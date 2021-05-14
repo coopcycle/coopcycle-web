@@ -12,6 +12,7 @@ use AppBundle\Form\DeliveryType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
+use AppBundle\Sylius\Order\OrderFactory;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -28,48 +29,16 @@ trait DeliveryTrait
     abstract protected function getDeliveryRoutes();
 
     /**
+     * @param OrderFactory $factory
      * @param Delivery $delivery
      * @param int $price
      * @param CustomerInterface $customer
      *
      * @return OrderInterface
      */
-    protected function createOrderForDelivery(Delivery $delivery, int $price, ?CustomerInterface $customer = null)
+    protected function createOrderForDelivery(OrderFactory $factory, Delivery $delivery, int $price, ?CustomerInterface $customer = null, $attach = true)
     {
-        $orderFactory = $this->container->get('sylius.factory.order');
-        $orderItemFactory = $this->container->get('sylius.factory.order_item');
-        $productVariantFactory = $this->get('sylius.factory.product_variant');
-
-        $order = $orderFactory->createNew();
-        $order->setDelivery($delivery);
-        $order->setShippingAddress($delivery->getDropoff()->getAddress());
-
-        $shippingTimeRange = new TsRange();
-
-        if (null === $delivery->getDropoff()->getAfter()) {
-            $dropoffAfter = clone $delivery->getDropoff()->getBefore();
-            $dropoffAfter->modify('-15 minutes');
-            $delivery->getDropoff()->setAfter($dropoffAfter);
-        }
-        $shippingTimeRange->setLower($delivery->getDropoff()->getAfter());
-        $shippingTimeRange->setUpper($delivery->getDropoff()->getBefore());
-
-        $order->setShippingTimeRange($shippingTimeRange);
-
-        if (null !== $customer) {
-            $order->setCustomer($customer);
-        }
-
-        $variant = $productVariantFactory->createForDelivery($delivery, $price);
-
-        $orderItem = $orderItemFactory->createNew();
-        $orderItem->setVariant($variant);
-        $orderItem->setUnitPrice($variant->getPrice());
-        $this->container->get('sylius.order_item_quantity_modifier')->modify($orderItem, 1);
-
-        $this->get('sylius.order_modifier')->addToOrder($order, $orderItem);
-
-        return $order;
+        return $factory->createForDelivery($delivery, $price, $customer, $attach);
     }
 
     protected function createDeliveryForm(Delivery $delivery, array $options = [])
@@ -99,10 +68,7 @@ trait DeliveryTrait
 
             $delivery = $form->getData();
 
-            if ($delivery->getId() === null) {
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-            }
-
+            $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
             $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
 
             return $this->redirectToRoute($routes['success']);
@@ -113,6 +79,7 @@ trait DeliveryTrait
             'delivery' => $delivery,
             'form' => $form->createView(),
             'debug_pricing' => $request->query->getBoolean('debug', false),
+            'back_route' => $routes['back'],
         ]);
     }
 

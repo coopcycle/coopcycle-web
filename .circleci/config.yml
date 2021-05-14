@@ -6,6 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Create .env file
+          command: cp .env.dist .env
+      - run:
           name: Pull containers
           command: docker-compose pull --ignore-pull-failures
       - run:

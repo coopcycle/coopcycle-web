@@ -1,0 +1,17 @@
+<section class="list-subheader">
+  {% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
+  <div class="container">
+    <div class="d-flex align-items-center mb-4 {{ restaurant_pledges_enabled ? 'justify-content-between' : 'justify-content-end' }}">
+      {% if 'yes' == restaurant_pledges_enabled %}
+      <a href="{{ path('restaurants_suggest') }}" class="btn btn-lg btn-default">
+        <i class="fa fa-heart-o mr-2"></i>
+        <span class="d-none d-sm-inline">{{ 'base.footer.suggest'|trans }}</span>
+      </a>
+      {% endif %}
+      <a href="{{ path('restaurants', { mode: to_mode|default('map') }) }}" class="btn btn-lg btn-default">
+        <i class="fa fa-{{ to_mode|default('map') }} mr-2"></i>
+        <span class="d-none d-sm-inline">{{ ('restaurants.mode.' ~ to_mode|default('map'))|trans }}</span>
+      </a>
+    </div>
+  </div>
+</section>

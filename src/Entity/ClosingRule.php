@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "delete"={
  *       "method"="DELETE",
  *       "controller"=DeleteClosingRule::class,
- *       "security"="is_granted('ROLE_RESTAURANT') and is_granted('delete', object)"
+ *       "security"="is_granted('delete', object)"
  *     },
  *   },
  * )
@@ -97,5 +97,14 @@ class ClosingRule
     public function setReason($reason)
     {
         $this->reason = $reason;
+    }
+
+    public static function create($startDate, $endDate)
+    {
+        $r = new self();
+        $r->setStartDate(is_string($startDate) ? new \DateTime($startDate) : $startDate);
+        $r->setEndDate(is_string($endDate) ? new \DateTime($endDate) : $endDate);
+
+        return $r;
     }
 }

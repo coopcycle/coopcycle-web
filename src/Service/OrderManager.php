@@ -33,11 +33,6 @@ class OrderManager
         $this->commandBus->handle(new OrderCommand\RefuseOrder($order, $reason));
     }
 
-    public function createPaymentIntent(OrderInterface $order, string $paymentMethodId)
-    {
-        $this->commandBus->handle(new OrderCommand\CreatePaymentIntent($order, $paymentMethodId));
-    }
-
     /**
      * @param OrderInterface $order
      * @param string|array|null $data

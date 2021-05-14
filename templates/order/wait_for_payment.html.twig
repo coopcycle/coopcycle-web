@@ -46,10 +46,6 @@
       </div>
     </div>
 
-    {{ form_start(form) }}
-      {{ form_widget(form) }}
-    {{ form_end(form) }}
-
   {% else %}
     <div class="alert alert-warning">
       {% trans from 'validators' %}cart.empty{% endtrans %}
@@ -69,46 +65,66 @@ var stripe = Stripe("{{ coopcycle_setting('stripe_publishable_key') }}", { strip
 var stripe = Stripe("{{ coopcycle_setting('stripe_publishable_key') }}");
 {% endif %}
 
-// https://stripe.com/docs/sources/best-practices
+// https://stripe.com/docs/payments/giropay/accept-a-payment#handling-the-redirect
 
 // After some amount of time, we should stop trying to resolve the order synchronously:
 var MAX_POLL_COUNT = 30; // We will wait for 5 minutes
 var pollCount = 0;
 
-function pollForSourceStatus() {
+function pollForPaymentIntent() {
+
   stripe
-    .retrieveSource({
-      id: "{{ source_id }}",
-      client_secret: "{{ client_secret }}"
-    })
-    .then(function(result) {
-      var source = result.source;
+    .retrievePaymentIntent("{{ client_secret }}")
+    .then(function(response) {
 
-      if (source.status === 'chargeable') {
+      if (response.error) {
 
-        // Make a request to your server to charge the Source.
-        // Depending on the Charge status, show your customer the relevant message.
-
-        document.querySelector('#wait-waiting').classList.add('hidden');
-        document.querySelector('#wait-success').classList.remove('hidden');
-
-        setTimeout(function() {
-          document.querySelector('form[name="charge_stripe_source"]').submit();
-        }, 500);
-
-      } else if (source.status === 'pending' && pollCount < MAX_POLL_COUNT) {
-        // Try again in a second, if the Source is still `pending`:
-        pollCount += 1;
-        setTimeout(pollForSourceStatus, 10000);
-      } else {
-        // Depending on the Source status, show your customer the relevant message.
+        // TODO Show the actual error
         document.querySelector('#wait-waiting').classList.add('hidden');
         document.querySelector('#wait-failure').classList.remove('hidden');
+
+      } else if (response.paymentIntent) {
+
+        // https://stripe.com/docs/payments/intents#intent-statuses
+        if (response.paymentIntent.status === 'succeeded') {
+
+          document.querySelector('#wait-waiting').classList.add('hidden');
+          document.querySelector('#wait-success').classList.remove('hidden');
+
+          setTimeout(function() {
+            var form = document.createElement('form');
+            form.setAttribute('method', 'post');
+            document.body.appendChild(form);
+            form.submit();
+          }, 500);
+
+        } else if (response.paymentIntent.status === 'requires_payment_method') {
+
+          document.querySelector('#wait-waiting').classList.add('hidden');
+          document.querySelector('#wait-failure').classList.remove('hidden');
+
+        } else {
+
+          if (pollCount < MAX_POLL_COUNT) {
+            pollCount += 1;
+            setTimeout(pollForPaymentIntent, 10000);
+          } else {
+            document.querySelector('#wait-waiting').classList.add('hidden');
+            document.querySelector('#wait-failure').classList.remove('hidden');
+          }
+
+        }
+
       }
+
+    }).catch(function(e) {
+      // TODO Show the actual error
+      document.querySelector('#wait-waiting').classList.add('hidden');
+      document.querySelector('#wait-failure').classList.remove('hidden');
     });
 }
 
-setTimeout(pollForSourceStatus, 5000);
+setTimeout(pollForPaymentIntent, 5000);
 
 </script>
 {% endif %}

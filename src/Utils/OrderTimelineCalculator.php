@@ -2,48 +2,35 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
-use Carbon\Carbon;
 
 class OrderTimelineCalculator
 {
-    private $preparationTimeResolver;
-    private $pickupTimeResolver;
+    private $preparationTimeCalculator;
+    private $shippingTimeCalculator;
 
     /**
-     * @param PreparationTimeResolver $preparationTimeResolver
-     * @param PickupTimeResolver $pickupTimeResolver
+     * @param PreparationTimeCalculator $preparationTimeCalculator
+     * @param ShippingTimeCalculator $shippingTimeCalculator
      */
     public function __construct(
-        PreparationTimeResolver $preparationTimeResolver,
-        PickupTimeResolver $pickupTimeResolver)
+        PreparationTimeCalculator $preparationTimeCalculator,
+        ShippingTimeCalculator $shippingTimeCalculator)
     {
-        $this->preparationTimeResolver = $preparationTimeResolver;
-        $this->pickupTimeResolver = $pickupTimeResolver;
+        $this->preparationTimeCalculator = $preparationTimeCalculator;
+        $this->shippingTimeCalculator = $shippingTimeCalculator;
     }
 
-    public function calculate(OrderInterface $order)
+    public function calculate(OrderInterface $order, ?TsRange $range = null): OrderTimeline
     {
-        $timeline = new OrderTimeline();
+        $preparationTime = $this->preparationTimeCalculator->calculate($order);
+        $shippingTime =
+            'delivery' === $order->getFulfillmentMethod() ? $this->shippingTimeCalculator->calculate($order) : null;
 
-        $shippingTimeRange = $order->getShippingTimeRange();
-
-        $dropoff = Carbon::instance($shippingTimeRange->getLower())
-            ->average($shippingTimeRange->getUpper());
-
-        if (!$order->isTakeaway()) {
-            $timeline->setDropoffExpectedAt($dropoff);
-        }
-
-        $pickup = $this->pickupTimeResolver->resolve($order, $dropoff);
-        $timeline->setPickupExpectedAt($pickup);
-
-        $preparation = $this->preparationTimeResolver->resolve($order, $dropoff);
-        $timeline->setPreparationExpectedAt($preparation);
-
-        return $timeline;
+        return OrderTimeline::create($order, $range ?? $order->getShippingTimeRange(), $preparationTime, $shippingTime);
     }
 
     public function delay(OrderInterface $order, $delay)
@@ -52,18 +39,29 @@ class OrderTimelineCalculator
 
         $preparationExpectedAt = clone $timeline->getPreparationExpectedAt();
         $pickupExpectedAt = clone $timeline->getPickupExpectedAt();
-        $dropoffExpectedAt = clone $timeline->getDropoffExpectedAt();
 
         $preparationExpectedAt->modify(sprintf('+%d minutes', $delay));
         $pickupExpectedAt->modify(sprintf('+%d minutes', $delay));
-        $dropoffExpectedAt->modify(sprintf('+%d minutes', $delay));
 
         $timeline->setPreparationExpectedAt($preparationExpectedAt);
         $timeline->setPickupExpectedAt($pickupExpectedAt);
-        $timeline->setDropoffExpectedAt($dropoffExpectedAt);
+
+        if (null !== $timeline->getDropoffExpectedAt()) {
+            $dropoffExpectedAt = clone $timeline->getDropoffExpectedAt();
+            $dropoffExpectedAt->modify(sprintf('+%d minutes', $delay));
+            $timeline->setDropoffExpectedAt($dropoffExpectedAt);
+        }
+
+        $shippingTimeRange = $order->getShippingTimeRange();
+
+        $shippingTimeRangeLower = clone $shippingTimeRange->getLower();
+        $shippingTimeRangeUpper = clone $shippingTimeRange->getUpper();
+
+        $shippingTimeRangeLower->modify(sprintf('+%d minutes', $delay));
+        $shippingTimeRangeUpper->modify(sprintf('+%d minutes', $delay));
 
         $order->setShippingTimeRange(
-            DateUtils::dateTimeToTsRange($dropoffExpectedAt, 5)
+            TsRange::create($shippingTimeRangeLower, $shippingTimeRangeUpper)
         );
 
         $delivery = $order->getDelivery();

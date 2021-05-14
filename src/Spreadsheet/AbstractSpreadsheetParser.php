@@ -95,7 +95,7 @@ abstract class AbstractSpreadsheetParser
         return array_search(max($delimiters), $delimiters);
     }
 
-    abstract protected function validateHeader(array $header);
+    abstract public function validateHeader(array $header);
 
     abstract public function getExampleData(): array;
 
@@ -104,7 +104,7 @@ abstract class AbstractSpreadsheetParser
      * @param array $options
      * @return array
      */
-    abstract protected function parseData(array $data, array $options = []): array;
+    abstract public function parseData(array $data, array $options = []): array;
 
     /**
      * @param File|string $file

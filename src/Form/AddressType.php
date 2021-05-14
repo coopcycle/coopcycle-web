@@ -17,7 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
@@ -80,6 +80,15 @@ class AddressType extends AbstractType
                 ]);
         }
 
+        if (true === $options['with_name']) {
+            $builder
+                ->add('name', TextType::class, [
+                    'required' => false,
+                    'label' => 'form.address.name.label',
+                    'attr' => ['placeholder' => 'form.address.name.placeholder']
+                ]);
+        }
+
         if (true === $options['with_telephone']) {
             $builder
                 ->add('telephone', PhoneNumberType::class, [
@@ -89,12 +98,12 @@ class AddressType extends AbstractType
                 ]);
         }
 
-        if (true === $options['with_name']) {
+        if (true === $options['with_contact_name']) {
             $builder
-                ->add('name', TextType::class, [
+                ->add('contactName', TextType::class, [
+                    'label' => 'form.task.recipient.label',
+                    'help' => 'form.task.recipient.help',
                     'required' => false,
-                    'label' => 'form.address.name.label',
-                    'attr' => ['placeholder' => 'form.address.name.placeholder']
                 ]);
         }
 
@@ -170,6 +179,7 @@ class AddressType extends AbstractType
             'street_address_label' => 'form.address.streetAddress.label',
             'with_widget' => false,
             'with_description' => true,
+            'with_contact_name' => false,
         ));
     }
 }

@@ -23,9 +23,9 @@ class GeoJSONUploadType extends AbstractType
     const ERROR_INVALID_JSON =
         'The file does not contain valid JSON';
     const ERROR_INVALID_GEOJSON =
-        'GeoJSON must contain a Feature, a FeatureCollection, or a Polygon';
+        'The GeoJSON file must contain a Feature, a FeatureCollection, or a Polygon';
     const ERROR_POLYGON_ONLY =
-        'GeoJSON must contain Polygon geometries';
+        'The GeoJSON file must contain only Polygon geometries';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -56,6 +56,7 @@ class GeoJSONUploadType extends AbstractType
 
             try {
                 $geojson = GeoJson::jsonUnserialize($data);
+                $event->getForm()->getParent()->setData($geojson);
             } catch (UnserializationException $e) {
                 $event->getForm()->addError(new FormError($e->getMessage()));
                 return;
@@ -79,14 +80,18 @@ class GeoJSONUploadType extends AbstractType
             }
 
             // Verify we are dealing with polygons
+            $containsOnlyPolygons = true;
             foreach ($geojson as $feature) {
                 if (!$feature->getGeometry() instanceof Polygon) {
-                    $event->getForm()->addError(new FormError(self::ERROR_POLYGON_ONLY));
-                    return;
+                    $containsOnlyPolygons = false;
+                    break;
                 }
             }
 
-            $event->getForm()->getParent()->setData($geojson);
+            if (!$containsOnlyPolygons) {
+                $event->getForm()->addError(new FormError(self::ERROR_POLYGON_ONLY));
+                return;
+            }
         });
     }
 

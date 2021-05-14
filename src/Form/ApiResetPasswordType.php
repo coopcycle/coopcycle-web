@@ -1,12 +1,8 @@
 <?php
 
-
 namespace AppBundle\Form;
 
-
 use AppBundle\Entity\User;
-use libphonenumber\PhoneNumberFormat;
-use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -17,10 +13,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ApiResetPasswordType extends AbstractType
 {
-    public function __construct()
-    {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('plainPassword', RepeatedType::class, [

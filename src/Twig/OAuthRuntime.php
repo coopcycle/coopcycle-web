@@ -2,8 +2,8 @@
 
 namespace AppBundle\Twig;
 
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -41,13 +41,18 @@ class OAuthRuntime implements RuntimeExtensionInterface
         $redirectUri = $params['redirect_uri'];
         unset($params['redirect_uri']);
 
-        $time = time();
-        $signer = new Sha256();
+        $config = Configuration::forSymmetricSigner(
+            new Sha256(),
+            InMemory::plainText($this->key)
+        );
 
-        $token = (new Builder())
-            ->issuedBy($redirectUri)
-            ->expiresAt($time + 3600)
-            ->getToken($signer, new Key($this->key));
+        $now = new \DateTimeImmutable();
+
+        $token = $config->builder()
+                ->issuedBy($redirectUri)
+                ->expiresAt($now->modify('+1 hour'))
+                ->getToken($config->signer(), $config->signingKey())
+                ->toString();
 
         $params = array_merge($params, [
             'redirect_uri' => $this->proxyUri,

@@ -2,9 +2,9 @@
 
 namespace AppBundle\Action;
 
-use FOS\UserBundle\Mailer\MailerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
-use FOS\UserBundle\Util\TokenGeneratorInterface;
+use Nucleos\UserBundle\Mailer\MailerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Util\TokenGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Annotation\Route;
 class ResettingSendEmail
 {
     private $userManager;
-    private $dispatcher;
     private $tokenGenerator;
     private $mailer;
 
@@ -25,13 +24,11 @@ class ResettingSendEmail
 
     public function __construct(
         UserManagerInterface $userManager,
-        EventDispatcherInterface $dispatcher,
         TokenGeneratorInterface $tokenGenerator,
         MailerInterface $mailer,
         int $retryTtl)
     {
         $this->userManager = $userManager;
-        $this->dispatcher = $dispatcher;
         $this->tokenGenerator = $tokenGenerator;
         $this->mailer = $mailer;
         $this->retryTtl = $retryTtl;

@@ -1,0 +1,20 @@
+registration:
+    check_email: |
+      Un e-mail a été envoyé à l'adresse %email%.
+      <br>
+      Il contient un lien d'activation sur lequel il vous faudra cliquer afin d'activer votre compte.
+    confirmed: |
+      Félicitations <strong>%username%</strong>, votre compte est maintenant activé.
+    before_confirmation_continue_order: |
+      Une fois que vous avez activé votre compte, vous pouvez terminer votre commande.
+    after_confirmation_continue_order: Terminez votre commande
+
+form:
+    username: Nom d'utilisateur
+
+form.registration.username.help: 'Votre nom d''utilisateur ne peut pas dépasser 15 caractères.
+
+  Un nom d''utilisateur peut seulement contenir des caractères alphanumériques (lettres
+  A-Z, chiffres 0-9) à l''exception des underscores.
+
+  '

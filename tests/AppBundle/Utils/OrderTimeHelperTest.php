@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Utils;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Vendor;
@@ -15,6 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Redis;
 
 class OrderTimeHelperTest extends TestCase
 {
@@ -28,11 +30,13 @@ class OrderTimeHelperTest extends TestCase
         $this->preparationTimeCalculator = $this->prophesize(PreparationTimeCalculator::class);
         $this->shippingDateFilter = $this->prophesize(ShippingDateFilter::class);
         $this->shippingTimeCalculator = $this->prophesize(ShippingTimeCalculator::class);
+        $this->redis = $this->prophesize(Redis::class);
 
         $this->helper = new OrderTimeHelper(
             $this->shippingDateFilter->reveal(),
             $this->preparationTimeCalculator->reveal(),
             $this->shippingTimeCalculator->reveal(),
+            $this->redis->reveal(),
             'fr'
         );
     }
@@ -50,25 +54,14 @@ class OrderTimeHelperTest extends TestCase
 
         $sameDayChoices = [
             '2020-03-31T14:30:00+02:00',
-            '2020-03-31T14:45:00+02:00',
+            '2020-03-31T14:40:00+02:00',
+            '2020-03-31T14:50:00+02:00',
         ];
-
-        $cart = $this->prophesize(OrderInterface::class);
-        $cart
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
-        $cart
-            ->getVendor()
-            ->willReturn(
-                Vendor::withRestaurant($restaurant->reveal())
-            );
-        $cart
-            ->getFulfillmentMethod()
-            ->willReturn('delivery');
 
         $fulfillmentMethod = new FulfillmentMethod();
         $fulfillmentMethod->setOpeningHours(["Mo-Su 13:00-15:00"]);
         $fulfillmentMethod->setOpeningHoursBehavior('asap');
+        $fulfillmentMethod->setOrderingDelayMinutes(0);
 
         $restaurant
             ->getShippingOptionsDays()
@@ -85,16 +78,29 @@ class OrderTimeHelperTest extends TestCase
             ->willReturn($fulfillmentMethod);
 
         $restaurant
-            ->getOrderingDelayMinutes()
-            ->willReturn(0);
-        $restaurant
             ->getClosingRules()
             ->willReturn(new ArrayCollection());
 
+        $cart = $this->prophesize(OrderInterface::class);
+        $cart
+            ->getRestaurant()
+            ->willReturn($restaurant->reveal());
+        $cart
+            ->getVendor()
+            ->willReturn(
+                Vendor::withRestaurant($restaurant->reveal())
+            );
+        $cart
+            ->getFulfillmentMethod()
+            ->willReturn('delivery');
+        $cart
+            ->getFulfillmentMethodObject()
+            ->willReturn($fulfillmentMethod);
+
         $this->shippingDateFilter
-            ->accept($cart, Argument::type(\DateTime::class))
+            ->accept($cart, Argument::type(TsRange::class))
             ->will(function ($args) use ($sameDayChoices) {
-                if (in_array($args[1]->format(\DateTime::ATOM), $sameDayChoices)) {
+                if (in_array($args[1]->getLower()->format(\DateTime::ATOM), $sameDayChoices)) {
                     return false;
                 }
 
@@ -103,7 +109,7 @@ class OrderTimeHelperTest extends TestCase
 
         $shippingTimeRange = $this->helper->getShippingTimeRange($cart->reveal());
 
-        $this->assertEquals(new \DateTime('2020-04-01 12:55:00'), $shippingTimeRange->getLower());
-        $this->assertEquals(new \DateTime('2020-04-01 13:05:00'), $shippingTimeRange->getUpper());
+        $this->assertEquals(new \DateTime('2020-04-01 13:00:00'), $shippingTimeRange->getLower());
+        $this->assertEquals(new \DateTime('2020-04-01 13:10:00'), $shippingTimeRange->getUpper());
     }
 }

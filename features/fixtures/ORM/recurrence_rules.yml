@@ -1,0 +1,38 @@
+include:
+  - addresses.yml
+  - stores.yml
+
+Recurr\Rule:
+  rrule_1:
+    __construct: [ 'FREQ=WEEKLY;' ]
+  rrule_2:
+    __construct: [ 'FREQ=WEEKLY;BYDAY=MO,FR' ]
+
+AppBundle\Entity\Task\RecurrenceRule:
+  recurrence_rule_1:
+    store: '@store_1'
+    rule: '@rrule_1'
+    template: { '@type': 'Task', 'address': { '@id': '/api/addresses/1', 'streetAddress': '272, rue Saint Honoré 75001 Paris 1er' }, 'after': '11:30', 'before': '12:00' }
+  recurrence_rule_2:
+    store: '@store_1'
+    rule: '@rrule_2'
+    template:
+      '@type': 'hydra:Collection'
+      'hydra:member':
+        - 'address':
+            '@id': '/api/addresses/1'
+            'streetAddress': '272, rue Saint Honoré 75001 Paris 1er'
+          'after': '11:30'
+          'before': '12:00'
+        - 'address':
+            '@id': '/api/addresses/2'
+            'streetAddress': '18, avenue Ledru-Rollin 75012 Paris 12ème'
+          'after': '12:30'
+          'before': '13:00'
+  recurrence_rule_3:
+    store: '@store_1'
+    rule: '@rrule_2'
+    template:
+      '@type': 'hydra:Collection'
+      'hydra:member': []
+    deletedAt: <identity(new \DateTime('yesterday'))>

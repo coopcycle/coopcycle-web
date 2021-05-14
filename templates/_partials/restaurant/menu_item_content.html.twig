@@ -3,7 +3,7 @@
   <small class="menu-item-description">{{ 'restaurant.unavailable'|trans }}</small>
 {% else %}
   {% if product.description is not null %}
-    <small class="menu-item-description">{{ product.description }}</small>
+    <small class="menu-item-description">{{ product.description|nl2br }}</small>
   {% endif %}
   {% if product.allergens is not empty %}
     {% set allergens = [] %}

@@ -8,7 +8,7 @@ use Sylius\Component\Order\Model\Adjustment;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class OrderDepositRefundProcessor implements OrderProcessorInterface
 {
@@ -27,11 +27,12 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
     {
         $order->removeAdjustmentsRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT);
 
-        $restaurant = $order->getRestaurant();
-
-        if (null === $restaurant) {
+        // For the moment, not supported on hubs
+        if (!$order->hasVendor() || $order->isMultiVendor()) {
             return;
         }
+
+        $restaurant = $order->getRestaurant();
 
         if ($restaurant->isDepositRefundOptin()) {
             if (!$restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {

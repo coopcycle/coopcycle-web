@@ -36,7 +36,7 @@ final class StoreAddressesSubresourceDataProvider implements SubresourceDataProv
      */
     public function getSubresource(string $resourceClass, array $identifiers, array $context, string $operationName = null)
     {
-        [$identifier, $identifierResourceClass] = $context['identifiers'][0];
+        [ $identifierResourceClass, $identifier ] = current($context['identifiers']);
 
         $id = (int) $context['subresource_identifiers'][$identifier];
 

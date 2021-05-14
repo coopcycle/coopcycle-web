@@ -1,11 +1,20 @@
 var Encore = require('@symfony/webpack-encore')
 var webpack = require('webpack')
+var path = require('path')
+var ESLintPlugin = require('eslint-webpack-plugin')
 
 Encore
 
   .setOutputPath(__dirname + '/web/build')
+
   .setPublicPath('/build')
 
+  // Use this if you want to debug on a real device
+  // .setPublicPath('http://192.168.0.11:8080')
+  // .setManifestKeyPrefix('/build')
+
+  .addEntry('admin-orders', './js/app/admin/orders.js')
+  .addEntry('admin-restaurants', './js/app/admin/restaurants.js')
   .addEntry('common', './js/app/common.js')
   .addEntry('customize-form', './js/app/customize/form.js')
   .addEntry('checkout-summary', './js/app/checkout/summary.js')
@@ -19,22 +28,29 @@ Encore
   .addEntry('delivery-tracking', './js/app/delivery/tracking.js')
   .addEntry('notifications', './js/app/notifications/index.js')
   .addEntry('foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
+  .addEntry('metrics', './js/app/metrics/index.js')
+  .addEntry('metrics-admin', './js/app/metrics/admin.js')
+  .addEntry('order', './js/app/order/index.js')
   .addEntry('product-form', './js/app/product/form.js')
   .addEntry('product-list', './js/app/product/list.js')
   .addEntry('product-option-form', './js/app/forms/product-option.js')
   .addEntry('register', './js/app/register/index.js')
   .addEntry('restaurant', './js/app/restaurant/index.js')
   .addEntry('restaurant-form', './js/app/restaurant/form.js')
+  .addEntry('restaurant-fulfillment-methods', './js/app/restaurant/fulfillment-methods.js')
   .addEntry('restaurant-list', './js/app/restaurant/list.js')
   .addEntry('restaurant-menu-editor', './js/app/restaurant/menu-editor.js')
   .addEntry('restaurant-planning', './js/app/restaurant/planning.js')
   .addEntry('restaurant-preparation-time', './js/app/restaurant/preparationTime.js')
   .addEntry('restaurants-map', './js/app/restaurants-map/index.js')
   .addEntry('search-address', './js/app/search/address.js')
+  .addEntry('search-user', './js/app/search/user.js')
   .addEntry('store-form', './js/app/store/form.js')
   .addEntry('task-list', './js/app/delivery/task-list.js')
+  .addEntry('time-slot-form', './js/app/time-slot/form.js')
   .addEntry('user-tracking', './js/app/user/tracking.js')
   .addEntry('user-form', './js/app/user/form.js')
+  .addEntry('user-invite', './js/app/user/invite.js')
   .addEntry('widgets', './js/app/widgets/index.js')
   .addEntry('widgets-admin', './js/app/widgets/admin.js')
   .addEntry('zone-preview', './js/app/zone/preview.js')
@@ -76,31 +92,27 @@ Encore
   .enableVersioning(Encore.isProduction())
 
 if (!Encore.isProduction()) {
-  Encore.enableEslintLoader((options) => {
-    options.rules = {
-      'no-console': 'warn',
-      'no-case-declarations': 'off',
-      'no-extra-boolean-cast': 'off',
-      'react/prop-types': 'off',
-      'react/display-name': 'off',
-    }
-  })
+  // https://github.com/symfony/webpack-encore/issues/847
+  Encore.addPlugin(new ESLintPlugin())
 }
+
+// https://github.com/webpack/webpack-dev-server/blob/master/CHANGELOG.md#400-beta0-2020-11-27
+Encore.configureDevServerOptions(options => {
+  options.firewall = false
+  options.static = [
+    {
+      directory: 'web/',
+      watch: {
+        usePolling: true,
+      }
+    }
+  ]
+  options.headers = { 'Access-Control-Allow-Origin': '*' }
+  options.compress = true
+})
 
 let webpackConfig = Encore.getWebpackConfig()
 
-webpackConfig.devServer = {
-  headers: { 'Access-Control-Allow-Origin': '*' },
-  stats: 'minimal',
-  compress: true,
-  watchOptions: {
-    ignored: /node_modules/,
-    poll: 1000
-  }
-}
-
-webpackConfig.stats = {
-  source: false,
-}
+webpackConfig.stats = 'minimal'
 
 module.exports = webpackConfig

@@ -4,7 +4,7 @@ security:
 
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext
-        FOS\UserBundle\Model\UserInterface: sha512
+        Nucleos\UserBundle\Model\UserInterface: sha512
 
     role_hierarchy:
         ROLE_CUSTOMER: ROLE_USER
@@ -16,7 +16,7 @@ security:
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
         fos_userbundle:
-            id: fos_user.user_provider.username_email
+            id: nucleos_user.user_provider.username_email
         # jwt:
         #     lexik_jwt:
         #         class: AppBundle\Entity\User
@@ -43,7 +43,7 @@ security:
 
         api_deliveries:
             pattern:   ^/api/deliveries
-            methods: [ GET, POST, PUT ]
+            methods: [ GET, POST, PUT, DELETE ]
             stateless: true
             anonymous: ~
             bearer_token: true
@@ -51,6 +51,13 @@ security:
         api_tasks_import:
             pattern:   ^/api/tasks/import
             methods: [ POST ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
+        api_task_events_get:
+            pattern:   ^/api/tasks/[0-9]+/events$
+            methods: [ GET ]
             stateless: true
             anonymous: ~
             bearer_token: true
@@ -84,15 +91,13 @@ security:
             bearer_token: true
 
         api_time_slots:
-            pattern:   ^/api/time_slots/[0-9]+$
-            methods: [ GET ]
+            pattern:   ^/api/time_slots
             stateless: true
             anonymous: ~
             bearer_token: true
 
-        api_pricing_calculate_price:
-            pattern:   ^/api/pricing/calculate-price
-            methods: [ GET ]
+        api_retail_prices_calculate:
+            pattern:   ^/api/retail_prices/calculate
             stateless: true
             anonymous: ~
             bearer_token: true
@@ -139,6 +144,11 @@ security:
             anonymous: ~
             bearer_token: true
 
+        api_webhooks:
+            pattern:   ^/api/webhooks
+            stateless: true
+            bearer_token: true
+
         token_refresh:
             pattern:  ^/api/token/refresh
             stateless: true
@@ -160,11 +170,30 @@ security:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
 
+        # Disable session to improve performance
+        # TraceableFirewallListener will be skipped
+
+        # FIXME
+        # Causes a problem in AppBundle\Sylius\Cart\SessionSubscriber
+        # When an admin adds products to the cart of a *DISABLED* restaurant,
+        # an AJAX request invoking SessionSubscriber may clear the cart,
+        # because of the mechanism to cleanup carts with disabled restaurant.
+
         restaurant_fulfillment_timing:
             pattern: ^/restaurant/[0-9]+/timing$
             methods: [ GET ]
-            stateless: true
-            anonymous: ~
+            security: false
+
+        # search_restaurants:
+        #     pattern: ^/search/restaurants
+        #     methods: [ GET ]
+        #     stateless: true
+        #     anonymous: ~
+
+        search_geocode:
+            pattern: ^/search/geocode
+            methods: [ GET ]
+            security: false
 
         web:
             pattern:            ^/
@@ -192,6 +221,7 @@ security:
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/dashboard, roles: [ ROLE_ADMIN, ROLE_RESTAURANT, ROLE_STORE ] }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
         - { path: ^/profile/jwt, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/profile/notifications, roles: IS_AUTHENTICATED_REMEMBERED }

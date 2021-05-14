@@ -3,16 +3,21 @@
 {% form_theme form 'form/delivery.html.twig' %}
 
 {% block breadcrumb %}
+  {% set delivery = form.vars.value %}
+  <li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
+  {% if delivery.id is not null %}
+  <li>#{{ delivery.id }}</li>
+  {% else %}
+  <li>{% trans %}delivery.createNew{% endtrans %}</li>
+  {% endif %}
+{% endblock %}
 
-{% set delivery = form.vars.value %}
-
-<li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
-{% if delivery.id is not null %}
-<li>#{{ delivery.id }}</li>
-{% else %}
-<li>{% trans %}delivery.createNew{% endtrans %}</li>
-{% endif %}
-
+{% block dashboard_subnav %}
+  <div>
+    <a href="{{ path(back_route) }}">
+      <i class="fa fa-arrow-left mr-2"></i>{{ 'stores.deliveries'|trans }}
+    </a>
+  </div>
 {% endblock %}
 
 {% block content %}
@@ -83,19 +88,17 @@
 
   <div class="d-md-flex d-lg-flex d-xl-flex flex-row mb-4">
     <div class="col-md-7">
-      {% if delivery.store is not empty and delivery.store.createOrders %}
-        <div id="delivery-price" class="delivery-price-preview mb-4 mb-md-0"
-          data-tax-rate-amount="{{ tax_rate.amount|e('html_attr') }}"
-          data-tax-rate-is-included-in-price="{{ tax_rate.isIncludedInPrice()|json_encode|e('html_attr') }}">
+      {% if delivery.id is empty and delivery.store is not empty and delivery.store.createOrders %}
+        <div id="delivery-price" class="mb-4 mb-md-0">
 
           <div class="delivery-price">
             <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
             <span class="delivery-price-value" id="delivery_price">
-              <span {% if not tax_rate.isIncludedInPrice() %}class="text-muted"{% endif %}>
+              <span>
                 <span data-tax="included">{{ 0|price_format }}</span>
                 <span class="ml-2">{{ 'basics.tax_incl'|trans }}</span>
               </span>
-              <span {% if tax_rate.isIncludedInPrice() %}class="text-muted"{% endif %}>
+              <span class="text-muted">
                 <span data-tax="excluded">{{ 0|price_format }}</span>
                 <span class="ml-2">{{ 'basics.tax_excl'|trans }}</span>
               </span>
@@ -141,6 +144,4 @@
 
 {% block scripts %}
 {{ encore_entry_script_tags('delivery-form') }}
-<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap"
-  async defer></script>
 {% endblock %}

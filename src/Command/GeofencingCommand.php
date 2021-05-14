@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Message\PushNotification;
+use AppBundle\Service\Geofencing;
 use Doctrine\ORM\EntityManagerInterface;
 use Redis;
 use RedisException;
@@ -21,6 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class GeofencingCommand extends Command
 {
     private $doctrine;
+    private $geofencing;
     private $tile38;
     private $messageBus;
     private $translator;
@@ -31,6 +33,7 @@ class GeofencingCommand extends Command
 
     public function __construct(
         EntityManagerInterface $doctrine,
+        Geofencing $geofencing,
         Redis $tile38,
         string $doorstepChanNamespace,
         MessageBusInterface $messageBus,
@@ -38,6 +41,7 @@ class GeofencingCommand extends Command
         LoggerInterface $logger)
     {
         $this->doctrine = $doctrine;
+        $this->geofencing = $geofencing;
         $this->tile38 = $tile38;
         $this->doorstepChanNamespace = $doorstepChanNamespace;
         $this->messageBus = $messageBus;
@@ -146,6 +150,16 @@ class GeofencingCommand extends Command
                     $taskId = (int) $matches[1];
 
                     $task = $taskRepository->find($taskId);
+
+                    if (null === $task) {
+                        return;
+                    }
+
+                    if (!$task->isAssigned()) {
+                        $this->logMessage(sprintf('Stop monitoring geofences for task #%d', $task->getId()));
+                        $this->geofencing->deleteChannel($task);
+                        return;
+                    }
 
                     // This is not the assigned messenger
                     if ($task->getAssignedCourier()->getUsername() !== $payload['id']) {

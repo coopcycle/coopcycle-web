@@ -1,6 +1,7 @@
-{% extends "admin.html.twig" %}
+{% extends "deliveries.html.twig" %}
 
 {% block breadcrumb %}
+  {{ parent() }}
   <li>{% trans %}adminDashboard.time_slots.title{% endtrans %}</li>
 {% endblock %}
 
@@ -12,7 +13,7 @@
   </a>
 </p>
 
-<table class="table table-condensed">
+<table class="table">
   <thead>
     <th>#</th>
     <th>{{ 'form.time_slot.name.label'|trans }}</th>

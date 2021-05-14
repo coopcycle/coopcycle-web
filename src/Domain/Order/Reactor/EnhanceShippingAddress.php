@@ -3,8 +3,10 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\OrderCreated;
+use AppBundle\Sylius\Customer\CustomerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
+use Webmozart\Assert\Assert;
 
 class EnhanceShippingAddress
 {
@@ -17,7 +19,7 @@ class EnhanceShippingAddress
     {
         $order = $event->getOrder();
 
-        if (!$order->isFoodtech()) {
+        if (!$order->hasVendor()) {
             return;
         }
 
@@ -41,6 +43,13 @@ class EnhanceShippingAddress
                     $this->phoneNumberUtil->parse($customer->getPhoneNumber())
                 );
             } catch (NumberParseException $e) {}
+        }
+
+        if (empty($customer->getPhoneNumber()) && !empty($telephone)) {
+
+            Assert::isInstanceOf($customer, CustomerInterface::class);
+
+            $customer->setTelephone($telephone);
         }
     }
 }

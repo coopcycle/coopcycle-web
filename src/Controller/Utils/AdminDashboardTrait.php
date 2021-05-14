@@ -4,25 +4,34 @@ namespace AppBundle\Controller\Utils;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
+use AppBundle\Entity\Address;
+use AppBundle\Entity\Hub;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Task\Group as TaskGroup;
+use AppBundle\Entity\Task\RecurrenceRule as TaskRecurrenceRule;
 use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
+use AppBundle\Service\TagManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\TaskImageNamer;
 use Cocur\Slugify\SlugifyInterface;
-use FOS\UserBundle\Model\UserInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Doctrine\ORM\Query\Expr;
+use Nucleos\UserBundle\Model\UserInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use phpcent\Client as CentrifugoClient;
 use Psr\Log\LoggerInterface;
+use Redis;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -41,7 +50,7 @@ trait AdminDashboardTrait
         $nav = $request->query->getBoolean('nav', true);
 
         $defaultParams = [
-            'date' => $request->get('date'),
+            'date' => $request->get('date', (new \DateTime())->format('Y-m-d')),
         ];
 
         if (!$nav) {
@@ -56,10 +65,14 @@ trait AdminDashboardTrait
      */
     public function dashboardAction(Request $request,
         TaskManager $taskManager,
-        JWTManagerInterface $jwtManager)
+        JWTManagerInterface $jwtManager,
+        CentrifugoClient $centrifugoClient,
+        Redis $tile38,
+        IriConverterInterface $iriConverter,
+        TagManager $tagManager)
     {
         return $this->dashboardFullscreenAction((new \DateTime())->format('Y-m-d'),
-            $request, $taskManager, $jwtManager);
+            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter, $tagManager);
     }
 
     /**
@@ -68,7 +81,11 @@ trait AdminDashboardTrait
      */
     public function dashboardFullscreenAction($date, Request $request,
         TaskManager $taskManager,
-        JWTManagerInterface $jwtManager)
+        JWTManagerInterface $jwtManager,
+        CentrifugoClient $centrifugoClient,
+        Redis $tile38,
+        IriConverterInterface $iriConverter,
+        TagManager $tagManager)
     {
         $hashids = new Hashids($this->getParameter('secret'), 8);
 
@@ -83,7 +100,6 @@ trait AdminDashboardTrait
         $taskExport->end = new \DateTime();
 
         $taskExportForm = $this->createForm(TaskExportType::class, $taskExport);
-        $taskGroupForm = $this->createForm(TaskGroupType::class);
 
         $taskExportForm->handleRequest($request);
         if ($taskExportForm->isSubmitted() && $taskExportForm->isValid()) {
@@ -100,28 +116,10 @@ trait AdminDashboardTrait
             return $response;
         }
 
-        $taskGroupForm->handleRequest($request);
-        if ($taskGroupForm->isSubmitted() && $taskGroupForm->isValid()) {
-
-            if ($taskGroupForm->getClickedButton() && 'delete' === $taskGroupForm->getClickedButton()->getName()) {
-
-                $taskGroup = $this->getDoctrine()
-                    ->getRepository(TaskGroup::class)
-                    ->find($taskGroupForm->get('id')->getData());
-
-                $taskManager->deleteGroup($taskGroup);
-
-                $this->getDoctrine()
-                    ->getManagerForClass(TaskGroup::class)
-                    ->flush();
-            }
-
-            return $this->redirectToDashboard($request);
-        }
-
         $allTasks = $this->getDoctrine()
             ->getRepository(Task::class)
-            ->findByDate($date);
+            ->findByDate($date)
+            ;
 
         $taskLists = $this->getDoctrine()
             ->getRepository(TaskList::class)
@@ -141,44 +139,136 @@ trait AdminDashboardTrait
                 'resource_class' => TaskList::class,
                 'operation_type' => 'item',
                 'item_operation_name' => 'get',
-                'groups' => ['task_collection', 'task', 'delivery', 'address', sprintf('address_%s', $this->getParameter('country_iso'))]
+                'groups' => ['task_collection']
             ]);
         }, $taskLists);
 
         $couriers = $this->getDoctrine()
             ->getRepository(User::class)
             ->createQueryBuilder('u')
-            ->select("u.username")
+            ->select('u.username')
             ->where('u.roles LIKE :roles')
             ->orderBy('u.username', 'ASC')
             ->setParameter('roles', '%ROLE_COURIER%')
             ->getQuery()
-            ->getResult();
+            ->getArrayResult();
 
-        $allTags = $this->getDoctrine()
-            ->getRepository(Tag::class)
-            ->findAll();
+        $this->getDoctrine()->getManager()->getFilters()->enable('soft_deleteable');
 
-        $normalizedTags = [];
-        foreach ($allTags as $tag) {
-            $normalizedTags[] = [
-                'name' => $tag->getName(),
-                'slug' => $tag->getSlug(),
-                'color' => $tag->getColor(),
-            ];
-        }
+        $recurrenceRules =
+            $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findAll();
+
+        $recurrenceRulesNormalized = array_map(function (TaskRecurrenceRule $recurrenceRule) {
+            return $this->get('serializer')->normalize($recurrenceRule, 'jsonld', [
+                'resource_class' => TaskRecurrenceRule::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+            ]);
+        }, $recurrenceRules);
+
+        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
+
+        $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
+
+        $storesNormalized = array_map(function (Store $store) {
+            return $this->get('serializer')->normalize($store, 'jsonld', [
+                'resource_class' => Store::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+            ]);
+        }, $stores);
+
+        $qb = $this->getDoctrine()
+            ->getRepository(Address::class)
+            ->createQueryBuilder('a');
+        $qb
+            ->select('a.id')
+            ->leftJoin(LocalBusiness::class, 'r', Expr\Join::WITH, 'r.address = a.id')
+            ->leftJoin(Hub::class,           'h', Expr\Join::WITH, 'h.address = a.id')
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->isNotNull('r.id'),
+                    $qb->expr()->isNotNull('h.id')
+                )
+            );
+
+        $addressIris = array_map(
+            fn ($address) => $iriConverter->getItemIriFromResourceClass(Address::class, $address),
+            $qb->getQuery()->getArrayResult()
+        );
 
         return $this->render('admin/dashboard_iframe.html.twig', [
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
             'couriers' => $couriers,
-            'tasks' => $allTasksNormalized,
+            'all_tasks' => $allTasksNormalized,
             'task_lists' => $taskListsNormalized,
             'task_export_form' => $taskExportForm->createView(),
-            'task_group_form' => $taskGroupForm->createView(),
-            'tags' => $normalizedTags,
+            'tags' => $tagManager->getAllTags(),
             'jwt' => $jwtManager->create($this->getUser()),
+            'centrifugo_token' => $centrifugoClient->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600)),
+            'centrifugo_tracking_channel' => sprintf('$%s_tracking', $this->getParameter('centrifugo_namespace')),
+            'centrifugo_events_channel' => sprintf('%s_events#%s', $this->getParameter('centrifugo_namespace'), $this->getUser()->getUsername()),
+            'positions' => $this->loadPositions($tile38),
+            'task_recurrence_rules' => $recurrenceRulesNormalized,
+            'stores' => $storesNormalized,
+            'pickup_cluster_addresses' => $addressIris,
         ]);
+    }
+
+    private function loadPositions(Redis $tile38, $cursor = 0, array $points = [])
+    {
+        $result = $tile38->rawCommand(
+            'SCAN',
+            $this->getParameter('tile38_fleet_key'),
+            'CURSOR',
+            $cursor,
+            'LIMIT',
+            '10'
+        );
+
+        $newCursor = $result[0];
+        $objects = $result[1];
+
+        // Remember: more or less than COUNT or no keys may be returned
+        // See http://redis.io/commands/scan#the-count-option
+        // Also, SCAN may return the same key multiple times
+        // See http://redis.io/commands/scan#scan-guarantees
+        // Additionally, you should always have the code that uses the keys
+        // before the code checking the cursor.
+        if (count($objects) > 0) {
+            foreach ($objects as $object) {
+                [$username, $data] = $object;
+                $point = json_decode($data, true);
+                // Warning: format is lng,lat
+                [$longitude, $latitude, $timestamp] = $point['coordinates'];
+
+                $points[] = [
+                    'username' => $username,
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                    'timestamp' => $timestamp,
+                ];
+            }
+        }
+
+        // It's important to note that the cursor and returned keys
+        // vary independently. The scan is never complete until redis
+        // returns a non-zero cursor. However, with MATCH and large
+        // collections, most iterations will return an empty keys array.
+
+        // Still, a cursor of zero DOES NOT mean that there are no keys.
+        // A zero cursor just means that the SCAN is complete, but there
+        // might be one last batch of results to process.
+
+        // From <http://redis.io/commands/scan>:
+        // 'An iteration starts when the cursor is set to 0,
+        // and terminates when the cursor returned by the server is 0.'
+        if ($newCursor === 0) {
+            return $points;
+        }
+
+        return $this->loadPositions($tile38, $newCursor, $points);
     }
 
     protected function getTaskList(\DateTime $date, UserInterface $user)
@@ -241,7 +331,7 @@ trait AdminDashboardTrait
             'resource_class' => TaskList::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['task_collection', 'task', 'delivery', 'address']
+            'groups' => ['task_collection']
         ]));
     }
 
@@ -270,7 +360,7 @@ trait AdminDashboardTrait
             'resource_class' => TaskList::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['task_collection', 'task']
+            'groups' => ['task_collection']
         ]);
 
         return new JsonResponse($taskListNormalized);
@@ -279,7 +369,10 @@ trait AdminDashboardTrait
     /**
      * @Route("/admin/tasks/{taskId}/images/{imageId}/download", name="admin_task_image_download")
      */
-    public function downloadTaskImage($taskId, $imageId, StorageInterface $storage, SlugifyInterface $slugify)
+    public function downloadTaskImageAction($taskId, $imageId,
+        StorageInterface $storage,
+        SlugifyInterface $slugify,
+        Filesystem $taskImagesFilesystem)
     {
         $image = $this->getDoctrine()->getRepository(TaskImage::class)->find($imageId);
 
@@ -292,12 +385,10 @@ trait AdminDashboardTrait
         // FIXME
         // It's not clean to use resolveUri()
         // but the problem is that resolvePath() returns the path with prefix,
-        // while $fs is alreay aware of the prefix
+        // while $taskImagesFilesystem is alreay aware of the prefix
         $imagePath = ltrim($storage->resolveUri($image, 'file'), '/');
 
-        $fs = $this->get('task_images_filesystem');
-
-        if (!$fs->has($imagePath)) {
+        if (!$taskImagesFilesystem->has($imagePath)) {
             throw new NotFoundHttpException(sprintf('Image at path "%s" not found', $imagePath));
         }
 
@@ -307,7 +398,7 @@ trait AdminDashboardTrait
             stream_copy_to_stream($fileStream, $outputStream);
         });
 
-        $response->headers->set('Content-Type', $fs->getMimetype($imagePath));
+        $response->headers->set('Content-Type', $taskImagesFilesystem->getMimetype($imagePath));
 
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,

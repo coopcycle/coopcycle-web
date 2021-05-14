@@ -11,6 +11,7 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
 use AppBundle\Sylius\OrderProcessing\OrderOptionsFeeProcessor;
 use AppBundle\Sylius\OrderProcessing\OrderOptionsProcessor;
+use AppBundle\Sylius\OrderProcessing\OrderVendorProcessor;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
@@ -23,7 +24,7 @@ use Sylius\Component\Order\Model\OrderItemInterface;
 use Sylius\Component\Order\Processor\CompositeOrderProcessor;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrderOptionsFeeProcessorTest extends KernelTestCase
 {
@@ -68,11 +69,15 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
         );
         $this->orderOptionsProcessor = new OrderOptionsProcessor($this->adjustmentFactory);
 
+        $this->orderVendorProcessor = $this->prophesize(OrderVendorProcessor::class);
+        // $this->orderVendorProcessor->process(Argument::type(OrderInterface::class))->shouldBeCalled();
+
         $this->compositeProcessor = new CompositeOrderProcessor();
 
         $this->optionsFeeProcessor = new OrderOptionsFeeProcessor(
             $this->orderOptionsProcessor,
-            $this->orderFeeProcessor
+            $this->orderFeeProcessor,
+            $this->orderVendorProcessor->reveal()
         );
     }
 

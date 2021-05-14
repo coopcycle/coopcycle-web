@@ -20,11 +20,16 @@ window.CoopCycle.FoodtechDashboard = (el, preloadedState, options) => {
   // TODO Add loader
 
   $.getJSON(window.Routing.generate('profile_jwt'))
-    .then(token => {
+    .then(result => {
 
       const state = {
         ...preloadedState,
-        jwt: token
+        jwt: result.jwt,
+        centrifugo: {
+          token:     result.cent_tok,
+          namespace: result.cent_ns,
+          username:  result.cent_usr,
+        }
       }
 
       const store = createStoreFromPreloadedState(state)

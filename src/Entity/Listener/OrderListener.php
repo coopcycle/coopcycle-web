@@ -4,7 +4,7 @@ namespace AppBundle\Entity\Listener;
 
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Vendor;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 

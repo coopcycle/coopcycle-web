@@ -6,10 +6,10 @@
   {% if form.vehicle is defined %}
     {{ form_row(form.vehicle) }}
   {% endif %}
-  {% if form.weight is defined %}
+  {% if form.weight is defined and not form.weight.rendered %}
     {{ form_row(form.weight) }}
   {% endif %}
-  {% if form.packages is defined %}
+  {% if form.packages is defined and not form.packages.rendered %}
     {{ form_row(form.packages) }}
   {% endif %}
 

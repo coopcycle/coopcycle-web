@@ -2,31 +2,45 @@
 
 namespace AppBundle\Api\Swagger;
 
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use ApiPlatform\Core\OpenApi\Factory\OpenApiFactoryInterface;
+use ApiPlatform\Core\OpenApi\OpenApi;
+use ApiPlatform\Core\OpenApi\Model;
 
-final class SwaggerDecorator implements NormalizerInterface
+class SwaggerDecorator implements OpenApiFactoryInterface
 {
     private $decorated;
 
-    public function __construct(NormalizerInterface $decorated)
+    private static $excluded = [
+        '/api/api_apps/{id}',
+        '/api/opening_hours_specifications/{id}',
+        '/api/task_events/{id}',
+        '/api/remote_push_tokens/{id}',
+        '/api/me/remote_push_tokens',
+        '/api/me/remote_push_tokens/{token}',
+        '/api/retail_prices/{id}',
+        '/api/time_slot_choices/{id}',
+        '/api/customers/{id}',
+    ];
+
+    public function __construct(OpenApiFactoryInterface $decorated)
     {
         $this->decorated = $decorated;
     }
 
-    public function normalize($object, $format = null, array $context = [])
+    public function __invoke(array $context = []): OpenApi
     {
-        $docs = $this->decorated->normalize($object, $format, $context);
+        $openApi = $this->decorated->__invoke($context);
 
-        unset($docs['paths']['/api/api_apps/{id}']);
-        unset($docs['paths']['/api/opening_hours_specifications/{id}']);
-        unset($docs['paths']['/api/pricing/calculate-price']);
-        unset($docs['paths']['/api/task_events/{id}']);
+        $paths = $openApi->getPaths()->getPaths();
 
-        return $docs;
-    }
+        $filteredPaths = new Model\Paths();
+        foreach ($paths as $path => $pathItem) {
+            if (in_array($path, self::$excluded)) {
+                continue;
+            }
+            $filteredPaths->addPath($path, $pathItem);
+        }
 
-    public function supportsNormalization($data, $format = null)
-    {
-        return $this->decorated->supportsNormalization($data, $format);
+        return $openApi->withPaths($filteredPaths);
     }
 }

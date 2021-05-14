@@ -18,9 +18,9 @@ Feature: Tasks
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
-        "@type":"hydra:Collection",
+        "@context":"/api/contexts/TaskList",
+        "@id":"/api/task_lists/1",
+        "@type":"TaskList",
         "hydra:member":[
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -61,7 +61,88 @@ Feature: Tasks
             "tags":@array@
           }
         ],
-        "hydra:totalItems":2
+        "hydra:totalItems":2,
+        "items":[
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "after":"2018-03-02T11:30:00+00:00",
+            "before":"2018-03-02T12:00:00+00:00",
+            "doneAfter":"2018-03-02T11:30:00+00:00",
+            "doneBefore":"2018-03-02T12:00:00+00:00",
+            "comments":"#bob",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"bob",
+            "previous":null,
+            "group":null,
+            "tags":@array@
+          },
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"DONE",
+            "address":@...@,
+            "after":"2018-03-02T12:00:00+00:00",
+            "before":"2018-03-02T12:30:00+00:00",
+            "doneAfter":"2018-03-02T12:00:00+00:00",
+            "doneBefore":"2018-03-02T12:30:00+00:00",
+            "comments":"#bob",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"bob",
+            "previous":null,
+            "group":null,
+            "tags":@array@
+          }
+        ],
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "date":"2018-03-02",
+        "username":"bob",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()"
+      }
+      """
+
+  Scenario: Retrieve assigned tasks when not created yet
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/me/tasks/2020-03-02"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskList",
+        "@id":"/api/task_lists/4",
+        "@type":"TaskList",
+        "hydra:member":[],
+        "hydra:totalItems":0,
+        "items":[],
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "date":"2020-03-02",
+        "username":"bob",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()"
       }
       """
 
@@ -83,34 +164,30 @@ Feature: Tasks
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/TaskEvent",
-        "@id":"/api/tasks/2/events",
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
         "@type":"hydra:Collection",
-        "hydra:member":[
-          {
-            "@id":"@string@.startsWith('/api/task_events')",
-            "@type":"TaskEvent",
-            "id":@integer@,
-            "task":"/api/tasks/2",
-            "name":"task:created",
-            "data":[],
-            "metadata":[],
-            "createdAt":"@string@.isDateTime()"
-          },
-          {
-            "@id":"@string@.startsWith('/api/task_events')",
-            "@type":"TaskEvent",
-            "id":@integer@,
-            "task":"/api/tasks/2",
-            "name":"task:assigned",
-            "data":{
-              "username":"bob"
+        "hydra:member":@array@,
+        "hydra:totalItems":2,
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/tasks/2/events{?date,assigned}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":[
+            {
+              "@type":"IriTemplateMapping",
+              "variable":"date",
+              "property":"date",
+              "required":false
             },
-            "metadata":[],
-            "createdAt":"@string@.isDateTime()"
-          }
-        ],
-        "hydra:totalItems":2
+            {
+              "@type":"IriTemplateMapping",
+              "variable":"assigned",
+              "property":"assigned",
+              "required":false
+            }
+          ]
+        }
       }
       """
 
@@ -269,6 +346,7 @@ Feature: Tasks
           "contactName":"John Doe",
           "description":null,
           "geo":{
+            "@type":"GeoCoordinates",
             "latitude":48.846656,
             "longitude":2.369052
           },
@@ -293,7 +371,8 @@ Feature: Tasks
         "next":null,
         "doorstep":false,
         "orgName": "",
-        "ref":null
+        "ref":null,
+        "recurrenceRule": null
       }
       """
 
@@ -556,6 +635,7 @@ Feature: Tasks
           "lastName":null,
           "description": "Sonner à l'interphone",
           "geo":{
+            "@type":"GeoCoordinates",
             "latitude":48.870473,
             "longitude":2.331933
           },
@@ -579,7 +659,8 @@ Feature: Tasks
         "images":@array@,
         "doorstep":false,
         "orgName": "",
-        "ref":null
+        "ref":null,
+        "recurrenceRule": null
       }
       """
 
@@ -628,6 +709,7 @@ Feature: Tasks
           "lastName":null,
           "description": "Sonner à l'interphone",
           "geo":{
+            "@type":"GeoCoordinates",
             "latitude":48.870473,
             "longitude":2.331933
           },
@@ -653,7 +735,8 @@ Feature: Tasks
         "images":@array@,
         "doorstep":false,
         "orgName": "",
-        "ref":null
+        "ref":null,
+        "recurrenceRule": null
       }
       """
 
@@ -1038,7 +1121,8 @@ Feature: Tasks
         "violations":[
           {
             "propertyPath":"type",
-            "message":@string@
+            "message":@string@,
+            "code":null
           }
         ]
       }
@@ -1222,6 +1306,8 @@ Feature: Tasks
       type,address.streetAddress,address.telephone,address.name,after,before,tags
       pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
       dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
+      dropoff,"68, rue du Faubourg Saint Denis Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
+      dropoff,"42, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
       """
     Then the response status code should be 201
     And the JSON should match:
@@ -1232,6 +1318,8 @@ Feature: Tasks
         "@type":"TaskGroup",
         "name":@string@,
         "tasks":[
+          "@string@.matchRegex('#/api/tasks/[0-9]+#')",
+          "@string@.matchRegex('#/api/tasks/[0-9]+#')",
           "@string@.matchRegex('#/api/tasks/[0-9]+#')",
           "@string@.matchRegex('#/api/tasks/[0-9]+#')"
         ]
@@ -1298,7 +1386,8 @@ Feature: Tasks
         "violations":[
           {
             "propertyPath":"tasks[1]",
-            "message":@string@
+            "message":@string@,
+            "code":null
           }
         ]
       }
@@ -1331,7 +1420,8 @@ Feature: Tasks
         "violations":[
           {
             "propertyPath":"tasks[1].ref",
-            "message":@string@
+            "message":@string@,
+            "code":@string@
           }
         ]
       }
@@ -1407,13 +1497,51 @@ Feature: Tasks
          "hydra:description":@string@,
          "violations":[
             {
-               "propertyPath":"address.geo",
-               "message":@string@
+              "propertyPath":"address.geo",
+              "message":@string@,
+              "code":@string@
             },
             {
-               "propertyPath":"address.streetAddress",
-               "message":@string@
+              "propertyPath":"address.streetAddress",
+              "message":@string@,
+              "code":@string@
             }
          ]
+      }
+      """
+
+  Scenario: Authorized to retrieve task events
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    Given the store with name "Acme" has imported tasks:
+      | type    | address.streetAddress                 | after            | before           |
+      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+    Given the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/tasks/1/events"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/task_events/1",
+            "@type":"TaskEvent",
+            "name":"task:created",
+            "data":[],
+            "createdAt":"@string@.isDateTime()"
+          }
+        ],
+        "hydra:totalItems":1,
+        "hydra:search":{
+          "@*@":"@*@"
+        }
       }
       """

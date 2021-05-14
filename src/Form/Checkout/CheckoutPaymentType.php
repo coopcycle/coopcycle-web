@@ -2,9 +2,13 @@
 
 namespace AppBundle\Form\Checkout;
 
+use AppBundle\Edenred\Authentication as EdenredAuthentication;
+use AppBundle\Edenred\Client as EdenredPayment;
 use AppBundle\Form\StripePaymentType;
 use AppBundle\Payment\GatewayResolver;
-use AppBundle\Service\StripeManager;
+use AppBundle\Sylius\Customer\CustomerInterface;
+use AppBundle\Sylius\Payment\Context as PaymentContext;
+use AppBundle\Utils\OrderTimeHelper;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -12,20 +16,29 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
+use Webmozart\Assert\Assert;
 
 class CheckoutPaymentType extends AbstractType
 {
-    private $stripeManager;
     private $resolver;
 
-    public function __construct(StripeManager $stripeManager, GatewayResolver $resolver)
+    public function __construct(
+        GatewayResolver $resolver,
+        OrderTimeHelper $orderTimeHelper,
+        EdenredAuthentication $edenredAuthentication,
+        EdenredPayment $edenredPayment)
     {
-        $this->stripeManager = $stripeManager;
         $this->resolver = $resolver;
+        $this->edenredAuthentication = $edenredAuthentication;
+        $this->edenredPayment = $edenredPayment;
+
+        parent::__construct($orderTimeHelper);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $builder
             ->add('stripePayment', StripePaymentType::class, [
                 'mapped' => false,
@@ -47,9 +60,7 @@ class CheckoutPaymentType extends AbstractType
             $form = $event->getForm();
             $order = $event->getData();
 
-            $restaurant = $order->getRestaurant();
-
-            if (null === $restaurant) {
+            if (!$order->hasVendor()) {
 
                 return;
             }
@@ -58,8 +69,25 @@ class CheckoutPaymentType extends AbstractType
                 'Credit card' => 'card',
             ];
 
-            if ($restaurant->isStripePaymentMethodEnabled('giropay')) {
+            if ($order->supportsGiropay()) {
                 $choices['Giropay'] = 'giropay';
+            }
+
+            if ($order->supportsEdenred()) {
+                if ($order->getCustomer()->hasEdenredCredentials()) {
+                    $amounts = $this->edenredPayment->splitAmounts($order);
+                    if ($amounts['edenred'] > 0) {
+                        if ($amounts['card'] > 0) {
+                            $choices['Edenred'] = PaymentContext::METHOD_EDENRED_PLUS_CARD;
+                        } else {
+                            $choices['Edenred'] = PaymentContext::METHOD_EDENRED;
+                        }
+                    }
+                } else {
+                    // The customer will be presented with the button
+                    // to connect his/her Edenred account
+                    $choices['Edenred'] = 'edenred';
+                }
             }
 
             if (count($choices) < 2) {
@@ -70,39 +98,25 @@ class CheckoutPaymentType extends AbstractType
                 ->add('method', ChoiceType::class, [
                     'label' => 'form.checkout_payment.method.label',
                     'choices' => $choices,
+                    'choice_attr' => function($choice, $key, $value) use ($order) {
+
+                        Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
+
+                        switch ($value) {
+                            case PaymentContext::METHOD_EDENRED:
+                            case PaymentContext::METHOD_EDENRED_PLUS_CARD:
+                                return [
+                                    'data-edenred-is-connected' => $order->getCustomer()->hasEdenredCredentials(),
+                                    'data-edenred-authorize-url' => $this->edenredAuthentication->getAuthorizeUrl($order)
+                                ];
+                        }
+
+                        return [];
+                    },
                     'mapped' => false,
                     'expanded' => true,
                     'multiple' => false,
                 ]);
-        });
-
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-
-            $form = $event->getForm();
-            $order = $event->getData();
-
-            $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
-            if (!$form->has('method')) {
-
-                // This is needed if customer has selected
-                // another method previously, but didn't
-                // complete the process
-                $payment->clearSource();
-
-                return;
-            }
-
-            if ('giropay' === $form->get('method')->getData()) {
-
-                $ownerName = $form->get('stripePayment')
-                    ->get('cardholderName')->getData();
-
-                // TODO Catch Exception (source not enabled)
-                $source = $this->stripeManager->createGiropaySource($payment, $ownerName);
-
-                $payment->setSource($source);
-            }
         });
     }
 }

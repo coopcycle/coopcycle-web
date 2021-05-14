@@ -15,16 +15,24 @@ use Doctrine\DBAL\Exception\TableNotFoundException;
 use Faker;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
-use FOS\UserBundle\Util\UserManipulator;
+use Nucleos\UserBundle\Util\UserManipulator;
+use Geocoder\Provider\Addok\Addok as AddokProvider;
+use Geocoder\Provider\Chain\Chain as ChainProvider;
+use Geocoder\Provider\Photon\Photon as PhotonProvider;
+use Geocoder\StatefulGeocoder;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\HandlerStack;
+use Http\Adapter\Guzzle6\Client;
 use libphonenumber\PhoneNumberUtil;
 use League\Geotools\Coordinate\Coordinate;
 use Redis;
+use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\Store\FlockStore;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 
@@ -83,8 +91,7 @@ class InitDemoCommand extends Command
         RepositoryInterface $taxCategoryRepository,
         Geocoder $geocoder,
         string $country,
-        string $defaultLocale,
-        string $googleApiKeyFromEnv)
+        string $defaultLocale)
     {
         $this->doctrine = $doctrine;
         $this->userManipulator = $userManipulator;
@@ -99,7 +106,6 @@ class InitDemoCommand extends Command
         $this->geocoder = $geocoder;
         $this->country = $country;
         $this->defaultLocale = $defaultLocale;
-        $this->googleApiKeyFromEnv = $googleApiKeyFromEnv;
 
         parent::__construct();
     }
@@ -237,20 +243,32 @@ class InitDemoCommand extends Command
             $em->persist($brandName);
         }
 
-        try {
-            $this->craueConfig->get('google_api_key');
-        } catch (\RuntimeException $e) {
-            if (empty($this->googleApiKeyFromEnv)) {
-                throw new \RuntimeException(sprintf('No Google API key found. '
-                    .'You should either have a "google_api_key" setting stored in database, '
-                    .'or a GOOGLE_API_KEY env var. '));
-            }
-            $em->persist(
-                $this->createCraueConfigSetting('google_api_key', $this->googleApiKeyFromEnv)
-            );
+        $em->flush();
+
+        // We create a custom geocoder chain using free services
+
+        $stack = HandlerStack::create();
+        $stack->push(RateLimiterMiddleware::perSecond(2));
+
+        $httpClient  = new GuzzleClient(['handler' => $stack, 'timeout' => 30.0]);
+        $httpAdapter = new Client($httpClient);
+
+        $providers = [];
+
+        if ('fr' === $this->country) {
+            $providers[] = AddokProvider::withBANServer($httpAdapter);
         }
 
-        $em->flush();
+        // Make sure we use a language supported by Photon
+        // "language es is not supported, supported languages are: default, en, fr, de, it"
+        $geocoderLocale = in_array($this->defaultLocale, ['en', 'fr', 'de', 'it']) ? $this->defaultLocale : 'en';
+
+        $providers[] = PhotonProvider::withKomootServer($httpAdapter);
+
+        $statefulGeocoder =
+            new StatefulGeocoder(new ChainProvider($providers), $geocoderLocale);
+
+        $this->geocoder->setGeocoder($statefulGeocoder);
 
         $addressProvider = new AddressProvider($this->faker, $this->geocoder, new Coordinate($mapCenterValue));
 

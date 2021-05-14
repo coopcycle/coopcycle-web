@@ -10,7 +10,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\TaskEvent;
 use AppBundle\Validator\Constraints\Task as TaskConstraint;
 use AppBundle\Validator\Constraints\TaskValidator;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
 use PHPUnit\Framework\TestCase;
@@ -69,7 +69,8 @@ class TaskTest extends TestCase
     public function testHasEvent()
     {
         $event = new TaskEvent($this->task, "PICKUP");
-        $this->task->getEvents()->add($event);
+        $this->task->addEvent($event);
+
         $this->assertTrue($this->task->hasEvent("PICKUP"));
         $this->assertFalse($this->task->hasEvent("DROPOFF"));
     }
@@ -93,10 +94,10 @@ class TaskTest extends TestCase
         $event3 = $this->createTaskEvent('task:assigned', new \DateTime('2018-04-11 14:00:00'));
         $event4 = $this->createTaskEvent('task:unassigned', new \DateTime('2018-04-11 15:00:00'));
 
-        $this->task->getEvents()->add($event1);
-        $this->task->getEvents()->add($event2);
-        $this->task->getEvents()->add($event3);
-        $this->task->getEvents()->add($event4);
+        $this->task->addEvent($event1);
+        $this->task->addEvent($event2);
+        $this->task->addEvent($event3);
+        $this->task->addEvent($event4);
 
         $this->assertSame($this->task->getLastEvent('task:assigned'), $event3);
     }
@@ -193,10 +194,16 @@ class TaskTest extends TestCase
         $task->setDoneBefore(new \DateTime('2019-08-18 08:00'));
 
         $violations = $validator->validate($task);
-        $this->assertCount(1, $violations);
-        $this->assertSame('doneBefore', $violations->get(0)->getPropertyPath());
+        $this->assertCount(2, $violations);
+        $this->assertSame('address', $violations->get(0)->getPropertyPath());
+        $this->assertSame('doneBefore', $violations->get(1)->getPropertyPath());
+
+        $address = new Address();
+        $address->setStreetAddress('1, Rue de Rivoli Paris');
+        $address->setGeo(new GeoCoordinates(48.856613, 2.352222));
 
         $task = new Task();
+        $task->setAddress($address);
         $task->setDoneAfter(new \DateTime('2019-08-18 12:00'));
         $task->setDoneBefore(new \DateTime('2019-08-18 12:00'));
 
@@ -205,6 +212,7 @@ class TaskTest extends TestCase
         $this->assertSame('doneBefore', $violations->get(0)->getPropertyPath());
 
         $task = new Task();
+        $task->setAddress($address);
         $task->setDoneAfter(null);
         $task->setDoneBefore(new \DateTime('2019-08-18 08:00'));
 
@@ -212,6 +220,7 @@ class TaskTest extends TestCase
         $this->assertCount(0, $violations);
 
         $task = new Task();
+        $task->setAddress($address);
         $task->setDoneAfter(new \DateTime('2019-08-18 08:00'));
         $task->setDoneBefore(new \DateTime('2019-08-18 12:00'));
 

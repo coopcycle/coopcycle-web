@@ -4,7 +4,6 @@ namespace AppBundle\Api\Filter;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\TaskCollectionItem;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryBuilderHelper;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;

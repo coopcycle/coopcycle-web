@@ -35,7 +35,7 @@ final class SettingsProcessor implements ProcessorInterface
             return;
         }
 
-        $this->settingsManager->set('embed.delivery.pricingRuleSet', $object->getId(), 'embed');
+        $this->settingsManager->set('embed.delivery.pricingRuleSet', $object->getId());
         $this->settingsManager->flush();
     }
 }

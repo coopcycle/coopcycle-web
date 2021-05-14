@@ -1,35 +1,25 @@
-{% extends "admin.html.twig" %}
+{% extends "deliveries.html.twig" %}
 
 {% form_theme delivery_import_form 'bootstrap_3_horizontal_layout.html.twig' %}
-
-{% block breadcrumb %}
-<li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
-{% endblock %}
+{% form_theme delivery_export_form 'form/deliveries_export.html.twig' %}
 
 {% block content %}
 
-  <div class="text-right mb-4">
-    <a href="#" class="btn btn-success mr-4" data-toggle="modal" data-target="#export-deliveries-modal">
-      <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
-    </a>
-    <div class="dropdown d-inline-block mr-4">
-      {% include '_partials/delivery/sort.html.twig' %}
+  <div class="d-flex justify-content-between mb-5">
+    <div id="search-deliveries" class="w-50">
+      <input type="text" class="form-control">
     </div>
-    {# Filter is active #}
-    {% if deliveries.paginatorOptions.filterFieldParameterName in deliveries.params|keys %}
-      {% set params_without_filters = {} %}
-      {% for key, value in deliveries.params %}
-        {% if key not in [ deliveries.paginatorOptions.filterFieldParameterName, deliveries.paginatorOptions.filterValueParameterName ] %}
-          {% set params_without_filters = params_without_filters|merge({ (key): value }) %}
-        {% endif %}
-      {% endfor %}
-      <a class="btn btn-default mr-4" href="{{ path(deliveries.route, params_without_filters) }}">
-        {{ 'deliveries.filter.clear'|trans }} <i class="fa fa-times"></i>
+    <div class="text-right">
+      <a href="#" class="btn btn-sm btn-default mr-4" data-toggle="modal" data-target="#import-deliveries-modal">
+        <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
       </a>
-    {% endif %}
-    <a href="#" class="btn btn-success" data-toggle="modal" data-target="#choose-store-modal">
-      <i class="fa fa-plus"></i> {% trans %}delivery.createNew{% endtrans %}
-    </a>
+      <a href="#" class="btn btn-sm btn-default mr-4" data-toggle="modal" data-target="#export-deliveries-modal">
+        <i class="fa fa-download"></i> {% trans %}basics.export{% endtrans %}
+      </a>
+      <a href="#" class="btn btn-success" data-toggle="modal" data-target="#choose-store-modal">
+        <i class="fa fa-plus"></i> {% trans %}delivery.createNew{% endtrans %}
+      </a>
+    </div>
   </div>
 
   {% if delivery_import_form.vars.submitted and (not delivery_import_form.vars.valid and not delivery_import_form.file.vars.valid) %}
@@ -42,6 +32,39 @@
     </div>
   {% endif %}
 
+  {# {% include '_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %} #}
+
+  <h3>{{ 'basics.today'|trans }}</h3>
+  {% include '_partials/delivery/list.html.twig' with { deliveries: today, with_store: true, with_order: true } %}
+
+  <h3>{{ 'deliveries.section.upcoming'|trans }}</h3>
+  {% include '_partials/delivery/list.html.twig' with { deliveries: upcoming, with_store: true, with_order: true } %}
+
+  <hr>
+
+  <div class="d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center mt-4 mb-3">
+      <h3 class="m-0 mr-4">{{ 'deliveries.section.past'|trans }}</h3>
+      <div class="dropdown d-inline-block mr-4">
+        {% include '_partials/delivery/sort.html.twig' %}
+      </div>
+      {# Filter is active #}
+      {% if deliveries.paginatorOptions.filterFieldParameterName in deliveries.params|keys %}
+        {% set params_without_filters = {} %}
+        {% for key, value in deliveries.params %}
+          {% if key not in [ deliveries.paginatorOptions.filterFieldParameterName, deliveries.paginatorOptions.filterValueParameterName ] %}
+            {% set params_without_filters = params_without_filters|merge({ (key): value }) %}
+          {% endif %}
+        {% endfor %}
+        <a class="btn btn-sm btn-default mr-4" href="{{ path(deliveries.route, params_without_filters) }}">
+          {{ 'deliveries.filter.clear'|trans }} <i class="fa fa-times"></i>
+        </a>
+      {% endif %}
+    </div>
+    <div class="text-monospace">
+    {{ knp_pagination_render(deliveries, '@KnpPaginator/Pagination/sliding.html.twig') }}
+    </div>
+  </div>
   {% include '_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %}
 
   <nav class="text-center">
@@ -70,34 +93,42 @@
     </div>
   </div>
 
-  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="export-deliveries-modal-label" id="export-deliveries-modal">
+  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="import-deliveries-modal-label" id="import-deliveries-modal">
     <div class="modal-dialog" role="document">
       {{ form_start(delivery_import_form, { attr: { class: 'modal-content' } }) }}
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="export-deliveries-modal-label">{% trans %}basics.import{% endtrans %}</h4>
+          <h4 class="modal-title" id="import-deliveries-modal-label">{% trans %}basics.import{% endtrans %}</h4>
         </div>
         <div class="modal-body">
           {{ form_row(delivery_import_form.store) }}
           {{ form_row(delivery_import_form.file) }}
-          <div class="form-group">
-            <div class="col-sm-10 col-sm-offset-2">
-              <p class="form-control-static">
-                <a role="button" data-toggle="collapse" href="#spreadsheet-container" aria-expanded="false" aria-controls="spreadsheet-container">
-                  {{ 'basics.view_example'|trans }}
-                </a>
-              </p>
-            </div>
-          </div>
-          <div class="collapse" id="spreadsheet-container">
-            <div id="spreadsheet" style="max-width: 100%; overflow: scroll; border: 1px solid;"></div>
-          </div>
         </div>
         <div class="modal-footer">
+          <a class="mr-4" href="{{ path('spreadsheet_example_deliveries') }}">{{ 'spreadsheet.download_example'|trans }}</a>
           <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
           <button type="submit" class="btn btn-primary">{% trans %}basics.import{% endtrans %}</button>
         </div>
       {{ form_end(delivery_import_form) }}
+    </div>
+  </div>
+
+  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="export-deliveries-modal-label" id="export-deliveries-modal">
+    <div class="modal-dialog" role="document">
+      {{ form_start(delivery_export_form, { attr: { class: 'modal-content' } }) }}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="export-deliveries-modal-label">{% trans %}basics.export{% endtrans %}</h4>
+        </div>
+        <div class="modal-body">
+          {{ form_row(delivery_export_form.start) }}
+          {{ form_row(delivery_export_form.end) }}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
+          <button type="submit" class="btn btn-primary">{% trans %}basics.export{% endtrans %}</button>
+        </div>
+      {{ form_end(delivery_export_form) }}
     </div>
   </div>
 

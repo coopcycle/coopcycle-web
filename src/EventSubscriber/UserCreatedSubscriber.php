@@ -2,9 +2,9 @@
 
 namespace AppBundle\EventSubscriber;
 
-use FOS\UserBundle\Event\UserEvent;
-use FOS\UserBundle\FOSUserEvents;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Event\UserEvent;
+use Nucleos\UserBundle\NucleosUserEvents;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Channel\Context\ChannelNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -28,7 +28,7 @@ class UserCreatedSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            FOSUserEvents::USER_CREATED => 'setChannel',
+            NucleosUserEvents::USER_CREATED => 'setChannel',
         );
     }
 

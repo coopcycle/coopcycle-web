@@ -1,12 +1,31 @@
 {% extends "admin.html.twig" %}
 
+{% form_theme pledge_form 'bootstrap_3_layout.html.twig' %}
+
 {% block breadcrumb %}
 <li>{% trans %}adminDashboard.restaurants.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
 
-<div class="text-right margin-bottom-md">
+<div class="d-flex align-items-center justify-content-between">
+  <div class="d-flex align-items-center flex-fill">
+    <div id="search-restaurants" class="w-25 mr-4">
+      <input type="text" class="form-control">
+    </div>
+    <a href="{{ path('admin_hubs') }}" class="btn btn-default mr-4">
+      {{ 'adminDashboard.hubs.title'|trans }}
+    </a>
+    <a href="{{ path('admin_promotions') }}" class="btn btn-default mr-4">
+      {% trans %}adminDashboard.promotions.title{% endtrans %}
+    </a>
+    {{ form_start(pledge_form, { attr: { class: 'form-inline d-inline-block border-left pl-4' } }) }}
+      {{ form_widget(pledge_form.enable_restaurant_pledges) }}
+      <a href="{{ path('admin_restaurants_pledges') }}" class="btn btn-default ml-4">
+        {% trans %}adminDashboard.pledges.title{% endtrans %} <span class="badge">{{ pledge_count }}</span>
+      </a>
+    {{ form_end(pledge_form) }}
+  </div>
   <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success">
     <i class="fa fa-plus"></i> {% trans %}adminDashboard.restaurants.createNew{% endtrans %}
   </a>
@@ -15,4 +34,8 @@
 {% include "_partials/restaurant/list.html.twig" %}
 {% include "admin/pagination.html.twig" %}
 
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('admin-restaurants') }}
 {% endblock %}

@@ -37,7 +37,7 @@
         {% block header_right %}
         <ul style="text-align: right;">
           <li><strong>{{ coopcycle_setting('brand_name') }}</strong></li>
-          <li>{{ 'now'|localizeddate('short', 'short') }}</li>
+          <li>{{ 'now'|format_datetime('short', 'short') }}</li>
         </ul>
         {% endblock %}
       </div>

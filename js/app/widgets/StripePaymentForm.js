@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { render } from 'react-dom'
 import _ from 'lodash'
 import classNames from 'classnames'
+import axios from 'axios'
 
 import mastercard from 'payment-icons/min/flat/mastercard.svg'
 import visa from 'payment-icons/min/flat/visa.svg'
 import giropay from '../../../assets/svg/giropay.svg'
+import edenredLogo from '../../../assets/svg/Edenred_Logo.svg'
 
 import stripe from '../payment/stripe'
 import mercadopago from '../payment/mercadopago'
@@ -37,19 +39,50 @@ const PaymentMethodPicker = ({ methods, onSelect }) => {
 
   const [ method, setMethod ] = useState('')
 
+  useEffect(() => {
+    if (method) {
+      onSelect(method)
+    }
+  }, [ method ])
+
   return (
     <div style={ methodPickerStyles }>
       <button type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'card' }) }
-        onClick={ () => { setMethod('card'); onSelect('card') } }>
+        onClick={ () => setMethod('card') }>
         <img src={ visa } height="45" className="mr-2" />
         <img src={ mastercard } height="45" />
       </button>
-      { _.includes(methods, 'giropay') && (
-        <button type="button"  className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
-          onClick={ () => { setMethod('giropay'); onSelect('giropay') } }>
-          <img src={ giropay } height="45" />
-        </button>
-      )}
+      { _.map(methods, m => {
+
+        if (m.type === 'giropay') {
+
+          return (
+            <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
+              onClick={ () => setMethod('giropay') }>
+              <img src={ giropay } height="45" />
+            </button>
+          )
+        }
+
+        if (m.type === 'edenred' || m.type === 'edenred+card') {
+
+          return (
+            <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+              onClick={ () => {
+
+                if (!m.data.edenredIsConnected) {
+                  window.location.href = m.data.edenredAuthorizeUrl
+                  return
+                }
+
+                setMethod(m.type)
+              }}>
+              <img src={ edenredLogo } height="45" />
+            </button>
+          )
+        }
+
+      }) }
     </div>
   )
 }
@@ -68,7 +101,10 @@ export default function(form, options) {
 
   const methods = Array
     .from(form.querySelectorAll('input[name="checkout_payment[method]"]'))
-    .map((el) => el.value)
+    .map((el) => ({
+      type: el.value,
+      data: el.dataset
+    }))
 
   disableBtn(submitButton)
 
@@ -94,21 +130,42 @@ export default function(form, options) {
         event.complete && enableBtn(submitButton)
         document.getElementById('card-errors').textContent = ''
       }
-    }
+    },
   })
 
   cc.init(form)
 
   form.addEventListener('submit', function(event) {
 
-    if (methods.length > 1 && form.querySelector('input[name="checkout_payment[method]"]:checked').value !== 'card') {
-      return
-    }
-
     event.preventDefault()
 
     $('.btn-payment').addClass('btn-payment__loading')
     disableBtn(submitButton)
+
+    if (methods.length > 1) {
+
+      const selectedMethod =
+        form.querySelector('input[name="checkout_payment[method]"]:checked').value
+
+      switch (selectedMethod) {
+        case 'giropay':
+          cc.confirmGiropayPayment()
+            .catch(e => {
+              $('.btn-payment').removeClass('btn-payment__loading')
+              enableBtn(submitButton)
+              document.getElementById('card-errors').textContent = e.message
+            })
+          break
+        case 'edenred':
+          // It means the whole amount can be paid with Edenred (ex. click & collect)
+          form.submit()
+          break
+      }
+
+      if (_.includes(['giropay', 'edenred'], selectedMethod)) {
+        return
+      }
+    }
 
     cc.createToken()
       .then(token => {
@@ -124,15 +181,30 @@ export default function(form, options) {
 
   const onSelect = value => {
     form.querySelector(`input[name="checkout_payment[method]"][value="${value}"]`).checked = true
-    if (value === 'card') {
-      cc.mount(document.getElementById('card-element')).then(() => enableBtn(submitButton))
-      document.getElementById('payment-redirect-help').classList.add('hidden')
-    } else {
-      cc.unmount()
-      document.getElementById('card-errors').textContent = ''
-      document.getElementById('payment-redirect-help').classList.remove('hidden')
-      enableBtn(submitButton)
-    }
+    axios
+      .post(options.selectPaymentMethodURL, { method: value })
+      .then(response => {
+        switch (value) {
+          case 'card':
+          case 'giropay':
+          case 'edenred+card':
+            cc.mount(document.getElementById('card-element'), value, response.data).then(() => {
+              document.getElementById('card-element').scrollIntoView()
+              enableBtn(submitButton)
+            })
+            break
+          case 'edenred':
+            // TODO
+            // Here no need to enter credit card details or what
+            // Maybe, add a confirmation step?
+            enableBtn(submitButton)
+            break
+          default:
+            cc.unmount()
+            document.getElementById('card-errors').textContent = ''
+            enableBtn(submitButton)
+        }
+      })
   }
 
   if (methods.length > 1) {

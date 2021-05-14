@@ -29,9 +29,7 @@ services:
     arguments:
       - '@event_recorder'
       - '@sylius.order_number_assigner'
-      - '@coopcycle.stripe_manager'
       - '@AppBundle\Payment\Gateway'
-      - '@AppBundle\Utils\OrderTimeHelper'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\Checkout
@@ -41,7 +39,6 @@ services:
     arguments:
       - '@event_recorder'
       - '@sylius.order_number_assigner'
-      - '@AppBundle\Utils\OrderTimeHelper'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\Quote
@@ -93,7 +90,6 @@ services:
     arguments:
       - '@coopcycle.stripe_manager'
       - '@sm.factory'
-      - '@event_recorder'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\Refund
@@ -113,7 +109,7 @@ services:
   coopcycle.domain.order.reactor.create_tasks:
     class: AppBundle\Domain\Order\Reactor\CreateTasks
     arguments:
-      - '@routing_service'
+      - '@coopcycle.delivery.manager'
       - '@coopcycle.utils.order_text_encoder'
     tags:
         - name: event_subscriber
@@ -133,6 +129,7 @@ services:
       - '@coopcycle.email_manager'
       - '@coopcycle.settings_manager'
       - '@event_bus'
+      - '@Symfony\Component\Messenger\MessageBusInterface'
     tags:
         - name: event_subscriber
           subscribes_to: order:created
@@ -144,17 +141,21 @@ services:
           subscribes_to: order:cancelled
         - name: event_subscriber
           subscribes_to: order:delayed
+        - name: event_subscriber
+          subscribes_to: order:fulfilled
 
   coopcycle.domain.order.reactor.send_remote_push_notification:
     class: AppBundle\Domain\Order\Reactor\SendRemotePushNotification
     arguments:
-      - '@fos_user.user_manager'
+      - '@nucleos_user.user_manager'
       - '@messenger.default_bus'
       - '@api_platform.iri_converter'
       - '@translator'
     tags:
         - name: event_subscriber
           subscribes_to: order:created
+        - name: event_subscriber
+          subscribes_to: order:accepted
 
   coopcycle.domain.order.reactor.clear_session:
     class: AppBundle\Domain\Order\Reactor\ClearSession
@@ -177,6 +178,7 @@ services:
     class: AppBundle\Domain\Order\Reactor\CapturePayment
     arguments:
       - '@AppBundle\Payment\Gateway'
+      - '@logger'
     tags:
         - name: event_subscriber
           subscribes_to: order:fulfilled
@@ -211,10 +213,10 @@ services:
         - name: event_subscriber
           subscribes_to: order:created
 
-  coopcycle.domain.order.reactor.publish_to_redis:
-    class: AppBundle\Domain\Order\Reactor\PublishToRedis
+  coopcycle.domain.order.reactor.publish_live_update:
+    class: AppBundle\Domain\Order\Reactor\PublishLiveUpdate
     arguments:
-      - '@coopcycle.socket_io_manager'
+      - '@AppBundle\Service\LiveUpdates'
     tags:
         - name: event_subscriber
           subscribes_to: order:created
@@ -236,7 +238,7 @@ services:
   coopcycle.domain.order.reactor.modify_promotions_usage:
     class: AppBundle\Domain\Order\Reactor\ModifyPromotionsUsage
     arguments:
-      - '@coopcycle.socket_io_manager'
+      - '@AppBundle\Service\LiveUpdates'
     tags:
         - name: event_subscriber
           subscribes_to: order:created
@@ -254,10 +256,7 @@ services:
   coopcycle.domain.order.reactor.create_geofencing_channel:
     class: AppBundle\Domain\Order\Reactor\CreateGeofencingChannel
     arguments:
-      $tile38: '@snc_redis.tile38'
-      $doorstepChanNamespace: '%tile38_doorstep_chan_namespace%'
-      $fleetKey: '%tile38_fleet_key%'
-      $logger: '@logger'
+      $geofencing: '@AppBundle\Service\Geofencing'
     tags:
         - name: event_subscriber
           subscribes_to: order:picked
@@ -265,9 +264,7 @@ services:
   coopcycle.domain.order.reactor.delete_geofencing_channel:
     class: AppBundle\Domain\Order\Reactor\DeleteGeofencingChannel
     arguments:
-      $tile38: '@snc_redis.tile38'
-      $doorstepChanNamespace: '%tile38_doorstep_chan_namespace%'
-      $logger: '@logger'
+      $geofencing: '@AppBundle\Service\Geofencing'
     tags:
         - name: event_subscriber
           subscribes_to: order:dropped
@@ -284,8 +281,8 @@ services:
     arguments:
       - '@sm.factory'
       - '@sylius.order_processing.order_payment_processor'
-      - '@serializer'
       - '@event_bus'
+      - '@AppBundle\Utils\OrderTimeHelper'
     tags:
         - name: event_subscriber
           subscribes_to: order:created
@@ -301,3 +298,14 @@ services:
           subscribes_to: order:checkout_succeeded
         - name: event_subscriber
           subscribes_to: order:checkout_failed
+
+  coopcycle.domain.order.reactor.cancel_edenred_transaction:
+    class: AppBundle\Domain\Order\Reactor\CancelEdenredTransaction
+    arguments:
+      - '@AppBundle\Edenred\Client'
+      - '@sm.factory'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:refused
+        - name: event_subscriber
+          subscribes_to: order:cancelled

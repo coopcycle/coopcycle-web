@@ -17,7 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -36,7 +36,7 @@ class DeliveryEmbedType extends DeliveryType
             ->add('email', EmailType::class, [
                 'mapped' => false,
                 'label' => 'form.email',
-                'translation_domain' => 'FOSUserBundle'
+                'translation_domain' => 'NucleosProfileBundle'
             ])
             ->add('telephone', PhoneNumberType::class, [
                 'mapped' => false,

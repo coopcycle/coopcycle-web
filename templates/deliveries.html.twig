@@ -1,0 +1,19 @@
+{% extends "admin.html.twig" %}
+
+{% block body %}
+<div class="d-flex h-100">
+  <div class="w-25 h-100 bg-light" style="margin-top: -20px;">
+    {% include 'admin/_partials/deliveries_nav.html.twig' %}
+  </div>
+  <div class="w-75 px-4 mb-4">
+    <ol class="breadcrumb">
+      <li><a href="{{ path('admin_index') }}">{% trans %}adminDashboard.title{% endtrans %}</a></li>
+      {% block breadcrumb %}
+      <li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
+      {% endblock %}
+    </ol>
+    {% block content %}
+    {% endblock %}
+  </div>
+</div>
+{% endblock %}

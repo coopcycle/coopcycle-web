@@ -14,12 +14,6 @@ cliArgs:
   baseurl: '/' #base url for api
 routingServers:
   osrm:
-    car:
-      host: 'osrm'
-      port: '5000'
     bike:
-      host: 'osrm'
-      port: '5000'
-    foot:
       host: 'osrm'
       port: '5000'

@@ -15,6 +15,9 @@ final class SoftDeletedSubscriber implements EventSubscriberInterface
     private $routes = [
         'api_restaurants_products_get_subresource',
         'api_restaurants_get_collection',
+        'api_recurrence_rules_get_collection',
+        'api_recurrence_rules_get_item',
+        'admin_restaurants_search'
     ];
 
     public function __construct(ManagerRegistry $doctrine)

@@ -6,6 +6,7 @@ use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Webmozart\Assert\Assert;
@@ -15,8 +16,9 @@ class DeleteClosingRuleVoter extends Voter
     // these strings are just invented: you can use anything
     const DELETE = 'delete';
 
-    public function __construct(EntityManagerInterface $objectManager)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker, EntityManagerInterface $objectManager)
     {
+        $this->authorizationChecker = $authorizationChecker;
         $this->objectManager = $objectManager;
     }
 
@@ -42,6 +44,14 @@ class DeleteClosingRuleVoter extends Voter
             return false;
         }
 
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+
+        if (!$this->authorizationChecker->isGranted('ROLE_RESTAURANT')) {
+            return false;
+        }
+
         $qb = $this->objectManager->getRepository(LocalBusiness::class)
             ->createQueryBuilder('r')
             ->innerJoin('r.closingRules', 'cr')
@@ -53,9 +63,7 @@ class DeleteClosingRuleVoter extends Voter
 
         if ($restaurant) {
 
-            Assert::isInstanceOf($user, User::class);
-
-            return $user->ownsRestaurant($restaurant);
+            return $this->authorizationChecker->isGranted('edit', $restaurant);
         }
 
         return false;

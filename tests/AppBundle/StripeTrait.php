@@ -69,7 +69,15 @@ trait StripeTrait
         $absUrl = Stripe::$apiBase . $path;
 
         $this->stripeHttpClient
-            ->request(strtolower($method), $absUrl, Argument::type('array'), $params, false)
+            ->request(strtolower($method), $absUrl, Argument::that(function ($headers) {
+                foreach ($headers as $headerLine) {
+                    // Make sure the Stripe-Account header is *NOT* set
+                    if (1 === preg_match('/^Stripe-Account:/', $headerLine)) {
+                        return false;
+                    }
+                }
+                return true;
+            }), $params, false)
             ->shouldBeCalled()
             ->will(function ($args) {
                 $curlClient = HttpClient\CurlClient::instance();

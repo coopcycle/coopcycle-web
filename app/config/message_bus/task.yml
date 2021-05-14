@@ -58,7 +58,7 @@ services:
   coopcycle.domain.task.reactor.publish_redis_message:
     class: AppBundle\Domain\Task\Reactor\PublishRedisMessage
     arguments:
-      - '@coopcycle.socket_io_manager'
+      - '@AppBundle\Service\LiveUpdates'
     tags:
       - name: event_subscriber
         subscribes_to: task:created
@@ -75,13 +75,14 @@ services:
       - name: event_subscriber
         subscribes_to: task:cancelled
       - name: event_subscriber
-        subscribes_to: task_collection:updated
+        subscribes_to: task_collections:updated
+      - name: event_subscriber
+        subscribes_to: task_list:updated
 
   coopcycle.domain.task.reactor.send_email:
     class: AppBundle\Domain\Task\Reactor\SendEmail
     arguments:
       - '@coopcycle.email_manager'
-      - '@coopcycle.settings_manager'
     tags:
       - name: event_subscriber
         subscribes_to: task:done
@@ -101,3 +102,18 @@ services:
     tags:
       - name: event_subscriber
         subscribes_to: task:started
+
+  coopcycle.domain.task.reactor.trigger_webhook:
+    class: AppBundle\Domain\Task\Reactor\TriggerWebhook
+    arguments:
+      - '@messenger.default_bus'
+      - '@api_platform.iri_converter'
+    tags:
+      - name: event_subscriber
+        subscribes_to: task:assigned
+      - name: event_subscriber
+        subscribes_to: task:started
+      - name: event_subscriber
+        subscribes_to: task:done
+      - name: event_subscriber
+        subscribes_to: task:failed

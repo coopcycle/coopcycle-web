@@ -1,0 +1,84 @@
+{
+  "nodes":{
+    "nodes":{
+      "left":{
+        "nodes":{
+          "left":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "name":"distance"
+            }
+          },
+          "right":{
+            "nodes":{
+              "left":{
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":16000
+                }
+              },
+              "right":{
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":17000
+                }
+              }
+            },
+            "attributes":{
+              "operator":".."
+            }
+          }
+        },
+        "attributes":{
+          "operator":"in"
+        }
+      },
+      "right":{
+        "nodes":{
+          "left":{
+            "nodes":{
+              "arguments":{
+                "nodes":[
+                  {
+                    "nodes":[
+
+                    ],
+                    "attributes":{
+                      "name":"pickup"
+                    }
+                  }
+                ],
+                "attributes":[
+
+                ]
+              }
+            },
+            "attributes":{
+              "name":"diff_hours"
+            }
+          },
+          "right":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":3
+            }
+          }
+        },
+        "attributes":{
+          "operator":"<"
+        }
+      }
+    },
+    "attributes":{
+      "operator":"and"
+    }
+  }
+}

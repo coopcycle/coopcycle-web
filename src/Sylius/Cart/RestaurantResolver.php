@@ -2,7 +2,6 @@
 
 namespace AppBundle\Sylius\Cart;
 
-use AppBundle\Entity\HubRepository;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Vendor;
@@ -29,6 +28,7 @@ class RestaurantResolver
         'restaurant_cart_clear_time',
         'restaurant_modify_cart_item_quantity',
         'restaurant_remove_from_cart',
+        'restaurant_cart',
     ];
 
     /**
@@ -38,13 +38,11 @@ class RestaurantResolver
     public function __construct(
         RequestStack $requestStack,
         LocalBusinessRepository $repository,
-        EntityManagerInterface $entityManager,
-        HubRepository $hubRepository)
+        EntityManagerInterface $entityManager)
     {
         $this->requestStack = $requestStack;
         $this->repository = $repository;
         $this->entityManager = $entityManager;
-        $this->hubRepository = $hubRepository;
     }
 
     /**
@@ -102,15 +100,14 @@ class RestaurantResolver
         $vendor = $data['vendor'];
 
         if ($vendor->isHub()) {
-            $hub = $this->hubRepository->findOneByRestaurant($restaurant);
 
-            return $vendor->getHub() === $hub;
+            return $vendor->getHub() === $restaurant->getHub();
         }
 
         if ($vendor->getRestaurant() !== $restaurant) {
 
-            $thisHub = $this->hubRepository->findOneByRestaurant($data['vendor']->getRestaurant());
-            $thatHub = $this->hubRepository->findOneByRestaurant($restaurant);
+            $thisHub = $data['vendor']->getRestaurant()->getHub();
+            $thatHub = $restaurant->getHub();
 
             if (null !== $thisHub && null !== $thatHub && $thisHub === $thatHub) {
                 return true;
@@ -118,22 +115,5 @@ class RestaurantResolver
         }
 
         return $vendor->getRestaurant() === $restaurant;
-    }
-
-    public function changeVendor(OrderInterface $cart)
-    {
-        $isSingle = $cart->getVendor()->getRestaurant() !== null;
-
-        $restaurant = $this->resolve();
-
-        if ($isSingle && $cart->getVendor()->getRestaurant() !== $restaurant) {
-            $hub = $this->hubRepository->findOneByRestaurant($restaurant);
-            if ($hub) {
-                $vendor = new Vendor();
-                $vendor->setHub($hub);
-
-                $cart->setVendor($vendor);
-            }
-        }
     }
 }

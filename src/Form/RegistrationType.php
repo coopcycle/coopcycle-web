@@ -3,7 +3,8 @@
 namespace AppBundle\Form;
 
 use AppBundle\Form\Type\LegalType;
-use Symfony\Component\Form\AbstractType;
+use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
+use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -12,7 +13,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 
-class RegistrationType extends AbstractType
+class RegistrationType extends AbstractTypeExtension
 {
     private $isDemo;
 
@@ -49,8 +50,10 @@ class RegistrationType extends AbstractType
         });
     }
 
-    public function getParent()
+    public static function getExtendedTypes(): iterable
     {
-        return 'FOS\UserBundle\Form\Type\RegistrationFormType';
+        return [
+            RegistrationFormType::class
+        ];
     }
 }

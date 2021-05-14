@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% form_theme form "bootstrap_3_layout.html.twig" %}
+{% form_theme form with ['form/delivery.html.twig', 'form/delivery_embed.html.twig'] %}
 
 {% block banner %}{% endblock %}
 {% block menu %}{% endblock %}
@@ -21,7 +21,7 @@
   {{ form_start(form, { action: path('embed_delivery_process', { hashid: hashid }) }) }}
   <div class="alert alert-info">
     {% trans with {
-      '%dropoff_date%': delivery.dropoff.doneBefore|localizeddate('medium', 'short'),
+      '%dropoff_date%': delivery.dropoff.doneBefore|format_datetime('medium', 'short'),
       '%dropoff_address%': dropoff.address.streetAddress,
       '%distance%': (delivery.distance / 1000)|round(2, 'floor'),
       '%total_including_tax%': price|price_format,
@@ -43,17 +43,11 @@
 
   {% if form.stripePayment is defined %}
     {{ form_widget(form.stripePayment.stripeToken) }}
-    {{ form_row(form.stripePayment.cardholderName) }}
-    <div class="form-group">
-      <label class="control-label hidden" for="card-element">
-        {% trans %}order.payment.title{% endtrans %}
-      </label>
-      <div id="card-element">
-        <!-- a Stripe Element will be inserted here. -->
-      </div>
-      <!-- Used to display form errors -->
-      <div id="card-errors" role="alert"></div>
+    <div id="card-element">
+      <!-- a React element will be inserted here. -->
     </div>
+    <!-- Used to display form errors -->
+    <div id="card-errors" role="alert"></div>
   {% endif %}
 
   <button type="submit" class="btn btn-block btn-lg btn-primary" disabled="disabled">
@@ -76,6 +70,30 @@
 {% endblock %}
 
 {% block scripts %}
+
+{% set gateway = payment_gateway_resolver.resolve() %}
+{% set gateway_configs = {} %}
+
+{% if gateway == 'stripe' %}
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+{% set gateway_configs = gateway_configs|merge({
+  stripe: {
+    account: null,
+    publishableKey: coopcycle_setting('stripe_publishable_key'),
+    createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid })
+  }
+}) %}
+{% endif %}
+
+{% if gateway == 'mercadopago' %}
+<script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
+{% set gateway_configs = gateway_configs|merge({
+  mercadopago: {
+    publishableKey: coopcycle_setting('mercadopago_test_publishable_key'),
+    country: country
+  }
+}) %}
+{% endif %}
 
 {% set delivery = form.vars.value %}
 {% set pickup = form.pickup.vars.value %}
@@ -100,9 +118,10 @@ $("#modify-form").on('click', function() {
 $('#delivery_billingAddress_streetAddress').removeAttr('required');
 
 new CoopCycle.StripePaymentForm(document.querySelector('form[name="delivery"]'), {
-  publishableKey: "{{ coopcycle_setting('stripe_publishable_key') }}",
-  tokenElement: document.querySelector('#delivery_stripePayment_stripeToken'),
-  cardholderNameElement: document.querySelector('#delivery_stripePayment_cardholderName')
+  card: "{{ gateway }}",
+  amount: {{ price }},
+  gatewayConfigs: {{ gateway_configs|json_encode|raw }},
+  tokenElement: document.querySelector('#delivery_stripePayment_stripeToken')
 });
 
 </script>

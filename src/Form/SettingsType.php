@@ -80,16 +80,6 @@ class SettingsType extends AbstractType
                 'help' => 'form.settings.phone_number.help',
                 'disabled' => $this->isDemo
             ])
-            ->add('enable_restaurant_pledges', CheckboxType::class, [
-                'label' => 'form.settings.enable_restaurant_pledges.label',
-                'required' => false,
-            ])
-            ->add('google_api_key', TextType::class, [
-                'label' => 'form.settings.google_api_key.label',
-                'help' => 'form.settings.google_api_key.help',
-                'help_html' => true,
-                'disabled' => $this->isDemo || $this->debug
-            ])
             ->add('latlng', TextType::class, [
                 'label' => 'form.settings.latlng.label',
                 'help' => 'form.settings.latlng.help',
@@ -139,17 +129,6 @@ class SettingsType extends AbstractType
                 $builder->add('stripe', StripeType::class, ['mapped' => false]);
                 break;
         }
-
-        $builder->get('enable_restaurant_pledges')
-            ->addModelTransformer(new CallbackTransformer(
-                function ($originalValue) {
-                    return filter_var($originalValue, FILTER_VALIDATE_BOOLEAN);
-                },
-                function ($submittedValue) {
-                    return $submittedValue ? 'yes' : 'no';
-                }
-            ))
-        ;
 
         $builder->get('guest_checkout_enabled')
             ->addModelTransformer(new CallbackTransformer(

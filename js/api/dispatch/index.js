@@ -3,6 +3,7 @@ var WebSocketServer = WebSocket.Server
 var http = require('http')
 var _ = require('lodash')
 var winston = require('winston')
+var path = require('path');
 
 var TokenVerifier = require('../TokenVerifier')
 
@@ -37,21 +38,16 @@ var server = http.createServer(function(request, response) {
     // we don't have to implement anything.
 });
 
-var tokenVerifier = new TokenVerifier(process.env.COOPCYCLE_PUBLIC_KEY_FILE, db)
+let publicKeyFile
+if (!process.env.COOPCYCLE_PUBLIC_KEY_FILE) {
+  publicKeyFile = path.resolve(__dirname, '../../../var/jwt/public.pem')
+} else {
+  publicKeyFile = process.env.COOPCYCLE_PUBLIC_KEY_FILE
+}
+const tokenVerifier = new TokenVerifier(publicKeyFile, db)
 
 var wsServer = new WebSocketServer({
-    server: server,
-    verifyClient: function (info, cb) {
-      tokenVerifier
-        .verify(info.req.headers)
-        .then((user) => {
-          info.req.user = user;
-          cb(true);
-        })
-        .catch(e => {
-          cb(false, 401, 'Access denied');
-        });
-    },
+  noServer: true,
 })
 
 let rooms = {}
@@ -91,12 +87,10 @@ function initialize() {
   })
 
   // WebSocket server
-  wsServer.on('connection', function(ws, req) {
+  wsServer.on('connection', function(ws, req, user) {
 
     ws.isAlive = true
     ws.on('pong', heartbeat)
-
-    const { user } = req
 
     logger.info(`User ${user.username} connected`)
 
@@ -114,6 +108,20 @@ function initialize() {
     })
 
   })
+
+  server.on('upgrade', function upgrade(request, socket, head) {
+    tokenVerifier
+      .verify(request.headers)
+      .then((user) => {
+        wsServer.handleUpgrade(request, socket, head, function done(ws) {
+          wsServer.emit('connection', ws, request, user);
+        });
+      })
+      .catch(e => {
+        socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
+        socket.destroy();
+      });
+  });
 
   const interval = setInterval(function ping() {
     wsServer.clients.forEach(function each(ws) {

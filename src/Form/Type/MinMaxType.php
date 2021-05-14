@@ -50,7 +50,7 @@ class MinMaxType extends AbstractType implements DataMapperInterface
             $numRange = new NumRange();
             $forms = iterator_to_array($forms);
             $forms['lower']->setData($numRange->getLower());
-            if ($numRange->getUpper() === INF) {
+            if ($numRange->getUpper() === 'INF') {
                 $forms['infinity']->setData(true);
             } else {
                 $forms['upper']->setData($numRange->getUpper());
@@ -67,7 +67,7 @@ class MinMaxType extends AbstractType implements DataMapperInterface
 
         $forms['lower']->setData($viewData->getLower());
         $forms['upper']->setData($viewData->getUpper());
-        $forms['infinity']->setData($viewData->getUpper() === INF);
+        $forms['infinity']->setData($viewData->getUpper() === 'INF');
     }
 
     public function mapFormsToData($forms, &$viewData)
@@ -80,7 +80,7 @@ class MinMaxType extends AbstractType implements DataMapperInterface
 
         $numRange = new NumRange();
         $numRange->setLower($lower);
-        $numRange->setUpper($infinity ? INF : $upper);
+        $numRange->setUpper($infinity ? 'INF' : $upper);
 
         $viewData = $numRange;
     }

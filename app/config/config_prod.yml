@@ -19,10 +19,12 @@ framework:
 #        cache: validator.mapping.cache.doctrine.apc
 #    serializer:
 #        cache: serializer.mapping.cache.doctrine.apc
-
+    session:
+        cookie_secure: true
 
 parameters:
     router.request_context.scheme: 'https'
+    nucleos_profile.registration.confirmation.enabled: true
 
 # https://github.com/doctrine/DoctrineBundle/releases/tag/2.0.1
 # https://symfony.com/blog/new-in-doctrinebundle-1-11-0
@@ -51,92 +53,78 @@ monolog:
                 - ^/
         nested:
             type: rotating_file
-            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/%kernel.environment%.log"
             level: debug
             formatter: monolog.formatter.json
             max_files: 7
             channels: ["!api", "!stripe", "!loopeat"]
         api:
             type: rotating_file
-            path: "%kernel.logs_dir%/api.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/api.%kernel.environment%.log"
             level: info
             formatter: monolog.formatter.json
             max_files: 7
             channels: [api]
         messenger:
             type: rotating_file
-            path: "%kernel.logs_dir%/messenger.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/messenger.%kernel.environment%.log"
             level: debug
             formatter: monolog.formatter.json
             max_files: 7
             channels: [messenger]
         fee_calculation:
             type: rotating_file
-            path: "%kernel.logs_dir%/fee_calculation.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/fee_calculation.%kernel.environment%.log"
             level: info
             formatter: monolog.formatter.json
             max_files: 7
             channels: [fee_calculation]
         timing:
             type: rotating_file
-            path: "%kernel.logs_dir%/timing.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/timing.%kernel.environment%.log"
             level: info
             max_files: 7
             channels: [timing]
         geofencing:
             type: rotating_file
-            path: "%kernel.logs_dir%/geofencing.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/geofencing.%kernel.environment%.log"
             level: info
             formatter: monolog.formatter.json
             max_files: 7
             channels: [geofencing]
         stripe:
             type: rotating_file
-            path: "%kernel.logs_dir%/stripe.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/stripe.%kernel.environment%.log"
             level: info
             max_files: 7
             channels: [stripe]
         loopeat:
             type: rotating_file
-            path: "%kernel.logs_dir%/loopeat.%kernel.environment%.log"
+            path: "%env(APP_LOG_DIR)%/loopeat.%kernel.environment%.log"
             level: info
             max_files: 7
             channels: [loopeat]
-        mailer:
-            level:    error
-            type:     rotating_file
-            path:     '%kernel.logs_dir%/mailer.%kernel.environment%.log'
-            max_files: 7
-            channels: [mailer]
         console:
             type:  console
 
-fos_user:
+nucleos_profile:
     registration:
         confirmation:
             enabled: true
 
+services:
+    Sentry\Integration\IgnoreErrorsIntegration:
+        arguments:
+            $options:
+                ignore_exceptions:
+                    - Symfony\Component\Security\Core\Exception\AccessDeniedException
+                    - Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+                    - ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException
+
 sentry:
     dsn: '%sentry_public_dsn%'
     options:
-        # https://github.com/getsentry/sentry-symfony#step-3-configure-the-sdk
-        # https://docs.sentry.io/platforms/php/#php-specific-options
-        excluded_exceptions:
-            - Symfony\Component\Security\Core\Exception\AccessDeniedException
-            - Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-            - ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException
-
-# see
-# https://github.com/liip/LiipImagineBundle/issues/1018
-# https://github.com/liip/LiipImagineBundle/issues/1144
-liip_imagine:
-    resolvers:
-        default:
-            web_path:
-                web_root: '%kernel.project_dir%/../../shared/web'
-    loaders:
-        default:
-            filesystem:
-                data_root:
-                    - '%kernel.project_dir%/../../shared/web'
-                    - '%kernel.project_dir%/web'
+        tags:
+            coopcycle_app_name: '%env(COOPCYCLE_APP_NAME)%'
+        integrations:
+            - 'Sentry\Integration\IgnoreErrorsIntegration'

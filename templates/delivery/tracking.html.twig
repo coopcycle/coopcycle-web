@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     {{ sonata_seo_metadatas() }}
     {{ encore_entry_link_tags('common') }}
+    {{ encore_entry_link_tags('delivery-tracking') }}
     {% block styles %}{% endblock %}
     {% block structured_data %}{% endblock %}
   </head>
@@ -24,14 +25,14 @@
           <span>{{ delivery.pickup.address.streetAddress }}</span>
         </div>
         <div>
-          <small class="text-muted">{{ delivery.pickup.doneBefore|localizeddate('short', 'short') }}</small>
+          <small class="text-muted">{{ delivery.pickup.doneBefore|format_datetime('short', 'short') }}</small>
         </div>
         <div>
           <i class="fa fa-arrow-down"></i>
           <span>{{ delivery.dropoff.address.streetAddress }}</span>
         </div>
         <div>
-          <small class="text-muted">{{ delivery.dropoff.doneBefore|localizeddate('short', 'short') }}</small>
+          <small class="text-muted">{{ delivery.dropoff.doneBefore|format_datetime('short', 'short') }}</small>
         </div>
       </div>
     </div>
@@ -58,7 +59,8 @@
       data-dropoff="{{ [ delivery.dropoff.address.geo.latitude, delivery.dropoff.address.geo.longitude ]|json_encode|e('html_attr') }}"
       data-polyline="{{ delivery.polyline|e('html_attr') }}"
       data-is-completed="{{ delivery.completed|json_encode|e('html_attr') }}"
-      data-token="{{ token|json_encode|e('html_attr') }}"></div>
+      data-centrifugo-token="{{ centrifugo_token|json_encode|e('html_attr') }}"
+      data-centrifugo-channel="{{ centrifugo_channel|json_encode|e('html_attr') }}"></div>
 
     {{ encore_entry_script_tags('delivery-tracking') }}
 

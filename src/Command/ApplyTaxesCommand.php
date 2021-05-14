@@ -9,6 +9,7 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -36,7 +37,13 @@ class ApplyTaxesCommand extends Command
     {
         $this
             ->setName('coopcycle:orders:process-taxes')
-            ->setDescription('Process order taxes');
+            ->setDescription('Process order taxes')
+            ->addOption(
+                'since',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Process orders since date'
+            );
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -46,11 +53,15 @@ class ApplyTaxesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->io->title('Processing order taxes');
+        $since = $input->getOption('since');
+        $since = new \DateTime($since);
+
+        $this->io->title(sprintf('Applying order taxes to orders since %s', $since->format(\DateTime::ATOM)));
 
         $qb = $this->orderRepository->createQueryBuilder('o')
-            ->andWhere('o.state != :state')
-            ->setParameter('state', OrderInterface::STATE_CART);
+            ->andWhere('o.createdAt >= :since')
+            ->setParameter('since', $since)
+            ;
 
         $count = (clone $qb)->select('COUNT(o.id)')->getQuery()->getSingleScalarResult();
 
@@ -70,9 +81,13 @@ class ApplyTaxesCommand extends Command
                 ->getResult();
 
             foreach ($orders as $order) {
-                $this->io->text(sprintf('Processing taxes on order #%d', $order->getId()));
+                $this->io->text(sprintf('Processing taxes on order #%d (state = "%s", created = "%s")',
+                    $order->getId(),
+                    $order->getState(),
+                    $order->getCreatedAt()->format(\DateTime::ATOM)));
                 $this->orderTaxesProcessor->process($order);
             }
+
             $this->orderManager->flush();
             $this->orderManager->clear();
         }

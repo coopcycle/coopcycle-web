@@ -2,15 +2,20 @@
 
 namespace AppBundle\OpeningHours;
 
-use AppBundle\Utils\TimeRange;
+use AppBundle\Entity\ClosingRule;
+use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
+use Spatie\OpeningHours\OpeningHours;
+use Spatie\OpeningHours\Exceptions\MaximumLimitExceeded;
 
 trait OpenCloseTrait
 {
-    private $nextOpeningDateCache = [];
-    private $timeRanges = [];
     private $hasFutureClosingRulesCache = [];
+    private $spatieOpeningHoursCache = [];
+    private $isOpenCache = [];
+    private $nextOpeningDateCache = [];
+    private $nextClosingDateCache = [];
 
     public function hasClosingRuleFor(\DateTime $date = null, \DateTime $now = null): bool
     {
@@ -43,60 +48,35 @@ trait OpenCloseTrait
         return false;
     }
 
-    private function computeTimeRanges(array $openingHours)
+    public function matchClosingRuleFor(\DateTime $date = null, \DateTime $now = null): ?ClosingRule
     {
-        if (count($openingHours) === 0) {
-            $this->timeRanges = [];
-            return;
+        $date = $date ?? Carbon::now();
+        $now = $now ?? Carbon::now();
+
+        $closingRules = $this->getClosingRules();
+
+        if (count($closingRules) === 0) {
+            return null;
         }
 
-        foreach ($openingHours as $openingHour) {
-            $this->timeRanges[] = TimeRange::create($openingHour);
-        }
-    }
+        // Optimisation
+        // When we look for a date in the future,
+        // It's useless to loop over "past" closing rules
+        if ($date >= $now && !$this->hasFutureClosingRules($closingRules, $now)) {
 
-    private function getTimeRanges()
-    {
-        $openingHours = $this->getOpeningHours();
-        if (count($openingHours) !== count($this->timeRanges)) {
-            $this->computeTimeRanges($openingHours);
+            return null;
         }
 
-        return $this->timeRanges;
-    }
-
-    private function _getNextOpeningDate(\DateTime $now = null)
-    {
-        if (!$now) {
-            $now = Carbon::now();
+        // WARNING
+        // This method may be called a *lot* of times
+        // Thus, we avoid using Criteria, because it would trigger a query every time
+        foreach ($closingRules as $closingRule) {
+            if ($date >= $closingRule->getStartDate() && $date <= $closingRule->getEndDate()) {
+                return $closingRule;
+            }
         }
 
-        $dates = [];
-
-        foreach ($this->getTimeRanges() as $timeRange) {
-            $dates[] = $timeRange->getNextOpeningDate($now);
-        }
-
-        sort($dates);
-
-        return array_shift($dates);
-    }
-
-    private function _getNextClosingDate(\DateTime $now = null)
-    {
-        if (!$now) {
-            $now = Carbon::now();
-        }
-
-        $dates = [];
-
-        foreach ($this->getTimeRanges() as $timeRange) {
-            $dates[] = $timeRange->getNextClosingDate($now);
-        }
-
-        sort($dates);
-
-        return array_shift($dates);
+        return null;
     }
 
     public function isOpen(\DateTime $now = null): bool
@@ -105,19 +85,13 @@ trait OpenCloseTrait
             $now = Carbon::now();
         }
 
-        if ($this->hasClosingRuleFor($now)) {
+        if (!isset($this->isOpenCache[$now->format(\DateTime::ATOM)])) {
+            $openingHours = $this->getSpatieOpeningHours($this->getOpeningHours(), $this->getClosingRules());
 
-            return false;
+            $this->isOpenCache[$now->format(\DateTime::ATOM)] = $openingHours->isOpenAt($now);
         }
 
-        foreach ($this->getTimeRanges() as $timeRange) {
-            if ($timeRange->isOpen($now)) {
-
-                return true;
-            }
-        }
-
-        return false;
+        return $this->isOpenCache[$now->format(\DateTime::ATOM)];
     }
 
     public function getNextOpeningDate(\DateTime $now = null)
@@ -126,28 +100,17 @@ trait OpenCloseTrait
             $now = Carbon::now();
         }
 
-        if (!isset($this->nextOpeningDateCache[$now->getTimestamp()])) {
+        try {
+            if (!isset($this->nextOpeningDateCache[$now->format(\DateTime::ATOM)])) {
+                $openingHours = $this->getSpatieOpeningHours($this->getOpeningHours(), $this->getClosingRules());
 
-            $nextOpeningDate = null;
-
-            if ($this->hasClosingRuleFor($now)) {
-                foreach ($this->getClosingRules() as $closingRule) {
-                    if ($now >= $closingRule->getStartDate() && $now <= $closingRule->getEndDate()) {
-
-                        $nextOpeningDate = $this->_getNextOpeningDate($closingRule->getEndDate());
-                        break;
-                    }
-                }
+                $this->nextOpeningDateCache[$now->format(\DateTime::ATOM)] = $openingHours->nextOpen($now);
             }
 
-            if (null === $nextOpeningDate) {
-                $nextOpeningDate = $this->_getNextOpeningDate($now);
-            }
-
-            $this->nextOpeningDateCache[$now->getTimestamp()] = $nextOpeningDate;
+            return $this->nextOpeningDateCache[$now->format(\DateTime::ATOM)];
+        } catch (MaximumLimitExceeded $e) {
+            return null;
         }
-
-        return $this->nextOpeningDateCache[$now->getTimestamp()];
     }
 
     public function getNextClosingDate(\DateTime $now = null)
@@ -156,25 +119,13 @@ trait OpenCloseTrait
             $now = Carbon::now();
         }
 
-        $nextClosingDates = [];
-        if ($nextClosingDate = $this->_getNextClosingDate($now)) {
-            $nextClosingDates[] = $nextClosingDate;
+        if (!isset($this->nextClosingDateCache[$now->format(\DateTime::ATOM)])) {
+            $openingHours = $this->getSpatieOpeningHours($this->getOpeningHours(), $this->getClosingRules());
+
+            $this->nextClosingDateCache[$now->format(\DateTime::ATOM)] = $openingHours->nextClose($now);
         }
 
-        foreach ($this->getClosingRules() as $closingRule) {
-            if ($closingRule->getEndDate() < $now) {
-                continue;
-            }
-            $nextClosingDates[] = $closingRule->getStartDate();
-        }
-
-        $nextClosingDates = array_filter($nextClosingDates, function (\DateTime $date) use ($now) {
-            return $date >= $now;
-        });
-
-        sort($nextClosingDates);
-
-        return array_shift($nextClosingDates);
+        return $this->nextClosingDateCache[$now->format(\DateTime::ATOM)];
     }
 
     private function hasFutureClosingRules(Collection $closingRules, \DateTime $now)
@@ -196,5 +147,10 @@ trait OpenCloseTrait
         }
 
         return $this->hasFutureClosingRulesCache[$cacheKey];
+    }
+
+    private function getSpatieOpeningHours(array $openingHours, Collection $closingRules)
+    {
+        return SpatieOpeningHoursRegistry::get($openingHours, $closingRules);
     }
 }

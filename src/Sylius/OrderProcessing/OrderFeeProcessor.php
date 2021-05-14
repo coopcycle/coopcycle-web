@@ -3,18 +3,18 @@
 namespace AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
 final class OrderFeeProcessor implements OrderProcessorInterface
@@ -46,9 +46,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
     {
         Assert::isInstanceOf($order, OrderInterface::class);
 
-        $restaurant = $order->getRestaurant();
-
-        if (null === $restaurant) {
+        if (!$order->hasVendor()) {
             return;
         }
 
@@ -58,15 +56,15 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         $order->removeAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
         $order->removeAdjustments(AdjustmentInterface::TIP_ADJUSTMENT);
 
-        $contract = $restaurant->getContract();
+        $contract = $order->getVendor()->getContract();
         $feeRate = $contract->getFeeRate();
 
         $delivery = null;
         if (!$order->isTakeAway() && ($contract->isVariableDeliveryPriceEnabled() || $contract->isVariableCustomerAmountEnabled())) {
             try {
                 $delivery = $this->getDelivery($order);
-            } catch (ShippingAddressMissingException $e) {
-                $this->logger->error('OrderFeeProcessor | address is missing');
+            } catch (ShippingAddressMissingException|NoAvailableTimeSlotException $e) {
+                $this->logger->error(sprintf('OrderFeeProcessor | %s', $e->getMessage()));
             }
         }
 
@@ -179,12 +177,10 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         }
 
         foreach ($promotion->getActions() as $action) {
-            if ($action->getType() === DeliveryPercentageDiscountPromotionActionCommand::TYPE) {
-                $configuration = $action->getConfiguration();
-                if (isset($configuration['decrase_platform_fee'])) {
+            $configuration = $action->getConfiguration();
+            if (isset($configuration['decrase_platform_fee'])) {
 
-                    return $configuration['decrase_platform_fee'];
-                }
+                return $configuration['decrase_platform_fee'];
             }
         }
 

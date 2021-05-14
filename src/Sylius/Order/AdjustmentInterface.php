@@ -15,4 +15,5 @@ interface AdjustmentInterface extends BaseAdjustmentInterface
     public const ORDER_PROMOTION_ADJUSTMENT = 'order_promotion';
     public const REUSABLE_PACKAGING_ADJUSTMENT = 'reusable_packaging';
     public const TIP_ADJUSTMENT = 'tip';
+    public const TRANSFER_AMOUNT_ADJUSTMENT = 'transfer_amount';
 }

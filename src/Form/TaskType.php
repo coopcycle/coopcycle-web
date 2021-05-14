@@ -4,7 +4,6 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
-use AppBundle\Service\TagManager;
 use AppBundle\Service\TaskManager;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
@@ -23,12 +22,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaskType extends AbstractType
 {
-    private $tagManager;
     private $country;
 
-    public function __construct(TagManager $tagManager, string $country)
+    public function __construct(string $country)
     {
-        $this->tagManager = $tagManager;
         $this->country = $country;
     }
 
@@ -36,7 +33,8 @@ class TaskType extends AbstractType
     {
         $addressBookOptions = [
             'label' => $options['street_address_label'],
-            'with_addresses' => $options['with_addresses']
+            'with_addresses' => $options['with_addresses'],
+            'with_remember_address' => $options['with_remember_address'],
         ];
 
         if (isset($options['address_placeholder']) && !empty($options['address_placeholder'])) {
@@ -62,12 +60,14 @@ class TaskType extends AbstractType
             ->add('doneAfter', DateType::class, [
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm:ss',
-                'required' => false
+                'required' => false,
+                'html5' => false,
             ])
             ->add('doneBefore', DateType::class, [
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd HH:mm:ss',
-                'required' => true
+                'required' => true,
+                'html5' => false,
             ]);
 
         if ($options['with_tags']) {
@@ -107,11 +107,7 @@ class TaskType extends AbstractType
                 $form = $event->getForm();
                 $task = $event->getData();
 
-                $tags = array_map(function ($tag) {
-                    return $tag->getSlug();
-                }, iterator_to_array($task->getTags()));
-
-                $form->get('tagsAsString')->setData(implode(' ', $tags));
+                $form->get('tagsAsString')->setData(implode(' ', $task->getTags()));
             });
 
             $builder->get('tagsAsString')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
@@ -119,8 +115,7 @@ class TaskType extends AbstractType
                 $task = $event->getForm()->getParent()->getData();
 
                 $tagsAsString = $event->getData();
-                $slugs = explode(' ', $tagsAsString);
-                $tags = $this->tagManager->fromSlugs($slugs);
+                $tags = explode(' ', $tagsAsString);
 
                 $task->setTags($tags);
             });
@@ -159,6 +154,7 @@ class TaskType extends AbstractType
             'with_recipient_details' => false,
             'with_doorstep' => false,
             'street_address_label' => 'form.task.address.label',
+            'with_remember_address' => false,
         ));
     }
 }

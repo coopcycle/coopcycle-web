@@ -4,6 +4,7 @@ namespace AppBundle\Security;
 
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\User;
+use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -17,6 +18,7 @@ class OrderActionsVoter extends Voter
     const FULFILL = 'fulfill';
     const CANCEL  = 'cancel';
     const VIEW    = 'view';
+    const VIEW_PUBLIC = 'view_public';
 
     private static $actions = [
         self::ACCEPT,
@@ -25,6 +27,7 @@ class OrderActionsVoter extends Voter
         self::FULFILL,
         self::CANCEL,
         self::VIEW,
+        self::VIEW_PUBLIC,
     ];
 
     private $authorizationChecker;
@@ -49,6 +52,22 @@ class OrderActionsVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        if (self::VIEW_PUBLIC === $attribute) {
+
+            $orderState = $subject->getState();
+
+            $validStates = [
+                OrderInterface::STATE_NEW,
+                OrderInterface::STATE_ACCEPTED,
+            ];
+
+            if (!in_array($orderState, $validStates)) {
+                return false;
+            }
+
+            return true;
+        }
+
         if (!is_object($user = $token->getUser())) {
             // e.g. anonymous authentication
             return false;
@@ -60,7 +79,7 @@ class OrderActionsVoter extends Voter
 
         Assert::isInstanceOf($user, User::class);
 
-        $ownsRestaurant = $user->ownsRestaurant($subject->getRestaurant());
+        $ownsRestaurant = $this->isGrantedRestaurant($subject);
 
         $isCustomer = null !== $subject->getCustomer()
             && $subject->getCustomer()->hasUser()
@@ -72,6 +91,17 @@ class OrderActionsVoter extends Voter
         }
 
         // For actions like "accept", "refuse", etc...
-        return $this->authorizationChecker->isGranted('ROLE_RESTAURANT') && $ownsRestaurant;
+        return $ownsRestaurant;
+    }
+
+    private function isGrantedRestaurant($subject)
+    {
+        foreach ($subject->getRestaurants() as $restaurant) {
+            if ($this->authorizationChecker->isGranted('edit', $restaurant)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

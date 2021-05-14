@@ -4,9 +4,9 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\FOSUserEvents;
-use FOS\UserBundle\Event\UserEvent;
-use FOS\UserBundle\Model\UserInterface;
+use Nucleos\UserBundle\NucleosUserEvents;
+use Nucleos\UserBundle\Event\UserEvent;
+use Nucleos\UserBundle\Model\UserInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -32,7 +32,7 @@ final class WebAuthenticationListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            FOSUserEvents::SECURITY_IMPLICIT_LOGIN => 'onImplicitLogin',
+            NucleosUserEvents::SECURITY_IMPLICIT_LOGIN => 'onImplicitLogin',
             SecurityEvents::INTERACTIVE_LOGIN => 'onSecurityInteractiveLogin',
         ];
     }
@@ -62,7 +62,7 @@ final class WebAuthenticationListener implements EventSubscriberInterface
 
         $cart->setCustomer($user->getCustomer());
 
-        if (null === $cart->getRestaurant()) {
+        if (!$cart->hasVendor()) {
             return;
         }
 

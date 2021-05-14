@@ -1,0 +1,22 @@
+{{ form_row(form.name) }}
+<div class="hidden">
+ {{ form_widget(form.enabled) }}
+</div>
+{{ form_row(form.legalName) }}
+{% if form.address is defined %}
+  {{ form_row(form.address) }}
+{% endif %}
+{{ form_row(form.website) }}
+{{ form_row(form.telephone) }}
+{% if form.siret is defined %}
+  {{ form_row(form.siret) }}
+{% endif %}
+{% if form.vat_number is defined %}
+  {{ form_row(form.vat_number) }}
+{% endif %}
+{% if form.rcs_number is defined %}
+  {{ form_row(form.rcs_number) }}
+{% endif %}
+{% if form.cuit is defined %}
+  {{ form_row(form.cuit) }}
+{% endif %}

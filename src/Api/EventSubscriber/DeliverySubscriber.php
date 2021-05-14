@@ -3,6 +3,7 @@
 namespace AppBundle\Api\EventSubscriber;
 
 use AppBundle\Entity\Store;
+use AppBundle\Message\DeliveryCreated;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -21,9 +23,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 final class DeliverySubscriber implements EventSubscriberInterface
 {
     private $doctrine;
-    private $tokenStorage;
     private $storeExtractor;
     private $routing;
+    private $messageBus;
 
     private static $matchingRoutes = [
         'api_deliveries_get_item',
@@ -33,28 +35,26 @@ final class DeliverySubscriber implements EventSubscriberInterface
 
     public function __construct(
         ManagerRegistry $doctrine,
-        TokenStorageInterface $tokenStorage,
         TokenStoreExtractor $storeExtractor,
-        RoutingInterface $routing)
+        RoutingInterface $routing,
+        MessageBusInterface $messageBus)
     {
         $this->doctrine = $doctrine;
-        $this->tokenStorage = $tokenStorage;
         $this->storeExtractor = $storeExtractor;
         $this->routing = $routing;
+        $this->messageBus = $messageBus;
     }
 
     public static function getSubscribedEvents()
     {
         // @see https://api-platform.com/docs/core/events/#built-in-event-listeners
         return [
-            KernelEvents::REQUEST => [
-                ['accessControl', EventPriorities::POST_DESERIALIZE],
-            ],
             KernelEvents::VIEW => [
                 ['setDefaults', EventPriorities::PRE_VALIDATE],
                 ['calculate', EventPriorities::PRE_VALIDATE],
                 ['handleCheckResponse', EventPriorities::POST_VALIDATE],
                 ['addToStore', EventPriorities::POST_WRITE],
+                ['sendNotification', EventPriorities::POST_WRITE],
             ],
         ];
     }
@@ -62,49 +62,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
     private function matchRoute(Request $request)
     {
         return in_array($request->attributes->get('_route'), self::$matchingRoutes);
-    }
-
-    public function accessControl(RequestEvent $event)
-    {
-        $request = $event->getRequest();
-        if (!$this->matchRoute($request)) {
-            return;
-        }
-
-        $delivery = $request->attributes->get('data');
-
-        if (null !== ($token = $this->tokenStorage->getToken())) {
-
-            if ($token instanceof JWTUserToken) {
-
-                $user = $token->getUser();
-                $store = $delivery->getStore();
-
-                if ($store && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($store)) {
-                    return;
-                }
-
-            } else {
-                // TODO Move this to Delivery entity access_control
-                $roles = $token->getRoles();
-                foreach ($roles as $role) {
-                    if ($role->getRole() === 'ROLE_OAUTH2_DELIVERIES') {
-
-                        $store = $this->storeExtractor->extractStore();
-
-                        if (null === $delivery->getStore()) {
-                            return;
-                        }
-
-                        if ($delivery->getStore() === $store) {
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
-        throw new AccessDeniedException();
     }
 
     public function setDefaults(ViewEvent $event)
@@ -163,6 +120,21 @@ final class DeliverySubscriber implements EventSubscriberInterface
 
         $store->addDelivery($delivery);
         $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    public function sendNotification(ViewEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if ('api_deliveries_post_collection' !== $request->attributes->get('_route')) {
+            return;
+        }
+
+        $delivery = $event->getControllerResult();
+
+        $this->messageBus->dispatch(
+            new DeliveryCreated($delivery)
+        );
     }
 
     public function calculate(ViewEvent $event)

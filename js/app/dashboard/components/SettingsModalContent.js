@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import { Form, Radio } from 'antd'
+import { Form, Radio } from 'antd';
 
 import {
   closeSettings,
@@ -26,8 +26,7 @@ class SettingsModalContent extends React.Component {
     }
   }
 
-  handleSubmit(e) {
-    e.preventDefault()
+  handleSubmit() {
     this.props.setPolylineStyle(this.state.polylineStyle)
     this.props.setClustersEnabled(this.state.clustersEnabled)
     this.props.closeSettings()
@@ -36,8 +35,7 @@ class SettingsModalContent extends React.Component {
   render() {
 
     return (
-      <Form layout="horizontal" colon={ false }
-        onSubmit={ this.handleSubmit.bind(this) }>
+      <Form layout="horizontal" colon={ false }>
         <Form.Item label={ this.props.t('ADMIN_DASHBOARD_SETTINGS_POLYLINE') } { ...formItemLayout }>
           <Radio.Group defaultValue={ this.props.polylineStyle }
             onChange={ (e) => this.setState({ polylineStyle: e.target.value }) }>
@@ -55,7 +53,7 @@ class SettingsModalContent extends React.Component {
           </Radio.Group>
         </Form.Item>
         <Form.Item { ...buttonItemLayout }>
-          <button type="submit" className="btn btn-block btn-primary">
+          <button type="button" className="btn btn-block btn-primary" onClick={ this.handleSubmit.bind(this) }>
             { this.props.t('ADMIN_DASHBOARD_FILTERS_APPLY') }
           </button>
         </Form.Item>
@@ -67,8 +65,8 @@ class SettingsModalContent extends React.Component {
 function mapStateToProps(state) {
 
   return {
-    polylineStyle: state.polylineStyle,
-    clustersEnabled: state.clustersEnabled,
+    polylineStyle: state.settings.polylineStyle,
+    clustersEnabled: state.settings.clustersEnabled,
   }
 }
 

@@ -1,18 +1,29 @@
-{% extends "admin.html.twig" %}
+{% extends "deliveries.html.twig" %}
 
 {% form_theme form 'form/time_slot.html.twig' %}
 
 {% block breadcrumb %}
+  {{ parent() }}
   {% set time_slot = form.vars.value %}
   <li><a href="{{ path('admin_time_slots') }}">{% trans %}adminDashboard.time_slots.title{% endtrans %}</a></li>
   {% if time_slot.id is not null %}
-  <li>#{{ time_slot.id }}</li>
+  <li>{{ time_slot.name }}</li>
   {% else %}
   <li>{{ 'basics.add'|trans }}</li>
   {% endif %}
 {% endblock %}
 
 {% block content %}
+
+<div class="bg-light d-flex align-items-center justify-content-between p-4 mb-4">
+  <label class="m-0">
+    {{ 'form.time_slot.preview_title'|trans }}
+    <i class="fa fa-refresh fa-spin fa fa-fw invisible" id="preview-loader"></i>
+  </label>
+  <div id="preview"
+    data-url="{{ path('admin_time_slot_preview') }}"></div>
+</div>
+
 {{ form_start(form) }}
   {{ form_row(form.name) }}
   {{ form_row(form.interval) }}
@@ -34,75 +45,26 @@
   <div id="simple" {% if is_advanced %}class="hidden"{% endif %}>
     {{ form_row(form.workingDaysOnly) }}
     {{ form_row(form.choices) }}
+    <div>
+      <button type="button" class="btn btn-success" id="simple-add"><i class="fa fa-plus"></i>  {{ 'basics.add'|trans }}</button>
+    </div>
   </div>
   <div id="advanced" {% if not is_advanced %}class="hidden"{% endif %}>
-    {{ form_row(form.openingHours) }}
+    {% set opening_hours_errors = [] %}
+    {% for key, value in form.openingHours %}
+      {% if not value.vars.valid %}
+        {% set opening_hours_errors = opening_hours_errors|merge([ key ]) %}
+      {% endif %}
+    {% endfor %}
+    {{ form_row(form.openingHours, { attr: { 'data-errors': opening_hours_errors|json_encode } }) }}
   </div>
-  <button type="submit" class="btn btn-block btn-primary">
+  <hr>
+  <button type="submit" class="btn btn-lg btn-block btn-primary">
     {{ 'basics.save'|trans }}
   </button>
 {{ form_end(form) }}
 {% endblock %}
 
 {% block scripts %}
-<script>
-var $collectionHolder;
-
-var $addTagButton = $('<button type="button" class="btn btn-success"><i class="fa fa-plus"></i>  {{ 'basics.add'|trans }}</button>');
-var $newLinkLi = $('<div></div>').append($addTagButton);
-
-function addChoiceForm($collectionHolder, $newLinkLi) {
-    var prototype = $collectionHolder.data('prototype');
-
-    var index = $collectionHolder.data('index');
-
-    var newForm = prototype;
-
-    newForm = newForm.replace(/__name__/g, index);
-
-    $collectionHolder.data('index', index + 1);
-
-    var $newFormLi = $('<div></div>').append(newForm);
-    $newLinkLi.before($newFormLi);
-}
-
-$('input[data-name="mode"]').on('click', function() {
-  var mode = $(this).attr('data-mode');
-  if (mode === 'advanced') {
-    $('#simple').addClass('hidden');
-    $('input[data-mode="simple"]').prop('checked', false);
-    $('input[data-mode="simple"]').closest('btn').removeClass('active');
-
-    $('#advanced').removeClass('hidden');
-    $('input[data-mode="advanced"]').closest('btn').addClass('active');
-  } else {
-    $('#advanced').addClass('hidden');
-    $('input[data-mode="advanced"]').prop('checked', false);
-    $('input[data-mode="advanced"]').closest('btn').removeClass('active');
-
-    $('#simple').removeClass('hidden');
-    $('input[data-mode="simple"]').closest('btn').addClass('active');
-  }
-});
-
-$(document).ready(function() {
-    $collectionHolder = $('#time_slot_choices');
-
-    $collectionHolder.append($newLinkLi);
-
-    $collectionHolder.data('index', $collectionHolder.find(':input').length);
-
-    $addTagButton.on('click', function(e) {
-        addChoiceForm($collectionHolder, $newLinkLi);
-    });
-
-    new CoopCycle.OpeningHoursInput(document.querySelector('#time_slot_openingHours'), {
-      locale: $('html').attr('lang'),
-      rowsWithErrors: [],
-      behavior: 'time_slot'
-    });
-
-});
-</script>
+{{ encore_entry_script_tags('time-slot-form') }}
 {% endblock %}
-

@@ -13,24 +13,13 @@ class QuoteHandler
 {
     private $eventRecorder;
     private $orderNumberAssigner;
-    private $orderTimeHelper;
 
     public function __construct(
         RecordsMessages $eventRecorder,
-        OrderNumberAssignerInterface $orderNumberAssigner,
-        OrderTimeHelper $orderTimeHelper)
+        OrderNumberAssignerInterface $orderNumberAssigner)
     {
         $this->eventRecorder = $eventRecorder;
         $this->orderNumberAssigner = $orderNumberAssigner;
-        $this->orderTimeHelper = $orderTimeHelper;
-    }
-
-    private function setShippingDate(OrderInterface $order)
-    {
-        if (null === $order->getShippingTimeRange()) {
-            $range = $this->orderTimeHelper->getShippingTimeRange($order);
-            $order->setShippingTimeRange($range);
-        }
     }
 
     public function __invoke(Quote $command)
@@ -38,11 +27,7 @@ class QuoteHandler
         $order = $command->getOrder();
 
         $this->orderNumberAssigner->assignNumber($order);
-        // FIXME
-        // We shouldn't auto-assign a date when it is a quote
-        // Keeping this until it is possible to choose an arbitrary date
-        // https://github.com/coopcycle/coopcycle-web/issues/698
-        $this->setShippingDate($order);
+
         $this->eventRecorder->record(new Event\CheckoutSucceeded($order));
     }
 }

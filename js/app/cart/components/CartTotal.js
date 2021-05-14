@@ -69,6 +69,10 @@ class CartTotal extends React.Component {
       adjustments = adjustments.concat(this.props.adjustments.reusable_packaging)
     }
 
+    if (Object.prototype.hasOwnProperty.call(this.props.adjustments, 'order_promotion')) {
+      adjustments = adjustments.concat(this.props.adjustments.order_promotion)
+    }
+
     if (Object.prototype.hasOwnProperty.call(this.props.adjustments, 'delivery_promotion')) {
       adjustments = adjustments.concat(this.props.adjustments.delivery_promotion)
     }
@@ -119,7 +123,6 @@ class CartTotal extends React.Component {
             <span>{ this.props.t('CART_TOTAL') }</span>
             <strong className="pull-right">{ (total / 100).formatMoney() }</strong>
           </div>
-          <hr />
         </div>
       )
     }

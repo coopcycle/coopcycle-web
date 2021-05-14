@@ -1,0 +1,1136 @@
+global.changesSaved: Els teus canvis s'han desat.
+navbar.login: Iniciar sessió
+navbar.myAccount: El meu compte
+base.footer.contactUs: Contacta'ns
+base.footer.help: Ajuda
+base.footer.legal: Avís legal
+base.footer.suggest: Suggereix un establiment
+adminDashboard.title: Tauler d’administrador
+adminDashboard.configuration: Configuració
+adminDashboard.tooltip.orders: Gestiona les comandes del restaurant
+adminDashboard.tooltip.deliveries: Gestiona les entregues
+adminDashboard.tooltip.stores: Gestiona les botigues
+adminDashboard.tooltip.restaurants: Gestiona els restaurants
+adminDashboard.tooltip.users: Gestiona els comptes d’usuari
+adminDashboard.dashboard.title: Panell
+adminDashboard.dashboard.import: Importa
+adminDashboard.dashboard.export: Exporta
+adminDashboard.dashboard.importTasks: Importar tasques
+adminDashboard.dashboard.exportTasks: Exportar tasques
+adminDashboard.dashboard.deleteTaskGroup: Suprimeix el grup de tasques
+adminDashboard.dashboard.displayByGroups: Visualització per grups
+adminDashboard.dashboard.displayAll: Mostra-ho tot
+adminDashboard.deliveries.title: Entregues
+adminDashboard.deliveries.type: Tipus
+adminDashboard.deliveries.dueDate: Data de venciment
+adminDashboard.deliveries.courier: Repartidor
+adminDashboard.deliveries.address: Adreça
+adminDashboard.deliveries.delivery: Entrega
+adminDashboard.deliveries.originAddress: Adreça de procedència
+adminDashboard.deliveries.deliveryAddress: Adreça d'entrega
+adminDashboard.embed.title: Pantalla externa
+embed.delivery.title: Formulari de creació de entregues
+embed.delivery.configure_pricing_rule_set: Primer has de configurar una regla de preus
+  per aplicar-la
+embed.delivery.iframe_code: Utilitzeu el codi HTML següent per incorporar el formulari
+  al vostre lloc web
+embed.breadcrumb.start: Informació
+embed.breadcrumb.summary: Resum
+embed.breadcrumb.confirm: Confirmació
+embed.delivery.summary.title: Resum de la vostra comanda
+embed.delivery.use_form_below: Utilitzeu el formulari següent per pagar la vostra
+  comanda amb targeta de crèdit
+embed.delivery.paid_at: Pagament realitzat a %date%
+embed.payment.heading: Paga la meva comanda
+embed.delivery.contact_heading: Contacte
+embed.delivery.specify_billing_address: Especifiqueu una adreça de facturació
+embed.delivery.billing_address: Adreça de facturació
+adminDashboard.menuCategories.menu: Menú
+adminDashboard.menuCategories.categories: Categories
+adminDashboard.menuCategories.addCategory: Afegir categoria
+adminDashboard.stores.title: Botigues
+adminDashboard.stores.createNew: Crea una nova botiga
+adminDashboard.stores.form.uploadImage: Carregueu una imatge
+adminDashboard.orders.title: Comandes
+adminDashboard.orders.previousOrders: Comandes anteriors
+adminDashboard.orders.showCanceled: Mostra les comandes cancel·lades
+adminDashboard.restaurants.title: Restaurants
+adminDashboard.restaurants.createNew: Crea un nou restaurant
+adminDashboard.restaurants.exclusive: Exclusiu
+adminDashboard.users.title: Usuaris
+adminDashboard.users.roles: Funcions
+adminDashboard.users.editUser: Edita l'usuari
+adminDashboard.users.edit.addStore: Afegeix una botiga
+adminDashboard.users.edit.addRestaurant: Afegeix un restaurant
+adminDashboard.users.createNew: Afegeix un usuari
+adminDashboard.settings.title: Configuració
+adminDashboard.pricing.title: Preu
+adminDashboard.pricing.manage: Gestiona
+adminDashboard.pricing.settings: Configuració
+adminDashboard.pricing.noPricings: Encara no hi ha preus
+adminDashboard.pricing.createNew: Crea un preu nou
+adminDashboard.pricing.noRuleFound: No s'ha trobat cap regla de preus. Les regles
+  de preus defineixen com es calcula el cost de lliurament.
+adminDashboard.pricing.addRule: Afegiu una regla
+adminDashboard.tags.title: Etiquetes
+adminDashboard.tags.createNew: Crea una etiqueta nova
+adminDashboard.tags.name: Nom
+adminDashboard.tags.color: Color
+adminDashboard.taxation.title: Impostos
+adminDashboard.taxation.button: Afegir impostos
+adminDashboard.zones.title: Zones
+adminDashboard.zones.uploadGeoJSON: Carregueu un fitxer GeoJSON
+adminDashboard.zones.send: Envia
+adminDashboard.back.title: Torna al lloc web
+adminDashboard.promotions.title: Promocions
+adminDashboard.pledges.title: Suggeriments
+adminDashboard.time_slots.title: Franges horàries
+deliveryForm.noPriceWarning: No es pot calcular cap preu. Introdueix-lo, si us plau.
+deliveryForm.noPriceFromPricingWarning: No es pot calcular cap preu a partir de les
+  tarifes. Introdueix-lo manualment o edita els preus.
+delivery.createNew: Crea una nova entrega
+delivery.tracking_link: Enllaç de seguiment
+delivery.with_id: 'Lliurament #%id%'
+help.title: Ajuda
+help.home: Inici
+restaurants.no_results: No hem trobat cap restaurant que coincideixi amb la cerca
+  ☹ <br> Prova amb una adreça diferent
+restaurants.visible_by_you_only: Només és visible per a tu
+restaurants.placeholder.title: Una mica de paciència …
+restaurants.placeholder.text: Properament arribaran nous restaurants!
+localBusiness.form.orderingDelayMinutes: Retard addicional abans de la comanda
+localBusiness.form.orderingDelayMinutes.help: Utilitza aquest camp per afegir un temps
+  addicional abans de la comanda d'un usuari. Aquest paràmetre no canvia els temps
+  de preparació del menjar ni el d'entrega.
+localBusiness.form.orderingDelayDays: Dia/Dies
+localBusiness.form.orderingDelayHours: Hora/Hores
+localBusiness.form.name: Nom
+localBusiness.form.description: Descripció
+localBusiness.form.legalName: Nom legal
+localBusiness.form.website: Lloc web
+localBusiness.form.telephone: Telèfon
+localBusiness.form.openingHours: Horari d'obertura
+localBusiness.form.deliveryPerimeterExpression: Zona o distància màxima de lliurament
+restaurant.available: Disponible
+restaurant.unavailable: No disponible
+restaurant.disabledWarning: "Aquest restaurant està desactivat de manera que els visitants\
+  \ no poden veure aquesta pàgina. Si vols, pots <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
+  > activar-lo a l'administrador </a>.\n"
+restaurant.closedWarningWithDelay: Demana ara per més endavant. Demana com a mínim
+  %delay% abans.
+restaurant.temporaryClosedWarning: Aquest restaurant està tancat fins el <strong>%
+  date% </strong>. Pots fer comanda per a més endavant!
+restaurant.noMenuWarning: "De moment aquest restaurant no té cap carta\n"
+restaurant.form.enabled.tooltip: "Si està desactivat, un restaurant no és visible\
+  \ al lloc web. No apareix als resultats de la cerca i la seva pàgina no és accessible\
+  \ pels visitants.\n"
+restaurant.form.allow_stripe_connect.label: Permet que el restaurant gestioni el compte
+  Stripe tot sol
+restaurant.form.temporaryClosingRule: Fes clic aquí per desactivar temporalment les
+  comandes al teu restaurant.
+restaurant.form.accessPlanning: Accedeix al calendari
+restaurant.form.createRestaurant: Crea un restaurant
+restaurant.contract.title: Contracte
+restaurant.deliveryPerimeterExpression.title: Perímetre d’entrega
+restaurant.deliveryPerimeterExpression.help: Defineix el perímetre acceptat per als
+  lliuraments. Podeu triar un radi (en km) o una zona
+restaurant.contract.minimumCartAmount.label: Comanda mínima
+restaurant.contract.flatDeliveryPrice.label: Import carregat per la plataforma
+restaurant.contract.flatDeliveryPrice.help: Aquest import no es mostrarà al carretó
+  i no augmentarà l'import total
+restaurant.contract.customerAmount.label: Import pagat pel client/a
+restaurant.contract.customerAmount.help: Aquest import apareixerà al carretó i n'augmentarà
+  l'import total
+restaurant.contract.feeRate.label: Percentatge de comissió de lliuraments
+restaurant.contract.feeRate.help: Aquest percentatge el retindrà la plataforma sobre
+  el total de productes
+restaurant.contract.restaurantPaysStripeFee.label: Responsable de la comissió Stripe,
+  devolucions i recàrrecs
+restaurant.contract.restaurantPaysStripeFee.help: Tria qui serà el responsable de
+  pagar la comissió de Stripe i de gestionar devolucions i recàrrecs
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurant
+restaurant.contract.restaurantPaysStripeFee.cooperative: Cooperativa
+restaurant.contract.onlyAdmin: Només un administrador pot editar els detalls del contracte.
+restaurant.contract.noContract: No existeixen condicions del contracte. Posa't en
+  contacte amb un administrador.
+restaurant.contract.showAdvanced: Mostra la configuració avançada
+restaurant.menus.noMenus: De moment no has creat cap carta.
+restaurant.menus.activate: Activa
+restaurant.menus.activated: S'ha activat la carta « % menu_name% ». Ara es mostrarà
+  a la pàgina del restaurant
+restaurant.closingForm.title: Afegiu un tancament temporal
+restaurant.closingForm.reason.label: Raó
+restaurant.closingForm.dates.label: Tancar de / a
+restaurant.list.manage: Gestiona
+restaurant.list.orders: Comandes
+restaurant.list.refunds: Devolucions
+restaurant.list.products: Productes
+restaurant.list.product_options: Opcions
+restaurant.list.menus: Menús
+restaurant.list.activeMenu: Menú actiu
+restaurant.list.planning: Planificació
+restaurant.list.settings: Configuració
+restaurant.list.norestaurant: Encara no hi ha restaurants
+restaurant.list.createNewRestaurant: Crea un nou restaurant
+restaurant.list.preparationTime: Preparació
+restaurant.list.stats: Estadístiques
+restaurant.product_options.help: "Aquesta secció li permet configurar elements addicionals\
+  \ per a configurables. <strong></strong>\n<br>\nPermeten, per exemple, agregar suplements\
+  \ o triar els elements d'un menú (acompanyament, beguda…)\n<br>\nPer a cada opció,\
+  \ pot definir una llista de valors\n"
+restaurant.product_options.list.values: Valors
+restaurant.form.uploadImage: Carregueu una imatge
+profile.addresses.breadcrumb: Adreces
+profile.addresses.empty: Encara no s'ha guardat cap adreça!
+profile.orders.empty: Encara no hi ha cap comanda!
+profile.myDeliveries: Les meves entregues
+profile.myStores: Les meves botigues
+profile.myRestaurants: Els meus restaurants
+profile.myRestaurants.noRestaurants: Encara no tens cap restaurant
+profile.myAccount: El meu compte
+profile.myTracking: El meu seguiment
+profile.myOrders: Les meves ordres
+profile.myAddresses: Les meves adreces
+profile.myPersonalInfo: Les meves dades personals
+profile.payment: Pagament
+profile.task.noTasks: No s’han programat tasques
+profile.task.dueDate: Data de venciment
+profile.task.address: Adreça
+profile.task.complete: Completa
+profile.task.date: Data
+profile.addresses.newAddress: Nova adreça
+profile.addresses.add: Afegiu
+profile.editProfile: Edita el perfil
+profile.payment.title: Pagament
+profile.payment.stripeConnected: El vostre compte Stripe està connectat
+profile.username: Nom d'usuari
+profile.email: Correu electrònic
+profile.telephone: Telèfon
+profile.familyName: Nom de familia
+profile.givenName: Nom donat
+profile.managedStores: Botigues gestionades per l’usuari
+profile.managedRestaurants: Restaurants gestionats per l’usuari
+profile.accountType: Tipus de compte
+order.cart.title: Cistell de compra
+order.items.products_with_count: Productes (%count%)
+order.summary.heading: Comanda %number% (#%id%)
+order.total_including_tax: Total (amb IVA)
+order.items_total: Total de productes
+order.total_tax: IVA
+order.total_tax_by_rate: Total %name%
+order.preparation_expected_at: Preparació esperada al %date%
+order.shipping_date.title: La vostra data d’enviament
+order.payment.title: Informació del teu pagament
+order.payment.expiration.label: Caducitat
+order.payment.month.label: Mes
+order.payment.year.label: Any
+order.payment.card_number.label: Número de targeta
+order.payment.total: Pagament %total%
+order.payment.cvc: CVC
+order.delivery_time: Lliurament %time%
+order.payment.card_number.help: Hem introduït un <a href="https://stripe.com/docs/testing#cards"
+  target="_blank" tabindex="-1">número de targeta de prova</a> stripe. No s'efectuarà
+  cap càrrec en compte.
+order.state.cart: Cistella de compra
+order.state.accepted: Acceptat
+order.state.refused: Refusat
+order.state.new: Nou
+order.state.fulfilled: Entregat
+order.state.cancelled: Cancel·lat
+payment.state.cart: Cistell de compra
+payment.state.new: Nou
+payment.state.authorized: Autoritzat
+payment.state.completed: Completat
+payment.state.failed: Fallat
+payment.state.cancelled: Cancel·lat
+payment.state.refunded: Reemborsat
+payment.state.refunded_partially: Parcialment reemborsat
+order.adjustment_type.delivery: Entrega
+order.adjustment_type.platform_fees: Comissions de CoopCycle
+order.list.total: Total
+order.list.shippedAt: Temps d’enviament
+order.list.type: Tipus
+order.list.customer: Client
+order.list.state: Estat
+order.list.summary: Resum
+order.list.summary.restaurant.text: Lliurament al restaurant <a href="%restaurant_url%">%restaurant_name%</a>
+order.list.summary.deleted_restaurant.text: Lliurament al restaurant %restaurant_name%
+order.list.summary.delivery.text: Entrega %distance%, %vehicle%
+order.list.receipt: Recibo
+vehicle.bike: Bicicleta
+vehicle.cargo_bike: Bicicleta de càrrega
+task.form.create: Crear tasca
+task.form.timeWindow: Finestra de temps
+task.form.showHistory: Mostra l'historial
+task.form.modal.moreOptions: Més opcions
+task.form.edit: Modifica la tasca %id%
+task.form.dateRange: Interval de dates
+task.form.finish: Acabar la tasca
+task.form.details: Detalls de la tasca
+task.form.finish.DONE.info: La tasca s'ha finalitzat amb èxit
+task.form.finish.FAIL.info: La tasca no s'ha pogut completar
+task.status.done: Èxit
+task.status.failed: Fallat
+task.status.todo: Fer
+form.task.courier.label: Repartidor
+form.task.comments.label: Comentaris
+form.task.comments.placeholder: Especifiqueu tots els detalls útils per realitzar
+  la tasca
+form.task.status.label: Estat
+form.task_event.notes.placeholder: 'Ex: adreça no trobada, cap problema …'
+form.task_event.notes.help: Podeu editar el comentari
+form.task_complete.done.label: Completa
+form.task_complete.fail.label: Informar del problema
+task.type.PICKUP: Recollida
+task.type.DROPOFF: Entrega
+task.previous_task_not_completed_yet: La tasca anterior no s'ha completat encara
+demo.disclaimer: <i class="fa fa-bullhorn"></i>  Benvingut a la demostració <a target="_blank"
+  href="https://coopcycle.org">CoopCycle</a> plataforma
+demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i
+  class="fa fa-info-circle"></i>  Com utilitzar aquesta demostració?</a>
+maintenance.disclaimer: El mode de manteniment està habilitat
+cart.widget.title: Les teves dades d’entrega
+cart.widget.button: Comanda
+checkout.breadcrumb.address: Adreça
+checkout.breadcrumb.payment: Pagament
+form.geojson_upload.file: Arxiu
+form.store_type.pricing_rule_set.label: Preu
+form.store_type.prefill_pickup_address.label: Omple l’adreça de recollida automàtica
+  prèviament
+form.store_type.create_orders.label: Crear comandes
+form.delivery.vehicle.VEHICLE_BIKE: Bicicleta
+form.delivery.vehicle.VEHICLE_CARGO_BIKE: Bicicleta de càrrega
+form.store_type.pricing_rule_set.placeholder: Trieu un preu
+form.store_type.setAsDefault.label: Definiu com a adreça predeterminada
+form.store_type.defaultAddress.label: Adreça predeterminada
+form.store_type.time_slot.label: Franja horària
+form.delivery.vehicle.placeholder: Trieu un tipus de vehicle
+form.delivery.pickup.label: Direcció de recollida
+form.delivery.dropoff.label: Adreça de lliurament
+form.delivery.weight.label: Pes
+form.delivery.vehicle.label: Bicicleta normal o bicicleta de càrrega?
+form.delivery.pickup.doneBefore.label: Data i horari de recollida
+form.delivery.dropoff.doneBefore.label: Data i horari de lliurament
+form.delivery.distance.label: Distància
+form.delivery.duration.label: Durada
+form.delivery.store.label: Botiga
+form.delivery.store.placeholder: Cerqueu una botiga …
+form.delivery.price.label: Preu
+form.order.accept.label: Accepta
+form.order.accept.help: Un cop acceptada la comanda, el client serà notificat per
+  correu electrònic.
+form.order.fulfill.label: Complir
+form.order.payment_complete.label: Completa
+form.order.payment_refund.label: Devolució
+form.order.refund_modal.title: Devolució
+form.payment.refund_amount.label: Import retornat
+form.payment.refund_amount.help: L’import que especifiqueu es retornarà al client
+form.address.addressLocality.label: Ciutat
+form.address.postalCode.label: Codi Postal
+form.address.description.label: Instruccions
+form.address.description.placeholder: 2a porta a l'esquerra …
+form.address.streetAddress.label: Adreça
+form.address.streetAddress.error.noLatLng: Seleccioneu una adreça al menú desplegable
+form.address.name.label: Nom
+form.address.name.placeholder: Casa, feina…
+form.address.company.label: Empresa
+form.pricing_rule_set.name.label: Nom
+form.pricing_rule_set.rules.label: Normes
+form.pricing_rule.price.label: Preu
+form.preparation_time_rule.expression.label: Expressió
+form.preparation_time_rule.time.label: Temps
+form.preparation_time.defaults_warning: "Aquest restaurant encara no té cap temps\
+  \ de preparació personalitzada. A continuació s’han copiat les regles predeterminades,\
+  \ les podeu canviar.\n"
+form.settings.date_time: Data i hora
+form.settings.brand_name.label: Nom de la marca
+form.settings.stripe.title: Compte de Stripe
+form.settings.stripe.help: 'Stripe és el servei de pagament que utilitzem per gestionar
+  targetes de crèdit. Per utilitzar la part de comerç electrònic de la plataforma
+  és necessari configurar aquesta secció, així com Stripe Connect. Stripe requereix
+  un preu de 0.25cts + 1.4% per pagament (up-to-date pricings <a href="https://stripe.com/fr/pricing">here</a>),
+  a càrrec del propietari de la botiga '
+form.settings.stripe_testmode.help: 'En el mode «test», haureu d’utilitzar <a href="https://stripe.com/docs/testing">prova
+  de targetes de crèdit</a> números a pagar a la plataforma. <strong>No es bescanviaran
+  diners.</strong> '
+form.settings.stripe_enable_livemode.help: Per activar el mode «en viu», primer heu
+  de configurar les tecles «en viu».
+form.settings.stripe_publishable_key.label: Clau publicable de Stripe
+form.settings.stripe_publishable_key.help: "Creeu un compte Stripe per obtenir-ne\
+  \ <a href=\"https://stripe.com/docs/dashboard#api-keys\">clau publicable</a>\n"
+form.settings.stripe_secret_key.label: Clau secreta de Stripe
+form.settings.stripe_secret_key.help: "Creeu un compte Stripe per obtenir-ne <a href=\"\
+  https://stripe.com/docs/dashboard#api-keys\">clau publicable</a>\n"
+form.settings.stripe_connect_client_id.label: Stripe Connect identificador
+form.settings.stripe_connect_client_id.help: "Obteniu l'identificador a la secció\
+  \ <a href=\"https://dashboard.stripe.com/account/applications/settings\">pàgina\
+  \ de paràmetres</a>\n"
+form.settings.latlng.label: Coordenades geogràfiques
+form.settings.latlng.help: "Especifiqueu la latitud i la longitud predeterminades.\
+  \ Podeu continuar <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
+form.settings.administrator_email.label: Correu electrònic de l'administrador
+form.settings.administrator_email.help: Les notificacions s’enviaran a aquest correu
+  electrònic
+form.settings.phone_number.label: Número de telèfon
+form.settings.phone_number.help: Aquest número es mostrarà als clients
+form.settings.enable_restaurant_pledges.label: Permet als clients suggerir restaurants
+form.suggest.name.label: Nom
+form.suggest.name.help: Indiqueu el nom exacte perquè el puguem trobar
+form.suggest.submit.label: Suggeriu ara
+form.suggest.message: "No trobes el teu restaurant preferit?\n<br>\nDona'ns el seu\
+  \ nom i l'adreça. \n<br>\nAixò ens permetrà contactar-hi per a poder incloure'ls\
+  \ al nostre llistat de restaurants.\n"
+form.suggest.thank_you_message: Gràcies per suggerir aquest restaurant!
+restaurant.suggest.message: "Ajuda'ns a convèncer a %restaurant.name% per treballar\
+  \ %brand_name%!\n<br>\nPer veure-la a la plataforma, necessitem que vosaltres i\
+  \ la vostra veu recolzeu la nostra futura sol·licitud de col·laboració amb aquesta\
+  \ marca.\n"
+restaurant.suggest.vote: Vota per %name%
+pledge.suggested_by: Suggerida per @%username%
+restaurant.suggest.has_voted: Ja heu votat aquest restaurant!
+restaurant.suggest.banner_disclaimer: Aquest restaurant no està disponible de moment.
+  Vota per %restaurant.name%!
+pledge.vote_count_equals_two: '%first_user% i %second_user% han votat per aquest restaurant'
+pledge.vote_count_equals_one: '%username% ha votat a favor d’aquest restaurant'
+pledge.accept: Accepta
+pledge.reject: Rebutjar
+form.maintenance.enable.label: Habilita el manteniment
+form.maintenance.disable.label: Desactiva el manteniment
+form.maintenance.enable.alert: Activareu el mode de manteniment. <br>Només els administradors
+  tindran accés al lloc.
+form.maintenance.disable.alert: Inhabilitareu el mode de manteniment
+form.maintenance.message.label: Missatge
+mardown_formatting.help: Podeu formatar el text mitjançant la sintaxi de Markdown
+form.banner.enable.label: Activa el banner
+form.banner.disable.label: Desactiva el banner
+form.banner.enable.alert: Heu d'activar el banner
+form.banner.disable.alert: Heu de desactivar el banner
+form.banner.message.label: Missatge a mostrar en banner
+form.stripe_livemode.enable.label: Utilitzeu Stripe en mode «en viu»
+form.stripe_livemode.enable.alert: En mode «en viu», es carregarà targeta de crèdit.
+form.stripe_livemode.disable.label: Utilitzeu Stripe en mode «test»
+form.stripe_livemode.disable.alert: En el mode «test», no es carregarà cap targeta
+  de crèdit.
+form.stripe_livemode.disable_and_enable_maintenance.label: Canvieu al mode «test»
+  i activeu el manteniment
+form.stripe_livemode.disable_and_enable_maintenance.alert: Et trobes en mode «en viu».
+  <br> Si canvieu al mode «test», el manteniment s’activarà automàticament.
+form.settings.currency_code.label: Moneda
+form.delivery_embed.name.label: Nom
+form.delivery_embed.name.help: El vostre nom o nom de l'empresa
+form.delivery_embed.telephone.label: Número de telèfon
+form.delivery_embed.vehicle.disclaimer: Lliurem amb bicicleta de càrrega articles
+  de més de 50x40x20 (cm) i/o el pes dels quals excedeixi els 6 kg.
+form.registration.username.help: "El vostre nom d’usuari no pot ser superior a 15\
+  \ caràcters. Un nom d'usuari només pot contenir caràcters alfanumèrics (lletres\
+  \ A-Z, números 0-9) a excepció dels guions baixos.\n"
+form.local_business.stripe_account.title: Compte de Stripe
+form.local_business.mercadopago_account.title: Compte de MercadoPago
+form.local_business.stripe_account.help: Connecteu un compte Stripe per transferir
+  diners a un altre compte bancari
+form.local_business.stripe_account.connect_button.text: Connecta amb Stripe
+form.local_business.stripe_account.not_configured: Encara no podeu connectar cap compte
+form.local_business.stripe_account.success: Compte de Stripe connectat correctament
+form.local_business.stripe_account.need_stripe_account: "Encara no heu creat un compte\
+  \ Stripe per a aquest restaurant. Stripe és una plataforma de pagaments que ens\
+  \ permet gestionar de forma segura els pagaments amb targeta i les transferències\
+  \ al vostre compte bancari.<br>\nPer crear un compte Stripe per a aquest restaurant,\
+  \ si us plau <a href=\"%stripeAuthorizeURL%\">clica aquí</a>.\n"
+form.local_business.stripe_account.link_ok: "Aquest restaurant està enllaçat a un\
+  \ compte Stripe i pot rebre pagaments de la plataforma.<br>\nPer gestionar el vostre\
+  \ compte Stripe i les transferències al vostre compte, utilitzeu el botó<a href=\"\
+  https://dashboard.stripe.com/\" target=\"_blank\">Stripe dashboard</a>.\n"
+form.menu_item.name.label: Nom
+form.menu_item.price.label: Preu
+form.menu_item_modifier.name.label: Nom
+form.menu_item_modifier.price.label: Preu
+form.menu_item_modifier.calculusStrategy.label: Càlcul de preus
+form.menu_taxon.name.label: Nom
+form.menu_taxon.add_child.label: Afegeix una secció
+form.menu_taxon.child_name.placeholder: "Exemple: plats principals, postres ...\n"
+form.menu_editor.products_panel.title: Productes
+form.menu_editor.save.label: Guardar canvis
+form.menu_editor.help: "Utilitzeu l'editor següent per escriure els elements del menú\n\
+  <br>\nDrag and drop the products into the sections on the left\n<br>\nSi voleu eliminar\
+  \ un producte del menú, deixeu-lo a la secció \"Productes\" de la dreta\n<br>\n\
+  No us oblideu de fer clic al botó «Desa els canvis» a continuació\n"
+form.menu_editor.products.help: Per a afegir productes en la llista de la dreta, agregalos
+  al <a href="%products_url%">catàleg</a>primer
+form.menu_editor.taxon_modal.title: Modificar una secció
+form.product.name.label: Nom
+form.product.description.label: Descripció
+form.product.price.label: Preu
+form.product.taxCategory.label: Impostos
+form.product.enabled.label: Habilitat
+form.product.allergens.label: Al·lèrgens
+form.product.allergens.help: Aquest producte conté els següents al·lèrgens?
+form.product.restricted_diets.label: Dietes restringides
+form.product.restricted_diets.help: Aquest producte s’adapta a les dietes següents?
+form.product.confirm.label: Confirmeu els canvis
+form.product.confirm.help: "Has canviat el nom del producte. Si és un <strong>modificació\
+  \ menor</strong> (error d'ortografia, majúscula…), faci clic a « Confirmar canvis\
+  \ ».\n<br>\nSi no, ha de crear <a href=\"%link%\">un nou producte</a>, perquè pugui\
+  \ distingir els productes que embeni i mantenir un historial. "
+form.product_option.name.label: Nom
+form.product_option.strategy.label: Càlcul de preus
+form.product_option.add_value.label: Valor afegit
+form.product_option.values.title: Valors
+form.product_option.values.help: Heu de definir una llista de valors per aquesta opció
+form.product_option.additional.label: Aquesta opció és addicional
+form.product_option.additional.help: El client pot triar diversos valors sense haver
+  de triar almenys un
+form.product_option_value.value.label: Valor
+form.product_option_value.price.label: Preu
+form.checkout_address.notes.label: Deixa un comentari per al restaurant
+form.checkout_address.notes.placeholder: "Exemple: sense salsa, sense tomàquets ...\n"
+form.checkout_address.notes.help: El teu comentari serà enviat al restaurant
+form.checkout_address.promotion_coupon.label: Codi de cupó
+form.checkout_address.telephone.label: Número de telèfon
+form.task_export.start.label: Començar
+form.task_export.end.label: Final
+form.api_app.name.label: Nom de l'aplicació
+form.api_app.store.label: Botiga
+form.api_app.client_id.label: Identificador
+form.api_app.client_secret.label: Clau secreta
+form.credit_note.user_search.help: La promoció només serà utilitzada per aquest usuari
+form.credit_note.amount.label: Import
+form.credit_note.name.label: Nom
+form.credit_note.name.help: El nom de la promoció que es mostrarà al Cistell de compra
+form.resend_confirmation_email.submit.label: Torna a enviar el correu electrònic
+form.embed_settings.with_vehicle.label: Afegiu l'opció del vehicle
+form.time_slot.name.label: Nom
+form.time_slot.choices.label: Eleccions
+form.time_slot_choice.start_time.label: Hora d'inici
+form.time_slot_choice.end_time.label: Temps de finalització
+promotion_coupon.used.label: Nombre d’usos
+product_option.strategy.free: Gratuït
+product_option.strategy.option_value: Cada opció té un preu diferent
+roles.ROLE_ADMIN: Administrador
+roles.ROLE_COURIER: Repartidor
+roles.ROLE_RESTAURANT: Restaurant
+roles.ROLE_STORE: Botiga
+roles.ROLE_USER: Usuari
+user.edit.roles.help: Configura els permisos d’aquest usuari
+user.edit.enabled.help: Un usuari desactivat serà desconnectat i no es pot tornar
+  a iniciar a la plataforma.
+user.profile.familyName: Nom de familia
+user.profile.givenName: Nom donat
+roles.ROLE_ADMIN.help: "Administrador: accés a totes les funcions\n"
+roles.ROLE_COURIER.help: "Missatger: veure les tasques d’espera, modificar les tasques\
+  \ assignades ...\n"
+roles.ROLE_RESTAURANT.help: 'Propietari del restaurant: gestiona els restaurants assignats,
+  gestiona les comandes …'
+roles.ROLE_STORE.help: 'Propietari de la botiga: gestiona les botigues assignades,
+  gestiona els enviaments …'
+stores.manage: Gestiona
+stores.settings: Configuració
+stores.createNewDelivery: Crea un nou lliurament
+stores.users: Usuaris
+stores.pricing_rule_set: Preu
+stores.api_keys: Claus API
+stores.deliveries: Entregues
+stores.deliveries.heading: 'Entrega #%delivery_id% - %delivery_distance%'
+stores.deliveries.task_unassigned: No adscrit
+stores.addresses: Adreces
+meta.title: Plataforma de entrega per a empreses de treballadors
+admin.settings.missing_mandatory_settings: "Falta la configuració obligatòria.\nAnar\
+  \ a <a href=\"%settings_url%\">pàgina de configuració</a>per configurar-les.\n"
+index.map.tip: Utilitzeu el mapa següent per trobar restaurants
+index.banner: Menjars deliciosos del restaurant a la teva casa.
+index.our_restaurants: Els nostres restaurants
+index.view_all_restaurants: Veure tots els restaurants
+notifications.empty: No hi ha notificacions
+adminDashboard.statistics: Estadístiques
+adminDashboard.activity.title: Activitat
+activity.task.created: "@%owner% tasca creada #task/%aggregate_id%\n"
+activity.task.assigned: "@%owner% tasca assignada #task/%aggregate_id%\n"
+activity.task.unassigned: "@%owner% tasca no assignada #task/%aggregate_id%\n"
+activity.task.done: "@%owner% tasca completada #task/%aggregate_id%\n"
+activity.task.failed: "@%owner% no es pot completar task #task/%aggregate_id%\n"
+activity.task.cancelled: "@%owner% ha cancel·lat la tasca #task/%aggregate_id%\n"
+activity.order.created: "Comanda #order/%aggregate_id% ha estat creat per @%owner%\n"
+activity.order.accepted: "Comanda #order/%aggregate_id% ha estat acceptada\n"
+activity.order.refused: "Comanda #order/%aggregate_id% ha estat rebutjada\n"
+activity.order.picked: "@%owner% ha rebut la comanda #order/%aggregate_id%\n"
+activity.order.dropped: "@%owner% ha entregat la comanda #order/%aggregate_id%\n"
+activity.order.fulfilled: "Comanda #order/#%aggregate_id% és complerta\n"
+social.sign_in_with_facebook: Inicieu la sessió amb Facebook
+embed.delivery.summary: "Has fet una comanda que serà lliurada el <strong>%dropoff_date%</strong>\
+  \ a l'adreça següent: <strong>%dropoff_adress%</strong> <br> Hem calculat un trajecte\
+  \ de <strong>%distance% quilòmetres</strong>. <br> El preu total del lliurament\
+  \ és de <strong>%total_excluding_tax% (sense IVA); </strong> %total_including_tax%\
+  \ (amb IVA). <br><br>Si algun dels detalls esmentats és incorrecte, pots canviar-ho\
+  \ fent clic a \"Editar\". "
+embed.delivery.submit.help: Fes clic per a confirmar la comanda i realitzar el lliurament.
+embed.delivery.confirm_message: La seva comanda de lliurament s'ha realitzat i rebrà
+  un resum per correu electrònic en breu. Verificarem la seva comanda i li enviarem
+  un correu electrònic de confirmació al més aviat possible.
+pagination.previous: Anterior
+pagination.next: Seguent
+basics.save: Desa
+basics.next: Següent
+basics.continue: Continuar
+basics.powered_by: Impulsat per <a href="https://coopcycle.org">CoopCycle</a>
+basics.add: Afegir
+basics.edit: Editar
+basics.delete: Suprimir
+basics.cancel: Cancel · lar
+basics.open: Obert
+basics.tomorrow: Demà
+basics.price: Preu
+basics.tax_category: IVA
+basics.export: Exporta
+basics.name: Nom
+basics.today: Avui
+basics.are_you_sure: Estàs segur?
+basics.no_entries: Encara no hi ha cap element
+basics.created_at: Creat a %date%
+profile.password.change: Canvia la teva contrasenya
+authentication.forgot_password: Has oblidat la contrasenya?
+authentication.not_registered_yet: No estas registrat encara?
+authentication.create_account: Crea el teu compte
+authentication.already_registered: Ja estas registrada?
+authentication.sign_in: Iniciar sessió
+maintenance.text: 'Lloc en fase de manteniment: tornarem aviat'
+api_apps.breadcrumb: Clients API
+api_apps.created.message: S'ha afegit el client. Feu servir les credencials següents
+  per autenticar-vos.
+promotions.breadcrumb: Promocions
+promotions.breadcrumb.new_credit_note: Nova nota de crèdit
+promotions.heading.free_delivery: Enviament gratuït
+promotions.heading.free_delivery.help: Crea cupons de promoció per oferir entregues
+promotions.heading.credit_note: Cupons
+promotions.heading.credit_note.help: Creeu cupons exclusius per als clients
+promotions.promotion_coupon.success: El vostre codi de cupó %code% s’ha tingut en
+  compte
+promotions.add_free_delivery_coupon: Afegiu un cupó de promoció «enviament gratuït»
+promotions.create_credit_note_coupon: Afegir un cupó
+delivery.table.heading.summary: Resum
+delivery.table.heading.courier: Repartidor
+delivery.table.heading.order: Comanda
+search.users: Cerca un usuari …
+allergens.CEREALS_CONTAINING_GLUTEN: Cereals que contenen gluten
+allergens.CRUSTACEANS: Crustacis
+allergens.EGGS: Ous
+allergens.FISH: Peix
+allergens.PEANUTS: Cacauets
+allergens.SOYBEANS: Soja
+allergens.MILK: Llet
+allergens.NUTS: Nous
+allergens.CELERY: Api
+allergens.MUSTARD: Mostassa
+allergens.SESAME_SEEDS: Llavors de sèsam
+allergens.SULPHUR_DIOXIDE_SULPHITES: Diòxid de sofre i sulfits
+allergens.LUPIN: Tramús
+allergens.MOLLUSCS: Mol·luscs
+restricted_diets.DIABETIC_DIET: Diabètic
+restricted_diets.GLUTEN_FREE_DIET: Sense gluten
+restricted_diets.HALAL_DIET: Halal
+restricted_diets.HINDU_DIET: Hindú
+restricted_diets.KOSHER_DIET: Kosher
+restricted_diets.LOW_CALORIE_DIET: Baixes calories
+restricted_diets.LOW_FAT_DIET: Baix en greixos
+restricted_diets.LOW_LACTOSE_DIET: Baixa lactosa
+restricted_diets.LOW_SALT_DIET: Baix en sal
+restricted_diets.VEGAN_DIET: Vegana
+restricted_diets.VEGETARIAN_DIET: Vegetariana
+time_slot.human_readable: '%day% entre %start% i %end%'
+resend_confirmation_email.disclaimer: Si no heu rebut el correu electrònic de confirmació,
+  feu clic al botó.
+sylius.ui.code: Codi
+sylius.form.promotion_coupon.per_customer_usage_limit: Per límit d’ús del client
+adminDashboard.package_sets.title: Paquets
+form.store_type.package_set.label: Conjunt de paquets
+form.delivery.package.label: Paquet
+form.delivery.packages.label: Paquets
+adminDashboard.tags.confirm_delete: "Segur que voleu suprimir aquesta etiqueta? \n\
+  Serà eliminada dels respectius elements que l'utilitzen i l'etiqueta ja no els agruparà\
+  \ més."
+restaurant.stats.order_number: Número d'ordre
+restaurant.stats.delivered_on: Entregat el
+restaurant.stats.total_products_including_all_taxes: Total de productes incloent tots
+  els impostos
+restaurant.stats.total_products_excluding_taxes: Total de productes sense impostos
+restaurant.stats.delivery: Entrega
+form.time_slot.interval.label: Interval
+form.package_set.name.label: Nom
+form.package_set.packages.label: Paquets
+form.package.name.label: Nom
+form.package.volume_units.label: Unitats de volum
+basics.date_range: Des de %start% fins a %end%
+basics.total_including_tax: Total, inclosos tots els impostos
+basics.stripe_fees: Comissions de Stripe
+basics.platform_fees: Comissions de la plataforma
+basics.net_income: Ingressos nets
+localBusiness.form.openingHoursBehavior.asap: Tan aviat com sigui possible
+localBusiness.form.shippingOptionsDays: Opcions d'entrega (en dies)
+adminDashboard.users.invite: Convida un usuari
+form.user.quotes_allowed.label: Permet a aquest usuari sol·licitar un pressupost
+restaurant.form.fulfillment_methods.label: Mètodes d'execució
+restaurant.form.section.general: General
+restaurant.form.section.options: Opcions
+restaurant.form.section.fulfillment: Execució
+restaurant.form.section.payment: Pagament
+restaurant.form.section.settlement: Liquidació
+localBusiness.form.openingHoursBehavior: Comportament de l'horari d'obertura
+restaurant.contract.variableCustomerAmount.help: El preu pagat es calcularà utilitzant
+  la tarifa seleccionada
+restaurant.contract.variableCustomerAmount.placeholder: Si us plau selecciona un conjunt
+  de regles de preus
+restaurant.contract.variableCustomerAmountEnabled.label: Habilita la quantitat variable
+  pagada pel client
+restaurant.contract.takeAwayFeeRate.label: Tarifa de la plataforma per endur
+restaurant.contract.takeAwayFeeRate.help: Aquest percentatge serà retingut per la
+  plataforma del total dels productes
+restaurant.form.noPricingRule: Cap tarifa de preus ha estat implementada, <a href="%editPricingRule%">fes
+  clic aquí per crear-ne una</a>.
+restaurant.form.deposit_refund_enabled.label: Habilita el sistema de devolució de
+  dipòsits
+restaurant.form.exclusive.label: Aquest restaurant és exclusiu
+restaurant.form.quotes_allowed.label: "Aquest restaurant també accepta comandes amb\
+  \ pressupost (per exemple, càterings)"
+restaurant.contract.variableDeliveryPrice.label: Quantitat cobrada per la plataforma
+  (variable)
+restaurant.contract.variableDeliveryPriceEnabled.label: Habilita la quantitat variable
+  que cobra la plataforma
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: La quantitat es calcula
+  dinàmicament
+order.total_excluding_tax: Total (sense IVA)
+order.payment.waiting_for_confirmation: Esperant la confirmació del seu banc…
+order.payment.do_not_close: No tanqui aquesta pàgina
+order.payment.waiting_success: El seu banc ha confirmat el pagament
+order.payment.waiting_failure: El seu banc ha rebutjat el pagament
+order.notes: Notes dels clients
+order.adjustment_type.tip: Propina
+order.list.generate_receipt: Generar
+form.task.telephone.label: Telèfon
+form.task.recipient.label: Contacte
+form.delivery.weight.help: Si us plau, indiqui el pes en grams (1kg = 1000g)
+form.delivery.to_be_confirmed.warning: Vostè ha de confirmar l'ordre
+form.delivery.has_order.info: Aquest lliurament aquesta vinculada a una ordre
+form.settings.company_logo.help: Aquest logo s'usarà per a factures i comprovants
+  de lliurament
+form.product.reusable_packaging_enabled.label: Habiliti l'emboltori reutilitzable
+  per aquest producte
+form.product.reusable_packaging.label: Tipus d'emboltori reutilitzable
+form.product.reusable_packaging_unit.label: Nombre d'unitats
+form.product_option.preview_title: Opció vista prèvia
+form.checkout_address.reusable_packaging_enabled.label: Vull envasos reutilitzables
+  (%preu%)
+form.checkout_address.takeaway.disclaimer: Has optat per fer clic i recollir. Vostè
+  és responsable de recollir la seva comanda el dia i l'hora seleccionats.
+form.checkout_address.takeaway.contact: Si té algun problema, contacti amb l'establiment
+  %telèfon%.
+form.checkout_address.takeaway.no_show_disclaimer: "Tingui en compte: si no recull,\
+  \ se li cobrarà l'import total de la comanda."
+form.checkout_address.reusable_packaging.loopeat.learn_more: Saber més sobre LoopEat
+form.embed_settings.with_weight.label: Consultar pes de béns
+form.time_slot.working_days_only.label: Permetre seleccionar només dies laborals
+form.reusable_packaging.name.label: Nom
+form.reusable_packaging.is_tracked.label: Seguiment habilitat
+form.reusable_packaging.price.label: Preu
+form.reusable_packaging.on_hand.label: Quantitat
+form.deposit_refund_settings.deposit_refund_optin.label: El sistema de reemborsament
+  és opcional
+form.new_order.variant_name.label: Nom del producte
+form.new_order.variant_name.help: El nom que apareixerà en el resum de la comanda
+  i la factura
+form.new_order.variant_price.label: Preu
+restaurant.quotes_disclaimer.authenticated: Aquest restaurant també accepta comandes
+  amb pressupost. Per fer un pressupost, ha de ser un client referenciat.<a href="%contact_us%">Contacta
+  amb nosaltres </a>per a més informació.
+index.our_shops: Botigues locals
+index.view_all_shops: Veure totes les botigues
+form.checkout_address.reusable_packaging_loopeat_enabled.label: Vull usar contenidors
+  LoopEat
+form.checkout_address.add_promotion.label: Aplicar
+form.checkout_address.tip_amount.label: Propina
+form.checkout_address.tip_amount.help: Moltes gràcies❤
+form.checkout_address.add_tip.label: Aplicar
+form.checkout_address.quote.label: Sol·licitar pressupost
+form.credit_note.restaurant.help: El descompte només es podrà utilitzar per a demanar
+  en aquest restaurant. Deixi buit per a aplicar a tots els restaurants.
+restaurant.form.loopeat_enabled.label: Habilita el sistema de dipòsit i reemborsament
+  de LoopEat
+basics.updated_at: Actualitzat en %date%
+basics.send_invitation: Enviar una invitació
+basics.send_invitation.confirm: La teva invitació ha estat enviada! Ara pot editar
+  els ajustos del nou usuari.
+time_range: entre %start% i %end%
+time_range.same_day: '[Avui] [%range%]'
+time_range.next_day: '[Demà] [%range%]'
+time_range.last_day: '[Ahir] [%range%]'
+deliveries.sort.newest: La més nova primer
+deliveries.sort.oldest: Els més vells primer
+deliveries.filter.clear: Mostrar tot
+orders.new: Nova comanda
+orders.payment_link.send_by_email: Enviar enllaç de pagament per correu electrònic
+orders.payment_link.sent: Email enviat amb èxit
+orders.payment_refunded: Pagament reemborsat amb èxit
+form.min_max.lower.label: Número mínim
+form.min_max.upper.label: Número màxim
+form.local_business.iso_code.fr.siret: Número SIRET
+form.local_business.iso_code.fr.vat_number: Número IVA
+form.local_business.iso_code.fr.rcs_number: Número RCS
+form.local_business.iso_code.ar.cuit: Número CUIT/CUIL
+receipt.title: 'Rebut de la comanda #%number%'
+receipt.line_item.name: Producte
+receipt.line_item.unit_price: preu d'unitat
+receipt.line_item.quantity: Quantia
+receipt.line_item.total: Total
+receipt.footer_item.total_products: Total de productes
+receipt.footer_item.total_excl_tax: Total (sense IVA)
+receipt.footer_item.total_incl_tax: Total (amb IVA)
+receipt.total: Total (amb IVA)
+receipt.emitter_details: Comanda al restaurant <strong>%restaurant_name%</strong>
+delivery.import.success_message: El seu arxiu es va processar correctament, es van
+  crear %count% lliuraments
+form.delivery_import.store.label: Botiga
+basics.view_example: Veure exemple
+notifications.restaurant.new_order: Nova comanda per confirmar
+task.receipt.message: Per la present confirmem que hem lliurat el seu paquet en <strong>%address%</strong>
+  a <strong>%date%</strong>
+task.receipt.received_by: El paquet va ser rebut per <strong>%name%</strong>
+task.receipt.reference: 'Referència: <strong>%ref%</strong>'
+basics.hours: '%count% hour|%count% hores'
+basics.days: '%count% day|%count% dies'
+basics.weeks: '%count% week|%count% setmanes'
+basics.none: Cap
+basics.yes: Si
+basics.no: No
+notifications.messenger_approaching: Hey %customer% El nostre missatger %messenger%
+  està gairebé amb tu. Prepara't!
+order.export.heading.restaurant_name: Restaurant
+order.export.heading.order_number: Número de comanda
+order.export.heading.completed_at: Completat en
+order.export.heading.total_products_excl_tax: Productes totals (sense IVA)
+order.export.heading.total_products_incl_tax: Productes totals (amb IVA)
+order.export.heading.packaging_fee: Embalatge
+order.export.heading.total_incl_tax: Total (amb IVA)
+order.export.heading.stripe_fee: Comissió Stripe
+order.export.heading.platform_fee: Comissió plataforma
+order.export.heading.net_revenue: Ingressos nets
+order.export.heading.completed_by: Completat per
+form.order_export.messenger.label: Agregar una columna amb el/la missatger que va
+  completar la comanda
+basics.show: Mostrar
+basics.hide: Ocultar
+food_establishment.BAR_OR_PUB: Bar o Pub
+food_establishment.CAFE_OR_COFFEE_SHOP: Cafetería
+food_establishment.DISTILLERY: Destil·leria
+food_establishment.FAST_FOOD_RESTAURANT: Restaurant de menjar ràpid
+food_establishment.ICE_CREAM_SHOP: Gelateria
+food_establishment.RESTAURANT: Restaurant
+food_establishment.WINERY: Celler
+store.BIKE_STORE: Botiga de bicicletes
+store.BOOK_STORE: Llibreria
+store.CLOTHING_STORE: Tenda de roba
+store.COMPUTER_STORE: Tenda de Informàtica
+store.CONVENIENCE_STORE: Tenda de comoditat
+store.DEPARTMENT_STORE: Grans magatzems
+store.ELECTRONIC_STORE: Botiga d'electrònica
+store.FLORIST: Floristeria
+store.FURNITURE_STORE: Mueblería
+store.GARDEN_STORE: Botiga de jardineria
+store.GROCERY_STORE: Botiga d'alimentació
+store.HARDWARE_STORE: Ferreteria
+store.HOBBY_SHOP: Tenda de passatemps
+store.HOME_GOODS_STORE: Botiga d'articles per a la llar
+store.JEWELRY_STORE: Joieria
+store.LIQUOR_STORE: Licorería
+store.MENS_CLOTHING_STORE: Botiga de roba d'home
+store.MOBILE_PHONE_STORE: Botiga de telefonia
+store.MOVIE_RENTAL_STORE: Vídeo club
+restaurant.form.loopeat_disconnect.label: Desconnecta LoopEat
+restaurant.form.featured.label: Aquest restaurant apareix en la pàgina d'inici
+restaurant.contract.variableDeliveryPrice.help: L'import cobrat es calcularà utilitzant
+  el conjunt de regles de preus seleccionats
+restaurant.contract.variableDeliveryPrice.placeholder: Si us plau seleccioni una tarifa
+  de preus
+restaurant.list.depositRefund: Reemborsament de dipòsit
+restaurant.list.promotions: Promocions
+form.settings.company_logo.label: Logo d'empresa
+store.MUSIC_STORE: Botiga de música
+store.SPORTING_GOODS_STORE: Botiga d'esport
+store.TIRE_SHOP: Botiga de pneumàtics
+store.TOY_STORE: Botiga de joguines
+store.WHOLESALE_STORE: Magatzem a l'engròs
+order.reusable_packaging.alert: Aquesta comanda ha d'estar en un paquet reutilitzable
+order.public_link: Enllaç per a compartir
+order.payments: Pagaments
+order.adjustment_type.reusable_packaging: Embalatge
+order_item.adjustment_type.reusable_packaging: '%quantity% × paquet(s)'
+form.task.address.label: Adreça
+form.task.recipient.help: Especifiqui nom de la persona de contacte
+form.task.dropoff.doorstep.label: Llindar de lliurament
+form.delivery.pickup.address_placeholder: Número de casa i nom del carrer, àrea, codi
+  postal, ciutat
+form.delivery.dropoff.address_placeholder: Número de casa i nom del carrer, àrea,
+  codi postal, ciutat
+form.delivery.time_slot.label: Interval de temps
+form.delivery.view_order: Veure demanat
+form.order.refuse.label: Rebutjar
+basics.view: Veure
+basics.import: Importar
+store.OFFICE_EQUIPMENT_STORE: Botiga material d'oficina
+store.OUTLET_STORE: Botiga Outlet
+store.SHOE_STORE: Sabateria
+form.local_business_type.label: Tipus de negoci
+order.export.heading.delivery_fee: Despeses d'enviament
+food_establishment.BREWERY: Cerveseria
+store.AUTO_PARTS_STORE: Botiga de recanvis
+form.delivery_import.file.label: Arxiu
+profile.loopeat.connect: Connectar el meu compte de LoopEat
+profile.loopeat.connected: Compte de LoopEat connectada
+basics.free: gratis
+store.PAWN_SHOP: Casa de préstecs
+store.PET_STORE: Botiga de mascotes
+food_establishment.BAKERY: Forn de pa
+form.time_slot.prior_notice_hours.label: Avís previ (hores)
+restaurant.form.giropay_enabled.label: Habilita Giropay
+activity.task.started: "@%owner% va començar tasca #task/%*aggregate_id%\n"
+form.min_max.infinity.label: Sense màxim
+receipt.billing_details: Comanda pagada amb targeta de crèdit el %date%
+task.receipt.greeting: Estimat client,
+task.receipt.attached_images: Imatges adjuntes
+basics.copy: Copiar
+form.local_business_type.food_establishment: Establiment de menjar
+form.local_business_type.store: Botiga
+form.local_business_type.help: Els tipus estan usant el <a href="https://schema.org/">schema.org</a>
+  vocabulari per a <a href="https://schema.org/FoodEstablishment">establiments de
+  menjar</a> i <a href="https://schema.org/Store">botigues</a>
+localBusiness.form.enabled: Activat
+notifications.tasks_changed: Tasca per a %date% canviada!
+localBusiness.form.openingHoursBehavior.time_slot: Franja horària
+restaurant.quotes_disclaimer.not_authenticated: Aquest restaurant també accepta comandes
+  amb pressupost. Si ets un client referenciat, <a href="%login%">connecta't </a>
+  per a fer un pressupost. <a href="%contact_us%">Contacta amb nosaltres</a> per a
+  més informació.
+restaurant.contract.variableCustomerAmount.label: Import pagat pel client/a (variable)
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: L'import es calcula
+  dinàmicament
+restaurant.contract.calculation_info: Pots cobrar al restaurant un import diferent
+  de l'import pagat pel client. <br> Per exemple, pots oferir el lliurament al client
+  mentre cobres una quantitat fixa al restaurant. <br> També pot configurar un import
+  dinàmic (per exemple, en funció de la distància).
+form.order.refuse.refund.alert: Aquesta comanda es va pagar amb un mètode de pagament
+  que no gestiona les autoritzacions prèvies. Si ho rebutja, es reemborsarà el pagament.
+  Estàs segur?
+form.checkout_payment.method.label: Triï un mètode de pagament
+restaurant_promotion.offer_delivery: Oferir tarifes de lliurament
+basics.close: A prop
+basics.allow_edit: Permetre edició
+form.price_with_tax.tax_excl.label: Preu (sense IVA)
+form.offer_delivery.coupon_code.error.exists: Aquest codi ja existeix
+users.all: Tots els usuaris
+users.restaurant_owners: Amos de restaurants
+users.store_owners: Amos de botigues
+users.administrators: Administradors
+users.couriers: Missatgers
+users.sort.alphabetically: Alfabèticament
+users.sort.newest: Registrat recentment
+sms.simple: "Hola,\nEl nostre missatger aquesta en camí a %address%.\n"
+sms.with_tracking: "Hola,\nEl nostre missatger aquesta en camí a %address%.\nSegueix-ho\
+  \ en %link%\n"
+fulfillment_method.delivery: Lliurament
+fulfillment_method.collection: Recollida
+form.price_with_tax.tax_incl.label: Preu (amb IVA)
+restaurant_promotion.offer_delivery.help: Això li permet oferir les despeses d'enviament
+  <strong>amb els teus propis diners</strong>. El seu marge es veurà disminuït per
+  la suma de les despeses d'enviament. Això<strong>no disminuirà</strong> les tarifes
+  percebudes per la plataforma.
+form.offer_delivery.coupon_code.help: És la seva responsabilitat comunicar aquest
+  codi al client, ja sigui personalment o a través de les xarxes socials
+base.footer.privacy: Privacitat
+base.footer.terms: Termes del servei
+form.time_slot.choices.error.empty: La llista d'opcions no pot estar buida
+order.payer.title: Informacó del comprador
+order.payer.email: Correu electronic
+order.payer.identificationType: Tipus de document identificatiu
+profile.fullName: Nom complet
+order.payer.identificationNumber: Número del document
+form.store_type.time_slot.placeholder: Escull una franja horària
+form.payment.state.label: Estat
+form.payment.last_update.label: Última actualització
+checkout.breadcrumb.confirm: Confirmació
+form.payment.amount.label: Import
+form.payment.refund_liable.help: Qui és responsable de l'incident?
+form.payment.refund_comment.help: Per favor descriu el que ha succeït
+form.address.company_name.label: Nom de l'empresa
+form.payment.refund_liable.label: Part responsable
+form.payment.refund_comment.label: Comentaris
+form.address.company.business_reference.label: Persona de contacte de l'entitat
+form.address.company.function.label: Càrrec de la persona de contacte
+form.address.company.collaborator_number.label: Nombre de persones treballadores
+form.address.company.meal_estimate.label: Nombre estimat d'àpats diaris
+form.company.make_the_request.label: Enviar sol·licitud
+form.settings.sms_enabled.label: Habilitar enviament de SMS
+deliveries.section.past: Antigues
+order.export.heading.tip: Propina
+form:
+  restaurant:
+    name:
+      label: Nom del restaurant
+    contact_referent:
+      label: Persona de contacte de l'establiment
+    b2b:
+      label: Voleu proposar ofertes especials per a empreses?
+refund.list.amount: Import retornat
+refund.list.liable_party: Part responsable
+refund.list.comments: Comentaris
+form.checkout_address.telephone.help: Per contactar-te en cas d'incident
+guest_checkout.user_with_same_email_exists: Ja existeix un compte amb el mateix correu
+  electrònic. Si us plau inicia sessió per continuar o fes servir un altre correu
+  electrònic per fer una comanda sense registrar-te.
+guest_checkout.use_another_email: Fer servir un altre correu electrònic
+homepage.form.title: Necessites que et portem alguna cosa?
+localBusiness.form.use_different_business_address.label: Utilitza una adreça comercial
+  diferent
+localBusiness.form.business_address.label: Adreça de l'establiment
+form.pricing_rule_set.strategy.label: Mètode de càlcul
+form.pricing_rule_set.strategy.map.label: Totes les regles que coincideixen
+restaurant.form.cuisines.label: Estils de cuina
+user.edit.enabled.label: Habilitat
+form.pricing_rule_set.strategy.find.label: La primera regla que coincideix
+restaurant.form.section.taxonomy: Classificació
+form.settings.subject_to_vat.label: Subjecte a IVA
+form.store_type.weight_required.label: Sol·licitar el pes
+form.registration.legal.label: Accepto els Termes i Condicions i la Política de Privacitat
+form.registration.legal.help: Marcant aquesta casella, aceptes els nostres<a href="%terms_url%">Termes
+  i Condicions</a> i la <a href="%privacy_url%">Política de Privadesa</a>.
+form.customize.motto.help: Això es mostrarà a la pàgina d'inici
+deliveries.section.upcoming: Properes
+authentication.register_benefits: Registra't per fer comandes amb més agilitat. També
+  podràs consultar el teu historial de comandes.
+authentication.choose_password: Escull contrassenya
+receipt.line_item.tax_total: IVA
+order.export.heading.fulfillment_method: Realització
+form.receipt.billing_address.label: Direcció de facturació
+form.receipt.billing_address.help: Si vols fer servir una direcció de facturació diferent,
+  introdueix-la aquí
+order.refund.total_amount: Aquesta comanda ha sigut reemborsada per un import de %amount%
+form.product_tax_category_choice.placeholder: Escull impost
+base.footer.companyRegister: Comença a col·laborar
+base.footer.RegisterMyRestaurant: Registrar el meu establiment
+adminDashboard.users.orders_count: Nombre de comandes
+adminDashboard.users.last_order: Darrera comanda
+adminDashboard.users.registered_at: Registrat/da
+form.settings.mercadopago.publishable_key.label: Clau publicable
+basics.description: Descripció
+basics.configure: Configuració
+form.settings.sms_gateway_config.twilio.from.label: Número de telèfon de Twilio
+form.settings.sms_gateway_config.twilio.auth_token.label: Twilio Auth Token
+form.settings.sms_gateway_config.twilio.sid.label: Twilio SID
+form.settings.sms_gateway_config.mailjet.api_token.label: Mailjet API Token
+form.settings.sms_gateway.label: SMS Gateway
+form.settings.sms.title: SMS
+form.pricing_rule_set.strategy.help: Les pautes es valoren de dalt a baix. Depenent
+  del mètode de càlcul triat, o bé la primera pauta que coincideixi decidirà el preu,
+  o bé el preu es calcularà sumant totes les pautes que coincideixin.
+form.payment.refund_application_fee.help: "Si marqueu aquesta casella, la comissió\
+  \ que cobra la plataforma al soci es retornarà proporcionalment \n<br> \n<a href=\"\
+  https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Learn more</a>\n"
+form.store_type.packages_required.label: Requerir l'entrada de paquets
+form.store_type.package_set.placeholder: Triar un conjunt de paquets
+restaurant.form.section.loopeat: LoopEat
+adminDashboard.customize.title: Personalitzar
+form.settings.mercadopago_testmode.help: "En mode « test », cal utilitzar <a href=\"\
+  https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba\"\
+  >prova els números de les targetes de crèdit </a> per pagar a la plataforma. <strong>No\
+  \ s'intercanviaran diners.</strong> "
+homepage.form.content: <strong>%brand_name%</strong> funciona a nivell local i realitza
+  l'entrega a domicili en vehicles no contaminants. Estalvieu envasos i unifiqueu
+  al màxim els enviaments.?
+promotion_action.fixed_discount: '%amount% de descompte'
+promotion_action.delivery_percentage_discount: "%percentage% de descompte en les despeses\
+  \ d'enviament?"
+promotion_action.percentage_discount: '%percentage% de descompte'
+order.list.reorder: Reordenar
+form.settings.guest_checkout_enabled.label: Activar el checkout (procés de compra)?
+restaurant.form.section.embed: Inserir
+restaurant.embed.disclaimer: Podeu inserir el checkout (procés de compra) directament
+  al vostre lloc web. Seguiu les instruccions següents per començar.?
+restaurant.embed.greeting: Això és tot! Quan els visitants facin clic al botó, s'obrirà
+  una finestra al vostre web.
+restaurant.embed.step_2: Afegir el <code>data-coopcycle-embed="% url%"</code> a un
+  element HTML clicable
+restaurant.embed.step_1: Afegeix l'escriptura <code>coopcycle.js</code> a la teva
+  pàgina?
+loopeat.oauth_redirect.warning: Sereu redirigits al web de LoopEat per iniciar la
+  sessió o crear el vostre compte
+loopeat.oauth_connect.success: Compte de LoopEat connectat amb èxit!
+form.attach_to_org.modal.title: Adjuntar a la botiga o magatzem?
+refund.list.disclaimer.admin: Quan la plataforma és responsable de l'incident, la
+  plataforma deu al restaurant l'import de la devolució, ja que el restaurant ja ha
+  retornat aquest import al client.
+refund.list.refunded_at: Reemborsat a
+refund.list.debit_total: Import total que la plataforma ha de pagar al restaurant
+confirm.deposit_refund_enabled: El sistema de devolució de dipòsits està habilitat,
+  ara podeu <a href="%url%"> configurar els envasos</a>.
+info.deposit_refund: Cada entrada de la llista següent representa un tipus d'envàs
+  (petit, gran...). Un cop triat l'envàs, podeu configurar-ne un per a cada producte.
+form.package_with_quantity.package.placeholder: Triar un tipus d'envàs
+order.reusable_packaging.pledge_return.disclaimer: El client ha indicat que es retornaran%
+  count% envasos
+form.time_slot.same_day_cutoff.help: Per exemple, si trieu les 11:00, les opcions
+  del mateix dia no es mostraran després de les 11:00
+form.time_slot.same_day_cutoff.label: Límit del mateix dia
+basics.kilos: Quilos
+basics.tax_excl: Sense IVA
+basics.tax_incl: Amb IVA
+nav.about_us: Sobre nosaltres
+spreadsheet.download_example: Baixar un exemple de fulla de càlcul
+promotion_rule.is_customer: Client és %username%
+promotion_rule.is_restaurant: Restaurant és %restaurant%
+profile.loopeat.disconnect: Desconnectar LoopEat
+time_range.same_else: '[En] LL [%range%]'
+search.orders: Cercar una comanda (telèfon, mail del client ...)
+delivery.table.heading.owner: Propietari
+form.customize.custom_banner.help: Assegureu-vos que el bàner sigui un patró SVG repetible
+form.customize.custom_banner.label: Bàner personalitzat
+form.customize.custom_privacy.label: Contingut de la pàgina de política personalitzada
+  de privadesa
+form.customize.custom_privacy_enabled.label: Activar la política personalitzada de
+  privadesa
+form.customize.custom_terms.label: Contingut de la pàgina de termes i condicions personalitzades
+form.customize.custom_terms_enabled.label: Activar els termes i condicions personalitzades
+form.customize.custom_legal.label: Contingut de la pàgina d'avís legal personalitzat
+form.customize.custom_legal_enabled.label: Activar l'avís legal personalitzat
+form.customize.motto.label: Lema
+form.customize.about_us.label: Contingut de la nostra pàgina
+form.customize.about_us_enabled.label: Activar la nostra pàgina
+form.deposit_refund_settings.deposit_refund_optin.help: Quan el sistema de devolució
+  de dipòsit sigui opcional, podrà triar si vol o no els embalatges. Quan sigui obligatori,
+  els embalatges s'afegiran al total de la comanda automàticament. --------No sé què
+  vol dir?
+form.credit_note.percentage.label: Percentatge
+form.credit_note.type.label: Tipus de descompte
+form.credit_note.user_search.label: Usuari
+form.menu_editor.name.help: Això només us permet distingir els menús. Això no es mostra
+  al client.
+form.settings.mercadopago.redirect_uri.help: 'Quan configuri la seva app, utilitzi
+  la següent URL de redirecció: <code>%redirect_uri%</code>'
+form.settings.mercadopago.app_id.help: Necessita <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">crear
+  una aplicació</a> para obtenir la seva ID.
+form.settings.mercadopago.app_id.label: ID de l'aplicació
+form.settings.mercadopago.access_token.help: Obtenir la <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+  target="_blank">fitxa d'accés</a>
+form.settings.mercadopago.access_token.label: Fitxa d'accés
+form.settings.mercadopago_enable_livemode.help: Per activar el mode « live », primer
+  necessites configurar les claus del mode « live ».
+form.settings.mercadopago.publishable_key.help: Obtenir la <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+  target="_blank">clau per publicar</a>
+form.mercadopago_livemode.disable.label: Utilitzar Mercado Pago en mode « test »
+form.local_business.mercadopago_account.success: El compte de Mercado Pago s'ha connectat
+  amb èxit
+form.mercadopago_livemode.enable.label: Utilitzar Mercado Pago en mode « live »
+form.local_business.mercadopago.connect_button.text: Connectar amb Mercado Pago
+form.mercadopago_livemode.enable.alert: En mode « live », les targetes de crèdit seran
+  carregades.
+form.mercadopago_livemode.disable_and_enable_maintenance.alert: Estàs utilitzant el
+  mode « live ».<br>Si vols passar a mode « test », el manteniment s'activarà automàticament.
+form.mercadopago_livemode.disable_and_enable_maintenance.label: Utilitzar el mode
+  « test » i activar el manteniment
+form.mercadopago_livemode.disable.alert: En mode « test », les targetes de crèdit
+  no seran carregades.
+form.settings.mercadopago.title: Mercado Pago

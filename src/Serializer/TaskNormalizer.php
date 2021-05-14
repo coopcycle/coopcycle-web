@@ -8,7 +8,7 @@ use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -51,6 +51,10 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         // Make sure "comments" is a string
         if (array_key_exists('comments', $data) && null === $data['comments']) {
             $data['comments'] = '';
+        }
+
+        if (isset($data['tags']) && is_array($data['tags']) && count($data['tags']) > 0) {
+            $data['tags'] = $this->tagManager->expand($data['tags']);
         }
 
         // FIXME Avoid coupling normalizer with groups
@@ -104,6 +108,10 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             }
         }
 
+        if (isset($data['type'])) {
+            $data['type'] = strtoupper($data['type']);
+        }
+
         $task = $this->normalizer->denormalize($data, $class, $format, $context);
 
         if (null === $task->getId() && null !== $task->getAddress()) {
@@ -116,12 +124,6 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if ($address && null === $task->getAddress()) {
             $task->setAddress($address);
-        }
-
-        if (isset($data['tags'])) {
-            $slugs = is_array($data['tags']) ? $data['tags'] : explode(' ', $data['tags']);
-            $tags = $this->tagManager->fromSlugs($slugs);
-            $task->setTags($tags);
         }
 
         if (isset($data['assignedTo'])) {

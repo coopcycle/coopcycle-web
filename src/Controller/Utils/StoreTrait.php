@@ -4,34 +4,47 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
+use AppBundle\Form\StoreAddressesType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\DeliveryImportType;
+use AppBundle\Message\DeliveryCreated;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
+use AppBundle\Service\InvitationManager;
+use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
 use Doctrine\ORM\Query\Expr;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\Filesystem;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait StoreTrait
 {
-    abstract protected function getStoreList(Request $request);
+    abstract protected function getStoreList();
 
     public function storeListAction(Request $request)
     {
-        [ $stores, $pages, $page ] = $this->getStoreList($request);
+        [ $stores, $pages, $page ] = $this->getStoreList();
 
         $routes = $request->attributes->get('routes');
 
@@ -46,7 +59,9 @@ trait StoreTrait
         ]);
     }
 
-    public function storeUsersAction($id, Request $request, UserManagerInterface $userManager)
+    public function storeUsersAction($id, Request $request,
+        UserManagerInterface $userManager,
+        InvitationManager $invitationManager)
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
 
@@ -69,6 +84,33 @@ trait StoreTrait
             return $this->redirectToRoute('admin_store_users', ['id' => $id]);
         }
 
+        $inviteForm = $this->createFormBuilder([])
+            ->add('email', EmailType::class)
+            ->getForm();
+
+        $inviteForm->handleRequest($request);
+
+        if ($inviteForm->isSubmitted() && $inviteForm->isValid()) {
+
+            $email = $inviteForm->get('email')->getData();
+
+            $invitation = new Invitation();
+            $invitation->setUser($this->getUser());
+            $invitation->setEmail($email);
+
+            $invitation->addStore($store);
+            $invitation->addRole('ROLE_STORE');
+
+            $invitationManager->send($invitation);
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('basics.send_invitation.confirm')
+            );
+
+            return $this->redirectToRoute($routes['store_users'], ['id' => $id]);
+        }
+
         return $this->render('store/users.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
@@ -76,10 +118,12 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'add_user_form' => $addUserForm->createView(),
+            'invite_form' => $inviteForm->createView(),
+            'store_addresses_route' => $routes['store_addresses']
         ]);
     }
 
-    public function storeAddressAction($storeId, $addressId, Request $request)
+    public function storeAddressAction($storeId, $addressId, Request $request, TranslatorInterface $translator)
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($storeId);
 
@@ -91,10 +135,10 @@ trait StoreTrait
             throw new AccessDeniedHttpException('Access denied');
         }
 
-        return $this->renderStoreAddressForm($store, $address, $request);
+        return $this->renderStoreAddressForm($store, $address, $request, $translator);
     }
 
-    public function newStoreAddressAction($id, Request $request)
+    public function newStoreAddressAction($id, Request $request, TranslatorInterface $translator)
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
 
@@ -102,10 +146,10 @@ trait StoreTrait
 
         $address = new Address();
 
-        return $this->renderStoreAddressForm($store, $address, $request);
+        return $this->renderStoreAddressForm($store, $address, $request, $translator);
     }
 
-    protected function renderStoreForm(Store $store, Request $request)
+    protected function renderStoreForm(Store $store, Request $request, TranslatorInterface $translator)
     {
         $form = $this->createForm(StoreType::class, $store);
 
@@ -121,7 +165,7 @@ trait StoreTrait
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $translator->trans('global.changesSaved')
             );
 
             return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);
@@ -131,31 +175,26 @@ trait StoreTrait
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
+            'store_route' => $routes['store'],
             'stores_route' => $routes['stores'],
             'store_delivery_new_route' => $routes['store_delivery_new'],
             'store_deliveries_route' => $routes['store_deliveries'],
-            'store_address_new_route' => $routes['store_address_new'],
-            'store_address_route' => $routes['store_address'],
+            'store_addresses_route' => $routes['store_addresses'],
         ]);
     }
 
-    protected function renderStoreAddressForm(Store $store, Address $address, Request $request)
+    protected function renderStoreAddressForm(Store $store, Address $address, Request $request, TranslatorInterface $translator)
     {
         $routes = $request->attributes->get('routes');
 
-        $form = $this->createForm(AddressType::class, $address, [
-            'with_name' => true,
-            'with_widget' => true,
-        ]);
+        $form = $this->createStoreAddressForm($address);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $address = $form->getData();
 
-            if (!$store->getAddresses()->contains($address)) {
-                $store->addAddress($address);
-            }
+            $store->addAddress($address);
 
             // Set as default if no default address is defined yet
             if (null === $store->getAddress()) {
@@ -166,10 +205,10 @@ trait StoreTrait
 
             $this->addFlash(
                 'notice',
-                $this->get('translator')->trans('global.changesSaved')
+                $translator->trans('global.changesSaved')
             );
 
-            return $this->redirectToRoute($routes['store'], ['id' => $store->getId()]);
+            return $this->redirectToRoute($routes['store_addresses'], ['id' => $store->getId()]);
         }
 
         return $this->render('store/address_form.html.twig', [
@@ -184,7 +223,10 @@ trait StoreTrait
     public function newStoreDeliveryAction($id, Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
-        TaxRateResolverInterface $taxRateResolver)
+        OrderFactory $orderFactory,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        MessageBusInterface $messageBus)
     {
         $routes = $request->attributes->get('routes');
 
@@ -199,6 +241,7 @@ trait StoreTrait
         $form = $this->createDeliveryForm($delivery, [
             'with_dropoff_recipient_details' => true,
             'with_dropoff_doorstep' => true,
+            'with_remember_address' => true,
         ]);
 
         $form->handleRequest($request);
@@ -211,41 +254,40 @@ trait StoreTrait
                 try {
 
                     $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $order = $this->createOrderForDelivery($delivery, $price, $this->getUser()->getCustomer());
+                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $this->getUser()->getCustomer());
 
-                    $this->get('sylius.repository.order')->add($order);
+                    $this->handleRememberAddress($store, $form);
+
+                    $entityManager->persist($order);
+                    $entityManager->flush();
+
                     $orderManager->onDemand($order);
-                    $this->get('sylius.manager.order')->flush();
+
+                    $entityManager->flush();
 
                     return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
                 } catch (NoRuleMatchedException $e) {
-                    $message = $this->get('translator')->trans('delivery.price.error.priceCalculation', [], 'validators');
+                    $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                     $form->addError(new FormError($message));
                 }
 
             } else {
 
-                $this->getDoctrine()
-                    ->getManagerForClass(Delivery::class)
-                    ->persist($delivery);
+                $this->handleRememberAddress($store, $form);
 
-                $this->getDoctrine()
-                    ->getManagerForClass(Delivery::class)
-                    ->flush();
+                $entityManager->persist($delivery);
+                $entityManager->flush();
+
+                $messageBus->dispatch(
+                    new DeliveryCreated($delivery)
+                );
 
                 // TODO Add flash message
 
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
             }
         }
-
-        $variant = $this->get('sylius.factory.product_variant')
-            ->createForDelivery($delivery, 0);
-
-        $rate = $taxRateResolver->resolve($variant, [
-            'country' => strtolower($this->getParameter('region_iso')),
-        ]);
 
         return $this->render('store/delivery_form.html.twig', [
             'layout' => $request->attributes->get('layout'),
@@ -254,18 +296,30 @@ trait StoreTrait
             'debug_pricing' => $request->query->getBoolean('debug', false),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
-            'tax_rate' => $rate,
+            'back_route' => $routes['back'],
             'show_left_menu' => $request->attributes->get('show_left_menu', true),
         ]);
     }
 
-    public function storeAction($id, Request $request)
+    private function handleRememberAddress(Store $store, FormInterface $form)
+    {
+        foreach (['pickup', 'dropoff'] as $taskType) {
+            $addressForm = $form->get($taskType)->get('address');
+            $rememberAddress = $addressForm->has('rememberAddress') && $addressForm->get('rememberAddress')->getData();
+            if ($rememberAddress) {
+                $task = $form->get($taskType)->getData();
+                $store->addAddress($task->getAddress());
+            }
+        }
+    }
+
+    public function storeAction($id, Request $request, TranslatorInterface $translator)
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
 
         $this->accessControl($store);
 
-        return $this->renderStoreForm($store, $request);
+        return $this->renderStoreForm($store, $request, $translator);
     }
 
     public function storeDeliveriesAction($id, Request $request,
@@ -299,51 +353,19 @@ trait StoreTrait
             return $this->redirectToRoute($routes['import_success']);
         }
 
-        $today = Carbon::now();
-
-        $after = new \DateTime('+2 days');
-        $after->setTime(0, 0, 0);
-
-        $qb = $this->getDoctrine()
+        $sections = $this->getDoctrine()
             ->getRepository(Delivery::class)
-            ->createQueryBuilder('d')
-            ->join(TaskCollectionItem::class, 'i', Expr\Join::WITH, 'i.parent = d.id')
-            ->join(Task::class, 't', Expr\Join::WITH, 'i.task = t.id')
-            ->andWhere('d.store = :store')
-            ->setParameter('store', $store);
-
-        $qbToday = (clone $qb)
-            ->andWhere('t.type = :dropoff')
-            ->andWhere('t.doneAfter > :after')
-            ->andWhere('t.doneBefore < :before')
-            ->setParameter('dropoff', Task::TYPE_DROPOFF)
-            ->setParameter('after', $today->copy()->hour(0)->minute(0)->second(0))
-            ->setParameter('before', $today->copy()->hour(23)->minute(59)->second(59));
-
-        $qbUpcoming = (clone $qb)
-            ->andWhere('t.type = :dropoff')
-            ->andWhere('t.doneAfter > :after')
-            ->setParameter('dropoff', Task::TYPE_DROPOFF)
-            ->setParameter('after', $today->copy()->add(1, 'day')->hour(0)->minute(0)->second(0))
-            ->orderBy('t.doneBefore', 'asc')
-            ;
-
-        $qbPast = (clone $qb)
-            ->andWhere('t.type = :dropoff')
-            ->andWhere('t.doneBefore < :after')
-            ->setParameter('dropoff', Task::TYPE_DROPOFF)
-            ->setParameter('after', $today->copy()->sub(1, 'day')->hour(23)->minute(59)->second(59))
-            ;
+            ->getSections($store);
 
         $deliveries = $paginator->paginate(
-            $qbPast,
+            $sections['past'],
             $request->query->getInt('page', 1),
             6,
             [
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.doneBefore',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
-                PaginatorInterface::SORT_FIELD_WHITELIST => ['t.doneBefore'],
-                PaginatorInterface::FILTER_FIELD_WHITELIST => []
+                PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['t.doneBefore'],
+                PaginatorInterface::FILTER_FIELD_ALLOW_LIST => []
             ]
         );
 
@@ -351,12 +373,111 @@ trait StoreTrait
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'deliveries' => $deliveries,
-            'today' => $qbToday->getQuery()->getResult(),
-            'upcoming' => $qbUpcoming->getQuery()->getResult(),
+            'today' => $sections['today']->getQuery()->getResult(),
+            'upcoming' => $sections['upcoming']->getQuery()->getResult(),
             'routes' => $this->getDeliveryRoutes(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'delivery_import_form' => $deliveryImportForm->createView(),
         ]);
+    }
+
+    public function storeAddressesAction($id, Request $request, TranslatorInterface $translator)
+    {
+        $store = $this->getDoctrine()
+            ->getRepository(Store::class)
+            ->find($id);
+
+        $this->accessControl($store);
+
+        $routes = $request->attributes->get('routes');
+
+        $form = $this->createForm(StoreAddressesType::class, $store);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute($routes['store_addresses'], [ 'id' => $store->getId() ]);
+        }
+
+        $address = new Address();
+
+        $addressForm = $this->createStoreAddressForm($address);
+
+        return $this->render('store/addresses.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'form' => $form->createView(),
+            'address_form' => $addressForm->createView(),
+            'store_address_new_route' => $routes['store_address_new'],
+            'store_address_route' => $routes['store_address'],
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
+            'store_addresses_route' => $routes['store_addresses'],
+        ]);
+    }
+
+    private function createStoreAddressForm(Address $address)
+    {
+        return $this->createForm(AddressType::class, $address, [
+            'with_name' => true,
+            'with_widget' => true,
+            'with_telephone' => true,
+            'with_contact_name' => true,
+        ]);
+    }
+
+    public function downloadDeliveryImagesAction($storeId, $deliveryId, Request $request,
+        StorageInterface $storage,
+        Filesystem $taskImagesFilesystem)
+    {
+        $delivery = $this->getDoctrine()
+            ->getRepository(Delivery::class)
+            ->find($deliveryId);
+
+        $this->denyAccessUnlessGranted('edit', $delivery);
+
+        if (!$delivery->hasImages()) {
+            throw new BadRequestHttpException(sprintf('Delivery #%d has no images', $deliveryId));
+        }
+
+        $zip = new \ZipArchive();
+        $zipName = tempnam(sys_get_temp_dir(), 'coopcycle_delivery_images');
+        $zip->open($zipName, \ZipArchive::CREATE);
+
+        foreach ($delivery->getImages() as $image) {
+
+            // FIXME
+            // It's not clean to use resolveUri()
+            // but the problem is that resolvePath() returns the path with prefix,
+            // while $taskImagesFilesystem is alreay aware of the prefix
+            $imagePath = ltrim($storage->resolveUri($image, 'file'), '/');
+
+            if (!$taskImagesFilesystem->has($imagePath)) {
+                throw new BadRequestHttpException(sprintf('Image at path "%s" not found', $imagePath));
+            }
+
+            $zip->addFromString(basename($imagePath), $taskImagesFilesystem->read($imagePath));
+        }
+
+        $zip->close();
+
+        $response = new Response(file_get_contents($zipName));
+        $response->headers->set('Content-Type', 'application/zip');
+        $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            sprintf('coopcycle-delivery-images-%d.zip', $deliveryId)
+        ));
+
+        unlink($zipName);
+
+        return $response;
     }
 }

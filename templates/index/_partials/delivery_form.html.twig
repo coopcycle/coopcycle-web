@@ -1,0 +1,27 @@
+<div class="container">
+  <section class="homepage-delivery">
+    <div class="homepage-delivery-text">
+      <h2 class="mt-0">{{ 'homepage.form.title'|trans }}</h2>
+      <p>{% trans with { '%brand_name%': coopcycle_setting('brand_name') } %}homepage.form.content{% endtrans %}</p>
+    </div>
+    <div class="homepage-delivery-form">
+      {{ form_start(delivery_form, {
+        action: path('embed_delivery_start', { hashid: hashid }),
+        attr: {
+          autocomplete: 'off',
+        } }) }}
+        {{ form_widget(delivery_form.pickup.type) }}
+        {{ form_widget(delivery_form.dropoff.type) }}
+        <div class="mb-4">
+        {{ form_widget(delivery_form.dropoff.address) }}
+        </div>
+        {% if delivery_form.dropoff.timeSlot is defined %}
+        <div class="mb-4">
+        {{ form_widget(delivery_form.dropoff.timeSlot) }}
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }} →</button>
+      {{ form_end(delivery_form, { render_rest: false }) }}
+    </div>
+  </section>
+</div>

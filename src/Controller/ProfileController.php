@@ -9,6 +9,7 @@ use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
+use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
@@ -18,13 +19,13 @@ use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
 use AppBundle\Service\DeliveryManager;
-use AppBundle\Service\SocketIoManager;
+use AppBundle\Service\TopBarNotifications;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
@@ -32,63 +33,30 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterfa
 use Cocur\Slugify\SlugifyInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use phpcent\Client as CentrifugoClient;
 use Sylius\Component\Order\Model\OrderInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sylius\Component\Order\Repository\OrderRepositoryInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingException;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ProfileController extends Controller
+class ProfileController extends AbstractController
 {
     const ITEMS_PER_PAGE = 20;
 
-    use AccessControlTrait;
-    use DeliveryTrait;
     use OrderTrait;
-    use RestaurantTrait;
-    use StoreTrait;
     use UserTrait;
 
-    protected function getRestaurantRoutes()
+    public function __construct(OrderRepositoryInterface $orderRepository)
     {
-        return [
-            'restaurants' => 'profile_restaurants',
-            'restaurant' => 'profile_restaurant',
-            'menu_taxons' => 'profile_restaurant_menu_taxons',
-            'menu_taxon' => 'profile_restaurant_menu_taxon',
-            'products' => 'profile_restaurant_products',
-            'product_options' => 'profile_restaurant_product_options',
-            'product_new' => 'profile_restaurant_product_new',
-            'dashboard' => 'profile_restaurant_dashboard',
-            'planning' => 'profile_restaurant_planning',
-            'stripe_oauth_redirect' => 'profile_restaurant_stripe_oauth_redirect',
-            'preparation_time' => 'profile_restaurant_preparation_time',
-            'stats' => 'profile_restaurant_stats',
-            'deposit_refund' => 'profile_restaurant_deposit_refund',
-            'promotions' => 'profile_restaurant_promotions',
-            'promotion_new' => 'profile_restaurant_new_promotion',
-            'promotion' => 'profile_restaurant_promotion',
-            'product_option_preview' => 'profile_restaurant_product_option_preview',
-            'reusable_packaging_new' => 'profile_restaurant_new_reusable_packaging',
-        ];
-    }
-
-    private function handleSwitchRequest(Request $request, Collection $items, $queryKey, $sessionKey)
-    {
-        if ($request->query->has($queryKey)) {
-            foreach ($items as $item) {
-                if ($item->getId() === $request->query->getInt($queryKey)) {
-                    $request->getSession()->set($sessionKey, $item->getId());
-
-                    return $this->redirectToRoute('fos_user_profile_show');
-                }
-            }
-
-            throw $this->createAccessDeniedException();
-        }
+        $this->orderRepository = $orderRepository;
     }
 
     public function indexAction(Request $request,
@@ -96,45 +64,11 @@ class ProfileController extends Controller
         TranslatorInterface $translator,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
-        PaginatorInterface $paginator)
+        PaginatorInterface $paginator,
+        EntityManagerInterface $entityManager,
+        EdenredAuthentication $edenredAuthentication)
     {
         $user = $this->getUser();
-
-        if ($user->hasRole('ROLE_STORE') && $request->attributes->has('_store')) {
-
-            if ($response = $this->handleSwitchRequest($request, $user->getStores(), 'store', '_store')) {
-
-                return $response;
-            }
-
-            $store = $request->attributes->get('_store');
-
-            $routes = $request->attributes->has('routes') ? $request->attributes->get('routes') : [];
-            $routes['import_success'] = 'fos_user_profile_show';
-            $routes['stores'] = 'fos_user_profile_show';
-            $routes['store'] = 'profile_store';
-
-            $request->attributes->set('routes', $routes);
-
-            return $this->storeDeliveriesAction($store->getId(), $request, $translator, $paginator);
-
-            // FIXME Forward doesn't copy request attributes
-            // return $this->forward('AppBundle\Controller\ProfileController::storeDeliveriesAction', [
-            //     'id'  => $store->getId(),
-            // ]);
-        }
-
-        if ($user->hasRole('ROLE_RESTAURANT') && $request->attributes->has('_restaurant')) {
-
-            if ($response = $this->handleSwitchRequest($request, $user->getRestaurants(), 'restaurant', '_restaurant')) {
-
-                return $response;
-            }
-
-            $restaurant = $request->attributes->get('_restaurant');
-
-            return $this->statsAction($restaurant->getId(), $request, $slugify, $translator);
-        }
 
         if ($user->hasRole('ROLE_COURIER')) {
 
@@ -150,7 +84,7 @@ class ProfileController extends Controller
             $redirectUri = $this->generateUrl('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
             $redirectAfterUri = $this->generateUrl(
-                'fos_user_profile_show',
+                'nucleos_profile_profile_show',
                 [],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
@@ -174,10 +108,16 @@ class ProfileController extends Controller
             $loopeatAuthorizeUrl = sprintf('%s/oauth/authorize?%s', $this->getParameter('loopeat_base_url'), $queryString);
         }
 
+        $edenredAuthorizeUrl = '';
+        if ($this->getParameter('edenred_enabled') && !$customer->hasEdenredCredentials()) {
+            $edenredAuthorizeUrl = $edenredAuthentication->getAuthorizeUrl($customer);
+        }
+
         return $this->render('profile/index.html.twig', array(
             'user' => $user,
             'customer' => $customer,
             'loopeat_authorize_url' => $loopeatAuthorizeUrl,
+            'edenred_authorize_url' => $edenredAuthorizeUrl,
         ));
     }
 
@@ -192,9 +132,13 @@ class ProfileController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+            if ($editForm->getClickedButton() && 'loopeatDisconnect' === $editForm->getClickedButton()->getName()) {
+                $user->getCustomer()->clearLoopEatCredentials();
+            }
+
             $userManager->updateUser($user);
 
-            return $this->redirectToRoute('fos_user_profile_show');
+            return $this->redirectToRoute('nucleos_profile_profile_show');
         }
 
         return $this->render('profile/edit_profile.html.twig', array(
@@ -202,9 +146,9 @@ class ProfileController extends Controller
         ));
     }
 
-    protected function getOrderList(Request $request)
+    protected function getOrderList(Request $request, $showCanceled = false)
     {
-        $qb = $this->get('sylius.repository.order')
+        $qb = $this->orderRepository
             ->createQueryBuilder('o')
             ->andWhere('o.customer = :customer')
             ->andWhere('o.state != :state')
@@ -217,7 +161,7 @@ class ProfileController extends Controller
             ->getSingleScalarResult();
 
         $pages  = ceil($count / self::ITEMS_PER_PAGE);
-        $page   = $request->query->get('p', 1);
+        $page   = $request->query->getInt('p', 1);
         $offset = self::ITEMS_PER_PAGE * ($page - 1);
 
         $orders = (clone $qb)
@@ -236,41 +180,37 @@ class ProfileController extends Controller
         JWTManagerInterface $jwtManager,
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
-        EntityManagerInterface $em)
+        NormalizerInterface $normalizer,
+        CentrifugoClient $centrifugoClient)
     {
-        $filter = $em->getFilters()->disable('enabled_filter');
+        $order = $this->orderRepository->find($id);
 
-        $order = $this->container->get('sylius.repository.order')->find($id);
+        $customer = $order->getCustomer();
 
-        if ($order->getCustomer()->hasUser() && $order->getCustomer()->getUser() !== $this->getUser()) {
+        if ($customer->hasUser() && $customer->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException();
         }
 
-        if ($order->isFoodtech()) {
+        if ($order->hasVendor()) {
+
+            // FIXME We may generate expired tokens
 
             $exp = clone $order->getShippingTimeRange()->getUpper();
             $exp->modify('+3 hours');
 
-            // FIXME We may generate expired tokens
-
-            $jwt = $jwsProvider->create([
-                // We add a custom "ord" claim to the token,
-                // that will allow watching order events
-                'ord' => $iriConverter->getIriFromItem($order),
-                // Token expires 3 hours after expected completion
-                'exp' => $exp->getTimestamp(),
-            ])->getToken();
-
             return $this->render('profile/order.html.twig', [
                 'order' => $order,
                 'events' => (new OrderEventCollection($order))->toArray(),
-                'order_normalized' => $this->get('serializer')->normalize($order, 'jsonld', [
+                'order_normalized' => $normalizer->normalize($order, 'jsonld', [
                     'groups' => ['order'],
                     'is_web' => true
                 ]),
                 'reset' => false,
                 'track_goal' => false,
-                'jwt' => $jwt,
+                'centrifugo' => [
+                    'token'   => $centrifugoClient->generateConnectionToken($order->getId(), $exp->getTimestamp()),
+                    'channel' => sprintf('%s_order_events#%d', $this->getParameter('centrifugo_namespace'), $order->getId())
+                ]
             ]);
         }
 
@@ -332,27 +272,6 @@ class ProfileController extends Controller
         ));
     }
 
-    protected function getRestaurantList(Request $request)
-    {
-        return [ $this->getUser()->getRestaurants(), 1, 1 ];
-    }
-
-    protected function getStoreList(Request $request)
-    {
-        return [ $this->getUser()->getStores(), 1, 1 ];
-    }
-
-    protected function getDeliveryRoutes()
-    {
-        return [
-            'list'      => 'profile_tasks',
-            'pick'      => 'profile_delivery_pick',
-            'deliver'   => 'profile_delivery_deliver',
-            'view'      => 'profile_delivery',
-            'store_new' => 'profile_store_delivery_new'
-        ];
-    }
-
     /**
      * @Route("/profile/tracking/{date}", name="profile_tracking")
      */
@@ -394,7 +313,7 @@ class ProfileController extends Controller
     /**
      * @Route("/profile/tasks/{id}/complete", name="profile_task_complete")
      */
-    public function completeTaskAction($id, Request $request, TaskManager $taskManager)
+    public function completeTaskAction($id, Request $request, TaskManager $taskManager, TranslatorInterface $translator)
     {
         $task = $this->getDoctrine()
             ->getRepository(Task::class)
@@ -426,7 +345,7 @@ class ProfileController extends Controller
                 } catch (\Exception $e) {
                     $this->addFlash(
                         'error',
-                        $this->get('translator')->trans($e->getMessage())
+                        $translator->trans($e->getMessage())
                     );
                 }
             }
@@ -442,7 +361,9 @@ class ProfileController extends Controller
     /**
      * @Route("/profile/jwt", methods={"GET"}, name="profile_jwt")
      */
-    public function jwtAction(Request $request, JWTManagerInterface $jwtManager)
+    public function jwtAction(Request $request,
+        JWTManagerInterface $jwtManager,
+        CentrifugoClient $centrifugoClient)
     {
         $user = $this->getUser();
 
@@ -463,21 +384,26 @@ class ProfileController extends Controller
             $request->getSession()->set('_jwt', $jwtManager->create($user));
         }
 
-        return new JsonResponse($request->getSession()->get('_jwt'));
+        return new JsonResponse([
+            'jwt' => $request->getSession()->get('_jwt'),
+            'cent_ns'  => $this->getParameter('centrifugo_namespace'),
+            'cent_usr' => $user->getUsername(),
+            'cent_tok' => $centrifugoClient->generateConnectionToken($user->getUsername(), (time() + 3600)),
+        ]);
     }
 
     /**
      * @Route("/profile/notifications", name="profile_notifications")
      */
-    public function notificationsAction(Request $request, SocketIoManager $socketIoManager)
+    public function notificationsAction(Request $request, TopBarNotifications $topBarNotifications, NormalizerInterface $normalizer)
     {
-        $notifications = $socketIoManager->getLastNotifications($this->getUser());
+        $notifications = $topBarNotifications->getLastNotifications($this->getUser());
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
 
             return new JsonResponse([
-                'notifications' => $this->get('serializer')->normalize($notifications, 'json'),
-                'unread' => (int) $socketIoManager->countNotifications($this->getUser())
+                'notifications' => $normalizer->normalize($notifications, 'json'),
+                'unread' => (int) $topBarNotifications->countNotifications($this->getUser())
             ]);
         }
 
@@ -489,7 +415,7 @@ class ProfileController extends Controller
     /**
      * @Route("/profile/notifications/read", methods={"POST"}, name="profile_notifications_mark_as_read")
      */
-    public function markNotificationsAsReadAction(Request $request, SocketIoManager $socketIoManager)
+    public function markNotificationsAsReadAction(Request $request, TopBarNotifications $topBarNotifications)
     {
         $ids = [];
         $content = $request->getContent();
@@ -497,8 +423,25 @@ class ProfileController extends Controller
             $ids = json_decode($content, true);
         }
 
-        $socketIoManager->markAsRead($this->getUser(), $ids);
+        $topBarNotifications->markAsRead($this->getUser(), $ids);
 
         return new Response('', 204);
+    }
+
+    public function redirectToDashboardAction($path, Request $request, RouterInterface $router)
+    {
+        $dashboardPath = sprintf('/dashboard/%s', $path);
+
+        try {
+
+            $router->match($dashboardPath);
+
+            $queryString = $request->getQueryString();
+
+            return $this->redirect($dashboardPath . (!empty($queryString) ? sprintf('?%s', $queryString) : ''), 301);
+
+        } catch (RoutingException $e) {}
+
+        throw $this->createNotFoundException();
     }
 }

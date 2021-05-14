@@ -9,6 +9,7 @@ use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Comparable;
 use Sylius\Component\Product\Model\Product as BaseProduct;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
@@ -23,15 +24,19 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "put"={
  *       "method"="PUT",
  *       "denormalization_context"={"groups"={"product_update"}},
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsProduct(object))"
+ *       "access_control"="is_granted('edit', object)"
  *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "access_control"="is_granted('edit', object)"
+ *     }
  *   },
  *   attributes={
  *     "normalization_context"={"groups"={"product"}}
  *   }
  * )
  */
-class Product extends BaseProduct implements ProductInterface
+class Product extends BaseProduct implements ProductInterface, Comparable
 {
     protected $deletedAt;
 
@@ -48,6 +53,8 @@ class Product extends BaseProduct implements ProductInterface
     protected $reusablePackaging;
 
     protected $images;
+
+    protected $restaurant;
 
     public function __construct()
     {
@@ -285,5 +292,30 @@ class Product extends BaseProduct implements ProductInterface
         $image->setProduct($this);
 
         $this->images->add($image);
+    }
+
+    /**
+     * Fix "Nesting level too deep - recursive dependency?"
+     * @see https://github.com/Atlantic18/DoctrineExtensions/pull/2185
+     */
+    public function compareTo($other)
+    {
+        return $this === $other;
+    }
+
+    /**
+     * @return LocalBusiness|null
+     */
+    public function getRestaurant(): ?LocalBusiness
+    {
+        return $this->restaurant;
+    }
+
+    /**
+     * @param LocalBusiness|null $restaurant
+     */
+    public function setRestaurant(?LocalBusiness $restaurant)
+    {
+        $this->restaurant = $restaurant;
     }
 }

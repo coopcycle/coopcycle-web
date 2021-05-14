@@ -19,9 +19,7 @@
         <li>
           <a class="admin-navbar__link" href="{{ path('homepage') }}"><i class="fa fa-sign-out"></i>  {% trans %}adminDashboard.back.title{% endtrans %}</a>
         </li>
-        <li>
-          <span class="headway p-3 d-block"></span>
-        </li>
+        <li id="changelog"></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.orders{% endtrans %}">
@@ -34,12 +32,6 @@
           <a class="admin-navbar__link" href="{{ path('admin_deliveries') }}">
             <i class="fa fa-bicycle"></i>
             <span class="navbar-label">{% trans %}adminDashboard.deliveries.title{% endtrans %}</span>
-          </a>
-        </li>
-        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.stores{% endtrans %}">
-          <a class="admin-navbar__link" href="{{ path('admin_stores') }}">
-            <i class="fa fa-shopping-cart"></i>
-            <span class="navbar-label">{% trans %}adminDashboard.stores.title{% endtrans %}</span>
           </a>
         </li>
         {% if coopcycle_setting('b2b_enabled') %}
@@ -69,29 +61,14 @@
           </a>
           <ul class="dropdown-menu">
             <li><a href="{{ path('admin_activity') }}">{% trans %}adminDashboard.activity.title{% endtrans %}</a></li>
+            <li><a href="{{ path('admin_metrics') }}">{% trans %}adminDashboard.metrics.title{% endtrans %}</a></li>
           </ul>
         </li>
-        <li class="dropdown">
-          <a class="admin-navbar__link" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+        <li>
+          <a class="admin-navbar__link" href="{{ path('admin_settings') }}">
             <i class="fa fa-cog"></i>
-            <span class="navbar-label">{% trans %}adminDashboard.configuration{% endtrans %}</span> <span class="caret"></span>
+            <span class="navbar-label">{% trans %}adminDashboard.settings.title{% endtrans %}</span>
           </a>
-          <ul class="dropdown-menu">
-            <li><a href="{{ path('admin_settings') }}">{% trans %}adminDashboard.settings.title{% endtrans %}</a></li>
-            {% if not is_demo %}
-            <li><a href="{{ path('admin_customize') }}">{% trans %}adminDashboard.customize.title{% endtrans %}</a></li>
-            {% endif %}
-            <li><a href="{{ path('admin_deliveries_pricing') }}">{% trans %}adminDashboard.pricing.title{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_tags') }}">{% trans %}adminDashboard.tags.title{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_taxation_settings') }}">{% trans %}adminDashboard.taxation.title{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_zones') }}">{% trans %}adminDashboard.zones.title{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_embed') }}">{% trans %}adminDashboard.embed.title{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_promotions') }}">{% trans %}adminDashboard.promotions.title{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_api_apps') }}">API</a></li>
-            <li><a href="{{ path('admin_restaurants_pledges') }}">{% trans %}adminDashboard.pledges.title{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_time_slots') }}">{% trans %}adminDashboard.time_slots.title{% endtrans %}</a></li>
-            <li><a href="{{ path('admin_packages') }}">{% trans %}adminDashboard.package_sets.title{% endtrans %}</a></li>
-          </ul>
         </li>
         {% include '_partials/user/account_dropdown.html.twig' %}
       </ul>

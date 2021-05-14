@@ -1,0 +1,115 @@
+{
+  "nodes":{
+    "nodes":{
+      "left":{
+        "nodes":{
+          "left":{
+            "nodes":{
+              "left":{
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "name":"distance"
+                }
+              },
+              "right":{
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":0
+                }
+              }
+            },
+            "attributes":{
+              "operator":">"
+            }
+          },
+          "right":{
+            "nodes":{
+              "arguments":{
+                "nodes":[
+                  {
+                    "nodes":{
+                      "node":{
+                        "nodes":[
+
+                        ],
+                        "attributes":{
+                          "name":"dropoff"
+                        }
+                      },
+                      "attribute":{
+                        "nodes":[
+
+                        ],
+                        "attributes":{
+                          "value":"address"
+                        }
+                      },
+                      "arguments":{
+                        "nodes":[
+
+                        ],
+                        "attributes":[
+
+                        ]
+                      }
+                    },
+                    "attributes":{
+                      "type":1
+                    }
+                  },
+                  {
+                    "nodes":[
+
+                    ],
+                    "attributes":{
+                      "value":"foo and bar"
+                    }
+                  }
+                ],
+                "attributes":[
+
+                ]
+              }
+            },
+            "attributes":{
+              "name":"in_zone"
+            }
+          }
+        },
+        "attributes":{
+          "operator":"and"
+        }
+      },
+      "right":{
+        "nodes":{
+          "left":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "name":"weight"
+            }
+          },
+          "right":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":0
+            }
+          }
+        },
+        "attributes":{
+          "operator":">"
+        }
+      }
+    },
+    "attributes":{
+      "operator":"and"
+    }
+  }
+}

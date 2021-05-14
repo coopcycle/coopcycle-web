@@ -207,6 +207,9 @@
         "RESTAURANT_DASHBOARD_NEW_ORDERS": "Nuovi ordini",
         "RESTAURANT_DASHBOARD_ACCEPTED_ORDERS": "Ordini accettati",
         "RESTAURANT_DASHBOARD_FULFILLED_ORDERS": "Ordini completati",
-        "PLEASE_SELECT_ADDRESS": "Selezioni un indirizzo nel menù a tendina"
+        "PLEASE_SELECT_ADDRESS": "Selezioni un indirizzo nel menù a tendina",
+        "PAYMENT_FORM_REDIRECT_HELP": "Verrai reindirizzato al sito della banca per completare il tuo pagamento",
+        "PAYMENT_FORM_CARDHOLDER_NAME": "Titolare carta",
+        "PAYMENT_FORM_TITLE": "Informazioni di pagamento"
     }
 }

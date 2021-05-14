@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'profile_restaurant' %}
+{% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'dashboard_restaurant' %}
 {% set restaurant_edit_url = path(restaurant_edit_route, { id: restaurant.id }) %}
 
 {% form_theme cart_form 'form/cart.html.twig' %}
@@ -14,18 +14,22 @@
 {% block banner %}
 
   {% set disabled_warning = ( not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) ) %}
-  {% set preorder_warning = ( restaurant.orderingDelayMinutes > 0 ) %}
+  {% set preorder_warning = ( restaurant.isFulfillmentMethodEnabled('delivery') and restaurant.getFulfillmentMethod('delivery').orderingDelayMinutes > 0 ) %}
+  {% set ordering_delay_warning = coopcycle_has_ordering_delay() %}
 
-  {% if disabled_warning or preorder_warning %}
-  <nav class="restaurant-banner">
+  {% if disabled_warning or preorder_warning or ordering_delay_warning %}
+  <nav class="restaurant-banner {% if embed_context.enabled %}mt-0{% endif %}">
     <div class="alert alert-warning text-center">
       {% if disabled_warning %}
       <p class="mb-0">{{ 'restaurant.disabledWarning'|trans({ '%restaurantEditUrl%': restaurant_edit_url }) | raw }}</p>
       {% endif %}
       {% if preorder_warning %}
       <p class="mb-0">{{ 'restaurant.closedWarningWithDelay'|trans({
-        '%delay%': restaurant|restaurant_delay_for_humans(app.request.locale)
+        '%delay%': restaurant.getFulfillmentMethod('delivery').orderingDelayMinutes|delay_for_humans(app.request.locale)
       }) }}</p>
+      {% endif %}
+      {% if ordering_delay_warning %}
+      <p class="mb-0">🔥 {{ 'ordering_delay.disclaimer'|trans }}</p>
       {% endif %}
     </div>
   </nav>
@@ -39,7 +43,12 @@
   {% block restaurant_nav %}
     {% if not embed_context.enabled %}
     <div class="homepage-restaurants__show-more text-left mb-4">
-      {% if restaurant.context == 'AppBundle\\Enum\\Store' %}
+      {% if restaurant.belongsToHub() %}
+        <a class="restaurant-show-more" href="{{ path('hub', { id: restaurant.hub.id, slug: restaurant.hub.name|slugify }) }}">
+          <i class="fa fa-arrow-left mr-2"></i>
+          <span>{% trans %}index.view_all_merchants{% endtrans %}</span>
+        </a>
+      {% elseif restaurant.context == 'AppBundle\\Enum\\Store' %}
         <a class="restaurant-show-more" href="{{ path('stores') }}">
           <i class="fa fa-arrow-left mr-2"></i>
           <span>{% trans %}index.view_all_shops{% endtrans %}</span>
@@ -54,10 +63,18 @@
     {% endif %}
   {% endblock %}
 
+  {#
+  FIXME
+  Calling restaurant.getNextOpeningDate() may throw Spatie\OpeningHours\Exceptions\MaximumLimitExceeded
+  "No open date/time found in the next 366 days, use $openingHours->setDayLimit() to increase the limit."
+  For example, set holidays for 2 years
+  #}
+
   {% if not restaurant.isOpen %}
-    {% if restaurant.hasClosingRuleFor %}
+    {% set closingRule = restaurant.matchClosingRuleFor %}
+    {% if closingRule is not empty %}
     <div class="alert alert-danger text-center">
-      {% trans with { '%date%': restaurant.getNextOpeningDate|localizeddate('medium', 'none') } %}
+      {% trans with { '%date%': closingRule.endDate|format_datetime('medium', 'none') } %}
       restaurant.temporaryClosedWarning
       {% endtrans %}
     </div>
@@ -67,7 +84,7 @@
   {% if restaurant.quotesAllowed %}
     {% set trans_params = {
       '%contact_us%': ('mailto:' ~ coopcycle_setting('administrator_email')),
-      '%login%': path('fos_user_security_login')
+      '%login%': path('nucleos_user_security_login')
     } %}
     {% if app.user %}
       {% if not app.user.quotesAllowed %}
@@ -91,6 +108,7 @@
     {% endif %}
     <section class="restaurant-header-body">
       <h1>{{ restaurant.name }}</h1>
+      <p class="d-none d-lg-block">{{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
       {% if restaurant.website is defined and restaurant.website is not empty %}
       <p>
         <a href="{{ restaurant.website }}" target="_blank">
@@ -98,26 +116,22 @@
         </a>
       </p>
       {% endif %}
-      {% if restaurant.description is defined and restaurant.description is not empty %}
-      <div class="restaurant-description text-muted">
-        {{ restaurant.description|markdown }}
-      </div>
-      {% endif %}
     </section>
     <section class="restaurant-header-right">
-      <p>{{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
-      {% if restaurant.isFulfillmentMethodEnabled('delivery') %}
-      <div
-        data-opening-hours="{{ restaurant.getOpeningHours('delivery')|json_encode|e('html_attr') }}"
-        data-opening-hours-behavior="{{ restaurant.getOpeningHoursBehavior('delivery')|e('html_attr') }}"></div>
-      {% endif %}
-      {% if restaurant.isFulfillmentMethodEnabled('collection') %}
-      <div
-        data-opening-hours="{{ restaurant.getOpeningHours('collection')|json_encode|e('html_attr') }}"
-        data-opening-hours-behavior="{{ restaurant.getOpeningHoursBehavior('collection')|e('html_attr') }}"></div>
-      {% endif %}
+      <div class="d-flex justify-content-end">
+        {% include 'restaurant/_partials/opening_hours.html.twig' with {
+          delivery:   restaurant.isFulfillmentMethodEnabled('delivery')   ? restaurant.getOpeningHours('delivery')   : [],
+          collection: restaurant.isFulfillmentMethodEnabled('collection') ? restaurant.getOpeningHours('collection') : []
+        } %}
+      </div>
     </section>
   </header>
+
+  {% if restaurant.description is defined and restaurant.description is not empty %}
+  <section class="restaurant-description text-muted d-none d-lg-block">
+    {{ restaurant.description|markdown }}
+  </section>
+  {% endif %}
 
   {% if restaurant.menuTaxon is not null %}
   <div class="row">
@@ -127,7 +141,8 @@
     We cache the following block for performance
     Iterating through all products, options… is a lot of database requests
     #}
-    {% cache ('restaurant_' ~ restaurant.id ~ '_menu_v0.3') restaurant %}
+    {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation) %}
+    {% cache cache_key ttl(300) %}
     <div class="col-xs-12 col-sm-8" id="menu">
       <div class="restaurant-menu-wrapper">
       {% for child in restaurant.menuTaxon.children %}
@@ -146,16 +161,33 @@
                 </a>
               </div>
             {% else %}
+              {% set product_images = [] %}
+              {% set images_16x9 = product.images|filter(image => image.ratio == '16:9') %}
+              {% if images_16x9|length > 0 %}
+                {% set product_images_filtered = images_16x9 %}
+              {% else %}
+                {% set product_images_filtered = product.images|filter(image => image.ratio == '1:1') %}
+              {% endif %}
+              {% for product_image in product_images_filtered %}
+                {% set imagine_filter = ('product_thumbnail_' ~ (product_image.ratio|replace({ ':': 'x' }))) %}
+                {#
+                FIXME
+                Since we are using a S3 backed CDN, each call to the coopcycle_asset filter,
+                (which in turn calls Liip\ImagineBundle\Imagine\Cache\CacheManager::getBrowserPath()),
+                generates a HTTP call to S3 to check if the thumbnail exists.
+
+                Until a user opens the popup to generate the thumbnails, these calls will return 404.
+                It may generate too many API calls, and "HTTP 503 Slow Down" errors.
+
+                This is why we set the 4th parameter to true, to *ALWAYS* return the filter URL.
+                #}
+                {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', imagine_filter, true, true) ]) %}
+              {% endfor %}
               {% if not product.hasOptions() %}
               <div class="restaurant-menu-section-item">
-                {% if product.images|length > 1 %}
-                  {% set product_images = [] %}
-                  {% for product_image in product.images %}
-                    {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', 'product_thumbnail') ]) %}
-                  {% endfor %}
+                {% if product_images|length > 1 %}
                   <button class="menu-item" type="button"
-                    data-toggle="modal"
-                    data-target="#product-details"
+                    data-modal="details"
                     data-product-name="{{ product.name|e('html_attr') }}"
                     data-product-images="{{ product_images|json_encode|e('html_attr') }}"
                     data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
@@ -176,11 +208,11 @@
               <div class="restaurant-menu-section-item">
                 <button
                   class="menu-item"
-                  data-toggle="modal"
-                  data-target="#product-options"
+                  data-modal="options"
                   data-form-action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code })|e('html_attr') }}"
                   data-product-code="{{ product.code|e('html_attr') }}"
                   data-product-name="{{ product.name|e('html_attr') }}"
+                  data-product-images="{{ product_images|json_encode|e('html_attr') }}"
                   data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
                   data-product-options="{{ product.options|coopcycle_normalize('AppBundle\\Entity\\Sylius\\ProductOption', ['product_option'], 'json')|json_encode|e('html_attr') }}">
                   {% include '_partials/restaurant/menu_item_inner.html.twig' %}
@@ -198,7 +230,7 @@
 
     {% if restaurant.isFulfillmentMethodEnabled('delivery') or restaurant.isFulfillmentMethodEnabled('collection') %}
     <div class="col-xs-12 col-sm-4">
-      {{ form_start(cart_form) }}
+      {{ form_start(cart_form, { attr: { 'data-cart-url': path('restaurant_cart', { id: restaurant.id }) } }) }}
         <div id="cart"></div>
       {{ form_end(cart_form) }}
     </div>
@@ -218,42 +250,6 @@
     </div>
   {% endif %}
 
-</div>
-
-{# Modals for product options #}
-
-<div id="product-options" class="modal fade">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title"></h4>
-      </div>
-      <div class="modal-body"></div>
-    </div>
-  </div>
-</div>
-
-<div id="product-details" class="modal fade">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title"></h4>
-      </div>
-      <div class="modal-body">
-        <form method="post" action="" data-product-simple>
-          <div data-swiper></div>
-          <hr />
-          <button class="btn btn-lg btn-block btn-primary" type="submit"></button>
-        </form>
-      </div>
-    </div>
-  </div>
 </div>
 
 {% set restaurant_json = { id: restaurant.id } %}
@@ -276,5 +272,4 @@
 
 {% block scripts %}
 {{ encore_entry_script_tags('restaurant') }}
-<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
 {% endblock %}

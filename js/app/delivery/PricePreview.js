@@ -2,15 +2,6 @@ import axios from 'axios'
 
 const baseURL = location.protocol + '//' + location.hostname
 
-const calculate = (base, amount, isIncludedInPrice) => {
-
-    if (isIncludedInPrice) {
-      return Math.round(base - (base / (1 + amount)))
-    }
-
-    return Math.round(base * amount)
-}
-
 // @see https://gist.github.com/anvk/5602ec398e4fdc521e2bf9940fd90f84
 
 function asyncFunc(item, payload, token) {
@@ -64,10 +55,6 @@ class PricePreview {
   update(delivery) {
 
     const $container = $('#delivery_price').closest('.delivery-price')
-    const $wrapper = $container.closest('.delivery-price-preview')
-
-    const amount = $wrapper.data('taxRateAmount')
-    const isIncludedInPrice = $wrapper.data('taxRateIsIncludedInPrice')
 
     $container.removeClass('delivery-price--error')
     $container.addClass('delivery-price--loading')
@@ -83,7 +70,7 @@ class PricePreview {
     const pricingPromise = new Promise((resolve) => {
       axios({
         method: 'post',
-        url: baseURL + '/api/pricing/deliveries',
+        url: baseURL + '/api/retail_prices/calculate',
         data: delivery,
         headers: {
           'Accept': 'application/ld+json',
@@ -91,7 +78,7 @@ class PricePreview {
           Authorization: `Bearer ${this.token}`
         }
       })
-        .then(response => resolve({ success: true, price: response.data }))
+        .then(response => resolve({ success: true, data: response.data }))
         .catch(e => {
           let message = ''
 
@@ -115,15 +102,12 @@ class PricePreview {
 
         if (priceResult.success) {
 
-          const taxAmount =
-            calculate(priceResult.price, amount, isIncludedInPrice)
-
-          const taxIncluded = isIncludedInPrice ? priceResult.price : (priceResult.price + taxAmount)
-          const taxExcluded = isIncludedInPrice ? (priceResult.price - taxAmount) : priceResult.price
+          const { data } = priceResult
+          const taxExcluded = data.amount - data.tax.amount
 
           $('#delivery_price')
             .find('[data-tax="included"]')
-            .text((taxIncluded / 100).formatMoney())
+            .text((data.amount / 100).formatMoney())
           $('#delivery_price')
             .find('[data-tax="excluded"]')
             .text((taxExcluded / 100).formatMoney())

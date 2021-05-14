@@ -10,6 +10,7 @@ use AppBundle\Entity\TaskCollection;
 use AppBundle\Message\CalculateRoute;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
@@ -22,11 +23,13 @@ class CalculateRouteHandler implements MessageHandlerInterface
     public function __construct(
         EntityManagerInterface $objectManager,
         RoutingInterface $routing,
-        MessageBus $eventBus)
+        MessageBus $eventBus,
+        LoggerInterface $logger)
     {
         $this->objectManager = $objectManager;
         $this->routing = $routing;
         $this->eventBus = $eventBus;
+        $this->logger = $logger;
     }
 
     public function __invoke(CalculateRoute $message)
@@ -38,8 +41,17 @@ class CalculateRouteHandler implements MessageHandlerInterface
             return;
         }
 
+        $this->logger->debug(sprintf('%s : address #%d was updated', CalculateRoute::class, $message->getAddressId()));
+
         $tasks = $this->objectManager->getRepository(Task::class)
             ->findByAddress($address);
+
+        if (count($tasks) === 0) {
+            return;
+        }
+
+        $this->logger->debug(sprintf('%s : there are %d tasks linked to address #%d',
+            CalculateRoute::class, count($tasks), $message->getAddressId()));
 
         $toUpdate = [];
 
@@ -53,15 +65,23 @@ class CalculateRouteHandler implements MessageHandlerInterface
             }
         }
 
+        $this->logger->debug(sprintf('%s : there are %d collections to update',
+            CalculateRoute::class, count($toUpdate)));
+
+        if (count($toUpdate) === 0) {
+            return;
+        }
+
         foreach ($toUpdate as $collection) {
             $this->calculate($collection);
         }
 
         $this->objectManager->flush();
 
-        foreach ($toUpdate as $collection) {
-            $this->eventBus->handle(new Event\TaskCollectionUpdated($collection));
-        }
+        // Send only one event to avoid flooding
+        $this->eventBus->handle(
+            new Event\TaskCollectionsUpdated($toUpdate)
+        );
     }
 
     private function calculate(TaskCollectionInterface $taskCollection)

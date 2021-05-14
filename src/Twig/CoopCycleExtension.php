@@ -4,12 +4,17 @@ namespace AppBundle\Twig;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
+use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use AppBundle\Sylius\Product\ProductOptionInterface;
+use AppBundle\Twig\CacheExtension\KeyGenerator;
 use Carbon\Carbon;
+use Carbon\Translator as CarbonTranslator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\PersistentCollection;
 use Hashids\Hashids;
+use Spatie\OpeningHours\OpeningHoursForDay;
+use Spatie\OpeningHours\Time;
 use Symfony\Component\Serializer\SerializerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -47,11 +52,19 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('hashid', array($this, 'hashid')),
             new TwigFilter('local_business_type', array(LocalBusinessRuntime::class, 'type')),
             new TwigFilter('time_range_for_humans', array(OrderRuntime::class, 'timeRangeForHumans')),
+            new TwigFilter('time_range_for_humans_short', array(OrderRuntime::class, 'timeRangeForHumansShort')),
             new TwigFilter('promotion_rule_for_humans', array(PromotionRuntime::class, 'ruleForHumans')),
+            new TwigFilter('promotion_action_for_humans', array(PromotionRuntime::class, 'actionForHumans')),
             new TwigFilter('get_iri_from_item', array($this, 'getIriFromItem')),
             new TwigFilter('oauth2_proxy', array(OAuthRuntime::class, 'modifyUrl')),
             new TwigFilter('restaurant_microdata', array(LocalBusinessRuntime::class, 'seo')),
-            new TwigFilter('restaurant_delay_for_humans', array(LocalBusinessRuntime::class, 'delayForHumans')),
+            new TwigFilter('delay_for_humans', array(LocalBusinessRuntime::class, 'delayForHumans')),
+            new TwigFilter('grams_to_kilos', array($this, 'gramsToKilos')),
+            new TwigFilter('opening_hours', array($this, 'openingHours')),
+            new TwigFilter('day_localized', array($this, 'dayLocalized')),
+            new TwigFilter('opening_hours_for_day_matches', array($this, 'openingHoursForDayMatches')),
+            new TwigFilter('cache_key', array(KeyGenerator::class, 'generateKey')),
+            new TwigFilter('parse_expression', array(ExpressionLanguageRuntime::class, 'parseExpression')),
         );
     }
 
@@ -72,6 +85,10 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('local_business_path', array(UrlGeneratorRuntime::class, 'localBusinessPath')),
             new TwigFunction('coopcycle_has_about_us', array(AppearanceRuntime::class, 'hasAboutUs')),
             new TwigFunction('coopcycle_has_banner', array(AssetsRuntime::class, 'hasCustomBanner')),
+            new TwigFunction('coopcycle_restaurants_suggestions', array(LocalBusinessRuntime::class, 'restaurantsSuggestions')),
+            new TwigFunction('coopcycle_has_ordering_delay', array(OrderRuntime::class, 'hasDelayConfigured')),
+            new TwigFunction('coopcycle_bounding_rect', array(SettingResolver::class, 'getBoundingRect')),
+            new TwigFunction('coopcycle_checkout_suggestions', array(LocalBusinessRuntime::class, 'getCheckoutSuggestions')),
         );
     }
 
@@ -108,9 +125,11 @@ class CoopCycleExtension extends AbstractExtension
             $groups = ['address'];
         }
 
-        $context = [
-            'groups' => $groups,
-        ];
+        $context = [];
+
+        if (!empty($groups)) {
+           $context['groups'] = $groups;
+        }
 
         if ('jsonld' === $format) {
             $context = array_merge($context, [
@@ -164,5 +183,29 @@ class CoopCycleExtension extends AbstractExtension
     public function getIriFromItem($item)
     {
         return $this->iriConverter->getIriFromItem($item);
+    }
+
+    public function gramsToKilos($grams)
+    {
+        return sprintf('%s kg', number_format($grams / 1000, 2));
+    }
+
+    public function openingHours(array $openingHours)
+    {
+        return SpatieOpeningHoursRegistry::get($openingHours);
+    }
+
+    public function dayLocalized(string $day, string $locale)
+    {
+        return Carbon::instance(
+            new \DateTime(ucfirst($day))
+        )->locale($locale)->dayName;
+    }
+
+    public function openingHoursForDayMatches(OpeningHoursForDay $openingHoursForDay, string $day)
+    {
+        $now = Carbon::now();
+
+        return $day === strtolower($now->englishDayOfWeek) && $openingHoursForDay->isOpenAt(Time::fromDateTime($now));
     }
 }

@@ -204,9 +204,10 @@
 
 {% block styles %}
   {{ encore_entry_link_tags('restaurant-form') }}
+  {{ encore_entry_link_tags('restaurant-fulfillment-methods') }}
 {% endblock %}
 
 {% block scripts %}
-{{ encore_entry_script_tags('restaurant-form') }}
-<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
+  {{ encore_entry_script_tags('restaurant-form') }}
+  {{ encore_entry_script_tags('restaurant-fulfillment-methods') }}
 {% endblock %}

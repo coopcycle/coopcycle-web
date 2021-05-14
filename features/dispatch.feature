@@ -51,7 +51,8 @@ Feature: Dispatch
             "polyline":"",
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
-            "username":"sarah"
+            "username":"sarah",
+            "date":"2018-12-01"
           },
           {
             "@id":"@string@.startsWith('/api/task_lists')",
@@ -62,7 +63,8 @@ Feature: Dispatch
             "polyline":"",
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
-            "username":"bob"
+            "username":"bob",
+            "date":"2018-12-01"
           }
         ],
         "hydra:totalItems":2,
@@ -275,4 +277,15 @@ Feature: Dispatch
       {}
       """
     Then the response status code should be 403
+    And the response should be in JSON
+
+  Scenario: Get optimized task list
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/task_lists/1/optimize"
+    Then the response status code should be 200
     And the response should be in JSON

@@ -3,11 +3,11 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
-use AppBundle\Domain\Order\Event\OrderCreated;
+use AppBundle\Domain\Order\Event;
 use AppBundle\Message\PushNotification;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SendRemotePushNotification
 {
@@ -28,46 +28,55 @@ class SendRemotePushNotification
         $this->translator = $translator;
     }
 
-    public function __invoke($event)
+    public function __invoke(Event $event)
     {
         $order = $event->getOrder();
 
-        if ($event instanceof OrderCreated && $order->isFoodtech()) {
+        if (!$order->hasVendor()) {
+            return;
+        }
 
-            $message = $this->translator->trans('notifications.restaurant.new_order');
+        $shouldSendNotification = $order->isMultiVendor() ?
+            $event instanceof Event\OrderAccepted : $event instanceof Event\OrderCreated;
 
-            // Send to admins
-            $admins = array_map(function ($user) {
+        if (!$shouldSendNotification) {
+            return;
+        }
+
+        // TODO Send a different message when event is "order:accepted"
+        $message = $this->translator->trans('notifications.restaurant.new_order');
+
+        // Send to admins
+        $admins = array_map(function ($user) {
+            return $user->getUsername();
+        }, $this->userManager->findUsersByRole('ROLE_ADMIN'));
+
+        $this->messageBus->dispatch(
+            new PushNotification($message, $admins)
+        );
+
+        // Send to owners
+        $owners = $order->getNotificationRecipients()->toArray();
+
+        if (count($owners) > 0) {
+
+            $data = [
+                'event' => [
+                    'name' => 'order:created',
+                    'data' => [
+                        'order' => $this->iriConverter->getIriFromItem($order),
+                    ]
+                ],
+            ];
+
+            $users = array_map(function ($user) {
                 return $user->getUsername();
-            }, $this->userManager->findUsersByRole('ROLE_ADMIN'));
+            }, $owners);
+            $users = array_unique($owners);
 
             $this->messageBus->dispatch(
-                new PushNotification($message, $admins)
+                new PushNotification($message, $users, $data)
             );
-
-            // Send to owners
-            $owners = $order->getRestaurant()->getOwners()->toArray();
-
-            if (count($owners) > 0) {
-
-                $data = [
-                    'event' => [
-                        'name' => 'order:created',
-                        'data' => [
-                            'order' => $this->iriConverter->getIriFromItem($order),
-                        ]
-                    ],
-                ];
-
-                $users = array_unique($owners);
-                $users = array_map(function ($user) {
-                    return $user->getUsername();
-                }, $owners);
-
-                $this->messageBus->dispatch(
-                    new PushNotification($message, $users, $data)
-                );
-            }
         }
     }
 }

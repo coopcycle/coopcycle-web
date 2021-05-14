@@ -1,22 +1,4 @@
-{% if form.enabledFulfillmentMethods is defined %}
-  {{ form_row(form.enabledFulfillmentMethods) }}
-{% endif %}
-
 {{ form_row(form.fulfillmentMethods, { label: false }) }}
-
-<label class="control-label">{% trans %}localBusiness.form.orderingDelayMinutes{% endtrans %}</label>
-<div class="row">
-  <div class="col-sm-3">
-    {{ form_row(form.orderingDelayDays) }}
-  </div>
-  <div class="col-sm-3">
-    {{ form_row(form.orderingDelayHours) }}
-  </div>
-</div>
-
-<span class="help-block">
-  <i class="fa fa-info-circle"></i>&nbsp;{{ "localBusiness.form.orderingDelayMinutes.help" | trans | raw }}
-</span>
 
 {{ form_row(form.shippingOptionsDays) }}
 

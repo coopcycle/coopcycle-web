@@ -1,11 +1,12 @@
-{% extends "admin.html.twig" %}
+{% extends "deliveries.html.twig" %}
 
 {% block breadcrumb %}
+{{ parent() }}
 <li>{% trans %}adminDashboard.stores.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
-  <div class="text-right margin-bottom-md">
+  <div class="text-right mb-4">
     <a href="{{ path('admin_store_new') }}" class="btn btn-success">
       <i class="fa fa-plus"></i> {% trans %}adminDashboard.stores.createNew{% endtrans %}
     </a>

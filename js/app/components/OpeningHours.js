@@ -1,10 +1,12 @@
 import React from 'react'
 import moment from 'moment'
 import _ from 'lodash'
-import { Button, ConfigProvider, Radio, TimePicker } from 'antd'
+import { ConfigProvider, Radio, TimePicker } from 'antd'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import { withTranslation } from 'react-i18next'
+
+import 'antd/lib/button/style/index.css'
 
 import openingHourIntervalToReadable from '../restaurant/parseOpeningHours'
 import TimeRange from '../utils/TimeRange'
@@ -67,25 +69,16 @@ class OpeningHours extends React.Component {
     this.setState({ disabled: true })
   }
 
-  onStartChange(key, date) {
+  onRangeChange(key, range) {
+    if (!range) {
+      return
+    }
 
     const { rows } = this.state
     const row = rows[key]
 
-    row.start = date.format('HH:mm')
-
-    rows.splice(key, 1, row)
-    this.setState({ rows })
-
-    this.props.onChange(_.map(rows, (row) => this.rowToString(row)))
-  }
-
-  onEndChange(key, date) {
-
-    const { rows } = this.state
-    const row = rows[key]
-
-    row.end = date.format('HH:mm')
+    row.start = range[0].format('HH:mm')
+    row.end = range[1].format('HH:mm')
 
     rows.splice(key, 1, row)
     this.setState({ rows })
@@ -169,29 +162,16 @@ class OpeningHours extends React.Component {
         className={ classNames({ 'danger': (-1 !== this.props.rowsWithErrors.indexOf(index)) }) }>
         <td width="50%">
           <span className="d-block mr-3">
-            <TimePicker
+            <TimePicker.RangePicker
               { ...timePickerProps }
-              disabled={ this.state.disabled }
+              defaultValue={[startValue, endValue]}
               disabledMinutes={this.disabledMinutes}
-              onChange={this.onStartChange.bind(this, index)}
-              defaultValue={startValue}
-              hideDisabledOptions
-              placeholder="Heure"
-              addon={panel => (
-                <Button size="small" type="primary" onClick={() => panel.close()}>OK</Button>
-              )}
-            />
-            <TimePicker
-              { ...timePickerProps }
               disabled={ this.state.disabled }
-              disabledMinutes={this.disabledMinutes}
-              onChange={this.onEndChange.bind(this, index)}
-              defaultValue={endValue}
               hideDisabledOptions
-              placeholder="Heure"
-              addon={panel => (
-                <Button size="small" type="primary" onClick={() => panel.close()}>OK</Button>
-              )}
+              placeholder={["Heure","Heure"]}
+              onChange={(value) => {
+                this.onRangeChange(index, value)
+              }}
             />
           </span>
           <small className="text-muted">{ openingHourIntervalToReadable(this.rowToString(row), this.props.locale, this.state.behavior) }</small>

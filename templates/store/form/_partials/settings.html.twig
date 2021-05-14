@@ -1,0 +1,45 @@
+{% if form.pricingRuleSet is defined or form.prefillPickupAddress is defined or form.createOrders is defined %}
+  {% if form.pricingRuleSet is defined and form.pricingRuleSet.vars.choices|length == 0 %}
+    <div class="alert alert-warning">{% trans with {'%editPricingRule%':admin_deliveries_pricing} %}restaurant.form.noPricingRule{% endtrans %}</div>
+    <div class="hidden">
+      {{ form_row(form.pricingRuleSet) }}
+      {% if form.prefillPickupAddress is defined %}
+        {{ form_row(form.prefillPickupAddress) }}
+      {% endif %}
+      {% if form.createOrders is defined %}
+        {{ form_row(form.createOrders) }}
+      {% endif %}
+    </div>
+  {% else %}
+    {% if form.pricingRuleSet is defined %}
+      {{ form_row(form.pricingRuleSet) }}
+    {% endif %}
+    {% if form.prefillPickupAddress is defined %}
+      {{ form_row(form.prefillPickupAddress) }}
+    {% endif %}
+    {% if form.createOrders is defined %}
+      {{ form_row(form.createOrders) }}
+    {% endif %}
+    {% if form.weightRequired is defined %}
+      {{ form_row(form.weightRequired) }}
+    {% endif %}
+    {% if form.packagesRequired is defined %}
+      {{ form_row(form.packagesRequired) }}
+    {% endif %}
+  {% endif %}
+  <hr>
+{% endif %}
+
+{% if form.timeSlot is defined or form.packageSet is defined %}
+  {% if form.timeSlot is defined %}
+    {{ form_row(form.timeSlot) }}
+  {% endif %}
+  {% if form.packageSet is defined %}
+    {{ form_row(form.packageSet) }}
+  {% endif %}
+  <hr>
+{% endif %}
+
+{% if form.tags is defined %}
+  {{ form_row(form.tags) }}
+{% endif %}

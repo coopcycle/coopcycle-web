@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
@@ -16,6 +17,7 @@ use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
+use AppBundle\Vroom\Shipment as VroomShipment;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -29,9 +31,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "post"={
  *       "method"="POST",
  *       "denormalization_context"={"groups"={"delivery_create"}},
- *       "swagger_context"={
- *         "parameters"=Delivery::SWAGGER_CONTEXT_POST_PARAMETERS
- *       }
+ *       "openapi_context"={
+ *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
+ *       },
+ *       "security_post_denormalize"="is_granted('create', object)"
  *     },
  *     "check"={
  *       "method"="POST",
@@ -40,26 +43,28 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "status"=200,
  *       "validation_groups"={"Default", "delivery_check"},
  *       "denormalization_context"={"groups"={"delivery_create"}},
- *       "swagger_context"={
+ *       "security_post_denormalize"="is_granted('create', object)",
+ *       "openapi_context"={
  *         "summary"="Asserts a Delivery is feasible",
- *         "parameters"=Delivery::SWAGGER_CONTEXT_POST_PARAMETERS
+ *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
  *       }
  *     }
  *   },
  *   itemOperations={
  *     "get"={
- *       "method"="GET"
+ *       "method"="GET",
+ *       "security"="is_granted('view', object)"
  *     },
  *     "put"={
  *        "method"="PUT",
- *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())"
+ *        "security"="is_granted('edit', object)"
  *     },
  *     "pick"={
  *        "method"="PUT",
  *        "path"="/deliveries/{id}/pick",
  *        "controller"=PickDelivery::class,
- *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())",
- *        "swagger_context"={
+ *        "security"="is_granted('edit', object)",
+ *        "openapi_context"={
  *          "summary"="Marks a Delivery as picked"
  *        }
  *     },
@@ -67,9 +72,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *        "method"="PUT",
  *        "path"="/deliveries/{id}/drop",
  *        "controller"=DropDelivery::class,
- *        "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_OAUTH2_DELIVERIES') and oauth2_context.store == object.getStore())",
- *        "swagger_context"={
+ *        "security"="is_granted('edit', object)",
+ *        "openapi_context"={
  *          "summary"="Marks a Delivery as dropped"
+ *        }
+ *     },
+ *     "cancel"={
+ *        "method"="DELETE",
+ *        "controller"=CancelDelivery::class,
+ *        "write"=false,
+ *        "security"="is_granted('edit', object)",
+ *        "openapi_context"={
+ *          "summary"="Cancels a Delivery"
  *        }
  *     }
  *   },
@@ -108,20 +122,19 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     private $packages;
 
-    const SWAGGER_CONTEXT_POST_PARAMETERS = [
-        [
-            "name" => "delivery",
-            "in"=>"body",
-            "schema" => [
-                "type" => "object",
-                "required" => ["dropoff"],
-                "properties" => [
-                    "dropoff" => ['$ref' => '#/definitions/Task-task_create'],
-                    "pickup" => ['$ref' => '#/definitions/Task-task_create'],
-                ]
+    const OPENAPI_CONTEXT_POST_PARAMETERS = [[
+        "name" => "delivery",
+        "in"=>"body",
+        "schema" => [
+            "type" => "object",
+            "required" => ["dropoff"],
+            "properties" => [
+                "dropoff" => ['$ref' => '#/definitions/Task-task_create'],
+                "pickup" => ['$ref' => '#/definitions/Task-task_create'],
             ]
-        ]
-    ];
+        ],
+        "style" => "form"
+    ]];
 
     public function __construct()
     {
@@ -446,5 +459,35 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         if (null !== $order) {
             return $order->getRestaurant();
         }
+    }
+
+    public static function toVroomShipment(Delivery $delivery): VroomShipment
+    {
+        $shipment = new VroomShipment();
+
+        $shipment->pickup = Task::toVroomJob($delivery->getPickup());
+        $shipment->delivery = Task::toVroomJob($delivery->getDropoff());
+
+        return $shipment;
+    }
+
+    public function getImages()
+    {
+        $images = new ArrayCollection();
+
+        foreach ($this->getPickup()->getImages() as $image) {
+            $images->add($image);
+        }
+
+        foreach ($this->getDropoff()->getImages() as $image) {
+            $images->add($image);
+        }
+
+        return $images;
+    }
+
+    public function hasImages()
+    {
+        return count($this->getImages()) > 0;
     }
 }

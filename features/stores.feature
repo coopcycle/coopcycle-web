@@ -114,6 +114,7 @@ Feature: Stores
           "@id":"/api/addresses/1",
           "@type":"http://schema.org/Place",
           "geo":{
+            "@type":"GeoCoordinates",
             "latitude":48.864577,
             "longitude":2.333338
           },
@@ -148,6 +149,7 @@ Feature: Stores
           "@id":"/api/addresses/1",
           "@type":"http://schema.org/Place",
           "geo":{
+            "@type":"GeoCoordinates",
             "latitude":48.864577,
             "longitude":2.333338
           },
@@ -181,10 +183,14 @@ Feature: Stores
         "name":"Acme time slot",
         "choices":[
           {
+            "@type":"Choice",
+            "@id":@string@,
             "startTime":"12:00:00",
             "endTime":"14:00:00"
           },
           {
+            "@type":"Choice",
+            "@id":@string@,
             "startTime":"14:00:00",
             "endTime":"17:00:00"
           }
@@ -604,6 +610,7 @@ Feature: Stores
             "@type":"http://schema.org/Place",
             "contactName":null,
             "geo":{
+              "@type":"GeoCoordinates",
               "latitude":48.884625,
               "longitude":2.322084
             },

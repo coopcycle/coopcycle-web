@@ -27,7 +27,6 @@
     {# If the price can't be calculated, do not show payment field #}
     {% if form.stripePayment is defined %}
       <div class="hidden">
-        {{ form_widget(form.stripePayment.cardholderName, { required: false }) }}
         {{ form_widget(form.stripePayment.stripeToken) }}
       </div>
     {% endif %}
@@ -65,6 +64,4 @@
 
 {% block scripts %}
 {{ encore_entry_script_tags('delivery-embed-start-form') }}
-<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&language={{ app.request.locale }}&callback=initMap"
-  async defer></script>
 {% endblock %}

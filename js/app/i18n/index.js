@@ -7,10 +7,12 @@
  */
 import i18next from 'i18next'
 import { initReactI18next } from 'react-i18next'
+import LanguageDetector from 'i18next-browser-languagedetector'
 
 import moment from 'moment'
 import 'moment-timezone'
 
+import an from './locales/an.json'
 import ca from './locales/ca.json'
 import de from './locales/de.json'
 import en from './locales/en.json'
@@ -36,28 +38,23 @@ import frFR from 'numbro/dist/languages/fr-FR.min.js'
 import plPL from 'numbro/dist/languages/pl-PL.min.js'
 import ptBR from 'numbro/dist/languages/pt-BR.min.js'
 
-export const localeDetector = () => $('html').attr('lang')
-
-// https://www.i18next.com/misc/creating-own-plugins.html#languagedetector
-const languageDetector = {
-  type: 'languageDetector',
-  detect: localeDetector,
-  init: () => { },
-  cacheUserLanguage: () => { }
-}
-
 i18next
-  .use(languageDetector)
+  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     fallbackLng: 'en',
-    resources: { ca, de, en, fr, es, pl, "pt-BR": pt_BR },
+    resources: { an, ca, de, en, fr, es, pl, "pt-BR": pt_BR },
     ns: ['common'],
     defaultNS: 'common',
-    debug: process.env.DEBUG
+    debug: process.env.DEBUG,
+    detection: {
+      order: ['htmlTag', 'path', 'navigator'],
+    },
   })
 
 export default i18next
+
+export const localeDetector = () => i18next.language
 
 export const setTimezone = timezone => moment.tz.setDefault(timezone)
 

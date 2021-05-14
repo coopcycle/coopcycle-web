@@ -38,6 +38,11 @@ AppBundle\Entity\Sylius\ProductOptionValue:
     code: GLUTEN_FREE
     currentLocale: fr
     value: Gluten free
+  not_enabled_option:
+    code: NOT_ENABLED_OPTION
+    currentLocale: fr
+    value: Not enabled
+    enabled: false
 
 AppBundle\Entity\Sylius\ProductOption:
   pizza_topping:
@@ -45,7 +50,7 @@ AppBundle\Entity\Sylius\ProductOption:
     strategy: free
     currentLocale: fr
     name: Pizza topping
-    values: [ "@pizza_topping_pepperoni", "@pizza_topping_extra_cheese" ]
+    values: [ "@pizza_topping_pepperoni", "@pizza_topping_extra_cheese", "@not_enabled_option" ]
   gluten_intolerance:
     code: GLUTEN_INTOLERANCE
     strategy: free

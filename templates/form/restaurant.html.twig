@@ -17,16 +17,19 @@
   {% endif %}
 {% endblock %}
 
-{% block _restaurant_fulfillmentMethods_entry_row %}
+{% block fulfillment_method_item_row %}
 <div class="panel panel-default">
-  <div class="panel-heading">{{ ('fulfillment_method.' ~ form.vars.value.type)|trans }}</div>
+  <div class="panel-heading">
+    {{ ('fulfillment_method.' ~ form.vars.value.type)|trans }}
+    <span class="pull-right">{{ form_widget(form.enabled, { label_attr: { class: 'checkbox-inline' } }) }}</span>
+  </div>
   <div class="panel-body">
     {{ form_row(form) }}
   </div>
 </div>
 {% endblock %}
 
-{% block _restaurant_fulfillmentMethods_entry_widget %}
+{% block fulfillment_method_item_widget %}
 <div id="{{ form.vars.id }}">
 
   {% set fulfillment_method = form.vars.value %}
@@ -44,6 +47,7 @@
       {% set opening_hours_errors = opening_hours_errors|merge([ key ]) %}
     {% endif %}
   {% endfor %}
+
   {{ form_row(form.openingHours, { label: false, attr: {
     'data-widget': 'opening-hours',
     'data-errors': opening_hours_errors|json_encode,
@@ -54,11 +58,133 @@
   }}) }}
   {{ form_row(form.openingHoursBehavior, { row_attr: { class: 'd-none' } }) }}
 
-  {% if form.allowEdit is defined and method == 'delivery' %}
-    {{ form_row(form.allowEdit) }}
+  <hr />
+
+  <div class="form-horizontal">
+    <div class="form-group">
+      {{ form_label(form.minimumAmount, null, { label_attr: { class: 'col-sm-7' } }) }}
+      <div class="col-sm-5">
+        {{ form_widget(form.minimumAmount) }}
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-7 control-label">{{ 'localBusiness.form.orderingDelayMinutes'|trans }}</label>
+      <div class="col-sm-5">
+        <div class="d-flex">
+          <div class="input-group mr-4">
+            {{ form_widget(form.orderingDelayDays, { attr: { size: 2 } }) }}
+            <span class="input-group-addon"><small>{{ form.orderingDelayDays.vars.label|trans }}</small></span>
+          </div>
+          <div class="input-group">
+            {{ form_widget(form.orderingDelayHours, { attr: { size: 2 } }) }}
+            <span class="input-group-addon"><small>{{ form.orderingDelayHours.vars.label|trans }}</small></span>
+          </div>
+        </div>
+        <span class="help-block mb-0">
+          {{ 'localBusiness.form.orderingDelayMinutes.help'| trans }}
+        </span>
+      </div>
+    </div>
+    {% if method == 'delivery' and form.rangeDuration is defined %}
+    <div class="form-group">
+      {{ form_label(form.rangeDuration, null, { label_attr: { class: 'col-sm-7' } }) }}
+      <div class="col-sm-5">
+        {{ form_widget(form.rangeDuration) }}
+      </div>
+    </div>
+    {% endif %}
+    <div class="form-group">
+      <div class="col-sm-offset-7 col-sm-5">
+        {{ form_widget(form.preOrderingAllowed) }}
+        {{ form_help(form.preOrderingAllowed) }}
+      </div>
+    </div>
+    {% if method == 'delivery' and form.allowEdit is defined %}
+    <div class="form-group">
+      <div class="col-sm-offset-7 col-sm-5">
+        {{ form_widget(form.allowEdit) }}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block contract_widget %}
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="alert alert-info">{% trans %}restaurant.contract.calculation_info{% endtrans %}</div>
+      <div class="row">
+        <div class="col-sm-6">
+          {{ form_row(form.variableDeliveryPriceEnabled) }}
+          {{ form_row(form.flatDeliveryPrice) }}
+          {{ form_row(form.variableDeliveryPrice) }}
+        </div>
+        <div class="col-sm-6">
+          {{ form_row(form.variableCustomerAmountEnabled) }}
+          {{ form_row(form.customerAmount) }}
+          {{ form_row(form.variableCustomerAmount) }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{ form_row(form.feeRate) }}
+  {{ form_row(form.takeAwayFeeRate) }}
+
+  {% if form.restaurantPaysStripeFee is defined %}
+  <p>
+    <a class="help-block collapsed" role="button" data-toggle="collapse" href="#{{ form.vars.id }}_advanced">
+      <i class="fa fa-plus"></i>
+      <i class="fa fa-minus"></i>
+      <span>{% trans %}restaurant.contract.showAdvanced{% endtrans %}</span>
+    </a>
+  </p>
+  <div class="collapse" id="{{ form.vars.id }}_advanced">
+    {{ form_row(form.restaurantPaysStripeFee, { help: 'restaurant.contract.restaurantPaysStripeFee.help' }) }}
+  </div>
   {% endif %}
 
-  {{ form_row(form.minimumAmount) }}
+{% endblock %}
 
+{% block _hub_restaurants_row %}
+{% spaceless %}
+<div class="form-group">
+  <table class="table" id="{{ form.vars.id }}" data-prototype="{{ form_widget(form.vars.prototype)|e('html_attr') }}">
+    <thead>
+      <th colspan="2">{{ (form.vars.label)|trans }}</th>
+    </thead>
+    <tbody>
+    {% for child in form.children %}
+      {{ form_widget(child) }}
+    {% endfor %}
+    </tbody>
+  </table>
 </div>
+<div class="form-horizontal">
+  <div class="form-group form-group-sm">
+    <label class="col-sm-2 control-label">{{ 'adminDashboard.users.edit.addRestaurant'|trans }}</label>
+    <div class="col-sm-10">
+      <div id="restaurant-search"></div>
+    </div>
+  </div>
+</div>
+{% endspaceless %}
+{% endblock %}
+
+{% block _hub_restaurants_entry_widget %}
+{% spaceless %}
+<tr>
+  <td>
+    {{ form.vars.data ? form.vars.data.name : '__restaurant_name__' }}
+    <input type="hidden" id="{{ form.vars.id ? form.vars.id : '' }}"
+      name="{{ form.vars.full_name ? form.vars.full_name : '' }}"
+      value="{{ form.vars.value ? form.vars.value : '__value__' }}">
+  </td>
+  <td class="text-right">
+    <a href="#" data-remove="restaurant"><span class="glyphicon glyphicon-trash"></span></a>
+  </td>
+</tr>
+{% endspaceless %}
 {% endblock %}

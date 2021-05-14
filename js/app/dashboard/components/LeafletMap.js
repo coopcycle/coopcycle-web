@@ -1,201 +1,277 @@
 import React, { Component } from 'react'
+import { render } from 'react-dom'
 import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
-import { setCurrentTask, assignAfter, selectTask, selectTasks as selectTasksAction } from '../redux/actions'
-import { selectFilteredTasks } from '../redux/selectors'
-import { selectAllTasks, selectTaskLists, selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
+import moment from 'moment'
+import classNames from 'classnames'
 
-class LeafletMap extends Component {
+import { setCurrentTask, assignAfter, selectTask, selectTasksByIds } from '../redux/actions'
+import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle } from './MapLayers'
+import { selectVisibleTaskIds } from '../redux/selectors'
+import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
-  _draw() {
-    const {
-      polylines,
-      asTheCrowFlies,
-      tasks,
-      tasksFiltered,
-      clustersEnabled,
-    } = this.props
+const sortByBefore = task => moment(task.before)
 
-    const tasksHidden = _.differenceWith(tasks, tasksFiltered, (a, b) => a['@id'] === b['@id'])
+const GroupHeading = ({ tasks }) => {
+  const task = _.first(tasks)
 
-    tasksFiltered.forEach(task => this.proxy.addTask(task))
-    tasksHidden.forEach(task => this.proxy.hideTask(task))
-
-    _.forEach(polylines, (polyline, username) => this.proxy.setPolyline(username, polyline))
-    _.forEach(asTheCrowFlies, (polyline, username) => this.proxy.setPolylineAsTheCrowFlies(username, polyline))
-
-    if (clustersEnabled) {
-      this.proxy.showClusters()
-    } else {
-      this.proxy.hideClusters()
-    }
+  if (task.orgName) {
+    return (
+      <div className="mb-2 px-2">
+        <strong className="d-block">{ `${task.orgName} (${tasks.length})` }</strong>
+        <small className="text-muted">{ task.address.streetAddress }</small>
+      </div>
+    )
   }
 
-  componentDidMount() {
+  return (
+    <strong className="d-block mb-2 px-2">{ `${task.address.streetAddress} (${tasks.length})` }</strong>
+  )
+}
 
-    this.map = MapHelper.init('map', {
-      onLoad: this.props.onLoad
+const TASKS_PER_PAGE = 5
+
+const GroupTable = ({ tasks, onEditClick, onMouseEnter, onMouseLeave }) => {
+
+  const [ page, setPage ] = React.useState(1)
+
+  const pages = Math.ceil(tasks.length / TASKS_PER_PAGE)
+
+  // Create an array starting at 1
+  const pagesArray =
+    Array.from({ length: pages }, (value, index) => index + 1)
+
+  const offset = (page - 1) * TASKS_PER_PAGE
+  const tasksForPage = tasks.slice(offset, offset + TASKS_PER_PAGE)
+
+  return (
+    <div>
+      <table className="table table-hover table-condensed mb-2">
+        <tbody>
+        { tasksForPage.map(task =>
+          <tr key={ task['@id'] } className="py-1"
+            onMouseEnter={() => {
+              onMouseEnter(task)
+            }}
+            onMouseLeave={ onMouseLeave }>
+            <td>
+              <a href="#" onClick={ (e) => {
+                e.preventDefault()
+                onEditClick(task)
+              }}
+              >
+                <strong className="mr-2">{ `#${task.id}` }</strong>
+                <span className="text-muted">
+                  { `${moment(task.after).format('LT')} — ${moment(task.before).format('LT')}` }
+                </span>
+              </a>
+            </td>
+            <td className="text-right">
+              <i className={ classNames({
+                'fa': true,
+                'fa-check': task.status === 'DONE',
+                'fa-play':  task.status === 'DOING',
+                'd-none': !isDoingOrDone(task) }) }
+              ></i>
+            </td>
+          </tr>
+        )}
+        </tbody>
+      </table>
+      { pages > 1 && (
+      <div className="text-right mr-2">
+        { pagesArray.map(p =>
+          <a key={ `p-${p}` }
+            href="#"
+            className={ classNames({
+              'p-2': true,
+              'bg-light': p === page
+            }) }
+            onClick={ e => {
+              e.preventDefault()
+              setPage(p)
+            }}
+          >{ p }</a>
+        )}
+      </div>
+      ) }
+    </div>
+  )
+}
+
+const isDoingOrDone = task => _.includes(['DOING', 'DONE'], task.status)
+
+class GroupPopupContent extends React.Component {
+
+  render() {
+
+    const tasksByAddress = _.mapValues(
+      _.groupBy(this.props.clusterTasks, (task) => `${task.address['@id']}|${task.orgName}` ),
+      (tasks) => _.sortBy(tasks, [ sortByBefore ])
+    )
+
+    return (
+      <div className="mt-5 mb-3">
+        <div className="leaflet-popup-pickup-group-content">
+        { _.map(tasksByAddress, (tasks, key) =>
+          <div key={ key } className="mb-3">
+            <GroupHeading tasks={ tasks } />
+            <GroupTable tasks={ tasks }
+              onEditClick={ this.props.onEditClick }
+              onMouseEnter={ this.props.onMouseEnter }
+              onMouseLeave={ this.props.onMouseLeave } />
+          </div>
+        )}
+        </div>
+      </div>
+    )
+  }
+}
+
+const MapContext = React.createContext([ null, () => {} ])
+
+const MapProvider = (props) => {
+
+  const [ map, setMap ] = React.useState(null);
+
+  const fromTask = React.useRef(null);
+  const toTask   = React.useRef(null);
+
+  React.useEffect(() => {
+
+    const LMap = MapHelper.init('map', {
+      onLoad: props.onLoad
     })
-    this.proxy = new MapProxy(this.map, {
-      onEditClick: this.props.setCurrentTask,
+
+    const proxy = new MapProxy(LMap, {
+      onEditClick: props.setCurrentTask,
       onTaskMouseDown: task => {
         if (task.isAssigned) {
-          this.proxy.disableDragging()
-          this.fromTask = task
+          proxy.disableDragging()
+          fromTask.current = task
         }
       },
       onTaskMouseOver: task => {
         if (task.isAssigned) {
-          this.proxy.enableConnect(task)
+          proxy.enableConnect(task)
         }
-        if (this.fromTask && task !== this.fromTask && !task.isAssigned) {
-          this.toTask = task
-          this.proxy.enableConnect(task, true)
+        if (fromTask.current && task !== fromTask.current && !task.isAssigned) {
+          toTask.current = task
+          proxy.enableConnect(task, true)
         }
       },
       onTaskMouseOut: (task) => {
-        this.toTask = null
-        this.proxy.disableConnect(task)
+        if (task.isAssigned) {
+          proxy.hidePolyline(task.assignedTo)
+        }
+        toTask.current = null
+        proxy.disableConnect(task)
       },
       onMouseMove: (e) => {
-        if (this.fromTask) {
-          const targetLatLng = !!this.toTask ? this.proxy.toLatLng(this.toTask) : e.latlng
-          this.proxy.setDrawPolyline(this.proxy.toLatLng(this.fromTask), targetLatLng, !!this.toTask)
-          this.proxy.enableConnect(this.fromTask, !!this.toTask)
+        if (fromTask.current) {
+          const targetLatLng = !!toTask.current ? proxy.toLatLng(toTask.current) : e.latlng
+          proxy.setDrawPolyline(proxy.toLatLng(fromTask.current), targetLatLng, !!toTask.current)
+          proxy.enableConnect(fromTask.current, !!toTask.current)
         }
       },
       onMouseUp: () => {
 
-        if (!!this.fromTask && !!this.toTask) {
-          this.props.assignAfter(this.fromTask.assignedTo, this.toTask, this.fromTask)
+        if (!!fromTask.current && !!toTask.current) {
+          props.assignAfter(fromTask.current.assignedTo, toTask.current, fromTask.current)
         }
 
-        if (!!this.fromTask) {
-          this.proxy.disableConnect(this.fromTask)
+        if (!!fromTask.current) {
+          proxy.disableConnect(fromTask.current)
         }
-        if (!!this.toTask) {
-          this.proxy.disableConnect(this.toTask)
+        if (!!toTask.current) {
+          proxy.disableConnect(toTask.current)
         }
 
-        this.fromTask = null
-        this.toTask = null
+        fromTask.current = null
+        toTask.current = null
 
-        this.proxy.clearDrawPolyline()
-        this.proxy.enableDragging()
+        proxy.clearDrawPolyline()
+        proxy.enableDragging()
       },
       onMarkersSelected: markers => {
-        const tasks = []
-        markers.forEach(marker => {
-          const task = _.find(this.props.tasks, t => t['@id'] === marker.options.task)
-          if (task) {
-            tasks.push(task)
-          }
-        })
-        this.props.selectTasks(tasks)
+        const taskIds = markers.map(marker => marker.options.task['@id'])
+        props.selectTasksByIds(taskIds)
+      },
+      onPickupClusterClick: (a) => {
+
+        const childMarkers = a.layer.getAllChildMarkers()
+        const tasks = childMarkers.map(m => m.options.task)
+
+        const el = document.createElement('div')
+
+        render(<GroupPopupContent
+          onEditClick={ proxy.onEditClick }
+          clusterTasks={ tasks }
+          onMouseEnter={ task => {
+            proxy.pointToNext(task, a.latlng)
+          }}
+          onMouseLeave={ () => {
+            proxy.hideNext()
+          }}
+          />, el)
+
+        return el
       }
     })
 
-    this._draw()
-  }
+    setMap(proxy)
 
-  componentDidUpdate(prevProps) {
+  }, [])
 
-    const {
-      polylineEnabled,
-      polylines,
-      selectedTasks,
-      positions,
-      offline,
-      polylineStyle,
-    } = this.props
+  return (
+    <MapContext.Provider value={ map }>
+      <div id="map"></div>
+      { map && props.children }
+    </MapContext.Provider>
+  )
+}
 
-    this._draw()
+export const useMap = () => React.useContext(MapContext)
 
-    selectedTasks.forEach(task => this.proxy.addTask(task, '#EEB516'))
-
-    _.forEach(polylineEnabled, (enabled, username) => {
-      if (enabled) {
-        if (polylineStyle === 'as_the_crow_flies') {
-          this.proxy.hidePolyline(username)
-          this.proxy.showPolylineAsTheCrowFlies(username, polylines[username])
-        } else {
-          this.proxy.hidePolylineAsTheCrowFlies(username)
-          this.proxy.showPolyline(username, polylines[username])
-        }
-      } else {
-        this.proxy.hidePolylineAsTheCrowFlies(username)
-        this.proxy.hidePolyline(username)
-      }
-    })
-
-    if (prevProps.positions !== positions) {
-      positions.forEach(position => {
-        const { username, coords, lastSeen } = position
-        this.proxy.setGeolocation(username, coords, lastSeen)
-        this.proxy.setOnline(username)
-      })
-    }
-
-    if (prevProps.offline !== offline) {
-      offline.forEach(username => {
-        this.proxy.setOffline(username)
-      })
-    }
-
-  }
+class LeafletMap extends Component {
 
   render() {
+
     return (
-      <div id="map"></div>
+      <MapProvider
+        tasks={ this.props.tasks }
+        visibleTaskIds={ this.props.visibleTaskIds }
+        onLoad={ this.props.onLoad }
+        setCurrentTask={ this.props.setCurrentTask }
+        assignAfter={ this.props.assignAfter }
+        selectTasksByIds={ this.props.selectTasksByIds }
+      >
+        <CourierMapLayer />
+        <TaskMapLayer />
+        <PolylineMapLayer />
+        <ClustersMapToggle />
+      </MapProvider>
     )
   }
 }
 
 function mapStateToProps(state) {
 
-  const { polylineEnabled } = state
-
-  const taskLists = selectTaskLists(state)
-
-  let polylines = {}
-  _.forEach(taskLists, taskList => {
-    polylines[taskList.username] = taskList.polyline
-  })
-
-  let asTheCrowFlies = {}
-  _.forEach(taskLists, taskList => {
-    asTheCrowFlies[taskList.username] =
-      _.map(taskList.items, item => ([ item.address.geo.latitude, item.address.geo.longitude ]))
-  })
-
-  const tasks = selectAllTasks(state)
-
   return {
-    tasks,
-    tasksFiltered: selectFilteredTasks({
-      tasks,
-      filters: state.filters,
-      date: selectSelectedDate(state)
-    }),
-    polylines,
-    polylineEnabled,
-    selectedTasks: state.selectedTasks,
-    positions: state.positions,
-    offline: state.offline,
-    polylineStyle: state.polylineStyle,
-    asTheCrowFlies,
-    clustersEnabled: state.clustersEnabled,
+    tasks: selectAllTasks(state),
+    visibleTaskIds: selectVisibleTaskIds(state),
   }
 }
 
 function mapDispatchToProps (dispatch) {
+
   return {
     setCurrentTask: task => dispatch(setCurrentTask(task)),
     assignAfter: (username, task, after) => dispatch(assignAfter(username, task, after)),
     selectTask: task => dispatch(selectTask(task)),
-    selectTasks: tasks => dispatch(selectTasksAction(tasks)),
+    selectTasksByIds: taskIds => dispatch(selectTasksByIds(taskIds)),
   }
 }
 

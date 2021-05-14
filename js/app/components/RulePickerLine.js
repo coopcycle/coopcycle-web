@@ -4,7 +4,8 @@ import isScalar from 'locutus/php/var/is_scalar'
 import { withTranslation } from 'react-i18next'
 import numbro from 'numbro'
 
-import { numericTypes } from './RulePicker'
+import { numericTypes, isNum } from './RulePicker'
+import './RulePicker.scss'
 
 /*
 
@@ -125,17 +126,11 @@ class RulePickerLine extends React.Component {
     let state = { operator }
 
     if ('in' === operator) {
-      state = {
-        ...state,
-        value: ['', '']
-      }
+      state.value = ['0', isK(this.state.type) ? '1000' : '1']
     }
 
-    if (_.includes(['==', '<', '>'], operator) && Array.isArray(this.state.value)) {
-      state = {
-        ...state,
-        value: ''
-      }
+    if (_.includes(['==', '<', '>'], operator)) {
+      state.value = isNum(this.state.type) ? '0' : ''
     }
 
     this.setState(state)
@@ -211,11 +206,11 @@ class RulePickerLine extends React.Component {
     // weight, distance, diff_days(pickup)
     case 'in':
       return (
-        <div className="row">
-          <div className="col-md-6">
+        <div className="d-flex justify-content-between">
+          <div className="mr-2">
             <input className="form-control input-sm" value={ (this.state.value[0] / (isK(this.state.type) ? 1000 : 1))  } onChange={this.handleFirstBoundChange} type="number" min="0" required></input>
           </div>
-          <div className="col-md-6">
+          <div>
             <input className="form-control input-sm" value={ (this.state.value[1] / (isK(this.state.type) ? 1000 : 1)) } onChange={this.handleSecondBoundChange} type="number" min="0" required></input>
           </div>
         </div>
@@ -238,8 +233,8 @@ class RulePickerLine extends React.Component {
   render () {
 
     return (
-      <div className="row">
-        <div className="col-md-3 form-group">
+      <tr>
+        <td>
           <select value={this.state.type} onChange={this.onTypeSelect} className="form-control input-sm">
             <option value="">-</option>
             <optgroup label={ this.props.t('RULE_PICKER_LINE_OPTGROUP_DELIVERY') }>
@@ -257,8 +252,8 @@ class RulePickerLine extends React.Component {
               <option value="order.itemsTotal">{ this.props.t('RULE_PICKER_LINE_ORDER_ITEMS_TOTAL') }</option>
             </optgroup>
           </select>
-        </div>
-        <div className="col-md-3">
+        </td>
+        <td width="20%">
           {
             this.state.type && (
               <select value={this.state.operator} onChange={this.onOperatorSelect} className="form-control input-sm">
@@ -269,16 +264,16 @@ class RulePickerLine extends React.Component {
               </select>
             )
           }
-        </div>
-        <div className="col-md-5">
+        </td>
+        <td width="25%">
           {
             this.state.operator && this.renderBoundPicker()
           }
-        </div>
-        <div className="col-md-1" onClick={this.delete}>
+        </td>
+        <td className="text-right" onClick={this.delete}>
           <a href="#"><i className="fa fa-trash"></i></a>
-        </div>
-      </div>
+        </td>
+      </tr>
     )
   }
 }

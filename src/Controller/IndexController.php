@@ -6,6 +6,7 @@ use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
+use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Enum\FoodEstablishment;
@@ -13,19 +14,21 @@ use AppBundle\Enum\Store;
 use AppBundle\Form\DeliveryEmbedType;
 use Hashids\Hashids;
 use MyCLabs\Enum\Enum;
+use Symfony\Contracts\Cache\CacheInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class IndexController extends AbstractController
 {
     use UserTrait;
 
-    const MAX_RESULTS = 3;
+    const MAX_RESULTS = 6;
     const EXPIRES_AFTER = 300;
 
     private function getItems(LocalBusinessRepository $repository, string $type, CacheInterface $cache, string $cacheKey)
@@ -61,7 +64,7 @@ class IndexController extends AbstractController
     /**
      * @HideSoftDeleted
      */
-    public function indexAction(LocalBusinessRepository $repository, CacheInterface $appCache)
+    public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache)
     {
         $user = $this->getUser();
 
@@ -72,10 +75,13 @@ class IndexController extends AbstractController
         }
 
         [ $restaurants, $restaurantsCount ] =
-            $this->getItems($repository, FoodEstablishment::class, $appCache, sprintf('homepage.restaurants.%s', $cacheKeySuffix));
+            $this->getItems($repository, FoodEstablishment::class, $projectCache, sprintf('homepage.restaurants.%s', $cacheKeySuffix));
         [ $stores, $storesCount ] =
-            $this->getItems($repository, Store::class, $appCache, sprintf('homepage.stores.%s', $cacheKeySuffix));
+            $this->getItems($repository, Store::class, $projectCache, sprintf('homepage.stores.%s', $cacheKeySuffix));
 
+        $hubs = $this->getDoctrine()->getRepository(Hub::class)->findBy([
+            'enabled' => true
+        ]);
 
         $qb = $this->getDoctrine()
             ->getRepository(DeliveryForm::class)
@@ -99,22 +105,26 @@ class IndexController extends AbstractController
 
         $hashids = new Hashids($this->getParameter('secret'), 12);
 
+        $countZeroWaste = $repository->countZeroWaste();
+
         return $this->render('index/index.html.twig', array(
             'restaurants' => $restaurants,
             'stores' => $stores,
+            'hubs' => $hubs,
             'show_more_restaurants' => $restaurantsCount > self::MAX_RESULTS,
             'show_more_stores' => $storesCount > self::MAX_RESULTS,
             'max_results' => self::MAX_RESULTS,
             'addresses_normalized' => $this->getUserAddresses(),
             'delivery_form' => $form ? $form->createView() : null,
             'hashid' => $deliveryForm ? $hashids->encode($deliveryForm->getId()) : '',
+            'zero_waste_count' => $countZeroWaste,
         ));
     }
 
     /**
      * @Route("/cart.json", name="cart_json")
      */
-    public function cartAsJsonAction(CartContextInterface $cartContext, Request $request)
+    public function cartAsJsonAction(CartContextInterface $cartContext)
     {
         $cart = $cartContext->getCart();
 
@@ -124,5 +134,20 @@ class IndexController extends AbstractController
         ];
 
         return new JsonResponse($data);
+    }
+
+    /**
+     * @Route("/CHANGELOG.md", name="changelog")
+     */
+    public function changelogAction()
+    {
+        $response = new Response(file_get_contents($this->getParameter('kernel.project_dir') . '/CHANGELOG.md'));
+        $response->headers->add(['Content-Type' => 'text/markdown']);
+        return $response;
+    }
+
+    public function redirectToLocaleAction()
+    {
+        return new RedirectResponse(sprintf('/%s/', $this->getParameter('locale')), 302);
     }
 }

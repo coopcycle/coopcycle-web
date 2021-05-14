@@ -1,0 +1,115 @@
+registration.email.subject: |
+  Email confirmation
+registration.email.message: |
+  <h2>Welcome to %brand_name%, %username%</h2>
+  You’re receiving this message because you recently signed up for a %brand_name% account.
+  <br>
+  Confirm your email address by clicking the button below.
+registration.email.confirm: Confirm email
+registration.email.disclaimer: This link can only be used once to validate your account
+registration.email.textMessage: |
+  Welcome to %brand_name%, %username%,\n\n
+  You’re receiving this message because you recently signed up for a %brand_name% account.\n
+  To confirm your email, please click the following link: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
+resetting.email.message: <h2>Hello %username%</h2> To reset your password, please
+  click the button below.
+resetting.email.reset: Reset password
+order.view: View order
+order.public_url: |
+  To track the status of your order, <a href="%order.public_url%">click here</a>.
+order.foodtech.accepted.delivery: "It will be delivered to you at the following time:"
+order.foodtech.accepted.delivery.disclaimer: "We will contact you in case of a problem\
+  \ to find your address"
+order.foodtech.accepted.collection: "You will have to collect it at the following\
+  \ time:"
+order.foodtech.accepted.collection.disclaimer: "If you have a problem, contact <strong>%name%</strong>\
+  \ at <strong>%phone_number%</strong> in advance enough to cancel your order."
+order.foodtech.cancelled: "The restaurant is unable to prepare your order %order.number%.\n\
+  <br>\nYour money will be automatically transfered back within the next 5 days.\n"
+admin.order.created.subject: New order to be confirmed
+admin.order.created.body: |
+  Hello,
+  <br>
+  A new order has been created.
+admin.order_foodtech.created.body: |
+  Hello,
+  <br>
+  A new order has been created for <strong>%restaurant.name%</strong>.
+admin.pledge.subject: A new suggestion has been sent!
+admin.send_invitation.subject: Invitation to CoopCycle!
+admin.send_invitation.body: |
+  Hello %username%,
+  <br>
+  This is an invitation to the CoopCycle space, to finalize the creation of your account please click on the following link.
+admin.send_invitation.create_password: Create my password
+admin.pledge.body: |
+  Hello,
+  <br>
+  %username% would like %pledge.name% to be on CoopCycle!
+user.pledge.subject: Your suggestion is now on CoopCycle!
+user.pledge.body: |
+  Hello,
+  <br>
+  thanks to you, %pledge.name% is now on CoopCycle!
+owner.order.created.subject: New order to confirm
+owner.order.created.body: |
+  Hi,
+  <br>
+  A new order has been placed for <strong>%restaurant.name%</strong>.
+order.created.subject: Order %order.number% has been received
+order.created.body: "Hello,\n<br>\nWe have received your order.\n<br>\nWe will check\
+  \ your order as soon as possible and send you an email when it is confirmed.\n"
+order.accepted.subject: Order %order.number% has been confirmed
+order.accepted.body.intro: "Hello,\n<br>\nYour order is confirmed."
+order.cancelled.subject: Your order %order.number% has been cancelled
+order.cancelled.body.intro: |
+  Hello,
+  <br>
+  We are sorry, but your order has been cancelled.
+order.delayed.subject: Your order %order.number% has been delayed
+order.delayed.body: |
+  Hello,
+  <br>
+  We are sorry, but your order will be delayed by %delay% minutes.
+  <br>
+  We apologize for the inconvenience.
+task.done.subject: 'Task #%task.id% completed'
+task.done.body: |
+  Hello,
+  <br>
+  Task #%task.id% has been completed.
+task.failed.subject: 'Task #%task.id% could not be completed'
+task.failed.body: |
+  Hello,
+  <br>
+  Task #%task.id% could not be completed.
+order.payment.subject: Payment of your order %order.number%
+order.payment.body: "Hello,\n<br>\nWe have completed a delivery that you have ordered\
+  \ from us.\n<br>\nYou will find below a link allowing you to pay by credit card.\n"
+covid_19.subject: COVID-19 | Important instructions for your order
+covid_19.body: "<h1>Instructions to follow for your delivery</h1>\n<p>Given the current\
+  \ COVID-19 (Coronavirus) pandemic, you <strong>must strictly</strong> adhere to\
+  \ the following instructions:</p>\n<h2>1. Respect social distancing</h2>\n<p>We\
+  \ will drop off your order on your doorstep, so you won't have to approach the person\
+  \ who comes to deliver. There is also no need to leave a tip.</p>\n<h2>2. Unpack\
+  \ your order after receipt</h2>\n<p>The virus can survive on cardboard and plastic\
+  \ surfaces for several days. Packaging is therefore a high risk route of transmission\
+  \ of the virus.\nWe therefore ask you to <strong>unpack your order and transfer\
+  \ the contents to plates</strong>.</p>\n<h2>3. Dispose of the packaging</h2>\n<p>Once\
+  \ your order is unpacked, be sure to <strong>dispose of the packaging in a closed\
+  \ bin</strong> to avoid inadvertently touching it later.</p>\n<h2>4. Wash your hands!</h2>\n\
+  <p>Once you have unpacked your order and discarded the packaging, <strong>wash your\
+  \ hands!</strong></p>\n"
+
+order.expiring_authorization.subject: A payment authorization will expire soon
+order.expiring_authorization.text: The payment authorization for order <strong>%order.number%</strong>
+  will expire soon. <br> You should complete the order before the authorization expires
+  to avoid losing money.
+
+order.receipt.subject: Receipt for your order %order.number%
+order.receipt.body: "Hello,\n<br>\nPlease find attached the receipt for your order."
+
+order.payment_failed.subject: There was an error processing your payment
+order.payment_failed.body: "Hello,\n<br>\nWe are sorry, there was an error processing\
+  \ your payment. Please try again with a different payment method."
+order.payment_failed.return_to_order: Return to order

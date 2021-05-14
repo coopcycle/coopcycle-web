@@ -8,7 +8,7 @@ use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Entity\TaskList;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaskCollectionUpdated extends BaseEvent implements SerializableEventInterface
 {
@@ -33,7 +33,7 @@ class TaskCollectionUpdated extends BaseEvent implements SerializableEventInterf
         ];
     }
 
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'task_collection:updated';
     }

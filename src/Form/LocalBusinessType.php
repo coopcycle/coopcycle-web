@@ -26,7 +26,6 @@ abstract class LocalBusinessType extends AbstractType
     protected $entityManager;
     protected $serializer;
     protected $country;
-    protected $loopeatEnabled;
     protected $debug;
 
     public function __construct(
@@ -35,7 +34,6 @@ abstract class LocalBusinessType extends AbstractType
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
         string $country,
-        bool $loopeatEnabled = false,
         bool $debug = false)
     {
         $this->authorizationChecker = $authorizationChecker;
@@ -43,7 +41,6 @@ abstract class LocalBusinessType extends AbstractType
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
         $this->country = $country;
-        $this->loopeatEnabled = $loopeatEnabled;
         $this->debug = $debug;
     }
 

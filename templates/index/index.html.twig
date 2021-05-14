@@ -4,7 +4,8 @@
 
 <section class="homepage-search" data-search="address"
   data-addresses="{{ addresses_normalized|json_encode()|e('html') }}"
-  data-tracking-category="Homepage">
+  data-tracking-category="Homepage"
+  data-restaurants="{{ coopcycle_restaurants_suggestions()|json_encode()|e('html') }}">
   <div class="homepage-search-container">
     {% set motto = coopcycle_setting('motto') %}
     <h1 class="banner-title text-center">
@@ -35,37 +36,22 @@
   } %}
 {% endif %}
 
-{% if delivery_form is not null %}
-<div class="container">
-  <section class="homepage-delivery">
-    <div class="row">
-      <div class="col-sm-6">
-        {{ form_start(delivery_form, {
-          action: path('embed_delivery_start', { hashid: hashid }),
-          attr: {
-            autocomplete: 'off',
-            class: 'mb-4'
-          } }) }}
-          {{ form_widget(delivery_form.pickup.type) }}
-          {{ form_widget(delivery_form.dropoff.type) }}
-          <div class="mb-4">
-          {{ form_widget(delivery_form.dropoff.address) }}
-          </div>
-          {% if delivery_form.dropoff.timeSlot is defined %}
-          <div class="mb-4">
-          {{ form_widget(delivery_form.dropoff.timeSlot) }}
-          </div>
-          {% endif %}
-          <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }} →</button>
-        {{ form_end(delivery_form, { render_rest: false }) }}
-      </div>
-      <div class="col-sm-6 homepage-delivery-text">
-        <h2 class="mt-0">{{ 'homepage.form.title'|trans }}</h2>
-        <p>{% trans with { '%brand_name%': coopcycle_setting('brand_name') } %}homepage.form.content{% endtrans %}</p>
-      </div>
+{% if zero_waste_count > 0 %}
+  <section class="homepage-zerowaste mb-4">
+    <div class="container">
+      <a href="{{ path('restaurants_by_tags', { tags: 'zerowaste' }) }}" class="d-flex justify-content-between align-items-center py-4">
+        <span>
+          <i class="fa fa-lg fa-globe mr-2" aria-hidden="true"></i>
+          <span>{{ 'homepage.zerowaste'|trans }}</span>
+        </span>
+        <i class="fa fa-lg fa-arrow-right"></i>
+      </a>
     </div>
   </section>
-</div>
+{% endif %}
+
+{% if delivery_form is not null %}
+  {% include 'index/_partials/delivery_form.html.twig' %}
 {% endif %}
 
 {% if stores|length > 0 %}
@@ -78,17 +64,30 @@
   } %}
 {% endif %}
 
-<section class="homepage-map">
-  <div class="embed-responsive embed-responsive-16by9">
-    <iframe class="embed-responsive-item" src="{{ path('restaurants_map', { zoom: 13 }) }}"></iframe>
-  </div>
-</section>
+{% if hubs|length > 0 %}
+  {% for hub in hubs %}
+    {% if hub.restaurants|length >= 3 %}
+      {% include 'index/_partials/section.html.twig' with {
+        items: hub.restaurants|slice(0, 3),
+        section_title: hub.name,
+        view_all: 'index.view_all_shops'|trans,
+        view_all_path: path('hub', { id: hub.id, slug: hub.name|slugify }),
+        show_more: hub.restaurants|length > 3,
+        pad_items: false
+      } %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
 
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('restaurant-list') }}
+  {{ encore_entry_link_tags('delivery-homepage') }}
+{% endblock %}
+
 {% block scripts %}
-{{ encore_entry_script_tags('search-address') }}
-{{ encore_entry_script_tags('restaurant-list') }}
-{{ encore_entry_script_tags('delivery-homepage') }}
-<script src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&libraries=places&callback=initMap" async defer></script>
+  {{ encore_entry_script_tags('search-address') }}
+  {{ encore_entry_script_tags('restaurant-list') }}
+  {{ encore_entry_script_tags('delivery-homepage') }}
 {% endblock %}

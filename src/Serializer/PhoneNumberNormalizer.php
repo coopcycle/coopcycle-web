@@ -13,4 +13,22 @@ class PhoneNumberNormalizer extends BasePhoneNumberNormalizer
     {
         parent::__construct($phoneNumberUtil, strtoupper($region), $format);
     }
+
+    public function denormalize($data, $class, $format = null, array $context = [])
+    {
+        // Also support "false"
+        // https://github.com/coopcycle/coopcycle-plugins/issues/21
+        if (false === $data) {
+            return;
+        }
+
+        return parent::denormalize($data, $class, $format, $context);
+    }
+
+    public function supportsDenormalization($data, $type, $format = null)
+    {
+        // Also support "false"
+        // https://github.com/coopcycle/coopcycle-plugins/issues/21
+        return 'libphonenumber\PhoneNumber' === $type && (\is_string($data) || false === $data);
+    }
 }

@@ -3,14 +3,12 @@
 namespace AppBundle\Command;
 
 use AppBundle\Domain\Order\Event\OrderCreated;
-use AppBundle\Domain\Order\Reactor\PublishToRedis;
+use AppBundle\Domain\Order\Reactor\PublishLiveUpdate;
 use AppBundle\Domain\Order\Reactor\SendRemotePushNotification;
 use AppBundle\Service\RemotePushNotificationManager;
-use AppBundle\Service\SocketIoManager;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -24,15 +22,11 @@ class OrderNotificationCommand extends Command
     public function __construct(
         RepositoryInterface $orderRepository,
         RemotePushNotificationManager $remotePushNotificationManager,
-        SocketIoManager $socketIoManager,
-        UserManagerInterface $userManager,
-        PublishToRedis $websocket,
+        PublishLiveUpdate $websocket,
         SendRemotePushNotification $push)
     {
         $this->orderRepository = $orderRepository;
         $this->remotePushNotificationManager = $remotePushNotificationManager;
-        $this->socketIoManager = $socketIoManager;
-        $this->userManager = $userManager;
 
         $this->websocket = $websocket;
         $this->push = $push;

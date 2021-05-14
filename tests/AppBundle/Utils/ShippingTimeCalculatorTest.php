@@ -5,7 +5,6 @@ namespace Tests\AppBundle\Utils;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\Vendor;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\ShippingTimeCalculator;
@@ -31,7 +30,12 @@ class ShippingTimeCalculatorTest extends TestCase
     {
         return [
             [ 600, '10 minutes' ],
-            [ 3950, '1 hours 5 minutes' ],
+            [ 3950, '1 hour 5 minutes 50 seconds' ],
+            [ 435, '7 minutes 15 seconds' ],
+            [ 1, '1 second' ],
+            [ 60, '1 minute' ],
+            // When the time is 0, we use the fallback
+            [ 0, '10 minutes' ],
         ];
     }
 
@@ -52,8 +56,6 @@ class ShippingTimeCalculatorTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setAddress($restaurantAddress);
 
-        $vendor = Vendor::withRestaurant($restaurant);
-
         $this->routing
             ->getDuration(
                 Argument::type(GeoCoordinates::class),
@@ -63,8 +65,8 @@ class ShippingTimeCalculatorTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getVendor()
-            ->willReturn($vendor);
+            ->getPickupAddress()
+            ->willReturn($restaurantAddress);
         $order
             ->getShippingAddress()
             ->willReturn($shippingAddress);
@@ -82,12 +84,10 @@ class ShippingTimeCalculatorTest extends TestCase
         $restaurant = new Restaurant();
         $restaurant->setAddress($restaurantAddress);
 
-        $vendor = Vendor::withRestaurant($restaurant);
-
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getVendor()
-            ->willReturn($vendor);
+            ->getPickupAddress()
+            ->willReturn($restaurantAddress);
         $order
             ->getShippingAddress()
             ->willReturn(null);

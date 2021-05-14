@@ -3,6 +3,8 @@ import { withTranslation } from 'react-i18next'
 import { Timeline } from 'antd'
 import moment from 'moment'
 
+import { asText } from '../../../components/ShippingTimeRange'
+
 export default withTranslation()(({ order, t }) => {
 
   return (
@@ -14,6 +16,9 @@ export default withTranslation()(({ order, t }) => {
         { order.reusablePackagingEnabled && (
           <span className="text-warning">{ t('ADMIN_DASHBOARD_ORDERS_PACKAGING_ALERT') }</span>
         )}
+        { order.preparationTime && (
+          <span className="text-muted">{ order.preparationTime }</span>
+        ) }
       </Timeline.Item>
       <Timeline.Item dot={<i className="fa fa-cube"></i>}>
         <div>
@@ -21,19 +26,24 @@ export default withTranslation()(({ order, t }) => {
         </div>
         <ul className="list-unstyled">
           <li>
-            <span>{ order.restaurant.address.streetAddress }</span>
+            <span>{ order.vendor.address.streetAddress }</span>
           </li>
           { order.takeaway && (
           <li>
             <span className="text-warning">{ t('ADMIN_DASHBOARD_ORDERS_TAKEAWAY_ALERT') }</span>
           </li>
           )}
+          { (!order.takeaway && order.shippingTime) && (
+          <li>
+            <span className="text-muted">{ order.shippingTime }</span>
+          </li>
+          ) }
         </ul>
       </Timeline.Item>
       { !order.takeaway && (
       <Timeline.Item dot={<i className="fa fa-arrow-down"></i>}>
         <div>
-          <strong>{ t('RESTAURANT_DASHBOARD_DROPOFF_AT', { time: moment(order.shippedAt).format('LT') }) }</strong>
+          <strong>{ t('RESTAURANT_DASHBOARD_DROPOFF_AT', { time: asText(order.shippingTimeRange, true) }) }</strong>
         </div>
         <ul className="list-unstyled">
           <li>{ order.shippingAddress.streetAddress }</li>

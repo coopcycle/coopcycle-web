@@ -73,20 +73,11 @@ class RefuseOrderHandlerTest extends TestCase
 
     public function testRefuseOrderWithGiropayRefundsCustomer()
     {
-        $source = Stripe\Source::constructFrom([
-            'id' => 'src_12345678',
-            'type' => 'giropay',
-            'client_secret' => '',
-            'redirect' => [
-                'url' => 'http://example.com'
-            ]
-        ]);
-
         $payment = new Payment();
         $payment->setAmount(3000);
         $payment->setState(PaymentInterface::STATE_COMPLETED);
         $payment->setCurrencyCode('EUR');
-        $payment->setSource($source);
+        $payment->setPaymentMethodTypes(['giropay']);
 
         $order = new Order();
         $order->addPayment($payment);

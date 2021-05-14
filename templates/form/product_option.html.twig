@@ -2,25 +2,30 @@
 
 {% block _product_option_values_entry_row %}
   {% set row_id = form.vars.id ~ '_row' %}
-  <div class="row" id="{{ row_id }}">
-    <div class="col-sm-5">
-      {{ form_row(form.translations, { label: false }) }}
+  <div class="d-flex align-items-center mb-2" id="{{ row_id }}">
+    <div class="flex-fill mr-4">
+      {{ form_widget(form.translations, { label: false }) }}
     </div>
-    <div class="col-sm-5">
-      {{ form_row(form.price) }}
+    <div class="flex-fill mr-4" data-shown="option_value">
+      {{ form_widget(form.price) }}
     </div>
-    <div class="col-sm-2 text-right">
-      <div class="form-group form-group-delete">
-        <button data-delete-row data-target="{{ '#' ~ row_id }}" type="button" class="btn btn-danger" tabindex="-1">
-          <i class="fa fa-trash"></i> {{ 'basics.delete'|trans }}
-        </button>
-      </div>
+    <div class="mr-2">
+      {{ form_widget(form.enabled) }}
+    </div>
+    <div>
+      <button data-delete-row data-target="{{ '#' ~ row_id }}" type="button" class="btn btn-transparent" tabindex="-1" disabled>
+        <i class="fa fa-lg fa-trash"></i>
+      </button>
     </div>
   </div>
 {% endblock %}
 
 {% block _product_option_values_entry_translations_entry_row %}
-  {{ form_widget(form) }}
+  {{ form_widget(form, { label: false }) }}
+{% endblock %}
+
+{% block _product_option_values_entry_translations_entry_widget %}
+  {{ form_widget(form.value, { attr: { placeholder: 'form.option_value.value.placeholder' } }) }}
 {% endblock %}
 
 {% block _product_option_values_widget %}

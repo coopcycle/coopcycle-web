@@ -13,6 +13,7 @@
     {% endif %}
     <th></th>
     <th></th>
+    <th></th>
   </thead>
   <tbody>
   {% for delivery in deliveries %}
@@ -21,13 +22,17 @@
         <a href="{{ path(routes.view, { id: delivery.id }) }}">#{{ delivery.id }}</a>
       </td>
       {% if with_store is defined and with_store %}
-      <td>
+      <td width="20%">
         {% if delivery.owner is not empty %}
-          <a href="{{ path(deliveries.route, deliveries.params|merge({
-            (deliveries.paginatorOptions.filterFieldParameterName): delivery.owner is instanceof('AppBundle\\Entity\\LocalBusiness') ? 'r.id' : 's.id',
-            (deliveries.paginatorOptions.filterValueParameterName): delivery.owner.id })) }}">
-            {{ delivery.owner.name }}
-          </a>
+          {% if deliveries.route is defined %}
+            <a href="{{ path(deliveries.route, deliveries.params|merge({
+              (deliveries.paginatorOptions.filterFieldParameterName): delivery.owner is instanceof('AppBundle\\Entity\\LocalBusiness') ? 'r.id' : 's.id',
+              (deliveries.paginatorOptions.filterValueParameterName): delivery.owner.id })) }}">
+              {{ delivery.owner.name }}
+            </a>
+          {% else %}
+            <span>{{ delivery.owner.name }}</span>
+          {% endif %}
         {% endif %}
       </td>
       {% endif %}
@@ -35,10 +40,14 @@
         <small><i class="fa fa-cube"></i> {{ delivery.pickup.address.streetAddress }}</small>
         <br>
         <small><i class="fa fa-arrow-down"></i> {{ delivery.dropoff.address.streetAddress }}</small>
+        {% set details = [ delivery.distance|meters_to_kilometers ] %}
+        {% if delivery.weight is not empty %}
+          {% set details = details|merge([ delivery.weight|grams_to_kilos ]) %}
+        {% endif %}
         <br>
-        <small>{{ delivery.distance|meters_to_kilometers }}</small>
+        <small>{{ details|join(' - ') }}</small>
       </td>
-      <td>
+      <td width="10%">
         <small>
           {% if delivery.dropoff.before|date('Ymd') == 'now'|date('Ymd') %}
             {{ delivery.dropoff.before|ago }}
@@ -65,6 +74,13 @@
         {% endif %}
       </td>
       {% endif %}
+      <td class="text-center">
+        {% if delivery.hasImages() and store is defined %}
+          <a href="{{ path(routes.download_images, { storeId: store.id, deliveryId: delivery.id }) }}">
+            <i class="fa fa-lg fa-camera"></i>
+          </a>
+        {% endif %}
+      </td>
       <td class="text-center" width="10%">
         <small class="text-muted">{{ delivery.createdAt|ago }}</small>
       </td>

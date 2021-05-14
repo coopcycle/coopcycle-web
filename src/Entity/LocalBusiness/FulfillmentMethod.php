@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity\LocalBusiness;
 
-use AppBundle\Validator\Constraints\TimeRange as AssertTimeRange;
+use AppBundle\Validator\Constraints\NotOverlappingOpeningHours as AssertNotOverlappingOpeningHours;
 use Sylius\Component\Resource\Model\ToggleableInterface;
 use Sylius\Component\Resource\Model\ToggleableTrait;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -17,9 +17,8 @@ class FulfillmentMethod implements ToggleableInterface
 
     /**
      * @var array
-     * @Assert\All({
-     *   @AssertTimeRange()
-     * })
+     *
+     * @AssertNotOverlappingOpeningHours
      */
     private $openingHours = [];
     private $openingHoursBehavior = 'asap';
@@ -31,6 +30,16 @@ class FulfillmentMethod implements ToggleableInterface
      * @Assert\NotBlank
      */
     private $minimumAmount = 0;
+
+    /**
+     * @var int Additional time to delay ordering
+     */
+    protected $orderingDelayMinutes = 0;
+
+    /**
+     * @var boolean
+     */
+    protected $preOrderingAllowed = true;
 
     /**
      * @return mixed
@@ -111,9 +120,9 @@ class FulfillmentMethod implements ToggleableInterface
     /**
      * @return mixed
      */
-    public function getOption($name)
+    public function getOption($name, $default = null)
     {
-        return isset($this->options[$name]) ? $this->options[$name] : null;
+        return isset($this->options[$name]) ? $this->options[$name] : $default;
     }
 
     /**
@@ -142,5 +151,37 @@ class FulfillmentMethod implements ToggleableInterface
         $this->minimumAmount = $minimumAmount;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrderingDelayMinutes()
+    {
+        return $this->orderingDelayMinutes;
+    }
+
+    /**
+     * @param int $orderingDelayMinutes
+     */
+    public function setOrderingDelayMinutes(int $orderingDelayMinutes)
+    {
+        $this->orderingDelayMinutes = $orderingDelayMinutes;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isPreOrderingAllowed(): bool
+    {
+        return $this->preOrderingAllowed;
+    }
+
+    /**
+     * @param bool $preOrderingAllowed
+     */
+    public function setPreOrderingAllowed(bool $preOrderingAllowed)
+    {
+        $this->preOrderingAllowed = $preOrderingAllowed;
     }
 }

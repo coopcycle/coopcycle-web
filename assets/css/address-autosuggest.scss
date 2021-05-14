@@ -4,12 +4,8 @@
     margin-bottom: $form-group-margin-bottom;
   }
 
-  &__input-container {
-    display: flex;
-  }
-
   &__input-wrapper {
-    flex: 1;
+    display: flex;
     position: relative;
 
     &:before {
@@ -71,7 +67,6 @@
       padding: 4px;
       img {
         display: inline-block;
-        width: 150px;
       }
     }
 
@@ -101,9 +96,19 @@
 
 .has-error {
   .address-autosuggest {
-    &__container {
+    &__input-wrapper {
       &:before {
         background-color: $state-danger-text;
+      }
+    }
+  }
+}
+
+.form-group-sm {
+  .address-autosuggest {
+    &__input-wrapper {
+      &:before {
+        font-size: 18px;
       }
     }
   }

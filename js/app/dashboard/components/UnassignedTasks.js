@@ -1,151 +1,143 @@
-import React from 'react'
-import { render } from 'react-dom'
+import React, { useState } from 'react'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import moment from 'moment'
 import { Draggable, Droppable } from "react-beautiful-dnd"
+import { Popover } from 'antd'
+import { useTranslation } from 'react-i18next'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
+import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
-import { setTaskListGroupMode, openNewTaskModal, closeNewTaskModal, toggleSearch } from '../redux/actions'
-import { selectUnassignedTasks } from '../../coopcycle-frontend-js/dispatch/redux'
+import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup } from '../redux/actions'
+import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectSelectedTasks } from '../redux/selectors'
 
-const UnassignedTasksPopoverContentWithTrans = withTranslation()(UnassignedTasksPopoverContent)
+class StandaloneTasks extends React.Component {
 
-class UnassignedTasks extends React.Component {
-
-  toggleDisplay(e) {
-    e.preventDefault()
-
-    const $target = $(e.currentTarget)
-
-    if (!$target.data('bs.popover')) {
-
-      const el = document.createElement('div')
-
-      const cb = () => {
-        $target.popover({
-          trigger: 'manual',
-          html: true,
-          container: 'body',
-          placement: 'left',
-          content: el,
-          template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content"></div></div>'
-        })
-        $target.popover('toggle')
-      }
-
-      render(<UnassignedTasksPopoverContentWithTrans
-        defaultValue={ this.props.taskListGroupMode }
-        onChange={ mode => {
-          this.props.setTaskListGroupMode(mode)
-          $target.popover('hide')
-        }} />, el, cb)
-
-    } else {
-      $target.popover('toggle')
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.tasks === this.props.tasks
+      && nextProps.offset === this.props.offset) {
+      return false
     }
-  }
 
-  renderGroup(group, tasks) {
-    return (
-      <TaskGroup key={ group.id } group={ group } tasks={ tasks } />
-    )
+    return true
   }
 
   render() {
+    return _.map(this.props.tasks, (task, index) => {
 
-    const { taskListGroupMode } = this.props
-    let { unassignedTasks } = this.props
-    const groupsMap = new Map()
-    const groups = []
-    let standaloneTasks = unassignedTasks
+      return (
+        <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ (this.props.offset + index) }>
+          {(provided, snapshot) => {
 
-    if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
+            return (
+              <div
+                ref={ provided.innerRef }
+                { ...provided.draggableProps }
+                { ...provided.dragHandleProps }
+              >
+                <Task task={ task } />
+                { (snapshot.isDragging && this.props.selectedTasksLength > 1) && (
+                  <div className="task-dragging-number">
+                    <span>{ this.props.selectedTasksLength }</span>
+                  </div>
+                ) }
+              </div>
+            )
+          }}
+        </Draggable>
+      )
+    })
+  }
+}
 
-      const tasksWithGroup = _.filter(unassignedTasks, task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group)
+const StandaloneTasksWithConnect = connect(
+  (state) => ({
+    selectedTasksLength: selectSelectedTasks(state).length,
+  })
+)(StandaloneTasks)
 
-      _.forEach(tasksWithGroup, task => {
-        const keys = Array.from(groupsMap.keys())
-        const group = _.find(keys, group => group.id === task.group.id)
-        if (!group) {
-          groupsMap.set(task.group, [ task ])
-        } else {
-          groupsMap.get(group).push(task)
+const Buttons = connect(
+  (state) => ({
+    taskListGroupMode: state.taskListGroupMode,
+  }),
+  (dispatch) => ({
+    setTaskListGroupMode: (mode) => dispatch(setTaskListGroupMode(mode)),
+    openNewTaskModal: () => dispatch(openNewTaskModal()),
+    toggleSearch: () => dispatch(toggleSearch()),
+    openNewRecurrenceRuleModal: () => dispatch(openNewRecurrenceRuleModal()),
+  })
+)(({ taskListGroupMode, setTaskListGroupMode, openNewTaskModal, toggleSearch, openNewRecurrenceRuleModal }) => {
+
+  const [ visible, setVisible ] = useState(false)
+  const { t } = useTranslation()
+
+  return (
+    <React.Fragment>
+      <a href="#" className="mr-3" onClick={ e => {
+        e.preventDefault()
+        openNewRecurrenceRuleModal()
+      }}>
+        <i className="fa fa-clock-o"></i>
+      </a>
+      <a href="#" className="mr-3" onClick={ e => {
+        e.preventDefault()
+        openNewTaskModal()
+      }}>
+        <i className="fa fa-plus"></i>
+      </a>
+      <a href="#" className="mr-3" onClick={ e => {
+        e.preventDefault()
+        toggleSearch()
+      }}>
+        <i className="fa fa-search"></i>
+      </a>
+      <Popover
+        placement="leftTop"
+        arrowPointAtCenter
+        trigger="click"
+        content={ <UnassignedTasksPopoverContent
+          defaultValue={ taskListGroupMode }
+          onChange={ mode => {
+            setTaskListGroupMode(mode)
+            setVisible(false)
+          }} />
         }
-      })
-      groupsMap.forEach((tasks, group) => {
-        groups.push({
-          ...group,
-          tasks
-        })
-      })
+        visible={ visible }
+        onVisibleChange={ value => setVisible(value) }
+      >
+        <a href="#" onClick={ e => e.preventDefault() } title={ t('ADMIN_DASHBOARD_DISPLAY') }>
+          <i className="fa fa-list"></i>
+        </a>
+      </Popover>
+    </React.Fragment>
+  )
+})
 
-      standaloneTasks = _.filter(unassignedTasks, task => !Object.prototype.hasOwnProperty.call(task, 'group') || !task.group)
-    }
+class UnassignedTasks extends React.Component {
 
-    // Order by dropoff desc, with pickup before
-    if (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC') {
-
-      const dropoffTasks = _.filter(standaloneTasks, t => t.type === 'DROPOFF')
-      dropoffTasks.sort((a, b) => {
-        return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
-      })
-      const grouped = _.reduce(dropoffTasks, (acc, task) => {
-        if (task.previous) {
-          const prev = _.find(standaloneTasks, t => t['@id'] === task.previous)
-          if (prev) {
-            acc.push(prev)
-          }
-        }
-        acc.push(task)
-
-        return acc
-      }, [])
-
-      standaloneTasks = grouped
-    } else {
-      standaloneTasks.sort((a, b) => {
-        return moment(a.doneBefore).isBefore(b.doneBefore) ? -1 : 1
-      })
-    }
-
-    const classNames = ['dashboard__panel']
-    if (this.props.hidden) {
-      classNames.push('hidden')
-    }
+  render() {
 
     return (
-      <div className={ classNames.join(' ') }>
-        <h4>
+      <div className="dashboard__panel">
+        <h4 className="d-flex justify-content-between">
           <span>{ this.props.t('DASHBOARD_UNASSIGNED') }</span>
-          <span className="pull-right">
-            <a href="#" onClick={ e => {
-              e.preventDefault()
-              this.props.openNewTaskModal()
-            }}>
-              <i className="fa fa-plus"></i>
-            </a>
-            &nbsp;&nbsp;
-            <a href="#" onClick={ e => {
-              e.preventDefault()
-              this.props.toggleSearch()
-            }}>
-              <i className="fa fa-search"></i>
-            </a>
-            &nbsp;&nbsp;
-            <a href="#" onClick={ e => this.toggleDisplay(e) } title={ this.props.t('ADMIN_DASHBOARD_DISPLAY') }>
-              <i className="fa fa-list"></i>
-            </a>
+          <span>
+            <Buttons />
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
+          { this.props.recurrenceRules.map((rrule, index) =>
+            <RecurrenceRule
+              key={ `rrule-${index}` }
+              rrule={ rrule }
+              onClick={ () => this.props.setCurrentRecurrenceRule(rrule) } />
+          ) }
           <Droppable droppableId="unassigned">
             {(provided) => (
               <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
-                { _.map(groups, (group, index) => {
+                { _.map(this.props.groups, (group, index) => {
                   return (
                     <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
                       {(provided) => (
@@ -154,35 +146,19 @@ class UnassignedTasks extends React.Component {
                           { ...provided.draggableProps }
                           { ...provided.dragHandleProps }
                         >
-                          { this.renderGroup(group, group.tasks) }
+                          <TaskGroup
+                            key={ group.id }
+                            group={ group }
+                            tasks={ group.tasks }
+                            onConfirmDelete={ () => this.props.deleteGroup(group) } />
                         </div>
                       )}
                     </Draggable>
                   )
                 })}
-                { _.map(standaloneTasks, (task, index) => {
-                  return (
-                    <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ (groups.length + index) }>
-                      {(provided, snapshot) => {
-
-                        return (
-                          <div
-                            ref={ provided.innerRef }
-                            { ...provided.draggableProps }
-                            { ...provided.dragHandleProps }
-                          >
-                            <Task task={ task } />
-                            { (snapshot.isDragging && this.props.selectedTasks.length > 1) && (
-                              <div style={{ position: 'absolute', top: '-10px', right: '-10px', backgroundColor: '#e67e22', color: 'white', height: '20px', width: '20px', borderRadius: '50%', textAlign: 'center' }}>
-                                <span style={{ lineHeight: '20px', fontWeight: '700' }}>{ this.props.selectedTasks.length }</span>
-                              </div>
-                            ) }
-                          </div>
-                        )
-                      }}
-                    </Draggable>
-                  )
-                })}
+                <StandaloneTasksWithConnect
+                  tasks={ this.props.standaloneTasks }
+                  offset={ this.props.groups.length } />
                 { provided.placeholder }
               </div>
             )}
@@ -196,21 +172,17 @@ class UnassignedTasks extends React.Component {
 function mapStateToProps (state) {
 
   return {
-    unassignedTasks: selectUnassignedTasks(state),
-    taskListGroupMode: state.taskListGroupMode,
-    showCancelledTasks: state.filters.showCancelledTasks,
-    taskModalIsOpen: state.taskModalIsOpen,
-    selectedTasks: state.selectedTasks,
+    groups: selectGroups(state),
+    standaloneTasks: selectStandaloneTasks(state),
+    recurrenceRules: selectRecurrenceRules(state),
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    setTaskListGroupMode: (mode) => dispatch(setTaskListGroupMode(mode)),
-    openNewTaskModal: () => dispatch(openNewTaskModal()),
-    closeNewTaskModal: () => dispatch(closeNewTaskModal()),
-    toggleSearch: () => dispatch(toggleSearch())
+    setCurrentRecurrenceRule: (recurrenceRule) => dispatch(setCurrentRecurrenceRule(recurrenceRule)),
+    deleteGroup: (group) => dispatch(deleteGroup(group)),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, null, { forwardRef: true })(withTranslation(['common'], { withRef: true })(UnassignedTasks))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(UnassignedTasks))

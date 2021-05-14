@@ -37,8 +37,15 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        $data['items'] = $this->flattenItems($data['items']);
-        $data['username'] = $object->getCourier()->getUsername();
+        if (isset($data['items'])) {
+            $data['items'] = $this->flattenItems($data['items']);
+        }
+
+        // Legacy
+        if (isset($context['item_operation_name']) && $context['item_operation_name'] === 'my_tasks') {
+            $data['hydra:member'] = $data['items'];
+            $data['hydra:totalItems'] = count($data['items']);
+        }
 
         return $data;
     }

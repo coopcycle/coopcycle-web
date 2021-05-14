@@ -3,7 +3,6 @@
 namespace Tests\AppBundle\Sylius\Cart;
 
 use AppBundle\Entity\Hub;
-use AppBundle\Entity\HubRepository;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Sylius\Order;
@@ -34,7 +33,6 @@ class RestaurantResolverTest extends TestCase
         $this->requestStack = $this->prophesize(RequestStack::class);
         $this->repository = $this->prophesize(LocalBusinessRepository::class);
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
-        $this->hubRepository = $this->prophesize(HubRepository::class);
 
         $this->entityManager
             ->getUnitOfWork()
@@ -52,8 +50,7 @@ class RestaurantResolverTest extends TestCase
         $resolver = new RestaurantResolver(
             $this->requestStack->reveal(),
             $this->repository->reveal(),
-            $this->entityManager->reveal(),
-            $this->hubRepository->reveal()
+            $this->entityManager->reveal()
         );
 
         $this->assertTrue($resolver->accept($cart->reveal()));
@@ -88,8 +85,7 @@ class RestaurantResolverTest extends TestCase
         $resolver = new RestaurantResolver(
             $this->requestStack->reveal(),
             $this->repository->reveal(),
-            $this->entityManager->reveal(),
-            $this->hubRepository->reveal()
+            $this->entityManager->reveal()
         );
 
         $this->assertTrue($resolver->accept($cart->reveal()));
@@ -124,8 +120,7 @@ class RestaurantResolverTest extends TestCase
         $resolver = new RestaurantResolver(
             $this->requestStack->reveal(),
             $this->repository->reveal(),
-            $this->entityManager->reveal(),
-            $this->hubRepository->reveal()
+            $this->entityManager->reveal()
         );
 
         $this->assertTrue($resolver->accept($cart->reveal()));
@@ -160,8 +155,7 @@ class RestaurantResolverTest extends TestCase
         $resolver = new RestaurantResolver(
             $this->requestStack->reveal(),
             $this->repository->reveal(),
-            $this->entityManager->reveal(),
-            $this->hubRepository->reveal()
+            $this->entityManager->reveal()
         );
 
         $this->assertFalse($resolver->accept($cart->reveal()));
@@ -174,12 +168,18 @@ class RestaurantResolverTest extends TestCase
         $restaurant = $this->prophesize(LocalBusiness::class);
         $otherRestaurant = $this->prophesize(LocalBusiness::class);
 
-        $this->hubRepository
-            ->findOneByRestaurant($restaurant->reveal())
+        $restaurant
+            ->belongsToHub()
+            ->willReturn(true);
+        $restaurant
+            ->getHub()
             ->willReturn($hub->reveal());
 
-        $this->hubRepository
-            ->findOneByRestaurant($otherRestaurant->reveal())
+        $otherRestaurant
+            ->belongsToHub()
+            ->willReturn(true);
+        $otherRestaurant
+            ->getHub()
             ->willReturn($hub->reveal());
 
         $request = new Request(
@@ -205,8 +205,7 @@ class RestaurantResolverTest extends TestCase
         $resolver = new RestaurantResolver(
             $this->requestStack->reveal(),
             $this->repository->reveal(),
-            $this->entityManager->reveal(),
-            $this->hubRepository->reveal()
+            $this->entityManager->reveal()
         );
 
         $this->assertTrue($resolver->accept($cart->reveal()));
@@ -218,8 +217,11 @@ class RestaurantResolverTest extends TestCase
         $cart = $this->prophesize(OrderInterface::class);
         $restaurant = $this->prophesize(LocalBusiness::class);
 
-        $this->hubRepository
-            ->findOneByRestaurant($restaurant->reveal())
+        $restaurant
+            ->belongsToHub()
+            ->willReturn(true);
+        $restaurant
+            ->getHub()
             ->willReturn($hub->reveal());
 
         $request = new Request(
@@ -245,52 +247,9 @@ class RestaurantResolverTest extends TestCase
         $resolver = new RestaurantResolver(
             $this->requestStack->reveal(),
             $this->repository->reveal(),
-            $this->entityManager->reveal(),
-            $this->hubRepository->reveal()
+            $this->entityManager->reveal()
         );
 
         $this->assertTrue($resolver->accept($cart->reveal()));
-    }
-
-    public function testChangeVendorWithHub()
-    {
-        $restaurant = $this->prophesize(LocalBusiness::class);
-        $otherRestaurant = $this->prophesize(LocalBusiness::class);
-
-        $request = new Request(
-            $query = [],
-            $request = [],
-            $attributes = [
-                '_route' => 'restaurant',
-                'id' => 1,
-            ]
-        );
-
-        $this->requestStack->getMasterRequest()->willReturn($request);
-        $this->repository->find(1)->willReturn($restaurant->reveal());
-
-        $vendor = new Vendor();
-        $vendor->setRestaurant($otherRestaurant->reveal());
-
-        $cart = $this->prophesize(Order::class);
-        $cart->getVendor()->willReturn($vendor);
-
-        $hub = new Hub();
-        $this->hubRepository
-            ->findOneByRestaurant($restaurant->reveal())
-            ->willReturn($hub);
-
-        $resolver = new RestaurantResolver(
-            $this->requestStack->reveal(),
-            $this->repository->reveal(),
-            $this->entityManager->reveal(),
-            $this->hubRepository->reveal()
-        );
-
-        $resolver->changeVendor($cart->reveal());
-
-        $cart->setVendor(Argument::that(function (Vendor $vendor) use ($hub) {
-            return $vendor->getHub() === $hub;
-        }))->shouldHaveBeenCalled();
     }
 }

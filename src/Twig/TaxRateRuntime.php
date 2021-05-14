@@ -10,11 +10,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaxRateRuntime implements RuntimeExtensionInterface
 {
+    private $taxRateRepository;
     private $taxesHelper;
 
-    public function __construct(RepositoryInterface $taxRateRepository, TranslatorInterface $translator)
+    public function __construct(RepositoryInterface $taxRateRepository, TaxesHelper $taxesHelper)
     {
-        $this->taxesHelper = new TaxesHelper($taxRateRepository, $translator);
+        $this->taxRateRepository = $taxRateRepository;
+        $this->taxesHelper = $taxesHelper;
     }
 
     public function split($order)

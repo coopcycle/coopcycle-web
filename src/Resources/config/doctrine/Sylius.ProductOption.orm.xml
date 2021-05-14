@@ -15,5 +15,8 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
+    <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="productOptions">
+      <join-column name="restaurant_id" referenced-column-name="id" />
+    </many-to-one>
   </entity>
 </doctrine-mapping>

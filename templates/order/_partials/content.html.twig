@@ -12,7 +12,16 @@
     </div>
   </div>
   <div class="col-xs-12 col-md-6">
-    <div id="order-timeline"></div>
+    {% if order.number is not empty %}
+    <div class="alert alert-info">
+      {% trans with { '%number%': order.number } %}order.number{% endtrans %}
+    </div>
+    {% endif %}
+    <div id="order-timeline"
+      data-order="{{ order_normalized|json_encode|e('html_attr') }}"
+      data-events="{{ events|json_encode|e('html_attr') }}"
+      data-centrifugo-channel="{{ centrifugo.channel|e('html_attr') }}"
+      data-centrifugo-token="{{ centrifugo.token|e('html_attr') }}"></div>
     {% if not order.customer.hasUser() %}
       <div class="border mb-3">
         <h4 class="bg-light p-3 m-0">{{ 'authentication.not_registered_yet'|trans }}</h4>
@@ -20,12 +29,27 @@
           <p>{{ 'authentication.register_benefits'|trans }}</p>
           <div class="text-right">
             <a class="btn btn-success"
-              href="{{ path('fos_user_registration_register', { source: app.request.get('hashid') }) }}">
+              href="{{ path('nucleos_profile_registration_register', { source: app.request.get('hashid') }) }}">
               {{ 'authentication.create_account'|trans }}
             </a>
           </div>
         </div>
       </div>
     {% endif %}
+    {% if order.state == 'new' and custom_message is defined and custom_message is not empty %}
+      <div class="border mb-3">
+        <h4 class="bg-light p-3 m-0">
+          <i class="fa fa-info-circle mr-2"></i>
+          <span>{{ coopcycle_setting('brand_name') }}</span>
+          </h4>
+        <div class="px-3 py-4">
+          {{ custom_message|markdown }}
+        </div>
+      </div>
+    {% endif %}
   </div>
 </div>
+
+{% if reset %}
+<div id="checkout-reset"></div>
+{% endif %}

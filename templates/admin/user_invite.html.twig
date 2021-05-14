@@ -1,6 +1,6 @@
 {% extends "admin.html.twig" %}
 
-{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% form_theme form 'form/user.html.twig' %}
 
 {% block breadcrumb %}
   <li><a href="{{ path('admin_users') }}">{% trans %}adminDashboard.users.title{% endtrans %}</a></li>
@@ -16,13 +16,23 @@
       </h2>
       {{ form_start(form) }}
 
-        {{ form_row(form.username) }}
         {{ form_row(form.email) }}
+        {{ form_row(form.roles, { label: false }) }}
 
-        {{ form_row(form.quotesAllowed) }}
+        {{ form_widget(form.restaurants, { attr: { 'data-search-url': path('admin_restaurants_search', { format: 'json'  }) } }) }}
+        {{ form_widget(form.stores, { attr: { 'data-search-url': path('admin_stores_search', { format: 'json'  }) } }) }}
+
         <hr>
         <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.send_invitation'|trans }}</button>
       {{ form_end(form) }}
     </div>
   </div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('user-invite') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('user-invite') }}
 {% endblock %}

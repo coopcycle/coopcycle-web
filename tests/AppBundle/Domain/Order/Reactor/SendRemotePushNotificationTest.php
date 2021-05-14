@@ -15,7 +15,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SendRemotePushNotificationTest extends KernelTestCase
 {
@@ -77,6 +77,7 @@ class SendRemotePushNotificationTest extends KernelTestCase
         $restaurant->addOwner($owner);
 
         $order->setRestaurant($restaurant);
+        $order->addRestaurant($restaurant, 1000, 0);
 
         $this->setId($restaurant, 1);
         $this->setId($order, 1);

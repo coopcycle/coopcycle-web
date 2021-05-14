@@ -14,10 +14,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
-use Trikoder\Bundle\OAuth2Bundle\Manager\ClientManagerInterface;
 use Trikoder\Bundle\OAuth2Bundle\Model\Client;
 use Trikoder\Bundle\OAuth2Bundle\Model\Grant;
 use Trikoder\Bundle\OAuth2Bundle\Model\Scope;
@@ -25,11 +24,8 @@ use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
 
 class ApiAppType extends AbstractType
 {
-    private $clientManager;
-
-    public function __construct(ClientManagerInterface $clientManager)
+    public function __construct()
     {
-        $this->clientManager = $clientManager;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

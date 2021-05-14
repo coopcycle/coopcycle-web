@@ -26,11 +26,6 @@
         <option name="default">t</option>
       </options>
     </field>
-    <field name="orderingDelayMinutes" type="integer" column="ordering_delay_minutes" nullable="false">
-      <options>
-        <option name="default">0</option>
-      </options>
-    </field>
     <field name="shippingOptionsDays" type="integer" column="shipping_options_days" nullable="false">
       <options>
         <option name="default">2</option>
@@ -80,13 +75,14 @@
         <option name="default">false</option>
       </options>
     </field>
+    <field name="edenredMerchantId" type="string" column="edenred_merchant_id" nullable="true"/>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
       <cascade>
         <cascade-persist/>
       </cascade>
     </many-to-one>
-    <one-to-one field="pledge" target-entity="AppBundle\Entity\Restaurant\Pledge" mapped-by="restaurant">
+    <one-to-one field="pledge" target-entity="AppBundle\Entity\Restaurant\Pledge">
       <cascade>
         <cascade-all/>
       </cascade>
@@ -161,7 +157,7 @@
         <join-column name="active_menu_taxon_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
-    <many-to-many field="servesCuisine" target-entity="AppBundle\Entity\Cuisine">
+    <many-to-many field="servesCuisine" target-entity="AppBundle\Entity\Cuisine" inversed-by="restaurants">
       <cascade>
         <cascade-persist/>
       </cascade>
@@ -178,32 +174,16 @@
       </order-by>
     </many-to-many>
     <many-to-many field="owners" target-entity="AppBundle\Entity\User" mapped-by="restaurants"/>
-    <many-to-many field="products" target-entity="AppBundle\Entity\Sylius\Product">
+    <one-to-many field="products" target-entity="AppBundle\Entity\Sylius\Product" mapped-by="restaurant">
       <cascade>
         <cascade-persist/>
       </cascade>
-      <join-table name="restaurant_product">
-        <join-columns>
-          <join-column name="restaurant_id" referenced-column-name="id"/>
-        </join-columns>
-        <inverse-join-columns>
-          <join-column name="product_id" referenced-column-name="id" unique="true"/>
-        </inverse-join-columns>
-      </join-table>
-    </many-to-many>
-    <many-to-many field="productOptions" target-entity="AppBundle\Entity\Sylius\ProductOption">
+    </one-to-many>
+    <one-to-many field="productOptions" target-entity="AppBundle\Entity\Sylius\ProductOption" mapped-by="restaurant">
       <cascade>
         <cascade-persist/>
       </cascade>
-      <join-table name="restaurant_product_option">
-        <join-columns>
-          <join-column name="restaurant_id" referenced-column-name="id"/>
-        </join-columns>
-        <inverse-join-columns>
-          <join-column name="option_id" referenced-column-name="id"/>
-        </inverse-join-columns>
-      </join-table>
-    </many-to-many>
+    </one-to-many>
     <many-to-many field="taxons" target-entity="AppBundle\Entity\Sylius\Taxon">
       <cascade>
         <cascade-persist/>
@@ -234,6 +214,9 @@
       <join-columns>
         <join-column name="organization_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
+    </many-to-one>
+    <many-to-one field="hub" target-entity="AppBundle\Entity\Hub" inversed-by="restaurants">
+      <join-column name="hub_id" referenced-column-name="id" />
     </many-to-one>
   </entity>
 </doctrine-mapping>

@@ -20,7 +20,7 @@ export default withTranslation()(({ order, onClick }) => {
       </div>
       <div className="panel-body">
         <ul className="list-unstyled">
-          <li><i className="fa fa-cutlery"></i> { order.restaurant.name }</li>
+          <li><i className="fa fa-cutlery"></i> { order.vendor.name }</li>
           <li><i className="fa fa-user"></i> { order.customer.username }</li>
           <li><i className="fa fa-money"></i> { (order.total / 100).formatMoney() }</li>
           { order.assignedTo && (

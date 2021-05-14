@@ -8,7 +8,7 @@ use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Entity\Task;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class Event extends BaseEvent implements SerializableEventInterface, HumanReadableEventInterface
 {

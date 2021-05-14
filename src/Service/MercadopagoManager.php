@@ -13,20 +13,11 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class MercadopagoManager
 {
     private $settingsManager;
-    private $urlGenerator;
-    private $secret;
-    private $logger;
 
     public function __construct(
-        SettingsManager $settingsManager,
-        UrlGeneratorInterface $urlGenerator,
-        string $secret,
-        LoggerInterface $logger)
+        SettingsManager $settingsManager)
     {
         $this->settingsManager = $settingsManager;
-        $this->urlGenerator = $urlGenerator;
-        $this->secret = $secret;
-        $this->logger = $logger;
     }
 
     public function configure()

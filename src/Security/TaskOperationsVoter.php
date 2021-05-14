@@ -42,11 +42,14 @@ class TaskOperationsVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         if (!is_object($user = $token->getUser())) {
-            return $this->voteOnAttributeWithOAuth($attribute, $subject, $token);
+            return $this->voteOnAttributeWithOAuth($attribute, $subject);
         }
 
-        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')
-        ||  $this->authorizationChecker->isGranted('ROLE_COURIER')) {
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+
+        if ($this->authorizationChecker->isGranted('ROLE_COURIER') && $subject->isAssignedTo($user)) {
             return true;
         }
 
@@ -68,7 +71,7 @@ class TaskOperationsVoter extends Voter
         return false;
     }
 
-    private function voteOnAttributeWithOAuth($attribute, $subject, TokenInterface $token)
+    private function voteOnAttributeWithOAuth($attribute, $subject)
     {
         if (!$this->authorizationChecker->isGranted('ROLE_OAUTH2_TASKS')) {
             return false;

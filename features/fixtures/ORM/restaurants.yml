@@ -41,7 +41,6 @@ AppBundle\Entity\LocalBusiness:
   restaurant_1:
     name: 'Nodaiwa'
     address: "@address_1"
-    orderingDelayMinutes: 0
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
     contract: "@contract_1"
@@ -49,11 +48,16 @@ AppBundle\Entity\LocalBusiness:
     __calls:
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]
+    products:
+      - '@pizza'
+      - '@hamburger'
+    productOptions:
+      - '@pizza_topping'
+      - '@gluten_intolerance'
   restaurant_2:
     name: 'Café Barjot'
     address: "@address_2"
     openingHours: ['Mo-Sa 11:30-14:30']
-    orderingDelayMinutes: 0
     enabled: true
     contract: "@contract_2"
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
@@ -66,7 +70,6 @@ AppBundle\Entity\LocalBusiness:
         - 'collection'
   restaurant_3:
     name: 'La Cantina Clandestina'
-    orderingDelayMinutes: 0
     address: "@address_3"
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
@@ -77,7 +80,6 @@ AppBundle\Entity\LocalBusiness:
       - setMinimumAmount: ['collection', 1500]
   restaurant_4:
     name: 'Wild Buffet'
-    orderingDelayMinutes: 0
     address: "@address_3"
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
@@ -100,7 +102,6 @@ AppBundle\Entity\LocalBusiness:
     state: pledge
   restaurant_6:
     name: 'Good Old Times'
-    orderingDelayMinutes: 0
     address: "@address_3"
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: false

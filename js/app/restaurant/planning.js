@@ -11,12 +11,7 @@ import { antdLocale, localeDetector } from '../i18n'
 
 const baseURL = location.protocol + '//' + location.hostname
 
-const { RangePicker } = DatePicker,
-  // HACK : disable default input style so it fits with Bootstrap's design
-  rangeInputStyle = {
-    'padding': '0',
-    'width': '100%'
-  }
+const { RangePicker } = DatePicker
 
 let locale = localeDetector(),
   selectedClosingStartDate,
@@ -62,9 +57,7 @@ class ClosingRuleRangePicker extends React.Component {
       <ConfigProvider locale={antdLocale}>
         <RangePicker
           format="DD/MM/YYYY à HH:mm"
-          showTime={{format: 'HH:mm'}}
-          className="form-control"
-          style={rangeInputStyle}
+          showTime={{ format: 'HH:mm' }}
           onChange={onChange}
         />
       </ConfigProvider>
@@ -82,7 +75,7 @@ class ClosingRulesCalendar extends React.Component {
   }
 
   onDeleteClick(closingRule) {
-    if (window.confirm('are you sure ?')) {
+    if (window.confirm('Are you sure ?')) {
       axios({
         method: 'DELETE',
         url: `${baseURL}/api/opening_hours_specifications/${closingRule.id}`,
@@ -155,8 +148,8 @@ class ClosingRulesCalendar extends React.Component {
 }
 
 $.getJSON(window.Routing.generate('profile_jwt'))
-  .then(tok => {
-    token = tok
+  .then(result => {
+    token = result.jwt
     render(
       <ClosingRulesCalendar rules={closingRules} />,
       document.getElementById('calendar-planning')

@@ -1,0 +1,23 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+{% include "restaurant/_partials/list_header.html.twig" %}
+{% include "restaurant/_partials/list_buttons.html.twig" with { to_mode: 'list' } %}
+<div class="container">
+  <section class="homepage-map mb-4">
+    <div class="embed-responsive embed-responsive-16by9">
+      <iframe class="embed-responsive-item" src="{{ path('restaurants_map', { zoom: 13 }) }}"></iframe>
+    </div>
+  </section>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('restaurant-list') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('search-address') }}
+  {{ encore_entry_script_tags('restaurant-list') }}
+{% endblock %}

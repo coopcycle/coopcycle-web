@@ -1,6 +1,7 @@
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 @import "../../../assets/css/vars.scss";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
 
 // $panel-heading-padding is 10px 15px !default;
 // nth() allows to extract individual values
@@ -8,6 +9,256 @@ $panel-heading-padding-vertical: nth($panel-heading-padding, 1);
 $panel-heading-padding-horizontal: nth($panel-heading-padding, 2);
 
 $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 2));
+
+.restaurant-menu-wrapper {
+  // On mobile, add a margin to allow scrolling
+  @media (max-width: $screen-xs-max) {
+    margin-bottom: $navbar-height;
+  }
+}
+
+.restaurant-menu-section {
+
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
+
+  @media (max-width: $screen-xs-max) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+
+  &-item {
+    border: 1px solid $list-group-border;
+    & > * {
+      width: 100%;
+      min-height: 100%;
+      height: 100%;
+    }
+    &:hover,
+    &:focus {
+      color: $list-group-link-hover-color;
+      background-color: $list-group-hover-bg;
+      button.menu-item {
+        color: $list-group-link-color;
+        background-color: $list-group-hover-bg;
+      }
+    }
+    button.menu-item {
+      width: 100%;
+      min-height: 100%;
+      height: 100%;
+
+      // Reset button styles
+      // @see https://gist.github.com/MoOx/9137295
+
+      border: none;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      overflow: visible;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+      text-align: inherit;
+      line-height: normal;
+      -webkit-font-smoothing: inherit;
+      -moz-osx-font-smoothing: inherit;
+      -webkit-appearance: none;
+
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .menu-item-inner {
+      display: flex;
+      flex: 1;
+    }
+    .menu-item-content-wrapper {
+      padding: 15px;
+      flex: 3;
+      flex-direction: column;
+      display: flex;
+      justify-content: space-between;
+    }
+    .menu-item-image-wrapper {
+      flex: 1;
+      align-self: center;
+      padding: 15px 15px 15px 0;
+      > img {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// TODO Add more precise selector
+button.menu-item:focus,
+button.menu-item:active {
+   outline: none !important;
+   box-shadow: none;
+}
+
+.menu-item.menu-item--unavailable {
+  display: block;
+  color: #ddd;
+  cursor: default;
+  &:hover {
+    text-decoration: none;
+  }
+  .menu-item-price {
+    text-decoration: line-through;
+  }
+}
+
+.menu-item .menu-item-description,
+.menu-item .menu-item-allergens,
+.menu-item-restricted-diets {
+  display: block;
+  font-weight: normal;
+}
+
+.menu-item .menu-item-content {
+  margin-bottom: 5px;
+}
+
+.menu-item .menu-item-name {
+  font-family: inherit;
+  font-weight: bold;
+  margin: 0 0 5px 0;
+}
+
+.menu-item .menu-item-price {
+  white-space: nowrap;
+}
+
+.restaurant-header {
+
+  display: flex;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eeeeee;
+  margin-bottom: 15px;
+
+  @media (max-width: $screen-xs-max) {
+    flex-direction: column;
+  }
+
+  img.restaurant-image {
+    width: 120px;
+    height: 120px;
+    margin-right: 15px;
+    @media (max-width: $screen-xs-max) {
+      display: none;
+    }
+  }
+
+  &-body {
+    flex: 1;
+  }
+  &-right {
+    flex: 1;
+    text-align: right;
+    @media (max-width: $screen-xs-max) {
+      display: none;
+    }
+  }
+
+  .table-opening-hours {
+    width: auto;
+    font-size: $font-size-small;
+    thead > tr > th {
+      text-align: right;
+    }
+    tbody > tr > td,
+    tbody > tr > th {
+      border-top: none;
+    }
+    tbody > tr:not(.active) {
+      color: $text-muted;
+    }
+    tbody > tr.active > td,
+    tbody > tr.active > th {
+      background-color: transparent;
+    }
+  }
+
+}
+
+.product-option-item {
+  &:hover {
+    background-color: $main-blue-light;
+  }
+  .radio,
+  .checkbox {
+    width: 100%;
+    label {
+      width: 100%;
+    }
+  }
+}
+
+.product-option-item-range {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  input[type="number"] {
+    @extend .form-control;
+    min-width: 10%;
+    width: 10%;
+    @media (max-width: $screen-xs-max) {
+      min-width: 20%;
+      width: 20%;
+    }
+    padding: 3px 6px;
+    margin-right: 8px;
+  }
+  label {
+    flex-grow: 1;
+    margin: 0;
+    font-weight: 400;
+    padding: 6px 0;
+    hyphens: auto;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  &-buttons {
+    display: flex;
+    flex-direction: row;
+    @media (max-width: $screen-xs-max) {
+      flex-direction: column;
+    }
+  }
+}
+
+.quantity-input-group {
+  display: flex;
+  justify-content: space-between;
+  input[type="number"] {
+    text-align: center;
+    border: none;
+  }
+  &__decrement,
+  &__increment {
+    border: none;
+    background-color: transparent;
+  }
+}
+
+.button-icon--decrement,
+.button-icon--increment {
+  border: none;
+  background-color: transparent;
+  &[disabled] {
+    cursor: $cursor-disabled;
+    @include opacity(.65);
+  }
+}
+
+.restaurant-banner {
+  margin-top: -20px;
+}
 
 #cart {
   margin-top: ($base-margin + 20px);
@@ -285,11 +536,25 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   }
 }
 
+// Custom class to allow scrolling inside modal
+// @see https://github.com/reactjs/react-modal/issues/283
+.ReactModal__Overlay--cart {
+  @media (max-width: $screen-xs-max) {
+    // height: 100vh;
+    // Dot *NOT* use 100vh on mobile
+    // https://developers.google.com/web/updates/2016/12/url-bar-resizing
+    height: 100%;
+    .ReactModal__Content {
+      overflow-y: auto;
+    }
+  }
+}
+
 .ReactModal__Content--enter-address {
   overflow: inherit;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   @media (min-width: $screen-lg-min) {
     width: 33%;
   }
@@ -298,18 +563,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   }
   @media (max-width: $screen-xs-max) {
     width: calc(100% - 30px);
-    height: 80%;
-  }
-  .close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 10px 12px;
-    @media (max-width: $screen-xs-max) {
-      font-size: 32px;
-      padding: 12px 18px;
-    }
-
+    height: calc(100vh - 30px);
   }
 }
 
@@ -359,5 +613,40 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     display: block;
     padding: 15px 0;
     margin: 15px 0;
+  }
+}
+
+.ReactModal__Content--product-options {
+
+  overflow: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 0;
+  max-height: calc(100% - 30px);
+
+  @media (min-width: $screen-lg-min) {
+    width: 40%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 50%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+    height: calc(100% - 30px);
+  }
+
+  .product-modal-container {
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+
+    main {
+      flex: 1;
+      overflow: auto;
+    }
   }
 }

@@ -51,22 +51,6 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->locale = $locale;
     }
 
-    private function containsGroups(array $context = [], array $groups)
-    {
-        if (!isset($context['groups'])) {
-
-            return false;
-        }
-
-        foreach ($groups as $group) {
-            if (in_array($group, $context['groups'])) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public function normalize($object, $format = null, array $context = array())
     {
         $data = $this->normalizer->normalize($object, $format, $context);
@@ -94,6 +78,11 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         if (isset($context['groups']) && in_array('restaurant_seo', $context['groups'])) {
 
             return $this->normalizeForSeo($object, $data);
+        }
+
+        if (isset($context['groups']) && in_array('restaurant_potential_action', $context['groups'])) {
+
+            $data['potentialAction'] = $this->normalizePotentialAction($object);
         }
 
         if (isset($data['activeMenuTaxon'])) {
@@ -128,24 +117,10 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
             'type' => $object->getContext() === Store::class ? 'store' : 'restaurant',
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $priceCurrency = $this->currencyContext->getCurrencyCode();
-
-        $data['potentialAction'] = [
-            '@type' => 'OrderAction',
-            'target' => [
-                '@type' => 'EntryPoint',
-                'urlTemplate' => $urlTemplate,
-                'inLanguage' => $this->locale,
-                'actionPlatform' => [
-                    'http://schema.org/DesktopWebPlatform',
-                ]
-            ],
-            'deliveryMethod' => [
-                'http://purl.org/goodrelations/v1#DeliveryModeOwnFleet'
-            ],
-        ];
+        $data['potentialAction'] = $this->normalizePotentialAction($object);
 
         $contract = $object->getContract();
+        $priceCurrency = $this->currencyContext->getCurrencyCode();
 
         if ($object->isFulfillmentMethodEnabled('delivery') && !$contract->isVariableCustomerAmountEnabled()) {
 
@@ -167,6 +142,32 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         return $data;
     }
 
+    private function normalizePotentialAction(LocalBusiness $object): array
+    {
+        // @see https://developers.google.com/search/docs/data-types/local-business#order-reservation-scenarios
+
+        $urlTemplate = $this->urlGenerator->generate('restaurant', [
+            'id' => $object->getId(),
+            'slug' => $this->slugify->slugify($object->getName()),
+            'type' => $object->getContext() === Store::class ? 'store' : 'restaurant',
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return [
+            '@type' => 'OrderAction',
+            'target' => [
+                '@type' => 'EntryPoint',
+                'urlTemplate' => $urlTemplate,
+                'inLanguage' => $this->locale,
+                'actionPlatform' => [
+                    'http://schema.org/DesktopWebPlatform',
+                ]
+            ],
+            'deliveryMethod' => [
+                'http://purl.org/goodrelations/v1#DeliveryModeOwnFleet'
+            ],
+        ];
+    }
+
     public function supportsNormalization($data, $format = null)
     {
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof LocalBusiness;
@@ -174,9 +175,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        $restaurant = $this->normalizer->denormalize($data, $class, $format, $context);
-
-        return $restaurant;
+        return $this->normalizer->denormalize($data, $class, $format, $context);
     }
 
     public function supportsDenormalization($data, $type, $format = null)

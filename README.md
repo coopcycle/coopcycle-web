@@ -38,16 +38,39 @@ Make sure:
 - to install `docker-compose` [following instructions](https://docs.docker.com/compose/install/) to get the **latest version**.
 - to follow the [post-installation steps](https://docs.docker.com/install/linux/linux-postinstall/).
 
-#### Setup Google Maps API (optional)
+#### Setup OpenStreetMap geocoders (optional)
 
-CoopCycle uses the Google Maps API for Geocoding, as well as the Places API.
-You will need to create a project in the Google Cloud Platform Console, and
-enable the Google Maps API. GCP will give you an API token that you will need
-later.  By default, the Geocoding and Places API will not be enabled, so you
-need to enable them as well (`Maps API dashboard > APIs > Geocoding API >
-Enable`, and `Maps API dashboard > APIs > Places API for Web > Enable`).
+CoopCycle uses [OpenStreetMap](https://www.openstreetmap.org/) to geocode addresses and provide autocomplete features.
+
+##### Address autocomplete
+
+To configure address autocomplete, choose a provider below, grab the credentials, and configure environment variables accordingly.
+
+```
+ALGOLIA_PLACES_APP_ID
+ALGOLIA_PLACES_API_KEY
+LOCATIONIQ_ACCESS_TOKEN
+GEOCODE_EARTH_API_KEY
+```
+
+- For [Algolia Places](https://community.algolia.com/places/), set `COOPCYCLE_AUTOCOMPLETE_ADAPTER=algolia`
+- For [Geocode Earth](https://geocode.earth/), set `COOPCYCLE_AUTOCOMPLETE_ADAPTER=geocode-earth`
+- For [LocationIQ](https://locationiq.com/), set `COOPCYCLE_AUTOCOMPLETE_ADAPTER=locationiq`
+
+##### Geocoding
+
+To configure geocoding, create an account on [OpenCage](https://opencagedata.com/), and configure the `OPENCAGE_API_KEY` environement variable.
 
 ### Run the application
+
+#### Pull the Docker containers (optional)
+
+We have prebuilt some images and uploaded them to [Docker Hub](https://hub.docker.com/u/coopcycle).
+To avoid building those images locally, you can pull them first.
+
+```
+docker-compose pull
+```
 
 #### Start the Docker containers
 
@@ -104,15 +127,15 @@ make enable-xdebug
 > docker-compose build php
 > docker-compose restart php nginx
 > ```
+
 #### 2. Enable php debug in VSCode
+
 1. Install a PHP Debug extension, this is tested with [felixfbecker.php-debug](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug) extension.
 2. Add the following configuration in your `.vscode/launch.json` of your workspace:
 
 ```json
 {
-	...
 	"configurations": [
-    ...
     {
       "name": "Listen for XDebug",
       "type": "php",
@@ -128,11 +151,12 @@ make enable-xdebug
           "max_depth": 5
       }
     }
-    ...
   ]
 }
 ```
+
 3. If you're having issues connecting the debugger yo can restart nginx and php containers to reload the xdebug extension.
+
 ```
 docker-compose restart php nginx
 ```

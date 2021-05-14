@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class Vendor implements ShippingOptionsInterface
@@ -120,15 +122,6 @@ class Vendor implements ShippingOptionsInterface
         return $this->restaurant->getFulfillmentMethods();
     }
 
-    public function getOrderingDelayMinutes()
-    {
-        if (null !== $this->hub) {
-            return $this->hub->getOrderingDelayMinutes();
-        }
-
-        return $this->restaurant->getOrderingDelayMinutes();
-    }
-
     public function getShippingOptionsDays()
     {
         if (null !== $this->hub) {
@@ -186,6 +179,41 @@ class Vendor implements ShippingOptionsInterface
         return $this->restaurant->getDeliveryPerimeterExpression();
     }
 
+    public function getOwners(): Collection
+    {
+        if (null !== $this->hub) {
+            $owners = new ArrayCollection();
+            foreach ($this->hub->getRestaurants() as $restaurant) {
+                foreach ($restaurant->getOwners() as $owner) {
+                    $owners->add($owner);
+                }
+
+            }
+
+            return $owners;
+        }
+
+        return $this->restaurant->getOwners();
+    }
+
+    public function getEdenredMerchantId()
+    {
+        if (null === $this->restaurant) {
+            return null;
+        }
+
+        return $this->restaurant->getEdenredMerchantId();
+    }
+
+    public function isStripePaymentMethodEnabled($paymentMethod)
+    {
+        if (null === $this->restaurant) {
+            return false;
+        }
+
+        return $this->restaurant->isStripePaymentMethodEnabled($paymentMethod);
+    }
+
     /* END Common interface between Restaurant & Hub */
 
     public static function withRestaurant(LocalBusiness $restaurant)
@@ -202,14 +230,5 @@ class Vendor implements ShippingOptionsInterface
         $vendor->setHub($hub);
 
         return $vendor;
-    }
-
-    public function toArray()
-    {
-        if (null !== $this->hub) {
-            return $this->hub->getRestaurants();
-        }
-
-        return [ $this->restaurant ];
     }
 }

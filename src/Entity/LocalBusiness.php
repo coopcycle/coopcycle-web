@@ -11,7 +11,6 @@ use AppBundle\Action\Restaurant\Deliveries as RestaurantDeliveriesController;
 use AppBundle\Action\Restaurant\Menus;
 use AppBundle\Action\Restaurant\Orders;
 use AppBundle\Action\Restaurant\Timing;
-use AppBundle\Annotation\Enabled;
 use AppBundle\Api\Dto\RestaurantInput;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
@@ -32,8 +31,8 @@ use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Validator\Constraints\IsActivableRestaurant as AssertIsActivableRestaurant;
-use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -63,7 +62,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "normalization_context"={"groups"={"restaurant", "address", "order"}}
+ *       "normalization_context"={"groups"={"restaurant", "address", "order", "restaurant_potential_action"}},
+ *       "security"="is_granted('view', object)"
  *     },
  *     "restaurant_menu"={
  *       "method"="GET",
@@ -81,13 +81,13 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "method"="PUT",
  *       "input"=RestaurantInput::class,
  *       "denormalization_context"={"groups"={"restaurant_update"}},
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "close"={
  *       "method"="PUT",
  *       "path"="/restaurants/{id}/close",
  *       "controller"=CloseController::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "restaurant_deliveries"={
  *       "method"="GET",
@@ -106,13 +106,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "method"="GET",
  *       "path"="/restaurants/{id}/orders",
  *       "controller"=Orders::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_RESTAURANT') and user.ownsRestaurant(object))"
+ *       "security"="is_granted('edit', object)"
  *     }
  *   }
  * )
  * @Vich\Uploadable
  * @AssertIsActivableRestaurant(groups="activable")
- * @Enabled
  */
 class LocalBusiness extends BaseLocalBusiness implements
     CatalogInterface,
@@ -149,7 +148,7 @@ class LocalBusiness extends BaseLocalBusiness implements
      *
      * @Assert\Type(type="string")
      * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"restaurant", "order", "restaurant_seo"})
+     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple"})
      */
     protected $name;
 
@@ -188,7 +187,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @var Address
      *
-     * @Groups({"restaurant", "order", "restaurant_seo"})
+     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple"})
      */
     protected $address;
 
@@ -243,6 +242,10 @@ class LocalBusiness extends BaseLocalBusiness implements
     protected $isAvailableForB2b;
 
     protected $mercadopagoAccounts;
+
+    protected $edenredMerchantId;
+
+    protected $hub;
 
     public function __construct()
     {
@@ -425,7 +428,7 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->contract = $contract;
     }
 
-    public function getOwners()
+    public function getOwners(): Collection
     {
         return $this->owners;
     }
@@ -494,8 +497,6 @@ class LocalBusiness extends BaseLocalBusiness implements
      */
     public function setPledge($pledge)
     {
-        $pledge->setRestaurant($this);
-
         $this->pledge = $pledge;
 
         return $this;
@@ -787,5 +788,35 @@ class LocalBusiness extends BaseLocalBusiness implements
         }
 
         return null;
+    }
+
+    public function asOriginCode(): string
+    {
+        return (string) $this->getId();
+    }
+
+    public function getEdenredMerchantId()
+    {
+        return $this->edenredMerchantId;
+    }
+
+    public function setEdenredMerchantId($edenredMerchantId)
+    {
+        $this->edenredMerchantId = $edenredMerchantId;
+    }
+
+    public function getHub(): ?Hub
+    {
+        return $this->hub;
+    }
+
+    public function setHub(?Hub $hub)
+    {
+        $this->hub = $hub;
+    }
+
+    public function belongsToHub(): bool
+    {
+        return null !== $this->hub;
     }
 }

@@ -14,11 +14,15 @@ import {
   GEOCODING_FAILURE,
   ENABLE_TAKEAWAY,
   DISABLE_TAKEAWAY,
+  OPEN_ADDRESS_MODAL,
+  CLOSE_PRODUCT_OPTIONS_MODAL,
+  OPEN_PRODUCT_OPTIONS_MODAL,
+  CLOSE_PRODUCT_DETAILS_MODAL,
+  OPEN_PRODUCT_DETAILS_MODAL,
 } from './actions'
 
 const initialState = {
   cart: {
-    restaurant: null,
     items: [],
     itemsTotal: 0,
     total: 0,
@@ -48,6 +52,10 @@ const initialState = {
   isDateModalOpen: false,
   isAddressModalOpen: false,
   country: 'fr',
+  isProductOptionsModalOpen: false,
+  productOptionsModalContext: {},
+  isProductDetailsModalOpen: false,
+  productDetailsModalContext: {},
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -69,7 +77,6 @@ const errors = (state = initialState.errors, action = {}) => {
 
     return []
   case FETCH_SUCCESS:
-  case FETCH_FAILURE:
     const { errors } = action.payload
 
     return errors || []
@@ -89,7 +96,6 @@ const errors = (state = initialState.errors, action = {}) => {
 const cart = (state = initialState.cart, action = {}) => {
   switch (action.type) {
   case FETCH_SUCCESS:
-  case FETCH_FAILURE:
 
     return action.payload.cart
   case SET_STREET_ADDRESS:
@@ -172,7 +178,6 @@ const isDateModalOpen = (state = initialState.isDateModalOpen, action = {}) => {
 const times = (state = initialState.times, action = {}) => {
   switch (action.type) {
   case FETCH_SUCCESS:
-  case FETCH_FAILURE:
 
     return action.payload.times
   default:
@@ -189,7 +194,6 @@ const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}
     return false
 
   case FETCH_SUCCESS:
-  case FETCH_FAILURE:
     const { errors } = action.payload
 
     return Object.prototype.hasOwnProperty.call(errors, 'shippingAddress')
@@ -197,10 +201,69 @@ const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}
     const { propertyPath } = action.payload
 
     return propertyPath === 'shippingAddress'
+  case OPEN_ADDRESS_MODAL:
+
+    return true
   default:
 
     return state
   }
+}
+
+const isProductOptionsModalOpen = (state = initialState.isProductOptionsModalOpen, action = {}) => {
+  switch (action.type) {
+  case CLOSE_PRODUCT_OPTIONS_MODAL:
+
+    return false
+
+  case OPEN_PRODUCT_OPTIONS_MODAL:
+
+    return true
+  }
+
+  return state
+}
+
+const productOptionsModalContext = (state = initialState.productOptionsModalContext, action = {}) => {
+  switch (action.type) {
+  case CLOSE_PRODUCT_OPTIONS_MODAL:
+
+    return {}
+
+  case OPEN_PRODUCT_OPTIONS_MODAL:
+
+    return action.payload
+  }
+
+  return state
+}
+
+const isProductDetailsModalOpen = (state = initialState.isProductDetailsModalOpen, action = {}) => {
+  switch (action.type) {
+  case CLOSE_PRODUCT_DETAILS_MODAL:
+
+    return false
+
+  case OPEN_PRODUCT_DETAILS_MODAL:
+
+    return true
+  }
+
+  return state
+}
+
+const productDetailsModalContext = (state = initialState.productDetailsModalContext, action = {}) => {
+  switch (action.type) {
+  case CLOSE_PRODUCT_DETAILS_MODAL:
+
+    return {}
+
+  case OPEN_PRODUCT_DETAILS_MODAL:
+
+    return action.payload
+  }
+
+  return state
 }
 
 export default combineReducers({
@@ -218,4 +281,8 @@ export default combineReducers({
   isDateModalOpen,
   isAddressModalOpen,
   country,
+  isProductOptionsModalOpen,
+  productOptionsModalContext,
+  isProductDetailsModalOpen,
+  productDetailsModalContext,
 })

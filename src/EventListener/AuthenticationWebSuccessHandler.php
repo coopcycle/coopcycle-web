@@ -33,7 +33,7 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
      *
      * @param string $providerKey
      */
-    public function setProviderKey($providerKey)
+    public function setFirewallName($providerKey)
     {
         $this->providerKey = $providerKey;
     }
@@ -65,8 +65,12 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
                     return new RedirectResponse($this->router->generate('admin_index'));
                 }
 
-                if ($user->hasRole('ROLE_STORE') || $user->hasRole('ROLE_RESTAURANT') || $user->hasRole('ROLE_COURIER')) {
-                    return new RedirectResponse($this->router->generate('fos_user_profile_show'));
+                if ($user->hasRole('ROLE_STORE') || $user->hasRole('ROLE_RESTAURANT')) {
+                    return new RedirectResponse($this->router->generate('dashboard'));
+                }
+
+                if ($user->hasRole('ROLE_COURIER')) {
+                    return new RedirectResponse($this->router->generate('nucleos_profile_profile_show'));
                 }
 
                 return $this->httpUtils->createRedirectResponse($request, $this->options['default_target_path']);

@@ -10,6 +10,7 @@ use Sylius\Component\Order\Context\CartNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Webmozart\Assert\Assert;
 
 final class SessionSubscriber implements EventSubscriberInterface
@@ -23,6 +24,9 @@ final class SessionSubscriber implements EventSubscriberInterface
     /** @var bool */
     private $enabled;
 
+    /** @var TokenStorageInterface */
+    private $tokenStorage;
+
     /** @var LoggerInterface|null */
     private $logger;
 
@@ -30,11 +34,13 @@ final class SessionSubscriber implements EventSubscriberInterface
         CartContextInterface $cartContext,
         string $sessionKeyName,
         bool $enabled,
+        TokenStorageInterface $tokenStorage,
         LoggerInterface $logger = null)
     {
         $this->cartContext = $cartContext;
         $this->sessionKeyName = $sessionKeyName;
         $this->enabled = $enabled;
+        $this->tokenStorage = $tokenStorage;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -57,7 +63,15 @@ final class SessionSubscriber implements EventSubscriberInterface
 
         $request = $event->getRequest();
 
-        if (!$request->hasSession() || !$request->getSession()->isStarted()) {
+        if (!$request->hasPreviousSession() || !$request->getSession()->isStarted()) {
+            $this->logger->debug('SessionSubscriber | no session, skipping');
+            return;
+        }
+
+        $token = $this->tokenStorage->getToken();
+
+        if (null === $token || !$token->isAuthenticated()) {
+            $this->logger->debug('SessionSubscriber | no authenticated token, skipping');
             return;
         }
 
@@ -66,24 +80,24 @@ final class SessionSubscriber implements EventSubscriberInterface
             $cart = $this->cartContext->getCart();
 
         } catch (CartNotFoundException $exception) {
-            $this->logger->debug('No cart found in context');
+            $this->logger->debug('SessionSubscriber | No cart found in context');
             return;
         }
 
         /** @var OrderInterface $cart */
         Assert::isInstanceOf($cart, OrderInterface::class);
 
-        if (null === $cart->getRestaurant()) {
-            $this->logger->debug('No restaurant associated to cart');
+        if (!$cart->hasVendor()) {
+            $this->logger->debug('SessionSubscriber | No vendor(s) associated to cart');
             return;
         }
 
         if (null === $cart->getId()) {
-            $this->logger->debug('Cart has not been persisted yet');
+            $this->logger->debug('SessionSubscriber | Cart has not been persisted yet');
             return;
         }
 
-        $this->logger->debug(sprintf('Saving cart #%d in session', $cart->getId()));
+        $this->logger->debug(sprintf('SessionSubscriber | Saving cart #%d in session', $cart->getId()));
         $request->getSession()->set($this->sessionKeyName, $cart->getId());
     }
 }

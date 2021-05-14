@@ -38,7 +38,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $data = [ $data ];
         }
 
-        $bulk = array_map(function ($item) use ($context) {
+        return array_map(function ($item) use ($context) {
 
             // This is needed, because CsvDecoder will transform empty rows to empty strings,
             // causing the error "The string supplied did not seem to be a phone number."
@@ -48,8 +48,6 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
             return $this->normalizer->denormalize($item, Task::class, 'jsonld', $context);
         }, $data);
-
-        return $bulk;
     }
 
     public function supportsDenormalization($data, $type, $format = null)

@@ -3,32 +3,15 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import { Input } from 'antd'
-import Fuse from 'fuse.js'
 
 import { toggleSearch } from '../redux/actions'
-import { selectAllTasks } from '../../coopcycle-frontend-js/dispatch/redux'
+import { selectFuseSearch } from '../redux/selectors'
 
 import Task from './Task'
 
 const { Search } = Input
 
-const fuseOptions = {
-  shouldSort: true,
-  includeScore: true,
-  keys: [{
-    name: 'id',
-    weight: 0.7
-  }, {
-    name: 'tags.slug',
-    weight: 0.1
-  }, {
-    name: 'address.name',
-    weight: 0.1
-  }, {
-    name: 'address.streetAddress',
-    weight: 0.1
-  }]
-}
+import 'antd/lib/button/style/index.css'
 
 class SearchPanel extends React.Component {
 
@@ -124,11 +107,8 @@ class SearchPanel extends React.Component {
 
 function mapStateToProps(state) {
 
-  const tasks = selectAllTasks(state)
-
   return {
-    tasks,
-    fuse: new Fuse(tasks, fuseOptions),
+    fuse: selectFuseSearch(state),
     searchIsOn: state.searchIsOn
   }
 }

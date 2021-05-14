@@ -19,8 +19,6 @@ abstract class FrozenOrder
     /** @var Collection|FrozenOrderFooterItem[] */
     protected $footerItems;
 
-    protected $order;
-
     public function __construct()
     {
         $this->lineItems = new ArrayCollection();
@@ -92,15 +90,5 @@ abstract class FrozenOrder
         $item->setParent($this);
 
         $this->footerItems->add($item);
-    }
-
-    public function setOrder($order)
-    {
-        $this->order = $order;
-    }
-
-    public function getOrder()
-    {
-        return $this->order;
     }
 }

@@ -12,7 +12,6 @@ class AppKernel extends Kernel
             new Symfony\Bundle\SecurityBundle\SecurityBundle(),
             new Symfony\Bundle\TwigBundle\TwigBundle(),
             new Symfony\Bundle\MonologBundle\MonologBundle(),
-            new Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle(),
             new Sylius\Bundle\ResourceBundle\SyliusResourceBundle(),
             new Sylius\Bundle\LocaleBundle\SyliusLocaleBundle(),
             new Sylius\Bundle\AttributeBundle\SyliusAttributeBundle(),
@@ -32,7 +31,8 @@ class AppKernel extends Kernel
             new ApiPlatform\Core\Bridge\Symfony\Bundle\ApiPlatformBundle(),
             new Nelmio\CorsBundle\NelmioCorsBundle(),
             new FOS\RestBundle\FOSRestBundle(),
-            new FOS\UserBundle\FOSUserBundle(),
+            new Nucleos\UserBundle\NucleosUserBundle(),
+            new Nucleos\ProfileBundle\NucleosProfileBundle(),
             new Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle(),
             new Gesdinet\JWTRefreshTokenBundle\GesdinetJWTRefreshTokenBundle(),
             new Snc\RedisBundle\SncRedisBundle(),
@@ -54,7 +54,6 @@ class AppKernel extends Kernel
             new Hautelook\AliceBundle\HautelookAliceBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new JMose\CommandSchedulerBundle\JMoseCommandSchedulerBundle(),
-            new Nmure\CrawlerDetectBundle\CrawlerDetectBundle(),
             new Symfony\WebpackEncoreBundle\WebpackEncoreBundle(),
             new Liip\ImagineBundle\LiipImagineBundle(),
             new Oneup\UploaderBundle\OneupUploaderBundle(),
@@ -72,6 +71,10 @@ class AppKernel extends Kernel
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
             $bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
+        }
+
+        if ('test' === $this->getEnvironment()) {
+            $bundles[] = new FriendsOfBehat\SymfonyExtension\Bundle\FriendsOfBehatSymfonyExtensionBundle();
         }
 
         return $bundles;
@@ -100,12 +103,26 @@ class AppKernel extends Kernel
     }
 
     /**
+     * Backport of https://github.com/symfony/symfony/pull/37114
      * {@inheritdoc}
      */
-    public function getLogDir()
+    public function getCacheDir()
+    {
+        if (isset($_SERVER['APP_CACHE_DIR'])) {
+            return $_SERVER['APP_CACHE_DIR'].'/'.$this->environment;
+        }
+
+        return parent::getCacheDir();
+    }
+
+    /**
+     * Backport of https://github.com/symfony/symfony/pull/37114
+     * {@inheritdoc}
+     */
+    public function getLogDir(): string
     {
         // Just to add the "s"
-        return $this->getProjectDir().'/var/logs';
+        return $_SERVER['APP_LOG_DIR'] ?? ($this->getProjectDir().'/var/logs');
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader)

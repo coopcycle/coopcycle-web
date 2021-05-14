@@ -1,0 +1,51 @@
+restaurant.openingHours.notBlank: Sélectionnez au moins un créneau d'ouverture
+restaurant.telephone.notBlank: Entrez votre numéro de téléphone
+restaurant.name.notBlank: Entrez le nom de votre restaurant
+restaurant.contract.notValid: Entrez le contrat de livraison pour ce restaurant (nécessite d'être administrateur de la plateforme)
+restaurant.stripeAccount.notSet: Liez le restaurant à un compte Stripe
+restaurant.notActivable: Vous ne pouvez pas encore activer ce restaurant
+restaurant.menu.notSet: Créez et activez un menu
+
+address.tooFar: Cette adresse est trop éloignée
+address.notSet: Veuillez entrer l'adresse de livraison
+
+cart.address.empty: Veuillez sélectionner une adresse
+cart.empty: Votre panier est vide
+
+order.totalIncludingTax.tooLow: Le montant minimum est de %minimum_amount%
+
+order.shippedAt.expired: L'horaire de livraison est dépassé
+order.shippedAt.notAvailable: L'horaire de livraison n'est plus disponible
+order.shippedAt.notEmpty: L'horaire de livraison ne peut pas être vide
+order.items.containsDisabledProduct: La commande contient un produit désactivé
+order.fulfillment_methods.empty: Cet établissement est actuellement indisponible
+
+delivery.price.error.priceCalculation: Le prix de la course n'a pas pu être calculé.
+
+delivery.tasks.unexpectedCount: La entrega debe consistir en dos tareas.
+delivery.tasks.pickupAfterDropoff: La date de dépôt doit être postérieure à la date de retrait.
+
+delivery.check.notValid: Votre demande n'est pas réalisable
+
+time_range.empty: Vous n'avez sélectionné aucune valeur
+time_range.no_weekday: Vous n'avez pas sélectionné de jour de la semaine
+
+product.name.modified: Vous avez modifié le nom du produit
+
+task.before.mustBeGreaterThanAfter: La plage horaire n'est pas valide
+
+product_option.valuesRange.notAllowed: Vous ne pouvez pas définir d'intervalle pour une option obligatoire
+
+product.reusablePackagingUnit.mustBeGreaterThanZero: Vous devez spécifier une quantité supérieure à 0
+
+loopeat.insufficient_balance:
+  Il vous manque %count% crédit pour être livré·e zero déchet|Il vous manque %count% crédits pour être livré·e zero déchet
+
+restaurant.contract.variableCustomerAmount.pickOne: Veuillez sélectionner une tarification
+restaurant.contract.variableDeliveryPrice.pickOne: Veuillez sélectionner une tarification
+
+checkout.user_with_same_email_exists: Un compte avec le même email existe déjà
+
+time_range_jump.next_day: Il n'est plus possible de commander pour aujourd'hui
+
+order.shippingTimeRange.notAvailable: Indisponible pour l'instant

@@ -8,6 +8,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\DateUtils;
+use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\PriceFormatter;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Bundle\PromotionBundle\Doctrine\ORM\PromotionCouponRepository;
@@ -17,7 +18,6 @@ use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -28,7 +28,6 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
     private $normalizer;
     private $channelContext;
     private $productRepository;
-    private $productOptionValueRepository;
     private $variantResolver;
     private $orderItemFactory;
     private $orderItemQuantityModifier;
@@ -43,7 +42,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         ObjectNormalizer $objectNormalizer,
         ChannelContextInterface $channelContext,
         ProductRepositoryInterface $productRepository,
-        RepositoryInterface $productOptionValueRepository,
+        OptionsPayloadConverter $optionsPayloadConverter,
         LazyProductVariantResolverInterface $variantResolver,
         FactoryInterface $orderItemFactory,
         OrderItemQuantityModifierInterface $orderItemQuantityModifier,
@@ -57,7 +56,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->normalizer = $normalizer;
         $this->channelContext = $channelContext;
         $this->productRepository = $productRepository;
-        $this->productOptionValueRepository = $productOptionValueRepository;
+        $this->optionsPayloadConverter = $optionsPayloadConverter;
         $this->variantResolver = $variantResolver;
         $this->orderItemFactory = $orderItemFactory;
         $this->orderItemQuantityModifier = $orderItemQuantityModifier;
@@ -70,47 +69,38 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->translator = $translator;
     }
 
-    public function normalizeAdjustments(Order $order)
-    {
-        $serializeAdjustment = function (BaseAdjustmentInterface $adjustment) {
-
-            return [
-                'id' => $adjustment->getId(),
-                'label' => $adjustment->getLabel(),
-                'amount' => $adjustment->getAmount(),
-            ];
-        };
-
-        $deliveryAdjustments =
-            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT)->toArray());
-        $deliveryPromotionAdjustments =
-            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)->toArray());
-        $orderPromotionAdjustments =
-            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT)->toArray());
-        $reusablePackagingAdjustments =
-            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->toArray());
-        $taxAdjustments =
-            array_map($serializeAdjustment, $order->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT)->toArray());
-
-        return [
-            AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
-            AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT => array_values($deliveryPromotionAdjustments),
-            AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT => array_values($orderPromotionAdjustments),
-            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments),
-            AdjustmentInterface::TAX_ADJUSTMENT => array_values($taxAdjustments),
-        ];
-    }
-
     public function normalize($object, $format = null, array $context = array())
     {
         // TODO Document why we use ObjectNormalizer for unsaved orders (?)
         if (null === $object->getId() && !in_array('cart', $context['groups'])) {
             $data = $this->objectNormalizer->normalize($object, $format, $context);
         } else {
-            $data = $this->normalizer->normalize($object, $format, $context);
-        }
 
-        $data['adjustments'] = $this->normalizeAdjustments($object);
+            // FIXME
+            //
+            // This is here to avoid errors like
+            // > Unable to generate an IRI for "AppBundle\Entity\Address"
+            //
+            // 1/ The customer has a cart at restaurant A, with shippingAddress = null
+            // 2/ The customer goes to restaurant B, and changes the address
+            // 3/ The cart is not persisted, and shippingAddress.id = NULL
+
+            $fixShippingAddress = false;
+
+            $shippingAddress = $object->getShippingAddress();
+            if (null !== $shippingAddress && null === $shippingAddress->getId()) {
+                $object->setShippingAddress(null);
+                $shippingAddressData = $this->objectNormalizer->normalize($shippingAddress, $format, $context);
+                $fixShippingAddress = true;
+            }
+
+            $data = $this->normalizer->normalize($object, $format, $context);
+
+            if ($fixShippingAddress) {
+                $object->setShippingAddress($shippingAddress);
+                $data['shippingAddress'] = $shippingAddressData;
+            }
+        }
 
         $restaurant = $object->getRestaurant();
 
@@ -144,36 +134,11 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             // Make sure the array is zero-indexed
             $data['items'] = array_values($data['items']);
 
-            $restaurant = $object->getRestaurant();
-            if (null === $restaurant) {
-                $data['restaurant'] = null;
-            } else {
-
-                $fulfillmentMethods = [];
-                foreach ($restaurant->getFulfillmentMethods() as $fulfillmentMethod) {
-                    if ($fulfillmentMethod->isEnabled()) {
-                        $fulfillmentMethods[] = $fulfillmentMethod->getType();
-                    }
-                }
-
-                $data['restaurant'] = [
-                    'id' => $restaurant->getId(),
-                    'variableCustomerAmountEnabled' =>
-                        $restaurant->getContract() !== null ? $restaurant->getContract()->isVariableCustomerAmountEnabled() : false,
-                    'address' => [
-                        'latlng' => [
-                            $restaurant->getAddress()->getGeo()->getLatitude(),
-                            $restaurant->getAddress()->getGeo()->getLongitude(),
-                        ]
-                    ],
-                    'fulfillmentMethods' => $fulfillmentMethods,
-                ];
-            }
-
-            $vendor = $object->getVendor();
-            if (null === $vendor) {
+            if (!$object->hasVendor()) {
                 $data['vendor'] = null;
             } else {
+
+                $vendor = $object->getVendor();
 
                 $fulfillmentMethods = [];
                 foreach ($vendor->getFulfillmentMethods() as $fulfillmentMethod) {
@@ -240,29 +205,10 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 if (!$product->hasOptions()) {
                     $productVariant = $this->variantResolver->getVariant($product);
                 } else {
-
                     if (!$product->hasNonAdditionalOptions() && (!isset($item['options']) || empty($item['options']))) {
                         $productVariant = $this->variantResolver->getVariant($product);
                     } else {
-                        $optionValues = new \SplObjectStorage();
-                        foreach ($item['options'] as $option) {
-                            // Legacy
-                            if (is_string($option)) {
-                                $optionValue = $this->productOptionValueRepository->findOneByCode($option);
-                                $optionValues->attach($optionValue);
-                            } else {
-                                $optionValue = $this->productOptionValueRepository->findOneByCode($option['code']);
-                                if ($optionValue && $product->hasOptionValue($optionValue)) {
-                                    $quantity = isset($option['quantity']) ? (int) $option['quantity'] : 0;
-                                    if (!$optionValue->getOption()->isAdditional() || null === $optionValue->getOption()->getValuesRange()) {
-                                        $quantity = 1;
-                                    }
-                                    if ($quantity > 0) {
-                                        $optionValues->attach($optionValue, $quantity);
-                                    }
-                                }
-                            }
-                        }
+                        $optionValues = $this->optionsPayloadConverter->convert($product, $item['options']);
                         $productVariant = $this->variantResolver->getVariantForOptionValues($product, $optionValues);
                     }
                 }

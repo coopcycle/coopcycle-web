@@ -5,16 +5,19 @@ namespace AppBundle\Domain\Order\Reactor;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Payment\Gateway;
 use AppBundle\Sylius\Order\OrderInterface;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Webmozart\Assert\Assert;
 
 class CapturePayment
 {
     private $gateway;
+    private $logger;
 
-    public function __construct(Gateway $gateway)
+    public function __construct(Gateway $gateway, LoggerInterface $logger)
     {
         $this->gateway = $gateway;
+        $this->logger = $logger;
     }
 
     public function __invoke(Event $event)
@@ -35,7 +38,7 @@ class CapturePayment
         $payment = $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED);
 
         // This happens when a B2B customer has placed an order
-        if (null === $payment && null === $order->getRestaurant()) {
+        if (null === $payment && !$order->hasVendor()) {
             return;
         }
 
@@ -48,8 +51,7 @@ class CapturePayment
         $completedPayment =
             $order->getLastPayment(PaymentInterface::STATE_COMPLETED);
 
-        if (null !== $completedPayment && $completedPayment->hasSource()
-            && 'giropay' === $completedPayment->getSourceType()) {
+        if (null !== $completedPayment && $completedPayment->isGiropay()) {
             return;
         }
 
@@ -63,6 +65,7 @@ class CapturePayment
             // FIXME
             // If we land here, there is a severe problem
             // Maybe schedule a retry?
+            $this->logger->error($e->getMessage());
         }
     }
 }

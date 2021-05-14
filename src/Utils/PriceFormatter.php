@@ -9,16 +9,13 @@ use Twig\Extra\Intl\IntlExtension;
 class PriceFormatter
 {
     private $currencyContext;
-    private $currencyHelper;
     private $intl;
 
     public function __construct(
         CurrencyContextInterface $currencyContext,
-        CurrencyHelperInterface $currencyHelper,
         IntlExtension $intl)
     {
         $this->currencyContext = $currencyContext;
-        $this->currencyHelper = $currencyHelper;
         $this->intl = $intl;
     }
 

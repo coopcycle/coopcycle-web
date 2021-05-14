@@ -6,9 +6,13 @@ class Invitation
 {
     protected $code;
 
+    protected $email;
+
     protected $user;
 
     protected $sentAt;
+
+    protected $grants = [];
 
     /**
      * @return mixed
@@ -26,6 +30,26 @@ class Invitation
     public function setCode($code)
     {
         $this->code = $code;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return self
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
 
         return $this;
     }
@@ -68,5 +92,55 @@ class Invitation
         $this->sentAt = $sentAt;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGrants()
+    {
+        return $this->grants;
+    }
+
+    /**
+     * @param string $role
+     */
+    public function addRole(string $role)
+    {
+        $roles = $this->grants['roles'] ?? [];
+
+        if (!in_array($role, $roles, true)) {
+            $roles[] = $role;
+        }
+
+        $this->grants['roles'] = $roles;
+    }
+
+    /**
+     * @param LocalBusiness $restaurant
+     */
+    public function addRestaurant(LocalBusiness $restaurant)
+    {
+        $restaurants = $this->grants['restaurants'] ?? [];
+
+        if (!in_array($restaurant->getId(), $restaurants, true)) {
+            $restaurants[] = $restaurant->getId();
+        }
+
+        $this->grants['restaurants'] = $restaurants;
+    }
+
+    /**
+     * @param Store $store
+     */
+    public function addStore(Store $store)
+    {
+        $stores = $this->grants['stores'] ?? [];
+
+        if (!in_array($store->getId(), $stores, true)) {
+            $stores[] = $store->getId();
+        }
+
+        $this->grants['stores'] = $stores;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Domain\Order\Reactor;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Reactor\UpdateState;
 use AppBundle\Entity\Delivery;
@@ -10,6 +11,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\OrderTimeHelper;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -42,18 +44,23 @@ class UpdateStateTest extends KernelTestCase
         $this->stateMachineFactory = self::$container->get(FactoryInterface::class);
 
         $this->orderProcessor = $this->prophesize(OrderProcessorInterface::class);
-        $this->serializer = $this->prophesize(SerializerInterface::class);
         $this->eventBus = $this->prophesize(MessageBus::class);
 
-        $this->serializer
-            ->serialize(Argument::type(OrderInterface::class), 'json', Argument::type('array'))
-            ->willReturn(json_encode(['foo' => 'bar']));
+        $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
+
+        $this->shippingTimeRange = new TsRange();
+        $this->shippingTimeRange->setLower(new \DateTime('2020-04-09 19:55:00'));
+        $this->shippingTimeRange->setUpper(new \DateTime('2020-04-09 20:05:00'));
+
+        $this->orderTimeHelper
+            ->getShippingTimeRange(Argument::type(OrderInterface::class))
+            ->willReturn($this->shippingTimeRange);
 
         $this->updateState = new UpdateState(
             $this->stateMachineFactory,
             $this->orderProcessor->reveal(),
-            $this->serializer->reveal(),
-            $this->eventBus->reveal()
+            $this->eventBus->reveal(),
+            $this->orderTimeHelper->reveal()
         );
     }
 
@@ -72,6 +79,9 @@ class UpdateStateTest extends KernelTestCase
 
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
         $this->assertEquals(PaymentInterface::STATE_AUTHORIZED, $payment->getState());
+
+        $this->assertNotNull($order->getShippingTimeRange());
+        $this->assertEquals($this->shippingTimeRange, $order->getShippingTimeRange());
     }
 
     public function testCheckoutFailed()

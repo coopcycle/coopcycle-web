@@ -5,6 +5,7 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="imageName" type="string" column="image_name" length="255" nullable="true" />
+    <field name="ratio" type="string" column="ratio" length="5" />
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>

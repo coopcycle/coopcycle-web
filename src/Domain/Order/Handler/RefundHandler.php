@@ -15,16 +15,13 @@ class RefundHandler
 {
     private $stripeManager;
     private $stateMachineFactory;
-    private $eventRecorder;
 
     public function __construct(
         StripeManager $stripeManager,
-        StateMachineFactoryInterface $stateMachineFactory,
-        RecordsMessages $eventRecorder)
+        StateMachineFactoryInterface $stateMachineFactory)
     {
         $this->stripeManager = $stripeManager;
         $this->stateMachineFactory = $stateMachineFactory;
-        $this->eventRecorder = $eventRecorder;
     }
 
     public function __invoke(RefundCommand $command)

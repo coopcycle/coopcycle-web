@@ -15,6 +15,9 @@ trait CatalogTrait
      */
     protected $products;
 
+    /**
+     * @ApiSubresource
+     */
     protected $productOptions;
 
     protected $taxons;
@@ -39,6 +42,7 @@ trait CatalogTrait
     public function addProduct(ProductInterface $product)
     {
         if (!$this->hasProduct($product)) {
+            $product->setRestaurant($this);
             $this->products->add($product);
         }
     }
@@ -47,6 +51,7 @@ trait CatalogTrait
     {
         if ($this->hasProduct($product)) {
             $this->products->removeElement($product);
+            $product->setRestaurant(null);
         }
     }
 
@@ -60,6 +65,7 @@ trait CatalogTrait
     public function addProductOption(ProductOptionInterface $productOption)
     {
         if (!$this->productOptions->contains($productOption)) {
+            $productOption->setRestaurant($this);
             $this->productOptions->add($productOption);
         }
     }
@@ -68,6 +74,7 @@ trait CatalogTrait
     {
         if ($this->productOptions->contains($productOption)) {
             $this->productOptions->removeElement($productOption);
+            $productOption->setRestaurant(null);
         }
     }
 

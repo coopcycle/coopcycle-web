@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import Modal from 'react-modal'
 
-import { goBackToRestaurant, retryLastAddItemRequest } from '../redux/actions'
+import { retryLastAddItemRequest } from '../redux/actions'
 
 class RestaurantModal extends Component {
 
@@ -16,6 +16,8 @@ class RestaurantModal extends Component {
 
   renderModalContent() {
 
+    const continueURL = window.Routing.generate('order_continue')
+
     return (
       <div>
         <div className="text-center">
@@ -26,9 +28,9 @@ class RestaurantModal extends Component {
           </p>
         </div>
         <div className="ReactModal__Restaurant__button">
-          <button type="button" className="btn btn-default" onClick={ () => this.props.goBackToRestaurant() }>
+          <a className="btn btn-default" href={ continueURL }>
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_BTN_NO') }
-          </button>
+          </a>
           <button type="button" className="btn btn-primary" onClick={ () => this.props.retryLastAddItemRequest() }>
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_BTN_YES') }
           </button>
@@ -65,7 +67,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
 
   return {
-    goBackToRestaurant: () => dispatch(goBackToRestaurant()),
     retryLastAddItemRequest: () => dispatch(retryLastAddItemRequest()),
   }
 }

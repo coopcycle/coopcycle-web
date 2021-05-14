@@ -46,3 +46,45 @@ export const selectCancelledOrders = createSelector(
   selectOrders,
   orders => _.filter(orders, o => o.state === 'refused' || o.state === 'cancelled').sort(orderSort)
 )
+
+export const selectHoursRanges = createSelector(
+  state => state.date,
+  date => {
+    const dateAsRange = moment.range(
+      moment(date).startOf('day'),
+      moment(date).endOf('day')
+    )
+
+    const hoursRanges = []
+
+    for (let start of dateAsRange.by('hour')) {
+      const end = moment(start).add(1, 'hour')
+      const hourRange = moment.range(start, end).toString()
+      hoursRanges.push(hourRange)
+    }
+
+    return hoursRanges
+  }
+)
+
+export const selectOrdersByHourRange = createSelector(
+  selectHoursRanges,
+  state => state.orders,
+  (hoursRanges, orders) => {
+
+    const groups = _.groupBy(orders, o => {
+      return _.find(hoursRanges, hr => {
+        const range = moment.rangeFromISOString(hr)
+        const shippingTimeRange = moment.range(o.shippingTimeRange)
+
+        return shippingTimeRange.overlaps(range)
+      })
+    })
+
+    return _.map(groups, (value, key) => ({
+      range: key,
+      count: value.length,
+      percentage: ((value.length * 100) / orders.length) / 100,
+    }))
+  }
+)

@@ -23,24 +23,24 @@
         <div class="d-flex justify-content-between">
           <button type="button" class="btn btn-warning"
             data-toggle="collapse" data-target="#guest-checkout-signin"
-            aria-expanded="false" aria-controls="guest-checkout-signin">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</button>
+            aria-expanded="false" aria-controls="guest-checkout-signin">{{ 'layout.login'|trans({}, 'NucleosUserBundle') }}</button>
           <button type="button" class="btn btn-transparent">{{ 'guest_checkout.use_another_email'|trans }}</button>
         </div>
         <div class="collapse mt-4" id="guest-checkout-signin">
-          <form action="{{ path("fos_user_security_check", { _target_path: path('order') }) }}" method="post">
+          <form action="{{ path("nucleos_user_security_check", { _target_path: path('order') }) }}" method="post">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
             <input type="hidden" name="_username" value="{{ form.customer.email.vars.data }}" />
             <div class="input-group">
               <input type="password" name="_password"
                 class="form-control" id="guest-checkout-password"
-                placeholder="{{ 'security.login.password'|trans({}, 'FOSUserBundle') }}">
+                placeholder="{{ 'security.login.password'|trans({}, 'NucleosUserBundle') }}">
               <span class="input-group-btn">
                 <button type="submit" class="btn btn-primary">
-                  {{ 'security.login.submit'|trans({}, 'FOSUserBundle') }}
+                  {{ 'security.login.submit'|trans({}, 'NucleosUserBundle') }}
                 </button>
               </span>
             </div>
-            <a class="help-block mb-0" href="{{ path('fos_user_resetting_request') }}">
+            <a class="help-block mb-0" href="{{ path('nucleos_user_resetting_request') }}">
               {% trans from 'messages' %}authentication.forgot_password{% endtrans %}
             </a>
           </form>
@@ -52,7 +52,30 @@
 
     <div class="row">
       <div class="col-xs-12">
+
         {% include 'order/breadcrumb.html.twig' %}
+
+        {% for suggestion in coopcycle_checkout_suggestions(order) %}
+          {% if suggestion.type == 'CONTINUE_SHOPPING_HUB' %}
+            <div class="alert alert-info p-3 d-flex justify-content-between align-items-center">
+              <div>
+                <i class="fa fa-lg fa-info-circle mr-2"></i>
+                <span>
+                  {% trans with { '%name%': suggestion.hub.name } %}checkout.suggestions.continue_shopping_hub{% endtrans %}
+                </span>
+              </div>
+              <div class="ml-2">
+                <a class="btn btn-sm btn-info h-100 d-flex align-items-center"
+                  href="{{ path('hub', { id: suggestion.hub.id, slug: suggestion.hub.name|slugify }) }}">
+                  {{ 'index.view_all_merchants'|trans }}
+                </a>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        {{ form_errors(form) }}
+
         <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h4>
         <div class="border-bottom mb-5">
 
@@ -61,7 +84,7 @@
             {% include '_partials/order/items.html.twig' with {
               with_taxes: false,
               with_items: false,
-              with_tip_form: form.tipAmount
+              with_tip_form: form_tip
             } %}
             <div class="row">
               <div class="col-xs-12 col-sm-3 col-sm-offset-9 text-right">
@@ -71,20 +94,18 @@
                   aria-expanded="false"
                   aria-controls="promotion-coupon-collapse"
                   class="d-block mb-4 font-weight-bold">
-                  {{ form.promotionCoupon.vars.label|trans }}
+                  {{ 'form.checkout_address.promotion_coupon.label'|trans }}
                 </a>
                 <div class="collapse" id="promotion-coupon-collapse">
-                  {{ form_row(form.promotionCoupon) }}
+                  <div class="form-group">
+                    <div class="input-group input-group-sm">
+                      <input type="text" class="form-control" id="coupon-code">
+                      <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button" id="apply-coupon">{{ 'form.checkout_address.add_promotion.label'|trans }}</button>
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                {# We use an input group with the button #}
-                {# {{ form_row(form.addPromotion) }} #}
-              </div>
-            </div>
-            <div class="row hidden">
-              <div class="col-xs-12 col-sm-3 col-sm-offset-9">
-                {{ form_row(form.tipAmount) }}
-                {# We use an input group with the button #}
-                {# {{ form_row(form.addPromotion) }} #}
               </div>
             </div>
             {% if form.reusablePackagingEnabled is defined %}
@@ -125,7 +146,7 @@
         <div class="d-flex flex-row justify-content-between align-items-center py-3">
           <span class="text-success">
             <i class="fa fa-clock-o fa-lg mr-2"></i>
-            <strong>{{ shipping_range|time_range_for_humans }}</strong>
+            <strong>{{ form.shippingTimeRange.vars.value|time_range_for_humans }}</strong>
           </span>
           <div>
             {% if form.quote is defined %}
@@ -139,6 +160,18 @@
       </div>
     </nav>
     {{ form_end(form) }}
+
+    <div class="d-none">
+      {{ form_start(form_tip) }}
+        {{ form_widget(form_tip) }}
+      {{ form_end(form_tip) }}
+    </div>
+
+    <div class="d-none">
+      {{ form_start(form_coupon) }}
+        {{ form_widget(form_coupon) }}
+      {{ form_end(form_coupon) }}
+    </div>
 
     <div class="modal fade" id="modal-loopeat" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">

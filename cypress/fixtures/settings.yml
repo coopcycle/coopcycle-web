@@ -3,10 +3,6 @@ Craue\ConfigBundle\Entity\Setting:
     section: general
     name: latlng
     value: '48.857498,2.335402'
-  setting_google_api_key:
-    section: general
-    name: google_api_key
-    value: '<{GOOGLE_API_KEY}>'
   setting_default_tax_category:
     section: general
     name: default_tax_category

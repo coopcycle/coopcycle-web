@@ -4,7 +4,7 @@ namespace AppBundle\MessageHandler;
 
 use AppBundle\Message\PushNotification;
 use AppBundle\Service\RemotePushNotificationManager;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class PushNotificationHandler implements MessageHandlerInterface

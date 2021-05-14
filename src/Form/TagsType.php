@@ -4,7 +4,6 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Model\TaggableInterface;
-use AppBundle\Service\TagManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -17,12 +16,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TagsType extends AbstractType
 {
-    private $tagManager;
     private $objectManager;
 
-    public function __construct(TagManager $tagManager, EntityManagerInterface $objectManager)
+    public function __construct(EntityManagerInterface $objectManager)
     {
-        $this->tagManager = $tagManager;
         $this->objectManager = $objectManager;
     }
 
@@ -37,10 +34,7 @@ class TagsType extends AbstractType
                 return;
             }
 
-            $tags = array_map(
-                fn($tag) => $tag->getSlug(),
-                iterator_to_array($taggable->getTags())
-            );
+            $tags = $taggable->getTags();
 
             if (!empty($tags)) {
                 $event->setData(implode(' ', $tags));
@@ -59,9 +53,7 @@ class TagsType extends AbstractType
             $tagsAsString = $event->getData();
             $slugs = explode(' ', $tagsAsString);
 
-            $tags = $this->tagManager->fromSlugs($slugs);
-
-            $taggable->setTags($tags);
+            $taggable->setTags($slugs);
         });
     }
 

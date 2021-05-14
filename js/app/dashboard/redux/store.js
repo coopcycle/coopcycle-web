@@ -1,10 +1,20 @@
-import { createStore, applyMiddleware, compose } from 'redux'
+import {createStore, applyMiddleware, compose, combineReducers} from 'redux'
 import thunk from 'redux-thunk'
-import { reducer as coreReducer } from '../../coopcycle-frontend-js/dispatch/redux'
-import webReducer from './reducers'
-import webDispatchReducer from './dispatchReducers'
 import reduceReducers from 'reduce-reducers';
 import { socketIO, persistFilters } from './middlewares'
+import {
+  dateReducer,
+  taskEntityReducers as coreTaskEntityReducers,
+  taskListEntityReducers as coreTaskListEntityReducers,
+  uiReducers as coreUiReducers,
+} from '../../coopcycle-frontend-js/logistics/redux'
+import * as webReducers from './reducers'
+import webTaskEntityReducers from './taskEntityReducers'
+import webTaskListEntityReducers from './taskListEntityReducers'
+import webUiReducers from './uiReducers'
+import configReducers from './configReducers'
+import settingsReducers from './settingsReducers'
+import trackingReducers from './trackingReducers'
 
 const middlewares = [ thunk, socketIO, persistFilters ]
 
@@ -14,15 +24,20 @@ const middlewares = [ thunk, socketIO, persistFilters ]
 const composeEnhancers = (typeof window !== 'undefined' &&
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 
-const reducer = (state, action) => {
-  const rootState = webReducer(state, action)
-  const dispatchState = reduceReducers(coreReducer, webDispatchReducer)(state.dispatch, action)
-
-  return {
-    ...rootState,
-    dispatch: dispatchState,
-  }
-}
+const reducer = combineReducers({
+  ...webReducers,
+  logistics: combineReducers({
+    date: dateReducer,
+    entities: combineReducers({
+      tasks: reduceReducers(coreTaskEntityReducers, webTaskEntityReducers),
+      taskLists: reduceReducers(coreTaskListEntityReducers, webTaskListEntityReducers),
+    }),
+    ui: reduceReducers(coreUiReducers, webUiReducers)
+  }),
+  config: configReducers,
+  settings: settingsReducers,
+  tracking: trackingReducers,
+})
 
 export const createStoreFromPreloadedState = preloadedState => {
   return createStore(

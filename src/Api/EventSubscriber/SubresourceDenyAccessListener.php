@@ -25,21 +25,15 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
 {
     private $itemDataProvider;
     private $doctrine;
-    private $tokenStorage;
-    private $accessTokenManager;
     private $denyAccessListener;
 
     public function __construct(
         ItemDataProviderInterface $itemDataProvider,
         ManagerRegistry $doctrine,
-        TokenStorageInterface $tokenStorage,
-        AccessTokenManagerInterface $accessTokenManager,
         DenyAccessListener $denyAccessListener)
     {
         $this->itemDataProvider = $itemDataProvider;
         $this->doctrine = $doctrine;
-        $this->tokenStorage = $tokenStorage;
-        $this->accessTokenManager = $accessTokenManager;
         $this->denyAccessListener = $denyAccessListener;
     }
 
@@ -47,7 +41,6 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
     {
         return [
             KernelEvents::REQUEST => [
-                [ 'addOAuthContext', 4 ],
                 [ 'security', 4 ],
             ],
         ];
@@ -67,29 +60,6 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
         ]);
     }
 
-    public function addOAuthContext(RequestEvent $event)
-    {
-        $request = $event->getRequest();
-
-        if (!$this->supportsRequest($request)) {
-            return;
-        }
-
-        $oAuth2Context = new \stdClass();
-        if (null !== ($token = $this->tokenStorage->getToken()) && $token instanceof OAuth2Token) {
-
-            $accessToken = $this->accessTokenManager->find($token->getCredentials());
-            $client = $accessToken->getClient();
-
-            $apiApp = $this->doctrine->getRepository(ApiApp::class)
-                ->findOneByOauth2Client($client);
-
-            $oAuth2Context->store = $apiApp->getStore();
-        }
-
-        $request->attributes->set('oauth2_context', $oAuth2Context);
-    }
-
     public function security(RequestEvent $event)
     {
         $request = $event->getRequest();
@@ -103,7 +73,7 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
             $subresourceContext = $request->attributes->get('_api_subresource_context');
 
             $parent = null;
-            foreach ($subresourceContext['identifiers'] as $key => [$id, $resourceClass]) {
+            foreach ($subresourceContext['identifiers'] as $key => [$resourceClass, $id]) {
                 if (null !== $parent = $this->itemDataProvider->getItem($resourceClass, $request->attributes->get($id), 'get')) {
                     break;
                 }

@@ -12,11 +12,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 trait ShippingOptionsTrait
 {
     /**
-     * @var integer Additional time to delay ordering
-     */
-    protected $orderingDelayMinutes = 0;
-
-    /**
      * @Assert\GreaterThan(1)
      * @Assert\LessThanOrEqual(6)
      */
@@ -28,22 +23,6 @@ trait ShippingOptionsTrait
      * @Assert\Type(type="string")
      */
     protected $deliveryPerimeterExpression = 'distance < 3000';
-
-    /**
-     * @return int
-     */
-    public function getOrderingDelayMinutes()
-    {
-        return $this->orderingDelayMinutes;
-    }
-
-    /**
-     * @param int $orderingDelayMinutes
-     */
-    public function setOrderingDelayMinutes(int $orderingDelayMinutes)
-    {
-        $this->orderingDelayMinutes = $orderingDelayMinutes;
-    }
 
     /**
      * @return int

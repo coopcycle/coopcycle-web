@@ -4,6 +4,8 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\TaxCategory;
+use AppBundle\Service\SettingsManager;
+use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Taxation\TaxesInitializer;
 use AppBundle\Sylius\Taxation\TaxesProvider;
@@ -11,8 +13,8 @@ use AppBundle\Taxonomy\CuisineProvider;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Model\UserInterface;
 use Psr\Log\LogLevel;
+use Stripe;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
 use Sylius\Component\Product\Model\ProductAttribute;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
@@ -28,10 +30,12 @@ use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SetupCommand extends Command
@@ -51,6 +55,7 @@ class SetupCommand extends Command
     private $locale;
 
     private $locales = [
+        'an',
         'ca',
         'fr',
         'en',
@@ -68,6 +73,7 @@ class SetupCommand extends Command
     ];
 
     private $onDemandDeliveryProductNames = [
+        'an' => 'Entrega baixo demanda',
         'ca' => 'Lliurament a demanda',
         'fr' => 'Livraison à la demande',
         'en' => 'On demand delivery',
@@ -79,6 +85,7 @@ class SetupCommand extends Command
     ];
 
     private $allergenAttributeNames = [
+        'an' => 'Alerchenos',
         'ca' => 'Al·lèrgens',
         'fr' => 'Allergènes',
         'en' => 'Allergens',
@@ -90,6 +97,7 @@ class SetupCommand extends Command
     ];
 
     private $restrictedDietsAttributeNames = [
+        'an' => 'Dietas restrinchidas',
         'ca' => 'Dietes restringides',
         'fr' => 'Régimes restreints',
         'en' => 'Restricted diets',
@@ -101,6 +109,7 @@ class SetupCommand extends Command
     ];
 
     private $freeDeliveryPromotionNames = [
+        'an' => 'Entrega de baldes',
         'ca' => 'Lliurament gratuït',
         'fr' => 'Livraison offerte',
         'en' => 'Free delivery',
@@ -121,6 +130,8 @@ class SetupCommand extends Command
         'BRL',
         'ARS',
         'CRC',
+        'AUD',
+        'MXN',
     ];
 
     public function __construct(
@@ -144,7 +155,10 @@ class SetupCommand extends Command
         ManagerRegistry $doctrine,
         SlugifyInterface $slugify,
         TranslatorInterface $translator,
-        string $locale)
+        SettingsManager $settingsManager,
+        UrlGeneratorInterface $urlGenerator,
+        string $locale,
+        string $country)
     {
         $this->productRepository = $productRepository;
         $this->productFactory = $productFactory;
@@ -180,7 +194,12 @@ class SetupCommand extends Command
 
         $this->translator = $translator;
 
+        $this->settingsManager = $settingsManager;
+
+        $this->urlGenerator = $urlGenerator;
+
         $this->locale = $locale;
+        $this->country = $country;
 
         parent::__construct();
     }
@@ -229,6 +248,9 @@ class SetupCommand extends Command
 
         $output->writeln('<info>Checking Sylius taxes are present…</info>');
         $this->createSyliusTaxes($output);
+
+        $output->writeln('<info>Configuring Stripe webhook endpoint…</info>');
+        $this->configureStripeWebhooks($output);
 
         return 0;
     }
@@ -286,28 +308,53 @@ class SetupCommand extends Command
 
     private function createSyliusPaymentMethods(OutputInterface $output)
     {
-        $paymentMethod = $this->paymentMethodRepository->findOneByCode('STRIPE');
+        $methods = [
+            [
+                'code' => 'CARD',
+                'name' => 'Card',
+            ],
+            [
+                'code' => 'GIROPAY',
+                'name' => 'Giropay',
+                'countries' => ['de'],
+            ],
+            [
+                'code' => 'EDENRED',
+                'name' => 'Edenred',
+                'countries' => ['fr'],
+            ],
+            [
+                'code' => 'EDENRED+CARD',
+                'name' => 'Edenred + Card',
+                'countries' => ['fr'],
+            ],
+        ];
 
-        if (null === $paymentMethod) {
+        foreach ($methods as $method) {
 
-            $paymentMethod = new PaymentMethod();
+            $paymentMethod = $this->paymentMethodRepository->findOneByCode($method['code']);
 
-            $paymentMethod->setCode('STRIPE');
-            $paymentMethod->enable();
+            if (null === $paymentMethod) {
 
-            foreach ($this->locales as $locale) {
+                $paymentMethod = new PaymentMethod();
+                $paymentMethod->setCode($method['code']);
+                $paymentMethod->setEnabled(
+                    isset($method['countries']) ? in_array($this->country, $method['countries']) : true
+                );
 
-                $paymentMethod->setFallbackLocale($locale);
-                $translation = $paymentMethod->getTranslation($locale);
+                foreach ($this->locales as $locale) {
 
-                $translation->setName('Stripe');
+                    $paymentMethod->setFallbackLocale($locale);
+                    $translation = $paymentMethod->getTranslation($locale);
+
+                    $translation->setName($method['name']);
+                }
+
+                $this->paymentMethodRepository->add($paymentMethod);
+                $output->writeln(sprintf('Creating payment method « %s »', $method['name']));
+            } else {
+                $output->writeln(sprintf('Payment method « %s » already exists', $method['name']));
             }
-
-            $this->paymentMethodRepository->add($paymentMethod);
-
-            $output->writeln('Creating payment method « Stripe »');
-        } else {
-            $output->writeln('Payment method « Stripe » already exists');
         }
     }
 
@@ -479,5 +526,67 @@ class SetupCommand extends Command
         );
 
         $taxesInitializer->initialize();
+    }
+
+    private function configureStripeWebhooks(OutputInterface $output)
+    {
+        $secretKey = $this->settingsManager->get('stripe_secret_key');
+
+        if (null === $secretKey) {
+            $output->writeln('Stripe secret key is not configured, skipping');
+            return;
+        }
+
+        $stripe = new Stripe\StripeClient([
+            'api_key' => $secretKey,
+            'stripe_version' => StripeManager::STRIPE_API_VERSION,
+        ]);
+
+        $webhookEvents = [
+            'account.application.deauthorized',
+            'account.updated',
+            'payment_intent.succeeded',
+            'payment_intent.payment_failed',
+            'charge.captured',
+            'charge.succeeded',
+            'charge.updated',
+            // Used for Giropay legacy integration
+            'source.chargeable',
+            'source.failed',
+            'source.canceled',
+        ];
+
+        $url = $this->urlGenerator->generate('stripe_webhook', [], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $output->writeln(sprintf('Stripe webhook endpoint url is "%s"', $url));
+
+        // https://stripe.com/docs/api/webhook_endpoints/create?lang=php
+        $webhookId = $this->settingsManager->get('stripe_webhook_id');
+
+        if (null !== $webhookId) {
+
+            $output->writeln('Stripe webhook is already configured, updating…');
+
+            $webhookEndpoint = $stripe->webhookEndpoints->retrieve($webhookId);
+
+            $stripe->webhookEndpoints->update($webhookEndpoint->id, [
+                'url' => $url,
+                'enabled_events' => $webhookEvents,
+            ]);
+
+        } else {
+
+            $webhookEndpoint = $stripe->webhookEndpoints->create([
+                'url' => $url,
+                'enabled_events' => $webhookEvents,
+                'connect' => true,
+            ]);
+
+            $this->settingsManager->set('stripe_webhook_id', $webhookEndpoint->id);
+            $this->settingsManager->set('stripe_webhook_secret', $webhookEndpoint->secret);
+            $this->settingsManager->flush();
+
+            $output->writeln('Stripe webhook endpoint created');
+        }
     }
 }

@@ -6,11 +6,11 @@ use AppBundle\Domain\Order\Command\AcceptOrder;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
+use AppBundle\Utils\OrderTimeHelper;
 use SimpleBus\Message\Bus\MessageBus;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\PaymentTransitions;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * This Reactor is responsible for updating the state of the aggregate.
@@ -19,7 +19,6 @@ class UpdateState
 {
     private $stateMachineFactory;
     private $orderProcessor;
-    private $serializer;
     private $eventBus;
 
     private $eventNameToTransition = [];
@@ -27,13 +26,13 @@ class UpdateState
     public function __construct(
         StateMachineFactoryInterface $stateMachineFactory,
         OrderProcessorInterface $orderProcessor,
-        SerializerInterface $serializer,
-        MessageBus $eventBus)
+        MessageBus $eventBus,
+        OrderTimeHelper $orderTimeHelper)
     {
         $this->stateMachineFactory = $stateMachineFactory;
         $this->orderProcessor = $orderProcessor;
-        $this->serializer = $serializer;
         $this->eventBus = $eventBus;
+        $this->orderTimeHelper = $orderTimeHelper;
 
         $this->eventNameToTransition = [
             Event\OrderCreated::messageName()   => OrderTransitions::TRANSITION_CREATE,
@@ -91,13 +90,25 @@ class UpdateState
     {
         if ($event instanceof Event\CheckoutSucceeded) {
 
+            $order = $event->getOrder();
             $payment = $event->getPayment();
+
+            // FIXME
+            // We shouldn't auto-assign a date when it is a quote
+            // Keeping this until it is possible to choose an arbitrary date
+            // https://github.com/coopcycle/coopcycle-web/issues/698
+
+            if (null === $order->getShippingTimeRange()) {
+                $order->setShippingTimeRange(
+                    $this->orderTimeHelper->getShippingTimeRange($order)
+                );
+            }
+
             $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
 
             if (null !== $payment) {
-                // TODO Create class constant for "authorize" transition
-                if ($stateMachine->can('authorize')) {
-                    $stateMachine->apply('authorize');
+                if ($stateMachine->can(PaymentTransitions::TRANSITION_AUTHORIZE)) {
+                    $stateMachine->apply(PaymentTransitions::TRANSITION_AUTHORIZE);
                 } elseif ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
                     $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
                 }
@@ -106,7 +117,7 @@ class UpdateState
             // Trigger an order:created event
             // The event will be handled by this very same class
 
-            $createdEvent = new Event\OrderCreated($event->getOrder());
+            $createdEvent = new Event\OrderCreated($order);
 
             $this->handleStateChange($createdEvent);
             $this->eventBus->handle($createdEvent);

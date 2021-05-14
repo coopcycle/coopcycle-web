@@ -41,7 +41,7 @@
         </td>
         <td width="15%">
           <i class="fa fa-clock-o"></i> 
-          {{ task.doneAfter|localizeddate('none', 'short') }} - {{ task.doneBefore|localizeddate('none', 'short') }}
+          {{ task.doneAfter|format_datetime('none', 'short') }} - {{ task.doneBefore|format_datetime('none', 'short') }}
         </td>
         <td>{{ task.address.streetAddress }}</td>
         <td class="text-right">

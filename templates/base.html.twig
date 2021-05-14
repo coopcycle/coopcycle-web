@@ -8,6 +8,9 @@
     {{ sonata_seo_metadatas() }}
     {{ encore_entry_link_tags('common') }}
     {{ encore_entry_link_tags('widgets') }}
+    {% if app.user %}
+      {{ encore_entry_link_tags('notifications') }}
+    {% endif %}
     {% block styles_common %}
       {% block styles %}{% endblock %}
     {% endblock %}
@@ -19,6 +22,7 @@
     }
     </style>
     {% endif %}
+    <link rel="preconnect" href="{{ cdn_root_url }}" />
   </head>
   <body data-country="{{ country_iso }}" data-currency-symbol="{{ currency_context.currencyCode|sylius_currency_symbol }}" data-timezone="{{ coopcycle_setting('timezone') }}">
     {% block menu %}
@@ -54,34 +58,19 @@
       {% endif %}
     {% endblock %}
     {% if app.environment == "prod" %}
-      {% if sentry_apm_enabled %}
       <script
-        src="https://browser.sentry-cdn.com/5.17.0/bundle.apm.min.js"
-        crossorigin="anonymous"></script>
-      <script>
-        Sentry.init({
-          dsn: '{{ sentry_public_dsn }}',
-          integrations: [
-            new Sentry.Integrations.Tracing()
-          ],
-          tracesSampleRate: 0.25
-        });
-      </script>
-      {% else %}
-      <script
-        src="https://browser.sentry-cdn.com/5.17.0/bundle.min.js"
-        integrity="sha384-lowBFC6YTkvMIWPORr7+TERnCkZdo5ab00oH5NkFLeQUAmBTLGwJpFjF6djuxJ/5"
-        crossorigin="anonymous"></script>
+        src="https://browser.sentry-cdn.com/6.2.4/bundle.min.js"
+        integrity="sha384-b3mYy/x0ZxlqU5OjYvVD7RczftJVOXmpHSmrcqpL4c+kBSXWEnRL2Puv9eMjYmDq"
+        crossorigin="anonymous"
+      ></script>
       <script>
         Sentry.init({ dsn: '{{ sentry_public_dsn }}' });
       </script>
-      {% endif %}
     {% endif %}
 
     <div id="cpccl_settings"
       data-latlng="{{ coopcycle_setting('latlng')|json_encode|e('html_attr') }}"></div>
 
-    <script src="/tracking/socket.io/socket.io.js"></script>
     <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 
@@ -90,6 +79,22 @@
 
     {% if app.user %}
       {{ encore_entry_script_tags('notifications') }}
+    {% endif %}
+
+    <div id="autocomplete-adapter" data-value="{{ autocomplete_adapter|default('algolia') }}"></div>
+    {% if autocomplete_adapter|default('algolia') == 'geocode-earth' %}
+    <div id="geocode-earth" data-api-key="{{ geocode_earth_api_key }}"
+      data-boundary-circle-latlon="{{ coopcycle_setting('latlng')|e('html_attr') }}"></div>
+    {% elseif autocomplete_adapter|default('algolia') == 'locationiq' %}
+    <div id="locationiq"
+      data-access-token="{{ locationiq_access_token }}"
+      data-viewbox="{{ coopcycle_bounding_rect() }}"></div>
+    {% else %}
+    <div id="algolia-places"
+      data-app-id="{{ algolia_places_app_id }}"
+      data-api-key="{{ algolia_places_api_key }}"
+      data-around-lat-lng="{{ coopcycle_setting('latlng')|e('html_attr') }}"
+      data-address-template="{{ algolia_places_address_template }}"></div>
     {% endif %}
 
     {% block scripts_common %}

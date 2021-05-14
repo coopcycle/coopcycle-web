@@ -18,9 +18,9 @@ AppBundle\Entity\User:
 AppBundle\Entity\Sylius\Customer:
   attributes:
     username:
-      groups: ['customer', 'order']
+      groups: ['customer', 'order', 'order_minimal']
     email:
-      groups: ['customer', 'order']
+      groups: ['customer', 'order', 'order_minimal']
     telephone:
       groups: ['customer', 'order', 'customer_update']
     phoneNumber:
@@ -39,26 +39,28 @@ Sylius\Component\Order\Model\Order:
       groups: ['order']
     restaurant:
       groups: ['order', 'order_create', 'cart', 'order_update']
+    vendor:
+      groups: ['order', 'order_minimal']
     shippingAddress:
-      groups: ['order', 'order_create', 'cart', 'order_update']
+      groups: ['order', 'order_create', 'cart', 'order_update', 'order_minimal']
     shippedAt:
       groups: ['order', 'order_create', 'cart', 'order_update']
     shippingTimeRange:
-      groups: ['order', 'order_create', 'cart', 'order_update']
+      groups: ['order', 'order_create', 'cart', 'order_update', 'order_minimal']
     customer:
-      groups: ['order', 'cart']
+      groups: ['order', 'cart', 'order_minimal']
     items:
       groups: ['order', 'order_create', 'cart']
     total:
-      groups: ['order', 'cart']
+      groups: ['order', 'cart', 'order_minimal']
     number:
-      groups: ['order']
+      groups: ['order', 'order_minimal']
     itemsTotal:
       groups: ['order', 'cart']
     taxTotal:
       groups: ['order']
     state:
-      groups: ['order']
+      groups: ['order', 'order_minimal']
     notes:
       groups: ['order', 'cart', 'order_update']
     createdAt:
@@ -74,9 +76,13 @@ Sylius\Component\Order\Model\Order:
     reusablePackagingPledgeReturn:
       groups: ['order', 'cart', 'order_update']
     takeaway:
-      groups: ['order']
+      groups: ['order', 'order_minimal']
     fulfillmentMethod:
-      groups: ['cart', 'order_update']
+      groups: ['cart', 'order_update', 'order_minimal']
+    preparationTime:
+      groups: ['order']
+    shippingTime:
+      groups: ['order']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:
@@ -87,6 +93,21 @@ Sylius\Component\Order\Model\OrderItem:
     total:
       groups: ['order', 'cart']
     unitPrice:
+      groups: ['order', 'cart']
+    adjustments:
+      groups: ['order', 'cart']
+
+Sylius\Component\Order\Model\Adjustment:
+  attributes:
+    # FIXME
+    # For an unknow reason, the id is NULL when normalized
+    # id:
+    #   groups: ['order', 'cart']
+    label:
+      groups: ['order', 'cart']
+    amount:
+      groups: ['order', 'cart']
+    type:
       groups: ['order', 'cart']
 
 AppBundle\Entity\Sylius\OrderTimeline:
@@ -134,6 +155,8 @@ Sylius\Component\Product\Model\ProductOptionValue:
       groups: ['product_option']
     price:
       groups: ['product_option']
+    enabled:
+      groups: ['product_option', 'product_option_value_update']
 
 AppBundle\DataType\NumRange:
   attributes:
@@ -152,3 +175,10 @@ AppBundle\Entity\LocalBusiness\FulfillmentMethod:
       groups: ['restaurant']
     enabled:
       groups: ['restaurant']
+
+AppBundle\Entity\Vendor:
+  attributes:
+    name:
+      groups: ['order', 'order_minimal']
+    address:
+      groups: ['order']

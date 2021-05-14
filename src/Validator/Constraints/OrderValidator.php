@@ -6,38 +6,20 @@ use AppBundle\Entity\Address;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\PriceFormatter;
-use Carbon\Carbon;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\ValidatorBuilder;
 
 class OrderValidator extends ConstraintValidator
 {
-    private $routing;
-    private $expressionLanguage;
     private $priceFormatter;
 
-    public function __construct(
-        RoutingInterface $routing,
-        ExpressionLanguage $expressionLanguage,
-        PriceFormatter $priceFormatter)
+    public function __construct(PriceFormatter $priceFormatter)
     {
-        $this->routing = $routing;
-        $this->expressionLanguage = $expressionLanguage;
         $this->priceFormatter = $priceFormatter;
-    }
-
-    private function isAddressValid(Address $address)
-    {
-        $validator = Validation::createValidator();
-
-        $errors = $validator->validate($address, [
-            new Assert\Valid(),
-        ]);
-
-        return count($errors) === 0;
     }
 
     private function validateVendor($object, Constraint $constraint)
@@ -49,11 +31,7 @@ class OrderValidator extends ConstraintValidator
             return;
         }
 
-        $vendor = $order->getVendor();
-
-        $fulfillmentMethod = $vendor->getFulfillmentMethod($object->getFulfillmentMethod());
-        $minimumAmount = $fulfillmentMethod->getMinimumAmount();
-
+        $minimumAmount = $order->getFulfillmentMethodObject()->getMinimumAmount();
         $itemsTotal = $order->getItemsTotal();
 
         if ($itemsTotal < $minimumAmount) {
@@ -61,42 +39,6 @@ class OrderValidator extends ConstraintValidator
                 ->setParameter('%minimum_amount%', $this->priceFormatter->formatWithSymbol($minimumAmount))
                 ->atPath('total')
                 ->addViolation();
-
-            // Stop here when order is empty
-            // We don't want to show an error on shipping address until at least one item is added
-            if ($itemsTotal === 0) {
-                return;
-            }
-        }
-
-        $shippingAddress = $order->getShippingAddress();
-
-        if ($order->isTakeaway()) {
-
-            return;
-        }
-
-        if (null === $shippingAddress || !$this->isAddressValid($shippingAddress)) {
-            $this->context->buildViolation($constraint->addressNotSetMessage)
-                ->atPath('shippingAddress')
-                ->setCode(Order::ADDRESS_NOT_SET)
-                ->addViolation();
-
-            return;
-        }
-
-        $distance = $this->routing->getDistance(
-            $vendor->getAddress()->getGeo(),
-            $shippingAddress->getGeo()
-        );
-
-        if (!$vendor->canDeliverAddress($order->getShippingAddress(), $distance, $this->expressionLanguage)) {
-            $this->context->buildViolation($constraint->addressTooFarMessage)
-                ->atPath('shippingAddress')
-                ->setCode(Order::ADDRESS_TOO_FAR)
-                ->addViolation();
-
-            return;
         }
     }
 

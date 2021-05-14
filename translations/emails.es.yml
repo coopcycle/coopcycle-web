@@ -1,0 +1,84 @@
+registration.email.subject: "Confirma tu correo electrónico\n"
+registration.email.message: "<h2>Bienvenido sobre %brand_name%, %username%</h2>\n\
+  Estás recibiendo este mensaje porque recientemente te registraste en %brand_name%.\n\
+  <br>\nConfirma tu correo electrónico pulsando el botón aquí abajo.\n"
+registration.email.confirm: Confirmar mi correo electrónico
+registration.email.disclaimer: Este enlace sólo puede utilizarse una vez para validar
+  tu cuenta
+registration.email.textMessage: "Bienvenido a %brand_name%, %username%,\\n\\n\nEstás\
+  \ recibiendo este mensaje porque recientemente te registraste en %brand_name%.\\\
+  n\nSigue el siguiente enlace para confirmar tu correo electrónico: <a href=\"%confirmationUrl%\"\
+  \ rel=\"notrack\">%confirmationUrl%</a>.\n"
+resetting.email.message: <h2>¡Hola %username%!</h2> Para restablecer tu contraseña,
+  por favor pulsa el botón aquí abajo.
+resetting.email.reset: Restablecer mi contraseña
+order.view: Ver el pedido
+order.public_url: "Para seguir el estado de tu pedido, <a href=\"%order.public_url%\"\
+  >haga clic aquí</a>.\n"
+order.foodtech.accepted.delivery: 'Se le entregará en el siguiente horario:'
+order.foodtech.accepted.delivery.disclaimer: Nos pondremos en contacto en el caso
+  de encontrar problemas con su dirección
+order.foodtech.accepted.collection: 'Tendrá que recogerlo en el siguiente horario:'
+order.foodtech.accepted.collection.disclaimer: Si tiene algún problema, contacte con
+  <strong>%name%</strong> en <strong>%phone_number%</strong> con suficiente antelación
+  para cancelar su pedido.
+order.foodtech.cancelled: "El restaurante no puede preparar tu pedido %order.number%.\n\
+  <br>\nSi tu cuenta ha sido cargada, recibiras la devolución en algunos días laborales,\
+  \ dependiendo de tu banco.\n"
+admin.order.created.subject: Nuevo pedido para confirmar
+admin.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido.\n"
+admin.order_foodtech.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido\
+  \ para <strong>%restaurant.name%</strong>.\n"
+owner.order.created.subject: Nuevo pedido para confirmar
+owner.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido para <strong>%restaurant.name%</strong>.\n"
+order.created.subject: El pedido %order.number% ha sido recibido
+order.created.body: "Hola,\n<br>\nHemos recibido su pedido.\n<br>\nComprobamos su\
+  \ pedido lo antes posible y te enviaremos un correo cuando esté confirmado.\n"
+order.accepted.subject: Tu pedido %order.number% ha sido confirmado
+order.accepted.body.intro: "Hola,\n<br>\nTu pedido esta confirmado."
+order.cancelled.subject: Tu pedido %order.number% ha sido cancelado
+order.cancelled.body.intro: "Buenos dias,\n<br>\nLo sentimos, pero tu pedido ha sido\
+  \ cancelado.\n"
+order.delayed.subject: Tu pedido %order.number% llegará más tarde
+order.delayed.body: "Buenos dias,\n<br>\nLo sentimos, pero tu pedido llegará %delay%\
+  \ minutos más tarde.\n<br>\nDisculpanos por las molestias.\n"
+task.done.subject: 'La tarea #%task.id% ha sido completada'
+task.done.body: "Buenos dias,\n<br>\nLa tarea #%task.id% ha sido completada.\n"
+task.failed.subject: 'La tarea #%task.id% no se pudo completar'
+task.failed.body: "Buenos dias,\n<br>\nLa tarea #%task.id% no se pudo completar.\n"
+admin.pledge.subject: ¡Se ha enviado una nueva sugerencia!
+admin.pledge.body: "Hola,\n<br>\n%username% le gustaría %pledge.name% estar en CoopCycle!\n"
+user.pledge.subject: ¡Su sugerencia ahora está en CoopCycle!
+user.pledge.body: "Hola,\n<br>\n¡Gracias a ti, %pledge.name% ahora está en CoopCycle!\n"
+admin.send_invitation.create_password: Crear mi contraseña
+admin.send_invitation.body: "Hola %username%,\n<br>\nEste correo es una invitación\
+  \ a tu espacio CoopCycle, para terminar la creación de su cuenta, por favor haga\
+  \ un clic en el siguiente enlace.\n"
+admin.send_invitation.subject: ¡Invitación a CoopCycle!
+covid_19.subject: COVID-19 | Instrucciones importantes para tu pedido
+covid_19.body: "<h1>instrucciones a seguir para su entrega</h1>\n<p>Debido a la pandemia\
+  \ actual de COVID-19 (Coronavirus), usted <strong>debe estrictamente</strong> seguir\
+  \ las siguientes instrucciones:</p>\n<h2>1. Respetar el distanciamiento social</h2>\n\
+  <p>Dejaremos su pedido en su puerta  para que no tenga que acercarse a la persona\
+  \ que viene a entregar. No es necesario que deje propina.</p>\n<h2>2. Desembale\
+  \ su pedido después de recibirlo</h2>\n<p>El virus puede sobrevivir en superficies\
+  \ de cartón y plástico durante varios días. El empaquetado es, por lo tanto, una\
+  \ ruta de alto riesgo de transmisión del virus.\nPor lo tanto, le pedimos que <strong>desempaquete\
+  \ su pedido y transfiera el contenido a platos</strong>.</p>\n<h2>3. Tire el embalaje.</h2>\n\
+  <p>Una vez que su pedido esté desempaquetado, asegúrese de <strong>tirar el envoltorio\
+  \ a una basura cerrada</strong> Para evitar tocarla inadvertidamente más tarde.</p>\n\
+  <h2>4. Límpiese las manos!</h2>\n<p>Una vez que haya desempacado su pedido y desechado\
+  \ el embalaje,<strong>límpiese las manos!</strong></p>\n"
+order.payment.body: "Hola,\n<br>\nHemos completado una entrega que nos ha pedido.\n\
+  <br>\nA continuación encontrará un enlace que le permite pagar con tarjeta de crédito.\n"
+order.payment.subject: Pago de tu pedido %order.number%
+order.expiring_authorization.text: El autorización de pago para el pedido <strong>%order.number%</strong>
+  va a caducar pronto. <br> Debería terminar de hacer el pedido antes de que el autorización
+  caduca para evitar perder el dinero.
+order.expiring_authorization.subject: Un autorización de pago caducará pronto
+order.payment_failed.return_to_order: Volver al pedido
+order.payment_failed.body: "Hola,\n<br>\nLo sentimos, hubo un error al procesar su\
+  \ pago. Vuelve a intentarlo con otro método de pago."
+order.payment_failed.subject: Hubo un error al procesar su pago
+order.receipt.body: "Hola,\n<br>\nEl recibo de su pedido se encuentra adjunto."
+order.receipt.subject: Recibo de su pedido %order.number%

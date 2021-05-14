@@ -3,9 +3,10 @@
 namespace Tests\AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\Contract;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderDepositRefundProcessor;
 use AppBundle\Entity\Sylius\ProductVariant;
@@ -14,7 +15,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Order\Model\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -54,7 +55,7 @@ class OrderDepositRefundProcessorTest extends TestCase
         return $contract;
     }
 
-    private function createOrderItem(Restaurant $restaurant, ReusablePackaging $reusablePackaging, $quantity, $units, $enabled)
+    private function createOrderItem(LocalBusiness $restaurant, ReusablePackaging $reusablePackaging, $quantity, $units, $enabled)
     {
         $orderItem = $this->prophesize(OrderItemInterface::class);
         $variant = $this->prophesize(ProductVariant::class);
@@ -91,7 +92,7 @@ class OrderDepositRefundProcessorTest extends TestCase
     {
         $order = new Order();
 
-        $restaurant = new Restaurant();
+        $restaurant = new LocalBusiness();
         $restaurant->setDepositRefundEnabled(false);
 
         $order->setRestaurant($restaurant);
@@ -109,7 +110,7 @@ class OrderDepositRefundProcessorTest extends TestCase
     public function testOrderDoesNotContainReusablePackagingDoesNothing()
     {
         $order = new Order();
-        $restaurant = new Restaurant();
+        $restaurant = new LocalBusiness();
 
         $restaurant->setDepositRefundEnabled(true);
         $order->setRestaurant($restaurant);
@@ -131,7 +132,7 @@ class OrderDepositRefundProcessorTest extends TestCase
         $reusablePackaging = new ReusablePackaging();
         $reusablePackaging->setPrice(100);
 
-        $restaurant = new Restaurant();
+        $restaurant = new LocalBusiness();
         $restaurant->setDepositRefundEnabled(true);
         $restaurant->addReusablePackaging($reusablePackaging);
 
@@ -139,6 +140,12 @@ class OrderDepositRefundProcessorTest extends TestCase
         $order
             ->isReusablePackagingEnabled()
             ->willReturn(true);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
         $order
             ->getRestaurant()
             ->willReturn($restaurant);

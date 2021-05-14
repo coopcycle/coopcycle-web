@@ -1,0 +1,193 @@
+global.changesSaved: A alterações foram gravadas.
+navbar.login: Autenticação
+navbar.myAccount: A minha conta
+base.footer.contactUs: Contacte-nos
+base.footer.help: Ajuda
+base.footer.legal: Aviso legal
+base.footer.suggest: Sugira um restaurante
+base.footer.privacy: Privacidade
+base.footer.terms: Termos de serviço
+adminDashboard.title: Painel do administrador
+adminDashboard.configuration: Configuração
+adminDashboard.tooltip.orders: Administrar os pedidos dos restaurantes
+adminDashboard.tooltip.deliveries: Administrar entregas
+adminDashboard.tooltip.stores: Administrar lojas
+adminDashboard.tooltip.restaurants: Administrar restaurantes
+adminDashboard.tooltip.users: Administrar contas de utilizador
+adminDashboard.dashboard.title: Painel de controle
+adminDashboard.dashboard.import: Importar
+adminDashboard.dashboard.export: Exportar
+adminDashboard.dashboard.importTasks: Importar tarefas
+adminDashboard.dashboard.exportTasks: Exportar tarefas
+adminDashboard.dashboard.deleteTaskGroup: Apagar grupo de tarefas
+adminDashboard.dashboard.displayByGroups: Mostrar por grupos
+adminDashboard.dashboard.displayAll: Mostrar tudo
+adminDashboard.deliveries.title: Entregas
+adminDashboard.deliveries.type: Tipo
+adminDashboard.deliveries.dueDate: Data de vencimento
+adminDashboard.deliveries.courier: Estafeta
+adminDashboard.deliveries.address: Endereço
+adminDashboard.deliveries.delivery: Entrega
+adminDashboard.deliveries.originAddress: Endereço original
+adminDashboard.deliveries.deliveryAddress: Endereço de entrega
+adminDashboard.package_sets.title: Embalagens
+adminDashboard.customize.title: Personalizar
+embed.delivery.title: Formulário de criação de entregas
+embed.delivery.configure_pricing_rule_set: Para aplicar, primeiro precisa de configurar
+  uma regra de preços
+embed.delivery.iframe_code: Use o código HTML abaixo para incorporar o formulário
+  na sua página
+embed.breadcrumb.start: Informação
+embed.breadcrumb.summary: Resumo
+embed.breadcrumb.confirm: Confirmação
+embed.delivery.summary.title: Resumo do pedido
+embed.delivery.use_form_below: Use o formulário abaixo para pagar o seu pedido com
+  cartão de crédito
+embed.delivery.paid_at: Pagamento realizado em %date%
+embed.payment.heading: Pagar o meu pedido
+embed.delivery.contact_heading: Contato
+embed.delivery.specify_billing_address: Especifique um endereço de facturação
+embed.delivery.billing_address: Endereço de facturação
+adminDashboard.menuCategories.menu: Menu
+adminDashboard.menuCategories.categories: Categorias
+adminDashboard.menuCategories.addCategory: Adicionar categoria
+adminDashboard.stores.title: Lojas
+adminDashboard.stores.createNew: Criar uma nova loja
+adminDashboard.stores.form.uploadImage: Carregar uma imagem
+adminDashboard.orders.title: Pedidos
+adminDashboard.orders.previousOrders: Pedidos anteriores
+adminDashboard.orders.showCanceled: Mostrar pedidos cancelados
+adminDashboard.restaurants.title: Restaurantes
+adminDashboard.restaurants.createNew: Criar um novo restaurante
+adminDashboard.restaurants.exclusive: Exclusivo
+adminDashboard.users.title: Utilizadores
+adminDashboard.users.roles: Funções
+adminDashboard.users.editUser: Editar utilizador
+adminDashboard.users.edit.addStore: Adicionar uma loja
+adminDashboard.users.edit.addRestaurant: Adicionar um restaurante
+adminDashboard.users.createNew: Adicionar utilizador
+adminDashboard.users.invite: Convidar utilizador
+form.user.quotes_allowed.label: Permitir que este utilizador solicite uma cotação
+adminDashboard.settings.title: Configurações
+adminDashboard.pricing.title: Preços
+adminDashboard.pricing.manage: Gerir
+adminDashboard.pricing.settings: Configurações
+adminDashboard.pricing.noPricings: Ainda não existem preços
+adminDashboard.pricing.createNew: Criar um novo preço
+adminDashboard.pricing.noRuleFound: Regras de preços não encontradas. As regras de
+  preços definem como é que os custos de entrega são calculados.
+adminDashboard.pricing.addRule: Adicionar regra
+adminDashboard.tags.title: Marcadores
+adminDashboard.tags.createNew: Criar um marcador novo
+adminDashboard.tags.name: Nome
+adminDashboard.tags.color: Cor
+adminDashboard.tags.confirm_delete: "Tem a certeza que quer remover este marcador\
+  \ ? \nO marcador será removido dos respectivos elementos que o estejam a usar e\
+  \ não serão mais agrupados pelo marcador."
+adminDashboard.taxation.title: Tributação
+adminDashboard.taxation.button: Adicionar tributação
+adminDashboard.zones.title: Zonas
+adminDashboard.zones.uploadGeoJSON: Carregar um ficheiro do tipo GeoJSON
+adminDashboard.zones.send: Enviar
+adminDashboard.back.title: Voltar à página
+adminDashboard.promotions.title: Promoções
+adminDashboard.pledges.title: Sugestões
+adminDashboard.time_slots.title: Horários
+deliveryForm.noPriceWarning: Nenhum preço pode ser calculado.  Por favor, insira-o.
+deliveryForm.noPriceFromPricingWarning: Nenhum preço pode ser calculado a partir dos
+  preços.  Insira-o manualmente ou edite os preços.
+delivery.createNew: Criar nova entrega
+delivery.tracking_link: Link de rastreamento
+delivery.with_id: 'Entrega #%id%'
+help.title: Ajuda
+help.home: Página inicial
+restaurants.no_results: Não encontramos nenhum restaurante que satisfaça os critérios
+  da sua pesquisa. ☹ <br>Tente com um endereço diferente
+restaurants.visible_by_you_only: Visível apenas para si
+restaurants.placeholder.title: Um pouco de paciência…
+restaurants.placeholder.text: Novos restaurantes estão a chegar em breve!
+localBusiness.form.orderingDelayMinutes: Atraso adicional antes de fazer o pedido
+localBusiness.form.orderingDelayMinutes.help: Use este campo para adicionar algum
+  tempo antes do cliente poder pedir. Esta configuração não altera o tempo de confeção
+  ou de transporte.
+localBusiness.form.enabled: Ativado
+localBusiness.form.orderingDelayDays: Dia(s)
+localBusiness.form.orderingDelayHours: Hora(s)
+localBusiness.form.name: Nome
+localBusiness.form.description: Descrição
+localBusiness.form.legalName: Nome legal
+localBusiness.form.website: Página
+localBusiness.form.telephone: Telefone
+localBusiness.form.openingHours: Horário de funcionamento
+localBusiness.form.deliveryPerimeterExpression: Zona ou distância máxima para entrega
+localBusiness.form.shippingOptionsDays: Número de opções de envio (em dias)
+localBusiness.form.openingHoursBehavior: Comportamento do horário de funcionamento
+localBusiness.form.openingHoursBehavior.asap: O mais depressa possível
+localBusiness.form.openingHoursBehavior.time_slot: Horário
+localBusiness.form.use_different_business_address.label: Use um endereço profissional
+  diferente
+localBusiness.form.business_address.label: Endereço profissional
+restaurant.available: Disponível
+restaurant.unavailable: Indisponível
+restaurant.contract.variableCustomerAmount.placeholder: Selecione um conjunto de regras
+  de preços
+restaurant.contract.variableCustomerAmount.help: O preço pago será calculado usando
+  o conjunto de regras de preços selecionado
+restaurant.contract.variableCustomerAmount.label: Valor pago pelo cliente (variável)
+restaurant.contract.showAdvanced: Mostrar configurações avançadas
+restaurant.contract.noContract: Sem detalhes do contrato. Entre em contato com um
+  administrador.
+restaurant.contract.onlyAdmin: Apenas um administrador pode editar os detalhes do
+  contrato.
+restaurant.contract.restaurantPaysStripeFee.cooperative: Cooperativo
+restaurant.contract.restaurantPaysStripeFee.restaurant: Restaurante
+restaurant.contract.feeRate.help: Esta percentagem será retida pela plataforma no
+  total de produtos
+restaurant.contract.feeRate.label: Taxa da plataforma para entregas
+restaurant.contract.customerAmount.help: Esse valor será exibido no carrinho e aumentará
+  o valor total
+restaurant.contract.customerAmount.label: Valor pago pelo cliente
+restaurant.contract.variableDeliveryPriceEnabled.disclaimer: O valor é calculado dinamicamente
+restaurant.contract.variableDeliveryPriceEnabled.label: Ativar valor variável cobrado
+  pela plataforma
+restaurant.contract.variableDeliveryPrice.placeholder: Selecione um conjunto de regras
+  de preços
+restaurant.contract.variableDeliveryPrice.help: O valor cobrado será calculado usando
+  o conjunto de regras de preços selecionado
+restaurant.contract.variableDeliveryPrice.label: Valor cobrado pela plataforma (variável)
+restaurant.contract.flatDeliveryPrice.help: Esse valor não será exibido no carrinho
+  e não aumentará o valor total
+restaurant.contract.flatDeliveryPrice.label: Valor cobrado pela plataforma
+restaurant.contract.minimumCartAmount.label: Montante mínimo do carrinho
+restaurant.deliveryPerimeterExpression.help: Defina um perímetro de entregas aceitável.
+  Pode escolher um raio (em km) ou uma zona
+restaurant.deliveryPerimeterExpression.title: Perímetro de entrega
+restaurant.contract.title: Contrato
+restaurant.form.cuisines.label: Cozinhas
+restaurant.form.section.settlement: Liquidação
+restaurant.form.section.payment: Pagamento
+restaurant.form.section.fulfillment: Satisfação
+restaurant.form.section.options: Opções
+restaurant.form.section.general: Geral
+restaurant.form.featured.label: Este restaurante é destaque na página inicial
+restaurant.form.quotes_allowed.label: 'Este restaurante também aceita orçamentos (p.e.:
+  serviço de buffet)'
+restaurant.form.exclusive.label: Este restaurante é exclusivo
+restaurant.form.createRestaurant: Criar restaurante
+restaurant.form.accessPlanning: Plano de acesso
+restaurant.form.deposit_refund_enabled.label: Ativar sistema de reembolso de depósitos
+restaurant.form.temporaryClosingRule: Clique aqui para desativar temporariamente os
+  pedidos no seu restaurante.
+restaurant.form.enabled.tooltip: "Quando está inativo, o restaurante não fica visível\
+  \ na página. Não aparece nos resultados de pesquisa e a página do restaurante não\
+  \ está acessível aos visitantes.\n"
+restaurant.form.noPricingRule: Nenhuma regra de preço foi implementada, <a href="%editPricingRule%">clique
+  aqui para criar uma</a>.
+restaurant.noMenuWarning: "Por enquanto este restaurante não tem ementa.\n"
+restaurant.temporaryClosedWarning: Este restaurante está fechado até <strong>%date%</strong>.
+  Ainda assim pode pedir para mais tarde!
+restaurant.closedWarningWithDelay: Peça agora para mais tarde. Peça com pelo menos
+  %delay% de antecedência.
+restaurant.disabledWarning: "Este restaurante está inativo, logo, os visitantes não\
+  \ conseguem ver esta página. Se quiser, pode <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
+  >ativá-lo no administrador</a>.\n"

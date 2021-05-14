@@ -9,17 +9,7 @@
 {% endblock %}
 
 {% block subnav %}
-  <div class="text-right">
-    <a href="#" class="btn btn-success mr-4" data-toggle="modal" data-target="#export-deliveries-modal">
-      <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
-    </a>
-    <div class="dropdown mr-4 d-inline-block">
-      {% include '_partials/delivery/sort.html.twig' %}
-    </div>
-    <a href="{{ path(routes.store_new, { id: store.id }) }}" class="btn btn-success">
-      <i class="fa fa-plus"></i> {{ 'delivery.createNew'|trans }}
-    </a>
-  </div>
+  {% include "store/_partials/subnav.html.twig" %}
 {% endblock %}
 
 {% block content %}
@@ -58,20 +48,9 @@
       </div>
       <div class="modal-body">
         {{ form_row(delivery_import_form.file) }}
-        <div class="form-group">
-          <div class="col-sm-10 col-sm-offset-2">
-            <p class="form-control-static">
-              <a role="button" data-toggle="collapse" href="#spreadsheet-container" aria-expanded="false" aria-controls="collapseExample">
-                {{ 'basics.view_example'|trans }}
-              </a>
-            </p>
-          </div>
-        </div>
-        <div class="collapse" id="spreadsheet-container">
-          <div id="spreadsheet" style="max-width: 100%; overflow: scroll; border: 1px solid;"></div>
-        </div>
       </div>
       <div class="modal-footer">
+        <a class="mr-4" href="{{ path('spreadsheet_example_deliveries') }}">{{ 'spreadsheet.download_example'|trans }}</a>
         <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
         <button type="submit" class="btn btn-primary">{% trans %}basics.import{% endtrans %}</button>
       </div>

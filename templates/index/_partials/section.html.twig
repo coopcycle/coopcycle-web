@@ -1,3 +1,5 @@
+{% set pad_length = items|length > 3 ? max_results : 3 %}
+
 <section class="homepage-restaurants">
   <div class="container">
     <div class="d-flex flex-row justify-content-between align-items-center py-4">
@@ -12,8 +14,8 @@
           {% include "_partials/restaurant/list_thumbnail.html.twig" %}
         </div>
       {% endfor %}
-      {% if items|length < max_results %}
-        {% set pad = (max_results - items|length) %}
+      {% if (pad_items is not defined or pad_items) and items|length < max_results %}
+        {% set pad = (pad_length - items|length) %}
         {% for i in range(0, (pad - 1)) %}
           <div class="col-xs-12 col-md-4 display-flex">
             <div class="thumbnail restaurant-item">

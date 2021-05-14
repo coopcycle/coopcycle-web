@@ -1,4 +1,8 @@
 import _ from 'lodash'
+import phoneNumberExamples from 'libphonenumber-js/examples.mobile.json'
+import { getExampleNumber } from 'libphonenumber-js'
+
+import i18n, { getCountry } from '../../i18n'
 
 export const addressAsText = (address) => {
 
@@ -23,3 +27,8 @@ export const addressAsText = (address) => {
 
   return addressParts.join(' ')
 }
+
+const country = (getCountry() || 'fr').toUpperCase()
+const phoneNumber = getExampleNumber(country, phoneNumberExamples)
+
+export const phoneNumberExample = i18n.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP', { example: phoneNumber.formatNational() })

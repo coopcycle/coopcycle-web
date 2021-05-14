@@ -18,7 +18,7 @@
       {% if event.icon is defined %}<i class="fa fa-{{ event.icon }}"></i>  {% endif %}{{ event.forHumans|coopcycle_markup|raw }}
     </td>
     <td class="text-right">
-      {{ event.createdAt|localizeddate('short', 'short') }}
+      {{ event.createdAt|format_datetime('short', 'short') }}
     </td>
   </tr>
 {% endfor %}

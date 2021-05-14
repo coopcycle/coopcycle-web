@@ -6,29 +6,21 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Tag;
 use AppBundle\Service\Geocoder;
-use AppBundle\Service\TagManager;
+use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Cocur\Slugify\Slugify;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
-use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
-use Prophecy\PhpUnit\ProphecyTrait;
 
 class TaskSpreadsheetParserTest extends TestCase
 {
-    use ProphecyTrait;
-
     private $geocoder;
-    private $tagManager;
 
-    private $parser;
-
-    public function setUp(): void
+    protected function createParser(): AbstractSpreadsheetParser
     {
         $this->geocoder = $this->prophesize(Geocoder::class);
-        $this->tagManager = $this->prophesize(TagManager::class);
         $this->phoneNumberUtil = $this->prophesize(PhoneNumberUtil::class);
         $this->userManager = $this->prophesize(UserManagerInterface::class);
 
@@ -41,9 +33,8 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->userManager->findUserByUsername('sarah')
             ->willReturn(null);
 
-        $this->parser = new TaskSpreadsheetParser(
+        return new TaskSpreadsheetParser(
             $this->geocoder->reveal(),
-            $this->tagManager->reveal(),
             new Slugify(),
             $this->phoneNumberUtil->reveal(),
             $this->userManager->reveal(),
@@ -57,9 +48,9 @@ class TaskSpreadsheetParserTest extends TestCase
             ->geocode(Argument::type('string'))
             ->willReturn(new Address());
 
-        $this->tagManager
-            ->fromSlugs(Argument::type('array'))
-            ->willReturn([ new Tag() ]);
+        $this->geocoder
+            ->reverse(Argument::type('float'), Argument::type('float'))
+            ->willReturn(new Address());
 
         $this->phoneNumberUtil
             ->parse(Argument::any(), Argument::type('string'))
@@ -199,5 +190,50 @@ class TaskSpreadsheetParserTest extends TestCase
 
         $this->assertEquals($expectedAfter, $after);
         $this->assertEquals($expectedBefore, $before);
+    }
+
+    public function testCanParseExampleData()
+    {
+        $this->mockDependencies();
+
+        parent::testCanParseExampleData();
+    }
+
+    public function testValidateHeaderThrowsException()
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('You must provide an "address" (alternatively "address.streetAddress") or a "latlong" (alternatively "address.latlng") column');
+
+        $this->mockDependencies();
+
+        $this->parser->validateHeader([
+            'foo',
+        ]);
+    }
+
+    public function testValidateHeaderWithStreetAddress()
+    {
+        $this->mockDependencies();
+
+        $this->assertNull($this->parser->validateHeader([
+            'address.streetAddress',
+        ]));
+        $this->assertNull($this->parser->validateHeader([
+            'address',
+        ]));
+    }
+
+    public function testValidateHeaderWithStreetAddressAndLatlng()
+    {
+        $this->mockDependencies();
+
+        $this->assertNull($this->parser->validateHeader([
+            'address.streetAddress',
+            'address.latlng',
+        ]));
+        $this->assertNull($this->parser->validateHeader([
+            'address',
+            'latlong',
+        ]));
     }
 }

@@ -1,4 +1,4 @@
-{% extends "admin.html.twig" %}
+{% extends "deliveries.html.twig" %}
 
 {% block breadcrumb %}
 <li><a href="{{ path('admin_api_apps') }}">{{ 'api_apps.breadcrumb'|trans }}</a></li>
@@ -20,6 +20,7 @@
   </thead>
   <tbody>
   {% for api_app in api_apps %}
+    <tr>
       <td width="5%">
         <a href="{{ path('admin_api_app', { id: api_app.id }) }}">
           #{{ api_app.id }}

@@ -19,18 +19,11 @@
 {{ encore_entry_script_tags('foodtech-dashboard') }}
 <script>
 var orders = {{ orders_normalized|json_encode()|raw }};
-var order = {{ order_normalized|json_encode()|raw }};
 new CoopCycle.FoodtechDashboard(document.querySelector('#restaurant-dashboard'), {
   orders: orders['hydra:member'],
-  order: order,
+  initialOrder: {{ initial_order|json_encode()|raw }},
   date: "{{ date|date('Y-m-d') }}",
-  jwt: "{{ jwt }}",
   restaurant: {{ restaurant_normalized|json_encode()|raw }},
-  acceptOrderRoute: "{{ routes.order_accept }}",
-  refuseOrderRoute: "{{ routes.order_refuse }}",
-  delayOrderRoute: "{{ routes.order_delay }}",
-  cancelOrderRoute: "{{ routes.order_cancel }}",
-  fulfillOrderRoute: "{{ routes.order_fulfill }}",
   currentRoute: "{{ current_route }}",
   showSettings: false,
 }, {

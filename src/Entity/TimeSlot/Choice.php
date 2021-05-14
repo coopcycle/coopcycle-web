@@ -3,7 +3,6 @@
 namespace AppBundle\Entity\TimeSlot;
 
 use AppBundle\Entity\Task;
-use Carbon\Carbon;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 

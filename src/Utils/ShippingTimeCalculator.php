@@ -4,7 +4,7 @@ namespace AppBundle\Utils;
 
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
-use Carbon\Carbon;
+use Carbon\CarbonInterval;
 
 class ShippingTimeCalculator
 {
@@ -17,9 +17,9 @@ class ShippingTimeCalculator
         $this->fallback = $fallback;
     }
 
-    public function calculate(OrderInterface $order)
+    public function calculate(OrderInterface $order): string
     {
-        $pickupAddress = $order->getVendor()->getAddress();
+        $pickupAddress = $order->getPickupAddress();
         $dropoffAddress = $order->getShippingAddress();
 
         if (null === $dropoffAddress || null === $dropoffAddress->getGeo()) {
@@ -31,17 +31,10 @@ class ShippingTimeCalculator
             $dropoffAddress->getGeo()
         );
 
-        $now = Carbon::now();
-        $dateWithPadding = Carbon::now()->addSeconds($seconds);
-
-        $hours = $dateWithPadding->diffInHours($now);
-        $minutes = $dateWithPadding->diffInMinutes($now);
-
-        if ($hours > 0) {
-
-            return sprintf('%d hours %d minutes', $hours, ($minutes % 60));
+        if (0 === $seconds) {
+            return $this->fallback;
         }
 
-        return sprintf('%d minutes', $minutes);
+        return CarbonInterval::seconds($seconds)->cascade()->forHumans();
     }
 }

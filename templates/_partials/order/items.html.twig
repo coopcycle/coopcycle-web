@@ -8,36 +8,27 @@
   </thead>
   {% if with_items %}
   <tbody>
-  {% for item in order.items %}
-    {% set options_adjustments = item.getAdjustments('menu_item_modifier') %}
-    {% set packaging_adjustments = item.getAdjustments('reusable_packaging') %}
-    <tr>
-      <td>
-        <span class="text-muted">{{ item.quantity }} ×</span> {{ item.variant.name }}
-        {% if options_adjustments|length > 0 or packaging_adjustments|length > 0 %}
-        <ul class="list-unstyled">
-        {% for adjustment in options_adjustments %}
-          <li>
-            <small class="text-muted">
-              {{ adjustment.label }} {{ adjustment.amount|price_format }}
-            </small>
-          </li>
+  {% if order.hasVendor() %}
+    {% set itemsGroups = order.getItemsGroupedByVendor() %}
+    {% if itemsGroups|length > 1 %}
+      {% for vendor in itemsGroups %}
+        <tr>
+          <th colspan="2">{{ vendor.name }}</th>
+        </tr>
+        {% for item in itemsGroups[vendor] %}
+          {% include '_partials/order/item.html.twig' with { item: item } %}
         {% endfor %}
-        {% for adjustment in packaging_adjustments %}
-          <li>
-            <small class="text-muted">
-              {{ adjustment.label }} {{ adjustment.amount|price_format }}
-            </small>
-          </li>
-        {% endfor %}
-        </ul>
-        {% endif %}
-      </td>
-      <td class="text-right">
-        {{ item.total|price_format }}
-      </td>
-    </tr>
-  {% endfor %}
+      {% endfor %}
+    {% else %}
+      {% for item in order.items %}
+        {% include '_partials/order/item.html.twig' with { item: item } %}
+      {% endfor %}
+    {% endif %}
+  {% else %}
+    {% for item in order.items %}
+      {% include '_partials/order/item.html.twig' with { item: item } %}
+    {% endfor %}
+  {% endif %}
   <tbody>
   {% endif %}
   {% set delivery_adjustments = order.getAdjustments('delivery') %}

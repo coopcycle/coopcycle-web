@@ -55,4 +55,13 @@ class OsrmWithFallback extends Base
             return $this->fallback->getDuration(...$coordinates);
         }
     }
+
+    public function getDistances(GeoCoordinates $source, GeoCoordinates ...$destinations)
+    {
+        try {
+            return $this->osrm->getDistances($source, ...$destinations);
+        } catch (GuzzleException $e) {
+            return $this->fallback->getDistances($source, ...$destinations);
+        }
+    }
 }

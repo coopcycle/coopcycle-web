@@ -43,12 +43,11 @@ const updateTip = _.debounce(function() {
   const mask = document.querySelector('#tip-input').inputmask
   const newValue = mask.unmaskedvalue()
 
-  var $form = $('form[name="checkout_address"]')
+  var $form = $('form[name="checkout_tip"]')
 
   var data = {}
-  data['checkout_address[tipAmount]'] = newValue
-  data['checkout_address[addTip]'] = ''
-  data['checkout_address[_token]'] = $('#checkout_address__token').val()
+  data['checkout_tip[amount]'] = newValue
+  data['checkout_tip[_token]'] = $('#checkout_tip__token').val()
 
   $('form[name="checkout_address"] table').LoadingOverlay('show', {
     image: false,
@@ -188,4 +187,43 @@ $('#guest-checkout-signin').on('shown.bs.collapse', function () {
 
 $('#guest-checkout-signin').on('hidden.bs.collapse', function () {
   $(this).find('input[type="password"]').prop('required', false)
+})
+
+$('#apply-coupon').on('click', function(e) {
+
+  e.preventDefault()
+
+  const $form = $('form[name="checkout_coupon"]')
+
+  const data = {
+    'checkout_coupon[promotionCoupon]': $('#coupon-code').val(),
+    'checkout_coupon[_token]': $('#checkout_coupon__token').val(),
+  }
+
+  $('form[name="checkout_address"] table').LoadingOverlay('show', {
+    image: false,
+  })
+  mainSubmitBtn.setAttribute('disabled', true)
+  mainSubmitBtn.classList.add('disabled')
+
+  $.ajax({
+    url : $form.attr('action'),
+    type: $form.attr('method'),
+    data : data,
+    success: function(html) {
+
+      $('form[name="checkout_address"] table').replaceWith(
+        $(html).find('form[name="checkout_address"] table')
+      )
+
+      enableTipInput()
+
+      $('#coupon-code').val('')
+      $('#promotion-coupon-collapse').collapse('hide')
+
+      $('form[name="checkout_address"] table').LoadingOverlay('hide')
+      mainSubmitBtn.removeAttribute('disabled')
+      mainSubmitBtn.classList.remove('disabled')
+    }
+  })
 })

@@ -15,6 +15,7 @@ use AppBundle\Action\Order\Cancel as OrderCancel;
 use AppBundle\Action\Order\Delay as OrderDelay;
 use AppBundle\Action\Order\Fulfill as OrderFulfill;
 use AppBundle\Action\Order\Pay as OrderPay;
+use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Action\MyOrders;
 use AppBundle\Api\Dto\CartItemInput;
@@ -23,6 +24,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -31,12 +33,15 @@ use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Validator\Constraints\IsOrderModifiable as AssertOrderIsModifiable;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
 use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
+use AppBundle\Validator\Constraints\ShippingAddress as AssertShippingAddress;
 use AppBundle\Validator\Constraints\ShippingTimeRange as AssertShippingTimeRange;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Customer\Model\CustomerInterface;
+use Sylius\Component\Order\Model\AdjustmentInterface as BaseAdjustmentInterface;
 use Sylius\Component\Order\Model\Order as BaseOrder;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
@@ -54,7 +59,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_ADMIN')"
  *     },
  *     "post"={
  *       "method"="POST",
@@ -67,12 +72,16 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "status"=200,
  *       "denormalization_context"={"groups"={"order_create", "address_create"}},
  *       "normalization_context"={"groups"={"cart_timing"}},
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Retrieves timing information about a Order resource.",
  *         "responses"={
  *           "200"={
  *             "description"="Order timing information",
- *             "schema"=Order::SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA
+ *             "content"={
+ *               "application/json": {
+ *                 "schema"=Order::SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA
+ *               }
+ *             }
  *           }
  *         }
  *       }
@@ -86,14 +95,23 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('view', object)"
+ *       "security"="is_granted('view', object)"
+ *     },
+ *     "payment_details"={
+ *       "method"="GET",
+ *       "path"="/orders/{id}/payment",
+ *       "controller"=PaymentDetailsController::class,
+ *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
+ *       "openapi_context"={
+ *         "summary"="Get payment details for a Order resource."
+ *       }
  *     },
  *     "pay"={
  *       "method"="PUT",
  *       "path"="/orders/{id}/pay",
  *       "controller"=OrderPay::class,
- *       "access_control"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
- *       "swagger_context"={
+ *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
+ *       "openapi_context"={
  *         "summary"="Pays a Order resource."
  *       }
  *     },
@@ -103,7 +121,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "controller"=OrderAccept::class,
  *       "security"="is_granted('accept', object)",
  *       "deserialize"=false,
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Accepts a Order resource."
  *       }
  *     },
@@ -112,7 +130,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/{id}/refuse",
  *       "controller"=OrderRefuse::class,
  *       "security"="is_granted('refuse', object)",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Refuses a Order resource."
  *       }
  *     },
@@ -121,7 +139,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/{id}/delay",
  *       "controller"=OrderDelay::class,
  *       "security"="is_granted('delay', object)",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Delays a Order resource."
  *       }
  *     },
@@ -130,7 +148,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/{id}/fulfill",
  *       "controller"=OrderFulfill::class,
  *       "security"="is_granted('fulfill', object)",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Fulfills a Order resource."
  *       }
  *     },
@@ -139,7 +157,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "path"="/orders/{id}/cancel",
  *       "controller"=OrderCancel::class,
  *       "security"="is_granted('cancel', object)",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Cancels a Order resource."
  *       }
  *     },
@@ -149,20 +167,24 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "controller"=OrderAssign::class,
  *       "validation_groups"={"cart"},
  *       "normalization_context"={"groups"={"cart"}},
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Assigns a Order resource to a User."
  *       }
  *     },
  *     "get_cart_timing"={
  *       "method"="GET",
  *       "path"="/orders/{id}/timing",
- *       "access_control"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())",
- *       "swagger_context"={
+ *       "security"="is_granted('session', object)",
+ *       "openapi_context"={
  *         "summary"="Retrieves timing information about a Order resource.",
  *         "responses"={
  *           "200"={
  *             "description"="Order timing information",
- *             "schema"=Order::SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA
+ *             "content"={
+ *               "application/json": {
+ *                 "schema"=Order::SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA
+ *               }
+ *             }
  *           }
  *         }
  *       }
@@ -171,7 +193,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "method"="GET",
  *       "path"="/orders/{id}/validate",
  *       "normalization_context"={"groups"={"cart"}},
- *       "access_control"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())"
+ *       "security"="is_granted('session', object)"
  *     },
  *     "put_cart"={
  *       "method"="PUT",
@@ -179,7 +201,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "validation_groups"={"cart"},
  *       "normalization_context"={"groups"={"cart"}},
  *       "denormalization_context"={"groups"={"order_update"}},
- *       "security"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())"
+ *       "security"="is_granted('session', object)"
  *     },
  *     "post_cart_items"={
  *       "method"="POST",
@@ -189,8 +211,8 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "validation_groups"={"cart"},
  *       "denormalization_context"={"groups"={"cart"}},
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())",
- *       "swagger_context"={
+ *       "security"="is_granted('session', object)",
+ *       "openapi_context"={
  *         "summary"="Adds items to a Order resource."
  *       }
  *     },
@@ -201,7 +223,7 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "validation_groups"={"cart"},
  *       "denormalization_context"={"groups"={"cart"}},
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())"
+ *       "security"="is_granted('session', object)"
  *     },
  *     "delete_item"={
  *       "method"="DELETE",
@@ -212,8 +234,8 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  *       "validate"=false,
  *       "write"=false,
  *       "status"=200,
- *       "security"="(object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())",
- *       "swagger_context"={
+ *       "security"="is_granted('session', object)",
+ *       "openapi_context"={
  *         "summary"="Deletes items from a Order resource."
  *       }
  *     }
@@ -236,13 +258,12 @@ class Order extends BaseOrder implements OrderInterface
     protected $vendor;
 
     /**
-     * @Assert\Valid(groups={"cart"})
+     * @Assert\Valid
+     * @AssertShippingAddress
      */
     protected $shippingAddress;
 
     protected $billingAddress;
-
-    protected $shippedAt;
 
     protected $payments;
 
@@ -283,6 +304,8 @@ class Order extends BaseOrder implements OrderInterface
      */
     protected $takeaway = false;
 
+    protected $vendors;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -303,6 +326,7 @@ class Order extends BaseOrder implements OrderInterface
         $this->payments = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->promotions = new ArrayCollection();
+        $this->vendors = new ArrayCollection();
     }
 
     /**
@@ -425,6 +449,18 @@ class Order extends BaseOrder implements OrderInterface
         return $this->getTotal() - $this->getFeeTotal() - $this->getStripeFeeTotal();
     }
 
+    public function getTransferAmount(LocalBusiness $restaurant): int
+    {
+        $vendor = $this->getVendorByRestaurant($restaurant);
+
+        if ($vendor) {
+
+            return $vendor->getTransferAmount();
+        }
+
+        return 0;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -443,18 +479,22 @@ class Order extends BaseOrder implements OrderInterface
      */
     public function setRestaurant(?LocalBusiness $restaurant): void
     {
+        $currentRestaurant = $this->getRestaurant();
+
         $vendor = new Vendor();
         $vendor->setRestaurant($restaurant);
 
         $this->vendor = $vendor;
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isFoodtech(): bool
-    {
-        return $this->hasVendor();
+        if (null !== $restaurant && $restaurant !== $currentRestaurant) {
+
+            $this->vendors->clear();
+
+            $this->clearItems();
+            $this->setShippingTimeRange(null);
+
+            $this->addRestaurant($restaurant);
+        }
     }
 
     public function hasVendor(): bool
@@ -492,15 +532,20 @@ class Order extends BaseOrder implements OrderInterface
 
     /**
      * {@inheritdoc}
+     * @deprecated
+     * @SerializedName("shippedAt")
      */
     public function getShippedAt(): ?\DateTime
     {
-        return $this->shippedAt;
-    }
+        if (null !== $this->shippingTimeRange) {
 
-    public function setShippedAt(?\DateTime $shippedAt): void
-    {
-        $this->shippedAt = $shippedAt;
+            $lower = Carbon::make($this->shippingTimeRange->getLower());
+            $upper = Carbon::make($this->shippingTimeRange->getUpper());
+
+            return $lower->average($upper)->toDateTime();
+        }
+
+        return null;
     }
 
     /**
@@ -600,14 +645,34 @@ class Order extends BaseOrder implements OrderInterface
     public function getPreparationExpectedAt()
     {
         if (null !== $this->timeline) {
-            return $this->timeline->getPreparationExpectedAt();
+            $value = $this->timeline->getPreparationExpectedAt();
+
+            // @see https://github.com/coopcycle/coopcycle-web/issues/2134
+            return $value instanceof CarbonInterface ? $value->toDateTime() : $value;
         }
     }
 
     public function getPickupExpectedAt()
     {
         if (null !== $this->timeline) {
-            return $this->timeline->getPickupExpectedAt();
+            $value = $this->timeline->getPickupExpectedAt();
+
+            // @see https://github.com/coopcycle/coopcycle-web/issues/2134
+            return $value instanceof CarbonInterface ? $value->toDateTime() : $value;
+        }
+    }
+
+    public function getPreparationTime()
+    {
+        if (null !== $this->timeline) {
+            return $this->timeline->getPreparationTime();
+        }
+    }
+
+    public function getShippingTime()
+    {
+        if (null !== $this->timeline) {
+            return $this->timeline->getShippingTime();
         }
     }
 
@@ -808,8 +873,6 @@ class Order extends BaseOrder implements OrderInterface
 
     public function setReceipt($receipt)
     {
-        $receipt->setOrder($this);
-
         $this->receipt = $receipt;
     }
 
@@ -825,8 +888,6 @@ class Order extends BaseOrder implements OrderInterface
             $receipt = $this->receipt;
 
             $this->receipt = null;
-
-            $receipt->setOrder(null);
 
             return $receipt;
         }
@@ -850,14 +911,6 @@ class Order extends BaseOrder implements OrderInterface
     public function setShippingTimeRange(?TsRange $shippingTimeRange)
     {
         $this->shippingTimeRange = $shippingTimeRange;
-
-        // Legacy
-        if (null !== $shippingTimeRange) {
-            $this->shippedAt =
-                Carbon::instance($shippingTimeRange->getLower())->average($shippingTimeRange->getUpper());
-        } else {
-            $this->shippedAt = null;
-        }
     }
 
     /**
@@ -885,6 +938,10 @@ class Order extends BaseOrder implements OrderInterface
     public function setTakeaway(bool $takeaway): void
     {
         $this->takeaway = $takeaway;
+
+        if ($takeaway) {
+            $this->setShippingAddress(null);
+        }
     }
 
     /**
@@ -901,6 +958,33 @@ class Order extends BaseOrder implements OrderInterface
     public function setFulfillmentMethod(string $fulfillmentMethod)
     {
         $this->setTakeaway($fulfillmentMethod === 'collection');
+    }
+
+    public function getFulfillmentMethodObject(): ?FulfillmentMethod
+    {
+        $restaurants = $this->getRestaurants();
+
+        if (count($restaurants) === 0) {
+
+            // Vendors may not have been processed yet
+            $restaurant = $this->getRestaurant();
+
+            if (null !== $restaurant) {
+
+                return $restaurant->getFulfillmentMethod(
+                    $this->getFulfillmentMethod()
+                );
+            }
+
+            return null;
+        }
+
+        $first = $restaurants->first();
+        $target = count($restaurants) === 1 ? $first : $first->getHub();
+
+        return $target->getFulfillmentMethod(
+            $this->getFulfillmentMethod()
+        );
     }
 
     public function getRefundTotal(): int
@@ -948,7 +1032,7 @@ class Order extends BaseOrder implements OrderInterface
 
     /**
      * @SerializedName("assignedTo")
-     * @Groups({"dispatch"})
+     * @Groups({"order", "order_minimal"})
      */
     public function getAssignedTo()
     {
@@ -985,5 +1069,181 @@ class Order extends BaseOrder implements OrderInterface
     public function setVendor(?Vendor $vendor): void
     {
         $this->vendor = $vendor;
+    }
+
+    public function getItemsGroupedByVendor(): \SplObjectStorage
+    {
+        $hash = new \SplObjectStorage();
+
+        foreach ($this->getItems() as $item) {
+
+            $product = $item->getVariant()->getProduct();
+            $restaurant = $product->getRestaurant();
+
+            if (null !== $restaurant) {
+                $items = isset($hash[$restaurant]) ? $hash[$restaurant] : [];
+                $hash[$restaurant] = array_merge($items, [ $item ]);
+            }
+        }
+
+        return $hash;
+    }
+
+    /**
+     * @SerializedName("adjustments")
+     * @Groups({"order", "cart"})
+     */
+    public function getAdjustmentsHash(): array
+    {
+        $serializeAdjustment = function (BaseAdjustmentInterface $adjustment) {
+
+            return [
+                'id' => $adjustment->getId(),
+                'label' => $adjustment->getLabel(),
+                'amount' => $adjustment->getAmount(),
+            ];
+        };
+
+        $deliveryAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT)->toArray());
+        $deliveryPromotionAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)->toArray());
+        $orderPromotionAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT)->toArray());
+        $reusablePackagingAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->toArray());
+        $taxAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT)->toArray());
+
+        return [
+            AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
+            AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT => array_values($deliveryPromotionAdjustments),
+            AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT => array_values($orderPromotionAdjustments),
+            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments),
+            AdjustmentInterface::TAX_ADJUSTMENT => array_values($taxAdjustments),
+        ];
+    }
+
+    /**
+     * @return int
+     */
+    public function getItemsTotalForRestaurant(LocalBusiness $restaurant): int
+    {
+        $total = 0;
+        foreach ($this->getItems() as $item) {
+            if ($restaurant->hasProduct($item->getVariant()->getProduct())) {
+                $total += $item->getTotal();
+            }
+        }
+
+        return $total;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPercentageForRestaurant(LocalBusiness $restaurant): float
+    {
+        $total = $this->getItemsTotal();
+
+        if (0 === $total) {
+            return 0.0;
+        }
+
+        $itemsTotal = $this->getItemsTotalForRestaurant($restaurant);
+
+        return round($itemsTotal / $total, 4);
+    }
+
+    public function getRestaurants(): Collection
+    {
+        return $this->vendors->map(fn(OrderVendor $vendor) => $vendor->getRestaurant());
+    }
+
+    public function getVendors(): Collection
+    {
+        return $this->vendors;
+    }
+
+    public function getVendorByRestaurant(LocalBusiness $restaurant): ?OrderVendor
+    {
+        foreach ($this->vendors as $vendor) {
+            if ($vendor->getRestaurant() === $restaurant) {
+                return $vendor;
+            }
+        }
+
+        return null;
+    }
+
+    public function containsRestaurant(LocalBusiness $restaurant): bool
+    {
+        foreach ($this->vendors as $vendor) {
+            if ($vendor->getRestaurant() === $restaurant) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function addRestaurant(LocalBusiness $restaurant, int $itemsTotal = 0, int $transferAmount = 0)
+    {
+        $vendor = $this->getVendorByRestaurant($restaurant);
+
+        if (null === $vendor) {
+            $vendor = new OrderVendor($this, $restaurant);
+            $this->vendors->add($vendor);
+        }
+
+        $vendor->setItemsTotal($itemsTotal);
+        $vendor->setTransferAmount($transferAmount);
+    }
+
+    public function isMultiVendor(): bool
+    {
+        return $this->hasVendor() && $this->getVendor()->isHub();
+    }
+
+    public function getPickupAddress(): ?Address
+    {
+        if ($this->hasVendor()) {
+            return $this->getVendor()->getAddress();
+        }
+
+        return null;
+    }
+
+    public function getNotificationRecipients(): Collection
+    {
+        $recipients = new ArrayCollection();
+
+        foreach ($this->getRestaurants() as $restaurant) {
+            foreach ($restaurant->getOwners() as $owner) {
+                $recipients->add($owner);
+            }
+        }
+
+        return $recipients;
+    }
+
+    public function supportsGiropay(): bool
+    {
+        if ($this->isMultiVendor()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->isStripePaymentMethodEnabled('giropay');
+    }
+
+    public function supportsEdenred(): bool
+    {
+        if ($this->isMultiVendor()) {
+
+            return false;
+        }
+
+        return null !== $this->getRestaurant()->getEdenredMerchantId();
     }
 }

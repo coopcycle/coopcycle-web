@@ -2,16 +2,22 @@
 
 ---
 
-{% for item in order.items %}
-{{ item.variant.product.name }} × {{ item.quantity }}
-{% for adjustment in item.getAdjustments('menu_item_modifier') %}
-  - {{ adjustment.label }}
-{% endfor %}
-{% for adjustment in item.getAdjustments('reusable_packaging') %}
-  - {{ adjustment.label }}
+{% set itemsGroups = order.getItemsGroupedByVendor() %}
+{% if itemsGroups|length > 1 %}
+{% for vendor in itemsGroups %}
+{{ vendor.name }}
+{{ ("%'=" ~ (vendor.name|length) ~ "." ~ (vendor.name|length) ~ "s")|format('') }}
+
+{% for item in itemsGroups[vendor] %}
+  {% include 'order/summary_item.txt.twig' with { item: item } %}
 {% endfor %}
 
 {% endfor %}
+{% else %}
+{% for item in order.items %}
+  {% include 'order/summary_item.txt.twig' with { item: item } %}
+{% endfor %}
+{% endif %}
 
 {% if order.reusablePackagingPledgeReturn > 0 %}
 ---

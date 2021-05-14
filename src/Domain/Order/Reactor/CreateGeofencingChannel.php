@@ -4,26 +4,15 @@ namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\OrderPicked;
 use AppBundle\Entity\Task;
-use Redis;
-use Psr\Log\LoggerInterface;
+use AppBundle\Service\Geofencing;
 
 class CreateGeofencingChannel
 {
-    private $tile38;
-    private $doorstepChanNamespace;
-    private $fleetKey;
-    private $logger;
+    private $geofencing;
 
-    public function __construct(
-        Redis $tile38,
-        string $doorstepChanNamespace,
-        string $fleetKey,
-        LoggerInterface $logger)
+    public function __construct(Geofencing $geofencing)
     {
-        $this->tile38 = $tile38;
-        $this->doorstepChanNamespace = $doorstepChanNamespace;
-        $this->fleetKey = $fleetKey;
-        $this->logger = $logger;
+        $this->geofencing = $geofencing;
     }
 
     public function __invoke(OrderPicked $event)
@@ -36,20 +25,6 @@ class CreateGeofencingChannel
         //     return;
         // }
 
-        $this->tile38->rawCommand(
-            'SETCHAN',
-            sprintf('%s:dropoff:%d', $this->doorstepChanNamespace, $dropoff->getId()),
-            'NEARBY',
-            $this->fleetKey,
-            'FENCE',
-            'DETECT',
-            'enter',
-            'COMMANDS',
-            'set',
-            'POINT',
-            $dropoff->getAddress()->getGeo()->getLatitude(),
-            $dropoff->getAddress()->getGeo()->getLongitude(),
-            (string) Task::GEOFENCING_RADIUS
-        );
+        $this->geofencing->createChannel($dropoff);
     }
 }

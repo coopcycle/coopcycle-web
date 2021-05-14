@@ -55,7 +55,7 @@
 {% do form.payments.setRendered %}
 {% include 'order/_partials/payments.html.twig' %}
 
-{% if is_granted('ROLE_ADMIN') and not order.foodtech %}
+{% if is_granted('ROLE_ADMIN') and not order.hasVendor() %}
   {% include 'order/_partials/payment_link.html.twig' %}
 {% endif %}
 

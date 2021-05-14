@@ -5,7 +5,7 @@ service:
     ca-bc:
       gst: 0.05
     de:
-      standard: 0.16
+      standard: 0.19
     es:
       standard: 0.21
     fr:
@@ -16,6 +16,10 @@ service:
       standard: 0.23
     ar:
       standard: 0.21
+    mx:
+      standard: 0.16
+    au:
+      gst: 0.10
 
 service_tax_exempt:
   rates:
@@ -35,6 +39,10 @@ service_tax_exempt:
       zero: 0.0
     ar:
       zero: 0.0
+    au:
+      zero: 0.0
+    mx:
+      zero: 0.0
 
 drink:
   rates:
@@ -51,7 +59,7 @@ drink_alcohol:
       gst: 0.05
       pst: 0.10
     de:
-      standard: 0.16
+      standard: 0.19
     es:
       standard: 0.21
     fr:
@@ -71,7 +79,7 @@ food_takeaway:
     be:
       reduced: 0.06
     de:
-      standard: 0.16
+      standard: 0.19
     es:
       intermediary: 0.1
     fr:
@@ -94,7 +102,7 @@ base_standard:
       gst: 0.05
       pst: 0.07
     de:
-      standard: 0.16
+      standard: 0.19
     es:
       standard: 0.21
     fr:
@@ -105,6 +113,10 @@ base_standard:
       standard: 0.23
     ar:
       standard: 0.21
+    au:
+      gst: 0.10
+    mx:
+      standard: 0.16
 
 base_intermediary:
   rates:
@@ -128,7 +140,7 @@ base_reduced:
     ca-bc:
       zero: 0.00
     de:
-      reduced: 0.05
+      reduced: 0.07
     es:
       reduced: 0.04
     fr:
@@ -139,3 +151,28 @@ base_reduced:
       reduced: 0.05
     ar:
       reduced: 0.025
+    mx:
+      reduced: 0.08
+
+base_exempt:
+  rates:
+    be:
+      zero: 0.00
+    ca-bc:
+      zero: 0.00
+    de:
+      zero: 0.00
+    es:
+      zero: 0.00
+    fr:
+      zero: 0.00
+    gb:
+      zero: 0.00
+    pl:
+      zero: 0.00
+    ar:
+      zero: 0.00
+    au:
+      zero: 0.00
+    mx:
+      zero: 0.00

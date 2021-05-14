@@ -8,12 +8,20 @@
 <p><strong>{% trans %}profile.email{% endtrans %}</strong>: {% if is_demo %}✴✴✴{% else %}{{ user.email }}{% endif %}</p>
 <p><strong>{% trans %}profile.fullName{% endtrans %}</strong>: {{ user.customer.fullName }}</p>
 <p><strong>{% trans %}profile.telephone{% endtrans %}</strong>: {% if user.telephone %}{{ user.telephone|phone_number_format('NATIONAL') }}{% endif %}</p>
-<p><a href="{{ path('fos_user_change_password') }}">{% trans %}profile.password.change{% endtrans %}</a></p>
+<p><a href="{{ path('nucleos_user_change_password') }}">{% trans %}profile.password.change{% endtrans %}</a></p>
 
 {% if loopeat_enabled %}
   {% if customer.hasLoopEatCredentials() %}
     <p><a class="btn btn-default btn-sm"><i class="fa fa-check"></i> {% trans %}profile.loopeat.connected{% endtrans %}</a></p>
   {% else %}
     <p><a href="{{ loopeat_authorize_url }}" class="btn btn-success btn-sm">{% trans %}profile.loopeat.connect{% endtrans %}</a></p>
+  {% endif %}
+{% endif %}
+
+{% if edenred_enabled %}
+  {% if customer.hasEdenredCredentials() %}
+    <p><a class="btn btn-default btn-sm"><i class="fa fa-check"></i> {% trans %}profile.edenred.connected{% endtrans %}</a></p>
+  {% else %}
+    <p><a href="{{ edenred_authorize_url }}" class="btn btn-success btn-sm">{% trans %}profile.edenred.connect{% endtrans %}</a></p>
   {% endif %}
 {% endif %}

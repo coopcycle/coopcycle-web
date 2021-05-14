@@ -1,7 +1,9 @@
-{% extends "admin.html.twig" %}
+{% extends "deliveries.html.twig" %}
+
 {% form_theme form 'form/pricing_rule_set.html.twig' %}
 
 {% block breadcrumb %}
+{{ parent() }}
 <li><a href="{{ path('admin_deliveries_pricing') }}">{% trans %}adminDashboard.pricing.title{% endtrans %}</a></li>
 {% endblock %}
 

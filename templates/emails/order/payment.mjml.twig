@@ -9,7 +9,7 @@
   <br>
   <br>
   <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white"
-    href="{{ url('public_order', { number: order|hashid }) }}">
+    href="{{ url('public_order', { hashid: order|hashid }) }}">
     {{ 'order.view' | trans({}, 'emails') }}
   </mj-button>
 </mj-column>

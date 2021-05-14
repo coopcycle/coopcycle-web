@@ -4,10 +4,10 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\Task\Assign as TaskAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
+use AppBundle\Action\Task\Events as TaskEvents;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
@@ -18,11 +18,13 @@ use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Task\Group as TaskGroup;
+use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Validator\Constraints\Task as AssertTask;
+use AppBundle\Vroom\Job as VroomJob;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -47,23 +49,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "access_control"="is_granted('ROLE_ADMIN')",
  *       "denormalization_context"={"groups"={"task_create"}},
  *       "validation_groups"={"Default"}
- *     },
- *     "my_tasks"={
- *       "method"="GET",
- *       "path"="/me/tasks/{date}",
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
- *       "pagination_enabled"=false,
- *       "filters"={},
- *       "swagger_context"={
- *         "summary"="Retrieves the collection of Task resources assigned to the authenticated token.",
- *         "parameters"={{
- *           "in"="path",
- *           "name"="date",
- *           "required"=true,
- *           "type"="string",
- *           "format"="date"
- *         }}
- *       }
  *     }
  *   },
  *   itemOperations={
@@ -81,7 +66,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "path"="/tasks/{id}/start",
  *       "controller"=TaskStart::class,
  *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Marks a Task as started"
  *       }
  *     },
@@ -91,12 +76,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "controller"=TaskDone::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
  *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Marks a Task as done",
  *         "parameters"={
  *           {
  *             "in"="body",
- *             "schema"={"type"="object", "properties"={"notes"={"type"="string"}}}
+ *             "name"="N/A",
+ *             "schema"={"type"="object", "properties"={"notes"={"type"="string"}}},
+ *             "style"="form"
  *           }
  *         }
  *       }
@@ -107,12 +94,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "controller"=TaskFailed::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
  *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Marks a Task as failed",
  *         "parameters"={
  *           {
  *             "in"="body",
- *             "schema"={"type"="object", "properties"={"notes"={"type"="string"}}}
+ *             "name"="N/A",
+ *             "schema"={"type"="object", "properties"={"notes"={"type"="string"}}},
+ *             "style"="form"
  *           }
  *         }
  *       }
@@ -123,12 +112,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "controller"=TaskAssign::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
  *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Assigns a Task to a messenger",
  *         "parameters"={
  *           {
  *             "in"="body",
- *             "schema"={"type"="object", "properties"={"username"={"type"="string"}}}
+ *             "name"="N/A",
+ *             "schema"={"type"="object", "properties"={"username"={"type"="string"}}},
+ *             "style"="form"
  *           }
  *         }
  *       }
@@ -139,7 +130,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "controller"=TaskUnassign::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
  *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Unassigns a Task from a messenger"
  *       }
  *     },
@@ -149,7 +140,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "controller"=TaskCancel::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
  *       "access_control"="is_granted('ROLE_ADMIN')",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Cancels a Task"
  *       }
  *     },
@@ -159,14 +150,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "controller"=TaskDuplicate::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
  *       "access_control"="is_granted('ROLE_ADMIN')",
- *       "swagger_context"={
+ *       "openapi_context"={
  *         "summary"="Duplicates a Task"
  *       }
- *     }
- *   },
- *   subresourceOperations={
- *     "events_get_subresource"={
- *       "security"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))"
+ *     },
+ *     "task_events"={
+ *       "method"="GET",
+ *       "path"="/tasks/{id}/events",
+ *       "controller"=TaskEvents::class,
+ *       "security"="is_granted('view', object)",
+ *       "openapi_context"={
+ *         "summary"="Retrieves events for a Task"
+ *       }
  *     }
  *   }
  * )
@@ -202,6 +197,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     private $id;
 
     /**
+     * @Assert\Choice({"PICKUP", "DROPOFF"})
      * @Groups({"task", "task_create", "task_edit"})
      */
     private $type = self::TYPE_DROPOFF;
@@ -214,6 +210,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     private $delivery;
 
     /**
+     * @Assert\NotNull()
      * @Assert\Valid()
      * @Groups({"task", "task_create", "task_edit", "address", "address_create", "delivery_create", "pricing_rule_evalute"})
      */
@@ -235,9 +232,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface
      */
     private $comments;
 
-    /**
-     * @ApiSubresource
-     */
     private $events;
 
     private $createdAt;
@@ -268,9 +262,14 @@ class Task implements TaggableInterface, OrganizationAwareInterface
 
     /**
      * @var Collection<int,TaskImage>
-     * @Groups({"task", "task_edit"})
+     * @Groups({"task_edit"})
      */
     private $images;
+
+    /**
+     * @var int
+     */
+    private $imageCount = 0;
 
     /**
      * @Groups({"task", "task_create", "task_edit"})
@@ -281,6 +280,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface
      * @Groups({"task", "task_create"})
      */
     private $ref;
+
+    /**
+     * @var RecurrenceRule|null
+     * @Groups({"task"})
+     */
+    private $recurrenceRule;
 
     public function __construct()
     {
@@ -430,7 +435,14 @@ class Task implements TaggableInterface, OrganizationAwareInterface
 
     public function getEvents()
     {
-        return $this->events;
+        $iterator = $this->events->getIterator();
+        $iterator->uasort(function (TaskEvent $a, TaskEvent $b) {
+            return $a->getCreatedAt() < $b->getCreatedAt() ? -1 : 1;
+        });
+
+        return new ArrayCollection(
+            iterator_to_array($iterator)
+        );
     }
 
     public function containsEventWithName($name)
@@ -550,7 +562,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
 
     public function getLastEvent($name)
     {
-        $criteria = Criteria::create()->orderBy(array("created_at" => Criteria::DESC));
+        $criteria = Criteria::create()->orderBy(array('created_at' => Criteria::DESC));
 
         foreach ($this->getEvents()->matching($criteria) as $event) {
             if ($event->getName() === $name) {
@@ -583,6 +595,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
         }
 
         $this->images = $images;
+        $this->imageCount = count($this->images);
 
         return $this;
     }
@@ -590,6 +603,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     public function addImage($image)
     {
         $this->images->add($image);
+        $this->imageCount = count($this->images);
 
         return $this;
     }
@@ -694,5 +708,49 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     public function getRef(): ?string
     {
         return $this->ref;
+    }
+
+    public static function toVroomJob(Task $task): VroomJob
+    {
+        $job = new VroomJob();
+
+        $job->id = $task->getId();
+        $job->location = [
+            $task->getAddress()->getGeo()->getLongitude(),
+            $task->getAddress()->getGeo()->getLatitude()
+        ];
+        $job->time_windows = [
+            [
+                (int) $task->getAfter()->format('U'),
+                (int) $task->getBefore()->format('U')
+            ]
+        ];
+
+        return $job;
+    }
+
+    public function setRecurrenceRule(RecurrenceRule $recurrenceRule)
+    {
+        $this->recurrenceRule = $recurrenceRule;
+
+        return $this;
+    }
+
+    public function getRecurrenceRule(): ?RecurrenceRule
+    {
+        return $this->recurrenceRule;
+    }
+
+    /**
+     * @SerializedName("images")
+     * @Groups({"task"})
+     */
+    public function getImagesWithCache()
+    {
+        if (0 === $this->imageCount) {
+            return new ArrayCollection();
+        }
+
+        return $this->getImages();
     }
 }

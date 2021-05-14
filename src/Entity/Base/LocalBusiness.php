@@ -3,7 +3,6 @@
 namespace AppBundle\Entity\Base;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use Carbon\Carbon;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;

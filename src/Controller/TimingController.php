@@ -5,12 +5,13 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\OrderTimeHelper;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class TimingController extends AbstractController
@@ -19,63 +20,67 @@ class TimingController extends AbstractController
      * @Route("/restaurant/{id}/timing", name="restaurant_fulfillment_timing", methods={"GET"})
      */
     public function fulfillmentTimingAction($id, Request $request,
+        EntityManagerInterface $entityManager,
         OrderFactory $orderFactory,
         OrderTimeHelper $orderTimeHelper,
-        CacheInterface $appCache)
+        CacheInterface $projectCache)
     {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(LocalBusiness::class)->find($id);
-
-        if (!$restaurant) {
-            throw new NotFoundHttpException();
-        }
-
         $data = [];
 
-        $deliveryCacheKey = sprintf('restaurant.%d.delivery.timing', $restaurant->getId());
-        $collectionCacheKey = sprintf('restaurant.%d.collection.timing', $restaurant->getId());
+        $deliveryCacheKey = sprintf('restaurant.%d.delivery.timing', $id);
+        $collectionCacheKey = sprintf('restaurant.%d.collection.timing', $id);
 
-        if ($restaurant->isFulfillmentMethodEnabled('delivery')) {
+        $data['delivery'] = $projectCache->get($deliveryCacheKey, function (ItemInterface $item)
+            use ($id, $entityManager, $orderFactory, $orderTimeHelper) {
 
-            $data['delivery'] = $appCache->get($deliveryCacheKey, function (ItemInterface $item)
-                use ($restaurant, $orderFactory, $orderTimeHelper) {
+            $restaurant = $entityManager->getRepository(LocalBusiness::class)->find($id);
 
-                $item->expiresAfter(60 * 5);
+            if (null === $restaurant || !$restaurant->isFulfillmentMethodEnabled('delivery')) {
+                $item->expiresAfter(60 * 60);
 
-                $cart = $orderFactory->createForRestaurant($restaurant);
-                $cart->setTakeaway(false);
+                return [];
+            }
 
-                $timeInfo = $orderTimeHelper->getTimeInfo($cart);
+            $item->expiresAfter(60 * 5);
 
-                return [
-                    'range' => $timeInfo['range'],
-                    'today' => $timeInfo['today'],
-                    'fast'  => $timeInfo['fast'],
-                    'diff'  => $timeInfo['diff'],
-                ];
-            });
-        }
+            $cart = $orderFactory->createForRestaurant($restaurant);
+            $cart->setTakeaway(false);
 
-        if ($restaurant->isFulfillmentMethodEnabled('collection')) {
+            $timeInfo = $orderTimeHelper->getTimeInfo($cart);
 
-            $data['collection'] = $appCache->get($collectionCacheKey, function (ItemInterface $item)
-                use ($restaurant, $orderFactory, $orderTimeHelper) {
+            return [
+                'range' => $timeInfo['range'],
+                'today' => $timeInfo['today'],
+                'fast'  => $timeInfo['fast'],
+                'diff'  => $timeInfo['diff'],
+            ];
+        });
 
-                $item->expiresAfter(60 * 5);
+        $data['collection'] = $projectCache->get($collectionCacheKey, function (ItemInterface $item)
+            use ($id, $entityManager, $orderFactory, $orderTimeHelper) {
 
-                $cart = $orderFactory->createForRestaurant($restaurant);
-                $cart->setTakeaway(true);
+            $restaurant = $entityManager->getRepository(LocalBusiness::class)->find($id);
 
-                $timeInfo = $orderTimeHelper->getTimeInfo($cart);
+            if (null === $restaurant || !$restaurant->isFulfillmentMethodEnabled('collection')) {
+                $item->expiresAfter(60 * 60);
 
-                return [
-                    'range' => $timeInfo['range'],
-                    'today' => $timeInfo['today'],
-                    'fast'  => $timeInfo['fast'],
-                    'diff'  => $timeInfo['diff'],
-                ];
-            });
-        }
+                return [];
+            }
+
+            $item->expiresAfter(60 * 5);
+
+            $cart = $orderFactory->createForRestaurant($restaurant);
+            $cart->setTakeaway(true);
+
+            $timeInfo = $orderTimeHelper->getTimeInfo($cart);
+
+            return [
+                'range' => $timeInfo['range'],
+                'today' => $timeInfo['today'],
+                'fast'  => $timeInfo['fast'],
+                'diff'  => $timeInfo['diff'],
+            ];
+        });
 
         return new JsonResponse($data);
     }

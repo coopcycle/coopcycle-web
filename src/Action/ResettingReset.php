@@ -4,7 +4,7 @@ namespace AppBundle\Action;
 
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Form\ApiResetPasswordType;
-use FOS\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
@@ -26,7 +26,6 @@ class ResettingReset
     private $formFactory;
     private $jwtManager;
     private $dispatcher;
-    private $logger;
 
     /**
      * @var int
@@ -38,14 +37,12 @@ class ResettingReset
         FormFactoryInterface $formFactory,
         JWTTokenManagerInterface $jwtManager,
         EventDispatcherInterface $dispatcher,
-        LoggerInterface $logger,
         int $tokenTtl)
     {
         $this->userManager = $userManager;
         $this->formFactory = $formFactory;
         $this->jwtManager = $jwtManager;
         $this->dispatcher = $dispatcher;
-        $this->logger = $logger;
         $this->tokenTtl = $tokenTtl;
     }
 
@@ -67,7 +64,7 @@ class ResettingReset
             throw new AccessDeniedException();
         }
 
-        // @see FOSUserEvents::RESETTING_RESET_INITIALIZE
+        // @see NucleosUserEvents::RESETTING_RESET_INITIALIZE
         if (!$user->isPasswordRequestNonExpired($this->tokenTtl)) {
             $data = [
                 'message' => 'token expired',
@@ -99,7 +96,7 @@ class ResettingReset
 
         $user->setPlainPassword($password);
 
-        // @see FOSUserEvents::RESETTING_RESET_SUCCESS
+        // @see NucleosUserEvents::RESETTING_RESET_SUCCESS
         $user->setConfirmationToken(null);
         $user->setPasswordRequestedAt(null);
         $user->setEnabled(true);

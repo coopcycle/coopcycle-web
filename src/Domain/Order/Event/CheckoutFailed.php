@@ -12,7 +12,7 @@ class CheckoutFailed extends Event implements DomainEvent
     private $payment;
     private $reason;
 
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'order:checkout_failed';
     }

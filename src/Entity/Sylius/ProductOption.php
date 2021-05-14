@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\DataType\NumRange;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Sylius\Product\ProductOptionInterface;
@@ -9,6 +10,15 @@ use AppBundle\Validator\Constraints\ProductOption as AssertProductOption;
 use Sylius\Component\Product\Model\ProductOption as BaseProductOption;
 
 /**
+ * @ApiResource(
+ *   collectionOperations={},
+ *   itemOperations={
+ *     "get"={"method"="GET"}
+ *   },
+ *   attributes={
+ *     "normalization_context"={"groups"={"product_option"}}
+ *   }
+ * )
  * @AssertProductOption
  */
 class ProductOption extends BaseProductOption implements ProductOptionInterface
@@ -26,6 +36,8 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
     protected $valuesRange;
 
     protected $deletedAt;
+
+    protected $restaurant;
 
     /**
      * {@inheritdoc}
@@ -59,9 +71,14 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
         return $this->additional;
     }
 
-    public function setRestaurant(LocalBusiness $restaurant)
+    public function getRestaurant(): ?LocalBusiness
     {
-        $restaurant->addProductOption($this);
+        return $this->restaurant;
+    }
+
+    public function setRestaurant(?LocalBusiness $restaurant)
+    {
+        $this->restaurant = $restaurant;
     }
 
     /**

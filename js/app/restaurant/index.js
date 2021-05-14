@@ -1,34 +1,25 @@
 import React from 'react'
-import { render, unmountComponentAtNode } from 'react-dom'
+import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
 import _ from 'lodash'
 
-import engine  from 'store/src/store-engine'
-import session from 'store/storages/sessionStorage'
-import cookie  from 'store/storages/cookieStorage'
-
-import OpeningHoursParser from '../widgets/OpeningHoursParser'
 import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from '../cart/redux/store'
-import { addItem, addItemWithOptions, queueAddItem } from '../cart/redux/actions'
+import { queueAddItem, openProductOptionsModal, openProductDetailsModal } from '../cart/redux/actions'
 import Cart from '../cart/components/Cart'
-import { validateForm } from '../utils/address'
-import ProductOptionsModal from './components/ProductOptionsModal'
-import ProductDetailsModal from './components/ProductDetailsModal'
+import storage from '../search/address-storage'
 
 require('gasparesganga-jquery-loading-overlay')
 
 import './index.scss'
 
-const storage = engine.createStore([ session, cookie ])
-
 window._paq = window._paq || []
 
 let store
 
-window.initMap = function() {
+const init = function() {
 
   const container = document.getElementById('cart')
 
@@ -43,86 +34,30 @@ window.initMap = function() {
     store.dispatch(queueAddItem($(this).attr('action'), 1))
   })
 
-  // We update the base price on "show.bs.modal" to avoid flickering
-  $('#product-options').on('show.bs.modal', function(event) {
+  document.querySelectorAll('[data-modal="options"]').forEach(el => {
+    el.addEventListener('click', () => {
 
-    const $modal = $(this)
-    $modal.find('.modal-title').text(event.relatedTarget.dataset.productName)
+      const name       = el.dataset.productName
+      const options    = JSON.parse(el.dataset.productOptions)
+      const images     = JSON.parse(el.dataset.productImages)
+      const price      = JSON.parse(el.dataset.productPrice)
+      const code       = el.dataset.productCode
+      const formAction = el.dataset.formAction
 
-    const productOptions =
-      JSON.parse(event.relatedTarget.dataset.productOptions)
-
-    render(
-      <ProductOptionsModal
-        price={ JSON.parse(event.relatedTarget.dataset.productPrice) }
-        code={ event.relatedTarget.dataset.productCode }
-        options={ productOptions }
-        formAction={ event.relatedTarget.dataset.formAction }
-        onSubmit={ (e) => {
-          e.preventDefault()
-
-          const $form = $modal.find('form')
-
-          const data = $form.serializeArray()
-          const quantity = $form.find('[data-product-quantity]').val() || 1
-
-          if (data.length > 0) {
-            store.dispatch(addItemWithOptions($form.attr('action'), data, quantity))
-          } else {
-            store.dispatch(addItem($form.attr('action'), quantity))
-          }
-
-          $modal.modal('hide')
-
-        } } />,
-      this.querySelector('.modal-body')
-    )
-  })
-
-  $('#product-options').on('shown.bs.modal', function() {
-    var $form = $(this).find('form[data-product-options]')
-    if ($form.length === 1) {
-      window._paq.push(['trackEvent', 'Checkout', 'showOptions'])
-      // $form.find('button[type="submit"]').prop('disabled', !isValid($form))
-    }
-  })
-
-  $('#product-options').on('hidden.bs.modal', function() {
-    unmountComponentAtNode(this.querySelector('.modal-body'))
-    window._paq.push(['trackEvent', 'Checkout', 'hideOptions'])
-  })
-
-  $('#product-details').on('show.bs.modal', function(event) {
-
-    const images = JSON.parse(event.relatedTarget.dataset.productImages)
-    const productPrice = JSON.parse(event.relatedTarget.dataset.productPrice)
-
-    const $modal = $(this)
-    $modal.find('.modal-title').text(event.relatedTarget.dataset.productName)
-    $modal.find('form').attr('action', event.relatedTarget.dataset.formAction)
-    $modal.find('button[type="submit"]').text((productPrice / 100).formatMoney())
-
-    const $placeholder = $('<div>')
-    $placeholder.addClass('d-flex')
-    $placeholder.addClass('overflow-hidden')
-    images.forEach(image => {
-      const $img = $('<img>')
-      $img.attr('src', image)
-      $placeholder.append($img)
+      store.dispatch(openProductOptionsModal(name, options, images, price, code, formAction))
     })
-    $('.modal-body [data-swiper]').append($placeholder)
   })
 
-  $('#product-details').on('shown.bs.modal', function(event) {
-    const images = JSON.parse(event.relatedTarget.dataset.productImages)
-    render(
-      <ProductDetailsModal images={ images } />,
-      this.querySelector('.modal-body [data-swiper]')
-    )
-  })
+  document.querySelectorAll('[data-modal="details"]').forEach(el => {
+    el.addEventListener('click', () => {
 
-  $('#product-details').on('hidden.bs.modal', function() {
-    unmountComponentAtNode(this.querySelector('.modal-body [data-swiper]'))
+      const name       = el.dataset.productName
+      const images     = JSON.parse(el.dataset.productImages)
+      const price      = JSON.parse(el.dataset.productPrice)
+      const formAction = el.dataset.formAction
+
+      store.dispatch(openProductDetailsModal(name, images, price, formAction))
+    })
   })
 
   const restaurantDataElement = document.querySelector('#js-restaurant-data')
@@ -154,16 +89,6 @@ window.initMap = function() {
       }
     }
   }
-
-  $(container).closest('form').on('submit', function (e) {
-
-    const searchInput = document.querySelector('#cart input[type="search"]')
-    const latInput = document.querySelector('#cart_shippingAddress_latitude')
-    const lngInput = document.querySelector('#cart_shippingAddress_longitude')
-    const streetAddrInput = document.querySelector('#cart_shippingAddress_streetAddress')
-
-    validateForm(e, searchInput, latInput, lngInput, streetAddrInput)
-  })
 
   const state = {
     cart,
@@ -197,15 +122,8 @@ window.initMap = function() {
 
 }
 
-document.querySelectorAll('[data-opening-hours]').forEach(el => {
-  // FIXME Check parse errors
-  new OpeningHoursParser(el, {
-    openingHours: JSON.parse(el.dataset.openingHours),
-    locale: $('html').attr('lang'),
-    behavior: el.dataset.openingHoursBehavior,
-  })
-})
-
 $('#menu').LoadingOverlay('show', {
   image: false,
 })
+
+init()

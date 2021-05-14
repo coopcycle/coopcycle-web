@@ -54,7 +54,7 @@ abstract class PostalAddress
     /**
      * @var string The postal code. For example, 94043.
      *
-     * @Groups({"address_create", "order_update", "address_gb"})
+     * @Groups({"address_create", "order_update", "task_create", "address_gb"})
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/postalCode")
      */

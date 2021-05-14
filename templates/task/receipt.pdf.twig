@@ -50,7 +50,7 @@
 <p>
 {% trans with {
   '%address%': task.address.streetAddress,
-  '%date%': task.completedAt|localizeddate('short', 'short') } %}task.receipt.message{% endtrans %}
+  '%date%': task.completedAt|format_datetime('short', 'short') } %}task.receipt.message{% endtrans %}
 </p>
 
 {% if task.address.contactName is not empty %}

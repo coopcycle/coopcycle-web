@@ -2,12 +2,15 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Action\MyTasks as MyTasksController;
 use AppBundle\Action\TaskList\Create as CreateTaskListController;
+use AppBundle\Action\TaskList\Optimize as OptimizeController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Api\Filter\DateFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * A TaskList represents the daily planning for a courier.
@@ -29,6 +32,31 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "my_tasks"={
+ *       "method"="GET",
+ *       "path"="/me/tasks/{date}",
+ *       "controller"=MyTasksController::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "read"=false,
+ *       "write"=false,
+ *       "normalization_context"={"groups"={"task_collection", "task", "delivery", "address"}},
+ *       "openapi_context"={
+ *         "summary"="Retrieves the collection of Task resources assigned to the authenticated token.",
+ *         "parameters"={{
+ *           "in"="path",
+ *           "name"="date",
+ *           "required"=true,
+ *           "type"="string",
+ *           "format"="date"
+ *         }}
+ *       }
+ *     },
+ *     "optimize"={
+ *        "method"="GET",
+ *        "path"="/task_lists/{id}/optimize",
+ *        "controller"=OptimizeController::class,
+ *        "access_control"="is_granted('ROLE_ADMIN')"
  *     }
  *   },
  *   attributes={
@@ -46,6 +74,15 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * @SerializedName("date")
+     * @Groups({"task_collection", "task_collections"})
+     */
+    public function getDateString()
+    {
+        return $this->date->format('Y-m-d');
     }
 
     public function setDate(\DateTime $date)
@@ -87,5 +124,14 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
         }
 
         return parent::removeTask($task);
+    }
+
+    /**
+     * @SerializedName("username")
+     * @Groups({"task_collection", "task_collections"})
+     */
+    public function getUsername()
+    {
+        return $this->getCourier()->getUsername();
     }
 }

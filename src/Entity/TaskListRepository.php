@@ -4,7 +4,7 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskCollectionItem;
-use FOS\UserBundle\Model\UserInterface;
+use Nucleos\UserBundle\Model\UserInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 

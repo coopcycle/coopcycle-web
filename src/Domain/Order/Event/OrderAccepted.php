@@ -8,7 +8,7 @@ use AppBundle\Domain\Order\Event;
 
 class OrderAccepted extends Event implements DomainEvent, HasIconInterface
 {
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'order:accepted';
     }

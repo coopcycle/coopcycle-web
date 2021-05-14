@@ -20,7 +20,7 @@
               {% trans %}restaurant.list.manage{% endtrans %}   <span class="caret"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right">
-              {% if is_granted('ROLE_ADMIN') or app.user.ownsRestaurant(restaurant) %}
+              {% if is_granted('edit', restaurant) %}
               <li>
                 <a href="{{ path(dashboard_route, { restaurantId: restaurant.id }) }}">
                 {% trans %}restaurant.list.orders{% endtrans %}

@@ -4,10 +4,11 @@ install:
 	@printf "\e[0;32mPopulating schema..\e[0m\n"
 	@docker-compose exec php php bin/console doctrine:schema:create --env=dev
 	@docker-compose exec php bin/demo --env=dev
+	@docker-compose exec php php bin/console doctrine:migrations:sync-metadata-storage
 	@docker-compose exec php php bin/console doctrine:migrations:version --no-interaction --quiet --add --all
 
 osrm:
-	@docker-compose run --rm osrm wget --no-check-certificate https://coopcycle.org/osm/paris-france.osm.pbf -O /data/data.osm.pbf
+	@docker-compose run --rm osrm wget --no-check-certificate https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf -O /data/data.osm.pbf
 	@docker-compose run --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
 	@docker-compose run --rm osrm osrm-partition /data/data.osrm
 	@docker-compose run --rm osrm osrm-customize /data/data.osrm
@@ -23,7 +24,7 @@ mocha:
 	@docker-compose exec -e SYMFONY_ENV=test -e NODE_ENV=test nodejs /run-tests.sh
 
 migrations-diff:
-	@docker-compose exec php php bin/console doctrine:migrations:diff
+	@docker-compose exec php php bin/console doctrine:migrations:diff --no-interaction
 
 migrations-migrate:
 	@docker-compose exec php php bin/console doctrine:migrations:migrate

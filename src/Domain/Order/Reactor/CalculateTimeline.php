@@ -33,7 +33,7 @@ class CalculateTimeline
     {
         $order = $event->getOrder();
 
-        if (!$order->isFoodtech()) {
+        if (!$order->hasVendor()) {
             return;
         }
 
@@ -41,16 +41,6 @@ class CalculateTimeline
 
         if ($event instanceof Event\OrderDelayed) {
             $this->calculator->delay($order, $event->getDelay());
-        }
-
-        if ($event instanceof Event\OrderPicked) {
-            // TODO Resolve the date from the event
-            $timeline->setPickupAt(new \DateTime());
-        }
-
-        if ($event instanceof Event\OrderDropped) {
-            // TODO Resolve the date from the event
-            $timeline->setDropoffAt(new \DateTime());
         }
     }
 }

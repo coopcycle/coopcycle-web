@@ -2,14 +2,14 @@
 
 namespace AppBundle\Form\Checkout;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
+use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\LoopEatOrder;
-use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponToCodeType;
-use Sylius\Bundle\PromotionBundle\Validator\Constraints\PromotionSubjectCoupon;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -17,7 +17,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
@@ -25,7 +24,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CheckoutAddressType extends AbstractType
@@ -40,6 +39,7 @@ class CheckoutAddressType extends AbstractType
     public function __construct(
         TranslatorInterface $translator,
         PriceFormatter $priceFormatter,
+        OrderTimeHelper $orderTimeHelper,
         LoopEatClient $loopeatClient,
         LoopEatContext $loopeatContext,
         SessionInterface $session,
@@ -51,10 +51,14 @@ class CheckoutAddressType extends AbstractType
         $this->loopeatContext = $loopeatContext;
         $this->session = $session;
         $this->loopeatOAuthFlow = $loopeatOAuthFlow;
+
+        parent::__construct($orderTimeHelper);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $builder
             ->add('shippingAddress', AddressType::class, [
                 'label' => false,
@@ -64,27 +68,6 @@ class CheckoutAddressType extends AbstractType
                 'label' => 'form.checkout_address.notes.label',
                 'help' => 'form.checkout_address.notes.help',
                 'attr' => ['placeholder' => 'form.checkout_address.notes.placeholder']
-            ])
-            ->add('promotionCoupon', PromotionCouponToCodeType::class, [
-                'label' => 'form.checkout_address.promotion_coupon.label',
-                'required' => false,
-            ])
-            ->add('addPromotion', SubmitType::class, [
-                'label' => 'form.checkout_address.add_promotion.label'
-            ])
-            ->add('tipAmount', NumberType::class, [
-                'label' => 'form.checkout_address.tip_amount.label',
-                'mapped' => false,
-                'required' => false,
-                'html5' => true,
-                'attr'  => array(
-                    'min'  => 0,
-                    'step' => 0.5,
-                ),
-                'help' => 'form.checkout_address.tip_amount.help'
-            ])
-            ->add('addTip', SubmitType::class, [
-                'label' => 'form.checkout_address.add_tip.label'
             ]);
 
         $builder->get('shippingAddress')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
@@ -117,7 +100,6 @@ class CheckoutAddressType extends AbstractType
             }
 
             $restaurant = $order->getRestaurant();
-            $vendor = $order->getVendor();
             $customer = $order->getCustomer();
             $packagingQuantity = $order->getReusablePackagingQuantity();
 
@@ -126,7 +108,7 @@ class CheckoutAddressType extends AbstractType
                 // FIXME
                 // We need to check if $packagingQuantity > 0
 
-                if (!$vendor->isHub() && $restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials()) {
+                if (!$order->isMultiVendor() && $restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials()) {
 
                     $this->loopeatContext->initialize();
 
@@ -185,22 +167,11 @@ class CheckoutAddressType extends AbstractType
 
             // When the restaurant accepts quotes and the customer is allowed,
             // we add another submit button
-            if (!$vendor->isHub() &&
+            if (!$order->isMultiVendor() &&
                 $restaurant->isQuotesAllowed() && null !== $customer && $customer->hasUser() && $customer->getUser()->isQuotesAllowed()) {
                 $form->add('quote', SubmitType::class, [
                     'label' => 'form.checkout_address.quote.label'
                 ]);
-            }
-        });
-
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-
-            $form = $event->getForm();
-            $order = $form->getData();
-
-            if ($form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName()) {
-                $tipAmount = $form->get('tipAmount')->getData();
-                $order->setTipAmount((int) ($tipAmount * 100));
             }
         });
     }
@@ -222,7 +193,6 @@ class CheckoutAddressType extends AbstractType
 
         $resolver->setDefault('constraints', [
             new LoopEatOrder(),
-            new PromotionSubjectCoupon()
         ]);
     }
 }

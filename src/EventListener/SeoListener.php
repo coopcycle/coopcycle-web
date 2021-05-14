@@ -10,7 +10,7 @@ use Sonata\SeoBundle\Seo\SeoPageInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class SeoListener
@@ -29,6 +29,10 @@ class SeoListener
      * @var UploaderHelper
      */
     private UploaderHelper $uploaderHelper;
+
+    private static $excluded = [
+        'search_geocode',
+    ];
 
     public function __construct(
         TranslatorInterface $translator,
@@ -60,6 +64,11 @@ class SeoListener
 
         // Skip if this is an AJAX request
         if ($request->isXmlHttpRequest()) {
+            return;
+        }
+
+        // Skip if this is explicitly excluded
+        if ($request->attributes->has('_route') && in_array($request->attributes->get('_route'), self::$excluded)) {
             return;
         }
 

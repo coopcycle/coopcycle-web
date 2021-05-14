@@ -129,17 +129,17 @@ class WatchExpiringAuthorizationCommand extends Command
                 );
 
                 // Send email to restaurant owners
-                $owners = $order->getRestaurant()->getOwners()->toArray();
+                $owners = $order->getNotificationRecipients()->toArray();
                 if (count($owners) > 0) {
 
                     $ownerMails = [];
                     foreach ($owners as $owner) {
-                        $ownerMails[$owner->getEmail()] = $owner->getFullName();
+                        $ownerMails[] = sprintf('%s <%s>', $owner->getFullName(), $owner->getEmail());
                     }
 
                     $this->emailManager->sendTo(
                         $this->emailManager->createExpiringAuthorizationReminderMessageForOwner($order),
-                        $ownerMails
+                        ...$ownerMails
                     );
                 }
 

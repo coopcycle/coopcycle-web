@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Doctrine\Persistence\ManagerRegistry;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Psr\Log\LoggerInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,39 +23,34 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 final class OrderSubscriber implements EventSubscriberInterface
 {
-    private $doctrine;
     private $tokenStorage;
     private $orderTimeHelper;
     private $validator;
     private $dataPersister;
-    private $logger;
+    private $orderProcessor;
 
     public function __construct(
-        ManagerRegistry $doctrine,
         TokenStorageInterface $tokenStorage,
         OrderTimeHelper $orderTimeHelper,
         ValidatorInterface $validator,
         DataPersisterInterface $dataPersister,
-        LoggerInterface $logger
+        OrderProcessorInterface $orderProcessor
     ) {
-        $this->doctrine = $doctrine;
         $this->tokenStorage = $tokenStorage;
         $this->orderTimeHelper = $orderTimeHelper;
         $this->validator = $validator;
         $this->dataPersister = $dataPersister;
-        $this->logger = $logger;
+        $this->orderProcessor = $orderProcessor;
     }
 
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => [
-                ['addCartSessionContext', EventPriorities::PRE_READ],
-            ],
             KernelEvents::VIEW => [
                 ['preValidate', EventPriorities::PRE_VALIDATE],
                 ['timingResponse', EventPriorities::PRE_VALIDATE],
                 ['validateResponse', EventPriorities::POST_VALIDATE],
+                ['process', EventPriorities::PRE_WRITE],
                 ['deleteItemPostWrite', EventPriorities::POST_WRITE],
             ],
         ];
@@ -72,22 +68,6 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         return $user;
-    }
-
-    public function addCartSessionContext(RequestEvent $event)
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return;
-        }
-
-        $cartSession = new \stdClass();
-        $cartSession->cart = null;
-        if ($token instanceof JWTUserToken && $token->hasAttribute('cart')) {
-            $cartSession->cart = $token->getAttribute('cart');
-        }
-
-        $request = $event->getRequest();
-        $request->attributes->set('cart_session', $cartSession);
     }
 
     public function preValidate(ViewEvent $event)
@@ -114,7 +94,7 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         if ($request->attributes->get('_route') === 'api_orders_post_collection'
-            && $order->isFoodtech() && null === $order->getId() && null === $order->getShippingTimeRange()) {
+            && $order->hasVendor() && null === $order->getId() && null === $order->getShippingTimeRange()) {
             $shippingTimeRange = $this->orderTimeHelper->getShippingTimeRange($order);
             $order->setShippingTimeRange($shippingTimeRange);
         }
@@ -138,9 +118,7 @@ final class OrderSubscriber implements EventSubscriberInterface
 
         $order = $event->getControllerResult();
 
-        $restaurant = $order->getRestaurant();
-
-        if (null == $restaurant) {
+        if (!$order->hasVendor()) {
             return;
         }
 
@@ -181,5 +159,21 @@ final class OrderSubscriber implements EventSubscriberInterface
         $controllerResult = $event->getControllerResult();
         $persistResult = $this->dataPersister->persist($controllerResult);
         $event->setControllerResult($persistResult);
+    }
+
+    public function process(ViewEvent $event)
+    {
+        $resource = $event->getControllerResult();
+        $method = $event->getRequest()->getMethod();
+
+        if (!$resource instanceof Order || Request::METHOD_PUT !== $method) {
+            return;
+        }
+
+        if ($resource->getState() !== Order::STATE_CART) {
+            return;
+        }
+
+        $this->orderProcessor->process($resource);
     }
 }

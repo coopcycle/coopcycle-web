@@ -8,7 +8,7 @@ class Guard
 {
     public function isFulfillable(OrderInterface $order)
     {
-        if ($order->isFoodtech() && !$order->isTakeaway()) {
+        if ($order->hasVendor() && !$order->isTakeaway()) {
 
             $delivery = $order->getDelivery();
 

@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM node:15-alpine
 
 RUN apk update && apk add --no-cache git
 
@@ -8,8 +8,6 @@ WORKDIR /srv/coopcycle
 
 COPY package.json /srv/coopcycle
 COPY package-lock.json /srv/coopcycle
-
-RUN npm install
 
 COPY docker/nodejs/start.sh /
 COPY docker/nodejs/run-tests.sh /

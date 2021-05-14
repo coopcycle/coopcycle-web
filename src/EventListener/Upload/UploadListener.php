@@ -44,7 +44,7 @@ final class UploadListener
         ProductSpreadsheetParser $productSpreadsheetParser,
         SerializerInterface $serializer,
         IriConverterInterface $iriConverter,
-        CacheInterface $appCache,
+        CacheInterface $projectCache,
         string $secret,
         bool $isDemo,
         LoggerInterface $logger)
@@ -57,7 +57,7 @@ final class UploadListener
         $this->productSpreadsheetParser = $productSpreadsheetParser;
         $this->serializer = $serializer;
         $this->iriConverter = $iriConverter;
-        $this->appCache = $appCache;
+        $this->projectCache = $projectCache;
         $this->secret = $secret;
         $this->isDemo = $isDemo;
         $this->logger = $logger;
@@ -122,7 +122,10 @@ final class UploadListener
             );
 
             $object = new ProductImage();
+            $object->setRatio($request->get('ratio', '1:1'));
+
             $product->addImage($object);
+
         } else {
             return;
         }
@@ -154,7 +157,7 @@ final class UploadListener
         $this->settingsManager->set('company_logo', $file->getBasename());
         $this->settingsManager->flush();
 
-        $this->appCache->delete('content.company_logo.base_64');
+        $this->projectCache->delete('content.company_logo.base_64');
     }
 
     private function onTasksUpload(PostPersistEvent $event)
@@ -223,7 +226,7 @@ final class UploadListener
             throw new UploadException('Banner can\'t be changed in demo mode');
         }
 
-        $this->appCache->delete('banner_svg_stat');
-        $this->appCache->delete('banner_svg');
+        $this->projectCache->delete('banner_svg_stat');
+        $this->projectCache->delete('banner_svg');
     }
 }

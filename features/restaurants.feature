@@ -3,6 +3,7 @@ Feature: Manage restaurants
   Scenario: Retrieve the restaurants list
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants"
@@ -22,6 +23,7 @@ Feature: Manage restaurants
   Scenario: Search restaurants
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants?coordinate=48.853286,2.369116"
@@ -48,6 +50,7 @@ Feature: Manage restaurants
             "@id":"/api/addresses/2",
             "@type":"http://schema.org/Place",
             "geo":{
+              "@type":"GeoCoordinates",
               "latitude":48.846656,
               "longitude":2.369052
             },
@@ -117,6 +120,7 @@ Feature: Manage restaurants
         "@id":"@string@.startsWith('/api/addresses')",
         "@type":"http://schema.org/Place",
         "geo":{
+          "@type":"GeoCoordinates",
           "latitude":@double@,
           "longitude":@double@
         },
@@ -136,7 +140,17 @@ Feature: Manage restaurants
         }
       ],
       "specialOpeningHoursSpecification":[],
-      "fulfillmentMethods":@array@
+      "fulfillmentMethods":@array@,
+      "potentialAction":{
+        "@type":"OrderAction",
+        "target":{
+          "@type":"EntryPoint",
+          "urlTemplate":@string@,
+          "inLanguage":"fr",
+          "actionPlatform":["http://schema.org/DesktopWebPlatform"]
+        },
+        "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
+      }
     }
     """
 
@@ -170,12 +184,12 @@ Feature: Manage restaurants
         "@type":"TimeInfo",
         "@id":@string@,
         "range":[
-          "2020-09-18T11:55:00+02:00",
-          "2020-09-18T12:05:00+02:00"
+          "2020-09-18T12:00:00+02:00",
+          "2020-09-18T12:10:00+02:00"
         ],
         "today":false,
         "fast": false,
-        "diff":"1255 - 1265"
+        "diff":"1260 - 1270"
       },
       "collection":null
     }
@@ -200,7 +214,6 @@ Feature: Manage restaurants
     And I send a "GET" request to "/api/restaurants/1/timing"
     Then the response status code should be 200
     And the response should be in JSON
-    And print last response
     And the JSON should match:
     """
     {
@@ -212,12 +225,12 @@ Feature: Manage restaurants
         "@type":"TimeInfo",
         "@id":@string@,
         "range":[
-          "2020-09-17T12:25:00+02:00",
-          "2020-09-17T12:35:00+02:00"
+          "2020-09-17T12:30:00+02:00",
+          "2020-09-17T12:40:00+02:00"
         ],
         "today":true,
         "fast":true,
-        "diff":"25 - 35"
+        "diff":"30 - 40"
       },
       "collection":null
     }
@@ -229,10 +242,6 @@ Feature: Manage restaurants
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
-    And the restaurant with id "6" has products:
-      | code      |
-      | PIZZA     |
-      | HAMBURGER |
     And the restaurant with id "6" has menu:
       | section | product   |
       | Pizzas  | PIZZA     |
@@ -247,7 +256,7 @@ Feature: Manage restaurants
     And the user "bob" is authenticated
     When I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/restaurants/6"
-    Then the response status code should be 404
+    Then the response status code should be 403
 
   Scenario: Retrieve a restaurant's menu
     Given the fixtures files are loaded:
@@ -393,6 +402,7 @@ Feature: Manage restaurants
   Scenario: Restaurant is deliverable
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants/1/can-deliver/48.855799,2.359207"
@@ -402,6 +412,7 @@ Feature: Manage restaurants
   Scenario: Restaurant is not deliverable
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants/1/can-deliver/48.882305,2.365448"
@@ -466,6 +477,7 @@ Feature: Manage restaurants
   Scenario: User has not sufficient access rights
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -484,6 +496,7 @@ Feature: Manage restaurants
   Scenario: User is not authorized to modify restaurant
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -504,6 +517,7 @@ Feature: Manage restaurants
   Scenario: Change restaurant state
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -581,6 +595,87 @@ Feature: Manage restaurants
             "name":@string@,
             "description":null,
             "enabled":@boolean@
+          }
+        ],
+        "hydra:totalItems":2
+      }
+      """
+
+  Scenario: Retrieve restaurant product options
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When I send a "GET" request to "/api/restaurants/1/product_options"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ProductOption",
+        "@id":"/api/restaurants/1/product_options",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/product_options/1",
+            "@type":"ProductOption",
+            "strategy":"free",
+            "additional":false,
+            "valuesRange":null,
+            "code":"PIZZA_TOPPING",
+            "values":[
+              {
+                "@id":"@string@.startsWith('/api/product_option_values')",
+                "@type":"ProductOptionValue",
+                "price":0,
+                "code":"PIZZA_TOPPING_PEPPERONI",
+                "value":"Pepperoni",
+                "enabled":true
+              },
+              {
+                "@id":"@string@.startsWith('/api/product_option_values')",
+                "@type":"ProductOptionValue",
+                "price":0,
+                "code":"PIZZA_TOPPING_EXTRA_CHEESE",
+                "value":"Extra cheese",
+                "enabled":true
+              },
+              {
+                "@id":"@string@.startsWith('/api/product_option_values')",
+                "@type":"ProductOptionValue",
+                "price":0,
+                "code":"NOT_ENABLED_OPTION",
+                "enabled":false,
+                "value":"Not enabled"
+              }
+            ],
+            "name":"Pizza topping"
+          },
+          {
+            "@id":"/api/product_options/2",
+            "@type":"ProductOption",
+            "strategy":"free",
+            "additional":true,
+            "valuesRange":null,
+            "code":"GLUTEN_INTOLERANCE",
+            "values":[
+              {
+                "@id":"@string@.startsWith('/api/product_option_values')",
+                "@type":"ProductOptionValue",
+                "price":0,
+                "code":"GLUTEN_FREE",
+                "value":"Gluten free",
+                "enabled":true
+              }
+            ],
+            "name":"Gluten intolerance"
           }
         ],
         "hydra:totalItems":2
@@ -678,6 +773,7 @@ Feature: Manage restaurants
                 "contactName":null,
                 "description":null,
                 "geo":{
+                  "@type":"GeoCoordinates",
                   "latitude":48.864577,
                   "longitude":2.333338
                 },
@@ -702,6 +798,7 @@ Feature: Manage restaurants
                 "contactName":null,
                 "description":null,
                 "geo":{
+                  "@type":"GeoCoordinates",
                   "latitude":48.864577,
                   "longitude":2.333338
                 },
@@ -725,6 +822,7 @@ Feature: Manage restaurants
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_locales.yml  |
+      | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" is closed between "2018-08-27 12:00:00" and "2018-08-28 10:00:00"
     Given the user "bob" is loaded:

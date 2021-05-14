@@ -31,11 +31,19 @@ class TsRangeNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
+        if (is_array($data) && count($data) === 2) {
+            $tsRange = new TsRange();
+            $tsRange->setLower(new \DateTime($data[0]));
+            $tsRange->setUpper(new \DateTime($data[1]));
+
+            return $tsRange;
+        }
+
         return [];
     }
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return false;
+        return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === TsRange::class;
     }
 }

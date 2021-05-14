@@ -6,11 +6,13 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\ShippingAddressMissingException;
+use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\OrderTimeHelper;
-use Carbon\Carbon;
+use AppBundle\Utils\OrderTimelineCalculator;
+use AppBundle\Utils\PickupTimeResolver;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class DeliveryManager
@@ -18,15 +20,18 @@ class DeliveryManager
     private $expressionLanguage;
     private $routing;
     private $orderTimeHelper;
+    private $orderTimelineCalculator;
 
     public function __construct(
         ExpressionLanguage $expressionLanguage,
         RoutingInterface $routing,
-        OrderTimeHelper $orderTimeHelper)
+        OrderTimeHelper $orderTimeHelper,
+        OrderTimelineCalculator $orderTimelineCalculator)
     {
         $this->expressionLanguage = $expressionLanguage;
         $this->routing = $routing;
         $this->orderTimeHelper = $orderTimeHelper;
+        $this->orderTimelineCalculator = $orderTimelineCalculator;
     }
 
     public function getPrice(Delivery $delivery, PricingRuleSet $ruleSet)
@@ -72,15 +77,25 @@ class DeliveryManager
 
     public function createFromOrder(OrderInterface $order)
     {
-        if (null === $order->getVendor()) {
+        if (!$order->hasVendor()) {
             throw new \InvalidArgumentException('Order should reference a vendor');
         }
 
-        $pickupAddress = $order->getVendor()->getAddress();
+        $pickupAddress = $order->getPickupAddress();
         $dropoffAddress = $order->getShippingAddress();
 
         if (null === $dropoffAddress) {
-            throw new ShippingAddressMissingException(sprintf('Order does not have a shipping address'));
+            throw new ShippingAddressMissingException('Order does not have a shipping address');
+        }
+
+        $dropoffTimeRange = $order->getShippingTimeRange();
+        if (null === $dropoffTimeRange) {
+            $dropoffTimeRange =
+                $this->orderTimeHelper->getShippingTimeRange($order);
+        }
+
+        if (null === $dropoffTimeRange) {
+            throw new NoAvailableTimeSlotException('No time slot is avaible');
         }
 
         $distance = $this->routing->getDistance(
@@ -92,15 +107,8 @@ class DeliveryManager
             $dropoffAddress->getGeo()
         );
 
-        $dropoffTimeRange = $order->getShippingTimeRange();
-        if (null === $dropoffTimeRange) {
-            $dropoffTimeRange =
-                $this->orderTimeHelper->getShippingTimeRange($order);
-        }
-
-        $pickupTime = Carbon::instance($dropoffTimeRange->getLower())
-            ->average($dropoffTimeRange->getUpper())
-            ->subSeconds($duration);
+        $timeline = $this->orderTimelineCalculator->calculate($order, $dropoffTimeRange);
+        $pickupTime = $timeline->getPickupExpectedAt();
 
         $pickupTimeRange = DateUtils::dateTimeToTsRange($pickupTime, 5);
 

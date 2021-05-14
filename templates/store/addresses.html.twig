@@ -1,0 +1,97 @@
+{% extends 'store/layout.html.twig' %}
+
+{% form_theme address_form 'bootstrap_3_layout.html.twig' %}
+
+{% block subnav %}
+{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+<li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+<li>{% trans %}stores.address_book{% endtrans %}</li>
+{% endblock %}
+
+{% block store_content %}
+{% if store.addresses|length > 0 %}
+
+  {{ form_start(form) }}
+
+  <table class="table">
+    <tbody>
+    {% for address in store.addresses %}
+      <tr {% if address is same as(store.address) %}class="active"{% endif %}>
+        <td>
+          <span class="d-block">
+            {% if address.name is not empty %}
+            <strong>{{ address.name }}</strong>
+            <span class="my-2">–</span>
+            {% endif %}
+            {{ address.streetAddress }}
+          </span>
+          {% if address.description is not empty %}
+          <small class="text-muted">{{ address.description }}</small>
+          {% endif %}
+        </td>
+        <td class="text-right">
+          {% if address is not same as(store.address) %}
+            {% set form_name = 'setAsDefault_' ~ address.id %}
+            {% if form[form_name] is defined %}
+              {{ form_widget(form[form_name], { attr: { class: 'btn btn-xs btn-default' } }) }}
+            {% endif %}
+          {% else %}
+            <small class="text-muted">{{ 'form.store_type.defaultAddress.label'|trans }}</small>
+          {% endif %}
+        </td>
+        <td class="text-right">
+          <a href="#"
+            data-toggle="modal" data-target="#address-form-modal"
+            data-address="{{ path(store_address_route, { storeId: store.id, addressId: address.id }) }}"
+            data-address-obj="{{ address|coopcycle_normalize('AppBundle\\Entity\\Address', ['address', 'address_create'])|json_encode|e('html_attr') }}"
+            data-new-address="{{ path(store_address_new_route, { id: store.id }) }}"
+            data-name="{{ address.name|e('html_attr') }}"
+            data-street-address="{{ address.streetAddress|e('html_attr') }}"
+            data-description="{{ address.description|e('html_attr') }}"
+            data-telephone="{{ (address.telephone is not empty ? address.telephone|phone_number_format('NATIONAL') : '')|e('html_attr') }}"
+            data-contact-name="{{ address.contactName|e('html_attr') }}">{{ 'basics.edit'|trans }}</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {{ form_end(form) }}
+
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}basics.no_entries{% endtrans %}
+  </div>
+{% endif %}
+<p class="text-right">
+  <a href="#" class="btn btn-success"
+    data-toggle="modal" data-target="#address-form-modal"
+    data-new-address="{{ path(store_address_new_route, { id: store.id }) }}">
+    <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
+  </a>
+</p>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="address-form-modal">
+  <div class="modal-dialog" role="document">
+    {{ form_start(address_form, { attr: { class: 'modal-content' } }) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">{{ 'form.address.streetAddress.label'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        {{ form_widget(address_form) }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+        <button type="submit" class="btn btn-primary">{{ 'basics.save'|trans }}</button>
+      </div>
+    {{ form_end(address_form) }}
+  </div>
+</div>
+
+{% endblock %}

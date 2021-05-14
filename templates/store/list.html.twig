@@ -62,6 +62,13 @@
                   {% trans %}stores.deliveries{% endtrans %}
                 </a>
               </li>
+              {% if is_granted('ROLE_ADMIN') %}
+              <li>
+                <a href="{{ path('admin_store_users', { id: store.id }) }}">
+                  {% trans %}stores.users{% endtrans %}
+                </a>
+              </li>
+              {% endif %}
               <li>
                 <a href="{{ path(store_delivery_new_route, { id: store.id }) }}">
                   {% trans %}stores.createNewDelivery{% endtrans %}

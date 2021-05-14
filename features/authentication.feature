@@ -25,6 +25,30 @@ Feature: Authenticate
       }
       """
 
+  Scenario: Refresh token
+    Given the user is loaded:
+      | email    | bob@coopcycle.org |
+      | username | bob               |
+      | password | 123456            |
+    And the user "bob" has a refresh token "123456"
+    And I send a "POST" request to "/api/token/refresh" with parameters:
+      | key           | value  |
+      | refresh_token | 123456 |
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "token": @string@,
+        "roles": @array@,
+        "username": "bob",
+        "email": "bob@coopcycle.org",
+        "id": @integer@,
+        "refresh_token": "123456",
+        "enabled": true
+      }
+      """
+
   Scenario: Login by email success
     And the user is loaded:
       | email    | bob@coopcycle.org |
@@ -180,8 +204,24 @@ Feature: Authenticate
       "detail":@string@,
       "violations":[
         {
-          "propertyPath":"data.username",
-          "message":@string@
+          "propertyPath":"username",
+          "message":@string@,
+          "code":@string@
+        },
+        {
+          "propertyPath":"username",
+          "message":@string@,
+          "code":@string@
+        },
+        {
+          "propertyPath":"username",
+          "message":@string@,
+          "code":@string@
+        },
+        {
+          "propertyPath":"username",
+          "message":@string@,
+          "code":@string@
         }
       ]
     }
@@ -206,13 +246,19 @@ Feature: Authenticate
     And the JSON should match:
     """
     {
-      "type":"https:\/\/tools.ietf.org\/html\/rfc2616#section-10",
+      "type":"https://tools.ietf.org/html/rfc2616#section-10",
       "title":@string@,
       "detail":@string@,
       "violations":[
         {
-          "propertyPath":"data.username",
-          "message":@string@
+          "propertyPath":"username",
+          "message":@string@,
+          "code":@string@
+        },
+        {
+          "propertyPath":"username",
+          "message":@string@,
+          "code":@string@
         }
       ]
     }
@@ -237,13 +283,19 @@ Feature: Authenticate
     And the JSON should match:
     """
     {
-      "type":"https:\/\/tools.ietf.org\/html\/rfc2616#section-10",
+      "type":"https://tools.ietf.org/html/rfc2616#section-10",
       "title":@string@,
       "detail":@string@,
       "violations":[
         {
-          "propertyPath":"data.email",
-          "message":@string@
+          "propertyPath":"email",
+          "message":@string@,
+          "code":@string@
+        },
+        {
+          "propertyPath":"email",
+          "message":@string@,
+          "code":@string@
         }
       ]
     }

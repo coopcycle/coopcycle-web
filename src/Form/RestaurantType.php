@@ -8,6 +8,7 @@ use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Form\Restaurant\FulfillmentMethodType;
 use AppBundle\Form\Restaurant\LoopeatType;
 use AppBundle\Form\Restaurant\ShippingOptionsTrait;
+use AppBundle\Form\Restaurant\FulfillmentMethodsTrait;
 use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\FormEvent;
@@ -19,13 +20,15 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RestaurantType extends LocalBusinessType
 {
-    use ShippingOptionsTrait {
-        buildForm as buildShippingOptionsForm;
+    use ShippingOptionsTrait, FulfillmentMethodsTrait {
+        ShippingOptionsTrait::buildForm as buildShippingOptionsForm;
+        FulfillmentMethodsTrait::buildForm as buildFulfillmentMethodsForm;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -33,6 +36,7 @@ class RestaurantType extends LocalBusinessType
         parent::buildForm($builder, $options);
 
         $this->buildShippingOptionsForm($builder, $options);
+        $this->buildFulfillmentMethodsForm($builder, $options);
 
         $builder
             ->add('type', LocalBusinessTypeChoiceType::class)
@@ -46,6 +50,7 @@ class RestaurantType extends LocalBusinessType
                 'entry_type' => FulfillmentMethodType::class,
                 'entry_options' => [
                     'label' => false,
+                    'block_prefix' => 'fulfillment_method_item',
                 ],
                 'allow_add' => false,
                 'allow_delete' => false,
@@ -86,17 +91,6 @@ class RestaurantType extends LocalBusinessType
                     'label' => 'restaurant.form.deposit_refund_enabled.label',
                     'required' => false,
                 ])
-                ->add('enabledFulfillmentMethods', ChoiceType::class, [
-                    'choices'  => [
-                        'fulfillment_method.delivery' => 'delivery',
-                        'fulfillment_method.collection' => 'collection',
-                    ],
-                    'label' => 'restaurant.form.fulfillment_methods.label',
-                    'required' => false,
-                    'expanded' => true,
-                    'multiple' => true,
-                    'mapped' => false,
-                ])
                 ->add('delete', SubmitType::class, [
                     'label' => 'basics.delete',
                 ]);
@@ -109,23 +103,10 @@ class RestaurantType extends LocalBusinessType
             ]);
         }
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $restaurant = $event->getData();
             $form = $event->getForm();
-
-            if ($form->has('enabledFulfillmentMethods')) {
-
-                $enabledFulfillmentMethods = [];
-                if ($restaurant->isFulfillmentMethodEnabled('delivery')) {
-                    $enabledFulfillmentMethods[] = 'delivery';
-                }
-                if ($restaurant->isFulfillmentMethodEnabled('collection')) {
-                    $enabledFulfillmentMethods[] = 'collection';
-                }
-
-                $form->get('enabledFulfillmentMethods')->setData($enabledFulfillmentMethods);
-            }
 
             if (null !== $restaurant->getId()) {
 
@@ -148,13 +129,7 @@ class RestaurantType extends LocalBusinessType
                         ]);
                 }
 
-                $isFoodEstablishment = false;
-                foreach (FoodEstablishment::values() as $value) {
-                    if ($value->getValue() === $restaurant->getType()) {
-                        $isFoodEstablishment = true;
-                        break;
-                    }
-                }
+                $isFoodEstablishment = FoodEstablishment::isValid($restaurant->getType());
 
                 if ($isFoodEstablishment) {
                     $form
@@ -163,6 +138,16 @@ class RestaurantType extends LocalBusinessType
                             'required' => false,
                             'data' => $this->serializer->serialize($restaurant->getServesCuisine(), 'jsonld')
                         ]);
+
+                    if ($options['edenred_enabled']) {
+                        $form
+                            ->add('edenredMerchantId', TextType::class, [
+                                'label' => 'restaurant.form.edenred_merchant_id.label',
+                                'help' => 'restaurant.form.edenred_merchant_id.help',
+                                'required' => false,
+                                'disabled' => !$this->authorizationChecker->isGranted('ROLE_ADMIN')
+                            ]);
+                    }
                 }
             }
 
@@ -177,13 +162,6 @@ class RestaurantType extends LocalBusinessType
 
                 $form = $event->getForm();
                 $restaurant = $form->getData();
-
-                if ($form->has('enabledFulfillmentMethods')) {
-                    $enabledFulfillmentMethods = $form->get('enabledFulfillmentMethods')->getData();
-
-                    $restaurant->addFulfillmentMethod('delivery', in_array('delivery', $enabledFulfillmentMethods));
-                    $restaurant->addFulfillmentMethod('collection', in_array('collection', $enabledFulfillmentMethods));
-                }
 
                 if ($form->has('allowStripeConnect')) {
                     $allowStripeConnect = $form->get('allowStripeConnect')->getData();
@@ -250,7 +228,8 @@ class RestaurantType extends LocalBusinessType
 
         $resolver->setDefaults(array(
             'data_class' => LocalBusiness::class,
-            'loopeat_enabled' => $this->loopeatEnabled,
+            'loopeat_enabled' => false,
+            'edenred_enabled' => false,
         ));
     }
 }

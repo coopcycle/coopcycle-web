@@ -12,6 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
+ *       "security"="is_granted('view', object.getTask())",
  *     }
  *   }
  * )

@@ -70,26 +70,35 @@ class ContractType extends AbstractType
                 'scale' => 2,
                 'type' => 'fractional',
             ])
-            ->add('restaurantPaysStripeFee', ChoiceType::class, [
-                'label' => 'restaurant.contract.restaurantPaysStripeFee.label',
-                'choices' => array(
-                    'restaurant.contract.restaurantPaysStripeFee.restaurant' => true,
-                    'restaurant.contract.restaurantPaysStripeFee.cooperative' => false
-                )
-            ])
             ->add('takeAwayFeeRate', PercentType::class, [
                 'label' => 'restaurant.contract.takeAwayFeeRate.label',
                 'help' => 'restaurant.contract.takeAwayFeeRate.help',
                 'scale' => 2,
                 'type' => 'fractional',
             ]);
+
+        if ($options['with_advanced_options']) {
+            $builder
+                ->add('restaurantPaysStripeFee', ChoiceType::class, [
+                    'label' => 'restaurant.contract.restaurantPaysStripeFee.label',
+                    'choices' => array(
+                        'restaurant.contract.restaurantPaysStripeFee.restaurant' => true,
+                        'restaurant.contract.restaurantPaysStripeFee.cooperative' => false
+                    )
+                ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Contract::class
+            'data_class' => Contract::class,
+            'with_advanced_options' => true,
         ]);
     }
 
+    public function getBlockPrefix()
+    {
+        return 'contract';
+    }
 }

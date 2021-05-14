@@ -13,28 +13,42 @@ use AppBundle\Form\DeliveryEmbedType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use FOS\UserBundle\Util\CanonicalizerInterface;
+use Nucleos\UserBundle\Util\CanonicalizerInterface;
 use Hashids\Hashids;
 use libphonenumber\PhoneNumber;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Resource\Factory\FactoryInterface;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
  */
-class EmbedController extends Controller
+class EmbedController extends AbstractController
 {
     use DeliveryTrait;
+
+    public function __construct(RepositoryInterface $customerRepository, FactoryInterface $customerFactory, TranslatorInterface $translator)
+    {
+        $this->customerRepository = $customerRepository;
+        $this->customerFactory = $customerFactory;
+        $this->translator = $translator;
+    }
 
     protected function getDeliveryRoutes()
     {
@@ -50,13 +64,13 @@ class EmbedController extends Controller
 
     private function findOrCreateCustomer($email, PhoneNumber $telephone, CanonicalizerInterface $canonicalizer)
     {
-        $customer = $this->get('sylius.repository.customer')
+        $customer = $this->customerRepository
             ->findOneBy([
                 'emailCanonical' => $canonicalizer->canonicalize($email)
             ]);
 
         if (!$customer) {
-            $customer = $this->get('sylius.factory.customer')->createNew();
+            $customer = $this->customerFactory->createNew();
 
             $customer->setEmail($email);
             $customer->setEmailCanonical($canonicalizer->canonicalize($email));
@@ -144,7 +158,13 @@ class EmbedController extends Controller
      */
     public function deliverySummaryAction($hashid, Request $request,
         DeliveryManager $deliveryManager,
-        TaxRateResolverInterface $taxRateResolver)
+        OrderRepositoryInterface $orderRepository,
+        OrderManager $orderManager,
+        OrderFactory $orderFactory,
+        EntityManagerInterface $objectManager,
+        CanonicalizerInterface $canonicalizer,
+        OrderProcessorInterface $orderProcessor,
+        SessionInterface $session)
     {
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
@@ -166,27 +186,43 @@ class EmbedController extends Controller
             try {
 
                 $delivery = $form->getData();
+
+                $email = $form->get('email')->getData();
+                $telephone = $form->get('telephone')->getData();
+
+                $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
                 $price = $this->getDeliveryPrice(
                     $delivery,
                     $deliveryForm->getPricingRuleSet(),
                     $deliveryManager
                 );
+                $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $customer, $attach = false);
 
-                $rate = $taxRateResolver->resolve(
-                    $this->get('sylius.factory.product_variant')->createForDelivery($delivery, $price)
-                );
+                if ($billingAddress = $form->get('billingAddress')->getData()) {
+                    $this->setBillingAddress($order, $billingAddress);
+                }
 
-                $priceExcludingTax = (int) round($price / (1 + $rate->getAmount()));
+                $orderProcessor->process($order);
+
+                $objectManager->persist($order);
+                $objectManager->flush();
+
+                $sessionKeyName = sprintf('delivery_form.%s.cart', $hashid);
+
+                $session->set($sessionKeyName, $order->getId());
+
+                $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
                 return $this->render('embed/delivery/summary.html.twig', [
                     'hashid' => $hashid,
                     'price' => $price,
-                    'price_excluding_tax' => $priceExcludingTax,
+                    'price_excluding_tax' => ($order->getTotal() - $order->getTaxTotal()),
                     'form' => $form->createView(),
+                    'payment' => $payment,
                 ]);
 
             } catch (NoRuleMatchedException $e) {
-                $message = $this->get('translator')->trans('delivery.price.error.priceCalculation', [], 'validators');
+                $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                 $form->addError(new FormError($message));
             }
 
@@ -206,13 +242,25 @@ class EmbedController extends Controller
         OrderManager $orderManager,
         EntityManagerInterface $objectManager,
         DeliveryManager $deliveryManager,
-        CanonicalizerInterface $canonicalizer)
+        SessionInterface $session)
     {
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
         }
 
         $deliveryForm = $this->decode($hashid);
+
+        $sessionKeyName = sprintf('delivery_form.%s.cart', $hashid);
+
+        if (!$session->has($sessionKeyName)) {
+            return $this->redirectToRoute('embed_delivery_start', ['hashid' => $hashid]);
+        }
+
+        $order = $orderRepository->findCartById($session->get($sessionKeyName));
+
+        if (null === $order) {
+            return $this->redirectToRoute('embed_delivery_start', ['hashid' => $hashid]);
+        }
 
         $form = $this->doCreateDeliveryForm([
             'with_weight' => $deliveryForm->getWithWeight(),
@@ -227,33 +275,26 @@ class EmbedController extends Controller
 
             $delivery = $form->getData();
 
-            $stripeToken = $form->get('stripePayment')->get('stripeToken')->getData();
+            $data = [
+                'stripeToken' => $form->get('stripePayment')->get('stripeToken')->getData()
+            ];
 
-            $email = $form->get('email')->getData();
-            $telephone = $form->get('telephone')->getData();
+            $orderManager->checkout($order, $data);
 
-            $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
-            $price = $this->getDeliveryPrice(
-                $delivery,
-                $deliveryForm->getPricingRuleSet(),
-                $deliveryManager
-            );
-            $order = $this->createOrderForDelivery($delivery, $price, $customer);
+            $order->setDelivery($delivery);
 
-            if ($billingAddress = $form->get('billingAddress')->getData()) {
-                $this->setBillingAddress($order, $billingAddress);
-            }
-
-            $orderRepository->add($order);
-            $orderManager->checkout($order, $stripeToken);
             $objectManager->flush();
 
             $this->addFlash(
                 'embed_delivery',
-                $this->get('translator')->trans('embed.delivery.confirm_message')
+                $this->translator->trans('embed.delivery.confirm_message')
             );
 
-            return $this->redirectToRoute('public_order', ['number' => $order->getNumber()]);
+            $hashids = new Hashids($this->getParameter('secret'), 8);
+
+            return $this->redirectToRoute('public_order', [
+                'hashid' => $hashids->encode($order->getId())
+            ]);
         }
 
         return $this->render('embed/delivery/summary.html.twig', [

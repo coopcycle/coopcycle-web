@@ -1,6 +1,14 @@
 {% extends "bootstrap_3_layout.html.twig" %}
 
-{% block _order_export_date_widget %}
+{% block _order_export_start_widget %}
+<div>
+  <div id="{{ form.vars.id }}_widget"></div>
+  {% set type = 'hidden' %}
+  {{ block('hidden_widget') }}
+</div>
+{% endblock %}
+
+{% block _order_export_end_widget %}
 <div>
   <div id="{{ form.vars.id }}_widget"></div>
   {% set type = 'hidden' %}

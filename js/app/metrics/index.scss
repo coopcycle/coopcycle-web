@@ -1,0 +1,21 @@
+.table-restaurant-stats {
+  > thead > tr > th,
+  > tbody > tr > td,
+  > tfoot > tr > td {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 12px;
+  }
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 16px;
+}
+
+.metrics-chart-panel {
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

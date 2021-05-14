@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -78,15 +77,6 @@ class StoreType extends LocalBusinessType
             $store = $event->getData();
 
             if (null !== $store && null !== $store->getId()) {
-                foreach ($store->getAddresses() as $address) {
-                    if ($address !== $store->getAddress()) {
-                        $form->add(sprintf('setAsDefault_%s', $address->getId()), SubmitType::class, [
-                            'label' => 'form.store_type.setAsDefault.label',
-                            'attr' => [ 'data-address' => $address->getId() ]
-                        ]);
-                    }
-                }
-
                 // Remove default address form
                 $form->remove('address');
             }
@@ -97,22 +87,9 @@ class StoreType extends LocalBusinessType
             $form = $event->getForm();
             $store = $event->getData();
 
-            if ($form->getClickedButton()) {
-                $options = $form->getClickedButton()->getConfig()->getOptions();
-                $addressId = $options['attr']['data-address'];
-                foreach ($store->getAddresses() as $storeAddress) {
-                    if ($storeAddress->getId() === $addressId) {
-                        $store->setAddress($storeAddress);
-                        break;
-                    }
-                }
-            } else {
-                if (null === $store->getId()) {
-                    $defaultAddress = $store->getAddress();
-                    if (!$store->getAddresses()->contains($defaultAddress)) {
-                        $store->addAddress($defaultAddress);
-                    }
-                }
+            if (null === $store->getId()) {
+                $defaultAddress = $store->getAddress();
+                $store->addAddress($defaultAddress);
             }
         });
     }

@@ -22,26 +22,31 @@ services:
     build:
       dockerfile: './docker/nodejs/Dockerfile'
       context: '.'
+    image: coopcycle/node
     depends_on:
       - postgres
       - redis
+      - tile38
     ports:
       - '8000:8000'
-      - '8001:8001'
-      - '8002:8002'
     volumes:
-      - 'node_modules:/srv/coopcycle/node_modules'
-      - './:/srv/coopcycle:cached'
+      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+      - '.:/srv/coopcycle'
+      - 'node_modules_node:/srv/coopcycle/node_modules/'
+    # environment:
+    #   - APP_ENV
 
   webpack:
     build:
       dockerfile: './docker/webpack/Dockerfile'
       context: '.'
+    image: coopcycle/webpack
     ports:
       - '8080:8080'
     volumes:
-      - 'node_modules:/srv/coopcycle/node_modules'
-      - './:/srv/coopcycle:cached'
+      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+      - '.:/srv/coopcycle'
+      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
 
   osrm:
     build: './docker/osrm'
@@ -67,10 +72,15 @@ services:
       - stripe_mock
       - browserless
     environment:
-      - 'BEHAT_PARAMS={"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80"}}}'
+      # Make sure "base_url" has a trailing slash
+      # https://github.com/FriendsOfBehat/SymfonyExtension/issues/124
+      - 'BEHAT_PARAMS={"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80/"}}}'
       - GOOGLE_API_KEY
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY
+      - ALGOLIA_PLACES_APP_ID
+      - ALGOLIA_PLACES_API_KEY
+      - ALGOLIA_PLACES_ADDRESS_TEMPLATE
     volumes:
       - 'php_cache:/var/www/html/var/cache'
       - './:/var/www/html:cached'
@@ -97,6 +107,7 @@ services:
     depends_on:
       - php
       - nodejs
+      - centrifugo
     ports:
       - '80:80'
     volumes:
@@ -128,7 +139,6 @@ services:
 
   browserless:
     image: browserless/chrome
-    restart: always
     environment:
       - DEBUG=browserless/chrome*
 
@@ -186,8 +196,64 @@ services:
     depends_on:
       - osrm
 
+  sonic:
+    image: valeriansaliou/sonic:v1.3.0
+    ports:
+      - "1491:1491"
+    volumes:
+      - ./sonic.cfg:/etc/sonic.cfg
+
+  centrifugo:
+    image: centrifugo/centrifugo
+    ports:
+      - "8100:8000"
+    depends_on:
+      - redis
+    environment:
+      - CENTRIFUGO_TOKEN_HMAC_SECRET_KEY
+      - CENTRIFUGO_API_KEY
+      - CENTRIFUGO_V3_USE_OFFSET=true
+      - CENTRIFUGO_ENGINE=redis
+      - CENTRIFUGO_REDIS_URL=redis://redis:6379
+      - CENTRIFUGO_ADMIN=true
+      - CENTRIFUGO_ADMIN_PASSWORD=centrifugo
+      - CENTRIFUGO_ADMIN_SECRET=centrifugo
+
+  # https://cube.dev/docs/getting-started-docker
+  cube:
+    image: cubejs/cube:alpine
+    ports:
+      - 4000:4000
+    depends_on:
+      - postgres
+    environment:
+      - CUBEJS_DB_TYPE=postgres
+      - CUBEJS_DB_HOST=${COOPCYCLE_DB_HOST}
+      - CUBEJS_DB_PORT=${COOPCYCLE_DB_PORT}
+      # - CUBEJS_DB_NAME=${COOPCYCLE_DB_NAME}
+      - CUBEJS_DB_USER=${COOPCYCLE_DB_USER}
+      - CUBEJS_DB_PASS=${COOPCYCLE_DB_PASSWORD}
+      - CUBEJS_WEB_SOCKETS=true
+      - CUBEJS_DEV_MODE=true
+      - CUBEJS_API_SECRET
+    volumes:
+      - ./cube:/cube/conf/schema
+      - ./cube.js:/cube/conf/cube.js
+
+  typesense:
+    image: typesense/typesense:0.19.0
+    ports:
+      - 8108:8108
+    environment:
+      - TYPESENSE_API_KEY
+      - TYPESENSE_DATA_DIR=/data
+    volumes:
+      - typesense_data:/data
+
 volumes:
-  node_modules:
+  node_modules_node:
+  node_modules_webpack:
   pg_data:
   php_cache:
   minio_data:
+  typesense_data:

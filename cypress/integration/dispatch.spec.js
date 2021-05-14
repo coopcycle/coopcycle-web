@@ -15,11 +15,10 @@ context('Checkout', () => {
     })
   })
 
-  it('make basic dispatch operations', () => {
+  it.skip('make basic dispatch operations', () => {
 
-    cy.server()
-    cy.route('POST', '/api/tasks').as('postTask')
-    cy.route('POST', '/admin/task-lists/**/jane').as('postTaskList')
+    cy.intercept('POST', '/api/tasks').as('postTask')
+    cy.intercept('POST', '/admin/task-lists/**/jane').as('postTaskList')
 
     cy.visit('/login')
 
@@ -82,11 +81,11 @@ context('Checkout', () => {
 
     cy.get('.ReactModal__Content--task-form')
       .find('ul[role="listbox"] li', { timeout: 5000 })
-      .contains('91 Rue de Rivoli, Paris, France')
+      .contains('91 Rue de Rivoli, 75004 Paris, France')
       .click()
 
     cy.get('.ReactModal__Content--task-form input[type="search"]')
-      .should('have.value', '91 Rue de Rivoli, Paris, France')
+      .should('have.value', '91 Rue de Rivoli, 75004 Paris, France')
 
     // FIXME
     // Make it work without wait

@@ -9,14 +9,9 @@ use AppBundle\Sylius\Order\OrderInterface;
 
 class OrderFulfilled extends Event implements DomainEvent, HasIconInterface
 {
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'order:fulfilled';
-    }
-
-    public function __construct(OrderInterface $order)
-    {
-        parent::__construct($order);
     }
 
     public static function iconName()

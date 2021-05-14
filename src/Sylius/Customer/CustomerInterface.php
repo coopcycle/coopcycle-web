@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\Customer;
 
+use AppBundle\Entity\Edenred\CustomerCredentials as EdenredCustomerCredentials;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\User;
 use AppBundle\LoopEat\OAuthCredentialsInterface;
@@ -69,4 +70,18 @@ interface CustomerInterface extends BaseCustomerInterface, OAuthCredentialsInter
      * @param PhoneNumber|string $telephone
      */
     public function setTelephone($telephone);
+
+    /**
+     * @return bool
+     */
+    public function hasEdenredCredentials(): bool;
+
+    /**
+     * @return EdenredCustomerCredentials|null
+     */
+    public function getEdenredCredentials(): ?EdenredCustomerCredentials;
+
+    public function setEdenredAccessToken($accessToken);
+
+    public function setEdenredRefreshToken($refreshToken);
 }

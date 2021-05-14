@@ -7,8 +7,7 @@ use AppBundle\Form\StripePaymentType;
 use AppBundle\Service\StripeManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
-use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
+use phpcent\Client as CentrifugoClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Stripe;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
@@ -30,34 +29,31 @@ class PublicController extends AbstractController
     }
 
     /**
-     * @Route("/o/{number}", name="public_order")
+     * @Route("/o/{hashid}", name="public_order")
      */
-    public function orderAction($number, Request $request, EntityManagerInterface $objectManager, StripeManager $stripeManager)
+    public function orderAction($hashid, Request $request,
+        EntityManagerInterface $objectManager,
+        StripeManager $stripeManager)
     {
-        $order = $this->orderRepository->findOneBy([
-            'number' => $number
-        ]);
+        $hashids = new Hashids($this->getParameter('secret'), 8);
+        $decoded = $hashids->decode($hashid);
 
-        if (null === $order) {
-
-            $hashids = new Hashids($this->getParameter('secret'), 8);
-            $decoded = $hashids->decode($number);
-
-            if (count($decoded) !== 1) {
-                throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $number));
-            }
-
-            $id = current($decoded);
-            $order = $this->orderRepository->find($id);
+        if (count($decoded) !== 1) {
+            throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
         }
 
+        $id = current($decoded);
+        $order = $this->orderRepository->find($id);
+
         if (null === $order) {
-            throw new NotFoundHttpException(sprintf('Order %s does not exist', $number));
+            throw new NotFoundHttpException(sprintf('Order #%d does not exist', $id));
         }
 
-        if (null !== $order->getRestaurant()) {
+        if ($order->hasVendor()) {
             throw $this->createAccessDeniedException();
         }
+
+        $this->denyAccessUnlessGranted('view_public', $order);
 
         $lastPayment = $order->getLastPayment();
 
@@ -84,14 +80,12 @@ class PublicController extends AbstractController
 
                     $stripeManager->configure();
 
-                    $charge = Stripe\Charge::create([
-                      'amount' => $lastPayment->getAmount(),
-                      'currency' => strtolower($lastPayment->getCurrencyCode()),
-                      'description' => sprintf('Order %s', $order->getNumber()),
-                      'source' => $stripeToken,
-                    ]);
+                    if ($lastPayment->requiresUseStripeSDK()) {
+                        $stripeManager->confirmIntent($lastPayment);
+                    }
 
-                    $lastPayment->setCharge($charge->id);
+                    $stripeManager->capture($lastPayment);
+
                     $lastPayment->setState(PaymentInterface::STATE_COMPLETED);
 
                 } catch (Stripe\Exception\ApiErrorException $e) {
@@ -104,7 +98,7 @@ class PublicController extends AbstractController
                 }
 
                 return $this->redirectToRoute('public_order', [
-                    'number' => $number
+                    'hashid' => $hashid
                 ]);
             }
 
@@ -118,8 +112,7 @@ class PublicController extends AbstractController
      * @Route("/d/{hashid}", name="public_delivery")
      */
     public function deliveryAction($hashid, Request $request,
-        JWTEncoderInterface $jwtEncoder,
-        JWSProviderInterface $jwsProvider)
+        CentrifugoClient $centrifugoClient)
     {
         $hashids = new Hashids($this->getParameter('secret'), 8);
 
@@ -141,25 +134,23 @@ class PublicController extends AbstractController
             $courier = $delivery->getPickup()->getAssignedCourier();
         }
 
-        $token = null;
+        $token = '';
+        $channel = '';
         if ($delivery->isAssigned() && !$delivery->isCompleted()) {
 
+            // Token expires 3 hours after expected completion
             $expiration = clone $delivery->getDropoff()->getDoneBefore();
             $expiration->modify('+3 hours');
 
-            $token = $jwsProvider->create([
-                // We add a custom "msn" claim to the token,
-                // that will allow tracking a messenger
-                'msn' => $courier->getUsername(),
-                // Token expires 3 hours after expected completion
-                'exp' => $expiration->getTimestamp(),
-            ])->getToken();
+            $channel = sprintf('%s_tracking#%s', $this->getParameter('centrifugo_namespace'), $courier->getUsername());
+            $token = $centrifugoClient->generateConnectionToken($courier->getUsername(), $expiration->getTimestamp());
         }
 
         return $this->render('delivery/tracking.html.twig', [
             'delivery' => $delivery,
             'courier' => $courier,
-            'token' => $token,
+            'centrifugo_token' => $token,
+            'centrifugo_channel' => $channel,
         ]);
     }
 }

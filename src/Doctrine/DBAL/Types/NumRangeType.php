@@ -30,21 +30,21 @@ class NumRangeType extends Type
             return $value;
         }
 
-        return sprintf('[%s,%s]', $value->getLower(), $value->getUpper() === INF ? '' : $value->getUpper());
+        return sprintf('[%s,%s]', $value->getLower(), $value->getUpper() === 'INF' ? '' : $value->getUpper());
     }
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         if (null !== $value) {
 
-            preg_match('/^(\[|\()([0-9]+),([0-9]?)(\]|\))$/', $value, $matches);
+            preg_match('/^(\[|\()([0-9]+),([0-9]*)(\]|\))$/', $value, $matches);
 
             $lower = $matches[2];
             $upper = $matches[3];
 
             $value = new NumRange();
             $value->setLower($lower);
-            $value->setUpper(empty($upper) ? INF : $upper);
+            $value->setUpper(empty($upper) ? 'INF' : $upper);
         }
 
         return $value;

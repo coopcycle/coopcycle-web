@@ -2,12 +2,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import moment from 'moment'
-import { ConfigProvider, DatePicker } from 'antd'
+import { DatePicker } from 'antd'
 import _ from 'lodash'
 
-import { antdLocale } from '../../i18n'
-import { openFiltersModal, resetFilters, openSettings, openImportModal } from '../redux/actions'
-import { selectSelectedDate } from '../../coopcycle-frontend-js/dispatch/redux'
+import { openFiltersModal, resetFilters, openSettings, openImportModal, openExportModal } from '../redux/actions'
+import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 
 class Navbar extends React.Component {
 
@@ -43,6 +42,11 @@ class Navbar extends React.Component {
   _onImportClick(e) {
     e.preventDefault()
     this.props.openImportModal()
+  }
+
+  _onExportClick(e) {
+    e.preventDefault()
+    this.props.openExportModal()
   }
 
   renderFilters() {
@@ -103,19 +107,17 @@ class Navbar extends React.Component {
                     <i className="fa fa-caret-left"></i>
                   </a>
                   <div className="dashboard__date-picker">
-                    <ConfigProvider locale={antdLocale}>
-                      <DatePicker
-                        format={ 'll' }
-                        defaultValue={ this.props.date }
-                        onChange={(date) => {
-                          if (date) {
-                            window.location.href = window.Routing.generate('admin_dashboard_fullscreen', {
-                              date: date.format('YYYY-MM-DD'),
-                              nav: this.props.nav
-                            })
-                          }
-                        }} />
-                    </ConfigProvider>
+                    <DatePicker
+                      format={ 'll' }
+                      defaultValue={ this.props.date }
+                      onChange={(date) => {
+                        if (date) {
+                          window.location.href = window.Routing.generate('admin_dashboard_fullscreen', {
+                            date: date.format('YYYY-MM-DD'),
+                            nav: this.props.nav
+                          })
+                        }
+                      }} />
                   </div>
                   <a className="dashboard__date-link" href={ this.props.next }>
                     <i className="fa fa-caret-right"></i>
@@ -123,12 +125,12 @@ class Navbar extends React.Component {
                 </div>
               </li>
               <li>
-                <a href="#" data-toggle="modal" data-target="#export-modal">
+                <a href="#" onClick={ this._onExportClick.bind(this) }>
                   <i className="fa fa-download" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_EXPORT') }
                 </a>
               </li>
               <li>
-                <a href="#"  onClick={ this._onImportClick.bind(this) }>
+                <a href="#" onClick={ this._onImportClick.bind(this) }>
                   <i className="fa fa-upload" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_IMPORT') }
                 </a>
               </li>
@@ -163,15 +165,15 @@ function mapStateToProps(state) {
     date: selectedDate,
     prev: window.Routing.generate('admin_dashboard_fullscreen', {
       date: moment(selectedDate).subtract(1, 'days').format('YYYY-MM-DD'),
-      nav: state.nav
+      nav: state.config.nav
     }),
     next: window.Routing.generate('admin_dashboard_fullscreen', {
       date: moment(selectedDate).add(1, 'days').format('YYYY-MM-DD'),
-      nav: state.nav
+      nav: state.config.nav
     }),
     imports: state.imports,
-    nav: state.nav,
-    isDefaultFilters: state.isDefaultFilters,
+    nav: state.config.nav,
+    isDefaultFilters: state.settings.isDefaultFilters,
     taskImportToken: state.taskImportToken,
   }
 }
@@ -183,6 +185,7 @@ function mapDispatchToProps(dispatch) {
     resetFilters: () => dispatch(resetFilters()),
     openSettings: () => dispatch(openSettings()),
     openImportModal: () => dispatch(openImportModal()),
+    openExportModal: () => dispatch(openExportModal()),
   }
 }
 

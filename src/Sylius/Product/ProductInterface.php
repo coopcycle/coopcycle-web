@@ -12,4 +12,9 @@ interface ProductInterface extends BaseProductInterface
     public function hasOptionValue(ProductOptionValueInterface $optionValue): bool;
 
     public function getPositionForOption(ProductOptionInterface $option): int;
+
+    /**
+     * @return LocalBusiness|null
+     */
+    public function getRestaurant(): ?LocalBusiness;
 }

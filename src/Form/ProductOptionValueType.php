@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,6 +25,10 @@ class ProductOptionValueType extends AbstractType
             ->add('price', MoneyType::class, [
                 'label' => 'form.product_option_value.price.label',
                 'empty_data' => 0,
+            ])
+            ->add('enabled', CheckboxType::class, [
+                'label' => 'basics.enabled',
+                'required' => false,
             ]);
     }
 

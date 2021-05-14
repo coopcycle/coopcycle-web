@@ -18,6 +18,13 @@ class ProductSpreadsheetParser extends AbstractSpreadsheetParser
     private $variantFactory;
     private $taxCategoryRepository;
 
+    private static $taxCategories = [
+        'BASE_STANDARD',
+        'BASE_INTERMEDIARY',
+        'BASE_REDUCED',
+        'BASE_EXEMPT',
+    ];
+
     public function __construct(
         SerializerInterface $serializer,
         ProductFactoryInterface $productFactory,
@@ -33,7 +40,7 @@ class ProductSpreadsheetParser extends AbstractSpreadsheetParser
     /**
      * @inheritdoc
      */
-    protected function parseData(array $data, array $options = []): array
+    public function parseData(array $data, array $options = []): array
     {
         return array_map(function ($data)  {
 
@@ -78,7 +85,7 @@ class ProductSpreadsheetParser extends AbstractSpreadsheetParser
         }, $data);
     }
 
-    protected function validateHeader(array $header)
+    public function validateHeader(array $header)
     {
         $expected = [
             'name',
@@ -95,18 +102,25 @@ class ProductSpreadsheetParser extends AbstractSpreadsheetParser
 
     public function getExampleData(): array
     {
+        $categories = [];
+        foreach ($this->taxCategoryRepository->findAll() as $taxCategory) {
+            if (in_array($taxCategory->getCode(), self::$taxCategories)) {
+                $categories[] = $taxCategory->getName();
+            }
+        }
+
         return [
             [
                 'name' => 'Pizza Margherita',
                 'description' => 'The most famous pizza',
                 'price_tax_incl' => 900,
-                'tax_category' => 'Food',
+                'tax_category' => $categories[array_rand($categories)],
             ],
             [
                 'name' => 'Pizza Regina',
                 'description' => 'Another pizza',
                 'price_tax_incl' => 1000,
-                'tax_category' => 'Food',
+                'tax_category' => $categories[array_rand($categories)],
             ]
         ];
     }

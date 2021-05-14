@@ -5,8 +5,9 @@ namespace Tests\AppBundle\Domain\Order\Reactor;
 use AppBundle\Domain\Order\Event\OrderCancelled;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Order\Reactor\CapturePayment;
+use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Payment;
-use AppBundle\Entity\Restaurant;
+use AppBundle\Message\RetrieveStripeFee;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\MercadopagoManager;
@@ -15,6 +16,7 @@ use AppBundle\Service\StripeManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
+use Psr\Log\NullLogger;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Stripe;
 
@@ -28,43 +30,35 @@ class CapturePaymentTest extends TestCase
     {
         $this->stripeManager = $this->prophesize(StripeManager::class);
         $this->mercadopagoManager = $this->prophesize(MercadopagoManager::class);
+        $this->edenred = $this->prophesize(EdenredClient::class);
 
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
 
         $this->gateway = new Gateway(
             $this->gatewayResolver->reveal(),
             $this->stripeManager->reveal(),
-            $this->mercadopagoManager->reveal()
+            $this->mercadopagoManager->reveal(),
+            $this->edenred->reveal()
         );
 
         $this->capturePayment = new CapturePayment(
-            $this->gateway
+            $this->gateway,
+            new NullLogger()
         );
     }
 
     public function testDoesNothingWhenChargeIsAlreadyCaptured()
     {
-        $restaurant = new Restaurant();
-
-        $source = Stripe\Source::constructFrom([
-            'id' => 'src_12345678',
-            'type' => 'giropay',
-            'client_secret' => '',
-            'redirect' => [
-                'url' => 'http://example.com'
-            ]
-        ]);
-
         $payment = new Payment();
         $payment->setAmount(3350);
         $payment->setCurrencyCode('EUR');
-        $payment->setSource($source);
+        $payment->setPaymentMethodTypes(['giropay']);
 
         $order = $this->prophesize(OrderInterface::class);
 
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->hasVendor()
+            ->willReturn(true);
         $order
             ->isEmpty()
             ->willReturn(false);
@@ -80,6 +74,11 @@ class CapturePaymentTest extends TestCase
         $order
             ->getLastPayment(PaymentInterface::STATE_COMPLETED)
             ->willReturn($payment);
+        $order
+            ->getNumber()
+            ->willReturn('ABC123');
+
+        $payment->setOrder($order->reveal());
 
         $this->stripeManager
             ->capture(Argument::type(PaymentInterface::class))
@@ -90,8 +89,6 @@ class CapturePaymentTest extends TestCase
 
     public function testCapturesPaymentForFulfilledOrders()
     {
-        $restaurant = new Restaurant();
-
         $payment = new Payment();
         $payment->setAmount(3350);
         $payment->setCurrencyCode('EUR');
@@ -99,8 +96,8 @@ class CapturePaymentTest extends TestCase
         $order = $this->prophesize(OrderInterface::class);
 
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->hasVendor()
+            ->willReturn(true);
         $order
             ->isEmpty()
             ->willReturn(false);
@@ -116,6 +113,11 @@ class CapturePaymentTest extends TestCase
         $order
             ->getLastPayment(PaymentInterface::STATE_COMPLETED)
             ->willReturn(null);
+        $order
+            ->getNumber()
+            ->willReturn('ABC123');
+
+        $payment->setOrder($order->reveal());
 
         $this->stripeManager
             ->capture($payment)
@@ -126,8 +128,6 @@ class CapturePaymentTest extends TestCase
 
     public function testDoesNothingForCancelledOrders()
     {
-        $restaurant = new Restaurant();
-
         $payment = new Payment();
         $payment->setAmount(3350);
         $payment->setCurrencyCode('EUR');
@@ -135,8 +135,8 @@ class CapturePaymentTest extends TestCase
         $order = $this->prophesize(OrderInterface::class);
 
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->hasVendor()
+            ->willReturn(true);
         $order
             ->isEmpty()
             ->willReturn(false);
@@ -152,6 +152,11 @@ class CapturePaymentTest extends TestCase
         $order
             ->getLastPayment(PaymentInterface::STATE_COMPLETED)
             ->willReturn(null);
+        $order
+            ->getNumber()
+            ->willReturn('ABC123');
+
+        $payment->setOrder($order->reveal());
 
         $this->stripeManager
             ->capture($payment)
@@ -162,8 +167,6 @@ class CapturePaymentTest extends TestCase
 
     public function testCapturesPaymentForCancelledOrdersWithNoShowReason()
     {
-        $restaurant = new Restaurant();
-
         $payment = new Payment();
         $payment->setAmount(3350);
         $payment->setCurrencyCode('EUR');
@@ -171,8 +174,8 @@ class CapturePaymentTest extends TestCase
         $order = $this->prophesize(OrderInterface::class);
 
         $order
-            ->getRestaurant()
-            ->willReturn($restaurant);
+            ->hasVendor()
+            ->willReturn(true);
         $order
             ->isEmpty()
             ->willReturn(false);
@@ -188,6 +191,11 @@ class CapturePaymentTest extends TestCase
         $order
             ->getLastPayment(PaymentInterface::STATE_COMPLETED)
             ->willReturn(null);
+        $order
+            ->getNumber()
+            ->willReturn('ABC123');
+
+        $payment->setOrder($order->reveal());
 
         $this->stripeManager
             ->capture($payment)

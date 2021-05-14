@@ -257,9 +257,9 @@ class ModalContent extends React.Component {
           </div>
           <div>
             <h4 className="text-center">
-              <i className="fa fa-cutlery"></i>  { order.restaurant.name }
+              <i className="fa fa-cutlery"></i>  { order.vendor.name }
             </h4>
-            { order.restaurant.telephone && (
+            { (order.restaurant && order.restaurant.telephone) && (
               <div className="text-center text-muted">
                 { this.renderPhoneNumber(order.restaurant.telephone) }
               </div>

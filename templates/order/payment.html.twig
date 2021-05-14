@@ -71,23 +71,11 @@
 
             {{ form_widget(form.stripePayment.stripeToken) }}
 
-            {{ form_row(form.stripePayment.cardholderName, { attr: {  'data-checkout': 'cardholderName' } }) }}
-
-            <div class="form-group">
-              <label class="control-label hidden" for="card-element">
-                {% trans %}order.payment.title{% endtrans %}
-              </label>
-              <div id="card-element">
-                <!-- a Stripe Element will be inserted here. -->
-              </div>
-              {# <div id="payment-method-picker"></div> #}
-              <!-- Used to display form errors -->
-              <div id="card-errors" role="alert"></div>
+            <div id="card-element">
+              <!-- a React element will be inserted here. -->
             </div>
 
-            <div class="text-center hidden mt-3" id="payment-redirect-help">
-              <span class="help-block">{{ 'order.payment.redirect.help'|trans }}</span>
-            </div>
+            <div id="card-errors" role="alert" class="text-danger"></div>
 
           </div>
         </div>
@@ -98,7 +86,7 @@
         <div class="d-flex flex-row justify-content-between align-items-center py-3">
           <span class="text-success">
             <i class="fa fa-clock-o fa-lg mr-2"></i>
-            <strong>{{ shipping_range|time_range_for_humans }}</strong>
+            <strong>{{ form.shippingTimeRange.vars.value|time_range_for_humans }}</strong>
           </span>
           <div>
             <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
@@ -131,7 +119,10 @@
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
 {% set gateway_configs = gateway_configs|merge({
   stripe: {
-    publishableKey: coopcycle_setting('stripe_publishable_key')
+    publishableKey: coopcycle_setting('stripe_publishable_key'),
+    account: payment.stripeUserId ? payment.stripeUserId : null,
+    createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid }),
+    createGiropayPaymentIntentURL: path('stripe_create_giropay_payment_intent', { hashId: payment|hashid }),
   }
 }) %}
 {% endif %}
@@ -154,7 +145,7 @@
     amount: {{ order.total }},
     gatewayConfigs: {{ gateway_configs|json_encode|raw }},
     tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
-    cardholderNameElement: document.querySelector('#checkout_payment_stripePayment_cardholderName')
+    selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}"
   });
 </script>
 {% endif %}

@@ -1,0 +1,93 @@
+{
+  "nodes":{
+    "nodes":{
+      "left":{
+        "nodes":{
+          "left":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "name":"distance"
+            }
+          },
+          "right":{
+            "nodes":{
+              "left":{
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":1000
+                }
+              },
+              "right":{
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":8000
+                }
+              }
+            },
+            "attributes":{
+              "operator":".."
+            }
+          }
+        },
+        "attributes":{
+          "operator":"in"
+        }
+      },
+      "right":{
+        "nodes":{
+          "left":{
+            "nodes":{
+              "node":{
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "name":"order"
+                }
+              },
+              "attribute":{
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":"itemsTotal"
+                }
+              },
+              "arguments":{
+                "nodes":[
+
+                ],
+                "attributes":[
+
+                ]
+              }
+            },
+            "attributes":{
+              "type":1
+            }
+          },
+          "right":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":10
+            }
+          }
+        },
+        "attributes":{
+          "operator":">"
+        }
+      }
+    },
+    "attributes":{
+      "operator":"and"
+    }
+  }
+}

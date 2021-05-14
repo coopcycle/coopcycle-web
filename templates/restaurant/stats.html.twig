@@ -11,59 +11,105 @@
 <div class="d-flex justify-content-between mb-4">
   <h3 class="nomargin">
   {% trans with {
-    '%start%': start|localizeddate('medium', 'none'),
-    '%end%': end|localizeddate('medium', 'none'),
+    '%start%': start|format_datetime('medium', 'none'),
+    '%end%': end|format_datetime('medium', 'none'),
   } %}basics.date_range{% endtrans %}
   </h3>
   <div class="d-flex align-items-center">
     <form method="post" class="d-inline-block mr-2">
       <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-download"></i> {{ 'basics.export'|trans }}</button>
     </form>
-    <div id="month-picker" class="d-inline-block"></div>
+    <div id="month-picker" class="d-inline-block"
+      data-route-name="{{ stats_route }}"
+      data-restaurant="{{ restaurant.id }}"
+      data-default-value="{{ start|date('Y-m') }}"
+      data-picker-type="{{ picker_type }}"></div>
   </div>
 </div>
 
-{% set refunds = [] %}
-{% for order in stats %}
-  {% if order.hasRefunds() %}
-    {% set refunds = refunds|merge(order.getRefunds()) %}
-  {% endif %}
-{% endfor %}
+{% if cube_token is defined and cube_token is not empty %}
+<div id="cubejs"
+  data-api-url="{{ cubejs_api_url }}"
+  data-token="{{ cube_token|e('html_attr') }}"
+  data-date-range="{{ [ start|date('Y-m-d'), end|date('Y-m-d') ]|json_encode|e('html_attr') }}"
+  class="mb-4"
+  style="min-height: 240px;"></div>
+{% endif %}
 
 <ul class="nav nav-tabs mb-4">
   <li role="presentation" {% if tab == 'orders' %}class="active"{% endif %}>
     <a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, tab: 'orders' })) }}">{{ 'restaurant.list.orders'|trans }} ({{ stats|length }})</a>
   </li>
   <li role="presentation" {% if tab == 'refunds' %}class="active"{% endif %}>
-    <a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, tab: 'refunds' })) }}">{{ 'restaurant.list.refunds'|trans }} ({{ refunds|length }})</a>
+    <a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, tab: 'refunds' })) }}">{{ 'restaurant.list.refunds'|trans }} ({{ refunded_orders|length }})</a>
   </li>
 </ul>
+
+{% set refunds = [] %}
+{% set refunded_orders_hash = {} %}
+{% for order in refunded_orders %}
+  {% set refunds = refunds|merge(order.getRefunds()) %}
+  {% set refunded_orders_hash = refunded_orders_hash|merge({ ('#' ~ order.id) : order }) %}
+{% endfor %}
 
 {% if tab == 'refunds' %}
   {% include 'restaurant/_partials/refunds.html.twig' %}
 {% else %}
-<table class="table table-condensed">
+
+<div class="mb-4 d-flex justify-content-end">
+  <div class="btn-group">
+    <button type="button" class="btn btn-default">
+      {{ with_details ? 'restaurant.stats.view_detailed'|trans : 'restaurant.stats.view_simple'|trans }}
+    </button>
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="caret"></span>
+      <span class="sr-only">Toggle Dropdown</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-right">
+      <li><a href="{{ path(stats_route, (app.request.query.all())|merge({ id: restaurant.id, details: (with_details ? '0' : '1') })) }}">
+        {{ with_details ? 'restaurant.stats.view_simple'|trans : 'restaurant.stats.view_detailed'|trans }}
+      </a></li>
+    </ul>
+  </div>
+</div>
+
+{% set columns =
+  stats.columns|filter(c => (stats.isProductTaxColumn(c) or stats.isTaxColumn(c)) ? with_details : true)  %}
+
+<table class="table table-hover table-condensed table-restaurant-stats">
   <thead>
-    {% for column in stats.columns %}
+    <tr>
+      {% for column in columns %}
       <th class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
         {{ stats.getColumnLabel(column) }}
       </th>
-    {% endfor %}
-    <th></th>
+      {% endfor %}
+      <th></th>
+    </tr>
   </thead>
   <tbody>
-    {% for order in stats %}
-      <tr class="{{ order.hasRefunds() ? 'text-danger' : '' }}">
-        {% for column in stats.columns %}
+    {% for order in stats.getPagination(app.request.query.get('page', 1)) %}
+      <tr class="{{ ('#' ~ order.id) in refunded_orders_hash|keys ? 'text-danger' : '' }}">
+        {% for column in columns %}
         <td class="{{ stats.isNumericColumn(column) ? 'text-right' : 'text-left' }}">
-          {{ stats.getRowValue(column, loop.parent.loop.index0) }}
+          {{ stats.getRowValueForPage(column, loop.parent.loop.index0, app.request.query.get('page', 1)) }}
         </td>
         {% endfor %}
         <td class="text-right">
-          {% if order.hasRefunds() %}
+          {% if ('#' ~ order.id) in refunded_orders_hash|keys %}
+            {% set refunded_order = refunded_orders_hash[('#' ~ order.id)] %}
             <button class="button-icon" data-toggle="tooltip" data-placement="left"
-              title="{{ 'order.refund.total_amount'|trans({ '%amount%': order.refundTotal|price_format }) }}">
+              title="{{ 'order.refund.total_amount'|trans({ '%amount%': refunded_order.refundTotal|price_format }) }}">
               <i class="fa fa-exclamation-circle"></i>
+            </button>
+          {% endif %}
+          {% if order.isMultiVendor %}
+            <button class="button-icon" data-toggle="tooltip" data-placement="left"
+              title="{{ 'order.hub.sub_total.disclaimer'|trans({
+                '%column%': ('order.export.heading.net_revenue'|trans),
+                '%amount%': order.revenue|price_format
+              }) }}">
+              <i class="fa fa-circle text-warning"></i>
             </button>
           {% endif %}
         </td>
@@ -72,28 +118,35 @@
   </tbody>
   <tfoot>
     <tr>
-      {% for column in stats.columns %}
+      {% for column in columns %}
         <td class="text-right">
           <strong>{{ stats.getColumnTotal(column) }}</strong>
         </td>
       {% endfor %}
+      <td></td>
     </tr>
   </tfoot>
 </table>
+<nav class="text-center">
+  {% set pages = stats.getPages() %}
+  {% if pages > 1 %}
+  <ul class="pagination pagination-sm">
+      {% for i in 1..pages %}
+      <li {{ app.request.query.get('page', 1) == i ? 'class="active"' }}>
+        <a href="{{ path(app.request.attributes.get('_route'), { id: restaurant.id }|merge(app.request.query.all|merge({ page: i }))) }}">{{ i }}</a>
+      </li>
+      {% endfor %}
+  </ul>
+  {% endif %}
+</nav>
 {% endif %}
 
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('metrics') }}
+{% endblock %}
+
 {% block scripts %}
-  <script>
-    new CoopCycle.MonthPicker(document.querySelector('#month-picker'), {
-      defaultValue: "{{ start|date('Y-m') }}",
-      onChange: function(date, dateString) {
-        window.location.href = Routing.generate("{{ stats_route }}", { id: {{ restaurant.id }}, month: dateString });
-      }
-    });
-    $(function () {
-      $('[data-toggle="tooltip"]').tooltip();
-    });
-  </script>
+  {{ encore_entry_script_tags('metrics') }}
 {% endblock %}

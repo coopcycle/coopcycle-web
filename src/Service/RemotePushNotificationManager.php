@@ -10,6 +10,7 @@ use Kreait\Firebase\Exception\ServiceAccountDiscoveryFailed;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\MessageTarget;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Pushok;
 
 class RemotePushNotificationManager
@@ -17,6 +18,7 @@ class RemotePushNotificationManager
     private $firebaseFactory;
     private $apnsClient;
     private $entityManager;
+    private $translator;
     private $logger;
 
     private static $enabled = true;
@@ -25,11 +27,13 @@ class RemotePushNotificationManager
         FirebaseFactory $firebaseFactory,
         Pushok\Client $apnsClient,
         EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
         LoggerInterface $logger)
     {
         $this->firebaseFactory = $firebaseFactory;
         $this->apnsClient = $apnsClient;
         $this->entityManager = $entityManager;
+        $this->translator = $translator;
         $this->logger = $logger;
     }
 
@@ -73,7 +77,7 @@ class RemotePushNotificationManager
         if (null !== $notification) {
             $payload['notification'] = [
                 'title' => $notification,
-                'body' => $notification,
+                'body' => $this->translator->trans('notifications.tap_to_open'),
             ];
             $payload['android']['notification'] = [
                 'sound' => 'default',

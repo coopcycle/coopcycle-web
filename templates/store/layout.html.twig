@@ -1,0 +1,71 @@
+{% extends layout %}
+
+{% block content %}
+
+{% set is_main_screen = form is defined and form.vars.id == 'store' %}
+
+{% if is_main_screen %}
+{{ form_start(form) }}
+{% endif %}
+
+  <div class="row">
+    <div class="col-sm-3">
+      {% if form is defined and form.imageFile is defined %}
+        {{ form_row(form.imageFile) }}
+      {% else %}
+        {% set image_url = coopcycle_asset(store, 'imageFile', 'store_thumbnail') %}
+        {% if image_url is empty %}
+          {% set image_url = '//via.placeholder.com/512.jpg' %}
+        {% endif %}
+        <div class="form-group">
+          <div class="image-uploader"
+            {% if image_url is not empty %}style="background-image: url({{ image_url }})"{% endif %}>
+          </div>
+        </div>
+      {% endif %}
+      <ul class="nav nav-pills nav-stacked mb-4">
+        <li role="presentation" {% if app.request.attributes.get('_route') == store_route %}class="active"{% endif %}>
+          <a href="{{ path(store_route, { id: store.id }) }}#general" {% if is_main_screen %}role="tab" data-toggle="tab" aria-controls="general"{% endif %}>
+            {{ 'restaurant.form.section.general'|trans }}
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="{{ path(store_route, { id: store.id }) }}#settings" {% if is_main_screen %}role="tab" data-toggle="tab" aria-controls="settings"{% endif %}>
+            {{ 'store.form.section.settings'|trans }}
+          </a>
+        </li>
+        {% if store.id is not empty %}
+        <li role="presentation" {% if app.request.attributes.get('_route') == store_addresses_route %}class="active"{% endif %}>
+          <a href="{{ path(store_addresses_route, { id: store.id }) }}">
+            {{ 'stores.address_book'|trans }}
+          </a>
+        </li>
+        {% if is_granted('ROLE_ADMIN') %}
+        <li role="presentation" {% if app.request.attributes.get('_route') == 'admin_store_users' %}class="active"{% endif %}>
+          <a href="{{ path('admin_store_users', { id: store.id }) }}">
+            {{ 'stores.users'|trans }}
+          </a>
+        </li>
+        <li role="presentation">
+          <a href="{{ path('admin_store_deliveries', { id: store.id }) }}">
+            {{ 'stores.deliveries'|trans }}
+          </a>
+        </li>
+        {% endif %}
+        {% endif %}
+      </ul>
+    </div>
+    <div class="col-sm-9">
+      {% block store_content %}{% endblock %}
+    </div>
+  </div>
+
+{% if is_main_screen %}
+{{ form_end(form) }}
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('store-form') }}
+{% endblock %}

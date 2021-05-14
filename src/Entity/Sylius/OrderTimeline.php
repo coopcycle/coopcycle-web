@@ -2,17 +2,17 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Sylius\Order\OrderInterface;
+use Gedmo\Timestampable\Traits\Timestampable;
 
 class OrderTimeline
 {
+    use Timestampable;
+
     protected $id;
 
     protected $order;
-
-    protected $createdAt;
-
-    protected $updatedAt;
 
     /**
      * The time the order is expected to be dropped.
@@ -29,11 +29,15 @@ class OrderTimeline
      */
     protected $preparationExpectedAt;
 
-    protected $dropoffAt;
+    /**
+     * @var string
+     */
+    protected $preparationTime;
 
-    protected $pickupAt;
-
-    protected $readyAt;
+    /**
+     * @var string|null
+     */
+    protected $shippingTime;
 
     public function getId()
     {
@@ -55,7 +59,7 @@ class OrderTimeline
         return $this->dropoffExpectedAt;
     }
 
-    public function setDropoffExpectedAt(\DateTime $dropoffExpectedAt)
+    public function setDropoffExpectedAt(?\DateTime $dropoffExpectedAt)
     {
         $this->dropoffExpectedAt = $dropoffExpectedAt;
 
@@ -86,27 +90,80 @@ class OrderTimeline
         return $this;
     }
 
-    public function getPickupAt()
+    /**
+     * @return string
+     */
+    public function getPreparationTime()
     {
-        return $this->pickupAt;
+        return $this->preparationTime;
     }
 
-    public function setPickupAt(\DateTime $pickupAt)
+    /**
+     * @param string $preparationTime
+     *
+     * @return self
+     */
+    public function setPreparationTime($preparationTime)
     {
-        $this->pickupAt = $pickupAt;
+        $this->preparationTime = $preparationTime;
 
         return $this;
     }
 
-    public function getDropoffAt()
+    /**
+     * @return string|null
+     */
+    public function getShippingTime()
     {
-        return $this->dropoffAt;
+        return $this->shippingTime;
     }
 
-    public function setDropoffAt(\DateTime $dropoffAt)
+    /**
+     * @param string $shippingTime
+     *
+     * @return self
+     */
+    public function setShippingTime($shippingTime)
     {
-        $this->dropoffAt = $dropoffAt;
+        $this->shippingTime = $shippingTime;
 
         return $this;
+    }
+
+    public static function create(OrderInterface $order, TsRange $range, string $preparationTime, ?string $shippingTime = null)
+    {
+        $timeline = new self();
+
+        $timeline->setPreparationTime($preparationTime);
+        if (!empty($shippingTime)) {
+            $timeline->setShippingTime($shippingTime);
+        }
+
+        if ('collection' === $order->getFulfillmentMethod()) {
+
+            $preparation = clone $range->getLower();
+            $preparation->sub(date_interval_create_from_date_string($preparationTime));
+
+            $timeline->setPickupExpectedAt($range->getLower());
+            $timeline->setPreparationExpectedAt($preparation);
+
+        } else {
+
+            // The pickup time is when the messenger grabs the bag
+            $pickup = clone $range->getLower();
+            $pickup->sub(date_interval_create_from_date_string($shippingTime));
+
+            // Substract 5 additional minutes to say goodbye, unlock the bike...
+            $pickup->sub(date_interval_create_from_date_string('5 minutes'));
+
+            $preparation = clone $pickup;
+            $preparation->sub(date_interval_create_from_date_string($preparationTime));
+
+            $timeline->setDropoffExpectedAt($range->getLower());
+            $timeline->setPickupExpectedAt($pickup);
+            $timeline->setPreparationExpectedAt($preparation);
+        }
+
+        return $timeline;
     }
 }

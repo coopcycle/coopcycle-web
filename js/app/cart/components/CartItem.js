@@ -19,8 +19,8 @@ class CartItem extends React.Component {
     if (Object.prototype.hasOwnProperty.call(adjustments, 'menu_item_modifier')) {
       return (
         <div className="cart__item__adjustments">
-          { adjustments.menu_item_modifier.map(adjustment =>
-            <div key={ adjustment.id }>
+          { adjustments.menu_item_modifier.map((adjustment, index) =>
+            <div key={ `cart-item-${this.props.id}-adjustment-${index}` }>
               <small>{ truncateText(adjustment.label) }</small>
               { adjustment.amount > 0 && (
                 <small> (+{ (adjustment.amount / 100).formatMoney() })</small>

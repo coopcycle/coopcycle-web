@@ -1,0 +1,598 @@
+/**
+ * Copyright © 2020 Codrops
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the “Software”), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * https://github.com/codrops/DotNavigationStyles
+ */
+
+.dotstyle ul {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    cursor: default;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.dotstyle li {
+    position: relative;
+    display: block;
+    float: left;
+    margin: 0 16px;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.dotstyle li a {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    border-radius: 50%;
+    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.3);
+    text-indent: -999em; /* make the text accessible to screen readers */
+    cursor: pointer;
+    position: absolute;
+}
+
+.dotstyle li a:focus {
+    outline: none;
+}
+
+/* Individual styles and effects */
+
+/* Fill up */
+
+.dotstyle-fillup li a {
+    overflow: hidden;
+    background-color: transparent;
+    box-shadow: inset 0 0 0 2px white;
+    -webkit-transition: background 0.3s ease;
+    transition: background 0.3s ease;
+}
+
+.dotstyle-fillup li a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    height: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 0 0 1px #fff;
+    -webkit-transition: height 0.3s ease;
+    transition: height 0.3s ease;
+}
+
+.dotstyle-fillup li a:hover,
+.dotstyle-fillup li a:focus {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.dotstyle-fillup li.current a::after {
+    height: 100%;
+}
+
+/* Scale up */
+
+.dotstyle-scaleup li a {
+    -webkit-transition: -webkit-transform 0.3s ease, background-color 0.3s ease;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.dotstyle-scaleup li a:hover,
+.dotstyle-scaleup li a:focus {
+    background-color: white;
+}
+
+.dotstyle-scaleup li.current a {
+    background-color: white;
+    -webkit-transform: scale(1.5);
+    transform: scale(1.5);
+}
+
+/* Stroke */
+
+.dotstyle-stroke li a {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0);
+    -webkit-transition: box-shadow 0.3s ease, background-color 0.3s ease;
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.dotstyle-stroke li a:hover,
+.dotstyle-stroke li a:focus {
+    background-color: white;
+}
+
+.dotstyle-stroke li.current a {
+    background-color: transparent;
+    box-shadow: 0 0 0 2px white;
+}
+
+/* Fill in */
+
+.dotstyle-fillin li a {
+    background-color: transparent;
+    box-shadow: inset 0 0 0 2px white;
+    -webkit-transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease;
+}
+
+.dotstyle-fillin li a:hover,
+.dotstyle-fillin li a:focus {
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6)
+}
+
+.dotstyle-fillin li.current a {
+    box-shadow: inset 0 0 0 8px white;
+}
+
+/* Circle grow */
+
+.dotstyle-circlegrow li a {
+    overflow: hidden;
+    background-color: transparent;
+    box-shadow: inset 0 0 0 2px white;
+    -webkit-transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease;
+}
+
+.dotstyle-circlegrow li a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    border-radius: 50%;
+    background-color: #fff;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    -webkit-transition: -webkit-transform 0.3s ease;
+    transition: transform 0.3s ease;
+}
+
+.dotstyle-circlegrow li a:hover,
+.dotstyle-circlegrow li a:focus {
+    opacity: 0.7;
+}
+
+.dotstyle-circlegrow li.current a::after {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+
+/* Dot to stroke */
+
+.dotstyle-dotstroke li a {
+    box-shadow: inset 0 0 0 8px rgba(255, 255, 255, 0.5);
+    -webkit-transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease;
+}
+
+.dotstyle-dotstroke li a:hover,
+.dotstyle-dotstroke li a:focus {
+    box-shadow: inset 0 0 0 8px white;
+}
+
+.dotstyle-dotstroke li.current a {
+    box-shadow: inset 0 0 0 2px white;
+}
+
+/* SVG draw circle stroke */
+
+.dotstyle-drawcircle li {
+    width: 18px;
+    height: 18px;
+}
+
+.dotstyle-drawcircle li a {
+    top: 3px;
+    left: 3px;
+    width: 12px;
+    height: 12px;
+    background-color: #c44d48;
+    -webkit-transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease;
+}
+
+.dotstyle-drawcircle li svg {
+    z-index: 10;
+}
+
+.dotstyle-drawcircle li svg circle {
+    opacity: 0;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 39 39;
+    stroke-dashoffset: 39;
+    /* length of circle path (pi*2r) */
+    -webkit-transition: stroke-dashoffset 0.3s, opacity 0.3s;
+    transition: stroke-dashoffset 0.3s, opacity 0.3s;
+}
+
+.dotstyle-drawcircle li.current a,
+.dotstyle-drawcircle li a:hover,
+.dotstyle-drawcircle li a:focus {
+    opacity: 0.5;
+}
+
+.dotstyle-drawcircle li.current svg circle {
+    opacity: 1;
+    stroke-dashoffset: 0;
+    -webkit-transition: stroke-dashoffset 0.3s, opacity 0.15s;
+    transition: stroke-dashoffset 0.3s, opacity 0.15s;
+}
+
+/* Small dot with stroke */
+
+.dotstyle-smalldotstroke li {
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0);
+    -webkit-transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease;
+}
+
+.dotstyle-smalldotstroke li a {
+    background-color: rgba(255, 255, 255, 0.7);
+    -webkit-transition: background-color 0.3s ease, -webkit-transform 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.dotstyle-smalldotstroke li a:hover,
+.dotstyle-smalldotstroke li a:focus,
+.dotstyle-smalldotstroke li.current a {
+    background-color: white
+}
+
+.dotstyle-smalldotstroke li.current a {
+    -webkit-transform: scale(0.4);
+    transform: scale(0.4);
+}
+
+.dotstyle-smalldotstroke li.current {
+    box-shadow: 0 0 0 2px white;
+}
+
+/* Puff */
+
+.dotstyle-puff li a {
+    border: 2px solid #fff;
+    -webkit-transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease;
+}
+
+.dotstyle-puff li a::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    background: #c44d48;
+    border-radius: 50%;
+    box-shadow: 0 0 1px #c44d48;
+    opacity: 0;
+    -webkit-transform: scale(3);
+    transform: scale(3);
+    -webkit-transition: opacity 0.3s ease, -webkit-transform 0.3s ease, visibility 0s 0.3s;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s 0.3s;
+}
+
+.dotstyle-puff li a:hover,
+.dotstyle-puff li a:focus,
+.dotstyle-puff li.current a {
+    border-color: #c44d48;
+}
+
+.dotstyle-puff li.current a::after {
+    visibility: visible;
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-transition: opacity 0.3s ease, -webkit-transform 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* 3D Flip */
+
+.dotstyle-flip li {
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
+}
+
+.dotstyle-flip li a {
+    background-color: transparent;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-transition: -webkit-transform 0.3s ease, opacity 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.dotstyle-flip li a::before,
+.dotstyle-flip li a::after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: white;
+    content: '';
+    text-indent: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.dotstyle-flip li a::after {
+    background-color: #c44d48;
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+}
+
+.dotstyle-flip li a:hover,
+.dotstyle-flip li a:focus {
+    opacity: 0.8;
+}
+
+.dotstyle-flip li.current a {
+    -webkit-transform: rotateY(180deg);
+    transform: rotateY(180deg);
+}
+
+/* Tooltip */
+
+.dotstyle-tooltip li {
+    border: 2px solid #fff;
+    border-radius: 50%;
+    z-index: 1;
+    -webkit-transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease;
+}
+
+.dotstyle-tooltip li a {
+    top: auto;
+    bottom: 250%;
+    left: 50%;
+    visibility: hidden;
+    padding: 0 10px;
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    background-color: #c44d48;
+    color: #fff;
+    text-indent: 0;
+    line-height: 2;
+    opacity: 0;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    -webkit-transition: -webkit-transform 0.3s ease, opacity 0.3s ease, visibility 0s 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0s 0.3s ease;
+}
+
+.dotstyle-tooltip li a::after { /* http: //cssarrowplease.com/ */
+    position: absolute;
+    left: 50%;
+    margin-left: -10px;
+    width: 0;
+    height: 0;
+    border: solid transparent;
+    border-width: 10px;
+    border-color: transparent;
+    border-top-color: #c44d48;
+    content: '';
+    pointer-events: none;
+    top: 99%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease;
+}
+
+.no-touch .dotstyle-tooltip li:hover a,
+.dotstyle-tooltip li.current a {
+    z-index: 100;
+    visibility: visible;
+    opacity: 1;
+    -webkit-transform: translateX(-50%) translateY(0%);
+    transform: translateX(-50%) translateY(0%);
+    -webkit-transition: -webkit-transform 0.3s ease, opacity 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.dotstyle-tooltip li.current {
+    border-color: #c44d48;
+}
+
+.dotstyle-tooltip li:hover {
+    z-index: 100;
+}
+
+.no-touch .dotstyle-tooltip ul:hover li.current a {
+    opacity: 0.2;
+}
+
+.dotstyle-tooltip ul li.current:hover a {
+    opacity: 1;
+}
+
+/* Dot move */
+
+.dotstyle-dotmove li:last-child {
+    position: absolute;
+    left: 0;
+    margin: 0;
+    width: 48px;
+    -webkit-transition: -webkit-transform 0.3s ease;
+    transition: transform 0.3s ease;
+}
+
+.dotstyle-dotmove li:last-child::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -1px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #c44d48;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+
+.dotstyle-dotmove li.current:first-child ~ li:last-child {
+    -webkit-transform: translateX(0%);
+    transform: translateX(0%);
+}
+
+.dotstyle-dotmove li.current:nth-child(2) ~ li:last-child {
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+}
+
+.dotstyle-dotmove li.current:nth-child(3) ~ li:last-child {
+    -webkit-transform: translateX(200%);
+    transform: translateX(200%);
+}
+
+.dotstyle-dotmove li.current:nth-child(4) ~ li:last-child {
+    -webkit-transform: translateX(300%);
+    transform: translateX(300%);
+}
+
+.dotstyle-dotmove li.current:nth-child(5) ~ li:last-child {
+    -webkit-transform: translateX(400%);
+    transform: translateX(400%);
+}
+
+.dotstyle-dotmove li.current:nth-child(6) ~ li:last-child {
+    -webkit-transform: translateX(500%);
+    transform: translateX(500%);
+}
+
+.dotstyle-dotmove li a {
+    -webkit-transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease;
+}
+
+.dotstyle-dotmove li a:hover,
+.dotstyle-dotmove li a:focus {
+    background-color: #fff;
+}
+
+/* Fly in */
+
+.dotstyle-hop li a {
+    border: 2px solid #c44d48;
+    background: transparent;
+}
+
+.dotstyle-hop li a::after {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    border-radius: 50%;
+    visibility: hidden;
+    background: #fff;
+    opacity: 0;
+    -webkit-transform: rotate(-100deg);
+    transform: rotate(-100deg);
+    -webkit-transform-origin: -200% 50%;
+    transform-origin: -200% 50%;
+    -webkit-transition: -webkit-transform 0.3s ease 0.3s, opacity 0.3s ease, visibility 0s 0.3s ease;
+    transition: transform 0.3s ease 0.3s, opacity 0.3s ease, visibility 0s 0.3s ease;
+}
+
+.dotstyle-hop li a:focus {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.dotstyle-hop li.current-from-right a::after {
+    -webkit-transition: none;
+    transition: none;
+    -webkit-transform: rotate(100deg);
+    transform: rotate(100deg);
+    -webkit-transform-origin: 300% 50%;
+    transform-origin: 300% 50%;
+}
+
+.dotstyle-hop li.current a::after {
+    visibility: visible;
+    opacity: 1;
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transition: -webkit-transform 0.3s ease, opacity 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Fall */
+
+.dotstyle-fall li::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    opacity: 0;
+    left: 0;
+    background-color: #c44d48;
+    border-radius: 50%;
+    -webkit-transform: translateY(-200%);
+    transform: translateY(-200%);
+    -webkit-transition: -webkit-transform 0.3s ease, opacity 0.3s ease, visibility 0s 0.3s;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0s 0.3s;
+}
+
+.dotstyle-fall li a {
+    -webkit-transition: -webkit-transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.dotstyle-fall li:hover a,
+.dotstyle-fall li a:focus,
+.dotstyle-fall li.current a {
+    background-color: #fff;
+}
+
+.dotstyle-fall li.current::after {
+    opacity: 1;
+    visibility: visible;
+    -webkit-transition: -webkit-transform 0.3s ease, opacity 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    -webkit-transform: translateY(0%);
+    transform: translateY(0%);
+}
+
+.dotstyle-fall li.current a {
+    opacity: 0;
+    -webkit-transform: translateY(200%);
+    transform: translateY(200%);
+}

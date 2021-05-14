@@ -1,0 +1,9 @@
+<div class="d-flex flex-row justify-content-between align-items-center py-4">
+  {% if direction == 'left' %}
+  <a class="restaurant-show-more" href="{{ link_path }}"><i class="fa fa-arrow-left mr-2"></i>{{ link_text }}</a>
+  {% endif %}
+  <h3 class="m-0">{{ title }}</h3>
+  {% if direction == 'right' %}
+  <a class="restaurant-show-more" href="{{ link_path }}">{{ link_text }}<i class="fa fa-arrow-right ml-2"></i></a>
+  {% endif %}
+</div>

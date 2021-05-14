@@ -31,7 +31,7 @@ class TaskUnassigned extends Event implements DomainEvent, HasIconInterface
         ];
     }
 
-    public static function messageName()
+    public static function messageName(): string
     {
         return 'task:unassigned';
     }

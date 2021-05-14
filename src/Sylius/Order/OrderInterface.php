@@ -6,6 +6,7 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Sylius\OrderEvent;
 use AppBundle\Entity\Vendor;
 use Doctrine\Common\Collections\Collection;
@@ -24,7 +25,8 @@ interface OrderInterface extends
     ChannelAwareInterface,
     PromotionSubjectInterface,
     PromotionCouponAwarePromotionSubjectInterface,
-    CustomerAwareInterface
+    CustomerAwareInterface,
+    OrderSupportInterface
 {
     public const STATE_ACCEPTED = 'accepted';
     public const STATE_REFUSED = 'refused';
@@ -109,11 +111,6 @@ interface OrderInterface extends
     public function getShippingTimeRange(): ?TsRange;
 
     /**
-     * @return boolean
-     */
-    public function isFoodtech(): bool;
-
-    /**
      * @param string|null $state
      *
      * @return PaymentInterface|null
@@ -166,7 +163,51 @@ interface OrderInterface extends
     public function getVendor(): ?Vendor;
 
     /**
+     * @param Vendor|null $vendor
+     */
+    public function setVendor(?Vendor $vendor): void;
+
+    /**
      * @return boolean
      */
     public function hasVendor(): bool;
+
+    /**
+     * @return Collection
+     */
+    public function getVendors(): Collection;
+
+    /**
+     * @return int
+     */
+    public function getTransferAmount(LocalBusiness $subVendor): int;
+
+    /**
+     * @return \SplObjectStorage
+     */
+    public function getItemsGroupedByVendor(): \SplObjectStorage;
+
+    /**
+     * @return int
+     */
+    public function getReusablePackagingPledgeReturn();
+
+    /**
+     * @param LocalBusiness $restaurant
+     * @return float
+     */
+    public function getPercentageForRestaurant(LocalBusiness $restaurant): float;
+
+    public function addRestaurant(LocalBusiness $restaurant, int $itemsTotal, int $transferAmount);
+
+    public function getRestaurants(): Collection;
+
+    public function isMultiVendor(): bool;
+
+    /**
+     * @return Address|null
+     */
+    public function getPickupAddress(): ?Address;
+
+    public function getFulfillmentMethodObject(): ?FulfillmentMethod;
 }

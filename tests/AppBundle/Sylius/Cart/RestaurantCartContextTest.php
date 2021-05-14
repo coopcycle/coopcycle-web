@@ -19,6 +19,7 @@ use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class RestaurantCartContextTest extends TestCase
 {
@@ -38,6 +39,7 @@ class RestaurantCartContextTest extends TestCase
         $this->orderFactory = $this->prophesize(OrderFactory::class);
         $this->channelContext = $this->prophesize(ChannelContextInterface::class);
         $this->restaurantResolver = $this->prophesize(RestaurantResolver::class);
+        $this->authorizationChecker = $this->prophesize(AuthorizationCheckerInterface::class);
 
         $this->webChannel = $this->prophesize(ChannelInterface::class);
         $this->webChannel->getCode()->willReturn('web');
@@ -50,7 +52,8 @@ class RestaurantCartContextTest extends TestCase
             $this->orderFactory->reveal(),
             $this->sessionKeyName,
             $this->channelContext->reveal(),
-            $this->restaurantResolver->reveal()
+            $this->restaurantResolver->reveal(),
+            $this->authorizationChecker->reveal()
         );
     }
 
@@ -101,6 +104,7 @@ class RestaurantCartContextTest extends TestCase
     {
         $restaurant = $this->prophesize(LocalBusiness::class);
         $restaurant->getName()->willReturn('Foo');
+        $restaurant->isEnabled()->willReturn(true);
 
         $this->restaurantResolver
             ->resolve()
@@ -121,6 +125,9 @@ class RestaurantCartContextTest extends TestCase
                 $restaurant->reveal()
             )
         );
+        $expectedCart
+            ->isMultiVendor()
+            ->willReturn(false);
         $expectedCart->getChannel()->willReturn($this->webChannel->reveal());
 
         $this->restaurantResolver
@@ -143,6 +150,7 @@ class RestaurantCartContextTest extends TestCase
     {
         $restaurant = $this->prophesize(LocalBusiness::class);
         $restaurant->getName()->willReturn('Foo');
+        $restaurant->isEnabled()->willReturn(true);
 
         $otherRestaurant = $this->prophesize(LocalBusiness::class);
 
@@ -166,6 +174,9 @@ class RestaurantCartContextTest extends TestCase
                 $restaurant->reveal()
             )
         );
+        $expectedCart
+            ->isMultiVendor()
+            ->willReturn(false);
 
         $this->restaurantResolver
             ->accept($expectedCart->reveal())
@@ -229,7 +240,7 @@ class RestaurantCartContextTest extends TestCase
         $this->expectException(CartNotFoundException::class);
 
         $restaurant = $this->prophesize(LocalBusiness::class);
-        $restaurant->getName()->willThrow(new EntityNotFoundException());
+        $restaurant->isEnabled()->willReturn(false);
 
         $this->restaurantResolver
             ->resolve()
@@ -246,6 +257,82 @@ class RestaurantCartContextTest extends TestCase
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
         $cartProphecy->getVendor()->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+        $cartProphecy->isMultiVendor()->willReturn(false);
+        $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
+
+        $expectedCart = $cartProphecy->reveal();
+
+        $this->orderRepository
+            ->findCartById(1)
+            ->willReturn($expectedCart);
+
+        $this->session->remove($this->sessionKeyName)->shouldBeCalled();
+
+        $cart = $this->context->getCart();
+    }
+
+    public function testExistingCartStoredInSessionWithDisabledRestaurantAndAuthorizedUser()
+    {
+        $restaurant = $this->prophesize(LocalBusiness::class);
+        $restaurant->isEnabled()->willReturn(false);
+
+        $this->authorizationChecker->isGranted('edit', $restaurant->reveal())->willReturn(true);
+
+        $this->restaurantResolver
+            ->resolve()
+            ->willReturn(null);
+
+        $this->session
+            ->has($this->sessionKeyName)
+            ->willReturn(true);
+
+        $this->session
+            ->get($this->sessionKeyName)
+            ->willReturn(1);
+
+        $cartProphecy = $this->prophesize(OrderInterface::class);
+        $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
+        $cartProphecy->getVendor()->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+        $cartProphecy->isMultiVendor()->willReturn(false);
+        $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
+
+        $expectedCart = $cartProphecy->reveal();
+
+        $this->orderRepository
+            ->findCartById(1)
+            ->willReturn($expectedCart);
+
+        $this->session->remove($this->sessionKeyName)->shouldNotBeCalled();
+
+        $cart = $this->context->getCart();
+
+        $this->assertNotNull($cart);
+        $this->assertSame($expectedCart, $cart);
+    }
+
+    public function testExistingCartStoredInSessionThrowingEntityNotFoundException()
+    {
+        $this->expectException(CartNotFoundException::class);
+
+        $restaurant = $this->prophesize(LocalBusiness::class);
+        $restaurant->isEnabled()->willThrow(new EntityNotFoundException());
+
+        $this->restaurantResolver
+            ->resolve()
+            ->willReturn(null);
+
+        $this->session
+            ->has($this->sessionKeyName)
+            ->willReturn(true);
+
+        $this->session
+            ->get($this->sessionKeyName)
+            ->willReturn(1);
+
+        $cartProphecy = $this->prophesize(OrderInterface::class);
+        $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
+        $cartProphecy->getVendor()->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+        $cartProphecy->isMultiVendor()->willReturn(false);
         $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
 
         $expectedCart = $cartProphecy->reveal();

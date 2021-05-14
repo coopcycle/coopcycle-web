@@ -16,7 +16,7 @@
 {% block header_right %}
 <ul style="text-align: right;">
   <li><strong>{{ coopcycle_setting('brand_name') }}</strong></li>
-  <li>{{ receipt.issuedAt|localizeddate('short', 'short', locale) }}</li>
+  <li>{{ receipt.issuedAt|format_datetime('short', 'short', locale=locale) }}</li>
   {% if receipt.billingAddress is not empty %}
   <li>{{ receipt.billingAddress|nl2br }}</li>
   {% endif %}
@@ -87,7 +87,7 @@
 </table>
 
 <div style="text-align: center;">
-  <small>{{ 'receipt.billing_details'|trans({ '%date%': payment.updatedAt|localizeddate('short', 'short', locale) }) }}</small>
+  <small>{{ 'receipt.billing_details'|trans({ '%date%': payment.updatedAt|format_datetime('short', 'short', locale=locale) }) }}</small>
 </div>
 
 {% endblock %}

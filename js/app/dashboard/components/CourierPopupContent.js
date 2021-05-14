@@ -18,13 +18,26 @@ case 'fr':
 }
 
 export default class extends Component {
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      lastSeen: this.props.lastSeen
+    }
+  }
+
+  updateLastSeen(lastSeen) {
+    this.setState({ lastSeen })
+  }
+
   render() {
 
-    const { username, lastSeen } = this.props
+    const { username } = this.props
+    const { lastSeen } = this.state
 
     return (
       <div className="text-center">
-        <span>{ username }</span>
+        <strong>{ username }</strong>
         <br />
         <TimeAgo date={ lastSeen.toDate() } formatter={ formatter } />
       </div>

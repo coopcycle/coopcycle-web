@@ -1,0 +1,57 @@
+restaurant.openingHours.notBlank: Select at least one opened schedule
+restaurant.telephone.notBlank: Enter your phone number
+restaurant.name.notBlank: Enter your restaurant's name
+restaurant.contract.notValid: Enter the delivery contract terms (require administrator privileges)
+restaurant.stripeAccount.notSet: Link the restaurant to a Stripe account
+restaurant.notActivable: You can't enable this restaurant yet
+restaurant.menu.notSet: Create and activate a menu
+
+address.tooFar: This address is too far
+address.notSet: Please enter the delivery address
+
+cart.address.empty: Please select an address
+cart.empty: Your cart is empty
+
+order.totalIncludingTax.tooLow: The minimum amount is %minimum_amount%
+
+order.shippedAt.expired: The delivery date is expired
+order.shippedAt.notAvailable: The delivery date is no longer available
+order.shippedAt.notEmpty: The delivery date can't be empty
+order.items.containsDisabledProduct: The order contains a disabled product
+order.fulfillment_methods.empty: This establishment is currently unavailable
+
+delivery.price.error.priceCalculation: The delivery price could not be calculated.
+
+delivery.tasks.unexpectedCount: Delivery must consist of two tasks.
+delivery.tasks.pickupAfterDropoff: Dropoff date must be after pickup date.
+
+delivery.check.notValid: Your request is not feasible
+delivery.check.noStore: You must provide a store
+
+time_range.empty: You have not selected any value
+time_range.no_weekday: You did not select a day of the week
+
+product.name.modified: You have changed the product name
+
+task.before.mustBeGreaterThanAfter: The time frame is not valid
+
+product_option.valuesRange.notAllowed: You can't define a range for a mandatory option
+
+product.reusablePackagingUnit.mustBeGreaterThanZero: You must specify a quantity greater than 0
+
+order.state.notModifiable: Order can't be modified anymore
+
+loopeat.insufficient_balance: Your LoopEat balance (X) is not sufficient to wrap the whole order
+
+restaurant.contract.variableCustomerAmount.pickOne: Please pick at least one pricing
+restaurant.contract.variableDeliveryPrice.pickOne: Please pick at least one pricing
+
+order.collection.not_available: The "collection" fulfillment method is not available
+
+task_group.ref.duplicate: The ref "%ref%" appears multiple times
+
+checkout.user_with_same_email_exists: An account with the same email already exists
+
+time_range_jump.next_day: It is no longer possible to order for today
+
+order.shippingTimeRange.notAvailable: Not available at the moment

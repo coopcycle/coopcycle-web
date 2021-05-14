@@ -3,6 +3,7 @@ Feature: Food Tech
   Scenario: Restaurant does not belong to user
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -55,6 +56,7 @@ Feature: Food Tech
             "@id":"/api/orders/1",
             "@type":"http://schema.org/Order",
             "customer":{"@*@":"@*@"},
+            "vendor":{"@*@":"@*@"},
             "restaurant":{"@*@":"@*@"},
             "shippingAddress":{"@*@":"@*@"},
             "shippedAt":"@string@.isDateTime()",
@@ -73,6 +75,9 @@ Feature: Food Tech
             "taxTotal":@integer@,
             "preparationExpectedAt":"@string@.isDateTime()",
             "pickupExpectedAt":"@string@.isDateTime()",
+            "assignedTo": "@string@||@null@",
+            "preparationTime":"@string@||@null@",
+            "shippingTime":"@string@||@null@",
             "adjustments":{
               "delivery":@array@,
               "delivery_promotion":[],
@@ -136,7 +141,38 @@ Feature: Food Tech
       """
     Then the response status code should be 200
     And the response should be in JSON
-    And the last order from "sarah" should be in state "refused"
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":@string@,
+        "@type":"http://schema.org/Order",
+        "customer":{"@*@":"@*@"},
+        "vendor":{"@*@":"@*@"},
+        "shippingAddress":{"@*@":"@*@"},
+        "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn":0,
+        "shippingTimeRange":[
+          "2018-08-27T12:25:00+02:00",
+          "2018-08-27T12:35:00+02:00"
+        ],
+        "takeaway":false,
+        "id":@integer@,
+        "number":null,
+        "notes":null,
+        "items":@array@,
+        "itemsTotal":1800,
+        "total":2150,
+        "state":"refused",
+        "createdAt":"@string@.isDateTime()",
+        "taxTotal":222,
+        "restaurant":@...@,
+        "shippedAt":"2018-08-27T12:30:00+02:00",
+        "preparationExpectedAt":"2018-08-27T12:25:00+02:00",
+        "pickupExpectedAt":"2018-08-27T12:35:00+02:00",
+        "adjustments":@...@
+      }
+      """
 
   Scenario: Delay order
     Given the fixtures files are loaded:
@@ -398,6 +434,80 @@ Feature: Food Tech
       """
     Then the response status code should be 200
 
+  Scenario: Disable product option value
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/product_option_values/1" with body:
+      """
+      {
+        "enabled": false
+      }
+      """
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ProductOptionValue",
+        "@id":"/api/product_option_values/1",
+        "@type":"ProductOptionValue",
+        "price":0,
+        "code":"PIZZA_TOPPING_PEPPERONI",
+        "enabled":false,
+        "value":"Pepperoni"
+      }
+      """
+
+  Scenario: Enable disabled product option value
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/product_option_values/3" with body:
+      """
+      {
+        "enabled": true
+      }
+      """
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ProductOptionValue",
+        "@id":"/api/product_option_values/3",
+        "@type":"ProductOptionValue",
+        "price":0,
+        "code":"NOT_ENABLED_OPTION",
+        "enabled":true,
+        "value":"Not enabled"
+      }
+      """
+
   Scenario: Not authorized to disable product
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -411,7 +521,7 @@ Feature: Food Tech
     And the user "bob" is authenticated
     And I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "PUT" request to "/api/products/1" with body:
+    When the user "bob" sends a "PUT" request to "/api/products/3" with body:
       """
       {
         "enabled": false
@@ -420,6 +530,7 @@ Feature: Food Tech
     Then the response status code should be 403
 
   Scenario: Close restaurant
+    Given the current time is "2020-10-02 11:00:00"
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | products.yml        |
@@ -441,4 +552,34 @@ Feature: Food Tech
       {}
       """
     Then the response status code should be 200
-    And the restaurant with id "1" should have "1" closing rule
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Restaurant",
+        "@id":@string@,
+        "@type":"http://schema.org/Restaurant",
+        "id":@integer@,
+        "name":"Nodaiwa",
+        "description":null,
+        "enabled":true,
+        "depositRefundEnabled":false,
+        "depositRefundOptin":true,
+        "address":{"@*@":"@*@"},
+        "state":"normal",
+        "telephone":"+33612345678",
+        "fulfillmentMethods":@array@,
+        "openingHoursSpecification":@array@,
+        "specialOpeningHoursSpecification":[
+          {
+            "@id":@string@,
+            "@type":"OpeningHoursSpecification",
+            "id":@integer@,
+            "opens":"00:00",
+            "closes":"00:00",
+            "validFrom":"2020-10-02",
+            "validThrough":"2020-10-03"
+          }
+        ],
+        "image":@string@
+      }
+      """

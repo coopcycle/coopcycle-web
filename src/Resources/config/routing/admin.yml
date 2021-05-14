@@ -5,6 +5,7 @@ admin_delivery:
       layout: 'admin.html.twig'
       routes:
           success: admin_deliveries
+          back: admin_deliveries
   methods:  [ GET, POST ]
 
 admin_order_receipt:
@@ -66,10 +67,22 @@ admin_orders:
             order: admin_order
     methods:  [ GET, POST ]
 
+admin_hub_new:
+    path: /admin/restaurants/hubs/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newHubAction
+    methods: [ GET, POST ]
+
 admin_hub:
     path: /admin/restaurants/hubs/{id}
     defaults:
         _controller: AppBundle\Controller\AdminController::hubAction
+    methods: [ GET, POST ]
+
+admin_hubs:
+    path: /admin/restaurants/hubs
+    defaults:
+        _controller: AppBundle\Controller\AdminController::hubsAction
     methods: [ GET, POST ]
 
 admin_restaurant_new:
@@ -118,7 +131,7 @@ admin_restaurants:
             menu_taxons: admin_restaurant_menu_taxons
             products: admin_restaurant_products
             restaurant: admin_restaurant
-    methods: [ GET ]
+    methods: [ GET, POST ]
 
 admin_restaurant_menu_taxons:
     path: /admin/restaurants/{id}/menus
@@ -414,6 +427,7 @@ admin_store_new:
             store_deliveries: admin_store_deliveries
             store_address_new: admin_store_new_address
             store_address: admin_store_address
+            store_addresses: admin_store_addresses
     methods:  [ GET, POST ]
 
 admin_store:
@@ -428,6 +442,7 @@ admin_store:
             store_deliveries: admin_store_deliveries
             store_address_new: admin_store_new_address
             store_address: admin_store_address
+            store_addresses: admin_store_addresses
     methods:  [ GET, POST ]
 
 admin_store_deliveries:
@@ -438,6 +453,7 @@ admin_store_deliveries:
         routes:
             stores: admin_stores
             store: admin_store
+            import_success: admin_deliveries
     methods:  [ GET, POST ]
 
 admin_store_delivery_new:
@@ -449,7 +465,14 @@ admin_store_delivery_new:
             stores: admin_stores
             store: admin_store
             success: admin_store_deliveries
+            back: admin_deliveries
     methods:  [ GET, POST ]
+
+admin_store_delivery_download_images:
+    path: /admin/stores/{storeId}/deliveries/{deliveryId}/images/download
+    defaults:
+        _controller: AppBundle\Controller\AdminController::downloadDeliveryImagesAction
+    methods:  [ GET ]
 
 admin_store_users:
     path: /admin/stores/{id}/users
@@ -459,6 +482,8 @@ admin_store_users:
         routes:
             stores: admin_stores
             store: admin_store
+            store_addresses: admin_store_addresses
+            store_users: admin_store_users
     methods:  [ GET, POST ]
 
 admin_store_new_address:
@@ -469,6 +494,7 @@ admin_store_new_address:
         routes:
             stores: admin_stores
             store: admin_store
+            store_addresses: admin_store_addresses
     methods:  [ GET, POST ]
 
 admin_store_address:
@@ -479,6 +505,20 @@ admin_store_address:
         routes:
             stores: admin_stores
             store: admin_store
+            store_addresses: admin_store_addresses
+    methods:  [ GET, POST ]
+
+admin_store_addresses:
+    path: /admin/stores/{id}/addresses
+    defaults:
+        _controller: AppBundle\Controller\AdminController::storeAddressesAction
+        layout: 'admin.html.twig'
+        routes:
+            stores: admin_stores
+            store: admin_store
+            store_address_new: admin_store_new_address
+            store_address: admin_store_address
+            store_addresses: admin_store_addresses
     methods:  [ GET, POST ]
 
 admin_tag_new:
@@ -506,3 +546,10 @@ admin_customize:
         _controller: AppBundle\Controller\AdminController::customizeAction
         layout: 'admin.html.twig'
     methods:  [ GET, POST ]
+
+admin_metrics:
+    path: /admin/metrics
+    defaults:
+        _controller: AppBundle\Controller\AdminController::metricsAction
+        layout: 'admin.html.twig'
+    methods:  [ GET ]

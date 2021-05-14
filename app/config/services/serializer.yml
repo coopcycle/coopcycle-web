@@ -17,7 +17,7 @@ services:
   AppBundle\Serializer\RestaurantNormalizer:
     arguments:
       $normalizer: "@api_platform.jsonld.normalizer.item"
-      $locale: "%kernel.default_locale%"
+      $locale: "%env(COOPCYCLE_LOCALE)%"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\TaskNormalizer:
@@ -44,7 +44,6 @@ services:
     arguments:
       $normalizer: "@api_platform.jsonld.normalizer.item"
       $objectNormalizer: "@serializer.normalizer.object"
-      $productOptionValueRepository: "@sylius.repository.product_option_value"
       $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
       $orderItemFactory: "@sylius.factory.order_item"
       $promotionCouponRepository: "@sylius.repository.promotion_coupon"
@@ -73,4 +72,19 @@ services:
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\Csv\TaskNormalizer:
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\GeoCoordinatesNormalizer:
+    arguments:
+      $normalizer: "@api_platform.jsonld.normalizer.object"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\Csv\DeliveryNormalizer:
+    arguments:
+      $normalizer: "@serializer.normalizer.object"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\RRuleNormalizer:
+    arguments:
+      $normalizer: "@serializer.normalizer.object"
     tags: [ { name: serializer.normalizer, priority: 128 } ]

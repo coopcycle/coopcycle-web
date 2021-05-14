@@ -1,20 +1,43 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
 {% block _pricing_rule_set_rules_entry_widget %}
-  <div class="delivery-pricing-ruleset__rule__handle">
-    <i class="fa fa-arrows"></i>
-    {{ form_widget(form.position, { attr: { class: 'delivery-pricing-ruleset__rule__position' } }) }}
+
+  {% set pricing_rule = form.vars.data %}
+
+  <div class="delivery-pricing-ruleset__rule__main">
+    <div class="delivery-pricing-ruleset__rule__handle">
+      <i class="fa fa-2x fa-arrows"></i>
+      {{ form_widget(form.position, { attr: { class: 'delivery-pricing-ruleset__rule__position' } }) }}
+    </div>
+    <div class="w-75">
+      <div class="delivery-pricing-ruleset__rule__expression"
+        {% if pricing_rule is not empty %}
+        data-expression="{{ pricing_rule.expression|parse_expression|coopcycle_normalize(null, [], 'json')|json_encode|e('html_attr') }}"
+        {% endif %}
+        >
+        <div class="rule-expression-container"></div>
+        {{ form_widget(form.expression, { attr: { 'data-expression': '' } }) }}
+      </div>
+    </div>
+    <div class="delivery-pricing-ruleset__rule__remove align-self-start">
+      <a href="#" class="p-4"><i class="fa fa-2x fa-times"></i></a>
+    </div>
   </div>
-  <div class="delivery-pricing-ruleset__rule__expression">
-    <div class="rule-expression-container"></div>
-    {{ form_widget(form.expression) }}
+  <div>
+    <div class="delivery-pricing-ruleset__rule__price"
+      {% if pricing_rule is not empty %}
+      data-price-expression="{{ pricing_rule.price|parse_expression|coopcycle_normalize(null, [], 'json')|json_encode|e('html_attr') }}"
+      {% endif %}
+      >
+      <div class="d-flex align-items-center">
+        {{ form_label(form.price, null, { label_attr: { class: 'w-25' } }) }}
+        <div class="w-75">
+          {{ form_widget(form.price) }}
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="delivery-pricing-ruleset__rule__price">
-    {{ form_row(form.price) }}
-  </div>
-  <div class="delivery-pricing-ruleset__rule__remove">
-    <a href="#"><i class="fa fa-trash"></i></a>
-  </div>
+
 {% endblock %}
 
 {% block _pricing_rule_set_rules_entry_price_widget %}

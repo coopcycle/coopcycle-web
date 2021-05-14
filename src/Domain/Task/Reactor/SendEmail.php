@@ -4,19 +4,15 @@ namespace AppBundle\Domain\Task\Reactor;
 
 use AppBundle\Domain\Task\Event;
 use AppBundle\Service\EmailManager;
-use AppBundle\Service\SettingsManager;
 
 class SendEmail
 {
     private $emailManager;
-    private $settingsManager;
 
     public function __construct(
-        EmailManager $emailManager,
-        SettingsManager $settingsManager)
+        EmailManager $emailManager)
     {
         $this->emailManager = $emailManager;
-        $this->settingsManager = $settingsManager;
     }
 
     public function __invoke(Event $event)
@@ -32,7 +28,7 @@ class SendEmail
         $order = $delivery->getOrder();
 
         // Skip if this is related to foodtech
-        if (null !== $order && $order->isFoodtech()) {
+        if (null !== $order && $order->hasVendor()) {
             return;
         }
 
@@ -50,12 +46,12 @@ class SendEmail
 
                 $ownerMails = [];
                 foreach ($owners as $owner) {
-                    $ownerMails[$owner->getEmail()] = $owner->getFullName();
+                    $ownerMails[] = sprintf('%s <%s>', $owner->getFullName(), $owner->getEmail());
                 }
 
                 $this->emailManager->sendTo(
                     $this->emailManager->createTaskCompletedMessage($task),
-                    $ownerMails
+                    ...$ownerMails
                 );
             }
         }

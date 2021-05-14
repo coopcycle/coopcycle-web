@@ -10,13 +10,17 @@ use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Sylius\Component\Resource\Model\ToggleableInterface;
+use Sylius\Component\Resource\Model\ToggleableTrait;
 
-class Hub implements OpenCloseInterface
+class Hub implements OpenCloseInterface, ToggleableInterface
 {
     use ClosingRulesTrait;
     use FulfillmentMethodsTrait;
     use ShippingOptionsTrait;
     use OpenCloseTrait;
+
+    use ToggleableTrait;
 
     private $id;
     private $name;
@@ -103,11 +107,23 @@ class Hub implements OpenCloseInterface
     }
 
     /**
-     * @param mixed $restaurant
+     * @param LocalBusiness $restaurant
      */
-    public function addRestaurant($restaurant)
+    public function addRestaurant(LocalBusiness $restaurant)
     {
-        $this->restaurants->add($restaurant);
+        if (!$this->restaurants->contains($restaurant)) {
+            $restaurant->setHub($this);
+            $this->restaurants->add($restaurant);
+        }
+    }
+
+    /**
+     * @param LocalBusiness $restaurant
+     */
+    public function removeRestaurant(LocalBusiness $restaurant): void
+    {
+        $this->restaurants->removeElement($restaurant);
+        $restaurant->setHub(null);
     }
 
     /**
@@ -127,28 +143,15 @@ class Hub implements OpenCloseInterface
     }
 
     /**
-     * @return int
+     * @return array
      */
-    public function getItemsTotalForRestaurant(OrderInterface $order, LocalBusiness $restaurant): int
+    public function getBusinessTypes(): array
     {
-        $total = 0;
-        foreach ($order->getItems() as $item) {
-            if ($restaurant->hasProduct($item->getVariant()->getProduct())) {
-                $total += $item->getTotal();
-            }
+        $types = [];
+        foreach ($this->getRestaurants() as $restaurant) {
+            $types[] = $restaurant->getType();
         }
 
-        return $total;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPercentageForRestaurant(OrderInterface $order, LocalBusiness $restaurant): float
-    {
-        $total = $order->getItemsTotal();
-        $itemsTotal = $this->getItemsTotalForRestaurant($order, $restaurant);
-
-        return round($itemsTotal / $total, 2);
+        return array_unique($types);
     }
 }

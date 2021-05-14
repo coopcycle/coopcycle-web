@@ -5,10 +5,9 @@ namespace AppBundle\Action;
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\User;
 use AppBundle\Form\ApiRegistrationType;
-use FOS\UserBundle\Mailer\MailerInterface;
-use FOS\UserBundle\Model\UserManagerInterface;
-use FOS\UserBundle\Util\UserManipulator;
-use FOS\UserBundle\Util\TokenGeneratorInterface;
+use Nucleos\ProfileBundle\Mailer\MailerInterface;
+use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Util\TokenGeneratorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
@@ -21,10 +20,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Register
 {
-    private $userManipulator;
     private $userManager;
     private $jwtManager;
     private $dispatcher;
@@ -34,22 +33,22 @@ class Register
     private $confirmationEnabled;
 
     public function __construct(
-        UserManipulator $userManipulator,
         UserManagerInterface $userManager,
         JWTTokenManagerInterface $jwtManager,
         EventDispatcherInterface $dispatcher,
         FormFactoryInterface $formFactory,
         TokenGeneratorInterface $tokenGenerator,
         MailerInterface $mailer,
+        ValidatorInterface $validator,
         bool $confirmationEnabled)
     {
-        $this->userManipulator = $userManipulator;
         $this->userManager = $userManager;
         $this->jwtManager = $jwtManager;
         $this->dispatcher = $dispatcher;
         $this->formFactory = $formFactory;
         $this->tokenGenerator = $tokenGenerator;
         $this->mailer = $mailer;
+        $this->validator = $validator;
         $this->confirmationEnabled = $confirmationEnabled;
     }
 
@@ -83,9 +82,7 @@ class Register
             'fullName' => $fullName,
         ];
 
-        $user = $this->userManager->createUser();
-
-        $form = $this->formFactory->create(ApiRegistrationType::class, $user);
+        $form = $this->formFactory->create(ApiRegistrationType::class);
         $form->submit($data);
 
         if (!$form->isValid()) {
@@ -101,28 +98,19 @@ class Register
             throw new ValidationException($violations);
         }
 
-        try {
+        $registration = $form->getData();
 
-            $enabled = $this->confirmationEnabled ? false : true;
+        $user = $registration->toUser($this->userManager);
 
-            $user = $this->userManipulator->create($username, $password, $email, $enabled, false);
+        $violations = $this->validator->validate($user);
 
-            $user->setTelephone($form->get('telephone')->getData());
-
-            if (!empty($fullName)) {
-                $user->getCustomer()->setFullName($fullName);
-            } else {
-                $user->getCustomer()->setFirstName($form->get('givenName')->getData());
-                $user->getCustomer()->setLastName($form->get('familyName')->getData());
-            }
-
-            $this->userManager->updateUser($user);
-
-        } catch (\Exception $e) {
-            // FIXME If a "real" error occurs, it is hidden
-            // TODO Send JSON-LD response
-            throw new BadRequestHttpException($e);
+        if (count($violations) > 0) {
+            throw new ValidationException($violations);
         }
+
+        $user->setEnabled($this->confirmationEnabled ? false : true);
+
+        $this->userManager->updateUser($user);
 
         // @see FOS\UserBundle\EventListener\EmailConfirmationListener
         if ($this->confirmationEnabled) {

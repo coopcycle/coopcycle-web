@@ -8,12 +8,6 @@ html, body {
   }
 }
 
-.rushInfoSize {
-  font-size: 1.5em;
-  margin-left: 0.2em;
-  top: 6px;
-}
-
 .content {
   flex: 1;
 }
@@ -140,11 +134,15 @@ h1, h2, h3, h4, h5, h6 {
   vertical-align: middle;
 }
 
-// ------------------ Admin ------------------
-
-.store-opening-hours {
-  width: 35%;
+.modal {
+  @media (max-width: $screen-xs-max) {
+    .modal-dialog {
+      width: calc(100% - 20px);
+    }
+  }
 }
+
+// ------------------ Admin ------------------
 
 .navbar--admin {
   .navbar-nav.navbar-right {
@@ -152,26 +150,6 @@ h1, h2, h3, h4, h5, h6 {
       .navbar-label {
         display: none;
       }
-    }
-  }
-}
-
-// ------------------ Help ------------------
-
-.help-nav__item {
-
-  &:hover {
-    text-decoration: none;
-  }
-
-  .list-group-item {
-    font-size: 14px;
-    color: $main-blue;
-
-    &:hover {
-      color: white;
-      background-color: $main-blue-light;
-      text-decoration: none;
     }
   }
 }
@@ -243,31 +221,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 50px;
 }
 
-.homepage-delivery {
-  // https://stackoverflow.com/questions/8541081/css-set-a-background-color-which-is-50-of-the-width-of-the-window
-  background: #212121;
-  padding: 60px 60px 0;
-  @media (min-width: $screen-sm-min) {
-    background: linear-gradient(0deg, #FFF 20%, #212121 0%);
-  }
-  @media (max-width: $screen-xs-max) {
-    padding-bottom: 60px;
-  }
-  margin-bottom: 40px;
-  form {
-    background: #FFFFFF;
-    box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    padding: 50px 40px;
-    button[type="submit"] {
-      background-color: #0076FF;
-    }
-  }
-  &-text {
-    color: #e5e5e5;
-  }
-}
-
 .homepage-map {
   margin-bottom: -40px;
   color: #ccc;
@@ -303,296 +256,17 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-#search small {
-  color: #fff;
-}
-
-// ------------------ Cart ------------------
-
-.restaurant-menu-wrapper {
-  // On mobile, add a margin to allow scrolling
-  @media (max-width: $screen-xs-max) {
-    margin-bottom: $navbar-height;
-  }
-}
-
-.restaurant-menu-section {
-
-  display: grid;
-  grid-gap: 8px;
-  grid-template-columns: repeat(2, 1fr);
-
-  @media (max-width: $screen-xs-max) {
-    grid-template-columns: repeat(1, 1fr);
-  }
-
-
-  &-item {
-    border: 1px solid $list-group-border;
-    & > * {
-      width: 100%;
-      min-height: 100%;
-      height: 100%;
-    }
-    &:hover,
-    &:focus {
-      color: $list-group-link-hover-color;
-      background-color: $list-group-hover-bg;
-      button.menu-item {
-        color: $list-group-link-color;
-        background-color: $list-group-hover-bg;
-      }
-    }
-    button.menu-item {
-      width: 100%;
-      min-height: 100%;
-      height: 100%;
-
-      // Reset button styles
-      // @see https://gist.github.com/MoOx/9137295
-
-      border: none;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      overflow: visible;
-      background: transparent;
-      color: inherit;
-      font: inherit;
-      text-align: inherit;
-      line-height: normal;
-      -webkit-font-smoothing: inherit;
-      -moz-osx-font-smoothing: inherit;
-      -webkit-appearance: none;
-
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-    }
-    .menu-item-inner {
-      display: flex;
-      flex: 1;
-    }
-    .menu-item-content-wrapper {
-      padding: 15px;
-      flex: 3;
-      flex-direction: column;
-      display: flex;
-      justify-content: space-between;
-    }
-    .menu-item-image-wrapper {
-      flex: 1;
-      align-self: center;
-      padding: 15px 15px 15px 0;
-      > img {
-        width: 100%;
-      }
-    }
-  }
-}
-
-.restaurant-title {
-  display:inline-block;
-}
-
-.restaurant-header {
-
-  display: flex;
-  align-items: center;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eeeeee;
-  margin-bottom: 15px;
-
-  @media (max-width: $screen-xs-max) {
-    flex-direction: column;
-  }
-
-  img.restaurant-image {
-    width: 120px;
-    height: 120px;
-    margin-right: 15px;
-    @media (max-width: $screen-xs-max) {
-      display: none;
-    }
-  }
-
-  &-body {
-    flex: 8;
-  }
-  &-right {
-    flex: 4;
-    @extend .text-muted;
-    text-align: right;
-    @media (max-width: $screen-xs-max) {
-      display: none;
-    }
-  }
-
-}
-
-.restaurant-list {
-  h1 {
-    display: inline-block;
-  }
-  /* Use object-fit to make sure images have same ratio */
-  .restaurant-image {
-    &--placeholder {
-      object-fit: contain;
-      padding: 20px;
-      border-bottom: 1px solid #ddd;
-    }
-  }
-}
-
-.restaurant-list-header {
+.dashboard-subnav {
+  background-color: #ECFFFD;
+  border-bottom: 1px solid #BDFFF6;
   margin-top: -20px;
-  padding-top: $bs-base-margin;
-  margin-bottom: $bs-base-margin;
-  background-color: $main-blue-light;
-  background-image: url(../pattern.svg);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
-}
-
-.restaurant-item {
-
-  position: relative;
-  color: #212121;
-  &:hover {
-    color: lighten(#212121, 10%);
-  }
-  margin-bottom: $line-height-computed;
-
-  &--disabled > * {
-    opacity: 0.6;
-  }
-  &--disabled > &__top-left,
-  &--disabled > &__top-right {
-    opacity: 0.9;
-  }
-  &__top-left,
-  &__top-right {
-    position: absolute;
-    top: 12px;
-  }
-  &__top-left {
-    left: 12px;
-  }
-  &__top-right {
-    right: 12px;
-  }
-
-  &__title {
-    font-weight: 700;
-  }
-
-  &__time-range {
-    font-size: $font-size-small;
-    background: #E5E5E5;
-    border-radius: 4px;
-    padding: 5px 10px;
-  }
-
-  > img,
-  a > img {
-    @include img-responsive;
-    margin-right: auto;
-    margin-left: auto;
-  }
-}
-
-.restaurant-item:hover {
-  text-decoration: none;
-}
-
-.restaurant-item:hover img {
-  opacity: 0.8;
-}
-
-// TODO Add more precise selector
-button.menu-item:focus,
-button.menu-item:active {
-   outline: none !important;
-   box-shadow: none;
-}
-
-.menu-item.menu-item--unavailable {
-  display: block;
-  color: #ddd;
-  cursor: default;
-  &:hover {
-    text-decoration: none;
-  }
-  .menu-item-price {
-    text-decoration: line-through;
-  }
-}
-
-.menu-item .menu-item-description,
-.menu-item .menu-item-allergens,
-.menu-item-restricted-diets {
-  display: block;
-  font-weight: normal;
-}
-
-.menu-item .menu-item-content {
-  margin-bottom: 5px;
-}
-
-.menu-item .menu-item-name {
-  font-family: inherit;
-  font-weight: bold;
-  margin: 0 0 5px 0;
-}
-
-.menu-item .menu-item-price {
-  white-space: nowrap;
-}
-
-.product-option-item {
-  &:hover {
-    background-color: $main-blue-light;
-  }
-  .radio,
-  .checkbox {
-    width: 100%;
-    label {
-      width: 100%;
-    }
-  }
-}
-
-.product-option-item-range {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  input[type="number"] {
-    @extend .form-control;
-    min-width: 10%;
-    width: 10%;
-    @media (max-width: $screen-xs-max) {
-      min-width: 20%;
-      width: 20%;
-    }
-    padding: 3px 6px;
-    margin-right: 8px;
-  }
-  label {
-    flex-grow: 1;
-    margin: 0;
-    font-weight: 400;
-    padding: 6px 0;
-    hyphens: auto;
-    &:hover {
-      cursor: pointer;
-    }
-  }
-  &-buttons {
-    display: flex;
-    flex-direction: row;
-    @media (max-width: $screen-xs-max) {
-      flex-direction: column;
+  .navbar {
+    .navbar-toggle {
+      background-color: darken(#ECFFFD, 50%);
+      border-color: white;
+      .icon-bar {
+        background-color: white;
+      }
     }
   }
 }
@@ -605,65 +279,12 @@ button.menu-item:active {
   display:inline-block;
 }
 
-.order-map__image {
-  margin-bottom: 20px;
-}
-
 .ant-calendar-picker {
   margin-right: 5px;
 }
 
 .ant-form-item {
   margin-bottom: 0;
-}
-
-form[name="restaurant"] #restaurant_imageFile_file,
-form[name="store"] #store_imageFile_file {
-  width: 0.1px;
-  height: 0.1px;
-  opacity: 0;
-  overflow: hidden;
-  position: absolute;
-  z-index: -1;
-}
-
-.form-group-delete {
-  padding-top: ($line-height-computed + 5px);
-}
-
-// ------------------ Autosuggest ------------------
-
-.react-autosuggest__container {
-  position: relative;
-
-  &:after {
-    @include fa-icon();
-    content: $fa-var-spinner;
-    @extend .fa-pulse;
-    display: block;
-    position: absolute;
-    top: calc(50% - 7px);
-    right: $padding-base-horizontal;
-    display: none;
-  }
-}
-
-.react-autosuggest__container--loading {
-  &:after {
-    display: inline;
-  }
-}
-
-.react-autosuggest__suggestions-container {
-  left: 0;
-  right: 0;
-  position: absolute;
-  z-index: 2000!important;
-}
-
-.react-autosuggest__suggestions-list {
-  list-style: none;
-  padding-left: 0;
 }
 
 // ------------------ React Modal ------------------
@@ -677,17 +298,6 @@ form[name="store"] #store_imageFile_file {
   right: 0;
   bottom: 0;
   background-color: rgba(255, 255, 255, 0.75);
-}
-
-// Custom class to allow scrolling inside modal
-// @see https://github.com/reactjs/react-modal/issues/283
-.ReactModal__Overlay--overflow {
-  @media (max-width: $screen-xs-max) {
-    height: 100vh;
-    .ReactModal__Content {
-      overflow-y: auto;
-    }
-  }
 }
 
 .ReactModal__Content {
@@ -714,257 +324,8 @@ form[name="store"] #store_imageFile_file {
   overflow: hidden;
 }
 
-// ------------------ Order Timeline ------------------
-
-.order-timeline {
-
-  $bullet-width: 26px;
-
-  &__step {
-
-    padding-bottom: $base-margin-s;
-    opacity: 0.7;
-
-    &__bullet {
-      @include fa-icon();
-      margin-right: $base-margin-s;
-      line-height: $bullet-width;
-      height: $bullet-width;
-      width: $bullet-width;
-      text-align: center;
-      vertical-align: middle;
-      border-radius: 50%;
-      color: #fff;
-      background-color: $main-blue;
-    }
-    &__bullet:before {
-      content: $fa-var-clock-o;
-    }
-
-    &--success &__bullet {
-      background-color: $green;
-    }
-    &--success &__bullet:before {
-      content: $fa-var-check;
-    }
-
-    &--danger &__bullet {
-      background-color: $red;
-    }
-    &--danger &__bullet:before {
-      content: $fa-var-times;
-    }
-
-    &__description {
-      border-left: 1px solid $gray;
-      min-height: 50px;
-      margin: $base-margin-s 0 $base-margin-s ($bullet-width / 2);
-      padding: $base-margin-s;
-      display: none;
-    }
-
-    &--active &__description {
-      display: block;
-    }
-
-    &--active {
-      opacity: 1;
-    }
-
-  }
-
-}
-
-// ------------------ Image uploader ------------------
-
-.image-uploader {
-  position: relative;
-  width: 230px;
-  height: 230px;
-  border: 1px dashed black;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
-}
-
-.image-uploader > label {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.ant-time-picker + .ant-time-picker {
-  margin-left: 10px;
-}
-
-// HACK : disable Antd input style so it fits with Bootstrap's design
-#closing-rules-range-picker .ant-calendar-picker-input.ant-input {
-  padding: 0;
-  width: 100%;
-  border: none;
-}
-
-// HACK : vertical-align submit button to bottom
-#closing_rule_submit {
-  margin-top: 25px;
-}
-
-.calendar-close {
-  color: $white;
-  background-color: $light-red;
-  border-top: 1px solid $red;
-  border-bottom: 1px solid $red;
-  list-style: none;
-  padding: $base-margin-xs $base-margin-xs;
-}
-
-.role-icons {
-  .fa {
-    margin-left: 5px;
-  }
-}
-
-.restaurant-dashboard {
-  display: flex;
-  height: 500px;
-  &__list {
-    flex: 3;
-    padding-right: 15px;
-    overflow-y: scroll;
-    h4 {
-      margin-top: 0;
-    }
-  }
-  &__details {
-    display: flex;
-    flex: 2;
-    padding-left: 15px;
-    &__container {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 15px;
-      &--empty {
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-      }
-      & > h3 {
-        margin-top: 0;
-      }
-    }
-    &__dishes {
-      max-height: 60%;
-      overflow-y: scroll;
-    }
-    &__buttons {
-      margin-top: auto;
-    }
-  }
-}
-
-.delivery-pricing-ruleset {
-  padding-left: 0;
-  &__rule {
-    display: flex;
-    align-items: center;
-    margin-bottom: 30px;
-    background-color: #fff;
-    &__handle {
-      flex: 1;
-      text-align: center;
-      cursor: grab;
-      padding: 20px 0;
-    }
-    &__expression {
-      flex: 8;
-      padding-right: 15px;
-      width: 0;
-    }
-    &__price {
-      flex: 4;
-    }
-    &__remove {
-      flex: 1;
-      text-align: right;
-    }
-  }
-}
-
-.rule-picker {
-  padding: 15px 15px 0 15px;
-  border: 1px solid black;
-  border-radius: 4px;
-  &-preview {
-    margin-top: 10px;
-    pre {
-      margin: 0;
-      font-size: 11px;
-      white-space: pre-wrap;
-    }
-  }
-}
-
-.react-autosuggest__suggestions-container--open {
-  display: block;
-  border: 1px solid #aaa;
-  background-color: #fff;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  z-index: 2;
-}
-
-.react-autosuggest__suggestions-list {
-  margin-bottom: 0;
-}
-
-.react-autosuggest__suggestion {
-  cursor: pointer;
-  padding: 10px;
-}
-
-.react-autosuggest__suggestion--highlighted {
-  background-color: #eee;
-}
-
 .text-monospace {
   font-family: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
-}
-
-#cart-top {
-  a {
-    margin-right: 0;
-  }
-}
-
-.panel--delivery {
-  .panel-heading > a {
-    display: block;
-    text-decoration: none;
-  }
-}
-
-#help {
-  img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-  }
-  table {
-    width: 100%;
-    th[align="center"] {
-      text-align: center;
-    }
-    th[align="right"] {
-      text-align: right;
-    }
-    th, td {
-      padding: 5px 0;
-    }
-  }
 }
 
 .bike-icon {
@@ -1008,97 +369,6 @@ form[name="store"] #store_imageFile_file {
   }
 }
 
-.restaurant-opening-hours {
-  font-size: 12px;
-}
-
-// Make sure Google Place Autocomplete is always on top
-// Fix for Bootstrap's modal
-div.pac-container {
-   z-index: 1050 !important;
-}
-
-.btn-confirm-delete {
-  display: flex;
-  margin: 0 auto;
-  transition: all 0.4s;
-  .message {
-    // @see https://stackoverflow.com/questions/3508605/how-can-i-transition-height-0-to-height-auto-using-css
-    max-width: 0;
-    height: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    transition: max-width 0.4s;
-  }
-  &.confirm {
-    .fa {
-      margin-right: 4px;
-    }
-    .message {
-      max-width: 500px;
-      height: auto;
-    }
-  }
-}
-
-/* Dropzone */
-
-.dz-image {
-  img {
-    width: 100%;
-    height: 100%;
-  }
-}
-
-.dropzone {
-  &.dropzone--blue {
-
-    border: 3px dashed #0074d9;
-    text-align: center;
-    transition: border-color 0.4s;
-
-    &.dz-drag-hover,
-    &:hover {
-      border-style: dashed;
-      border-color: lighten(#0074d9, 40%);
-    }
-
-  }
-}
-
-.quantity-input-group {
-  display: flex;
-  justify-content: space-between;
-  input[type="number"] {
-    text-align: center;
-    border: none;
-  }
-  &__decrement,
-  &__increment {
-    border: none;
-    background-color: transparent;
-  }
-}
-
-.button-icon--decrement,
-.button-icon--increment {
-  border: none;
-  background-color: transparent;
-  &[disabled] {
-    cursor: $cursor-disabled;
-    @include opacity(.65);
-  }
-}
-
-form[name="restaurant"] {
-  .help-block.collapsed .fa-minus {
-    display: none;
-  }
-  .help-block:not(.collapsed) .fa-plus {
-    display: none;
-  }
-}
-
 .btn-facebook {
   background: #3B5998;
   border-radius: 0;
@@ -1127,93 +397,6 @@ form[name="restaurant"] {
 
 .restaurant-pledge__image {
   max-width: 66.6666%;
-}
-
-.delivery__tracking {
-
-  display: flex;
-  flex-direction: column;
-
-  width: 100%;
-  height: 100vh;
-
-  padding: 0;
-  margin: 0;
-
-  &__topnav,
-  &__bottomnav {
-    padding: 10px 20px;
-  }
-
-  &__topnav {
-    text-align: center;
-    border-bottom: 1px solid #ccc;
-    h1 {
-      font-size: 24px;
-      margin: 0;
-    }
-  }
-  &__bottomnav {
-    border-top: 1px solid #ccc;
-  }
-
-  &__map-container {
-    flex: 1;
-    display: flex;
-    position: relative;
-
-    &--completed:after {
-      content: '';
-      position: absolute;
-      height: 100%;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 401;
-    }
-  }
-
-  &__map {
-    flex: 1;
-  }
-}
-
-.product__form__options {
-  &--sortable {
-    > * {
-      border: 1px solid #ebebeb;
-      padding: 10px;
-      background-color: #fff;
-    }
-  }
-}
-
-.restaurant-banner {
-  margin-top: -20px;
-}
-
-#modal-loopeat {
-  @media (max-width: $screen-xs-max) {
-    .modal-dialog {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 10px;
-      .modal-content {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        .modal-body {
-          flex: 1;
-          .embed-responsive.embed-responsive-16by9 {
-            height: 100%;
-            padding-bottom: 0;
-          }
-        }
-      }
-    }
-  }
 }
 
 .button-icon {
@@ -1254,57 +437,12 @@ form[name="restaurant"] {
   }
 }
 
-#delivery_pickup,
-#delivery_dropoff {
-  position: relative;
-  @media (max-width: $screen-sm-max) {
-    padding-top: 24px;
+.homepage-zerowaste {
+  background-color: #00DD61;
+  color: lighten(#00DD61, 50%);
+  a {
+    font-size: $font-size-large;
+    color: lighten(#00DD61, 50%);
+    text-decoration: none;
   }
-  &:before {
-    @include fa-icon();
-    font-size: 24px;
-    display: block;
-    position: absolute;
-    top: 0;
-    color: #9980FA;
-    line-height: $line-height-base;
-    padding-left: 15px;
-    @media (max-width: $screen-sm-max) {
-      right: 0;
-    }
-  }
-  .form-group:first-child {
-    label {
-      font-size: $font-size-large;
-    }
-  }
-}
-
-#delivery_pickup {
-  &:before {
-    content: $fa-var-cube;
-  }
-}
-
-#delivery_dropoff {
-  &:before {
-    content: $fa-var-arrow-down;
-  }
-}
-
-#delivery_pickup_address,
-#delivery_dropoff_address {
-  .address-autosuggest__container {
-    margin: 0;
-  }
-}
-
-.map-distance-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  z-index: 401;
-  padding: 5px;
-  background-color: #0984e3;
-  color: #ffffff;
 }

@@ -7,63 +7,37 @@ services:
   AppBundle\Twig\:
     resource: '../../../src/Twig/*'
 
-  League\Flysystem\Filesystem $assetsFilesystem: '@assets_filesystem'
-
   AppBundle\Twig\AppearanceRuntime:
     arguments:
       $logoFallback: '%kernel.project_dir%/web/img/logo.png'
+      $assetsFilesystem: '@assets_filesystem'
 
-  AppBundle\Twig\TaxRateRuntime:
+  AppBundle\Twig\AssetsRuntime:
     arguments:
-      $taxRateRepository: '@sylius.repository.tax_rate'
+      $assetsFilesystem: '@assets_filesystem'
 
   AppBundle\Twig\OrderRuntime:
     arguments:
-      $locale: '%kernel.default_locale%'
-
-  Twig_Extensions_Extension_Text:
-    class: Twig_Extensions_Extension_Text
-    tags:
-      - { name: twig.extension }
-
-  Twig_Extensions_Extension_Intl:
-    class: Twig_Extensions_Extension_Intl
-    tags:
-      - { name: twig.extension }
+      $redis: '@snc_redis.default'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
 
   Twig\Extra\Intl\IntlExtension:
     tags:
       - { name: twig.extension }
 
-  twig.cache_extension.provider:
-    class: Twig\CacheExtension\CacheProvider\PsrCacheAdapter
-    arguments:
-      $cache: '@cache.app'
+  Twig\Extra\String\StringExtension:
+    tags:
+      - { name: twig.extension }
 
-  twig.cache_extension.key_generator:
-    class: AppBundle\Twig\CacheExtension\KeyGenerator
-    arguments:
-      $slugify: '@slugify'
+  AppBundle\Twig\CacheExtension\KeyGenerator: ~
 
-  twig.cache_extension.strategy.black_hole:
-    class: Twig\CacheExtension\CacheStrategy\BlackholeCacheStrategy
-
-  twig.cache_extension.strategy.lifetime:
-    class: Twig\CacheExtension\CacheStrategy\LifetimeCacheStrategy
+  Twig\Extra\Cache\CacheRuntime:
     arguments:
-      $cache: '@twig.cache_extension.provider'
+      $cache: '@twig.cache'
+    tags:
+      - { name: twig.runtime }
 
-  twig.cache_extension.strategy.generational:
-    class: Twig\CacheExtension\CacheStrategy\GenerationalCacheStrategy
-    arguments:
-      $cache: '@twig.cache_extension.provider'
-      $keyGenerator: '@twig.cache_extension.key_generator'
-      $lifetime: 300
-
-  twig.cache_extension:
-    class: Twig\CacheExtension\Extension
-    arguments:
-      $cacheStrategy: '@twig.cache_extension.strategy.generational'
+  Twig\Extra\Cache\CacheExtension:
     tags:
       - { name: twig.extension }
 

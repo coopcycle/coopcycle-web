@@ -11,7 +11,6 @@ use AppBundle\Form\Entity\PackageWithQuantity;
 use AppBundle\Form\Type\TimeSlotChoice;
 use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Service\RoutingInterface;
-use AppBundle\Utils\TimeRange;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,7 +22,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -52,15 +51,6 @@ class DeliveryType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (true === $options['with_weight']) {
-            $builder
-                ->add('weight', NumberType::class, [
-                    'required' => false,
-                    'html5' => true,
-                    'label' => 'form.delivery.weight.label',
-                ]);
-        }
-
         if (true === $options['with_vehicle']) {
             $builder->add('vehicle', ChoiceType::class, [
                 'required' => true,
@@ -108,6 +98,7 @@ class DeliveryType extends AbstractType
                 'with_addresses' => null !== $store ? $store->getAddresses() : [],
                 'address_placeholder' => 'form.delivery.pickup.address_placeholder',
                 'street_address_label' => 'form.delivery.pickup.label',
+                'with_remember_address' => $options['with_remember_address'],
             ]);
             $form->add('dropoff', TaskType::class, [
                 'mapped' => false,
@@ -122,15 +113,31 @@ class DeliveryType extends AbstractType
                 'street_address_label' => 'form.delivery.dropoff.label',
                 'with_recipient_details' => $options['with_dropoff_recipient_details'],
                 'with_doorstep' => $options['with_dropoff_doorstep'],
+                'with_remember_address' => $options['with_remember_address'],
             ]);
+        });
 
-            if ($form->has('weight') && null !== $store && $store->isWeightRequired()) {
+        // Add weight field if needed
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
-                $config = $form->get('weight')->getConfig();
-                $options = $config->getOptions();
-                $options['required'] = true;
+            $form = $event->getForm();
+            $delivery = $event->getData();
+            $store = $delivery->getStore();
 
-                $form->add('weight', get_class($config->getType()->getInnerType()), $options);
+            if (true === $options['with_weight']) {
+
+                $required = null !== $store && $store->isWeightRequired();
+
+                $form
+                    ->add('weight', NumberType::class, [
+                        'required' => $required,
+                        'html5' => true,
+                        'label' => 'form.delivery.weight.label',
+                    ]);
+
+                if (null !== $delivery->getId() && null !== $delivery->getWeight()) {
+                    $form->get('weight')->setData($delivery->getWeight() / 1000);
+                }
             }
         });
 
@@ -305,6 +312,7 @@ class DeliveryType extends AbstractType
             'with_dropoff_doorstep' => false,
             'with_time_slot' => null,
             'with_package_set' => null,
+            'with_remember_address' => false,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

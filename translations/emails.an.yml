@@ -1,0 +1,108 @@
+registration.email.subject: |
+  Confirma lo tuyo correu electronico
+registration.email.message: |
+  <h2>Bienveniu a %brand_name%, %username%</h2>
+  Has recibiu este mensache perque recientment te rechistrés en %brand_name%.
+  <br>
+  Confirma lo tuyo correu electronico pretando lo botón aquí abaixo.
+registration.email.confirm: 'Confirma lo correu electronico'
+registration.email.disclaimer: 'Este vinclo nomás puede fer-se servir una vegada pa
+  validar la tuya cuenta'
+registration.email.textMessage: |
+  Bienveniu a %brand_name%, %username%,\n\n
+  Has recibiu este mensache perque recientment te rechistrés en %brand_name%.\n
+  Pa confirmar lo tuyo correu electronico, por favor preta en o siguient vinclo: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
+resetting.email.message: '<h2>Ola %username%!</h2> Pa restablir la tuya clau, per
+  favor preta lo botón aquí abaixo.'
+resetting.email.reset: 'Restablir la mía clau'
+order.view: 'Veyer lo pediu'
+order.public_url: |
+  Pa seguir lo estau d'o tuyo pediu, <a href="%order.public_url%">faiga clic aquí</a>.
+order.foodtech.accepted.delivery: "Le'n entregaremos en o siguient horario:"
+order.foodtech.accepted.delivery.disclaimer: "Nos meteremos en contacto en o caso\
+  \ de trobar problemas con a suya adreza"
+order.foodtech.accepted.collection: "Habrá de recullir-lo en o siguient horario:"
+order.foodtech.accepted.collection.disclaimer: "Si tiene bell problema, contacte con\
+  \ <strong>%name%</strong> en <strong>%phone_number%</strong> con prou tiempo pa\
+  \ cancelar lo suyo pediu."
+order.foodtech.cancelled: "Lo restaurant no puede aprestar lo tuyo pediu %order.number%.\n\
+  <br>\nLa tuya cuenta no ha estau cargada.\n"
+admin.order.created.subject: 'Nuevo pediu pa confirmar'
+admin.order.created.body: |
+  Ola,
+  <br>
+  S'ha creyau un nuevo pediu.
+admin.order_foodtech.created.body: |
+  Ola,
+  <br>
+  S'ha creyau un nuevo pediu pa <strong>%restaurant.name%</strong>.
+admin.pledge.subject: 'S''ha ninviau una nueva sucherencia!'
+admin.send_invitation.subject: 'Invitación a CoopCycle!'
+admin.send_invitation.body: |
+  Ola %username%,
+  <br>
+  Este correu ye una invitación a l'espacio CoopCycle, pa rematar la creyación d'a suya cuenta, per favor faiga un clic en o siguient vinclo.
+admin.send_invitation.create_password: 'Creyar la mía clau'
+admin.pledge.body: |
+  Ola,
+  <br>
+  %username% le fería goyo %pledge.name% d'estar en CoopCycle!
+user.pledge.subject: 'La suya sucherencia agora ye en CoopCycle!'
+user.pledge.body: |
+  Ola,
+  <br>
+  Gracias a tu, %pledge.name% agora ye en CoopCycle!
+owner.order.created.subject: 'Nuevo pediu pa confirmar'
+owner.order.created.body: |
+  Ola,
+  <br>
+  S'ha creyau un nuevo pediu pa <strong>%restaurant.name%</strong>.
+order.created.subject: 'Lo pediu %order.number% ha estau recibiu'
+order.created.body: "Ola,\n<br>\nHemos recibiu lo suyo pediu.\n<br>\nComprobamos lo\
+  \ suyo pediu antes con antes y te ninviaremos un correu quan sía confirmau.\n"
+order.accepted.subject: 'Lo tuyo pediu %order.number% ha estau confirmau'
+order.accepted.body.intro: "Ola,\n<br>\nO tuyo pediu ye confirmau."
+order.cancelled.subject: 'Lo tuyo pediu %order.number% ha estau cancelau'
+order.cancelled.body.intro: |
+  Ola,
+  <br>
+  Lo sentimos, pero lo tuyo pediu ha estau cancelau.
+order.delayed.subject: 'Lo tuyo pediu %order.number% ferá tarde'
+order.delayed.body: |
+  Ola,
+  <br>
+  Lo sentimos, pero lo tuyo pediu plegará %delay% menutos mas tarde.
+  <br>
+  Disculpa-nos per las molestias.
+task.done.subject: 'La fayena #%task.itz% ha estau completada'
+task.done.body: |
+  Ola,
+  <br>
+  La fayena #%task.itz% ha estau completada.
+task.failed.subject: 'La fayena #%task.itz% no se podió completar'
+task.failed.body: |
+  Ola,
+  <br>
+  La fayena #%task.itz% no se podió completar.
+order.payment.subject: 'Pago d''o tuyo pediu %order.number%'
+order.payment.body: "Ola,\n<br>\nHemos completau una entrega que nos ha pediu.\n<br>\n\
+  Aquí abaixo trobará un vinclo que le permite pagar con tarcheta de credito.\n"
+covid_19.subject: 'COVID-19 | Instruccions importants pa lo tuyo pediu'
+covid_19.body: "<h1>Instruccions a seguir pa la suya entrega</h1>\n<p>Dada la pandemia\
+  \ actual de COVID-19 (Coronavirus), vusté <strong>must strictly</strong> siga las\
+  \ siguients instruccions:</p>\n<h2>1. Guarda la distancia social</h2>\n<p>Deixaremos\
+  \ lo suyo pediu en a suya puerta, pa que no haiga d'acercar-se a la persona que\
+  \ viene a entregar. Puede u no deixar propina.</p>\n<h2>2. Desempaque lo suyo pediu\
+  \ dimpués de recibir-lo</h2>\n<p>Lo virus puede sobrevivir en superficies de cartón\
+  \ y plastico qualques días. L'empaquetache ye, per tanto, una rota d'alto risgo\
+  \ de transmisión d'o virus.\nPor lo tanto, le pedimos que <strong>desempaquete lo\
+  \ suyo pediu y transfiera lo conteniu a platos</strong>.</p>\n<h2>3. Tire l'empaquetache.</h2>\n\
+  <p>Una vegada que lo suyo pediu sía desempaquetau, s'asegure de <strong>tirar l'empaquetache\
+  \ a una vasuera zarrada</strong> Pa privar tocar-la distraitament mas tarde.</p>\n\
+  <h2>4. Limpie-se las mans!</h2>\n<p>Una vegada que haiga desempacau lo suyo pediu\
+  \ y repuyau l'embalache,<strong>limpie-se las mans!</strong></p>\n"
+
+order.expiring_authorization.subject: 'L''autorización de pago vencerá luego'
+order.expiring_authorization.text: 'L''autorización de pago pa lo pediu <strong>%order.number%</strong>
+  vencerá luego. <br> Completa lo pediu antes que l''autorización no venza pa no perder
+  los diners.'

@@ -5,7 +5,9 @@ namespace AppBundle\Entity;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
+use AppBundle\Entity\Sylius\Product;
 use AppBundle\Utils\RestaurantFilter;
+use Carbon\Carbon;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
@@ -182,23 +184,12 @@ class LocalBusinessRepository extends EntityRepository
         // 2 - closed restaurants
         // 3 - disabled restaurants
 
-        $featured = array_filter($matches, function (LocalBusiness $lb) {
-            return $lb->isFeatured() && $lb->isOpen();
-        });
-        $opened = array_filter($matches, function (LocalBusiness $lb) use ($featured) {
-            return !in_array($lb, $featured) && $lb->isEnabled() && $lb->isOpen();
-        });
-        $closed = array_filter($matches, function (LocalBusiness $lb) {
-            return $lb->isEnabled() && !$lb->isOpen();
-        });
-        $others = array_filter($matches, function (LocalBusiness $lb) {
-            return !$lb->isEnabled();
-        });
+        $now = Carbon::now();
 
-        $nextOpeningComparator = function (LocalBusiness $a, LocalBusiness $b) {
+        $nextOpeningComparator = function (LocalBusiness $a, LocalBusiness $b) use ($now) {
 
-            $aNextOpening = $a->getNextOpeningDate();
-            $bNextOpening = $b->getNextOpeningDate();
+            $aNextOpening = $a->getNextOpeningDate($now);
+            $bNextOpening = $b->getNextOpeningDate($now);
 
             $compareNextOpening = $aNextOpening === $bNextOpening ?
                 0 : ($aNextOpening < $bNextOpening ? -1 : 1);
@@ -206,12 +197,19 @@ class LocalBusinessRepository extends EntityRepository
             return $compareNextOpening;
         };
 
-        usort($featured, $nextOpeningComparator);
-        usort($opened, $nextOpeningComparator);
-        usort($closed, $nextOpeningComparator);
-        usort($others, $nextOpeningComparator);
+        usort($matches, $nextOpeningComparator);
 
-        return array_merge($featured, $opened, $closed, $others);
+        $featured = array_filter($matches, function (LocalBusiness $lb) use ($now) {
+            return $lb->isFeatured() && $lb->isOpen($now);
+        });
+        $opened = array_filter($matches, function (LocalBusiness $lb) use ($now, $featured) {
+            return !in_array($lb, $featured, true) && $lb->isOpen($now);
+        });
+        $closed = array_filter($matches, function (LocalBusiness $lb) use ($now) {
+            return !$lb->isOpen($now);
+        });
+
+        return array_merge($featured, $opened, $closed);
     }
 
     public function findByOption(ProductOptionInterface $option)
@@ -224,5 +222,40 @@ class LocalBusinessRepository extends EntityRepository
         ;
 
         return $qb->getQuery()->getResult();
+    }
+
+    private function createZeroWasteQueryBuilder()
+    {
+        $qb = $this->createQueryBuilder('r');
+        $qb
+            ->andWhere(
+                'r.enabled = :enabled'
+            )
+            ->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->eq('r.depositRefundEnabled', ':enabled'),
+                    $qb->expr()->eq('r.loopeatEnabled', ':enabled')
+                )
+            )
+            ->setParameter('enabled', true);
+
+        return $qb;
+    }
+
+    public function findZeroWaste()
+    {
+        return $this->createZeroWasteQueryBuilder()
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countZeroWaste()
+    {
+        $qb = $this->createZeroWasteQueryBuilder();
+        $qb
+            ->select('COUNT(r.id)');
+
+        return $qb->getQuery()
+            ->getSingleScalarResult();
     }
 }

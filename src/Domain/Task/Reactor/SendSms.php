@@ -47,7 +47,7 @@ class SendSms
 
         // Skip if this is related to foodtech
         if ($order = $this->orderRepository->findOneByTask($task)) {
-            if ($order->isFoodtech()) {
+            if ($order->hasVendor()) {
                 return;
             }
         }

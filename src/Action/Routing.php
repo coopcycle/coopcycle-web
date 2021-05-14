@@ -42,7 +42,7 @@ class Routing
      *     methods={"GET"}
      * )
      */
-    public function routeAction($coordinates, Request $request): JsonResponse
+    public function routeAction($coordinates): JsonResponse
     {
         $data = $this->routing->getServiceResponse(
             'route',
@@ -63,7 +63,7 @@ class Routing
      *     methods={"GET"}
      * )
      */
-    public function tripAction($coordinates, Request $request): JsonResponse
+    public function tripAction($coordinates): JsonResponse
     {
         $data = $this->routing->getServiceResponse(
             'trip',

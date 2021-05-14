@@ -4,34 +4,56 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Service\SettingsManager;
+use AppBundle\Utils\GeoUtils;
 use Geocoder\Geocoder as GeocoderInterface;
 use Geocoder\Location;
+use Geocoder\Model\Bounds;
 use Geocoder\Provider\Addok\Addok as AddokProvider;
 use Geocoder\Provider\Chain\Chain as ChainProvider;
-use Geocoder\Provider\GoogleMaps\GoogleMaps as GoogleMapsProvider;
-use Geocoder\Provider\Nominatim\Nominatim as NominatimProvider;
+use Geocoder\Provider\OpenCage\OpenCage as OpenCageProvider;
+use Geocoder\Provider\OpenCage\Model\OpenCageAddress;
 use Geocoder\Query\GeocodeQuery;
+use Geocoder\Query\ReverseQuery;
 use Geocoder\StatefulGeocoder;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\HandlerStack;
 use Http\Adapter\Guzzle6\Client;
-use PredictHQ\AddressFormatter\Formatter as AddressFormatter;
+use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
+use Spatie\GuzzleRateLimiterMiddleware\Store as RateLimiterStore;
+use Webmozart\Assert\Assert;
 
 class Geocoder
 {
+    private $rateLimiterStore;
     private $settingsManager;
+    private $openCageApiKey;
     private $country;
     private $locale;
+    private $rateLimitPerSecond;
+    private $autoconfigure;
+
     private $geocoder;
     private $addressFormatter;
 
     /**
      * FIXME Inject providers through constructor (needs a CompilerPass)
      */
-    public function __construct(SettingsManager $settingsManager, $country, $locale)
+    public function __construct(
+        RateLimiterStore $rateLimiterStore,
+        SettingsManager $settingsManager,
+        string $openCageApiKey,
+        string $country,
+        string $locale,
+        int $rateLimitPerSecond,
+        bool $autoconfigure = true)
     {
+        $this->rateLimiterStore = $rateLimiterStore;
         $this->settingsManager = $settingsManager;
+        $this->openCageApiKey = $openCageApiKey;
         $this->country = $country;
         $this->locale = $locale;
+        $this->rateLimitPerSecond = $rateLimitPerSecond;
+        $this->autoconfigure = $autoconfigure;
     }
 
     private function getGeocoder()
@@ -41,23 +63,39 @@ class Geocoder
 
             $providers = [];
 
-            // For France only, use https://adresse.data.gouv.fr/
-            if ('fr' === $this->country) {
-                // TODO Create own provider to get results with a high score
-                $providers[] = AddokProvider::withBANServer($httpClient);
+            if ($this->autoconfigure) {
+                // For France only, use https://adresse.data.gouv.fr/
+                if ('fr' === $this->country) {
+                    // TODO Create own provider to get results with a high score
+                    $providers[] = AddokProvider::withBANServer($httpClient);
+                }
             }
 
-            // Add Google provider only if api key is configured
-            $apiKey = $this->settingsManager->get('google_api_key');
-            if (!empty($apiKey)) {
-                $region = strtoupper($this->country);
-                $providers[] = new GoogleMapsProvider($httpClient, $region, $apiKey);
+            // Add OpenCage provider only if api key is configured
+            if (!empty($this->openCageApiKey)) {
+                $providers[] = $this->createOpenCageProvider();
             }
 
             $this->geocoder = new StatefulGeocoder(new ChainProvider($providers), $this->locale);
         }
 
         return $this->geocoder;
+    }
+
+    private function createOpenCageProvider()
+    {
+        // @see https://github.com/geocoder-php/Geocoder/blob/master/docs/cookbook/rate-limiting.md
+
+        $rateLimiter =
+            RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
+
+        $stack = HandlerStack::create();
+        $stack->push($rateLimiter);
+
+        $httpClient  = new GuzzleClient(['handler' => $stack, 'timeout' => 30.0]);
+        $httpAdapter = new Client($httpClient);
+
+        return new OpenCageProvider($httpAdapter, $this->openCageApiKey);
     }
 
     /**
@@ -73,7 +111,22 @@ class Geocoder
      */
     public function geocode($value)
     {
-        $results = $this->getGeocoder()->geocode($value);
+        // The value of the bounds parameter should be specified as two coordinate points
+        // forming the south-west and north-east corners of a bounding box (min lon, min lat, max lon, max lat).
+        // @see https://opencagedata.com/api#forward-opt
+        // @see https://opencagedata.com/bounds-finder
+        [ $latitude, $longitude ] = explode(',', $this->settingsManager->get('latlng'));
+        $viewbox = GeoUtils::getViewbox(floatval($latitude), floatval($longitude), 50);
+        [ $lngMax, $latMax, $lngMin, $latMin ] = $viewbox;
+        $bounds = new Bounds($latMax, $lngMin, $latMin, $lngMax);
+
+        $query = GeocodeQuery::create($value)
+            ->withData('proximity', $this->settingsManager->get('latlng'))
+            ->withBounds($bounds);
+
+        $results = $this->getGeocoder()->geocodeQuery(
+            $query
+        );
 
         if (count($results) > 0) {
             $result = $results->first();
@@ -94,7 +147,11 @@ class Geocoder
 
     public function reverse(float $latitude, float $longitude)
     {
-        $results = $this->getGeocoder()->reverse($latitude, $longitude);
+        $query = ReverseQuery::fromCoordinates($latitude, $longitude);
+
+        $results = $this->getGeocoder()->reverseQuery(
+            $query
+        );
 
         if (count($results) > 0) {
             $result = $results->first();
@@ -111,34 +168,21 @@ class Geocoder
         }
     }
 
-    private function getAddressFormatter()
-    {
-        if (null === $this->addressFormatter) {
-            $this->addressFormatter = new AddressFormatter();
-        }
-
-        return $this->addressFormatter;
-    }
-
     private function formatAddress(Location $location)
     {
-        $data = [
-            'house_number' => $location->getStreetNumber(),
-            'road' => $location->getStreetName(),
-            'city' => $location->getLocality(),
-            'postcode' => $location->getPostalCode(),
-        ];
+        switch ($location->getProvidedBy()) {
+            case 'addok':
+                // If it's addok, we use French formatting
+                return sprintf('%s %s, %s %s',
+                    $location->getStreetNumber(), $location->getStreetName(), $location->getPostalCode(), $location->getLocality());
 
-        if (null !== $location->getCountry() && null !== $location->getCountry()->getCode()) {
-            $data['country_code'] = $location->getCountry()->getCode();
+            case 'opencage':
+                Assert::isInstanceOf($location, OpenCageAddress::class);
+
+                return $location->getFormattedAddress();
         }
 
-        $streetAddress = $this->getAddressFormatter()->formatArray($data);
-
-        // Convert address to single line
-        $lines = preg_split("/\r\n|\n|\r/", $streetAddress);
-        $lines = array_filter($lines);
-
-        return implode(', ', $lines);
+        return sprintf('%s %s, %s %s',
+            $location->getStreetName(), $location->getStreetNumber(), $location->getPostalCode(), $location->getLocality());
     }
 }

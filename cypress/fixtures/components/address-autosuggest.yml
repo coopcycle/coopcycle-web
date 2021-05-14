@@ -1,0 +1,18 @@
+es:
+  - search: calle de toledo 39
+    expect:
+      - Calle de Toledo 39, 28001 Madrid, España
+  - search: travesia de las vistillas
+    expect:
+      - Travesía de las Vistillas, 28001 Madrid, España
+  - search: calle de la arganzuela 25
+    expect:
+      - Calle de la Arganzuela 25, 28001 Madrid, España
+
+fr:
+  - search: 12 rue de rivoli
+    expect:
+      - 12 Rue De Rivoli, 75004 Paris, France
+  - search: 56 bd de l'hopi
+    expect:
+      - 56 Bd De l'Hopital, Paris, France

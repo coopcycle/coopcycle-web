@@ -4,7 +4,7 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\TrackingPosition;
-use FOS\UserBundle\Model\UserInterface;
+use Nucleos\UserBundle\Model\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

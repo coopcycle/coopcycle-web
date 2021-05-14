@@ -1,8 +1,9 @@
 import { createAction } from 'redux-actions'
 import _ from 'lodash'
+import axios from 'axios'
 
 import i18n, { getCountry } from '../../i18n'
-import { placeToAddress } from '../../utils/GoogleMaps'
+import { geocode } from '../../components/AddressAutosuggest'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const FETCH_SUCCESS = 'FETCH_SUCCESS'
@@ -17,9 +18,15 @@ export const REPLACE_ERRORS = 'REPLACE_ERRORS'
 export const SET_DATE_MODAL_OPEN = 'SET_DATE_MODAL_OPEN'
 export const CLOSE_ADDRESS_MODAL = 'CLOSE_ADDRESS_MODAL'
 export const GEOCODING_FAILURE = 'GEOCODING_FAILURE'
+export const OPEN_ADDRESS_MODAL = 'OPEN_ADDRESS_MODAL'
 
 export const ENABLE_TAKEAWAY = 'ENABLE_TAKEAWAY'
 export const DISABLE_TAKEAWAY = 'DISABLE_TAKEAWAY'
+
+export const OPEN_PRODUCT_OPTIONS_MODAL = 'OPEN_PRODUCT_OPTIONS_MODAL'
+export const CLOSE_PRODUCT_OPTIONS_MODAL = 'CLOSE_PRODUCT_OPTIONS_MODAL'
+export const OPEN_PRODUCT_DETAILS_MODAL = 'OPEN_PRODUCT_DETAILS_MODAL'
+export const CLOSE_PRODUCT_DETAILS_MODAL = 'CLOSE_PRODUCT_DETAILS_MODAL'
 
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const fetchSuccess = createAction(FETCH_SUCCESS)
@@ -33,28 +40,60 @@ export const setLastAddItemRequest = createAction(SET_LAST_ADD_ITEM_REQUEST, (ur
 export const clearLastAddItemRequest = createAction(CLEAR_LAST_ADD_ITEM_REQUEST)
 export const setDateModalOpen = createAction(SET_DATE_MODAL_OPEN)
 export const closeAddressModal = createAction(CLOSE_ADDRESS_MODAL)
+export const openAddressModal = createAction(OPEN_ADDRESS_MODAL)
 
 export const geocodingFailure = createAction(GEOCODING_FAILURE)
+
+export const closeProductOptionsModal = createAction(CLOSE_PRODUCT_OPTIONS_MODAL)
+export const openProductOptionsModal =
+  createAction(OPEN_PRODUCT_OPTIONS_MODAL, (name, options, images, price, code, formAction) => ({ name, options, images, price, code, formAction }))
+
+export const closeProductDetailsModal = createAction(CLOSE_PRODUCT_DETAILS_MODAL)
+export const openProductDetailsModal =
+  createAction(OPEN_PRODUCT_DETAILS_MODAL, (name, images, price, formAction) => ({ name, images, price, formAction }))
+
+const httpClient = axios.create()
+
+httpClient.defaults.headers.common['Content-Type']     = 'application/x-www-form-urlencoded'
+httpClient.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+
+function serializeForm(withTime = false) {
+
+  const params = new URLSearchParams()
+
+  $('form[name="cart"]').serializeArray().forEach(field => {
+    params.append(field.name, field.value)
+  })
+
+  if (withTime) {
+    $('form[name="cart_time"]').serializeArray().forEach(field => {
+      params.append(field.name, field.value)
+    })
+  }
+
+  return params
+}
 
 function postForm() {
 
   const $form = $('form[name="cart"]')
-  const data = $form.serializeArray()
 
-  return $.post($form.attr('action'), data)
+  return httpClient.request({
+    method: 'POST',
+    url: $form.data('cartUrl'),
+    data: serializeForm().toString(),
+  }).then(res => res.data)
 }
 
 function postFormWithTime() {
 
   const $form = $('form[name="cart"]')
-  const defaultData = $form.serializeArray()
 
-  const $timeForm = $('form[name="cart_time"]')
-  const timeData = $timeForm.serializeArray()
-
-  const data = defaultData.concat(timeData)
-
-  return $.post($form.attr('action'), data)
+  return httpClient.request({
+    method: 'POST',
+    url: $form.data('cartUrl'),
+    data: serializeForm(true).toString(),
+  }).then(res => res.data)
 }
 
 function notifyListeners(cart) {
@@ -64,20 +103,15 @@ function notifyListeners(cart) {
 }
 
 function handleAjaxResponse(res, dispatch, broadcast = true) {
-
-  const hasErrors = res.errors && _.size(res.errors) > 0
-
-  if (!hasErrors) {
-    dispatch(fetchSuccess(res))
-  } else {
-    dispatch(fetchFailure(res))
-  }
-
+  dispatch(fetchSuccess(res))
   $('#menu').LoadingOverlay('hide')
-
   if (broadcast) {
     notifyListeners(res.cart)
   }
+}
+
+function handleAjaxError(e, dispatch) {
+  dispatch(fetchFailure())
 }
 
 const QUEUE_CART_ITEMS = 'QUEUE_CART_ITEMS'
@@ -156,7 +190,7 @@ export function updateItemQuantity(itemID, quantity) {
 
     $.post(url, { quantity })
       .then(res => handleAjaxResponse(res, dispatch))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+      .fail(e   => handleAjaxError(e, dispatch))
   }
 }
 
@@ -178,14 +212,11 @@ export function removeItem(itemID) {
 
     return $.ajax(fetchParams)
       .then(res => handleAjaxResponse(res, dispatch))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+      .fail(e   => handleAjaxError(e, dispatch))
   }
 }
 
 function geocodeAndSync() {
-
-  const geocoder = new window.google.maps.Geocoder()
-  const geocoderOK = window.google.maps.GeocoderStatus.OK
 
   return (dispatch, getState) => {
 
@@ -202,13 +233,11 @@ function geocodeAndSync() {
       return
     }
 
-    geocoder.geocode({ address: cart.shippingAddress.streetAddress }, (results, status) => {
+    geocode(cart.shippingAddress.streetAddress).then(address => {
 
       $('#menu').LoadingOverlay('hide')
 
-      if (status === geocoderOK && results.length > 0) {
-        const place = results[0]
-        const address = placeToAddress(place, cart.shippingAddress.streetAddress)
+      if (address) {
         dispatch(changeAddress({
           ...cart.shippingAddress,
           ...address,
@@ -226,10 +255,16 @@ export function sync() {
 
     const { cart } = getState()
 
+    if (cart.takeaway) {
+      $('#menu').LoadingOverlay('hide')
+      return
+    }
+
     if (cart.shippingAddress && !cart.shippingAddress.streetAddress) {
+      dispatch(fetchRequest())
       postForm()
         .then(res => handleAjaxResponse(res, dispatch, false))
-        .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+        .catch(e  => handleAjaxError(e, dispatch))
     } else {
       dispatch(geocodeAndSync())
     }
@@ -246,7 +281,7 @@ export function changeDate() {
 
     postFormWithTime()
       .then(res => handleAjaxResponse(res, dispatch, false))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .catch(e  => handleAjaxError(e, dispatch))
   }
 }
 
@@ -287,12 +322,15 @@ export function changeAddress(address) {
 
         isNewAddressFormElement.value = '0'
 
+         // This must be done *BEFORE* posting the form
+        dispatch(disableTakeaway(false))
+
         const url =
           window.Routing.generate('restaurant_cart_address', { id: restaurant.id })
 
         $.post(url, { address: address['@id'] })
           .then(res => handleAjaxResponse(res, dispatch, false))
-          .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+          .fail(e   => handleAjaxError(e, dispatch))
 
       } else {
 
@@ -300,30 +338,22 @@ export function changeAddress(address) {
 
         // This must be done *BEFORE* posting the form
         dispatch(mapAddressFields(address))
+        dispatch(disableTakeaway(false))
 
         postForm()
           .then(res => handleAjaxResponse(res, dispatch, false))
-          .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+          .catch(e  => handleAjaxError(e, dispatch))
       }
 
     } else {
-      dispatch(replaceErrors('shippingAddress', [
-        { message: i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION') }
-      ]))
+      setTimeout(() => dispatch(replaceErrors('shippingAddress', [
+        {
+          message: i18n.t('CART_ADDRESS_NOT_ENOUGH_PRECISION'),
+          code: 'Order::ADDRESS_NOT_PRECISE',
+        }
+      ])), 250)
     }
 
-  }
-}
-
-export function goBackToRestaurant() {
-
-  return (dispatch, getState) => {
-
-    const restaurant = getState().cart.restaurant
-
-    window.location.href = window.Routing.generate('restaurant', {
-      id: restaurant.id
-    })
   }
 }
 
@@ -340,7 +370,7 @@ export function clearDate() {
 
     $.post(url)
       .then(res => handleAjaxResponse(res, dispatch, false))
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch, false))
+      .fail(e   => handleAjaxError(e, dispatch))
 
   }
 }
@@ -348,7 +378,7 @@ export function clearDate() {
 const _enableTakeaway = createAction(ENABLE_TAKEAWAY)
 const _disableTakeaway = createAction(DISABLE_TAKEAWAY)
 
-export function enableTakeaway() {
+export function enableTakeaway(post = true) {
 
   return (dispatch) => {
 
@@ -360,16 +390,18 @@ export function enableTakeaway() {
       $takeaway.prop('checked', true)
 
       dispatch(_enableTakeaway())
-      dispatch(fetchRequest())
 
-      postForm()
-        .then(res => handleAjaxResponse(res, dispatch))
-        .fail(e   => handleAjaxResponse(e.responseJSON, dispatch))
+      if (post) {
+        dispatch(fetchRequest())
+        postForm()
+          .then(res => handleAjaxResponse(res, dispatch))
+          .catch(e  => handleAjaxError(e, dispatch))
+      }
     }
   }
 }
 
-export function disableTakeaway() {
+export function disableTakeaway(post = true) {
 
   return (dispatch) => {
 
@@ -381,11 +413,13 @@ export function disableTakeaway() {
       $takeaway.prop('checked', false)
 
       dispatch(_disableTakeaway())
-      dispatch(fetchRequest())
 
-      postForm()
-        .then(res => handleAjaxResponse(res, dispatch))
-        .fail(e   => handleAjaxResponse(e.responseJSON, dispatch))
+      if (post) {
+        dispatch(fetchRequest())
+        postForm()
+          .then(res => handleAjaxResponse(res, dispatch))
+          .catch(e  => handleAjaxError(e, dispatch))
+      }
     }
   }
 }
@@ -419,6 +453,6 @@ export function retryLastAddItemRequest() {
         dispatch(clearLastAddItemRequest())
         handleAjaxResponse(res, dispatch)
       })
-      .fail(e => handleAjaxResponse(e.responseJSON, dispatch))
+      .fail(e => handleAjaxError(e, dispatch))
   }
 }

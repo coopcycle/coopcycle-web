@@ -5,36 +5,42 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\OrderConfirmTrait;
 use AppBundle\DataType\TsRange;
+use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Embed\Context as EmbedContext;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Form\Checkout\CheckoutAddressType;
+use AppBundle\Form\Checkout\CheckoutCouponType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
+use AppBundle\Form\Checkout\CheckoutTipType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
-use AppBundle\Utils\OrderTimeHelper;
-use Carbon\Carbon;
+use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
+use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
+use phpcent\Client as CentrifugoClient;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class OrderController extends AbstractController
@@ -42,33 +48,15 @@ class OrderController extends AbstractController
     use OrderConfirmTrait;
 
     private $objectManager;
-    private $orderTimeHelper;
-    private $logger;
 
     public function __construct(
         EntityManagerInterface $objectManager,
-        OrderTimeHelper $orderTimeHelper,
         FactoryInterface $orderFactory,
-        string $sessionKeyName,
-        LoggerInterface $logger)
+        string $sessionKeyName)
     {
         $this->objectManager = $objectManager;
-        $this->orderTimeHelper = $orderTimeHelper;
         $this->orderFactory = $orderFactory;
         $this->sessionKeyName = $sessionKeyName;
-        $this->logger = $logger;
-    }
-
-    private function getShippingRange(OrderInterface $order): TsRange
-    {
-        $range = $order->getShippingTimeRange();
-
-        if (null !== $range) {
-
-            return $range;
-        }
-
-        return $this->orderTimeHelper->getShippingTimeRange($order);
     }
 
     /**
@@ -91,9 +79,22 @@ class OrderController extends AbstractController
 
         $order = $cartContext->getCart();
 
-        if (null === $order || null === $order->getVendor()) {
+        if (null === $order || !$order->hasVendor()) {
 
             return $this->redirectToRoute('homepage');
+        }
+
+        $errors = $validator->validate($order);
+
+        // @see https://github.com/coopcycle/coopcycle-web/issues/2069
+        if (count($errors->findByCodes(ShippingAddressConstraint::ADDRESS_NOT_SET)) > 0) {
+
+            $vendor = $order->getVendor();
+            if ($order->isMultiVendor()) {
+                return $this->redirectToRoute('hub', ['id' => $vendor->getHub()->getId()]);
+            }
+
+            return $this->redirectToRoute('restaurant', ['id' => $vendor->getRestaurant()->getId()]);
         }
 
         $user = $this->getUser();
@@ -109,8 +110,49 @@ class OrderController extends AbstractController
         $wasReusablePackagingEnabled = $order->isReusablePackagingEnabled();
         $originalReusablePackagingPledgeReturn = $order->getReusablePackagingPledgeReturn();
 
-        $form = $this->createForm(CheckoutAddressType::class, $order);
+        $tipForm = $this->createForm(CheckoutTipType::class);
+        $tipForm->handleRequest($request);
 
+        if ($tipForm->isSubmitted()) {
+
+            $tipAmount = $tipForm->get('amount')->getData();
+            $order->setTipAmount((int) ($tipAmount * 100));
+
+            $orderProcessor->process($order);
+            $this->objectManager->flush();
+
+            return $this->redirectToRoute('order');
+        }
+
+        $couponForm = $this->createForm(CheckoutCouponType::class, $order);
+        $couponForm->handleRequest($request);
+
+        if ($couponForm->isSubmitted()) {
+
+            $promotionCouponWasAdded =
+                null === $originalPromotionCoupon && null !== $order->getPromotionCoupon();
+
+            if ($promotionCouponWasAdded) {
+                $this->addFlash(
+                    'notice',
+                    $translator->trans('promotions.promotion_coupon.success', [
+                        '%code%' => $order->getPromotionCoupon()->getCode()
+                    ])
+                );
+            } else {
+                $this->addFlash(
+                    'error',
+                    'No coupon applied'
+                );
+            }
+
+            $orderProcessor->process($order);
+            $this->objectManager->flush();
+
+            return $this->redirectToRoute('order');
+        }
+
+        $form = $this->createForm(CheckoutAddressType::class, $order);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
@@ -128,23 +170,8 @@ class OrderController extends AbstractController
             $reusablePackagingPledgeReturnWasChanged =
                 $originalReusablePackagingPledgeReturn !== $order->getReusablePackagingPledgeReturn();
 
-            $tipWasAdded =
-                $form->getClickedButton() && 'addTip' === $form->getClickedButton()->getName();
-
-            $promotionCouponWasAdded =
-                null === $originalPromotionCoupon && null !== $order->getPromotionCoupon();
-
             // In those cases, we always reload the page
-            if ($reusablePackagingWasChanged || $tipWasAdded || $promotionCouponWasAdded || $reusablePackagingPledgeReturnWasChanged) {
-
-                if ($promotionCouponWasAdded) {
-                    $this->addFlash(
-                        'notice',
-                        $translator->trans('promotions.promotion_coupon.success', [
-                            '%code%' => $order->getPromotionCoupon()->getCode()
-                        ])
-                    );
-                }
+            if ($reusablePackagingWasChanged || $reusablePackagingPledgeReturnWasChanged) {
 
                 $orderProcessor->process($order);
                 $this->objectManager->flush();
@@ -153,6 +180,12 @@ class OrderController extends AbstractController
             }
 
             if ($form->isValid()) {
+
+                // https://github.com/coopcycle/coopcycle-web/issues/1910
+                // Maybe a better would be to use "empty_data" option in CheckoutAddressType
+                if (null !== $originalPromotionCoupon && null === $order->getPromotionCoupon()) {
+                    $order->setPromotionCoupon($originalPromotionCoupon);
+                }
 
                 $orderProcessor->process($order);
 
@@ -178,8 +211,9 @@ class OrderController extends AbstractController
 
         return $this->render('order/index.html.twig', array(
             'order' => $order,
-            'shipping_range' => $this->getShippingRange($order),
             'form' => $form->createView(),
+            'form_tip' => $tipForm->createView(),
+            'form_coupon' => $couponForm->createView(),
         ));
     }
 
@@ -201,40 +235,29 @@ class OrderController extends AbstractController
 
         $order = $cartContext->getCart();
 
-        if (null === $order || null === $order->getVendor()) {
+        if (null === $order || !$order->hasVendor()) {
 
             return $this->redirectToRoute('homepage');
         }
 
+        $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
+
         // Make sure to call StripeManager::configurePayment()
         // It will resolve the Stripe account that will be used
-        $stripeManager->configurePayment(
-            $order->getLastPayment(PaymentInterface::STATE_CART)
-        );
+        // TODO Make sure we are using Stripe, not MercadoPago
+        $stripeManager->configurePayment($payment);
 
         $form = $this->createForm(CheckoutPaymentType::class, $order);
 
         $parameters =  [
             'order' => $order,
-            'shipping_range' => $this->getShippingRange($order),
+            'payment' => $payment,
         ];
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
-            if ($payment->hasSource()) {
-
-                $payment->setState(PaymentInterface::STATE_PROCESSING);
-
-                // TODO Freeze shipping time?
-                // Maybe better after source becomes chargeable
-
-                $this->objectManager->flush();
-
-                return $this->redirect($payment->getSourceRedirectUrl());
-            }
 
             $data = [
                 'stripeToken' => $form->get('stripePayment')->get('stripeToken')->getData()
@@ -267,6 +290,92 @@ class OrderController extends AbstractController
     }
 
     /**
+     * @Route("/order/payment/{hashId}/method", name="order_payment_select_method", methods={"POST"})
+     */
+    public function selectPaymentMethodAction($hashId, Request $request,
+        OrderManager $orderManager,
+        CartContextInterface $cartContext,
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
+        EntityManagerInterface $entityManager,
+        EdenredClient $edenredClient)
+    {
+        $order = $cartContext->getCart();
+
+        if (null === $order || !$order->hasVendor()) {
+
+            return new JsonResponse(['message' => 'No cart found in context'], 404);
+        }
+
+        $hashids = new Hashids($this->getParameter('secret'), 8);
+
+        $decoded = $hashids->decode($hashId);
+
+        if (count($decoded) !== 1) {
+
+            return new JsonResponse(['message' => 'Hashid could not be decoded'], 400);
+        }
+
+        $paymentId = current($decoded);
+        $payment = $entityManager->getRepository(PaymentInterface::class)->find($paymentId);
+
+        if (null === $payment) {
+
+            return new JsonResponse(['message' => 'Payment does not exist'], 404);
+        }
+
+        if (!$order->hasPayment($payment)) {
+
+            return new JsonResponse(['message' => 'Payment does not belong to current cart'], 400);
+        }
+
+        $content = $request->getContent();
+
+        $data = [];
+
+        if (!empty($content)) {
+            $data = json_decode($content, true);
+        }
+
+        if (!isset($data['method'])) {
+
+            return new JsonResponse(['message' => 'No payment method found in request'], 400);
+        }
+
+        $code = strtoupper($data['method']);
+
+        $paymentMethod = $paymentMethodRepository->findOneByCode($code);
+
+        if (null === $paymentMethod) {
+
+            return new JsonResponse(['message' => 'Payment method does not exist'], 404);
+        }
+
+        if (!$paymentMethod->isEnabled() && !$this->getParameter('kernel.debug')) {
+
+            return new JsonResponse(['message' => 'Payment method is not enabled'], 400);
+        }
+
+        $payment->setMethod($paymentMethod);
+
+        switch ($code) {
+            case 'EDENRED+CARD':
+            case 'EDENRED':
+                $breakdown = $edenredClient->splitAmounts($order);
+                $payment->setAmountBreakdown($breakdown['edenred'], $breakdown['card']);
+                break;
+            default:
+                $payment->clearAmountBreakdown();
+                break;
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'amount_breakdown' => $payment->getAmountBreakdown(),
+        ]);
+    }
+
+    /**
      * @Route("/order/confirm/{hashid}", name="order_confirm")
      */
     public function confirmAction($hashid,
@@ -275,7 +384,8 @@ class OrderController extends AbstractController
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
         SessionInterface $session,
-        Request $request)
+        Filesystem $assetsFilesystem,
+        CentrifugoClient $centrifugoClient)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
 
@@ -292,18 +402,25 @@ class OrderController extends AbstractController
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
         }
 
+        $this->denyAccessUnlessGranted('view_public', $order);
+
+        // TODO Check if order is in expected state (new or superior)
+
         $loopeatAccessTokenKey =
             sprintf('loopeat.order.%d.access_token', $id);
         $loopeatRefreshTokenKey =
             sprintf('loopeat.order.%d.refresh_token', $id);
 
         if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
+
             $order->getCustomer()->setLoopeatAccessToken(
                 $session->get($loopeatAccessTokenKey)
             );
             $order->getCustomer()->setLoopeatRefreshToken(
                 $session->get($loopeatRefreshTokenKey)
             );
+
+            $this->objectManager->flush();
 
             $session->remove($loopeatAccessTokenKey);
             $session->remove($loopeatRefreshTokenKey);
@@ -312,18 +429,15 @@ class OrderController extends AbstractController
         $resetSession = $flashBag->has('reset_session') && !empty($flashBag->get('reset_session'));
         $trackGoal = $flashBag->has('track_goal') && !empty($flashBag->get('track_goal'));
 
+        // FIXME We may generate expired tokens
+
         $exp = clone $order->getShippingTimeRange()->getUpper();
         $exp->modify('+3 hours');
 
-        // FIXME We may generate expired tokens
-
-        $jwt = $jwsProvider->create([
-            // We add a custom "ord" claim to the token,
-            // that will allow watching order events
-            'ord' => $iriConverter->getIriFromItem($order),
-            // Token expires 3 hours after expected completion
-            'exp' => $exp->getTimestamp(),
-        ])->getToken();
+        $customMessage = null;
+        if ($assetsFilesystem->has('order_confirm.md')) {
+            $customMessage = $assetsFilesystem->read('order_confirm.md');
+        }
 
         return $this->render('order/foodtech.html.twig', [
             'order' => $order,
@@ -334,7 +448,11 @@ class OrderController extends AbstractController
             ]),
             'reset' => $resetSession,
             'track_goal' => $trackGoal,
-            'jwt' => $jwt,
+            'custom_message' => $customMessage,
+            'centrifugo' => [
+                'token'   => $centrifugoClient->generateConnectionToken($order->getId(), $exp->getTimestamp()),
+                'channel' => sprintf('%s_order_events#%d', $this->getParameter('centrifugo_namespace'), $order->getId())
+            ]
         ]);
     }
 
@@ -345,8 +463,7 @@ class OrderController extends AbstractController
         OrderRepository $orderRepository,
         SessionInterface $session,
         OrderProcessorInterface $orderProcessor,
-        OrderModifierInterface $orderModifier,
-        Request $request)
+        OrderModifierInterface $orderModifier)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
 
@@ -380,5 +497,28 @@ class OrderController extends AbstractController
         $session->set($this->sessionKeyName, $cart->getId());
 
         return $this->redirectToRoute('order');
+    }
+
+    /**
+     * @Route("/order/continue", name="order_continue")
+     */
+    public function continueAction(Request $request,
+        CartContextInterface $cartContext)
+    {
+        $order = $cartContext->getCart();
+
+        if (null === $order || !$order->hasVendor()) {
+
+            return $this->redirectToRoute('homepage');
+        }
+
+        $restaurants = $order->getRestaurants();
+
+        if (count($restaurants) === 0) {
+
+            return $this->redirectToRoute('homepage');
+        }
+
+        return $this->redirectToRoute('restaurant', ['id' => $restaurants->first()->getId()]);
     }
 }

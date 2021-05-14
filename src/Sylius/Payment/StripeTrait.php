@@ -78,12 +78,17 @@ trait StripeTrait
         ]);
     }
 
+    /**
+     * @return string|null
+     */
     public function getPaymentIntent()
     {
         if (isset($this->details['payment_intent'])) {
 
             return $this->details['payment_intent'];
         }
+
+        return null;
     }
 
     public function getPaymentIntentClientSecret()
@@ -177,6 +182,9 @@ trait StripeTrait
         }
     }
 
+    /**
+     * @deprecated
+     */
     public function getSource()
     {
         if (isset($this->details['source'])) {
@@ -185,11 +193,45 @@ trait StripeTrait
         }
     }
 
+    /**
+     * @deprecated
+     */
     public function getSourceType()
     {
         if (isset($this->details['source_type'])) {
 
             return $this->details['source_type'];
         }
+    }
+
+    public function setPaymentMethodTypes(array $value)
+    {
+        $this->details = array_merge($this->details, [
+            'payment_method_types' => $value,
+        ]);
+    }
+
+    public function getPaymentMethodTypes(): array
+    {
+        if (isset($this->details['payment_method_types'])) {
+
+            return $this->details['payment_method_types'];
+        }
+
+        return [];
+    }
+
+    public function isGiropay(): bool
+    {
+        /** @deprecated */
+        if ($this->hasSource() && 'giropay' === $this->getSourceType()) {
+            return true;
+        }
+
+        if (in_array('giropay', $this->getPaymentMethodTypes())) {
+            return true;
+        }
+
+        return false;
     }
 }

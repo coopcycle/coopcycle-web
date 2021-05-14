@@ -26,6 +26,7 @@ Feature: Manage shops
           "@id":"/api/addresses/1",
           "@type":"http://schema.org/Place",
           "geo":{
+            "@type":"GeoCoordinates",
             "latitude":48.864577,
             "longitude":2.333338
           },
@@ -52,6 +53,16 @@ Feature: Manage shops
         ],
         "specialOpeningHoursSpecification":[],
         "image":@string@,
-        "fulfillmentMethods":@array@
+        "fulfillmentMethods":@array@,
+        "potentialAction":{
+          "@type":"OrderAction",
+          "target":{
+            "@type":"EntryPoint",
+            "urlTemplate":@string@,
+            "inLanguage":"fr",
+            "actionPlatform":["http://schema.org/DesktopWebPlatform"]
+          },
+          "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
+        }
       }
       """

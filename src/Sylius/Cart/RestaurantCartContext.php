@@ -11,6 +11,7 @@ use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class RestaurantCartContext implements CartContextInterface
 {
@@ -27,6 +28,11 @@ final class RestaurantCartContext implements CartContextInterface
      */
     private ChannelContextInterface $channelContext;
 
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    private AuthorizationCheckerInterface $authorizationChecker;
+
     /** @var OrderInterface|null */
     private $cart;
 
@@ -41,7 +47,8 @@ final class RestaurantCartContext implements CartContextInterface
         FactoryInterface $orderFactory,
         string $sessionKeyName,
         ChannelContextInterface $channelContext,
-        RestaurantResolver $resolver)
+        RestaurantResolver $resolver,
+        AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->session = $session;
         $this->orderRepository = $orderRepository;
@@ -49,6 +56,7 @@ final class RestaurantCartContext implements CartContextInterface
         $this->sessionKeyName = $sessionKeyName;
         $this->channelContext = $channelContext;
         $this->resolver = $resolver;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -63,20 +71,18 @@ final class RestaurantCartContext implements CartContextInterface
         $cart = null;
 
         if ($this->session->has($this->sessionKeyName)) {
+
             $cart = $this->orderRepository->findCartById($this->session->get($this->sessionKeyName));
 
             if (null === $cart || $cart->getChannel()->getCode() !== $this->channelContext->getChannel()->getCode()) {
                 $this->session->remove($this->sessionKeyName);
             } else {
                 try {
-
-                    // We need to call a method on the restaurant object
-                    // so that Doctrine eventually triggers EntityNotFoundException
-                    $noop = $cart->getVendor()->getRestaurant();
-                    if (null !== $noop) {
-                        $noop->getName();
+                    if (!$cart->isMultiVendor() && !$cart->getVendor()->getRestaurant()->isEnabled()
+                        && !$this->authorizationChecker->isGranted('edit', $cart->getVendor()->getRestaurant())) {
+                        $cart = null;
+                        $this->session->remove($this->sessionKeyName);
                     }
-
                 } catch (EntityNotFoundException $e) {
                     $cart = null;
                     $this->session->remove($this->sessionKeyName);
