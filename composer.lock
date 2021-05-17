@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fece35924dc4fd223b93f04d9c14925e",
+    "content-hash": "cad4a6904728f83d0a923ee09f7f348a",
     "packages": [
         {
             "name": "api-platform/core",
@@ -16176,16 +16176,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v5.2.6",
+            "version": "v5.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "f52424eb407dc67f164afed33a514da1ebbfab10"
+                "reference": "23147f993c63c9eaafe3fa7ac0363a2e42d66a22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/f52424eb407dc67f164afed33a514da1ebbfab10",
-                "reference": "f52424eb407dc67f164afed33a514da1ebbfab10",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/23147f993c63c9eaafe3fa7ac0363a2e42d66a22",
+                "reference": "23147f993c63c9eaafe3fa7ac0363a2e42d66a22",
                 "shasum": ""
             },
             "require": {
@@ -16376,7 +16376,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/symfony/issues",
-                "source": "https://github.com/symfony/symfony/tree/v5.2.6"
+                "source": "https://github.com/symfony/symfony/tree/v5.2.8"
             },
             "funding": [
                 {
@@ -16392,7 +16392,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-03-29T05:17:12+00:00"
+            "time": "2021-05-12T13:28:09+00:00"
         },
         {
             "name": "symfony/webpack-encore-bundle",
