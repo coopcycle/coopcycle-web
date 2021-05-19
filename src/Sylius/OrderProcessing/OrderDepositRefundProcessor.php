@@ -74,7 +74,16 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
             }
         }
 
-        if ($totalAmount > 0) {
+        // Collect an additional fee for LoopEat, *PER ORDER*
+        // https://github.com/coopcycle/coopcycle-web/issues/2284
+        if ($restaurant->isLoopeatEnabled()) {
+            $order->addAdjustment($this->adjustmentFactory->createWithData(
+                AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+                $this->translator->trans('order.adjustment_type.reusable_packaging.loopeat'),
+                90,
+                $neutral = false
+            ));
+        } else if ($totalAmount > 0) {
             $order->addAdjustment($this->adjustmentFactory->createWithData(
                 AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
                 $this->translator->trans('order.adjustment_type.reusable_packaging'),

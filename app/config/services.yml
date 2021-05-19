@@ -271,6 +271,16 @@ services:
     tags:
       - { name: sylius.order_processor, priority: 64 }
 
+  # IMPORTANT
+  # OrderDepositRefundProcessor must be executed *BEFORE* OrderFeeProcessor
+  # because we need to increase the platform fee for LoopEat
+
+  AppBundle\Sylius\OrderProcessing\OrderDepositRefundProcessor:
+    arguments:
+      $adjustmentFactory: "@sylius.factory.adjustment"
+    tags:
+      - { name: sylius.order_processor, priority: 52 }
+
   sylius.order_processing.order_options_fee_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderOptionsFeeProcessor
     arguments:
@@ -291,12 +301,6 @@ services:
     class: AppBundle\Sylius\OrderProcessing\OrderPaymentProcessor
     tags:
       - { name: sylius.order_processor, priority: 16 }
-
-  AppBundle\Sylius\OrderProcessing\OrderDepositRefundProcessor:
-    arguments:
-      $adjustmentFactory: "@sylius.factory.adjustment"
-    tags:
-      - { name: sylius.order_processor, priority: 8 }
 
   sylius.promotion_action.delivery_percentage:
     class: AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand

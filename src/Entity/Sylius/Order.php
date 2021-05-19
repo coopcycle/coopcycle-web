@@ -1268,4 +1268,14 @@ class Order extends BaseOrder implements OrderInterface
 
         return $total;
     }
+
+    public function isLoopeat(): bool
+    {
+        if (!$this->hasVendor() || $this->isMultiVendor() || !$this->isReusablePackagingEnabled()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->isLoopeatEnabled();
+    }
 }
