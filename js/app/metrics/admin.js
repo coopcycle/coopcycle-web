@@ -13,9 +13,13 @@ const rootElement = document.getElementById('cubejs');
 
 if (rootElement) {
 
-  const { dateRange, view } = { ...rootElement.dataset }
+  const { dateRange, view, zeroWaste } = { ...rootElement.dataset }
 
-  const store = createStore({ dateRange, view })
+  const store = createStore({
+    dateRange,
+    view,
+    zeroWaste: JSON.parse(zeroWaste)
+  })
 
   const cubejsApi = cubejs(
     rootElement.dataset.token,

@@ -19,6 +19,7 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\OrganizationConfig;
 use AppBundle\Entity\PackageSet;
@@ -2079,7 +2080,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function metricsAction(Request $request)
+    public function metricsAction(LocalBusinessRepository $localBusinessRepository, Request $request)
     {
         // https://cube.dev/docs/security
         $key = \Lcobucci\JWT\Signer\Key\InMemory::plainText($_SERVER['CUBEJS_API_SECRET']);
@@ -2096,8 +2097,11 @@ class AdminController extends AbstractController
                 ->withClaim('database', $this->getParameter('database_name'))
                 ->getToken($config->signer(), $config->signingKey());
 
+        $zeroWasteCount = $localBusinessRepository->countZeroWaste();
+
         return $this->render('admin/metrics.html.twig', [
             'cube_token' => $token->toString(),
+            'zero_waste' => $zeroWasteCount > 0,
         ]);
     }
 }

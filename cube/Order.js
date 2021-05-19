@@ -68,6 +68,11 @@ cube(`Order`, {
       type: `string`
     },
 
+    reusablePackagingEnabled: {
+      sql: `reusable_packaging_enabled`,
+      type: `boolean`
+    },
+
   },
 
   dataSource: `default`
