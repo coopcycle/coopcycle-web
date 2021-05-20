@@ -5,6 +5,7 @@ import withPackages from './with-packages.json'
 import withDiffHours from './with-diff-hours.json'
 import withDropoffDoorstep from './with-dropoff-doorstep.json'
 import withOrderItemsTotal from './with-order-items-total.json'
+import withOrderItemsTotalRange from './with-order-items-total-range.json'
 
 import fixedPrice from './fixed-price.json'
 import priceRange from './price-range.json'
@@ -257,6 +258,17 @@ describe('Pricing rule parser (AST)', function() {
       [
         { left: 'distance', operator: 'in', right: [ 1000, 8000 ] },
         { left: 'order.itemsTotal', operator: '>', right: 10 }
+      ]
+    )
+  })
+
+  it('should parse AST with order items total (range)', function() {
+
+    const result = parseAST(withOrderItemsTotalRange)
+
+    expect(result).toEqual(
+      [
+        { left: 'order.itemsTotal', operator: 'in', right: [ 2300, 2599 ] }
       ]
     )
   })
