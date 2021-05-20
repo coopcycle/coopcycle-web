@@ -67,6 +67,13 @@ admin_orders:
             order: admin_order
     methods:  [ GET, POST ]
 
+admin_restaurants_edenred:
+    path: /admin/restaurants/edenred
+    defaults:
+        _controller: AppBundle\Controller\AdminController::edenredTransactionsAction
+        layout: 'admin.html.twig'
+    methods: [ GET, POST ]
+
 admin_hub_new:
     path: /admin/restaurants/hubs/new
     defaults:

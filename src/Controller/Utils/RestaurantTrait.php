@@ -52,6 +52,8 @@ use MercadoPago;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -1448,5 +1450,60 @@ trait RestaurantTrait
         $this->getDoctrine()->getManagerForClass(Product::class)->flush();
 
         return new Response('', 204);
+    }
+
+    public function edenredTransactionsAction(Request $request)
+    {
+        $qb = $this->getDoctrine()->getRepository(PaymentInterface::class)
+            ->createQueryBuilder('p');
+
+        $qb->join(OrderInterface::class, 'o', Expr\Join::WITH, 'p.order = o.id');
+        $qb->join(PaymentMethodInterface::class, 'pm', Expr\Join::WITH, 'p.method = pm.id');
+
+        $edenredWithCard = 'EDENRED+CARD';
+
+        $qb->andWhere('pm.code = :code');
+        $qb->andWhere('o.state = :state');
+
+        $qb->setParameter('code', $edenredWithCard);
+        $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
+
+        $month = new \DateTime('now');
+        if ($request->query->has('month')) {
+            $month = new \DateTime($request->query->get('month'));
+        }
+
+        $start = new \DateTime(
+            sprintf('first day of %s', $month->format('F Y'))
+        );
+        $end = new \DateTime(
+            sprintf('last day of %s', $month->format('F Y'))
+        );
+
+        $start->setTime(0, 0, 0);
+        $end->setTime(23, 59, 59);
+
+        $qb = OrderRepository::addShippingTimeRangeClause($qb, 'o', $start, $end);
+
+        $hash = new \SplObjectStorage();
+
+        $payments = $qb->getQuery()->getResult();
+
+        foreach ($payments as $payment) {
+
+            $restaurant = $payment->getOrder()->getRestaurant();
+
+            if (!$hash->contains($restaurant)) {
+                $hash->attach($restaurant, []);
+            }
+
+            $hash->attach($restaurant, array_merge($hash[$restaurant], [ $payment ]));
+        }
+
+        return $this->render('restaurant/edenred_transactions.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'month' => $month,
+            'payments' => $hash,
+        ]));
     }
 }

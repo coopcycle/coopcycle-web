@@ -1,0 +1,74 @@
+{% extends 'restaurant/layout.html.twig' %}
+
+{% block body %}
+<div class="container">
+
+  <div class="d-flex justify-content-end mb-4">
+    <div id="month-picker" class="d-inline-block"
+      data-default-value="{{ month|date('Y-m') }}"></div>
+  </div>
+
+  {% for restaurant in payments %}
+    <nav class="d-flex justify-content-between mb-4">
+      <h3 class="m-0">{{ restaurant.name }}</h3>
+      <form method="post" class="d-inline-block mr-2">
+        <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-download"></i> {{ 'basics.export'|trans }}</button>
+      </form>
+    </nav>
+    <table class="table">
+      <thead>
+        <th>Vendor</th>
+        <th>Order #</th>
+        <th>Completed at</th>
+        <th class="text-right">Total amount</th>
+        <th class="text-right">Edenred amount</th>
+        <th class="text-right">Platform fee</th>
+        {#
+        <th>Authorization ID</th>
+        <th>Capture ID</th>
+        #}
+      </thead>
+      <tbody>
+      {% for payment in payments[restaurant] %}
+      <tr>
+        <td>
+          <span>{{ payment.order.vendor.name }}</span>
+        </td>
+        <td>
+          <span class="text-monospace">{{ payment.order.number }}</span>
+        </td>
+        <td>
+          <span>{{ payment.order.shippingTimeRange|time_range_for_humans_short }}</span>
+        </td>
+        <td class="text-right">
+          <span class="text-monospace">{{ payment.amount|price_format }}</span>
+        </td>
+        <td class="text-right">
+          <span class="text-monospace">{{ payment.getAmountForMethod('EDENRED')|price_format }}</span>
+        </td>
+        <td class="text-right">
+          <span class="text-monospace">{{ payment.order.feeTotal|price_format }}</span>
+        </td>
+        {#
+        <td>
+          <small class="text-monospace">{{ payment.edenredAuthorizationId }}</small>
+        </td>
+        <td>
+          <small class="text-monospace">{{ payment.edenredCaptureId }}</small>
+        </td>
+        #}
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('restaurant-edenred') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('restaurant-edenred') }}
+{% endblock %}
