@@ -166,16 +166,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.183.0",
+            "version": "3.183.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "bf4a4e56859b89ab307033bf695467f6d6042dda"
+                "reference": "4ba06057844425c4095ad72095beaea278c9778b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/bf4a4e56859b89ab307033bf695467f6d6042dda",
-                "reference": "bf4a4e56859b89ab307033bf695467f6d6042dda",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4ba06057844425c4095ad72095beaea278c9778b",
+                "reference": "4ba06057844425c4095ad72095beaea278c9778b",
                 "shasum": ""
             },
             "require": {
@@ -250,9 +250,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.183.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.183.1"
             },
-            "time": "2021-05-18T18:13:37+00:00"
+            "time": "2021-05-19T18:14:26+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -3559,22 +3559,22 @@
         },
         {
             "name": "friendsofphp/proxy-manager-lts",
-            "version": "v1.0.3",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfPHP/proxy-manager-lts.git",
-                "reference": "121af47c9aee9c03031bdeca3fac0540f59aa5c3"
+                "reference": "587bfddfd9847c1d0417c4cf07d1dbf19aa6d136"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfPHP/proxy-manager-lts/zipball/121af47c9aee9c03031bdeca3fac0540f59aa5c3",
-                "reference": "121af47c9aee9c03031bdeca3fac0540f59aa5c3",
+                "url": "https://api.github.com/repos/FriendsOfPHP/proxy-manager-lts/zipball/587bfddfd9847c1d0417c4cf07d1dbf19aa6d136",
+                "reference": "587bfddfd9847c1d0417c4cf07d1dbf19aa6d136",
                 "shasum": ""
             },
             "require": {
                 "laminas/laminas-code": "~3.4.1|^4.0",
                 "php": ">=7.1",
-                "symfony/filesystem": "^4.4.17|^5.0"
+                "symfony/filesystem": "^4.4.17|^5.0|^6.0"
             },
             "conflict": {
                 "laminas/laminas-stdlib": "<3.2.1",
@@ -3585,7 +3585,7 @@
             },
             "require-dev": {
                 "ext-phar": "*",
-                "symfony/phpunit-bridge": "^5.2"
+                "symfony/phpunit-bridge": "^5.2|^6.0"
             },
             "type": "library",
             "extra": {
@@ -3625,7 +3625,7 @@
             ],
             "support": {
                 "issues": "https://github.com/FriendsOfPHP/proxy-manager-lts/issues",
-                "source": "https://github.com/FriendsOfPHP/proxy-manager-lts/tree/v1.0.3"
+                "source": "https://github.com/FriendsOfPHP/proxy-manager-lts/tree/v1.0.4"
             },
             "funding": [
                 {
@@ -3637,7 +3637,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-14T21:52:44+00:00"
+            "time": "2021-05-19T14:35:49+00:00"
         },
         {
             "name": "friendsofsymfony/jsrouting-bundle",
@@ -5235,7 +5235,7 @@
         },
         {
             "name": "illuminate/cache",
-            "version": "v8.42.0",
+            "version": "v8.42.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/cache.git",
@@ -5292,7 +5292,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v8.42.0",
+            "version": "v8.42.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -5346,7 +5346,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v8.42.0",
+            "version": "v8.42.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -5394,7 +5394,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v8.42.0",
+            "version": "v8.42.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -5440,7 +5440,7 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v8.42.0",
+            "version": "v8.42.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
@@ -8986,12 +8986,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosProfileBundle.git",
-                "reference": "eda49b9d2fe458432bbded1acb4fe728592c9936"
+                "reference": "5337c1ddb4483cfdff74dec93f7813dc0ac57c5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/eda49b9d2fe458432bbded1acb4fe728592c9936",
-                "reference": "eda49b9d2fe458432bbded1acb4fe728592c9936",
+                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/5337c1ddb4483cfdff74dec93f7813dc0ac57c5c",
+                "reference": "5337c1ddb4483cfdff74dec93f7813dc0ac57c5c",
                 "shasum": ""
             },
             "require": {
@@ -9080,7 +9080,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2021-05-18T04:34:51+00:00"
+            "time": "2021-05-20T03:33:13+00:00"
         },
         {
             "name": "nucleos/user-bundle",
@@ -12082,16 +12082,16 @@
         },
         {
             "name": "sentry/sentry-symfony",
-            "version": "4.1.1",
+            "version": "4.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-symfony.git",
-                "reference": "1a4080a3153a20dc9217571104951647d822f92d"
+                "reference": "93a357af39994b846aa9c6280c8e44a1e2739e27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/1a4080a3153a20dc9217571104951647d822f92d",
-                "reference": "1a4080a3153a20dc9217571104951647d822f92d",
+                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/93a357af39994b846aa9c6280c8e44a1e2739e27",
+                "reference": "93a357af39994b846aa9c6280c8e44a1e2739e27",
                 "shasum": ""
             },
             "require": {
@@ -12179,7 +12179,7 @@
             ],
             "support": {
                 "issues": "https://github.com/getsentry/sentry-symfony/issues",
-                "source": "https://github.com/getsentry/sentry-symfony/tree/4.1.1"
+                "source": "https://github.com/getsentry/sentry-symfony/tree/4.1.2"
             },
             "funding": [
                 {
@@ -12191,7 +12191,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2021-05-10T07:39:23+00:00"
+            "time": "2021-05-16T22:44:16+00:00"
         },
         {
             "name": "simple-bus/message-bus",
@@ -12927,16 +12927,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.78.0",
+            "version": "v7.79.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "6ec33fa8e9de2322be93d28dfd685661c67ca549"
+                "reference": "e17e85bc13dfa531bdfb3d3719d3810431d104f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/6ec33fa8e9de2322be93d28dfd685661c67ca549",
-                "reference": "6ec33fa8e9de2322be93d28dfd685661c67ca549",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/e17e85bc13dfa531bdfb3d3719d3810431d104f9",
+                "reference": "e17e85bc13dfa531bdfb3d3719d3810431d104f9",
                 "shasum": ""
             },
             "require": {
@@ -12982,9 +12982,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v7.78.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v7.79.0"
             },
-            "time": "2021-05-05T23:55:32+00:00"
+            "time": "2021-05-19T19:30:23+00:00"
         },
         {
             "name": "sylius-labs/polyfill-symfony-framework-bundle",
@@ -16931,16 +16931,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.23.0",
+            "version": "6.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "4e69cc175512db9ef07e87e92c124aefa4d01360"
+                "reference": "110651d67940617e08557a7bac57edbd27b77d3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/4e69cc175512db9ef07e87e92c124aefa4d01360",
-                "reference": "4e69cc175512db9ef07e87e92c124aefa4d01360",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/110651d67940617e08557a7bac57edbd27b77d3e",
+                "reference": "110651d67940617e08557a7bac57edbd27b77d3e",
                 "shasum": ""
             },
             "require": {
@@ -16979,9 +16979,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twilio/twilio-php/issues",
-                "source": "https://github.com/twilio/twilio-php/tree/6.23.0"
+                "source": "https://github.com/twilio/twilio-php/tree/6.24.0"
             },
-            "time": "2021-05-05T19:15:04+00:00"
+            "time": "2021-05-19T19:41:37+00:00"
         },
         {
             "name": "vich/uploader-bundle",
@@ -20141,16 +20141,16 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v5.2.8",
+            "version": "v5.2.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "b3cf2c3f7f6196fb498002920c1ae9036d9e5619"
+                "reference": "ea24e42c1ee04792f5d814da6f0814b20ece2907"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/b3cf2c3f7f6196fb498002920c1ae9036d9e5619",
-                "reference": "b3cf2c3f7f6196fb498002920c1ae9036d9e5619",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/ea24e42c1ee04792f5d814da6f0814b20ece2907",
+                "reference": "ea24e42c1ee04792f5d814da6f0814b20ece2907",
                 "shasum": ""
             },
             "require": {
@@ -20204,7 +20204,7 @@
             "description": "Provides utilities for PHPUnit, especially user deprecation notices management",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/phpunit-bridge/tree/v5.2.8"
+                "source": "https://github.com/symfony/phpunit-bridge/tree/v5.2.9"
             },
             "funding": [
                 {
@@ -20220,7 +20220,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-07T12:56:09+00:00"
+            "time": "2021-05-16T13:07:46+00:00"
         },
         {
             "name": "theseer/tokenizer",
