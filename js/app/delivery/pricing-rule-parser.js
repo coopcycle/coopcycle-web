@@ -122,23 +122,21 @@ const traverseNode = (node, accumulator) => {
           right:    node.nodes.right.attributes.value,
         })
       } else if (node.nodes.left.nodes.node?.attributes.name === 'order' && node.nodes.left.nodes.attribute?.attributes.value === 'itemsTotal') {
+        let $right
         if ('in' === node.attributes.operator) {
-          accumulator.push({
-            left:     `${node.nodes.left.nodes.node.attributes.name}.${node.nodes.left.nodes.attribute.attributes.value}`,
-            operator: node.attributes.operator,
-            right:    [
-              node.nodes.right.nodes.left.attributes.value,
-              node.nodes.right.nodes.right.attributes.value
-            ],
-          })
+          $right = [
+            node.nodes.right.nodes.left.attributes.value,
+            node.nodes.right.nodes.right.attributes.value
+          ]
         } else {
-          accumulator.push({
-            left:     `${node.nodes.left.nodes.node.attributes.name}.${node.nodes.left.nodes.attribute.attributes.value}`,
-            operator: node.attributes.operator,
-            right:    node.nodes.right.attributes.value,
-          })
+          $right =  node.nodes.right.attributes.value
         }
        
+        accumulator.push({
+          left:     `${node.nodes.left.nodes.node.attributes.name}.${node.nodes.left.nodes.attribute.attributes.value}`,
+          operator: node.attributes.operator,
+          right: $right,
+        })
 
       } else if (node.nodes.left.attributes.name === 'diff_hours' || node.nodes.left.attributes.name === 'diff_days') {
         accumulator.push({
