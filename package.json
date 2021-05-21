@@ -107,7 +107,7 @@
     "leaflet.markercluster": "^1.5.0",
     "less": "^4.1.1",
     "less-loader": "^8.1.1",
-    "libphonenumber-js": "^1.9.17",
+    "libphonenumber-js": "^1.9.18",
     "lottie-web": "^5.7.8",
     "micromodal": "^0.4.6",
     "mocha": "^7.1.1",
@@ -153,6 +153,6 @@
     "styled-components": "^5.3.0",
     "to-string-loader": "^1.1.6",
     "url-loader": "^4.1.1",
-    "x-data-spreadsheet": "^1.1.8"
+    "x-data-spreadsheet": "^1.1.9"
   }
 }
