@@ -554,7 +554,9 @@ form.delivery_embed.name.label: 'Izena'
 form.delivery_embed.name.help: 'Zure izena edo enpresaren izena'
 form.delivery_embed.telephone.label: 'Telefono zenbakia'
 form.delivery_embed.vehicle.disclaimer: ''
-form.registration.username.help: ""
+form.registration.username.help: "Erabiltzaile-izenak ezin ditu 15 baino karaketere\
+  \ gehiago eduki. Erabiltzaile-izen batek karaketere alfanumerikoak soilik izan ditzake\
+  \ (A-Z letrak, 0-9 zenbakiak), azpimarrak izan ezik.\n"
 form.registration.legal.label: ''
 form.registration.legal.help: ''
 form.local_business.stripe_account.title: 'Stripe kontua'
