@@ -21,7 +21,7 @@
         <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-download"></i> {{ 'basics.export'|trans }}</button>
       </form>
     </nav>
-    <table class="table">
+    <table class="table table-condensed table-hover">
       <thead>
         <th>Vendor</th>
         <th>Order #</th>
@@ -29,14 +29,12 @@
         <th class="text-right">Total amount</th>
         <th class="text-right">Edenred amount</th>
         <th class="text-right">Platform fee</th>
-        {#
-        <th>Authorization ID</th>
-        <th>Capture ID</th>
-        #}
       </thead>
       <tbody>
       {% for payment in payments[restaurant] %}
-      <tr>
+      {% set is_captured =
+        payment.edenredAuthorizationId is not empty and payment.edenredCaptureId is not empty %}
+      <tr class="{{ is_captured ? 'danger' : '' }}">
         <td>
           <span>{{ payment.order.vendor.name }}</span>
         </td>
@@ -55,14 +53,6 @@
         <td class="text-right">
           <span class="text-monospace">{{ payment.order.feeTotal|price_format }}</span>
         </td>
-        {#
-        <td>
-          <small class="text-monospace">{{ payment.edenredAuthorizationId }}</small>
-        </td>
-        <td>
-          <small class="text-monospace">{{ payment.edenredCaptureId }}</small>
-        </td>
-        #}
       </tr>
       {% set total_amount   = (total_amount + payment.amount) %}
       {% set edenred_amount = (edenred_amount + payment.getAmountForMethod('EDENRED')) %}
