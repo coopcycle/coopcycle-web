@@ -1488,6 +1488,8 @@ trait RestaurantTrait
 
         $qb = OrderRepository::addShippingTimeRangeClause($qb, 'o', $start, $end);
 
+        $qb->orderBy('o.shippingTimeRange', 'DESC');
+
         $hash = new \SplObjectStorage();
 
         $payments = $qb->getQuery()->getResult();
