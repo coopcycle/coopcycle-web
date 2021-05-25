@@ -23,7 +23,6 @@
     </nav>
     <table class="table table-condensed table-hover">
       <thead>
-        <th>Vendor</th>
         <th>Order #</th>
         <th>Completed at</th>
         <th class="text-right">Total amount</th>
@@ -34,10 +33,7 @@
       {% for payment in payments[restaurant] %}
       {% set is_captured =
         payment.edenredAuthorizationId is not empty and payment.edenredCaptureId is not empty %}
-      <tr class="{{ is_captured ? 'danger' : '' }}">
-        <td>
-          <span>{{ payment.order.vendor.name }}</span>
-        </td>
+      <tr class="{{ not is_captured ? 'danger' : '' }}">
         <td>
           <span class="text-monospace">{{ payment.order.number }}</span>
         </td>
@@ -62,7 +58,6 @@
       {% if total_amount > 0 %}
       <tfoot>
         <tr>
-          <th></th>
           <th></th>
           <th></th>
           <th class="text-right">
