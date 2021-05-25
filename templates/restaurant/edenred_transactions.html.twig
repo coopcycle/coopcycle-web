@@ -9,6 +9,11 @@
   </div>
 
   {% for restaurant in payments %}
+
+    {% set total_amount = 0 %}
+    {% set edenred_amount = 0 %}
+    {% set platform_fee = 0 %}
+
     <nav class="d-flex justify-content-between mb-4">
       <h3 class="m-0">{{ restaurant.name }}</h3>
       <form method="post" class="d-inline-block mr-2">
@@ -59,8 +64,29 @@
         </td>
         #}
       </tr>
+      {% set total_amount   = (total_amount + payment.amount) %}
+      {% set edenred_amount = (edenred_amount + payment.getAmountForMethod('EDENRED')) %}
+      {% set platform_fee   = (platform_fee + payment.order.feeTotal) %}
       {% endfor %}
       </tbody>
+      {% if total_amount > 0 %}
+      <tfoot>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th class="text-right">
+            <span class="text-monospace">{{ total_amount|price_format }}</span>
+          </th>
+          <th class="text-right">
+            <span class="text-monospace">{{ edenred_amount|price_format }}</span>
+          </th>
+          <th class="text-right">
+            <span class="text-monospace">{{ platform_fee|price_format }}</span>
+          </th>
+        </tr>
+      </tfoot>
+      {% endif %}
     </table>
   {% endfor %}
 </div>
