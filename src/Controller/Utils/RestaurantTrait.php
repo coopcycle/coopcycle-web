@@ -47,6 +47,7 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ObjectRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use League\Csv\Writer as CsvWriter;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use MercadoPago;
 use Ramsey\Uuid\Uuid;
@@ -1452,7 +1453,9 @@ trait RestaurantTrait
         return new Response('', 204);
     }
 
-    public function edenredTransactionsAction(Request $request)
+    public function edenredTransactionsAction(
+        SlugifyInterface $slugify,
+        Request $request)
     {
         $qb = $this->getDoctrine()->getRepository(PaymentInterface::class)
             ->createQueryBuilder('p');
@@ -1498,6 +1501,63 @@ trait RestaurantTrait
             }
 
             $hash->attach($restaurant, array_merge($hash[$restaurant], [ $payment ]));
+        }
+
+        if ($request->isMethod('POST') && $request->request->has('restaurant')) {
+
+            $restaurantId = $request->request->getInt('restaurant');
+
+            $exported = $this->getDoctrine()->getRepository(LocalBusiness::class)
+                ->find($restaurantId);
+
+            if (null === $exported) {
+
+                throw $this->createNotFoundException();
+            }
+
+            $filename = sprintf('edenred-%s-%s.csv',
+                $month->format('Y-m'),
+                $slugify->slugify($restaurant->getName())
+            );
+
+            $csv = CsvWriter::createFromString('');
+
+            $numberFormatter = \NumberFormatter::create($request->getLocale(), \NumberFormatter::DECIMAL);
+            $numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
+            $numberFormatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
+
+            $heading = [
+                'Order number',
+                'Completed at',
+                'Total amount',
+                'Edenred amount',
+                'Platform fee',
+            ];
+
+            $records = [];
+            foreach ($hash[$exported] as $payment) {
+
+                $order = $payment->getOrder();
+
+                $records[] = [
+                    $order->getNumber(),
+                    $order->getShippingTimeRange()->getLower()->format('Y-m-d'),
+                    $numberFormatter->format($order->getTotal() / 100),
+                    $numberFormatter->format($payment->getAmountForMethod('EDENRED') / 100),
+                    $numberFormatter->format($order->getFeeTotal() / 100),
+                ];
+            }
+
+            $csv->insertOne($heading);
+            $csv->insertAll($records);
+
+            $response = new Response($csv->getContent());
+            $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                $filename
+            ));
+
+            return $response;
         }
 
         return $this->render('restaurant/edenred_transactions.html.twig', $this->withRoutes([

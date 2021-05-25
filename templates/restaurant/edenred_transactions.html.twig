@@ -12,6 +12,7 @@
     <nav class="d-flex justify-content-between mb-4">
       <h3 class="m-0">{{ restaurant.name }}</h3>
       <form method="post" class="d-inline-block mr-2">
+        <input type="hidden" name="restaurant" value="{{ restaurant.id }}" />
         <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-download"></i> {{ 'basics.export'|trans }}</button>
       </form>
     </nav>
