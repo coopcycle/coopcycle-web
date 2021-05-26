@@ -33,7 +33,7 @@
         {{ form_widget(form.stores, { attr: { 'data-search-url': path('admin_stores_search', { format: 'json'  }) } }) }}
       {% endif %}
       {{ form_row(form.roles) }}
-      <button type="submit" class="btn btn-block btn-primary">{% trans %}basics.save{% endtrans %}</button>
+      <button type="submit" class="btn btn-block btn-primary sticky-buttons">{% trans %}basics.save{% endtrans %}</button>
     {{ form_end(form) }}
 {% endblock %}
 

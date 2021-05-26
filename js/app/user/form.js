@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import { Switch } from 'antd'
 
 import i18n from '../i18n'
+import './form.scss'
 
 function renderSwitch($input) {
 
