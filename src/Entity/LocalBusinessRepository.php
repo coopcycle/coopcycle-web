@@ -199,17 +199,25 @@ class LocalBusinessRepository extends EntityRepository
 
         usort($matches, $nextOpeningComparator);
 
-        $featured = array_filter($matches, function (LocalBusiness $lb) use ($now) {
-            return $lb->isFeatured() && $lb->isOpen($now);
+        $opened = array_filter($matches, function (LocalBusiness $lb) use ($now) {
+            return $lb->isOpen($now);
         });
-        $opened = array_filter($matches, function (LocalBusiness $lb) use ($now, $featured) {
-            return !in_array($lb, $featured, true) && $lb->isOpen($now);
-        });
+
+        $featuredComparator = function (LocalBusiness $a, LocalBusiness $b) {
+            if ($a->isFeatured() && $b->isFeatured()) {
+                return 0;
+            }
+
+            return $a->isFeatured() ? -1 : 1;
+        };
+
+        usort($opened, $featuredComparator);
+
         $closed = array_filter($matches, function (LocalBusiness $lb) use ($now) {
             return !$lb->isOpen($now);
         });
 
-        return array_merge($featured, $opened, $closed);
+        return array_merge($opened, $closed);
     }
 
     public function findByOption(ProductOptionInterface $option)

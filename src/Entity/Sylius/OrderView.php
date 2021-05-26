@@ -188,7 +188,7 @@ class OrderView
 
     public function getRefundTotal(): int
     {
-        $total = array_reduce($this->refunds, fn ($total, $refund) => $total + $refund['amount'], 0);
+        $total = array_reduce($this->refunds, fn ($total, $refund): int => $total + $refund['amount'], 0);
 
         return $total > 0 ? $total * -1 : $total;
     }
