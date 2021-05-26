@@ -525,12 +525,14 @@ form.suggest.message: "Ezin duzu zure jatetxe edo denda gogokoena aurkitu?\n<br>
   \ identifikatzen lagunduko digu eta eskaera erreala dagoela frogatuko dugu.\n"
 form.suggest.thank_you_message: 'Eskerrik asko jatetxe hau proposatzeagatik!'
 restaurant.suggest.message: ""
-restaurant.suggest.vote: 'Eman botoa %name%-(e)ri'
+restaurant.suggest.vote: 'Boazkatu %name%'
 pledge.suggested_by: '@%username%-(e)k proposatua'
-restaurant.suggest.has_voted: ''
-restaurant.suggest.banner_disclaimer: ''
-pledge.vote_count_equals_two: ''
-pledge.vote_count_equals_one: ''
+restaurant.suggest.has_voted: 'Jatetxe hau bozkatu duzu dagoeneko!'
+restaurant.suggest.banner_disclaimer: 'Jatetxe hau ez dago eskuragarri momentuz. Bozkatu
+  %restaurant.name%!'
+pledge.vote_count_equals_two: '%first_user% eta %second_user% jatetxe honengatik bozkatu
+  dute'
+pledge.vote_count_equals_one: '%username% jatetxe honengatik bozkatu du'
 pledge.accept: 'Onartu'
 pledge.reject: 'Baztertu'
 form.maintenance.enable.label: 'Gaitu mantentzea'
@@ -546,10 +548,11 @@ form.banner.enable.alert: 'Iragarki-banda gaituko duzu'
 form.banner.disable.alert: 'Iragarki-banda desgaituko duzu'
 form.banner.message.label: 'Mezua iragarki-bandan erakutsiko da'
 form.stripe_livemode.enable.label: 'Erabili Stripe « live » moduan'
-form.stripe_livemode.enable.alert: ''
+form.stripe_livemode.enable.alert: '« live » moduan, kreditu-txartelak kobratuko dira.'
 form.stripe_livemode.disable.label: 'Erabili Stripe « test » moduan'
-form.stripe_livemode.disable.alert: ''
-form.stripe_livemode.disable_and_enable_maintenance.label: ''
+form.stripe_livemode.disable.alert: '« test » moduan, kreditu-txartelak ez dira kobratuko.'
+form.stripe_livemode.disable_and_enable_maintenance.label: 'Aldatu « test » modura
+  eta gaitu mantentze modua'
 form.stripe_livemode.disable_and_enable_maintenance.alert: ''
 form.settings.currency_code.label: 'Moneta'
 form.delivery_embed.name.label: 'Izena'
@@ -583,9 +586,11 @@ form.mercadopago_livemode.disable_and_enable_maintenance.alert: ''
 form.settings.mercadopago_testmode.help: ''
 form.settings.mercadopago_enable_livemode.help: ''
 form.settings.mercadopago.publishable_key.label: 'Argitaratze-gakoa'
-form.settings.mercadopago.publishable_key.help: ""
+form.settings.mercadopago.publishable_key.help: "Lortu <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+  \ target=\"_blank\">argitaratze gakoa</a>"
 form.settings.mercadopago.access_token.label: 'Sarbide tokena'
-form.settings.mercadopago.access_token.help: ""
+form.settings.mercadopago.access_token.help: "Lortu <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+  \ target=\"_blank\">sarbide tokena</a>"
 form.settings.mercadopago.app_id.label: 'Aplikazio IDa'
 form.settings.mercadopago.app_id.help: ''
 form.settings.mercadopago.redirect_uri.help: ""
@@ -609,14 +614,14 @@ form.product.price.label: 'Prezioa'
 form.product.taxCategory.label: 'Zergak'
 form.product.enabled.label: 'Gaituta'
 form.product.allergens.label: 'Alergenoak'
-form.product.allergens.help: ''
+form.product.allergens.help: 'Produktu honek hurrengo alergenoak ditu?'
 form.product.restricted_diets.label: ''
-form.product.restricted_diets.help: ''
+form.product.restricted_diets.help: 'Produktu honek dieta hauek betetzen ditu?'
 form.product.confirm.label: 'Berretsi aldaketak'
 form.product.confirm.help: ""
 form.product.reusable_packaging_enabled.label: ''
 form.product.reusable_packaging.label: ''
-form.product.reusable_packaging_unit.label: ''
+form.product.reusable_packaging_unit.label: 'Unitate kopurua'
 form.product_option.name.label: 'izena'
 form.product_option.strategy.label: 'Prezioaren kalkulua'
 form.product_option.add_value.label: 'Gehitu balioa'
@@ -627,7 +632,7 @@ form.product_option.additional.help: ''
 form.product_option.preview_title: 'Aukeren aurreikuspena'
 form.product_option_value.value.label: 'Balioa'
 form.product_option_value.price.label: 'Prezioa'
-form.checkout_address.notes.label: ''
+form.checkout_address.notes.label: 'Utzi nota bat jatetxeari'
 form.checkout_address.notes.placeholder: ""
 form.checkout_address.notes.help: 'Zure iruzkina jatetxera bidaliko da'
 form.checkout_address.promotion_coupon.label: 'Kupoi-kodea'
