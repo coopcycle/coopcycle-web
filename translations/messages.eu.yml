@@ -496,8 +496,9 @@ form.settings.stripe_connect_client_id.label: 'Stripe Connect identifikatzailea'
 form.settings.stripe_connect_client_id.help: "Lortu identifikatzailea <a href=\"https://dashboard.stripe.com/account/applications/settings\"\
   >parametro orrian</a>\n"
 form.settings.google_api_key.label: 'Google API gakoa'
-form.settings.google_api_key.help: ""
-form.settings.latlng.label: ''
+form.settings.google_api_key.help: "Sortu Google kontu bat zure <a href=\"https://developers.google.com/maps/documentation/javascript/get-api-key?hl=eu\"\
+  >API gakoa</a> lortzeko\n"
+form.settings.latlng.label: 'Koordenatu geografikoak'
 form.settings.latlng.help: ""
 form.settings.administrator_email.label: 'Administratzailearen e-posta'
 form.settings.administrator_email.help: 'Jakinarazpenak e-posta honetara bidaliko
@@ -506,7 +507,8 @@ form.settings.phone_number.label: 'Telefono zenbakia'
 form.settings.phone_number.help: 'Zenbaki hau bezeroei erakutsiko zaie'
 form.settings.enable_restaurant_pledges.label: 'Baimendu bezeroek jatetxeak proposatzea'
 form.settings.company_logo.label: 'Enpresaren logoa'
-form.settings.company_logo.help: ''
+form.settings.company_logo.help: 'Logo hau faktura eta banaketa-frogentzako erabiliko
+  da'
 form.settings.subject_to_vat.label: 'BEZa aplikatzen da'
 form.settings.sms_enabled.label: 'Gaitu SMS bidalketa'
 form.settings.sms.title: 'SMS'
@@ -523,7 +525,7 @@ form.suggest.message: "Ezin duzu zure jatetxe edo denda gogokoena aurkitu?\n<br>
   \ identifikatzen lagunduko digu eta eskaera erreala dagoela frogatuko dugu.\n"
 form.suggest.thank_you_message: 'Eskerrik asko jatetxe hau proposatzeagatik!'
 restaurant.suggest.message: ""
-restaurant.suggest.vote: ''
+restaurant.suggest.vote: 'Eman botoa %name%-(e)ri'
 pledge.suggested_by: '@%username%-(e)k proposatua'
 restaurant.suggest.has_voted: ''
 restaurant.suggest.banner_disclaimer: ''
