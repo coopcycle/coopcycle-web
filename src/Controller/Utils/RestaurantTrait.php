@@ -1519,7 +1519,7 @@ trait RestaurantTrait
 
             $filename = sprintf('edenred-%s-%s.csv',
                 $month->format('Y-m'),
-                $slugify->slugify($restaurant->getName())
+                $slugify->slugify($exported->getName())
             );
 
             $csv = CsvWriter::createFromString('');
