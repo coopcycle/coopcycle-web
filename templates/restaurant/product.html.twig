@@ -88,17 +88,18 @@
 
   <hr>
 
-  <div class="row">
+  <div class="sticky-buttons row">
     {#
     Make sure the "save" button is *BEFORE* the "delete" button in the DOM
     to avoid deleting when hitting "enter"
     #}
-    <div class="col-sm-9">
+     <div class="col-sm-9">
       <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
     </div>
     <div class="col-sm-3">
       {{ form_widget(form.delete, { attr: { class: 'btn-block btn-danger' } }) }}
     </div>
+
   </div>
 
 {{ form_end(form) }}

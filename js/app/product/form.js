@@ -9,6 +9,7 @@ import { createAction } from 'redux-actions'
 import '../i18n'
 import { calculate } from '../utils/tax'
 import { openEditor } from './image-editor'
+import './form.scss'
 
 Dropzone.autoDiscover = false
 
