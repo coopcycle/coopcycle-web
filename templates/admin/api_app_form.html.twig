@@ -12,8 +12,12 @@
 {% block content %}
 {{ form_start(form) }}
   {{ form_widget(form) }}
-  <button type="submit" class="btn btn-block btn-primary">
+  <div class="sticky-buttons">
+  	<button type="submit" class="btn btn-block btn-primary">
     {{ 'basics.save'|trans }}
-  </button>
+  	</button>
+  </div>
+
+
 {{ form_end(form) }}
 {% endblock %}

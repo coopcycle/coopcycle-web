@@ -54,7 +54,10 @@
         {{ form_start(upload_form) }}
           {{ form_row(upload_form.file) }}
           <span class="help-block">{% trans %}adminDashboard.zones.uploadGeoJSON{% endtrans %}</span>
-          <button type="submit" class="btn btn-block btn-primary">{% trans %}adminDashboard.zones.send{% endtrans %}</button>
+          <div class="sticky-buttons">
+            <button type="submit" class="btn btn-block btn-primary">{% trans %}adminDashboard.zones.send{% endtrans %}</button>
+          </div>
+
         {{ form_end(upload_form) }}
       </div>
     </div>
