@@ -40,8 +40,6 @@ class DeliveryManager
 
     public function getPrice(Delivery $delivery, PricingRuleSet $ruleSet)
     {
-        $this->lastMatchedRule = null;
-
         if ($ruleSet->getStrategy() === 'find') {
 
             foreach ($ruleSet->getRules() as $rule) {
