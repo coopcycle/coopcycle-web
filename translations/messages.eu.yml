@@ -295,7 +295,7 @@ order.total_including_tax: 'Guztira (BEZa barne)'
 order.items_total: 'Produktuak guztira'
 order.total_tax: 'BEZa'
 order.total_tax_by_rate: '%name% guztira'
-order.preparation_expected_at: ''
+order.preparation_expected_at: 'Prestaketa %date%(e)tan espero da'
 order.shipping_date.title: 'Zure banatze-data'
 order.payer.title: 'Eroslearen informazioa'
 order.payer.email: 'E-posta'
@@ -485,7 +485,8 @@ form.settings.stripe.help: 'Stripe kreditu-txartel ordainketak kudeatzeko erabil
   hartzen du ordainketa bakoitzako (prezio eguneratuak <a href="https://stripe.com/fr/pricing">hemen</a>).
   Ordainketa dendaren jabeak egin behar du. '
 form.settings.stripe_testmode.help: ''
-form.settings.stripe_enable_livemode.help: ''
+form.settings.stripe_enable_livemode.help: '« live » modua gaitzeko, « live » gakoak
+  konfiguratu behar dituzu lehenago.'
 form.settings.stripe_publishable_key.label: 'Stripe gako publikoa'
 form.settings.stripe_publishable_key.help: "Sortu Stripe kontu bat zure <a href=\"\
   https://stripe.com/docs/dashboard#api-keys\">gako argitagarria</a> lortzeko\n"
@@ -499,7 +500,8 @@ form.settings.google_api_key.label: 'Google API gakoa'
 form.settings.google_api_key.help: "Sortu Google kontu bat zure <a href=\"https://developers.google.com/maps/documentation/javascript/get-api-key?hl=eu\"\
   >API gakoa</a> lortzeko\n"
 form.settings.latlng.label: 'Koordenatu geografikoak'
-form.settings.latlng.help: ""
+form.settings.latlng.help: "Zehaztu latitude eta longitude lehenetsia. <a href=\"\
+  https://www.latlong.net/\">latlong.net</a> orrian lortu dezakezu\n"
 form.settings.administrator_email.label: 'Administratzailearen e-posta'
 form.settings.administrator_email.help: 'Jakinarazpenak e-posta honetara bidaliko
   dira'
@@ -553,7 +555,8 @@ form.stripe_livemode.disable.label: 'Erabili Stripe « test » moduan'
 form.stripe_livemode.disable.alert: '« test » moduan, kreditu-txartelak ez dira kobratuko.'
 form.stripe_livemode.disable_and_enable_maintenance.label: 'Aldatu « test » modura
   eta gaitu mantentze modua'
-form.stripe_livemode.disable_and_enable_maintenance.alert: ''
+form.stripe_livemode.disable_and_enable_maintenance.alert: '« live » moduan zaude.<br>«
+  test » modura aldatzen bazara, mantentzea automatikoki gaituko da.'
 form.settings.currency_code.label: 'Moneta'
 form.delivery_embed.name.label: 'Izena'
 form.delivery_embed.name.help: 'Zure izena edo enpresaren izena'
