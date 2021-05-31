@@ -440,6 +440,8 @@ services:
   AppBundle\Service\DeliveryManager:
     arguments:
       $expressionLanguage: "@coopcycle.expression_language"
+    tags:
+      - { name: monolog.logger, channel: fee_calculation }
 
   AppBundle\Utils\PreparationTimeCalculator:
     arguments:
