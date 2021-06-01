@@ -84,7 +84,7 @@ context('Delivery', () => {
 
     cy.location('pathname').should('match', /\/fr\/forms\/[a-zA-Z0-9]+\/summary/)
 
-    cy.get('form[name="delivery"] .alert-info')
+    cy.get('.alert-info')
       .invoke('text')
       .should('match', /Vous avez demandé une course qui vous sera déposée le/)
   })
