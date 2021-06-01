@@ -87,5 +87,12 @@ context('Delivery', () => {
     cy.get('.alert-info')
       .invoke('text')
       .should('match', /Vous avez demandé une course qui vous sera déposée le/)
+
+    cy.get('form[name="stripe_payment"] input[type="text"]').type('John Doe')
+    cy.enterCreditCard()
+
+    cy.get('form[name="stripe_payment"] button[type="submit"]').click()
+
+    cy.location('pathname', { timeout: 30000 }).should('match', /\/fr\/pub\/o\/[a-zA-Z0-9]+/)
   })
 })
