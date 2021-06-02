@@ -66,12 +66,19 @@ Class EdenredCommand extends Command
                 $payment->getOrder()->getNumber()
             ));
 
-            $captureId = $this->edenred->captureTransaction($payment);
-            $payment->setEdenredCaptureId($captureId);
+            try {
 
-            $this->io->text(sprintf('Transaction captured with "%s"', $captureId));
+                $captureId = $this->edenred->captureTransaction($payment);
+                $payment->setEdenredCaptureId($captureId);
 
-            $this->entityManager->flush();
+                $this->io->text(sprintf('Transaction captured with "%s"', $captureId));
+
+                $this->entityManager->flush();
+
+            } catch (\Exception $e) {
+                $this->io->caution($e->getMessage());
+            }
+
         }
 
         return 0;
