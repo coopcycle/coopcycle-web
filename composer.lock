@@ -166,16 +166,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.183.7",
+            "version": "3.183.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "cf9c877e799c43e22d0e0cbc840e91d1885b13b6"
+                "reference": "f42dcf893227842aca11e8ea19f7b2123cf3244b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cf9c877e799c43e22d0e0cbc840e91d1885b13b6",
-                "reference": "cf9c877e799c43e22d0e0cbc840e91d1885b13b6",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/f42dcf893227842aca11e8ea19f7b2123cf3244b",
+                "reference": "f42dcf893227842aca11e8ea19f7b2123cf3244b",
                 "shasum": ""
             },
             "require": {
@@ -250,9 +250,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.183.7"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.183.11"
             },
-            "time": "2021-05-27T01:00:13+00:00"
+            "time": "2021-06-02T18:14:10+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -2729,22 +2729,22 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "2.9.1",
+            "version": "2.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/orm.git",
-                "reference": "f3e55fae9fdbdbc23897006bdbf016c20e11f6e9"
+                "reference": "75b4b88c5b7cebc24ed7251a20c2a5aa027300e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/orm/zipball/f3e55fae9fdbdbc23897006bdbf016c20e11f6e9",
-                "reference": "f3e55fae9fdbdbc23897006bdbf016c20e11f6e9",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/75b4b88c5b7cebc24ed7251a20c2a5aa027300e1",
+                "reference": "75b4b88c5b7cebc24ed7251a20c2a5aa027300e1",
                 "shasum": ""
             },
             "require": {
                 "composer/package-versions-deprecated": "^1.8",
                 "doctrine/annotations": "^1.13",
-                "doctrine/cache": "^1.11|^2.0",
+                "doctrine/cache": "^1.11.3|^2.0.3",
                 "doctrine/collections": "^1.5",
                 "doctrine/common": "^3.0.3",
                 "doctrine/dbal": "^2.13.0",
@@ -2815,9 +2815,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/orm/issues",
-                "source": "https://github.com/doctrine/orm/tree/2.9.1"
+                "source": "https://github.com/doctrine/orm/tree/2.9.2"
             },
-            "time": "2021-05-24T15:54:12+00:00"
+            "time": "2021-05-31T09:53:14+00:00"
         },
         {
             "name": "doctrine/persistence",
@@ -3510,16 +3510,16 @@
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v5.2.1",
+            "version": "v5.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "f42c9110abe98dd6cfe9053c49bc86acc70b2d23"
+                "reference": "3c2d70f2e64e2922345e89f2ceae47d2463faae1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/f42c9110abe98dd6cfe9053c49bc86acc70b2d23",
-                "reference": "f42c9110abe98dd6cfe9053c49bc86acc70b2d23",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/3c2d70f2e64e2922345e89f2ceae47d2463faae1",
+                "reference": "3c2d70f2e64e2922345e89f2ceae47d2463faae1",
                 "shasum": ""
             },
             "require": {
@@ -3558,9 +3558,9 @@
             ],
             "support": {
                 "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v5.2.1"
+                "source": "https://github.com/firebase/php-jwt/tree/v5.3.0"
             },
-            "time": "2021-02-12T00:02:00+00:00"
+            "time": "2021-05-20T17:37:02+00:00"
         },
         {
             "name": "friendsofphp/proxy-manager-lts",
@@ -5240,7 +5240,7 @@
         },
         {
             "name": "illuminate/cache",
-            "version": "v8.43.0",
+            "version": "v8.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/cache.git",
@@ -5297,7 +5297,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v8.43.0",
+            "version": "v8.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -5351,7 +5351,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v8.43.0",
+            "version": "v8.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -5399,7 +5399,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v8.43.0",
+            "version": "v8.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -5445,7 +5445,7 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v8.43.0",
+            "version": "v8.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
@@ -7857,16 +7857,16 @@
         },
         {
             "name": "liip/imagine-bundle",
-            "version": "2.6.0",
+            "version": "2.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/liip/LiipImagineBundle.git",
-                "reference": "afa4193c7fde027426ebb19e73878cd026438bbd"
+                "reference": "00f3ccfccb33834b44f82c17cca80bfd83882bb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/afa4193c7fde027426ebb19e73878cd026438bbd",
-                "reference": "afa4193c7fde027426ebb19e73878cd026438bbd",
+                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/00f3ccfccb33834b44f82c17cca80bfd83882bb3",
+                "reference": "00f3ccfccb33834b44f82c17cca80bfd83882bb3",
                 "shasum": ""
             },
             "require": {
@@ -7947,9 +7947,9 @@
             ],
             "support": {
                 "issues": "https://github.com/liip/LiipImagineBundle/issues",
-                "source": "https://github.com/liip/LiipImagineBundle/tree/2.6.0"
+                "source": "https://github.com/liip/LiipImagineBundle/tree/2.6.1"
             },
-            "time": "2021-03-31T06:42:04+00:00"
+            "time": "2021-05-22T08:55:29+00:00"
         },
         {
             "name": "m6web/daemon-bundle",
@@ -8991,12 +8991,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosProfileBundle.git",
-                "reference": "4a03a22501cdeaf38f98928399ed4f0ce006386e"
+                "reference": "9749457088cda428b2483ec493a18384bac8862a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/4a03a22501cdeaf38f98928399ed4f0ce006386e",
-                "reference": "4a03a22501cdeaf38f98928399ed4f0ce006386e",
+                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/9749457088cda428b2483ec493a18384bac8862a",
+                "reference": "9749457088cda428b2483ec493a18384bac8862a",
                 "shasum": ""
             },
             "require": {
@@ -9085,7 +9085,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2021-05-25T03:14:53+00:00"
+            "time": "2021-05-31T05:16:25+00:00"
         },
         {
             "name": "nucleos/user-bundle",
@@ -9093,12 +9093,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosUserBundle.git",
-                "reference": "99885e38d4f1b5fbc58d14d73d078e0607e78c4d"
+                "reference": "93fe0aba92088e155aa652213beb65a769b03470"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosUserBundle/zipball/99885e38d4f1b5fbc58d14d73d078e0607e78c4d",
-                "reference": "99885e38d4f1b5fbc58d14d73d078e0607e78c4d",
+                "url": "https://api.github.com/repos/nucleos/NucleosUserBundle/zipball/93fe0aba92088e155aa652213beb65a769b03470",
+                "reference": "93fe0aba92088e155aa652213beb65a769b03470",
                 "shasum": ""
             },
             "require": {
@@ -9201,7 +9201,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2021-05-25T03:38:31+00:00"
+            "time": "2021-05-31T04:43:57+00:00"
         },
         {
             "name": "nyholm/psr7",
@@ -9856,16 +9856,16 @@
         },
         {
             "name": "php-http/discovery",
-            "version": "1.13.0",
+            "version": "1.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-http/discovery.git",
-                "reference": "788f72d64c43dc361e7fcc7464c3d947c64984a7"
+                "reference": "778f722e29250c1fac0bbdef2c122fa5d038c9eb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-http/discovery/zipball/788f72d64c43dc361e7fcc7464c3d947c64984a7",
-                "reference": "788f72d64c43dc361e7fcc7464c3d947c64984a7",
+                "url": "https://api.github.com/repos/php-http/discovery/zipball/778f722e29250c1fac0bbdef2c122fa5d038c9eb",
+                "reference": "778f722e29250c1fac0bbdef2c122fa5d038c9eb",
                 "shasum": ""
             },
             "require": {
@@ -9882,8 +9882,7 @@
                 "puli/composer-plugin": "1.0.0-beta10"
             },
             "suggest": {
-                "php-http/message": "Allow to use Guzzle, Diactoros or Slim Framework factories",
-                "puli/composer-plugin": "Sets up Puli which is recommended for Discovery to work. Check http://docs.php-http.org/en/latest/discovery.html for more details."
+                "php-http/message": "Allow to use Guzzle, Diactoros or Slim Framework factories"
             },
             "type": "library",
             "extra": {
@@ -9919,9 +9918,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-http/discovery/issues",
-                "source": "https://github.com/php-http/discovery/tree/1.13.0"
+                "source": "https://github.com/php-http/discovery/tree/1.14.0"
             },
-            "time": "2020-11-27T14:49:42+00:00"
+            "time": "2021-06-01T14:30:21+00:00"
         },
         {
             "name": "php-http/guzzle6-adapter",
@@ -12087,16 +12086,16 @@
         },
         {
             "name": "sentry/sentry-symfony",
-            "version": "4.1.2",
+            "version": "4.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-symfony.git",
-                "reference": "93a357af39994b846aa9c6280c8e44a1e2739e27"
+                "reference": "d0b85df21f65499db87341648541a526a1f7960d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/93a357af39994b846aa9c6280c8e44a1e2739e27",
-                "reference": "93a357af39994b846aa9c6280c8e44a1e2739e27",
+                "url": "https://api.github.com/repos/getsentry/sentry-symfony/zipball/d0b85df21f65499db87341648541a526a1f7960d",
+                "reference": "d0b85df21f65499db87341648541a526a1f7960d",
                 "shasum": ""
             },
             "require": {
@@ -12104,6 +12103,7 @@
                 "php": "^7.2||^8.0",
                 "php-http/discovery": "^1.11",
                 "sentry/sdk": "^3.1",
+                "symfony/cache-contracts": "^2.4",
                 "symfony/config": "^3.4.44||^4.4.20||^5.0.11",
                 "symfony/console": "^3.4.44||^4.4.20||^5.0.11",
                 "symfony/dependency-injection": "^3.4.44||^4.4.20||^5.0.11",
@@ -12127,7 +12127,6 @@
                 "phpunit/phpunit": "^8.5||^9.0",
                 "symfony/browser-kit": "^3.4.44||^4.4.20||^5.0.11",
                 "symfony/cache": "^3.4.44||^4.4.20||^5.0.11",
-                "symfony/cache-contracts": "^2.4",
                 "symfony/dom-crawler": "^3.4.44||^4.4.20||^5.0.11",
                 "symfony/framework-bundle": "^3.4.44||^4.4.20||^5.0.11",
                 "symfony/messenger": "^4.4.20||^5.0.11",
@@ -12184,7 +12183,7 @@
             ],
             "support": {
                 "issues": "https://github.com/getsentry/sentry-symfony/issues",
-                "source": "https://github.com/getsentry/sentry-symfony/tree/4.1.2"
+                "source": "https://github.com/getsentry/sentry-symfony/tree/4.1.3"
             },
             "funding": [
                 {
@@ -12196,7 +12195,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2021-05-16T22:44:16+00:00"
+            "time": "2021-05-31T07:54:49+00:00"
         },
         {
             "name": "simple-bus/message-bus",
@@ -13042,7 +13041,7 @@
         },
         {
             "name": "sylius/attribute",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Attribute.git",
@@ -13102,13 +13101,13 @@
                 "shop"
             ],
             "support": {
-                "source": "https://github.com/Sylius/Attribute/tree/v1.9.3"
+                "source": "https://github.com/Sylius/Attribute/tree/v1.9.4"
             },
             "time": "2021-01-29T11:05:58+00:00"
         },
         {
             "name": "sylius/attribute-bundle",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusAttributeBundle.git",
@@ -13175,13 +13174,13 @@
                 "shop"
             ],
             "support": {
-                "source": "https://github.com/Sylius/SyliusAttributeBundle/tree/v1.9.3"
+                "source": "https://github.com/Sylius/SyliusAttributeBundle/tree/v1.9.4"
             },
             "time": "2021-04-06T13:31:24+00:00"
         },
         {
             "name": "sylius/channel",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Channel.git",
@@ -13243,13 +13242,13 @@
                 "sylius"
             ],
             "support": {
-                "source": "https://github.com/Sylius/Channel/tree/v1.9.3"
+                "source": "https://github.com/Sylius/Channel/tree/v1.9.4"
             },
             "time": "2021-01-21T10:58:26+00:00"
         },
         {
             "name": "sylius/channel-bundle",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusChannelBundle.git",
@@ -13316,13 +13315,13 @@
                 "currency"
             ],
             "support": {
-                "source": "https://github.com/Sylius/SyliusChannelBundle/tree/v1.9.3"
+                "source": "https://github.com/Sylius/SyliusChannelBundle/tree/v1.9.4"
             },
             "time": "2021-03-19T15:00:21+00:00"
         },
         {
             "name": "sylius/currency",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Currency.git",
@@ -13381,13 +13380,13 @@
                 "money"
             ],
             "support": {
-                "source": "https://github.com/Sylius/Currency/tree/v1.9.3"
+                "source": "https://github.com/Sylius/Currency/tree/v1.9.4"
             },
             "time": "2021-01-29T11:05:58+00:00"
         },
         {
             "name": "sylius/currency-bundle",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusCurrencyBundle.git",
@@ -13459,13 +13458,13 @@
             ],
             "support": {
                 "issues": "https://github.com/Sylius/SyliusCurrencyBundle/issues",
-                "source": "https://github.com/Sylius/SyliusCurrencyBundle/tree/v1.9.3"
+                "source": "https://github.com/Sylius/SyliusCurrencyBundle/tree/v1.9.4"
             },
             "time": "2021-03-19T15:00:21+00:00"
         },
         {
             "name": "sylius/customer",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Customer.git",
@@ -13529,13 +13528,13 @@
                 "groups"
             ],
             "support": {
-                "source": "https://github.com/Sylius/Customer/tree/v1.9.3"
+                "source": "https://github.com/Sylius/Customer/tree/v1.9.4"
             },
             "time": "2021-01-29T11:05:58+00:00"
         },
         {
             "name": "sylius/customer-bundle",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusCustomerBundle.git",
@@ -13615,13 +13614,13 @@
                 "groups"
             ],
             "support": {
-                "source": "https://github.com/Sylius/SyliusCustomerBundle/tree/v1.9.3"
+                "source": "https://github.com/Sylius/SyliusCustomerBundle/tree/v1.9.4"
             },
             "time": "2021-03-19T15:00:21+00:00"
         },
         {
             "name": "sylius/inventory",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Inventory.git",
@@ -13680,13 +13679,13 @@
                 "sylius"
             ],
             "support": {
-                "source": "https://github.com/Sylius/Inventory/tree/v1.9.3"
+                "source": "https://github.com/Sylius/Inventory/tree/v1.9.4"
             },
             "time": "2021-01-29T11:05:58+00:00"
         },
         {
             "name": "sylius/locale",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Locale.git",
@@ -13746,13 +13745,13 @@
                 "localization"
             ],
             "support": {
-                "source": "https://github.com/Sylius/Locale/tree/v1.9.3"
+                "source": "https://github.com/Sylius/Locale/tree/v1.9.4"
             },
             "time": "2021-01-29T11:05:58+00:00"
         },
         {
             "name": "sylius/locale-bundle",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusLocaleBundle.git",
@@ -13824,13 +13823,13 @@
             ],
             "support": {
                 "issues": "https://github.com/Sylius/SyliusLocaleBundle/issues",
-                "source": "https://github.com/Sylius/SyliusLocaleBundle/tree/v1.9.3"
+                "source": "https://github.com/Sylius/SyliusLocaleBundle/tree/v1.9.4"
             },
             "time": "2021-04-15T10:49:21+00:00"
         },
         {
             "name": "sylius/money-bundle",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusMoneyBundle.git",
@@ -13902,22 +13901,22 @@
                 "money"
             ],
             "support": {
-                "source": "https://github.com/Sylius/SyliusMoneyBundle/tree/v1.9.3"
+                "source": "https://github.com/Sylius/SyliusMoneyBundle/tree/v1.9.4"
             },
             "time": "2021-03-19T15:00:21+00:00"
         },
         {
             "name": "sylius/order",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Order.git",
-                "reference": "308add2515bd1dd1e0a70b2e1772049e8caaddee"
+                "reference": "c70560409cdaa884420dd4b882c5df7c2cec5d50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sylius/Order/zipball/308add2515bd1dd1e0a70b2e1772049e8caaddee",
-                "reference": "308add2515bd1dd1e0a70b2e1772049e8caaddee",
+                "url": "https://api.github.com/repos/Sylius/Order/zipball/c70560409cdaa884420dd4b882c5df7c2cec5d50",
+                "reference": "c70560409cdaa884420dd4b882c5df7c2cec5d50",
                 "shasum": ""
             },
             "require": {
@@ -13968,13 +13967,13 @@
                 "webshop"
             ],
             "support": {
-                "source": "https://github.com/Sylius/Order/tree/v1.9.3"
+                "source": "https://github.com/Sylius/Order/tree/v1.9.4"
             },
-            "time": "2021-01-29T11:05:58+00:00"
+            "time": "2021-04-26T06:36:21+00:00"
         },
         {
             "name": "sylius/order-bundle",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusOrderBundle.git",
@@ -14048,13 +14047,13 @@
                 "sylius"
             ],
             "support": {
-                "source": "https://github.com/Sylius/SyliusOrderBundle/tree/v1.9.3"
+                "source": "https://github.com/Sylius/SyliusOrderBundle/tree/v1.9.4"
             },
             "time": "2021-03-19T15:00:21+00:00"
         },
         {
             "name": "sylius/payment",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Payment.git",
@@ -14113,13 +14112,13 @@
                 "webshop"
             ],
             "support": {
-                "source": "https://github.com/Sylius/Payment/tree/v1.9.3"
+                "source": "https://github.com/Sylius/Payment/tree/v1.9.4"
             },
             "time": "2021-01-29T11:05:58+00:00"
         },
         {
             "name": "sylius/payment-bundle",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusPaymentBundle.git",
@@ -14189,13 +14188,13 @@
                 "webshop"
             ],
             "support": {
-                "source": "https://github.com/Sylius/SyliusPaymentBundle/tree/v1.9.3"
+                "source": "https://github.com/Sylius/SyliusPaymentBundle/tree/v1.9.4"
             },
             "time": "2021-03-19T15:00:21+00:00"
         },
         {
             "name": "sylius/product",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Product.git",
@@ -14262,13 +14261,13 @@
                 "variants"
             ],
             "support": {
-                "source": "https://github.com/Sylius/Product/tree/v1.9.3"
+                "source": "https://github.com/Sylius/Product/tree/v1.9.4"
             },
             "time": "2021-04-22T15:27:00+00:00"
         },
         {
             "name": "sylius/product-bundle",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusProductBundle.git",
@@ -14338,13 +14337,13 @@
                 "shop"
             ],
             "support": {
-                "source": "https://github.com/Sylius/SyliusProductBundle/tree/v1.9.3"
+                "source": "https://github.com/Sylius/SyliusProductBundle/tree/v1.9.4"
             },
             "time": "2021-03-19T15:00:21+00:00"
         },
         {
             "name": "sylius/promotion",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Promotion.git",
@@ -14403,13 +14402,13 @@
                 "sylius"
             ],
             "support": {
-                "source": "https://github.com/Sylius/Promotion/tree/v1.9.3"
+                "source": "https://github.com/Sylius/Promotion/tree/v1.9.4"
             },
             "time": "2021-01-29T11:05:58+00:00"
         },
         {
             "name": "sylius/promotion-bundle",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusPromotionBundle.git",
@@ -14484,7 +14483,7 @@
                 "sylius"
             ],
             "support": {
-                "source": "https://github.com/Sylius/SyliusPromotionBundle/tree/v1.9.3"
+                "source": "https://github.com/Sylius/SyliusPromotionBundle/tree/v1.9.4"
             },
             "time": "2021-03-29T11:26:47+00:00"
         },
@@ -14662,7 +14661,7 @@
         },
         {
             "name": "sylius/taxation",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Taxation.git",
@@ -14723,13 +14722,13 @@
                 "vat"
             ],
             "support": {
-                "source": "https://github.com/Sylius/Taxation/tree/v1.9.3"
+                "source": "https://github.com/Sylius/Taxation/tree/v1.9.4"
             },
             "time": "2021-01-29T11:05:58+00:00"
         },
         {
             "name": "sylius/taxation-bundle",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusTaxationBundle.git",
@@ -14802,13 +14801,13 @@
                 "webshop"
             ],
             "support": {
-                "source": "https://github.com/Sylius/SyliusTaxationBundle/tree/v1.9.3"
+                "source": "https://github.com/Sylius/SyliusTaxationBundle/tree/v1.9.4"
             },
             "time": "2021-03-19T15:00:21+00:00"
         },
         {
             "name": "sylius/taxonomy",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/Taxonomy.git",
@@ -14868,13 +14867,13 @@
                 "taxonomy"
             ],
             "support": {
-                "source": "https://github.com/Sylius/Taxonomy/tree/v1.9.3"
+                "source": "https://github.com/Sylius/Taxonomy/tree/v1.9.4"
             },
             "time": "2021-03-18T13:27:19+00:00"
         },
         {
             "name": "sylius/taxonomy-bundle",
-            "version": "v1.9.3",
+            "version": "v1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sylius/SyliusTaxonomyBundle.git",
@@ -14946,7 +14945,7 @@
                 "taxonomy"
             ],
             "support": {
-                "source": "https://github.com/Sylius/SyliusTaxonomyBundle/tree/v1.9.3"
+                "source": "https://github.com/Sylius/SyliusTaxonomyBundle/tree/v1.9.4"
             },
             "time": "2021-03-19T15:00:21+00:00"
         },
@@ -16936,16 +16935,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.24.0",
+            "version": "6.24.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "110651d67940617e08557a7bac57edbd27b77d3e"
+                "reference": "3438bcdb42a8fabcfaa081670d5924b868016148"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/110651d67940617e08557a7bac57edbd27b77d3e",
-                "reference": "110651d67940617e08557a7bac57edbd27b77d3e",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/3438bcdb42a8fabcfaa081670d5924b868016148",
+                "reference": "3438bcdb42a8fabcfaa081670d5924b868016148",
                 "shasum": ""
             },
             "require": {
@@ -16984,9 +16983,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twilio/twilio-php/issues",
-                "source": "https://github.com/twilio/twilio-php/tree/6.24.0"
+                "source": "https://github.com/twilio/twilio-php/tree/6.24.1"
             },
-            "time": "2021-05-19T19:41:37+00:00"
+            "time": "2021-06-02T20:26:58+00:00"
         },
         {
             "name": "vich/uploader-bundle",
@@ -18991,16 +18990,16 @@
         },
         {
             "name": "phpstan/phpstan-symfony",
-            "version": "0.12.33",
+            "version": "0.12.35",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-symfony.git",
-                "reference": "7f47026c69c9f2ef8d6b1814bd17cc86ea768e9d"
+                "reference": "0cd5b0d7666294c2a983aa276bb2d7fa125d0ae4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/7f47026c69c9f2ef8d6b1814bd17cc86ea768e9d",
-                "reference": "7f47026c69c9f2ef8d6b1814bd17cc86ea768e9d",
+                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/0cd5b0d7666294c2a983aa276bb2d7fa125d0ae4",
+                "reference": "0cd5b0d7666294c2a983aa276bb2d7fa125d0ae4",
                 "shasum": ""
             },
             "require": {
@@ -19012,11 +19011,10 @@
                 "symfony/framework-bundle": "<3.0"
             },
             "require-dev": {
-                "phing/phing": "^2.16.3",
                 "php-parallel-lint/php-parallel-lint": "^1.2",
                 "phpstan/phpstan-phpunit": "^0.12.16",
                 "phpstan/phpstan-strict-rules": "^0.12.5",
-                "phpunit/phpunit": "^7.5.20",
+                "phpunit/phpunit": "^9.5",
                 "symfony/config": "^4.2 || ^5.0",
                 "symfony/console": "^4.0 || ^5.0",
                 "symfony/framework-bundle": "^4.4 || ^5.0",
@@ -19055,9 +19053,9 @@
             "description": "Symfony Framework extensions and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-symfony/issues",
-                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.33"
+                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.35"
             },
-            "time": "2021-05-05T14:52:06+00:00"
+            "time": "2021-06-02T11:44:45+00:00"
         },
         {
             "name": "phpstan/phpstan-webmozart-assert",
@@ -20146,26 +20144,26 @@
         },
         {
             "name": "symfony/phpunit-bridge",
-            "version": "v5.2.9",
+            "version": "v5.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",
-                "reference": "ea24e42c1ee04792f5d814da6f0814b20ece2907"
+                "reference": "15cab721487b7bf43ad545a1e7d0095782e26f8c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/ea24e42c1ee04792f5d814da6f0814b20ece2907",
-                "reference": "ea24e42c1ee04792f5d814da6f0814b20ece2907",
+                "url": "https://api.github.com/repos/symfony/phpunit-bridge/zipball/15cab721487b7bf43ad545a1e7d0095782e26f8c",
+                "reference": "15cab721487b7bf43ad545a1e7d0095782e26f8c",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5.9"
+                "php": ">=7.1.3",
+                "symfony/deprecation-contracts": "^2.1"
             },
             "conflict": {
-                "phpunit/phpunit": "<4.8.35|<5.4.3,>=5.0|<6.4,>=6.0|9.1.2"
+                "phpunit/phpunit": "<7.5|9.1.2"
             },
             "require-dev": {
-                "symfony/deprecation-contracts": "^2.1",
                 "symfony/error-handler": "^4.4|^5.0"
             },
             "suggest": {
@@ -20209,7 +20207,7 @@
             "description": "Provides utilities for PHPUnit, especially user deprecation notices management",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/phpunit-bridge/tree/v5.2.9"
+                "source": "https://github.com/symfony/phpunit-bridge/tree/v5.3.0"
             },
             "funding": [
                 {
@@ -20225,7 +20223,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-05-16T13:07:46+00:00"
+            "time": "2021-05-26T17:57:12+00:00"
         },
         {
             "name": "theseer/tokenizer",
