@@ -293,4 +293,15 @@ class Customer extends BaseCustomer implements CustomerInterface
 
         $this->edenredCredentials->setRefreshToken($refreshToken);
     }
+
+    public function clearEdenredCredentials()
+    {
+        if (null === $this->edenredCredentials) {
+
+            return;
+        }
+
+        $this->edenredCredentials->setCustomer(null);
+        $this->edenredCredentials = null;
+    }
 }
