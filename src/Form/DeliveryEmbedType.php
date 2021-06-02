@@ -57,24 +57,6 @@ class DeliveryEmbedType extends DeliveryType
                 'required' => false,
             ]);
 
-        if ($options['with_payment']) {
-            $builder->add('stripePayment', StripePaymentType::class, [
-                'mapped' => false,
-                'label' => false
-            ]);
-        }
-
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
-
-            $form = $event->getForm();
-            $data = $event->getData();
-
-            if (!$options['with_payment'] && isset($data['stripePayment'])) {
-                unset($data['stripePayment']);
-                $event->setData($data);
-            }
-        });
-
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
 
             $form = $event->getForm();
@@ -88,16 +70,5 @@ class DeliveryEmbedType extends DeliveryType
                 }
             }
         });
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        parent::configureOptions($resolver);
-
-        $resolver->setDefault('with_payment', false);
-
-        // Disable CSRF protection to allow being used in iframes
-        // @see https://github.com/coopcycle/coopcycle-web/issues/735
-        $resolver->setDefault('csrf_protection', false);
     }
 }

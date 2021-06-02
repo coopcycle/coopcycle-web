@@ -10,6 +10,7 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\DeliveryEmbedType;
+use AppBundle\Form\StripePaymentType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -43,7 +44,10 @@ class EmbedController extends AbstractController
 {
     use DeliveryTrait;
 
-    public function __construct(RepositoryInterface $customerRepository, FactoryInterface $customerFactory, TranslatorInterface $translator)
+    public function __construct(
+        RepositoryInterface $customerRepository,
+        FactoryInterface $customerFactory,
+        TranslatorInterface $translator)
     {
         $this->customerRepository = $customerRepository;
         $this->customerFactory = $customerFactory;
@@ -55,9 +59,24 @@ class EmbedController extends AbstractController
         return [];
     }
 
-    private function doCreateDeliveryForm(array $options = [])
+    private function doCreateDeliveryForm(Request $request, bool $readSession = true): FormInterface
     {
+        $deliveryForm = $this->getDeliveryForm($request);
+
+        $options = [
+            'with_weight'      => $deliveryForm->getWithWeight(),
+            'with_vehicle'     => $deliveryForm->getWithVehicle(),
+            'with_time_slot'   => $deliveryForm->getTimeSlot(),
+            'with_package_set' => $deliveryForm->getPackageSet(),
+        ];
+
         $delivery = Delivery::create();
+
+        if ($readSession) {
+            if ($d = $this->getDeliveryFromSession($request)) {
+                $delivery = $d;
+            }
+        }
 
         return $this->get('form.factory')->createNamed('delivery', DeliveryEmbedType::class, $delivery, $options);
     }
@@ -131,21 +150,53 @@ class EmbedController extends AbstractController
     /**
      * @Route("/forms/{hashid}", name="embed_delivery_start")
      */
-    public function deliveryStartAction($hashid, Request $request)
+    public function deliveryStartAction($hashid, Request $request,
+        DeliveryManager $deliveryManager,
+        CanonicalizerInterface $canonicalizer,
+        SessionInterface $session)
     {
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
         }
 
-        $deliveryForm = $this->decode($hashid);
+        $form = $this->doCreateDeliveryForm($request);
 
-        $form = $this->doCreateDeliveryForm([
-            'with_weight' => $deliveryForm->getWithWeight(),
-            'with_vehicle' => $deliveryForm->getWithVehicle(),
-            'with_time_slot' => $deliveryForm->getTimeSlot(),
-            'with_package_set' => $deliveryForm->getPackageSet(),
-        ]);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            try {
+
+                $delivery = $form->getData();
+
+                $price = $this->getDeliveryPrice(
+                    $delivery,
+                    $this->getPricingRuleSet($request),
+                    $deliveryManager
+                );
+
+                // We store the form data in session, because it's serializable
+                // https://symfony.com/doc/current/form/direct_submit.html
+                $session->set(
+                    sprintf('delivery_form.%s.form_data', $hashid),
+                    $request->request->get($form->getName())
+                );
+
+                $session->set(
+                    sprintf('delivery_form.%s.price', $hashid),
+                    $price
+                );
+
+                return $this->redirectToRoute('embed_delivery_summary', [
+                    'hashid' => $hashid
+                ]);
+
+            } catch (NoRuleMatchedException $e) {
+                $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+                $form->addError(new FormError($message));
+            }
+
+        }
 
         return $this->render('embed/delivery/start.html.twig', [
             'form' => $form->createView(),
@@ -170,137 +221,103 @@ class EmbedController extends AbstractController
             $this->container->get('profiler')->disable();
         }
 
-        $deliveryForm = $this->decode($hashid);
+        $form = $this->doCreateDeliveryForm($request);
 
-        $form = $this->doCreateDeliveryForm([
-            'with_weight' => $deliveryForm->getWithWeight(),
-            'with_vehicle' => $deliveryForm->getWithVehicle(),
-            'with_time_slot' => $deliveryForm->getTimeSlot(),
-            'with_package_set' => $deliveryForm->getPackageSet(),
-            'with_payment' => true,
-        ]);
+        // TODO If nothing in session, redirect to start
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        $formData = $session->get(
+            sprintf('delivery_form.%s.form_data', $hashid)
+        );
 
-            try {
+        $price = $session->get(
+            sprintf('delivery_form.%s.price', $hashid)
+        );
 
-                $delivery = $form->getData();
+        $form->submit($formData);
 
-                $email = $form->get('email')->getData();
-                $telephone = $form->get('telephone')->getData();
-
-                $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
-                $price = $this->getDeliveryPrice(
-                    $delivery,
-                    $deliveryForm->getPricingRuleSet(),
-                    $deliveryManager
-                );
-                $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $customer, $attach = false);
-
-                if ($billingAddress = $form->get('billingAddress')->getData()) {
-                    $this->setBillingAddress($order, $billingAddress);
-                }
-
-                $orderProcessor->process($order);
-
-                $objectManager->persist($order);
-                $objectManager->flush();
-
-                $sessionKeyName = sprintf('delivery_form.%s.cart', $hashid);
-
-                $session->set($sessionKeyName, $order->getId());
-
-                $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
-                return $this->render('embed/delivery/summary.html.twig', [
-                    'hashid' => $hashid,
-                    'price' => $price,
-                    'price_excluding_tax' => ($order->getTotal() - $order->getTaxTotal()),
-                    'form' => $form->createView(),
-                    'payment' => $payment,
-                ]);
-
-            } catch (NoRuleMatchedException $e) {
-                $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
-                $form->addError(new FormError($message));
-            }
-
-        }
-
-        return $this->render('embed/delivery/start.html.twig', [
-            'form' => $form->createView(),
-            'hashid' => $hashid,
-        ]);
-    }
-
-    /**
-     * @Route("/forms/{hashid}/process", name="embed_delivery_process")
-     */
-    public function deliveryProcessAction($hashid, Request $request,
-        OrderRepositoryInterface $orderRepository,
-        OrderManager $orderManager,
-        EntityManagerInterface $objectManager,
-        DeliveryManager $deliveryManager,
-        SessionInterface $session)
-    {
-        if ($this->container->has('profiler')) {
-            $this->container->get('profiler')->disable();
-        }
-
-        $deliveryForm = $this->decode($hashid);
-
-        $sessionKeyName = sprintf('delivery_form.%s.cart', $hashid);
-
-        if (!$session->has($sessionKeyName)) {
-            return $this->redirectToRoute('embed_delivery_start', ['hashid' => $hashid]);
-        }
-
-        $order = $orderRepository->findCartById($session->get($sessionKeyName));
-
-        if (null === $order) {
-            return $this->redirectToRoute('embed_delivery_start', ['hashid' => $hashid]);
-        }
-
-        $form = $this->doCreateDeliveryForm([
-            'with_weight' => $deliveryForm->getWithWeight(),
-            'with_vehicle' => $deliveryForm->getWithVehicle(),
-            'with_time_slot' => $deliveryForm->getTimeSlot(),
-            'with_package_set' => $deliveryForm->getPackageSet(),
-            'with_payment' => true,
-        ]);
-
-        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $delivery = $form->getData();
 
-            $data = [
-                'stripeToken' => $form->get('stripePayment')->get('stripeToken')->getData()
-            ];
+            $paymentForm = $this->createForm(StripePaymentType::class);
 
-            $orderManager->checkout($order, $data);
+            if ($request->isMethod('POST')) {
 
-            $order->setDelivery($delivery);
+                $order = $orderRepository->findCartById(
+                    (int) $session->get(sprintf('delivery_form.%s.cart', $hashid))
+                );
 
+                if (null === $order) {
+
+                    return $this->redirectToRoute('embed_delivery_start', ['hashid' => $hashid]);
+                }
+
+                $paymentForm->handleRequest($request);
+
+                if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
+
+                    $data = [
+                        'stripeToken' => $paymentForm->get('stripeToken')->getData()
+                    ];
+
+                    $order->setDelivery($delivery);
+                    $orderManager->checkout($order, $data);
+                    $objectManager->flush();
+
+                    $session->remove(
+                        sprintf('delivery_form.%s.form_data', $hashid)
+                    );
+                    $session->remove(
+                        sprintf('delivery_form.%s.price', $hashid)
+                    );
+                    $session->remove(
+                        sprintf('delivery_form.%s.cart', $hashid)
+                    );
+
+                    $this->addFlash(
+                        'embed_delivery',
+                        $this->translator->trans('embed.delivery.confirm_message')
+                    );
+
+                    $hashids = new Hashids($this->getParameter('secret'), 8);
+
+                    return $this->redirectToRoute('public_order', [
+                        'hashid' => $hashids->encode($order->getId())
+                    ]);
+                }
+            }
+
+            $email     = $form->get('email')->getData();
+            $telephone = $form->get('telephone')->getData();
+
+            $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
+            $order    = $this->createOrderForDelivery($orderFactory, $delivery, $price, $customer, $attach = false);
+
+            if ($billingAddress = $form->get('billingAddress')->getData()) {
+                $this->setBillingAddress($order, $billingAddress);
+            }
+
+            $orderProcessor->process($order);
+
+            $objectManager->persist($order);
             $objectManager->flush();
 
-            $this->addFlash(
-                'embed_delivery',
-                $this->translator->trans('embed.delivery.confirm_message')
+            $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
+
+            $session->set(
+                sprintf('delivery_form.%s.cart', $hashid),
+                $order->getId()
             );
 
-            $hashids = new Hashids($this->getParameter('secret'), 8);
-
-            return $this->redirectToRoute('public_order', [
-                'hashid' => $hashids->encode($order->getId())
+            return $this->render('embed/delivery/summary.html.twig', [
+                'hashid' => $hashid,
+                'delivery' => $delivery,
+                'price' => $price,
+                'price_excluding_tax' => ($order->getTotal() - $order->getTaxTotal()),
+                'form' => $paymentForm->createView(),
+                'payment' => $payment,
             ]);
         }
-
-        return $this->render('embed/delivery/summary.html.twig', [
-            'form' => $form->createView(),
-            'hashid' => $hashid,
-        ]);
     }
 
     private function setBillingAddress(OrderInterface $order, Address $address)
@@ -308,5 +325,43 @@ class EmbedController extends AbstractController
         if (null !== $address->getCompany() || null !== $address->getStreetAddress()) {
             $order->setBillingAddress($address);
         }
+    }
+
+    private function getDeliveryForm(Request $request): ?DeliveryForm
+    {
+        return $this->decode($request->get('hashid'));
+    }
+
+    /**
+     * @return Delivery|null
+     */
+    private function getDeliveryFromSession(Request $request): ?Delivery
+    {
+        $session = $request->getSession();
+
+        $hashid = $request->get('hashid');
+        $key = sprintf('delivery_form.%s.form_data', $hashid);
+
+        if (!$session->has($key)) {
+
+            return null;
+        }
+
+        $form = $this->doCreateDeliveryForm($request, false);
+        $formData = $session->get($key);
+
+        $form->submit($formData);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            return $form->getData();
+        }
+
+        return null;
+    }
+
+    private function getPricingRuleSet(Request $request)
+    {
+        return $this->getDeliveryForm($request)->getPricingRuleSet();
     }
 }
