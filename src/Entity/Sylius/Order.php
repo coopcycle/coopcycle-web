@@ -51,6 +51,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use Sylius\Component\Taxation\Model\TaxRateInterface;
+use Webmozart\Assert\Assert as WMAssert;
 
 /**
  * @see http://schema.org/Order Documentation on Schema.org
@@ -1245,5 +1246,21 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return null !== $this->getRestaurant()->getEdenredMerchantId();
+    }
+
+    public function getAlcoholicItemsTotal(): int
+    {
+        $total = 0;
+
+        foreach ($this->getItems() as $item) {
+
+            WMAssert::isInstanceOf($item, OrderItemInterface::class);
+
+            if ($item->getVariant()->getProduct()->isAlcohol()) {
+                $total += $item->getTotal();
+            }
+        }
+
+        return $total;
     }
 }
