@@ -1176,3 +1176,4 @@ restaurants.edenred_transactions.disclaimer: Cette page liste l'ensemble des com
   Pour ces commandes, l'ensemble de l'argent a été perçu par le restaurant.
   Vous devez donc envoyer une facture à chaque restaurant, pour réclamer les commissions dûes.
 restaurants.edenred_transactions.edenred_amount: Montant payé avec Edenred
+restaurants.edenred_transactions.title: Transactions Edenred

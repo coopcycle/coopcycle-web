@@ -25,6 +25,11 @@
         {% trans %}adminDashboard.pledges.title{% endtrans %} <span class="badge">{{ pledge_count }}</span>
       </a>
     {{ form_end(pledge_form) }}
+    <div class="border-left pl-4 ml-4">
+      <a class="btn btn-default" href="{{ path('admin_restaurants_edenred') }}">
+        {{ 'restaurants.edenred_transactions.title'|trans }}
+      </a>
+    </div>
   </div>
   <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success">
     <i class="fa fa-plus"></i> {% trans %}adminDashboard.restaurants.createNew{% endtrans %}

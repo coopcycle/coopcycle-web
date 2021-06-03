@@ -1182,3 +1182,4 @@ restaurants.edenred_transactions.disclaimer: This page lists all the orders paid
   For these orders, all the money has been collected by the restaurant.
   You must therefore send an invoice to each restaurant, to claim the commissions due.
 restaurants.edenred_transactions.edenred_amount: Amount paid with Edenred
+restaurants.edenred_transactions: Edenred transactions
