@@ -8,6 +8,15 @@
       data-default-value="{{ month|date('Y-m') }}"></div>
   </div>
 
+  {% if payments|length > 0 %}
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle mr-2"></i>
+    <span>
+    {{ 'restaurants.edenred_transactions.disclaimer'|trans }}
+    </span>
+  </div>
+  {% endif %}
+
   {% for restaurant in payments %}
 
     {% set total_amount = 0 %}
@@ -23,11 +32,11 @@
     </nav>
     <table class="table table-condensed table-hover">
       <thead>
-        <th>Order #</th>
-        <th>Completed at</th>
-        <th class="text-right">Total amount</th>
-        <th class="text-right">Edenred amount</th>
-        <th class="text-right">Platform fee</th>
+        <th>{{ 'order.export.heading.order_number'|trans }}</th>
+        <th>{{ 'order.export.heading.completed_at'|trans }}</th>
+        <th class="text-right">{{ 'order.export.heading.total_incl_tax'|trans }}</th>
+        <th class="text-right">{{ 'restaurants.edenred_transactions.edenred_amount'|trans }}</th>
+        <th class="text-right">{{ 'order.export.heading.platform_fee'|trans }}</th>
       </thead>
       <tbody>
       {% for payment in payments[restaurant] %}
