@@ -8,6 +8,11 @@
       </options>
     </field>
     <field name="reusablePackagingUnit" type="float" column="reusable_packaging_unit" nullable="true"/>
+    <field name="alcohol" type="boolean" column="alcohol">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <one-to-many field="options" target-entity="AppBundle\Entity\Sylius\ProductOptions" mapped-by="product" orphan-removal="true" fetch="EAGER">
       <cascade>
