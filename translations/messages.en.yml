@@ -1182,4 +1182,6 @@ restaurants.edenred_transactions.disclaimer: This page lists all the orders paid
   For these orders, all the money has been collected by the restaurant.
   You must therefore send an invoice to each restaurant, to claim the commissions due.
 restaurants.edenred_transactions.edenred_amount: Amount paid with Edenred
-restaurants.edenred_transactions: Edenred transactions
+restaurants.edenred_transactions.title: Edenred transactions
+form.product.alcohol.label: This product is an alcoholic beverage
+form.product.alcohol.help: Check this box only if this product is an alcoholic beverage, like a bottle of wine.

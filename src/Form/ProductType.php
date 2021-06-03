@@ -74,6 +74,11 @@ class ProductType extends AbstractType
                 'required' => false,
                 'label' => 'form.product.enabled.label',
             ])
+            ->add('alcohol', CheckboxType::class, [
+                'required' => false,
+                'label' => 'form.product.alcohol.label',
+                'help' => 'form.product.alcohol.help',
+            ])
             ->add('delete', SubmitType::class, [
                 'label' => 'basics.delete',
             ]);

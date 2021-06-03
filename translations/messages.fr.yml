@@ -1177,3 +1177,5 @@ restaurants.edenred_transactions.disclaimer: Cette page liste l'ensemble des com
   Vous devez donc envoyer une facture à chaque restaurant, pour réclamer les commissions dûes.
 restaurants.edenred_transactions.edenred_amount: Montant payé avec Edenred
 restaurants.edenred_transactions.title: Transactions Edenred
+form.product.alcohol.label: Ce produit est une boisson alcoolisée
+form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson alcoolisée, comme une bouteille de vin.

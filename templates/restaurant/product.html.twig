@@ -71,13 +71,19 @@
 
   {{ form_row(form.options, { attr: { class: "product__form__options--sortable" } }) }}
 
-  <div class="row">
-    <div class="col-sm-6">
-      {{ form_row(form.allergens) }}
+  <section class="mb-4">
+    <div class="row">
+      <div class="col-sm-6">
+        {{ form_row(form.allergens) }}
+      </div>
+      <div class="col-sm-6">
+        {{ form_row(form.restrictedDiets) }}
+      </div>
     </div>
-    <div class="col-sm-6">
-      {{ form_row(form.restrictedDiets) }}
-    </div>
+  </section>
+
+  <div class="border p-3">
+  {{ form_row(form.alcohol) }}
   </div>
 
   <hr>
