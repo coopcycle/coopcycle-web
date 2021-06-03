@@ -185,8 +185,9 @@ class Client extends BaseClient
 
         $deliveryFee = $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT);
         $packagingFee = $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT);
+        $tipAmount = $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT);
 
-        $notPayableAmount = $deliveryFee + $packagingFee;
+        $notPayableAmount = $deliveryFee + $packagingFee + $tipAmount;
         $payableAmount = $total - $notPayableAmount;
 
         $balance = $this->getBalance($order->getCustomer());

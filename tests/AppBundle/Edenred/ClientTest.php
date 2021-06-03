@@ -90,6 +90,7 @@ class ClientTest extends TestCase
         $order->getTotal()->willReturn(3000);
         $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT)->willReturn(350);
         $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->willReturn(0);
+        $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)->willReturn(0);
         $order->getCustomer()->willReturn($customer);
 
         $this->mockHandler->append(
@@ -119,6 +120,7 @@ class ClientTest extends TestCase
         $order->getTotal()->willReturn(3000);
         $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT)->willReturn(0);
         $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->willReturn(0);
+        $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)->willReturn(0);
         $order->getCustomer()->willReturn($customer);
 
         $this->mockHandler->append(
@@ -148,6 +150,7 @@ class ClientTest extends TestCase
         $order->getTotal()->willReturn(3000);
         $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT)->willReturn(0);
         $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->willReturn(0);
+        $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)->willReturn(0);
         $order->getCustomer()->willReturn($customer);
 
         $this->mockHandler->append(
