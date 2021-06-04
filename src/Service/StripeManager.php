@@ -270,7 +270,7 @@ class StripeManager
     {
         $order = $payment->getOrder();
 
-        if (!$order->hasVendor()) {
+        if (!$order->hasVendor() || !$order->isMultiVendor()) {
             return;
         }
 

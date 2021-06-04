@@ -342,7 +342,9 @@ class StripeController extends AbstractController
             return new Response('', 200);
         }
 
-        $stripeManager->createTransfersForHub($payment, $charge);
+        if (!$event->account) {
+            $stripeManager->createTransfersForHub($payment, $charge);
+        }
 
         $stripeFee = $this->getStripeFee($event);
 
