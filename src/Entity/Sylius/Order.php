@@ -1245,7 +1245,7 @@ class Order extends BaseOrder implements OrderInterface
             return false;
         }
 
-        return null !== $this->getRestaurant()->getEdenredMerchantId();
+        return $this->getRestaurant()->supportsEdenred();
     }
 
     public function getAlcoholicItemsTotal(): int

@@ -805,6 +805,11 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->edenredMerchantId = $edenredMerchantId;
     }
 
+    public function supportsEdenred(): bool
+    {
+        return null !== $this->getEdenredMerchantId();
+    }
+
     public function getHub(): ?Hub
     {
         return $this->hub;
