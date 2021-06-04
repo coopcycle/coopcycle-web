@@ -170,7 +170,8 @@ class RestaurantController extends AbstractController
      */
     public function listAction(Request $request,
         LocalBusinessRepository $repository,
-        CacheInterface $projectCache)
+        CacheInterface $projectCache,
+        SlugifyInterface $slugify)
     {
         $mode = $request->query->get('mode', 'list');
 
@@ -201,7 +202,9 @@ class RestaurantController extends AbstractController
             $matches = $repository->findByLatLng($latitude, $longitude);
         } else {
 
-            $restaurantsIds = $projectCache->get('restaurant.list.ids', function (ItemInterface $item) use ($repository) {
+            $cacheKey = sprintf('restaurant.list.ids|%s', $slugify->slugify($repository->getContext()));
+
+            $restaurantsIds = $projectCache->get($cacheKey, function (ItemInterface $item) use ($repository) {
 
                 $item->expiresAfter(60 * 5);
 
@@ -742,9 +745,12 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/stores", name="stores")
      */
-    public function storeListAction(Request $request, LocalBusinessRepository $repository, CacheInterface $projectCache)
+    public function storeListAction(Request $request,
+        LocalBusinessRepository $repository,
+        CacheInterface $projectCache,
+        SlugifyInterface $slugify)
     {
-        return $this->listAction($request, $repository->withContext(Store::class), $projectCache);
+        return $this->listAction($request, $repository->withContext(Store::class), $projectCache, $slugify);
     }
 
     /**
