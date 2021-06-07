@@ -7,6 +7,7 @@ import {
   SET_FILTER_VALUE,
   RESET_FILTERS,
   scanPositions,
+  SHOW_RECURRENCE_RULES,
 } from './actions'
 import _ from 'lodash'
 import Centrifuge from 'centrifuge'
@@ -102,6 +103,11 @@ export const persistFilters = ({ getState }) => (next) => (action) => {
   if (action.type === RESET_FILTERS) {
     state = getState()
     window.sessionStorage.removeItem(`cpccl__dshbd__fltrs__${getKey(state)}`)
+  }
+
+ if (action.type === SHOW_RECURRENCE_RULES) {
+    state = getState()
+    window.sessionStorage.setItem(`recurrence_rules_visible`, JSON.stringify(state.settings.isRecurrenceRulesVisible))
   }
 
   return result

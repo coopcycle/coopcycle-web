@@ -10,7 +10,7 @@ import Task from './Task'
 import TaskGroup from './TaskGroup'
 import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
-import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup } from '../redux/actions'
+import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, showRecurrenceRules } from '../redux/actions'
 import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectSelectedTasks } from '../redux/selectors'
 
 class StandaloneTasks extends React.Component {
@@ -61,14 +61,16 @@ const StandaloneTasksWithConnect = connect(
 const Buttons = connect(
   (state) => ({
     taskListGroupMode: state.taskListGroupMode,
+    isRecurrenceRulesVisible: state.settings.isRecurrenceRulesVisible,
   }),
   (dispatch) => ({
     setTaskListGroupMode: (mode) => dispatch(setTaskListGroupMode(mode)),
     openNewTaskModal: () => dispatch(openNewTaskModal()),
     toggleSearch: () => dispatch(toggleSearch()),
     openNewRecurrenceRuleModal: () => dispatch(openNewRecurrenceRuleModal()),
+    showRecurrenceRules: (isChecked) =>dispatch(showRecurrenceRules(isChecked))
   })
-)(({ taskListGroupMode, setTaskListGroupMode, openNewTaskModal, toggleSearch, openNewRecurrenceRuleModal }) => {
+)(({ taskListGroupMode, setTaskListGroupMode, openNewTaskModal, toggleSearch, openNewRecurrenceRuleModal, isRecurrenceRulesVisible, showRecurrenceRules }) => {
 
   const [ visible, setVisible ] = useState(false)
   const { t } = useTranslation()
@@ -102,7 +104,10 @@ const Buttons = connect(
           onChange={ mode => {
             setTaskListGroupMode(mode)
             setVisible(false)
-          }} />
+          }}
+          isRecurrenceRulesVisible={isRecurrenceRulesVisible}
+          showRecurrenceRules={showRecurrenceRules}
+           />
         }
         visible={ visible }
         onVisibleChange={ value => setVisible(value) }
@@ -128,7 +133,7 @@ class UnassignedTasks extends React.Component {
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
-          { this.props.recurrenceRules.map((rrule, index) =>
+          { this.props.isRecurrenceRulesVisible && this.props.recurrenceRules.map((rrule, index) =>
             <RecurrenceRule
               key={ `rrule-${index}` }
               rrule={ rrule }
@@ -175,6 +180,7 @@ function mapStateToProps (state) {
     groups: selectGroups(state),
     standaloneTasks: selectStandaloneTasks(state),
     recurrenceRules: selectRecurrenceRules(state),
+    isRecurrenceRulesVisible: state.settings.isRecurrenceRulesVisible,
   }
 }
 

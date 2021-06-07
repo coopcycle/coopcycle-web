@@ -9,7 +9,7 @@ const radioStyle = {
   lineHeight: '30px',
 }
 
-export default ({ onChange, defaultValue }) => {
+export default ({ onChange, defaultValue, isRecurrenceRulesVisible, showRecurrenceRules }) => {
 
   const [ value, setValue ] = useState(defaultValue);
   const { t } = useTranslation()
@@ -35,7 +35,11 @@ export default ({ onChange, defaultValue }) => {
           </Radio>
         </Radio.Group>
       </div>
-      <Checkbox>
+      <Checkbox onChange={ e => {
+            showRecurrenceRules(e.target.checked)
+          }}
+          checked={isRecurrenceRulesVisible}
+          >
         { t('ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES') }
       </Checkbox>
     </div>

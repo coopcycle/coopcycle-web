@@ -154,6 +154,7 @@ export const UPDATE_RECURRENCE_RULE_REQUEST = 'UPDATE_RECURRENCE_RULE_REQUEST'
 export const UPDATE_RECURRENCE_RULE_SUCCESS = 'UPDATE_RECURRENCE_RULE_SUCCESS'
 export const DELETE_RECURRENCE_RULE_SUCCESS = 'DELETE_RECURRENCE_RULE_SUCCESS'
 export const UPDATE_RECURRENCE_RULE_ERROR = 'UPDATE_RECURRENCE_RULE_ERROR'
+export const SHOW_RECURRENCE_RULES = 'SHOW_RECURRENCE_RULES'
 
 export const DELETE_GROUP_SUCCESS = 'DELETE_GROUP_SUCCESS'
 
@@ -474,6 +475,10 @@ export function loadTaskEventsFailure(error) {
 
 export function openImportModal() {
   return { type: OPEN_IMPORT_MODAL }
+}
+
+export function showRecurrenceRules(isChecked) {
+  return { type: SHOW_RECURRENCE_RULES, isChecked }
 }
 
 export function closeImportModal() {

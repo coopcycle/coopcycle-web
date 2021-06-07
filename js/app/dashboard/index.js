@@ -88,6 +88,17 @@ function start() {
     }
   }
 
+  const persistentRules = window.sessionStorage.getItem(`recurrence_rules_visible`)
+  if (persistentRules) {
+    preloadedState = {
+      ...preloadedState,
+      settings: {
+        isRecurrenceRulesVisible: JSON.parse(persistentRules)
+      }
+    }
+  }
+
+
   const store = createStoreFromPreloadedState(preloadedState)
 
   const mapRef = createRef()
