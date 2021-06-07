@@ -103,6 +103,14 @@ class RestaurantType extends LocalBusinessType
             ]);
         }
 
+        if ($options['vytal_enabled']) {
+            $builder->add('vytalEnabled', CheckboxType::class, [
+                'label' => 'restaurant.form.vytal_enabled.label',
+                'required' => false,
+                'disabled' => !$this->authorizationChecker->isGranted('ROLE_ADMIN'),
+            ]);
+        }
+
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $restaurant = $event->getData();
@@ -230,6 +238,7 @@ class RestaurantType extends LocalBusinessType
             'data_class' => LocalBusiness::class,
             'loopeat_enabled' => false,
             'edenred_enabled' => false,
+            'vytal_enabled' => false,
         ));
     }
 }

@@ -109,6 +109,7 @@ trait RestaurantTrait
         $form = $this->createForm(RestaurantType::class, $restaurant, [
             'loopeat_enabled' => $this->getParameter('loopeat_enabled'),
             'edenred_enabled' => $this->getParameter('edenred_enabled'),
+            'vytal_enabled' => $this->getParameter('vytal_enabled'),
         ]);
 
         // Associate Stripe account with restaurant
@@ -134,6 +135,7 @@ trait RestaurantTrait
 
         $wasLoopEatEnabled = $restaurant->isLoopeatEnabled();
         $wasDepositRefundEnabled = $restaurant->isDepositRefundEnabled();
+        $wasVytalEnabled = $restaurant->isVytalEnabled();
 
         $activationErrors = [];
         $formErrors = [];
@@ -168,6 +170,20 @@ trait RestaurantTrait
                     if (!$restaurant->hasReusablePackagingWithName('LoopEat')) {
                         $reusablePackaging = new ReusablePackaging();
                         $reusablePackaging->setName('LoopEat');
+                        $reusablePackaging->setPrice(0);
+                        $reusablePackaging->setOnHold(0);
+                        $reusablePackaging->setOnHand(9999);
+                        $reusablePackaging->setTracked(false);
+
+                        $restaurant->addReusablePackaging($reusablePackaging);
+                    }
+                }
+
+                if (!$wasVytalEnabled && $restaurant->isVytalEnabled()) {
+
+                    if (!$restaurant->hasReusablePackagingWithName('Vytal')) {
+                        $reusablePackaging = new ReusablePackaging();
+                        $reusablePackaging->setName('Vytal');
                         $reusablePackaging->setPrice(0);
                         $reusablePackaging->setOnHold(0);
                         $reusablePackaging->setOnHand(9999);

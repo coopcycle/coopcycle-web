@@ -1185,3 +1185,7 @@ restaurants.edenred_transactions.edenred_amount: Amount paid with Edenred
 restaurants.edenred_transactions.title: Edenred transactions
 form.product.alcohol.label: This product is an alcoholic beverage
 form.product.alcohol.help: Check this box only if this product is an alcoholic beverage, like a bottle of wine.
+form.checkout_address.reusable_packaging_vytal_enabled.label: I want to use Vytal containers
+vytal.code.disclaimer: Open the Vytal app, generate a code, then enter it below.
+restaurant.form.section.vytal: Vytal
+restaurant.form.vytal_enabled.label: Enable Vytal deposit-refund system

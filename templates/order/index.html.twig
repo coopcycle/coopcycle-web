@@ -1,6 +1,7 @@
 {% extends "base.html.twig" %}
 
 {% form_theme form 'form/order.html.twig' %}
+{% form_theme form_vytal 'form/order.html.twig' %}
 
 {% block banner %}
 {% endblock %}
@@ -199,6 +200,24 @@
             <button type="button" class="btn btn-primary btn-rounded btn-md" data-continue>{{ 'basics.continue'|trans }}</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-vytal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-sm" role="document">
+        {{ form_start(form_vytal, { attr: { class: 'modal-content' } }) }}
+          <div class="modal-body">
+            <div class="mb-4">{{ 'vytal.code.disclaimer'|trans|raw }}</div>
+            <div class="input-group">
+              <div class="input-group-addon">V - </div>
+              {{ form_widget(form_vytal.code) }}
+            </div>
+          </div>
+          <div class="d-flex justify-content-between p-4 border-top">
+            <button type="button" class="btn btn-default btn-rounded btn-md" data-dismiss="modal">{{ 'basics.close'|trans }}</button>
+            <button type="submit" class="btn btn-primary btn-rounded btn-md">{{ 'basics.continue'|trans }}</button>
+          </div>
+        {{ form_end(form_vytal) }}
       </div>
     </div>
 

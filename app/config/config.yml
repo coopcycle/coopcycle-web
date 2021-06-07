@@ -57,6 +57,7 @@ parameters:
     edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
     nucleos_profile.registration.confirmation.enabled: false
     craue_config.cache_adapter.class: Craue\ConfigBundle\CacheAdapter\SymfonyCacheComponentAdapter
+    vytal_enabled: '%env(bool:VYTAL_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.

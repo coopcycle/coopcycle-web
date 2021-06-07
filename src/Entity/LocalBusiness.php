@@ -247,6 +247,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $hub;
 
+    protected $vytalEnabled = false;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -823,5 +825,25 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function belongsToHub(): bool
     {
         return null !== $this->hub;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVytalEnabled()
+    {
+        return $this->vytalEnabled;
+    }
+
+    /**
+     * @param bool $enabled
+     *
+     * @return self
+     */
+    public function setVytalEnabled($enabled)
+    {
+        $this->vytalEnabled = $enabled;
+
+        return $this;
     }
 }

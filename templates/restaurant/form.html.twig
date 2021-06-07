@@ -124,6 +124,13 @@
           </a>
         </li>
         {% endif %}
+        {% if form.vytalEnabled is defined %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#vytal" aria-controls="vytal">
+            {{ 'restaurant.form.section.vytal'|trans }}
+          </a>
+        </li>
+        {% endif %}
         {% if restaurant.id is not null %}
         <li role="presentation">
           <a role="tab" data-toggle="tab" href="#embed" aria-controls="embed">
@@ -162,6 +169,11 @@
         {% if form.loopeat is defined %}
         <div role="tabpanel" class="tab-pane" id="loopeat">
           {% include "restaurant/form/_partials/loopeat.html.twig" with { form: form.loopeat } %}
+        </div>
+        {% endif %}
+        {% if form.vytalEnabled is defined %}
+        <div role="tabpanel" class="tab-pane" id="vytal">
+          {{ form_row(form.vytalEnabled) }}
         </div>
         {% endif %}
         {% if restaurant.id is not null %}

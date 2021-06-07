@@ -35,6 +35,7 @@ use AppBundle\Validator\Constraints\Order as AssertOrder;
 use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
 use AppBundle\Validator\Constraints\ShippingAddress as AssertShippingAddress;
 use AppBundle\Validator\Constraints\ShippingTimeRange as AssertShippingTimeRange;
+use AppBundle\Vytal\CodeAwareTrait as VytalCodeAwareTrait;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -254,6 +255,8 @@ use Webmozart\Assert\Assert as WMAssert;
  */
 class Order extends BaseOrder implements OrderInterface
 {
+    use VytalCodeAwareTrait;
+
     protected $customer;
 
     protected $vendor;
@@ -775,7 +778,9 @@ class Order extends BaseOrder implements OrderInterface
             return false;
         }
 
-        if (!$restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {
+        if (!$restaurant->isDepositRefundEnabled()
+            && !$restaurant->isLoopeatEnabled()
+            && !$restaurant->isVytalEnabled()) {
             return false;
         }
 
