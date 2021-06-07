@@ -89,6 +89,9 @@
     <div id="locationiq"
       data-access-token="{{ locationiq_access_token }}"
       data-viewbox="{{ coopcycle_bounding_rect() }}"></div>
+    {% elseif autocomplete_adapter|default('algolia') == 'google' %}
+    <div id="google"
+      data-location="{{ coopcycle_setting('latlng')|e('html_attr') }}"></div>
     {% else %}
     <div id="algolia-places"
       data-app-id="{{ algolia_places_app_id }}"
@@ -100,6 +103,14 @@
     {% block scripts_common %}
       {% block scripts %}{% endblock %}
     {% endblock %}
+
+    {# This must be added *AFTER* scripts, so that initMap function is defined #}
+    {% if autocomplete_adapter|default('algolia') == 'google' %}
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&callback=initMap&libraries=places"
+      async
+    ></script>
+    {% endif %}
 
     {% if app.environment == "test" %}
     <script>

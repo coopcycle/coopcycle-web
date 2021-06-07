@@ -47,6 +47,15 @@ import {
   configure as configureGE
   } from './AddressAutosuggest/geocode-earth'
 
+import {
+  onSuggestionsFetchRequested as onSuggestionsFetchRequestedGOOG,
+  poweredBy as poweredByGOOG,
+  transformSuggestion as transformSuggestionGOOG,
+  geocode as geocodeGOOG,
+  configure as configureGOOG,
+  onSuggestionSelected as onSuggestionSelectedGOOG,
+  } from './AddressAutosuggest/google'
+
 import { storage, getFromCache } from './AddressAutosuggest/cache'
 import { getAdapter, getAdapterOptions } from './AddressAutosuggest/config'
 
@@ -113,6 +122,14 @@ const adapters = {
     geocode: geocodeGE,
     configure: configureGE,
   },
+  google: {
+    onSuggestionsFetchRequested: onSuggestionsFetchRequestedGOOG,
+    poweredBy: poweredByGOOG,
+    transformSuggestion: transformSuggestionGOOG,
+    geocode: geocodeGOOG,
+    configure: configureGOOG,
+    onSuggestionSelected: onSuggestionSelectedGOOG,
+  }
 }
 
 // WARNING
