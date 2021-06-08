@@ -627,7 +627,7 @@ form.menu_item_modifier.name.label: Name
 form.menu_item_modifier.price.label: Price
 form.menu_item_modifier.calculusStrategy.label: Price calculation
 form.menu_taxon.name.label: Name
-form.menu_taxon.add_child.label: Add section
+form.menu_taxon.add_child.label: Add category
 form.menu_taxon.child_name.placeholder: "Example: main courses, desserts…\n"
 form.menu_editor.products_panel.title: Products
 form.menu_editor.save.label: Save Changes
