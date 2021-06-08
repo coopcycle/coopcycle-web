@@ -103,9 +103,20 @@ export const transformSuggestion = function () {
   // TODO Implement
 }
 
-export const geocode = function () {
+export const geocode = function (text) {
 
-  // TODO Implement
+  // https://developers.google.com/maps/documentation/javascript/geocoding
+  return new Promise((resolve) => {
+
+    geocoderService.geocode({ address: text }, (results, status) => {
+      if (status === window.google.maps.GeocoderStatus.OK && results.length > 0) {
+        const place = results[0]
+        resolve(placeToAddress(place))
+      } else {
+        resolve(null)
+      }
+    })
+  })
 }
 
 export const configure = function (options) {
