@@ -1,0 +1,115 @@
+registration.email.subject: |
+  E-posta berrespena
+registration.email.message: |
+  <h2>Ongi etorri %brand_name%-(e)ra, %username%</h2>
+  Mezu hau jaso duzu %brand_name%-(e)n kontu berria sortu duzulako.
+  <br>
+  Berretsi zure helbide elektronikoa azpiko botoian klik eginez.
+registration.email.confirm: 'Berretsi e-posta'
+registration.email.disclaimer: 'Esteka hau zure kontua balioztatzeko aldi batean soilik
+  erabili daiteke'
+registration.email.textMessage: |
+  Ongi etorri %brand_name%-(e)ra, %username%,\n\n
+  Mezu hau jaso duzu %brand_name%-(e)n kontu berria sortu duzulako.\n
+  Zure e-posta berresteko, egin klik hurrengo estekan: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
+resetting.email.message: '<h2>Kaixo %username%</h2> Zure pasahitza berresteko, mesedez,
+  egin klik azpiko botoian.'
+resetting.email.reset: 'Berezarri pasahitza'
+order.view: 'Ikusi eskaera'
+order.public_url: |
+  Zure eskaeraren egoera jarraitzeko, <a href="%order.public_url%">egin klik hemen</a>.
+order.foodtech.accepted.delivery: "Ordu honetan helduko zaizu zure eskaera:"
+order.foodtech.accepted.delivery.disclaimer: "Zurekin harremanetan jarriko gara helbidea\
+  \ aurkitzeko arazoak baditugun"
+order.foodtech.accepted.collection: "Ordu honetan jaso beharko duzu zure eskaera:"
+order.foodtech.accepted.collection.disclaimer: "Arazorik baduzu, jarri harremanetan\
+  \ <strong>%name%</strong>-(r)ekin <strong>%phone_number%</strong> telefono zenbakian\
+  \ denborarekin zure eskaera ezeztatu ahal izateko."
+order.foodtech.cancelled: "Jatetxeak ezin du zure %order.number% eskaera prestatu.\n\
+  <br>\nZure dirua hurrengo 5 egunetan itzuliko zaizu automatikoki.\n"
+admin.order.created.subject: 'Eskaera berria konfirmatzeke'
+admin.order.created.body: |
+  Kaixo,
+  <br>
+  Eskaera berria sortu da.
+admin.order_foodtech.created.body: |
+  Kaixo,
+  <br>
+  Eskaera berria sortu da <strong>%restaurant.name%</strong>(r)entzako.
+admin.pledge.subject: 'Iradokizun berria bidali da!'
+admin.send_invitation.subject: 'CoopCyclera gonbidapena!'
+admin.send_invitation.body: |
+  Kaixo %username%,
+  <br>
+  Mezu hau, zure CoopCycle gunera gonbidapena da, zure kontua sortzen amaitzeko egin klik jarraian duzun estekan.
+admin.send_invitation.create_password: 'Nire pasahitza sortu'
+admin.pledge.body: |
+  Kaixo,
+  <br>
+  %username% k %pledge.name% CoopCyclen egotea nahi du!
+user.pledge.subject: 'Zure iradokizuna orain CoopCyclen dago!'
+user.pledge.body: |
+  Kaixo,
+  <br>
+  Zuri esker, %pledge.name% CoopCyclen dago orain!
+owner.order.created.subject: 'Eskaera berria berresteko'
+owner.order.created.body: |
+  Aupa,
+  <br>
+  Eskaera berria sortu da <strong>%restaurant.name%</strong>(r)entzako.
+order.created.subject: '%order.number% eskaera jaso da'
+order.created.body: "Kaixo\n<br>\nZure eskaera jaso dugu.\n<br>\nAhalik eta azkarren\
+  \ egiaztatuko dugu zure eskaera eta baieztatzean mezu elektroniko bat bidaliko dizugu.\n"
+order.accepted.subject: 'Zure %order.number% eskaera baieztatu da'
+order.accepted.body.intro: "Kaixo,\n<br>\nZure eskaera baieztatu da."
+order.cancelled.subject: 'Zure %order.number% eskaera bertan behera utzi da'
+order.cancelled.body.intro: |
+  Kaixo,
+  <br>
+  Sentitzen dugu, baina zure eskaera bertan behera utzi da.
+order.delayed.subject: 'Zure %order.number% eskaera atzeratu egin da'
+order.delayed.body: |
+  Kaixo,
+  <br>
+  Sentitzen dugu, baina zure eskaera %delay% minutuz atzeratuko da.
+  <br>
+  Barkatu eragozpenak.
+task.done.subject: '#%task.id% zeregina gauzatu da'
+task.done.body: |
+  Kaixo,
+  <br>
+  #%task.id% zeregina burutu da.
+task.failed.subject: 'Ezin izan da #%task.id% zeregina burutu'
+task.failed.body: |
+  Kaixo,
+  <br>
+  Ezin izan da #%task.id% zeregina burutu.
+order.payment.subject: 'Zure %order.number% eskaeraren ordainketa'
+order.payment.body: "Kaixo,\n<br>\nEgin duzun eskaera baten entrega burutu dugu.\n\
+  <br>\nAzpian kreditu-txartelarekin ordaintzeko esteka bat aurkituko duzu.\n"
+covid_19.subject: 'COVID-19 | Zure eskaerarentzako argibide garrantzitsuak'
+covid_19.body: "<h1>Zure banaketa jarraitzeko instrukzioak</h1>\n<p>Uneko COVID-19\
+  \ (Coronavirus) pandemia dela eta, hurrengo instrukzioak <strong>jarraitu behar\
+  \ dituzu</strong> :</p>\n<h2>1. Mantendu distantzia soziala</h2>\n<p>Zure eskaera\
+  \ ate aurrean utziko dugu, banatzera datorren pertsonarengana hurbiltzeko beharra\
+  \ izan ez dezazun. Ez da beharrezkoa eskupekorik uztea ere.</p>\n<h2>2. Ireki zure\
+  \ eskaera hartu ostean</h2>\n<p>Birusa kartoizko eta plastikozko azaletan hainbat\
+  \ egun iraun dezake bizirik. Paketeak beraz birusaren transmisio bektore oso altuak\
+  \ dira.\nHorregatik <strong>zure eskaera paketetik atera eta platerretan zerbitzatzea</strong>\
+  \ eskatzen dizugu.</p>\n<h2>3. Paketea nola bota</h2>\n<p>Zure eskaera paketetik\
+  \ atera ostean, ziurtatu <strong>paketea itxitako zaborrontzi batean botatzen duzula</strong>\
+  \ gero nahi gabe ukitu ez dezazun.</p>\n<h2>4. Garbitu eskuak!</h2>\n<p>Zure eskaera\
+  \ paketetik atera eta paketea bota ostean, <strong>garbitu zure eskuak!</strong></p>\n"
+
+order.expiring_authorization.subject: 'Orainketa baimena laster iraungiko da'
+order.expiring_authorization.text: 'Ordainketa baimena <strong>%order.number%</strong>
+  eskaerarako laster iraungiko da. <br> Eskaera bukatu beharko zenuke baimena iraungi
+  baino lehen dirua galtzen saihesteko.'
+
+order.receipt.subject: 'Zure %order.number% eskaeraren ordainagiria'
+order.receipt.body: "Kaixo,\n<br>\nZure eskaeraren ordainagiria erantsi da."
+
+order.payment_failed.subject: 'Errore bat gertatu da zure ordainketa prozesatzen'
+order.payment_failed.body: "Kaixo,\n<br>\nBarkatu, errore bat gertatu da zure ordainketa\
+  \ prozesatzen. Mesedez, saiatu berriro ordainketa metodo desberdin batekin."
+order.payment_failed.return_to_order: 'Itzuli eskaerara'
