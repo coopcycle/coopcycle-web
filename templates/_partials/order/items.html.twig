@@ -111,7 +111,15 @@
     {% if packaging_adjustments|length > 0 %}
       {% for adjustment in packaging_adjustments %}
       <tr>
-        <th>{{ adjustment.label }}</th>
+        <th>
+          <span>{{ adjustment.label }}</span>
+          {% if order.isLoopeat() %}
+          <br>
+          <small class="font-weight-normal text-muted">
+          {{ 'order.adjustment_type.reusable_packaging.loopeat.help'|trans }}
+          </small>
+          {% endif %}
+        </th>
         <td class="text-right text-nowrap">
           {{ adjustment.amount|price_format }}
         </td>

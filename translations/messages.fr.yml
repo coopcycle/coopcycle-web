@@ -1182,3 +1182,4 @@ form.payment.refund_breakdown: Montant remboursable par carte %card%, montant re
 products.on_demand_delivery.name: Livraison à la demande
 index.view_all: Voir tout
 order.adjustment_type.reusable_packaging.loopeat: Service zéro déchet
+order.adjustment_type.reusable_packaging.loopeat.help: Ces frais couvrent le lavage, le réapprovisionnement des restaurants et l’achat des sacs en tissu réutilisables
