@@ -58,6 +58,8 @@ class AutocompleteAdapterType extends AbstractType
             $choices['Geocode.Earth'] = 'geocode-earth';
         }
 
+        $choices['Google'] = 'google';
+
         $resolver->setDefaults([
             'choices' => $choices,
             'required' => false,

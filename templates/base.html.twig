@@ -88,12 +88,7 @@
     {% endblock %}
 
     {# This must be added *AFTER* scripts, so that initMap function is defined #}
-    {% if autocomplete_adapter|default('algolia') == 'google' %}
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key') }}&callback=initMap&libraries=places"
-      async
-    ></script>
-    {% endif %}
+    {% include '_partials/google_maps.html.twig' %}
 
     {% if app.environment == "test" %}
     <script>
