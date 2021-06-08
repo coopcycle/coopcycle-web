@@ -1189,3 +1189,6 @@ form.checkout_address.reusable_packaging_vytal_enabled.label: I want to use Vyta
 vytal.code.disclaimer: Open the Vytal app, generate a delivery token, then enter it below. <a href="https://www.vytal.org/bestellen" target="_blank">Learn more</a>
 restaurant.form.section.vytal: Vytal
 restaurant.form.vytal_enabled.label: Enable Vytal deposit-refund system
+form.settings.addresses.title: Addresses
+form.settings.autocomplete_provider.label: Suggestions provider
+form.settings.google_api_key_custom.label: Google API Key

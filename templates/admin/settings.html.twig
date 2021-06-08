@@ -113,6 +113,14 @@
 
   </div>
 
+  <h4>{% trans %}form.settings.addresses.title{% endtrans %}</h4>
+
+  {{ form_row(form.autocomplete_provider) }}
+
+  <div class="d-none">
+  {{ form_row(form.google_api_key_custom) }}
+  </div>
+
   <hr>
 
   {{ form_rest(form) }}
