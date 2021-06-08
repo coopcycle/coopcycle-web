@@ -1,0 +1,95 @@
+{% extends 'restaurant/layout.html.twig' %}
+
+{% block body %}
+<div class="container">
+
+  <div class="d-flex justify-content-end mb-4">
+    <div id="month-picker" class="d-inline-block"
+      data-default-value="{{ month|date('Y-m') }}"></div>
+  </div>
+
+  {% if payments|length > 0 %}
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle mr-2"></i>
+    <span>
+    {{ 'restaurants.edenred_transactions.disclaimer'|trans }}
+    </span>
+  </div>
+  {% endif %}
+
+  {% for restaurant in payments %}
+
+    {% set total_amount = 0 %}
+    {% set edenred_amount = 0 %}
+    {% set platform_fee = 0 %}
+
+    <nav class="d-flex justify-content-between mb-4">
+      <h3 class="m-0">{{ restaurant.name }}</h3>
+      <form method="post" class="d-inline-block mr-2">
+        <input type="hidden" name="restaurant" value="{{ restaurant.id }}" />
+        <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-download"></i> {{ 'basics.export'|trans }}</button>
+      </form>
+    </nav>
+    <table class="table table-condensed table-hover">
+      <thead>
+        <th>{{ 'order.export.heading.order_number'|trans }}</th>
+        <th>{{ 'order.export.heading.completed_at'|trans }}</th>
+        <th class="text-right">{{ 'order.export.heading.total_incl_tax'|trans }}</th>
+        <th class="text-right">{{ 'restaurants.edenred_transactions.edenred_amount'|trans }}</th>
+        <th class="text-right">{{ 'order.export.heading.platform_fee'|trans }}</th>
+      </thead>
+      <tbody>
+      {% for payment in payments[restaurant] %}
+      {% set is_captured =
+        payment.edenredAuthorizationId is not empty and payment.edenredCaptureId is not empty %}
+      <tr class="{{ not is_captured ? 'danger' : '' }}">
+        <td>
+          <span class="text-monospace">{{ payment.order.number }}</span>
+        </td>
+        <td>
+          <span>{{ payment.order.shippingTimeRange|time_range_for_humans_short }}</span>
+        </td>
+        <td class="text-right">
+          <span class="text-monospace">{{ payment.amount|price_format }}</span>
+        </td>
+        <td class="text-right">
+          <span class="text-monospace">{{ payment.getAmountForMethod('EDENRED')|price_format }}</span>
+        </td>
+        <td class="text-right">
+          <span class="text-monospace">{{ payment.order.feeTotal|price_format }}</span>
+        </td>
+      </tr>
+      {% set total_amount   = (total_amount + payment.amount) %}
+      {% set edenred_amount = (edenred_amount + payment.getAmountForMethod('EDENRED')) %}
+      {% set platform_fee   = (platform_fee + payment.order.feeTotal) %}
+      {% endfor %}
+      </tbody>
+      {% if total_amount > 0 %}
+      <tfoot>
+        <tr>
+          <th></th>
+          <th></th>
+          <th class="text-right">
+            <span class="text-monospace">{{ total_amount|price_format }}</span>
+          </th>
+          <th class="text-right">
+            <span class="text-monospace">{{ edenred_amount|price_format }}</span>
+          </th>
+          <th class="text-right">
+            <span class="text-monospace">{{ platform_fee|price_format }}</span>
+          </th>
+        </tr>
+      </tfoot>
+      {% endif %}
+    </table>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('restaurant-edenred') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('restaurant-edenred') }}
+{% endblock %}

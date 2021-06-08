@@ -30,22 +30,24 @@
     </div>
   {% endif %}
 
-  <div class="row">
-    <div class="col-sm-3">
-      {% if product.id is not null %}
-      <a href="#" id="image-editor"
-        class="d-flex align-items-center justify-content-center border text-decoration-none"
-        style="padding: 10rem;">
-        <i class="fa fa-3x fa-camera"></i>
-      </a>
-      {% endif %}
+  <section class="mb-4">
+    <div class="row">
+      <div class="col-sm-3">
+        {% if product.id is not null %}
+        <a href="#" id="image-editor"
+          class="d-flex align-items-center justify-content-center border text-decoration-none"
+          style="padding: 10rem;">
+          <i class="fa fa-3x fa-camera"></i>
+        </a>
+        {% endif %}
+      </div>
+      <div class="col-sm-9">
+        {{ form_row(form.name) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.enabled) }}
+      </div>
     </div>
-    <div class="col-sm-9">
-      {{ form_row(form.name) }}
-      {{ form_row(form.description) }}
-      {{ form_row(form.enabled) }}
-    </div>
-  </div>
+  </section>
 
   {% if form.reusablePackagingEnabled is defined and form.reusablePackaging is defined and form.reusablePackagingUnit is defined %}
   <div class="panel panel-default">
@@ -69,13 +71,19 @@
 
   {{ form_row(form.options, { attr: { class: "product__form__options--sortable" } }) }}
 
-  <div class="row">
-    <div class="col-sm-6">
-      {{ form_row(form.allergens) }}
+  <section class="mb-4">
+    <div class="row">
+      <div class="col-sm-6">
+        {{ form_row(form.allergens) }}
+      </div>
+      <div class="col-sm-6">
+        {{ form_row(form.restrictedDiets) }}
+      </div>
     </div>
-    <div class="col-sm-6">
-      {{ form_row(form.restrictedDiets) }}
-    </div>
+  </section>
+
+  <div class="border p-3">
+  {{ form_row(form.alcohol) }}
   </div>
 
   <hr>

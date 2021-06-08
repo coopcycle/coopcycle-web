@@ -53,4 +53,14 @@
     </div>
   {% endif %}
 
+  {% if restaurant.supportsEdenred() %}
+    <div class="restaurant-item__top-right">
+      <span class="restaurant-supports-edenred"></span>
+    </div>
+  {% elseif restaurant.isVytalEnabled() %}
+    <div class="restaurant-item__top-right">
+      <span class="restaurant-supports-vytal"></span>
+    </div>
+  {% endif %}
+
 </div>

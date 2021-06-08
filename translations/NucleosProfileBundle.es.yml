@@ -15,3 +15,5 @@ form.registration.username.help: 'Su nombre de usuario no puede tener más de 15
   0-9) con la excepción de los guiones bajos.
 
   '
+
+form.email.help: Para enviarle actualizaciones sobre su pedido

@@ -17,6 +17,7 @@
         <option name="default">0</option>
       </options>
     </field>
+    <field name="vytalCode" type="string" column="vytal_code" nullable="true"/>
     <one-to-one field="delivery" target-entity="AppBundle\Entity\Delivery" mapped-by="order">
       <cascade>
         <cascade-persist/>

@@ -6,6 +6,7 @@ import {
 export const initialState = {
   view: 'marketplace',
   dateRange: '30d',
+  zeroWaste: false,
 }
 
 export default (state = initialState, action = {}) => {

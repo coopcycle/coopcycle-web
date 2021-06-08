@@ -8,7 +8,7 @@ import { dateRanges } from '../utils'
 
 const { Option } = Select
 
-const Navbar = ({ dateRange, changeDateRange, changeView }) => {
+const Navbar = ({ dateRange, changeDateRange, changeView, zeroWaste }) => {
 
   return (
     <div className="d-flex align-items-center justify-content-between border-bottom py-4 mb-4">
@@ -22,6 +22,15 @@ const Navbar = ({ dateRange, changeDateRange, changeView }) => {
           e.preventDefault()
           changeView('logistics')
         }}>Logistics</a>
+        { zeroWaste && (
+        <React.Fragment>
+          <span className="mx-2">|</span>
+          <a href="#" onClick={ e => {
+            e.preventDefault()
+            changeView('zerowaste')
+          }}>Zero waste</a>
+        </React.Fragment>
+        ) }
       </div>
       <Select
         defaultValue={ dateRange }
@@ -38,6 +47,7 @@ function mapStateToProps(state) {
 
   return {
     dateRange: state.dateRange,
+    zeroWaste: state.zeroWaste,
   }
 }
 

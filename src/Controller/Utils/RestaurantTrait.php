@@ -47,11 +47,14 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ObjectRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use League\Csv\Writer as CsvWriter;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use MercadoPago;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -106,6 +109,7 @@ trait RestaurantTrait
         $form = $this->createForm(RestaurantType::class, $restaurant, [
             'loopeat_enabled' => $this->getParameter('loopeat_enabled'),
             'edenred_enabled' => $this->getParameter('edenred_enabled'),
+            'vytal_enabled' => $this->getParameter('vytal_enabled'),
         ]);
 
         // Associate Stripe account with restaurant
@@ -131,6 +135,7 @@ trait RestaurantTrait
 
         $wasLoopEatEnabled = $restaurant->isLoopeatEnabled();
         $wasDepositRefundEnabled = $restaurant->isDepositRefundEnabled();
+        $wasVytalEnabled = $restaurant->isVytalEnabled();
 
         $activationErrors = [];
         $formErrors = [];
@@ -165,6 +170,20 @@ trait RestaurantTrait
                     if (!$restaurant->hasReusablePackagingWithName('LoopEat')) {
                         $reusablePackaging = new ReusablePackaging();
                         $reusablePackaging->setName('LoopEat');
+                        $reusablePackaging->setPrice(0);
+                        $reusablePackaging->setOnHold(0);
+                        $reusablePackaging->setOnHand(9999);
+                        $reusablePackaging->setTracked(false);
+
+                        $restaurant->addReusablePackaging($reusablePackaging);
+                    }
+                }
+
+                if (!$wasVytalEnabled && $restaurant->isVytalEnabled()) {
+
+                    if (!$restaurant->hasReusablePackagingWithName('Vytal')) {
+                        $reusablePackaging = new ReusablePackaging();
+                        $reusablePackaging->setName('Vytal');
                         $reusablePackaging->setPrice(0);
                         $reusablePackaging->setOnHold(0);
                         $reusablePackaging->setOnHand(9999);
@@ -1448,5 +1467,121 @@ trait RestaurantTrait
         $this->getDoctrine()->getManagerForClass(Product::class)->flush();
 
         return new Response('', 204);
+    }
+
+    public function edenredTransactionsAction(
+        SlugifyInterface $slugify,
+        Request $request)
+    {
+        $qb = $this->getDoctrine()->getRepository(PaymentInterface::class)
+            ->createQueryBuilder('p');
+
+        $qb->join(OrderInterface::class, 'o', Expr\Join::WITH, 'p.order = o.id');
+        $qb->join(PaymentMethodInterface::class, 'pm', Expr\Join::WITH, 'p.method = pm.id');
+
+        $edenredWithCard = 'EDENRED+CARD';
+
+        $qb->andWhere('pm.code = :code');
+        $qb->andWhere('o.state = :state');
+
+        $qb->setParameter('code', $edenredWithCard);
+        $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
+
+        $month = new \DateTime('now');
+        if ($request->query->has('month')) {
+            $month = new \DateTime($request->query->get('month'));
+        }
+
+        $start = new \DateTime(
+            sprintf('first day of %s', $month->format('F Y'))
+        );
+        $end = new \DateTime(
+            sprintf('last day of %s', $month->format('F Y'))
+        );
+
+        $start->setTime(0, 0, 0);
+        $end->setTime(23, 59, 59);
+
+        $qb = OrderRepository::addShippingTimeRangeClause($qb, 'o', $start, $end);
+
+        $qb->orderBy('o.shippingTimeRange', 'DESC');
+
+        $hash = new \SplObjectStorage();
+
+        $payments = $qb->getQuery()->getResult();
+
+        foreach ($payments as $payment) {
+
+            $restaurant = $payment->getOrder()->getRestaurant();
+
+            if (!$hash->contains($restaurant)) {
+                $hash->attach($restaurant, []);
+            }
+
+            $hash->attach($restaurant, array_merge($hash[$restaurant], [ $payment ]));
+        }
+
+        if ($request->isMethod('POST') && $request->request->has('restaurant')) {
+
+            $restaurantId = $request->request->getInt('restaurant');
+
+            $exported = $this->getDoctrine()->getRepository(LocalBusiness::class)
+                ->find($restaurantId);
+
+            if (null === $exported) {
+
+                throw $this->createNotFoundException();
+            }
+
+            $filename = sprintf('edenred-%s-%s.csv',
+                $month->format('Y-m'),
+                $slugify->slugify($exported->getName())
+            );
+
+            $csv = CsvWriter::createFromString('');
+
+            $numberFormatter = \NumberFormatter::create($request->getLocale(), \NumberFormatter::DECIMAL);
+            $numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
+            $numberFormatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
+
+            $heading = [
+                'Order number',
+                'Completed at',
+                'Total amount',
+                'Edenred amount',
+                'Platform fee',
+            ];
+
+            $records = [];
+            foreach ($hash[$exported] as $payment) {
+
+                $order = $payment->getOrder();
+
+                $records[] = [
+                    $order->getNumber(),
+                    $order->getShippingTimeRange()->getLower()->format('Y-m-d'),
+                    $numberFormatter->format($order->getTotal() / 100),
+                    $numberFormatter->format($payment->getAmountForMethod('EDENRED') / 100),
+                    $numberFormatter->format($order->getFeeTotal() / 100),
+                ];
+            }
+
+            $csv->insertOne($heading);
+            $csv->insertAll($records);
+
+            $response = new Response($csv->getContent());
+            $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                $filename
+            ));
+
+            return $response;
+        }
+
+        return $this->render('restaurant/edenred_transactions.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'month' => $month,
+            'payments' => $hash,
+        ]));
     }
 }

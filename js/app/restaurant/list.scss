@@ -93,3 +93,28 @@
 .restaurant-item:hover img {
   opacity: 0.8;
 }
+
+.restaurant-supports-edenred {
+
+  $originalWidth: 413.24px;
+  $originalHeight: 265.47px;
+
+  background-image: url('../../../assets/svg/Edenred_Logo.svg');
+  background-repeat: no-repeat;
+  display: block;
+  width: ($originalWidth / 6);
+  height: ($originalHeight / 6);
+}
+
+.restaurant-supports-vytal {
+
+    $vytalWidth: 964px;
+    $vytalHeight: 893px;
+
+    background-image: url('../../../assets/logos/vytal_logo_green.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: block;
+    width: ($vytalWidth / 15);
+    height: ($vytalHeight / 15);
+}

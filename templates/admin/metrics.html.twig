@@ -9,7 +9,8 @@
   data-api-url="{{ cubejs_api_url }}"
   data-token="{{ cube_token }}"
   data-view="{{ app.request.query.get('view', 'marketplace') }}"
-  data-date-range="{{ app.request.query.get('range', '30d') }}"></div>
+  data-date-range="{{ app.request.query.get('range', '30d') }}"
+  data-zero-waste="{{ zero_waste|json_encode|e('html_attr') }}"></div>
 {% endblock %}
 
 {% block styles %}

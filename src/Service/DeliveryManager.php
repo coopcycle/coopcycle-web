@@ -13,6 +13,8 @@ use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\OrderTimelineCalculator;
 use AppBundle\Utils\PickupTimeResolver;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class DeliveryManager
@@ -26,23 +28,23 @@ class DeliveryManager
         ExpressionLanguage $expressionLanguage,
         RoutingInterface $routing,
         OrderTimeHelper $orderTimeHelper,
-        OrderTimelineCalculator $orderTimelineCalculator)
+        OrderTimelineCalculator $orderTimelineCalculator,
+        LoggerInterface $logger = null)
     {
         $this->expressionLanguage = $expressionLanguage;
         $this->routing = $routing;
         $this->orderTimeHelper = $orderTimeHelper;
         $this->orderTimelineCalculator = $orderTimelineCalculator;
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function getPrice(Delivery $delivery, PricingRuleSet $ruleSet)
     {
-        $this->lastMatchedRule = null;
-
         if ($ruleSet->getStrategy() === 'find') {
 
             foreach ($ruleSet->getRules() as $rule) {
                 if ($rule->matches($delivery, $this->expressionLanguage)) {
-                    $this->lastMatchedRule = $rule;
+                    $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()));
 
                     return $rule->evaluatePrice($delivery, $this->expressionLanguage);
                 }
@@ -54,25 +56,26 @@ class DeliveryManager
         if ($ruleSet->getStrategy() === 'map') {
 
             $totalPrice = 0;
+            $matchedAtLeastOne = false;
+
             foreach ($ruleSet->getRules() as $rule) {
                 if ($rule->matches($delivery, $this->expressionLanguage)) {
-                    $this->lastMatchedRule = $rule;
+                    $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()));
 
                     $price = $rule->evaluatePrice($delivery, $this->expressionLanguage);
                     $totalPrice += $price;
+
+                    $matchedAtLeastOne = true;
                 }
             }
 
-            if ($this->lastMatchedRule !== null) {
+            if ($matchedAtLeastOne) {
 
                 return $totalPrice;
             }
         }
-    }
 
-    public function getLastMatchedRule(): ?PricingRule
-    {
-        return $this->lastMatchedRule;
+        return null;
     }
 
     public function createFromOrder(OrderInterface $order)

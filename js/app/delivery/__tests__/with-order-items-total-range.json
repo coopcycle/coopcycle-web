@@ -1,0 +1,63 @@
+{
+  "nodes":{
+    "nodes":{
+      "left":{
+        "nodes":{
+          "node":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "name":"order"
+            }
+          },
+          "attribute":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":"itemsTotal"
+            }
+          },
+          "arguments":{
+            "nodes":[
+
+            ],
+            "attributes":[
+
+            ]
+          }
+        },
+        "attributes":{
+          "type":1
+        }
+      },
+      "right":{
+        "nodes":{
+          "left":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":2300
+            }
+          },
+          "right":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":2599
+            }
+          }
+        },
+        "attributes":{
+          "operator":".."
+        }
+      }
+    },
+    "attributes":{
+      "operator":"in"
+    }
+  }
+}

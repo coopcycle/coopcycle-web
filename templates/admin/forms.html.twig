@@ -19,6 +19,7 @@
     <th>{{ 'form.store_type.time_slot.label'|trans }}</th>
     <th>{{ 'form.store_type.package_set.label'|trans }}</th>
     <th></th>
+    <th></th>
   </thead>
   <tbody>
   {% for form in forms %}
@@ -48,6 +49,11 @@
             {{ 'form.embed_settings.with_weight.label'|trans }}
           </li>
         </ul>
+      </td>
+      <td class="text-right">
+        <a href="{{ path('embed_delivery_start', { hashid: form|hashid(12) }) }}" target="_blank">
+          <i class="fa fa-external-link"></i>
+        </a>
       </td>
     </tr>
   {% endfor %}

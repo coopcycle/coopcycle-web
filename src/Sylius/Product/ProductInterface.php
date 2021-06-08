@@ -17,4 +17,6 @@ interface ProductInterface extends BaseProductInterface
      * @return LocalBusiness|null
      */
     public function getRestaurant(): ?LocalBusiness;
+
+    public function isAlcohol(): bool;
 }

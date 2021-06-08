@@ -233,7 +233,7 @@ class StripeController extends AbstractController
             case Stripe\Event::PAYMENT_INTENT_PAYMENT_FAILED:
                 return $this->handlePaymentIntentPaymentFailed($event, $eventBus, $emailManager);
             case Stripe\Event::CHARGE_CAPTURED:
-                return $this->handleChargeCaptured($event);
+                return $this->handleChargeCaptured($event, $stripeManager);
             case Stripe\Event::CHARGE_SUCCEEDED:
                 return $this->handleChargeSucceeded($event);
         }
@@ -321,33 +321,36 @@ class StripeController extends AbstractController
         return new Response('', 200);
     }
 
-    private function handleChargeCaptured(Stripe\Event $event): Response
+    private function handleChargeCaptured(Stripe\Event $event, StripeManager $stripeManager): Response
     {
         $charge = $event->data->object;
+
+        // Can happen when using Stripe CLI
+        if (empty($charge->payment_intent)) {
+            $this->logger->error(sprintf('Charge "%s" has no payment intent, skipping', $charge->id));
+
+            return new Response('', 200);
+        }
+
+        $this->logger->info(sprintf('Retrieving payment intent "%s"', $charge->payment_intent));
+
+        $payment = $this->findOneByPaymentIntent($charge->payment_intent);
+
+        if (null === $payment) {
+            $this->logger->error(sprintf('Payment Intent "%s" not found', $charge->payment_intent));
+
+            return new Response('', 200);
+        }
+
+        if (!$event->account) {
+            $stripeManager->createTransfersForHub($payment, $charge);
+        }
 
         $stripeFee = $this->getStripeFee($event);
 
         $this->logger->info(sprintf('Stripe fee  = %d', $stripeFee));
 
         if ($stripeFee > 0) {
-
-            // Can happen when using Stripe CLI
-            if (empty($charge->payment_intent)) {
-                $this->logger->error(sprintf('Charge "%s" has no payment intent, skipping', $charge->id));
-
-                return new Response('', 200);
-            }
-
-            $this->logger->info(sprintf('Retrieving payment intent "%s"', $charge->payment_intent));
-
-            $payment = $this->findOneByPaymentIntent($charge->payment_intent);
-
-            if (null === $payment) {
-                $this->logger->error(sprintf('Payment Intent "%s" not found', $charge->payment_intent));
-
-                return new Response('', 200);
-            }
-
             $this->addStripeFeeAdjustment($payment->getOrder(), $stripeFee);
         }
 

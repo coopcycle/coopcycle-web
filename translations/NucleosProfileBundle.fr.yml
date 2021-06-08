@@ -18,3 +18,5 @@ form.registration.username.help: 'Votre nom d''utilisateur ne peut pas dépasser
   A-Z, chiffres 0-9) à l''exception des underscores.
 
   '
+
+form.email.help: Pour vous informer de l'avancement de votre commande

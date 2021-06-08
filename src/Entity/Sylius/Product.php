@@ -56,6 +56,8 @@ class Product extends BaseProduct implements ProductInterface, Comparable
 
     protected $restaurant;
 
+    protected $alcohol = false;
+
     public function __construct()
     {
         parent::__construct();
@@ -317,5 +319,15 @@ class Product extends BaseProduct implements ProductInterface, Comparable
     public function setRestaurant(?LocalBusiness $restaurant)
     {
         $this->restaurant = $restaurant;
+    }
+
+    public function isAlcohol(): bool
+    {
+        return $this->alcohol;
+    }
+
+    public function setAlcohol(bool $alcohol)
+    {
+        $this->alcohol = $alcohol;
     }
 }

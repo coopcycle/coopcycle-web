@@ -19,14 +19,32 @@ function isHidden(hiddenCouriers, username) {
 }
 
 const timeSteps = {
-  0: '00:00',
-  4: '04:00',
-  8: '08:00',
+  0:  '00:00',
+  4:  '04:00',
+  8:  '08:00',
+  9:  '09:00',
+  10: '10:00',
+  11: '11:00',
   12: '12:00',
+  13: '13:00',
+  14: '14:00',
+  15: '15:00',
   16: '16:00',
+  17: '17:00',
+  18: '18:00',
+  19: '19:00',
   20: '20:00',
+  21: '21:00',
+  22: '22:00',
   24: '23:59',
 }
+
+const timeStepsWithStyle = _.mapValues(timeSteps, (value) => ({
+  label: value,
+  style: {
+    fontSize: '10px'
+  }
+}))
 
 class FiltersModalContent extends React.Component {
 
@@ -153,7 +171,7 @@ class FiltersModalContent extends React.Component {
               <div role="tabpanel" className="tab-pane" id="filters_timerange">
                 <div className="dashboard__modal-filters__tabpane mx-4">
                   <Slider range
-                    marks={ timeSteps }
+                    marks={ timeStepsWithStyle }
                     defaultValue={ values.timeRange }
                     max={ 24 }
                     step={ null }

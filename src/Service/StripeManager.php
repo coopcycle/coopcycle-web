@@ -230,10 +230,6 @@ class StripeManager
             ]);
         }
 
-        if ($charge = $this->getChargeFromPaymentIntent($intent)) {
-            $this->createTransfersForHub($payment, $charge);
-        }
-
         // TODO Return charge
         return $intent;
     }
@@ -270,24 +266,11 @@ class StripeManager
         return Stripe\Refund::create($args, $stripeOptions);
     }
 
-    /**
-     * @return Stripe\StripeObject|null
-     */
-    private function getChargeFromPaymentIntent(Stripe\PaymentIntent $intent): ?Stripe\StripeObject
-    {
-        // @see https://stripe.com/docs/api/payment_intents/object#payment_intent_object-charges
-        if (count($intent->charges->data) === 1) {
-            return current($intent->charges->data);
-        }
-
-        return null;
-    }
-
     public function createTransfersForHub(PaymentInterface $payment, Stripe\StripeObject $charge)
     {
         $order = $payment->getOrder();
 
-        if (!$order->hasVendor()) {
+        if (!$order->hasVendor() || !$order->isMultiVendor()) {
             return;
         }
 

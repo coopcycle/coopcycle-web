@@ -1172,3 +1172,10 @@ restaurant_promotion.items_total.help: Cela vous permet d'appliquer une réducti
   Cela ne <strong>diminuera pas</strong> les frais perçus par
   la plate-forme.
 restaurant_promotion.items_total: À partir d'un montant d'achats
+restaurants.edenred_transactions.disclaimer: Cette page liste l'ensemble des commandes payées avec Edenred, en partie ou en totalité.
+  Pour ces commandes, l'ensemble de l'argent a été perçu par le restaurant.
+  Vous devez donc envoyer une facture à chaque restaurant, pour réclamer les commissions dûes.
+restaurants.edenred_transactions.edenred_amount: Montant payé avec Edenred
+restaurants.edenred_transactions.title: Transactions Edenred
+form.product.alcohol.label: Ce produit est une boisson alcoolisée
+form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson alcoolisée, comme une bouteille de vin.

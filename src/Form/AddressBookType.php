@@ -55,13 +55,18 @@ class AddressBookType extends AbstractType
                 'choices' => $options['with_addresses'],
                 'choice_label' => 'streetAddress',
                 'choice_value' => function (Address $address = null) {
-                    return $address ? $this->iriConverter->getIriFromItem($address) : '';
+                    return $address && null !== $address->getId() ? $this->iriConverter->getIriFromItem($address) : '';
                 },
                 'choice_attr' => function(Address $choice, $key, $value) {
 
-                    return [
-                        'data-address' => $this->serializer->serialize($choice, 'jsonld')
-                    ];
+                    if ($choice->getId() !== null) {
+
+                        return [
+                            'data-address' => $this->serializer->serialize($choice, 'jsonld')
+                        ];
+                    }
+
+                    return [];
                 },
                 'label' => false,
                 'required' => false,

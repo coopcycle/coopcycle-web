@@ -7,6 +7,7 @@ use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use GuzzleHttp\Client as BaseClient;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use Psr\Log\LoggerInterface;
@@ -47,11 +48,12 @@ class Client extends BaseClient
 
     public function getBalance(Customer $customer): int
     {
-        $userInfo = $this->authentication->userInfo($customer);
-
-        $credentials = $customer->getEdenredCredentials();
-
         try {
+
+            $userInfo = $this->authentication->userInfo($customer);
+
+            $credentials = $customer->getEdenredCredentials();
+
             // https://documenter.getpostman.com/view/10405248/TVewaQQX#82e953fc-9110-4246-8a78-aba888b70b31
             $response = $this->request('GET', sprintf('/v1/users/%s', $userInfo['username']), [
                 'headers' => [
@@ -65,6 +67,13 @@ class Client extends BaseClient
             $data = json_decode((string) $response->getBody(), true);
 
             return $data['data']['available_amount'] ?? 0;
+
+        } catch (BadResponseException $e) {
+            // This means the refresh token has expired
+            if (401 === $e->getResponse()->getStatusCode()) {
+                $this->logger->error('Refresh token has expired, clearing credentials');
+                $customer->clearEdenredCredentials();
+            }
         } catch (RequestException $e) {
             $this->logger->error(sprintf(
                 'Could not get customer balance: "%s"',
@@ -174,10 +183,12 @@ class Client extends BaseClient
 
         $total = $order->getTotal();
 
-        $deliveryFee = $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT);
-        $packagingFee = $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT);
-
-        $notPayableAmount = $deliveryFee + $packagingFee;
+        $notPayableAmount = array_sum([
+            $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT),
+            $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT),
+            $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT),
+            $order->getAlcoholicItemsTotal(),
+        ]);
         $payableAmount = $total - $notPayableAmount;
 
         $balance = $this->getBalance($order->getCustomer());

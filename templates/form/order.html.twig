@@ -42,6 +42,7 @@
 {% block _checkout_address_reusablePackagingEnabled_row %}
 
   {% set isLoopeat = attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}
+  {% set isVytal   = attr['data-vytal'] is defined and attr['data-vytal'] == 'true' %}
   {% set isChecked = form.vars.data %}
 
   {% if isLoopeat %}
@@ -117,6 +118,13 @@
         </div>
         <img class="loopeat-bowl1" src="{{ asset('img/loopeat/bowl1.png') }}" alt="Loopeat" />
       {% endif %}
+    </div>
+  {% elseif isVytal %}
+    <div>
+      <div class="alert alert-vytal py-0 m-0">
+        {{ form_widget(form) }}
+        <span class="vytal-logo-white my-3"></span>
+      </div>
     </div>
   {% else %}
     <div>

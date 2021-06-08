@@ -35,6 +35,7 @@ use AppBundle\Validator\Constraints\Order as AssertOrder;
 use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
 use AppBundle\Validator\Constraints\ShippingAddress as AssertShippingAddress;
 use AppBundle\Validator\Constraints\ShippingTimeRange as AssertShippingTimeRange;
+use AppBundle\Vytal\CodeAwareTrait as VytalCodeAwareTrait;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -51,6 +52,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use Sylius\Component\Taxation\Model\TaxRateInterface;
+use Webmozart\Assert\Assert as WMAssert;
 
 /**
  * @see http://schema.org/Order Documentation on Schema.org
@@ -253,6 +255,8 @@ use Sylius\Component\Taxation\Model\TaxRateInterface;
  */
 class Order extends BaseOrder implements OrderInterface
 {
+    use VytalCodeAwareTrait;
+
     protected $customer;
 
     protected $vendor;
@@ -774,7 +778,9 @@ class Order extends BaseOrder implements OrderInterface
             return false;
         }
 
-        if (!$restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {
+        if (!$restaurant->isDepositRefundEnabled()
+            && !$restaurant->isLoopeatEnabled()
+            && !$restaurant->isVytalEnabled()) {
             return false;
         }
 
@@ -1244,6 +1250,22 @@ class Order extends BaseOrder implements OrderInterface
             return false;
         }
 
-        return null !== $this->getRestaurant()->getEdenredMerchantId();
+        return $this->getRestaurant()->supportsEdenred();
+    }
+
+    public function getAlcoholicItemsTotal(): int
+    {
+        $total = 0;
+
+        foreach ($this->getItems() as $item) {
+
+            WMAssert::isInstanceOf($item, OrderItemInterface::class);
+
+            if ($item->getVariant()->getProduct()->isAlcohol()) {
+                $total += $item->getTotal();
+            }
+        }
+
+        return $total;
     }
 }

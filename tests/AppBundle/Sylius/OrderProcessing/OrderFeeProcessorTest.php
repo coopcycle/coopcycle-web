@@ -276,10 +276,6 @@ class OrderFeeProcessorTest extends KernelTestCase
             ->willReturn($delivery);
 
         $this->deliveryManager
-            ->getLastMatchedRule()
-            ->willReturn(new PricingRule());
-
-        $this->deliveryManager
             ->getPrice($delivery, $pricing)
             ->willReturn(750);
 
@@ -342,10 +338,6 @@ class OrderFeeProcessorTest extends KernelTestCase
         $this->deliveryManager
             ->getPrice($delivery, $pricing)
             ->willReturn(350);
-
-        $this->deliveryManager
-            ->getLastMatchedRule()
-            ->willReturn(new PricingRule());
 
         $this->orderFeeProcessor->process($order);
 

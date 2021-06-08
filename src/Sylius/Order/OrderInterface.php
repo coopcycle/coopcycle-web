@@ -210,4 +210,6 @@ interface OrderInterface extends
     public function getPickupAddress(): ?Address;
 
     public function getFulfillmentMethodObject(): ?FulfillmentMethod;
+
+    public function getAlcoholicItemsTotal(): int;
 }

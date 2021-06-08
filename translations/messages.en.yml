@@ -238,7 +238,7 @@ restaurant.list.products: Products
 restaurant.list.product_options: Options
 restaurant.list.menus: Menus
 restaurant.list.activeMenu: Menu editor
-restaurant.list.planning: Planning
+restaurant.list.planning: Holidays
 restaurant.list.settings: Settings
 restaurant.list.norestaurant: There are no restaurants yet
 restaurant.list.createNewRestaurant: Create a new restaurant
@@ -1178,3 +1178,14 @@ restaurant_promotion.items_total.help: This allows you to apply a discount above
   of the discount. This will <strong>not diminish</strong> the fees perceived
   by the platform.
 adminDashboard.metrics.title: Metrics
+restaurants.edenred_transactions.disclaimer: This page lists all the orders paid with Edenred, in part or in full.
+  For these orders, all the money has been collected by the restaurant.
+  You must therefore send an invoice to each restaurant, to claim the commissions due.
+restaurants.edenred_transactions.edenred_amount: Amount paid with Edenred
+restaurants.edenred_transactions.title: Edenred transactions
+form.product.alcohol.label: This product is an alcoholic beverage
+form.product.alcohol.help: Check this box only if this product is an alcoholic beverage, like a bottle of wine.
+form.checkout_address.reusable_packaging_vytal_enabled.label: I want to use Vytal containers
+vytal.code.disclaimer: Open the Vytal app, generate a delivery token, then enter it below. <a href="https://www.vytal.org/bestellen" target="_blank">Learn more</a>
+restaurant.form.section.vytal: Vytal
+restaurant.form.vytal_enabled.label: Enable Vytal deposit-refund system
