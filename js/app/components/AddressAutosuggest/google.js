@@ -103,19 +103,35 @@ export const transformSuggestion = function () {
   // TODO Implement
 }
 
+const listeners = []
+
+function doGeocode(address, resolve) {
+  geocoderService.geocode({ address }, (results, status) => {
+    if (status === window.google.maps.GeocoderStatus.OK && results.length > 0) {
+      const place = results[0]
+      resolve(placeToAddress(place))
+    } else {
+      resolve(null)
+    }
+  })
+}
+
+function addListener(address, resolve) {
+  listeners.push(function () {
+    doGeocode(address, resolve)
+  })
+}
+
 export const geocode = function (text) {
 
   // https://developers.google.com/maps/documentation/javascript/geocoding
   return new Promise((resolve) => {
-
-    geocoderService.geocode({ address: text }, (results, status) => {
-      if (status === window.google.maps.GeocoderStatus.OK && results.length > 0) {
-        const place = results[0]
-        resolve(placeToAddress(place))
-      } else {
-        resolve(null)
-      }
-    })
+    // We have to do this, because initMap may not have been invoked yet
+    if (!geocoderService) {
+      addListener(text, resolve)
+    } else {
+      doGeocode(text, resolve)
+    }
   })
 }
 
@@ -124,12 +140,16 @@ export const configure = function (options) {
   // FIXME Only execute once
 
   window.initMap = function() {
+
     autocompleteService = new window.google.maps.places.AutocompleteService()
     geocoderService     = new window.google.maps.Geocoder()
 
     const [ lat, lng ] = options.location.split(',').map(parseFloat)
 
     location = new window.google.maps.LatLng(lat, lng)
+
+    listeners.forEach(listener => listener())
+    listeners.slice()
   }
 
 }
