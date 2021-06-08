@@ -12,6 +12,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class OrderDepositRefundProcessor implements OrderProcessorInterface
 {
+    const LOOPEAT_PROCESSING_FEE = 200;
+
     public function __construct(
         AdjustmentFactoryInterface $adjustmentFactory,
         TranslatorInterface $translator)
@@ -80,7 +82,7 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
             $order->addAdjustment($this->adjustmentFactory->createWithData(
                 AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
                 $this->translator->trans('order.adjustment_type.reusable_packaging.loopeat'),
-                90,
+                self::LOOPEAT_PROCESSING_FEE,
                 $neutral = false
             ));
         } else if ($totalAmount > 0) {

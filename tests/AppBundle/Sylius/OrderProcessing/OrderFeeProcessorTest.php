@@ -574,7 +574,7 @@ class OrderFeeProcessorTest extends KernelTestCase
         $this->orderFeeProcessor->process($order->reveal());
 
         $order->addAdjustment(Argument::that(function ($adjustment) {
-            return 590 === $adjustment->getAmount();
+            return 700 === $adjustment->getAmount();
         }))->shouldHaveBeenCalled();
     }
 }
