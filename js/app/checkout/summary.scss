@@ -103,3 +103,26 @@
     }
   }
 }
+
+$vytalGreen: #53b848;
+
+.vytal-logo-white {
+
+  $vytalWidth: 964px;
+  $vytalHeight: 893px;
+
+  background-image: url('../../../assets/logos/vytal_logo_white.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: block;
+  width: ($vytalWidth / 18);
+  height: ($vytalHeight / 18);
+}
+
+.alert-vytal {
+  background-color: $vytalGreen;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

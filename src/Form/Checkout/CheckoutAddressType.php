@@ -105,10 +105,13 @@ class CheckoutAddressType extends AbstractType
 
             if ($order->isEligibleToReusablePackaging()) {
 
+                $supportsLoopEat = $restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials();
+
                 // FIXME
                 // We need to check if $packagingQuantity > 0
 
-                if (!$order->isMultiVendor() && $restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials()) {
+                if (!$order->isMultiVendor() && $supportsLoopEat) {
+
 
                     $this->loopeatContext->initialize();
 
@@ -140,6 +143,16 @@ class CheckoutAddressType extends AbstractType
                         // Need to use a string here, or it won't work as expected
                         // https://github.com/symfony/symfony/issues/12499
                         'empty_data' => '0',
+                    ]);
+
+                } elseif (!$order->isMultiVendor() && $restaurant->isVytalEnabled()) {
+
+                    $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                        'required' => false,
+                        'label' => 'form.checkout_address.reusable_packaging_vytal_enabled.label',
+                        'attr' => [
+                            'data-vytal' => 'true',
+                        ],
                     ]);
 
                 } elseif ($restaurant->isDepositRefundEnabled() && $restaurant->isDepositRefundOptin()) {
