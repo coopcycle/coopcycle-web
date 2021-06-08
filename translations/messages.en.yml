@@ -237,7 +237,7 @@ restaurant.list.refunds: Refunds
 restaurant.list.products: Products
 restaurant.list.product_options: Options
 restaurant.list.menus: Menus
-restaurant.list.activeMenu: Active menu
+restaurant.list.activeMenu: Menu editor
 restaurant.list.planning: Holidays
 restaurant.list.settings: Settings
 restaurant.list.norestaurant: There are no restaurants yet
