@@ -96,5 +96,11 @@ class Settings
 
     public $autocomplete_provider;
 
+    /**
+     * @Assert\Expression(
+     *   "this.autocomplete_provider != 'google' or value != ''",
+     *   message="This value should not be blank."
+     * )
+     */
     public $google_api_key_custom;
 }

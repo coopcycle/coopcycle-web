@@ -505,8 +505,10 @@
     $('#settings_autocomplete_provider').on('change', function() {
       if ('google' === $(this).val()) {
         $('[data-autocomplete-provider="google"]').removeClass('d-none');
+        $('#settings_google_api_key_custom').prop('required', true);
       } else {
         $('[data-autocomplete-provider="google"]').addClass('d-none');
+        $('#settings_google_api_key_custom').prop('required', false)
       }
     });
 
