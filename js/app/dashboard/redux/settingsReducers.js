@@ -5,6 +5,7 @@ import {
   RESET_FILTERS,
   SET_CLUSTERS_ENABLED,
   SET_POLYLINE_STYLE,
+  SHOW_RECURRENCE_RULES,
 } from './actions'
 
 const defaultFilters = {
@@ -21,10 +22,17 @@ const initialState = {
   isDefaultFilters: true,
   clustersEnabled: false,
   polylineStyle: 'normal',
+  isRecurrenceRulesVisible: true,
 }
 
 export default (state = initialState, action) => {
   switch (action.type) {
+
+  case SHOW_RECURRENCE_RULES:
+    return {
+      ...state,
+      isRecurrenceRulesVisible: action.isChecked
+    }
 
   case SET_FILTER_VALUE:
 
