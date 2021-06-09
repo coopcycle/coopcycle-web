@@ -1152,3 +1152,5 @@ form.customize.order_confirm_enabled.label: Mostrar un mensaje de confirmación 
 form.option_value.value.placeholder: ej. patatas fritas, ensaladas…
 basics.enabled: Activado
 order.export.empty: No hay pedidos para exportar
+form.settings.autocomplete_provider.label: Proveedor de sugerencias
+form.settings.google_api_key_custom.label: Llave de API Google
