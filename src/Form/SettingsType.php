@@ -39,6 +39,7 @@ class SettingsType extends AbstractType
     private $country;
     private $isDemo;
     private $debug;
+    private $googleEnabled;
 
     public function __construct(
         SettingsManager $settingsManager,
@@ -46,7 +47,8 @@ class SettingsType extends AbstractType
         GatewayResolver $gatewayResolver,
         string $country,
         bool $isDemo,
-        bool $debug)
+        bool $debug,
+        bool $googleEnabled)
     {
         $this->settingsManager = $settingsManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
@@ -54,6 +56,7 @@ class SettingsType extends AbstractType
         $this->country = $country;
         $this->isDemo = $isDemo;
         $this->debug = $debug;
+        $this->googleEnabled = $googleEnabled;
     }
 
     private function createPlaceholder($value)
@@ -116,12 +119,16 @@ class SettingsType extends AbstractType
             ->add('sms_gateway_config', HiddenType::class, [
                 'required' => false,
                 'label' => 'form.settings.sms_gateway_config.label',
-            ])
-            ->add('autocomplete_provider', AutocompleteAdapterType::class)
-            ->add('google_api_key_custom', PasswordType::class, [
-                'required' => false,
-                'label' => 'form.settings.google_api_key_custom.label',
             ]);
+
+        if ($this->googleEnabled) {
+            $builder
+                ->add('autocomplete_provider', AutocompleteAdapterType::class)
+                ->add('google_api_key_custom', PasswordType::class, [
+                    'required' => false,
+                    'label' => 'form.settings.google_api_key_custom.label',
+                ]);
+        }
 
         $gateway = $this->gatewayResolver->resolve();
 

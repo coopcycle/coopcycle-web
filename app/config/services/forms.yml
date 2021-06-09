@@ -86,6 +86,7 @@ services:
       $country: '%country_iso%'
       $isDemo: '%is_demo%'
       $debug: '%kernel.debug%'
+      $googleEnabled: '%env(bool:GOOGLE_ENABLED)%'
     tags: [ form.type ]
 
   AppBundle\Form\TaskType:

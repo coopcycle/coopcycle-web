@@ -115,11 +115,17 @@
 
   <h4>{% trans %}form.settings.addresses.title{% endtrans %}</h4>
 
-  {{ form_row(form.autocomplete_provider) }}
+  {{ form_row(form.latlng) }}
 
-  <div class="{{ form.autocomplete_provider.vars.data != 'google' ? 'd-none' : '' }}" data-autocomplete-provider="google">
-  {{ form_row(form.google_api_key_custom) }}
-  </div>
+  {% if form.autocomplete_provider is defined %}
+    {{ form_row(form.autocomplete_provider) }}
+  {% endif %}
+
+  {% if form.google_api_key_custom is defined %}
+    <div class="{{ form.autocomplete_provider.vars.data != 'google' ? 'd-none' : '' }}" data-autocomplete-provider="google">
+    {{ form_row(form.google_api_key_custom) }}
+    </div>
+  {% endif %}
 
   <hr>
 
