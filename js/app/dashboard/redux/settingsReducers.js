@@ -29,8 +29,9 @@ export default (state = initialState, action) => {
   switch (action.type) {
 
   case SHOW_RECURRENCE_RULES:
-    return {...state,
-          isRecurrenceRulesVisible: action.isChecked
+    return {
+      ...state,
+      isRecurrenceRulesVisible: action.isChecked
     }
 
   case SET_FILTER_VALUE:
