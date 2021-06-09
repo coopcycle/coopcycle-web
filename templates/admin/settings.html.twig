@@ -113,6 +113,20 @@
 
   </div>
 
+  <h4>{% trans %}form.settings.addresses.title{% endtrans %}</h4>
+
+  {{ form_row(form.latlng) }}
+
+  {% if form.autocomplete_provider is defined %}
+    {{ form_row(form.autocomplete_provider) }}
+  {% endif %}
+
+  {% if form.google_api_key_custom is defined %}
+    <div class="{{ form.autocomplete_provider.vars.data != 'google' ? 'd-none' : '' }}" data-autocomplete-provider="google">
+    {{ form_row(form.google_api_key_custom) }}
+    </div>
+  {% endif %}
+
   <hr>
 
   {{ form_rest(form) }}
@@ -483,6 +497,16 @@
       onChange: function(checked) {
         $smsEnabledCheckbox.prop('checked', checked)
         $('#settings_sms_options').collapse('toggle');
+      }
+    });
+
+    // Address autocomplete
+
+    $('#settings_autocomplete_provider').on('change', function() {
+      if ('google' === $(this).val()) {
+        $('[data-autocomplete-provider="google"]').removeClass('d-none');
+      } else {
+        $('[data-autocomplete-provider="google"]').addClass('d-none');
       }
     });
 

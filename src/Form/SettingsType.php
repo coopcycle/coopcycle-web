@@ -6,6 +6,7 @@ use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Form\PaymentGateway\MercadopagoType;
 use AppBundle\Form\PaymentGateway\StripeType;
+use AppBundle\Form\Type\AutocompleteAdapterType;
 use Doctrine\ORM\EntityRepository;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
@@ -38,6 +39,7 @@ class SettingsType extends AbstractType
     private $country;
     private $isDemo;
     private $debug;
+    private $googleEnabled;
 
     public function __construct(
         SettingsManager $settingsManager,
@@ -45,7 +47,8 @@ class SettingsType extends AbstractType
         GatewayResolver $gatewayResolver,
         string $country,
         bool $isDemo,
-        bool $debug)
+        bool $debug,
+        bool $googleEnabled)
     {
         $this->settingsManager = $settingsManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
@@ -53,6 +56,7 @@ class SettingsType extends AbstractType
         $this->country = $country;
         $this->isDemo = $isDemo;
         $this->debug = $debug;
+        $this->googleEnabled = $googleEnabled;
     }
 
     private function createPlaceholder($value)
@@ -116,6 +120,15 @@ class SettingsType extends AbstractType
                 'required' => false,
                 'label' => 'form.settings.sms_gateway_config.label',
             ]);
+
+        if ($this->googleEnabled) {
+            $builder
+                ->add('autocomplete_provider', AutocompleteAdapterType::class)
+                ->add('google_api_key_custom', PasswordType::class, [
+                    'required' => false,
+                    'label' => 'form.settings.google_api_key_custom.label',
+                ]);
+        }
 
         $gateway = $this->gatewayResolver->resolve();
 

@@ -42,6 +42,7 @@ class SettingsManager
         'mercadopago_live_publishable_key',
         'mercadopago_test_access_token',
         'mercadopago_live_access_token',
+        'google_api_key_custom',
     ];
 
     private static $boolean = [

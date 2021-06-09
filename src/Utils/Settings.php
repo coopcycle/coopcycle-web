@@ -93,4 +93,8 @@ class Settings
     public $mercadopago_app_id;
 
     public $guest_checkout_enabled;
+
+    public $autocomplete_provider;
+
+    public $google_api_key_custom;
 }
