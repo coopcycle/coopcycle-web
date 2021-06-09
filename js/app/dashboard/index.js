@@ -93,6 +93,7 @@ function start() {
     preloadedState = {
       ...preloadedState,
       settings: {
+        ...preloadedState.settings,
         isRecurrenceRulesVisible: JSON.parse(persistentRules)
       }
     }
