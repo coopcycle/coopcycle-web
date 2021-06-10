@@ -372,7 +372,8 @@ Feature: Tasks
         "doorstep":false,
         "orgName": "",
         "ref":null,
-        "recurrenceRule": null
+        "recurrenceRule": null,
+        "metadata": []
       }
       """
 
@@ -660,7 +661,8 @@ Feature: Tasks
         "doorstep":false,
         "orgName": "",
         "ref":null,
-        "recurrenceRule": null
+        "recurrenceRule": null,
+        "metadata": []
       }
       """
 
@@ -736,7 +738,8 @@ Feature: Tasks
         "doorstep":false,
         "orgName": "",
         "ref":null,
-        "recurrenceRule": null
+        "recurrenceRule": null,
+        "metadata": []
       }
       """
 
