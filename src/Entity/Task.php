@@ -760,9 +760,13 @@ class Task implements TaggableInterface, OrganizationAwareInterface
         return $this->getImages();
     }
 
-    public function setMetadata($metadata)
+    public function setMetadata($key)
     {
-        $this->metadata = $metadata;
+        if (func_num_args() === 1 && is_array(func_get_arg(0))) {
+            $this->metadata = func_get_arg(0);
+        } elseif (func_num_args() === 2) {
+            $this->metadata[func_get_arg(0)] = func_get_arg(1);
+        }
     }
 
     public function getMetadata()

@@ -148,6 +148,19 @@ class TaskTest extends TestCase
         $this->assertEquals(new \DateTime('2019-08-18 12:00'), $clone->getDoneBefore());
     }
 
+    public function testSetMetadata()
+    {
+        $task = new Task();
+
+        $task->setMetadata(['foo' => 'bar']);
+
+        $this->assertEquals(['foo' => 'bar'], $task->getMetadata());
+
+        $task->setMetadata('baz', 'bat');
+
+        $this->assertEquals(['foo' => 'bar', 'baz' => 'bat'], $task->getMetadata());
+    }
+
     public function testValidation()
     {
         $unitOfWork = $this->prophesize(UnitOfWork::class);
