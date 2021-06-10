@@ -287,6 +287,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface
      */
     private $recurrenceRule;
 
+    /**
+     * @var array
+     * @Groups({"task"})
+     */
+    private $metadata = [];
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -752,5 +758,19 @@ class Task implements TaggableInterface, OrganizationAwareInterface
         }
 
         return $this->getImages();
+    }
+
+    public function setMetadata($key)
+    {
+        if (func_num_args() === 1 && is_array(func_get_arg(0))) {
+            $this->metadata = func_get_arg(0);
+        } elseif (func_num_args() === 2) {
+            $this->metadata[func_get_arg(0)] = func_get_arg(1);
+        }
+    }
+
+    public function getMetadata()
+    {
+        return $this->metadata;
     }
 }
