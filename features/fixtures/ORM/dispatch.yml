@@ -51,6 +51,9 @@ AppBundle\Entity\Task:
     doneBefore: <identity(new \DateTime('2018-12-01 11:00:00'))>
     __calls:
       - assignTo: [ "@sarah", <identity(new \DateTime('2018-12-01'))> ]
+    metadata:
+      foo: bar
+      baz: bat
   task_2:
     address: "@address_2"
     doneAfter: <identity(new \DateTime('2018-11-30 11:30:00'))>
