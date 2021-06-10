@@ -73,11 +73,6 @@ drink_alcohol:
     pl:
       standard: 0.23
 
-food:
-  rates:
-    ca-bc:
-      pst: 0.07
-
 food_takeaway:
   rates:
     be:
@@ -92,11 +87,6 @@ food_takeaway:
       zero: 0.0
     pl:
       intermediary: 0.08
-
-jewelry:
-  rates:
-    ca-bc:
-      pst: 0.07
 
 base_standard:
   rates:
@@ -130,10 +120,13 @@ base_intermediary:
       intermediary: 0.12
     ca-bc:
       gst: 0.05
+      pst: 0.00
     es:
       intermediary: 0.1
     fr:
       intermediary: 0.1
+    gb:
+      intermediary: 0.05
     pl:
       intermediary: 0.08
     ar:
@@ -145,16 +138,12 @@ base_reduced:
   rates:
     be:
       reduced: 0.06
-    ca-bc:
-      zero: 0.00
     de:
       reduced: 0.07
     es:
       reduced: 0.04
     fr:
       reduced: 0.055
-    gb:
-      reduced: 0.05
     pl:
       reduced: 0.05
     ar:
@@ -169,7 +158,8 @@ base_exempt:
     be:
       zero: 0.00
     ca-bc:
-      zero: 0.00
+      gst: 0.00
+      pst: 0.00
     de:
       zero: 0.00
     es:
