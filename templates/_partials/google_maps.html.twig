@@ -5,7 +5,5 @@
 
 {% if adapter == 'google' and google_api_key is not empty %}
 <script
-  src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key_custom') }}&callback=initMap&libraries=places"
-  async
-></script>
+  src="https://maps.googleapis.com/maps/api/js?key={{ coopcycle_setting('google_api_key_custom') }}&v=weekly&libraries=places"></script>
 {% endif %}

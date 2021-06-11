@@ -83,12 +83,13 @@
 
     {% include '_partials/autocomplete_adapter.html.twig' %}
 
+    {# We load Google Maps *SYNCHRONOUSLY*, so this must be added *BEFORE* scripts, so that Google is loaded #}
+    {# https://developers.google.com/maps/documentation/javascript/examples/map-sync #}
+    {% include '_partials/google_maps.html.twig' %}
+
     {% block scripts_common %}
       {% block scripts %}{% endblock %}
     {% endblock %}
-
-    {# This must be added *AFTER* scripts, so that initMap function is defined #}
-    {% include '_partials/google_maps.html.twig' %}
 
     {% if app.environment == "test" %}
     <script>
