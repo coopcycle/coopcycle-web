@@ -4,6 +4,7 @@ namespace AppBundle\Form\Restaurant;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -25,5 +26,12 @@ trait FulfillmentMethodsTrait
                 'allow_delete' => false,
                 'prototype' => false,
             ]);
+
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $builder
+                ->add('deliveryPerimeterExpression', HiddenType::class, [
+                    'label' => 'localBusiness.form.deliveryPerimeterExpression'
+                ]);
+        }
     }
 }

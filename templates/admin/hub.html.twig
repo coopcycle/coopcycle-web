@@ -48,6 +48,9 @@
         <div role="tabpanel" class="tab-pane" id="fulfillment">
           {{ form_row(form.fulfillmentMethods, { label: false }) }}
           {{ form_row(form.shippingOptionsDays) }}
+          {% if form.deliveryPerimeterExpression is defined %}
+            {{ form_row(form.deliveryPerimeterExpression) }}
+          {% endif %}
         </div>
         <div role="tabpanel" class="tab-pane" id="settlement">
           {{ form_widget(form) }}

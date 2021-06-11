@@ -80,9 +80,6 @@ class RestaurantType extends LocalBusinessType
                     'required' => false
                 ])
                 ->add('contract', ContractType::class)
-                ->add('deliveryPerimeterExpression', HiddenType::class, [
-                    'label' => 'localBusiness.form.deliveryPerimeterExpression'
-                ])
                 ->add('quotesAllowed', CheckboxType::class, [
                     'label' => 'restaurant.form.quotes_allowed.label',
                     'required' => false,
