@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Payment;
 
 use AppBundle\Edenred\Client as EdenredClient;
+use AppBundle\Entity\Refund;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
@@ -118,8 +119,5 @@ class GatewayTest extends TestCase
         $this->assertTrue($payment->hasRefunds());
         $this->assertCount(1, $payment->getRefunds());
         $this->assertInstanceOf(Collection::class, $payment->getRefunds());
-
-        $this->assertEquals(Refund::LIABLE_PARTY_PLATFORM, $payment->getRefunds()->get(0)->getLiableParty());
-        $this->assertEquals(['stripe_refund_id' => 're_123456'], $payment->getRefunds()->get(0)->getData());
     }
 }
