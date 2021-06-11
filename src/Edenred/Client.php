@@ -242,4 +242,42 @@ class Client extends BaseClient
             throw $e;
         }
     }
+
+    public function refund(PaymentInterface $payment, $amount = null)
+    {
+        $order = $payment->getOrder();
+
+        $body = [
+            'amount' => $amount ?? $payment->getAmountForMethod('EDENRED'),
+            'tstamp' => (new \DateTime())->format(\DateTime::ATOM),
+        ];
+
+        Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
+
+        $credentials = $order->getCustomer()->getEdenredCredentials();
+
+        // https://documenter.getpostman.com/view/2761627/TVejiB3m#bf335b3c-d9fc-4249-93fe-1bbdedc1a9cd
+        try {
+
+            $response = $this->request('POST', sprintf('/v1/transactions/%s/actions/refund', $payment->getEdenredAuthorizationId()), [
+                'headers' => [
+                    'Authorization' => sprintf('Bearer %s', $credentials->getAccessToken()),
+                    'X-Client-Id' => $this->paymentClientId,
+                    'X-Client-Secret' => $this->paymentClientSecret,
+                ],
+                'json' => $body,
+                'oauth_credentials' => $credentials,
+            ]);
+
+            return true;
+
+        } catch (RequestException $e) {
+            $this->logger->error(sprintf(
+                'Could not refund transaction: "%s"',
+                (string) $e->getResponse()->getBody()
+            ));
+
+            throw $e;
+        }
+    }
 }
