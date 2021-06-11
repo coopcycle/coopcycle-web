@@ -73,6 +73,25 @@ export const onSuggestionsFetchRequested = function({ value }) {
 
 export function onSuggestionSelected(event, { suggestion }) {
 
+  // TODO Remove code duplication
+  if (suggestion.type === 'address') {
+
+    const geohash = ngeohash.encode(
+      suggestion.address.geo.latitude,
+      suggestion.address.geo.longitude,
+      11
+    )
+
+    const address = {
+      ...suggestion.address,
+      geohash,
+    }
+
+    this.props.onAddressSelected(suggestion.value, address, suggestion.type)
+
+    return
+  }
+
   geocoderService.geocode({ placeId: suggestion.google.place_id }, (results, status) => {
     if (status === window.google.maps.GeocoderStatus.OK && results.length === 1) {
 
