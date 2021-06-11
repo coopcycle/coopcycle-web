@@ -7,9 +7,8 @@ use AppBundle\Domain\Order\Event\OrderCreated;
 use AppBundle\Domain\Order\Handler\RefundHandler;
 use AppBundle\Entity\Refund;
 use AppBundle\Entity\Sylius\Payment;
-use AppBundle\Service\StripeManager;
+use AppBundle\Payment\Gateway;
 use AppBundle\Sylius\Order\OrderInterface;
-use Doctrine\Common\Collections\Collection;
 use Prophecy\PhpUnit\ProphecyTrait;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use SM\Factory\FactoryInterface;
@@ -34,13 +33,13 @@ class RefundHandlerTest extends KernelTestCase
 
         self::bootKernel();
 
-        $this->stripeManager = $this->prophesize(StripeManager::class);
+        $this->gateway = $this->prophesize(Gateway::class);
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
         $this->stateMachineFactory = self::$container->get(FactoryInterface::class);
         $this->eventRecorder = $this->prophesize(RecordsMessages::class);
 
         $this->handler = new RefundHandler(
-            $this->stripeManager->reveal(),
+            $this->gateway->reveal(),
             $this->stateMachineFactory,
             $this->eventRecorder->reveal()
         );
@@ -58,14 +57,11 @@ class RefundHandlerTest extends KernelTestCase
         $payment->setState(PaymentInterface::STATE_COMPLETED);
         $payment->setOrder($order->reveal());
 
-        $stripeRefund = Stripe\Refund::constructFrom([
-            'id' => 're_123456',
-            'amount' => 500,
-        ]);
+        $refund = new Refund();
 
-        $this->stripeManager
+        $this->gateway
             ->refund($payment, 500)
-            ->willReturn($stripeRefund)
+            ->willReturn($refund)
             ->shouldBeCalled();
 
         $command = new RefundCommand($payment, 500, Refund::LIABLE_PARTY_PLATFORM, 'Lorem ipsum');
@@ -74,11 +70,7 @@ class RefundHandlerTest extends KernelTestCase
 
         call_user_func_array($this->handler, [ $command ]);
 
-        $this->assertTrue($payment->hasRefunds());
-        $this->assertCount(1, $payment->getRefunds());
-        $this->assertInstanceOf(Collection::class, $payment->getRefunds());
-
-        $this->assertEquals(Refund::LIABLE_PARTY_PLATFORM, $payment->getRefunds()->get(0)->getLiableParty());
-        $this->assertEquals(['stripe_refund_id' => 're_123456'], $payment->getRefunds()->get(0)->getData());
+        $this->assertEquals(Refund::LIABLE_PARTY_PLATFORM, $refund->getLiableParty());
+        $this->assertEquals('Lorem ipsum', $refund->getComments());
     }
 }

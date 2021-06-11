@@ -7,13 +7,19 @@ use Stripe\Refund as StripeRefund;
 
 trait RefundTrait
 {
-    public function addRefund(int $amount, string $liableParty, string $comments = '')
+    public function addRefund(int $amount, ?string $liableParty = null, string $comments = '')
     {
         $refund = new Refund();
         $refund->setPayment($this);
-        $refund->setLiableParty($liableParty);
         $refund->setAmount($amount);
-        $refund->setComments($comments);
+
+        if (null !== $liableParty) {
+            $refund->setLiableParty($liableParty);
+        }
+
+        if (!empty($comments)) {
+             $refund->setComments($comments);
+        }
 
         $this->refunds->add($refund);
 

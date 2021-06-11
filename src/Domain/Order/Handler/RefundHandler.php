@@ -5,7 +5,7 @@ namespace AppBundle\Domain\Order\Handler;
 use AppBundle\Domain\Order\Command\Refund as RefundCommand;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Entity\Refund;
-use AppBundle\Service\StripeManager;
+use AppBundle\Payment\Gateway;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -13,14 +13,14 @@ use Sylius\Component\Payment\PaymentTransitions;
 
 class RefundHandler
 {
-    private $stripeManager;
+    private $gateway;
     private $stateMachineFactory;
 
     public function __construct(
-        StripeManager $stripeManager,
+        Gateway $gateway,
         StateMachineFactoryInterface $stateMachineFactory)
     {
-        $this->stripeManager = $stripeManager;
+        $this->gateway = $gateway;
         $this->stateMachineFactory = $stateMachineFactory;
     }
 
@@ -42,16 +42,14 @@ class RefundHandler
 
         $transition = $isPartial ? 'refund_partially' : PaymentTransitions::TRANSITION_REFUND;
 
-        $refund = $this->stripeManager->refund($payment, $amount);
+        $refund = $this->gateway->refund($payment, $amount);
 
         if ($payment->getState() === 'refunded_partially' && $transition !== 'refund_partially') {
             $stateMachine->apply($transition);
         }
 
-        $ref = $payment->addRefund($amount, $liableParty, $comments);
-
-        $ref->setData(['stripe_refund_id' => $refund->id]);
-        $payment->addStripeRefund($refund);
+        $refund->setLiableParty($liableParty);
+        $refund->setComments($comments);
 
         // TODO Record event
     }

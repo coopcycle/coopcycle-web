@@ -3,6 +3,7 @@
 namespace AppBundle\Payment;
 
 use AppBundle\Edenred\Client as EdenredClient;
+use AppBundle\Entity\Refund;
 use AppBundle\Message\RetrieveStripeFee;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\StripeManager;
@@ -100,5 +101,17 @@ class Gateway
 
                 return new StripeResponse([]);
         }
+    }
+
+    public function refund(PaymentInterface $payment, $amount = null): Refund
+    {
+        $refund = $this->stripeManager->refund($payment, $amount);
+
+        $payment->addStripeRefund($refund);
+
+        $ref = $payment->addRefund($amount);
+        $ref->setData(['stripe_refund_id' => $refund->id]);
+
+        return $ref;
     }
 }

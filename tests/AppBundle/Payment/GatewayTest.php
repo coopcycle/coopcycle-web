@@ -10,6 +10,7 @@ use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use Doctrine\Common\Collections\Collection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Stripe;
@@ -93,5 +94,32 @@ class GatewayTest extends TestCase
             ->shouldNotBeCalled();
 
         $this->gateway->authorize($payment, ['token' => 'pi_98765432']);
+    }
+
+    public function testRefund()
+    {
+        $payment = new Payment();
+        $payment->setState(PaymentInterface::STATE_COMPLETED);
+
+        $stripeRefund = Stripe\Refund::constructFrom([
+            'id' => 're_123456',
+            'amount' => 500,
+        ]);
+
+        $this->stripeManager
+            ->refund($payment, 500)
+            ->willReturn($stripeRefund)
+            ->shouldBeCalled();
+
+        $this->assertFalse($payment->hasRefunds());
+
+        $this->gateway->refund($payment, 500);
+
+        $this->assertTrue($payment->hasRefunds());
+        $this->assertCount(1, $payment->getRefunds());
+        $this->assertInstanceOf(Collection::class, $payment->getRefunds());
+
+        $this->assertEquals(Refund::LIABLE_PARTY_PLATFORM, $payment->getRefunds()->get(0)->getLiableParty());
+        $this->assertEquals(['stripe_refund_id' => 're_123456'], $payment->getRefunds()->get(0)->getData());
     }
 }
