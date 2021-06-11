@@ -105,13 +105,46 @@ class Gateway
 
     public function refund(PaymentInterface $payment, $amount = null): Refund
     {
-        $refund = $this->stripeManager->refund($payment, $amount);
+        $refund = $payment->addRefund($amount);
 
-        $payment->addStripeRefund($refund);
+        $method = $payment->getMethod();
 
-        $ref = $payment->addRefund($amount);
-        $ref->setData(['stripe_refund_id' => $refund->id]);
+        // This means the whole amount has been paid with Edenred
+        if ($method && 'EDENRED' === $method->getCode()) {
 
-        return $ref;
+            $this->edenred->refund($payment, $payment->getAmount());
+
+        // In this case, we refund by priority with credit card,
+        // and also with Edenred if needed
+        } elseif ($payment->isEdenredWithCard()) {
+
+            switch ($this->resolver->resolve()) {
+                case 'mercadopago':
+                    // TODO Implement
+                    throw new \RuntimeException('Refunding with MercadoPago is not implemented yet');
+                case 'stripe':
+                default:
+
+                    $amountToRefund = $amount ?? $payment->getAmount();
+                    $cardAmount     = min($payment->getAmountForMethod('CARD'), $amountToRefund);
+                    $edenredAmount  = min($payment->getAmountForMethod('EDENRED'), $amountToRefund - $cardAmount);
+
+                    $stripeRefund = $this->stripeManager->refund($payment, $cardAmount);
+                    $payment->addStripeRefund($stripeRefund);
+                    $refund->setData(['stripe_refund_id' => $stripeRefund->id]);
+
+                    if ($edenredAmount > 0) {
+                        $this->edenred->refund($payment, $edenredAmount);
+                        $refund->setData(['edenred_transaction_id' => $payment->getEdenredAuthorizationId()]);
+                    }
+            }
+
+        } else {
+            $stripeRefund = $this->stripeManager->refund($payment, $amount);
+            $payment->addStripeRefund($stripeRefund);
+            $refund->setData(['stripe_refund_id' => $stripeRefund->id]);
+        }
+
+        return $refund;
     }
 }
