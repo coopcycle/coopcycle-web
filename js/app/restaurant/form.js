@@ -10,7 +10,6 @@ import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard'
 
 import i18n from '../i18n'
 import DropzoneWidget from '../widgets/Dropzone'
-import DeliveryZonePicker from '../components/DeliveryZonePicker'
 
 import 'prismjs/themes/prism.css'
 import 'prismjs/plugins/toolbar/prism-toolbar.css'
@@ -108,16 +107,6 @@ $(function() {
 
   // Render Switch on page load
   $('form[name="restaurant"]').find('.switch').each((index, el) => renderSwitch($(el)))
-
-  const zonePickerEl = document.getElementById('restaurant_deliveryPerimeterExpression__picker')
-  if (zonePickerEl) {
-    render(
-      <DeliveryZonePicker
-        zones={ JSON.parse(formData.dataset.zones) }
-        expression={ formData.dataset.restaurantDeliveryPerimeterExpression }
-        onExprChange={ expr => $('#restaurant_deliveryPerimeterExpression').val(expr) }
-      />, zonePickerEl)
-  }
 
   $('#restaurant_imageFile_delete').closest('.form-group').remove()
 

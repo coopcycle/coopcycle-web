@@ -1,4 +1,7 @@
+import React from 'react'
+import { render } from 'react-dom'
 import OpeningHoursInput from '../widgets/OpeningHoursInput'
+import DeliveryZonePicker from '../components/DeliveryZonePicker'
 
 $(function() {
 
@@ -39,6 +42,25 @@ $(function() {
         }
       }
     })
+  })
+
+  document.querySelectorAll('[data-widget="delivery-perimeter-expression"]').forEach(el => {
+
+    const input = el.querySelector('input[type="hidden"]')
+
+    if (input) {
+
+      const container = document.createElement('div')
+
+      render(
+        <DeliveryZonePicker
+          zones={ JSON.parse(el.dataset.zones) }
+          expression={ el.dataset.defaultValue }
+          onExprChange={ expr => $(input).val(expr) }
+        />, container)
+
+      el.appendChild(container)
+    }
   })
 
 })

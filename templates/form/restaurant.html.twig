@@ -189,12 +189,23 @@
 {% endspaceless %}
 {% endblock %}
 
-{% block _restaurant_deliveryPerimeterExpression_row %}
+{% block delivery_perimeter_expression_widget %}
   <h4>{% trans %}restaurant.deliveryPerimeterExpression.title{% endtrans %}</h4>
-  {{ form_widget(form) }}
-  <div id="restaurant_deliveryPerimeterExpression__picker">
+  <div
+    data-widget="delivery-perimeter-expression"
+    data-default-value="{{ form.vars.data|e('html_attr') }}"
+    data-zones="{{ coopcycle_zone_names()|json_encode|e('html_attr') }}">
+    {{ form_widget(form) }}
   </div>
   <span class="help-block">
     <i class="fa fa-info-circle"></i> {{ 'restaurant.deliveryPerimeterExpression.help'|trans|raw }}
   </span>
+{% endblock %}
+
+{% block _restaurant_deliveryPerimeterExpression_row %}
+  {{ block('delivery_perimeter_expression_widget') }}
+{% endblock %}
+
+{% block _hub_deliveryPerimeterExpression_row %}
+  {{ block('delivery_perimeter_expression_widget') }}
 {% endblock %}

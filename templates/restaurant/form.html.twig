@@ -208,9 +208,7 @@
 <div id="restaurant-form-data"
   data-action-url="{{ oneup_uploader_endpoint('restaurant') }}"
   data-restaurant-id="{{ restaurant.id }}"
-  data-restaurant-image="{{ coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') }}"
-  data-restaurant-delivery-perimeter-expression="{{ restaurant.deliveryPerimeterExpression|e('html_attr') }}"
-  data-zones="{{ coopcycle_zone_names()|json_encode|e('html_attr') }}"></div>
+  data-restaurant-image="{{ coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') }}"></div>
 
 {% endblock %}
 
