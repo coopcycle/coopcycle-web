@@ -88,7 +88,7 @@ services:
   coopcycle.domain.order.handler.refund:
     class: AppBundle\Domain\Order\Handler\RefundHandler
     arguments:
-      - '@coopcycle.stripe_manager'
+      - '@AppBundle\Payment\Gateway'
       - '@sm.factory'
     tags:
       - name: command_handler
