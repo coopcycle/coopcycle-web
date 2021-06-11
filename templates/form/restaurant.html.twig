@@ -188,3 +188,13 @@
 </tr>
 {% endspaceless %}
 {% endblock %}
+
+{% block _restaurant_deliveryPerimeterExpression_row %}
+  <h4>{% trans %}restaurant.deliveryPerimeterExpression.title{% endtrans %}</h4>
+  {{ form_widget(form) }}
+  <div id="restaurant_deliveryPerimeterExpression__picker">
+  </div>
+  <span class="help-block">
+    <i class="fa fa-info-circle"></i> {{ 'restaurant.deliveryPerimeterExpression.help'|trans|raw }}
+  </span>
+{% endblock %}

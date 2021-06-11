@@ -3,11 +3,5 @@
 {{ form_row(form.shippingOptionsDays) }}
 
 {% if form.deliveryPerimeterExpression is defined %}
-  <h4>{% trans %}restaurant.deliveryPerimeterExpression.title{% endtrans %}</h4>
-  {{ form_widget(form.deliveryPerimeterExpression) }}
-  <div id="restaurant_deliveryPerimeterExpression__picker">
-  </div>
-  <span class="help-block">
-    <i class="fa fa-info-circle"></i> {{ 'restaurant.deliveryPerimeterExpression.help'|trans|raw }}
-  </span>
+ {{ form_row(form.deliveryPerimeterExpression) }}
 {% endif %}
