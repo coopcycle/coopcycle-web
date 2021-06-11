@@ -125,9 +125,8 @@ class Gateway
                 case 'stripe':
                 default:
 
-                    $amountToRefund = $amount ?? $payment->getAmount();
-                    $cardAmount     = min($payment->getAmountForMethod('CARD'), $amountToRefund);
-                    $edenredAmount  = min($payment->getAmountForMethod('EDENRED'), $amountToRefund - $cardAmount);
+                    $cardAmount     = $payment->getRefundableAmountForMethod('CARD', $amount);
+                    $edenredAmount  = $payment->getRefundableAmountForMethod('EDENRED', $amount);
 
                     $stripeRefund = $this->stripeManager->refund($payment, $cardAmount);
                     $payment->addStripeRefund($stripeRefund);
