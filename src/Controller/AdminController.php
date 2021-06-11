@@ -866,12 +866,6 @@ class AdminController extends AbstractController
             $originalRules->add($rule);
         }
 
-        $zones = $this->getDoctrine()->getRepository(Zone::class)->findAll();
-        $zoneNames = [];
-        foreach ($zones as $zone) {
-            array_push($zoneNames, $zone->getName());
-        }
-
         $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
         $packageNames = [];
         foreach ($packageSets as $packageSet) {
@@ -914,7 +908,6 @@ class AdminController extends AbstractController
 
         return $this->render('admin/pricing_rule_set.html.twig', [
             'form' => $form->createView(),
-            'zones' => $zoneNames,
             'packages' => $packageNames,
         ]);
     }

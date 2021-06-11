@@ -18,7 +18,6 @@ use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Sylius\TaxonRepository;
-use AppBundle\Entity\Zone;
 use AppBundle\Form\ClosingRuleType;
 use AppBundle\Form\MenuEditorType;
 use AppBundle\Form\MenuTaxonType;
@@ -224,11 +223,7 @@ trait RestaurantTrait
             $activationErrors = ValidationUtils::serializeValidationErrors($violations);
         }
 
-        $zones = $this->getDoctrine()->getRepository(Zone::class)->findAll();
-        $zoneNames = [];
-        foreach ($zones as $zone) {
-            array_push($zoneNames, $zone->getName());
-        }
+
 
         $loopeatAuthorizeUrl = '';
         if ($this->getParameter('loopeat_enabled') && $restaurant->isLoopeatEnabled()) {
@@ -264,7 +259,6 @@ trait RestaurantTrait
         $cuisines = $this->getDoctrine()->getRepository(Cuisine::class)->findAll();
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
-            'zoneNames' => $zoneNames,
             'restaurant' => $restaurant,
             'activationErrors' => $activationErrors,
             'formErrors' => $formErrors,

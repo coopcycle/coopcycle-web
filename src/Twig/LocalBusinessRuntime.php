@@ -4,11 +4,13 @@ namespace AppBundle\Twig;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\Zone;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -21,12 +23,14 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         TranslatorInterface $translator,
         SerializerInterface $serializer,
         LocalBusinessRepository $repository,
-        CacheInterface $projectCache)
+        CacheInterface $projectCache,
+        EntityManagerInterface $entityManager)
     {
         $this->translator = $translator;
         $this->serializer = $serializer;
         $this->repository = $repository;
         $this->projectCache = $projectCache;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -118,5 +122,19 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         }
 
         return $suggestions;
+    }
+
+    public function getZoneNames(): array
+    {
+        $names = [];
+
+        $zones =
+            $this->entityManager->getRepository(Zone::class)->findAll();
+
+        foreach ($zones as $zone) {
+            $names[] = $zone->getName();
+        }
+
+        return $names;
     }
 }
