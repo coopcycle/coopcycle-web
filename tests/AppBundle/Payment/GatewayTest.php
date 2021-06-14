@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Model\PaymentMethod;
 use Prophecy\Argument;
 
 class GatewayTest extends TestCase
@@ -115,6 +116,68 @@ class GatewayTest extends TestCase
         $this->assertFalse($payment->hasRefunds());
 
         $this->gateway->refund($payment, 500);
+
+        $this->assertTrue($payment->hasRefunds());
+        $this->assertCount(1, $payment->getRefunds());
+        $this->assertInstanceOf(Collection::class, $payment->getRefunds());
+    }
+
+    public function testRefundEdenredWithCard()
+    {
+        $method = new PaymentMethod();
+        $method->setCode('EDENRED+CARD');
+
+        $payment = new Payment();
+        $payment->setState(PaymentInterface::STATE_COMPLETED);
+        $payment->setMethod($method);
+        $payment->setAmount(3800 + 550);
+        $payment->setAmountBreakdown(3800, 550);
+
+        $stripeRefund = Stripe\Refund::constructFrom([
+            'id' => 're_123456',
+            'amount' => 550,
+        ]);
+
+        $this->stripeManager
+            ->refund($payment, 550)
+            ->willReturn($stripeRefund)
+            ->shouldBeCalled();
+
+        $this->edenred
+            ->refund($payment, 450)
+            ->shouldBeCalled();
+
+        $this->assertFalse($payment->hasRefunds());
+
+        $this->gateway->refund($payment, 1000);
+
+        $this->assertTrue($payment->hasRefunds());
+        $this->assertCount(1, $payment->getRefunds());
+        $this->assertInstanceOf(Collection::class, $payment->getRefunds());
+    }
+
+    public function testRefundEdenred()
+    {
+        $method = new PaymentMethod();
+        $method->setCode('EDENRED');
+
+        $payment = new Payment();
+        $payment->setState(PaymentInterface::STATE_COMPLETED);
+        $payment->setMethod($method);
+        $payment->setAmount(3800);
+        $payment->setAmountBreakdown(3800, 0);
+
+        $this->stripeManager
+            ->refund($payment, Argument::type('int'))
+            ->shouldNotBeCalled();
+
+        $this->edenred
+            ->refund($payment, 3800)
+            ->shouldBeCalled();
+
+        $this->assertFalse($payment->hasRefunds());
+
+        $this->gateway->refund($payment, 1000);
 
         $this->assertTrue($payment->hasRefunds());
         $this->assertCount(1, $payment->getRefunds());

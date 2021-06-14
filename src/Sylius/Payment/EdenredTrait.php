@@ -90,4 +90,17 @@ trait EdenredTrait
             return $this->details['edenred_cancel_id'];
         }
     }
+
+    public function getRefundableAmountForMethod($method, $amount = null)
+    {
+        switch ($method) {
+            case 'CARD':
+                return min($this->getAmountForMethod('CARD'), $amount ?? $this->getAmount());
+
+            case 'EDENRED':
+                return min($this->getAmountForMethod('CARD'), ($amount ?? $this->getAmount()) - $this->getRefundableAmountForMethod('CARD'));
+        }
+
+        return 0;
+    }
 }

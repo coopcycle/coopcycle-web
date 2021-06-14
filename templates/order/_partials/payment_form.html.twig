@@ -1,6 +1,6 @@
 {% form_theme payment_form 'bootstrap_3_layout.html.twig' %}
 
-{% set payment = payment_form.vars.value %}
+{% set payment = payment_form.vars.data %}
 {% set refund_modal_id = 'refund-modal-' ~ payment.id %}
 
 <div class="modal fade" id="{{ refund_modal_id }}" tabindex="-1" role="dialog" aria-labelledby="{{ refund_modal_id }}-label">
@@ -15,6 +15,20 @@
         </h4>
       </div>
       <div class="modal-body">
+
+        {% if payment.method.code == 'EDENRED+CARD' %}
+        <div class="alert alert-warning">
+          <div class="mb-2">
+            <i class="fa fa-warning"></i>
+            <span>{{ 'form.payment.edenred_disclaimer'|trans }}</span>
+          </div>
+          <span>{{ 'form.payment.refund_breakdown'|trans({
+            '%card%': payment.getRefundableAmountForMethod('CARD')|price_format,
+            '%edenred%': payment.getRefundableAmountForMethod('EDENRED')|price_format
+          }) }}</span>
+        </div>
+        {% endif %}
+
         {% if payment_form.amount is defined %}
           {{ form_row(payment_form.amount) }}
         {% endif %}
