@@ -10,6 +10,7 @@ use Geocoder\Location;
 use Geocoder\Model\Bounds;
 use Geocoder\Provider\Addok\Addok as AddokProvider;
 use Geocoder\Provider\Chain\Chain as ChainProvider;
+use Geocoder\Provider\GoogleMaps\GoogleMaps as GoogleMapsProvider;
 use Geocoder\Provider\OpenCage\OpenCage as OpenCageProvider;
 use Geocoder\Provider\OpenCage\Model\OpenCageAddress;
 use Geocoder\Query\GeocodeQuery;
@@ -71,15 +72,27 @@ class Geocoder
                 }
             }
 
+            $geocodingProvider = $settingsManager->get('geocoding_provider');
+            $geocodingProvider = $geocodingProvider ?? 'opencage';
+
             // Add OpenCage provider only if api key is configured
-            if (!empty($this->openCageApiKey)) {
+            if ('opencage' === $geocodingProvider && !empty($this->openCageApiKey)) {
                 $providers[] = $this->createOpenCageProvider();
+            } elseif ('google' === $geocodingProvider) {
+                $providers[] = $this->createGoogleMapsProvider();
             }
 
             $this->geocoder = new StatefulGeocoder(new ChainProvider($providers), $this->locale);
         }
 
         return $this->geocoder;
+    }
+
+    private function createGoogleMapsProvider()
+    {
+        $region = strtoupper($this->country);
+
+        return new GoogleMapsProvider(new Client(), $region, $this->settingsManager->get('google_api_key_custom'));
     }
 
     private function createOpenCageProvider()

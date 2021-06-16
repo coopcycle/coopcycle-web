@@ -121,6 +121,10 @@
     {{ form_row(form.autocomplete_provider) }}
   {% endif %}
 
+  {% if form.geocoding_provider is defined %}
+    {{ form_row(form.geocoding_provider) }}
+  {% endif %}
+
   {% if form.google_api_key_custom is defined %}
     <div class="{{ form.autocomplete_provider.vars.data != 'google' ? 'd-none' : '' }}" data-autocomplete-provider="google">
     {{ form_row(form.google_api_key_custom) }}
@@ -502,15 +506,22 @@
 
     // Address autocomplete
 
-    $('#settings_autocomplete_provider').on('change', function() {
-      if ('google' === $(this).val()) {
+    var onProviderChange = function() {
+
+      var autocompleteVal = $('#settings_autocomplete_provider').val();
+      var geocodingVal = $('#settings_geocoding_provider').val();
+
+      if (autocompleteVal === 'google' || geocodingVal === 'google') {
         $('[data-autocomplete-provider="google"]').removeClass('d-none');
         $('#settings_google_api_key_custom').prop('required', true);
       } else {
         $('[data-autocomplete-provider="google"]').addClass('d-none');
         $('#settings_google_api_key_custom').prop('required', false)
       }
-    });
+    };
+
+    $('#settings_autocomplete_provider').on('change', onProviderChange);
+    $('#settings_geocoding_provider').on('change', onProviderChange);
 
   })();
 

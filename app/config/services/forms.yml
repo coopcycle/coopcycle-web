@@ -234,3 +234,8 @@ services:
       $locationIqAccessToken: '%env(LOCATIONIQ_ACCESS_TOKEN)%'
       $geocodeEarthApiKey: '%env(GEOCODE_EARTH_API_KEY)%'
     tags: [ form.type ]
+
+  AppBundle\Form\Type\GeocodingProviderType:
+    arguments:
+      $opencageApiKey: '%env(OPENCAGE_API_KEY)%'
+    tags: [ form.type ]

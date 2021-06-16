@@ -119,7 +119,8 @@
         "jaybizzle/crawler-detect": "^1.2",
         "nucleos/user-bundle": "1.10.x-dev",
         "nucleos/profile-bundle": "1.5.x-dev",
-        "twig/cache-extra": "^3.3"
+        "twig/cache-extra": "^3.3",
+        "geocoder-php/google-maps-provider": "^4.6"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

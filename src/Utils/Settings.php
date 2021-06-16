@@ -103,4 +103,6 @@ class Settings
      * )
      */
     public $google_api_key_custom;
+
+    public $geocoding_provider;
 }

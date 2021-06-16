@@ -7,6 +7,7 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Form\PaymentGateway\MercadopagoType;
 use AppBundle\Form\PaymentGateway\StripeType;
 use AppBundle\Form\Type\AutocompleteAdapterType;
+use AppBundle\Form\Type\GeocodingProviderType;
 use Doctrine\ORM\EntityRepository;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
@@ -124,6 +125,7 @@ class SettingsType extends AbstractType
         if ($this->googleEnabled) {
             $builder
                 ->add('autocomplete_provider', AutocompleteAdapterType::class)
+                ->add('geocoding_provider', GeocodingProviderType::class)
                 ->add('google_api_key_custom', PasswordType::class, [
                     'required' => false,
                     'label' => 'form.settings.google_api_key_custom.label',
