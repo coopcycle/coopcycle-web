@@ -72,7 +72,7 @@ class Geocoder
                 }
             }
 
-            $geocodingProvider = $settingsManager->get('geocoding_provider');
+            $geocodingProvider = $this->settingsManager->get('geocoding_provider');
             $geocodingProvider = $geocodingProvider ?? 'opencage';
 
             // Add OpenCage provider only if api key is configured
