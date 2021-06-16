@@ -513,10 +513,8 @@
 
       if (autocompleteVal === 'google' || geocodingVal === 'google') {
         $('[data-autocomplete-provider="google"]').removeClass('d-none');
-        $('#settings_google_api_key_custom').prop('required', true);
       } else {
         $('[data-autocomplete-provider="google"]').addClass('d-none');
-        $('#settings_google_api_key_custom').prop('required', false)
       }
     };
 

@@ -98,7 +98,7 @@ class Settings
 
     /**
      * @Assert\Expression(
-     *   "this.autocomplete_provider != 'google' or value != ''",
+     *   "this.autocomplete_provider != 'google' or this.geocoding_provider != 'google' or value != ''",
      *   message="This value should not be blank."
      * )
      */
