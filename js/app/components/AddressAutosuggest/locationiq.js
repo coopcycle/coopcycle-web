@@ -40,7 +40,6 @@ const getFormattedAddress = (result) => {
 const getSearchParams = (q, country, language) => ({
   key: getAccessToken(),
   q: q.substring(0, 200),
-  countrycodes: country,
   'accept-language': language,
   dedupe: '1',
   limit: '5',
