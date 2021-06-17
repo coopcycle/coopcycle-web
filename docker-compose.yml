@@ -82,8 +82,8 @@ services:
       - ALGOLIA_PLACES_API_KEY
       - ALGOLIA_PLACES_ADDRESS_TEMPLATE
     volumes:
-      - 'php_cache:/var/www/html/var/cache'
       - './:/var/www/html:cached'
+      - 'php_cache:/var/www/html/var/cache'
     cap_add:
       - SYS_ADMIN
 
