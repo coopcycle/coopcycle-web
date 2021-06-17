@@ -89,7 +89,9 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('coopcycle_has_ordering_delay', array(OrderRuntime::class, 'hasDelayConfigured')),
             new TwigFunction('coopcycle_bounding_rect', array(SettingResolver::class, 'getBoundingRect')),
             new TwigFunction('coopcycle_checkout_suggestions', array(LocalBusinessRuntime::class, 'getCheckoutSuggestions')),
-            new TwigFunction('coopcycle_zone_names', array(LocalBusinessRuntime::class, 'getZoneNames'))
+            new TwigFunction('coopcycle_zone_names', array(LocalBusinessRuntime::class, 'getZoneNames')),
+            new TwigFunction('mercadopago_can_enable_livemode', array(MercadopagoResolver::class, 'canEnableLivemode')),
+            new TwigFunction('mercadopago_can_enable_testmode', array(MercadopagoResolver::class, 'canEnableTestmode')),
         );
     }
 

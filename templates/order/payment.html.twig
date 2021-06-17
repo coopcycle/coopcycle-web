@@ -26,13 +26,13 @@
           </div>
         </div>
 
-        {% if gateway == 'mercadopago' %}
+        {% if gateway == 'mercadopago' and (mercadopago_can_enable_testmode() or mercadopago_can_enable_livemode()) %}
           <div class="form-group">
             <h4 class="bg-light p-3 m-0">{{ 'order.payer.title'|trans }}</h4>
             <div style="margin:10px">
               <div>
                 <label for="email">{{ 'order.payer.email'|trans }}</label>
-                <input class="form-control" id="email" name="email" type="text" value="test@test.com" />
+                <input class="form-control" id="email" name="email" type="text" />
               </div>
               {#
               In Mexico, we don't need identification documents
@@ -127,11 +127,11 @@
 }) %}
 {% endif %}
 
-{% if gateway == 'mercadopago' %}
+{% if gateway == 'mercadopago' and (mercadopago_can_enable_testmode() or mercadopago_can_enable_livemode()) %}
 <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
 {% set gateway_configs = gateway_configs|merge({
   mercadopago: {
-    publishableKey: coopcycle_setting('mercadopago_test_publishable_key'),
+    publishableKey: coopcycle_setting('mercadopago_publishable_key'),
     country: country
   }
 }) %}
