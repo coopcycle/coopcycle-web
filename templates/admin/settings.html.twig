@@ -126,7 +126,9 @@
   {% endif %}
 
   {% if form.google_api_key_custom is defined %}
-    <div class="{{ form.autocomplete_provider.vars.data != 'google' ? 'd-none' : '' }}" data-autocomplete-provider="google">
+    {% set is_google_api_key_visible =
+      (form.autocomplete_provider.vars.data == 'google' or form.geocoding_provider.vars.data == 'google') %}
+    <div class="{{ not is_google_api_key_visible ? 'd-none' : '' }}" data-autocomplete-provider="google">
     {{ form_row(form.google_api_key_custom) }}
     </div>
   {% endif %}
