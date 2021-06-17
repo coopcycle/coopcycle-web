@@ -49,10 +49,11 @@ class CheckoutHandler
         $payment = $this->getLastPayment($order);
 
         $isFreeOrder = null === $payment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
+        $isCashOnDelivery = null !== $payment && $payment->isCashOnDelivery();
 
-        if ($isFreeOrder) {
+        if ($isFreeOrder || $isCashOnDelivery) {
             $this->orderNumberAssigner->assignNumber($order);
-            $this->eventRecorder->record(new Event\CheckoutSucceeded($order));
+            $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $payment));
 
             return;
         }

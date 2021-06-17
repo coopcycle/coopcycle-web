@@ -37,4 +37,11 @@ class Payment extends BasePayment implements OrderAwareInterface
     {
         $this->order = $order;
     }
+
+    public function isCashOnDelivery(): bool
+    {
+        $method = $this->getMethod();
+
+        return null !== $method && $method->getCode() === 'CASH_ON_DELIVERY';
+    }
 }
