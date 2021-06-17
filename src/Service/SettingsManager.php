@@ -217,6 +217,14 @@ class SettingsManager
         }
     }
 
+    public function supportsCardPayments()
+    {
+        $supportsStripe = $this->canEnableStripeTestmode() || $this->canEnableStripeLivemode();
+        $supportsMercadopago = $this->canEnableMercadopagoTestmode() || $this->canEnableMercadopagoLivemode();
+
+        return $supportsStripe && $supportsMercadopago;
+    }
+
     public function canSendSms()
     {
         if (!$this->get('sms_enabled')) {
