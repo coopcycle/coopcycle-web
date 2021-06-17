@@ -9,11 +9,13 @@ import { useTranslation } from 'react-i18next'
 
 function getInstallments(cardNumber, amount, setPaymentMethod, setInstallments) {
 
-  if (cardNumber.length >= 6) {
-      let bin = cardNumber.substring(0, 6)
+  const cardNumberClean = cardNumber.replace(/\s/g,'')
+
+  if (cardNumberClean.length >= 6) {
+      let bin = cardNumberClean.substring(0, 6)
       // Obtener método de pago de la tarjeta
       Mercadopago.getPaymentMethod({
-          "bin": bin
+        "bin": bin
       }, (status, response) => {
         if (status === 200) {
           setPaymentMethod(response[0].id)
