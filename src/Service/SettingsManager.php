@@ -222,7 +222,7 @@ class SettingsManager
         $supportsStripe = $this->canEnableStripeTestmode() || $this->canEnableStripeLivemode();
         $supportsMercadopago = $this->canEnableMercadopagoTestmode() || $this->canEnableMercadopagoLivemode();
 
-        return $supportsStripe && $supportsMercadopago;
+        return $supportsStripe || $supportsMercadopago;
     }
 
     public function canSendSms()
