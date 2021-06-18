@@ -1672,7 +1672,9 @@ class AdminController extends AbstractController
 
     private function renderTimeSlotForm(Request $request, TimeSlot $timeSlot, EntityManagerInterface $objectManager)
     {
-        $form = $this->createForm(TimeSlotType::class, $timeSlot);
+        $form = $this->createForm(TimeSlotType::class, $timeSlot, [
+            'validation_groups' => ['last_mile']
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
