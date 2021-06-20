@@ -224,8 +224,8 @@ restaurant.list.refunds: Vrácení peněz
 restaurant.list.products: Produkty
 restaurant.list.product_options: Možnosti
 restaurant.list.menus: Jídelní lístky
-restaurant.list.activeMenu: Aktivní nabídka
-restaurant.list.planning: Plánování
+restaurant.list.activeMenu: Editor nabídek
+restaurant.list.planning: Svátky
 restaurant.list.settings: Nastavení
 restaurant.list.norestaurant: Nejsou zatím žádné restaurace
 restaurant.list.createNewRestaurant: Vytvořit novou restauraci
@@ -766,7 +766,7 @@ roles.ROLE_STORE: Obchod
 roles.ROLE_RESTAURANT: Restaurace
 roles.ROLE_COURIER: Kurýr
 roles.ROLE_ADMIN: Administrátor
-product_option.strategy.option_value: Každá varianta má jinou cenu
+product_option.strategy.option_value: Vlastní cena
 product_option.strategy.free: Zdarma
 promotion_coupon.used.label: Počet uživatelů
 form.customize.about_us.label: Obsah strany O nás
@@ -870,7 +870,7 @@ form.menu_editor.help: "Položky nabídky můžete skládat pomocí níže uvede
 form.menu_editor.save.label: Uložit změny
 form.menu_editor.products_panel.title: Produkty
 form.menu_taxon.child_name.placeholder: "Příklad: hlavní jídla, dezerty ...\n"
-form.menu_taxon.add_child.label: Přidat sekci
+form.menu_taxon.add_child.label: Přidat kategorii
 form.menu_taxon.name.label: Název
 form.menu_item_modifier.calculusStrategy.label: Výpočet ceny
 form.menu_item_modifier.price.label: Cena
@@ -1140,3 +1140,4 @@ basics.enabled: Povoleno
 order.export.empty: Nejsou k dispozici žádné objednávky k exportu
 order.export.heading.promotions: Propagace
 form.payment.method.name.label: Způsob platby
+order.export.heading.refund_total: Náhrady
