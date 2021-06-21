@@ -30,7 +30,11 @@ final class ChannelResolver implements RequestResolverInterface
             }
         }
 
-        if (!$channel = $this->channelRepository->findOneByCode('web')) {
+        $isApiRequest = $request->attributes->has('_api_resource_class');
+
+        $code = $isApiRequest ? 'app' : 'web';
+
+        if (!$channel = $this->channelRepository->findOneByCode($code)) {
             throw new ChannelNotFoundException();
         }
 
