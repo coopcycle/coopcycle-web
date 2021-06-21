@@ -4,7 +4,7 @@ import ngeohash from 'ngeohash'
 
 import PoweredByGoogle from './powered_by_google_on_white_hdpi.png'
 
-const placeToAddress = (place) => {
+const placeToAddress = (place, value) => {
 
   const addressDict = {}
 
@@ -24,7 +24,11 @@ const placeToAddress = (place) => {
     addressLocality: addressDict.locality || '',
     addressRegion: addressDict.administrative_area_level_1 || '',
     postalCode: addressDict.postal_code || '',
-    streetAddress: place.formatted_address,
+    // We *DO NOT* use place.formatted_address, because it's different
+    // from what has been entered & is visible in the search field
+    // Also, some hacky code (js/app/utils/address.js) relies on the fact that what is entered
+    // corresponds to the "streetAddress" property
+    streetAddress: value, // place.formatted_address,
     // street_address indicates a precise street address
     isPrecise: _.includes(place.types, 'street_address') || _.includes(place.types, 'premise'),
     needsGeocoding: false,
