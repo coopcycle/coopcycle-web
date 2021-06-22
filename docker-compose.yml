@@ -46,6 +46,7 @@ services:
     volumes:
       # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
       - '.:/srv/coopcycle'
+      - 'webpack_php_cache:/srv/coopcycle/var/cache'
       - 'node_modules_webpack:/srv/coopcycle/node_modules/'
 
   osrm:
@@ -257,3 +258,4 @@ volumes:
   php_cache:
   minio_data:
   typesense_data:
+  webpack_php_cache:
