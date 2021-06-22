@@ -54,7 +54,9 @@ const PaymentMethodPicker = ({ methods, onSelect }) => {
       </button>
       { _.map(methods, m => {
 
-        if (m.type === 'giropay') {
+        switch (m.type) {
+
+        case 'giropay':
 
           return (
             <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
@@ -62,9 +64,9 @@ const PaymentMethodPicker = ({ methods, onSelect }) => {
               <img src={ giropay } height="45" />
             </button>
           )
-        }
 
-        if (m.type === 'edenred' || m.type === 'edenred+card') {
+        case 'edenred':
+        case 'edenred+card':
 
           return (
             <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
@@ -80,6 +82,7 @@ const PaymentMethodPicker = ({ methods, onSelect }) => {
               <img src={ edenredLogo } height="45" />
             </button>
           )
+
         }
 
       }) }
