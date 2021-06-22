@@ -167,16 +167,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.184.4",
+            "version": "3.184.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "34e6b2abfb9d9d2f619c7218fb366371099e26b7"
+                "reference": "0b7187c96ced465d400ad9427157e05ddee68edc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/34e6b2abfb9d9d2f619c7218fb366371099e26b7",
-                "reference": "34e6b2abfb9d9d2f619c7218fb366371099e26b7",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0b7187c96ced465d400ad9427157e05ddee68edc",
+                "reference": "0b7187c96ced465d400ad9427157e05ddee68edc",
                 "shasum": ""
             },
             "require": {
@@ -251,9 +251,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.184.4"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.184.6"
             },
-            "time": "2021-06-15T18:14:30+00:00"
+            "time": "2021-06-17T18:24:56+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -6837,27 +6837,23 @@
         },
         {
             "name": "laminas/laminas-code",
-            "version": "4.3.0",
+            "version": "4.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-code.git",
-                "reference": "1beb4447f9efd26041eba7eff50614e798c353fd"
+                "reference": "2b0bb59ade31a045fd3ff0097dc558bb896f6596"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-code/zipball/1beb4447f9efd26041eba7eff50614e798c353fd",
-                "reference": "1beb4447f9efd26041eba7eff50614e798c353fd",
+                "url": "https://api.github.com/repos/laminas/laminas-code/zipball/2b0bb59ade31a045fd3ff0097dc558bb896f6596",
+                "reference": "2b0bb59ade31a045fd3ff0097dc558bb896f6596",
                 "shasum": ""
             },
             "require": {
-                "laminas/laminas-eventmanager": "^3.3",
                 "php": "^7.4 || ~8.0.0"
             },
             "conflict": {
                 "phpspec/prophecy": "<1.9.0"
-            },
-            "replace": {
-                "zendframework/zend-code": "self.version"
             },
             "require-dev": {
                 "doctrine/annotations": "^1.10.4",
@@ -6904,135 +6900,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-05-12T12:41:03+00:00"
-        },
-        {
-            "name": "laminas/laminas-eventmanager",
-            "version": "3.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-eventmanager.git",
-                "reference": "966c859b67867b179fde1eff0cd38df51472ce4a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-eventmanager/zipball/966c859b67867b179fde1eff0cd38df51472ce4a",
-                "reference": "966c859b67867b179fde1eff0cd38df51472ce4a",
-                "shasum": ""
-            },
-            "require": {
-                "laminas/laminas-zendframework-bridge": "^1.0",
-                "php": "^7.3 || ^8.0"
-            },
-            "replace": {
-                "zendframework/zend-eventmanager": "^3.2.1"
-            },
-            "require-dev": {
-                "container-interop/container-interop": "^1.1",
-                "laminas/laminas-coding-standard": "~1.0.0",
-                "laminas/laminas-stdlib": "^2.7.3 || ^3.0",
-                "phpbench/phpbench": "^0.17.1",
-                "phpunit/phpunit": "^8.5.8"
-            },
-            "suggest": {
-                "container-interop/container-interop": "^1.1, to use the lazy listeners feature",
-                "laminas/laminas-stdlib": "^2.7.3 || ^3.0, to use the FilterChain feature"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\EventManager\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Trigger and listen to events within a PHP application",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "event",
-                "eventmanager",
-                "events",
-                "laminas"
-            ],
-            "support": {
-                "chat": "https://laminas.dev/chat",
-                "docs": "https://docs.laminas.dev/laminas-eventmanager/",
-                "forum": "https://discourse.laminas.dev",
-                "issues": "https://github.com/laminas/laminas-eventmanager/issues",
-                "rss": "https://github.com/laminas/laminas-eventmanager/releases.atom",
-                "source": "https://github.com/laminas/laminas-eventmanager"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2021-03-08T15:24:29+00:00"
-        },
-        {
-            "name": "laminas/laminas-zendframework-bridge",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-zendframework-bridge.git",
-                "reference": "6cccbddfcfc742eb02158d6137ca5687d92cee32"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-zendframework-bridge/zipball/6cccbddfcfc742eb02158d6137ca5687d92cee32",
-                "reference": "6cccbddfcfc742eb02158d6137ca5687d92cee32",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.3 || ^8.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^5.7 || ^6.5 || ^7.5 || ^8.1 || ^9.3",
-                "psalm/plugin-phpunit": "^0.15.1",
-                "squizlabs/php_codesniffer": "^3.5",
-                "vimeo/psalm": "^4.6"
-            },
-            "type": "library",
-            "extra": {
-                "laminas": {
-                    "module": "Laminas\\ZendFrameworkBridge"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/autoload.php"
-                ],
-                "psr-4": {
-                    "Laminas\\ZendFrameworkBridge\\": "src//"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Alias legacy ZF class names to Laminas Project equivalents.",
-            "keywords": [
-                "ZendFramework",
-                "autoloading",
-                "laminas",
-                "zf"
-            ],
-            "support": {
-                "forum": "https://discourse.laminas.dev/",
-                "issues": "https://github.com/laminas/laminas-zendframework-bridge/issues",
-                "rss": "https://github.com/laminas/laminas-zendframework-bridge/releases.atom",
-                "source": "https://github.com/laminas/laminas-zendframework-bridge"
-            },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2021-02-25T21:54:58+00:00"
+            "time": "2021-06-17T13:39:43+00:00"
         },
         {
             "name": "laravolt/avatar",
@@ -8202,12 +8070,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/alexsegura/dx-php.git",
-                "reference": "94fa88782b2ffd0db3c13fbf4d3ab95acd9df15d"
+                "reference": "a063bd9ab9447b94ea589be9aca1dd82a921ee44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexsegura/dx-php/zipball/94fa88782b2ffd0db3c13fbf4d3ab95acd9df15d",
-                "reference": "94fa88782b2ffd0db3c13fbf4d3ab95acd9df15d",
+                "url": "https://api.github.com/repos/alexsegura/dx-php/zipball/a063bd9ab9447b94ea589be9aca1dd82a921ee44",
+                "reference": "a063bd9ab9447b94ea589be9aca1dd82a921ee44",
                 "shasum": ""
             },
             "require": {
@@ -8248,24 +8116,12 @@
             "license": [
                 "MIT"
             ],
-            "authors": [
-                {
-                    "name": "imasson",
-                    "role": "Developer",
-                    "homepage": "https://github.com/imasson"
-                },
-                {
-                    "name": "joelibaceta",
-                    "role": "Developer",
-                    "homepage": "https://github.com/joelibaceta"
-                }
-            ],
             "description": "Mercado Pago PHP SDK",
-            "homepage": "https://github.com/mercadopago/dx-php",
+            "homepage": "https://github.com/mercadopago/sdk-php",
             "support": {
                 "source": "https://github.com/alexsegura/dx-php/tree/fix-composer"
             },
-            "time": "2021-03-09T16:45:15+00:00"
+            "time": "2021-06-17T23:16:13+00:00"
         },
         {
             "name": "michelf/php-markdown",
@@ -12995,16 +12851,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.83.0",
+            "version": "v7.84.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "bb7244c7334ad8bf30d31bb4972d5aff57df1563"
+                "reference": "cc04a86f11a548f83d437f548137dc86a03d2eea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/bb7244c7334ad8bf30d31bb4972d5aff57df1563",
-                "reference": "bb7244c7334ad8bf30d31bb4972d5aff57df1563",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/cc04a86f11a548f83d437f548137dc86a03d2eea",
+                "reference": "cc04a86f11a548f83d437f548137dc86a03d2eea",
                 "shasum": ""
             },
             "require": {
@@ -13050,9 +12906,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v7.83.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v7.84.0"
             },
-            "time": "2021-06-07T23:15:45+00:00"
+            "time": "2021-06-16T23:44:39+00:00"
         },
         {
             "name": "sylius-labs/polyfill-symfony-framework-bundle",
@@ -16999,16 +16855,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.24.1",
+            "version": "6.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "3438bcdb42a8fabcfaa081670d5924b868016148"
+                "reference": "95a8fcb82d2be26da01102f4c9498b7c1ea07cef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/3438bcdb42a8fabcfaa081670d5924b868016148",
-                "reference": "3438bcdb42a8fabcfaa081670d5924b868016148",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/95a8fcb82d2be26da01102f4c9498b7c1ea07cef",
+                "reference": "95a8fcb82d2be26da01102f4c9498b7c1ea07cef",
                 "shasum": ""
             },
             "require": {
@@ -17047,9 +16903,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twilio/twilio-php/issues",
-                "source": "https://github.com/twilio/twilio-php/tree/6.24.1"
+                "source": "https://github.com/twilio/twilio-php/tree/6.25.0"
             },
-            "time": "2021-06-02T20:26:58+00:00"
+            "time": "2021-06-16T19:21:16+00:00"
         },
         {
             "name": "vich/uploader-bundle",
@@ -17878,7 +17734,7 @@
         },
         {
             "name": "winzou/state-machine",
-            "version": "0.4.1",
+            "version": "0.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/winzou/state-machine.git",
@@ -17930,7 +17786,7 @@
             ],
             "support": {
                 "issues": "https://github.com/winzou/state-machine/issues",
-                "source": "https://github.com/winzou/state-machine/tree/0.4.1"
+                "source": "https://github.com/winzou/state-machine/tree/0.4.2"
             },
             "time": "2021-03-03T21:03:15+00:00"
         },
