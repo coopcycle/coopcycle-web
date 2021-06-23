@@ -26,10 +26,10 @@ document.querySelectorAll('textarea[data-preview]').forEach((textarea) => {
   })
 
   cm.on('change', (editor) => {
-    render(<ReactMarkdown source={ editor.getValue() } />, preview)
+    render(<ReactMarkdown>{ editor.getValue() }</ReactMarkdown>, preview)
   })
 
-  render(<ReactMarkdown source={ textarea.value } />, preview)
+  render(<ReactMarkdown>{ textarea.value }</ReactMarkdown>, preview)
 
 })
 
