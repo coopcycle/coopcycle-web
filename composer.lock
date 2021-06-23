@@ -4153,16 +4153,16 @@
         },
         {
             "name": "geocoder-php/nominatim-provider",
-            "version": "5.4.0",
+            "version": "5.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/geocoder-php/nominatim-provider.git",
-                "reference": "80f39ce41bcd0e4d9de3e83c40caf92d089fecf2"
+                "reference": "db1d2b5c435b4be257f6698e9eea70ae549f360a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/geocoder-php/nominatim-provider/zipball/80f39ce41bcd0e4d9de3e83c40caf92d089fecf2",
-                "reference": "80f39ce41bcd0e4d9de3e83c40caf92d089fecf2",
+                "url": "https://api.github.com/repos/geocoder-php/nominatim-provider/zipball/db1d2b5c435b4be257f6698e9eea70ae549f360a",
+                "reference": "db1d2b5c435b4be257f6698e9eea70ae549f360a",
                 "shasum": ""
             },
             "require": {
@@ -4206,9 +4206,9 @@
             "description": "Geocoder Nominatim adapter",
             "homepage": "http://geocoder-php.org/Geocoder/",
             "support": {
-                "source": "https://github.com/geocoder-php/nominatim-provider/tree/5.4.0"
+                "source": "https://github.com/geocoder-php/nominatim-provider/tree/5.5.0"
             },
-            "time": "2020-12-21T16:41:18+00:00"
+            "time": "2021-06-20T14:14:20+00:00"
         },
         {
             "name": "geocoder-php/open-cage-provider",
