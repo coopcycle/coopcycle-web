@@ -228,7 +228,6 @@ restaurant.menus.activated: '« %menu_name% » menua gaitu da. Jatetxearen orria
 restaurant.closingForm.title: 'Gehitu behin-behineko itxiera'
 restaurant.closingForm.reason.label: 'Arrazoia'
 restaurant.closingForm.dates.label: 'Itxita hemendik/hona'
-restaurant.list.manage: 'Kudeatu'
 restaurant.list.orders: 'Eskaerak'
 restaurant.list.refunds: 'Itzulketak'
 restaurant.list.products: 'Produktuak'

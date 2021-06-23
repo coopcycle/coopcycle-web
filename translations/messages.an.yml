@@ -235,7 +235,6 @@ restaurant.menus.activated: 'Lo menú « %menu_name% » ha estau activau. Agora 
 restaurant.closingForm.title: 'Anyadir zarre temporal'
 restaurant.closingForm.reason.label: 'Razón'
 restaurant.closingForm.dates.label: 'Zarrau de/dica'
-restaurant.list.manage: 'Chestionar'
 restaurant.list.orders: 'Pedius'
 restaurant.list.refunds: 'Devolucions'
 restaurant.list.products: 'Productos'

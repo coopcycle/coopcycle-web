@@ -160,7 +160,6 @@ restaurant.menus.activated: S'ha activat la carta « % menu_name% ». Ara es mos
 restaurant.closingForm.title: Afegiu un tancament temporal
 restaurant.closingForm.reason.label: Raó
 restaurant.closingForm.dates.label: Tancar de / a
-restaurant.list.manage: Gestiona
 restaurant.list.orders: Comandes
 restaurant.list.refunds: Devolucions
 restaurant.list.products: Productes

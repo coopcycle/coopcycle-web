@@ -220,7 +220,6 @@ restaurant.menus.activated: O cardápio « %menu_name% » foi ativado. Ele agora
 restaurant.closingForm.title: Adicionar fechamento temporário
 restaurant.closingForm.reason.label: Motivo
 restaurant.closingForm.dates.label: Fechado de/até
-restaurant.list.manage: Gerenciar
 restaurant.list.orders: Pedidos
 restaurant.list.refunds: Reembolsos
 restaurant.list.products: Produtos

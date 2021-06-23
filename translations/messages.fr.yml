@@ -211,7 +211,6 @@ restaurant.menus.activated: Le menu « %menu_name% » a bien été activé. Il s
 restaurant.closingForm.title: Ajouter une fermeture temporaire
 restaurant.closingForm.reason.label: Motif
 restaurant.closingForm.dates.label: Fermeture de/à
-restaurant.list.manage: Gérer
 restaurant.list.orders: Commandes
 restaurant.list.refunds: Remboursements
 restaurant.list.products: Produits

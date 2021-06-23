@@ -247,7 +247,6 @@ restaurant.menus.activated: Manu « %menu_name% » zostało aktywowane. Teraz b�
 restaurant.closingForm.title: Dodaj tymczasowe zamknięcie
 restaurant.closingForm.reason.label: Powód
 restaurant.closingForm.dates.label: Zamknięte od/do
-restaurant.list.manage: Zarządzaj
 restaurant.list.orders: Zamówienia
 restaurant.list.refunds: Zwroty kosztów
 restaurant.list.products: Produkty

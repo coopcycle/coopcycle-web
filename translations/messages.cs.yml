@@ -216,7 +216,6 @@ restaurant.menus.activated: Bylo aktivováno menu « %menu_name% » . Nyní se z
 restaurant.closingForm.title: Přidat dočasné uzavření
 restaurant.closingForm.reason.label: Důvod
 restaurant.closingForm.dates.label: Zavřeno od/do
-restaurant.list.manage: Spravovat
 restaurant.list.orders: Objednávky
 restaurant.list.refunds: Vrácení peněz
 restaurant.list.products: Produkty

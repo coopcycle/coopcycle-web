@@ -834,7 +834,6 @@ restaurant.list.menus: Menù
 restaurant.list.norestaurant: Non ci sono ancora ristoranti
 restaurant.closingForm.reason.label: Ragioni
 restaurant.closingForm.dates.label: Chiuso dalle/alle
-restaurant.list.manage: Gestione
 restaurant.list.preparationTime: Preparazione
 restaurant.closingForm.title: Aggiungi un orario di chiusura
 restaurant.list.activeMenu: Menù attivi
