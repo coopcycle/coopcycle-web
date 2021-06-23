@@ -251,8 +251,6 @@ restaurant.list.orders: Zamówienia
 restaurant.list.refunds: Zwroty kosztów
 restaurant.list.products: Produkty
 restaurant.list.product_options: Opcje
-restaurant.list.menus: Lista menu
-restaurant.list.activeMenu: Aktywne menu
 restaurant.list.planning: Planowanie
 restaurant.list.settings: Ustawienia
 restaurant.list.norestaurant: Nie ma jeszcze żadnych restauracji

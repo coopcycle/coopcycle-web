@@ -240,8 +240,6 @@ restaurant.closingForm.title: Eine temporäre Schließzeit hinzufügen
 restaurant.closingForm.dates.label: Geschlossen von/bis
 restaurant.list.orders: Bestellungen
 restaurant.list.product_options: Optionen
-restaurant.list.menus: Menüs
-restaurant.list.activeMenu: Aktives Menü
 restaurant.list.planning: Planung
 restaurant.list.norestaurant: Es gibt zur Zeit keine Restaurants
 restaurant.list.preparationTime: Vorbereitung

@@ -43,13 +43,13 @@
 
           <li>
             <a href="{{ path(menu_taxons_route, { id: restaurant.id }) }}">
-              <i class="fa fa-list"></i>  {% trans %}restaurant.list.menus{% endtrans %}
+              <i class="fa fa-list"></i>  {% trans %}restaurant.list.catalogs{% endtrans %}
             </a>
           </li>
           {% if restaurant.menuTaxon is not null %}
           <li>
             <a href="{{ path(menu_taxon_route, { restaurantId: restaurant.id, menuId: restaurant.menuTaxon.id }) }}">
-              <i class="fa fa-cutlery"></i>  {% trans %}restaurant.list.activeMenu{% endtrans %}
+              <i class="fa fa-check-circle-o"></i>  {% trans %}restaurant.list.active_catalog{% endtrans %}
             </a>
           </li>
           {% endif %}

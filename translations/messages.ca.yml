@@ -164,8 +164,6 @@ restaurant.list.orders: Comandes
 restaurant.list.refunds: Devolucions
 restaurant.list.products: Productes
 restaurant.list.product_options: Opcions
-restaurant.list.menus: Menús
-restaurant.list.activeMenu: Menú actiu
 restaurant.list.planning: Planificació
 restaurant.list.settings: Configuració
 restaurant.list.norestaurant: Encara no hi ha restaurants

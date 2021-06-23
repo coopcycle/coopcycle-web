@@ -145,8 +145,8 @@ restaurant.list.orders: Pedidos
 restaurant.list.refunds: Devoluciones
 restaurant.list.products: Productos
 restaurant.list.product_options: Opciones
-restaurant.list.menus: Cartas
-restaurant.list.activeMenu: Carta activada
+restaurant.list.catalogs: Catálogo
+restaurant.list.active_catalog: Catálogo activo
 restaurant.list.planning: Calendario
 restaurant.list.settings: Ajustes
 restaurant.list.norestaurant: Aún no existen restaurantes

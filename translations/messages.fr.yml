@@ -215,8 +215,8 @@ restaurant.list.orders: Commandes
 restaurant.list.refunds: Remboursements
 restaurant.list.products: Produits
 restaurant.list.product_options: Options
-restaurant.list.menus: Menus
-restaurant.list.activeMenu: Menu activé
+restaurant.list.catalogs: Catalogues
+restaurant.list.active_catalog: Catalogue activé
 restaurant.list.planning: Planning
 restaurant.list.settings: Paramètres
 restaurant.list.norestaurant: Pas de restaurant pour le moment
