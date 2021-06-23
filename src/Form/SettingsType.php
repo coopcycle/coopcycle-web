@@ -41,6 +41,7 @@ class SettingsType extends AbstractType
     private $isDemo;
     private $debug;
     private $googleEnabled;
+    private $cashEnabled;
 
     public function __construct(
         SettingsManager $settingsManager,
@@ -49,7 +50,8 @@ class SettingsType extends AbstractType
         string $country,
         bool $isDemo,
         bool $debug,
-        bool $googleEnabled)
+        bool $googleEnabled,
+        bool $cashEnabled)
     {
         $this->settingsManager = $settingsManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
@@ -58,6 +60,7 @@ class SettingsType extends AbstractType
         $this->isDemo = $isDemo;
         $this->debug = $debug;
         $this->googleEnabled = $googleEnabled;
+        $this->cashEnabled = $cashEnabled;
     }
 
     private function createPlaceholder($value)
@@ -99,11 +102,6 @@ class SettingsType extends AbstractType
             ->add('currency_code', CurrencyChoiceType::class, [
                 'label' => 'form.settings.currency_code.label'
             ])
-            ->add('guest_checkout_enabled', CheckboxType::class, [
-                'required' => false,
-                'label' => 'form.settings.guest_checkout_enabled.label',
-                'help' => 'form.settings.guest_checkout_enabled.help'
-            ])
             ->add('sms_enabled', CheckboxType::class, [
                 'required' => false,
                 'label' => 'form.settings.sms_enabled.label',
@@ -121,6 +119,25 @@ class SettingsType extends AbstractType
                 'required' => false,
                 'label' => 'form.settings.sms_gateway_config.label',
             ]);
+
+        // When cash on delivery is enabled, we want customers to register
+        if (!$this->cashEnabled) {
+            $builder->add('guest_checkout_enabled', CheckboxType::class, [
+                'required' => false,
+                'label' => 'form.settings.guest_checkout_enabled.label',
+                'help' => 'form.settings.guest_checkout_enabled.help'
+            ]);
+            $builder->get('guest_checkout_enabled')
+                ->addModelTransformer(new CallbackTransformer(
+                    function ($originalValue) {
+                        return filter_var($originalValue, FILTER_VALIDATE_BOOLEAN);
+                    },
+                    function ($submittedValue) {
+                        return $submittedValue ? '1' : '0';
+                    }
+                ))
+            ;
+        }
 
         if ($this->googleEnabled) {
             $builder
@@ -144,17 +161,6 @@ class SettingsType extends AbstractType
                 $builder->add('stripe', StripeType::class, ['mapped' => false]);
                 break;
         }
-
-        $builder->get('guest_checkout_enabled')
-            ->addModelTransformer(new CallbackTransformer(
-                function ($originalValue) {
-                    return filter_var($originalValue, FILTER_VALIDATE_BOOLEAN);
-                },
-                function ($submittedValue) {
-                    return $submittedValue ? '1' : '0';
-                }
-            ))
-        ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 
