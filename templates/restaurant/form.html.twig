@@ -3,7 +3,7 @@
 {% form_theme form 'form/restaurant.html.twig' %}
 
 {% block breadcrumb %}
-<li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+<li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a></li>
 <li>{% if restaurant.id is not empty %}{{ restaurant.name }}{% else %}{% trans %}restaurant.form.createRestaurant{% endtrans %}{% endif %}</li>
 {% endblock %}
 

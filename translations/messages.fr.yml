@@ -51,7 +51,7 @@ adminDashboard.orders.previousOrders: Commandes précédentes
 adminDashboard.orders.showCanceled: Afficher les commandes annulées
 adminDashboard.orders.noOrders: Pas de commande pour l'instant
 adminDashboard.restaurants.exclusive: Exclusif
-adminDashboard.restaurants.title: Restaurants
+adminDashboard.shops.title: Boutiques
 adminDashboard.users.title: Utilisateurs
 adminDashboard.users.roles: Rôles
 adminDashboard.users.editUser: Modifier l'utilisateur

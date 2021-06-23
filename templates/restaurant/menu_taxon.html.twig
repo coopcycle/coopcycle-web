@@ -5,7 +5,7 @@
 {% form_theme menu_editor_form.name 'bootstrap_3_layout.html.twig' %}
 
 {% block breadcrumb %}
-  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a></li>
   <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
   <li><a href="{{ path(menu_taxons_route, { id: restaurant.id }) }}">Menus</a></li>
   <li>{% if menu.id is not null %}{{ menu.name }}{% else %}{{ 'basics.add'|trans }}{% endif %}</li>

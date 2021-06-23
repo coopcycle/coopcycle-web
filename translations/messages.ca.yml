@@ -54,7 +54,7 @@ adminDashboard.stores.form.uploadImage: Carregueu una imatge
 adminDashboard.orders.title: Comandes
 adminDashboard.orders.previousOrders: Comandes anteriors
 adminDashboard.orders.showCanceled: Mostra les comandes cancel·lades
-adminDashboard.restaurants.title: Restaurants
+adminDashboard.shops.title: Botigues
 adminDashboard.restaurants.exclusive: Exclusiu
 adminDashboard.users.title: Usuaris
 adminDashboard.users.roles: Funcions

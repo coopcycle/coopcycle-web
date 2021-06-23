@@ -4,7 +4,7 @@
 
 {% block breadcrumb %}
   {% set product_option = form.vars.value %}
-  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a></li>
   <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
   <li>
     <a href="{{ path(product_options_route, { id: restaurant.id }) }}">

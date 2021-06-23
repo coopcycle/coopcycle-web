@@ -1,7 +1,7 @@
 {% extends 'restaurant/layout.html.twig' %}
 
 {% block breadcrumb %}
-  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.restaurants.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a></li>
   <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
   <li>{% trans %}Menus{% endtrans %}</li>
 {% endblock %}

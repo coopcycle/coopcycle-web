@@ -39,7 +39,7 @@ adminDashboard.stores.form.uploadImage: Subir una imagen
 adminDashboard.orders.title: Pedidos
 adminDashboard.orders.previousOrders: Pedidos anteriores
 adminDashboard.orders.showCanceled: Mostrar pedidos cancelados
-adminDashboard.restaurants.title: Restaurantes
+adminDashboard.shops.title: Tiendas
 adminDashboard.users.title: Usuarios
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Editar usuario

@@ -57,7 +57,6 @@ adminDashboard.stores.form.uploadImage: Carregar uma imagem
 adminDashboard.orders.title: Pedidos
 adminDashboard.orders.previousOrders: Pedidos anteriores
 adminDashboard.orders.showCanceled: Mostrar pedidos cancelados
-adminDashboard.restaurants.title: Restaurantes
 adminDashboard.restaurants.exclusive: Exclusivo
 adminDashboard.users.title: Utilizadores
 adminDashboard.users.roles: Funções

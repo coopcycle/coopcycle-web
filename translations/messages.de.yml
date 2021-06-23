@@ -18,7 +18,6 @@ embed.breadcrumb.summary: Zusammenfassung
 embed.breadcrumb.confirm: Bestätigung
 adminDashboard.stores.form.uploadImage: Bild hochladen
 adminDashboard.orders.title: Bestellungen
-adminDashboard.restaurants.title: Restaurants
 adminDashboard.users.edit.addRestaurant: Restaurant hinzufügen
 adminDashboard.settings.title: Einstellungen
 adminDashboard.pricing.settings: Einstellungen
