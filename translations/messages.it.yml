@@ -21,7 +21,6 @@ adminDashboard.users.editUser: Modifica utente
 adminDashboard.users.roles: Ruoli
 adminDashboard.users.title: Utenti
 adminDashboard.restaurants.exclusive: Esclusivo
-adminDashboard.restaurants.createNew: Crea un nuovo ristorante
 adminDashboard.restaurants.title: Ristoranti
 adminDashboard.orders.showCanceled: Mostra gli ordini cancellati
 adminDashboard.orders.previousOrders: Ordini precedenti

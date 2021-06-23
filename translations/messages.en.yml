@@ -60,7 +60,6 @@ adminDashboard.orders.title: Orders
 adminDashboard.orders.previousOrders: Previous orders
 adminDashboard.orders.showCanceled: Show cancelled orders
 adminDashboard.restaurants.title: Restaurants
-adminDashboard.restaurants.createNew: Create a new restaurant
 adminDashboard.restaurants.exclusive: Exclusive
 adminDashboard.users.title: Users
 adminDashboard.users.roles: Roles

@@ -145,7 +145,6 @@ adminDashboard.stores.title: Läden
 adminDashboard.stores.createNew: Neuen Laden erstellen
 adminDashboard.orders.previousOrders: Vorherige Bestellung
 adminDashboard.orders.showCanceled: Zeige stornierte Bestellungen
-adminDashboard.restaurants.createNew: Neues Restaurant erstellen
 adminDashboard.users.title: Benutzer
 adminDashboard.users.roles: Funktion
 adminDashboard.users.editUser: Benutzer bearbeiten

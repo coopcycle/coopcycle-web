@@ -55,7 +55,6 @@ adminDashboard.orders.title: Comandes
 adminDashboard.orders.previousOrders: Comandes anteriors
 adminDashboard.orders.showCanceled: Mostra les comandes cancel·lades
 adminDashboard.restaurants.title: Restaurants
-adminDashboard.restaurants.createNew: Crea un nou restaurant
 adminDashboard.restaurants.exclusive: Exclusiu
 adminDashboard.users.title: Usuaris
 adminDashboard.users.roles: Funcions

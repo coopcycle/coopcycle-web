@@ -64,7 +64,6 @@ adminDashboard.menuCategories.categories: Kategorie
 embed.delivery.billing_address: Adres rozliczeniowy
 adminDashboard.stores.createNew: Dodaj nowy sklep
 adminDashboard.stores.title: Sklepy
-adminDashboard.restaurants.createNew: Dodaj nową restauracje
 adminDashboard.restaurants.title: Restauracje
 adminDashboard.orders.showCanceled: Anulowane zamówienia
 adminDashboard.orders.previousOrders: Historia zamówień

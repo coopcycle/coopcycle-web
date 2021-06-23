@@ -56,7 +56,6 @@ adminDashboard.orders.title: Objednávky
 adminDashboard.orders.previousOrders: Předchozí objednávky
 adminDashboard.orders.showCanceled: Zobrazit zrušené objednávky
 adminDashboard.restaurants.title: Restaurace
-adminDashboard.restaurants.createNew: Vytvořit novou restauraci
 adminDashboard.restaurants.exclusive: Výhradní
 adminDashboard.users.title: Uživatelé
 adminDashboard.users.roles: Role
