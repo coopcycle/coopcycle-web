@@ -6,6 +6,7 @@ use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Edenred\Client as EdenredPayment;
 use AppBundle\Form\StripePaymentType;
 use AppBundle\Payment\GatewayResolver;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
 use AppBundle\Utils\OrderTimeHelper;
@@ -26,11 +27,15 @@ class CheckoutPaymentType extends AbstractType
         GatewayResolver $resolver,
         OrderTimeHelper $orderTimeHelper,
         EdenredAuthentication $edenredAuthentication,
-        EdenredPayment $edenredPayment)
+        EdenredPayment $edenredPayment,
+        SettingsManager $settingsManager,
+        bool $cashEnabled)
     {
         $this->resolver = $resolver;
         $this->edenredAuthentication = $edenredAuthentication;
         $this->edenredPayment = $edenredPayment;
+        $this->settingsManager = $settingsManager;
+        $this->cashEnabled = $cashEnabled;
 
         parent::__construct($orderTimeHelper);
     }
@@ -65,9 +70,11 @@ class CheckoutPaymentType extends AbstractType
                 return;
             }
 
-            $choices = [
-                'Credit card' => 'card',
-            ];
+            $choices = [];
+
+            if ($this->settingsManager->supportsCardPayments()) {
+                $choices['Credit card'] = 'card';
+            }
 
             if ($order->supportsGiropay()) {
                 $choices['Giropay'] = 'giropay';
@@ -90,8 +97,8 @@ class CheckoutPaymentType extends AbstractType
                 }
             }
 
-            if (count($choices) < 2) {
-                return;
+            if ($this->cashEnabled) {
+                $choices['Cash on delivery'] = 'cash_on_delivery';
             }
 
             $form
@@ -116,6 +123,7 @@ class CheckoutPaymentType extends AbstractType
                     'mapped' => false,
                     'expanded' => true,
                     'multiple' => false,
+                    'data' => count($choices) === 1 ? 'card' : null
                 ]);
         });
     }

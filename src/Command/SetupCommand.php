@@ -328,6 +328,11 @@ class SetupCommand extends Command
                 'name' => 'Edenred + Card',
                 'countries' => ['fr'],
             ],
+            [
+                'code' => 'CASH_ON_DELIVERY',
+                'name' => 'Cash on delivery',
+                'countries' => ['mx'],
+            ],
         ];
 
         foreach ($methods as $method) {

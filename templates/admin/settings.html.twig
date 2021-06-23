@@ -41,7 +41,9 @@
   </div>
 
   {{ form_row(form.subject_to_vat) }}
+  {% if form.guest_checkout_enabled is defined %}
   {{ form_row(form.guest_checkout_enabled) }}
+  {% endif %}
 
   <div class="alert alert-danger">
     <i class="fa fa-warning"></i> {{ 'form.maintenance.enable.label'|trans }}

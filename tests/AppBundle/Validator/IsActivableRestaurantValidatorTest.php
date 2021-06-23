@@ -30,7 +30,8 @@ class IsActivableRestaurantValidatorTest extends ConstraintValidatorTestCase
     {
         return new IsActivableRestaurantValidator(
             $this->settingsManager->reveal(),
-            $this->gatewayResolver->reveal()
+            $this->gatewayResolver->reveal(),
+            $cashEnabled = false
         );
 	}
 
