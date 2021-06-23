@@ -1,6 +1,11 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 @import "../../../assets/css/vars.scss";
 
+body{
+  padding-bottom: 510px;
+  z-index: -1;
+}
+
 form[name="restaurant"] #restaurant_imageFile_file,
 form[name="store"] #store_imageFile_file {
   width: 0.1px;
@@ -10,6 +15,7 @@ form[name="store"] #store_imageFile_file {
   position: absolute;
   z-index: -1;
 }
+
 
 // ------------------ Image uploader ------------------
 
@@ -143,15 +149,10 @@ form[name="restaurant"] {
 }
 
 .sticky-buttons{
-  position:  fixed;
-  left: 0;
-  bottom: 0;
   width: 100%;
-  box-sizing: border-box;
+  position:  fixed;
+  bottom: 0;
   background-color: white;
-  border-top: white;
-  padding: 5%;
-  z-index: 100;
-  flex-shrink: 0;
+  z-index: 50;
   }
   
