@@ -15,11 +15,13 @@ class IsActivableRestaurantValidator extends ConstraintValidator
 {
     private $settingsManager;
     private $resolver;
+    private $cashEnabled;
 
-    public function __construct(SettingsManager $settingsManager, GatewayResolver $resolver)
+    public function __construct(SettingsManager $settingsManager, GatewayResolver $resolver, bool $cashEnabled)
     {
         $this->settingsManager = $settingsManager;
         $this->resolver = $resolver;
+        $this->cashEnabled = $cashEnabled;
     }
 
     public function validate($object, Constraint $constraint)
@@ -77,19 +79,26 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                     ->addViolation();
             }
 
-            if ('mercadopago' === $this->resolver->resolve()) {
-                $mercadopagoAccount = $object->getMercadopagoAccount($this->settingsManager->isMercadopagoLivemode());
-                if (null === $mercadopagoAccount) {
-                    $this->context->buildViolation($constraint->mercadopagoAccountMessage)
-                        ->atPath('mercadopagoAccounts')
-                        ->addViolation();
-                }
-            } else {
-                $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
-                if (null === $stripeAccount) {
-                    $this->context->buildViolation($constraint->stripeAccountMessage)
-                        ->atPath('stripeAccounts')
-                        ->addViolation();
+            if (!$this->cashEnabled) {
+                $gateway = $this->resolver->resolve();
+                switch ($gateway) {
+                    case 'mercadopago':
+                        $mercadopagoAccount = $object->getMercadopagoAccount($this->settingsManager->isMercadopagoLivemode());
+                        if (null === $mercadopagoAccount) {
+                            $this->context->buildViolation($constraint->mercadopagoAccountMessage)
+                                ->atPath('mercadopagoAccounts')
+                                ->addViolation();
+                        }
+                        break;
+                    case 'stripe':
+                    default:
+                        $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
+                        if (null === $stripeAccount) {
+                            $this->context->buildViolation($constraint->stripeAccountMessage)
+                                ->atPath('stripeAccounts')
+                                ->addViolation();
+                        }
+                        break;
                 }
             }
         }
