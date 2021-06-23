@@ -832,7 +832,6 @@ restaurant.list.products: Prodotti
 restaurant.list.product_options: Opzioni
 restaurant.list.menus: Menù
 restaurant.list.norestaurant: Non ci sono ancora ristoranti
-restaurant.list.createNewRestaurant: Crea un nuovo ristorante
 restaurant.closingForm.reason.label: Ragioni
 restaurant.closingForm.dates.label: Chiuso dalle/alle
 restaurant.list.manage: Gestione

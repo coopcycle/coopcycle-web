@@ -245,7 +245,6 @@ restaurant.list.menus: Menüs
 restaurant.list.activeMenu: Aktives Menü
 restaurant.list.planning: Planung
 restaurant.list.norestaurant: Es gibt zur Zeit keine Restaurants
-restaurant.list.createNewRestaurant: Ein neues Restaurant erstellen
 restaurant.list.preparationTime: Vorbereitung
 restaurant.list.stats: Statistiken
 order.list.receipt: Empfangsbestätigung

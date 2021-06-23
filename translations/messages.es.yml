@@ -151,7 +151,6 @@ restaurant.list.activeMenu: Carta activada
 restaurant.list.planning: Calendario
 restaurant.list.settings: Ajustes
 restaurant.list.norestaurant: Aún no existen restaurantes
-restaurant.list.createNewRestaurant: Crear restaurante
 restaurant.list.preparationTime: Preparación
 restaurant.list.stats: Estadísticas
 restaurant.product_options.help: "Esta sección le permite configurar elementos adicionales\
