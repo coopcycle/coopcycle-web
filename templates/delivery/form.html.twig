@@ -84,55 +84,54 @@
     </div>
   </div>
 
-  <hr>
-<div class="sticky-buttons">
-  <div class="d-md-flex d-lg-flex d-xl-flex flex-row mb-4">
-    <div class="col-md-7">
-      {% if delivery.id is empty and delivery.store is not empty and delivery.store.createOrders %}
-        <div id="delivery-price" class="mb-4 mb-md-0">
+  <div class="sticky-buttons">
+    <div class="d-md-flex d-lg-flex d-xl-flex flex-row">
+      <div class="col-md-7">
+        {% if delivery.id is empty and delivery.store is not empty and delivery.store.createOrders %}
+          <div id="delivery-price" class="mb-4 mb-md-0">
 
-          <div class="delivery-price">
-            <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
-            <span class="delivery-price-value" id="delivery_price">
-              <span>
-                <span data-tax="included">{{ 0|price_format }}</span>
-                <span class="ml-2">{{ 'basics.tax_incl'|trans }}</span>
-              </span>
-              <span class="text-muted">
-                <span data-tax="excluded">{{ 0|price_format }}</span>
-                <span class="ml-2">{{ 'basics.tax_excl'|trans }}</span>
-              </span>
-            </span>
-          </div>
-
-          <div class="text-center text-danger">
-            <small id="delivery_price_error" class="delivery-price-error"></small>
-          </div>
-
-          {% if debug_pricing is defined and debug_pricing %}
-            {% set pricing_rules = delivery.store.pricingRuleSet.rules %}
-            <ul class="list-group" id="pricing-rules-debug">
-            {% for pricing_rule in pricing_rules %}
-              <li class="list-group-item" data-pricing-rule="/api/pricing_rules/{{ pricing_rule.id }}">
-                <span>{{ pricing_rule.expression }}</span>
-                <span class="pull-right">
-                  <i class="fa fa-spinner fa-spin hidden"></i>
+            <div class="delivery-price">
+              <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
+              <span class="delivery-price-value" id="delivery_price">
+                <span>
+                  <span data-tax="included">{{ 0|price_format }}</span>
+                  <span class="ml-2">{{ 'basics.tax_incl'|trans }}</span>
                 </span>
-              </li>
-            {% endfor %}
-            </ul>
-          {% endif %}
+                <span class="text-muted">
+                  <span data-tax="excluded">{{ 0|price_format }}</span>
+                  <span class="ml-2">{{ 'basics.tax_excl'|trans }}</span>
+                </span>
+              </span>
+            </div>
 
-        </div>
-      {% endif %}
+            <div class="text-center text-danger">
+              <small id="delivery_price_error" class="delivery-price-error"></small>
+            </div>
+
+            {% if debug_pricing is defined and debug_pricing %}
+              {% set pricing_rules = delivery.store.pricingRuleSet.rules %}
+              <ul class="list-group" id="pricing-rules-debug">
+              {% for pricing_rule in pricing_rules %}
+                <li class="list-group-item" data-pricing-rule="/api/pricing_rules/{{ pricing_rule.id }}">
+                  <span>{{ pricing_rule.expression }}</span>
+                  <span class="pull-right">
+                    <i class="fa fa-spinner fa-spin hidden"></i>
+                  </span>
+                </li>
+              {% endfor %}
+              </ul>
+            {% endif %}
+
+          </div>
+        {% endif %}
+      </div>
+      <div class="col-md-5">
+        <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary h-100">
+          <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
+          {% trans %}basics.save{% endtrans %}
+        </button>
+      </div>
     </div>
-    <div class="col-md-5">
-      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary h-100">
-        <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
-        {% trans %}basics.save{% endtrans %}
-      </button>
-    </div>
-  </div>
   </div>
 
 {{ form_end(form) }}

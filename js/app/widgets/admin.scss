@@ -152,7 +152,11 @@ form[name="restaurant"] {
   width: 100%;
   position:  fixed;
   bottom: 0;
+  left: 0;
+  right: 0;
   background-color: white;
   z-index: 500;
-  }
-  
+  padding: 10px 0;
+  border-top: 1px solid #e9e9e9;
+}
+
