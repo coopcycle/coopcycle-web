@@ -22,6 +22,7 @@ class ContentController extends AbstractController
      *   "de": "/uber-uns",
      *   "en": "/about-us",
      *   "es": "/sobre-nosotros",
+     *   "eu": "/guri-buruz",
      *   "fr": "/a-propos",
      *   "it": "/riguardo-a-noi",
      *   "pl": "/o-nas",
