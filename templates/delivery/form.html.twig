@@ -85,7 +85,7 @@
   </div>
 
   <hr>
-
+<div class="sticky-buttons">
   <div class="d-md-flex d-lg-flex d-xl-flex flex-row mb-4">
     <div class="col-md-7">
       {% if delivery.id is empty and delivery.store is not empty and delivery.store.createOrders %}
@@ -126,12 +126,13 @@
         </div>
       {% endif %}
     </div>
-    <div class="col-md-5 sticky-buttons">
+    <div class="col-md-5">
       <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary h-100">
         <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
         {% trans %}basics.save{% endtrans %}
       </button>
     </div>
+  </div>
   </div>
 
 {{ form_end(form) }}
