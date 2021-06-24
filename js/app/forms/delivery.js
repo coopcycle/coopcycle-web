@@ -33,6 +33,31 @@ function toPackages(name) {
   return packages
 }
 
+function showAddressOptions(telephone, recipient, isTelephoneRequired, isRecipientRequired) {
+  if (telephone) {
+    telephone.setAttribute('required', isTelephoneRequired)
+    telephone.closest('.form-group').classList.remove('hidden')
+  }
+  if (recipient) {
+    recipient.setAttribute('required', isRecipientRequired)
+    recipient.closest('.form-group').classList.remove('hidden')
+  }
+}
+
+function hideRememberAddress(name, type) {
+  const rememberAddr = document.querySelector(`#${name}_${type}_address_rememberAddress`)
+  if (rememberAddr) {
+    rememberAddr.closest('.checkbox').classList.add('invisible')
+  }
+}
+
+function showRememberAddress(name, type) {
+  const rememberAddr = document.querySelector(`#${name}_${type}_address_rememberAddress`)
+  if (rememberAddr) {
+    rememberAddr.closest('.checkbox').classList.remove('invisible')
+  }
+}
+
 function createAddressWidget(name, type, cb) {
 
   const telephone = document.querySelector(`#${name}_${type}_telephone`)
@@ -61,21 +86,24 @@ function createAddressWidget(name, type, cb) {
           recipient.removeAttribute('required')
           recipient.closest('.form-group').classList.add('hidden')
         }
+        hideRememberAddress(name, type)
       } else {
-        if (telephone) {
-          telephone.setAttribute('required', isTelephoneRequired)
-          telephone.closest('.form-group').classList.remove('hidden')
-        }
-        if (recipient) {
-          recipient.setAttribute('required', isRecipientRequired)
-          recipient.closest('.form-group').classList.remove('hidden')
-        }
+        showAddressOptions(telephone, recipient, isTelephoneRequired, isRecipientRequired)
+        showRememberAddress(name, type)
       }
 
       store.dispatch({
         type: 'SET_ADDRESS',
         taskType: type,
         address
+      })
+    },
+    onClear: () => {
+      showAddressOptions(telephone, recipient, isTelephoneRequired, isRecipientRequired)
+      showRememberAddress(name, type)
+      store.dispatch({
+        type: 'CLEAR_ADDRESS',
+        taskType: type,
       })
     }
   })
@@ -253,6 +281,11 @@ function reducer(state = {}, action) {
     return {
       ...state,
       packages: action.packages
+    }
+  case 'CLEAR_ADDRESS':
+    return {
+      ...state,
+      [ action.taskType ]: _.omit({ ...state[action.taskType] }, ['address'])
     }
   default:
     return state

@@ -429,6 +429,10 @@ class AddressAutosuggest extends Component {
     if (this.props.reportValidity) {
       this.autosuggest.input.setCustomValidity('')
     }
+
+    if (this.props.onClear) {
+      this.props.onClear()
+    }
   }
 
   onChange(event, { newValue }) {
@@ -694,6 +698,7 @@ AddressAutosuggest.propTypes = {
   inputProps: PropTypes.object,
   autofocus: PropTypes.bool,
   error: PropTypes.bool,
+  onClear: PropTypes.func,
 }
 
 export default withTranslation()(AddressAutosuggest)

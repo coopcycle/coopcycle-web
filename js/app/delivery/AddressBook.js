@@ -133,6 +133,11 @@ export default function(el, options) {
         }
 
       } }
+      onClear={ () => {
+        if (options.onClear && typeof options.onClear === 'function') {
+          options.onClear()
+        }
+      } }
       { ...autosuggestProps } />,
     reactContainer
   )

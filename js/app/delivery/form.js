@@ -64,6 +64,23 @@ function createMarker(location, addressType) {
   MapHelper.fitToLayers(map, _.filter(markers))
 }
 
+function removeMarker(addressType) {
+
+  if (!map) {
+    return
+  }
+
+  const marker = markers[addressType]
+
+  if (!marker) {
+    return
+  }
+
+  marker.removeFrom(map)
+
+  MapHelper.fitToLayers(map, _.filter(markers))
+}
+
 function serializeAddress(address) {
   if (Object.prototype.hasOwnProperty.call(address, '@id')) {
     return address['@id']
@@ -101,13 +118,18 @@ form = new DeliveryForm('delivery', {
         longitude: delivery.pickup.address.geo.longitude
       }, 'pickup')
       $('#delivery_pickup_panel_title').text(delivery.pickup.address.streetAddress)
+    } else {
+      removeMarker('pickup')
     }
+
     if (delivery.dropoff.address) {
       createMarker({
         latitude: delivery.dropoff.address.geo.latitude,
         longitude: delivery.dropoff.address.geo.longitude
       }, 'dropoff')
       $('#delivery_dropoff_panel_title').text(delivery.dropoff.address.streetAddress)
+    } else {
+      removeMarker('dropoff')
     }
 
     if (delivery.pickup.address && delivery.dropoff.address) {
