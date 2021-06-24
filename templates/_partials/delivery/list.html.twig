@@ -44,6 +44,11 @@
         {% if delivery.weight is not empty %}
           {% set details = details|merge([ delivery.weight|grams_to_kilos ]) %}
         {% endif %}
+        {% if delivery.hasPackages() %}
+          {% for package_quantity in delivery.packages %}
+            {% set details = details|merge([ package_quantity.quantity ~ ' × ' ~ package_quantity.package.name ]) %}
+          {% endfor %}
+        {% endif %}
         <br>
         <small>{{ details|join(' - ') }}</small>
       </td>
