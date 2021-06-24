@@ -676,3 +676,4 @@ restaurant.form.cuisines.label: Küchenrichtung
 restaurant.form.fulfillment_methods.label: Möglichkeiten zur Auftragsausführung
 restaurant.form.loopeat_enabled.label: LoopEat System einschalten
 checkout.breadcrumb.confirm: Bestätigung
+products.on_demand_delivery.name: Lieferung auf Anfrage

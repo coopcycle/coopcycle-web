@@ -1129,3 +1129,4 @@ form.mercadopago_livemode.disable_and_enable_maintenance.label: Utilitzar el mod
 form.mercadopago_livemode.disable.alert: En mode « test », les targetes de crèdit
   no seran carregades.
 form.settings.mercadopago.title: Mercado Pago
+products.on_demand_delivery.name: Lliurament a demanda

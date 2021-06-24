@@ -990,3 +990,4 @@ localBusiness.form.business_address.label: Endereço comercial
 localBusiness.form.use_different_business_address.label: Utilize outro endereço comercial
 base.footer.terms: Termos de serviço
 base.footer.privacy: Privacidade
+products.on_demand_delivery.name: Entrega sob demanda

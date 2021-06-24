@@ -865,3 +865,4 @@ form.checkout_address.reusable_packaging_loopeat_enabled.label: Chcę użyć poj
 basics.updated_at: Zaktualizowane %date%
 order.notes: Informacje od klienta
 order.payments: Płatności
+products.on_demand_delivery.name: Dostawa na żądanie

@@ -953,3 +953,4 @@ form.menu_editor.name.help: Questo serve solo a te per distinguere i menù. Non 
   mostrato al cliente.
 restaurant.form.cuisines.label: Cucine
 restaurant.form.section.taxonomy: Tassonomia
+products.on_demand_delivery.name: Consegna su richiesta

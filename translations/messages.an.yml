@@ -1109,3 +1109,4 @@ homepage.form.title: 'Necesitas qualcosa pa entregar?'
 homepage.form.content: "<strong>%brand_name%</strong> opera localment servicios d'entrega\
   \ con bicicletas no contaminants. Ninvie un paquet u complete lo ninvio recursivo\
   \ pa lo suyo negocio."
+products.on_demand_delivery.name: Entrega baixo demanda

@@ -54,70 +54,10 @@ class SetupCommand extends Command
 
     private $locale;
 
-    private $locales = [
-        'an',
-        'ca',
-        'fr',
-        'en',
-        'es',
-        'de',
-        'it',
-        'pl',
-        'pt-BR'
-    ];
-
     private $channels = [
         'web' => 'Web',
         'app' => 'App',
         'pro' => 'Pro'
-    ];
-
-    private $onDemandDeliveryProductNames = [
-        'an' => 'Entrega baixo demanda',
-        'ca' => 'Lliurament a demanda',
-        'fr' => 'Livraison à la demande',
-        'en' => 'On demand delivery',
-        'es' => 'Entrega bajo demanda',
-        'de' => 'Lieferung auf Anfrage',
-        'it' => 'Consegna su richiesta',
-        'pl' => 'Dostawa na żądanie',
-        'pt-BR' => 'Entrega sob demanda'
-    ];
-
-    private $allergenAttributeNames = [
-        'an' => 'Alerchenos',
-        'ca' => 'Al·lèrgens',
-        'fr' => 'Allergènes',
-        'en' => 'Allergens',
-        'es' => 'Alérgenos',
-        'de' => 'Allergene',
-        'it' => 'Allergeni',
-        'pl' => 'Alergeny',
-        'pt-BR' => 'Alergenos'
-    ];
-
-    private $restrictedDietsAttributeNames = [
-        'an' => 'Dietas restrinchidas',
-        'ca' => 'Dietes restringides',
-        'fr' => 'Régimes restreints',
-        'en' => 'Restricted diets',
-        'es' => 'Dietas restringidas',
-        'de' => 'Eingeschränkte Ernährung',
-        'it' => 'Piani ristretti',
-        'pl' => 'Ograniczone diety',
-        'pt-BR' => 'Dietas restritas'
-    ];
-
-    private $freeDeliveryPromotionNames = [
-        'an' => 'Entrega de baldes',
-        'ca' => 'Lliurament gratuït',
-        'fr' => 'Livraison offerte',
-        'en' => 'Free delivery',
-        'es' => 'Entrega gratis',
-        'de' => 'Gratisversand',
-        'it' => 'Consegna gratuita',
-        'pl' => 'Darmowa dostawa',
-        'pt-BR' => 'Entrega grátis'
     ];
 
     private $currencies = [
@@ -158,7 +98,8 @@ class SetupCommand extends Command
         SettingsManager $settingsManager,
         UrlGeneratorInterface $urlGenerator,
         string $locale,
-        string $country)
+        string $country,
+        string $localeRegex)
     {
         $this->productRepository = $productRepository;
         $this->productFactory = $productFactory;
@@ -200,6 +141,7 @@ class SetupCommand extends Command
 
         $this->locale = $locale;
         $this->country = $country;
+        $this->localeRegex = $localeRegex;
 
         parent::__construct();
     }
@@ -211,11 +153,17 @@ class SetupCommand extends Command
             ->setDescription('Setups some basic stuff.');
     }
 
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        $this->locales = explode('|', $this->localeRegex);
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('<info>Setting up CoopCycle…</info>');
 
         $output->writeln('<info>Checking Sylius locales are present…</info>');
+
         foreach ($this->locales as $locale) {
             $this->createSyliusLocale($locale, $output);
         }
@@ -384,7 +332,7 @@ class SetupCommand extends Command
 
         foreach ($this->locales as $locale) {
 
-            $name = $this->onDemandDeliveryProductNames[$locale];
+            $name = $this->translator->trans('products.on_demand_delivery.name', [], 'messages', $locale);
 
             $product->setFallbackLocale($locale);
             $translation = $product->getTranslation($locale);
@@ -418,10 +366,12 @@ class SetupCommand extends Command
 
         foreach ($this->locales as $locale) {
 
+            $name = $this->translator->trans('form.product.allergens.label', [], 'messages', $locale);
+
             $attribute->setFallbackLocale($locale);
             $translation = $attribute->getTranslation($locale);
 
-            $translation->setName($this->allergenAttributeNames[$locale]);
+            $translation->setName($name);
         }
 
         $this->productAttributeManager->flush();
@@ -449,10 +399,12 @@ class SetupCommand extends Command
 
         foreach ($this->locales as $locale) {
 
+            $name = $this->translator->trans('form.product.restricted_diets.label', [], 'messages', $locale);
+
             $attribute->setFallbackLocale($locale);
             $translation = $attribute->getTranslation($locale);
 
-            $translation->setName($this->restrictedDietsAttributeNames[$locale]);
+            $translation->setName($name);
         }
 
         $this->productAttributeManager->flush();
@@ -464,8 +416,10 @@ class SetupCommand extends Command
 
         if (null === $promotion) {
 
+            $name = $this->translator->trans('promotions.heading.free_delivery', [], 'messages', $this->locale);
+
             $promotion = $this->promotionFactory->createNew();
-            $promotion->setName($this->freeDeliveryPromotionNames[$this->locale]);
+            $promotion->setName($name);
             $promotion->setCouponBased(true);
             $promotion->setCode('FREE_DELIVERY');
             $promotion->setPriority(1);

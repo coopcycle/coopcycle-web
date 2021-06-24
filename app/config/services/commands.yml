@@ -81,6 +81,7 @@ services:
       $taxCategoryFactory: '@sylius.factory.tax_category'
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $country: "%country_iso%"
+      $localeRegex: "%locale_regex%"
     tags:
       - { name: 'console.command', command: 'coopcycle:setup' }
 
