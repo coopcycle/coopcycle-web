@@ -21,8 +21,7 @@ class SitemapController extends AbstractController
             ->getRepository(LocalBusiness::class)
             ->findBy(['enabled' => true]);
 
-        // TODO Use locale_regex parameter
-        $locales = ['en', 'es', 'de', 'fr', 'pl'];
+        $locales = explode('|', $this->getParameter('locale_regex'));
         $locale = $this->getParameter('locale');
         $otherLocales = array_diff($locales, [$locale]);
 
