@@ -16986,16 +16986,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.25.0",
+            "version": "6.26.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "95a8fcb82d2be26da01102f4c9498b7c1ea07cef"
+                "reference": "c09d3ee8c445a9b6a4f96f164fdde5c8502ddaf9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/95a8fcb82d2be26da01102f4c9498b7c1ea07cef",
-                "reference": "95a8fcb82d2be26da01102f4c9498b7c1ea07cef",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/c09d3ee8c445a9b6a4f96f164fdde5c8502ddaf9",
+                "reference": "c09d3ee8c445a9b6a4f96f164fdde5c8502ddaf9",
                 "shasum": ""
             },
             "require": {
@@ -17034,9 +17034,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twilio/twilio-php/issues",
-                "source": "https://github.com/twilio/twilio-php/tree/6.25.0"
+                "source": "https://github.com/twilio/twilio-php/tree/6.26.0"
             },
-            "time": "2021-06-16T19:21:16+00:00"
+            "time": "2021-06-30T20:34:58+00:00"
         },
         {
             "name": "vich/uploader-bundle",
