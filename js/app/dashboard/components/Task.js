@@ -18,9 +18,11 @@ const TaskCaption = ({ task }) => {
 
   const { t } = useTranslation()
 
+  const name = t('ADMIN_DASHBOARD_ORDERS_ORDER')
+
   return (
     <span>
-      <span className="mr-1">#{ task.id }</span>
+      <span className="mr-1">#{ task.id } { !_.isEmpty(task.metadata.order_number) && (' | ' + name + ' ' + task.metadata.order_number) }</span>
       { (task.orgName && !_.isEmpty(task.orgName)) && (
         <span>
           <span className="font-weight-bold">{ task.orgName }</span>
