@@ -29,7 +29,7 @@ export default class extends Component {
       <div className="pt-2">
         <header className="d-flex justify-content-between align-items-center mb-2">
           <strong>
-            { i18n.t('ADMIN_DASHBOARD_TASK_CAPTION_SHORT', { id: task.id }  ) } { !_.isEmpty(task.metadata.order_number) && (' | ' + name + ' ' + task.metadata.order_number) }
+            { i18n.t('ADMIN_DASHBOARD_TASK_CAPTION_SHORT', { id: task.id }) }{ !_.isEmpty(task.metadata.order_number) && (' | ' + name + ' ' + task.metadata.order_number) }
           </strong>
           <span>
             <a className="task__edit" onClick={ this.props.onEditClick }>
