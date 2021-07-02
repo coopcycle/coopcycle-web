@@ -7,6 +7,8 @@ use AppBundle\Enum\Store;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LocalBusinessTypeChoiceType extends AbstractType
@@ -16,6 +18,23 @@ class LocalBusinessTypeChoiceType extends AbstractType
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        // @see https://stackoverflow.com/questions/21553719/symfony2-sort-order-a-translated-entity-form-field
+
+        $collator = new \Collator($this->translator->getLocale());
+
+        usort(
+            $view->vars['choices'],
+            function ($a, $b) use ($collator) {
+                return $collator->compare(
+                    $this->translator->trans($a->label),
+                    $this->translator->trans($b->label)
+                );
+            }
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -36,17 +55,8 @@ class LocalBusinessTypeChoiceType extends AbstractType
             $choices[$key] = $value->getValue();
         }
 
-        asort($choices);
-
         $resolver->setDefaults([
             'choices' => $choices,
-            'group_by' => function($choice, $key, $value) {
-                if ($found = Store::search($value)) {
-                    return $this->translator->trans('form.local_business_type.store');
-                }
-
-                return $this->translator->trans('form.local_business_type.food_establishment');
-            },
             'label' => 'form.local_business_type.label',
             'help' => 'form.local_business_type.help',
             'help_html' => true,
