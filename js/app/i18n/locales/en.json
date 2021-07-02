@@ -235,7 +235,9 @@
             "FOR_EVERY": "for every",
             "ABOVE": "above",
             "TYPE_FIXED": "Fixed price",
-            "TYPE_RANGE": "Price by ranges"
+            "TYPE_RANGE": "Price by ranges",
+            "TYPE_PER_PACKAGE": "Price per package",
+            "PER_PACKAGE": "per package"
         },
         "CASH_ON_DELIVERY_DISCLAIMER": "You are going to pay by cash on delivery. Please prepare the exact amount and make sure to be reachable."
     }

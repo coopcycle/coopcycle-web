@@ -185,13 +185,20 @@ export class PriceRange extends Price {
   }
 }
 
+export class PricePerPackage extends Price {
+  constructor(packageName, unitPrice) {
+    super()
+    this.packageName = packageName
+    this.unitPrice = unitPrice
+  }
+}
+
 export class RawPriceExpression extends Price {
   constructor(expression) {
     super()
     this.expression = expression
   }
 }
-
 
 export const parseAST = ast => {
 
@@ -203,6 +210,7 @@ export const parseAST = ast => {
 }
 
 const parsePriceNode = (node, expression) => {
+
   if (node.attributes.name === 'price_range') {
 
     const args = node.nodes.arguments.nodes
@@ -213,6 +221,15 @@ const parsePriceNode = (node, expression) => {
     const threshold = args[3].attributes.value
 
     return new PriceRange(attribute, price, step, threshold)
+  }
+
+  if (node.attributes.operator && node.attributes.operator === '*'
+  &&  node.nodes.left?.nodes?.node?.attributes?.name === 'packages') {
+
+    const packageName = node.nodes.left.nodes.arguments.nodes[1].attributes.value
+    const unitPrice = node.nodes.right.attributes.value
+
+    return new PricePerPackage(packageName, unitPrice)
   }
 
   if (node.nodes.length === 0 && typeof node.attributes.value === 'number') {
