@@ -17,7 +17,7 @@
     {% set cache_key = restaurant|cache_key(restaurant_caption_cache_annotation) %}
     {% cache cache_key ttl(300) %}
     {% if restaurant.servesCuisine|length > 0 %}
-      <div class="restaurant-item__cuisines mb-3">
+      <div class="restaurant-item__caption mb-3">
         {% for cuisine in restaurant.servesCuisine %}
           <a href="{{ path('restaurants_by_cuisine', { cuisineName: cuisine.name }) }}">{{ cuisine.name|trans({}, 'cuisines') }}</a>
           {% if not loop.last %}
@@ -26,9 +26,13 @@
         {% endfor %}
       </div>
     {% elseif restaurant.description is not empty %}
-      <p class="text-muted">{{ restaurant.description|u.truncate(42, '…', false) }}</p>
+      <div class="restaurant-item__caption mb-3">
+        <span class="text-muted">{{ restaurant.description }}</span>
+      </div>
     {% else %}
-      <p class="text-muted">{{ restaurant.address.streetAddress }}</p>
+      <div class="restaurant-item__caption mb-3">
+        <span class="text-muted">{{ restaurant.address.streetAddress }}</span>
+      </div>
     {% endif %}
     {% endcache %}
     <div data-fulfillment="{{ path('restaurant_fulfillment_timing', { id: restaurant.id }) }}">

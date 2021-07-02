@@ -62,7 +62,12 @@
     font-weight: 700;
   }
 
-  &__cuisines {
+  &__caption {
+    overflow: hidden;
+    word-wrap: break-word;
+    text-overflow: ellipsis;
+    height: ($line-height-computed * 2);
+    max-height: ($line-height-computed * 2);
     & > a {
       color: #777777;
       &:hover {
