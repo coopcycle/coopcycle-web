@@ -112,6 +112,19 @@ class CreditCard {
 
 const containsMethod = (methods, method) => !!_.find(methods, m => m.type === method)
 
+const handleCardPayment = (cc, options, form, submitButton) => {
+  cc.createToken()
+    .then(token => {
+      options.tokenElement.setAttribute('value', token)
+      form.submit()
+    })
+    .catch(e => {
+      $('.btn-payment').removeClass('btn-payment__loading')
+      enableBtn(submitButton)
+      document.getElementById('card-errors').textContent = e.message
+    })
+}
+
 export default function(form, options) {
 
   const submitButton = form.querySelector('input[type="submit"],button[type="submit"]')
@@ -168,18 +181,7 @@ export default function(form, options) {
     disableBtn(submitButton)
 
     if (methods.length === 1 && containsMethod(methods, 'card')) {
-
-      cc.createToken()
-        .then(token => {
-          options.tokenElement.setAttribute('value', token)
-          form.submit()
-        })
-        .catch(e => {
-          $('.btn-payment').removeClass('btn-payment__loading')
-          enableBtn(submitButton)
-          document.getElementById('card-errors').textContent = e.message
-        })
-
+      handleCardPayment(cc, options, form, submitButton)
     } else {
 
       const selectedMethod =
@@ -200,6 +202,9 @@ export default function(form, options) {
           break
         case 'cash_on_delivery':
           form.submit()
+          break
+        case 'card':
+          handleCardPayment(cc, options, form, submitButton)
           break
       }
     }
