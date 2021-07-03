@@ -279,7 +279,7 @@ class SetupCommand extends Command
             [
                 'code' => 'CASH_ON_DELIVERY',
                 'name' => 'Cash on delivery',
-                'countries' => ['mx'],
+                'countries' => ['mx','ar'],
             ],
         ];
 
