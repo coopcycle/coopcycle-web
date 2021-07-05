@@ -22,6 +22,8 @@ service:
       gst: 0.10
     se:
       standard: 0.25
+    de:
+      standard: 0.25
 
 service_tax_exempt:
   rates:
@@ -46,6 +48,8 @@ service_tax_exempt:
     mx:
       zero: 0.0
     se:
+      zero: 0.0
+    dk:
       zero: 0.0
 
 drink:
@@ -113,6 +117,8 @@ base_standard:
       standard: 0.16
     se:
       standard: 0.25
+    dk:
+      standard: 0.25
 
 base_intermediary:
   rates:
@@ -177,4 +183,6 @@ base_exempt:
     mx:
       zero: 0.00
     se:
+      zero: 0.00
+    dk:
       zero: 0.00
