@@ -22,7 +22,7 @@ service:
       gst: 0.10
     se:
       standard: 0.25
-    de:
+    dk:
       standard: 0.25
 
 service_tax_exempt:
