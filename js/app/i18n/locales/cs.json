@@ -236,6 +236,7 @@
             "ABOVE": "nad",
             "FOR_EVERY": "pro každý"
         },
-        "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "Opravdu chcete odstranit všechny úkoly v této skupině?"
+        "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "Opravdu chcete odstranit všechny úkoly v této skupině?",
+        "CASH_ON_DELIVERY_DISCLAIMER": "Budete platit na dobírku. Připravte si prosím přesnou částku a ujistěte se, že jste dosažitelní."
     }
 }
