@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import moment from 'moment'
+import _ from 'lodash'
 
 import i18n from '../../i18n'
 import { addressAsText } from '../utils'
@@ -22,11 +23,13 @@ export default class extends Component {
 
     const { task } = this.state
 
+    const name = i18n.t('ADMIN_DASHBOARD_ORDERS_ORDER')
+
     return (
       <div className="pt-2">
         <header className="d-flex justify-content-between align-items-center mb-2">
           <strong>
-            { i18n.t('ADMIN_DASHBOARD_TASK_CAPTION_SHORT', { id: task.id }) }
+            { i18n.t('ADMIN_DASHBOARD_TASK_CAPTION_SHORT', { id: task.id }) }{ !_.isEmpty(task.metadata.order_number) && (' | ' + name + ' ' + task.metadata.order_number) }
           </strong>
           <span>
             <a className="task__edit" onClick={ this.props.onEditClick }>

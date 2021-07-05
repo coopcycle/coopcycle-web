@@ -38,7 +38,9 @@ class CreateTasks
         $orderAsText = $this->orderTextEncoder->encode($order, 'txt');
 
         $delivery->getPickup()->setComments($orderAsText);
+        $delivery->getPickup()->setMetadata('order_number', $order->getNumber());
         $delivery->getDropoff()->setComments($orderAsText);
+        $delivery->getDropoff()->setMetadata('order_number', $order->getNumber());
 
         $order->setDelivery($delivery);
     }
