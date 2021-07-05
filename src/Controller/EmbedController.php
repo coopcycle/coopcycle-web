@@ -239,7 +239,11 @@ class EmbedController extends AbstractController
 
             $delivery = $form->getData();
 
-            $paymentForm = $this->createForm(StripePaymentType::class);
+            $paymentForm = $this->createForm(StripePaymentType::class, null, [
+                'attr' => [
+                    'data-payment-method-picker' => 'false'
+                ],
+            ]);
 
             if ($request->isMethod('POST')) {
 

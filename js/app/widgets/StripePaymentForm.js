@@ -138,6 +138,14 @@ export default function(form, options) {
       data: { ...el.dataset }
     }))
 
+  // Hotfix for embedded form
+  if (form.dataset.paymentMethodPicker && JSON.parse(form.dataset.paymentMethodPicker) === false) {
+    methods.push({
+      type: 'card',
+      data: {},
+    })
+  }
+
   disableBtn(submitButton)
 
   let cc
