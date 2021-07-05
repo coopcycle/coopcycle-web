@@ -115,6 +115,9 @@ class CreateTasksTest extends TestCase
         $order
             ->getShippingAddress()
             ->willReturn($shippingAddress);
+        $order
+            ->getNumber()
+            ->willReturn('AB123');
 
         $delivery = new Delivery();
 
