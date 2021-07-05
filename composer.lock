@@ -167,16 +167,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.185.3",
+            "version": "3.185.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "e7a7d6b28b477a02a5625348995949c2dee7919a"
+                "reference": "35310302912fdc3b4a0e829b84424c41e3fd9727"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e7a7d6b28b477a02a5625348995949c2dee7919a",
-                "reference": "e7a7d6b28b477a02a5625348995949c2dee7919a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/35310302912fdc3b4a0e829b84424c41e3fd9727",
+                "reference": "35310302912fdc3b4a0e829b84424c41e3fd9727",
                 "shasum": ""
             },
             "require": {
@@ -251,9 +251,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.185.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.185.6"
             },
-            "time": "2021-06-28T18:15:17+00:00"
+            "time": "2021-07-02T18:13:18+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -4570,16 +4570,16 @@
         },
         {
             "name": "google/cloud-core",
-            "version": "v1.42.1",
+            "version": "v1.42.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-cloud-php-core.git",
-                "reference": "26a471ec72ee98ae146316054b25a88de8693b11"
+                "reference": "f3fff3ca4af92c87eb824e5c98aaf003523204a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-cloud-php-core/zipball/26a471ec72ee98ae146316054b25a88de8693b11",
-                "reference": "26a471ec72ee98ae146316054b25a88de8693b11",
+                "url": "https://api.github.com/repos/googleapis/google-cloud-php-core/zipball/f3fff3ca4af92c87eb824e5c98aaf003523204a2",
+                "reference": "f3fff3ca4af92c87eb824e5c98aaf003523204a2",
                 "shasum": ""
             },
             "require": {
@@ -4628,22 +4628,22 @@
             ],
             "description": "Google Cloud PHP shared dependency, providing functionality useful to all components.",
             "support": {
-                "source": "https://github.com/googleapis/google-cloud-php-core/tree/v1.42.1"
+                "source": "https://github.com/googleapis/google-cloud-php-core/tree/v1.42.2"
             },
-            "time": "2021-06-09T22:04:14+00:00"
+            "time": "2021-06-30T16:21:40+00:00"
         },
         {
             "name": "google/cloud-storage",
-            "version": "v1.23.2",
+            "version": "v1.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-cloud-php-storage.git",
-                "reference": "4a9f1262c2929af8c33a58466616820dba91dddc"
+                "reference": "ab1ad1d2722196e1476b151d5143234aa2e85d14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-cloud-php-storage/zipball/4a9f1262c2929af8c33a58466616820dba91dddc",
-                "reference": "4a9f1262c2929af8c33a58466616820dba91dddc",
+                "url": "https://api.github.com/repos/googleapis/google-cloud-php-storage/zipball/ab1ad1d2722196e1476b151d5143234aa2e85d14",
+                "reference": "ab1ad1d2722196e1476b151d5143234aa2e85d14",
                 "shasum": ""
             },
             "require": {
@@ -4682,9 +4682,9 @@
             ],
             "description": "Cloud Storage Client for PHP",
             "support": {
-                "source": "https://github.com/googleapis/google-cloud-php-storage/tree/v1.23.2"
+                "source": "https://github.com/googleapis/google-cloud-php-storage/tree/v1.24.0"
             },
-            "time": "2021-06-09T22:04:14+00:00"
+            "time": "2021-06-30T16:21:40+00:00"
         },
         {
             "name": "google/crc32",
@@ -5306,7 +5306,7 @@
         },
         {
             "name": "illuminate/cache",
-            "version": "v8.49.0",
+            "version": "v8.49.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/cache.git",
@@ -5363,7 +5363,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v8.49.0",
+            "version": "v8.49.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -5417,7 +5417,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v8.49.0",
+            "version": "v8.49.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -5465,7 +5465,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v8.49.0",
+            "version": "v8.49.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -5511,16 +5511,16 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v8.49.0",
+            "version": "v8.49.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "3fa6652d71db8440bf84bccab4d1f1bffaaabb2e"
+                "reference": "0ecdbb8e61919e972c120c0956fb1c0a3b085967"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/3fa6652d71db8440bf84bccab4d1f1bffaaabb2e",
-                "reference": "3fa6652d71db8440bf84bccab4d1f1bffaaabb2e",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/0ecdbb8e61919e972c120c0956fb1c0a3b085967",
+                "reference": "0ecdbb8e61919e972c120c0956fb1c0a3b085967",
                 "shasum": ""
             },
             "require": {
@@ -5575,7 +5575,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-06-28T13:56:26+00:00"
+            "time": "2021-07-02T16:40:19+00:00"
         },
         {
             "name": "imagine/imagine",
@@ -7804,16 +7804,16 @@
         },
         {
             "name": "lexik/jwt-authentication-bundle",
-            "version": "v2.12.1",
+            "version": "v2.12.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lexik/LexikJWTAuthenticationBundle.git",
-                "reference": "76f74a12fd53cece7d1ee60fa0134d71eb1c8b78"
+                "reference": "8081ff6df6d9a8358124aa68a7105e9bb978d54e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lexik/LexikJWTAuthenticationBundle/zipball/76f74a12fd53cece7d1ee60fa0134d71eb1c8b78",
-                "reference": "76f74a12fd53cece7d1ee60fa0134d71eb1c8b78",
+                "url": "https://api.github.com/repos/lexik/LexikJWTAuthenticationBundle/zipball/8081ff6df6d9a8358124aa68a7105e9bb978d54e",
+                "reference": "8081ff6df6d9a8358124aa68a7105e9bb978d54e",
                 "shasum": ""
             },
             "require": {
@@ -7899,7 +7899,7 @@
             ],
             "support": {
                 "issues": "https://github.com/lexik/LexikJWTAuthenticationBundle/issues",
-                "source": "https://github.com/lexik/LexikJWTAuthenticationBundle/tree/v2.12.1"
+                "source": "https://github.com/lexik/LexikJWTAuthenticationBundle/tree/v2.12.2"
             },
             "funding": [
                 {
@@ -7911,7 +7911,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-06-27T22:29:03+00:00"
+            "time": "2021-07-03T14:11:12+00:00"
         },
         {
             "name": "liip/imagine-bundle",
@@ -8609,16 +8609,16 @@
         },
         {
             "name": "myclabs/php-enum",
-            "version": "1.8.1",
+            "version": "1.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/php-enum.git",
-                "reference": "55555d31a622b4bc9662664132a0533ae6ef47b1"
+                "reference": "8bef486e885cae67ced6e43257300e8acc3f06ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/php-enum/zipball/55555d31a622b4bc9662664132a0533ae6ef47b1",
-                "reference": "55555d31a622b4bc9662664132a0533ae6ef47b1",
+                "url": "https://api.github.com/repos/myclabs/php-enum/zipball/8bef486e885cae67ced6e43257300e8acc3f06ad",
+                "reference": "8bef486e885cae67ced6e43257300e8acc3f06ad",
                 "shasum": ""
             },
             "require": {
@@ -8653,7 +8653,7 @@
             ],
             "support": {
                 "issues": "https://github.com/myclabs/php-enum/issues",
-                "source": "https://github.com/myclabs/php-enum/tree/1.8.1"
+                "source": "https://github.com/myclabs/php-enum/tree/1.8.2"
             },
             "funding": [
                 {
@@ -8665,7 +8665,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-06-29T09:20:05+00:00"
+            "time": "2021-07-04T17:44:39+00:00"
         },
         {
             "name": "namshi/jose",
@@ -9250,16 +9250,16 @@
         },
         {
             "name": "nyholm/psr7",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nyholm/psr7.git",
-                "reference": "23ae1f00fbc6a886cbe3062ca682391b9cc7c37b"
+                "reference": "2212385b47153ea71b1c1b1374f8cb5e4f7892ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/23ae1f00fbc6a886cbe3062ca682391b9cc7c37b",
-                "reference": "23ae1f00fbc6a886cbe3062ca682391b9cc7c37b",
+                "url": "https://api.github.com/repos/Nyholm/psr7/zipball/2212385b47153ea71b1c1b1374f8cb5e4f7892ec",
+                "reference": "2212385b47153ea71b1c1b1374f8cb5e4f7892ec",
                 "shasum": ""
             },
             "require": {
@@ -9273,7 +9273,7 @@
                 "psr/http-message-implementation": "1.0"
             },
             "require-dev": {
-                "http-interop/http-factory-tests": "^0.8",
+                "http-interop/http-factory-tests": "^0.9",
                 "php-http/psr7-integration-tests": "^1.0",
                 "phpunit/phpunit": "^7.5 || 8.5 || 9.4",
                 "symfony/error-handler": "^4.4"
@@ -9311,7 +9311,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Nyholm/psr7/issues",
-                "source": "https://github.com/Nyholm/psr7/tree/1.4.0"
+                "source": "https://github.com/Nyholm/psr7/tree/1.4.1"
             },
             "funding": [
                 {
@@ -9323,7 +9323,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-02-18T15:41:32+00:00"
+            "time": "2021-07-02T08:32:20+00:00"
         },
         {
             "name": "odolbeau/phone-number-bundle",
@@ -12982,16 +12982,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.86.0",
+            "version": "v7.87.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "7a56d1066305afe2601f39bed5b1caf277f829c7"
+                "reference": "9392f03cb8d8803bf8273378ce42d5cbbf1e24fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/7a56d1066305afe2601f39bed5b1caf277f829c7",
-                "reference": "7a56d1066305afe2601f39bed5b1caf277f829c7",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/9392f03cb8d8803bf8273378ce42d5cbbf1e24fc",
+                "reference": "9392f03cb8d8803bf8273378ce42d5cbbf1e24fc",
                 "shasum": ""
             },
             "require": {
@@ -13037,9 +13037,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v7.86.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v7.87.0"
             },
-            "time": "2021-06-25T16:48:21+00:00"
+            "time": "2021-06-30T18:22:47+00:00"
         },
         {
             "name": "sylius-labs/polyfill-symfony-framework-bundle",
@@ -16986,16 +16986,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.25.0",
+            "version": "6.26.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "95a8fcb82d2be26da01102f4c9498b7c1ea07cef"
+                "reference": "c09d3ee8c445a9b6a4f96f164fdde5c8502ddaf9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/95a8fcb82d2be26da01102f4c9498b7c1ea07cef",
-                "reference": "95a8fcb82d2be26da01102f4c9498b7c1ea07cef",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/c09d3ee8c445a9b6a4f96f164fdde5c8502ddaf9",
+                "reference": "c09d3ee8c445a9b6a4f96f164fdde5c8502ddaf9",
                 "shasum": ""
             },
             "require": {
@@ -17034,9 +17034,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twilio/twilio-php/issues",
-                "source": "https://github.com/twilio/twilio-php/tree/6.25.0"
+                "source": "https://github.com/twilio/twilio-php/tree/6.26.0"
             },
-            "time": "2021-06-16T19:21:16+00:00"
+            "time": "2021-06-30T20:34:58+00:00"
         },
         {
             "name": "vich/uploader-bundle",
@@ -18926,16 +18926,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.90",
+            "version": "0.12.91",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "f0e4b56630fc3d4eb5be86606d07212ac212ede4"
+                "reference": "8226701cd228a0d63c2df995de7ab6070c69ac6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f0e4b56630fc3d4eb5be86606d07212ac212ede4",
-                "reference": "f0e4b56630fc3d4eb5be86606d07212ac212ede4",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8226701cd228a0d63c2df995de7ab6070c69ac6a",
+                "reference": "8226701cd228a0d63c2df995de7ab6070c69ac6a",
                 "shasum": ""
             },
             "require": {
@@ -18966,7 +18966,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.90"
+                "source": "https://github.com/phpstan/phpstan/tree/0.12.91"
             },
             "funding": [
                 {
@@ -18986,20 +18986,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-06-18T07:15:38+00:00"
+            "time": "2021-07-04T15:31:48+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
-            "version": "0.12.37",
+            "version": "0.12.38",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-symfony.git",
-                "reference": "45e2ae29f6f53f5039b3d5c401dfc26724d8f5bb"
+                "reference": "58b5959a11e26ce495b424ee634e721aaa9674d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/45e2ae29f6f53f5039b3d5c401dfc26724d8f5bb",
-                "reference": "45e2ae29f6f53f5039b3d5c401dfc26724d8f5bb",
+                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/58b5959a11e26ce495b424ee634e721aaa9674d1",
+                "reference": "58b5959a11e26ce495b424ee634e721aaa9674d1",
                 "shasum": ""
             },
             "require": {
@@ -19053,34 +19053,33 @@
             "description": "Symfony Framework extensions and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-symfony/issues",
-                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.37"
+                "source": "https://github.com/phpstan/phpstan-symfony/tree/0.12.38"
             },
-            "time": "2021-06-16T13:00:16+00:00"
+            "time": "2021-07-01T07:35:09+00:00"
         },
         {
             "name": "phpstan/phpstan-webmozart-assert",
-            "version": "0.12.12",
+            "version": "0.12.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-webmozart-assert.git",
-                "reference": "1657403194a43f83b5355bd400aa7fc63f0e6857"
+                "reference": "c5009369a492219d3fb0cc6828aeca283fe3baaf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-webmozart-assert/zipball/1657403194a43f83b5355bd400aa7fc63f0e6857",
-                "reference": "1657403194a43f83b5355bd400aa7fc63f0e6857",
+                "url": "https://api.github.com/repos/phpstan/phpstan-webmozart-assert/zipball/c5009369a492219d3fb0cc6828aeca283fe3baaf",
+                "reference": "c5009369a492219d3fb0cc6828aeca283fe3baaf",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1 || ^8.0",
-                "phpstan/phpstan": "^0.12.49"
+                "phpstan/phpstan": "^0.12.85"
             },
             "require-dev": {
-                "phing/phing": "^2.16.3",
                 "php-parallel-lint/php-parallel-lint": "^1.2",
                 "phpstan/phpstan-phpunit": "^0.12.6",
                 "phpstan/phpstan-strict-rules": "^0.12.1",
-                "phpunit/phpunit": "^7.5.20",
+                "phpunit/phpunit": "^9.5",
                 "webmozart/assert": "^1.9.1"
             },
             "type": "phpstan-extension",
@@ -19106,9 +19105,9 @@
             "description": "PHPStan webmozart/assert extension",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-webmozart-assert/issues",
-                "source": "https://github.com/phpstan/phpstan-webmozart-assert/tree/0.12.12"
+                "source": "https://github.com/phpstan/phpstan-webmozart-assert/tree/0.12.14"
             },
-            "time": "2021-01-31T12:24:28+00:00"
+            "time": "2021-07-04T09:46:30+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
