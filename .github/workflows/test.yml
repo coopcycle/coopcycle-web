@@ -80,6 +80,7 @@ jobs:
     env:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      STRIPE_CONNECT_CLIENT_ID: ${{ secrets.STRIPE_CONNECT_CLIENT_ID }}
       AWS_ENDPOINT: ${{ secrets.AWS_ENDPOINT }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -130,7 +131,7 @@ jobs:
       #     python -m pip install --upgrade pip
       #     pip install python-swiftclient python-keystoneclient
       #     pip install awscli
-      #     tar czvf $GITHUB_SHA.tgz -C cypress/screenshots .
+      #     tar czvf $GITHUB_SHA.tgz -C cypress/videos .
       #     aws --endpoint=$AWS_ENDPOINT s3 cp $GITHUB_SHA.tgz s3://cypress/$GITHUB_SHA.tgz --acl private
   COMPONENT:
     name: Run Component tests

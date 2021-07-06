@@ -79,11 +79,13 @@ services:
       - GOOGLE_API_KEY
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY
+      - STRIPE_CONNECT_CLIENT_ID
       - ALGOLIA_PLACES_APP_ID
       - ALGOLIA_PLACES_API_KEY
       - ALGOLIA_PLACES_ADDRESS_TEMPLATE
     volumes:
       - './:/var/www/html:cached'
+      - 'php_logs:/var/www/html/var/logs'
       - 'php_cache:/var/www/html/var/cache'
     cap_add:
       - SYS_ADMIN
@@ -100,8 +102,9 @@ services:
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY
     volumes:
-      - 'php_cache:/var/www/html/var/cache'
       - './:/var/www/html:cached'
+      - 'php_logs:/var/www/html/var/logs'
+      - 'php_cache:/var/www/html/var/cache'
 
   nginx:
     image: 'nginx:1.11-alpine'
@@ -268,3 +271,4 @@ volumes:
   minio_data:
   typesense_data:
   webpack_php_cache:
+  php_logs:

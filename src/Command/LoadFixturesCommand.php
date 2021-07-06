@@ -60,10 +60,7 @@ class LoadFixturesCommand extends Command
             $this->projectDir . '/' . $file
         ];
 
-        $this->fixturesLoader->load($files, [
-            'STRIPE_PUBLISHABLE_KEY' => getenv('STRIPE_PUBLISHABLE_KEY'),
-            'STRIPE_SECRET_KEY' => getenv('STRIPE_SECRET_KEY')
-        ]);
+        $this->fixturesLoader->load($files, $_SERVER);
 
         return 0;
     }

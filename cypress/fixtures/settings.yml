@@ -23,3 +23,7 @@ Craue\ConfigBundle\Entity\Setting:
     section: general
     name: stripe_test_secret_key
     value: '<{STRIPE_SECRET_KEY}>'
+  setting_stripe_connect_client_id:
+    section: general
+    name: stripe_test_connect_client_id
+    value: '<{STRIPE_CONNECT_CLIENT_ID}>'
