@@ -1,9 +1,0 @@
-{
-    "baseUrl": "http://test.coopcycle.org",
-    "video": false,
-    "chromeWebSecurity": false,
-    "watchForFileChanges": false,
-    "env": {
-        "COMMAND_PREFIX": ""
-    }
-}
