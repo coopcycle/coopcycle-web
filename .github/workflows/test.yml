@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: '15.x'
       - name: Install PHP dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest --no-scripts
+        run: composer install --prefer-dist --no-progress --no-scripts
       - name: Install JS dependencies
         run: npm ci
       - name: Run PHPStan
