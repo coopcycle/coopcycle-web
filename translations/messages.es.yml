@@ -1152,3 +1152,4 @@ order.export.empty: No hay pedidos para exportar
 form.settings.autocomplete_provider.label: Proveedor de sugerencias
 form.settings.google_api_key_custom.label: Llave de API Google
 products.on_demand_delivery.name: Entrega bajo demanda
+index.view_all: Ver todo
