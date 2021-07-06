@@ -137,4 +137,15 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
         return $names;
     }
+
+    /**
+     * @param string|LocalBusiness $entityOrText
+     * @return string
+     */
+    public function typeKey($entityOrText): ?string
+    {
+        $type = $entityOrText instanceof LocalBusiness ? $entityOrText->getType() : $entityOrText;
+
+        return LocalBusiness::getKeyForType($type);
+    }
 }

@@ -1195,3 +1195,4 @@ form.payment.refund_breakdown: Amount refundable by card %card%, amount refundab
 form.settings.geocoding_provider.label: Geocoding provider
 form.settings.geocoding_provider.help: Used by the API and when importing spreadsheets
 products.on_demand_delivery.name: On demand delivery
+index.view_all: View all
