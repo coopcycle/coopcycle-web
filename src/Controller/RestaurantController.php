@@ -161,18 +161,41 @@ class RestaurantController extends AbstractController
             'geohash' => '',
             'addresses_normalized' => $this->getUserAddresses(),
             'address' => null,
-            'local_business_context' => $repository->getContext(),
         ));
     }
 
     /**
      * @Route("/restaurants", name="restaurants")
      */
+    public function legacyRestaurantsAction(Request $request,
+        LocalBusinessRepository $repository,
+        CacheInterface $projectCache,
+        SlugifyInterface $slugify)
+    {
+        $requestClone = clone $request;
+
+        $requestClone->attributes->set('type', LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT));
+
+        return $this->listAction($requestClone, $repository, $projectCache, $slugify);
+    }
+
+    /**
+     * @Route("/shops", name="shops")
+     */
     public function listAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
         SlugifyInterface $slugify)
     {
+        $defaultKey = LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT);
+
+        $key = $request->get('type', $defaultKey);
+        $type = LocalBusiness::getTypeForKey($key);
+
+        if (null === $type) {
+            $type = LocalBusiness::getTypeForKey($defaultKey);
+        }
+
         $mode = $request->query->get('mode', 'list');
 
         if (!in_array($mode, ['list', 'map'])) {
@@ -202,16 +225,16 @@ class RestaurantController extends AbstractController
             $matches = $repository->findByLatLng($latitude, $longitude);
         } else {
 
-            $cacheKey = sprintf('restaurant.list.ids|%s', $slugify->slugify($repository->getContext()));
+            $cacheKey = sprintf('restaurant.list.ids|%s', LocalBusiness::getKeyForType($type));
 
-            $restaurantsIds = $projectCache->get($cacheKey, function (ItemInterface $item) use ($repository) {
+            $restaurantsIds = $projectCache->get($cacheKey, function (ItemInterface $item) use ($repository, $type) {
 
                 $item->expiresAfter(60 * 5);
 
                 return array_map(function (LocalBusiness $restaurant) {
 
                     return $restaurant->getId();
-                }, $repository->findAllSorted());
+                }, $repository->withTypeFilter($type)->findAllSorted());
             });
 
             $matches = array_map(function ($id) use ($repository) {
@@ -227,6 +250,9 @@ class RestaurantController extends AbstractController
 
         $pages = ceil($count / self::ITEMS_PER_PAGE);
 
+        $countByType = $repository->countByType();
+        $types = array_keys($countByType);
+
         return $this->render('restaurant/list.html.twig', array(
             'count' => $count,
             'restaurants' => $matches,
@@ -235,7 +261,8 @@ class RestaurantController extends AbstractController
             'geohash' => $request->query->get('geohash'),
             'addresses_normalized' => $this->getUserAddresses(),
             'address' => $request->query->has('address') ? $request->query->get('address') : null,
-            'local_business_context' => $repository->getContext(),
+            'types' => $types,
+            'current_type' => $type,
         ));
     }
 
@@ -745,12 +772,16 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/stores", name="stores")
      */
-    public function storeListAction(Request $request,
+    public function legacyStoreListAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
         SlugifyInterface $slugify)
     {
-        return $this->listAction($request, $repository->withContext(Store::class), $projectCache, $slugify);
+        $requestClone = clone $request;
+
+        $requestClone->attributes->set('type', LocalBusiness::getKeyForType(Store::GROCERY_STORE));
+
+        return $this->listAction($requestClone, $repository, $projectCache, $slugify);
     }
 
     /**
@@ -769,7 +800,6 @@ class RestaurantController extends AbstractController
             'geohash' => '',
             'addresses_normalized' => $this->getUserAddresses(),
             'address' => null,
-            'local_business_context' => $repository->getContext(),
         ));
     }
 }

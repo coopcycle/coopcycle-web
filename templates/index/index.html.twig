@@ -26,15 +26,20 @@
   </form>
 </section>
 
-{% if restaurants|length > 0 %}
+{% set top_sections = sections|slice(0, 2)%}
+{% set bottom_sections = sections|slice(2, 1)%}
+
+{% for section in top_sections %}
   {% include 'index/_partials/section.html.twig' with {
-    items: restaurants,
-    section_title: 'index.our_restaurants'|trans,
-    view_all: 'index.view_all_restaurants'|trans,
-    view_all_path: path('restaurants'),
-    show_more: show_more_restaurants
+    items: section.shops,
+    section_title: section.type|local_business_type,
+    view_all: 'index.view_all'|trans,
+    view_all_path: route_exists(section.type_key_plural) ?
+      path(section.type_key_plural) : path('shops', { type: section.type_key }),
+    show_more: true,
+    pad_items: false,
   } %}
-{% endif %}
+{% endfor %}
 
 {% if zero_waste_count > 0 %}
   <section class="homepage-zerowaste mb-4">
@@ -54,15 +59,17 @@
   {% include 'index/_partials/delivery_form.html.twig' %}
 {% endif %}
 
-{% if stores|length > 0 %}
+{% for section in bottom_sections %}
   {% include 'index/_partials/section.html.twig' with {
-    items: stores,
-    section_title: 'index.our_shops'|trans,
-    view_all: 'index.view_all_shops'|trans,
-    view_all_path: path('stores'),
-    show_more: show_more_stores
+    items: section.shops,
+    section_title: section.type|local_business_type,
+    view_all: 'index.view_all'|trans,
+    view_all_path: route_exists(section.type_key_plural) ?
+      path(section.type_key_plural) : path('shops', { type: section.type_key }),
+    show_more: true,
+    pad_items: false,
   } %}
-{% endif %}
+{% endfor %}
 
 {% if hubs|length > 0 %}
   {% for hub in hubs %}

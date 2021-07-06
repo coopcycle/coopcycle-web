@@ -18,6 +18,7 @@ class LocalBusinessRepository extends EntityRepository
 {
     private $restaurantFilter;
     private $context = FoodEstablishment::class;
+    private $typeFilter = FoodEstablishment::RESTAURANT;
 
     public function withContext(string $context)
     {
@@ -167,6 +168,7 @@ class LocalBusinessRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('o');
 
+        /*
         $r = new \ReflectionClass($this->context);
         $values = $r->getMethod('values')->invoke(null);
 
@@ -174,6 +176,9 @@ class LocalBusinessRepository extends EntityRepository
         foreach ($values as $value) {
             $types[] = $value->getValue();
         }
+        */
+
+        $types[] = $this->typeFilter;
 
         $qb->add('where', $qb->expr()->in('o.type', $types));
 
@@ -265,5 +270,37 @@ class LocalBusinessRepository extends EntityRepository
 
         return $qb->getQuery()
             ->getSingleScalarResult();
+    }
+
+    public function countByType(): array
+    {
+        $qb = $this->createQueryBuilder('r');
+        $qb
+            ->select('r.type')
+            ->addSelect('COUNT(r.id) AS cnt')
+            ->groupBy('r.type')
+            ->orderBy('cnt', 'DESC')
+            ;
+
+        $result = $qb->getQuery()->getArrayResult();
+
+        return array_combine(
+            array_map(fn ($res) => $res['type'], $result),
+            array_map(fn ($res) => $res['cnt'], $result)
+        );
+    }
+
+    public function setTypeFilter(string $type)
+    {
+        $this->typeFilter = $type;
+
+        return $this;
+    }
+
+    public function withTypeFilter(string $type)
+    {
+        $repository = clone $this;
+
+        return $repository->setTypeFilter($type);
     }
 }

@@ -12,6 +12,7 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Form\DeliveryEmbedType;
+use Cocur\Slugify\SlugifyInterface;
 use Hashids\Hashids;
 use MyCLabs\Enum\Enum;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -21,6 +22,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\String\Inflector\EnglishInflector;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -30,10 +32,11 @@ class IndexController extends AbstractController
 
     const MAX_RESULTS = 6;
     const EXPIRES_AFTER = 300;
+    const ITEMS_PER_ROW = 3;
 
     private function getItems(LocalBusinessRepository $repository, string $type, CacheInterface $cache, string $cacheKey)
     {
-        $typeRepository = $repository->withContext($type);
+        $typeRepository = $repository->withTypeFilter($type);
 
         $itemsIds = $cache->get($cacheKey, function (ItemInterface $item) use ($typeRepository) {
 
@@ -64,7 +67,7 @@ class IndexController extends AbstractController
     /**
      * @HideSoftDeleted
      */
-    public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache)
+    public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache, SlugifyInterface $slugify)
     {
         $user = $this->getUser();
 
@@ -74,48 +77,60 @@ class IndexController extends AbstractController
             $cacheKeySuffix = 'anonymous';
         }
 
-        [ $restaurants, $restaurantsCount ] =
-            $this->getItems($repository, FoodEstablishment::class, $projectCache, sprintf('homepage.restaurants.%s', $cacheKeySuffix));
-        [ $stores, $storesCount ] =
-            $this->getItems($repository, Store::class, $projectCache, sprintf('homepage.stores.%s', $cacheKeySuffix));
+        $countByType = $repository->countByType();
+        $types = array_keys($countByType);
+
+        $typesWithEnoughShops = [];
+        $typesWithNotEnoughShops = [];
+        foreach ($countByType as $type => $countForType) {
+            if ($countForType >= self::ITEMS_PER_ROW || $countForType >= (self::ITEMS_PER_ROW * 2)) {
+                $typesWithEnoughShops[] = $type;
+            } else {
+                $typesWithNotEnoughShops[] = $type;
+            }
+        }
+
+        $inflector = new EnglishInflector();
+
+        $sections = [];
+        foreach ($typesWithEnoughShops as $type) {
+
+            $keyForType = LocalBusiness::getKeyForType($type);
+
+            $cacheKey = sprintf('homepage.%s.%s', $keyForType, $cacheKeySuffix);
+
+            [ $shops, $shopsCount ] =
+                $this->getItems($repository, $type, $projectCache, $cacheKey);
+
+            $sections[] = [
+                'type' => $type,
+                'shops' => $shops,
+                'type_key' => $keyForType,
+                'type_key_plural' => current($inflector->pluralize($keyForType)),
+            ];
+
+            if (count($sections) >= 3) {
+                break;
+            }
+        }
 
         $hubs = $this->getDoctrine()->getRepository(Hub::class)->findBy([
             'enabled' => true
         ]);
 
-        $qb = $this->getDoctrine()
-            ->getRepository(DeliveryForm::class)
-            ->createQueryBuilder('f');
-
-        $qb->where('f.showHomepage = :showHomepage');
-        $qb->setParameter('showHomepage', ($showHomepage = true));
-        $qb->setMaxResults(1);
-
-        $deliveryForm = $qb->getQuery()->getOneOrNullResult();
-        $form = null;
-
-        if ($deliveryForm) {
-            $form = $this->get('form.factory')->createNamed('delivery', DeliveryEmbedType::class, new Delivery(), [
-                'with_weight'      => $deliveryForm->getWithWeight(),
-                'with_vehicle'     => $deliveryForm->getWithVehicle(),
-                'with_time_slot'   => $deliveryForm->getTimeSlot(),
-                'with_package_set' => $deliveryForm->getPackageSet(),
-            ]);
-        }
+        $deliveryForm = $this->getDeliveryForm();
 
         $hashids = new Hashids($this->getParameter('secret'), 12);
 
         $countZeroWaste = $repository->countZeroWaste();
 
         return $this->render('index/index.html.twig', array(
-            'restaurants' => $restaurants,
-            'stores' => $stores,
+            'sections' => $sections,
             'hubs' => $hubs,
-            'show_more_restaurants' => $restaurantsCount > self::MAX_RESULTS,
-            'show_more_stores' => $storesCount > self::MAX_RESULTS,
             'max_results' => self::MAX_RESULTS,
             'addresses_normalized' => $this->getUserAddresses(),
-            'delivery_form' => $form ? $form->createView() : null,
+            'delivery_form' => $deliveryForm ?
+                $this->getDeliveryFormForm($deliveryForm)->createView() : null,
             'hashid' => $deliveryForm ? $hashids->encode($deliveryForm->getId()) : '',
             'zero_waste_count' => $countZeroWaste,
         ));
@@ -149,5 +164,33 @@ class IndexController extends AbstractController
     public function redirectToLocaleAction()
     {
         return new RedirectResponse(sprintf('/%s/', $this->getParameter('locale')), 302);
+    }
+
+    private function getDeliveryForm(): ?DeliveryForm
+    {
+        $qb = $this->getDoctrine()
+            ->getRepository(DeliveryForm::class)
+            ->createQueryBuilder('f');
+
+        $qb->where('f.showHomepage = :showHomepage');
+        $qb->setParameter('showHomepage', ($showHomepage = true));
+        $qb->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    private function getDeliveryFormForm(?DeliveryForm $deliveryForm = null)
+    {
+        if ($deliveryForm) {
+
+            return $this->get('form.factory')->createNamed('delivery', DeliveryEmbedType::class, new Delivery(), [
+                'with_weight'      => $deliveryForm->getWithWeight(),
+                'with_vehicle'     => $deliveryForm->getWithVehicle(),
+                'with_time_slot'   => $deliveryForm->getTimeSlot(),
+                'with_package_set' => $deliveryForm->getPackageSet(),
+            ]);
+        }
+
+        return null;
     }
 }

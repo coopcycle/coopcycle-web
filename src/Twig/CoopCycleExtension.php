@@ -15,6 +15,8 @@ use Doctrine\ORM\PersistentCollection;
 use Hashids\Hashids;
 use Spatie\OpeningHours\OpeningHoursForDay;
 use Spatie\OpeningHours\Time;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -25,12 +27,14 @@ class CoopCycleExtension extends AbstractExtension
 {
     private $serializer;
     private $iriConverter;
+    private $router;
     private $secret;
 
-    public function __construct(SerializerInterface $serializer, IriConverterInterface $iriConverter, string $secret)
+    public function __construct(SerializerInterface $serializer, IriConverterInterface $iriConverter, RouterInterface $router, string $secret)
     {
         $this->serializer = $serializer;
         $this->iriConverter = $iriConverter;
+        $this->router = $router;
         $this->secret = $secret;
     }
 
@@ -51,6 +55,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('date_calendar', array($this, 'dateCalendar'), ['needs_context' => true]),
             new TwigFilter('hashid', array($this, 'hashid')),
             new TwigFilter('local_business_type', array(LocalBusinessRuntime::class, 'type')),
+            new TwigFilter('local_business_type_key', array(LocalBusinessRuntime::class, 'typeKey')),
             new TwigFilter('time_range_for_humans', array(OrderRuntime::class, 'timeRangeForHumans')),
             new TwigFilter('time_range_for_humans_short', array(OrderRuntime::class, 'timeRangeForHumansShort')),
             new TwigFilter('promotion_rule_for_humans', array(PromotionRuntime::class, 'ruleForHumans')),
@@ -92,6 +97,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('coopcycle_zone_names', array(LocalBusinessRuntime::class, 'getZoneNames')),
             new TwigFunction('mercadopago_can_enable_livemode', array(MercadopagoResolver::class, 'canEnableLivemode')),
             new TwigFunction('mercadopago_can_enable_testmode', array(MercadopagoResolver::class, 'canEnableTestmode')),
+            new TwigFunction('route_exists', array($this, 'routeExists')),
         );
     }
 
@@ -210,5 +216,22 @@ class CoopCycleExtension extends AbstractExtension
         $now = Carbon::now();
 
         return $day === strtolower($now->englishDayOfWeek) && $openingHoursForDay->isOpenAt(Time::fromDateTime($now));
+    }
+
+    public function routeExists($routeName)
+    {
+        // https://symfony.com/doc/current/routing.html#checking-if-a-route-exists
+
+        try {
+
+            $url = $this->router->generate($routeName);
+
+            return true;
+
+        } catch (RouteNotFoundException $e) {
+            // the route is not defined...
+        }
+
+        return false;
     }
 }
