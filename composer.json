@@ -120,7 +120,8 @@
         "nucleos/user-bundle": "1.10.x-dev",
         "nucleos/profile-bundle": "1.5.x-dev",
         "twig/cache-extra": "^3.3",
-        "geocoder-php/google-maps-provider": "^4.6"
+        "geocoder-php/google-maps-provider": "^4.6",
+        "symfony/redis-messenger": "^5.3"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
