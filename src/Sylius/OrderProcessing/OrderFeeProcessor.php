@@ -146,6 +146,15 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             $businessAmount += $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT);
         }
 
+        // If the order contains LoopEat lunchboxes,
+        // the platform collects the processing fees.
+        if ($order->isLoopeat()) {
+            $reusablePackagingTotal = $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT);
+            if ($reusablePackagingTotal > 0) {
+                $businessAmount += $reusablePackagingTotal;
+            }
+        }
+
         $feeAdjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::FEE_ADJUSTMENT,
             $this->translator->trans('order.adjustment_type.platform_fees'),

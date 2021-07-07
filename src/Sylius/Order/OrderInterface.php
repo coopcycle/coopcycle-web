@@ -212,4 +212,8 @@ interface OrderInterface extends
     public function getFulfillmentMethodObject(): ?FulfillmentMethod;
 
     public function getAlcoholicItemsTotal(): int;
+
+    public function isLoopeat(): bool;
+
+    public function getTipAmount();
 }

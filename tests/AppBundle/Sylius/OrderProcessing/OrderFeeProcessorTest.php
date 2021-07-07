@@ -8,17 +8,19 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Vendor;
 use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
+use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Sylius\Component\Order\Model\Adjustment;
-use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Promotion\Model\PromotionAction;
@@ -537,5 +539,42 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $this->assertEquals(350, $order->getFeeTotal());
         $this->assertEquals(350, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
+    }
+
+    public function testOrderWithLoopeatProcessingFee()
+    {
+        $contract = self::createContract(500, 0, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = $this->prophesize(OrderInterface::class); // new Order();
+        $order->hasVendor()->willReturn(true);
+        $order->getVendor()->willReturn(Vendor::withRestaurant($restaurant));
+        $order->isTakeAway()->willReturn(false);
+        $order->getItemsTotal()->willReturn(2000);
+
+        $order->getAdjustments(AdjustmentInterface::TIP_ADJUSTMENT)
+            ->willReturn(new ArrayCollection([]));
+
+        $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)
+            ->willReturn(new ArrayCollection([]));
+
+        $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)
+            ->willReturn(0);
+
+        $order->getTipAmount()->willReturn(null);
+
+        $order->isLoopeat()->willReturn(true);
+        $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
+            ->willReturn(90);
+
+        $order->removeAdjustments(Argument::type('string'))->shouldBeCalled();
+
+        $this->orderFeeProcessor->process($order->reveal());
+
+        $order->addAdjustment(Argument::that(function ($adjustment) {
+            return 590 === $adjustment->getAmount();
+        }))->shouldHaveBeenCalled();
     }
 }
