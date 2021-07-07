@@ -25,7 +25,10 @@
       } %}
       <hr>
     {% endif %}
-    <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+    <div class="sticky-buttons">
+      <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+    </div>
+
   {{ form_end(embed_settings_form) }}
 
 {% endblock %}

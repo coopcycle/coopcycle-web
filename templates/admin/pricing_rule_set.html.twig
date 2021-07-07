@@ -48,10 +48,12 @@
         <i class="fa fa-plus"></i> {% trans %}adminDashboard.pricing.addRule{% endtrans %}
       </button>
     </div>
+    <div class="sticky-buttons">
+      <button type="submit" class="btn btn-block btn-lg btn-primary">
+        {% trans %}basics.save{% endtrans %}
+      </button>
+    </div>
 
-    <button type="submit" class="btn btn-block btn-lg btn-primary">
-      {% trans %}basics.save{% endtrans %}
-    </button>
 
   {{ form_end(form) }}
 

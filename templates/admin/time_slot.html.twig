@@ -59,9 +59,12 @@
     {{ form_row(form.openingHours, { attr: { 'data-errors': opening_hours_errors|json_encode } }) }}
   </div>
   <hr>
-  <button type="submit" class="btn btn-lg btn-block btn-primary">
-    {{ 'basics.save'|trans }}
-  </button>
+  <div class="sticky-buttons">
+    <button type="submit" class="btn btn-lg btn-block btn-primary">
+      {{ 'basics.save'|trans }}
+    </button>
+  </div>
+
 {{ form_end(form) }}
 {% endblock %}
 

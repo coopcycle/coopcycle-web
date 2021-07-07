@@ -82,9 +82,11 @@
       {% trans with { '%products_url%': path(products_route, { id: restaurant.id }) } %}form.menu_editor.products.help{% endtrans %}
     </p>
 
-    <button type="submit" class="btn btn-block btn-lg btn-primary">
+    <div class="sticky-buttons">
+      <button type="submit" class="btn btn-block btn-lg btn-primary">
       {{ 'form.menu_editor.save.label'|trans }}
-    </button>
+      </button>
+    </div>  
 
     {# Useful for debugging #}
     {% set debug_menu_editor = false %}
