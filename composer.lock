@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ba21f43a314ec289c72fbb51d76cd937",
+    "content-hash": "eadd10d40c8766294cbd538c8641a02c",
     "packages": [
         {
             "name": "api-platform/core",
@@ -16234,16 +16234,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v5.2.6",
+            "version": "v5.2.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "f52424eb407dc67f164afed33a514da1ebbfab10"
+                "reference": "3552d33cac808741658b6d09866fb1ada92f6fd8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/f52424eb407dc67f164afed33a514da1ebbfab10",
-                "reference": "f52424eb407dc67f164afed33a514da1ebbfab10",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/3552d33cac808741658b6d09866fb1ada92f6fd8",
+                "reference": "3552d33cac808741658b6d09866fb1ada92f6fd8",
                 "shasum": ""
             },
             "require": {
@@ -16369,7 +16369,7 @@
                 "cache/integration-tests": "dev-master",
                 "composer/package-versions-deprecated": "^1.8",
                 "doctrine/annotations": "^1.10.4",
-                "doctrine/cache": "~1.6",
+                "doctrine/cache": "^1.6|^2.0",
                 "doctrine/collections": "~1.0",
                 "doctrine/data-fixtures": "^1.1",
                 "doctrine/dbal": "^2.10|^3.0",
@@ -16434,7 +16434,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/symfony/issues",
-                "source": "https://github.com/symfony/symfony/tree/v5.2.6"
+                "source": "https://github.com/symfony/symfony/tree/v5.2.9"
             },
             "funding": [
                 {
@@ -16450,7 +16450,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-03-29T05:17:12+00:00"
+            "time": "2021-05-19T12:23:59+00:00"
         },
         {
             "name": "symfony/webpack-encore-bundle",
