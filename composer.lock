@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ba21f43a314ec289c72fbb51d76cd937",
+    "content-hash": "be38540ba5ec2fcee2c5255226d4b3bf",
     "packages": [
         {
             "name": "api-platform/core",
@@ -4332,16 +4332,16 @@
         },
         {
             "name": "gesdinet/jwt-refresh-token-bundle",
-            "version": "v0.11.1",
+            "version": "v0.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/markitosgv/JWTRefreshTokenBundle.git",
-                "reference": "81f15cca6690c77f591d7d903775fd3da8778829"
+                "reference": "4a7109df39b84b5bc41e6ee16da8cdcb9e0093fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/markitosgv/JWTRefreshTokenBundle/zipball/81f15cca6690c77f591d7d903775fd3da8778829",
-                "reference": "81f15cca6690c77f591d7d903775fd3da8778829",
+                "url": "https://api.github.com/repos/markitosgv/JWTRefreshTokenBundle/zipball/4a7109df39b84b5bc41e6ee16da8cdcb9e0093fb",
+                "reference": "4a7109df39b84b5bc41e6ee16da8cdcb9e0093fb",
                 "shasum": ""
             },
             "require": {
@@ -4383,9 +4383,9 @@
             ],
             "support": {
                 "issues": "https://github.com/markitosgv/JWTRefreshTokenBundle/issues",
-                "source": "https://github.com/markitosgv/JWTRefreshTokenBundle/tree/v0.11.1"
+                "source": "https://github.com/markitosgv/JWTRefreshTokenBundle/tree/v0.12.0"
             },
-            "time": "2021-03-05T10:21:49+00:00"
+            "time": "2021-04-23T16:47:20+00:00"
         },
         {
             "name": "giggsey/libphonenumber-for-php",
@@ -16066,6 +16066,85 @@
             "time": "2021-02-19T12:13:01+00:00"
         },
         {
+            "name": "symfony/polyfill-php81",
+            "version": "v1.23.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php81.git",
+                "reference": "e66119f3de95efc359483f810c4c3e6436279436"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php81/zipball/e66119f3de95efc359483f810c4c3e6436279436",
+                "reference": "e66119f3de95efc359483f810c4c3e6436279436",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "1.23-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php81\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ],
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.1+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php81/tree/v1.23.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2021-05-21T13:25:03+00:00"
+        },
+        {
             "name": "symfony/polyfill-uuid",
             "version": "v1.23.0",
             "source": {
@@ -16234,16 +16313,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v5.2.6",
+            "version": "v5.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "f52424eb407dc67f164afed33a514da1ebbfab10"
+                "reference": "dbd559ff851c680b7967ff46355b89c50713ae45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/f52424eb407dc67f164afed33a514da1ebbfab10",
-                "reference": "f52424eb407dc67f164afed33a514da1ebbfab10",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/dbd559ff851c680b7967ff46355b89c50713ae45",
+                "reference": "dbd559ff851c680b7967ff46355b89c50713ae45",
                 "shasum": ""
             },
             "require": {
@@ -16266,12 +16345,16 @@
                 "symfony/polyfill-mbstring": "~1.0",
                 "symfony/polyfill-php73": "^1.11",
                 "symfony/polyfill-php80": "^1.15",
+                "symfony/polyfill-php81": "^1.22",
                 "symfony/polyfill-uuid": "^1.15",
                 "twig/twig": "^2.13|^3.0.4"
             },
             "conflict": {
+                "async-aws/core": "<1.5",
+                "doctrine/annotations": "<1.12",
                 "doctrine/dbal": "<2.10",
                 "egulias/email-validator": "~3.0.0",
+                "ext-psr": "<1.1|>=2",
                 "masterminds/html5": "<2.6",
                 "ocramius/proxy-manager": "<2.1",
                 "phpdocumentor/reflection-docblock": "<3.2.2",
@@ -16290,12 +16373,11 @@
                 "psr/simple-cache-implementation": "1.0",
                 "symfony/cache-implementation": "1.0|2.0",
                 "symfony/event-dispatcher-implementation": "2.0",
-                "symfony/http-client-implementation": "2.2",
+                "symfony/http-client-implementation": "2.4",
                 "symfony/service-implementation": "1.0|2.0",
                 "symfony/translation-implementation": "2.3"
             },
             "replace": {
-                "symfony/amazon-mailer": "self.version",
                 "symfony/asset": "self.version",
                 "symfony/browser-kit": "self.version",
                 "symfony/cache": "self.version",
@@ -16314,7 +16396,6 @@
                 "symfony/finder": "self.version",
                 "symfony/form": "self.version",
                 "symfony/framework-bundle": "self.version",
-                "symfony/google-mailer": "self.version",
                 "symfony/http-client": "self.version",
                 "symfony/http-foundation": "self.version",
                 "symfony/http-kernel": "self.version",
@@ -16322,15 +16403,13 @@
                 "symfony/intl": "self.version",
                 "symfony/ldap": "self.version",
                 "symfony/lock": "self.version",
-                "symfony/mailchimp-mailer": "self.version",
                 "symfony/mailer": "self.version",
-                "symfony/mailgun-mailer": "self.version",
                 "symfony/messenger": "self.version",
                 "symfony/mime": "self.version",
                 "symfony/monolog-bridge": "self.version",
                 "symfony/notifier": "self.version",
                 "symfony/options-resolver": "self.version",
-                "symfony/postmark-mailer": "self.version",
+                "symfony/password-hasher": "self.version",
                 "symfony/process": "self.version",
                 "symfony/property-access": "self.version",
                 "symfony/property-info": "self.version",
@@ -16343,7 +16422,6 @@
                 "symfony/security-guard": "self.version",
                 "symfony/security-http": "self.version",
                 "symfony/semaphore": "self.version",
-                "symfony/sendgrid-mailer": "self.version",
                 "symfony/serializer": "self.version",
                 "symfony/stopwatch": "self.version",
                 "symfony/string": "self.version",
@@ -16368,12 +16446,11 @@
                 "async-aws/sqs": "^1.0",
                 "cache/integration-tests": "dev-master",
                 "composer/package-versions-deprecated": "^1.8",
-                "doctrine/annotations": "^1.10.4",
-                "doctrine/cache": "~1.6",
+                "doctrine/annotations": "^1.12",
+                "doctrine/cache": "^1.6|^2.0",
                 "doctrine/collections": "~1.0",
                 "doctrine/data-fixtures": "^1.1",
                 "doctrine/dbal": "^2.10|^3.0",
-                "doctrine/doctrine-bundle": "^2.0",
                 "doctrine/orm": "^2.7.3",
                 "egulias/email-validator": "^2.1.10|^3.1",
                 "guzzlehttp/promises": "^1.4",
@@ -16387,7 +16464,9 @@
                 "predis/predis": "~1.1",
                 "psr/http-client": "^1.0",
                 "psr/simple-cache": "^1.0",
+                "symfony/mercure-bundle": "^0.3",
                 "symfony/phpunit-bridge": "^5.2",
+                "symfony/runtime": "self.version",
                 "symfony/security-acl": "~2.8|~3.0",
                 "twig/cssinliner-extra": "^2.12|^3",
                 "twig/inky-extra": "^2.12|^3",
@@ -16434,7 +16513,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/symfony/issues",
-                "source": "https://github.com/symfony/symfony/tree/v5.2.6"
+                "source": "https://github.com/symfony/symfony/tree/v5.3.3"
             },
             "funding": [
                 {
@@ -16450,7 +16529,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-03-29T05:17:12+00:00"
+            "time": "2021-06-30T08:28:04+00:00"
         },
         {
             "name": "symfony/webpack-encore-bundle",
