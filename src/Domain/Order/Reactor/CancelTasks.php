@@ -22,7 +22,8 @@ class CancelTasks
             return;
         }
 
-        $this->taskManager->cancel($order->getDelivery()->getPickup());
-        $this->taskManager->cancel($order->getDelivery()->getDropoff());
+        foreach ($order->getDelivery()->getTasks() as $task) {
+            $this->taskManager->cancel($task);
+        }
     }
 }
