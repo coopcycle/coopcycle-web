@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
 import { createStore } from 'redux'
@@ -94,7 +96,7 @@ function createAddressWidget(name, type, cb) {
 
       store.dispatch({
         type: 'SET_ADDRESS',
-        taskType: type,
+        taskIndex: parseInt(type.replace('tasks_', ''), 10),
         address
       })
     },
@@ -103,7 +105,7 @@ function createAddressWidget(name, type, cb) {
       showRememberAddress(name, type)
       store.dispatch({
         type: 'CLEAR_ADDRESS',
-        taskType: type,
+        taskIndex: parseInt(type.replace('tasks_', ''), 10),
       })
     }
   })
@@ -126,6 +128,10 @@ function getDatePickerKey(name, type) {
   }
 
   return 'before'
+}
+
+function getTaskType(name, type) {
+  return document.querySelector(`#${name}_${type}_type`).value.toUpperCase()
 }
 
 function createDatePickerWidget(name, type) {
@@ -249,12 +255,16 @@ function parseWeight(value) {
 function reducer(state = {}, action) {
   switch (action.type) {
   case 'SET_ADDRESS':
+
+    const newTasks = state.tasks.slice()
+    newTasks[action.taskIndex] = {
+      ...newTasks[action.taskIndex],
+      address: action.address
+    }
+
     return {
       ...state,
-      [ action.taskType ]: {
-        ...state[action.taskType],
-        address: action.address
-      }
+      tasks: newTasks,
     }
   case 'SET_TIME_SLOT':
     return {
@@ -285,7 +295,13 @@ function reducer(state = {}, action) {
   case 'CLEAR_ADDRESS':
     return {
       ...state,
-      [ action.taskType ]: _.omit({ ...state[action.taskType] }, ['address'])
+      tasks: state.tasks.map((task, index) => {
+        if (index === action.taskIndex) {
+          return _.omit({ ...task }, ['address'])
+        }
+
+        return task
+      }),
     }
   default:
     return state
@@ -313,22 +329,41 @@ export default function(name, options) {
     let preloadedState = {
       store: `/api/stores/${storeId}`, // FIXME The data attribute should contain the IRI
       weight: weightEl ? parseWeight(weightEl.value) : 0,
-      pickup: {
-        address: null,
-        [ getDatePickerKey(name, 'pickup') ]: getDatePickerValue(name, 'pickup')
-      },
-      dropoff: {
-        address: null,
-        [ getDatePickerKey(name, 'dropoff') ]: getDatePickerValue(name, 'dropoff')
-      },
+      tasks: [],
       packages: []
     }
 
-    createAddressWidget(name, 'pickup', address => preloadedState.pickup.address = address)
-    createDatePickerWidget(name, 'pickup')
+    // tasks_0, tasks_1...
+    const taskForms = Array.from(el.querySelectorAll('[data-form="task"]'))
 
-    createAddressWidget(name, 'dropoff', address => preloadedState.dropoff.address = address)
-    createDatePickerWidget(name, 'dropoff')
+    taskForms.forEach((taskEl, index) => {
+
+      const taskForm = taskEl.getAttribute('id').replace(name + '_', '')
+
+      const task = {
+        type: getTaskType(name, taskForm),
+        address: null,
+        [ getDatePickerKey(name, taskForm) ]: getDatePickerValue(name, taskForm)
+      }
+
+      preloadedState.tasks.push(task)
+
+      createAddressWidget(name, taskForm, address => {
+        const index = preloadedState.tasks.indexOf(task)
+        if (-1 !== index) {
+          preloadedState.tasks[index].address = address
+        }
+      })
+      createDatePickerWidget(name, taskForm)
+
+      const tagsEl = document.querySelector(`#${name}_${taskForm}_tagsAsString`)
+      if (tagsEl) {
+        // TODO Avoid doing twice
+        $.getJSON(window.Routing.generate('admin_tags', { format: 'json' }), function(tags) {
+          createTagsWidget(name, taskForm, tags)
+        })
+      }
+    })
 
     store = createStore(reducer, preloadedState)
 
@@ -342,16 +377,6 @@ export default function(name, options) {
           value: parseWeight(e.target.value)
         })
       }, 350))
-    }
-
-    const pickupTagsEl = document.querySelector(`#${name}_pickup_tagsAsString`)
-    const dropoffTagsEl = document.querySelector(`#${name}_dropoff_tagsAsString`)
-
-    if (pickupTagsEl && dropoffTagsEl) {
-      $.getJSON(window.Routing.generate('admin_tags', { format: 'json' }), function(tags) {
-        createTagsWidget(name, 'pickup', tags)
-        createTagsWidget(name, 'dropoff', tags)
-      })
     }
 
     new ClipboardJS('#copy', {
@@ -369,6 +394,7 @@ export default function(name, options) {
 
     el.addEventListener('submit', (e) => {
 
+      // TODO Don't hardcode
       _.find(['pickup', 'dropoff'], type => {
 
         const isNewAddrInput = document.querySelector(`#${name}_${type}_address_isNewAddress`)
