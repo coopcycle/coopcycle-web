@@ -97,7 +97,7 @@ class TaskList extends React.Component {
     const avatarURL = window.Routing.generate('user_avatar', { username })
 
     return (
-      <AccordionItem>
+      <AccordionItem uuid={username} >
         <AccordionItemHeading>
           <AccordionItemButton>
             <span>
