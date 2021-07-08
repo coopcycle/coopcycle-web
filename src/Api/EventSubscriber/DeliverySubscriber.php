@@ -147,10 +147,8 @@ final class DeliverySubscriber implements EventSubscriberInterface
 
         $delivery = $event->getControllerResult();
 
-        $distance = $this->routing->getDistance(
-            $delivery->getPickup()->getAddress()->getGeo(),
-            $delivery->getDropoff()->getAddress()->getGeo()
-        );
+        $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
+        $distance = $this->routing->getDistance(...$coords);
 
         $delivery->setDistance(ceil($distance));
     }
