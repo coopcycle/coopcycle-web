@@ -112,8 +112,8 @@ const renderPriceChoice = (item) => {
         >
         <PricePerPackageEditor
           defaultValue={ pricePerPackageDefaultValue }
-          onChange={ ({ packageName, unitPrice }) => {
-            $input.val(`packages.quantity("${packageName}") * ${unitPrice}`)
+          onChange={ ({ packageName, unitPrice, offset, discountPrice }) => {
+            $input.val(`price_per_package(packages, "${packageName}", ${unitPrice}, ${offset}, ${discountPrice})`)
           }}
           packages={ packages }
           />

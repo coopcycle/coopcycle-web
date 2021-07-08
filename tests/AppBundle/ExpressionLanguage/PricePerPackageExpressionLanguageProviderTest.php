@@ -21,17 +21,18 @@ class PricePerPackageExpressionLanguageProviderTest extends TestCase
     public function returnValueProvider()
     {
         return [
-            [  1,    1240 ],
-            [  2,    2480 ],
-            [  3,    2900 ],
-            [  4,    3320 ],
+            [ 'price_per_package(packages, "XXL", 1240, 2, 420)', 1, 1240 ],
+            [ 'price_per_package(packages, "XXL", 1240, 2, 420)', 2, 1660 ],
+            [ 'price_per_package(packages, "XXL", 1240, 2, 420)', 3, 2080 ],
+            [ 'price_per_package(packages, "XXL", 1240, 2, 420)', 4, 2500 ],
+            [ 'price_per_package(packages, "XXL", 1240, 0, 420)', 4, 4960 ],
         ];
     }
 
     /**
      * @dataProvider returnValueProvider
      */
-    public function testReturnValue($quantity, $expectedValue)
+    public function testReturnValue($expression, $quantity, $expectedValue)
     {
         $this->language->registerProvider(new PricePerPackageExpressionLanguageProvider());
 
@@ -41,7 +42,7 @@ class PricePerPackageExpressionLanguageProviderTest extends TestCase
 
         $delivery->addPackageWithQuantity($package, $quantity);
 
-        $value = $this->language->evaluate('price_per_package(packages, "XXL", 1240, 2, 420)', [
+        $value = $this->language->evaluate($expression, [
             'packages' => new PackagesResolver($delivery),
         ]);
 

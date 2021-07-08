@@ -186,10 +186,12 @@ export class PriceRange extends Price {
 }
 
 export class PricePerPackage extends Price {
-  constructor(packageName, unitPrice) {
+  constructor(packageName, unitPrice, offset, discountPrice) {
     super()
     this.packageName = packageName
     this.unitPrice = unitPrice
+    this.offset = offset
+    this.discountPrice = discountPrice
   }
 }
 
@@ -230,6 +232,18 @@ const parsePriceNode = (node, expression) => {
     const unitPrice = node.nodes.right.attributes.value
 
     return new PricePerPackage(packageName, unitPrice)
+  }
+
+  if (node.attributes.name === 'price_per_package') {
+
+    const args = node.nodes.arguments.nodes
+
+    const packageName   = args[1].attributes.value
+    const unitPrice     = args[2].attributes.value
+    const offset        = args[3].attributes.value
+    const discountPrice = args[4].attributes.value
+
+    return new PricePerPackage(packageName, unitPrice, offset, discountPrice)
   }
 
   if (node.nodes.length === 0 && typeof node.attributes.value === 'number') {

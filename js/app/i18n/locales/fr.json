@@ -233,7 +233,10 @@
             "TYPE_FIXED": "Prix fixe",
             "TYPE_RANGE": "Prix par tranches",
             "TYPE_PER_PACKAGE": "Prix par paquet",
-            "PER_PACKAGE": "par paquet"
+            "PER_PACKAGE": "par paquet",
+            "PER_PACKAGE_STARTING": "à partir de",
+            "PER_PACKAGE_ADD_DISCOUNT": "Ajouter une réduction",
+            "PER_PACKAGE_DEL_DISCOUNT": "Supprimer la réduction"
         },
         "CASH_ON_DELIVERY_DISCLAIMER": "Vous allez payer en contre-remboursement. Veuillez préparer le montant exact en espèces et assurez-vous d'être joignable."
     }

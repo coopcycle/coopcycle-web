@@ -18,10 +18,16 @@ class PricePerPackageExpressionLanguageProvider implements ExpressionFunctionPro
 
             $quantity = $packages->quantity($packageName);
 
-            $rest = $quantity - $offset;
+            // Means no discount
+            if (0 === $offset) {
+
+                return $basePrice * $quantity;
+            }
+
+            $rest = $quantity - ($offset - 1);
             $rest = $rest < 0 ? 0 : $rest;
 
-            $quantityWithBasePrice = min($quantity, $offset);
+            $quantityWithBasePrice = min($quantity, ($offset - 1));
 
             return ($basePrice * $quantityWithBasePrice) + ($discountPrice * $rest);
         };
