@@ -1,0 +1,63 @@
+{
+  "nodes":{
+    "nodes":{
+      "left":{
+        "nodes":{
+          "node":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "name":"packages"
+            }
+          },
+          "attribute":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":"quantity"
+            }
+          },
+          "arguments":{
+            "nodes":[
+              {
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":0
+                }
+              },
+              {
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":"XXL"
+                }
+              }
+            ],
+            "attributes":[
+
+            ]
+          }
+        },
+        "attributes":{
+          "type":2
+        }
+      },
+      "right":{
+        "nodes":[
+
+        ],
+        "attributes":{
+          "value":240
+        }
+      }
+    },
+    "attributes":{
+      "operator":"*"
+    }
+  }
+}
