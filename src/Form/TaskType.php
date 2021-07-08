@@ -18,6 +18,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaskType extends AbstractType
@@ -32,14 +33,10 @@ class TaskType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $addressBookOptions = [
-            'label' => $options['street_address_label'],
+            'label' => 'form.task.address.label',
             'with_addresses' => $options['with_addresses'],
             'with_remember_address' => $options['with_remember_address'],
         ];
-
-        if (isset($options['address_placeholder']) && !empty($options['address_placeholder'])) {
-            $addressBookOptions['new_address_placeholder'] = $options['address_placeholder'];
-        }
 
         $builder
             ->add('type', ChoiceType::class, [
@@ -150,11 +147,24 @@ class TaskType extends AbstractType
             'can_edit_type' => true,
             'with_tags' => true,
             'with_addresses' => [],
-            'address_placeholder' => null,
             'with_recipient_details' => false,
             'with_doorstep' => false,
-            'street_address_label' => 'form.task.address.label',
             'with_remember_address' => false,
         ));
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $taskType = strtolower($view->vars['value']->getType());
+
+        $view->children['address']->vars['label'] =
+            sprintf('form.delivery.%s.label', $taskType);
+
+        $streetAddress = $view->children['address']->children['newAddress']->children['streetAddress'];
+
+        $streetAddress->vars['attr'] = array_merge(
+            $streetAddress->vars['attr'] ?? [],
+            [ 'placeholder' => sprintf('form.delivery.%s.address_placeholder', $taskType) ]
+        );
     }
 }
