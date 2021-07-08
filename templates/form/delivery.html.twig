@@ -9,7 +9,8 @@ col-md-9
 {%- endblock form_group_class %}
 
 {% block task_row %}
-<div id="{{ form.vars.id }}">
+<div id="{{ form.vars.id }}"
+  class="delivery__form__task delivery__form__task--{{ form.vars.data.type|lower }}">
   {{ form_widget(form) }}
 </div>
 {% endblock %}
