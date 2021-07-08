@@ -35,7 +35,7 @@ class PriceRangeExpressionLanguageProviderTest extends TestCase
     {
         $this->language->registerProvider(new PriceRangeExpressionLanguageProvider());
 
-        $value = $this->language->evaluate(sprintf('price_range(distance, 450, 2000, 2500)', ), [
+        $value = $this->language->evaluate('price_range(distance, 450, 2000, 2500)', [
             'distance' => $distance,
         ]);
 

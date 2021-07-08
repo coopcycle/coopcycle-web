@@ -1,4 +1,4 @@
-import parsePricingRule, { parseAST, parsePriceAST, FixedPrice, PriceRange, RawPriceExpression } from '../pricing-rule-parser'
+import parsePricingRule, { parseAST, parsePriceAST, FixedPrice, PriceRange, PricePerPackage, RawPriceExpression } from '../pricing-rule-parser'
 import withZone from './with-zone.json'
 
 import withPackages from './with-packages.json'
@@ -10,6 +10,8 @@ import withOrderItemsTotalRange from './with-order-items-total-range.json'
 import fixedPrice from './fixed-price.json'
 import priceRange from './price-range.json'
 import rawPriceFormula from './raw-price-formula.json'
+import pricePerPackageFormula from './price-per-package.json'
+import pricePerPackageFunctionFormula from './price-per-package-function.json'
 
 describe('Pricing rule parser', function() {
 
@@ -289,6 +291,22 @@ describe('Pricing rule price parser (AST)', function() {
     expect(result.price).toBe(450);
     expect(result.step).toBe(2000);
     expect(result.threshold).toBe(2500);
+  })
+
+  it('should parse price per package', function() {
+    const result = parsePriceAST(pricePerPackageFormula, 'packages.quantity("XXL") * 240')
+    expect(result).toBeInstanceOf(PricePerPackage);
+    expect(result.packageName).toBe('XXL');
+    expect(result.unitPrice).toBe(240);
+  })
+
+  it('should parse price per package function', function() {
+    const result = parsePriceAST(pricePerPackageFunctionFormula, 'price_per_package(packages, "XXL", 1240, 3, 210)')
+    expect(result).toBeInstanceOf(PricePerPackage);
+    expect(result.packageName).toBe('XXL');
+    expect(result.unitPrice).toBe(1240);
+    expect(result.offset).toBe(3);
+    expect(result.discountPrice).toBe(210);
   })
 
   it('should parse raw formula', function() {

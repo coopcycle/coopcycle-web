@@ -6,8 +6,9 @@ import classNames from 'classnames'
 
 import RulePicker from '../components/RulePicker'
 import PriceRangeEditor from '../components/PriceRangeEditor'
+import PricePerPackageEditor from '../components/PricePerPackageEditor'
 import './pricing-rules.scss'
-import { parsePriceAST, PriceRange, FixedPrice } from './pricing-rule-parser'
+import { parsePriceAST, PriceRange, FixedPrice, PricePerPackage } from './pricing-rule-parser'
 import i18n from '../i18n'
 
 const PriceChoice = ({ defaultValue, onChange }) => {
@@ -18,6 +19,7 @@ const PriceChoice = ({ defaultValue, onChange }) => {
     <select onChange={ e => onChange(e.target.value) } defaultValue={ defaultValue }>
       <option value="fixed">{ t('PRICE_RANGE_EDITOR.TYPE_FIXED') }</option>
       <option value="range">{ t('PRICE_RANGE_EDITOR.TYPE_RANGE') }</option>
+      <option value="per_package">{ t('PRICE_RANGE_EDITOR.TYPE_PER_PACKAGE') }</option>
     </select>
   )
 }
@@ -62,8 +64,10 @@ const renderPriceChoice = (item) => {
   let priceType = 'fixed'
 
   const rangeEditorRef = React.createRef()
+  const pricePerPackageEditorRef = React.createRef()
 
   let priceRangeDefaultValue = {}
+  let pricePerPackageDefaultValue = {}
 
   if (price instanceof PriceRange) {
     priceType = 'range'
@@ -71,10 +75,19 @@ const renderPriceChoice = (item) => {
     priceRangeDefaultValue = price
   }
 
-  const $parent = $input.parent()
-  const $container = $('<div />')
+  if (price instanceof PricePerPackage) {
+    priceType = 'per_package'
+    $input.addClass('d-none')
+    pricePerPackageDefaultValue = price
+  }
 
-  $container.appendTo($parent)
+  const $parent = $input.parent()
+
+  const $priceRangeEditorContainer = $('<div />')
+  const $pricePerPackageEditorContainer = $('<div />')
+
+  $priceRangeEditorContainer.appendTo($parent)
+  $pricePerPackageEditorContainer.appendTo($parent)
 
   render(
     <I18nextProvider i18n={ i18n }>
@@ -88,7 +101,25 @@ const renderPriceChoice = (item) => {
           }} />
       </div>
     </I18nextProvider>,
-    $container[0]
+    $priceRangeEditorContainer[0]
+  )
+
+  render(
+    <I18nextProvider i18n={ i18n }>
+      <div
+        ref={ pricePerPackageEditorRef }
+        className={ classNames({ 'd-none': priceType !== 'per_package' }) }
+        >
+        <PricePerPackageEditor
+          defaultValue={ pricePerPackageDefaultValue }
+          onChange={ ({ packageName, unitPrice, offset, discountPrice }) => {
+            $input.val(`price_per_package(packages, "${packageName}", ${unitPrice}, ${offset}, ${discountPrice})`)
+          }}
+          packages={ packages }
+          />
+      </div>
+    </I18nextProvider>,
+    $pricePerPackageEditorContainer[0]
   )
 
   render(
@@ -99,11 +130,21 @@ const renderPriceChoice = (item) => {
           switch (value) {
             case 'range':
               $input.addClass('d-none')
+              pricePerPackageEditorRef.current.classList.add('d-none')
+
               rangeEditorRef.current.classList.remove('d-none')
+              break
+            case 'per_package':
+              $input.addClass('d-none')
+              rangeEditorRef.current.classList.add('d-none')
+
+              pricePerPackageEditorRef.current.classList.remove('d-none')
               break
             case 'fixed':
             default:
               rangeEditorRef.current.classList.add('d-none')
+              pricePerPackageEditorRef.current.classList.add('d-none')
+
               $input.removeClass('d-none')
           }
         }} />

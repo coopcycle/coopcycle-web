@@ -1,0 +1,56 @@
+{
+  "nodes":{
+    "nodes":{
+      "arguments":{
+        "nodes":[
+          {
+            "nodes":[
+
+            ],
+            "attributes":{
+              "name":"packages"
+            }
+          },
+          {
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":"XXL"
+            }
+          },
+          {
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":1240
+            }
+          },
+          {
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":3
+            }
+          },
+          {
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":210
+            }
+          }
+        ],
+        "attributes":[
+
+        ]
+      }
+    },
+    "attributes":{
+      "name":"price_per_package"
+    }
+  }
+}
