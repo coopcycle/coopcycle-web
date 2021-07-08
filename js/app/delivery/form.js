@@ -95,6 +95,10 @@ function serializeAddress(address) {
   }
 }
 
+if (document.getElementById('map')) {
+  map = MapHelper.init('map')
+}
+
 form = new DeliveryForm('delivery', {
   onReady: function(delivery) {
     if (delivery.pickup.address) {
@@ -187,8 +191,4 @@ if (priceEl) {
       $('form[name="delivery"]').LoadingOverlay('hide')
       pricePreview = new PricePreview(priceEl, { token: result.jwt })
     })
-}
-
-if (document.getElementById('map')) {
-  map = MapHelper.init('map')
 }
