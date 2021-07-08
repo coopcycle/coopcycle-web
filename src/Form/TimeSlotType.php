@@ -37,9 +37,17 @@ class TimeSlotType extends AbstractType
             ->add('interval', ChoiceType::class, [
                 'label' => 'form.time_slot.interval.label',
                 'choices'  => [
+                    $this->translator->trans('basics.days', ['%count%' => 0]) => 'same day'
+                    $this->translator->trans('basics.days', ['%count%' => 1]) => '1 days',
                     $this->translator->trans('basics.days', ['%count%' => 2]) => '2 days',
                     $this->translator->trans('basics.days', ['%count%' => 3]) => '3 days',
-                    $this->translator->trans('basics.weeks', ['%count%' => 1]) => '1 week',
+                    $this->translator->trans('basics.weeks',['%count%' => 4]) => '4 days',
+                    $this->translator->trans('basics.weeks',['%count%' => 4]) => '5 days',
+                    $this->translator->trans('basics.weeks',['%count%' => 4]) => '6 days',
+                    $this->translator->trans('basics.weeks',['%count%' => 4]) => '7 days',
+                    $this->translator->trans('basics.weeks',['%count%' => 8]) => '8 days',
+                    $this->translator->trans('basics.weeks',['%count%' => 9]) => '9 days',
+                    $this->translator->trans('basics.weeks',['%count%' => 10]) => '10 days',
                 ],
             ])
             ->add('workingDaysOnly', CheckboxType::class, [
