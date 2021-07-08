@@ -18,16 +18,16 @@ let markers = {
 
 function route(delivery) {
 
-  const { pickup, dropoff } = delivery
-
-  if (!pickup.address || !dropoff.address) {
+  if (!isValid(delivery)) {
     return Promise.reject('Missing pickup.address and/or dropoff.address')
   }
 
-  return MapHelper.route([
-    [ pickup.address.geo.latitude, pickup.address.geo.longitude ],
-    [ dropoff.address.geo.latitude, dropoff.address.geo.longitude ]
-  ])
+  const coords = delivery.tasks.map(t => ([
+    t.address.geo.latitude,
+    t.address.geo.longitude
+  ]))
+
+  return MapHelper.route(coords)
     .then(route => {
 
       var distance = parseInt(route.distance, 10)
@@ -95,48 +95,41 @@ function serializeAddress(address) {
   }
 }
 
+function isValid(delivery) {
+  const tasksWithoutAddress = _.filter(delivery.tasks, t => _.isEmpty(t.address))
+
+  return tasksWithoutAddress.length === 0
+}
+
 if (document.getElementById('map')) {
   map = MapHelper.init('map')
 }
 
 form = new DeliveryForm('delivery', {
   onReady: function(delivery) {
-    if (delivery.pickup.address) {
-      createMarker({
-        latitude: delivery.pickup.address.geo.latitude,
-        longitude: delivery.pickup.address.geo.longitude
-      }, 'pickup')
-    }
-    if (delivery.dropoff.address) {
-      createMarker({
-        latitude: delivery.dropoff.address.geo.latitude,
-        longitude: delivery.dropoff.address.geo.longitude
-      }, 'dropoff')
-    }
+    delivery.tasks.forEach(task => {
+      if (task.address) {
+        createMarker({
+          latitude: task.address.geo.latitude,
+          longitude: task.address.geo.longitude
+        }, task.type.toLowerCase())
+      }
+    })
   },
   onChange: function(delivery) {
 
-    if (delivery.pickup.address) {
-      createMarker({
-        latitude: delivery.pickup.address.geo.latitude,
-        longitude: delivery.pickup.address.geo.longitude
-      }, 'pickup')
-      $('#delivery_pickup_panel_title').text(delivery.pickup.address.streetAddress)
-    } else {
-      removeMarker('pickup')
-    }
+    delivery.tasks.forEach(task => {
+      if (task.address) {
+        createMarker({
+          latitude: task.address.geo.latitude,
+          longitude: task.address.geo.longitude
+        }, task.type.toLowerCase())
+      } else {
+        removeMarker(task.type.toLowerCase())
+      }
+    })
 
-    if (delivery.dropoff.address) {
-      createMarker({
-        latitude: delivery.dropoff.address.geo.latitude,
-        longitude: delivery.dropoff.address.geo.longitude
-      }, 'dropoff')
-      $('#delivery_dropoff_panel_title').text(delivery.dropoff.address.streetAddress)
-    } else {
-      removeMarker('dropoff')
-    }
-
-    if (delivery.pickup.address && delivery.dropoff.address) {
+    if (isValid(delivery)) {
 
       this.disable()
 
@@ -149,16 +142,15 @@ form = new DeliveryForm('delivery', {
 
       const updatePrice = new Promise((resolve) => {
         if (delivery.store && pricePreview) {
+
+          const tasks = delivery.tasks.slice(0)
+
           const deliveryAsPayload = {
             ...delivery,
-            pickup: {
-              ...delivery.pickup,
-              address: serializeAddress(delivery.pickup.address)
-            },
-            dropoff: {
-              ...delivery.dropoff,
-              address: serializeAddress(delivery.dropoff.address)
-            }
+            tasks: tasks.map(t => ({
+              ...t,
+              address: serializeAddress(t.address)
+            }))
           }
 
           pricePreview.update(deliveryAsPayload).then(() => resolve())

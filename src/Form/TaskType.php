@@ -104,28 +104,38 @@ class TaskType extends AbstractType
             ]);
         }
 
-        if ($options['with_recipient_details']) {
-            $builder
-                ->add('telephone', PhoneNumberType::class, [
-                    'label' => 'form.task.telephone.label',
-                    'mapped' => false,
-                    'format' => PhoneNumberFormat::NATIONAL,
-                    'default_region' => strtoupper($this->country),
-                ])
-                ->add('recipient', TextType::class, [
-                    'label' => 'form.task.recipient.label',
-                    'help' => 'form.task.recipient.help',
-                    'mapped' => false,
-                ]);
-        }
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
-        if ($options['with_doorstep']) {
-            $builder
-                ->add('doorstep', CheckboxType::class, [
-                    'label' => 'form.task.dropoff.doorstep.label',
-                    'required' => false,
-                ]);
-        }
+            $form = $event->getForm();
+            $task = $event->getData();
+
+            if (Task::TYPE_DROPOFF !== $task->getType()) {
+                return;
+            }
+
+            if ($options['with_recipient_details']) {
+                $form
+                    ->add('telephone', PhoneNumberType::class, [
+                        'label' => 'form.task.telephone.label',
+                        'mapped' => false,
+                        'format' => PhoneNumberFormat::NATIONAL,
+                        'default_region' => strtoupper($this->country),
+                    ])
+                    ->add('recipient', TextType::class, [
+                        'label' => 'form.task.recipient.label',
+                        'help' => 'form.task.recipient.help',
+                        'mapped' => false,
+                    ]);
+            }
+
+            if ($options['with_doorstep']) {
+                $form
+                    ->add('doorstep', CheckboxType::class, [
+                        'label' => 'form.task.dropoff.doorstep.label',
+                        'required' => false,
+                    ]);
+            }
+        });
 
         if ($builder->has('tagsAsString')) {
             $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
@@ -188,6 +198,8 @@ class TaskType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $taskType = strtolower($view->vars['value']->getType());
+
+        $view->vars['label'] = sprintf('form.delivery.%s.label', $taskType);
 
         // Custom label based on task type
         $view->children['address']->vars['label'] =

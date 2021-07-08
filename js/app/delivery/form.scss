@@ -6,7 +6,10 @@
 @import "~font-awesome/scss/_animated.scss";
 
 .delivery__form__task {
+
   position: relative;
+  margin-bottom: 3em;
+
   @media (max-width: $screen-sm-max) {
     padding-top: 24px;
   }

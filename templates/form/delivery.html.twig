@@ -74,67 +74,11 @@ col-md-9
   {{ block('vehicle_widget') }}
 {% endblock %}
 
-{# Pickup #}
-
-{% block _delivery_pickup_row %}
-  {{ block('task_row') }}
-{% endblock %}
-
-{% block _delivery_pickup_widget %}
-  {{ block('task_widget') }}
-{% endblock %}
-
-{% block _delivery_pickup_type_widget %}
-  {{ block('hidden_widget') }}
-{% endblock %}
-
-{% block _delivery_pickup_doneAfter_widget %}
-  {{ block('hidden_widget') }}
-{% endblock %}
-
-{% block _delivery_pickup_doneBefore_widget %}
-  {{ block('hidden_widget') }}
-  <div id="{{ form.vars.id ~ '_widget' }}"></div>
-{% endblock %}
-
-{% block _delivery_pickup_tagsAsString_widget %}
-<div id="{{ form.vars.id ~ '_widget' }}"></div>
-{{ block('hidden_widget') }}
-{% endblock %}
-
-{# Dropoff #}
-
-{% block _delivery_dropoff_row %}
-  {{ block('task_row') }}
-{% endblock %}
-
-{% block _delivery_dropoff_widget %}
-  {{ block('task_widget') }}
-{% endblock %}
-
-{% block _delivery_dropoff_type_widget %}
-  {{ block('hidden_widget') }}
-{% endblock %}
-
-{% block _delivery_dropoff_doneAfter_widget %}
-  {{ block('hidden_widget') }}
-{% endblock %}
-
 {% block _delivery_weight_widget %}
   <div class="input-group">
     {{ block('form_widget_simple') }}
     <span class="input-group-addon">{{ 'basics.kilos'|trans }}</span>
   </div>
-{% endblock %}
-
-{% block _delivery_dropoff_doneBefore_widget %}
-  {{ block('hidden_widget') }}
-  <div id="{{ form.vars.id ~ '_widget' }}"></div>
-{% endblock %}
-
-{% block _delivery_dropoff_tagsAsString_widget %}
-<div id="{{ form.vars.id ~ '_widget' }}"></div>
-{{ block('hidden_widget') }}
 {% endblock %}
 
 {% block _delivery_packages_widget %}
@@ -163,4 +107,30 @@ col-md-9
     data-delete
     data-target="#{{ form.vars.id }}"><i class="fa fa-trash-o"></i></button>
 </div>
+{% endblock %}
+
+{% block _delivery_tasks_entry_row %}
+  {{ block('task_row') }}
+{% endblock %}
+
+{% block _delivery_tasks_entry_widget %}
+  {{ block('task_widget') }}
+{% endblock %}
+
+{% block _delivery_tasks_entry_type_widget %}
+  {{ block('hidden_widget') }}
+{% endblock %}
+
+{% block _delivery_tasks_entry_doneAfter_widget %}
+  {{ block('hidden_widget') }}
+{% endblock %}
+
+{% block _delivery_tasks_entry_doneBefore_widget %}
+  {{ block('hidden_widget') }}
+  <div id="{{ form.vars.id ~ '_widget' }}"></div>
+{% endblock %}
+
+{% block _delivery_tasks_entry_tagsAsString_widget %}
+<div id="{{ form.vars.id ~ '_widget' }}"></div>
+{{ block('hidden_widget') }}
 {% endblock %}

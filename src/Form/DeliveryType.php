@@ -85,31 +85,19 @@ class DeliveryType extends AbstractType
                 $delivery->getDropoff()->setDoneBefore($dropoffBefore);
             }
 
-            $form->add('pickup', TaskType::class, [
-                'mapped' => false,
-                'label' => 'form.delivery.pickup.label',
-                'constraints' => [
-                    new Assert\Valid()
+            $form->add('tasks', CollectionType::class, [
+                'entry_type' => TaskType::class,
+                'entry_options' => [
+                    'constraints' => [
+                        new Assert\Valid()
+                    ],
+                    'with_tags' => $options['with_tags'],
+                    'with_addresses' => null !== $store ? $store->getAddresses() : [],
+                    'with_remember_address' => $options['with_remember_address'],
+                    'with_time_slot' => $this->getTimeSlot($options, $store),
+                    'with_recipient_details' => $options['with_dropoff_recipient_details'],
+                    'with_doorstep' => $options['with_dropoff_doorstep'],
                 ],
-                'data' => $delivery->getPickup(),
-                'with_tags' => $options['with_tags'],
-                'with_addresses' => null !== $store ? $store->getAddresses() : [],
-                'with_remember_address' => $options['with_remember_address'],
-                'with_time_slot' => $this->getTimeSlot($options, $store),
-            ]);
-            $form->add('dropoff', TaskType::class, [
-                'mapped' => false,
-                'label' => 'form.delivery.dropoff.label',
-                'constraints' => [
-                    new Assert\Valid()
-                ],
-                'data' => $delivery->getDropoff(),
-                'with_tags' => $options['with_tags'],
-                'with_addresses' => null !== $store ? $store->getAddresses() : [],
-                'with_recipient_details' => $options['with_dropoff_recipient_details'],
-                'with_doorstep' => $options['with_dropoff_doorstep'],
-                'with_remember_address' => $options['with_remember_address'],
-                'with_time_slot' => $this->getTimeSlot($options, $store),
             ]);
         });
 
