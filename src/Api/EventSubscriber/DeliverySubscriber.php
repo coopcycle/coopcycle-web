@@ -89,9 +89,9 @@ final class DeliverySubscriber implements EventSubscriberInterface
         if (null !== $dropoff->getDoneBefore() && null === $pickup->getDoneBefore()) {
             if (null !== $dropoff->getAddress() && null !== $pickup->getAddress()) {
 
+                $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
                 $duration = $this->routing->getDuration(
-                    $pickup->getAddress()->getGeo(),
-                    $dropoff->getAddress()->getGeo()
+                    ...$coords
                 );
 
                 $pickupDoneBefore = clone $dropoff->getDoneBefore();
