@@ -20,7 +20,7 @@ col-md-9
   {{ form_row(form.address) }}
 
   {% if form.doneBefore is defined %}
-    {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
+    {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ (form.vars.data.type|lower) ~ '.doneBefore.label' }) }}
   {% endif %}
 
   {% if form.timeSlot is defined %}
