@@ -4,6 +4,9 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TimeSlot;
+use AppBundle\Form\Type\TimeSlotChoice;
+use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Service\TaskManager;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
@@ -53,19 +56,45 @@ class TaskType extends AbstractType
                 'label' => 'form.task.comments.label',
                 'required' => false,
                 'attr' => ['rows' => '2', 'placeholder' => 'form.task.comments.placeholder']
-            ])
-            ->add('doneAfter', DateType::class, [
-                'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd HH:mm:ss',
-                'required' => false,
-                'html5' => false,
-            ])
-            ->add('doneBefore', DateType::class, [
-                'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd HH:mm:ss',
-                'required' => true,
-                'html5' => false,
             ]);
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+
+            $form = $event->getForm();
+            $task = $event->getData();
+
+            if (null !== $options['with_time_slot']) {
+
+                $timeSlotOptions = [
+                    'time_slot' => $options['with_time_slot'],
+                    'label' => 'form.delivery.time_slot.label',
+                    'mapped' => false
+                ];
+
+                if (null !== $task->getId()) {
+                    $timeSlotOptions['disabled'] = true;
+                    $timeSlotOptions['data'] = TimeSlotChoice::fromTask($task);
+                }
+
+                $form
+                    ->add('timeSlot', TimeSlotChoiceType::class, $timeSlotOptions);
+
+            } else {
+                $form
+                    ->add('doneAfter', DateType::class, [
+                        'widget' => 'single_text',
+                        'format' => 'yyyy-MM-dd HH:mm:ss',
+                        'required' => false,
+                        'html5' => false,
+                    ])
+                    ->add('doneBefore', DateType::class, [
+                        'widget' => 'single_text',
+                        'format' => 'yyyy-MM-dd HH:mm:ss',
+                        'required' => true,
+                        'html5' => false,
+                    ]);
+            }
+        });
 
         if ($options['with_tags']) {
             $builder->add('tagsAsString', TextType::class, [
@@ -150,18 +179,23 @@ class TaskType extends AbstractType
             'with_recipient_details' => false,
             'with_doorstep' => false,
             'with_remember_address' => false,
+            'with_time_slot' => null,
         ));
+
+        $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);
     }
 
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $taskType = strtolower($view->vars['value']->getType());
 
+        // Custom label based on task type
         $view->children['address']->vars['label'] =
             sprintf('form.delivery.%s.label', $taskType);
 
         $streetAddress = $view->children['address']->children['newAddress']->children['streetAddress'];
 
+        // Custom placeholder based on task type
         $streetAddress->vars['attr'] = array_merge(
             $streetAddress->vars['attr'] ?? [],
             [ 'placeholder' => sprintf('form.delivery.%s.address_placeholder', $taskType) ]
