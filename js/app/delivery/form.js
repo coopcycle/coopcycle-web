@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import MapHelper from '../MapHelper'
 import _ from 'lodash'
 require('gasparesganga-jquery-loading-overlay')
@@ -101,82 +103,69 @@ if (document.getElementById('map')) {
 
 form = new DeliveryForm('delivery', {
   onReady: function(delivery) {
-    if (delivery.pickup.address) {
-      createMarker({
-        latitude: delivery.pickup.address.geo.latitude,
-        longitude: delivery.pickup.address.geo.longitude
-      }, 'pickup')
-    }
-    if (delivery.dropoff.address) {
-      createMarker({
-        latitude: delivery.dropoff.address.geo.latitude,
-        longitude: delivery.dropoff.address.geo.longitude
-      }, 'dropoff')
-    }
+    delivery.tasks.forEach(task => {
+      if (task.address) {
+        createMarker({
+          latitude: task.address.geo.latitude,
+          longitude: task.address.geo.longitude
+        }, task.type.toLowerCase())
+      }
+    })
   },
   onChange: function(delivery) {
 
-    if (delivery.pickup.address) {
-      createMarker({
-        latitude: delivery.pickup.address.geo.latitude,
-        longitude: delivery.pickup.address.geo.longitude
-      }, 'pickup')
-      $('#delivery_pickup_panel_title').text(delivery.pickup.address.streetAddress)
-    } else {
-      removeMarker('pickup')
-    }
+    delivery.tasks.forEach(task => {
+      if (task.address) {
+        createMarker({
+          latitude: task.address.geo.latitude,
+          longitude: task.address.geo.longitude
+        }, task.type.toLowerCase())
+      } else {
+        removeMarker(task.type.toLowerCase())
+      }
+    })
 
-    if (delivery.dropoff.address) {
-      createMarker({
-        latitude: delivery.dropoff.address.geo.latitude,
-        longitude: delivery.dropoff.address.geo.longitude
-      }, 'dropoff')
-      $('#delivery_dropoff_panel_title').text(delivery.dropoff.address.streetAddress)
-    } else {
-      removeMarker('dropoff')
-    }
+    // if (delivery.pickup.address && delivery.dropoff.address) {
 
-    if (delivery.pickup.address && delivery.dropoff.address) {
+    //   this.disable()
 
-      this.disable()
+    //   const updateDistance = new Promise((resolve) => {
+    //     route(delivery).then((infos) => {
+    //       $('#delivery_distance').text(`${infos.kms} Km`)
+    //       resolve()
+    //     })
+    //   })
 
-      const updateDistance = new Promise((resolve) => {
-        route(delivery).then((infos) => {
-          $('#delivery_distance').text(`${infos.kms} Km`)
-          resolve()
-        })
-      })
+    //   const updatePrice = new Promise((resolve) => {
+    //     if (delivery.store && pricePreview) {
+    //       const deliveryAsPayload = {
+    //         ...delivery,
+    //         pickup: {
+    //           ...delivery.pickup,
+    //           address: serializeAddress(delivery.pickup.address)
+    //         },
+    //         dropoff: {
+    //           ...delivery.dropoff,
+    //           address: serializeAddress(delivery.dropoff.address)
+    //         }
+    //       }
 
-      const updatePrice = new Promise((resolve) => {
-        if (delivery.store && pricePreview) {
-          const deliveryAsPayload = {
-            ...delivery,
-            pickup: {
-              ...delivery.pickup,
-              address: serializeAddress(delivery.pickup.address)
-            },
-            dropoff: {
-              ...delivery.dropoff,
-              address: serializeAddress(delivery.dropoff.address)
-            }
-          }
+    //       pricePreview.update(deliveryAsPayload).then(() => resolve())
+    //     } else {
+    //       resolve()
+    //     }
+    //   })
 
-          pricePreview.update(deliveryAsPayload).then(() => resolve())
-        } else {
-          resolve()
-        }
-      })
-
-      Promise.all([
-        updateDistance,
-        updatePrice,
-      ])
-      .then(() => {
-        form.enable()
-      })
-      // eslint-disable-next-line no-console
-      .catch(e => console.error(e))
-    }
+    //   Promise.all([
+    //     updateDistance,
+    //     updatePrice,
+    //   ])
+    //   .then(() => {
+    //     form.enable()
+    //   })
+    //   // eslint-disable-next-line no-console
+    //   .catch(e => console.error(e))
+    // }
   }
 })
 
