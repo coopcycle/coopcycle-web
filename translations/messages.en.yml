@@ -32,7 +32,7 @@ adminDashboard.deliveries.address: Address
 adminDashboard.deliveries.delivery: Delivery
 adminDashboard.deliveries.originAddress: Origin address
 adminDashboard.deliveries.deliveryAddress: Delivery address
-adminDashboard.embed.title: External Display
+adminDashboard.embed.title: Forms
 adminDashboard.package_sets.title: Packages
 adminDashboard.customize.title: Customize
 embed.delivery.title: Delivery creation form
