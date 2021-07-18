@@ -37,4 +37,10 @@ final class DeliveryInput
      * @Groups({"pricing_deliveries"})
      */
     public $packages;
+
+    /**
+     * @var Task[]
+     * @Groups({"delivery_create"})
+     */
+    public $tasks;
 }
