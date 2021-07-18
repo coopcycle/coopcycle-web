@@ -475,12 +475,10 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
     {
         $images = new ArrayCollection();
 
-        foreach ($this->getPickup()->getImages() as $image) {
-            $images->add($image);
-        }
-
-        foreach ($this->getDropoff()->getImages() as $image) {
-            $images->add($image);
+        foreach ($this->getTasks() as $task) {
+            foreach ($task->getImages() as $image) {
+                $images->add($image);
+            }
         }
 
         return $images;
