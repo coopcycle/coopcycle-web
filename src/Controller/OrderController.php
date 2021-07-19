@@ -258,6 +258,11 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
+        if (null === $order->getCustomer()) {
+
+            return $this->redirectToRoute('order');
+        }
+
         $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
         // Make sure to call StripeManager::configurePayment()
