@@ -329,15 +329,17 @@ export default function(name, options) {
     const weightEl = document.querySelector(`#${name}_weight`)
 
     // Intialize Redux store
-    let storeId
-    if (el.dataset.store) {
-      storeId = el.dataset.store
-    }
     let preloadedState = {
-      store: `/api/stores/${storeId}`, // FIXME The data attribute should contain the IRI
       weight: weightEl ? parseWeight(weightEl.value) : 0,
       tasks: [],
       packages: []
+    }
+
+    if (el.dataset.store) {
+      preloadedState = {
+        ...preloadedState,
+        store: el.dataset.store
+      }
     }
 
     // tasks_0, tasks_1...
