@@ -100,7 +100,7 @@ class TaskType extends AbstractType
             $builder->add('tagsAsString', TextType::class, [
                 'mapped' => false,
                 'required' => false,
-                'label' => 'Tags'
+                'label' => 'adminDashboard.tags.title'
             ]);
         }
 
