@@ -672,4 +672,40 @@ class AsapChoiceLoaderTest extends TestCase
 
         $this->assertCount(0, $choices);
     }
+
+    public function testIssue2632()
+    {
+        Carbon::setTestNow(Carbon::parse('2017-10-04T12:10:26+02:00'));
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime('2017-10-04T00:00:00+02:00'));
+        $closingRule->setEndDate(new \DateTime('2017-10-04T12:40:00+02:00'));
+
+        $closingRules = new ArrayCollection();
+        $closingRules->add($closingRule);
+
+        $choiceLoader = new AsapChoiceLoader([
+            "Mo-Sa 11:30-14:00",
+            "Mo-Sa 18:30-21:00"
+        ], $closingRules);
+
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertContainsTimeRanges([
+            ['2017-10-04T12:40:00+02:00', '2017-10-04T12:50:00+02:00'],
+            ['2017-10-04T12:50:00+02:00', '2017-10-04T13:00:00+02:00'],
+            ['2017-10-04T13:50:00+02:00', '2017-10-04T14:00:00+02:00'],
+            ['2017-10-04T18:30:00+02:00', '2017-10-04T18:40:00+02:00'],
+        ], $choices);
+
+        $this->assertNotContainsTimeRanges([
+            ['2017-10-04T12:00:00+02:00', '2017-10-04T12:10:00+02:00'],
+            ['2017-10-04T12:10:00+02:00', '2017-10-04T12:20:00+02:00'],
+            ['2017-10-04T12:20:00+02:00', '2017-10-04T12:30:00+02:00'],
+            ['2017-10-04T12:30:00+02:00', '2017-10-04T12:40:00+02:00'],
+            ['2017-10-04T14:00:00+02:00', '2017-10-04T14:10:00+02:00'],
+            ['2017-10-04T17:50:00+02:00', '2017-10-04T18:00:00+02:00'],
+        ], $choices);
+    }
 }

@@ -124,7 +124,15 @@ class SchemaDotOrgParser
                             continue 2;
                         }
 
-                        $newRanges[] = \Spatie\OpeningHours\TimeRange::fromString($dayRange->start()->format() . '-' . $range->start()->format())->format();
+                        // $range ->    |-------|***| <- $newRanges[]
+                        // $dayRange ->     |-------|
+
+                        if ($range->end()->isBefore($dayRange->end())) {
+                            $newRanges[] = \Spatie\OpeningHours\TimeRange::fromString($range->end()->format() . '-' . $dayRange->end()->format())->format();
+                        } else {
+                            $newRanges[] = \Spatie\OpeningHours\TimeRange::fromString($dayRange->start()->format() . '-' . $range->start()->format())->format();
+                        }
+
                         continue 2;
                     }
 
