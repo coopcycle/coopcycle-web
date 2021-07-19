@@ -6,7 +6,11 @@ import './embed-start.scss'
 
 const getDateTimePickerContainer = trigger => trigger.parentNode
 
-$.each(['pickup', 'dropoff'], function(index, type) {
+const taskForms = Array
+  .from(document.querySelectorAll('[data-form="task"]'))
+  .map(el => el.getAttribute('id').replace('delivery_', ''))
+
+taskForms.forEach(function(type) {
 
   const doneBeforeEl = document.querySelector(`#delivery_${type}_doneBefore`)
 

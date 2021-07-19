@@ -2,6 +2,7 @@ import moment from 'moment'
 import ClipboardJS from 'clipboard'
 import { createStore } from 'redux'
 import _ from 'lodash'
+import axios from 'axios'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
@@ -94,8 +95,8 @@ function createAddressWidget(name, type, cb) {
 
       store.dispatch({
         type: 'SET_ADDRESS',
-        taskType: type,
-        address
+        taskIndex: getTaskIndex(type),
+        value: address
       })
     },
     onClear: () => {
@@ -103,7 +104,7 @@ function createAddressWidget(name, type, cb) {
       showRememberAddress(name, type)
       store.dispatch({
         type: 'CLEAR_ADDRESS',
-        taskType: type,
+        taskIndex: getTaskIndex(type),
       })
     }
   })
@@ -128,6 +129,10 @@ function getDatePickerKey(name, type) {
   return 'before'
 }
 
+function getTaskType(name, type) {
+  return document.querySelector(`#${name}_${type}_type`).value.toUpperCase()
+}
+
 function createDatePickerWidget(name, type) {
 
   const datePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
@@ -137,7 +142,7 @@ function createDatePickerWidget(name, type) {
     timeSlotEl.addEventListener('change', e => {
       store.dispatch({
         type: 'SET_TIME_SLOT',
-        taskType: type,
+        taskIndex: getTaskIndex(type),
         value: e.target.value
       })
     })
@@ -150,7 +155,7 @@ function createDatePickerWidget(name, type) {
       datePickerEl.value = date.format('YYYY-MM-DD HH:mm:ss')
       store.dispatch({
         type: 'SET_BEFORE',
-        taskType: type,
+        taskIndex: getTaskIndex(type),
         value: date.format()
       })
     }
@@ -246,31 +251,34 @@ function parseWeight(value) {
   return parseInt((floatValue * 1000), 10)
 }
 
+function replaceTasks(state, index, key, value) {
+  const newTasks = state.tasks.slice()
+  newTasks[index] = {
+    ...newTasks[index],
+    [key]: value
+  }
+
+  return newTasks
+}
+
+const getTaskIndex = (key) => parseInt(key.replace('tasks_', ''), 10)
+
 function reducer(state = {}, action) {
   switch (action.type) {
   case 'SET_ADDRESS':
     return {
       ...state,
-      [ action.taskType ]: {
-        ...state[action.taskType],
-        address: action.address
-      }
+      tasks: replaceTasks(state, action.taskIndex, 'address', action.value),
     }
   case 'SET_TIME_SLOT':
     return {
       ...state,
-      [ action.taskType ]: {
-        ...state[action.taskType],
-        timeSlot: action.value
-      }
+      tasks: replaceTasks(state, action.taskIndex, 'timeSlot', action.value),
     }
   case 'SET_BEFORE':
     return {
       ...state,
-      [ action.taskType ]: {
-        ...state[action.taskType],
-        before: action.value
-      }
+      tasks: replaceTasks(state, action.taskIndex, 'before', action.value),
     }
   case 'SET_WEIGHT':
     return {
@@ -285,12 +293,27 @@ function reducer(state = {}, action) {
   case 'CLEAR_ADDRESS':
     return {
       ...state,
-      [ action.taskType ]: _.omit({ ...state[action.taskType] }, ['address'])
+      tasks: state.tasks.map((task, index) => {
+        if (index === action.taskIndex) {
+          return _.omit({ ...task }, ['address'])
+        }
+
+        return task
+      }),
     }
   default:
     return state
   }
 }
+
+const loadTags = _.once(() => {
+
+  return axios({
+    method: 'get',
+    url: window.Routing.generate('admin_tags', { format: 'json' }),
+  })
+  .then(response => response.data)
+})
 
 export default function(name, options) {
 
@@ -306,29 +329,49 @@ export default function(name, options) {
     const weightEl = document.querySelector(`#${name}_weight`)
 
     // Intialize Redux store
-    let storeId
-    if (el.dataset.store) {
-      storeId = el.dataset.store
-    }
     let preloadedState = {
-      store: `/api/stores/${storeId}`, // FIXME The data attribute should contain the IRI
       weight: weightEl ? parseWeight(weightEl.value) : 0,
-      pickup: {
-        address: null,
-        [ getDatePickerKey(name, 'pickup') ]: getDatePickerValue(name, 'pickup')
-      },
-      dropoff: {
-        address: null,
-        [ getDatePickerKey(name, 'dropoff') ]: getDatePickerValue(name, 'dropoff')
-      },
+      tasks: [],
       packages: []
     }
 
-    createAddressWidget(name, 'pickup', address => preloadedState.pickup.address = address)
-    createDatePickerWidget(name, 'pickup')
+    if (el.dataset.store) {
+      preloadedState = {
+        ...preloadedState,
+        store: el.dataset.store
+      }
+    }
 
-    createAddressWidget(name, 'dropoff', address => preloadedState.dropoff.address = address)
-    createDatePickerWidget(name, 'dropoff')
+    // tasks_0, tasks_1...
+    const taskForms = Array.from(el.querySelectorAll('[data-form="task"]'))
+
+    taskForms.forEach((taskEl) => {
+
+      const taskForm = taskEl.getAttribute('id').replace(name + '_', '')
+
+      const task = {
+        type: getTaskType(name, taskForm),
+        address: null,
+        [ getDatePickerKey(name, taskForm) ]: getDatePickerValue(name, taskForm)
+      }
+
+      preloadedState.tasks.push(task)
+
+      createAddressWidget(name, taskForm, address => {
+        const index = preloadedState.tasks.indexOf(task)
+        if (-1 !== index) {
+          preloadedState.tasks[index].address = address
+        }
+      })
+      createDatePickerWidget(name, taskForm)
+
+      const tagsEl = document.querySelector(`#${name}_${taskForm}_tagsAsString`)
+      if (tagsEl) {
+        loadTags().then(tags => {
+          createTagsWidget(name, taskForm, tags)
+        })
+      }
+    })
 
     store = createStore(reducer, preloadedState)
 
@@ -342,16 +385,6 @@ export default function(name, options) {
           value: parseWeight(e.target.value)
         })
       }, 350))
-    }
-
-    const pickupTagsEl = document.querySelector(`#${name}_pickup_tagsAsString`)
-    const dropoffTagsEl = document.querySelector(`#${name}_dropoff_tagsAsString`)
-
-    if (pickupTagsEl && dropoffTagsEl) {
-      $.getJSON(window.Routing.generate('admin_tags', { format: 'json' }), function(tags) {
-        createTagsWidget(name, 'pickup', tags)
-        createTagsWidget(name, 'dropoff', tags)
-      })
     }
 
     new ClipboardJS('#copy', {
@@ -369,7 +402,9 @@ export default function(name, options) {
 
     el.addEventListener('submit', (e) => {
 
-      _.find(['pickup', 'dropoff'], type => {
+      _.find(taskForms, taskEl => {
+
+        const type = taskEl.getAttribute('id').replace(name + '_', '')
 
         const isNewAddrInput = document.querySelector(`#${name}_${type}_address_isNewAddress`)
         if (!isNewAddrInput) {

@@ -16,8 +16,7 @@
 
     {{ form_errors(form) }}
 
-    {{ form_row(form.pickup) }}
-    {{ form_row(form.dropoff) }}
+    {{ form_widget(form.tasks) }}
 
     {% if form.vehicle is defined %}
       {{ form_row(form.vehicle) }}
