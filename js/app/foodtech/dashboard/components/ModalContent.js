@@ -12,6 +12,7 @@ import {
   cancelOrder,
   fulfillOrder,
 } from '../redux/actions'
+import { selectItemsGroups } from '../redux/selectors'
 
 import OrderItems from './OrderItems'
 import OrderTotal from './OrderTotal'
@@ -232,7 +233,7 @@ class ModalContent extends React.Component {
 
   render() {
 
-    const { order } = this.props
+    const { order, itemsGroups, restaurant } = this.props
 
     return (
       <div className="panel panel-default">
@@ -266,7 +267,7 @@ class ModalContent extends React.Component {
             ) }
           </div>
           <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_DISHES') }</h5>
-          <OrderItems order={ order } />
+          <OrderItems itemsGroups={ itemsGroups } restaurant={ restaurant } />
           <OrderTotal order={ order } />
           { order.notes && this.renderNotes() }
           <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_TIMELINE') }</h5>
@@ -282,7 +283,9 @@ function mapStateToProps(state) {
 
   return {
     countryCode: (getCountry() || 'fr').toUpperCase(),
-    loading: state.isFetching
+    loading: state.isFetching,
+    itemsGroups: selectItemsGroups(state),
+    restaurant: state.restaurant,
   }
 }
 
