@@ -4,6 +4,7 @@ namespace AppBundle\OpeningHours;
 
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
+use Spatie\OpeningHours\TimeRange;
 
 class SchemaDotOrgParser
 {
@@ -115,30 +116,38 @@ class SchemaDotOrgParser
 
             foreach ($dayRanges as $dayRange) {
 
-                /* @var \Spatie\OpeningHours\TimeRange $dayRange */
+                /* @var TimeRange $dayRange */
                 foreach ($closedRanges as $exceptionRange) {
-                    $range = \Spatie\OpeningHours\TimeRange::fromString($exceptionRange);
+                    $range = TimeRange::fromString($exceptionRange);
 
                     if ($range->overlaps($dayRange)) {
                         if ($dayRange->start()->isAfter($range->start()) && $range->end()->isAfter($dayRange->end())) {
                             continue 2;
                         }
 
-                        $newRanges[] = \Spatie\OpeningHours\TimeRange::fromString($dayRange->start()->format() . '-' . $range->start()->format())->format();
+                        // $range ->    |-------|***| <- $newRanges[]
+                        // $dayRange ->     |-------|
+
+                        if ($range->end()->isBefore($dayRange->end())) {
+                            $newRanges[] = TimeRange::fromString($range->end()->format() . '-' . $dayRange->end()->format())->format();
+                        } else {
+                            $newRanges[] = TimeRange::fromString($dayRange->start()->format() . '-' . $range->start()->format())->format();
+                        }
+
                         continue 2;
                     }
 
                     if ($dayRange->containsTime($range->start()) && $dayRange->containsTime($range->end())) {
-                        $newRanges[] = \Spatie\OpeningHours\TimeRange::fromString($dayRange->start()->format() . '-' . $range->start()->format())->format();
-                        $newRanges[] = \Spatie\OpeningHours\TimeRange::fromString($range->end()->format() . '-' . $dayRange->end()->format())->format();
+                        $newRanges[] = TimeRange::fromString($dayRange->start()->format() . '-' . $range->start()->format())->format();
+                        $newRanges[] = TimeRange::fromString($range->end()->format() . '-' . $dayRange->end()->format())->format();
                         continue 2;
                     }
                     if ($dayRange->containsTime($range->start())) {
-                        $newRanges[] = \Spatie\OpeningHours\TimeRange::fromString($dayRange->start()->format() . '-' . $range->start()->format())->format();
+                        $newRanges[] = TimeRange::fromString($dayRange->start()->format() . '-' . $range->start()->format())->format();
                         continue 2;
                     }
                     if ($dayRange->containsTime($range->end())) {
-                        $newRanges[] = \Spatie\OpeningHours\TimeRange::fromString($range->end()->format() . '-' . $dayRange->end()->format())->format();
+                        $newRanges[] = TimeRange::fromString($range->end()->format() . '-' . $dayRange->end()->format())->format();
                         continue 2;
                     }
                 }
