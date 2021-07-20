@@ -233,7 +233,7 @@ class ModalContent extends React.Component {
 
   render() {
 
-    const { order, itemsGroups } = this.props
+    const { order, itemsGroups, restaurant } = this.props
 
     return (
       <div className="panel panel-default">
@@ -267,7 +267,7 @@ class ModalContent extends React.Component {
             ) }
           </div>
           <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_DISHES') }</h5>
-          <OrderItems itemsGroups={ itemsGroups } />
+          <OrderItems itemsGroups={ itemsGroups } restaurant={ restaurant } />
           <OrderTotal order={ order } />
           { order.notes && this.renderNotes() }
           <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_TIMELINE') }</h5>
@@ -285,6 +285,7 @@ function mapStateToProps(state) {
     countryCode: (getCountry() || 'fr').toUpperCase(),
     loading: state.isFetching,
     itemsGroups: selectItemsGroups(state),
+    restaurant: state.restaurant,
   }
 }
 
