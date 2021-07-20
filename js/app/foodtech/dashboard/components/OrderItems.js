@@ -1,4 +1,5 @@
 import React from 'react'
+import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
 
 const hasAdjustments = (item) => {
@@ -33,14 +34,12 @@ class OrderItems extends React.Component {
     )
   }
 
-  render() {
-
-    const { order } = this.props
+  renderItems(items) {
 
     return (
       <table className="table table-condensed nomargin">
         <tbody>
-          { order.items.map((item, key) =>
+          { items.map((item, key) =>
             <tr key={ key }>
               <td>
                 <span>{ item.quantity } x { item.name }</span>
@@ -52,6 +51,29 @@ class OrderItems extends React.Component {
           ) }
         </tbody>
       </table>
+    )
+  }
+
+  render() {
+
+    if (_.size(this.props.itemsGroups) === 1) {
+
+      const itemsGroup = _.first(this.props.itemsGroups)
+
+      return this.renderItems(itemsGroup.items)
+    }
+
+    return (
+      <div>
+        { _.map(this.props.itemsGroups, (items, title) => {
+          return (
+            <React.Fragment key={ title }>
+              <h5 className="text-muted">{ title }</h5>
+              { this.renderItems(items) }
+            </React.Fragment>
+          )
+        })}
+      </div>
     )
   }
 
