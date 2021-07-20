@@ -71,6 +71,26 @@
     {% endfor %}
   </tbody>
 </table>
+{% else %}
+
+  <h4>{% trans %}sylius.form.promotion.rules{% endtrans %}</h4>
+  <ul class="list-unstyled">
+  {% for promotion_rule in promotion.rules %}
+    <li>
+      <small>{{ promotion_rule|promotion_rule_for_humans }}</small>
+    </li>
+  {% endfor %}
+  </ul>
+
+  <h4>{% trans %}sylius.form.promotion.actions{% endtrans %}</h4>
+  <ul class="list-unstyled">
+  {% for promotion_action in promotion.actions %}
+    <li>
+      <small>{{ promotion_action|promotion_action_for_humans }}</small>
+    </li>
+  {% endfor %}
+  </ul>
+
 {% endif %}
 
 {% endfor %}
