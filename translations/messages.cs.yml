@@ -1201,3 +1201,7 @@ form.settings.addresses.title: Adresy
 restaurant.list.active_catalog: Aktivní katalog
 restaurant.list.catalogs: Katalogy
 adminDashboard.shops.title: Obchody
+order.adjustment_type.reusable_packaging.loopeat.help: Tento poplatek pokrývá mytí,
+  doplňování zásob v restauraci a nákup látkových tašek pro opakované použití
+order.adjustment_type.reusable_packaging.loopeat: Poplatek za zpracování LoopEat
+index.view_all: Zobrazit vše
