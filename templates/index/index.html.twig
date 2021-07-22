@@ -32,10 +32,11 @@
 {% for section in top_sections %}
   {% include 'index/_partials/section.html.twig' with {
     items: section.shops,
-    section_title: section.type|local_business_type,
+    section_title: section.types is defined ?
+      section.types|map(t => t|local_business_type)|join(', ') : section.type|local_business_type,
     view_all: 'index.view_all'|trans,
-    view_all_path: route_exists(section.type_key_plural) ?
-      path(section.type_key_plural) : path('shops', { type: section.type_key }),
+    view_all_path: (section.type_key_plural is not empty and route_exists(section.type_key_plural)) ?
+      path(section.type_key_plural) : path('shops', section.type is not empty ? { type: section.type_key } : {}),
     show_more: true,
     pad_items: false,
   } %}
@@ -62,10 +63,11 @@
 {% for section in bottom_sections %}
   {% include 'index/_partials/section.html.twig' with {
     items: section.shops,
-    section_title: section.type|local_business_type,
+    section_title: section.types is defined ?
+      section.types|map(t => t|local_business_type)|join(', ') : section.type|local_business_type,
     view_all: 'index.view_all'|trans,
-    view_all_path: route_exists(section.type_key_plural) ?
-      path(section.type_key_plural) : path('shops', { type: section.type_key }),
+    view_all_path: (section.type_key_plural is not empty and route_exists(section.type_key_plural)) ?
+      path(section.type_key_plural) : path('shops', section.type is not empty ? { type: section.type_key } : {}),
     show_more: true,
     pad_items: false,
   } %}
