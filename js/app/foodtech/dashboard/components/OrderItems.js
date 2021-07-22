@@ -68,9 +68,9 @@ class OrderItems extends React.Component {
 
     if (_.size(this.props.itemsGroups) === 1) {
 
-      const itemsGroup = _.first(this.props.itemsGroups)
+      const key = _.first(_.keys(this.props.itemsGroups))
 
-      return this.renderItems(itemsGroup.items)
+      return this.renderItems(this.props.itemsGroups[key])
     }
 
     return (
