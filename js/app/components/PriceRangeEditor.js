@@ -8,7 +8,7 @@ export default ({ defaultValue, onChange }) => {
 
   const defaultAttribute = defaultValue.attribute || 'distance'
 
-  const [ unit, setUnit ] = useState(defaultAttribute ? 'km' : 'kg')
+  const [ unit, setUnit ] = useState(defaultAttribute === 'distance' ? 'km' : 'kg')
 
   const [ attribute, setAttribute ] = useState(defaultAttribute)
   const [ price, setPrice ] = useState(defaultValue.price || 0)
