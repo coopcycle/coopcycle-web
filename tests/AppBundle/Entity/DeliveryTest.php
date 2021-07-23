@@ -165,5 +165,57 @@ class DeliveryTest extends TestCase
         $this->assertCount(2, $delivery->getTasks());
         $this->assertSame($pickup, $delivery->getPickup());
         $this->assertSame($dropoff, $delivery->getDropoff());
+
+        $this->assertSame($dropoff, $delivery->getPickup()->getNext());
+        $this->assertSame($pickup, $delivery->getDropoff()->getPrevious());
+
+        $this->assertSame($delivery, $pickup->getDelivery());
+        $this->assertSame($delivery, $dropoff->getDelivery());
+    }
+
+    public function testCreateWithTasksWith4Params()
+    {
+        $addresses = [];
+        for ($i = 0; $i < 4; $i++) {
+            $address = new Address();
+            $address->setGeo(new GeoCoordinates(48.842049, 2.331181));
+            $addresses[] = $address;
+        }
+
+        $tasks = [];
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setAddress($addresses[0]);
+        $pickup->setBefore(new \DateTime('today 12:00'));
+
+        $tasks[] = $pickup;
+
+        for ($i = 1; $i < 4; $i++) {
+            $dropoff = new Task();
+            $dropoff->setAddress($addresses[$i]);
+            $dropoff->setBefore(new \DateTime('today 12:00'));
+
+            $tasks[] = $dropoff;
+        }
+
+        $delivery = Delivery::createWithTasks(...$tasks);
+
+        $this->assertCount(4, $delivery->getTasks());
+        $this->assertSame($pickup, $delivery->getPickup());
+        // Delivery::getDropoff() returns the *LAST* dropoff to stay BC
+        $this->assertSame($tasks[3], $delivery->getDropoff());
+
+        $this->assertSame($tasks[0], $tasks[1]->getPrevious());
+        $this->assertSame($tasks[2], $tasks[1]->getNext());
+
+        $this->assertSame($tasks[1], $tasks[2]->getPrevious());
+        $this->assertSame($tasks[3], $tasks[2]->getNext());
+
+        $this->assertNull($tasks[3]->getNext());
+
+        foreach ($tasks as $task) {
+            $this->assertSame($delivery, $task->getDelivery());
+        }
     }
 }

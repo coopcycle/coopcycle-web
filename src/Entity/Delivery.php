@@ -157,24 +157,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         $this->packages = new ArrayCollection();
     }
 
-    public function addTask(Task $task, $position = null)
-    {
-        $pickup = $this->getPickup();
-        $dropoff = $this->getDropoff();
-
-        if (null === $pickup && $task->isPickup()) {
-            parent::addTask($task, $position);
-            return;
-        }
-
-        if (null === $dropoff && $task->isDropoff()) {
-            parent::addTask($task, $position);
-            return;
-        }
-
-        throw new \RuntimeException('No additional task can be added');
-    }
-
     public function getOrder()
     {
         return $this->order;
@@ -232,9 +214,17 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
      */
     public function getDropoff()
     {
-        foreach ($this->getTasks() as $task) {
-            if ($task->getType() === Task::TYPE_DROPOFF) {
-                return $task;
+        if (count($this->getTasks()) > 2) {
+            foreach (array_reverse($this->getTasks()) as $task) {
+                if ($task->getType() === Task::TYPE_DROPOFF) {
+                    return $task;
+                }
+            }
+        } else {
+            foreach ($this->getTasks() as $task) {
+                if ($task->getType() === Task::TYPE_DROPOFF) {
+                    return $task;
+                }
             }
         }
 
@@ -246,24 +236,51 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         return new self();
     }
 
-    public static function createWithTasks($pickup, $dropoff)
+    public static function createWithTasks(Task ...$tasks)
     {
         $delivery = self::create();
 
         $delivery->removeTask($delivery->getPickup());
         $delivery->removeTask($delivery->getDropoff());
 
-        $pickup->setType(Task::TYPE_PICKUP);
-        $pickup->setDelivery($delivery);
+        if (func_num_args() > 2) {
 
-        $dropoff->setType(Task::TYPE_DROPOFF);
-        $dropoff->setDelivery($delivery);
+            for ($i = 0; $i < count($tasks); $i++) {
 
-        $pickup->setNext($dropoff);
-        $dropoff->setPrevious($pickup);
+                $current = $tasks[$i];
+                $prev = $i > 0 ? $tasks[$i - 1] : null;
+                $next = $i < (count($tasks) - 1) ? $tasks[$i + 1] : null;
 
-        $delivery->addTask($pickup);
-        $delivery->addTask($dropoff);
+                if ($prev) {
+                    $current->setPrevious($prev);
+                }
+
+                if ($next) {
+                    $current->setNext($next);
+                }
+
+                $current->setDelivery($delivery);
+
+                $delivery->addTask($current);
+            }
+
+
+        } else {
+
+            [ $pickup, $dropoff ] = $tasks;
+
+            $pickup->setType(Task::TYPE_PICKUP);
+            $pickup->setDelivery($delivery);
+
+            $dropoff->setType(Task::TYPE_DROPOFF);
+            $dropoff->setDelivery($delivery);
+
+            $pickup->setNext($dropoff);
+            $dropoff->setPrevious($pickup);
+
+            $delivery->addTask($pickup);
+            $delivery->addTask($dropoff);
+        }
 
         return $delivery;
     }
