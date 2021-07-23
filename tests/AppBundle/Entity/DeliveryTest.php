@@ -143,4 +143,27 @@ class DeliveryTest extends TestCase
 
         $this->assertEquals(3000, $language->evaluate('order.itemsTotal', $values));
     }
+
+    public function testCreateWithTasksWith2Params()
+    {
+        $pickupAddress = new Address();
+        $pickupAddress->setGeo(new GeoCoordinates(48.842049, 2.331181));
+
+        $dropoffAddress = new Address();
+        $dropoffAddress->setGeo(new GeoCoordinates(48.842049, 2.331181));
+
+        $pickup = new Task();
+        $pickup->setAddress($pickupAddress);
+        $pickup->setBefore(new \DateTime('today 12:00'));
+
+        $dropoff = new Task();
+        $dropoff->setAddress($dropoffAddress);
+        $dropoff->setBefore(new \DateTime('today 12:00'));
+
+        $delivery = Delivery::createWithTasks($pickup, $dropoff);
+
+        $this->assertCount(2, $delivery->getTasks());
+        $this->assertSame($pickup, $delivery->getPickup());
+        $this->assertSame($dropoff, $delivery->getDropoff());
+    }
 }
