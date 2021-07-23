@@ -1153,3 +1153,6 @@ form.settings.autocomplete_provider.label: Proveedor de sugerencias
 form.settings.google_api_key_custom.label: Llave de API Google
 products.on_demand_delivery.name: Entrega bajo demanda
 index.view_all: Ver todo
+restaurant.list.tags.zerowaste: Sin residuos
+order.hub.sub_total.disclaimer: Este pedido fue ingresado con varios comercios. La
+  "%column%" columna muestra la cantidad que corresponde a tus productos(%amount%).
