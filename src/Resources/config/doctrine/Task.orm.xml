@@ -26,16 +26,16 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
-    <one-to-one field="previous" target-entity="AppBundle\Entity\Task">
+    <many-to-one field="previous" target-entity="AppBundle\Entity\Task">
       <join-columns>
         <join-column name="previous_task_id" referenced-column-name="id"/>
       </join-columns>
-    </one-to-one>
-    <one-to-one field="next" target-entity="AppBundle\Entity\Task">
+    </many-to-one>
+    <many-to-one field="next" target-entity="AppBundle\Entity\Task">
       <join-columns>
         <join-column name="next_task_id" referenced-column-name="id"/>
       </join-columns>
-    </one-to-one>
+    </many-to-one>
     <one-to-many field="events" target-entity="AppBundle\Entity\TaskEvent" mapped-by="task">
       <cascade>
         <cascade-all/>
