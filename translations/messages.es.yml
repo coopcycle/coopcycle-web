@@ -1156,3 +1156,45 @@ index.view_all: Ver todo
 restaurant.list.tags.zerowaste: Sin residuos
 order.hub.sub_total.disclaimer: Este pedido fue ingresado con varios comercios. La
   "%column%" columna muestra la cantidad que corresponde a tus productos(%amount%).
+restaurant.stats.view_detailed: Vista de detalles
+restaurant.stats.view_simple: Vista sencilla
+homepage.zerowaste: ¡Descubre nuestros comercios ecológicos!
+form.adress_book.remember_address: Guardar esta dirección
+hub.disclaimer: ¡Compre de múltiples comercios, y le realizamos una solo entrega!
+checkout.suggestions.continue_shopping_hub: Puede continuar comprando en otros comercios
+  de <strong>%name%</strong>
+adminDashboard.api.help: Permitir la creación de entregas periódicas
+adminDashboard.api.title: API
+form.time_slot.preview_title: Vista previa de periodos de tiempo
+adminDashboard.tags.help: Asignar etiquetas y colores a las tareas
+adminDashboard.zones.help: Definir zonas geográficas
+adminDashboard.package_sets.help: Configurar los tipos de productos a transportar
+adminDashboard.time_slots.help: Configurar periodos de tiempo
+adminDashboard.embed.help: Crear formularios para generar entregas
+adminDashboard.pricing.help: Definir reglas para calcular el precio de una entrega
+adminDashboard.stores.help: Crear cuentas de clientes
+order.number: Tu orden tiene el número <strong><span class="text-monospace">%number%</span></strong>
+restaurants.mode.map: Mostrar en el mapa
+restaurants.mode.list: Mostrar en formato de lista
+restaurant.form.edenred_merchant_id.help: Dejar el campo vació para deshabilitar Edenred
+restaurant.form.edenred_merchant_id.label: ID de la Tienda en Edenred
+adminDashboard.hubs.help: Una agrupación de comercios permite agrupar comercios que
+  comparten un espacio común., como un mercado,plaza comercial o galería .
+adminDashboard.hubs.createNew: Crear una nueva agrupación de comercios
+adminDashboard.hubs.title: Agrupación de comercios
+store.form.section.settings: Ajustes
+stores.address_book: Direcciones guardadas
+form.payment.method.name.label: Método de pago
+edenred.oauth_connect.success: ¡Cuenta Edenred conectada exitosamente!
+profile.edenred.connect: Conectar mi cuenta Edenred
+profile.edenred.connected: Cuenta Edenred conectada
+notifications.delivery_created: Se ha creado un pedido en la fecha %date%
+ordering_delay.admin_reminder: Configuró un retraso en todos los pedidos
+ordering_delay.disclaimer: ¡Estamos recibiendo muchos pedidos,  los tiempos de entrega
+  se retrasaran!
+form.fulfillment_method.options.range_duration.label: Margen de tolerancia
+form.fulfillment_method.pre_ordering_allowed.label: Permitir pedidos anticipados
+profile.dashboard_suggest: ¿Necesita administrar sus pedidos y entregas? <a href="%link%">Descubra
+  el nuevo panel de administración  </a> ✨
+restaurant_promotion.items_total: Basado en el total de productos
+order.export.heading.refund_total: Reembolsos
