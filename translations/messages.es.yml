@@ -1061,7 +1061,7 @@ form.time_slot.same_day_cutoff.label: Hora de límite diario
 form.package_with_quantity.package.placeholder: Elije un tipo de envase
 form.product_tax_category_choice.placeholder: Elije una categoria de IVA
 basics.kilos: Kilos
-basics.tax_excl: Sin IVA
+basics.tax_excl: Sin IVA.
 basics.tax_incl: IVA incl.
 nav.about_us: Acerca de nosotros
 spreadsheet.download_example: Descarga una hoja de cálculo de ejemplo
@@ -1156,9 +1156,9 @@ index.view_all: Ver todo
 restaurant.list.tags.zerowaste: Sin residuos
 order.hub.sub_total.disclaimer: Este pedido fue ingresado con varios comercios. La
   "%column%" columna muestra la cantidad que corresponde a tus productos(%amount%).
-restaurant.stats.view_detailed: Vista de detalles
+restaurant.stats.view_detailed: Vista de detalle
 restaurant.stats.view_simple: Vista sencilla
-homepage.zerowaste: ¡Descubre nuestros comercios ecológicos!
+homepage.zerowaste: ¡Descubre nuestros comercios sin residuos!
 form.adress_book.remember_address: Guardar esta dirección
 hub.disclaimer: ¡Compre de múltiples comercios, y le realizamos una solo entrega!
 checkout.suggestions.continue_shopping_hub: Puede continuar comprando en otros comercios
@@ -1190,11 +1190,46 @@ profile.edenred.connect: Conectar mi cuenta Edenred
 profile.edenred.connected: Cuenta Edenred conectada
 notifications.delivery_created: Se ha creado un pedido en la fecha %date%
 ordering_delay.admin_reminder: Configuró un retraso en todos los pedidos
-ordering_delay.disclaimer: ¡Estamos recibiendo muchos pedidos,  los tiempos de entrega
+ordering_delay.disclaimer: ¡Estamos recibiendo muchos pedidos, los tiempos de entrega
   se retrasaran!
 form.fulfillment_method.options.range_duration.label: Margen de tolerancia
 form.fulfillment_method.pre_ordering_allowed.label: Permitir pedidos anticipados
 profile.dashboard_suggest: ¿Necesita administrar sus pedidos y entregas? <a href="%link%">Descubra
-  el nuevo panel de administración  </a> ✨
+  el nuevo panel de administración</a> ✨
 restaurant_promotion.items_total: Basado en el total de productos
 order.export.heading.refund_total: Reembolsos
+order.adjustment_type.reusable_packaging.loopeat: Cuota por servicio sin residuos
+form.items_total_promotion.items_total.label: Total de productos anteriores
+order.adjustment_type.reusable_packaging.loopeat.help: Esta cuota cubre los gastos
+  por limpieza, retorno al restaurante y compra de bolsas de tela reutilizables
+form.settings.geocoding_provider.help: Utilizado por la API y cuando se importan hojas
+  de cálculo
+form.settings.geocoding_provider.label: Proveedor de geocodificación
+form.payment.refund_breakdown: Cantidad reembolsable por tarjeta %card%, cantidad
+  reembolsable por Edenred %edenred%
+form.payment.edenred_disclaimer: Esta orden se pagó con Edenred y se completó con
+  una tarjeta de crédito. El reembolso será hecho basándose en la prioridad de la
+  cantidad pagada por la tarjeta de crédito, y si es necesario en la cantidad pagada
+  por Edenred.
+form.settings.addresses.title: Direcciones
+restaurant.form.vytal_enabled.label: Habilitar el sistema de depósito y reembolso
+  de Vytal
+restaurant.form.section.vytal: Vytal
+vytal.code.disclaimer: Abre la app Vytal, genera un delivery token, luego ingresalo
+  aquí. <a href="https://www.vytal.org/bestellen" target="_blank">Aprender más</a>
+form.checkout_address.reusable_packaging_vytal_enabled.label: Quiero usar contenedores
+  Vytal
+form.product.alcohol.help: Marca esta opción únicamente si este producto es una bebida
+  alcohólica, como una botella de vino.
+form.product.alcohol.label: Este producto es una bebida alcohólica
+restaurants.edenred_transactions.title: Transacciones Edenred
+restaurants.edenred_transactions.edenred_amount: Cantidad pagada con Edenred
+restaurants.edenred_transactions.disclaimer: Esta página muestra todos los pedidos
+  pagados con Edenred, parcial o totalmente. Para estos pedidos, todo el dinero fue
+  recolectado por el comercio. Por lo tanto, debe mandar una factura a cada comercio
+  para reclamar las comisiones pendientes de pago.
+adminDashboard.metrics.title: Estadísticas
+restaurant_promotion.items_total.help: Esto le permite aplicar un descuento sobre
+  una cierta cantidad. Su ganancia va a disminuir por el descuento. Esto <strong>no
+  disminuirá</strong> la tarifa percibida por la plataforma.
+form.items_total_promotion.fixed_discount_amount.label: Aplicar un descuento de
