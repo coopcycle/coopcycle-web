@@ -348,7 +348,7 @@ Feature: Task recurrence rules
         "@id":"/api/recurrence_rules",
         "@type":"hydra:Collection",
         "hydra:member": @array@,
-        "hydra:totalItems":2
+        "hydra:totalItems":3
       }
       """
 
