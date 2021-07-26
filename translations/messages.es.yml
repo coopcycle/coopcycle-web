@@ -1188,7 +1188,7 @@ form.payment.method.name.label: Método de pago
 edenred.oauth_connect.success: ¡Cuenta Edenred conectada exitosamente!
 profile.edenred.connect: Conectar mi cuenta Edenred
 profile.edenred.connected: Cuenta Edenred conectada
-notifications.delivery_created: Se ha creado un pedido en la fecha %date%
+notifications.delivery_created: Un servicio para recoger el %date% ha sido creado
 ordering_delay.admin_reminder: Configuró un retraso en todos los pedidos
 ordering_delay.disclaimer: ¡Estamos recibiendo muchos pedidos, los tiempos de entrega
   se retrasaran!
