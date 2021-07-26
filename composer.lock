@@ -19268,16 +19268,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "0.12.91",
+            "version": "0.12.93",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "8226701cd228a0d63c2df995de7ab6070c69ac6a"
+                "reference": "7b7602f05d340ffa418c59299f8c053ac6c3e7ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8226701cd228a0d63c2df995de7ab6070c69ac6a",
-                "reference": "8226701cd228a0d63c2df995de7ab6070c69ac6a",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7b7602f05d340ffa418c59299f8c053ac6c3e7ea",
+                "reference": "7b7602f05d340ffa418c59299f8c053ac6c3e7ea",
                 "shasum": ""
             },
             "require": {
@@ -19308,7 +19308,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/0.12.91"
+                "source": "https://github.com/phpstan/phpstan/tree/0.12.93"
             },
             "funding": [
                 {
@@ -19328,7 +19328,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-07-04T15:31:48+00:00"
+            "time": "2021-07-20T10:49:53+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -19930,21 +19930,21 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.11.36",
+            "version": "0.11.40",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "0c1004ad176273c2249a1384ffb160167f5f2199"
+                "reference": "7b92aa73fab4c66371e8577e98f3e2168b16f69f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/0c1004ad176273c2249a1384ffb160167f5f2199",
-                "reference": "0c1004ad176273c2249a1384ffb160167f5f2199",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/7b92aa73fab4c66371e8577e98f3e2168b16f69f",
+                "reference": "7b92aa73fab4c66371e8577e98f3e2168b16f69f",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1|^8.0",
-                "phpstan/phpstan": "0.12.91"
+                "phpstan/phpstan": "0.12.93"
             },
             "conflict": {
                 "phpstan/phpdoc-parser": "<=0.5.3",
@@ -19977,7 +19977,7 @@
             "description": "Prefixed and PHP 7.1 downgraded version of rector/rector",
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.11.36"
+                "source": "https://github.com/rectorphp/rector/tree/0.11.40"
             },
             "funding": [
                 {
@@ -19985,7 +19985,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-07-10T19:27:51+00:00"
+            "time": "2021-07-25T12:41:49+00:00"
         },
         {
             "name": "sebastian/code-unit",
