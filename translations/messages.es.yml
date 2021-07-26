@@ -428,7 +428,7 @@ form.menu_item_modifier.name.label: Nombre
 form.menu_item_modifier.price.label: Precio
 form.menu_item_modifier.calculusStrategy.label: Cálculo del precio
 form.menu_taxon.name.label: Nombre
-form.menu_taxon.add_child.label: Añadir una sección
+form.menu_taxon.add_child.label: Añadir una categoría
 form.menu_taxon.child_name.placeholder: "Ejemplo : platos, postres…\n"
 form.menu_editor.products_panel.title: Productos
 form.menu_editor.save.label: Guardar cambios
