@@ -1199,7 +1199,7 @@ profile.dashboard_suggest: ¿Necesita administrar sus pedidos y entregas? <a hre
 restaurant_promotion.items_total: Basado en el total de productos
 order.export.heading.refund_total: Reembolsos
 order.adjustment_type.reusable_packaging.loopeat: Cuota por servicio sin residuos
-form.items_total_promotion.items_total.label: Total de productos anteriores
+form.items_total_promotion.items_total.label: Por encima del total de productos
 order.adjustment_type.reusable_packaging.loopeat.help: Esta cuota cubre los gastos
   por limpieza, retorno al restaurante y compra de bolsas de tela reutilizables
 form.settings.geocoding_provider.help: Utilizado por la API y cuando se importan hojas
