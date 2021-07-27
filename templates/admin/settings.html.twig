@@ -138,8 +138,10 @@
   <hr>
 
   {{ form_rest(form) }}
+  <div class="sticky-buttons">
+    <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+  </div>
 
-  <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
 {{ form_end(form) }}
 
 <div id="modal-maintenance" class="modal fade" tabindex="-1" role="dialog">
