@@ -56,6 +56,9 @@ class OsrmWithFallback extends Base
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getDistances(GeoCoordinates $source, GeoCoordinates ...$destinations)
     {
         try {
