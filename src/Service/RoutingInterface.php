@@ -31,4 +31,10 @@ interface RoutingInterface
      * @param GeoCoordinates[] ...$coordinates
      */
     public function getDistances(GeoCoordinates $source, GeoCoordinates ...$coordinates);
+
+    /**
+     * @param GeoCoordinates[] ...$coordinates
+     * @return array
+     */
+    public function route(GeoCoordinates ...$coordinates);
 }

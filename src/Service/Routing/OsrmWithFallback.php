@@ -67,4 +67,13 @@ class OsrmWithFallback extends Base
             return $this->fallback->getDistances($source, ...$destinations);
         }
     }
+
+    public function route(GeoCoordinates ...$coordinates)
+    {
+        try {
+            return $this->osrm->route(...$coordinates);
+        } catch (GuzzleException $e) {
+            return $this->fallback->route(...$coordinates);
+        }
+    }
 }

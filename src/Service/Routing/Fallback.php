@@ -82,4 +82,19 @@ class Fallback extends Base
 
         return $distances;
     }
+
+    public function route(GeoCoordinates ...$coordinates)
+    {
+        return [
+            'code' => 'Ok',
+            'routes' => [
+                [
+                    'geometry' => $this->getPolyline(...$coordinates),
+                    'distance' => $this->getDistance(...$coordinates),
+                    'duration' => $this->getDuration(...$coordinates)
+                ]
+
+            ]
+        ];
+    }
 }
