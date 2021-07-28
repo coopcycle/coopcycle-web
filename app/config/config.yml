@@ -519,6 +519,9 @@ csa_guzzle:
             config:
                 base_uri: "http://%osrm_host%"
                 lazy: true
+                connect_timeout: 1.0
+                timeout: 1.0
+
         google_maps:
             config:
                 base_uri: "https://maps.googleapis.com"
