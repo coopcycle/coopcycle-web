@@ -573,7 +573,7 @@ form.menu_item_modifier.name.label: 'Izena'
 form.menu_item_modifier.price.label: 'Prezioa'
 form.menu_item_modifier.calculusStrategy.label: 'Prezioaren kalkulua'
 form.menu_taxon.name.label: 'Izena'
-form.menu_taxon.add_child.label: 'Gehitu sekzioa'
+form.menu_taxon.add_child.label: 'Gehitu kategoria'
 form.menu_taxon.child_name.placeholder: "Adibidez: platerak, postreak...\n"
 form.menu_editor.products_panel.title: 'Produktuak'
 form.menu_editor.save.label: 'Gorde aldaketak'
@@ -659,7 +659,7 @@ form.customize.custom_banner.label: 'Iragarki-banda pertsonalizatua'
 form.customize.custom_banner.help: 'Ziurtatu iragarki-banda SVG patroi errepikagarria
   dela'
 product_option.strategy.free: 'Doan'
-product_option.strategy.option_value: 'Aukera bakoitzak prezio desberdina du'
+product_option.strategy.option_value: 'Prezio pertsonalizatua'
 roles.ROLE_ADMIN: 'Administratzailea'
 roles.ROLE_COURIER: 'Mezularia'
 roles.ROLE_RESTAURANT: 'Jatetxea'
@@ -889,3 +889,15 @@ products.on_demand_delivery.name: 'Eskariaren arabera entrega'
 restaurant.list.active_catalog: Katalogo aktiboa
 restaurant.list.catalogs: Katalogoa
 adminDashboard.shops.title: Dendak
+restaurant_promotion.items_total: Produktuen totalean oinarrituta
+notifications.tasks_changed: '%date% egundaren zereginak aldatu dira!'
+form.local_business_type.label: Negozio mota
+store.TOY_STORE: Jostailu denda
+store.CLOTHING_STORE: Erropa-denda
+deliveries.section.past: Iragana
+restricted_diets.LOW_SALT_DIET: Gatz gutxi
+restricted_diets.LOW_LACTOSE_DIET: Laktosa gutxi
+restricted_diets.LOW_CALORIE_DIET: Kaloria gutxi
+restricted_diets.KOSHER_DIET: Kosher
+restricted_diets.GLUTEN_FREE_DIET: Glutenik gabe
+promotion_coupon.used.label: Erabilera kopurua
