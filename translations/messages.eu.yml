@@ -232,7 +232,7 @@ restaurant.list.orders: 'Eskaerak'
 restaurant.list.refunds: 'Itzulketak'
 restaurant.list.products: 'Produktuak'
 restaurant.list.product_options: 'Aukerak'
-restaurant.list.planning: 'Plangintza'
+restaurant.list.planning: 'Oporrak'
 restaurant.list.settings: 'Ezarpenak'
 restaurant.list.norestaurant: 'Ez dago jatetxerik oraindik'
 restaurant.list.preparationTime: 'Prestaketa'
@@ -886,3 +886,6 @@ edenred.oauth_connect.success: 'Edenred kontua ondo konektatu da!'
 form.payment.method.name.label: 'Ordainketa metodoa'
 order.export.heading.promotions: 'Promozioak'
 products.on_demand_delivery.name: 'Eskariaren arabera entrega'
+restaurant.list.active_catalog: Katalogo aktiboa
+restaurant.list.catalogs: Katalogoa
+adminDashboard.shops.title: Dendak
