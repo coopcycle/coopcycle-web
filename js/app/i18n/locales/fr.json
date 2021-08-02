@@ -238,6 +238,13 @@
             "PER_PACKAGE_ADD_DISCOUNT": "Ajouter une réduction",
             "PER_PACKAGE_DEL_DISCOUNT": "Supprimer la réduction"
         },
-        "CASH_ON_DELIVERY_DISCLAIMER": "Vous allez payer en contre-remboursement. Veuillez préparer le montant exact en espèces et assurez-vous d'être joignable."
+        "CASH_ON_DELIVERY_DISCLAIMER": "Vous allez payer en contre-remboursement. Veuillez préparer le montant exact en espèces et assurez-vous d'être joignable.",
+        "RRULE": {
+            "every": "chaque",
+            "week": "semaine",
+            "on": "le",
+            "weekday": "jour de la semaine",
+            "day": "jour"
+        }
     }
 }
