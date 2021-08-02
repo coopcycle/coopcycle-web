@@ -1,7 +1,8 @@
 import React from 'react'
 import { rrulestr } from 'rrule'
 import moment from 'moment'
-import { toTextArgs } from '../utils/rrule'
+
+import RecurrenceRuleAsText from './RecurrenceRuleAsText'
 
 export default ({ rrule, onClick }) => {
   const ruleObj = rrulestr(rrule.rule, {
@@ -17,7 +18,12 @@ export default ({ rrule, onClick }) => {
         <span className="font-weight-bold">{ rrule.orgName }</span>
         <span className="mx-1">›</span>
       </span>
-      <span>{ `${ruleObj.toText(...toTextArgs())} (${length})` }</span>
+      <span>
+        <span className="mr-1">
+          <RecurrenceRuleAsText rrule={ ruleObj } />
+        </span>
+        <span>{ `(${length})` }</span>
+      </span>
     </span>
   )
 }

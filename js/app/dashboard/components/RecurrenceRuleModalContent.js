@@ -19,7 +19,8 @@ import { timePickerProps } from '../../utils/antd'
 import { recurrenceTemplateToArray } from '../redux/utils'
 import { saveRecurrenceRule, createTasksFromRecurrenceRule, deleteRecurrenceRule } from '../redux/actions'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
-import { toTextArgs } from '../utils/rrule'
+import RecurrenceRuleAsText from './RecurrenceRuleAsText'
+
 import { phoneNumberExample } from '../utils'
 
 const freqOptions = [
@@ -220,7 +221,7 @@ const RecurrenceEditor = ({ recurrence, onChange }) => {
           onChange={ opts => onChange({ ...ruleObj.options, byweekday: opts }) } />
       </div>
       <div>
-        <small className="text-muted">{ ruleObj.toText(...toTextArgs()) }</small>
+        <small className="text-muted"><RecurrenceRuleAsText rrule={ ruleObj } /></small>
       </div>
     </div>
   )
