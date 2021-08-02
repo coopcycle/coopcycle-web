@@ -10,19 +10,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *   attributes={
- *     "normalization_context"={"groups"={"centrifugo"}}
- *   },
  *   itemOperations={
  *     "get_token"={
  *       "method"="GET",
  *       "path"="/centrifugo/token",
  *       "controller"=TokenController::class,
  *       "read"=false,
+ *       "normalization_context"={"groups"={"centrifugo"}},
  *       "openapi_context"={
- *         "summary"="Retrieves Centrifugo token",
+ *         "summary"="Retrieves Centrifugo token"
  *       }
  *     },
+ *     "refresh_token"={
+ *       "method"="POST",
+ *       "path"="/centrifugo/token/refresh",
+ *       "controller"=TokenController::class,
+ *       "read"=false,
+ *       "normalization_context"={"groups"={"centrifugo_refresh"}},
+ *       "openapi_context"={
+ *         "summary"="Refreshes Centrifugo token"
+ *       }
+ *     }
  *   },
  *   collectionOperations={}
  * )
@@ -39,7 +47,7 @@ final class Centrifugo
     /**
      * @var int
      *
-     * @Groups({"centrifugo"})
+     * @Groups({"centrifugo", "centrifugo_refresh"})
      */
     public $token;
 
