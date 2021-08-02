@@ -103,7 +103,7 @@
         "twig/intl-extra": "^3.0",
         "odolbeau/phone-number-bundle": "^3.1",
         "league/omnipay": "^3",
-        "mercadopago/dx-php": "dev-fix-composer",
+        "mercadopago/dx-php": "^2.4.1",
         "egulias/email-validator": "^2.1",
         "twilio/sdk": "^6.10",
         "friendsofsymfony/rest-bundle": "^3.0",
@@ -197,11 +197,5 @@
             "symfony/webpack-encore-bundle": ["tests"],
             "willdurand/hateoas": ["tests"]
         }
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/alexsegura/dx-php"
-        }
-    ]
+    }
 }
