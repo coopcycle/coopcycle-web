@@ -386,19 +386,19 @@ Feature: Authenticate
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
-    """
-    {
-      "id":@integer@,
-      "roles":[
-        "ROLE_USER"
-      ],
-      "username":"bob",
-      "email":"bob@coopcycle.org",
-      "enabled": true,
-      "token":@string@,
-      "refresh_token":@string@
-    }
-    """
+      """
+      {
+        "id":@integer@,
+        "roles":[
+          "ROLE_USER"
+        ],
+        "username":"bob",
+        "email":"bob@coopcycle.org",
+        "enabled": true,
+        "token":@string@,
+        "refresh_token":@string@
+      }
+      """
 
   Scenario: Set new password failure, token expired
     Given the user is loaded:
@@ -416,15 +416,16 @@ Feature: Authenticate
       | password    | 654321            |
     Then the response status code should be 400
     And the response should be in JSON
-    """
-    {
-      "@context":"/api/contexts/Error",
-      "@type":"hydra:Error",
-      "hydra:title":"An error occurred",
-      "hydra:description":@string@,
-      "trace":@array@
-    }
-    """
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Error",
+        "@type":"hydra:Error",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "trace":@array@
+      }
+      """
 
   Scenario: Set new password failure, wrong token
     Given the user is loaded:
@@ -442,12 +443,13 @@ Feature: Authenticate
       | password    | 654321            |
     Then the response status code should be 401
     And the response should be in JSON
-    """
-    {
-      "@context":"/api/contexts/Error",
-      "@type":"hydra:Error",
-      "hydra:title":"An error occurred",
-      "hydra:description":@string@,
-      "trace":@array@
-    }
-    """
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Error",
+        "@type":"hydra:Error",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "trace":@array@
+      }
+      """
