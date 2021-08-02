@@ -19,11 +19,13 @@ export * from './actions'
 import {
   mapToColor,
   tasksToIds,
+  groupLinkedTasks,
 } from './taskUtils'
 
 export const taskUtils = {
   mapToColor,
   tasksToIds,
+  groupLinkedTasks,
 }
 
 import {

@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { moment } from '../../coopcycle-frontend-js';
+import { taskUtils } from '../../coopcycle-frontend-js/logistics/redux';
 
 export function taskComparator(a, b) {
   return a['@id'] === b['@id']
@@ -20,24 +21,15 @@ export function withLinkedTasks(tasks, allTasks) {
     tasks = [ tasks ]
   }
 
+  const groups = taskUtils.groupLinkedTasks(allTasks)
+
   const newTasks = []
   tasks.forEach(task => {
-    // FIXME
-    // Make it work when more than 2 tasks are linked together
-    if (task.previous) {
-      // If previous task is another day, will be null
-      const previousTask = _.find(allTasks, t => t['@id'] === task.previous)
-      if (previousTask) {
-        newTasks.push(previousTask)
-      }
-      newTasks.push(task)
-    } else if (task.next) {
-      // If next task is another day, will be null
-      const nextTask = _.find(allTasks, t => t['@id'] === task.next)
-      newTasks.push(task)
-      if (nextTask) {
-        newTasks.push(nextTask)
-      }
+    if (Object.prototype.hasOwnProperty.call(groups, task['@id'])) {
+      groups[task['@id']].forEach(taskId => {
+        const t = _.find(allTasks, t => t['@id'] === taskId)
+        newTasks.push(t)
+      })
     } else {
       newTasks.push(task)
     }

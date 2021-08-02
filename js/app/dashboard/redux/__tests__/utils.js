@@ -48,6 +48,20 @@ describe('withLinkedTasks', () => {
     }, {
       '@id': '/api/tasks/5',
       previous: '/api/tasks/4',
+    },
+    // Without next
+    {
+      '@id': '/api/tasks/6',
+    }, {
+      '@id': '/api/tasks/7',
+      previous: '/api/tasks/6',
+    }, {
+      '@id': '/api/tasks/8',
+      previous: '/api/tasks/6',
+    },
+    // Not linked
+    {
+      '@id': '/api/tasks/9',
     }
   ]
 
@@ -92,6 +106,39 @@ describe('withLinkedTasks', () => {
       }
     ])
   })
+
+  it('should return expected results with multiple tasks (without next)', () => {
+
+    const actual = withLinkedTasks({
+      '@id': '/api/tasks/6'
+    }, allTasks)
+
+    expect(actual).toEqual([
+      {
+        '@id': '/api/tasks/6',
+      }, {
+        '@id': '/api/tasks/7',
+        previous: '/api/tasks/6',
+      }, {
+        '@id': '/api/tasks/8',
+        previous: '/api/tasks/6',
+      }
+    ])
+  })
+
+  it('should return expected results with unlinked task', () => {
+
+    const actual = withLinkedTasks({
+      '@id': '/api/tasks/9'
+    }, allTasks)
+
+    expect(actual).toEqual([
+      {
+        '@id': '/api/tasks/9',
+      }
+    ])
+  })
+
 })
 
 describe('timeframeToPercentage', () => {
