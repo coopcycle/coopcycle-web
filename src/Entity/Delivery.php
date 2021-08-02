@@ -157,6 +157,14 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         $this->packages = new ArrayCollection();
     }
 
+    public function addTask(Task $task, $position = null)
+    {
+        $task->setDelivery($this);
+
+        return parent::addTask($task, $position);
+    }
+
+
     public function getOrder()
     {
         return $this->order;
@@ -243,25 +251,17 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         $delivery->removeTask($delivery->getPickup());
         $delivery->removeTask($delivery->getDropoff());
 
-        if (func_num_args() > 2) {
+        if (count($tasks) > 2) {
 
-            for ($i = 0; $i < count($tasks); $i++) {
+            $pickup = array_shift($tasks);
 
-                $current = $tasks[$i];
-                $prev = $i > 0 ? $tasks[$i - 1] : null;
-                $next = $i < (count($tasks) - 1) ? $tasks[$i + 1] : null;
+            $delivery->addTask($pickup);
 
-                if ($prev) {
-                    $current->setPrevious($prev);
-                }
+            foreach ($tasks as $dropoff) {
 
-                if ($next) {
-                    $current->setNext($next);
-                }
+                $dropoff->setPrevious($pickup);
 
-                $current->setDelivery($delivery);
-
-                $delivery->addTask($current);
+                $delivery->addTask($dropoff);
             }
 
 

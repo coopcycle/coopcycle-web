@@ -26,18 +26,6 @@ class DeliveryTest extends TestCase
         $this->assertCount(2, $delivery->getTasks());
     }
 
-    public function testAddTaskThrowsException()
-    {
-        $this->expectException(\RuntimeException::class);
-
-        $delivery = new Delivery();
-
-        $task = new Task();
-        $task->setType(Task::TYPE_PICKUP);
-
-        $delivery->addTask($task);
-    }
-
     public function testToExpressionLanguageValues()
     {
         $pickupAddress = new Address();
@@ -206,13 +194,12 @@ class DeliveryTest extends TestCase
         // Delivery::getDropoff() returns the *LAST* dropoff to stay BC
         $this->assertSame($tasks[3], $delivery->getDropoff());
 
+        // Only dropoffs should have link with pickup
         $this->assertSame($tasks[0], $tasks[1]->getPrevious());
-        $this->assertSame($tasks[2], $tasks[1]->getNext());
+        $this->assertSame($tasks[0], $tasks[2]->getPrevious());
+        $this->assertSame($tasks[0], $tasks[3]->getPrevious());
 
-        $this->assertSame($tasks[1], $tasks[2]->getPrevious());
-        $this->assertSame($tasks[3], $tasks[2]->getNext());
-
-        $this->assertNull($tasks[3]->getNext());
+        $this->assertNull($tasks[0]->getNext());
 
         foreach ($tasks as $task) {
             $this->assertSame($delivery, $task->getDelivery());
