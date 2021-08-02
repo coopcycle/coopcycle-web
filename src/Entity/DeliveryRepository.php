@@ -27,25 +27,25 @@ class DeliveryRepository extends EntityRepository
         }
 
         $qbToday = (clone $qb)
-            ->andWhere('t.type = :dropoff')
-            ->andWhere('t.doneAfter > :after')
-            ->andWhere('t.doneBefore < :before')
-            ->setParameter('dropoff', Task::TYPE_DROPOFF)
+            ->andWhere('t.type = :pickup')
+            ->andWhere('t.doneAfter >= :after')
+            ->andWhere('t.doneBefore <= :before')
+            ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->copy()->hour(0)->minute(0)->second(0))
             ->setParameter('before', $today->copy()->hour(23)->minute(59)->second(59));
 
         $qbUpcoming = (clone $qb)
-            ->andWhere('t.type = :dropoff')
-            ->andWhere('t.doneAfter > :after')
-            ->setParameter('dropoff', Task::TYPE_DROPOFF)
+            ->andWhere('t.type = :pickup')
+            ->andWhere('t.doneAfter >= :after')
+            ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->copy()->add(1, 'day')->hour(0)->minute(0)->second(0))
             ->orderBy('t.doneBefore', 'asc')
             ;
 
         $qbPast = (clone $qb)
-            ->andWhere('t.type = :dropoff')
+            ->andWhere('t.type = :pickup')
             ->andWhere('t.doneBefore < :after')
-            ->setParameter('dropoff', Task::TYPE_DROPOFF)
+            ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->copy()->sub(1, 'day')->hour(23)->minute(59)->second(59))
             ;
 

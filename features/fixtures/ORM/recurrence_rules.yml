@@ -36,3 +36,25 @@ AppBundle\Entity\Task\RecurrenceRule:
       '@type': 'hydra:Collection'
       'hydra:member': []
     deletedAt: <identity(new \DateTime('yesterday'))>
+  recurrence_rule_4:
+    store: '@store_1'
+    rule: '@rrule_2'
+    template:
+      '@type': 'hydra:Collection'
+      'hydra:member':
+        - 'address':
+            '@id': '/api/addresses/1'
+            'streetAddress': '272, rue Saint Honoré 75001 Paris 1er'
+          'type': 'PICKUP'
+          'after': '11:30'
+          'before': '12:00'
+        - 'address':
+            '@id': '/api/addresses/2'
+            'streetAddress': '18, avenue Ledru-Rollin 75012 Paris 12ème'
+          'after': '12:30'
+          'before': '13:00'
+        - 'address':
+            '@id': '/api/addresses/3'
+            'streetAddress': '18, avenue Ledru-Rollin 75012 Paris 12ème'
+          'after': '12:30'
+          'before': '13:00'
