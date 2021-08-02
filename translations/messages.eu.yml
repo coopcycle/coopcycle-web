@@ -901,3 +901,39 @@ restricted_diets.LOW_CALORIE_DIET: Kaloria gutxi
 restricted_diets.KOSHER_DIET: Kosher
 restricted_diets.GLUTEN_FREE_DIET: Glutenik gabe
 promotion_coupon.used.label: Erabilera kopurua
+order.export.heading.refund_total: Itzulketak
+basics.weeks: aste %count%|%count% aste
+basics.days: egun %count%|%count% egun
+basics.hours: ordu %count%|%count% ordu
+task.receipt.reference: 'Erreferentzia: <strong>%ref%</strong>'
+receipt.title: 'Zure #%number% eskaeraren ordainagiria'
+sylius.form.promotion_coupon.per_customer_usage_limit: Bezero bakoitzeko erabilpen
+  muga
+time_range: '%start% eta %end% artean'
+restricted_diets.VEGETARIAN_DIET: Begetarianoa
+restricted_diets.VEGAN_DIET: Beganoa
+restricted_diets.LOW_FAT_DIET: Gantz gutxikoa
+restricted_diets.HINDU_DIET: Hindua
+allergens.MOLLUSCS: Moluskoak
+allergens.LUPIN: Lupinua
+allergens.SULPHUR_DIOXIDE_SULPHITES: Sulfuro dioxido eta sulfitoak
+allergens.MUSTARD: Mostaza
+allergens.CELERY: Apioa
+promotions.heading.credit_note: Kreditu-notak
+promotions.breadcrumb.new_credit_note: Kreditu-nota berria
+promotions.breadcrumb: Promozioak
+basics.stripe_fees: Stripe komisioak
+basics.platform_fees: Plataformaren komisioak
+roles.ROLE_COURIER.help: "Mezularia: ikusi zain dauden zereginak, aldatu esleitutako\
+  \ zereginak...\n"
+form.credit_note.name.help: Organ erakutsiko den beherapenaren izena
+form.credit_note.type.label: Beherapen mota
+form.checkout_address.notes.placeholder: "Adibidez: saltsa gabe, tomaterik gabe...\n"
+form.product.restricted_diets.label: Dieta murriztuak
+form.mercadopago_livemode.disable_and_enable_maintenance.alert: « live » moduan zaude.<br>«
+  test » modura aldatzen bazara, mantentze modua automatikoki gaituko da.
+form.mercadopago_livemode.disable_and_enable_maintenance.label: Aldatu « test » modura
+  eta gaitu mantentze modua
+form.mercadopago_livemode.disable.alert: « test » moduan, kreditu-txartelak ez dira
+  kobratuko.
+form.mercadopago_livemode.disable.label: Erabili Mercadopago « test » moduan
