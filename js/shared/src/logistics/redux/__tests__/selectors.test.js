@@ -226,8 +226,8 @@ describe('Selectors', () => {
   describe('selectTasksWithColor', () => {
     it('should return tasks with a color tag', () => {
       expect(selectTasksWithColor(baseState)).toEqual({
-        '/api/tasks/1': '#93c63f',
-        '/api/tasks/2': '#93c63f',
+        '/api/tasks/1': '#6c87e0',
+        '/api/tasks/2': '#6c87e0',
       })
     })
   })
