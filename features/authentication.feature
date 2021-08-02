@@ -453,3 +453,24 @@ Feature: Authenticate
         "trace":@array@
       }
       """
+
+  Scenario: Retrieve Centrifugo token
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/centrifugo/token"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Centrifugo",
+        "@id":"/api/centrifugo/token",
+        "@type":"Centrifugo",
+        "token":@string@,
+        "namespace":@string@
+      }
+      """
