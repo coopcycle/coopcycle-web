@@ -34,7 +34,7 @@ class PricingRuleValidator extends ConstraintValidator
         } catch (SyntaxError $e) {
             $this->context
                 ->buildViolation($constraint->expressionSyntaxErrorMessage)
-                ->setParameter('%expression%', $object->getExpression())
+                ->setParameter('%expression%', $object->getExpression() ?? '')
                 ->atPath('expression')
                 ->addViolation();
         }
