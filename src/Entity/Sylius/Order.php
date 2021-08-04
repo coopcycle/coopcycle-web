@@ -16,9 +16,11 @@ use AppBundle\Action\Order\Delay as OrderDelay;
 use AppBundle\Action\Order\Fulfill as OrderFulfill;
 use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
+use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Action\MyOrders;
 use AppBundle\Api\Dto\CartItemInput;
+use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\User;
@@ -106,6 +108,17 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
  *       "openapi_context"={
  *         "summary"="Get payment details for a Order resource."
+ *       }
+ *     },
+ *     "payment_methods"={
+ *       "method"="GET",
+ *       "path"="/orders/{id}/payment_methods",
+ *       "controller"=PaymentMethodsController::class,
+ *       "output"=PaymentMethodsOutput::class,
+ *       "normalization_context"={"api_sub_level"=true},
+ *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
+ *       "openapi_context"={
+ *         "summary"="Get available payment methods for a Order resource."
  *       }
  *     },
  *     "pay"={
