@@ -29,6 +29,8 @@ export default ({ packages, defaultValue, onChange }) => {
               onChange({
                 packageName,
                 unitPrice: e.target.value * 100,
+                offset,
+                discountPrice,
               })
             }} />
             <span className="ml-2">{ getCurrencySymbol() }</span>
@@ -41,6 +43,8 @@ export default ({ packages, defaultValue, onChange }) => {
               onChange({
                 packageName: e.target.value,
                 unitPrice,
+                offset,
+                discountPrice,
               })
             }}>
             { packages.map(pkg => (<option key={ pkg }>{ pkg }</option>)) }
