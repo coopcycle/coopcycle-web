@@ -36,8 +36,18 @@
         data-packages="{{ packages|json_encode|e('html_attr') }}"
     >
         {% for rule in form.rules %}
-          <li class="delivery-pricing-ruleset__rule">
-            {{ form_errors(rule) }}
+          <li class="delivery-pricing-ruleset__rule {% if not rule.vars.valid %}delivery-pricing-ruleset__rule--error{% endif %}">
+            {# FIXME #}
+            {# Errors on "price" field do not bubble up to parent form #}
+            {% if not rule.vars.valid %}
+              <div class="px-4">
+              {% if rule.price.vars.errors|length > 0 %}
+                {{ form_errors(rule.price) }}
+              {% endif %}
+              {{ form_errors(rule) }}
+              </div>
+            {% endif %}
+
             {{ form_widget(rule) }}
           </li>
         {% endfor %}
