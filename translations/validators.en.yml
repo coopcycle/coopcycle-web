@@ -55,3 +55,5 @@ checkout.user_with_same_email_exists: An account with the same email already exi
 time_range_jump.next_day: It is no longer possible to order for today
 
 order.shippingTimeRange.notAvailable: Not available at the moment
+
+pricing_rule.expression.syntax_error: Syntax error in expression "%expression%"
