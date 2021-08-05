@@ -684,6 +684,8 @@ services:
 
   AppBundle\Action\Order\Pay:
     public: true
+    arguments:
+      $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
     tags:
       - { name: monolog.logger, channel: stripe }
 
