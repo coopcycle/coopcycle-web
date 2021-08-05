@@ -1,4 +1,4 @@
-{{ 'order.summary.heading'|trans({ '%number%': order.number, '%id%': order.id }) }}
+{{ 'order.summary.heading'|trans({ '%number%': order.number, '%id%': order.id  }) }}
 
 ---
 
@@ -23,4 +23,10 @@
 ---
 
 {{ 'order.reusable_packaging.pledge_return.disclaimer'|trans({ '%count%': order.reusablePackagingPledgeReturn }) }}
+{% endif %}
+
+{% if order.getAdjustmentsTotal('tip') > 0 %}
+---
+
+{{ 'order.adjustment_type.tip'|trans }} {{ order.getAdjustmentsTotal('tip')|price_format }}
 {% endif %}
