@@ -12,6 +12,7 @@ use Psr\Log\NullLogger;
 use Stripe\Exception\ApiErrorException;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -20,18 +21,23 @@ class Pay
     private $entityManager;
     private $stripeManager;
     private $orderNumberAssigner;
+    private $cashEnabled;
 
     public function __construct(
         OrderManager $dataManager,
         EntityManagerInterface $entityManager,
         StripeManager $stripeManager,
         OrderNumberAssignerInterface $orderNumberAssigner,
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
+        bool $cashEnabled = false,
         LoggerInterface $logger = null)
     {
         $this->orderManager = $dataManager;
         $this->entityManager = $entityManager;
         $this->stripeManager = $stripeManager;
         $this->orderNumberAssigner = $orderNumberAssigner;
+        $this->paymentMethodRepository = $paymentMethodRepository;
+        $this->cashEnabled = $cashEnabled;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -43,11 +49,34 @@ class Pay
             $body = json_decode($content, true);
         }
 
-        if (!isset($body['paymentMethodId']) && !isset($body['paymentIntentId'])) {
+        if (!isset($body['paymentMethodId']) && !isset($body['paymentIntentId']) && !isset($body['cashOnDelivery'])) {
             throw new BadRequestHttpException('Mandatory parameters are missing');
         }
 
         $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
+
+        if (isset($body['cashOnDelivery']) && true === $body['cashOnDelivery']) {
+
+            if (!$this->cashEnabled) {
+                throw new BadRequestHttpException('Cash on delivery is not enabled');
+            }
+
+            $paymentMethod = $this->paymentMethodRepository->findOneByCode('CASH_ON_DELIVERY');
+            if (null === $paymentMethod) {
+                throw new BadRequestHttpException('Payment method "CASH_ON_DELIVERY" not found');
+            }
+
+            $payment->setMethod($paymentMethod);
+
+            $this->orderManager->checkout($data);
+            $this->entityManager->flush();
+
+            if (PaymentInterface::STATE_FAILED === $payment->getState()) {
+                throw new BadRequestHttpException($payment->getLastError());
+            }
+
+            return $data;
+        }
 
         if (isset($body['paymentIntentId'])) {
 

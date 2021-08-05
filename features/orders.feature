@@ -1188,3 +1188,44 @@ Feature: Orders
         "stripeAccount":null
       }
       """
+
+  @debug
+  Scenario: Get cart payment methods
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the setting "brand_name" has value "CoopCycle"
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
+    And the setting "stripe_test_publishable_key" has value "pk_1234567890"
+    And the setting "stripe_test_secret_key" has value "sk_1234567890"
+    And the setting "stripe_test_connect_client_id" has value "ca_1234567890"
+    Given the user "bob" has created a cart at restaurant with id "1"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/orders/1/payment_methods"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":{"@*@":"@*@"},
+        "@type":"PaymentMethodsOutput",
+        "@id":@string@,
+        "methods":[
+          {
+            "type":"card"
+          }
+        ]
+      }
+      """
