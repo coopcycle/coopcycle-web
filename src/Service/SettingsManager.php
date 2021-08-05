@@ -336,4 +336,9 @@ class SettingsManager
 
         return $settings;
     }
+
+    public function clearCache()
+    {
+        $this->craueCache->clear();
+    }
 }
