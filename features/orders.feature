@@ -1189,7 +1189,6 @@ Feature: Orders
       }
       """
 
-  @debug
   Scenario: Get cart payment methods
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -1227,5 +1226,38 @@ Feature: Orders
             "type":"card"
           }
         ]
+      }
+      """
+
+  Scenario: Retrieve Centrifugo connection details for order
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" is authenticated
+    And the user "bob" has ordered something at the restaurant with id "1"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/orders/1/centrifugo"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Centrifugo",
+        "@id":"/api/centrifugo/token",
+        "@type":"Centrifugo",
+        "token":@string@,
+        "namespace":@string@,
+        "channel":"coopcycle_order_events#1"
       }
       """

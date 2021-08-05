@@ -45,16 +45,23 @@ final class Centrifugo
     public $id;
 
     /**
-     * @var int
+     * @var string
      *
      * @Groups({"centrifugo", "centrifugo_refresh"})
      */
     public $token;
 
     /**
-     * @var int
+     * @var string
      *
      * @Groups({"centrifugo"})
      */
     public $namespace;
+
+    /**
+     * @var string
+     *
+     * @Groups({"centrifugo_for_order"})
+     */
+    public $channel;
 }

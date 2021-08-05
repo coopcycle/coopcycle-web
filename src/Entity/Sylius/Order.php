@@ -18,6 +18,7 @@ use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
+use AppBundle\Action\Order\Centrifugo as CentrifugoController;
 use AppBundle\Action\MyOrders;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
@@ -252,6 +253,16 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "security"="is_granted('session', object)",
  *       "openapi_context"={
  *         "summary"="Deletes items from a Order resource."
+ *       }
+ *     },
+ *     "centrifugo"={
+ *       "method"="GET",
+ *       "path"="/orders/{id}/centrifugo",
+ *       "controller"=CentrifugoController::class,
+ *       "normalization_context"={"groups"={"centrifugo", "centrifugo_for_order"}},
+ *       "security"="is_granted('view', object)",
+ *       "openapi_context"={
+ *         "summary"="Get Centrifugo connection details for a Order resource."
  *       }
  *     }
  *   },

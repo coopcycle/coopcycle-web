@@ -710,6 +710,11 @@ services:
     arguments:
       $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
 
+  AppBundle\Action\Order\Centrifugo:
+    public: true
+    arguments:
+      $centrifugoNamespace: '%centrifugo_namespace%'
+
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }
