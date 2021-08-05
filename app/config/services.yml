@@ -972,6 +972,10 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.search }
 
+  AppBundle\MessageHandler\CreateWebhookEndpointHandler:
+    arguments:
+      $entityName: "%craue_config.entity_name%"
+
   AppBundle\Service\MaintenanceManager: ~
 
   AppBundle\Service\SmsManager: ~

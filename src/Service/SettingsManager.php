@@ -94,6 +94,9 @@ class SettingsManager
             case 'stripe_connect_client_id':
                 $name = $this->isStripeLivemode() ? 'stripe_live_connect_client_id' : 'stripe_test_connect_client_id';
                 break;
+            case 'stripe_webhook_secret':
+                $name = $this->isStripeLivemode() ? 'stripe_live_webhook_secret' : 'stripe_test_webhook_secret';
+                break;
             case 'mercadopago_publishable_key':
                 $name = $this->isMercadopagoLivemode() ? 'mercadopago_live_publishable_key' : 'mercadopago_test_publishable_key';
                 break;
