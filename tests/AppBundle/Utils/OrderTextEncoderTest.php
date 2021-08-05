@@ -8,6 +8,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
+use AppBundle\Utils\PriceFormatter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -31,6 +32,8 @@ class OrderTextEncoderTest extends KernelTestCase
         $twig = self::$container->get(TwigEnvironment::class);
 
         $this->encoder = new OrderTextEncoder($twig);
+
+        $this->priceFormatter = self::$container->get(PriceFormatter::class);
     }
 
     private function createOrder(int $tipAmount = 0): OrderInterface
@@ -112,6 +115,8 @@ EOT;
 
     public function testEncodeWithTip()
     {
+        $formattedPrice = $this->priceFormatter->formatWithSymbol(500);
+
         $order = $this->createOrder($tipAmount = 500);
 
         $output = $this->encoder->encode($order, 'txt');
@@ -134,7 +139,7 @@ Hello
 
 ---
 
-Pourboire € 5.00
+Pourboire {$formattedPrice}
 
 EOT;
 
