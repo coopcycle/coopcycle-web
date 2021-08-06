@@ -7,7 +7,8 @@ cube(`Store`, {
       drillMembers: [id]
     },
     cumulativeCount: {
-      sql: `id`,
+      // Don't use "id" here, or it would sum the ids
+      sql: `1`,
       type: `runningTotal`,
     },
   },
