@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 
 import AverageDistance from './AverageDistance'
 import NumberOfTasks from './NumberOfTasks'
+import StoreCumulativeCount from './StoreCumulativeCount'
 import Navbar from './Navbar'
 import ChartPanel from './ChartPanel'
 
@@ -17,6 +18,9 @@ const Dashboard = ({ cubejsApi, dateRange }) => {
         </ChartPanel>
         <ChartPanel title="Number of tasks">
           <NumberOfTasks cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        </ChartPanel>
+        <ChartPanel title="Number of stores">
+          <StoreCumulativeCount cubejsApi={ cubejsApi } dateRange={ dateRange } />
         </ChartPanel>
       </div>
     </div>
