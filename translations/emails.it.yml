@@ -68,3 +68,13 @@ covid_19.body: "<h1>Istruzioni da seguire per la tua spedizione</h1>\n<p>Data l'
   \ la confezione in un cestino chiuso</strong> evita di toccarlo.</p>\n<h2>4. Lavati\
   \ le mani!</h2>\n<p>Una volta aperto l'ordine e buttato la confezione, <strong>lavati\
   \ le mani!</strong></p>\n"
+order.payment_failed.return_to_order: Torna all'ordine
+order.receipt.body: "Ciao,\n<br>\nLa ricevuta del suo ordine si trova in allegato."
+order.payment_failed.body: "Ciao,\n<br>\nCi dispiace, c'è stato un errore nel processare\
+  \ il pagamento. Per favore prova nuovamente con un metodo di pagamento diverso."
+order.payment_failed.subject: Si è verificato un errore nel processare il pagamento
+order.receipt.subject: Ricevuta del suo ordine %order.number%
+order.expiring_authorization.text: L'autorizzazione per il pagamento <strong>%order.number%</strong>
+  scadrà presto. <br> Completi l'ordine prima della scadenza dell'autorizzazione per
+  evitare di perdere il denaro.
+order.expiring_authorization.subject: L'autorizzazione al pagamento scadrà presto
