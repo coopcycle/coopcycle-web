@@ -835,7 +835,7 @@ restaurant.closingForm.reason.label: Ragioni
 restaurant.closingForm.dates.label: Chiuso dalle/alle
 restaurant.list.preparationTime: Preparazione
 restaurant.closingForm.title: Aggiungi un orario di chiusura
-restaurant.list.planning: Calendario
+restaurant.list.planning: Vacanze
 restaurant.list.settings: Impostazioni
 restaurant.list.stats: Statistiche
 restaurant.list.promotions: Promozioni
@@ -867,7 +867,7 @@ profile.payment: Pagamento
 order.list.summary.restaurant.text: Consegna al ristorante <a href="%restaurant_url%">%restaurant_name%</a>
 order.list.state: Stato
 order.list.summary: Sommario
-order.adjustment_type.tip: Suggerimento
+order.adjustment_type.tip: Mancia
 order.list.customer: Cliente
 payment.state.refunded_partially: Parzialmente rimborsato
 order.adjustment_type.delivery: Consegna
@@ -896,7 +896,7 @@ profile.task.dueDate: Data di scadenza
 order.total_tax: IVA
 order.total_tax_by_rate: Totale %name%
 profile.task.noTasks: Nessun compito programmato
-profile.managedRestaurants: Ristorante gestito dall'utente
+profile.managedRestaurants: Ristoranti gestiti dall'utente
 order.summary.heading: Ordine %number% (#%id%)
 order.total_excluding_tax: Totale (escluso IVA)
 order.total_including_tax: Totale (incl. IVA)
@@ -954,3 +954,29 @@ form.menu_editor.name.help: Questo serve solo a te per distinguere i menù. Non 
 restaurant.form.cuisines.label: Cucine
 restaurant.form.section.taxonomy: Tassonomia
 products.on_demand_delivery.name: Consegna su richiesta
+form.payment.amount.label: Quantità
+form.payment.state.label: Stato
+form.store_type.packages_required.label: Richiesta di pacchetti
+form.store_type.weight_required.label: Richiesta di peso
+form.store_type.package_set.placeholder: Scegli un set di pacchetti
+form.store_type.time_slot.placeholder: Scegli una fascia oraria
+restaurant.form.section.loopeat: LoopEat
+checkout.breadcrumb.confirm: Conferma
+order.payer.identificationNumber: Numero del documento
+order.payer.identificationType: Tipo di documento
+order.payer.email: E-mail
+order.payer.title: Dettagli del compratore
+profile.fullName: Nome completo
+restaurant.list.active_catalog: Catalogo attivo
+restaurant.list.catalogs: Cataloghi
+localBusiness.form.business_address.label: Indirizzo commerciale
+localBusiness.form.use_different_business_address.label: Utilizzi un indirizzo commerciale
+  differente
+adminDashboard.users.last_order: Ultimo ordine
+adminDashboard.users.registered_at: Registrato
+adminDashboard.users.orders_count: Numero di ordini
+adminDashboard.shops.title: Negozi
+base.footer.terms: Condizioni di servizio
+base.footer.privacy: Privacy
+base.footer.RegisterMyRestaurant: Registra il mio ristorante
+base.footer.companyRegister: Diventa partner
