@@ -211,7 +211,7 @@ restaurant.contract.restaurantPaysStripeFee.restaurant: Ristoranti
 form.time_slot_choice.start_time.label: Ora di inizio
 form.time_slot_choice.end_time.label: Ora di fine
 form.address.description.label: Istruzioni
-form.address.description.placeholder: Secondo porta sulla sinistra…
+form.address.description.placeholder: 2a porta sulla sinistra…
 form.address.streetAddress.label: Indirizzo
 form.address.streetAddress.error.noLatLng: Selezioni un indirizzo nel menù a tendina
 form.address.name.label: Nome
@@ -542,8 +542,8 @@ form.order.fulfill.label: Esegui
 form.order.payment_complete.label: Completa
 form.order.payment_refund.label: Rimborso
 form.order.refund_modal.title: Rimborso
-form.payment.refund_amount.label: Quantità
-form.payment.refund_amount.help: La quantità specificata sarà rimborsato al cliente
+form.payment.refund_amount.label: Ammontare rimborsato
+form.payment.refund_amount.help: L'ammontare specificato sarà rimborsato al cliente
 form.settings.date_time: Data e ora
 form.settings.brand_name.label: Nome marca
 form.settings.stripe.title: Account Stripe
@@ -606,7 +606,7 @@ form.menu_item_modifier.name.label: Nome
 form.menu_item_modifier.price.label: Prezzo
 form.menu_item_modifier.calculusStrategy.label: Calcolando il prezzo
 form.menu_taxon.name.label: Nome
-form.menu_taxon.add_child.label: Aggiungi  parte
+form.menu_taxon.add_child.label: Aggiungere una categoria
 form.menu_taxon.child_name.placeholder: "Esempio: portata principale, desserts...\n"
 form.menu_editor.products_panel.title: Prodotti
 form.menu_editor.save.label: Salva cambiamenti
@@ -674,7 +674,7 @@ form.new_order.variant_name.label: Nome prodotto
 form.new_order.variant_price.label: Prezzo
 form.customize.about_us.label: Chi siamo contenuto della pagina
 product_option.strategy.free: Gratis
-product_option.strategy.option_value: Ogni opzione ha un prezzo diverso
+product_option.strategy.option_value: Prezzo personalizzato
 user.edit.roles.help: Configura i permessi degli utenti
 roles.ROLE_STORE.help: 'Proprietario del negozio: gestire i negozi assegnati, gestire
   le consegne …'
@@ -980,3 +980,141 @@ base.footer.terms: Condizioni di servizio
 base.footer.privacy: Privacy
 base.footer.RegisterMyRestaurant: Registra il mio ristorante
 base.footer.companyRegister: Diventa partner
+guest_checkout.use_another_email: Utilizzare un'altra email
+guest_checkout.user_with_same_email_exists: Un account con questa email esiste già.
+  Per favore, fai il login per continuare, oppure usa un'altra email per effettuare
+  un ordine senza creare un account.
+form.checkout_address.telephone.help: Per contattarti in caso di problemi
+authentication.register_benefits: Registrati per ordinare più rapidamente. Potrai
+  anche rivedere i tuoi ordini precedenti.
+loopeat.oauth_redirect.warning: Sarai reindirizzato al sito web di LoopEat per l'accesso
+  o la creazione del tuo account
+loopeat.oauth_connect.success: Account LoopEat connesso con successo!
+form.attach_to_org.modal.title: Allegare al negozio
+form.time_slot.choices.error.empty: La lista delle scelte non può essere vuoto
+refund.list.disclaimer.admin: Quando la piattaforma è responsabile per l'incidente,
+  significa che la piattaforma deve al commerciante l'importo del rimborso, in quanto
+  il commerciante ha rimborsato il cliente.
+refund.list.refunded_at: Rimborsato a
+refund.list.debit_total: Importo totale dovuto dalla piattaforma all'impresa
+refund.list.comments: Commenti
+refund.list.liable_party: Parte responsabile
+refund.list.amount: Importo rimborsato
+form:
+  restaurant:
+    b2b:
+      label: Ti piacerebbe proporre offerte speciali per aziende?
+    contact_referent:
+      label: Persona di contatto per il ristorante
+    name:
+      label: Nome del ristorante
+order.reusable_packaging.pledge_return.disclaimer: Il cliente ha indicato che %count%
+  pacchetti saranno restituiti
+form.time_slot.same_day_cutoff.help: Per esempio, selezionando 11.00, opzioni del
+  giorno stesso non verranno mostrate dopo le 11.00
+form.time_slot.same_day_cutoff.label: Soglia giornaliera
+form.package_with_quantity.package.placeholder: Scegliere un tipo di pacchetto
+form.product_tax_category_choice.placeholder: Scegliere una categoria di imposta
+basics.kilos: Kili
+basics.tax_excl: Senza IVA
+basics.tax_incl: IVA incl.
+nav.about_us: Chi siamo
+spreadsheet.download_example: Scaricare un foglio di calcolo d'esempio
+order.refund.total_amount: Questo ordine è stato rimborsato per un importo di %amount%
+promotion_rule.is_customer: Il cliente è %username%
+promotion_rule.is_restaurant: Il ristorante è %restaurant%
+restaurant_promotion.items_total: Basato sul totale degli articoli
+order.export.empty: Non ci sono ordini da esportare
+order.export.heading.refund_total: Rimborsi
+order.export.heading.fulfillment_method: Realizzazione
+profile.loopeat.disconnect: Disconnettere LoopEat
+receipt.line_item.tax_total: IVA
+deliveries.section.past: Passato
+deliveries.section.upcoming: In arrivo
+search.orders: Cercare una consegna (numero, mail del cliente...)
+delivery.table.heading.owner: Proprietario
+authentication.choose_password: Scegli la tua password
+basics.configure: Configurare
+basics.description: Descrizione
+user.edit.enabled.label: Attivato
+form.customize.custom_banner.help: Assicurati che il banner sia un pattern SVG ripetibile
+form.customize.custom_banner.label: Banner personalizzato
+form.customize.custom_privacy.label: Contenuto della pagina informativa sulla privacy
+  personalizzata
+form.customize.custom_privacy_enabled.label: Abilitare l'informativa sulla privacy
+  personalizzata
+form.customize.custom_terms.label: Contenuto della pagina dei termini e condizioni
+  personalizzati
+form.customize.custom_terms_enabled.label: Abilitare termini e condizioni personalizzate
+form.customize.custom_legal.label: Contenuto della pagina della nota legale personalizzata
+form.customize.custom_legal_enabled.label: Abilitare la nota legale personalizzata
+form.customize.motto.help: Questa sarà mostrato sulla homepage
+form.customize.motto.label: Motto
+form.customize.about_us_enabled.label: Abilitare la pagina "Chi siamo"
+form.credit_note.percentage.label: Percentuale
+form.credit_note.type.label: Tipo di sconto
+form.credit_note.user_search.label: User
+form.settings.mercadopago.redirect_uri.help: "Nel configurare l'app, usa il seguente\
+  \ URI di reindirizzamento: <code>%redirect_uri%</code>"
+form.settings.mercadopago.app_id.help: E' necessario <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">creare
+  un applicazione</a> per ottenere il proprio ID d'applicazione.
+form.settings.mercadopago.app_id.label: ID dell'applicazione
+form.settings.mercadopago.access_token.help: Ottieni il <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+  target="_blank">token di accesso</a>
+form.settings.mercadopago.access_token.label: Token di accesso
+form.settings.mercadopago.publishable_key.help: Ottieni la <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+  target="_blank">chiave di pubblicazione</a>
+form.settings.mercadopago.publishable_key.label: Chiave di pubblicazione
+form.settings.mercadopago_enable_livemode.help: Per attivare la modalità « live »,
+  è necessario configurare prima le credenziali « live ».
+form.settings.mercadopago_testmode.help: 'Nella modalità « test », usare<a href="https://www.mercadopago.com.ar/developers/en/guides/online-payments/checkout-api/testing#bookmark_how_to_test_your_integration">numeri
+  delle carte di credito di prova</a>  per pagare. <strong>Non ci sarà scambio di
+  denaro.</strong> '
+form.mercadopago_livemode.disable_and_enable_maintenance.alert: Sei in modalità «
+  live ».<br>Se vuoi passare alla modalità « test », il mantenimento sarà attivato
+  automaticamente.
+form.mercadopago_livemode.disable_and_enable_maintenance.label: Passare alla modalità
+  « test » e attivare il mantenimento
+form.mercadopago_livemode.disable.alert: In modalità « test », le carte di credito
+  non riceveranno addebito.
+form.mercadopago_livemode.disable.label: Usare Mercadopago in modalità « test »
+form.mercadopago_livemode.enable.alert: In modalità « live », le carte di credito
+  riceveranno un addebito
+form.mercadopago_livemode.enable.label: Usare Mercadopago in modalità « live »
+form.local_business.mercadopago.connect_button.text: Connettere con Mercado Pago
+form.local_business.mercadopago_account.success: Account MercadoPago connesso con
+  successo
+form.settings.mercadopago.title: Mercado Pago
+form.registration.legal.help: Spuntando questa casella, accetti i nostri <a href="%terms_url%">termini
+  e condizioni</a> e <a href="%privacy_url%">l'informativa sulla privacy</a>.
+form.registration.legal.label: Accetto i termini e condizioni e l'Informativa sulla
+  privacy
+form.settings.sms_gateway_config.twilio.from.label: Numero di telefono Twilio
+form.settings.sms_gateway_config.twilio.auth_token.label: Twilio Auth Token
+form.settings.sms_gateway_config.twilio.sid.label: Twilio SID
+form.settings.sms_gateway_config.mailjet.api_token.label: Mailjet API Token
+form.settings.sms_gateway.label: SMS Gateway
+form.settings.sms.title: SMS
+form.settings.sms_enabled.label: Abilitare l'invio si SMS
+form.settings.subject_to_vat.label: Soggetto a IVA
+form.pricing_rule_set.strategy.map.label: Tutte le regole che corrispondono
+form.pricing_rule_set.strategy.find.label: La prima regola che corrisponde
+form.pricing_rule_set.strategy.help: Le regole sono valutate dall'alto verso il basso.
+  A seconda del metodo di calcolo selezionato, o la prima regola che corrisponde determinerà
+  il prezzo, oppure il prezzo sarà calcolato sommando tutte le regole corrispondenti.
+form.pricing_rule_set.strategy.label: Metodo di calcolo
+form.company.make_the_request.label: Inviare la richiesta
+form.address.company.meal_estimate.label: Numero stimato di pasti (per giorno)
+form.address.company.collaborator_number.label: Numero di impiegati
+form.address.company.function.label: Posizione della persona di contatto
+form.address.company.business_reference.label: Persona di contatto per l'impresa
+form.address.company_name.label: Nome dell'impresa
+form.payment.refund_application_fee.help: "Marcando questa casella, la commissione\
+  \ addebitata dalla piattaforma al partner sarà rimborsata proporzionalmente\n<br>\n\
+  <a href=\"https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Learn\
+  \ more</a>\n"
+form.payment.refund_comment.help: Per favore descrivi cosa è successo
+form.payment.refund_comment.label: Commenti
+form.payment.refund_liable.help: Quale delle parti è responsabile dell'incidente?
+form.payment.refund_liable.label: Parte responsabile
+form.payment.last_update.label: Ultimo aggiornamento
