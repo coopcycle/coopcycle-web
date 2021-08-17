@@ -1,11 +1,11 @@
 registration.email.subject: "Conferma email\n"
 registration.email.message: "<h2>Benvenuto su %brand_name%, %username%</h2>\nHai ricevuto\
-  \ questo messaggio perché hai appena registrato il tuo account su %brand_name%.<br>\n\
-  Conferma il tuo indirizzo email cliccando sul tasto qui sotto.\n"
+  \ questo messaggio perché hai appena registrato il tuo account su %brand_name%.\n\
+  <br>\nConferma il tuo indirizzo email cliccando sul tasto qui sotto.\n"
 registration.email.confirm: Conferma email
 registration.email.disclaimer: Questo link serve ad attivare il tuo account
 registration.email.textMessage: "Benvenuto su %brand_name%, %username%,\\n\\n\nHai\
-  \ ricevuto questo messaggio perché hai appena registrato il tuo account  su %brand_name%\
+  \ ricevuto questo messaggio perché hai appena registrato il tuo account su %brand_name%\
   \ .\\n\nPer attivare la tua email, clicca sul link seguente: <a href=\"%confirmationUrl%\"\
   \ rel=\"notrack\">%confirmationUrl%</a>.\n"
 resetting.email.message: <h2>Ciao %username%</h2> Per resettare la tua password, clicca
