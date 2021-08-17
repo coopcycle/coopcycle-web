@@ -24,7 +24,7 @@ adminDashboard.restaurants.exclusive: Esclusivo
 adminDashboard.orders.showCanceled: Mostra gli ordini cancellati
 adminDashboard.orders.previousOrders: Ordini precedenti
 adminDashboard.orders.title: Ordini
-adminDashboard.stores.form.uploadImage: Upload immagine
+adminDashboard.stores.form.uploadImage: Carica un immagine
 adminDashboard.stores.createNew: Crea un nuovo negozio
 adminDashboard.stores.title: Negozi
 adminDashboard.menuCategories.addCategory: Aggiungi categoria
@@ -57,10 +57,10 @@ adminDashboard.deliveries.dueDate: Data di scadenza
 adminDashboard.deliveries.type: Tipo
 adminDashboard.deliveries.title: Consegne
 adminDashboard.dashboard.displayAll: Visualizza tutto
-adminDashboard.dashboard.displayByGroups: Visualizza per gruppo
-adminDashboard.dashboard.deleteTaskGroup: Cancella gruppo attività
-adminDashboard.dashboard.exportTasks: Esporta attività
-adminDashboard.dashboard.importTasks: Importa attività
+adminDashboard.dashboard.displayByGroups: Visualizza per gruppi
+adminDashboard.dashboard.deleteTaskGroup: Cancella gruppo di incarichi
+adminDashboard.dashboard.exportTasks: Esporta incarichi
+adminDashboard.dashboard.importTasks: Importa incarichi
 adminDashboard.dashboard.export: Esporta
 adminDashboard.dashboard.import: Importa
 adminDashboard.dashboard.title: Dashboard
@@ -97,12 +97,12 @@ help.home: Home
 restaurants.visible_by_you_only: Visibile solo a te
 restaurants.placeholder.title: Un attimo di pazienza…
 adminDashboard.pledges.title: Suggerimenti
-deliveryForm.noPriceWarning: Non è possibile calcolare il prezzo. Per favore introdurre
-  un prezzo.
+deliveryForm.noPriceWarning: Non è stato possibile calcolare il prezzo. Per favore
+  inserirlo manualmente.
 restaurants.no_results: Non abbiamo trovato ristoranti che coincidono con la tua ricerca
   ☹<br>prova un indirizzo diverso
 restaurants.placeholder.text: Nuovi ristorani arriveranno presto!
-order.reusable_packaging.alert: Questo ordine deve essere impachettato con un packaging
+order.reusable_packaging.alert: Questo ordine deve essere impacchettato con un packaging
   riutilizzabile
 restaurant.quotes_disclaimer.authenticated: Questo ristorante accetta anche preventivi.
   Per creare un preventivo devi essere un cliente referenziato. <a href="%contact_us%">Contattaci</a>
@@ -401,7 +401,7 @@ form.menu_editor.help: "Usa l'editor sottostante per comporre il menù\n<br>\nTr
 form.suggest.name.label: Nome
 form.local_business.stripe_account.help: Connetti un Account Stripe per trasferimenti
   verso un altro conto bancario
-form.local_business.stripe_account.connect_button.text: Connettiti con Stripe
+form.local_business.stripe_account.connect_button.text: Connettere con Stripe
 form.local_business.stripe_account.not_configured: Non puoi ancora connettere un Account
 form.checkout_address.reusable_packaging_enabled.label: Desidero un imballaggio riutilizzabile
   (%price%)
@@ -417,7 +417,7 @@ users.all: Tutti gli utenti
 users.couriers: Corrieri
 users.restaurant_owners: Proprietario ristorante
 users.store_owners: Proprietario del negozio
-users.administrators: Amministratore
+users.administrators: Amministratori
 form.credit_note.restaurant.help: La promozione sarà utilizzabile durante l'ordine
   presso questo ristorante. Non compilare per applicarlo a tutti i ristoranti.
 form.time_slot.interval.label: Intervallo
@@ -504,7 +504,7 @@ task.status.failed: Fallito
 form.task.address.label: Indirizzo
 form.task.courier.label: Corriere
 form.task.comments.label: Commenti
-form.task.comments.placeholder: Specifiche e dettagli utile per completare l'incarico
+form.task.comments.placeholder: Specificare ogni dettaglio utile per completare l'incarico
 form.task.telephone.label: Telefono
 form.task.recipient.label: Contatto
 task.type.DROPOFF: Consegna
@@ -513,7 +513,8 @@ checkout.breadcrumb.address: Indirizzo
 checkout.breadcrumb.payment: Pagamento
 form.geojson_upload.file: File
 form.store_type.pricing_rule_set.label: Determinazione del prezzo
-form.store_type.prefill_pickup_address.label: Compila un indirizzo di presa predeterminato
+form.store_type.prefill_pickup_address.label: Compilare automaticamente l'indirizzo
+  di ritiro
 form.store_type.create_orders.label: Crea ordine
 form.delivery.vehicle.VEHICLE_BIKE: Bicicletta
 form.store_type.defaultAddress.label: Indirizzo predefinito
@@ -889,9 +890,9 @@ order.list.shippedAt: Data di spedizione
 form.delivery.pickup.doneBefore.label: Data e ora di presa
 form.deposit_refund_settings.deposit_refund_optin.label: Rimborso deposito è opzionale
 food_establishment.CAFE_OR_COFFEE_SHOP: Caffe o teteria
-order.payment.do_not_close: Non chiudere questa pagine
+order.payment.do_not_close: Non chiudere questa pagina
 order.payment.waiting_success: La tua banca ha confermato il pagamento
-order.payment.waiting_failure: La tua banca non ha accettato il pagamento
+order.payment.waiting_failure: La tua banca ha rifiutato il pagamento
 profile.task.dueDate: Data di scadenza
 order.total_tax: IVA
 order.total_tax_by_rate: Totale %name%
@@ -900,12 +901,12 @@ profile.managedRestaurants: Ristoranti gestiti dall'utente
 order.summary.heading: Ordine %number% (#%id%)
 order.total_excluding_tax: Totale (escluso IVA)
 order.total_including_tax: Totale (incl. IVA)
-order.preparation_expected_at: Preparazione aspettata alle %date%
+order.preparation_expected_at: Preparazione prevista per %date%
 order.shipping_date.title: Orario di consegna
-order.payment.title: Informazioni di pagamento
-order.payment.card_number.label: Numero carta
+order.payment.title: Le informazioni del tuo pagamento
+order.payment.card_number.label: Numero di carta
 order.items_total: Totale prodotti
-order.payment.total: Paga  %total%
+order.payment.total: Pagare %total%
 order.payment.month.label: Mese
 order.payment.year.label: Anno
 order.payment.expiration.label: Scadenza
@@ -931,11 +932,11 @@ profile.task.date: Data
 profile.addresses.newAddress: Nuovo indirizzo
 profile.addresses.add: Aggiungi
 profile.familyName: Cognome
-order.payment.waiting_for_confirmation: Aspettando la conferma dalla tua banca…
+order.payment.waiting_for_confirmation: In attesa della conferma dalla tua banca…
 profile.givenName: Nome
 profile.managedStores: Negozio gestito dall'utente
-order.payment.card_number.help: Una numero Stripe <a href="https://stripe.com/docs/testing#cards"
-  target="_blank" tabindex="-1">di una carta test</a> è stato pre-inserito. Non verrà
+order.payment.card_number.help: Una carta Stripe di prova <a href="https://stripe.com/docs/testing#cards"
+  target="_blank" tabindex="-1">numero di carta</a> è stata pre-compilata. Non verrà
   effettuato nessun addebito.
 info.deposit_refund: Ogni voce nell'elenco seguente rappresenta un tipo di imballaggio
   (piccolo, grande ...). Una volta creati sarà possibile configurarli per ciascun
@@ -1118,3 +1119,116 @@ form.payment.refund_comment.label: Commenti
 form.payment.refund_liable.help: Quale delle parti è responsabile dell'incidente?
 form.payment.refund_liable.label: Parte responsabile
 form.payment.last_update.label: Ultimo aggiornamento
+order.adjustment_type.reusable_packaging.loopeat.help: Questa commissione copre il
+  lavaggio, il rifornimento del ristorante e l'acquisto di borse di stoffa riutilizzabili
+order.adjustment_type.reusable_packaging.loopeat: Commissione LoopEat
+index.view_all: Visualizzare tutto
+form.settings.geocoding_provider.help: Utilizzato per l'API e quando si importano
+  fogli di calcolo
+form.settings.geocoding_provider.label: Fornitore di geocoding
+form.payment.refund_breakdown: Importo rimborsabile per carta %card%, importo rimborsabile
+  per Edenred %edenred%
+form.payment.edenred_disclaimer: Questo ordine è stato pagato con Edenred e un supplemento
+  con carta di credito. Il rimborso verrà fatto basandosi in priorità per l'importo
+  pagato con carta di credito, e per l'importo Edenred se necessario.
+form.settings.google_api_key_custom.label: Google API Key
+form.settings.autocomplete_provider.label: Suggerimenti fornitore
+form.settings.addresses.title: Indirizzi
+restaurant.form.vytal_enabled.label: Abilitare il sistema di deposito e rimborso di
+  Vytal
+restaurant.form.section.vytal: Vytal
+vytal.code.disclaimer: Apri la app Vytal, genera un delivery token, e poi inseriscilo
+  qui. <a href="https://www.vytal.org/bestellen" target="_blank">Scopri di più</a>
+form.checkout_address.reusable_packaging_vytal_enabled.label: Voglio utilizzare i
+  contenitori Vytal
+form.product.alcohol.help: Marca questa casella solo se il prodotto è una bevanda
+  alcolica, come una bottiglia di vino.
+form.product.alcohol.label: Questo prodotto è una bevanda alcolica
+restaurants.edenred_transactions.title: Transazioni Edenred
+restaurants.edenred_transactions.edenred_amount: Importo pagato con Edenred
+restaurants.edenred_transactions.disclaimer: Questa pagina mostra la lista di tutti
+  gli ordini pagati con Edenred, in parte o completamente. Per questi ordini, tutto
+  il denaro è stato riscosso dal ristorante. Perciò, devi inviare una fattura a ciascun
+  ristorante, per richiedere la commissione dovuta.
+adminDashboard.metrics.title: Statistiche
+restaurant_promotion.items_total.help: Questo ti permette di applicate una sconto
+  oltre un certo importo. Il tuo margine diminuirà in base all'ammontare dello sconto.
+  Questo <strong>non diminuirà</strong> le tariffe percepite dalla piattaforma.
+form.items_total_promotion.fixed_discount_amount.label: Applicare uno sconto di
+form.items_total_promotion.items_total.label: Sopra totale di articoli
+restaurant.stats.view_detailed: Vista dettagliata
+restaurant.stats.view_simple: Vista semplice
+homepage.zerowaste: Scopri i nostri ristoranti a rifiuti zero!
+restaurant.list.tags.zerowaste: Rifiuti zero
+form.adress_book.remember_address: Ricordare questo indirizzo
+hub.disclaimer: Ordina da vari negozi, e ti consegneremo tutto in un'unica consegna!
+checkout.suggestions.continue_shopping_hub: Puoi continuare gli acquisti negli altri
+  negozi di <strong>%name%</strong>
+adminDashboard.api.help: Permettere di creare ordini in maniera programmata
+adminDashboard.api.title: API
+form.time_slot.preview_title: Anteprima dello slot di tempo
+adminDashboard.tags.help: Assegnare dei tag e dei colori agli incarichi
+adminDashboard.zones.help: Definire aree geografiche
+adminDashboard.package_sets.help: Configurare i tipi di beni da trasportare
+adminDashboard.time_slots.help: Configurare slot di tempo
+adminDashboard.embed.help: Creare dei formulari per ordinare consegne
+adminDashboard.pricing.help: Definire le regole per calcolare il prezzo di consegna
+adminDashboard.stores.help: Creare degli account cliente
+order.number: Il tuo ordine ha il numero <strong><span class="text-monospace">%number%</span></strong>
+restaurants.mode.map: Mostrare come mappa
+restaurants.mode.list: Mostrare come lista
+restaurant.form.edenred_merchant_id.help: Lasciare vuoto per disattivare Edenred
+restaurant.form.edenred_merchant_id.label: ID dell'esercente Edenred
+adminDashboard.hubs.help: Un gruppo di esercenti permette di raggruppare singoli negozi
+  allo stesso indirizzo di ritiro, come per es. un mercato o un centro commerciale.
+adminDashboard.hubs.createNew: Creare un nuovo gruppo di esercenti
+adminDashboard.hubs.title: Gruppo di esercenti
+store.form.section.settings: Parametri
+stores.address_book: Rubrica degli indirizzi
+order.export.heading.promotions: Promozioni
+form.payment.method.name.label: Metodo di pagamento
+edenred.oauth_connect.success: Conto Edenred connesso con successo!
+profile.edenred.connect: Connettere il mio conto Edenred
+profile.edenred.connected: Conto Edenred connesso
+notifications.tap_to_open: Toccare per aprire
+notifications.tasks_changed_today: Gli incarichi per oggi sono stati aggiornati
+notifications.delivery_created: Una consegna con ritiro per il %date% è stata creata
+ordering_delay.admin_reminder: Hai configurato un ritardo per tutti gli ordini
+ordering_delay.disclaimer: Stiamo ricevendo molti ordini, i tempi di consegna subiranno
+  un ritardo!
+form.fulfillment_method.options.range_duration.label: Durata dell'intervallo
+form.fulfillment_method.pre_ordering_allowed.help: Deselezionando la casella, i clienti
+  potranno realizzare solamente ordini per lo stesso giorno.
+form.fulfillment_method.pre_ordering_allowed.label: Autorizzare i pre-ordini
+profile.dashboard_suggest: Hai bisogno di gestire i tuoi ordini e le tue consegne?
+  <a href="%link%">Scopri la nuova dashboard</a> ✨
+order.hub.sub_total.disclaimer: Questo ordine è stato effettuato con vari esercenti.
+  La "%column%" colonna mostra la quantità corrispondente ai tuoi prodotti (%amount%).
+form.customize.order_confirm.label: Questo messaggio comparirà nella pagina di conferma
+  dell'ordine
+form.customize.order_confirm_enabled.label: Mostrare un messaggio di conferma della
+  consegna personalizzato
+form.option_value.value.placeholder: per es. patatine fritte, insalata…
+basics.enabled: Attivato
+basics.search: Cercare…
+form.hub.restaurants.label: Lista degli esercenti
+index.view_all_merchants: Visualizzare tutti gli esercenti
+order.list.summary.hub.text: Ordinare al hub %name%
+promotion_action.fixed_discount: '%amount% di sconto'
+promotion_action.delivery_percentage_discount: '%percentage% di sconto sulla tariffa
+  di consegna'
+promotion_action.percentage_discount: '%percentage% di sconto'
+homepage.form.content: <strong>%brand_name%</strong> è un servizio di consegne a domicilio
+  on-demand in bicicletta che opera localmente e in maniera non inquinante. Spedisci
+  un singolo pacchetto, o realizza consegne in maniera ricorrente per la tua impresa.
+homepage.form.title: Hai bisogno di una consegna?
+order.list.reorder: Ordinare di nuovo
+form.settings.guest_checkout_enabled.label: Attivare il checkout per gli ospiti
+restaurant.embed.greeting: E' tutto! Adesso quando i visitatori cliccheranno sul pulsante,
+  si aprirà una pagina direttamente sul tuo sito web.
+restaurant.embed.step_2: Aggiungi il <code>data-coopcycle-embed="%url%"</code> a un
+  elemento HTML cliccabile
+restaurant.embed.step_1: Aggiungi lo script <code>coopcycle.js</code> alla tua pagina
+restaurant.embed.disclaimer: Puoi incorporare il checkout direttamente nel tuo sito
+  web. Segui le istruzioni prima di iniziare.
+restaurant.form.section.embed: Incorporare
