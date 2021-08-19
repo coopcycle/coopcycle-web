@@ -232,7 +232,7 @@ restaurant.list.orders: 'Eskaerak'
 restaurant.list.refunds: 'Itzulketak'
 restaurant.list.products: 'Produktuak'
 restaurant.list.product_options: 'Aukerak'
-restaurant.list.planning: 'Plangintza'
+restaurant.list.planning: 'Oporrak'
 restaurant.list.settings: 'Ezarpenak'
 restaurant.list.norestaurant: 'Ez dago jatetxerik oraindik'
 restaurant.list.preparationTime: 'Prestaketa'
@@ -573,7 +573,7 @@ form.menu_item_modifier.name.label: 'Izena'
 form.menu_item_modifier.price.label: 'Prezioa'
 form.menu_item_modifier.calculusStrategy.label: 'Prezioaren kalkulua'
 form.menu_taxon.name.label: 'Izena'
-form.menu_taxon.add_child.label: 'Gehitu sekzioa'
+form.menu_taxon.add_child.label: 'Gehitu kategoria'
 form.menu_taxon.child_name.placeholder: "Adibidez: platerak, postreak...\n"
 form.menu_editor.products_panel.title: 'Produktuak'
 form.menu_editor.save.label: 'Gorde aldaketak'
@@ -659,7 +659,7 @@ form.customize.custom_banner.label: 'Iragarki-banda pertsonalizatua'
 form.customize.custom_banner.help: 'Ziurtatu iragarki-banda SVG patroi errepikagarria
   dela'
 product_option.strategy.free: 'Doan'
-product_option.strategy.option_value: 'Aukera bakoitzak prezio desberdina du'
+product_option.strategy.option_value: 'Prezio pertsonalizatua'
 roles.ROLE_ADMIN: 'Administratzailea'
 roles.ROLE_COURIER: 'Mezularia'
 roles.ROLE_RESTAURANT: 'Jatetxea'
@@ -886,3 +886,54 @@ edenred.oauth_connect.success: 'Edenred kontua ondo konektatu da!'
 form.payment.method.name.label: 'Ordainketa metodoa'
 order.export.heading.promotions: 'Promozioak'
 products.on_demand_delivery.name: 'Eskariaren arabera entrega'
+restaurant.list.active_catalog: Katalogo aktiboa
+restaurant.list.catalogs: Katalogoa
+adminDashboard.shops.title: Dendak
+restaurant_promotion.items_total: Produktuen totalean oinarrituta
+notifications.tasks_changed: '%date% egundaren zereginak aldatu dira!'
+form.local_business_type.label: Negozio mota
+store.TOY_STORE: Jostailu denda
+store.CLOTHING_STORE: Erropa-denda
+deliveries.section.past: Iragana
+restricted_diets.LOW_SALT_DIET: Gatz gutxi
+restricted_diets.LOW_LACTOSE_DIET: Laktosa gutxi
+restricted_diets.LOW_CALORIE_DIET: Kaloria gutxi
+restricted_diets.KOSHER_DIET: Kosher
+restricted_diets.GLUTEN_FREE_DIET: Glutenik gabe
+promotion_coupon.used.label: Erabilera kopurua
+order.export.heading.refund_total: Itzulketak
+basics.weeks: aste %count%|%count% aste
+basics.days: egun %count%|%count% egun
+basics.hours: ordu %count%|%count% ordu
+task.receipt.reference: 'Erreferentzia: <strong>%ref%</strong>'
+receipt.title: 'Zure #%number% eskaeraren ordainagiria'
+sylius.form.promotion_coupon.per_customer_usage_limit: Bezero bakoitzeko erabilpen
+  muga
+time_range: '%start% eta %end% artean'
+restricted_diets.VEGETARIAN_DIET: Begetarianoa
+restricted_diets.VEGAN_DIET: Beganoa
+restricted_diets.LOW_FAT_DIET: Gantz gutxikoa
+restricted_diets.HINDU_DIET: Hindua
+allergens.MOLLUSCS: Moluskoak
+allergens.LUPIN: Lupinua
+allergens.SULPHUR_DIOXIDE_SULPHITES: Sulfuro dioxido eta sulfitoak
+allergens.MUSTARD: Mostaza
+allergens.CELERY: Apioa
+promotions.heading.credit_note: Kreditu-notak
+promotions.breadcrumb.new_credit_note: Kreditu-nota berria
+promotions.breadcrumb: Promozioak
+basics.stripe_fees: Stripe komisioak
+basics.platform_fees: Plataformaren komisioak
+roles.ROLE_COURIER.help: "Mezularia: ikusi zain dauden zereginak, aldatu esleitutako\
+  \ zereginak...\n"
+form.credit_note.name.help: Organ erakutsiko den beherapenaren izena
+form.credit_note.type.label: Beherapen mota
+form.checkout_address.notes.placeholder: "Adibidez: saltsa gabe, tomaterik gabe...\n"
+form.product.restricted_diets.label: Dieta murriztuak
+form.mercadopago_livemode.disable_and_enable_maintenance.alert: « live » moduan zaude.<br>«
+  test » modura aldatzen bazara, mantentze modua automatikoki gaituko da.
+form.mercadopago_livemode.disable_and_enable_maintenance.label: Aldatu « test » modura
+  eta gaitu mantentze modua
+form.mercadopago_livemode.disable.alert: « test » moduan, kreditu-txartelak ez dira
+  kobratuko.
+form.mercadopago_livemode.disable.label: Erabili Mercadopago « test » moduan
