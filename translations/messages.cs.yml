@@ -279,6 +279,8 @@ order.items_total: Celkem produktů
 order.total_tax: DPH
 order.total_tax_by_rate: Celkem %name%
 order.preparation_expected_at: Očekává se příprava v %date%
+order.preparation_expected_for: Očekává se příprava v %date%
+order.order_number: \# %order_number%
 order.shipping_date.title: Vaše datum dodání
 order.payment.title: Vaše platební údaje
 order.payment.expiration.label: Vypršení

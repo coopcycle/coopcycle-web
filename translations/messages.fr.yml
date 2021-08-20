@@ -274,7 +274,10 @@ order.total_including_tax: Total TTC
 order.items_total: Total produits
 order.total_tax: TVA
 order.total_tax_by_rate: Total %name%
-order.preparation_expected_at: Préparation à %date%
+order.preparation_expected_at: Préparation à démarrer pour %date%
+order.preparation_expected_for: Préparation attendue pour %date%
+order.order_number: \# %order_number%
+order.customer_name : Client : %customer_firstname% %customer_lastname%
 order.net_total_including_tax: Total TTC (net)
 order.stripe_fee: Frais bancaires
 order.fee: Frais plateforme
@@ -856,7 +859,7 @@ form.registration.legal.label: J'accepte les Conditions Générales et la Politi
   de Confidentialité
 form.registration.legal.help: En cochant cette case, vous acceptez nos <a href="%terms_url%">Conditions
   Générales</a> et notre <a href="%privacy_url%">Politique de Confidentialité</a>.
-order.adjustment_type.reusable_packaging: Emballage
+order.adjustment_type.reusable_packaging: Consigne
 form.store_type.package_set.label: Ensemble de paquets
 adminDashboard.package_sets.title: Paquets
 form.package.volume_units.label: Unité de volume

@@ -213,7 +213,10 @@ order.total_including_tax: Total (amb IVA)
 order.items_total: Total de productes
 order.total_tax: IVA
 order.total_tax_by_rate: Total %name%
-order.preparation_expected_at: Preparació esperada al %date%
+order.preparation_expected_at: Preparació començant al %date%
+order.preparation_expected_for: Preparació esperada al %date%
+order.order_number: \# %order_number%
+order.customer_name : Cliente : %customer_firstname% %customer_lastname%
 order.shipping_date.title: La vostra data d’enviament
 order.payment.title: Informació del teu pagament
 order.payment.expiration.label: Caducitat
