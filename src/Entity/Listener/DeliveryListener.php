@@ -9,10 +9,8 @@ class DeliveryListener
 {
     public function prePersist(Delivery $delivery, LifecycleEventArgs $args)
     {
-       $packages = $delivery->getPackages();
-
-
         $comments = "";
+        
         if ($delivery->hasPackages() ) {
             foreach( $delivery->getPackages() as $package){
                 $comments .= $package->getQuantity() .' × ' . $package->getPackage()->getName() ."\n";
@@ -24,7 +22,6 @@ class DeliveryListener
             $weight= number_format($grams / 1000, 2) . ' kg';
             $comments.= $weight;
         }
-
 
         $delivery->getPickup()->setComments($comments);
 
