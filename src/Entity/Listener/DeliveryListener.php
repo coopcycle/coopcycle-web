@@ -9,6 +9,11 @@ class DeliveryListener
 {
     public function prePersist(Delivery $delivery, LifecycleEventArgs $args)
     {
+       $weight = $delivery->getWeight();
+       $packages = $delivery->getPackages();
+       $delivery->getPickup()->setComments($weight);
+
+
         $store = $delivery->getStore();
 
         if (null === $store) {
