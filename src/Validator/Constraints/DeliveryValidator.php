@@ -17,7 +17,7 @@ class DeliveryValidator extends ConstraintValidator
 
         $delivery = $object;
 
-        if (count($delivery->getTasks()) !== 2) {
+        if (count($delivery->getTasks()) < 2) {
             $this->context->buildViolation($constraint->unexpectedTaskCountMessage)
                  ->atPath('items')
                  ->addViolation();
@@ -25,14 +25,18 @@ class DeliveryValidator extends ConstraintValidator
             return;
         }
 
-        $pickup = $delivery->getPickup();
-        $dropoff = $delivery->getDropoff();
+        $pickupBefore = $delivery->getPickup()->getBefore();
 
-        // TODO Improve this validation, use whole timewindow
-        if ($pickup->getDoneBefore() > $dropoff->getDoneBefore()) {
-            $this->context->buildViolation($constraint->pickupAfterDropoffMessage)
-                 ->atPath('items')
-                 ->addViolation();
+        foreach ($delivery->getTasks() as $task) {
+            if ($task->isDropoff()) {
+                // TODO Improve this validation, use whole timewindow
+                if ($pickupBefore > $task->getBefore()) {
+                    $this->context->buildViolation($constraint->pickupAfterDropoffMessage)
+                         ->atPath('items')
+                         ->addViolation();
+                    return;
+                }
+            }
         }
     }
 }
