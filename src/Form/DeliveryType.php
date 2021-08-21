@@ -98,6 +98,8 @@ class DeliveryType extends AbstractType
                     'with_recipient_details' => $options['with_dropoff_recipient_details'],
                     'with_doorstep' => $options['with_dropoff_doorstep'],
                 ],
+                'allow_add' => true,
+                'prototype_data' => new Task(),
             ]);
         });
 

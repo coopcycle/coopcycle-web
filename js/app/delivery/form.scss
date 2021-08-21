@@ -44,9 +44,13 @@
 }
 
 .delivery__form__task--dropoff {
+  $top-padding: 30px;
   &:before {
     content: $fa-var-arrow-down;
+    top: $top-padding;
   }
+  border-top: 1px solid #ededed;
+  padding-top: $top-padding;
 }
 
 .map-distance-overlay {

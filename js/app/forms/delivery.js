@@ -3,11 +3,21 @@ import ClipboardJS from 'clipboard'
 import { createStore } from 'redux'
 import _ from 'lodash'
 import axios from 'axios'
+import { createSelector } from 'reselect'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 import TagsInput from '../widgets/TagsInput'
 import { validateForm } from '../utils/address'
+
+const selectTasks = state => state.tasks
+
+const selectLastDropoff = createSelector(
+  selectTasks,
+  (tasks) => {
+    return _.findLast(tasks, t => t.type === 'DROPOFF')
+  }
+)
 
 class DeliveryForm {
   disable() {
@@ -117,7 +127,9 @@ function getDatePickerValue(name, type) {
     return $(`#${name}_${type}_timeSlot`).val()
   }
 
-  return moment($(`#${name}_${type}_doneBefore`).val(), 'YYYY-MM-DD HH:mm:ss').format()
+  const defaultValue = $(`#${name}_${type}_doneBefore`).val() || selectLastDropoff(store.getState()).before
+
+  return moment(defaultValue, 'YYYY-MM-DD HH:mm:ss').format()
 }
 
 function getDatePickerKey(name, type) {
@@ -149,8 +161,15 @@ function createDatePickerWidget(name, type) {
     return
   }
 
+  const defaultValue = datePickerEl.value || selectLastDropoff(store.getState()).before
+
+  // When adding a new task, initialize hidden input value
+  if (!datePickerEl.value) {
+    datePickerEl.value = moment(defaultValue).format('YYYY-MM-DD HH:mm:ss')
+  }
+
   new DateTimePicker(document.querySelector(`#${name}_${type}_doneBefore_widget`), {
-    defaultValue: datePickerEl.value,
+    defaultValue,
     onChange: function(date) {
       datePickerEl.value = date.format('YYYY-MM-DD HH:mm:ss')
       store.dispatch({
@@ -301,6 +320,11 @@ function reducer(state = {}, action) {
         return task
       }),
     }
+  case 'ADD_DROPOFF':
+    return {
+      ...state,
+      tasks: state.tasks.concat([ action.value ]),
+    }
   default:
     return state
   }
@@ -314,6 +338,52 @@ const loadTags = _.once(() => {
   })
   .then(response => response.data)
 })
+
+// https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
+function createElementFromHTML(htmlString) {
+  var div = document.createElement('div');
+  div.innerHTML = htmlString.trim();
+
+  // Change this to div.childNodes to support multiple top-level nodes
+  return div.firstChild;
+}
+
+function initSubForm(name, taskEl, preloadedState) {
+  const taskForm = taskEl.getAttribute('id').replace(name + '_', '')
+
+  const task = {
+    type: getTaskType(name, taskForm),
+    address: null,
+    [ getDatePickerKey(name, taskForm) ]: getDatePickerValue(name, taskForm)
+  }
+
+  if (preloadedState) {
+    preloadedState.tasks.push(task)
+  } else {
+    store.dispatch({
+      type: 'ADD_DROPOFF',
+      taskIndex: getTaskIndex(taskForm),
+      value: task
+    })
+  }
+
+  createAddressWidget(name, taskForm, address => {
+    if (preloadedState) {
+      const index = preloadedState.tasks.indexOf(task)
+      if (-1 !== index) {
+        preloadedState.tasks[index].address = address
+      }
+    }
+  })
+  createDatePickerWidget(name, taskForm)
+
+  const tagsEl = document.querySelector(`#${name}_${taskForm}_tagsAsString`)
+  if (tagsEl) {
+    loadTags().then(tags => {
+      createTagsWidget(name, taskForm, tags)
+    })
+  }
+}
 
 export default function(name, options) {
 
@@ -344,36 +414,12 @@ export default function(name, options) {
 
     // tasks_0, tasks_1...
     const taskForms = Array.from(el.querySelectorAll('[data-form="task"]'))
+    taskForms.forEach((taskEl) => initSubForm(name, taskEl, preloadedState))
 
-    taskForms.forEach((taskEl) => {
-
-      const taskForm = taskEl.getAttribute('id').replace(name + '_', '')
-
-      const task = {
-        type: getTaskType(name, taskForm),
-        address: null,
-        [ getDatePickerKey(name, taskForm) ]: getDatePickerValue(name, taskForm)
-      }
-
-      preloadedState.tasks.push(task)
-
-      createAddressWidget(name, taskForm, address => {
-        const index = preloadedState.tasks.indexOf(task)
-        if (-1 !== index) {
-          preloadedState.tasks[index].address = address
-        }
-      })
-      createDatePickerWidget(name, taskForm)
-
-      const tagsEl = document.querySelector(`#${name}_${taskForm}_tagsAsString`)
-      if (tagsEl) {
-        loadTags().then(tags => {
-          createTagsWidget(name, taskForm, tags)
-        })
-      }
-    })
-
-    store = createStore(reducer, preloadedState)
+    store = createStore(
+      reducer, preloadedState,
+      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    )
 
     onReady(preloadedState)
     store.subscribe(() => onChange(store.getState()))
@@ -423,6 +469,29 @@ export default function(name, options) {
 
     }, false)
 
+    // https://symfony.com/doc/current/form/form_collections.html#allowing-new-tags-with-the-prototype
+    el.querySelector('[data-add="dropoff"]')
+      .addEventListener('click', () => {
+
+        const collectionHolder =
+          document.querySelector('#delivery_tasks')
+
+        const newHtml = collectionHolder
+          .dataset
+          .prototype
+          .replace(
+            /__name__/g,
+            collectionHolder.dataset.index
+          );
+
+        const item = createElementFromHTML(newHtml)
+
+        collectionHolder.appendChild(item)
+
+        initSubForm(name, item)
+
+        collectionHolder.dataset.index++
+      })
   }
 
   return form
