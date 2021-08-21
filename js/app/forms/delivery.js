@@ -280,6 +280,13 @@ function replaceTasks(state, index, key, value) {
   return newTasks
 }
 
+function removeTasks(state, index) {
+  const newTasks = state.tasks.slice()
+  newTasks.splice(index, 1)
+
+  return newTasks
+}
+
 const getTaskIndex = (key) => parseInt(key.replace('tasks_', ''), 10)
 
 function reducer(state = {}, action) {
@@ -325,6 +332,11 @@ function reducer(state = {}, action) {
       ...state,
       tasks: state.tasks.concat([ action.value ]),
     }
+  case 'REMOVE_DROPOFF':
+    return {
+      ...state,
+      tasks: removeTasks(state, action.taskIndex)
+    }
   default:
     return state
   }
@@ -350,6 +362,7 @@ function createElementFromHTML(htmlString) {
 
 function initSubForm(name, taskEl, preloadedState) {
   const taskForm = taskEl.getAttribute('id').replace(name + '_', '')
+  const taskIndex = getTaskIndex(taskForm)
 
   const task = {
     type: getTaskType(name, taskForm),
@@ -362,7 +375,7 @@ function initSubForm(name, taskEl, preloadedState) {
   } else {
     store.dispatch({
       type: 'ADD_DROPOFF',
-      taskIndex: getTaskIndex(taskForm),
+      taskIndex,
       value: task
     })
   }
@@ -382,6 +395,25 @@ function initSubForm(name, taskEl, preloadedState) {
     loadTags().then(tags => {
       createTagsWidget(name, taskForm, tags)
     })
+  }
+
+  const deleteBtn = taskEl.querySelector('[data-delete="task"]')
+
+  if (deleteBtn) {
+    if (taskIndex === 1) {
+      // No delete button for the 1rst dropoff,
+      // we want at least one dropoff
+      deleteBtn.remove()
+    } else {
+      deleteBtn.addEventListener('click', (e) => {
+        e.preventDefault()
+        taskEl.remove()
+        store.dispatch({
+          type: 'REMOVE_DROPOFF',
+          taskIndex,
+        })
+      })
+    }
   }
 }
 

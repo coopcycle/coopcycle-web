@@ -26,7 +26,7 @@
       right: 0;
     }
   }
-  .form-group:first-child {
+  .form-group:first-of-type {
     > label {
       font-size: $font-size-large;
     }
