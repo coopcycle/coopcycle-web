@@ -11,10 +11,7 @@ let map
 let form
 let pricePreview
 
-let markers = {
-  pickup: null,
-  dropoff: null,
-}
+let markers = []
 
 function route(delivery) {
 
@@ -45,38 +42,43 @@ const markerIcons = {
   dropoff: { icon: 'flag', color: '#2ECC71' }
 }
 
-function createMarker(location, addressType) {
+function createMarker(location, index, addressType) {
 
   if (!map) {
     return
   }
 
   const { icon, color } = markerIcons[addressType]
-  if (markers[addressType]) {
-    map.removeLayer(markers[addressType])
-  }
-  markers[addressType] = MapHelper.createMarker({
+
+  removeMarker(index)
+
+  const marker = MapHelper.createMarker({
     lat: location.latitude,
     lng: location.longitude
   }, icon, 'marker', color)
-  markers[addressType].addTo(map)
+
+  marker.addTo(map)
+
+  markers.splice(index, 0, marker)
 
   MapHelper.fitToLayers(map, _.filter(markers))
 }
 
-function removeMarker(addressType) {
+function removeMarker(index) {
 
   if (!map) {
     return
   }
 
-  const marker = markers[addressType]
+  const marker = markers[index]
 
   if (!marker) {
     return
   }
 
   marker.removeFrom(map)
+
+  markers.splice(index, 1)
 
   MapHelper.fitToLayers(map, _.filter(markers))
 }
@@ -118,14 +120,14 @@ form = new DeliveryForm('delivery', {
   },
   onChange: function(delivery) {
 
-    delivery.tasks.forEach(task => {
+    delivery.tasks.forEach((task, index) => {
       if (task.address) {
         createMarker({
           latitude: task.address.geo.latitude,
           longitude: task.address.geo.longitude
-        }, task.type.toLowerCase())
+        }, index, task.type.toLowerCase())
       } else {
-        removeMarker(task.type.toLowerCase())
+        removeMarker(index)
       }
     })
 
