@@ -9,18 +9,19 @@ class DeliveryListener
 {
     public function prePersist(Delivery $delivery, LifecycleEventArgs $args)
     {
-        $comments = "";
+        $comments = '';
         
-        if ($delivery->hasPackages() ) {
-            foreach( $delivery->getPackages() as $package){
-                $comments .= $package->getQuantity() .' × ' . $package->getPackage()->getName() ."\n";
+        if ($delivery->hasPackages()) {
+            foreach ($delivery->getPackages() as $package) {
+                $comments .= $package->getQuantity() .' × ' . $package->getPackage()->getName();
+                $comments .= "\n";
             }
         }
 
         $grams = $delivery->getWeight();
-        if (null !== $grams ) {
-            $weight= number_format($grams / 1000, 2) . ' kg';
-            $comments.= $weight;
+        if (null !== $grams) {
+            $weight = number_format($grams / 1000, 2) . ' kg';
+            $comments .= $weight;
         }
 
         $delivery->getPickup()->setComments($comments);
