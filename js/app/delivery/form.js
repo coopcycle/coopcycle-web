@@ -109,12 +109,12 @@ if (document.getElementById('map')) {
 
 form = new DeliveryForm('delivery', {
   onReady: function(delivery) {
-    delivery.tasks.forEach(task => {
+    delivery.tasks.forEach((task, index) => {
       if (task.address) {
         createMarker({
           latitude: task.address.geo.latitude,
           longitude: task.address.geo.longitude
-        }, task.type.toLowerCase())
+        }, index, task.type.toLowerCase())
       }
     })
   },
