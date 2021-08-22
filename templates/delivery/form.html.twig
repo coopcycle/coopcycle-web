@@ -35,7 +35,7 @@
 
   <div class="row">
     <div class="col-md-7">
-      {{ form_widget(form.tasks) }}
+      {{ form_widget(form.tasks, { attr: { 'data-index': form.tasks|length > 0 ? form.tasks|length : 0 } }) }}
     </div>
     <div class="col-md-5">
       <div class="form-horizontal">

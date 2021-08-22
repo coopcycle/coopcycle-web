@@ -109,7 +109,9 @@ class TaskType extends AbstractType
             $form = $event->getForm();
             $task = $event->getData();
 
-            if (Task::TYPE_DROPOFF !== $task->getType()) {
+            $taskType = null !== $task ? $task->getType() : Task::TYPE_DROPOFF;
+
+            if (Task::TYPE_DROPOFF !== $taskType) {
                 return;
             }
 
@@ -143,12 +145,20 @@ class TaskType extends AbstractType
                 $form = $event->getForm();
                 $task = $event->getData();
 
+                if (null === $task) {
+                    return;
+                }
+
                 $form->get('tagsAsString')->setData(implode(' ', $task->getTags()));
             });
 
             $builder->get('tagsAsString')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
 
                 $task = $event->getForm()->getParent()->getData();
+
+                if (null === $task) {
+                    return;
+                }
 
                 $tagsAsString = $event->getData();
                 $tags = explode(' ', $tagsAsString);
