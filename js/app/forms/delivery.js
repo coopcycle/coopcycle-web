@@ -88,14 +88,24 @@ function createAddressWidget(name, type, cb) {
 
       if (Object.prototype.hasOwnProperty.call(address, '@id')) {
         if (telephone) {
-          telephone.value = ''
-          telephone.removeAttribute('required')
-          telephone.closest('.form-group').classList.add('hidden')
+          const isTelephoneValid = !_.isEmpty(address.telephone)
+          if (isTelephoneValid) {
+            telephone.value = ''
+            telephone.removeAttribute('required')
+            telephone.closest('.form-group').classList.add('hidden')
+          } else {
+            telephone.setAttribute('required', isTelephoneRequired)
+          }
         }
         if (recipient) {
-          recipient.value = ''
-          recipient.removeAttribute('required')
-          recipient.closest('.form-group').classList.add('hidden')
+          const isRecipientValid = !_.isEmpty(address.contactName)
+          if (isRecipientValid) {
+            recipient.value = ''
+            recipient.removeAttribute('required')
+            recipient.closest('.form-group').classList.add('hidden')
+          } else {
+            recipient.setAttribute('required', isRecipientRequired)
+          }
         }
         hideRememberAddress(name, type)
       } else {
