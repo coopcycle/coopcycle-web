@@ -167,16 +167,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.190.5",
+            "version": "3.191.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c2063c78310b45e378f1bdad9fe6e9191f36439c"
+                "reference": "221eb3790a2f5cc73067ec1c13d4c788a0296351"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c2063c78310b45e378f1bdad9fe6e9191f36439c",
-                "reference": "c2063c78310b45e378f1bdad9fe6e9191f36439c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/221eb3790a2f5cc73067ec1c13d4c788a0296351",
+                "reference": "221eb3790a2f5cc73067ec1c13d4c788a0296351",
                 "shasum": ""
             },
             "require": {
@@ -251,9 +251,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.190.5"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.191.1"
             },
-            "time": "2021-08-18T18:24:08+00:00"
+            "time": "2021-08-20T18:43:14+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -4173,16 +4173,16 @@
         },
         {
             "name": "geocoder-php/nominatim-provider",
-            "version": "5.5.0",
+            "version": "5.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/geocoder-php/nominatim-provider.git",
-                "reference": "db1d2b5c435b4be257f6698e9eea70ae549f360a"
+                "reference": "79187d08e7d70ddd9c40c6e58031b69fece9d7c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/geocoder-php/nominatim-provider/zipball/db1d2b5c435b4be257f6698e9eea70ae549f360a",
-                "reference": "db1d2b5c435b4be257f6698e9eea70ae549f360a",
+                "url": "https://api.github.com/repos/geocoder-php/nominatim-provider/zipball/79187d08e7d70ddd9c40c6e58031b69fece9d7c8",
+                "reference": "79187d08e7d70ddd9c40c6e58031b69fece9d7c8",
                 "shasum": ""
             },
             "require": {
@@ -4226,9 +4226,9 @@
             "description": "Geocoder Nominatim adapter",
             "homepage": "http://geocoder-php.org/Geocoder/",
             "support": {
-                "source": "https://github.com/geocoder-php/nominatim-provider/tree/5.5.0"
+                "source": "https://github.com/geocoder-php/nominatim-provider/tree/5.5.1"
             },
-            "time": "2021-06-20T14:14:20+00:00"
+            "time": "2021-08-20T15:18:10+00:00"
         },
         {
             "name": "geocoder-php/open-cage-provider",
@@ -8847,16 +8847,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.51.1",
+            "version": "2.52.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "8619c299d1e0d4b344e1f98ca07a1ce2cfbf1922"
+                "reference": "369c0e2737c56a0f39c946dd261855255a6fccbe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/8619c299d1e0d4b344e1f98ca07a1ce2cfbf1922",
-                "reference": "8619c299d1e0d4b344e1f98ca07a1ce2cfbf1922",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/369c0e2737c56a0f39c946dd261855255a6fccbe",
+                "reference": "369c0e2737c56a0f39c946dd261855255a6fccbe",
                 "shasum": ""
             },
             "require": {
@@ -8937,7 +8937,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-07-28T13:16:28+00:00"
+            "time": "2021-08-14T19:10:52+00:00"
         },
         {
             "name": "notfloran/mjml-bundle",
@@ -13004,16 +13004,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.93.0",
+            "version": "v7.94.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "c739cf6841bb3498e23bd52ecfadfcb21c521a14"
+                "reference": "03cd6b5c1c4fc9087ddd1dd046457bff274294d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/c739cf6841bb3498e23bd52ecfadfcb21c521a14",
-                "reference": "c739cf6841bb3498e23bd52ecfadfcb21c521a14",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/03cd6b5c1c4fc9087ddd1dd046457bff274294d6",
+                "reference": "03cd6b5c1c4fc9087ddd1dd046457bff274294d6",
                 "shasum": ""
             },
             "require": {
@@ -13059,9 +13059,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v7.93.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v7.94.0"
             },
-            "time": "2021-08-11T18:48:54+00:00"
+            "time": "2021-08-19T14:15:27+00:00"
         },
         {
             "name": "sylius-labs/polyfill-symfony-framework-bundle",
