@@ -288,11 +288,24 @@ const localize = (func, adapter, thisArg) => {
 
 const getSuggestionValue = suggestion => suggestion.value
 
-const renderSuggestion = suggestion => (
-  <div>
-    { suggestion.value }
-  </div>
-)
+const renderSuggestion = suggestion => {
+
+  const parts = [
+    suggestion.value
+  ]
+
+  if (suggestion.type === 'address') {
+    if (!_.isEmpty(suggestion.address.name)) {
+      parts.unshift(suggestion.address.name)
+    }
+  }
+
+  return (
+    <div>
+      { parts.join(' — ') }
+    </div>
+  )
+}
 
 // https://github.com/moroshko/react-autosuggest#should-render-suggestions-prop
 function shouldRenderSuggestions(value) {
