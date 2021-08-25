@@ -205,4 +205,41 @@ class DeliveryTest extends TestCase
             $this->assertSame($delivery, $task->getDelivery());
         }
     }
+
+    public function testToExpressionLanguageValuesWithMultipleDropoffs()
+    {
+        $pickupAddress = new Address();
+        $pickupAddress->setGeo(new GeoCoordinates(48.842049, 2.331181));
+
+        $dropoffAddress = new Address();
+        $dropoffAddress->setGeo(new GeoCoordinates(48.842049, 2.331181));
+
+        $otherDropoffAddress = new Address();
+        $otherDropoffAddress->setGeo(new GeoCoordinates(48.842049, 2.331181));
+
+        $delivery = new Delivery();
+        $delivery->setDistance(2500);
+        $delivery->getPickup()->setAddress($pickupAddress);
+        $delivery->getDropoff()->setAddress($dropoffAddress);
+        $delivery->getDropoff()->setDoorstep(true);
+
+        $otherDrop = new Task();
+        $otherDrop->setAddress($otherDropoffAddress);
+
+        $delivery->addTask($otherDrop);
+
+        $values = Delivery::toExpressionLanguageValues($delivery);
+
+        $this->assertArrayHasKey('distance', $values);
+        $this->assertArrayHasKey('weight', $values);
+        $this->assertArrayHasKey('vehicle', $values);
+        $this->assertArrayHasKey('pickup', $values);
+        $this->assertArrayHasKey('dropoff', $values);
+
+        $language = new ExpressionLanguage();
+
+        $this->assertEquals($pickupAddress, $language->evaluate('pickup.address', $values));
+        $this->assertEquals($otherDropoffAddress, $language->evaluate('dropoff.address', $values));
+        $this->assertFalse($language->evaluate('dropoff.doorstep', $values));
+    }
 }
