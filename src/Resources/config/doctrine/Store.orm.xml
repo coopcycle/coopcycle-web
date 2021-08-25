@@ -27,6 +27,7 @@
     <field name="checkExpression" type="string" column="check_expression" nullable="true"/>
     <field name="weightRequired" type="boolean" column="weight_required"/>
     <field name="packagesRequired" type="boolean" column="packages_required"/>
+    <field name="multiDropEnabled" type="boolean" column="multi_drop_enabled"/>
     <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store">
       <cascade>
         <cascade-persist/>

@@ -145,6 +145,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $packagesRequired = false;
 
+    private $multiDropEnabled = false;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
@@ -446,6 +448,26 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function setPackagesRequired($packagesRequired)
     {
         $this->packagesRequired = $packagesRequired;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMultiDropEnabled()
+    {
+        return $this->multiDropEnabled;
+    }
+
+    /**
+     * @param bool $multiDropEnabled
+     *
+     * @return self
+     */
+    public function setMultiDropEnabled($multiDropEnabled)
+    {
+        $this->multiDropEnabled = $multiDropEnabled;
 
         return $this;
     }

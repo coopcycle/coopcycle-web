@@ -61,6 +61,11 @@ class StoreType extends LocalBusinessType
                     'label' => 'form.store_type.packages_required.label',
                     'required' => false,
                 ])
+                ->add('multiDropEnabled', CheckboxType::class, [
+                    'label' => 'form.store_type.multi_drop_enabled.label',
+                    'help' => 'form.store_type.multi_drop_enabled.help',
+                    'required' => false,
+                ])
                 ->add('timeSlot', EntityType::class, [
                     'label' => 'form.store_type.time_slot.label',
                     'class' => TimeSlot::class,
