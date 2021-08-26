@@ -9,12 +9,12 @@
   }, 'emails') | raw }}
   </mj-text>
   <mj-spacer container-background-color="#ecedee" height="1px" />
-  <mj-text align="center" line-height="30px" font-size="26px">
-    {{ 'order.order_number'|trans({ '%order_number%': order.number }) }}
+  <mj-text font-family="'Roboto Mono', monospace" align="center" line-height="30px" font-size="26px">
+    {{ order.number }}
   </mj-text>
   <mj-spacer container-background-color="#ecedee" height="1px" />
   <mj-text align="center" line-height="30px" font-size="26px">
-    {{ 'order.customer_name'|trans({ '%customer_firstname%': order.customer.firstName, '%customer_lastname%' : order.customer.lastName }) }}
+    {{ order.customer.fullName }}
   </mj-text>
   <mj-spacer container-background-color="#ecedee" height="1px" />
   <mj-text align="center" line-height="20px" font-size="15px">
