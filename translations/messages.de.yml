@@ -309,6 +309,7 @@ order.summary.heading: Auftrag %number% (#%id%)
 order.items_total: Alle Artikel insgesamt
 order.total_tax: Steuern
 order.preparation_expected_at: Erwartete Bereitstellung bis zum %date%
+order.preparation_expected_for: Erwartete Bereitstellung bis zum %date%
 order.shipping_date.title: Dein Liefertermin
 order.payment.title: Deine Zahlungsinformationen
 order.payment.expiration.label: Gültigkeitsdauer

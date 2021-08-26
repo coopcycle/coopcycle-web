@@ -902,6 +902,7 @@ order.summary.heading: Ordine %number% (#%id%)
 order.total_excluding_tax: Totale (escluso IVA)
 order.total_including_tax: Totale (incl. IVA)
 order.preparation_expected_at: Preparazione prevista per %date%
+order.preparation_expected_for: Preparazione aspettata per %date%
 order.shipping_date.title: Orario di consegna
 order.payment.title: Le informazioni del tuo pagamento
 order.payment.card_number.label: Numero di carta

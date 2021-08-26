@@ -9,8 +9,19 @@
   }, 'emails') | raw }}
   </mj-text>
   <mj-spacer container-background-color="#ecedee" height="1px" />
+  <mj-text font-family="'Roboto Mono', monospace" align="center" line-height="30px" font-size="26px">
+    {{ order.number }}
+  </mj-text>
+  <mj-spacer container-background-color="#ecedee" height="1px" />
+  <mj-text align="center" line-height="30px" font-size="26px">
+    {{ order.customer.fullName }}
+  </mj-text>
+  <mj-spacer container-background-color="#ecedee" height="1px" />
   <mj-text align="center" line-height="20px" font-size="15px">
-    {{ 'order.preparation_expected_at'|trans({ '%date%': order.preparationExpectedAt|format_datetime('none', 'short') }) }}
+    {{ 'order.preparation_expected_at'|trans({ '%date%': order.preparationExpectedAt|format_datetime('short', 'short') }) }}
+  </mj-text>
+    <mj-text align="center" line-height="20px" font-size="15px">
+    {{ 'order.preparation_expected_for'|trans({ '%date%': order.pickupExpectedAt|format_datetime('short', 'short') }) }}
   </mj-text>
   <mj-spacer container-background-color="#ecedee" height="1px" />
   {% include 'emails/order/_partials/items.mjml.twig' %}

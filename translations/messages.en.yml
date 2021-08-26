@@ -295,7 +295,8 @@ order.total_including_tax: Total (incl. VAT)
 order.items_total: Total products
 order.total_tax: VAT
 order.total_tax_by_rate: Total %name%
-order.preparation_expected_at: Preparation expected at %date%
+order.preparation_expected_at: Preparation starting at %date%
+order.preparation_expected_for: Preparation expected for %date%
 order.shipping_date.title: Your shipping date
 order.payer.title: Buyer information
 order.payer.email: E-mail
