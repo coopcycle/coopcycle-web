@@ -512,8 +512,9 @@ export default function(name, options) {
     }, false)
 
     // https://symfony.com/doc/current/form/form_collections.html#allowing-new-tags-with-the-prototype
-    el.querySelector('[data-add="dropoff"]')
-      .addEventListener('click', () => {
+    const addTaskButton = el.querySelector('[data-add="dropoff"]')
+    if (addTaskButton) {
+      addTaskButton.addEventListener('click', () => {
 
         const collectionHolder =
           document.querySelector('#delivery_tasks')
@@ -534,6 +535,7 @@ export default function(name, options) {
 
         collectionHolder.dataset.index++
       })
+    }
   }
 
   return form
