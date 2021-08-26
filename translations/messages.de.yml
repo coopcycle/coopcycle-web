@@ -311,7 +311,7 @@ order.total_tax: Steuern
 order.preparation_expected_at: Erwartete Bereitstellung bis zum %date%
 order.preparation_expected_for: Erwartete Bereitstellung bis zum %date%
 order.order_number: \# %order_number%
-order.customer_name : Kunde : %customer_firstname% %customer_lastname%
+order.customer_name: 'Kunde : %customer_firstname% %customer_lastname%'
 order.shipping_date.title: Dein Liefertermin
 order.payment.title: Deine Zahlungsinformationen
 order.payment.expiration.label: Gültigkeitsdauer

@@ -300,7 +300,7 @@ order.total_tax_by_rate: 'Total %name%'
 order.preparation_expected_at: 'Preparación asperada a las %date%'
 order.preparation_expected_for: 'Preparación asperada a las %date%'
 order.order_number: \# %order_number%
-order.customer_name : Cliente : %customer_firstname% %customer_lastname%
+order.customer_name: 'Cliente : %customer_firstname% %customer_lastname%'
 order.shipping_date.title: 'Calendata d''entrega'
 order.payer.title: 'Detalles d''o comprador'
 order.payer.email: 'Correu electronico'

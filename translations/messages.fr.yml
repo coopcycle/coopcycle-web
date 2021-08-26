@@ -277,7 +277,7 @@ order.total_tax_by_rate: Total %name%
 order.preparation_expected_at: Préparation à démarrer pour %date%
 order.preparation_expected_for: Préparation attendue pour %date%
 order.order_number: \# %order_number%
-order.customer_name : Client : %customer_firstname% %customer_lastname%
+order.customer_name: 'Client : %customer_firstname% %customer_lastname%'
 order.net_total_including_tax: Total TTC (net)
 order.stripe_fee: Frais bancaires
 order.fee: Frais plateforme

@@ -310,7 +310,7 @@ order.total_tax_by_rate: Łącznie %name%
 order.preparation_expected_at: Przygotowanie oczekiwane na %date%
 order.preparation_expected_for: Przygotowanie oczekiwane na %date%
 order.order_number: \# %order_number%
-order.customer_name : Klient : %customer_firstname% %customer_lastname%
+order.customer_name: 'Klient : %customer_firstname% %customer_lastname%'
 order.shipping_date.title: Twoja data wysyłki
 order.payment.title: Twoje informacje o płatności
 order.payment.expiration.label: Wygaśnięcie

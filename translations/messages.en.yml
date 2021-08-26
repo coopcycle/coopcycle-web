@@ -298,7 +298,7 @@ order.total_tax_by_rate: Total %name%
 order.preparation_expected_at: Preparation starting at %date%
 order.preparation_expected_for: Preparation expected for %date%
 order.order_number: \# %order_number%
-order.customer_name : Customer : %customer_firstname% %customer_lastname%
+order.customer_name: 'Customer : %customer_firstname% %customer_lastname%'
 order.shipping_date.title: Your shipping date
 order.payer.title: Buyer information
 order.payer.email: E-mail
