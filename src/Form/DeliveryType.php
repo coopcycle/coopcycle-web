@@ -12,6 +12,7 @@ use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -101,6 +102,16 @@ class DeliveryType extends AbstractType
                 'allow_add' => true,
                 'prototype_data' => new Task(),
             ]);
+
+            $isMultiDropEnabled = null !== $store ? $store->isMultiDropEnabled() : false;
+            if ($isMultiDropEnabled) {
+                $form->add('addTask', ButtonType::class, [
+                    'label' => 'basics.add',
+                    'attr' => [
+                        'data-add' => 'dropoff'
+                    ],
+                ]);
+            }
         });
 
         // Add weight field if needed

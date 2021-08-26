@@ -145,10 +145,13 @@ col-md-9
 
 {% block _delivery_tasks_widget %}
 {{ block('collection_widget') }}
-<div class="text-right">
-  <button type="button" class="btn btn-primary" data-add="dropoff">
-    <i class="fa fa-plus mr-1"></i>
-    <span>{{ 'basics.add'|trans }}</span>
-  </button>
-</div>
+{% if form.parent.addTask is defined %}
+  <div class="text-right">
+    {{ form_widget(form.parent.addTask, {
+      attr: { class: 'btn-primary' },
+      label: '<i class="fa fa-plus mr-1"></i><span>' ~ ('basics.add'|trans) ~ '</span>',
+      label_html: true
+    }) }}
+  </div>
+{% endif %}
 {% endblock %}
