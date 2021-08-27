@@ -254,7 +254,10 @@ trait StoreTrait
                 try {
 
                     $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $this->getUser()->getCustomer());
+                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $this->getUser()->getCustomer(),
+                        // We do *NOT* attach the delivery to the order
+                        // Instead, it will be created when the order is accepted
+                        $attach = false);
 
                     $this->handleRememberAddress($store, $form);
 
