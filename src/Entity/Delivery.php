@@ -22,6 +22,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
@@ -123,9 +124,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
      */
     private $store;
 
-    /**
-     * @Groups({"product_variant"})
-     */
     private $packages;
 
     const OPENAPI_CONTEXT_POST_PARAMETERS = [[
@@ -510,5 +508,21 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
     public function hasImages()
     {
         return count($this->getImages()) > 0;
+    }
+
+    /**
+     * @Groups({"product_variant"})
+     * @SerializedName("packages")
+     */
+    public function getPackagesNormalized()
+    {
+        return array_map(function (DeliveryPackage $p) {
+
+            return [
+                'type' => $p->getPackage()->getName(),
+                'quantity' => $p->getQuantity(),
+            ];
+
+        }, $this->getPackages()->toArray());
     }
 }

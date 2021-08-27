@@ -128,6 +128,9 @@ abstract class TaskCollection
         }
     }
 
+    /**
+     * @Groups({"product_variant"})
+     */
     public function getTasks()
     {
         return $this->getItems()->map(function (TaskCollectionItem $item) {
