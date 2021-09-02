@@ -48,7 +48,8 @@
         </button>
       </td>
       <td class="text-right">
-        <form method="post">
+        <form method="post"
+          onsubmit="return confirm('{{ 'api_apps.regenerate_secret_warning'|trans }}');">
           <input type="hidden" name="oauth2_client" value="{{ api_app.oauth2Client.identifier }}">
           <button type="submit" class="btn btn-danger btn-xs">
             <i class="fa fa-refresh mr-1"></i>{{ 'api_apps.regenerate_secret'|trans }}

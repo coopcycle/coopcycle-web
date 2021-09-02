@@ -1188,3 +1188,4 @@ promotion_rule.is_items_total_above: Le total des produits est supérieur à %am
 form.store_type.multi_drop_enabled.label: Activer les dépôts multiples
 form.store_type.multi_drop_enabled.help: Permet aux utilisateur·ice·s d'ajouter un point de dépôt supplémentaire lors de la création d'une livraison
 api_apps.regenerate_secret: Renouveler la clé secrète
+api_apps.regenerate_secret_warning: Toutes les applications utilisant la clé secrète précédente ne fonctionnera plus.

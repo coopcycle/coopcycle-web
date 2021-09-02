@@ -1203,3 +1203,4 @@ promotion_rule.is_items_total_above: The items total is above %amount%
 form.store_type.multi_drop_enabled.label: Enable multiple dropoffs
 form.store_type.multi_drop_enabled.help: Allow users to add additional dropoffs when creating a delivery
 api_apps.regenerate_secret: Renew secret key
+api_apps.regenerate_secret_warning: Any apps using this API endpoint with the previous secret will stop working.
