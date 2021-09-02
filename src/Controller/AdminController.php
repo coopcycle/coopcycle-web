@@ -108,6 +108,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuth2Client;
 use Twig\Environment as TwigEnvironment;
 
 class AdminController extends AbstractController
@@ -1314,11 +1315,27 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/api/apps", name="admin_api_apps")
      */
-    public function apiAppsAction()
+    public function apiAppsAction(Request $request)
     {
-        $apiApps = $this->getDoctrine()
+        if ($request->isMethod('POST') && $request->request->has('oauth2_client')) {
+
+            $oAuth2ClientId = $request->get('oauth2_client');
+            $oAuth2Client = $this->entityManager
+                ->getRepository(OAuth2Client::class)
+                ->find($oAuth2ClientId);
+
+            $newSecret = hash('sha512', random_bytes(32));
+            $oAuth2Client->setSecret($newSecret);
+
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_api_apps');
+        }
+
+        $apiApps = $this->entityManager
             ->getRepository(ApiApp::class)
             ->findAll();
+
         return $this->render('admin/api_apps.html.twig', [
             'api_apps' => $apiApps
         ]);
