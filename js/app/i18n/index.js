@@ -18,6 +18,7 @@ import de from './locales/de.json'
 import en from './locales/en.json'
 import es from './locales/es.json'
 import fr from './locales/fr.json'
+import it from './locales/it.json'
 import pl from './locales/pl.json'
 import pt_BR from './locales/pt_BR.json'
 
@@ -25,6 +26,7 @@ import de_DE from 'antd/es/locale/de_DE'
 import en_US from 'antd/es/locale/en_US'
 import es_ES from 'antd/es/locale/es_ES'
 import fr_FR from 'antd/es/locale/fr_FR'
+import it_IT from 'antd/es/locale/it_IT'
 import pl_PL from 'antd/es/locale/pl_PL'
 import antd_pt_BR from 'antd/es/locale/pt_BR'
 
@@ -35,6 +37,7 @@ import deDE from 'numbro/dist/languages/de-DE.min.js'
 import enGB from 'numbro/dist/languages/en-GB.min.js'
 import esES from 'numbro/dist/languages/es-ES.min.js'
 import frFR from 'numbro/dist/languages/fr-FR.min.js'
+import itIT from 'numbro/dist/languages/it-IT.min.js'
 import plPL from 'numbro/dist/languages/pl-PL.min.js'
 import ptBR from 'numbro/dist/languages/pt-BR.min.js'
 
@@ -43,7 +46,7 @@ i18next
   .use(initReactI18next)
   .init({
     fallbackLng: 'en',
-    resources: { an, ca, de, en, fr, es, pl, "pt-BR": pt_BR },
+    resources: { an, ca, de, en, fr, es, it, pl, "pt-BR": pt_BR },
     ns: ['common'],
     defaultNS: 'common',
     debug: process.env.DEBUG,
@@ -63,6 +66,7 @@ const antdLocaleMap = {
   'en': en_US,
   'es': es_ES,
   'fr': fr_FR,
+  'it': it_IT,
   'pl': pl_PL,
   'pt-BR': antd_pt_BR,
 }
@@ -72,6 +76,7 @@ numbro.registerLanguage(deDE)
 numbro.registerLanguage(enGB)
 numbro.registerLanguage(esES)
 numbro.registerLanguage(frFR)
+numbro.registerLanguage(itIT)
 numbro.registerLanguage(plPL)
 numbro.registerLanguage(ptBR)
 
