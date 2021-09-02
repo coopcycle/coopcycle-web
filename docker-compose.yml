@@ -213,7 +213,7 @@ services:
       - ./sonic.cfg:/etc/sonic.cfg
 
   centrifugo:
-    image: centrifugo/centrifugo
+    image: centrifugo/centrifugo:v2
     ports:
       - "8100:8000"
     depends_on:
