@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
   <entity name="AppBundle\Entity\ApiApp" table="api_app">
+    <unique-constraints>
+      <unique-constraint columns="api_key"/>
+    </unique-constraints>
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name"/>
+    <field name="type" type="string" column="type" length="12"/>
+    <field name="apiKey" type="string" column="api_key" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
@@ -16,7 +21,7 @@
         <cascade-persist/>
       </cascade>
       <join-columns>
-        <join-column name="oauth2_client_id" referenced-column-name="identifier" nullable="false"/>
+        <join-column name="oauth2_client_id" referenced-column-name="identifier" nullable="true"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="store" target-entity="AppBundle\Entity\Store">

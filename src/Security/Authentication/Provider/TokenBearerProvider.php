@@ -2,7 +2,10 @@
 
 namespace AppBundle\Security\Authentication\Provider;
 
+use AppBundle\Entity\ApiApp;
+use AppBundle\Security\Authentication\Token\ApiKeyToken;
 use AppBundle\Security\Authentication\Token\BearerToken;
+use Doctrine\ORM\EntityManagerInterface;
 use League\OAuth2\Server\ResourceServer;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\InvalidPayloadException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Guard\JWTTokenAuthenticator;
@@ -25,17 +28,36 @@ class TokenBearerProvider implements AuthenticationProviderInterface
         ResourceServer $resourceServer,
         JWTTokenAuthenticator $jwtTokenAuthenticator,
         OAuth2TokenFactory $oauth2TokenFactory,
+        EntityManagerInterface $entityManager,
         string $providerKey)
     {
         $this->userProvider = $userProvider;
         $this->resourceServer = $resourceServer;
         $this->jwtTokenAuthenticator = $jwtTokenAuthenticator;
         $this->oauth2TokenFactory = $oauth2TokenFactory;
+        $this->entityManager = $entityManager;
         $this->providerKey = $providerKey;
     }
 
     public function authenticate(TokenInterface $token)
     {
+        if ($token instanceof ApiKeyToken) {
+
+            $rawToken = $token->getCredentials();
+            $rawApiKey = substr($rawToken, 3);
+
+            $apiApp = $this->entityManager
+                ->getRepository(ApiApp::class)
+                ->findOneBy(['apiKey' => $rawApiKey, 'type' => 'api_key']);
+
+            if (null === $apiApp) {
+
+                throw new AuthenticationException(sprintf('API Key "%s" does not exist', $rawApiKey));
+            }
+
+            return $token;
+        }
+
         try {
 
             // First, try with Lexik
@@ -66,6 +88,6 @@ class TokenBearerProvider implements AuthenticationProviderInterface
 
     public function supports(TokenInterface $token)
     {
-        return $token instanceof BearerToken;
+        return $token instanceof BearerToken || $token instanceof ApiKeyToken;
     }
 }

@@ -31,15 +31,31 @@ class ApiApp
     private $id;
 
     /**
+     * @var string
      * @Groups({"api_app"})
      */
     private $name;
+
+    /**
+     * @var Client
+     */
     private $oauth2Client;
 
     /**
+     * @var Store
      * @Groups({"api_app"})
      */
     private $store;
+
+    /**
+     * @var string
+     */
+    private $type = 'oauth';
+
+    /**
+     * @var string|null
+     */
+    private $apiKey;
 
     public function getId()
     {
@@ -70,7 +86,7 @@ class ApiApp
         return $this;
     }
 
-    public function getStore()
+    public function getStore(): ?Store
     {
         return $this->store;
     }
@@ -78,6 +94,30 @@ class ApiApp
     public function setStore(Store $store)
     {
         $this->store = $store;
+
+        return $this;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getApiKey()
+    {
+        return $this->apiKey;
+    }
+
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
 
         return $this;
     }

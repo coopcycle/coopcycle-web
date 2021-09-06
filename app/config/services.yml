@@ -812,6 +812,8 @@ services:
       $providerKey: ~
     public: false
 
+  AppBundle\Security\ApiKeyManager: ~
+
   AppBundle\Security\Firewall\CartSessionListener:
     arguments:
       - '@security.token_storage'
