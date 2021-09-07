@@ -30,7 +30,8 @@ final class DeliverySubscriber implements EventSubscriberInterface
     private static $matchingRoutes = [
         'api_deliveries_get_item',
         'api_deliveries_post_collection',
-        'api_deliveries_check_collection'
+        'api_deliveries_check_collection',
+        'api_deliveries_post_urbantz_collection',
     ];
 
     public function __construct(
