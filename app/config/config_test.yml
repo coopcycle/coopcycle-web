@@ -85,3 +85,10 @@ services:
           - '@coopcycle.settings_manager'
         tags:
             - { name: fidry_alice_data_fixtures.processor }
+
+    urbantz_client_mock:
+        class: Symfony\Component\HttpClient\MockHttpClient
+        arguments:
+            $baseUri: 'https://api.urbantz.com/v2/'
+
+    Symfony\Contracts\HttpClient\HttpClientInterface $urbantzClient: '@urbantz_client_mock'

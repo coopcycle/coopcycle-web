@@ -650,6 +650,11 @@ services:
   AppBundle\Api\EventSubscriber\ProductOptionValueSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
+  AppBundle\Api\EventSubscriber\UrbantzSubscriber:
+    arguments:
+      $secret: '%secret%'
+    tags: [ 'kernel.event_subscriber' ]
+
   AppBundle\Action\Settings:
     public: true
     arguments:
