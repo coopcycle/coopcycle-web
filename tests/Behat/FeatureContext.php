@@ -101,6 +101,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     private $fixturesLoader;
 
+    private $apiKeys;
+
     /**
      * Initializes context.
      *
@@ -129,6 +131,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
+        $this->apiKeys = [];
         $this->doctrine = $doctrine;
         $this->manager = $doctrine->getManager();
         $this->schemaTool = new SchemaTool($this->manager);
@@ -466,6 +469,29 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given the store with name :storeName has an API key
+     */
+    public function theStoreWithNameHasAnApiKey($storeName)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $secret = hash('sha512', random_bytes(32));
+
+        $apiKey = 'ak_'.$secret;
+
+        $apiApp = new ApiApp();
+        $apiApp->setName($storeName);
+        $apiApp->setStore($store);
+        $apiApp->setApiKey($secret);
+        $apiApp->setType('api_key');
+
+        $this->doctrine->getManagerForClass(ApiApp::class)->persist($apiApp);
+        $this->doctrine->getManagerForClass(ApiApp::class)->flush();
+
+        $this->apiKeys[$storeName] = $apiKey;
+    }
+
+    /**
      * @When I send an authenticated :method request to :url
      */
     public function iSendAnAuthenticatedRequestTo($method, $url, PyStringNode $body = null)
@@ -532,6 +558,32 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->oAuthTokens[$clientName]);
+        $this->restContext->iSendARequestTo($method, $url, $body);
+    }
+
+    /**
+     * @When the store with name :storeName sends a :method request to :url
+     */
+    public function theStoreWithNameSendsARequestTo($storeName, $method, $url)
+    {
+        if (!isset($this->apiKeys[$storeName])) {
+            throw new \RuntimeException("API key for {$storeName} does not exist");
+        }
+
+        $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->apiKeys[$storeName]);
+        $this->restContext->iSendARequestTo($method, $url, $body);
+    }
+
+    /**
+     * @When the store with name :storeName sends a :method request to :url with body:
+     */
+    public function theStoreWithNameSendsARequestToWithBody($storeName, $method, $url, PyStringNode $body)
+    {
+        if (!isset($this->apiKeys[$storeName])) {
+            throw new \RuntimeException("API key for {$storeName} does not exist");
+        }
+
+        $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->apiKeys[$storeName]);
         $this->restContext->iSendARequestTo($method, $url, $body);
     }
 
