@@ -117,3 +117,20 @@ services:
         subscribes_to: task:done
       - name: event_subscriber
         subscribes_to: task:failed
+
+  coopcycle.domain.task.reactor.notify_urbantz:
+    class: AppBundle\Domain\Task\Reactor\NotifyUrbantz
+    arguments:
+      - '@urbantz.client'
+      - '@doctrine.orm.default_entity_manager'
+      - '%secret%'
+      - '@logger'
+    tags:
+      - name: event_subscriber
+        subscribes_to: task:assigned
+      - name: event_subscriber
+        subscribes_to: task:started
+      - name: event_subscriber
+        subscribes_to: task:done
+      - name: event_subscriber
+        subscribes_to: task:failed
