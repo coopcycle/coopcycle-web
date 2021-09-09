@@ -53,7 +53,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "post_urbantz"={
  *       "method"="POST",
  *       "path"="/urbantz/deliveries",
- *       "input"=UrbantzOrderInput::class
+ *       "input"=UrbantzOrderInput::class,
+ *       "security"="is_granted('ROLE_API_KEY')"
  *     }
  *   },
  *   itemOperations={
