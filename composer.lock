@@ -217,20 +217,20 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.192.0",
+            "version": "3.193.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "3f3026ecd3ef534701499ce98c8e3393604fca8b"
+                "reference": "418ff1173253b8d0fd8e50eeb9ca15b51ab24e4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3f3026ecd3ef534701499ce98c8e3393604fca8b",
-                "reference": "3f3026ecd3ef534701499ce98c8e3393604fca8b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/418ff1173253b8d0fd8e50eeb9ca15b51ab24e4a",
+                "reference": "418ff1173253b8d0fd8e50eeb9ca15b51ab24e4a",
                 "shasum": ""
             },
             "require": {
-                "aws/aws-crt-php": "^1.0.1",
+                "aws/aws-crt-php": "^1.0.2",
                 "ext-json": "*",
                 "ext-pcre": "*",
                 "ext-simplexml": "*",
@@ -302,9 +302,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.192.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.193.0"
             },
-            "time": "2021-09-03T18:13:44+00:00"
+            "time": "2021-09-08T18:14:42+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -5374,16 +5374,16 @@
         },
         {
             "name": "illuminate/cache",
-            "version": "v8.58.0",
+            "version": "v8.60.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/cache.git",
-                "reference": "1edbbc6f474fd614993fd9aa309f32806606dfb8"
+                "reference": "881c2e21c5118302872201a5ac02081ea6a499a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/cache/zipball/1edbbc6f474fd614993fd9aa309f32806606dfb8",
-                "reference": "1edbbc6f474fd614993fd9aa309f32806606dfb8",
+                "url": "https://api.github.com/repos/illuminate/cache/zipball/881c2e21c5118302872201a5ac02081ea6a499a1",
+                "reference": "881c2e21c5118302872201a5ac02081ea6a499a1",
                 "shasum": ""
             },
             "require": {
@@ -5427,20 +5427,20 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-08-18T14:44:52+00:00"
+            "time": "2021-09-08T12:09:40+00:00"
         },
         {
             "name": "illuminate/collections",
-            "version": "v8.58.0",
+            "version": "v8.60.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "673d71d9db2827b04c096c4fe9739edddea14ac4"
+                "reference": "18fa841df912ec56849351dd6ca8928e8a98b69d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/673d71d9db2827b04c096c4fe9739edddea14ac4",
-                "reference": "673d71d9db2827b04c096c4fe9739edddea14ac4",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/18fa841df912ec56849351dd6ca8928e8a98b69d",
+                "reference": "18fa841df912ec56849351dd6ca8928e8a98b69d",
                 "shasum": ""
             },
             "require": {
@@ -5481,20 +5481,20 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-08-25T13:02:21+00:00"
+            "time": "2021-09-08T12:48:16+00:00"
         },
         {
             "name": "illuminate/contracts",
-            "version": "v8.58.0",
+            "version": "v8.60.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "7354badf7b57eae805a56d1163fb023e0f58a639"
+                "reference": "ab4bb4ec3b36905ccf972c84f9aaa2bdd1153913"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/7354badf7b57eae805a56d1163fb023e0f58a639",
-                "reference": "7354badf7b57eae805a56d1163fb023e0f58a639",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/ab4bb4ec3b36905ccf972c84f9aaa2bdd1153913",
+                "reference": "ab4bb4ec3b36905ccf972c84f9aaa2bdd1153913",
                 "shasum": ""
             },
             "require": {
@@ -5529,11 +5529,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-08-24T21:29:28+00:00"
+            "time": "2021-09-08T12:09:40+00:00"
         },
         {
             "name": "illuminate/macroable",
-            "version": "v8.58.0",
+            "version": "v8.60.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -5579,16 +5579,16 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v8.58.0",
+            "version": "v8.60.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "5e8f059a5d1f298324e847822b997778a3472128"
+                "reference": "c0fbc05c4362de423a7a4da137098e9d1affaf54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/5e8f059a5d1f298324e847822b997778a3472128",
-                "reference": "5e8f059a5d1f298324e847822b997778a3472128",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/c0fbc05c4362de423a7a4da137098e9d1affaf54",
+                "reference": "c0fbc05c4362de423a7a4da137098e9d1affaf54",
                 "shasum": ""
             },
             "require": {
@@ -5643,7 +5643,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2021-08-25T13:04:37+00:00"
+            "time": "2021-09-08T12:48:16+00:00"
         },
         {
             "name": "imagine/imagine",
@@ -17348,16 +17348,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.28.1",
+            "version": "6.28.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "8d389e82b2bef32cad093cec362c5b190f7de58b"
+                "reference": "530be7f621fc8fb1d2af5ba5a70e278f262e048f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/8d389e82b2bef32cad093cec362c5b190f7de58b",
-                "reference": "8d389e82b2bef32cad093cec362c5b190f7de58b",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/530be7f621fc8fb1d2af5ba5a70e278f262e048f",
+                "reference": "530be7f621fc8fb1d2af5ba5a70e278f262e048f",
                 "shasum": ""
             },
             "require": {
@@ -17396,9 +17396,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twilio/twilio-php/issues",
-                "source": "https://github.com/twilio/twilio-php/tree/6.28.1"
+                "source": "https://github.com/twilio/twilio-php/tree/6.28.2"
             },
-            "time": "2021-08-25T20:20:47+00:00"
+            "time": "2021-09-08T19:54:49+00:00"
         },
         {
             "name": "vich/uploader-bundle",
