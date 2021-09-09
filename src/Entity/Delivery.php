@@ -9,6 +9,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
+use AppBundle\Api\Dto\UrbantzOrderInput;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Entity\Delivery\Package as DeliveryPackage;
 use AppBundle\Entity\Package;
@@ -48,6 +49,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *         "summary"="Asserts a Delivery is feasible",
  *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
  *       }
+ *     },
+ *     "post_urbantz"={
+ *       "method"="POST",
+ *       "path"="/urbantz/deliveries",
+ *       "input"=UrbantzOrderInput::class,
+ *       "security"="is_granted('ROLE_API_KEY')"
  *     }
  *   },
  *   itemOperations={

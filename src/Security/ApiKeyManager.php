@@ -36,6 +36,6 @@ class ApiKeyManager
             return;
         }
 
-        return new ApiKeyToken([], $rawToken);
+        return new ApiKeyToken(['ROLE_API_KEY'], $rawToken);
     }
 }

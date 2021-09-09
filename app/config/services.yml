@@ -650,6 +650,11 @@ services:
   AppBundle\Api\EventSubscriber\ProductOptionValueSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
+  AppBundle\Api\EventSubscriber\UrbantzSubscriber:
+    arguments:
+      $secret: '%secret%'
+    tags: [ 'kernel.event_subscriber' ]
+
   AppBundle\Action\Settings:
     public: true
     arguments:
@@ -834,6 +839,7 @@ services:
   AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RestaurantInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RemotePushTokenInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\UrbantzOrderInputDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:

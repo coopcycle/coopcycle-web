@@ -165,6 +165,12 @@ framework:
         enabled: true
     mailer:
         dsn: '%env(COOPCYCLE_MAIL_URL)%'
+    http_client:
+        scoped_clients:
+            urbantz.client:
+                base_uri: 'https://api.urbantz.com/v2/'
+                headers:
+                    X-Api-Key: '%env(URBANTZ_API_KEY)%'
 
 # Twig Configuration
 twig:
