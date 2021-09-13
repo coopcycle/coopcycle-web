@@ -981,3 +981,35 @@ form.mercadopago_livemode.enable.alert: « produkzio » moduan, kreditu txartela
 form.mercadopago_livemode.enable.label: Erabili Mercadopago « produkzio » moduan
 form.registration.legal.label: Terminoak eta baldintzak eta pribatutasun-politika
   onartzen ditut
+restaurant.form.section.vytal: Vytal
+form.checkout_address.reusable_packaging_vytal_enabled.label: Vytal kontenedoreak
+  erabili nahi ditut
+form.product.alcohol.label: Produktu hau edari alkoholiko bat da
+restaurants.edenred_transactions.title: Edenred transakzioak
+adminDashboard.metrics.title: Estatistikak
+form.items_total_promotion.fixed_discount_amount.label: Ezarri beherapen kopuru hau
+restaurant.stats.view_detailed: Ikuspegi xehetua
+restaurant.stats.view_simple: Ikuspegi sinplea
+restaurant.list.tags.zerowaste: Hondakinik gabe
+form.adress_book.remember_address: Gogoratu helbide hau
+adminDashboard.api.title: API
+adminDashboard.tags.help: Esleitu etiketak eta koloreak zereginei
+adminDashboard.zones.help: Definitu eremu geografikoak
+adminDashboard.embed.help: Sortu entregak eskatzeko formularioak
+adminDashboard.stores.help: Sortu bezeroen kontuak
+restaurants.mode.map: Ikusi mapa moduan
+restaurants.mode.list: Ikusi zerrenda moduan
+form.settings.addresses.title: Helbideak
+form.settings.google_api_key_custom.label: Google API gakoa
+form.settings.geocoding_provider.label: Geokodifikazio hornitzailea
+index.view_all: Ikusi guztiak
+order.adjustment_type.reusable_packaging.loopeat: LoopEat prozesatze-ordainketa
+store.SPORTING_GOODS_STORE: Kirol-denda
+store.SHOE_STORE: Zapata-denda
+store.PET_STORE: Maskota-denda
+store.OUTLET_STORE: Outlet denda
+store.MOVIE_RENTAL_STORE: Bideokluba
+store.MOBILE_PHONE_STORE: Mugikor-denda
+store.GARDEN_STORE: Lorezaintza denda
+store.FLORIST: Loradenda
+store.FURNITURE_STORE: Altzari-denda
