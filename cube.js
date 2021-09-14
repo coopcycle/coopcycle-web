@@ -4,10 +4,10 @@ const PostgresDriver = require('@cubejs-backend/postgres-driver');
 
 module.exports = {
   contextToAppId: ({ securityContext }) =>
-    `CUBEJS_APP_${securityContext.database}`,
+    `CUBEJS_APP_coopcycle`,
   driverFactory: ({ securityContext }) =>
     new PostgresDriver({
-      database: `${securityContext.database}`,
+      database: 'coopcycle', // `${securityContext.database}`,
     }),
   // https://cube.dev/docs/config#options-reference-scheduled-refresh-contexts
   scheduledRefreshContexts: async () => [
