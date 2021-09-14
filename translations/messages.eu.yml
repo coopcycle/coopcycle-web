@@ -937,3 +937,79 @@ form.mercadopago_livemode.disable_and_enable_maintenance.label: Aldatu « test �
 form.mercadopago_livemode.disable.alert: « test » moduan, kreditu-txartelak ez dira
   kobratuko.
 form.mercadopago_livemode.disable.label: Erabili Mercadopago « test » moduan
+order.export.heading.net_revenue: Diru-sarrera garbiak
+order.export.heading.packaging_fee: Bilgarria
+task.receipt.received_by: <strong>%name%</strong>(e)k paketea jaso du
+delivery.import.success_message: Zure fitxategia ondo prozesatu da, %count% entrega
+  sortu dira
+receipt.emitter_details: Eskaera <strong>%restaurant_name%</strong> jatetxean
+allergens.NUTS: Oskoldun fruituak
+promotions.create_credit_note_coupon: Gehitu kreditu-nota
+promotions.add_free_delivery_coupon: Gehitu « entrega dohain » promozio kupoia
+promotions.promotion_coupon.success: Zure %code% promozio-kodea kontuan hartu da
+promotions.heading.credit_note.help: Sortu kreditu-nota bakarrak bezeroentzat
+promotions.heading.free_delivery.help: Sortu promozio-kodeak entrega eskaintzeko
+basics.send_invitation.confirm: Zure gonbidapena bidali da! Erabiltzaile berriaren
+  ezarpenak editatu ditzakezu.
+basics.net_income: Diru-sarrera garbiak
+basics.powered_by: <a href="https://coopcycle.org">CoopCycle</a>ek bultzatuta
+activity.order.fulfilled: "#%aggregate_id%/#order eskaera bete da\n"
+activity.order.dropped: "@%owner%(e)k %aggregate_id%/#order eskaera utzi du\n"
+activity.order.picked: "@%owner%(e)k %aggregate_id%/#order eskaera hartu du\n"
+activity.order.refused: "%aggregate_id%/#order eskaera ukatu da\n"
+activity.order.accepted: "%aggregate_id%/#order eskaera onartu da\n"
+activity.order.created: "@%owner%(e)k %aggregate_id%/#order eskaera sortu du\n"
+index.banner: Plater gozoak jatetxetik etxera.
+meta.title: Kooperatibentzako logistika-plataforma
+roles.ROLE_STORE.help: 'Dendaren jabea: esleitutako dendak kudeatu, entregak kudeatu…'
+roles.ROLE_RESTAURANT.help: 'Jatetxearen jabea: esleitutako jatetxeak kudeatu, eskaerak
+  kudeatu…'
+user.edit.enabled.help: Desgaitutako erabiltzaile bati saioa itxiko zaio eta ezingo
+  du plataforman saioa berriro hasi.
+form.new_order.variant_name.help: Eskaeraren laburpenean eta fakturan agertuko den
+  izena
+form.embed_settings.with_weight.label: Galdetu produktuen pisua
+form.checkout_address.reusable_packaging_enabled.label: Bilgarri berrerabilgarria
+  nahi dut (%price%)
+form.product_option.additional.help: Bezeroak hainbat balio aukeratu ditzake, bakarra
+  aukeratu behar izan gabe
+form.product.reusable_packaging.label: Bilgarri berrerabilgarri mota
+form.product.reusable_packaging_enabled.label: Gaitu bilgarri berrerabilgarria produktu
+  honentzat
+form.mercadopago_livemode.enable.alert: « produkzio » moduan, kreditu txartelak karguak
+  jasoko dituzte.
+form.mercadopago_livemode.enable.label: Erabili Mercadopago « produkzio » moduan
+form.registration.legal.label: Terminoak eta baldintzak eta pribatutasun-politika
+  onartzen ditut
+restaurant.form.section.vytal: Vytal
+form.checkout_address.reusable_packaging_vytal_enabled.label: Vytal kontenedoreak
+  erabili nahi ditut
+form.product.alcohol.label: Produktu hau edari alkoholiko bat da
+restaurants.edenred_transactions.title: Edenred transakzioak
+adminDashboard.metrics.title: Estatistikak
+form.items_total_promotion.fixed_discount_amount.label: Ezarri beherapen kopuru hau
+restaurant.stats.view_detailed: Ikuspegi xehetua
+restaurant.stats.view_simple: Ikuspegi sinplea
+restaurant.list.tags.zerowaste: Hondakinik gabe
+form.adress_book.remember_address: Gogoratu helbide hau
+adminDashboard.api.title: API
+adminDashboard.tags.help: Esleitu etiketak eta koloreak zereginei
+adminDashboard.zones.help: Definitu eremu geografikoak
+adminDashboard.embed.help: Sortu entregak eskatzeko formularioak
+adminDashboard.stores.help: Sortu bezeroen kontuak
+restaurants.mode.map: Ikusi mapa moduan
+restaurants.mode.list: Ikusi zerrenda moduan
+form.settings.addresses.title: Helbideak
+form.settings.google_api_key_custom.label: Google API gakoa
+form.settings.geocoding_provider.label: Geokodifikazio hornitzailea
+index.view_all: Ikusi guztiak
+order.adjustment_type.reusable_packaging.loopeat: LoopEat prozesatze-ordainketa
+store.SPORTING_GOODS_STORE: Kirol-denda
+store.SHOE_STORE: Zapata-denda
+store.PET_STORE: Maskota-denda
+store.OUTLET_STORE: Outlet denda
+store.MOVIE_RENTAL_STORE: Bideokluba
+store.MOBILE_PHONE_STORE: Mugikor-denda
+store.GARDEN_STORE: Lorezaintza denda
+store.FLORIST: Loradenda
+store.FURNITURE_STORE: Altzari-denda
