@@ -398,7 +398,7 @@ Feature: Urbantz
     Then the response status code should be 200
     # And print last response
 
-  Scenario: Receive webhook for TaskChanged event
+  Scenario: Receive webhook for unknown event
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
