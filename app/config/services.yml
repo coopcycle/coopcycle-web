@@ -850,7 +850,9 @@ services:
   AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RestaurantInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RemotePushTokenInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\UrbantzOrderInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\UrbantzOrderInputDataTransformer:
+    arguments:
+      $country: '%country_iso%'
   AppBundle\Api\DataTransformer\UrbantzWebhookInputDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:

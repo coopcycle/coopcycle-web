@@ -10,12 +10,19 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\Geocoder;
 use Carbon\Carbon;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberUtil;
 
 class UrbantzOrderInputDataTransformer implements DataTransformerInterface
 {
-    public function __construct(Geocoder $geocoder)
+    public function __construct(
+        Geocoder $geocoder,
+        PhoneNumberUtil $phoneNumberUtil,
+        string $country)
     {
         $this->geocoder = $geocoder;
+        $this->phoneNumberUtil = $phoneNumberUtil;
+        $this->country = $country;
     }
 
     /**
@@ -56,6 +63,15 @@ class UrbantzOrderInputDataTransformer implements DataTransformerInterface
         if (!empty($description)) {
             $address->setDescription($description);
         }
+
+        try {
+            $phone = $task['contact']['phone'] ?? null;
+            if ($phone) {
+                $address->setTelephone(
+                    $this->phoneNumberUtil->parse($phone, strtoupper($this->country))
+                );
+            }
+        } catch (NumberParseException $e) {}
 
         $delivery->getDropoff()->setAddress($address);
 

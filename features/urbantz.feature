@@ -1,6 +1,6 @@
 Feature: Urbantz
 
-  Scenario: Create delivery from order
+  Scenario: Create delivery from order with invalid phone
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
@@ -107,6 +107,124 @@ Feature: Urbantz
             },
             "streetAddress":"24 Rue de la Paix, 75002 Paris",
             "telephone":null,
+            "name":null
+          },
+          "comments":"",
+          "after":"2021-08-27T10:25:00+02:00",
+          "before":"2021-08-27T11:00:00+02:00",
+          "doneAfter":"2021-08-27T10:25:00+02:00",
+          "doneBefore":"2021-08-27T11:00:00+02:00"
+        }
+      }
+      """
+
+  Scenario: Create delivery from order with valid phone
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    Given the setting "latlng" has value "48.856613,2.352222"
+    And the store with name "Acme" has an API key
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the store with name "Acme" sends a "POST" request to "/api/urbantz/deliveries" with body:
+      """
+      [
+        {
+          "type":"delivery",
+          "serviceTime":0,
+          "maxTransitTime":0,
+          "activity":"delivery",
+          "instructions":"4ème étage",
+          "contact":{
+            "language":"fr",
+            "account":"2080118",
+            "person":"Test Nantais",
+            "phone":"0612345678",
+            "name":null,
+            "buildingInfo":{
+              "floor":null,
+              "digicode1":""
+            }
+          },
+          "address":{
+            "country":"FR",
+            "number":"24",
+            "street":"Rue de la Paix",
+            "city":"Paris",
+            "zip":"75002"
+          },
+          "timeWindow":{
+            "start":"2021-08-27T08:25:00.000Z",
+            "stop":"2021-08-27T09:00:00.000Z"
+          },
+          "taskId":"1269-0009999999",
+          "items":[
+            {
+              "type":"SEC",
+              "quantity":1,
+              "dimensions":{
+                "weight":1.082,
+                "volume":9.396321
+              },
+              "barcode":"12690002936057",
+              "barcodeEncoding":"CODE128"
+            }
+          ],
+          "metadata":{
+            "codePe":"AN7809"
+          }
+        }
+      ]
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":@string@,
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":@string@,
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"/api/addresses/1",
+            "@type":"http://schema.org/Place",
+            "contactName":null,
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":48.864577,
+              "longitude":2.333338
+            },
+            "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+            "telephone":null,
+            "name":null
+          },
+          "comments":"",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneAfter":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()"
+        },
+        "dropoff":{
+          "@id":@string@,
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":@string@,
+            "@type":"http://schema.org/Place",
+            "contactName":"Test Nantais",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":48.8698848,
+              "longitude":2.332091
+            },
+            "streetAddress":"24 Rue de la Paix, 75002 Paris",
+            "telephone":"+33612345678",
             "name":null
           },
           "comments":"",
@@ -396,7 +514,6 @@ Feature: Urbantz
       ]
       """
     Then the response status code should be 200
-    # And print last response
 
   Scenario: Receive webhook for unknown event
     Given the fixtures files are loaded:
