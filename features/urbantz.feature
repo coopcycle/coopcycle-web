@@ -4,6 +4,7 @@ Feature: Urbantz
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
+    Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an API key
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -29,12 +30,10 @@ Feature: Urbantz
           },
           "address":{
             "country":"FR",
-            "number":"4",
-            "street":"Rue Perrault",
-            "city":"Nantes",
-            "zip":"44000",
-            "latitude": 47.21160575171194,
-            "longitude": -1.550412088473055
+            "number":"24",
+            "street":"Rue de la Paix",
+            "city":"Paris",
+            "zip":"75002"
           },
           "timeWindow":{
             "start":"2021-08-27T08:25:00.000Z",
@@ -87,10 +86,10 @@ Feature: Urbantz
             "name":null
           },
           "comments":"",
-          "after":"2021-08-27T10:15:52+02:00",
-          "before":"2021-08-27T10:30:52+02:00",
-          "doneAfter":"2021-08-27T10:15:52+02:00",
-          "doneBefore":"2021-08-27T10:30:52+02:00"
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneAfter":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":@string@,
@@ -103,10 +102,10 @@ Feature: Urbantz
             "contactName":"Test Nantais",
             "geo":{
               "@type":"GeoCoordinates",
-              "latitude":47.211605751712,
-              "longitude":-1.5504120884731
+              "latitude":48.8698848,
+              "longitude":2.332091
             },
-            "streetAddress":"4 Rue Perrault, 44000 Nantes",
+            "streetAddress":"24 Rue de la Paix, 75002 Paris",
             "telephone":null,
             "name":null
           },

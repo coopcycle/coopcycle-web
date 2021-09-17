@@ -8,10 +8,16 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Security\TokenStoreExtractor;
+use AppBundle\Service\Geocoder;
 use Carbon\Carbon;
 
 class UrbantzOrderInputDataTransformer implements DataTransformerInterface
 {
+    public function __construct(Geocoder $geocoder)
+    {
+        $this->geocoder = $geocoder;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -32,7 +38,16 @@ class UrbantzOrderInputDataTransformer implements DataTransformerInterface
         );
 
         $address->setStreetAddress($streetAddress);
-        $address->setGeo(new GeoCoordinates($task['address']['latitude'], $task['address']['longitude']));
+
+        $latitute  = $task['address']['latitude']  ?? null;
+        $longitude = $task['address']['longitude'] ?? null;
+
+        if ($latitute && $longitude) {
+            $address->setGeo(new GeoCoordinates($latitude, $longitude));
+        } else {
+            $geoAddr = $this->geocoder->geocode($streetAddress);
+            $address->setGeo($geoAddr->getGeo());
+        }
 
         $contactName = $task['contact']['person'] ?? $task['contact']['name'];
         $address->setContactName($contactName);
