@@ -5,9 +5,17 @@ namespace AppBundle\Entity;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
+use Hashids\Hashids;
 
 class DeliveryRepository extends EntityRepository
 {
+    private $secret;
+
+    public function setSecret(string $secret)
+    {
+        $this->secret = $secret;
+    }
+
     public function getSections(?Store $store = null)
     {
         $today = Carbon::now();
@@ -54,5 +62,29 @@ class DeliveryRepository extends EntityRepository
             'upcoming' => $qbUpcoming,
             'past' => $qbPast,
         ];
+    }
+
+    public function findOneByHashId(string $hashId)
+    {
+        if (0 === strpos($hashId, 'dlv_')) {
+            $hashId = substr($hashId, strlen('dlv_'));
+        }
+
+        if (strlen($hashId) !== 32) {
+
+            return null;
+        }
+
+        $hashids = new Hashids($this->secret, 32);
+        $ids = $hashids->decode($hashId);
+
+        if (count($ids) !== 1) {
+
+            return null;
+        }
+
+        $id = current($ids);
+
+        return $this->find($id);
     }
 }
