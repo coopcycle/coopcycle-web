@@ -119,7 +119,6 @@ Feature: Urbantz
       }
       """
 
-  @debug
   Scenario: Receive webhook for TaskChanged event
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -399,3 +398,20 @@ Feature: Urbantz
       """
     Then the response status code should be 200
     # And print last response
+
+  Scenario: Receive webhook for TaskChanged event
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the store with name "Acme" has an API key
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the store with name "Acme" sends a "POST" request to "/api/urbantz/webhook/Foo" with body:
+      """
+      [
+        {
+          "extTrackId": "dlv_pQB5NV1LzOyXJPEP30xgjaGkYo3WlZvA"
+        }
+      ]
+      """
+    Then the response status code should be 404

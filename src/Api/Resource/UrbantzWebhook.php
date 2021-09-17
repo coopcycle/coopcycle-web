@@ -52,4 +52,11 @@ final class UrbantzWebhook
     {
         $this->id = $id;
     }
+
+    public static function isValidEvent(string $eventName)
+    {
+        return in_array($eventName, [
+            self::TASK_CHANGED,
+        ]);
+    }
 }

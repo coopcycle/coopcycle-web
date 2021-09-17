@@ -15,6 +15,11 @@ final class UrbantzWebhookEventDataProvider implements ItemDataProviderInterface
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?UrbantzWebhook
     {
+        if (!UrbantzWebhook::isValidEvent($id)) {
+
+            return null;
+        }
+
         return new UrbantzWebhook($id);
     }
 }
