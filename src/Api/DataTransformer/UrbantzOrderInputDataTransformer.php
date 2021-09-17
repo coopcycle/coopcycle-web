@@ -46,10 +46,10 @@ class UrbantzOrderInputDataTransformer implements DataTransformerInterface
 
         $address->setStreetAddress($streetAddress);
 
-        $latitute  = $task['address']['latitude']  ?? null;
+        $latitude  = $task['address']['latitude']  ?? null;
         $longitude = $task['address']['longitude'] ?? null;
 
-        if ($latitute && $longitude) {
+        if ($latitude && $longitude) {
             $address->setGeo(new GeoCoordinates($latitude, $longitude));
         } else {
             $geoAddr = $this->geocoder->geocode($streetAddress);
