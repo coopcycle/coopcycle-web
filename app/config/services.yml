@@ -522,6 +522,15 @@ services:
     arguments:
       - AppBundle\Entity\Hub
 
+  AppBundle\Entity\DeliveryRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Delivery
+    calls:
+      - method: setSecret
+        arguments:
+            - '%secret%'
+
   AppBundle\Service\Routing\Osrm:
     arguments:
       $client: '@csa_guzzle.client.osrm'
@@ -746,6 +755,8 @@ services:
       - { name: 'api_platform.subresource_data_provider', priority: 2 }
     autoconfigure: false
 
+  AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
+
   AppBundle\Utils\RestaurantFilter:
     arguments:
       - '@routing_service'
@@ -840,6 +851,7 @@ services:
   AppBundle\Api\DataTransformer\RestaurantInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RemotePushTokenInputDataTransformer: ~
   AppBundle\Api\DataTransformer\UrbantzOrderInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\UrbantzWebhookInputDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:
