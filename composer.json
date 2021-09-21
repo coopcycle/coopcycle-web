@@ -96,7 +96,7 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "sylius/resource-bundle": "^1.7.1",
         "kreait/firebase-bundle": "^2.2",
-        "phpdocumentor/reflection-docblock": "^4.0",
+        "phpdocumentor/reflection-docblock": "^5.1",
         "sylius/customer-bundle": "^1.6",
         "mailjet/mailjet-apiv3-php": "^1.4",
         "edamov/pushok": "^0.13",
