@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ee2f4276807b5800b1285e2e380302b",
+    "content-hash": "49039745d82bfe60fd469a35e748acf4",
     "packages": [
         {
             "name": "api-platform/core",
@@ -9052,16 +9052,16 @@
         },
         {
             "name": "nucleos/profile-bundle",
-            "version": "1.5.x-dev",
+            "version": "1.7.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosProfileBundle.git",
-                "reference": "aa4227a0172357b704186dc5bb900c43a29a5c1c"
+                "reference": "95ce1a9072f00b0b7c5c04ad54b77cec08c7c3de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/aa4227a0172357b704186dc5bb900c43a29a5c1c",
-                "reference": "aa4227a0172357b704186dc5bb900c43a29a5c1c",
+                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/95ce1a9072f00b0b7c5c04ad54b77cec08c7c3de",
+                "reference": "95ce1a9072f00b0b7c5c04ad54b77cec08c7c3de",
                 "shasum": ""
             },
             "require": {
@@ -9104,6 +9104,7 @@
                 "symfony/doctrine-bridge": "^4.4 || ^5.0",
                 "symfony/yaml": "^4.4 || ^5.0"
             },
+            "default-branch": true,
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
@@ -9130,7 +9131,7 @@
             ],
             "support": {
                 "issues": "https://github.com/nucleos/NucleosProfileBundle/issues",
-                "source": "https://github.com/nucleos/NucleosProfileBundle/tree/1.5.x"
+                "source": "https://github.com/nucleos/NucleosProfileBundle/tree/1.7.x"
             },
             "funding": [
                 {
@@ -9150,20 +9151,20 @@
                     "type": "other"
                 }
             ],
-            "time": "2021-06-11T21:43:38+00:00"
+            "time": "2021-09-16T04:25:14+00:00"
         },
         {
             "name": "nucleos/user-bundle",
-            "version": "1.10.x-dev",
+            "version": "1.12.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosUserBundle.git",
-                "reference": "e9983d22f94d1d6389ae1a16f3579a9c2fc17a5f"
+                "reference": "594179b8864aa6654c9d5f73e537ef1afe8a3cb0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosUserBundle/zipball/e9983d22f94d1d6389ae1a16f3579a9c2fc17a5f",
-                "reference": "e9983d22f94d1d6389ae1a16f3579a9c2fc17a5f",
+                "url": "https://api.github.com/repos/nucleos/NucleosUserBundle/zipball/594179b8864aa6654c9d5f73e537ef1afe8a3cb0",
+                "reference": "594179b8864aa6654c9d5f73e537ef1afe8a3cb0",
                 "shasum": ""
             },
             "require": {
@@ -9245,7 +9246,7 @@
             ],
             "support": {
                 "issues": "https://github.com/nucleos/NucleosUserBundle/issues",
-                "source": "https://github.com/nucleos/NucleosUserBundle/tree/1.10.x"
+                "source": "https://github.com/nucleos/NucleosUserBundle/tree/1.12.x"
             },
             "funding": [
                 {
@@ -9265,7 +9266,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2021-06-12T07:57:13+00:00"
+            "time": "2021-09-15T21:05:55+00:00"
         },
         {
             "name": "nyholm/psr7",
