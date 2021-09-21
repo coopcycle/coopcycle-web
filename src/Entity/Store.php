@@ -145,6 +145,12 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $packagesRequired = false;
 
+    /**
+     * @Assert\Expression(
+     *     "!(this.getCreateOrders() and value == true)",
+     *     message="store.multi_drop.conflict"
+     * )
+     */
     private $multiDropEnabled = false;
 
     public function __construct() {
