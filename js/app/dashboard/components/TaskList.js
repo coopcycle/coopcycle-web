@@ -95,9 +95,10 @@ class TaskList extends React.Component {
     const distanceFormatted = (distance / 1000).toFixed(2) + ' Km'
 
     const avatarURL = window.Routing.generate('user_avatar', { username })
+    console.log({username})
 
     return (
-      <AccordionItem uuid={username} >
+      <AccordionItem preExpanded={username} uuid={username} >
         <AccordionItemHeading>
           <AccordionItemButton>
             <span>
