@@ -96,13 +96,12 @@ class TaskList extends React.Component {
 
     const avatarURL = window.Routing.generate('user_avatar', { username })
     const preExpanded = this.props.preExpanded && this.props.preExpanded.includes(username)
-let itemProps = {}
-
-if (preExpanded){
-  itemProps = {
-    dangerouslySetExpanded:true
-  }
-}
+    let itemProps = {}
+    if (preExpanded){
+      itemProps = {
+        dangerouslySetExpanded:true
+      }
+    }
 
     return (
       <AccordionItem uuid={username} {...itemProps} >
