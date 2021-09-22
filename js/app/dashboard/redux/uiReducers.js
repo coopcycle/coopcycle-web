@@ -5,9 +5,15 @@ import {
   SET_CURRENT_TASK,
 } from "./actions";
 
+import {
+  CREATE_TASK_LIST_SUCCESS,
+} from '../../coopcycle-frontend-js/logistics/redux';
+
+
 const initialState = {
   taskListsLoading: false,
   currentTask: null,
+  preExpanded: [],
 }
 
 export default (state = initialState, action) => {
@@ -34,6 +40,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         currentTask: action.task,
+      }
+    case CREATE_TASK_LIST_SUCCESS:
+    console.log(action.payload.username)
+      return {
+        ...state,
+        preExpanded: [action.payload.username],
       }
   }
 

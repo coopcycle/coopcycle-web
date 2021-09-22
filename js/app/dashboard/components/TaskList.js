@@ -95,9 +95,17 @@ class TaskList extends React.Component {
     const distanceFormatted = (distance / 1000).toFixed(2) + ' Km'
 
     const avatarURL = window.Routing.generate('user_avatar', { username })
+    const preExpanded = this.props.preExpanded && this.props.preExpanded.includes(username)
+let itemProps = {}
+
+if (preExpanded){
+  itemProps = {
+    dangerouslySetExpanded:true
+  }
+}
 
     return (
-      <AccordionItem uuid={username} >
+      <AccordionItem uuid={username} {...itemProps} >
         <AccordionItemHeading>
           <AccordionItemButton>
             <span>
@@ -211,6 +219,7 @@ const makeMapStateToProps = () => {
       distance: ownProps.distance,
       duration: ownProps.duration,
       filters: state.settings.filters,
+      preExpanded: state.logistics.ui.preExpanded,
     }
   }
 

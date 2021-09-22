@@ -13,7 +13,11 @@ class TaskLists extends React.Component {
 
   render() {
 
-    const { taskLists, taskListsLoading } = this.props
+    const { taskLists, taskListsLoading, preExpanded } = this.props
+
+console.log(preExpanded);
+console.log(typeof preExpanded);
+
 
     return (
       <div className="dashboard__panel dashboard__panel--assignees">
@@ -28,6 +32,7 @@ class TaskLists extends React.Component {
         </h4>
         <Accordion
           allowZeroExpanded
+          preExpanded={['bot_1']}
           id="accordion"
           className="dashboard__panel__scroll"
           style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
@@ -37,7 +42,6 @@ class TaskLists extends React.Component {
               if (this.props.hiddenCouriers.includes(taskList.username)) {
                 return null
               }
-
               return (
                 <TaskList
                   key={ taskList['@id'] }
@@ -60,6 +64,7 @@ function mapStateToProps (state) {
     taskLists: selectTaskLists(state),
     taskListsLoading: state.logistics.ui.taskListsLoading,
     hiddenCouriers: state.settings.filters.hiddenCouriers,
+    preExpanded: state.logistics.ui.preExpanded,
   }
 }
 
