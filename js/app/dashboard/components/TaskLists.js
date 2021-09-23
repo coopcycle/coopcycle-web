@@ -11,12 +11,10 @@ import { selectTaskLists } from '../redux/selectors'
 
 class TaskLists extends React.Component {
 
+
   render() {
 
-    const { taskLists, taskListsLoading, preExpanded } = this.props
-
-console.log(preExpanded);
-console.log(typeof preExpanded);
+    const { taskLists, taskListsLoading } = this.props
 
 
     return (
@@ -32,7 +30,6 @@ console.log(typeof preExpanded);
         </h4>
         <Accordion
           allowZeroExpanded
-          preExpanded={['bot_1']}
           id="accordion"
           className="dashboard__panel__scroll"
           style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
@@ -64,7 +61,6 @@ function mapStateToProps (state) {
     taskLists: selectTaskLists(state),
     taskListsLoading: state.logistics.ui.taskListsLoading,
     hiddenCouriers: state.settings.filters.hiddenCouriers,
-    preExpanded: state.logistics.ui.preExpanded,
   }
 }
 
