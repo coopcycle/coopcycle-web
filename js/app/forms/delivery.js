@@ -71,8 +71,8 @@ function showRememberAddress(name, type) {
 
 function createAddressWidget(name, type, cb) {
 
-  const telephone = document.querySelector(`#${name}_${type}_telephone`)
-  const recipient = document.querySelector(`#${name}_${type}_recipient`)
+  const telephone = document.querySelector(`#${name}_${type}_address_telephone`)
+  const recipient = document.querySelector(`#${name}_${type}_address_contactName`)
 
   const isTelephoneRequired = telephone && telephone.hasAttribute('required')
   const isRecipientRequired = recipient && recipient.hasAttribute('required')

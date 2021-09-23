@@ -8,8 +8,6 @@ use AppBundle\Entity\TimeSlot;
 use AppBundle\Form\Type\TimeSlotChoice;
 use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Service\TaskManager;
-use libphonenumber\PhoneNumberFormat;
-use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -26,19 +24,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaskType extends AbstractType
 {
-    private $country;
-
-    public function __construct(string $country)
-    {
-        $this->country = $country;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $addressBookOptions = [
             'label' => 'form.task.address.label',
             'with_addresses' => $options['with_addresses'],
             'with_remember_address' => $options['with_remember_address'],
+            'with_details' => $options['with_address_details'],
         ];
 
         $builder
@@ -111,31 +103,14 @@ class TaskType extends AbstractType
 
             $taskType = null !== $task ? $task->getType() : Task::TYPE_DROPOFF;
 
-            if (Task::TYPE_DROPOFF !== $taskType) {
-                return;
-            }
-
-            if ($options['with_recipient_details']) {
-                $form
-                    ->add('telephone', PhoneNumberType::class, [
-                        'label' => 'form.task.telephone.label',
-                        'mapped' => false,
-                        'format' => PhoneNumberFormat::NATIONAL,
-                        'default_region' => strtoupper($this->country),
-                    ])
-                    ->add('recipient', TextType::class, [
-                        'label' => 'form.task.recipient.label',
-                        'help' => 'form.task.recipient.help',
-                        'mapped' => false,
-                    ]);
-            }
-
-            if ($options['with_doorstep']) {
-                $form
-                    ->add('doorstep', CheckboxType::class, [
-                        'label' => 'form.task.dropoff.doorstep.label',
-                        'required' => false,
-                    ]);
+            if (Task::TYPE_DROPOFF === $taskType) {
+                if ($options['with_doorstep']) {
+                    $form
+                        ->add('doorstep', CheckboxType::class, [
+                            'label' => 'form.task.dropoff.doorstep.label',
+                            'required' => false,
+                        ]);
+                }
             }
         });
 
@@ -178,14 +153,6 @@ class TaskType extends AbstractType
                     $choice->applyToTask($task);
                 }
             }
-
-            if ($form->has('telephone')) {
-                $task->getAddress()->setTelephone($form->get('telephone')->getData());
-            }
-
-            if ($form->has('recipient')) {
-                $task->getAddress()->setContactName($form->get('recipient')->getData());
-            }
         });
     }
 
@@ -196,7 +163,7 @@ class TaskType extends AbstractType
             'can_edit_type' => true,
             'with_tags' => true,
             'with_addresses' => [],
-            'with_recipient_details' => false,
+            'with_address_details' => false,
             'with_doorstep' => false,
             'with_remember_address' => false,
             'with_time_slot' => null,

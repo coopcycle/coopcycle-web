@@ -5,9 +5,12 @@ namespace AppBundle\Form;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use Doctrine\ORM\PersistentCollection;
+use libphonenumber\PhoneNumberFormat;
+use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -30,11 +33,13 @@ class AddressBookType extends AbstractType
 {
     private $iriConverter;
     private $serializer;
+    private $country;
 
-    public function __construct(IriConverterInterface $iriConverter, SerializerInterface $serializer)
+    public function __construct(IriConverterInterface $iriConverter, SerializerInterface $serializer, string $country)
     {
         $this->iriConverter = $iriConverter;
         $this->serializer = $serializer;
+        $this->country = $country;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -89,6 +94,21 @@ class AddressBookType extends AbstractType
             ]);
         }
 
+        if ($options['with_details']) {
+            $builder
+                ->add('telephone', PhoneNumberType::class, [
+                    'label' => 'form.task.telephone.label',
+                    'mapped' => false,
+                    'format' => PhoneNumberFormat::NATIONAL,
+                    'default_region' => strtoupper($this->country),
+                ])
+                ->add('contactName', TextType::class, [
+                    'label' => 'form.task.recipient.label',
+                    'help' => 'form.task.recipient.help',
+                    'mapped' => false,
+                ]);
+        }
+
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
@@ -122,17 +142,28 @@ class AddressBookType extends AbstractType
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
 
             $form = $event->getForm();
-            $address = $event->getData();
 
             $existingAddress = $form->get('existingAddress')->getData();
             $newAddress = $form->get('newAddress')->getData();
             $isNewAddress = $form->get('isNewAddress')->getData();
 
-            if ($isNewAddress) {
-                $event->setData($newAddress);
-            } else {
-                $event->setData($existingAddress);
+            $address = $isNewAddress ? $newAddress : $existingAddress;
+
+            if ($form->has('telephone')) {
+                $telephone = $form->get('telephone')->getData();
+                if ($telephone) {
+                    $address->setTelephone($telephone);
+                }
             }
+
+            if ($form->has('contactName')) {
+                $contactName = $form->get('contactName')->getData();
+                if ($contactName) {
+                    $address->setContactName($contactName);
+                }
+            }
+
+            $event->setData($address);
         });
     }
 
@@ -143,6 +174,7 @@ class AddressBookType extends AbstractType
             'with_addresses' => [],
             'new_address_placeholder' => null,
             'with_remember_address' => false,
+            'with_details' => false,
         ));
     }
 
