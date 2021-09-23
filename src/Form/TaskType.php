@@ -71,7 +71,7 @@ class TaskType extends AbstractType
                     'mapped' => false
                 ];
 
-                if (null !== $task->getId()) {
+                if (null !== $task && null !== $task->getId()) {
                     $timeSlotOptions['disabled'] = true;
                     $timeSlotOptions['data'] = TimeSlotChoice::fromTask($task);
                 }
