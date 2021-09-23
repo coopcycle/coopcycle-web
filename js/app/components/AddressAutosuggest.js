@@ -78,6 +78,7 @@ const defaultFuseOptions = {
   minMatchCharLength: 1,
   keys: [
     'streetAddress',
+    'name',
   ]
 }
 
