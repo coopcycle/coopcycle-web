@@ -32,6 +32,11 @@
         {{ form_widget(dropoff_form.timeSlot) }}
         </div>
         {% endif %}
+
+        {% if delivery_form._token is defined %}
+          {{ form_widget(delivery_form._token) }}
+        {% endif %}
+
         <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }} →</button>
       {{ form_end(delivery_form, { render_rest: false }) }}
     </div>
