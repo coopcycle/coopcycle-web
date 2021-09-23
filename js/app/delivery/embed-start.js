@@ -1,3 +1,4 @@
+import moment from 'moment'
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 import { createPackagesWidget } from '../forms/delivery'
@@ -16,7 +17,7 @@ taskForms.forEach(function(type) {
 
   if (doneBeforeEl) {
     new DateTimePicker(document.querySelector(`#delivery_${type}_doneBefore_widget`), {
-      defaultValue: doneBeforeEl.value,
+      defaultValue: doneBeforeEl.value || moment().format('YYYY-MM-DD HH:mm:ss'),
       getDatePickerContainer: getDateTimePickerContainer,
       getTimePickerContainer: getDateTimePickerContainer,
       onChange: function(date) {
