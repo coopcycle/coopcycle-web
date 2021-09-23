@@ -235,7 +235,7 @@ form.store_type.pricing_rule_set.placeholder: Scegli un prezzo
 form.store_type.time_slot.label: Fascia oraria
 task.receipt.greeting: Caro cliente,
 task.receipt.message: Con la presente confermiamo di aver consegnato il pacco in <strong>%
-  address% </strong> in <strong>% data% </strong>
+  address% </strong> il <strong>% data% </strong>
 task.receipt.received_by: Il pacco è stato ricevuto da <strong>%name%</strong>
 adminDashboard.customize.title: Personalizza
 vehicle.bike: Bicicletta
@@ -285,8 +285,8 @@ form.delivery.vehicle.placeholder: Scegli un tipo di veicolo
 form.delivery.to_be_confirmed.warning: Devi confermare l'ordine
 basics.delete: Cancella
 receipt.emitter_details: Ordine presso ristorante <strong>%restaurant_name%</strong>
-delivery.import.success_message: Il tuo file è stato acquisito con successo, %count%  consegne
-  sono state create
+delivery.import.success_message: Il tuo file è stato processato correttamente, %count%
+  consegne sono state create
 form.order.accept.help: Una volta accettato l'ordine, il cliente verrà notificato
   via email.
 form.order.refuse.refund.alert: Questo ordine è stato evaso con un metodo di pagamento
@@ -296,9 +296,9 @@ form.preparation_time_rule.expression.label: Espressione
 restricted_diets.DIABETIC_DIET: Diabetico
 restricted_diets.GLUTEN_FREE_DIET: Senza glutine
 restricted_diets.HALAL_DIET: Carne halal
-restricted_diets.HINDU_DIET: Hindu
+restricted_diets.HINDU_DIET: Indù
 restricted_diets.KOSHER_DIET: Kosher
-restricted_diets.LOW_CALORIE_DIET: Calorie basse
+restricted_diets.LOW_CALORIE_DIET: Ipocalorico
 form.banner.enable.alert: Stai per abilitare il banner
 form.banner.disable.alert: Stai per disabilitare il banner
 form.banner.message.label: Messaggio da mostrare nel banner
@@ -353,10 +353,10 @@ form.delivery_embed.vehicle.disclaimer: Consegniamo con biciclette cargo oggetti
 form.registration.username.help: "L'username non può essere più lungo di 15 caratteri.\
   \ L'username può solo contenere caratteri alfanumerici (lettere A-Z, numeri 0-9)\
   \ con l'eccezione del trattino basso (underscore).\n"
-allergens.NUTS: Frutto a guscio
-restricted_diets.LOW_FAT_DIET: Grassi bassi
-restricted_diets.LOW_LACTOSE_DIET: Poco lattosio
-restricted_diets.LOW_SALT_DIET: Poco sale
+allergens.NUTS: Frutti a guscio
+restricted_diets.LOW_FAT_DIET: Povero di grassi
+restricted_diets.LOW_LACTOSE_DIET: A basso contenuto di lattosio
+restricted_diets.LOW_SALT_DIET: A basso contenuto di sale
 restricted_diets.VEGAN_DIET: Vegano
 restricted_diets.VEGETARIAN_DIET: Vegetariano
 time_slot.human_readable: '%day% tra %start% e %end%'
@@ -364,20 +364,19 @@ time_range: tra %start% e %end%
 time_range.same_day: '[Oggi] [%range%]'
 time_range.next_day: '[Domani] [%range%]'
 time_range.last_day: '[Ieri] [%range%]'
-time_range.same_else: '[On] LL [%range%]'
-resend_confirmation_email.disclaimer: Se non hai ricevuto la email di conferma, clicca
-  nel bottone.
+time_range.same_else: '[Il] LL [%range%]'
+resend_confirmation_email.disclaimer: Se non hai ricevuto l'email di conferma, clicca
+  il bottone.
 sylius.ui.code: Codice
-sylius.form.promotion_coupon.per_customer_usage_limit: Per limite di utilizzo del
-  cliente
-deliveries.sort.newest: Il più nuovo prima
-deliveries.sort.oldest: Il più vecchio prima
+sylius.form.promotion_coupon.per_customer_usage_limit: Limite di utilizzo per cliente
+deliveries.sort.newest: Prima i più recenti
+deliveries.sort.oldest: Prima i più vecchi
 deliveries.filter.clear: Mostra tutti
 orders.new: Nuovo ordine
 orders.payment_link.sent: Email inviata con successo
 form.min_max.upper.label: Numero massimo
 form.min_max.infinity.label: Nessun massimo
-form.local_business.iso_code.fr.siret: Numero Codice Fiscale
+form.local_business.iso_code.fr.siret: Numero SIRET
 order.list.generate_receipt: Emettere
 form.settings.stripe_secret_key.label: Chiave segreta Stripe
 form.local_business.stripe_account.need_stripe_account: "Non hai ancora creato un\
@@ -387,9 +386,9 @@ form.local_business.stripe_account.need_stripe_account: "Non hai ancora creato u
   \ per favore <a href=\"%stripeAuthorizeURL%\">clicca qui</a>.\n"
 store.TIRE_SHOP: Gommista
 store.TOY_STORE: Negozio di giocattoli
-store.WHOLESALE_STORE: Ingrosso
+store.WHOLESALE_STORE: Negozio all'ingrosso
 form.local_business_type.food_establishment: Stabilimento alimentare
-form.local_business_type.store: Magazzino
+form.local_business_type.store: Negozio
 form.local_business_type.label: Tipo di azienda
 form.settings.stripe_publishable_key.label: Chiave pubblicabile Stripe
 form.settings.administrator_email.label: Email amministratore
@@ -414,8 +413,8 @@ form.checkout_address.takeaway.no_show_disclaimer: "Nota: se non ritiri, ti verr
 receipt.line_item.total: Totale
 users.all: Tutti gli utenti
 users.couriers: Corrieri
-users.restaurant_owners: Proprietario ristorante
-users.store_owners: Proprietario del negozio
+users.restaurant_owners: Proprietari di ristoranti
+users.store_owners: Proprietari di negozi
 users.administrators: Amministratori
 form.credit_note.restaurant.help: La promozione sarà utilizzabile durante l'ordine
   presso questo ristorante. Non compilare per applicarlo a tutti i ristoranti.
@@ -455,11 +454,11 @@ promotions.heading.free_delivery.help: Crea coupon promozionali per offrire la c
 promotions.add_free_delivery_coupon: Aggiungi un coupon di promozione «consegna gratuita»
 allergens.SULPHUR_DIOXIDE_SULPHITES: Anidride solforosa e solfiti
 orders.payment_refunded: Pagamento rimborsato con successo
-form.local_business.iso_code.fr.vat_number: P. IVA
+form.local_business.iso_code.fr.vat_number: Numero di partita IVA
 receipt.title: 'Ricevuta del tuo ordine #%number%'
-receipt.billing_details: Ordine pagato tramite carta di credito %date%
+receipt.billing_details: Ordine pagato tramite carta di credito il %date%
 form.delivery_import.file.label: File
-notifications.messenger_approaching: Hey %customer%! Il nostro corriere %messenger%
+notifications.messenger_approaching: Ciao %customer%! Il nostro corriere %messenger%
   è vicino a te. Preparati!
 form.task.dropoff.doorstep.label: Consegna alla porta
 form.task_event.notes.help: Puoi modificare il commento
@@ -470,13 +469,14 @@ form.order_export.messenger.label: Aggiungi colonna con il corriere che ha compl
   l'ordine
 form.store_type.setAsDefault.label: Imposta come indirizzo predefinito
 store.CONVENIENCE_STORE: Alimentari
-store.HOME_GOODS_STORE: Articoli per la casa
+store.HOME_GOODS_STORE: Negozio di articoli per la casa
 store.OFFICE_EQUIPMENT_STORE: Negozio di attrezzature per ufficio
 pledge.accept: Accetta
 form.maintenance.message.label: Messaggio
 food_establishment.BAKERY: Fornaio
-form.local_business_type.help: La tipologia sta usando il<a href="https://schema.org/">schema.org</a>
-  vocabolario <a href="https://schema.org/FoodEstablishment">ristorante</a> e<a href="https://schema.org/Store">negozio</a>
+form.local_business_type.help: I tipi stanno usando il<a href="https://schema.org/">schema.org</a>
+  vocabolario per <a href="https://schema.org/FoodEstablishment">stabilimenti alimentari</a>
+  e <a href="https://schema.org/Store">negozi</a>
 restaurant_promotion.offer_delivery.help: Ciò ti consente di offrire le spese di spedizione
   <strong> con i tuoi soldi </strong>. Il margine verrà ridotto dell'importo delle
   spese di spedizione. Ciò <strong> non diminuirà </strong> le commissioni percepite
@@ -742,12 +742,12 @@ allergens.CEREALS_CONTAINING_GLUTEN: Cereali contenenti glutine
 allergens.CRUSTACEANS: Crostacei
 allergens.EGGS: Uova
 allergens.FISH: Pesce
-allergens.PEANUTS: _Arachidi
+allergens.PEANUTS: Arachidi
 allergens.SOYBEANS: Soia
 allergens.MILK: Latte
 allergens.CELERY: Sedano
 allergens.MUSTARD: Senape
-allergens.SESAME_SEEDS: Olio di sesamo
+allergens.SESAME_SEEDS: Semi di sesamo
 allergens.LUPIN: Lupini
 allergens.MOLLUSCS: Molluschi
 form.local_business.iso_code.fr.rcs_number: Numero RCS
@@ -758,9 +758,9 @@ receipt.line_item.quantity: Quantità
 receipt.footer_item.total_products: Prodotti totali
 receipt.footer_item.total_excl_tax: Totale (esclusa IVA)
 receipt.footer_item.total_incl_tax: Totale (inclusa IVA)
-form.delivery_import.store.label: Deposito
+form.delivery_import.store.label: Negozio
 basics.view_example: Vedi esempio
-notifications.restaurant.new_order: Nessun ordine da accettare
+notifications.restaurant.new_order: Nuovo ordine da accettare
 profile.loopeat.connect: Connetti il mio account LoopEat
 profile.loopeat.connected: Account LoopEat connesso
 basics.yes: Sì
@@ -768,17 +768,17 @@ basics.no: No
 order.export.heading.total_products_excl_tax: Totale prodotti (esclusa IVA)
 order.export.heading.total_products_incl_tax: Totale prodotti (inclusa IVA)
 order.export.heading.packaging_fee: Imballaggio
-order.export.heading.tip: Consigli
+order.export.heading.tip: Mancia
 order.export.heading.total_incl_tax: Totale (inclusa IVA)
-order.export.heading.stripe_fee: Tariffa Stripe
-order.export.heading.platform_fee: Tariffa piattaforma
-order.export.heading.net_revenue: Guadagno netto
+order.export.heading.stripe_fee: Commissione Stripe
+order.export.heading.platform_fee: Commissione piattaforma
+order.export.heading.net_revenue: Ricavo netto
 order.export.heading.completed_by: Completato da
 basics.show: Mostra
 basics.hide: Nascondi
 food_establishment.BAR_OR_PUB: Bar o pub
 food_establishment.BREWERY: Birreria
-food_establishment.DISTILLERY: Distelleria
+food_establishment.DISTILLERY: Distilleria
 food_establishment.FAST_FOOD_RESTAURANT: Ristorante fast food
 food_establishment.ICE_CREAM_SHOP: Gelateria
 food_establishment.RESTAURANT: Ristorante
@@ -794,7 +794,7 @@ store.FLORIST: Negozio di fiori
 store.FURNITURE_STORE: Negozio di mobili
 store.GARDEN_STORE: Vivaio
 store.HARDWARE_STORE: Negozio hardware
-store.HOBBY_SHOP: Negozio di Hobbistica
+store.HOBBY_SHOP: Negozio di hobbistica
 store.JEWELRY_STORE: Gioielleria
 store.LIQUOR_STORE: Negozio di liquori
 store.MENS_CLOTHING_STORE: Negozio di abbigliamento maschile
@@ -805,11 +805,11 @@ store.PAWN_SHOP: Banco dei pegni
 store.PET_STORE: Negozio di animali
 store.SHOE_STORE: Negozio di scarpe
 store.SPORTING_GOODS_STORE: Negozio di articoli sportivi
-notifications.tasks_changed: L'impiego della %date% è cambiata!
-restaurant_promotion.offer_delivery: Offri costi di consegna
+notifications.tasks_changed: L'incarico del %date% è cambiata!
+restaurant_promotion.offer_delivery: Offri tariffe di consegna
 form.offer_delivery.coupon_code.error.exists: Questo codice è già esistente
-form.offer_delivery.coupon_code.help: È responsabilità dell'utente comunicare questo
-  codice al cliente, personalmente o tramite i social network
+form.offer_delivery.coupon_code.help: È vostra responsabilità comunicare questo codice
+  al cliente, personalmente o tramite i social network
 users.sort.alphabetically: In ordine alfabetico
 users.sort.newest: Registrato recentemente
 sms.simple: "Ciao;\nIl nostro corriere è partito verso %address%\n"
@@ -817,7 +817,7 @@ sms.with_tracking: "Ciao;\nIl nostro corriere è partito verso %address%.\nTracc
   \ su %link%\n"
 basics.close: Chiudi
 fulfillment_method.delivery: Consegna
-fulfillment_method.collection: Collezione
+fulfillment_method.collection: Ritiro
 restaurant.menus.activate: Attivare
 restaurant.contract.takeAwayFeeRate.label: Addebito della piattaforma per il take
   away
@@ -889,7 +889,7 @@ order.list.shippedAt: Tempo di spedizione
 form.delivery.pickup.doneBefore.label: Data e ora di presa
 form.deposit_refund_settings.deposit_refund_optin.label: Il sistema di deposito -
   rimborso è opzionale
-food_establishment.CAFE_OR_COFFEE_SHOP: Caffe o teteria
+food_establishment.CAFE_OR_COFFEE_SHOP: Caffè o bar
 order.payment.do_not_close: Non chiudere questa pagina
 order.payment.waiting_success: La tua banca ha confermato il pagamento
 order.payment.waiting_failure: La tua banca ha rifiutato il pagamento
@@ -939,9 +939,8 @@ order.payment.card_number.help: Una carta Stripe di prova <a href="https://strip
   target="_blank" tabindex="-1">numero di carta</a> è stata pre-compilata. Non verrà
   effettuato nessun addebito.
 info.deposit_refund: Ogni voce nell'elenco seguente rappresenta un tipo di imballaggio
-  (piccolo, grande ...). Una volta creati sarà possibile configurarli per ciascun
-  prodotto.
-confirm.deposit_refund_enabled: Il sistema di rimborso del deposito è abilitato, ora
+  (piccolo, grande...). Una volta creati sarà possibile configurarli per ciascun prodotto.
+confirm.deposit_refund_enabled: Il sistema di deposito - rimborso è abilitato, ora
   puoi <a href="%url%">definire gli imballaggi</a>.
 form.deposit_refund_settings.deposit_refund_optin.help: Quando il sistema di deposito
   - rimborso è facoltativo, sarà possibile scegliere se si desidera o meno gli imballaggi.
@@ -1017,7 +1016,7 @@ form.time_slot.same_day_cutoff.label: Soglia giornaliera
 form.package_with_quantity.package.placeholder: Scegliere un tipo di pacchetto
 form.product_tax_category_choice.placeholder: Scegliere una categoria di imposta
 basics.kilos: Kili
-basics.tax_excl: Senza IVA
+basics.tax_excl: IVA esclusa
 basics.tax_incl: IVA incl.
 nav.about_us: Chi siamo
 spreadsheet.download_example: Scaricare un foglio di calcolo d'esempio
