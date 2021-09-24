@@ -1132,7 +1132,7 @@ form.payment.edenred_disclaimer: Questo ordine è stato pagato con Edenred e un 
 form.settings.google_api_key_custom.label: Google API Key
 form.settings.autocomplete_provider.label: Suggerimenti fornitore
 form.settings.addresses.title: Indirizzi
-restaurant.form.vytal_enabled.label: Abilitare il sistema di deposito e rimborso di
+restaurant.form.vytal_enabled.label: Abilitare il sistema di deposito - rimborso di
   Vytal
 restaurant.form.section.vytal: Vytal
 vytal.code.disclaimer: Apri la app Vytal, genera un delivery token, e poi inseriscilo
@@ -1177,16 +1177,16 @@ restaurants.mode.map: Mostrare come mappa
 restaurants.mode.list: Mostrare come lista
 restaurant.form.edenred_merchant_id.help: Lasciare vuoto per disattivare Edenred
 restaurant.form.edenred_merchant_id.label: ID dell'esercente Edenred
-adminDashboard.hubs.help: Un gruppo di esercenti permette di raggruppare singoli negozi
-  allo stesso indirizzo di ritiro, come per es. un mercato o un centro commerciale.
+adminDashboard.hubs.help: I gruppi di esercenti permettono di raggruppare singoli
+  negozi allo stesso indirizzo di ritiro, come per es. un mercato o un centro commerciale.
 adminDashboard.hubs.createNew: Creare un nuovo gruppo di esercenti
-adminDashboard.hubs.title: Gruppo di esercenti
+adminDashboard.hubs.title: Gruppi di esercenti
 store.form.section.settings: Parametri
 stores.address_book: Rubrica degli indirizzi
 order.export.heading.promotions: Promozioni
 form.payment.method.name.label: Metodo di pagamento
-edenred.oauth_connect.success: Conto Edenred connesso con successo!
-profile.edenred.connect: Connettere il mio conto Edenred
+edenred.oauth_connect.success: Conto Edenred connesso correttamente!
+profile.edenred.connect: Connetti il mio conto Edenred
 profile.edenred.connected: Conto Edenred connesso
 notifications.tap_to_open: Toccare per aprire
 notifications.tasks_changed_today: Gli incarichi per oggi sono stati aggiornati
@@ -1211,14 +1211,14 @@ basics.enabled: Attivato
 basics.search: Cercare…
 form.hub.restaurants.label: Lista degli esercenti
 index.view_all_merchants: Visualizzare tutti gli esercenti
-order.list.summary.hub.text: Ordinare al hub %name%
+order.list.summary.hub.text: Ordinare dal gruppo di esercenti %name%
 promotion_action.fixed_discount: '%amount% di sconto'
-promotion_action.delivery_percentage_discount: '%percentage% di sconto sulla tariffa
+promotion_action.delivery_percentage_discount: '%percentage% di sconto sulle tariffe
   di consegna'
 promotion_action.percentage_discount: '%percentage% di sconto'
 homepage.form.content: <strong>%brand_name%</strong> è un servizio di consegne a domicilio
   on-demand in bicicletta che opera localmente e in maniera non inquinante. Spedisci
-  un singolo pacchetto, o realizza consegne in maniera ricorrente per la tua impresa.
+  un pacco singolarmente, o in maniera ricorrente, per la tua impresa.
 homepage.form.title: Hai bisogno di una consegna?
 order.list.reorder: Ordinare di nuovo
 form.settings.guest_checkout_enabled.label: Attivare il checkout per gli ospiti
