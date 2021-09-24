@@ -5,6 +5,7 @@ namespace AppBundle\Api\EventSubscriber;
 use AppBundle\Entity\Store;
 use AppBundle\Message\DeliveryCreated;
 use AppBundle\Security\TokenStoreExtractor;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use ApiPlatform\Core\EventListener\EventPriorities;
@@ -38,12 +39,14 @@ final class DeliverySubscriber implements EventSubscriberInterface
         ManagerRegistry $doctrine,
         TokenStoreExtractor $storeExtractor,
         RoutingInterface $routing,
-        MessageBusInterface $messageBus)
+        MessageBusInterface $messageBus,
+        DeliveryManager $deliveryManager)
     {
         $this->doctrine = $doctrine;
         $this->storeExtractor = $storeExtractor;
         $this->routing = $routing;
         $this->messageBus = $messageBus;
+        $this->deliveryManager = $deliveryManager;
     }
 
     public static function getSubscribedEvents()
@@ -74,33 +77,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
 
         $delivery = $event->getControllerResult();
 
-        $pickup = $delivery->getPickup();
-        $dropoff = $delivery->getDropoff();
-
-        if (null === $store = $delivery->getStore()) {
-            $store = $this->storeExtractor->extractStore();
-        }
-
-        // If no pickup address is specified, use the store address
-        if (null === $pickup->getAddress() && null !== $store) {
-            $pickup->setAddress($store->getAddress());
-        }
-
-        // If no pickup time is specified, calculate it
-        if (null !== $dropoff->getDoneBefore() && null === $pickup->getDoneBefore()) {
-            if (null !== $dropoff->getAddress() && null !== $pickup->getAddress()) {
-
-                $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
-                $duration = $this->routing->getDuration(
-                    ...$coords
-                );
-
-                $pickupDoneBefore = clone $dropoff->getDoneBefore();
-                $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
-
-                $pickup->setDoneBefore($pickupDoneBefore);
-            }
-        }
+        $this->deliveryManager->setDefaults($delivery);
     }
 
     public function addToStore(ViewEvent $event)

@@ -12,6 +12,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Exception\ShippingAddressMissingException;
+use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\OrderTimeHelper;
@@ -38,6 +39,7 @@ class DeliveryManagerTest extends KernelTestCase
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
         $this->routing = $this->prophesize(RoutingInterface::class);
         $this->orderTimelineCalculator = $this->prophesize(OrderTimelineCalculator::class);
+        $this->storeExtractor = $this->prophesize(TokenStoreExtractor::class);
     }
 
     public function testGetPrice()
@@ -65,7 +67,8 @@ class DeliveryManagerTest extends KernelTestCase
             $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
-            $this->orderTimelineCalculator->reveal()
+            $this->orderTimelineCalculator->reveal(),
+            $this->storeExtractor->reveal()
         );
 
         $delivery = new Delivery();
@@ -100,7 +103,8 @@ class DeliveryManagerTest extends KernelTestCase
             $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
-            $this->orderTimelineCalculator->reveal()
+            $this->orderTimelineCalculator->reveal(),
+            $this->storeExtractor->reveal()
         );
 
         $delivery = new Delivery();
@@ -157,7 +161,8 @@ class DeliveryManagerTest extends KernelTestCase
             $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
-            $this->orderTimelineCalculator->reveal()
+            $this->orderTimelineCalculator->reveal(),
+            $this->storeExtractor->reveal()
         );
 
         $delivery = $deliveryManager->createFromOrder($order);
@@ -196,7 +201,8 @@ class DeliveryManagerTest extends KernelTestCase
             $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
-            $this->orderTimelineCalculator->reveal()
+            $this->orderTimelineCalculator->reveal(),
+            $this->storeExtractor->reveal()
         );
 
         $delivery = $deliveryManager->createFromOrder($order);

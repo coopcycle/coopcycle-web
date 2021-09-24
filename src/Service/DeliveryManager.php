@@ -7,6 +7,7 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Exception\NoAvailableTimeSlotException;
+use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
@@ -22,19 +23,23 @@ class DeliveryManager
     private $expressionLanguage;
     private $routing;
     private $orderTimeHelper;
+    private $storeExtractor;
     private $orderTimelineCalculator;
+    private $logger;
 
     public function __construct(
         ExpressionLanguage $expressionLanguage,
         RoutingInterface $routing,
         OrderTimeHelper $orderTimeHelper,
         OrderTimelineCalculator $orderTimelineCalculator,
+        TokenStoreExtractor $storeExtractor,
         LoggerInterface $logger = null)
     {
         $this->expressionLanguage = $expressionLanguage;
         $this->routing = $routing;
         $this->orderTimeHelper = $orderTimeHelper;
         $this->orderTimelineCalculator = $orderTimelineCalculator;
+        $this->storeExtractor = $storeExtractor;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -133,5 +138,36 @@ class DeliveryManager
         $delivery->setOrder($order);
 
         return $delivery;
+    }
+
+    public function setDefaults(Delivery $delivery)
+    {
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
+
+        if (null === $store = $delivery->getStore()) {
+            $store = $this->storeExtractor->extractStore();
+        }
+
+        // If no pickup address is specified, use the store address
+        if (null === $pickup->getAddress() && null !== $store) {
+            $pickup->setAddress($store->getAddress());
+        }
+
+        // If no pickup time is specified, calculate it
+        if (null !== $dropoff->getDoneBefore() && null === $pickup->getDoneBefore()) {
+            if (null !== $dropoff->getAddress() && null !== $pickup->getAddress()) {
+
+                $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
+                $duration = $this->routing->getDuration(
+                    ...$coords
+                );
+
+                $pickupDoneBefore = clone $dropoff->getDoneBefore();
+                $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
+
+                $pickup->setDoneBefore($pickupDoneBefore);
+            }
+        }
     }
 }
