@@ -55,7 +55,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
         return [
             KernelEvents::VIEW => [
                 ['setDefaults', EventPriorities::PRE_VALIDATE],
-                ['calculate', EventPriorities::PRE_VALIDATE],
                 ['handleCheckResponse', EventPriorities::POST_VALIDATE],
                 ['addToStore', EventPriorities::POST_WRITE],
                 ['sendNotification', EventPriorities::POST_WRITE],
@@ -113,22 +112,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
         $this->messageBus->dispatch(
             new DeliveryCreated($delivery)
         );
-    }
-
-    public function calculate(ViewEvent $event)
-    {
-        $request = $event->getRequest();
-
-        if (!$this->matchRoute($request)) {
-            return;
-        }
-
-        $delivery = $event->getControllerResult();
-
-        $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
-        $distance = $this->routing->getDistance(...$coords);
-
-        $delivery->setDistance(ceil($distance));
     }
 
     // FIXME

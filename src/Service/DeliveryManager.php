@@ -159,9 +159,7 @@ class DeliveryManager
             if (null !== $dropoff->getAddress() && null !== $pickup->getAddress()) {
 
                 $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
-                $duration = $this->routing->getDuration(
-                    ...$coords
-                );
+                $duration = $this->routing->getDuration(...$coords);
 
                 $pickupDoneBefore = clone $dropoff->getDoneBefore();
                 $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
@@ -169,5 +167,10 @@ class DeliveryManager
                 $pickup->setDoneBefore($pickupDoneBefore);
             }
         }
+
+        $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
+        $distance = $this->routing->getDistance(...$coords);
+
+        $delivery->setDistance(ceil($distance));
     }
 }
