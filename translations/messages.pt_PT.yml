@@ -317,3 +317,7 @@ adminDashboard.users.last_order: Último pedido
 adminDashboard.users.orders_count: Número de pedidos
 base.footer.RegisterMyRestaurant: Registrar meu restaurante
 base.footer.companyRegister: Seja um parceiro
+order.state.accepted: Aceito
+order.state.cart: Carrinho
+order.payment.waiting_failure: Pagamento recusado pelo Banco
+order.payment.waiting_success: Pagamento confirmado pelo Banco
