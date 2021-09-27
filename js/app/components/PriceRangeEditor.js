@@ -19,7 +19,7 @@ export default ({ defaultValue, onChange }) => {
     <div>
       <label className="mr-2">
         <input type="number" size="4"
-          defaultValue={ price / 100 } min="0" step=".5"
+          defaultValue={ price / 100 } min="0" step=".1"
           className="form-control d-inline-block"
           style={{ width: '80px' }}
           onChange={ e => {
@@ -35,7 +35,7 @@ export default ({ defaultValue, onChange }) => {
       </label>
       <label>
         <span className="mx-2">{ t('PRICE_RANGE_EDITOR.FOR_EVERY') }</span>
-        <input type="number" size="4" min="0" step=".5" defaultValue={ step / 1000 }
+        <input type="number" size="4" min="0" step=".1" defaultValue={ step / 1000 }
           className="form-control d-inline-block"
           style={{ width: '80px' }}
           onChange={ e => {
@@ -67,7 +67,7 @@ export default ({ defaultValue, onChange }) => {
       </label>
       <label>
         <span className="mx-2">{ t('PRICE_RANGE_EDITOR.ABOVE') }</span>
-        <input type="number" size="4" min="0" step=".5" defaultValue={ threshold / 1000 }
+        <input type="number" size="4" min="0" step=".1" defaultValue={ threshold / 1000 }
           className="form-control d-inline-block"
           style={{ width: '80px' }}
           onChange={ e => {
