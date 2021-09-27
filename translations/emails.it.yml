@@ -3,7 +3,8 @@ registration.email.message: "<h2>Benvenuto su %brand_name%, %username%</h2>\nHai
   \ questo messaggio perché hai appena registrato il tuo account su %brand_name%.\n\
   <br>\nConferma il tuo indirizzo email cliccando sul tasto qui sotto.\n"
 registration.email.confirm: Conferma email
-registration.email.disclaimer: Questo link serve ad attivare il tuo account
+registration.email.disclaimer: Questo link è valido una volta e serve ad attivare
+  il tuo account
 registration.email.textMessage: "Benvenuto su %brand_name%, %username%,\\n\\n\nHai\
   \ ricevuto questo messaggio perché hai appena registrato il tuo account su %brand_name%\
   \ .\\n\nPer attivare la tua email, clicca sul link seguente: <a href=\"%confirmationUrl%\"\
@@ -14,15 +15,16 @@ resetting.email.reset: Resetta la password
 order.view: VIsualizza ordine
 order.public_url: "Per tracciare lo stato del tuo ordine, <a href=\"%order.public_url%\"\
   >clicca qui</a>.\n"
-order.foodtech.accepted.delivery: "L'ordine ti sarà spedito alle ore:"
+order.foodtech.accepted.delivery: "L'ordine ti sarà consegnato al seguente orario:"
 order.foodtech.accepted.delivery.disclaimer: Ti contatteremo in caso avessimo problemi
   a trovare il tuo indirizzo
 order.foodtech.accepted.collection: 'Dovrai ritirarlo alle ore:'
 order.foodtech.accepted.collection.disclaimer: Se riscontri un problema, contatta
   <strong>%name%</strong> at <strong>%phone_number%</strong>, con abbastanza anticipo
   per annullare l'ordine.
-order.foodtech.cancelled: "Il ristoratore è impossibilitato a preparare il tuo ordine\
-  \ %order.number%.\n<br>\nNon ti è stato addebitato nessun costo.\n"
+order.foodtech.cancelled: "Il ristorante è impossibilitato a preparare il tuo ordine\
+  \ %order.number%.\n<br>\nTi verrà automaticamente restituito l'importo pagato entro\
+  \ i prossimi 5 giorni.\n"
 admin.order.created.subject: Nuovo ordine da confermare
 admin.order.created.body: "Ciao,\n<br>\nUn nuovo ordine è stato creato.\n"
 admin.order_foodtech.created.body: "Ciao,\n<br>\nÈ stato creato un nuovo ordine per\
@@ -38,10 +40,10 @@ user.pledge.body: "Ciao,\n<br>\ngrazie a te, %pledge.name% ora è su CoopCycle!\
 owner.order.created.subject: Nuovo ordine da confermare
 owner.order.created.body: "Ciao,\n<br>\nÈ arrivato un nuovo ordine per <strong>%restaurant.name%</strong>.\n"
 order.created.subject: L'ordine %order.number% è stato ricevuto
-order.created.body: "Ciao,\n<br>\nAbbiamo ricevuto il tuo ordine.\n<br>\nControlleremo\
+order.created.body: "Ciao,\n<br>\nAbbiamo ricevuto il tuo ordine.\n<br>\nVerificheremo\
   \ il tuo ordine il prima possibile e ti manderemo un'email appena sarà confermato.\n"
-order.accepted.subject: L'ordine %order.number% è stata confermata
-order.accepted.body.intro: "Ciao,\n<br>\nIl tuo ordine è stato confermato."
+order.accepted.subject: L'ordine %order.number% è stato confermato
+order.accepted.body.intro: "Ciao,\n<br>\nIl tuo ordine è confermato."
 order.cancelled.subject: Il tuo ordine %order.number% è stato cancellato
 order.cancelled.body.intro: "Ciao,\n<br>\nCi dispiace, il tuo ordine è stato cancellato.\n"
 order.delayed.subject: Il tuo ordine %order.number% è in ritardo
@@ -49,32 +51,31 @@ order.delayed.body: "Ciao,\n<br>\nCi dispiace, ma il tuo ordine è in ritardo di
   \ minuti.\n<br>\nCi scusiamo per l'inconveniente.\n"
 task.done.subject: 'Incarico #%task.id% completato'
 task.done.body: "Ciao,\n<br>\nL'incarico #%task.id% è stato completato.\n"
-task.failed.subject: "L'incarico #%task.id% potrebbe non essere stato completato"
-task.failed.body: "Ciao,\n<br>\nL'incarico #%task.id% potrebbe non essere stato completato\n"
+task.failed.subject: "L'incarico #%task.id% non ha potuto essere completato"
+task.failed.body: "Ciao,\n<br>\nL'incarico #%task.id% non ha potuto essere completato.\n"
 order.payment.subject: Pagamento del tuo ordine %order.number%
-order.payment.body: "Ciao,\n<br>\nAbbiamo completato l'ordine che hai effettuato su\
-  \ CoopCycle.\n<br>\nTroverai di seguito il tasto per accettare il pagamento dalla\
-  \ carta di credito.\n"
+order.payment.body: "Ciao,\n<br>\nAbbiamo completato l'ordine che hai effettuato con\
+  \ noi.\n<br>\nTroverai di seguito il tasto per poter pagare con carta di credito.\n"
 covid_19.subject: COVID-19 | Linee guida fondamentali per il tuo ordine
-covid_19.body: "<h1>Istruzioni da seguire per la tua spedizione</h1>\n<p>Data l'attuale\
+covid_19.body: "<h1>Istruzioni da seguire per la tua consegna</h1>\n<p>Data l'attuale\
   \ pandemia di COVID-19, <strong>devi assolutamente</strong> seguire le istruzioni\
   \ seguenti:</p>\n<h2>1. Rispettare la distanza sociale</h2>\n<p>Lasceremo il tuo\
   \ ordine sulla soglia d'ingresso, così non dovrai avvicinarti al rider che si occupa\
-  \ della consegna.</p>\n<h2>2. Aprire il tuo ordine</h2>\n<p>Il virus può sopravvivere\
+  \ della consegna.</p>\n<h2>2. Apri il tuo ordine</h2>\n<p>Il virus può sopravvivere\
   \ sulle superfici di cartone e di plastica per alcuni giorni. L'imballaggio può\
   \ essere un veicolo di trasmissione del virus. \nTi consigliamo di <strong>aprire\
   \ il tuo ordine e spostarne il contenuto dentro i piatti o altri contenitori. </strong>.</p>\n\
   <h2>3. Smaltire la confezione</h2>\n<p>Una volta aperto l'ordine, <strong>butta\
-  \ la confezione in un cestino chiuso</strong> evita di toccarlo.</p>\n<h2>4. Lavati\
-  \ le mani!</h2>\n<p>Una volta aperto l'ordine e buttato la confezione, <strong>lavati\
-  \ le mani!</strong></p>\n"
+  \ la confezione in un cestino chiuso</strong> per evitare di toccarlo in seguito\
+  \ inavvertitamente.</p>\n<h2>4. Lavati le mani!</h2>\n<p>Una volta aperto l'ordine\
+  \ e buttata la confezione, <strong>lavati le mani!</strong></p>\n"
 order.payment_failed.return_to_order: Torna all'ordine
-order.receipt.body: "Ciao,\n<br>\nLa ricevuta del suo ordine si trova in allegato."
+order.receipt.body: "Ciao,\n<br>\nLa ricevuta del tuo ordine si trova in allegato."
 order.payment_failed.body: "Ciao,\n<br>\nCi dispiace, c'è stato un errore nel processare\
   \ il pagamento. Per favore prova nuovamente con un metodo di pagamento diverso."
 order.payment_failed.subject: Si è verificato un errore nel processare il pagamento
-order.receipt.subject: Ricevuta del suo ordine %order.number%
+order.receipt.subject: Ricevuta del tuo ordine %order.number%
 order.expiring_authorization.text: L'autorizzazione per il pagamento <strong>%order.number%</strong>
-  scadrà presto. <br> Completi l'ordine prima della scadenza dell'autorizzazione per
+  scadrà presto. <br> Completa l'ordine prima della scadenza dell'autorizzazione per
   evitare di perdere il denaro.
 order.expiring_authorization.subject: L'autorizzazione al pagamento scadrà presto

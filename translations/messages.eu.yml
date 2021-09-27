@@ -1013,3 +1013,57 @@ store.MOBILE_PHONE_STORE: Mugikor-denda
 store.GARDEN_STORE: Lorezaintza denda
 store.FLORIST: Loradenda
 store.FURNITURE_STORE: Altzari-denda
+form.menu_editor.products.help: Produktuak eskuineko zerrendara gehitzeko, gehitu
+  itzazu <a href="%products_url%">katalogora</a> lehenengo
+demo.disclaimer: <i class="fa fa-bullhorn"></i>  Ongi etorri<a target="_blank" href="https://coopcycle.org">CoopCycle</a>
+  plataformaren demora
+order.payment.card_number.help: Stripe <a href="https://stripe.com/docs/testing#cards"
+  target="_blank" tabindex="-1">test txartel-zenbaki</a> bat aurrezarri da. Ez da
+  konturik kobratuko.
+restaurant.form.vytal_enabled.label: Gaitu Vytal gordailu-itzulpen sistema
+restaurants.edenred_transactions.edenred_amount: Edenred ordaindutako kopurua
+form.items_total_promotion.items_total.label: Goiko produktuen totala
+adminDashboard.api.help: Baimendu entregak periodikoki sortzen
+form.time_slot.preview_title: Denbora-tarte aurreikuspena
+adminDashboard.package_sets.help: Konfiguratu garraiatzeko produktu motak
+adminDashboard.time_slots.help: Ezarri denbora-tarteak
+adminDashboard.pricing.help: Definitu entrega baten prezioa kalkulatzeko arauak
+restaurant.form.edenred_merchant_id.help: Utzi hutsik Edenred desgaitzeko
+restaurant.form.edenred_merchant_id.label: Edenred denda ID
+adminDashboard.hubs.help: Komertzio-guneak dendak taldekatzen ditu batze-helbide berdina
+  erabiltzen dutenean, merkatu bat adibidez.
+adminDashboard.hubs.createNew: Sortu komertzio-gune berria
+adminDashboard.hubs.title: Komertzio-gunea
+store.form.section.settings: Ezarpenak
+stores.address_book: Helbide liburua
+profile.edenred.connected: Edenred kontua konektatuta
+notifications.tap_to_open: Sakatu irekitzeko
+notifications.tasks_changed_today: Zure eguneko zereginak eguneratu dira
+form.customize.order_confirm.label: Mezu hau eskareraren berrespen orrian agertuko
+  da
+form.customize.order_confirm_enabled.label: Erakutsi eskaera berrespen mezu pertsonalizatu
+  bat
+order.list.summary.hub.text: Eskatu %name% lokalean
+form.settings.guest_checkout_enabled.label: Gaitu gonbidatuen checkout
+restaurant.embed.step_2: Gehitu<code>data-coopcycle-embed="%url%"</code> HTML elementu
+  klikagarri batean
+restaurant.embed.step_1: Gehitu <code>coopcycle.js</code> scripta zure orrira
+restaurant.form.section.embed: Kapsulatuta
+form.attach_to_org.modal.title: Erantsi dendara
+form.time_slot.choices.error.empty: Aukera zerrenda ezin da hutsik egon
+users.sort.newest: Orain dela gutxi erregistratua
+store.GROCERY_STORE: Elikagai-denda
+store.AUTO_PARTS_STORE: Elikagai-denda
+store.DEPARTMENT_STORE: Merkataritza-gunea
+store.CONVENIENCE_STORE: Janari-denda
+form.order_export.messenger.label: Gehitu zutabe bat eskaera burutu duen mezulariarekin
+notifications.messenger_approaching: Hey %customer%! Gure %messenger% mezularia ia
+  zurekin dago. Presta zaitez!
+task.receipt.attached_images: Erantsitako irudiak
+admin.settings.missing_mandatory_settings: "Beharrezko ezarpenak falta dira.\nJoan\
+  \ <a href=\"%settings_url%\">ezarpen orrira</a> konfiguratzeko.\n"
+form.time_slot.prior_notice_hours.label: Aldez aurreko oharra (orduak)
+form.credit_note.user_search.help: Beherapen hau erabiltzaile honek soilik erabili
+  ahal izango du
+form.menu_editor.name.help: Hau zure menu ezberdinak identifikatzeko da. Ez zaio bezeroari
+  erakusten.

@@ -189,3 +189,135 @@ restaurant.closedWarningWithDelay: Peça agora para mais tarde. Peça com pelo m
 restaurant.disabledWarning: "Este restaurante está inativo, logo, os visitantes não\
   \ conseguem ver esta página. Se quiser, pode <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
   >ativá-lo no administrador</a>.\n"
+order.payment.do_not_close: Não feche esta página
+order.payment.waiting_for_confirmation: Aguardando a confirmação do seu banco …
+order.payment.card_number.help: Introduzimos um <a href="https://stripe.com/docs/testing#cards"
+  target="_blank" tabindex="-1">número de carão de teste</a> stripe. Não se realizará
+  cobrança.
+order.delivery_time: Entrega %tempo%
+order.payment.cvc: CVC
+order.payment.total: Pagar% total%
+order.payment.card_number.label: Número do cartão
+order.payment.year.label: Ano
+order.payment.month.label: Mês
+order.payment.expiration.label: Válido até
+order.payment.title: Informações do pagamento
+order.payer.identificationNumber: Número do documento
+order.payer.identificationType: Tipo de Documento
+order.payer.email: Email
+order.payer.title: Informações do cliente
+order.shipping_date.title: Seu horário de envio
+order.preparation_expected_at: Preparação esperada em% date%
+order.total_tax_by_rate: Total %nome%
+order.total_tax: IVA
+order.items_total: Total de produtos
+order.total_including_tax: Total (com IVA)
+order.total_excluding_tax: Total (sem IVA)
+order.summary.heading: Pedido%número% (#%id%)
+order.items.products_with_count: Produtos(%count%)
+order.cart.title: Carrinho
+profile.accountType: Tipo de conta
+profile.managedRestaurants: Restaurantes gerenciados pelo usuário
+profile.managedStores: Lojas gerenciadas pelo usuário
+profile.fullName: Nome completo
+profile.givenName: Nome
+profile.familyName: Apelido
+profile.telephone: Telefone
+profile.email: Email
+profile.username: Usuário
+profile.payment.stripeConnected: Sua conta Stripe foi conectada
+profile.payment.title: Pagamento
+profile.editProfile: Editar perfil
+profile.addresses.add: Adicionar
+profile.addresses.newAddress: Novo endereço
+profile.task.date: Data
+profile.task.complete: Completo
+profile.task.address: Emdereço
+profile.task.dueDate: Dada de entrega
+profile.task.noTasks: Sem tarefas programadas
+profile.payment: Pagamento
+profile.myPersonalInfo: Minha informação pessoal
+profile.myAddresses: Meus endereços
+profile.myOrders: Meus pedidos
+profile.myTracking: Meu rastreamento
+profile.myAccount: Minha conta
+profile.myRestaurants.noRestaurants: Ainda não tem restaurantes
+profile.myRestaurants: Meus restaurantes
+profile.myStores: Minhas lojas
+profile.myDeliveries: Minhas Entregas
+profile.orders.empty: Nenhum pedido ainda!
+profile.addresses.empty: Nenhum endereço salvo ainda!
+profile.addresses.breadcrumb: Endereço
+restaurant.stats.delivery: Entrega
+restaurant.stats.total_products_excluding_taxes: Total de produtos sem impostos
+restaurant.stats.total_products_including_all_taxes: Total de produtos incluindo todos
+  os impostos
+restaurant.stats.delivered_on: Entregue em
+restaurant.stats.order_number: Número do pedido
+restaurant.form.uploadImage: Adicionar imagem
+restaurant.product_options.list.values: Valores
+restaurant.product_options.help: "Esta seção permite que você configure itens adicionais\
+  \ para seus <strong> produtos </strong>.\n<br>\nEles permitem, por exemplo, adicionar\
+  \ suplementos ou escolher os elementos de um menu (acompanhamento, bebida ...)\n\
+  <br>\nPara cada opção, você pode definir uma lista de valores\n"
+restaurant.list.promotions: Promoções
+restaurant.list.depositRefund: Reembolso
+restaurant.list.stats: Estatísticas
+restaurant.list.preparationTime: Preparação
+restaurant.list.norestaurant: Ainda não há restaurantes
+restaurant.list.settings: Ajustes
+restaurant.list.planning: Feriados
+restaurant.list.active_catalog: Catálogo ativo
+restaurant.list.catalogs: Catálogos
+restaurant.list.product_options: Opções
+restaurant.list.products: Produtos
+restaurant.list.refunds: Devoluções
+restaurant.list.orders: Pedidos
+restaurant.closingForm.dates.label: Fechando de / para
+restaurant.closingForm.reason.label: Motivo
+restaurant.closingForm.title: Adicionar um fechamento temporário
+restaurant.menus.activated: O menu «% menu_name%» foi ativado. Agora será exibido
+  na página do restaurante
+restaurant.menus.activate: Ativar
+restaurant.menus.noMenus: Você ainda não criou nenhum Menú.
+restaurant.contract.takeAwayFeeRate.help: Esse percentual será retido sobre o total
+  dos produtos
+restaurant.contract.takeAwayFeeRate.label: Taxa para take away
+restaurant.contract.calculation_info: Você pode cobrar do restaurante um valor diferente
+  do valor pago pelo cliente. <br> Por exemplo, você pode oferecer entrega ao cliente
+  enquanto cobra um valor fixo no restaurante. <br> Você também pode configurar uma
+  quantidade dinâmica (por exemplo, com base na distância).
+restaurant.contract.variableCustomerAmountEnabled.disclaimer: A quantidade é calculada
+  dinamicamente
+restaurant.contract.variableCustomerAmountEnabled.label: Habilitar valor variável
+  pago pelo cliente
+restaurant.contract.restaurantPaysStripeFee.help: Escolha quem será responsável pelo
+  custo das taxas do Stripe e pelo gerenciamento de reembolsos e estornos
+restaurant.contract.restaurantPaysStripeFee.label: Responsável pelo custo das taxas,
+  reembolsos e estornos do Stripe
+restaurant.form.section.loopeat: LoopEat
+restaurant.form.section.taxonomy: Taxonomia
+restaurant.form.fulfillment_methods.label: Métodos de preenchimento
+restaurant.form.giropay_enabled.label: Habilitar Giropay
+restaurant.form.loopeat_disconnect.label: Desconecar LoopEat
+restaurant.form.loopeat_enabled.label: Habilite o sistema de depósito e reembolso
+  de LoopEat
+restaurant.form.allow_stripe_connect.label: Permitir que o restaurante gerencie a
+  conta do Stripe
+restaurant.quotes_disclaimer.not_authenticated: Este restaurante aceita pedidos especiais
+  de orçamento. Se já é nosso cliente, <a href="%login%">efetue login</a> para solicitar
+  um orçamento. <a href="%contact_us%">Contate-nos</a> para mais informações.
+restaurant.quotes_disclaimer.authenticated: Este restaurante também aceita pedidos
+  especiais. Para pedir um orçamento, você precisa nosso cliente. <a href="%contact_us%">Contate-nos</a>
+  para mais informações.
+adminDashboard.users.registered_at: Registrado
+adminDashboard.shops.title: Lojas
+adminDashboard.embed.title: Display Externo
+adminDashboard.users.last_order: Último pedido
+adminDashboard.users.orders_count: Número de pedidos
+base.footer.RegisterMyRestaurant: Registrar meu restaurante
+base.footer.companyRegister: Seja um parceiro
+order.state.accepted: Aceito
+order.state.cart: Carrinho
+order.payment.waiting_failure: Pagamento recusado pelo Banco
+order.payment.waiting_success: Pagamento confirmado pelo Banco
