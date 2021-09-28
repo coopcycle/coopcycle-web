@@ -1,7 +1,7 @@
 registration.email.subject: "Confirmació el teu correu electrònic\n"
 registration.email.message: "<h2>Et donem la benvinguda a %brand_name%, %username%</h2>\n\
-  \nHas rebut aquest missatge perque t'has registrat recentment a %brand_name%.\n\
-  <br>\n\nConfirma la teva adreça de correu electrònic fent clic al botó següent.\n"
+  Has rebut aquest missatge perque t'has registrat recentment a %brand_name%.\n<br>\n\
+  Confirma la teva adreça de correu electrònic fent clic al botó següent.\n"
 registration.email.confirm: Confirma el correu electrònic
 registration.email.disclaimer: Aquest enllaç només es pot utilitzar una vegada per
   validar el vostre compte
