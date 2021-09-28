@@ -91,9 +91,9 @@ adminDashboard.back.title: Voltar à página
 adminDashboard.promotions.title: Promoções
 adminDashboard.pledges.title: Sugestões
 adminDashboard.time_slots.title: Horários
-deliveryForm.noPriceWarning: Nenhum preço pode ser calculado.  Por favor, insira-o.
+deliveryForm.noPriceWarning: Não se pode calcular o preço. Por favor, insira um valor.
 deliveryForm.noPriceFromPricingWarning: Nenhum preço pode ser calculado a partir dos
-  preços.  Insira-o manualmente ou edite os preços.
+  preços. Insira-o manualmente ou edite os preços.
 delivery.createNew: Criar nova entrega
 delivery.tracking_link: Link de rastreamento
 delivery.with_id: 'Entrega #%id%'
@@ -315,7 +315,7 @@ adminDashboard.shops.title: Lojas
 adminDashboard.embed.title: Display Externo
 adminDashboard.users.last_order: Último pedido
 adminDashboard.users.orders_count: Número de pedidos
-base.footer.RegisterMyRestaurant: Registrar meu restaurante
+base.footer.RegisterMyRestaurant: Inscrever meu restaurante
 base.footer.companyRegister: Seja um parceiro
 order.state.accepted: Aceito
 order.state.cart: Carrinho
