@@ -25,9 +25,10 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *       "path"="/urbantz/webhook/{id}",
  *       "input"=UrbantzOrderInput::class,
  *       "controller"=ReceiveWebhookController::class,
+ *       "denormalization_context"={"groups"={"urbantz_input"}},
+ *       "normalization_context"={"groups"={"urbantz_output"}},
  *       "security"="is_granted('ROLE_API_KEY')",
  *       "status"=200,
- *       "write"=false,
  *       "openapi_context"={
  *         "summary"="Receives a webhook from Urbantz.",
  *       }
@@ -37,7 +38,8 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  */
 final class UrbantzWebhook
 {
-    const TASK_CHANGED = 'TaskChanged';
+    const TASKS_ANNOUNCED = 'tasks_announced';
+    const TASK_CHANGED    = 'task_changed';
 
     /**
      * @var string
@@ -46,7 +48,15 @@ final class UrbantzWebhook
      */
     public $id;
 
+    /**
+     * @Groups({"urbantz_input"})
+     */
     public $tasks = [];
+
+    /**
+     * @Groups({"urbantz_output"})
+     */
+    public $deliveries = [];
 
     public function __construct(string $id = null)
     {
@@ -56,6 +66,7 @@ final class UrbantzWebhook
     public static function isValidEvent(string $eventName)
     {
         return in_array($eventName, [
+            self::TASKS_ANNOUNCED,
             self::TASK_CHANGED,
         ]);
     }

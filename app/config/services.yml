@@ -729,6 +729,11 @@ services:
     arguments:
       $centrifugoNamespace: '%centrifugo_namespace%'
 
+  AppBundle\Action\Urbantz\ReceiveWebhook:
+    public: true
+    arguments:
+      $country: "%country_iso%"
+
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }
@@ -850,9 +855,6 @@ services:
   AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RestaurantInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RemotePushTokenInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\UrbantzOrderInputDataTransformer:
-    arguments:
-      $country: '%country_iso%'
   AppBundle\Api\DataTransformer\UrbantzWebhookInputDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
@@ -1189,3 +1191,5 @@ services:
     arguments:
       $country: '%region_iso%'
       # $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
+
+  AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~

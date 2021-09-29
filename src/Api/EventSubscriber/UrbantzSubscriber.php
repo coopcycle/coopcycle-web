@@ -3,7 +3,9 @@
 namespace AppBundle\Api\EventSubscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
+use AppBundle\Api\Resource\UrbantzWebhook;
 use AppBundle\Entity\Urbantz\Delivery as UrbantzDelivery;
+use AppBundle\Security\TokenStoreExtractor;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
@@ -25,11 +27,13 @@ final class UrbantzSubscriber implements EventSubscriberInterface
     public function __construct(
         HttpClientInterface $urbantzClient,
         EntityManagerInterface $entityManager,
+        TokenStoreExtractor $storeExtractor,
         LoggerInterface $logger,
         string $secret)
     {
         $this->urbantzClient = $urbantzClient;
         $this->entityManager = $entityManager;
+        $this->storeExtractor = $storeExtractor;
         $this->logger = $logger;
         $this->secret = $secret;
     }
@@ -39,49 +43,82 @@ final class UrbantzSubscriber implements EventSubscriberInterface
         // @see https://api-platform.com/docs/core/events/#built-in-event-listeners
         return [
             KernelEvents::VIEW => [
+                ['addToStore', EventPriorities::PRE_WRITE],
                 ['setTrackingId', EventPriorities::POST_WRITE],
             ],
         ];
+    }
+
+    public function addToStore(ViewEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if ('api_urbantz_webhooks_receive_webhook_item' !== $request->attributes->get('_route')) {
+            return;
+        }
+
+        $store = $this->storeExtractor->extractStore();
+
+        if (null === $store) {
+            return;
+        }
+
+        $webhook = $event->getControllerResult();
+
+        if ($webhook->id !== UrbantzWebhook::TASKS_ANNOUNCED) {
+            return;
+        }
+
+        foreach ($webhook->deliveries as $delivery) {
+            $store->addDelivery($delivery);
+        }
     }
 
     public function setTrackingId(ViewEvent $event)
     {
         $request = $event->getRequest();
 
-        if ('api_deliveries_post_urbantz_collection' !== $request->attributes->get('_route')) {
+        if ('api_urbantz_webhooks_receive_webhook_item' !== $request->attributes->get('_route')) {
             return;
         }
 
         $hashids = new Hashids($this->secret, 32);
 
-        $delivery = $event->getControllerResult();
+        $webhook = $event->getControllerResult();
 
-        $taskId = $delivery->getDropoff()->getRef();
-        $hashid = $hashids->encode($delivery->getId());
+        if ($webhook->id !== UrbantzWebhook::TASKS_ANNOUNCED) {
+            return;
+        }
 
-        $extTrackId = "dlv_{$hashid}";
+        foreach ($webhook->deliveries as $delivery) {
 
-        // https://docs.urbantz.com/#tag/External-Carrier
-        // https://api.urbantz.com/v2/carrier/external/task/id/XXXXXXX
-        try {
+            $taskId = $delivery->getDropoff()->getRef();
+            $hashid = $hashids->encode($delivery->getId());
 
-            $response = $this->urbantzClient->request('POST', "carrier/external/task/id/{$taskId}", [
-                'body' => ['extTrackId' => $extTrackId],
-            ]);
+            $extTrackId = "dlv_{$hashid}";
 
-            // Need to invoke a method on the Response,
-            // to actually throw the Exception here
-            // https://github.com/symfony/symfony/issues/34281
-            $statusCode = $response->getStatusCode();
+            // https://docs.urbantz.com/#tag/External-Carrier
+            // https://api.urbantz.com/v2/carrier/external/task/id/XXXXXXX
+            try {
 
-            $urbantzDelivery = new UrbantzDelivery();
-            $urbantzDelivery->setDelivery($delivery);
+                $response = $this->urbantzClient->request('POST', "carrier/external/task/id/{$taskId}", [
+                    'body' => ['extTrackId' => $extTrackId],
+                ]);
 
-            $this->entityManager->persist($urbantzDelivery);
-            $this->entityManager->flush();
+                // Need to invoke a method on the Response,
+                // to actually throw the Exception here
+                // https://github.com/symfony/symfony/issues/34281
+                $statusCode = $response->getStatusCode();
 
-        } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
-            $this->logger->error($e->getMessage());
+                $urbantzDelivery = new UrbantzDelivery();
+                $urbantzDelivery->setDelivery($delivery);
+
+                $this->entityManager->persist($urbantzDelivery);
+                $this->entityManager->flush();
+
+            } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
+                $this->logger->error($e->getMessage());
+            }
         }
     }
 }

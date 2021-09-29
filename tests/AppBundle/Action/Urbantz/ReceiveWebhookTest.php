@@ -6,10 +6,11 @@ use AppBundle\Action\Urbantz\ReceiveWebhook;
 use AppBundle\Api\Resource\UrbantzWebhook;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\TaskManager;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use libphonenumber\PhoneNumberUtil;
 
 class ReceiveWebhookTest extends TestCase
 {
@@ -18,13 +19,15 @@ class ReceiveWebhookTest extends TestCase
     public function setUp(): void
     {
         $this->deliveryRepository = $this->prophesize(DeliveryRepository::class);
+        $this->deliveryManager = $this->prophesize(DeliveryManager::class);
         $this->taskManager = $this->prophesize(TaskManager::class);
-        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
         $this->action = new ReceiveWebhook(
             $this->deliveryRepository->reveal(),
+            $this->deliveryManager->reveal(),
             $this->taskManager->reveal(),
-            $this->entityManager->reveal()
+            PhoneNumberUtil::getInstance(),
+            'fr'
         );
     }
 
@@ -52,9 +55,6 @@ class ReceiveWebhookTest extends TestCase
             ->shouldHaveBeenCalled();
 
         $this->taskManager->cancel($delivery->getDropoff())
-            ->shouldHaveBeenCalled();
-
-        $this->entityManager->flush()
             ->shouldHaveBeenCalled();
     }
 }

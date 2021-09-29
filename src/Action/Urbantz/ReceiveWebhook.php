@@ -3,21 +3,30 @@
 namespace AppBundle\Action\Urbantz;
 
 use AppBundle\Api\Resource\UrbantzWebhook;
-use AppBundle\Action\Utils\TokenStorageTrait;
+use AppBundle\Entity\Address;
+use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\TaskManager;
-use Doctrine\ORM\EntityManagerInterface;
+use Carbon\Carbon;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberUtil;
 
 class ReceiveWebhook
 {
     public function __construct(
         DeliveryRepository $deliveryRepository,
+        DeliveryManager $deliveryManager,
         TaskManager $taskManager,
-        EntityManagerInterface $entityManager)
+        PhoneNumberUtil $phoneNumberUtil,
+        string $country)
     {
         $this->deliveryRepository = $deliveryRepository;
+        $this->deliveryManager = $deliveryManager;
         $this->taskManager = $taskManager;
-        $this->entityManager = $entityManager;
+        $this->phoneNumberUtil = $phoneNumberUtil;
+        $this->country = $country;
     }
 
     public function __invoke(UrbantzWebhook $data)
@@ -26,22 +35,86 @@ class ReceiveWebhook
 
         foreach ($data->tasks as $task) {
             switch ($event) {
-                case 'TaskChanged':
-                    $this->onTaskChanged($task);
+                case UrbantzWebhook::TASKS_ANNOUNCED:
+                    $data->deliveries[] = $this->onTaskAnnounced($task);
+                    break;
+                case UrbantzWebhook::TASK_CHANGED:
+                    if ($delivery = $this->onTaskChanged($task)) {
+                        $data->deliveries[] = $delivery;
+                    }
+                    break;
             }
         }
 
         return $data;
     }
 
-    private function onTaskChanged(array $task)
+    private function onTaskAnnounced(array $task): Delivery
+    {
+        $delivery = new Delivery();
+
+        $address = new Address();
+
+        $streetAddress = sprintf('%s, %s',
+            ($task['source']['number'] . ' ' . $task['source']['street']),
+            ($task['source']['zip'] . ' ' . $task['source']['city'])
+        );
+
+        $address->setStreetAddress($streetAddress);
+
+        [ $longitude, $latitude ] = $task['location']['location']['geometry'] ?? [];
+
+        if ($latitude && $longitude) {
+            $address->setGeo(new GeoCoordinates($latitude, $longitude));
+        } else {
+            // $geoAddr = $this->geocoder->geocode($streetAddress);
+            // $address->setGeo($geoAddr->getGeo());
+        }
+
+        $contactName = $task['contact']['person'] ?? $task['contact']['name'];
+        $address->setContactName($contactName);
+
+        $description = $task['instructions'] ?? '';
+        if (!empty($description)) {
+            $address->setDescription($description);
+        }
+
+        try {
+            $phone = $task['contact']['phone'] ?? null;
+            if ($phone) {
+                $address->setTelephone(
+                    $this->phoneNumberUtil->parse($phone, strtoupper($this->country))
+                );
+            }
+        } catch (NumberParseException $e) {}
+
+        $delivery->getDropoff()->setAddress($address);
+
+        $tz = date_default_timezone_get();
+
+        $delivery->getDropoff()->setAfter(
+            Carbon::parse($task['timeWindow']['start'])->tz($tz)->toDateTime()
+        );
+        $delivery->getDropoff()->setBefore(
+            Carbon::parse($task['timeWindow']['stop'])->tz($tz)->toDateTime()
+        );
+
+        $delivery->getDropoff()->setRef($task['taskId']);
+
+        $this->deliveryManager->setDefaults($delivery);
+
+        return $delivery;
+    }
+
+    private function onTaskChanged(array $task): ?Delivery
     {
         $extTrackId = $task['extTrackId'];
 
         $delivery = $this->deliveryRepository->findOneByHashId($extTrackId);
 
         if (!$delivery) {
-            return;
+
+            return null;
         }
 
         if ('DISCARDED' === $task['progress']) {
@@ -50,9 +123,9 @@ class ReceiveWebhook
                 $this->taskManager->cancel($task);
             }
 
-            // As we have configured write = false at operation level,
-            // we have to flush changes here
-            $this->entityManager->flush();
+            return $delivery;
         }
+
+        return null;
     }
 }
