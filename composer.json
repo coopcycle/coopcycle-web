@@ -121,7 +121,7 @@
         "nucleos/profile-bundle": "1.7.x-dev",
         "twig/cache-extra": "^3.3",
         "geocoder-php/google-maps-provider": "^4.6",
-        "symfony/redis-messenger": "^5.3",
+        "symfony/redis-messenger": "5.3.7",
         "symfony/amqp-messenger": "^5.3",
         "symfony/doctrine-messenger": "^5.3"
     },
