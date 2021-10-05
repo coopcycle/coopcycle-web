@@ -28,6 +28,8 @@
 
 {{ form_row(form.mercadopago.mercadopago_app_id) }}
 
+{{ form_row(form.mercadopago.mercadopago_client_secret) }}
+
 <div class="alert alert-info">
   <i class="fa fa-info-circle"></i> {% trans with { '%redirect_uri%': url('mercadopago_oauth_callback') } %}form.settings.mercadopago.redirect_uri.help{% endtrans %}
 </div>
