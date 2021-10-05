@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@mapbox/polyline": "^1.1.0",
+    "chartjs-plugin-datalabels": "^2.0.0",
     "co": "^4.6.0",
     "color-hash": "^2.0.1",
     "cypress-webpack-preprocessor-v5": "^5.0.0-alpha.1",
