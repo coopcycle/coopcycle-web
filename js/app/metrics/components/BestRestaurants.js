@@ -37,9 +37,11 @@ const renderChart = ({ resultSet, error }) => {
 
   const options = {
     ...commonOptions,
-    legend: {
-      position: 'left'
-    }
+    plugins: {
+      legend: {
+        position: 'left'
+      },
+    },
   };
 
   return <Pie data={data} options={options} />;
