@@ -99,7 +99,7 @@ class ReceiveWebhook
             Carbon::parse($task['timeWindow']['stop'])->tz($tz)->toDateTime()
         );
 
-        $delivery->getDropoff()->setRef($task['id']);
+        $delivery->getDropoff()->setRef($task['taskId']);
 
         $this->deliveryManager->setDefaults($delivery);
 

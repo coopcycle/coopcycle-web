@@ -101,7 +101,7 @@ final class UrbantzSubscriber implements EventSubscriberInterface
             // https://api.urbantz.com/v2/carrier/external/task/id/XXXXXXX
             try {
 
-                $response = $this->urbantzClient->request('POST', "carrier/external/task/id/{$taskId}", [
+                $response = $this->urbantzClient->request('POST', "carrier/external/task/taskid/{$taskId}", [
                     'body' => ['extTrackId' => $extTrackId],
                 ]);
 
