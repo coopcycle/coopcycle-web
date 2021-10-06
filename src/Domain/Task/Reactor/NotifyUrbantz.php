@@ -97,7 +97,7 @@ class NotifyUrbantz
             );
 
             $response = $this->urbantzClient->request('POST', "carrier/external/task/{$extTrackId}/{$operation}", [
-                'body' => array_merge([
+                'json' => array_merge([
                     'updatedTime' => Carbon::now()->toIso8601ZuluString(),
                     // Specify how to identify the items to update.
                     // If id or barcode is selected then the field items must be used
