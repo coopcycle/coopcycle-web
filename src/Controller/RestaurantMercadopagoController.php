@@ -25,14 +25,6 @@ class RestaurantMercadopagoController extends AbstractController
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
 
-        // $isMercadopagoLivemode = $this->settingsManager->isMercadopagoLivemode();
-
-        // if (!$isMercadopagoLivemode) {
-        //     return new JsonResponse([
-        //         'public_key' => $this->settingsManager->get('mercadopago_access_token')
-        //     ], Response::HTTP_OK);
-        // }
-
         $mp_account = $restaurant->getMercadopagoAccount(true);
 
         if (null === $mp_account) {

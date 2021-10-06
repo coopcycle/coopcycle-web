@@ -107,7 +107,7 @@ class MercadopagoController extends AbstractController
         if (isset($res['error']) && !empty($res['error'])) {
             $this->addFlash(
                 'error',
-                $res['error']
+                $res['error_description'] ?? $res['error']
             );
 
             return $this->redirectToRoute('homepage');
