@@ -1262,8 +1262,7 @@ Feature: Orders
       }
       """
 
-  @debug
-  Scenario: Get order timing
+    Scenario: Get order timing
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |

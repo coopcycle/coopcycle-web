@@ -59,9 +59,6 @@ class MercadopagoController extends AbstractController
         $redirect = $payload['iss'];
         $livemode = filter_var($payload['mplm'], FILTER_VALIDATE_BOOLEAN);
 
-        $accessToken = $livemode ?
-            $settingsManager->get('mercadopago_live_access_token') : $settingsManager->get('mercadopago_test_access_token');
-
         $redirectUri = $this->generateUrl(
             'mercadopago_oauth_callback',
             [],
