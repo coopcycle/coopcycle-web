@@ -124,7 +124,7 @@ services:
       - '@urbantz.client'
       - '@doctrine.orm.default_entity_manager'
       - '%secret%'
-      - '@logger'
+      - '@monolog.logger.urbantz'
     tags:
       - name: event_subscriber
         subscribes_to: task:assigned
