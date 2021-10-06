@@ -59,6 +59,10 @@ class NotifyUrbantz
             return;
         }
 
+        $this->logger->info(
+            sprintf('Notifying Urbantz for event "%s"', $event->messageName())
+        );
+
         switch (get_class($event)) {
             // https://docs.urbantz.com/#operation/AssignTask
             // https://api.urbantz.com/v2/carrier/external/task/ext-123456/complete
