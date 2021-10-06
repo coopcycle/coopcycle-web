@@ -73,7 +73,9 @@ class TaskList extends React.Component {
     this.props.unassignTasks(this.props.username, task)
   }
 
-  
+  componentDidUpdate(){
+    console.log('componentDidUpdate')
+  }
 
   render() {
     const {
