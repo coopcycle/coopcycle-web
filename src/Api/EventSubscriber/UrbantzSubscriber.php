@@ -113,6 +113,10 @@ final class UrbantzSubscriber implements EventSubscriberInterface
                 $urbantzDelivery = new UrbantzDelivery();
                 $urbantzDelivery->setDelivery($delivery);
 
+                $this->logger->info(
+                    sprintf('Urbantz task "%s" is now linked to delivery with hashid "%s"', $taskId, $extTrackId)
+                );
+
                 $this->entityManager->persist($urbantzDelivery);
                 $this->entityManager->flush();
 

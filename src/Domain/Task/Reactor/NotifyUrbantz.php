@@ -88,6 +88,10 @@ class NotifyUrbantz
 
         try {
 
+            $this->logger->info(
+                sprintf('Sending update to Urbantz for delivery with hashid "%s"', $extTrackId)
+            );
+
             $response = $this->urbantzClient->request('POST', "carrier/external/task/{$extTrackId}/{$operation}", [
                 'body' => array_merge([
                     'updatedTime' => Carbon::now()->toIso8601ZuluString(),
