@@ -67,7 +67,11 @@ class NotifyUrbantz
             // https://docs.urbantz.com/#operation/AssignTask
             // https://api.urbantz.com/v2/carrier/external/task/ext-123456/complete
             case TaskAssigned::class:
-                $this->request($delivery, 'assign');
+                $this->request($delivery, 'assign', [
+                    'arrived' => [
+                        'total' => true,
+                    ]
+                ]);
                 break;
             // https://docs.urbantz.com/#operation/CompleteTask
             case TaskDone::class:
