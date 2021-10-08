@@ -37,7 +37,7 @@ const DynamicMenu = ({
     _.filter(selectedTasks, selectedTask =>
       !_.find(unassignedTasks, unassignedTask => unassignedTask['@id'] === selectedTask['@id']))
 
-  const containsOnlyUnassignedTasks = !_.find(selectedTasks, t => t && t.isAssigned)
+  const containsOnlyUnassignedTasks = !_.find(selectedTasks, t => t.isAssigned)
 
   const actions = []
 
