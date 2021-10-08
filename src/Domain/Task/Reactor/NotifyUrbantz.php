@@ -77,12 +77,16 @@ class NotifyUrbantz
             case TaskDone::class:
 
                 $operation = $task->isDropoff() ? 'complete' : 'start';
+                $payload   = $task->isDropoff() ?
+                    [
+                        'delivered' => [ 'total' => true ]
+                    ]
+                    :
+                    [
+                        'departed' => [ 'total'=> true ]
+                    ];
 
-                $this->request($delivery, $operation, [
-                    'delivered' => [
-                        'total' => true,
-                    ],
-                ]);
+                $this->request($delivery, $operation, $payload);
                 break;
         }
     }
