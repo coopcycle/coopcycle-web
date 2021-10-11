@@ -72,3 +72,9 @@ order.expiring_authorization.text: A autorização de pagamento para encomenda <
   expirará em breve. <br> Deverá completar a encomenda antes de a autorização expirar
   para evitar perder dinheiro.
 order.expiring_authorization.subject: Uma autorização de pagamento expirará em breve
+order.payment_failed.return_to_order: Voltar ao pedido
+order.payment_failed.body: "Olá,\npara\nDesculpe, ocorreu um erro ao processar seu\
+  \ pagamento. Tente novamente com outro método de pagamento."
+order.payment_failed.subject: Ocorreu um erro ao processar o seu pagamento
+order.receipt.body: "Olá,\n<br>\nSegue em anexo o recibo de seu pedido."
+order.receipt.subject: Recibo do seu pedido% order.number%
