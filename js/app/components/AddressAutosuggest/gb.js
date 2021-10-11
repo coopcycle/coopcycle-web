@@ -212,6 +212,10 @@ export function onSuggestionSelected(event, { suggestion }) {
 
     this.props.onAddressSelected(suggestion.value, address, suggestion.type)
   }
+
+  if (suggestion.type === 'address') {
+    this.props.onAddressSelected(suggestion.value, suggestion.address, suggestion.type)
+  }
 }
 
 export function poweredBy() {
