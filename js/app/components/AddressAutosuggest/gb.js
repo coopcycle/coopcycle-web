@@ -7,10 +7,6 @@ import IdealPostcodes from './ideal-postcodes.svg'
 
 window._paq = window._paq || []
 
-const defaultFuseSearchOptions = {
-  limit: 5
-}
-
 export function placeholder() {
 
   if (!this.state.postcode) {
@@ -57,36 +53,11 @@ const toPostcode = (address) => ({
 
 export function getInitialState() {
 
-  let multiSection = false
-  const suggestions = []
-
-  if (this.props.addresses.length > 0) {
-
-    multiSection = true
-
-    const addressesAsSuggestions = this.props.addresses.map((address, idx) => ({
-      type: 'address',
-      value: address.streetAddress,
-      address: {
-        ...address,
-        // Let's suppose saved addresses are precise
-        isPrecise: true,
-        needsGeocoding: false,
-      },
-      index: idx,
-    }))
-
-    suggestions.push({
-      title: this.props.t('SAVED_ADDRESSES'),
-      suggestions: addressesAsSuggestions.slice(0, 5),
-    })
-  }
-
   return {
     value: _.isObject(this.props.address) ?
       (this.props.address.streetAddress || '') : '',
-    suggestions,
-    multiSection,
+    suggestions: [],
+    multiSection: false,
     // @var object
     postcode: _.isObject(this.props.address) && this.props.address.postalCode ?
       toPostcode(this.props.address) : null
@@ -101,65 +72,21 @@ export function onSuggestionsFetchRequested({ value }) {
 
     window._paq.push(['trackEvent', 'AddressAutosuggest', 'searchPostcode', value])
 
-    let multiSection = false
-    let suggestions = []
-
-    if (this.props.addresses.length > 0) {
-
-      const fuseResults = this.fuse.search(value, {
-        ...defaultFuseSearchOptions,
-        ...this.props.fuseSearchOptions,
-      })
-
-      if (fuseResults.length > 0) {
-
-        const addressesAsSuggestions = fuseResults.map((fuseResult, idx) => ({
-          type: 'address',
-          value: fuseResult.item.streetAddress,
-          address: fuseResult.item,
-          index: idx,
-        }))
-
-        suggestions.push({
-          title: this.props.t('SAVED_ADDRESSES'),
-          suggestions: addressesAsSuggestions
-        })
-        multiSection = true
-      }
-    }
-
     axios({
       method: 'get',
       url: `https://api.postcodes.io/postcodes/${value.replace(/\s/g, '')}/autocomplete`,
     })
       .then(response => {
-
-        let predictionsAsSuggestions = []
-
         if (response.data.status === 200 && Array.isArray(response.data.result)) {
-          predictionsAsSuggestions = response.data.result.map(postcode => ({
+          const suggestions = response.data.result.map(postcode => ({
             type: 'postcode',
             value: postcode,
             address: toAddress(postcode)
           }))
+          this.setState({
+            suggestions,
+          })
         }
-
-        if (multiSection) {
-          if (predictionsAsSuggestions.length > 0) {
-            suggestions.push({
-              title: this.props.t('ADDRESS_SUGGESTIONS'),
-              suggestions: predictionsAsSuggestions,
-            })
-          }
-        } else {
-          suggestions = predictionsAsSuggestions
-        }
-
-        this.setState({
-          suggestions,
-          multiSection,
-        })
-
       })
   } else {
 
