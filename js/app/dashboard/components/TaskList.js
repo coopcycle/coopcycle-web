@@ -15,7 +15,7 @@ import {
 import classNames from 'classnames'
 
 import Task from './Task'
-import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
+import { unassignTasks, togglePolyline, optimizeTaskList, clearPreExpanded } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
 import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
 
@@ -74,7 +74,7 @@ class TaskList extends React.Component {
   }
 
   componentDidUpdate(){
-    console.log('componentDidUpdate')
+    this.props.clearPreExpanded(this.props.state)
   }
 
   render() {

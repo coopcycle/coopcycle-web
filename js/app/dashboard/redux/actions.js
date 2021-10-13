@@ -1031,6 +1031,15 @@ export function handleDragStart(result) {
   }
 }
 
+export function clearPreExpanded(getState){
+  let state = getState()
+  return {
+  ...state,
+  preExpanded: [],
+}
+}
+
+
 export function handleDragEnd(result) {
 
   return function(dispatch, getState) {
