@@ -234,6 +234,7 @@ function mapDispatchToProps(dispatch) {
     unassignTasks: (username, tasks) => dispatch(unassignTasks(username, tasks)),
     togglePolyline: (username) => dispatch(togglePolyline(username)),
     optimizeTaskList: (taskList) => dispatch(optimizeTaskList(taskList)),
+    clearPreExpanded: (state) => dispatch(clearPreExpanded(state))
   }
 }
 
