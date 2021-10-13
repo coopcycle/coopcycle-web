@@ -1189,3 +1189,5 @@ form.store_type.multi_drop_enabled.label: Activer les dépôts multiples
 form.store_type.multi_drop_enabled.help: Permet aux utilisateur·ice·s d'ajouter un point de dépôt supplémentaire lors de la création d'une livraison
 api_apps.regenerate_secret: Renouveler la clé secrète
 api_apps.regenerate_secret_warning: Toutes les applications utilisant la clé secrète précédente ne fonctionnera plus.
+restaurant.form.cash_on_delivery_enabled.label: Activer le paiement en contre-remboursement
+restaurant.form.cash_on_delivery_enabled.help: Cela permettra aux clients de payer en espèces. À utiliser avec précaution.

@@ -81,6 +81,11 @@
         <option name="default">0</option>
       </options>
     </field>
+    <field name="cashOnDeliveryEnabled" type="boolean" column="cash_on_delivery_enabled">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
       <cascade>

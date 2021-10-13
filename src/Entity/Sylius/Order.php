@@ -1302,4 +1302,14 @@ class Order extends BaseOrder implements OrderInterface
 
         return $this->getRestaurant()->isLoopeatEnabled();
     }
+
+    public function supportsCashOnDelivery(): bool
+    {
+        if ($this->isMultiVendor()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->isCashOnDeliveryEnabled();
+    }
 }
