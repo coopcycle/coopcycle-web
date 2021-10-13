@@ -662,7 +662,9 @@ services:
   AppBundle\Api\EventSubscriber\UrbantzSubscriber:
     arguments:
       $secret: '%secret%'
-    tags: [ 'kernel.event_subscriber' ]
+    tags:
+      - { name: kernel.event_subscriber }
+      - { name: monolog.logger, channel: urbantz }
 
   AppBundle\Action\Settings:
     public: true
