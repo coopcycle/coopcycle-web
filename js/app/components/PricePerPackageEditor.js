@@ -38,6 +38,7 @@ export default ({ packages, defaultValue, onChange }) => {
         <label className="mr-2">
           <span className="mx-2">{ t('PRICE_RANGE_EDITOR.PER_PACKAGE') }</span>
           <select
+            defaultValue={ packageName }
             onChange={ e => {
               setPackageName(e.target.value)
               onChange({

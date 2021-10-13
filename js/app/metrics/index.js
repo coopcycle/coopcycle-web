@@ -45,11 +45,9 @@ if (rootElement) {
     const options = {
       ...commonOptions,
       scales: {
-        xAxes: [
-          {
-            stacked: true,
-          },
-        ],
+        x: {
+          stacked: true,
+        },
       },
     };
     return <Bar data={data} options={options} />;

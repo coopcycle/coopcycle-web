@@ -97,7 +97,7 @@ class CheckoutPaymentType extends AbstractType
                 }
             }
 
-            if ($this->cashEnabled) {
+            if ($this->cashEnabled || $order->supportsCashOnDelivery()) {
                 $choices['Cash on delivery'] = 'cash_on_delivery';
             }
 

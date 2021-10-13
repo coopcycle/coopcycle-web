@@ -102,7 +102,7 @@ final class UrbantzSubscriber implements EventSubscriberInterface
             try {
 
                 $response = $this->urbantzClient->request('POST', "carrier/external/task/id/{$taskId}", [
-                    'body' => ['extTrackId' => $extTrackId],
+                    'json' => ['extTrackId' => $extTrackId],
                 ]);
 
                 // Need to invoke a method on the Response,
@@ -112,6 +112,10 @@ final class UrbantzSubscriber implements EventSubscriberInterface
 
                 $urbantzDelivery = new UrbantzDelivery();
                 $urbantzDelivery->setDelivery($delivery);
+
+                $this->logger->info(
+                    sprintf('Urbantz task "%s" is now linked to delivery with hashid "%s"', $taskId, $extTrackId)
+                );
 
                 $this->entityManager->persist($urbantzDelivery);
                 $this->entityManager->flush();

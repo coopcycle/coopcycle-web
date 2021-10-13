@@ -99,7 +99,9 @@ class ReceiveWebhook
             Carbon::parse($task['timeWindow']['stop'])->tz($tz)->toDateTime()
         );
 
-        $delivery->getDropoff()->setRef($task['taskId']);
+        // IMPORTANT
+        // This is what will be used to set the external tracking id
+        $delivery->getDropoff()->setRef($task['id']);
 
         $this->deliveryManager->setDefaults($delivery);
 

@@ -59,22 +59,34 @@ class NotifyUrbantz
             return;
         }
 
+        $this->logger->info(
+            sprintf('Notifying Urbantz for event "%s"', $event->messageName())
+        );
+
         switch (get_class($event)) {
             // https://docs.urbantz.com/#operation/AssignTask
             // https://api.urbantz.com/v2/carrier/external/task/ext-123456/complete
             case TaskAssigned::class:
-                $this->request($delivery, 'assign');
+                $this->request($delivery, 'assign', [
+                    'arrived' => [
+                        'total' => true,
+                    ]
+                ]);
                 break;
             // https://docs.urbantz.com/#operation/CompleteTask
             case TaskDone::class:
 
                 $operation = $task->isDropoff() ? 'complete' : 'start';
+                $payload   = $task->isDropoff() ?
+                    [
+                        'delivered' => [ 'total' => true ]
+                    ]
+                    :
+                    [
+                        'departed' => [ 'total'=> true ]
+                    ];
 
-                $this->request($delivery, $operation, [
-                    'delivered' => [
-                        'total' => true,
-                    ],
-                ]);
+                $this->request($delivery, $operation, $payload);
                 break;
         }
     }
@@ -88,8 +100,12 @@ class NotifyUrbantz
 
         try {
 
+            $this->logger->info(
+                sprintf('Sending update to Urbantz for delivery with hashid "%s"', $extTrackId)
+            );
+
             $response = $this->urbantzClient->request('POST', "carrier/external/task/{$extTrackId}/{$operation}", [
-                'body' => array_merge([
+                'json' => array_merge([
                     'updatedTime' => Carbon::now()->toIso8601ZuluString(),
                     // Specify how to identify the items to update.
                     // If id or barcode is selected then the field items must be used

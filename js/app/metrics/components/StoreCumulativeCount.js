@@ -31,15 +31,15 @@ const renderChart = ({ resultSet, error }) => {
   };
   const options = {
     ...commonOptions,
-    legend: {
-      display: false
+    plugins: {
+      legend: {
+        display: false
+      },
     },
     scales: {
-      xAxes: [
-        {
-          stacked: true,
-        },
-      ],
+      x: {
+        stacked: true,
+      },
     },
   };
   // return <Bar data={data} options={options} />;

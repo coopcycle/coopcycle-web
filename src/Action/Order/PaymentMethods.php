@@ -29,7 +29,7 @@ class PaymentMethods
             $output->addMethod('card');
         }
 
-        if ($this->cashEnabled) {
+        if ($this->cashEnabled || $data->supportsCashOnDelivery()) {
             $output->addMethod('cash_on_delivery');
         }
 

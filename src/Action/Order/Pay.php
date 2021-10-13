@@ -57,7 +57,7 @@ class Pay
 
         if (isset($body['cashOnDelivery']) && true === $body['cashOnDelivery']) {
 
-            if (!$this->cashEnabled) {
+            if (!$this->cashEnabled && !$data->supportsCashOnDelivery()) {
                 throw new BadRequestHttpException('Cash on delivery is not enabled');
             }
 

@@ -43,23 +43,21 @@ const renderChart = ({ resultSet, error }) => {
 
   const options = {
     ...commonOptions,
-    legend: {
-      display: false
+    plugins: {
+      legend: {
+        display: false
+      },
     },
     scales: {
-      xAxes: [
-        {
-          stacked: true,
+      x: {
+        stacked: true,
+      },
+      y: {
+        stacked: true,
+        ticks: {
+          precision: 0,
         },
-      ],
-      yAxes: [
-        {
-          stacked: true,
-          ticks: {
-            precision: 0,
-          },
-        },
-      ],
+      },
     },
   };
   return <Bar data={data} options={options} />;
