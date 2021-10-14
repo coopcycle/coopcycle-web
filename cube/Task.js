@@ -24,10 +24,13 @@ const createPercentageMeasure = (status) => ({
 
 
 cube(`Task`, {
-  sql: `SELECT id, type, done_after AS after, done_before AS before, status FROM public.task`,
+  sql: `SELECT id, type, done_after, done_before, status FROM public.task`,
 
   joins: {
-
+    TaskDoneEvent: {
+      relationship: `hasOne`,
+      sql: `${CUBE.id} = ${TaskDoneEvent}.task_id`,
+    },
   },
 
   measures: Object.assign(
@@ -35,6 +38,21 @@ cube(`Task`, {
       count: {
         type: `count`,
         drillMembers: [id]
+      },
+      countDoneTooEarly: {
+        sql: `id`,
+        type: `count`,
+        filters: [{ sql: `${CUBE.minutesAfterStart} < 0` }],
+      },
+      countDoneTooLate: {
+        sql: `id`,
+        type: `count`,
+        filters: [{ sql: `${CUBE.minutesBeforeEnd} < 0` }],
+      },
+      countDoneOnTime: {
+        sql: `id`,
+        type: `count`,
+        filters: [{ sql: `${CUBE.minutesAfterStart} > 0 AND ${CUBE.minutesBeforeEnd} > 0` }],
       },
     },
     statuses.reduce(
@@ -54,9 +72,31 @@ cube(`Task`, {
       primaryKey: true
     },
 
-    date: {
-      sql: `before`,
+    intervalStartAt: {
+      sql: `done_after`,
       type: `time`
+    },
+
+    intervalEndAt: {
+      sql: `done_before`,
+      type: `time`
+    },
+
+    done: {
+      sql: `${TaskDoneEvent.createdAt}`,
+      type: `time`
+    },
+
+    minutesAfterStart: {
+      sql: `DATE_PART('hour', ${CUBE.done} - ${CUBE.intervalStartAt}) * 60
+          + DATE_PART('minute', ${CUBE.done} - ${CUBE.intervalStartAt})`,
+      type: `number`
+    },
+
+    minutesBeforeEnd: {
+      sql: `DATE_PART('hour', ${CUBE.intervalEndAt} - ${CUBE.done}) * 60
+          + DATE_PART('minute', ${CUBE.intervalEndAt} - ${CUBE.done})`,
+      type: `number`
     },
 
     status: {
