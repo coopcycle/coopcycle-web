@@ -53,6 +53,7 @@ class ContentController extends AbstractController
         $files = [
             'fr' => sprintf('http://coopcycle.org/%s/fr.md', $type),
             'en' => sprintf('http://coopcycle.org/%s/en.md', $type),
+            'es' => sprintf('http://coopcycle.org/%s/es.md', $type),
         ];
 
         $key = array_key_exists($locale, $files) ? $locale : 'en';
