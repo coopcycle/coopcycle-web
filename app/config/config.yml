@@ -171,6 +171,8 @@ framework:
                 base_uri: 'https://api.urbantz.com/v2/'
                 headers:
                     X-Api-Key: '%env(URBANTZ_API_KEY)%'
+            facebook.client:
+                base_uri: 'https://graph.facebook.com/'
 
 # Twig Configuration
 twig:
