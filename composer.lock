@@ -12959,16 +12959,16 @@
         },
         {
             "name": "spatie/opening-hours",
-            "version": "2.10.1",
+            "version": "2.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/opening-hours.git",
-                "reference": "b1f656141e01f22adb75e4a6b353195e5b728989"
+                "reference": "6a86c246624b8bd5fca502b056406e6c7b5fe7c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/opening-hours/zipball/b1f656141e01f22adb75e4a6b353195e5b728989",
-                "reference": "b1f656141e01f22adb75e4a6b353195e5b728989",
+                "url": "https://api.github.com/repos/spatie/opening-hours/zipball/6a86c246624b8bd5fca502b056406e6c7b5fe7c7",
+                "reference": "6a86c246624b8bd5fca502b056406e6c7b5fe7c7",
                 "shasum": ""
             },
             "require": {
@@ -13007,9 +13007,9 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/opening-hours/issues",
-                "source": "https://github.com/spatie/opening-hours/tree/2.10.1"
+                "source": "https://github.com/spatie/opening-hours/tree/2.11.0"
             },
-            "time": "2020-12-10T22:35:29+00:00"
+            "time": "2021-10-13T12:11:07+00:00"
         },
         {
             "name": "spomky-labs/base64url",
@@ -20936,5 +20936,5 @@
         "php": ">=7.4"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
