@@ -19,6 +19,8 @@ class MercadopagoAccount
 
     private $refreshToken;
 
+    private $publicKey;
+
     private $livemode;
 
     public function getId()
@@ -74,6 +76,26 @@ class MercadopagoAccount
     public function setRefreshToken($refreshToken)
     {
         $this->refreshToken = $refreshToken;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPublicKey()
+    {
+        return $this->publicKey;
+    }
+
+    /**
+     * @param mixed $publicKey
+     *
+     * @return self
+     */
+    public function setPublicKey($publicKey)
+    {
+        $this->publicKey = $publicKey;
 
         return $this;
     }

@@ -59,9 +59,6 @@ class MercadopagoController extends AbstractController
         $redirect = $payload['iss'];
         $livemode = filter_var($payload['mplm'], FILTER_VALIDATE_BOOLEAN);
 
-        $accessToken = $livemode ?
-            $settingsManager->get('mercadopago_live_access_token') : $settingsManager->get('mercadopago_test_access_token');
-
         $redirectUri = $this->generateUrl(
             'mercadopago_oauth_callback',
             [],
@@ -72,16 +69,18 @@ class MercadopagoController extends AbstractController
         // -H 'accept: application/json' \
         // -H 'content-type: application/x-www-form-urlencoded' \
         // 'https://api.mercadopago.com/oauth/token' \
-        // -d 'client_secret=ACCESS_TOKEN' \
+        // -d 'client_secret=CLIENT_SECRET' \
+        // -d 'client_ID=CLIENT_ID' \
         // -d 'grant_type=authorization_code' \
-        // -d 'code=AUTHORIZATION_CODE' \
+        // -d 'code=CODE' \
         // -d 'redirect_uri=REDIRECT_URI'
 
         $params = array(
             'grant_type' => 'authorization_code',
             'code' => $request->query->get('code'),
-            'client_secret' => $accessToken,
+            'client_secret' => $settingsManager->get('mercadopago_client_secret'),
             'redirect_uri' => $redirectUri,
+            'client_id' => $settingsManager->get('mercadopago_app_id')
         );
 
         $req = curl_init('https://api.mercadopago.com/oauth/token');
@@ -108,7 +107,7 @@ class MercadopagoController extends AbstractController
         if (isset($res['error']) && !empty($res['error'])) {
             $this->addFlash(
                 'error',
-                $res['error_description']
+                $res['error_description'] ?? $res['error']
             );
 
             return $this->redirectToRoute('homepage');
@@ -119,6 +118,7 @@ class MercadopagoController extends AbstractController
             ->setUserId($res['user_id'])
             ->setAccessToken($res['access_token'])
             ->setRefreshToken($res['refresh_token'])
+            ->setPublicKey($res['public_key'])
             ->setLivemode($res['live_mode'])
             ;
 

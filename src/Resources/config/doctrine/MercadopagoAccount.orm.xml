@@ -7,6 +7,7 @@
     <field name="userId" type="string" column="user_id"/>
     <field name="accessToken" type="text" column="access_token"/>
     <field name="refreshToken" type="text" column="refresh_token"/>
+    <field name="publicKey" type="text" column="public_key" nullable="true"/>
     <field name="livemode" type="boolean" column="livemode"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
