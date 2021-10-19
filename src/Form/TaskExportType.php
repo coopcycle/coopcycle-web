@@ -67,7 +67,8 @@ class TaskExportType extends AbstractType
                 'event.FAILED.notes',
                 'finishedAt',
                 'courier',
-                'tags'
+                'tags',
+                'address.contactName',
             ]);
 
             $records = [];
@@ -101,7 +102,8 @@ class TaskExportType extends AbstractType
                     $task->hasEvent(Event\TaskFailed::messageName()) ? $task->getLastEvent(Event\TaskFailed::messageName())->getData('notes') : '',
                     $finishedAt,
                     $task->isAssigned() ? $task->getAssignedCourier() : '',
-                    implode(',', $task->getTags())
+                    implode(',', $task->getTags()),
+                    $address->getContactName() ?: '',
                 ];
             }
             $csv->insertAll($records);

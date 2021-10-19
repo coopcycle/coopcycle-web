@@ -5,6 +5,7 @@ namespace AppBundle\Api\EventSubscriber;
 use AppBundle\Entity\Store;
 use AppBundle\Message\DeliveryCreated;
 use AppBundle\Security\TokenStoreExtractor;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use ApiPlatform\Core\EventListener\EventPriorities;
@@ -30,19 +31,22 @@ final class DeliverySubscriber implements EventSubscriberInterface
     private static $matchingRoutes = [
         'api_deliveries_get_item',
         'api_deliveries_post_collection',
-        'api_deliveries_check_collection'
+        'api_deliveries_check_collection',
+        'api_deliveries_post_urbantz_collection',
     ];
 
     public function __construct(
         ManagerRegistry $doctrine,
         TokenStoreExtractor $storeExtractor,
         RoutingInterface $routing,
-        MessageBusInterface $messageBus)
+        MessageBusInterface $messageBus,
+        DeliveryManager $deliveryManager)
     {
         $this->doctrine = $doctrine;
         $this->storeExtractor = $storeExtractor;
         $this->routing = $routing;
         $this->messageBus = $messageBus;
+        $this->deliveryManager = $deliveryManager;
     }
 
     public static function getSubscribedEvents()
@@ -51,7 +55,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
         return [
             KernelEvents::VIEW => [
                 ['setDefaults', EventPriorities::PRE_VALIDATE],
-                ['calculate', EventPriorities::PRE_VALIDATE],
                 ['handleCheckResponse', EventPriorities::POST_VALIDATE],
                 ['addToStore', EventPriorities::POST_WRITE],
                 ['sendNotification', EventPriorities::POST_WRITE],
@@ -73,33 +76,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
 
         $delivery = $event->getControllerResult();
 
-        $pickup = $delivery->getPickup();
-        $dropoff = $delivery->getDropoff();
-
-        if (null === $store = $delivery->getStore()) {
-            $store = $this->storeExtractor->extractStore();
-        }
-
-        // If no pickup address is specified, use the store address
-        if (null === $pickup->getAddress() && null !== $store) {
-            $pickup->setAddress($store->getAddress());
-        }
-
-        // If no pickup time is specified, calculate it
-        if (null !== $dropoff->getDoneBefore() && null === $pickup->getDoneBefore()) {
-            if (null !== $dropoff->getAddress() && null !== $pickup->getAddress()) {
-
-                $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
-                $duration = $this->routing->getDuration(
-                    ...$coords
-                );
-
-                $pickupDoneBefore = clone $dropoff->getDoneBefore();
-                $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
-
-                $pickup->setDoneBefore($pickupDoneBefore);
-            }
-        }
+        $this->deliveryManager->setDefaults($delivery);
     }
 
     public function addToStore(ViewEvent $event)
@@ -135,22 +112,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
         $this->messageBus->dispatch(
             new DeliveryCreated($delivery)
         );
-    }
-
-    public function calculate(ViewEvent $event)
-    {
-        $request = $event->getRequest();
-
-        if (!$this->matchRoute($request)) {
-            return;
-        }
-
-        $delivery = $event->getControllerResult();
-
-        $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
-        $distance = $this->routing->getDistance(...$coords);
-
-        $delivery->setDistance(ceil($distance));
     }
 
     // FIXME

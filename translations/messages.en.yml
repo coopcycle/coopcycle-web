@@ -32,7 +32,7 @@ adminDashboard.deliveries.address: Address
 adminDashboard.deliveries.delivery: Delivery
 adminDashboard.deliveries.originAddress: Origin address
 adminDashboard.deliveries.deliveryAddress: Delivery address
-adminDashboard.embed.title: External Display
+adminDashboard.embed.title: Forms
 adminDashboard.package_sets.title: Packages
 adminDashboard.customize.title: Customize
 embed.delivery.title: Delivery creation form
@@ -295,7 +295,8 @@ order.total_including_tax: Total (incl. VAT)
 order.items_total: Total products
 order.total_tax: VAT
 order.total_tax_by_rate: Total %name%
-order.preparation_expected_at: Preparation expected at %date%
+order.preparation_expected_at: Preparation starting at %date%
+order.preparation_expected_for: Preparation expected for %date%
 order.shipping_date.title: Your shipping date
 order.payer.title: Buyer information
 order.payer.email: E-mail
@@ -1198,3 +1199,10 @@ products.on_demand_delivery.name: On demand delivery
 index.view_all: View all
 order.adjustment_type.reusable_packaging.loopeat: LoopEat processing fee
 order.adjustment_type.reusable_packaging.loopeat.help: This fee covers washing, restaurant restocking and the purchase of reusable cloth bags
+promotion_rule.is_items_total_above: The items total is above %amount%
+form.store_type.multi_drop_enabled.label: Enable multiple dropoffs
+form.store_type.multi_drop_enabled.help: Allow users to add additional dropoffs when creating a delivery
+api_apps.regenerate_secret: Renew secret key
+api_apps.regenerate_secret_warning: Any apps using this API endpoint with the previous secret will stop working.
+restaurant.form.cash_on_delivery_enabled.label: Enable cash on delivery
+restaurant.form.cash_on_delivery_enabled.help: This will allow customers to pay with cash on delivery. Use with caution.

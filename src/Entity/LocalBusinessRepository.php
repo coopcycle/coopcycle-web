@@ -178,9 +178,10 @@ class LocalBusinessRepository extends EntityRepository
         }
         */
 
-        $types[] = $this->typeFilter;
-
-        $qb->add('where', $qb->expr()->in('o.type', $types));
+        if (null !== $this->typeFilter) {
+            $types[] = $this->typeFilter;
+            $qb->add('where', $qb->expr()->in('o.type', $types));
+        }
 
         $matches = $qb->getQuery()->getResult();
 
@@ -290,7 +291,7 @@ class LocalBusinessRepository extends EntityRepository
         );
     }
 
-    public function setTypeFilter(string $type)
+    public function setTypeFilter(?string $type = null)
     {
         $this->typeFilter = $type;
 
@@ -302,5 +303,12 @@ class LocalBusinessRepository extends EntityRepository
         $repository = clone $this;
 
         return $repository->setTypeFilter($type);
+    }
+
+    public function withoutTypeFilter()
+    {
+        $repository = clone $this;
+
+        return $repository->setTypeFilter(null);
     }
 }

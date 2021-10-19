@@ -136,6 +136,27 @@ Feature: Authenticate
     }
     """
 
+  Scenario: Authenticated request with API key
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the store with name "Acme" has an API key
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the store with name "Acme" sends a "GET" request to "/api/me"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/ApiApp",
+      "@type":"http://schema.org/SoftwareApplication",
+      "@id":"/api/api_apps/1",
+      "store":"/api/stores/1",
+      "name":"Acme"
+    }
+    """
+
   Scenario: Register success
     When I add "Accept" header equal to "application/ld+json"
     And I send a "POST" request to "/api/register" with parameters:
@@ -386,19 +407,19 @@ Feature: Authenticate
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
-    """
-    {
-      "id":@integer@,
-      "roles":[
-        "ROLE_USER"
-      ],
-      "username":"bob",
-      "email":"bob@coopcycle.org",
-      "enabled": true,
-      "token":@string@,
-      "refresh_token":@string@
-    }
-    """
+      """
+      {
+        "id":@integer@,
+        "roles":[
+          "ROLE_USER"
+        ],
+        "username":"bob",
+        "email":"bob@coopcycle.org",
+        "enabled": true,
+        "token":@string@,
+        "refresh_token":@string@
+      }
+      """
 
   Scenario: Set new password failure, token expired
     Given the user is loaded:
@@ -416,15 +437,12 @@ Feature: Authenticate
       | password    | 654321            |
     Then the response status code should be 400
     And the response should be in JSON
-    """
-    {
-      "@context":"/api/contexts/Error",
-      "@type":"hydra:Error",
-      "hydra:title":"An error occurred",
-      "hydra:description":@string@,
-      "trace":@array@
-    }
-    """
+    And the JSON should match:
+      """
+      {
+        "message":@string@
+      }
+      """
 
   Scenario: Set new password failure, wrong token
     Given the user is loaded:
@@ -442,12 +460,31 @@ Feature: Authenticate
       | password    | 654321            |
     Then the response status code should be 401
     And the response should be in JSON
-    """
-    {
-      "@context":"/api/contexts/Error",
-      "@type":"hydra:Error",
-      "hydra:title":"An error occurred",
-      "hydra:description":@string@,
-      "trace":@array@
-    }
-    """
+    And the JSON should match:
+      """
+      {
+        "code":401,
+        "message":@string@
+      }
+      """
+
+  Scenario: Retrieve Centrifugo token
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/centrifugo/token"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Centrifugo",
+        "@id":"/api/centrifugo/token",
+        "@type":"Centrifugo",
+        "token":@string@,
+        "namespace":@string@
+      }
+      """

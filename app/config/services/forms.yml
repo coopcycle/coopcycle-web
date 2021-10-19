@@ -218,7 +218,7 @@ services:
 
   AppBundle\Form\Type\PhoneNumberType:
     arguments:
-      $country: '%region_iso%'
+      $country: '%country_iso%'
     tags: [ form.type ]
 
   AppBundle\Form\Type\LegalType:

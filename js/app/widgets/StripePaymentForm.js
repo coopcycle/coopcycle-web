@@ -211,6 +211,7 @@ export default function(form, options) {
         case 'cash_on_delivery':
           form.submit()
           break
+        case 'edenred+card':
         case 'card':
           handleCardPayment(cc, options, form, submitButton)
           break

@@ -250,6 +250,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $vytalEnabled = false;
 
+    protected $cashOnDeliveryEnabled = false;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -901,5 +903,25 @@ class LocalBusiness extends BaseLocalBusiness implements
         }
 
         return $typesByKey[$key] ?? null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCashOnDeliveryEnabled()
+    {
+        return $this->cashOnDeliveryEnabled;
+    }
+
+    /**
+     * @param bool $enabled
+     *
+     * @return self
+     */
+    public function setCashOnDeliveryEnabled($enabled)
+    {
+        $this->cashOnDeliveryEnabled = $enabled;
+
+        return $this;
     }
 }

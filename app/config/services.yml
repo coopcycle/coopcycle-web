@@ -522,6 +522,15 @@ services:
     arguments:
       - AppBundle\Entity\Hub
 
+  AppBundle\Entity\DeliveryRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Delivery
+    calls:
+      - method: setSecret
+        arguments:
+            - '%secret%'
+
   AppBundle\Service\Routing\Osrm:
     arguments:
       $client: '@csa_guzzle.client.osrm'
@@ -650,6 +659,13 @@ services:
   AppBundle\Api\EventSubscriber\ProductOptionValueSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
+  AppBundle\Api\EventSubscriber\UrbantzSubscriber:
+    arguments:
+      $secret: '%secret%'
+    tags:
+      - { name: kernel.event_subscriber }
+      - { name: monolog.logger, channel: urbantz }
+
   AppBundle\Action\Settings:
     public: true
     arguments:
@@ -684,6 +700,8 @@ services:
 
   AppBundle\Action\Order\Pay:
     public: true
+    arguments:
+      $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
     tags:
       - { name: monolog.logger, channel: stripe }
 
@@ -697,6 +715,26 @@ services:
     arguments:
       $country: "%country_iso%"
       $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  AppBundle\Action\CentrifugoToken:
+    public: true
+    arguments:
+      $centrifugoNamespace: "%centrifugo_namespace%"
+
+  AppBundle\Action\Order\PaymentMethods:
+    public: true
+    arguments:
+      $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
+
+  AppBundle\Action\Order\Centrifugo:
+    public: true
+    arguments:
+      $centrifugoNamespace: '%centrifugo_namespace%'
+
+  AppBundle\Action\Urbantz\ReceiveWebhook:
+    public: true
+    arguments:
+      $country: "%country_iso%"
 
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
@@ -723,6 +761,8 @@ services:
     tags:
       - { name: 'api_platform.subresource_data_provider', priority: 2 }
     autoconfigure: false
+
+  AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
 
   AppBundle\Utils\RestaurantFilter:
     arguments:
@@ -795,6 +835,8 @@ services:
       $providerKey: ~
     public: false
 
+  AppBundle\Security\ApiKeyManager: ~
+
   AppBundle\Security\Firewall\CartSessionListener:
     arguments:
       - '@security.token_storage'
@@ -815,6 +857,7 @@ services:
   AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RestaurantInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RemotePushTokenInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\UrbantzWebhookInputDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:
@@ -954,6 +997,10 @@ services:
       $namespace: '%sonic_namespace%'
     tags:
       - { name: monolog.logger, channel: coopcycle.search }
+
+  AppBundle\MessageHandler\CreateWebhookEndpointHandler:
+    arguments:
+      $entityName: "%craue_config.entity_name%"
 
   AppBundle\Service\MaintenanceManager: ~
 
@@ -1146,3 +1193,5 @@ services:
     arguments:
       $country: '%region_iso%'
       # $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
+
+  AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~

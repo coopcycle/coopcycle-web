@@ -148,4 +148,16 @@ class Osrm extends Base
 
         return current($response['distances']);
     }
+
+    public function route(GeoCoordinates ...$coordinates)
+    {
+        return $this->getServiceResponse(
+            'route',
+            $coordinates,
+            [
+                'steps' => 'true',
+                'overview' => 'full'
+            ]
+        );
+    }
 }

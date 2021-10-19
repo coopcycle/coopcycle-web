@@ -10,16 +10,33 @@
         attr: {
           autocomplete: 'off',
         } }) }}
-        {{ form_widget(delivery_form.pickup.type) }}
-        {{ form_widget(delivery_form.dropoff.type) }}
+
+        {% set pickup_form  = null %}
+        {% set dropoff_form = null %}
+
+        {% for task_form in delivery_form.tasks %}
+          {% if task_form.vars.data.type == 'PICKUP' %}
+            {% set pickup_form = task_form %}
+          {% else %}
+            {% set dropoff_form = task_form %}
+          {% endif %}
+        {% endfor %}
+
+        {{ form_widget(pickup_form.type) }}
+        {{ form_widget(dropoff_form.type) }}
         <div class="mb-4">
-        {{ form_widget(delivery_form.dropoff.address) }}
+        {{ form_widget(dropoff_form.address) }}
         </div>
-        {% if delivery_form.dropoff.timeSlot is defined %}
+        {% if dropoff_form.timeSlot is defined %}
         <div class="mb-4">
-        {{ form_widget(delivery_form.dropoff.timeSlot) }}
+        {{ form_widget(dropoff_form.timeSlot) }}
         </div>
         {% endif %}
+
+        {% if delivery_form._token is defined %}
+          {{ form_widget(delivery_form._token) }}
+        {% endif %}
+
         <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }} →</button>
       {{ form_end(delivery_form, { render_rest: false }) }}
     </div>

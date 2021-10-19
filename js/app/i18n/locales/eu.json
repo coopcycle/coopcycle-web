@@ -242,6 +242,8 @@
             "PER_PACKAGE_ADD_DISCOUNT": "Gehitu beherapena",
             "PER_PACKAGE_DEL_DISCOUNT": "Kendu beherapena"
         },
-        "CASH_ON_DELIVERY_DISCLAIMER": "Eskaera jasotzean ordaintzeko aukeratu duzu. Mesedez, prestatu kantitate zehatza eta egon eskuragarri."
+        "CASH_ON_DELIVERY_DISCLAIMER": "Eskaera jasotzean ordaintzeko aukeratu duzu. Mesedez, prestatu kantitate zehatza eta egon eskuragarri.",
+        "new": "Berria",
+        "accepted": "Onartuta"
     }
 }

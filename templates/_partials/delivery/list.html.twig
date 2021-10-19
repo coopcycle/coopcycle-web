@@ -37,9 +37,16 @@
       </td>
       {% endif %}
       <td width="40%">
-        <small><i class="fa fa-cube"></i> {{ delivery.pickup.address.streetAddress }}</small>
-        <br>
-        <small><i class="fa fa-arrow-down"></i> {{ delivery.dropoff.address.streetAddress }}</small>
+        <ul class="list-unstyled">
+          {% for task in delivery.getTasks() %}
+          <li>
+            <small>
+              <span class="mr-1">{% include "_partials/task/type_icon.html.twig" with { task: task } %}</span>
+              <span>{{ task.address.streetAddress }}</span>
+            </small>
+          </li>
+          {% endfor %}
+        </ul>
         {% set details = [ delivery.distance|meters_to_kilometers ] %}
         {% if delivery.weight is not empty %}
           {% set details = details|merge([ delivery.weight|grams_to_kilos ]) %}
@@ -49,7 +56,6 @@
             {% set details = details|merge([ package_quantity.quantity ~ ' × ' ~ package_quantity.package.name ]) %}
           {% endfor %}
         {% endif %}
-        <br>
         <small>{{ details|join(' - ') }}</small>
       </td>
       <td width="10%">

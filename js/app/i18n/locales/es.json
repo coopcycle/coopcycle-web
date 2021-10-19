@@ -242,6 +242,13 @@
         "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Mostrar pedidos periódicos",
         "EDENRED_SPLIT_AMOUNTS": "Usted puede pagar {{edenred}} con su tarjeta Edenred, pero aún así usted necesita pagar{{card}} con tarjeta de crédito",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Mostrar las entregas de forma ascendente.",
-        "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "¿Confirma  borrar todas las tareas del grupo?"
+        "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "¿Confirma  borrar todas las tareas del grupo?",
+        "RRULE": {
+            "every": "cada",
+            "week": "semana",
+            "on": "el",
+            "weekday": "dia de la semana",
+            "day": "dia"
+        }
     }
 }

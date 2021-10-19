@@ -46,6 +46,7 @@ class PricingRule
     /**
      * @Groups({"original_rules"})
      * @Assert\Type(type="string")
+     * @Assert\NotBlank()
      */
     protected $expression;
 

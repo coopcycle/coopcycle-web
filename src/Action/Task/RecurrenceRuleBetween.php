@@ -2,6 +2,7 @@
 
 namespace AppBundle\Action\Task;
 
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use Doctrine\ORM\EntityManagerInterface;
 use Recurr\Transformer\ArrayTransformer;
@@ -72,6 +73,12 @@ class RecurrenceRuleBetween
             $task->setRecurrenceRule($data);
             $this->entityManager->persist($task);
             $tasks[] = $task;
+        }
+
+        if (count($tasks) > 1 && $tasks[0]->isPickup()) {
+            $delivery = Delivery::createWithTasks(...$tasks);
+            $data->getStore()->addDelivery($delivery);
+            $this->entityManager->persist($delivery);
         }
 
         $this->entityManager->flush();

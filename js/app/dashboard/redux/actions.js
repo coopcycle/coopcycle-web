@@ -1100,27 +1100,12 @@ export function handleDragEnd(result) {
         const [ removed ] = newTasks.splice(result.source.index, 1);
         newTasks.splice(result.destination.index, 0, removed)
       } else {
-
         const task = _.find(allTasks, t => t['@id'] === result.draggableId)
-
-        newTasks.splice(result.destination.index, 0, task)
-
-        if (task && task.previous) {
-          // If previous task is another day, will be null
-          const previousTask = _.find(allTasks, t => t['@id'] === task.previous)
-          if (previousTask) {
-            Array.prototype.splice.apply(newTasks,
-              Array.prototype.concat([ result.destination.index, 0 ], previousTask))
-          }
-        } else if (task && task.next) {
-          // If next task is another day, will be null
-          const nextTask = _.find(allTasks, t => t['@id'] === task.next)
-          if (nextTask) {
-            Array.prototype.splice.apply(newTasks,
-              Array.prototype.concat([ result.destination.index + 1, 0 ], nextTask))
-          }
+        if (task) {
+          const linkedTasks = withLinkedTasks(task, allTasks)
+          Array.prototype.splice.apply(newTasks,
+            Array.prototype.concat([ result.destination.index, 0 ], linkedTasks))
         }
-
       }
 
     }

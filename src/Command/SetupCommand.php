@@ -4,7 +4,8 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\TaxCategory;
-use AppBundle\Service\SettingsManager;
+use AppBundle\Message\CreateWebhookEndpoint;
+use AppBundle\MessageHandler\CreateWebhookEndpointHandler;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Taxation\TaxesInitializer;
@@ -96,8 +97,8 @@ class SetupCommand extends Command
         ManagerRegistry $doctrine,
         SlugifyInterface $slugify,
         TranslatorInterface $translator,
-        SettingsManager $settingsManager,
         UrlGeneratorInterface $urlGenerator,
+        CreateWebhookEndpointHandler $createWebhookEndpointHandler,
         string $locale,
         string $country,
         string $localeRegex)
@@ -136,9 +137,9 @@ class SetupCommand extends Command
 
         $this->translator = $translator;
 
-        $this->settingsManager = $settingsManager;
-
         $this->urlGenerator = $urlGenerator;
+
+        $this->createWebhookEndpointHandler = $createWebhookEndpointHandler;
 
         $this->locale = $locale;
         $this->country = $country;
@@ -164,7 +165,6 @@ class SetupCommand extends Command
         $output->writeln('<info>Setting up CoopCycle…</info>');
 
         $output->writeln('<info>Checking Sylius locales are present…</info>');
-
         foreach ($this->locales as $locale) {
             $this->createSyliusLocale($locale, $output);
         }
@@ -490,63 +490,13 @@ class SetupCommand extends Command
 
     private function configureStripeWebhooks(OutputInterface $output)
     {
-        $secretKey = $this->settingsManager->get('stripe_secret_key');
-
-        if (null === $secretKey) {
-            $output->writeln('Stripe secret key is not configured, skipping');
-            return;
-        }
-
-        $stripe = new Stripe\StripeClient([
-            'api_key' => $secretKey,
-            'stripe_version' => StripeManager::STRIPE_API_VERSION,
-        ]);
-
-        $webhookEvents = [
-            'account.application.deauthorized',
-            'account.updated',
-            'payment_intent.succeeded',
-            'payment_intent.payment_failed',
-            'charge.captured',
-            'charge.succeeded',
-            'charge.updated',
-            // Used for Giropay legacy integration
-            'source.chargeable',
-            'source.failed',
-            'source.canceled',
-        ];
-
         $url = $this->urlGenerator->generate('stripe_webhook', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $output->writeln(sprintf('Stripe webhook endpoint url is "%s"', $url));
 
-        // https://stripe.com/docs/api/webhook_endpoints/create?lang=php
-        $webhookId = $this->settingsManager->get('stripe_webhook_id');
-
-        if (null !== $webhookId) {
-
-            $output->writeln('Stripe webhook is already configured, updating…');
-
-            $webhookEndpoint = $stripe->webhookEndpoints->retrieve($webhookId);
-
-            $stripe->webhookEndpoints->update($webhookEndpoint->id, [
-                'url' => $url,
-                'enabled_events' => $webhookEvents,
-            ]);
-
-        } else {
-
-            $webhookEndpoint = $stripe->webhookEndpoints->create([
-                'url' => $url,
-                'enabled_events' => $webhookEvents,
-                'connect' => true,
-            ]);
-
-            $this->settingsManager->set('stripe_webhook_id', $webhookEndpoint->id);
-            $this->settingsManager->set('stripe_webhook_secret', $webhookEndpoint->secret);
-            $this->settingsManager->flush();
-
-            $output->writeln('Stripe webhook endpoint created');
+        foreach (['test', 'live'] as $mode) {
+            $message = new CreateWebhookEndpoint($url, $mode);
+            call_user_func_array($this->createWebhookEndpointHandler, [ $message ]);
         }
     }
 }

@@ -1,3 +1,4 @@
+import moment from 'moment'
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 import { createPackagesWidget } from '../forms/delivery'
@@ -6,13 +7,17 @@ import './embed-start.scss'
 
 const getDateTimePickerContainer = trigger => trigger.parentNode
 
-$.each(['pickup', 'dropoff'], function(index, type) {
+const taskForms = Array
+  .from(document.querySelectorAll('[data-form="task"]'))
+  .map(el => el.getAttribute('id').replace('delivery_', ''))
+
+taskForms.forEach(function(type) {
 
   const doneBeforeEl = document.querySelector(`#delivery_${type}_doneBefore`)
 
   if (doneBeforeEl) {
     new DateTimePicker(document.querySelector(`#delivery_${type}_doneBefore_widget`), {
-      defaultValue: doneBeforeEl.value,
+      defaultValue: doneBeforeEl.value || moment().format('YYYY-MM-DD HH:mm:ss'),
       getDatePickerContainer: getDateTimePickerContainer,
       getTimePickerContainer: getDateTimePickerContainer,
       onChange: function(date) {

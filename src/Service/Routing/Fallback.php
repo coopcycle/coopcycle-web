@@ -71,4 +71,30 @@ class Fallback extends Base
 
         return intval($minutes * 60);
     }
+
+    public function getDistances(GeoCoordinates $source, GeoCoordinates ...$destinations)
+    {
+        $distances = [];
+
+        foreach ($destinations as $destination) {
+            $distances[] = $this->getDistance($source, $destination);
+        }
+
+        return $distances;
+    }
+
+    public function route(GeoCoordinates ...$coordinates)
+    {
+        return [
+            'code' => 'Ok',
+            'routes' => [
+                [
+                    'geometry' => $this->getPolyline(...$coordinates),
+                    'distance' => $this->getDistance(...$coordinates),
+                    'duration' => $this->getDuration(...$coordinates)
+                ]
+
+            ]
+        ];
+    }
 }

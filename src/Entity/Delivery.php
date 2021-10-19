@@ -159,21 +159,11 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     public function addTask(Task $task, $position = null)
     {
-        $pickup = $this->getPickup();
-        $dropoff = $this->getDropoff();
+        $task->setDelivery($this);
 
-        if (null === $pickup && $task->isPickup()) {
-            parent::addTask($task, $position);
-            return;
-        }
-
-        if (null === $dropoff && $task->isDropoff()) {
-            parent::addTask($task, $position);
-            return;
-        }
-
-        throw new \RuntimeException('No additional task can be added');
+        return parent::addTask($task, $position);
     }
+
 
     public function getOrder()
     {
@@ -232,9 +222,17 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
      */
     public function getDropoff()
     {
-        foreach ($this->getTasks() as $task) {
-            if ($task->getType() === Task::TYPE_DROPOFF) {
-                return $task;
+        if (count($this->getTasks()) > 2) {
+            foreach (array_reverse($this->getTasks()) as $task) {
+                if ($task->getType() === Task::TYPE_DROPOFF) {
+                    return $task;
+                }
+            }
+        } else {
+            foreach ($this->getTasks() as $task) {
+                if ($task->getType() === Task::TYPE_DROPOFF) {
+                    return $task;
+                }
             }
         }
 
@@ -246,24 +244,43 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         return new self();
     }
 
-    public static function createWithTasks($pickup, $dropoff)
+    public static function createWithTasks(Task ...$tasks)
     {
         $delivery = self::create();
 
         $delivery->removeTask($delivery->getPickup());
         $delivery->removeTask($delivery->getDropoff());
 
-        $pickup->setType(Task::TYPE_PICKUP);
-        $pickup->setDelivery($delivery);
+        if (count($tasks) > 2) {
 
-        $dropoff->setType(Task::TYPE_DROPOFF);
-        $dropoff->setDelivery($delivery);
+            $pickup = array_shift($tasks);
 
-        $pickup->setNext($dropoff);
-        $dropoff->setPrevious($pickup);
+            $delivery->addTask($pickup);
 
-        $delivery->addTask($pickup);
-        $delivery->addTask($dropoff);
+            foreach ($tasks as $dropoff) {
+
+                $dropoff->setPrevious($pickup);
+
+                $delivery->addTask($dropoff);
+            }
+
+
+        } else {
+
+            [ $pickup, $dropoff ] = $tasks;
+
+            $pickup->setType(Task::TYPE_PICKUP);
+            $pickup->setDelivery($delivery);
+
+            $dropoff->setType(Task::TYPE_DROPOFF);
+            $dropoff->setDelivery($delivery);
+
+            $pickup->setNext($dropoff);
+            $dropoff->setPrevious($pickup);
+
+            $delivery->addTask($pickup);
+            $delivery->addTask($dropoff);
+        }
 
         return $delivery;
     }
@@ -475,12 +492,10 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
     {
         $images = new ArrayCollection();
 
-        foreach ($this->getPickup()->getImages() as $image) {
-            $images->add($image);
-        }
-
-        foreach ($this->getDropoff()->getImages() as $image) {
-            $images->add($image);
+        foreach ($this->getTasks() as $task) {
+            foreach ($task->getImages() as $image) {
+                $images->add($image);
+            }
         }
 
         return $images;

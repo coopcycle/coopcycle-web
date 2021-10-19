@@ -2,11 +2,22 @@ import moment from 'moment'
 import ClipboardJS from 'clipboard'
 import { createStore } from 'redux'
 import _ from 'lodash'
+import axios from 'axios'
+import { createSelector } from 'reselect'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 import TagsInput from '../widgets/TagsInput'
 import { validateForm } from '../utils/address'
+
+const selectTasks = state => state.tasks
+
+const selectLastDropoff = createSelector(
+  selectTasks,
+  (tasks) => {
+    return _.findLast(tasks, t => t.type === 'DROPOFF')
+  }
+)
 
 class DeliveryForm {
   disable() {
@@ -77,14 +88,24 @@ function createAddressWidget(name, type, cb) {
 
       if (Object.prototype.hasOwnProperty.call(address, '@id')) {
         if (telephone) {
-          telephone.value = ''
-          telephone.removeAttribute('required')
-          telephone.closest('.form-group').classList.add('hidden')
+          const isTelephoneValid = !_.isEmpty(address.telephone)
+          if (isTelephoneValid) {
+            telephone.value = ''
+            telephone.removeAttribute('required')
+            telephone.closest('.form-group').classList.add('hidden')
+          } else {
+            telephone.setAttribute('required', isTelephoneRequired)
+          }
         }
         if (recipient) {
-          recipient.value = ''
-          recipient.removeAttribute('required')
-          recipient.closest('.form-group').classList.add('hidden')
+          const isRecipientValid = !_.isEmpty(address.contactName)
+          if (isRecipientValid) {
+            recipient.value = ''
+            recipient.removeAttribute('required')
+            recipient.closest('.form-group').classList.add('hidden')
+          } else {
+            recipient.setAttribute('required', isRecipientRequired)
+          }
         }
         hideRememberAddress(name, type)
       } else {
@@ -94,8 +115,8 @@ function createAddressWidget(name, type, cb) {
 
       store.dispatch({
         type: 'SET_ADDRESS',
-        taskType: type,
-        address
+        taskIndex: getTaskIndex(type),
+        value: address
       })
     },
     onClear: () => {
@@ -103,7 +124,7 @@ function createAddressWidget(name, type, cb) {
       showRememberAddress(name, type)
       store.dispatch({
         type: 'CLEAR_ADDRESS',
-        taskType: type,
+        taskIndex: getTaskIndex(type),
       })
     }
   })
@@ -116,7 +137,9 @@ function getDatePickerValue(name, type) {
     return $(`#${name}_${type}_timeSlot`).val()
   }
 
-  return moment($(`#${name}_${type}_doneBefore`).val(), 'YYYY-MM-DD HH:mm:ss').format()
+  const defaultValue = $(`#${name}_${type}_doneBefore`).val() || selectLastDropoff(store.getState()).before
+
+  return moment(defaultValue, 'YYYY-MM-DD HH:mm:ss').format()
 }
 
 function getDatePickerKey(name, type) {
@@ -128,6 +151,10 @@ function getDatePickerKey(name, type) {
   return 'before'
 }
 
+function getTaskType(name, type) {
+  return document.querySelector(`#${name}_${type}_type`).value.toUpperCase()
+}
+
 function createDatePickerWidget(name, type) {
 
   const datePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
@@ -137,20 +164,27 @@ function createDatePickerWidget(name, type) {
     timeSlotEl.addEventListener('change', e => {
       store.dispatch({
         type: 'SET_TIME_SLOT',
-        taskType: type,
+        taskIndex: getTaskIndex(type),
         value: e.target.value
       })
     })
     return
   }
 
+  const defaultValue = datePickerEl.value || selectLastDropoff(store.getState()).before
+
+  // When adding a new task, initialize hidden input value
+  if (!datePickerEl.value) {
+    datePickerEl.value = moment(defaultValue).format('YYYY-MM-DD HH:mm:ss')
+  }
+
   new DateTimePicker(document.querySelector(`#${name}_${type}_doneBefore_widget`), {
-    defaultValue: datePickerEl.value,
+    defaultValue,
     onChange: function(date) {
       datePickerEl.value = date.format('YYYY-MM-DD HH:mm:ss')
       store.dispatch({
         type: 'SET_BEFORE',
-        taskType: type,
+        taskIndex: getTaskIndex(type),
         value: date.format()
       })
     }
@@ -246,31 +280,41 @@ function parseWeight(value) {
   return parseInt((floatValue * 1000), 10)
 }
 
+function replaceTasks(state, index, key, value) {
+  const newTasks = state.tasks.slice()
+  newTasks[index] = {
+    ...newTasks[index],
+    [key]: value
+  }
+
+  return newTasks
+}
+
+function removeTasks(state, index) {
+  const newTasks = state.tasks.slice()
+  newTasks.splice(index, 1)
+
+  return newTasks
+}
+
+const getTaskIndex = (key) => parseInt(key.replace('tasks_', ''), 10)
+
 function reducer(state = {}, action) {
   switch (action.type) {
   case 'SET_ADDRESS':
     return {
       ...state,
-      [ action.taskType ]: {
-        ...state[action.taskType],
-        address: action.address
-      }
+      tasks: replaceTasks(state, action.taskIndex, 'address', action.value),
     }
   case 'SET_TIME_SLOT':
     return {
       ...state,
-      [ action.taskType ]: {
-        ...state[action.taskType],
-        timeSlot: action.value
-      }
+      tasks: replaceTasks(state, action.taskIndex, 'timeSlot', action.value),
     }
   case 'SET_BEFORE':
     return {
       ...state,
-      [ action.taskType ]: {
-        ...state[action.taskType],
-        before: action.value
-      }
+      tasks: replaceTasks(state, action.taskIndex, 'before', action.value),
     }
   case 'SET_WEIGHT':
     return {
@@ -285,10 +329,101 @@ function reducer(state = {}, action) {
   case 'CLEAR_ADDRESS':
     return {
       ...state,
-      [ action.taskType ]: _.omit({ ...state[action.taskType] }, ['address'])
+      tasks: state.tasks.map((task, index) => {
+        if (index === action.taskIndex) {
+          return _.omit({ ...task }, ['address'])
+        }
+
+        return task
+      }),
+    }
+  case 'ADD_DROPOFF':
+    return {
+      ...state,
+      tasks: state.tasks.concat([ action.value ]),
+    }
+  case 'REMOVE_DROPOFF':
+    return {
+      ...state,
+      tasks: removeTasks(state, action.taskIndex)
     }
   default:
     return state
+  }
+}
+
+const loadTags = _.once(() => {
+
+  return axios({
+    method: 'get',
+    url: window.Routing.generate('admin_tags', { format: 'json' }),
+  })
+  .then(response => response.data)
+})
+
+// https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
+function createElementFromHTML(htmlString) {
+  var div = document.createElement('div');
+  div.innerHTML = htmlString.trim();
+
+  // Change this to div.childNodes to support multiple top-level nodes
+  return div.firstChild;
+}
+
+function initSubForm(name, taskEl, preloadedState) {
+  const taskForm = taskEl.getAttribute('id').replace(name + '_', '')
+  const taskIndex = getTaskIndex(taskForm)
+
+  const task = {
+    type: getTaskType(name, taskForm),
+    address: null,
+    [ getDatePickerKey(name, taskForm) ]: getDatePickerValue(name, taskForm)
+  }
+
+  if (preloadedState) {
+    preloadedState.tasks.push(task)
+  } else {
+    store.dispatch({
+      type: 'ADD_DROPOFF',
+      taskIndex,
+      value: task
+    })
+  }
+
+  createAddressWidget(name, taskForm, address => {
+    if (preloadedState) {
+      const index = preloadedState.tasks.indexOf(task)
+      if (-1 !== index) {
+        preloadedState.tasks[index].address = address
+      }
+    }
+  })
+  createDatePickerWidget(name, taskForm)
+
+  const tagsEl = document.querySelector(`#${name}_${taskForm}_tagsAsString`)
+  if (tagsEl) {
+    loadTags().then(tags => {
+      createTagsWidget(name, taskForm, tags)
+    })
+  }
+
+  const deleteBtn = taskEl.querySelector('[data-delete="task"]')
+
+  if (deleteBtn) {
+    if (taskIndex === 1) {
+      // No delete button for the 1rst dropoff,
+      // we want at least one dropoff
+      deleteBtn.remove()
+    } else {
+      deleteBtn.addEventListener('click', (e) => {
+        e.preventDefault()
+        taskEl.remove()
+        store.dispatch({
+          type: 'REMOVE_DROPOFF',
+          taskIndex,
+        })
+      })
+    }
   }
 }
 
@@ -306,31 +441,27 @@ export default function(name, options) {
     const weightEl = document.querySelector(`#${name}_weight`)
 
     // Intialize Redux store
-    let storeId
-    if (el.dataset.store) {
-      storeId = el.dataset.store
-    }
     let preloadedState = {
-      store: `/api/stores/${storeId}`, // FIXME The data attribute should contain the IRI
       weight: weightEl ? parseWeight(weightEl.value) : 0,
-      pickup: {
-        address: null,
-        [ getDatePickerKey(name, 'pickup') ]: getDatePickerValue(name, 'pickup')
-      },
-      dropoff: {
-        address: null,
-        [ getDatePickerKey(name, 'dropoff') ]: getDatePickerValue(name, 'dropoff')
-      },
+      tasks: [],
       packages: []
     }
 
-    createAddressWidget(name, 'pickup', address => preloadedState.pickup.address = address)
-    createDatePickerWidget(name, 'pickup')
+    if (el.dataset.store) {
+      preloadedState = {
+        ...preloadedState,
+        store: el.dataset.store
+      }
+    }
 
-    createAddressWidget(name, 'dropoff', address => preloadedState.dropoff.address = address)
-    createDatePickerWidget(name, 'dropoff')
+    // tasks_0, tasks_1...
+    const taskForms = Array.from(el.querySelectorAll('[data-form="task"]'))
+    taskForms.forEach((taskEl) => initSubForm(name, taskEl, preloadedState))
 
-    store = createStore(reducer, preloadedState)
+    store = createStore(
+      reducer, preloadedState,
+      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    )
 
     onReady(preloadedState)
     store.subscribe(() => onChange(store.getState()))
@@ -342,16 +473,6 @@ export default function(name, options) {
           value: parseWeight(e.target.value)
         })
       }, 350))
-    }
-
-    const pickupTagsEl = document.querySelector(`#${name}_pickup_tagsAsString`)
-    const dropoffTagsEl = document.querySelector(`#${name}_dropoff_tagsAsString`)
-
-    if (pickupTagsEl && dropoffTagsEl) {
-      $.getJSON(window.Routing.generate('admin_tags', { format: 'json' }), function(tags) {
-        createTagsWidget(name, 'pickup', tags)
-        createTagsWidget(name, 'dropoff', tags)
-      })
     }
 
     new ClipboardJS('#copy', {
@@ -369,7 +490,9 @@ export default function(name, options) {
 
     el.addEventListener('submit', (e) => {
 
-      _.find(['pickup', 'dropoff'], type => {
+      _.find(taskForms, taskEl => {
+
+        const type = taskEl.getAttribute('id').replace(name + '_', '')
 
         const isNewAddrInput = document.querySelector(`#${name}_${type}_address_isNewAddress`)
         if (!isNewAddrInput) {
@@ -388,6 +511,31 @@ export default function(name, options) {
 
     }, false)
 
+    // https://symfony.com/doc/current/form/form_collections.html#allowing-new-tags-with-the-prototype
+    const addTaskButton = el.querySelector('[data-add="dropoff"]')
+    if (addTaskButton) {
+      addTaskButton.addEventListener('click', () => {
+
+        const collectionHolder =
+          document.querySelector('#delivery_tasks')
+
+        const newHtml = collectionHolder
+          .dataset
+          .prototype
+          .replace(
+            /__name__/g,
+            collectionHolder.dataset.index
+          );
+
+        const item = createElementFromHTML(newHtml)
+
+        collectionHolder.appendChild(item)
+
+        initSubForm(name, item)
+
+        collectionHolder.dataset.index++
+      })
+    }
   }
 
   return form

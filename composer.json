@@ -96,15 +96,15 @@
         "league/flysystem-aws-s3-v3": "^1.0",
         "sylius/resource-bundle": "^1.7.1",
         "kreait/firebase-bundle": "^2.2",
-        "phpdocumentor/reflection-docblock": "^4.0",
+        "phpdocumentor/reflection-docblock": "^5.1",
         "sylius/customer-bundle": "^1.6",
         "mailjet/mailjet-apiv3-php": "^1.4",
         "edamov/pushok": "^0.13",
         "twig/intl-extra": "^3.0",
         "odolbeau/phone-number-bundle": "^3.1",
         "league/omnipay": "^3",
-        "mercadopago/dx-php": "dev-fix-composer",
-        "egulias/email-validator": "^2.1",
+        "mercadopago/dx-php": "^2.4.1",
+        "egulias/email-validator": "^3.0",
         "twilio/sdk": "^6.10",
         "friendsofsymfony/rest-bundle": "^3.0",
         "geocoder-php/open-cage-provider": "^4.4",
@@ -117,11 +117,11 @@
         "twig/string-extra": "^3.1",
         "simshaun/recurr": "^4.0",
         "jaybizzle/crawler-detect": "^1.2",
-        "nucleos/user-bundle": "1.10.x-dev",
-        "nucleos/profile-bundle": "1.5.x-dev",
+        "nucleos/user-bundle": "1.12.x-dev",
+        "nucleos/profile-bundle": "1.7.x-dev",
         "twig/cache-extra": "^3.3",
         "geocoder-php/google-maps-provider": "^4.6",
-        "symfony/redis-messenger": "^5.3",
+        "symfony/redis-messenger": "5.3.7",
         "symfony/amqp-messenger": "^5.3",
         "symfony/doctrine-messenger": "^5.3"
     },
@@ -197,11 +197,5 @@
             "symfony/webpack-encore-bundle": ["tests"],
             "willdurand/hateoas": ["tests"]
         }
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/alexsegura/dx-php"
-        }
-    ]
+    }
 }

@@ -5,7 +5,15 @@ export const dateRanges = {
   '3mo': 'Last 3 months'
 }
 
+const customRangeRegex = /([0-9-]+)\/([0-9-]+)/
+
 export const getCubeDateRange = (key) => {
+
+  const matches = key.match(customRangeRegex)
+  if (matches) {
+
+    return [ matches[1], matches[2] ]
+  }
 
   if (Object.prototype.hasOwnProperty.call(dateRanges, key)) {
 

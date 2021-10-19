@@ -41,6 +41,10 @@ security:
             pattern: ^/oauth2/token$
             security: false
 
+        api_facebook_login:
+            pattern: ^/api/facebook/login$
+            security: false
+
         api_deliveries:
             pattern:   ^/api/deliveries
             methods: [ GET, POST, PUT, DELETE ]
@@ -98,6 +102,13 @@ security:
 
         api_retail_prices_calculate:
             pattern:   ^/api/retail_prices/calculate
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
+        api_urbantz:
+            pattern:   ^/api/urbantz
+            methods: [ GET, POST, PUT, DELETE ]
             stateless: true
             anonymous: ~
             bearer_token: true
@@ -229,6 +240,7 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/_uploader/restaurant, roles: [ ROLE_ADMIN, ROLE_RESTAURANT ] }
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/facebook/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/orders/timing, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/api/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }

@@ -269,7 +269,10 @@ export const selectCurrentTaskEvents = createSelector(
 export const selectSelectedTasks = createSelector(
   taskSelectors.selectEntities,
   state => state.selectedTasks,
-  (tasksById, selectedTasks) => selectedTasks.map(id => tasksById[id])
+  // FIXME
+  // We use filter, to filter out "undefined" objects
+  // Best would be to clear the selectedTasks after Redux action completes
+  (tasksById, selectedTasks) => filter(selectedTasks.map(id => tasksById[id]))
 )
 
 export const selectVisiblePickupTasks = createSelector(

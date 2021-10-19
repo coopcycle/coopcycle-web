@@ -24,18 +24,31 @@ class PricingRuleValidator extends ConstraintValidator
             throw new \InvalidArgumentException(sprintf('$object should be an instance of %s', PricingRule::class));
         }
 
-        try {
+        $delivery = new Delivery();
+        $delivery->getPickup()->setBefore(new \DateTime('+4 hours'));
 
-            $delivery = new Delivery();
-            $delivery->getPickup()->setBefore(new \DateTime('+4 hours'));
+        try {
 
             $this->expressionLanguage->evaluate($object->getExpression(), Delivery::toExpressionLanguageValues($delivery));
 
         } catch (SyntaxError $e) {
             $this->context
                 ->buildViolation($constraint->expressionSyntaxErrorMessage)
-                ->setParameter('%expression%', $object->getExpression())
+                ->setParameter('%expression%', $object->getExpression() ?? '')
                 ->atPath('expression')
+                ->addViolation();
+        }
+
+        try {
+
+            $this->expressionLanguage->evaluate($object->getPrice(), Delivery::toExpressionLanguageValues($delivery));
+
+        } catch (SyntaxError $e) {
+
+            $this->context
+                ->buildViolation($constraint->expressionSyntaxErrorMessage)
+                ->setParameter('%expression%', $object->getPrice())
+                ->atPath('price')
                 ->addViolation();
         }
     }

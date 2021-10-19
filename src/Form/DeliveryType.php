@@ -8,12 +8,11 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Form\Entity\PackageWithQuantity;
-use AppBundle\Form\Type\TimeSlotChoice;
-use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -87,34 +86,33 @@ class DeliveryType extends AbstractType
                 $delivery->getDropoff()->setDoneBefore($dropoffBefore);
             }
 
-            $form->add('pickup', TaskType::class, [
-                'mapped' => false,
-                'label' => 'form.delivery.pickup.label',
-                'constraints' => [
-                    new Assert\Valid()
+            $form->add('tasks', CollectionType::class, [
+                'entry_type' => TaskType::class,
+                'entry_options' => [
+                    'constraints' => [
+                        new Assert\Valid()
+                    ],
+                    'with_tags' => $options['with_tags'],
+                    'with_addresses' => null !== $store ? $store->getAddresses() : [],
+                    'with_remember_address' => $options['with_remember_address'],
+                    'with_time_slot' => $this->getTimeSlot($options, $store),
+                    'with_recipient_details' => $options['with_dropoff_recipient_details'],
+                    'with_doorstep' => $options['with_dropoff_doorstep'],
                 ],
-                'data' => $delivery->getPickup(),
-                'with_tags' => $options['with_tags'],
-                'with_addresses' => null !== $store ? $store->getAddresses() : [],
-                'address_placeholder' => 'form.delivery.pickup.address_placeholder',
-                'street_address_label' => 'form.delivery.pickup.label',
-                'with_remember_address' => $options['with_remember_address'],
+                'allow_add' => true,
+                'prototype_data' => new Task(),
             ]);
-            $form->add('dropoff', TaskType::class, [
-                'mapped' => false,
-                'label' => 'form.delivery.dropoff.label',
-                'constraints' => [
-                    new Assert\Valid()
-                ],
-                'data' => $delivery->getDropoff(),
-                'with_tags' => $options['with_tags'],
-                'with_addresses' => null !== $store ? $store->getAddresses() : [],
-                'address_placeholder' => 'form.delivery.dropoff.address_placeholder',
-                'street_address_label' => 'form.delivery.dropoff.label',
-                'with_recipient_details' => $options['with_dropoff_recipient_details'],
-                'with_doorstep' => $options['with_dropoff_doorstep'],
-                'with_remember_address' => $options['with_remember_address'],
-            ]);
+
+            $isMultiDropEnabled = null !== $store ? $store->isMultiDropEnabled() : false;
+            $createOrders = null !== $store ? $store->getCreateOrders() : false;
+            if ($isMultiDropEnabled && !$createOrders) {
+                $form->add('addTask', ButtonType::class, [
+                    'label' => 'basics.add',
+                    'attr' => [
+                        'data-add' => 'dropoff'
+                    ],
+                ]);
+            }
         });
 
         // Add weight field if needed
@@ -139,41 +137,6 @@ class DeliveryType extends AbstractType
                     $form->get('weight')->setData($delivery->getWeight() / 1000);
                 }
             }
-        });
-
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
-
-            $form = $event->getForm();
-            $delivery = $event->getData();
-
-            if (!$timeSlot = $this->getTimeSlot($options, $delivery->getStore())) {
-                return;
-            }
-
-            $timeSlotOptions = [
-                'time_slot' => $timeSlot,
-                'label' => 'form.delivery.time_slot.label',
-                'mapped' => false
-            ];
-
-            $pickupTimeSlotOptions = $dropoffTimeSlotOptions = $timeSlotOptions;
-
-            if (null !== $delivery->getId()) {
-
-                $pickupTimeSlotOptions['disabled'] = true;
-                $pickupTimeSlotOptions['data'] = TimeSlotChoice::fromTask($delivery->getPickup());
-
-                $dropoffTimeSlotOptions['disabled'] = true;
-                $dropoffTimeSlotOptions['data'] = TimeSlotChoice::fromTask($delivery->getDropoff());
-            }
-
-            $form->get('pickup')->remove('doneAfter');
-            $form->get('pickup')->remove('doneBefore');
-            $form->get('pickup')->add('timeSlot', TimeSlotChoiceType::class, $pickupTimeSlotOptions);
-
-            $form->get('dropoff')->remove('doneAfter');
-            $form->get('dropoff')->remove('doneBefore');
-            $form->get('dropoff')->add('timeSlot', TimeSlotChoiceType::class, $dropoffTimeSlotOptions);
         });
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {

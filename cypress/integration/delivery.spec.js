@@ -25,14 +25,12 @@ context('Delivery', () => {
 
     cy.get('a').contains('Créer une livraison').click()
 
-    // TODO Use data attributes instead of CSS selectors
-    // https://docs.cypress.io/guides/references/best-practices.html#Selecting-Elements
-    cy.get('#delivery_pickup_address input[type="search"]')
-        .type('23 av claude vellefaux', { timeout: 15000 })
+    cy.get('[data-form="task"]').eq(0).find('input[type="search"]')
+      .type('23 av claude vellefaux', { timeout: 15000 })
     cy.contains('23 Avenue Claude Vellefaux, 75010 Paris, France').click()
 
-    cy.get('#delivery_dropoff_address input[type="search"]')
-        .type('72 rue st maur', { timeout: 15000 })
+    cy.get('[data-form="task"]').eq(1).find('input[type="search"]')
+      .type('72 rue st maur', { timeout: 15000 })
     cy.contains('72 Rue Saint-Maur, 75011 Paris, France').click()
 
     cy.wait('@apiRoutingRoute')
@@ -47,34 +45,36 @@ context('Delivery', () => {
 
     // Pickup
 
-    cy.get('#delivery_pickup_address input[type="search"]')
+    cy.get('[data-form="task"]').eq(0).find('input[type="search"]')
       .type('91 rue de rivoli paris', { timeout: 5000, delay: 30 })
 
-    cy.get('#delivery_pickup_address')
+    cy.get('[data-form="task"]').eq(0)
       .find('.react-autosuggest__suggestions-container')
       .find('ul[role="listbox"] li', { timeout: 5000 })
       .contains('91 Rue de Rivoli, 75004 Paris, France')
       .click()
 
-    cy.get('#delivery_pickup_address_newAddress_latitude')
-      .invoke('val')
-      .should('match', /[0-9\.]+/)
-
     // Dropoff
 
-    cy.get('#delivery_dropoff_address input[type="search"]')
+    cy.get('[data-form="task"]').eq(1).find('input[type="search"]')
       .type('120 rue st maur paris', { timeout: 5000, delay: 30 })
 
     // Click on the first suggestion
-    cy.get('#delivery_dropoff_address')
+    cy.get('[data-form="task"]').eq(1)
       .find('.react-autosuggest__suggestions-container')
       .find('ul[role="listbox"] li', { timeout: 5000 })
       .contains('120 Rue Saint-Maur')
       .click()
 
-    cy.get('#delivery_dropoff_address_newAddress_latitude')
-      .invoke('val')
-      .should('match', /[0-9\.]+/)
+    cy.get('[data-form="task"]')
+      .each(($el) => {
+        cy.wrap($el).find('[id$="address_newAddress_latitude"]')
+          .invoke('val')
+          .should('match', /[0-9\.]+/)
+        cy.wrap($el).find('[id$="address_newAddress_longitude"]')
+          .invoke('val')
+          .should('match', /[0-9\.]+/)
+      })
 
     cy.get('#delivery_name').type('John Doe')
     cy.get('#delivery_email').type('dev@coopcycle.org')

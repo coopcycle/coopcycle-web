@@ -5,9 +5,17 @@ namespace AppBundle\Entity;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
+use Hashids\Hashids;
 
 class DeliveryRepository extends EntityRepository
 {
+    private $secret;
+
+    public function setSecret(string $secret)
+    {
+        $this->secret = $secret;
+    }
+
     public function getSections(?Store $store = null)
     {
         $today = Carbon::now();
@@ -27,25 +35,25 @@ class DeliveryRepository extends EntityRepository
         }
 
         $qbToday = (clone $qb)
-            ->andWhere('t.type = :dropoff')
-            ->andWhere('t.doneAfter > :after')
-            ->andWhere('t.doneBefore < :before')
-            ->setParameter('dropoff', Task::TYPE_DROPOFF)
+            ->andWhere('t.type = :pickup')
+            ->andWhere('t.doneAfter >= :after')
+            ->andWhere('t.doneBefore <= :before')
+            ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->copy()->hour(0)->minute(0)->second(0))
             ->setParameter('before', $today->copy()->hour(23)->minute(59)->second(59));
 
         $qbUpcoming = (clone $qb)
-            ->andWhere('t.type = :dropoff')
-            ->andWhere('t.doneAfter > :after')
-            ->setParameter('dropoff', Task::TYPE_DROPOFF)
+            ->andWhere('t.type = :pickup')
+            ->andWhere('t.doneAfter >= :after')
+            ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->copy()->add(1, 'day')->hour(0)->minute(0)->second(0))
             ->orderBy('t.doneBefore', 'asc')
             ;
 
         $qbPast = (clone $qb)
-            ->andWhere('t.type = :dropoff')
+            ->andWhere('t.type = :pickup')
             ->andWhere('t.doneBefore < :after')
-            ->setParameter('dropoff', Task::TYPE_DROPOFF)
+            ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->copy()->sub(1, 'day')->hour(23)->minute(59)->second(59))
             ;
 
@@ -54,5 +62,29 @@ class DeliveryRepository extends EntityRepository
             'upcoming' => $qbUpcoming,
             'past' => $qbPast,
         ];
+    }
+
+    public function findOneByHashId(string $hashId)
+    {
+        if (0 === strpos($hashId, 'dlv_')) {
+            $hashId = substr($hashId, strlen('dlv_'));
+        }
+
+        if (strlen($hashId) !== 32) {
+
+            return null;
+        }
+
+        $hashids = new Hashids($this->secret, 32);
+        $ids = $hashids->decode($hashId);
+
+        if (count($ids) !== 1) {
+
+            return null;
+        }
+
+        $id = current($ids);
+
+        return $this->find($id);
     }
 }

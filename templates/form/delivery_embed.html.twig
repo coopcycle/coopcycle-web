@@ -1,33 +1,34 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
 {% block task_embed_row %}
+<div id="{{ form.vars.id }}" data-form="task">
 
   {{ form_label(form) }}
 
   {{ form_row(form.address) }}
 
   {% if form.doneBefore is defined %}
-    {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ form.vars.name ~ '.doneBefore.label' }) }}
+    {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ (form.vars.data.type|lower) ~ '.doneBefore.label' }) }}
   {% endif %}
 
   {% if form.timeSlot is defined %}
     {{ form_row(form.timeSlot) }}
   {% endif %}
 
-  {% if form.vars.value.type == 'PICKUP' and form.parent.weight is defined %}
-    {{ form_row(form.parent.weight) }}
+  {% if form.vars.data.type == 'PICKUP' and form.parent.parent.weight is defined %}
+    {{ form_row(form.parent.parent.weight) }}
   {% endif %}
 
-  {% if form.vars.value.type == 'PICKUP' and form.parent.packages is defined %}
-    {{ form_row(form.parent.packages) }}
+  {% if form.vars.data.type == 'PICKUP' and form.parent.parent.packages is defined %}
+    {{ form_row(form.parent.parent.packages) }}
   {% endif %}
 
   {{ form_row(form.address.newAddress.description) }}
 
   {{ form_widget(form.type) }}
 
+</div>
 {% endblock %}
-
 
 {% block _delivery_vehicle_widget %}
 <div class="alert alert-info">
@@ -36,23 +37,11 @@
 {{ block('vehicle_widget') }}
 {% endblock %}
 
-{# Pickup #}
-
-{% block _delivery_pickup_row %}
+{% block _delivery_tasks_entry_row %}
   {{ block('task_embed_row') }}
 {% endblock %}
 
-{% block _delivery_pickup_label %}
-  <h3>{{ label|trans }}</h3>
-{% endblock %}
-
-{# Dropoff #}
-
-{% block _delivery_dropoff_row %}
-  {{ block('task_embed_row') }}
-{% endblock %}
-
-{% block _delivery_dropoff_label %}
+{% block _delivery_tasks_entry_label %}
   <h3>{{ label|trans }}</h3>
 {% endblock %}
 

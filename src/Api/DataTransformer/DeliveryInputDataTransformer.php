@@ -29,7 +29,11 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
      */
     public function transform($data, string $to, array $context = [])
     {
-        $delivery = Delivery::createWithTasks($data->pickup, $data->dropoff);
+        if (is_array($data->tasks) && count($data->tasks) > 0) {
+            $delivery = Delivery::createWithTasks(...$data->tasks);
+        } else {
+            $delivery = Delivery::createWithTasks($data->pickup, $data->dropoff);
+        }
 
         if ($data->store && $data->store instanceof Store) {
             $delivery->setStore($data->store);

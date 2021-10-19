@@ -258,6 +258,11 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
+        if (null === $order->getCustomer()) {
+
+            return $this->redirectToRoute('order');
+        }
+
         $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
         // Make sure to call StripeManager::configurePayment()
@@ -368,7 +373,11 @@ class OrderController extends AbstractController
             return new JsonResponse(['message' => 'Payment method does not exist'], 404);
         }
 
-        if (!$paymentMethod->isEnabled() && !$this->getParameter('kernel.debug')) {
+        // The "CASH_ON_DELIVERY" payment method may not be enabled,
+        // however if it's enabled at shop level, it is allowed
+        $bypass = $code === 'CASH_ON_DELIVERY' && $order->supportsCashOnDelivery();
+
+        if (!$paymentMethod->isEnabled() && !$bypass) {
 
             return new JsonResponse(['message' => 'Payment method is not enabled'], 400);
         }

@@ -106,6 +106,17 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
 
         while ($cursor <= $this->maxDate) {
 
+            if (!empty($this->timeSlot->getSameDayCutoff())
+            && Carbon::instance($cursor)->isSameDay($this->now)) {
+                $cutoff = $this->now->copy()->setTimeFromTimeString(
+                    $this->timeSlot->getSameDayCutoff()
+                );
+                if ($this->now > $cutoff) {
+                    $cursor = $this->moveCursor($cursor);
+                    continue;
+                }
+            }
+
             if ($this->timeSlot->hasOpeningHours()) {
                 foreach ($this->openingHoursSpecifications as $spec) {
 
@@ -118,16 +129,6 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                             clone $cursor,
                             sprintf('%s-%s', $spec->opens, $spec->closes)
                         );
-
-                        if (!empty($this->timeSlot->getSameDayCutoff())
-                        && Carbon::instance($cursor)->isSameDay($this->now)) {
-                            $cutoff = $this->now->copy()->setTimeFromTimeString(
-                                $this->timeSlot->getSameDayCutoff()
-                            );
-                            if ($this->now > $cutoff) {
-                                continue;
-                            }
-                        }
 
                         $tsRange = $choice->toTsRange();
 

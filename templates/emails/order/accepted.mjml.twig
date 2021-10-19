@@ -19,7 +19,7 @@
   {% endif %}
   {{ ('order.foodtech.accepted.' ~ order.fulfillmentMethod ~ '.disclaimer')|trans({
     '%name%': order.vendor.name,
-    '%phone_number%': telephone|phone_number_format('NATIONAL')
+    '%phone_number%': telephone ? telephone|phone_number_format('NATIONAL') : 'N/A'
   }, 'emails')|raw }}
   </mj-text>
   {% if not order.vendor.isHub() and order.vendor.restaurant.loopeatEnabled and order.reusablePackagingEnabled %}

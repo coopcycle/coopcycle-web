@@ -282,7 +282,8 @@ order.total_including_tax: Total (incl. ICMS)
 order.items_total: Total de produtos
 order.total_tax: ICMS
 order.total_tax_by_rate: Total %name%
-order.preparation_expected_at: Preparação estimada em %date%
+order.preparation_expected_at: Preparação começando em %date%
+order.preparation_expected_for: Preparação estimada em %date%
 order.shipping_date.title: Sua data de entrega
 order.payment.title: Sua informação de pagamento
 order.payment.expiration.label: Expiração

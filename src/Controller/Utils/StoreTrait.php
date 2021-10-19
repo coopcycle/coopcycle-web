@@ -303,11 +303,11 @@ trait StoreTrait
 
     private function handleRememberAddress(Store $store, FormInterface $form)
     {
-        foreach (['pickup', 'dropoff'] as $taskType) {
-            $addressForm = $form->get($taskType)->get('address');
+        foreach ($form->get('tasks') as $form) {
+            $addressForm = $form->get('address');
             $rememberAddress = $addressForm->has('rememberAddress') && $addressForm->get('rememberAddress')->getData();
             if ($rememberAddress) {
-                $task = $form->get($taskType)->getData();
+                $task = $form->getData();
                 $store->addAddress($task->getAddress());
             }
         }

@@ -16,9 +16,12 @@ use AppBundle\Action\Order\Delay as OrderDelay;
 use AppBundle\Action\Order\Fulfill as OrderFulfill;
 use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
+use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
+use AppBundle\Action\Order\Centrifugo as CentrifugoController;
 use AppBundle\Action\MyOrders;
 use AppBundle\Api\Dto\CartItemInput;
+use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\User;
@@ -106,6 +109,17 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
  *       "openapi_context"={
  *         "summary"="Get payment details for a Order resource."
+ *       }
+ *     },
+ *     "payment_methods"={
+ *       "method"="GET",
+ *       "path"="/orders/{id}/payment_methods",
+ *       "controller"=PaymentMethodsController::class,
+ *       "output"=PaymentMethodsOutput::class,
+ *       "normalization_context"={"api_sub_level"=true},
+ *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
+ *       "openapi_context"={
+ *         "summary"="Get available payment methods for a Order resource."
  *       }
  *     },
  *     "pay"={
@@ -239,6 +253,16 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "security"="is_granted('session', object)",
  *       "openapi_context"={
  *         "summary"="Deletes items from a Order resource."
+ *       }
+ *     },
+ *     "centrifugo"={
+ *       "method"="GET",
+ *       "path"="/orders/{id}/centrifugo",
+ *       "controller"=CentrifugoController::class,
+ *       "normalization_context"={"groups"={"centrifugo", "centrifugo_for_order"}},
+ *       "security"="is_granted('view', object)",
+ *       "openapi_context"={
+ *         "summary"="Get Centrifugo connection details for a Order resource."
  *       }
  *     }
  *   },
@@ -1277,5 +1301,15 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return $this->getRestaurant()->isLoopeatEnabled();
+    }
+
+    public function supportsCashOnDelivery(): bool
+    {
+        if ($this->isMultiVendor()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->isCashOnDeliveryEnabled();
     }
 }

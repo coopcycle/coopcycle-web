@@ -88,3 +88,10 @@ export const selectOrdersByHourRange = createSelector(
     }))
   }
 )
+
+export const selectItems = state => state.order.items
+
+export const selectItemsGroups = createSelector(
+  selectItems,
+  (items) =>  _.groupBy(items, 'vendor.name')
+)

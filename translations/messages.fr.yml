@@ -274,7 +274,8 @@ order.total_including_tax: Total TTC
 order.items_total: Total produits
 order.total_tax: TVA
 order.total_tax_by_rate: Total %name%
-order.preparation_expected_at: Préparation à %date%
+order.preparation_expected_at: Préparation à démarrer pour %date%
+order.preparation_expected_for: Préparation attendue pour %date%
 order.net_total_including_tax: Total TTC (net)
 order.stripe_fee: Frais bancaires
 order.fee: Frais plateforme
@@ -727,7 +728,7 @@ basics.send_invitation.confirm: Votre invitation a bien été envoyée ! Vous po
 basics.send_invitation.invitated_user_after_password_confirmation: Votre compte a
   bien été créer, veuillez vérifier dès à présent vos <a target="_blank" href="%restaurantEditUrl%">informations
   personnelles</a>
-adminDashboard.embed.title: Intégration
+adminDashboard.embed.title: Formulaires
 embed.delivery.title: Formulaire de création de livraison
 embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règle
   tarifaire à appliquer
@@ -856,7 +857,7 @@ form.registration.legal.label: J'accepte les Conditions Générales et la Politi
   de Confidentialité
 form.registration.legal.help: En cochant cette case, vous acceptez nos <a href="%terms_url%">Conditions
   Générales</a> et notre <a href="%privacy_url%">Politique de Confidentialité</a>.
-order.adjustment_type.reusable_packaging: Emballage
+order.adjustment_type.reusable_packaging: Consigne
 form.store_type.package_set.label: Ensemble de paquets
 adminDashboard.package_sets.title: Paquets
 form.package.volume_units.label: Unité de volume
@@ -1183,3 +1184,10 @@ products.on_demand_delivery.name: Livraison à la demande
 index.view_all: Voir tout
 order.adjustment_type.reusable_packaging.loopeat: Service zéro déchet
 order.adjustment_type.reusable_packaging.loopeat.help: Ces frais couvrent le lavage, le réapprovisionnement des restaurants et l’achat des sacs en tissu réutilisables
+promotion_rule.is_items_total_above: Le total des produits est supérieur à %amount%
+form.store_type.multi_drop_enabled.label: Activer les dépôts multiples
+form.store_type.multi_drop_enabled.help: Permet aux utilisateur·ice·s d'ajouter un point de dépôt supplémentaire lors de la création d'une livraison
+api_apps.regenerate_secret: Renouveler la clé secrète
+api_apps.regenerate_secret_warning: Toutes les applications utilisant la clé secrète précédente ne fonctionnera plus.
+restaurant.form.cash_on_delivery_enabled.label: Activer le paiement en contre-remboursement
+restaurant.form.cash_on_delivery_enabled.help: Cela permettra aux clients de payer en espèces. À utiliser avec précaution.

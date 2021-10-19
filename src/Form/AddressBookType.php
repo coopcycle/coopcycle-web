@@ -62,7 +62,9 @@ class AddressBookType extends AbstractType
                     if ($choice->getId() !== null) {
 
                         return [
-                            'data-address' => $this->serializer->serialize($choice, 'jsonld')
+                            'data-address' => $this->serializer->serialize($choice, 'jsonld', [
+                                'groups' => ['delivery_create', 'task_create']
+                            ])
                         ];
                     }
 

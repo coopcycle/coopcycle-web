@@ -5,9 +5,11 @@
 @import "~font-awesome/scss/_mixins.scss";
 @import "~font-awesome/scss/_animated.scss";
 
-#delivery_pickup,
-#delivery_dropoff {
+.delivery__form__task {
+
   position: relative;
+  margin-bottom: 3em;
+
   @media (max-width: $screen-sm-max) {
     padding-top: 24px;
   }
@@ -24,30 +26,31 @@
       right: 0;
     }
   }
-  .form-group:first-child {
+  .form-group:first-of-type {
     > label {
       font-size: $font-size-large;
     }
   }
+
+  .address-autosuggest__container {
+    margin: 0;
+  }
 }
 
-#delivery_pickup {
+.delivery__form__task--pickup {
   &:before {
     content: $fa-var-cube;
   }
 }
 
-#delivery_dropoff {
+.delivery__form__task--dropoff {
+  $top-padding: 30px;
   &:before {
     content: $fa-var-arrow-down;
+    top: $top-padding;
   }
-}
-
-#delivery_pickup_address,
-#delivery_dropoff_address {
-  .address-autosuggest__container {
-    margin: 0;
-  }
+  border-top: 1px solid #ededed;
+  padding-top: $top-padding;
 }
 
 .map-distance-overlay {

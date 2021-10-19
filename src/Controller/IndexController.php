@@ -81,37 +81,68 @@ class IndexController extends AbstractController
         $types = array_keys($countByType);
 
         $typesWithEnoughShops = [];
-        $typesWithNotEnoughShops = [];
         foreach ($countByType as $type => $countForType) {
             if ($countForType >= self::ITEMS_PER_ROW || $countForType >= (self::ITEMS_PER_ROW * 2)) {
                 $typesWithEnoughShops[] = $type;
-            } else {
-                $typesWithNotEnoughShops[] = $type;
             }
         }
 
         $inflector = new EnglishInflector();
 
         $sections = [];
-        foreach ($typesWithEnoughShops as $type) {
 
-            $keyForType = LocalBusiness::getKeyForType($type);
+        if (count($typesWithEnoughShops) > 0) {
 
-            $cacheKey = sprintf('homepage.%s.%s', $keyForType, $cacheKeySuffix);
+            foreach ($typesWithEnoughShops as $type) {
 
-            [ $shops, $shopsCount ] =
-                $this->getItems($repository, $type, $projectCache, $cacheKey);
+                $keyForType = LocalBusiness::getKeyForType($type);
 
-            $sections[] = [
-                'type' => $type,
-                'shops' => $shops,
-                'type_key' => $keyForType,
-                'type_key_plural' => current($inflector->pluralize($keyForType)),
-            ];
+                $cacheKey = sprintf('homepage.%s.%s', $keyForType, $cacheKeySuffix);
 
-            if (count($sections) >= 3) {
-                break;
+                [ $shops, $shopsCount ] =
+                    $this->getItems($repository, $type, $projectCache, $cacheKey);
+
+                $sections[] = [
+                    'type' => $type,
+                    'shops' => $shops,
+                    'type_key' => $keyForType,
+                    'type_key_plural' => current($inflector->pluralize($keyForType)),
+                ];
+
+                if (count($sections) >= 3) {
+                    break;
+                }
             }
+
+        } else {
+
+            $shops = $repository->withoutTypeFilter()->findAllSorted();
+
+            if (count($shops) > 0) {
+
+                $types = [];
+                foreach ($shops as $shop) {
+                    $types[] = $shop->getType();
+                }
+                $types = array_unique($types);
+
+                $keysForTypes = array_map(fn ($t) => LocalBusiness::getKeyForType($t), $types);
+
+                if (count($shops) >= (self::ITEMS_PER_ROW * 2)) {
+                    $shops = array_slice($shops, 0, (self::ITEMS_PER_ROW * 2));
+                } elseif (count($shops) >= self::ITEMS_PER_ROW) {
+                    $shops = array_slice($shops, 0, self::ITEMS_PER_ROW);
+                }
+
+                $sections[] = [
+                    'type' => null,
+                    'types' => $types,
+                    'shops' => $shops,
+                    'type_key' => null,
+                    'type_key_plural' => null,
+                ];
+            }
+
         }
 
         $hubs = $this->getDoctrine()->getRepository(Hub::class)->findBy([

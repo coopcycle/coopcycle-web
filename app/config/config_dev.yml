@@ -67,6 +67,12 @@ monolog:
             level: info
             max_files: 3
             channels: [loopeat]
+        urbantz:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/urbantz.%kernel.environment%.log"
+            level: info
+            max_files: 3
+            channels: [urbantz]
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
         #firephp:

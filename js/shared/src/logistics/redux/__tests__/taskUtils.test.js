@@ -26,8 +26,8 @@ describe('taskUtils', () => {
       const groups = groupLinkedTasks(tasks)
 
       expect(groups).toEqual({
-        '/api/tasks/1': [ 1, 2 ],
-        '/api/tasks/2': [ 1, 2 ],
+        '/api/tasks/1': [ '/api/tasks/1', '/api/tasks/2' ],
+        '/api/tasks/2': [ '/api/tasks/1', '/api/tasks/2' ],
       })
     })
 
@@ -51,8 +51,8 @@ describe('taskUtils', () => {
       const groups = groupLinkedTasks(tasks)
 
       expect(groups).toEqual({
-        '/api/tasks/1': [ 1, 2 ],
-        '/api/tasks/2': [ 1, 2 ],
+        '/api/tasks/1': [ '/api/tasks/1', '/api/tasks/2' ],
+        '/api/tasks/2': [ '/api/tasks/1', '/api/tasks/2' ],
       })
     })
 
@@ -78,9 +78,68 @@ describe('taskUtils', () => {
       const groups = groupLinkedTasks(tasks)
 
       expect(groups).toEqual({
-        '/api/tasks/1': [ 1, 2, 3 ],
-        '/api/tasks/2': [ 1, 2, 3 ],
-        '/api/tasks/3': [ 1, 2, 3 ],
+        '/api/tasks/1': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ],
+        '/api/tasks/2': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ],
+        '/api/tasks/3': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ],
+      })
+    })
+
+    it('should group when there are more than 2 tasks without next', () => {
+
+      const tasks = [
+        {
+          '@id': '/api/tasks/1',
+          id : 1,
+        }, {
+          '@id': '/api/tasks/2',
+          id : 2,
+          previous: '/api/tasks/1',
+        }, {
+          '@id': '/api/tasks/3',
+          id : 3,
+          previous: '/api/tasks/1',
+        }, {
+          '@id': '/api/tasks/4',
+          id : 4,
+        }
+      ]
+
+      const groups = groupLinkedTasks(tasks)
+
+      expect(groups).toEqual({
+        '/api/tasks/1': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ],
+        '/api/tasks/2': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ],
+        '/api/tasks/3': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ],
+      })
+    })
+
+    it('should group when there are more than 2 tasks without next, not ordered', () => {
+
+      const tasks = [
+        {
+          '@id': '/api/tasks/2',
+          id : 2,
+          previous: '/api/tasks/1',
+        }, {
+          '@id': '/api/tasks/3',
+          id : 3,
+          previous: '/api/tasks/1',
+        }, {
+          '@id': '/api/tasks/4',
+          id : 4,
+        },
+        {
+          '@id': '/api/tasks/1',
+          id : 1,
+        },
+      ]
+
+      const groups = groupLinkedTasks(tasks)
+
+      expect(groups).toEqual({
+        '/api/tasks/1': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ],
+        '/api/tasks/2': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ],
+        '/api/tasks/3': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ],
       })
     })
 
@@ -112,10 +171,10 @@ describe('taskUtils', () => {
       const groups = groupLinkedTasks(tasks)
 
       expect(groups).toEqual({
-        '/api/tasks/1': [ 1, 2 ],
-        '/api/tasks/2': [ 1, 2 ],
-        '/api/tasks/4': [ 4, 5 ],
-        '/api/tasks/5': [ 4, 5 ],
+        '/api/tasks/1': [ '/api/tasks/1', '/api/tasks/2' ],
+        '/api/tasks/2': [ '/api/tasks/1', '/api/tasks/2' ],
+        '/api/tasks/4': [ '/api/tasks/4', '/api/tasks/5' ],
+        '/api/tasks/5': [ '/api/tasks/4', '/api/tasks/5' ],
       })
     })
 

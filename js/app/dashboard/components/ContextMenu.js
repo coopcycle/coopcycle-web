@@ -55,8 +55,6 @@ const DynamicMenu = ({
 
       if (containsOnlyUnassignedTasks) {
         actions.push(CANCEL_MULTI)
-        actions.push(MOVE_TO_NEXT_DAY_MULTI)
-        actions.push(MOVE_TO_NEXT_WORKING_DAY_MULTI)
       }
 
     } else {
@@ -71,6 +69,11 @@ const DynamicMenu = ({
         actions.push(MOVE_TO_BOTTOM)
       }
 
+    }
+
+    if (containsOnlyUnassignedTasks) {
+      actions.push(MOVE_TO_NEXT_DAY_MULTI)
+      actions.push(MOVE_TO_NEXT_WORKING_DAY_MULTI)
     }
   }
 

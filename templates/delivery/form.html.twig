@@ -25,7 +25,7 @@
 {% set delivery = form.vars.value %}
 {% set is_new = delivery.id is null %}
 
-{{ form_start(form, { attr: { 'data-store': delivery.store is not empty ? delivery.store.id : null } }) }}
+{{ form_start(form, { attr: { 'data-store': delivery.store is not empty ? delivery.store|get_iri_from_item : null } }) }}
 
   {% if is_granted('ROLE_ADMIN') and not is_new and delivery.order is not empty %}
     {% include '_partials/delivery/order_alert.html.twig' with { order: delivery.order } %}
@@ -35,7 +35,7 @@
 
   <div class="row">
     <div class="col-md-7">
-      {{ form_row(form.pickup) }}
+      {{ form_widget(form.tasks, { attr: { 'data-index': form.tasks|length > 0 ? form.tasks|length : 0 } }) }}
     </div>
     <div class="col-md-5">
       <div class="form-horizontal">
@@ -53,32 +53,23 @@
           </div>
         </div>
         {% endif %}
-      </div>
-    </div>
-  </div>
 
-  <hr>
-
-  <div class="row">
-    <div class="col-md-7">
-      {{ form_row(form.dropoff) }}
-    </div>
-    <div class="col-md-5">
-      {% if not is_new %}
-      <div class="alert alert-info">
-        <a href="{{ url('public_delivery', { hashid: delivery|hashid }) }}" target="_blank" id="tracking_link">{% trans %}delivery.tracking_link{% endtrans %} <i class="fa fa-external-link"></i></a>
-        <a href="#" class="pull-right" id="copy" data-clipboard-target="#tracking_link"><i class="fa fa-clipboard" aria-hidden="true"></i></a>
-      </div>
-      {% endif %}
-      <div class="embed-responsive embed-responsive-16by9">
-        <div class="embed-responsive-item" id="map"></div>
-        <div class="map-distance-overlay">
-          <span class="mr-2">{% trans %}form.delivery.distance.label{% endtrans %}</span>
-          <span id="delivery_distance">
-            {% if delivery.distance is not empty %}
-              {{ delivery.distance|meters_to_kilometers }}
-            {% endif %}
-          </span>
+        {% if not is_new %}
+        <div class="alert alert-info">
+          <a href="{{ url('public_delivery', { hashid: delivery|hashid }) }}" target="_blank" id="tracking_link">{% trans %}delivery.tracking_link{% endtrans %} <i class="fa fa-external-link"></i></a>
+          <a href="#" class="pull-right" id="copy" data-clipboard-target="#tracking_link"><i class="fa fa-clipboard" aria-hidden="true"></i></a>
+        </div>
+        {% endif %}
+        <div class="embed-responsive embed-responsive-16by9">
+          <div class="embed-responsive-item" id="map"></div>
+          <div class="map-distance-overlay">
+            <span class="mr-2">{% trans %}form.delivery.distance.label{% endtrans %}</span>
+            <span id="delivery_distance">
+              {% if delivery.distance is not empty %}
+                {{ delivery.distance|meters_to_kilometers }}
+              {% endif %}
+            </span>
+          </div>
         </div>
       </div>
     </div>

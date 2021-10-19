@@ -165,4 +165,34 @@ class SchemaDotOrgParserTest extends TestCase
             $this->assertInstanceOf(OpeningHours::class, $oh);
         }
     }
+
+    public function testIssue2632()
+    {
+        $closingRules = new ArrayCollection();
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime("2021-07-05T12:40:00+02:00"));
+        $closingRule->setEndDate(new \DateTime("2021-07-14T12:40:00+02:00"));
+
+        $closingRules->add($closingRule);
+
+        $exceptions = SchemaDotOrgParser::parseExceptions(
+            $closingRules,
+            SchemaDotOrgParser::parseCollection([
+                "Mo-Sa 11:30-14:00",
+                "Mo-Sa 18:30-21:00"
+            ])
+        );
+
+        $this->assertArrayHasKey('2021-07-05', $exceptions);
+        $this->assertEquals([
+            '11:30-12:40'
+        ], $exceptions['2021-07-05']);
+
+        $this->assertArrayHasKey('2021-07-14', $exceptions);
+        $this->assertEquals([
+            '12:40-14:00',
+            '18:30-21:00'
+        ], $exceptions['2021-07-14']);
+    }
 }

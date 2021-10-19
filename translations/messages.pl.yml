@@ -308,6 +308,7 @@ order.items_total: Wszystkie produkty
 order.total_tax: VAT
 order.total_tax_by_rate: Łącznie %name%
 order.preparation_expected_at: Przygotowanie oczekiwane na %date%
+order.preparation_expected_for: Przygotowanie oczekiwane na %date%
 order.shipping_date.title: Twoja data wysyłki
 order.payment.title: Twoje informacje o płatności
 order.payment.expiration.label: Wygaśnięcie

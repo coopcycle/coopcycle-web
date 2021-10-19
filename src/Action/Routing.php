@@ -4,6 +4,7 @@ namespace AppBundle\Action;
 
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Service\Routing\Osrm;
+use AppBundle\Service\RoutingInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,7 @@ class Routing
     /**
      * @param Osrm $routing
      */
-    public function __construct(Osrm $routing)
+    public function __construct(RoutingInterface $routing)
     {
         $this->routing = $routing;
     }
@@ -44,14 +45,8 @@ class Routing
      */
     public function routeAction($coordinates): JsonResponse
     {
-        $data = $this->routing->getServiceResponse(
-            'route',
-            $this->decodeCoordinates($coordinates),
-            [
-                'steps' => 'true',
-                'overview' => 'full'
-            ]
-        );
+        $coords = $this->decodeCoordinates($coordinates);
+        $data = $this->routing->route(...$coords);
 
         return new JsonResponse($data);
     }

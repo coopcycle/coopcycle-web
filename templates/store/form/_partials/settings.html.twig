@@ -26,6 +26,9 @@
     {% if form.packagesRequired is defined %}
       {{ form_row(form.packagesRequired) }}
     {% endif %}
+    {% if form.multiDropEnabled is defined %}
+      {{ form_row(form.multiDropEnabled) }}
+    {% endif %}
   {% endif %}
   <hr>
 {% endif %}

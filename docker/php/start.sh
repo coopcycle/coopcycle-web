@@ -16,7 +16,7 @@ if [ ! -f var/jwt/private.pem ]; then
     printf "\e[0;32mGenerating RSA key to encrypt webtokens..\e[0m\n"
     openssl genrsa -out var/jwt/private.pem -passout pass:coursiers -aes256 4096;
     chgrp www-data var/jwt/private.pem
-    chmod 640 var/jwt/private.pem
+    chmod 644 var/jwt/private.pem
 fi
 
 if [ ! -f var/jwt/public.pem ]; then

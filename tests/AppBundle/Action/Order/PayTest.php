@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
+use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -25,6 +26,7 @@ class PayTest extends TestCase
         $orderManager = $this->prophesize(OrderManager::class);
         $stripeManager = $this->prophesize(StripeManager::class);
         $ona = $this->prophesize(OrderNumberAssignerInterface::class);
+        $pmr = $this->prophesize(PaymentMethodRepositoryInterface::class);
 
         $order = new Order();
 
@@ -34,7 +36,8 @@ class PayTest extends TestCase
             $orderManager->reveal(),
             $doctrine->reveal(),
             $stripeManager->reveal(),
-            $ona->reveal()
+            $ona->reveal(),
+            $pmr->reveal()
         );
 
         $response = call_user_func_array($pay, [$order, $request]);

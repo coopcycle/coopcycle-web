@@ -27,7 +27,7 @@
       </div>
     {% elseif restaurant.description is not empty %}
       <div class="restaurant-item__caption mb-3">
-        <span class="text-muted">{{ restaurant.description }}</span>
+        <span class="text-muted">{{ restaurant.description|striptags|slice(0, 140) ~ '…'|raw|nl2br }}</span>
       </div>
     {% else %}
       <div class="restaurant-item__caption mb-3">

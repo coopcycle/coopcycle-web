@@ -348,7 +348,7 @@ Feature: Task recurrence rules
         "@id":"/api/recurrence_rules",
         "@type":"hydra:Collection",
         "hydra:member": @array@,
-        "hydra:totalItems":2
+        "hydra:totalItems":3
       }
       """
 
@@ -414,5 +414,48 @@ Feature: Task recurrence rules
           }
         ],
         "hydra:totalItems":2
+      }
+      """
+
+  Scenario: Apply recurrence rule creates delivery
+    Given the fixtures files are loaded:
+      | sylius_channels.yml  |
+      | users.yml            |
+      | addresses.yml        |
+      | recurrence_rules.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules/4/between" with body:
+      """
+      {
+        "after": "2021-02-12T00:00:00+01:00",
+        "before": "2021-02-12T23:59:59+01:00"
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RecurrenceRule",
+        "@id":"/api/recurrence_rules",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/tasks/1",
+            "@type":"Task"
+          },
+          {
+            "@id":"/api/tasks/2",
+            "@type":"Task"
+          },
+          {
+            "@id":"/api/tasks/3",
+            "@type":"Task"
+          }
+        ],
+        "hydra:totalItems":3
       }
       """

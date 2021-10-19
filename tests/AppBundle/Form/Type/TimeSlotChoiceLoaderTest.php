@@ -450,4 +450,35 @@ class TimeSlotChoiceLoaderTest extends TestCase
 
         $this->assertCount(0, $choices);
     }
+
+    public function testGetChoicesWithCutoff()
+    {
+        $choice1 = new Choice();
+        $choice1->setStartTime('09:00:00');
+        $choice1->setEndTime('17:00:00');
+
+        $slot = new TimeSlot();
+        $slot->addChoice($choice1);
+        $slot->setSameDayCutoff('10:00');
+
+        // Sunday
+        Carbon::setTestNow(Carbon::parse('2021-07-20 11:00:00'));
+
+        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr');
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertCount(2, $choices);
+
+        $this->assertTimeSlotChoice(
+            new \DateTime('2021-07-21 09:00:00'),
+            new \DateTime('2021-07-21 17:00:00'),
+            $choices[0]
+        );
+        $this->assertTimeSlotChoice(
+            new \DateTime('2021-07-22 09:00:00'),
+            new \DateTime('2021-07-22 17:00:00'),
+            $choices[1]
+        );
+    }
 }

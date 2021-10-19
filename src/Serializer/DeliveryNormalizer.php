@@ -134,12 +134,17 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();
 
-        if (isset($data['dropoff'])) {
-            $this->denormalizeTask($data['dropoff'], $dropoff, $format);
-        }
+        if (isset($data['tasks']) && is_array($data['tasks']) && count($data['tasks']) === 2) {
+            $this->denormalizeTask($data['tasks'][0], $pickup, $format);
+            $this->denormalizeTask($data['tasks'][1], $dropoff, $format);
+        } else {
+            if (isset($data['dropoff'])) {
+                $this->denormalizeTask($data['dropoff'], $dropoff, $format);
+            }
 
-        if (isset($data['pickup'])) {
-            $this->denormalizeTask($data['pickup'], $pickup, $format);
+            if (isset($data['pickup'])) {
+                $this->denormalizeTask($data['pickup'], $pickup, $format);
+            }
         }
 
         if (isset($data['packages'])) {

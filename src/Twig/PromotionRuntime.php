@@ -35,6 +35,10 @@ class PromotionRuntime implements RuntimeExtensionInterface
             case Rule\IsRestaurantRuleChecker::TYPE:
                 $restaurant = $this->repository->find($configuration['restaurant_id']);
                 return $this->translator->trans('promotion_rule.is_restaurant', ['%restaurant%' => $restaurant->getName()]);
+            case Rule\IsItemsTotalAboveRuleChecker::TYPE:
+                return $this->translator->trans('promotion_rule.is_items_total_above', [
+                    '%amount%' => $this->priceFormatter->formatWithSymbol($configuration['amount'])
+                ]);
         }
 
         return $rule->getType();

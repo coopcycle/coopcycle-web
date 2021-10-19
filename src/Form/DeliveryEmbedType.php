@@ -71,4 +71,11 @@ class DeliveryEmbedType extends DeliveryType
             }
         });
     }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        parent::configureOptions($resolver);
+
+        $resolver->setDefault('with_tags', false);
+    }
 }
