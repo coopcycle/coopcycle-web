@@ -73,8 +73,10 @@ class TaskList extends React.Component {
     this.props.unassignTasks(this.props.username, task)
   }
 
-  componentDidUpdate(){
-    this.props.clearPreExpanded(this.props.state)
+  componentDidUpdate() {
+    if (this.props.preExpanded.length > 0) {
+      this.props.clearPreExpanded()
+    }
   }
 
   render() {
@@ -234,7 +236,7 @@ function mapDispatchToProps(dispatch) {
     unassignTasks: (username, tasks) => dispatch(unassignTasks(username, tasks)),
     togglePolyline: (username) => dispatch(togglePolyline(username)),
     optimizeTaskList: (taskList) => dispatch(optimizeTaskList(taskList)),
-    clearPreExpanded: (state) => dispatch(clearPreExpanded(state))
+    clearPreExpanded: () => dispatch(clearPreExpanded())
   }
 }
 

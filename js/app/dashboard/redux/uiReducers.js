@@ -3,6 +3,7 @@ import {
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
   OPEN_NEW_TASK_MODAL,
   SET_CURRENT_TASK,
+  CLEAR_PRE_EXPANDED,
 } from "./actions";
 
 import {
@@ -41,11 +42,17 @@ export default (state = initialState, action) => {
         ...state,
         currentTask: action.task,
       }
+
     case CREATE_TASK_LIST_SUCCESS:
-    console.log(action.payload.username)
       return {
         ...state,
         preExpanded: [action.payload.username],
+      }
+
+    case CLEAR_PRE_EXPANDED:
+      return {
+        ...state,
+        preExpanded: [],
       }
   }
 
