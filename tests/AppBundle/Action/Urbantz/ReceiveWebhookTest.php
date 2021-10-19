@@ -63,6 +63,7 @@ class ReceiveWebhookTest extends TestCase
         $webhook = new UrbantzWebhook(UrbantzWebhook::TASKS_ANNOUNCED);
         $webhook->tasks = [
             [
+                'id' => 'abcdefgh123456',
                 'taskId' => '1269-00099999991',
                 'source' => [
                     'number' => '4',
@@ -105,6 +106,6 @@ class ReceiveWebhookTest extends TestCase
         $this->assertEquals('4 Rue Perrault, 44000 Nantes', $dropoffAddress->getStreetAddress());
         $this->assertEquals(47.21125182318541, $dropoffAddress->getGeo()->getLatitude());
         $this->assertEquals(-1.5506787323970848, $dropoffAddress->getGeo()->getLongitude());
-        $this->assertEquals('1269-00099999991', $delivery->getDropoff()->getRef());
+        $this->assertEquals('abcdefgh123456', $delivery->getDropoff()->getRef());
     }
 }
