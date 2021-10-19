@@ -15,7 +15,7 @@ import {
 import classNames from 'classnames'
 
 import Task from './Task'
-import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
+import { unassignTasks, togglePolyline, optimizeTaskList, clearPreExpanded } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
 import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
 
@@ -73,6 +73,12 @@ class TaskList extends React.Component {
     this.props.unassignTasks(this.props.username, task)
   }
 
+  componentDidUpdate() {
+    if (this.props.preExpanded.length > 0) {
+      this.props.clearPreExpanded()
+    }
+  }
+
   render() {
     const {
       duration,
@@ -95,9 +101,16 @@ class TaskList extends React.Component {
     const distanceFormatted = (distance / 1000).toFixed(2) + ' Km'
 
     const avatarURL = window.Routing.generate('user_avatar', { username })
+    const preExpanded = this.props.preExpanded && this.props.preExpanded.includes(username)
+    let itemProps = {}
+    if (preExpanded){
+      itemProps = {
+        dangerouslySetExpanded:true
+      }
+    }
 
     return (
-      <AccordionItem>
+      <AccordionItem uuid={username} {...itemProps} >
         <AccordionItemHeading>
           <AccordionItemButton>
             <span>
@@ -211,6 +224,7 @@ const makeMapStateToProps = () => {
       distance: ownProps.distance,
       duration: ownProps.duration,
       filters: state.settings.filters,
+      preExpanded: state.logistics.ui.preExpanded,
     }
   }
 
@@ -222,6 +236,7 @@ function mapDispatchToProps(dispatch) {
     unassignTasks: (username, tasks) => dispatch(unassignTasks(username, tasks)),
     togglePolyline: (username) => dispatch(togglePolyline(username)),
     optimizeTaskList: (taskList) => dispatch(optimizeTaskList(taskList)),
+    clearPreExpanded: () => dispatch(clearPreExpanded())
   }
 }
 

@@ -11,9 +11,11 @@ import { selectTaskLists } from '../redux/selectors'
 
 class TaskLists extends React.Component {
 
+
   render() {
 
     const { taskLists, taskListsLoading } = this.props
+
 
     return (
       <div className="dashboard__panel dashboard__panel--assignees">
@@ -37,7 +39,6 @@ class TaskLists extends React.Component {
               if (this.props.hiddenCouriers.includes(taskList.username)) {
                 return null
               }
-
               return (
                 <TaskList
                   key={ taskList['@id'] }

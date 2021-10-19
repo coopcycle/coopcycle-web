@@ -158,6 +158,8 @@ export const SHOW_RECURRENCE_RULES = 'SHOW_RECURRENCE_RULES'
 
 export const DELETE_GROUP_SUCCESS = 'DELETE_GROUP_SUCCESS'
 
+export const CLEAR_PRE_EXPANDED = 'CLEAR_PRE_EXPANDED'
+
 export function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
 }
@@ -1029,6 +1031,10 @@ export function handleDragStart(result) {
       dispatch(clearSelectedTasks())
     }
   }
+}
+
+export function clearPreExpanded() {
+  return { type: CLEAR_PRE_EXPANDED }
 }
 
 export function handleDragEnd(result) {
