@@ -2,11 +2,13 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import AverageDistance from './AverageDistance'
+import NumberOfTasks from './NumberOfTasks'
 import StoreCumulativeCount from './StoreCumulativeCount'
-import NumberOfTasksByStatus from './NumberOfTasksByStatus'
-import PercentageOfTasksByStatus from './PercentageOfTasksByStatus'
 import Navbar from './Navbar'
 import ChartPanel from './ChartPanel'
+import PercentageOfTasksByTiming from './PercentageOfTasksByTiming'
+import NumberOfTasksByTiming from './NumberOfTasksByTiming'
+import DistributionOfTasksByTiming from './DistributionOfTasksByTiming'
 
 const Dashboard = ({ cubejsApi, dateRange }) => {
 
@@ -17,14 +19,49 @@ const Dashboard = ({ cubejsApi, dateRange }) => {
         <ChartPanel title="Average distance">
           <AverageDistance cubejsApi={ cubejsApi } dateRange={ dateRange } />
         </ChartPanel>
+        <ChartPanel title="Number of tasks">
+          <NumberOfTasks cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        </ChartPanel>
         <ChartPanel title="Number of stores">
           <StoreCumulativeCount cubejsApi={ cubejsApi } dateRange={ dateRange } />
         </ChartPanel>
-        <ChartPanel title="Number Of Tasks By Status">
-          <NumberOfTasksByStatus cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        <div>
+        </div>
+        <ChartPanel title="Percentage Of Pickups By Timing">
+          <PercentageOfTasksByTiming
+            cubejsApi={ cubejsApi }
+            dateRange={ dateRange }
+            taskType="PICKUP" />
         </ChartPanel>
-        <ChartPanel title="Percentage Of Tasks By Status">
-          <PercentageOfTasksByStatus cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        <ChartPanel title="Percentage Of Dropoffs By Timing">
+          <PercentageOfTasksByTiming
+            cubejsApi={ cubejsApi }
+            dateRange={ dateRange }
+            taskType="DROPOFF" />
+        </ChartPanel>
+        <ChartPanel title="Number Of Pickups NOT on time">
+          <NumberOfTasksByTiming
+            cubejsApi={ cubejsApi }
+            dateRange={ dateRange }
+            taskType="PICKUP"/>
+        </ChartPanel>
+        <ChartPanel title="Number Of Dropoffs NOT on time">
+          <NumberOfTasksByTiming
+            cubejsApi={ cubejsApi }
+            dateRange={ dateRange }
+            taskType="DROPOFF"/>
+        </ChartPanel>
+        <ChartPanel title="Distribution Of Pickups By Timing">
+          <DistributionOfTasksByTiming
+            cubejsApi={ cubejsApi }
+            dateRange={ dateRange }
+            taskType="PICKUP"/>
+        </ChartPanel>
+        <ChartPanel title="Distribution Of Dropoffs By Timing">
+          <DistributionOfTasksByTiming
+            cubejsApi={ cubejsApi }
+            dateRange={ dateRange }
+            taskType="DROPOFF"/>
         </ChartPanel>
       </div>
     </div>

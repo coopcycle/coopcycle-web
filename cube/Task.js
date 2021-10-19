@@ -29,7 +29,7 @@ cube(`Task`, {
   joins: {
     TaskDoneEvent: {
       relationship: `hasOne`,
-      sql: `${CUBE.id} = ${TaskDoneEvent}.task_id`,
+      sql: `${CUBE.status} = 'DONE' AND ${CUBE.id} = ${TaskDoneEvent}.task_id`,
     },
   },
 
@@ -37,22 +37,49 @@ cube(`Task`, {
     {
       count: {
         type: `count`,
-        drillMembers: [id]
+        drillMembers: [id],
       },
-      countDoneTooEarly: {
+      countDone: {
+        type: `count`,
+        drillMembers: [id],
+        filters: [{ sql: `${CUBE.status} = 'DONE'` }],
+      },
+      countTooEarly: {
         sql: `id`,
         type: `count`,
         filters: [{ sql: `${CUBE.minutesAfterStart} < 0` }],
       },
-      countDoneTooLate: {
+      countTooLate: {
+        sql: `${countTooLateInt} * -1`,
+        type: `number`,
+      },
+      countTooLateInt: {
         sql: `id`,
         type: `count`,
         filters: [{ sql: `${CUBE.minutesBeforeEnd} < 0` }],
       },
-      countDoneOnTime: {
+      countOnTime: {
         sql: `id`,
         type: `count`,
-        filters: [{ sql: `${CUBE.minutesAfterStart} > 0 AND ${CUBE.minutesBeforeEnd} > 0` }],
+        filters: [{ sql: `${CUBE.minutesAfterStart} >= 0 AND ${CUBE.minutesBeforeEnd} >= 0` }],
+      },
+      percentageTooEarly: {
+        type: `number`,
+        format: `percent`,
+        sql: `ROUND(${CUBE.countTooEarly}::numeric / ${CUBE.countDone}::numeric * 100.0, 2)`,
+        filters: [{ sql: `${CUBE.countDone} > 0` }],
+      },
+      percentageTooLate: {
+        type: `number`,
+        format: `percent`,
+        sql: `ROUND(${CUBE.countTooLateInt}::numeric / ${CUBE.countDone}::numeric * 100.0, 2)`,
+        filters: [{ sql: `${CUBE.countDone} > 0` }],
+      },
+      percentageOnTime: {
+        type: `number`,
+        format: `percent`,
+        sql: `ROUND(${CUBE.countOnTime}::numeric / ${CUBE.countDone}::numeric * 100.0, 2)`,
+        filters: [{ sql: `${CUBE.countDone} > 0` }],
       },
     },
     statuses.reduce(
@@ -99,11 +126,45 @@ cube(`Task`, {
       type: `number`
     },
 
+    intervalDiff: {
+      type: `number`,
+      case: {
+        when: [
+          {
+            sql: `${CUBE.minutesAfterStart} < 0`,
+            label: { sql: `${CUBE.minutesAfterStart}` },
+          },
+          {
+            sql: `${CUBE.minutesAfterStart} >= 0 AND ${CUBE.minutesBeforeEnd} >= 0`,
+            label: { sql: `0` },
+          },
+          {
+            sql: `${CUBE.minutesBeforeEnd} < 0`,
+            label: { sql: `${CUBE.minutesBeforeEnd} * -1` },
+          },
+        ],
+        else: { label: `100000` },
+      },
+    },
+
     status: {
       sql: `status`,
       type: `string`
     },
 
+    type: {
+      sql: `type`,
+      type: `string`
+    },
+  },
+
+  segments: {
+    pickup: {
+      sql: `${CUBE.type} = 'PICKUP'`,
+    },
+    dropoff: {
+      sql: `${CUBE.type} = 'DROPOFF'`,
+    },
   },
 
   dataSource: `default`
