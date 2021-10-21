@@ -1837,16 +1837,16 @@
         },
         {
             "name": "doctrine/common",
-            "version": "3.1.2",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/common.git",
-                "reference": "a036d90c303f3163b5be8b8fde9b6755b2be4a3a"
+                "reference": "6d970a11479275300b5144e9373ce5feacfa9b91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/common/zipball/a036d90c303f3163b5be8b8fde9b6755b2be4a3a",
-                "reference": "a036d90c303f3163b5be8b8fde9b6755b2be4a3a",
+                "url": "https://api.github.com/repos/doctrine/common/zipball/6d970a11479275300b5144e9373ce5feacfa9b91",
+                "reference": "6d970a11479275300b5144e9373ce5feacfa9b91",
                 "shasum": ""
             },
             "require": {
@@ -1907,7 +1907,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/common/issues",
-                "source": "https://github.com/doctrine/common/tree/3.1.2"
+                "source": "https://github.com/doctrine/common/tree/3.2.0"
             },
             "funding": [
                 {
@@ -1923,7 +1923,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-02-10T20:18:51+00:00"
+            "time": "2021-10-19T06:47:22+00:00"
         },
         {
             "name": "doctrine/data-fixtures",
@@ -8288,16 +8288,16 @@
         },
         {
             "name": "mercadopago/dx-php",
-            "version": "2.4.3",
+            "version": "2.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mercadopago/sdk-php.git",
-                "reference": "0cc752104164f0bc9b94e3d5b7754016039b822b"
+                "reference": "678f1e059309c5340f928df909e6b747caed2116"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mercadopago/sdk-php/zipball/0cc752104164f0bc9b94e3d5b7754016039b822b",
-                "reference": "0cc752104164f0bc9b94e3d5b7754016039b822b",
+                "url": "https://api.github.com/repos/mercadopago/sdk-php/zipball/678f1e059309c5340f928df909e6b747caed2116",
+                "reference": "678f1e059309c5340f928df909e6b747caed2116",
                 "shasum": ""
             },
             "require": {
@@ -8334,9 +8334,9 @@
             "description": "Mercado Pago PHP SDK",
             "homepage": "https://github.com/mercadopago/sdk-php",
             "support": {
-                "source": "https://github.com/mercadopago/sdk-php/tree/2.4.3"
+                "source": "https://github.com/mercadopago/sdk-php/tree/2.4.4"
             },
-            "time": "2021-09-30T17:36:34+00:00"
+            "time": "2021-10-20T18:08:36+00:00"
         },
         {
             "name": "michelf/php-markdown",
@@ -20936,5 +20936,5 @@
         "php": ">=7.4"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
