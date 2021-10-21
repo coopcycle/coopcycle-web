@@ -61,19 +61,33 @@ class ApiAppType extends AbstractType
 
             if (null !== $apiApp->getId()) {
 
-                $form->add('client_id', TextType::class, [
-                    'label' => 'form.api_app.client_id.label',
-                    'data' => $apiApp->getOauth2Client()->getIdentifier(),
-                    'disabled' => true,
-                    'mapped' => false,
-                ]);
+                $type = $apiApp->getType();
 
-                $form->add('client_secret', TextType::class, [
-                    'label' => 'form.api_app.client_secret.label',
-                    'data' => $apiApp->getOauth2Client()->getSecret(),
-                    'disabled' => true,
-                    'mapped' => false,
-                ]);
+                switch ($type) {
+                    case 'api_key':
+                        $form->add('apiKey', TextType::class, [
+                            'label' => 'form.api_app.client_id.label',
+                            'data' => 'ak_' . $apiApp->getApiKey(),
+                            'disabled' => true,
+                            'mapped' => false,
+                        ]);
+                        break;
+                    case 'oauth':
+                    default:
+                        $form->add('client_id', TextType::class, [
+                            'label' => 'form.api_app.client_id.label',
+                            'data' => $apiApp->getOauth2Client()->getIdentifier(),
+                            'disabled' => true,
+                            'mapped' => false,
+                        ]);
+                        $form->add('client_secret', TextType::class, [
+                            'label' => 'form.api_app.client_secret.label',
+                            'data' => $apiApp->getOauth2Client()->getSecret(),
+                            'disabled' => true,
+                            'mapped' => false,
+                        ]);
+                        break;
+                }
 
                 $storeOptions['disabled'] = true;
             }
