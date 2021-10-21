@@ -39,7 +39,7 @@ function typeFromSeries (s) {
 }
 
 function timingFromSeries (s) {
-  if (s.key.includes('countTooEarly')) {
+  if (s.key.includes('TooEarly')) {
     return TIMING_TOO_EARLY
   } else {
     return TIMING_TOO_LATE
@@ -51,7 +51,13 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
     () =>
       resultSet.series().map((s) => ({
         label: s.title,
-        data: s.series.map((r) => r.value),
+        data: s.series.map((r) => {
+          if (s.key.includes('Task.countTooLate')) {
+            return -1 * r.value
+          } else {
+            return r.value
+          }
+        }),
         backgroundColor: s.series.map(() => {
           return getBackgroundColor(typeFromSeries(s), timingFromSeries(s))
         }),

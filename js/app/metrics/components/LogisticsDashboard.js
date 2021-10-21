@@ -9,6 +9,7 @@ import ChartPanel from './ChartPanel'
 import PercentageOfTasksByTiming from './PercentageOfTasksByTiming'
 import NumberOfTasksByTiming from './NumberOfTasksByTiming'
 import DistributionOfTasksByTiming from './DistributionOfTasksByTiming'
+import AverageTiming from './AverageTiming'
 
 const Dashboard = ({ cubejsApi, dateRange }) => {
 
@@ -34,6 +35,11 @@ const Dashboard = ({ cubejsApi, dateRange }) => {
         </ChartPanel>
         <ChartPanel title="Number Of Tasks NOT on time">
           <NumberOfTasksByTiming
+            cubejsApi={ cubejsApi }
+            dateRange={ dateRange } />
+        </ChartPanel>
+        <ChartPanel title="Average delay">
+          <AverageTiming
             cubejsApi={ cubejsApi }
             dateRange={ dateRange } />
         </ChartPanel>

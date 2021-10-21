@@ -2,15 +2,17 @@ import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
 import 'antd/dist/antd.css';
 import React from 'react';
-import { Bar } from 'react-chartjs-2';
+import { Bar, } from 'react-chartjs-2';
 import {getCubeDateRange} from "../utils";
-import { useDeepCompareMemo } from 'use-deep-compare';
-// import {formatDayDimension, getBackgroundColor, getLabel} from "../tasksGraphUtils";
+import { useDeepCompareMemo } from 'use-deep-compare'
 import {
-  formatDayDimension,
-  getBackgroundColor, TIMING_TOO_EARLY, TIMING_TOO_LATE, TYPE_DROPOFF,
+  formatDayDimension, getBackgroundColor, TIMING_TOO_EARLY, TIMING_TOO_LATE,
+  TYPE_DROPOFF,
   TYPE_PICKUP,
 } from '../tasksGraphUtils'
+
+// const defaultMinMaxX = 6 * 60 // in minutes
+// const defaultMinX = -1 * defaultMinMaxX
 
 const commonOptions = {
   maintainAspectRatio: false,
@@ -20,21 +22,6 @@ const commonOptions = {
   plugins: {
     legend: {
       position: 'bottom',
-    },
-    tooltip: {
-      callbacks: {
-        label: function(context) {
-          let label = context.dataset.label || '';
-
-          if (label) {
-            label += ': ';
-          }
-          if (context.parsed.y !== null) {
-            label += `${context.parsed.y}%`;
-          }
-          return label;
-        }
-      },
     },
   },
   scales: {
@@ -68,10 +55,21 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
       resultSet.series().map((s) => ({
         label: s.title,
         data: s.series.map((r) => {
-          if (s.key.includes('Task.percentageTooLate')) {
-            return -1 * r.value
+          console.log(`data:`)
+          console.log(s)
+          console.log(r)
+
+          let value = r.value
+
+          //todo
+          // if (value < defaultMinX) {
+          //   value = defaultMinX
+          // }
+
+          if (s.key.includes('Task.averageTooEarly')) {
+            return -1 * value
           } else {
-            return r.value
+            return value
           }
         }),
         backgroundColor: s.series.map(() => {
@@ -118,47 +116,47 @@ const renderChart = ({ resultSet, error, pivotConfig }) => {
 
 const ChartRenderer = ({ cubejsApi, dateRange }) => {
   return (
-  <QueryRenderer
-    query={{
-      "measures": [
-        "Task.percentageTooEarly",
-        "Task.percentageTooLate"
-      ],
-      "timeDimensions": [
-        {
-          "dimension": "Task.intervalEndAt",
-          "granularity": "day",
-          "dateRange": getCubeDateRange(dateRange)
+    <QueryRenderer
+      query={{
+        "measures": [
+          "Task.averageTooEarly",
+          "Task.averageTooLate",
+        ],
+        "timeDimensions": [
+          {
+            "dimension": "Task.intervalEndAt",
+            "granularity": "day",
+            "dateRange": getCubeDateRange(dateRange)
+          }
+        ],
+        "order": {
+          "Task.type": "desc"
+        },
+        "filters": [],
+        "dimensions": [
+          "Task.type"
+        ],
+        "limit": 5000,
+        "segments": []
+      }}
+      cubejsApi={cubejsApi}
+      resetResultSetOnChange={false}
+      render={(props) => renderChart({
+        ...props,
+        chartType: 'bar',
+        pivotConfig: {
+          "x": [
+            "Task.intervalEndAt.day"
+          ],
+          "y": [
+            "Task.type",
+            "measures"
+          ],
+          "fillMissingDates": true,
+          "joinDateRange": false
         }
-      ],
-      "order": {
-        "Task.type": "desc"
-      },
-      "filters": [],
-      "dimensions": [
-        "Task.type"
-      ],
-      "limit": 5000,
-      "segments": []
-    }}
-    cubejsApi={cubejsApi}
-    resetResultSetOnChange={false}
-    render={(props) => renderChart({
-      ...props,
-      chartType: 'bar',
-      pivotConfig: {
-        "x": [
-          "Task.intervalEndAt.day",
-        ],
-        "y": [
-          "Task.type",
-          "measures"
-        ],
-        "fillMissingDates": true,
-        "joinDateRange": false
-      }
-    })}
-  />
+      })}
+    />
   );
 };
 
