@@ -4,21 +4,16 @@ import 'antd/dist/antd.css';
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import {getCubeDateRange} from "../utils";
-// import {formatDayDimension, getBackgroundColor, getLabel} from "../tasksGraphUtils";
 import { useDeepCompareMemo } from 'use-deep-compare'
+import {
+  getBackgroundColor, TIMING_ON_TIME,
+  TIMING_TOO_EARLY,
+  TIMING_TOO_LATE,
+} from '../tasksGraphUtils'
 
-const COLORS_SERIES = [
-  '#5b8ff9',
-  '#5ad8a6',
-  '#5e7092',
-  '#f6bd18',
-  '#6f5efa',
-  '#6ec8ec',
-  '#945fb9',
-  '#ff9845',
-  '#299796',
-  '#fe99c3',
-];
+const defaultMinMaxX = 12 * 60 // in minutes
+const defaultMinX = -1 * defaultMinMaxX
+const defaultMaxX = defaultMinMaxX
 
 const commonOptions = {
   maintainAspectRatio: false,
@@ -32,25 +27,78 @@ const commonOptions = {
   },
   scales: {
     x: {
+      type: 'linear',
       ticks: {
         autoSkip: true,
         maxRotation: 0,
         padding: 12,
         minRotation: 0,
+        callback: function(value) {
+          if (value === defaultMinX) {
+            return "<"
+          } else if (value === defaultMaxX) {
+            return "<"
+          } else {
+            return value + ' min';
+          }
+        }
       },
     },
   },
 };
 
-const BarChartRenderer = ({ resultSet, pivotConfig }) => {
+function timingFromX (x) {
+  if (x < 0) {
+    return TIMING_TOO_EARLY
+  } else if (x === 0) {
+    return TIMING_ON_TIME
+  } else {
+    return TIMING_TOO_LATE
+  }
+}
+
+function reduce(arr, biFunc) {
+  return arr.reduce(function (acc, r) {
+    return biFunc(acc, Number(r.x))
+  }, 0)
+}
+
+const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
+  let minMaxX = defaultMinMaxX
+
   const datasets = useDeepCompareMemo(
     () =>
-      resultSet.series().map((s, index) => ({
-        label: s.title,
-        data: s.series.map((r) => r.value),
-        backgroundColor: COLORS_SERIES[index],
-        fill: false,
-      })),
+      resultSet.series().map((s) => {
+        let min = reduce(s.series, Math.min)
+        let max = reduce(s.series, Math.max)
+
+        minMaxX = Math.min(defaultMinMaxX, Math.max(Math.abs(min), Math.abs(max)))
+
+        return ({
+          label: s.title,
+          data: s.series.map((r) => {
+            let x = Number(r.x)
+
+            if (x < defaultMinX) {
+              x = defaultMinX
+            }
+
+            if (x > defaultMaxX) {
+              x = defaultMaxX
+            }
+
+            return {
+              x,
+              y: r.value
+            }
+          }),
+          backgroundColor: s.series.map((r) => {
+            let x = Number(r.x)
+            return getBackgroundColor(taskType, timingFromX(x))
+          }),
+          fill: false,
+        })
+      }),
     [resultSet]
   );
   const data = {
@@ -61,14 +109,19 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
   const options = {
     ...commonOptions,
     scales: {
-      x: { ...commonOptions.scales.x, stacked },
+      x: {
+        ...commonOptions.scales.x,
+        stacked,
+        min: -1 * minMaxX,
+        max: minMaxX,
+      },
       y: { ...commonOptions.scales.y, stacked },
     },
   };
   return <Bar type="bar" data={data} options={options} />;
 };
 
-const renderChart = ({ resultSet, error, pivotConfig }) => {
+const renderChart = ({ resultSet, error, pivotConfig, taskType }) => {
   if (error) {
     return <div>{error.toString()}</div>;
   }
@@ -77,7 +130,7 @@ const renderChart = ({ resultSet, error, pivotConfig }) => {
     return <Spin />;
   }
 
-  return <BarChartRenderer resultSet={resultSet} pivotConfig={pivotConfig} />;
+  return <BarChartRenderer resultSet={resultSet} pivotConfig={pivotConfig} taskType={taskType} />;
 
 };
 
@@ -123,7 +176,8 @@ const ChartRenderer = ({ cubejsApi, dateRange, taskType }) => {
           ],
           "fillMissingDates": true,
           "joinDateRange": false
-        }
+        },
+        taskType
       })}
     />
   );

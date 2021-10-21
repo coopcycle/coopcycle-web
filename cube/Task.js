@@ -114,14 +114,17 @@ cube(`Task`, {
       type: `time`
     },
 
+    // based on http://sqlines.com/postgresql/how-to/datediff
     minutesAfterStart: {
-      sql: `DATE_PART('hour', ${CUBE.done} - ${CUBE.intervalStartAt}) * 60
+      sql: `DATE_PART('day', ${CUBE.done} - ${CUBE.intervalStartAt}) * 24 * 60
+          + DATE_PART('hour', ${CUBE.done} - ${CUBE.intervalStartAt}) * 60
           + DATE_PART('minute', ${CUBE.done} - ${CUBE.intervalStartAt})`,
       type: `number`
     },
 
     minutesBeforeEnd: {
-      sql: `DATE_PART('hour', ${CUBE.intervalEndAt} - ${CUBE.done}) * 60
+      sql: `DATE_PART('day', ${CUBE.intervalEndAt} - ${CUBE.done}) * 24 * 60
+          + DATE_PART('hour', ${CUBE.intervalEndAt} - ${CUBE.done}) * 60
           + DATE_PART('minute', ${CUBE.intervalEndAt} - ${CUBE.done})`,
       type: `number`
     },
@@ -140,10 +143,10 @@ cube(`Task`, {
           },
           {
             sql: `${CUBE.minutesBeforeEnd} < 0`,
-            label: { sql: `${CUBE.minutesBeforeEnd} * -1` },
+            label: { sql: `(${CUBE.minutesBeforeEnd}) * -1` },
           },
         ],
-        else: { label: `100000` },
+        else: { label: `0` },
       },
     },
 
