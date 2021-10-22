@@ -103,4 +103,26 @@ class MercadopagoManager
 
         return $payment;
     }
+
+    /**
+     * @return MercadoPago\Payment
+     */
+    public function getPayment(PaymentInterface $payment)
+    {
+        $this->configure();
+
+        $order = $payment->getOrder();
+
+        $options = [];
+
+        if (null !== $order->getRestaurant()) {
+            $account = $order->getRestaurant()->getMercadopagoAccount(true);
+            if ($account) {
+                // @see MercadoPago\Manager::processOptions()
+                $options['custom_access_token'] = $account->getAccessToken();
+            }
+        }
+
+        return MercadoPago\Payment::read(["id" => $payment->getMercadopagoPaymentId()], ["custom_access_token" => $options['custom_access_token']]);
+    }
 }
