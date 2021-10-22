@@ -12,7 +12,7 @@ export default ({ code }) => {
     case 'card':
       return (
         <span>
-          <img src={ visa } height="22" className="mr-2" />
+          <img src={ visa } height="18" className="mr-2" />
           <img src={ mastercard } height="18" />
         </span>
       )
