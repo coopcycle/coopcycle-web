@@ -6,6 +6,8 @@ use AppBundle\Action\Order\Pay;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
+use AppBundle\Payment\GatewayResolver;
+use AppBundle\Service\MercadopagoManager;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -27,6 +29,8 @@ class PayTest extends TestCase
         $stripeManager = $this->prophesize(StripeManager::class);
         $ona = $this->prophesize(OrderNumberAssignerInterface::class);
         $pmr = $this->prophesize(PaymentMethodRepositoryInterface::class);
+        $gatewayResolver = $this->prophesize(GatewayResolver::class);
+        $mercadopagoManager = $this->prophesize(MercadopagoManager::class);
 
         $order = new Order();
 
@@ -37,7 +41,9 @@ class PayTest extends TestCase
             $doctrine->reveal(),
             $stripeManager->reveal(),
             $ona->reveal(),
-            $pmr->reveal()
+            $pmr->reveal(),
+            $gatewayResolver->reveal(),
+            $mercadopagoManager->reveal(),
         );
 
         $response = call_user_func_array($pay, [$order, $request]);
