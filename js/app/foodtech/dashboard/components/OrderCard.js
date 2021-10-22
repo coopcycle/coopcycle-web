@@ -24,7 +24,7 @@ export default withTranslation()(({ order, onClick }) => {
           <li><i className="fa fa-cutlery"></i> { order.vendor.name }</li>
           <li><i className="fa fa-user"></i> { order.customer.username }</li>
           <li><i className="fa fa-money"></i> { (order.total / 100).formatMoney() }</li>
-          <li><PaymentMethodIcon code={ order.paymentMethod } /></li>
+          <li><PaymentMethodIcon code={ order.paymentMethod } height="18" /></li>
           { order.assignedTo && (
             <li>
               <Avatar username={ order.assignedTo } />
