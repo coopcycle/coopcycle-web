@@ -4,6 +4,7 @@ import { withTranslation } from 'react-i18next'
 import OrderNumber from './OrderNumber'
 import ShippingTimeRange from '../../../components/ShippingTimeRange'
 import Avatar from '../../../components/Avatar'
+import PaymentMethodIcon from '../../../components/PaymentMethodIcon'
 
 export default withTranslation()(({ order, onClick }) => {
 
@@ -23,6 +24,7 @@ export default withTranslation()(({ order, onClick }) => {
           <li><i className="fa fa-cutlery"></i> { order.vendor.name }</li>
           <li><i className="fa fa-user"></i> { order.customer.username }</li>
           <li><i className="fa fa-money"></i> { (order.total / 100).formatMoney() }</li>
+          <li><PaymentMethodIcon code={ order.paymentMethod } /></li>
           { order.assignedTo && (
             <li>
               <Avatar username={ order.assignedTo } />

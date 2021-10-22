@@ -995,6 +995,20 @@ class Order extends BaseOrder implements OrderInterface
     }
 
     /**
+     * @SerializedName("paymentMethod")
+     */
+    public function getPaymentMethod(): string
+    {
+        $payment = $this->getLastPayment();
+
+        if ($payment) {
+            return $payment->getMethod()->getCode();
+        }
+
+        return '';
+    }
+
+    /**
      * @SerializedName("fulfillmentMethod")
      */
     public function setFulfillmentMethod(string $fulfillmentMethod)
