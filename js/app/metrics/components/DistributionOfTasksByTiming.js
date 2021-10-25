@@ -22,7 +22,7 @@ const commonOptions = {
   },
   plugins: {
     legend: {
-      position: 'bottom',
+      display: false,
     },
   },
   scales: {

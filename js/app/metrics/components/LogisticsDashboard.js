@@ -10,6 +10,7 @@ import PercentageOfTasksByTiming from './PercentageOfTasksByTiming'
 import NumberOfTasksByTiming from './NumberOfTasksByTiming'
 import DistributionOfTasksByTiming from './DistributionOfTasksByTiming'
 import AverageTiming from './AverageTiming'
+import PercentageOfTasksOnTime from './PercentageOfTasksOnTime'
 
 const Dashboard = ({ cubejsApi, dateRange }) => {
 
@@ -28,28 +29,33 @@ const Dashboard = ({ cubejsApi, dateRange }) => {
         </ChartPanel>
         <div>
         </div>
-        <ChartPanel title="Percentage Of Tasks NOT on time">
+        <ChartPanel title="Percentage Of Tasks done on time">
+          <PercentageOfTasksOnTime
+            cubejsApi={ cubejsApi }
+            dateRange={ dateRange } />
+        </ChartPanel>
+        <ChartPanel title="Percentage Of Tasks done too early/late">
           <PercentageOfTasksByTiming
             cubejsApi={ cubejsApi }
             dateRange={ dateRange } />
         </ChartPanel>
-        <ChartPanel title="Number Of Tasks NOT on time">
+        <ChartPanel title="Number Of Tasks done too early/late">
           <NumberOfTasksByTiming
             cubejsApi={ cubejsApi }
             dateRange={ dateRange } />
         </ChartPanel>
-        <ChartPanel title="Average delay">
+        <ChartPanel title="Average number of minutes Tasks are done too early/late">
           <AverageTiming
             cubejsApi={ cubejsApi }
             dateRange={ dateRange } />
         </ChartPanel>
-        <ChartPanel title="Distribution Of Pickups By Timing">
+        <ChartPanel title="Number Of PICKUP done X minutes earlier/later than planned">
           <DistributionOfTasksByTiming
             cubejsApi={ cubejsApi }
             dateRange={ dateRange }
             taskType="PICKUP"/>
         </ChartPanel>
-        <ChartPanel title="Distribution Of Dropoffs By Timing">
+        <ChartPanel title="Number Of DROPOFF done X minutes earlier/later than planned">
           <DistributionOfTasksByTiming
             cubejsApi={ cubejsApi }
             dateRange={ dateRange }

@@ -40,26 +40,26 @@ export const getBackgroundColor = (type, timing) => {
     case TYPE_PICKUP:
       switch (timing) {
         case TIMING_TOO_EARLY:
-          value = '#6ec8ec'
+          value = '#86BCE3'
           break;
         case TIMING_TOO_LATE:
-          value = '#fe99c3'
+          value = '#FAB06F'
           break;
         case TIMING_ON_TIME:
-          value = '#5ad8a6'
+          value = '#81c784'
           break;
       }
       break;
     case TYPE_DROPOFF:
       switch (timing) {
         case TIMING_TOO_EARLY:
-          value = '#5b8ff9'
+          value = '#2B567F'
           break;
         case TIMING_TOO_LATE:
-          value = '#945fb9'
+          value = '#A65331'
           break;
         case TIMING_ON_TIME:
-          value = '#5ad8a6'
+          value = '#2e7d32'
           break;
       }
       break;

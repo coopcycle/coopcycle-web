@@ -50,7 +50,19 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
   const datasets = useDeepCompareMemo(
     () =>
       resultSet.series().map((s) => ({
-        label: s.title,
+        get label() {
+          if (s.key.includes('PICKUP,Task.countTooEarly')) {
+            return "# PICKUP done too early"
+          } else if (s.key.includes('PICKUP,Task.countTooLate')) {
+            return "# PICKUP done too late"
+          } else if (s.key.includes('DROPOFF,Task.countTooEarly')) {
+            return "# DROPOFF done too early"
+          } else if (s.key.includes('DROPOFF,Task.countTooLate')) {
+            return "# DROPOFF done too late"
+          }else {
+            return s.title
+          }
+        },
         data: s.series.map((r) => {
           if (s.key.includes('Task.countTooLate')) {
             return -1 * r.value

@@ -73,15 +73,11 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
     () =>
       resultSet.series().map((s) => ({
         get label() {
-          if (s.key.includes('PICKUP,Task.percentageTooEarly')) {
-            return "% PICKUP done too early"
-          } else if (s.key.includes('PICKUP,Task.percentageTooLate')) {
-            return "% PICKUP done too late"
-          } else if (s.key.includes('DROPOFF,Task.percentageTooEarly')) {
-            return "% DROPOFF done too early"
-          } else if (s.key.includes('DROPOFF,Task.percentageTooLate')) {
-            return "% DROPOFF done too late"
-          }else {
+          if (s.key.includes('PICKUP,Task.percentageOnTime')) {
+            return "% PICKUP done on time"
+          } else if (s.key.includes('DROPOFF,Task.percentageOnTime')) {
+            return "% DROPOFF done on time"
+          } else {
             return s.title
           }
         },
@@ -139,8 +135,7 @@ const ChartRenderer = ({ cubejsApi, dateRange }) => {
   <QueryRenderer
     query={{
       "measures": [
-        "Task.percentageTooEarly",
-        "Task.percentageTooLate"
+        "Task.percentageOnTime",
       ],
       "timeDimensions": [
         {
