@@ -11,8 +11,8 @@ import {
   TYPE_PICKUP,
 } from '../tasksGraphUtils'
 
-// const defaultMinMaxX = 6 * 60 // in minutes
-// const defaultMinX = -1 * defaultMinMaxX
+const defaultMinMaxX = 6 * 60 // in minutes
+const defaultMaxX = defaultMinMaxX
 
 const commonOptions = {
   maintainAspectRatio: false,
@@ -59,14 +59,13 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
           console.log(s)
           console.log(r)
 
-          let value = r.value
+          let value = Math.abs(r.value)
 
-          //todo
-          // if (value < defaultMinX) {
-          //   value = defaultMinX
-          // }
+          if (value > defaultMaxX) {
+            value = defaultMaxX
+          }
 
-          if (s.key.includes('Task.averageTooEarly')) {
+          if (s.key.includes('Task.averageTooLate')) {
             return -1 * value
           } else {
             return value
