@@ -169,7 +169,7 @@ base_reduced:
     se:
       reduced: 0.06
     it:
-      reduced: 0.05
+      reduced: 0.04
 
 base_exempt:
   rates:
@@ -197,4 +197,6 @@ base_exempt:
     se:
       zero: 0.00
     dk:
+      zero: 0.00
+    it:
       zero: 0.00
