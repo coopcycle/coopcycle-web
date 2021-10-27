@@ -211,7 +211,7 @@
         "PAYMENT_FORM_REDIRECT_HELP": "Verrai reindirizzato al sito della banca per completare il tuo pagamento",
         "PAYMENT_FORM_CARDHOLDER_NAME": "Titolare carta",
         "PAYMENT_FORM_TITLE": "Informazioni di pagamento",
-        "CASH_ON_DELIVERY_DISCLAIMER": "Il pagamento sarà in contanti alla consegna. Per favore, prepara l'importo preciso e assicurati di essere raggiungibile.",
+        "CASH_ON_DELIVERY_DISCLAIMER": "Pagherai in contanti. Per favore prepara l'importo esatto e assicurati di essere raggiungibile.",
         "PRICE_RANGE_EDITOR": {
             "PER_PACKAGE_DEL_DISCOUNT": "Rimuovere sconto",
             "PER_PACKAGE_ADD_DISCOUNT": "Aggiungere sconto",
