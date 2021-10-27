@@ -238,7 +238,7 @@
         "CART_PRODUCT_OPTIONS_VALUES_RANGE": "Per favore scegli tra i valori {{min}} e {{max}}",
         "RULE_PICKER_LINE_OPTGROUP_ORDER": "Ordine",
         "RULE_PICKER_LINE_OPTGROUP_DELIVERY": "Consegna",
-        "RULE_PICKER_LINE_ORDER_ITEMS_TOTAL": "Numero totale di articoli",
+        "RULE_PICKER_LINE_ORDER_ITEMS_TOTAL": "Importo totale",
         "RULE_PICKER_LINE_PACKAGES": "Pacchetti",
         "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Differenza (ore)",
         "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Map clusters abilitato",
