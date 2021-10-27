@@ -47,7 +47,7 @@ embed.delivery.configure_pricing_rule_set: È necessario configurare prima una r
   di determinazione dei prezzi da applicare
 embed.delivery.title: Modulo di creazione consegna
 adminDashboard.package_sets.title: Pacchi
-adminDashboard.embed.title: Visualizzazione esterna
+adminDashboard.embed.title: Formulari
 adminDashboard.deliveries.deliveryAddress: Indirizzo di consegna
 adminDashboard.deliveries.originAddress: Indirizzo di origine
 adminDashboard.deliveries.delivery: Consegna
@@ -463,8 +463,8 @@ notifications.messenger_approaching: Ciao %customer%! Il nostro corriere %messen
 form.task.dropoff.doorstep.label: Consegna alla porta
 form.task_event.notes.help: Puoi modificare il commento
 form.task_complete.done.label: Completa
-form.task_complete.fail.label: Riporta un problema
-task.type.PICKUP: Presa
+form.task_complete.fail.label: Segnala un problema
+task.type.PICKUP: Ritiro
 form.order_export.messenger.label: Aggiungi colonna con il corriere che ha completato
   l'ordine
 form.store_type.setAsDefault.label: Imposta come indirizzo predefinito
@@ -886,7 +886,7 @@ order.list.receipt: Ricevuta
 payment.state.authorized: Autorizzato
 order.adjustment_type.reusable_packaging: Imballaggio
 order.list.shippedAt: Tempo di spedizione
-form.delivery.pickup.doneBefore.label: Data e ora di presa
+form.delivery.pickup.doneBefore.label: Data e ora di ritiro
 form.deposit_refund_settings.deposit_refund_optin.label: Il sistema di deposito -
   rimborso è opzionale
 food_establishment.CAFE_OR_COFFEE_SHOP: Caffè o bar
@@ -901,7 +901,7 @@ profile.managedRestaurants: Ristoranti gestiti dall'utente
 order.summary.heading: Ordine %number% (#%id%)
 order.total_excluding_tax: Totale (escluso IVA)
 order.total_including_tax: Totale (incl. IVA)
-order.preparation_expected_at: Preparazione prevista per %date%
+order.preparation_expected_at: La preparazione inizierà %date%
 order.preparation_expected_for: Preparazione aspettata per %date%
 order.shipping_date.title: Orario di consegna
 order.payment.title: Le tue informazioni di pagamento
@@ -971,7 +971,7 @@ profile.fullName: Nome completo
 restaurant.list.active_catalog: Catalogo attivo
 restaurant.list.catalogs: Cataloghi
 localBusiness.form.business_address.label: Indirizzo commerciale
-localBusiness.form.use_different_business_address.label: Utilizzi un indirizzo commerciale
+localBusiness.form.use_different_business_address.label: Utilizza un indirizzo commerciale
   differente
 adminDashboard.users.last_order: Ultimo ordine
 adminDashboard.users.registered_at: Registrato
@@ -1231,3 +1231,9 @@ restaurant.embed.step_1: Aggiungi lo script <code>coopcycle.js</code> alla tua p
 restaurant.embed.disclaimer: Puoi incorporare il checkout direttamente nel tuo sito
   web. Segui le istruzioni prima di iniziare.
 restaurant.form.section.embed: Incorporare
+restaurant.form.cash_on_delivery_enabled.help: Questo permetterà ai clienti di pagare
+  in contanti alla consegna. Usare con precauzione.
+restaurant.form.cash_on_delivery_enabled.label: Attivare pagamento in contanti alla
+  consegna
+api_apps.regenerate_secret: Rinnovare la chiave segreta
+promotion_rule.is_items_total_above: Il totale dell'importo è superiore a %amount%

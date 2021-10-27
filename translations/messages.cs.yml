@@ -28,7 +28,7 @@ adminDashboard.deliveries.address: Adresa
 adminDashboard.deliveries.delivery: Dodávka
 adminDashboard.deliveries.originAddress: Původní adresa
 adminDashboard.deliveries.deliveryAddress: Doručovací adresa
-adminDashboard.embed.title: Externí obrazovka
+adminDashboard.embed.title: Formuláře
 adminDashboard.package_sets.title: Balíčky
 embed.delivery.title: Formulář pro vytvoření dodávky
 embed.delivery.configure_pricing_rule_set: Nejprve musíte nakonfigurovat pravidlo
@@ -278,7 +278,7 @@ order.total_including_tax: Celkem (vč. DPH)
 order.items_total: Celkem produktů
 order.total_tax: DPH
 order.total_tax_by_rate: Celkem %name%
-order.preparation_expected_at: Očekává se příprava v %date%
+order.preparation_expected_at: Příprava začíná v %date%
 order.preparation_expected_for: Očekává se příprava v %date%
 order.shipping_date.title: Vaše datum dodání
 order.payment.title: Vaše platební údaje
@@ -1206,3 +1206,13 @@ order.adjustment_type.reusable_packaging.loopeat.help: Tento poplatek pokrývá 
   doplňování zásob v restauraci a nákup látkových tašek pro opakované použití
 order.adjustment_type.reusable_packaging.loopeat: Poplatek za zpracování LoopEat
 index.view_all: Zobrazit vše
+restaurant.form.cash_on_delivery_enabled.help: Zákazníci tak budou moci platit na
+  dobírku. Používejte s opatrností.
+restaurant.form.cash_on_delivery_enabled.label: Povolit dobírku
+api_apps.regenerate_secret_warning: Všechny aplikace používající tento koncový bod
+  API s předchozím tajemstvím přestanou fungovat.
+api_apps.regenerate_secret: Obnovit tajný klíč
+form.store_type.multi_drop_enabled.help: Umožnit uživatelům přidávat další předávky
+  při vytváření dodávky
+form.store_type.multi_drop_enabled.label: Povolení vícenásobného předání
+promotion_rule.is_items_total_above: Součet položek je vyšší než %amount%
