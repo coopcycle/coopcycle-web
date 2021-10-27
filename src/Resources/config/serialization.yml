@@ -84,7 +84,7 @@ Sylius\Component\Order\Model\Order:
     shippingTime:
       groups: ['order']
     paymentMethod:
-      groups: ['order_update', 'order_minimal']
+      groups: ['order', 'order_update', 'order_minimal']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:
