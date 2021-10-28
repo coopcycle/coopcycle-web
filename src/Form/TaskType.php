@@ -8,8 +8,6 @@ use AppBundle\Entity\TimeSlot;
 use AppBundle\Form\Type\TimeSlotChoice;
 use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Service\TaskManager;
-use libphonenumber\PhoneNumberFormat;
-use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -39,6 +37,7 @@ class TaskType extends AbstractType
             'label' => 'form.task.address.label',
             'with_addresses' => $options['with_addresses'],
             'with_remember_address' => $options['with_remember_address'],
+            'with_address_props' => $options['with_address_props'],
         ];
 
         $builder
@@ -171,10 +170,10 @@ class TaskType extends AbstractType
             'can_edit_type' => true,
             'with_tags' => true,
             'with_addresses' => [],
-            'with_recipient_details' => false,
             'with_doorstep' => false,
             'with_remember_address' => false,
             'with_time_slot' => null,
+            'with_address_props' => false,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

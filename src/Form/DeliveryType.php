@@ -96,8 +96,8 @@ class DeliveryType extends AbstractType
                     'with_addresses' => null !== $store ? $store->getAddresses() : [],
                     'with_remember_address' => $options['with_remember_address'],
                     'with_time_slot' => $this->getTimeSlot($options, $store),
-                    'with_recipient_details' => $options['with_dropoff_recipient_details'],
                     'with_doorstep' => $options['with_dropoff_doorstep'],
+                    'with_address_props' => $options['with_address_props'],
                 ],
                 'allow_add' => true,
                 'prototype_data' => new Task(),
@@ -271,11 +271,11 @@ class DeliveryType extends AbstractType
             'with_vehicle' => false,
             'with_weight' => true,
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
-            'with_dropoff_recipient_details' => false,
             'with_dropoff_doorstep' => false,
             'with_time_slot' => null,
             'with_package_set' => null,
             'with_remember_address' => false,
+            'with_address_props' => false,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

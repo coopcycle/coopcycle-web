@@ -91,21 +91,25 @@ class AddressBookType extends AbstractType
                 'label' => false,
                 'required' => false,
                 'mapped' => false,
-            ])
-            // We require telephone & contactName,
-            // but the name is still optional
-            ->add('name', TextType::class, [
-                'required' => false,
-                'mapped' => false,
-            ])
-            ->add('telephone', TextType::class, [
-                'required' => true,
-                'mapped' => false,
-            ])
-            ->add('contactName', TextType::class, [
-                'required' => true,
-                'mapped' => false,
             ]);
+
+        if ($options['with_address_props']) {
+            $builder
+                // We require telephone & contactName,
+                // but the name is still optional
+                ->add('name', TextType::class, [
+                    'required' => false,
+                    'mapped' => false,
+                ])
+                ->add('telephone', TextType::class, [
+                    'required' => true,
+                    'mapped' => false,
+                ])
+                ->add('contactName', TextType::class, [
+                    'required' => true,
+                    'mapped' => false,
+                ]);
+        }
 
         if ($options['with_remember_address']) {
             $builder->add('rememberAddress', CheckboxType::class, [
@@ -154,20 +158,26 @@ class AddressBookType extends AbstractType
             $newAddress = $form->get('newAddress')->getData();
             $isNewAddress = $form->get('isNewAddress')->getData();
 
-            $name = $form->get('name')->getData();
-            $contactName = $form->get('contactName')->getData();
-            $telephone = $form->get('telephone')->getData();
-
             $addressToModify = $isNewAddress ? $newAddress : $existingAddress;
 
-            $addressToModify->setName($name);
-            $addressToModify->setContactName($contactName);
+            if ($form->has('name')) {
+                $name = $form->get('name')->getData();
+                $addressToModify->setName($name);
+            }
 
-            try {
-                $addressToModify->setTelephone(
-                    $this->phoneNumberUtil->parse($telephone, strtoupper($this->country))
-                );
-            } catch (NumberParseException $e) {}
+            if ($form->has('contactName')) {
+                $contactName = $form->get('contactName')->getData();
+                $addressToModify->setContactName($contactName);
+            }
+
+            if ($form->has('telephone')) {
+                try {
+                    $telephone = $form->get('telephone')->getData();
+                    $addressToModify->setTelephone(
+                        $this->phoneNumberUtil->parse($telephone, strtoupper($this->country))
+                    );
+                } catch (NumberParseException $e) {}
+            }
 
             $event->setData($addressToModify);
         });
@@ -180,6 +190,7 @@ class AddressBookType extends AbstractType
             'with_addresses' => [],
             'new_address_placeholder' => null,
             'with_remember_address' => false,
+            'with_address_props' => false,
         ));
     }
 

@@ -15,10 +15,16 @@
     {{ form_widget(form.newAddress.latitude, { attr: { 'data-address-prop': 'latitude' } }) }}
     {{ form_widget(form.newAddress.longitude, { attr: { 'data-address-prop': 'longitude' } }) }}
 
-    <div class="invisible">
-    {{ form_widget(form.name) }}
-    {{ form_widget(form.telephone) }}
-    {{ form_widget(form.contactName) }}
+    <div class="d-none">
+    {% if form.name is defined %}
+      {{ form_widget(form.name) }}
+    {% endif %}
+    {% if form.telephone is defined %}
+      {{ form_widget(form.telephone) }}
+    {% endif %}
+    {% if form.contactName is defined %}
+      {{ form_widget(form.contactName) }}
+    {% endif %}
     </div>
 
     {{ form_widget(form.isNewAddress, { attr: { 'class': 'd-none' } }) }}

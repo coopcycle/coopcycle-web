@@ -239,7 +239,6 @@ trait StoreTrait
         $delivery = $store->createDelivery();
 
         $form = $this->createDeliveryForm($delivery, [
-            'with_dropoff_recipient_details' => true,
             'with_dropoff_doorstep' => true,
             'with_remember_address' => true,
         ]);
