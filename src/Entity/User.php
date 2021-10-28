@@ -61,7 +61,7 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     /**
      * @Assert\NotBlank()
-     * @Assert\Length(min="3", max="15")
+     * @Assert\Length(min=3, max=15)
      * @Assert\Regex(pattern="/^[a-zA-Z0-9_]{3,15}$/")
      * @var string
      */
@@ -69,6 +69,12 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     /**
      * @Assert\NotBlank()
+     * @Assert\Length( min=3, max=15,
+     *      minMessage = "Your username must be at least 3 characters long",
+     *      maxMessage = "Your username cannot be longer than 15 characters"
+     * )
+     * 
+     * @Assert\Regex(pattern="/^[a-zA-Z0-9_]{3,15}$/")
      * @var string
      */
     protected $email;
