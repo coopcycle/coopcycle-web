@@ -25,12 +25,12 @@
       {% endif %}
       <ul class="nav nav-pills nav-stacked mb-4">
         <li role="presentation" {% if app.request.attributes.get('_route') == store_route %}class="active"{% endif %}>
-          <a href="{{ path(store_route, { id: store.id }) }}#general" {% if is_main_screen %}role="tab" data-toggle="tab" aria-controls="general"{% endif %}>
+          <a href="{% if store.id is not empty %}{{ path(store_route, { id: store.id }) }}{% endif %}#general" {% if is_main_screen %}role="tab" data-toggle="tab" aria-controls="general"{% endif %}>
             {{ 'restaurant.form.section.general'|trans }}
           </a>
         </li>
         <li role="presentation">
-          <a href="{{ path(store_route, { id: store.id }) }}#settings" {% if is_main_screen %}role="tab" data-toggle="tab" aria-controls="settings"{% endif %}>
+          <a href="{% if store.id is not empty %}{{ path(store_route, { id: store.id }) }}{% endif %}#settings" {% if is_main_screen %}role="tab" data-toggle="tab" aria-controls="settings"{% endif %}>
             {{ 'store.form.section.settings'|trans }}
           </a>
         </li>
