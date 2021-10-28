@@ -57,9 +57,9 @@ class MercadopagoManager
         $p->installments = $payment->getMercadopagoInstallments() ?? 1;
         $p->payment_method_id = $payment->getMercadopagoPaymentMethod();
 
-        $payer = new MercadoPago\Payer();
-        $payer->email = $order->getCustomer()->getEmail(); // this email must be the same as the one entered in the payment form
-        $p->payer = $payer;
+        $p->payer = array(
+            'email' => $order->getCustomer()->getEmail() // this email must be the same as the one entered in the payment form
+        );
 
         $p->capture = false;
 
