@@ -123,6 +123,11 @@ export default ({ onChange }) => ({
     this.form = form
     const { country, publishableKey } = this.config.gatewayConfig
 
+    /*
+     * When this flow is tested in a production environment we have to check if the Public Key to send
+     * has to be from the Marketplace owner or from the Seller/Restaurant.
+     * Now we are using the Public Key of the Marketplace owner (Coop).
+     */
     Mercadopago.setPublishableKey(publishableKey)
 
     if (country !== 'mx') {

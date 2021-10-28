@@ -22,7 +22,7 @@ class MercadopagoPreference
      */
     public function __invoke($data, Request $request)
     {
-        $account = $data->getRestaurant()->getMercadopagoAccount(true);
+        $account = $data->getRestaurant()->getMercadopagoAccount();
         if ($account) {
             MercadoPago\SDK::setAccessToken($account->getAccessToken());
         }

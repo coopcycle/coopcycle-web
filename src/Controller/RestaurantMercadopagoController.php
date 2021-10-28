@@ -25,7 +25,7 @@ class RestaurantMercadopagoController extends AbstractController
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
 
-        $mp_account = $restaurant->getMercadopagoAccount(true);
+        $mp_account = $restaurant->getMercadopagoAccount();
 
         if (null === $mp_account) {
             return new JsonResponse([

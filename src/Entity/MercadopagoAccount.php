@@ -21,8 +21,6 @@ class MercadopagoAccount
 
     private $publicKey;
 
-    private $livemode;
-
     public function getId()
     {
         return $this->id;
@@ -100,20 +98,4 @@ class MercadopagoAccount
         return $this;
     }
 
-    /**
-     * @param mixed $livemode
-     *
-     * @return self
-     */
-    public function setLivemode($livemode)
-    {
-        $this->livemode = $livemode;
-
-        return $this;
-    }
-
-    public function getLivemode()
-    {
-        return $this->livemode;
-    }
 }
