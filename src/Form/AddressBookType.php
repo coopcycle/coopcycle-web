@@ -5,9 +5,12 @@ namespace AppBundle\Form;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use Doctrine\ORM\PersistentCollection;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberUtil;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -31,10 +34,16 @@ class AddressBookType extends AbstractType
     private $iriConverter;
     private $serializer;
 
-    public function __construct(IriConverterInterface $iriConverter, SerializerInterface $serializer)
+    public function __construct(
+        IriConverterInterface $iriConverter,
+        SerializerInterface $serializer,
+        PhoneNumberUtil $phoneNumberUtil,
+        string $country)
     {
         $this->iriConverter = $iriConverter;
         $this->serializer = $serializer;
+        $this->phoneNumberUtil = $phoneNumberUtil;
+        $this->country = $country;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -43,6 +52,9 @@ class AddressBookType extends AbstractType
             'label' => false,
             'required' => false,
             'mapped' => false,
+            'with_name' => false,
+            'with_telephone' => false,
+            'with_contact_name' => false,
         ];
 
         if (isset($options['new_address_placeholder']) && !empty($options['new_address_placeholder'])) {
@@ -78,6 +90,20 @@ class AddressBookType extends AbstractType
             ->add('isNewAddress', CheckboxType::class, [
                 'label' => false,
                 'required' => false,
+                'mapped' => false,
+            ])
+            // We require telephone & contactName,
+            // but the name is still optional
+            ->add('name', TextType::class, [
+                'required' => false,
+                'mapped' => false,
+            ])
+            ->add('telephone', TextType::class, [
+                'required' => true,
+                'mapped' => false,
+            ])
+            ->add('contactName', TextType::class, [
+                'required' => true,
                 'mapped' => false,
             ]);
 
@@ -128,11 +154,22 @@ class AddressBookType extends AbstractType
             $newAddress = $form->get('newAddress')->getData();
             $isNewAddress = $form->get('isNewAddress')->getData();
 
-            if ($isNewAddress) {
-                $event->setData($newAddress);
-            } else {
-                $event->setData($existingAddress);
-            }
+            $name = $form->get('name')->getData();
+            $contactName = $form->get('contactName')->getData();
+            $telephone = $form->get('telephone')->getData();
+
+            $addressToModify = $isNewAddress ? $newAddress : $existingAddress;
+
+            $addressToModify->setName($name);
+            $addressToModify->setContactName($contactName);
+
+            try {
+                $addressToModify->setTelephone(
+                    $this->phoneNumberUtil->parse($telephone, strtoupper($this->country))
+                );
+            } catch (NumberParseException $e) {}
+
+            $event->setData($addressToModify);
         });
     }
 

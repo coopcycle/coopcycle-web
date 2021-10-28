@@ -44,17 +44,6 @@ function toPackages(name) {
   return packages
 }
 
-function showAddressOptions(telephone, recipient, isTelephoneRequired, isRecipientRequired) {
-  if (telephone) {
-    telephone.setAttribute('required', isTelephoneRequired)
-    telephone.closest('.form-group').classList.remove('hidden')
-  }
-  if (recipient) {
-    recipient.setAttribute('required', isRecipientRequired)
-    recipient.closest('.form-group').classList.remove('hidden')
-  }
-}
-
 function hideRememberAddress(name, type) {
   const rememberAddr = document.querySelector(`#${name}_${type}_address_rememberAddress`)
   if (rememberAddr) {
@@ -71,45 +60,22 @@ function showRememberAddress(name, type) {
 
 function createAddressWidget(name, type, cb) {
 
-  const telephone = document.querySelector(`#${name}_${type}_telephone`)
-  const recipient = document.querySelector(`#${name}_${type}_recipient`)
-
-  const isTelephoneRequired = telephone && telephone.hasAttribute('required')
-  const isRecipientRequired = recipient && recipient.hasAttribute('required')
-
   new AddressBook(document.querySelector(`#${name}_${type}_address`), {
     existingAddressControl: document.querySelector(`#${name}_${type}_address_existingAddress`),
     newAddressControl: document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`),
     isNewAddressControl: document.querySelector(`#${name}_${type}_address_isNewAddress`),
+    // Fields containing address details
+    nameControl: document.querySelector(`#${name}_${type}_address_name`),
+    telephoneControl: document.querySelector(`#${name}_${type}_address_telephone`),
+    contactNameControl: document.querySelector(`#${name}_${type}_address_contactName`),
     onReady: address => {
       cb(address)
     },
     onChange: address => {
 
       if (Object.prototype.hasOwnProperty.call(address, '@id')) {
-        if (telephone) {
-          const isTelephoneValid = !_.isEmpty(address.telephone)
-          if (isTelephoneValid) {
-            telephone.value = ''
-            telephone.removeAttribute('required')
-            telephone.closest('.form-group').classList.add('hidden')
-          } else {
-            telephone.setAttribute('required', isTelephoneRequired)
-          }
-        }
-        if (recipient) {
-          const isRecipientValid = !_.isEmpty(address.contactName)
-          if (isRecipientValid) {
-            recipient.value = ''
-            recipient.removeAttribute('required')
-            recipient.closest('.form-group').classList.add('hidden')
-          } else {
-            recipient.setAttribute('required', isRecipientRequired)
-          }
-        }
         hideRememberAddress(name, type)
       } else {
-        showAddressOptions(telephone, recipient, isTelephoneRequired, isRecipientRequired)
         showRememberAddress(name, type)
       }
 
@@ -120,7 +86,6 @@ function createAddressWidget(name, type, cb) {
       })
     },
     onClear: () => {
-      showAddressOptions(telephone, recipient, isTelephoneRequired, isRecipientRequired)
       showRememberAddress(name, type)
       store.dispatch({
         type: 'CLEAR_ADDRESS',

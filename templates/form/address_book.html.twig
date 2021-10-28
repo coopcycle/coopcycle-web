@@ -15,6 +15,12 @@
     {{ form_widget(form.newAddress.latitude, { attr: { 'data-address-prop': 'latitude' } }) }}
     {{ form_widget(form.newAddress.longitude, { attr: { 'data-address-prop': 'longitude' } }) }}
 
+    <div class="invisible">
+    {{ form_widget(form.name) }}
+    {{ form_widget(form.telephone) }}
+    {{ form_widget(form.contactName) }}
+    </div>
+
     {{ form_widget(form.isNewAddress, { attr: { 'class': 'd-none' } }) }}
 
   </div>

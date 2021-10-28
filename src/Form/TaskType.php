@@ -111,31 +111,14 @@ class TaskType extends AbstractType
 
             $taskType = null !== $task ? $task->getType() : Task::TYPE_DROPOFF;
 
-            if (Task::TYPE_DROPOFF !== $taskType) {
-                return;
-            }
-
-            if ($options['with_recipient_details']) {
-                $form
-                    ->add('telephone', PhoneNumberType::class, [
-                        'label' => 'form.task.telephone.label',
-                        'mapped' => false,
-                        'format' => PhoneNumberFormat::NATIONAL,
-                        'default_region' => strtoupper($this->country),
-                    ])
-                    ->add('recipient', TextType::class, [
-                        'label' => 'form.task.recipient.label',
-                        'help' => 'form.task.recipient.help',
-                        'mapped' => false,
-                    ]);
-            }
-
-            if ($options['with_doorstep']) {
-                $form
-                    ->add('doorstep', CheckboxType::class, [
-                        'label' => 'form.task.dropoff.doorstep.label',
-                        'required' => false,
-                    ]);
+            if (Task::TYPE_DROPOFF === $taskType) {
+                if ($options['with_doorstep']) {
+                    $form
+                        ->add('doorstep', CheckboxType::class, [
+                            'label' => 'form.task.dropoff.doorstep.label',
+                            'required' => false,
+                        ]);
+                }
             }
         });
 
@@ -177,14 +160,6 @@ class TaskType extends AbstractType
                 if ($choice) {
                     $choice->applyToTask($task);
                 }
-            }
-
-            if ($form->has('telephone')) {
-                $task->getAddress()->setTelephone($form->get('telephone')->getData());
-            }
-
-            if ($form->has('recipient')) {
-                $task->getAddress()->setContactName($form->get('recipient')->getData());
             }
         });
     }
