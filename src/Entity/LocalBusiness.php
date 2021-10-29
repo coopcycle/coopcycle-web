@@ -779,19 +779,15 @@ class LocalBusiness extends BaseLocalBusiness implements
         $manyToMany = new RestaurantMercadopagoAccount();
         $manyToMany->setRestaurant($this);
         $manyToMany->setMercadopagoAccount($account);
-        $manyToMany->setLivemode($account->getLivemode());
 
         $this->mercadopagoAccounts->add($manyToMany);
     }
 
-    public function getMercadopagoAccount($livemode): ?MercadopagoAccount
+    public function getMercadopagoAccount(): ?MercadopagoAccount
     {
         foreach ($this->getMercadopagoAccounts() as $account) {
-            if ($account->isLivemode() === $livemode) {
-                return $account->getMercadopagoAccount();
-            }
+            return $account->getMercadopagoAccount();
         }
-
         return null;
     }
 
