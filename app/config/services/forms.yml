@@ -136,6 +136,8 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\AddressBookType:
+    arguments:
+      $country: '%country_iso%'
     tags: [ form.type ]
 
   sylius.form.extension.type.promotion_coupon:
