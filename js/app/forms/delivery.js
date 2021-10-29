@@ -70,6 +70,9 @@ function createAddressWidget(name, type, cb) {
     contactNameControl: document.querySelector(`#${name}_${type}_address_contactName`),
     onReady: address => {
       cb(address)
+      if (Object.prototype.hasOwnProperty.call(address, '@id')) {
+        hideRememberAddress(name, type)
+      }
     },
     onChange: address => {
 
