@@ -37,6 +37,16 @@ function getFormattedValue(prop, value) {
   return value
 }
 
+function getUnformattedValue(prop, value) {
+  if (prop === 'telephone' && typeof value === 'string') {
+    const phoneNumber = parsePhoneNumberFromString(value, (getCountry() || 'fr').toUpperCase())
+
+    return phoneNumber ? phoneNumber.format('E.164') : value
+  }
+
+  return value
+}
+
 const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
 
   const inputRef = useRef(null)
@@ -53,7 +63,7 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
   const onFinish = (values) => {
     const value = values[prop]
     setVisible(false)
-    onChange(value)
+    onChange(getUnformattedValue(prop, value))
   }
 
   useEffect(() => {
@@ -114,7 +124,7 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
           style={{ opacity: 0, width: 0, position: 'absolute', left: '50%', top: 0, bottom: 0, pointerEvents: 'none' }}
           id={ id }
           name={ name }
-          defaultValue={ value }
+          defaultValue={ getUnformattedValue(prop, value) }
           required={ required } />
       </span>
     </Popover>
