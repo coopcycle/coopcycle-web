@@ -104,6 +104,10 @@ class SettingsManager
             case 'mercadopago_access_token':
                 $name = $this->isMercadopagoLivemode() ? 'mercadopago_live_access_token' : 'mercadopago_test_access_token';
                 break;
+            case 'mercadopago_access_token_for_test':
+                // to be used only for test
+                $name = !$this->isMercadopagoLivemode() ? 'mercadopago_live_access_token' : '';
+                break;
             case 'timezone':
                 return ini_get('date.timezone');
             case 'foodtech_enabled':
