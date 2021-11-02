@@ -99,6 +99,7 @@ services:
     arguments:
       $country: '%country_iso%'
       $debug: '%kernel.debug%'
+      $cashOnDeliveryOptinEnabled: '%env(bool:CASH_ON_DELIVERY_OPTIN_ENABLED)%'
     tags: [ form.type ]
 
   AppBundle\Form\StoreType:
