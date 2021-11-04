@@ -173,6 +173,7 @@ export function onSuggestionsFetchRequested({ value }) {
     parts.push(this.state.postcode.postcode)
 
     this.setState({
+      multiSection: false,
       suggestions: [{
         type: 'manual_address',
         // https://ideal-postcodes.co.uk/guides/good-addressing-guidelines
