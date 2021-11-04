@@ -215,6 +215,9 @@ export function onSuggestionSelected(event, { suggestion }) {
   }
 
   if (suggestion.type === 'address') {
+    this.setState({
+      postcode: toPostcode(suggestion.address),
+    })
     this.props.onAddressSelected(suggestion.value, suggestion.address, suggestion.type)
   }
 }
