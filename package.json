@@ -67,7 +67,7 @@
     "babel-plugin-import": "^1.13.3",
     "beautifymarker": "^1.0.9",
     "bootstrap-sass": "^3.4.1",
-    "centrifuge": "^2.8.2",
+    "centrifuge": "^2.8.3",
     "chai": "^4.3.4",
     "chart.js": "^3.6.0",
     "chroma-js": "^2.1.2",
@@ -152,7 +152,7 @@
     "sortablejs": "^1.14.0",
     "store": "^2.0.12",
     "styled-components": "^5.3.3",
-    "to-string-loader": "^1.1.6",
+    "to-string-loader": "^1.2.0",
     "url-loader": "^4.1.1",
     "x-data-spreadsheet": "^1.1.9"
   }
