@@ -124,7 +124,8 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
           style={{ opacity: 0, width: 0, position: 'absolute', left: '50%', top: 0, bottom: 0, pointerEvents: 'none' }}
           id={ id }
           name={ name }
-          defaultValue={ getUnformattedValue(prop, value) }
+          value={ getUnformattedValue(prop, value) }
+          onChange={ () => null }
           required={ required } />
       </span>
     </Popover>
