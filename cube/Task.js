@@ -115,6 +115,13 @@ cube(`Task`, {
       type: `time`
     },
 
+    intervalMinutes: {
+      sql: `DATE_PART('day', ${CUBE.intervalEndAt} - ${CUBE.intervalStartAt}) * 24 * 60
+          + DATE_PART('hour', ${CUBE.intervalEndAt} - ${CUBE.intervalStartAt}) * 60
+          + DATE_PART('minute', ${CUBE.intervalEndAt} - ${CUBE.intervalStartAt})`,
+      type: `number`
+    },
+
     done: {
       sql: `${TaskDoneEvent.createdAt}`,
       type: `time`
@@ -135,7 +142,7 @@ cube(`Task`, {
       type: `number`
     },
 
-    intervalDiff: {
+    notInIntervalMinutes: {
       type: `number`,
       case: {
         when: [
@@ -154,6 +161,16 @@ cube(`Task`, {
         ],
         else: { label: `0` },
       },
+    },
+
+    intervalDiffTemp: {
+      sql: `cast(((${CUBE.minutesAfterStart}) / (${CUBE.intervalMinutes}) - 0.5) * 100 as bigint)`,
+      type: `number`
+    },
+
+    intervalDiff: {
+      sql: `width_bucket((${CUBE.minutesAfterStart}) / (${CUBE.intervalMinutes}), -2, 3, 100)*10 - 550`,
+      type: `number`
     },
 
     status: {

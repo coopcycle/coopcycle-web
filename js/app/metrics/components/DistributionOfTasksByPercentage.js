@@ -11,7 +11,7 @@ import {
   TIMING_TOO_LATE,
 } from '../tasksGraphUtils'
 
-const defaultMinMaxX = 12 * 60 // in minutes
+const defaultMinMaxX = 500 // 450%
 const defaultMinX = -1 * defaultMinMaxX
 const defaultMaxX = defaultMinMaxX
 
@@ -39,7 +39,7 @@ const commonOptions = {
           } else if (value === defaultMaxX) {
             return "<"
           } else {
-            return value + ' min';
+            return value + ' %';
           }
         }
       },
@@ -48,12 +48,12 @@ const commonOptions = {
 };
 
 function timingFromX (x) {
-  if (x < 0) {
+  if (x < -50) {
     return TIMING_TOO_EARLY
-  } else if (x === 0) {
-    return TIMING_ON_TIME
-  } else {
+  } else if (x > 50) {
     return TIMING_TOO_LATE
+  } else {
+    return TIMING_ON_TIME
   }
 }
 
@@ -139,12 +139,12 @@ const ChartRenderer = ({ cubejsApi, dateRange, taskType }) => {
     <QueryRenderer
       query={{
         "dimensions": [
-          "Task.notInIntervalMinutes"
+          "Task.intervalDiff"
         ],
         "timeDimensions": [],
         "order": [
           [
-            "Task.notInIntervalMinutes",
+            "Task.intervalDiff",
             "asc"
           ]
         ],
@@ -159,6 +159,13 @@ const ChartRenderer = ({ cubejsApi, dateRange, taskType }) => {
             "member": "Task.intervalEndAt",
             "operator": "inDateRange",
             "values": getCubeDateRange(dateRange)
+          },
+          {
+            "member": "Task.status",
+            "operator": "contains",
+            "values": [
+              "DONE"
+            ]
           }
         ]
       }}
@@ -169,7 +176,7 @@ const ChartRenderer = ({ cubejsApi, dateRange, taskType }) => {
         chartType: 'bar',
         pivotConfig: {
           "x": [
-            "Task.notInIntervalMinutes"
+            "Task.intervalDiff"
           ],
           "y": [
             "measures"

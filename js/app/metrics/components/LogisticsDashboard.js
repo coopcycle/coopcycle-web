@@ -11,6 +11,7 @@ import NumberOfTasksByTiming from './NumberOfTasksByTiming'
 import DistributionOfTasksByTiming from './DistributionOfTasksByTiming'
 import AverageTiming from './AverageTiming'
 import PercentageOfTasksOnTime from './PercentageOfTasksOnTime'
+import DistributionOfTasksByPercentage from './DistributionOfTasksByPercentage'
 
 const Dashboard = ({ cubejsApi, dateRange }) => {
 
@@ -57,6 +58,18 @@ const Dashboard = ({ cubejsApi, dateRange }) => {
         </ChartPanel>
         <ChartPanel title="Number Of DROPOFF done X minutes earlier/later than planned">
           <DistributionOfTasksByTiming
+            cubejsApi={ cubejsApi }
+            dateRange={ dateRange }
+            taskType="DROPOFF"/>
+        </ChartPanel>
+        <ChartPanel title="Number Of PICKUP done % earlier/later than planned">
+          <DistributionOfTasksByPercentage
+            cubejsApi={ cubejsApi }
+            dateRange={ dateRange }
+            taskType="PICKUP"/>
+        </ChartPanel>
+        <ChartPanel title="Number Of DROPOFF done % earlier/later than planned">
+          <DistributionOfTasksByPercentage
             cubejsApi={ cubejsApi }
             dateRange={ dateRange }
             taskType="DROPOFF"/>
