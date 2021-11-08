@@ -91,6 +91,11 @@ class AddressBookType extends AbstractType
                 'label' => false,
                 'required' => false,
                 'mapped' => false,
+            ])
+            ->add('duplicateAddress', CheckboxType::class, [
+                'label' => false,
+                'required' => false,
+                'mapped' => false,
             ]);
 
         if ($options['with_address_props']) {
@@ -157,8 +162,13 @@ class AddressBookType extends AbstractType
             $existingAddress = $form->get('existingAddress')->getData();
             $newAddress = $form->get('newAddress')->getData();
             $isNewAddress = $form->get('isNewAddress')->getData();
+            $duplicateAddress = $form->get('duplicateAddress')->getData();
 
             $addressToModify = $isNewAddress ? $newAddress : $existingAddress;
+
+            if (!$isNewAddress && $duplicateAddress) {
+                $addressToModify = clone $existingAddress;
+            }
 
             if ($form->has('name')) {
                 $name = $form->get('name')->getData();
