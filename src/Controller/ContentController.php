@@ -26,7 +26,8 @@ class ContentController extends AbstractController
      *   "fr": "/a-propos",
      *   "it": "/riguardo-a-noi",
      *   "pl": "/o-nas",
-     *   "pt-BR": "/sobre-nos"
+     *   "pt_BR": "/sobre-nos",
+     *   "pt_PT": "/sobre-nos"
      * }, name="about_us")
      */
     public function aboutUsAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $projectCache)
@@ -53,6 +54,7 @@ class ContentController extends AbstractController
         $files = [
             'fr' => sprintf('http://coopcycle.org/%s/fr.md', $type),
             'en' => sprintf('http://coopcycle.org/%s/en.md', $type),
+            'es' => sprintf('http://coopcycle.org/%s/es.md', $type),
         ];
 
         $key = array_key_exists($locale, $files) ? $locale : 'en';

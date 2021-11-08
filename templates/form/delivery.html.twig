@@ -38,12 +38,6 @@ col-md-9
 
   {{ form_row(form.comments) }}
 
-  {% if form.telephone is defined %}
-    {{ form_row(form.telephone) }}
-  {% endif %}
-  {% if form.recipient is defined %}
-    {{ form_row(form.recipient) }}
-  {% endif %}
   {% if form.doorstep is defined %}
     {{ form_row(form.doorstep) }}
   {% endif %}

@@ -144,17 +144,17 @@ $(function() {
 
   $('#restaurant_useDifferentBusinessAddress').on('change', function() {
     if ($(this).is(':checked')) {
-      $('#restaurant_businessAddress_streetAddress').closest('.form-group').removeClass('d-none')
+      $('#restaurant_businessAddress').closest('.form-group').removeClass('d-none')
       $('#restaurant_businessAddress_streetAddress').attr('required', true)
       setTimeout(() => $('#restaurant_businessAddress_streetAddress').focus(), 350)
     } else {
-      $('#restaurant_businessAddress_streetAddress').closest('.form-group').addClass('d-none')
+      $('#restaurant_businessAddress').closest('.form-group').addClass('d-none')
       $('#restaurant_businessAddress_streetAddress').attr('required', false)
     }
   })
 
   if (!$('#restaurant_useDifferentBusinessAddress').is(':checked')) {
-    $('#restaurant_businessAddress_streetAddress').closest('.form-group').addClass('d-none')
+    $('#restaurant_businessAddress').closest('.form-group').addClass('d-none')
     $('#restaurant_businessAddress_streetAddress').attr('required', false)
   }
 

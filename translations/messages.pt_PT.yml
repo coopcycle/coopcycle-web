@@ -91,9 +91,9 @@ adminDashboard.back.title: Voltar à página
 adminDashboard.promotions.title: Promoções
 adminDashboard.pledges.title: Sugestões
 adminDashboard.time_slots.title: Horários
-deliveryForm.noPriceWarning: Nenhum preço pode ser calculado.  Por favor, insira-o.
+deliveryForm.noPriceWarning: Não se pode calcular o preço. Por favor, insira um valor.
 deliveryForm.noPriceFromPricingWarning: Nenhum preço pode ser calculado a partir dos
-  preços.  Insira-o manualmente ou edite os preços.
+  preços. Insira-o manualmente ou edite os preços.
 delivery.createNew: Criar nova entrega
 delivery.tracking_link: Link de rastreamento
 delivery.with_id: 'Entrega #%id%'
@@ -315,9 +315,485 @@ adminDashboard.shops.title: Lojas
 adminDashboard.embed.title: Display Externo
 adminDashboard.users.last_order: Último pedido
 adminDashboard.users.orders_count: Número de pedidos
-base.footer.RegisterMyRestaurant: Registrar meu restaurante
+base.footer.RegisterMyRestaurant: Inscrever meu restaurante
 base.footer.companyRegister: Seja um parceiro
 order.state.accepted: Aceito
 order.state.cart: Carrinho
 order.payment.waiting_failure: Pagamento recusado pelo Banco
 order.payment.waiting_success: Pagamento confirmado pelo Banco
+allergens.MILK: Leite
+allergens.SOYBEANS: Seja
+allergens.PEANUTS: Amendoins
+allergens.FISH: Peixe
+allergens.EGGS: Ovos
+allergens.CRUSTACEANS: Crustáceos
+allergens.CEREALS_CONTAINING_GLUTEN: Cereais que contém glúten
+search.users: Buscar um usuário…
+delivery.table.heading.owner: Dono
+delivery.table.heading.order: Pedido
+delivery.table.heading.courier: Estafeta
+delivery.table.heading.summary: Resumo
+promotions.create_credit_note_coupon: Adicionar uma nota de crédito
+promotions.heading.credit_note.help: Criar notas de crédito especiais para clientes
+promotions.heading.credit_note: Notas de crédito
+promotions.heading.free_delivery.help: Criar códigos promocionais para oferecer entregas
+  gratuítas
+promotions.heading.free_delivery: Entrega grátis
+promotions.breadcrumb.new_credit_note: Nova nota de crédito
+promotions.breadcrumb: Promoções
+api_apps.breadcrumb: Clientes API
+maintenance.text: Site em manutenção. Voltamos em breve
+authentication.choose_password: Escolha uma senha
+authentication.sign_in: Registrar-se
+authentication.already_registered: Já tem conta?
+authentication.create_account: Cria sua conta
+authentication.not_registered_yet: Ainda não registrado?
+authentication.forgot_password: Esqueceu a senha?
+profile.password.change: Mudar senha
+basics.configure: Configurar
+basics.send_invitation.confirm: Seu convite foi enviado! agora pode editar os ajustes
+  do novo usuário.
+basics.send_invitation: Enviar um convite
+basics.platform_fees: Tarifas da plataforma
+basics.stripe_fees: Tarifas de Stripe
+basics.total_including_tax: Total incluíndo impostos
+basics.no_entries: Nenhum elemento ainda
+basics.are_you_sure: Tem certeza?
+basics.today: Hoje
+basics.description: Descrição
+basics.name: Nome
+basics.import: Importar
+basics.export: Exportar
+basics.tax_category: IVA
+basics.price: Preço
+basics.tomorrow: Manhã
+basics.open: Aberto
+basics.cancel: Cancelar
+basics.delete: Deletar
+basics.edit: Editar
+basics.add: Add
+basics.continue: Continuar
+basics.next: Seguinte
+basics.save: Guardar
+basics.view: Ver
+pagination.next: Seguinte
+pagination.previous: Anterior
+embed.delivery.submit.help: Clique para confirmar o pedido.
+adminDashboard.activity.title: Atividade
+adminDashboard.statistics: Estatísticas
+notifications.empty: Nenhuma notificação
+index.view_all_shops: Ver todas as lojas
+index.our_shops: Lojas locais
+index.view_all_restaurants: Ver todos os restaurantes
+index.our_restaurants: Nossos restaurantes
+index.banner: Refeições deliciosas entregues em sua casa.
+index.map.tip: Usa o mapa para encontrar restaurantes
+meta.title: Plataforma de logística para cooperativas
+stores.addresses: Endereços
+stores.deliveries.task_unassigned: Não atribuída
+stores.deliveries: Entregas
+stores.api_keys: Chaves API
+stores.users: Usuários
+stores.createNewDelivery: Criar entrega
+stores.settings: Ajustes
+stores.manage: Gerenciar
+roles.ROLE_STORE.help: 'Proprietário da loja: gerenciar lojas atribuídas, entregas…'
+roles.ROLE_RESTAURANT.help: 'Proprietário do restaurante: gerenciar restaurantes ,
+  pedidos…'
+roles.ROLE_COURIER.help: "Estafeta: ver tarefas pendentes, modificar tarefas atribuídas...\n"
+roles.ROLE_ADMIN.help: "Admim: Acesso completo a todas as oções\n"
+user.profile.givenName: Nome
+user.profile.familyName: Apelido
+user.edit.enabled.help: Um usuário desativado será desconectado e não poderá voltar
+  a fazer login na plataforma
+user.edit.enabled.label: Ativo
+user.edit.roles.help: Configurar permissões deste usuário
+roles.ROLE_USER: Usuário
+roles.ROLE_STORE: Loja
+roles.ROLE_RESTAURANT: Restaurante
+roles.ROLE_COURIER: Estafeta
+roles.ROLE_ADMIN: Admin
+product_option.strategy.option_value: Editar preço
+product_option.strategy.free: Gratuíto
+promotion_coupon.used.label: Número de usos
+form.customize.custom_banner.help: Tenha certeza que o banner está no padrão SVG
+form.customize.custom_banner.label: Editar banner
+form.customize.custom_privacy.label: Editar conteúdo da página de privacidade
+form.customize.custom_privacy_enabled.label: Habilitar política de privacidade editável
+form.customize.custom_legal.label: Personalizar a página de informação legal
+form.customize.custom_legal_enabled.label: Habilitar nota legal personalizada
+form.customize.motto.help: Isto não será mostrado na página do início
+form.new_order.variant_price.label: Preço
+form.new_order.variant_name.help: O nome que aparecerá no resumo do pedido e na fatura
+form.new_order.variant_name.label: Nome do produto
+form.deposit_refund_settings.deposit_refund_optin.label: Sistema de reembolso é opcional
+form.reusable_packaging.on_hand.label: Quantidade
+form.reusable_packaging.price.label: Preço
+form.reusable_packaging.name.label: Nome
+form.package.volume_units.label: Unidade de volume
+form.package.name.label: Nome
+form.package_set.packages.label: Pacotes
+form.package_set.name.label: Nome
+form.time_slot.prior_notice_hours.label: Aviso prévio (horas)
+form.time_slot_choice.end_time.label: Hora de término
+form.time_slot_choice.start_time.label: Hora de início
+form.time_slot.choices.label: Opções
+form.time_slot.working_days_only.label: Permitir selecionar somente dias úteis
+form.time_slot.interval.label: Intervalo
+form.time_slot.name.label: Nome
+form.embed_settings.with_weight.label: Consultar o peso dos produtos
+form.embed_settings.with_vehicle.label: Adicionar possibilidade de escolha do veículo
+form.resend_confirmation_email.submit.label: Reenviar email
+form.credit_note.name.help: O nome do desconto se mostrará no carrinho
+form.credit_note.name.label: Nome
+form.credit_note.percentage.label: Porcentagem
+form.credit_note.amount.label: Valor
+form.credit_note.type.label: Tipo de desconto
+form.credit_note.user_search.label: Usuário
+form.credit_note.user_search.help: O desconto só será usado por este usuário
+form.api_app.client_secret.label: Chave secreta
+form.api_app.client_id.label: Login
+form.api_app.store.label: Loja
+form.api_app.name.label: Nome da Aplicação
+form.task_export.start.label: Início
+form.checkout_payment.method.label: Escolha um método de pagamento
+form.checkout_address.takeaway.no_show_disclaimer: Tenha em conta que - se não coletares
+  seu pedido,  ainda assim será cobrado integralmente.
+form.checkout_address.takeaway.disclaimer: Escolheste a opção de recolha própria,
+  és responsável por coletar seu pedido no horário e dia escolhidos.
+form.checkout_address.quote.label: Solicitar orçamento
+form.checkout_address.tip_amount.help: Obrigado ❤
+form.checkout_address.add_tip.label: Aplicar
+form.checkout_address.tip_amount.label: Gorgeta
+form.checkout_address.add_promotion.label: Aplicar
+form.checkout_address.reusable_packaging_enabled.label: Quero embalagens reutilizáveis
+  (%price%)
+form.checkout_address.telephone.label: Telefone
+form.checkout_address.promotion_coupon.label: Código promocional
+form.checkout_address.notes.help: Teu comentário será enviado ao restaurante
+form.checkout_address.notes.placeholder: "Exemplo: sem molho, sem cebola...\n"
+form.checkout_address.notes.label: Deixe um comentário para o restaurante
+form.product_option_value.price.label: Preço
+form.product_option_value.value.label: Valor
+form.product_option.preview_title: Opção de vista prévia
+form.product_option.additional.help: O cliente pode escolher diferentes valores, sem
+  precisar escolher ao menos um
+form.product_option.additional.label: Esta opção é adicional
+form.product_option.values.help: Deves definir uma lista de valores para esta opção
+form.product_option.values.title: Valores
+form.product_option.add_value.label: Adicionar valor
+form.product_option.strategy.label: Cálculo do preço
+form.product_option.name.label: Nome
+form.product.reusable_packaging_unit.label: Número de unidades
+form.product.reusable_packaging.label: Tipo de embalagem reutilizável
+form.product.reusable_packaging_enabled.label: Habilite embalagens reutilizáveis para
+  este produto
+form.product.confirm.label: Confirmar mudanças
+form.product.restricted_diets.help: Este produto é adequado às seguintes dietas?
+form.product.restricted_diets.label: Dietas especiais
+form.product.allergens.help: Este produto contém itens alérgenos?
+form.product.allergens.label: Alergias
+form.product.enabled.label: Ativado
+form.product.taxCategory.label: Taxas
+form.product.price.label: Preço
+form.product.description.label: Descrição
+form.product.name.label: Nome
+form.menu_editor.taxon_modal.title: Modificar uma seção
+form.menu_editor.save.label: Guardar mudanças
+form.menu_editor.products_panel.title: Produtos
+form.menu_taxon.child_name.placeholder: "Ex.: pratos principais, entradas, bebidas...\n"
+form.menu_taxon.add_child.label: Adicionar uma categoria
+form.menu_taxon.name.label: Nome
+form.menu_item_modifier.calculusStrategy.label: Cálculo do preço
+form.menu_item_modifier.price.label: Preço
+form.menu_item_modifier.name.label: Nome
+form.menu_item.price.label: Preço
+form.menu_item.name.label: Nome
+form.settings.mercadopago.app_id.label: ID na Aplicação
+form.settings.mercadopago.access_token.label: Token de acesso
+form.settings.mercadopago.publishable_key.label: Chave de publicação
+form.mercadopago_livemode.enable.label: ''
+form.local_business.mercadopago.connect_button.text: Conectar com MercadoPago
+form.local_business.mercadopago_account.success: Conta MercadoPago conectada com êxito
+form.local_business.mercadopago_account.title: Conta do MercadoPago
+form.settings.mercadopago.title: Mercado Pago
+form.local_business.stripe_account.success: Conta Stripe conectada com êxito
+form.local_business.stripe_account.not_configured: Não pode conectar a uma conta ainda
+form.local_business.stripe_account.connect_button.text: Conecte com Stripe
+form.local_business.stripe_account.help: Conecte uma conta Stripe para transferir
+  dinheiro para outra conta bancária
+form.local_business.stripe_account.title: Contra Stripe
+form.registration.legal.label: Eu concordo com os Termos e Condições e Política de
+  Privacidade
+form.registration.username.help: "Seu nome de usuário não pode ter mais de 15 caracteres.\
+  \ Um nome de usuário pode conter apenas caracteres alfanuméricos (letras A-Z, números\
+  \ 0-9) com exceção de sublinhados.\n"
+form.delivery_embed.vehicle.disclaimer: Entregamos em bicicletas de carga produtos
+  com mais de 50x40x20 (cm) ou cujo peso exceda a 6kg.
+form.delivery_embed.telephone.label: Número de telefone
+form.delivery_embed.name.help: Seu nome ou nome da empresa
+form.delivery_embed.name.label: Nome
+form.settings.currency_code.label: Moeda
+form.stripe_livemode.disable.alert: No modo « test » , os cartões de crédito não serão
+  cobrados.
+form.stripe_livemode.disable.label: Utilizar Stripe em modo « test »
+form.stripe_livemode.enable.alert: No modo « live », os cartões de crédito serão cobrados.
+form.stripe_livemode.enable.label: Use Stripe no modo « live »
+form.banner.message.label: Mensagem para exibir no banner
+form.banner.disable.alert: Você vai desabilitar o banner
+form.banner.enable.alert: Você vai habilitar o banner
+form.banner.disable.label: Desativar banner
+form.banner.enable.label: Habilitar banner
+mardown_formatting.help: Você pode formatar o texto usando a sintaxe Markdown
+form.maintenance.message.label: Mensagem
+form.maintenance.disable.alert: Você vai desativar o modo de manutenção
+form.maintenance.enable.alert: Você vai ativar o modo de manutenção. <br> Apenas administradores
+  terão acesso ao site.
+form.maintenance.disable.label: Desativar manutenção
+form.maintenance.enable.label: Ativar manutenção
+pledge.reject: Rejeitar
+pledge.accept: Aceitar
+pledge.vote_count_equals_one: '%username% ha votado por este restaurante'
+pledge.vote_count_equals_two: '% first_user% e% second_user% votaram neste restaurante'
+restaurant.suggest.banner_disclaimer: Este restaurante não está disponível no momento.
+  Vote em% restaurant.name%!
+restaurant.suggest.has_voted: Você já votou neste restaurante!
+pledge.suggested_by: Sugerido por @% username%
+restaurant.suggest.vote: Vote em% name%
+restaurant.suggest.message: "Ajude-nos a convencer% restaurant.name% a trabalhar com%\
+  \ brand_name%!\n<br>\nPara ver isso na plataforma, precisamos de você e de sua voz\
+  \ para apoiar nosso futuro pedido de colaboração com este parceiro.\n"
+form.suggest.thank_you_message: Obrigado por sugerir este restaurante!
+form.suggest.message: "Não consegue encontrar seu restaurante ou loja favorita?\n\
+  <br>\nDiga-nos seu nome e endereço.\n<br>\nIsso nos permitirá identificar potenciais\
+  \ parceiros.\n"
+form.suggest.submit.label: Sugerir agora
+form.suggest.name.help: Por favor, indique o nome exato para que possamos encontrá-lo
+form.suggest.name.label: Nome
+form.settings.sms_gateway_config.twilio.from.label: Número de telefone Twilio
+form.settings.sms_gateway_config.twilio.auth_token.label: Twilio Auth Token
+form.settings.sms_gateway_config.twilio.sid.label: Twilio SID
+form.settings.sms_gateway_config.mailjet.api_token.label: Token da API Mailjet
+form.settings.sms_gateway.label: Gateway de SMS
+form.settings.sms.title: SMS
+form.settings.sms_enabled.label: Habilitar envio de SMS
+form.settings.subject_to_vat.label: Sujeito a IVA
+form.settings.company_logo.help: Este logotipo será usado para faturas de entrega
+form.settings.company_logo.label: Company logo
+form.settings.enable_restaurant_pledges.label: Permitir que os clientes sugiram restaurantes
+form.settings.phone_number.help: Este número será exibido para os clientes
+form.settings.phone_number.label: Número de telefone
+form.settings.administrator_email.help: As notificações serão enviadas para este e-mail
+form.settings.administrator_email.label: Email do administrador
+form.settings.stripe_secret_key.help: "Crie uma conta Stripe para obter sua <a href=\"\
+  https://stripe.com/docs/dashboard#api-keys\"> chave publicável </a>\n"
+demo.disclaimer: <i class = "fa fa-bullhorn"> </i> Bem-vindo à demonstração da plataforma
+  <a target="_blank" href="https://coopcycle.org"> CoopCycle </a>
+form.settings.latlng.help: "Especifique a latitude e longitude padrão. Você pode obtê-lo\
+  \ em <a href=\"https://www.latlong.net/\"> latlong.net </a>\n"
+form.settings.latlng.label: Cordenadas geográficas
+form.settings.stripe_connect_client_id.help: "Obtenha o identificador na <a href=\"\
+  https://dashboard.stripe.com/account/applications/settings\"> página de parâmetros\
+  \ </a>\n"
+form.settings.stripe_connect_client_id.label: ID do Stripe Connect
+form.settings.stripe_secret_key.label: Chave secreta de Stripe
+form.settings.stripe_publishable_key.help: "Crie uma conta Stripe para obter sua <a\
+  \ href=\"https://stripe.com/docs/dashboard#api-keys\"> chave pública </a>\n"
+form.settings.stripe_publishable_key.label: Chave pública de stripe
+form.settings.stripe_enable_livemode.help: Para habilitar o modo «ao vivo», você precisa
+  configurar as chaves «ao vivo» primeiro.
+form.settings.stripe_testmode.help: 'No modo «teste», você terá que usar números de
+  <a href="https://stripe.com/docs/testing"> cartões de crédito de teste </a> para
+  pagar na plataforma. <strong> Nenhum dinheiro será trocado. </strong> '
+form.settings.stripe.help: 'Stripe é o serviço de pagamento que usamos para lidar
+  com cartões de crédito. Para usar a parte de e-commerce da plataforma é necessário
+  configurar esta seção, assim como o Stripe Connect. O Stripe cobra uma taxa de 0,25
+  cts + 1,4% por pagamento (preços atualizados <a href="https://stripe.com/fr/pricing">
+  aqui </a>), a ser pago pela loja proprietário. '
+form.settings.stripe.title: Conta Stripe
+form.settings.brand_name.label: Nome da marca
+form.settings.date_time: Data e hora
+form.preparation_time.defaults_warning: "Este restaurante ainda não tem nenhum tempo\
+  \ de preparação personalizado. As regras padrão foram copiadas abaixo, você pode\
+  \ alterá-las.\n"
+form.preparation_time_rule.time.label: Tempo
+form.preparation_time_rule.expression.label: Expressão
+form.pricing_rule.price.label: Preço
+form.pricing_rule_set.strategy.map.label: Todas as regras coincidem
+form.pricing_rule_set.strategy.find.label: A primeira regra que coincide
+form.pricing_rule_set.strategy.help: As regras são avaliadas de cima para baixo. Dependendo
+  do método de cálculo selecionado, ou a primeira regra correspondente decidirá o
+  preço ou o preço será calculado somando todas as regras de correspondência.
+form.pricing_rule_set.strategy.label: Método de cálculo
+form.pricing_rule_set.rules.label: Regras
+form.pricing_rule_set.name.label: Nome
+form.company.make_the_request.label: Enviar requisição
+form.address.company.meal_estimate.label: Número estimados de refeições (por dia)
+form.address.company.collaborator_number.label: Número de trabalhadores
+form.address.company.function.label: Posição da pessoa de contato
+form.address.company.business_reference.label: Pessoa de contato na empresa
+form.address.company_name.label: Nome da empresa
+form.address.company.label: Empresa
+form.address.name.placeholder: Casa, trabalho…
+form.address.name.label: Nome
+form.address.streetAddress.error.noLatLng: Por favor selecione um endereço de entrega
+form.address.streetAddress.label: Endereço
+form.address.description.placeholder: 2ª porta à esquerda
+form.address.description.label: Instruções
+form.address.postalCode.label: Código postal
+form.address.addressLocality.label: Cidade
+form.payment.refund_application_fee.help: "Se você marcar esta caixa, a comissão cobrada\
+  \ pela plataforma ao parceiro será reembolsada proporcionalmente\n<br>\n<a href=\"\
+  https://stripe.com/docs/connect/direct-charges#issuing-refunds\"> Saiba mais </a>\n"
+form.payment.refund_comment.help: Por favor, descreva o que ocorreu
+form.payment.refund_comment.label: Comentários
+form.payment.refund_liable.help: Qual das partes é responsável pelo incidente?
+form.payment.refund_liable.label: Parte responsável
+form.payment.refund_amount.help: O valor que especificar será devolvido ao cliente
+form.payment.last_update.label: Ultima atualização
+form.payment.refund_amount.label: Valor reembolsado
+form.payment.amount.label: Valor
+form.payment.state.label: Estado
+form.order.refuse.refund.alert: Este pedido foi pago com uma forma de pagamento que
+  não gerencia pré-autorizações. Se você recusar, o pagamento será devolvido. Tem
+  certeza?
+form.order.refund_modal.title: Reembolso
+form.order.payment_refund.label: Reembolsar
+form.order.payment_complete.label: Completar
+form.order.fulfill.label: Realizar
+form.order.refuse.label: Recusar
+form.order.accept.help: Uma vez aceito o pedido, o cliente será notificado por email
+form.order.accept.label: Aceitar
+form.delivery.view_order: Ver pedido
+form.delivery.time_slot.label: Intervalo de tempo
+form.delivery.packages.label: Embalagens
+form.delivery.package.label: Embalagem
+form.delivery.has_order.info: Esta entrega está vinculada a um pedido
+form.delivery.to_be_confirmed.warning: Precisa confirmar o pedido
+form.delivery.price.label: Preço
+form.delivery.store.placeholder: Buscar uma loja…
+form.delivery.store.label: Loja
+form.delivery.duration.label: Duração
+form.delivery.distance.label: Distância
+form.delivery.dropoff.doneBefore.label: Data e horário de entrega
+form.delivery.pickup.doneBefore.label: Data e horário de recolha
+form.delivery.vehicle.label: Bicicleta normal ou de carga?
+form.delivery.weight.help: Por favor, indique o peso (considere 1kg = 1000g)
+form.delivery.weight.label: Peso
+form.delivery.dropoff.address_placeholder: Número de casa e nome da rua, área, código
+  postal, cidade
+form.delivery.dropoff.label: Endereço de entrega
+form.delivery.pickup.address_placeholder: Número de casa e nome da rua, área, código
+  posta, cidade
+form.delivery.pickup.label: Endereço de recolha
+form.delivery.vehicle.placeholder: Escolha um veículo
+form.store_type.packages_required.label: Pedir os pacotes
+form.store_type.weight_required.label: Pedir para inserir o peso
+form.store_type.package_set.placeholder: Escolha um pacote múltiplo
+form.store_type.package_set.label: Pacote múltiplo
+form.store_type.time_slot.placeholder: Escolha uma faixa de tempo
+form.store_type.time_slot.label: Faixa de tempo
+form.store_type.defaultAddress.label: Endereço padrão
+form.store_type.setAsDefault.label: Definir como endereço padrão
+form.store_type.pricing_rule_set.placeholder: Escolha um preço
+form.delivery.vehicle.VEHICLE_CARGO_BIKE: Bicicleta de carga
+form.delivery.vehicle.VEHICLE_BIKE: Bicicleta
+form.store_type.create_orders.label: Criar pedidos
+form.store_type.prefill_pickup_address.label: Completar automaticamente o endereço
+  de recolha
+form.store_type.pricing_rule_set.label: Preço
+form.geojson_upload.file: Arquivo
+checkout.breadcrumb.confirm: Confirmação
+checkout.breadcrumb.payment: Pagamento
+checkout.breadcrumb.address: Endereço
+cart.widget.button: Pedir
+cart.widget.title: Seus detalhes de entrega
+maintenance.disclaimer: Mode de manutenção ativado
+demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help/how-to-use-the-demo/"><i
+  class="fa fa-info-circle"></i>  Como usar esta demonstração?</a>
+task.previous_task_not_completed_yet: A tarefa anterio ainda não foi concluída
+task.type.DROPOFF: Entrega
+task.type.PICKUP: Recolha
+form.task_complete.fail.label: Informar problemas
+form.task_complete.done.label: Concluída
+form.task_event.notes.help: Pode editar o comentário
+form.task_event.notes.placeholder: 'Ex: sitio não encontrado, sem problemas…'
+form.task.dropoff.doorstep.label: Desembarque na porta
+form.task.recipient.help: Especifique o nome da pessoa de contato
+form.task.recipient.label: Contato
+form.task.telephone.label: Telefone
+form.task.status.label: Estado
+form.task.comments.placeholder: Especifique qualquer detalhe útil para completar a
+  tarefa
+form.task.comments.label: Comentários
+form.task.courier.label: Estafeta
+form.task.address.label: Endreço
+task.status.todo: Pendente
+task.status.failed: Falha
+task.status.done: Sucesso
+task.form.finish.FAIL.info: A tarefa não pode ser finalizada
+task.form.finish.DONE.info: A tarefa foi realizada com êxito
+task.form.details: Detalhes da tarefa
+task.form.finish: Terminar tarefa
+task.form.dateRange: Faixa de tempo
+task.form.edit: Modificar tarefa %id%
+task.form.modal.moreOptions: Mais opções
+task.form.showHistory: Mostrar histórico
+task.form.timeWindow: Intervalo de tempo
+task.form.create: Criar tarefa
+vehicle.cargo_bike: Bicicleta cargo
+vehicle.bike: Bicicleta
+order.list.generate_receipt: Gerar
+order.list.receipt: Factura
+order.list.summary.delivery.text: Enterga %distancia%, %veículo%
+order.list.summary.deleted_restaurant.text: Entrega em restaurante %restaurant_name%
+order.list.summary.restaurant.text: Entrega em restaurante<a href="%restaurant_url%">%restaurant_name%</a>
+order.list.summary: Resumo
+order.list.state: Estado
+order.list.customer: Cliente
+deliveries.filter.clear: Mostrar tudo
+deliveries.sort.oldest: Os mais velhos primeiro
+deliveries.sort.newest: A mais nova primeiro
+sylius.form.promotion_coupon.per_customer_usage_limit: Limite de uso por cliente
+sylius.ui.code: Código
+resend_confirmation_email.disclaimer: Se não recebeu o email de confirmação, clique
+  no botão.
+restricted_diets.VEGETARIAN_DIET: Vegetariano
+restricted_diets.VEGAN_DIET: Vegano
+restricted_diets.LOW_SALT_DIET: Baixo em sal
+restricted_diets.LOW_LACTOSE_DIET: Baixa lactose
+restricted_diets.LOW_FAT_DIET: Baixo em gorduras
+restricted_diets.LOW_CALORIE_DIET: Baixo em calorias
+restricted_diets.KOSHER_DIET: Kosher
+restricted_diets.HINDU_DIET: Hindú
+restricted_diets.HALAL_DIET: Halal
+restricted_diets.GLUTEN_FREE_DIET: Sem gluten
+restricted_diets.DIABETIC_DIET: Diabético
+allergens.MOLLUSCS: Moluscos
+allergens.SESAME_SEEDS: Sementes de sésamo
+allergens.MUSTARD: Mostarda
+allergens.NUTS: Nuts
+order.list.type: Tipo
+order.list.shippedAt: Hora de entrega
+order.list.total: Total
+order_item.adjustment_type.reusable_packaging: '%quantidade% × pacote(s)'
+order.adjustment_type.tip: Gorgeta
+order.adjustment_type.reusable_packaging: Embalagem
+order.adjustment_type.platform_fees: Taxa CoopCycle
+order.adjustment_type.delivery: Entrega
+payment.state.refunded_partially: Parcialmente reembolsado
+payment.state.refunded: Reembolsado
+payment.state.cancelled: Cancelado
+payment.state.failed: Falha
+payment.state.completed: Concluído
+payment.state.authorized: Autorizado
+payment.state.new: Novo
+payment.state.cart: Carrinho
+order.notes: Anotações de clientes
+order.payments: Pagamentos
+order.public_link: Link compartilhável
+order.reusable_packaging.alert: Este pedido deve ser embalado em embalagens reutilizáveis
+order.state.cancelled: Cancelado
+order.state.fulfilled: Cumprido
+order.state.new: Novo
+order.state.refused: Recusado

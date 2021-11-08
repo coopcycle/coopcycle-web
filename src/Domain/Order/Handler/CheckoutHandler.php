@@ -50,8 +50,9 @@ class CheckoutHandler
 
         $isFreeOrder = null === $payment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
         $isCashOnDelivery = null !== $payment && $payment->isCashOnDelivery();
+        $isMercadopagoPaymentApproved = null !== $payment && 'approved' === $payment->getMercadopagoPaymentStatus();
 
-        if ($isFreeOrder || $isCashOnDelivery) {
+        if ($isFreeOrder || $isCashOnDelivery || $isMercadopagoPaymentApproved) {
             $this->orderNumberAssigner->assignNumber($order);
             $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $payment));
 

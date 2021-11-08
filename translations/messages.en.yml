@@ -1204,3 +1204,10 @@ form.store_type.multi_drop_enabled.label: Enable multiple dropoffs
 form.store_type.multi_drop_enabled.help: Allow users to add additional dropoffs when creating a delivery
 api_apps.regenerate_secret: Renew secret key
 api_apps.regenerate_secret_warning: Any apps using this API endpoint with the previous secret will stop working.
+restaurant.form.cash_on_delivery_enabled.label: Enable cash on delivery
+restaurant.form.cash_on_delivery_enabled.help: This will allow customers to pay with cash on delivery. Use with caution.
+form.api_app.type.label: API authentication mechanism
+form.api_app.type.oauth.label: OAuth - for WordPress
+form.api_app.type.api_key.label: API Key - for Urbantz
+form.settings.mercadopago.client_secret.label: Client Secret
+localBusiness.form.business_address.help: This address will be used in receipts

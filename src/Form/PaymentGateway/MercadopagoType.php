@@ -51,6 +51,13 @@ class MercadopagoType extends BaseType
                 'help' => 'form.settings.mercadopago.app_id.help',
                 'help_html' => true
             ])
+            ->add('mercadopago_client_secret', PasswordType::class, [
+                'required' => false,
+                'label' => 'form.settings.mercadopago.client_secret.label',
+                'attr' => [
+                    'autocomplete' => 'new-password'
+                ]
+            ])
             ;
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {

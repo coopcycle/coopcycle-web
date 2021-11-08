@@ -66,6 +66,7 @@ class RestaurantType extends LocalBusinessType
                 'with_widget' => true,
                 'with_description' => false,
                 'label' => false,
+                'help' => 'localBusiness.form.business_address.help',
             ])
             ;
 
@@ -91,6 +92,15 @@ class RestaurantType extends LocalBusinessType
                 ->add('delete', SubmitType::class, [
                     'label' => 'basics.delete',
                 ]);
+
+            if ($this->cashOnDeliveryOptinEnabled) {
+                $builder
+                    ->add('cashOnDeliveryEnabled', CheckboxType::class, [
+                        'label' => 'restaurant.form.cash_on_delivery_enabled.label',
+                        'help' => 'restaurant.form.cash_on_delivery_enabled.help',
+                        'required' => false,
+                    ]);
+            }
         }
 
         if ($options['loopeat_enabled']) {

@@ -19,6 +19,7 @@ use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Action\Order\Centrifugo as CentrifugoController;
+use AppBundle\Action\Order\MercadopagoPreference;
 use AppBundle\Action\MyOrders;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
@@ -30,6 +31,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
+use AppBundle\Payment\MercadopagoPreferenceResponse;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
@@ -263,6 +265,16 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "security"="is_granted('view', object)",
  *       "openapi_context"={
  *         "summary"="Get Centrifugo connection details for a Order resource."
+ *       }
+ *     },
+ *     "mercadopago_preference"={
+ *       "method"="GET",
+ *       "path"="/orders/{id}/mercadopago-preference",
+ *       "controller"=MercadopagoPreference::class,
+ *       "output"=MercadopagoPreferenceResponse::class,
+ *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
+ *       "openapi_context"={
+ *         "summary"="Creates a MercadoPago preference and returns its ID."
  *       }
  *     }
  *   },
@@ -983,6 +995,20 @@ class Order extends BaseOrder implements OrderInterface
     }
 
     /**
+     * @SerializedName("paymentMethod")
+     */
+    public function getPaymentMethod(): string
+    {
+        $payment = $this->getLastPayment();
+
+        if ($payment) {
+            return $payment->getMethod()->getCode();
+        }
+
+        return '';
+    }
+
+    /**
      * @SerializedName("fulfillmentMethod")
      */
     public function setFulfillmentMethod(string $fulfillmentMethod)
@@ -1301,5 +1327,15 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return $this->getRestaurant()->isLoopeatEnabled();
+    }
+
+    public function supportsCashOnDelivery(): bool
+    {
+        if ($this->isMultiVendor()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->isCashOnDeliveryEnabled();
     }
 }

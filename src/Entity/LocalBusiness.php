@@ -250,6 +250,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $vytalEnabled = false;
 
+    protected $cashOnDeliveryEnabled = false;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -777,19 +779,15 @@ class LocalBusiness extends BaseLocalBusiness implements
         $manyToMany = new RestaurantMercadopagoAccount();
         $manyToMany->setRestaurant($this);
         $manyToMany->setMercadopagoAccount($account);
-        $manyToMany->setLivemode($account->getLivemode());
 
         $this->mercadopagoAccounts->add($manyToMany);
     }
 
-    public function getMercadopagoAccount($livemode): ?MercadopagoAccount
+    public function getMercadopagoAccount(): ?MercadopagoAccount
     {
         foreach ($this->getMercadopagoAccounts() as $account) {
-            if ($account->isLivemode() === $livemode) {
-                return $account->getMercadopagoAccount();
-            }
+            return $account->getMercadopagoAccount();
         }
-
         return null;
     }
 
@@ -901,5 +899,25 @@ class LocalBusiness extends BaseLocalBusiness implements
         }
 
         return $typesByKey[$key] ?? null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCashOnDeliveryEnabled()
+    {
+        return $this->cashOnDeliveryEnabled;
+    }
+
+    /**
+     * @param bool $enabled
+     *
+     * @return self
+     */
+    public function setCashOnDeliveryEnabled($enabled)
+    {
+        $this->cashOnDeliveryEnabled = $enabled;
+
+        return $this;
     }
 }

@@ -92,6 +92,8 @@ class Settings
 
     public $mercadopago_app_id;
 
+    public $mercadopago_client_secret;
+
     public $guest_checkout_enabled;
 
     public $autocomplete_provider;

@@ -1,3 +1,5 @@
+# https://www.avalara.com/vatlive/en/vat-rates/international-vat-and-gst-rates.html
+
 service:
   rates:
     be:
@@ -24,6 +26,8 @@ service:
       standard: 0.25
     dk:
       standard: 0.25
+    it:
+      standard: 0.22
 
 service_tax_exempt:
   rates:
@@ -50,6 +54,8 @@ service_tax_exempt:
     se:
       zero: 0.0
     dk:
+      zero: 0.0
+    it:
       zero: 0.0
 
 drink:
@@ -119,6 +125,8 @@ base_standard:
       standard: 0.25
     dk:
       standard: 0.25
+    it:
+      standard: 0.22
 
 base_intermediary:
   rates:
@@ -139,6 +147,8 @@ base_intermediary:
       intermediary: 0.105
     se:
       intermediary: 0.12
+    it:
+      intermediary: 0.1
 
 base_reduced:
   rates:
@@ -158,6 +168,8 @@ base_reduced:
       reduced: 0.08
     se:
       reduced: 0.06
+    it:
+      reduced: 0.04
 
 base_exempt:
   rates:
@@ -185,4 +197,6 @@ base_exempt:
     se:
       zero: 0.00
     dk:
+      zero: 0.00
+    it:
       zero: 0.00

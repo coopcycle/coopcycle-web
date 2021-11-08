@@ -91,6 +91,8 @@ trait DeliveryTrait
 
         $this->accessControl($delivery);
 
-        return $this->renderDeliveryForm($delivery, $request);
+        return $this->renderDeliveryForm($delivery, $request, [
+            'with_address_props' => true,
+        ]);
     }
 }

@@ -33,12 +33,13 @@ class MercadopagoManager
         $this->configure();
 
         $order = $payment->getOrder();
+        $restaurant = $order->getRestaurant();
 
         $options = [];
 
         $applicationFee = 0;
-        if (null !== $order->getRestaurant()) {
-            $account = $order->getRestaurant()->getMercadopagoAccount(false);
+        if (null !== $restaurant) {
+            $account = $restaurant->getMercadopagoAccount();
             if ($account) {
                 $applicationFee = $order->getFeeTotal();
                 // @see MercadoPago\Manager::processOptions()
@@ -55,17 +56,17 @@ class MercadopagoManager
         $p->description = sprintf('Order %s', $order->getNumber());
         $p->installments = $payment->getMercadopagoInstallments() ?? 1;
         $p->payment_method_id = $payment->getMercadopagoPaymentMethod();
+
         $p->payer = array(
-            'email' => $order->getCustomer()->getEmail()
-            // On development we should use the buyer testing e-mail
-            // Documentation: https://www.mercadopago.com.mx/developers/en/guides/online-payments/marketplace/checkout-pro/testing-marketplace/
+            'email' => $order->getCustomer()->getEmail() // this email must be the same as the one entered in the payment form
         );
+
         $p->capture = false;
 
         if ($applicationFee > 0) {
             $p->application_fee = ($applicationFee / 100);
         }
-      
+
         if (!$p->save($options)) {
             throw new \Exception((string) $p->error);
         }
@@ -87,7 +88,7 @@ class MercadopagoManager
         $options = [];
 
         if (null !== $order->getRestaurant()) {
-            $account = $order->getRestaurant()->getMercadopagoAccount(false);
+            $account = $order->getRestaurant()->getMercadopagoAccount();
             if ($account) {
                 // @see MercadoPago\Manager::processOptions()
                 $options['custom_access_token'] = $account->getAccessToken();
@@ -102,5 +103,27 @@ class MercadopagoManager
         }
 
         return $payment;
+    }
+
+    /**
+     * @return MercadoPago\Payment
+     */
+    public function getPayment(PaymentInterface $payment)
+    {
+        $this->configure();
+
+        $order = $payment->getOrder();
+
+        $options = [];
+
+        if (null !== $order->getRestaurant()) {
+            $account = $order->getRestaurant()->getMercadopagoAccount(true);
+            if ($account) {
+                // @see MercadoPago\Manager::processOptions()
+                $options['custom_access_token'] = $account->getAccessToken();
+            }
+        }
+
+        return MercadoPago\Payment::read(["id" => $payment->getMercadopagoPaymentId()], ["custom_access_token" => $options['custom_access_token']]);
     }
 }

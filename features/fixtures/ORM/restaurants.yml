@@ -37,6 +37,18 @@ AppBundle\Entity\Contract:
     customerAmount: 350
     feeRate: 0.00
 
+AppBundle\Entity\RestaurantMercadopagoAccount:
+  restaurant_mercadopago_account_1:
+    restaurant: '@restaurant_1'
+    mercadopagoAccount: '@mercadopago_account_1'
+
+AppBundle\Entity\MercadopagoAccount:
+  mercadopago_account_1:
+    accessToken: 'ACCESS_TOKEN'
+    refreshToken: 'REFRESH_TOKEN'
+    publicKey: 'PUBLIC_KEY'
+    user_id: 1
+
 AppBundle\Entity\LocalBusiness:
   restaurant_1:
     name: 'Nodaiwa'

@@ -83,7 +83,7 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                 $gateway = $this->resolver->resolve();
                 switch ($gateway) {
                     case 'mercadopago':
-                        $mercadopagoAccount = $object->getMercadopagoAccount($this->settingsManager->isMercadopagoLivemode());
+                        $mercadopagoAccount = $object->getMercadopagoAccount();
                         if (null === $mercadopagoAccount) {
                             $this->context->buildViolation($constraint->mercadopagoAccountMessage)
                                 ->atPath('mercadopagoAccounts')

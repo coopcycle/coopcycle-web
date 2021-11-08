@@ -42,6 +42,7 @@ class SettingsManager
         'mercadopago_live_publishable_key',
         'mercadopago_test_access_token',
         'mercadopago_live_access_token',
+        'mercadopago_client_secret',
         'google_api_key_custom',
     ];
 
