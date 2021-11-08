@@ -212,7 +212,7 @@ restaurant.contract.restaurantPaysStripeFee.restaurant: Ristorante
 form.time_slot_choice.start_time.label: Ora di inizio
 form.time_slot_choice.end_time.label: Ora di fine
 form.address.description.label: Istruzioni
-form.address.description.placeholder: 2a porta sulla sinistra…
+form.address.description.placeholder: Campanello, altre informazioni utili…
 form.address.streetAddress.label: Indirizzo
 form.address.streetAddress.error.noLatLng: Selezioni un indirizzo nel menù a tendina
 form.address.name.label: Nome
@@ -738,13 +738,13 @@ promotions.create_credit_note_coupon: Aggiungi una nota di credito
 delivery.table.heading.courier: Corriere
 delivery.table.heading.order: Ordine
 search.users: Cerca un utente…
-allergens.CEREALS_CONTAINING_GLUTEN: Cereali contenenti glutine
+allergens.CEREALS_CONTAINING_GLUTEN: Glutine
 allergens.CRUSTACEANS: Crostacei
 allergens.EGGS: Uova
 allergens.FISH: Pesce
 allergens.PEANUTS: Arachidi
 allergens.SOYBEANS: Soia
-allergens.MILK: Latte
+allergens.MILK: Latticini
 allergens.CELERY: Sedano
 allergens.MUSTARD: Senape
 allergens.SESAME_SEEDS: Semi di sesamo
