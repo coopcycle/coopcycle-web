@@ -22,6 +22,16 @@ const createPercentageMeasure = (status) => ({
   },
 });
 
+const dateDiffInSeconds = (datetime) =>
+  `((DATE_PART('day', ${datetime}) * 24
+  + DATE_PART('hour', ${datetime})) * 60
+  + DATE_PART('minute', ${datetime})) * 60
+  + DATE_PART('second', ${datetime})`
+
+
+const dateDiffInMinutes = (datetime) =>
+  `(${dateDiffInSeconds(datetime)}) / 60`
+
 
 cube(`Task`, {
   sql: `SELECT id, type, done_after, done_before, status FROM public.task`,
@@ -116,9 +126,7 @@ cube(`Task`, {
     },
 
     intervalMinutes: {
-      sql: `DATE_PART('day', ${CUBE.intervalEndAt} - ${CUBE.intervalStartAt}) * 24 * 60
-          + DATE_PART('hour', ${CUBE.intervalEndAt} - ${CUBE.intervalStartAt}) * 60
-          + DATE_PART('minute', ${CUBE.intervalEndAt} - ${CUBE.intervalStartAt})`,
+      sql: dateDiffInMinutes(`${CUBE.intervalEndAt} - ${CUBE.intervalStartAt}`),
       type: `number`
     },
 
@@ -129,16 +137,12 @@ cube(`Task`, {
 
     // based on http://sqlines.com/postgresql/how-to/datediff
     minutesAfterStart: {
-      sql: `DATE_PART('day', ${CUBE.done} - ${CUBE.intervalStartAt}) * 24 * 60
-          + DATE_PART('hour', ${CUBE.done} - ${CUBE.intervalStartAt}) * 60
-          + DATE_PART('minute', ${CUBE.done} - ${CUBE.intervalStartAt})`,
+      sql: dateDiffInMinutes(`${CUBE.done} - ${CUBE.intervalStartAt}`),
       type: `number`
     },
 
     minutesBeforeEnd: {
-      sql: `DATE_PART('day', ${CUBE.intervalEndAt} - ${CUBE.done}) * 24 * 60
-          + DATE_PART('hour', ${CUBE.intervalEndAt} - ${CUBE.done}) * 60
-          + DATE_PART('minute', ${CUBE.intervalEndAt} - ${CUBE.done})`,
+      sql: dateDiffInMinutes(`${CUBE.intervalEndAt} - ${CUBE.done}`),
       type: `number`
     },
 
@@ -163,13 +167,13 @@ cube(`Task`, {
       },
     },
 
-    intervalDiffTemp: {
-      sql: `cast(((${CUBE.minutesAfterStart}) / (${CUBE.intervalMinutes}) - 0.5) * 100 as bigint)`,
-      type: `number`
-    },
+    // intervalDiff: {
+    //   sql: `cast(((${CUBE.minutesAfterStart}) / (${CUBE.intervalMinutes}) - 0.5) * 100 as bigint)`,
+    //   type: `number`
+    // },
 
     intervalDiff: {
-      sql: `width_bucket((${CUBE.minutesAfterStart}) / (${CUBE.intervalMinutes}), -2, 3, 100)*10 - 550`,
+      sql: `width_bucket((${CUBE.minutesAfterStart}) / (${CUBE.intervalMinutes}), -2, 3, 100)*5 - 500`,
       type: `number`
     },
 
