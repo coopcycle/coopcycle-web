@@ -197,7 +197,7 @@ order.total_including_tax: Total (IVA incl.)
 order.items_total: Total productos
 order.total_tax: IVA
 order.total_tax_by_rate: Total %name%
-order.preparation_expected_at: Preparación esperada a las %date%
+order.preparation_expected_at: Preparación a partir de las %date%
 order.shipping_date.title: Tu horario de entrega
 order.payer.title: Detalles del comprador
 order.payer.email: E-mail
@@ -1233,3 +1233,4 @@ restaurant_promotion.items_total.help: Esto le permite aplicar un descuento sobr
   una cierta cantidad. Su ganancia va a disminuir por el descuento. Esto <strong>no
   disminuirá</strong> la tarifa percibida por la plataforma.
 form.items_total_promotion.fixed_discount_amount.label: Aplicar un descuento de
+order.preparation_expected_for: Preparación esperada a las %date%
