@@ -147,7 +147,7 @@ restaurant.list.products: Productos
 restaurant.list.product_options: Opciones
 restaurant.list.catalogs: Catálogo
 restaurant.list.active_catalog: Catálogo activo
-restaurant.list.planning: Calendario
+restaurant.list.planning: Días no laborables
 restaurant.list.settings: Ajustes
 restaurant.list.norestaurant: Aún no existen restaurantes
 restaurant.list.preparationTime: Preparación
@@ -493,7 +493,7 @@ form.delivery_embed.vehicle.disclaimer: Entregamos en bicicleta de carga artícu
 form.resend_confirmation_email.submit.label: Reenviar correo electrónico
 promotion_coupon.used.label: Número de usos
 product_option.strategy.free: Gratis
-product_option.strategy.option_value: Cada opción tiene un precio diferente
+product_option.strategy.option_value: Precio a medida
 roles.ROLE_ADMIN: Administrador
 roles.ROLE_COURIER: Mensajero
 roles.ROLE_RESTAURANT: Restaurante
