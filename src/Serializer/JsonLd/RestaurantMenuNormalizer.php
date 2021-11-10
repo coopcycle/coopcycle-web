@@ -167,8 +167,6 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                         'description' => $description,
                         'identifier' => $product->getCode(),
                         'enabled' => $product->isEnabled(),
-                        'image_1x1' => $this->getProductImagePath($product, '1:1'),
-                        'image_16x9' => $this->getProductImagePath($product, '16:9'),
                         'offers' => [
                             '@type' => 'Offer',
                             'price' => $defaultVariant->getPrice(),
@@ -193,6 +191,15 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                             $reflect = new \ReflectionClass(Allergen::class);
                             return $reflect->getConstant($constantName);
                         }, $allergens));
+                    }
+
+                    $image_1x1 = $this->getProductImagePath($product, '1:1');
+                    if ( $image_1x1 ) {
+                        $item['image_1x1'] = $image_1x1;
+                    }
+                    $image_16x9 = $this->getProductImagePath($product, '16:9');
+                    if ( $image_16x9 ) {
+                        $item['image_16x9'] = $image_16x9;
                     }
 
                     $section['hasMenuItem'][] = $item;
