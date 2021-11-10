@@ -47,11 +47,11 @@ cube(`Task`, {
     {
       count: {
         type: `count`,
-        drillMembers: [id],
+        // drillMembers: [id],
       },
       countDone: {
         type: `count`,
-        drillMembers: [id],
+        // drillMembers: [id],
         filters: [{ sql: `${CUBE.status} = 'DONE'` }],
       },
       countTooEarly: {
@@ -172,8 +172,16 @@ cube(`Task`, {
     //   type: `number`
     // },
 
+    /**
+     * width_bucket: https://www.postgresql.org/docs/current/functions-math.html
+     * bucket width: 0,05
+     * low: -4
+     * high: 5
+     * count of buckets: 180 = (high - low) / bucket width
+     * on time: [0;1] => [400, 500], subtract 450 to display on time a range [-50%, 50%]
+     */
     intervalDiff: {
-      sql: `width_bucket((${CUBE.minutesAfterStart}) / (${CUBE.intervalMinutes}), -2, 3, 100)*5 - 500`,
+      sql: `width_bucket((${CUBE.minutesAfterStart}) / (${CUBE.intervalMinutes}), -4, 5, 180)*0.05*100 - 450`,
       type: `number`
     },
 
