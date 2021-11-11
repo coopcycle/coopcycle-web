@@ -184,7 +184,7 @@ restaurant.contract.calculation_info: "Puoi addebitare il ristorante con un impo
 restaurant.form.exclusive.label: Questo ristorante è esclusivo
 restaurant.contract.minimumCartAmount.label: Ordine minimo
 restaurant.contract.flatDeliveryPrice.label: Importo addebitato dalla piattaforma
-restaurant.contract.flatDeliveryPrice.help: Quesa somma non verrà mostrata nel carrello
+restaurant.contract.flatDeliveryPrice.help: Questa somma non verrà mostrata nel carrello
   e non aumenterà il prezzo totale
 restaurant.contract.variableDeliveryPrice.placeholder: Selezionare una regola di prezzo
 restaurant.contract.customerAmount.label: Importo pagato dal cliente
@@ -212,7 +212,7 @@ restaurant.contract.restaurantPaysStripeFee.restaurant: Ristorante
 form.time_slot_choice.start_time.label: Ora di inizio
 form.time_slot_choice.end_time.label: Ora di fine
 form.address.description.label: Istruzioni
-form.address.description.placeholder: 2a porta sulla sinistra…
+form.address.description.placeholder: Campanello, altre informazioni utili…
 form.address.streetAddress.label: Indirizzo
 form.address.streetAddress.error.noLatLng: Selezioni un indirizzo nel menù a tendina
 form.address.name.label: Nome
@@ -280,7 +280,7 @@ delivery.table.heading.summary: Sommario
 order.export.heading.restaurant_name: Ristorante
 order.export.heading.order_number: Numero ordine
 order.export.heading.completed_at: Completato il
-order.export.heading.delivery_fee: Tariffe di consegna
+order.export.heading.delivery_fee: Tariffa di consegna
 form.delivery.vehicle.placeholder: Scegli un tipo di veicolo
 form.delivery.to_be_confirmed.warning: Devi confermare l'ordine
 basics.delete: Cancella
@@ -725,7 +725,7 @@ basics.send_invitation.confirm: Il tuo invito è stato mandato! Puoi cambiare ad
 profile.password.change: Cambia la password
 authentication.forgot_password: Password dimenticata?
 api_apps.breadcrumb: API clienti
-api_apps.created.message: Il client è stato aggiunto. Usa le credenziali di seguito
+api_apps.created.message: Il cliente è stato aggiunto. Usa le credenziali di seguito
   per autenticarti.
 promotions.breadcrumb: Promozioni
 promotions.breadcrumb.new_credit_note: Nuova nota di credito
@@ -738,13 +738,13 @@ promotions.create_credit_note_coupon: Aggiungi una nota di credito
 delivery.table.heading.courier: Corriere
 delivery.table.heading.order: Ordine
 search.users: Cerca un utente…
-allergens.CEREALS_CONTAINING_GLUTEN: Cereali contenenti glutine
+allergens.CEREALS_CONTAINING_GLUTEN: Glutine
 allergens.CRUSTACEANS: Crostacei
 allergens.EGGS: Uova
 allergens.FISH: Pesce
 allergens.PEANUTS: Arachidi
 allergens.SOYBEANS: Soia
-allergens.MILK: Latte
+allergens.MILK: Latticini
 allergens.CELERY: Sedano
 allergens.MUSTARD: Senape
 allergens.SESAME_SEEDS: Semi di sesamo
@@ -1016,7 +1016,7 @@ form.time_slot.same_day_cutoff.help: Per esempio, selezionando 11.00, opzioni de
 form.time_slot.same_day_cutoff.label: Soglia giornaliera
 form.package_with_quantity.package.placeholder: Scegliere un tipo di pacchetto
 form.product_tax_category_choice.placeholder: Scegliere una categoria di imposta
-basics.kilos: Kili
+basics.kilos: Kg
 basics.tax_excl: IVA esclusa
 basics.tax_incl: IVA incl.
 nav.about_us: Chi siamo
@@ -1024,7 +1024,7 @@ spreadsheet.download_example: Scaricare un foglio di calcolo d'esempio
 order.refund.total_amount: Questo ordine è stato rimborsato per un importo di %amount%
 promotion_rule.is_customer: Il cliente è %username%
 promotion_rule.is_restaurant: Il ristorante è %restaurant%
-restaurant_promotion.items_total: Basato sul totale degli articoli
+restaurant_promotion.items_total: Basato sull'importo totale degli articoli
 order.export.empty: Non ci sono ordini da esportare
 order.export.heading.refund_total: Rimborsi
 order.export.heading.fulfillment_method: Realizzazione
@@ -1150,11 +1150,11 @@ restaurants.edenred_transactions.disclaimer: Questa pagina mostra la lista di tu
   il denaro è stato riscosso dal ristorante. Perciò, devi inviare una fattura a ciascun
   ristorante, per richiedere la commissione dovuta.
 adminDashboard.metrics.title: Statistiche
-restaurant_promotion.items_total.help: Questo ti permette di applicate una sconto
+restaurant_promotion.items_total.help: Questo ti permette di applicate uno sconto
   oltre un certo importo. Il tuo margine diminuirà in base all'ammontare dello sconto.
   Questo <strong>non diminuirà</strong> le tariffe percepite dalla piattaforma.
 form.items_total_promotion.fixed_discount_amount.label: Applicare uno sconto di
-form.items_total_promotion.items_total.label: Sopra totale di articoli
+form.items_total_promotion.items_total.label: Per un importo superiore a
 restaurant.stats.view_detailed: Vista dettagliata
 restaurant.stats.view_simple: Vista semplice
 homepage.zerowaste: Scopri i nostri ristoranti a rifiuti zero!

@@ -6,9 +6,12 @@ import { UserOutlined, PhoneOutlined, StarOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import Modal from 'react-modal'
 
 import AddressAutosuggest from '../components/AddressAutosuggest'
 import { getCountry } from '../i18n'
+
+import './AddressBook.scss'
 
 const AddressPopoverIcon = ({ prop }) => {
   switch (prop) {
@@ -37,6 +40,19 @@ function getFormattedValue(prop, value) {
   return value
 }
 
+function getUnformattedValue(prop, value) {
+  if (prop === 'telephone' && typeof value === 'string') {
+    const phoneNumber = parsePhoneNumberFromString(value, (getCountry() || 'fr').toUpperCase())
+
+    return phoneNumber ? phoneNumber.format('E.164') : value
+  }
+
+  // If value is null or undefined, we make sure to return an empty string,
+  // because React treats value={ undefined | null } as an uncontrolled component
+  // https://stackoverflow.com/questions/49969577/warning-when-changing-controlled-input-value-in-react
+  return value ?? ''
+}
+
 const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
 
   const inputRef = useRef(null)
@@ -53,7 +69,7 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
   const onFinish = (values) => {
     const value = values[prop]
     setVisible(false)
-    onChange(value)
+    onChange(getUnformattedValue(prop, value))
   }
 
   useEffect(() => {
@@ -114,7 +130,8 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
           style={{ opacity: 0, width: 0, position: 'absolute', left: '50%', top: 0, bottom: 0, pointerEvents: 'none' }}
           id={ id }
           name={ name }
-          defaultValue={ value }
+          value={ getUnformattedValue(prop, value) }
+          onChange={ () => null }
           required={ required } />
       </span>
     </Popover>
@@ -125,20 +142,31 @@ const AddressBook = ({
   addresses,
   initialAddress,
   onAddressSelected,
+  onDuplicateAddress,
   onClear,
   details,
   ...otherProps
 }) => {
 
+  const { t } = useTranslation()
   const [ address, setAddress ] = useState(initialAddress)
+  const [ isModalOpen, setModalOpen ] = useState(false)
 
   const onAddressPropChange = (address, prop, value) => {
+
     const newAddress = {
       ...address,
       [prop]: value
     }
     setAddress(newAddress)
     onAddressSelected(newAddress.streetAddress, newAddress)
+
+    if (address['@id']) {
+      const oldValue = address[prop]
+      if (!_.isEmpty(oldValue) && oldValue !== value) {
+        setModalOpen(true)
+      }
+    }
   }
 
   return (
@@ -170,6 +198,29 @@ const AddressBook = ({
             { ...item } />
         )) }
       </div> }
+      <Modal
+        isOpen={ isModalOpen }
+        onRequestClose={ () => setModalOpen(false) }
+        shouldCloseOnOverlayClick={ false }
+        contentLabel={ t('ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER') }
+        overlayClassName="ReactModal__Overlay--addressProp"
+        className="ReactModal__Content--addressProp"
+        htmlOpenClassName="ReactModal__Html--open"
+        bodyOpenClassName="ReactModal__Body--open">
+        <p>{ t('ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER') }</p>
+        <div className="d-flex justify-content-between">
+          <Button
+            onClick={ () => {
+              onDuplicateAddress(false)
+              setModalOpen(false)
+            }}>{ t('ADDRESS_BOOK_PROP_CHANGED_UPDATE') }</Button>
+          <Button type="primary"
+            onClick={ () => {
+              onDuplicateAddress(true)
+              setModalOpen(false)
+            }}>{ t('ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE') }</Button>
+        </div>
+      </Modal>
     </div>
   )
 }
@@ -197,8 +248,11 @@ export default function(el, options) {
   const {
     existingAddressControl,
     newAddressControl,
-    isNewAddressControl
+    isNewAddressControl,
+    duplicateAddressControl,
   } = options
+
+  Modal.setAppElement(el)
 
   const addresses = []
   Array.from(existingAddressControl.options).forEach(option => {
@@ -262,6 +316,20 @@ export default function(el, options) {
     el.appendChild(isNewAddressControlHidden)
   }
 
+  // Replace the duplicate address checkbox by a hidden input with the same name & value
+  const duplicateAddressControlHidden = document.createElement('input')
+
+  const duplicateAddressControlName  = duplicateAddressControl.name
+  const duplicateAddressControlValue = duplicateAddressControl.value
+  const duplicateAddressControlId    = duplicateAddressControl.id
+
+  duplicateAddressControlHidden.setAttribute('type', 'hidden')
+  duplicateAddressControlHidden.setAttribute('name',  duplicateAddressControlName)
+  duplicateAddressControlHidden.setAttribute('value', duplicateAddressControlValue)
+  duplicateAddressControlHidden.setAttribute('id',    duplicateAddressControlId)
+
+  duplicateAddressControl.closest('.checkbox').remove()
+
   // Callback with initial data
   let address
 
@@ -310,6 +378,8 @@ export default function(el, options) {
       addresses={ addresses }
       initialAddress={ address }
       details={ details }
+      // The onAddressSelected callback is *ALSO* called when
+      // an address prop (name, telephone, contactName) is modified
       onAddressSelected={ (value, address) => {
 
         if (address['@id']) {
@@ -337,6 +407,15 @@ export default function(el, options) {
           options.onClear()
         }
       } }
+      onDuplicateAddress={ (duplicate) => {
+        if (duplicate) {
+          if (!document.documentElement.contains(duplicateAddressControlHidden)) {
+            el.appendChild(duplicateAddressControlHidden)
+          }
+        } else {
+          duplicateAddressControlHidden.remove()
+        }
+      }}
       { ...autosuggestProps } />,
     reactContainer
   )
