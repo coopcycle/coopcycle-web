@@ -39,7 +39,6 @@ class SettingsType extends AbstractType
     private $phoneNumberUtil;
     private $country;
     private $isDemo;
-    private $debug;
     private $googleEnabled;
     private $cashEnabled;
 
@@ -49,7 +48,6 @@ class SettingsType extends AbstractType
         GatewayResolver $gatewayResolver,
         string $country,
         bool $isDemo,
-        bool $debug,
         bool $googleEnabled,
         bool $cashEnabled)
     {
@@ -58,7 +56,6 @@ class SettingsType extends AbstractType
         $this->gatewayResolver = $gatewayResolver;
         $this->country = $country;
         $this->isDemo = $isDemo;
-        $this->debug = $debug;
         $this->googleEnabled = $googleEnabled;
         $this->cashEnabled = $cashEnabled;
     }

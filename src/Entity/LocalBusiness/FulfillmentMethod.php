@@ -12,7 +12,6 @@ class FulfillmentMethod implements ToggleableInterface
     use ToggleableTrait;
 
     private $id;
-    private $restaurant;
     private $type = 'delivery';
 
     /**

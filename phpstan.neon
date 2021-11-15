@@ -37,6 +37,11 @@ parameters:
         - '#Call to an undefined method Symfony\\Component\\Validator\\ConstraintViolationListInterface::findByCodes\(\)#'
         - '#Call to an undefined method Doctrine\\Persistence\\ObjectManager::getFilters#'
         - '#Method AppBundle\\Serializer\\PhoneNumberNormalizer::denormalize\(\) should return array\|object but#'
+        - '#(createdAt|updatedAt) is never written, only read#'
+        - '#(createdAt|updatedAt) is unused#'
+        - '#Property AppBundle\\Entity\\(.*)::\$id is never written, only read#'
+        - '#Property AppBundle\\Entity\\(.*)::\$id is unused#'
+        - '#updatedAt is never read, only written#'
     universalObjectCratesClasses:
         - MercadoPago\Item
         - MercadoPago\Preference

@@ -4,7 +4,6 @@ namespace AppBundle\Api\EventSubscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,12 +13,10 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 final class ProductOptionValueSubscriber implements EventSubscriberInterface
 {
-    private $entityManager;
     private $dispatcher;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $dispatcher)
+    public function __construct(EventDispatcherInterface $dispatcher)
     {
-        $this->entityManager = $entityManager;
         $this->dispatcher = $dispatcher;
     }
 

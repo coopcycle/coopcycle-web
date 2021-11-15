@@ -85,14 +85,11 @@ services:
     arguments:
       $country: '%country_iso%'
       $isDemo: '%is_demo%'
-      $debug: '%kernel.debug%'
       $googleEnabled: '%env(bool:GOOGLE_ENABLED)%'
       $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
     tags: [ form.type ]
 
   AppBundle\Form\TaskType:
-    arguments:
-      $country: '%country_iso%'
     tags: [ form.type ]
 
   AppBundle\Form\RestaurantType:
