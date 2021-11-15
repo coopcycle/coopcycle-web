@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 trait AccessControlTrait
 {
     /**
-     * @var Delivery|LocalBusiness|Store $object
+     * @param Delivery|LocalBusiness|Store $object
      */
     protected function accessControl($object)
     {
