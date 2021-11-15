@@ -32,7 +32,7 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
         $this->openingHours = $openingHours;
         $this->closingRules = $closingRules ?? new ArrayCollection();
         $this->orderingDelayMinutes = $orderingDelayMinutes;
-        $this->rangeDuration = $rangeDuration ?? 10;
+        $this->rangeDuration = $rangeDuration;
         $this->preOrderingAllowed = $preOrderingAllowed;
     }
 
