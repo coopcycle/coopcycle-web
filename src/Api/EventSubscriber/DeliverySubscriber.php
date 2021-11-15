@@ -6,7 +6,6 @@ use AppBundle\Entity\Store;
 use AppBundle\Message\DeliveryCreated;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
-use AppBundle\Service\RoutingInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
@@ -25,7 +24,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
 {
     private $doctrine;
     private $storeExtractor;
-    private $routing;
     private $messageBus;
 
     private static $matchingRoutes = [
@@ -38,13 +36,11 @@ final class DeliverySubscriber implements EventSubscriberInterface
     public function __construct(
         ManagerRegistry $doctrine,
         TokenStoreExtractor $storeExtractor,
-        RoutingInterface $routing,
         MessageBusInterface $messageBus,
         DeliveryManager $deliveryManager)
     {
         $this->doctrine = $doctrine;
         $this->storeExtractor = $storeExtractor;
-        $this->routing = $routing;
         $this->messageBus = $messageBus;
         $this->deliveryManager = $deliveryManager;
     }

@@ -3,20 +3,11 @@
 namespace AppBundle\Action\Order;
 
 use MercadoPago;
-use AppBundle\Service\SettingsManager;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Payment\MercadopagoPreferenceResponse;
 
 class MercadopagoPreference
 {
-    private $settingsManager;
-
-    public function __construct(
-        SettingsManager $settingsManager)
-    {
-        $this->settingsManager = $settingsManager;
-    }
-
     /**
      * @return MercadoPago\Preference
      */

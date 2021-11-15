@@ -20,7 +20,6 @@ services:
     public: false
     arguments:
       $doctrine: '@doctrine.orm.default_entity_manager'
-      $userManager: '@nucleos_user.user_manager'
       $tokenManager: '@lexik_jwt_authentication.jwt_manager'
       $routing: '@routing_service'
       $settingsManager: '@coopcycle.settings_manager'

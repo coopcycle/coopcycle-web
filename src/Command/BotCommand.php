@@ -8,7 +8,6 @@ use AppBundle\Entity\TaskList;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Nucleos\UserBundle\Model\UserManagerInterface;
 use GuzzleHttp\Client as HttpClient;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
@@ -23,21 +22,18 @@ use Symfony\Component\Stopwatch\Stopwatch;
 class BotCommand extends DaemonCommand
 {
     private $doctrine;
-    private $userManager;
     private $tokenManager;
     private $routing;
     private $settingsManager;
 
     public function __construct(
         EntityManagerInterface $doctrine,
-        UserManagerInterface $userManager,
         JWTTokenManagerInterface $tokenManager,
         RoutingInterface $routing,
         SettingsManager $settingsManager,
         HttpClient $apiClient)
     {
         $this->doctrine = $doctrine;
-        $this->userManager = $userManager;
         $this->tokenManager = $tokenManager;
         $this->routing = $routing;
         $this->settingsManager = $settingsManager;

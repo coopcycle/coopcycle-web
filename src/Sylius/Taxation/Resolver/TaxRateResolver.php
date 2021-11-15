@@ -13,8 +13,8 @@ use Sylius\Component\Taxation\Resolver\TaxRateResolver as BaseTaxRateResolver;
 class TaxRateResolver extends BaseTaxRateResolver implements TaxRateResolverInterface
 {
     /**
-     * @var RepositoryInterface $taxRateRepository
-     * @var string $region
+     * @param RepositoryInterface $taxRateRepository
+     * @param string $region
      */
     public function __construct(RepositoryInterface $taxRateRepository, string $region)
     {

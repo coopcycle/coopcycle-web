@@ -11,7 +11,6 @@ use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,7 +28,6 @@ class ImportTasksCommand extends Command
     private $validator;
     private $liveUpdates;
     private $hashids;
-    private $logger;
 
     public function __construct(
         EntityManagerInterface $objectManager,
@@ -37,15 +35,13 @@ class ImportTasksCommand extends Command
         TaskSpreadsheetParser $spreadsheetParser,
         ValidatorInterface $validator,
         LiveUpdates $liveUpdates,
-        string $secret,
-        LoggerInterface $logger)
+        string $secret)
     {
         $this->objectManager = $objectManager;
         $this->taskImportsFilesystem = $taskImportsFilesystem;
         $this->spreadsheetParser = $spreadsheetParser;
         $this->validator = $validator;
         $this->liveUpdates = $liveUpdates;
-        $this->logger = $logger;
         $this->hashids = new Hashids($secret, 8);
 
         parent::__construct();

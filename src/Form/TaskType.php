@@ -24,13 +24,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaskType extends AbstractType
 {
-    private $country;
-
-    public function __construct(string $country)
-    {
-        $this->country = $country;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $addressBookOptions = [
