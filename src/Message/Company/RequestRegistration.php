@@ -55,4 +55,12 @@ class RequestRegistration
     {
         return $this->mealEstimate;
     }
+
+    /**
+     * @return array
+     */
+    public function getBusinessReferent(): array
+    {
+        return $this->businessReferent;
+    }
 }
