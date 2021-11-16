@@ -14,7 +14,7 @@ final class CartItemInput
     /**
      * @Groups({"cart"})
      */
-    public $quantity;
+    public $quantity = 1;
 
     /**
      * @Groups({"cart"})
