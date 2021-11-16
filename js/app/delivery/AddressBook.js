@@ -59,18 +59,7 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
   const { t } = useTranslation()
   const [ visible, setVisible ] = useState(false)
 
-  if (!address) {
-
-    return null
-  }
-
   const [ form ] = Form.useForm()
-
-  const onFinish = (values) => {
-    const value = values[prop]
-    setVisible(false)
-    onChange(getUnformattedValue(prop, value))
-  }
 
   useEffect(() => {
     if (visible) {
@@ -79,6 +68,17 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
       })
     }
   }, [ visible ]);
+
+  if (!address) {
+
+    return null
+  }
+
+  const onFinish = (values) => {
+    const value = values[prop]
+    setVisible(false)
+    onChange(getUnformattedValue(prop, value))
+  }
 
   const value = address[prop]
 
