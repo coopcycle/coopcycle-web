@@ -7,7 +7,7 @@
   <tr>
     <td>
       {% if mercadopago_account is not empty %}
-        <span class="label label-success">Connected</span>
+        <span class="label label-success">{{ 'form.local_business.mercadopago.connected'|trans }}</span>
       {% else %}
         <a href="{{ path(mercadopago_oauth_redirect_route, { id: restaurant.id }) }}" class="btn btn-sm mercadopago-connect">
           <span>{{ 'form.local_business.mercadopago.connect_button.text'|trans }}</span>

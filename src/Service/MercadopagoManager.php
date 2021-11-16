@@ -110,14 +110,18 @@ class MercadopagoManager
      */
     public function getPayment(PaymentInterface $payment)
     {
-        $this->configure();
+        if ($this->settingsManager->isMercadopagoLivemode()) {
+            $this->configure();
+        } else {
+            MercadoPago\SDK::setAccessToken($this->settingsManager->get('mercadopago_access_token_for_test'));
+        }
 
         $order = $payment->getOrder();
 
         $options = [];
 
         if (null !== $order->getRestaurant()) {
-            $account = $order->getRestaurant()->getMercadopagoAccount(true);
+            $account = $order->getRestaurant()->getMercadopagoAccount();
             if ($account) {
                 // @see MercadoPago\Manager::processOptions()
                 $options['custom_access_token'] = $account->getAccessToken();

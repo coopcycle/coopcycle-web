@@ -1211,3 +1211,4 @@ form.api_app.type.oauth.label: OAuth - for WordPress
 form.api_app.type.api_key.label: API Key - for Urbantz
 form.settings.mercadopago.client_secret.label: Client Secret
 localBusiness.form.business_address.help: This address will be used in receipts
+form.local_business.mercadopago.connected: Connected
