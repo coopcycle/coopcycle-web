@@ -317,18 +317,22 @@ export default function(el, options) {
   }
 
   // Replace the duplicate address checkbox by a hidden input with the same name & value
-  const duplicateAddressControlHidden = document.createElement('input')
+  let duplicateAddressControlHidden
+  if (duplicateAddressControl) {
+    duplicateAddressControlHidden = document.createElement('input')
 
-  const duplicateAddressControlName  = duplicateAddressControl.name
-  const duplicateAddressControlValue = duplicateAddressControl.value
-  const duplicateAddressControlId    = duplicateAddressControl.id
+    const duplicateAddressControlName  = duplicateAddressControl.name
+    const duplicateAddressControlValue = duplicateAddressControl.value
+    const duplicateAddressControlId    = duplicateAddressControl.id
 
-  duplicateAddressControlHidden.setAttribute('type', 'hidden')
-  duplicateAddressControlHidden.setAttribute('name',  duplicateAddressControlName)
-  duplicateAddressControlHidden.setAttribute('value', duplicateAddressControlValue)
-  duplicateAddressControlHidden.setAttribute('id',    duplicateAddressControlId)
+    duplicateAddressControlHidden.setAttribute('type', 'hidden')
+    duplicateAddressControlHidden.setAttribute('name',  duplicateAddressControlName)
+    duplicateAddressControlHidden.setAttribute('value', duplicateAddressControlValue)
+    duplicateAddressControlHidden.setAttribute('id',    duplicateAddressControlId)
 
-  duplicateAddressControl.closest('.checkbox').remove()
+    duplicateAddressControl.closest('.checkbox').remove()
+  }
+
 
   // Callback with initial data
   let address
@@ -408,12 +412,14 @@ export default function(el, options) {
         }
       } }
       onDuplicateAddress={ (duplicate) => {
-        if (duplicate) {
-          if (!document.documentElement.contains(duplicateAddressControlHidden)) {
-            el.appendChild(duplicateAddressControlHidden)
+        if (duplicateAddressControlHidden) {
+          if (duplicate) {
+            if (!document.documentElement.contains(duplicateAddressControlHidden)) {
+              el.appendChild(duplicateAddressControlHidden)
+            }
+          } else {
+            duplicateAddressControlHidden.remove()
           }
-        } else {
-          duplicateAddressControlHidden.remove()
         }
       }}
       { ...autosuggestProps } />,
