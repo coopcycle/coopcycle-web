@@ -14,6 +14,7 @@ class RestaurantFilterConfigurator
         'homepage',
         'restaurants',
         'api_restaurants_get_collection',
+        'shops',
     ];
 
     public function __construct(EntityManagerInterface $em)
