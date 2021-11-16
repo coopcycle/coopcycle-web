@@ -213,6 +213,11 @@ class OrderController extends AbstractController
             // In those cases, we always reload the page
             if ($reusablePackagingWasChanged || $reusablePackagingPledgeReturnWasChanged) {
 
+                // Make sure to reset return counter
+                if (!$order->isReusablePackagingEnabled()) {
+                    $order->setReusablePackagingPledgeReturn(0);
+                }
+
                 $orderProcessor->process($order);
                 $this->objectManager->flush();
 
