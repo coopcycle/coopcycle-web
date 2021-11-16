@@ -93,7 +93,7 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
           initialValues={{ [ prop ]: getFormattedValue(prop, value) }}>
           <Form.Item
             name={ prop }
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            rules={[{ required }]}
           >
             <Input
               prefix={<AddressPopoverIcon prop={ prop } />}
