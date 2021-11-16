@@ -190,7 +190,7 @@ const AddressBook = ({
       </div>
       { address &&
       <div className="mt-4 mb-2">
-        { details.map(item => (
+        { _.map(details, item => (
           <AddressPopover
             key={ item.prop }
             address={ address }
@@ -361,16 +361,25 @@ export default function(el, options) {
     }
   }
 
-  const details = []
+  let details = {}
 
   if (options.nameControl) {
-    details.push(getInputProps(options.nameControl, 'name'))
+    details = {
+      ...details,
+      name: getInputProps(options.nameControl, 'name'),
+    }
   }
   if (options.telephoneControl) {
-    details.push(getInputProps(options.telephoneControl, 'telephone'))
+    details = {
+      ...details,
+      telephone: getInputProps(options.telephoneControl, 'telephone'),
+    }
   }
   if (options.contactNameControl) {
-    details.push(getInputProps(options.contactNameControl, 'contactName'))
+    details = {
+      ...details,
+      contactName: getInputProps(options.contactNameControl, 'contactName'),
+    }
   }
 
   const reactContainer = document.createElement('div')
