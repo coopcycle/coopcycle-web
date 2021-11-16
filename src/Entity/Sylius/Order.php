@@ -1000,9 +1000,10 @@ class Order extends BaseOrder implements OrderInterface
     public function getPaymentMethod(): string
     {
         $payment = $this->getLastPayment();
+        $method = $payment->getMethod();
 
-        if ($payment) {
-            return $payment->getMethod()->getCode();
+        if ($method) {
+            return $method->getCode();
         }
 
         return '';
