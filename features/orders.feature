@@ -690,7 +690,8 @@ Feature: Orders
         "takeaway":false,
         "assignedTo":"@string@||@null@",
         "preparationTime":"@string@||@null@",
-        "shippingTime":"@string@||@null@"
+        "shippingTime":"@string@||@null@",
+        "paymentMethod":"@string@||@null@"
       }
       """
 
