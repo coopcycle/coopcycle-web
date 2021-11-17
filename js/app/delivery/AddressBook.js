@@ -93,7 +93,7 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
           initialValues={{ [ prop ]: getFormattedValue(prop, value) }}>
           <Form.Item
             name={ prop }
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            rules={[{ required }]}
           >
             <Input
               prefix={<AddressPopoverIcon prop={ prop } />}
@@ -123,7 +123,9 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
             'border-primary': !_.isEmpty(value),
           }) }>
           <span className="mr-2"><AddressPopoverIcon prop={ prop } /></span>
-          <span>{ !_.isEmpty(value) ? getFormattedValue(prop, value) : t(`${transKeys[prop]}_LABEL`) }</span>
+          <span className={ classNames({
+            'font-weight-bold': prop === 'name',
+          }) }>{ !_.isEmpty(value) ? getFormattedValue(prop, value) : t(`${transKeys[prop]}_LABEL`) }</span>
         </button>
         {/* https://stackoverflow.com/questions/50917016/make-hidden-field-required */}
         <input type="text"
