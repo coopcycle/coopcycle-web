@@ -45,6 +45,10 @@ security:
             pattern: ^/api/facebook/login$
             security: false
 
+        api_sign_in_with_apple_login:
+            pattern: ^/api/sign_in_with_apple/login$
+            security: false
+
         api_deliveries:
             pattern:   ^/api/deliveries
             methods: [ GET, POST, PUT, DELETE ]

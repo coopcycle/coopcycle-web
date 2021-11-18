@@ -2,6 +2,16 @@
 
 namespace AppBundle\Action;
 
+use Azimo\Apple\Api;
+use Azimo\Apple\Auth;
+use Azimo\Apple\Auth\Exception\ValidationFailedException;
+use GuzzleHttp\Client;
+use Lcobucci\JWT\Encoding\JoseEncoder;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Token\Parser;
+use Lcobucci\JWT\Validation\Constraint\IssuedBy;
+use Lcobucci\JWT\Validation\Constraint\PermittedFor;
+use Lcobucci\JWT\Validation\Validator;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
@@ -11,37 +21,31 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class FacebookLogin
+class SignInWithApple
 {
     private $userManager;
     private $jwtManager;
     private $dispatcher;
-    private $facebookClient;
 
     public function __construct(
         UserManagerInterface $userManager,
         JWTTokenManagerInterface $jwtManager,
-        EventDispatcherInterface $dispatcher,
-        HttpClientInterface $facebookClient)
+        EventDispatcherInterface $dispatcher)
     {
         $this->userManager = $userManager;
         $this->jwtManager = $jwtManager;
         $this->dispatcher = $dispatcher;
-        $this->facebookClient = $facebookClient;
     }
 
     /**
      * @Route(
-     *     path="/facebook/login",
-     *     name="api_facebook_login",
+     *     path="/sign_in_with_apple/login",
+     *     name="api_sign_in_with_apple_login",
      *     methods={"POST"}
      * )
      */
-    public function facebookLoginAction(Request $request)
+    public function signInWithAppleLoginAction(Request $request)
     {
         $data = [];
         $content = $request->getContent();
@@ -49,24 +53,37 @@ class FacebookLogin
             $data = json_decode($content, true);
         }
 
+        $appleJwtFetchingService = new Auth\Service\AppleJwtFetchingService(
+            new Auth\Jwt\JwtParser(new Parser(new JoseEncoder())),
+            new Auth\Jwt\JwtVerifier(
+                new Api\AppleApiClient(
+                    new Client(
+                        [
+                            'base_uri'        => 'https://appleid.apple.com',
+                            'timeout'         => 5,
+                            'connect_timeout' => 5,
+                        ]
+                    ),
+                    new Api\Factory\ResponseFactory()
+                ),
+                new Validator(),
+                new Sha256()
+            ),
+            new Auth\Jwt\JwtValidator(
+                new Validator(),
+                [
+                    new IssuedBy('https://appleid.apple.com'),
+                    new PermittedFor('org.coopcycle.CoopCycle'),
+                ]
+            ),
+            new Auth\Factory\AppleJwtStructFactory()
+        );
+
         try {
 
-            // https://graph.facebook.com/me?fields=email,name,first_name,last_name&access_token=XXX
-            $facebookResponse = $this->facebookClient->request('GET', 'me', [
-                'query' => [
-                    'fields' => 'email,name,first_name,last_name',
-                    'access_token' => $data['accessToken'],
-                ],
-            ]);
+            $payload = $appleJwtFetchingService->getJwtPayload($data['identityToken']);
 
-            // Need to invoke a method on the Response,
-            // to actually throw the Exception here
-            // https://github.com/symfony/symfony/issues/34281
-            $statusCode = $facebookResponse->getStatusCode();
-
-            $fbContent = $facebookResponse->toArray();
-
-            $email = $fbContent['email'];
+            $email = $payload->getEmail();
 
             $user = $this->userManager->findUserByEmail($email);
 
@@ -85,7 +102,7 @@ class FacebookLogin
 
             return $response;
 
-        } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
+        } catch (ValidationFailedException $e) {
             throw new AccessDeniedException();
         }
     }

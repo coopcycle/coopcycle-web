@@ -123,7 +123,8 @@
         "geocoder-php/google-maps-provider": "^4.6",
         "symfony/redis-messenger": "^5.3",
         "symfony/amqp-messenger": "^5.3",
-        "symfony/doctrine-messenger": "^5.3"
+        "symfony/doctrine-messenger": "^5.3",
+        "azimolabs/apple-sign-in-php-sdk": "^2.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
