@@ -11,10 +11,10 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class FacebookLogin
 {
@@ -74,7 +74,7 @@ class FacebookLogin
             $user = $this->userManager->findUserByEmail($email);
 
             if (null === $user) {
-                throw new AccessDeniedException();
+                throw new AccessDeniedHttpException();
             }
 
             $jwt = $this->jwtManager->create($user);
@@ -88,9 +88,9 @@ class FacebookLogin
 
             return $response;
 
-        } catch (\Exception $e) {
+        } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
             $this->logger->error($e->getMessage());
-            throw new AccessDeniedException();
+            throw new AccessDeniedHttpException();
         }
     }
 }

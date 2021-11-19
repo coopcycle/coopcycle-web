@@ -20,7 +20,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class SignInWithApple
 {
@@ -88,7 +88,7 @@ class SignInWithApple
             $user = $this->userManager->findUserByEmail($email);
 
             if (null === $user) {
-                throw new AccessDeniedException();
+                throw new AccessDeniedHttpException();
             }
 
             $jwt = $this->jwtManager->create($user);
@@ -103,7 +103,7 @@ class SignInWithApple
             return $response;
 
         } catch (ValidationFailedException $e) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedHttpException();
         }
     }
 }
