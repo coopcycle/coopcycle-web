@@ -7,6 +7,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,12 +27,14 @@ class FacebookLogin
         UserManagerInterface $userManager,
         JWTTokenManagerInterface $jwtManager,
         EventDispatcherInterface $dispatcher,
-        HttpClientInterface $facebookClient)
+        HttpClientInterface $facebookClient,
+        LoggerInterface $logger)
     {
         $this->userManager = $userManager;
         $this->jwtManager = $jwtManager;
         $this->dispatcher = $dispatcher;
         $this->facebookClient = $facebookClient;
+        $this->logger = $logger;
     }
 
     /**
@@ -85,7 +88,8 @@ class FacebookLogin
 
             return $response;
 
-        } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage());
             throw new AccessDeniedException();
         }
     }
