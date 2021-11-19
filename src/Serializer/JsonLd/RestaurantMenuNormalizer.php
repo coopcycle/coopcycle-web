@@ -11,6 +11,8 @@ use Sylius\Component\Locale\Provider\LocaleProvider;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
+use Liip\ImagineBundle\Service\FilterService;
 
 /**
  * FIXME
@@ -27,11 +29,15 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
     public function __construct(
         ItemNormalizer $normalizer,
         LocaleProvider $localeProvider,
-        ProductVariantResolverInterface $variantResolver)
+        ProductVariantResolverInterface $variantResolver,
+        UploaderHelper $uploaderHelper,
+        FilterService $imagineFilter)
     {
         $this->normalizer = $normalizer;
         $this->localeProvider = $localeProvider;
         $this->variantResolver = $variantResolver;
+        $this->uploaderHelper = $uploaderHelper;
+        $this->imagineFilter = $imagineFilter;
     }
 
     private function normalizeRange($range)
@@ -109,6 +115,24 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
         return $data;
     }
 
+    private function getProductImagePath($product, $ratio) {
+        try {
+            $productImage = $product->getImages()->filter(function ($image) use($ratio) {
+                return $image->getRatio() === $ratio;
+            })->first();
+            if ($productImage) {
+                $imagePath = $this->uploaderHelper->asset($productImage, 'imageFile');
+                if (!empty($imagePath)) {
+                    $filterName = sprintf('product_thumbnail_%s', str_replace(':', 'x', $ratio));
+                    return $this->imagineFilter->getUrlOfFilteredImage($imagePath, $filterName);
+                }
+            }
+        } catch (\Exception $e) {
+            // TODO add logger?
+        }
+        return null;
+    }
+
     public function normalize($object, $format = null, array $context = array())
     {
         $data = $this->normalizer->normalize($object, $format, $context);
@@ -168,6 +192,19 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                             return $reflect->getConstant($constantName);
                         }, $allergens));
                     }
+
+                    $images = [];
+                    foreach (['1:1', '16:9'] as $ratio) {
+                        $imagePath = $this->getProductImagePath($product, $ratio);
+                        if ($imagePath) {
+                            $images[] = [
+                                'ratio' => $ratio,
+                                'url' => $imagePath,
+                            ];
+                        }
+                    }
+
+                    $item['images'] = $images;
 
                     $section['hasMenuItem'][] = $item;
                 }
