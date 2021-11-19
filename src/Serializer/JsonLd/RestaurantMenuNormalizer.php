@@ -117,11 +117,11 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
 
     private function getProductImagePath($product, $ratio) {
         try {
-            $product_image = $product->getImages()->filter(function ($image) use($ratio) {
+            $productImage = $product->getImages()->filter(function ($image) use($ratio) {
                 return $image->getRatio() === $ratio;
             })->first();
-            if ( $product_image ) {
-                $imagePath = $this->uploaderHelper->asset($product_image, 'imageFile');
+            if ($productImage) {
+                $imagePath = $this->uploaderHelper->asset($productImage, 'imageFile');
                 if (!empty($imagePath)) {
                     $filterName = sprintf('product_thumbnail_%s', str_replace(':', 'x', $ratio));
                     return $this->imagineFilter->getUrlOfFilteredImage($imagePath, $filterName);
@@ -193,14 +193,18 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                         }, $allergens));
                     }
 
-                    $image_1x1 = $this->getProductImagePath($product, '1:1');
-                    if ( $image_1x1 ) {
-                        $item['image_1x1'] = $image_1x1;
+                    $images = [];
+                    foreach (['1:1', '16:9'] as $ratio) {
+                        $imagePath = $this->getProductImagePath($product, $ratio);
+                        if ($imagePath) {
+                            $images[] = [
+                                'ratio' => $ratio,
+                                'url' => $imagePath,
+                            ];
+                        }
                     }
-                    $image_16x9 = $this->getProductImagePath($product, '16:9');
-                    if ( $image_16x9 ) {
-                        $item['image_16x9'] = $image_16x9;
-                    }
+
+                    $item['images'] = $images;
 
                     $section['hasMenuItem'][] = $item;
                 }
