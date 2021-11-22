@@ -739,7 +739,7 @@ services:
   AppBundle\Action\GoogleSignIn:
     public: true
     arguments:
-      $appId: "%env(GOOGLE_SIGN_IN_APP_ID)%"
+      $appId: "%env(GOOGLE_SIGN_IN_CLIENT_ID)%"
 
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
