@@ -13426,16 +13426,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.101.0",
+            "version": "v7.103.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "392d387c61a72a4629a92fa93a4bc44318089224"
+                "reference": "3a029598395bb4c7cfafa64707a553f4b01a9a12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/392d387c61a72a4629a92fa93a4bc44318089224",
-                "reference": "392d387c61a72a4629a92fa93a4bc44318089224",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/3a029598395bb4c7cfafa64707a553f4b01a9a12",
+                "reference": "3a029598395bb4c7cfafa64707a553f4b01a9a12",
                 "shasum": ""
             },
             "require": {
@@ -13481,9 +13481,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v7.101.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v7.103.0"
             },
-            "time": "2021-11-16T16:07:54+00:00"
+            "time": "2021-11-20T00:36:07+00:00"
         },
         {
             "name": "sylius-labs/polyfill-symfony-framework-bundle",
@@ -21284,5 +21284,5 @@
         "php": ">=7.4"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
