@@ -61,7 +61,30 @@ class Pay
 
         $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
 
-        switch($this->gatewayResolver->resolve()) {
+        if (isset($body['cashOnDelivery']) && true === $body['cashOnDelivery']) {
+
+            if (!$this->cashEnabled && !$data->supportsCashOnDelivery()) {
+                throw new BadRequestHttpException('Cash on delivery is not enabled');
+            }
+
+            $paymentMethod = $this->paymentMethodRepository->findOneByCode('CASH_ON_DELIVERY');
+            if (null === $paymentMethod) {
+                throw new BadRequestHttpException('Payment method "CASH_ON_DELIVERY" not found');
+            }
+
+            $payment->setMethod($paymentMethod);
+
+            $this->orderManager->checkout($data);
+            $this->entityManager->flush();
+
+            if (PaymentInterface::STATE_FAILED === $payment->getState()) {
+                throw new BadRequestHttpException($payment->getLastError());
+            }
+
+            return $data;
+        }
+
+        switch ($this->gatewayResolver->resolve()) {
             case 'mercadopago':
                 $payment->setMercadopagoPaymentId($body['paymentId']);
 
@@ -88,29 +111,6 @@ class Pay
                 }
 
                 return $data;
-        }
-
-        if (isset($body['cashOnDelivery']) && true === $body['cashOnDelivery']) {
-
-            if (!$this->cashEnabled && !$data->supportsCashOnDelivery()) {
-                throw new BadRequestHttpException('Cash on delivery is not enabled');
-            }
-
-            $paymentMethod = $this->paymentMethodRepository->findOneByCode('CASH_ON_DELIVERY');
-            if (null === $paymentMethod) {
-                throw new BadRequestHttpException('Payment method "CASH_ON_DELIVERY" not found');
-            }
-
-            $payment->setMethod($paymentMethod);
-
-            $this->orderManager->checkout($data);
-            $this->entityManager->flush();
-
-            if (PaymentInterface::STATE_FAILED === $payment->getState()) {
-                throw new BadRequestHttpException($payment->getLastError());
-            }
-
-            return $data;
         }
 
         if (isset($body['paymentIntentId'])) {

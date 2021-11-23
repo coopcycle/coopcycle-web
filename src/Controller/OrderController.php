@@ -70,7 +70,8 @@ class OrderController extends AbstractController
         TranslatorInterface $translator,
         ValidatorInterface $validator,
         SettingsManager $settingsManager,
-        EmbedContext $embedContext)
+        EmbedContext $embedContext,
+        SessionInterface $session)
     {
         if (!$settingsManager->get('guest_checkout_enabled')) {
             if (!$embedContext->isEnabled()) {
@@ -103,8 +104,30 @@ class OrderController extends AbstractController
         // If the user is authenticated, use the corresponding customer
         // @see AppBundle\EventListener\WebAuthenticationListener
         if (null !== $user && $user->getCustomer() !== $order->getCustomer()) {
+
             $order->setCustomer($user->getCustomer());
+
+            // Make sure to move LoopEat credentials if any
+            $loopeatAccessTokenKey =
+                sprintf('loopeat.order.%d.access_token', $order->getId());
+            $loopeatRefreshTokenKey =
+                sprintf('loopeat.order.%d.refresh_token', $order->getId());
+
+            if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
+                $order->getCustomer()->setLoopeatAccessToken(
+                    $session->get($loopeatAccessTokenKey)
+                );
+                $order->getCustomer()->setLoopeatRefreshToken(
+                    $session->get($loopeatRefreshTokenKey)
+                );
+            }
+
             $this->objectManager->flush();
+
+            if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
+                $session->remove($loopeatAccessTokenKey);
+                $session->remove($loopeatRefreshTokenKey);
+            }
         }
 
         $originalPromotionCoupon = $order->getPromotionCoupon();
@@ -189,6 +212,11 @@ class OrderController extends AbstractController
 
             // In those cases, we always reload the page
             if ($reusablePackagingWasChanged || $reusablePackagingPledgeReturnWasChanged) {
+
+                // Make sure to reset return counter
+                if (!$order->isReusablePackagingEnabled()) {
+                    $order->setReusablePackagingPledgeReturn(0);
+                }
 
                 $orderProcessor->process($order);
                 $this->objectManager->flush();

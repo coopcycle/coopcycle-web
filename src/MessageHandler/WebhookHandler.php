@@ -14,8 +14,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
@@ -24,18 +22,15 @@ class WebhookHandler implements MessageHandlerInterface
     private $client;
     private $iriConverter;
     private $entityManager;
-    private $logger;
 
     public function __construct(
         Client $client,
         IriConverterInterface $iriConverter,
-        EntityManagerInterface $entityManager,
-        LoggerInterface $logger = null)
+        EntityManagerInterface $entityManager)
     {
         $this->client = $client;
         $this->iriConverter = $iriConverter;
         $this->entityManager = $entityManager;
-        $this->logger = $logger ?? new NullLogger();
     }
 
     public function __invoke(WebhookMessage $message)

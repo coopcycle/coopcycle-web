@@ -1,0 +1,8 @@
+.ReactModal__Overlay--addressProp {
+  // To make sure the overlay is *ABOVE* the Leaflet map
+  z-index: 1001;
+}
+
+.ReactModal__Content--addressProp {
+  max-width: 50%;
+}

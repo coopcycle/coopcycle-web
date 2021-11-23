@@ -64,6 +64,7 @@ function createAddressWidget(name, type, cb) {
     existingAddressControl: document.querySelector(`#${name}_${type}_address_existingAddress`),
     newAddressControl: document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`),
     isNewAddressControl: document.querySelector(`#${name}_${type}_address_isNewAddress`),
+    duplicateAddressControl: document.querySelector(`#${name}_${type}_address_duplicateAddress`),
     // Fields containing address details
     nameControl: document.querySelector(`#${name}_${type}_address_name`),
     telephoneControl: document.querySelector(`#${name}_${type}_address_telephone`),

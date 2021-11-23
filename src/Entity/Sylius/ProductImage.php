@@ -107,4 +107,9 @@ class ProductImage
     {
         $this->ratio = $ratio;
     }
+
+    public function getProduct()
+    {
+        return $this->product;
+    }
 }

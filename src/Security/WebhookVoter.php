@@ -5,7 +5,6 @@ namespace AppBundle\Security;
 use AppBundle\Entity\Webhook;
 use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface;
 use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
@@ -23,14 +22,11 @@ class WebhookVoter extends Voter
         self::EDIT,
     ];
 
-    private $authorizationChecker;
     private $accessTokenManager;
 
     public function __construct(
-        AuthorizationCheckerInterface $authorizationChecker,
         AccessTokenManagerInterface $accessTokenManager)
     {
-        $this->authorizationChecker = $authorizationChecker;
         $this->accessTokenManager = $accessTokenManager;
     }
 

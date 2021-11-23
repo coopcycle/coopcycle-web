@@ -488,3 +488,13 @@ Feature: Authenticate
         "namespace":@string@
       }
       """
+
+  Scenario: Login with Facebook (access denied)
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/facebook/login" with body:
+      """
+      {
+        "accessToken": "EAAShkmkLDaABAN4RNHUaLH9TvKeWxwVzBQy82GmrPzzuDNRq5i7sm95y9qZCM5b1zDHAjCuTHHRGGL9DxJalNoGgYACtuQQqa60K9vlVO1JTMAHTFBiCPl8qfzLZCZA0p9dsZCrLJBHkbZBBaRpac7hRFLiJ4v5UA9kfPqlZC3h5wKn2Sl5sJ6O88SthACSEfJStIlZA9GVZAZA8ezHBZCGXraPxLcvkRM5SV6fwPpeHxPtOIqHLmQ3Kir"
+      }
+      """
+    Then the response status code should be 403

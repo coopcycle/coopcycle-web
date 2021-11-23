@@ -20,7 +20,6 @@ class TokenBearerProvider implements AuthenticationProviderInterface
 {
     private $userProvider;
     private $jwtTokenAuthenticator;
-    private $oauth2Provider;
     private $providerKey;
 
     public function __construct(

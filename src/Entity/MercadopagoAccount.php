@@ -98,4 +98,11 @@ class MercadopagoAccount
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getRefreshToken()
+    {
+        return $this->refreshToken;
+    }
 }

@@ -1,12 +1,13 @@
 includes:
     - vendor/phpstan/phpstan-symfony/extension.neon
     - vendor/phpstan/phpstan-webmozart-assert/extension.neon
+    - vendor/phpstan/phpstan-doctrine/extension.neon
 
 parameters:
     level: 4
     paths:
         - src
-    excludes_analyse:
+    excludePaths:
         # Class AppBundle\Api\DataProvider\RestaurantCollectionDataProvider extends final class ApiPlatform\Core\Bridge\Doctrine\Orm\CollectionDataProvider
         - src/Api/DataProvider/RestaurantCollectionDataProvider
         - src/Doctrine/EventSubscriber/TaskSubscriber/EntityChangeSetProcessor
@@ -14,7 +15,6 @@ parameters:
         - '#Access to an undefined property #'
         - '#Call to an undefined method Symfony\\Component\\Form\\FormInterface::getClickedButton\(\)#'
         - '#Call to an undefined method Sylius\\Component\\Order\\Model\\OrderInterface::[a-zA-Z]+\(\)#'
-        - '#Call to an undefined method Doctrine\\Persistence\\ObjectRepository<[a-zA-Z\\]+>::[a-zA-Z]+\(\)#'
         - '#Call to an undefined method Doctrine\\ORM\\EntityRepository<[a-zA-Z\\]+>::[a-zA-Z]+\(\)#'
         - '#Call to an undefined method Sylius\\Component\\(Order|Payment|Product)\\Model\\[a-zA-Z]+Interface::[a-zA-Z]+\(\)#'
         - '#Call to an undefined method Symfony\\Component\\Security\\Core\\User\\UserInterface::[a-zA-Z]+\(\)#'
@@ -37,6 +37,15 @@ parameters:
         - '#Call to an undefined method Symfony\\Component\\Validator\\ConstraintViolationListInterface::findByCodes\(\)#'
         - '#Call to an undefined method Doctrine\\Persistence\\ObjectManager::getFilters#'
         - '#Method AppBundle\\Serializer\\PhoneNumberNormalizer::denormalize\(\) should return array\|object but#'
+        - '#(createdAt|updatedAt) is never written, only read#'
+        - '#(createdAt|updatedAt) is unused#'
+        - '#Property AppBundle\\Entity\\(.*)::\$id is never written, only read#'
+        - '#Property AppBundle\\Entity\\(.*)::\$id is unused#'
+        - '#updatedAt is never read, only written#'
+        - '#Property AppBundle\\Form\\Type\\AutocompleteAdapterType::\$(algoliaApiKey|locationIqAccessToken) is never read, only written#'
+        - '#Property AppBundle\\Form\\Type\\GeocodingProviderType::\$opencageApiKey is never read, only written#'
+        - '#Class AppBundle\\Security\\OAuth\\ResourceOwner\\FacebookResourceOwner extends @final class HWI\\Bundle\\OAuthBundle\\OAuth\\ResourceOwner\\FacebookResourceOwner#'
+        - '#Property AppBundle\\Utils\\TimeRange::\$(.*) is never read, only written#'
     universalObjectCratesClasses:
         - MercadoPago\Item
         - MercadoPago\Preference
