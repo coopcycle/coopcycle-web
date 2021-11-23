@@ -74,9 +74,9 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
       resultSet.series().map((s) => ({
         get label() {
           if (s.key.includes('PICKUP,Task.percentageOnTime')) {
-            return "% PICKUP done on time"
+            return "% PICKUP on time"
           } else if (s.key.includes('DROPOFF,Task.percentageOnTime')) {
-            return "% DROPOFF done on time"
+            return "% DROPOFF on time"
           } else {
             return s.title
           }
@@ -140,7 +140,7 @@ const ChartRenderer = ({ cubejsApi, dateRange }) => {
       "timeDimensions": [
         {
           "dimension": "Task.intervalEndAt",
-          "granularity": "day",
+          "granularity": "week",
           "dateRange": getCubeDateRange(dateRange)
         }
       ],

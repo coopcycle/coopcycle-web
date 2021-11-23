@@ -108,6 +108,38 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
   const stacked = !(pivotConfig.x || []).includes('measures');
   const options = {
     ...commonOptions,
+    plugins: {
+      ...commonOptions.plugins,
+      tooltip: {
+        callbacks: {
+          title: function () {
+            // hide title
+            return '';
+          },
+          label: function (context) {
+            let data = context.raw
+
+            let label = '';
+
+            if (data.x < -50) {
+              label += `${Math.abs(Math.round(data.x + 50))} % early: `
+            } else if (data.x <= 50) {
+              label += `on time (${Math.round(data.x + 50)} %): `
+            } else {
+              label += `${Math.abs(Math.round(data.x - 50))} % late: `
+            }
+
+            // if (label) {
+            //   label += ': ';
+            // }
+            // if (context.parsed.y !== null) {
+            //   label += `average ${Math.abs(Math.round(context.parsed.y))} minutes`;
+            // }
+            return label += `${data.y} ${taskType}`;
+          }
+        },
+      },
+    },
     scales: {
       x: {
         ...commonOptions.scales.x,

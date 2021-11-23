@@ -20,6 +20,21 @@ const commonOptions = {
     legend: {
       position: 'bottom',
     },
+    tooltip: {
+      callbacks: {
+        label: function(context) {
+          let label = context.dataset.label || '';
+
+          if (label) {
+            label += ': ';
+          }
+          if (context.parsed.y !== null) {
+            label += `${Math.abs(context.parsed.y)}`;
+          }
+          return label;
+        }
+      },
+    },
   },
   scales: {
     x: {
@@ -52,13 +67,13 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
       resultSet.series().map((s) => ({
         get label() {
           if (s.key.includes('PICKUP,Task.countTooEarly')) {
-            return "# PICKUP done too early"
+            return "PICKUP early"
           } else if (s.key.includes('PICKUP,Task.countTooLate')) {
-            return "# PICKUP done too late"
+            return "PICKUP late"
           } else if (s.key.includes('DROPOFF,Task.countTooEarly')) {
-            return "# DROPOFF done too early"
+            return "DROPOFF early"
           } else if (s.key.includes('DROPOFF,Task.countTooLate')) {
-            return "# DROPOFF done too late"
+            return "DROPOFF late"
           }else {
             return s.title
           }
@@ -123,7 +138,7 @@ const ChartRenderer = ({ cubejsApi, dateRange }) => {
         "timeDimensions": [
           {
             "dimension": "Task.intervalEndAt",
-            "granularity": "day",
+            "granularity": "week",
             "dateRange": getCubeDateRange(dateRange)
           }
         ],

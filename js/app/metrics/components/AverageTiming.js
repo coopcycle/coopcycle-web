@@ -23,6 +23,21 @@ const commonOptions = {
     legend: {
       position: 'bottom',
     },
+    tooltip: {
+      callbacks: {
+        label: function(context) {
+          let label = context.dataset.label || '';
+
+          if (label) {
+            label += ': ';
+          }
+          if (context.parsed.y !== null) {
+            label += `average ${Math.abs(Math.round(context.parsed.y))} minutes`;
+          }
+          return label;
+        }
+      },
+    },
   },
   scales: {
     x: {
@@ -53,12 +68,20 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
   const datasets = useDeepCompareMemo(
     () =>
       resultSet.series().map((s) => ({
-        label: s.title,
+        get label() {
+          if (s.key.includes('PICKUP,Task.averageTooEarly')) {
+            return "PICKUP early"
+          } else if (s.key.includes('PICKUP,Task.averageTooLate')) {
+            return "PICKUP late"
+          } else if (s.key.includes('DROPOFF,Task.averageTooEarly')) {
+            return "DROPOFF early"
+          } else if (s.key.includes('DROPOFF,Task.averageTooLate')) {
+            return "DROPOFF late"
+          }else {
+            return s.title
+          }
+        },
         data: s.series.map((r) => {
-          console.log(`data:`)
-          console.log(s)
-          console.log(r)
-
           let value = Math.abs(r.value)
 
           if (value > defaultMaxX) {
@@ -124,7 +147,7 @@ const ChartRenderer = ({ cubejsApi, dateRange }) => {
         "timeDimensions": [
           {
             "dimension": "Task.intervalEndAt",
-            "granularity": "day",
+            "granularity": "week",
             "dateRange": getCubeDateRange(dateRange)
           }
         ],
