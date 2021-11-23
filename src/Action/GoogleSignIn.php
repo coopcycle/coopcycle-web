@@ -6,6 +6,7 @@ use Nucleos\UserBundle\Model\UserManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,10 +14,20 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class GoogleSignIn
 {
+    private $userManager;
+    private $jwtManager;
+    private $dispatcher;
     private $appId;
 
-    public function __construct(string $appId)
+    public function __construct(
+        UserManagerInterface $userManager,
+        JWTTokenManagerInterface $jwtManager,
+        EventDispatcherInterface $dispatcher,
+        string $appId)
     {
+        $this->userManager = $userManager;
+        $this->jwtManager = $jwtManager;
+        $this->dispatcher = $dispatcher;
         $this->appId = $appId;
     }
 
