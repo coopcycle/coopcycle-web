@@ -28,21 +28,6 @@ const commonOptions = {
   scales: {
     x: {
       type: 'linear',
-      ticks: {
-        autoSkip: true,
-        maxRotation: 0,
-        padding: 12,
-        minRotation: 0,
-        callback: function(value) {
-          if (value === defaultMinX) {
-            return "<"
-          } else if (value === defaultMaxX) {
-            return "<"
-          } else {
-            return Math.round(value) + ' min';
-          }
-        }
-      },
     },
   },
 };
@@ -122,20 +107,14 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
             let label = '';
 
             if (data.x < 0) {
-              label += `${Math.abs(Math.round(data.x))} minutes early: `
+              label += `${Math.abs(Math.round(data.x))} minutes early`
             } else if (data.x == 0) {
-              label += `on time: `
+              label += `on time`
             } else {
-              label += `${Math.abs(Math.round(data.x))} minutes late: `
+              label += `${Math.abs(Math.round(data.x))} minutes late`
             }
 
-            // if (label) {
-            //   label += ': ';
-            // }
-            // if (context.parsed.y !== null) {
-            //   label += `average ${Math.abs(Math.round(context.parsed.y))} minutes`;
-            // }
-            return label += `${data.y} ${taskType}`;
+            return `${data.y} ${taskType}: ${label}`;
           }
         },
       },
@@ -146,6 +125,36 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
         stacked,
         min: -1 * minMaxX,
         max: minMaxX,
+        ticks: {
+          autoSkip: true,
+          maxRotation: 0,
+          padding: 12,
+          minRotation: 0,
+          callback: function(value) {
+            if (value === defaultMinX) {
+              return "<"
+            } else if (value === defaultMaxX) {
+              return "<"
+            } else {
+              return Math.abs(Math.round(value)) + ' min';
+            }
+          },
+          color: function (context) {
+            let value = context.tick.value
+
+            if (value < defaultMinX) {
+              return '#000000'
+            } else if (value < 0) {
+              return getBackgroundColor(taskType, TIMING_TOO_EARLY)
+            } else if (value == 0) {
+              return getBackgroundColor(taskType, TIMING_ON_TIME)
+            } else if (value < defaultMaxX) {
+              return getBackgroundColor(taskType, TIMING_TOO_LATE)
+            } else {
+              return '#000000'
+            }
+          }
+        },
       },
       y: { ...commonOptions.scales.y, stacked },
     },
@@ -173,7 +182,12 @@ const ChartRenderer = ({ cubejsApi, dateRange, taskType }) => {
         "dimensions": [
           "Task.notInIntervalMinutes"
         ],
-        "timeDimensions": [],
+        "timeDimensions": [
+          {
+            "dimension": "Task.intervalEndAt",
+            "dateRange": getCubeDateRange(dateRange)
+          }
+        ],
         "order": [
           [
             "Task.notInIntervalMinutes",
@@ -186,13 +200,7 @@ const ChartRenderer = ({ cubejsApi, dateRange, taskType }) => {
         "segments": [
           `Task.${taskType.toLowerCase()}`
         ],
-        "filters": [
-          {
-            "member": "Task.intervalEndAt",
-            "operator": "inDateRange",
-            "values": getCubeDateRange(dateRange)
-          }
-        ]
+        "filters": []
       }}
       cubejsApi={cubejsApi}
       resetResultSetOnChange={false}

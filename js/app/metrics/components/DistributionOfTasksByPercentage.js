@@ -28,21 +28,6 @@ const commonOptions = {
   scales: {
     x: {
       type: 'linear',
-      ticks: {
-        autoSkip: true,
-        maxRotation: 0,
-        padding: 12,
-        minRotation: 0,
-        callback: function(value) {
-          if (value === defaultMinX) {
-            return "<"
-          } else if (value === defaultMaxX) {
-            return "<"
-          } else {
-            return value + ' %';
-          }
-        }
-      },
     },
   },
 };
@@ -122,20 +107,14 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
             let label = '';
 
             if (data.x < -50) {
-              label += `${Math.abs(Math.round(data.x + 50))} % early: `
+              label += `${Math.abs(Math.round(data.x + 50))} % early`
             } else if (data.x <= 50) {
-              label += `on time (${Math.round(data.x + 50)} %): `
+              label += `on time (${Math.round(data.x + 50)})`
             } else {
-              label += `${Math.abs(Math.round(data.x - 50))} % late: `
+              label += `${Math.abs(Math.round(data.x - 50))} % late`
             }
 
-            // if (label) {
-            //   label += ': ';
-            // }
-            // if (context.parsed.y !== null) {
-            //   label += `average ${Math.abs(Math.round(context.parsed.y))} minutes`;
-            // }
-            return label += `${data.y} ${taskType}`;
+            return `${data.y} ${taskType}: ${label}`;
           }
         },
       },
@@ -146,6 +125,40 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
         stacked,
         min: -1 * minMaxX,
         max: minMaxX,
+        ticks: {
+          autoSkip: true,
+          maxRotation: 0,
+          padding: 12,
+          minRotation: 0,
+          callback: function(value) {
+            if (value < defaultMinX) {
+              return "<"
+            } else if (value <= -50) {
+              return Math.abs(value + 50) + ' %';
+            } else if (value < 50) {
+              return (value + 50) + ' %';
+            } else if (value < defaultMaxX) {
+              return (value - 50) + ' %';
+            } else {
+              return "<"
+            }
+          },
+          color: function (context) {
+            let value = context.tick.value
+
+            if (value < defaultMinX) {
+              return '#000000'
+            } else if (value <= -50) {
+              return getBackgroundColor(taskType, TIMING_TOO_EARLY)
+            } else if (value < 50) {
+              return getBackgroundColor(taskType, TIMING_ON_TIME)
+            } else if (value < defaultMaxX) {
+              return getBackgroundColor(taskType, TIMING_TOO_LATE)
+            } else {
+              return '#000000'
+            }
+          }
+        },
       },
       y: { ...commonOptions.scales.y, stacked },
     },
@@ -173,7 +186,12 @@ const ChartRenderer = ({ cubejsApi, dateRange, taskType }) => {
         "dimensions": [
           "Task.intervalDiff"
         ],
-        "timeDimensions": [],
+        "timeDimensions": [
+          {
+            "dimension": "Task.intervalEndAt",
+            "dateRange": getCubeDateRange(dateRange)
+          }
+        ],
         "order": [
           [
             "Task.intervalDiff",
@@ -187,11 +205,6 @@ const ChartRenderer = ({ cubejsApi, dateRange, taskType }) => {
           `Task.${taskType.toLowerCase()}`
         ],
         "filters": [
-          {
-            "member": "Task.intervalEndAt",
-            "operator": "inDateRange",
-            "values": getCubeDateRange(dateRange)
-          },
           {
             "member": "Task.status",
             "operator": "contains",
