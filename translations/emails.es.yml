@@ -33,7 +33,7 @@ owner.order.created.subject: Nuevo pedido para confirmar
 owner.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido para <strong>%restaurant.name%</strong>.\n"
 order.created.subject: El pedido %order.number% ha sido recibido
 order.created.body: "Hola,\n<br>\nHemos recibido su pedido.\n<br>\nComprobamos su\
-  \ pedido lo antes posible y te enviaremos un correo cuando esté confirmado.\n"
+  \ pedido lo antes posible y le enviaremos un correo cuando esté confirmado.\n"
 order.accepted.subject: Tu pedido %order.number% ha sido confirmado
 order.accepted.body.intro: "Hola,\n<br>\nTu pedido esta confirmado."
 order.cancelled.subject: Tu pedido %order.number% ha sido cancelado
