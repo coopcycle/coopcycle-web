@@ -312,7 +312,7 @@ form.address.name.label: Nombre
 form.address.name.placeholder: Casa, oficina…
 form.address.addressLocality.label: Ciudad
 form.address.postalCode.label: Código postal
-form.address.description.label: Instrucciones
+form.address.description.label: Instrucciones para la entrega
 form.address.description.placeholder: 2ª puerta a la izquierda…
 form.pricing_rule_set.name.label: Nombre
 form.pricing_rule_set.rules.label: Reglas
@@ -645,7 +645,7 @@ basics.continue: Continuar
 basics.created_at: Creado el %date%
 promotions.add_free_delivery_coupon: Añadir un cupón de promoción " envío gratuito
   "
-base.footer.suggest: Sugerir un comercio
+base.footer.suggest: Sugerir un comercio/restaurante
 adminDashboard.package_sets.title: Paquetes
 adminDashboard.restaurants.exclusive: Exclusivo
 adminDashboard.pledges.title: Sugerencias
@@ -716,7 +716,7 @@ basics.total_including_tax: Total incluyendo todos los impuestos
 basics.stripe_fees: Tarifas de Stripe
 basics.platform_fees: Tarifas de plataforma
 basics.net_income: Ingresos netos
-time_slot.human_readable: '%day% entre %start% y %end%'
+time_slot.human_readable: 'Entrega %day% desde las %start%'
 time_range: entre %start% y %end%
 time_range.same_day: '[Hoy] [%range%]'
 time_range.next_day: '[Mañana] [%range%]'
