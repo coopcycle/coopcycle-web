@@ -33,7 +33,7 @@ owner.order.created.subject: Nuevo pedido para confirmar
 owner.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido para <strong>%restaurant.name%</strong>.\n"
 order.created.subject: El pedido %order.number% ha sido recibido
 order.created.body: "Hola,\n<br>\nHemos recibido su pedido.\n<br>\nComprobamos su\
-  \ pedido lo antes posible y te enviaremos un correo cuando esté confirmado.\n"
+  \ pedido lo antes posible y le enviaremos un correo cuando esté confirmado.\n"
 order.accepted.subject: Tu pedido %order.number% ha sido confirmado
 order.accepted.body.intro: "Hola,\n<br>\nTu pedido esta confirmado."
 order.cancelled.subject: Tu pedido %order.number% ha sido cancelado
@@ -59,7 +59,7 @@ covid_19.subject: COVID-19 | Instrucciones importantes para tu pedido
 covid_19.body: "<h1>instrucciones a seguir para su entrega</h1>\n<p>Debido a la pandemia\
   \ actual de COVID-19 (Coronavirus), usted <strong>debe estrictamente</strong> seguir\
   \ las siguientes instrucciones:</p>\n<h2>1. Respetar el distanciamiento social</h2>\n\
-  <p>Dejaremos su pedido en su puerta  para que no tenga que acercarse a la persona\
+  <p>Dejaremos su pedido en su puerta para que no tenga que acercarse a la persona\
   \ que viene a entregar. No es necesario que deje propina.</p>\n<h2>2. Desembale\
   \ su pedido después de recibirlo</h2>\n<p>El virus puede sobrevivir en superficies\
   \ de cartón y plástico durante varios días. El empaquetado es, por lo tanto, una\
