@@ -41,7 +41,10 @@ final class PercentageDiscountPromotionActionCommand implements PromotionActionC
             return false;
         }
 
-        $promotionAmount = -1 * (int) round($subject->getItemsTotal() * $configuration['percentage']);
+        $itemsTotal = $configuration['items_total'] ?? true;
+        $amount = $itemsTotal ? $subject->getItemsTotal() : $subject->getTotal();
+
+        $promotionAmount = -1 * (int) round($amount * $configuration['percentage']);
 
         if (0 === $promotionAmount) {
             return false;
