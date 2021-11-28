@@ -1191,3 +1191,4 @@ api_apps.regenerate_secret: Renouveler la clé secrète
 api_apps.regenerate_secret_warning: Toutes les applications utilisant la clé secrète précédente ne fonctionnera plus.
 restaurant.form.cash_on_delivery_enabled.label: Activer le paiement en contre-remboursement
 restaurant.form.cash_on_delivery_enabled.help: Cela permettra aux clients de payer en espèces. À utiliser avec précaution.
+localBusiness.form.business_address.help: Cette adresse sera utilisée dans les reçus

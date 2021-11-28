@@ -10,8 +10,6 @@ class RestaurantMercadopagoAccount
 
     private $mercadopagoAccount;
 
-    private $livemode;
-
     public function getId()
     {
         return $this->id;
@@ -41,15 +39,4 @@ class RestaurantMercadopagoAccount
         return $this;
     }
 
-    public function isLivemode()
-    {
-        return $this->livemode;
-    }
-
-    public function setLivemode($livemode)
-    {
-        $this->livemode = $livemode;
-
-        return $this;
-    }
 }

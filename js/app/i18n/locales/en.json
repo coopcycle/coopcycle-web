@@ -242,6 +242,10 @@
             "PER_PACKAGE_ADD_DISCOUNT": "Add discount",
             "PER_PACKAGE_DEL_DISCOUNT": "Remove discount"
         },
-        "CASH_ON_DELIVERY_DISCLAIMER": "You are going to pay by cash on delivery. Please prepare the exact amount and make sure to be reachable."
+        "CASH_ON_DELIVERY_DISCLAIMER": "You are going to pay by cash on delivery. Please prepare the exact amount and make sure to be reachable.",
+        "ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER": "You have just changed a property of the address. Do you want to change this property for all the past and upcoming deliveries using this address, or only once?",
+        "ADDRESS_BOOK_PROP_CHANGED_UPDATE": "Change the existing address",
+        "ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE": "Change only once",
+        "TIME_RANGE_FROM": "from {{start}}"
     }
 }

@@ -42,6 +42,7 @@ class SettingsManager
         'mercadopago_live_publishable_key',
         'mercadopago_test_access_token',
         'mercadopago_live_access_token',
+        'mercadopago_client_secret',
         'google_api_key_custom',
     ];
 
@@ -102,6 +103,10 @@ class SettingsManager
                 break;
             case 'mercadopago_access_token':
                 $name = $this->isMercadopagoLivemode() ? 'mercadopago_live_access_token' : 'mercadopago_test_access_token';
+                break;
+            case 'mercadopago_access_token_for_test':
+                // to be used only for test
+                $name = !$this->isMercadopagoLivemode() ? 'mercadopago_live_access_token' : '';
                 break;
             case 'timezone':
                 return ini_get('date.timezone');

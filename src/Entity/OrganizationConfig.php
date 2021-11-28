@@ -98,8 +98,7 @@ class OrganizationConfig
         return $this->coverageOfDeliveryCostsByTheCompanyOrTheEmployee;
     }
 
-
-    private function isCoverageOfDeliveryCostsByTheCompanyOrTheEmployee()
+    public function isCoverageOfDeliveryCostsByTheCompanyOrTheEmployee()
     {
         return $this->coverageOfDeliveryCostsByTheCompanyOrTheEmployee !== null;
     }

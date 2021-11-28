@@ -4,12 +4,7 @@ import _ from 'lodash'
 import classNames from 'classnames'
 import axios from 'axios'
 
-import mastercard from 'payment-icons/min/flat/mastercard.svg'
-import visa from 'payment-icons/min/flat/visa.svg'
-import giropay from '../../../assets/svg/giropay.svg'
-import edenredLogo from '../../../assets/svg/Edenred_Logo.svg'
-import cashLogo from '../../../assets/svg/dollar-bill-svgrepo-com.svg'
-
+import PaymentMethodIcon from '../components/PaymentMethodIcon'
 import stripe from '../payment/stripe'
 import mercadopago from '../payment/mercadopago'
 import { Disclaimer } from '../payment/cashOnDelivery'
@@ -57,8 +52,7 @@ const PaymentMethodPicker = ({ methods, onSelect }) => {
           return (
             <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'card' }) }
               onClick={ () => setMethod('card') }>
-              <img src={ visa } height="45" className="mr-2" />
-              <img src={ mastercard } height="45" />
+              <PaymentMethodIcon code={ m.type } height="45" />
             </button>
           )
 
@@ -67,7 +61,7 @@ const PaymentMethodPicker = ({ methods, onSelect }) => {
           return (
             <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
               onClick={ () => setMethod('giropay') }>
-              <img src={ giropay } height="45" />
+              <PaymentMethodIcon code={ m.type } height="45" />
             </button>
           )
 
@@ -85,7 +79,7 @@ const PaymentMethodPicker = ({ methods, onSelect }) => {
 
                 setMethod(m.type)
               }}>
-              <img src={ edenredLogo } height="45" />
+              <PaymentMethodIcon code={ m.type } height="45" />
             </button>
           )
 
@@ -94,7 +88,7 @@ const PaymentMethodPicker = ({ methods, onSelect }) => {
           return (
             <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
               onClick={ () => setMethod('cash_on_delivery') }>
-              <img src={ cashLogo } height="45" />
+              <PaymentMethodIcon code={ m.type } height="45" />
             </button>
           )
 

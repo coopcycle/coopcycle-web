@@ -249,6 +249,7 @@
             "on": "el",
             "weekday": "dia de la semana",
             "day": "dia"
-        }
+        },
+        "TIME_RANGE_FROM": "desde {{start}}"
     }
 }

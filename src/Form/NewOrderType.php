@@ -16,7 +16,7 @@ class NewOrderType extends DeliveryType
     {
         $options = array_merge($options, [
             'with_tags' => false,
-            'with_dropoff_recipient_details' => true,
+            'with_address_props' => true,
         ]);
 
         parent::buildForm($builder, $options);

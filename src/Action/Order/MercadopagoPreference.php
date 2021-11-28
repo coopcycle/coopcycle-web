@@ -3,26 +3,17 @@
 namespace AppBundle\Action\Order;
 
 use MercadoPago;
-use AppBundle\Service\SettingsManager;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Payment\MercadopagoPreferenceResponse;
 
 class MercadopagoPreference
 {
-    private $settingsManager;
-
-    public function __construct(
-        SettingsManager $settingsManager)
-    {
-        $this->settingsManager = $settingsManager;
-    }
-
     /**
      * @return MercadoPago\Preference
      */
     public function __invoke($data, Request $request)
     {
-        $account = $data->getRestaurant()->getMercadopagoAccount(true);
+        $account = $data->getRestaurant()->getMercadopagoAccount();
         if ($account) {
             MercadoPago\SDK::setAccessToken($account->getAccessToken());
         }
@@ -48,6 +39,11 @@ class MercadopagoPreference
         $preference->payer = $payer;
 
         $preference->marketplace_fee = ($data->getFeeTotal() / 100);
+
+        // https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-pro/configurations#bookmark_activa_el_modo_binario
+        $preference->binary_mode = true; // If binary mode is active, the paymant can be only approved or rejected (can not be in process or pending)
+
+        $preference->statement_descriptor = $data->getRestaurant()->getName(); // what user/buyer can see on its credit card details
 
         $preference->save();
 

@@ -31,7 +31,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RestaurantStats implements \Countable
 {
-    private $qb;
     private $result;
     private $translator;
     private $withVendorName;
@@ -358,14 +357,6 @@ class RestaurantStats implements \Countable
                 $this->columnTotals[$column] += $rowValue;
             }
         }
-    }
-
-    private function loadIds()
-    {
-        $qbForIds = clone $this->qb;
-        $qbForIds->select('ov.id')->setFirstResult(null)->setMaxResults(null);
-
-        return array_map(fn($row) => $row['id'], $qbForIds->getQuery()->getArrayResult());
     }
 
     private function loadMessengers()

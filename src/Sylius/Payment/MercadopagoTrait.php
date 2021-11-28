@@ -33,4 +33,34 @@ trait MercadopagoTrait
             return $this->details['mercadopago_installments'];
         }
     }
+
+    public function setMercadopagoPaymentId($paymentId)
+    {
+        $this->details = array_merge($this->details, [
+            'mercadopago_payment_id' => $paymentId
+        ]);
+    }
+
+    public function getMercadopagoPaymentId()
+    {
+        if (isset($this->details['mercadopago_payment_id'])) {
+
+            return $this->details['mercadopago_payment_id'];
+        }
+    }
+
+    public function setMercadopagoPaymentStatus($paymentStatus)
+    {
+        $this->details = array_merge($this->details, [
+            'mercadopago_payment_status' => $paymentStatus
+        ]);
+    }
+
+    public function getMercadopagoPaymentStatus()
+    {
+        if (isset($this->details['mercadopago_payment_status'])) {
+
+            return $this->details['mercadopago_payment_status'];
+        }
+    }
 }

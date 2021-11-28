@@ -34,7 +34,6 @@ class Geocoder
     private $autoconfigure;
 
     private $geocoder;
-    private $addressFormatter;
 
     /**
      * FIXME Inject providers through constructor (needs a CompilerPass)

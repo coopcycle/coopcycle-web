@@ -121,9 +121,11 @@
         "nucleos/profile-bundle": "1.7.x-dev",
         "twig/cache-extra": "^3.3",
         "geocoder-php/google-maps-provider": "^4.6",
-        "symfony/redis-messenger": "5.3.7",
+        "symfony/redis-messenger": "^5.3",
         "symfony/amqp-messenger": "^5.3",
-        "symfony/doctrine-messenger": "^5.3"
+        "symfony/doctrine-messenger": "^5.3",
+        "azimolabs/apple-sign-in-php-sdk": "^2.0",
+        "google/apiclient": "^2.11"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -131,15 +133,16 @@
         "behat/behat": "^3.7",
         "behatch/contexts": "^3.3",
         "coduo/php-matcher": "^6.0",
-        "phpstan/phpstan": "^0.12",
-        "phpstan/phpstan-symfony": "^0.12",
+        "phpstan/phpstan": "^1.0",
+        "phpstan/phpstan-symfony": "^1.0",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/phpstan-webmozart-assert": "^0.12.7",
+        "phpstan/phpstan-webmozart-assert": "^1.0",
         "friends-of-behat/symfony-extension": "^2.0",
         "friends-of-behat/mink": "^1.8",
         "friends-of-behat/mink-extension": "^2.5",
         "friends-of-behat/mink-browserkit-driver": "^1.4",
-        "rector/rector": "^0.11"
+        "rector/rector": "^0.12",
+        "phpstan/phpstan-doctrine": "^1.0"
     },
     "scripts": {
         "post-install-cmd": [

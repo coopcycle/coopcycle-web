@@ -23,7 +23,7 @@
 {% endblock %}
 
 {% block password_widget %}
-{% if form.vars.name matches '/^stripe_/' or form.vars.name matches '/^mercadopago_/' %}
+{% if form.vars.name != 'mercadopago_client_secret' and (form.vars.name matches '/^stripe_/' or form.vars.name matches '/^mercadopago_/') %}
   {% set disabled = is_demo %}
   <div class="input-group">
     <span class="input-group-addon">

@@ -3,24 +3,17 @@
 </h4>
 
 <table class="table">
-  {% set test_mercadopago_account = restaurant.getMercadopagoAccount(false) %}
-  {% set live_mercadopago_account = restaurant.getMercadopagoAccount(true) %}
+  {% set mercadopago_account = restaurant.getMercadopagoAccount() %}
   <tr>
     <td>
-      <span class="label label-default">TEST</span>
-    </td>
-    <td></td>
-    <td class="text-right">
-      {% if test_mercadopago_account is not empty %}
-        <span class="text-success">
-          <i class="fa fa-check"></i>
-        </span>
+      {% if mercadopago_account is not empty %}
+        <span class="label label-success">{{ 'form.local_business.mercadopago.connected'|trans }}</span>
       {% else %}
-        <a href="{{ path(mercadopago_oauth_redirect_route, { id: restaurant.id, livemode: 'no'}) }}" class="btn btn-sm mercadopago-connect">
+        <a href="{{ path(mercadopago_oauth_redirect_route, { id: restaurant.id }) }}" class="btn btn-sm mercadopago-connect">
           <span>{{ 'form.local_business.mercadopago.connect_button.text'|trans }}</span>
         </a>
       {% endif %}
     </td>
+    <td></td>
   </tr>
-  {# TODO Allow connecting live account #}
 </table>

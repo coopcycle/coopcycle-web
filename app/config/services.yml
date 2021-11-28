@@ -736,6 +736,11 @@ services:
     arguments:
       $country: "%country_iso%"
 
+  AppBundle\Action\GoogleSignIn:
+    public: true
+    arguments:
+      $appId: "%env(GOOGLE_SIGN_IN_CLIENT_ID)%"
+
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }

@@ -18,7 +18,6 @@ class TaskSubscriber implements EventSubscriber
 {
     private $eventBus;
     private $eventStore;
-    private $messageBus;
     private $processor;
     private $logger;
 

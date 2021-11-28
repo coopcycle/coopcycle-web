@@ -27,6 +27,7 @@ abstract class LocalBusinessType extends AbstractType
     protected $serializer;
     protected $country;
     protected $debug;
+    protected $cashOnDeliveryOptinEnabled;
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
@@ -34,7 +35,8 @@ abstract class LocalBusinessType extends AbstractType
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
         string $country,
-        bool $debug = false)
+        bool $debug = false,
+        bool $cashOnDeliveryOptinEnabled = false)
     {
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
@@ -42,6 +44,7 @@ abstract class LocalBusinessType extends AbstractType
         $this->serializer = $serializer;
         $this->country = $country;
         $this->debug = $debug;
+        $this->cashOnDeliveryOptinEnabled = $cashOnDeliveryOptinEnabled;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

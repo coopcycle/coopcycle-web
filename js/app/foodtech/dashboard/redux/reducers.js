@@ -136,6 +136,7 @@ export default (state = initialState, action = {}) => {
       'assignedTo',
       'takeaway',
       'fulfillmentMethod',
+      'paymentMethod',
     ]))
 
     return {

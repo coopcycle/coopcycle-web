@@ -12,7 +12,6 @@ use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Promotion\Model\PromotionAction;
-use Sylius\Component\Promotion\Repository\PromotionCouponRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,22 +23,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ItemsTotalBasedPromotionType extends AbstractType
 {
     private $promotionRuleFactory;
-    private $promotionCouponRepository;
-    private $translator;
 
-    public function __construct(
-        FactoryInterface $promotionRuleFactory,
-        PromotionCouponRepositoryInterface $promotionCouponRepository,
-        TranslatorInterface $translator)
+    public function __construct(FactoryInterface $promotionRuleFactory)
     {
         $this->promotionRuleFactory = $promotionRuleFactory;
-        $this->promotionCouponRepository = $promotionCouponRepository;
-        $this->translator = $translator;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

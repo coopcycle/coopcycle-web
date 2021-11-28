@@ -199,16 +199,6 @@ class StripeManager
         return $intent;
     }
 
-    private function resolveSource(PaymentInterface $payment)
-    {
-        if ($stripeToken = $payment->getStripeToken()) {
-
-            return $stripeToken;
-        }
-
-        throw new \Exception(sprintf('No Stripe source found in payment #%d', $payment->getId()));
-    }
-
     /**
      * @return Stripe\PaymentIntent
      */

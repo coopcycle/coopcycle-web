@@ -42,7 +42,6 @@ class InitDemoCommand extends Command
     private $doctrine;
     private $faker;
     private $fixturesLoader;
-    private $client;
     private $redis;
     private $ormPurger;
     private $craueConfig;

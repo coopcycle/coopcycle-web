@@ -5,7 +5,6 @@ namespace AppBundle\Command;
 use AppBundle\Utils\GeoUtils;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\ParameterType;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,14 +15,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 Class DeduplicateCustomerAddressesCommand extends Command
 {
     private $connection;
-    private $entityManager;
 
-    public function __construct(
-        Connection $connection,
-        EntityManagerInterface $entityManager)
+    public function __construct(Connection $connection)
     {
         $this->connection = $connection;
-        $this->entityManager = $entityManager;
 
         parent::__construct();
     }
