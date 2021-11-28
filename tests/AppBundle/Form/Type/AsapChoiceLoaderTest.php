@@ -194,7 +194,7 @@ class AsapChoiceLoaderTest extends TestCase
 
     public function testSameDayWithOneShippingOption()
     {
-        Carbon::setTestNow(Carbon::parse('2020-03-12T15:30:00+02:00'));
+        Carbon::setTestNowAndTimezone(Carbon::parse('2020-03-12 15:30:00'));
 
         $openingHours = [
             "Tu-Su 13:15-16:00",
@@ -240,7 +240,7 @@ class AsapChoiceLoaderTest extends TestCase
             "2020-03-19",
         ], $choices);
 
-        Carbon::setTestNow(Carbon::parse('2020-03-12T23:30:00+02:00'));
+        Carbon::setTestNowAndTimezone(Carbon::parse('2020-03-12 23:30:00'));
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -607,7 +607,8 @@ class AsapChoiceLoaderTest extends TestCase
 
     public function testEscaleDuJapon()
     {
-        Carbon::setTestNow(Carbon::parse('2021-01-27T17:08:00+02:00'));
+        // It's a Wednesday
+        Carbon::setTestNowAndTimezone(Carbon::parse('2021-01-27 17:08:00'));
 
         $delay = 90; // 1h30
         $choiceLoader = new AsapChoiceLoader(["Mo-Sa 11:30-14:00","Mo-Sa 18:00-20:30"], null, $delay, 10);
@@ -619,13 +620,14 @@ class AsapChoiceLoaderTest extends TestCase
 
         $range = $firstChoice->toTsRange();
 
-        $this->assertEquals(new \DateTime('2021-01-27T18:40:00+02:00'), $range->getLower());
-        $this->assertEquals(new \DateTime('2021-01-27T18:50:00+02:00'), $range->getUpper());
+        $this->assertEquals(new \DateTime('2021-01-27 18:40:00'), $range->getLower());
+        $this->assertEquals(new \DateTime('2021-01-27 18:50:00'), $range->getUpper());
     }
 
     public function test30MinutesRangeWithPriorNotice()
     {
-        Carbon::setTestNow(Carbon::parse('2021-01-28T11:55:00+02:00'));
+        // It's a Thursday
+        Carbon::setTestNowAndTimezone(Carbon::parse('2021-01-28 11:55:00'));
 
         $choiceLoader = new AsapChoiceLoader(["Mo-Fr 11:30-14:30"], null, 120, 30);
 
@@ -635,10 +637,10 @@ class AsapChoiceLoaderTest extends TestCase
         $firstChoice = $choices[0];
         $range = $firstChoice->toTsRange();
 
-        $this->assertEquals(new \DateTime('2021-01-28T14:00:00+02:00'), $range->getLower());
-        $this->assertEquals(new \DateTime('2021-01-28T14:30:00+02:00'), $range->getUpper());
+        $this->assertEquals(new \DateTime('2021-01-28 14:00:00'), $range->getLower());
+        $this->assertEquals(new \DateTime('2021-01-28 14:30:00'), $range->getUpper());
 
-        Carbon::setTestNow(Carbon::parse('2021-01-28T12:05:00+02:00'));
+        Carbon::setTestNowAndTimezone(Carbon::parse('2021-01-28 12:05:00'));
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -646,13 +648,13 @@ class AsapChoiceLoaderTest extends TestCase
         $firstChoice = $choices[0];
         $range = $firstChoice->toTsRange();
 
-        $this->assertEquals(new \DateTime('2021-01-29T11:30:00+02:00'), $range->getLower());
-        $this->assertEquals(new \DateTime('2021-01-29T12:00:00+02:00'), $range->getUpper());
+        $this->assertEquals(new \DateTime('2021-01-29 11:30:00'), $range->getLower());
+        $this->assertEquals(new \DateTime('2021-01-29 12:00:00'), $range->getUpper());
     }
 
     public function testPreorderingDisabledWith60MinutesDuration()
     {
-        Carbon::setTestNow(Carbon::parse('2021-03-17T12:05:00+02:00'));
+        Carbon::setTestNow(Carbon::parse('2021-03-17 12:05:00'));
 
         $choiceLoader = new AsapChoiceLoader(["Mo-Sa 09:00-21:00"], null, 0, 60, false);
 
@@ -662,10 +664,10 @@ class AsapChoiceLoaderTest extends TestCase
         $firstChoice = $choices[0];
         $range = $firstChoice->toTsRange();
 
-        $this->assertEquals(new \DateTime('2021-03-17T13:00:00+02:00'), $range->getLower());
-        $this->assertEquals(new \DateTime('2021-03-17T14:00:00+02:00'), $range->getUpper());
+        $this->assertEquals(new \DateTime('2021-03-17 13:00:00'), $range->getLower());
+        $this->assertEquals(new \DateTime('2021-03-17 14:00:00'), $range->getUpper());
 
-        Carbon::setTestNow(Carbon::parse('2021-03-17T20:30:00+02:00'));
+        Carbon::setTestNow(Carbon::parse('2021-03-17 20:30:00'));
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
