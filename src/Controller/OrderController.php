@@ -235,7 +235,7 @@ class OrderController extends AbstractController
                 $orderProcessor->process($order);
 
                 $isQuote = $form->getClickedButton() && 'quote' === $form->getClickedButton()->getName();
-                $isFreeOrder = !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
+                $isFreeOrder = $order->isFree();
 
                 if ($isQuote) {
                     $orderManager->quote($order);
