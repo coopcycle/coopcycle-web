@@ -716,7 +716,7 @@ basics.total_including_tax: Total incluyendo todos los impuestos
 basics.stripe_fees: Tarifas de Stripe
 basics.platform_fees: Tarifas de plataforma
 basics.net_income: Ingresos netos
-time_slot.human_readable: 'Entrega %day% desde las %start%'
+time_slot.human_readable: '%day% entre %start% y %end%'
 time_range: entre %start% y %end%
 time_range.same_day: '[Hoy] [%range%]'
 time_range.next_day: '[Mañana] [%range%]'
