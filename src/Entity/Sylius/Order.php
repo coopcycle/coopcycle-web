@@ -1338,4 +1338,9 @@ class Order extends BaseOrder implements OrderInterface
 
         return $this->getRestaurant()->isCashOnDeliveryEnabled();
     }
+
+    public function isFree(): bool
+    {
+        return !$this->isEmpty() && $this->getItemsTotal() > 0 && $this->getTotal() === 0;
+    }
 }
