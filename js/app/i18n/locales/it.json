@@ -242,6 +242,7 @@
         "RULE_PICKER_LINE_PACKAGES": "Pacchetti",
         "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Differenza (ore)",
         "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Map clusters abilitato",
-        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Mostra sempre non assegnato"
+        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Mostra sempre non assegnato",
+        "TIME_RANGE_FROM": "dalle {{start}}"
     }
 }
