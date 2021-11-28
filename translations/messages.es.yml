@@ -466,7 +466,7 @@ form.product_option.additional.help: El cliente puede elegir varios valores, sin
 form.checkout_address.notes.label: Deja un comentario para el restaurante
 form.checkout_address.notes.placeholder: "Ejemplo: sin salsa, sin tomates…\n"
 form.checkout_address.notes.help: Tu comentario será enviado al restaurante
-form.checkout_address.promotion_coupon.label: Código promocional
+form.checkout_address.promotion_coupon.label: Código de descuento
 form.checkout_address.telephone.label: Teléfono
 form.checkout_address.reusable_packaging_enabled.label: Quiero envases reutilizables
   (%precio%)
