@@ -921,6 +921,26 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given a guest has added a payment to order at restaurant with id :id
+     */
+    public function aGuestAddAPaymentToOrderAtRestaurantWithId($id)
+    {
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
+        $order = $this->getLastCartFromRestaurant($restaurant);
+
+        $payment = $this->getContainer()->get('sylius.factory.payment')->createNew();
+
+        $payment->setMethod($this->getContainer()->get('sylius.repository.payment_method')->findOneBy(['code' => 'card']));
+
+        $order->addPayment($payment);
+
+        $this->orderProcessor->process($order);
+
+        $this->getContainer()->get('sylius.manager.order')->persist($order);
+        $this->getContainer()->get('sylius.manager.order')->flush();
+    }
+
+    /**
      * @Given there is a cart at restaurant with id :id
      */
     public function createCartAtRestaurantWithId($id)
