@@ -20,6 +20,7 @@ Feature: Food Tech
     Given the current time is "2018-08-27 12:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -84,7 +85,8 @@ Feature: Food Tech
               "order_promotion":[],
               "reusable_packaging":[],
               "tax":@array@
-            }
+            },
+            "paymentMethod": "CARD"
           }
         ],
         "hydra:totalItems":1,
@@ -111,6 +113,7 @@ Feature: Food Tech
   Scenario: Refuse order with reason
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -177,6 +180,7 @@ Feature: Food Tech
   Scenario: Delay order
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -253,6 +257,7 @@ Feature: Food Tech
   Scenario: Accept order (with empty JSON payload)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -313,6 +318,7 @@ Feature: Food Tech
   Scenario: Accept order when restaurant is closed
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"

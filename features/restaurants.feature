@@ -326,7 +326,8 @@ Feature: Manage restaurants
                     }
                   ]
                 }
-              ]
+              ],
+              "images":[]
             }
           ]
         },
@@ -344,7 +345,8 @@ Feature: Manage restaurants
               "offers": {
                 "@type":"Offer",
                 "price":@integer@
-              }
+              },
+              "images":[]
             }
           ]
         }
@@ -723,6 +725,7 @@ Feature: Manage restaurants
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_locales.yml  |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"

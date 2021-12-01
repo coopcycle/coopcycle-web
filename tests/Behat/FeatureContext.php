@@ -777,6 +777,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
             $this->getContainer()->get('sylius.order_modifier')->addToOrder($order, $item);
         }
 
+        $this->orderProcessor->process($order);
+
         return $order;
     }
 
