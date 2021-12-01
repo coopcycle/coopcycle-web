@@ -46,6 +46,8 @@ import {
   UPDATE_RECURRENCE_RULE_ERROR,
   OPEN_EXPORT_MODAL,
   CLOSE_EXPORT_MODAL,
+  OPEN_CREATE_GROUP_MODAL,
+  CLOSE_CREATE_GROUP_MODAL,
 } from './actions'
 
 import {
@@ -75,6 +77,7 @@ const initialState = {
   recurrenceRulesLoading: false,
   recurrenceRulesErrorMessage: '',
   exportModalIsOpen: false,
+  createGroupModalIsOpen: false,
 }
 
 export const addModalIsOpen = (state = false, action) => {
@@ -422,6 +425,17 @@ export const exportModalIsOpen = (state = false, action) => {
   case OPEN_EXPORT_MODAL:
     return true
   case CLOSE_EXPORT_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
+export const createGroupModalIsOpen = (state = false, action) => {
+  switch(action.type) {
+  case OPEN_CREATE_GROUP_MODAL:
+    return true
+  case CLOSE_CREATE_GROUP_MODAL:
     return false
   default:
     return state

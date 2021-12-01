@@ -246,6 +246,8 @@
         "ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER": "You have just changed a property of the address. Do you want to change this property for all the past and upcoming deliveries using this address, or only once?",
         "ADDRESS_BOOK_PROP_CHANGED_UPDATE": "Change the existing address",
         "ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE": "Change only once",
-        "TIME_RANGE_FROM": "from {{start}}"
+        "TIME_RANGE_FROM": "from {{start}}",
+        "ADMIN_DASHBOARD_CREATE_GROUP": "Create group",
+        "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Group name"
     }
 }
