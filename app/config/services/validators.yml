@@ -21,6 +21,7 @@ services:
   AppBundle\Validator\Constraints\IsActivableRestaurantValidator:
     arguments:
       $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
+      $stripeConnectRequired: '%env(bool:STRIPE_CONNECT_REQUIRED)%'
     tags:
       - { name: validator.constraint_validator }
 

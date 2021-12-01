@@ -16,12 +16,16 @@ class IsActivableRestaurantValidator extends ConstraintValidator
     private $settingsManager;
     private $resolver;
     private $cashEnabled;
+    private $stripeConnectRequired;
 
-    public function __construct(SettingsManager $settingsManager, GatewayResolver $resolver, bool $cashEnabled)
+    public function __construct(SettingsManager $settingsManager, GatewayResolver $resolver,
+        bool $cashEnabled,
+        bool $stripeConnectRequired = true)
     {
         $this->settingsManager = $settingsManager;
         $this->resolver = $resolver;
         $this->cashEnabled = $cashEnabled;
+        $this->stripeConnectRequired = $stripeConnectRequired;
     }
 
     public function validate($object, Constraint $constraint)
@@ -93,7 +97,7 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                     case 'stripe':
                     default:
                         $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
-                        if (null === $stripeAccount) {
+                        if ($this->stripeConnectRequired && null === $stripeAccount) {
                             $this->context->buildViolation($constraint->stripeAccountMessage)
                                 ->atPath('stripeAccounts')
                                 ->addViolation();
