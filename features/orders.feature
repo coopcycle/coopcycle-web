@@ -706,6 +706,7 @@ Feature: Orders
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -929,6 +930,7 @@ Feature: Orders
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
