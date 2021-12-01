@@ -631,6 +631,10 @@ services:
       - { name: monolog.logger, channel: coopcycle.search }
       - { name: doctrine.event_subscriber }
 
+  AppBundle\Doctrine\EventSubscriber\DeliverySubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
   AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:
     arguments:
         $denyAccessListener: '@api_platform.security.listener.request.deny_access'

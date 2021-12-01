@@ -34,7 +34,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
@@ -225,8 +224,7 @@ trait StoreTrait
         DeliveryManager $deliveryManager,
         OrderFactory $orderFactory,
         EntityManagerInterface $entityManager,
-        TranslatorInterface $translator,
-        MessageBusInterface $messageBus)
+        TranslatorInterface $translator)
     {
         $routes = $request->attributes->get('routes');
 
@@ -278,10 +276,6 @@ trait StoreTrait
 
                 $entityManager->persist($delivery);
                 $entityManager->flush();
-
-                $messageBus->dispatch(
-                    new DeliveryCreated($delivery)
-                );
 
                 // TODO Add flash message
 
