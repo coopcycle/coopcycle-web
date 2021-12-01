@@ -27,6 +27,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "denormalization_context"={"groups"={"task", "task_create"}},
  *       "controller"=TaskBulk::class,
  *       "security"="is_granted('ROLE_OAUTH2_TASKS')"
+ *     },
+ *     "post"={
+ *       "method"="POST",
+ *       "security_post_denormalize"="is_granted('create', object)"
  *     }
  *   },
  *   itemOperations={
