@@ -4,6 +4,7 @@ namespace AppBundle\MessageHandler;
 
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
+use AppBundle\Entity\Task\ImportQueue as TaskImportQueue;
 use AppBundle\Message\ImportTasks;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\LiveUpdates;
@@ -75,11 +76,15 @@ class ImportTasksHandler implements MessageHandlerInterface
             return;
         }
 
+        $this->updateQueueStatus($message, 'started');
+
         try {
 
             $tasks = $this->spreadsheetParser->parse($tempnam, [
                 'date' => $message->getDate()
             ]);
+
+            $this->logger->info(sprintf('Importing %d tasks…', count($tasks)));
 
             foreach ($tasks as $task) {
                 $violations = $this->validator->validate($task);
@@ -88,13 +93,16 @@ class ImportTasksHandler implements MessageHandlerInterface
                 }
             }
 
-            $this->logger->info(sprintf('Importing %d tasks…', count($tasks)));
-
         } catch (\Exception $e) {
+
+            $this->logger->error(sprintf('Error importing file %s, "%s"', $message->getFilename(), $e->getMessage()));
+
             $this->liveUpdates->toAdmins('task_import:failure', [
                 'token' => $message->getToken(),
                 'message' => $e->getMessage(),
             ]);
+            $this->updateQueueStatus($message, 'failed', $e->getMessage());
+
             unlink($tempnam);
             return;
         }
@@ -108,10 +116,15 @@ class ImportTasksHandler implements MessageHandlerInterface
             $this->objectManager->flush();
 
         } catch (DriverException $e) {
+
+            $this->logger->error(sprintf('Error importing file %s, "%s"', $message->getFilename(), $e->getMessage()));
+
             $this->liveUpdates->toAdmins('task_import:failure', [
                 'token' => $message->getToken(),
                 'message' => $e->getMessage(),
             ]);
+            $this->updateQueueStatus($message, 'failed', $e->getMessage());
+
             unlink($tempnam);
             return;
         }
@@ -120,7 +133,31 @@ class ImportTasksHandler implements MessageHandlerInterface
         $this->liveUpdates->toAdmins('task_import:success', [
             'token' => $message->getToken()
         ]);
+        $this->updateQueueStatus($message, 'completed');
 
         unlink($tempnam);
+    }
+
+    private function updateQueueStatus(ImportTasks $message, string $status, $error = null)
+    {
+        if (null !== $message->getQueueId()) {
+
+            $taskImportQueue = $this->objectManager
+                ->getRepository(TaskImportQueue::class)
+                ->find($message->getQueueId());
+
+            if (null !== $taskImportQueue) {
+                $taskImportQueue->setStatus($status);
+                if ('started' === $status) {
+                    $taskImportQueue->setStartedAt(new \DateTime());
+                } else {
+                    $taskImportQueue->setFinishedAt(new \DateTime());
+                }
+                if (null !== $error) {
+                    $taskImportQueue->setError($error);
+                }
+                $this->objectManager->flush();
+            }
+        }
     }
 }

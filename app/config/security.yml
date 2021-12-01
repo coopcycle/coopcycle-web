@@ -121,6 +121,13 @@ security:
             anonymous: ~
             bearer_token: true
 
+        api_task_import_queues:
+            pattern:   ^/api/task_import_queues
+            methods: [ GET ]
+            stateless: true
+            anonymous: ~
+            bearer_token: true
+
         api_carts_session:
             pattern:   ^/api/carts/session$
             methods: [ POST ]

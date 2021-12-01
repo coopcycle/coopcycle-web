@@ -91,3 +91,6 @@ services:
 
   AppBundle\Serializer\UrbantzOrderNormalizer:
     tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\TaskImportQueueNormalizer:
+    tags: [ { name: serializer.normalizer, priority: 64 } ]
