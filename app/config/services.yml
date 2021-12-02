@@ -643,6 +643,11 @@ services:
   AppBundle\Api\EventSubscriber\DeliverySubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
+  AppBundle\Api\EventSubscriber\TaskImportQueueSubscriber:
+    arguments:
+        $secret: '%secret%'
+    tags: [ 'kernel.event_subscriber' ]
+
   AppBundle\Api\EventSubscriber\SoftDeletedSubscriber:
     arguments:
         - '@doctrine'

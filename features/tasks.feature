@@ -1576,3 +1576,30 @@ Feature: Tasks
         }
       }
       """
+
+  Scenario: Import tasks with CSV format (async)
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+      | tags.yml            |
+    Given the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "text/csv"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import_async" with body:
+      """
+      type,address.streetAddress,address.telephone,address.name,after,before,tags
+      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
+      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
+      dropoff,"68, rue du Faubourg Saint Denis Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
+      dropoff,"42, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
+      """
+    Then the response status code should be 201
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskImportQueue",
+        "@id":"/api/task_import_queues/1",
+        "@type":"TaskImportQueue"
+      }
+      """

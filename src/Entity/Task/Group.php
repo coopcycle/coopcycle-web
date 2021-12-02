@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Task;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Task\Bulk as TaskBulk;
+use AppBundle\Action\Task\BulkAsync as TaskBulkAsync;
 use AppBundle\Action\Task\DeleteGroup as DeleteGroupController;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
@@ -26,6 +27,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "input_formats"={"csv"={"text/csv"}},
  *       "denormalization_context"={"groups"={"task", "task_create"}},
  *       "controller"=TaskBulk::class,
+ *       "security"="is_granted('ROLE_OAUTH2_TASKS')"
+ *     },
+ *     "tasks_import_async"={
+ *       "method"="POST",
+ *       "path"="/tasks/import_async",
+ *       "input_formats"={"csv"={"text/csv"}},
+ *       "deserialize"=false,
+ *       "controller"=TaskBulkAsync::class,
  *       "security"="is_granted('ROLE_OAUTH2_TASKS')"
  *     },
  *     "post"={
