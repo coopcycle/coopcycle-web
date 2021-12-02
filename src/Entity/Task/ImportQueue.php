@@ -36,6 +36,9 @@ class ImportQueue
      */
     protected $status;
 
+    /**
+     * @Groups({"task_import_queue_completed"})
+     */
     protected $group;
 
     protected $startedAt;
