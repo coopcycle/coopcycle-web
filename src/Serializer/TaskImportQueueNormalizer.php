@@ -24,15 +24,17 @@ class TaskImportQueueNormalizer implements ContextAwareNormalizerInterface, Norm
 
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        $data['tasks'] = array_map(function ($task) {
+        if (isset($data['tasks'])) {
+            $data['tasks'] = array_map(function ($task) {
 
-            if (is_array($task) && isset($task['@id'])) {
-                return $task['@id'];
-            }
+                if (is_array($task) && isset($task['@id'])) {
+                    return $task['@id'];
+                }
 
-            return $task;
+                return $task;
 
-        }, $data['tasks']);
+            }, $data['tasks']);
+        }
 
         return $data;
     }

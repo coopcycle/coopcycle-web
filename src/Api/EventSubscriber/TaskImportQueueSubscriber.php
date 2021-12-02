@@ -4,6 +4,7 @@ namespace AppBundle\Api\EventSubscriber;
 
 use AppBundle\Entity\Task\ImportQueue;
 use AppBundle\Message\ImportTasks;
+use AppBundle\Security\TokenStoreExtractor;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
@@ -17,12 +18,18 @@ final class TaskImportQueueSubscriber implements EventSubscriberInterface
 {
     private $messageBus;
     private $filesystem;
+    private $storeExtractor;
     private $secret;
 
-    public function __construct(MessageBusInterface $messageBus, Filesystem $taskImportsFilesystem, string $secret)
+    public function __construct(
+        MessageBusInterface $messageBus,
+        Filesystem $taskImportsFilesystem,
+        TokenStoreExtractor $storeExtractor,
+        string $secret)
     {
         $this->messageBus = $messageBus;
         $this->filesystem = $taskImportsFilesystem;
+        $this->storeExtractor = $storeExtractor;
         $this->secret = $secret;
     }
 
@@ -59,8 +66,14 @@ final class TaskImportQueueSubscriber implements EventSubscriberInterface
             'mimetype' => 'text/plain'
         ]);
 
+        $orgId = null;
+        $store = $this->storeExtractor->extractStore();
+        if (null !== $store) {
+            $orgId = $store->getOrganization()->getId();
+        }
+
         $this->messageBus->dispatch(
-            new ImportTasks($encoded, $filename, new \DateTime(), $result->getId())
+            new ImportTasks($encoded, $filename, new \DateTime(), $result->getId(), $orgId)
         );
     }
 }

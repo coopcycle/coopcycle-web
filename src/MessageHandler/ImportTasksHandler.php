@@ -2,6 +2,7 @@
 
 namespace AppBundle\MessageHandler;
 
+use AppBundle\Entity\Organization;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Task\ImportQueue as TaskImportQueue;
@@ -111,6 +112,16 @@ class ImportTasksHandler implements MessageHandlerInterface
 
             foreach ($tasks as $task) {
                 $task->setGroup($taskGroup);
+
+                if (null !== $message->getOrgId()) {
+                    $organization = $this->objectManager
+                        ->getRepository(Organization::class)
+                        ->find($message->getOrgId());
+                    if (null !== $organization) {
+                        $task->setOrganization($organization);
+                    }
+                }
+
                 $this->objectManager->persist($task);
             }
             $this->objectManager->flush();
