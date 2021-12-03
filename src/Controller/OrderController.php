@@ -10,6 +10,7 @@ use AppBundle\Embed\Context as EmbedContext;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutCouponType;
@@ -575,5 +576,35 @@ class OrderController extends AbstractController
         }
 
         return $this->redirectToRoute('restaurant', ['id' => $restaurants->first()->getId()]);
+    }
+
+    /**
+     * @Route("/order/{hashid}/preview", name="order_preview")
+     */
+    public function dataPreviewAction($hashid, OrderRepository $orderRepository)
+    {
+        $hashids = new Hashids($this->getParameter('secret'), 16);
+
+        $decoded = $hashids->decode($hashid);
+
+        if (count($decoded) !== 1) {
+            throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
+        }
+
+        $id = current($decoded);
+        $order = $orderRepository->find($id);
+
+        if (null === $order) {
+            throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
+        }
+
+        $orderNormalized = $this->get('serializer')->normalize($order, 'jsonld', [
+            'resource_class' => Order::class,
+            'operation_type' => 'item',
+            'item_operation_name' => 'get',
+            'groups' => ['order', 'address']
+        ]);
+
+        return new JsonResponse($orderNormalized, 200);
     }
 }
