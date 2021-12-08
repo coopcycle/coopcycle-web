@@ -80,15 +80,29 @@ final class UrbantzSubscriber implements EventSubscriberInterface
         // Check if this needs to be assigned to another store
         if (null !== $webhook->hub) {
 
+            $this->logger->info(
+                sprintf('Looking for a store for hub "%s"', $webhook->hub)
+            );
+
             $hub = $this->entityManager
                 ->getRepository(UrbantzHub::class)
                 ->findOneBy(['hub' => $webhook->hub]);
 
             if (null !== $hub) {
 
+                $this->logger->info(
+                    sprintf('Found store "%s" for hub "%s"', $hub->getStore()->getName(), $webhook->hub)
+                );
+
                 return $hub->getStore();
             }
+
+            $this->logger->info(
+                sprintf('No store found for hub "%s"', $webhook->hub)
+            );
         }
+
+        $this->logger->info('Resolving store from token');
 
         return $this->storeExtractor->extractStore();
     }
