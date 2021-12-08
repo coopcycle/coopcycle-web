@@ -44,7 +44,7 @@ class Hub
     }
 
     /**
-     * @param string $hubId
+     * @param string $hub
      *
      * @return self
      */
