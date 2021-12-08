@@ -95,6 +95,7 @@ class ReceiveWebhookTest extends TestCase
                     'bac' => 1,
                     'volume' => 49.452571
                 ],
+                'hub' => '618a4fce108a386e4699725f',
             ]
         ];
 
@@ -103,6 +104,8 @@ class ReceiveWebhookTest extends TestCase
         $this->assertSame($webhook, $response);
 
         $this->assertCount(1, $webhook->deliveries);
+
+        $this->assertEquals('618a4fce108a386e4699725f', $webhook->hub);
 
         $delivery = $webhook->deliveries[0];
 

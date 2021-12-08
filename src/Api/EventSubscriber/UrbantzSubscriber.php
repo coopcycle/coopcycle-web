@@ -5,6 +5,7 @@ namespace AppBundle\Api\EventSubscriber;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use AppBundle\Api\Resource\UrbantzWebhook;
 use AppBundle\Entity\Urbantz\Delivery as UrbantzDelivery;
+use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Security\TokenStoreExtractor;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -67,6 +68,18 @@ final class UrbantzSubscriber implements EventSubscriberInterface
 
         if ($webhook->id !== UrbantzWebhook::TASKS_ANNOUNCED) {
             return;
+        }
+
+        // Check if this needs to be assigned to another store
+        if (null !== $webhook->hub) {
+
+            $hub = $this->entityManager
+                ->getRepository(UrbantzHub::class)
+                ->findOneBy(['hub' => $webhook->hub]);
+
+            if (null !== $hub) {
+                $store = $hub->getStore();
+            }
         }
 
         foreach ($webhook->deliveries as $delivery) {
