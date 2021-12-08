@@ -58,18 +58,25 @@ final class UrbantzSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $store = $this->storeExtractor->extractStore();
-
-        if (null === $store) {
-            return;
-        }
-
         $webhook = $event->getControllerResult();
 
         if ($webhook->id !== UrbantzWebhook::TASKS_ANNOUNCED) {
             return;
         }
 
+        $store = $this->resolveStore($webhook);
+
+        if (null === $store) {
+            return;
+        }
+
+        foreach ($webhook->deliveries as $delivery) {
+            $store->addDelivery($delivery);
+        }
+    }
+
+    private function resolveStore(UrbantzWebhook $webhook)
+    {
         // Check if this needs to be assigned to another store
         if (null !== $webhook->hub) {
 
@@ -78,13 +85,12 @@ final class UrbantzSubscriber implements EventSubscriberInterface
                 ->findOneBy(['hub' => $webhook->hub]);
 
             if (null !== $hub) {
-                $store = $hub->getStore();
+
+                return $hub->getStore();
             }
         }
 
-        foreach ($webhook->deliveries as $delivery) {
-            $store->addDelivery($delivery);
-        }
+        return $this->storeExtractor->extractStore();
     }
 
     public function setTrackingId(ViewEvent $event)
