@@ -54,14 +54,14 @@ class WebhookHandler implements MessageHandlerInterface
 
         foreach ($apps as $app) {
 
-            $webhook = $this->entityManager
+            $webhooks = $this->entityManager
                 ->getRepository(Webhook::class)
-                ->findOneBy([
+                ->findBy([
                     'oauth2Client' => $app->getOauth2Client(),
                     'event' => $message->getEvent()
                 ]);
 
-            if ($webhook) {
+            foreach ($webhooks as $webhook) {
 
                 $payload = [
                     'data' => [
