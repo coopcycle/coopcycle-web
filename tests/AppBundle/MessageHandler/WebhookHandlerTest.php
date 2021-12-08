@@ -82,8 +82,8 @@ class WebhookHandlerTest extends TestCase
         $this->apiAppRepository->findBy(['store' => $store])
             ->willReturn([ $apiApp ]);
 
-        $this->webhookRepository->findOneBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
-            ->willReturn($webhook);
+        $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
+            ->willReturn([ $webhook ]);
 
         $this->iriConverter->getItemFromIri('/api/deliveries/1')
             ->willReturn($delivery);
@@ -142,8 +142,8 @@ class WebhookHandlerTest extends TestCase
         $this->apiAppRepository->findBy(['store' => $store])
             ->willReturn([ $apiApp ]);
 
-        $this->webhookRepository->findOneBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
-            ->willReturn($webhook);
+        $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
+            ->willReturn([ $webhook ]);
 
         $this->iriConverter->getItemFromIri('/api/deliveries/1')
             ->willReturn($delivery);
@@ -208,11 +208,11 @@ class WebhookHandlerTest extends TestCase
         $this->apiAppRepository->findBy(['store' => $store])
             ->willReturn([ $apiApp ]);
 
-        $this->webhookRepository->findOneBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.completed'])
-            ->willReturn($webhook);
+        $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.completed'])
+            ->willReturn([ $webhook ]);
 
-        $this->webhookRepository->findOneBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
-            ->willReturn(null);
+        $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
+            ->willReturn([]);
 
         $this->iriConverter->getItemFromIri('/api/deliveries/1')
             ->willReturn($delivery);
