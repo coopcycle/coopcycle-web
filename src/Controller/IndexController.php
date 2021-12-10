@@ -12,6 +12,7 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Form\DeliveryEmbedType;
+use AppBundle\Utils\SortableRestaurantIterator;
 use Cocur\Slugify\SlugifyInterface;
 use Hashids\Hashids;
 use MyCLabs\Enum\Enum;
@@ -42,12 +43,14 @@ class IndexController extends AbstractController
 
             $item->expiresAfter(self::EXPIRES_AFTER);
 
-            $items = $typeRepository->findAllSorted();
+            $items = $typeRepository->findAllForType();
 
             return array_map(fn(LocalBusiness $lb) => $lb->getId(), $items);
         });
 
         foreach (array_slice($itemsIds, 0, self::MAX_RESULTS) as $id) {
+            // If one of the items can't be found (probably because it's disabled),
+            // we invalidate the cache
             if (null === $typeRepository->find($id)) {
                 $cache->delete($cacheKey);
 
@@ -60,6 +63,9 @@ class IndexController extends AbstractController
             fn(int $id): LocalBusiness => $typeRepository->find($id),
             array_slice($itemsIds, 0, self::MAX_RESULTS)
         );
+
+        $iterator = new SortableRestaurantIterator($items);
+        $items = iterator_to_array($iterator);
 
         return [ $items, $count ];
     }
@@ -116,7 +122,10 @@ class IndexController extends AbstractController
 
         } else {
 
-            $shops = $repository->withoutTypeFilter()->findAllSorted();
+            $shops = $repository->withoutTypeFilter()->findAllForType();
+
+            $iterator = new SortableRestaurantIterator($shops);
+            $shops = iterator_to_array($iterator);
 
             if (count($shops) > 0) {
 

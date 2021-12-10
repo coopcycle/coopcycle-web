@@ -31,6 +31,7 @@ use AppBundle\Sylius\Cart\RestaurantResolver;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
+use AppBundle\Utils\SortableRestaurantIterator;
 use AppBundle\Utils\ValidationUtils;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -234,7 +235,7 @@ class RestaurantController extends AbstractController
                 return array_map(function (LocalBusiness $restaurant) {
 
                     return $restaurant->getId();
-                }, $repository->withTypeFilter($type)->findAllSorted());
+                }, $repository->withTypeFilter($type)->findAllForType());
             });
 
             $matches = array_map(function ($id) use ($repository) {
@@ -243,6 +244,9 @@ class RestaurantController extends AbstractController
 
             $matches = array_values(array_filter($matches));
         }
+
+        $iterator = new SortableRestaurantIterator($matches);
+        $matches = iterator_to_array($iterator);
 
         $count = count($matches);
 
