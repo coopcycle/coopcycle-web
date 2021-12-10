@@ -5,6 +5,7 @@ Feature: Manage restaurants
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
+    Given the current time is "2021-12-10 11:00:00"
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants"
     Then the response status code should be 200
@@ -15,7 +16,20 @@ Feature: Manage restaurants
       "@context":"/api/contexts/Restaurant",
       "@id":"/api/restaurants",
       "@type":"hydra:Collection",
-      "hydra:member":@array@,
+      "hydra:member":[
+        {
+          "@id":"/api/restaurants/1",
+          "@*@": "@*@"
+        },
+        {
+          "@id":"/api/restaurants/3",
+          "@*@": "@*@"
+        },
+        {
+          "@id":"/api/restaurants/2",
+          "@*@": "@*@"
+        }
+      ],
       "hydra:totalItems":3
     }
     """
@@ -62,8 +76,8 @@ Feature: Manage restaurants
           "openingHoursSpecification":[
             {
               "@type":"OpeningHoursSpecification",
-              "opens":"11:30",
-              "closes":"14:30",
+              "opens":"19:30",
+              "closes":"23:30",
               "dayOfWeek":[
                 "Monday",
                 "Tuesday",
