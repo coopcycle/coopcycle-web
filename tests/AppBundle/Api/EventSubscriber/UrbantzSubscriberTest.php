@@ -142,6 +142,9 @@ class UrbantzSubscriberTest extends TestCase
         $storeFromToken = $this->prophesize(Store::class);
         $storeForHub = $this->prophesize(Store::class);
 
+        $storeFromToken->getName()->willReturn('From token');
+        $storeForHub->getName()->willReturn('For hub');
+
         $this->storeExtractor
             ->extractStore()
             ->willReturn($storeFromToken->reveal())
