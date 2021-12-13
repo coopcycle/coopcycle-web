@@ -12,6 +12,7 @@ use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\ApiApp;
+use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
@@ -47,6 +48,7 @@ use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\MercadopagoLivemodeType;
 use AppBundle\Form\NewOrderType;
+use AppBundle\Form\NonprofitType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\OrganizationType;
 use AppBundle\Form\PackageSetType;
@@ -1262,7 +1264,6 @@ class AdminController extends AbstractController
             'can_enable_mercadopago_livemode' => $canEnableMercadopagoLivemode,
         ]);
     }
-
     /**
      * @Route("/admin/embed", name="admin_embed")
      */
@@ -2128,6 +2129,96 @@ class AdminController extends AbstractController
             'products_route' => $routes['products'],
             'pledge_count' => $pledgeCount,
             'pledge_form' => $pledgeForm->createView(),
+            'nonprofits_enabled' => $this->getParameter('nonprofits_enabled')
+        ]);
+    }
+
+
+    /**
+     * @param Nonprofit $nonprofit
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    private function handleNonprofitForm(Nonprofit $nonprofit, Request $request)
+    {
+        $form = $this->createForm(NonprofitType::class, $nonprofit);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $this->getDoctrine()->getManager()->persist($nonprofit);
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_nonprofits');
+        }
+
+        return $this->render('admin/nonprofit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * Handle POST request from nonprofit form
+     *
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function newNonprofitAction(Request $request)
+    {
+        $nonprofit = new Nonprofit();
+
+        return $this->handleNonprofitForm($nonprofit, $request);
+    }
+
+    /**
+     * Build and return the form of a specific nonprofit
+     *
+     * @param int $id
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function nonprofitAction(int $id, Request $request)
+    {
+        $nonprofit = $this->getDoctrine()->getRepository(Nonprofit::class)->find($id);
+
+        if (!$nonprofit) {
+            throw $this->createNotFoundException(sprintf('Nonprofit #%d does not exist', $id));
+        }
+
+        return $this->handleNonprofitForm($nonprofit, $request);
+    }
+
+    /**
+     * @param int $id
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function deleteNonprofitAction(int $id, Request $request): RedirectResponse
+    {
+        $nonprofit = $this->getDoctrine()->getRepository(Nonprofit::class)->find($id);
+        $this->entityManager->remove($nonprofit);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('admin_nonprofits');
+    }
+
+    /**
+     * Build the nonprofit list page
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function nonProfitsActionListAction(
+        Request $request
+    ): Response
+    {
+        $nonprofits = $this->entityManager->getRepository(Nonprofit::class)->findAll();
+
+        return $this->render('admin/nonprofits.html.twig', [
+            'nonprofits' => $nonprofits
         ]);
     }
 

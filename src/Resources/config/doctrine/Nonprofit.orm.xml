@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity name="AppBundle\Entity\Nonprofit" table="nonprofit">
+    <id name="id" type="integer" column="id" >
+      <generator strategy="IDENTITY" />
+    </id>
+    <field name="name" type="string" column="name" nullable="false"/>
+    <field name="url" type="string" column="url" nullable="true"/>
+    <field name="logoName" type="string" column="logo_name" length="255" nullable="true" />
+    <field name="description" type="text" column="description" nullable="false"/>
+    <field name="enabled" column="enabled" type="boolean" />
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+  </entity>
+</doctrine-mapping>

@@ -148,3 +148,16 @@ $vytalGreen: #53b848;
   align-items: center;
   justify-content: space-between;
 }
+
+.nonprofit-card {
+  .thumbnail {
+    cursor: pointer;
+    height: 340px;
+  }
+   &.active {
+    .thumbnail {
+      border: 1px solid #66afe9;
+      background-color: #f3faff;
+    }
+  }
+}

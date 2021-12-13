@@ -1,0 +1,45 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'form/restaurant.html.twig' %}
+
+{% block breadcrumb %}
+<li>
+  <a href="{{ path('admin_nonprofits') }}">{% trans %}adminDashboard.nonprofits.title{% endtrans %}</a>
+</li>
+<li>
+  {{ 'basics.add'|trans }}
+</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+
+<div class="row">
+  <div class="col-sm-9">
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="general">
+        {{ form_row(form.name) }}
+        {{ form_row(form.url) }}
+        {{ form_row(form.enabled) }}
+        {{ form_row(form.description) }}
+      </div>
+      <div role="tabpanel" class="tab-pane" id="settlement">
+        {{ form_widget(form) }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<button type="submit" class="btn btn-block btn-lg btn-primary">
+  {{ 'basics.save'|trans }}
+</button>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block styles %}
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

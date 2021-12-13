@@ -580,3 +580,34 @@ admin_metrics:
         _controller: AppBundle\Controller\AdminController::metricsAction
         layout: 'admin.html.twig'
     methods:  [ GET ]
+
+admin_nonprofits:
+  path: /admin/nonprofits
+  condition: '%nonprofits_enabled% == true'
+  defaults:
+    _controller: AppBundle\Controller\AdminController::nonProfitsActionListAction
+    layout: 'admin.html.twig'
+  methods:  [ GET ]
+
+admin_nonprofit_new:
+  path: /admin/nonprofits/new
+  condition: '%nonprofits_enabled% == true'
+  defaults:
+    _controller: AppBundle\Controller\AdminController::newNonprofitAction
+    layout: 'admin.html.twig'
+  methods: [ GET, POST ]
+
+admin_nonprofit_delete:
+  path: /admin/nonprofits/{id}/delete
+  condition: '%nonprofits_enabled% == true'
+  defaults:
+    _controller: AppBundle\Controller\AdminController::deleteNonprofitAction
+  methods: [ POST ]
+
+admin_nonprofit:
+  path: /admin/nonprofits/{id}
+  condition: '%nonprofits_enabled% == true'
+  defaults:
+    _controller: AppBundle\Controller\AdminController::nonprofitAction
+    layout: 'admin.html.twig'
+  methods: [ GET, POST ]

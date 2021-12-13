@@ -32,6 +32,7 @@ class GatewayResolver
 
     public function resolve()
     {
+        //FEAT: Conditional gateway
         return $this->resolveForCountry($this->country);
     }
 }
