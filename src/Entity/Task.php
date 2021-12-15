@@ -17,12 +17,14 @@ use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
+use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Validator\Constraints\Task as AssertTask;
 use AppBundle\Vroom\Job as VroomJob;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -175,6 +177,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
+    use PackagesAwareTrait;
 
     const TYPE_DROPOFF = 'DROPOFF';
     const TYPE_PICKUP = 'PICKUP';
@@ -297,6 +300,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     {
         $this->events = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->packages = new ArrayCollection();
     }
 
     public function getId()
@@ -772,5 +776,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     public function getMetadata()
     {
         return $this->metadata;
+    }
+
+    public function getPackages()
+    {
+        return $this->packages;
     }
 }

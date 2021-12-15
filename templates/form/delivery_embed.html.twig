@@ -15,6 +15,10 @@
     {{ form_row(form.timeSlot) }}
   {% endif %}
 
+  {% if form.packages is defined %}
+    {{ form_row(form.packages) }}
+  {% endif %}
+
   {% if form.vars.data.type == 'PICKUP' and form.parent.parent.weight is defined %}
     {{ form_row(form.parent.parent.weight) }}
   {% endif %}

@@ -10,8 +10,8 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
-use AppBundle\Entity\Delivery\Package as DeliveryPackage;
 use AppBundle\Entity\Package;
+use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
@@ -101,6 +101,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Delivery extends TaskCollection implements TaskCollectionInterface
 {
+    use PackagesAwareTrait;
+
     const VEHICLE_BIKE = 'bike';
     const VEHICLE_CARGO_BIKE = 'cargo_bike';
 
@@ -119,8 +121,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
      * @Groups({"delivery_create"})
      */
     private $store;
-
-    private $packages;
 
     const OPENAPI_CONTEXT_POST_PARAMETERS = [[
         "name" => "delivery",
@@ -338,19 +338,19 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         return true;
     }
 
-    public function setPackages($packages)
-    {
-        $this->packages = $packages;
-    }
-
     public function getPackages()
     {
-        return $this->packages;
-    }
+        $packages = new ArrayCollection();
 
-    public function hasPackages()
-    {
-        return count($this->packages) > 0;
+        foreach ($this->getTasks() as $task) {
+            if ($task->hasPackages()) {
+                foreach ($task->getPackages() as $package) {
+                    $packages->add($package);
+                }
+            }
+        }
+
+        return $packages;
     }
 
     public function addPackageWithQuantity(Package $package, $quantity = 1)
@@ -359,50 +359,19 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
             return;
         }
 
-        $deliveryPackage = $this->resolvePackage($package);
-        $deliveryPackage->setQuantity($deliveryPackage->getQuantity() + $quantity);
+        $items = $this->getItems();
 
-        if (!$this->packages->contains($deliveryPackage)) {
-            $this->packages->add($deliveryPackage);
-        }
-    }
-
-    private function resolvePackage(Package $package): DeliveryPackage
-    {
-        if ($this->hasPackage($package)) {
-            foreach ($this->packages as $deliveryPackage) {
-                if ($deliveryPackage->getPackage() === $package) {
-                    return $deliveryPackage;
-                }
+        $firstDropoff = null;
+        foreach ($items as $item) {
+            if ($item->getTask()->getType() === Task::TYPE_DROPOFF) {
+                $firstDropoff = $item->getTask();
+                break;
             }
         }
 
-        $deliveryPackage = new DeliveryPackage($this);
-        $deliveryPackage->setPackage($package);
-
-        return $deliveryPackage;
-    }
-
-    public function hasPackage(Package $package)
-    {
-        foreach ($this->packages as $p) {
-            if ($p->getPackage() === $package) {
-                return true;
-            }
+        if ($firstDropoff) {
+            $firstDropoff->addPackageWithQuantity($package, $quantity);
         }
-
-        return false;
-    }
-
-    public function getQuantityForPackage(Package $package)
-    {
-        foreach ($this->packages as $p) {
-            if ($p->getPackage() === $package) {
-                return $p->getQuantity();
-            }
-        }
-
-        return 0;
     }
 
     private static function createTaskObject(?Task $task)

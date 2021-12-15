@@ -108,6 +108,18 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         if (isset($data['comments'])) {
             $task->setComments($data['comments']);
         }
+
+        if (isset($data['packages'])) {
+
+            $packageRepository = $this->doctrine->getRepository(Package::class);
+
+            foreach ($data['packages'] as $p) {
+                $package = $packageRepository->findOneByName($p['type']);
+                if ($package) {
+                    $task->addPackageWithQuantity($package, $p['quantity']);
+                }
+            }
+        }
     }
 
     private function denormalizeAddress($data, $format = null)

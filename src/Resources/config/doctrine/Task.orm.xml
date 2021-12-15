@@ -46,6 +46,11 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
+    <one-to-many field="packages" target-entity="AppBundle\Entity\Task\Package" mapped-by="task">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
     <many-to-one field="delivery" target-entity="AppBundle\Entity\Delivery">
       <join-columns>
         <join-column name="delivery_id" referenced-column-name="id"/>
