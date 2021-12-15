@@ -48,9 +48,9 @@ class IndexController extends AbstractController
             return array_map(fn(LocalBusiness $lb) => $lb->getId(), $items);
         });
 
-        foreach (array_slice($itemsIds, 0, self::MAX_RESULTS) as $id) {
-            // If one of the items can't be found (probably because it's disabled),
-            // we invalidate the cache
+        // If one of the items can't be found (probably because it's disabled),
+        // we invalidate the cache
+        foreach ($itemsIds as $id) {
             if (null === $typeRepository->find($id)) {
                 $cache->delete($cacheKey);
 
@@ -61,11 +61,13 @@ class IndexController extends AbstractController
         $count = count($itemsIds);
         $items = array_map(
             fn(int $id): LocalBusiness => $typeRepository->find($id),
-            array_slice($itemsIds, 0, self::MAX_RESULTS)
+            $itemsIds
         );
 
         $iterator = new SortableRestaurantIterator($items);
         $items = iterator_to_array($iterator);
+
+        $items = array_slice($items, 0, self::MAX_RESULTS);
 
         return [ $items, $count ];
     }
