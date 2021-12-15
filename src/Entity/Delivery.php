@@ -359,18 +359,11 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
             return;
         }
 
-        $items = $this->getItems();
-
-        $firstDropoff = null;
-        foreach ($items as $item) {
-            if ($item->getTask()->getType() === Task::TYPE_DROPOFF) {
-                $firstDropoff = $item->getTask();
+        foreach ($this->getTasks() as $task) {
+            if ($task->isDropoff()) {
+                $task->addPackageWithQuantity($package, $quantity);
                 break;
             }
-        }
-
-        if ($firstDropoff) {
-            $firstDropoff->addPackageWithQuantity($package, $quantity);
         }
     }
 
