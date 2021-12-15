@@ -11,6 +11,7 @@ use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Entity\Package;
+use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
@@ -99,7 +100,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @AssertDelivery
  * @AssertCheckDelivery(groups={"delivery_check"})
  */
-class Delivery extends TaskCollection implements TaskCollectionInterface
+class Delivery extends TaskCollection implements TaskCollectionInterface, PackagesAwareInterface
 {
     use PackagesAwareTrait;
 

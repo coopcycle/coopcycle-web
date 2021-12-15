@@ -18,7 +18,9 @@ use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Package;
+use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Task\Group as TaskGroup;
+use AppBundle\Entity\Task\Package as TaskPackage;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
@@ -173,7 +175,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(AssignedFilter::class, properties={"assigned"})
  * @UniqueEntity(fields={"organization", "ref"}, errorPath="ref")
  */
-class Task implements TaggableInterface, OrganizationAwareInterface
+class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
@@ -781,5 +783,35 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     public function getPackages()
     {
         return $this->packages;
+    }
+
+    public function addPackageWithQuantity(Package $package, $quantity = 1)
+    {
+        if (0 === $quantity) {
+            return;
+        }
+
+        $wrappedPackage = $this->resolvePackage($package);
+        $wrappedPackage->setQuantity($wrappedPackage->getQuantity() + $quantity);
+
+        if (!$this->packages->contains($wrappedPackage)) {
+            $this->packages->add($wrappedPackage);
+        }
+    }
+
+    protected function resolvePackage(Package $package): TaskPackage
+    {
+        if ($this->hasPackage($package)) {
+            foreach ($this->packages as $taskPackage) {
+                if ($taskPackage->getPackage() === $package) {
+                    return $taskPackage;
+                }
+            }
+        }
+
+        $taskPackage = new TaskPackage($this);
+        $taskPackage->setPackage($package);
+
+        return $taskPackage;
     }
 }
