@@ -123,18 +123,23 @@ class Geocoder
      */
     public function geocode($value)
     {
-        // The value of the bounds parameter should be specified as two coordinate points
-        // forming the south-west and north-east corners of a bounding box (min lon, min lat, max lon, max lat).
-        // @see https://opencagedata.com/api#forward-opt
-        // @see https://opencagedata.com/bounds-finder
-        [ $latitude, $longitude ] = explode(',', $this->settingsManager->get('latlng'));
-        $viewbox = GeoUtils::getViewbox(floatval($latitude), floatval($longitude), 50);
-        [ $lngMax, $latMax, $lngMin, $latMin ] = $viewbox;
-        $bounds = new Bounds($latMax, $lngMin, $latMin, $lngMax);
+        $query = GeocodeQuery::create($value);
 
-        $query = GeocodeQuery::create($value)
-            ->withData('proximity', $this->settingsManager->get('latlng'))
-            ->withBounds($bounds);
+        $latlng = $this->settingsManager->get('latlng');
+        if ($latlng) {
+            // The value of the bounds parameter should be specified as two coordinate points
+            // forming the south-west and north-east corners of a bounding box (min lon, min lat, max lon, max lat).
+            // @see https://opencagedata.com/api#forward-opt
+            // @see https://opencagedata.com/bounds-finder
+            [ $latitude, $longitude ] = explode(',', $latlng);
+            $viewbox = GeoUtils::getViewbox(floatval($latitude), floatval($longitude), 50);
+            [ $lngMax, $latMax, $lngMin, $latMin ] = $viewbox;
+            $bounds = new Bounds($latMax, $lngMin, $latMin, $lngMax);
+
+            $query = $query
+                ->withData('proximity', $latlng)
+                ->withBounds($bounds);
+        }
 
         $results = $this->getGeocoder()->geocodeQuery(
             $query
