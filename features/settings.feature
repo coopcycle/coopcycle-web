@@ -10,6 +10,7 @@ Feature: Settings
     And the setting "currency_code" has value "eur"
     And the setting "phone_number" has value "+33612345678"
     And the setting "administrator_email" has value "dev@coopcycle.org"
+    And the setting "guest_checkout_enabled" has value "true"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/settings"
@@ -28,6 +29,7 @@ Feature: Settings
         "latlng":"48.856613,2.352222",
         "currency_code":"eur",
         "phone_number":"+33612345678",
-        "administrator_email":"dev@coopcycle.org"
+        "administrator_email":"dev@coopcycle.org",
+        "guest_checkout_enabled":true
       }
       """
