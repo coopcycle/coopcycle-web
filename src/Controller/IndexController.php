@@ -45,6 +45,9 @@ class IndexController extends AbstractController
 
             $items = $typeRepository->findAllForType();
 
+            $iterator = new SortableRestaurantIterator($items);
+            $items = iterator_to_array($iterator);
+
             return array_map(fn(LocalBusiness $lb) => $lb->getId(), $items);
         });
 
@@ -61,13 +64,8 @@ class IndexController extends AbstractController
         $count = count($itemsIds);
         $items = array_map(
             fn(int $id): LocalBusiness => $typeRepository->find($id),
-            $itemsIds
+            array_slice($itemsIds, 0, self::MAX_RESULTS)
         );
-
-        $iterator = new SortableRestaurantIterator($items);
-        $items = iterator_to_array($iterator);
-
-        $items = array_slice($items, 0, self::MAX_RESULTS);
 
         return [ $items, $count ];
     }
