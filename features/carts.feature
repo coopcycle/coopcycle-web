@@ -1503,6 +1503,7 @@ Feature: Carts
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
+    And the setting "guest_checkout_enabled" has value "1"
     And the restaurant with id "1" has products:
       | code      |
       | PIZZA     |
