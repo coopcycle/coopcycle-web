@@ -60,6 +60,8 @@ jobs:
         run: docker-compose up -d
       - name: Wait for PHP-FPM
         run: until docker inspect --format='{{ .State.Health.Status }}' $(docker-compose ps -q php) | grep -wq healthy; do sleep 5; done
+      - name: Dump SQL (for dev)
+        run: docker-compose exec -T php bin/console doctrine:schema:create --env=dev --dump-sql
       - name: Create database
         run: docker-compose exec -T php bin/console doctrine:schema:create --env=test
       - name: Validate database schema
