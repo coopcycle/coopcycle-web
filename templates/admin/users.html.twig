@@ -79,6 +79,7 @@
 <table class="table">
 <thead>
   <th>{% trans %}profile.email{% endtrans  %}</th>
+  <th>{% trans %}profile.fullName{% endtrans  %}</th>
   <th>{% trans %}profile.telephone{% endtrans  %}</th>
   <th class="text-right">{% trans %}adminDashboard.users.orders_count{% endtrans  %}</th>
   <th class="text-right">{% trans %}adminDashboard.users.registered_at{% endtrans  %}</th>
@@ -92,6 +93,9 @@
   <tr>
     <td>
       <span class="text-monospace">{% if is_demo %}✴✴✴{% else %}{{ customer.emailCanonical }}{% endif %}</span>
+    </td>
+    <td>
+      {% if customer.fullName is not empty %}{{ customer.fullName }}{% endif %}
     </td>
     <td>
       {% if customer.phoneNumber is not empty %}{{ customer.phoneNumber }}{% endif %}
