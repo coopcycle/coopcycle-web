@@ -45,6 +45,9 @@ class ImportQueue
 
     protected $finishedAt;
 
+    /**
+     * @Groups({"task_import_queue_failed"})
+     */
     protected $error;
 
     public function getId()

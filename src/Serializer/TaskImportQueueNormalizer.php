@@ -20,6 +20,10 @@ class TaskImportQueueNormalizer implements ContextAwareNormalizerInterface, Norm
             $context['groups'][] = 'task_import_queue_completed';
         }
 
+        if ('failed' === $object->getStatus()) {
+            $context['groups'][] = 'task_import_queue_failed';
+        }
+
         $context[self::ALREADY_CALLED] = true;
 
         $data = $this->normalizer->normalize($object, $format, $context);
