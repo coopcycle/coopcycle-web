@@ -308,4 +308,41 @@ class DeliveryTest extends TestCase
         $this->assertCount(1, $packages);
         $this->assertEquals(2, $delivery->getQuantityForPackage($smallPackage));
     }
+
+    public function testGetPackagesWithMultipleDropoffs()
+    {
+        // Atm, this test can't pass, because we would need to return
+        // an array of Task\Package objects,
+        // which are expecting a reference to a Task object
+        // A possible solution, would be to change the implementation
+        // of the getPackages() method, so that it returns a SplObjectStorage
+        $this->markTestSkipped();
+
+        $delivery = new Delivery();
+
+        $otherDrop = new Task();
+        $otherDrop->setType(Task::TYPE_DROPOFF);
+
+        $delivery->addTask($otherDrop);
+
+        $smallPackage = new Package();
+        $smallPackage->setName('S');
+
+        $i = 0;
+        foreach ($delivery->getTasks() as $task) {
+            if ($task->isDropoff()) {
+                if (0 === $i) {
+                    $task->addPackageWithQuantity($smallPackage, 2);
+                    $this->assertCount(1, $delivery->getPackages());
+                    $this->assertEquals(2, $delivery->getQuantityForPackage($smallPackage));
+                }
+                if (1 === $i) {
+                    $task->addPackageWithQuantity($smallPackage, 1);
+                    $this->assertCount(1, $delivery->getPackages());
+                    $this->assertEquals(3, $delivery->getQuantityForPackage($smallPackage));
+                }
+                $i++;
+            }
+        }
+    }
 }

@@ -176,7 +176,7 @@ function createPackageForm(name, $list, cb) {
   var counter = $list.data('widget-counter') || $list.children().length
   var newWidget = $list.attr('data-prototype')
 
-  newWidget = newWidget.replace(/__name__/g, counter)
+  newWidget = newWidget.replace(/__package__/g, counter)
 
   counter++
   $list.data('widget-counter', counter)

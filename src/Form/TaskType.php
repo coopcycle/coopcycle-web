@@ -152,11 +152,15 @@ class TaskType extends AbstractType
                 $form = $event->getForm();
                 $task = $event->getData();
 
-                if ($task->getType() === Task::TYPE_DROPOFF) {
+                // Because we are using a collection of forms, $task may be NULL
+                // When $task == NULL, it means it's an additional task
+                // In this case, we add the "packages" field anyways,
+                // to avoid the error "This form should not contain extra fields"
+                if (null === $task || $task->getType() === Task::TYPE_DROPOFF) {
 
                     $data = [];
 
-                    if ($task->hasPackages()) {
+                    if ($task && $task->hasPackages()) {
                         foreach ($task->getPackages() as $wrappedPackage) {
                             $pwq = new PackageWithQuantity($wrappedPackage->getPackage());
                             $pwq->setQuantity($wrappedPackage->getQuantity());
@@ -176,7 +180,8 @@ class TaskType extends AbstractType
                         'allow_delete' => true,
                         'attr' => [
                             'data-packages-required' => var_export($options['with_packages_required'], true),
-                        ]
+                        ],
+                        'prototype_name' => '__package__'
                     ]);
 
                     $form->get('packages')->setData($data);
