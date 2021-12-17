@@ -13,6 +13,7 @@ use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
+use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
@@ -343,12 +344,24 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     {
         $packages = new ArrayCollection();
 
+        $hash = new \SplObjectStorage();
+
         foreach ($this->getTasks() as $task) {
             if ($task->hasPackages()) {
                 foreach ($task->getPackages() as $package) {
-                    $packages->add($package);
+                    $object = $package->getPackage();
+                    if (isset($hash[$object])) {
+                        $hash[$object] += $package->getQuantity();
+                    } else {
+                        $hash[$object] = $package->getQuantity();
+                    }
                 }
             }
+        }
+
+        foreach ($hash as $package) {
+            $quantity = $hash[$package];
+            $packages->add(new PackageWithQuantity($package, $quantity));
         }
 
         return $packages;

@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Form\Entity;
+namespace AppBundle\Entity\Package;
 
 use AppBundle\Entity\Package;
 
@@ -9,9 +9,10 @@ class PackageWithQuantity
     private $package;
     private $quantity = 0;
 
-    public function __construct(Package $package = null)
+    public function __construct(Package $package = null, $quantity = 0)
     {
         $this->package = $package;
+        $this->quantity = $quantity;
     }
 
     /**

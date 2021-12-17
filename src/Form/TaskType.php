@@ -3,10 +3,10 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
-use AppBundle\Form\Entity\PackageWithQuantity;
 use AppBundle\Form\Type\TimeSlotChoice;
 use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Service\TaskManager;

@@ -7,7 +7,6 @@ use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
-use AppBundle\Form\Entity\PackageWithQuantity;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;

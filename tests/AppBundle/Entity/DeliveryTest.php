@@ -311,13 +311,6 @@ class DeliveryTest extends TestCase
 
     public function testGetPackagesWithMultipleDropoffs()
     {
-        // Atm, this test can't pass, because we would need to return
-        // an array of Task\Package objects,
-        // which are expecting a reference to a Task object
-        // A possible solution, would be to change the implementation
-        // of the getPackages() method, so that it returns a SplObjectStorage
-        $this->markTestSkipped();
-
         $delivery = new Delivery();
 
         $otherDrop = new Task();
