@@ -116,5 +116,6 @@ class ReceiveWebhookTest extends TestCase
         $this->assertEquals(-1.5506787323970848, $dropoffAddress->getGeo()->getLongitude());
         $this->assertEquals('abcdefgh123456', $delivery->getDropoff()->getRef());
         $this->assertEquals("1 × bac(s)\n25.592 kg\n", $delivery->getPickup()->getComments());
+        $this->assertEquals(25592, $delivery->getWeight());
     }
 }

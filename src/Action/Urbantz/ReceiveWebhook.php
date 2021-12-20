@@ -112,6 +112,10 @@ class ReceiveWebhook
             }
             if (isset($task['dimensions']['weight'])) {
                 $comments .= "{$task['dimensions']['weight']} kg\n";
+
+                $delivery->setWeight(
+                    intval($task['dimensions']['weight'] * 1000)
+                );
             }
         }
 
