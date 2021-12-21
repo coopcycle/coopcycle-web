@@ -627,7 +627,8 @@ Feature: Orders
           "username":"bob",
           "email":"bob@coopcycle.org",
           "telephone": "+33612345678",
-          "phoneNumber": "+33612345678"
+          "phoneNumber": "+33612345678",
+          "fullName": "Bob Doe"
         },
         "vendor":{"@*@":"@*@"},
         "restaurant":{
