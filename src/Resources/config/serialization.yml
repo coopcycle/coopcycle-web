@@ -21,6 +21,8 @@ AppBundle\Entity\Sylius\Customer:
       groups: ['customer', 'order', 'order_minimal']
     email:
       groups: ['customer', 'order', 'order_minimal']
+    fullName:
+      groups: ['customer', 'order', 'order_minimal']
     telephone:
       groups: ['customer', 'order', 'customer_update']
     phoneNumber:
