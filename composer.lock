@@ -3773,28 +3773,28 @@
         },
         {
             "name": "friendsofsymfony/jsrouting-bundle",
-            "version": "2.7.0",
+            "version": "2.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle.git",
-                "reference": "d56600542504148bf2faa2b6bd7571a6adf6799e"
+                "reference": "c978fabc6a21a77052ff3fe927b41111ec944f0d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSJsRoutingBundle/zipball/d56600542504148bf2faa2b6bd7571a6adf6799e",
-                "reference": "d56600542504148bf2faa2b6bd7571a6adf6799e",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSJsRoutingBundle/zipball/c978fabc6a21a77052ff3fe927b41111ec944f0d",
+                "reference": "c978fabc6a21a77052ff3fe927b41111ec944f0d",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1|^8.0",
-                "symfony/console": "~3.3|^4.0|^5.0",
-                "symfony/framework-bundle": "~3.3|^4.0|^5.0",
-                "symfony/serializer": "~3.3|^4.0|^5.0",
-                "willdurand/jsonp-callback-validator": "~1.0"
+                "symfony/console": "~3.4|^4.4.20|^5.0",
+                "symfony/framework-bundle": "~3.4|^4.4.20|^5.0",
+                "symfony/serializer": "~3.4|^4.4.20|^5.0",
+                "willdurand/jsonp-callback-validator": "~1.1"
             },
             "require-dev": {
-                "symfony/expression-language": "~3.3|^4.0|^5.0",
-                "symfony/phpunit-bridge": "^5.1"
+                "symfony/expression-language": "~3.4|^4.4.20|^5.0",
+                "symfony/phpunit-bridge": "^5.3"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -3833,9 +3833,9 @@
             ],
             "support": {
                 "issues": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle/issues",
-                "source": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle/tree/2.7.0"
+                "source": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle/tree/2.8.0"
             },
-            "time": "2020-11-20T10:38:12+00:00"
+            "time": "2021-12-15T08:51:04+00:00"
         },
         {
             "name": "friendsofsymfony/rest-bundle",
@@ -4509,16 +4509,16 @@
         },
         {
             "name": "giggsey/libphonenumber-for-php",
-            "version": "8.12.38",
+            "version": "8.12.39",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/libphonenumber-for-php.git",
-                "reference": "0a6293c57de9256f4bd0d673280fbfbfd1e47533"
+                "reference": "6ae517989e96f069141ffeb56ccbbd849520f6ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/0a6293c57de9256f4bd0d673280fbfbfd1e47533",
-                "reference": "0a6293c57de9256f4bd0d673280fbfbfd1e47533",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/6ae517989e96f069141ffeb56ccbbd849520f6ff",
+                "reference": "6ae517989e96f069141ffeb56ccbbd849520f6ff",
                 "shasum": ""
             },
             "require": {
@@ -4578,7 +4578,7 @@
                 "issues": "https://github.com/giggsey/libphonenumber-for-php/issues",
                 "source": "https://github.com/giggsey/libphonenumber-for-php"
             },
-            "time": "2021-11-26T08:32:55+00:00"
+            "time": "2021-12-07T08:51:54+00:00"
         },
         {
             "name": "giggsey/locale",
@@ -4636,16 +4636,16 @@
         },
         {
             "name": "google/apiclient",
-            "version": "v2.11.0",
+            "version": "v2.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client.git",
-                "reference": "7db9eb40c8ba887e81c0fe84f2888a967396cdfb"
+                "reference": "1530583a711f4414407112c4068464bcbace1c71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/7db9eb40c8ba887e81c0fe84f2888a967396cdfb",
-                "reference": "7db9eb40c8ba887e81c0fe84f2888a967396cdfb",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client/zipball/1530583a711f4414407112c4068464bcbace1c71",
+                "reference": "1530583a711f4414407112c4068464bcbace1c71",
                 "shasum": ""
             },
             "require": {
@@ -4676,7 +4676,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.x-dev"
+                    "dev-main": "2.x-dev"
                 }
             },
             "autoload": {
@@ -4701,22 +4701,22 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client/issues",
-                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.11.0"
+                "source": "https://github.com/googleapis/google-api-php-client/tree/v2.12.1"
             },
-            "time": "2021-09-20T21:15:55+00:00"
+            "time": "2021-12-02T03:34:25+00:00"
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.223.0",
+            "version": "v0.226.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "e7c5284f4271a7f794410356ff44aff65c0254eb"
+                "reference": "c67839c96bc821b202c6737c9ae1ba6fd4626653"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/e7c5284f4271a7f794410356ff44aff65c0254eb",
-                "reference": "e7c5284f4271a7f794410356ff44aff65c0254eb",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/c67839c96bc821b202c6737c9ae1ba6fd4626653",
+                "reference": "c67839c96bc821b202c6737c9ae1ba6fd4626653",
                 "shasum": ""
             },
             "require": {
@@ -4745,9 +4745,9 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client-services/issues",
-                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.223.0"
+                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.226.0"
             },
-            "time": "2021-11-21T12:26:34+00:00"
+            "time": "2021-12-18T12:26:19+00:00"
         },
         {
             "name": "google/auth",
@@ -7514,16 +7514,16 @@
         },
         {
             "name": "league/csv",
-            "version": "9.7.3",
+            "version": "9.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/csv.git",
-                "reference": "d8149032aa74a9daca6f7b35d63c46a35c9bc1d5"
+                "reference": "002f55f649e7511710dc7154ff44c7be32c8195c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/csv/zipball/d8149032aa74a9daca6f7b35d63c46a35c9bc1d5",
-                "reference": "d8149032aa74a9daca6f7b35d63c46a35c9bc1d5",
+                "url": "https://api.github.com/repos/thephpleague/csv/zipball/002f55f649e7511710dc7154ff44c7be32c8195c",
+                "reference": "002f55f649e7511710dc7154ff44c7be32c8195c",
                 "shasum": ""
             },
             "require": {
@@ -7594,7 +7594,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-11-21T19:32:00+00:00"
+            "time": "2021-11-30T07:09:34+00:00"
         },
         {
             "name": "league/event",
@@ -8203,28 +8203,28 @@
         },
         {
             "name": "liip/imagine-bundle",
-            "version": "2.7.2",
+            "version": "2.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/liip/LiipImagineBundle.git",
-                "reference": "8581eed5dddbecaf7e442b0fd968b33c65a13db8"
+                "reference": "25098c758380933ba4f2d4ffc68614c4c1c90a72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/8581eed5dddbecaf7e442b0fd968b33c65a13db8",
-                "reference": "8581eed5dddbecaf7e442b0fd968b33c65a13db8",
+                "url": "https://api.github.com/repos/liip/LiipImagineBundle/zipball/25098c758380933ba4f2d4ffc68614c4c1c90a72",
+                "reference": "25098c758380933ba4f2d4ffc68614c4c1c90a72",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
                 "imagine/imagine": "^1.2.4",
                 "php": "^7.1|^8.0",
-                "symfony/filesystem": "^3.4|^4.4|^5.3",
-                "symfony/finder": "^3.4|^4.4|^5.3",
-                "symfony/framework-bundle": "^3.4.23|^4.4|^5.3",
-                "symfony/mime": "^4.4|^5.3",
-                "symfony/options-resolver": "^3.4|^4.4|^5.3",
-                "symfony/process": "^3.4|^4.4|^5.3",
+                "symfony/filesystem": "^3.4|^4.4|^5.3|^6.0",
+                "symfony/finder": "^3.4|^4.4|^5.3|^6.0",
+                "symfony/framework-bundle": "^3.4.23|^4.4|^5.3|^6.0",
+                "symfony/mime": "^4.4|^5.3|^6.0",
+                "symfony/options-resolver": "^3.4|^4.4|^5.3|^6.0",
+                "symfony/process": "^3.4|^4.4|^5.3|^6.0",
                 "twig/twig": "^1.44|^2.9|^3.0"
             },
             "require-dev": {
@@ -8238,16 +8238,16 @@
                 "phpstan/phpstan": "^0.12.64",
                 "psr/cache": "^1.0|^2.0|^3.0",
                 "psr/log": "^1.0",
-                "symfony/browser-kit": "^3.4|^4.4|^5.3",
-                "symfony/cache": "^3.4|^4.4|^5.3",
-                "symfony/console": "^3.4|^4.4|^5.3",
-                "symfony/dependency-injection": "^3.4|^4.4|^5.3",
-                "symfony/form": "^3.4|^4.4|^5.3",
-                "symfony/messenger": "^4.4|^5.3",
+                "symfony/browser-kit": "^3.4|^4.4|^5.3|^6.0",
+                "symfony/cache": "^3.4|^4.4|^5.3|^6.0",
+                "symfony/console": "^3.4|^4.4|^5.3|^6.0",
+                "symfony/dependency-injection": "^3.4|^4.4|^5.3|^6.0",
+                "symfony/form": "^3.4|^4.4|^5.3|^6.0",
+                "symfony/messenger": "^4.4|^5.3|^6.0",
                 "symfony/phpunit-bridge": "^5.3",
-                "symfony/templating": "^3.4|^4.4|^5.3",
-                "symfony/validator": "^3.4|^4.4|^5.3",
-                "symfony/yaml": "^3.4|^4.4|^5.3"
+                "symfony/templating": "^3.4|^4.4|^5.3|^6.0",
+                "symfony/validator": "^3.4|^4.4|^5.3|^6.0",
+                "symfony/yaml": "^3.4|^4.4|^5.3|^6.0"
             },
             "suggest": {
                 "alcaeus/mongo-php-adapter": "required for mongodb components",
@@ -8299,9 +8299,9 @@
             ],
             "support": {
                 "issues": "https://github.com/liip/LiipImagineBundle/issues",
-                "source": "https://github.com/liip/LiipImagineBundle/tree/2.7.2"
+                "source": "https://github.com/liip/LiipImagineBundle/tree/2.7.3"
             },
-            "time": "2021-11-11T12:21:07+00:00"
+            "time": "2021-12-03T13:56:56+00:00"
         },
         {
             "name": "m6web/daemon-bundle",
@@ -9619,35 +9619,39 @@
         },
         {
             "name": "odolbeau/phone-number-bundle",
-            "version": "v3.5.0",
+            "version": "v3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/odolbeau/phone-number-bundle.git",
-                "reference": "c30c6629b6fe78cba7f9032e580f0d5e1e71c2ed"
+                "reference": "0e9428c2252b2b8c5864c58dd6629cb548aa4695"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/odolbeau/phone-number-bundle/zipball/c30c6629b6fe78cba7f9032e580f0d5e1e71c2ed",
-                "reference": "c30c6629b6fe78cba7f9032e580f0d5e1e71c2ed",
+                "url": "https://api.github.com/repos/odolbeau/phone-number-bundle/zipball/0e9428c2252b2b8c5864c58dd6629cb548aa4695",
+                "reference": "0e9428c2252b2b8c5864c58dd6629cb548aa4695",
                 "shasum": ""
             },
             "require": {
                 "giggsey/libphonenumber-for-php": "^8.0",
                 "php": ">=7.4",
-                "symfony/framework-bundle": "^4.4|^5.3",
-                "symfony/intl": "^4.4|^5.3"
+                "symfony/framework-bundle": "^4.4|^5.3|^6.0",
+                "symfony/intl": "^4.4|^5.3|^6.0"
+            },
+            "conflict": {
+                "symfony/serializer": "6.0.0"
             },
             "replace": {
                 "misd/phone-number-bundle": "self.version"
             },
             "require-dev": {
                 "doctrine/doctrine-bundle": "^1.12|^2.0",
-                "phpunit/phpunit": "^8.4",
-                "symfony/form": "^4.4|^5.3",
-                "symfony/property-access": "^4.4|^5.3",
-                "symfony/serializer": "^4.4|^5.3",
-                "symfony/twig-bundle": "^4.4|^5.3",
-                "symfony/validator": "^4.4|^5.3"
+                "phpspec/prophecy-phpunit": "^2.0",
+                "phpunit/phpunit": "^9.5",
+                "symfony/form": "^4.4|^5.3|^6.0",
+                "symfony/property-access": "^4.4|^5.3|^6.0",
+                "symfony/serializer": "^4.4|^5.3|^6.0.1",
+                "symfony/twig-bundle": "^4.4|^5.3|^6.0",
+                "symfony/validator": "^4.4|^5.3|^6.0"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "Add a DBAL mapping type",
@@ -9660,7 +9664,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.5.x-dev"
+                    "dev-master": "3.6.x-dev"
                 }
             },
             "autoload": {
@@ -9683,9 +9687,9 @@
             ],
             "support": {
                 "issues": "https://github.com/odolbeau/phone-number-bundle/issues",
-                "source": "https://github.com/odolbeau/phone-number-bundle/tree/v3.5.0"
+                "source": "https://github.com/odolbeau/phone-number-bundle/tree/v3.6.0"
             },
-            "time": "2021-10-27T11:58:46+00:00"
+            "time": "2021-12-07T09:07:46+00:00"
         },
         {
             "name": "omnipay/common",
@@ -11034,16 +11038,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.11",
+            "version": "3.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "6e794226a35159eb06f355efe59a0075a16551dd"
+                "reference": "89bfb45bd8b1abc3b37e910d57f5dbd3174f40fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/6e794226a35159eb06f355efe59a0075a16551dd",
-                "reference": "6e794226a35159eb06f355efe59a0075a16551dd",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/89bfb45bd8b1abc3b37e910d57f5dbd3174f40fb",
+                "reference": "89bfb45bd8b1abc3b37e910d57f5dbd3174f40fb",
                 "shasum": ""
             },
             "require": {
@@ -11125,7 +11129,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.11"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.12"
             },
             "funding": [
                 {
@@ -11141,7 +11145,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-10-27T03:01:46+00:00"
+            "time": "2021-11-28T23:46:03+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
@@ -13347,16 +13351,16 @@
         },
         {
             "name": "spatie/opening-hours",
-            "version": "2.11.0",
+            "version": "2.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/opening-hours.git",
-                "reference": "6a86c246624b8bd5fca502b056406e6c7b5fe7c7"
+                "reference": "e3ba90f67d1a8705431535fdd99699b9e9bf5b6f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/opening-hours/zipball/6a86c246624b8bd5fca502b056406e6c7b5fe7c7",
-                "reference": "6a86c246624b8bd5fca502b056406e6c7b5fe7c7",
+                "url": "https://api.github.com/repos/spatie/opening-hours/zipball/e3ba90f67d1a8705431535fdd99699b9e9bf5b6f",
+                "reference": "e3ba90f67d1a8705431535fdd99699b9e9bf5b6f",
                 "shasum": ""
             },
             "require": {
@@ -13395,9 +13399,9 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/opening-hours/issues",
-                "source": "https://github.com/spatie/opening-hours/tree/2.11.0"
+                "source": "https://github.com/spatie/opening-hours/tree/2.11.2"
             },
-            "time": "2021-10-13T12:11:07+00:00"
+            "time": "2021-12-09T10:16:57+00:00"
         },
         {
             "name": "spomky-labs/base64url",
@@ -13540,16 +13544,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v7.103.0",
+            "version": "v7.107.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "3a029598395bb4c7cfafa64707a553f4b01a9a12"
+                "reference": "a90f74037261ed376c0d37066f396c48809c8e99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/3a029598395bb4c7cfafa64707a553f4b01a9a12",
-                "reference": "3a029598395bb4c7cfafa64707a553f4b01a9a12",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/a90f74037261ed376c0d37066f396c48809c8e99",
+                "reference": "a90f74037261ed376c0d37066f396c48809c8e99",
                 "shasum": ""
             },
             "require": {
@@ -13559,11 +13563,10 @@
                 "php": ">=5.6.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "2.17.1",
-                "php-coveralls/php-coveralls": "^2.1",
-                "phpunit/phpunit": "^5.7",
-                "squizlabs/php_codesniffer": "^3.3",
-                "symfony/process": "~3.4"
+                "friendsofphp/php-cs-fixer": "3.2.1",
+                "phpstan/phpstan": "^1.2",
+                "phpunit/phpunit": "^5.7 || ^9.0",
+                "squizlabs/php_codesniffer": "^3.3"
             },
             "type": "library",
             "extra": {
@@ -13595,9 +13598,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v7.103.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v7.107.0"
             },
-            "time": "2021-11-20T00:36:07+00:00"
+            "time": "2021-12-09T20:40:29+00:00"
         },
         {
             "name": "sylius-labs/polyfill-symfony-framework-bundle",
@@ -17835,16 +17838,16 @@
         },
         {
             "name": "twilio/sdk",
-            "version": "6.31.1",
+            "version": "6.32.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twilio/twilio-php.git",
-                "reference": "b3788dd0171bc8037206c6760174315bbe9c3443"
+                "reference": "d4a5ad22e761a14c5e355debb88a6f17640b247c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/b3788dd0171bc8037206c6760174315bbe9c3443",
-                "reference": "b3788dd0171bc8037206c6760174315bbe9c3443",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/d4a5ad22e761a14c5e355debb88a6f17640b247c",
+                "reference": "d4a5ad22e761a14c5e355debb88a6f17640b247c",
                 "shasum": ""
             },
             "require": {
@@ -17883,9 +17886,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twilio/twilio-php/issues",
-                "source": "https://github.com/twilio/twilio-php/tree/6.31.1"
+                "source": "https://github.com/twilio/twilio-php/tree/6.32.0"
             },
-            "time": "2021-11-17T20:15:02+00:00"
+            "time": "2021-12-15T20:48:09+00:00"
         },
         {
             "name": "vich/uploader-bundle",
@@ -19969,16 +19972,16 @@
         },
         {
             "name": "phpstan/phpstan-symfony",
-            "version": "1.0.1",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-symfony.git",
-                "reference": "edb55af46fe1aaa62fafae51c36ccd1b577125bb"
+                "reference": "84df52516771a2d8cf26b7b5b42a6dd4b1d26c2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/edb55af46fe1aaa62fafae51c36ccd1b577125bb",
-                "reference": "edb55af46fe1aaa62fafae51c36ccd1b577125bb",
+                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/84df52516771a2d8cf26b7b5b42a6dd4b1d26c2c",
+                "reference": "84df52516771a2d8cf26b7b5b42a6dd4b1d26c2c",
                 "shasum": ""
             },
             "require": {
@@ -20033,22 +20036,22 @@
             "description": "Symfony Framework extensions and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-symfony/issues",
-                "source": "https://github.com/phpstan/phpstan-symfony/tree/1.0.1"
+                "source": "https://github.com/phpstan/phpstan-symfony/tree/1.0.4"
             },
-            "time": "2021-11-03T14:14:43+00:00"
+            "time": "2021-12-16T09:03:35+00:00"
         },
         {
             "name": "phpstan/phpstan-webmozart-assert",
-            "version": "1.0.0",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-webmozart-assert.git",
-                "reference": "83546e171484750922686be13c041c480f5a7a48"
+                "reference": "6371a588eaa39e5f52e8e91dbedaa9dc42ab5321"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-webmozart-assert/zipball/83546e171484750922686be13c041c480f5a7a48",
-                "reference": "83546e171484750922686be13c041c480f5a7a48",
+                "url": "https://api.github.com/repos/phpstan/phpstan-webmozart-assert/zipball/6371a588eaa39e5f52e8e91dbedaa9dc42ab5321",
+                "reference": "6371a588eaa39e5f52e8e91dbedaa9dc42ab5321",
                 "shasum": ""
             },
             "require": {
@@ -20086,9 +20089,9 @@
             "description": "PHPStan webmozart/assert extension",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-webmozart-assert/issues",
-                "source": "https://github.com/phpstan/phpstan-webmozart-assert/tree/1.0.0"
+                "source": "https://github.com/phpstan/phpstan-webmozart-assert/tree/1.0.2"
             },
-            "time": "2021-10-14T08:10:02+00:00"
+            "time": "2021-11-29T12:57:08+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -20513,16 +20516,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.12.5",
+            "version": "0.12.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "e50e40e0fe73b88a46f27e086441e1998ceeca3c"
+                "reference": "dd40e9e1971b1fdb5fb8d818e3ee691a31ac638b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/e50e40e0fe73b88a46f27e086441e1998ceeca3c",
-                "reference": "e50e40e0fe73b88a46f27e086441e1998ceeca3c",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/dd40e9e1971b1fdb5fb8d818e3ee691a31ac638b",
+                "reference": "dd40e9e1971b1fdb5fb8d818e3ee691a31ac638b",
                 "shasum": ""
             },
             "require": {
@@ -20561,7 +20564,7 @@
             "description": "Prefixed and PHP 7.1 downgraded version of rector/rector",
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.12.5"
+                "source": "https://github.com/rectorphp/rector/tree/0.12.8"
             },
             "funding": [
                 {
@@ -20569,7 +20572,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-11-23T17:38:29+00:00"
+            "time": "2021-12-13T23:55:00+00:00"
         },
         {
             "name": "sebastian/cli-parser",
