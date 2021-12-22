@@ -17,6 +17,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
+use Carbon\Carbon;
 
 class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 {
@@ -89,6 +90,12 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['hasMenu'] = $data['activeMenuTaxon'];
         }
         unset($data['activeMenuTaxon']);
+
+        $isOpen = $object->isOpen();
+        $data['isOpen'] = $isOpen;
+        if (!$isOpen) {
+            $data['nextOpeningDate'] = $object->getNextOpeningDate();
+        }
 
         return $data;
     }
