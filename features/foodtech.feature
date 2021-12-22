@@ -586,6 +586,8 @@ Feature: Food Tech
             "validThrough":"2020-10-03"
           }
         ],
-        "image":@string@
+        "image":@string@,
+        "isOpen":false,
+        "nextOpeningDate":@string@
       }
       """
