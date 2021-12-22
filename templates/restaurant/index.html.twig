@@ -74,9 +74,33 @@
     {% set closingRule = restaurant.matchClosingRuleFor %}
     {% if closingRule is not empty %}
     <div class="alert alert-danger text-center">
-      {% trans with { '%date%': closingRule.endDate|format_datetime('medium', 'none') } %}
+      {% trans with { '%date%': closingRule.endDate|format_datetime('full', 'none') } %}
       restaurant.temporaryClosedWarning
       {% endtrans %}
+    </div>
+    {% else %}
+    <div class="alert alert-danger text-center">
+      {% set next_opening_date = restaurant.getNextOpeningDate() %}
+      {% if next_opening_date %}
+        {% if next_opening_date.isToday() %}
+          {% trans with { '%time%': next_opening_date|format_datetime('none','short') } %}
+          restaurant.closedOpensTodayLaterWarning
+          {% endtrans %}
+        {% elseif next_opening_date.isTomorrow() %}
+          {% trans with { '%time%': next_opening_date|format_datetime('none','short') } %}
+          restaurant.closedOpensTomorrowWarning
+          {% endtrans %}
+        {% else %}
+          {# after tomorrow #}
+          {% trans with { '%date%': next_opening_date|format_datetime('full','none') } %}
+          restaurant.closedOpensAfterTomorrowWarning
+          {% endtrans %}
+        {% endif %}
+      {% else %}
+        {% trans %}
+        restaurant.closedNowWarning
+        {% endtrans %}
+      {% endif %}
     </div>
     {% endif %}
   {% endif %}
@@ -104,7 +128,18 @@
   <header class="restaurant-header">
     {% set restaurant_image = coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') %}
     {% if restaurant_image is not empty %}
+    <div class="restaurant-image position-relative">
       <img class="restaurant-image" src="{{ restaurant_image }}">
+      {% if not restaurant.isOpen %}
+      <figcaption>
+        <div class="position-absolute w-100 h-100 bg-dark" style="opacity: 0.5;"></div>
+        <div class="position-absolute text-white font-weight-bold d-flex flex-column justify-content-center align-items-center w-100 h-100 p-1">
+          <i class="fa fa-moon-o"></i>
+          <span>{{ 'restaurants.closed_now'|trans }}</span>
+        </div>
+      </figcaption>
+    {% endif %}
+    </div>
     {% endif %}
     <section class="restaurant-header-body">
       <h1>{{ restaurant.name }}</h1>
@@ -252,7 +287,7 @@
 
 </div>
 
-{% set restaurant_json = { id: restaurant.id } %}
+{% set restaurant_json = { id: restaurant.id, isOpen: restaurant.isOpen } %}
 {% set cart = cart_provider.getCart() %}
 {% set cart_json = cart_provider.normalize(cart) %}
 

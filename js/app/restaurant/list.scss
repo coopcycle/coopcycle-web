@@ -89,6 +89,16 @@
     margin-right: auto;
     margin-left: auto;
   }
+
+  > figcaption,
+  a > figcaption {
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 110px;
+    font-size: $font-size-h3;
+  }
 }
 
 .restaurant-item:hover {

@@ -2,6 +2,7 @@
     "common": {
         "CART_TITLE": "Cesta",
         "CART_WIDGET_BUTTON": "Pedir",
+        "SCHEDULE_ORDER": "Programar pedido",
         "CART_EMPTY": "Tu cesta está vacía",
         "OPENING_HOURS_SINGLE": "El {{day}} de {{open}} a {{close}}",
         "OPENING_HOURS_RANGE": "De {{fromDay}} a {{toDay}}, de {{open}} a {{close}}",

@@ -2,6 +2,7 @@
     "common": {
         "CART_TITLE": "Cart",
         "CART_WIDGET_BUTTON": "Order",
+        "SCHEDULE_ORDER": "Schedule order",
         "CART_EMPTY": "Your cart is empty",
         "OPENING_HOURS_SINGLE": "On {{day}} from {{open}} to {{close}}",
         "OPENING_HOURS_RANGE": "From {{fromDay}} to {{toDay}}, from {{open}} to {{close}}",
