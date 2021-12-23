@@ -100,11 +100,11 @@ restaurant.closedWarningWithDelay: Pide ahora para más tarde. Pedidos minimo %d
   antes.
 restaurant.temporaryClosedWarning: Éste restaurante está cerrado y no disponible hasta el <strong>%date%</strong>
 restaurant.closedOpensTodayLaterWarning: Éste restaurante se encuentra cerrado pero vuelve a abrir hoy a las <strong>%time%</strong>.
-  Puedes programar tu pedido!
+restaurant.canOrderForLater: Puedes programar tu pedido para más tarde!
 restaurant.closedOpensTomorrowWarning: Éste restaurante se encuentra cerrado por hoy pero abre mañana a las <strong>%time%</strong>.
-  Puedes programar tu pedido!
+restaurant.canOrderForTomorrow: Puedes programar tu pedido para mañana!
 restaurant.closedOpensAfterTomorrowWarning: Éste restaurante se encuentra cerrado pero vuelvo a abrir el <strong>%date%</strong>.
-  Puedes programar tu pedido!
+restaurant.canOrderForOtherDay: Puedes programar tu pedido para ese día!
 restaurant.closedNowWarning: Éste restaurante se encuentra cerrado por hoy.
 restaurant.noMenuWarning: "Este restaurante no tiene menú por ahora\n"
 restaurant.form.enabled.tooltip: "Cuando está desactivado, un restaurante no está\

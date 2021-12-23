@@ -133,7 +133,7 @@ localBusiness.form.use_different_business_address.label: Use a different busines
 localBusiness.form.business_address.label: Business address
 restaurant.available: Available
 restaurant.unavailable: Unavailable
-restaurant.closed_now: Closed now
+restaurants.closed_now: Closed now
 restaurant.disabledWarning: "This restaurant is disabled so the site visitors can't\
   \ see this page. If you want to, you can <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
   >activate it in the admin</a>.\n"
@@ -141,11 +141,11 @@ restaurant.closedWarningWithDelay: Order now for later. Order at least %delay% i
   advance.
 restaurant.temporaryClosedWarning: This restaurant is closed and not available until <strong>%date%</strong>.
 restaurant.closedOpensTodayLaterWarning: This restaurant is closed now but opens today at <strong>%time%</strong>.
-  You can still order for later on though!
+restaurant.canOrderForLater: You can still order for later on though!
 restaurant.closedOpensTomorrowWarning: This restaurant is closed for the day but opens tomorrow at <strong>%time%</strong>.
-  You can still order for tomorrow on though!
+restaurant.canOrderForTomorrow: You can still order for tomorrow on though!
 restaurant.closedOpensAfterTomorrowWarning: This restaurant is closed until <strong>%date%</strong>.
-  You can still order for that day on though!
+restaurant.canOrderForOtherDay: You can still order for that day on though!
 restaurant.closedNowWarning: This restaurant is closed now.
 restaurant.noMenuWarning: "This restaurant has no menu for now\n"
 restaurant.quotes_disclaimer.authenticated: This restaurant also accepts orders on
