@@ -19,7 +19,7 @@ export default ({ defaultValue, onChange }) => {
     <div>
       <label className="mr-2">
         <input type="number" size="4"
-          defaultValue={ price / 100 } min="0" step=".01"
+          defaultValue={ price / 100 } min="0" step=".001"
           className="form-control d-inline-block"
           style={{ width: '80px' }}
           onChange={ e => {
