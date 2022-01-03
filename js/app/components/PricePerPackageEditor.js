@@ -21,7 +21,7 @@ export default ({ packages, defaultValue, onChange }) => {
             defaultValue={ unitPrice / 100 }
             size="4"
             min="0"
-            step=".1"
+            step=".01"
             className="form-control d-inline-block"
             style={{ width: '80px' }}
             onChange={ e => {
