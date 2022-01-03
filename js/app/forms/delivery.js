@@ -176,7 +176,7 @@ function createPackageForm(name, $list, cb) {
   var counter = $list.data('widget-counter') || $list.children().length
   var newWidget = $list.attr('data-prototype')
 
-  newWidget = newWidget.replace(/__name__/g, counter)
+  newWidget = newWidget.replace(/__package__/g, counter)
 
   counter++
   $list.data('widget-counter', counter)
@@ -290,10 +290,10 @@ function reducer(state = {}, action) {
       ...state,
       weight: action.value
     }
-  case 'SET_PACKAGES':
+  case 'SET_TASK_PACKAGES':
     return {
       ...state,
-      packages: action.packages
+      tasks: replaceTasks(state, action.taskIndex, 'packages', action.packages)
     }
   case 'CLEAR_ADDRESS':
     return {
@@ -394,6 +394,12 @@ function initSubForm(name, taskEl, preloadedState) {
       })
     }
   }
+
+  const packages = document.querySelector(`#${name}_${taskForm}_packages`)
+  if (packages) {
+    const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
+    createPackagesWidget(`${name}_${taskForm}`, packagesRequired, packages => store.dispatch({ type: 'SET_TASK_PACKAGES', taskIndex, packages }))
+  }
 }
 
 export default function(name, options) {
@@ -449,13 +455,6 @@ export default function(name, options) {
         return document.getElementById('tracking_link').getAttribute('href')
       }
     })
-
-    const packages = document.querySelector(`#${name}_packages`)
-
-    if (packages) {
-      const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
-      createPackagesWidget(name, packagesRequired, packages => store.dispatch({ type: 'SET_PACKAGES', packages }))
-    }
 
     el.addEventListener('submit', (e) => {
 

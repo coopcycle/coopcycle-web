@@ -3,7 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Package;
-use AppBundle\Form\Entity\PackageWithQuantity;
+use AppBundle\Entity\Package\PackageWithQuantity;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;

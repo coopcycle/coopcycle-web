@@ -5,6 +5,7 @@ namespace Tests\AppBundle\Entity;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use AppBundle\Entity\TaskEvent;
@@ -239,5 +240,25 @@ class TaskTest extends TestCase
 
         $violations = $validator->validate($task);
         $this->assertCount(0, $violations);
+    }
+
+    public function testAddPackageWithQuantity()
+    {
+        $smallPackage = new Package();
+        $smallPackage->setName('S');
+
+        $mediumPackage = new Package();
+        $mediumPackage->setName('M');
+
+        $task = new Task();
+
+        $task->addPackageWithQuantity($smallPackage, 1);
+        $this->assertEquals(1, $task->getQuantityForPackage($smallPackage));
+
+        $task->addPackageWithQuantity($smallPackage, 1);
+        $this->assertEquals(2, $task->getQuantityForPackage($smallPackage));
+
+        $task->addPackageWithQuantity($mediumPackage, 0);
+        $this->assertEquals(0, $task->getQuantityForPackage($mediumPackage));
     }
 }

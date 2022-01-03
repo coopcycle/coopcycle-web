@@ -36,6 +36,10 @@ col-md-9
     {{ form_row(form.timeSlot) }}
   {% endif %}
 
+  {% if form.packages is defined %}
+    {{ form_row(form.packages) }}
+  {% endif %}
+
   {{ form_row(form.comments) }}
 
   {% if form.doorstep is defined %}
@@ -83,32 +87,48 @@ col-md-9
   </div>
 {% endblock %}
 
+{% block packages_widget %}
+  <div id="{{ form.vars.id }}" class="delivery__form__packages" data-packages-required="{{ form.vars.attr['data-packages-required'] }}">
+    <div id="{{ form.vars.id }}_list"
+      data-prototype="{{ form_widget(form.vars.prototype)|e }}"
+      data-widget-counter="{{ form.children|length }}"
+      class="delivery__form__packages__list">
+      {% for child in form %}
+        {{ form_widget(child) }}
+      {% endfor %}
+    </div>
+    <div class="text-right">
+      <button type="button" class="btn btn-default" id="{{ form.vars.id }}_add"
+        data-target="#{{ form.vars.id }}_list">{{ 'basics.add'|trans }}</button>
+    </div>
+  </div>
+{% endblock %}
+
 {% block _delivery_packages_widget %}
-<div id="{{ form.vars.id }}" class="delivery__form__packages" data-packages-required="{{ form.vars.attr['data-packages-required'] }}">
-  <div id="{{ form.vars.id }}_list"
-    data-prototype="{{ form_widget(form.vars.prototype)|e }}"
-    data-widget-counter="{{ form.children|length }}"
-    class="delivery__form__packages__list">
-    {% for child in form %}
-      {{ form_widget(child) }}
-    {% endfor %}
+  {{ block('packages_widget') }}
+{% endblock %}
+
+{% block _delivery_tasks_entry_packages_widget %}
+  {{ block('packages_widget') }}
+{% endblock %}
+
+{% block packages_entry_widget %}
+  <div class="delivery__form__packages__list-item" id="{{ form.vars.id }}">
+    {{ form_widget(form.quantity, { attr: { class: 'delivery__form__packages__list-item-quantity' } }) }}
+    <span class="delivery__form__packages__list-item-multiply">×</span>
+    {{ form_widget(form.package, { attr: { class: 'delivery__form__packages__list-item-package' } }) }}
+    <button type="button" class="btn btn-default delivery__form__packages__list-item-delete"
+      data-delete
+      data-target="#{{ form.vars.id }}"><i class="fa fa-trash-o"></i></button>
   </div>
-  <div class="text-right">
-    <button type="button" class="btn btn-default" id="{{ form.vars.id }}_add"
-      data-target="#{{ form.vars.id }}_list">{{ 'basics.add'|trans }}</button>
-  </div>
-</div>
 {% endblock %}
 
 {% block _delivery_packages_entry_widget %}
-<div class="delivery__form__packages__list-item" id="{{ form.vars.id }}">
-  {{ form_widget(form.quantity, { attr: { class: 'delivery__form__packages__list-item-quantity' } }) }}
-  <span class="delivery__form__packages__list-item-multiply">×</span>
-  {{ form_widget(form.package, { attr: { class: 'delivery__form__packages__list-item-package' } }) }}
-  <button type="button" class="btn btn-default delivery__form__packages__list-item-delete"
-    data-delete
-    data-target="#{{ form.vars.id }}"><i class="fa fa-trash-o"></i></button>
-</div>
+  {{ block('packages_entry_widget') }}
+{% endblock %}
+
+{% block _delivery_tasks_entry_packages_entry_widget %}
+  {{ block('packages_entry_widget') }}
 {% endblock %}
 
 {% block _delivery_tasks_entry_row %}

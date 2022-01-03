@@ -34,14 +34,14 @@ taskForms.forEach(function(type) {
     isNewAddressControl: document.querySelector(`#delivery_${type}_address_isNewAddress`),
   })
 
+  const packages = document.querySelector(`#delivery_${type}_packages`)
+
+  if (packages) {
+    const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
+    createPackagesWidget(`delivery_${type}`, packagesRequired)
+  }
+
 })
-
-const packages = document.querySelector(`#delivery_packages`)
-
-if (packages) {
-  const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
-  createPackagesWidget('delivery', packagesRequired)
-}
 
 function setBillingAddressRequired(required) {
   if (required) {

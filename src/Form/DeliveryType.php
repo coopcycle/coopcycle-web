@@ -7,7 +7,6 @@ use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
-use AppBundle\Form\Entity\PackageWithQuantity;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
@@ -98,6 +97,8 @@ class DeliveryType extends AbstractType
                     'with_time_slot' => $this->getTimeSlot($options, $store),
                     'with_doorstep' => $options['with_dropoff_doorstep'],
                     'with_address_props' => $options['with_address_props'],
+                    'with_package_set' => $this->getPackageSet($options, $store),
+                    'with_packages_required' => null !== $store ? $store->isPackagesRequired() : true,
                 ],
                 'allow_add' => true,
                 'prototype_data' => new Task(),
@@ -135,64 +136,6 @@ class DeliveryType extends AbstractType
 
                 if (null !== $delivery->getId() && null !== $delivery->getWeight()) {
                     $form->get('weight')->setData($delivery->getWeight() / 1000);
-                }
-            }
-        });
-
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
-
-            $form = $event->getForm();
-            $delivery = $event->getData();
-
-            if (!$packageSet = $this->getPackageSet($options, $delivery->getStore())) {
-                return;
-            }
-
-            $data = [];
-
-            if ($delivery->hasPackages()) {
-                foreach ($delivery->getPackages() as $deliveryPackage) {
-                    $pwq = new PackageWithQuantity($deliveryPackage->getPackage());
-                    $pwq->setQuantity($deliveryPackage->getQuantity());
-                    $data[] = $pwq;
-                }
-            }
-
-            $store = $delivery->getStore();
-            $isPackagesRequired = null !== $store ? $store->isPackagesRequired() : true;
-
-            $form->add('packages', CollectionType::class, [
-                'entry_type' => PackageWithQuantityType::class,
-                'entry_options' => [
-                    'label' => false,
-                    'package_set' => $packageSet
-                ],
-                'label' => 'form.delivery.packages.label',
-                'mapped' => false,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'attr' => [
-                    'data-packages-required' => var_export($isPackagesRequired, true),
-                ]
-            ]);
-
-            $form->get('packages')->setData($data);
-        });
-
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-
-            $form = $event->getForm();
-            $delivery = $event->getData();
-
-            if ($form->has('packages')) {
-                $packages = $form->get('packages')->getData();
-                foreach ($packages as $packageWithQuantity) {
-                    if ($packageWithQuantity->getQuantity() > 0) {
-                        $delivery->addPackageWithQuantity(
-                            $packageWithQuantity->getPackage(),
-                            $packageWithQuantity->getQuantity()
-                        );
-                    }
                 }
             }
         });

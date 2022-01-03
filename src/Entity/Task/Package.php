@@ -1,19 +1,19 @@
 <?php
 
-namespace AppBundle\Entity\Delivery;
+namespace AppBundle\Entity\Task;
 
-use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Task;
 
 class Package
 {
     protected $id;
     protected $package;
-    protected $delivery;
+    protected $task;
     protected $quantity = 0;
 
-    public function __construct(Delivery $delivery = null)
+    public function __construct(Task $task = null)
     {
-        $this->delivery = $delivery;
+        $this->task = $task;
     }
 
     /**
@@ -47,19 +47,19 @@ class Package
     /**
      * @return mixed
      */
-    public function getDelivery()
+    public function getTask()
     {
-        return $this->delivery;
+        return $this->task;
     }
 
     /**
-     * @param mixed $delivery
+     * @param mixed $task
      *
      * @return self
      */
-    public function setDelivery($delivery)
+    public function setTask($task)
     {
-        $this->delivery = $delivery;
+        $this->task = $task;
 
         return $this;
     }
