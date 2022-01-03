@@ -1,6 +1,7 @@
 Feature: Manage shops
 
   Scenario: Retrieve a store via restaurants endpoint
+    Given the current time is "2021-12-22 13:00:00"
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_locales.yml  |
@@ -63,6 +64,7 @@ Feature: Manage shops
             "actionPlatform":["http://schema.org/DesktopWebPlatform"]
           },
           "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
-        }
+        },
+        "isOpen":true
       }
       """

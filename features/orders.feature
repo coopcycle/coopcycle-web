@@ -566,7 +566,7 @@ Feature: Orders
     """
 
   Scenario: Create order without shipping date
-    Given the current time is "2017-09-02 11:00:00"
+    Given the current time is "2017-09-02 13:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
       | payment_methods.yml |
@@ -648,7 +648,8 @@ Feature: Orders
             "name":null,
             "telephone": null
           },
-          "telephone":"+33612345678"
+          "telephone":"+33612345678",
+          "isOpen":true
         },
         "shippingAddress":{
           "@id":"@string@.startsWith('/api/addresses')",
@@ -690,7 +691,7 @@ Feature: Orders
         "notes": null,
         "createdAt":@string@,
         "shippedAt":"@string@.isDateTime()",
-        "shippingTimeRange":["2017-09-02T12:00:00+02:00","2017-09-02T12:10:00+02:00"],
+        "shippingTimeRange":["2017-09-02T13:30:00+02:00","2017-09-02T13:40:00+02:00"],
         "preparationExpectedAt":null,
         "pickupExpectedAt":null,
         "reusablePackagingEnabled": false,

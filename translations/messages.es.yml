@@ -92,13 +92,20 @@ localBusiness.form.deliveryPerimeterExpression: Zona o máxima distancia de repa
 localBusiness.form.shippingOptionsDays: Opciones de entrega (en días)
 restaurant.available: Disponible
 restaurant.unavailable: No disponible
+restaurants.closed_now: Cerrado ahora
 restaurant.disabledWarning: "Éste restaurante está desactivado así que los visitantes\
   \ no verán ésta página. Si quiéres, puedes <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
   >activarlo en el panel de administración</a>.\n"
 restaurant.closedWarningWithDelay: Pide ahora para más tarde. Pedidos minimo %delay%
   antes.
-restaurant.temporaryClosedWarning: Éste restaurante está cerrado hasta el <strong>%date%</strong>
-  pero puedes hacer un pedido para más tarde
+restaurant.temporaryClosedWarning: Éste restaurante está cerrado y no disponible hasta el <strong>%date%</strong>
+restaurant.closedOpensTodayLaterWarning: Éste restaurante se encuentra cerrado pero vuelve a abrir hoy a las <strong>%time%</strong>.
+restaurant.canOrderForLater: Puedes programar tu pedido para más tarde!
+restaurant.closedOpensTomorrowWarning: Éste restaurante se encuentra cerrado por hoy pero abre mañana a las <strong>%time%</strong>.
+restaurant.canOrderForTomorrow: Puedes programar tu pedido para mañana!
+restaurant.closedOpensAfterTomorrowWarning: Éste restaurante se encuentra cerrado pero vuelvo a abrir el <strong>%date%</strong>.
+restaurant.canOrderForOtherDay: Puedes programar tu pedido para ese día!
+restaurant.closedNowWarning: Éste restaurante se encuentra cerrado por hoy.
 restaurant.noMenuWarning: "Este restaurante no tiene menú por ahora\n"
 restaurant.form.enabled.tooltip: "Cuando está desactivado, un restaurante no está\
   \ visible en el sitio web. No aparece en los resultados de búsqueda y los visitantes\
