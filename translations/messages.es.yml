@@ -1065,7 +1065,7 @@ order.reusable_packaging.pledge_return.disclaimer: El cilente a indicado que %co
 form.time_slot.same_day_cutoff.help: Por ejemplo, si selecionas 11.00, opciones del
   mismo día no se mostrarán después de las 11.00
 form.time_slot.same_day_cutoff.label: Hora de límite diario
-form.package_with_quantity.package.placeholder: Elije un tipo de envase
+form.package_with_quantity.package.placeholder: Elije un tipo de paquete
 form.product_tax_category_choice.placeholder: Elije una categoria de IVA
 basics.kilos: Kilos
 basics.tax_excl: Sin IVA.
@@ -1076,7 +1076,7 @@ order.refund.total_amount: Este pedido ha sido reembolsado por un importe de %am
 promotion_rule.is_customer: Cliente es %username%
 promotion_rule.is_restaurant: Restaurante es %restaurant%
 info.deposit_refund: Cada hueco en la lista abajo representa un tipo de envase (grande,
-  pequeña...). Ya creadas los envases, puedes configurarlas para cada producto.
+  pequeño...). Creados los envases, puedes configurar para cada producto.
 confirm.deposit_refund_enabled: El sistema de deposito-reembolso está habilitada,
   ahora puedes <a href="%url%">configurar los envases</a>.
 profile.loopeat.disconnect: Desconectar LoopEat
