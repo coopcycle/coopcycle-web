@@ -84,19 +84,19 @@
   }
 
   > img,
-  a > img {
+  a > img,
+  a > div > img {
     @include img-responsive;
     margin-right: auto;
     margin-left: auto;
   }
 
-  > figcaption,
-  a > figcaption {
+  figcaption {
     position: absolute;
     right: 0;
     left: 0;
     top: 0;
-    bottom: 110px;
+    bottom: 0;
     font-size: $font-size-h3;
   }
 }

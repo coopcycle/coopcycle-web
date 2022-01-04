@@ -10,17 +10,19 @@
 
 <div class="restaurant-item {% if not restaurant.enabled %}restaurant-item--disabled{% endif %}">
   <a href="{{ local_business_path(restaurant, restaurant_path_params) }}">
-    <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
-    {% set in_1h = 'now'|date_modify('+1 hour') %}
-    {% if not restaurant.isOpen(in_1h) %}
-      <figcaption>
-        <div class="w-100 h-100 position-absolute bg-dark" style="opacity: 0.5;"></div>
-        <div class="text-white font-weight-bold d-flex flex-column justify-content-center align-items-center w-100 h-100 position-absolute p-5">
-          <i class="fa fa-moon-o"></i>
-          <span>{{ 'restaurants.closed_now'|trans }}</span>
-        </div>
-      </figcaption>
-    {% endif %}
+    <div class="position-relative">
+      <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
+      {% set in_1h = 'now'|date_modify('+1 hour') %}
+      {% if not restaurant.isOpen(in_1h) %}
+        <figcaption>
+          <div class="w-100 h-100 position-absolute bg-dark" style="opacity: 0.5;"></div>
+          <div class="text-white font-weight-bold d-flex flex-column justify-content-center align-items-center w-100 h-100 position-absolute p-5">
+            <i class="fa fa-moon-o"></i>
+            <span>{{ 'restaurants.closed_now'|trans }}</span>
+          </div>
+        </figcaption>
+      {% endif %}
+    </div>
     <h4 class="restaurant-item__title">{{ restaurant.name|u.truncate(48, '…', false) }}</h4>
   </a>
   <div>
