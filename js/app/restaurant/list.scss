@@ -60,6 +60,8 @@
 
   &__title {
     font-weight: 700;
+    height: ($line-height-computed * 2);
+    max-height: ($line-height-computed * 2);
   }
 
   &__caption {
