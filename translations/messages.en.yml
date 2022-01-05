@@ -133,7 +133,7 @@ localBusiness.form.use_different_business_address.label: Use a different busines
 localBusiness.form.business_address.label: Business address
 restaurant.available: Available
 restaurant.unavailable: Unavailable
-restaurants.closed_now: Closed now
+restaurants.pre_order: Pre-order
 restaurant.disabledWarning: "This restaurant is disabled so the site visitors can't\
   \ see this page. If you want to, you can <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
   >activate it in the admin</a>.\n"

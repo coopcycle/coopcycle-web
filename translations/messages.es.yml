@@ -92,7 +92,7 @@ localBusiness.form.deliveryPerimeterExpression: Zona o máxima distancia de repa
 localBusiness.form.shippingOptionsDays: Opciones de entrega (en días)
 restaurant.available: Disponible
 restaurant.unavailable: No disponible
-restaurants.closed_now: Cerrado ahora
+restaurants.pre_order: Reservar
 restaurant.disabledWarning: "Éste restaurante está desactivado así que los visitantes\
   \ no verán ésta página. Si quiéres, puedes <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
   >activarlo en el panel de administración</a>.\n"
