@@ -271,10 +271,10 @@ security:
             anonymous: ~
 
     access_control:
-        - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login, role: PUBLIC_ACCESS }
+        - { path: ^/register, role: PUBLIC_ACCESS }
+        - { path: ^/resetting, role: PUBLIC_ACCESS }
+        - { path: ^/order/public, roles: PUBLIC_ACCESS }
         - { path: ^/dashboard, roles: [ ROLE_ADMIN, ROLE_RESTAURANT, ROLE_STORE ] }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
         - { path: ^/profile/jwt, roles: IS_AUTHENTICATED_REMEMBERED }
@@ -282,14 +282,14 @@ security:
         - { path: ^/profile, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/_uploader/restaurant, roles: [ ROLE_ADMIN, ROLE_RESTAURANT ] }
-        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/facebook/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/orders/timing, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/routing, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/settings, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/restaurants, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [ GET ] }
-        - { path: ^/api/carts/session$, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [ POST ] }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/facebook/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/orders/timing, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/resetting, role: PUBLIC_ACCESS }
+        - { path: ^/api/routing, roles: PUBLIC_ACCESS }
+        - { path: ^/api/settings, roles: PUBLIC_ACCESS }
+        - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api/restaurants, roles: PUBLIC_ACCESS, methods: [ GET ] }
+        - { path: ^/api/carts/session$, roles: PUBLIC_ACCESS, methods: [ POST ] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
