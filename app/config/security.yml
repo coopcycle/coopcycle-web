@@ -2,6 +2,8 @@
 # http://symfony.com/doc/current/book/security.html
 security:
 
+    enable_authenticator_manager: true
+
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext
         Nucleos\UserBundle\Model\UserInterface: sha512
@@ -30,7 +32,6 @@ security:
         api_login:
             pattern:  ^/api/login
             stateless: true
-            anonymous: ~
             form_login:
                 check_path:               /api/login_check
                 success_handler:          lexik_jwt_authentication.handler.authentication_success
@@ -57,145 +58,124 @@ security:
             pattern:   ^/api/deliveries
             methods: [ GET, POST, PUT, DELETE ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_tasks_import:
             pattern:   ^/api/tasks/import
             methods: [ POST ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_task_events_get:
             pattern:   ^/api/tasks/[0-9]+/events$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_task_get:
             pattern:   ^/api/tasks/[0-9]+$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_task_groups:
             pattern:   ^/api/task_groups/[0-9]+$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_store_deliveries:
             pattern:   ^/api/stores/[0-9]+/deliveries$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_stores:
             pattern:   ^/api/stores/[0-9]+$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_time_slots:
             pattern:   ^/api/time_slots
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_retail_prices_calculate:
             pattern:   ^/api/retail_prices/calculate
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_urbantz:
             pattern:   ^/api/urbantz
             methods: [ GET, POST, PUT, DELETE ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_task_import_queues:
             pattern:   ^/api/task_import_queues
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_carts_session:
             pattern:   ^/api/carts/session$
             methods: [ POST ]
             stateless: true
-            anonymous: ~
             cart_session: true
 
         api_carts:
             pattern:   ^/api/orders/[0-9]+$
             methods: [ PUT ]
             stateless: true
-            anonymous: ~
             cart_session: true
 
         api_cart_items:
             pattern:   ^/api/orders/[0-9]+/items$
             methods: [ POST ]
             stateless: true
-            anonymous: ~
             cart_session: true
 
         api_cart_item:
             pattern:   ^/api/orders/[0-9]+/items/[0-9]+$
             methods: [ PUT, DELETE ]
             stateless: true
-            anonymous: ~
             cart_session: true
 
         api_cart_operations:
             pattern:   ^/api/orders/[0-9]+/(assign|timing|validate)$
             methods: [ GET, PUT ]
             stateless: true
-            anonymous: ~
             cart_session: true
 
         api_cart_payment:
             pattern:   ^/api/orders/[0-9]+/payment$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             cart_session: true
 
         api_cart_payment_methods:
             pattern:   ^/api/orders/[0-9]+/payment_methods$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             cart_session: true
 
         api_cart_pay:
             pattern:   ^/api/orders/[0-9]+/pay$
             methods: [ PUT ]
             stateless: true
-            anonymous: ~
             cart_session: true
 
         api_cart_mercadopago_preference:
             pattern:   ^/api/orders/[0-9]+/mercadopago-preference$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             cart_session: true
 
         api_me:
             pattern:   ^/api/me$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_webhooks:
@@ -206,7 +186,6 @@ security:
         token_refresh:
             pattern:  ^/api/token/refresh
             stateless: true
-            anonymous: ~
 
         api_docs:
             pattern:   ^/api/docs
@@ -219,10 +198,7 @@ security:
         api:
             pattern:   ^/api
             stateless: true
-            anonymous: ~
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+            jwt: ~
 
         # Disable session to improve performance
         # TraceableFirewallListener will be skipped
@@ -263,12 +239,11 @@ security:
                 oauth_user_provider:
                     service: coopcycle.user_provider
             logout: true
-            anonymous: ~
             remember_me:
                 secret: '%secret%'
 
         main:
-            anonymous: ~
+            lazy: true
 
     access_control:
         - { path: ^/login, role: PUBLIC_ACCESS }

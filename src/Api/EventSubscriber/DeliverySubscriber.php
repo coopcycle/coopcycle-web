@@ -8,7 +8,6 @@ use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use Doctrine\Persistence\ManagerRegistry;
 use ApiPlatform\Core\EventListener\EventPriorities;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;

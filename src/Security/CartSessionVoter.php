@@ -5,6 +5,7 @@ namespace AppBundle\Security;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Sylius\Order;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Webmozart\Assert\Assert;
@@ -34,7 +35,7 @@ class CartSessionVoter extends Voter
     {
         // (object.getCustomer() != null and object.getCustomer().hasUser() and object.getCustomer().getUser() == user) or (cart_session.cart != null and cart_session.cart.getId() == object.getId())
 
-        if ($token instanceof JWTUserToken && $token->hasAttribute('cart')) {
+        if (($token instanceof JWTUserToken || $token instanceof JWTPostAuthenticationToken) && $token->hasAttribute('cart')) {
 
             $cart = $token->getAttribute('cart');
 

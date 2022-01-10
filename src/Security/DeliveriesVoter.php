@@ -4,7 +4,6 @@ namespace AppBundle\Security;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\User;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
