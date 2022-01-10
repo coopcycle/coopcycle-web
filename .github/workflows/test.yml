@@ -22,10 +22,6 @@ jobs:
           php-version: ${{ matrix.php_version }}
           tools: composer:v2, phpstan
           extensions: redis
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '15.x'
       - name: Install PHP dependencies
         run: composer install --prefer-dist --no-progress --no-scripts
       - name: Install JS dependencies
@@ -88,9 +84,6 @@ jobs:
       ALGOLIA_PLACES_API_KEY: ${{ secrets.ALGOLIA_PLACES_API_KEY }}
       ALGOLIA_PLACES_ADDRESS_TEMPLATE: county
     steps:
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 15
       - uses: actions/checkout@v2
       - name: Create .env file
         run: cp .env.dist .env
@@ -148,9 +141,6 @@ jobs:
       ALGOLIA_PLACES_APP_ID: ${{ secrets.ALGOLIA_PLACES_APP_ID }}
       ALGOLIA_PLACES_API_KEY: ${{ secrets.ALGOLIA_PLACES_API_KEY }}
     steps:
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 15
       - uses: actions/checkout@v2
       - name: Run Cypress
         uses: cypress-io/github-action@v2
