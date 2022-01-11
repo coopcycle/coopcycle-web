@@ -57,7 +57,7 @@
     "@release-notes/changelog-parser": "^0.1.2",
     "@stripe/react-stripe-js": "^1.7.0",
     "@stripe/stripe-js": "^1.22.0",
-    "@symfony/webpack-encore": "^1.1.2",
+    "@symfony/webpack-encore": "^1.3.0",
     "algoliasearch": "^4.11.0",
     "antd": "^4.17.4",
     "autoprefixer": "^10.4.0",
