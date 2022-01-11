@@ -65,11 +65,6 @@ class CheckoutPaymentType extends AbstractType
             $form = $event->getForm();
             $order = $event->getData();
 
-            if (!$order->hasVendor()) {
-
-                return;
-            }
-
             $choices = [];
 
             if ($this->settingsManager->supportsCardPayments()) {
@@ -103,7 +98,7 @@ class CheckoutPaymentType extends AbstractType
 
             $form
                 ->add('method', ChoiceType::class, [
-                    'label' => 'form.checkout_payment.method.label',
+                    'label' => count($choices) > 1 ? 'form.checkout_payment.method.label' : false,
                     'choices' => $choices,
                     'choice_attr' => function($choice, $key, $value) use ($order) {
 

@@ -239,11 +239,6 @@ class EmbedController extends AbstractController
 
             $delivery = $form->getData();
 
-            $paymentForm = $this->createForm(StripePaymentType::class, null, [
-                'attr' => [
-                    'data-payment-method-picker' => 'false'
-                ],
-            ]);
 
             if ($request->isMethod('POST')) {
 
@@ -256,17 +251,44 @@ class EmbedController extends AbstractController
                     return $this->redirectToRoute('embed_delivery_start', ['hashid' => $hashid]);
                 }
 
+                $paymentForm = $this->createForm(CheckoutPaymentType::class, $order);
+
                 $paymentForm->handleRequest($request);
 
                 if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
 
+                    $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
+
                     $data = [
-                        'stripeToken' => $paymentForm->get('stripeToken')->getData()
+                        'stripeToken' => $paymentForm->get('stripePayment')->get('stripeToken')->getData()
                     ];
 
-                    $order->setDelivery($delivery);
+                    if ($paymentForm->has('paymentMethod')) {
+                        $data['mercadopagoPaymentMethod'] = $paymentForm->get('paymentMethod')->getData();
+                    }
+                    if ($paymentForm->has('installments')) {
+                        $data['mercadopagoInstallments'] = $paymentForm->get('installments')->getData();
+                    }
+
+                    if (null === $order->getDelivery()) {
+                        $order->setDelivery($delivery);
+                    }
+
                     $orderManager->checkout($order, $data);
                     $objectManager->flush();
+
+                    if (PaymentInterface::STATE_FAILED === $payment->getState()) {
+                        return $this->render('embed/delivery/summary.html.twig', [
+                            'hashid' => $hashid,
+                            'delivery' => $delivery,
+                            'price' => $price,
+                            'price_excluding_tax' => ($order->getTotal() - $order->getTaxTotal()),
+                            'form' => $paymentForm->createView(),
+                            'payment' => $payment,
+                            'order' => $order,
+                            'error' => $payment->getLastError()
+                        ]);
+                    }
 
                     $session->remove(
                         sprintf('delivery_form.%s.form_data', $hashid)
@@ -297,6 +319,8 @@ class EmbedController extends AbstractController
             $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
             $order    = $this->createOrderForDelivery($orderFactory, $delivery, $price, $customer, $attach = false);
 
+            $paymentForm = $this->createForm(CheckoutPaymentType::class, $order);
+
             if ($billingAddress = $form->get('billingAddress')->getData()) {
                 $this->setBillingAddress($order, $billingAddress);
             }
@@ -320,6 +344,7 @@ class EmbedController extends AbstractController
                 'price_excluding_tax' => ($order->getTotal() - $order->getTaxTotal()),
                 'form' => $paymentForm->createView(),
                 'payment' => $payment,
+                'order' => $order,
             ]);
         }
     }

@@ -6,6 +6,6 @@ export const Disclaimer = () => {
   const { t } = useTranslation()
 
   return (
-    <div className="alert alert-warning mt-4">{ t('CASH_ON_DELIVERY_DISCLAIMER') }</div>
+    <div id="cash_on_delivery_disclaimer" className="alert alert-warning mt-4">{ t('CASH_ON_DELIVERY_DISCLAIMER') }</div>
   )
 }
