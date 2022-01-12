@@ -1285,7 +1285,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function supportsGiropay(): bool
     {
-        if ($this->isMultiVendor()) {
+        if ($this->isMultiVendor() || !$this->hasVendor()) {
 
             return false;
         }
@@ -1295,7 +1295,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function supportsEdenred(): bool
     {
-        if ($this->isMultiVendor()) {
+        if ($this->isMultiVendor() || !$this->hasVendor()) {
 
             return false;
         }
@@ -1331,7 +1331,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function supportsCashOnDelivery(): bool
     {
-        if ($this->isMultiVendor()) {
+        if ($this->isMultiVendor() || !$this->hasVendor()) {
 
             return false;
         }

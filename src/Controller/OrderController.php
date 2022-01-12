@@ -351,13 +351,6 @@ class OrderController extends AbstractController
         EntityManagerInterface $entityManager,
         EdenredClient $edenredClient)
     {
-        $order = $cartContext->getCart();
-
-        if (null === $order || !$order->hasVendor()) {
-
-            return new JsonResponse(['message' => 'No cart found in context'], 404);
-        }
-
         $hashids = new Hashids($this->getParameter('secret'), 8);
 
         $decoded = $hashids->decode($hashId);
@@ -375,9 +368,11 @@ class OrderController extends AbstractController
             return new JsonResponse(['message' => 'Payment does not exist'], 404);
         }
 
-        if (!$order->hasPayment($payment)) {
+        $order = $payment->getOrder();
 
-            return new JsonResponse(['message' => 'Payment does not belong to current cart'], 400);
+        if (null === $order) {
+
+            return new JsonResponse(['message' => 'Payment does not belong to any order'], 400);
         }
 
         $content = $request->getContent();
