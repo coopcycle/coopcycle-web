@@ -121,17 +121,15 @@ const MercadoPagoForm = ({ amount, onChange }) => {
 export default ({ onChange }) => ({
   init(form) {
     this.form = form
-    const { country, restaurantPublicKey } = this.config.gatewayConfig
+    const { country, publishableKey } = this.config.gatewayConfig
 
-    if (!restaurantPublicKey) {
-      throw new Error('Current restaurant has not configured the Public Key for Mercadopago')
+    if (!publishableKey) {
+      throw new Error('You need a Public Key for Mercadopago')
     }
 
-    /*
-     * With the Public Key of the Marketplace owner (Coop) the payment is not working
-     * so now we are going to test in production with the public key of the restaurant.
-     */
-    Mercadopago.setPublishableKey(restaurantPublicKey)
+    console.log(`publishableKey: ${publishableKey}`)
+
+    Mercadopago.setPublishableKey(publishableKey)
 
     if (country !== 'mx') {
       Mercadopago.getIdentificationTypes()

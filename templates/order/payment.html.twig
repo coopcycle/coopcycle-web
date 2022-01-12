@@ -128,8 +128,8 @@
 <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
 {% set gateway_configs = gateway_configs|merge({
   mercadopago: {
-    country: country,
-    restaurantPublicKey: order.restaurant.getMercadopagoAccount() ? order.restaurant.getMercadopagoAccount().getPublicKey() : null
+    publishableKey: order.restaurant.getMercadopagoAccount() ? order.restaurant.getMercadopagoAccount().getPublicKey() : null,
+    country: country
   }
 }) %}
 {% endif %}
