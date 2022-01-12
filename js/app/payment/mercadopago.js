@@ -127,8 +127,6 @@ export default ({ onChange }) => ({
       throw new Error('You need a Public Key for Mercadopago')
     }
 
-    console.log(`publishableKey: ${publishableKey}`)
-
     Mercadopago.setPublishableKey(publishableKey)
 
     if (country !== 'mx') {
