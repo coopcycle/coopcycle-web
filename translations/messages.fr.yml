@@ -1199,3 +1199,6 @@ restaurant.canOrderForTomorrow: Vous pouvez toujours commander pour demain !
 restaurant.closedOpensAfterTomorrowWarning: Ce restaurant est fermé jusqu'au <strong>%date%</strong>.
 restaurant.canOrderForOtherDay: Vous pouvez quand même commander pour ce jour-là !
 restaurant.closedNowWarning: Ce restaurant est fermé actuellement.
+restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
+restaurant.form.en_boite_le_plat_enabled.label: Activer le système de consigne En Boîte Le Plat
+form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'Je veux des contenants consignés <a href="https://enboiteleplat.fr/">En Boîte Le Plat</a>.'

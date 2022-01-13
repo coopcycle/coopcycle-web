@@ -109,6 +109,7 @@ trait RestaurantTrait
             'loopeat_enabled' => $this->getParameter('loopeat_enabled'),
             'edenred_enabled' => $this->getParameter('edenred_enabled'),
             'vytal_enabled' => $this->getParameter('vytal_enabled'),
+            'en_boite_le_plat_enabled' => $this->getParameter('en_boite_le_plat_enabled'),
         ]);
 
         // Associate Stripe account with restaurant

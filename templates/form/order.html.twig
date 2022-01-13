@@ -43,6 +43,7 @@
 
   {% set isLoopeat = attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}
   {% set isVytal   = attr['data-vytal'] is defined and attr['data-vytal'] == 'true' %}
+  {% set isEnBoiteLePlat = attr['data-en-boite-le-plat'] is defined and attr['data-en-boite-le-plat'] == 'true' %}
   {% set isChecked = form.vars.data %}
 
   {% if isLoopeat %}
@@ -124,6 +125,20 @@
       <div class="alert alert-vytal py-0 m-0">
         {{ form_widget(form) }}
         <span class="vytal-logo-white my-3"></span>
+      </div>
+    </div>
+  {% elseif isEnBoiteLePlat %}
+    <div>
+      <div class="alert alert-en-boite-le-plat py-0 m-0">
+        {# FIXME #}
+        {# label_html does not work with checkboxes #}
+        <div class="checkbox">
+          <label>
+            {{ block('checkbox_widget', 'form_div_layout.html.twig') }}
+            <span>{{ label|trans|raw }}</span>
+          </label>
+        </div>
+        <span class="en-boite-le-plat-logo-orange my-3"></span>
       </div>
     </div>
   {% else %}
