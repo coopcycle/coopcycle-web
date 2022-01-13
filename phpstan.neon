@@ -36,7 +36,6 @@ parameters:
         - '#Method [a-zA-Z\\:\(\)]+ should return Doctrine\\Common\\Collections\\Collection<\(int\|string\), [a-zA-Z\\]+> but returns Doctrine\\Common\\Collections\\ArrayCollection<\(int\|string\), [a-zA-Z\\\|]+>#'
         - '#Call to an undefined method Symfony\\Component\\Validator\\ConstraintViolationListInterface::findByCodes\(\)#'
         - '#Call to an undefined method Doctrine\\Persistence\\ObjectManager::getFilters#'
-        - '#Method AppBundle\\Serializer\\PhoneNumberNormalizer::denormalize\(\) should return array\|object but#'
         - '#(createdAt|updatedAt) is never written, only read#'
         - '#(createdAt|updatedAt) is unused#'
         - '#Property AppBundle\\Entity\\(.*)::\$id is never written, only read#'
@@ -46,6 +45,8 @@ parameters:
         - '#Property AppBundle\\Form\\Type\\GeocodingProviderType::\$opencageApiKey is never read, only written#'
         - '#Class AppBundle\\Security\\OAuth\\ResourceOwner\\FacebookResourceOwner extends @final class HWI\\Bundle\\OAuthBundle\\OAuth\\ResourceOwner\\FacebookResourceOwner#'
         - '#Property AppBundle\\Utils\\TimeRange::\$(.*) is never read, only written#'
+        - '#Call to an undefined method Symfony\\Component\\Console\\Helper\\HelperInterface::ask\(\)#'
+        - '#Cannot use array destructuring on array<int, mixed>\|Doctrine\\ORM\\PersistentCollection#'
     universalObjectCratesClasses:
         - MercadoPago\Item
         - MercadoPago\Preference
