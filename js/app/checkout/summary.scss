@@ -126,3 +126,23 @@ $vytalGreen: #53b848;
   align-items: center;
   justify-content: space-between;
 }
+
+.en-boite-le-plat-logo-orange {
+
+  $w: 1000px;
+  $h: 500px;
+
+  background-image: url('../../../assets/logos/en_boite_le_plat_orange.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: block;
+  width: ($w / 8);
+  height: ($h / 8);
+}
+
+.alert-en-boite-le-plat {
+  background-color: #fff7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

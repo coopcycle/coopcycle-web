@@ -1219,3 +1219,6 @@ form.api_app.type.api_key.label: API Key - for Urbantz
 form.settings.mercadopago.client_secret.label: Client Secret
 localBusiness.form.business_address.help: This address will be used in receipts
 form.local_business.mercadopago.connected: Connected
+restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
+restaurant.form.en_boite_le_plat_enabled.label: Enable En Boîte Le Plat deposit-refund system
+form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'I want <a href="https://enboiteleplat.fr/">En Boîte Le Plat</a> reusable containers.'

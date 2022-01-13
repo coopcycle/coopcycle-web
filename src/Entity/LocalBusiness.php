@@ -250,6 +250,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $vytalEnabled = false;
 
+    protected $enBoitLePlatEnabled = false;
+
     protected $cashOnDeliveryEnabled = false;
 
     public function __construct()
@@ -917,6 +919,26 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setCashOnDeliveryEnabled($enabled)
     {
         $this->cashOnDeliveryEnabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnBoitLePlatEnabled()
+    {
+        return $this->enBoitLePlatEnabled;
+    }
+
+    /**
+     * @param bool $enabled
+     *
+     * @return self
+     */
+    public function setEnBoitLePlatEnabled($enabled)
+    {
+        $this->enBoitLePlatEnabled = $enabled;
 
         return $this;
     }

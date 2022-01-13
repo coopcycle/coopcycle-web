@@ -86,6 +86,11 @@
         <option name="default">0</option>
       </options>
     </field>
+    <field name="enBoitLePlatEnabled" type="boolean" column="en_boite_le_plat_enabled">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
       <cascade>

@@ -118,6 +118,14 @@ class RestaurantType extends LocalBusinessType
             ]);
         }
 
+        if ($options['en_boite_le_plat_enabled']) {
+            $builder->add('enBoitLePlatEnabled', CheckboxType::class, [
+                'label' => 'restaurant.form.en_boite_le_plat_enabled.label',
+                'required' => false,
+                'disabled' => !$this->authorizationChecker->isGranted('ROLE_ADMIN'),
+            ]);
+        }
+
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $restaurant = $event->getData();
@@ -246,6 +254,7 @@ class RestaurantType extends LocalBusinessType
             'loopeat_enabled' => false,
             'edenred_enabled' => false,
             'vytal_enabled' => false,
+            'en_boite_le_plat_enabled' => false,
         ));
     }
 }
