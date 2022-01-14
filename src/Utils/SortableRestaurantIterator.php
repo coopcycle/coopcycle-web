@@ -46,6 +46,24 @@ class SortableRestaurantIterator extends \ArrayIterator
             return -1;
         }
 
+        $aHasRange = isset($aTimeInfo['range']) && is_array($aTimeInfo['range']) && count($aTimeInfo['range']) === 2;
+        $bHasRange = isset($bTimeInfo['range']) && is_array($bTimeInfo['range']) && count($bTimeInfo['range']) === 2;
+
+        if (!$aHasRange && !$bHasRange) {
+
+            return 0;
+        }
+
+        if (!$aHasRange) {
+
+            return 1;
+        }
+
+        if (!$bHasRange) {
+
+            return -1;
+        }
+
         $aStart = new \DateTime($aTimeInfo['range'][0]);
         $bStart = new \DateTime($bTimeInfo['range'][0]);
 
