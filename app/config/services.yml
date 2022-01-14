@@ -758,6 +758,7 @@ services:
     parent: 'api_platform.doctrine.orm.collection_data_provider'
     arguments:
       $restaurantFilter: '@coopcycle.utils.restaurant_filter'
+      $timingRegistry: '@AppBundle\Service\TimingRegistry'
     tags:
       - { name: 'api_platform.collection_data_provider', priority: 2 }
     autoconfigure: false

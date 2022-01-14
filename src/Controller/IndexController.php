@@ -12,6 +12,7 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Form\DeliveryEmbedType;
+use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\SortableRestaurantIterator;
 use Cocur\Slugify\SlugifyInterface;
 use Hashids\Hashids;
@@ -35,17 +36,17 @@ class IndexController extends AbstractController
     const EXPIRES_AFTER = 300;
     const ITEMS_PER_ROW = 3;
 
-    private function getItems(LocalBusinessRepository $repository, string $type, CacheInterface $cache, string $cacheKey)
+    private function getItems(LocalBusinessRepository $repository, string $type, CacheInterface $cache, string $cacheKey, TimingRegistry $timingRegistry)
     {
         $typeRepository = $repository->withTypeFilter($type);
 
-        $itemsIds = $cache->get($cacheKey, function (ItemInterface $item) use ($typeRepository) {
+        $itemsIds = $cache->get($cacheKey, function (ItemInterface $item) use ($typeRepository, $timingRegistry) {
 
             $item->expiresAfter(self::EXPIRES_AFTER);
 
             $items = $typeRepository->findAllForType();
 
-            $iterator = new SortableRestaurantIterator($items);
+            $iterator = new SortableRestaurantIterator($items, $timingRegistry);
             $items = iterator_to_array($iterator);
 
             return array_map(fn(LocalBusiness $lb) => $lb->getId(), $items);
@@ -59,7 +60,7 @@ class IndexController extends AbstractController
             if (null === $typeRepository->find($id)) {
                 $cache->delete($cacheKey);
 
-                return $this->getItems($repository, $type, $cache, $cacheKey);
+                return $this->getItems($repository, $type, $cache, $cacheKey, $timingRegistry);
             }
         }
 
@@ -75,7 +76,8 @@ class IndexController extends AbstractController
     /**
      * @HideSoftDeleted
      */
-    public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache, SlugifyInterface $slugify)
+    public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache, SlugifyInterface $slugify,
+        TimingRegistry $timingRegistry)
     {
         $user = $this->getUser();
 
@@ -108,7 +110,7 @@ class IndexController extends AbstractController
                 $cacheKey = sprintf('homepage.%s.%s', $keyForType, $cacheKeySuffix);
 
                 [ $shops, $shopsCount ] =
-                    $this->getItems($repository, $type, $projectCache, $cacheKey);
+                    $this->getItems($repository, $type, $projectCache, $cacheKey, $timingRegistry);
 
                 $sections[] = [
                     'type' => $type,
@@ -126,7 +128,7 @@ class IndexController extends AbstractController
 
             $shops = $repository->withoutTypeFilter()->findAllForType();
 
-            $iterator = new SortableRestaurantIterator($shops);
+            $iterator = new SortableRestaurantIterator($shops, $timingRegistry);
             $shops = iterator_to_array($iterator);
 
             if (count($shops) > 0) {
