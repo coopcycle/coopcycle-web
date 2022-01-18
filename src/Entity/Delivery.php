@@ -316,6 +316,10 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function setStore(Store $store)
     {
         $this->store = $store;
+
+        foreach ($this->getTasks() as $task) {
+            $task->setOrganization($store->getOrganization());
+        }
     }
 
     public function getStore()
