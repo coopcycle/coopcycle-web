@@ -20,6 +20,7 @@
       </options>
     </field>
     <field name="metadata" type="json_array" column="metadata" nullable="true"/>
+    <field name="weight" type="integer" column="weight" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>

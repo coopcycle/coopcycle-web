@@ -115,8 +115,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     private $order;
 
-    private $weight;
-
     private $vehicle = self::VEHICLE_BIKE;
 
     /**
@@ -181,12 +179,22 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     public function getWeight()
     {
-        return $this->weight;
+        $totalWeight = 0;
+        foreach ($this->getTasks() as $task) {
+            $totalWeight += $task->getWeight();
+        }
+        return $totalWeight;
     }
 
     public function setWeight($weight)
     {
-        $this->weight = $weight;
+        foreach ($this->getTasks() as $task) {
+            // Why do we need to ask if isDropoff? I guess because we do not want to set weights to the pickup task that is part of this delivery
+            if ($task->isDropoff()) {
+                $task->setWeight($weight);
+                break; // What does it mean this break?
+            }
+        }
 
         return $this;
     }

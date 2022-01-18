@@ -24,6 +24,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 class TaskType extends AbstractType
 {
@@ -189,6 +190,38 @@ class TaskType extends AbstractType
             });
         }
 
+        // Add weight field if needed
+        if (true === $options['with_weight']) {
+
+            $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+                $form = $event->getForm();
+                $task = $event->getData();
+
+                // Because we are using a collection of forms, $task may be NULL
+                // When $task == NULL, it means it's an additional task
+                // In this case, we add the "weight" field anyways,
+                // to avoid the error "This form should not contain extra fields"
+                if (null === $task || $task->getType() === Task::TYPE_DROPOFF) {
+                    $form
+                        ->add('weight', NumberType::class, [
+                            'required' => $options['with_weight_required'],
+                            'html5' => true,
+                            'label' => 'form.delivery.weight.label',
+                            'attr'  => array(
+                                'min'  => 0,
+                                'step' => 0.5,
+                            ),
+                        ]);
+
+                    if (null !== $task && null !== $task->getId() && null !== $task->getWeight()) {
+                        $weight = null !== $task->getWeight() ? $task->getWeight() / 1000 : 0;
+                        $form->get('weight')->setData($weight);
+                    }
+                }
+
+            });
+        }
+
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
 
             $form = $event->getForm();
@@ -212,6 +245,12 @@ class TaskType extends AbstractType
                     }
                 }
             }
+
+            if ($form->has('weight')) {
+                $weightK = $form->get('weight')->getData();
+                $weight = $weightK * 1000;
+                $task->setWeight($weight);
+            }
         });
     }
 
@@ -228,6 +267,8 @@ class TaskType extends AbstractType
             'with_address_props' => false,
             'with_package_set' => null,
             'with_packages_required' => false,
+            'with_weight' => true,
+            'with_weight_required' => false,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

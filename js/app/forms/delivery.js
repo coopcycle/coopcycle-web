@@ -288,7 +288,7 @@ function reducer(state = {}, action) {
   case 'SET_WEIGHT':
     return {
       ...state,
-      weight: action.value
+      tasks: replaceTasks(state, action.taskIndex, 'weight', action.value)
     }
   case 'SET_TASK_PACKAGES':
     return {
@@ -400,6 +400,25 @@ function initSubForm(name, taskEl, preloadedState) {
     const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
     createPackagesWidget(`${name}_${taskForm}`, packagesRequired, packages => store.dispatch({ type: 'SET_TASK_PACKAGES', taskIndex, packages }))
   }
+
+  const weightEl = document.querySelector(`#${name}_${taskForm}_weight`)
+
+  if (preloadedState) {
+    const index = preloadedState.tasks.indexOf(task)
+    if (-1 !== index) {
+      preloadedState.tasks[index].weight = weightEl ? parseWeight(weightEl.value) : 0
+    }
+  }
+
+  if (weightEl) {
+    weightEl.addEventListener('input', _.debounce(e => {
+      store.dispatch({
+        type: 'SET_WEIGHT',
+        value: parseWeight(e.target.value),
+        taskIndex,
+      })
+    }, 350))
+  }
 }
 
 export default function(name, options) {
@@ -413,11 +432,9 @@ export default function(name, options) {
 
   if (el) {
 
-    const weightEl = document.querySelector(`#${name}_weight`)
 
     // Intialize Redux store
     let preloadedState = {
-      weight: weightEl ? parseWeight(weightEl.value) : 0,
       tasks: [],
       packages: []
     }
@@ -440,15 +457,6 @@ export default function(name, options) {
 
     onReady(preloadedState)
     store.subscribe(() => onChange(store.getState()))
-
-    if (weightEl) {
-      weightEl.addEventListener('input', _.debounce(e => {
-        store.dispatch({
-          type: 'SET_WEIGHT',
-          value: parseWeight(e.target.value)
-        })
-      }, 350))
-    }
 
     new ClipboardJS('#copy', {
       text: function() {
