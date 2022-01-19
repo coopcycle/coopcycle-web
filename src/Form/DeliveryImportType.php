@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Store;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -42,6 +43,10 @@ class DeliveryImportType extends AbstractType
                 'label' => 'form.delivery_import.store.label',
                 'mapped' => false,
                 'class' => Store::class,
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->orderBy('u.username', 'ASC');
+                },            
                 'choice_label' => 'name',
             ]);
         }
