@@ -583,6 +583,7 @@ services:
       $country: "%country_iso%"
       $foodtechEnabled: "%foodtech_enabled%"
       $b2bEnabled: "%b2b_enabled%"
+      $forceStripe: "%env(bool:FORCE_STRIPE)%"
 
   AppBundle\Service\EmailManager:
     arguments:
