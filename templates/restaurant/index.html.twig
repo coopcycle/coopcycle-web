@@ -142,7 +142,7 @@
     {% if restaurant_image is not empty %}
     <div class="restaurant-image position-relative">
       <img class="restaurant-image" src="{{ restaurant_image }}">
-      {% if not restaurant.isOpen %}
+      {% if should_show_pre_order(restaurant) %}
       <figcaption>
         <div class="position-absolute w-100 h-100 bg-dark" style="opacity: 0.5;"></div>
         <div class="position-absolute text-white font-weight-bold d-flex flex-column justify-content-center align-items-center w-100 h-100 p-1">
