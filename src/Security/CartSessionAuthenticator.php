@@ -2,6 +2,7 @@
 
 namespace AppBundle\Security;
 
+use AppBundle\Entity\User;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\ExpiredTokenException;
@@ -111,7 +112,10 @@ class CartSessionAuthenticator extends AbstractAuthenticator
 
             if ($cart = $this->extractCart($payload)) {
 
-                $token = new JWTUserToken([], null, $rawToken, $this->firewallName);
+                $user = new User();
+                $user->setUsername($rawToken);
+
+                $token = new JWTUserToken([], $user, $rawToken, $this->firewallName);
                 $token->setAttribute('cart', $cart);
 
                 $passport = new SelfValidatingPassport(new UserBadge($token->getCredentials()), [

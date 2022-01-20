@@ -3,6 +3,7 @@
 namespace AppBundle\Security;
 
 use AppBundle\Entity\ApiApp;
+use AppBundle\Entity\User;
 use AppBundle\Security\ApiKeyManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\InvalidPayloadException;
@@ -77,6 +78,11 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
                 throw new AuthenticationException(sprintf('API Key "%s" does not exist', $token->getCredentials()));
             }
 
+            $user = new User();
+            $user->setUsername($token->getCredentials());
+
+            $token->setUser($user);
+
             $passport = new SelfValidatingPassport(new UserBadge($token->getCredentials()), [
                 new PreAuthenticatedUserBadge()
             ]);
@@ -107,6 +113,11 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
                     $this->firewallName
                 )
             );
+
+            $user = new User();
+            $user->setUsername($token->getCredentials());
+
+            $token->setUser($user);
 
             $passport = new SelfValidatingPassport(new UserBadge($token->getCredentials()), [
                 new PreAuthenticatedUserBadge()
