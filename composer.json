@@ -63,7 +63,7 @@
         "laravolt/avatar": "^4",
         "sylius/product-bundle": "^1.7.5",
         "sylius/taxonomy-bundle": "^1.7.5",
-        "sonata-project/seo-bundle": "^2.13",
+        "sonata-project/seo-bundle": "^3.0",
         "sylius/currency-bundle": "^1.7.5",
         "php-http/guzzle6-adapter": "^2.0",
         "php-http/message": "^1.6",
