@@ -44,8 +44,8 @@ class DeliveryImportType extends AbstractType
                 'mapped' => false,
                 'class' => Store::class,
                 'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('u')
-                        ->orderBy('u.username', 'ASC');
+                    return $er->createQueryBuilder('store')
+                        ->orderBy('store.name', 'ASC');
                 },            
                 'choice_label' => 'name',
             ]);
