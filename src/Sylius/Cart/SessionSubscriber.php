@@ -10,7 +10,6 @@ use Sylius\Component\Order\Context\CartNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Webmozart\Assert\Assert;
 
 final class SessionSubscriber implements EventSubscriberInterface
@@ -24,9 +23,6 @@ final class SessionSubscriber implements EventSubscriberInterface
     /** @var bool */
     private $enabled;
 
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
     /** @var LoggerInterface|null */
     private $logger;
 
@@ -34,13 +30,11 @@ final class SessionSubscriber implements EventSubscriberInterface
         CartContextInterface $cartContext,
         string $sessionKeyName,
         bool $enabled,
-        TokenStorageInterface $tokenStorage,
         LoggerInterface $logger = null)
     {
         $this->cartContext = $cartContext;
         $this->sessionKeyName = $sessionKeyName;
         $this->enabled = $enabled;
-        $this->tokenStorage = $tokenStorage;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -64,14 +58,7 @@ final class SessionSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         if (!$request->hasPreviousSession() || !$request->getSession()->isStarted()) {
-            $this->logger->debug('SessionSubscriber | no session, skipping');
-            return;
-        }
-
-        $token = $this->tokenStorage->getToken();
-
-        if (null === $token || !$token->isAuthenticated()) {
-            $this->logger->debug('SessionSubscriber | no authenticated token, skipping');
+            $this->logger->debug('SessionSubscriber | No session, skipping');
             return;
         }
 
