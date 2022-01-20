@@ -23,7 +23,6 @@ parameters:
         - '#Call to an undefined method AppBundle\\Entity\\Model\\TaggableInterface::getId\(\)#'
         - '#Call to an undefined method League\\Geotools\\Geohash\\GeohashInterface::getCoordinate\(\)#'
         - '#Call to an undefined method Sylius\\Component\\Order\\Repository\\OrderRepositoryInterface::countByCustomerAndCoupon\(\)#'
-        - '#Call to an undefined method Symfony\\Component\\HttpFoundation\\Session\\SessionInterface::getFlashBag\(\)#'
         - '#Call to an undefined method Symfony\\Component\\DependencyInjection\\Extension\\ExtensionInterface::addSecurityListenerFactory\(\)#'
         - '#Strict comparison using === between null and Sylius\\Component\\Order\\Model\\OrderInterface will always evaluate to false#'
         - '#Call to an undefined method [a-zA-Z\\]+::accessControl\(\)#'
