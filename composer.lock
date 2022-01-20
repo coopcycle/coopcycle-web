@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "488260d2c991759bd79d95a5fe3b1f12",
+    "content-hash": "4c10b38e45fe5ff7dee76b207987f2c6",
     "packages": [
         {
             "name": "api-platform/core",
@@ -5239,35 +5239,33 @@
         },
         {
             "name": "hautelook/alice-bundle",
-            "version": "2.10.0",
+            "version": "2.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/theofidry/AliceBundle.git",
-                "reference": "016ff236de2b103a88f734cb98761588b7db8b2f"
+                "reference": "17c5199b2a6efbc1383b0afe1cddfa3c176b7b6f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/theofidry/AliceBundle/zipball/016ff236de2b103a88f734cb98761588b7db8b2f",
-                "reference": "016ff236de2b103a88f734cb98761588b7db8b2f",
+                "url": "https://api.github.com/repos/theofidry/AliceBundle/zipball/17c5199b2a6efbc1383b0afe1cddfa3c176b7b6f",
+                "reference": "17c5199b2a6efbc1383b0afe1cddfa3c176b7b6f",
                 "shasum": ""
             },
             "require": {
-                "doctrine/data-fixtures": "^1.5",
-                "doctrine/doctrine-bundle": "^2.5",
-                "doctrine/orm": "^2.10.0",
-                "doctrine/persistence": "^2.2",
-                "php": "^7.4 || ^8.0",
-                "psr/log": "^1.0 || ^2.0 || ^3.0",
-                "symfony/finder": "^5.4.2 || ^6.0",
-                "symfony/framework-bundle": "^5.4.2 || ^6.0",
-                "theofidry/alice-data-fixtures": "^1.5"
+                "doctrine/data-fixtures": "^1.2",
+                "doctrine/doctrine-bundle": "^1.8 || ^2.0",
+                "doctrine/orm": "^2.5.11",
+                "doctrine/persistence": "^1.3.4 || ^2.0",
+                "php": "^7.3 || ^8.0",
+                "psr/log": "^1.0",
+                "symfony/finder": "^3.4 || ^4.0 || ^5.0",
+                "symfony/framework-bundle": "^3.4.24 || ^4.0 || ^5.0",
+                "theofidry/alice-data-fixtures": "^1.4"
             },
             "require-dev": {
-                "doctrine/shards": "^1.0",
                 "phpspec/prophecy": "^1.7",
-                "phpspec/prophecy-phpunit": "^2.0",
-                "phpunit/phpunit": "^9.5",
-                "symfony/phpunit-bridge": "^6.0"
+                "phpunit/phpunit": "^8.5",
+                "symfony/phpunit-bridge": "^5.1"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -5307,9 +5305,9 @@
             ],
             "support": {
                 "issues": "https://github.com/theofidry/AliceBundle/issues",
-                "source": "https://github.com/theofidry/AliceBundle/tree/2.10.0"
+                "source": "https://github.com/theofidry/AliceBundle/tree/2.9.0"
             },
-            "time": "2022-01-01T18:24:08+00:00"
+            "time": "2021-02-23T08:45:57+00:00"
         },
         {
             "name": "http-interop/http-factory-guzzle",
@@ -17335,38 +17333,36 @@
         },
         {
             "name": "theofidry/alice-data-fixtures",
-            "version": "1.5.1",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/theofidry/AliceDataFixtures.git",
-                "reference": "4a290880e177c9db955bb261dd4383667c46462d"
+                "reference": "bcfdf64bc940eb4a7b40b46d9ca5251e5692cc11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/theofidry/AliceDataFixtures/zipball/4a290880e177c9db955bb261dd4383667c46462d",
-                "reference": "4a290880e177c9db955bb261dd4383667c46462d",
+                "url": "https://api.github.com/repos/theofidry/AliceDataFixtures/zipball/bcfdf64bc940eb4a7b40b46d9ca5251e5692cc11",
+                "reference": "bcfdf64bc940eb4a7b40b46d9ca5251e5692cc11",
                 "shasum": ""
             },
             "require": {
                 "nelmio/alice": "^3.5",
-                "php": "^7.4 || ^8.0",
-                "psr/log": "^1 || ^2 || ^3",
-                "webmozart/assert": "^1.10"
+                "php": "^7.3 | ^8.0",
+                "psr/log": "^1.0"
             },
             "conflict": {
                 "doctrine/orm": "<2.6.3",
-                "doctrine/persistence": "<2.0",
-                "illuminate/database": "<8.12",
+                "illuminate/database": "<5.5",
                 "ocramius/proxy-manager": "<2.1",
-                "symfony/framework-bundle": "<4.4 || >5.0,<5.4",
+                "symfony/framework-bundle": "<3.4",
                 "zendframework/zend-code": "<3.3.1"
             },
             "require-dev": {
-                "bamarni/composer-bin-plugin": "^1.4.1",
-                "phpspec/prophecy": "^1.14.0",
-                "phpspec/prophecy-phpunit": "^2.0.1",
-                "phpunit/phpunit": "^9.5.10",
-                "symfony/phpunit-bridge": "^5.3.8 || ^6.0"
+                "bamarni/composer-bin-plugin": "^1.1",
+                "phpspec/prophecy": "^1.6",
+                "phpspec/prophecy-phpunit": "^2.0",
+                "phpunit/phpunit": "^9.3",
+                "symfony/phpunit-bridge": "^5.1.3"
             },
             "suggest": {
                 "alcaeus/mongo-php-adapter": "To use Doctrine with the MongoDB flavour",
@@ -17416,7 +17412,7 @@
             ],
             "support": {
                 "issues": "https://github.com/theofidry/AliceDataFixtures/issues",
-                "source": "https://github.com/theofidry/AliceDataFixtures/tree/1.5.1"
+                "source": "https://github.com/theofidry/AliceDataFixtures/tree/1.4.0"
             },
             "funding": [
                 {
@@ -17424,7 +17420,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-12-21T19:45:45+00:00"
+            "time": "2021-01-25T10:07:17+00:00"
         },
         {
             "name": "trikoder/oauth2-bundle",
