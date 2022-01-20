@@ -7,6 +7,7 @@ use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
 use Webmozart\Assert\Assert;
 
 class TaskOperationsVoter extends Voter
@@ -41,12 +42,16 @@ class TaskOperationsVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        if (!is_object($user = $token->getUser())) {
+        if ($token instanceof OAuth2Token) {
             return $this->voteOnAttributeWithOAuth($attribute, $subject);
         }
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             return true;
+        }
+
+        if (!is_object($user = $token->getUser())) {
+            return false;
         }
 
         if ($this->authorizationChecker->isGranted('ROLE_COURIER') && $subject->isAssignedTo($user)) {

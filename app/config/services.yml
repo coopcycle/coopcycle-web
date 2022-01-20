@@ -836,34 +836,7 @@ services:
     tags:
       - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
 
-  AppBundle\Security\Firewall\TokenBearerListener:
-    arguments:
-      - '@security.token_storage'
-      - '@security.authentication.manager'
-      - '@lexik_jwt_authentication.jwt_token_authenticator'
-      - '@sensio_framework_extra.psr7.http_message_factory'
-
-  AppBundle\Security\Authentication\Provider\TokenBearerProvider:
-    arguments:
-      $userProvider: ~
-      $resourceServer: '@league.oauth2.server.resource_server'
-      $jwtTokenAuthenticator: '@lexik_jwt_authentication.jwt_token_authenticator'
-      $providerKey: ~
-    public: false
-
   AppBundle\Security\ApiKeyManager: ~
-
-  AppBundle\Security\Firewall\CartSessionListener:
-    arguments:
-      - '@security.token_storage'
-      - '@security.authentication.manager'
-      - '@lexik_jwt_authentication.jwt_token_authenticator'
-    public: false
-
-  AppBundle\Security\Authentication\Provider\CartSessionProvider:
-    arguments:
-      $jwtTokenAuthenticator: '@lexik_jwt_authentication.jwt_token_authenticator'
-    public: false
 
   AppBundle\Mjml\MjmlServerRenderer:
     arguments:
@@ -1212,3 +1185,9 @@ services:
       # $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
 
   AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~
+
+  AppBundle\Security\BearerTokenAuthenticator:
+    abstract: true
+
+  AppBundle\Security\CartSessionAuthenticator:
+    abstract: true

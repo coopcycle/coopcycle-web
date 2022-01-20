@@ -83,7 +83,7 @@
         "sylius/promotion-bundle": "^1.7.5",
         "notfloran/mjml-bundle": "^3.0",
         "martin-georgiev/postgresql-for-doctrine": "^1.3",
-        "hautelook/alice-bundle": "^2.3",
+        "hautelook/alice-bundle": "~2.9.0",
         "nyholm/psr7": "^1.1",
         "hwi/oauth-bundle": "^1.3.0",
         "php-http/httplug-bundle": "^1.16",
@@ -125,7 +125,8 @@
         "symfony/amqp-messenger": "^5.3",
         "symfony/doctrine-messenger": "^5.3",
         "azimolabs/apple-sign-in-php-sdk": "^2.0",
-        "google/apiclient": "^2.11"
+        "google/apiclient": "^2.11",
+        "theofidry/alice-data-fixtures": "1.4.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

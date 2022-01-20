@@ -33,7 +33,7 @@ final class RestaurantCollectionDataProvider extends CollectionDataProvider
         return LocalBusiness::class === $resourceClass && $operationName === 'get';
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $collection = parent::getCollection($resourceClass, $operationName, $context);
 
