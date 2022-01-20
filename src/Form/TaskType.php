@@ -213,7 +213,7 @@ class TaskType extends AbstractType
                             ),
                         ]);
 
-                    if (null !== $task && null !== $task->getId() && null !== $task->getWeight()) {
+                    if (null !== $task && null !== $task->getId()) {
                         $weight = null !== $task->getWeight() ? $task->getWeight() / 1000 : 0;
                         $form->get('weight')->setData($weight);
                     }
