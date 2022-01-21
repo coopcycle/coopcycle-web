@@ -16,6 +16,7 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class WebhookHandler implements MessageHandlerInterface
 {
@@ -24,11 +25,12 @@ class WebhookHandler implements MessageHandlerInterface
     private $entityManager;
 
     public function __construct(
-        Client $client,
         IriConverterInterface $iriConverter,
         EntityManagerInterface $entityManager)
     {
-        $this->client = $client;
+        // FIXME
+        // Use dependency injection with HttpClientInterface
+        $this->client = new Client();
         $this->iriConverter = $iriConverter;
         $this->entityManager = $entityManager;
     }
