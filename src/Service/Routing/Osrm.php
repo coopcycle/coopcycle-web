@@ -68,7 +68,7 @@ class Osrm extends Base
     private $cache = [];
 
     /**
-     * @param Client $client
+     * @param HttpClientInterface $osrmClient
      */
     public function __construct(HttpClientInterface $osrmClient)
     {
