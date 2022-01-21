@@ -178,6 +178,8 @@ framework:
                 base_uri: "%env(COOPCYCLE_BROWSERLESS_HOST)%"
             mjml.client:
                 base_uri: "%env(COOPCYCLE_MJML_HOST)%/"
+            vroom.client:
+                base_uri: "%env(VROOM_HOST)%/"
 
 # Twig Configuration
 twig:
@@ -537,10 +539,6 @@ csa_guzzle:
         api:
             config:
                 base_uri: "%router.request_context.scheme%://%router.request_context.host%"
-                lazy: true
-        vroom:
-            config:
-                base_uri: "%env(VROOM_HOST)%"
                 lazy: true
 
 sylius_taxation:

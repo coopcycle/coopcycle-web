@@ -11,6 +11,7 @@ use AppBundle\Vroom\Shipment;
 use AppBundle\Vroom\Vehicle;
 use AppBundle\Entity\TaskCollection;
 use GuzzleHttp\Client;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
 * a class to connect a given routing problem with the vroom api to return optimal results
@@ -18,11 +19,11 @@ use GuzzleHttp\Client;
 
 class RouteOptimizer
 {
-    private $client;
+    private $vroomClient;
 
-    public function __construct(Client $client)
+    public function __construct(HttpClientInterface $vroomClient)
     {
-        $this->client = $client;
+        $this->vroomClient = $vroomClient;
     }
 
     /**
@@ -38,13 +39,13 @@ class RouteOptimizer
         $normalizer = new RoutingProblemNormalizer();
 
         // TODO Catch Exception
-        $response = $this->client->request('POST', '', [
+        $response = $this->vroomClient->request('POST', '', [
             'headers' => ['Content-Type'=> 'application/json'],
             'body' => json_encode($normalizer->normalize($routingProblem)),
         ]);
 
         $tasks = $taskCollection->getTasks();
-        $data = json_decode((string) $response->getBody(), true);
+        $data = json_decode((string) $response->getContent(), true);
 
         $firstRoute = $data['routes'][0];
         array_shift($firstRoute['steps']);

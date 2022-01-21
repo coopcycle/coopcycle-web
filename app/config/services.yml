@@ -1127,9 +1127,7 @@ services:
       - '%env(SONIC_PORT)%'
       - 30
 
-  AppBundle\Service\RouteOptimizer:
-    arguments:
-      $client: '@csa_guzzle.client.vroom'
+  AppBundle\Service\RouteOptimizer: ~
 
   phpcent\Client:
     arguments:
