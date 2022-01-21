@@ -180,7 +180,7 @@ framework:
             mjml.client:
                 base_uri: "%env(COOPCYCLE_MJML_HOST)%/"
             vroom.client:
-                base_uri: "%env(VROOM_HOST)%/"
+                base_uri: "http://%env(VROOM_HOST)%/"
             api.client:
                 base_uri: "%router.request_context.scheme%://%router.request_context.host%"
             osrm.client:
