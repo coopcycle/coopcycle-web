@@ -184,7 +184,6 @@ services:
     arguments:
       $promotionRuleFactory: '@sylius.factory.promotion_rule'
       $promotionFactory: '@sylius.factory.promotion'
-      $browserlessClient: '@csa_guzzle.client.browserless'
 
   AppBundle\EventListener\LocaleListener:
     arguments: ['%env(COOPCYCLE_LOCALE)%']
@@ -930,7 +929,6 @@ services:
 
   AppBundle\Sylius\Order\ReceiptGenerator:
     arguments:
-      $httpClient: '@csa_guzzle.client.browserless'
       $filesystem: '@receipts_filesystem'
       $taxRateRepository: '@sylius.repository.tax_rate'
       $locale: '%env(COOPCYCLE_LOCALE)%'
