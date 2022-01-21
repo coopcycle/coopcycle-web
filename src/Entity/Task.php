@@ -298,6 +298,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      */
     private $metadata = [];
 
+    /**
+     * @var array
+     * @Groups({"task", "delivery_create", "pricing_deliveries"})
+     */
     private $weight;
 
     public function __construct()

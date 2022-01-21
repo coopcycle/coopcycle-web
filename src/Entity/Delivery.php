@@ -179,19 +179,23 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     public function getWeight()
     {
-        $totalWeight = 0;
+        $totalWeight = null;
         foreach ($this->getTasks() as $task) {
-            $totalWeight += $task->getWeight();
+            if (null !== $task->getWeight()) {
+                $totalWeight += $task->getWeight();
+            }
         }
         return $totalWeight;
     }
 
     public function setWeight($weight)
     {
-        foreach ($this->getTasks() as $task) {
-            if ($task->isDropoff()) {
-                $task->setWeight($weight);
-                break;
+        if (null !== $weight) {
+            foreach ($this->getTasks() as $task) {
+                if ($task->isDropoff()) {
+                    $task->setWeight($weight);
+                    break;
+                }
             }
         }
 
