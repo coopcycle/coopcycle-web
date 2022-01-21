@@ -530,9 +530,7 @@ services:
         arguments:
             - '%secret%'
 
-  AppBundle\Service\Routing\Osrm:
-    arguments:
-      $client: '@csa_guzzle.client.osrm'
+  AppBundle\Service\Routing\Osrm: ~
 
   routing_service:
     public: true

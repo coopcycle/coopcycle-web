@@ -183,6 +183,9 @@ framework:
                 base_uri: "%env(VROOM_HOST)%/"
             api.client:
                 base_uri: "%router.request_context.scheme%://%router.request_context.host%"
+            osrm.client:
+                base_uri: "http://%osrm_host%"
+                timeout: 1.0
 
 # Twig Configuration
 twig:
@@ -532,13 +535,6 @@ vich_uploader:
 
 csa_guzzle:
     logger: true
-    clients:
-        osrm:
-            config:
-                base_uri: "http://%osrm_host%"
-                lazy: true
-                connect_timeout: 1.0
-                timeout: 1.0
 
 sylius_taxation:
     resources:
