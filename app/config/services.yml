@@ -131,7 +131,6 @@ services:
         arguments:
             - '%loopeat_partner_secret%'
     tags:
-      - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: loopeat }
 
   AppBundle\LoopEat\Context:
@@ -1145,7 +1144,6 @@ services:
       $clientId: "%env(EDENRED_AUTHENTICATION_CLIENT_ID)%"
       $clientSecret: "%env(EDENRED_AUTHENTICATION_CLIENT_SECRET)%"
     tags:
-      - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: edenred }
 
   AppBundle\Edenred\RefreshTokenHandler:
@@ -1162,7 +1160,6 @@ services:
       $paymentClientId: '%env(EDENRED_PAYMENT_CLIENT_ID)%'
       $paymentClientSecret: '%env(EDENRED_PAYMENT_CLIENT_SECRET)%'
     tags:
-      - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: edenred }
 
   AppBundle\Service\Geofencing:
