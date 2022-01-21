@@ -177,7 +177,7 @@ class WebhookHandlerTest extends TestCase
             new WebhookMessage('/api/deliveries/1', 'delivery.picked')
         ]);
 
-        $this->assertCount(0, $this->httpContainer);
+        $this->entityManager->flush()->shouldNotHaveBeenCalled();
     }
 
     public function testDoesNotSendHttpRequestWhenNotSubscribedToEvent()
@@ -213,6 +213,6 @@ class WebhookHandlerTest extends TestCase
             new WebhookMessage('/api/deliveries/1', 'delivery.picked')
         ]);
 
-        $this->assertCount(0, $this->httpContainer);
+        $this->entityManager->flush()->shouldNotHaveBeenCalled();
     }
 }
