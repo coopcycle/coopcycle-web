@@ -80,7 +80,6 @@ use Nucleos\UserBundle\Model\UserManagerInterface;
 use Nucleos\UserBundle\Util\TokenGeneratorInterface;
 use Nucleos\UserBundle\Util\CanonicalizerInterface;
 use Nucleos\ProfileBundle\Mailer\Mail\RegistrationMail;
-use GuzzleHttp\Client as HttpClient;
 use Knp\Component\Pager\PaginatorInterface;
 use Ramsey\Uuid\Uuid;
 use Redis;

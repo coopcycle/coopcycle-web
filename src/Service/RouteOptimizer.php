@@ -10,7 +10,6 @@ use AppBundle\Vroom\Job;
 use AppBundle\Vroom\Shipment;
 use AppBundle\Vroom\Vehicle;
 use AppBundle\Entity\TaskCollection;
-use GuzzleHttp\Client;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**

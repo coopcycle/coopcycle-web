@@ -2,7 +2,6 @@
 
 namespace AppBundle\Mjml;
 
-use GuzzleHttp\Client as HttpClient;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
