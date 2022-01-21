@@ -532,10 +532,6 @@ csa_guzzle:
                 lazy: true
                 connect_timeout: 1.0
                 timeout: 1.0
-        google_maps:
-            config:
-                base_uri: "https://maps.googleapis.com"
-                lazy: true
         mjml_server:
             config:
                 base_uri: "%env(COOPCYCLE_MJML_HOST)%"
