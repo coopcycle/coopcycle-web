@@ -300,7 +300,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     /**
      * @var array
-     * @Groups({"task", "delivery_create", "pricing_deliveries"})
+     * @Groups({"task", "task_create", "delivery_create", "pricing_deliveries"})
      */
     private $weight;
 
