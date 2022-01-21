@@ -533,9 +533,6 @@ vich_uploader:
                     chars_per_dir: 2
                     dirs: 2
 
-csa_guzzle:
-    logger: true
-
 sylius_taxation:
     resources:
         tax_category:
