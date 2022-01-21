@@ -4,25 +4,26 @@ namespace AppBundle\Mjml;
 
 use GuzzleHttp\Client as HttpClient;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class MjmlServerRenderer implements RendererInterface
 {
-    private $client;
+    private $mjmlClient;
 
-    public function __construct(HttpClient $client)
+    public function __construct(HttpClientInterface $mjmlClient)
     {
-        $this->client = $client;
+        $this->mjmlClient = $mjmlClient;
     }
 
     public function render(string $mjmlContent): string
     {
-    	$response = $this->client->post('/', [
-		    'body' => $mjmlContent,
-		    'headers' => [
-		        'Content-Type' => 'text/plain',
-		    ]
-		]);
+        $response = $this->mjmlClient->request('POST', '', [
+            'body' => $mjmlContent,
+            'headers' => [
+                'Content-Type' => 'text/plain',
+            ]
+        ]);
 
-		return (string) $response->getBody();
+        return (string) $response->getContent();
     }
 }

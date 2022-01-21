@@ -837,9 +837,7 @@ services:
 
   AppBundle\Security\ApiKeyManager: ~
 
-  AppBundle\Mjml\MjmlServerRenderer:
-    arguments:
-      $client: '@csa_guzzle.client.mjml_server'
+  AppBundle\Mjml\MjmlServerRenderer: ~
 
   AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
   AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
