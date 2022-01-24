@@ -22,7 +22,7 @@ use Geocoder\Provider\Photon\Photon as PhotonProvider;
 use Geocoder\StatefulGeocoder;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
-use Http\Adapter\Guzzle6\Client;
+use Http\Adapter\Guzzle7\Client;
 use libphonenumber\PhoneNumberUtil;
 use League\Geotools\Coordinate\Coordinate;
 use Redis;

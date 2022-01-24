@@ -6,7 +6,7 @@ use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
-use GuzzleHttp\Client as BaseClient;
+use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
@@ -15,7 +15,7 @@ use Psr\Log\NullLogger;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Webmozart\Assert\Assert;
 
-class Client extends BaseClient
+class Client
 {
     private $logger;
 
@@ -37,7 +37,7 @@ class Client extends BaseClient
 
         $stack->push($refreshTokenHandler);
 
-        parent::__construct($config);
+        $this->client = new GuzzleClient($config);
 
         $this->paymentClientId = $paymentClientId;
         $this->paymentClientSecret = $paymentClientSecret;
@@ -55,7 +55,7 @@ class Client extends BaseClient
             $credentials = $customer->getEdenredCredentials();
 
             // https://documenter.getpostman.com/view/10405248/TVewaQQX#82e953fc-9110-4246-8a78-aba888b70b31
-            $response = $this->request('GET', sprintf('/v1/users/%s', $userInfo['username']), [
+            $response = $this->client->request('GET', sprintf('/v1/users/%s', $userInfo['username']), [
                 'headers' => [
                     'Authorization' => sprintf('Bearer %s', $credentials->getAccessToken()),
                     'X-Client-Id' => $this->paymentClientId,
@@ -111,7 +111,7 @@ class Client extends BaseClient
 
         // https://documenter.getpostman.com/view/10405248/TVewaQQX#42a5e69d-898b-41b9-b37e-9d28c23135c8
         try {
-            $response = $this->request('POST', '/v1/transactions', [
+            $response = $this->client->request('POST', '/v1/transactions', [
                 'headers' => [
                     'Authorization' => sprintf('Bearer %s', $credentials->getAccessToken()),
                     'X-Client-Id' => $this->paymentClientId,
@@ -153,7 +153,7 @@ class Client extends BaseClient
 
         // https://documenter.getpostman.com/view/10405248/TVewaQQX#93c0ef51-7526-46a2-9c48-967692f51d7f
         try {
-            $response = $this->request('POST', sprintf('/v1/transactions/%s/actions/capture', $payment->getEdenredAuthorizationId()), [
+            $response = $this->client->request('POST', sprintf('/v1/transactions/%s/actions/capture', $payment->getEdenredAuthorizationId()), [
                 'headers' => [
                     'Authorization' => sprintf('Bearer %s', $credentials->getAccessToken()),
                     'X-Client-Id' => $this->paymentClientId,
@@ -220,7 +220,7 @@ class Client extends BaseClient
 
         // https://documenter.getpostman.com/view/10405248/TVewaQQX#daa3d033-f7d9-4c0b-a0c4-db3614596895
         try {
-            $response = $this->request('POST', sprintf('/v1/transactions/%s/actions/cancel', $payment->getEdenredAuthorizationId()), [
+            $response = $this->client->request('POST', sprintf('/v1/transactions/%s/actions/cancel', $payment->getEdenredAuthorizationId()), [
                 'headers' => [
                     'Authorization' => sprintf('Bearer %s', $credentials->getAccessToken()),
                     'X-Client-Id' => $this->paymentClientId,
@@ -259,7 +259,7 @@ class Client extends BaseClient
         // https://documenter.getpostman.com/view/2761627/TVejiB3m#bf335b3c-d9fc-4249-93fe-1bbdedc1a9cd
         try {
 
-            $response = $this->request('POST', sprintf('/v1/transactions/%s/actions/refund', $payment->getEdenredAuthorizationId()), [
+            $response = $this->client->request('POST', sprintf('/v1/transactions/%s/actions/refund', $payment->getEdenredAuthorizationId()), [
                 'headers' => [
                     'Authorization' => sprintf('Bearer %s', $credentials->getAccessToken()),
                     'X-Client-Id' => $this->paymentClientId,

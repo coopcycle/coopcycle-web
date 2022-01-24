@@ -8,12 +8,12 @@ use AppBundle\Entity\Sylius\Customer;
 use AppBundle\LoopEat\OAuthCredentialsInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Client as BaseClient;
+use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise\RejectedPromise;
-use GuzzleHttp\Psr7;
+use GuzzleHttp\Psr7\Utils;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -21,7 +21,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class Client extends BaseClient
+class Client
 {
     const JWT_CLAIM_SUCCESS_REDIRECT = 'https://coopcycle.org/loopeat_success_redirect';
     const JWT_CLAIM_FAILURE_REDIRECT = 'https://coopcycle.org/loopeat_failure_redirect';
@@ -41,7 +41,7 @@ class Client extends BaseClient
 
         $config['handler'] = $stack;
 
-        parent::__construct($config);
+        $this->client = new GuzzleClient($config);
 
         $this->objectManager = $objectManager;
         $this->jwtEncoder = $jwtEncoder;
@@ -97,7 +97,7 @@ class Client extends BaseClient
                                     $this->logger->info(sprintf('Refreshing token with "%s"',
                                         $options['oauth_credentials']->getLoopeatRefreshToken()));
 
-                                    $response = $this->request('POST', '/oauth/token', [
+                                    $response = $this->client->request('POST', '/oauth/token', [
                                         'form_params' => $params,
                                     ]);
 
@@ -116,7 +116,7 @@ class Client extends BaseClient
 
                                     $this->objectManager->flush();
 
-                                    $request = Psr7\modify_request($request, [
+                                    $request = Utils::modifyRequest($request, [
                                         'set_headers' => [
                                             'Authorization' => sprintf('Bearer %s', $data['access_token'])
                                         ]
@@ -148,12 +148,12 @@ class Client extends BaseClient
         $params = array_merge($defaults, $params);
         $queryString = http_build_query($params);
 
-        return sprintf('%s/oauth/authorize?%s', $this->getConfig('base_uri'), $queryString);
+        return sprintf('%s/oauth/authorize?%s', $this->client->getConfig('base_uri'), $queryString);
     }
 
     public function currentCustomer(OAuthCredentialsInterface $credentials)
     {
-        $response = $this->request('GET', '/customers/current', [
+        $response = $this->client->request('GET', '/customers/current', [
             'headers' => [
                 'Authorization' => sprintf('Bearer %s', $credentials->getLoopeatAccessToken())
             ],
@@ -172,7 +172,7 @@ class Client extends BaseClient
 
             for ($i = 0; $i < $quantity; $i++) {
 
-                $response = $this->request('GET', '/customers/return_loopeat', [
+                $response = $this->client->request('GET', '/customers/return_loopeat', [
                     'headers' => [
                         'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
                     ],
@@ -189,7 +189,7 @@ class Client extends BaseClient
 
                 $this->logger->info(sprintf('Got token "%s" to return for "%s"', $url, $customer->getEmailCanonical()));
 
-                $response = $this->request('GET', $url, [
+                $response = $this->client->request('GET', $url, [
                     'auth' => [$this->loopEatPartnerId, $this->loopEatPartnerSecret]
                 ]);
             }
@@ -214,7 +214,7 @@ class Client extends BaseClient
 
             for ($i = 0; $i < $quantity; $i++) {
 
-                $response = $this->request('GET', '/customers/grab_loopeat', [
+                $response = $this->client->request('GET', '/customers/grab_loopeat', [
                     'headers' => [
                         'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
                     ],
@@ -225,7 +225,7 @@ class Client extends BaseClient
 
                 $this->logger->info(sprintf('Got token "%s" to grab for "%s"', $url, $customer->getEmailCanonical()));
 
-                $response = $this->request('GET', $url, [
+                $response = $this->client->request('GET', $url, [
                     'headers' => [
                         'Authorization' => sprintf('Bearer %s', $restaurant->getLoopeatAccessToken())
                     ],
