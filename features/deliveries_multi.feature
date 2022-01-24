@@ -21,7 +21,8 @@ Feature: Multi-step deliveries
           {
             "type": "dropoff",
             "address": "48, Rue de Rivoli",
-            "before": "tomorrow 13:30"
+            "before": "tomorrow 13:30",
+            "weight": 1500
           }
         ]
       }
@@ -57,7 +58,7 @@ Feature: Multi-step deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "comments": ""
+          "comments": "1.50 kg"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -81,7 +82,8 @@ Feature: Multi-step deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "comments": ""
+          "comments": "",
+          "weight":1500
         }
       }
       """

@@ -120,6 +120,10 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
                 }
             }
         }
+
+        if (isset($data['weight'])) {
+            $task->setWeight($data['weight']);
+        }
     }
 
     private function denormalizeAddress($data, $format = null)
