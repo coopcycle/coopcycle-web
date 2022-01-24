@@ -20,11 +20,11 @@ class Client
     private $logger;
 
     public function __construct(
-        array $config = [],
         string $paymentClientId,
         string $paymentClientSecret,
         RefreshTokenHandler $refreshTokenHandler,
         Authentication $authentication,
+        array $config = [],
         LoggerInterface $logger = null
     )
     {

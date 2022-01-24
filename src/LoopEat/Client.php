@@ -29,12 +29,12 @@ class Client
     private $logger;
 
     public function __construct(
-        array $config = [],
         EntityManagerInterface $objectManager,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         UrlGeneratorInterface $urlGenerator,
-        LoggerInterface $logger)
+        LoggerInterface $logger,
+        array $config = [])
     {
         $stack = HandlerStack::create();
         $stack->push($this->refreshToken());

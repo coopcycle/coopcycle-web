@@ -14,14 +14,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class Authentication
 {
     public function __construct(
-        array $config = [],
         string $clientId,
         string $clientSecret,
         RefreshTokenHandler $refreshTokenHandler,
         UrlGeneratorInterface $urlGenerator,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        array $config = []
     )
     {
         $stack = HandlerStack::create();
