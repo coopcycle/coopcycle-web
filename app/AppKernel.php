@@ -53,7 +53,6 @@ class AppKernel extends Kernel
             new Fidry\AliceDataFixtures\Bridge\Symfony\FidryAliceDataFixturesBundle(),
             new Hautelook\AliceBundle\HautelookAliceBundle(),
             new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
-            new JMose\CommandSchedulerBundle\JMoseCommandSchedulerBundle(),
             new Symfony\WebpackEncoreBundle\WebpackEncoreBundle(),
             new Liip\ImagineBundle\LiipImagineBundle(),
             new Oneup\UploaderBundle\OneupUploaderBundle(),

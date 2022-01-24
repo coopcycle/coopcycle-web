@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d7998e565ea1ffa4cab724670e1f149",
+    "content-hash": "942a009929b1e08b50859691dad7cd7a",
     "packages": [
         {
             "name": "api-platform/core",
@@ -3011,67 +3011,6 @@
                 "source": "https://github.com/doctrine/sql-formatter/tree/1.1.2"
             },
             "time": "2021-11-05T11:11:14+00:00"
-        },
-        {
-            "name": "dragonmantank/cron-expression",
-            "version": "v3.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dragonmantank/cron-expression.git",
-                "reference": "be85b3f05b46c39bbc0d95f6c071ddff669510fa"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dragonmantank/cron-expression/zipball/be85b3f05b46c39bbc0d95f6c071ddff669510fa",
-                "reference": "be85b3f05b46c39bbc0d95f6c071ddff669510fa",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.2|^8.0",
-                "webmozart/assert": "^1.0"
-            },
-            "replace": {
-                "mtdowling/cron-expression": "^1.0"
-            },
-            "require-dev": {
-                "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^1.0",
-                "phpstan/phpstan-webmozart-assert": "^1.0",
-                "phpunit/phpunit": "^7.0|^8.0|^9.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Cron\\": "src/Cron/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Chris Tankersley",
-                    "email": "chris@ctankersley.com",
-                    "homepage": "https://github.com/dragonmantank"
-                }
-            ],
-            "description": "CRON for PHP: Calculate the next or previous run date and determine if a CRON expression is due",
-            "keywords": [
-                "cron",
-                "schedule"
-            ],
-            "support": {
-                "issues": "https://github.com/dragonmantank/cron-expression/issues",
-                "source": "https://github.com/dragonmantank/cron-expression/tree/v3.3.1"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/dragonmantank",
-                    "type": "github"
-                }
-            ],
-            "time": "2022-01-18T15:43:28+00:00"
         },
         {
             "name": "drupal/core-vendor-hardening",
@@ -6138,78 +6077,6 @@
                 "source": "https://github.com/jmikola/geojson/tree/master"
             },
             "time": "2015-09-27T15:35:21+00:00"
-        },
-        {
-            "name": "jmose/command-scheduler-bundle",
-            "version": "v3.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/j-guyon/CommandSchedulerBundle.git",
-                "reference": "c8a54b9cce09054ae489a71229f7f28e2da1fc45"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/j-guyon/CommandSchedulerBundle/zipball/c8a54b9cce09054ae489a71229f7f28e2da1fc45",
-                "reference": "c8a54b9cce09054ae489a71229f7f28e2da1fc45",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/doctrine-bundle": "^1.6.10|^2.0",
-                "doctrine/orm": "^2.5.11",
-                "dragonmantank/cron-expression": "^3.0",
-                "php": "^7.2",
-                "symfony/asset": "^3.4|^4.3|^5.0",
-                "symfony/console": "^3.4|^4.3|^5.0",
-                "symfony/form": "^3.4|^4.3|^5.0",
-                "symfony/framework-bundle": "^3.4|^4.3|^5.0",
-                "symfony/templating": "^3.4|^4.3|^5.0",
-                "symfony/translation": "^3.4|^4.3|^5.0",
-                "symfony/twig-bundle": "^3.4|^4.3|^5.0",
-                "symfony/validator": "^3.4|^4.3|^5.0"
-            },
-            "require-dev": {
-                "doctrine/doctrine-fixtures-bundle": "^3.0.0",
-                "ext-pcntl": "*",
-                "liip/functional-test-bundle": "^4.2",
-                "liip/test-fixtures-bundle": "^1.4.0",
-                "php-coveralls/php-coveralls": "^2.0",
-                "phpunit/phpunit": "^8.5",
-                "symfony/css-selector": "^3.4|^4.0|^5.0",
-                "symfony/security-bundle": "^3.4|^4.0|^5.0"
-            },
-            "suggest": {
-                "ext-pcntl": "For using the scheduler daemon"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-4": {
-                    "JMose\\CommandSchedulerBundle\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Julien Guyon",
-                    "email": "julienguyon@hotmail.com"
-                }
-            ],
-            "description": "This Symfony bundle will allow you to schedule all your commands just like UNIX crontab",
-            "homepage": "https://github.com/J-Mose/CommandSchedulerBundle",
-            "keywords": [
-                "command",
-                "cron",
-                "scheduler",
-                "symfony",
-                "task"
-            ],
-            "support": {
-                "issues": "https://github.com/j-guyon/CommandSchedulerBundle/issues",
-                "source": "https://github.com/j-guyon/CommandSchedulerBundle/tree/v3.0.1"
-            },
-            "time": "2020-07-01T14:30:21+00:00"
         },
         {
             "name": "jms/metadata",
@@ -21892,5 +21759,5 @@
         "php": ">=7.4"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.0.0"
 }
