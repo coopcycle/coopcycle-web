@@ -28,6 +28,7 @@ parameters:
     database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
     locale: "%coopcycle.locale%"
     locale_regex: an|ca|fr|en|es|eu|de|it|pl|pt_BR|pt_PT
+    router.request_context.scheme: 'http'
     router.request_context.host: "%env(APP_HOST)%"
     loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
     loopeat_base_url: '%env(LOOPEAT_BASE_URL)%'
@@ -174,6 +175,17 @@ framework:
                     X-Api-Key: '%env(URBANTZ_API_KEY)%'
             facebook.client:
                 base_uri: 'https://graph.facebook.com/'
+            browserless.client:
+                base_uri: "%env(COOPCYCLE_BROWSERLESS_HOST)%"
+            mjml.client:
+                base_uri: "%env(COOPCYCLE_MJML_HOST)%/"
+            vroom.client:
+                base_uri: "http://%env(VROOM_HOST)%/"
+            api.client:
+                base_uri: "%router.request_context.scheme%://%router.request_context.host%"
+            osrm.client:
+                base_uri: "http://%osrm_host%"
+                timeout: 1.0
 
 # Twig Configuration
 twig:
@@ -520,37 +532,6 @@ vich_uploader:
                 options:
                     chars_per_dir: 2
                     dirs: 2
-
-csa_guzzle:
-    logger: true
-    clients:
-        osrm:
-            config:
-                base_uri: "http://%osrm_host%"
-                lazy: true
-                connect_timeout: 1.0
-                timeout: 1.0
-
-        google_maps:
-            config:
-                base_uri: "https://maps.googleapis.com"
-                lazy: true
-        browserless:
-            config:
-                base_uri: "%env(COOPCYCLE_BROWSERLESS_HOST)%"
-                lazy: true
-        mjml_server:
-            config:
-                base_uri: "%env(COOPCYCLE_MJML_HOST)%"
-                lazy: true
-        api:
-            config:
-                base_uri: "%router.request_context.scheme%://%router.request_context.host%"
-                lazy: true
-        vroom:
-            config:
-                base_uri: "%env(VROOM_HOST)%"
-                lazy: true
 
 sylius_taxation:
     resources:

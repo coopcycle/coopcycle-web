@@ -80,7 +80,6 @@ use Nucleos\UserBundle\Model\UserManagerInterface;
 use Nucleos\UserBundle\Util\TokenGeneratorInterface;
 use Nucleos\UserBundle\Util\CanonicalizerInterface;
 use Nucleos\ProfileBundle\Mailer\Mail\RegistrationMail;
-use GuzzleHttp\Client as HttpClient;
 use Knp\Component\Pager\PaginatorInterface;
 use Ramsey\Uuid\Uuid;
 use Redis;
@@ -107,6 +106,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuth2Client;
 use Twig\Environment as TwigEnvironment;
@@ -155,7 +155,7 @@ class AdminController extends AbstractController
         PromotionCouponRepositoryInterface $promotionCouponRepository,
         FactoryInterface $promotionRuleFactory,
         FactoryInterface $promotionFactory,
-        HttpClient $browserlessClient
+        HttpClientInterface $browserlessClient
     )
     {
         $this->orderRepository = $orderRepository;
@@ -1871,7 +1871,7 @@ class AdminController extends AbstractController
             'json' => ['html' => $html]
         ]);
 
-        $response = new Response((string) $pdf->getBody());
+        $response = new Response((string) $pdf->getContent());
 
         $response->headers->add(['Content-Type' => 'application/pdf']);
         $response->headers->add([

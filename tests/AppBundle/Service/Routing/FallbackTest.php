@@ -4,8 +4,6 @@ namespace Tests\AppBundle\Service\Routing;
 
 use AppBundle\Service\Routing\Fallback;
 use AppBundle\Entity\Base\GeoCoordinates;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 class FallbackTest extends TestCase

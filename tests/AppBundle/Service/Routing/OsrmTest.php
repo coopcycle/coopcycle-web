@@ -4,10 +4,10 @@ namespace Tests\AppBundle\Service\Routing;
 
 use AppBundle\Service\Routing\Osrm;
 use AppBundle\Entity\Base\GeoCoordinates;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
 
 class OsrmTest extends TestCase
 {
@@ -15,9 +15,8 @@ class OsrmTest extends TestCase
 
     public function setUp(): void
     {
-        $this->client = $this->prophesize(Client::class);
-
-        $this->osrm = new Osrm($this->client->reveal());
+        $this->client = new MockHttpClient(null, 'http://osrm');
+        $this->osrm = new Osrm($this->client);
     }
 
     public function testRequestIsCached()
@@ -32,10 +31,13 @@ class OsrmTest extends TestCase
             ]
         ];
 
-        $this->client
-            ->request('GET', '/route/v1/bicycle/2.352222,48.856613;2.352222,48.856613;2.352222,48.856613?overview=full')
-            ->willReturn(new Response(200, [], json_encode($responseBody)))
-            ->shouldBeCalledTimes(1);
+        $mockResponse = new MockResponse(json_encode($responseBody));
+
+        $responses = [
+            $mockResponse
+        ];
+
+        $this->client->setResponseFactory($responses);
 
         $coord1 = new GeoCoordinates(48.856613, 2.352222);
         $coord2 = new GeoCoordinates(48.856613, 2.352222);
@@ -45,5 +47,7 @@ class OsrmTest extends TestCase
         $this->assertEquals(3000, $this->osrm->getDistance(...[$coord1, $coord2, $coord3]));
         $this->assertEquals(3600, $this->osrm->getDuration($coord1, $coord2, $coord3));
         $this->assertEquals('abcdefgh', $this->osrm->getPolyline($coord1, $coord2, $coord3));
+
+        $this->assertEquals('http://osrm/route/v1/bicycle/2.352222,48.856613;2.352222,48.856613;2.352222,48.856613?overview=full', $mockResponse->getRequestUrl());
     }
 }

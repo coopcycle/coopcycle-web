@@ -131,7 +131,6 @@ services:
         arguments:
             - '%loopeat_partner_secret%'
     tags:
-      - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: loopeat }
 
   AppBundle\LoopEat\Context:
@@ -184,7 +183,6 @@ services:
     arguments:
       $promotionRuleFactory: '@sylius.factory.promotion_rule'
       $promotionFactory: '@sylius.factory.promotion'
-      $browserlessClient: '@csa_guzzle.client.browserless'
 
   AppBundle\EventListener\LocaleListener:
     arguments: ['%env(COOPCYCLE_LOCALE)%']
@@ -531,9 +529,7 @@ services:
         arguments:
             - '%secret%'
 
-  AppBundle\Service\Routing\Osrm:
-    arguments:
-      $client: '@csa_guzzle.client.osrm'
+  AppBundle\Service\Routing\Osrm: ~
 
   routing_service:
     public: true
@@ -838,9 +834,7 @@ services:
 
   AppBundle\Security\ApiKeyManager: ~
 
-  AppBundle\Mjml\MjmlServerRenderer:
-    arguments:
-      $client: '@csa_guzzle.client.mjml_server'
+  AppBundle\Mjml\MjmlServerRenderer: ~
 
   AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
   AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
@@ -930,7 +924,6 @@ services:
 
   AppBundle\Sylius\Order\ReceiptGenerator:
     arguments:
-      $httpClient: '@csa_guzzle.client.browserless'
       $filesystem: '@receipts_filesystem'
       $taxRateRepository: '@sylius.repository.tax_rate'
       $locale: '%env(COOPCYCLE_LOCALE)%'
@@ -1131,9 +1124,7 @@ services:
       - '%env(SONIC_PORT)%'
       - 30
 
-  AppBundle\Service\RouteOptimizer:
-    arguments:
-      $client: '@csa_guzzle.client.vroom'
+  AppBundle\Service\RouteOptimizer: ~
 
   phpcent\Client:
     arguments:
@@ -1153,7 +1144,6 @@ services:
       $clientId: "%env(EDENRED_AUTHENTICATION_CLIENT_ID)%"
       $clientSecret: "%env(EDENRED_AUTHENTICATION_CLIENT_SECRET)%"
     tags:
-      - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: edenred }
 
   AppBundle\Edenred\RefreshTokenHandler:
@@ -1170,7 +1160,6 @@ services:
       $paymentClientId: '%env(EDENRED_PAYMENT_CLIENT_ID)%'
       $paymentClientSecret: '%env(EDENRED_PAYMENT_CLIENT_SECRET)%'
     tags:
-      - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: edenred }
 
   AppBundle\Service\Geofencing:

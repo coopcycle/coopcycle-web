@@ -45,7 +45,6 @@
         "vich/uploader-bundle": "^1.13",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "guzzlehttp/guzzle": "~6.0",
-        "csa/guzzle-bundle": "^3.0",
         "myclabs/php-enum": "^1.8",
         "beberlei/doctrineextensions": "^1.0",
         "sentry/sentry-symfony": "^4.0",

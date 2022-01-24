@@ -6,12 +6,12 @@ use AppBundle\Entity\Sylius\OrderReceipt;
 use AppBundle\Entity\Sylius\OrderReceiptLineItem as LineItem;
 use AppBundle\Entity\Sylius\OrderReceiptFooterItem as FooterItem;
 use AppBundle\Sylius\Order\AdjustmentInterface;
-use GuzzleHttp\Client;
 use League\Flysystem\Filesystem;
 use Sylius\Component\Order\Model\AdjustableInterface;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
@@ -19,14 +19,14 @@ class ReceiptGenerator
 {
     public function __construct(
         TwigEnvironment $twig,
-        Client $httpClient,
+        HttpClientInterface $browserlessClient,
         Filesystem $filesystem,
         TranslatorInterface $translator,
         RepositoryInterface $taxRateRepository,
         string $locale)
     {
         $this->twig = $twig;
-        $this->httpClient = $httpClient;
+        $this->browserlessClient = $browserlessClient;
         $this->filesystem = $filesystem;
         $this->translator = $translator;
         $this->taxRateRepository = $taxRateRepository;
@@ -110,11 +110,11 @@ class ReceiptGenerator
             'locale'       => $this->locale,
         ]);
 
-        $response = $this->httpClient->request('POST', '/pdf', [
+        $response = $this->browserlessClient->request('POST', '/pdf', [
             'json' => ['html' => $html]
         ]);
 
-        return (string) $response->getBody();
+        return (string) $response->getContent();
     }
 
     private function addAdjustmentFooterItem(OrderReceipt $receipt, Adjustment $adjustment)
