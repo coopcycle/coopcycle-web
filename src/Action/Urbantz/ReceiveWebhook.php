@@ -100,18 +100,18 @@ class ReceiveWebhook
             Carbon::parse($task['timeWindow']['stop'])->tz($tz)->toDateTime()
         );
 
-        $comments = '';
+        $pickupComments = '';
 
         if (isset($task['hubName'])) {
-            $comments .= "{$task['hubName']}\n\n";
+            $pickupComments .= "{$task['hubName']}\n\n";
         }
 
         if (isset($task['dimensions'])) {
             if (isset($task['dimensions']['bac'])) {
-                $comments .= "{$task['dimensions']['bac']} × bac(s)\n";
+                $pickupComments .= "{$task['dimensions']['bac']} × bac(s)\n";
             }
             if (isset($task['dimensions']['weight'])) {
-                $comments .= "{$task['dimensions']['weight']} kg\n";
+                $pickupComments .= "{$task['dimensions']['weight']} kg\n";
 
                 $delivery->setWeight(
                     intval($task['dimensions']['weight'] * 1000)
@@ -119,8 +119,20 @@ class ReceiveWebhook
             }
         }
 
-        if (!empty($comments)) {
-            $delivery->getPickup()->setComments($comments);
+        $dropoffComments = '';
+
+        if (isset($task['contact']['buildingInfo']) && isset($task['contact']['buildingInfo']['digicode1'])) {
+            if (!empty($task['contact']['buildingInfo']['digicode1'])) {
+                $dropoffComments .= "Digicode : {$task['contact']['buildingInfo']['digicode1']}\n";
+            }
+        }
+
+        if (!empty($pickupComments)) {
+            $delivery->getPickup()->setComments($pickupComments);
+        }
+
+        if (!empty($dropoffComments)) {
+            $delivery->getDropoff()->setComments($dropoffComments);
         }
 
         // IMPORTANT
