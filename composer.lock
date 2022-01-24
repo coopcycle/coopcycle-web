@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "65e88dbc1c80f486c0277731c90a045b",
+    "content-hash": "5b071159405d06b43e8b793c6828f09d",
     "packages": [
         {
             "name": "api-platform/core",
@@ -6505,28 +6505,28 @@
         },
         {
             "name": "kreait/firebase-bundle",
-            "version": "2.7.0",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kreait/firebase-bundle.git",
-                "reference": "faa64e7f062a7ead6216c62f54b1b6f4a09ab61a"
+                "reference": "8157334028f51e11df18827e243f981a89620345"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kreait/firebase-bundle/zipball/faa64e7f062a7ead6216c62f54b1b6f4a09ab61a",
-                "reference": "faa64e7f062a7ead6216c62f54b1b6f4a09ab61a",
+                "url": "https://api.github.com/repos/kreait/firebase-bundle/zipball/8157334028f51e11df18827e243f981a89620345",
+                "reference": "8157334028f51e11df18827e243f981a89620345",
                 "shasum": ""
             },
             "require": {
                 "kreait/firebase-php": "^5.25.0",
                 "php": "^7.4|^8.0",
-                "symfony/cache": "^4.4|^5.3",
-                "symfony/config": "^4.4|^5.3",
-                "symfony/dependency-injection": "^4.4|^5.3",
-                "symfony/http-kernel": "^4.4|^5.3"
+                "symfony/cache": "^5.4|^6.0",
+                "symfony/config": "^5.4|^6.0",
+                "symfony/dependency-injection": "^5.4|^6.0",
+                "symfony/http-kernel": "^5.4|^6.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^8.5"
+                "phpunit/phpunit": "^9.5.10"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -6558,7 +6558,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kreait/firebase-bundle/issues",
-                "source": "https://github.com/kreait/firebase-bundle/tree/2.7.0"
+                "source": "https://github.com/kreait/firebase-bundle/tree/3.1.0"
             },
             "funding": [
                 {
@@ -6566,7 +6566,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-12-04T13:18:08+00:00"
+            "time": "2021-12-04T13:24:32+00:00"
         },
         {
             "name": "kreait/firebase-php",
@@ -6815,16 +6815,16 @@
         },
         {
             "name": "laminas/laminas-stdlib",
-            "version": "3.7.0",
+            "version": "3.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-stdlib.git",
-                "reference": "cba75fad2053bb5dc8d3e7f5e62b61d75eecfaf1"
+                "reference": "bcd869e2fe88d567800057c1434f2380354fe325"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/cba75fad2053bb5dc8d3e7f5e62b61d75eecfaf1",
-                "reference": "cba75fad2053bb5dc8d3e7f5e62b61d75eecfaf1",
+                "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/bcd869e2fe88d567800057c1434f2380354fe325",
+                "reference": "bcd869e2fe88d567800057c1434f2380354fe325",
                 "shasum": ""
             },
             "require": {
@@ -6870,7 +6870,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2022-01-10T11:18:55+00:00"
+            "time": "2022-01-21T15:50:46+00:00"
         },
         {
             "name": "laravolt/avatar",
@@ -21528,5 +21528,5 @@
         "php": ">=7.4"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.2.0"
 }
