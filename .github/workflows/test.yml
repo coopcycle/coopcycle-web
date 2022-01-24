@@ -12,6 +12,7 @@ jobs:
         php_version:
           - '7.4'
           - '8.1'
+      fail-fast: false
     env:
       CYPRESS_INSTALL_BINARY: '0'
     steps:
