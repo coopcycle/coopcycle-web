@@ -8,7 +8,7 @@ use Carbon\Carbon;
 
 class SortableRestaurantIterator extends \ArrayIterator
 {
-    public function __construct($array = [], TimingRegistry $timingRegistry)
+    public function __construct($array, TimingRegistry $timingRegistry)
     {
         $this->timingRegistry = $timingRegistry;
 

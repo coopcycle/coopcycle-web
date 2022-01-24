@@ -44,7 +44,7 @@
         "stripe/stripe-php": "^7.7",
         "vich/uploader-bundle": "^1.13",
         "doctrine/doctrine-migrations-bundle": "^3.0",
-        "guzzlehttp/guzzle": "~6.0",
+        "guzzlehttp/guzzle": "^7.0",
         "myclabs/php-enum": "^1.8",
         "beberlei/doctrineextensions": "^1.0",
         "sentry/sentry-symfony": "^4.0",
@@ -64,7 +64,6 @@
         "sylius/taxonomy-bundle": "^1.7.5",
         "sonata-project/seo-bundle": "^3.0",
         "sylius/currency-bundle": "^1.7.5",
-        "php-http/guzzle6-adapter": "^2.0",
         "php-http/message": "^1.6",
         "geo6/geocoder-php-addok-provider": "^1.0",
         "geocoder-php/chain-provider": "^4.0",
@@ -100,7 +99,7 @@
         "edamov/pushok": "^0.13",
         "twig/intl-extra": "^3.0",
         "odolbeau/phone-number-bundle": "^3.1",
-        "league/omnipay": "^3",
+        "league/omnipay": "^3.2.1",
         "mercadopago/dx-php": "^2.4.1",
         "egulias/email-validator": "^3.0",
         "twilio/sdk": "^6.10",
@@ -124,7 +123,8 @@
         "symfony/doctrine-messenger": "^5.3",
         "azimolabs/apple-sign-in-php-sdk": "^2.0",
         "google/apiclient": "^2.11",
-        "theofidry/alice-data-fixtures": "1.4.0"
+        "theofidry/alice-data-fixtures": "1.4.0",
+        "php-http/guzzle7-adapter": "^1.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

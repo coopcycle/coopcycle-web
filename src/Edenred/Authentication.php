@@ -5,23 +5,23 @@ namespace AppBundle\Edenred;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
-use GuzzleHttp\Client as BaseClient;
+use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class Authentication extends BaseClient
+class Authentication
 {
     public function __construct(
-        array $config = [],
         string $clientId,
         string $clientSecret,
         RefreshTokenHandler $refreshTokenHandler,
         UrlGeneratorInterface $urlGenerator,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        array $config = []
     )
     {
         $stack = HandlerStack::create();
@@ -29,7 +29,7 @@ class Authentication extends BaseClient
 
         $config['handler'] = $stack;
 
-        parent::__construct($config);
+        $this->client = new GuzzleClient($config);
 
         $this->baseUrl = $config['base_uri'];
         $this->clientId = $clientId;
@@ -126,7 +126,7 @@ class Authentication extends BaseClient
 
     public function userInfo(CustomerInterface $customer)
     {
-        $response = $this->request('GET', '/connect/userinfo', [
+        $response = $this->client->request('GET', '/connect/userinfo', [
             'headers' => [
                 'Authorization' => sprintf('Bearer %s', $customer->getEdenredCredentials()->getAccessToken()),
             ],

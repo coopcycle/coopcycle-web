@@ -408,7 +408,7 @@ class RestaurantStats implements \Countable
         return $bypass ? $amount : $this->numberFormatter->format($amount / 100);
     }
 
-    public function count()
+    public function count(): int
     {
         return count($this->result);
     }

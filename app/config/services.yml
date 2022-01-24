@@ -545,11 +545,9 @@ services:
     tags: [ 'api_platform.filter' ]
 
   AppBundle\Api\Filter\TaskFilter:
-    arguments: [ '@doctrine', '@request_stack', '@?logger', { tokenStorage: '@security.token_storage' } ]
     tags: [ 'api_platform.filter' ]
 
   AppBundle\Api\Filter\AssignedFilter:
-    arguments: [ '@doctrine', '@request_stack', '@?logger', { tokenStorage: '@security.token_storage' } ]
     tags: [ 'api_platform.filter' ]
 
   AppBundle\Api\Filter\DeliveryOrderFilter:
