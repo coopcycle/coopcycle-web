@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -42,10 +43,16 @@ class ApiApp
     private $oauth2Client;
 
     /**
-     * @var Store
+     * @var Store|null
      * @Groups({"api_app"})
      */
     private $store;
+
+    /**
+     * @var LocalBusiness|null
+     * @Groups({"api_app"})
+     */
+    private $shop;
 
     /**
      * @var string
@@ -94,6 +101,18 @@ class ApiApp
     public function setStore(Store $store)
     {
         $this->store = $store;
+
+        return $this;
+    }
+
+    public function getShop(): ?LocalBusiness
+    {
+        return $this->shop;
+    }
+
+    public function setShop(LocalBusiness $shop)
+    {
+        $this->shop = $shop;
 
         return $this;
     }
