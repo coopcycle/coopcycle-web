@@ -7,7 +7,6 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
-use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\TaskManager;
 use Carbon\Carbon;
 use libphonenumber\NumberParseException;
@@ -17,13 +16,11 @@ class ReceiveWebhook
 {
     public function __construct(
         DeliveryRepository $deliveryRepository,
-        DeliveryManager $deliveryManager,
         TaskManager $taskManager,
         PhoneNumberUtil $phoneNumberUtil,
         string $country)
     {
         $this->deliveryRepository = $deliveryRepository;
-        $this->deliveryManager = $deliveryManager;
         $this->taskManager = $taskManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->country = $country;
@@ -138,8 +135,6 @@ class ReceiveWebhook
         // IMPORTANT
         // This is what will be used to set the external tracking id
         $delivery->getDropoff()->setRef($task['id']);
-
-        $this->deliveryManager->setDefaults($delivery);
 
         return $delivery;
     }

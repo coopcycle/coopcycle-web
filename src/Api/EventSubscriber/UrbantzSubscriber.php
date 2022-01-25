@@ -7,6 +7,7 @@ use AppBundle\Api\Resource\UrbantzWebhook;
 use AppBundle\Entity\Urbantz\Delivery as UrbantzDelivery;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Security\TokenStoreExtractor;
+use AppBundle\Service\DeliveryManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
@@ -29,12 +30,14 @@ final class UrbantzSubscriber implements EventSubscriberInterface
         HttpClientInterface $urbantzClient,
         EntityManagerInterface $entityManager,
         TokenStoreExtractor $storeExtractor,
+        DeliveryManager $deliveryManager,
         LoggerInterface $logger,
         string $secret)
     {
         $this->urbantzClient = $urbantzClient;
         $this->entityManager = $entityManager;
         $this->storeExtractor = $storeExtractor;
+        $this->deliveryManager = $deliveryManager;
         $this->logger = $logger;
         $this->secret = $secret;
     }
@@ -72,6 +75,9 @@ final class UrbantzSubscriber implements EventSubscriberInterface
 
         foreach ($webhook->deliveries as $delivery) {
             $store->addDelivery($delivery);
+            // Call DeliveryManager::setDefaults here,
+            // once the store has been associated
+            $this->deliveryManager->setDefaults($delivery);
         }
     }
 

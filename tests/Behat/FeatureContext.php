@@ -18,6 +18,7 @@ use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Store\Token as StoreToken;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\Sylius\Product;
@@ -1218,5 +1219,20 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->doctrine->getManagerForClass(RefreshToken::class)->persist($tok);
         $this->doctrine->getManagerForClass(RefreshToken::class)->flush();
+    }
+
+    /**
+     * @Given the store with name :name is associated with Urbantz hub :hub
+     */
+    public function theStoreWithNameIsAssociatedWithUrbantzHub($storeName, $hub)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $urbantzHub = new UrbantzHub();
+        $urbantzHub->setStore($store);
+        $urbantzHub->setHub($hub);
+
+        $this->doctrine->getManagerForClass(UrbantzHub::class)->persist($urbantzHub);
+        $this->doctrine->getManagerForClass(UrbantzHub::class)->flush();
     }
 }

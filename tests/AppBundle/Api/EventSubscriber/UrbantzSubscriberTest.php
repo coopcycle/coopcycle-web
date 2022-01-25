@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Security\TokenStoreExtractor;
+use AppBundle\Service\DeliveryManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
@@ -39,10 +40,13 @@ class UrbantzSubscriberTest extends TestCase
             ->getRepository(UrbantzHub::class)
             ->willReturn($this->urbantzHubRepository->reveal());
 
+        $this->deliveryManager = $this->prophesize(DeliveryManager::class);
+
         $this->subscriber = new UrbantzSubscriber(
             $this->httpClient,
             $this->entityManager->reveal(),
             $this->storeExtractor->reveal(),
+            $this->deliveryManager->reveal(),
             new NullLogger(),
             'secret'
         );
