@@ -928,6 +928,7 @@ trikoder_oauth2:
     scopes:
         - tasks
         - deliveries
+        - orders
     persistence:
         doctrine:
             entity_manager: default
