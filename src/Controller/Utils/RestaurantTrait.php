@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Utils;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Cuisine;
@@ -18,6 +19,7 @@ use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Sylius\TaxonRepository;
+use AppBundle\Form\ApiAppType;
 use AppBundle\Form\ClosingRuleType;
 use AppBundle\Form\MenuEditorType;
 use AppBundle\Form\MenuTaxonType;
@@ -1578,5 +1580,74 @@ trait RestaurantTrait
             'month' => $month,
             'payments' => $hash,
         ]));
+    }
+
+    public function restaurantApiAction(
+        $id,
+        Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        $qb = $this->entityManager
+            ->getRepository(ApiApp::class)
+            ->createQueryBuilder('a')
+            ->andWhere('a.shop = :shop')
+            ->setParameter('shop', $restaurant);
+
+        $apiApps = $qb->getQuery()->getResult();
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render('restaurant/api.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'api_apps' => $apiApps,
+        ], $routes));
+    }
+
+    public function newRestaurantApiAction(
+        $id,
+        Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        $apiApp = new ApiApp();
+        $apiApp->setShop($restaurant);
+
+        $form = $this->createForm(ApiAppType::class, $apiApp, [
+            'with_stores' => false
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $apiApp = $form->getData();
+
+            $this->getDoctrine()
+                ->getManagerForClass(ApiApp::class)
+                ->persist($apiApp);
+
+            $this->getDoctrine()
+                ->getManagerForClass(ApiApp::class)
+                ->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('api_apps.created.message')
+            );
+
+            return $this->redirectToRoute('admin_restaurant_api', [ 'id' => $id ]);
+        }
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render('restaurant/api_form.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+        ], $routes));
     }
 }
