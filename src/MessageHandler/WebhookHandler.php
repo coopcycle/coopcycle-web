@@ -10,6 +10,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Webhook;
 use AppBundle\Entity\WebhookExecution;
 use AppBundle\Message\Webhook as WebhookMessage;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
@@ -38,16 +39,28 @@ class WebhookHandler implements MessageHandlerInterface
     {
         $object = $this->iriConverter->getItemFromIri($message->getObject());
 
-        if (!$object instanceof Delivery) {
+        if (!$object instanceof Delivery && !$object instanceof OrderInterface) {
             return;
         }
 
-        if (null === $object->getStore()) {
+        if ($object instanceof Delivery && null === $object->getStore()) {
             return;
         }
 
-        $apps = $this->entityManager->getRepository(ApiApp::class)
-            ->findBy(['store' => $object->getStore()]);
+        if ($object instanceof OrderInterface && null === $object->getRestaurant()) {
+            return;
+        }
+
+        $apps = [];
+        if ($object instanceof Delivery) {
+            $apps = $this->entityManager->getRepository(ApiApp::class)
+                ->findBy(['store' => $object->getStore()]);
+        }
+
+        if ($object instanceof OrderInterface) {
+            $apps = $this->entityManager->getRepository(ApiApp::class)
+                ->findBy(['shop' => $object->getRestaurant()]);
+        }
 
         if (count($apps) === 0) {
             return;
