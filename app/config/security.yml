@@ -124,6 +124,18 @@ security:
             stateless: true
             cart_session: true
 
+        api_orders_get:
+            pattern:   ^/api/orders/[0-9]+$
+            methods: [ GET ]
+            stateless: true
+            bearer_token: true
+
+        api_orders_accept:
+            pattern:   ^/api/orders/[0-9]+/accept$
+            methods: [ PUT ]
+            stateless: true
+            bearer_token: true
+
         api_carts:
             pattern:   ^/api/orders/[0-9]+$
             methods: [ PUT ]
