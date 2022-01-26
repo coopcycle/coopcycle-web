@@ -365,6 +365,26 @@ admin_restaurant_promotion:
             restaurant_promotions: admin_restaurant_promotions
     methods: [ GET, POST ]
 
+admin_restaurant_new_api:
+    path: /admin/restaurants/{id}/api/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newRestaurantApiAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+    methods: [ GET, POST ]
+
+admin_restaurant_api:
+    path: /admin/restaurants/{id}/api
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantApiAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+    methods: [ GET, POST ]
+
 admin_order_accept:
     path: /admin/orders/{id}/accept
     defaults:

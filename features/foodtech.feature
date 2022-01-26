@@ -591,3 +591,64 @@ Feature: Food Tech
         "nextOpeningDate":@string@
       }
       """
+
+  Scenario: Retrieve order with OAuth
+    Given the current time is "2018-08-27 12:00:00"
+    And the fixtures files are loaded:
+      | sylius_channels.yml |
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    Given the user "sarah" is loaded:
+      | email      | sarah@coopcycle.org |
+      | password   | 123456              |
+    And the user "sarah" has ordered something for "2018-08-27 12:30:00" at the restaurant with id "1"
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the restaurant with name "Nodaiwa" has an OAuth client named "Nodaiwa"
+    And the OAuth client with name "Nodaiwa" has an access token
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the OAuth client "Nodaiwa" sends a "GET" request to "/api/orders/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+
+  Scenario: Accept order with OAuth
+    Given the current time is "2018-08-27 12:00:00"
+    And the fixtures files are loaded:
+      | sylius_channels.yml |
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
+    # FIXME This is needed for email notifications. It should be defined once.
+    And the setting "administrator_email" has value "admin@coopcycle.org"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    Given the user "sarah" is loaded:
+      | email      | sarah@coopcycle.org |
+      | password   | 123456              |
+    And the user "sarah" has ordered something for "2018-08-27 12:30:00" at the restaurant with id "1"
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the restaurant with name "Nodaiwa" has an OAuth client named "Nodaiwa"
+    And the OAuth client with name "Nodaiwa" has an access token
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the OAuth client "Nodaiwa" sends a "PUT" request to "/api/orders/1/accept" with body:
+      """
+      {}
+      """
+    Then the response status code should be 200
+    And the response should be in JSON

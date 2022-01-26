@@ -1332,9 +1332,12 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_api_apps');
         }
 
-        $apiApps = $this->entityManager
+        $qb = $this->entityManager
             ->getRepository(ApiApp::class)
-            ->findAll();
+            ->createQueryBuilder('a')
+            ->andWhere('a.store IS NOT NULL');
+
+        $apiApps = $qb->getQuery()->getResult();
 
         return $this->render('admin/api_apps.html.twig', [
             'api_apps' => $apiApps

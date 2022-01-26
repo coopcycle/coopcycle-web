@@ -309,3 +309,12 @@ services:
           subscribes_to: order:refused
         - name: event_subscriber
           subscribes_to: order:cancelled
+
+  coopcycle.domain.order.reactor.trigger_webhook:
+    class: AppBundle\Domain\Order\Reactor\TriggerWebhook
+    arguments:
+      - '@messenger.default_bus'
+      - '@api_platform.iri_converter'
+    tags:
+      - name: event_subscriber
+        subscribes_to: order:created
