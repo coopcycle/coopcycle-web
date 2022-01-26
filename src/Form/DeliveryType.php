@@ -99,6 +99,8 @@ class DeliveryType extends AbstractType
                     'with_address_props' => $options['with_address_props'],
                     'with_package_set' => $this->getPackageSet($options, $store),
                     'with_packages_required' => null !== $store ? $store->isPackagesRequired() : true,
+                    'with_weight' => $options['with_weight'],
+                    'with_weight_required' => null !== $store ? $store->isWeightRequired() : true,
                 ],
                 'allow_add' => true,
                 'prototype_data' => new Task(),
@@ -116,30 +118,6 @@ class DeliveryType extends AbstractType
             }
         });
 
-        // Add weight field if needed
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
-
-            $form = $event->getForm();
-            $delivery = $event->getData();
-            $store = $delivery->getStore();
-
-            if (true === $options['with_weight']) {
-
-                $required = null !== $store && $store->isWeightRequired();
-
-                $form
-                    ->add('weight', NumberType::class, [
-                        'required' => $required,
-                        'html5' => true,
-                        'label' => 'form.delivery.weight.label',
-                    ]);
-
-                if (null !== $delivery->getId() && null !== $delivery->getWeight()) {
-                    $form->get('weight')->setData($delivery->getWeight() / 1000);
-                }
-            }
-        });
-
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
 
             $form = $event->getForm();
@@ -149,12 +127,6 @@ class DeliveryType extends AbstractType
             }
 
             $delivery = $event->getForm()->getData();
-
-            if ($form->has('weight')) {
-                $weightK = $form->get('weight')->getData();
-                $weight = $weightK * 1000;
-                $delivery->setWeight($weight);
-            }
 
             $coordinates = [];
             foreach ($delivery->getTasks() as $task) {

@@ -115,8 +115,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     private $order;
 
-    private $weight;
-
     private $vehicle = self::VEHICLE_BIKE;
 
     /**
@@ -181,12 +179,25 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     public function getWeight()
     {
-        return $this->weight;
+        $totalWeight = null;
+        foreach ($this->getTasks() as $task) {
+            if (null !== $task->getWeight()) {
+                $totalWeight += $task->getWeight();
+            }
+        }
+        return $totalWeight;
     }
 
     public function setWeight($weight)
     {
-        $this->weight = $weight;
+        if (null !== $weight) {
+            foreach ($this->getTasks() as $task) {
+                if ($task->isDropoff()) {
+                    $task->setWeight($weight);
+                    break;
+                }
+            }
+        }
 
         return $this;
     }

@@ -903,7 +903,8 @@ Feature: Manage restaurants
               "after":"@string@.isDateTime()",
               "before":"@string@.isDateTime()",
               "doneAfter":"@string@.isDateTime()",
-              "doneBefore":"@string@.isDateTime()"
+              "doneBefore":"@string@.isDateTime()",
+              "weight":null
             }
           }
         ],

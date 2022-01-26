@@ -298,6 +298,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      */
     private $metadata = [];
 
+    /**
+     * @var int
+     * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create", "pricing_deliveries"})
+     */
+    private $weight;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -813,5 +819,17 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $taskPackage->setPackage($package);
 
         return $taskPackage;
+    }
+
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
+
+        return $this;
     }
 }

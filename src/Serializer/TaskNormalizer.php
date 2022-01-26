@@ -81,6 +81,10 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             }
         }
 
+        if ($object->isPickup()) {
+            unset($data['weight']);
+        }
+
         return $data;
     }
 

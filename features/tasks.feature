@@ -373,7 +373,8 @@ Feature: Tasks
         "orgName": "",
         "ref":null,
         "recurrenceRule": null,
-        "metadata": []
+        "metadata": [],
+        "weight":null
       }
       """
 
@@ -616,7 +617,8 @@ Feature: Tasks
           }
         },
         "doneAfter": "2018-12-24T23:30:00+01:00",
-        "doneBefore": "2018-12-24T23:59:59+01:00"
+        "doneBefore": "2018-12-24T23:59:59+01:00",
+        "weight": 800
       }
       """
     Then the response status code should be 201
@@ -662,7 +664,8 @@ Feature: Tasks
         "orgName": "",
         "ref":null,
         "recurrenceRule": null,
-        "metadata": []
+        "metadata": [],
+        "weight": 800
       }
       """
 
@@ -739,7 +742,8 @@ Feature: Tasks
         "orgName": "",
         "ref":null,
         "recurrenceRule": null,
-        "metadata": []
+        "metadata": [],
+        "weight":null
       }
       """
 
@@ -866,7 +870,8 @@ Feature: Tasks
             "metadata":{
               "foo":"bar",
               "baz":"bat"
-            }
+            },
+            "weight":null
           },
           {
             "@id":"/api/tasks/2",
@@ -892,7 +897,8 @@ Feature: Tasks
             "images":[],
             "ref": null,
             "recurrenceRule":null,
-            "metadata":[]
+            "metadata":[],
+            "weight":null
           }
         ],
         "hydra:totalItems":2,
