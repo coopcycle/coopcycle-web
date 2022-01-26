@@ -125,7 +125,16 @@
       {% if customer.hasUser() %}
       <a class="btn btn-xs btn-success"
         href="{{ path('admin_user_edit', { username: customer.user.username }) }}">
-        <i class="fa fa-pencil" aria-hidden="true"></i>  {% trans from 'messages' %}Edit{%  endtrans %}
+        <i class="fa fa-pencil" aria-hidden="true"></i>  {{ 'basics.edit'|trans }}
+      </a>
+      {% endif %}
+    </td>
+    <td class="text-right">
+      {% if customer.hasUser() %}
+      <a class="btn btn-xs btn-danger"
+        href="{{ path('admin_user_delete', { username: customer.user.username }) }}"
+        onclick="return confirm('{{ 'adminDashboard.users.confirmDeleteUser'|trans({ '%email%': customer.emailCanonical })|escape('js') }}')">
+        <i class="fa fa-trash" aria-hidden="true"></i>  {{ 'basics.delete'|trans }}
       </a>
       {% endif %}
     </td>
