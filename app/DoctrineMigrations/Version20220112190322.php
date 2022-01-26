@@ -37,6 +37,11 @@ final class Version20220112190322 extends AbstractMigration
         }
 
         foreach ($deliveriesWithWeight as $deliveryWithWeight) {
+
+            if (intval($deliveryWithWeight['weight']) === 0) {
+                continue;
+            }
+
             $this->addSql('UPDATE task SET weight = :weight WHERE id = :task_id', [
                 'weight' => $deliveryWithWeight['weight'],
                 'task_id' => $deliveryWithWeight['task_id']
