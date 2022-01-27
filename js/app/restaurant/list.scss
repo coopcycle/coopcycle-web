@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 @import "../../../assets/css/vars.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
@@ -119,8 +121,8 @@
   background-image: url('../../../assets/svg/Edenred_Logo.svg');
   background-repeat: no-repeat;
   display: block;
-  width: ($originalWidth / 6);
-  height: ($originalHeight / 6);
+  width: math.div($originalWidth, 6);
+  height: math.div($originalHeight, 6);
 }
 
 .restaurant-supports-vytal {
@@ -132,6 +134,6 @@
     background-repeat: no-repeat;
     background-size: cover;
     display: block;
-    width: ($vytalWidth / 15);
-    height: ($vytalHeight / 15);
+    width: math.div($vytalWidth, 15);
+    height: math.div($vytalHeight, 15);
 }

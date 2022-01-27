@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 
 #loopeat-block {
@@ -115,8 +117,8 @@ $vytalGreen: #53b848;
   background-repeat: no-repeat;
   background-size: cover;
   display: block;
-  width: ($vytalWidth / 18);
-  height: ($vytalHeight / 18);
+  width: math.div($vytalWidth, 18);
+  height: math.div($vytalHeight, 18);
 }
 
 .alert-vytal {
@@ -136,8 +138,8 @@ $vytalGreen: #53b848;
   background-repeat: no-repeat;
   background-size: cover;
   display: block;
-  width: ($w / 8);
-  height: ($h / 8);
+  width: ($w * 0.125);
+  height: ($h * 0.125);
 }
 
 .alert-en-boite-le-plat {
