@@ -18,24 +18,6 @@ services:
     ports:
       - '6379:6379'
 
-  nodejs:
-    build:
-      dockerfile: './docker/nodejs/Dockerfile'
-      context: '.'
-    image: coopcycle/node
-    depends_on:
-      - postgres
-      - redis
-      - tile38
-    ports:
-      - '8000:8000'
-    volumes:
-      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-      - '.:/srv/coopcycle'
-      - 'node_modules_node:/srv/coopcycle/node_modules/'
-    # environment:
-    #   - APP_ENV
-
   webpack:
     build:
       dockerfile: './docker/webpack/Dockerfile'
@@ -110,7 +92,6 @@ services:
     image: 'nginx:1.11-alpine'
     depends_on:
       - php
-      - nodejs
       - centrifugo
     ports:
       - '80:80'
@@ -123,7 +104,6 @@ services:
     image: 'nginx:1.11-alpine'
     depends_on:
       - php
-      - nodejs
     ports:
       - '9080:80'
     volumes:
@@ -264,7 +244,6 @@ services:
       driver: none
 
 volumes:
-  node_modules_node:
   node_modules_webpack:
   pg_data:
   php_cache:
