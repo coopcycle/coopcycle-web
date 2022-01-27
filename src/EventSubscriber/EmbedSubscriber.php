@@ -2,7 +2,6 @@
 
 namespace AppBundle\EventSubscriber;
 
-use AppBundle\Controller\EmbedController;
 use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -39,15 +38,7 @@ class EmbedSubscriber implements EventSubscriberInterface
 
         $request = $event->getRequest();
 
-        if (!$request->attributes->has('_controller')) {
-            return;
-        }
-
-        $controller = $request->attributes->get('_controller');
-
-        [$class] = explode('::', $controller, 2);
-
-        if ($request->query->has('embed') || $class === EmbedController::class) {
+        if ($request->query->has('embed')) {
             // @see Symfony\Component\HttpKernel\EventListener\AbstractSessionListener
             if ($this->storage instanceof NativeSessionStorage) {
                 $this->storage->setOptions([
