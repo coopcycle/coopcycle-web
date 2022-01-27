@@ -45,7 +45,7 @@ class EmbedSubscriber implements EventSubscriberInterface
 
         $controller = $request->attributes->get('_controller');
 
-        [$class, $method] = explode('::', $controller, 2);
+        [$class] = explode('::', $controller, 2);
 
         if ($request->query->has('embed') || $class === EmbedController::class) {
             // @see Symfony\Component\HttpKernel\EventListener\AbstractSessionListener
