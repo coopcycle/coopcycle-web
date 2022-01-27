@@ -18,7 +18,12 @@
 
   <h3>{{ 'embed.delivery.summary.title'|trans }}</h3>
 
-  {{ form_start(form) }}
+  {% set form_action_params = app.request.attributes.get('_route_params')|merge({
+    data: submission_hashid,
+    order: order|hashid(16)
+  }) %}
+
+  {{ form_start(form, { action: path(app.request.attributes.get('_route'), form_action_params) }) }}
   <div class="alert alert-info">
     {% trans with {
       '%dropoff_date%':        delivery.dropoff.doneBefore|format_datetime('medium', 'short'),
@@ -33,7 +38,7 @@
     <br>
 
     <p class="text-center">
-      <a href="{{ path('embed_delivery_start', { hashid: hashid }) }}" class="btn btn-xs btn-default">{{ 'basics.edit'|trans }}</a>
+      <a href="{{ path('embed_delivery_start', { hashid: hashid, data: submission_hashid }) }}" class="btn btn-xs btn-default">{{ 'basics.edit'|trans }}</a>
     </p>
   </div>
 
