@@ -72,6 +72,8 @@ const DynamicMenu = ({
         actions.push(MOVE_TO_BOTTOM)
       }
 
+      actions.push(CANCEL_MULTI)
+
     }
 
     if (containsOnlyUnassignedTasks) {
