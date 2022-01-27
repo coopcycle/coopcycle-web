@@ -16,6 +16,7 @@ use AppBundle\Action\Restaurant\ActivateMenu;
  *   attributes={
  *     "normalization_context"={"groups"={"restaurant"}}
  *   },
+ *   collectionOperations={},
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
