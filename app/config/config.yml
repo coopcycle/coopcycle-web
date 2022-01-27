@@ -101,9 +101,7 @@ framework:
         handler_id: snc_redis.session.handler
         cookie_lifetime: 604800 # 7 days
         gc_maxlifetime: 604800 # 7 days
-        # Make sure to *NOT* define cookie_samesite, so that it can be changed at runtime
-        # https://github.com/symfony/symfony/issues/45200
-        # cookie_samesite: 'lax'
+        cookie_samesite: 'lax'
         cookie_secure: 'auto'
     fragments:       ~
     http_method_override: true
