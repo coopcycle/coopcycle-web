@@ -607,6 +607,12 @@ class AdminController extends AbstractController
         $user->setEmailCanonical($anonymousEmail);
         $user->setEnabled(false);
 
+        $customer = $user->getCustomer();
+        if (null !== $customer) {
+            $customer->setEmail($anonymousEmail);
+            $customer->setEmailCanonical($anonymousEmail);
+        }
+
         $userManager->updateUser($user, false);
 
         $this->entityManager->flush();
