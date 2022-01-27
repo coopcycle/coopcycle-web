@@ -817,10 +817,6 @@ services:
     arguments:
       $annotation: '%restaurant_menu_cache_annotation%'
 
-  AppBundle\EventSubscriber\EmbedSubscriber:
-    arguments:
-      $debug: '%kernel.debug%'
-
   AppBundle\EventListener\Upload\UploadListener:
     arguments:
       $mappingFactory: '@vich_uploader.property_mapping_factory'
