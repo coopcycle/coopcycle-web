@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "cypress-webpack-preprocessor-v5": "^5.0.0-alpha.1",
+    "dotenv": "^8.6.0",
     "form-data": "^2.3.3",
     "lodash": "^4.17.21",
     "promise": "^8.1.0",
