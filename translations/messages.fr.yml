@@ -1202,3 +1202,5 @@ restaurant.closedNowWarning: Ce restaurant est fermé actuellement.
 restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 restaurant.form.en_boite_le_plat_enabled.label: Activer le système de consigne En Boîte Le Plat
 form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'Je veux des contenants consignés <a href="https://enboiteleplat.fr/rennes/" target="_blank">En Boîte Le Plat</a>.'
+adminDashboard.users.confirmDeleteUser: Voulez-vous vraiment supprimer l'utilisateur avec l'email %email% ?
+adminDashboard.users.userHasBeenDeleted: L'utilisateur a été supprimé.
