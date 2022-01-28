@@ -87,6 +87,7 @@
   <th class="text-right">{% trans %}adminDashboard.users.roles{% endtrans  %}</th>
   <th>{% trans %}profile.username{% endtrans  %}</th>
   <th></th>
+  <th></th>
 </thead>
 <tbody>
 {% for customer in customers %}
@@ -130,7 +131,8 @@
       {% endif %}
     </td>
     <td class="text-right">
-      {% if customer.hasUser() and customer.user.enabled %}
+      {# Show delete button only for "normal" users, without any special role #}
+      {% if customer.hasUser() and customer.user.enabled and customer.user.hasRole('ROLE_USER') and customer.user.roles|length == 1 %}
       <form method="post" action="{{ path('admin_user_delete', { username: customer.user.username }) }}">
         <button type="submit" class="btn btn-xs btn-danger"
           href="{{ path('admin_user_delete', { username: customer.user.username }) }}"
