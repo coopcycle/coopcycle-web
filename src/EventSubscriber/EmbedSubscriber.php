@@ -38,7 +38,10 @@ class EmbedSubscriber implements EventSubscriberInterface
 
         $request = $event->getRequest();
 
-        if ($request->query->has('embed')) {
+        $hasEmbedParam = $request->query->has('embed')
+            && ('' === $request->query->get('embed') || true === $request->query->getBoolean('embed'));
+
+        if ($hasEmbedParam) {
             // @see Symfony\Component\HttpKernel\EventListener\AbstractSessionListener
             if ($this->storage instanceof NativeSessionStorage) {
                 $this->storage->setOptions([
@@ -52,26 +55,12 @@ class EmbedSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function onKernelRequest(RequestEvent $event)
-    {
-        $request = $event->getRequest();
-
-        if ($request->query->has('embed')) {
-            if ('' === $request->query->get('embed') || true === $request->query->getBoolean('embed')) {
-                $request->getSession()->set('embed', true);
-            } else {
-                $request->getSession()->remove('embed');
-            }
-        }
-    }
-
     public static function getSubscribedEvents()
     {
         return [
             KernelEvents::REQUEST => [
-                // Run *AFTER* Symfony\Component\HttpKernel\EventListener\RouterListener (priority = 32)
-                ['setCookieSameSiteNoneSecure', 24],
-                ['onKernelRequest', 0],
+                // Run *BEFORE* Symfony\Component\HttpKernel\EventListener\SessionListener (priority = 128)
+                ['setCookieSameSiteNoneSecure', 132],
             ],
         ];
     }

@@ -1,6 +1,7 @@
 import { createAction } from 'redux-actions'
 import _ from 'lodash'
 import axios from 'axios'
+import qs from 'qs'
 
 import i18n, { getCountry } from '../../i18n'
 import { geocode } from '../../components/AddressAutosuggest'
@@ -56,6 +57,18 @@ const httpClient = axios.create()
 
 httpClient.defaults.headers.common['Content-Type']     = 'application/x-www-form-urlencoded'
 httpClient.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+
+function getRoutingParams(params) {
+
+  const urlParams = qs.parse(window.location.search.substring(1))
+
+  if (Object.prototype.hasOwnProperty.call(urlParams, 'embed')
+    && (urlParams.embed === '' || urlParams.embed === '1')) {
+    params.embed = '1'
+  }
+
+  return params
+}
 
 function serializeForm(withTime = false) {
 
@@ -184,7 +197,7 @@ export function updateItemQuantity(itemID, quantity) {
     const { restaurant } = getState()
 
     const url =
-      window.Routing.generate('restaurant_modify_cart_item_quantity', { id: restaurant.id, itemId: itemID })
+      window.Routing.generate('restaurant_modify_cart_item_quantity', getRoutingParams({ id: restaurant.id, itemId: itemID }))
 
     dispatch(fetchRequest())
 
@@ -203,7 +216,7 @@ export function removeItem(itemID) {
     dispatch(fetchRequest())
 
     const restaurant = getState().restaurant
-    const url = window.Routing.generate('restaurant_remove_from_cart', { id: restaurant.id, cartItemId: itemID })
+    const url = window.Routing.generate('restaurant_remove_from_cart', getRoutingParams({ id: restaurant.id, cartItemId: itemID }))
 
     const fetchParams = {
       url,
@@ -326,7 +339,7 @@ export function changeAddress(address) {
         dispatch(disableTakeaway(false))
 
         const url =
-          window.Routing.generate('restaurant_cart_address', { id: restaurant.id })
+          window.Routing.generate('restaurant_cart_address', getRoutingParams({ id: restaurant.id }))
 
         $.post(url, { address: address['@id'] })
           .then(res => handleAjaxResponse(res, dispatch, false))
@@ -364,7 +377,7 @@ export function clearDate() {
     const { restaurant } = getState()
 
     const url =
-      window.Routing.generate('restaurant_cart_clear_time', { id: restaurant.id })
+      window.Routing.generate('restaurant_cart_clear_time', getRoutingParams({ id: restaurant.id }))
 
     dispatch(fetchRequest())
 

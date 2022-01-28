@@ -3,21 +3,21 @@
 namespace AppBundle\Embed;
 
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class Context
 {
-    public function __construct(SessionInterface $session)
+    public function __construct(RequestStack $requestStack)
     {
-        $this->session = $session;
+        $this->requestStack = $requestStack;
     }
 
     public function isEmbedded()
     {
-        if (!$this->session->has('embed')) {
-            return false;
-        }
+        $request = $this->requestStack->getCurrentRequest();
 
-        return (bool) $this->session->get('embed');
+        return $request->query->has('embed')
+            && ('' === $request->query->get('embed') || true === $request->query->getBoolean('embed'));
     }
 
     public function isEnabled()

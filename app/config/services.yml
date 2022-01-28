@@ -1179,3 +1179,7 @@ services:
     arguments:
       - '@snc_redis.session'
       - { 'prefix': '%database_name%:session:' }
+
+  AppBundle\Routing\EmbedAwareRouter:
+    decorates: router
+    arguments: ['@.inner']
