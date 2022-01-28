@@ -131,11 +131,13 @@
     </td>
     <td class="text-right">
       {% if customer.hasUser() %}
-      <a class="btn btn-xs btn-danger"
-        href="{{ path('admin_user_delete', { username: customer.user.username }) }}"
-        onclick="return confirm('{{ 'adminDashboard.users.confirmDeleteUser'|trans({ '%email%': customer.emailCanonical })|escape('js') }}')">
-        <i class="fa fa-trash" aria-hidden="true"></i>  {{ 'basics.delete'|trans }}
-      </a>
+      <form method="post" action="{{ path('admin_user_delete', { username: customer.user.username }) }}">
+        <button type="submit" class="btn btn-xs btn-danger"
+          href="{{ path('admin_user_delete', { username: customer.user.username }) }}"
+          onclick="return confirm('{{ 'adminDashboard.users.confirmDeleteUser'|trans({ '%email%': customer.emailCanonical })|escape('js') }}')">
+          <i class="fa fa-trash" aria-hidden="true"></i>  {{ 'basics.delete'|trans }}
+        </button>
+      </form>
       {% endif %}
     </td>
   </tr>
