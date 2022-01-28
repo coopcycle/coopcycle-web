@@ -99,7 +99,7 @@ if (!Encore.isProduction()) {
 
 // https://github.com/webpack/webpack-dev-server/blob/master/CHANGELOG.md#400-beta0-2020-11-27
 Encore.configureDevServerOptions(options => {
-  options.firewall = false
+  // options.firewall = false
   options.static = [
     {
       directory: 'web/',
@@ -110,6 +110,16 @@ Encore.configureDevServerOptions(options => {
   ]
   options.headers = { 'Access-Control-Allow-Origin': '*' }
   options.compress = true
+
+  // --host 0.0.0.0 --public localhost:8080 --port 8080
+  options.host = '0.0.0.0'
+  options.port = 8080
+  options.client = {
+    webSocketURL: {
+      hostname: 'localhost',
+      port: 8080,
+    }
+  }
 })
 
 let webpackConfig = Encore.getWebpackConfig()
