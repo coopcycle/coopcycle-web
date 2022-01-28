@@ -43,6 +43,8 @@ adminDashboard.shops.title: Tiendas
 adminDashboard.users.title: Usuarios
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Editar usuario
+adminDashboard.users.confirmDeleteUser: ¿Estás seguro de eliminar al usuario con email %email%?
+adminDashboard.users.userHasBeenDeleted: El usuario ha sido eliminado.
 adminDashboard.users.edit.addStore: Añadir tienda
 adminDashboard.users.edit.addRestaurant: Añadir restaurante
 adminDashboard.users.createNew: Añadir usuario

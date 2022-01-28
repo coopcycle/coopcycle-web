@@ -64,6 +64,8 @@ adminDashboard.restaurants.exclusive: Exclusive
 adminDashboard.users.title: Users
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Edit user
+adminDashboard.users.confirmDeleteUser: Are you sure you want to delete user with email %email%?
+adminDashboard.users.userHasBeenDeleted: User has been deleted.
 adminDashboard.users.edit.addStore: Add a store
 adminDashboard.users.edit.addRestaurant: Add a restaurant
 adminDashboard.users.createNew: Add user

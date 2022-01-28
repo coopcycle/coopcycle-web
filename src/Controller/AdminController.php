@@ -591,6 +591,42 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/user/{username}/delete", name="admin_user_delete", methods={"POST"})
+     */
+    public function userDeleteAction($username, Request $request, UserManagerInterface $userManager)
+    {
+        $user = $userManager->findUserByUsername($username);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
+
+        $anonymousEmail = sprintf('anon%s@coopcycle.org', bin2hex(random_bytes(8)));
+
+        $user->setEmail($anonymousEmail);
+        $user->setEmailCanonical($anonymousEmail);
+        $user->setEnabled(false);
+
+        $customer = $user->getCustomer();
+        if (null !== $customer) {
+            $customer->setEmail($anonymousEmail);
+            $customer->setEmailCanonical($anonymousEmail);
+            $customer->setFullName('');
+        }
+
+        $userManager->updateUser($user, false);
+
+        $this->entityManager->flush();
+
+        $this->addFlash(
+            'notice',
+            $this->translator->trans('adminDashboard.users.userHasBeenDeleted')
+        );
+
+        return $this->redirectToRoute('admin_users');
+    }
+
+    /**
      * @Route("/admin/user/{username}/tracking", name="admin_user_tracking")
      */
     public function userTrackingAction($username, Request $request, UserManagerInterface $userManager)

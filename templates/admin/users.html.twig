@@ -87,10 +87,11 @@
   <th class="text-right">{% trans %}adminDashboard.users.roles{% endtrans  %}</th>
   <th>{% trans %}profile.username{% endtrans  %}</th>
   <th></th>
+  <th></th>
 </thead>
 <tbody>
 {% for customer in customers %}
-  <tr>
+  <tr class="{{ customer.hasUser() and not customer.user.enabled ? 'danger' : '' }}">
     <td>
       <span class="text-monospace">{% if is_demo %}✴✴✴{% else %}{{ customer.emailCanonical }}{% endif %}</span>
     </td>
@@ -125,8 +126,20 @@
       {% if customer.hasUser() %}
       <a class="btn btn-xs btn-success"
         href="{{ path('admin_user_edit', { username: customer.user.username }) }}">
-        <i class="fa fa-pencil" aria-hidden="true"></i>  {% trans from 'messages' %}Edit{%  endtrans %}
+        <i class="fa fa-pencil" aria-hidden="true"></i>  {{ 'basics.edit'|trans }}
       </a>
+      {% endif %}
+    </td>
+    <td class="text-right">
+      {# Show delete button only for "normal" users, without any special role #}
+      {% if customer.hasUser() and customer.user.enabled and customer.user.hasRole('ROLE_USER') and customer.user.roles|length == 1 %}
+      <form method="post" action="{{ path('admin_user_delete', { username: customer.user.username }) }}">
+        <button type="submit" class="btn btn-xs btn-danger"
+          href="{{ path('admin_user_delete', { username: customer.user.username }) }}"
+          onclick="return confirm('{{ 'adminDashboard.users.confirmDeleteUser'|trans({ '%email%': customer.emailCanonical })|escape('js') }}')">
+          <i class="fa fa-trash" aria-hidden="true"></i>  {{ 'basics.delete'|trans }}
+        </button>
+      </form>
       {% endif %}
     </td>
   </tr>
