@@ -90,7 +90,7 @@
 </thead>
 <tbody>
 {% for customer in customers %}
-  <tr>
+  <tr class="{{ customer.hasUser() and not customer.user.enabled ? 'danger' : '' }}">
     <td>
       <span class="text-monospace">{% if is_demo %}✴✴✴{% else %}{{ customer.emailCanonical }}{% endif %}</span>
     </td>
@@ -130,7 +130,7 @@
       {% endif %}
     </td>
     <td class="text-right">
-      {% if customer.hasUser() %}
+      {% if customer.hasUser() and customer.user.enabled %}
       <form method="post" action="{{ path('admin_user_delete', { username: customer.user.username }) }}">
         <button type="submit" class="btn btn-xs btn-danger"
           href="{{ path('admin_user_delete', { username: customer.user.username }) }}"
