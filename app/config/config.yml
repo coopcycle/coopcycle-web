@@ -97,8 +97,8 @@ framework:
     default_locale:  "%locale%"
     trusted_hosts:   ~
     session:
-        # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
-        handler_id: snc_redis.session.handler
+        # https://symfony.com/doc/5.4/session/database.html#store-sessions-in-a-key-value-database-redis
+        handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler
         cookie_lifetime: 604800 # 7 days
         gc_maxlifetime: 604800 # 7 days
         cookie_samesite: 'lax'
@@ -385,8 +385,6 @@ snc_redis:
             type: phpredis
             alias: session
             dsn: "%env(COOPCYCLE_REDIS_DSN)%"
-            options:
-                prefix: "%database_name%:"
         tile38:
             type: phpredis
             alias: tile38
@@ -398,15 +396,6 @@ snc_redis:
             type: phpredis
             alias: shared
             dsn: "%env(COOPCYCLE_REDIS_DSN)%"
-    session:
-        client: session
-        prefix: "session:"
-        # Disable session locking for performance (?)
-        # https://github.com/snc/SncRedisBundle/issues/132
-        # https://github.com/snc/SncRedisBundle/issues/182
-        # https://github.com/snc/SncRedisBundle/issues/250
-        # https://github.com/snc/SncRedisBundle/pull/404
-        # locking: false
 
 oneup_flysystem:
     adapters:

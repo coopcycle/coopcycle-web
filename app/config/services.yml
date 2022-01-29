@@ -1174,3 +1174,9 @@ services:
 
   AppBundle\Security\CartSessionAuthenticator:
     abstract: true
+
+  # https://symfony.com/doc/5.4/session/database.html#store-sessions-in-a-key-value-database-redis
+  Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
+    arguments:
+      - '@snc_redis.session'
+      - { 'prefix': '%database_name%:session:' }
