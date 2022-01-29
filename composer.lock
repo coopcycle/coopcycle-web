@@ -12772,16 +12772,16 @@
         },
         {
             "name": "snc/redis-bundle",
-            "version": "4.1.3",
+            "version": "4.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/snc/SncRedisBundle.git",
-                "reference": "341ea72b9ef4fc85ea80bdebbefb7ed8de6e6bea"
+                "reference": "f23d544741df8ff2fe56fa3391f02bedc7725a9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/snc/SncRedisBundle/zipball/341ea72b9ef4fc85ea80bdebbefb7ed8de6e6bea",
-                "reference": "341ea72b9ef4fc85ea80bdebbefb7ed8de6e6bea",
+                "url": "https://api.github.com/repos/snc/SncRedisBundle/zipball/f23d544741df8ff2fe56fa3391f02bedc7725a9f",
+                "reference": "f23d544741df8ff2fe56fa3391f02bedc7725a9f",
                 "shasum": ""
             },
             "require": {
@@ -12855,9 +12855,9 @@
             ],
             "support": {
                 "issues": "https://github.com/snc/SncRedisBundle/issues",
-                "source": "https://github.com/snc/SncRedisBundle/tree/4.1.3"
+                "source": "https://github.com/snc/SncRedisBundle/tree/4.1.5"
             },
-            "time": "2022-01-17T13:01:15+00:00"
+            "time": "2022-01-28T20:56:50+00:00"
         },
         {
             "name": "sonata-project/block-bundle",
