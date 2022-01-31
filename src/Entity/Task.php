@@ -805,6 +805,24 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         }
     }
 
+    public function setQuantityForPackage(Package $package, $quantity = 1)
+    {
+        $wrappedPackage = $this->resolvePackage($package);
+
+        if (0 === $quantity) {
+            if ($this->packages->contains($wrappedPackage)) {
+                $this->packages->removeElement($wrappedPackage);
+            }
+            return;
+        }
+
+        $wrappedPackage->setQuantity($quantity);
+
+        if (!$this->packages->contains($wrappedPackage)) {
+            $this->packages->add($wrappedPackage);
+        }
+    }
+
     protected function resolvePackage(Package $package): TaskPackage
     {
         if ($this->hasPackage($package)) {

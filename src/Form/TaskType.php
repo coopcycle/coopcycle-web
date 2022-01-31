@@ -235,14 +235,22 @@ class TaskType extends AbstractType
             }
 
             if ($form->has('packages')) {
+
                 $packages = $form->get('packages')->getData();
+
+                $hash = new \SplObjectStorage();
+
                 foreach ($packages as $packageWithQuantity) {
-                    if ($packageWithQuantity->getQuantity() > 0) {
-                        $task->addPackageWithQuantity(
-                            $packageWithQuantity->getPackage(),
-                            $packageWithQuantity->getQuantity()
-                        );
+                    $package = $packageWithQuantity->getPackage();
+                    if (!$hash->contains($package)) {
+                        $hash[$package] = 0;
                     }
+                    $hash[$package] = $hash[$package] + $packageWithQuantity->getQuantity();
+                }
+
+                foreach ($hash as $package) {
+                    $quantity = $hash[$package];
+                    $task->setQuantityForPackage($package, $quantity);
                 }
             }
 
