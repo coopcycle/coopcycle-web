@@ -7,13 +7,11 @@ use Jaybizzle\CrawlerDetect\CrawlerDetect;
 use Redis;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
 class MaintenanceListener
 {
-    private $tokenStorage;
     private $redis;
     private $translator;
     private $templating;
@@ -26,13 +24,11 @@ class MaintenanceListener
 
     public function __construct(
         MaintenanceManager $maintenance,
-        TokenStorageInterface $tokenStorage,
         Redis $redis,
         TranslatorInterface $translator,
         TwigEnvironment $templating)
     {
         $this->maintenance = $maintenance;
-        $this->tokenStorage = $tokenStorage;
         $this->redis = $redis;
         $this->translator = $translator;
         $this->templating = $templating;
@@ -45,10 +41,6 @@ class MaintenanceListener
         }
 
         $request = $event->getRequest();
-
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return;
-        }
 
         $crawlerDetect = new CrawlerDetect();
 
