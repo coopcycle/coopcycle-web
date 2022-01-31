@@ -2,7 +2,7 @@
 
 namespace AppBundle\Form\Checkout;
 
-use AppBundle\DataType\TsRange;
+use AppBundle\Entity\Nonprofit;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\LoopEat\Context as LoopEatContext;
@@ -10,22 +10,20 @@ use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\LoopEatOrder;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CheckoutAddressType extends AbstractType
 {
@@ -43,7 +41,8 @@ class CheckoutAddressType extends AbstractType
         LoopEatClient $loopeatClient,
         LoopEatContext $loopeatContext,
         SessionInterface $session,
-        string $loopeatOAuthFlow)
+        string $loopeatOAuthFlow,
+        bool $nonProfitsEnabled)
     {
         $this->translator = $translator;
         $this->priceFormatter = $priceFormatter;
@@ -51,6 +50,7 @@ class CheckoutAddressType extends AbstractType
         $this->loopeatContext = $loopeatContext;
         $this->session = $session;
         $this->loopeatOAuthFlow = $loopeatOAuthFlow;
+        $this->nonProfitsEnabled = $nonProfitsEnabled;
 
         parent::__construct($orderTimeHelper);
     }
@@ -198,6 +198,17 @@ class CheckoutAddressType extends AbstractType
                 ]);
             }
         });
+
+        if ($this->nonProfitsEnabled) {
+            $builder->add('nonprofit', EntityType::class, [
+                'class' => Nonprofit::class,
+                'choice_label' => 'name',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->where('u.enabled = true');
+                },
+            ]);
+        }
     }
 
     private function disableChildForm(FormInterface $form, $name)

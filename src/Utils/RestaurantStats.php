@@ -5,25 +5,23 @@ namespace AppBundle\Utils;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\Task;
-use AppBundle\Entity\User;
+use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\Refund;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Sylius\OrderView;
-use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Entity\Sylius\TaxRate;
-use AppBundle\Sylius\Taxation\TaxesHelper;
+use AppBundle\Entity\Task;
+use AppBundle\Entity\User;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Taxation\TaxesHelper;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
-use Doctrine\Persistence\ObjectRepository;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Knp\Component\Pager\Paginator;
 use League\Csv\Writer as CsvWriter;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -44,6 +42,8 @@ class RestaurantStats implements \Countable
 
     private $numberFormatter;
 
+    private bool $nonProfitsEnabled;
+
     const MAX_RESULTS = 50;
 
     public function __construct(
@@ -56,7 +56,8 @@ class RestaurantStats implements \Countable
         TranslatorInterface $translator,
         TaxesHelper $taxesHelper,
         bool $withVendorName = false,
-        bool $withMessenger = false)
+        bool $withMessenger = false,
+        bool $nonProfitsEnabled = false)
     {
         $this->entityManager = $entityManager;
 
@@ -65,6 +66,7 @@ class RestaurantStats implements \Countable
         $this->taxesHelper = $taxesHelper;
         $this->withVendorName = $withVendorName;
         $this->withMessenger = $withMessenger;
+        $this->nonProfitsEnabled = $nonProfitsEnabled;
 
         $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
         $this->numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
@@ -82,6 +84,10 @@ class RestaurantStats implements \Countable
 
         if ($withMessenger) {
             $this->loadMessengers();
+        }
+
+        if ($nonProfitsEnabled) {
+            $this->addNonprofits();
         }
     }
 
@@ -282,6 +288,42 @@ class RestaurantStats implements \Countable
         }, $this->result);
     }
 
+    private function addNonprofits()
+    {
+        if (count($this->ids) === 0) {
+            return;
+        }
+
+        $qb = $this->entityManager
+            ->getRepository(Nonprofit::class)
+            ->createQueryBuilder('np');
+
+        $qb
+            ->select('np.id')
+            ->addSelect('np.name')
+            ;
+
+        $nonProfits = $qb->getQuery()->getArrayResult();
+
+        $nonProfitsById = array_reduce($nonProfits, function ($accumulator, $nonProfit) {
+
+            $accumulator[$nonProfit['id']] = $nonProfit['name'];
+
+            return $accumulator;
+
+        }, []);
+
+        $this->result = array_map(function ($order) use ($nonProfitsById) {
+
+            if (!empty($order->nonprofitId)) {
+                $order->nonprofitName = $nonProfitsById[$order->nonprofitId];
+            }
+
+            return $order;
+
+        }, $this->result);
+    }
+
     private function computeTaxes()
     {
         $this->serviceTaxRateCode = $this->taxesHelper->getServiceTaxRateCode();
@@ -447,6 +489,9 @@ class RestaurantStats implements \Countable
         $headings[] = 'platform_fee';
         $headings[] = 'refund_total';
         $headings[] = 'net_revenue';
+        if ($this->nonProfitsEnabled) {
+            $headings[] = 'nonprofit';
+        }
 
         return $headings;
     }
@@ -523,6 +568,8 @@ class RestaurantStats implements \Countable
                 return $this->formatNumber($order->getRefundTotal(), !$formatted);
             case 'net_revenue':
                 return $this->formatNumber($order->getRevenue(), !$formatted);
+            case 'nonprofit':
+                return $order->getNonprofit();
         }
 
         return '';
@@ -573,7 +620,7 @@ class RestaurantStats implements \Countable
             'stripe_fee',
             'platform_fee',
             'refund_total',
-            'net_revenue',
+            'net_revenue'
         ]);
     }
 
@@ -636,6 +683,7 @@ class RestaurantStats implements \Countable
         }
 
         $result = $query->getArrayResult();
+
         $orders = array_map(fn ($data) => OrderView::create($data, $restaurant), $result);
 
         return $orders;

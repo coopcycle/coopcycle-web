@@ -1,0 +1,49 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+  <li>
+    <a href="{{ path('admin_restaurants') }}" >
+      {{ 'adminDashboard.shops.title'|trans }}
+    </a>
+  </li>
+  <li>
+    {{ 'adminDashboard.nonprofits.title'|trans }}
+  </li>
+{% endblock %}
+
+{% block content %}
+
+  <div class="text-right mb-4">
+    <a href="{{ path('admin_nonprofit_new') }}" class="btn btn-success">
+      <i class="fa fa-plus mr-2"></i>
+      <span>{% trans %}adminDashboard.nonprofits.createNew{% endtrans %}</span>
+    </a>
+  </div>
+
+  {% if nonprofits|length > 0 %}
+    <table class="table">
+      <tbody>
+      {% for nonprofit in nonprofits %}
+        <tr>
+          <td width="5%"><a href="{{ path('admin_nonprofit', { id: nonprofit.id }) }}">#{{ nonprofit.id }}</a></td>
+          <td width="20%">
+            <span>{{ nonprofit.name }}</span>
+          </td>
+          <td width="25%">{{ nonprofit.description }}</td>
+          <td class="text-right" width="5%">
+            <form action="{{ path('admin_nonprofit_delete', { id: nonprofit.id }) }}" method="POST"
+                  onsubmit="javascript: return confirm('{% trans %}adminDashboard.nonprofits.confirm_delete{% endtrans %}');" >
+              <button type="submit" class="fa fa-trash btn-link"></button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="alert alert-info">
+      {% trans %}basics.no_entries{% endtrans %}
+    </div>
+  {% endif %}
+
+{% endblock %}

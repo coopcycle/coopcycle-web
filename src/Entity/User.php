@@ -89,6 +89,8 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     protected $quotesAllowed = false;
 
+    protected $defaultNonprofit;
+
     /**
      * @var CustomerInterface|null
      */
@@ -395,5 +397,15 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
         $this->mercadopagoAccounts->add($account);
 
         return $this;
+    }
+
+    public function getDefaultNonprofit()
+    {
+        return $this->defaultNonprofit;
+    }
+
+    public function setDefaultNonprofit($defaultNonprofit)
+    {
+        $this->defaultNonprofit = $defaultNonprofit;
     }
 }

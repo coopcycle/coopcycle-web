@@ -60,6 +60,7 @@ parameters:
     craue_config.cache_adapter.class: Craue\ConfigBundle\CacheAdapter\SymfonyCacheComponentAdapter
     vytal_enabled: '%env(bool:VYTAL_ENABLED)%'
     en_boite_le_plat_enabled: '%env(bool:EN_BOITE_LE_PLAT_ENABLED)%'
+    nonprofits_enabled: '%env(bool:NONPROFITS_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -439,6 +440,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: product_imports
+        nonprofits_images:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: nonprofits_images
         cdn:
             awss3v3:
                 client: cdn_s3_client
@@ -477,6 +483,10 @@ oneup_flysystem:
             adapter: product_imports
             alias: product_imports_filesystem
             mount: product_imports_filesystem
+        nonprofits_images:
+            adapter: nonprofits_images
+            alias: nonprofits_images_filesystem
+            mount: nonprofits_images_filesystem
         cdn:
             adapter: cdn
             alias: cdn_filesystem

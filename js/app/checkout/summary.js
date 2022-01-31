@@ -240,3 +240,11 @@ $('#apply-coupon').on('click', function(e) {
     }
   })
 })
+
+const nonprofitInput = document.getElementById('nonprofit_input');
+const nonprofitCards = Array.from(document.getElementsByClassName('nonprofit-card'))
+window.setNonprofit = function (elem) {
+  nonprofitInput.value = elem.dataset.value;
+  nonprofitCards.map(x => x.classList.remove('active'));
+  elem.classList.add("active");
+}

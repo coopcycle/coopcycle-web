@@ -266,6 +266,7 @@ profile.managedStores: Magasins gérés par l'utilisateur
 profile.managedRestaurants: Restaurants gérés par l'utilisateur
 profile.accountType: Type de compte
 order.cart.title: Panier
+order.cart.donation: Donation
 order.items.products_with_count: Produits (%count%)
 order.summary.heading: Commande %number% (#%id%)
 order.total_excluding_tax: Total HT
@@ -930,6 +931,7 @@ order.export.heading.platform_fee: Frais Plateforme
 order.export.heading.net_revenue: Revenu net
 order.export.heading.completed_by: Livrée par
 order.export.heading.refund_total: Remboursements
+order.export.heading.nonprofit: Association
 form.order_export.messenger.label: Inclure une colonne avec le coursier ayant livré
   la commande
 basics.show: Afficher
@@ -1191,6 +1193,9 @@ api_apps.regenerate_secret_warning: Toutes les applications utilisant la clé se
 restaurant.form.cash_on_delivery_enabled.label: Activer le paiement en contre-remboursement
 restaurant.form.cash_on_delivery_enabled.help: Cela permettra aux clients de payer en espèces. À utiliser avec précaution.
 localBusiness.form.business_address.help: Cette adresse sera utilisée dans les reçus
+adminDashboard.nonprofits.createNew: Ajouter une nouvelle association
+adminDashboard.nonprofits.title: Associations
+adminDashboard.nonprofits.confirm_delete: Êtes-vous sûr de supprimer cette association ?
 restaurants.pre_order: Pré-commander
 restaurant.closedOpensTodayLaterWarning: Ce restaurant est fermé maintenant mais ouvre aujourd'hui à <strong>%time%</strong>.
 restaurant.canOrderForLater: Mais vous pouvez toujours commander pour plus tard !
