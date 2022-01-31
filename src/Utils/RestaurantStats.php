@@ -68,14 +68,12 @@ class RestaurantStats implements \Countable
         $this->withMessenger = $withMessenger;
         $this->nonProfitsEnabled = $nonProfitsEnabled;
 
-
         $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
         $this->numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
         $this->numberFormatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
 
         $this->result = $this->getArrayResult($start, $end, $restaurant);
         $this->ids = array_map(fn ($o) => $o->id, $this->result);
-
 
         $this->addAdjustments();
         $this->addVendors();
@@ -86,6 +84,10 @@ class RestaurantStats implements \Countable
 
         if ($withMessenger) {
             $this->loadMessengers();
+        }
+
+        if ($nonProfitsEnabled) {
+            $this->addNonprofits();
         }
     }
 
@@ -279,6 +281,42 @@ class RestaurantStats implements \Countable
                 if ($refund['order_id'] === $order->id) {
                     $order->refunds[] = $refund;
                 }
+            }
+
+            return $order;
+
+        }, $this->result);
+    }
+
+    private function addNonprofits()
+    {
+        if (count($this->ids) === 0) {
+            return;
+        }
+
+        $qb = $this->entityManager
+            ->getRepository(Nonprofit::class)
+            ->createQueryBuilder('np');
+
+        $qb
+            ->select('np.id')
+            ->addSelect('np.name')
+            ;
+
+        $nonProfits = $qb->getQuery()->getArrayResult();
+
+        $nonProfitsById = array_reduce($nonProfits, function ($accumulator, $nonProfit) {
+
+            $accumulator[$nonProfit['id']] = $nonProfit['name'];
+
+            return $accumulator;
+
+        }, []);
+
+        $this->result = array_map(function ($order) use ($nonProfitsById) {
+
+            if (!empty($order->nonprofitId)) {
+                $order->nonprofitName = $nonProfitsById[$order->nonprofitId];
             }
 
             return $order;
@@ -622,17 +660,11 @@ class RestaurantStats implements \Countable
 
         $rsm->addRootEntityFromClassMetadata(Order::class, 'o');
         $rsm->addJoinedEntityResult(OrderVendor::class, 'v', 'o', 'vendors');
-        if ($this->nonProfitsEnabled) {
-            $rsm->addJoinedEntityFromClassMetadata(Nonprofit::class, 'n', 'o', 'nonprofit', ['nonprofit_id', 'id']);
-        }
 
         $sql = 'SELECT ' . $rsm->generateSelectClause() . ' '
             . 'FROM sylius_order o '
-            . 'LEFT JOIN sylius_order_vendor v ON (o.id = v.order_id) ';
-            if ($this->nonProfitsEnabled) {
-                $sql .= 'LEFT JOIN nonprofit n ON (o.nonprofit_id = n.id) ';
-            }
-            $sql .= 'WHERE '
+            . 'LEFT JOIN sylius_order_vendor v ON (o.id = v.order_id) '
+            . 'WHERE '
             . '(o.shipping_time_range && CAST(:range AS tsrange)) = true '
             . 'AND o.state = :state'
             ;
@@ -644,13 +676,14 @@ class RestaurantStats implements \Countable
         $sql .= ' ORDER BY o.shipping_time_range DESC';
 
         $query = $this->entityManager->createNativeQuery($sql, $rsm);
-
         $query->setParameter('state', OrderInterface::STATE_FULFILLED);
         $query->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')));
         if (null !== $restaurant) {
             $query->setParameter('restaurant', $restaurant);
         }
+
         $result = $query->getArrayResult();
+
         $orders = array_map(fn ($data) => OrderView::create($data, $restaurant), $result);
 
         return $orders;

@@ -29,6 +29,9 @@ class OrderView
 
     public $refunds = [];
 
+    public $nonprofitId;
+    public $nonprofitName;
+
     public function __construct(?LocalBusiness $restaurant = null)
     {
         $this->restaurant = $restaurant;
@@ -182,8 +185,9 @@ class OrderView
         $order->takeaway          = $data['takeaway'];
         $order->itemsTotal        = $data['itemsTotal'];
         $order->total             = $data['total'];
-        if(isset($data['nonprofit'])) {
-            $order->nonprofit     = $data['nonprofit']['name'];
+
+        if (isset($data['nonprofit_id'])) {
+            $order->nonprofitId = $data['nonprofit_id'];
         }
 
         return $order;
@@ -201,6 +205,6 @@ class OrderView
      */
     public function getNonprofit(): ?string
     {
-        return $this->nonprofit;
+        return $this->nonprofitName;
     }
 }
