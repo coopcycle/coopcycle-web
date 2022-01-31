@@ -823,6 +823,16 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         }
     }
 
+    public function removePackage(Package $package)
+    {
+        $wrappedPackage = $this->resolvePackage($package);
+
+        if ($this->packages->contains($wrappedPackage)) {
+            $this->packages->removeElement($wrappedPackage);
+            $wrappedPackage->setTask(null);
+        }
+    }
+
     protected function resolvePackage(Package $package): TaskPackage
     {
         if ($this->hasPackage($package)) {

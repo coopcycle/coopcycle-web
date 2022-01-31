@@ -10,6 +10,7 @@ use AppBundle\Entity\TimeSlot;
 use AppBundle\Form\Type\TimeSlotChoice;
 use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Service\TaskManager;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -238,6 +239,11 @@ class TaskType extends AbstractType
 
                 $packages = $form->get('packages')->getData();
 
+                $originalPackages = new ArrayCollection();
+                foreach ($task->getPackages() as $p) {
+                    $originalPackages->add($p->getPackage());
+                }
+
                 $hash = new \SplObjectStorage();
 
                 foreach ($packages as $packageWithQuantity) {
@@ -251,6 +257,12 @@ class TaskType extends AbstractType
                 foreach ($hash as $package) {
                     $quantity = $hash[$package];
                     $task->setQuantityForPackage($package, $quantity);
+                }
+
+                foreach ($originalPackages as $originalPackage) {
+                    if (!$hash->contains($originalPackage)) {
+                        $task->removePackage($originalPackage);
+                    }
                 }
             }
 
