@@ -201,7 +201,6 @@ services:
 
   AppBundle\EventListener\MaintenanceListener:
     arguments:
-      $tokenStorage: '@security.token_storage'
       $redis: '@snc_redis.default'
       $templating: '@twig'
     tags:
