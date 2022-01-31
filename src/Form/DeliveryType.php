@@ -103,6 +103,7 @@ class DeliveryType extends AbstractType
                     'with_weight_required' => null !== $store ? $store->isWeightRequired() : true,
                 ],
                 'allow_add' => true,
+                'allow_delete' => true,
                 'prototype_data' => new Task(),
             ]);
 
