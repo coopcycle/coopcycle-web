@@ -41,7 +41,8 @@ class CheckoutAddressType extends AbstractType
         LoopEatClient $loopeatClient,
         LoopEatContext $loopeatContext,
         SessionInterface $session,
-        string $loopeatOAuthFlow)
+        string $loopeatOAuthFlow,
+        bool $nonProfitsEnabled)
     {
         $this->translator = $translator;
         $this->priceFormatter = $priceFormatter;
@@ -49,6 +50,7 @@ class CheckoutAddressType extends AbstractType
         $this->loopeatContext = $loopeatContext;
         $this->session = $session;
         $this->loopeatOAuthFlow = $loopeatOAuthFlow;
+        $this->nonProfitsEnabled = $nonProfitsEnabled;
 
         parent::__construct($orderTimeHelper);
     }
@@ -197,14 +199,16 @@ class CheckoutAddressType extends AbstractType
             }
         });
 
-        $builder->add('nonprofit', EntityType::class, [
-            'class' => Nonprofit::class,
-            'choice_label' => 'name',
-            'query_builder' => function (EntityRepository $er) {
-                return $er->createQueryBuilder('u')
-                    ->where('u.enabled = true');
-            },
-        ]);
+        if ($this->nonProfitsEnabled) {
+            $builder->add('nonprofit', EntityType::class, [
+                'class' => Nonprofit::class,
+                'choice_label' => 'name',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->where('u.enabled = true');
+                },
+            ]);
+        }
     }
 
     private function disableChildForm(FormInterface $form, $name)
