@@ -265,7 +265,9 @@ class EmbedController extends AbstractController
                     return $this->redirectToRoute('embed_delivery_start', ['hashid' => $hashid]);
                 }
 
-                $paymentForm = $this->createForm(CheckoutPaymentType::class, $order);
+                $paymentForm = $this->createForm(CheckoutPaymentType::class, $order, [
+                    'csrf_protection' => false,
+                ]);
 
                 $paymentForm->handleRequest($request);
 
@@ -323,7 +325,9 @@ class EmbedController extends AbstractController
             $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
             $order    = $this->createOrderForDelivery($orderFactory, $delivery, $price, $customer, $attach = false);
 
-            $paymentForm = $this->createForm(CheckoutPaymentType::class, $order);
+            $paymentForm = $this->createForm(CheckoutPaymentType::class, $order, [
+                'csrf_protection' => false,
+            ]);
 
             if ($billingAddress = $form->get('billingAddress')->getData()) {
                 $this->setBillingAddress($order, $billingAddress);
