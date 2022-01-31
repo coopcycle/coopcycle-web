@@ -109,7 +109,7 @@
     "react-accessible-accordion": "^3.3.5",
     "react-autosuggest": "^10.1.0",
     "react-beautiful-dnd": "^13.1.0",
-    "react-chartjs-2": "^4.0.1",
+    "react-chartjs-2": "~3.3.0",
     "react-color": "^2.19.3",
     "react-contexify": "^5.0.0",
     "react-cropper": "^2.1.8",
