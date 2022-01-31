@@ -193,7 +193,9 @@ function createPackageForm(name, $list, cb) {
 
 export function createPackagesWidget(name, packagesRequired, cb) {
 
-  if (packagesRequired) {
+  const isNew = document.querySelectorAll(`#${name}_packages .delivery__form__packages__list-item`).length === 0
+
+  if (isNew && packagesRequired) {
     createPackageForm(
       name,
       $(`#${name}_packages_list`),
