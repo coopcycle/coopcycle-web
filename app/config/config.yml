@@ -231,7 +231,6 @@ twig:
         geocode_earth_api_key: '%env(GEOCODE_EARTH_API_KEY)%'
         restaurant_menu_cache_annotation: '%restaurant_menu_cache_annotation%'
         restaurant_caption_cache_annotation: '%restaurant_caption_cache_annotation%'
-        cdn_root_url: '%env(CDN_ROOT_URL)%'
         edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
         cubejs_api_url: '%env(CUBEJS_API_URL)%'
     exception_controller: null
@@ -448,11 +447,6 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: nonprofits_images
-        cdn:
-            awss3v3:
-                client: cdn_s3_client
-                bucket: '%env(CDN_S3_BUCKET)%'
-                prefix: ''
     filesystems:
         assets:
             adapter: assets
@@ -490,10 +484,6 @@ oneup_flysystem:
             adapter: nonprofits_images
             alias: nonprofits_images_filesystem
             mount: nonprofits_images_filesystem
-        cdn:
-            adapter: cdn
-            alias: cdn_filesystem
-            mount: cdn_filesystem
 
 vich_uploader:
     db_driver: orm
@@ -725,7 +715,6 @@ liip_imagine:
                     max: 80
                     progressive: true
         product_thumbnail:
-            # cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -743,7 +732,6 @@ liip_imagine:
                     strip_all: true
                     level: 4
         product_thumbnail_1x1:
-            # cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -761,7 +749,6 @@ liip_imagine:
                     strip_all: true
                     level: 4
         product_thumbnail_16x9:
-            # cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -779,7 +766,6 @@ liip_imagine:
                     strip_all: true
                     level: 4
         product_thumbnail_4x3:
-            # cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:

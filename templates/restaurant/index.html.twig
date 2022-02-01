@@ -217,17 +217,6 @@
               {% endif %}
               {% for product_image in product_images_filtered %}
                 {% set imagine_filter = ('product_thumbnail_' ~ (product_image.ratio|replace({ ':': 'x' }))) %}
-                {#
-                FIXME
-                Since we are using a S3 backed CDN, each call to the coopcycle_asset filter,
-                (which in turn calls Liip\ImagineBundle\Imagine\Cache\CacheManager::getBrowserPath()),
-                generates a HTTP call to S3 to check if the thumbnail exists.
-
-                Until a user opens the popup to generate the thumbnails, these calls will return 404.
-                It may generate too many API calls, and "HTTP 503 Slow Down" errors.
-
-                This is why we set the 4th parameter to true, to *ALWAYS* return the filter URL.
-                #}
                 {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', imagine_filter, true, true) ]) %}
               {% endfor %}
               {% if not product.hasOptions() %}
