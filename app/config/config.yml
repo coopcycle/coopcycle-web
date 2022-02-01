@@ -102,7 +102,10 @@ framework:
         handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler
         cookie_lifetime: 604800 # 7 days
         gc_maxlifetime: 604800 # 7 days
-        cookie_samesite: 'lax'
+        # Make sure to *NOT* define cookie_samesite, so that it can be changed at runtime
+        # https://github.com/coopcycle/coopcycle-web/issues/3084
+        # https://github.com/symfony/symfony/issues/45200
+        cookie_samesite: ~
         cookie_secure: 'auto'
     fragments:       ~
     http_method_override: true
