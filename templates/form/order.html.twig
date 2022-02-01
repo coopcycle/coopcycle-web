@@ -222,7 +222,9 @@
        <div class="col-sm-6 col-md-4 nonprofit-card {% if form.vars.value == nonprofit.data.id %} active {% endif %}"
             data-value="{{ nonprofit.data.id }}" onclick="setNonprofit(this)">
          <div class="thumbnail">
-            <img src="{{ oneup_uploader_asset(nonprofit.data.logoName, 'nonprofits_images_filesystem') }}" alt="...">
+            <img
+              src="{{ oneup_uploader_asset(nonprofit.data.logoName, 'nonprofits_images_filesystem') }}"
+              alt="{{ nonprofit.data.name }}">
             <div class="caption">
               <h3>{{ nonprofit.data.name }}</h3>
               <p>{{ nonprofit.data.description }}</p>
