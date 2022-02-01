@@ -99,6 +99,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('mercadopago_can_enable_testmode', array(MercadopagoResolver::class, 'canEnableTestmode')),
             new TwigFunction('route_exists', array($this, 'routeExists')),
             new TwigFunction('should_show_pre_order', array(LocalBusinessRuntime::class, 'shouldShowPreOrder')),
+            new TwigFunction('oneup_uploader_asset', array(AssetsRuntime::class, 'oneupUploaderAsset')),
         );
     }
 

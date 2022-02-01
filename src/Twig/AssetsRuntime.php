@@ -89,4 +89,15 @@ class AssetsRuntime implements RuntimeExtensionInterface
             return $this->assetsFilesystem->has('banner.svg');
         });
     }
+
+    public function oneupUploaderAsset($filename, $prefix): ?string
+    {
+        $fileSystem = $this->mountManager->getFilesystem($prefix);
+
+        if (!$fileSystem->has($filename)) {
+            return '';
+        }
+
+        return (string) ImageManagerStatic::make($fileSystem->read($filename))->encode('data-url');
+    }
 }

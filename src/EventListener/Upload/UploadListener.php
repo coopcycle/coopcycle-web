@@ -3,6 +3,7 @@
 namespace AppBundle\EventListener\Upload;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Core\Exception\ExceptionInterface;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
@@ -68,6 +69,23 @@ final class UploadListener
         $request = $event->getRequest();
         $response = $event->getResponse();
         $file = $event->getFile();
+
+        $this->logger->debug(sprintf('UploadListener | event type = %s', $event->getType()));
+        $this->logger->debug(sprintf('UploadListener | file pathname = %s', $file->getPathname()));
+
+        if ('nonprofit' === $event->getType()) {
+
+            try {
+                $nonprofit = $this->iriConverter->getItemFromIri($request->get('nonprofit'));
+                $nonprofit->setLogoName($file->getPathname());
+                $this->entityManager->flush();
+            } catch (ExceptionInterface $e) {
+                $file->getFilesystem()->delete($file->getPathname());
+                throw new UploadException($e->getMessage());
+            }
+
+            return $response;
+        }
 
         if ('products' === $event->getType()) {
 
