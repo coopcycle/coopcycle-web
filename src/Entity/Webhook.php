@@ -157,6 +157,7 @@ class Webhook
             'delivery.failed',
             'delivery.picked',
             'delivery.completed',
+            'order.created',
         ];
     }
 }
