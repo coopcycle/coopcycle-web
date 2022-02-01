@@ -116,7 +116,7 @@
         </div>
 
         {% if form.nonprofit is defined and form.nonprofit.vars.choices|length > 0 %}
-        <div class="border-bottom mb-5">
+        <div class="bg-light border-bottom mb-5">
           <h4 class="p-3 m-0">{{ 'order.cart.donation'|trans }}</h4>
           <div id="items">
             {{ form_row(form.nonprofit) }}

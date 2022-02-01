@@ -13,9 +13,6 @@
 
 {% block content %}
 
-{% set nonprofit = form.vars.data %}
-
-
 {{ form_start(form) }}
   <div id="nonprofit-dropzone"></div>
   {{ form_widget(form) }}
@@ -23,6 +20,7 @@
     {{ 'basics.save'|trans }}
   </button>
 {{ form_end(form) }}
+
 {% endblock %}
 
 {% block styles %}
@@ -39,7 +37,7 @@ new window.CoopCycle.Dropzone($('#nonprofit-dropzone'), {
     }
   },
   image: "{{ oneup_uploader_asset(nonprofit.logoName, 'nonprofits_images_filesystem') }}",
-  size: [ 256, 256 ],
+  size: [ 512, 384 ],
   // croppie: {
   //   format: 'png',
   //   enableResize: true
