@@ -219,16 +219,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.209.12",
+            "version": "3.209.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "02e488042410fac0af67fd37f222d5b3c0424b72"
+                "reference": "8656babb2e58ea3e7c9a40724e8a545ce40bb622"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/02e488042410fac0af67fd37f222d5b3c0424b72",
-                "reference": "02e488042410fac0af67fd37f222d5b3c0424b72",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8656babb2e58ea3e7c9a40724e8a545ce40bb622",
+                "reference": "8656babb2e58ea3e7c9a40724e8a545ce40bb622",
                 "shasum": ""
             },
             "require": {
@@ -304,9 +304,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.209.12"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.209.15"
             },
-            "time": "2022-01-25T19:17:24+00:00"
+            "time": "2022-01-28T19:14:57+00:00"
         },
         {
             "name": "azimolabs/apple-sign-in-php-sdk",
@@ -367,30 +367,30 @@
         },
         {
             "name": "azuyalabs/yasumi",
-            "version": "2.4.0",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azuyalabs/yasumi.git",
-                "reference": "083a0d0579fee17e68d688d463bc01098ac2691f"
+                "reference": "5fd99815e8bf480fd0e6b76527d5413767e98930"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azuyalabs/yasumi/zipball/083a0d0579fee17e68d688d463bc01098ac2691f",
-                "reference": "083a0d0579fee17e68d688d463bc01098ac2691f",
+                "url": "https://api.github.com/repos/azuyalabs/yasumi/zipball/5fd99815e8bf480fd0e6b76527d5413767e98930",
+                "reference": "5fd99815e8bf480fd0e6b76527d5413767e98930",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": ">=7.3"
+                "php": ">=7.4"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.16",
-                "infection/infection": "^0.17 | ^0.22",
+                "friendsofphp/php-cs-fixer": "v2.19 | v3.5",
+                "infection/infection": "^0.17 | ^0.26",
                 "mikey179/vfsstream": "^1.6",
-                "phan/phan": "^4.0",
-                "phpstan/phpstan": "^0.12.66",
-                "phpunit/phpunit": "^8.5 | ^9.4",
-                "vimeo/psalm": "^4"
+                "phan/phan": "^5.2",
+                "phpstan/phpstan": "^0.12",
+                "phpunit/phpunit": "^8.5 | ^9.5",
+                "vimeo/psalm": "^4.9"
             },
             "suggest": {
                 "ext-calendar": "For calculating the date of Easter"
@@ -436,7 +436,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2021-05-09T09:03:34+00:00"
+            "time": "2022-01-30T07:43:17+00:00"
         },
         {
             "name": "babdev/pagerfanta-bundle",
@@ -9052,29 +9052,29 @@
         },
         {
             "name": "notfloran/mjml-bundle",
-            "version": "v3.5.1",
+            "version": "v3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/notFloran/mjml-bundle.git",
-                "reference": "0b9b99fef1c0d06a34de58ba329d0b0bd3bd1623"
+                "reference": "3ec58e974b6117432b5ac2d6bf19be545117e663"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/notFloran/mjml-bundle/zipball/0b9b99fef1c0d06a34de58ba329d0b0bd3bd1623",
-                "reference": "0b9b99fef1c0d06a34de58ba329d0b0bd3bd1623",
+                "url": "https://api.github.com/repos/notFloran/mjml-bundle/zipball/3ec58e974b6117432b5ac2d6bf19be545117e663",
+                "reference": "3ec58e974b6117432b5ac2d6bf19be545117e663",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.1.0",
-                "symfony/dependency-injection": "^3.4 || ^4.0 || ^5.0",
-                "symfony/process": "^3.4 || ^4.0 || ^5.0",
-                "symfony/twig-bundle": "^3.4 || ^4.0 || ^5.0"
+                "symfony/dependency-injection": "^3.4 || ^4.0 || ^5.0 || ^6.0",
+                "symfony/process": "^3.4 || ^4.0 || ^5.0 || ^6.0",
+                "symfony/twig-bundle": "^3.4 || ^4.0 || ^5.0 || ^6.0"
             },
             "require-dev": {
                 "matthiasnoback/symfony-config-test": "^4.1",
                 "phpstan/phpstan": "^0.12.0",
-                "phpunit/phpunit": "^7.0",
-                "symplify/easy-coding-standard": "^6.0|^7.0"
+                "phpunit/phpunit": "^7.0|^8.0",
+                "symplify/easy-coding-standard": "^9.0"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -9099,9 +9099,9 @@
             ],
             "support": {
                 "issues": "https://github.com/notFloran/mjml-bundle/issues",
-                "source": "https://github.com/notFloran/mjml-bundle/tree/v3.5.1"
+                "source": "https://github.com/notFloran/mjml-bundle/tree/v3.6.0"
             },
-            "time": "2021-01-23T14:38:29+00:00"
+            "time": "2021-12-07T13:07:23+00:00"
         },
         {
             "name": "nucleos/profile-bundle",
@@ -17407,16 +17407,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v5.4.3",
+            "version": "v5.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "74f33558adecab939c54f8fc472cb7a12b96b488"
+                "reference": "d7915d01c1205b7e6f2cbc58c5b5b3fd0d973a1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/74f33558adecab939c54f8fc472cb7a12b96b488",
-                "reference": "74f33558adecab939c54f8fc472cb7a12b96b488",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/d7915d01c1205b7e6f2cbc58c5b5b3fd0d973a1c",
+                "reference": "d7915d01c1205b7e6f2cbc58c5b5b3fd0d973a1c",
                 "shasum": ""
             },
             "require": {
@@ -17608,7 +17608,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/symfony/issues",
-                "source": "https://github.com/symfony/symfony/tree/v5.4.3"
+                "source": "https://github.com/symfony/symfony/tree/v5.4.4"
             },
             "funding": [
                 {
@@ -17624,7 +17624,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-28T11:06:17+00:00"
+            "time": "2022-01-29T18:08:18+00:00"
         },
         {
             "name": "symfony/webpack-encore-bundle",
@@ -20158,16 +20158,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.4.3",
+            "version": "1.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "89d10839dbfc95eeb7da656578b4a899ad2b59b1"
+                "reference": "f7409da1e26c6dee172cce744034b869a2f27a9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/89d10839dbfc95eeb7da656578b4a899ad2b59b1",
-                "reference": "89d10839dbfc95eeb7da656578b4a899ad2b59b1",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f7409da1e26c6dee172cce744034b869a2f27a9e",
+                "reference": "f7409da1e26c6dee172cce744034b869a2f27a9e",
                 "shasum": ""
             },
             "require": {
@@ -20198,7 +20198,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.4.3"
+                "source": "https://github.com/phpstan/phpstan/tree/1.4.4"
             },
             "funding": [
                 {
@@ -20218,7 +20218,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-28T16:27:17+00:00"
+            "time": "2022-01-31T16:50:49+00:00"
         },
         {
             "name": "phpstan/phpstan-doctrine",
