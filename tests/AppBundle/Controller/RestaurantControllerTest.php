@@ -211,6 +211,9 @@ class RestaurantControllerTest extends WebTestCase
             ->willReturn($variant->reveal());
 
         $errors = $this->prophesize(ConstraintViolationListInterface::class);
+        $errors->count()->willReturn(0);
+        $errors->rewind()->shouldBeCalled();
+        $errors->valid()->shouldBeCalled();
 
         $this->validator
             ->validate(Argument::type('object'), Argument::any())
