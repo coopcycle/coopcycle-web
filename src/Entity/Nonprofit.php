@@ -10,8 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
-
 
 /**
  * Nonprofit organisation
@@ -20,7 +18,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     iri="http://schema.org/NGO",
  *     shortName="Nonprofit",
  * )
- * @Vich\Uploadable()
  */
 class Nonprofit
 {
@@ -49,18 +46,6 @@ class Nonprofit
      * @ApiProperty(iri="https://schema.org/URL")
      */
     protected ?string $url;
-
-
-    /**
-     * @Vich\UploadableField(mapping="logo", fileNameProperty="logoName")
-     * @Assert\File(
-     *   maxSize = "1024k",
-     *   mimeTypes = {"image/jpg", "image/jpeg", "image/png"}
-     * )
-     *
-     * @var File
-     */
-    protected File $logoFile;
 
     /**
      * @var string|null
@@ -113,25 +98,9 @@ class Nonprofit
     }
 
     /**
-     * @return File
-     */
-    public function getLogoFile(): File
-    {
-        return $this->logoFile;
-    }
-
-    /**
-     * @param File $logoFile
-     */
-    public function setLogoFile(File $logoFile): void
-    {
-        $this->logoFile = $logoFile;
-    }
-
-    /**
      * @return string
      */
-    public function getLogoName(): string
+    public function getLogoName(): ?string
     {
         return $this->logoName;
     }

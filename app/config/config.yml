@@ -446,7 +446,7 @@ oneup_flysystem:
             awss3v3:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
-                prefix: nonprofits_images
+                prefix: nonprofits
     filesystems:
         assets:
             adapter: assets
