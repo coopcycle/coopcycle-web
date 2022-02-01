@@ -37,11 +37,7 @@ new window.CoopCycle.Dropzone($('#nonprofit-dropzone'), {
     }
   },
   image: "{{ oneup_uploader_asset(nonprofit.logoName, 'nonprofits_images_filesystem') }}",
-  size: [ 512, 384 ],
-  // croppie: {
-  //   format: 'png',
-  //   enableResize: true
-  // }
+  size: [ 512, 384 ]
 });
 </script>
 {% endblock %}
