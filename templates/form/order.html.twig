@@ -223,7 +223,7 @@
             data-value="{{ nonprofit.data.id }}" onclick="setNonprofit(this)">
          <div class="thumbnail">
             <img
-              src="{{ oneup_uploader_asset(nonprofit.data.logoName, 'nonprofits_images_filesystem') }}"
+              src="{{ oneup_uploader_asset_base64(nonprofit.data.logoName, 'nonprofits_images_filesystem') }}"
               alt="{{ nonprofit.data.name }}">
             <div class="caption">
               <h3>{{ nonprofit.data.name }}</h3>

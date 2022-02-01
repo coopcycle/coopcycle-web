@@ -90,7 +90,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         });
     }
 
-    public function oneupUploaderAsset($filename, $prefix): ?string
+    public function oneupUploaderAssetBase64($filename, $prefix): ?string
     {
         $fileSystem = $this->mountManager->getFilesystem($prefix);
 
