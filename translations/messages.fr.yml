@@ -455,6 +455,18 @@ form.settings.stripe_connect_client_id.label: Identifiant Stripe Connect
 form.settings.stripe_connect_client_id.help: "Récupérez l'identifiant Stripe Connect\
   \ sur la <a href=\"https://dashboard.stripe.com/account/applications/settings\"\
   >page des paramètres</a>\n"
+
+form.settings.paygreen.title: Compte Paygreen
+form.settings.paygreen.help: Paygreen blablabla TODO
+form.settings.paygreen_enable_livemode.help: Pour activer le mode « live », vous devez
+  configurer les identifiants « live ».
+form.settings.paygreen_client_id_key.label: Clé publique Paygreen
+form.settings.paygreen_client_id_key.help: "Créez un compte Paygreen pour récupérer\
+  \ votre <a href=\"https://paygreen.fr\">clé publique</a>\n"
+form.settings.paygreen_secret_key.label: Clé secrète Paygreen
+form.settings.paygreen_secret_key.help: "Créez un compte Paygreen pour récupérer votre\
+  \ <a href=\"https://paygreen.fr\">clé secrète</a>\n"
+
 form.settings.latlng.label: Coordonnées géographiques
 form.settings.latlng.help: "Spécifiez la latitude et la longitude par défaut. Vous\
   \ pouvez l'obtenir sur <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
@@ -507,6 +519,15 @@ form.stripe_livemode.disable.alert: En mode « test », les cartes ne seront pas
 form.stripe_livemode.disable_and_enable_maintenance.label: Passer en mode « test »
   et activer la maintenance
 form.stripe_livemode.disable_and_enable_maintenance.alert: Vous êtes actuellement
+  en mode « live ».<br>Si vous souhaitez passer en « test », le mode maintenance sera
+  activé automatiquement.
+form.paygreen_livemode.enable.label: Utiliser Paygreen en mode « live »
+form.paygreen_livemode.enable.alert: En mode « live », les cartes seront débitées.
+form.paygreen_livemode.disable.label: Utiliser Paygreen en mode « test »
+form.paygreen_livemode.disable.alert: En mode « test », les cartes ne seront pas débitées.
+form.paygreen_livemode.disable_and_enable_maintenance.label: Passer en mode « test »
+  et activer la maintenance
+form.paygreen_livemode.disable_and_enable_maintenance.alert: Vous êtes actuellement
   en mode « live ».<br>Si vous souhaitez passer en « test », le mode maintenance sera
   activé automatiquement.
 form.settings.currency_code.label: Devise

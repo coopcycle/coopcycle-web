@@ -94,6 +94,14 @@ class Settings
 
     public $mercadopago_client_secret;
 
+    public $paygreen_live_client_id;
+
+    public $paygreen_live_secret;
+
+    public $paygreen_test_client_id;
+
+    public $paygreen_test_secret;
+
     public $guest_checkout_enabled;
 
     public $autocomplete_provider;

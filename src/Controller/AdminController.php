@@ -53,7 +53,7 @@ use AppBundle\Form\PackageSetType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Form\SettingsType;
-use AppBundle\Form\StripeLivemodeType;
+use AppBundle\Form\PaygreenLivemodeType;
 use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
@@ -1134,7 +1134,7 @@ class AdminController extends AbstractController
 
         $isStripeLivemode = $settingsManager->isStripeLivemode();
         $canEnableStripeLivemode = $settingsManager->canEnableStripeLivemode();
-        $stripeLivemodeForm = $this->createForm(StripeLivemodeType::class);
+        $stripeLivemodeForm = $this->createForm(PaygreenLivemodeType::class);
 
         $stripeLivemodeForm->handleRequest($request);
         if ($stripeLivemodeForm->isSubmitted() && $stripeLivemodeForm->isValid()) {
@@ -1173,6 +1173,31 @@ class AdminController extends AbstractController
                 if ('disable_and_enable_maintenance' === $mercadopagoLivemodeForm->getClickedButton()->getName()) {
                     $redis->set('maintenance', '1');
                     $settingsManager->set('mercadopago_livemode', 'no');
+                }
+                $settingsManager->flush();
+            }
+
+            return $this->redirectToRoute('admin_settings');
+        }
+
+        /* Paygreen live mode */
+
+        $isPaygreenLivemode = $settingsManager->isPaygreenLivemode();
+        $canEnablePaygreenLivemode = $settingsManager->canEnablePaygreenLivemode();
+        $paygreenLivemodeForm = $this->createForm(PaygreenLivemodeType::class);
+
+        $paygreenLivemodeForm->handleRequest($request);
+        if ($paygreenLivemodeForm->isSubmitted() && $paygreenLivemodeForm->isValid()) {
+            if ($paygreenLivemodeForm->getClickedButton()) {
+                if ('enable' === $paygreenLivemodeForm->getClickedButton()->getName()) {
+                    $settingsManager->set('paygreen_livemode', 'yes');
+                }
+                if ('disable' === $paygreenLivemodeForm->getClickedButton()->getName()) {
+                    $settingsManager->set('paygreen_livemode', 'no');
+                }
+                if ('disable_and_enable_maintenance' === $paygreenLivemodeForm->getClickedButton()->getName()) {
+                    $redis->set('maintenance', '1');
+                    $settingsManager->set('paygreen_livemode', 'no');
                 }
                 $settingsManager->flush();
             }
@@ -1260,6 +1285,9 @@ class AdminController extends AbstractController
             'mercadopago_livemode' => $isMercadopagoLivemode,
             'mercadopago_livemode_form' => $mercadopagoLivemodeForm->createView(),
             'can_enable_mercadopago_livemode' => $canEnableMercadopagoLivemode,
+            'paygreen_livemode' => $isPaygreenLivemode,
+            'paygreen_livemode_form' => $paygreenLivemodeForm->createView(),
+            'can_enable_paygreen_livemode' => $canEnablePaygreenLivemode,
         ]);
     }
 

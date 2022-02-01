@@ -43,6 +43,10 @@ class SettingsManager
         'mercadopago_test_access_token',
         'mercadopago_live_access_token',
         'mercadopago_client_secret',
+        'paygreen_live_client_id',
+        'paygreen_live_secret',
+        'paygreen_test_client_id',
+        'paygreen_test_secret',
         'google_api_key_custom',
     ];
 
@@ -110,6 +114,12 @@ class SettingsManager
                 // to be used only for test
                 $name = !$this->isMercadopagoLivemode() ? 'mercadopago_live_access_token' : '';
                 break;
+            case 'paygreen_client_id':
+                $name = $this->isPaygreenLivemode() ? 'paygreen_live_client_id' : 'paygreen_test_client_id';
+                break;
+            case 'paygreen_secret':
+                $name = $this->isPaygreenLivemode() ? 'paygreen_live_secret' : 'paygreen_test_secret';
+                break;
             case 'timezone':
                 return ini_get('date.timezone');
             case 'foodtech_enabled':
@@ -173,6 +183,20 @@ class SettingsManager
         return filter_var($livemode, FILTER_VALIDATE_BOOLEAN);
     }
 
+    /**
+     * @return bool
+     */
+    public function isPaygreenLivemode(): bool
+    {
+        $livemode = $this->get('paygreen_livemode');
+
+        if (!$livemode) {
+            return false;
+        }
+
+        return filter_var($livemode, FILTER_VALIDATE_BOOLEAN);
+    }
+
     public function canEnableStripeTestmode()
     {
         try {
@@ -221,6 +245,38 @@ class SettingsManager
             $mercadopagoLiveSecretKey = $this->craueConfig->get('mercadopago_live_access_token');
 
             return !empty($mercadopagoLivePublishableKey) && !empty($mercadopagoLiveSecretKey);
+
+        } catch (\RuntimeException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function canEnablePaygreenTestmode(): bool
+    {
+        try {
+            $paygreenTestClientID = $this->craueConfig->get('paygreen_test_client_id');
+            $paygreenTestSecret = $this->craueConfig->get('paygreen_test_secret');
+
+            return !empty($paygreenTestClientID) && !empty($paygreenTestSecret);
+
+        } catch (\RuntimeException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function canEnablePaygreenLivemode(): bool
+    {
+        try {
+            $paygreenLiveClientID = $this->craueConfig->get('paygreen_live_client_id');
+            $paygreenLiveSecret = $this->craueConfig->get('paygreen_live_secret');
+
+            return !empty($paygreenLiveClientID) && !empty($paygreenLiveSecret);
 
         } catch (\RuntimeException $e) {
             return false;
