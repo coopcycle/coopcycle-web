@@ -216,10 +216,10 @@
 
 {% block _checkout_address_nonprofit_row %}
   <input name="{{ form.vars.full_name }}" type="number" hidden="hidden" id="nonprofit_input" value="{{ form.vars.value }}">
-  {% for row in form.vars.choices|batch(3) %}
+  {% for row in form.vars.choices|batch(4) %}
    <div class="row">
      {% for nonprofit in row %}
-       <div class="col-sm-6 col-md-4 nonprofit-card {% if form.vars.value == nonprofit.data.id %} active {% endif %}"
+       <div class="col-sm-6 col-md-3 nonprofit-card {% if form.vars.value == nonprofit.data.id %} active {% endif %}"
             data-value="{{ nonprofit.data.id }}" onclick="setNonprofit(this)">
          <div class="thumbnail">
             <img
