@@ -1209,3 +1209,4 @@ restaurant.form.en_boite_le_plat_enabled.label: Activer le système de consigne 
 form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'Je veux des contenants consignés <a href="https://enboiteleplat.fr/rennes/" target="_blank">En Boîte Le Plat</a>.'
 adminDashboard.users.confirmDeleteUser: Voulez-vous vraiment supprimer l'utilisateur avec l'email %email% ?
 adminDashboard.users.userHasBeenDeleted: L'utilisateur a été supprimé.
+order.cart.donation.disclaimer: Nous vous proposons de consacrer %percentage% des revenus tirés de votre commmande à l'une de nos associations partenaires. Vous ne paierez pas plus cher.
