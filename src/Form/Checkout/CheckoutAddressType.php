@@ -207,6 +207,10 @@ class CheckoutAddressType extends AbstractType
                     return $er->createQueryBuilder('u')
                         ->where('u.enabled = true');
                 },
+                'expanded' => false,
+                'multiple' => false,
+                'required' => false,
+                'placeholder' => 'form.checkout_address.nonprofit.placeholder',
             ]);
         }
     }

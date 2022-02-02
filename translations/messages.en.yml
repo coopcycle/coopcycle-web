@@ -1230,3 +1230,4 @@ adminDashboard.nonprofits.createNew: Add a new nonprofit
 adminDashboard.nonprofits.title: Nonprofits
 adminDashboard.nonprofits.confirm_delete: Are you sure you want to delete this nonprofit?
 order.cart.donation.disclaimer: We offer you to donate %percentage% of the revenue from your order to one of our partner associations. You will not pay more.
+form.checkout_address.nonprofit.placeholder: Choose your favorite nonprofit
