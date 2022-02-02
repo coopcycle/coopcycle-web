@@ -266,7 +266,7 @@ profile.managedStores: Magasins gérés par l'utilisateur
 profile.managedRestaurants: Restaurants gérés par l'utilisateur
 profile.accountType: Type de compte
 order.cart.title: Panier
-order.cart.donation: Donation
+order.cart.donation: Dons aux associations
 order.items.products_with_count: Produits (%count%)
 order.summary.heading: Commande %number% (#%id%)
 order.total_excluding_tax: Total HT
