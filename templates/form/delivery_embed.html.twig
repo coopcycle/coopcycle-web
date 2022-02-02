@@ -15,12 +15,12 @@
     {{ form_row(form.timeSlot) }}
   {% endif %}
 
-  {% if form.vars.data.type == 'PICKUP' and form.parent.parent.weight is defined %}
-    {{ form_row(form.parent.parent.weight) }}
+  {% if form.packages is defined %}
+    {{ form_row(form.packages) }}
   {% endif %}
 
-  {% if form.vars.data.type == 'PICKUP' and form.parent.parent.packages is defined %}
-    {{ form_row(form.parent.parent.packages) }}
+  {% if form.weight is defined %}
+    {{ form_row(form.weight) }}
   {% endif %}
 
   {{ form_row(form.address.newAddress.description) }}

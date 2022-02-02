@@ -16,6 +16,9 @@ AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_3:
     name: Default
     rules: [ '@pricing_rule_3' ]
+  pricing_rule_set_4:
+    name: Default
+    rules: [ '@pricing_rule_4' ]
 
 AppBundle\Entity\Delivery\PricingRule:
   pricing_rule_1:
@@ -33,6 +36,11 @@ AppBundle\Entity\Delivery\PricingRule:
     price: 1299
     position: 1
     ruleSet: '@pricing_rule_set_3'
+  pricing_rule_4:
+    expression: 'weight \< 2000'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_4'
 
 AppBundle\Entity\Address:
   address_1:
@@ -107,6 +115,14 @@ AppBundle\Entity\Store:
     address: "@address_2"
     enabled: true
     pricingRuleSet: '@pricing_rule_set_3'
+    timeSlot: '@time_slot_1'
+    __calls:
+      - addAddress: [ "@address_2" ]
+  store_4:
+    name: 'Acme4'
+    address: "@address_2"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_4'
     timeSlot: '@time_slot_1'
     __calls:
       - addAddress: [ "@address_2" ]

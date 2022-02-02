@@ -27,6 +27,7 @@ class Settings
         'latlng',
         'currency_code',
         'administrator_email',
+        'guest_checkout_enabled',
     ];
 
     public function __construct(

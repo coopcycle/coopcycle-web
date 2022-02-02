@@ -63,7 +63,8 @@ class SettingsManager
         string $country,
         bool $foodtechEnabled,
         bool $b2bEnabled,
-        GatewayResolver $gatewayResolver)
+        GatewayResolver $gatewayResolver,
+        $forceStripe = false)
     {
         $this->craueConfig = $craueConfig;
         $this->craueCache = $craueCache;
@@ -74,6 +75,7 @@ class SettingsManager
         $this->foodtechEnabled = $foodtechEnabled;
         $this->b2bEnabled = $b2bEnabled;
         $this->gatewayResolver = $gatewayResolver;
+        $this->forceStripe = $forceStripe;
     }
 
     public function isSecret($name)
@@ -229,6 +231,11 @@ class SettingsManager
     {
         $supportsStripe = $this->canEnableStripeTestmode() || $this->canEnableStripeLivemode();
         $supportsMercadopago = $this->canEnableMercadopagoTestmode() || $this->canEnableMercadopagoLivemode();
+
+        if ($this->forceStripe) {
+
+            return $supportsStripe;
+        }
 
         return $supportsStripe || $supportsMercadopago;
     }

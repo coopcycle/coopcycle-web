@@ -44,7 +44,8 @@ class StoreVoter extends Voter
             return true;
         }
 
-        if ($this->authorizationChecker->isGranted('ROLE_OAUTH2_DELIVERIES')) {
+        if ($this->authorizationChecker->isGranted('ROLE_OAUTH2_DELIVERIES')
+        ||  $this->authorizationChecker->isGranted('ROLE_API_KEY')) {
             return $subject === $this->storeExtractor->extractStore();
         }
 

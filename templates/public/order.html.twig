@@ -95,6 +95,7 @@
 
 {% set gateway = payment_gateway_resolver.resolve() %}
 {% set gateway_configs = {} %}
+{% set country = country_iso %}
 
 {% if gateway == 'stripe' %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>

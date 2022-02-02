@@ -48,13 +48,14 @@
       </td>
     </tr>
     {% if delivery_adjustments|length > 0 %}
-    {% set delivery_adjustment = order.getAdjustments('delivery')|first %}
-    <tr>
-      <th>{{ delivery_adjustment.label }}</th>
-      <td class="text-right text-nowrap">
-        {{ delivery_adjustment.amount|price_format }}
-      </td>
-    </tr>
+      {% for delivery_adjustment in delivery_adjustments %}
+      <tr>
+        <th>{{ delivery_adjustment.label }}</th>
+        <td class="text-right text-nowrap">
+          {{ delivery_adjustment.amount|price_format }}
+        </td>
+      </tr>
+      {% endfor %}
     {% endif %}
     {% if show_taxes %}
       {% for tax_rate in order|split_tax_rates %}

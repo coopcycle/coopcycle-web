@@ -49,4 +49,27 @@ class PercentageDiscountPromotionActionCommandTest extends TestCase
             $this->actionCommand->execute($order->reveal(), ['percentage' => 0.15], $promotion->reveal())
         );
     }
+
+    public function testExecuteWith100PercentOnTotal()
+    {
+        $order = $this->prophesize(OrderInterface::class);
+
+        $order->getItemsTotal()->willReturn(1000);
+        $order->getTotal()->willReturn(1350);
+
+        $promotion = $this->prophesize(PromotionInterface::class);
+
+        $order
+            ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
+
+                $this->assertEquals(-1350, $adjustment->getAmount());
+
+                return true;
+            }))
+            ->shouldBeCalled();
+
+        $this->assertTrue(
+            $this->actionCommand->execute($order->reveal(), ['percentage' => 1.00, 'items_total' => false], $promotion->reveal())
+        );
+    }
 }

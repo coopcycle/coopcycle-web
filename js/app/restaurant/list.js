@@ -11,7 +11,7 @@ const FulfillmentBadge = ({ range }) => {
   return (
     <span className="restaurant-item__time-range">
       <i className="fa fa-clock-o mr-2"></i>
-      <span>{ asText(range) }</span>
+      <span>{ asText(range, false, true) }</span>
     </span>
   )
 }

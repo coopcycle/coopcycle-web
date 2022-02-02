@@ -18,7 +18,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
-use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class StoreType extends LocalBusinessType
 {

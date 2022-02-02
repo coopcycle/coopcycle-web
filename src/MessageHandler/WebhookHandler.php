@@ -10,12 +10,14 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Webhook;
 use AppBundle\Entity\WebhookExecution;
 use AppBundle\Message\Webhook as WebhookMessage;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Response;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class WebhookHandler implements MessageHandlerInterface
 {
@@ -24,7 +26,7 @@ class WebhookHandler implements MessageHandlerInterface
     private $entityManager;
 
     public function __construct(
-        Client $client,
+        HttpClientInterface $client,
         IriConverterInterface $iriConverter,
         EntityManagerInterface $entityManager)
     {
@@ -37,16 +39,28 @@ class WebhookHandler implements MessageHandlerInterface
     {
         $object = $this->iriConverter->getItemFromIri($message->getObject());
 
-        if (!$object instanceof Delivery) {
+        if (!$object instanceof Delivery && !$object instanceof OrderInterface) {
             return;
         }
 
-        if (null === $object->getStore()) {
+        if ($object instanceof Delivery && null === $object->getStore()) {
             return;
         }
 
-        $apps = $this->entityManager->getRepository(ApiApp::class)
-            ->findBy(['store' => $object->getStore()]);
+        if ($object instanceof OrderInterface && null === $object->getRestaurant()) {
+            return;
+        }
+
+        $apps = [];
+        if ($object instanceof Delivery) {
+            $apps = $this->entityManager->getRepository(ApiApp::class)
+                ->findBy(['store' => $object->getStore()]);
+        }
+
+        if ($object instanceof OrderInterface) {
+            $apps = $this->entityManager->getRepository(ApiApp::class)
+                ->findBy(['shop' => $object->getRestaurant()]);
+        }
 
         if (count($apps) === 0) {
             return;
@@ -54,14 +68,14 @@ class WebhookHandler implements MessageHandlerInterface
 
         foreach ($apps as $app) {
 
-            $webhook = $this->entityManager
+            $webhooks = $this->entityManager
                 ->getRepository(Webhook::class)
-                ->findOneBy([
+                ->findBy([
                     'oauth2Client' => $app->getOauth2Client(),
                     'event' => $message->getEvent()
                 ]);
 
-            if ($webhook) {
+            foreach ($webhooks as $webhook) {
 
                 $payload = [
                     'data' => [
@@ -77,16 +91,22 @@ class WebhookHandler implements MessageHandlerInterface
 
                 try {
 
-                    $response = $this->client->post($webhook->getUrl(), [
+                    $response = $this->client->request('POST', $webhook->getUrl(), [
                         'headers' => [
                             'X-CoopCycle-Signature' => $signature,
                         ],
                         'json' => $payload,
                     ]);
 
+                    // Need to invoke a method on the Response,
+                    // to actually throw the Exception here
+                    // https://github.com/symfony/symfony/issues/34281
+                    // https://symfony.com/doc/5.4/http_client.html#handling-exceptions
+                    $content = $response->getContent();
+
                     $this->logExecution($webhook, $response);
 
-                } catch (RequestException $e) {
+                } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
 
                     $response = $e->getResponse();
 
@@ -98,7 +118,7 @@ class WebhookHandler implements MessageHandlerInterface
         }
     }
 
-    private function logExecution(Webhook $webhook, Response $response)
+    private function logExecution(Webhook $webhook, ResponseInterface $response)
     {
         $execution = new WebhookExecution();
         $execution->setWebhook($webhook);

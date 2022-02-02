@@ -104,9 +104,10 @@ class UpdateState
                 );
             }
 
-            $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
-
             if (null !== $payment) {
+
+                $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+
                 if ($stateMachine->can(PaymentTransitions::TRANSITION_AUTHORIZE)) {
                     $stateMachine->apply(PaymentTransitions::TRANSITION_AUTHORIZE);
                 } elseif ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {

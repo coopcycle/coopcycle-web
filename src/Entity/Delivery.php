@@ -10,8 +10,10 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
-use AppBundle\Entity\Delivery\Package as DeliveryPackage;
 use AppBundle\Entity\Package;
+use AppBundle\Entity\Package\PackagesAwareInterface;
+use AppBundle\Entity\Package\PackagesAwareTrait;
+use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
@@ -99,8 +101,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @AssertDelivery
  * @AssertCheckDelivery(groups={"delivery_check"})
  */
-class Delivery extends TaskCollection implements TaskCollectionInterface
+class Delivery extends TaskCollection implements TaskCollectionInterface, PackagesAwareInterface
 {
+    use PackagesAwareTrait;
+
     const VEHICLE_BIKE = 'bike';
     const VEHICLE_CARGO_BIKE = 'cargo_bike';
 
@@ -111,16 +115,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     private $order;
 
-    private $weight;
-
     private $vehicle = self::VEHICLE_BIKE;
 
     /**
      * @Groups({"delivery_create"})
      */
     private $store;
-
-    private $packages;
 
     const OPENAPI_CONTEXT_POST_PARAMETERS = [[
         "name" => "delivery",
@@ -179,12 +179,25 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
 
     public function getWeight()
     {
-        return $this->weight;
+        $totalWeight = null;
+        foreach ($this->getTasks() as $task) {
+            if (null !== $task->getWeight()) {
+                $totalWeight += $task->getWeight();
+            }
+        }
+        return $totalWeight;
     }
 
     public function setWeight($weight)
     {
-        $this->weight = $weight;
+        if (null !== $weight) {
+            foreach ($this->getTasks() as $task) {
+                if ($task->isDropoff()) {
+                    $task->setWeight($weight);
+                    break;
+                }
+            }
+        }
 
         return $this;
     }
@@ -314,6 +327,10 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
     public function setStore(Store $store)
     {
         $this->store = $store;
+
+        foreach ($this->getTasks() as $task) {
+            $task->setOrganization($store->getOrganization());
+        }
     }
 
     public function getStore()
@@ -338,19 +355,31 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
         return true;
     }
 
-    public function setPackages($packages)
-    {
-        $this->packages = $packages;
-    }
-
     public function getPackages()
     {
-        return $this->packages;
-    }
+        $packages = new ArrayCollection();
 
-    public function hasPackages()
-    {
-        return count($this->packages) > 0;
+        $hash = new \SplObjectStorage();
+
+        foreach ($this->getTasks() as $task) {
+            if ($task->hasPackages()) {
+                foreach ($task->getPackages() as $package) {
+                    $object = $package->getPackage();
+                    if (isset($hash[$object])) {
+                        $hash[$object] += $package->getQuantity();
+                    } else {
+                        $hash[$object] = $package->getQuantity();
+                    }
+                }
+            }
+        }
+
+        foreach ($hash as $package) {
+            $quantity = $hash[$package];
+            $packages->add(new PackageWithQuantity($package, $quantity));
+        }
+
+        return $packages;
     }
 
     public function addPackageWithQuantity(Package $package, $quantity = 1)
@@ -359,50 +388,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface
             return;
         }
 
-        $deliveryPackage = $this->resolvePackage($package);
-        $deliveryPackage->setQuantity($deliveryPackage->getQuantity() + $quantity);
-
-        if (!$this->packages->contains($deliveryPackage)) {
-            $this->packages->add($deliveryPackage);
-        }
-    }
-
-    private function resolvePackage(Package $package): DeliveryPackage
-    {
-        if ($this->hasPackage($package)) {
-            foreach ($this->packages as $deliveryPackage) {
-                if ($deliveryPackage->getPackage() === $package) {
-                    return $deliveryPackage;
-                }
+        foreach ($this->getTasks() as $task) {
+            if ($task->isDropoff()) {
+                $task->addPackageWithQuantity($package, $quantity);
+                break;
             }
         }
-
-        $deliveryPackage = new DeliveryPackage($this);
-        $deliveryPackage->setPackage($package);
-
-        return $deliveryPackage;
-    }
-
-    public function hasPackage(Package $package)
-    {
-        foreach ($this->packages as $p) {
-            if ($p->getPackage() === $package) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function getQuantityForPackage(Package $package)
-    {
-        foreach ($this->packages as $p) {
-            if ($p->getPackage() === $package) {
-                return $p->getQuantity();
-            }
-        }
-
-        return 0;
     }
 
     private static function createTaskObject(?Task $task)

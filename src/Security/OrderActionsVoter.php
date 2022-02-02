@@ -4,10 +4,12 @@ namespace AppBundle\Security;
 
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\User;
+use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
 use Webmozart\Assert\Assert;
 
 class OrderActionsVoter extends Voter
@@ -32,9 +34,12 @@ class OrderActionsVoter extends Voter
 
     private $authorizationChecker;
 
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenStoreExtractor $tokenExtractor)
     {
         $this->authorizationChecker = $authorizationChecker;
+        $this->tokenExtractor = $tokenExtractor;
     }
 
     protected function supports($attribute, $subject)
@@ -66,6 +71,27 @@ class OrderActionsVoter extends Voter
             }
 
             return true;
+        }
+
+        if ($token instanceof OAuth2Token) {
+
+            if (!$this->authorizationChecker->isGranted('ROLE_OAUTH2_ORDERS')) {
+                return false;
+            }
+
+            if (!$subject->hasVendor()) {
+                return false;
+            }
+
+            if (self::VIEW === $attribute || self::ACCEPT === $attribute) {
+
+                if ($shop = $this->tokenExtractor->extractShop()) {
+
+                    return $shop === $subject->getRestaurant();
+                }
+            }
+
+            return false;
         }
 
         if (!is_object($user = $token->getUser())) {

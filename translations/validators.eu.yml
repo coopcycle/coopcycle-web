@@ -1,0 +1,43 @@
+restaurant.stripeAccount.notSet: Lotu jatetxea Stripe kontu batera
+store.multi_drop.conflict: Ezin dituzu eskaerak sortu eta banaketa-puntu anitzak gaitu
+  aldi berean
+pricing_rule.expression.syntax_error: Sintaxi-errorea "%expression%" adierazpenean
+order.shippingTimeRange.notAvailable: Ez dago eskuragarri momentuz
+time_range_jump.next_day: Ez da posible gaurko eskatzea
+checkout.user_with_same_email_exists: E-posta berdineko kontu bat existitzen da
+task_group.ref.duplicate: '"%ref%" erreferentzia hainbat aldiz agertzen da'
+order.collection.not_available: '"batze" betetze metodoa ez dago eskuragarri'
+restaurant.contract.variableDeliveryPrice.pickOne: Mesedez, hautatu prezio bat gutxienez
+restaurant.contract.variableCustomerAmount.pickOne: Mesedez, hautatu prezio bat gutxienez
+loopeat.insufficient_balance: Zure LoopEat saldoa (X) ez da nahikoa eskaerarako
+order.state.notModifiable: Eskaera ezin da aldatu
+product.reusablePackagingUnit.mustBeGreaterThanZero: 0 baino kantitate handiagoa zehaztu
+  behar duzu
+product_option.valuesRange.notAllowed: Ezin duzu tarte bat definitu beharrezko aukera
+  batentzat
+task.before.mustBeGreaterThanAfter: Denbora-tartea baliogabea da
+product.name.modified: Produktuaren izena aldatu duzu
+time_range.no_weekday: Ez duzu asteko egun bat hautatu
+time_range.empty: Ez duzu baliorik hautatu
+delivery.check.noStore: Denda bat eman behar duzu
+delivery.check.notValid: Ezin da zure eskaera egin
+delivery.tasks.pickupAfterDropoff: Banaketa-data batze-data ostean izan behar da.
+delivery.tasks.unexpectedCount: Banaketak bi zeregin izan behar ditu.
+delivery.price.error.priceCalculation: Ezin izan da banaketa-prezioa kalkulatu.
+order.fulfillment_methods.empty: Establezimendu hau ez dago eskuragarri
+order.items.containsDisabledProduct: Eskaerak desgaitutako produktu bat dauka
+order.shippedAt.notEmpty: Banaketa-data ezin da hutsik egon
+order.shippedAt.expired: Banaketa-data iraungita dago
+order.shippedAt.notAvailable: Banaketa-data ez dago eskuragarri dagoeneko
+order.totalIncludingTax.tooLow: Kopuru minimoa %minimum_amount% da
+cart.empty: Zure orga hutsik dago
+cart.address.empty: Mesedez, hautatu helbide bat
+address.notSet: Mesedez, sartu banaketa helbide bat
+address.tooFar: Helbide hau urrunegi dago
+restaurant.menu.notSet: Sortu eta gaitu menu bat
+restaurant.notActivable: Oraindik ezin duzu jatetxe hau gaitu
+restaurant.contract.notValid: Sartu banaketa-kontratuaren terminoak (administratzaile
+  baimenak behar ditu)
+restaurant.name.notBlank: Sartu jatetxearen izena
+restaurant.telephone.notBlank: Sartu zure telefono-zenbakia
+restaurant.openingHours.notBlank: Sartu gutxienez irekiera-ordu bat

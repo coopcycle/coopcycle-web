@@ -17,7 +17,7 @@ function roundUp(n, x = 5) {
     return Math.trunc(value)
 }
 
-export const asText = (value, short) => {
+export const asText = (value, short, from) => {
 
   if (!value || !Array.isArray(value) || value.length !== 2) {
     return ''
@@ -54,7 +54,7 @@ export const asText = (value, short) => {
     })
   } else {
 
-    const rangeAsText = i18n.t('TIME_RANGE', {
+    const rangeAsText = i18n.t(from === true ? 'TIME_RANGE_FROM' : 'TIME_RANGE', {
       start: range.start.format('LT'),
       end: range.end.format('LT'),
     })

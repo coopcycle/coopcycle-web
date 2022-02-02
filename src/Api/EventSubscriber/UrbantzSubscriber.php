@@ -5,7 +5,9 @@ namespace AppBundle\Api\EventSubscriber;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use AppBundle\Api\Resource\UrbantzWebhook;
 use AppBundle\Entity\Urbantz\Delivery as UrbantzDelivery;
+use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Security\TokenStoreExtractor;
+use AppBundle\Service\DeliveryManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
@@ -28,12 +30,14 @@ final class UrbantzSubscriber implements EventSubscriberInterface
         HttpClientInterface $urbantzClient,
         EntityManagerInterface $entityManager,
         TokenStoreExtractor $storeExtractor,
+        DeliveryManager $deliveryManager,
         LoggerInterface $logger,
         string $secret)
     {
         $this->urbantzClient = $urbantzClient;
         $this->entityManager = $entityManager;
         $this->storeExtractor = $storeExtractor;
+        $this->deliveryManager = $deliveryManager;
         $this->logger = $logger;
         $this->secret = $secret;
     }
@@ -57,21 +61,56 @@ final class UrbantzSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $store = $this->storeExtractor->extractStore();
-
-        if (null === $store) {
-            return;
-        }
-
         $webhook = $event->getControllerResult();
 
         if ($webhook->id !== UrbantzWebhook::TASKS_ANNOUNCED) {
             return;
         }
 
+        $store = $this->resolveStore($webhook);
+
+        if (null === $store) {
+            return;
+        }
+
         foreach ($webhook->deliveries as $delivery) {
             $store->addDelivery($delivery);
+            // Call DeliveryManager::setDefaults here,
+            // once the store has been associated
+            $this->deliveryManager->setDefaults($delivery);
         }
+    }
+
+    private function resolveStore(UrbantzWebhook $webhook)
+    {
+        // Check if this needs to be assigned to another store
+        if (null !== $webhook->hub) {
+
+            $this->logger->info(
+                sprintf('Looking for a store for hub "%s"', $webhook->hub)
+            );
+
+            $hub = $this->entityManager
+                ->getRepository(UrbantzHub::class)
+                ->findOneBy(['hub' => $webhook->hub]);
+
+            if (null !== $hub) {
+
+                $this->logger->info(
+                    sprintf('Found store "%s" for hub "%s"', $hub->getStore()->getName(), $webhook->hub)
+                );
+
+                return $hub->getStore();
+            }
+
+            $this->logger->info(
+                sprintf('No store found for hub "%s"', $webhook->hub)
+            );
+        }
+
+        $this->logger->info('Resolving store from token');
+
+        return $this->storeExtractor->extractStore();
     }
 
     public function setTrackingId(ViewEvent $event)

@@ -2,6 +2,8 @@
 # http://symfony.com/doc/current/book/security.html
 security:
 
+    enable_authenticator_manager: true
+
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext
         Nucleos\UserBundle\Model\UserInterface: sha512
@@ -30,7 +32,6 @@ security:
         api_login:
             pattern:  ^/api/login
             stateless: true
-            anonymous: ~
             form_login:
                 check_path:               /api/login_check
                 success_handler:          lexik_jwt_authentication.handler.authentication_success
@@ -57,110 +58,136 @@ security:
             pattern:   ^/api/deliveries
             methods: [ GET, POST, PUT, DELETE ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_tasks_import:
             pattern:   ^/api/tasks/import
             methods: [ POST ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_task_events_get:
             pattern:   ^/api/tasks/[0-9]+/events$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_task_get:
             pattern:   ^/api/tasks/[0-9]+$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_task_groups:
             pattern:   ^/api/task_groups/[0-9]+$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_store_deliveries:
             pattern:   ^/api/stores/[0-9]+/deliveries$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_stores:
             pattern:   ^/api/stores/[0-9]+$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_time_slots:
             pattern:   ^/api/time_slots
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_retail_prices_calculate:
             pattern:   ^/api/retail_prices/calculate
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_urbantz:
             pattern:   ^/api/urbantz
             methods: [ GET, POST, PUT, DELETE ]
             stateless: true
-            anonymous: ~
+            bearer_token: true
+
+        api_task_import_queues:
+            pattern:   ^/api/task_import_queues
+            methods: [ GET ]
+            stateless: true
             bearer_token: true
 
         api_carts_session:
             pattern:   ^/api/carts/session$
             methods: [ POST ]
             stateless: true
-            anonymous: ~
             cart_session: true
+
+        api_orders_get:
+            pattern:   ^/api/orders/[0-9]+$
+            methods: [ GET ]
+            stateless: true
+            bearer_token: true
+
+        api_orders_accept:
+            pattern:   ^/api/orders/[0-9]+/accept$
+            methods: [ PUT ]
+            stateless: true
+            bearer_token: true
 
         api_carts:
             pattern:   ^/api/orders/[0-9]+$
             methods: [ PUT ]
             stateless: true
-            anonymous: ~
             cart_session: true
 
         api_cart_items:
             pattern:   ^/api/orders/[0-9]+/items$
             methods: [ POST ]
             stateless: true
-            anonymous: ~
             cart_session: true
 
         api_cart_item:
             pattern:   ^/api/orders/[0-9]+/items/[0-9]+$
             methods: [ PUT, DELETE ]
             stateless: true
-            anonymous: ~
             cart_session: true
 
         api_cart_operations:
             pattern:   ^/api/orders/[0-9]+/(assign|timing|validate)$
             methods: [ GET, PUT ]
             stateless: true
-            anonymous: ~
+            cart_session: true
+
+        api_cart_payment:
+            pattern:   ^/api/orders/[0-9]+/payment$
+            methods: [ GET ]
+            stateless: true
+            cart_session: true
+
+        api_cart_payment_methods:
+            pattern:   ^/api/orders/[0-9]+/payment_methods$
+            methods: [ GET ]
+            stateless: true
+            cart_session: true
+
+        api_cart_pay:
+            pattern:   ^/api/orders/[0-9]+/pay$
+            methods: [ PUT ]
+            stateless: true
+            cart_session: true
+
+        api_cart_mercadopago_preference:
+            pattern:   ^/api/orders/[0-9]+/mercadopago-preference$
+            methods: [ GET ]
+            stateless: true
             cart_session: true
 
         api_me:
             pattern:   ^/api/me$
             methods: [ GET ]
             stateless: true
-            anonymous: ~
             bearer_token: true
 
         api_webhooks:
@@ -171,7 +198,6 @@ security:
         token_refresh:
             pattern:  ^/api/token/refresh
             stateless: true
-            anonymous: ~
 
         api_docs:
             pattern:   ^/api/docs
@@ -184,10 +210,7 @@ security:
         api:
             pattern:   ^/api
             stateless: true
-            anonymous: ~
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+            jwt: ~
 
         # Disable session to improve performance
         # TraceableFirewallListener will be skipped
@@ -228,18 +251,17 @@ security:
                 oauth_user_provider:
                     service: coopcycle.user_provider
             logout: true
-            anonymous: ~
             remember_me:
                 secret: '%secret%'
 
         main:
-            anonymous: ~
+            lazy: true
 
     access_control:
-        - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/order/public, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login, role: PUBLIC_ACCESS }
+        - { path: ^/register, role: PUBLIC_ACCESS }
+        - { path: ^/resetting, role: PUBLIC_ACCESS }
+        - { path: ^/order/public, roles: PUBLIC_ACCESS }
         - { path: ^/dashboard, roles: [ ROLE_ADMIN, ROLE_RESTAURANT, ROLE_STORE ] }
         - { path: ^/profile/restaurants, roles: ROLE_RESTAURANT }
         - { path: ^/profile/jwt, roles: IS_AUTHENTICATED_REMEMBERED }
@@ -247,14 +269,14 @@ security:
         - { path: ^/profile, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/_uploader/restaurant, roles: [ ROLE_ADMIN, ROLE_RESTAURANT ] }
-        - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/facebook/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/orders/timing, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/routing, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/settings, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/restaurants, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [ GET ] }
-        - { path: ^/api/carts/session$, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: [ POST ] }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/facebook/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/orders/timing, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/resetting, role: PUBLIC_ACCESS }
+        - { path: ^/api/routing, roles: PUBLIC_ACCESS }
+        - { path: ^/api/settings, roles: PUBLIC_ACCESS }
+        - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api/restaurants, roles: PUBLIC_ACCESS, methods: [ GET ] }
+        - { path: ^/api/carts/session$, roles: PUBLIC_ACCESS, methods: [ POST ] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

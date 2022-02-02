@@ -110,6 +110,10 @@ Encore.configureDevServerOptions(options => {
   ]
   options.headers = { 'Access-Control-Allow-Origin': '*' }
   options.compress = true
+
+  options.host = '0.0.0.0'
+  options.public = 'localhost:8080'
+  options.port = 8080
 })
 
 let webpackConfig = Encore.getWebpackConfig()

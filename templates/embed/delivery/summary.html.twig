@@ -2,6 +2,10 @@
 
 {% form_theme form with ['form/delivery.html.twig', 'form/delivery_embed.html.twig'] %}
 
+{% set gateway = payment_gateway_resolver.resolve() %}
+{% set gateway_configs = {} %}
+{% set country = country_iso %}
+
 {% block banner %}{% endblock %}
 {% block menu %}{% endblock %}
 {% block footer %}{% endblock %}
@@ -14,7 +18,12 @@
 
   <h3>{{ 'embed.delivery.summary.title'|trans }}</h3>
 
-  {{ form_start(form) }}
+  {% set form_action_params = app.request.attributes.get('_route_params')|merge({
+    data: submission_hashid,
+    order: order|hashid(16)
+  }) %}
+
+  {{ form_start(form, { action: path(app.request.attributes.get('_route'), form_action_params) }) }}
   <div class="alert alert-info">
     {% trans with {
       '%dropoff_date%':        delivery.dropoff.doneBefore|format_datetime('medium', 'short'),
@@ -29,13 +38,46 @@
     <br>
 
     <p class="text-center">
-      <a href="{{ path('embed_delivery_start', { hashid: hashid }) }}" class="btn btn-xs btn-default">{{ 'basics.edit'|trans }}</a>
+      <a href="{{ path('embed_delivery_start', { hashid: hashid, data: submission_hashid }) }}" class="btn btn-xs btn-default">{{ 'basics.edit'|trans }}</a>
     </p>
   </div>
 
+  {% if error is defined %}
+    <div class="alert alert-danger">
+      {{ error }}
+    </div>
+  {% endif %}
+
   {{ form_errors(form) }}
 
-  {{ form_widget(form.stripeToken) }}
+  {% if form.method is defined %}
+    {{ form_row(form.method) }}
+  {% endif %}
+
+  {% if gateway == 'mercadopago' and (mercadopago_can_enable_testmode() or mercadopago_can_enable_livemode()) %}
+    <div id="mercadopago_identification_fields" style="display: none;">
+      <div class="form-group">
+        <label for="email">{{ 'order.payer.email'|trans }}</label>
+        <input class="form-control" id="email" name="email" type="text" value="{{ order.customer.email }}" />
+      </div>
+      {#
+      In Mexico, we don't need identification documents
+      https://www.mercadopago.com.br/developers/en/guides/resources/localization/identification-types/
+      #}
+      {% if country != 'mx' %}
+        <div class="form-group">
+          <label for="docType">{{ 'order.payer.identificationType'|trans }}</label>
+          <select class="form-control" id="docType" name="docType" data-checkout="docType" type="text"></select>
+        </div>
+        <div class="form-group">
+          <label for="docNumber">{{ 'order.payer.identificationNumber'|trans }}</label>
+          <input class="form-control" id="docNumber" name="docNumber" data-checkout="docNumber" type="text"/>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {{ form_widget(form.stripePayment.stripeToken) }}
   <div id="card-element">
     <!-- a React element will be inserted here. -->
   </div>
@@ -63,8 +105,6 @@
 
 {% block scripts %}
 
-{% set gateway = payment_gateway_resolver.resolve() %}
-{% set gateway_configs = {} %}
 
 {% if gateway == 'stripe' %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
@@ -81,7 +121,7 @@
 <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
 {% set gateway_configs = gateway_configs|merge({
   mercadopago: {
-    publishableKey: coopcycle_setting('mercadopago_test_publishable_key'),
+    publishableKey: coopcycle_setting('mercadopago_publishable_key'),
     country: country
   }
 }) %}
@@ -106,11 +146,12 @@ $("#modify-form").on('click', function() {
     .submit()
 });
 
-new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
+new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
   card: "{{ gateway }}",
   amount: {{ price }},
   gatewayConfigs: {{ gateway_configs|json_encode|raw }},
-  tokenElement: document.querySelector('#stripe_payment_stripeToken')
+  tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
+  selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}"
 });
 
 </script>

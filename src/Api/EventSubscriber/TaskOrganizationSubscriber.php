@@ -51,8 +51,10 @@ final class TaskOrganizationSubscriber implements EventSubscriberInterface
 
         $store = $this->storeExtractor->extractStore();
 
-        foreach ($object->getTasks() as $task) {
-            $task->setOrganization($store->getOrganization());
+        if (null !== $store) {
+            foreach ($object->getTasks() as $task) {
+                $task->setOrganization($store->getOrganization());
+            }
         }
     }
 }

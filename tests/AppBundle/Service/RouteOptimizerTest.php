@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\AppBundle\Normalizer;
+namespace Tests\AppBundle\Service;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
@@ -21,7 +21,7 @@ class RouteOptimizerTest extends KernelTestCase
 
         self::bootKernel();
 
-        $this->client = self::$container->get('csa_guzzle.client.vroom');
+        $this->client = self::$container->get('vroom.client');
     }
 
     public function testCreateRoutingProblemWithShipments()

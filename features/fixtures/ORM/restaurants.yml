@@ -69,7 +69,7 @@ AppBundle\Entity\LocalBusiness:
   restaurant_2:
     name: 'Café Barjot'
     address: "@address_2"
-    openingHours: ['Mo-Sa 11:30-14:30']
+    openingHours: ['Mo-Sa 19:30-23:30']
     enabled: true
     contract: "@contract_2"
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
@@ -83,7 +83,7 @@ AppBundle\Entity\LocalBusiness:
   restaurant_3:
     name: 'La Cantina Clandestina'
     address: "@address_3"
-    openingHours: ['Mo-Sa 11:30-14:30']
+    openingHours: ['Mo-Sa 12:30-14:30']
     enabled: true
     contract: "@contract_3"
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>

@@ -1,0 +1,27 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'form/restaurant.html.twig' %}
+
+{% block breadcrumb %}
+<li>
+  <a href="{{ path('admin_nonprofits') }}">{% trans %}adminDashboard.nonprofits.title{% endtrans %}</a>
+</li>
+<li>
+  {{ 'basics.add'|trans }}
+</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+  {{ form_widget(form) }}
+  <button type="submit" class="btn btn-block btn-lg btn-primary">
+    {{ 'basics.save'|trans }}
+  </button>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block styles %}
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

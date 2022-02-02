@@ -43,11 +43,11 @@ class ClientTest extends TestCase
         $handlerStack = HandlerStack::create($this->mockHandler);
 
         $this->client = new EdenredClient(
-            ['handler' => $handlerStack],
             'key_123',
             'secret_456',
             $this->refreshTokenHandler,
-            $this->edenredAuth->reveal()
+            $this->edenredAuth->reveal(),
+            ['handler' => $handlerStack]
         );
     }
 

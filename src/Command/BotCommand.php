@@ -8,7 +8,6 @@ use AppBundle\Entity\TaskList;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Client as HttpClient;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -18,6 +17,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Stopwatch\Stopwatch;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class BotCommand extends DaemonCommand
 {
@@ -31,7 +31,7 @@ class BotCommand extends DaemonCommand
         JWTTokenManagerInterface $tokenManager,
         RoutingInterface $routing,
         SettingsManager $settingsManager,
-        HttpClient $apiClient)
+        HttpClientInterface $apiClient)
     {
         $this->doctrine = $doctrine;
         $this->tokenManager = $tokenManager;
@@ -178,7 +178,7 @@ class BotCommand extends DaemonCommand
 
         try {
 
-            $response = $this->apiClient->get('/api/me/tasks/'.$date->format('Y-m-d'), [
+            $response = $this->apiClient->request('GET', '/api/me/tasks/'.$date->format('Y-m-d'), [
                 'body' => '{}',
                 'headers' => [
                     'Authorization' => "Bearer {$token}",
@@ -203,7 +203,7 @@ class BotCommand extends DaemonCommand
     {
         try {
 
-            $response = $this->apiClient->put('/api/tasks/'.$task['id'].'/done', [
+            $response = $this->apiClient->request('PUT', '/api/tasks/'.$task['id'].'/done', [
                 'body' => '{}',
                 'headers' => [
                     'Authorization' => "Bearer {$token}",
@@ -232,7 +232,7 @@ class BotCommand extends DaemonCommand
 
         try {
 
-            $response = $this->apiClient->post('/api/me/location', [
+            $response = $this->apiClient->request('POST', '/api/me/location', [
                 'body' => json_encode($payload),
                 'headers' => [
                     'Authorization' => "Bearer {$token}",

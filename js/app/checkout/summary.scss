@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 
 #loopeat-block {
@@ -115,8 +117,8 @@ $vytalGreen: #53b848;
   background-repeat: no-repeat;
   background-size: cover;
   display: block;
-  width: ($vytalWidth / 18);
-  height: ($vytalHeight / 18);
+  width: math.div($vytalWidth, 18);
+  height: math.div($vytalHeight, 18);
 }
 
 .alert-vytal {
@@ -125,4 +127,37 @@ $vytalGreen: #53b848;
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.en-boite-le-plat-logo-orange {
+
+  $w: 1000px;
+  $h: 500px;
+
+  background-image: url('../../../assets/logos/en_boite_le_plat_orange.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: block;
+  width: ($w * 0.125);
+  height: ($h * 0.125);
+}
+
+.alert-en-boite-le-plat {
+  background-color: #fff7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nonprofit-card {
+  .thumbnail {
+    cursor: pointer;
+    height: 340px;
+  }
+   &.active {
+    .thumbnail {
+      border: 1px solid #66afe9;
+      background-color: #f3faff;
+    }
+  }
 }

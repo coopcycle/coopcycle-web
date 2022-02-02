@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 @import "../../../assets/css/vars.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
@@ -60,6 +62,8 @@
 
   &__title {
     font-weight: 700;
+    height: ($line-height-computed * 2);
+    max-height: ($line-height-computed * 2);
   }
 
   &__caption {
@@ -84,10 +88,20 @@
   }
 
   > img,
-  a > img {
+  a > img,
+  a > div > img {
     @include img-responsive;
     margin-right: auto;
     margin-left: auto;
+  }
+
+  figcaption {
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    font-size: $font-size-h3;
   }
 }
 
@@ -107,8 +121,8 @@
   background-image: url('../../../assets/svg/Edenred_Logo.svg');
   background-repeat: no-repeat;
   display: block;
-  width: ($originalWidth / 6);
-  height: ($originalHeight / 6);
+  width: math.div($originalWidth, 6);
+  height: math.div($originalHeight, 6);
 }
 
 .restaurant-supports-vytal {
@@ -120,6 +134,6 @@
     background-repeat: no-repeat;
     background-size: cover;
     display: block;
-    width: ($vytalWidth / 15);
-    height: ($vytalHeight / 15);
+    width: math.div($vytalWidth, 15);
+    height: math.div($vytalHeight, 15);
 }

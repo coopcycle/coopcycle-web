@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Form\OrderExportType;
@@ -13,8 +12,6 @@ use AppBundle\Utils\RestaurantStats;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Flysystem\Filesystem;
-use Sylius\Component\Order\Model\OrderInterface;
-use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -82,7 +79,6 @@ trait OrderTrait
 
                 $start->setTime(0, 0, 1);
                 $end->setTime(23, 59, 59);
-
                 $stats = new RestaurantStats(
                     $entityManager,
                     $start,
@@ -93,7 +89,8 @@ trait OrderTrait
                     $translator,
                     $taxesHelper,
                     $withVendorName = true,
-                    $withMessenger
+                    $withMessenger,
+                    $this->getParameter('nonprofits_enabled')
                 );
 
                 if (count($stats) === 0) {

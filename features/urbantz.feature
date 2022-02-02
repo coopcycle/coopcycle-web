@@ -278,6 +278,350 @@ Feature: Urbantz
       }
       """
 
+  Scenario: Receive webhook for TasksAnnounced event with multiple hubs
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the store with name "Acme" has an API key
+    And the store with name "Acme" is associated with Urbantz hub "61289572c2b7aab94f380d76"
+    And the store with name "Acme2" is associated with Urbantz hub "61289572c2b7aab94f380d77"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the store with name "Acme" sends a "POST" request to "/api/urbantz/webhook/tasks_announced" with body:
+      """
+      [
+        {
+          "source":{
+            "location":{
+              "type":"Point",
+              "geometry":[
+
+              ]
+            },
+            "addressLines":[
+
+            ],
+            "geocodeScore":0,
+            "cleanScore":0,
+            "number":"4",
+            "street":"Rue Perrault",
+            "city":"Nantes",
+            "zip":"44000",
+            "country":"FR",
+            "address":"Rue Perrault 4 44000 Nantes FR"
+          },
+          "location":{
+            "location":{
+              "type":"Point",
+              "geometry":[
+                -1.5506787323970848,
+                47.21125182318541
+              ]
+            },
+            "addressLines":[
+              "Rue Perrault",
+              "44000",
+              "Nantes",
+              "FRA"
+            ],
+            "geocodeScore":80,
+            "cleanScore":0,
+            "number":null,
+            "street":"Rue Perrault",
+            "city":"Nantes",
+            "zip":"44000",
+            "country":"FRA",
+            "address":"Rue Perrault 44000 Nantes FRA",
+            "origin":"ADDRESS_BOOK",
+            "precision":"street"
+          },
+          "notificationSettings":{
+            "sms":true,
+            "email":true
+          },
+          "contact":{
+            "buildingInfo":{
+              "floor":null,
+              "digicode1":""
+            },
+            "extraEmails":[
+
+            ],
+            "extraPhones":[
+
+            ],
+            "account":"2080118",
+            "name":null,
+            "person":"Test Nantais",
+            "phone":"06XXXXXXX",
+            "language":"fr"
+          },
+          "requires":{
+            "dispatcher":{
+              "scan":false
+            },
+            "driver":{
+              "prepCheckList":false,
+              "prepScan":false,
+              "signatureAndComment":false,
+              "signatureAndItemConcerns":false,
+              "signature":false,
+              "scan":false,
+              "comment":false,
+              "photo":false,
+              "contactless":false
+            },
+            "stop":{
+              "onSite":false
+            },
+            "failure":{
+              "photo":false
+            },
+            "dropOff":{
+              "driver":{
+                "prepCheckList":false,
+                "prepScan":false,
+                "signatureAndComment":false,
+                "signatureAndItemConcerns":false,
+                "signature":false,
+                "scan":false,
+                "comment":false,
+                "photo":false
+              },
+              "stop":{
+                "onSite":false
+              }
+            }
+          },
+          "delay":{
+            "time":0,
+            "when":"2021-09-23T15:12:03.876Z"
+          },
+          "timeWindow":{
+            "start":"2021-09-23T08:25:00.000Z",
+            "stop":"2021-09-23T09:00:00.000Z"
+          },
+          "actualTime":{
+            "arrive":{
+              "location":{
+                "type":"Point",
+                "geometry":[
+
+                ]
+              }
+            }
+          },
+          "execution":{
+            "contactless":{
+              "forced":false
+            },
+            "timer":{
+              "timestamps":[
+
+              ]
+            }
+          },
+          "collect":{
+            "activated":false
+          },
+          "assets":{
+            "deliver":[
+
+            ],
+            "return":[
+
+            ]
+          },
+          "status":"PENDING",
+          "activity":"classic",
+          "skills":[],
+          "labels":[],
+          "attempts":1,
+          "carrierAssociationRejected":null,
+          "numberOfPlannings":0,
+          "timeWindowMargin":0,
+          "optimizationCount":0,
+          "hasBeenPaid":null,
+          "closureDate":null,
+          "lastOfflineUpdatedAt":null,
+          "replanned":false,
+          "archived":false,
+          "setToInvoice":false,
+          "paymentType":null,
+          "collectedAmount":0,
+          "categories":[],
+          "_id":"614c99434a4181badb8fff6c",
+          "announcement":"614c994356e310cc1208a649",
+          "date":"2021-09-23T00:00:00.000Z",
+          "endpoint":"6128960cb13a3dd81ac9d1ac",
+          "taskId":"1269-00099999991",
+          "type":"delivery",
+          "announcementUpdate":"614c994356e310cc1208a649",
+          "attachments":[],
+          "by":"6128955c9ad1277b740efc33",
+          "categoriesDetails":[],
+          "client":"Coopcycle",
+          "customerCalls":[],
+          "dimensions":{
+            "bac":0,
+            "volume":9.396321,
+            "weight":1.082
+          },
+          "flux":"612895c82132e8cab82a147a",
+          "hasRejectedProducts":false,
+          "id":"614c99434a4181badb8fff6c",
+          "imagePath":"https://backend.urbantz.com/pictures/platforms/612894c781af110161fa20cd/",
+          "instructions":"4ème étage",
+          "issues":[],
+          "items":[
+            {
+              "damaged":{
+                "confirmed":false,
+                "pictures":[
+
+                ],
+                "picturesInfo":[
+
+                ]
+              },
+              "status":"PENDING",
+              "quantity":1,
+              "labels":[
+
+              ],
+              "skills":[
+
+              ],
+              "lastOfflineUpdatedAt":null,
+              "_id":"614c99434a4181c5298fff6f",
+              "type":"SEC",
+              "barcode":"12690002936057",
+              "barcodeEncoding":"CODE128",
+              "dimensions":{
+                "weight":1.082,
+                "bac":0,
+                "volume":9.396321
+              },
+              "log":[
+                {
+                  "_id":"614c99434a418124478fff70",
+                  "to":"PENDING",
+                  "when":"2021-09-23T15:12:03.870Z"
+                }
+              ]
+            }
+          ],
+          "log":[
+            {
+              "_id":"614c99434a4181a4278fff73",
+              "to":"GEOCODED",
+              "when":"2021-09-23T15:12:03.892Z",
+              "by":null
+            }
+          ],
+          "metadata":{
+            "codePe":"AN7809"
+          },
+          "notifications":[],
+          "platform":"612894c781af110161fa20cd",
+          "platformName":"Les Coursiers Nantais",
+          "products":[],
+          "progress":"GEOCODED",
+          "returnedProducts":[],
+          "serviceTime":0,
+          "trackingId":"614c9943-4a4181ba-db8fff6c-bd321648",
+          "updated":"2021-09-23T15:12:03.869Z",
+          "when":"2021-09-23T15:12:03.869Z",
+          "hub":"61289572c2b7aab94f380d77",
+          "hubName":"Coopcycle",
+          "targetFlux":"61289572c2b7aab94f380d76__612895c82132e8cab82a147a_2021-09-23",
+          "zone":null,
+          "zoneId":null,
+          "order":"614c99434a418164848fff7d"
+        }
+      ]
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/UrbantzWebhook",
+        "@id":"/api/urbantz_webhooks/tasks_announced",
+        "@type":"UrbantzWebhook",
+        "deliveries":[
+          {
+            "@id":"/api/deliveries/1",
+            "@type":"http://schema.org/ParcelDelivery"
+          }
+        ]
+      }
+      """
+    Given the store with name "Acme2" has an API key
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the store with name "Acme2" sends a "GET" request to "/api/deliveries/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/1",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":1,
+        "pickup":{
+          "@id":"/api/tasks/1",
+          "@type":"Task",
+          "id":1,
+          "status":"TODO",
+          "address":{
+            "@id":"/api/addresses/2",
+            "@type":"http://schema.org/Place",
+            "contactName":null,
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":48.864577,
+              "longitude":2.333338
+            },
+            "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
+            "telephone":null,
+            "name":null
+          },
+          "comments":"Coopcycle\n\n0 × bac(s)\n1.082 kg\n\n\n1.08 kg",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneAfter":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()"
+        },
+        "dropoff":{
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "id":2,
+          "status":"TODO",
+          "address":{
+            "@id":"/api/addresses/4",
+            "@type":"http://schema.org/Place",
+            "contactName":"Test Nantais",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":47.211251823185,
+              "longitude":-1.5506787323971
+            },
+            "streetAddress":"4 Rue Perrault, 44000 Nantes",
+            "telephone":null,
+            "name":null
+          },
+          "comments":"",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneAfter":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "weight":1082
+        }
+      }
+      """
+
   Scenario: Receive webhook for TaskChanged event
     Given the fixtures files are loaded:
       | sylius_channels.yml |

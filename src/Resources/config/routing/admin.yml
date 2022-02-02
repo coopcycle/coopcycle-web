@@ -365,6 +365,26 @@ admin_restaurant_promotion:
             restaurant_promotions: admin_restaurant_promotions
     methods: [ GET, POST ]
 
+admin_restaurant_new_api:
+    path: /admin/restaurants/{id}/api/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newRestaurantApiAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+    methods: [ GET, POST ]
+
+admin_restaurant_api:
+    path: /admin/restaurants/{id}/api
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantApiAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurants: admin_restaurants
+            restaurant: admin_restaurant
+    methods: [ GET, POST ]
+
 admin_order_accept:
     path: /admin/orders/{id}/accept
     defaults:
@@ -560,3 +580,34 @@ admin_metrics:
         _controller: AppBundle\Controller\AdminController::metricsAction
         layout: 'admin.html.twig'
     methods:  [ GET ]
+
+admin_nonprofits:
+  path: /admin/nonprofits
+  condition: '%nonprofits_enabled% == true'
+  defaults:
+    _controller: AppBundle\Controller\AdminController::nonProfitsActionListAction
+    layout: 'admin.html.twig'
+  methods:  [ GET ]
+
+admin_nonprofit_new:
+  path: /admin/nonprofits/new
+  condition: '%nonprofits_enabled% == true'
+  defaults:
+    _controller: AppBundle\Controller\AdminController::newNonprofitAction
+    layout: 'admin.html.twig'
+  methods: [ GET, POST ]
+
+admin_nonprofit_delete:
+  path: /admin/nonprofits/{id}/delete
+  condition: '%nonprofits_enabled% == true'
+  defaults:
+    _controller: AppBundle\Controller\AdminController::deleteNonprofitAction
+  methods: [ POST ]
+
+admin_nonprofit:
+  path: /admin/nonprofits/{id}
+  condition: '%nonprofits_enabled% == true'
+  defaults:
+    _controller: AppBundle\Controller\AdminController::nonprofitAction
+    layout: 'admin.html.twig'
+  methods: [ GET, POST ]

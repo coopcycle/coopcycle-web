@@ -23,7 +23,6 @@ parameters:
         - '#Call to an undefined method AppBundle\\Entity\\Model\\TaggableInterface::getId\(\)#'
         - '#Call to an undefined method League\\Geotools\\Geohash\\GeohashInterface::getCoordinate\(\)#'
         - '#Call to an undefined method Sylius\\Component\\Order\\Repository\\OrderRepositoryInterface::countByCustomerAndCoupon\(\)#'
-        - '#Call to an undefined method Symfony\\Component\\HttpFoundation\\Session\\SessionInterface::getFlashBag\(\)#'
         - '#Call to an undefined method Symfony\\Component\\DependencyInjection\\Extension\\ExtensionInterface::addSecurityListenerFactory\(\)#'
         - '#Strict comparison using === between null and Sylius\\Component\\Order\\Model\\OrderInterface will always evaluate to false#'
         - '#Call to an undefined method [a-zA-Z\\]+::accessControl\(\)#'
@@ -36,7 +35,6 @@ parameters:
         - '#Method [a-zA-Z\\:\(\)]+ should return Doctrine\\Common\\Collections\\Collection<\(int\|string\), [a-zA-Z\\]+> but returns Doctrine\\Common\\Collections\\ArrayCollection<\(int\|string\), [a-zA-Z\\\|]+>#'
         - '#Call to an undefined method Symfony\\Component\\Validator\\ConstraintViolationListInterface::findByCodes\(\)#'
         - '#Call to an undefined method Doctrine\\Persistence\\ObjectManager::getFilters#'
-        - '#Method AppBundle\\Serializer\\PhoneNumberNormalizer::denormalize\(\) should return array\|object but#'
         - '#(createdAt|updatedAt) is never written, only read#'
         - '#(createdAt|updatedAt) is unused#'
         - '#Property AppBundle\\Entity\\(.*)::\$id is never written, only read#'
@@ -46,6 +44,9 @@ parameters:
         - '#Property AppBundle\\Form\\Type\\GeocodingProviderType::\$opencageApiKey is never read, only written#'
         - '#Class AppBundle\\Security\\OAuth\\ResourceOwner\\FacebookResourceOwner extends @final class HWI\\Bundle\\OAuthBundle\\OAuth\\ResourceOwner\\FacebookResourceOwner#'
         - '#Property AppBundle\\Utils\\TimeRange::\$(.*) is never read, only written#'
+        - '#Call to an undefined method Symfony\\Component\\Console\\Helper\\HelperInterface::ask\(\)#'
+        - '#Cannot use array destructuring on array<int, mixed>\|Doctrine\\ORM\\PersistentCollection#'
+        - '#Call to an undefined method Symfony\\Component\\Security\\Http\\Authenticator\\Passport\\PassportInterface::getAttribute\(\).#'
     universalObjectCratesClasses:
         - MercadoPago\Item
         - MercadoPago\Preference

@@ -95,6 +95,7 @@
         "PAYMENT_FORM_REDIRECT_HELP": "Du wirst zur Seite deiner Bank weitergeleitet, um die Bezahlung zu vervollständigen",
         "PAYMENT_FORM_CARDHOLDER_NAME": "Name des Karteninhabers",
         "PAYMENT_FORM_TITLE": "Deine Zahlungsinformationen",
-        "RULE_PICKER_LINE_OPTGROUP_DELIVERY": "Lieferung"
+        "RULE_PICKER_LINE_OPTGROUP_DELIVERY": "Lieferung",
+        "TIME_RANGE_FROM": "ab {{start}}"
     }
 }

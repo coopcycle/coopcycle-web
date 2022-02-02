@@ -12,7 +12,6 @@
 // the project's config changing)
 
 require('dotenv').config()
-// const webpackPreprocessor = require('cypress-webpack-preprocessor-v5')
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits

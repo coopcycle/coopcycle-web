@@ -5,6 +5,7 @@ Feature: Manage restaurants
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
+    Given the current time is "2021-12-10 11:00:00"
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants"
     Then the response status code should be 200
@@ -15,13 +16,27 @@ Feature: Manage restaurants
       "@context":"/api/contexts/Restaurant",
       "@id":"/api/restaurants",
       "@type":"hydra:Collection",
-      "hydra:member":@array@,
+      "hydra:member":[
+        {
+          "@id":"/api/restaurants/1",
+          "@*@": "@*@"
+        },
+        {
+          "@id":"/api/restaurants/3",
+          "@*@": "@*@"
+        },
+        {
+          "@id":"/api/restaurants/2",
+          "@*@": "@*@"
+        }
+      ],
       "hydra:totalItems":3
     }
     """
 
   Scenario: Search restaurants
-    Given the fixtures files are loaded:
+    Given the current time is "2021-12-22 20:00:00"
+    And the fixtures files are loaded:
       | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -62,8 +77,8 @@ Feature: Manage restaurants
           "openingHoursSpecification":[
             {
               "@type":"OpeningHoursSpecification",
-              "opens":"11:30",
-              "closes":"14:30",
+              "opens":"19:30",
+              "closes":"23:30",
               "dayOfWeek":[
                 "Monday",
                 "Tuesday",
@@ -76,7 +91,8 @@ Feature: Manage restaurants
           ],
           "specialOpeningHoursSpecification":[],
           "image":@string@,
-          "fulfillmentMethods":@array@
+          "fulfillmentMethods":@array@,
+          "isOpen":true
         }
       ],
       "hydra:totalItems":1,
@@ -86,6 +102,78 @@ Feature: Manage restaurants
     """
 
   Scenario: Retrieve a restaurant
+    Given the current time is "2021-12-22 13:00:00"
+    And the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burger  | HAMBURGER |
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/restaurants/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/Restaurant",
+      "@id":"/api/restaurants/1",
+      "id":1,
+      "@type":"http://schema.org/Restaurant",
+      "enabled":true,
+      "depositRefundEnabled": false,
+      "depositRefundOptin": true,
+      "name":"Nodaiwa",
+      "description": null,
+      "state": "normal",
+      "address":{
+        "@id":"@string@.startsWith('/api/addresses')",
+        "@type":"http://schema.org/Place",
+        "geo":{
+          "@type":"GeoCoordinates",
+          "latitude":@double@,
+          "longitude":@double@
+        },
+        "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
+        "name":null,
+        "telephone": null
+      },
+      "telephone":"+33612345678",
+      "image":@string@,
+      "hasMenu":"@string@.startsWith('/api/restaurants/menus')",
+      "openingHoursSpecification":[
+        {
+          "@type":"OpeningHoursSpecification",
+          "opens":"11:30",
+          "closes":"14:30",
+          "dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+        }
+      ],
+      "specialOpeningHoursSpecification":[],
+      "fulfillmentMethods":@array@,
+      "potentialAction":{
+        "@type":"OrderAction",
+        "target":{
+          "@type":"EntryPoint",
+          "urlTemplate":@string@,
+          "inLanguage":"fr",
+          "actionPlatform":["http://schema.org/DesktopWebPlatform"]
+        },
+        "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
+      },
+      "isOpen":true
+    }
+    """
+
+  Scenario: Retrieve a closed restaurant
+    Given the current time is "2021-12-19 12:00:00"
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_locales.yml  |
@@ -150,7 +238,9 @@ Feature: Manage restaurants
           "actionPlatform":["http://schema.org/DesktopWebPlatform"]
         },
         "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
-      }
+      },
+      "isOpen":false,
+      "nextOpeningDate":@string@
     }
     """
 
@@ -326,7 +416,8 @@ Feature: Manage restaurants
                     }
                   ]
                 }
-              ]
+              ],
+              "images":[]
             }
           ]
         },
@@ -344,7 +435,8 @@ Feature: Manage restaurants
               "offers": {
                 "@type":"Offer",
                 "price":@integer@
-              }
+              },
+              "images":[]
             }
           ]
         }
@@ -723,6 +815,7 @@ Feature: Manage restaurants
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_locales.yml  |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -810,7 +903,8 @@ Feature: Manage restaurants
               "after":"@string@.isDateTime()",
               "before":"@string@.isDateTime()",
               "doneAfter":"@string@.isDateTime()",
-              "doneBefore":"@string@.isDateTime()"
+              "doneBefore":"@string@.isDateTime()",
+              "weight":null
             }
           }
         ],

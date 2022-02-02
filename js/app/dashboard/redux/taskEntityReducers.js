@@ -5,6 +5,7 @@ import {
   UPDATE_TASK,
   DELETE_GROUP_SUCCESS,
   REMOVE_TASK,
+  CREATE_GROUP_SUCCESS,
 } from './actions'
 import { taskAdapter } from '../../coopcycle-frontend-js/logistics/redux'
 
@@ -40,6 +41,25 @@ export default (state = initialState, action) => {
 
     case REMOVE_TASK:
       return taskAdapter.removeOne(state, action.task['@id'])
+
+    case CREATE_GROUP_SUCCESS:
+
+      const tasksMatchingCreatedGroup = _.filter(
+        selectors.selectAll(state),
+        t => _.includes(action.taskGroup.tasks, t['@id'])
+      )
+
+      if (tasksMatchingCreatedGroup.length === 0) {
+        return state
+      }
+
+      return taskAdapter.upsertMany(state, tasksMatchingCreatedGroup.map(t => ({
+        ...t,
+        group: _.pickBy({
+          ...action.taskGroup,
+          tags: [],
+        }, (value, key) => key !== 'tasks')
+      })))
   }
 
   return state

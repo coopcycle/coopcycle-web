@@ -64,6 +64,8 @@ adminDashboard.restaurants.exclusive: Exclusive
 adminDashboard.users.title: Users
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Edit user
+adminDashboard.users.confirmDeleteUser: Are you sure you want to delete user with email %email%?
+adminDashboard.users.userHasBeenDeleted: User has been deleted.
 adminDashboard.users.edit.addStore: Add a store
 adminDashboard.users.edit.addRestaurant: Add a restaurant
 adminDashboard.users.createNew: Add user
@@ -133,13 +135,20 @@ localBusiness.form.use_different_business_address.label: Use a different busines
 localBusiness.form.business_address.label: Business address
 restaurant.available: Available
 restaurant.unavailable: Unavailable
+restaurants.pre_order: Pre-order
 restaurant.disabledWarning: "This restaurant is disabled so the site visitors can't\
   \ see this page. If you want to, you can <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
   >activate it in the admin</a>.\n"
 restaurant.closedWarningWithDelay: Order now for later. Order at least %delay% in
   advance.
-restaurant.temporaryClosedWarning: This restaurant is closed until <strong>%date%</strong>.
-  You can still order for later on though!
+restaurant.temporaryClosedWarning: This restaurant is closed and not available until <strong>%date%</strong>.
+restaurant.closedOpensTodayLaterWarning: This restaurant is closed now but opens today at <strong>%time%</strong>.
+restaurant.canOrderForLater: You can still order for later on though!
+restaurant.closedOpensTomorrowWarning: This restaurant is closed for the day but opens tomorrow at <strong>%time%</strong>.
+restaurant.canOrderForTomorrow: You can still order for tomorrow on though!
+restaurant.closedOpensAfterTomorrowWarning: This restaurant is closed until <strong>%date%</strong>.
+restaurant.canOrderForOtherDay: You can still order for that day on though!
+restaurant.closedNowWarning: This restaurant is closed now.
 restaurant.noMenuWarning: "This restaurant has no menu for now\n"
 restaurant.quotes_disclaimer.authenticated: This restaurant also accepts orders on
   quotation. To create quotes, you must be a referenced customer. <a href="%contact_us%">Contact
@@ -1212,3 +1221,13 @@ form.api_app.type.api_key.label: API Key - for Urbantz
 form.settings.mercadopago.client_secret.label: Client Secret
 localBusiness.form.business_address.help: This address will be used in receipts
 form.local_business.mercadopago.connected: Connected
+restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
+restaurant.form.en_boite_le_plat_enabled.label: Enable En Boîte Le Plat deposit-refund system
+form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'I want <a href="https://enboiteleplat.fr/rennes/" target="_blank">En Boîte Le Plat</a> reusable containers.'
+order.cart.donation: Donation
+order.export.heading.nonprofit: Nonprofit
+adminDashboard.nonprofits.createNew: Add a new nonprofit
+adminDashboard.nonprofits.title: Nonprofits
+adminDashboard.nonprofits.confirm_delete: Are you sure you want to delete this nonprofit?
+order.cart.donation.disclaimer: We offer you to donate %percentage% of the revenue from your order to one of our partner associations. You will not pay more.
+form.checkout_address.nonprofit.placeholder: Choose your favorite nonprofit

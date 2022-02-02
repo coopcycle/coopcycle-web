@@ -23,7 +23,7 @@ services:
       $tokenManager: '@lexik_jwt_authentication.jwt_manager'
       $routing: '@routing_service'
       $settingsManager: '@coopcycle.settings_manager'
-      $apiClient: '@csa_guzzle.client.api'
+      $apiClient: '@api.client'
     tags:
       - { name: 'console.command', command: 'coopcycle:bot' }
 

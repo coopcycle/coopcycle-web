@@ -131,7 +131,6 @@ services:
         arguments:
             - '%loopeat_partner_secret%'
     tags:
-      - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: loopeat }
 
   AppBundle\LoopEat\Context:
@@ -184,7 +183,6 @@ services:
     arguments:
       $promotionRuleFactory: '@sylius.factory.promotion_rule'
       $promotionFactory: '@sylius.factory.promotion'
-      $browserlessClient: '@csa_guzzle.client.browserless'
 
   AppBundle\EventListener\LocaleListener:
     arguments: ['%env(COOPCYCLE_LOCALE)%']
@@ -203,7 +201,6 @@ services:
 
   AppBundle\EventListener\MaintenanceListener:
     arguments:
-      $tokenStorage: '@security.token_storage'
       $redis: '@snc_redis.default'
       $templating: '@twig'
     tags:
@@ -531,9 +528,7 @@ services:
         arguments:
             - '%secret%'
 
-  AppBundle\Service\Routing\Osrm:
-    arguments:
-      $client: '@csa_guzzle.client.osrm'
+  AppBundle\Service\Routing\Osrm: ~
 
   routing_service:
     public: true
@@ -549,11 +544,9 @@ services:
     tags: [ 'api_platform.filter' ]
 
   AppBundle\Api\Filter\TaskFilter:
-    arguments: [ '@doctrine', '@request_stack', '@?logger', { tokenStorage: '@security.token_storage' } ]
     tags: [ 'api_platform.filter' ]
 
   AppBundle\Api\Filter\AssignedFilter:
-    arguments: [ '@doctrine', '@request_stack', '@?logger', { tokenStorage: '@security.token_storage' } ]
     tags: [ 'api_platform.filter' ]
 
   AppBundle\Api\Filter\DeliveryOrderFilter:
@@ -583,6 +576,7 @@ services:
       $country: "%country_iso%"
       $foodtechEnabled: "%foodtech_enabled%"
       $b2bEnabled: "%b2b_enabled%"
+      $forceStripe: "%env(bool:FORCE_STRIPE)%"
 
   AppBundle\Service\EmailManager:
     arguments:
@@ -631,12 +625,21 @@ services:
       - { name: monolog.logger, channel: coopcycle.search }
       - { name: doctrine.event_subscriber }
 
+  AppBundle\Doctrine\EventSubscriber\DeliverySubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
   AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:
     arguments:
         $denyAccessListener: '@api_platform.security.listener.request.deny_access'
     tags: [ 'kernel.event_subscriber' ]
 
   AppBundle\Api\EventSubscriber\DeliverySubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\TaskImportQueueSubscriber:
+    arguments:
+        $secret: '%secret%'
     tags: [ 'kernel.event_subscriber' ]
 
   AppBundle\Api\EventSubscriber\SoftDeletedSubscriber:
@@ -749,6 +752,7 @@ services:
     parent: 'api_platform.doctrine.orm.collection_data_provider'
     arguments:
       $restaurantFilter: '@coopcycle.utils.restaurant_filter'
+      $timingRegistry: '@AppBundle\Service\TimingRegistry'
     tags:
       - { name: 'api_platform.collection_data_provider', priority: 2 }
     autoconfigure: false
@@ -812,10 +816,6 @@ services:
     arguments:
       $annotation: '%restaurant_menu_cache_annotation%'
 
-  AppBundle\EventSubscriber\EmbedSubscriber:
-    arguments:
-      $debug: '%kernel.debug%'
-
   AppBundle\EventListener\Upload\UploadListener:
     arguments:
       $mappingFactory: '@vich_uploader.property_mapping_factory'
@@ -825,38 +825,9 @@ services:
     tags:
       - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
 
-  AppBundle\Security\Firewall\TokenBearerListener:
-    arguments:
-      - '@security.token_storage'
-      - '@security.authentication.manager'
-      - '@lexik_jwt_authentication.jwt_token_authenticator'
-      - '@sensio_framework_extra.psr7.http_message_factory'
-
-  AppBundle\Security\Authentication\Provider\TokenBearerProvider:
-    arguments:
-      $userProvider: ~
-      $resourceServer: '@league.oauth2.server.resource_server'
-      $jwtTokenAuthenticator: '@lexik_jwt_authentication.jwt_token_authenticator'
-      $providerKey: ~
-    public: false
-
   AppBundle\Security\ApiKeyManager: ~
 
-  AppBundle\Security\Firewall\CartSessionListener:
-    arguments:
-      - '@security.token_storage'
-      - '@security.authentication.manager'
-      - '@lexik_jwt_authentication.jwt_token_authenticator'
-    public: false
-
-  AppBundle\Security\Authentication\Provider\CartSessionProvider:
-    arguments:
-      $jwtTokenAuthenticator: '@lexik_jwt_authentication.jwt_token_authenticator'
-    public: false
-
-  AppBundle\Mjml\MjmlServerRenderer:
-    arguments:
-      $client: '@csa_guzzle.client.mjml_server'
+  AppBundle\Mjml\MjmlServerRenderer: ~
 
   AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
   AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
@@ -898,46 +869,6 @@ services:
             secret: '%env(S3_CREDENTIALS_SECRET)%'
           use_path_style_endpoint: true
 
-  cdn_s3_client:
-    class: Aws\S3\S3Client
-    arguments:
-        - endpoint: '%env(CDN_S3_ENDPOINT)%'
-          version: latest
-          region: '%env(CDN_S3_REGION)%'
-          credentials:
-            key: '%env(CDN_S3_CREDENTIALS_KEY)%'
-            secret: '%env(CDN_S3_CREDENTIALS_SECRET)%'
-          use_path_style_endpoint: true
-          # https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_configuration.html#config-retries
-          # https://www.digitalocean.com/docs/spaces/#limits
-          # https://www.digitalocean.com/docs/spaces/resources/performance-tips/#50x-errors
-          retries:
-            mode: standard
-            max_attempts: 3
-
-  # https://symfony.com/doc/current/bundles/LiipImagineBundle/cache-resolver/cache.html
-
-  coopcycle.imagine.cache.resolver.flysystem:
-    class: Liip\ImagineBundle\Imagine\Cache\Resolver\FlysystemResolver
-    arguments:
-      $flysystem: '@oneup_flysystem.cdn_filesystem'
-      $rootUrl: '%env(CDN_ROOT_URL)%'
-      $cachePrefix: '%env(CDN_CACHE_PREFIX)%'
-
-  coopcycle.imagine.cache.redis:
-    class: Symfony\Component\Cache\DoctrineProvider
-    arguments:
-      - '@s3_flysystem.cache'
-
-  coopcycle.imagine.cache.resolver.flysystem.cache:
-    class: Liip\ImagineBundle\Imagine\Cache\Resolver\CacheResolver
-    arguments:
-      - "@coopcycle.imagine.cache.redis"
-      - "@coopcycle.imagine.cache.resolver.flysystem"
-      - { prefix: "s3_flysystem" }
-    tags:
-      - { name: "liip_imagine.cache.resolver", resolver: "cached_s3_flysystem" }
-
   AppBundle\Service\StripeManager:
     tags:
       - { name: monolog.logger, channel: stripe }
@@ -946,7 +877,6 @@ services:
 
   AppBundle\Sylius\Order\ReceiptGenerator:
     arguments:
-      $httpClient: '@csa_guzzle.client.browserless'
       $filesystem: '@receipts_filesystem'
       $taxRateRepository: '@sylius.repository.tax_rate'
       $locale: '%env(COOPCYCLE_LOCALE)%'
@@ -1056,6 +986,7 @@ services:
         - br
         - cr
         - mx
+      $forceStripe: "%env(bool:FORCE_STRIPE)%"
 
   AppBundle\Payment\Gateway: ~
 
@@ -1146,9 +1077,7 @@ services:
       - '%env(SONIC_PORT)%'
       - 30
 
-  AppBundle\Service\RouteOptimizer:
-    arguments:
-      $client: '@csa_guzzle.client.vroom'
+  AppBundle\Service\RouteOptimizer: ~
 
   phpcent\Client:
     arguments:
@@ -1168,7 +1097,6 @@ services:
       $clientId: "%env(EDENRED_AUTHENTICATION_CLIENT_ID)%"
       $clientSecret: "%env(EDENRED_AUTHENTICATION_CLIENT_SECRET)%"
     tags:
-      - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: edenred }
 
   AppBundle\Edenred\RefreshTokenHandler:
@@ -1185,7 +1113,6 @@ services:
       $paymentClientId: '%env(EDENRED_PAYMENT_CLIENT_ID)%'
       $paymentClientSecret: '%env(EDENRED_PAYMENT_CLIENT_SECRET)%'
     tags:
-      - { name: csa_guzzle.client }
       - { name: monolog.logger, channel: edenred }
 
   AppBundle\Service\Geofencing:
@@ -1200,3 +1127,19 @@ services:
       # $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
 
   AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~
+
+  AppBundle\Security\BearerTokenAuthenticator:
+    abstract: true
+
+  AppBundle\Security\CartSessionAuthenticator:
+    abstract: true
+
+  # https://symfony.com/doc/5.4/session/database.html#store-sessions-in-a-key-value-database-redis
+  Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
+    arguments:
+      - '@snc_redis.session'
+      - { 'prefix': '%database_name%:session:' }
+
+  AppBundle\Routing\EmbedAwareRouter:
+    decorates: router
+    arguments: ['@.inner']

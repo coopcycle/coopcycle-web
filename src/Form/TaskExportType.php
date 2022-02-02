@@ -69,6 +69,7 @@ class TaskExportType extends AbstractType
                 'courier',
                 'tags',
                 'address.contactName',
+                'organization'
             ]);
 
             $records = [];
@@ -104,6 +105,7 @@ class TaskExportType extends AbstractType
                     $task->isAssigned() ? $task->getAssignedCourier() : '',
                     implode(',', $task->getTags()),
                     $address->getContactName() ?: '',
+                    $task->getOrganizationName(),
                 ];
             }
             $csv->insertAll($records);

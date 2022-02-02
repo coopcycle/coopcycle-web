@@ -164,66 +164,16 @@ class LocalBusinessRepository extends EntityRepository
         return $qb->getQuery()->getSingleScalarResult();
     }
 
-    public function findAllSorted()
+    public function findAllForType()
     {
         $qb = $this->createQueryBuilder('o');
-
-        /*
-        $r = new \ReflectionClass($this->context);
-        $values = $r->getMethod('values')->invoke(null);
-
-        $types = [];
-        foreach ($values as $value) {
-            $types[] = $value->getValue();
-        }
-        */
 
         if (null !== $this->typeFilter) {
             $types[] = $this->typeFilter;
             $qb->add('where', $qb->expr()->in('o.type', $types));
         }
 
-        $matches = $qb->getQuery()->getResult();
-
-        // 0 - featured & opened restaurants
-        // 1 - opened restaurants
-        // 2 - closed restaurants
-        // 3 - disabled restaurants
-
-        $now = Carbon::now();
-
-        $nextOpeningComparator = function (LocalBusiness $a, LocalBusiness $b) use ($now) {
-
-            $aNextOpening = $a->getNextOpeningDate($now);
-            $bNextOpening = $b->getNextOpeningDate($now);
-
-            $compareNextOpening = $aNextOpening === $bNextOpening ?
-                0 : ($aNextOpening < $bNextOpening ? -1 : 1);
-
-            return $compareNextOpening;
-        };
-
-        usort($matches, $nextOpeningComparator);
-
-        $opened = array_filter($matches, function (LocalBusiness $lb) use ($now) {
-            return $lb->isOpen($now);
-        });
-
-        $featuredComparator = function (LocalBusiness $a, LocalBusiness $b) {
-            if ($a->isFeatured() && $b->isFeatured()) {
-                return 0;
-            }
-
-            return $a->isFeatured() ? -1 : 1;
-        };
-
-        usort($opened, $featuredComparator);
-
-        $closed = array_filter($matches, function (LocalBusiness $lb) use ($now) {
-            return !$lb->isOpen($now);
-        });
-
-        return array_merge($opened, $closed);
+        return $qb->getQuery()->getResult();
     }
 
     public function findByOption(ProductOptionInterface $option)

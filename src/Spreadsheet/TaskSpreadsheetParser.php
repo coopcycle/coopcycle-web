@@ -168,6 +168,10 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
                 $task->assignTo($user, $assignAt);
             }
 
+            if (isset($record['ref']) && !empty($record['ref'])) {
+                $task->setRef($record['ref']);
+            }
+
             $tasks[] = $task;
         }
 

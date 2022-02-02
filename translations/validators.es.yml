@@ -1,13 +1,14 @@
 restaurant.openingHours.notBlank: Introduce al menos un horario de apertura
 restaurant.telephone.notBlank: Introduce un número de teléfono
 restaurant.name.notBlank: Introduce el nombre del restaurante
-restaurant.contract.notValid: Introduce los términos de contrato (requiere privilegios de administrador)
+restaurant.contract.notValid: Introduce los términos de contrato (requiere privilegios
+  de administrador)
 restaurant.stripeAccount.notSet: Enlaza el restaurante a una cuenta Stripe
 restaurant.mercadopagoAccount.notSet: Enlaza el restaurante a una cuenta de MercadoPago
 restaurant.notActivable: Aún no puedes activar éste restaurante
 restaurant.menu.notSet: Crea y activa un menú
 
-address.tooFar: Esta dirección está muy lejos
+address.tooFar: Con este comercio/restaurante no llegamos, elige otro
 address.notSet: Escribe tu dirección
 
 cart.address.empty: Por favor selecciona una dirección
@@ -23,7 +24,8 @@ order.items.containsDisabledProduct: El pedido contiene un producto desactivado
 delivery.price.error.priceCalculation: El precio de la entrega no pudo ser calculado.
 
 delivery.tasks.unexpectedCount: Delivery must consist of two tasks.
-delivery.tasks.pickupAfterDropoff: La fecha de presentación debe ser posterior a la fecha de retiro.
+delivery.tasks.pickupAfterDropoff: La fecha de presentación debe ser posterior a la
+  fecha de retiro.
 
 delivery.check.notValid: Su solicitud no es factible
 

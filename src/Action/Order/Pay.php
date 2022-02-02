@@ -8,6 +8,7 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Payment\GatewayResolver;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -53,6 +54,13 @@ class Pay
         $content = $request->getContent();
         if (!empty($content)) {
             $body = json_decode($content, true);
+        }
+
+        if ($data->isFree()) {
+            $this->orderManager->checkout($data);
+            $this->entityManager->flush();
+
+            return $data;
         }
 
         if (!isset($body['paymentMethodId']) && !isset($body['paymentIntentId']) && !isset($body['cashOnDelivery'])) {

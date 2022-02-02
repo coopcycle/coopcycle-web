@@ -108,7 +108,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/orders/{id}/payment",
  *       "controller"=PaymentDetailsController::class,
- *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
+ *       "security"="is_granted('session', object)",
  *       "openapi_context"={
  *         "summary"="Get payment details for a Order resource."
  *       }
@@ -119,7 +119,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "controller"=PaymentMethodsController::class,
  *       "output"=PaymentMethodsOutput::class,
  *       "normalization_context"={"api_sub_level"=true},
- *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
+ *       "security"="is_granted('session', object)",
  *       "openapi_context"={
  *         "summary"="Get available payment methods for a Order resource."
  *       }
@@ -128,7 +128,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="PUT",
  *       "path"="/orders/{id}/pay",
  *       "controller"=OrderPay::class,
- *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
+ *       "security"="is_granted('session', object)",
  *       "openapi_context"={
  *         "summary"="Pays a Order resource."
  *       }
@@ -272,7 +272,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/orders/{id}/mercadopago-preference",
  *       "controller"=MercadopagoPreference::class,
  *       "output"=MercadopagoPreferenceResponse::class,
- *       "security"="object.getCustomer().hasUser() and object.getCustomer().getUser() == user",
+ *       "security"="is_granted('session', object)",
  *       "openapi_context"={
  *         "summary"="Creates a MercadoPago preference and returns its ID."
  *       }
@@ -334,6 +334,10 @@ class Order extends BaseOrder implements OrderInterface
      * @AssertShippingTimeRange(groups={"Default", "ShippingTime"})
      */
     protected $shippingTimeRange;
+
+
+    protected $nonprofit;
+
 
     /**
      * @Assert\Expression(
@@ -1001,7 +1005,7 @@ class Order extends BaseOrder implements OrderInterface
     {
         $payment = $this->getLastPayment();
 
-        if ($payment) {
+        if ($payment && $payment->getMethod()) {
             return $payment->getMethod()->getCode();
         }
 
@@ -1285,7 +1289,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function supportsGiropay(): bool
     {
-        if ($this->isMultiVendor()) {
+        if ($this->isMultiVendor() || !$this->hasVendor()) {
 
             return false;
         }
@@ -1295,7 +1299,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function supportsEdenred(): bool
     {
-        if ($this->isMultiVendor()) {
+        if ($this->isMultiVendor() || !$this->hasVendor()) {
 
             return false;
         }
@@ -1331,11 +1335,26 @@ class Order extends BaseOrder implements OrderInterface
 
     public function supportsCashOnDelivery(): bool
     {
-        if ($this->isMultiVendor()) {
+        if ($this->isMultiVendor() || !$this->hasVendor()) {
 
             return false;
         }
 
         return $this->getRestaurant()->isCashOnDeliveryEnabled();
+    }
+
+    public function isFree(): bool
+    {
+        return !$this->isEmpty() && $this->getItemsTotal() > 0 && $this->getTotal() === 0;
+    }
+
+    public function getNonprofit()
+    {
+        return $this->nonprofit;
+    }
+
+    public function setNonprofit($nonprofit)
+    {
+        $this->nonprofit = $nonprofit;
     }
 }

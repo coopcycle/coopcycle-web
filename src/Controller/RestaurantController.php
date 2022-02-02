@@ -27,10 +27,12 @@ use AppBundle\Form\Order\CartType;
 use AppBundle\Form\PledgeType;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Cart\RestaurantResolver;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
+use AppBundle\Utils\SortableRestaurantIterator;
 use AppBundle\Utils\ValidationUtils;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -170,13 +172,14 @@ class RestaurantController extends AbstractController
     public function legacyRestaurantsAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        SlugifyInterface $slugify)
+        SlugifyInterface $slugify,
+        TimingRegistry $timingRegistry)
     {
         $requestClone = clone $request;
 
         $requestClone->attributes->set('type', LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT));
 
-        return $this->listAction($requestClone, $repository, $projectCache, $slugify);
+        return $this->listAction($requestClone, $repository, $projectCache, $slugify, $timingRegistry);
     }
 
     /**
@@ -185,7 +188,8 @@ class RestaurantController extends AbstractController
     public function listAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        SlugifyInterface $slugify)
+        SlugifyInterface $slugify,
+        TimingRegistry $timingRegistry)
     {
         $defaultKey = LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT);
 
@@ -234,7 +238,7 @@ class RestaurantController extends AbstractController
                 return array_map(function (LocalBusiness $restaurant) {
 
                     return $restaurant->getId();
-                }, $repository->withTypeFilter($type)->findAllSorted());
+                }, $repository->withTypeFilter($type)->findAllForType());
             });
 
             $matches = array_map(function ($id) use ($repository) {
@@ -243,6 +247,9 @@ class RestaurantController extends AbstractController
 
             $matches = array_values(array_filter($matches));
         }
+
+        $iterator = new SortableRestaurantIterator($matches, $timingRegistry);
+        $matches = iterator_to_array($iterator);
 
         $count = count($matches);
 
@@ -775,13 +782,14 @@ class RestaurantController extends AbstractController
     public function legacyStoreListAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        SlugifyInterface $slugify)
+        SlugifyInterface $slugify,
+        TimingRegistry $timingRegistry)
     {
         $requestClone = clone $request;
 
         $requestClone->attributes->set('type', LocalBusiness::getKeyForType(Store::GROCERY_STORE));
 
-        return $this->listAction($requestClone, $repository, $projectCache, $slugify);
+        return $this->listAction($requestClone, $repository, $projectCache, $slugify, $timingRegistry);
     }
 
     /**

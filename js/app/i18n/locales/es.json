@@ -2,6 +2,7 @@
     "common": {
         "CART_TITLE": "Cesta",
         "CART_WIDGET_BUTTON": "Pedir",
+        "SCHEDULE_ORDER": "Programar pedido",
         "CART_EMPTY": "Tu cesta está vacía",
         "OPENING_HOURS_SINGLE": "El {{day}} de {{open}} a {{close}}",
         "OPENING_HOURS_RANGE": "De {{fromDay}} a {{toDay}}, de {{open}} a {{close}}",
@@ -65,7 +66,7 @@
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_LABEL": "Teléfono",
         "ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR": "Este número de teléfono no es válido",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP": "Ejemplo: {{example}}",
-        "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_DESCRIPTION_LABEL": "Instrucciones",
+        "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_DESCRIPTION_LABEL": "Instrucciones para la entrega",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_DESCRIPTION_PLACEHOLDER": "2ª puerta a la izquierda…",
         "ADMIN_DASHBOARD_TASK_FORM_TIME_RANGE_LABEL": "Rango de fechas",
         "ADMIN_DASHBOARD_TASK_FORM_COMMENTS_LABEL": "Comentarios",
@@ -112,7 +113,7 @@
         "RESTAURANT_LIST_FILTER_LATER": "Más tarde",
         "CART_TOTAL": "Total",
         "CART_TOTAL_PRODUCTS": "Total productos",
-        "ENTER_YOUR_ADDRESS": "Ingrese calle y portal y seleccione una dirección del desplegable",
+        "ENTER_YOUR_ADDRESS": "Ingrese calle y portal y seleccione una dirección",
         "SAVED_ADDRESSES": "Direcciones guardadas",
         "ADDRESS_SUGGESTIONS": "Sugerencias",
         "CART_CHANGE_RESTAURANT_MODAL_LABEL": "Cambio de restaurant",
@@ -249,6 +250,7 @@
             "on": "el",
             "weekday": "dia de la semana",
             "day": "dia"
-        }
+        },
+        "TIME_RANGE_FROM": "desde {{start}}"
     }
 }

@@ -20,6 +20,7 @@
       </options>
     </field>
     <field name="metadata" type="json_array" column="metadata" nullable="true"/>
+    <field name="weight" type="integer" column="weight" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
@@ -42,6 +43,11 @@
       </cascade>
     </one-to-many>
     <one-to-many field="images" target-entity="AppBundle\Entity\TaskImage" mapped-by="task">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <one-to-many field="packages" target-entity="AppBundle\Entity\Task\Package" mapped-by="task" orphan-removal="true">
       <cascade>
         <cascade-all/>
       </cascade>

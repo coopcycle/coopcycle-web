@@ -108,6 +108,14 @@
         <cascade-persist/>
       </cascade>
     </one-to-many>
+  <many-to-one field="nonprofit" target-entity="AppBundle\Entity\Nonprofit">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="nonprofit_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\OrderListener">
         <lifecycle-callback type="preFlush" method="preFlush"/>

@@ -12,10 +12,12 @@ class TaskGroupVoter extends Voter
 {
     const VIEW = 'view';
     const EDIT = 'edit';
+    const CREATE = 'create';
 
     private static $actions = [
         self::VIEW,
         self::EDIT,
+        self::CREATE,
     ];
 
     private $authorizationChecker;
@@ -46,7 +48,7 @@ class TaskGroupVoter extends Voter
             return true;
         }
 
-        if (self::EDIT === $attribute) {
+        if (self::EDIT === $attribute || self::CREATE === $attribute) {
             return false;
         }
 

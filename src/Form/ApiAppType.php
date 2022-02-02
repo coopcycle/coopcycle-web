@@ -25,26 +25,25 @@ use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
 
 class ApiAppType extends AbstractType
 {
-    public function __construct()
-    {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('name', TextType::class, [
                 'label' => 'form.api_app.name.label',
             ]);
-        $builder
-            ->add('type', ChoiceType::class, [
-                'label' => 'form.api_app.type.label',
-                'choices' => [
-                    'form.api_app.type.oauth.label' => 'oauth',
-                    'form.api_app.type.api_key.label' => 'api_key',
-                ],
-            ]);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        if ($options['with_stores']) {
+            $builder
+                ->add('type', ChoiceType::class, [
+                    'label' => 'form.api_app.type.label',
+                    'choices' => [
+                        'form.api_app.type.oauth.label' => 'oauth',
+                        'form.api_app.type.api_key.label' => 'api_key',
+                    ],
+                ]);
+        }
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
             $apiApp = $event->getData();
@@ -92,7 +91,9 @@ class ApiAppType extends AbstractType
                 $storeOptions['disabled'] = true;
             }
 
-            $form->add('store', EntityType::class, $storeOptions);
+            if ($options['with_stores']) {
+                $form->add('store', EntityType::class, $storeOptions);
+            }
         });
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
@@ -106,9 +107,17 @@ class ApiAppType extends AbstractType
             $client = new Client($identifier, $secret);
             $client->setActive(true);
 
-            $tasksScope = new Scope('tasks');
-            $deliveriesScope = new Scope('deliveries');
-            $client->setScopes($tasksScope, $deliveriesScope);
+            if (null !== $apiApp->getShop()) {
+                $scopes = [
+                    new Scope('orders'),
+                ];
+            } else {
+                $scopes = [
+                    new Scope('tasks'),
+                    new Scope('deliveries'),
+                ];
+            }
+            $client->setScopes(...$scopes);
 
             switch ($apiApp->getType()) {
                 case 'api_key':
@@ -130,6 +139,7 @@ class ApiAppType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => ApiApp::class,
+            'with_stores' => true,
         ));
     }
 }

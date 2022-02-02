@@ -123,6 +123,20 @@ services:
         - name: event_subscriber
           subscribes_to: order:cancelled
 
+  coopcycle.domain.order.reactor.calculate_timeline:
+    class: AppBundle\Domain\Order\Reactor\CalculateTimeline
+    arguments:
+      - '@coopcycle.order_timeline_calculator'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:created
+        - name: event_subscriber
+          subscribes_to: order:delayed
+        - name: event_subscriber
+          subscribes_to: order:picked
+        - name: event_subscriber
+          subscribes_to: order:dropped
+
   coopcycle.domain.order.reactor.send_email:
     class: AppBundle\Domain\Order\Reactor\SendEmail
     arguments:
@@ -184,20 +198,6 @@ services:
           subscribes_to: order:fulfilled
         - name: event_subscriber
           subscribes_to: order:cancelled
-
-  coopcycle.domain.order.reactor.calculate_timeline:
-    class: AppBundle\Domain\Order\Reactor\CalculateTimeline
-    arguments:
-      - '@coopcycle.order_timeline_calculator'
-    tags:
-        - name: event_subscriber
-          subscribes_to: order:created
-        - name: event_subscriber
-          subscribes_to: order:delayed
-        - name: event_subscriber
-          subscribes_to: order:picked
-        - name: event_subscriber
-          subscribes_to: order:dropped
 
   coopcycle.domain.order.reactor.add_customer_address:
     class: AppBundle\Domain\Order\Reactor\AddCustomerAddress
@@ -309,3 +309,12 @@ services:
           subscribes_to: order:refused
         - name: event_subscriber
           subscribes_to: order:cancelled
+
+  coopcycle.domain.order.reactor.trigger_webhook:
+    class: AppBundle\Domain\Order\Reactor\TriggerWebhook
+    arguments:
+      - '@messenger.default_bus'
+      - '@api_platform.iri_converter'
+    tags:
+      - name: event_subscriber
+        subscribes_to: order:created

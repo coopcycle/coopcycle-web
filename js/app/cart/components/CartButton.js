@@ -10,10 +10,11 @@ class CartButton extends Component {
 
   render() {
 
-    const { hasErrors, items, loading } = this.props
+    const { hasErrors, items, loading, restaurantIsOpen } = this.props
 
     const disabled = (hasErrors || items.length === 0 || loading)
     const btnProps = disabled ? { disabled: true } : {}
+    const label = restaurantIsOpen ? this.props.t('CART_WIDGET_BUTTON') : this.props.t('SCHEDULE_ORDER');
 
     return (
       <button type="submit" className={ classNames({
@@ -23,7 +24,7 @@ class CartButton extends Component {
         'btn-primary': true,
         'disabled': disabled }) }
         { ...btnProps }>
-        <span>{ this.props.loading && <i className="fa fa-spinner fa-spin"></i> }</span>  <span>{ this.props.t('CART_WIDGET_BUTTON') }</span>
+        <span>{ this.props.loading && <i className="fa fa-spinner fa-spin"></i> }</span>  <span>{ label }</span>
       </button>
     )
   }
@@ -35,6 +36,7 @@ function mapStateToProps(state) {
     items: selectItems(state),
     loading: state.isFetching,
     hasErrors: _.size(state.errors) > 0,
+    restaurantIsOpen: state.restaurant.isOpen,
   }
 }
 

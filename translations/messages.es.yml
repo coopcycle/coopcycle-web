@@ -43,6 +43,8 @@ adminDashboard.shops.title: Tiendas
 adminDashboard.users.title: Usuarios
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Editar usuario
+adminDashboard.users.confirmDeleteUser: ¿Estás seguro de eliminar al usuario con email %email%?
+adminDashboard.users.userHasBeenDeleted: El usuario ha sido eliminado.
 adminDashboard.users.edit.addStore: Añadir tienda
 adminDashboard.users.edit.addRestaurant: Añadir restaurante
 adminDashboard.users.createNew: Añadir usuario
@@ -92,13 +94,20 @@ localBusiness.form.deliveryPerimeterExpression: Zona o máxima distancia de repa
 localBusiness.form.shippingOptionsDays: Opciones de entrega (en días)
 restaurant.available: Disponible
 restaurant.unavailable: No disponible
+restaurants.pre_order: Reservar
 restaurant.disabledWarning: "Éste restaurante está desactivado así que los visitantes\
   \ no verán ésta página. Si quiéres, puedes <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
   >activarlo en el panel de administración</a>.\n"
 restaurant.closedWarningWithDelay: Pide ahora para más tarde. Pedidos minimo %delay%
   antes.
-restaurant.temporaryClosedWarning: Éste restaurante está cerrado hasta el <strong>%date%</strong>
-  pero puedes hacer un pedido para más tarde
+restaurant.temporaryClosedWarning: Éste restaurante está cerrado y no disponible hasta el <strong>%date%</strong>
+restaurant.closedOpensTodayLaterWarning: Éste restaurante se encuentra cerrado pero vuelve a abrir hoy a las <strong>%time%</strong>.
+restaurant.canOrderForLater: Puedes programar tu pedido para más tarde!
+restaurant.closedOpensTomorrowWarning: Éste restaurante se encuentra cerrado por hoy pero abre mañana a las <strong>%time%</strong>.
+restaurant.canOrderForTomorrow: Puedes programar tu pedido para mañana!
+restaurant.closedOpensAfterTomorrowWarning: Éste restaurante se encuentra cerrado pero vuelvo a abrir el <strong>%date%</strong>.
+restaurant.canOrderForOtherDay: Puedes programar tu pedido para ese día!
+restaurant.closedNowWarning: Éste restaurante se encuentra cerrado por hoy.
 restaurant.noMenuWarning: "Este restaurante no tiene menú por ahora\n"
 restaurant.form.enabled.tooltip: "Cuando está desactivado, un restaurante no está\
   \ visible en el sitio web. No aparece en los resultados de búsqueda y los visitantes\
@@ -147,7 +156,7 @@ restaurant.list.products: Productos
 restaurant.list.product_options: Opciones
 restaurant.list.catalogs: Catálogo
 restaurant.list.active_catalog: Catálogo activo
-restaurant.list.planning: Calendario
+restaurant.list.planning: Días no laborables
 restaurant.list.settings: Ajustes
 restaurant.list.norestaurant: Aún no existen restaurantes
 restaurant.list.preparationTime: Preparación
@@ -197,7 +206,7 @@ order.total_including_tax: Total (IVA incl.)
 order.items_total: Total productos
 order.total_tax: IVA
 order.total_tax_by_rate: Total %name%
-order.preparation_expected_at: Preparación esperada a las %date%
+order.preparation_expected_at: Preparación a partir de las %date%
 order.shipping_date.title: Tu horario de entrega
 order.payer.title: Detalles del comprador
 order.payer.email: E-mail
@@ -312,7 +321,7 @@ form.address.name.label: Nombre
 form.address.name.placeholder: Casa, oficina…
 form.address.addressLocality.label: Ciudad
 form.address.postalCode.label: Código postal
-form.address.description.label: Instrucciones
+form.address.description.label: Instrucciones para la entrega
 form.address.description.placeholder: 2ª puerta a la izquierda…
 form.pricing_rule_set.name.label: Nombre
 form.pricing_rule_set.rules.label: Reglas
@@ -466,7 +475,7 @@ form.product_option.additional.help: El cliente puede elegir varios valores, sin
 form.checkout_address.notes.label: Deja un comentario para el restaurante
 form.checkout_address.notes.placeholder: "Ejemplo: sin salsa, sin tomates…\n"
 form.checkout_address.notes.help: Tu comentario será enviado al restaurante
-form.checkout_address.promotion_coupon.label: Código promocional
+form.checkout_address.promotion_coupon.label: Código de descuento
 form.checkout_address.telephone.label: Teléfono
 form.checkout_address.reusable_packaging_enabled.label: Quiero envases reutilizables
   (%precio%)
@@ -493,7 +502,7 @@ form.delivery_embed.vehicle.disclaimer: Entregamos en bicicleta de carga artícu
 form.resend_confirmation_email.submit.label: Reenviar correo electrónico
 promotion_coupon.used.label: Número de usos
 product_option.strategy.free: Gratis
-product_option.strategy.option_value: Cada opción tiene un precio diferente
+product_option.strategy.option_value: Precio a medida
 roles.ROLE_ADMIN: Administrador
 roles.ROLE_COURIER: Mensajero
 roles.ROLE_RESTAURANT: Restaurante
@@ -645,7 +654,7 @@ basics.continue: Continuar
 basics.created_at: Creado el %date%
 promotions.add_free_delivery_coupon: Añadir un cupón de promoción " envío gratuito
   "
-base.footer.suggest: Sugerir un comercio
+base.footer.suggest: Sugerir un comercio/restaurante
 adminDashboard.package_sets.title: Paquetes
 adminDashboard.restaurants.exclusive: Exclusivo
 adminDashboard.pledges.title: Sugerencias
@@ -1058,7 +1067,7 @@ order.reusable_packaging.pledge_return.disclaimer: El cilente a indicado que %co
 form.time_slot.same_day_cutoff.help: Por ejemplo, si selecionas 11.00, opciones del
   mismo día no se mostrarán después de las 11.00
 form.time_slot.same_day_cutoff.label: Hora de límite diario
-form.package_with_quantity.package.placeholder: Elije un tipo de envase
+form.package_with_quantity.package.placeholder: Elije un tipo de paquete
 form.product_tax_category_choice.placeholder: Elije una categoria de IVA
 basics.kilos: Kilos
 basics.tax_excl: Sin IVA.
@@ -1069,7 +1078,7 @@ order.refund.total_amount: Este pedido ha sido reembolsado por un importe de %am
 promotion_rule.is_customer: Cliente es %username%
 promotion_rule.is_restaurant: Restaurante es %restaurant%
 info.deposit_refund: Cada hueco en la lista abajo representa un tipo de envase (grande,
-  pequeña...). Ya creadas los envases, puedes configurarlas para cada producto.
+  pequeño...). Creados los envases, puedes configurar para cada producto.
 confirm.deposit_refund_enabled: El sistema de deposito-reembolso está habilitada,
   ahora puedes <a href="%url%">configurar los envases</a>.
 profile.loopeat.disconnect: Desconectar LoopEat
@@ -1233,3 +1242,4 @@ restaurant_promotion.items_total.help: Esto le permite aplicar un descuento sobr
   una cierta cantidad. Su ganancia va a disminuir por el descuento. Esto <strong>no
   disminuirá</strong> la tarifa percibida por la plataforma.
 form.items_total_promotion.fixed_discount_amount.label: Aplicar un descuento de
+order.preparation_expected_for: Preparación esperada a las %date%
