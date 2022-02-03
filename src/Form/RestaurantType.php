@@ -88,9 +88,6 @@ class RestaurantType extends LocalBusinessType
                 ->add('depositRefundEnabled', CheckboxType::class, [
                     'label' => 'restaurant.form.deposit_refund_enabled.label',
                     'required' => false,
-                ])
-                ->add('delete', SubmitType::class, [
-                    'label' => 'basics.delete',
                 ]);
 
             if ($this->cashOnDeliveryOptinEnabled) {
@@ -140,6 +137,11 @@ class RestaurantType extends LocalBusinessType
                         'required' => false,
                         'data' => in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())
                     ]);
+                    if (!$restaurant->isDeleted()) {
+                        $form->add('delete', SubmitType::class, [
+                            'label' => 'basics.delete',
+                        ]);
+                    }
                 }
 
                 if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && ($this->debug || 'de' === $this->country)) {
