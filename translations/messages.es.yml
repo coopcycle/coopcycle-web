@@ -147,7 +147,7 @@ restaurant.list.products: Productos
 restaurant.list.product_options: Opciones
 restaurant.list.catalogs: Catálogo
 restaurant.list.active_catalog: Catálogo activo
-restaurant.list.planning: Días no laborables
+restaurant.list.planning: Programar Cierre
 restaurant.list.settings: Ajustes
 restaurant.list.norestaurant: Aún no existen restaurantes
 restaurant.list.preparationTime: Preparación
@@ -624,7 +624,7 @@ embed.breadcrumb.summary: Resumen
 embed.breadcrumb.confirm: Confirmación
 embed.delivery.summary.title: Resumen de tu pedido
 embed.delivery.use_form_below: Usa el siguiente formulario para pagar tu pedido con
-  tarjeta de crédito
+  tarjeta de crédito/débito
 embed.delivery.paid_at: Pago realizado en %date%
 embed.payment.heading: Pagar mi pedido
 embed.delivery.contact_heading: Contacto
@@ -753,7 +753,7 @@ receipt.footer_item.total_products: Total productos
 receipt.footer_item.total_excl_tax: Total (sin IVA)
 receipt.footer_item.total_incl_tax: Total (IVA incl.)
 receipt.total: Total (IVA incl.)
-receipt.billing_details: Pedido pagado con tarjeta de crédito el %date%
+receipt.billing_details: Pedido pagado con tarjeta de crédito/débito el %date%
 receipt.emitter_details: Pedido en el restaurante <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nuevo pedido por confirmar
 form.checkout_address.quote.label: Solicitar presupuesto
