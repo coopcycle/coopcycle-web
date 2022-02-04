@@ -224,7 +224,7 @@
         "PAYMENT_FORM_REDIRECT_HELP": "Será redirigido a la entidad bancaria para completar su pago",
         "PAYMENT_FORM_CARDHOLDER_NAME": "Nombre del titular de la tarjeta",
         "PAYMENT_FORM_TITLE": "Información de tú pago",
-        "PAYMENT_FORM_NOT_SUPPORTED": "No aceptamos (todavía) las tarjetas Ticket Restaurant, Sodexo, Cheque Gourmet, por favor utilice una tarjeta de crédito clásica.",
+        "PAYMENT_FORM_NOT_SUPPORTED": "No aceptamos (todavía) las tarjetas Ticket Restaurant, Sodexo, Cheque Gourmet, por favor utilice una tarjeta de crédito/débito clásica.",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Mover {{count}} tareas para el siguiente día laborable ({{nextWorkingDay}})",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Mover {{count}} tareas al día siguiente",
         "CASH_ON_DELIVERY_DISCLAIMER": "El pago se realizará contra reembolso. Por favor, prepare la cantidad exacta y asegúrese de estar al alcance.",
