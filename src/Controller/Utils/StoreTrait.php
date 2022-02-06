@@ -53,18 +53,21 @@ trait StoreTrait
             $qb,
             $request->query->getInt('page', 1),
             $STORES_PER_PAGE,
-            [
+            [                
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'c.name',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
-                PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['u.store', 'c.name'],
-            ]
+            ],
         );
 
-        $attributes = [];
+        $routes = $request->attributes->get('routes');
 
-        return $this->render('store/list.html.twig', array(
+        return $this->render($request->attributes->get('template'), array(
             'stores' => $stores,
-            'attributes' => $attributes,
+            'layout' => $request->attributes->get('layout'), 
+            'stores' => $stores, 
+            'store_route' => $routes['store'], 
+            'store_delivery_new_route' => $routes['store_delivery_new'], 
+            'store_deliveries_route' => $routes['store_deliveries'], 
         ));
     }
 
