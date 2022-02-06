@@ -81,6 +81,9 @@
     {% endfor %}
     </tbody>
   </table>
+  <nav class="text-center"> 
+   {{ knp_pagination_render(stores) }} 
+  </nav> 
 {% else %}
   <div class="alert alert-info">
   {% trans %}stores.list.noStores{% endtrans %}

@@ -41,21 +41,31 @@ trait StoreTrait
 {
     abstract protected function getStoreList();
 
-    public function storeListAction(Request $request)
+    public function storeListAction(Request $request, PaginatorInterface $paginator)
     {
-        [ $stores, $pages, $page ] = $this->getStoreList();
+        $qb = $this->getDoctrine()
+        ->getRepository(Store::class)
+        ->createQueryBuilder('c');
+        
+        $STORES_PER_PAGE = 20;
 
-        $routes = $request->attributes->get('routes');
+        $stores = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            $STORES_PER_PAGE,
+            [
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'c.name',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
+                PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['u.store', 'c.name'],
+            ]
+        );
 
-        return $this->render($request->attributes->get('template'), [
-            'layout' => $request->attributes->get('layout'),
+        $attributes = [];
+
+        return $this->render('store/list.html.twig', array(
             'stores' => $stores,
-            'pages' => $pages,
-            'page' => $page,
-            'store_route' => $routes['store'],
-            'store_delivery_new_route' => $routes['store_delivery_new'],
-            'store_deliveries_route' => $routes['store_deliveries'],
-        ]);
+            'attributes' => $attributes,
+        ));
     }
 
     public function storeUsersAction($id, Request $request,
