@@ -28,8 +28,7 @@ const taskColor = (task, selected) => {
   }
 
   if (task.tags.length > 0) {
-    const tag = _.first(task.tags)
-    return tag.color
+    return tagsColor(task.tags)
   }
 
   return '#777'
