@@ -18,10 +18,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client;
-use Trikoder\Bundle\OAuth2Bundle\Model\Grant;
-use Trikoder\Bundle\OAuth2Bundle\Model\Scope;
-use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\Grant;
+use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 
 class ApiAppType extends AbstractType
 {
@@ -104,7 +104,7 @@ class ApiAppType extends AbstractType
             $identifier = hash('md5', random_bytes(16));
             $secret = hash('sha512', random_bytes(32));
 
-            $client = new Client($identifier, $secret);
+            $client = new Client($apiApp->getName(), $identifier, $secret);
             $client->setActive(true);
 
             if (null !== $apiApp->getShop()) {

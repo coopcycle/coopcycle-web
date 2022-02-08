@@ -110,7 +110,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuth2Client;
+use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
 use Twig\Environment as TwigEnvironment;
 
 class AdminController extends AbstractController

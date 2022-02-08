@@ -49,10 +49,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
 use libphonenumber\PhoneNumberUtil;
 use Fidry\AliceDataFixtures\LoaderInterface;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuthClient;
-use Trikoder\Bundle\OAuth2Bundle\Model\Grant;
-use Trikoder\Bundle\OAuth2Bundle\Model\Scope;
-use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
+use League\Bundle\OAuth2ServerBundle\Model\Client as OAuthClient;
+use League\Bundle\OAuth2ServerBundle\Model\Grant;
+use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -841,7 +841,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $identifier = hash('md5', random_bytes(16));
         $secret = hash('sha512', random_bytes(32));
 
-        $client = new OAuthClient($identifier, $secret);
+        $client = new OAuthClient($storeName, $identifier, $secret);
         $client->setActive(true);
 
         $clientCredentials = new Grant(OAuth2Grants::CLIENT_CREDENTIALS);
@@ -870,7 +870,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $identifier = hash('md5', random_bytes(16));
         $secret = hash('sha512', random_bytes(32));
 
-        $client = new OAuthClient($identifier, $secret);
+        $client = new OAuthClient($restaurantName, $identifier, $secret);
         $client->setActive(true);
 
         $clientCredentials = new Grant(OAuth2Grants::CLIENT_CREDENTIALS);

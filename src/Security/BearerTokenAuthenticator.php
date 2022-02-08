@@ -6,6 +6,7 @@ use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\User;
 use AppBundle\Security\ApiKeyManager;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\InvalidPayloadException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\JWTAuthenticator;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
@@ -21,8 +22,6 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\PreAuthenticate
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\CustomCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
-use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Provider\OAuth2Provider;
-use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2TokenFactory;
 
 /**
  * @see https://symfony.com/doc/5.3/security/custom_authenticator.html
@@ -30,25 +29,20 @@ use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2TokenFactor
 class BearerTokenAuthenticator extends AbstractAuthenticator
 {
     private $jwtAuthenticator;
-    private $oauth2Provider;
-    private $oauth2TokenFactory;
-    private $httpMessageFactory;
+    private $oauth2Authenticator;
     private $apiKeyManager;
+    private $entityManager;
     private $firewallName;
 
     public function __construct(
         JWTAuthenticator $jwtAuthenticator,
-        OAuth2Provider $oauth2Provider,
-        OAuth2TokenFactory $oauth2TokenFactory,
-        HttpMessageFactoryInterface $httpMessageFactory,
+        OAuth2Authenticator $oauth2Authenticator,
         ApiKeyManager $apiKeyManager,
         EntityManagerInterface $entityManager,
         string $firewallName)
     {
         $this->jwtAuthenticator = $jwtAuthenticator;
-        $this->oauth2Provider = $oauth2Provider;
-        $this->oauth2TokenFactory = $oauth2TokenFactory;
-        $this->httpMessageFactory = $httpMessageFactory;
+        $this->oauth2Authenticator = $oauth2Authenticator;
         $this->apiKeyManager = $apiKeyManager;
         $this->entityManager = $entityManager;
         $this->firewallName = $firewallName;
@@ -105,23 +99,10 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
 
         } catch (InvalidPayloadException $e) {
 
-            // Then, try with Trikoder
-            $token = $this->oauth2Provider->authenticate(
-                $this->oauth2TokenFactory->createOAuth2Token(
-                    $this->httpMessageFactory->createRequest($request),
-                    $user = null,
-                    $this->firewallName
-                )
-            );
+            // Then, try with League\OAuth2
+            $passport = $this->oauth2Authenticator->authenticate($request);
 
-            $user = new User();
-            $user->setUsername($token->getCredentials());
-
-            $token->setUser($user);
-
-            $passport = new SelfValidatingPassport(new UserBadge($token->getCredentials()), [
-                new PreAuthenticatedUserBadge()
-            ]);
+            $token = $this->oauth2Authenticator->createAuthenticatedToken($passport, $this->firewallName);
             $passport->setAttribute('oauth2_token', $token);
 
             return $passport;
