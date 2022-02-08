@@ -65,7 +65,8 @@ coopcycle_profile:
     resource: '@AppBundle/Resources/config/routing/profile.yml'
 
 oauth2:
-    resource: '@TrikoderOAuth2Bundle/Resources/config/routes.xml'
+    resource: '@LeagueOAuth2ServerBundle/Resources/config/routes.php'
+    type: php
     prefix: /oauth2
 
 _liip_imagine:

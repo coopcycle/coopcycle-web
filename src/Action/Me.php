@@ -8,8 +8,8 @@ use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\User;
 use AppBundle\Security\Authentication\Token\ApiKeyToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface;
-use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
+use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 
 class Me
 {

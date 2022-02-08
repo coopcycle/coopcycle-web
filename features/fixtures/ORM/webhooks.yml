@@ -1,16 +1,17 @@
-Trikoder\Bundle\OAuth2Bundle\Model\Grant:
+League\Bundle\OAuth2ServerBundle\Model\Grant:
   oauth2_grant_client_credentials:
-    __construct: [ <(Trikoder\Bundle\OAuth2Bundle\OAuth2Grants::CLIENT_CREDENTIALS)> ]
+    __construct: [ <(League\Bundle\OAuth2ServerBundle\OAuth2Grants::CLIENT_CREDENTIALS)> ]
 
-Trikoder\Bundle\OAuth2Bundle\Model\Scope:
+League\Bundle\OAuth2ServerBundle\Model\Scope:
   oauth2_scope_tasks:
     __construct: [ 'tasks' ]
   oauth2_scope_deliveries:
     __construct: [ 'deliveries' ]
 
-Trikoder\Bundle\OAuth2Bundle\Model\Client:
+League\Bundle\OAuth2ServerBundle\Model\Client:
   oauth_client_1:
     __construct:
+      - 'Acme'
       - 'abc123456'
       - 'def123456789'
     grants: '@oauth2_grant_client_credentials'
@@ -21,6 +22,7 @@ Trikoder\Bundle\OAuth2Bundle\Model\Client:
         - '@oauth2_scope_deliveries'
   oauth_client_2:
     __construct:
+      - 'Acme'
       - 'abc654321'
       - 'def987654321'
     grants: '@oauth2_grant_client_credentials'

@@ -20,7 +20,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuth2Client;
+use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
 
 class WebhookHandlerTest extends TestCase
 {

@@ -13,7 +13,7 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
-    <many-to-one field="oauth2Client" target-entity="Trikoder\Bundle\OAuth2Bundle\Model\Client">
+    <many-to-one field="oauth2Client" target-entity="League\Bundle\OAuth2ServerBundle\Model\Client">
       <join-columns>
         <join-column name="client_id" referenced-column-name="identifier" nullable="false"/>
       </join-columns>

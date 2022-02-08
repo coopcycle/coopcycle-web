@@ -7,7 +7,7 @@ use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use Webmozart\Assert\Assert;
 
 class TaskOperationsVoter extends Voter

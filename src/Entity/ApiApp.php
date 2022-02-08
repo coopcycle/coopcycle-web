@@ -7,7 +7,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
 
 /**
  * @see https://schema.org/SoftwareApplication Documentation on Schema.org
