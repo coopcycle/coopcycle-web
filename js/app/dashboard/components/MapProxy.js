@@ -11,6 +11,7 @@ import ColorHash from 'color-hash'
 import MapHelper from '../../MapHelper'
 import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
+import { createLeafletIcon } from '../../components/Avatar'
 
 const tagsColor = tags => {
   const tag = _.first(tags)
@@ -62,17 +63,6 @@ const taskIcon = task => {
 const polylineOptions = {
   color: '#3498DB',
   opacity: 0.7
-}
-
-const createIcon = username => {
-  const iconUrl = window.Routing.generate('user_avatar', { username })
-
-  return L.icon({
-    iconUrl: iconUrl,
-    iconSize:    [20, 20], // size of the icon
-    iconAnchor:  [10, 10], // point of the icon which will correspond to marker's location
-    popupAnchor: [-2, -72], // point from which the popup should open relative to the iconAnchor,
-  })
 }
 
 const colorHash = new ColorHash({
@@ -413,7 +403,7 @@ export default class MapProxy {
 
     if (!marker) {
 
-      marker = L.marker(position, { icon: createIcon(username), lastSeen })
+      marker = L.marker(position, { icon: createLeafletIcon(username), lastSeen })
       marker.setOpacity(1)
 
       popupComponent = React.createRef()
