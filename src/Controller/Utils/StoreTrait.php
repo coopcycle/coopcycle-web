@@ -64,7 +64,6 @@ trait StoreTrait
         return $this->render($request->attributes->get('template'), array(
             'stores' => $stores,
             'layout' => $request->attributes->get('layout'), 
-            'stores' => $stores, 
             'store_route' => $routes['store'], 
             'store_delivery_new_route' => $routes['store_delivery_new'], 
             'store_deliveries_route' => $routes['store_deliveries'], 
