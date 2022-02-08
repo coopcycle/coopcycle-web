@@ -1,27 +1,3 @@
-const statuses = ['TODO', 'DOING', 'FAILED', 'DONE', 'CANCELLED'];
-
-const createTotalByStatusMeasure = (status) => ({
-  [`Total_${status}_tasks`]: {
-    type: `count`,
-    title: `Total ${status} tasks`,
-    filters: [
-      {
-        sql: (CUBE) => `${CUBE}."status" = '${status}'`,
-      },
-    ],
-  },
-});
-
-const createPercentageMeasure = (status) => ({
-  [`Percentage_of_${status}`]: {
-    type: `number`,
-    format: `percent`,
-    title: `Percentage of ${status} tasks`,
-    sql: (CUBE) =>
-      `ROUND(${CUBE[`Total_${status}_tasks`]}::numeric / ${CUBE.count}::numeric * 100.0, 2)`,
-  },
-});
-
 const dateDiffInSeconds = (datetime) =>
   `((DATE_PART('day', ${datetime}) * 24
   + DATE_PART('hour', ${datetime})) * 60
@@ -98,14 +74,6 @@ cube(`Task`, {
         filters: [{ sql: `${CUBE.countDone} > 0` }],
       },
     },
-    statuses.reduce(
-      (all, status) => ({
-        ...all,
-        ...createTotalByStatusMeasure(status),
-        ...createPercentageMeasure(status),
-      }),
-      {}
-    )
   ),
 
   dimensions: {
@@ -166,11 +134,6 @@ cube(`Task`, {
         else: { label: `0` },
       },
     },
-
-    // intervalDiff: {
-    //   sql: `cast(((${CUBE.minutesAfterStart}) / (${CUBE.intervalMinutes}) - 0.5) * 100 as bigint)`,
-    //   type: `number`
-    // },
 
     /**
      * width_bucket: https://www.postgresql.org/docs/current/functions-math.html
