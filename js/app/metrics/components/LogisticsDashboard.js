@@ -1,11 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
+import Navbar from './Navbar'
+import ChartPanel from './ChartPanel'
 import AverageDistance from './AverageDistance'
 import NumberOfTasks from './NumberOfTasks'
 import StoreCumulativeCount from './StoreCumulativeCount'
-import Navbar from './Navbar'
-import ChartPanel from './ChartPanel'
 import PercentageOfTasksByTiming from './PercentageOfTasksByTiming'
 import NumberOfTasksByTiming from './NumberOfTasksByTiming'
 import DistributionOfTasksByTiming from './DistributionOfTasksByTiming'

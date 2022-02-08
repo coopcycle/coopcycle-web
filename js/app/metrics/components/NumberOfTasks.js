@@ -7,6 +7,8 @@ import moment from 'moment'
 const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
 const commonOptions = {
   maintainAspectRatio: false,
+  scales: {
+  }
 };
 
 import { getCubeDateRange } from '../utils'
@@ -35,11 +37,7 @@ const renderChart = ({ resultSet, error }) => {
       display: false
     },
     scales: {
-      xAxes: [
-        {
-          stacked: true,
-        },
-      ],
+      x: { ...commonOptions.scales.x, stacked: true },
     },
   };
   return <Bar data={data} options={options} />;
@@ -81,7 +79,7 @@ const Chart = ({ cubejsApi, dateRange }) => {
         chartType: 'bar',
         pivotConfig: {
           "x": [
-            "Task.date.day"
+            "Task.intervalEndAt.day"
           ],
           "y": [
             "measures"
