@@ -124,7 +124,8 @@
         "azimolabs/apple-sign-in-php-sdk": "^2.0",
         "google/apiclient": "^2.11",
         "theofidry/alice-data-fixtures": "1.4.0",
-        "php-http/guzzle7-adapter": "^1.0"
+        "php-http/guzzle7-adapter": "^1.0",
+        "shahonseven/php-color-hash": "dev-master"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -143,6 +144,12 @@
         "rector/rector": "^0.12",
         "phpstan/phpstan-doctrine": "^1.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/alexsegura/php-color-hash"
+        }
+    ],
     "scripts": {
         "post-install-cmd": [
             "@php bin/console cache:clear --no-warmup",
