@@ -34,7 +34,7 @@ use AppBundle\Validator\Constraints\IsActivableRestaurant as AssertIsActivableRe
 use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -121,7 +121,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     ShippingOptionsInterface
 {
     use Timestampable;
-    use SoftDeleteableEntity;
+    use SoftDeleteable;
     use LoopEatOAuthCredentialsTrait;
     use CatalogTrait;
     use FoodEstablishmentTrait;
