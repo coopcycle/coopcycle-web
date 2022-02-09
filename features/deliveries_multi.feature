@@ -58,7 +58,7 @@ Feature: Multi-step deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "comments": "",
+          "comments": "1.50 kg",
           "weight":1500,
           "packages": []
         },
