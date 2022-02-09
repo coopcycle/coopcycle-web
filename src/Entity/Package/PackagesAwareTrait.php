@@ -3,9 +3,13 @@
 namespace AppBundle\Entity\Package;
 
 use AppBundle\Entity\Package;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait PackagesAwareTrait
 {
+    /**
+     * @Groups({"task"})
+     */
     protected $packages;
 
     public function hasPackages()

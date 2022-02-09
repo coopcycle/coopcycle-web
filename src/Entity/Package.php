@@ -3,13 +3,20 @@
 namespace AppBundle\Entity;
 
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 class Package
 {
     use Timestampable;
 
     protected $id;
+    /**
+     * @Groups({"task", "delivery"})
+     */
     protected $name;
+    /**
+     * @Groups({"task", "delivery"})
+     */
     protected $volumeUnits;
     protected $packageSet;
 

@@ -592,7 +592,9 @@ Feature: Urbantz
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneAfter":"@string@.isDateTime()",
-          "doneBefore":"@string@.isDateTime()"
+          "doneBefore":"@string@.isDateTime()",
+          "weight":1082,
+          "packages":[]
         },
         "dropoff":{
           "@id":"/api/tasks/2",

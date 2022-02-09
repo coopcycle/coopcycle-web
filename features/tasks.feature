@@ -374,7 +374,8 @@ Feature: Tasks
         "ref":null,
         "recurrenceRule": null,
         "metadata": [],
-        "weight":null
+        "weight":null,
+        "packages": []
       }
       """
 
@@ -665,7 +666,8 @@ Feature: Tasks
         "ref":null,
         "recurrenceRule": null,
         "metadata": [],
-        "weight": 800
+        "weight": 800,
+        "packages": []
       }
       """
 
@@ -743,7 +745,8 @@ Feature: Tasks
         "ref":null,
         "recurrenceRule": null,
         "metadata": [],
-        "weight":null
+        "weight":null,
+        "packages": []
       }
       """
 
@@ -871,7 +874,8 @@ Feature: Tasks
               "foo":"bar",
               "baz":"bat"
             },
-            "weight":null
+            "weight":null,
+            "packages": []
           },
           {
             "@id":"/api/tasks/2",
@@ -898,7 +902,8 @@ Feature: Tasks
             "ref": null,
             "recurrenceRule":null,
             "metadata":[],
-            "weight":null
+            "weight":null,
+            "packages": []
           }
         ],
         "hydra:totalItems":2,
