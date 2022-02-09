@@ -906,7 +906,8 @@ Feature: Manage restaurants
               "before":"@string@.isDateTime()",
               "doneAfter":"@string@.isDateTime()",
               "doneBefore":"@string@.isDateTime()",
-              "weight":null
+              "weight":null,
+              "packages": []
             }
           }
         ],

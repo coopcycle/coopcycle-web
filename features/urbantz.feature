@@ -619,7 +619,8 @@ Feature: Urbantz
           "before":"@string@.isDateTime()",
           "doneAfter":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "weight":1082
+          "weight":1082,
+          "packages": []
         }
       }
       """
