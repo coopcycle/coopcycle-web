@@ -572,7 +572,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->apiKeys[$storeName]);
-        $this->restContext->iSendARequestTo($method, $url, $body);
+        $this->restContext->iSendARequestTo($method, $url);
     }
 
     /**
