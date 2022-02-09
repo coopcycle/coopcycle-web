@@ -230,7 +230,7 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
-          "comments": "2.00 kg",
+          "comments": "",
           "weight": 2000,
           "packages": []
         },
@@ -335,7 +335,7 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
-          "comments": "2 × XL\n6.00 kg",
+          "comments": "",
           "weight": 6000,
           "packages": [
             {
