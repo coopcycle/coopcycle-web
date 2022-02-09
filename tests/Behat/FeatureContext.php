@@ -7,7 +7,6 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\ClosingRule;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
@@ -586,38 +585,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->apiKeys[$storeName]);
         $this->restContext->iSendARequestTo($method, $url, $body);
-    }
-
-    /**
-     * @Given the last delivery from user :username has status :status
-     */
-    public function theLastDeliveryFromUserHasStatus($username, $status)
-    {
-        $user = $this->userManager->findUserByUsername($username);
-
-        $order = $this->doctrine->getRepository(Order::class)
-            ->findOneBy(['customer' => $user], ['createdAt' => 'DESC']);
-
-        $order->getDelivery()->setStatus($status);
-
-        $this->doctrine->getManagerForClass(Delivery::class)->flush();
-    }
-
-    /**
-     * @Given the last delivery from user :customer is dispatched to courier :courier
-     */
-    public function theLastDeliveryFromUserIsDispatchedToCourier($customerUsername, $courierUsername)
-    {
-        $customer = $this->userManager->findUserByUsername($customerUsername);
-        $courier = $this->userManager->findUserByUsername($courierUsername);
-
-        $order = $this->doctrine->getRepository(Order::class)
-            ->findOneBy(['customer' => $customer], ['createdAt' => 'DESC']);
-
-        $order->getDelivery()->setCourier($courier);
-        $order->getDelivery()->setStatus(Delivery::STATUS_DISPATCHED);
-
-        $this->doctrine->getManagerForClass(Delivery::class)->flush();
     }
 
     /**
