@@ -1,6 +1,6 @@
 default:
   calls:
-    error_reporting: 16383 # E_ALL & ~E_USER_DREPRECATED
+    error_reporting: 8191 # E_ALL & ~E_USER_DEPRECATED & ~E_DEPRECATED
   suites:
     default:
       contexts:
