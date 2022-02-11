@@ -186,3 +186,16 @@ if (priceEl) {
       pricePreview = new PricePreview(priceEl, { token: result.jwt })
     })
 }
+
+const arbitraryPriceEl = document.getElementById('delivery_arbitraryPrice')
+const variantDetailsEl = document.querySelector('[data-variant-details]')
+
+if (arbitraryPriceEl) {
+  arbitraryPriceEl.addEventListener('change', function(e) {
+    if (e.target.checked) {
+      variantDetailsEl.classList.remove('d-none')
+    } else {
+      variantDetailsEl.classList.add('d-none')
+    }
+  })
+}

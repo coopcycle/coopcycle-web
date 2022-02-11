@@ -19,6 +19,7 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
 use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
 use Doctrine\ORM\Query\Expr;
@@ -26,6 +27,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Ramsey\Uuid\Uuid;
+use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -224,7 +227,8 @@ trait StoreTrait
         DeliveryManager $deliveryManager,
         OrderFactory $orderFactory,
         EntityManagerInterface $entityManager,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        OrderNumberAssignerInterface $orderNumberAssigner)
     {
         $routes = $request->attributes->get('routes');
 
@@ -240,12 +244,16 @@ trait StoreTrait
             'with_dropoff_doorstep' => true,
             'with_remember_address' => true,
             'with_address_props' => true,
+            'with_arbitrary_price' => true,
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $delivery = $form->getData();
+
+            $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
+                $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
 
             if ($store->getCreateOrders()) {
 
@@ -269,6 +277,29 @@ trait StoreTrait
                     $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                     $form->addError(new FormError($message));
                 }
+
+            } elseif ($useArbitraryPrice) {
+
+                $variantPrice = $form->get('variantPrice')->getData();
+                $variantName = $form->get('variantName')->getData();
+
+                $order = $this->createOrderForDelivery($orderFactory, $delivery, $variantPrice);
+
+                $variant = $order->getItems()->get(0)->getVariant();
+
+                $variant->setName($variantName);
+                $variant->setCode(Uuid::uuid4()->toString());
+
+                $order->setState(OrderInterface::STATE_ACCEPTED);
+
+                $entityManager->persist($order);
+                $entityManager->flush();
+
+                $orderNumberAssigner->assignNumber($order);
+
+                $entityManager->flush();
+
+                return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
             } else {
 
