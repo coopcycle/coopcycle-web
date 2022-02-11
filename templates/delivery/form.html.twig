@@ -42,17 +42,6 @@
         {% if form.vehicle is defined %}
           {{ form_row(form.vehicle) }}
         {% endif %}
-        {% if form.weight is defined %}
-          {{ form_row(form.weight) }}
-        {% endif %}
-        {% if form.packages is defined %}
-        <div class="form-group">
-          {{ form_label(form.packages) }}
-          <div class="col-sm-9">
-            {{ form_widget(form.packages) }}
-          </div>
-        </div>
-        {% endif %}
 
         {% if not is_new %}
         <div class="alert alert-info">
