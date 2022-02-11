@@ -60,6 +60,14 @@
             </span>
           </div>
         </div>
+        {% if form.arbitraryPrice is defined %}
+          <hr>
+          {{ form_row(form.arbitraryPrice) }}
+          <div class="d-none" data-variant-details>
+          {{ form_row(form.variantName) }}
+          {{ form_row(form.variantPrice) }}
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>

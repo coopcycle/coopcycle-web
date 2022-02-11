@@ -1211,3 +1211,4 @@ adminDashboard.users.confirmDeleteUser: Voulez-vous vraiment supprimer l'utilisa
 adminDashboard.users.userHasBeenDeleted: L'utilisateur a été supprimé.
 order.cart.donation.disclaimer: Nous vous proposons de consacrer %percentage% des revenus tirés de votre commmande à l'une de nos associations partenaires. Vous ne paierez pas plus cher.
 form.checkout_address.nonprofit.placeholder: Choisissez votre association préférée
+form.delivery.arbitrary_price.label: Definir le prix manuellement
