@@ -6,6 +6,8 @@ import withDiffHours from './with-diff-hours.json'
 import withDropoffDoorstep from './with-dropoff-doorstep.json'
 import withOrderItemsTotal from './with-order-items-total.json'
 import withOrderItemsTotalRange from './with-order-items-total-range.json'
+import withTotalVolumeUnits from './with-packages-total-volume-units.json'
+import withTotalVolumeUnitsRange from './with-packages-total-volume-units-range.json'
 
 import fixedPrice from './fixed-price.json'
 import priceRange from './price-range.json'
@@ -271,6 +273,28 @@ describe('Pricing rule parser (AST)', function() {
     expect(result).toEqual(
       [
         { left: 'order.itemsTotal', operator: 'in', right: [ 2300, 2599 ] }
+      ]
+    )
+  })
+
+  it('should parse AST with total volume units', function() {
+
+    const result = parseAST(withTotalVolumeUnits)
+
+    expect(result).toEqual(
+      [
+        { left: 'packages.totalVolumeUnits()', operator: '>', right: 3 }
+      ]
+    )
+  })
+
+  it('should parse AST with total volume units (range)', function() {
+
+    const result = parseAST(withTotalVolumeUnitsRange)
+
+    expect(result).toEqual(
+      [
+        { left: 'packages.totalVolumeUnits()', operator: 'in', right: [1, 5] }
       ]
     )
   })

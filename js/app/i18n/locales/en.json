@@ -249,6 +249,7 @@
         "ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE": "Change only once",
         "TIME_RANGE_FROM": "from {{start}}",
         "ADMIN_DASHBOARD_CREATE_GROUP": "Create group",
-        "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Group name"
+        "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Group name",
+        "RULE_PICKER_LINE_VOLUME_UNITS": "Volume units"
     }
 }
