@@ -250,6 +250,7 @@
         "ADDRESS_BOOK_PROP_CHANGED_UPDATE": "Modifier l'adresse existante",
         "ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE": "Modifier pour cette fois",
         "TIME_RANGE_FROM": "à partir de {{start}}",
-        "SCHEDULE_ORDER": "Pré-commander"
+        "SCHEDULE_ORDER": "Pré-commander",
+        "RULE_PICKER_LINE_VOLUME_UNITS": "Unités de volume"
     }
 }
