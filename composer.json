@@ -111,7 +111,7 @@
         "spatie/opening-hours": "^2.10",
         "centrifugal/phpcent": "~3.0",
         "twig/string-extra": "^3.1",
-        "simshaun/recurr": "^4.0",
+        "simshaun/recurr": "^5.0",
         "jaybizzle/crawler-detect": "^1.2",
         "nucleos/user-bundle": "1.12.x-dev",
         "nucleos/profile-bundle": "1.7.x-dev",
