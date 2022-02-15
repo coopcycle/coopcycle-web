@@ -234,7 +234,8 @@ const parsePriceNode = (node, expression) => {
 
     const args = node.nodes.arguments.nodes
 
-    const attribute = args[0].attributes.name
+    const attribute = (args[0].nodes?.node?.attributes.name === 'packages' && args[0].nodes?.attribute?.attributes.value === 'totalVolumeUnits')
+      ? 'packages.totalVolumeUnits()' : args[0].attributes.name
     const price     = args[1].attributes.value
     const step      = args[2].attributes.value
     const threshold = args[3].attributes.value
