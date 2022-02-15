@@ -28,6 +28,9 @@ final class Version20220208172631 extends AbstractMigration
             $this->addSql('UPDATE oauth2_client SET name = :name WHERE identifier = :identifier', $oauth2Client);
         }
 
+        // There may be some orphans (?)
+        $this->addSql('UPDATE oauth2_client SET name = \'Unknown\' WHERE name IS NULL');
+
         $this->addSql('ALTER TABLE oauth2_client ALTER name SET NOT NULL');
     }
 
