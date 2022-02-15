@@ -35,6 +35,18 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->entityManager = $entityManager;
     }
 
+    private function _normalizeTaskPackages($packages) {
+        $packagesNormalized = [];
+        foreach ($packages as $package) {
+            $packagesNormalized[] = [
+                'type' => $package->getPackage()->getName(),
+                'name' => $package->getPackage()->getName(),
+                'quantity' => $package->getQuantity(),
+            ];
+        }
+        return $packagesNormalized;
+    }
+
     public function normalize($object, $format = null, array $context = array())
     {
         $data = $this->normalizer->normalize($object, $format, $context);
@@ -85,11 +97,11 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $delivery = $object->getDelivery();
 
             if (null !== $delivery) {
-                $data['packages'] = $delivery->getPackages();
+                $data['packages'] = $this->_normalizeTaskPackages($delivery->getPackages());
                 $data['weight'] = $delivery->getWeight();
             }
         } else {
-            $data['packages'] = $object->getPackages();
+            $data['packages'] = $this->_normalizeTaskPackages($object->getPackages());
         }
 
         return $data;

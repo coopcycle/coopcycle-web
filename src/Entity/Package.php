@@ -14,9 +14,6 @@ class Package
      * @Groups({"task", "delivery"})
      */
     protected $name;
-    /**
-     * @Groups({"task", "delivery"})
-     */
     protected $volumeUnits;
     protected $packageSet;
 

@@ -339,14 +339,8 @@ Feature: Deliveries
           "weight": 6000,
           "packages": [
             {
-              "@type": "PackageWithQuantity",
-              "@id": @string@,
-              "package": {
-                "@type": "Package",
-                "@id": @string@,
-                "name": "XL",
-                "volumeUnits": 3
-              },
+              "type": "XL",
+              "name": "XL",
               "quantity": 2
             }
           ]
@@ -377,14 +371,8 @@ Feature: Deliveries
           "weight": 6000,
           "packages": [
             {
-              "@type": "Package",
-              "@id": @string@,
-              "package": {
-                "@type": "Package",
-                "@id": @string@,
-                "name": "XL",
-                "volumeUnits": 3
-              },
+              "type": "XL",
+              "name": "XL",
               "quantity": 2
             }
           ]

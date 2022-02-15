@@ -3,17 +3,10 @@
 namespace AppBundle\Entity\Package;
 
 use AppBundle\Entity\Package;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 class PackageWithQuantity
 {
-    /**
-     * @Groups({"task", "delivery"})
-     */
     private $package;
-    /**
-     * @Groups({"task", "delivery"})
-     */
     private $quantity = 0;
 
     public function __construct(Package $package = null, $quantity = 0)
