@@ -36,6 +36,7 @@ const typeToOperators = {
   'dropoff.doorstep': ['=='],
   'packages': ['containsAtLeastOne'],
   'order.itemsTotal': ['==', '<', '>', 'in'],
+  'packages.totalVolumeUnits()': ['<', '>', 'in'],
 }
 
 const isK = type => type === 'distance' || type === 'weight'
@@ -247,6 +248,7 @@ class RulePickerLine extends React.Component {
               <option value="diff_days(pickup)">{ this.props.t('RULE_PICKER_LINE_PICKUP_DIFF_DAYS') }</option>
               <option value="dropoff.doorstep">{ this.props.t('RULE_PICKER_LINE_DROPOFF_DOORSTEP') }</option>
               <option value="packages">{ this.props.t('RULE_PICKER_LINE_PACKAGES') }</option>
+              <option value="packages.totalVolumeUnits()">{ this.props.t('RULE_PICKER_LINE_VOLUME_UNITS') }</option>
             </optgroup>
             <optgroup label={ this.props.t('RULE_PICKER_LINE_OPTGROUP_ORDER') }>
               <option value="order.itemsTotal">{ this.props.t('RULE_PICKER_LINE_ORDER_ITEMS_TOTAL') }</option>

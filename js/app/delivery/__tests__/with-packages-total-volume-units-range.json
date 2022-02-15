@@ -1,0 +1,63 @@
+{
+  "nodes":{
+    "nodes":{
+      "left":{
+        "nodes":{
+          "node":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "name":"packages"
+            }
+          },
+          "attribute":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":"totalVolumeUnits"
+            }
+          },
+          "arguments":{
+            "nodes":[
+
+            ],
+            "attributes":[
+
+            ]
+          }
+        },
+        "attributes":{
+          "type":2
+        }
+      },
+      "right":{
+        "nodes":{
+          "left":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":1
+            }
+          },
+          "right":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":5
+            }
+          }
+        },
+        "attributes":{
+          "operator":".."
+        }
+      }
+    },
+    "attributes":{
+      "operator":"in"
+    }
+  }
+}
