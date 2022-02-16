@@ -406,11 +406,13 @@ Feature: Task recurrence rules
         "hydra:member":[
           {
             "@id":"/api/tasks/1",
-            "@type":"Task"
+            "@type":"Task",
+            "packages": []
           },
           {
             "@id":"/api/tasks/2",
-            "@type":"Task"
+            "@type":"Task",
+            "packages": []
           }
         ],
         "hydra:totalItems":2
@@ -445,15 +447,19 @@ Feature: Task recurrence rules
         "hydra:member":[
           {
             "@id":"/api/tasks/1",
-            "@type":"Task"
+            "@type":"Task",
+            "packages": [],
+            "weight": null
           },
           {
             "@id":"/api/tasks/2",
-            "@type":"Task"
+            "@type":"Task",
+            "packages": []
           },
           {
             "@id":"/api/tasks/3",
-            "@type":"Task"
+            "@type":"Task",
+            "packages": []
           }
         ],
         "hydra:totalItems":3

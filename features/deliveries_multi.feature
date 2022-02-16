@@ -58,7 +58,9 @@ Feature: Multi-step deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "comments": "1.50 kg"
+          "comments": "1.50 kg",
+          "weight":1500,
+          "packages": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -83,7 +85,8 @@ Feature: Multi-step deliveries
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "comments": "",
-          "weight":1500
+          "weight":1500,
+          "packages": []
         }
       }
       """
