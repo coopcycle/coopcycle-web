@@ -198,7 +198,8 @@ security:
         token_refresh:
             pattern:  ^/api/token/refresh
             stateless: true
-            refresh_jwt: ~
+            refresh_jwt:
+                provider: fos_userbundle
 
         api_docs:
             pattern:   ^/api/docs
