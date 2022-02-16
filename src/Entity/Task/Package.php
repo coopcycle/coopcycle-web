@@ -3,22 +3,15 @@
 namespace AppBundle\Entity\Task;
 
 use AppBundle\Entity\Task;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 class Package
 {
     protected $id;
 
-    /**
-     * @Groups({"task", "delivery"})
-     */
     protected $package;
 
     protected $task;
 
-    /**
-     * @Groups({"task", "delivery"})
-     */
     protected $quantity = 0;
 
     public function __construct(Task $task = null)
