@@ -660,7 +660,6 @@ form.embed_settings.with_vehicle.label: Aggiungi scelta del veicolo
 form.embed_settings.with_weight.label: Chiedi il peso dei prodotti
 form.time_slot.name.label: Nome
 form.time_slot.working_days_only.label: Consenti la selezione solo dei giorni lavorativi
-form.time_slot.choices.label: Scelte
 form.time_slot.prior_notice_hours.label: Preavviso (ore)
 form.package_set.name.label: Nome
 form.package_set.packages.label: Pacchi

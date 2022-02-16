@@ -18,7 +18,6 @@
     <th>#</th>
     <th>{{ 'form.time_slot.name.label'|trans }}</th>
     <th>{{ 'form.time_slot.interval.label'|trans }}</th>
-    <th>{{ 'form.time_slot.choices.label'|trans }}</th>
   </thead>
   <tbody>
   {% for time_slot in time_slots %}
@@ -31,11 +30,6 @@
       </td>
       <td>
         {{ time_slot.interval }}
-      </td>
-      <td>
-        {% for choice in time_slot.choices %}
-          <small>{{ choice.startTime }} - {{ choice.endTime }}</small>
-        {% endfor %}
       </td>
     </tr>
   {% endfor %}

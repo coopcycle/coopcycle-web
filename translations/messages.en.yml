@@ -720,7 +720,6 @@ form.embed_settings.with_weight.label: Ask for weight of goods
 form.time_slot.name.label: Name
 form.time_slot.interval.label: Interval
 form.time_slot.working_days_only.label: Allow selecting only working days
-form.time_slot.choices.label: Choices
 form.time_slot_choice.start_time.label: Start time
 form.time_slot_choice.end_time.label: End time
 form.time_slot.prior_notice_hours.label: Prior notice (hours)

@@ -634,7 +634,6 @@ form.embed_settings.with_weight.label: Demander le poids de la marchandise
 form.resend_confirmation_email.submit.label: Renvoyer l'email
 form.time_slot.name.label: Nom
 form.time_slot.working_days_only.label: Limiter les choix aux jours ouvrés
-form.time_slot.choices.label: Plages horaires
 form.time_slot_choice.start_time.label: Date de début
 form.time_slot_choice.end_time.label: Date de fin
 form.time_slot.prior_notice_hours.label: Délai de prévenance (heures)

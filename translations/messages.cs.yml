@@ -784,7 +784,6 @@ form.package_set.name.label: Název
 form.time_slot.prior_notice_hours.label: Předběžné oznámení (hodiny)
 form.time_slot_choice.end_time.label: Čas konce
 form.time_slot_choice.start_time.label: Čas začátku
-form.time_slot.choices.label: Možnosti
 form.time_slot.working_days_only.label: Povolit výběr pouze pracovních dnů
 form.time_slot.interval.label: Časový rozsah
 form.time_slot.name.label: Název
