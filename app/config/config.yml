@@ -373,7 +373,6 @@ lexik_jwt_authentication:
             name:    token
 
 gesdinet_jwt_refresh_token:
-    user_provider: nucleos_user.user_provider.username_email
     ttl_update: true
 
 snc_redis:

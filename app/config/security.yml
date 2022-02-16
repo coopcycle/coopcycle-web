@@ -198,6 +198,7 @@ security:
         token_refresh:
             pattern:  ^/api/token/refresh
             stateless: true
+            refresh_jwt: ~
 
         api_docs:
             pattern:   ^/api/docs
