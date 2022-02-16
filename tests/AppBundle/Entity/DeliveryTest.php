@@ -344,7 +344,9 @@ class DeliveryTest extends TestCase
         $delivery = new Delivery();
 
         $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        // Even if the first task is not a pickup,
+        // it will be considered as a pickup
+        // $pickup->setType(Task::TYPE_PICKUP);
 
         $dropoff1 = new Task();
         $dropoff1->setType(Task::TYPE_DROPOFF);

@@ -266,17 +266,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
         if (count($tasks) > 2) {
 
-            $pickup = array_shift($tasks);
-
-            $delivery->addTask($pickup);
-
-            foreach ($tasks as $dropoff) {
-
-                $dropoff->setPrevious($pickup);
-
-                $delivery->addTask($dropoff);
-            }
-
+            $delivery = $delivery->withTasks(...$tasks);
 
         } else {
 
@@ -303,6 +293,9 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         $this->items->clear();
 
         $pickup = array_shift($tasks);
+
+        // Make sure the first task is a pickup
+        $pickup->setType(Task::TYPE_PICKUP);
 
         $this->addTask($pickup);
 
