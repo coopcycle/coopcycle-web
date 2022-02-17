@@ -1032,12 +1032,6 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function getStoreList()
-    {
-        $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
-        return [ $stores, 1, 1 ];
-    }
-
     public function newStoreAction(Request $request)
     {
         $store = new Store();

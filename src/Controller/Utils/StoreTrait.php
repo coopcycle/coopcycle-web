@@ -42,22 +42,32 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait StoreTrait
 {
-    abstract protected function getStoreList();
-
-    public function storeListAction(Request $request)
+    public function storeListAction(Request $request, PaginatorInterface $paginator)
     {
-        [ $stores, $pages, $page ] = $this->getStoreList();
+        $qb = $this->getDoctrine()
+        ->getRepository(Store::class)
+        ->createQueryBuilder('c');
+        
+        $STORES_PER_PAGE = 20;
+
+        $stores = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            $STORES_PER_PAGE,
+            [                
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'c.name',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
+            ],
+        );
 
         $routes = $request->attributes->get('routes');
 
         return $this->render($request->attributes->get('template'), [
-            'layout' => $request->attributes->get('layout'),
             'stores' => $stores,
-            'pages' => $pages,
-            'page' => $page,
-            'store_route' => $routes['store'],
-            'store_delivery_new_route' => $routes['store_delivery_new'],
-            'store_deliveries_route' => $routes['store_deliveries'],
+            'layout' => $request->attributes->get('layout'), 
+            'store_route' => $routes['store'], 
+            'store_delivery_new_route' => $routes['store_delivery_new'], 
+            'store_deliveries_route' => $routes['store_deliveries'], 
         ]);
     }
 
