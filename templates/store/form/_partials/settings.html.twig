@@ -33,7 +33,10 @@
   <hr>
 {% endif %}
 
-{% if form.timeSlot is defined or form.packageSet is defined %}
+{% if form.timeSlot is defined or form.timeSlots is defined or form.packageSet is defined %}
+  {% if form.timeSlots is defined %}
+    {{ form_row(form.timeSlots) }}
+  {% endif %}
   {% if form.timeSlot is defined %}
     {{ form_row(form.timeSlot) }}
   {% endif %}

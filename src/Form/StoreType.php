@@ -68,6 +68,15 @@ class StoreType extends LocalBusinessType
                     'required' => false,
                     'query_builder' => new OrderByNameQueryBuilder(),
                 ])
+                ->add('timeSlots', EntityType::class, [
+                    'label' => 'form.store_type.time_slots.label',
+                    'class' => TimeSlot::class,
+                    'choice_label' => 'name',
+                    'required' => false,
+                    'expanded' => true,
+                    'multiple' => true,
+                    'query_builder' => new OrderByNameQueryBuilder(),
+                ])
                 ->add('tags', TagsType::class, [
                     'mapped' => false,
                 ]);

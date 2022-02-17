@@ -153,10 +153,13 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
      */
     private $multiDropEnabled = false;
 
+    private $timeSlots;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
         $this->addresses = new ArrayCollection();
+        $this->timeSlots = new ArrayCollection();
     }
 
     /**
@@ -476,5 +479,15 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         $this->multiDropEnabled = $multiDropEnabled;
 
         return $this;
+    }
+
+    public function getTimeSlots()
+    {
+        return $this->timeSlots;
+    }
+
+    public function addTimeSlot(TimeSlot $timeSlot)
+    {
+        $this->timeSlots->add($timeSlot);
     }
 }

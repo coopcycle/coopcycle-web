@@ -98,6 +98,7 @@ class DeliveryType extends AbstractType
                     'with_addresses' => null !== $store ? $store->getAddresses() : [],
                     'with_remember_address' => $options['with_remember_address'],
                     'with_time_slot' => $this->getTimeSlot($options, $store),
+                    'with_time_slots' => $this->getTimeSlots($options, $store),
                     'with_doorstep' => $options['with_dropoff_doorstep'],
                     'with_address_props' => $options['with_address_props'],
                     'with_package_set' => $this->getPackageSet($options, $store),
@@ -190,6 +191,24 @@ class DeliveryType extends AbstractType
     }
 
     /**
+     * @return TimeSlot[]|null
+     */
+    private function getTimeSlots(array $options, ?Store $store = null)
+    {
+        if (null !== $options['with_time_slots']) {
+
+            return $options['with_time_slots'];
+        }
+
+        if ($store) {
+
+            return $store->getTimeSlots();
+        }
+
+        return null;
+    }
+
+    /**
      * @return PackageSet|null
      */
     private function getPackageSet(array $options, ?Store $store = null): ?PackageSet
@@ -216,6 +235,7 @@ class DeliveryType extends AbstractType
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
             'with_dropoff_doorstep' => false,
             'with_time_slot' => null,
+            'with_time_slots' => null,
             'with_package_set' => null,
             'with_remember_address' => false,
             'with_address_props' => false,

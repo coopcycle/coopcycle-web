@@ -90,6 +90,8 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\TaskType:
+    arguments:
+      $locale: '%env(COOPCYCLE_LOCALE)%'
     tags: [ form.type ]
 
   AppBundle\Form\RestaurantType:

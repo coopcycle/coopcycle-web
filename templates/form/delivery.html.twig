@@ -36,6 +36,10 @@ col-md-9
     {{ form_row(form.timeSlot) }}
   {% endif %}
 
+  {% if form.switchTimeSlot is defined %}
+    {{ form_row(form.switchTimeSlot) }}
+  {% endif %}
+
   {% if form.packages is defined %}
     {{ form_row(form.packages) }}
   {% endif %}

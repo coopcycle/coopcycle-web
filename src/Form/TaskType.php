@@ -8,9 +8,13 @@ use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Form\Type\TimeSlotChoice;
+use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Service\TaskManager;
+use AppBundle\Translation\DatePeriodFormatter;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -29,6 +33,15 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 class TaskType extends AbstractType
 {
+    protected $datePeriodFormatter;
+    protected $locale;
+
+    public function __construct(DatePeriodFormatter $datePeriodFormatter, string $locale)
+    {
+        $this->datePeriodFormatter = $datePeriodFormatter;
+        $this->locale = $locale;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $addressBookOptions = [
@@ -59,6 +72,51 @@ class TaskType extends AbstractType
 
             $form = $event->getForm();
             $task = $event->getData();
+
+            if (null !== $options['with_time_slot']
+            && null !== $options['with_time_slots']
+            && null === $task->getId()
+            && count($options['with_time_slots']) > 1) {
+
+                $iterator = $options['with_time_slots']->getIterator();
+                $iterator->uasort(function (TimeSlot $a, TimeSlot $b) {
+                    return ($a->getName() < $b->getName()) ? -1 : 1;
+                });
+                $choices = new ArrayCollection(iterator_to_array($iterator));
+
+                $form
+                    ->add('switchTimeSlot', EntityType::class, [
+                        'class' => TimeSlot::class,
+                        'choices' => $choices,
+                        'choice_label' => 'name',
+                        'choice_attr' => function($choice, $key, $value) {
+
+                            $choiceLoader = new TimeSlotChoiceLoader(
+                                $choice,
+                                $this->locale
+                            );
+                            $choiceList = $choiceLoader->loadChoiceList();
+
+                            $choices = [];
+                            foreach ($choiceList->getChoices() as $choice) {
+                                $choices[] = [
+                                    'label' => $this->datePeriodFormatter->toHumanReadable($choice->toDatePeriod()),
+                                    'value' => (string) $choice,
+                                ];
+                            }
+
+                            return [
+                                'data-choices' => json_encode($choices),
+                            ];
+                        },
+                        'label' => false,
+                        'required' => true,
+                        'mapped' => false,
+                        'expanded' => true,
+                        'multiple' => false,
+                        'data' => $options['with_time_slot'],
+                    ]);
+            }
 
             if (null !== $options['with_time_slot']) {
 
@@ -284,6 +342,7 @@ class TaskType extends AbstractType
             'with_doorstep' => false,
             'with_remember_address' => false,
             'with_time_slot' => null,
+            'with_time_slots' => null,
             'with_address_props' => false,
             'with_package_set' => null,
             'with_packages_required' => false,
