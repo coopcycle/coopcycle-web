@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import TagsSelect from '../components/TagsSelect'
 import { addressMapper } from '../widgets/addressForm'
+import _ from 'lodash'
 
 var tagsEl = document.querySelector('#store_tags');
 
@@ -67,4 +68,21 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 
 if (window.location.hash !== '') {
   $(`a[aria-controls="${window.location.hash.substring(1)}"]`).tab('show')
+}
+
+const timeSlotsEl = document.querySelector('#store_timeSlots')
+const timeSlotEl = document.querySelector('#store_timeSlot')
+
+if (timeSlotsEl && timeSlotEl) {
+  timeSlotsEl.querySelectorAll('input[type="checkbox"]').forEach(chk => {
+    chk.addEventListener('change', () => {
+
+      const checked = timeSlotsEl.querySelectorAll('input[type="checkbox"]:checked')
+      const values = Array.from(checked).map(el => el.value)
+
+      if (!_.includes(values, timeSlotEl.value)) {
+        timeSlotEl.value = values[0]
+      }
+    })
+  })
 }
