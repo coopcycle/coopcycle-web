@@ -24,6 +24,8 @@ final class Version20220217134929 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_5CE54537D62B0FA ON store_time_slot (time_slot_id)');
         $this->addSql('ALTER TABLE store_time_slot ADD CONSTRAINT FK_5CE54537B092A811 FOREIGN KEY (store_id) REFERENCES store (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE store_time_slot ADD CONSTRAINT FK_5CE54537D62B0FA FOREIGN KEY (time_slot_id) REFERENCES time_slot (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+
+        $this->addSql('INSERT INTO store_time_slot (store_id, time_slot_id) SELECT id, time_slot_id FROM store WHERE time_slot_id IS NOT NULL');
     }
 
     public function down(Schema $schema): void
