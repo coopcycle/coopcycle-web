@@ -2244,6 +2244,7 @@ class AdminController extends AbstractController
         return $this->render('admin/metrics.html.twig', [
             'cube_token' => $token->toString(),
             'zero_waste' => $zeroWasteCount > 0,
+            'ui_tasks_metrics_enabled' => $this->getParameter('ui_tasks_metrics_enabled')
         ]);
     }
 }
