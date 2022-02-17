@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Utils;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Contract;
@@ -1142,7 +1143,8 @@ trait RestaurantTrait
         TranslatorInterface $translator,
         EntityManagerInterface $entityManager,
         PaginatorInterface $paginator,
-        TaxesHelper $taxesHelper)
+        TaxesHelper $taxesHelper,
+        CubeJsTokenFactory $tokenFactory)
     {
         $tab = $request->query->get('tab', 'orders');
 
@@ -1193,22 +1195,6 @@ trait RestaurantTrait
             return $response;
         }
 
-        // https://cube.dev/docs/security
-        $key = \Lcobucci\JWT\Signer\Key\InMemory::plainText($_SERVER['CUBEJS_API_SECRET']);
-        $config = \Lcobucci\JWT\Configuration::forSymmetricSigner(
-            new \Lcobucci\JWT\Signer\Hmac\Sha256(),
-            $key
-        );
-
-        // https://github.com/lcobucci/jwt/issues/229
-        $now = new \DateTimeImmutable('@' . time());
-
-        $token = $config->builder()
-            ->expiresAt($now->modify('+1 hour'))
-            ->withClaim('database', $this->getParameter('database_name'))
-            ->withClaim('vendor_id', $restaurant->getId())
-            ->getToken($config->signer(), $config->signingKey());
-
         return $this->render('restaurant/stats.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
@@ -1217,7 +1203,7 @@ trait RestaurantTrait
             'start' => $start,
             'end' => $end,
             'tab' => $tab,
-            'cube_token' => $token->toString(),
+            'cube_token' => $tokenFactory->createToken(['vendor_id' => $restaurant->getId()]),
             'picker_type' => $request->query->has('date') ? 'date' : 'month',
             'with_details' => $request->query->getBoolean('details', false),
         ]));

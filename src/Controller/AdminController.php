@@ -11,6 +11,7 @@ use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
+use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\User;
@@ -2216,27 +2217,15 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function metricsAction(LocalBusinessRepository $localBusinessRepository, Request $request)
+    public function metricsAction(
+        LocalBusinessRepository $localBusinessRepository,
+        CubeJsTokenFactory $tokenFactory,
+        Request $request)
     {
-        // https://cube.dev/docs/security
-        $key = \Lcobucci\JWT\Signer\Key\InMemory::plainText($_SERVER['CUBEJS_API_SECRET']);
-        $config = \Lcobucci\JWT\Configuration::forSymmetricSigner(
-            new \Lcobucci\JWT\Signer\Hmac\Sha256(),
-            $key
-        );
-
-        // https://github.com/lcobucci/jwt/issues/229
-        $now = new \DateTimeImmutable('@' . time());
-
-        $token = $config->builder()
-                ->expiresAt($now->modify('+1 hour'))
-                ->withClaim('database', $this->getParameter('database_name'))
-                ->getToken($config->signer(), $config->signingKey());
-
         $zeroWasteCount = $localBusinessRepository->countZeroWaste();
 
         return $this->render('admin/metrics.html.twig', [
-            'cube_token' => $token->toString(),
+            'cube_token' => $tokenFactory->createToken(),
             'zero_waste' => $zeroWasteCount > 0,
         ]);
     }
