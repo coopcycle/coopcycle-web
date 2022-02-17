@@ -9,6 +9,7 @@ use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
+use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
@@ -443,5 +444,17 @@ class ProfileController extends AbstractController
         } catch (RoutingException $e) {}
 
         throw $this->createNotFoundException();
+    }
+
+    /**
+     * @Route("/profile/loopeat", name="profile_loopeat")
+     */
+    public function loopeatAction(Request $request, CubeJsTokenFactory $tokenFactory)
+    {
+        $this->denyAccessUnlessGranted('ROLE_LOOPEAT');
+
+        return $this->render('profile/loopeat.html.twig', [
+            'cube_token' => $tokenFactory->createToken(),
+        ]);
     }
 }
