@@ -65,7 +65,7 @@ trait StoreTrait
             'store_route' => $routes['store'], 
             'store_delivery_new_route' => $routes['store_delivery_new'], 
             'store_deliveries_route' => $routes['store_deliveries'], 
-        )];
+        ]);
     }
 
     public function storeUsersAction($id, Request $request,
