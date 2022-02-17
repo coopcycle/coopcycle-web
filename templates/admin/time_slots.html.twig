@@ -41,7 +41,11 @@
         {{ time_slot.sameDayCutoff }}
       </td>
       <td>
-        <span data-opening-hours="{{ time_slot.openingHours|json_encode|e('html_attr') }}"></span>
+        <ul class="list-unstyled">
+          {% for oh in time_slot.openingHours %}
+            <li><span data-opening-hours="{{ oh|json_encode|e('html_attr') }}">{{ oh }}</span></li>
+          {% endfor %}
+        </ul>
       </td>
     </tr>
   {% endfor %}
