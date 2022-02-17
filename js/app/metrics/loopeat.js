@@ -5,6 +5,7 @@ import { QueryRenderer } from '@cubejs-client/react';
 import { Spin, Table } from 'antd';
 
 import 'antd/lib/pagination/style/index.css'
+import 'antd/lib/select/style/index.css'
 
 const rootElement = document.getElementById('cubejs');
 

@@ -60,7 +60,7 @@
           </a>
         </li>
         {% endif %}
-        {% if is_granted('ROLE_LOOPEAT') %}
+        {% if loopeat_enabled and is_granted('ROLE_LOOPEAT') %}
         <li
           class="{{ app.request.attributes.get('_route') == 'profile_loopeat' ? 'active' : '' }}">
           <a href="{{ path('profile_loopeat') }}">
