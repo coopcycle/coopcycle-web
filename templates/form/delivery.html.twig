@@ -36,7 +36,7 @@ col-md-9
     {{ form_row(form.timeSlot) }}
   {% endif %}
 
-  {% if form.switchTimeSlot is defined %}
+  {% if form.switchTimeSlot is defined and not form.switchTimeSlot.rendered %}
     {{ form_row(form.switchTimeSlot) }}
   {% endif %}
 
@@ -120,7 +120,6 @@ col-md-9
   {{ block('weight_widget') }}
 {% endblock %}
 
-
 {% block packages_entry_widget %}
   <div class="delivery__form__packages__list-item" id="{{ form.vars.id }}">
     {{ form_widget(form.quantity, { attr: { class: 'delivery__form__packages__list-item-quantity' } }) }}
@@ -173,4 +172,11 @@ col-md-9
     }) }}
   </div>
 {% endif %}
+{% endblock %}
+
+{% block _delivery_tasks_entry_timeSlot_widget %}
+  {{ form_widget(form) }}
+  {% if form.parent.switchTimeSlot is defined %}
+    {{ form_widget(form.parent.switchTimeSlot) }}
+  {% endif %}
 {% endblock %}
