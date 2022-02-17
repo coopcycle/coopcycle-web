@@ -4,6 +4,9 @@
   <div id="cubejs"
     data-api-url="{{ cubejs_api_url }}"
     data-token="{{ cube_token }}"></div>
+  <form method="post">
+    <button type="submit" class="btn btn-success">{{ 'basics.export'|trans }}</button>
+  </form>
 {% endblock %}
 
 {% block styles %}

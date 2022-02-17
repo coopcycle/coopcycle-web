@@ -191,6 +191,8 @@ framework:
             osrm.client:
                 base_uri: "http://%osrm_host%"
                 timeout: 1.0
+            cubejs.client:
+                base_uri: "%env(CUBEJS_API_URL)%/"
 
 # Twig Configuration
 twig:
