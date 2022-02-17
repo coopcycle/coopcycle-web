@@ -43,12 +43,10 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
 
         $this->maxDate = $maxDate ?? $this->now->copy()->add($timeSlot->getInterval());
 
-        $this->workingDaysOnly = !$timeSlot->hasOpeningHours() && $timeSlot->isWorkingDaysOnly();
+        $this->workingDaysOnly = $timeSlot->isWorkingDaysOnly();
 
-        if ($timeSlot->hasOpeningHours()) {
-            $this->openingHoursSpecifications =
-                OpeningHoursSpecification::fromOpeningHours($timeSlot->getOpeningHours());
-        }
+        $this->openingHoursSpecifications =
+            OpeningHoursSpecification::fromOpeningHours($timeSlot->getOpeningHours());
 
         if ($this->workingDaysOnly) {
             $providers = Yasumi::getProviders();
@@ -94,10 +92,6 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
             return new ArrayChoiceList([], $value);
         }
 
-        if (!$this->timeSlot->hasOpeningHours() && count($this->timeSlot->getChoices()) === 0) {
-            return new ArrayChoiceList([], $value);
-        }
-
         $cursor = $this->getCursor($this->now);
 
         $choices = [];
@@ -117,41 +111,26 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                 }
             }
 
-            if ($this->timeSlot->hasOpeningHours()) {
-                foreach ($this->openingHoursSpecifications as $spec) {
+            foreach ($this->openingHoursSpecifications as $spec) {
 
-                    $weekdays = array_map(function ($dayOfWeek) {
-                        return $this->OHSToCarbon[$dayOfWeek];
-                    }, $spec->dayOfWeek);
+                $weekdays = array_map(function ($dayOfWeek) {
+                    return $this->OHSToCarbon[$dayOfWeek];
+                }, $spec->dayOfWeek);
 
-                    if (in_array($cursor->weekday(), $weekdays)) {
-                        $choice = new TimeSlotChoice(
-                            clone $cursor,
-                            sprintf('%s-%s', $spec->opens, $spec->closes)
-                        );
-
-                        $tsRange = $choice->toTsRange();
-
-                        $violations = $validator->validate($tsRange, [
-                            new AssertClosingRules($this->closingRules)
-                        ]);
-
-                        if (count($violations) === 0 && !$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())
-                            && $tsRange->getLower() < $this->maxDate) {
-                            $choices[] = $choice;
-                        }
-                    }
-                }
-            } else {
-                foreach ($this->timeSlot->getChoices() as $timeSlotChoice) {
+                if (in_array($cursor->weekday(), $weekdays)) {
                     $choice = new TimeSlotChoice(
                         clone $cursor,
-                        $timeSlotChoice->toTimeRange()
+                        sprintf('%s-%s', $spec->opens, $spec->closes)
                     );
 
                     $tsRange = $choice->toTsRange();
 
-                    if (!$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice()) && $tsRange->getLower() < $this->maxDate) {
+                    $violations = $validator->validate($tsRange, [
+                        new AssertClosingRules($this->closingRules)
+                    ]);
+
+                    if (count($violations) === 0 && !$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())
+                        && $tsRange->getLower() < $this->maxDate) {
                         $choices[] = $choice;
                     }
                 }

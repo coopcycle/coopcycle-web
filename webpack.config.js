@@ -49,6 +49,7 @@ Encore
   .addEntry('store-form', './js/app/store/form.js')
   .addEntry('task-list', './js/app/delivery/task-list.js')
   .addEntry('time-slot-form', './js/app/time-slot/form.js')
+  .addEntry('time-slot-list', './js/app/time-slot/list.js')
   .addEntry('user-tracking', './js/app/user/tracking.js')
   .addEntry('user-form', './js/app/user/form.js')
   .addEntry('user-invite', './js/app/user/invite.js')

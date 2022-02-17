@@ -59,14 +59,6 @@ class TimeSlotType extends AbstractType
                 'help' => 'form.time_slot.same_day_cutoff.help',
                 'minutes' => [0, 15, 30, 60],
             ])
-            ->add('choices', CollectionType::class, [
-                'entry_type' => TimeSlotChoiceType::class,
-                'entry_options' => ['label' => false],
-                'label' => 'form.time_slot.choices.label',
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
-            ])
             ->add('openingHours', CollectionType::class, [
                 'entry_type' => HiddenType::class,
                 'entry_options' => [
@@ -103,23 +95,6 @@ class TimeSlotType extends AbstractType
                     'min' => 0
                 ]
             ]);
-        });
-
-        // When using "simple" mode, make sure there is at least one choice.
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-            $form = $event->getForm();
-            $timeSlot = $event->getData();
-
-            if (!$timeSlot->hasOpeningHours()) {
-                $choices = $form->get('choices')->getData();
-                if (count($choices) === 0) {
-                    $message =
-                        $this->translator->trans('form.time_slot.choices.error.empty');
-                    $form->get('choices')->addError(
-                        new FormError($message, 'form.time_slot.choices.error.empty')
-                    );
-                }
-            }
         });
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {

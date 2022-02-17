@@ -629,7 +629,6 @@ form.embed_settings.with_weight.label: Solicitar peso das mercadorias
 form.time_slot.name.label: Nome
 form.time_slot.interval.label: Intervalo
 form.time_slot.working_days_only.label: Permitir selecionar apenas dias úteis
-form.time_slot.choices.label: Escolhas
 form.time_slot_choice.start_time.label: Hora de início
 form.time_slot_choice.end_time.label: Hora de fim
 form.time_slot.prior_notice_hours.label: Aviso prévio (horas)

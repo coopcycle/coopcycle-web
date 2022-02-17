@@ -48,11 +48,6 @@ class TimeSlot
     private $name;
 
     /**
-     * @Groups({"time_slot"})
-     */
-    private $choices;
-
-    /**
      * @var string
      * @Groups({"time_slot"})
      */
@@ -118,40 +113,6 @@ class TimeSlot
     /**
      * @return mixed
      */
-    public function getChoices()
-    {
-        return $this->choices;
-    }
-
-    /**
-     * @param mixed $choices
-     *
-     * @return self
-     */
-    public function setChoices($choices)
-    {
-        $this->choices = $choices;
-
-        return $this;
-    }
-
-    public function addChoice($choice)
-    {
-        $choice->setTimeSlot($this);
-
-        $this->choices->add($choice);
-    }
-
-    public function removeChoice($choice)
-    {
-        $this->choices->removeElement($choice);
-
-        $choice->setTimeSlot(null);
-    }
-
-    /**
-     * @return mixed
-     */
     public function getInterval()
     {
         return $this->interval;
@@ -192,14 +153,6 @@ class TimeSlot
     /**
      * @return bool
      */
-    public function hasOpeningHours()
-    {
-        return null !== $this->openingHours && !empty($this->openingHours);
-    }
-
-    /**
-     * @return bool
-     */
     public function isWorkingDaysOnly(): bool
     {
         return $this->workingDaysOnly;
@@ -222,13 +175,9 @@ class TimeSlot
      */
     public function getOpeningHoursSpecification()
     {
-        if ($this->hasOpeningHours()) {
-            return array_map(function (OpeningHoursSpecification $spec) {
-                return $spec->jsonSerialize();
-            }, OpeningHoursSpecification::fromOpeningHours($this->getOpeningHours()));
-        }
-
-        return [];
+        return array_map(function (OpeningHoursSpecification $spec) {
+            return $spec->jsonSerialize();
+        }, OpeningHoursSpecification::fromOpeningHours($this->getOpeningHours()));
     }
 
     /**

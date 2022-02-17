@@ -20,13 +20,5 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
-    <one-to-many field="choices" target-entity="AppBundle\Entity\TimeSlot\Choice" mapped-by="timeSlot" orphan-removal="true">
-      <cascade>
-        <cascade-all/>
-      </cascade>
-      <order-by>
-        <order-by-field name="startTime" direction="ASC"/>
-      </order-by>
-    </one-to-many>
   </entity>
 </doctrine-mapping>

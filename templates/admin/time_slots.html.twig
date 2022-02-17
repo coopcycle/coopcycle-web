@@ -18,7 +18,9 @@
     <th>#</th>
     <th>{{ 'form.time_slot.name.label'|trans }}</th>
     <th>{{ 'form.time_slot.interval.label'|trans }}</th>
-    <th>{{ 'form.time_slot.choices.label'|trans }}</th>
+    <th>{{ 'form.time_slot.prior_notice_hours.label'|trans }}</th>
+    <th>{{ 'form.time_slot.same_day_cutoff.label'|trans }}</th>
+    <th></th>
   </thead>
   <tbody>
   {% for time_slot in time_slots %}
@@ -33,13 +35,21 @@
         {{ time_slot.interval }}
       </td>
       <td>
-        {% for choice in time_slot.choices %}
-          <small>{{ choice.startTime }} - {{ choice.endTime }}</small>
-        {% endfor %}
+        {{ time_slot.priorNotice }}
+      </td>
+      <td>
+        {{ time_slot.sameDayCutoff }}
+      </td>
+      <td>
+        <span data-opening-hours="{{ time_slot.openingHours|json_encode|e('html_attr') }}"></span>
       </td>
     </tr>
   {% endfor %}
   </tbody>
 </table>
 
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('time-slot-list') }}
 {% endblock %}
