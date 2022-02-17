@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\TimeSlot;
+use AppBundle\Translation\DatePeriodFormatter;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
@@ -11,19 +12,16 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TimeSlotChoiceType extends AbstractType
 {
-    protected $translator;
+    protected $datePeriodFormatter;
     protected $country;
-    protected $locale;
 
-    public function __construct(TranslatorInterface $translator, string $country, string $locale)
+    public function __construct(DatePeriodFormatter $datePeriodFormatter, string $country)
     {
-        $this->translator = $translator;
+        $this->datePeriodFormatter = $datePeriodFormatter;
         $this->country = $country;
-        $this->locale = $locale;
     }
 
     public function getParent()
@@ -47,21 +45,7 @@ class TimeSlotChoiceType extends AbstractType
             },
             'choice_label' => function(TimeSlotChoice $choice) {
 
-                [ $start, $end ] = $choice->getTimeRange();
-
-                $calendar = Carbon::instance($choice->getDate())
-                    ->locale($this->locale)
-                    ->calendar(null, [
-                        'sameDay' => '[' . $this->translator->trans('basics.today') . ']',
-                        'nextDay' => '[' . $this->translator->trans('basics.tomorrow') . ']',
-                        'nextWeek' => 'dddd',
-                    ]);
-
-                return $this->translator->trans('time_slot.human_readable', [
-                    '%day%' => ucfirst(strtolower($calendar)),
-                    '%start%' => $start,
-                    '%end%' => $end,
-                ]);
+                return $this->datePeriodFormatter->toHumanReadable($choice->toDatePeriod());
             },
             'choice_value' => function (TimeSlotChoice $choice = null) {
                 return $choice ? (string) $choice : '';
