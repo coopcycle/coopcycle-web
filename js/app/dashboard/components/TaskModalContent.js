@@ -248,7 +248,9 @@ class TaskModalContent extends React.Component {
       before: moment(this.props.date).set({ hour: 23, minute: 59, second: 59 }).format(),
       comments: '',
       tags: [],
-      assignedTo: null
+      assignedTo: null,
+      packages: [],
+      weight: null,
     }
 
     if (!!this.props.task) {
@@ -412,6 +414,34 @@ class TaskModalContent extends React.Component {
                       </div>
                     )) }
                   </div>
+                </div>
+              )}
+              { (values.packages && values.packages.length) && (
+                <div className="form-group form-group-sm">
+                  <label className="control-label" htmlFor="task_comments">{ this.props.t('ADMIN_DASHBOARD_PACKAGES') }</label>
+                  <ul className="list-group table-hover">
+                    { values.packages.map(p => (
+                      <li key={p.name} className="task-package list-group-item d-flex justify-content-between align-items-center">
+                        {p.name}
+                        <span className="badge bg-primary rounded-pill">{p.quantity}</span>
+                      </li>
+                    )) }
+                    <li className="task-package task-package--total list-group-item d-flex justify-content-between align-items-center">
+                      <span className="font-weight-bold">Total</span>
+                      <span className="badge bg-warning rounded-pill">
+                        { values.packages.reduce((sum, p) => sum + p.quantity, 0) }
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              )}
+              { values.weight && (
+                <div className="form-group form-group-sm">
+                  <label className="control-label" htmlFor="task_comments">{ this.props.t('ADMIN_DASHBOARD_WEIGHT') }</label>
+                  <input id="task_weight" name="weight"
+                    className="form-control"
+                    disabled
+                    value={`${(Number(values.weight) / 1000).toFixed(2)} kg`}/>
                 </div>
               )}
               { (values.status === 'DONE' && values.type === 'DROPOFF') && (
