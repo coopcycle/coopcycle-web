@@ -132,14 +132,8 @@ class CheckoutHandlerTest extends TestCase
             ->getLastPayment(PaymentInterface::STATE_PROCESSING)
             ->willReturn(null);
         $order
-            ->isEmpty()
-            ->willReturn(false);
-        $order
-            ->getItemsTotal()
-            ->willReturn(1000);
-        $order
-            ->getTotal()
-            ->willReturn(0);
+            ->isFree()
+            ->willReturn(true);
 
         $this->stripeManager
             ->confirmIntent(Argument::type(Payment::class))

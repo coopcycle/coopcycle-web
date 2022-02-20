@@ -216,4 +216,6 @@ interface OrderInterface extends
     public function isLoopeat(): bool;
 
     public function getTipAmount();
+
+    public function isFree(): bool;
 }

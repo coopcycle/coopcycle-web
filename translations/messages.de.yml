@@ -480,7 +480,6 @@ form.package_set.packages.label: Verpackungen
 form.package_set.name.label: Name
 form.time_slot_choice.end_time.label: Endzeit
 form.time_slot_choice.start_time.label: Startzeit
-form.time_slot.choices.label: Auswahl
 form.settings.company_logo.label: Logo der Firma
 form.delivery.weight.help: Bitte das Gewicht in Gramm eingeben (1Kg=1000g)
 form.task.recipient.label: Kontakt

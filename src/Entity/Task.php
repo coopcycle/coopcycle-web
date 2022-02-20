@@ -17,12 +17,16 @@ use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
+use AppBundle\Entity\Package;
+use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Task\Group as TaskGroup;
+use AppBundle\Entity\Task\Package as TaskPackage;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
+use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Validator\Constraints\Task as AssertTask;
 use AppBundle\Vroom\Job as VroomJob;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -171,10 +175,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(AssignedFilter::class, properties={"assigned"})
  * @UniqueEntity(fields={"organization", "ref"}, errorPath="ref")
  */
-class Task implements TaggableInterface, OrganizationAwareInterface
+class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
+    use PackagesAwareTrait;
 
     const TYPE_DROPOFF = 'DROPOFF';
     const TYPE_PICKUP = 'PICKUP';
@@ -212,7 +217,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     /**
      * @Assert\NotNull()
      * @Assert\Valid()
-     * @Groups({"task", "task_create", "task_edit", "address", "address_create", "delivery_create", "pricing_rule_evalute"})
+     * @Groups({"task", "task_create", "task_edit", "address", "address_create", "delivery_create"})
      */
     private $address;
 
@@ -293,10 +298,17 @@ class Task implements TaggableInterface, OrganizationAwareInterface
      */
     private $metadata = [];
 
+    /**
+     * @var int
+     * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create", "pricing_deliveries"})
+     */
+    private $weight;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->packages = new ArrayCollection();
     }
 
     public function getId()
@@ -772,5 +784,80 @@ class Task implements TaggableInterface, OrganizationAwareInterface
     public function getMetadata()
     {
         return $this->metadata;
+    }
+
+    public function getPackages()
+    {
+        return $this->packages;
+    }
+
+    public function addPackageWithQuantity(Package $package, $quantity = 1)
+    {
+        if (0 === $quantity) {
+            return;
+        }
+
+        $wrappedPackage = $this->resolvePackage($package);
+        $wrappedPackage->setQuantity($wrappedPackage->getQuantity() + $quantity);
+
+        if (!$this->packages->contains($wrappedPackage)) {
+            $this->packages->add($wrappedPackage);
+        }
+    }
+
+    public function setQuantityForPackage(Package $package, $quantity = 1)
+    {
+        $wrappedPackage = $this->resolvePackage($package);
+
+        if (0 === $quantity) {
+            if ($this->packages->contains($wrappedPackage)) {
+                $this->packages->removeElement($wrappedPackage);
+            }
+            return;
+        }
+
+        $wrappedPackage->setQuantity($quantity);
+
+        if (!$this->packages->contains($wrappedPackage)) {
+            $this->packages->add($wrappedPackage);
+        }
+    }
+
+    public function removePackage(Package $package)
+    {
+        $wrappedPackage = $this->resolvePackage($package);
+
+        if ($this->packages->contains($wrappedPackage)) {
+            $this->packages->removeElement($wrappedPackage);
+            $wrappedPackage->setTask(null);
+        }
+    }
+
+    protected function resolvePackage(Package $package): TaskPackage
+    {
+        if ($this->hasPackage($package)) {
+            foreach ($this->packages as $taskPackage) {
+                if ($taskPackage->getPackage() === $package) {
+                    return $taskPackage;
+                }
+            }
+        }
+
+        $taskPackage = new TaskPackage($this);
+        $taskPackage->setPackage($package);
+
+        return $taskPackage;
+    }
+
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
+
+        return $this;
     }
 }

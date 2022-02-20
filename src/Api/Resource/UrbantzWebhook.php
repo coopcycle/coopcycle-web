@@ -58,6 +58,8 @@ final class UrbantzWebhook
      */
     public $deliveries = [];
 
+    public $hub;
+
     public function __construct(string $id = null)
     {
         $this->id = $id;

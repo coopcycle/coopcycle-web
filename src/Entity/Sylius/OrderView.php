@@ -3,10 +3,8 @@
 namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\Sylius\Order;
-use Carbon\Carbon;
-use Doctrine\DBAL\Connection;
 use AppBundle\Sylius\Order\AdjustmentInterface;
+use Carbon\Carbon;
 
 class OrderView
 {
@@ -23,11 +21,16 @@ class OrderView
     public $adjustments = [];
     public $vendors = [];
 
+    public ?string $nonprofit = null;
+
     private $itemsTaxTotal;
     private $adjustmentsTotalCache = [];
     private $adjustmentsTotalRecursivelyCache = [];
 
     public $refunds = [];
+
+    public $nonprofitId;
+    public $nonprofitName;
 
     public function __construct(?LocalBusiness $restaurant = null)
     {
@@ -183,6 +186,10 @@ class OrderView
         $order->itemsTotal        = $data['itemsTotal'];
         $order->total             = $data['total'];
 
+        if (isset($data['nonprofit_id'])) {
+            $order->nonprofitId = $data['nonprofit_id'];
+        }
+
         return $order;
     }
 
@@ -191,5 +198,13 @@ class OrderView
         $total = array_reduce($this->refunds, fn ($total, $refund): int => $total + $refund['amount'], 0);
 
         return $total > 0 ? $total * -1 : $total;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getNonprofit(): ?string
+    {
+        return $this->nonprofitName;
     }
 }

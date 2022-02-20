@@ -42,7 +42,7 @@ class CapturePayment
             return;
         }
 
-        $isFreeOrder = null === $payment && !$order->isEmpty() && $order->getItemsTotal() > 0 && $order->getTotal() === 0;
+        $isFreeOrder = null === $payment && $order->isFree();
         $isCashOnDelivery = null !== $payment && $payment->isCashOnDelivery();
 
         if ($isFreeOrder || $isCashOnDelivery) {

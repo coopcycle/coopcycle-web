@@ -5,7 +5,7 @@ namespace AppBundle\Edenred;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7;
+use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\RequestInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -75,7 +75,7 @@ class RefreshTokenHandler
 
                                 $this->entityManager->flush();
 
-                                $request = Psr7\modify_request($request, [
+                                $request = Utils::modifyRequest($request, [
                                     'set_headers' => [
                                         'Authorization' => sprintf('Bearer %s', $data['access_token'])
                                     ]

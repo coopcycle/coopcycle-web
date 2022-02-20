@@ -30,6 +30,13 @@
         {{ 'restaurants.edenred_transactions.title'|trans }}
       </a>
     </div>
+    {% if nonprofits_enabled %}
+    <div class="border-left pl-4 ml-4">
+      <a class="btn btn-default" href="{{ path('admin_nonprofits') }}">
+        {{ 'adminDashboard.nonprofits.title'|trans }}
+      </a>
+    </div>
+    {% endif %}
   </div>
   <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success">
     <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}

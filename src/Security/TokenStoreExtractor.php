@@ -3,11 +3,12 @@
 namespace AppBundle\Security;
 
 use AppBundle\Entity\ApiApp;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Security\Authentication\Token\ApiKeyToken;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
-use Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
+use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 
 class TokenStoreExtractor
 {
@@ -48,5 +49,29 @@ class TokenStoreExtractor
 
             return $apiApp->getStore();
         }
+    }
+
+    /**
+     * @return LocalBusiness|null
+     */
+    public function extractShop(): ?LocalBusiness
+    {
+        if (null === ($token = $this->tokenStorage->getToken())) {
+
+            return null;
+        }
+
+        if ($token instanceof OAuth2Token) {
+
+            $accessToken = $this->accessTokenManager->find($token->getCredentials());
+            $client = $accessToken->getClient();
+
+            $apiApp = $this->doctrine->getRepository(ApiApp::class)
+                ->findOneByOauth2Client($client);
+
+            return $apiApp->getShop();
+        }
+
+        return null;
     }
 }

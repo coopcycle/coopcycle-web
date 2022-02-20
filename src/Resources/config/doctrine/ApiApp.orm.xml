@@ -16,7 +16,7 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
-    <many-to-one field="oauth2Client" target-entity="Trikoder\Bundle\OAuth2Bundle\Model\Client">
+    <many-to-one field="oauth2Client" target-entity="League\Bundle\OAuth2ServerBundle\Model\Client">
       <cascade>
         <cascade-persist/>
       </cascade>
@@ -26,7 +26,12 @@
     </many-to-one>
     <many-to-one field="store" target-entity="AppBundle\Entity\Store">
       <join-columns>
-        <join-column name="store_id" referenced-column-name="id" nullable="false"/>
+        <join-column name="store_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="shop" target-entity="AppBundle\Entity\LocalBusiness">
+      <join-columns>
+        <join-column name="shop_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
   </entity>

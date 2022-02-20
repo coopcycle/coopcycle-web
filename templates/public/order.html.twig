@@ -60,7 +60,12 @@
         {{ form_start(payment_form) }}
 
           {{ form_errors(payment_form) }}
-          {{ form_widget(payment_form.stripeToken) }}
+
+          {% if payment_form.method is defined %}
+            {{ form_row(payment_form.method) }}
+          {% endif %}
+
+          {{ form_widget(payment_form.stripePayment.stripeToken) }}
           <div id="card-element">
             <!-- a React element will be inserted here. -->
           </div>
@@ -95,6 +100,7 @@
 
 {% set gateway = payment_gateway_resolver.resolve() %}
 {% set gateway_configs = {} %}
+{% set country = country_iso %}
 
 {% if gateway == 'stripe' %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
@@ -127,11 +133,12 @@ new CoopCycle.DeliveryMap('map', {
 {% if payment_form is defined %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
-new CoopCycle.StripePaymentForm(document.querySelector('form[name="stripe_payment"]'), {
+new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
   card: "{{ gateway }}",
   amount: {{ order.total }},
   gatewayConfigs: {{ gateway_configs|json_encode|raw }},
-  tokenElement: document.querySelector('#stripe_payment_stripeToken')
+  tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
+  selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: last_payment|hashid }) }}"
 });
 </script>
 {% endif %}

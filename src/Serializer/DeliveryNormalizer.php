@@ -46,6 +46,10 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
     private function denormalizeTask($data, Task $task, $format = null)
     {
+        if (isset($data['type'])) {
+            $task->setType(strtoupper($data['type']));
+        }
+
         if (isset($data['timeSlot'])) {
 
             // TODO Validate time slot
@@ -108,6 +112,22 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         if (isset($data['comments'])) {
             $task->setComments($data['comments']);
         }
+
+        if (isset($data['packages'])) {
+
+            $packageRepository = $this->doctrine->getRepository(Package::class);
+
+            foreach ($data['packages'] as $p) {
+                $package = $packageRepository->findOneByName($p['type']);
+                if ($package) {
+                    $task->addPackageWithQuantity($package, $p['quantity']);
+                }
+            }
+        }
+
+        if (isset($data['weight'])) {
+            $task->setWeight($data['weight']);
+        }
     }
 
     private function denormalizeAddress($data, $format = null)
@@ -134,9 +154,19 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();
 
-        if (isset($data['tasks']) && is_array($data['tasks']) && count($data['tasks']) === 2) {
-            $this->denormalizeTask($data['tasks'][0], $pickup, $format);
-            $this->denormalizeTask($data['tasks'][1], $dropoff, $format);
+        if (isset($data['tasks']) && is_array($data['tasks'])) {
+            if (count($data['tasks']) === 2) {
+                $this->denormalizeTask($data['tasks'][0], $pickup, $format);
+                $this->denormalizeTask($data['tasks'][1], $dropoff, $format);
+            } else {
+                $tasks = array_map(function ($item) use ($format) {
+                    $task = new Task();
+                    $this->denormalizeTask($item, $task, $format);
+                    return $task;
+                }, $data['tasks']);
+
+                $delivery = $delivery->withTasks(...$tasks);
+            }
         } else {
             if (isset($data['dropoff'])) {
                 $this->denormalizeTask($data['dropoff'], $dropoff, $format);

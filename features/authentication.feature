@@ -115,7 +115,7 @@ Feature: Authenticate
     }
     """
 
-  Scenario: Authenticated request with OAuth
+  Scenario: Authenticated request with OAuth (for store)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
@@ -132,7 +132,32 @@ Feature: Authenticate
       "@type":"http://schema.org/SoftwareApplication",
       "@id":"/api/api_apps/1",
       "store":"/api/stores/1",
+      "shop":null,
       "name":"Acme"
+    }
+    """
+
+  Scenario: Authenticated request with OAuth (for shop)
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with name "Nodaiwa" has an OAuth client named "Nodaiwa"
+    And the OAuth client with name "Nodaiwa" has an access token
+    When I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Nodaiwa" sends a "GET" request to "/api/me"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/ApiApp",
+      "@type":"http://schema.org/SoftwareApplication",
+      "@id":"/api/api_apps/1",
+      "store":null,
+      "shop":"/api/restaurants/1",
+      "name":"Nodaiwa"
     }
     """
 
@@ -153,6 +178,7 @@ Feature: Authenticate
       "@type":"http://schema.org/SoftwareApplication",
       "@id":"/api/api_apps/1",
       "store":"/api/stores/1",
+      "shop":null,
       "name":"Acme"
     }
     """

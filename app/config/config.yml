@@ -28,6 +28,7 @@ parameters:
     database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
     locale: "%coopcycle.locale%"
     locale_regex: an|ca|fr|en|es|eu|de|it|pl|pt_BR|pt_PT
+    router.request_context.scheme: 'http'
     router.request_context.host: "%env(APP_HOST)%"
     loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
     loopeat_base_url: '%env(LOOPEAT_BASE_URL)%'
@@ -58,6 +59,8 @@ parameters:
     nucleos_profile.registration.confirmation.enabled: false
     craue_config.cache_adapter.class: Craue\ConfigBundle\CacheAdapter\SymfonyCacheComponentAdapter
     vytal_enabled: '%env(bool:VYTAL_ENABLED)%'
+    en_boite_le_plat_enabled: '%env(bool:EN_BOITE_LE_PLAT_ENABLED)%'
+    nonprofits_enabled: '%env(bool:NONPROFITS_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -95,11 +98,15 @@ framework:
     default_locale:  "%locale%"
     trusted_hosts:   ~
     session:
-        # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
-        handler_id: snc_redis.session.handler
+        # https://symfony.com/doc/5.4/session/database.html#store-sessions-in-a-key-value-database-redis
+        handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler
         cookie_lifetime: 604800 # 7 days
         gc_maxlifetime: 604800 # 7 days
-        cookie_samesite: 'lax'
+        # Make sure to *NOT* define cookie_samesite, so that it can be changed at runtime
+        # https://github.com/coopcycle/coopcycle-web/issues/3084
+        # https://github.com/symfony/symfony/issues/45200
+        cookie_samesite: ~
+        cookie_secure: 'auto'
     fragments:       ~
     http_method_override: true
     assets: ~
@@ -173,6 +180,19 @@ framework:
                     X-Api-Key: '%env(URBANTZ_API_KEY)%'
             facebook.client:
                 base_uri: 'https://graph.facebook.com/'
+            browserless.client:
+                base_uri: "%env(COOPCYCLE_BROWSERLESS_HOST)%"
+            mjml.client:
+                base_uri: "%env(COOPCYCLE_MJML_HOST)%/"
+            vroom.client:
+                base_uri: "http://%env(VROOM_HOST)%/"
+            api.client:
+                base_uri: "%router.request_context.scheme%://%router.request_context.host%"
+            osrm.client:
+                base_uri: "http://%osrm_host%"
+                timeout: 1.0
+            cubejs.client:
+                base_uri: "%env(CUBEJS_API_URL)%/"
 
 # Twig Configuration
 twig:
@@ -213,7 +233,6 @@ twig:
         geocode_earth_api_key: '%env(GEOCODE_EARTH_API_KEY)%'
         restaurant_menu_cache_annotation: '%restaurant_menu_cache_annotation%'
         restaurant_caption_cache_annotation: '%restaurant_caption_cache_annotation%'
-        cdn_root_url: '%env(CDN_ROOT_URL)%'
         edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
         cubejs_api_url: '%env(CUBEJS_API_URL)%'
     exception_controller: null
@@ -356,7 +375,6 @@ lexik_jwt_authentication:
             name:    token
 
 gesdinet_jwt_refresh_token:
-    user_provider: nucleos_user.user_provider.username_email
     ttl_update: true
 
 snc_redis:
@@ -371,8 +389,6 @@ snc_redis:
             type: phpredis
             alias: session
             dsn: "%env(COOPCYCLE_REDIS_DSN)%"
-            options:
-                prefix: "%database_name%:"
         tile38:
             type: phpredis
             alias: tile38
@@ -384,15 +400,6 @@ snc_redis:
             type: phpredis
             alias: shared
             dsn: "%env(COOPCYCLE_REDIS_DSN)%"
-    session:
-        client: session
-        prefix: "session:"
-        # Disable session locking for performance (?)
-        # https://github.com/snc/SncRedisBundle/issues/132
-        # https://github.com/snc/SncRedisBundle/issues/182
-        # https://github.com/snc/SncRedisBundle/issues/250
-        # https://github.com/snc/SncRedisBundle/pull/404
-        # locking: false
 
 oneup_flysystem:
     adapters:
@@ -436,11 +443,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: product_imports
-        cdn:
+        nonprofits_images:
             awss3v3:
-                client: cdn_s3_client
-                bucket: '%env(CDN_S3_BUCKET)%'
-                prefix: ''
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: nonprofits
     filesystems:
         assets:
             adapter: assets
@@ -474,10 +481,10 @@ oneup_flysystem:
             adapter: product_imports
             alias: product_imports_filesystem
             mount: product_imports_filesystem
-        cdn:
-            adapter: cdn
-            alias: cdn_filesystem
-            mount: cdn_filesystem
+        nonprofits_images:
+            adapter: nonprofits_images
+            alias: nonprofits_images_filesystem
+            mount: nonprofits_images_filesystem
 
 vich_uploader:
     db_driver: orm
@@ -519,37 +526,6 @@ vich_uploader:
                 options:
                     chars_per_dir: 2
                     dirs: 2
-
-csa_guzzle:
-    logger: true
-    clients:
-        osrm:
-            config:
-                base_uri: "http://%osrm_host%"
-                lazy: true
-                connect_timeout: 1.0
-                timeout: 1.0
-
-        google_maps:
-            config:
-                base_uri: "https://maps.googleapis.com"
-                lazy: true
-        browserless:
-            config:
-                base_uri: "%env(COOPCYCLE_BROWSERLESS_HOST)%"
-                lazy: true
-        mjml_server:
-            config:
-                base_uri: "%env(COOPCYCLE_MJML_HOST)%"
-                lazy: true
-        api:
-            config:
-                base_uri: "%router.request_context.scheme%://%router.request_context.host%"
-                lazy: true
-        vroom:
-            config:
-                base_uri: "%env(VROOM_HOST)%"
-                lazy: true
 
 sylius_taxation:
     resources:
@@ -740,7 +716,6 @@ liip_imagine:
                     max: 80
                     progressive: true
         product_thumbnail:
-            # cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -758,7 +733,6 @@ liip_imagine:
                     strip_all: true
                     level: 4
         product_thumbnail_1x1:
-            # cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -776,7 +750,6 @@ liip_imagine:
                     strip_all: true
                     level: 4
         product_thumbnail_16x9:
-            # cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -794,7 +767,6 @@ liip_imagine:
                     strip_all: true
                     level: 4
         product_thumbnail_4x3:
-            # cache: cached_s3_flysystem
             data_loader: product_images
             filters:
                 upscale:
@@ -923,29 +895,26 @@ oneup_uploader:
                 image/svg+xml: ['svg']
                 image/svg: ['svg']
 
-trikoder_oauth2:
+league_oauth2_server:
     authorization_server:
         private_key: "%jwt_private_key_path%"
         private_key_passphrase: "%env(COOPCYCLE_PRIVATE_KEY_PASSPHRASE)%"
         encryption_key: "%env(COOPCYCLE_OAUTH_ENCRYPTION_KEY)%"
         access_token_ttl: PT1H
         refresh_token_ttl: P1M
-        grant_types:
-            client_credentials:
-                enable: true
-            password:
-                enable: false
-            refresh_token:
-                enable: false
-            authorization_code:
-                enable: false
-            implicit:
-                enable: false
+        enable_client_credentials_grant: true
+        enable_password_grant: false
+        enable_refresh_token_grant: false
+        enable_auth_code_grant: false
     resource_server:
         public_key: "%jwt_public_key_path%"
     scopes:
-        - tasks
-        - deliveries
+        available:
+            - tasks
+            - deliveries
+            - orders
+        default:
+            - deliveries
     persistence:
         doctrine:
             entity_manager: default

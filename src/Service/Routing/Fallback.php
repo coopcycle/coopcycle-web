@@ -4,7 +4,6 @@ namespace AppBundle\Service\Routing;
 
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Entity\Base\GeoCoordinates;
-use GuzzleHttp\Client;
 use League\Geotools\Geotools;
 use League\Geotools\Coordinate\Coordinate;
 use Polyline;

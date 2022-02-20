@@ -2,6 +2,7 @@
     "common": {
         "CART_TITLE": "Cart",
         "CART_WIDGET_BUTTON": "Order",
+        "SCHEDULE_ORDER": "Schedule order",
         "CART_EMPTY": "Your cart is empty",
         "OPENING_HOURS_SINGLE": "On {{day}} from {{open}} to {{close}}",
         "OPENING_HOURS_RANGE": "From {{fromDay}} to {{toDay}}, from {{open}} to {{close}}",
@@ -117,6 +118,8 @@
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "Display by dropoff desc.",
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Supported file formats: csv, ods, xlsx",
         "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Enabled map clusters",
+        "ADMIN_DASHBOARD_PACKAGES": "Packages",
+        "ADMIN_DASHBOARD_WEIGHT": "Weight",
         "USER_EDIT_ENABLED_LABEL": "Enabled",
         "USER_EDIT_DISABLED_LABEL": "Disabled",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Order created",
@@ -246,6 +249,9 @@
         "ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER": "You have just changed a property of the address. Do you want to change this property for all the past and upcoming deliveries using this address, or only once?",
         "ADDRESS_BOOK_PROP_CHANGED_UPDATE": "Change the existing address",
         "ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE": "Change only once",
-        "TIME_RANGE_FROM": "from {{start}}"
+        "TIME_RANGE_FROM": "from {{start}}",
+        "ADMIN_DASHBOARD_CREATE_GROUP": "Create group",
+        "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Group name",
+        "RULE_PICKER_LINE_VOLUME_UNITS": "Volume units"
     }
 }

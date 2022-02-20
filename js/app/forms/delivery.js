@@ -176,7 +176,7 @@ function createPackageForm(name, $list, cb) {
   var counter = $list.data('widget-counter') || $list.children().length
   var newWidget = $list.attr('data-prototype')
 
-  newWidget = newWidget.replace(/__name__/g, counter)
+  newWidget = newWidget.replace(/__package__/g, counter)
 
   counter++
   $list.data('widget-counter', counter)
@@ -193,7 +193,9 @@ function createPackageForm(name, $list, cb) {
 
 export function createPackagesWidget(name, packagesRequired, cb) {
 
-  if (packagesRequired) {
+  const isNew = document.querySelectorAll(`#${name}_packages .delivery__form__packages__list-item`).length === 0
+
+  if (isNew && packagesRequired) {
     createPackageForm(
       name,
       $(`#${name}_packages_list`),
@@ -288,12 +290,12 @@ function reducer(state = {}, action) {
   case 'SET_WEIGHT':
     return {
       ...state,
-      weight: action.value
+      tasks: replaceTasks(state, action.taskIndex, 'weight', action.value)
     }
-  case 'SET_PACKAGES':
+  case 'SET_TASK_PACKAGES':
     return {
       ...state,
-      packages: action.packages
+      tasks: replaceTasks(state, action.taskIndex, 'packages', action.packages)
     }
   case 'CLEAR_ADDRESS':
     return {
@@ -394,6 +396,31 @@ function initSubForm(name, taskEl, preloadedState) {
       })
     }
   }
+
+  const packages = document.querySelector(`#${name}_${taskForm}_packages`)
+  if (packages) {
+    const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
+    createPackagesWidget(`${name}_${taskForm}`, packagesRequired, packages => store.dispatch({ type: 'SET_TASK_PACKAGES', taskIndex, packages }))
+  }
+
+  const weightEl = document.querySelector(`#${name}_${taskForm}_weight`)
+
+  if (preloadedState) {
+    const index = preloadedState.tasks.indexOf(task)
+    if (-1 !== index) {
+      preloadedState.tasks[index].weight = weightEl ? parseWeight(weightEl.value) : 0
+    }
+  }
+
+  if (weightEl) {
+    weightEl.addEventListener('input', _.debounce(e => {
+      store.dispatch({
+        type: 'SET_WEIGHT',
+        value: parseWeight(e.target.value),
+        taskIndex,
+      })
+    }, 350))
+  }
 }
 
 export default function(name, options) {
@@ -407,11 +434,9 @@ export default function(name, options) {
 
   if (el) {
 
-    const weightEl = document.querySelector(`#${name}_weight`)
 
     // Intialize Redux store
     let preloadedState = {
-      weight: weightEl ? parseWeight(weightEl.value) : 0,
       tasks: [],
       packages: []
     }
@@ -435,27 +460,11 @@ export default function(name, options) {
     onReady(preloadedState)
     store.subscribe(() => onChange(store.getState()))
 
-    if (weightEl) {
-      weightEl.addEventListener('input', _.debounce(e => {
-        store.dispatch({
-          type: 'SET_WEIGHT',
-          value: parseWeight(e.target.value)
-        })
-      }, 350))
-    }
-
     new ClipboardJS('#copy', {
       text: function() {
         return document.getElementById('tracking_link').getAttribute('href')
       }
     })
-
-    const packages = document.querySelector(`#${name}_packages`)
-
-    if (packages) {
-      const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
-      createPackagesWidget(name, packagesRequired, packages => store.dispatch({ type: 'SET_PACKAGES', packages }))
-    }
 
     el.addEventListener('submit', (e) => {
 

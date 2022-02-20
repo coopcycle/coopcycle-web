@@ -6,7 +6,7 @@ import { Menu, Item } from 'react-contexify'
 
 import moment from 'moment'
 
-import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay } from '../redux/actions'
+import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal } from '../redux/actions'
 import { selectNextWorkingDay, selectSelectedTasks } from '../redux/selectors'
 
 const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
@@ -16,6 +16,7 @@ const MOVE_TO_TOP = 'MOVE_TO_TOP'
 const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
 const MOVE_TO_NEXT_DAY_MULTI = 'MOVE_TO_NEXT_DAY_MULTI'
 const MOVE_TO_NEXT_WORKING_DAY_MULTI = 'MOVE_TO_NEXT_WORKING_DAY_MULTI'
+const CREATE_GROUP = 'CREATE_GROUP'
 
 import { selectUnassignedTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
@@ -28,7 +29,8 @@ function _unassign(tasksToUnassign, unassignTasks) {
 
 const DynamicMenu = ({
   unassignedTasks, selectedTasks, nextWorkingDay,
-  unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay
+  unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
+  openCreateGroupModal,
 }) => {
 
   const { t } = useTranslation()
@@ -55,6 +57,7 @@ const DynamicMenu = ({
 
       if (containsOnlyUnassignedTasks) {
         actions.push(CANCEL_MULTI)
+        actions.push(CREATE_GROUP)
       }
 
     } else {
@@ -68,6 +71,8 @@ const DynamicMenu = ({
         actions.push(MOVE_TO_TOP)
         actions.push(MOVE_TO_BOTTOM)
       }
+
+      actions.push(CANCEL_MULTI)
 
     }
 
@@ -121,6 +126,12 @@ const DynamicMenu = ({
       >
         { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI', { count: selectedTasks.length, nextWorkingDay: moment(nextWorkingDay).format('LL') }) }
       </Item>
+      <Item
+        hidden={ !actions.includes(CREATE_GROUP) }
+        onClick={ () => openCreateGroupModal() }
+      >
+        { t('ADMIN_DASHBOARD_CREATE_GROUP') }
+      </Item>
       { actions.length === 0 && (
         <Item disabled>
           { t('ADMIN_DASHBOARD_NO_ACTION_AVAILABLE') }
@@ -147,6 +158,7 @@ function mapDispatchToProps(dispatch) {
     moveToBottom: task => dispatch(moveToBottom(task)),
     moveTasksToNextDay: tasks => dispatch(moveTasksToNextDay(tasks)),
     moveTasksToNextWorkingDay: tasks => dispatch(moveTasksToNextWorkingDay(tasks)),
+    openCreateGroupModal: () => dispatch(openCreateGroupModal()),
   }
 }
 

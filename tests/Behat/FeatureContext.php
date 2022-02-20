@@ -7,7 +7,6 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\ClosingRule;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
@@ -18,6 +17,7 @@ use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Store\Token as StoreToken;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\Sylius\Product;
@@ -48,10 +48,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
 use libphonenumber\PhoneNumberUtil;
 use Fidry\AliceDataFixtures\LoaderInterface;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuthClient;
-use Trikoder\Bundle\OAuth2Bundle\Model\Grant;
-use Trikoder\Bundle\OAuth2Bundle\Model\Scope;
-use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
+use League\Bundle\OAuth2ServerBundle\Model\Client as OAuthClient;
+use League\Bundle\OAuth2ServerBundle\Model\Grant;
+use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -571,7 +571,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->apiKeys[$storeName]);
-        $this->restContext->iSendARequestTo($method, $url, $body);
+        $this->restContext->iSendARequestTo($method, $url);
     }
 
     /**
@@ -585,38 +585,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->apiKeys[$storeName]);
         $this->restContext->iSendARequestTo($method, $url, $body);
-    }
-
-    /**
-     * @Given the last delivery from user :username has status :status
-     */
-    public function theLastDeliveryFromUserHasStatus($username, $status)
-    {
-        $user = $this->userManager->findUserByUsername($username);
-
-        $order = $this->doctrine->getRepository(Order::class)
-            ->findOneBy(['customer' => $user], ['createdAt' => 'DESC']);
-
-        $order->getDelivery()->setStatus($status);
-
-        $this->doctrine->getManagerForClass(Delivery::class)->flush();
-    }
-
-    /**
-     * @Given the last delivery from user :customer is dispatched to courier :courier
-     */
-    public function theLastDeliveryFromUserIsDispatchedToCourier($customerUsername, $courierUsername)
-    {
-        $customer = $this->userManager->findUserByUsername($customerUsername);
-        $courier = $this->userManager->findUserByUsername($courierUsername);
-
-        $order = $this->doctrine->getRepository(Order::class)
-            ->findOneBy(['customer' => $customer], ['createdAt' => 'DESC']);
-
-        $order->getDelivery()->setCourier($courier);
-        $order->getDelivery()->setStatus(Delivery::STATUS_DISPATCHED);
-
-        $this->doctrine->getManagerForClass(Delivery::class)->flush();
     }
 
     /**
@@ -777,6 +745,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
             $this->getContainer()->get('sylius.order_modifier')->addToOrder($order, $item);
         }
 
+        $this->orderProcessor->process($order);
+
         return $order;
     }
 
@@ -838,7 +808,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $identifier = hash('md5', random_bytes(16));
         $secret = hash('sha512', random_bytes(32));
 
-        $client = new OAuthClient($identifier, $secret);
+        $client = new OAuthClient($storeName, $identifier, $secret);
         $client->setActive(true);
 
         $clientCredentials = new Grant(OAuth2Grants::CLIENT_CREDENTIALS);
@@ -858,6 +828,34 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given the restaurant with name :restaurantName has an OAuth client named :clientName
+     */
+    public function createOauthClientForRestaurant($restaurantName, $clientName)
+    {
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->findOneByName($restaurantName);
+
+        $identifier = hash('md5', random_bytes(16));
+        $secret = hash('sha512', random_bytes(32));
+
+        $client = new OAuthClient($restaurantName, $identifier, $secret);
+        $client->setActive(true);
+
+        $clientCredentials = new Grant(OAuth2Grants::CLIENT_CREDENTIALS);
+        $client->setGrants($clientCredentials);
+
+        $ordersScope = new Scope('orders');
+        $client->setScopes($ordersScope);
+
+        $apiApp = new ApiApp();
+        $apiApp->setOauth2Client($client);
+        $apiApp->setName($clientName);
+        $apiApp->setShop($restaurant);
+
+        $this->doctrine->getManagerForClass(ApiApp::class)->persist($apiApp);
+        $this->doctrine->getManagerForClass(ApiApp::class)->flush();
+    }
+
+    /**
      * @Given the OAuth client with name :name has an access token
      */
     public function createAccessTokenForOauthClient($name)
@@ -871,7 +869,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $body = [
             'grant_type' => 'client_credentials',
-            'scope' => 'tasks deliveries'
+            'scope' => null !== $apiApp->getShop() ? 'orders' : 'tasks deliveries',
         ];
 
         $request = $this->httpMessageFactory->createRequest(
@@ -917,6 +915,26 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->orderProcessor->process($cart);
 
         $this->getContainer()->get('sylius.manager.order')->persist($cart);
+        $this->getContainer()->get('sylius.manager.order')->flush();
+    }
+
+    /**
+     * @Given a guest has added a payment to order at restaurant with id :id
+     */
+    public function aGuestAddAPaymentToOrderAtRestaurantWithId($id)
+    {
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
+        $order = $this->getLastCartFromRestaurant($restaurant);
+
+        $payment = $this->getContainer()->get('sylius.factory.payment')->createNew();
+
+        $payment->setMethod($this->getContainer()->get('sylius.repository.payment_method')->findOneBy(['code' => 'card']));
+
+        $order->addPayment($payment);
+
+        $this->orderProcessor->process($order);
+
+        $this->getContainer()->get('sylius.manager.order')->persist($order);
         $this->getContainer()->get('sylius.manager.order')->flush();
     }
 
@@ -1196,5 +1214,20 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->doctrine->getManagerForClass(RefreshToken::class)->persist($tok);
         $this->doctrine->getManagerForClass(RefreshToken::class)->flush();
+    }
+
+    /**
+     * @Given the store with name :name is associated with Urbantz hub :hub
+     */
+    public function theStoreWithNameIsAssociatedWithUrbantzHub($storeName, $hub)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $urbantzHub = new UrbantzHub();
+        $urbantzHub->setStore($store);
+        $urbantzHub->setHub($hub);
+
+        $this->doctrine->getManagerForClass(UrbantzHub::class)->persist($urbantzHub);
+        $this->doctrine->getManagerForClass(UrbantzHub::class)->flush();
     }
 }

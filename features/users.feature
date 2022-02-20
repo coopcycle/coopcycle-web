@@ -182,6 +182,7 @@ Feature: Users
         "email":"bob@demo.coopcycle.org",
         "phoneNumber":"+33612345678",
         "telephone":"+33612345678",
-        "username":"bob"
+        "username":"bob",
+        "fullName":"John Doe"
       }
       """

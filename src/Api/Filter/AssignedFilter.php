@@ -17,10 +17,10 @@ final class AssignedFilter extends AbstractContextAwareFilter
 
     public function __construct(
         ManagerRegistry $managerRegistry,
+        TokenStorageInterface $tokenStorage,
         $requestStack = null,
         LoggerInterface $logger = null,
-        array $properties = null,
-        TokenStorageInterface $tokenStorage)
+        array $properties = null)
     {
         parent::__construct($managerRegistry, $requestStack, $logger, $properties);
 

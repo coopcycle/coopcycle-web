@@ -5,23 +5,22 @@ namespace Tests\AppBundle\MessageHandler;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Webhook;
 use AppBundle\Entity\WebhookExecution;
 use AppBundle\Message\Webhook as WebhookMessage;
 use AppBundle\MessageHandler\WebhookHandler;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
-use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuth2Client;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpClient\MockHttpClient;
+use Symfony\Component\HttpClient\Response\MockResponse;
+use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
 
 class WebhookHandlerTest extends TestCase
 {
@@ -43,17 +42,7 @@ class WebhookHandlerTest extends TestCase
             ->getRepository(Webhook::class)
             ->willReturn($this->webhookRepository->reveal());
 
-        // https://docs.guzzlephp.org/en/stable/testing.html
-        $this->mockHandler = new MockHandler();
-
-        $handlerStack = HandlerStack::create($this->mockHandler);
-
-        $this->httpContainer = [];
-        $history = Middleware::history($this->httpContainer);
-
-        $handlerStack->push($history);
-
-        $this->client = new Client(['handler' => $handlerStack]);
+        $this->client = new MockHttpClient();
 
         $this->handler = new WebhookHandler(
             $this->client,
@@ -62,7 +51,7 @@ class WebhookHandlerTest extends TestCase
         );
     }
 
-    public function testSendsHttpRequest()
+    public function testSendsHttpRequestForDeliveryPicked()
     {
         $oauth2Client = $this->prophesize(OAuth2Client::class);
 
@@ -82,13 +71,19 @@ class WebhookHandlerTest extends TestCase
         $this->apiAppRepository->findBy(['store' => $store])
             ->willReturn([ $apiApp ]);
 
-        $this->webhookRepository->findOneBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
-            ->willReturn($webhook);
+        $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
+            ->willReturn([ $webhook ]);
 
         $this->iriConverter->getItemFromIri('/api/deliveries/1')
             ->willReturn($delivery);
 
-        $this->mockHandler->append(new Response(200));
+        $mockResponse = new MockResponse('', ['http_code' => 200]);
+
+        $responses = [
+            $mockResponse
+        ];
+
+        $this->client->setResponseFactory($responses);
 
         call_user_func_array($this->handler, [
             new WebhookMessage('/api/deliveries/1', 'delivery.picked')
@@ -100,29 +95,85 @@ class WebhookHandlerTest extends TestCase
 
         $this->entityManager->flush()->shouldHaveBeenCalled();
 
-        $this->assertCount(1, $this->httpContainer);
+        $this->assertSame('POST', $mockResponse->getRequestMethod());
+        $this->assertSame('http://example.com/webhook', $mockResponse->getRequestUrl());
+        $this->assertContains(
+            'X-CoopCycle-Signature: S9LMKpq4VBDEGm5umbQx/q4SQMnpX/Wz/719dBBZ3rI=',
+            $mockResponse->getRequestOptions()['headers']
+        );
 
-        // https://docs.guzzlephp.org/en/stable/testing.html#history-middleware
-        foreach ($this->httpContainer as $transaction) {
-            $this->assertEquals('POST', $transaction['request']->getMethod());
-            $this->assertEquals('http://example.com/webhook', (string) $transaction['request']->getUri());
-            $this->assertEquals('S9LMKpq4VBDEGm5umbQx/q4SQMnpX/Wz/719dBBZ3rI=',
-                (string) $transaction['request']->getHeaderLine('x-coopcycle-signature'));
+        $expectedPayload = [
+            'data' => [
+                'object' => '/api/deliveries/1',
+                'event' => 'delivery.picked'
+            ]
+        ];
+        $this->assertEquals($expectedPayload, json_decode($mockResponse->getRequestOptions()['body'], true));
+    }
 
-            $expectedPayload = [
-                'data' => [
-                    'object' => '/api/deliveries/1',
-                    'event' => 'delivery.picked'
-                ]
-            ];
+    public function testSendsHttpRequestForOrderCreated()
+    {
+        $oauth2Client = $this->prophesize(OAuth2Client::class);
 
-            $this->assertEquals($expectedPayload, json_decode($transaction['request']->getBody(), true));
-        }
+        $apiApp = new ApiApp();
+        $apiApp->setOauth2Client($oauth2Client->reveal());
+
+        $shop = new LocalBusiness();
+
+        $order = new Order();
+        $order->setRestaurant($shop);
+
+        $webhook = new Webhook();
+        $webhook->setEvent('order.created');
+        $webhook->setUrl('http://example.com/webhook');
+        $webhook->setSecret('123456');
+
+        $this->apiAppRepository->findBy(['shop' => $shop])
+            ->willReturn([ $apiApp ]);
+
+        $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'order.created'])
+            ->willReturn([ $webhook ]);
+
+        $this->iriConverter->getItemFromIri('/api/orders/1')
+            ->willReturn($order);
+
+        $mockResponse = new MockResponse('', ['http_code' => 200]);
+
+        $responses = [
+            $mockResponse
+        ];
+
+        $this->client->setResponseFactory($responses);
+
+        call_user_func_array($this->handler, [
+            new WebhookMessage('/api/orders/1', 'order.created')
+        ]);
+
+        $this->entityManager->persist(Argument::that(function (WebhookExecution $execution) use ($webhook) {
+            return $webhook === $execution->getWebhook() && $execution->getStatusCode() === 200;
+        }))->shouldHaveBeenCalled();
+
+        $this->entityManager->flush()->shouldHaveBeenCalled();
+
+        $this->assertSame('POST', $mockResponse->getRequestMethod());
+        $this->assertSame('http://example.com/webhook', $mockResponse->getRequestUrl());
+        $this->assertContains(
+            'X-CoopCycle-Signature: 8vf8W/TwEtIxWAWNHz8VIFwSTBNSiuk8GhTXbMsGWnc=',
+            $mockResponse->getRequestOptions()['headers']
+        );
+
+        $expectedPayload = [
+            'data' => [
+                'object' => '/api/orders/1',
+                'event' => 'order.created'
+            ]
+        ];
+        $this->assertEquals($expectedPayload, json_decode($mockResponse->getRequestOptions()['body'], true));
     }
 
     public function testSendsHttpRequestWithFailure()
     {
-        $this->expectException(RequestException::class);
+        $this->expectException(HttpExceptionInterface::class);
 
         $oauth2Client = $this->prophesize(OAuth2Client::class);
 
@@ -142,13 +193,16 @@ class WebhookHandlerTest extends TestCase
         $this->apiAppRepository->findBy(['store' => $store])
             ->willReturn([ $apiApp ]);
 
-        $this->webhookRepository->findOneBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
-            ->willReturn($webhook);
+        $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
+            ->willReturn([ $webhook ]);
 
         $this->iriConverter->getItemFromIri('/api/deliveries/1')
             ->willReturn($delivery);
 
-        $this->mockHandler->append(new Response(400));
+        $responses = [
+            new MockResponse('', ['http_code' => 400]),
+        ];
+        $this->client->setResponseFactory($responses);
 
         $this->entityManager->persist(Argument::that(function (WebhookExecution $execution) use ($webhook) {
             return $webhook === $execution->getWebhook() && $execution->getStatusCode() === 400;
@@ -185,7 +239,7 @@ class WebhookHandlerTest extends TestCase
             new WebhookMessage('/api/deliveries/1', 'delivery.picked')
         ]);
 
-        $this->assertCount(0, $this->httpContainer);
+        $this->entityManager->flush()->shouldNotHaveBeenCalled();
     }
 
     public function testDoesNotSendHttpRequestWhenNotSubscribedToEvent()
@@ -208,11 +262,11 @@ class WebhookHandlerTest extends TestCase
         $this->apiAppRepository->findBy(['store' => $store])
             ->willReturn([ $apiApp ]);
 
-        $this->webhookRepository->findOneBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.completed'])
-            ->willReturn($webhook);
+        $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.completed'])
+            ->willReturn([ $webhook ]);
 
-        $this->webhookRepository->findOneBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
-            ->willReturn(null);
+        $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
+            ->willReturn([]);
 
         $this->iriConverter->getItemFromIri('/api/deliveries/1')
             ->willReturn($delivery);
@@ -221,6 +275,6 @@ class WebhookHandlerTest extends TestCase
             new WebhookMessage('/api/deliveries/1', 'delivery.picked')
         ]);
 
-        $this->assertCount(0, $this->httpContainer);
+        $this->entityManager->flush()->shouldNotHaveBeenCalled();
     }
 }

@@ -132,14 +132,6 @@ export default function(form, options) {
       data: { ...el.dataset }
     }))
 
-  // Hotfix for embedded form
-  if (form.dataset.paymentMethodPicker && JSON.parse(form.dataset.paymentMethodPicker) === false) {
-    methods.push({
-      type: 'card',
-      data: {},
-    })
-  }
-
   disableBtn(submitButton)
 
   let cc
@@ -223,6 +215,16 @@ export default function(form, options) {
           case 'card':
           case 'giropay':
           case 'edenred+card':
+            const cashDisclaimer = document.getElementById('cash_on_delivery_disclaimer')
+            if (cashDisclaimer) {
+              // remove disclaimer for cash method if it was previously selected
+              cashDisclaimer.remove()
+            }
+
+            if ("mercadopago" === options.card) {
+              document.getElementById('mercadopago_identification_fields').style.display = "block"
+            }
+
             cc.mount(document.getElementById('card-element'), value, response.data).then(() => {
               document.getElementById('card-element').scrollIntoView()
               enableBtn(submitButton)
@@ -235,12 +237,25 @@ export default function(form, options) {
             enableBtn(submitButton)
             break
           case 'cash_on_delivery':
+            if (document.getElementById('card-element').children.length) {
+              // remove cc form if it was previously mounted
+              cc && cc.unmount()
+              if ("mercadopago" === options.card) {
+                // remove mercadopago identification fields if it was previously selected
+                document.getElementById('mercadopago_identification_fields').style.display = "none"
+              }
+            }
+
             enableBtn(submitButton)
 
-            const el = document.createElement('div')
-            document.querySelector('#checkout_payment_method').appendChild(el)
+            const disclaimer = document.getElementById('cash_on_delivery_disclaimer')
 
-            render(<Disclaimer />, el)
+            if (!disclaimer) {
+              // without this condition the disclaimer is rendered every time cash is selected
+              const el = document.createElement('div')
+              document.querySelector('#checkout_payment_method').appendChild(el)
+              render(<Disclaimer />, el)
+            }
 
             break
           default:
@@ -258,6 +273,10 @@ export default function(form, options) {
     .forEach(el => el.classList.add('d-none'))
 
   if (methods.length === 1 && containsMethod(methods, 'card')) {
+    if ("mercadopago" === options.card) {
+      document.getElementById('mercadopago_identification_fields').style.display = "block"
+    }
+
     cc.mount(document.getElementById('card-element')).then(() => enableBtn(submitButton))
   } else {
 

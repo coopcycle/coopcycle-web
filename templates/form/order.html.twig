@@ -43,6 +43,7 @@
 
   {% set isLoopeat = attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}
   {% set isVytal   = attr['data-vytal'] is defined and attr['data-vytal'] == 'true' %}
+  {% set isEnBoiteLePlat = attr['data-en-boite-le-plat'] is defined and attr['data-en-boite-le-plat'] == 'true' %}
   {% set isChecked = form.vars.data %}
 
   {% if isLoopeat %}
@@ -126,6 +127,20 @@
         <span class="vytal-logo-white my-3"></span>
       </div>
     </div>
+  {% elseif isEnBoiteLePlat %}
+    <div>
+      <div class="alert alert-en-boite-le-plat py-0 m-0">
+        {# FIXME #}
+        {# label_html does not work with checkboxes #}
+        <div class="checkbox">
+          <label>
+            {{ block('checkbox_widget', 'form_div_layout.html.twig') }}
+            <span>{{ label|trans|raw }}</span>
+          </label>
+        </div>
+        <span class="en-boite-le-plat-logo-orange my-3"></span>
+      </div>
+    </div>
   {% else %}
     <div>
       <div class="alert alert-info py-0 m-0">
@@ -198,3 +213,25 @@
   </div>
 {% endif %}
 {% endblock %}
+
+{#
+{% block _checkout_address_nonprofit_row %}
+  <input name="{{ form.vars.full_name }}" type="number" hidden="hidden" id="nonprofit_input" value="{{ form.vars.value }}">
+  {% for row in form.vars.choices|batch(3) %}
+   <div class="row">
+     {% for nonprofit in row %}
+       <div class="col-sm-6 col-md-4 nonprofit-card {% if form.vars.value == nonprofit.data.id %} active {% endif %}"
+            data-value="{{ nonprofit.data.id }}" onclick="setNonprofit(this)">
+         <div class="thumbnail">
+           <!--<img src="#" alt="...">-->
+           <div class="caption">
+             <h3>{{ nonprofit.data.name }}</h3>
+             <p>{{ nonprofit.data.description }}</p>
+           </div>
+         </div>
+       </div>
+     {% endfor %}
+   </div>
+  {% endfor %}
+{% endblock %}
+#}

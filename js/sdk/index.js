@@ -6,21 +6,6 @@ import modalCSS from './modal.css'
 // @see https://github.com/ghosh/Micromodal/blob/master/tests/examples/programmatic.html
 import modalHTML from './modal.html'
 
-export function embed(selector) {
-
-  const style = document.createElement('style')
-  style.setAttribute('type', 'text/css')
-  style.innerHTML = modalCSS.toString()
-
-  document.querySelector('head').appendChild(style)
-
-  const el = document.querySelector(selector)
-  el.innerHTML = modalHTML
-
-  MicroModal.init()
-  MicroModal.show('modal-1')
-}
-
 // @see https://gist.github.com/6174/6062387
 const uuid = () => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)

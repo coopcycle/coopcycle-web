@@ -6,10 +6,12 @@ import 'leaflet-area-select'
 import 'leaflet-swoopy'
 import React from 'react'
 import { render } from 'react-dom'
+import ColorHash from 'color-hash'
 
 import MapHelper from '../../MapHelper'
 import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
+import { createLeafletIcon } from '../../components/Avatar'
 
 const tagsColor = tags => {
   const tag = _.first(tags)
@@ -28,11 +30,10 @@ const taskColor = (task, selected) => {
   }
 
   if (task.tags.length > 0) {
-    const tag = _.first(task.tags)
-    return tag.color
+    return tagsColor(task.tags)
   }
 
-  return '#777'
+  return task.isAssigned ? colorHash.hex(task.assignedTo) : '#777'
 }
 
 const taskIcon = task => {
@@ -64,16 +65,9 @@ const polylineOptions = {
   opacity: 0.7
 }
 
-const createIcon = username => {
-  const iconUrl = window.Routing.generate('user_avatar', { username })
-
-  return L.icon({
-    iconUrl: iconUrl,
-    iconSize:    [20, 20], // size of the icon
-    iconAnchor:  [10, 10], // point of the icon which will correspond to marker's location
-    popupAnchor: [-2, -72], // point from which the popup should open relative to the iconAnchor,
-  })
-}
+const colorHash = new ColorHash({
+  hash: 'bkdr'
+})
 
 export default class MapProxy {
 
@@ -324,7 +318,12 @@ export default class MapProxy {
     const layerGroup = this.getPolylineAsTheCrowFliesLayerGroup(username)
     layerGroup.clearLayers()
 
-    const layer = L.polyline(polyline, polylineOptions)
+    const color = colorHash.hex(username)
+
+    const layer = L.polyline(polyline, {
+      ...polylineOptions,
+      color,
+    })
 
     // Add arrows to polyline
     const decorator = L.polylineDecorator(layer, {
@@ -337,7 +336,7 @@ export default class MapProxy {
             polygon: false,
             pathOptions: {
               stroke: true,
-              color: '#3498DB',
+              color,
               opacity: 0.7
             }
           })
@@ -354,7 +353,12 @@ export default class MapProxy {
     const layerGroup = this.getPolylineLayerGroup(username)
     layerGroup.clearLayers()
 
-    const layer = L.polyline(MapHelper.decodePolyline(polyline), polylineOptions)
+    const color = colorHash.hex(username)
+
+    const layer = L.polyline(MapHelper.decodePolyline(polyline), {
+      ...polylineOptions,
+      color,
+    })
 
     // Add arrows to polyline
     const decorator = L.polylineDecorator(layer, {
@@ -367,7 +371,7 @@ export default class MapProxy {
             polygon: false,
             pathOptions: {
               stroke: true,
-              color: '#3498DB',
+              color,
               opacity: 0.7
             }
           })
@@ -399,7 +403,7 @@ export default class MapProxy {
 
     if (!marker) {
 
-      marker = L.marker(position, { icon: createIcon(username), lastSeen })
+      marker = L.marker(position, { icon: createLeafletIcon(username), lastSeen })
       marker.setOpacity(1)
 
       popupComponent = React.createRef()

@@ -4,6 +4,8 @@ namespace AppBundle\Controller\Utils;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
+use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Cuisine;
@@ -16,8 +18,8 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
-use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Sylius\TaxonRepository;
+use AppBundle\Form\ApiAppType;
 use AppBundle\Form\ClosingRuleType;
 use AppBundle\Form\MenuEditorType;
 use AppBundle\Form\MenuTaxonType;
@@ -25,14 +27,13 @@ use AppBundle\Form\MenuType;
 use AppBundle\Form\PreparationTimeRulesType;
 use AppBundle\Form\ProductOptionType;
 use AppBundle\Form\ProductType;
-use AppBundle\Form\RestaurantType;
 use AppBundle\Form\Restaurant\DepositRefundSettingsType;
 use AppBundle\Form\Restaurant\ReusablePackagingType;
-use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
+use AppBundle\Form\RestaurantType;
 use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
+use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
-use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Utils\MenuEditor;
@@ -43,7 +44,6 @@ use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ObjectRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Csv\Writer as CsvWriter;
@@ -58,22 +58,20 @@ use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
 
 trait RestaurantTrait
@@ -109,6 +107,7 @@ trait RestaurantTrait
             'loopeat_enabled' => $this->getParameter('loopeat_enabled'),
             'edenred_enabled' => $this->getParameter('edenred_enabled'),
             'vytal_enabled' => $this->getParameter('vytal_enabled'),
+            'en_boite_le_plat_enabled' => $this->getParameter('en_boite_le_plat_enabled'),
         ]);
 
         // Associate Stripe account with restaurant
@@ -1144,7 +1143,8 @@ trait RestaurantTrait
         TranslatorInterface $translator,
         EntityManagerInterface $entityManager,
         PaginatorInterface $paginator,
-        TaxesHelper $taxesHelper)
+        TaxesHelper $taxesHelper,
+        CubeJsTokenFactory $tokenFactory)
     {
         $tab = $request->query->get('tab', 'orders');
 
@@ -1173,7 +1173,9 @@ trait RestaurantTrait
             $paginator,
             $this->getParameter('kernel.default_locale'),
             $translator,
-            $taxesHelper
+            $taxesHelper,
+            false, false,
+            $this->getParameter('nonprofits_enabled')
         );
 
         if ($request->isMethod('POST')) {
@@ -1193,22 +1195,6 @@ trait RestaurantTrait
             return $response;
         }
 
-        // https://cube.dev/docs/security
-        $key = \Lcobucci\JWT\Signer\Key\InMemory::plainText($_SERVER['CUBEJS_API_SECRET']);
-        $config = \Lcobucci\JWT\Configuration::forSymmetricSigner(
-            new \Lcobucci\JWT\Signer\Hmac\Sha256(),
-            $key
-        );
-
-        // https://github.com/lcobucci/jwt/issues/229
-        $now = new \DateTimeImmutable('@' . time());
-
-        $token = $config->builder()
-            ->expiresAt($now->modify('+1 hour'))
-            ->withClaim('database', $this->getParameter('database_name'))
-            ->withClaim('vendor_id', $restaurant->getId())
-            ->getToken($config->signer(), $config->signingKey());
-
         return $this->render('restaurant/stats.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
@@ -1217,7 +1203,7 @@ trait RestaurantTrait
             'start' => $start,
             'end' => $end,
             'tab' => $tab,
-            'cube_token' => $token->toString(),
+            'cube_token' => $tokenFactory->createToken(['vendor_id' => $restaurant->getId()]),
             'picker_type' => $request->query->has('date') ? 'date' : 'month',
             'with_details' => $request->query->getBoolean('details', false),
         ]));
@@ -1577,5 +1563,74 @@ trait RestaurantTrait
             'month' => $month,
             'payments' => $hash,
         ]));
+    }
+
+    public function restaurantApiAction(
+        $id,
+        Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        $qb = $this->entityManager
+            ->getRepository(ApiApp::class)
+            ->createQueryBuilder('a')
+            ->andWhere('a.shop = :shop')
+            ->setParameter('shop', $restaurant);
+
+        $apiApps = $qb->getQuery()->getResult();
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render('restaurant/api.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'api_apps' => $apiApps,
+        ], $routes));
+    }
+
+    public function newRestaurantApiAction(
+        $id,
+        Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        $apiApp = new ApiApp();
+        $apiApp->setShop($restaurant);
+
+        $form = $this->createForm(ApiAppType::class, $apiApp, [
+            'with_stores' => false
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $apiApp = $form->getData();
+
+            $this->getDoctrine()
+                ->getManagerForClass(ApiApp::class)
+                ->persist($apiApp);
+
+            $this->getDoctrine()
+                ->getManagerForClass(ApiApp::class)
+                ->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('api_apps.created.message')
+            );
+
+            return $this->redirectToRoute('admin_restaurant_api', [ 'id' => $id ]);
+        }
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render('restaurant/api_form.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+        ], $routes));
     }
 }

@@ -112,7 +112,7 @@ class SeoListener
             return;
         }
 
-        $this->seoPage->addTitle($restaurant->getName());
+        $this->seoPage->addTitleSuffix($restaurant->getName());
 
         $description = $restaurant->getDescription();
         if (!empty($description)) {
@@ -129,11 +129,19 @@ class SeoListener
             // https://developers.facebook.com/docs/reference/opengraph/object-type/restaurant.restaurant/
             ->addMeta('property', 'og:type', 'restaurant.restaurant')
             ->addMeta('property', 'restaurant:contact_info:street_address', $restaurant->getAddress()->getStreetAddress())
-            ->addMeta('property', 'restaurant:contact_info:locality', $restaurant->getAddress()->getAddressLocality())
-            ->addMeta('property', 'restaurant:contact_info:website', $restaurant->getWebsite())
             ->addMeta('property', 'place:location:latitude', (string) $restaurant->getAddress()->getGeo()->getLatitude())
             ->addMeta('property', 'place:location:longitude', (string) $restaurant->getAddress()->getGeo()->getLongitude())
             ;
+
+        $website = $restaurant->getWebsite();
+        if (!empty($website)) {
+            $this->seoPage->addMeta('property', 'restaurant:contact_info:website', $website);
+        }
+
+        $locality = $restaurant->getAddress()->getAddressLocality();
+        if (!empty($locality)) {
+            $this->seoPage->addMeta('property', 'restaurant:contact_info:locality', $locality);
+        }
 
         $imagePath = $this->uploaderHelper->asset($restaurant, 'imageFile');
         if (null !== $imagePath) {

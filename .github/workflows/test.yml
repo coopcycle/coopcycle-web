@@ -11,7 +11,8 @@ jobs:
       matrix:
         php_version:
           - '7.4'
-          # - '8.0'
+          - '8.1'
+      fail-fast: false
     env:
       CYPRESS_INSTALL_BINARY: '0'
     steps:
@@ -22,10 +23,6 @@ jobs:
           php-version: ${{ matrix.php_version }}
           tools: composer:v2, phpstan
           extensions: redis
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '15.x'
       - name: Install PHP dependencies
         run: composer install --prefer-dist --no-progress --no-scripts
       - name: Install JS dependencies
@@ -71,9 +68,7 @@ jobs:
       - name: Run Behat
         run: docker-compose exec -T php vendor/bin/behat -f progress
       - name: Run Jest
-        run: docker-compose exec -T nodejs npm run jest
-      # - name: Run Mocha
-      #   run: docker-compose exec -T nodejs node node_modules/.bin/mocha --require @babel/register --exit js/tests/
+        run: docker-compose exec -T webpack npm run jest
   E2E:
     name: Run End to End tests
     runs-on: ubuntu-latest

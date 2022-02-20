@@ -1498,6 +1498,257 @@ Feature: Carts
     Then the response status code should be 403
     And the response should be in JSON
 
+  Scenario: Assign cart to guest customer
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the setting "guest_checkout_enabled" has value "1"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/carts/session" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/1"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "token":@string@,
+        "cart":{
+          "@context":"/api/contexts/Order",
+          "@id":"/api/orders/1",
+          "@type":"http://schema.org/Order",
+          "customer":null,
+          "restaurant":"/api/restaurants/1",
+          "shippingAddress":null,
+          "shippedAt":null,
+          "shippingTimeRange": null,
+          "reusablePackagingEnabled":false,
+          "reusablePackagingPledgeReturn": 0,
+          "notes":null,
+          "items":[],
+          "itemsTotal":0,
+          "total":0,
+          "adjustments":@...@,
+          "fulfillmentMethod":"delivery"
+        }
+      }
+      """
+    Given the client is authenticated with last response token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send an authenticated "PUT" request to "/api/orders/1/assign" with body:
+      """
+      {
+        "guest": true,
+        "email": "guest@coopcycle.org",
+        "telephone": "+33193166989"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders/1",
+        "@type":"http://schema.org/Order",
+        "customer":"/api/customers/1",
+        "restaurant":"/api/restaurants/1",
+        "shippingAddress":null,
+        "shippedAt":null,
+        "shippingTimeRange": null,
+        "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
+        "notes":null,
+        "items":[],
+        "itemsTotal":0,
+        "total":350,
+        "adjustments":{
+          "delivery":[
+            {
+              "id":@integer@,
+              "label":@string@,
+              "amount":@integer@
+            }
+          ],
+          "delivery_promotion":[],
+          "order_promotion":[],
+          "reusable_packaging":[],
+          "tax":[]
+        },
+        "fulfillmentMethod":"delivery"
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/carts/session" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/1"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "token":@string@,
+        "cart":{
+          "@context":"/api/contexts/Order",
+          "@id":"/api/orders/2",
+          "@type":"http://schema.org/Order",
+          "customer":null,
+          "restaurant":"/api/restaurants/1",
+          "shippingAddress":null,
+          "shippedAt":null,
+          "shippingTimeRange": null,
+          "reusablePackagingEnabled":false,
+          "reusablePackagingPledgeReturn": 0,
+          "notes":null,
+          "items":[],
+          "itemsTotal":0,
+          "total":0,
+          "adjustments":@...@,
+          "fulfillmentMethod":"delivery"
+        }
+      }
+      """
+    Given the client is authenticated with last response token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send an authenticated "PUT" request to "/api/orders/2/assign" with body:
+      """
+      {
+        "guest": true,
+        "email": "guest_2@coopcycle.org",
+        "telephone": "+33193166989"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders/2",
+        "@type":"http://schema.org/Order",
+        "customer":"/api/customers/2",
+        "restaurant":"/api/restaurants/1",
+        "shippingAddress":null,
+        "shippedAt":null,
+        "shippingTimeRange": null,
+        "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
+        "notes":null,
+        "items":[],
+        "itemsTotal":0,
+        "total":350,
+        "adjustments":{
+          "delivery":[
+            {
+              "id":@integer@,
+              "label":@string@,
+              "amount":@integer@
+            }
+          ],
+          "delivery_promotion":[],
+          "order_promotion":[],
+          "reusable_packaging":[],
+          "tax":[]
+        },
+        "fulfillmentMethod":"delivery"
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/carts/session" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/1"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "token":@string@,
+        "cart":{
+          "@context":"/api/contexts/Order",
+          "@id":"/api/orders/3",
+          "@type":"http://schema.org/Order",
+          "customer":null,
+          "restaurant":"/api/restaurants/1",
+          "shippingAddress":null,
+          "shippedAt":null,
+          "shippingTimeRange": null,
+          "reusablePackagingEnabled":false,
+          "reusablePackagingPledgeReturn": 0,
+          "notes":null,
+          "items":[],
+          "itemsTotal":0,
+          "total":0,
+          "adjustments":@...@,
+          "fulfillmentMethod":"delivery"
+        }
+      }
+      """
+    Given the client is authenticated with last response token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send an authenticated "PUT" request to "/api/orders/3/assign" with body:
+      """
+      {
+        "guest": true,
+        "email": "guest@coopcycle.org",
+        "telephone": "+33193166989"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders/3",
+        "@type":"http://schema.org/Order",
+        "customer":"/api/customers/1",
+        "restaurant":"/api/restaurants/1",
+        "shippingAddress":null,
+        "shippedAt":null,
+        "shippingTimeRange": null,
+        "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn": 0,
+        "notes":null,
+        "items":[],
+        "itemsTotal":0,
+        "total":350,
+        "adjustments":{
+          "delivery":[
+            {
+              "id":@integer@,
+              "label":@string@,
+              "amount":@integer@
+            }
+          ],
+          "delivery_promotion":[],
+          "order_promotion":[],
+          "reusable_packaging":[],
+          "tax":[]
+        },
+        "fulfillmentMethod":"delivery"
+      }
+      """
+
   Scenario: Update cart with invalid phone number
     And the fixtures files are loaded:
       | sylius_channels.yml |

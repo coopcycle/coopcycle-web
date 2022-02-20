@@ -1,0 +1,68 @@
+<table class="table">
+  <thead>
+    <th>#</th>
+    <th>{{ 'form.api_app.name.label'|trans }}</th>
+    {% if with_stores ?? true %}
+    <th>{{ 'form.api_app.store.label'|trans }}</th>
+    {% endif %}
+    <th>{{ 'form.api_app.client_id.label'|trans }}</th>
+    <th>{{ 'form.api_app.client_secret.label'|trans }}</th>
+    {% if with_regenerate_secret ?? true %}
+    <th></th>
+    {% endif %}
+  </thead>
+  <tbody>
+  {% for api_app in api_apps %}
+    <tr>
+      <td width="5%">
+        <a href="{{ path('admin_api_app', { id: api_app.id }) }}">
+          #{{ api_app.id }}
+        </a>
+      </td>
+      <td>
+        {{ api_app.name }}
+      </td>
+      {% if with_stores ?? true %}
+      <td>
+        {{ api_app.store.name }}
+      </td>
+      {% endif %}
+      {% if api_app.type == 'oauth' %}
+      <td>
+        <span class="mr-4">{{ api_app.oauth2Client.identifier }}</span>
+        <button type="button" class="btn btn-default btn-xs"
+          data-toggle="copy" data-clipboard-text="{{ api_app.oauth2Client.identifier }}">
+          <i class="fa fa-copy mr-1"></i>{{ 'basics.copy'|trans }}
+        </button>
+      </td>
+      <td>
+        <span class="mr-4">••••••••••••••••</span>
+        <button type="button" class="btn btn-default btn-xs"
+          data-toggle="copy" data-clipboard-text="{{ api_app.oauth2Client.secret }}">
+          <i class="fa fa-copy mr-1"></i>{{ 'basics.copy'|trans }}
+        </button>
+      </td>
+      {% elseif api_app.type == 'api_key' %}
+      <td colspan="2">
+        <span class="mr-4">{{ 'ak_' ~ api_app.apiKey }}</span>
+        <button type="button" class="btn btn-default btn-xs"
+          data-toggle="copy" data-clipboard-text="{{ ('ak_' ~ api_app.apiKey) }}">
+          <i class="fa fa-copy mr-1"></i>{{ 'basics.copy'|trans }}
+        </button>
+      </td>
+      {% endif %}
+      {% if with_regenerate_secret ?? true %}
+      <td class="text-right">
+        <form method="post"
+          onsubmit="return confirm('{{ 'api_apps.regenerate_secret_warning'|trans }}');">
+          <input type="hidden" name="oauth2_client" value="{{ api_app.oauth2Client.identifier }}">
+          <button type="submit" class="btn btn-danger btn-xs">
+            <i class="fa fa-refresh mr-1"></i>{{ 'api_apps.regenerate_secret'|trans }}
+          </button>
+        </form>
+      </td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>

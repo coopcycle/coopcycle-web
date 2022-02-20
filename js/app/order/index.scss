@@ -46,7 +46,7 @@
     &__description {
       border-left: 1px solid $gray;
       min-height: 50px;
-      margin: $base-margin-s 0 $base-margin-s ($bullet-width / 2);
+      margin: $base-margin-s 0 $base-margin-s ($bullet-width * 0.5);
       padding: $base-margin-s;
       display: none;
     }

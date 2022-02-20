@@ -7,6 +7,7 @@ use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
+use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Taxation\TaxesHelper;
@@ -64,11 +65,6 @@ class DashboardController extends AbstractController
         ];
     }
 
-    protected function getStoreList()
-    {
-        return [ $this->getUser()->getStores(), 1, 1 ];
-    }
-
     protected function getOrderList(Request $request, $showCanceled = false)
     {
         return [];
@@ -79,7 +75,8 @@ class DashboardController extends AbstractController
         TranslatorInterface $translator,
         PaginatorInterface $paginator,
         EntityManagerInterface $entityManager,
-        TaxesHelper $taxesHelper)
+        TaxesHelper $taxesHelper,
+        CubeJsTokenFactory $tokenFactory)
     {
         $user = $this->getUser();
 
@@ -102,7 +99,7 @@ class DashboardController extends AbstractController
 
             $restaurant = $request->attributes->get('_restaurant');
 
-            return $this->statsAction($restaurant->getId(), $request, $slugify, $translator, $entityManager, $paginator, $taxesHelper);
+            return $this->statsAction($restaurant->getId(), $request, $slugify, $translator, $entityManager, $paginator, $taxesHelper, $tokenFactory);
         }
 
         return $this->redirectToRoute('nucleos_profile_profile_show');

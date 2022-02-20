@@ -128,7 +128,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
-          "comments": ""
+          "comments": "",
+          "weight": null,
+          "packages": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -152,7 +154,228 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
-          "comments": "Beware of the dog\nShe bites"
+          "comments": "Beware of the dog\nShe bites",
+          "weight":null,
+          "packages": []
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/deliveries/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/1",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":1,
+        "pickup":@...@,
+        "dropoff":@...@
+      }
+      """
+
+  Scenario: Create delivery with weight in dropoff task
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "pickup": {
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30",
+          "comments": "Beware of the dog\nShe bites",
+          "weight": 2000
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null,
+            "contactName": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "2.00 kg",
+          "weight": 2000,
+          "packages": []
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null,
+            "contactName": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "Beware of the dog\nShe bites",
+          "weight": 2000,
+          "packages": []
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/deliveries/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/1",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":1,
+        "pickup":@...@,
+        "dropoff":@...@
+      }
+      """
+
+  Scenario: Create delivery with weight and packages
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "pickup": {
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30",
+          "comments": "Beware of the dog\nShe bites",
+          "weight": 6000,
+          "packages": [
+            {"type": "XL", "quantity": 2}
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null,
+            "contactName": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "2 × XL\n6.00 kg",
+          "weight": 6000,
+          "packages": [
+            {
+              "type": "XL",
+              "name": "XL",
+              "quantity": 2
+            }
+          ]
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null,
+            "contactName": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "Beware of the dog\nShe bites",
+          "weight": 6000,
+          "packages": [
+            {
+              "type": "XL",
+              "name": "XL",
+              "quantity": 2
+            }
+          ]
         }
       }
       """
@@ -224,7 +447,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "comments": ""
+          "comments": "",
+          "weight": null,
+          "packages": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -248,7 +473,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "comments": ""
+          "comments": "",
+          "weight":null,
+          "packages": []
         }
       }
       """
@@ -305,7 +532,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "comments": ""
+          "comments": "",
+          "weight": null,
+          "packages": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -329,7 +558,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "comments": ""
+          "comments": "",
+          "weight":null,
+          "packages": []
         }
       }
       """
@@ -382,7 +613,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29')",
           "doneBefore":"@string@.startsWith('2018-08-29')",
-          "comments": ""
+          "comments": "",
+          "weight": null,
+          "packages": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -406,7 +639,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29T13:30:00')",
           "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')",
-          "comments": ""
+          "comments": "",
+          "weight":null,
+          "packages": []
         }
       }
       """
@@ -463,7 +698,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29')",
           "doneBefore":"@string@.startsWith('2018-08-29')",
-          "comments": ""
+          "comments": "",
+          "weight": null,
+          "packages": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -487,7 +724,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29T13:30:00')",
           "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')",
-          "comments": ""
+          "comments": "",
+          "weight":null,
+          "packages": []
         }
       }
       """
@@ -546,7 +785,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29')",
           "doneBefore":"@string@.startsWith('2018-08-29')",
-          "comments": ""
+          "comments": "",
+          "weight": null,
+          "packages": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -570,7 +811,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29T13:30:00')",
           "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')",
-          "comments": ""
+          "comments": "",
+          "weight":null,
+          "packages": []
         }
       }
       """
@@ -627,7 +870,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29')",
           "doneBefore":"@string@.startsWith('2018-08-29')",
-          "comments": ""
+          "comments": "",
+          "weight": null,
+          "packages": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -651,7 +896,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29T11:00')",
           "doneBefore":"@string@.startsWith('2018-08-29T11:00')",
-          "comments": ""
+          "comments": "",
+          "weight":null,
+          "packages": []
         }
       }
       """
@@ -709,7 +956,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "comments": ""
+          "comments": "",
+          "weight": null,
+          "packages": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -733,7 +982,9 @@ Feature: Deliveries
           "after":"2020-04-02T12:00:00+02:00",
           "before":"2020-04-02T14:00:00+02:00",
           "doneBefore":"2020-04-02T14:00:00+02:00",
-          "comments": ""
+          "comments": "",
+          "weight":null,
+          "packages": []
         }
       }
       """
@@ -774,7 +1025,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29T11:00')",
           "doneBefore":"@string@.startsWith('2018-08-29T11:00')",
-          "comments": ""
+          "comments": "",
+          "weight": null,
+          "packages": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -798,7 +1051,9 @@ Feature: Deliveries
           "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29T11:00')",
           "doneBefore":"@string@.startsWith('2018-08-29T11:00')",
-          "comments": ""
+          "comments": "",
+          "weight":null,
+          "packages": []
         }
       }
       """

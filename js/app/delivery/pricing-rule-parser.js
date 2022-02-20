@@ -144,6 +144,23 @@ const traverseNode = (node, accumulator) => {
           operator: node.attributes.operator,
           right:    node.nodes.right.attributes.value,
         })
+      } else if (node.nodes.left.nodes?.node?.attributes?.name === 'packages' && node.nodes.left.nodes?.attribute?.attributes?.value === 'totalVolumeUnits') {
+        if (node.attributes.operator === 'in') {
+          accumulator.push({
+            left:     'packages.totalVolumeUnits()',
+            operator: node.attributes.operator,
+            right:    [
+              node.nodes.right.nodes.left.attributes.value,
+              node.nodes.right.nodes.right.attributes.value
+            ],
+          })
+        } else {
+          accumulator.push({
+            left:     'packages.totalVolumeUnits()',
+            operator: node.attributes.operator,
+            right:    node.nodes.right.attributes.value,
+          })
+        }
       } else if ('in' === node.attributes.operator) {
         accumulator.push({
           left:     node.nodes.left.attributes.name,
@@ -217,7 +234,8 @@ const parsePriceNode = (node, expression) => {
 
     const args = node.nodes.arguments.nodes
 
-    const attribute = args[0].attributes.name
+    const attribute = (args[0].nodes?.node?.attributes.name === 'packages' && args[0].nodes?.attribute?.attributes.value === 'totalVolumeUnits')
+      ? 'packages.totalVolumeUnits()' : args[0].attributes.name
     const price     = args[1].attributes.value
     const step      = args[2].attributes.value
     const threshold = args[3].attributes.value

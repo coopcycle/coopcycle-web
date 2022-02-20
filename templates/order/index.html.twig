@@ -113,8 +113,19 @@
               {{ form_row(form.reusablePackagingEnabled) }}
             {% endif %}
           </div>
-
         </div>
+
+        {% if form.nonprofit is defined and form.nonprofit.vars.choices|length > 0 %}
+        <div class="border-bottom mb-5">
+          <h4 class="bg-light p-3 mb-4">{{ 'order.cart.donation'|trans }}</h4>
+          <div class="alert alert-info">
+            {{ 'order.cart.donation.disclaimer'|trans({ '%percentage%': '0.02'|format_number(style='percent') }) }}
+          </div>
+          <div id="items">
+            {{ form_row(form.nonprofit, { label: false }) }}
+          </div>
+        </div>
+        {% endif %}
 
         {% if order.takeaway %}
         <div class="alert alert-warning">

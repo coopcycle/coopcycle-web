@@ -6,7 +6,7 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\TimeSlot;
-use Doctrine\ORM\EntityRepository;
+use AppBundle\Form\Type\QueryBuilder\OrderByNameQueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -18,7 +18,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
-use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class StoreType extends LocalBusinessType
 {
@@ -32,17 +31,13 @@ class StoreType extends LocalBusinessType
                     'label' => 'form.store_type.pricing_rule_set.label',
                     'class' => PricingRuleSet::class,
                     'choice_label' => 'name',
-                    'query_builder' => function (EntityRepository $er) {
-                        return $er->createQueryBuilder('prs')->orderBy('prs.name', 'ASC');
-                    }
+                    'query_builder' => new OrderByNameQueryBuilder(),
                 ))
                 ->add('packageSet', EntityType::class, array(
                     'label' => 'form.store_type.package_set.label',
                     'class' => PackageSet::class,
                     'choice_label' => 'name',
-                    'query_builder' => function (EntityRepository $er) {
-                        return $er->createQueryBuilder('ps')->orderBy('ps.name', 'ASC');
-                    },
+                    'query_builder' => new OrderByNameQueryBuilder(),
                     'required' => false,
                 ))
                 ->add('prefillPickupAddress', CheckboxType::class, [
@@ -71,6 +66,7 @@ class StoreType extends LocalBusinessType
                     'class' => TimeSlot::class,
                     'choice_label' => 'name',
                     'required' => false,
+                    'query_builder' => new OrderByNameQueryBuilder(),
                 ])
                 ->add('tags', TagsType::class, [
                     'mapped' => false,

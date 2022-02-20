@@ -7,7 +7,7 @@ use AppBundle\Action\Webhook\Create as CreateController;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client;
+use League\Bundle\OAuth2ServerBundle\Model\Client;
 
 /**
  * @ApiResource(
@@ -157,6 +157,7 @@ class Webhook
             'delivery.failed',
             'delivery.picked',
             'delivery.completed',
+            'order.created',
         ];
     }
 }

@@ -30,6 +30,7 @@ Encore
   .addEntry('foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
   .addEntry('metrics', './js/app/metrics/index.js')
   .addEntry('metrics-admin', './js/app/metrics/admin.js')
+  .addEntry('metrics-loopeat', './js/app/metrics/loopeat.js')
   .addEntry('order', './js/app/order/index.js')
   .addEntry('product-form', './js/app/product/form.js')
   .addEntry('product-list', './js/app/product/list.js')
@@ -49,6 +50,7 @@ Encore
   .addEntry('store-form', './js/app/store/form.js')
   .addEntry('task-list', './js/app/delivery/task-list.js')
   .addEntry('time-slot-form', './js/app/time-slot/form.js')
+  .addEntry('time-slot-list', './js/app/time-slot/list.js')
   .addEntry('user-tracking', './js/app/user/tracking.js')
   .addEntry('user-form', './js/app/user/form.js')
   .addEntry('user-invite', './js/app/user/invite.js')
@@ -110,6 +112,10 @@ Encore.configureDevServerOptions(options => {
   ]
   options.headers = { 'Access-Control-Allow-Origin': '*' }
   options.compress = true
+
+  options.host = '0.0.0.0'
+  options.public = 'localhost:8080'
+  options.port = 8080
 })
 
 let webpackConfig = Encore.getWebpackConfig()

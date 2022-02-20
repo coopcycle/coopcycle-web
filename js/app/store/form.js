@@ -60,3 +60,11 @@ $('#address-form-modal').on('show.bs.modal', function (event) {
     modal.find('form').attr('action', newAddress)
   }
 })
+
+$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+  window.location.hash = e.target.getAttribute('aria-controls')
+})
+
+if (window.location.hash !== '') {
+  $(`a[aria-controls="${window.location.hash.substring(1)}"]`).tab('show')
+}

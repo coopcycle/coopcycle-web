@@ -9,7 +9,6 @@ use ApiPlatform\Core\EventListener\EventPriorities;
 use ApiPlatform\Core\Validator\ValidatorInterface;
 use Carbon\Carbon;
 use Doctrine\Persistence\ManagerRegistry;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\EventDispatcher\Event;

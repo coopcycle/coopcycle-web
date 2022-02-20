@@ -1,6 +1,8 @@
 /* https://codepen.io/hedula/pen/wvwdajR */
 
 // Variables
+@use "sass:math";
+
 $base-margin: 2em;
 $base-padding: 1em;
 $base-border-radius: .2em;
@@ -27,7 +29,7 @@ $animation-time: 0.5s;
 // Multi-step code
 
 .multi-step {
-    margin: ($base-margin / 2) 0;
+    margin: ($base-margin * 0.5) 0;
 }
 
 // Setting up flexbox for list
@@ -46,9 +48,9 @@ $animation-time: 0.5s;
 .multi-step-item {
     position: relative;
     width: 100%;
-    margin: 0 ($base-margin / 6);
+    margin: 0 math.div($base-margin, 6);
     @media only screen and (max-width: $screen-xs-max) {
-        margin: 0 ($base-margin / 6);
+        margin: 0 math.div($base-margin, 6);
     }
     z-index: 2;
     border-radius: $base-border-radius;
@@ -195,7 +197,7 @@ $animation-time: 0.5s;
         left: .75em;
         transform: translateY(-50%);
         min-width: 1.65em;
-        padding: ($base-padding / 2) $base-padding;
+        padding: ($base-padding * 0.5) $base-padding;
         z-index: 2;
         font-size: .85em;
         background-color: $gray-light;

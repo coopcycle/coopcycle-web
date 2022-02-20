@@ -1,0 +1,48 @@
+{
+  "nodes":{
+    "nodes":{
+      "left":{
+        "nodes":{
+          "node":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "name":"packages"
+            }
+          },
+          "attribute":{
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":"totalVolumeUnits"
+            }
+          },
+          "arguments":{
+            "nodes":[
+
+            ],
+            "attributes":[
+
+            ]
+          }
+        },
+        "attributes":{
+          "type":2
+        }
+      },
+      "right":{
+        "nodes":[
+
+        ],
+        "attributes":{
+          "value":3
+        }
+      }
+    },
+    "attributes":{
+      "operator":">"
+    }
+  }
+}

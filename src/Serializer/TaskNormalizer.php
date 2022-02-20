@@ -6,8 +6,10 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Package;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -22,13 +24,27 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         IriConverterInterface $iriConverter,
         TagManager $tagManager,
         UserManagerInterface $userManager,
-        Geocoder $geocoder)
+        Geocoder $geocoder,
+        EntityManagerInterface $entityManager)
     {
         $this->normalizer = $normalizer;
         $this->iriConverter = $iriConverter;
         $this->tagManager = $tagManager;
         $this->userManager = $userManager;
         $this->geocoder = $geocoder;
+        $this->entityManager = $entityManager;
+    }
+
+    private function _normalizeTaskPackages($packages) {
+        $packagesNormalized = [];
+        foreach ($packages as $package) {
+            $packagesNormalized[] = [
+                'type' => $package->getPackage()->getName(),
+                'name' => $package->getPackage()->getName(),
+                'quantity' => $package->getQuantity(),
+            ];
+        }
+        return $packagesNormalized;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -75,6 +91,17 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             if ($object->hasNext()) {
                 $data['next'] = $this->iriConverter->getIriFromItem($object->getNext());
             }
+        }
+
+        if ($object->isPickup()) {
+            $delivery = $object->getDelivery();
+
+            if (null !== $delivery) {
+                $data['packages'] = $this->_normalizeTaskPackages($delivery->getPackages());
+                $data['weight'] = $delivery->getWeight();
+            }
+        } else {
+            $data['packages'] = $this->_normalizeTaskPackages($object->getPackages());
         }
 
         return $data;
@@ -155,6 +182,18 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
             $task->setAfter($after);
             $task->setBefore($before);
+        }
+
+        if (isset($data['packages'])) {
+
+            $packageRepository = $this->entityManager->getRepository(Package::class);
+
+            foreach ($data['packages'] as $p) {
+                $package = $packageRepository->findOneByName($p['type']);
+                if ($package) {
+                    $task->addPackageWithQuantity($package, $p['quantity']);
+                }
+            }
         }
 
         return $task;

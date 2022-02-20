@@ -43,6 +43,8 @@ adminDashboard.shops.title: Tiendas
 adminDashboard.users.title: Usuarios
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Editar usuario
+adminDashboard.users.confirmDeleteUser: ¿Estás seguro de eliminar al usuario con email %email%?
+adminDashboard.users.userHasBeenDeleted: El usuario ha sido eliminado.
 adminDashboard.users.edit.addStore: Añadir tienda
 adminDashboard.users.edit.addRestaurant: Añadir restaurante
 adminDashboard.users.createNew: Añadir usuario
@@ -92,13 +94,20 @@ localBusiness.form.deliveryPerimeterExpression: Zona o máxima distancia de repa
 localBusiness.form.shippingOptionsDays: Opciones de entrega (en días)
 restaurant.available: Disponible
 restaurant.unavailable: No disponible
+restaurants.pre_order: Reservar
 restaurant.disabledWarning: "Éste restaurante está desactivado así que los visitantes\
   \ no verán ésta página. Si quiéres, puedes <a target=\"_blank\" href=\"%restaurantEditUrl%\"\
   >activarlo en el panel de administración</a>.\n"
 restaurant.closedWarningWithDelay: Pide ahora para más tarde. Pedidos minimo %delay%
   antes.
-restaurant.temporaryClosedWarning: Éste restaurante está cerrado hasta el <strong>%date%</strong>
-  pero puedes hacer un pedido para más tarde
+restaurant.temporaryClosedWarning: Éste restaurante está cerrado y no disponible hasta el <strong>%date%</strong>
+restaurant.closedOpensTodayLaterWarning: Éste restaurante se encuentra cerrado pero vuelve a abrir hoy a las <strong>%time%</strong>.
+restaurant.canOrderForLater: Puedes programar tu pedido para más tarde!
+restaurant.closedOpensTomorrowWarning: Éste restaurante se encuentra cerrado por hoy pero abre mañana a las <strong>%time%</strong>.
+restaurant.canOrderForTomorrow: Puedes programar tu pedido para mañana!
+restaurant.closedOpensAfterTomorrowWarning: Éste restaurante se encuentra cerrado pero vuelvo a abrir el <strong>%date%</strong>.
+restaurant.canOrderForOtherDay: Puedes programar tu pedido para ese día!
+restaurant.closedNowWarning: Éste restaurante se encuentra cerrado por hoy.
 restaurant.noMenuWarning: "Este restaurante no tiene menú por ahora\n"
 restaurant.form.enabled.tooltip: "Cuando está desactivado, un restaurante no está\
   \ visible en el sitio web. No aparece en los resultados de búsqueda y los visitantes\
@@ -466,7 +475,7 @@ form.product_option.additional.help: El cliente puede elegir varios valores, sin
 form.checkout_address.notes.label: Deja un comentario para el restaurante
 form.checkout_address.notes.placeholder: "Ejemplo: sin salsa, sin tomates…\n"
 form.checkout_address.notes.help: Tu comentario será enviado al restaurante
-form.checkout_address.promotion_coupon.label: Código promocional
+form.checkout_address.promotion_coupon.label: Código de descuento
 form.checkout_address.telephone.label: Teléfono
 form.checkout_address.reusable_packaging_enabled.label: Quiero envases reutilizables
   (%precio%)
@@ -704,7 +713,6 @@ form.registration.legal.help: Al marcar esta casilla, aceptas nuestros <a href="
   y Condiciones</a> y la <a href="%privacy_url%">Política de Privacidad</a>.
 form.time_slot.name.label: Nombre
 form.time_slot.interval.label: Intervalo
-form.time_slot.choices.label: Opciones
 form.time_slot_choice.start_time.label: Hora de inicio
 form.time_slot_choice.end_time.label: Hora de finalización
 form.package_set.name.label: Nombre

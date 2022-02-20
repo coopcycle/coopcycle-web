@@ -117,8 +117,7 @@ restaurant.disabledWarning: "Ce restaurant n'est pas activé et n'est donc pas v
   %restaurantEditUrl%\">l'activer dans l'admin</a>.\n"
 restaurant.closedWarningWithDelay: Commandez dès maintenant pour plus tard ! Commande
   minimum %delay% à l'avance.
-restaurant.temporaryClosedWarning: Ce restaurant est fermé jusqu'au <strong>%date%</strong>.
-  Vous pouvez commander pour plus tard !
+restaurant.temporaryClosedWarning: Ce restaurant est fermé et ne sera pas disponible avant <strong>%date%</strong>.
 restaurant.noMenuWarning: "Ce restaurant n'a pas de menu pour l'instant\n"
 restaurant.quotes_disclaimer.authenticated: Ce restaurant accepte également des commandes
   sur devis. Pour créer des devis, vous devez être un client référencé. <a href="%contact_us%">Contactez-nous</a>
@@ -267,6 +266,7 @@ profile.managedStores: Magasins gérés par l'utilisateur
 profile.managedRestaurants: Restaurants gérés par l'utilisateur
 profile.accountType: Type de compte
 order.cart.title: Panier
+order.cart.donation: Dons aux associations
 order.items.products_with_count: Produits (%count%)
 order.summary.heading: Commande %number% (#%id%)
 order.total_excluding_tax: Total HT
@@ -634,7 +634,6 @@ form.embed_settings.with_weight.label: Demander le poids de la marchandise
 form.resend_confirmation_email.submit.label: Renvoyer l'email
 form.time_slot.name.label: Nom
 form.time_slot.working_days_only.label: Limiter les choix aux jours ouvrés
-form.time_slot.choices.label: Plages horaires
 form.time_slot_choice.start_time.label: Date de début
 form.time_slot_choice.end_time.label: Date de fin
 form.time_slot.prior_notice_hours.label: Délai de prévenance (heures)
@@ -931,6 +930,7 @@ order.export.heading.platform_fee: Frais Plateforme
 order.export.heading.net_revenue: Revenu net
 order.export.heading.completed_by: Livrée par
 order.export.heading.refund_total: Remboursements
+order.export.heading.nonprofit: Association
 form.order_export.messenger.label: Inclure une colonne avec le coursier ayant livré
   la commande
 basics.show: Afficher
@@ -1192,3 +1192,22 @@ api_apps.regenerate_secret_warning: Toutes les applications utilisant la clé se
 restaurant.form.cash_on_delivery_enabled.label: Activer le paiement en contre-remboursement
 restaurant.form.cash_on_delivery_enabled.help: Cela permettra aux clients de payer en espèces. À utiliser avec précaution.
 localBusiness.form.business_address.help: Cette adresse sera utilisée dans les reçus
+adminDashboard.nonprofits.createNew: Ajouter une nouvelle association
+adminDashboard.nonprofits.title: Associations
+adminDashboard.nonprofits.confirm_delete: Êtes-vous sûr de supprimer cette association ?
+restaurants.pre_order: Pré-commander
+restaurant.closedOpensTodayLaterWarning: Ce restaurant est fermé maintenant mais ouvre aujourd'hui à <strong>%time%</strong>.
+restaurant.canOrderForLater: Mais vous pouvez toujours commander pour plus tard !
+restaurant.closedOpensTomorrowWarning: Ce restaurant est fermé pour la journée mais ouvre demain à <strong>%time%</strong>.
+restaurant.canOrderForTomorrow: Vous pouvez toujours commander pour demain !
+restaurant.closedOpensAfterTomorrowWarning: Ce restaurant est fermé jusqu'au <strong>%date%</strong>.
+restaurant.canOrderForOtherDay: Vous pouvez quand même commander pour ce jour-là !
+restaurant.closedNowWarning: Ce restaurant est fermé actuellement.
+restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
+restaurant.form.en_boite_le_plat_enabled.label: Activer le système de consigne En Boîte Le Plat
+form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'Je veux des contenants consignés <a href="https://enboiteleplat.fr/rennes/" target="_blank">En Boîte Le Plat</a>.'
+adminDashboard.users.confirmDeleteUser: Voulez-vous vraiment supprimer l'utilisateur avec l'email %email% ?
+adminDashboard.users.userHasBeenDeleted: L'utilisateur a été supprimé.
+order.cart.donation.disclaimer: Nous vous proposons de consacrer %percentage% des revenus tirés de votre commmande à l'une de nos associations partenaires. Vous ne paierez pas plus cher.
+form.checkout_address.nonprofit.placeholder: Choisissez votre association préférée
+form.delivery.arbitrary_price.label: Definir le prix manuellement

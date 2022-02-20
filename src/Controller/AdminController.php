@@ -11,7 +11,9 @@ use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
+use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\ApiApp;
+use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
@@ -47,6 +49,7 @@ use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\MercadopagoLivemodeType;
 use AppBundle\Form\NewOrderType;
+use AppBundle\Form\NonprofitType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\OrganizationType;
 use AppBundle\Form\PackageSetType;
@@ -80,7 +83,6 @@ use Nucleos\UserBundle\Model\UserManagerInterface;
 use Nucleos\UserBundle\Util\TokenGeneratorInterface;
 use Nucleos\UserBundle\Util\CanonicalizerInterface;
 use Nucleos\ProfileBundle\Mailer\Mail\RegistrationMail;
-use GuzzleHttp\Client as HttpClient;
 use Knp\Component\Pager\PaginatorInterface;
 use Ramsey\Uuid\Uuid;
 use Redis;
@@ -107,8 +109,9 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuth2Client;
+use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
 use Twig\Environment as TwigEnvironment;
 
 class AdminController extends AbstractController
@@ -155,7 +158,7 @@ class AdminController extends AbstractController
         PromotionCouponRepositoryInterface $promotionCouponRepository,
         FactoryInterface $promotionRuleFactory,
         FactoryInterface $promotionFactory,
-        HttpClient $browserlessClient
+        HttpClientInterface $browserlessClient
     )
     {
         $this->orderRepository = $orderRepository;
@@ -591,6 +594,42 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/user/{username}/delete", name="admin_user_delete", methods={"POST"})
+     */
+    public function userDeleteAction($username, Request $request, UserManagerInterface $userManager)
+    {
+        $user = $userManager->findUserByUsername($username);
+
+        if (!$user) {
+            throw $this->createNotFoundException();
+        }
+
+        $anonymousEmail = sprintf('anon%s@coopcycle.org', bin2hex(random_bytes(8)));
+
+        $user->setEmail($anonymousEmail);
+        $user->setEmailCanonical($anonymousEmail);
+        $user->setEnabled(false);
+
+        $customer = $user->getCustomer();
+        if (null !== $customer) {
+            $customer->setEmail($anonymousEmail);
+            $customer->setEmailCanonical($anonymousEmail);
+            $customer->setFullName('');
+        }
+
+        $userManager->updateUser($user, false);
+
+        $this->entityManager->flush();
+
+        $this->addFlash(
+            'notice',
+            $this->translator->trans('adminDashboard.users.userHasBeenDeleted')
+        );
+
+        return $this->redirectToRoute('admin_users');
+    }
+
+    /**
      * @Route("/admin/user/{username}/tracking", name="admin_user_tracking")
      */
     public function userTrackingAction($username, Request $request, UserManagerInterface $userManager)
@@ -993,12 +1032,6 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function getStoreList()
-    {
-        $stores = $this->getDoctrine()->getRepository(Store::class)->findAll();
-        return [ $stores, 1, 1 ];
-    }
-
     public function newStoreAction(Request $request)
     {
         $store = new Store();
@@ -1226,7 +1259,6 @@ class AdminController extends AbstractController
             'can_enable_mercadopago_livemode' => $canEnableMercadopagoLivemode,
         ]);
     }
-
     /**
      * @Route("/admin/embed", name="admin_embed")
      */
@@ -1332,9 +1364,12 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_api_apps');
         }
 
-        $apiApps = $this->entityManager
+        $qb = $this->entityManager
             ->getRepository(ApiApp::class)
-            ->findAll();
+            ->createQueryBuilder('a')
+            ->andWhere('a.store IS NOT NULL');
+
+        $apiApps = $qb->getQuery()->getResult();
 
         return $this->render('admin/api_apps.html.twig', [
             'api_apps' => $apiApps
@@ -1695,12 +1730,6 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($timeSlot->hasOpeningHours()) {
-                foreach ($timeSlot->getChoices() as $choice) {
-                    $timeSlot->removeChoice($choice);
-                }
-                $timeSlot->setWorkingDaysOnly(false);
-            }
 
             $objectManager->persist($timeSlot);
             $objectManager->flush();
@@ -1871,7 +1900,7 @@ class AdminController extends AbstractController
             'json' => ['html' => $html]
         ]);
 
-        $response = new Response((string) $pdf->getBody());
+        $response = new Response((string) $pdf->getContent());
 
         $response->headers->add(['Content-Type' => 'application/pdf']);
         $response->headers->add([
@@ -2089,30 +2118,108 @@ class AdminController extends AbstractController
             'products_route' => $routes['products'],
             'pledge_count' => $pledgeCount,
             'pledge_form' => $pledgeForm->createView(),
+            'nonprofits_enabled' => $this->getParameter('nonprofits_enabled')
         ]);
     }
 
-    public function metricsAction(LocalBusinessRepository $localBusinessRepository, Request $request)
+
+    /**
+     * @param Nonprofit $nonprofit
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    private function handleNonprofitForm(Nonprofit $nonprofit, Request $request)
     {
-        // https://cube.dev/docs/security
-        $key = \Lcobucci\JWT\Signer\Key\InMemory::plainText($_SERVER['CUBEJS_API_SECRET']);
-        $config = \Lcobucci\JWT\Configuration::forSymmetricSigner(
-            new \Lcobucci\JWT\Signer\Hmac\Sha256(),
-            $key
-        );
+        $form = $this->createForm(NonprofitType::class, $nonprofit);
 
-        // https://github.com/lcobucci/jwt/issues/229
-        $now = new \DateTimeImmutable('@' . time());
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $this->getDoctrine()->getManager()->persist($nonprofit);
+            $this->getDoctrine()->getManager()->flush();
 
-        $token = $config->builder()
-                ->expiresAt($now->modify('+1 hour'))
-                ->withClaim('database', $this->getParameter('database_name'))
-                ->getToken($config->signer(), $config->signingKey());
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
 
+            return $this->redirectToRoute('admin_nonprofits');
+        }
+
+        return $this->render('admin/nonprofit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * Handle POST request from nonprofit form
+     *
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function newNonprofitAction(Request $request)
+    {
+        $nonprofit = new Nonprofit();
+
+        return $this->handleNonprofitForm($nonprofit, $request);
+    }
+
+    /**
+     * Build and return the form of a specific nonprofit
+     *
+     * @param int $id
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function nonprofitAction(int $id, Request $request)
+    {
+        $nonprofit = $this->getDoctrine()->getRepository(Nonprofit::class)->find($id);
+
+        if (!$nonprofit) {
+            throw $this->createNotFoundException(sprintf('Nonprofit #%d does not exist', $id));
+        }
+
+        return $this->handleNonprofitForm($nonprofit, $request);
+    }
+
+    /**
+     * @param int $id
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function deleteNonprofitAction(int $id, Request $request): RedirectResponse
+    {
+        $nonprofit = $this->getDoctrine()->getRepository(Nonprofit::class)->find($id);
+        $this->entityManager->remove($nonprofit);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('admin_nonprofits');
+    }
+
+    /**
+     * Build the nonprofit list page
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function nonProfitsActionListAction(
+        Request $request
+    ): Response
+    {
+        $nonprofits = $this->entityManager->getRepository(Nonprofit::class)->findAll();
+
+        return $this->render('admin/nonprofits.html.twig', [
+            'nonprofits' => $nonprofits
+        ]);
+    }
+
+    public function metricsAction(
+        LocalBusinessRepository $localBusinessRepository,
+        CubeJsTokenFactory $tokenFactory,
+        Request $request)
+    {
         $zeroWasteCount = $localBusinessRepository->countZeroWaste();
 
         return $this->render('admin/metrics.html.twig', [
-            'cube_token' => $token->toString(),
+            'cube_token' => $tokenFactory->createToken(),
             'zero_waste' => $zeroWasteCount > 0,
         ]);
     }

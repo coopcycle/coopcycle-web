@@ -158,6 +158,12 @@ export const SHOW_RECURRENCE_RULES = 'SHOW_RECURRENCE_RULES'
 
 export const DELETE_GROUP_SUCCESS = 'DELETE_GROUP_SUCCESS'
 
+export const OPEN_CREATE_GROUP_MODAL = 'OPEN_CREATE_GROUP_MODAL'
+export const CLOSE_CREATE_GROUP_MODAL = 'CLOSE_CREATE_GROUP_MODAL'
+
+export const CREATE_GROUP_REQUEST = 'CREATE_GROUP_REQUEST'
+export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
+
 export function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
 }
@@ -1111,5 +1117,52 @@ export function handleDragEnd(result) {
     }
 
     dispatch(modifyTaskList(username, newTasks))
+  }
+}
+
+export function createGroupRequest() {
+  return { type: CREATE_GROUP_REQUEST }
+}
+
+export function createGroupSuccess(taskGroup) {
+  return { type: CREATE_GROUP_SUCCESS, taskGroup }
+}
+
+export function openCreateGroupModal() {
+  return { type: OPEN_CREATE_GROUP_MODAL }
+}
+
+export function closeCreateGroupModal() {
+  return { type: CLOSE_CREATE_GROUP_MODAL }
+}
+
+export function createGroup(name) {
+
+  return function(dispatch, getState) {
+
+    const selectedTasks = selectSelectedTasks(getState())
+    const { jwt } = getState()
+
+    dispatch(createGroupRequest())
+
+    createClient(dispatch).request({
+      method: 'post',
+      url: '/api/task_groups',
+      data: {
+        name,
+        tasks: _.map(selectedTasks, t => t['@id'])
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then((response) => {
+        dispatch(createGroupSuccess(response.data))
+        dispatch(closeCreateGroupModal())
+      })
+      // eslint-disable-next-line no-console
+      .catch(error => console.log(error))
   }
 }

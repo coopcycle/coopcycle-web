@@ -60,14 +60,8 @@ class CapturePaymentTest extends TestCase
             ->hasVendor()
             ->willReturn(true);
         $order
-            ->isEmpty()
-            ->willReturn(false);
-        $order
-            ->getItemsTotal()
-            ->willReturn(3000);
-        $order
-            ->getTotal()
-            ->willReturn(3350);
+            ->isFree()
+            ->willReturn(true);
         $order
             ->getLastPayment(PaymentInterface::STATE_AUTHORIZED)
             ->willReturn(null);

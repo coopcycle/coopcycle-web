@@ -2,6 +2,7 @@
     "common": {
         "CART_TITLE": "Cesta",
         "CART_WIDGET_BUTTON": "Pedir",
+        "SCHEDULE_ORDER": "Programar pedido",
         "CART_EMPTY": "Tu cesta está vacía",
         "OPENING_HOURS_SINGLE": "El {{day}} de {{open}} a {{close}}",
         "OPENING_HOURS_RANGE": "De {{fromDay}} a {{toDay}}, de {{open}} a {{close}}",
@@ -81,6 +82,8 @@
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Interfaz de rutas",
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES": "A vuelo de pájaro",
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Formatos de archivo admitidos: csv, ods, xlsx",
+        "ADMIN_DASHBOARD_PACKAGES": "Paquetes",
+        "ADMIN_DASHBOARD_WEIGHT": "Peso",
         "USER_EDIT_ENABLED_LABEL": "Activado",
         "USER_EDIT_DISABLED_LABEL": "Desactivado",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Pedido creado",

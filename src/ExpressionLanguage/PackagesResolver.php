@@ -34,4 +34,15 @@ class PackagesResolver
 
         return false;
     }
+
+    public function totalVolumeUnits()
+    {
+        $total = 0;
+
+        foreach ($this->delivery->getPackages() as $package) {
+            $total += ($package->getPackage()->getVolumeUnits() * $this->delivery->getQuantityForPackage($package->getPackage()));
+        }
+
+        return $total;
+    }
 }

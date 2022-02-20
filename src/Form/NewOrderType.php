@@ -31,7 +31,5 @@ class NewOrderType extends DeliveryType
                 'label' => 'form.new_order.variant_price.label',
                 'mapped' => false,
             ]);
-
-        $builder->remove('weight');
     }
 }

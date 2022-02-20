@@ -89,6 +89,57 @@ class DeliveryTest extends TestCase
         $this->assertEquals(0, $delivery->getQuantityForPackage($mediumPackage));
     }
 
+    public function testAddPackageWithQuantityWithMultipleDropoffs()
+    {
+        $delivery = new Delivery();
+
+        $otherDrop = new Task();
+        $otherDrop->setType(Task::TYPE_DROPOFF);
+
+        $delivery->addTask($otherDrop);
+
+        $this->assertCount(3, $delivery->getTasks());
+
+        $smallPackage = new Package();
+        $smallPackage->setName('S');
+
+        $mediumPackage = new Package();
+        $mediumPackage->setName('M');
+
+        $delivery->addPackageWithQuantity($smallPackage, 1);
+
+        $i = 0;
+        foreach ($delivery->getTasks() as $task) {
+            if ($task->isDropoff()) {
+                $this->assertCount(0 === $i ? 1 : 0, $task->getPackages());
+                $this->assertEquals(0 === $i ? 1 : 0, $task->getQuantityForPackage($smallPackage));
+                $i++;
+            }
+        }
+
+        $delivery->addPackageWithQuantity($smallPackage, 1);
+
+        $i = 0;
+        foreach ($delivery->getTasks() as $task) {
+            if ($task->isDropoff()) {
+                $this->assertCount(0 === $i ? 1 : 0, $task->getPackages());
+                $this->assertEquals(0 === $i ? 2 : 0, $task->getQuantityForPackage($smallPackage));
+                $i++;
+            }
+        }
+
+        $delivery->addPackageWithQuantity($mediumPackage, 3);
+
+        $i = 0;
+        foreach ($delivery->getTasks() as $task) {
+            if ($task->isDropoff()) {
+                $this->assertCount(0 === $i ? 2 : 0, $task->getPackages());
+                $this->assertEquals(0 === $i ? 3 : 0, $task->getQuantityForPackage($mediumPackage));
+                $i++;
+            }
+        }
+    }
+
     public function testToExpressionLanguageValuesWithOrder()
     {
         $pickupAddress = new Address();
@@ -241,5 +292,70 @@ class DeliveryTest extends TestCase
         $this->assertEquals($pickupAddress, $language->evaluate('pickup.address', $values));
         $this->assertEquals($otherDropoffAddress, $language->evaluate('dropoff.address', $values));
         $this->assertFalse($language->evaluate('dropoff.doorstep', $values));
+    }
+
+    public function testGetPackages()
+    {
+        $delivery = new Delivery();
+
+        $smallPackage = new Package();
+        $smallPackage->setName('S');
+
+        $delivery->getDropoff()->addPackageWithQuantity($smallPackage, 2);
+
+        $packages = $delivery->getPackages();
+
+        $this->assertCount(1, $packages);
+        $this->assertEquals(2, $delivery->getQuantityForPackage($smallPackage));
+    }
+
+    public function testGetPackagesWithMultipleDropoffs()
+    {
+        $delivery = new Delivery();
+
+        $otherDrop = new Task();
+        $otherDrop->setType(Task::TYPE_DROPOFF);
+
+        $delivery->addTask($otherDrop);
+
+        $smallPackage = new Package();
+        $smallPackage->setName('S');
+
+        $i = 0;
+        foreach ($delivery->getTasks() as $task) {
+            if ($task->isDropoff()) {
+                if (0 === $i) {
+                    $task->addPackageWithQuantity($smallPackage, 2);
+                    $this->assertCount(1, $delivery->getPackages());
+                    $this->assertEquals(2, $delivery->getQuantityForPackage($smallPackage));
+                }
+                if (1 === $i) {
+                    $task->addPackageWithQuantity($smallPackage, 1);
+                    $this->assertCount(1, $delivery->getPackages());
+                    $this->assertEquals(3, $delivery->getQuantityForPackage($smallPackage));
+                }
+                $i++;
+            }
+        }
+    }
+
+    public function testWithTasks()
+    {
+        $delivery = new Delivery();
+
+        $pickup = new Task();
+        // Even if the first task is not a pickup,
+        // it will be considered as a pickup
+        // $pickup->setType(Task::TYPE_PICKUP);
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+
+        $delivery = $delivery->withTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
+
+        $this->assertNotNull($delivery->getPickup());
     }
 }

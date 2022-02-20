@@ -15,6 +15,7 @@ import {
   createTaskList,
   closeRecurrenceRuleModal,
   closeExportModal,
+  closeCreateGroupModal,
   exportTasks } from '../redux/actions'
 import TaskModalContent from './TaskModalContent'
 import FiltersModalContent from './FiltersModalContent'
@@ -23,6 +24,7 @@ import ImportModalContent from './ImportModalContent'
 import AddUserModalContent from './AddUserModalContent'
 import RecurrenceRuleModalContent from './RecurrenceRuleModalContent'
 import ExportModalContent from './ExportModalContent'
+import CreateGroupModalContent from './CreateGroupModalContent'
 
 class Modals extends React.Component {
 
@@ -94,6 +96,15 @@ class Modals extends React.Component {
             onClickClose={ this.props.closeExportModal }
             onClickSubmit={ (start, end) => this.props.exportTasks(start, end) } />
         </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.createGroupModalIsOpen }
+          onRequestClose={ this.props.closeCreateGroupModal }
+          className="ReactModal__Content--select-courier"
+          shouldCloseOnOverlayClick={ true }>
+          <CreateGroupModalContent
+            onClickClose={ this.props.closeCreateGroupModal } />
+        </Modal>
       </React.Fragment>
     )
   }
@@ -110,6 +121,7 @@ function mapStateToProps(state) {
     date: selectSelectedDate(state),
     recurrenceRuleModalIsOpen: state.recurrenceRuleModalIsOpen,
     exportModalIsOpen: state.exportModalIsOpen,
+    createGroupModalIsOpen: state.createGroupModalIsOpen,
   }
 }
 
@@ -126,6 +138,7 @@ function mapDispatchToProps (dispatch) {
     createTaskList: (date, username) => dispatch(createTaskList(date, username)),
     closeRecurrenceRuleModal: () => dispatch(closeRecurrenceRuleModal()),
     closeExportModal: () => dispatch(closeExportModal()),
+    closeCreateGroupModal: () => dispatch(closeCreateGroupModal()),
     exportTasks: (start, end) => dispatch(exportTasks(start, end)),
   }
 }

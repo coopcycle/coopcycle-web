@@ -42,4 +42,24 @@ class PackagesResolverTest extends TestCase
         $this->assertEquals(2, $resolver->quantity('PackageOne'));
         $this->assertEquals(0, $resolver->quantity('PackageTwo'));
     }
+
+    public function testGetTotalVolumeUnits()
+    {
+        $delivery = new Delivery();
+
+        $packageOne = new Package();
+        $packageOne->setName('PackageOne');
+        $packageOne->setVolumeUnits(1.0);
+
+        $packageTwo = new Package();
+        $packageTwo->setName('PackageTwo');
+        $packageTwo->setVolumeUnits(2.5);
+
+        $delivery->addPackageWithQuantity($packageOne, 2);
+        $delivery->addPackageWithQuantity($packageTwo, 2);
+
+        $resolver = new PackagesResolver($delivery);
+
+        $this->assertEquals(7.0, $resolver->totalVolumeUnits());
+    }
 }

@@ -7,6 +7,7 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Zone;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
+use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
@@ -24,13 +25,15 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         SerializerInterface $serializer,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        TimingRegistry $timingRegistry)
     {
         $this->translator = $translator;
         $this->serializer = $serializer;
         $this->repository = $repository;
         $this->projectCache = $projectCache;
         $this->entityManager = $entityManager;
+        $this->timingRegistry = $timingRegistry;
     }
 
     /**
@@ -147,5 +150,29 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         $type = $entityOrText instanceof LocalBusiness ? $entityOrText->getType() : $entityOrText;
 
         return LocalBusiness::getKeyForType($type);
+    }
+
+    public function shouldShowPreOrder(LocalBusiness $entity): bool
+    {
+        $timeInfo = $this->timingRegistry->getForObject($entity);
+
+        if (empty($timeInfo)) {
+
+            return false;
+        }
+
+        if (!isset($timeInfo['range'])) {
+
+            return false;
+        }
+
+        if (!is_array($timeInfo['range']) || count($timeInfo['range']) !== 2) {
+
+            return false;
+        }
+
+        $start = Carbon::parse($timeInfo['range'][0]);
+
+        return $start->diffInHours(Carbon::now()) > 1;
     }
 }

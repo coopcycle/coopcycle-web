@@ -3,7 +3,7 @@
 namespace AppBundle\Service\Routing;
 
 use AppBundle\Entity\Base\GeoCoordinates;
-use GuzzleHttp\Client;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
  * URL scheme:
@@ -61,18 +61,18 @@ use GuzzleHttp\Client;
 class Osrm extends Base
 {
     /**
-     * @var Client
+     * @var HttpClientInterface
      */
-    private $client;
+    private $osrmClient;
 
     private $cache = [];
 
     /**
-     * @param Client $client
+     * @param HttpClientInterface $osrmClient
      */
-    public function __construct(Client $client)
+    public function __construct(HttpClientInterface $osrmClient)
     {
-        $this->client = $client;
+        $this->osrmClient = $osrmClient;
     }
 
     public function getServiceResponse($service, array $coordinates, array $options = [])
@@ -92,8 +92,8 @@ class Osrm extends Base
 
         if (!isset($this->cache[$cacheKey])) {
             $uri = "/{$service}/v1/bicycle/{$coordsAsString}" . (!empty($queryString) ? ('?'.$queryString) : '');
-            $response = $this->client->request('GET', $uri);
-            $data = json_decode($response->getBody(), true);
+            $response = $this->osrmClient->request('GET', $uri);
+            $data = json_decode($response->getContent(), true);
 
             $this->cache[$cacheKey] = $data;
         }

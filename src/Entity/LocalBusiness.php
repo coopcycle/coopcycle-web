@@ -34,7 +34,7 @@ use AppBundle\Validator\Constraints\IsActivableRestaurant as AssertIsActivableRe
 use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -121,7 +121,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     ShippingOptionsInterface
 {
     use Timestampable;
-    use SoftDeleteableEntity;
+    use SoftDeleteable;
     use LoopEatOAuthCredentialsTrait;
     use CatalogTrait;
     use FoodEstablishmentTrait;
@@ -249,6 +249,8 @@ class LocalBusiness extends BaseLocalBusiness implements
     protected $hub;
 
     protected $vytalEnabled = false;
+
+    protected $enBoitLePlatEnabled = false;
 
     protected $cashOnDeliveryEnabled = false;
 
@@ -917,6 +919,26 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setCashOnDeliveryEnabled($enabled)
     {
         $this->cashOnDeliveryEnabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnBoitLePlatEnabled()
+    {
+        return $this->enBoitLePlatEnabled;
+    }
+
+    /**
+     * @param bool $enabled
+     *
+     * @return self
+     */
+    public function setEnBoitLePlatEnabled($enabled)
+    {
+        $this->enBoitLePlatEnabled = $enabled;
 
         return $this;
     }

@@ -2,22 +2,13 @@ import MapHelper from '../MapHelper'
 import L from 'leaflet'
 import Centrifuge from 'centrifuge'
 
+import { createLeafletIcon } from '../components/Avatar'
+
 import './tracking.scss'
 
 const polylineOptions = {
   color: '#3498DB',
   opacity: 0.7
-}
-
-const createIcon = username => {
-  const iconUrl = window.Routing.generate('user_avatar', { username })
-
-  return L.icon({
-    iconUrl: iconUrl,
-    iconSize:    [20, 20], // size of the icon
-    iconAnchor:  [10, 10], // point of the icon which will correspond to marker's location
-    popupAnchor: [-2, -72], // point from which the popup should open relative to the iconAnchor,
-  })
 }
 
 let courierMarker
@@ -63,7 +54,7 @@ if (!isCompleted && centrifugoToken) {
     ]
 
     if (!courierMarker) {
-      courierMarker = L.marker(latLng, { icon: createIcon(message.data.user) })
+      courierMarker = L.marker(latLng, { icon: createLeafletIcon(message.data.user) })
       courierMarker.setOpacity(1)
       courierMarker.addTo(map)
 

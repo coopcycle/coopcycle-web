@@ -373,7 +373,9 @@ Feature: Tasks
         "orgName": "",
         "ref":null,
         "recurrenceRule": null,
-        "metadata": []
+        "metadata": [],
+        "weight":null,
+        "packages": []
       }
       """
 
@@ -616,7 +618,8 @@ Feature: Tasks
           }
         },
         "doneAfter": "2018-12-24T23:30:00+01:00",
-        "doneBefore": "2018-12-24T23:59:59+01:00"
+        "doneBefore": "2018-12-24T23:59:59+01:00",
+        "weight": 800
       }
       """
     Then the response status code should be 201
@@ -662,7 +665,9 @@ Feature: Tasks
         "orgName": "",
         "ref":null,
         "recurrenceRule": null,
-        "metadata": []
+        "metadata": [],
+        "weight": 800,
+        "packages": []
       }
       """
 
@@ -739,7 +744,9 @@ Feature: Tasks
         "orgName": "",
         "ref":null,
         "recurrenceRule": null,
-        "metadata": []
+        "metadata": [],
+        "weight":null,
+        "packages": []
       }
       """
 
@@ -866,7 +873,9 @@ Feature: Tasks
             "metadata":{
               "foo":"bar",
               "baz":"bat"
-            }
+            },
+            "weight":null,
+            "packages": []
           },
           {
             "@id":"/api/tasks/2",
@@ -892,7 +901,9 @@ Feature: Tasks
             "images":[],
             "ref": null,
             "recurrenceRule":null,
-            "metadata":[]
+            "metadata":[],
+            "weight":null,
+            "packages": []
           }
         ],
         "hydra:totalItems":2,
@@ -1574,5 +1585,32 @@ Feature: Tasks
         "hydra:search":{
           "@*@":"@*@"
         }
+      }
+      """
+
+  Scenario: Import tasks with CSV format (async)
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+      | tags.yml            |
+    Given the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "text/csv"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import_async" with body:
+      """
+      type,address.streetAddress,address.telephone,address.name,after,before,tags
+      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
+      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
+      dropoff,"68, rue du Faubourg Saint Denis Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
+      dropoff,"42, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
+      """
+    Then the response status code should be 201
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskImportQueue",
+        "@id":"/api/task_import_queues/1",
+        "@type":"TaskImportQueue"
       }
       """

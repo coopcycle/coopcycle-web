@@ -1,0 +1,19 @@
+{% extends "profile.html.twig" %}
+
+{% block content %}
+  <div id="cubejs"
+    data-api-url="{{ cubejs_api_url }}"
+    data-token="{{ cube_token }}"></div>
+  <form method="post">
+    <button type="submit" class="btn btn-success">{{ 'basics.export'|trans }}</button>
+  </form>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('metrics-loopeat') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('metrics-loopeat') }}
+{% endblock %}
+

@@ -19,6 +19,7 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
 use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
 use Doctrine\ORM\Query\Expr;
@@ -26,6 +27,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Ramsey\Uuid\Uuid;
+use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -34,28 +37,37 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait StoreTrait
 {
-    abstract protected function getStoreList();
-
-    public function storeListAction(Request $request)
+    public function storeListAction(Request $request, PaginatorInterface $paginator)
     {
-        [ $stores, $pages, $page ] = $this->getStoreList();
+        $qb = $this->getDoctrine()
+        ->getRepository(Store::class)
+        ->createQueryBuilder('c');
+        
+        $STORES_PER_PAGE = 20;
+
+        $stores = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            $STORES_PER_PAGE,
+            [                
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'c.name',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
+            ],
+        );
 
         $routes = $request->attributes->get('routes');
 
         return $this->render($request->attributes->get('template'), [
-            'layout' => $request->attributes->get('layout'),
             'stores' => $stores,
-            'pages' => $pages,
-            'page' => $page,
-            'store_route' => $routes['store'],
-            'store_delivery_new_route' => $routes['store_delivery_new'],
-            'store_deliveries_route' => $routes['store_deliveries'],
+            'layout' => $request->attributes->get('layout'), 
+            'store_route' => $routes['store'], 
+            'store_delivery_new_route' => $routes['store_delivery_new'], 
+            'store_deliveries_route' => $routes['store_deliveries'], 
         ]);
     }
 
@@ -226,7 +238,7 @@ trait StoreTrait
         OrderFactory $orderFactory,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator,
-        MessageBusInterface $messageBus)
+        OrderNumberAssignerInterface $orderNumberAssigner)
     {
         $routes = $request->attributes->get('routes');
 
@@ -242,12 +254,16 @@ trait StoreTrait
             'with_dropoff_doorstep' => true,
             'with_remember_address' => true,
             'with_address_props' => true,
+            'with_arbitrary_price' => true,
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $delivery = $form->getData();
+
+            $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
+                $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
 
             if ($store->getCreateOrders()) {
 
@@ -272,16 +288,35 @@ trait StoreTrait
                     $form->addError(new FormError($message));
                 }
 
+            } elseif ($useArbitraryPrice) {
+
+                $variantPrice = $form->get('variantPrice')->getData();
+                $variantName = $form->get('variantName')->getData();
+
+                $order = $this->createOrderForDelivery($orderFactory, $delivery, $variantPrice);
+
+                $variant = $order->getItems()->get(0)->getVariant();
+
+                $variant->setName($variantName);
+                $variant->setCode(Uuid::uuid4()->toString());
+
+                $order->setState(OrderInterface::STATE_ACCEPTED);
+
+                $entityManager->persist($order);
+                $entityManager->flush();
+
+                $orderNumberAssigner->assignNumber($order);
+
+                $entityManager->flush();
+
+                return $this->redirectToRoute($routes['success'], ['id' => $id]);
+
             } else {
 
                 $this->handleRememberAddress($store, $form);
 
                 $entityManager->persist($delivery);
                 $entityManager->flush();
-
-                $messageBus->dispatch(
-                    new DeliveryCreated($delivery)
-                );
 
                 // TODO Add flash message
 

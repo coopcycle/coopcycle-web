@@ -1,0 +1,25 @@
+{% extends 'restaurant/layout.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a></li>
+  <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
+  <li>{{ 'api_apps.breadcrumb'|trans }}</li>
+{% endblock %}
+
+{% block content %}
+  <p class="text-right">
+    <a href="{{ path('admin_restaurant_new_api', { id: restaurant.id }) }}" class="btn btn-success">
+      <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
+    </a>
+  </p>
+  {% include '_partials/api_app/list.html.twig' with {
+    with_stores: false,
+    with_regenerate_secret: false
+  } %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+new ClipboardJS('[data-toggle="copy"]');
+</script>
+{% endblock %}

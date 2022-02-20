@@ -23,7 +23,7 @@
     border-top-color: $speech-bubble-bg-color;
     border-bottom: 0;
     border-left: 0;
-    margin-left: (($speech-bubble-pointer-size / 2) * -1);
+    margin-left: (($speech-bubble-pointer-size * 0.5) * -1);
     margin-bottom: ($speech-bubble-pointer-size * -1);
   }
 }
