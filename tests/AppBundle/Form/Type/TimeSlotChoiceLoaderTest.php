@@ -456,4 +456,30 @@ class TimeSlotChoiceLoaderTest extends TestCase
             $choices[1]
         );
     }
+
+    public function testGetChoicesWithEmptyDays()
+    {
+        $slot = new TimeSlot();
+        $slot->setOpeningHours(['Mo-Sa 09:00-10:30', '12:00-14:00']);
+
+        // Sunday
+        Carbon::setTestNow(Carbon::parse('2021-07-20 11:00:00'));
+
+        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr');
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertCount(2, $choices);
+
+        $this->assertTimeSlotChoice(
+            new \DateTime('2021-07-21 09:00:00'),
+            new \DateTime('2021-07-21 10:30:00'),
+            $choices[0]
+        );
+        $this->assertTimeSlotChoice(
+            new \DateTime('2021-07-22 09:00:00'),
+            new \DateTime('2021-07-22 10:30:00'),
+            $choices[1]
+        );
+    }
 }

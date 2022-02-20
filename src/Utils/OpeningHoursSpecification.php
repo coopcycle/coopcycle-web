@@ -30,31 +30,33 @@ class OpeningHoursSpecification implements \JsonSerializable
     {
         preg_match('/(Mo|Tu|We|Th|Fr|Sa|Su)+(?:[,-](Mo|Tu|We|Th|Fr|Sa|Su)*)*/', $text, $matches);
 
-        $days = $matches[0];
+        $days = count($matches) > 0 ? $matches[0] : '';
 
         $openingHoursSpecification = new self();
 
-        // It is a single day
-        if (false === strpos($days, '-') && false === strpos($days, ',')) {
-            $openingHoursSpecification->dayOfWeek[] = self::$daysOfWeek[$days];
-        } else {
-            foreach (explode(',', $days) as $part) {
-                if (false !== strpos($part, '-')) {
-                    [ $start, $end ] = explode('-', $part);
-                    $append = false;
-                    foreach (self::$daysOfWeek as $short => $long) {
-                        if ($start === $short) {
-                            $append = true;
+        if (strlen($days) > 0) {
+            // It is a single day
+            if (false === strpos($days, '-') && false === strpos($days, ',')) {
+                $openingHoursSpecification->dayOfWeek[] = self::$daysOfWeek[$days];
+            } else {
+                foreach (explode(',', $days) as $part) {
+                    if (false !== strpos($part, '-')) {
+                        [ $start, $end ] = explode('-', $part);
+                        $append = false;
+                        foreach (self::$daysOfWeek as $short => $long) {
+                            if ($start === $short) {
+                                $append = true;
+                            }
+                            if ($append) {
+                                $openingHoursSpecification->dayOfWeek[] = $long;
+                            }
+                            if ($end === $short) {
+                                $append = false;
+                            }
                         }
-                        if ($append) {
-                            $openingHoursSpecification->dayOfWeek[] = $long;
-                        }
-                        if ($end === $short) {
-                            $append = false;
-                        }
+                    } else {
+                        $openingHoursSpecification->dayOfWeek[] = self::$daysOfWeek[$part];
                     }
-                } else {
-                    $openingHoursSpecification->dayOfWeek[] = self::$daysOfWeek[$part];
                 }
             }
         }
