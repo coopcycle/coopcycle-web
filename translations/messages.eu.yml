@@ -863,7 +863,6 @@ form:
       label: 'Jatetxearen izena'
     contact_referent:
       label: 'Jatetxearen kontaktua'
-    b2b:
 refund.list.amount: 'Itzulitako kopurua'
 refund.list.comments: 'Iruzkinak'
 refund.list.refunded_at: 'Itzulita:'
