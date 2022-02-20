@@ -310,6 +310,14 @@ Feature: Tasks
         "tags":@array@
       }
       """
+    # Trying to start twice should do nothing
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/2/start" with body:
+      """
+      {}
+      """
+    Then the response status code should be 200
 
   Scenario: Mark task as done with contact name
     Given the fixtures files are loaded:
