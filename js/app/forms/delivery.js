@@ -180,7 +180,6 @@ function createSwitchTimeSlotWidget(name, taskForm) {
       rad.addEventListener('change', function(e) {
 
         const choices = JSON.parse(e.target.dataset.choices)
-        const timeSlotEl = document.querySelector(`#${name}_${taskForm}_timeSlot`)
 
         timeSlotEl.innerHTML = ''
         choices.forEach(choice => {
