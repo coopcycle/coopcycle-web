@@ -10,6 +10,7 @@ use AppBundle\Validator\Constraints\NotOverlappingOpeningHours as AssertNotOverl
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -218,6 +219,16 @@ class TimeSlot
         $this->sameDayCutoff = $sameDayCutoff;
 
         return $this;
+    }
+
+    /**
+     * @deprecated
+     * @SerializedName("choices")
+     * @Groups({"time_slot"})
+     */
+    public function getChoices()
+    {
+        return [];
     }
 
     public static function create(FulfillmentMethod $fulfillmentMethod, ShippingOptionsInterface $options): TimeSlot
