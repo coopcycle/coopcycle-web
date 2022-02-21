@@ -195,6 +195,20 @@
   .ant-timeline-item-last .ant-timeline-item-content {
     min-height: inherit;
   }
+
+  @media print {
+    background-color: white !important;
+    height: 100%;
+    width: 100%;
+    max-height: 100%;
+    text-transform: uppercase;
+    font-weight: bold;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translate(0, 0);
+  }
 }
 
 .order-number {
