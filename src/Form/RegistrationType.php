@@ -13,18 +13,15 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationType extends AbstractTypeExtension
 {
     private $settingsManager;
-    private $urlGenerator;
     private $isDemo;
 
-    public function __construct(SettingsManager $settingsManager, UrlGeneratorInterface $urlGenerator, bool $isDemo = false)
+    public function __construct(SettingsManager $settingsManager, bool $isDemo = false)
     {
         $this->settingsManager = $settingsManager;
-        $this->urlGenerator = $urlGenerator;
         $this->isDemo = $isDemo;
     }
 
