@@ -302,7 +302,8 @@ class EmbedController extends AbstractController
                             'form' => $paymentForm->createView(),
                             'payment' => $payment,
                             'order' => $order,
-                            'error' => $payment->getLastError()
+                            'error' => $payment->getLastError(),
+                            'submission_hashid' => $request->query->get('data'),
                         ]);
                     }
 
