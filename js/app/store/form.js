@@ -68,3 +68,67 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 if (window.location.hash !== '') {
   $(`a[aria-controls="${window.location.hash.substring(1)}"]`).tab('show')
 }
+
+const timeSlotsEl = document.querySelector('#store_timeSlots')
+const timeSlotEl = document.querySelector('#store_timeSlot')
+
+if (timeSlotsEl && timeSlotEl) {
+
+  const defaultValue = timeSlotEl.value
+
+  timeSlotsEl.querySelectorAll('input[type="checkbox"]').forEach(chk => {
+
+    if (chk.value === defaultValue) {
+      document.querySelector(chk.dataset.defaultControl).checked = true
+    }
+
+    document.querySelector(chk.dataset.defaultControl).addEventListener('change', e => {
+      if (e.target.checked) {
+        timeSlotEl.value = e.target.value
+      }
+    })
+
+    chk.addEventListener('change', (e) => {
+
+      const defaultControl = document.querySelector(e.target.dataset.defaultControl)
+      const checkedCheckboxes = Array.from(timeSlotsEl.querySelectorAll('input[type="checkbox"]:checked'))
+      const checkedRadios = Array.from(timeSlotsEl.querySelectorAll('input[type="radio"]:checked'))
+
+      if (!e.target.checked) {
+
+        if (defaultControl.checked) {
+          if (checkedCheckboxes.length > 0) {
+            const firstChecked = checkedCheckboxes[0]
+            document.querySelector(firstChecked.dataset.defaultControl).checked = true
+          }
+        }
+
+        defaultControl.setAttribute('disabled', true)
+        defaultControl
+          .closest('.radio')
+          .classList.add('disabled')
+        defaultControl.checked = false
+
+      } else {
+
+        defaultControl.removeAttribute('disabled')
+        defaultControl
+          .closest('.radio')
+          .classList.remove('disabled')
+
+        if (checkedRadios.length === 0) {
+          defaultControl.checked = true
+        }
+      }
+
+      const checkedRadio = timeSlotsEl.querySelector('input[type="radio"]:checked')
+      if (checkedRadio) {
+        timeSlotEl.value = checkedRadio.value
+      } else {
+        timeSlotEl.value = ''
+      }
+    })
+  })
+
+  document.querySelector('#store_timeSlot').closest('.form-group').classList.add('d-none')
+}
