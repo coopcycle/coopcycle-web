@@ -711,6 +711,8 @@ form.registration.legal.label: Acepto los Términos y Condiciones y la Política
   Privacidad
 form.registration.legal.help: Al marcar esta casilla, aceptas nuestros <a href="%terms_url%">Términos
   y Condiciones</a> y la <a href="%privacy_url%">Política de Privacidad</a>.
+form.registration.optin.newsletter.label: Estoy de acuerdo en recibir el newsletter de %brand_name%
+form.registration.optin.marketing.label: Estoy de acuerdo en recibir promociones
 form.time_slot.name.label: Nombre
 form.time_slot.interval.label: Intervalo
 form.time_slot_choice.start_time.label: Hora de inicio

@@ -15,8 +15,10 @@
       {{ form_row(form.username) }}
       {{ form_row(form.plainPassword) }}
       {{ form_row(form.legal) }}
-      {{ form_row(form.newsletterOptin) }}
-      {{ form_row(form.marketingOptin) }}
+
+      {% for optin in (form.optins.vars.value|unserialize) %}
+        {{ form_row(form[optin.value]) }}
+      {% endfor %}
 
       {# TODO Add other fields #}
 

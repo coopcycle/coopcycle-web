@@ -4,8 +4,9 @@ namespace AppBundle\EventListener;
 
 use Nucleos\ProfileBundle\NucleosProfileEvents;
 use Nucleos\ProfileBundle\Event\UserFormEvent;
-use AppBundle\Entity\OptinConsent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use AppBundle\Entity\OptinConsent;
+use AppBundle\Enum\Optin;
 
 class RegistrationListener implements EventSubscriberInterface
 {
@@ -46,20 +47,13 @@ class RegistrationListener implements EventSubscriberInterface
             $user->setRoles($roles);
         }
 
-        if ($form->has('newsletterOptin')) {
+        foreach(Optin::values() as $optin) {
+            if ($form->has($optin->getValue())) {
+                $consent = new OptinConsent();
+                $consent->setType($optin->getKey());
 
-            $consent = new OptinConsent();
-            $consent->setType('newsletter');
-
-            $user->addOptinConsent($consent);
-        }
-
-        if ($form->has('marketingOptin')) {
-
-            $consent = new OptinConsent();
-            $consent->setType('marketing');
-
-            $user->addOptinConsent($consent);
+                $user->addOptinConsent($consent);
+            }
         }
     }
 }
