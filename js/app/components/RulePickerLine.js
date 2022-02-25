@@ -148,7 +148,7 @@ class RulePickerLine extends React.Component {
     if (k) {
       props = {
         ...props,
-        step: '.5'
+        step: '.1'
       }
     }
 
@@ -209,10 +209,10 @@ class RulePickerLine extends React.Component {
       return (
         <div className="d-flex justify-content-between">
           <div className="mr-2">
-            <input className="form-control input-sm" value={ (this.state.value[0] / (isK(this.state.type) ? 1000 : 1))  } onChange={this.handleFirstBoundChange} type="number" min="0" required></input>
+            <input className="form-control input-sm" value={ (this.state.value[0] / (isK(this.state.type) ? 1000 : 1))  } onChange={this.handleFirstBoundChange} type="number" min="0" required step="0.1"></input>
           </div>
           <div>
-            <input className="form-control input-sm" value={ (this.state.value[1] / (isK(this.state.type) ? 1000 : 1)) } onChange={this.handleSecondBoundChange} type="number" min="0" required></input>
+            <input className="form-control input-sm" value={ (this.state.value[1] / (isK(this.state.type) ? 1000 : 1)) } onChange={this.handleSecondBoundChange} type="number" min="0" required step="0.1"></input>
           </div>
         </div>
       )
