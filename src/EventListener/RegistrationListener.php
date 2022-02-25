@@ -3,7 +3,7 @@
 namespace AppBundle\EventListener;
 
 use Nucleos\ProfileBundle\NucleosProfileEvents;
-use Nucleos\UserBundle\Event\FormEvent;
+use Nucleos\ProfileBundle\Event\UserFormEvent;
 use AppBundle\Entity\OptinConsent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -21,10 +21,10 @@ class RegistrationListener implements EventSubscriberInterface
         ];
     }
 
-    public function onRegistrationSuccess(FormEvent $event)
+    public function onRegistrationSuccess(UserFormEvent $event)
     {
         $form = $event->getForm();
-        $user = $form->getData();
+        $user = $event->getUser();
 
         if ($form->has('accountType')) {
 
