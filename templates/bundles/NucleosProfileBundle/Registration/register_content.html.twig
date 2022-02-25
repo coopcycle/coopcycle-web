@@ -16,8 +16,8 @@
       {{ form_row(form.plainPassword) }}
       {{ form_row(form.legal) }}
 
-      {% for optin in (form.optins.vars.value|unserialize) %}
-        {{ form_row(form[optin.value]) }}
+      {% for optin in form.optins.vars.value|split(',') %}
+        {{ form_row(form[optin]) }}
       {% endfor %}
 
       {# TODO Add other fields #}

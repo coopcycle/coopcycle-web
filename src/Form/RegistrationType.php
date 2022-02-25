@@ -49,7 +49,7 @@ class RegistrationType extends AbstractTypeExtension
         $builder
         ->add('optins', HiddenType::class, [
             'mapped' => false,
-            'data' => serialize(Optin::values()),
+            'data' => implode(",", Optin::toArray()),
         ]);
 
         // @see https://fr.sendinblue.com/blog/guide-opt-in/
