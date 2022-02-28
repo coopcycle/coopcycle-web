@@ -1462,10 +1462,12 @@ trait RestaurantTrait
         $edenredWithCard = 'EDENRED+CARD';
 
         $qb->andWhere('pm.code = :code');
-        $qb->andWhere('o.state = :state');
+        $qb->andWhere('o.state = :order_state');
+        $qb->andWhere('p.state = :payment_state');
 
         $qb->setParameter('code', $edenredWithCard);
-        $qb->setParameter('state', OrderInterface::STATE_FULFILLED);
+        $qb->setParameter('order_state', OrderInterface::STATE_FULFILLED);
+        $qb->setParameter('payment_state', PaymentInterface::STATE_COMPLETED);
 
         $month = new \DateTime('now');
         if ($request->query->has('month')) {
