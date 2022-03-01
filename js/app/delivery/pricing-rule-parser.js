@@ -146,7 +146,7 @@ const traverseNode = (node, accumulator) => {
         })
       } else if (node.nodes.left.attributes.name === 'time_range_length') {
         accumulator.push({
-          left:     'time_range_length(pickup, \'hours\')',
+          left:     `time_range_length(${node.nodes.left.nodes.arguments.nodes[0].attributes.name}, 'hours')`,
           operator: node.attributes.operator,
           right:    node.nodes.right.attributes.value,
         })

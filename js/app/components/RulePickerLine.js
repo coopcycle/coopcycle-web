@@ -38,6 +38,7 @@ const typeToOperators = {
   'order.itemsTotal': ['==', '<', '>', 'in'],
   'packages.totalVolumeUnits()': ['<', '>', 'in'],
   'time_range_length(pickup, \'hours\')': ['<', '>', 'in'],
+  'time_range_length(dropoff, \'hours\')': ['<', '>', 'in'],
 }
 
 const isK = type => type === 'distance' || type === 'weight'
