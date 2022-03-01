@@ -252,6 +252,8 @@
         "TIME_RANGE_FROM": "from {{start}}",
         "ADMIN_DASHBOARD_CREATE_GROUP": "Create group",
         "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Group name",
-        "RULE_PICKER_LINE_VOLUME_UNITS": "Volume units"
+        "RULE_PICKER_LINE_VOLUME_UNITS": "Volume units",
+        "RULE_PICKER_LINE_PICKUP_TIME_RANGE_LENGTH_HOURS": "Pickup time range length (hours)",
+        "RULE_PICKER_LINE_DROPOFF_TIME_RANGE_LENGTH_HOURS": "Dropoff time range length (hours)"
     }
 }
