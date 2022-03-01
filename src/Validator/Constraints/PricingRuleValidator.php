@@ -25,8 +25,15 @@ class PricingRuleValidator extends ConstraintValidator
         }
 
         $delivery = new Delivery();
-        $delivery->getPickup()->setAfter(new \DateTime('+3 hours'));
-        $delivery->getPickup()->setBefore(new \DateTime('+4 hours'));
+
+        $after = new \DateTime('+3 hours');
+        $before = new \DateTime('+4 hours');
+
+        $delivery->getPickup()->setAfter($after);
+        $delivery->getPickup()->setBefore($before);
+
+        $delivery->getDropoff()->setAfter($after);
+        $delivery->getDropoff()->setBefore($before);
 
         try {
 
