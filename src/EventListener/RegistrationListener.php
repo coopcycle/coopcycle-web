@@ -48,7 +48,7 @@ class RegistrationListener implements EventSubscriberInterface
         }
 
         foreach(Optin::values() as $optin) {
-            if ($form->has($optin->getValue())) {
+            if ($form->has($optin->getValue()) && $form->get($optin->getValue())->getData()) {
                 $consent = new OptinConsent();
                 $consent->setType($optin->getKey());
 
