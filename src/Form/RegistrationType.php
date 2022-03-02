@@ -59,6 +59,7 @@ class RegistrationType extends AbstractTypeExtension
             $builder->add($optin->getValue(), CheckboxType::class, [
                 'label'    => $optin->label(),
                 'label_translation_parameters' => $optin->labelParameters($this->settingsManager),
+                'translation_domain' => 'messages',
                 'required' => $optin->required(),
                 'mapped'   => false,
             ]);
