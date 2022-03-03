@@ -1,6 +1,5 @@
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
-import 'antd/dist/antd.css';
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import {getCubeDateRange} from "../utils";
