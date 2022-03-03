@@ -61,7 +61,6 @@ parameters:
     vytal_enabled: '%env(bool:VYTAL_ENABLED)%'
     en_boite_le_plat_enabled: '%env(bool:EN_BOITE_LE_PLAT_ENABLED)%'
     nonprofits_enabled: '%env(bool:NONPROFITS_ENABLED)%'
-    ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -236,6 +235,8 @@ twig:
         restaurant_caption_cache_annotation: '%restaurant_caption_cache_annotation%'
         edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
         cubejs_api_url: '%env(CUBEJS_API_URL)%'
+        ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
+
     exception_controller: null
 
 # Doctrine Configuration
