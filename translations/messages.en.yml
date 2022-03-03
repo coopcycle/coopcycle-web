@@ -73,6 +73,9 @@ adminDashboard.users.invite: Invite user
 adminDashboard.users.orders_count: Number of orders
 adminDashboard.users.registered_at: Registered
 adminDashboard.users.last_order: Last order
+adminDashboard.users.export.optins.title: Select what you want to export
+adminDashboard.users.export.optins.newsletter: Users who agree to receive the newsletter
+adminDashboard.users.export.optins.marketting: Users who agree to receive promotions
 form.user.quotes_allowed.label: Allow this user to request a quote
 adminDashboard.settings.title: Settings
 adminDashboard.pricing.title: Pricing

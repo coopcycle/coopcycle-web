@@ -1035,6 +1035,9 @@ localBusiness.form.use_different_business_address.label: Utilice una dirección 
 adminDashboard.users.last_order: Último pedido
 adminDashboard.users.registered_at: Registrad@
 adminDashboard.users.orders_count: Numero de pedidos
+adminDashboard.users.export.optins.title: Selecciona lo que deseas exportar
+adminDashboard.users.export.optins.newsletter: Usuarios que están de acuerdo en recibir las últimas novedades
+adminDashboard.users.export.optins.marketting: Usuarios que están de acuerdo en recibir promociones
 adminDashboard.customize.title: Personalizar
 base.footer.RegisterMyRestaurant: Registrar mi restaurante
 base.footer.companyRegister: Conviértete en socio

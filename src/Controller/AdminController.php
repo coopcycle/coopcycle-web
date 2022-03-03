@@ -22,6 +22,7 @@ use AppBundle\Entity\Hub;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\OptinConsent;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\OrganizationConfig;
 use AppBundle\Entity\PackageSet;
@@ -61,6 +62,7 @@ use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
+use AppBundle\Form\UsersExportType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
@@ -158,7 +160,8 @@ class AdminController extends AbstractController
         PromotionCouponRepositoryInterface $promotionCouponRepository,
         FactoryInterface $promotionRuleFactory,
         FactoryInterface $promotionFactory,
-        HttpClientInterface $browserlessClient
+        HttpClientInterface $browserlessClient,
+        bool $optinExportUsersEnabled
     )
     {
         $this->orderRepository = $orderRepository;
@@ -168,6 +171,7 @@ class AdminController extends AbstractController
         $this->promotionRuleFactory = $promotionRuleFactory;
         $this->promotionFactory = $promotionFactory;
         $this->browserlessClient = $browserlessClient;
+        $this->optinExportUsersEnabled = $optinExportUsersEnabled;
     }
 
     /**
@@ -447,10 +451,47 @@ class AdminController extends AbstractController
             $attributes[$key]['last_order'] = $res;
         }
 
-        return $this->render('admin/users.html.twig', array(
+        $parameters = [
             'customers' => $customers,
             'attributes' => $attributes,
-        ));
+            'optin_export_users_enabled' => $this->optinExportUsersEnabled,
+        ];
+
+        if ($this->optinExportUsersEnabled) {
+
+            $usersExportForm = $this->createForm(UsersExportType::class);
+            $usersExportForm->handleRequest($request);
+
+            if ($usersExportForm->isSubmitted() && $usersExportForm->isValid()) {
+                $optinSelected = $usersExportForm->get('optins')->getData();
+
+                $optinsQB = $this->getDoctrine()
+                    ->getRepository(User::class)
+                    ->createQueryBuilder('u')
+                    ->select('u.username, u.email')
+                    ->innerJoin('u.optinConsents', 'oc')
+                    ->where('oc.type = :optin')
+                    ->setParameter('optin', $optinSelected);
+
+                $optinsResult = $optinsQB->getQuery()->getResult();
+
+                $csv = $this->get('serializer')->serialize($optinsResult, 'csv');
+
+                $filename = sprintf('coopcycle-users-for-%s-.csv', $optinSelected);
+
+                $response = new Response($csv);
+                $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                    $filename
+                ));
+
+                return $response;
+            }
+
+            $parameters['users_export_form'] = $usersExportForm->createView();
+        }
+
+        return $this->render('admin/users.html.twig', $parameters);
     }
 
     /**

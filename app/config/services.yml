@@ -184,6 +184,7 @@ services:
     arguments:
       $promotionRuleFactory: '@sylius.factory.promotion_rule'
       $promotionFactory: '@sylius.factory.promotion'
+      $optinExportUsersEnabled: '%env(bool:OPTIN_EXPORT_USERS_ENABLED)%'
 
   AppBundle\EventListener\LocaleListener:
     arguments: ['%env(COOPCYCLE_LOCALE)%']

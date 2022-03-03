@@ -64,4 +64,20 @@ class Optin extends Enum
                 return false;
         };
     }
+
+    /**
+     * Customization of Optin export label
+     */
+    public function exportLabel(): string
+    {
+        switch($this)
+        {
+            case Optin::NEWSLETTER:
+                return 'adminDashboard.users.export.optins.newsletter';
+            case Optin::MARKETING:
+                return 'adminDashboard.users.export.optins.marketting';
+            default:
+                return '';
+        }
+    }
 }
