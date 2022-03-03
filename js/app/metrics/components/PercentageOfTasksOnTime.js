@@ -4,7 +4,6 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import {getCubeDateRange} from "../utils";
 import { useDeepCompareMemo } from 'use-deep-compare';
-// import {formatDayDimension, getBackgroundColor, getLabel} from "../tasksGraphUtils";
 import {
   formatDayDimension,
   getBackgroundColor,
