@@ -23,8 +23,9 @@ class StartHandler
     {
         $task = $command->getTask();
 
-        $this->taskStateMachine->apply($task, 'start');
-
-        $this->eventRecorder->record(new Event\TaskStarted($task));
+        if ($this->taskStateMachine->can($task, 'start')) {
+            $this->taskStateMachine->apply($task, 'start');
+            $this->eventRecorder->record(new Event\TaskStarted($task));
+        }
     }
 }

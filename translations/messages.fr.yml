@@ -634,7 +634,6 @@ form.embed_settings.with_weight.label: Demander le poids de la marchandise
 form.resend_confirmation_email.submit.label: Renvoyer l'email
 form.time_slot.name.label: Nom
 form.time_slot.working_days_only.label: Limiter les choix aux jours ouvrés
-form.time_slot.choices.label: Plages horaires
 form.time_slot_choice.start_time.label: Date de début
 form.time_slot_choice.end_time.label: Date de fin
 form.time_slot.prior_notice_hours.label: Délai de prévenance (heures)
@@ -1211,3 +1210,6 @@ adminDashboard.users.confirmDeleteUser: Voulez-vous vraiment supprimer l'utilisa
 adminDashboard.users.userHasBeenDeleted: L'utilisateur a été supprimé.
 order.cart.donation.disclaimer: Nous vous proposons de consacrer %percentage% des revenus tirés de votre commmande à l'une de nos associations partenaires. Vous ne paierez pas plus cher.
 form.checkout_address.nonprofit.placeholder: Choisissez votre association préférée
+form.delivery.arbitrary_price.label: Definir le prix manuellement
+form.store_type.time_slots.label: Tranches horaires
+form.store_type.time_slots.set_as_default: Définir comme tranche horaire par défaut

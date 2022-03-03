@@ -90,6 +90,8 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\TaskType:
+    arguments:
+      $locale: '%env(COOPCYCLE_LOCALE)%'
     tags: [ form.type ]
 
   AppBundle\Form\RestaurantType:
@@ -155,7 +157,6 @@ services:
   AppBundle\Form\Type\TimeSlotChoiceType:
     arguments:
       $country: '%country_iso%'
-      $locale: '%env(COOPCYCLE_LOCALE)%'
     tags: [ form.type ]
 
   AppBundle\Form\Type\MoneyType:

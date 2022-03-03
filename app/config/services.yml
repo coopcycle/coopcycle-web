@@ -102,6 +102,7 @@ services:
   Sylius\Component\Resource\Repository\RepositoryInterface $taxRateRepository: '@sylius.repository.tax_rate'
   League\Flysystem\Filesystem $taskImagesFilesystem: '@task_images_filesystem'
   Nucleos\ProfileBundle\Mailer\MailerInterface: '@nucleos_profile.mailer.default'
+  Lcobucci\JWT\Configuration $cubeJsJwtConfiguration: '@cubejs.jwt.config'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -1143,3 +1144,26 @@ services:
   AppBundle\Routing\EmbedAwareRouter:
     decorates: router
     arguments: ['@.inner']
+
+  # https://cube.dev/docs/security
+
+  cubejs.jwt.key:
+    class: Lcobucci\JWT\Signer\Key
+    factory: ['Lcobucci\JWT\Signer\Key\InMemory', 'plainText']
+    arguments: ['%env(CUBEJS_API_SECRET)%']
+
+  cubejs.jwt.signer:
+    class: Lcobucci\JWT\Signer\Hmac\Sha256
+
+  cubejs.jwt.config:
+    class: Lcobucci\JWT\Configuration
+    factory: ['Lcobucci\JWT\Configuration', 'forSymmetricSigner']
+    arguments: ['@cubejs.jwt.signer', '@cubejs.jwt.key']
+
+  AppBundle\CubeJs\TokenFactory:
+    arguments:
+      $databaseName: '%database_name%'
+
+  AppBundle\Translation\DatePeriodFormatter:
+    arguments:
+      $locale: '%env(COOPCYCLE_LOCALE)%'

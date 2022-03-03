@@ -118,6 +118,8 @@
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "Display by dropoff desc.",
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Supported file formats: csv, ods, xlsx",
         "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Enabled map clusters",
+        "ADMIN_DASHBOARD_PACKAGES": "Packages",
+        "ADMIN_DASHBOARD_WEIGHT": "Weight",
         "USER_EDIT_ENABLED_LABEL": "Enabled",
         "USER_EDIT_DISABLED_LABEL": "Disabled",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Order created",
@@ -249,6 +251,9 @@
         "ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE": "Change only once",
         "TIME_RANGE_FROM": "from {{start}}",
         "ADMIN_DASHBOARD_CREATE_GROUP": "Create group",
-        "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Group name"
+        "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Group name",
+        "RULE_PICKER_LINE_VOLUME_UNITS": "Volume units",
+        "RULE_PICKER_LINE_PICKUP_TIME_RANGE_LENGTH_HOURS": "Pickup time range length (hours)",
+        "RULE_PICKER_LINE_DROPOFF_TIME_RANGE_LENGTH_HOURS": "Dropoff time range length (hours)"
     }
 }

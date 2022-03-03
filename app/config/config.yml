@@ -192,6 +192,8 @@ framework:
             osrm.client:
                 base_uri: "http://%osrm_host%"
                 timeout: 1.0
+            cubejs.client:
+                base_uri: "%env(CUBEJS_API_URL)%/"
 
 # Twig Configuration
 twig:
@@ -374,7 +376,6 @@ lexik_jwt_authentication:
             name:    token
 
 gesdinet_jwt_refresh_token:
-    user_provider: nucleos_user.user_provider.username_email
     ttl_update: true
 
 snc_redis:
@@ -895,30 +896,26 @@ oneup_uploader:
                 image/svg+xml: ['svg']
                 image/svg: ['svg']
 
-trikoder_oauth2:
+league_oauth2_server:
     authorization_server:
         private_key: "%jwt_private_key_path%"
         private_key_passphrase: "%env(COOPCYCLE_PRIVATE_KEY_PASSPHRASE)%"
         encryption_key: "%env(COOPCYCLE_OAUTH_ENCRYPTION_KEY)%"
         access_token_ttl: PT1H
         refresh_token_ttl: P1M
-        grant_types:
-            client_credentials:
-                enable: true
-            password:
-                enable: false
-            refresh_token:
-                enable: false
-            authorization_code:
-                enable: false
-            implicit:
-                enable: false
+        enable_client_credentials_grant: true
+        enable_password_grant: false
+        enable_refresh_token_grant: false
+        enable_auth_code_grant: false
     resource_server:
         public_key: "%jwt_public_key_path%"
     scopes:
-        - tasks
-        - deliveries
-        - orders
+        available:
+            - tasks
+            - deliveries
+            - orders
+        default:
+            - deliveries
     persistence:
         doctrine:
             entity_manager: default

@@ -36,6 +36,9 @@ const typeToOperators = {
   'dropoff.doorstep': ['=='],
   'packages': ['containsAtLeastOne'],
   'order.itemsTotal': ['==', '<', '>', 'in'],
+  'packages.totalVolumeUnits()': ['<', '>', 'in'],
+  'time_range_length(pickup, \'hours\')': ['<', '>', 'in'],
+  'time_range_length(dropoff, \'hours\')': ['<', '>', 'in'],
 }
 
 const isK = type => type === 'distance' || type === 'weight'
@@ -147,7 +150,7 @@ class RulePickerLine extends React.Component {
     if (k) {
       props = {
         ...props,
-        step: '.5'
+        step: '.1'
       }
     }
 
@@ -208,10 +211,10 @@ class RulePickerLine extends React.Component {
       return (
         <div className="d-flex justify-content-between">
           <div className="mr-2">
-            <input className="form-control input-sm" value={ (this.state.value[0] / (isK(this.state.type) ? 1000 : 1))  } onChange={this.handleFirstBoundChange} type="number" min="0" required></input>
+            <input className="form-control input-sm" value={ (this.state.value[0] / (isK(this.state.type) ? 1000 : 1))  } onChange={this.handleFirstBoundChange} type="number" min="0" required step="0.1"></input>
           </div>
           <div>
-            <input className="form-control input-sm" value={ (this.state.value[1] / (isK(this.state.type) ? 1000 : 1)) } onChange={this.handleSecondBoundChange} type="number" min="0" required></input>
+            <input className="form-control input-sm" value={ (this.state.value[1] / (isK(this.state.type) ? 1000 : 1)) } onChange={this.handleSecondBoundChange} type="number" min="0" required step="0.1"></input>
           </div>
         </div>
       )
@@ -247,6 +250,9 @@ class RulePickerLine extends React.Component {
               <option value="diff_days(pickup)">{ this.props.t('RULE_PICKER_LINE_PICKUP_DIFF_DAYS') }</option>
               <option value="dropoff.doorstep">{ this.props.t('RULE_PICKER_LINE_DROPOFF_DOORSTEP') }</option>
               <option value="packages">{ this.props.t('RULE_PICKER_LINE_PACKAGES') }</option>
+              <option value="packages.totalVolumeUnits()">{ this.props.t('RULE_PICKER_LINE_VOLUME_UNITS') }</option>
+              <option value="time_range_length(pickup, 'hours')">{ this.props.t('RULE_PICKER_LINE_PICKUP_TIME_RANGE_LENGTH_HOURS') }</option>
+              <option value="time_range_length(dropoff, 'hours')">{ this.props.t('RULE_PICKER_LINE_DROPOFF_TIME_RANGE_LENGTH_HOURS') }</option>
             </optgroup>
             <optgroup label={ this.props.t('RULE_PICKER_LINE_OPTGROUP_ORDER') }>
               <option value="order.itemsTotal">{ this.props.t('RULE_PICKER_LINE_ORDER_ITEMS_TOTAL') }</option>

@@ -32,7 +32,7 @@ adminDashboard.deliveries.address: 'Helbidea'
 adminDashboard.deliveries.delivery: 'Entrega'
 adminDashboard.deliveries.originAddress: 'Jatorrizko helbidea'
 adminDashboard.deliveries.deliveryAddress: 'Banaketa helbidea'
-adminDashboard.embed.title: 'Kanpoko pantaila'
+adminDashboard.embed.title: 'Formularioak'
 adminDashboard.package_sets.title: 'Paketeak'
 adminDashboard.customize.title: 'Pertsonalizatu'
 embed.delivery.title: 'Banaketa sortze formularioa'
@@ -287,7 +287,7 @@ order.total_including_tax: 'Guztira (BEZa barne)'
 order.items_total: 'Produktuak guztira'
 order.total_tax: 'BEZa'
 order.total_tax_by_rate: '%name% guztira'
-order.preparation_expected_at: 'Prestaketa %date%(e)tan espero da'
+order.preparation_expected_at: 'Prestaketa %date%(e)tan hasiko da'
 order.shipping_date.title: 'Zure banatze-data'
 order.payer.title: 'Eroslearen informazioa'
 order.payer.email: 'E-posta'
@@ -630,7 +630,6 @@ form.embed_settings.with_vehicle.label: 'Gehitu garraioa hautatzeko aukera'
 form.time_slot.name.label: 'Izena'
 form.time_slot.interval.label: 'Tartea'
 form.time_slot.working_days_only.label: 'Baimendu lanegunak soilik hautatzea'
-form.time_slot.choices.label: 'Aukerak'
 form.time_slot_choice.start_time.label: 'Hasiera-denbora'
 form.time_slot_choice.end_time.label: 'Bukaera-denbora'
 form.package_set.name.label: 'Izena'
@@ -865,6 +864,7 @@ form:
     contact_referent:
       label: 'Jatetxearen kontaktua'
     b2b:
+      label: Eskaintza bereziak proposatu nahi dizkiezu enpresei?
 refund.list.amount: 'Itzulitako kopurua'
 refund.list.comments: 'Iruzkinak'
 refund.list.refunded_at: 'Itzulita:'
@@ -1067,3 +1067,175 @@ form.credit_note.user_search.help: Beherapen hau erabiltzaile honek soilik erabi
   ahal izango du
 form.menu_editor.name.help: Hau zure menu ezberdinak identifikatzeko da. Ez zaio bezeroari
   erakusten.
+restaurant_promotion.offer_delivery: Banaketa-prezioa eskaini
+store.WHOLESALE_STORE: Handizkako biltegia
+restaurant.embed.disclaimer: Eskaera zure webgunean erantsi dezakezu zuzenean. Jarraitu
+  azpiko argibideak hasteko.
+form.fulfillment_method.pre_ordering_allowed.help: Kaxa hau desmarkatzen baduzu, bezeroak
+  egun bereko eskaerak soilik egin ahalko dituzte.
+ordering_delay.disclaimer: Eskaera asko jasotzen ari gara, banaketa-denborak luzetzen
+  ari dira!
+ordering_delay.admin_reminder: Eskaera atzerapen globala konfiguratu duzu
+notifications.delivery_created: '%date% datan batzeko banaketa bat sortu da'
+store.PAWN_SHOP: Bahitetxea
+order.adjustment_type.reusable_packaging.loopeat.help: Kuota honek garbitze, jatetxearen
+  itzulera eta berreabili daitezkeen telazko poltsen erosketa babesten du
+order.preparation_expected_for: Prestaketa %date%(e)tan espero da
+form.local_business.stripe_account.link_ok: "Jatetxe hau Stripe kontu batera lotu\
+  \ da eta plataformaren ordainketak jaso ditzake.<br>\nZure Stripe kontua eta transferentziak\
+  \ kudeatzeko, mesedez erabili <a href=\"https://dashboard.stripe.com/\" target=\"\
+  _blank\">Stripe panela</a>.\n"
+store.JEWELRY_STORE: Bitxi-denda
+store.HOBBY_SHOP: Hobby denda
+store.HOME_GOODS_STORE: Etxeko gauzen denda
+form.local_business_type.food_establishment: Janari-denda
+form.time_slot.same_day_cutoff.label: Eguneko muga-ordua
+form.time_slot.same_day_cutoff.help: Adibidez 11:00 hautatzen baduzu, egun berdineko
+  aukerak ez dira 11:00 ondoren erakutsiko
+refund.list.liable_party: Alderdi erantzulea
+loopeat.oauth_connect.success: LoopEat kontua ondo konektatu da!
+store.MENS_CLOTHING_STORE: Gizonen arropa-denda
+store.OFFICE_EQUIPMENT_STORE: Bulego-tresna denda
+store.TIRE_SHOP: Neumatiko-denda
+confirm.deposit_refund_enabled: Ordaintze-itzultze sistema gaituta dago, <a href="%url%">ontziak
+  konfiguratu</a> ditzakezu.
+info.deposit_refund: Azpiko zerrendako sarrera bakoitzak ontzi mota bat adierazten
+  du (txikia, handia…). Ontziak sortu direnean, produktu bakoitzerako konfiguratu
+  ditzakezu.
+order.reusable_packaging.pledge_return.disclaimer: Bezeroak %count% pakete bueltatuko
+  direla adierazi du
+form.checkout_address.telephone.help: Zurekin harremanetan jartzeko arazorik badagoen
+form.delivery_embed.vehicle.disclaimer: Karga-bizikleta bidez 50x40x20cm edota 6kg-ko
+  elementuak banatzen ditugu.
+form.receipt.billing_address.help: Fakturaziorako beste helbide bat erabili nahi baduzu,
+  sar ezazu hemen
+homepage.form.title: Zerbait banatzea behar duzu?
+refund.list.debit_total: Plataformak enpresari zor dion kopuru totala
+loopeat.oauth_redirect.warning: LoopEat webgunera birbidaliko zaitugu saioa hasteko
+  edo kontu berri bat sortzeko
+authentication.register_benefits: Erregistratu eskaera arinagoak egiteko. Aurreko
+  eskaeren historia ere ikusi ahal izango duzu.
+restaurant.embed.greeting: Hori da guztia! Orain bisitariek botoian klik egiterakoan,
+  zuzenean zure webgunean leiho bat irekitzen du.
+order.number: Zure eskaerak <strong><span class="text-monospace">%number%</span></strong>
+  zenbakia du
+hub.disclaimer: Erosi hainbat dendetatik, eta dena banaketa bakarrean emango dizugu!
+form.local_business.stripe_account.help: Konektatu Stripe kontu bat beste banku-kontu
+  batetik dirua transferitzeko
+form.settings.autocomplete_provider.label: Iradokizun-hornitzailea
+restaurants.edenred_transactions.disclaimer: Orri honek Edenred-en bidez ordaindutako
+  eskaera guztiak zerrendatzen ditu, partzialki edo osorik. Eskaera honentzat, diru
+  guztia jatetxeak batu du. Beraz, jatetxe bakoitzari faktura bat bidali behar diozu,
+  ordaindu beharreko komisioak eskatzeko.
+form.payment.refund_breakdown: Txartel bidez itzuli daitekeen kopurua %card%, Edenred-ek
+  itzuli dezakeen kopurua %edenred%
+form.settings.geocoding_provider.help: APIak erabiltzen du kalkulu-orriak inportatzerakoan
+promotion_rule.is_items_total_above: Elementuen totala %amount% gainetik dago
+form.store_type.multi_drop_enabled.label: Gaitu hainbat banaketa-puntu
+api_apps.regenerate_secret: Berritu gako sekretua
+restaurant.form.cash_on_delivery_enabled.label: Gaitu eskudirua banaketan
+restaurant.form.cash_on_delivery_enabled.help: Honek bezeroak banatzaileari eskudiruarekin
+  ordaintzea ahalbidetzen du. Kontuz erabili.
+form.settings.mercadopago_enable_livemode.help: « live » modua gaitzeko, « live »
+  gakoak konfiguratu behar dituzu lehenago.
+form.settings.mercadopago.redirect_uri.help: 'Aplikazioa konfiguratzerakoan, erabili
+  hurrengo berbideratze URIa: <code>%redirect_uri%</code>'
+form.credit_note.restaurant.help: Beherapena jatetxe honetan soilik erabili ahal izango
+  da. Utzi ezazu hutsik jatetxe guztietara aplikatzeko.
+time_slot.human_readable: '%day% %start% eta %end% artean'
+store.HARDWARE_STORE: Burdindegia
+store.LIQUOR_STORE: Likore-denda
+restaurant.contract.calculation_info: Jatetxeari bezeroak ordaindutako kopuru desberdina
+  kobratu diezaiokezu. <br> Adibidez, banaketa eskaini diezaiokezu bezeroari jatetxeari
+  prezio finko bat kobratzen diozun bitartean. <br> Prezio dinamikoa ere konfiguratu
+  dezakezu (adib. distantziaren arabera).
+restaurant.product_options.help: "Atal honetan zure <strong>produktu</strong>entzako\
+  \ elementu gehigarriak konfiguratu ditzakezu.\n<br>\nOsagarriak gehitu edo menuaren\
+  \ elementuak (osagarriak, edaria...) hautatzeko aukera ematen dute adibidez. \n\
+  <br>\nAukera bakoitzerako, balio zerrenda bat definitu dezakezu\n"
+form.order.refuse.refund.alert: Eskaera hau aurre-baimenak kudeatzen ez dituen ordainketa
+  metodo batekin ordaindu da. Ukatzen baduzu, dirua itzuliko da . Ziur zaude?
+form.settings.stripe_testmode.help: '« test » moduan, <a href="https://stripe.com/docs/testing">proba
+  kreditu-txartel zenbakiak</a> erabili beharko dituzu plataforman ordaintzeko. <strong>Ez
+  da dirurik trukatuko.</strong> '
+restaurant.suggest.message: "Lagun iezaiguzu %restaurant.name% jatetxeak %brand_name%-(r)ekin\
+  \ lan egin dezan!\n<br>\nPlataforman ikusteko, zu eta zure ahotsa behar dugu marka\
+  \ honekin kolaboratzeko eskaera laguntzeko.\n"
+form.registration.legal.help: Kaxa hau markatzean, gure <a href="%terms_url%">Terminoak
+  eta baldintzak</a> eta <a href="%privacy_url%">Pribatutasun-politika</a> onartzen
+  dituzu.
+form.preparation_time.defaults_warning: "Jatetxe honek ez du prestaketa-denbora pertsonalizatu\
+  \ bat prest. Arau lehenetsiak kopiatu dira azpian, aldatu ditzakezu.\n"
+form.local_business.stripe_account.need_stripe_account: "Ez duzu oraindik jatetxe\
+  \ honetarako Stripe kontua sortu. Stripe txartel-ordainketak eta zure banku kontuko\
+  \ transferentziak modu seguruan kudeatzen ahalbidetzen digun ordainketa plataforma\
+  \ segurua da.<br>\nJatetxe honetarako Stripe kontu bat sortzeko <a href=\"%stripeAuthorizeURL%\"\
+  >egin klik hemen</a>.\n"
+form.settings.mercadopago_testmode.help: '« test » moduan, <a href="https://www.mercadopago.com.ar/developers/en/guides/online-payments/checkout-api/testing#bookmark_how_to_test_your_integration">proba
+  kreditu-txartel zenbakiak</a> erabili beharko dituzu plataforman ordantzeko. <strong>Ez
+  da dirurik trukatuko.</strong> '
+form.product.confirm.help: "Produktuaren izena aldatu duzu. <strong>Aldaketa txiki</strong>\
+  \ bat bada (txarto idatzia, maiuskulaz…), egin klik « Berretsi aldaketak » botoian.\n\
+  <br>\nHala ez bada, <a href=\"%link%\">sortu produktu berria</a>, saltzen dituzun\
+  \ produktuak desberdintzeko eta historia mantentzeko. "
+form.checkout_address.takeaway.disclaimer: Klik eta batu aukeratu duzu. Eskaera hautatutako
+  egun eta orduan batzeko arduraduna zara.
+form.deposit_refund_settings.deposit_refund_optin.help: Ordaintze-bueltatze sistema
+  aukerazkoa denean, paketeak nahi badituen aukeratu ahalko du. Beharrezkoa denean,
+  paketeak eskaeraren guztira gehituko dira automatikoki.
+embed.delivery.summary: "Banaketa bat eskatu duzu <strong>%dropoff_date%</strong>\
+  \ datan hurrengo helbidera: <strong>%dropoff_address%</strong> <br><strong>%distance%\
+  \ kilometroko distantzia kalkulatu dugu</strong>. <br> Banaketa prezioa <strong>%total_excluding_tax%\
+  \ (BEZik gabe); </strong> %total_including_tax% (BEZa barne) da. <br><br>Goiko datuak\
+  \ okerrak badira, mesedez, aldatu itzazu 'Editatu' botoian klik eginez. "
+task.receipt.message: Zure paketea <strong>%address%</strong> helbidera <strong>%date%</strong>
+  datan banatu dugula berresten dugu
+form.local_business_type.help: Motak <a href="https://schema.org/">schema.org</a>
+  hiztegia erabilzen ari dira <a href="https://schema.org/FoodEstablishment">jatetxe</a>
+  eta <a href="https://schema.org/Store">dendentzat</a>
+form.offer_delivery.coupon_code.help: Zure ardura da bezeroari kode hau ematea, pertsonalki
+  edo sare sozialak erabiliz
+refund.list.disclaimer.admin: Plataforma istilu baten arduraduna bada, plataformak
+  bueltatuko den diruaren kopurua zor dio merkatariari, merkatariak bezeroari dirua
+  bueltatu diolako.
+guest_checkout.user_with_same_email_exists: Helbide elektroniko berdina duen kontu
+  bat dago jada. Mesedez, hasi saioa aurrera jarraitzeko, edo erabili beste e-posta
+  bat eskaera egiteko kontua sortu gabe.
+homepage.zerowaste: Ezagutu gure hondakinik gabeko jatetxeak!
+form.payment.edenred_disclaimer: Eskaera hau Edenred-ekin ordaindu da kreditu-txartel
+  batekin. Itzulpena kreditu-txartelak ordaindutako kopuruaren prioritatearen arabera
+  egingo da, eta beharrezkoa bada Edenred kopuruarena.
+form.settings.mercadopago.app_id.help: <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">Aplikazio
+  bat sortu</a> behar duzu zure aplikazio IDa lortzeko.
+embed.delivery.confirm_message: Zure banaketa eskaera sortu da eta laster e-posta
+  bat jasoko duzu laburpenarekin. Zure eskaera egiaztatu eta berrespen e-posta bat
+  bidaliko dugu lehenbailehen.
+checkout.suggestions.continue_shopping_hub: <strong>%name%</strong>-(r)en beste dendetan
+  erosten jarraitu dezakezu
+profile.dashboard_suggest: Zure eskaerak eta banaketak kudeatu behar dituzu? <a href="%link%">Ikusi
+  zure panel berria</a> ✨
+form.product.alcohol.help: Markatu kaxa hau produktua edari alkoholiko bat bada soilik,
+  ardo-botila bat bezala.
+form.store_type.multi_drop_enabled.help: Baimendu erabiltzaileek banaketa-puntu gehigarriak
+  gehitu ditzaten eskatzerakoan
+form.menu_editor.help: "Erabili azpiko editorea menuko elementuak osatzeko\n<br>\n\
+  Arrastatu eta jaregin produktuak ezkerreko ataletara\n<br>\nMenutik produktu bat\
+  \ ezabatu nahi baduzu, jaregin « Produktuak » eskuineko atalean\n<br>\nEz ahaztu\
+  \ « Gorde aldaketak » azpiko botoian klik egiten\n"
+order.refund.total_amount: 'Eskaera honen diru kopuru hau bueltatu da: %amount%'
+vytal.code.disclaimer: Ireki Vytal aplikazioa, sortu banaketa-token bat, eta sartu
+  ezazu azpian. <a href="https://www.vytal.org/bestellen" target="_blank">Informazio
+  gehiago</a>
+api_apps.regenerate_secret_warning: Aurreko sekretuarekin API amaiera-puntu hau erabiltzen
+  ari diren aplikazio guztiak funtzionatzeari utziko die.
+restaurant_promotion.offer_delivery.help: Honek banaketa-kuotak <strong>zure diruarekin</strong>
+  eskaintzeko aukera ematen dizu. Zure marjina banaketa-kuotaren kopuruaren arabera
+  gutxituko da. Honek <strong>ez ditu</strong> plataformak jasotako kuotak gutxitzen.
+homepage.form.content: <strong>%brand_name%</strong> bizikleta bidezko banaketa lokal
+  eta kutsadurarik gabeko zerbitzuekin lan egiten dago. Bidali pakete bakarra, edo
+  egin bidalketa periodikoak zure enpresarentzat.
+order.hub.sub_total.disclaimer: Eskaera hau hainbat merkatariekin sortu da. "%column%"
+  zutabeak zure produktuen kopurua adierazten du (%amount%).
+restaurant_promotion.items_total.help: Honek kopuru baten gainetik beherapen bat eskaintzen
+  ahalbidetzen dizu. Zure marjina beherapenaren arabera gutxituko da. Honek <strong>ez
+  ditu</strong> plataformaren kuotak gutxituko.

@@ -7,7 +7,7 @@ export default ({ packages, defaultValue, onChange }) => {
   const { t } = useTranslation()
 
   const [ unitPrice, setUnitPrice ] = useState(defaultValue.unitPrice || 0)
-  const [ packageName, setPackageName ] = useState(defaultValue.packageName || 0)
+  const [ packageName, setPackageName ] = useState(defaultValue.packageName || packages[0])
   const [ offset, setOffset ] = useState(defaultValue.offset || 0)
   const [ discountPrice, setDiscountPrice ] = useState(defaultValue.discountPrice || 0)
   const [ withDiscount, setWithDiscount ] = useState(defaultValue.offset > 0)

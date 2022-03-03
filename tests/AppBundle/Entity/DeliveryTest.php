@@ -338,4 +338,24 @@ class DeliveryTest extends TestCase
             }
         }
     }
+
+    public function testWithTasks()
+    {
+        $delivery = new Delivery();
+
+        $pickup = new Task();
+        // Even if the first task is not a pickup,
+        // it will be considered as a pickup
+        // $pickup->setType(Task::TYPE_PICKUP);
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+
+        $delivery = $delivery->withTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
+
+        $this->assertNotNull($delivery->getPickup());
+    }
 }

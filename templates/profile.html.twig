@@ -60,6 +60,15 @@
           </a>
         </li>
         {% endif %}
+        {% if loopeat_enabled and is_granted('ROLE_LOOPEAT') %}
+        <li
+          class="{{ app.request.attributes.get('_route') == 'profile_loopeat' ? 'active' : '' }}">
+          <a href="{{ path('profile_loopeat') }}">
+            <i class="fa fa-bar-chart mr-1"></i>
+            <span>{{ 'restaurant.form.section.loopeat'|trans }}</span>
+          </a>
+        </li>
+        {% endif %}
       </ul>
     </div>
     {% endif %}

@@ -13,8 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Token\OAuth2Token;
-use Trikoder\Bundle\OAuth2Bundle\Manager\AccessTokenManagerInterface;
+use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
+use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 
 /**
  * @see https://github.com/api-platform/api-platform/issues/529

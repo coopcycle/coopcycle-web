@@ -189,7 +189,8 @@ html, body {
   }
 }
 
-.list-group-item {
+:not(.task-package).list-group-item {
+
   font-size: 12px;
   position: relative;
   cursor: pointer;
@@ -218,6 +219,18 @@ html, body {
     position: absolute;
     left: 0;
     top: 0;
+  }
+}
+
+.task-package {
+  padding: 8px;
+
+  &--total {
+    background-color: darken(#f5f5f5, 10%) !important;
+  }
+
+  &:hover {
+    background-color: darken(#f5f5f5, 5%);
   }
 }
 

@@ -85,4 +85,17 @@ class OpeningHoursSpecificationTest extends TestCase
         $this->assertEquals('12:30', $openingHoursSpecification->opens);
         $this->assertEquals('19:00', $openingHoursSpecification->closes);
     }
+
+    public function testFromOpeningHoursWithEmptyDays()
+    {
+        $openingHours = ['16:00-18:00'];
+
+        $openingHoursSpecification = OpeningHoursSpecification::fromOpeningHours($openingHours);
+
+        $this->assertCount(1, $openingHoursSpecification);
+
+        $this->assertEquals([], $openingHoursSpecification[0]->dayOfWeek);
+        $this->assertEquals('16:00', $openingHoursSpecification[0]->opens);
+        $this->assertEquals('18:00', $openingHoursSpecification[0]->closes);
+    }
 }

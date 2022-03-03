@@ -51,9 +51,22 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
             return $before->floatDiffInHours($now);
         };
 
+        $timeRangeLengthCompiler = function ($task, $unit) {
+            // FIXME Need to test compilation
+        };
+
+        $timeRangeLengthEvaluator = function ($arguments, $task, $unit) {
+
+            $after = Carbon::instance($task->after);
+            $before = Carbon::instance($task->before);
+
+            return $before->floatDiffInHours($after);
+        };
+
         return array(
             new ExpressionFunction('diff_days', $daysCompiler, $daysEvaluator),
             new ExpressionFunction('diff_hours', $hoursCompiler, $hoursEvaluator),
+            new ExpressionFunction('time_range_length', $timeRangeLengthCompiler, $timeRangeLengthEvaluator),
         );
     }
 }

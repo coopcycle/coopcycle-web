@@ -7,7 +7,6 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\ClosingRule;
-use AppBundle\Entity\Order;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
@@ -49,10 +48,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
 use libphonenumber\PhoneNumberUtil;
 use Fidry\AliceDataFixtures\LoaderInterface;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuthClient;
-use Trikoder\Bundle\OAuth2Bundle\Model\Grant;
-use Trikoder\Bundle\OAuth2Bundle\Model\Scope;
-use Trikoder\Bundle\OAuth2Bundle\OAuth2Grants;
+use League\Bundle\OAuth2ServerBundle\Model\Client as OAuthClient;
+use League\Bundle\OAuth2ServerBundle\Model\Grant;
+use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
@@ -572,7 +571,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->apiKeys[$storeName]);
-        $this->restContext->iSendARequestTo($method, $url, $body);
+        $this->restContext->iSendARequestTo($method, $url);
     }
 
     /**
@@ -586,38 +585,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->apiKeys[$storeName]);
         $this->restContext->iSendARequestTo($method, $url, $body);
-    }
-
-    /**
-     * @Given the last delivery from user :username has status :status
-     */
-    public function theLastDeliveryFromUserHasStatus($username, $status)
-    {
-        $user = $this->userManager->findUserByUsername($username);
-
-        $order = $this->doctrine->getRepository(Order::class)
-            ->findOneBy(['customer' => $user], ['createdAt' => 'DESC']);
-
-        $order->getDelivery()->setStatus($status);
-
-        $this->doctrine->getManagerForClass(Delivery::class)->flush();
-    }
-
-    /**
-     * @Given the last delivery from user :customer is dispatched to courier :courier
-     */
-    public function theLastDeliveryFromUserIsDispatchedToCourier($customerUsername, $courierUsername)
-    {
-        $customer = $this->userManager->findUserByUsername($customerUsername);
-        $courier = $this->userManager->findUserByUsername($courierUsername);
-
-        $order = $this->doctrine->getRepository(Order::class)
-            ->findOneBy(['customer' => $customer], ['createdAt' => 'DESC']);
-
-        $order->getDelivery()->setCourier($courier);
-        $order->getDelivery()->setStatus(Delivery::STATUS_DISPATCHED);
-
-        $this->doctrine->getManagerForClass(Delivery::class)->flush();
     }
 
     /**
@@ -841,7 +808,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $identifier = hash('md5', random_bytes(16));
         $secret = hash('sha512', random_bytes(32));
 
-        $client = new OAuthClient($identifier, $secret);
+        $client = new OAuthClient($storeName, $identifier, $secret);
         $client->setActive(true);
 
         $clientCredentials = new Grant(OAuth2Grants::CLIENT_CREDENTIALS);
@@ -870,7 +837,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $identifier = hash('md5', random_bytes(16));
         $secret = hash('sha512', random_bytes(32));
 
-        $client = new OAuthClient($identifier, $secret);
+        $client = new OAuthClient($restaurantName, $identifier, $secret);
         $client->setActive(true);
 
         $clientCredentials = new Grant(OAuth2Grants::CLIENT_CREDENTIALS);

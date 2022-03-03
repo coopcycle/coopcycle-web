@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Form\OrderExportType;
@@ -41,7 +42,8 @@ trait OrderTrait
         EntityManagerInterface $entityManager,
         RepositoryInterface $taxRateRepository,
         PaginatorInterface $paginator,
-        TaxesHelper $taxesHelper)
+        TaxesHelper $taxesHelper,
+        CubeJsTokenFactory $tokenFactory)
     {
         $response = new Response();
 
@@ -110,23 +112,8 @@ trait OrderTrait
                 return $response;
             }
 
-            // https://cube.dev/docs/security
-            $key = \Lcobucci\JWT\Signer\Key\InMemory::plainText($_SERVER['CUBEJS_API_SECRET']);
-            $config = \Lcobucci\JWT\Configuration::forSymmetricSigner(
-                new \Lcobucci\JWT\Signer\Hmac\Sha256(),
-                $key
-            );
-
-            // https://github.com/lcobucci/jwt/issues/229
-            $now = new \DateTimeImmutable('@' . time());
-
-            $token = $config->builder()
-                    ->expiresAt($now->modify('+1 hour'))
-                    ->withClaim('database', $this->getParameter('database_name'))
-                    ->getToken($config->signer(), $config->signingKey());
-
             $parameters['order_export_form'] = $orderExportForm->createView();
-            $parameters['cube_token'] = $token->toString();
+            $parameters['cube_token'] = $tokenFactory->createToken();
         }
 
         return $this->render($request->attributes->get('template'), $parameters, $response);

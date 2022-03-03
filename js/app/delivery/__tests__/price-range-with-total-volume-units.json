@@ -1,0 +1,71 @@
+{
+  "nodes":{
+    "nodes":{
+      "arguments":{
+        "nodes":[
+          {
+            "nodes":{
+              "node":{
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "name":"packages"
+                }
+              },
+              "attribute":{
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":"totalVolumeUnits"
+                }
+              },
+              "arguments":{
+                "nodes":[
+
+                ],
+                "attributes":[
+
+                ]
+              }
+            },
+            "attributes":{
+              "type":2
+            }
+          },
+          {
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":100
+            }
+          },
+          {
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":1
+            }
+          },
+          {
+            "nodes":[
+
+            ],
+            "attributes":{
+              "value":0
+            }
+          }
+        ],
+        "attributes":[
+
+        ]
+      }
+    },
+    "attributes":{
+      "name":"price_range"
+    }
+  }
+}

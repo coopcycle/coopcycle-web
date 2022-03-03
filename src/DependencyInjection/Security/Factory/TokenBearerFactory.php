@@ -3,13 +3,13 @@
 namespace AppBundle\DependencyInjection\Security\Factory;
 
 use AppBundle\Security\BearerTokenAuthenticator;
+use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AuthenticatorFactoryInterface;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityFactoryInterface;
-use Trikoder\Bundle\OAuth2Bundle\Security\Authentication\Provider\OAuth2Provider;
 
 class TokenBearerFactory implements SecurityFactoryInterface, AuthenticatorFactoryInterface
 {
@@ -35,11 +35,10 @@ class TokenBearerFactory implements SecurityFactoryInterface, AuthenticatorFacto
     public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string
     {
         // OAuth
-        $oauth2ProviderId = 'security.authenticator.bearer_token.provider.oauth2.'.$firewallName;
+        $oauth2AuthenticatorId = 'security.authenticator.bearer_token.oauth2.'.$firewallName;
         $container
-            ->setDefinition($oauth2ProviderId, new ChildDefinition(OAuth2Provider::class))
+            ->setDefinition($oauth2AuthenticatorId, new ChildDefinition(OAuth2Authenticator::class))
             ->replaceArgument('$userProvider', new Reference($userProviderId))
-            ->replaceArgument('$providerKey', $firewallName)
         ;
 
         // JWT
@@ -53,7 +52,7 @@ class TokenBearerFactory implements SecurityFactoryInterface, AuthenticatorFacto
         $container
             ->setDefinition($authenticatorId, new ChildDefinition(BearerTokenAuthenticator::class))
             ->replaceArgument('$jwtAuthenticator', new Reference($jwtAuthenticatorId))
-            ->replaceArgument('$oauth2Provider', new Reference($oauth2ProviderId))
+            ->replaceArgument('$oauth2Authenticator', new Reference($oauth2AuthenticatorId))
             ->replaceArgument('$firewallName', $firewallName)
         ;
 

@@ -4,7 +4,6 @@ namespace Tests\AppBundle\Form\Type;
 
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\TimeSlot;
-use AppBundle\Entity\TimeSlot\Choice;
 use AppBundle\Form\Type\TimeSlotChoice;
 use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Utils\TimeSlotChoiceWithDate;
@@ -29,12 +28,8 @@ class TimeSlotChoiceLoaderTest extends TestCase
 
     public function testGetChoicesWithDatesOnSunday()
     {
-        $choice1 = new Choice();
-        $choice1->setStartTime('11:00:00');
-        $choice1->setEndTime('12:00:00');
-
         $slot = new TimeSlot();
-        $slot->addChoice($choice1);
+        $slot->setOpeningHours(['Mo-Su 11:00-12:00']);
 
         // Sunday
         Carbon::setTestNow(Carbon::parse('2019-07-28 19:00:00'));
@@ -59,12 +54,8 @@ class TimeSlotChoiceLoaderTest extends TestCase
 
     public function testGetChoicesWithDatesOnMonday()
     {
-        $choice1 = new Choice();
-        $choice1->setStartTime('11:00:00');
-        $choice1->setEndTime('12:00:00');
-
         $slot = new TimeSlot();
-        $slot->addChoice($choice1);
+        $slot->setOpeningHours(['Mo-Su 11:00-12:00']);
 
         // Monday
         Carbon::setTestNow(Carbon::parse('2019-07-29 08:00:00'));
@@ -89,12 +80,8 @@ class TimeSlotChoiceLoaderTest extends TestCase
 
     public function testGetChoicesWithDatesOnMondayTooLate()
     {
-        $choice1 = new Choice();
-        $choice1->setStartTime('11:00:00');
-        $choice1->setEndTime('12:00:00');
-
         $slot = new TimeSlot();
-        $slot->addChoice($choice1);
+        $slot->setOpeningHours(['Mo-Su 11:00-12:00']);
 
         // Monday
         Carbon::setTestNow(Carbon::parse('2019-07-29 13:00:00'));
@@ -119,12 +106,8 @@ class TimeSlotChoiceLoaderTest extends TestCase
 
     public function testGetChoicesWithDatesOnDayBeforeBankHoliday()
     {
-        $choice1 = new Choice();
-        $choice1->setStartTime('11:00:00');
-        $choice1->setEndTime('12:00:00');
-
         $slot = new TimeSlot();
-        $slot->addChoice($choice1);
+        $slot->setOpeningHours(['Mo-Su 11:00-12:00']);
 
         // Day before bank holiday
         Carbon::setTestNow(Carbon::parse('2019-08-14 13:00:00'));
@@ -149,13 +132,9 @@ class TimeSlotChoiceLoaderTest extends TestCase
 
     public function testGetChoicesWithDatesOnFridayNotOnlyWorkingDays()
     {
-        $choice1 = new Choice();
-        $choice1->setStartTime('11:00:00');
-        $choice1->setEndTime('12:00:00');
-
         $slot = new TimeSlot();
+        $slot->setOpeningHours(['Mo-Su 11:00-12:00']);
         $slot->setWorkingDaysOnly(false);
-        $slot->addChoice($choice1);
 
         // Friday
         Carbon::setTestNow(Carbon::parse('2019-10-25 19:00:00'));
@@ -453,12 +432,8 @@ class TimeSlotChoiceLoaderTest extends TestCase
 
     public function testGetChoicesWithCutoff()
     {
-        $choice1 = new Choice();
-        $choice1->setStartTime('09:00:00');
-        $choice1->setEndTime('17:00:00');
-
         $slot = new TimeSlot();
-        $slot->addChoice($choice1);
+        $slot->setOpeningHours(['Mo-Su 09:00-17:00']);
         $slot->setSameDayCutoff('10:00');
 
         // Sunday
@@ -478,6 +453,32 @@ class TimeSlotChoiceLoaderTest extends TestCase
         $this->assertTimeSlotChoice(
             new \DateTime('2021-07-22 09:00:00'),
             new \DateTime('2021-07-22 17:00:00'),
+            $choices[1]
+        );
+    }
+
+    public function testGetChoicesWithEmptyDays()
+    {
+        $slot = new TimeSlot();
+        $slot->setOpeningHours(['Mo-Sa 09:00-10:30', '12:00-14:00']);
+
+        // Sunday
+        Carbon::setTestNow(Carbon::parse('2021-07-20 11:00:00'));
+
+        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr');
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertCount(2, $choices);
+
+        $this->assertTimeSlotChoice(
+            new \DateTime('2021-07-21 09:00:00'),
+            new \DateTime('2021-07-21 10:30:00'),
+            $choices[0]
+        );
+        $this->assertTimeSlotChoice(
+            new \DateTime('2021-07-22 09:00:00'),
+            new \DateTime('2021-07-22 10:30:00'),
             $choices[1]
         );
     }

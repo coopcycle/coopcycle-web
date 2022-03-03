@@ -102,15 +102,18 @@ class CheckoutPaymentType extends AbstractType
                     'choices' => $choices,
                     'choice_attr' => function($choice, $key, $value) use ($order) {
 
-                        Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
+                        if (null !== $order->getCustomer()) {
 
-                        switch ($value) {
-                            case PaymentContext::METHOD_EDENRED:
-                            case PaymentContext::METHOD_EDENRED_PLUS_CARD:
-                                return [
-                                    'data-edenred-is-connected' => $order->getCustomer()->hasEdenredCredentials(),
-                                    'data-edenred-authorize-url' => $this->edenredAuthentication->getAuthorizeUrl($order)
-                                ];
+                            Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
+
+                            switch ($value) {
+                                case PaymentContext::METHOD_EDENRED:
+                                case PaymentContext::METHOD_EDENRED_PLUS_CARD:
+                                    return [
+                                        'data-edenred-is-connected' => $order->getCustomer()->hasEdenredCredentials(),
+                                        'data-edenred-authorize-url' => $this->edenredAuthentication->getAuthorizeUrl($order)
+                                    ];
+                            }
                         }
 
                         return [];

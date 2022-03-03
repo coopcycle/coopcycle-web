@@ -29,35 +29,17 @@
   {{ form_row(form.interval) }}
   {{ form_row(form.priorNoticeHours) }}
   {{ form_row(form.sameDayCutoff) }}
-  {% set time_slot = form.vars.data %}
-  {% set is_advanced = (time_slot.id is not null and time_slot.hasOpeningHours()) %}
-  <div class="text-right mb-4">
-    <div class="btn-group">
-      <label class="btn btn-default {% if not is_advanced %}active{% endif %}">
-        <input type="radio" data-name="mode" data-mode="simple" {% if not is_advanced %}checked{% endif %}> Mode simple
-      </label>
-      <label class="btn btn-default {% if is_advanced %}active{% endif %}">
-        <input type="radio" data-name="mode" data-mode="advanced" {% if is_advanced %}checked{% endif %}> Mode avancé
-      </label>
-    </div>
-  </div>
+  {{ form_row(form.workingDaysOnly) }}
+
   {{ form_errors(form) }}
-  <div id="simple" {% if is_advanced %}class="hidden"{% endif %}>
-    {{ form_row(form.workingDaysOnly) }}
-    {{ form_row(form.choices) }}
-    <div>
-      <button type="button" class="btn btn-success" id="simple-add"><i class="fa fa-plus"></i>  {{ 'basics.add'|trans }}</button>
-    </div>
-  </div>
-  <div id="advanced" {% if not is_advanced %}class="hidden"{% endif %}>
-    {% set opening_hours_errors = [] %}
-    {% for key, value in form.openingHours %}
-      {% if not value.vars.valid %}
-        {% set opening_hours_errors = opening_hours_errors|merge([ key ]) %}
-      {% endif %}
-    {% endfor %}
-    {{ form_row(form.openingHours, { attr: { 'data-errors': opening_hours_errors|json_encode } }) }}
-  </div>
+
+  {% set opening_hours_errors = [] %}
+  {% for key, value in form.openingHours %}
+    {% if not value.vars.valid %}
+      {% set opening_hours_errors = opening_hours_errors|merge([ key ]) %}
+    {% endif %}
+  {% endfor %}
+  {{ form_row(form.openingHours, { attr: { 'data-errors': opening_hours_errors|json_encode } }) }}
   <hr>
   <button type="submit" class="btn btn-lg btn-block btn-primary">
     {{ 'basics.save'|trans }}

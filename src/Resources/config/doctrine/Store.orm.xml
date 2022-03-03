@@ -62,6 +62,19 @@
         <join-column name="time_slot_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
+    <many-to-many field="timeSlots" target-entity="AppBundle\Entity\TimeSlot">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-table name="store_time_slot">
+        <join-columns>
+          <join-column name="store_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="time_slot_id" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
     <many-to-one field="packageSet" target-entity="AppBundle\Entity\PackageSet">
       <join-columns>
         <join-column name="package_set_id" referenced-column-name="id"/>

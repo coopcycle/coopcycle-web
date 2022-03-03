@@ -11,6 +11,7 @@ use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
+use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\User;
@@ -110,7 +111,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Trikoder\Bundle\OAuth2Bundle\Model\Client as OAuth2Client;
+use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
 use Twig\Environment as TwigEnvironment;
 
 class AdminController extends AbstractController
@@ -1031,12 +1032,6 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function getStoreList()
-    {
-        $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
-        return [ $stores, 1, 1 ];
-    }
-
     public function newStoreAction(Request $request)
     {
         $store = new Store();
@@ -1735,12 +1730,6 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($timeSlot->hasOpeningHours()) {
-                foreach ($timeSlot->getChoices() as $choice) {
-                    $timeSlot->removeChoice($choice);
-                }
-                $timeSlot->setWorkingDaysOnly(false);
-            }
 
             $objectManager->persist($timeSlot);
             $objectManager->flush();
@@ -2222,27 +2211,15 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function metricsAction(LocalBusinessRepository $localBusinessRepository, Request $request)
+    public function metricsAction(
+        LocalBusinessRepository $localBusinessRepository,
+        CubeJsTokenFactory $tokenFactory,
+        Request $request)
     {
-        // https://cube.dev/docs/security
-        $key = \Lcobucci\JWT\Signer\Key\InMemory::plainText($_SERVER['CUBEJS_API_SECRET']);
-        $config = \Lcobucci\JWT\Configuration::forSymmetricSigner(
-            new \Lcobucci\JWT\Signer\Hmac\Sha256(),
-            $key
-        );
-
-        // https://github.com/lcobucci/jwt/issues/229
-        $now = new \DateTimeImmutable('@' . time());
-
-        $token = $config->builder()
-                ->expiresAt($now->modify('+1 hour'))
-                ->withClaim('database', $this->getParameter('database_name'))
-                ->getToken($config->signer(), $config->signingKey());
-
         $zeroWasteCount = $localBusinessRepository->countZeroWaste();
 
         return $this->render('admin/metrics.html.twig', [
-            'cube_token' => $token->toString(),
+            'cube_token' => $tokenFactory->createToken(),
             'zero_waste' => $zeroWasteCount > 0,
             'ui_tasks_metrics_enabled' => $this->getParameter('ui_tasks_metrics_enabled')
         ]);

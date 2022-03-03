@@ -266,17 +266,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
         if (count($tasks) > 2) {
 
-            $pickup = array_shift($tasks);
-
-            $delivery->addTask($pickup);
-
-            foreach ($tasks as $dropoff) {
-
-                $dropoff->setPrevious($pickup);
-
-                $delivery->addTask($dropoff);
-            }
-
+            $delivery = $delivery->withTasks(...$tasks);
 
         } else {
 
@@ -296,6 +286,25 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         }
 
         return $delivery;
+    }
+
+    public function withTasks(Task ...$tasks)
+    {
+        $this->items->clear();
+
+        $pickup = array_shift($tasks);
+
+        // Make sure the first task is a pickup
+        $pickup->setType(Task::TYPE_PICKUP);
+
+        $this->addTask($pickup);
+
+        foreach ($tasks as $dropoff) {
+            $dropoff->setPrevious($pickup);
+            $this->addTask($dropoff);
+        }
+
+        return $this;
     }
 
     public static function createWithAddress($pickupAddress, $dropoffAddress)
@@ -402,7 +411,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         if ($task) {
             $taskObject->address = $task->getAddress();
             $taskObject->createdAt = $task->getCreatedAt();
-            $taskObject->before = $task->getDoneBefore();
+            $taskObject->after = $task->getAfter();
+            $taskObject->before = $task->getBefore();
             $taskObject->doorstep = $task->isDoorstep();
         }
 

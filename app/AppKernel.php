@@ -55,7 +55,7 @@ class AppKernel extends Kernel
             new Symfony\WebpackEncoreBundle\WebpackEncoreBundle(),
             new Liip\ImagineBundle\LiipImagineBundle(),
             new Oneup\UploaderBundle\OneupUploaderBundle(),
-            new Trikoder\Bundle\OAuth2Bundle\TrikoderOAuth2Bundle(),
+            new League\Bundle\OAuth2ServerBundle\LeagueOAuth2ServerBundle(),
             new NotFloran\MjmlBundle\MjmlBundle(),
             new Sentry\SentryBundle\SentryBundle(),
             new Http\HttplugBundle\HttplugBundle(),

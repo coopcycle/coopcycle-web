@@ -15,6 +15,7 @@ import {
 import classNames from 'classnames'
 
 import Task from './Task'
+import Avatar from '../../components/Avatar'
 import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
 import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
@@ -94,14 +95,12 @@ class TaskList extends React.Component {
 
     const distanceFormatted = (distance / 1000).toFixed(2) + ' Km'
 
-    const avatarURL = window.Routing.generate('user_avatar', { username })
-
     return (
       <AccordionItem>
         <AccordionItemHeading>
           <AccordionItemButton>
             <span>
-              <img src={ avatarURL } width="24" height="24" />
+              <Avatar username={ username } size="24" />
               <small className="text-monospace ml-2">
                 <strong className="mr-2">{ username }</strong>
                 <span className="text-muted">{ `(${tasks.length})` }</span>

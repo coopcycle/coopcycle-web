@@ -7,8 +7,11 @@ use AppBundle\Entity\Task;
 class Package
 {
     protected $id;
+
     protected $package;
+
     protected $task;
+
     protected $quantity = 0;
 
     public function __construct(Task $task = null)

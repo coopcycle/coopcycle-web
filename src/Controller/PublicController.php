@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Form\StripePaymentType;
+use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Service\StripeManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -69,12 +69,12 @@ class PublicController extends AbstractController
 
         if (in_array($lastPayment->getState(), $paymentStates)) {
 
-            $paymentForm = $this->createForm(StripePaymentType::class, $lastPayment);
+            $paymentForm = $this->createForm(CheckoutPaymentType::class, $order);
 
             $paymentForm->handleRequest($request);
             if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
 
-                $stripeToken = $paymentForm->get('stripeToken')->getData();
+                $stripeToken = $paymentForm->get('stripePayment')->get('stripeToken')->getData();
 
                 try {
 

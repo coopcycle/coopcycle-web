@@ -720,7 +720,6 @@ form.embed_settings.with_weight.label: Ask for weight of goods
 form.time_slot.name.label: Name
 form.time_slot.interval.label: Interval
 form.time_slot.working_days_only.label: Allow selecting only working days
-form.time_slot.choices.label: Choices
 form.time_slot_choice.start_time.label: Start time
 form.time_slot_choice.end_time.label: End time
 form.time_slot.prior_notice_hours.label: Prior notice (hours)
@@ -1231,3 +1230,6 @@ adminDashboard.nonprofits.title: Nonprofits
 adminDashboard.nonprofits.confirm_delete: Are you sure you want to delete this nonprofit?
 order.cart.donation.disclaimer: We offer you to donate %percentage% of the revenue from your order to one of our partner associations. You will not pay more.
 form.checkout_address.nonprofit.placeholder: Choose your favorite nonprofit
+form.delivery.arbitrary_price.label: Define the price manually
+form.store_type.time_slots.label: Time slots
+form.store_type.time_slots.set_as_default: Set as default time slot

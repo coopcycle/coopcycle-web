@@ -495,7 +495,6 @@ form.credit_note.name.help: El nom de la promoció que es mostrarà al Cistell d
 form.resend_confirmation_email.submit.label: Torna a enviar el correu electrònic
 form.embed_settings.with_vehicle.label: Afegiu l'opció del vehicle
 form.time_slot.name.label: Nom
-form.time_slot.choices.label: Eleccions
 form.time_slot_choice.start_time.label: Hora d'inici
 form.time_slot_choice.end_time.label: Temps de finalització
 promotion_coupon.used.label: Nombre d’usos

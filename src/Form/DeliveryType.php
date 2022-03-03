@@ -7,16 +7,19 @@ use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
+use AppBundle\Form\Type\MoneyType;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -95,6 +98,7 @@ class DeliveryType extends AbstractType
                     'with_addresses' => null !== $store ? $store->getAddresses() : [],
                     'with_remember_address' => $options['with_remember_address'],
                     'with_time_slot' => $this->getTimeSlot($options, $store),
+                    'with_time_slots' => $this->getTimeSlots($options, $store),
                     'with_doorstep' => $options['with_dropoff_doorstep'],
                     'with_address_props' => $options['with_address_props'],
                     'with_package_set' => $this->getPackageSet($options, $store),
@@ -109,12 +113,36 @@ class DeliveryType extends AbstractType
 
             $isMultiDropEnabled = null !== $store ? $store->isMultiDropEnabled() : false;
             $createOrders = null !== $store ? $store->getCreateOrders() : false;
+
             if ($isMultiDropEnabled && !$createOrders) {
                 $form->add('addTask', ButtonType::class, [
                     'label' => 'basics.add',
                     'attr' => [
                         'data-add' => 'dropoff'
                     ],
+                ]);
+            }
+
+            // Allow admins to define an arbitrary price
+            if (true === $options['with_arbitrary_price'] &&
+                null === $delivery->getId()
+                && $this->authorizationChecker->isGranted('ROLE_ADMIN')
+                && !$createOrders) {
+                $form->add('arbitraryPrice', CheckboxType::class, [
+                    'label' => 'form.delivery.arbitrary_price.label',
+                    'mapped' => false,
+                    'required' => false,
+                ])
+                ->add('variantName', TextType::class, [
+                    'label' => 'form.new_order.variant_name.label',
+                    'help' => 'form.new_order.variant_name.help',
+                    'mapped' => false,
+                    'required' => false,
+                ])
+                ->add('variantPrice', MoneyType::class, [
+                    'label' => 'form.new_order.variant_price.label',
+                    'mapped' => false,
+                    'required' => false,
                 ]);
             }
         });
@@ -163,6 +191,24 @@ class DeliveryType extends AbstractType
     }
 
     /**
+     * @return TimeSlot[]|null
+     */
+    private function getTimeSlots(array $options, ?Store $store = null)
+    {
+        if (null !== $options['with_time_slots']) {
+
+            return $options['with_time_slots'];
+        }
+
+        if ($store) {
+
+            return $store->getTimeSlots();
+        }
+
+        return null;
+    }
+
+    /**
      * @return PackageSet|null
      */
     private function getPackageSet(array $options, ?Store $store = null): ?PackageSet
@@ -189,9 +235,11 @@ class DeliveryType extends AbstractType
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
             'with_dropoff_doorstep' => false,
             'with_time_slot' => null,
+            'with_time_slots' => null,
             'with_package_set' => null,
             'with_remember_address' => false,
             'with_address_props' => false,
+            'with_arbitrary_price' => false,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);
