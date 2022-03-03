@@ -1,0 +1,47 @@
+{
+  "nodes":{
+    "nodes":{
+      "left":{
+        "nodes":{
+          "arguments":{
+            "nodes":[
+              {
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "name":"dropoff"
+                }
+              },
+              {
+                "nodes":[
+
+                ],
+                "attributes":{
+                  "value":"hours"
+                }
+              }
+            ],
+            "attributes":[
+
+            ]
+          }
+        },
+        "attributes":{
+          "name":"time_range_length"
+        }
+      },
+      "right":{
+        "nodes":[
+
+        ],
+        "attributes":{
+          "value":2
+        }
+      }
+    },
+    "attributes":{
+      "operator":"<"
+    }
+  }
+}

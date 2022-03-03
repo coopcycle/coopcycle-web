@@ -37,6 +37,8 @@ const typeToOperators = {
   'packages': ['containsAtLeastOne'],
   'order.itemsTotal': ['==', '<', '>', 'in'],
   'packages.totalVolumeUnits()': ['<', '>', 'in'],
+  'time_range_length(pickup, \'hours\')': ['<', '>', 'in'],
+  'time_range_length(dropoff, \'hours\')': ['<', '>', 'in'],
 }
 
 const isK = type => type === 'distance' || type === 'weight'
@@ -249,6 +251,8 @@ class RulePickerLine extends React.Component {
               <option value="dropoff.doorstep">{ this.props.t('RULE_PICKER_LINE_DROPOFF_DOORSTEP') }</option>
               <option value="packages">{ this.props.t('RULE_PICKER_LINE_PACKAGES') }</option>
               <option value="packages.totalVolumeUnits()">{ this.props.t('RULE_PICKER_LINE_VOLUME_UNITS') }</option>
+              <option value="time_range_length(pickup, 'hours')">{ this.props.t('RULE_PICKER_LINE_PICKUP_TIME_RANGE_LENGTH_HOURS') }</option>
+              <option value="time_range_length(dropoff, 'hours')">{ this.props.t('RULE_PICKER_LINE_DROPOFF_TIME_RANGE_LENGTH_HOURS') }</option>
             </optgroup>
             <optgroup label={ this.props.t('RULE_PICKER_LINE_OPTGROUP_ORDER') }>
               <option value="order.itemsTotal">{ this.props.t('RULE_PICKER_LINE_ORDER_ITEMS_TOTAL') }</option>

@@ -144,6 +144,12 @@ const traverseNode = (node, accumulator) => {
           operator: node.attributes.operator,
           right:    node.nodes.right.attributes.value,
         })
+      } else if (node.nodes.left.attributes.name === 'time_range_length') {
+        accumulator.push({
+          left:     `time_range_length(${node.nodes.left.nodes.arguments.nodes[0].attributes.name}, 'hours')`,
+          operator: node.attributes.operator,
+          right:    node.nodes.right.attributes.value,
+        })
       } else if (node.nodes.left.nodes?.node?.attributes?.name === 'packages' && node.nodes.left.nodes?.attribute?.attributes?.value === 'totalVolumeUnits') {
         if (node.attributes.operator === 'in') {
           accumulator.push({

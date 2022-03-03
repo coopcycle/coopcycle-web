@@ -411,7 +411,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         if ($task) {
             $taskObject->address = $task->getAddress();
             $taskObject->createdAt = $task->getCreatedAt();
-            $taskObject->before = $task->getDoneBefore();
+            $taskObject->after = $task->getAfter();
+            $taskObject->before = $task->getBefore();
             $taskObject->doorstep = $task->isDoorstep();
         }
 
