@@ -75,13 +75,13 @@
   {% if not restaurant.isOpen %}
     {% set closingRule = restaurant.matchClosingRuleFor %}
     {% if closingRule is not empty %}
-    <div class="alert alert-danger text-center">
+    <div class="alert alert-info text-center">
       {% trans with { '%date%': closingRule.endDate|format_datetime('full', 'none') } %}
       restaurant.temporaryClosedWarning
       {% endtrans %}
     </div>
     {% else %}
-    <div class="alert alert-danger text-center">
+    <div class="alert alert-info text-center">
       {% set next_opening_date = restaurant.getNextOpeningDate() %}
       {% if next_opening_date %}
         {% set isOrderingAvailable = cart.shippingTimeRange is not null or times.range is not null or times.ranges|length > 0 %}
