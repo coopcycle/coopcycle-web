@@ -235,6 +235,8 @@ twig:
         restaurant_caption_cache_annotation: '%restaurant_caption_cache_annotation%'
         edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
         cubejs_api_url: '%env(CUBEJS_API_URL)%'
+        ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
+
     exception_controller: null
 
 # Doctrine Configuration

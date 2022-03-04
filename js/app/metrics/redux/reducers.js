@@ -7,6 +7,7 @@ export const initialState = {
   view: 'marketplace',
   dateRange: '30d',
   zeroWaste: false,
+  uiTasksMetricsEnabled: false,
 }
 
 export default (state = initialState, action = {}) => {
