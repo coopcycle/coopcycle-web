@@ -28,7 +28,7 @@ class ClosingRules extends Constraint
             $options['closingRules'] = new ArrayCollection();
         }
 
-        if (null !== $options && !is_array($options) && $options instanceof Collection) {
+        if (null !== $options && $options instanceof Collection) {
             $options = [
                 'closingRules' => $options,
             ];
