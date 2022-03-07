@@ -9,6 +9,16 @@
       <gedmo:timestampable on="create"/>
     </field>
     <field name="withdrawedAt" type="datetime" column="withdrawed_at" nullable="true"/>
+    <field name="accepted" type="boolean" column="accepted" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="asked" type="boolean" column="asked" nullable="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <many-to-one field="user" target-entity="AppBundle\Entity\User" inversed-by="optinConsents">
       <join-columns>
         <join-column name="user_id" referenced-column-name="id"/>

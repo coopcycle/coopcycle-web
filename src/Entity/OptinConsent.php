@@ -12,6 +12,8 @@ class OptinConsent
     private $type;
     private $createdAt;
     private $withdrawedAt;
+    private $accepted;
+    private $asked;
 
     /**
      * @return mixed
@@ -97,6 +99,46 @@ class OptinConsent
     public function setWithdrawedAt($withdrawedAt)
     {
         $this->withdrawedAt = $withdrawedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAccepted()
+    {
+        return $this->accepted;
+    }
+
+    /**
+     * @param mixed $accepted
+     *
+     * @return self
+     */
+    public function setAccepted($accepted)
+    {
+        $this->accepted = $accepted;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAsked()
+    {
+        return $this->asked;
+    }
+
+    /**
+     * @param mixed $asked
+     *
+     * @return self
+     */
+    public function setAsked($asked)
+    {
+        $this->asked = $asked;
 
         return $this;
     }
