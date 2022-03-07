@@ -83,6 +83,12 @@ cube(`Task`, {
       primaryKey: true
     },
 
+    //deprecated, kept for backward compatibility
+    date: {
+      sql: `done_before`,
+      type: `time`
+    },
+
     intervalStartAt: {
       sql: `done_after`,
       type: `time`
