@@ -110,6 +110,25 @@ class TaskType extends AbstractType
                     'multiple' => false,
                     'data' => $options['with_time_slot'],
                 ]);
+
+            // https://symfony.com/doc/5.4/form/dynamic_form_modification.html#form-events-submitted-data
+            $builder->get('switchTimeSlot')->addEventListener(
+                FormEvents::POST_SUBMIT,
+                function (FormEvent $event) {
+
+                    $parentForm = $event->getForm()->getParent();
+                    $timeSlot = $event->getForm()->getData();
+
+                    $timeSlotOptions = [
+                        'time_slot' => $timeSlot,
+                        'label' => 'form.delivery.time_slot.label',
+                        'mapped' => false
+                    ];
+
+                    $parentForm
+                        ->add('timeSlot', TimeSlotChoiceType::class, $timeSlotOptions);
+                }
+            );
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
