@@ -68,54 +68,57 @@ class TaskType extends AbstractType
                 'attr' => ['rows' => '2', 'placeholder' => 'form.task.comments.placeholder']
             ]);
 
+        if (null !== $options['with_time_slot']
+        && null !== $options['with_time_slots']
+        && count($options['with_time_slots']) > 1) {
+
+            $iterator = $options['with_time_slots']->getIterator();
+            $iterator->uasort(function (TimeSlot $a, TimeSlot $b) {
+                return ($a->getName() < $b->getName()) ? -1 : 1;
+            });
+            $choices = new ArrayCollection(iterator_to_array($iterator));
+
+            $builder
+                ->add('switchTimeSlot', EntityType::class, [
+                    'class' => TimeSlot::class,
+                    'choices' => $choices,
+                    'choice_label' => 'name',
+                    'choice_attr' => function($choice, $key, $value) {
+
+                        $choiceLoader = new TimeSlotChoiceLoader(
+                            $choice,
+                            $this->locale
+                        );
+                        $choiceList = $choiceLoader->loadChoiceList();
+
+                        $choices = [];
+                        foreach ($choiceList->getChoices() as $choice) {
+                            $choices[] = [
+                                'label' => $this->datePeriodFormatter->toHumanReadable($choice->toDatePeriod()),
+                                'value' => (string) $choice,
+                            ];
+                        }
+
+                        return [
+                            'data-choices' => json_encode($choices),
+                        ];
+                    },
+                    'label' => false,
+                    'required' => true,
+                    'mapped' => false,
+                    'expanded' => true,
+                    'multiple' => false,
+                    'data' => $options['with_time_slot'],
+                ]);
+        }
+
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
             $task = $event->getData();
 
-            if (null !== $options['with_time_slot']
-            && null !== $options['with_time_slots']
-            && null === $task->getId()
-            && count($options['with_time_slots']) > 1) {
-
-                $iterator = $options['with_time_slots']->getIterator();
-                $iterator->uasort(function (TimeSlot $a, TimeSlot $b) {
-                    return ($a->getName() < $b->getName()) ? -1 : 1;
-                });
-                $choices = new ArrayCollection(iterator_to_array($iterator));
-
-                $form
-                    ->add('switchTimeSlot', EntityType::class, [
-                        'class' => TimeSlot::class,
-                        'choices' => $choices,
-                        'choice_label' => 'name',
-                        'choice_attr' => function($choice, $key, $value) {
-
-                            $choiceLoader = new TimeSlotChoiceLoader(
-                                $choice,
-                                $this->locale
-                            );
-                            $choiceList = $choiceLoader->loadChoiceList();
-
-                            $choices = [];
-                            foreach ($choiceList->getChoices() as $choice) {
-                                $choices[] = [
-                                    'label' => $this->datePeriodFormatter->toHumanReadable($choice->toDatePeriod()),
-                                    'value' => (string) $choice,
-                                ];
-                            }
-
-                            return [
-                                'data-choices' => json_encode($choices),
-                            ];
-                        },
-                        'label' => false,
-                        'required' => true,
-                        'mapped' => false,
-                        'expanded' => true,
-                        'multiple' => false,
-                        'data' => $options['with_time_slot'],
-                    ]);
+            if ($form->has('switchTimeSlot') && null !== $task->getId()) {
+                $form->remove('switchTimeSlot');
             }
 
             if (null !== $options['with_time_slot']) {
