@@ -2,8 +2,27 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Action\MyOptinConsents;
+use AppBundle\Action\UpdateOptinConsent;
+use ApiPlatform\Core\Annotation\ApiResource;
+
 /**
  * @see https://law.stackexchange.com/questions/29190/gdpr-where-to-store-users-consent
+ *
+ * @ApiResource(
+ *   collectionOperations={
+ *     "me_optin_consents"={
+ *       "method"="GET",
+ *       "path"="/me/optin-consents",
+ *       "controller"=MyOptinConsents::class
+ *     },
+ *     "update_optin_consents"={
+ *       "method"="PUT",
+ *       "path"="/me/optin-consents",
+ *       "controller"=UpdateOptinConsent::class
+ *     }
+ *   }
+ * )
  */
 class OptinConsent
 {
