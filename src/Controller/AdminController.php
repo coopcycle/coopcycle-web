@@ -470,7 +470,7 @@ class AdminController extends AbstractController
                     ->createQueryBuilder('u')
                     ->select('u.username, u.email')
                     ->innerJoin('u.optinConsents', 'oc')
-                    ->where('oc.type = :optin')
+                    ->where('oc.type = :optin and oc.accepted = true')
                     ->setParameter('optin', $optinSelected);
 
                 $optinsResult = $optinsQB->getQuery()->getResult();
