@@ -8,17 +8,15 @@ use Doctrine\Persistence\ManagerRegistry;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Psr\Log\LoggerInterface;
 
 class UpdateOptinConsent
 {
     use TokenStorageTrait;
 
-    public function __construct(TokenStorageInterface $tokenStorage, UserManagerInterface $userManager, LoggerInterface $logger)
+    public function __construct(TokenStorageInterface $tokenStorage, UserManagerInterface $userManager)
     {
         $this->tokenStorage = $tokenStorage;
         $this->userManager = $userManager;
-        $this->logger = $logger;
     }
 
     public function __invoke($data)
