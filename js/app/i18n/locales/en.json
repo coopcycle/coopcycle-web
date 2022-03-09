@@ -254,6 +254,10 @@
         "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Group name",
         "RULE_PICKER_LINE_VOLUME_UNITS": "Volume units",
         "RULE_PICKER_LINE_PICKUP_TIME_RANGE_LENGTH_HOURS": "Pickup time range length (hours)",
-        "RULE_PICKER_LINE_DROPOFF_TIME_RANGE_LENGTH_HOURS": "Dropoff time range length (hours)"
+        "RULE_PICKER_LINE_DROPOFF_TIME_RANGE_LENGTH_HOURS": "Dropoff time range length (hours)",
+        "OPTIN_CONSENT_NEWSLETTER_LABEL": "I agree to receive the {{brand}} newsletter.",
+        "OPTIN_CONSENT_MARKETING_LABEL": "I agree to receive occasional promotions.",
+        "SELECT_OPTIN_CONSENTS": "Do you agree to receive the following information?",
+        "DONE": "Done"
     }
 }

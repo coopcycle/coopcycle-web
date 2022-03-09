@@ -253,6 +253,10 @@
             "weekday": "dia de la semana",
             "day": "dia"
         },
-        "TIME_RANGE_FROM": "desde {{start}}"
+        "TIME_RANGE_FROM": "desde {{start}}",
+        "OPTIN_CONSENT_NEWSLETTER_LABEL": "Estoy de acuerdo en recibir las últimas novedades de {{brand}}.",
+        "OPTIN_CONSENT_MARKETING_LABEL": "Estoy de acuerdo en recibir promociones.",
+        "SELECT_OPTIN_CONSENTS": "¿Está de acuerdo en recibir la siguiente información?",
+        "DONE": "Hecho"
     }
 }
