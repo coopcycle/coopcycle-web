@@ -10,7 +10,7 @@ import {
   TIMING_TOO_LATE,
 } from '../tasksGraphUtils'
 
-const defaultMinMaxX = 500 // 450%
+const defaultMinMaxX = 450 // see cube/Task.js; == 400%
 const defaultMinX = -1 * defaultMinMaxX
 const defaultMaxX = defaultMinMaxX
 
@@ -62,15 +62,7 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
           label: s.title,
           data: s.series.map((r) => {
             let x = Number(r.x)
-
-            if (x < defaultMinX) {
-              x = defaultMinX
-            }
-
-            if (x > defaultMaxX) {
-              x = defaultMaxX
-            }
-
+            
             return {
               x,
               y: r.value
@@ -106,11 +98,19 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
             let label = '';
 
             if (data.x < -50) {
-              label += `${Math.abs(Math.round(data.x + 50))} % early`
+              if (data.x == defaultMinX) {
+                label += `>${Math.abs(Math.round(data.x + 50))} % early`
+              } else {
+                label += `~${Math.abs(Math.round(data.x + 50))} % early`
+              }
             } else if (data.x <= 50) {
               label += `on time (${Math.round(data.x + 50)})`
             } else {
-              label += `${Math.abs(Math.round(data.x - 50))} % late`
+              if (data.x == defaultMaxX) {
+                label += `>${Math.abs(Math.round(data.x - 50))} % late`
+              } else {
+                label += `~${Math.abs(Math.round(data.x - 50))} % late`
+              }
             }
 
             return `${data.y} ${taskType}: ${label}`;
@@ -130,10 +130,12 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
           padding: 12,
           minRotation: 0,
           callback: function(value) {
-            if (value < defaultMinX) {
-              return "<"
+            if (value <= defaultMinX) {
+              return ">"
             } else if (value <= -50) {
               return Math.abs(value + 50) + ' %';
+            } else if (value == 0) {
+              return 'on time';
             } else if (value < 50) {
               return (value + 50) + ' %';
             } else if (value < defaultMaxX) {
@@ -151,7 +153,7 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
               return getBackgroundColor(taskType, TIMING_TOO_EARLY)
             } else if (value < 50) {
               return getBackgroundColor(taskType, TIMING_ON_TIME)
-            } else if (value < defaultMaxX) {
+            } else if (value <= defaultMaxX) {
               return getBackgroundColor(taskType, TIMING_TOO_LATE)
             } else {
               return '#000000'

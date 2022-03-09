@@ -8,6 +8,10 @@ const dateDiffInSeconds = (datetime) =>
 const dateDiffInMinutes = (datetime) =>
   `(${dateDiffInSeconds(datetime)}) / 60`
 
+const group = (value, bucketWidth) =>
+  `floor(${value} / ${bucketWidth}) * ${bucketWidth} + ${bucketWidth / 2}`
+
+const groupDiffInMinutes = (value) => group(value, 10)
 
 cube(`Task`, {
   sql: `SELECT id, type, done_after, done_before, status FROM public.task`,
@@ -83,6 +87,12 @@ cube(`Task`, {
       primaryKey: true
     },
 
+    //deprecated, kept for backward compatibility
+    date: {
+      sql: `done_before`,
+      type: `time`
+    },
+
     intervalStartAt: {
       sql: `done_after`,
       type: `time`
@@ -118,17 +128,17 @@ cube(`Task`, {
       type: `number`,
       case: {
         when: [
-          {
+          { // early
             sql: `${CUBE.minutesAfterStart} < 0`,
-            label: { sql: `${CUBE.minutesAfterStart}` },
+            label: { sql: groupDiffInMinutes(`${CUBE.minutesAfterStart}`) },
           },
-          {
+          { // on time
             sql: `${CUBE.minutesAfterStart} >= 0 AND ${CUBE.minutesBeforeEnd} >= 0`,
             label: { sql: `0` },
           },
-          {
+          { // late
             sql: `${CUBE.minutesBeforeEnd} < 0`,
-            label: { sql: `(${CUBE.minutesBeforeEnd}) * -1` },
+            label: { sql: `(${groupDiffInMinutes(`${CUBE.minutesBeforeEnd}`)}) * -1` },
           },
         ],
         else: { label: `0` },
@@ -141,7 +151,15 @@ cube(`Task`, {
      * low: -4
      * high: 5
      * count of buckets: 180 = (high - low) / bucket width
-     * on time: [0;1] => [400, 500], subtract 450 to display on time a range [-50%, 50%]
+     *
+     * (1) width_bucket(..., -4, 5, 180):
+     * maps [-4; 5] => [0; 180]
+     * (<-4 => -4; >5 => 5)
+     * (on time: [0;1] => [80; 100])
+     *
+     * (2) ... *0.05*100 - 450
+     * maps [0; 180] => [-450; 450]
+     * (on time: [80;100] => [-50%, 50%])
      */
     intervalDiff: {
       sql: `width_bucket((${CUBE.minutesAfterStart}) / (${CUBE.intervalMinutes}), -4, 5, 180)*0.05*100 - 450`,

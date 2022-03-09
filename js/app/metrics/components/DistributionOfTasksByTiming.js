@@ -10,7 +10,7 @@ import {
   TIMING_TOO_LATE,
 } from '../tasksGraphUtils'
 
-const defaultMinMaxX = 12 * 60 // in minutes
+const defaultMinMaxX = 6 * 60 // in minutes
 const defaultMinX = -1 * defaultMinMaxX
 const defaultMaxX = defaultMinMaxX
 
@@ -106,11 +106,19 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
             let label = '';
 
             if (data.x < 0) {
-              label += `${Math.abs(Math.round(data.x))} minutes early`
+              if (data.x == defaultMinX) {
+                label += `>${Math.abs(Math.round(data.x))} minutes early`
+              } else {
+                label += `~${Math.abs(Math.round(data.x))} minutes early`
+              }
             } else if (data.x == 0) {
               label += `on time`
             } else {
-              label += `${Math.abs(Math.round(data.x))} minutes late`
+              if (data.x == defaultMaxX) {
+                label += `>${Math.abs(Math.round(data.x))} minutes late`
+              } else {
+                label += `~${Math.abs(Math.round(data.x))} minutes late`
+              }
             }
 
             return `${data.y} ${taskType}: ${label}`;
@@ -131,9 +139,11 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
           minRotation: 0,
           callback: function(value) {
             if (value === defaultMinX) {
-              return "<"
+              return ">"
             } else if (value === defaultMaxX) {
               return "<"
+            } else if (value == 0) {
+              return 'on time';
             } else {
               return Math.abs(Math.round(value)) + ' min';
             }
@@ -147,7 +157,7 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
               return getBackgroundColor(taskType, TIMING_TOO_EARLY)
             } else if (value == 0) {
               return getBackgroundColor(taskType, TIMING_ON_TIME)
-            } else if (value < defaultMaxX) {
+            } else if (value <= defaultMaxX) {
               return getBackgroundColor(taskType, TIMING_TOO_LATE)
             } else {
               return '#000000'
