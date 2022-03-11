@@ -25,6 +25,9 @@ final class SoftDeletedSubscriber implements EventSubscriberInterface
         $this->doctrine = $doctrine;
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [

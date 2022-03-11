@@ -40,6 +40,9 @@ final class DeliverySubscriber implements EventSubscriberInterface
         $this->deliveryManager = $deliveryManager;
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         // @see https://api-platform.com/docs/core/events/#built-in-event-listeners

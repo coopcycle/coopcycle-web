@@ -30,6 +30,9 @@ class ClearTwigCacheSubscriber implements EventSubscriberInterface
         $this->twigCache->deleteItem($cacheKey);
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return array(

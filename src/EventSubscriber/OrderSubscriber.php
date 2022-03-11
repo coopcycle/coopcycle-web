@@ -42,6 +42,9 @@ final class OrderSubscriber implements EventSubscriberInterface
         $this->orderProcessor = $orderProcessor;
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [

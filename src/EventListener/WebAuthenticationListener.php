@@ -29,6 +29,9 @@ final class WebAuthenticationListener implements EventSubscriberInterface
         $this->cartContext = $cartContext;
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [

@@ -33,6 +33,9 @@ final class TaskImportQueueSubscriber implements EventSubscriberInterface
         $this->secret = $secret;
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [

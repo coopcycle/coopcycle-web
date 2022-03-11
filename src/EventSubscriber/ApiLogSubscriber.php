@@ -75,6 +75,9 @@ class ApiLogSubscriber implements EventSubscriberInterface
         return Logger::INFO;
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return array(
