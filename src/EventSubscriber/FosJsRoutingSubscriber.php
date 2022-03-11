@@ -28,6 +28,9 @@ class FosJsRoutingSubscriber implements EventSubscriberInterface
         $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 'true');
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [

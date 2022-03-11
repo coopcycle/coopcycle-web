@@ -20,6 +20,9 @@ final class ProductOptionValueSubscriber implements EventSubscriberInterface
         $this->dispatcher = $dispatcher;
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [

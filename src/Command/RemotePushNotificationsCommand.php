@@ -59,6 +59,9 @@ class RemotePushNotificationsCommand extends Command
         $this->io = new SymfonyStyle($input, $output);
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $title = $input->getOption('title');

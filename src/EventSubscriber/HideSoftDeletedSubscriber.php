@@ -51,6 +51,9 @@ class HideSoftDeletedSubscriber implements EventSubscriberInterface
         $this->doctrine->getManager()->getFilters()->enable('soft_deleteable');
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return array(

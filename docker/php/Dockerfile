@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-alpine3.13
+FROM php:8.1-fpm-alpine
 
 RUN apk update
 
@@ -7,8 +7,8 @@ RUN apk add --no-cache \
         icu \
         zlib
 
-ENV APCU_VERSION 5.1.20
-ENV PHPREDIS_VERSION 5.3.4
+ENV APCU_VERSION 5.1.21
+ENV PHPREDIS_VERSION 5.3.6
 
 RUN set -xe \
     && apk add --no-cache \

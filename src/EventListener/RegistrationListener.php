@@ -11,6 +11,9 @@ class RegistrationListener implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [

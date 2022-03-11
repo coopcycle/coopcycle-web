@@ -81,6 +81,9 @@ Class CreateSettingCommand extends Command
         }
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $section = $input->getOption('section');

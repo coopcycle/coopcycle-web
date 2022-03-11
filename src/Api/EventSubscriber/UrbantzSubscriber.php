@@ -42,6 +42,9 @@ final class UrbantzSubscriber implements EventSubscriberInterface
         $this->secret = $secret;
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         // @see https://api-platform.com/docs/core/events/#built-in-event-listeners

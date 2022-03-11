@@ -50,6 +50,9 @@ class LocaleListener implements EventSubscriberInterface
         $request->attributes->set('_locale', $locale);
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return array(

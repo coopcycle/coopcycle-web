@@ -37,6 +37,9 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
         $this->denyAccessListener = $denyAccessListener;
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [

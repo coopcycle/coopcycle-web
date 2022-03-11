@@ -44,6 +44,9 @@ Class EdenredCommand extends Command
         $this->io = new SymfonyStyle($input, $output);
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $qb = $this->entityManager->getRepository(PaymentInterface::class)

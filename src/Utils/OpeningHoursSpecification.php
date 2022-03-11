@@ -93,7 +93,7 @@ class OpeningHoursSpecification implements \JsonSerializable
         return $openingHoursSpecification;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $data = [
             '@type'     => 'OpeningHoursSpecification',

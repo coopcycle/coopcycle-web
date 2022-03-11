@@ -27,6 +27,9 @@ final class MaintenanceSubscriber implements EventSubscriberInterface
         $this->maintenance = $maintenance;
     }
 
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [

@@ -53,6 +53,9 @@ Class BuildIndexCommand extends Command
         $this->io = new SymfonyStyle($input, $output);
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $ingest  = new \Psonic\Ingest($this->ingestClient);

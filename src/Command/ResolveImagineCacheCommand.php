@@ -43,6 +43,9 @@ Class ResolveImagineCacheCommand extends Command
         $this->io = new SymfonyStyle($input, $output);
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $resolveCacheCommand = $this->getApplication()->find('liip:imagine:cache:resolve');

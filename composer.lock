@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "61ec3c17560f39be88278e787f9a06aa",
+    "content-hash": "ffd73c6ff63c90352fe8df02853e61ff",
     "packages": [
         {
             "name": "api-platform/core",
@@ -13572,16 +13572,16 @@
         },
         {
             "name": "sonata-project/seo-bundle",
-            "version": "3.0.0",
+            "version": "3.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataSeoBundle.git",
-                "reference": "af91c98c8b18b2a9a93845887cf279e54b809a48"
+                "reference": "5c362a56063fd08057c5835cf86a4bcec9dcadb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/af91c98c8b18b2a9a93845887cf279e54b809a48",
-                "reference": "af91c98c8b18b2a9a93845887cf279e54b809a48",
+                "url": "https://api.github.com/repos/sonata-project/SonataSeoBundle/zipball/5c362a56063fd08057c5835cf86a4bcec9dcadb2",
+                "reference": "5c362a56063fd08057c5835cf86a4bcec9dcadb2",
                 "shasum": ""
             },
             "require": {
@@ -13602,19 +13602,20 @@
                 "knplabs/knp-menu": "^3.0",
                 "knplabs/knp-menu-bundle": "^3.0",
                 "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^0.12.84",
-                "phpstan/phpstan-phpunit": "^0.12.16",
-                "phpstan/phpstan-strict-rules": "^0.12.10",
-                "phpstan/phpstan-symfony": "^0.12.44",
+                "phpstan/phpstan": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpstan/phpstan-strict-rules": "^1.0",
+                "phpstan/phpstan-symfony": "^1.0",
                 "phpunit/phpunit": "^9.5",
                 "psalm/plugin-phpunit": "^0.16",
                 "symfony/console": "^4.4 || ^5.3 || ^6.0",
                 "symfony/filesystem": "^4.4 || ^5.3 || ^6.0",
                 "symfony/finder": "^4.4 || ^5.3 || ^6.0",
-                "symfony/phpunit-bridge": "^5.3 || ^6.0",
+                "symfony/phpunit-bridge": "^6.0",
                 "symfony/yaml": "^4.4 || ^5.3 || ^6.0",
                 "vimeo/psalm": "^4.7.2"
             },
+            "default-branch": true,
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
@@ -13644,7 +13645,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sonata-project/SonataSeoBundle/issues",
-                "source": "https://github.com/sonata-project/SonataSeoBundle/tree/3.0.0"
+                "source": "https://github.com/sonata-project/SonataSeoBundle/tree/3.x"
             },
             "funding": [
                 {
@@ -13664,7 +13665,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-11-20T11:42:20+00:00"
+            "time": "2022-02-23T00:31:49+00:00"
         },
         {
             "name": "sonata-project/twig-extensions",
@@ -21799,6 +21800,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "league/geotools": 0,
+        "sonata-project/seo-bundle": 20,
         "drupal/core-vendor-hardening": 20,
         "nucleos/user-bundle": 20,
         "nucleos/profile-bundle": 20,

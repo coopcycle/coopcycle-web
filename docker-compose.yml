@@ -44,7 +44,7 @@ services:
     build:
       dockerfile: './docker/php/Dockerfile'
       context: '.'
-    image: coopcycle/php
+    image: coopcycle/php:8.1
     depends_on:
       - postgres
       - redis
