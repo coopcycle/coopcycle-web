@@ -49,6 +49,9 @@ Class CopyTranslationCommand extends Command
             ;
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $inputKey = $input->getOption('input');

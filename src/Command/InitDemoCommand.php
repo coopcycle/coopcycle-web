@@ -127,6 +127,9 @@ class InitDemoCommand extends Command
         $this->lockFactory = new LockFactory($store);
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $lock = $this->lockFactory->createLock('orm-purger');

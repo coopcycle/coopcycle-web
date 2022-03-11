@@ -76,6 +76,9 @@ class GeofencingCommand extends Command
         $this->io = new SymfonyStyle($input, $output);
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $stopChannel = sprintf('%s:geofencing:stop', $this->doorstepChanNamespace);

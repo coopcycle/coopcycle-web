@@ -47,6 +47,9 @@ class LoadFixturesCommand extends Command
         $this->io = new SymfonyStyle($input, $output);
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ('test' !== $this->environment) {

@@ -160,6 +160,9 @@ class SetupCommand extends Command
         $this->locales = explode('|', $this->localeRegex);
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('<info>Setting up CoopCycle…</info>');

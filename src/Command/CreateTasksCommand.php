@@ -96,6 +96,9 @@ Class CreateTasksCommand extends Command
         $this->faker->addProvider($addressProvider);
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $date = $input->getOption('date');

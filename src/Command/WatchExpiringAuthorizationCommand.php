@@ -58,6 +58,9 @@ class WatchExpiringAuthorizationCommand extends Command
         $this->io = new SymfonyStyle($input, $output);
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $dryRun = $input->getOption('dry-run');

@@ -51,6 +51,9 @@ class ApplyTaxesCommand extends Command
         $this->io = new SymfonyStyle($input, $output);
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $since = $input->getOption('since');

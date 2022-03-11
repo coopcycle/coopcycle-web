@@ -53,6 +53,9 @@ class OrderNotificationCommand extends Command
         $this->io = new SymfonyStyle($input, $output);
     }
 
+    /**
+     * @return int
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $order = $this->orderRepository->find($input->getOption('order'));
