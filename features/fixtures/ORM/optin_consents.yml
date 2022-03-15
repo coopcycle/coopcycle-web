@@ -1,0 +1,21 @@
+AppBundle\Entity\User:
+  bob:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'bob'
+        - '123456'
+        - 'bob@demo.coopcycle.org'
+        - true
+        - false
+
+AppBundle\Entity\OptinConsent:
+  optin_1:
+    type: 'NEWSLETTER'
+    accepted: false
+    asked: false
+    user: "@bob"
+  optin_2:
+    type: 'MARKETING'
+    accepted: false
+    asked: false
+    user: "@bob"
