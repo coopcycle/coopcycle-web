@@ -1,0 +1,43 @@
+store.multi_drop.conflict: Nemůžete vytvářet objednávky a povolit více výdejů současně
+pricing_rule.expression.syntax_error: Syntaktická chyba ve výrazu "%expression%"
+order.shippingTimeRange.notAvailable: V současné době není k dispozici
+time_range_jump.next_day: Na dnešek již není možné objednat
+checkout.user_with_same_email_exists: Účet se stejným e-mailem již existuje
+task_group.ref.duplicate: Ref "%ref%" se objevuje vícekrát
+order.collection.not_available: Metoda plnění "sběru" není k dispozici
+restaurant.contract.variableDeliveryPrice.pickOne: Vyberte si prosím alespoň jednu
+  cenu
+restaurant.contract.variableCustomerAmount.pickOne: Vyberte si prosím alespoň jednu
+  cenu
+loopeat.insufficient_balance: Váš zůstatek LoopEat (X) nestačí na zabalení celé objednávky
+order.state.notModifiable: Objednávku již nelze upravit
+product.reusablePackagingUnit.mustBeGreaterThanZero: Musíte zadat množství větší než
+  0
+product_option.valuesRange.notAllowed: Pro povinnou volbu nelze definovat rozsah
+task.before.mustBeGreaterThanAfter: Časový rámec není platný
+product.name.modified: Změnili jste název produktu
+time_range.no_weekday: Nevybrali jste den v týdnu
+time_range.empty: Nevybrali jste žádnou hodnotu
+delivery.check.noStore: Musíte poskytnout obchod
+delivery.check.notValid: Váš požadavek není proveditelný
+delivery.tasks.pickupAfterDropoff: Datum předání musí být po datu vyzvednutí.
+delivery.tasks.unexpectedCount: Dodávka se musí skládat ze dvou úkolů.
+delivery.price.error.priceCalculation: Cenu dodávky nebylo možné vypočítat.
+order.fulfillment_methods.empty: Tato provozovna je v současné době nedostupná
+order.items.containsDisabledProduct: Objednávka obsahuje zakázaný produkt
+order.shippedAt.notEmpty: Datum dodání nemůže být prázdné
+order.shippedAt.notAvailable: Datum dodání již není k dispozici
+order.shippedAt.expired: Datum dodání vypršelo
+order.totalIncludingTax.tooLow: Minimální částka je %minimum_amount%
+cart.empty: Váš košík je prázdný
+cart.address.empty: Vyberte prosím adresu
+address.notSet: Zadejte prosím doručovací adresu
+address.tooFar: Tato adresa je příliš daleko
+restaurant.menu.notSet: Vytvoření a aktivace nabídky
+restaurant.notActivable: Tuto restauraci zatím nelze povolit
+restaurant.stripeAccount.notSet: Propojení restaurace s účtem Stripe
+restaurant.contract.notValid: Zadejte podmínky smlouvy o dodávce (vyžaduje oprávnění
+  správce)
+restaurant.name.notBlank: Zadejte název své restaurace
+restaurant.telephone.notBlank: Zadejte své telefonní číslo
+restaurant.openingHours.notBlank: Vyberte alespoň jeden otevřený plán
