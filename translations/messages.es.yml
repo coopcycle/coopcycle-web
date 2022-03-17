@@ -1242,3 +1242,6 @@ restaurant_promotion.items_total.help: Esto le permite aplicar un descuento sobr
   disminuirá</strong> la tarifa percibida por la plataforma.
 form.items_total_promotion.fixed_discount_amount.label: Aplicar un descuento de
 order.preparation_expected_for: Preparación esperada a las %date%
+homepage.featured: Destacados
+homepage.exclusives: Exclusivos
+homepage.shops.new: Tiendas nuevas

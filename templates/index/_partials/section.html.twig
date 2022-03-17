@@ -1,6 +1,52 @@
-{% set pad_length = items|length > 3 ? max_results : 3 %}
+<link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css"/>
 
-<section class="homepage-restaurants">
+<script type="module">
+
+import Swiper from 'https://unpkg.com/swiper@8/swiper-bundle.esm.browser.min.js';
+
+const swiper = new Swiper('.swiper', {
+  slidesPerView: 1.25,
+  spaceBetween: 2,
+  slidesPerGroup: 1,
+  navigation: {
+    nextEl: '.swiper-nav-next',
+    prevEl: '.swiper-nav-prev',
+  },
+  lazyLoading: true,
+  breakpoints: {
+    480: {
+      slidesPerView: 2.25,
+      spaceBetween: 2,
+      slidesPerGroup: 1,
+    },
+    768: {
+      slidesPerView: 3.25,
+      spaceBetween: 2,
+      slidesPerGroup: 2,
+    },
+    992: {
+      slidesPerView: 4.25,
+      spaceBetween: 3,
+      slidesPerGroup: 2,
+    },
+    1200: {
+      slidesPerView: 5.25,
+      spaceBetween: 4,
+      slidesPerGroup: 3,
+    },
+  },
+  observer: true, // to be initialized properly inside a hidden container
+  observeParents: true,
+  on: {
+    afterInit: function() {
+      // we need to hide the swiper at the begining because until is not initialized the images do not look very well
+      document.querySelectorAll('.homepage-restaurants').forEach(element => element.classList.remove('hidden'))
+    }
+  }
+});
+</script>
+
+<section class="homepage-restaurants hidden">
   <div class="container">
     <div class="d-flex flex-row justify-content-between align-items-center py-4">
       <h3 class="m-0">{{ section_title }}</h3>
@@ -8,26 +54,18 @@
       <a class="restaurant-show-more" href="{{ view_all_path }}">{{ view_all }}<i class="fa fa-arrow-right ml-2"></i></a>
       {% endif %}
     </div>
-    <div class="row restaurant-list mb-4">
-      {% for restaurant in items %}
-        <div class="col-xs-12 col-md-4 display-flex">
-          {% include "_partials/restaurant/list_thumbnail.html.twig" %}
-        </div>
-      {% endfor %}
-      {% if (pad_items is not defined or pad_items) and items|length < max_results %}
-        {% set pad = (pad_length - items|length) %}
-        {% for i in range(0, (pad - 1)) %}
-          <div class="col-xs-12 col-md-4 display-flex">
-            <div class="thumbnail restaurant-item">
-              <img class="restaurant-image restaurant-image--placeholder" src="{{ asset('img/restaurant/placeholder.png') }}">
-              <div class="caption">
-                <h4>{% trans %}restaurants.placeholder.title{% endtrans %}</h4>
-                <p class="text-muted">{% trans %}restaurants.placeholder.text{% endtrans %}</p>
-              </div>
+    <div class="row restaurant-list mb-4 px-4">
+      <div class="swiper">
+        <div class="swiper-wrapper">
+          {% for restaurant in items %}
+            <div class="swiper-slide">
+              {% include "_partials/restaurant/list_thumbnail.html.twig" %}
             </div>
-          </div>
-        {% endfor %}
-      {% endif %}
+          {% endfor %}
+        </div>
+        <button class="btn swiper-nav-prev d-none d-sm-block"><i class="fa fa-arrow-left"></i></button>
+        <button class="btn swiper-nav-next d-none d-sm-block"><i class="fa fa-arrow-right"></i></button>
+      </div>
     </div>
   </div>
 </section>

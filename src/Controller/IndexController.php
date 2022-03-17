@@ -32,9 +32,10 @@ class IndexController extends AbstractController
 {
     use UserTrait;
 
-    const MAX_RESULTS = 6;
     const EXPIRES_AFTER = 300;
-    const ITEMS_PER_ROW = 3;
+    const MAX_SECTIONS = 8;
+    const MIN_SHOPS_PER_CUISINE = 3;
+    const LATEST_SHOPS_LIMIT = 10;
 
     private function getItems(LocalBusinessRepository $repository, string $type, CacheInterface $cache, string $cacheKey, TimingRegistry $timingRegistry)
     {
@@ -52,9 +53,7 @@ class IndexController extends AbstractController
             return array_map(fn(LocalBusiness $lb) => $lb->getId(), $items);
         });
 
-        $slicedItemsIds = array_slice($itemsIds, 0, self::MAX_RESULTS);
-
-        foreach ($slicedItemsIds as $id) {
+        foreach ($itemsIds as $id) {
             // If one of the items can't be found (probably because it's disabled),
             // we invalidate the cache
             if (null === $typeRepository->find($id)) {
@@ -67,7 +66,7 @@ class IndexController extends AbstractController
         $count = count($itemsIds);
         $items = array_map(
             fn(int $id): LocalBusiness => $typeRepository->find($id),
-            $slicedItemsIds
+            $itemsIds
         );
 
         return [ $items, $count ];
@@ -87,75 +86,78 @@ class IndexController extends AbstractController
             $cacheKeySuffix = 'anonymous';
         }
 
-        $countByType = $repository->countByType();
-        $types = array_keys($countByType);
-
-        $typesWithEnoughShops = [];
-        foreach ($countByType as $type => $countForType) {
-            if ($countForType >= self::ITEMS_PER_ROW || $countForType >= (self::ITEMS_PER_ROW * 2)) {
-                $typesWithEnoughShops[] = $type;
-            }
-        }
-
         $inflector = new EnglishInflector();
 
         $sections = [];
 
-        if (count($typesWithEnoughShops) > 0) {
+        $restaurantType = FoodEstablishment::RESTAURANT;
+        $keyForRestaurantType = LocalBusiness::getKeyForType($restaurantType);
+        $cacheKey = sprintf('homepage.%s.%s', $keyForRestaurantType, $cacheKeySuffix);
 
-            foreach ($typesWithEnoughShops as $type) {
+        [ $restaurants, $restaurantsCount ] =
+            $this->getItems($repository, $restaurantType, $projectCache, $cacheKey, $timingRegistry);
 
-                $keyForType = LocalBusiness::getKeyForType($type);
+        if ($restaurantsCount > 0) {
+            $sections[] = [
+                'type' => $restaurantType,
+                'shops' => $restaurants,
+                'count' => $restaurantsCount,
+                'type_key' => $keyForRestaurantType,
+                'type_key_plural' => current($inflector->pluralize($keyForRestaurantType)),
+            ];
+        }
 
-                $cacheKey = sprintf('homepage.%s.%s', $keyForType, $cacheKeySuffix);
+        $featured = $repository->findFeatured();
 
-                [ $shops, $shopsCount ] =
-                    $this->getItems($repository, $type, $projectCache, $cacheKey, $timingRegistry);
+        if (count($featured) > 0) {
+            $sections[] = [
+                'type' => null,
+                'title' => 'homepage.featured',
+                'shops' => $featured,
+                'type_key_plural' => null,
+                'show_more' => false,
+            ];
+        }
 
-                $sections[] = [
-                    'type' => $type,
-                    'shops' => $shops,
-                    'type_key' => $keyForType,
-                    'type_key_plural' => current($inflector->pluralize($keyForType)),
+        $exclusives = $repository->findExclusives();
+
+        if (count($exclusives) > 0) {
+            $sections[] = [
+                'type' => null,
+                'title' => 'homepage.exclusives',
+                'shops' => $exclusives,
+                'type_key_plural' => null,
+                'show_more' => false,
+            ];
+        }
+
+        $news = $repository->findLatest(self::LATEST_SHOPS_LIMIT);
+
+        $sections[] = [
+            'type' => null,
+            'title' => 'homepage.shops.new',
+            'shops' => $news,
+            'type_key_plural' => null,
+            'show_more' => false,
+        ];
+
+        $countByCuisine = $repository->countByCuisine();
+
+        $cuisines = [];
+
+        foreach ($countByCuisine as $cuisine) {
+            if ($cuisine['cnt'] >= self::MIN_SHOPS_PER_CUISINE) {
+                $shopsByCuisine = $repository->findByCuisine($cuisine['id']);
+                $cuisines[] = [
+                    'name' => $cuisine['name'],
+                    'shops' => $shopsByCuisine,
+                    'view_all_path' => 'restaurants_by_cuisine',
                 ];
 
-                if (count($sections) >= 3) {
+                if (count($sections) >= self::MAX_SECTIONS) {
                     break;
                 }
             }
-
-        } else {
-
-            $shops = $repository->withoutTypeFilter()->findAllForType();
-
-            $iterator = new SortableRestaurantIterator($shops, $timingRegistry);
-            $shops = iterator_to_array($iterator);
-
-            if (count($shops) > 0) {
-
-                $types = [];
-                foreach ($shops as $shop) {
-                    $types[] = $shop->getType();
-                }
-                $types = array_unique($types);
-
-                $keysForTypes = array_map(fn ($t) => LocalBusiness::getKeyForType($t), $types);
-
-                if (count($shops) >= (self::ITEMS_PER_ROW * 2)) {
-                    $shops = array_slice($shops, 0, (self::ITEMS_PER_ROW * 2));
-                } elseif (count($shops) >= self::ITEMS_PER_ROW) {
-                    $shops = array_slice($shops, 0, self::ITEMS_PER_ROW);
-                }
-
-                $sections[] = [
-                    'type' => null,
-                    'types' => $types,
-                    'shops' => $shops,
-                    'type_key' => null,
-                    'type_key_plural' => null,
-                ];
-            }
-
         }
 
         $hubs = $this->getDoctrine()->getRepository(Hub::class)->findBy([
@@ -170,8 +172,8 @@ class IndexController extends AbstractController
 
         return $this->render('index/index.html.twig', array(
             'sections' => $sections,
+            'cuisines' => $cuisines,
             'hubs' => $hubs,
-            'max_results' => self::MAX_RESULTS,
             'addresses_normalized' => $this->getUserAddresses(),
             'delivery_form' => $deliveryForm ?
                 $this->getDeliveryFormForm($deliveryForm)->createView() : null,

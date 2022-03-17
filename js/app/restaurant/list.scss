@@ -62,7 +62,6 @@
 
   &__title {
     font-weight: 700;
-    height: ($line-height-computed * 2);
     max-height: ($line-height-computed * 2);
   }
 
@@ -70,7 +69,6 @@
     overflow: hidden;
     word-wrap: break-word;
     text-overflow: ellipsis;
-    height: ($line-height-computed * 2);
     max-height: ($line-height-computed * 2);
     & > a {
       color: #777777;

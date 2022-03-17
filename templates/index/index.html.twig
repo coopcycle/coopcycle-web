@@ -26,17 +26,26 @@
   </form>
 </section>
 
-{% set top_sections = sections|slice(0, 2)%}
-{% set bottom_sections = sections|slice(2, 1)%}
-
-{% for section in top_sections %}
+{% for section in sections %}
+  {% set section_title = section.title is defined and section.title is not empty ? section.title|trans :
+    (section.types is defined ? section.types|map(t => t|local_business_type)|join(', ') : section.type|local_business_type) %}
   {% include 'index/_partials/section.html.twig' with {
     items: section.shops,
-    section_title: section.types is defined ?
-      section.types|map(t => t|local_business_type)|join(', ') : section.type|local_business_type,
+    section_title: section_title,
     view_all: 'index.view_all'|trans,
     view_all_path: (section.type_key_plural is not empty and route_exists(section.type_key_plural)) ?
       path(section.type_key_plural) : path('shops', section.type is not empty ? { type: section.type_key } : {}),
+    show_more: section.show_more is defined ? section.show_more : true,
+    pad_items: false,
+  } %}
+{% endfor %}
+
+{% for cuisine in cuisines %}
+  {% include 'index/_partials/section.html.twig' with {
+    items: cuisine.shops,
+    section_title: cuisine.name|trans({}, 'cuisines'),
+    view_all: 'index.view_all'|trans,
+    view_all_path: path(cuisine.view_all_path, {'cuisineName': cuisine.name}),
     show_more: true,
     pad_items: false,
   } %}
@@ -59,19 +68,6 @@
 {% if delivery_form is not null %}
   {% include 'index/_partials/delivery_form.html.twig' %}
 {% endif %}
-
-{% for section in bottom_sections %}
-  {% include 'index/_partials/section.html.twig' with {
-    items: section.shops,
-    section_title: section.types is defined ?
-      section.types|map(t => t|local_business_type)|join(', ') : section.type|local_business_type,
-    view_all: 'index.view_all'|trans,
-    view_all_path: (section.type_key_plural is not empty and route_exists(section.type_key_plural)) ?
-      path(section.type_key_plural) : path('shops', section.type is not empty ? { type: section.type_key } : {}),
-    show_more: true,
-    pad_items: false,
-  } %}
-{% endfor %}
 
 {% if hubs|length > 0 %}
   {% for hub in hubs %}
