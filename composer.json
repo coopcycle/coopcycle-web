@@ -21,7 +21,10 @@
         "psr-4": { "Tests\\": "tests/" }
     },
     "config": {
-        "process-timeout":0
+        "process-timeout":0,
+        "allow-plugins": {
+            "drupal/core-vendor-hardening": true
+        }
     },
     "require": {
         "php": ">=7.4",
