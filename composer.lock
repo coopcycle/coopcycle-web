@@ -2793,16 +2793,16 @@
         },
         {
             "name": "drupal/core-vendor-hardening",
-            "version": "9.2.x-dev",
+            "version": "9.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-vendor-hardening.git",
-                "reference": "f9eaafd58792fef38037979c2344a9216a93cc7e"
+                "reference": "1c867b32b93200ef00840c5f153ae7750fa3ca7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/f9eaafd58792fef38037979c2344a9216a93cc7e",
-                "reference": "f9eaafd58792fef38037979c2344a9216a93cc7e",
+                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/1c867b32b93200ef00840c5f153ae7750fa3ca7b",
+                "reference": "1c867b32b93200ef00840c5f153ae7750fa3ca7b",
                 "shasum": ""
             },
             "require": {
@@ -2828,9 +2828,9 @@
                 "drupal"
             ],
             "support": {
-                "source": "https://github.com/drupal/core-vendor-hardening/tree/9.2.x"
+                "source": "https://github.com/drupal/core-vendor-hardening/tree/9.3.8"
             },
-            "time": "2021-04-22T15:46:23+00:00"
+            "time": "2022-02-24T17:40:56+00:00"
         },
         {
             "name": "edamov/pushok",
@@ -21801,7 +21801,6 @@
     "stability-flags": {
         "league/geotools": 0,
         "sonata-project/seo-bundle": 20,
-        "drupal/core-vendor-hardening": 20,
         "nucleos/user-bundle": 20,
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20
@@ -21812,5 +21811,5 @@
         "php": ">=7.4"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.2.0"
 }
