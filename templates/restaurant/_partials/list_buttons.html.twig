@@ -1,6 +1,6 @@
 <section class="list-subheader">
   {% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
-  <div class="container">
+  <div class="container-fluid">
     <div class="d-flex align-items-center mb-4 {{ restaurant_pledges_enabled ? 'justify-content-between' : 'justify-content-end' }}">
       {% if 'yes' == restaurant_pledges_enabled %}
       <a href="{{ path('restaurants_suggest') }}" class="btn btn-lg btn-default">
@@ -15,19 +15,3 @@
     </div>
   </div>
 </section>
-
-{% if types|length > 1 %}
-<section class="list-subheader">
-  <div class="container">
-    <ul class="nav nav-tabs mb-4">
-      {% for type in types %}
-      <li role="presentation" {% if current_type == type %}class="active"{% endif %}>
-        <a href="{{ path('shops', { type: type|local_business_type_key }) }}">
-          {{ type|local_business_type }}
-        </a>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-</section>
-{% endif %}

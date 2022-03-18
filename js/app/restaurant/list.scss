@@ -4,6 +4,23 @@
 @import "../../../assets/css/vars.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
 
+.shops-content {
+  display: flex;
+  flex-direction: row;
+}
+
+.restaurant-side-bar {
+  width: 20%;
+}
+
+.top-side-bar-space {
+  padding-top: 40px;
+}
+
+.restaurant-main-content {
+  width: 80%;
+}
+
 .restaurant-list {
   h1 {
     display: inline-block;

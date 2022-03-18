@@ -2,26 +2,50 @@
 
 {% block body %}
 {% include "restaurant/_partials/list_header.html.twig" %}
-{% include "restaurant/_partials/list_buttons.html.twig" with { to_mode: 'map' } %}
-<div class="container">
-  {% if count == 0 %}
-    <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
-      {{ 'restaurants.no_results'|trans|raw }}
-    </div>
-  {% else %}
-    <div class="row display-flex restaurant-list">
-      {% for restaurant in restaurants %}
-      <div class="col-sm-6 col-md-4 display-flex">
-        {% include "_partials/restaurant/list_thumbnail.html.twig" %}
+<div class="shops-content">
+  <div class="restaurant-side-bar container-fluid">
+    <div class="top-side-bar-space mb-4"></div>
+    <div class="side-bar-filters">
+      <div class="mb-4">
+        <h6 class="p-1 border-bottom"></h6>
+        <h4 class="py-4">Types</h4>
+        {% for type in types %}
+          <div class="radio px-3 mb-4">
+            <label>
+              <input type="radio" name="typesRadios"
+                value="{{ path('shops', { type: type|local_business_type_key }) }}"
+                {% if current_type == type %}checked{% endif %}>
+              {{ type|local_business_type }}
+            </label>
+          </div>
+        {% endfor %}
       </div>
-      {% endfor %}
     </div>
-    <div class="row">
-      <div class="col-xs-12">
-        {% include "restaurant/pagination.html.twig" %}
-      </div>
+  </div>
+
+  <div class="restaurant-main-content">
+    {% include "restaurant/_partials/list_buttons.html.twig" with { to_mode: 'map' } %}
+    <div class="container-fluid">
+      {% if count == 0 %}
+        <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
+          {{ 'restaurants.no_results'|trans|raw }}
+        </div>
+      {% else %}
+        <div class="row display-flex restaurant-list">
+          {% for restaurant in restaurants %}
+          <div class="col-sm-6 col-md-4 display-flex">
+            {% include "_partials/restaurant/list_thumbnail.html.twig" %}
+          </div>
+          {% endfor %}
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            {% include "restaurant/pagination.html.twig" %}
+          </div>
+        </div>
+      {% endif %}
     </div>
-  {% endif %}
+  </div>
 </div>
 {% endblock %}
 
@@ -32,4 +56,12 @@
 {% block scripts %}
   {{ encore_entry_script_tags('search-address') }}
   {{ encore_entry_script_tags('restaurant-list') }}
+
+  <script>
+    $('input[type=radio]').on('click', function (e) {
+      // avoid clicking another radio before navigate
+      document.querySelectorAll("input[type=radio]:not(input[type=radio]:checked)").forEach((radio) => radio.disabled=true)
+      window.location.href = e.target.value
+    });
+  </script>
 {% endblock %}
