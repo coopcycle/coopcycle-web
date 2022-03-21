@@ -19,6 +19,7 @@
     "form-data": "^2.3.3",
     "lodash": "^4.17.21",
     "promise": "^8.1.0",
+    "swiper": "^8.0.7",
     "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {

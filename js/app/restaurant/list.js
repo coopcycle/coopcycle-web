@@ -1,8 +1,12 @@
 import React from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
+import Swiper, { Navigation } from 'swiper'
 
 import { asText } from '../components/ShippingTimeRange'
+
+import 'swiper/css';
+import 'swiper/css/navigation'
 
 import './list.scss'
 
@@ -35,4 +39,46 @@ document.querySelectorAll('[data-fulfillment]').forEach(el => {
 
     render(<FulfillmentBadge range={ ranges[0] } />, el)
   })
+})
+
+new Swiper('.swiper', {
+  modules: [ Navigation ],
+  slidesPerView: 1.25,
+  spaceBetween: 2,
+  slidesPerGroup: 1,
+  navigation: {
+    nextEl: '.swiper-nav-next',
+    prevEl: '.swiper-nav-prev',
+  },
+  lazyLoading: true,
+  breakpoints: {
+    480: {
+      slidesPerView: 2.25,
+      spaceBetween: 2,
+      slidesPerGroup: 1,
+    },
+    768: {
+      slidesPerView: 3.25,
+      spaceBetween: 2,
+      slidesPerGroup: 2,
+    },
+    992: {
+      slidesPerView: 4.25,
+      spaceBetween: 3,
+      slidesPerGroup: 2,
+    },
+    1200: {
+      slidesPerView: 5.25,
+      spaceBetween: 4,
+      slidesPerGroup: 3,
+    },
+  },
+  observer: true, // to be initialized properly inside a hidden container
+  observeParents: true,
+  on: {
+    afterInit: function() {
+      // we need to hide the swiper at the begining because until is not initialized the images do not look very well
+      document.querySelectorAll('.homepage-restaurants').forEach(element => element.classList.remove('hidden'))
+    }
+  }
 })
