@@ -8,14 +8,6 @@
   h1 {
     display: inline-block;
   }
-  /* Use object-fit to make sure images have same ratio */
-  .restaurant-image {
-    &--placeholder {
-      object-fit: contain;
-      padding: 20px;
-      border-bottom: 1px solid #ddd;
-    }
-  }
 }
 
 .restaurant-list-header {
