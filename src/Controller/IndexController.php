@@ -24,7 +24,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\String\Inflector\EnglishInflector;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -87,8 +86,6 @@ class IndexController extends AbstractController
             $cacheKeySuffix = 'anonymous';
         }
 
-        $inflector = new EnglishInflector();
-
         $sections = [];
 
         $restaurantType = FoodEstablishment::RESTAURANT;
@@ -103,7 +100,6 @@ class IndexController extends AbstractController
                 'type' => $restaurantType,
                 'shops' => array_slice($restaurants, 0, self::MAX_SHOPS_PER_SECTION),
                 'type_key' => $keyForRestaurantType,
-                'type_key_plural' => current($inflector->pluralize($keyForRestaurantType)),
             ];
         }
 
@@ -114,7 +110,6 @@ class IndexController extends AbstractController
                 'type' => null,
                 'title' => 'homepage.featured',
                 'shops' => $featured,
-                'type_key_plural' => null,
                 'show_more' => false,
             ];
         }
@@ -126,7 +121,6 @@ class IndexController extends AbstractController
                 'type' => null,
                 'title' => 'homepage.exclusives',
                 'shops' => $exclusives,
-                'type_key_plural' => null,
                 'show_more' => false,
             ];
         }
@@ -137,7 +131,6 @@ class IndexController extends AbstractController
             'type' => null,
             'title' => 'homepage.shops.new',
             'shops' => $news,
-            'type_key_plural' => null,
             'show_more' => false,
         ];
 
