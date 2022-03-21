@@ -33,7 +33,6 @@
     view_all: 'index.view_all'|trans,
     view_all_path: section.view_all_path|default(''),
     show_more: section.show_more is defined ? section.show_more is defined : true,
-    pad_items: false,
   } %}
 {% endfor %}
 
@@ -64,7 +63,6 @@
         view_all: 'index.view_all_shops'|trans,
         view_all_path: path('hub', { id: hub.id, slug: hub.name|slugify }),
         show_more: hub.restaurants|length > 3,
-        pad_items: false
       } %}
     {% endif %}
   {% endfor %}

@@ -101,8 +101,6 @@ help.home: Página inicial
 restaurants.no_results: Não encontramos restaurantes com sua busca ☹<br>Tente com
   outro endereço
 restaurants.visible_by_you_only: Visível apenas para você
-restaurants.placeholder.title: Um pouco de paciência…
-restaurants.placeholder.text: Novos restaurantes chegarão em breve!
 localBusiness.form.orderingDelayMinutes: Tempo adicional antes do pedido
 localBusiness.form.orderingDelayMinutes.help: Utilize este campo para adicionar algum
   tempo antes do cliente poder fazer um pedido. Esta configuração não altera o tempo

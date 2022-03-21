@@ -76,8 +76,6 @@ delivery.createNew: Crear nueva entrega
 restaurants.no_results: No hemos encontrado ningún restaurante que coincida con tu
   búsqueda ☹<br>prueba con una dirección diferente
 restaurants.visible_by_you_only: Visible solo por ti
-restaurants.placeholder.title: Un poco de paciencia…
-restaurants.placeholder.text: ¡Nuevos restaurantes llegarán pronto!
 localBusiness.form.orderingDelayMinutes: Tiempo adicional antes del pedido
 localBusiness.form.orderingDelayMinutes.help: Usa éstos campos para añadir un tiempo
   adicional antes del pedido de un usuario. Esta opción no cambia los tiempos de preparación

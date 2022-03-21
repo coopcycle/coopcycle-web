@@ -18,7 +18,6 @@ adminDashboard.dashboard.export: Export
 adminDashboard.dashboard.importTasks: Importuj zadania
 adminDashboard.dashboard.exportTasks: Exportuj zadania
 restaurant.noMenuWarning: "Restauracja nie ma jeszcze menu\n"
-restaurants.placeholder.title: Trochę cierpliwości…
 restaurant.unavailable: Niedostępny
 restaurant.available: Dostępny
 localBusiness.form.deliveryPerimeterExpression: Strefy  lub maksymalna odległość dostawy
@@ -27,7 +26,6 @@ localBusiness.form.telephone: Telefon
 localBusiness.form.website: Strona
 localBusiness.form.description: Opis
 localBusiness.form.name: Nazwa
-restaurants.placeholder.text: Wkrótce nowe restuaracje!
 restaurants.no_results: Nie znaleziono żadniej restauracji<br>Spróbuj inny adres
 help.title: Pomoc
 delivery.with_id: Nr dostawy %id%

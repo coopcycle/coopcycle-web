@@ -95,13 +95,11 @@ delivery.with_id: 'Consegna #%id%'
 help.title: Aiuto
 help.home: Home
 restaurants.visible_by_you_only: Visibile solo a te
-restaurants.placeholder.title: Un attimo di pazienza…
 adminDashboard.pledges.title: Suggerimenti
 deliveryForm.noPriceWarning: Non è stato possibile calcolare il prezzo. Per favore
   inserirlo manualmente.
 restaurants.no_results: Non abbiamo trovato ristoranti che coincidono con la tua ricerca
   ☹<br>Prova con un indirizzo diverso
-restaurants.placeholder.text: Nuovi ristoranti arriveranno presto!
 order.reusable_packaging.alert: Questo ordine deve essere impacchettato con un packaging
   riutilizzabile
 restaurant.quotes_disclaimer.authenticated: Questo ristorante accetta anche preventivi.
