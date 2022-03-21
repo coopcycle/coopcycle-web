@@ -15,8 +15,6 @@ use Doctrine\ORM\PersistentCollection;
 use Hashids\Hashids;
 use Spatie\OpeningHours\OpeningHoursForDay;
 use Spatie\OpeningHours\Time;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -27,14 +25,12 @@ class CoopCycleExtension extends AbstractExtension
 {
     private $serializer;
     private $iriConverter;
-    private $router;
     private $secret;
 
-    public function __construct(SerializerInterface $serializer, IriConverterInterface $iriConverter, RouterInterface $router, string $secret)
+    public function __construct(SerializerInterface $serializer, IriConverterInterface $iriConverter, string $secret)
     {
         $this->serializer = $serializer;
         $this->iriConverter = $iriConverter;
-        $this->router = $router;
         $this->secret = $secret;
     }
 
