@@ -94,6 +94,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('mercadopago_can_enable_livemode', array(MercadopagoResolver::class, 'canEnableLivemode')),
             new TwigFunction('mercadopago_can_enable_testmode', array(MercadopagoResolver::class, 'canEnableTestmode')),
             new TwigFunction('should_show_pre_order', array(LocalBusinessRuntime::class, 'shouldShowPreOrder')),
+            new TwigFunction('toggle_query_param', array($this, 'toggleQueryParam')),
         );
     }
 
@@ -213,4 +214,42 @@ class CoopCycleExtension extends AbstractExtension
 
         return $day === strtolower($now->englishDayOfWeek) && $openingHoursForDay->isOpenAt(Time::fromDateTime($now));
     }
+
+    /**
+     * With this function we can toggle (add or remove) a query param or a value of a query param.
+     * It works for query params whose value is a list of strings like 'cuisine=asian,indian,italian'
+     */
+    public function toggleQueryParam($params, $paramName, $paramValue)
+    {
+        $result = [];
+
+        if (!in_array($paramName, array_keys($params))) {
+            // if selected param is not in current params we add it and return params
+            $params[$paramName] = $paramValue;
+            return $params;
+        }
+
+        foreach($params as $key => $value) {
+            if ($key === $paramName) {
+                // if selected param exists in current params
+                $values = explode(",", $value);
+                if (in_array($paramValue, $values)) {
+                    // if selected param value exists in current params
+                    $newValues = array_diff($values, [$paramValue]); // remove selected param value from list
+                    if (count($newValues) > 0) {
+                        // if after remove selected param value the param still has values we add it to the results
+                        $result[$key] = implode(",", array_diff($values, [$paramValue]));
+                    }
+                } else {
+                    // if selected param value does not exist in current params we append it to the list
+                    $result[$key] = $value . ',' . $paramValue;
+                }
+            } else {
+                // if selected param does not exist in current params we add it
+                $result[$key] = $value;
+            }
+        }
+        return $result;
+    }
+
 }

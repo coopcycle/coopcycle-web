@@ -139,6 +139,36 @@ class RestaurantController extends AbstractController
     }
 
     /**
+     * The cache key is built whit all query params alphabetically sorted.
+     * Whit this function we make sure that same filters in different order represent the same cache key.
+     */
+    private function getShopsListCacheKey($request, $type) {
+        // take all query params
+        $queryParamValues = array_values($request->query->all());
+
+        // some param value can be a list of strings like 'asian,indian,italian'
+        // here we create a list of lists
+        $queryParamValues = array_map(function ($param) {
+            $exploded = explode(",", $param);
+            return count($exploded) > 1 ? $exploded : [$param];
+        }, $queryParamValues);
+
+        // flatten multi dimensional arrays
+        $queryParamValues = array_merge(...$queryParamValues);
+
+        // if 'type' is not in query we have a default type selected
+        $typeForCacheKey = $request->query->has('type') ? $request->query->get('type') : LocalBusiness::getKeyForType($type);
+
+        if (!in_array($typeForCacheKey, $queryParamValues)) {
+            $queryParamValues[] = $typeForCacheKey;
+        }
+
+        sort($queryParamValues);
+
+        return sprintf('shops.list.ids|%s', implode(",", $queryParamValues));
+    }
+
+    /**
      * @Route("/restaurants/cuisines/{cuisineName}", name="restaurants_by_cuisine")
      */
     public function listByCuisineAction($cuisineName, Request $request,
@@ -191,6 +221,7 @@ class RestaurantController extends AbstractController
         SlugifyInterface $slugify,
         TimingRegistry $timingRegistry)
     {
+        $originalParams = $request->query->all();
         $defaultKey = LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT);
 
         $key = $request->get('type', $defaultKey);
@@ -214,6 +245,8 @@ class RestaurantController extends AbstractController
             ]);
         }
 
+        $cuisines = $repository->findExistingCuisines();
+
         $page = $request->query->getInt('page', 1);
         $offset = ($page - 1) * self::ITEMS_PER_PAGE;
 
@@ -229,16 +262,30 @@ class RestaurantController extends AbstractController
             $matches = $repository->findByLatLng($latitude, $longitude);
         } else {
 
-            $cacheKey = sprintf('restaurant.list.ids|%s', LocalBusiness::getKeyForType($type));
+            $cacheKey = $this->getShopsListCacheKey($request, $type);
 
-            $restaurantsIds = $projectCache->get($cacheKey, function (ItemInterface $item) use ($repository, $type) {
+            // for filtering we need in query param the full type instead of the key
+            $request->query->set('type', $type);
+
+            if ($request->query->has('cuisine')) {
+                $cuisineTypes = explode(",", $request->query->get('cuisine'));
+                $cuisineIds = [];
+                foreach ($cuisines as $cuisine) {
+                    if (in_array($cuisine->getName(), $cuisineTypes)) {
+                        $cuisineIds[] = $cuisine->getId();
+                    }
+                }
+                $request->query->set('cuisine', $cuisineIds);
+            }
+
+            $restaurantsIds = $projectCache->get($cacheKey, function (ItemInterface $item) use ($repository, $request) {
 
                 $item->expiresAfter(60 * 5);
 
                 return array_map(function (LocalBusiness $restaurant) {
 
                     return $restaurant->getId();
-                }, $repository->withTypeFilter($type)->findAllForType());
+                }, $repository->findByFilters($request->query->all()));
             });
 
             $matches = array_map(function ($id) use ($repository) {
@@ -260,6 +307,8 @@ class RestaurantController extends AbstractController
         $countByType = $repository->countByType();
         $types = array_keys($countByType);
 
+        $request->query->replace($originalParams);
+
         return $this->render('restaurant/list.html.twig', array(
             'count' => $count,
             'restaurants' => $matches,
@@ -270,6 +319,7 @@ class RestaurantController extends AbstractController
             'address' => $request->query->has('address') ? $request->query->get('address') : null,
             'types' => $types,
             'current_type' => $type,
+            'cuisines' => $this->get('serializer')->normalize($cuisines, 'jsonld'),
         ));
     }
 

@@ -6,6 +6,7 @@
   <div class="restaurant-side-bar container-fluid">
     <div class="top-side-bar-space mb-4"></div>
     <div class="side-bar-filters">
+
       <div class="mb-4">
         <h6 class="p-1 border-bottom"></h6>
         <h4 class="py-4">Types</h4>
@@ -13,9 +14,24 @@
           <div class="radio px-3 mb-4">
             <label>
               <input type="radio" name="typesRadios"
-                value="{{ path('shops', { type: type|local_business_type_key }) }}"
+                value="{{ path('shops', app.request.query.all()|merge({ type: type|local_business_type_key })) }}"
                 {% if current_type == type %}checked{% endif %}>
               {{ type|local_business_type }}
+            </label>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="mb-4">
+        <h6 class="p-1 border-bottom"></h6>
+        <h4 class="py-4">Cuisines</h4>
+        {% for cuisine in cuisines %}
+          <div class="checkbox px-3 mb-4">
+            <label>
+            <input type="checkbox"
+                value="{{ path('shops', toggle_query_param(app.request.query.all(), 'cuisine', cuisine.name)) }}"
+                {% if cuisine.name in app.request.query.get('cuisine')|join(',') %}checked{% endif %}>
+                {{ cuisine.name|trans({}, 'cuisines') }}
             </label>
           </div>
         {% endfor %}
@@ -61,6 +77,12 @@
     $('input[type=radio]').on('click', function (e) {
       // avoid clicking another radio before navigate
       document.querySelectorAll("input[type=radio]:not(input[type=radio]:checked)").forEach((radio) => radio.disabled=true)
+      window.location.href = e.target.value
+    });
+
+    $('input[type=checkbox]').on('click', function (e) {
+      // avoid clicking another radio before navigate
+      document.querySelectorAll("input[type=checkbox]:not(input[type=checkbox]:checked)").forEach((check) => check.disabled=true)
       window.location.href = e.target.value
     });
   </script>
