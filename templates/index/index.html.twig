@@ -35,7 +35,7 @@
     view_all: 'index.view_all'|trans,
     view_all_path: (section.type_key_plural is not empty and route_exists(section.type_key_plural)) ?
       path(section.type_key_plural) : path('shops', section.type is not empty ? { type: section.type_key } : {}),
-    show_more: section.show_more is defined ? section.show_more : true,
+    show_more: section.show_more|default(true),
     pad_items: false,
   } %}
 {% endfor %}

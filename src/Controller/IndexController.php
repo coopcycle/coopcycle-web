@@ -36,6 +36,7 @@ class IndexController extends AbstractController
     const MAX_SECTIONS = 8;
     const MIN_SHOPS_PER_CUISINE = 3;
     const LATEST_SHOPS_LIMIT = 10;
+    const MAX_SHOPS_PER_SECTION = 15;
 
     private function getItems(LocalBusinessRepository $repository, string $type, CacheInterface $cache, string $cacheKey, TimingRegistry $timingRegistry)
     {
@@ -100,8 +101,7 @@ class IndexController extends AbstractController
         if ($restaurantsCount > 0) {
             $sections[] = [
                 'type' => $restaurantType,
-                'shops' => $restaurants,
-                'count' => $restaurantsCount,
+                'shops' => array_slice($restaurants, 0, self::MAX_SHOPS_PER_SECTION),
                 'type_key' => $keyForRestaurantType,
                 'type_key_plural' => current($inflector->pluralize($keyForRestaurantType)),
             ];
