@@ -14,7 +14,6 @@ use AppBundle\Enum\Store;
 use AppBundle\Form\DeliveryEmbedType;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\SortableRestaurantIterator;
-use Cocur\Slugify\SlugifyInterface;
 use Hashids\Hashids;
 use MyCLabs\Enum\Enum;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -77,7 +76,7 @@ class IndexController extends AbstractController
     /**
      * @HideSoftDeleted
      */
-    public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache, SlugifyInterface $slugify,
+    public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache,
         TimingRegistry $timingRegistry,
         UrlGeneratorInterface $urlGenerator,
         TranslatorInterface $translator)
