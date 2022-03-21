@@ -91,8 +91,6 @@ delivery.with_id: 'Livraison #%id%'
 restaurants.no_results: Nous n'avons pas trouvé de restaurant correspondant à votre
   recherche ☹<br>Essayez avec une autre adresse
 restaurants.visible_by_you_only: Visible par vous seulement
-restaurants.placeholder.title: Un peu de patience…
-restaurants.placeholder.text: De nouveaux restaurants arrivent bientôt !
 localBusiness.form.orderingDelayMinutes: Délai additionnel pour les prises de commandes
 localBusiness.form.orderingDelayMinutes.help: Utilisez ces champs pour ajouter un
   délai avant la commande. N'influe pas sur le temps réservé à la préparation ni sur
@@ -1213,3 +1211,6 @@ form.checkout_address.nonprofit.placeholder: Choisissez votre association préf�
 form.delivery.arbitrary_price.label: Definir le prix manuellement
 form.store_type.time_slots.label: Tranches horaires
 form.store_type.time_slots.set_as_default: Définir comme tranche horaire par défaut
+homepage.featured: À la une
+homepage.exclusives: Exclusivités
+homepage.shops.new: Nouveautés

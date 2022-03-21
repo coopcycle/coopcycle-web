@@ -175,8 +175,6 @@ help.home: Zuhause
 restaurants.no_results: Wir haben leider kein Restaurant zu deiner Suchanfrage gefunden
   ☹<br>Versuchen Sie es mit einer anderen Adresse
 restaurants.visible_by_you_only: Nur für Sie sichtbar
-restaurants.placeholder.title: Ein wenig Geduld …
-restaurants.placeholder.text: Neue Restaurants folgen demnächst!
 localBusiness.form.orderingDelayMinutes: Zusätzliche Verzögerung vor der Bestellung
 localBusiness.form.orderingDelayMinutes.help: Nutzen Sie dieses Feld um eine Zeit
   festzulegen, bevor der Kunde bestellen kann. Diese Einstellung ändert die Kochzeit

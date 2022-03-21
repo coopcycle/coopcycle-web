@@ -110,8 +110,6 @@ help.home: Home
 restaurants.no_results: We did not find any restaurants matching your search ☹<br>Try
   with a different address
 restaurants.visible_by_you_only: Visible by you only
-restaurants.placeholder.title: A bit of patience…
-restaurants.placeholder.text: New restaurants are coming soon!
 localBusiness.form.orderingDelayMinutes: Additional delay before ordering
 localBusiness.form.orderingDelayMinutes.help: Use this field to add some time before
   the customer can order. This setting doesn't change the time needed for cooking
@@ -1233,3 +1231,6 @@ form.checkout_address.nonprofit.placeholder: Choose your favorite nonprofit
 form.delivery.arbitrary_price.label: Define the price manually
 form.store_type.time_slots.label: Time slots
 form.store_type.time_slots.set_as_default: Set as default time slot
+homepage.featured: Featured
+homepage.exclusives: Exclusives
+homepage.shops.new: New shops

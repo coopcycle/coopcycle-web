@@ -213,6 +213,57 @@ class LocalBusinessRepository extends EntityRepository
             ->getResult();
     }
 
+    public function findFeatured()
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->andWhere('r.featured = :featured')
+            ->setParameter('featured', true);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findExclusives()
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->andWhere('r.exclusive = :exclusive')
+            ->setParameter('exclusive', true);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findLatest($limit)
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->setMaxResults($limit)
+            ->orderBy('r.createdAt', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function countByCuisine(): array
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->select('COUNT(r.id) AS cnt')
+            ->addSelect('c.id')
+            ->addSelect('c.name')
+            ->innerJoin('r.servesCuisine', 'c')
+            ->groupBy('c.id')
+            ->orderBy('cnt', 'DESC');
+
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
+    }
+
+    public function findByCuisine($cuisine) {
+        $qb = $this->createQueryBuilder('r')
+            ->innerJoin('r.servesCuisine', 'c')
+            ->andWhere('c.id = :cuisine_id')
+            ->setParameter('cuisine_id', $cuisine);
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function countZeroWaste()
     {
         $qb = $this->createZeroWasteQueryBuilder();
