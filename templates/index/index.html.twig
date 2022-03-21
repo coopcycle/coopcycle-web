@@ -34,7 +34,7 @@
     section_title: section_title,
     view_all: 'index.view_all'|trans,
     view_all_path: path('shops', section.type is not empty ? { type: section.type_key } : {}),
-    show_more: section.show_more|default(true),
+    show_more: section.show_more is defined ? section.show_more is defined : true,
     pad_items: false,
   } %}
 {% endfor %}
