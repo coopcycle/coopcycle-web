@@ -91,19 +91,21 @@ class IndexController extends AbstractController
 
         $sections = [];
 
-        $restaurantType = FoodEstablishment::RESTAURANT;
-        $keyForRestaurantType = LocalBusiness::getKeyForType($restaurantType);
-        $cacheKey = sprintf('homepage.%s.%s', $keyForRestaurantType, $cacheKeySuffix);
+        $shopsByType = array_keys($repository->countByType());
 
-        [ $restaurants, $restaurantsCount ] =
-            $this->getItems($repository, $restaurantType, $projectCache, $cacheKey, $timingRegistry);
+        $shopType = array_shift($shopsByType);
+        $keyForShopType = LocalBusiness::getKeyForType($shopType);
+        $cacheKey = sprintf('homepage.%s.%s', $keyForShopType, $cacheKeySuffix);
 
-        if ($restaurantsCount > 0) {
+        [ $shops, $shopsCount ] =
+            $this->getItems($repository, $shopType, $projectCache, $cacheKey, $timingRegistry);
+
+        if ($shopsCount > 0) {
             $sections[] = [
-                'title' => $translator->trans('food_establishment.RESTAURANT'),
-                'shops' => array_slice($restaurants, 0, self::MAX_SHOPS_PER_SECTION),
+                'title' => $translator->trans(LocalBusiness::getTransKeyForType($shopType)),
+                'shops' => array_slice($shops, 0, self::MAX_SHOPS_PER_SECTION),
                 'view_all_path' => $urlGenerator->generate('shops', [
-                    'type' => $keyForRestaurantType,
+                    'type' => $keyForShopType,
                 ]),
             ];
         }
