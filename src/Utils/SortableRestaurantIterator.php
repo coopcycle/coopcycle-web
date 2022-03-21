@@ -4,7 +4,6 @@ namespace AppBundle\Utils;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\TimingRegistry;
-use Carbon\Carbon;
 
 class SortableRestaurantIterator extends \ArrayIterator
 {
@@ -12,48 +11,9 @@ class SortableRestaurantIterator extends \ArrayIterator
     {
         $this->timingRegistry = $timingRegistry;
 
-        $this->now = Carbon::now();
+        usort($array, [$this, 'nextSlotComparator']);
 
-        $featured = array_filter($array, function (LocalBusiness $lb) {
-            return $this->isFeatured($lb);
-        });
-
-        $notFeatured = array_filter($array, function (LocalBusiness $lb) {
-            return !$this->isFeatured($lb);
-        });
-
-        usort($featured,    [$this, 'nextSlotComparator']);
-        usort($notFeatured, [$this, 'nextSlotComparator']);
-
-        parent::__construct(array_merge($featured, $notFeatured));
-    }
-
-    private function hasRange($timeInfo)
-    {
-        return !empty($timeInfo)
-            && isset($timeInfo['range'])
-            && is_array($timeInfo['range'])
-            && count($timeInfo['range']) === 2;
-    }
-
-    private function isFeatured(LocalBusiness $lb)
-    {
-        $timeInfo = $this->timingRegistry->getForObject($lb);
-        $hasRange = $this->hasRange($timeInfo);
-
-        if (!$hasRange) {
-
-            return false;
-        }
-
-        $start = Carbon::parse($timeInfo['range'][0]);
-
-        if ($start->diffInHours($this->now) > 3) {
-
-            return false;
-        }
-
-        return $lb->isFeatured();
+        parent::__construct($array);
     }
 
     public function nextSlotComparator(LocalBusiness $a, LocalBusiness $b)
