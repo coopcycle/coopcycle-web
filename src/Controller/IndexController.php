@@ -25,7 +25,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IndexController extends AbstractController
 {
@@ -76,7 +78,9 @@ class IndexController extends AbstractController
      * @HideSoftDeleted
      */
     public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache, SlugifyInterface $slugify,
-        TimingRegistry $timingRegistry)
+        TimingRegistry $timingRegistry,
+        UrlGeneratorInterface $urlGenerator,
+        TranslatorInterface $translator)
     {
         $user = $this->getUser();
 
@@ -97,9 +101,11 @@ class IndexController extends AbstractController
 
         if ($restaurantsCount > 0) {
             $sections[] = [
-                'type' => $restaurantType,
+                'title' => $translator->trans('food_establishment.RESTAURANT'),
                 'shops' => array_slice($restaurants, 0, self::MAX_SHOPS_PER_SECTION),
-                'type_key' => $keyForRestaurantType,
+                'view_all_path' => $urlGenerator->generate('shops', [
+                    'type' => $keyForRestaurantType,
+                ]),
             ];
         }
 
@@ -107,8 +113,7 @@ class IndexController extends AbstractController
 
         if (count($featured) > 0) {
             $sections[] = [
-                'type' => null,
-                'title' => 'homepage.featured',
+                'title' => $translator->trans('homepage.featured'),
                 'shops' => $featured,
                 'show_more' => false,
             ];
@@ -118,8 +123,7 @@ class IndexController extends AbstractController
 
         if (count($exclusives) > 0) {
             $sections[] = [
-                'type' => null,
-                'title' => 'homepage.exclusives',
+                'title' => $translator->trans('homepage.exclusives'),
                 'shops' => $exclusives,
                 'show_more' => false,
             ];
@@ -128,23 +132,22 @@ class IndexController extends AbstractController
         $news = $repository->findLatest(self::LATEST_SHOPS_LIMIT);
 
         $sections[] = [
-            'type' => null,
-            'title' => 'homepage.shops.new',
+            'title' => $translator->trans('homepage.shops.new'),
             'shops' => $news,
             'show_more' => false,
         ];
 
         $countByCuisine = $repository->countByCuisine();
 
-        $cuisines = [];
-
         foreach ($countByCuisine as $cuisine) {
             if ($cuisine['cnt'] >= self::MIN_SHOPS_PER_CUISINE) {
                 $shopsByCuisine = $repository->findByCuisine($cuisine['id']);
-                $cuisines[] = [
-                    'name' => $cuisine['name'],
+                $sections[] = [
+                    'title' => $translator->trans($cuisine['name'], [], 'cuisines'),
                     'shops' => $shopsByCuisine,
-                    'view_all_path' => 'restaurants_by_cuisine',
+                    'view_all_path' => $urlGenerator->generate('restaurants_by_cuisine', [
+                        'cuisineName' => $cuisine['name'],
+                    ]),
                 ];
 
                 if (count($sections) >= self::MAX_SECTIONS) {
@@ -165,7 +168,6 @@ class IndexController extends AbstractController
 
         return $this->render('index/index.html.twig', array(
             'sections' => $sections,
-            'cuisines' => $cuisines,
             'hubs' => $hubs,
             'addresses_normalized' => $this->getUserAddresses(),
             'delivery_form' => $deliveryForm ?

@@ -27,25 +27,12 @@
 </section>
 
 {% for section in sections %}
-  {% set section_title = section.title is defined and section.title is not empty ? section.title|trans :
-    (section.types is defined ? section.types|map(t => t|local_business_type)|join(', ') : section.type|local_business_type) %}
   {% include 'index/_partials/section.html.twig' with {
     items: section.shops,
-    section_title: section_title,
+    section_title: section.title,
     view_all: 'index.view_all'|trans,
-    view_all_path: path('shops', section.type is not empty ? { type: section.type_key } : {}),
+    view_all_path: section.view_all_path|default(''),
     show_more: section.show_more is defined ? section.show_more is defined : true,
-    pad_items: false,
-  } %}
-{% endfor %}
-
-{% for cuisine in cuisines %}
-  {% include 'index/_partials/section.html.twig' with {
-    items: cuisine.shops,
-    section_title: cuisine.name|trans({}, 'cuisines'),
-    view_all: 'index.view_all'|trans,
-    view_all_path: path(cuisine.view_all_path, {'cuisineName': cuisine.name}),
-    show_more: true,
     pad_items: false,
   } %}
 {% endfor %}
