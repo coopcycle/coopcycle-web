@@ -258,6 +258,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .swiper {
   height: 350px;
+  figcaption {
+    font-size: $font-size-h4;
+  }
 }
 .swiper-nav-prev,
 .swiper-nav-next {
