@@ -111,30 +111,33 @@ class IndexController extends AbstractController
         }
 
         $featured = $repository->findFeatured();
+        $featuredIterator = new SortableRestaurantIterator($featured, $timingRegistry);
 
         if (count($featured) > 0) {
             $sections[] = [
                 'title' => $translator->trans('homepage.featured'),
-                'shops' => $featured,
+                'shops' => iterator_to_array($featuredIterator),
                 'show_more' => false,
             ];
         }
 
         $exclusives = $repository->findExclusives();
+        $exclusivesIterator = new SortableRestaurantIterator($exclusives, $timingRegistry);
 
         if (count($exclusives) > 0) {
             $sections[] = [
                 'title' => $translator->trans('homepage.exclusives'),
-                'shops' => $exclusives,
+                'shops' => iterator_to_array($exclusivesIterator),
                 'show_more' => false,
             ];
         }
 
         $news = $repository->findLatest(self::LATEST_SHOPS_LIMIT);
+        $newsIterator = new SortableRestaurantIterator($news, $timingRegistry);
 
         $sections[] = [
             'title' => $translator->trans('homepage.shops.new'),
-            'shops' => $news,
+            'shops' => iterator_to_array($newsIterator),
             'show_more' => false,
         ];
 
@@ -143,9 +146,11 @@ class IndexController extends AbstractController
         foreach ($countByCuisine as $cuisine) {
             if ($cuisine['cnt'] >= self::MIN_SHOPS_PER_CUISINE) {
                 $shopsByCuisine = $repository->findByCuisine($cuisine['id']);
+                $shopsByCuisineIterator = new SortableRestaurantIterator($shopsByCuisine, $timingRegistry);
+
                 $sections[] = [
                     'title' => $translator->trans($cuisine['name'], [], 'cuisines'),
-                    'shops' => $shopsByCuisine,
+                    'shops' => iterator_to_array($shopsByCuisineIterator),
                     'view_all_path' => $urlGenerator->generate('restaurants_by_cuisine', [
                         'cuisineName' => $cuisine['name'],
                     ]),
