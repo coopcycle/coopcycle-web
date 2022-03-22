@@ -90,15 +90,9 @@ class AskForOptinsModal extends Component {
                 </div>
               )
           })}
-          <div className="row" >
-            <div className="col-sm-4 col-xs-12"></div>
-            <div className="col-sm-4 col-xs-12">
-              <button type="button" className="btn btn-block btn-default" onClick={ () => this._onClickSubmit() }>
-                {this.props.t('OPTIN_CONSENT_MODAL_SUBMIT')}
-              </button>
-            </div>
-            <div className="col-sm-4 col-xs-12"></div>
-          </div>
+          <button type="button" className="btn btn-block btn-default" onClick={ () => this._onClickSubmit() }>
+            {this.props.t('OPTIN_CONSENT_MODAL_SUBMIT')}
+          </button>
         </form>
       </Modal>
     )
