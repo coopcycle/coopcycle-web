@@ -43,7 +43,8 @@ adminDashboard.shops.title: Tiendas
 adminDashboard.users.title: Usuarios
 adminDashboard.users.roles: Roles
 adminDashboard.users.editUser: Editar usuario
-adminDashboard.users.confirmDeleteUser: ¿Estás seguro de eliminar al usuario con email %email%?
+adminDashboard.users.confirmDeleteUser: ¿Estás seguro de eliminar al usuario con email
+  %email%?
 adminDashboard.users.userHasBeenDeleted: El usuario ha sido eliminado.
 adminDashboard.users.edit.addStore: Añadir tienda
 adminDashboard.users.edit.addRestaurant: Añadir restaurante
@@ -73,8 +74,8 @@ deliveryForm.noPriceWarning: No se ha podido calcular un precio. Por favor intro
 deliveryForm.noPriceFromPricingWarning: No se ha podido calcular un precio a partir
   de las normas de tarificación. Introdúzcalo manualmente o edite la tarificación.
 delivery.createNew: Crear nueva entrega
-restaurants.no_results: No hemos encontrado ningún restaurante que coincida con tu
-  búsqueda ☹<br>prueba con una dirección diferente
+restaurants.no_results: No hemos encontrado ningún comercio/restaurante que coincida
+  con tu búsqueda ☹<br>prueba con una dirección diferente
 restaurants.visible_by_you_only: Visible solo por ti
 restaurants.placeholder.title: Un poco de paciencia…
 restaurants.placeholder.text: ¡Nuevos restaurantes llegarán pronto!
@@ -100,24 +101,28 @@ restaurant.disabledWarning: "Éste restaurante está desactivado así que los vi
   >activarlo en el panel de administración</a>.\n"
 restaurant.closedWarningWithDelay: Pide ahora para más tarde. Pedidos minimo %delay%
   antes.
-restaurant.temporaryClosedWarning: Éste restaurante está cerrado y no disponible hasta el <strong>%date%</strong>
-restaurant.closedOpensTodayLaterWarning: Éste restaurante se encuentra cerrado pero vuelve a abrir hoy a las <strong>%time%</strong>.
+restaurant.temporaryClosedWarning: Este comercio está cerrado hasta el <strong>%date%</strong>
+  pero puedes hacer un pedido para más tarde
+restaurant.closedOpensTodayLaterWarning: Éste restaurante se encuentra cerrado pero
+  vuelve a abrir hoy a las <strong>%time%</strong>.
 restaurant.canOrderForLater: Puedes programar tu pedido para más tarde!
-restaurant.closedOpensTomorrowWarning: Éste restaurante se encuentra cerrado por hoy pero abre mañana a las <strong>%time%</strong>.
+restaurant.closedOpensTomorrowWarning: Éste restaurante se encuentra cerrado por hoy
+  pero abre mañana a las <strong>%time%</strong>.
 restaurant.canOrderForTomorrow: Puedes programar tu pedido para mañana!
-restaurant.closedOpensAfterTomorrowWarning: Éste restaurante se encuentra cerrado pero vuelvo a abrir el <strong>%date%</strong>.
+restaurant.closedOpensAfterTomorrowWarning: Éste restaurante se encuentra cerrado
+  pero vuelvo a abrir el <strong>%date%</strong>.
 restaurant.canOrderForOtherDay: Puedes programar tu pedido para ese día!
 restaurant.closedNowWarning: Éste restaurante se encuentra cerrado por hoy.
 restaurant.noMenuWarning: "Este restaurante no tiene menú por ahora\n"
 restaurant.form.enabled.tooltip: "Cuando está desactivado, un restaurante no está\
   \ visible en el sitio web. No aparece en los resultados de búsqueda y los visitantes\
   \ no pueden acceder a la página del restaurante.\n"
-restaurant.form.allow_stripe_connect.label: Permitir que el restaurante administre
+restaurant.form.allow_stripe_connect.label: Permitir que el comercio/restaurante administre
   la cuenta Stripe por sí mismo
 restaurant.form.temporaryClosingRule: Haga clic aquí para desactivar temporalmente
   los pedidos a su restaurante.
 restaurant.form.accessPlanning: Acceder al calendario
-restaurant.form.createRestaurant: Crear restaurante
+restaurant.form.createRestaurant: Crear comercio/restaurante
 restaurant.contract.title: Contrato
 restaurant.deliveryPerimeterExpression.title: Perímetro de entrega
 restaurant.deliveryPerimeterExpression.help: Define el perímetro permitido para la
@@ -491,7 +496,7 @@ form.credit_note.amount.label: Suma
 form.credit_note.name.label: Nombre
 form.credit_note.name.help: El nombre del descuento que se mostrará en la cesta
 form.credit_note.restaurant.help: El descuento sólo se podrá utilizar para pedir en
-  este restaurante. Deje vacío para aplicar a todos los restaurantes.
+  este comercio. Deje vacío para aplicar a todos los restaurantes.
 form.embed_settings.with_vehicle.label: Añadir la posibilidad de elegir el tipo de
   vehículo
 form.delivery_embed.name.label: Nombre
@@ -517,8 +522,8 @@ user.profile.familyName: Apellidos
 user.profile.givenName: Nombre
 roles.ROLE_ADMIN.help: "Administrador : Acceso completo a todas las opciones\n"
 roles.ROLE_COURIER.help: "Mensajero: ver tareas pendientes, modificar tareas asignadas…\n"
-roles.ROLE_RESTAURANT.help: 'Propietario de restaurante: gestionar restaurantes asignados,
-  gestionar pedidos…'
+roles.ROLE_RESTAURANT.help: 'Propietario de comercio/restaurante: gestionar restaurantes
+  asignados, gestionar pedidos…'
 roles.ROLE_STORE.help: 'Propietario de tienda: gestionar tiendas asignadas, gestionar
   entregas…'
 stores.manage: Gestionar
@@ -535,10 +540,10 @@ meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: "Algunos ajustes obligatorios no han sido\
   \ configurados.\nVes a la <a href=\"%settings_url%\">página de ajustes</a> para\
   \ configurarlos.\n"
-index.map.tip: Usa el mapa para encontrar restaurantes
+index.map.tip: Usa el mapa para encontrar comercios y restaurantes
 index.banner: Platos deliciosos del restaurante a tu casa.
 index.our_restaurants: Nuestros restaurantes
-index.view_all_restaurants: Ver todos los restaurantes
+index.view_all_restaurants: Ver todos los comercios y restaurantes
 notifications.empty: Ninguna notificación
 adminDashboard.statistics: Estadísticas
 adminDashboard.activity.title: Actividad
@@ -684,7 +689,8 @@ form.store_type.time_slot.label: Franja horaria
 form.store_type.package_set.label: Paquete conjunto
 form.delivery.package.label: Paquete
 form.delivery.packages.label: Paquetes
-form.settings.enable_restaurant_pledges.label: Permitir a los clientes sugerir restaurantes
+form.settings.enable_restaurant_pledges.label: Permitir a los clientes sugerir comercios
+  o restaurantes
 form.suggest.name.label: Nombre
 form.suggest.name.help: Indique el nombre exacto para que podamos encontrarlo
 form.suggest.submit.label: Sugerir ahora
@@ -745,10 +751,10 @@ order.reusable_packaging.alert: Este pedido debe estar en un paquete reutilizabl
 form.user.quotes_allowed.label: Permitir a este cliente solicitar un presupuesto
 restaurant.form.quotes_allowed.label: 'Este restaurante también accepta pedidos en
   citas (ej: catering)'
-restaurant.form.exclusive.label: Este restaurante es exclusivo
+restaurant.form.exclusive.label: Este comercio es exclusivo
 restaurant.form.noPricingRule: Ninguna tarificación ha sido implementada, <a href="%editPricingRule%">haga
   clic aquí para crear una</a>.
-restaurant.quotes_disclaimer.not_authenticated: Éste restaurante tabmien accepta pedidos
+restaurant.quotes_disclaimer.not_authenticated: Este restaurante también acepta pedidos
   en cita. Si usted es un cliente referenciado, <a href="%login%">Conéctese </a> para
   crear una cita. <a href="%contact_us%">Contáctenos</a> para más información.
 receipt.title: 'Recibo del pedido #%number%'
@@ -777,7 +783,7 @@ basics.copy: Copiar
 adminDashboard.users.invite: Invitar usuario
 order.export.heading.total_products_excl_tax: Productos totales (sin IVA)
 users.couriers: Mensajeros
-users.restaurant_owners: Dueños de restaurantes
+users.restaurant_owners: Dueños de comercios o restaurantes
 order.total_excluding_tax: Total (sin IVA)
 order.public_link: Enlace para compartir
 order.payments: Pagos
@@ -804,7 +810,8 @@ task.receipt.greeting: Querido cliente,
 basics.close: Cerca
 form.time_slot.prior_notice_hours.label: Aviso previo (horas)
 restaurant.form.loopeat_disconnect.label: Desconertar LoopEat
-restaurant.form.featured.label: Este restaurante aparece en la página de inicio
+restaurant.form.featured.label: Este comercio/restaurante aparece en la página de
+  inicio
 restaurant.form.fulfillment_methods.label: Métodos de cumplimiento
 restaurant.form.section.settlement: Liquidación
 restaurant.contract.variableDeliveryPrice.help: El importe cobrado se calculará utilizando
@@ -877,10 +884,10 @@ restaurant.contract.variableCustomerAmountEnabled.label: Habilitar la cantidad v
   pagado por la cliente
 restaurant.contract.variableCustomerAmountEnabled.disclaimer: La cantidad se calcula
   dinámicamente
-restaurant.contract.calculation_info: Puede cobrar al restaurante una cantidad diferente
-  de la cantidad pagada por el cliente. <br> Por ejemplo, puede ofrecer la entrega
-  al cliente mientras cobra una cantidad fija al restaurante. <br> También puede configurar
-  una cantidad dinámica (por ejemplo, en función de la distancia).
+restaurant.contract.calculation_info: Puede cobrar al comercio/restaurante una cantidad
+  diferente de la cantidad pagada por el cliente. <br> Por ejemplo, puede ofrecer
+  la entrega al cliente mientras cobra una cantidad fija al restaurante. <br> También
+  puede configurar una cantidad dinámica (por ejemplo, en función de la distancia).
 restaurant.list.depositRefund: Reembolso de depósito
 restaurant.list.promotions: Promociones
 order.payment.waiting_for_confirmation: Esperando la confirmación de su banco…
