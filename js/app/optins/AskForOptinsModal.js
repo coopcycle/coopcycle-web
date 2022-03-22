@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { withTranslation } from 'react-i18next'
 import Modal from 'react-modal'
 
+import './index.scss'
+
 class AskForOptinsModal extends Component {
 
   constructor(props) {
@@ -74,9 +76,10 @@ class AskForOptinsModal extends Component {
         isOpen={ this.state.isOpen }
         shouldCloseOnOverlayClick={ false }
         contentLabel={ this.props.t('SELECT_OPTIN_CONSENTS') }
-        className="ReactModal__Content">
+        className="ReactModal__Content--optins">
         <form name="optins">
-          <h4 className="text-center">{ this.props.t('SELECT_OPTIN_CONSENTS') }</h4>
+          <h4 className="text-center">{ this.props.t('OPTIN_CONSENT_MODAL_TITLE') }</h4>
+          <p className="text-muted">{ this.props.t('OPTIN_CONSENT_MODAL_DISCLAIMER') }</p>
           {this.state.optinsToAsk.length && this.state.optinsToAsk.map((optin) => {
               return (
                 <div className="checkbox" key={optin.id}>
@@ -91,7 +94,7 @@ class AskForOptinsModal extends Component {
             <div className="col-sm-4 col-xs-12"></div>
             <div className="col-sm-4 col-xs-12">
               <button type="button" className="btn btn-block btn-default" onClick={ () => this._onClickSubmit() }>
-                {this.props.t('DONE')}
+                {this.props.t('OPTIN_CONSENT_MODAL_SUBMIT')}
               </button>
             </div>
             <div className="col-sm-4 col-xs-12"></div>
