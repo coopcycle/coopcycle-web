@@ -289,6 +289,9 @@ class SendEmailTest extends TestCase
         $order
             ->getNumber()
             ->willReturn('ABC123');
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
 
         call_user_func_array($this->sendEmail, [ new Event\OrderFulfilled($order->reveal()) ]);
 
