@@ -42,6 +42,13 @@ class SendEmail
     public function __invoke(Event $event)
     {
         $order = $event->getOrder();
+        $customer = $order->getCustomer();
+
+        // This may happen when the order has been
+        // created by manually defining a price
+        if (null === $customer) {
+            return;
+        }
 
         if ($event instanceof OrderAccepted) {
 
