@@ -11,7 +11,6 @@ Feature: Optin Consents
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/me/optin-consents"
-    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -56,7 +55,6 @@ Feature: Optin Consents
         "asked": true
       }
       """
-    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
