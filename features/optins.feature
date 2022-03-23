@@ -20,32 +20,21 @@ Feature: Optin Consents
         "@type": "hydra:Collection",
         "hydra:member": [
             {
-                "@id": "/api/optin_consents/1",
+                "@id": @string@,
                 "@type": "OptinConsent",
                 "id": @integer@,
                 "user": "@string@.startsWith('/api/users')",
-                "type": "NEWSLETTER",
+                "type": @string@,
                 "createdAt": "@string@.isDateTime()",
                 "withdrawedAt": null,
                 "accepted": false,
                 "asked": false
             },
-            {
-                "@id": "/api/optin_consents/2",
-                "@type": "OptinConsent",
-                "id": @integer@,
-                "user": "@string@.startsWith('/api/users')",
-                "type": "MARKETING",
-                "createdAt": "@string@.isDateTime()",
-                "withdrawedAt": null,
-                "accepted": false,
-                "asked": false
-            }
+            "@array_previous@"
         ],
         "hydra:totalItems": 2
       }
       """
-
 
   Scenario: User accepts the consent to receive the Newsletter
     Given the fixtures files are loaded:
@@ -74,27 +63,12 @@ Feature: Optin Consents
         "@type": "hydra:Collection",
         "hydra:member": [
             {
-                "@id": "/api/optin_consents/1",
-                "@type": "OptinConsent",
-                "id": @integer@,
-                "user": "@string@.startsWith('/api/users')",
                 "type": "NEWSLETTER",
-                "createdAt": "@string@.isDateTime()",
-                "withdrawedAt": null,
                 "accepted": true,
-                "asked": true
+                "asked": true,
+                "@*@": "@*@"
             },
-            {
-                "@id": "/api/optin_consents/2",
-                "@type": "OptinConsent",
-                "id": @integer@,
-                "user": "@string@.startsWith('/api/users')",
-                "type": "MARKETING",
-                "createdAt": "@string@.isDateTime()",
-                "withdrawedAt": null,
-                "accepted": false,
-                "asked": false
-            }
+            "@...@"
         ],
         "hydra:totalItems": 2
       }
@@ -127,27 +101,12 @@ Feature: Optin Consents
         "@type": "hydra:Collection",
         "hydra:member": [
             {
-                "@id": "/api/optin_consents/1",
-                "@type": "OptinConsent",
-                "id": @integer@,
-                "user": "@string@.startsWith('/api/users')",
-                "type": "NEWSLETTER",
-                "createdAt": "@string@.isDateTime()",
-                "withdrawedAt": null,
-                "accepted": false,
-                "asked": false
-            },
-            {
-                "@id": "/api/optin_consents/2",
-                "@type": "OptinConsent",
-                "id": @integer@,
-                "user": "@string@.startsWith('/api/users')",
                 "type": "MARKETING",
-                "createdAt": "@string@.isDateTime()",
-                "withdrawedAt": null,
                 "accepted": false,
-                "asked": true
-            }
+                "asked": true,
+                "@*@": "@*@"
+            },
+            "@...@"
         ],
         "hydra:totalItems": 2
       }
