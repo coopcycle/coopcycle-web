@@ -21,6 +21,12 @@ class PublishLiveUpdate
         $order = $event->getOrder();
         $customer = $order->getCustomer();
 
+        // This may happen when the order has been
+        // created by manually defining a price
+        if (null === $customer) {
+            return;
+        }
+
         Assert::isInstanceOf($customer, CustomerInterface::class);
 
         $this->liveUpdates->toOrderWatchers($order, $event);
