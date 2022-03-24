@@ -1240,3 +1240,4 @@ form.store_type.time_slots.set_as_default: Set as default time slot
 homepage.featured: Featured
 homepage.exclusives: Exclusives
 homepage.shops.new: New shops
+users.disabled: Disabled

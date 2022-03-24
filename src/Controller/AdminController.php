@@ -411,6 +411,11 @@ class AdminController extends AbstractController
 
         $qb->leftJoin(User::class, 'u', Expr\Join::WITH, 'c.id = u.customer');
 
+        if (!$request->query->has('filterField') || $request->query->get('filterField') !== 'u.enabled') {
+            $qb->andWhere('u.enabled = :enabled');
+            $qb->setParameter('enabled', true);
+        }
+
         $customers = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
@@ -419,7 +424,7 @@ class AdminController extends AbstractController
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'c.id',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
                 PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['u.username', 'c.id'],
-                PaginatorInterface::FILTER_FIELD_ALLOW_LIST => ['u.roles', 'u.username']
+                PaginatorInterface::FILTER_FIELD_ALLOW_LIST => ['u.roles', 'u.username', 'u.enabled']
             ]
         );
 

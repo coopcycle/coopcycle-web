@@ -72,6 +72,12 @@
     icon: 'lock',
     active: (customers.params.filterField is defined and customers.params.filterField == 'u.roles' and customers.params.filterValue == '*ROLE_ADMIN*'),
     path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_ADMIN*' })
+  },
+  {
+    title: 'users.disabled'|trans,
+    icon: 'ban',
+    active: (customers.params.filterField is defined and customers.params.filterField == 'u.enabled' and customers.params.filterValue == '0'),
+    path: path('admin_users', { filterField: 'u.enabled', filterValue: '0' })
   }
 ] %}
 
@@ -100,7 +106,7 @@
 </thead>
 <tbody>
 {% for customer in customers %}
-  <tr class="{{ customer.hasUser() and not customer.user.enabled ? 'danger' : '' }}">
+  <tr>
     <td>
       <span class="text-monospace">{% if is_demo %}✴✴✴{% else %}{{ customer.emailCanonical }}{% endif %}</span>
     </td>
