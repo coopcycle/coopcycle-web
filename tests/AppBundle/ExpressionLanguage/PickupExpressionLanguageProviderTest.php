@@ -200,4 +200,32 @@ class PickupExpressionLanguageProviderTest extends TestCase
         $this->assertIsNumeric($value);
         $this->assertEquals($expectedValue, $value);
     }
+
+    public function timeRangeLengthProviderIn()
+    {
+        return [
+            [ '2019-08-19 09:00:00', '2019-08-19 12:00:00', true ],
+            [ '2019-08-19 09:00:00', '2019-08-19 10:00:00', false ],
+            [ '2019-08-19 09:00:00', '2019-08-19 09:30:00', false ],
+            [ '2019-08-19 09:00:00', '2019-08-20 09:30:00', false ],
+        ];
+    }
+
+    /**
+     * @dataProvider timeRangeLengthProviderIn
+     */
+    public function testTimeRangeLengthIn($after, $before, $expectedValue)
+    {
+        $this->language->registerProvider(new PickupExpressionLanguageProvider());
+
+        $dropoff = new \stdClass();
+        $dropoff->after = new \DateTime($after);
+        $dropoff->before = new \DateTime($before);
+
+        $value = $this->language->evaluate('time_range_length(dropoff, "hours") in 2..8', [
+            'dropoff' => $dropoff,
+        ]);
+
+        $this->assertSame($expectedValue, $value);
+    }
 }
