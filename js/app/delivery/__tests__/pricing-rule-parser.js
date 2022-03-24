@@ -10,6 +10,7 @@ import withTotalVolumeUnits from './with-packages-total-volume-units.json'
 import withTotalVolumeUnitsRange from './with-packages-total-volume-units-range.json'
 import withTimeRangeLength from './with-time-range-length.json'
 import withDropoffTimeRangeLength from './with-time-range-length-dropoff.json'
+import withDropoffTimeRangeLengthWithRange from './with-time-range-length-dropoff-in.json'
 
 import fixedPrice from './fixed-price.json'
 import priceRange from './price-range.json'
@@ -320,6 +321,17 @@ describe('Pricing rule parser (AST)', function() {
     expect(result).toEqual(
       [
         { left: 'time_range_length(dropoff, \'hours\')', operator: '<', right: 2 }
+      ]
+    )
+  })
+
+  it('should parse AST with dropoff time range length with range', function() {
+
+    const result = parseAST(withDropoffTimeRangeLengthWithRange)
+
+    expect(result).toEqual(
+      [
+        { left: 'time_range_length(dropoff, \'hours\')', operator: 'in', right: [ 2, 8 ] }
       ]
     )
   })
