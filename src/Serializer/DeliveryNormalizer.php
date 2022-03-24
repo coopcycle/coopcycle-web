@@ -50,6 +50,16 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
             $task->setType(strtoupper($data['type']));
         }
 
+        // Legacy
+        if (isset($data['doneAfter']) && !isset($data['after'])) {
+            $data['after'] = $data['doneAfter'];
+            unset($data['doneAfter']);
+        }
+        if (isset($data['doneBefore']) && !isset($data['before'])) {
+            $data['before'] = $data['doneBefore'];
+            unset($data['doneBefore']);
+        }
+
         if (isset($data['timeSlot'])) {
 
             // TODO Validate time slot
@@ -84,12 +94,13 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
                 $task->setBefore($period->getEndDate()->tz($tz)->toDateTime());
             }
 
-        } elseif (isset($data['before'])) {
-
-            $task->setDoneBefore(new \DateTime($data['before']));
-        } elseif (isset($data['doneBefore'])) {
-
-            $task->setDoneBefore(new \DateTime($data['doneBefore']));
+        } elseif (isset($data['before']) || isset($data['after'])) {
+            if (isset($data['after'])) {
+                $task->setAfter(new \DateTime($data['after']));
+            }
+            if (isset($data['before'])) {
+                $task->setBefore(new \DateTime($data['before']));
+            }
         }
 
         if (isset($data['address'])) {

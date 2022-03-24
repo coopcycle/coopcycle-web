@@ -412,6 +412,7 @@ Feature: Deliveries
         },
         "dropoff": {
           "address": "48, Rue de Rivoli",
+          "after": "tomorrow 12:30",
           "before": "tomorrow 13:30"
         }
       }
@@ -470,8 +471,8 @@ Feature: Deliveries
             "contactName": null
           },
           "doneAfter":"@string@.isDateTime()",
-          "after":"@string@.isDateTime()",
-          "before":"@string@.isDateTime()",
+          "after":"@string@.isDateTime().startsWith(\"2022-03-25T12:30:00\")",
+          "before":"@string@.isDateTime().startsWith(\"2022-03-25T13:30:00\")",
           "doneBefore":"@string@.isDateTime()",
           "comments": "",
           "weight":null,
