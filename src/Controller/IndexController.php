@@ -119,7 +119,9 @@ class IndexController extends AbstractController
             $sections[] = [
                 'title' => $translator->trans('homepage.featured'),
                 'shops' => iterator_to_array($featuredIterator),
-                'show_more' => false,
+                'view_all_path' => $urlGenerator->generate('shops', [
+                    'category' => 'featured',
+                ]),
             ];
         }
 
@@ -130,7 +132,9 @@ class IndexController extends AbstractController
             $sections[] = [
                 'title' => $translator->trans('homepage.exclusive'),
                 'shops' => iterator_to_array($exclusivesIterator),
-                'show_more' => false,
+                'view_all_path' => $urlGenerator->generate('shops', [
+                    'category' => 'exclusives',
+                ]),
             ];
         }
 
@@ -140,7 +144,9 @@ class IndexController extends AbstractController
         $sections[] = [
             'title' => $translator->trans('homepage.shops.new'),
             'shops' => iterator_to_array($newsIterator),
-            'show_more' => false,
+            'view_all_path' => $urlGenerator->generate('shops', [
+                'category' => 'news',
+            ]),
         ];
 
         $countByCuisine = $repository->countByCuisine();
@@ -153,8 +159,8 @@ class IndexController extends AbstractController
                 $sections[] = [
                     'title' => $translator->trans($cuisine['name'], [], 'cuisines'),
                     'shops' => iterator_to_array($shopsByCuisineIterator),
-                    'view_all_path' => $urlGenerator->generate('restaurants_by_cuisine', [
-                        'cuisineName' => $cuisine['name'],
+                    'view_all_path' => $urlGenerator->generate('shops', [
+                        'cuisine' => $cuisine['name'],
                     ]),
                 ];
 
