@@ -23,6 +23,19 @@
   }
 }
 
+.filter-section-btn {
+  outline: none !important;
+}
+
+.filter-caret {
+  transform: scale(1.6) rotate(-180deg);
+  margin-left: 8px;
+  margin-top: -4px;
+}
+button[aria-expanded='false'] .filter-caret {
+  transform: scale(1.6) rotate(0deg);
+}
+
 .restaurant-list-header {
   margin-top: -20px;
   padding-top: $bs-base-margin;

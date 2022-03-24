@@ -12,23 +12,38 @@
 
       <div class="mb-4">
         <h6 class="p-1 border-bottom"></h6>
-        <h4 class="py-4">Type</h4>
-        {% for type in types %}
-          <div class="radio px-3 mb-4">
-            <label>
-              <input type="radio" name="typesRadios"
-                value="{{ path('shops', app.request.query.all()|merge({ type: type|local_business_type_key })) }}"
-                {% if current_type == type %}checked{% endif %}>
-              {{ type|local_business_type }}
-            </label>
-          </div>
-        {% endfor %}
+          <button class="filter-section-btn btn btn-sm shadow-none bg-transparent w-100"
+            data-toggle="collapse" href="#collapseType" aria-expanded="true" aria-controls="collapseType">
+            <div class="d-flex flex-row align-items-center justify-content-between">
+              <h4><strong>Type</strong></h4>
+              <strong><span class="filter-caret caret"></span></i></strong>
+            </div>
+          </button>
+          <div class="collapse in" id="collapseType">
+          {% for type in types %}
+            <div class="radio px-3 mb-4">
+              <label>
+                <input type="radio" name="typesRadios"
+                  value="{{ path('shops', app.request.query.all()|merge({ type: type|local_business_type_key })) }}"
+                  {% if current_type == type %}checked{% endif %}>
+                {{ type|local_business_type }}
+              </label>
+            </div>
+          {% endfor %}
+        </div>
       </div>
 
       {% if cuisines|length > 0 %}
       <div class="mb-4">
         <h6 class="p-1 border-bottom"></h6>
-        <h4 class="py-4">Cuisine</h4>
+        <button class="filter-section-btn btn btn-sm shadow-none bg-transparent w-100"
+          data-toggle="collapse" href="#collapseCuisine" aria-expanded="true" aria-controls="collapseCuisine">
+          <div class="d-flex flex-row align-items-center justify-content-between">
+            <h4><strong>Cuisine</strong></h4>
+            <strong><span class="filter-caret caret"></span></i></strong>
+          </div>
+        </button>
+        <div class="collapse in" id="collapseCuisine">
         {% for cuisine in cuisines %}
           <div class="checkbox px-3 mb-4">
             <label>
@@ -39,17 +54,25 @@
             </label>
           </div>
         {% endfor %}
+        </div>
       </div>
       {% endif %}
 
       <div class="mb-4">
         <h6 class="p-1 border-bottom"></h6>
-        <h4 class="py-4">Category</h4>
+        <button class="filter-section-btn btn btn-sm shadow-none bg-transparent w-100"
+          data-toggle="collapse" href="#collapseCategory" aria-expanded="true" aria-controls="collapseCategory">
+          <div class="d-flex flex-row align-items-center justify-content-between">
+            <h4><strong>Category</strong></h4>
+            <strong><span class="filter-caret caret"></span></i></strong>
+          </div>
+        </button>
         {% set categories = [
           {key: 'featured', transKey: 'homepage.featured'},
           {key: 'exclusives', transKey: 'homepage.exclusives'},
           {key: 'news', transKey: 'homepage.shops.new'},
           {key: 'zerowaste', transKey: 'restaurant.list.tags.zerowaste'}] %}
+        <div class="collapse in" id="collapseCategory">
         {% for category in categories %}
           <div class="radio px-3 mb-4">
             <label>
@@ -60,6 +83,7 @@
             </label>
           </div>
         {% endfor %}
+        </div>
       </div>
     </div>
   </div>
