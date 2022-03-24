@@ -31,6 +31,7 @@ Encore
   .addEntry('metrics', './js/app/metrics/index.js')
   .addEntry('metrics-admin', './js/app/metrics/admin.js')
   .addEntry('metrics-loopeat', './js/app/metrics/loopeat.js')
+  .addEntry('optins', './js/app/optins/index.js')
   .addEntry('order', './js/app/order/index.js')
   .addEntry('product-form', './js/app/product/form.js')
   .addEntry('product-list', './js/app/product/list.js')

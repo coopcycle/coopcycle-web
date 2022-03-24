@@ -709,6 +709,8 @@ form.registration.legal.label: Acepto los Términos y Condiciones y la Política
   Privacidad
 form.registration.legal.help: Al marcar esta casilla, aceptas nuestros <a href="%terms_url%">Términos
   y Condiciones</a> y la <a href="%privacy_url%">Política de Privacidad</a>.
+form.registration.optin.newsletter.label: Estoy de acuerdo en recibir las últimas novedades de %brand_name%.
+form.registration.optin.marketing.label: Estoy de acuerdo en recibir promociones.
 form.time_slot.name.label: Nombre
 form.time_slot.interval.label: Intervalo
 form.time_slot_choice.start_time.label: Hora de inicio
@@ -1031,6 +1033,9 @@ localBusiness.form.use_different_business_address.label: Utilice una dirección 
 adminDashboard.users.last_order: Último pedido
 adminDashboard.users.registered_at: Registrad@
 adminDashboard.users.orders_count: Numero de pedidos
+adminDashboard.users.export.optins.title: Selecciona lo que deseas exportar
+adminDashboard.users.export.optins.newsletter: Usuarios que están de acuerdo en recibir las últimas novedades
+adminDashboard.users.export.optins.marketting: Usuarios que están de acuerdo en recibir promociones
 adminDashboard.customize.title: Personalizar
 base.footer.RegisterMyRestaurant: Registrar mi restaurante
 base.footer.companyRegister: Conviértete en socio

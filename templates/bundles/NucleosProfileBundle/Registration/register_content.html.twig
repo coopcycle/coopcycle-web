@@ -16,9 +16,16 @@
       {{ form_row(form.plainPassword) }}
       {{ form_row(form.legal) }}
 
+      {% for optin in form.optins.vars.value|split(',') %}
+        {{ form_row(form[optin]) }}
+      {% endfor %}
+
       {# TODO Add other fields #}
 
       {{ form_widget(form.save, { attr: { class: 'btn btn-block btn-lg btn-primary' } }) }}
+      <div class="help-block">
+        {% trans from 'messages' %}authentication.unsubscribe{% endtrans %}
+      </div>
     {{ form_end(form) }}
     <hr>
     <div class="panel panel-default">

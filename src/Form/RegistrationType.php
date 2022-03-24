@@ -5,20 +5,25 @@ namespace AppBundle\Form;
 use AppBundle\Form\Type\LegalType;
 use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Symfony\Component\Form\AbstractTypeExtension;
+use AppBundle\Service\SettingsManager;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
+use AppBundle\Enum\Optin;
 
 class RegistrationType extends AbstractTypeExtension
 {
+    private $settingsManager;
     private $isDemo;
 
-    public function __construct(bool $isDemo = false)
+    public function __construct(SettingsManager $settingsManager, bool $isDemo = false)
     {
+        $this->settingsManager = $settingsManager;
         $this->isDemo = $isDemo;
     }
 
@@ -40,6 +45,27 @@ class RegistrationType extends AbstractTypeExtension
             ]);
         }
 
+        // we need this data to iterate each optin form field in template
+        $builder
+        ->add('optins', HiddenType::class, [
+            'mapped' => false,
+            'data' => implode(",", Optin::toArray()),
+        ]);
+
+        // @see https://fr.sendinblue.com/blog/guide-opt-in/
+        // @see https://mailchimp.com/fr/help/collect-consent-with-gdpr-forms/
+        // @see https://www.mailerlite.com/blog/how-to-create-opt-in-forms-that-still-work-under-gdpr
+        foreach(Optin::values() as $optin) {
+            $builder->add($optin->getValue(), CheckboxType::class, [
+                'label'    => $optin->label(),
+                'label_translation_parameters' => $optin->labelParameters($this->settingsManager),
+                'translation_domain' => 'messages',
+                'required' => $optin->required(),
+                'mapped'   => false,
+            ]);
+        }
+
+        // Add help to "username" field
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             $child = $form->get('username');

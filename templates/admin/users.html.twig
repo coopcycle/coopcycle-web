@@ -1,5 +1,9 @@
 {% extends "admin.html.twig" %}
 
+{% if users_export_form is defined %}
+  {% form_theme users_export_form 'bootstrap_3_layout.html.twig' %}
+{% endif %}
+
 {% block breadcrumb %}
 <li>{% trans %}adminDashboard.users.title{% endtrans %}</li>
 {% endblock %}
@@ -30,6 +34,11 @@
     <a href="{{ path('admin_users_invite') }}" class="btn btn-info">
       <i class="fa fa-plus"></i> {% trans %}adminDashboard.users.invite{% endtrans %}
     </a>
+    {% if optin_export_users_enabled %}
+      <button class="btn btn-primary btn-success" type="button" data-toggle="modal" data-target="#users-export-modal">
+        <i class="fa fa-download"></i> {{ 'adminDashboard.dashboard.export'|trans }}
+      </button>
+    {% endif %}
   </div>
 </div>
 
@@ -149,6 +158,27 @@
 <nav class="text-center">
   {{ knp_pagination_render(customers) }}
 </nav>
+
+{% if users_export_form is defined %}
+<div class="modal fade" tabindex="-1" role="dialog" id="users-export-modal">
+  <div class="modal-dialog" role="document">
+    {{ form_start(users_export_form, { attr: { class: 'modal-content' } }) }}
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">{{ 'adminDashboard.dashboard.export'|trans }}</h4>
+      </div>
+      <div class="modal-body">
+        {{ form_row(users_export_form.optins) }}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
+        <button type="submit" class="btn btn-primary">{{ 'adminDashboard.dashboard.export'|trans }}</button>
+      </div>
+    {{ form_end(users_export_form) }}
+  </div>
+</div>
+{% endif %}
+
 {% endblock %}
 
 {% block scripts %}

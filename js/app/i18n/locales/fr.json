@@ -253,6 +253,11 @@
         "SCHEDULE_ORDER": "Pré-commander",
         "RULE_PICKER_LINE_VOLUME_UNITS": "Unités de volume",
         "RULE_PICKER_LINE_PICKUP_TIME_RANGE_LENGTH_HOURS": "Durée du créneau de retrait (heures)",
-        "RULE_PICKER_LINE_DROPOFF_TIME_RANGE_LENGTH_HOURS": "Durée du créneau de dépôt (heures)"
+        "RULE_PICKER_LINE_DROPOFF_TIME_RANGE_LENGTH_HOURS": "Durée du créneau de dépôt (heures)",
+        "OPTIN_CONSENT_NEWSLETTER_LABEL": "J'accepte de recevoir la newsletter de {{brand}}",
+        "OPTIN_CONSENT_MARKETING_LABEL": "J'accepte de recevoir des promotions ponctuelles",
+        "OPTIN_CONSENT_MODAL_TITLE": "Veuillez mettre à jour vos réglages",
+        "OPTIN_CONSENT_MODAL_DISCLAIMER": "Pour mieux vous servir, nous voudrions pouvoir vous contacter de temps en temps. Choississez les emails que vous souhaitez recevoir dans la liste ci-dessous.",
+        "OPTIN_CONSENT_MODAL_SUBMIT": "Mettre à jour"
     }
 }
