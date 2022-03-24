@@ -856,8 +856,8 @@ form.registration.legal.label: J'accepte les Conditions Générales et la Politi
 form.registration.legal.help: En cochant cette case, vous acceptez nos <a href="%terms_url%">Conditions
   Générales</a> et notre <a href="%privacy_url%">Politique de Confidentialité</a>.
 order.adjustment_type.reusable_packaging: Consigne
-form.registration.newsletter_optin.label: J'accepte de recevoir la newsletter de %brand_name%
-form.registration.marketing_optin.label: J'accepte de recevoir des promotions ponctuelles
+form.registration.optin.newsletter.label: J'accepte de recevoir la newsletter de %brand_name%
+form.registration.optin.marketing.label: J'accepte de recevoir des promotions ponctuelles
 form.store_type.package_set.label: Ensemble de paquets
 adminDashboard.package_sets.title: Paquets
 form.package.volume_units.label: Unité de volume
