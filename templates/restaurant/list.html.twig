@@ -4,7 +4,10 @@
 {% include "restaurant/_partials/list_header.html.twig" %}
 <div class="shops-content">
   <div class="restaurant-side-bar container-fluid d-none d-sm-block">
-    <div class="top-side-bar-space mb-4"></div>
+    <a href="{{ path('shops') }}" class="btn btn-lg btn-default w-100">
+      <i class="fa fa-trash mr-sm-2"></i>
+      <span class="d-none d-sm-inline">Borrar todo</span>
+    </a>
     <div class="side-bar-filters">
 
       <div class="mb-4">
@@ -22,6 +25,7 @@
         {% endfor %}
       </div>
 
+      {% if cuisines|length > 0 %}
       <div class="mb-4">
         <h6 class="p-1 border-bottom"></h6>
         <h4 class="py-4">Cuisine</h4>
@@ -36,6 +40,7 @@
           </div>
         {% endfor %}
       </div>
+      {% endif %}
 
       <div class="mb-4">
         <h6 class="p-1 border-bottom"></h6>
