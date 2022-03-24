@@ -188,6 +188,12 @@ function createSwitchTimeSlotWidget(name, taskForm) {
           opt.innerHTML = choice.label
           timeSlotEl.appendChild(opt)
         })
+
+        store.dispatch({
+          type: 'SET_TIME_SLOT',
+          taskIndex: getTaskIndex(taskForm),
+          value: timeSlotEl.value
+        })
       })
     })
   }
