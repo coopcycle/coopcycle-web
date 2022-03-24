@@ -1,7 +1,7 @@
 <div id="mobile-filter" class="collapse d-sm-none container-fluid">
     <a href="{{ path('shops') }}" class="btn btn-lg btn-default w-100">
       <i class="fa fa-trash mr-sm-2"></i>
-      <span class="d-inline">Borrar todo</span>
+      <span class="d-sm-inline">{{ 'shops.filters.clear_all'|trans }}</span>
     </a>
 
     <div class="mb-4">
@@ -9,7 +9,7 @@
         <button class="filter-section-btn btn btn-sm shadow-none bg-transparent w-100"
             data-toggle="collapse" href="#collapseTypeMobile" aria-expanded="true" aria-controls="collapseTypeMobile">
             <div class="d-flex flex-row align-items-center justify-content-between">
-                <h4><strong>Type</strong></h4>
+                <h4><strong>{{ 'shops.filters.title.types'|trans }}</strong></h4>
                 <strong><span class="filter-caret caret"></span></i></strong>
             </div>
         </button>
@@ -33,7 +33,7 @@
         <button class="filter-section-btn btn btn-sm shadow-none bg-transparent w-100"
             data-toggle="collapse" href="#collapseCuisineMobile" aria-expanded="true" aria-controls="collapseCuisineMobile">
             <div class="d-flex flex-row align-items-center justify-content-between">
-                <h4><strong>Cuisine</strong></h4>
+                <h4><strong>{{ 'shops.filters.title.cuisines'|trans }}</strong></h4>
                 <strong><span class="filter-caret caret"></span></i></strong>
             </div>
         </button>
@@ -57,7 +57,7 @@
         <button class="filter-section-btn btn btn-sm shadow-none bg-transparent w-100"
             data-toggle="collapse" href="#collapseCategoryMobile" aria-expanded="true" aria-controls="collapseCategoryMobile">
             <div class="d-flex flex-row align-items-center justify-content-between">
-                <h4><strong>Category</strong></h4>
+                <h4><strong>{{ 'shops.filters.title.categories'|trans }}</strong></h4>
                 <strong><span class="filter-caret caret"></span></i></strong>
             </div>
         </button>

@@ -74,8 +74,8 @@ deliveryForm.noPriceWarning: No se ha podido calcular un precio. Por favor intro
 deliveryForm.noPriceFromPricingWarning: No se ha podido calcular un precio a partir
   de las normas de tarificación. Introdúzcalo manualmente o edite la tarificación.
 delivery.createNew: Crear nueva entrega
-restaurants.no_results: No hemos encontrado ningún comercio/restaurante que coincida
-  con tu búsqueda ☹<br>prueba con una dirección diferente
+restaurants.no_results: No hemos encontrado ningún comercio/restaurante que coincida con tu
+  búsqueda ☹<br>prueba con una dirección diferente u otros filtros
 restaurants.visible_by_you_only: Visible solo por ti
 localBusiness.form.orderingDelayMinutes: Tiempo adicional antes del pedido
 localBusiness.form.orderingDelayMinutes.help: Usa éstos campos para añadir un tiempo
@@ -1255,3 +1255,7 @@ order.preparation_expected_for: Preparación esperada a las %date%
 homepage.featured: Destacados
 homepage.exclusive: Exclusivos
 homepage.shops.new: Tiendas nuevas
+shops.filters.clear_all: Borrar todo
+shops.filters.title.types: Tipos
+shops.filters.title.categories: Categorías
+shops.filters.title.cuisines: Estilos de cocina
