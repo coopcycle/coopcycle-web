@@ -661,6 +661,7 @@ class AdminController extends AbstractController
             $customer->setEmail($anonymousEmail);
             $customer->setEmailCanonical($anonymousEmail);
             $customer->setFullName('');
+            $customer->setPhoneNumber('');
         }
 
         $userManager->updateUser($user, false);
