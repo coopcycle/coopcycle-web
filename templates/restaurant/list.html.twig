@@ -9,7 +9,7 @@
 
       <div class="mb-4">
         <h6 class="p-1 border-bottom"></h6>
-        <h4 class="py-4">Types</h4>
+        <h4 class="py-4">Type</h4>
         {% for type in types %}
           <div class="radio px-3 mb-4">
             <label>
@@ -24,7 +24,7 @@
 
       <div class="mb-4">
         <h6 class="p-1 border-bottom"></h6>
-        <h4 class="py-4">Cuisines</h4>
+        <h4 class="py-4">Cuisine</h4>
         {% for cuisine in cuisines %}
           <div class="checkbox px-3 mb-4">
             <label>
@@ -32,6 +32,26 @@
                 value="{{ path('shops', toggle_query_param(app.request.query.all(), 'cuisine', cuisine.name)) }}"
                 {% if cuisine.name in app.request.query.get('cuisine')|join(',') %}checked{% endif %}>
                 {{ cuisine.name|trans({}, 'cuisines') }}
+            </label>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="mb-4">
+        <h6 class="p-1 border-bottom"></h6>
+        <h4 class="py-4">Category</h4>
+        {% set categories = [
+          {key: 'featured', transKey: 'homepage.featured'},
+          {key: 'exclusives', transKey: 'homepage.exclusives'},
+          {key: 'news', transKey: 'homepage.shops.new'},
+          {key: 'zerowaste', transKey: 'restaurant.list.tags.zerowaste'}] %}
+        {% for category in categories %}
+          <div class="radio px-3 mb-4">
+            <label>
+              <input type="radio" name="categoriesRadios"
+                value="{{ path('shops', app.request.query.all()|merge({ category: category.key })) }}"
+                {% if app.request.query.get('category') == category.key %}checked{% endif %}>
+              {{ category.transKey|trans }}
             </label>
           </div>
         {% endfor %}

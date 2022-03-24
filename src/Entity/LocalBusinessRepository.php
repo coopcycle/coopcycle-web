@@ -20,6 +20,7 @@ class LocalBusinessRepository extends EntityRepository
     private $restaurantFilter;
     private $context = FoodEstablishment::class;
     private $typeFilter = FoodEstablishment::RESTAURANT;
+    const LATESTS_SHOPS_LIMIT = 12;
 
     public function withContext(string $context)
     {
@@ -294,6 +295,35 @@ class LocalBusinessRepository extends EntityRepository
                             ->innerJoin('r.servesCuisine', 'c', 'WITH', $qb->expr()->in('c.id', ':cuisineIds'))
                             ->setParameter('cuisineIds', $value);
                         break;
+                    case 'category':
+                        switch($value) {
+                            case 'featured':
+                                $qb
+                                    ->andWhere('r.featured = :featured')
+                                    ->setParameter('featured', true);
+                                break;
+                            case 'exclusives':
+                                $qb
+                                    ->andWhere('r.exclusive = :exclusive')
+                                    ->setParameter('exclusive', true);
+                                break;
+                            case 'news':
+                                $qb
+                                    ->setMaxResults(self::LATESTS_SHOPS_LIMIT)
+                                    ->orderBy('r.createdAt', 'DESC');
+                                break;
+                            case 'zerowaste':
+                                $qb
+                                    ->andWhere(
+                                        $qb->expr()->orX(
+                                        $qb->expr()->eq('r.depositRefundEnabled', ':enabled'),
+                                        $qb->expr()->eq('r.loopeatEnabled', ':enabled'))
+                                    )
+                                    ->setParameter('enabled', true);
+                                break;
+                            default:
+                                break;
+                        }
                     default:
                         break;
                 }
