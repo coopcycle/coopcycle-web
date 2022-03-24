@@ -4,14 +4,21 @@
     <div class="d-flex align-items-center mb-4 {{ restaurant_pledges_enabled ? 'justify-content-between' : 'justify-content-end' }}">
       {% if 'yes' == restaurant_pledges_enabled %}
       <a href="{{ path('restaurants_suggest') }}" class="btn btn-lg btn-default">
-        <i class="fa fa-heart-o mr-2"></i>
+        <i class="fa fa-heart-o mr-sm-2"></i>
         <span class="d-none d-sm-inline">{{ 'base.footer.suggest'|trans }}</span>
       </a>
       {% endif %}
-      <a href="{{ path('restaurants', { mode: to_mode|default('map') }) }}" class="btn btn-lg btn-default">
-        <i class="fa fa-{{ to_mode|default('map') }} mr-2"></i>
-        <span class="d-none d-sm-inline">{{ ('restaurants.mode.' ~ to_mode|default('map'))|trans }}</span>
-      </a>
+      <div class="d-flex">
+        <a href="{{ path('restaurants', { mode: to_mode|default('map') }) }}" class="btn btn-lg btn-default">
+          <i class="fa fa-{{ to_mode|default('map') }} mr-sm-2"></i>
+          <span class="d-none d-sm-inline">{{ ('restaurants.mode.' ~ to_mode|default('map'))|trans }}</span>
+        </a>
+        <a href="#" class="ml-3 btn btn-lg btn-default d-block d-sm-none"
+          data-toggle="collapse" data-target="#mobile-filter" aria-expanded="false" aria-controls="mobile-filter">
+          <i class="fa fa-filter mr-sm-2"></i>
+          <span class="d-none d-sm-inline">Filters</span>
+        </a>
+      </div>
     </div>
   </div>
 </section>

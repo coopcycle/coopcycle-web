@@ -3,7 +3,7 @@
 {% block body %}
 {% include "restaurant/_partials/list_header.html.twig" %}
 <div class="shops-content">
-  <div class="restaurant-side-bar container-fluid">
+  <div class="restaurant-side-bar container-fluid d-none d-sm-block">
     <div class="top-side-bar-space mb-4"></div>
     <div class="side-bar-filters">
 
@@ -61,6 +61,7 @@
 
   <div class="restaurant-main-content">
     {% include "restaurant/_partials/list_buttons.html.twig" with { to_mode: 'map' } %}
+    {% include "restaurant/_partials/mobile_filters.html.twig" %}
     <div class="container-fluid">
       {% if count == 0 %}
         <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
