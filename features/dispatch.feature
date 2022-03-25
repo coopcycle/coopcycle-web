@@ -316,9 +316,6 @@ Feature: Dispatch
         "@id":"/api/task_groups/1",
         "@type":"TaskGroup",
         "name":"Fancy group",
-        "tasks":[
-          "/api/tasks/2",
-          "/api/tasks/1"
-        ]
+        "tasks":"@array@.count(2)"
       }
       """
