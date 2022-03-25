@@ -408,12 +408,12 @@ Feature: Deliveries
       """
       {
         "pickup": {
-          "before": "tomorrow 13:00"
+          "before": "2022-03-25 13:00"
         },
         "dropoff": {
           "address": "48, Rue de Rivoli",
-          "after": "tomorrow 12:30",
-          "before": "tomorrow 13:30"
+          "after": "2022-03-25 12:30",
+          "before": "2022-03-25 13:30"
         }
       }
       """
