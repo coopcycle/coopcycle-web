@@ -727,25 +727,25 @@ Feature: Manage restaurants
                 "@id":"@string@.startsWith('/api/product_option_values')",
                 "@type":"ProductOptionValue",
                 "price":0,
-                "code":"PIZZA_TOPPING_PEPPERONI",
-                "value":"Pepperoni",
-                "enabled":true
+                "code":@string@,
+                "value":@string@,
+                "enabled":@boolean@
               },
               {
                 "@id":"@string@.startsWith('/api/product_option_values')",
                 "@type":"ProductOptionValue",
                 "price":0,
-                "code":"PIZZA_TOPPING_EXTRA_CHEESE",
-                "value":"Extra cheese",
-                "enabled":true
+                "code":@string@,
+                "value":@string@,
+                "enabled":@boolean@
               },
               {
                 "@id":"@string@.startsWith('/api/product_option_values')",
                 "@type":"ProductOptionValue",
                 "price":0,
-                "code":"NOT_ENABLED_OPTION",
-                "enabled":false,
-                "value":"Not enabled"
+                "code":@string@,
+                "value":@string@,
+                "enabled":@boolean@
               }
             ],
             "name":"Pizza topping"
