@@ -93,21 +93,23 @@ class IndexController extends AbstractController
 
         $shopsByType = array_keys($repository->countByType());
 
-        $shopType = array_shift($shopsByType);
-        $keyForShopType = LocalBusiness::getKeyForType($shopType);
-        $cacheKey = sprintf('homepage.%s.%s', $keyForShopType, $cacheKeySuffix);
+        if (count($shopsByType) > 0) {
+            $shopType = array_shift($shopsByType);
+            $keyForShopType = LocalBusiness::getKeyForType($shopType);
+            $cacheKey = sprintf('homepage.%s.%s', $keyForShopType, $cacheKeySuffix);
 
-        [ $shops, $shopsCount ] =
-            $this->getItems($repository, $shopType, $projectCache, $cacheKey, $timingRegistry);
+            [ $shops, $shopsCount ] =
+                $this->getItems($repository, $shopType, $projectCache, $cacheKey, $timingRegistry);
 
-        if ($shopsCount > 0) {
-            $sections[] = [
-                'title' => $translator->trans(LocalBusiness::getTransKeyForType($shopType)),
-                'shops' => array_slice($shops, 0, self::MAX_SHOPS_PER_SECTION),
-                'view_all_path' => $urlGenerator->generate('shops', [
-                    'type' => $keyForShopType,
-                ]),
-            ];
+            if ($shopsCount > 0) {
+                $sections[] = [
+                    'title' => $translator->trans(LocalBusiness::getTransKeyForType($shopType)),
+                    'shops' => array_slice($shops, 0, self::MAX_SHOPS_PER_SECTION),
+                    'view_all_path' => $urlGenerator->generate('shops', [
+                        'type' => $keyForShopType,
+                    ]),
+                ];
+            }
         }
 
         $featured = $repository->findFeatured();
