@@ -147,7 +147,7 @@ const TemplateItem = ({ item, setFieldValues, onClickRemove, errors }) => {
           <AddressAutosuggest
             address={ item.address }
             onAddressSelected={ (value, address) => {
-              const cleanAddress = _.pick(address, ['@id', 'streetAddress'])
+              const cleanAddress = _.pick(address, ['@id', 'streetAddress', 'postalCode'])
               const mergedAddress = { ...item.address, ...cleanAddress }
               setFieldValues(item, { address: mergedAddress })
             }}
