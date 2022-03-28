@@ -258,7 +258,7 @@ const validateForm = values => {
     const itemsErrors = values.items.map(item => {
       if (_.isEmpty(item.address.streetAddress)) {
         return {
-          address: 'Veuillez sélectionner une addresse'
+          address: 'Please select an address'
         }
       }
 
