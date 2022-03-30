@@ -146,6 +146,7 @@ const MapProvider = (props) => {
     })
 
     const proxy = new MapProxy(LMap, {
+      useAvatarColors: props.useAvatarColors,
       onEditClick: props.setCurrentTask,
       onTaskMouseDown: task => {
         if (task.isAssigned) {
@@ -225,6 +226,12 @@ const MapProvider = (props) => {
 
   }, [])
 
+  React.useEffect(() => {
+    if (map) {
+      map.setUseAvatarColors(props.useAvatarColors)
+    }
+  }, [ props.useAvatarColors ])
+
   return (
     <MapContext.Provider value={ map }>
       <div id="map"></div>
@@ -247,6 +254,7 @@ class LeafletMap extends Component {
         setCurrentTask={ this.props.setCurrentTask }
         assignAfter={ this.props.assignAfter }
         selectTasksByIds={ this.props.selectTasksByIds }
+        useAvatarColors={ this.props.useAvatarColors }
       >
         <CourierMapLayer />
         <TaskMapLayer />
@@ -262,6 +270,7 @@ function mapStateToProps(state) {
   return {
     tasks: selectAllTasks(state),
     visibleTaskIds: selectVisibleTaskIds(state),
+    useAvatarColors: state.settings.useAvatarColors,
   }
 }
 

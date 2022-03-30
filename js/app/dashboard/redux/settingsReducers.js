@@ -6,6 +6,7 @@ import {
   SET_CLUSTERS_ENABLED,
   SET_POLYLINE_STYLE,
   SHOW_RECURRENCE_RULES,
+  SET_USE_AVATAR_COLORS,
 } from './actions'
 
 const defaultFilters = {
@@ -23,6 +24,7 @@ const initialState = {
   clustersEnabled: false,
   polylineStyle: 'normal',
   isRecurrenceRulesVisible: true,
+  useAvatarColors: false,
 }
 
 export default (state = initialState, action) => {
@@ -60,6 +62,13 @@ export default (state = initialState, action) => {
     return {
       ...state,
       clustersEnabled: action.enabled
+    }
+
+  case SET_USE_AVATAR_COLORS:
+
+    return {
+      ...state,
+      useAvatarColors: action.useAvatarColors
     }
 
   case SET_POLYLINE_STYLE:

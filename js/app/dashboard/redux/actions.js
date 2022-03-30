@@ -126,6 +126,7 @@ export const OPEN_SETTINGS = 'OPEN_SETTINGS'
 export const CLOSE_SETTINGS = 'CLOSE_SETTINGS'
 export const SET_POLYLINE_STYLE = 'SET_POLYLINE_STYLE'
 export const SET_CLUSTERS_ENABLED = 'SET_CLUSTERS_ENABLED'
+export const SET_USE_AVATAR_COLORS = 'SET_USE_AVATAR_COLORS'
 
 export const LOAD_TASK_EVENTS_REQUEST = 'LOAD_TASK_EVENTS_REQUEST'
 export const LOAD_TASK_EVENTS_SUCCESS = 'LOAD_TASK_EVENTS_SUCCESS'
@@ -465,6 +466,10 @@ export function setPolylineStyle(style) {
 
 export function setClustersEnabled(enabled) {
   return {type: SET_CLUSTERS_ENABLED, enabled}
+}
+
+export function setUseAvatarColors(useAvatarColors) {
+  return {type: SET_USE_AVATAR_COLORS, useAvatarColors}
 }
 
 export function loadTaskEventsRequest() {

@@ -19,7 +19,7 @@ const tagsColor = tags => {
   return tag.color
 }
 
-const taskColor = (task, selected) => {
+const taskColor = (task, selected, useAvatarColors) => {
 
   if (selected) {
     return '#EEB516'
@@ -33,7 +33,7 @@ const taskColor = (task, selected) => {
     return tagsColor(task.tags)
   }
 
-  return task.isAssigned ? colorHash.hex(task.assignedTo) : '#777'
+  return task.isAssigned && useAvatarColors ? colorHash.hex(task.assignedTo) : '#777'
 }
 
 const taskIcon = task => {
@@ -157,13 +157,15 @@ export default class MapProxy {
       })
     })
 
+    this.useAvatarColors = options.useAvatarColors
+
   }
 
   addTask(task, selected = false, isRestaurantAddress = false) {
 
     let marker = this.taskMarkers.get(task['@id'])
 
-    const color = taskColor(task, selected)
+    const color = taskColor(task, selected, this.useAvatarColors)
     const iconName = taskIcon(task)
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const latLng = L.latLng(task.address.geo.latitude, task.address.geo.longitude)
@@ -508,5 +510,34 @@ export default class MapProxy {
 
   hideNext() {
     this.swoopyLayerGroup.clearLayers()
+  }
+
+  setUseAvatarColors(useAvatarColors) {
+
+    this.useAvatarColors = useAvatarColors
+
+    this.taskMarkers.forEach((marker) => {
+
+      const task = marker.options.task
+      const color = taskColor(task, false, useAvatarColors)
+
+      const newOpts = {
+        textColor: color,
+        borderColor: color,
+      }
+      const currentOpts = _.pick(marker.options.icon.options, [
+        'textColor',
+        'borderColor',
+      ])
+
+      if (!_.isEqual(currentOpts, newOpts)) {
+        L.Util.setOptions(marker.options.icon, newOpts)
+        marker.setIcon(marker.options.icon)
+      }
+
+    })
+
+    window.sessionStorage.setItem('use_avatar_colors', JSON.stringify(useAvatarColors))
+
   }
 }

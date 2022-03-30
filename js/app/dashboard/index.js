@@ -99,6 +99,16 @@ function start() {
     }
   }
 
+  const persistedUseAvatarColors = window.sessionStorage.getItem(`use_avatar_colors`)
+  if (persistedUseAvatarColors) {
+    preloadedState = {
+      ...preloadedState,
+      settings: {
+        ...preloadedState.settings,
+        useAvatarColors: JSON.parse(persistedUseAvatarColors)
+      }
+    }
+  }
 
   const store = createStoreFromPreloadedState(preloadedState)
 
