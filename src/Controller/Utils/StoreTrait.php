@@ -265,30 +265,7 @@ trait StoreTrait
             $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
                 $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
 
-            if ($store->getCreateOrders()) {
-
-                try {
-
-                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $this->getUser()->getCustomer());
-
-                    $this->handleRememberAddress($store, $form);
-
-                    $entityManager->persist($order);
-                    $entityManager->flush();
-
-                    $orderManager->onDemand($order);
-
-                    $entityManager->flush();
-
-                    return $this->redirectToRoute($routes['success'], ['id' => $id]);
-
-                } catch (NoRuleMatchedException $e) {
-                    $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
-                    $form->addError(new FormError($message));
-                }
-
-            } elseif ($useArbitraryPrice) {
+            if ($useArbitraryPrice) {
 
                 $variantPrice = $form->get('variantPrice')->getData();
                 $variantName = $form->get('variantName')->getData();
@@ -310,6 +287,29 @@ trait StoreTrait
                 $entityManager->flush();
 
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
+
+            } elseif ($store->getCreateOrders()) {
+
+                try {
+
+                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
+                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $this->getUser()->getCustomer());
+
+                    $this->handleRememberAddress($store, $form);
+
+                    $entityManager->persist($order);
+                    $entityManager->flush();
+
+                    $orderManager->onDemand($order);
+
+                    $entityManager->flush();
+
+                    return $this->redirectToRoute($routes['success'], ['id' => $id]);
+
+                } catch (NoRuleMatchedException $e) {
+                    $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+                    $form->addError(new FormError($message));
+                }
 
             } else {
 
