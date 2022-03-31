@@ -55,7 +55,6 @@
         "ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE": "Franja horaria",
         "ADMIN_DASHBOARD_FILTERS_SHOW": "Visualitzar",
         "ADMIN_DASHBOARD_FILTERS_HIDE": "Amagar",
-        "ADMIN_DASHBOARD_TASK_CAPTION": "{{- address}} abans de {{date}}",
         "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Tasca #{{id}}",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_DESCRIPTION_PLACEHOLDER": "2a porta a l'esquerra…",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_CONTACT_NAME_LABEL": "Nom de la persona de contacte",

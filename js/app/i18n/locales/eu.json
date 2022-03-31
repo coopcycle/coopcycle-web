@@ -64,7 +64,6 @@
         "ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE": "Denbora-tartea",
         "ADMIN_DASHBOARD_FILTERS_SHOW": "Erakutsi",
         "ADMIN_DASHBOARD_FILTERS_HIDE": "Ezkutatu",
-        "ADMIN_DASHBOARD_TASK_CAPTION": "{{- address}} {{date}} baino lehen",
         "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "#{{id}} zeregina",
         "ADMIN_DASHBOARD_TASK_TIME_RANGE": "{{after}} eta {{before}} artean",
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "{{username}}-(e)ri esleituta",

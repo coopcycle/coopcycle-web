@@ -54,7 +54,6 @@
         "ADMIN_DASHBOARD_FILTERS_TAB_COURIERS": "Corrieri",
         "ADMIN_DASHBOARD_FILTERS_SHOW": "Mostrare",
         "ADMIN_DASHBOARD_FILTERS_HIDE": "Nascondere",
-        "ADMIN_DASHBOARD_TASK_CAPTION": "{{- address}} prima del {{date}}",
         "ADMIN_DASHBOARD_TASK_TITLE": "Incarico #{{id}}",
         "ADMIN_DASHBOARD_TASK_TITLE_NEW": "Nuovo incarico",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_STREET_ADDRESS_LABEL": "Indirizzo",

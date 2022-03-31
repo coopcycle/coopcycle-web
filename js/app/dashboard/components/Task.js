@@ -31,10 +31,14 @@ const TaskCaption = ({ task }) => {
           <span className="mx-1">›</span>
         </span>
       ) }
-      { t('ADMIN_DASHBOARD_TASK_CAPTION', {
-        address: addressAsText(task.address),
-        date: moment(task.before).format('LT')
+      <span>{ addressAsText(task.address) }</span>
+      <span className="mx-1">·</span>
+      <span>
+      { t('ADMIN_DASHBOARD_TASK_TIME_RANGE', {
+        after: moment(task.after).format('LT'),
+        before: moment(task.before).format('LT'),
       }) }
+      </span>
     </span>
   )
 }

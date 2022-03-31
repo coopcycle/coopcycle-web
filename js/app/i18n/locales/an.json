@@ -64,7 +64,6 @@
         "ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE": "Faixa horaria",
         "ADMIN_DASHBOARD_FILTERS_SHOW": "Amostrar",
         "ADMIN_DASHBOARD_FILTERS_HIDE": "Amagar",
-        "ADMIN_DASHBOARD_TASK_CAPTION": "{{- address}} antes de {{da-te}}",
         "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Fayena #{{id}}",
         "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Entre {{after}} y {{before}}",
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Asignau a {{username}}",
