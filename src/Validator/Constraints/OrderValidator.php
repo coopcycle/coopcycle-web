@@ -3,6 +3,7 @@
 namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Entity\Address;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\PriceFormatter;
@@ -38,6 +39,22 @@ class OrderValidator extends ConstraintValidator
             $this->context->buildViolation($constraint->totalIncludingTaxTooLowMessage)
                 ->setParameter('%minimum_amount%', $this->priceFormatter->formatWithSymbol($minimumAmount))
                 ->atPath('total')
+                ->addViolation();
+        }
+
+        $deliveryAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        if (count($deliveryAdjustments) > 1) {
+            $this->context->buildViolation($constraint->unexpectedAdjustmentsCount)
+                ->setParameter('%type%', AdjustmentInterface::DELIVERY_ADJUSTMENT)
+                ->atPath('adjustments')
+                ->addViolation();
+        }
+
+        $feeAdjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+        if (count($feeAdjustments) > 1) {
+            $this->context->buildViolation($constraint->unexpectedAdjustmentsCount)
+                ->setParameter('%type%', AdjustmentInterface::FEE_ADJUSTMENT)
+                ->atPath('adjustments')
                 ->addViolation();
         }
     }

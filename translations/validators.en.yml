@@ -59,3 +59,5 @@ order.shippingTimeRange.notAvailable: Not available at the moment
 pricing_rule.expression.syntax_error: Syntax error in expression "%expression%"
 
 store.multi_drop.conflict: You can't create orders and enable multiple dropoffs at the same time
+
+order.adjustments.unexpectedCount: Unexpected number of "%type%" adjustments

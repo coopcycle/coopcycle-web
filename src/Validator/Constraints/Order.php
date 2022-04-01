@@ -15,6 +15,7 @@ class Order extends Constraint
     public $totalIncludingTaxTooLowMessage = 'order.totalIncludingTax.tooLow';
     public $shippedAtNotEmptyMessage = 'order.shippedAt.notEmpty';
     public $containsDisabledProductMessage = 'order.items.containsDisabledProduct';
+    public $unexpectedAdjustmentsCount = 'order.adjustments.unexpectedCount';
 
     public function validatedBy()
     {
