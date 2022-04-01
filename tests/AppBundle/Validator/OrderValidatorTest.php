@@ -14,6 +14,7 @@ use AppBundle\Utils\PriceFormatter;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Order as OrderConstraint;
 use AppBundle\Validator\Constraints\OrderValidator;
+use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -128,6 +129,10 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $order
             ->getFulfillmentMethod()
             ->willReturn($takeaway ? 'collection' : 'delivery');
+
+        $order
+            ->getAdjustments(Argument::type('string'))
+            ->willReturn(new ArrayCollection());
 
         $fulfillmentMethod = new FulfillmentMethod();
         $fulfillmentMethod->setMinimumAmount($minimumCartAmount);
