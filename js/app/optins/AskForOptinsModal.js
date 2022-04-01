@@ -76,7 +76,8 @@ class AskForOptinsModal extends Component {
         isOpen={ this.state.isOpen }
         shouldCloseOnOverlayClick={ false }
         contentLabel={ this.props.t('SELECT_OPTIN_CONSENTS') }
-        className="ReactModal__Content--optins">
+        className="ReactModal__Content--optins"
+        overlayClassName="ReactModal__Overlay--optins">
         <form name="optins">
           <h4 className="text-center">{ this.props.t('OPTIN_CONSENT_MODAL_TITLE') }</h4>
           <p className="text-muted">{ this.props.t('OPTIN_CONSENT_MODAL_DISCLAIMER') }</p>

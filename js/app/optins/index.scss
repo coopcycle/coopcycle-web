@@ -1,5 +1,9 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 
+.ReactModal__Overlay--optins {
+  z-index: 2;
+}
+
 .ReactModal__Content--optins {
   @media (min-width: $screen-lg-min) {
     width: 50%;
