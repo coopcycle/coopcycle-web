@@ -66,7 +66,7 @@
   {% endfor %}
 {% endif %}
 
-<div id="optins" data-brand-name={{coopcycle_setting('brand_name')}}>
+<div id="optins" data-brand-name={{ coopcycle_setting('brand_name')|json_encode|e('html_attr') }}>
 </div>
 
 {% endblock %}

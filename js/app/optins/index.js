@@ -37,9 +37,11 @@ const init = async () => {
       )
     }
 
+    const brandName = JSON.parse(container.dataset.brandName)
+
     render(
         <I18nextProvider i18n={ i18n }>
-          <AskForOptinsModal httpClient={httpClient} brandName={container.dataset.brandName} />
+          <AskForOptinsModal httpClient={httpClient} brandName={brandName} />
         </I18nextProvider>,
         container
       )
