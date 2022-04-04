@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 use Carbon\Carbon;
 
@@ -39,6 +40,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         PriceFormatter $priceFormatter,
         SlugifyInterface $slugify,
         FilterService $imagineFilter,
+        TranslatorInterface $translator,
         string $locale)
     {
         $this->normalizer = $normalizer;
@@ -49,6 +51,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->priceFormatter = $priceFormatter;
         $this->slugify = $slugify;
         $this->imagineFilter = $imagineFilter;
+        $this->translator = $translator;
         $this->locale = $locale;
     }
 
@@ -95,6 +98,14 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $data['isOpen'] = $isOpen;
         if (!$isOpen) {
             $data['nextOpeningDate'] = $object->getNextOpeningDate();
+        }
+
+        if (isset($data['facets'])) {
+            $cuisines = array_map(fn ($c) => $this->translator->trans($c, [], 'cuisines'), $data['facets']['cuisine']);
+            $data['facets']['cuisine'] = $cuisines;
+
+            $data['facets']['type'] =
+                $this->translator->trans(LocalBusiness::getTransKeyForType($data['facets']['type']));
         }
 
         return $data;

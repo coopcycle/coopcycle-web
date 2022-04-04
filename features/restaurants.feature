@@ -19,6 +19,11 @@ Feature: Manage restaurants
       "hydra:member":[
         {
           "@id":"/api/restaurants/1",
+          "facets": {
+            "category":["exclusive","featured"],
+            "cuisine":["Asiatique"],
+            "type":"Restaurant"
+          },
           "@*@": "@*@"
         },
         {
