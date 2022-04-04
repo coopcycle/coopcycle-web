@@ -1241,3 +1241,5 @@ homepage.featured: Featured
 homepage.exclusives: Exclusives
 homepage.shops.new: New shops
 users.disabled: Disabled
+admin.settings.stop_using_algolia: |
+  You are using the Algolia suggestions engine, which <a href="https://www.algolia.com/blog/product/sunsetting-our-places-feature/">will stop working from May 31, 2022</a >. Go to the <a href="%settings_url%">settings page</a> to configure another engine, such as <a href="https://docs.coopcycle.org/en/admin/google/">Google Maps</a>
