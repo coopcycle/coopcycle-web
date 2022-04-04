@@ -256,7 +256,7 @@
         "OPTIN_CONSENT_NEWSLETTER_LABEL": "J'accepte de recevoir la newsletter de {{brand}}",
         "OPTIN_CONSENT_MARKETING_LABEL": "J'accepte de recevoir des promotions ponctuelles",
         "OPTIN_CONSENT_MODAL_TITLE": "Veuillez mettre à jour vos réglages",
-        "OPTIN_CONSENT_MODAL_DISCLAIMER": "Pour mieux vous servir, nous voudrions pouvoir vous contacter de temps en temps. Choississez les emails que vous souhaitez recevoir dans la liste ci-dessous.",
+        "OPTIN_CONSENT_MODAL_DISCLAIMER": "Pour mieux vous servir, nous voudrions pouvoir vous contacter de temps en temps. Choisissez les emails que vous souhaitez recevoir dans la liste ci-dessous.",
         "OPTIN_CONSENT_MODAL_SUBMIT": "Mettre à jour",
         "ADMIN_DASHBOARD_SETTINGS_AVATAR_COLORS_ENABLED": "Utiliser les couleurs des avatars pour les marqueurs et les tracés"
     }
