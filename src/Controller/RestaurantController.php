@@ -32,6 +32,7 @@ use AppBundle\Sylius\Cart\RestaurantResolver;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
+use AppBundle\Utils\RestaurantFilter;
 use AppBundle\Utils\SortableRestaurantIterator;
 use AppBundle\Utils\ValidationUtils;
 use Cocur\Slugify\SlugifyInterface;
@@ -55,6 +56,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
@@ -68,6 +70,7 @@ class RestaurantController extends AbstractController
 
     private $orderManager;
     private $serializer;
+    private $restaurantFilter;
 
     /**
      * @var OrderTimeHelper
@@ -103,7 +106,8 @@ class RestaurantController extends AbstractController
         $orderItemQuantityModifier,
         $orderModifier,
         OrderTimeHelper $orderTimeHelper,
-        SerializerInterface $serializer)
+        SerializerInterface $serializer,
+        RestaurantFilter $restaurantFilter)
     {
         $this->orderManager = $orderManager;
         $this->validator = $validator;
@@ -115,6 +119,7 @@ class RestaurantController extends AbstractController
         $this->orderModifier = $orderModifier;
         $this->orderTimeHelper = $orderTimeHelper;
         $this->serializer = $serializer;
+        $this->restaurantFilter = $restaurantFilter;
     }
 
     private function jsonResponse(OrderInterface $cart, array $errors)
@@ -245,10 +250,41 @@ class RestaurantController extends AbstractController
             ]);
         }
 
+        // find cuisines which can be selected by user to filter
         $cuisines = $repository->findExistingCuisines();
 
-        $page = $request->query->getInt('page', 1);
-        $offset = ($page - 1) * self::ITEMS_PER_PAGE;
+        $cacheKey = $this->getShopsListCacheKey($request, $type);
+
+        // for filtering we need in query param the full type instead of the key
+        $request->query->set('type', $type);
+
+        if ($request->query->has('cuisine')) {
+            // filter by cuisine id (index) instead of name
+            $cuisineTypes = $request->query->get('cuisine');
+            $cuisineIds = [];
+            foreach ($cuisines as $cuisine) {
+                if (in_array($cuisine->getName(), $cuisineTypes)) {
+                    $cuisineIds[] = $cuisine->getId();
+                }
+            }
+            $request->query->set('cuisine', $cuisineIds);
+        }
+
+        $restaurantsIds = $projectCache->get($cacheKey, function (ItemInterface $item) use ($repository, $request) {
+
+            $item->expiresAfter(60 * 5);
+
+            return array_map(function (LocalBusiness $restaurant) {
+
+                return $restaurant->getId();
+            }, $repository->findByFilters($request->query->all()));
+        });
+
+        $matches = array_map(function ($id) use ($repository) {
+            return $repository->find($id);
+        }, $restaurantsIds);
+
+        $matches = array_values(array_filter($matches));
 
         if ($request->query->has('geohash') && strlen($request->query->get('geohash')) > 0) {
             $geotools = new Geotools();
@@ -259,46 +295,16 @@ class RestaurantController extends AbstractController
             $latitude = $decoded->getCoordinate()->getLatitude();
             $longitude = $decoded->getCoordinate()->getLongitude();
 
-            $matches = $repository->findByLatLng($latitude, $longitude);
-        } else {
-
-            $cacheKey = $this->getShopsListCacheKey($request, $type);
-
-            // for filtering we need in query param the full type instead of the key
-            $request->query->set('type', $type);
-
-            if ($request->query->has('cuisine')) {
-                $cuisineTypes = $request->query->get('cuisine');
-                $cuisineIds = [];
-                foreach ($cuisines as $cuisine) {
-                    if (in_array($cuisine->getName(), $cuisineTypes)) {
-                        $cuisineIds[] = $cuisine->getId();
-                    }
-                }
-                $request->query->set('cuisine', $cuisineIds);
-            }
-
-            $restaurantsIds = $projectCache->get($cacheKey, function (ItemInterface $item) use ($repository, $request) {
-
-                $item->expiresAfter(60 * 5);
-
-                return array_map(function (LocalBusiness $restaurant) {
-
-                    return $restaurant->getId();
-                }, $repository->findByFilters($request->query->all()));
-            });
-
-            $matches = array_map(function ($id) use ($repository) {
-                return $repository->find($id);
-            }, $restaurantsIds);
-
-            $matches = array_values(array_filter($matches));
+            $matches = $this->restaurantFilter->matchingLatLng($matches, $latitude, $longitude);
         }
 
         $iterator = new SortableRestaurantIterator($matches, $timingRegistry);
         $matches = iterator_to_array($iterator);
 
         $count = count($matches);
+
+        $page = $request->query->getInt('page', 1);
+        $offset = ($page - 1) * self::ITEMS_PER_PAGE;
 
         $matches = array_slice($matches, $offset, self::ITEMS_PER_PAGE);
 
