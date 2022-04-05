@@ -127,7 +127,11 @@
     $('input[type=radio]').on('click', function (e) {
       // avoid clicking another radio before navigate
       document.querySelectorAll("input[type=radio]:not(input[type=radio]:checked)").forEach((radio) => radio.disabled=true)
-      window.location.href = e.target.value
+      try {
+        window.location.href = decodeURIComponent(e.target.value)
+      } catch(e) {
+        window.location.href = e.target.value
+      }
     });
 
     $('input[type=checkbox]').on('click', function (e) {
