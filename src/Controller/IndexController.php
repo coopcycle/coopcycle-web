@@ -128,7 +128,7 @@ class IndexController extends AbstractController
 
         if (count($exclusives) > 0) {
             $sections[] = [
-                'title' => $translator->trans('homepage.exclusives'),
+                'title' => $translator->trans('homepage.exclusive'),
                 'shops' => iterator_to_array($exclusivesIterator),
                 'show_more' => false,
             ];

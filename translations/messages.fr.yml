@@ -1215,7 +1215,7 @@ form.delivery.arbitrary_price.label: Definir le prix manuellement
 form.store_type.time_slots.label: Tranches horaires
 form.store_type.time_slots.set_as_default: Définir comme tranche horaire par défaut
 homepage.featured: À la une
-homepage.exclusives: Exclusivités
+homepage.exclusive: Exclusivités
 homepage.shops.new: Nouveautés
 users.disabled: Désactivés
 admin.settings.stop_using_algolia: |

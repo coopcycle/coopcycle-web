@@ -1238,7 +1238,7 @@ form.delivery.arbitrary_price.label: Define the price manually
 form.store_type.time_slots.label: Time slots
 form.store_type.time_slots.set_as_default: Set as default time slot
 homepage.featured: Featured
-homepage.exclusives: Exclusives
+homepage.exclusive: Exclusives
 homepage.shops.new: New shops
 users.disabled: Disabled
 admin.settings.stop_using_algolia: |
