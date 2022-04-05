@@ -138,16 +138,23 @@ class RestaurantController extends AbstractController
         return $business->getContext() === Store::class ? 'store' : 'restaurant';
     }
 
+    private function flatArray($array)
+    {
+        return array_reduce($array,
+            fn($acc, $item) => is_array($item)
+            ? [...$acc, ...$this->flatArray($item)]
+            : [...$acc, $item]
+            , []
+        );
+    }
+
     /**
      * The cache key is built whit all query params alphabetically sorted.
      * Whit this function we make sure that same filters in different order represent the same cache key.
      */
     private function getShopsListCacheKey($request, $type) {
-        // take all query params
-        $queryParamValues = array_values($request->query->all());
-
-        // flatten multi dimensional arrays
-        $queryParamValues = array_merge(...$queryParamValues);
+        // take all query params and flat them
+        $queryParamValues = $this->flatArray(array_values($request->query->all()));
 
         // if 'type' is not in query we have a default type selected
         $typeForCacheKey = $request->query->has('type') ? $request->query->get('type') : LocalBusiness::getKeyForType($type);
