@@ -42,7 +42,7 @@
             <div class="checkbox px-3 mb-4">
             <label>
             <input type="checkbox" name="cuisinesCheckboxMobile"
-                value="{{ path('shops', toggle_query_param(app.request.query.all(), 'cuisine', cuisine.name)) }}"
+                value="{{ path('shops', app.request.query.all()|merge({ cuisine: toggle_query_param(app.request, 'cuisine', cuisine.name) })) }}"
                 {% if cuisine.name in app.request.query.get('cuisine')|join(',') %}checked{% endif %}>
                 {{ cuisine.name|trans({}, 'cuisines') }}
             </label>

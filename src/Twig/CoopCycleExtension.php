@@ -217,39 +217,25 @@ class CoopCycleExtension extends AbstractExtension
 
     /**
      * With this function we can toggle (add or remove) a query param or a value of a query param.
-     * It works for query params whose value is a list of strings like 'cuisine=asian,indian,italian'
+     * It works for query params whose value is an array like 'cuisine[]=asian&cuisine[]=indian'
      */
-    public function toggleQueryParam($params, $paramName, $paramValue)
+    public function toggleQueryParam($request, $paramName, $paramValue)
     {
-        $result = [];
-
-        if (!in_array($paramName, array_keys($params))) {
-            // if selected param is not in current params we add it and return params
-            $params[$paramName] = $paramValue;
-            return $params;
-        }
-
-        foreach($params as $key => $value) {
-            if ($key === $paramName) {
-                // if selected param exists in current params
-                $values = explode(",", $value);
-                if (in_array($paramValue, $values)) {
-                    // if selected param value exists in current params
-                    $newValues = array_diff($values, [$paramValue]); // remove selected param value from list
-                    if (count($newValues) > 0) {
-                        // if after remove selected param value the param still has values we add it to the results
-                        $result[$key] = implode(",", array_diff($values, [$paramValue]));
-                    }
-                } else {
-                    // if selected param value does not exist in current params we append it to the list
-                    $result[$key] = $value . ',' . $paramValue;
-                }
+        if (!$request->query->has($paramName)) {
+            // if param is not present in query params we add it with the value
+            return array($paramValue);
+        } else {
+            $currentParamValues = $request->query->get($paramName);
+            if (in_array($paramValue, $currentParamValues)) {
+                // remove value if already exists in param
+                return array_values(array_filter($currentParamValues, function($value) use ($paramValue) {
+                    return $value !== $paramValue;
+                }));
             } else {
-                // if selected param does not exist in current params we add it
-                $result[$key] = $value;
+                // add value if not exists in param
+                return array_merge($currentParamValues, array($paramValue));
             }
         }
-        return $result;
     }
 
 }

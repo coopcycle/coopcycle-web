@@ -146,13 +146,6 @@ class RestaurantController extends AbstractController
         // take all query params
         $queryParamValues = array_values($request->query->all());
 
-        // some param value can be a list of strings like 'asian,indian,italian'
-        // here we create a list of lists
-        $queryParamValues = array_map(function ($param) {
-            $exploded = explode(",", $param);
-            return count($exploded) > 1 ? $exploded : [$param];
-        }, $queryParamValues);
-
         // flatten multi dimensional arrays
         $queryParamValues = array_merge(...$queryParamValues);
 
@@ -268,7 +261,7 @@ class RestaurantController extends AbstractController
             $request->query->set('type', $type);
 
             if ($request->query->has('cuisine')) {
-                $cuisineTypes = explode(",", $request->query->get('cuisine'));
+                $cuisineTypes = $request->query->get('cuisine');
                 $cuisineIds = [];
                 foreach ($cuisines as $cuisine) {
                     if (in_array($cuisine->getName(), $cuisineTypes)) {

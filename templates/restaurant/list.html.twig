@@ -48,7 +48,7 @@
           <div class="checkbox px-3 mb-4">
             <label>
             <input type="checkbox"
-                value="{{ path('shops', toggle_query_param(app.request.query.all(), 'cuisine', cuisine.name)) }}"
+              value="{{ path('shops', app.request.query.all()|merge({ cuisine: toggle_query_param(app.request, 'cuisine', cuisine.name) })) }}"
                 {% if cuisine.name in app.request.query.get('cuisine')|join(',') %}checked{% endif %}>
                 {{ cuisine.name|trans({}, 'cuisines') }}
             </label>
@@ -133,7 +133,11 @@
     $('input[type=checkbox]').on('click', function (e) {
       // avoid clicking another radio before navigate
       document.querySelectorAll("input[type=checkbox]:not(input[type=checkbox]:checked)").forEach((check) => check.disabled=true)
-      window.location.href = e.target.value
+      try {
+        window.location.href = decodeURIComponent(e.target.value)
+      } catch(e) {
+        window.location.href = e.target.value
+      }
     });
   </script>
 {% endblock %}
