@@ -302,12 +302,12 @@ class LocalBusinessRepository extends EntityRepository
                                     ->andWhere('r.featured = :featured')
                                     ->setParameter('featured', true);
                                 break;
-                            case 'exclusives':
+                            case 'exclusive':
                                 $qb
                                     ->andWhere('r.exclusive = :exclusive')
                                     ->setParameter('exclusive', true);
                                 break;
-                            case 'news':
+                            case 'new':
                                 $qb
                                     ->setMaxResults(self::LATESTS_SHOPS_LIMIT)
                                     ->orderBy('r.createdAt', 'DESC');
