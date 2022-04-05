@@ -97,7 +97,10 @@ Feature: Manage restaurants
           "specialOpeningHoursSpecification":[],
           "image":@string@,
           "fulfillmentMethods":@array@,
-          "isOpen":true
+          "isOpen":true,
+          "facets": {
+            "@*@": "@*@"
+          }
         }
       ],
       "hydra:totalItems":1,
