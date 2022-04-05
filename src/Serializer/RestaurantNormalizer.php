@@ -101,11 +101,16 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         if (isset($data['facets'])) {
-            $cuisines = array_map(fn ($c) => $this->translator->trans($c, [], 'cuisines'), $data['facets']['cuisine']);
+            $cuisines =
+                array_map(fn ($c) => $this->translator->trans($c, [], 'cuisines'), $data['facets']['cuisine']);
             $data['facets']['cuisine'] = $cuisines;
 
             $data['facets']['type'] =
                 $this->translator->trans(LocalBusiness::getTransKeyForType($data['facets']['type']));
+
+            $categories =
+                array_map(fn ($c) => $this->translator->trans(sprintf('homepage.%s', $c)), $data['facets']['category']);
+            $data['facets']['category'] = $categories;
         }
 
         return $data;

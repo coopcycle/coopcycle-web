@@ -20,7 +20,7 @@ Feature: Manage restaurants
         {
           "@id":"/api/restaurants/1",
           "facets": {
-            "category":["exclusive","featured"],
+            "category":["Exclusivités","À la une"],
             "cuisine":["Asiatique"],
             "type":"Restaurant"
           },
