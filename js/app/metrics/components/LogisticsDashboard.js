@@ -12,6 +12,7 @@ import DistributionOfTasksByTiming from './DistributionOfTasksByTiming'
 import AverageTiming from './AverageTiming'
 import PercentageOfTasksOnTime from './PercentageOfTasksOnTime'
 import DistributionOfTasksByPercentage from './DistributionOfTasksByPercentage'
+import TasksDoneTiming from './TasksDoneTiming'
 
 const Dashboard = ({ cubejsApi, dateRange, tasksMetricsEnabled }) => {
 
@@ -28,6 +29,14 @@ const Dashboard = ({ cubejsApi, dateRange, tasksMetricsEnabled }) => {
         <ChartPanel title="Number of stores">
           <StoreCumulativeCount cubejsApi={ cubejsApi } dateRange={ dateRange } />
         </ChartPanel>
+        {tasksMetricsEnabled && (<div/>)}
+        {tasksMetricsEnabled && (
+          <ChartPanel title="Tasks done on time, too early or too late">
+            <TasksDoneTiming
+              cubejsApi={ cubejsApi }
+              dateRange={ dateRange } />
+          </ChartPanel>
+        )}
         {tasksMetricsEnabled && (<div/>)}
         {tasksMetricsEnabled && (
           <ChartPanel title="Percentage Of Tasks done on time">
