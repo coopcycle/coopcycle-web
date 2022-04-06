@@ -988,6 +988,7 @@ services:
         - br
         - cr
         - mx
+        - cl
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
 
   AppBundle\Payment\Gateway: ~

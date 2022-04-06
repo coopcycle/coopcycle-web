@@ -74,6 +74,7 @@ class SetupCommand extends Command
         'AUD',
         'MXN',
         'DKK',
+        'CLP',
     ];
 
     public function __construct(
