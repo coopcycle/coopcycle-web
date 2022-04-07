@@ -837,19 +837,14 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/restaurants/tags/{tags}", name="restaurants_by_tags")
      */
-    public function listByTagsAction($tags, Request $request,
-        LocalBusinessRepository $repository)
+    public function listByTagsAction($tags)
     {
-        $restaurants = $repository->findZeroWaste();
-
-        return $this->render('restaurant/list_by_tags.html.twig', array(
-            'count' => count($restaurants),
-            'restaurants' => $restaurants,
-            'page' => 1,
-            'pages' => 1,
-            'geohash' => '',
-            'addresses_normalized' => $this->getUserAddresses(),
-            'address' => null,
-        ));
+        return $this->redirectToRoute(
+            'shops',
+            [
+                'category' => 'zerowaste'
+            ],
+            Response::HTTP_MOVED_PERMANENTLY
+        );
     }
 }
