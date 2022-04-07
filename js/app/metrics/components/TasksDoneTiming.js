@@ -22,17 +22,17 @@ const commonOptions = {
   },
   plugins: {
     legend: {
-      position: 'bottom',
+      position: 'right',
       labels: {
         sort: function(a, b) {
           // a: LegendItem, b: LegendItem, data: ChartData
 
           let order = [
             {type: TYPE_PICKUP, timing: TIMING_TOO_EARLY},
-            {type: TYPE_PICKUP, timing: TIMING_ON_TIME},
-            {type: TYPE_PICKUP, timing: TIMING_TOO_LATE},
             {type: TYPE_DROPOFF, timing: TIMING_TOO_EARLY},
+            {type: TYPE_PICKUP, timing: TIMING_ON_TIME},
             {type: TYPE_DROPOFF, timing: TIMING_ON_TIME},
+            {type: TYPE_PICKUP, timing: TIMING_TOO_LATE},
             {type: TYPE_DROPOFF, timing: TIMING_TOO_LATE},
           ]
 
@@ -62,6 +62,16 @@ const commonOptions = {
         autoSkip: true,
       },
     },
+    y: {
+      max: 100,
+      min: -100,
+      ticks: {
+        stepSize: 50,
+        callback: function(value) {
+          return Math.abs(value) + '%';
+        }
+      },
+    }
   },
 };
 
