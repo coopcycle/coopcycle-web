@@ -133,7 +133,7 @@ class IndexController extends AbstractController
                 'title' => $translator->trans('homepage.exclusive'),
                 'shops' => iterator_to_array($exclusivesIterator),
                 'view_all_path' => $urlGenerator->generate('shops', [
-                    'category' => 'exclusives',
+                    'category' => 'exclusive',
                 ]),
             ];
         }
