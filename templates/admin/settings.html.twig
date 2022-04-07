@@ -517,8 +517,11 @@
 
       if (autocompleteVal === 'google' || geocodingVal === 'google') {
         $('[data-autocomplete-provider="google"]').removeClass('d-none');
+        $('[data-autocomplete-provider="google"] input').prop('required', true);
       } else {
         $('[data-autocomplete-provider="google"]').addClass('d-none');
+        $('[data-autocomplete-provider="google"] input').prop('required', false);
+        $('[data-autocomplete-provider="google"] input').removeAttr('required');
       }
     };
 
