@@ -176,29 +176,15 @@ class RestaurantController extends AbstractController
     /**
      * @Route("/restaurants/cuisines/{cuisineName}", name="restaurants_by_cuisine")
      */
-    public function listByCuisineAction($cuisineName, Request $request,
-        LocalBusinessRepository $repository,
-        CacheInterface $projectCache)
+    public function listByCuisineAction($cuisineName)
     {
-        $cuisineRepo = $this->getDoctrine()->getRepository(Cuisine::class);
-        $cuisine = $cuisineRepo->findOneByName($cuisineName);
-
-        if (!$cuisine) {
-            throw new NotFoundHttpException();
-        }
-
-        $restaurants = $cuisine->getRestaurants();
-
-        return $this->render('restaurant/list_by_cuisine.html.twig', array(
-            'cuisine' => $cuisine,
-            'count' => count($restaurants),
-            'restaurants' => $restaurants,
-            'page' => 1,
-            'pages' => 1,
-            'geohash' => '',
-            'addresses_normalized' => $this->getUserAddresses(),
-            'address' => null,
-        ));
+        return $this->redirectToRoute(
+            'shops',
+            [
+                'cuisine' => [$cuisineName]
+            ],
+            Response::HTTP_MOVED_PERMANENTLY
+        );
     }
 
     /**
