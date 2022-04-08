@@ -213,5 +213,4 @@ class CoopCycleExtension extends AbstractExtension
 
         return $day === strtolower($now->englishDayOfWeek) && $openingHoursForDay->isOpenAt(Time::fromDateTime($now));
     }
-
 }
