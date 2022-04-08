@@ -145,7 +145,7 @@ class IndexController extends AbstractController
             'title' => $translator->trans('homepage.shops.new'),
             'shops' => iterator_to_array($newsIterator),
             'view_all_path' => $urlGenerator->generate('shops', [
-                'category' => 'news',
+                'category' => 'new',
             ]),
         ];
 
