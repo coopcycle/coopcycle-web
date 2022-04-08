@@ -160,7 +160,7 @@ class IndexController extends AbstractController
                     'title' => $translator->trans($cuisine['name'], [], 'cuisines'),
                     'shops' => iterator_to_array($shopsByCuisineIterator),
                     'view_all_path' => $urlGenerator->generate('shops', [
-                        'cuisine' => $cuisine['name'],
+                        'cuisine' => array($cuisine['name']),
                     ]),
                 ];
 
