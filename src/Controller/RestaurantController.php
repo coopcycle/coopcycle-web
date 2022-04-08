@@ -157,16 +157,9 @@ class RestaurantController extends AbstractController
      * The cache key is built whit all query params alphabetically sorted.
      * Whit this function we make sure that same filters in different order represent the same cache key.
      */
-    private function getShopsListCacheKey($request, $type) {
+    private function getShopsListCacheKey($request) {
         // take all query params and flat them
         $queryParamValues = $this->flatArray(array_values($request->query->all()));
-
-        // if 'type' is not in query we have a default type selected
-        $typeForCacheKey = $request->query->has('type') ? $request->query->get('type') : LocalBusiness::getKeyForType($type);
-
-        if (!in_array($typeForCacheKey, $queryParamValues)) {
-            $queryParamValues[] = $typeForCacheKey;
-        }
 
         sort($queryParamValues);
 
@@ -213,14 +206,6 @@ class RestaurantController extends AbstractController
         TimingRegistry $timingRegistry)
     {
         $originalParams = $request->query->all();
-        $defaultKey = LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT);
-
-        $key = $request->get('type', $defaultKey);
-        $type = LocalBusiness::getTypeForKey($key);
-
-        if (null === $type) {
-            $type = LocalBusiness::getTypeForKey($defaultKey);
-        }
 
         $mode = $request->query->get('mode', 'list');
 
@@ -239,10 +224,13 @@ class RestaurantController extends AbstractController
         // find cuisines which can be selected by user to filter
         $cuisines = $repository->findExistingCuisines();
 
-        $cacheKey = $this->getShopsListCacheKey($request, $type);
+        $cacheKey = $this->getShopsListCacheKey($request);
 
-        // for filtering we need in query param the full type instead of the key
-        $request->query->set('type', $type);
+        if ($request->query->has('type')) {
+            $type = LocalBusiness::getTypeForKey($request->query->get('type'));
+            // for filtering we need in query param the full type instead of the key
+            $request->query->set('type', $type);
+        }
 
         if ($request->query->has('cuisine')) {
             // filter by cuisine id (index) instead of name
@@ -310,7 +298,6 @@ class RestaurantController extends AbstractController
             'addresses_normalized' => $this->getUserAddresses(),
             'address' => $request->query->has('address') ? $request->query->get('address') : null,
             'types' => $types,
-            'current_type' => $type,
             'cuisines' => $this->get('serializer')->normalize($cuisines, 'jsonld'),
         ));
     }

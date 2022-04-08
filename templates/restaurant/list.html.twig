@@ -25,7 +25,7 @@
               <label>
                 <input type="radio" name="typesRadios"
                   value="{{ path('shops', app.request.query.all()|merge({ type: type|local_business_type_key })) }}"
-                  {% if current_type == type %}checked{% endif %}>
+                  {% if app.request.query.get('type') == type|local_business_type_key %}checked{% endif %}>
                 {{ type|local_business_type }}
               </label>
             </div>
