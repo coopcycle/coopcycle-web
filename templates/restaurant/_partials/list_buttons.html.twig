@@ -1,20 +1,18 @@
 {% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
 <section class="{{ 'yes' == restaurant_pledges_enabled ? 'list-subheader' : 'd-sm-none' }}">
   <div class="container-fluid">
-    <div class="d-flex align-items-center mb-4 {{ restaurant_pledges_enabled ? 'justify-content-between' : 'justify-content-end' }}">
+    <div class="d-flex flex-column flex-sm-row mb-4 mb-sm-0 {{ restaurant_pledges_enabled ? 'justify-content-between' : 'justify-content-end' }}">
       {% if 'yes' == restaurant_pledges_enabled %}
-      <a href="{{ path('restaurants_suggest') }}" class="btn btn-lg btn-default">
+      <a href="{{ path('restaurants_suggest') }}" class="btn btn-lg btn-default mb-4">
         <i class="fa fa-heart-o mr-sm-2"></i>
-        <span class="d-none d-sm-inline">{{ 'base.footer.suggest'|trans }}</span>
+        <span >{{ 'base.footer.suggest'|trans }}</span>
       </a>
       {% endif %}
-      <div class="d-flex flex-column flex-grow-1 justify-space-between">
-        <a href="#" class="btn btn-lg btn-default d-block d-sm-none"
-          data-toggle="collapse" data-target="#mobile-filter" aria-expanded="false" aria-controls="mobile-filter">
-          <i class="fa fa-filter mr-sm-2"></i>
-          <span>{{ 'shops.filters.title'|trans }}</span>
-        </a>
-      <div>
+      <a href="#" class="btn btn-lg btn-default d-block d-sm-none"
+        data-toggle="collapse" data-target="#mobile-filter" aria-expanded="false" aria-controls="mobile-filter">
+        <i class="fa fa-filter mr-sm-2"></i>
+        <span>{{ 'shops.filters.title'|trans }}</span>
+      </a>
     </div>
   </div>
 </section>
