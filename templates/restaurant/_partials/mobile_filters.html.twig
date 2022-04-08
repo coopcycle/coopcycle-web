@@ -1,4 +1,4 @@
-<div id="mobile-filter" class="shops-side-bar-filters collapse d-sm-none container-fluid">
+<form id="mobile-filter" method="get" path="{{ path('shops') }}" class="shops-side-bar-filters collapse d-sm-none container-fluid">
     <a href="{{ path('shops') }}" class="btn btn-lg btn-default w-100">
       <i class="fa fa-trash mr-sm-2"></i>
       <span class="d-sm-inline">{{ 'shops.filters.clear_all'|trans }}</span>
@@ -17,8 +17,7 @@
         {% for type in types %}
             <div class="radio px-3 mb-4">
             <label>
-                <input type="radio" name="typesRadiosMobile"
-                value="{{ path('shops', app.request.query.all()|merge({ type: type|local_business_type_key })) }}"
+                <input type="radio" name="type" value="{{ type|local_business_type_key }}"
                 {% if app.request.query.get('type') == type|local_business_type_key %}checked{% endif %}>
                 {{ type|local_business_type }}
             </label>
@@ -41,8 +40,7 @@
         {% for cuisine in cuisines %}
             <div class="checkbox px-3 mb-4">
             <label>
-            <input type="checkbox" name="cuisinesCheckboxMobile"
-                value="{{ path('shops', app.request.query.all()|merge({ cuisine: toggle_query_param(app.request, 'cuisine', cuisine.name) })) }}"
+            <input type="checkbox" name="cuisine[]" value="{{ cuisine.name }}"
                 {% if cuisine.name in app.request.query.get('cuisine')|join(',') %}checked{% endif %}>
                 {{ cuisine.name|trans({}, 'cuisines') }}
             </label>
@@ -70,8 +68,7 @@
         {% for category in categories %}
             <div class="radio px-3 mb-4">
             <label>
-                <input type="radio" name="categoriesRadiosMobile"
-                value="{{ path('shops', app.request.query.all()|merge({ category: category.key })) }}"
+                <input type="radio" name="category" value="{{ category.key }}"
                 {% if app.request.query.get('category') == category.key %}checked{% endif %}>
                 {{ category.transKey|trans }}
             </label>
@@ -81,4 +78,4 @@
     </div>
 
     <h6 class="p-1 border-bottom"></h6>
-</div>
+</form>

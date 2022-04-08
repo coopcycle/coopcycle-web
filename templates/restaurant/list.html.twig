@@ -8,7 +8,7 @@
       <i class="fa fa-trash mr-sm-2"></i>
       <span class="d-none d-sm-inline">{{ 'shops.filters.clear_all'|trans }}</span>
     </a>
-    <div class="shops-side-bar-filters">
+    <form method="get" path="{{ path('shops') }}" class="shops-side-bar-filters">
 
       <div class="mb-4">
         <h6 class="p-1 border-bottom"></h6>
@@ -23,8 +23,7 @@
           {% for type in types %}
             <div class="radio px-3 mb-4">
               <label>
-                <input type="radio" name="typesRadios"
-                  value="{{ path('shops', app.request.query.all()|merge({ type: type|local_business_type_key })) }}"
+                <input type="radio" name="type" value="{{ type|local_business_type_key }}"
                   {% if app.request.query.get('type') == type|local_business_type_key %}checked{% endif %}>
                 {{ type|local_business_type }}
               </label>
@@ -47,8 +46,7 @@
         {% for cuisine in cuisines %}
           <div class="checkbox px-3 mb-4">
             <label>
-            <input type="checkbox"
-              value="{{ path('shops', app.request.query.all()|merge({ cuisine: toggle_query_param(app.request, 'cuisine', cuisine.name) })) }}"
+            <input type="checkbox" name="cuisine[]" value="{{ cuisine.name }}"
                 {% if cuisine.name in app.request.query.get('cuisine')|join(',') %}checked{% endif %}>
                 {{ cuisine.name|trans({}, 'cuisines') }}
             </label>
@@ -76,8 +74,7 @@
         {% for category in categories %}
           <div class="radio px-3 mb-4">
             <label>
-              <input type="radio" name="categoriesRadios"
-                value="{{ path('shops', app.request.query.all()|merge({ category: category.key })) }}"
+              <input type="radio" name="category" value="{{ category.key }}"
                 {% if app.request.query.get('category') == category.key %}checked{% endif %}>
               {{ category.transKey|trans }}
             </label>
@@ -85,7 +82,8 @@
         {% endfor %}
         </div>
       </div>
-    </div>
+
+    </form>
   </div>
 
   <div class="restaurant-main-content">
@@ -126,22 +124,14 @@
   <script>
     $('.shops-side-bar-filters input[type=radio]').on('click', function (e) {
       // avoid clicking another radio before navigate
-      document.querySelectorAll("input[type=radio]:not(input[type=radio]:checked)").forEach((radio) => radio.disabled=true)
-      try {
-        window.location.href = decodeURIComponent(e.target.value)
-      } catch(e) {
-        window.location.href = e.target.value
-      }
+      document.querySelectorAll(".shops-side-bar-filters input[type=radio]:not(input[type=radio]:checked)").forEach((radio) => radio.disabled=true)
+      $(e.target).closest('form').submit()
     });
 
     $('.shops-side-bar-filters input[type=checkbox]').on('click', function (e) {
       // avoid clicking another radio before navigate
-      document.querySelectorAll("input[type=checkbox]:not(input[type=checkbox]:checked)").forEach((check) => check.disabled=true)
-      try {
-        window.location.href = decodeURIComponent(e.target.value)
-      } catch(e) {
-        window.location.href = e.target.value
-      }
+      document.querySelectorAll(".shops-side-bar-filters input[type=checkbox]:not(input[type=checkbox]:checked)").forEach((check) => check.disabled=true)
+      $(e.target).closest('form').submit()
     });
   </script>
 {% endblock %}

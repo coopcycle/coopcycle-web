@@ -94,7 +94,6 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('mercadopago_can_enable_livemode', array(MercadopagoResolver::class, 'canEnableLivemode')),
             new TwigFunction('mercadopago_can_enable_testmode', array(MercadopagoResolver::class, 'canEnableTestmode')),
             new TwigFunction('should_show_pre_order', array(LocalBusinessRuntime::class, 'shouldShowPreOrder')),
-            new TwigFunction('toggle_query_param', array($this, 'toggleQueryParam')),
         );
     }
 
@@ -213,29 +212,6 @@ class CoopCycleExtension extends AbstractExtension
         $now = Carbon::now();
 
         return $day === strtolower($now->englishDayOfWeek) && $openingHoursForDay->isOpenAt(Time::fromDateTime($now));
-    }
-
-    /**
-     * With this function we can toggle (add or remove) a query param or a value of a query param.
-     * It works for query params whose value is an array like 'cuisine[]=asian&cuisine[]=indian'
-     */
-    public function toggleQueryParam($request, $paramName, $paramValue)
-    {
-        if (!$request->query->has($paramName)) {
-            // if param is not present in query params we add it with the value
-            return array($paramValue);
-        } else {
-            $currentParamValues = $request->query->get($paramName);
-            if (in_array($paramValue, $currentParamValues)) {
-                // remove value if already exists in param
-                return array_values(array_filter($currentParamValues, function($value) use ($paramValue) {
-                    return $value !== $paramValue;
-                }));
-            } else {
-                // add value if not exists in param
-                return array_merge($currentParamValues, array($paramValue));
-            }
-        }
     }
 
 }
