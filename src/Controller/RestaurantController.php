@@ -154,19 +154,6 @@ class RestaurantController extends AbstractController
     }
 
     /**
-     * The cache key is built whit all query params alphabetically sorted.
-     * Whit this function we make sure that same filters in different order represent the same cache key.
-     */
-    private function getShopsListCacheKey($request) {
-        // take all query params and flat them
-        $queryParamValues = $this->flatArray(array_values($request->query->all()));
-
-        sort($queryParamValues);
-
-        return sprintf('shops.list.ids|%s', implode(",", $queryParamValues));
-    }
-
-    /**
      * @Route("/restaurants/cuisines/{cuisineName}", name="restaurants_by_cuisine")
      */
     public function listByCuisineAction($cuisineName)
@@ -833,5 +820,19 @@ class RestaurantController extends AbstractController
             ],
             Response::HTTP_MOVED_PERMANENTLY
         );
+    }
+
+    /**
+     * The cache key is built with all query params alphabetically sorted.
+     * With this function we make sure that same filters in different order represent the same cache key.
+     */
+    private function getShopsListCacheKey($request)
+    {
+        // take all query params and flat them
+        $queryParamValues = $this->flatArray(array_values($request->query->all()));
+
+        sort($queryParamValues);
+
+        return sprintf('shops.list.ids|%s', implode(",", $queryParamValues));
     }
 }
