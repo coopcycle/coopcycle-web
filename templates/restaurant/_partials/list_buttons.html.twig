@@ -1,33 +1,18 @@
-<section class="list-subheader">
-  {% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
-  <div class="container">
-    <div class="d-flex align-items-center mb-4 {{ restaurant_pledges_enabled ? 'justify-content-between' : 'justify-content-end' }}">
+{% set restaurant_pledges_enabled = coopcycle_setting('enable_restaurant_pledges') %}
+<section class="{{ 'yes' == restaurant_pledges_enabled ? 'list-subheader' : 'd-sm-none' }}">
+  <div class="container-fluid">
+    <div class="d-flex flex-column flex-sm-row mb-4 mb-sm-0 {{ restaurant_pledges_enabled ? 'justify-content-between' : 'justify-content-end' }}">
       {% if 'yes' == restaurant_pledges_enabled %}
-      <a href="{{ path('restaurants_suggest') }}" class="btn btn-lg btn-default">
-        <i class="fa fa-heart-o mr-2"></i>
-        <span class="d-none d-sm-inline">{{ 'base.footer.suggest'|trans }}</span>
+      <a href="{{ path('restaurants_suggest') }}" class="btn btn-lg btn-default mb-4">
+        <i class="fa fa-heart-o mr-sm-2"></i>
+        <span >{{ 'base.footer.suggest'|trans }}</span>
       </a>
       {% endif %}
-      <a href="{{ path('restaurants', { mode: to_mode|default('map') }) }}" class="btn btn-lg btn-default">
-        <i class="fa fa-{{ to_mode|default('map') }} mr-2"></i>
-        <span class="d-none d-sm-inline">{{ ('restaurants.mode.' ~ to_mode|default('map'))|trans }}</span>
+      <a href="#" class="btn btn-lg btn-default d-block d-sm-none"
+        data-toggle="collapse" data-target="#mobile-filter" aria-expanded="false" aria-controls="mobile-filter">
+        <i class="fa fa-filter mr-sm-2"></i>
+        <span>{{ 'shops.filters.title'|trans }}</span>
       </a>
     </div>
   </div>
 </section>
-
-{% if types|length > 1 %}
-<section class="list-subheader">
-  <div class="container">
-    <ul class="nav nav-tabs mb-4">
-      {% for type in types %}
-      <li role="presentation" {% if current_type == type %}class="active"{% endif %}>
-        <a href="{{ path('shops', { type: type|local_business_type_key }) }}">
-          {{ type|local_business_type }}
-        </a>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-</section>
-{% endif %}

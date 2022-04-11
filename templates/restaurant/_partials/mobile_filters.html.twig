@@ -1,0 +1,81 @@
+<form id="mobile-filter" method="get" path="{{ path('shops') }}" class="shops-side-bar-filters collapse d-sm-none container-fluid">
+    <a href="{{ path('shops') }}" class="btn btn-lg btn-default w-100">
+      <i class="fa fa-trash mr-sm-2"></i>
+      <span class="d-sm-inline">{{ 'shops.filters.clear_all'|trans }}</span>
+    </a>
+
+    <div class="mb-4">
+        <h6 class="p-1 border-bottom"></h6>
+        <button class="filter-section-btn btn btn-sm shadow-none bg-transparent w-100"
+            data-toggle="collapse" href="#collapseTypeMobile" aria-expanded="true" aria-controls="collapseTypeMobile">
+            <div class="d-flex flex-row align-items-center justify-content-between">
+                <h4><strong>{{ 'shops.filters.title.types'|trans }}</strong></h4>
+                <strong><span class="filter-caret caret"></span></i></strong>
+            </div>
+        </button>
+        <div class="collapse in" id="collapseTypeMobile">
+        {% for type in types %}
+            <div class="radio px-3 mb-4">
+            <label>
+                <input type="radio" name="type" value="{{ type|local_business_type_key }}"
+                {% if app.request.query.get('type') == type|local_business_type_key %}checked{% endif %}>
+                {{ type|local_business_type }}
+            </label>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+
+    {% if cuisines|length > 0 %}
+    <div class="mb-4">
+        <h6 class="p-1 border-bottom"></h6>
+        <button class="filter-section-btn btn btn-sm shadow-none bg-transparent w-100"
+            data-toggle="collapse" href="#collapseCuisineMobile" aria-expanded="true" aria-controls="collapseCuisineMobile">
+            <div class="d-flex flex-row align-items-center justify-content-between">
+                <h4><strong>{{ 'shops.filters.title.cuisines'|trans }}</strong></h4>
+                <strong><span class="filter-caret caret"></span></i></strong>
+            </div>
+        </button>
+        <div class="collapse in" id="collapseCuisineMobile">
+        {% for cuisine in cuisines %}
+            <div class="checkbox px-3 mb-4">
+            <label>
+            <input type="checkbox" name="cuisine[]" value="{{ cuisine.name }}"
+                {% if cuisine.name in app.request.query.get('cuisine')|join(',') %}checked{% endif %}>
+                {{ cuisine.name|trans({}, 'cuisines') }}
+            </label>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="mb-4">
+        <h6 class="p-1 border-bottom"></h6>
+        <button class="filter-section-btn btn btn-sm shadow-none bg-transparent w-100"
+            data-toggle="collapse" href="#collapseCategoryMobile" aria-expanded="true" aria-controls="collapseCategoryMobile">
+            <div class="d-flex flex-row align-items-center justify-content-between">
+                <h4><strong>{{ 'shops.filters.title.categories'|trans }}</strong></h4>
+                <strong><span class="filter-caret caret"></span></i></strong>
+            </div>
+        </button>
+        {% set categories = [
+            {key: 'featured', transKey: 'homepage.featured'},
+            {key: 'exclusive', transKey: 'homepage.exclusive'},
+            {key: 'new', transKey: 'homepage.shops.new'},
+            {key: 'zerowaste', transKey: 'restaurant.list.tags.zerowaste'}] %}
+        <div class="collapse in" id="collapseCategoryMobile">
+        {% for category in categories %}
+            <div class="radio px-3 mb-4">
+            <label>
+                <input type="radio" name="category" value="{{ category.key }}"
+                {% if app.request.query.get('category') == category.key %}checked{% endif %}>
+                {{ category.transKey|trans }}
+            </label>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+
+    <h6 class="p-1 border-bottom"></h6>
+</form>

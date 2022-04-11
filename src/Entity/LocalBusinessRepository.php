@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
+use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Utils\RestaurantFilter;
 use Carbon\Carbon;
@@ -19,6 +20,7 @@ class LocalBusinessRepository extends EntityRepository
     private $restaurantFilter;
     private $context = FoodEstablishment::class;
     private $typeFilter = FoodEstablishment::RESTAURANT;
+    const LATESTS_SHOPS_LIMIT = 12;
 
     public function withContext(string $context)
     {
@@ -260,6 +262,73 @@ class LocalBusinessRepository extends EntityRepository
             ->innerJoin('r.servesCuisine', 'c')
             ->andWhere('c.id = :cuisine_id')
             ->setParameter('cuisine_id', $cuisine);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findExistingCuisines() {
+        $qb = $this->createQueryBuilder('r')
+            ->select('c')
+            ->from(Cuisine::class, 'c')
+            ->innerJoin('c.restaurants', 'cr')
+            ->orderBy('c.name');
+
+        $result = $qb->getQuery()->getResult();
+
+        return $result;
+    }
+
+    public function findByFilters($filters)
+    {
+        $qb = $this->createQueryBuilder('r');
+
+        if (count($filters) > 0) {
+            foreach ($filters as $key => $value) {
+                switch($key) {
+                    case 'type':
+                        $qb
+                            ->andWhere('r.type = :type')
+                            ->setParameter('type', $value);
+                        break;
+                    case 'cuisine':
+                        $qb
+                            ->innerJoin('r.servesCuisine', 'c', 'WITH', $qb->expr()->in('c.id', ':cuisineIds'))
+                            ->setParameter('cuisineIds', $value);
+                        break;
+                    case 'category':
+                        switch($value) {
+                            case 'featured':
+                                $qb
+                                    ->andWhere('r.featured = :featured')
+                                    ->setParameter('featured', true);
+                                break;
+                            case 'exclusive':
+                                $qb
+                                    ->andWhere('r.exclusive = :exclusive')
+                                    ->setParameter('exclusive', true);
+                                break;
+                            case 'new':
+                                $qb
+                                    ->setMaxResults(self::LATESTS_SHOPS_LIMIT)
+                                    ->orderBy('r.createdAt', 'DESC');
+                                break;
+                            case 'zerowaste':
+                                $qb
+                                    ->andWhere(
+                                        $qb->expr()->orX(
+                                        $qb->expr()->eq('r.depositRefundEnabled', ':enabled'),
+                                        $qb->expr()->eq('r.loopeatEnabled', ':enabled'))
+                                    )
+                                    ->setParameter('enabled', true);
+                                break;
+                            default:
+                                break;
+                        }
+                    default:
+                        break;
+                }
+            }
+        }
 
         return $qb->getQuery()->getResult();
     }

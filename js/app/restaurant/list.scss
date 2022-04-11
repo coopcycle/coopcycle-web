@@ -4,10 +4,36 @@
 @import "../../../assets/css/vars.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
 
+.shops-content {
+  display: flex;
+  flex-direction: row;
+}
+
+.restaurant-side-bar {
+  min-width: 20%;
+}
+
+.restaurant-main-content {
+  min-width: 80%;
+}
+
 .restaurant-list {
   h1 {
     display: inline-block;
   }
+}
+
+.filter-section-btn {
+  outline: none !important;
+}
+
+.filter-caret {
+  transform: scale(1.6) rotate(-180deg);
+  margin-left: 8px;
+  margin-top: -4px;
+}
+button[aria-expanded='false'] .filter-caret {
+  transform: scale(1.6) rotate(0deg);
 }
 
 .restaurant-list-header {
