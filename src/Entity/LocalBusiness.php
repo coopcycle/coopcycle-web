@@ -52,7 +52,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "get"={
  *       "method"="GET",
  *       "pagination_enabled"=false,
- *       "normalization_context"={"groups"={"restaurant", "address", "order"}}
+ *       "normalization_context"={"groups"={"restaurant", "address", "order", "restaurant_list"}}
  *     },
  *     "me_restaurants"={
  *       "method"="GET",

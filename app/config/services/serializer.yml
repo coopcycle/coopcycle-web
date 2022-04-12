@@ -94,3 +94,7 @@ services:
 
   AppBundle\Serializer\TaskImportQueueNormalizer:
     tags: [ { name: serializer.normalizer, priority: 64 } ]
+
+  AppBundle\Serializer\RestaurantCollectionNormalizer:
+    decorates: 'api_platform.hydra.normalizer.collection'
+    arguments: ['@AppBundle\Serializer\RestaurantCollectionNormalizer.inner']

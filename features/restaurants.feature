@@ -1,5 +1,6 @@
 Feature: Manage restaurants
 
+  @debug
   Scenario: Retrieve the restaurants list
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -8,6 +9,7 @@ Feature: Manage restaurants
     Given the current time is "2021-12-10 11:00:00"
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants"
+    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -30,7 +32,47 @@ Feature: Manage restaurants
           "@*@": "@*@"
         }
       ],
-      "hydra:totalItems":3
+      "hydra:totalItems":3,
+      "facets":[
+        {
+          "parameter":"category",
+          "label":"Category",
+          "values":[
+            {
+              "value":"featured",
+              "label":"featured",
+              "count":1
+            },
+            {
+              "value":"exclusive",
+              "label":"exclusive",
+              "count":1
+            }
+          ]
+        },
+        {
+          "parameter":"cuisine",
+          "label":"Cuisine",
+          "values":[
+            {
+              "value":"asian",
+              "label":"asian",
+              "count":1
+            }
+          ]
+        },
+        {
+          "parameter":"type",
+          "label":"Type",
+          "values":[
+            {
+              "value":"restaurant",
+              "label":"restaurant",
+              "count":3
+            }
+          ]
+        }
+      ]
     }
     """
 

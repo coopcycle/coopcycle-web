@@ -4,6 +4,7 @@ namespace AppBundle\Api\DataProvider;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\CollectionDataProvider;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use AppBundle\Api\Resource\FacetsAwareCollection;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\SortableRestaurantIterator;
@@ -42,6 +43,6 @@ final class RestaurantCollectionDataProvider extends CollectionDataProvider
 
         $iterator = new SortableRestaurantIterator($collection, $this->timingRegistry);
 
-        return iterator_to_array($iterator);
+        return new FacetsAwareCollection(iterator_to_array($iterator));
     }
 }
