@@ -8,23 +8,19 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\SortableRestaurantIterator;
 use AppBundle\Utils\RestaurantFilter;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
 
 final class RestaurantCollectionDataProvider extends CollectionDataProvider
 {
     private $restaurantFilter;
     private $timingRegistry;
 
-    public function __construct(
-        ManagerRegistry $managerRegistry,
-        iterable $collectionExtensions = [],
-        RestaurantFilter $restaurantFilter,
-        TimingRegistry $timingRegistry)
+    public function setRestaurantFilter(RestaurantFilter $restaurantFilter)
     {
-        parent::__construct($managerRegistry, $collectionExtensions);
-
         $this->restaurantFilter = $restaurantFilter;
+    }
+
+    public function setTimingRegistry(TimingRegistry $timingRegistry)
+    {
         $this->timingRegistry = $timingRegistry;
     }
 
