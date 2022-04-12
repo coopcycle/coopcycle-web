@@ -18,6 +18,7 @@ use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
+use AppBundle\Utils\RestaurantFilter;
 use AppBundle\Service\SettingsManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
@@ -78,6 +79,7 @@ class RestaurantControllerTest extends WebTestCase
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
         $this->restaurantResolver = $this->prophesize(RestaurantResolver::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
+        $this->restaurantFilter = $this->prophesize(RestaurantFilter::class);
 
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
@@ -125,7 +127,8 @@ class RestaurantControllerTest extends WebTestCase
             $this->orderItemQuantityModifier->reveal(),
             $this->orderModifier->reveal(),
             $this->orderTimeHelper->reveal(),
-            $this->serializer
+            $this->serializer,
+            $this->restaurantFilter->reveal()
         );
 
         $this->controller->setContainer($container->reveal());
