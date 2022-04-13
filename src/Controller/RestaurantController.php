@@ -143,16 +143,6 @@ class RestaurantController extends AbstractController
         return $business->getContext() === Store::class ? 'store' : 'restaurant';
     }
 
-    private function flatArray($array)
-    {
-        return array_reduce($array,
-            fn($acc, $item) => is_array($item)
-            ? [...$acc, ...$this->flatArray($item)]
-            : [...$acc, $item]
-            , []
-        );
-    }
-
     /**
      * @Route("/restaurants/cuisines/{cuisineName}", name="restaurants_by_cuisine")
      */
@@ -211,7 +201,7 @@ class RestaurantController extends AbstractController
         // find cuisines which can be selected by user to filter
         $cuisines = $repository->findExistingCuisines();
 
-        $cacheKey = $this->getShopsListCacheKey($request, $slugify);
+        $cacheKey = $this->getShopsListCacheKey($request);
 
         if ($request->query->has('type')) {
             $type = LocalBusiness::getTypeForKey($request->query->get('type'));
@@ -826,13 +816,27 @@ class RestaurantController extends AbstractController
      * The cache key is built with all query params alphabetically sorted.
      * With this function we make sure that same filters in different order represent the same cache key.
      */
-    private function getShopsListCacheKey($request, SlugifyInterface $slugify)
+    private function getShopsListCacheKey($request)
     {
-        // take all query params and flat them
-        $queryParamValues = $this->flatArray(array_values($request->query->all()));
+        $parameters = [
+            'category',
+            'cuisine',
+            'type',
+        ];
 
-        sort($queryParamValues);
+        sort($parameters);
 
-        return sprintf('shops.list.ids|%s', $slugify->slugify(implode(",", $queryParamValues)));
+        $query = [];
+        foreach ($parameters as $parameter) {
+            $query[$parameter] = $request->query->get($parameter);
+        }
+
+        if (isset($query['cuisine'])) {
+            sort($query['cuisine']);
+        }
+
+        $cacheKey = http_build_query($query);
+
+        return sprintf('shops.list.filters|%s', $cacheKey);
     }
 }
