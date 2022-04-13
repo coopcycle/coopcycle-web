@@ -95,17 +95,12 @@
           {{ 'restaurants.no_results'|trans|raw }}
         </div>
       {% else %}
-        <div class="row display-flex restaurant-list">
-          {% for restaurant in restaurants %}
-          <div class="col-sm-6 col-md-4 display-flex">
-            {% include "_partials/restaurant/list_thumbnail.html.twig" %}
-          </div>
-          {% endfor %}
+        <div id="shops-list" class="row display-flex restaurant-list">
+          {% include "_partials/restaurant/shops_list.html.twig" %}
         </div>
-        <div class="row">
-          <div class="col-xs-12">
-            {% include "restaurant/pagination.html.twig" %}
-          </div>
+        <div id="shops-list-paginator"
+          data-page="{{page}}"
+          data-pages="{{pages}}">
         </div>
       {% endif %}
     </div>

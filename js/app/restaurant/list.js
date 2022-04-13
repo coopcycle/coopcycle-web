@@ -1,9 +1,10 @@
-import React from 'react'
+import React, {useState, useRef} from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
 import Swiper, { Navigation } from 'swiper'
 
 import { asText } from '../components/ShippingTimeRange'
+import { useIntersection } from '../hooks/useIntersection'
 
 import 'swiper/css';
 import 'swiper/css/navigation'
@@ -40,6 +41,65 @@ document.querySelectorAll('[data-fulfillment]').forEach(el => {
     render(<FulfillmentBadge range={ ranges[0] } />, el)
   })
 })
+
+const Paginator = ({ page, pages }) => {
+  const [currentPage, setCurrentPage] = useState(page)
+  const [totalPages] = useState(pages)
+  const [loading, setLoading] = useState(false)
+
+  const ref = useRef();
+
+  const inViewport = useIntersection(ref, '10px');
+
+  const loadMore = () => {
+    if (!loading) {
+      const newPage = currentPage < totalPages ? currentPage + 1 : currentPage
+
+      if (newPage > currentPage) {
+        setLoading(true)
+
+        const shopsEl = $("#shops-list")
+
+        $.ajax({
+          url : window.location.pathname + window.location.search,
+          data: {
+            page: newPage,
+          },
+          type: 'GET',
+          success: function(data) {
+            shopsEl.append($.parseHTML(data.rendered_list))
+            setTimeout(() => {
+              setCurrentPage(newPage)
+              setLoading(false)
+            }, 100)
+          }
+        })
+      }
+    }
+  }
+
+  if (inViewport && !loading) {
+    loadMore();
+  }
+
+  return (
+    <div ref={ref} className="shops-list-paginator">
+      {loading && <span><i className="fa fa-spinner fa-spin"></i></span>}
+    </div>
+  )
+}
+
+const paginator = document.getElementById('shops-list-paginator')
+
+if (paginator) {
+  render(
+    <Paginator
+     page={Number(paginator.dataset.page)}
+     pages={Number(paginator.dataset.pages)} />,
+    paginator
+  )
+}
+
 
 new Swiper('.swiper', {
   modules: [ Navigation ],
