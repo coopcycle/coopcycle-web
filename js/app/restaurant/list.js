@@ -83,14 +83,16 @@ new Swiper('.swiper', {
   }
 })
 
-$('.shops-side-bar-filters input[type=radio]').on('click', function (e) {
-  // avoid clicking another radio before navigate
+function disableAndSubmit(e) {
   document.querySelectorAll(".shops-side-bar-filters input[type=radio]:not(input[type=radio]:checked)").forEach((radio) => radio.disabled=true)
+  document.querySelectorAll(".shops-side-bar-filters input[type=checkbox]:not(input[type=checkbox]:checked)").forEach((check) => check.disabled=true)
   $(e.target).closest('form').submit()
+}
+
+$('.shops-side-bar-filters input[type=radio]').on('click', function (e) {
+  disableAndSubmit(e)
 });
 
 $('.shops-side-bar-filters input[type=checkbox]').on('click', function (e) {
-  // avoid clicking another radio before navigate
-  document.querySelectorAll(".shops-side-bar-filters input[type=checkbox]:not(input[type=checkbox]:checked)").forEach((check) => check.disabled=true)
-  $(e.target).closest('form').submit()
+  disableAndSubmit(e)
 });
