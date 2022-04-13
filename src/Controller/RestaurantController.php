@@ -211,7 +211,7 @@ class RestaurantController extends AbstractController
         // find cuisines which can be selected by user to filter
         $cuisines = $repository->findExistingCuisines();
 
-        $cacheKey = $this->getShopsListCacheKey($request);
+        $cacheKey = $this->getShopsListCacheKey($request, $slugify);
 
         if ($request->query->has('type')) {
             $type = LocalBusiness::getTypeForKey($request->query->get('type'));
@@ -826,13 +826,13 @@ class RestaurantController extends AbstractController
      * The cache key is built with all query params alphabetically sorted.
      * With this function we make sure that same filters in different order represent the same cache key.
      */
-    private function getShopsListCacheKey($request)
+    private function getShopsListCacheKey($request, SlugifyInterface $slugify)
     {
         // take all query params and flat them
         $queryParamValues = $this->flatArray(array_values($request->query->all()));
 
         sort($queryParamValues);
 
-        return sprintf('shops.list.ids|%s', implode(",", $queryParamValues));
+        return sprintf('shops.list.ids|%s', $slugify->slugify(implode(",", $queryParamValues)));
     }
 }
