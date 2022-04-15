@@ -84,8 +84,8 @@ new Swiper('.swiper', {
 })
 
 function disableAndSubmit(e) {
-  document.querySelectorAll(".shops-side-bar-filters input[type=radio]:not(input[type=radio]:checked)").forEach((radio) => radio.disabled=true)
-  document.querySelectorAll(".shops-side-bar-filters input[type=checkbox]:not(input[type=checkbox]:checked)").forEach((check) => check.disabled=true)
+  document.querySelectorAll('.shops-side-bar-filters input[type="radio"]:not(:checked)').forEach((radio) => radio.disabled=true)
+  document.querySelectorAll('.shops-side-bar-filters input[type="checkbox"]:not(:checked)').forEach((check) => check.disabled=true)
   $(e.target).closest('form').submit()
 }
 
