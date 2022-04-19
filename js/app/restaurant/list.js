@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react'
+import React, {useState, useRef, useEffect} from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
 import Swiper, { Navigation } from 'swiper'
@@ -10,6 +10,9 @@ import 'swiper/css';
 import 'swiper/css/navigation'
 
 import './list.scss'
+
+// turn off automatic browser handle of scroll
+window.history.scrollRestoration = 'manual'
 
 const FulfillmentBadge = ({ range }) => {
 
@@ -47,9 +50,14 @@ const Paginator = ({ page, pages }) => {
   const [totalPages] = useState(pages)
   const [loading, setLoading] = useState(false)
 
-  const ref = useRef();
+  useEffect(() => {
+    // scroll to top when shops list screen is rendered
+    window.scrollTo(0, 0)
+  }, [])
 
-  const inViewport = useIntersection(ref, '10px');
+  const ref = useRef()
+
+  const inViewport = useIntersection(ref, '10px')
 
   const loadMore = () => {
     if (!loading) {
@@ -66,6 +74,7 @@ const Paginator = ({ page, pages }) => {
             page: newPage,
           },
           type: 'GET',
+          cache: false,
           success: function(data) {
             shopsEl.append($.parseHTML(data.rendered_list))
             setTimeout(() => {
