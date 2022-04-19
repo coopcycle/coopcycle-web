@@ -2,6 +2,7 @@ import React, {useState, useRef, useEffect} from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
 import Swiper, { Navigation } from 'swiper'
+import { times } from 'lodash'
 
 import { asText } from '../components/ShippingTimeRange'
 import { useIntersection } from '../hooks/useIntersection'
@@ -13,6 +14,12 @@ import './list.scss'
 
 // turn off automatic browser handle of scroll
 window.history.scrollRestoration = 'manual'
+
+// save last scroll position right before the page is exited
+// if user navigates back to this screen, when all previous pages are loaded we scroll to this position
+window.addEventListener("beforeunload", () => {
+  localStorage.setItem("shops-lastScrollPos", window.document.documentElement.scrollTop);
+});
 
 const FulfillmentBadge = ({ range }) => {
 
@@ -49,6 +56,7 @@ const Paginator = ({ page, pages }) => {
   const [currentPage, setCurrentPage] = useState(page)
   const [totalPages] = useState(pages)
   const [loading, setLoading] = useState(false)
+  const [loadingPrevious, setLoadingPrevious] = useState(false)
 
   useEffect(() => {
     // scroll to top when shops list screen is rendered
@@ -57,7 +65,22 @@ const Paginator = ({ page, pages }) => {
 
   const ref = useRef()
 
+  const shopsEl = $("#shops-list")
+
   const inViewport = useIntersection(ref, '10px')
+
+  const loadPage = (page, onSuccess) => {
+    const searchParams = new URLSearchParams(window.location.search)
+      searchParams.set("page", page);
+      $.ajax({
+        url : window.location.pathname + '?' + searchParams.toString(),
+        type: 'GET',
+        cache: false,
+        success: function(data) {
+          onSuccess(data)
+        }
+      })
+  }
 
   const loadMore = () => {
     if (!loading) {
@@ -65,29 +88,48 @@ const Paginator = ({ page, pages }) => {
 
       if (newPage > currentPage) {
         setLoading(true)
-
-        const shopsEl = $("#shops-list")
-
-        $.ajax({
-          url : window.location.pathname + window.location.search,
-          data: {
-            page: newPage,
-          },
-          type: 'GET',
-          cache: false,
-          success: function(data) {
-            shopsEl.append($.parseHTML(data.rendered_list))
+        loadPage(newPage, (data) => {
+          shopsEl.append($.parseHTML(data.rendered_list))
             setTimeout(() => {
               setCurrentPage(newPage)
               setLoading(false)
             }, 100)
-          }
         })
       }
     }
   }
 
-  if (inViewport && !loading) {
+  useEffect(() => {
+    if (page > 1) {
+      // previously user has scrolled to a page > 1 in shops page
+      $("#shops-list").hide()
+      setLoadingPrevious(true)
+      setLoading(true)
+
+      // we need to fetch all previous pages until last 'page' seen
+      times(page - 1, (num) => {
+        // num is an index, from 0 to the previous page number to last page seen
+        const newPage = page - (num + 1) // we want to load from the begining 1,2,etc until last page seen
+        loadPage(newPage, (data) => {
+          shopsEl.prepend($.parseHTML(data.rendered_list))
+            if ((num + 1) === (page - 1)) {
+              // we have loaded all previous pages
+              $("#shops-list").show()
+              // without this timeout the rendering of Paginator behaves weird
+              setTimeout(() => {
+                setCurrentPage(page)
+                setLoadingPrevious(false)
+                setLoading(false)
+                // auto scroll to last scroll position
+                window.scrollTo({ top: localStorage.getItem("shops-lastScrollPos"), behavior: 'smooth' })
+              }, 100)
+            }
+        })
+      })
+    }
+  }, [])
+
+  if (inViewport && !loadingPrevious) {
     loadMore();
   }
 
