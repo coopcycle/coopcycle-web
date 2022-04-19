@@ -178,7 +178,23 @@ new Swiper('.swiper', {
 function disableAndSubmit(e) {
   document.querySelectorAll('.shops-side-bar-filters input[type="radio"]:not(:checked)').forEach((radio) => radio.disabled=true)
   document.querySelectorAll('.shops-side-bar-filters input[type="checkbox"]:not(:checked)').forEach((check) => check.disabled=true)
-  $(e.target).closest('form').submit()
+
+  const shopsEl = $("#shops-list")
+
+  $.ajax({
+    url : $(e.target).closest('form').attr('path'),
+    data: $(e.target).closest('form').serialize(),
+    type: $(e.target).closest('form').attr('method'),
+    cache: false,
+    success: function(data) {
+      shopsEl.empty().append($.parseHTML(data.rendered_list))
+      document.querySelectorAll('.shops-side-bar-filters input[type="radio"]:not(:checked)').forEach((radio) => radio.disabled=false)
+      document.querySelectorAll('.shops-side-bar-filters input[type="checkbox"]:not(:checked)').forEach((check) => check.disabled=false)
+      const searchParams = new URLSearchParams($(e.target).closest('form').serialize())
+      const path = `${$(e.target).closest('form').attr('path')}?${searchParams.toString()}`
+      window.history.pushState({path}, '', path)
+    }
+  })
 }
 
 $('.shops-side-bar-filters input[type=radio]').on('click', function (e) {
