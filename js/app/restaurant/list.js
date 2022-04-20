@@ -71,13 +71,14 @@ const Paginator = ({ page, pages }) => {
 
   const loadPage = (page, onSuccess) => {
     const searchParams = new URLSearchParams(window.location.search)
-    searchParams.set("page", page);
+    searchParams.set("page", page)
+    const url = `${window.location.pathname}?${searchParams.toString()}`
     $.ajax({
-      url : window.location.pathname + '?' + searchParams.toString(),
+      url,
       type: 'GET',
       cache: false,
       success: function(data) {
-        onSuccess(data)
+        onSuccess(url, data)
       }
     })
   }
@@ -88,9 +89,10 @@ const Paginator = ({ page, pages }) => {
 
       if (newPage > currentPage) {
         setLoading(true)
-        loadPage(newPage, (data) => {
+        loadPage(newPage, (path, data) => {
           shopsEl.append($.parseHTML(data.rendered_list))
             setTimeout(() => {
+              window.history.replaceState({path}, '', path)
               setCurrentPage(newPage)
               setLoading(false)
             }, 100)
@@ -110,20 +112,20 @@ const Paginator = ({ page, pages }) => {
       times(page - 1, (num) => {
         // num is an index, from 0 to the previous page number to last page seen
         const newPage = page - (num + 1) // we want to load from the begining 1,2,etc until last page seen
-        loadPage(newPage, (data) => {
+        loadPage(newPage, (_url, data) => {
           shopsEl.prepend($.parseHTML(data.rendered_list))
-            if ((num + 1) === (page - 1)) {
-              // we have loaded all previous pages
-              $("#shops-list").show()
-              // without this timeout the rendering of Paginator behaves weird
-              setTimeout(() => {
-                setCurrentPage(page)
-                setLoadingPrevious(false)
-                setLoading(false)
-                // auto scroll to last scroll position
-                window.scrollTo({ top: localStorage.getItem("shops-lastScrollPos"), behavior: 'smooth' })
-              }, 100)
-            }
+          if ((num + 1) === (page - 1)) {
+            // we have loaded all previous pages
+            $("#shops-list").show()
+            // without this timeout the rendering of Paginator behaves weird
+            setTimeout(() => {
+              setCurrentPage(page)
+              setLoadingPrevious(false)
+              setLoading(false)
+              // auto scroll to last scroll position
+              window.scrollTo({ top: localStorage.getItem("shops-lastScrollPos"), behavior: 'smooth' })
+            }, 100)
+          }
         })
       })
     }
