@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react'
-import { render } from 'react-dom'
+import { render, unmountComponentAtNode } from 'react-dom'
 import moment from 'moment'
 import Swiper, { Navigation } from 'swiper'
 
@@ -175,11 +175,24 @@ new Swiper('.swiper', {
   }
 })
 
+function resetPaginator(data) {
+  if (paginator) {
+    unmountComponentAtNode(paginator)
+    render(
+      <Paginator
+       page={Number(data.page)}
+       pages={Number(data.pages)} />,
+      paginator
+    )
+  }
+}
+
 function disableAndSubmit(e) {
   document.querySelectorAll('.shops-side-bar-filters input[type="radio"]:not(:checked)').forEach((radio) => radio.disabled=true)
   document.querySelectorAll('.shops-side-bar-filters input[type="checkbox"]:not(:checked)').forEach((check) => check.disabled=true)
 
   const shopsEl = $("#shops-list")
+  // const shopsPaginatorEl = document.getElementById("shops-list-paginator")
 
   $.ajax({
     url : $(e.target).closest('form').attr('path'),
@@ -187,9 +200,15 @@ function disableAndSubmit(e) {
     type: $(e.target).closest('form').attr('method'),
     cache: false,
     success: function(data) {
-      shopsEl.empty().append($.parseHTML(data.rendered_list))
+      resetPaginator(data)
+
+      shopsEl.empty().append($.parseHTML(data.rendered_list)) // show results
+
+      // enable filters
       document.querySelectorAll('.shops-side-bar-filters input[type="radio"]:not(:checked)').forEach((radio) => radio.disabled=false)
       document.querySelectorAll('.shops-side-bar-filters input[type="checkbox"]:not(:checked)').forEach((check) => check.disabled=false)
+
+      // update URL with applied filters
       const searchParams = new URLSearchParams($(e.target).closest('form').serialize())
       const path = `${$(e.target).closest('form').attr('path')}?${searchParams.toString()}`
       window.history.pushState({path}, '', path)

@@ -275,6 +275,8 @@ class RestaurantController extends AbstractController
             $response = new JsonResponse();
             $response->setData(array(
                 'rendered_list' => $list,
+                'page' => $page,
+                'pages' => $pages,
             ));
 
             return $response;
