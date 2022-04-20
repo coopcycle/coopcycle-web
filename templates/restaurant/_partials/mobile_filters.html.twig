@@ -1,5 +1,12 @@
 <form id="mobile-filter" method="get" path="{{ path('shops') }}" class="shops-side-bar-filters collapse d-sm-none container-fluid">
-    <a href="{{ path('shops') }}" class="btn btn-lg btn-default w-100">
+    {% if geohash is defined and geohash is not empty %}
+        <input type="hidden" name="geohash" value="{{geohash}}">
+    {% endif %}
+    {% if address is defined and address is not empty %}
+        <input type="hidden" name="address" value="{{address}}">
+    {% endif %}
+
+    <a href="{{ path('shops', {'geohash': geohash, 'address': address}) }}" class="btn btn-lg btn-default w-100">
       <i class="fa fa-trash mr-sm-2"></i>
       <span class="d-sm-inline">{{ 'shops.filters.clear_all'|trans }}</span>
     </a>
