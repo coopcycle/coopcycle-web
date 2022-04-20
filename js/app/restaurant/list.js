@@ -71,15 +71,15 @@ const Paginator = ({ page, pages }) => {
 
   const loadPage = (page, onSuccess) => {
     const searchParams = new URLSearchParams(window.location.search)
-      searchParams.set("page", page);
-      $.ajax({
-        url : window.location.pathname + '?' + searchParams.toString(),
-        type: 'GET',
-        cache: false,
-        success: function(data) {
-          onSuccess(data)
-        }
-      })
+    searchParams.set("page", page);
+    $.ajax({
+      url : window.location.pathname + '?' + searchParams.toString(),
+      type: 'GET',
+      cache: false,
+      success: function(data) {
+        onSuccess(data)
+      }
+    })
   }
 
   const loadMore = () => {
