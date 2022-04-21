@@ -117,13 +117,19 @@
     </div>
   </div>
 </div>
+
+<div id="optins"
+  data-brand-name={{ coopcycle_setting('brand_name')|json_encode|e('html_attr') }}></div>
+
 {% endblock %}
 
 {% block styles %}
   {{ encore_entry_link_tags('restaurant-list') }}
+  {{ encore_entry_link_tags('optins') }}
 {% endblock %}
 
 {% block scripts %}
   {{ encore_entry_script_tags('search-address') }}
   {{ encore_entry_script_tags('restaurant-list') }}
+  {{ encore_entry_script_tags('optins') }}
 {% endblock %}
