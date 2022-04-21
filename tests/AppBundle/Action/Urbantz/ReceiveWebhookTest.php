@@ -120,7 +120,7 @@ class ReceiveWebhookTest extends TestCase
         $this->assertEquals(25592, $delivery->getWeight());
     }
 
-    public function testTasksAnnouncedWithDigicode()
+    public function testTasksAnnouncedWithDigicodeAndFloor()
     {
         $webhook = new UrbantzWebhook(UrbantzWebhook::TASKS_ANNOUNCED);
         $webhook->tasks = [
@@ -148,6 +148,7 @@ class ReceiveWebhookTest extends TestCase
                     'person' => 'Test Nantais',
                     'phone' => '06XXXXXXX',
                     'buildingInfo' => [
+                        'floor' => 13,
                         'digicode1' => '123456'
                     ]
                 ],
@@ -176,6 +177,68 @@ class ReceiveWebhookTest extends TestCase
 
         $dropoffAddress = $delivery->getDropoff()->getAddress();
 
-        $this->assertEquals("Digicode : 123456\n", $delivery->getDropoff()->getComments());
+        $this->assertEquals("Digicode : 123456\nÉtage : 13\n", $delivery->getDropoff()->getComments());
+    }
+
+    public function testTasksAnnouncedWithInterphoneAndEmptyFloor()
+    {
+        $webhook = new UrbantzWebhook(UrbantzWebhook::TASKS_ANNOUNCED);
+        $webhook->tasks = [
+            [
+                'id' => 'abcdefgh123456',
+                'taskId' => '1269-00099999991',
+                'source' => [
+                    'number' => '4',
+                    'street' => 'Rue Perrault',
+                    'city' => 'Nantes',
+                    'zip' => '44000',
+                    'country' => 'FR',
+                    'address' => 'Rue Perrault 4 44000 Nantes FR'
+                ],
+                'location' => [
+                    'location' => [
+                        'geometry' => [
+                            -1.5506787323970848,
+                            47.21125182318541
+                        ]
+                    ]
+                ],
+                'contact' => [
+                    'name' => null,
+                    'person' => 'Test Nantais',
+                    'phone' => '06XXXXXXX',
+                    'buildingInfo' => [
+                        'floor' => 0,
+                        'digicode1' => null,
+                        'hasInterphone' => true,
+                        'interphoneCode' => '3466'
+                    ]
+                ],
+                'timeWindow' => [
+                    'start' => '2021-09-23T08:25:00.000Z',
+                    'stop' => '2021-09-23T09:00:00.000Z'
+                ],
+                'dimensions' => [
+                    'weight' => 25.592,
+                    'bac' => 1,
+                    'volume' => 49.452571
+                ],
+                'hub' => '618a4fce108a386e4699725f',
+            ]
+        ];
+
+        $response = call_user_func_array($this->action, [$webhook]);
+
+        $this->assertSame($webhook, $response);
+
+        $this->assertCount(1, $webhook->deliveries);
+
+        $this->assertEquals('618a4fce108a386e4699725f', $webhook->hub);
+
+        $delivery = $webhook->deliveries[0];
+
+        $dropoffAddress = $delivery->getDropoff()->getAddress();
+
+        $this->assertEquals("Code interphone : 3466\n", $delivery->getDropoff()->getComments());
     }
 }

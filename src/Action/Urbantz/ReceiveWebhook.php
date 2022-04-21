@@ -118,10 +118,20 @@ class ReceiveWebhook
 
         $dropoffComments = '';
 
-        if (isset($task['contact']['buildingInfo']) && isset($task['contact']['buildingInfo']['digicode1'])) {
-            if (!empty($task['contact']['buildingInfo']['digicode1'])) {
-                $dropoffComments .= "Digicode : {$task['contact']['buildingInfo']['digicode1']}\n";
-            }
+        $buildingInfo = isset($task['contact']) && isset($task['contact']['buildingInfo']) ?
+            $task['contact']['buildingInfo'] : [];
+
+        if (isset($buildingInfo['digicode1']) && !empty($buildingInfo['digicode1'])) {
+            $dropoffComments .= "Digicode : {$buildingInfo['digicode1']}\n";
+        }
+
+        if (isset($buildingInfo['floor']) && !empty($buildingInfo['floor'])) {
+            $dropoffComments .= "Étage : {$buildingInfo['floor']}\n";
+        }
+
+        if (isset($buildingInfo['hasInterphone']) && true === $buildingInfo['hasInterphone'] &&
+            isset($buildingInfo['interphoneCode']) && !empty($buildingInfo['interphoneCode'])) {
+            $dropoffComments .= "Code interphone : {$buildingInfo['interphoneCode']}\n";
         }
 
         if (!empty($pickupComments)) {
