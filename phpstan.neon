@@ -40,8 +40,6 @@ parameters:
         - '#Property AppBundle\\Entity\\(.*)::\$id is never written, only read#'
         - '#Property AppBundle\\Entity\\(.*)::\$id is unused#'
         - '#updatedAt is never read, only written#'
-        - '#Property AppBundle\\Form\\Type\\AutocompleteAdapterType::\$(algoliaApiKey|locationIqAccessToken) is never read, only written#'
-        - '#Property AppBundle\\Form\\Type\\GeocodingProviderType::\$opencageApiKey is never read, only written#'
         - '#Class AppBundle\\Security\\OAuth\\ResourceOwner\\FacebookResourceOwner extends @final class HWI\\Bundle\\OAuthBundle\\OAuth\\ResourceOwner\\FacebookResourceOwner#'
         - '#Property AppBundle\\Utils\\TimeRange::\$(.*) is never read, only written#'
         - '#Call to an undefined method Symfony\\Component\\Console\\Helper\\HelperInterface::ask\(\)#'
