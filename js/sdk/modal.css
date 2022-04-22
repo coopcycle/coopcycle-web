@@ -20,7 +20,6 @@
 
 .coopcycle-modal__container {
   background-color: #fff;
-  /*padding: 15px;*/
   max-width: 500px;
   width: 50%;
   max-height: 100vh;
@@ -28,6 +27,14 @@
   border-radius: 4px;
   overflow-y: auto;
   box-sizing: border-box;
+
+}
+
+@media (max-width: 768px) {
+  .coopcycle-modal__container {
+    width: 90%;
+    height: 90%;
+  }
 }
 
 .coopcycle-modal__header {
