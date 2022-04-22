@@ -11,6 +11,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Package as TaskPackage;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\TaskRepository;
+use AppBundle\Entity\User;
 use Doctrine\ORM\Query\Expr;
 
 final class DeliveryDataExporter extends AbstractDataExporter
@@ -26,6 +27,8 @@ final class DeliveryDataExporter extends AbstractDataExporter
         // Add join with delivery, to exclude standalone tasks
         $qb = $qb->join(Delivery::class, 'd', Expr\Join::WITH, 't.delivery = d.id');
 
+        $qb = $qb->leftJoin(User::class, 'u', Expr\Join::WITH, 't.assignedTo = u.id');
+
         $qb
             ->select('t.id')
             ->addSelect('t.type')
@@ -36,6 +39,7 @@ final class DeliveryDataExporter extends AbstractDataExporter
             ->addSelect('a.streetAddress')
             ->addSelect('d.distance')
             ->addSelect('o.name AS orgName')
+            ->addSelect('u.username as courier')
             ;
 
         $tasks = $qb->getQuery()->getArrayResult();
@@ -87,6 +91,7 @@ final class DeliveryDataExporter extends AbstractDataExporter
                 'order.number'    => $orderNumber,
                 'order.total'     => $orderTotal,
                 'packages'        => $packages,
+                'courier'         => $delivery['PICKUP']['courier'],
             ];
 
         }, $deliveries);
