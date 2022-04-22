@@ -28,6 +28,8 @@ service:
       standard: 0.25
     it:
       standard: 0.22
+    cl:
+      standard: 0.19
 
 service_tax_exempt:
   rates:
@@ -56,6 +58,8 @@ service_tax_exempt:
     dk:
       zero: 0.0
     it:
+      zero: 0.0
+    cl:
       zero: 0.0
 
 drink:
@@ -127,6 +131,8 @@ base_standard:
       standard: 0.25
     it:
       standard: 0.22
+    cl:
+      standard: 0.19
 
 base_intermediary:
   rates:
@@ -199,4 +205,6 @@ base_exempt:
     dk:
       zero: 0.00
     it:
+      zero: 0.00
+    cl:
       zero: 0.00
