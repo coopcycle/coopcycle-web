@@ -11,7 +11,19 @@ import 'swiper/css/navigation'
 
 import './list.scss'
 
-// turn off automatic browser handle of scroll
+/**
+ * Turn off automatic browser handle of scroll
+ *
+ * The browser by default saves the last position of the scroll so that when
+ * the user returns to the screen (e.g. when going to a restaurant and back again)
+ * returns to the last section of the list that has been viewing.
+ * But in our case we don't load the whole list, but we load it as the user scrolls
+ * therefore when returning to the screen the last position of the scroll in a previous navigation
+ * may be beyond the amount of elements we are displaying.
+
+ * By disabling the default scroll handling we make the browser not want to position the user in a place
+ * that no longer exists because the list has been restarted.
+ */
 window.history.scrollRestoration = 'manual'
 
 const FulfillmentBadge = ({ range }) => {
