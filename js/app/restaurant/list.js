@@ -29,14 +29,14 @@ window.history.scrollRestoration = 'manual'
 const FulfillmentBadge = ({ range }) => {
 
   return (
-    <span className="restaurant-item__time-range">
+    <span className="restaurant-item__time-range rendered-badge">
       <i className="fa fa-clock-o mr-2"></i>
       <span>{ asText(range, false, true) }</span>
     </span>
   )
 }
 
-document.querySelectorAll('[data-fulfillment]').forEach(el => {
+function addFulfillmentBadge(el) {
   $.getJSON(el.dataset.fulfillment).then(data => {
 
     if (!data.delivery && !data.collection) {
@@ -55,6 +55,10 @@ document.querySelectorAll('[data-fulfillment]').forEach(el => {
 
     render(<FulfillmentBadge range={ ranges[0] } />, el)
   })
+}
+
+document.querySelectorAll('[data-fulfillment]').forEach(el => {
+  addFulfillmentBadge(el)
 })
 
 const Paginator = ({ page, pages }) => {
@@ -89,6 +93,13 @@ const Paginator = ({ page, pages }) => {
           cache: false,
           success: function(data) {
             shopsEl.append($.parseHTML(data.rendered_list))
+            document.querySelectorAll('[data-fulfillment]').forEach(el => {
+              // render fulfillment badge only to new elements
+              if (el.firstChild.classList && el.firstChild.classList.contains('rendered-badge')) {
+                return;
+              }
+              addFulfillmentBadge(el)
+            })
             setTimeout(() => {
               setCurrentPage(newPage)
               setLoading(false)
