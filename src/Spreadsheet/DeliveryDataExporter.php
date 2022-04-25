@@ -18,10 +18,25 @@ final class DeliveryDataExporter extends AbstractDataExporter
 {
     protected function getData(\DateTime $start, \DateTime $end): array
     {
+        // 1. We load all the deliveries whose tasks are matching the date range
+        // We need to do this, because some deliveries may have one task inside the range,
+        // but another task outside the range
+
         $qb = $this->entityManager->getRepository(Task::class)
             ->createQueryBuilder('t');
-
         $qb = TaskRepository::addRangeClause($qb, $start, $end);
+        $qb
+            ->select('IDENTITY(t.delivery) AS delivery');
+
+        $tasks = $qb->getQuery()->getArrayResult();
+
+        $deliveryIds = array_map(fn ($t) => $t['delivery'], $tasks);
+        $deliveryIds = array_values(array_unique($deliveryIds));
+
+        // 2. We load all the tasks matching those deliveries
+
+        $qb = $this->entityManager->getRepository(Task::class)
+            ->createQueryBuilder('t');
         $qb = $qb->join(Address::class, 'a', Expr\Join::WITH, 't.address = a.id');
         $qb = $qb->leftJoin(Organization::class, 'o', Expr\Join::WITH, 't.organization = o.id');
         // Add join with delivery, to exclude standalone tasks
@@ -42,14 +57,16 @@ final class DeliveryDataExporter extends AbstractDataExporter
             ->addSelect('u.username as courier')
             ;
 
+        $qb
+            ->andWhere(
+                $qb->expr()->in('t.delivery', $deliveryIds)
+            );
+
         $tasks = $qb->getQuery()->getArrayResult();
 
         $taskIds = array_map(fn ($task) => $task['id'], $tasks);
 
         $packagesByTask = $this->getPackagesByTask($taskIds);
-
-        $deliveryIds = array_map(fn ($t) => $t['delivery'], $tasks);
-        $deliveryIds = array_values(array_unique($deliveryIds));
 
         $ordersByDelivery = $this->getOrdersByDelivery($deliveryIds);
 
