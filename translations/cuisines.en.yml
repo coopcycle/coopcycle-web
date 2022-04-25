@@ -31,6 +31,7 @@ cajun: Cajun
 californian: Californian
 calzones: Calzones
 cambodian: Cambodian
+canadian: Canadian
 canary: Canary
 caribbean: Caribbean
 castiza: Castiza
@@ -71,6 +72,7 @@ french: French
 frozen_yogurt: Frozen Yogurt
 fusion: Fusion
 galician: Galician
+gastronomic: Gastronomic
 gastropub: Gastropub
 german: German
 gluten_free: Gluten Free
@@ -94,6 +96,7 @@ italian: Italian
 jamaican: Jamaican
 japanese: Japanese
 juices: Juices
+kebab: Kebab
 korean_barbeque: Korean Barbeque
 korean: Korean
 kosher: Kosher
@@ -149,12 +152,12 @@ soul_food: Soul Food
 soup: Soup
 south_african: South African
 south_american: South American
-south_pacific: South Pacific
 southern: Southern
+south_pacific: South Pacific
 southwestern: Southwestern
 spanish: Spanish
-steak: Steak
 steakhouse: Steakhouse
+steak: Steak
 subs: Subs
 sushi: Sushi
 taiwanese: Taiwanese
