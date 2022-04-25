@@ -498,7 +498,7 @@ export default function(name, options) {
 
     el.addEventListener('submit', (e) => {
 
-      _.find(taskForms, taskEl => {
+      const hasInvalidInput = _.find(taskForms, taskEl => {
 
         const type = taskEl.getAttribute('id').replace(name + '_', '')
 
@@ -516,6 +516,10 @@ export default function(name, options) {
 
         return !isValid
       })
+
+      if (!hasInvalidInput) {
+        form.disable()
+      }
 
     }, false)
 
