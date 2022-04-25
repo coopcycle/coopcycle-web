@@ -24,6 +24,8 @@ final class DeliveryDataExporter extends AbstractDataExporter
 
         $qb = $this->entityManager->getRepository(Task::class)
             ->createQueryBuilder('t');
+        // Add join with delivery, to exclude standalone tasks
+        $qb = $qb->join(Delivery::class, 'd', Expr\Join::WITH, 't.delivery = d.id');
         $qb = TaskRepository::addRangeClause($qb, $start, $end);
         $qb
             ->select('IDENTITY(t.delivery) AS delivery');
