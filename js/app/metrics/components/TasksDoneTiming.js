@@ -13,6 +13,7 @@ import {
   TYPE_DROPOFF,
   TYPE_PICKUP,
 } from '../tasksGraphUtils'
+import _ from 'lodash'
 
 const commonOptions = {
   maintainAspectRatio: false,
@@ -21,23 +22,39 @@ const commonOptions = {
   },
   plugins: {
     legend: {
-      position: 'bottom',
+      position: 'right',
+      labels: {
+        sort: function(a, b) {
+          // a: LegendItem, b: LegendItem, data: ChartData
+
+          let order = [
+            {type: TYPE_PICKUP, timing: TIMING_TOO_EARLY},
+            {type: TYPE_DROPOFF, timing: TIMING_TOO_EARLY},
+            {type: TYPE_PICKUP, timing: TIMING_ON_TIME},
+            {type: TYPE_DROPOFF, timing: TIMING_ON_TIME},
+            {type: TYPE_PICKUP, timing: TIMING_TOO_LATE},
+            {type: TYPE_DROPOFF, timing: TIMING_TOO_LATE},
+          ]
+
+          function indexOf(item) {
+            return _.findIndex(order, function(o) {
+              return item.text.includes(typeToString(o.type)) && item.text.includes(timingToString(o.timing))
+            });
+          }
+
+          let aIndex = indexOf(a)
+          let bIndex = indexOf(b)
+
+          return aIndex - bIndex
+        }
+      }
     },
     tooltip: {
-      callbacks: {
-        label: function(context) {
-          let label = context.dataset.label || '';
-
-          if (label) {
-            label += ': ';
-          }
-          if (context.parsed.y !== null) {
-            label += `${context.parsed.y}%`;
-          }
-          return label;
-        }
-      },
-    },
+      filter: function(el) {
+        // el: TooltipItem
+        return el.raw != 0 //hide items with value == 0
+      }
+    }
   },
   scales: {
     x: {
@@ -45,6 +62,16 @@ const commonOptions = {
         autoSkip: true,
       },
     },
+    y: {
+      max: 100,
+      min: -100,
+      ticks: {
+        stepSize: 50,
+        callback: function(value) {
+          return Math.abs(value) + '%';
+        }
+      },
+    }
   },
 };
 
@@ -53,6 +80,16 @@ function typeFromSeries (s) {
     return TYPE_PICKUP
   } else {
     return TYPE_DROPOFF
+  }
+}
+
+function typeToString(type) {
+  if (type == TYPE_PICKUP) {
+    return 'PICKUP'
+  } else if (type == TYPE_DROPOFF) {
+    return 'DROPOFF'
+  } else {
+    return 'unknown type'
   }
 }
 
@@ -66,18 +103,34 @@ function timingFromSeries (s) {
   }
 }
 
+function timingToString(timing) {
+  if (timing == TIMING_TOO_EARLY) {
+    return 'early'
+  } else if (timing == TIMING_TOO_LATE) {
+    return 'late'
+  } else if (timing == TIMING_ON_TIME) {
+    return 'on time'
+  }  else {
+    return 'unknown timing'
+  }
+}
+
 const BarChartRenderer = ({ resultSet, pivotConfig }) => {
+  let visibleSeries = [
+    "Task.percentageOnTime",
+    "Task.percentageTooEarly",
+    "Task.percentageTooLate",
+  ]
+
+  function isVisible(series) {
+    return _.findIndex(visibleSeries, function(el) { return series.key.includes(el) }) != -1
+  }
+
   const datasets = useDeepCompareMemo(
     () =>
-      resultSet.series().map((s) => ({
+      resultSet.series().filter(s => isVisible(s)).map((s) => ({
         get label() {
-          if (s.key.includes('PICKUP,Task.percentageOnTime')) {
-            return "% PICKUP on time"
-          } else if (s.key.includes('DROPOFF,Task.percentageOnTime')) {
-            return "% DROPOFF on time"
-          } else {
-            return s.title
-          }
+          return `${timingToString(timingFromSeries(s))} ${typeToString(typeFromSeries(s))}`
         },
         data: s.series.map((r) => {
           if (s.key.includes('Task.percentageTooLate')) {
@@ -96,17 +149,40 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
           } else {
             return "DROPOFF"
           }
-        }
+        },
       })),
     [resultSet]
   );
+
+  const extraDatasets = useDeepCompareMemo(
+    () => resultSet.series().filter(s => !isVisible(s)),
+    [resultSet])
+
   const data = {
     labels: resultSet.categories().map((c) => formatDayDimension(c.category)),
     datasets,
   };
   const stacked = !(pivotConfig.x || []).includes('measures');
+
   const options = {
     ...commonOptions,
+    plugins: {
+      ...commonOptions.plugins,
+      tooltip: {
+        ...commonOptions.plugins.tooltip,
+        callbacks: {
+          label: function(context) {
+            let label = context.dataset.label || '';
+
+            if (context.parsed.y !== null) {
+              let extraValue = extraDatasets[context.datasetIndex].series[context.dataIndex]
+              return `${extraValue.value} ${label} (${Math.round(Math.abs(context.parsed.y))}%)`
+            }
+            return label;
+          }
+        },
+      },
+    },
     scales: {
       x: { ...commonOptions.scales.x, stacked },
       y: { ...commonOptions.scales.y, stacked },
@@ -132,8 +208,17 @@ const ChartRenderer = ({ cubejsApi, dateRange }) => {
   return (
   <QueryRenderer
     query={{
+      /**
+       * order OnTime/TooEarly/TooLate must be the same for percentage and count
+       * for tooltip to pick data correctly
+       */
       "measures": [
+        "Task.percentageTooLate",
         "Task.percentageOnTime",
+        "Task.percentageTooEarly",
+        "Task.countTooLate",
+        "Task.countOnTime",
+        "Task.countTooEarly",
       ],
       "timeDimensions": [
         {

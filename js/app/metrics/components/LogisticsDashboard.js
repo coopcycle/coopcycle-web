@@ -6,12 +6,10 @@ import ChartPanel from './ChartPanel'
 import AverageDistance from './AverageDistance'
 import NumberOfTasks from './NumberOfTasks'
 import StoreCumulativeCount from './StoreCumulativeCount'
-import PercentageOfTasksByTiming from './PercentageOfTasksByTiming'
-import NumberOfTasksByTiming from './NumberOfTasksByTiming'
 import DistributionOfTasksByTiming from './DistributionOfTasksByTiming'
 import AverageTiming from './AverageTiming'
-import PercentageOfTasksOnTime from './PercentageOfTasksOnTime'
 import DistributionOfTasksByPercentage from './DistributionOfTasksByPercentage'
+import TasksDoneTiming from './TasksDoneTiming'
 
 const Dashboard = ({ cubejsApi, dateRange, tasksMetricsEnabled }) => {
 
@@ -22,31 +20,16 @@ const Dashboard = ({ cubejsApi, dateRange, tasksMetricsEnabled }) => {
         <ChartPanel title="Average distance">
           <AverageDistance cubejsApi={ cubejsApi } dateRange={ dateRange } />
         </ChartPanel>
-        <ChartPanel title="Number of tasks">
-          <NumberOfTasks cubejsApi={ cubejsApi } dateRange={ dateRange } />
-        </ChartPanel>
         <ChartPanel title="Number of stores">
           <StoreCumulativeCount cubejsApi={ cubejsApi } dateRange={ dateRange } />
         </ChartPanel>
+        <ChartPanel title="Number of tasks">
+          <NumberOfTasks cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        </ChartPanel>
         {tasksMetricsEnabled && (<div/>)}
         {tasksMetricsEnabled && (
-          <ChartPanel title="Percentage Of Tasks done on time">
-            <PercentageOfTasksOnTime
-              cubejsApi={ cubejsApi }
-              dateRange={ dateRange } />
-          </ChartPanel>
-        )}
-        {tasksMetricsEnabled && (<div/>)}
-        {tasksMetricsEnabled && (
-          <ChartPanel title="Percentage Of Tasks done too early/late">
-            <PercentageOfTasksByTiming
-              cubejsApi={ cubejsApi }
-              dateRange={ dateRange } />
-          </ChartPanel>
-        )}
-        {tasksMetricsEnabled && (
-          <ChartPanel title="Number Of Tasks done too early/late">
-            <NumberOfTasksByTiming
+          <ChartPanel title="Tasks done on time, too early or too late">
+            <TasksDoneTiming
               cubejsApi={ cubejsApi }
               dateRange={ dateRange } />
           </ChartPanel>
@@ -58,7 +41,6 @@ const Dashboard = ({ cubejsApi, dateRange, tasksMetricsEnabled }) => {
               dateRange={ dateRange } />
           </ChartPanel>
         )}
-        {tasksMetricsEnabled && (<div/>)}
         {tasksMetricsEnabled && (
           <ChartPanel title="Number Of PICKUPs done X minutes earlier/later than planned">
             <DistributionOfTasksByTiming
