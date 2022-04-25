@@ -12,6 +12,7 @@ use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Sylius\OrderView;
 use AppBundle\Entity\Sylius\TaxRate;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -78,6 +79,7 @@ class RestaurantStats implements \Countable
         $this->addAdjustments();
         $this->addVendors();
         $this->addRefunds();
+        $this->addStores();
 
         $this->computeTaxes();
         $this->computeColumnTotals();
@@ -324,6 +326,49 @@ class RestaurantStats implements \Countable
         }, $this->result);
     }
 
+    private function addStores()
+    {
+        if (count($this->ids) === 0) {
+            return;
+        }
+
+        $qb = $this->entityManager
+            ->getRepository(Delivery::class)
+            ->createQueryBuilder('d');
+
+        $qb
+            ->select('IDENTITY(d.order) AS order_id')
+            ->addSelect('s.name AS store_name')
+            ->join(Store::class, 's', Expr\Join::WITH, 'd.store = s.id')
+            ->andWhere(
+                $qb->expr()->in('d.order', $this->ids)
+            );
+
+        $stores = $qb->getQuery()->getArrayResult();
+
+        $storesByOrderId = array_reduce($stores, function ($accumulator, $store) {
+
+            if (!isset($accumulator[$store['order_id']])) {
+                $accumulator[$store['order_id']] = [];
+            }
+
+            $accumulator[$store['order_id']] = $store['store_name'];
+
+            return $accumulator;
+
+        }, []);
+
+        $this->result = array_map(function ($order) use ($storesByOrderId) {
+
+            if (isset($storesByOrderId[$order->id])) {
+                $order->storeName = $storesByOrderId[$order->id];
+            }
+
+            return $order;
+
+        }, $this->result);
+    }
+
     private function computeTaxes()
     {
         $this->serviceTaxRateCode = $this->taxesHelper->getServiceTaxRateCode();
@@ -533,7 +578,7 @@ class RestaurantStats implements \Countable
 
         switch ($column) {
             case 'restaurant_name';
-                return $order->hasVendor() ? $order->getVendorName() : '';
+                return $order->hasVendor() ? $order->getVendorName() : $order->storeName;
             case 'order_number';
                 return $order->getNumber();
             case 'fulfillment_method';

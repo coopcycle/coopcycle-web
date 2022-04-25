@@ -31,6 +31,7 @@ class OrderView
 
     public $nonprofitId;
     public $nonprofitName;
+    public $storeName;
 
     public function __construct(?LocalBusiness $restaurant = null)
     {
