@@ -15,6 +15,7 @@ class DeliverySubscriber implements EventSubscriber
 {
     private $messageBus;
     private $deliveries = [];
+    private $onFlushCalled = false;
 
     public function __construct(MessageBusInterface $messageBus)
     {
@@ -31,6 +32,12 @@ class DeliverySubscriber implements EventSubscriber
 
     public function onFlush(OnFlushEventArgs $args)
     {
+        // When a store has tags, TaggableSubscriber will be called.
+        // In this case, DeliverySubscriber::onFlush() will be called twice.
+        if ($this->onFlushCalled) {
+            return;
+        }
+
         $this->deliveries = [];
 
         $em = $args->getEntityManager();
@@ -50,6 +57,8 @@ class DeliverySubscriber implements EventSubscriber
 
             return !$entity->getOrder()->hasVendor();
         });
+
+        $this->onFlushCalled = true;
     }
 
     public function postFlush(PostFlushEventArgs $args)
@@ -59,5 +68,7 @@ class DeliverySubscriber implements EventSubscriber
                 new DeliveryCreated($delivery)
             );
         }
+
+        $this->deliveries = [];
     }
 }
