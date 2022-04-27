@@ -120,6 +120,13 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             }
         }
 
+        $orderPromotionAdjustments = $order->getAdjustments(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT);
+        foreach ($orderPromotionAdjustments as $orderPromotionAdjustment) {
+            if ($this->decreasePlatformFee($orderPromotionAdjustment)) {
+                $businessAmount += $orderPromotionAdjustment->getAmount();
+            }
+        }
+
         $tipAmount = $order->getTipAmount();
 
         if (null !== $tipAmount) {
