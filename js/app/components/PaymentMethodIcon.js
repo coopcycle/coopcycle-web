@@ -33,4 +33,6 @@ export default ({ code, height }) => {
         <img src={ cashLogo } height={ height } />
       )
   }
+
+  return null
 }
