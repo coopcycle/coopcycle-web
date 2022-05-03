@@ -6,6 +6,8 @@ import Swiper, { Navigation } from 'swiper'
 import { asText } from '../components/ShippingTimeRange'
 import { useIntersection } from '../hooks/useIntersection'
 
+require('gasparesganga-jquery-loading-overlay')
+
 import 'swiper/css';
 import 'swiper/css/navigation'
 
@@ -191,12 +193,12 @@ function renderFulfillmentBadgeAfterAjax() {
   })
 }
 
-function disableAndSubmit(e) {
-  document.querySelectorAll('.shops-side-bar-filters input[type="radio"]:not(:checked)').forEach((radio) => radio.disabled=true)
-  document.querySelectorAll('.shops-side-bar-filters input[type="checkbox"]:not(:checked)').forEach((check) => check.disabled=true)
+function submitFilter(e) {
+  $('.shops-content').LoadingOverlay('show', {
+    image: false,
+  })
 
   const shopsEl = $("#shops-list")
-  // const shopsPaginatorEl = document.getElementById("shops-list-paginator")
 
   $.ajax({
     url : $(e.target).closest('form').attr('path'),
@@ -210,22 +212,22 @@ function disableAndSubmit(e) {
 
       renderFulfillmentBadgeAfterAjax()
 
-      // enable filters
-      document.querySelectorAll('.shops-side-bar-filters input[type="radio"]:not(:checked)').forEach((radio) => radio.disabled=false)
-      document.querySelectorAll('.shops-side-bar-filters input[type="checkbox"]:not(:checked)').forEach((check) => check.disabled=false)
-
       // update URL with applied filters
       const searchParams = new URLSearchParams($(e.target).closest('form').serialize())
       const path = `${$(e.target).closest('form').attr('path')}?${searchParams.toString()}`
       window.history.pushState({path}, '', path)
+
+      $('.shops-content').LoadingOverlay('hide', {
+        image: false,
+      })
     }
   })
 }
 
 $('.shops-side-bar-filters input[type=radio]').on('click', function (e) {
-  disableAndSubmit(e)
+  submitFilter(e)
 });
 
 $('.shops-side-bar-filters input[type=checkbox]').on('click', function (e) {
-  disableAndSubmit(e)
+  submitFilter(e)
 });
