@@ -269,7 +269,8 @@ class RestaurantController extends AbstractController
         // AJAX request from filters or pagination
         if ($request->isXmlHttpRequest()) {
             $list = $this->renderView('_partials/restaurant/shops_list.html.twig', [
-                'restaurants' => $matches
+                'restaurants' => $matches,
+                'count' => $count,
             ]);
 
             $response = new JsonResponse();
