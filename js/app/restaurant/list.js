@@ -93,13 +93,7 @@ const Paginator = ({ page, pages }) => {
           cache: false,
           success: function(data) {
             shopsEl.append($.parseHTML(data.rendered_list))
-            document.querySelectorAll('[data-fulfillment]').forEach(el => {
-              // render fulfillment badge only to new elements
-              if (el.firstChild.classList && el.firstChild.classList.contains('rendered-badge')) {
-                return;
-              }
-              addFulfillmentBadge(el)
-            })
+            renderFulfillmentBadgeAfterAjax()
             setTimeout(() => {
               setCurrentPage(newPage)
               setLoading(false)
@@ -187,6 +181,16 @@ function resetPaginator(data) {
   }
 }
 
+function renderFulfillmentBadgeAfterAjax() {
+  document.querySelectorAll('[data-fulfillment]').forEach(el => {
+    // render fulfillment badge only to new elements
+    if (el.firstChild.classList && el.firstChild.classList.contains('rendered-badge')) {
+      return;
+    }
+    addFulfillmentBadge(el)
+  })
+}
+
 function disableAndSubmit(e) {
   document.querySelectorAll('.shops-side-bar-filters input[type="radio"]:not(:checked)').forEach((radio) => radio.disabled=true)
   document.querySelectorAll('.shops-side-bar-filters input[type="checkbox"]:not(:checked)').forEach((check) => check.disabled=true)
@@ -203,6 +207,8 @@ function disableAndSubmit(e) {
       resetPaginator(data)
 
       shopsEl.empty().append($.parseHTML(data.rendered_list)) // show results
+
+      renderFulfillmentBadgeAfterAjax()
 
       // enable filters
       document.querySelectorAll('.shops-side-bar-filters input[type="radio"]:not(:checked)').forEach((radio) => radio.disabled=false)
