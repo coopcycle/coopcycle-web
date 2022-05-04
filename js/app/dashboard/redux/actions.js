@@ -158,6 +158,7 @@ export const UPDATE_RECURRENCE_RULE_ERROR = 'UPDATE_RECURRENCE_RULE_ERROR'
 export const SHOW_RECURRENCE_RULES = 'SHOW_RECURRENCE_RULES'
 
 export const DELETE_GROUP_SUCCESS = 'DELETE_GROUP_SUCCESS'
+export const EDIT_GROUP_SUCCESS = 'EDIT_GROUP_SUCCESS'
 
 export const OPEN_CREATE_GROUP_MODAL = 'OPEN_CREATE_GROUP_MODAL'
 export const CLOSE_CREATE_GROUP_MODAL = 'CLOSE_CREATE_GROUP_MODAL'
@@ -1003,6 +1004,42 @@ export function deleteGroup(group) {
       .then(() => dispatch(deleteGroupSuccess(resourceId)))
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))
+  }
+}
+
+export function editGroupSuccess(group) {
+  return { type: EDIT_GROUP_SUCCESS, group }
+}
+
+export function editGroup(group) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    const resourceId = group['@id']
+
+    return createClient(dispatch).request({
+      method: 'put',
+      url: resourceId,
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      },
+      data: {
+        name: group.name
+      }
+    })
+      .then((res) => {
+        dispatch(editGroupSuccess())
+        return res.data
+      })
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.log(error)
+        return null
+      })
   }
 }
 
