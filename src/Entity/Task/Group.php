@@ -48,6 +48,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "normalizationContext"={"groups"={"task_group"}},
  *       "security"="is_granted('view', object)"
  *     },
+ *     "put"={
+ *       "method"="PUT",
+ *       "denormalization_context"={"groups"={"task_group"}},
+ *       "security"="is_granted('edit', object)"
+ *     },
  *     "delete"={
  *       "method"="DELETE",
  *       "controller"=DeleteGroupController::class,
