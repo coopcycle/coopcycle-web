@@ -87,6 +87,7 @@
         "ADMIN_DASHBOARD_ADD_TO_GROUP": "Agregar a grupo",
         "ADMIN_DASHBOARD_CHOOSE_GROUP_LABEL": "Selecciona un grupo",
         "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Nombre del grupo",
+        "ADMIN_DASHBOARD_REMOVE_FROM_GROUP": "Quitar del grupo",
         "USER_EDIT_ENABLED_LABEL": "Activado",
         "USER_EDIT_DISABLED_LABEL": "Desactivado",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Pedido creado",
