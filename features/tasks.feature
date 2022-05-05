@@ -271,7 +271,7 @@ Feature: Tasks
     And the tasks with comments matching "#bob" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "PUT" request to "/api/tasks/1/add/1" with body:
+    And the user "bob" sends a "PUT" request to "/api/tasks/1/add_to_group/1" with body:
       """
       {}
       """

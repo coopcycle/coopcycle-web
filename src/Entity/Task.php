@@ -131,7 +131,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  *     "task_add_to_group"={
  *       "method"="PUT",
- *       "path"="/tasks/{id}/add/{group_id}",
+ *       "path"="/tasks/{id}/add_to_group/{group_id}",
  *       "controller"=AddToGroup::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
  *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('edit', object)",
