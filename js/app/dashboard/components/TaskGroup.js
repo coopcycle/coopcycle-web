@@ -24,6 +24,10 @@ class TaskGroup extends React.Component {
   renderTags() {
     const { group } = this.state
 
+    if (!group.tags) {
+      return;
+    }
+
     return (
       <span className="task__tags d-flex mr-2">
         { group.tags.map(tag => (
