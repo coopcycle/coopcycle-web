@@ -162,6 +162,10 @@ export const DELETE_GROUP_SUCCESS = 'DELETE_GROUP_SUCCESS'
 export const OPEN_CREATE_GROUP_MODAL = 'OPEN_CREATE_GROUP_MODAL'
 export const CLOSE_CREATE_GROUP_MODAL = 'CLOSE_CREATE_GROUP_MODAL'
 
+export const OPEN_ADD_TASK_TO_GROUP_MODAL = 'OPEN_ADD_TASK_TO_GROUP_MODAL'
+export const CLOSE_ADD_TASK_TO_GROUP_MODAL = 'CLOSE_ADD_TASK_TO_GROUP_MODAL'
+export const ADD_TASK_TO_GROUP_REQUEST = 'ADD_TASK_TO_GROUP_REQUEST'
+
 export const CREATE_GROUP_REQUEST = 'CREATE_GROUP_REQUEST'
 export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
 
@@ -1166,6 +1170,46 @@ export function createGroup(name) {
       .then((response) => {
         dispatch(createGroupSuccess(response.data))
         dispatch(closeCreateGroupModal())
+      })
+      // eslint-disable-next-line no-console
+      .catch(error => console.log(error))
+  }
+}
+
+export function addTaskToGroupRequest() {
+  return { type: ADD_TASK_TO_GROUP_REQUEST }
+}
+
+export function openAddTaskToGroupModal() {
+  return { type: OPEN_ADD_TASK_TO_GROUP_MODAL }
+}
+
+export function closeAddTaskToGroupModal() {
+  return { type: CLOSE_ADD_TASK_TO_GROUP_MODAL }
+}
+
+export function addTaskToGroup(taskId, taskGroupId) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(addTaskToGroupRequest())
+
+    createClient(dispatch).request({
+      method: 'put',
+      url: `/api/tasks/${taskId}/add/${taskGroupId}`,
+      data: {},
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then((response) => {
+        dispatch(closeAddTaskToGroupModal())
+        dispatch(_updateTask(response.data))
+        dispatch(clearSelectedTasks())
       })
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))

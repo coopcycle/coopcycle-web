@@ -16,7 +16,8 @@ import {
   closeRecurrenceRuleModal,
   closeExportModal,
   closeCreateGroupModal,
-  exportTasks } from '../redux/actions'
+  exportTasks,
+  closeAddTaskToGroupModal } from '../redux/actions'
 import TaskModalContent from './TaskModalContent'
 import FiltersModalContent from './FiltersModalContent'
 import SettingsModalContent from './SettingsModalContent'
@@ -25,6 +26,7 @@ import AddUserModalContent from './AddUserModalContent'
 import RecurrenceRuleModalContent from './RecurrenceRuleModalContent'
 import ExportModalContent from './ExportModalContent'
 import CreateGroupModalContent from './CreateGroupModalContent'
+import AddTaskToGroupModalContent from './AddTaskToGroupModalContent'
 
 class Modals extends React.Component {
 
@@ -105,6 +107,15 @@ class Modals extends React.Component {
           <CreateGroupModalContent
             onClickClose={ this.props.closeCreateGroupModal } />
         </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.addTaskToGroupModalIsOpen }
+          onRequestClose={ this.props.closeAddTaskToGroupModal }
+          className="ReactModal__Content--select-courier"
+          shouldCloseOnOverlayClick={ true }>
+          <AddTaskToGroupModalContent
+            onClickClose={ this.props.closeAddTaskToGroupModal } />
+        </Modal>
       </React.Fragment>
     )
   }
@@ -122,6 +133,7 @@ function mapStateToProps(state) {
     recurrenceRuleModalIsOpen: state.recurrenceRuleModalIsOpen,
     exportModalIsOpen: state.exportModalIsOpen,
     createGroupModalIsOpen: state.createGroupModalIsOpen,
+    addTaskToGroupModalIsOpen: state.addTaskToGroupModalIsOpen,
   }
 }
 
@@ -140,6 +152,7 @@ function mapDispatchToProps (dispatch) {
     closeExportModal: () => dispatch(closeExportModal()),
     closeCreateGroupModal: () => dispatch(closeCreateGroupModal()),
     exportTasks: (start, end) => dispatch(exportTasks(start, end)),
+    closeAddTaskToGroupModal: () => dispatch(closeAddTaskToGroupModal()),
   }
 }
 
