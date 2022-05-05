@@ -1235,7 +1235,7 @@ export function addTaskToGroup(taskId, taskGroupId) {
 
     createClient(dispatch).request({
       method: 'put',
-      url: `/api/tasks/${taskId}/add/${taskGroupId}`,
+      url: `/api/tasks/${taskId}/add_to_group/${taskGroupId}`,
       data: {},
       headers: {
         'Authorization': `Bearer ${jwt}`,
