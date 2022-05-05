@@ -8,6 +8,7 @@ use AppBundle\Domain\Task\Command\MarkAsDone;
 use AppBundle\Domain\Task\Command\MarkAsFailed;
 use AppBundle\Domain\Task\Command\Start;
 use AppBundle\Domain\Task\Command\AddToGroup;
+use AppBundle\Domain\Task\Command\RemoveFromGroup;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use SimpleBus\SymfonyBridge\Bus\CommandBus;
@@ -34,6 +35,11 @@ class TaskManager
     public function addToGroup(Task $task, TaskGroup $taskGroup)
     {
         $this->commandBus->handle(new AddToGroup($task, $taskGroup));
+    }
+
+    public function removeFromGroup(Task $task)
+    {
+        $this->commandBus->handle(new RemoveFromGroup($task));
     }
 
     public function markAsDone(Task $task, $notes = null, $contactName = null)

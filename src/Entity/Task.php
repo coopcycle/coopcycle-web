@@ -13,6 +13,7 @@ use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
 use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\AddToGroup;
+use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskFilter;
@@ -137,6 +138,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Add a Task to a group",
+ *        }
+ *     },
+ *     "task_remove_from_group"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/remove_from_group",
+ *       "controller"=RemoveFromGroup::class,
+ *       "denormalization_context"={"groups"={"task_operation"}},
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('edit', object)",
+ *       "openapi_context"={
+ *         "summary"="Remove a task from current group",
  *        }
  *     },
  *     "task_unassign"={

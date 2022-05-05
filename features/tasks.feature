@@ -349,6 +349,46 @@ Feature: Tasks
       }
       """
 
+  Scenario: Remove task from a group
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+      | users.yml           |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/2/remove_from_group" with body:
+      """
+      {}
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/2",
+        "@type":"Task",
+        "id":2,
+        "type":"DROPOFF",
+        "status":"TODO",
+        "address":@...@,
+        "after":"2018-03-02T11:30:00+01:00",
+        "before":"2018-03-02T12:00:00+01:00",
+        "doneAfter":"2018-03-02T11:30:00+01:00",
+        "doneBefore":"2018-03-02T12:00:00+01:00",
+        "comments":@string@,
+        "updatedAt":"@string@.isDateTime()",
+        "isAssigned":true,
+        "assignedTo":"bob",
+        "previous":null,
+        "group":null,
+        "tags":@array@
+      }
+      """
+
   Scenario: Start a task
     Given the fixtures files are loaded:
       | sylius_channels.yml |
