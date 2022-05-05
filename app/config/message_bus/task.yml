@@ -57,6 +57,12 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\AddToGroup
 
+  coopcycle.domain.task.handler.remove_from_group:
+    class: AppBundle\Domain\Task\Handler\RemoveFromGroupHandler
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\RemoveFromGroup
+
   #
   # Reactors
   #
