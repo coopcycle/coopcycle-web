@@ -8,7 +8,6 @@ import { selectGroups, selectSelectedTasks } from '../redux/selectors'
 
 const AddTaskToGroupModalContent = ({ selectedTasks, groups, addTaskToGroup }) => {
   const [taskGroupId, setTaskGroupId] = useState(null)
-  const taskId = selectedTasks[0] ? selectedTasks[0].id : null
 
   const { t } = useTranslation()
 
@@ -18,7 +17,7 @@ const AddTaskToGroupModalContent = ({ selectedTasks, groups, addTaskToGroup }) =
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        onFinish={ () => addTaskToGroup(taskId, taskGroupId) }
+        onFinish={ () => addTaskToGroup(selectedTasks, taskGroupId) }
         autoComplete="off"
       >
         <Form.Item

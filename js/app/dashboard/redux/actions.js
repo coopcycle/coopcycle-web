@@ -1225,7 +1225,7 @@ export function closeAddTaskToGroupModal() {
   return { type: CLOSE_ADD_TASK_TO_GROUP_MODAL }
 }
 
-export function addTaskToGroup(taskId, taskGroupId) {
+export function addTaskToGroup(tasks, taskGroupId) {
 
   return function(dispatch, getState) {
 
@@ -1233,19 +1233,25 @@ export function addTaskToGroup(taskId, taskGroupId) {
 
     dispatch(addTaskToGroupRequest())
 
-    createClient(dispatch).request({
-      method: 'put',
-      url: `/api/tasks/${taskId}/add_to_group/${taskGroupId}`,
-      data: {},
-      headers: {
-        'Authorization': `Bearer ${jwt}`,
-        'Accept': 'application/ld+json',
-        'Content-Type': 'application/ld+json'
-      }
+    const requests = tasks.map((task) => {
+      return createClient(dispatch).request({
+        method: 'put',
+        url: `/api/tasks/${task.id}/add_to_group/${taskGroupId}`,
+        data: {},
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
     })
-      .then((response) => {
+
+    Promise.all(requests)
+      .then((responses) => {
         dispatch(closeAddTaskToGroupModal())
-        dispatch(_updateTask(response.data))
+        responses.forEach((response) => {
+          dispatch(_updateTask(response.data))
+        })
         dispatch(clearSelectedTasks())
       })
       // eslint-disable-next-line no-console

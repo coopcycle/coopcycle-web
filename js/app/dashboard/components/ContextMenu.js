@@ -140,7 +140,7 @@ const DynamicMenu = ({
       </Item>
       <Item
         hidden={ !actions.includes(ADD_TO_GROUP) }
-        onClick={ () => openAddTaskToGroupModal(selectedTask) }
+        onClick={ () => openAddTaskToGroupModal(selectedTasks) }
       >
         { t('ADMIN_DASHBOARD_ADD_TO_GROUP') }
       </Item>
@@ -171,7 +171,7 @@ function mapDispatchToProps(dispatch) {
     moveTasksToNextDay: tasks => dispatch(moveTasksToNextDay(tasks)),
     moveTasksToNextWorkingDay: tasks => dispatch(moveTasksToNextWorkingDay(tasks)),
     openCreateGroupModal: () => dispatch(openCreateGroupModal()),
-    openAddTaskToGroupModal: (task) => dispatch(openAddTaskToGroupModal(task)),
+    openAddTaskToGroupModal: tasks => dispatch(openAddTaskToGroupModal(tasks)),
   }
 }
 
