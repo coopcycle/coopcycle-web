@@ -316,36 +316,24 @@ Feature: Tasks
       | users.yml           |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
-    And the tasks with comments matching "#bob" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "PUT" request to "/api/tasks/2/remove_from_group" with body:
-      """
-      {}
-      """
+    And the user "bob" sends a "DELETE" request to "/api/tasks/2/group"
+    Then the response status code should be 204
+    When the user "bob" is authenticated
+    And I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/task_groups/1"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2",
-        "@type":"Task",
-        "id":2,
-        "type":"DROPOFF",
-        "status":"TODO",
-        "address":@...@,
-        "after":"2018-03-02T11:30:00+01:00",
-        "before":"2018-03-02T12:00:00+01:00",
-        "doneAfter":"2018-03-02T11:30:00+01:00",
-        "doneBefore":"2018-03-02T12:00:00+01:00",
-        "comments":@string@,
-        "updatedAt":"@string@.isDateTime()",
-        "isAssigned":true,
-        "assignedTo":"bob",
-        "previous":null,
-        "group":null,
-        "tags":@array@
+        "@context": "/api/contexts/TaskGroup",
+        "@id": "/api/task_groups/1",
+        "@type": "TaskGroup",
+        "name": "Group #1",
+        "tasks": []
       }
       """
 
