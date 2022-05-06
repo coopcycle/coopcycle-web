@@ -8,13 +8,24 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Form\Type\AsapChoiceLoader;
 use AppBundle\Form\Type\TimeSlotChoice;
 use AppBundle\Form\Type\TsRangeChoice;
+use AppBundle\Service\TimeRegistry;
 use AppBundle\Utils\DateUtils;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class AsapChoiceLoaderTest extends TestCase
 {
+    use ProphecyTrait;
+
+    public function setUp(): void
+    {
+        $this->timeRegistry = $this->prophesize(TimeRegistry::class);
+        $this->timeRegistry->getAveragePreparationTime()->willReturn(0);
+        $this->timeRegistry->getAverageShippingTime()->willReturn(0);
+    }
+
     public function tearDown(): void
     {
         Carbon::setTestNow();
@@ -133,7 +144,7 @@ class AsapChoiceLoaderTest extends TestCase
     {
         Carbon::setTestNow(Carbon::parse('2017-10-04T17:30:00+02:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["Mo-Su 00:00-23:59"]);
+        $choiceLoader = new AsapChoiceLoader(["Mo-Su 00:00-23:59"], $this->timeRegistry->reveal());
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -167,7 +178,7 @@ class AsapChoiceLoaderTest extends TestCase
         // 2017-10-04 is a Wednesday
         Carbon::setTestNow(Carbon::parse('2017-10-04T17:30:00+02:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"]);
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $this->timeRegistry->reveal());
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -201,7 +212,7 @@ class AsapChoiceLoaderTest extends TestCase
             "Tu-Su 20:15-23:15"
         ];
 
-        $choiceLoader = new AsapChoiceLoader($openingHours);
+        $choiceLoader = new AsapChoiceLoader($openingHours, $this->timeRegistry->reveal());
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -271,7 +282,7 @@ class AsapChoiceLoaderTest extends TestCase
         // 2019-08-04 is a Sunday
         Carbon::setTestNow(Carbon::parse('2019-08-04T12:30:00+02:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["Tu-Sa 10:00-19:00"]);
+        $choiceLoader = new AsapChoiceLoader(["Tu-Sa 10:00-19:00"], $this->timeRegistry->reveal());
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -298,7 +309,7 @@ class AsapChoiceLoaderTest extends TestCase
     {
         Carbon::setTestNow(Carbon::parse('2019-08-04T12:30:00+02:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["Tu 10:00-19:00", "Th-Sa 10:00-19:00"]);
+        $choiceLoader = new AsapChoiceLoader(["Tu 10:00-19:00", "Th-Sa 10:00-19:00"], $this->timeRegistry->reveal());
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -319,7 +330,7 @@ class AsapChoiceLoaderTest extends TestCase
         Carbon::setTestNow(Carbon::parse('2017-10-04T17:30:00+02:00'));
 
         $delay = (2 * 24 * 60); // should order two days in advance
-        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], null, $delay);
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $this->timeRegistry->reveal(), null, $delay);
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
 
@@ -338,7 +349,7 @@ class AsapChoiceLoaderTest extends TestCase
     {
         Carbon::setTestNow(Carbon::parse('2017-10-04T17:30:26+02:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"]);
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $this->timeRegistry->reveal());
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
 
@@ -353,7 +364,7 @@ class AsapChoiceLoaderTest extends TestCase
     {
         Carbon::setTestNow(Carbon::parse('2017-10-04T17:30:26+02:00'));
 
-        $choiceLoader = new AsapChoiceLoader([]);
+        $choiceLoader = new AsapChoiceLoader([], $this->timeRegistry->reveal());
         $choiceList = $choiceLoader->loadChoiceList();
 
         $this->assertEquals([], $choiceList->getValues());
@@ -370,7 +381,7 @@ class AsapChoiceLoaderTest extends TestCase
         $closingRules = new ArrayCollection();
         $closingRules->add($closingRule);
 
-        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $closingRules);
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $this->timeRegistry->reveal(), $closingRules);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -404,7 +415,7 @@ class AsapChoiceLoaderTest extends TestCase
         $closingRules = new ArrayCollection();
         $closingRules->add($closingRule);
 
-        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $closingRules);
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $this->timeRegistry->reveal(), $closingRules);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -429,7 +440,7 @@ class AsapChoiceLoaderTest extends TestCase
         $closingRules = new ArrayCollection();
         $closingRules->add($closingRule);
 
-        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $closingRules);
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $this->timeRegistry->reveal(), $closingRules);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -445,7 +456,7 @@ class AsapChoiceLoaderTest extends TestCase
     {
         Carbon::setTestNow(Carbon::parse('2020-09-07T17:00:00+02:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["Mo-Su 18:00-23:59"]);
+        $choiceLoader = new AsapChoiceLoader(["Mo-Su 18:00-23:59"], $this->timeRegistry->reveal());
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
 
@@ -463,7 +474,7 @@ class AsapChoiceLoaderTest extends TestCase
         $choiceLoader = new AsapChoiceLoader([
             "We-Fr 12:00-14:00",
             "We-Sa 19:30-22:30"
-        ]);
+        ], $this->timeRegistry->reveal());
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -494,7 +505,7 @@ class AsapChoiceLoaderTest extends TestCase
     {
         Carbon::setTestNow(Carbon::parse('2020-12-23T09:30:00+02:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["Th-Fr 09:30-14:30","Th-Fr 20:30-23:00","Sa-Su 09:30-14:45","Sa-Su 19:15-01:15"]);
+        $choiceLoader = new AsapChoiceLoader(["Th-Fr 09:30-14:30","Th-Fr 20:30-23:00","Sa-Su 09:30-14:45","Sa-Su 19:15-01:15"], $this->timeRegistry->reveal());
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -514,7 +525,7 @@ class AsapChoiceLoaderTest extends TestCase
     {
         Carbon::setTestNow(Carbon::parse('2019-12-20T21:50:00+02:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["Th-Fr 09:30-14:30","Th-Fr 20:30-23:00","Sa-Su 09:30-14:45","Sa-Su 19:15-01:15"]);
+        $choiceLoader = new AsapChoiceLoader(["Th-Fr 09:30-14:30","Th-Fr 20:30-23:00","Sa-Su 09:30-14:45","Sa-Su 19:15-01:15"], $this->timeRegistry->reveal());
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -534,7 +545,7 @@ class AsapChoiceLoaderTest extends TestCase
     {
         Carbon::setTestNow(Carbon::parse('2020-12-23T09:30:00+02:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["We-Fr 11:30-14:30"], null, 0, 10, false);
+        $choiceLoader = new AsapChoiceLoader(["We-Fr 11:30-14:30"], $this->timeRegistry->reveal(), null, 0, 10, false);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -554,7 +565,7 @@ class AsapChoiceLoaderTest extends TestCase
     {
         Carbon::setTestNow(Carbon::parse('2020-12-23T09:30:00+02:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["Mo 11:00-13:00"], null, 0, 10);
+        $choiceLoader = new AsapChoiceLoader(["Mo 11:00-13:00"], $this->timeRegistry->reveal(), null, 0, 10);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -565,7 +576,7 @@ class AsapChoiceLoaderTest extends TestCase
             ['2020-12-28T12:50:00+02:00', '2020-12-28T13:00:00+02:00'],
         ], $choices);
 
-        $choiceLoader = new AsapChoiceLoader(["Mo 11:00-13:00"], null, 0, 30);
+        $choiceLoader = new AsapChoiceLoader(["Mo 11:00-13:00"], $this->timeRegistry->reveal(), null, 0, 30);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -576,7 +587,7 @@ class AsapChoiceLoaderTest extends TestCase
             ['2020-12-28T12:30:00+02:00', '2020-12-28T13:00:00+02:00'],
         ], $choices);
 
-        $choiceLoader = new AsapChoiceLoader(["Mo 11:00-14:00"], null, 0, 60);
+        $choiceLoader = new AsapChoiceLoader(["Mo 11:00-14:00"], $this->timeRegistry->reveal(), null, 0, 60);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -592,7 +603,7 @@ class AsapChoiceLoaderTest extends TestCase
     {
         Carbon::setTestNow(Carbon::parse('2020-12-23T09:30:00+02:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["Mo 11:15-13:30"], null, 0, 30);
+        $choiceLoader = new AsapChoiceLoader(["Mo 11:15-13:30"], $this->timeRegistry->reveal(), null, 0, 30);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -611,7 +622,7 @@ class AsapChoiceLoaderTest extends TestCase
         Carbon::setTestNowAndTimezone(Carbon::parse('2021-01-27 17:08:00'));
 
         $delay = 90; // 1h30
-        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 11:30-14:00","Mo-Sa 18:00-20:30"], null, $delay, 10);
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 11:30-14:00","Mo-Sa 18:00-20:30"], $this->timeRegistry->reveal(), null, $delay, 10);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -629,7 +640,7 @@ class AsapChoiceLoaderTest extends TestCase
         // It's a Thursday
         Carbon::setTestNowAndTimezone(Carbon::parse('2021-01-28 11:55:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["Mo-Fr 11:30-14:30"], null, 120, 30);
+        $choiceLoader = new AsapChoiceLoader(["Mo-Fr 11:30-14:30"], $this->timeRegistry->reveal(), null, 120, 30);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -656,7 +667,7 @@ class AsapChoiceLoaderTest extends TestCase
     {
         Carbon::setTestNow(Carbon::parse('2021-03-17 12:05:00'));
 
-        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 09:00-21:00"], null, 0, 60, false);
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 09:00-21:00"], $this->timeRegistry->reveal(), null, 0, 60, false);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
@@ -689,7 +700,7 @@ class AsapChoiceLoaderTest extends TestCase
         $choiceLoader = new AsapChoiceLoader([
             "Mo-Sa 11:30-14:00",
             "Mo-Sa 18:30-21:00"
-        ], $closingRules);
+        ], $this->timeRegistry->reveal(), $closingRules);
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();

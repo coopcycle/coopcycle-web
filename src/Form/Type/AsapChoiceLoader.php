@@ -5,6 +5,7 @@ namespace AppBundle\Form\Type;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
+use AppBundle\Service\TimeRegistry;
 use AppBundle\Utils\DateUtils;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -24,12 +25,14 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
 
     public function __construct(
         array $openingHours,
+        TimeRegistry $timeRegistry,
         Collection $closingRules = null,
         int $orderingDelayMinutes = 0,
         int $rangeDuration = 10,
         bool $preOrderingAllowed = true)
     {
         $this->openingHours = $openingHours;
+        $this->timeRegistry = $timeRegistry;
         $this->closingRules = $closingRules ?? new ArrayCollection();
         $this->orderingDelayMinutes = $orderingDelayMinutes;
         $this->rangeDuration = $rangeDuration;
@@ -75,6 +78,10 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
 
         $range = $openingHours->currentOpenRange($now);
 
+        // We add the average preparation time + average shipping time
+        $offset =
+            $this->timeRegistry->getAveragePreparationTime() + $this->timeRegistry->getAverageShippingTime();
+
         if ($range) {
 
             $end = Carbon::instance($now)
@@ -82,6 +89,10 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
                     $range->end()->hours(),
                     $range->end()->minutes()
                 );
+
+            $end->modify(
+                sprintf('+%d minutes', $offset)
+            );
 
             $period = CarbonPeriod::create(
                 $now, sprintf('%d minutes', $this->rangeDuration), $end,
@@ -101,6 +112,10 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
             }
         }
 
+        $nextClosingDate->modify(
+            sprintf('+%d minutes', $offset)
+        );
+
         $cursor = Carbon::instance($now);
         while ($cursor < $max) {
 
@@ -110,6 +125,7 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
             );
 
             foreach ($period as $date) {
+
                 $cursor = $date;
                 if ($date < $max) {
                     $choices[] = new TsRangeChoice(
@@ -120,6 +136,10 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
 
             $nextOpeningDate = $openingHours->nextOpen($nextClosingDate);
             $nextClosingDate = $openingHours->nextClose($nextOpeningDate);
+
+            $nextClosingDate->modify(
+                sprintf('+%d minutes', $offset)
+            );
         }
 
         return new ArrayChoiceList($choices, $value);
