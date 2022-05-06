@@ -2,6 +2,6 @@
 
 namespace AppBundle\Exception;
 
-class TaskAlreadyGrouppedException extends \Exception
+class TaskAlreadyBelongsToGroupException extends \Exception
 {
 }

@@ -42,7 +42,7 @@ const DynamicMenu = ({
 
   const containsOnlyUnassignedTasks = !_.find(selectedTasks, t => t.isAssigned)
 
-  const containsOnlyGrouppedTasks = selectedTasks.every(task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group)
+  const containsOnlyGroupedTasks = selectedTasks.every(task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group)
 
   const actions = []
 
@@ -84,7 +84,7 @@ const DynamicMenu = ({
     if (containsOnlyUnassignedTasks) {
       actions.push(MOVE_TO_NEXT_DAY_MULTI)
       actions.push(MOVE_TO_NEXT_WORKING_DAY_MULTI)
-      if (!containsOnlyGrouppedTasks) {
+      if (!containsOnlyGroupedTasks) {
         actions.push(ADD_TO_GROUP)
       }
     }
