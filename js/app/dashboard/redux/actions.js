@@ -1275,9 +1275,8 @@ export function removeTaskFromGroup(tasks) {
 
     const requests = tasks.map((task) => {
       return createClient(dispatch).request({
-        method: 'put',
-        url: `/api/tasks/${task.id}/remove_from_group`,
-        data: {},
+        method: 'delete',
+        url: `/api/tasks/${task.id}/group`,
         headers: {
           'Authorization': `Bearer ${jwt}`,
           'Accept': 'application/ld+json',
@@ -1287,9 +1286,13 @@ export function removeTaskFromGroup(tasks) {
     })
 
     Promise.all(requests)
-      .then((responses) => {
-        responses.forEach((response) => {
-          dispatch(_updateTask(response.data))
+      .then(() => {
+        tasks.forEach((task) => {
+          const taskWithoutGroup = {
+            ...task,
+            group: null
+          }
+          dispatch(_updateTask(taskWithoutGroup))
         })
       })
       // eslint-disable-next-line no-console
