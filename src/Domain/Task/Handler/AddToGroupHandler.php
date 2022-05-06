@@ -3,7 +3,7 @@
 namespace AppBundle\Domain\Task\Handler;
 
 use AppBundle\Domain\Task\Command\AddToGroup;
-use AppBundle\Exception\TaskAlreadyGrouppedException;
+use AppBundle\Exception\TaskAlreadyBelongsToGroupException;
 
 class AddToGroupHandler
 {
@@ -13,7 +13,7 @@ class AddToGroupHandler
         $group = $command->getTaskGroup();
 
         if (null !== $task->getGroup()) {
-            throw new TaskAlreadyGrouppedException(sprintf('Task #%d is already in group #%d', $task->getId(), $task->getGroup()->getId()));
+            throw new TaskAlreadyBelongsToGroupException(sprintf('Task #%d is already in group #%d', $task->getId(), $task->getGroup()->getId()));
         }
 
         $task->setGroup($group);
