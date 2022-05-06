@@ -10,7 +10,7 @@ import Task from './Task'
 import TaskGroup from './TaskGroup'
 import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
-import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, showRecurrenceRules } from '../redux/actions'
+import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules } from '../redux/actions'
 import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectSelectedTasks } from '../redux/selectors'
 
 class StandaloneTasks extends React.Component {
@@ -155,7 +155,8 @@ class UnassignedTasks extends React.Component {
                             key={ group.id }
                             group={ group }
                             tasks={ group.tasks }
-                            onConfirmDelete={ () => this.props.deleteGroup(group) } />
+                            onConfirmDelete={ () => this.props.deleteGroup(group) }
+                            onEdit={ (data) => this.props.editGroup(data) } />
                         </div>
                       )}
                     </Draggable>
@@ -188,6 +189,7 @@ function mapDispatchToProps(dispatch) {
   return {
     setCurrentRecurrenceRule: (recurrenceRule) => dispatch(setCurrentRecurrenceRule(recurrenceRule)),
     deleteGroup: (group) => dispatch(deleteGroup(group)),
+    editGroup: (group) => dispatch(editGroup(group)),
   }
 }
 

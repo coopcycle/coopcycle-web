@@ -274,6 +274,11 @@ html, body {
   }
 }
 
+.group__editable {
+  outline: none;
+  border: 0;
+}
+
 .task__highlighted {
   background-color: $yellow!important;
 }
