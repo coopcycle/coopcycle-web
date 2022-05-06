@@ -73,6 +73,8 @@ const DynamicMenu = ({
         actions.push(UNASSIGN_SINGLE)
         actions.push(MOVE_TO_TOP)
         actions.push(MOVE_TO_BOTTOM)
+      } else {
+        actions.push(CREATE_GROUP)
       }
 
       actions.push(CANCEL_MULTI)
