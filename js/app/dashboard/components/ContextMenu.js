@@ -64,7 +64,7 @@ const DynamicMenu = ({
         actions.push(CREATE_GROUP)
       }
 
-      if (containsOnlyGrouppedTasks) {
+      if (containsOnlyGroupedTasks) {
         actions.push(REMOVE_FROM_GROUP)
       }
 
