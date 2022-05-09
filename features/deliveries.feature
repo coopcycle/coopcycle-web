@@ -1192,3 +1192,89 @@ Feature: Deliveries
     And I add "Accept" header equal to "application/ld+json"
     And the OAuth client "Acme" sends a "DELETE" request to "/api/deliveries/1"
     Then the response status code should be 204
+
+  Scenario: Create delivery with dates in UTC
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    Given the current time is "2022-05-05 12:00:00"
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "pickup": {
+          "before": "2022-05-06T11:50:00+00:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "after": "2022-05-06T09:50:00+00:00",
+          "before": "2022-05-06T11:50:00+00:00"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight": null,
+          "packages": []
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime().startsWith(\"2022-05-06T11:50:00\")",
+          "before":"@string@.isDateTime().startsWith(\"2022-05-06T13:50:00\")",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight":null,
+          "packages": []
+        }
+      }
+      """

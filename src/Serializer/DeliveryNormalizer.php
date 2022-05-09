@@ -10,6 +10,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
+use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -95,11 +96,18 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
             }
 
         } elseif (isset($data['before']) || isset($data['after'])) {
+
+            $tz = date_default_timezone_get();
+
             if (isset($data['after'])) {
-                $task->setAfter(new \DateTime($data['after']));
+                $task->setAfter(
+                    Carbon::parse($data['after'])->tz($tz)->toDateTime()
+                );
             }
             if (isset($data['before'])) {
-                $task->setBefore(new \DateTime($data['before']));
+                $task->setBefore(
+                    Carbon::parse($data['before'])->tz($tz)->toDateTime()
+                );
             }
         }
 
