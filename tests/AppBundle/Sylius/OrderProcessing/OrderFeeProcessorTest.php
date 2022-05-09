@@ -560,6 +560,9 @@ class OrderFeeProcessorTest extends KernelTestCase
         $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)
             ->willReturn(new ArrayCollection([]));
 
+        $order->getAdjustments(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT)
+            ->willReturn(new ArrayCollection([]));
+
         $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)
             ->willReturn(0);
 
