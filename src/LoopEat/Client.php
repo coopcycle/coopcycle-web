@@ -168,31 +168,33 @@ class Client
         $this->logger->info(sprintf('Returning %d Loopeats from "%s"',
             $quantity, $customer->getEmailCanonical()));
 
+        if ($quantity < 1) {
+
+            return true;
+        }
+
         try {
 
-            for ($i = 0; $i < $quantity; $i++) {
+            $response = $this->client->request('GET', '/customers/return_loopeat?amount='.$quantity, [
+                'headers' => [
+                    'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
+                ],
+                'oauth_credentials' => $customer,
+            ]);
 
-                $response = $this->client->request('GET', '/customers/return_loopeat', [
-                    'headers' => [
-                        'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
-                    ],
-                    'oauth_credentials' => $customer,
-                ]);
+            $url = (string) $response->getBody();
 
-                $url = (string) $response->getBody();
+            # returns the loopeats to the coopcycle's owner account
+            $url = str_replace(
+                '/restaurants/return_loopeat',
+                '/partners/customer_return_loopeat',
+                $url);
 
-                # returns the loopeats to the coopcycle's owner account
-                $url = str_replace(
-                    '/restaurants/return_loopeat',
-                    '/partners/customer_return_loopeat',
-                    $url);
+            $this->logger->info(sprintf('Got token "%s" to return for "%s"', $url, $customer->getEmailCanonical()));
 
-                $this->logger->info(sprintf('Got token "%s" to return for "%s"', $url, $customer->getEmailCanonical()));
-
-                $response = $this->client->request('GET', $url, [
-                    'auth' => [$this->loopEatPartnerId, $this->loopEatPartnerSecret]
-                ]);
-            }
+            $response = $this->client->request('GET', $url, [
+                'auth' => [$this->loopEatPartnerId, $this->loopEatPartnerSecret]
+            ]);
 
         } catch (RequestException $e) {
             $this->logger->error($e->getMessage());
@@ -210,29 +212,30 @@ class Client
         $this->logger->info(sprintf('Grabbing %d Loopeats at "%s" for "%s"',
             $quantity, $restaurant->getName(), $customer->getEmailCanonical()));
 
+        if ($quantity < 1) {
+
+            return true;
+        }
+
         try {
 
-            for ($i = 0; $i < $quantity; $i++) {
+            $response = $this->client->request('GET', '/customers/grab_loopeat?amount='.$quantity, [
+                'headers' => [
+                    'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
+                ],
+                'oauth_credentials' => $customer,
+            ]);
 
-                $response = $this->client->request('GET', '/customers/grab_loopeat', [
-                    'headers' => [
-                        'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
-                    ],
-                    'oauth_credentials' => $customer,
-                ]);
+            $url = (string) $response->getBody();
 
-                $url = (string) $response->getBody();
+            $this->logger->info(sprintf('Got token "%s" to grab for "%s"', $url, $customer->getEmailCanonical()));
 
-                $this->logger->info(sprintf('Got token "%s" to grab for "%s"', $url, $customer->getEmailCanonical()));
-
-                $response = $this->client->request('GET', $url, [
-                    'headers' => [
-                        'Authorization' => sprintf('Bearer %s', $restaurant->getLoopeatAccessToken())
-                    ],
-                    'oauth_credentials' => $restaurant,
-                ]);
-
-            }
+            $response = $this->client->request('GET', $url, [
+                'headers' => [
+                    'Authorization' => sprintf('Bearer %s', $restaurant->getLoopeatAccessToken())
+                ],
+                'oauth_credentials' => $restaurant,
+            ]);
 
         } catch (RequestException $e) {
             $this->logger->error($e->getMessage());
