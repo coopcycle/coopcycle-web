@@ -65,12 +65,17 @@ Feature: Optin Consents
         "@type": "hydra:Collection",
         "hydra:member": [
             {
+                "type": "MARKETING",
+                "accepted": false,
+                "asked": false,
+                "@*@": "@*@"
+            },
+            {
                 "type": "NEWSLETTER",
                 "accepted": true,
                 "asked": true,
                 "@*@": "@*@"
-            },
-            "@...@"
+            }
         ],
         "hydra:totalItems": 2
       }

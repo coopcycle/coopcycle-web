@@ -30,6 +30,9 @@
       </cascade>
     </one-to-many>
     <one-to-many field="optinConsents" target-entity="AppBundle\Entity\OptinConsent" mapped-by="user">
+      <order-by>
+        <order-by-field name="type" direction="ASC" />
+      </order-by>
       <cascade>
         <cascade-persist/>
       </cascade>
