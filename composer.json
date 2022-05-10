@@ -27,7 +27,7 @@
         }
     },
     "require": {
-        "php": ">=7.4",
+        "php": ">=8.0",
         "symfony/symfony": "^5.3",
         "api-platform/core": "^2.6.3",
         "doctrine/orm": "^2.7",
