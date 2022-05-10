@@ -103,6 +103,8 @@ class ReceiveWebhook
             $pickupComments .= "{$task['hubName']}\n\n";
         }
 
+        $pickupComments .= "Commande n° {$task['taskId']}\n";
+
         if (isset($task['dimensions'])) {
             if (isset($task['dimensions']['bac'])) {
                 $pickupComments .= "{$task['dimensions']['bac']} × bac(s)\n";

@@ -115,7 +115,7 @@ class ReceiveWebhookTest extends TestCase
         $this->assertEquals(47.21125182318541, $dropoffAddress->getGeo()->getLatitude());
         $this->assertEquals(-1.5506787323970848, $dropoffAddress->getGeo()->getLongitude());
         $this->assertEquals('abcdefgh123456', $delivery->getDropoff()->getRef());
-        $this->assertEquals("1 × bac(s)\n25.592 kg\n", $delivery->getPickup()->getComments());
+        $this->assertEquals("Commande n° 1269-00099999991\n1 × bac(s)\n25.592 kg\n", $delivery->getPickup()->getComments());
         $this->assertEmpty($delivery->getDropoff()->getComments());
         $this->assertEquals(25592, $delivery->getWeight());
     }
@@ -177,6 +177,7 @@ class ReceiveWebhookTest extends TestCase
 
         $dropoffAddress = $delivery->getDropoff()->getAddress();
 
+        $this->assertEquals("Commande n° 1269-00099999991\n1 × bac(s)\n25.592 kg\n", $delivery->getPickup()->getComments());
         $this->assertEquals("Digicode : 123456\nÉtage : 13\n", $delivery->getDropoff()->getComments());
     }
 
@@ -239,6 +240,7 @@ class ReceiveWebhookTest extends TestCase
 
         $dropoffAddress = $delivery->getDropoff()->getAddress();
 
+        $this->assertEquals("Commande n° 1269-00099999991\n1 × bac(s)\n25.592 kg\n", $delivery->getPickup()->getComments());
         $this->assertEquals("Code interphone : 3466\n", $delivery->getDropoff()->getComments());
     }
 }
