@@ -588,7 +588,7 @@ Feature: Urbantz
             "telephone":null,
             "name":null
           },
-          "comments":"Coopcycle\n\n0 × bac(s)\n1.082 kg\n\n\n1.08 kg",
+          "comments":"Coopcycle\n\nCommande n° 1269-00099999991\n0 × bac(s)\n1.082 kg\n\n\n1.08 kg",
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneAfter":"@string@.isDateTime()",

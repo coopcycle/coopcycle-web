@@ -136,9 +136,7 @@ class ReceiveWebhook
             $dropoffComments .= "Code interphone : {$buildingInfo['interphoneCode']}\n";
         }
 
-        if (!empty($pickupComments)) {
-            $delivery->getPickup()->setComments($pickupComments);
-        }
+        $delivery->getPickup()->setComments($pickupComments);
 
         if (!empty($dropoffComments)) {
             $delivery->getDropoff()->setComments($dropoffComments);
