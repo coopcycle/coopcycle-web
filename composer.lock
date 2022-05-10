@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ffd73c6ff63c90352fe8df02853e61ff",
+    "content-hash": "0bf5f9fcb6fb271ea83dca7e0e49e80d",
     "packages": [
         {
             "name": "api-platform/core",
@@ -19427,49 +19427,48 @@
         },
         {
             "name": "behatch/contexts",
-            "version": "3.3.0",
+            "version": "dev-php80",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Behatch/contexts.git",
-                "reference": "e45284b1dddb9dce78e186a56683527802bccd47"
+                "url": "https://github.com/rkeet/behatch-contexts.git",
+                "reference": "8173ffc5fdf965fd9af57c7abbcaef5d584a7983"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behatch/contexts/zipball/e45284b1dddb9dce78e186a56683527802bccd47",
-                "reference": "e45284b1dddb9dce78e186a56683527802bccd47",
+                "url": "https://api.github.com/repos/rkeet/behatch-contexts/zipball/8173ffc5fdf965fd9af57c7abbcaef5d584a7983",
+                "reference": "8173ffc5fdf965fd9af57c7abbcaef5d584a7983",
                 "shasum": ""
             },
             "require": {
-                "behat/behat": "^3.0.13",
-                "friends-of-behat/mink-extension": "^2.3.1",
-                "justinrainbow/json-schema": "^5.0",
-                "php": ">=5.5",
-                "symfony/dom-crawler": "^2.4|^3.0|^4.0|^5.0",
-                "symfony/http-foundation": "^2.3|^3.0|^4.0|^5.0",
-                "symfony/property-access": "^2.3|^3.0|^4.0|^5.0"
+                "behat/behat": "^3.8",
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "ext-simplexml": "*",
+                "friends-of-behat/mink-extension": "^2.5",
+                "justinrainbow/json-schema": "^5.2",
+                "php": "^8.0",
+                "symfony/dom-crawler": "^4.4|^5.4|^6.0",
+                "symfony/http-foundation": "^5.4|^6.0",
+                "symfony/property-access": "^5.4|^6.0"
             },
             "replace": {
+                "behatch/contexts": "self.version",
                 "sanpi/behatch-contexts": "self.version"
             },
             "require-dev": {
-                "atoum/atoum": "^2.8|^3.0",
-                "behat/mink-goutte-driver": "^1.1",
-                "behat/mink-selenium2-driver": "^1.4@dev",
-                "fabpot/goutte": "^3.2",
-                "guzzlehttp/guzzle": "^6.3"
+                "atoum/atoum": "^4.0",
+                "behat/mink-goutte-driver": "^1.2",
+                "behat/mink-selenium2-driver": "^1.4",
+                "fabpot/goutte": "^3.3",
+                "guzzlehttp/guzzle": "^6.5"
             },
+            "default-branch": true,
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.0.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Behatch\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "beerware"
             ],
@@ -19478,14 +19477,12 @@
                 "BDD",
                 "Behat",
                 "Context",
-                "Symfony2"
+                "Symfony"
             ],
             "support": {
-                "issues": "https://github.com/Behatch/contexts/issues",
-                "source": "https://github.com/Behatch/contexts/tree/3.3.0"
+                "source": "https://github.com/rkeet/behatch-contexts/tree/php80"
             },
-            "abandoned": true,
-            "time": "2020-02-27T08:40:50+00:00"
+            "time": "2022-01-29T14:05:23+00:00"
         },
         {
             "name": "coduo/php-matcher",
@@ -19876,16 +19873,16 @@
         },
         {
             "name": "justinrainbow/json-schema",
-            "version": "5.2.11",
+            "version": "5.2.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/justinrainbow/json-schema.git",
-                "reference": "2ab6744b7296ded80f8cc4f9509abbff393399aa"
+                "reference": "ad87d5a5ca981228e0e205c2bc7dfb8e24559b60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/2ab6744b7296ded80f8cc4f9509abbff393399aa",
-                "reference": "2ab6744b7296ded80f8cc4f9509abbff393399aa",
+                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/ad87d5a5ca981228e0e205c2bc7dfb8e24559b60",
+                "reference": "ad87d5a5ca981228e0e205c2bc7dfb8e24559b60",
                 "shasum": ""
             },
             "require": {
@@ -19940,9 +19937,9 @@
             ],
             "support": {
                 "issues": "https://github.com/justinrainbow/json-schema/issues",
-                "source": "https://github.com/justinrainbow/json-schema/tree/5.2.11"
+                "source": "https://github.com/justinrainbow/json-schema/tree/5.2.12"
             },
-            "time": "2021-07-22T09:24:00+00:00"
+            "time": "2022-04-13T08:02:27+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -21783,7 +21780,14 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "behatch/contexts",
+            "version": "dev-php80",
+            "alias": "3.3.0",
+            "alias_normalized": "3.3.0.0"
+        }
+    ],
     "minimum-stability": "stable",
     "stability-flags": {
         "league/geotools": 0,
@@ -21791,7 +21795,8 @@
         "drupal/core-vendor-hardening": 20,
         "nucleos/user-bundle": 20,
         "nucleos/profile-bundle": 20,
-        "shahonseven/php-color-hash": 20
+        "shahonseven/php-color-hash": 20,
+        "behatch/contexts": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

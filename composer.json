@@ -134,7 +134,7 @@
         "symfony/phpunit-bridge": "^5.0",
         "phpunit/phpunit": "^9.0",
         "behat/behat": "^3.7",
-        "behatch/contexts": "^3.3",
+        "behatch/contexts": "dev-php80 as 3.3.0",
         "coduo/php-matcher": "^6.0",
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-symfony": "^1.0",
@@ -151,6 +151,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/alexsegura/php-color-hash"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:rkeet/behatch-contexts.git"
         }
     ],
     "scripts": {
