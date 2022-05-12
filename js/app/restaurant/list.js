@@ -1,10 +1,12 @@
 import React, {useState, useRef, useEffect} from 'react'
-import { render } from 'react-dom'
+import { render, unmountComponentAtNode } from 'react-dom'
 import moment from 'moment'
 import Swiper, { Navigation } from 'swiper'
 
 import { asText } from '../components/ShippingTimeRange'
 import { useIntersection } from '../hooks/useIntersection'
+
+require('gasparesganga-jquery-loading-overlay')
 
 import 'swiper/css';
 import 'swiper/css/navigation'
@@ -93,13 +95,7 @@ const Paginator = ({ page, pages }) => {
           cache: false,
           success: function(data) {
             shopsEl.append($.parseHTML(data.rendered_list))
-            document.querySelectorAll('[data-fulfillment]').forEach(el => {
-              // render fulfillment badge only to new elements
-              if (el.firstChild.classList && el.firstChild.classList.contains('rendered-badge')) {
-                return;
-              }
-              addFulfillmentBadge(el)
-            })
+            renderFulfillmentBadgeAfterAjax()
             setTimeout(() => {
               setCurrentPage(newPage)
               setLoading(false)
@@ -175,16 +171,63 @@ new Swiper('.swiper', {
   }
 })
 
-function disableAndSubmit(e) {
-  document.querySelectorAll('.shops-side-bar-filters input[type="radio"]:not(:checked)').forEach((radio) => radio.disabled=true)
-  document.querySelectorAll('.shops-side-bar-filters input[type="checkbox"]:not(:checked)').forEach((check) => check.disabled=true)
-  $(e.target).closest('form').submit()
+function resetPaginator(data) {
+  if (paginator) {
+    unmountComponentAtNode(paginator)
+    render(
+      <Paginator
+       page={Number(data.page)}
+       pages={Number(data.pages)} />,
+      paginator
+    )
+  }
+}
+
+function renderFulfillmentBadgeAfterAjax() {
+  document.querySelectorAll('[data-fulfillment]').forEach(el => {
+    // render fulfillment badge only to new elements
+    if (el.firstChild.classList && el.firstChild.classList.contains('rendered-badge')) {
+      return;
+    }
+    addFulfillmentBadge(el)
+  })
+}
+
+function submitFilter(e) {
+  $('.shops-content').LoadingOverlay('show', {
+    image: false,
+  })
+
+  const shopsEl = $("#shops-list")
+
+  $.ajax({
+    url : $(e.target).closest('form').attr('path'),
+    data: $(e.target).closest('form').serialize(),
+    type: $(e.target).closest('form').attr('method'),
+    cache: false,
+    success: function(data) {
+      resetPaginator(data)
+
+      shopsEl.empty().append($.parseHTML(data.rendered_list)) // show results
+
+      renderFulfillmentBadgeAfterAjax()
+
+      // update URL with applied filters
+      const searchParams = new URLSearchParams($(e.target).closest('form').serialize())
+      const path = `${$(e.target).closest('form').attr('path')}?${searchParams.toString()}`
+      window.history.pushState({path}, '', path)
+
+      $('.shops-content').LoadingOverlay('hide', {
+        image: false,
+      })
+    }
+  })
 }
 
 $('.shops-side-bar-filters input[type=radio]').on('click', function (e) {
-  disableAndSubmit(e)
+  submitFilter(e)
 });
 
 $('.shops-side-bar-filters input[type=checkbox]').on('click', function (e) {
-  disableAndSubmit(e)
+  submitFilter(e)
 });

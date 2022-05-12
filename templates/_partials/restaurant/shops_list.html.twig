@@ -1,5 +1,12 @@
-{% for restaurant in restaurants %}
+{% if count == 0 %}
+  {# empty state to be shown after an ajax request #}
+  <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
+    {{ 'restaurants.no_results'|trans|raw }}
+  </div>
+{% else %}
+  {% for restaurant in restaurants %}
     <div class="col-sm-6 col-md-4 display-flex">
-        {% include "_partials/restaurant/list_thumbnail.html.twig" %}
-    </div>
-{% endfor %}
+      {% include "_partials/restaurant/list_thumbnail.html.twig" %}
+  </div>
+  {% endfor %}
+{% endif %}
