@@ -1060,6 +1060,15 @@ services:
     arguments:
       $productOptionValueRepository: '@sylius.repository.product_option_value'
 
+  Typesense\Client:
+    arguments:
+      - api_key: '%env(TYPESENSE_API_KEY)%'
+        nodes:
+          - host: '%env(TYPESENSE_HOST)%'
+            port: '%env(TYPESENSE_PORT)%'
+            protocol: 'http'
+        connection_timeout_seconds: 2
+
   Psonic\Client:
     arguments:
       - '%env(SONIC_HOST)%'

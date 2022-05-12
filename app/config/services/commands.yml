@@ -162,3 +162,11 @@ services:
       $avatarDir: '%avatar_dir%'
     tags:
       - { name: 'console.command', command: 'coopcycle:avatars:regenerate' }
+
+  AppBundle\Command\CreateTypesenseCollection:
+    tags:
+      - { name: 'console.command', command: 'typesense:collection:create' }
+
+  AppBundle\Command\IndexTypesenseDocuments:
+    tags:
+      - { name: 'console.command', command: 'typesense:documents:index' }
