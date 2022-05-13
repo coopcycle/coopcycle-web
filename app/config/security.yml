@@ -79,6 +79,12 @@ security:
             stateless: true
             bearer_token: true
 
+        api_task_lists_get:
+            pattern:   ^/api/task_lists$
+            methods: [ GET ]
+            stateless: true
+            bearer_token: true
+
         api_task_groups:
             pattern:   ^/api/task_groups/[0-9]+$
             methods: [ GET ]

@@ -766,6 +766,16 @@ services:
     autowire: false
     public: false
 
+  AppBundle\Api\DataProvider\TaskListCollectionDataProvider:
+    parent: 'api_platform.doctrine.orm.collection_data_provider'
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+    calls:
+      - setTokenExtractor: ['@AppBundle\Security\TokenStoreExtractor']
+    autoconfigure: false
+    autowire: false
+    public: false
+
   AppBundle\Api\DataProvider\RestaurantPledgeFilterExtension:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }

@@ -872,4 +872,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
+
+    public function addToStore(Store $store)
+    {
+        $this->setOrganization($store->getOrganization());
+    }
 }

@@ -320,3 +320,85 @@ Feature: Dispatch
         "tasks":"@array@.count(2)"
       }
       """
+
+  @debug
+  Scenario: Retrieve task lists as OAuth client
+    Given the fixtures files are loaded:
+      | stores_with_orgs.yml |
+      | tasks_with_orgs.yml  |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/task_lists?date=2018-12-01"
+    Then print last response
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskList",
+        "@id":"/api/task_lists",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/task_lists/1",
+            "@type":"TaskList",
+            "items":[
+              {
+                "@id":"/api/tasks/1",
+                "@type":"Task",
+                "id":1,
+                "type":"DROPOFF",
+                "@*@": "@*@"
+              }
+            ],
+            "distance":0,
+            "duration":0,
+            "polyline":"iyfiH}tfM??",
+            "date":"2018-12-01",
+            "username":"sarah",
+            "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()"
+          },
+          {
+            "@id":"/api/task_lists/2",
+            "@type":"TaskList",
+            "items":[
+              {
+                "@id":"/api/tasks/3",
+                "@type":"Task",
+                "id":3,
+                "type":"DROPOFF",
+                "@*@": "@*@"
+              }
+            ],
+            "distance":0,
+            "duration":0,
+            "polyline":"iyfiH}tfM??",
+            "date":"2018-12-01",
+            "username":"bob",
+            "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()"
+          }
+        ],
+        "hydra:totalItems":2,
+        "hydra:view":{
+          "@id":"/api/task_lists?date=2018-12-01",
+          "@type":"hydra:PartialCollectionView"
+        },
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/task_lists{?date}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":[
+            {
+              "@type":"IriTemplateMapping",
+              "variable":"date",
+              "property":"date",
+              "required":false
+            }
+          ]
+        }
+      }
+      """
