@@ -12,39 +12,55 @@ use Symfony\Contracts\Cache\ItemInterface;
 
 class TimeRegistry
 {
+    const AVERAGE_PREPARATION_CACHE_KEY = 'avg_preparation';
+    const AVERAGE_SHIPPING_CACHE_KEY = 'avg_shipping';
+
     public function __construct(
         EntityManagerInterface $entityManager,
-        CacheInterface $projectCache)
+        CacheInterface $appCache)
     {
         $this->entityManager = $entityManager;
-        $this->projectCache = $projectCache;
+        $this->appCache = $appCache;
     }
 
     public function getAveragePreparationTime(): int
     {
-        $sql = 'SELECT ROUND(AVG(EXTRACT(EPOCH FROM TO_CHAR(t.preparation_time::interval, \'HH24:MI\')::interval) / 60)) FROM sylius_order_timeline t JOIN sylius_order o ON t.order_id = o.id WHERE o.state = \'fulfilled\'';
+        $cacheKey = sprintf('%s|%s', 'TimeRegistry', self::AVERAGE_PREPARATION_CACHE_KEY);
 
-        $stmt = $this->entityManager->getConnection()->prepare($sql);
-        $result = $stmt->executeQuery()->fetchColumn();
+        $result = $this->appCache->get($cacheKey, function (ItemInterface $item) {
 
-        // TODO Cache
+            $item->expiresAfter(60 * 5);
+
+            $sql = 'SELECT ROUND(AVG(EXTRACT(EPOCH FROM TO_CHAR(t.preparation_time::interval, \'HH24:MI\')::interval) / 60)) FROM sylius_order_timeline t JOIN sylius_order o ON t.order_id = o.id WHERE o.state = \'fulfilled\'';
+
+            $stmt = $this->entityManager->getConnection()->prepare($sql);
+
+            return $stmt->executeQuery()->fetchColumn();
+        });
 
         return (int) $result;
     }
 
     public function getAverageShippingTime(): int
     {
-        $sql = 'SELECT ROUND(AVG(tc.duration)) FROM task_collection tc JOIN delivery d ON tc.id = d.id JOIN sylius_order o ON d.order_id = o.id WHERE tc.type = \'delivery\' and o.state = \'fulfilled\'';
+        $cacheKey = sprintf('%s|%s', 'TimeRegistry', self::AVERAGE_SHIPPING_CACHE_KEY);
 
-        $stmt = $this->entityManager->getConnection()->prepare($sql);
-        $result = $stmt->executeQuery()->fetchColumn();
+        $result = $this->appCache->get($cacheKey, function (ItemInterface $item) {
 
-        $cascade = CarbonInterval::seconds((int) $result)
-            ->cascade()
-            ->toArray();
+            $item->expiresAfter(60 * 5);
 
-        // TODO Cache
+            $sql = 'SELECT ROUND(AVG(tc.duration)) FROM task_collection tc JOIN delivery d ON tc.id = d.id JOIN sylius_order o ON d.order_id = o.id WHERE tc.type = \'delivery\' and o.state = \'fulfilled\'';
 
-        return (int) $cascade['minutes'];
+            $stmt = $this->entityManager->getConnection()->prepare($sql);
+            $result = $stmt->executeQuery()->fetchColumn();
+
+            $cascade = CarbonInterval::seconds((int) $result)
+                ->cascade()
+                ->toArray();
+
+            return $cascade['minutes'];
+        });
+
+        return (int) $result;
     }
 }
