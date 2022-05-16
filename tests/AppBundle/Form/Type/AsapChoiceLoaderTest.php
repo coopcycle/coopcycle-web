@@ -721,4 +721,40 @@ class AsapChoiceLoaderTest extends TestCase
             ['2017-10-04T17:50:00+02:00', '2017-10-04T18:00:00+02:00'],
         ], $choices);
     }
+
+    public function testSameDayWithPreparationAndShippingOffset()
+    {
+        $this->timeRegistry->getAveragePreparationTime()->willReturn(15);
+        $this->timeRegistry->getAverageShippingTime()->willReturn(15);
+
+        // 2017-10-04 is a Wednesday
+        Carbon::setTestNow(Carbon::parse('2017-10-04T17:30:00+02:00'));
+
+        $choiceLoader = new AsapChoiceLoader(["Mo-Sa 10:00-19:00"], $this->timeRegistry->reveal());
+
+        $choiceList = $choiceLoader->loadChoiceList();
+        $choices = $choiceList->getChoices();
+
+        $this->assertContainsTimeRanges([
+            [ '2017-10-04T17:30:00+02:00', '2017-10-04T17:40:00+02:00' ],
+            [ '2017-10-04T18:00:00+02:00', '2017-10-04T18:10:00+02:00' ],
+            [ '2017-10-04T18:40:00+02:00', '2017-10-04T18:50:00+02:00' ],
+            [ '2017-10-04T18:50:00+02:00', '2017-10-04T19:00:00+02:00' ],
+            [ '2017-10-04T19:00:00+02:00', '2017-10-04T19:10:00+02:00' ],
+            [ '2017-10-04T19:10:00+02:00', '2017-10-04T19:20:00+02:00' ],
+            [ '2017-10-04T19:20:00+02:00', '2017-10-04T19:30:00+02:00' ],
+            [ '2017-10-05T10:00:00+02:00', '2017-10-05T10:10:00+02:00' ],
+        ], $choices);
+
+        $this->assertContainsDays([
+            "2017-10-04",
+            "2017-10-05",
+            "2017-10-06",
+            "2017-10-07",
+            // Sunday
+            "2017-10-09",
+            "2017-10-10",
+            "2017-10-11",
+        ], $choices);
+    }
 }
