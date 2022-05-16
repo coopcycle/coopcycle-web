@@ -32,9 +32,9 @@ class TaskManager
         $this->commandBus->handle(new DeleteGroup($taskGroup));
     }
 
-    public function addToGroup(Task $task, TaskGroup $taskGroup)
+    public function addToGroup(array $tasks, TaskGroup $taskGroup)
     {
-        $this->commandBus->handle(new AddToGroup($task, $taskGroup));
+        $this->commandBus->handle(new AddToGroup($tasks, $taskGroup));
     }
 
     public function removeFromGroup(Task $task)

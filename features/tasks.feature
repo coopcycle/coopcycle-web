@@ -308,44 +308,33 @@ Feature: Tasks
       | users.yml           |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
-    And the tasks with comments matching "#bob" are assigned to "bob"
-    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "PUT" request to "/api/tasks/1/add_to_group/1" with body:
+    And the user "bob" sends a "POST" request to "/api/task_groups/1/tasks" with body:
       """
-      {}
+      {
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/3"
+        ]
+      }
       """
-    Then the response status code should be 200
+    Then the response status code should be 201
+    # When the user "bob" has role "ROLE_ADMIN"
+    # And the user "bob" is authenticated
+    # And I add "Content-Type" header equal to "application/ld+json"
+    # And I add "Accept" header equal to "application/ld+json"
+    # And the user "bob" sends a "GET" request to "/api/task_groups/1"
+    # Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/1",
-        "@type":"Task",
-        "id":1,
-        "type":"DROPOFF",
-        "status":"TODO",
-        "address":@...@,
-        "after":"2018-03-02T11:30:00+01:00",
-        "before":"2018-03-02T12:00:00+01:00",
-        "doneAfter":"2018-03-02T11:30:00+01:00",
-        "doneBefore":"2018-03-02T12:00:00+01:00",
-        "comments":@string@,
-        "updatedAt":"@string@.isDateTime()",
-        "isAssigned":true,
-        "assignedTo":"bob",
-        "previous":null,
-        "group":{
-          "id":@integer@,
-          "name":"Group #1",
-          "tags":[{
-            "name":"Important",
-            "slug":"important",
-            "color":"#FF0000"
-          }]
-        },
-        "tags":@array@
+          "@context": "\/api\/contexts\/TaskGroup",
+          "@id": "\/api\/task_groups\/1",
+          "@type": "TaskGroup",
+          "name": "Group #1",
+          "tasks":"@array@.count(3)"
       }
       """
 

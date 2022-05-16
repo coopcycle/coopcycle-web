@@ -1227,7 +1227,7 @@ export function closeAddTaskToGroupModal() {
   return { type: CLOSE_ADD_TASK_TO_GROUP_MODAL }
 }
 
-export function addTaskToGroup(tasks, taskGroupId) {
+export function addTasksToGroup(tasks, taskGroup) {
 
   return function(dispatch, getState) {
 
@@ -1235,24 +1235,26 @@ export function addTaskToGroup(tasks, taskGroupId) {
 
     dispatch(addTaskToGroupRequest())
 
-    const requests = tasks.map((task) => {
-      return createClient(dispatch).request({
-        method: 'put',
-        url: `/api/tasks/${task.id}/add_to_group/${taskGroupId}`,
-        data: {},
-        headers: {
-          'Authorization': `Bearer ${jwt}`,
-          'Accept': 'application/ld+json',
-          'Content-Type': 'application/ld+json'
-        }
-      })
+    createClient(dispatch).request({
+      method: 'post',
+      url: `${taskGroup['@id']}/tasks`,
+      data: {
+        tasks: tasks.map((task) => task['@id'])
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
     })
-
-    Promise.all(requests)
-      .then((responses) => {
+      .then(() => {
         dispatch(closeAddTaskToGroupModal())
-        responses.forEach((response) => {
-          dispatch(_updateTask(response.data))
+        tasks.forEach((task) => {
+          const taskWithGroup = {
+            ...task,
+            group: taskGroup
+          }
+          dispatch(_updateTask(taskWithGroup))
         })
         dispatch(clearSelectedTasks())
       })

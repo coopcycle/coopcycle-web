@@ -9,13 +9,12 @@ class AddToGroupHandler
 {
     public function __invoke(AddToGroup $command)
     {
-        $task = $command->getTask();
+        $tasks = $command->getTasks();
         $group = $command->getTaskGroup();
 
-        if (null !== $task->getGroup()) {
-            throw new TaskAlreadyBelongsToGroupException(sprintf('Task #%d is already in group #%d', $task->getId(), $task->getGroup()->getId()));
+        foreach ($tasks as $task) {
+            $task->setGroup($group);
         }
 
-        $task->setGroup($group);
     }
 }

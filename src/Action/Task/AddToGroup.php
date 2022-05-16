@@ -2,34 +2,36 @@
 
 namespace AppBundle\Action\Task;
 
+use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class AddToGroup extends Base
 {
     public function __construct(
         TaskManager $taskManager,
-        EntityManagerInterface $objectManager
+        EntityManagerInterface $objectManager,
+        SerializerInterface $serializer
+
     )
     {
         $this->taskManager = $taskManager;
         $this->objectManager = $objectManager;
+        $this->serializer = $serializer;
     }
 
     public function __invoke($data, Request $request)
     {
-        $task = $data;
+        $taskGroup = $this->serializer->deserialize($request->getContent(), TaskGroup::class, 'jsonld');
 
-        $taskGroupId = $request->get('group_id');
+        $this->taskManager->addToGroup($taskGroup->getTasks(), $data);
 
-        $taskGroup = $this->objectManager
-            ->getRepository(TaskGroup::class)
-            ->find($taskGroupId);
+        $this->objectManager->flush();
 
-        $this->taskManager->addToGroup($task, $taskGroup);
-
-        return $task;
+        return $data;
     }
 }

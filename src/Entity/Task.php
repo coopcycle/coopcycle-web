@@ -12,7 +12,6 @@ use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
 use AppBundle\Action\Task\Start as TaskStart;
-use AppBundle\Action\Task\AddToGroup;
 use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
@@ -129,16 +128,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *           }
  *         }
  *       }
- *     },
- *     "task_add_to_group"={
- *       "method"="PUT",
- *       "path"="/tasks/{id}/add_to_group/{group_id}",
- *       "controller"=AddToGroup::class,
- *       "denormalization_context"={"groups"={"task_operation"}},
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('edit', object)",
- *       "openapi_context"={
- *         "summary"="Add a Task to a group",
- *        }
  *     },
  *     "task_remove_from_group"={
  *       "method"="DELETE",

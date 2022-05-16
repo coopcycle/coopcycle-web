@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Task;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Action\Task\AddToGroup as AddTasksToGroup;
 use AppBundle\Action\Task\Bulk as TaskBulk;
 use AppBundle\Action\Task\BulkAsync as TaskBulkAsync;
 use AppBundle\Action\Task\DeleteGroup as DeleteGroupController;
@@ -56,6 +57,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "delete"={
  *       "method"="DELETE",
  *       "controller"=DeleteGroupController::class,
+ *       "security"="is_granted('edit', object)"
+ *     },
+ *     "add_tasks"={
+ *       "method"="POST",
+ *       "path"="/task_groups/{id}/tasks",
+ *       "controller"=AddTasksToGroup::class,
+ *       "deserialize"=false,
+ *       "write"=false,
  *       "security"="is_granted('edit', object)"
  *     }
  *   }
