@@ -2,7 +2,6 @@
 
 namespace AppBundle\Domain\Task\Command;
 
-// use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 
 class AddToGroup

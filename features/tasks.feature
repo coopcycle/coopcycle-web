@@ -320,12 +320,6 @@ Feature: Tasks
       }
       """
     Then the response status code should be 201
-    # When the user "bob" has role "ROLE_ADMIN"
-    # And the user "bob" is authenticated
-    # And I add "Content-Type" header equal to "application/ld+json"
-    # And I add "Accept" header equal to "application/ld+json"
-    # And the user "bob" sends a "GET" request to "/api/task_groups/1"
-    # Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """

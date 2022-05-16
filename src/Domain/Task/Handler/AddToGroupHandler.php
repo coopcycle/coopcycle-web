@@ -3,7 +3,6 @@
 namespace AppBundle\Domain\Task\Handler;
 
 use AppBundle\Domain\Task\Command\AddToGroup;
-use AppBundle\Exception\TaskAlreadyBelongsToGroupException;
 
 class AddToGroupHandler
 {
