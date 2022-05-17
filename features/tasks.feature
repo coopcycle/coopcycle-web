@@ -301,6 +301,65 @@ Feature: Tasks
       }
       """
 
+  Scenario: Add task to a group
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+      | users.yml           |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    And I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/task_groups/1/tasks" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/3"
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+          "@context": "\/api\/contexts\/TaskGroup",
+          "@id": "\/api\/task_groups\/1",
+          "@type": "TaskGroup",
+          "name": "Group #1",
+          "tasks":"@array@.count(3)"
+      }
+      """
+
+  Scenario: Remove task from a group
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+      | users.yml           |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "DELETE" request to "/api/tasks/2/group"
+    Then the response status code should be 204
+    When the user "bob" is authenticated
+    And I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/task_groups/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/TaskGroup",
+        "@id": "/api/task_groups/1",
+        "@type": "TaskGroup",
+        "name": "Group #1",
+        "tasks": []
+      }
+      """
+
   Scenario: Start a task
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -1597,6 +1656,61 @@ Feature: Tasks
               "code":@string@
             }
          ]
+      }
+      """
+
+  Scenario: Create and update task group
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/task_groups" with body:
+      """
+      {
+        "name": "Fancy group",
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/2"
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskGroup",
+        "@id":"/api/task_groups/1",
+        "@type":"TaskGroup",
+        "name":"Fancy group",
+        "tasks":"@array@.count(2)"
+      }
+      """
+    When the user "bob" is authenticated
+    And I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/task_groups/1" with body:
+      """
+      {
+        "name": "New name group",
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/2"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskGroup",
+        "@id":"/api/task_groups/1",
+        "@type":"TaskGroup",
+        "name":"New name group",
+        "tasks":"@array@.count(2)"
       }
       """
 

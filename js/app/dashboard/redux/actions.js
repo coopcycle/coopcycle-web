@@ -163,6 +163,12 @@ export const EDIT_GROUP_SUCCESS = 'EDIT_GROUP_SUCCESS'
 export const OPEN_CREATE_GROUP_MODAL = 'OPEN_CREATE_GROUP_MODAL'
 export const CLOSE_CREATE_GROUP_MODAL = 'CLOSE_CREATE_GROUP_MODAL'
 
+export const OPEN_ADD_TASK_TO_GROUP_MODAL = 'OPEN_ADD_TASK_TO_GROUP_MODAL'
+export const CLOSE_ADD_TASK_TO_GROUP_MODAL = 'CLOSE_ADD_TASK_TO_GROUP_MODAL'
+export const ADD_TASK_TO_GROUP_REQUEST = 'ADD_TASK_TO_GROUP_REQUEST'
+
+export const REMOVE_TASK_FROM_GROUP_REQUEST = 'REMOVE_TASK_FROM_GROUP_REQUEST'
+
 export const CREATE_GROUP_REQUEST = 'CREATE_GROUP_REQUEST'
 export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
 
@@ -1203,6 +1209,93 @@ export function createGroup(name) {
       .then((response) => {
         dispatch(createGroupSuccess(response.data))
         dispatch(closeCreateGroupModal())
+      })
+      // eslint-disable-next-line no-console
+      .catch(error => console.log(error))
+  }
+}
+
+export function addTaskToGroupRequest() {
+  return { type: ADD_TASK_TO_GROUP_REQUEST }
+}
+
+export function openAddTaskToGroupModal() {
+  return { type: OPEN_ADD_TASK_TO_GROUP_MODAL }
+}
+
+export function closeAddTaskToGroupModal() {
+  return { type: CLOSE_ADD_TASK_TO_GROUP_MODAL }
+}
+
+export function addTasksToGroup(tasks, taskGroup) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(addTaskToGroupRequest())
+
+    createClient(dispatch).request({
+      method: 'post',
+      url: `${taskGroup['@id']}/tasks`,
+      data: {
+        tasks: tasks.map((task) => task['@id'])
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(() => {
+        dispatch(closeAddTaskToGroupModal())
+        tasks.forEach((task) => {
+          const taskWithGroup = {
+            ...task,
+            group: taskGroup
+          }
+          dispatch(_updateTask(taskWithGroup))
+        })
+        dispatch(clearSelectedTasks())
+      })
+      // eslint-disable-next-line no-console
+      .catch(error => console.log(error))
+  }
+}
+
+export function removeTaskFromGroupRequest() {
+  return { type: REMOVE_TASK_FROM_GROUP_REQUEST }
+}
+
+export function removeTaskFromGroup(tasks) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(removeTaskFromGroupRequest())
+
+    const requests = tasks.map((task) => {
+      return createClient(dispatch).request({
+        method: 'delete',
+        url: `/api/tasks/${task.id}/group`,
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    })
+
+    Promise.all(requests)
+      .then(() => {
+        tasks.forEach((task) => {
+          const taskWithoutGroup = {
+            ...task,
+            group: null
+          }
+          dispatch(_updateTask(taskWithoutGroup))
+        })
       })
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))

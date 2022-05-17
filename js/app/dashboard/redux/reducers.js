@@ -48,6 +48,8 @@ import {
   CLOSE_EXPORT_MODAL,
   OPEN_CREATE_GROUP_MODAL,
   CLOSE_CREATE_GROUP_MODAL,
+  OPEN_ADD_TASK_TO_GROUP_MODAL,
+  CLOSE_ADD_TASK_TO_GROUP_MODAL,
 } from './actions'
 
 import {
@@ -436,6 +438,17 @@ export const createGroupModalIsOpen = (state = false, action) => {
   case OPEN_CREATE_GROUP_MODAL:
     return true
   case CLOSE_CREATE_GROUP_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
+export const addTaskToGroupModalIsOpen = (state = false, action) => {
+  switch(action.type) {
+  case OPEN_ADD_TASK_TO_GROUP_MODAL:
+    return true
+  case CLOSE_ADD_TASK_TO_GROUP_MODAL:
     return false
   default:
     return state
