@@ -45,6 +45,7 @@ parameters:
         - '#Call to an undefined method Symfony\\Component\\Console\\Helper\\HelperInterface::ask\(\)#'
         - '#Cannot use array destructuring on array<int, mixed>\|Doctrine\\ORM\\PersistentCollection#'
         - '#Call to an undefined method Symfony\\Component\\Security\\Http\\Authenticator\\Passport\\PassportInterface::getAttribute\(\).#'
+        - '#Call to an undefined method DateTimeInterface::modify\(\)#'
     universalObjectCratesClasses:
         - MercadoPago\Item
         - MercadoPago\Preference

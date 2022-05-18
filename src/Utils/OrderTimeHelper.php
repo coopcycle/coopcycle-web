@@ -7,6 +7,7 @@ use AppBundle\Entity\TimeSlot;
 use AppBundle\Form\Type\AsapChoiceLoader;
 use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Form\Type\TsRangeChoice;
+use AppBundle\Service\TimeRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\PreparationTimeCalculator;
@@ -31,6 +32,7 @@ class OrderTimeHelper
         PreparationTimeCalculator $preparationTimeCalculator,
         ShippingTimeCalculator $shippingTimeCalculator,
         Redis $redis,
+        TimeRegistry $timeRegistry,
         string $country,
         LoggerInterface $logger = null)
     {
@@ -38,6 +40,7 @@ class OrderTimeHelper
         $this->preparationTimeCalculator = $preparationTimeCalculator;
         $this->shippingTimeCalculator = $shippingTimeCalculator;
         $this->redis = $redis;
+        $this->timeRegistry = $timeRegistry;
         $this->country = $country;
         $this->logger = $logger ?? new NullLogger();
     }
@@ -97,6 +100,7 @@ class OrderTimeHelper
 
             $choiceLoader = new AsapChoiceLoader(
                 $fulfillmentMethod->getOpeningHours(),
+                $this->timeRegistry,
                 $vendor->getClosingRules(),
                 $this->getOrderingDelayMinutes($fulfillmentMethod->getOrderingDelayMinutes()),
                 $fulfillmentMethod->getOption('range_duration', 10),
