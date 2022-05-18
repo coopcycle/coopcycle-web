@@ -22,5 +22,9 @@ return [
             'type' => 'string[]',
             'facet' => true
         ],
+        [
+            'name' => 'enabled',
+            'type' => 'bool',
+        ]
     ]
 ];

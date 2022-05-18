@@ -163,10 +163,10 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:avatars:regenerate' }
 
-  AppBundle\Command\CreateTypesenseCollection:
+  AppBundle\Command\Typesense\CreateCollectionCommand:
     tags:
       - { name: 'console.command', command: 'typesense:collection:create' }
 
-  AppBundle\Command\IndexTypesenseDocuments:
+  AppBundle\Command\Typesense\IndexShopsCommand:
     tags:
-      - { name: 'console.command', command: 'typesense:documents:index' }
+      - { name: 'console.command', command: 'typesense:shops:index' }
