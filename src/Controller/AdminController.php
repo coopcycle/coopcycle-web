@@ -116,6 +116,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
 use Twig\Environment as TwigEnvironment;
+use Typesense\Client as TypesenseClient;
 
 class AdminController extends AbstractController
 {
@@ -163,7 +164,8 @@ class AdminController extends AbstractController
         FactoryInterface $promotionRuleFactory,
         FactoryInterface $promotionFactory,
         HttpClientInterface $browserlessClient,
-        bool $optinExportUsersEnabled
+        bool $optinExportUsersEnabled,
+        TypesenseClient $typesenseClient
     )
     {
         $this->orderRepository = $orderRepository;
@@ -174,6 +176,7 @@ class AdminController extends AbstractController
         $this->promotionFactory = $promotionFactory;
         $this->browserlessClient = $browserlessClient;
         $this->optinExportUsersEnabled = $optinExportUsersEnabled;
+        $this->typesenseClient = $typesenseClient;
     }
 
     /**
@@ -1090,17 +1093,22 @@ class AdminController extends AbstractController
      */
     public function searchRestaurantsAction(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(LocalBusiness::class);
+        $shops_collection = 'shops';
 
-        $results = $repository->search($request->query->get('q'));
+        $searchParameters = [
+            'q'         => $request->query->get('q'),
+            'query_by'  => 'name',
+        ];
+
+        $result = $this->typesenseClient->collections[$shops_collection]->documents->search($searchParameters);
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
-            $data = array_map(function (LocalBusiness $restaurant) {
+            $data = array_map(function ($hit) {
                 return [
-                    'id' => $restaurant->getId(),
-                    'name' => $restaurant->getName(),
+                    'id' => $hit['document']['id'],
+                    'name' => $hit['document']['name'],
                 ];
-            }, $results);
+            }, $result['hits']);
 
             return new JsonResponse($data);
         }
