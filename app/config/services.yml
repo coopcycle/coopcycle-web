@@ -671,6 +671,11 @@ services:
       - { name: kernel.event_subscriber }
       - { name: monolog.logger, channel: urbantz }
 
+  AppBundle\Doctrine\EventSubscriber\ShopsEventsForTypesenseSubscriber:
+    tags:
+      - { name: monolog.logger }
+      - { name: doctrine.event_subscriber }
+
   AppBundle\Action\Settings:
     public: true
     arguments:
