@@ -76,6 +76,7 @@ adminDashboard.users.last_order: Last order
 adminDashboard.users.export.optins.title: Select what you want to export
 adminDashboard.users.export.optins.newsletter: Users who agree to receive the newsletter
 adminDashboard.users.export.optins.marketting: Users who agree to receive promotions
+adminDashboard.users.export.optins.all: All users
 form.user.quotes_allowed.label: Allow this user to request a quote
 adminDashboard.settings.title: Settings
 adminDashboard.pricing.title: Pricing

@@ -62,6 +62,10 @@ adminDashboard.users.invite: Inviter un utilisateur
 adminDashboard.users.orders_count: Nombre de commandes
 adminDashboard.users.registered_at: Inscription
 adminDashboard.users.last_order: Dernière commande
+adminDashboard.users.export.optins.title: Sélectionnez ce que vous voulez exporter
+adminDashboard.users.export.optins.newsletter: Les utilisateurs qui acceptent de recevoir la newsletter
+adminDashboard.users.export.optins.marketting: Les utilisateurs qui acceptent de recevoir des offres promotionnelles
+adminDashboard.users.export.optins.all: Tous les utilisateurs
 adminDashboard.settings.title: Paramètres
 adminDashboard.pricing.title: Tarification
 adminDashboard.pricing.manage: Gérer

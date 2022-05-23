@@ -37,6 +37,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Vehicle;
 use AppBundle\Entity\Zone;
+use AppBundle\Enum\Optin;
 use AppBundle\Form\AddOrganizationType;
 use AppBundle\Form\AttachToOrganizationType;
 use AppBundle\Form\ApiAppType;
@@ -479,10 +480,17 @@ class AdminController extends AbstractController
                 $optinsQB = $this->getDoctrine()
                     ->getRepository(User::class)
                     ->createQueryBuilder('u')
-                    ->select('u.username, u.email')
-                    ->innerJoin('u.optinConsents', 'oc')
-                    ->where('oc.type = :optin and oc.accepted = true')
-                    ->setParameter('optin', $optinSelected);
+                    ->leftJoin(Order::class, 'o', Expr\Join::WITH, 'o.customer = u')
+                    ->leftJoin('u.optinConsents', 'oc')
+                    ->leftJoin('u.customer', 'c')
+                    ->addOrderBy('o.createdAt')
+                    ->addOrderBy('u.id')
+                    ->addGroupBy('o', 'oc', 'c', 'u')
+                    ->select('u.username, u.email, CONCAT(c.firstName, \' \', c.lastName) as full_name, u.createdAt as signup, COUNT(o) as order_count, o.createdAt as last_order, oc.type as optin_type, oc.accepted');
+                    if (in_array($optinSelected, Optin::keys())) {
+                        $optinsQB->where('oc.type = :optin and oc.accepted = true')
+                            ->setParameter('optin', $optinSelected);
+                    }
 
                 $optinsResult = $optinsQB->getQuery()->getResult();
 

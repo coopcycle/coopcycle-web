@@ -25,6 +25,7 @@ class UsersExportType extends AbstractType
                         $optin->exportLabel() => $optin->getKey()
                     ];
                 }, Optin::values()),
+                'adminDashboard.users.export.optins.all' => 'all'
             ],
         ]);
     }
