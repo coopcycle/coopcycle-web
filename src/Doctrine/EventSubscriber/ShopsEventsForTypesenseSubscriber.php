@@ -8,7 +8,7 @@ use Doctrine\ORM\Events;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Psr\Log\LoggerInterface;
-use Typesense\Client as TypesenseClient;
+use AppBundle\Typesense\ShopsClient as TypesenseShopsClient;
 use Gedmo\SoftDeleteable\SoftDeleteableListener;
 
 class ShopsEventsForTypesenseSubscriber implements EventSubscriber
@@ -17,11 +17,11 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
 
     public function __construct(
         LoggerInterface $logger,
-        TypesenseClient $typesenseClient
+        TypesenseShopsClient $typesenseShopsClient
     )
     {
         $this->logger = $logger;
-        $this->typesenseClient = $typesenseClient;
+        $this->typesenseShopsClient = $typesenseShopsClient;
     }
 
     public function getSubscribedEvents()
@@ -46,7 +46,7 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
                 "category" => $this->getShopCategories($entity),
                 "enabled" => $entity->isEnabled(),
             ];
-            $this->typesenseClient->collections[self::COLLECTION]->documents->create($document);
+            $this->typesenseShopsClient->createDocument($document);
         }
     }
 
@@ -68,7 +68,7 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
                 "category" => $this->getShopCategories($entity),
                 "enabled" => $entity->isEnabled(),
             ];
-            $this->typesenseClient->collections[self::COLLECTION]->documents[$id]->update($document);
+            $this->typesenseShopsClient->updateDocument($id, $document);
         }
     }
 
@@ -78,7 +78,7 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
 
         if ($entity instanceof LocalBusiness) {
             $id = strval($entity->getId());
-            $this->typesenseClient->collections[self::COLLECTION]->documents[$id]->delete();
+            $this->typesenseShopsClient->deleteDocument($id);
         }
     }
 

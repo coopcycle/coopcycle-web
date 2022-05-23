@@ -11,11 +11,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Typesense\Client;
+use AppBundle\Typesense\ShopsClient as TypesenseShopsClient;
 
 class IndexShopsCommand extends AbstractIndexCommand
 {
-    protected $COLLECTION_NAME = 'shops';
+
+    public function __construct(
+        TypesenseShopsClient $typesenseShopsClient,
+        EntityManagerInterface $entityManager,
+        NormalizerInterface $serializer
+    )
+    {
+        $this->typesenseClient = $typesenseShopsClient;
+        $this->entityManager = $entityManager;
+        $this->serializer = $serializer;
+
+        parent::__construct();
+    }
 
     public function configure()
     {
@@ -73,11 +85,6 @@ class IndexShopsCommand extends AbstractIndexCommand
         }
 
         return $categories;
-    }
-
-    protected function deleteIndexedDocuments()
-    {
-        $this->client->collections[$this->COLLECTION_NAME]->documents->delete(['filter_by' => 'enabled:[true,false]']);
     }
 
 }

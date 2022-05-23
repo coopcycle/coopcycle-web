@@ -7,28 +7,15 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Typesense\Client;
 
 abstract class AbstractIndexCommand extends Command
 {
-    protected $COLLECTION_NAME = ''; // Override this property
-
-    protected $client;
+    protected $typesenseClient;
     protected $entityManager;
     protected $serializer;
 
-    public function __construct(
-        Client $client,
-        EntityManagerInterface $entityManager,
-        NormalizerInterface $serializer
-    )
+    public function __construct()
     {
-        $this->client = $client;
-        $this->entityManager = $entityManager;
-        $this->serializer = $serializer;
-
         parent::__construct();
     }
 
@@ -38,9 +25,6 @@ abstract class AbstractIndexCommand extends Command
     }
 
     abstract protected function getDocumentsToIndex();
-
-    // To delete all documents in a collection, you can use a filter that matches all documents in your collection.
-    abstract protected function deleteIndexedDocuments();
 
     public function initialize(InputInterface $input, OutputInterface $output)
     {
@@ -52,7 +36,7 @@ abstract class AbstractIndexCommand extends Command
         try {
             $documents = $this->getDocumentsToIndex();
 
-            $result = $this->client->collections[$this->COLLECTION_NAME]->documents->import($documents, ['action' => 'create']);
+            $result = $this->typesenseClient->createMultiDocuments($documents);
 
             $documentsWithErrors = array_filter($result, function($documentResult) {
                 return !$documentResult['success'];
@@ -69,15 +53,15 @@ abstract class AbstractIndexCommand extends Command
 
                 // if there was an error we should delete all indexed documents by this operation
                 // fix the error and then try to index all the documents again
-                $documents = $this->deleteIndexedDocuments($this->COLLECTION_NAME);
+                $documents = $this->typesenseClient->deleteMultiDocuments();
 
                 $this->io->text('Documents indexed successfully have ben removed, fix the error and try to index all the documents again');
             } else {
                 $this->io->text('All data has been indexed successfully');
 
-                $collectionData = $this->client->collections[$this->COLLECTION_NAME]->retrieve();
+                $collectionData = $this->typesenseClient->getCollection();
 
-                $this->io->text(sprintf('%s collection now has %d documents indexed', $this->COLLECTION_NAME, $collectionData['num_documents']));
+                $this->io->text(sprintf('%s collection now has %d documents indexed', $this->typesenseClient->getCollectionName(), $collectionData['num_documents']));
             }
 
         } catch (\Throwable $th) {

@@ -1184,3 +1184,7 @@ services:
   AppBundle\Translation\DatePeriodFormatter:
     arguments:
       $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  AppBundle\Typesense\ShopsClient:
+    arguments:
+      $environment: '%kernel.environment%'
