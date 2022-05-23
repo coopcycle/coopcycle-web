@@ -226,7 +226,24 @@ class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @BeforeScenario
      */
-    public function clearTypesenseCollections()
+    public function createTypesenseCollections()
+    {
+        $schemas_dir = 'typesense/schemas';
+        $schemas_files = array_diff(scandir($schemas_dir), array('..', '.')); // remove . and ..
+
+        array_walk($schemas_files, function ($schema_file) use($schemas_dir) {
+            $content = include($schemas_dir . '/' . $schema_file);
+
+            $content['name'] = $content['name'] . '_test';
+
+            $this->typesenseClient->collections->create($content);
+        });
+    }
+
+    /**
+     * @AfterScenario
+     */
+    public function deleteTypesenseCollections()
     {
         $schemas_dir = 'typesense/schemas';
         $schemas_files = array_diff(scandir($schemas_dir), array('..', '.')); // remove . and ..
@@ -237,10 +254,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
             $collection_name = $content['name'] . '_test';
 
             $this->typesenseClient->collections[$collection_name]->delete();
-
-            $content['name'] = $collection_name;
-
-            $this->typesenseClient->collections->create($content);
         });
     }
 
