@@ -196,6 +196,11 @@ security:
             stateless: true
             bearer_token: true
 
+        api_woopit:
+            pattern:   ^/api/woopit
+            stateless: true
+            bearer_token: true
+
         token_refresh:
             pattern:  ^/api/token/refresh
             stateless: true

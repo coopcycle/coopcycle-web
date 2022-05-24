@@ -104,6 +104,7 @@ services:
   Nucleos\ProfileBundle\Mailer\MailerInterface: '@nucleos_profile.mailer.default'
   Lcobucci\JWT\Configuration $cubeJsJwtConfiguration: '@cubejs.jwt.config'
   Hashids\Hashids $hashids8: '@hashids.8'
+  Hashids\Hashids $hashids12: '@hashids.12'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -1202,3 +1203,11 @@ services:
   hashids.8:
     class: Hashids\Hashids
     arguments: ['%secret%', 8]
+
+  AppBundle\Service\PriceHelper:
+    arguments:
+      $state: "%region_iso%"
+
+  hashids.12:
+    class: Hashids\Hashids
+    arguments: ['%secret%', 12]
