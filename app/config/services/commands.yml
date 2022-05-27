@@ -167,6 +167,10 @@ services:
     tags:
       - { name: 'console.command', command: 'typesense:collection:create' }
 
+  AppBundle\Command\Typesense\CreateAllCollectionsCommand:
+    tags:
+      - { name: 'console.command', command: 'typesense:collections:create' }
+
   AppBundle\Command\Typesense\IndexShopsCommand:
     tags:
       - { name: 'console.command', command: 'typesense:shops:index' }
