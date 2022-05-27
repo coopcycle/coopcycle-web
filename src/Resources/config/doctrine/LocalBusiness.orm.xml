@@ -141,7 +141,7 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <one-to-one field="mercadopagoAccount" target-entity="AppBundle\Entity\MercadopagoAccount" mapped-by="restaurant">
+    <one-to-one field="mercadopagoAccount" target-entity="AppBundle\Entity\MercadopagoAccount" mapped-by="restaurant" orphan-removal="true">
       <cascade>
         <cascade-all/>
       </cascade>

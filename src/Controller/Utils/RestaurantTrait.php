@@ -1078,6 +1078,27 @@ trait RestaurantTrait
         return $this->redirect($url);
     }
 
+    public function mercadopagoOAuthRemoveAction(
+        $id,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        $restaurant->setMercadopagoAccount(null);
+
+        $entityManager->flush();
+
+        $this->addFlash(
+            'notice',
+            $translator->trans('form.local_business.mercadopago.remove.connection.success')
+        );
+
+        return $this->redirectToRoute('admin_restaurant', ['id' => $id]);
+    }
+
     public function preparationTimeAction($id, Request $request, PreparationTimeCalculator $calculator)
     {
         $restaurant = $this->getDoctrine()

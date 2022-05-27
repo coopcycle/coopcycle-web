@@ -775,7 +775,7 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this->mercadopagoAccount;
     }
 
-    public function setMercadopagoAccount(MercadopagoAccount $account)
+    public function setMercadopagoAccount(?MercadopagoAccount $account)
     {
         $this->mercadopagoAccount = $account;
     }

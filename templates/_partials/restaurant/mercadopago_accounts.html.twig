@@ -2,18 +2,18 @@
   {% trans %}form.local_business.mercadopago_account.title{% endtrans %}
 </h4>
 
-<table class="table">
+<div class="d-flex justify-content-between align-items-center">
   {% set mercadopago_account = restaurant.getMercadopagoAccount() %}
-  <tr>
-    <td>
-      {% if mercadopago_account is not empty %}
-        <span class="label label-success">{{ 'form.local_business.mercadopago.connected'|trans }}</span>
-      {% else %}
-        <a href="{{ path(mercadopago_oauth_redirect_route, { id: restaurant.id }) }}" class="btn btn-sm mercadopago-connect">
-          <span>{{ 'form.local_business.mercadopago.connect_button.text'|trans }}</span>
-        </a>
-      {% endif %}
-    </td>
-    <td></td>
-  </tr>
-</table>
+  {% if mercadopago_account is not empty %}
+    <span class="p-3 label label-success">
+      {{ 'form.local_business.mercadopago.connected'|trans }}
+    </span>
+    <a href="{{ path(mercadopago_oauth_remove_route, { id: restaurant.id }) }}" class="btn btn-sm btn-danger">
+      <span>{{ 'form.local_business.mercadopago.remove.connection'|trans }}</span>
+    </a>
+  {% else %}
+    <a href="{{ path(mercadopago_oauth_redirect_route, { id: restaurant.id }) }}" class="btn btn-sm mercadopago-connect">
+      <span>{{ 'form.local_business.mercadopago.connect_button.text'|trans }}</span>
+    </a>
+  {% endif %}
+</div>
