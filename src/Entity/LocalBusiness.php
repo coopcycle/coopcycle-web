@@ -242,7 +242,7 @@ class LocalBusiness extends BaseLocalBusiness implements
      */
     protected $isAvailableForB2b;
 
-    protected $mercadopagoAccounts;
+    protected $mercadopagoAccount;
 
     protected $edenredMerchantId;
 
@@ -267,7 +267,6 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->reusablePackagings = new ArrayCollection();
         $this->promotions = new ArrayCollection();
         $this->isAvailableForB2b = false ;
-        $this->mercadopagoAccounts = new ArrayCollection();
 
         $this->fulfillmentMethods = new ArrayCollection();
         $this->addFulfillmentMethod('delivery', true);
@@ -771,26 +770,14 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->owners->add($owner);
     }
 
-    public function getMercadopagoAccounts()
-    {
-        return $this->mercadopagoAccounts;
-    }
-
-    public function addMercadopagoAccount(MercadopagoAccount $account)
-    {
-        $manyToMany = new RestaurantMercadopagoAccount();
-        $manyToMany->setRestaurant($this);
-        $manyToMany->setMercadopagoAccount($account);
-
-        $this->mercadopagoAccounts->add($manyToMany);
-    }
-
     public function getMercadopagoAccount(): ?MercadopagoAccount
     {
-        foreach ($this->getMercadopagoAccounts() as $account) {
-            return $account->getMercadopagoAccount();
-        }
-        return null;
+        return $this->mercadopagoAccount;
+    }
+
+    public function setMercadopagoAccount(MercadopagoAccount $account)
+    {
+        $this->mercadopagoAccount = $account;
     }
 
     public function asOriginCode(): string

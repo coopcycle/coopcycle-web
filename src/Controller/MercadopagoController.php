@@ -118,11 +118,10 @@ class MercadopagoController extends AbstractController
             ->setAccessToken($res['access_token'])
             ->setRefreshToken($res['refresh_token'])
             ->setPublicKey($res['public_key'])
+            ->setRestaurant($restaurant)
             ;
 
-        $this->getUser()->addMercadopagoAccount($account);
-
-        $restaurant->addMercadopagoAccount($account);
+        $restaurant->setMercadopagoAccount($account);
 
         $objectManager->flush();
 
