@@ -117,7 +117,8 @@ restaurant.disabledWarning: "Ce restaurant n'est pas activé et n'est donc pas v
   %restaurantEditUrl%\">l'activer dans l'admin</a>.\n"
 restaurant.closedWarningWithDelay: Commandez dès maintenant pour plus tard ! Commande
   minimum %delay% à l'avance.
-restaurant.temporaryClosedWarning: Ce restaurant est fermé et ne sera pas disponible avant <strong>%date%</strong>.
+restaurant.temporaryClosedWarning: Ce restaurant est indisponible à la livraison jusqu'au
+  <strong>%date%</strong>. Vous pouvez commander pour plus tard !
 restaurant.noMenuWarning: "Ce restaurant n'a pas de menu pour l'instant\n"
 restaurant.quotes_disclaimer.authenticated: Ce restaurant accepte également des commandes
   sur devis. Pour créer des devis, vous devez être un client référencé. <a href="%contact_us%">Contactez-nous</a>
@@ -1142,7 +1143,8 @@ stores.address_book: Carnet d'adresses
 store.form.section.settings: Paramètres
 adminDashboard.hubs.title: Hubs
 adminDashboard.hubs.createNew: Créer un nouveau hub
-adminDashboard.hubs.help: Les hubs permettent de regrouper des boutiques partageant le même point de retrait, comme un marché par exemple.
+adminDashboard.hubs.help: Les hubs permettent de regrouper des boutiques partageant
+  le même point de retrait, comme un marché par exemple.
 restaurant.form.edenred_merchant_id.label: Identifiant marchand Edenred
 restaurant.form.edenred_merchant_id.help: Laissez vide pour désactiver Edenred
 restaurants.mode.list: Afficher la liste
@@ -1156,8 +1158,10 @@ adminDashboard.package_sets.help: Configurez les types de marchandise à transpo
 adminDashboard.zones.help: Définissez des zones géographiques
 adminDashboard.tags.help: Associez des tags et des couleurs aux tâches
 adminDashboard.api.help: Créez des livraisons de facon automatisée
-checkout.suggestions.continue_shopping_hub: Vous pouvez continuer votre commande dans les autres boutiques <strong>%name%</strong>
-hub.disclaimer: Commandez dans plusieurs boutiques, et on vous livre en une seule fois !
+checkout.suggestions.continue_shopping_hub: Vous pouvez continuer votre commande dans
+  les autres boutiques <strong>%name%</strong>
+hub.disclaimer: Commandez dans plusieurs boutiques, et on vous livre en une seule
+  fois !
 form.adress_book.remember_address: Se souvenir de cette adresse
 restaurant.list.tags.zerowaste: Zéro déchet
 homepage.zerowaste: Découvrez nos restaurants zéro déchet !
@@ -1165,49 +1169,65 @@ restaurant.stats.view_simple: Affichage simple
 restaurant.stats.view_detailed: Affichage détaillé
 form.items_total_promotion.items_total.label: À partir de
 form.items_total_promotion.fixed_discount_amount.label: Appliquer une réduction de
-restaurant_promotion.items_total.help: Cela vous permet d'appliquer une réduction à partir d'un montant d'achat.
-  Votre marge sera réduite du montant de la réduction.
-  Cela ne <strong>diminuera pas</strong> les frais perçus par
-  la plate-forme.
+restaurant_promotion.items_total.help: Cela vous permet d'appliquer une réduction
+  à partir d'un montant d'achat. Votre marge sera réduite du montant de la réduction.
+  Cela ne <strong>diminuera pas</strong> les frais perçus par la plate-forme.
 restaurant_promotion.items_total: À partir d'un montant d'achats
-restaurants.edenred_transactions.disclaimer: Cette page liste l'ensemble des commandes payées avec Edenred, en partie ou en totalité.
-  Pour ces commandes, l'ensemble de l'argent a été perçu par le restaurant.
-  Vous devez donc envoyer une facture à chaque restaurant, pour réclamer les commissions dûes.
+restaurants.edenred_transactions.disclaimer: Cette page liste l'ensemble des commandes
+  payées avec Edenred, en partie ou en totalité. Pour ces commandes, l'ensemble de
+  l'argent a été perçu par le restaurant. Vous devez donc envoyer une facture à chaque
+  restaurant, pour réclamer les commissions dûes.
 restaurants.edenred_transactions.edenred_amount: Montant payé avec Edenred
 restaurants.edenred_transactions.title: Transactions Edenred
 form.product.alcohol.label: Ce produit est une boisson alcoolisée
-form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson alcoolisée, comme une bouteille de vin.
-form.payment.edenred_disclaimer: Cette commande a été payée avec Edenred et un complément par carte bancaire.
- Le remboursement se fera en priorité sur le montant payé par carte bancaire, et sur le montant Edenred le cas échéant.
-form.payment.refund_breakdown: Montant remboursable par carte %card%, montant remboursable par Edenred %edenred%
+form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson
+  alcoolisée, comme une bouteille de vin.
+form.payment.edenred_disclaimer: Cette commande a été payée avec Edenred et un complément
+  par carte bancaire. Le remboursement se fera en priorité sur le montant payé par
+  carte bancaire, et sur le montant Edenred le cas échéant.
+form.payment.refund_breakdown: Montant remboursable par carte %card%, montant remboursable
+  par Edenred %edenred%
 products.on_demand_delivery.name: Livraison à la demande
 index.view_all: Voir tout
 order.adjustment_type.reusable_packaging.loopeat: Service zéro déchet
-order.adjustment_type.reusable_packaging.loopeat.help: Ces frais couvrent le lavage, le réapprovisionnement des restaurants et l’achat des sacs en tissu réutilisables
+order.adjustment_type.reusable_packaging.loopeat.help: Ces frais couvrent le lavage,
+  le réapprovisionnement des restaurants et l’achat des sacs en tissu réutilisables
 promotion_rule.is_items_total_above: Le total des produits est supérieur à %amount%
 form.store_type.multi_drop_enabled.label: Activer les dépôts multiples
-form.store_type.multi_drop_enabled.help: Permet aux utilisateur·ice·s d'ajouter un point de dépôt supplémentaire lors de la création d'une livraison
+form.store_type.multi_drop_enabled.help: Permet aux utilisateur·ice·s d'ajouter un
+  point de dépôt supplémentaire lors de la création d'une livraison
 api_apps.regenerate_secret: Renouveler la clé secrète
-api_apps.regenerate_secret_warning: Toutes les applications utilisant la clé secrète précédente ne fonctionnera plus.
+api_apps.regenerate_secret_warning: Toutes les applications utilisant la clé secrète
+  précédente ne fonctionnera plus.
 restaurant.form.cash_on_delivery_enabled.label: Activer le paiement en contre-remboursement
-restaurant.form.cash_on_delivery_enabled.help: Cela permettra aux clients de payer en espèces. À utiliser avec précaution.
+restaurant.form.cash_on_delivery_enabled.help: Cela permettra aux clients de payer
+  en espèces. À utiliser avec précaution.
 localBusiness.form.business_address.help: Cette adresse sera utilisée dans les reçus
 adminDashboard.nonprofits.createNew: Ajouter une nouvelle association
 adminDashboard.nonprofits.title: Associations
-adminDashboard.nonprofits.confirm_delete: Êtes-vous sûr de supprimer cette association ?
+adminDashboard.nonprofits.confirm_delete: Êtes-vous sûr de supprimer cette association
+  ?
 restaurants.pre_order: Pré-commander
-restaurant.closedOpensTodayLaterWarning: Ce restaurant est fermé maintenant mais ouvre aujourd'hui à <strong>%time%</strong>.
+restaurant.closedOpensTodayLaterWarning: Ce restaurant est fermé maintenant mais ouvre
+  aujourd'hui à <strong>%time%</strong>.
 restaurant.canOrderForLater: Mais vous pouvez toujours commander pour plus tard !
-restaurant.closedOpensTomorrowWarning: Ce restaurant est fermé pour la journée mais ouvre demain à <strong>%time%</strong>.
+restaurant.closedOpensTomorrowWarning: Ce restaurant est fermé pour la journée mais
+  ouvre demain à <strong>%time%</strong>.
 restaurant.canOrderForTomorrow: Vous pouvez toujours commander pour demain !
 restaurant.closedOpensAfterTomorrowWarning: Ce restaurant est fermé jusqu'au <strong>%date%</strong>.
 restaurant.canOrderForOtherDay: Vous pouvez quand même commander pour ce jour-là !
 restaurant.closedNowWarning: Ce restaurant est fermé actuellement.
 restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
-restaurant.form.en_boite_le_plat_enabled.label: Activer le système de consigne En Boîte Le Plat
-form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'Je veux des contenants consignés <a href="https://enboiteleplat.fr/rennes/" target="_blank">En Boîte Le Plat</a>.'
-adminDashboard.users.confirmDeleteUser: Voulez-vous vraiment supprimer l'utilisateur avec l'email %email% ?
+restaurant.form.en_boite_le_plat_enabled.label: Activer le système de consigne En
+  Boîte Le Plat
+form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'Je veux
+  des contenants consignés <a href="https://enboiteleplat.fr/rennes/" target="_blank">En
+  Boîte Le Plat</a>.'
+adminDashboard.users.confirmDeleteUser: Voulez-vous vraiment supprimer l'utilisateur
+  avec l'email %email% ?
 adminDashboard.users.userHasBeenDeleted: L'utilisateur a été supprimé.
-order.cart.donation.disclaimer: Nous vous proposons de consacrer %percentage% des revenus tirés de votre commmande à l'une de nos associations partenaires. Vous ne paierez pas plus cher.
+order.cart.donation.disclaimer: Nous vous proposons de consacrer %percentage% des
+  revenus tirés de votre commmande à l'une de nos associations partenaires. Vous ne
+  paierez pas plus cher.
 form.checkout_address.nonprofit.placeholder: Choisissez votre association préférée
 form.delivery.arbitrary_price.label: Definir le prix manuellement
