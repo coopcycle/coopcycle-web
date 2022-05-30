@@ -76,7 +76,7 @@ class Group implements TaggableInterface
     use TaggableTrait;
 
     /**
-     * @Groups({"task"})
+     * @Groups({"task", "task_group"})
      */
     protected $id;
 
