@@ -56,6 +56,7 @@ const initialState = {
   productOptionsModalContext: {},
   isProductDetailsModalOpen: false,
   productDetailsModalContext: {},
+  addressModalContext: {},
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -210,6 +211,20 @@ const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}
   }
 }
 
+const addressModalContext = (state = initialState.addressModalContext, action = {}) => {
+  switch (action.type) {
+  case CLOSE_ADDRESS_MODAL:
+
+    return {}
+
+  case OPEN_ADDRESS_MODAL:
+
+    return action.payload
+  }
+
+  return state
+}
+
 const isProductOptionsModalOpen = (state = initialState.isProductOptionsModalOpen, action = {}) => {
   switch (action.type) {
   case CLOSE_PRODUCT_OPTIONS_MODAL:
@@ -285,4 +300,5 @@ export default combineReducers({
   productOptionsModalContext,
   isProductDetailsModalOpen,
   productDetailsModalContext,
+  addressModalContext,
 })

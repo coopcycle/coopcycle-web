@@ -44,7 +44,7 @@ class Cart extends Component {
                 <FulfillmentMethod
                   value={ fulfillmentMethod }
                   shippingAddress={ this.props.shippingAddress }
-                  onClick={ this.props.openAddressModal } />
+                  onClick={ () => this.props.openAddressModal(this.props.restaurant) } />
                 { this.props.isOrderingAvailable && <Time /> }
               </div>
               <CartItems />
@@ -79,6 +79,7 @@ function mapStateToProps(state) {
     takeaway: state.cart.takeaway,
     loading: state.isFetching,
     isOrderingAvailable: selectIsOrderingAvailable(state),
+    restaurant: state.cart.restaurant,
   }
 }
 
@@ -89,7 +90,7 @@ function mapDispatchToProps(dispatch) {
     sync: () => dispatch(sync()),
     enableTakeaway: () => dispatch(enableTakeaway()),
     disableTakeaway: () => dispatch(disableTakeaway()),
-    openAddressModal: () => dispatch(openAddressModal()),
+    openAddressModal: (restaurant) => dispatch(openAddressModal({restaurant})),
   }
 }
 
