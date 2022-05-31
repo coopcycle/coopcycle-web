@@ -12,7 +12,7 @@ use HWI\Bundle\OAuthBundle\Security\Core\User\OAuthAwareUserProviderInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -173,8 +173,8 @@ class NucleosUserBundleUserProvider implements UserProviderInterface, AccountCon
         $username = $user->getUsername();
 
         if (null === $user = $this->userManager->findUserBy([$identifier => $userId])) {
-            $exception = new UsernameNotFoundException(sprintf('User with ID "%d" could not be reloaded.', $userId));
-            $exception->setUsername($username);
+            $exception = new UserNotFoundException(sprintf('User with ID "%d" could not be reloaded.', $userId));
+            $exception->setUserIdentifier($userId);
 
             throw $exception;
         }
