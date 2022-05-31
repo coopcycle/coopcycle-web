@@ -24,6 +24,10 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
  *     "get"={
  *       "method"="GET",
  *       "security"="is_granted('view', object)"
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('edit', object)"
  *     }
  *   },
  *   attributes={

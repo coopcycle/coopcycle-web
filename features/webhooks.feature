@@ -114,3 +114,14 @@ Feature: Webhooks
     And I add "Accept" header equal to "application/ld+json"
     And the OAuth client "Acme2" sends a "GET" request to "/api/webhooks/1"
     Then the response status code should be 403
+
+  Scenario: Delete webhook
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+      | webhooks.yml        |
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "DELETE" request to "/api/webhooks/1"
+    Then the response status code should be 204
