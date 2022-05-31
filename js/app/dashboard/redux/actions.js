@@ -166,8 +166,10 @@ export const CLOSE_CREATE_GROUP_MODAL = 'CLOSE_CREATE_GROUP_MODAL'
 export const OPEN_ADD_TASK_TO_GROUP_MODAL = 'OPEN_ADD_TASK_TO_GROUP_MODAL'
 export const CLOSE_ADD_TASK_TO_GROUP_MODAL = 'CLOSE_ADD_TASK_TO_GROUP_MODAL'
 export const ADD_TASK_TO_GROUP_REQUEST = 'ADD_TASK_TO_GROUP_REQUEST'
+export const ADD_TASKS_TO_GROUP_SUCCESS = 'ADD_TASKS_TO_GROUP_SUCCESS'
 
 export const REMOVE_TASK_FROM_GROUP_REQUEST = 'REMOVE_TASK_FROM_GROUP_REQUEST'
+export const REMOVE_TASKS_FROM_GROUP_SUCCESS = 'REMOVE_TASKS_FROM_GROUP_SUCCESS'
 
 export const CREATE_GROUP_REQUEST = 'CREATE_GROUP_REQUEST'
 export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
@@ -1219,6 +1221,10 @@ export function addTaskToGroupRequest() {
   return { type: ADD_TASK_TO_GROUP_REQUEST }
 }
 
+export function addTasksToGroupSuccess(tasks, taskGroup) {
+  return { type: ADD_TASKS_TO_GROUP_SUCCESS, tasks, taskGroup }
+}
+
 export function openAddTaskToGroupModal() {
   return { type: OPEN_ADD_TASK_TO_GROUP_MODAL }
 }
@@ -1249,13 +1255,7 @@ export function addTasksToGroup(tasks, taskGroup) {
     })
       .then(() => {
         dispatch(closeAddTaskToGroupModal())
-        tasks.forEach((task) => {
-          const taskWithGroup = {
-            ...task,
-            group: taskGroup
-          }
-          dispatch(_updateTask(taskWithGroup))
-        })
+        dispatch(addTasksToGroupSuccess(tasks, taskGroup))
         dispatch(clearSelectedTasks())
       })
       // eslint-disable-next-line no-console
@@ -1263,17 +1263,21 @@ export function addTasksToGroup(tasks, taskGroup) {
   }
 }
 
-export function removeTaskFromGroupRequest() {
+export function removeTasksFromGroupRequest() {
   return { type: REMOVE_TASK_FROM_GROUP_REQUEST }
 }
 
-export function removeTaskFromGroup(tasks) {
+export function removeTasksFromGroupSuccess(tasks) {
+  return { type: REMOVE_TASKS_FROM_GROUP_SUCCESS, tasks }
+}
+
+export function removeTasksFromGroup(tasks) {
 
   return function(dispatch, getState) {
 
     const { jwt } = getState()
 
-    dispatch(removeTaskFromGroupRequest())
+    dispatch(removeTasksFromGroupRequest())
 
     const requests = tasks.map((task) => {
       return createClient(dispatch).request({
@@ -1289,13 +1293,7 @@ export function removeTaskFromGroup(tasks) {
 
     Promise.all(requests)
       .then(() => {
-        tasks.forEach((task) => {
-          const taskWithoutGroup = {
-            ...task,
-            group: null
-          }
-          dispatch(_updateTask(taskWithoutGroup))
-        })
+        dispatch(removeTasksFromGroupSuccess(tasks))
       })
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))

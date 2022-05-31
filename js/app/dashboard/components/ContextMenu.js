@@ -6,7 +6,7 @@ import { Menu, Item } from 'react-contexify'
 
 import moment from 'moment'
 
-import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal, openAddTaskToGroupModal, removeTaskFromGroup } from '../redux/actions'
+import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup } from '../redux/actions'
 import { selectNextWorkingDay, selectSelectedTasks } from '../redux/selectors'
 
 const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
@@ -32,7 +32,7 @@ function _unassign(tasksToUnassign, unassignTasks) {
 const DynamicMenu = ({
   unassignedTasks, selectedTasks, nextWorkingDay,
   unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
-  openCreateGroupModal, openAddTaskToGroupModal, removeTaskFromGroup
+  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup
 }) => {
 
   const { t } = useTranslation()
@@ -159,7 +159,7 @@ const DynamicMenu = ({
       </Item>
       <Item
         hidden={ !actions.includes(REMOVE_FROM_GROUP) }
-        onClick={ () => removeTaskFromGroup(selectedTasks) }
+        onClick={ () => removeTasksFromGroup(selectedTasks) }
       >
         { t('ADMIN_DASHBOARD_REMOVE_FROM_GROUP') }
       </Item>
@@ -191,7 +191,7 @@ function mapDispatchToProps(dispatch) {
     moveTasksToNextWorkingDay: tasks => dispatch(moveTasksToNextWorkingDay(tasks)),
     openCreateGroupModal: () => dispatch(openCreateGroupModal()),
     openAddTaskToGroupModal: tasks => dispatch(openAddTaskToGroupModal(tasks)),
-    removeTaskFromGroup: tasks => dispatch(removeTaskFromGroup(tasks)),
+    removeTasksFromGroup: tasks => dispatch(removeTasksFromGroup(tasks)),
   }
 }
 

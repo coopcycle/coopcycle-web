@@ -327,6 +327,7 @@ Feature: Tasks
           "@context": "\/api\/contexts\/TaskGroup",
           "@id": "\/api\/task_groups\/1",
           "@type": "TaskGroup",
+          "id": 1,
           "name": "Group #1",
           "tasks":"@array@.count(3)"
       }
@@ -355,6 +356,7 @@ Feature: Tasks
         "@context": "/api/contexts/TaskGroup",
         "@id": "/api/task_groups/1",
         "@type": "TaskGroup",
+        "id": 1,
         "name": "Group #1",
         "tasks": []
       }
@@ -1465,6 +1467,7 @@ Feature: Tasks
         "@context":"/api/contexts/TaskGroup",
         "@id":"/api/task_groups/1",
         "@type":"TaskGroup",
+        "id": 1,
         "name":@string@,
         "tasks":[
           "@string@.matchRegex('#/api/tasks/[0-9]+#')",
@@ -1501,6 +1504,7 @@ Feature: Tasks
         "@context":"/api/contexts/TaskGroup",
         "@id":"/api/task_groups/1",
         "@type":"TaskGroup",
+        "id": 1,
         "name":@string@,
         "tasks":[
           "@string@.matchRegex('#/api/tasks/[0-9]+#')"
@@ -1596,6 +1600,7 @@ Feature: Tasks
         "@context":"/api/contexts/TaskGroup",
         "@id":"/api/task_groups/1",
         "@type":"TaskGroup",
+        "id": 1,
         "name":@string@,
         "tasks":[
           "@string@.matchRegex('#/api/tasks/[0-9]+#')",
@@ -1684,6 +1689,7 @@ Feature: Tasks
         "@context":"/api/contexts/TaskGroup",
         "@id":"/api/task_groups/1",
         "@type":"TaskGroup",
+        "id": 1,
         "name":"Fancy group",
         "tasks":"@array@.count(2)"
       }
@@ -1709,6 +1715,7 @@ Feature: Tasks
         "@context":"/api/contexts/TaskGroup",
         "@id":"/api/task_groups/1",
         "@type":"TaskGroup",
+        "id": 1,
         "name":"New name group",
         "tasks":"@array@.count(2)"
       }
@@ -1739,6 +1746,7 @@ Feature: Tasks
         "@context":"/api/contexts/TaskGroup",
         "@id":"/api/task_groups/1",
         "@type":"TaskGroup",
+        "id": 1,
         "name":"Fancy group",
         "tasks":"@array@.count(2)"
       }
@@ -1764,6 +1772,7 @@ Feature: Tasks
         "@context":"/api/contexts/TaskGroup",
         "@id":"/api/task_groups/1",
         "@type":"TaskGroup",
+        "id": 1,
         "name":"New name group",
         "tasks":"@array@.count(2)"
       }
