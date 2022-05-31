@@ -141,11 +141,11 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <one-to-many field="mercadopagoAccounts" target-entity="AppBundle\Entity\RestaurantMercadopagoAccount" mapped-by="restaurant">
+    <one-to-one field="mercadopagoAccount" target-entity="AppBundle\Entity\MercadopagoAccount" mapped-by="restaurant" orphan-removal="true">
       <cascade>
         <cascade-all/>
       </cascade>
-    </one-to-many>
+    </one-to-one>
     <one-to-many field="reusablePackagings" target-entity="AppBundle\Entity\ReusablePackaging" mapped-by="restaurant">
       <cascade>
         <cascade-all/>

@@ -96,8 +96,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
      */
     protected $customer;
 
-    private $mercadopagoAccounts;
-
     protected $optinConsents;
 
     public function __construct()
@@ -106,7 +104,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
         $this->stores = new ArrayCollection();
         $this->stripeAccounts = new ArrayCollection();
         $this->remotePushTokens = new ArrayCollection();
-        $this->mercadopagoAccounts = new ArrayCollection();
         $this->optinConsents = new ArrayCollection();
 
         parent::__construct();
@@ -388,18 +385,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
         if (null !== $this->customer) {
             $this->customer->setEmail($email);
         }
-    }
-
-    public function getMercadopagoAccounts()
-    {
-        return $this->mercadopagoAccounts;
-    }
-
-    public function addMercadopagoAccount(MercadopagoAccount $account)
-    {
-        $this->mercadopagoAccounts->add($account);
-
-        return $this;
     }
 
     public function getDefaultNonprofit()

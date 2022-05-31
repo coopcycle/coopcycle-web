@@ -1070,12 +1070,41 @@ trait RestaurantTrait
 
         $oAuth = new MercadoPago\OAuth();
 
+        $authURL = $oAuth->getAuthorizationURL($settingsManager->get('mercadopago_app_id'), $redirectUri);
+
+        if ('cl' === $this->getParameter('country_iso')) {
+            // for Chile Mercadopago is building the URL as .com.cl and should be just .cl instead
+            // https://github.com/mercadopago/sdk-php/blob/9ca999e06cc8a875a11f0fcf4dccc75b41d020d5/src/MercadoPago/Entities/OAuth.php#L109
+            $authURL = str_replace('.com.cl', '.cl', $authURL);
+        }
+
         $url = sprintf('%s&state=%s',
             $oAuth->getAuthorizationURL($settingsManager->get('mercadopago_app_id'), $redirectUri),
             $state
         );
 
         return $this->redirect($url);
+    }
+
+    public function mercadopagoOAuthRemoveAction(
+        $id,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        $restaurant->setMercadopagoAccount(null);
+
+        $entityManager->flush();
+
+        $this->addFlash(
+            'notice',
+            $translator->trans('form.local_business.mercadopago.remove.connection.success')
+        );
+
+        return $this->redirectToRoute('admin_restaurant', ['id' => $id]);
     }
 
     public function preparationTimeAction($id, Request $request, PreparationTimeCalculator $calculator)

@@ -1260,3 +1260,6 @@ shops.filters.title.types: Tipos
 shops.filters.title.categories: Categorías
 shops.filters.title.cuisines: Estilos de cocina
 shops.filters.title: Filtros
+form.local_business.mercadopago.connected: Conectado
+form.local_business.mercadopago.remove.connection: Eliminar conexión con Mercadopago
+form.local_business.mercadopago.remove.connection.success: Conexión con Mercadopago eliminada con éxito

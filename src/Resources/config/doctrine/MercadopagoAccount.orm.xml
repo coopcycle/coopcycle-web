@@ -14,5 +14,10 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
+    <one-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="mercadopagoAccount">
+      <join-columns>
+        <join-column name="restaurant_id" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
   </entity>
 </doctrine-mapping>

@@ -21,6 +21,8 @@ class MercadopagoAccount
 
     private $publicKey;
 
+    private $restaurant;
+
     public function getId()
     {
         return $this->id;
@@ -104,5 +106,17 @@ class MercadopagoAccount
     public function getRefreshToken()
     {
         return $this->refreshToken;
+    }
+
+    public function getRestaurant()
+    {
+        return $this->restaurant;
+    }
+
+    public function setRestaurant(LocalBusiness $restaurant)
+    {
+        $this->restaurant = $restaurant;
+
+        return $this;
     }
 }

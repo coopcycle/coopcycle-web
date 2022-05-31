@@ -423,6 +423,12 @@ admin_restaurant_mercadopago_oauth_redirect:
         redirect_after: admin_restaurant
     methods: [ GET ]
 
+admin_restaurant_mercadopago_oauth_remove:
+    path: /admin/restaurants/{id}/mercadopago-oauth-remove
+    defaults:
+        _controller: AppBundle\Controller\AdminController::mercadopagoOAuthRemoveAction
+    methods: [ GET ]
+
 
 admin_order_cancel:
     path: /admin/orders/{id}/cancel
