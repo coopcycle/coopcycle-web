@@ -1,6 +1,41 @@
 import React, { useState } from 'react'
 import { getCurrencySymbol } from '../i18n'
 import { useTranslation } from 'react-i18next'
+import Select from 'react-select'
+import _ from 'lodash'
+
+/**
+ * Custom styles for the react-select component in order to:
+ * - set container display so that it will flow horizontally with its siblings
+ * - set a fixed width for the control to avoid it collapsing on itself,
+ *     and make sure long labels wrap correctly within the fixed width
+ * - inherit the font color from the containing CSS context
+ * - remove vertical padding and hide the separator to better match the styling
+ *     of other native <select> elements on the page
+ */
+const reactSelectStyles = { 
+  container: provided => ({
+      ...provided,
+      display: 'inline-block',
+      width: 150
+    }
+  ),
+  control: provided => ({ ...provided, minHeight: undefined }),
+  valueContainer: provided => ({ ...provided, padding: '0 5px' }),
+  placeholder: provided => ({ ...provided, color: undefined }),
+  input: provided => ({ ...provided, color: undefined }),
+  singleValue: provided => ({ ...provided, color: undefined }),
+  indicatorSeparator: () => ({ display: 'none' }),
+  dropdownIndicator: provided => ({ 
+    ...provided, 
+    color: undefined, 
+    padding: 0, 
+    ':hover': { 
+      color: undefined 
+    }
+  }),
+  option: provided => ({ ...provided, wordWrap: 'break-word' })
+}
 
 export default ({ packages, defaultValue, onChange }) => {
 
@@ -37,19 +72,21 @@ export default ({ packages, defaultValue, onChange }) => {
         </label>
         <label className="mr-2">
           <span className="mx-2">{ t('PRICE_RANGE_EDITOR.PER_PACKAGE') }</span>
-          <select
-            defaultValue={ packageName }
-            onChange={ e => {
-              setPackageName(e.target.value)
+          <Select
+            value={ { value: packageName, label: packageName } }
+            onChange={ selectedOption => {
+              setPackageName(selectedOption.value)
               onChange({
-                packageName: e.target.value,
+                packageName: selectedOption.value,
                 unitPrice,
                 offset,
                 discountPrice,
               })
-            }}>
-            { packages.map(pkg => (<option key={ pkg }>{ pkg }</option>)) }
-          </select>
+            }}
+            options={ _.sortBy(packages).map(pkg => ({ label: pkg, value: pkg })) }
+            styles={ reactSelectStyles }
+            isSearchable
+          />
         </label>
       </div>
       { withDiscount && (
