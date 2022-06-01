@@ -118,7 +118,7 @@ restaurant.disabledWarning: "Ce restaurant n'est pas activé et n'est donc pas v
 restaurant.closedWarningWithDelay: Commandez dès maintenant pour plus tard ! Commande
   minimum %delay% à l'avance.
 restaurant.temporaryClosedWarning: Ce restaurant est indisponible à la livraison jusqu'au
-  <strong>%date%</strong>. Vous pouvez commander pour plus tard !
+  <strong>%date%</strong>.
 restaurant.noMenuWarning: "Ce restaurant n'a pas de menu pour l'instant\n"
 restaurant.quotes_disclaimer.authenticated: Ce restaurant accepte également des commandes
   sur devis. Pour créer des devis, vous devez être un client référencé. <a href="%contact_us%">Contactez-nous</a>
