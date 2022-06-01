@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
 
 import Navbar from './Navbar'
@@ -10,12 +10,17 @@ import DistributionOfTasksByTiming from './DistributionOfTasksByTiming'
 import AverageTiming from './AverageTiming'
 import DistributionOfTasksByPercentage from './DistributionOfTasksByPercentage'
 import TasksDoneTiming from './TasksDoneTiming'
+import TagsSelect from '../../components/TagsSelect'
 
-const Dashboard = ({ cubejsApi, dateRange, tasksMetricsEnabled }) => {
+const Dashboard = ({ cubejsApi, dateRange, allTags, tasksMetricsEnabled }) => {
+  const [ selectedTags, setSelectedTags ] = useState([])
 
   return (
     <div>
       <Navbar />
+      <TagsSelect tags={ allTags }
+                  defaultValue={ selectedTags }
+                  onChange={ tags => setSelectedTags(tags) } />
       <div className="metrics-grid">
         <ChartPanel title="Average distance">
           <AverageDistance cubejsApi={ cubejsApi } dateRange={ dateRange } />
@@ -24,21 +29,23 @@ const Dashboard = ({ cubejsApi, dateRange, tasksMetricsEnabled }) => {
           <StoreCumulativeCount cubejsApi={ cubejsApi } dateRange={ dateRange } />
         </ChartPanel>
         <ChartPanel title="Number of tasks">
-          <NumberOfTasks cubejsApi={ cubejsApi } dateRange={ dateRange } />
+          <NumberOfTasks cubejsApi={ cubejsApi } dateRange={ dateRange } tags={ selectedTags } />
         </ChartPanel>
         {tasksMetricsEnabled && (<div/>)}
         {tasksMetricsEnabled && (
           <ChartPanel title="Tasks done on time, too early or too late">
             <TasksDoneTiming
               cubejsApi={ cubejsApi }
-              dateRange={ dateRange } />
+              dateRange={ dateRange }
+              tags={ selectedTags } />
           </ChartPanel>
         )}
         {tasksMetricsEnabled && (
           <ChartPanel title="Average number of minutes Tasks are done too early/late">
             <AverageTiming
               cubejsApi={ cubejsApi }
-              dateRange={ dateRange } />
+              dateRange={ dateRange }
+              tags={ selectedTags } />
           </ChartPanel>
         )}
         {tasksMetricsEnabled && (
@@ -82,6 +89,7 @@ function mapStateToProps(state) {
 
   return {
     dateRange: state.dateRange,
+    allTags: state.tags,
     tasksMetricsEnabled: state.uiTasksMetricsEnabled,
   }
 }

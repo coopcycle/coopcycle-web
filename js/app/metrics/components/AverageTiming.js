@@ -2,7 +2,7 @@ import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
 import React from 'react';
 import { Bar, } from 'react-chartjs-2';
-import {getCubeDateRange} from "../utils";
+import { getCubeDateRange, getTasksFilters } from '../utils'
 import { useDeepCompareMemo } from 'use-deep-compare'
 import {
   formatDayDimension, getBackgroundColor, TIMING_TOO_EARLY, TIMING_TOO_LATE,
@@ -135,7 +135,7 @@ const renderChart = ({ resultSet, error, pivotConfig }) => {
 
 };
 
-const ChartRenderer = ({ cubejsApi, dateRange }) => {
+const ChartRenderer = ({ cubejsApi, dateRange, tags }) => {
   return (
     <QueryRenderer
       query={{
@@ -153,7 +153,7 @@ const ChartRenderer = ({ cubejsApi, dateRange }) => {
         "order": {
           "Task.type": "desc"
         },
-        "filters": [],
+        "filters": getTasksFilters(tags),
         "dimensions": [
           "Task.type"
         ],
