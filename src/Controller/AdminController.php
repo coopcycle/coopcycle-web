@@ -2262,6 +2262,7 @@ class AdminController extends AbstractController
     public function metricsAction(
         LocalBusinessRepository $localBusinessRepository,
         CubeJsTokenFactory $tokenFactory,
+        TagManager $tagManager,
         Request $request)
     {
         $zeroWasteCount = $localBusinessRepository->countZeroWaste();
@@ -2269,6 +2270,7 @@ class AdminController extends AbstractController
         return $this->render('admin/metrics.html.twig', [
             'cube_token' => $tokenFactory->createToken(),
             'zero_waste' => $zeroWasteCount > 0,
+            'tags' => $tagManager->getAllTags(),
         ]);
     }
 }
