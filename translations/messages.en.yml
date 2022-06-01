@@ -1253,3 +1253,4 @@ form.local_business.mercadopago.remove.connection.success: Mercadopago connectio
 form.vehicle.volume_units.label: Volume units
 form.vehicle.max_weight.label: Maximum weight
 vehicles.breadcrumb: Vehicles
+vehicles.breadcrumb.help: Define fleet of vehicles
