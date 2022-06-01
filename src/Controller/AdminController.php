@@ -35,6 +35,7 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
+use AppBundle\Entity\Vehicle;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AddOrganizationType;
 use AppBundle\Form\AttachToOrganizationType;
@@ -63,6 +64,7 @@ use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
+use AppBundle\Form\VehicleType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
@@ -2269,6 +2271,45 @@ class AdminController extends AbstractController
         return $this->render('admin/metrics.html.twig', [
             'cube_token' => $tokenFactory->createToken(),
             'zero_waste' => $zeroWasteCount > 0,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/vehicles/new", name="admin_new_vehicle")
+     */
+    public function newVehicleAction(Request $request)
+    {
+        $vehicle = new Vehicle();
+
+        $form = $this->createForm(VehicleType::class, $vehicle);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+
+            $this->getDoctrine()->getManager()->persist($vehicle);
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_vehicles');
+        }
+
+        return $this->render('admin/vehicle.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/vehicles", name="admin_vehicles")
+     */
+    public function vehiclesAction()
+    {
+        $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findAll();
+
+        return $this->render('admin/vehicles.html.twig', [
+            'vehicles' => $vehicles,
         ]);
     }
 }
