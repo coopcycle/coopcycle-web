@@ -17,30 +17,26 @@ const Dashboard = ({ cubejsApi, dateRange, tasksMetricsEnabled }) => {
     <div>
       <Navbar />
       <div className="metrics-grid">
-        <ChartPanel title="Average distance">
-          <AverageDistance cubejsApi={ cubejsApi } dateRange={ dateRange } />
-        </ChartPanel>
         <ChartPanel title="Number of stores">
           <StoreCumulativeCount cubejsApi={ cubejsApi } dateRange={ dateRange } />
         </ChartPanel>
+        <div/>
         <ChartPanel title="Number of tasks">
           <NumberOfTasks cubejsApi={ cubejsApi } dateRange={ dateRange } />
         </ChartPanel>
-        {tasksMetricsEnabled && (<div/>)}
-        {tasksMetricsEnabled && (
-          <ChartPanel title="Tasks done on time, too early or too late">
-            <TasksDoneTiming
-              cubejsApi={ cubejsApi }
-              dateRange={ dateRange } />
-          </ChartPanel>
-        )}
-        {tasksMetricsEnabled && (
-          <ChartPanel title="Average number of minutes Tasks are done too early/late">
-            <AverageTiming
-              cubejsApi={ cubejsApi }
-              dateRange={ dateRange } />
-          </ChartPanel>
-        )}
+        <ChartPanel title="Tasks done on time, too early or too late">
+          <TasksDoneTiming
+            cubejsApi={ cubejsApi }
+            dateRange={ dateRange } />
+        </ChartPanel>
+        <ChartPanel title="Average distance">
+          <AverageDistance cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        </ChartPanel>
+        <ChartPanel title="Average number of minutes Tasks are done too early/late">
+          <AverageTiming
+            cubejsApi={ cubejsApi }
+            dateRange={ dateRange } />
+        </ChartPanel>
         {tasksMetricsEnabled && (
           <ChartPanel title="Number Of PICKUPs done X minutes earlier/later than planned">
             <DistributionOfTasksByTiming
