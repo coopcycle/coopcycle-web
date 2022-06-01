@@ -19,7 +19,11 @@ cube(`Task`, {
   joins: {
     TaskDoneEvent: {
       relationship: `hasOne`,
-      sql: `${CUBE.status} = 'DONE' AND ${CUBE.id} = ${TaskDoneEvent}.task_id`,
+      sql: `${CUBE.status} = 'DONE' AND ${CUBE.id} = ${TaskDoneEvent.taskId}`,
+    },
+    Tagging: {
+      relationship: `hasMany`,
+      sql: `${CUBE.id} = ${Tagging.resourceId}`,
     },
   },
 
