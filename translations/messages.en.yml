@@ -1254,3 +1254,4 @@ form.vehicle.volume_units.label: Volume units
 form.vehicle.max_weight.label: Maximum weight
 vehicles.breadcrumb: Vehicles
 vehicles.breadcrumb.help: Define fleet of vehicles
+form.task_export.dv4cul.label: Export using DV4CUL format

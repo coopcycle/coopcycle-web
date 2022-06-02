@@ -121,8 +121,7 @@
           <h4 class="modal-title" id="export-deliveries-modal-label">{% trans %}basics.export{% endtrans %}</h4>
         </div>
         <div class="modal-body">
-          {{ form_row(delivery_export_form.start) }}
-          {{ form_row(delivery_export_form.end) }}
+          {{ form_widget(delivery_export_form) }}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
