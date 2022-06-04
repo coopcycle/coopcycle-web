@@ -27,7 +27,6 @@ final class OrganizationFilter extends AbstractContextAwareFilter
         parent::__construct($managerRegistry, $requestStack, $logger, $properties);
 
         $this->tokenStorage = $tokenStorage;
-        $this->logger = $logger;
     }
 
     protected function getUser()
@@ -46,8 +45,6 @@ final class OrganizationFilter extends AbstractContextAwareFilter
 
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        $this->logger->info(sprintf("In OrganizationFilter: isPropertyEnabled = %b", $this->isPropertyEnabled($property, $resourceClass)));
-        
         // otherwise filter is applied to order and page as well
         if (!$this->isPropertyEnabled($property, $resourceClass)) {
             return;
@@ -58,12 +55,8 @@ final class OrganizationFilter extends AbstractContextAwareFilter
         if ($user->hasRole('ROLE_ADMIN')) {
             $orgName = filter_var($value);
 
-            // $this->logger->info(sprintf("In OrganizationFilter: orgName = %s", $orgName));
-
             $queryBuilder->andWhere(sprintf('org.name = %s', $orgName));
             $queryBuilder->innerJoin(Organization::class, 'org', Expr\Join::WITH, 'o.organization = org.id');
-
-            // $this->logger->info(sprintf("In OrganizationFilter: %s", $queryBuilder->__toString()));
         }
     }
 
