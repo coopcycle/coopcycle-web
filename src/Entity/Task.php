@@ -16,6 +16,7 @@ use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskFilter;
+use AppBundle\Api\Filter\OrganizationFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Package;
@@ -185,6 +186,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(TaskDateFilter::class, properties={"date"})
  * @ApiFilter(TaskFilter::class)
  * @ApiFilter(AssignedFilter::class, properties={"assigned"})
+ * @ApiFilter(OrganizationFilter::class, properties={"organization"})
  * @UniqueEntity(fields={"organization", "ref"}, errorPath="ref")
  */
 class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface
