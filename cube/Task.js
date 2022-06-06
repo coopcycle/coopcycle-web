@@ -63,24 +63,6 @@ cube(`Task`, {
         type: `count`,
         filters: [{ sql: `${CUBE.minutesAfterStart} >= 0 AND ${CUBE.minutesBeforeEnd} >= 0` }],
       },
-      percentageTooEarly: {
-        type: `number`,
-        format: `percent`,
-        sql: `ROUND(${CUBE.countTooEarly}::numeric / ${CUBE.countDone}::numeric * 100.0, 2)`,
-        filters: [{ sql: `${CUBE.countDone} > 0` }],
-      },
-      percentageTooLate: {
-        type: `number`,
-        format: `percent`,
-        sql: `ROUND(${CUBE.countTooLate}::numeric / ${CUBE.countDone}::numeric * 100.0, 2)`,
-        filters: [{ sql: `${CUBE.countDone} > 0` }],
-      },
-      percentageOnTime: {
-        type: `number`,
-        format: `percent`,
-        sql: `ROUND(${CUBE.countOnTime}::numeric / ${CUBE.countDone}::numeric * 100.0, 2)`,
-        filters: [{ sql: `${CUBE.countDone} > 0` }],
-      },
     },
   ),
 

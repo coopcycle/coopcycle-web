@@ -117,27 +117,42 @@ function timingToString(timing) {
 
 const BarChartRenderer = ({ resultSet, pivotConfig }) => {
   let visibleSeries = [
-    "Task.percentageOnTime",
-    "Task.percentageTooEarly",
-    "Task.percentageTooLate",
+    "Task.countTooLate",
+    "Task.countOnTime",
+    "Task.countTooEarly",
   ]
 
   function isVisible(series) {
     return _.findIndex(visibleSeries, function(el) { return series.key.includes(el) }) != -1
   }
 
+  let series = resultSet.series()
+
+  let pickupDoneSeries = series.find(el => el.key == "PICKUP,Task.countDone")
+  let dropoffDoneSeries = series.find(el => el.key == "DROPOFF,Task.countDone")
+
   const datasets = useDeepCompareMemo(
     () =>
-      resultSet.series().filter(s => isVisible(s)).map((s) => ({
+      series.filter(s => isVisible(s)).map((s) => ({
         get label() {
           return `${timingToString(timingFromSeries(s))} ${typeToString(typeFromSeries(s))}`
         },
-        data: s.series.map((r) => {
-          if (s.key.includes('Task.percentageTooLate')) {
-            return -1 * r.value
+        data: s.series.map((r, index) => {
+          let doneSeries
+          if (s.key.includes('PICKUP')) {
+            doneSeries = pickupDoneSeries
           } else {
-            return r.value
+            doneSeries = dropoffDoneSeries
           }
+
+          let percentage = Math.round(r.value / doneSeries.series[index].value * 100)
+
+          if (s.key.includes('Task.countTooLate')) {
+            return -1 * percentage
+          } else {
+            return percentage
+          }
+
         }),
         backgroundColor: s.series.map(() => {
           return getBackgroundColor(typeFromSeries(s), timingFromSeries(s))
@@ -154,9 +169,10 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
     [resultSet]
   );
 
-  const extraDatasets = useDeepCompareMemo(
-    () => resultSet.series().filter(s => !isVisible(s)),
+  const countDatasets = useDeepCompareMemo(
+    () => resultSet.series().filter(s => isVisible(s)),
     [resultSet])
+
 
   const data = {
     labels: resultSet.categories().map((c) => formatDayDimension(c.category)),
@@ -174,9 +190,11 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
           label: function(context) {
             let label = context.dataset.label || '';
 
-            if (context.parsed.y !== null) {
-              let extraValue = extraDatasets[context.datasetIndex].series[context.dataIndex]
-              return `${extraValue.value} ${label} (${Math.round(Math.abs(context.parsed.y))}%)`
+            let percentageValue = context.parsed.y
+
+            if (percentageValue !== null) {
+              let countValue = countDatasets[context.datasetIndex].series[context.dataIndex]
+              return `${countValue.value} ${label} (${Math.abs(percentageValue)}%)`
             }
             return label;
           }
@@ -208,17 +226,11 @@ const ChartRenderer = ({ cubejsApi, dateRange, tags }) => {
   return (
   <QueryRenderer
     query={{
-      /**
-       * order OnTime/TooEarly/TooLate must be the same for percentage and count
-       * for tooltip to pick data correctly
-       */
       "measures": [
-        "Task.percentageTooLate",
-        "Task.percentageOnTime",
-        "Task.percentageTooEarly",
         "Task.countTooLate",
         "Task.countOnTime",
         "Task.countTooEarly",
+        "Task.countDone",
       ],
       "timeDimensions": [
         {

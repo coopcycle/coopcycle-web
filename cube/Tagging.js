@@ -9,7 +9,7 @@ cube(`Tagging`, {
   joins: {
     Tag: {
       relationship: `hasOne`,
-      sql: `${CUBE.id} = ${Tag.id}`,
+      sql: `${CUBE.tagId} = ${Tag.id}`,
     },
   },
 
@@ -25,6 +25,11 @@ cube(`Tagging`, {
       sql: `id`,
       type: `number`,
       primaryKey: true
+    },
+
+    tagId: {
+      sql: `tag_id`,
+      type: `number`
     },
 
     resourceId: {
