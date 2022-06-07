@@ -1250,3 +1250,6 @@ shops.filters.title.cuisines: Cuisines
 shops.filters.title: Filters
 form.local_business.mercadopago.remove.connection: Remove connection with Mercadopago
 form.local_business.mercadopago.remove.connection.success: Mercadopago connection removed successfully
+form.vehicle.volume_units.label: Volume units
+form.vehicle.max_weight.label: Maximum weight
+vehicles.breadcrumb: Vehicles

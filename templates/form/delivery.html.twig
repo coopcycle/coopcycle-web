@@ -68,7 +68,7 @@ col-md-9
 
 {% endblock %}
 
-{% block vehicle_widget %}
+{% block delivery_vehicle_widget %}
 <div>
   <div class="btn-group btn-group--vehicle" data-toggle="buttons">
   {% for child in form %}
@@ -85,7 +85,7 @@ col-md-9
 {% endblock %}
 
 {% block _delivery_vehicle_widget %}
-  {{ block('vehicle_widget') }}
+  {{ block('delivery_vehicle_widget') }}
 {% endblock %}
 
 {% block weight_widget %}
