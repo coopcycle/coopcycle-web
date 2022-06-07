@@ -168,6 +168,7 @@
         "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Go back to previous order",
         "CART_ADDRESS_MODAL_HELP_TEXT": "Please enter your address accurately, with the street number and name",
         "CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS": "Go back to restaurants list",
+        "CART_ADDRESS_MODAL_BACK_TO_RESTAURANT": "Go back to restaurant",
         "CART_ADDRESS_MODAL_NO_THANKS_TAKEAWAY": "I will collect the order myself",
         "CART_DELIVERY_TIME_DIFF": "In {{diff}} minutes",
         "CART_DELIVERY_TIME_EDIT": "Change",

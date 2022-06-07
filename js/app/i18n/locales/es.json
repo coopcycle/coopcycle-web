@@ -129,6 +129,7 @@
         "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Volver a mi pedido",
         "CART_ADDRESS_MODAL_HELP_TEXT": "Por favor ingrese su dirección con precisión, con el número de la calle y el nombre",
         "CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS": "Volver a la lista de restaurantes",
+        "CART_ADDRESS_MODAL_BACK_TO_RESTAURANT": "Volver al restaurante",
         "CART_DELIVERY_TIME_DIFF": "Dentro de {{diff}} minutos",
         "CART_DELIVERY_TIME_EDIT": "Cambiar",
         "CART_DELIVERY_TIME_ASAP": "Lo antes posible",

@@ -20,8 +20,8 @@
 
 .coopcycle-modal__container {
   background-color: #fff;
-  max-width: 500px;
-  width: 50%;
+  max-width: 100vw;
+  width: 75%;
   max-height: 100vh;
   height: 75%;
   border-radius: 4px;
