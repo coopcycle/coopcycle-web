@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 class SitemapController extends AbstractController
 {
@@ -28,15 +29,26 @@ class SitemapController extends AbstractController
         $urls = [];
 
         // About us
-        $aboutUs = [
-            'loc' => $this->generateUrl('about_us', [
-                '_locale' => $locale
-            ], UrlGeneratorInterface::ABSOLUTE_URL)
-        ];
+        try {
+            $aboutUs = [
+                'loc' => $this->generateUrl('about_us', [
+                    '_locale' => $locale
+                ], UrlGeneratorInterface::ABSOLUTE_URL)
+            ];
+        } catch (RouteNotFoundException $e) {
+            $aboutUs = [
+                'loc' => $this->generateUrl('about_us', [
+                    '_locale' => 'en'
+                ], UrlGeneratorInterface::ABSOLUTE_URL)
+            ];
+        }
+
         foreach ($otherLocales as $otherLocale) {
-            $aboutUs['alternate_urls'][$otherLocale] = $this->generateUrl('about_us', [
-                '_locale' => $otherLocale
-            ], UrlGeneratorInterface::ABSOLUTE_URL);
+            try {
+                $aboutUs['alternate_urls'][$otherLocale] = $this->generateUrl('about_us', [
+                    '_locale' => $otherLocale
+                ], UrlGeneratorInterface::ABSOLUTE_URL);
+            } catch (RouteNotFoundException $e) {}
         }
         $urls[] = $aboutUs;
 
