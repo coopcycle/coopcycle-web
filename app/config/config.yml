@@ -61,6 +61,7 @@ parameters:
     vytal_enabled: '%env(bool:VYTAL_ENABLED)%'
     en_boite_le_plat_enabled: '%env(bool:EN_BOITE_LE_PLAT_ENABLED)%'
     nonprofits_enabled: '%env(bool:NONPROFITS_ENABLED)%'
+    dv4cul_enabled: '%env(bool:DV4CUL_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.

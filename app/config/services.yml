@@ -1093,6 +1093,7 @@ services:
       $namespace: '%centrifugo_namespace%'
 
   AppBundle\Spreadsheet\DeliveryDataExporter: ~
+  AppBundle\Spreadsheet\DV4CULDataExporter: ~
 
   AppBundle\Edenred\Authentication:
     arguments:

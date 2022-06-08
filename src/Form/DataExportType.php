@@ -2,8 +2,9 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Spreadsheet\AbstractDataExporter;
+use AppBundle\Spreadsheet\DataExporterInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -13,6 +14,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DataExportType extends AbstractType
 {
+    public function __construct(bool $dv4culEnabled, array $exporters)
+    {
+        $this->dv4culEnabled = $dv4culEnabled;
+        $this->exporters = $exporters;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -31,11 +38,22 @@ class DataExportType extends AbstractType
                 'data' => new \DateTime('now'),
             ]);
 
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($options) {
+        if ($this->dv4culEnabled) {
+            $builder
+                ->add('dv4cul', CheckboxType::class, [
+                    'label' => 'form.task_export.dv4cul.label',
+                    'required' => false,
+                ]);
+        }
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
 
             $taskExport = $event->getForm()->getData();
 
             $data = $event->getData();
+
+            $exporter = isset($data['dv4cul']) && $data['dv4cul'] ?
+                $this->exporters['dv4cul'] : $this->exporters['default'];
 
             $start = new \DateTime($data['start']);
             $start->setTime(0, 0, 0);
@@ -43,18 +61,13 @@ class DataExportType extends AbstractType
             $end = new \DateTime($data['end']);
             $end->setTime(23, 59, 59);
 
-            $csv = $options['data_exporter']->export($start, $end);
+            $content = $exporter->export($start, $end);
 
-            $event->getForm()->setData(['csv' => $csv]);
+            $event->getForm()->setData([
+                'content' => $content,
+                'content_type' => $exporter->getContentType(),
+                'filename' => $exporter->getFilename($start, $end),
+            ]);
         });
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'data_exporter' => null,
-        ));
-
-        $resolver->setAllowedTypes('data_exporter', [AbstractDataExporter::class]);
     }
 }

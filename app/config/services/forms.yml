@@ -244,3 +244,11 @@ services:
     arguments:
       $opencageApiKey: '%env(OPENCAGE_API_KEY)%'
     tags: [ form.type ]
+
+  AppBundle\Form\DataExportType:
+    arguments:
+      $dv4culEnabled: '%dv4cul_enabled%'
+      $exporters:
+        default: '@AppBundle\Spreadsheet\DeliveryDataExporter'
+        dv4cul: '@AppBundle\Spreadsheet\DV4CULDataExporter'
+    tags: [ form.type ]

@@ -72,7 +72,6 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
-use AppBundle\Spreadsheet\DeliveryDataExporter;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
@@ -717,7 +716,8 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/deliveries", name="admin_deliveries")
      */
-    public function deliveriesAction(Request $request, DeliveryDataExporter $dataExporter, PaginatorInterface $paginator)
+    public function deliveriesAction(Request $request,
+        PaginatorInterface $paginator)
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
             'with_store' => true
@@ -742,24 +742,20 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_deliveries');
         }
 
-        $dataExportForm = $this->createForm(DataExportType::class, null, [
-            'data_exporter' => $dataExporter
-        ]);
+        $dataExportForm = $this->createForm(DataExportType::class);
 
         $dataExportForm->handleRequest($request);
         if ($dataExportForm->isSubmitted() && $dataExportForm->isValid()) {
+
             $data = $dataExportForm->getData();
 
-            $start = $dataExportForm->get('start')->getData();
-            $end = $dataExportForm->get('end')->getData();
+            $response = new Response($data['content']);
 
-            $response = new Response($data['csv']);
-
-            $response->headers->add(['Content-Type' => 'text/csv']);
+            $response->headers->add(['Content-Type' => $data['content_type']]);
             $response->headers->add([
                 'Content-Disposition' => $response->headers->makeDisposition(
                     ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                    sprintf('deliveries-%s-%s.csv', $start->format('Y-m-d'), $end->format('Y-m-d'))
+                    $data['filename']
                 )
             ]);
 
