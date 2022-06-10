@@ -66,10 +66,9 @@ abstract class AbstractIndexCommand extends Command
 
         } catch (\Throwable $th) {
             $this->io->text(sprintf('There was an error indexing data: %s', $th->getMessage()));
-            return 0;
         }
 
-        return 1;
+        return 0;
     }
 
 }

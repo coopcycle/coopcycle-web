@@ -43,12 +43,11 @@ class DeleteCollectionCommand extends Command
             $this->client->collections[$collection]->delete();
         } catch (\Throwable $th) {
             $this->io->text(sprintf('There was an error deleting the collection: %s', $th->getMessage()));
-            return 0;
         }
 
         $this->io->text(sprintf('Collection %s deleted successfully', $collection));
 
-        return 1;
+        return 0;
     }
 
 }

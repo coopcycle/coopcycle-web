@@ -51,14 +51,13 @@ class CreateAllCollectionsCommand extends Command
                     $this->client->collections->create($content);
                 } catch (\Throwable $th) {
                     $this->io->text(sprintf('There was an error creating the collection %s - %s', $content['name'], $th->getMessage()));
-                    return 0;
                 }
             });
 
             $this->io->text('All collections have been created');
         }
 
-        return 1;
+        return 0;
     }
 
 }

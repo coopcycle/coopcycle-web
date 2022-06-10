@@ -46,12 +46,11 @@ class CreateCollectionCommand extends Command
 
         } catch (\Throwable $th) {
             $this->io->text(sprintf('There was an error creating the collection: %s', $th->getMessage()));
-            return 0;
         }
 
         $this->io->text(sprintf('Schema for %s created successfully', $collection));
 
-        return 1;
+        return 0;
     }
 
 }
