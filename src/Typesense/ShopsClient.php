@@ -58,6 +58,13 @@ class ShopsClient
             ->collections[$this->getCollectionName()]->retrieve();
     }
 
+    public function search($searchParameters)
+    {
+        return $this->typesenseClient
+            ->collections[$this->getCollectionName()]
+            ->documents->search($searchParameters);
+    }
+
     public function getCollectionName()
     {
         if ('test' === $this->environment) {

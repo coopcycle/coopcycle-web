@@ -117,6 +117,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
 use Twig\Environment as TwigEnvironment;
 use Typesense\Client as TypesenseClient;
+use AppBundle\Typesense\ShopsClient as TypesenseShopsClient;
 
 class AdminController extends AbstractController
 {
@@ -165,7 +166,7 @@ class AdminController extends AbstractController
         FactoryInterface $promotionFactory,
         HttpClientInterface $browserlessClient,
         bool $optinExportUsersEnabled,
-        TypesenseClient $typesenseClient
+        TypesenseShopsClient $typesenseShopsClient
     )
     {
         $this->orderRepository = $orderRepository;
@@ -176,7 +177,7 @@ class AdminController extends AbstractController
         $this->promotionFactory = $promotionFactory;
         $this->browserlessClient = $browserlessClient;
         $this->optinExportUsersEnabled = $optinExportUsersEnabled;
-        $this->typesenseClient = $typesenseClient;
+        $this->typesenseShopsClient = $typesenseShopsClient;
     }
 
     /**
@@ -1093,14 +1094,12 @@ class AdminController extends AbstractController
      */
     public function searchRestaurantsAction(Request $request)
     {
-        $shops_collection = 'shops';
-
         $searchParameters = [
             'q'         => $request->query->get('q'),
             'query_by'  => 'name',
         ];
 
-        $result = $this->typesenseClient->collections[$shops_collection]->documents->search($searchParameters);
+        $result = $this->typesenseShopsClient->search($searchParameters);
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
             $data = array_map(function ($hit) {
