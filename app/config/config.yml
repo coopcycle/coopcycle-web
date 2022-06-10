@@ -64,6 +64,10 @@ parameters:
     dv4cul_enabled: '%env(bool:DV4CUL_ENABLED)%'
     typesense_schemas_dir: "%kernel.project_dir%/src/Resources/config/typesense/schemas"
     typesense_shops_collection_name: "%database_name%_shops"
+    dabba_enabled: '%env(bool:DABBA_ENABLED)%'
+    dabba_base_url: '%env(DABBA_BASE_URL)%'
+    dabba_client_id: '%env(DABBA_CLIENT_ID)%'
+    dabba_client_secret: '%env(DABBA_CLIENT_SECRET)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -199,6 +203,8 @@ framework:
                 base_uri: "%env(CUBEJS_API_URL)%/"
             woopit.http_client:
                 base_uri: 'https://car-api.%env(WOOPIT_HOST)%/'
+            dabba.client:
+                base_uri: "%env(DABBA_BASE_URL)%/"
 
 # Twig Configuration
 twig:
@@ -242,6 +248,7 @@ twig:
         edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
         cubejs_api_url: '%env(CUBEJS_API_URL)%'
         ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
+        dabba_context: '@AppBundle\Dabba\Context'
 
     exception_controller: null
 

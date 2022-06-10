@@ -68,3 +68,7 @@ services:
       $expressionLanguage: '@coopcycle.expression_language'
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\DabbaOrderValidator:
+    tags:
+      - { name: validator.constraint_validator }

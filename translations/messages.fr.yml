@@ -1245,3 +1245,10 @@ shops.filters.title.types: Type de commerce
 shops.filters.title.categories: Catégories
 shops.filters.title.cuisines: Cuisines
 shops.filters.title: Filtres
+form.checkout_address.reusable_packaging_dabba_enabled.label: Je veux utiliser des consignes Dabba
+form.checkout_address.reusable_packaging.dabba.wallet.label: Vous avez <strong>%amount%</strong> sur votre cagnotte Dabba
+form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% par consigne)
+form.checkout_address.reusable_packaging.dabba.return_pledge_label: Vous allez rendre
+  %field% consigne(s) Dabba au coursier
+form.checkout_address.reusable_packaging.dabba.learn_more: En savoir plus sur Dabba
+form.checkout_address.reusable_packaging.dabba.add: Ajouter %missing% sur votre cagnotte

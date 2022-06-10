@@ -689,7 +689,7 @@ form.checkout_address.telephone.label: Phone number
 form.checkout_address.reusable_packaging_enabled.label: I want reusable packaging
   (%price%)
 form.checkout_address.reusable_packaging_loopeat_enabled.label: I want to use LoopEat
-  containers (%price%)
+  containers
 form.checkout_address.add_promotion.label: Apply
 form.checkout_address.tip_amount.label: Tip
 form.checkout_address.tip_amount.help: Thank you ❤
@@ -1257,3 +1257,12 @@ form.vehicle.max_weight.label: Maximum weight
 vehicles.breadcrumb: Vehicles
 vehicles.breadcrumb.help: Define fleet of vehicles
 form.task_export.dv4cul.label: Export using DV4CUL format
+restaurant.form.section.dabba: Dabba
+restaurant.form.dabba_enabled.label: Enable Dabba deposit-refund system
+dabba.oauth_redirect.warning: You will be redirected to the Dabba website to login or create your account
+form.checkout_address.reusable_packaging_dabba_enabled.label: I want to use Dabba
+  containers
+form.checkout_address.reusable_packaging.dabba.learn_more: Learn more about Dabba
+dabba.oauth_connect.success: Dabba account connected successfully!
+form.checkout_address.reusable_packaging.dabba.wallet.label: You have <strong>%amount%</strong> on your Dabba wallet
+form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% per lunchbox)

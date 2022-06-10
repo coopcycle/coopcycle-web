@@ -144,6 +144,13 @@
           </a>
         </li>
         {% endif %}
+        {% if form.dabba is defined %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#dabba" aria-controls="dabba">
+            {{ 'restaurant.form.section.dabba'|trans }}
+          </a>
+        </li>
+        {% endif %}
         {% if restaurant.id is not null %}
         <li role="presentation">
           <a role="tab" data-toggle="tab" href="#embed" aria-controls="embed">
@@ -192,6 +199,11 @@
         {% if form.enBoitLePlatEnabled is defined %}
         <div role="tabpanel" class="tab-pane" id="en-boite-le-plat">
           {{ form_row(form.enBoitLePlatEnabled) }}
+        </div>
+        {% endif %}
+        {% if form.dabba is defined %}
+        <div role="tabpanel" class="tab-pane" id="dabba">
+          {{ form_row(form.dabba) }}
         </div>
         {% endif %}
         {% if restaurant.id is not null %}

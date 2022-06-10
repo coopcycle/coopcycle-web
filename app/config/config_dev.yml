@@ -73,6 +73,12 @@ monolog:
             level: info
             max_files: 3
             channels: [urbantz]
+        dabba:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/dabba.%kernel.environment%.log"
+            level: info
+            max_files: 3
+            channels: [dabba]
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
         #firephp:

@@ -259,6 +259,10 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $cashOnDeliveryEnabled = false;
 
+    protected $dabbaEnabled = false;
+
+    protected $dabbaCode;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -980,9 +984,33 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $facets;
     }
 
-
     public function isZeroWaste()
     {
-        return $this->isDepositRefundEnabled() || $this->isLoopeatEnabled();
+        return $this->isDepositRefundEnabled() || $this->isLoopeatEnabled() || $this->isDabbaEnabled();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDabbaEnabled()
+    {
+        return $this->dabbaEnabled;
+    }
+
+    /**
+     * @param bool $enabled
+     *
+     * @return self
+     */
+    public function setDabbaEnabled($enabled)
+    {
+        $this->dabbaEnabled = $enabled;
+
+        return $this;
+    }
+
+    public function getDabbaCode()
+    {
+        return $this->dabbaCode;
     }
 }
