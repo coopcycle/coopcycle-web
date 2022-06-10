@@ -25,6 +25,11 @@ return [
         [
             'name' => 'enabled',
             'type' => 'bool',
-        ]
+        ],
+        [
+            'name' => '.*_facet',
+            'type' => 'auto',
+            'facet' => true
+        ],
     ]
 ];
