@@ -96,8 +96,7 @@ Encore
   .enableVersioning(Encore.isProduction())
 
 if (!Encore.isProduction()) {
-  // https://github.com/symfony/webpack-encore/issues/847
-  Encore.addPlugin(new ESLintPlugin())
+  Encore.enableEslintPlugin()
 }
 
 // https://github.com/webpack/webpack-dev-server/blob/master/CHANGELOG.md#400-beta0-2020-11-27
