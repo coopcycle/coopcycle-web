@@ -128,7 +128,7 @@
 <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
 {% set gateway_configs = gateway_configs|merge({
   mercadopago: {
-    publishableKey: order.restaurant.getMercadopagoAccount() ? order.restaurant.getMercadopagoAccount().getPublicKey() : null,
+    publishableKey: coopcycle_setting('mercadopago_publishable_key'),
     country: country
   }
 }) %}
