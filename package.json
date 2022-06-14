@@ -55,7 +55,7 @@
     "codemirror": "^5.65.3",
     "color-hash": "^2.0.1",
     "compare-versions": "^3.6.0",
-    "core-js": "^3.22.4",
+    "core-js": "^3.23.0",
     "cropperjs": "^1.5.12",
     "croppie": "^2.6.5",
     "cypress": "^6.9.1",
