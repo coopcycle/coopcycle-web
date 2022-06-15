@@ -232,7 +232,7 @@ services:
       driver: none
 
   typesense:
-    image: typesense/typesense:0.19.0
+    image: typesense/typesense:0.22.2
     ports:
       - 8108:8108
     environment:

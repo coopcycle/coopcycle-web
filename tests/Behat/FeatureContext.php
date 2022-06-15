@@ -63,6 +63,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
+use Typesense\Client as TypesenseClient;
 
 /**
  * Defines application features from the specific context.
@@ -127,7 +128,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         OrderProcessorInterface $orderProcessor,
         KernelInterface $kernel,
         ContainerInterface $behatContainer,
-        UserManagerInterface $userManager)
+        UserManagerInterface $userManager,
+        TypesenseClient $typesenseClient)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -151,6 +153,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->kernel = $kernel;
         $this->behatContainer = $behatContainer;
         $this->userManager = $userManager;
+        $this->typesenseClient = $typesenseClient;
     }
 
     protected function getContainer()
@@ -218,6 +221,40 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function createMandatorySettings()
     {
         $this->theSettingHasValue('latlng', '48.856613,2.352222');
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function createTypesenseCollections()
+    {
+        $schemas_dir = 'typesense/schemas';
+        $schemas_files = array_diff(scandir($schemas_dir), array('..', '.')); // remove . and ..
+
+        array_walk($schemas_files, function ($schema_file) use($schemas_dir) {
+            $content = include($schemas_dir . '/' . $schema_file);
+
+            $content['name'] = $content['name'] . '_test';
+
+            $this->typesenseClient->collections->create($content);
+        });
+    }
+
+    /**
+     * @AfterScenario
+     */
+    public function deleteTypesenseCollections()
+    {
+        $schemas_dir = 'typesense/schemas';
+        $schemas_files = array_diff(scandir($schemas_dir), array('..', '.')); // remove . and ..
+
+        array_walk($schemas_files, function ($schema_file) use($schemas_dir) {
+            $content = include($schemas_dir . '/' . $schema_file);
+
+            $collection_name = $content['name'] . '_test';
+
+            $this->typesenseClient->collections[$collection_name]->delete();
+        });
     }
 
     /**

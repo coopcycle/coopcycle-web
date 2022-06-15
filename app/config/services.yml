@@ -671,6 +671,11 @@ services:
       - { name: kernel.event_subscriber }
       - { name: monolog.logger, channel: urbantz }
 
+  AppBundle\Doctrine\EventSubscriber\ShopsEventsForTypesenseSubscriber:
+    tags:
+      - { name: monolog.logger }
+      - { name: doctrine.event_subscriber }
+
   AppBundle\Action\Settings:
     public: true
     arguments:
@@ -1060,6 +1065,15 @@ services:
     arguments:
       $productOptionValueRepository: '@sylius.repository.product_option_value'
 
+  Typesense\Client:
+    arguments:
+      - api_key: '%env(TYPESENSE_API_KEY)%'
+        nodes:
+          - host: '%env(TYPESENSE_HOST)%'
+            port: '%env(TYPESENSE_PORT)%'
+            protocol: 'http'
+        connection_timeout_seconds: 2
+
   Psonic\Client:
     arguments:
       - '%env(SONIC_HOST)%'
@@ -1170,3 +1184,7 @@ services:
   AppBundle\Translation\DatePeriodFormatter:
     arguments:
       $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  AppBundle\Typesense\ShopsClient:
+    arguments:
+      $environment: '%kernel.environment%'
