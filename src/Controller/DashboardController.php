@@ -49,6 +49,8 @@ class DashboardController extends AbstractController
             'promotion' => 'dashboard_restaurant_promotion',
             'product_option_preview' => 'dashboard_restaurant_product_option_preview',
             'reusable_packaging_new' => 'dashboard_restaurant_new_reusable_packaging',
+            'mercadopago_oauth_redirect' => 'dashboard_restaurant_mercadopago_oauth_redirect',
+            'mercadopago_oauth_remove' => 'dashboard_restaurant_mercadopago_oauth_remove',
         ];
     }
 

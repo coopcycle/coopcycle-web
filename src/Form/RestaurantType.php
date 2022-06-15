@@ -131,12 +131,27 @@ class RestaurantType extends LocalBusinessType
             if (null !== $restaurant->getId()) {
 
                 if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-                    $form->add('allowStripeConnect', CheckboxType::class, [
-                        'label' => 'restaurant.form.allow_stripe_connect.label',
-                        'mapped' => false,
-                        'required' => false,
-                        'data' => in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())
-                    ]);
+                    $gateway = $this->gatewayResolver->resolve();
+
+                    switch ($gateway) {
+                        case 'mercadopago':
+                            $form->add('allowMercadopagoConnect', CheckboxType::class, [
+                                'label' => 'restaurant.form.allow_mercadopago_connect.label',
+                                'mapped' => false,
+                                'required' => false,
+                                'data' => in_array('ROLE_RESTAURANT', $restaurant->getMercadopagoConnectRoles())
+                            ]);
+                            break;
+                        case 'stripe':
+                        default:
+                            $form->add('allowStripeConnect', CheckboxType::class, [
+                                'label' => 'restaurant.form.allow_stripe_connect.label',
+                                'mapped' => false,
+                                'required' => false,
+                                'data' => in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())
+                            ]);
+                            break;
+                    }
                     if (!$restaurant->isDeleted()) {
                         $form->add('delete', SubmitType::class, [
                             'label' => 'basics.delete',
@@ -195,6 +210,17 @@ class RestaurantType extends LocalBusinessType
                         if (!in_array('ROLE_RESTAURANT', $stripeConnectRoles)) {
                             $stripeConnectRoles[] = 'ROLE_RESTAURANT';
                             $restaurant->setStripeConnectRoles($stripeConnectRoles);
+                        }
+                    }
+                }
+
+                if ($form->has('allowMercadopagoConnect')) {
+                    $allowMercadopagoConnect = $form->get('allowMercadopagoConnect')->getData();
+                    if ($allowMercadopagoConnect) {
+                        $mercadopagoConnectRoles = $restaurant->getMercadopagoConnectRoles();
+                        if (!in_array('ROLE_RESTAURANT', $mercadopagoConnectRoles)) {
+                            $mercadopagoConnectRoles[] = 'ROLE_RESTAURANT';
+                            $restaurant->setMercadopagoConnectRoles($mercadopagoConnectRoles);
                         }
                     }
                 }

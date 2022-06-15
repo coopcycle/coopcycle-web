@@ -227,6 +227,11 @@ class LocalBusiness extends BaseLocalBusiness implements
      */
     protected $stripeConnectRoles = ['ROLE_ADMIN'];
 
+    /**
+     * The roles needed to be able to manage Mercadopago connect.
+     */
+    protected $mercadopagoConnectRoles = ['ROLE_ADMIN'];
+
     protected $preparationTimeRules;
 
     protected $reusablePackagings;
@@ -447,6 +452,18 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setState($state)
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    public function getMercadopagoConnectRoles()
+    {
+        return $this->mercadopagoConnectRoles;
+    }
+
+    public function setMercadopagoConnectRoles($mercadopagoConnectRoles)
+    {
+        $this->mercadopagoConnectRoles = $mercadopagoConnectRoles;
 
         return $this;
     }

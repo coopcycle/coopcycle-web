@@ -27,6 +27,15 @@
 
   {% if gateway == 'mercadopago' %}
     {% include "_partials/restaurant/mercadopago_accounts.html.twig" %}
+
+    {% if form.allowMercadopagoConnect is defined %}
+      <div class="mt-4 alert alert-warning">
+        {{ 'restaurant.form.allow_mercadopago_connect.label'|trans }}
+        <div class="pull-right">
+          {{ form_widget(form.allowMercadopagoConnect, { attr: { class: 'checkbox switch' }}) }}
+        </div>
+      </div>
+    {% endif %}
   {% endif %}
 
 {% endif %}
@@ -36,6 +45,9 @@
 {% endif %}
 {% if form.enableGiropay is defined and not form.enableGiropay.rendered %}
   {% do form.enableGiropay.setRendered %}
+{% endif %}
+{% if form.allowMercadopagoConnect is defined and not form.allowMercadopagoConnect.rendered %}
+  {% do form.allowMercadopagoConnect.setRendered %}
 {% endif %}
 
 {% if form.edenredMerchantId is defined %}

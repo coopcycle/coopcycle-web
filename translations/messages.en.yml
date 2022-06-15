@@ -164,6 +164,8 @@ restaurant.form.enabled.tooltip: "When disabled, a restaurant is not visible on 
   \ by visitors.\n"
 restaurant.form.allow_stripe_connect.label: Allow the restaurant to manage Stripe
   account on its own
+restaurant.form.allow_mercadopago_connect.label: Allow the restaurant to manage Mercadopago
+  account on its own
 restaurant.form.temporaryClosingRule: Click here to temporarily disable orders to
   your restaurant.
 restaurant.form.deposit_refund_enabled.label: Enable deposit-refund system
