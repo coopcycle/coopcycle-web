@@ -19,6 +19,11 @@ Feature: Manage restaurants
       "hydra:member":[
         {
           "@id":"/api/restaurants/1",
+          "facets": {
+            "category":["Exclusivités","À la une"],
+            "cuisine":["Asiatique"],
+            "type":"Restaurant"
+          },
           "@*@": "@*@"
         },
         {
@@ -92,7 +97,10 @@ Feature: Manage restaurants
           "specialOpeningHoursSpecification":[],
           "image":@string@,
           "fulfillmentMethods":@array@,
-          "isOpen":true
+          "isOpen":true,
+          "facets": {
+            "@*@": "@*@"
+          }
         }
       ],
       "hydra:totalItems":1,

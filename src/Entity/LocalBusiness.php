@@ -52,7 +52,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "get"={
  *       "method"="GET",
  *       "pagination_enabled"=false,
- *       "normalization_context"={"groups"={"restaurant", "address", "order"}}
+ *       "normalization_context"={"groups"={"restaurant", "address", "order", "restaurant_list"}}
  *     },
  *     "me_restaurants"={
  *       "method"="GET",
@@ -928,5 +928,44 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->enBoitLePlatEnabled = $enabled;
 
         return $this;
+    }
+
+    /**
+     * @SerializedName("facets")
+     * @Groups("restaurant_list")
+     */
+    public function getFacets()
+    {
+        $facets = [
+            'category' => [],
+            'cuisine'  => [],
+            'type'     => [],
+        ];
+
+        if ($this->isExclusive()) {
+            $facets['category'][] = 'exclusive';
+        }
+
+        if ($this->isFeatured()) {
+            $facets['category'][] = 'featured';
+        }
+
+        if ($this->isZeroWaste()) {
+            $facets['category'][] = 'zero_waste';
+        }
+
+        foreach ($this->getServesCuisine() as $cuisine) {
+            $facets['cuisine'][] = $cuisine->getName();
+        }
+
+        $facets['type'] = $this->getType();
+
+        return $facets;
+    }
+
+
+    public function isZeroWaste()
+    {
+        return $this->isDepositRefundEnabled() || $this->isLoopeatEnabled();
     }
 }
