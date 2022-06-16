@@ -11,10 +11,10 @@ use Typesense\Client;
 
 class CreateCollectionCommand extends Command
 {
-
-    public function __construct(Client $client)
+    public function __construct(Client $client, string $schemasDir)
     {
         $this->client = $client;
+        $this->schemasDir = $schemasDir;
 
         parent::__construct();
     }
@@ -40,7 +40,7 @@ class CreateCollectionCommand extends Command
         $collection = $input->getArgument('collection');
 
         try {
-            $contents = include_once(sprintf('typesense/schemas/%s.php', $collection));
+            $contents = include_once(sprintf('%s/%s.php', $this->schemasDir, $collection));
 
             $this->client->collections->create($contents);
 
