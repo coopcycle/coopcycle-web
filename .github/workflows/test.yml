@@ -149,3 +149,4 @@ jobs:
         with:
           spec: cypress/component/address-autosuggest.spec.js
           config: baseUrl=https://demo.coopcycle.org
+          component: true
