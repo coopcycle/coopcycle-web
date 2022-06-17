@@ -182,6 +182,6 @@ services:
     arguments:
       $schemasDir: '%typesense_schemas_dir%'
       $collections:
-        - "%typesense_shops_collection_name%"
+        shops: "%typesense_shops_collection_name%"
     tags:
       - { name: 'console.command', command: 'typesense:collections:create' }

@@ -25,9 +25,6 @@ class CreateAllCollectionsCommand extends Command
         $this
             ->setName('typesense:collections:create')
             ->setDescription('Creates all collections for Typesense')
-            // ->addArgument(
-            //     'env'
-            // )
             ;
     }
 
@@ -38,31 +35,24 @@ class CreateAllCollectionsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // $env = $input->getArgument('env');
+        foreach ($this->collections as $name => $nameWithNamespace) {
 
-        $schemas_files = array_diff(scandir($this->schemasDir), array('..', '.'));
+            $schemaFile = sprintf('%s/%s.php', $this->schemasDir, $name);
 
-        print_r($schemas_files);
-        print_r($this->collections);
-        return 0;
+            if (file_exists($schemaFile)) {
 
-        if ('test' === $env) {
-            $schemas_files = array_diff(scandir($this->schemasDir), array('..', '.')); // remove . and ..
-
-            array_walk($schemas_files, function ($schema_file) use($schemas_dir) {
-                $content = include($this->schemasDir . '/' . $schema_file);
-
-                $content['name'] = $content['name'] . '_test';
+                $schema = include($schemaFile);
 
                 try {
-                    $this->client->collections->create($content);
-                } catch (\Throwable $th) {
-                    $this->io->text(sprintf('There was an error creating the collection %s - %s', $content['name'], $th->getMessage()));
+                    $this->client->collections->create($schema);
+                } catch (\Throwable $e) {
+                    $this->io->text(sprintf('There was an error creating the collection %s - %s', $name, $e->getMessage()));
                 }
-            });
+            }
 
-            $this->io->text('All collections have been created');
         }
+
+        $this->io->text('All collections have been created');
 
         return 0;
     }
