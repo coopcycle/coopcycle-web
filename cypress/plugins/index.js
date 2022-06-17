@@ -22,20 +22,6 @@ module.exports = (on, config) => {
   config.env.GEOCODE_EARTH_API_KEY = process.env.GEOCODE_EARTH_API_KEY
   config.env.LOCATIONIQ_ACCESS_TOKEN = process.env.LOCATIONIQ_ACCESS_TOKEN
 
-  // https://github.com/cypress-io/cypress/tree/master/npm/webpack-preprocessor#options
-  // const options = {
-  //   // send in the options from your webpack.config.js, so it works the same
-  //   // as your app's code
-  //   webpackOptions: require('../../webpack.cypress'),
-  //   watchOptions: {},
-  // }
-  // on('file:preprocessor', webpackPreprocessor(options))
-
-  // https://github.com/cypress-io/cypress/blob/master/npm/react/docs/recipes.md#your-webpack-config
-  // from the root of the project (folder with cypress.json file)
-  config.env.webpackFilename = 'webpack.cypress.js'
-  require('@cypress/react/plugins/load-webpack')(on, config)
-
   // IMPORTANT to return the config object
   // with the any changed environment variables
   return config

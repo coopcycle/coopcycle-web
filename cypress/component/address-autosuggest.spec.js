@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import yaml from 'js-yaml'
-import { mount } from '@cypress/react'
+import { mount } from 'cypress/react'
 
 import AddressAutosuggest from '../../js/app/components/AddressAutosuggest'
 

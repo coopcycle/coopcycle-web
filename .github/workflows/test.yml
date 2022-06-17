@@ -70,6 +70,7 @@ jobs:
       - name: Run Jest
         run: docker-compose exec -T webpack npm run jest
   E2E:
+    if: false
     name: Run End to End tests
     runs-on: ubuntu-latest
     env:
@@ -115,7 +116,7 @@ jobs:
       - name: Compile assets
         run: until docker-compose exec -T webpack node_modules/.bin/encore dev; do sleep 5; done
       - name: Run Cypress
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4
         with:
           spec: |
             cypress/integration/*.spec.js
@@ -144,7 +145,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run Cypress
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4
         with:
           spec: cypress/component/address-autosuggest.spec.js
           config: baseUrl=https://demo.coopcycle.org
