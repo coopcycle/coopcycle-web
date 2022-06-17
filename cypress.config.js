@@ -12,7 +12,7 @@ module.exports = {
       framework: 'react',
       bundler: 'webpack',
       // optionally pass in webpack config
-      webpackConfig: require('./webpack.config'),
+      webpackConfig: require('./webpack.cypress'),
     },
   },
 }
