@@ -2,19 +2,18 @@
 
 namespace AppBundle\Command\Typesense;
 
+use AppBundle\Typesense\CollectionManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Typesense\Client;
 
 class CreateCollectionCommand extends Command
 {
-    public function __construct(Client $client, string $schemasDir)
+    public function __construct(CollectionManager $collectionManager)
     {
-        $this->client = $client;
-        $this->schemasDir = $schemasDir;
+        $this->collectionManager = $collectionManager;
 
         parent::__construct();
     }
@@ -37,18 +36,16 @@ class CreateCollectionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $collection = $input->getArgument('collection');
+        $name = $input->getArgument('collection');
 
         try {
-            $contents = include_once(sprintf('%s/%s.php', $this->schemasDir, $collection));
-
-            $this->client->collections->create($contents);
-
+            $collection = $this->collectionManager->create($name);
+            $this->io->text(
+                sprintf('Created collection "%s" with name "%s"', $name, $collection['name'])
+            );
         } catch (\Throwable $th) {
             $this->io->text(sprintf('There was an error creating the collection: %s', $th->getMessage()));
         }
-
-        $this->io->text(sprintf('Schema for %s created successfully', $collection));
 
         return 0;
     }

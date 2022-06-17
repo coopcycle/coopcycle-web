@@ -164,8 +164,6 @@ services:
       - { name: 'console.command', command: 'coopcycle:avatars:regenerate' }
 
   AppBundle\Command\Typesense\CreateCollectionCommand:
-    arguments:
-      $schemasDir: '%typesense_schemas_dir%'
     tags:
       - { name: 'console.command', command: 'typesense:collection:create' }
 
@@ -179,7 +177,5 @@ services:
 
   # used to create all collections in a test environment
   AppBundle\Command\Typesense\CreateAllCollectionsCommand:
-    arguments:
-      $schemasDir: '%typesense_schemas_dir%'
     tags:
       - { name: 'console.command', command: 'typesense:collections:create' }

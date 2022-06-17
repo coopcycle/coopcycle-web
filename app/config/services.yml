@@ -1187,4 +1187,10 @@ services:
 
   AppBundle\Typesense\ShopsClient:
     arguments:
-      $environment: '%kernel.environment%'
+      $collectionName: '%typesense_shops_collection_name%'
+
+  AppBundle\Typesense\CollectionManager:
+    arguments:
+      $schemasDir: '%typesense_schemas_dir%'
+      $collections:
+        shops: "%typesense_shops_collection_name%"

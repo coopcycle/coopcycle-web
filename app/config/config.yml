@@ -63,6 +63,7 @@ parameters:
     nonprofits_enabled: '%env(bool:NONPROFITS_ENABLED)%'
     dv4cul_enabled: '%env(bool:DV4CUL_ENABLED)%'
     typesense_schemas_dir: "%kernel.project_dir%/src/Resources/config/typesense/schemas"
+    typesense_shops_collection_name: "%database_name%_shops"
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
