@@ -2,19 +2,18 @@
 
 namespace AppBundle\Command\Typesense;
 
+use AppBundle\Typesense\CollectionManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Typesense\Client;
 
 class DeleteCollectionCommand extends Command
 {
-
-    public function __construct(Client $client)
+    public function __construct(CollectionManager $collectionManager)
     {
-        $this->client = $client;
+        $this->collectionManager = $collectionManager;
 
         parent::__construct();
     }
@@ -37,10 +36,10 @@ class DeleteCollectionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $collection = $input->getArgument('collection');
+        $name = $input->getArgument('collection');
 
         try {
-            $this->client->collections[$collection]->delete();
+            $this->collectionManager->delete($name);
         } catch (\Throwable $th) {
             $this->io->text(sprintf('There was an error deleting the collection: %s', $th->getMessage()));
         }

@@ -21,6 +21,7 @@ use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Typesense\CollectionManager;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
@@ -63,7 +64,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
-use Typesense\Client as TypesenseClient;
 
 /**
  * Defines application features from the specific context.
@@ -129,7 +129,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         KernelInterface $kernel,
         ContainerInterface $behatContainer,
         UserManagerInterface $userManager,
-        TypesenseClient $typesenseClient)
+        CollectionManager $typesenseCollectionManager)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -153,7 +153,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->kernel = $kernel;
         $this->behatContainer = $behatContainer;
         $this->userManager = $userManager;
-        $this->typesenseClient = $typesenseClient;
+        $this->typesenseCollectionManager = $typesenseCollectionManager;
     }
 
     protected function getContainer()
@@ -228,16 +228,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function createTypesenseCollections()
     {
-        $schemas_dir = 'typesense/schemas';
-        $schemas_files = array_diff(scandir($schemas_dir), array('..', '.')); // remove . and ..
-
-        array_walk($schemas_files, function ($schema_file) use($schemas_dir) {
-            $content = include($schemas_dir . '/' . $schema_file);
-
-            $content['name'] = $content['name'] . '_test';
-
-            $this->typesenseClient->collections->create($content);
-        });
+        foreach ($this->typesenseCollectionManager->getCollections() as $name) {
+            $this->typesenseCollectionManager->create($name);
+        }
     }
 
     /**
@@ -245,16 +238,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function deleteTypesenseCollections()
     {
-        $schemas_dir = 'typesense/schemas';
-        $schemas_files = array_diff(scandir($schemas_dir), array('..', '.')); // remove . and ..
-
-        array_walk($schemas_files, function ($schema_file) use($schemas_dir) {
-            $content = include($schemas_dir . '/' . $schema_file);
-
-            $collection_name = $content['name'] . '_test';
-
-            $this->typesenseClient->collections[$collection_name]->delete();
-        });
+        foreach ($this->typesenseCollectionManager->getCollections() as $name) {
+            $this->typesenseCollectionManager->delete($name);
+        }
     }
 
     /**
