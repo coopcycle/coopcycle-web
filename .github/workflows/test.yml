@@ -147,6 +147,6 @@ jobs:
       - name: Run Cypress
         uses: cypress-io/github-action@v4
         with:
-          spec: cypress/component/address-autosuggest.spec.js
+          spec: cypress/component/address-autosuggest.cy.js
           config: baseUrl=https://demo.coopcycle.org
           component: true
