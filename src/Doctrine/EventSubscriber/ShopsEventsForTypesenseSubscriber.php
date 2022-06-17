@@ -14,8 +14,6 @@ use Typesense\Exceptions\ObjectNotFound;
 
 class ShopsEventsForTypesenseSubscriber implements EventSubscriber
 {
-    const COLLECTION = 'shops';
-
     public function __construct(
         LoggerInterface $logger,
         TypesenseShopsClient $typesenseShopsClient

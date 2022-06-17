@@ -6,15 +6,13 @@ use Typesense\Client as TypesenseClient;
 
 class ShopsClient
 {
-    const COLLECTION = 'shops';
-
     public function __construct(
         TypesenseClient $typesenseClient,
-        string $environment
+        string $collectionName
     )
     {
         $this->typesenseClient = $typesenseClient;
-        $this->environment = $environment;
+        $this->collectionName = $collectionName;
     }
 
     public function createMultiDocuments($documents)
@@ -67,9 +65,6 @@ class ShopsClient
 
     public function getCollectionName()
     {
-        if ('test' === $this->environment) {
-            return self::COLLECTION . '_test';
-        }
-        return self::COLLECTION;
+        return $this->collectionName;
     }
 }

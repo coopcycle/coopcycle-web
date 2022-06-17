@@ -11,10 +11,11 @@ use Typesense\Client;
 
 class CreateAllCollectionsCommand extends Command
 {
-    public function __construct(Client $client, string $schemasDir)
+    public function __construct(Client $client, string $schemasDir, array $collections)
     {
         $this->client = $client;
         $this->schemasDir = $schemasDir;
+        $this->collections = $collections;
 
         parent::__construct();
     }
@@ -24,9 +25,10 @@ class CreateAllCollectionsCommand extends Command
         $this
             ->setName('typesense:collections:create')
             ->setDescription('Creates all collections for Typesense')
-            ->addArgument(
-                'env'
-            );
+            // ->addArgument(
+            //     'env'
+            // )
+            ;
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -36,7 +38,13 @@ class CreateAllCollectionsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $env = $input->getArgument('env');
+        // $env = $input->getArgument('env');
+
+        $schemas_files = array_diff(scandir($this->schemasDir), array('..', '.'));
+
+        print_r($schemas_files);
+        print_r($this->collections);
+        return 0;
 
         if ('test' === $env) {
             $schemas_files = array_diff(scandir($this->schemasDir), array('..', '.')); // remove . and ..
