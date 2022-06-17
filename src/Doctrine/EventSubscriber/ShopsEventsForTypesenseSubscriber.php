@@ -10,6 +10,7 @@ use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Psr\Log\LoggerInterface;
 use AppBundle\Typesense\ShopsClient as TypesenseShopsClient;
 use Gedmo\SoftDeleteable\SoftDeleteableListener;
+use Typesense\Exceptions\ObjectNotFound;
 
 class ShopsEventsForTypesenseSubscriber implements EventSubscriber
 {
@@ -68,7 +69,12 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
                 "category" => $this->getShopCategories($entity),
                 "enabled" => $entity->isEnabled(),
             ];
-            $this->typesenseShopsClient->updateDocument($id, $document);
+            try {
+                $this->typesenseShopsClient->updateDocument($id, $document);
+            } catch (ObjectNotFound $e) {
+                $this->logger->error($e->getMessage());
+            }
+
         }
     }
 
@@ -78,7 +84,11 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
 
         if ($entity instanceof LocalBusiness) {
             $id = strval($entity->getId());
-            $this->typesenseShopsClient->deleteDocument($id);
+            try {
+                $this->typesenseShopsClient->deleteDocument($id);
+            } catch (ObjectNotFound $e) {
+                $this->logger->error($e->getMessage());
+            }
         }
     }
 
