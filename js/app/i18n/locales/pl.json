@@ -95,6 +95,7 @@
         "ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS": "Ukończone",
         "ADMIN_DASHBOARD_TASK_DOWNLOAD_PDF": "Pobierz jako PDF",
         "ADMIN_DASHBOARD_TASK_FORM_SAVE": "Zapisz",
+        "ADMIN_DASHBOARD_TASK_FORM_CREATE": "Create tasks",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP": "Przykład: {{example}}",
         "ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR": "To nie jest prawidłowy numer telefonu",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_ERROR": "Proszę określ swój adres",

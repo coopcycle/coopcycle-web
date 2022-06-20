@@ -71,6 +71,7 @@
         "ADMIN_DASHBOARD_TASK_FORM_COMMENTS_LABEL": "Comentarios",
         "ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER": "Especifique cualquier detalle útil para completar la tarea",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_ERROR": "Por favor, selecciona una dirección",
+        "ADMIN_DASHBOARD_TASK_FORM_CREATE": "Crear las tareas",
         "ADMIN_DASHBOARD_TASK_FORM_SAVE": "Guardar",
         "ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS": "Completar",
         "ADMIN_DASHBOARD_COMPLETE_FORM_FAILURE": "Comunicar un problema",

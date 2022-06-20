@@ -96,6 +96,7 @@
         "ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS": "Dokončit",
         "ADMIN_DASHBOARD_TASK_DOWNLOAD_PDF": "Stáhnout jako PDF",
         "ADMIN_DASHBOARD_TASK_FORM_SAVE": "Uložit",
+        "ADMIN_DASHBOARD_TASK_FORM_CREATE": "Create tasks",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP": "Příklad: {{example}}",
         "ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR": "To není platné telefonní číslo",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_ERROR": "Prosím zadejte adresu",

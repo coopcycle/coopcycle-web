@@ -4,7 +4,7 @@ import { RRule, rrulestr } from 'rrule'
 import _ from 'lodash'
 import Select from 'react-select'
 import { Button, Checkbox, Radio, TimePicker, Input, Popover, Alert } from 'antd'
-import { PlusOutlined, ThunderboltOutlined, UserOutlined, PhoneOutlined, DeleteOutlined } from '@ant-design/icons'
+import { PlusOutlined, ThunderboltOutlined, UserOutlined, PhoneOutlined, DeleteOutlined, CodeSandboxOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import hash from 'object-hash'
 import { Formik } from 'formik'
@@ -47,6 +47,7 @@ const MoreOptions = ({ item, onChange }) => {
 
   const phoneNumber = parsePhoneNumberFromString((item.address && item.address.telephone) || '', country)
   const [ telephoneValue, setTelephoneValue ] = useState(phoneNumber ? phoneNumber.formatNational() : '')
+  const [ weightValue, setWeightValue ] = useState(item.weight ? item.weight / 1000 : 0)
 
   const [ contactName, setContactName ] = useState(item.address && item.address.contactName)
   const [ taskComments, setTaskComments ] = useState(item.comments)
@@ -73,6 +74,17 @@ const MoreOptions = ({ item, onChange }) => {
               onChange={ (e) => setTelephoneValue(
                 asYouTypeFormatter.reset().input(e.target.value)
               )} />
+          </div>
+          <div className="mb-3">
+            <Input
+              type="number"
+              placeholder="Weight in grams"
+              prefix={ <CodeSandboxOutlined /> }
+              value={ weightValue }
+              onChange={ (e) => {
+                setWeightValue(
+                e.target.value
+              )}} />
           </div>
           <div>
             <Input.TextArea
@@ -106,6 +118,12 @@ const MoreOptions = ({ item, onChange }) => {
             values = {
               ...values,
               comments: taskComments
+            }
+          }
+          if(weightValue){
+            values = {
+              ...values,
+              weight: weightValue * 1000
             }
           }
 
@@ -189,7 +207,13 @@ const TemplateItem = ({ item, setFieldValues, onClickRemove, errors }) => {
           if (values.comments) {
             newValues = {
               ...newValues,
-              comments: values.comments
+              comments: values.comments,
+            }
+          }
+          if (values.weight){
+            newValues = {
+              ...newValues,
+              weight: values.weight
             }
           }
 
@@ -402,7 +426,8 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
                   <Button size="large" icon={ <ThunderboltOutlined /> }
                     onClick={ () => {
                       createTasksFromRecurrenceRule(recurrenceRule)
-                    }}>Create tasks</Button>
+                    }}> { t('ADMIN_DASHBOARD_TASK_FORM_CREATE') }
+                    </Button>
                 </span>
               }
               <Button type="primary" size="large" onClick={ handleSubmit } loading={ loading }>

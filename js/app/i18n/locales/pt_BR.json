@@ -92,6 +92,7 @@
         "ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR": "Este não é um telefone válido",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP": "Exemplo: {{example}}",
         "ADMIN_DASHBOARD_TASK_FORM_SAVE": "Salvar",
+        "ADMIN_DASHBOARD_TASK_FORM_CREATE": "Create tasks",
         "ADMIN_DASHBOARD_TASK_DOWNLOAD_PDF": "Baixar como PDF",
         "ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS": "Completar",
         "ADMIN_DASHBOARD_COMPLETE_FORM_FAILURE": "Reportar um problema",
