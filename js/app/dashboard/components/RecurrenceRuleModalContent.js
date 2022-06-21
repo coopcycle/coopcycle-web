@@ -80,6 +80,7 @@ const MoreOptions = ({ item, onChange }) => {
               type="number"
               placeholder={ t('RULE_PICKER_LINE_WEIGHT') }
               prefix={ <CodeSandboxOutlined /> }
+              min="0"
               value={ weightValue ? weightValue : null }
               onChange={ (e) => {
                 setWeightValue(
