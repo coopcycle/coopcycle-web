@@ -93,6 +93,7 @@
         "ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR": "Hau ez da baliozko telefono zenbakia",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP": "Adibidea: {{example}}",
         "ADMIN_DASHBOARD_TASK_FORM_SAVE": "Gorde",
+        "ADMIN_DASHBOARD_TASK_FORM_CREATE": "Create tasks",
         "ADMIN_DASHBOARD_TASK_DOWNLOAD_PDF": "Deskargatu PDF gisa",
         "ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS": "Burutu",
         "ADMIN_DASHBOARD_COMPLETE_FORM_FAILURE": "Eman arazo baten berri",

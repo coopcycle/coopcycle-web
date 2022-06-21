@@ -93,6 +93,7 @@
         "ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR": "Este numero de telefono no ye valido",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP": "Eixemplo: {{example}}",
         "ADMIN_DASHBOARD_TASK_FORM_SAVE": "Alzar",
+        "ADMIN_DASHBOARD_TASK_FORM_CREATE": "Crear fayena",
         "ADMIN_DASHBOARD_TASK_DOWNLOAD_PDF": "Descargar en PDF",
         "ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS": "Completar",
         "ADMIN_DASHBOARD_COMPLETE_FORM_FAILURE": "Comunicar un problema",

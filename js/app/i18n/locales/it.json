@@ -138,6 +138,7 @@
         "ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR": "Questo numero non è valido",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP": "Esempio: {{example}}",
         "ADMIN_DASHBOARD_TASK_FORM_SAVE": "Salva",
+        "ADMIN_DASHBOARD_TASK_FORM_CREATE": "Create tasks",
         "ADMIN_DASHBOARD_TASK_DOWNLOAD_PDF": "Scarica come PDF",
         "ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS": "Completa",
         "RULE_PICKER_LINE_WEIGHT": "Peso (kg)",
