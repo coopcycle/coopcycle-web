@@ -201,7 +201,6 @@ Feature: Woopit
       }
       """
 
-  @debug
   Scenario: Receive & cancel quote
     Given the fixtures files are loaded:
       | sylius_channels.yml |

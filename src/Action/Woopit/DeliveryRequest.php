@@ -3,6 +3,7 @@
 namespace AppBundle\Action\Woopit;
 
 use AppBundle\Entity\Woopit\QuoteRequest as WoopitQuoteRequest;
+use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
@@ -62,9 +63,13 @@ class DeliveryRequest
 
         $delivery = $this->createDelivery($data);
 
+        $woopitDelivery = new WoopitDelivery();
+        $woopitDelivery->setDelivery($delivery);
+
         $store->addDelivery($delivery);
 
         $this->entityManager->persist($delivery);
+        $this->entityManager->persist($woopitDelivery);
         $this->entityManager->flush();
 
         $data->deliveryObject = $delivery;
