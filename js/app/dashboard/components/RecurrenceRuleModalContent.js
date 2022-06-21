@@ -78,13 +78,14 @@ const MoreOptions = ({ item, onChange }) => {
           <div className="mb-3">
             <Input
               type="number"
-              placeholder="Weight in grams"
+              placeholder={ t('RULE_PICKER_LINE_WEIGHT') }
               prefix={ <CodeSandboxOutlined /> }
-              value={ weightValue }
+              value={ weightValue ? weightValue : null }
               onChange={ (e) => {
                 setWeightValue(
-                e.target.value
-              )}} />
+                  e.target.value
+                )}
+              } />
           </div>
           <div>
             <Input.TextArea
@@ -120,7 +121,8 @@ const MoreOptions = ({ item, onChange }) => {
               comments: taskComments
             }
           }
-          if(weightValue){
+
+          if (weightValue) {
             values = {
               ...values,
               weight: weightValue * 1000
