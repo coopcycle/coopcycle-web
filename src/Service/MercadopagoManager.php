@@ -103,7 +103,7 @@ class MercadopagoManager
             $this->configure();
         }
 
-        $payment = MercadoPago\Payment::read(["id" => $payment->getCharge()], ["custom_access_token" => $options['custom_access_token']]);
+        $payment = MercadoPago\Payment::read(["id" => $payment->getCharge()]);
         $payment->capture = true;
 
         if (!$payment->update()) {
