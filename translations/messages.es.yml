@@ -117,6 +117,8 @@ restaurant.form.enabled.tooltip: "Cuando está desactivado, un restaurante no es
   \ no pueden acceder a la página del restaurante.\n"
 restaurant.form.allow_stripe_connect.label: Permitir que el comercio/restaurante administre
   la cuenta Stripe por sí mismo
+restaurant.form.allow_mercadopago_connect.label: Permitir que el comercio/restaurante administre
+  la cuenta Mercadopago por sí mismo
 restaurant.form.temporaryClosingRule: Haga clic aquí para desactivar temporalmente
   los pedidos a su restaurante.
 restaurant.form.accessPlanning: Acceder al calendario

@@ -288,6 +288,20 @@ dashboard_restaurant_stripe_oauth_redirect:
         redirect_after: dashboard_restaurant
     methods: [ GET ]
 
+dashboard_restaurant_mercadopago_oauth_redirect:
+    path: /dashboard/restaurants/{id}/mercadopago-oauth-redirect
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::mercadopagoOAuthRedirectAction
+        redirect_after: dashboard_restaurant
+    methods: [ GET ]
+
+dashboard_restaurant_mercadopago_oauth_remove:
+    path: /dashboard/restaurants/{id}/mercadopago-oauth-remove
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::mercadopagoOAuthRemoveAction
+        redirect_after: dashboard_restaurant
+    methods: [ GET ]
+
 dashboard_restaurant_promotions:
     path: /dashboard/restaurants/{id}/promotions
     defaults:

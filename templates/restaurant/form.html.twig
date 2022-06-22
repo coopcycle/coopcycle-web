@@ -41,6 +41,7 @@
 {% set cannot_be_enabled = ('enabled' in activationErrors|keys or 'data.enabled' in activationErrors|keys) %}
 
 {% set show_stripe_connect = false %}
+{% set show_mercadopago_connect = false %}
 
 {% if restaurant.id is not null %}
   {% for role in restaurant.stripeConnectRoles %}
@@ -48,9 +49,14 @@
       {% set show_stripe_connect = true %}
     {% endif %}
   {% endfor %}
+  {% for role in restaurant.mercadopagoConnectRoles %}
+    {% if is_granted(role) %}
+      {% set show_mercadopago_connect = true %}
+    {% endif %}
+  {% endfor %}
 {% endif %}
 
-{% set show_payment = (restaurant.id is not null and show_stripe_connect) %}
+{% set show_payment = (restaurant.id is not null and (show_stripe_connect or show_mercadopago_connect)) %}
 
 {{ form_start(form) }}
 

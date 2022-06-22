@@ -50,6 +50,7 @@
     <field name="additionalProperties" type="json_array" column="additional_properties" nullable="true"/>
     <field name="state" type="string" column="state"/>
     <field name="stripeConnectRoles" type="json_array" column="stripe_connect_roles"/>
+    <field name="mercadopagoConnectRoles" type="json_array" column="mercadopago_connect_roles" nullable="true"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <field name="exclusive" type="boolean" column="exclusive">
       <options>

@@ -1088,6 +1088,7 @@ trait RestaurantTrait
 
     public function mercadopagoOAuthRemoveAction(
         $id,
+        Request $request,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator)
     {
@@ -1104,7 +1105,10 @@ trait RestaurantTrait
             $translator->trans('form.local_business.mercadopago.remove.connection.success')
         );
 
-        return $this->redirectToRoute('admin_restaurant', ['id' => $id]);
+        return $this->redirectToRoute(
+            $request->attributes->get('redirect_after'),
+            ['id' => $id]
+        );
     }
 
     public function preparationTimeAction($id, Request $request, PreparationTimeCalculator $calculator)
