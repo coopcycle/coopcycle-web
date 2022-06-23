@@ -308,7 +308,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     /**
      * @var array
-     * @Groups({"task"})
+     * @Groups({"task", "task_edit"})
      */
     private $metadata = [];
 
