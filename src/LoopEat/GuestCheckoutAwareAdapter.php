@@ -54,7 +54,7 @@ class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
         }
 
         $this->session->set(
-            sprintf('loopeat.order.%d.refreshToken', $this->order->getId()),
+            sprintf('loopeat.order.%d.refresh_token', $this->order->getId()),
             $refreshToken
         );
     }
