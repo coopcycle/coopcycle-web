@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use AppBundle\Action\Webhook\Create as CreateController;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -39,6 +40,15 @@ class Webhook
 {
     use Timestampable;
 
+    public const EVENTS = [
+        'delivery.assigned',
+        'delivery.started',
+        'delivery.failed',
+        'delivery.picked',
+        'delivery.completed',
+        'order.created',
+    ];
+
     private $id;
 
     /**
@@ -51,6 +61,14 @@ class Webhook
      * @var string
      * @Assert\Choice(callback="getEvents")
      * @Groups({"webhook", "webhook_create"})
+     * @ApiProperty(
+     *   attributes={
+     *     "openapi_context"={
+     *       "type"="string",
+     *       "enum"=Webhook::EVENTS
+     *     }
+     *   }
+     * )
      */
     private $event;
 
@@ -155,13 +173,6 @@ class Webhook
 
     public static function getEvents()
     {
-        return [
-            'delivery.assigned',
-            'delivery.started',
-            'delivery.failed',
-            'delivery.picked',
-            'delivery.completed',
-            'order.created',
-        ];
+        return self::EVENTS;
     }
 }
