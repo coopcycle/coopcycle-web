@@ -1441,7 +1441,8 @@ Feature: Tasks
           "comments":"",
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00"
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
