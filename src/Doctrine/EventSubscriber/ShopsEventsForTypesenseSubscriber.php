@@ -45,7 +45,11 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
                 "category" => $this->getShopCategories($entity),
                 "enabled" => $entity->isEnabled(),
             ];
-            $this->typesenseShopsClient->createDocument($document);
+            try {
+                $this->typesenseShopsClient->createDocument($document);
+            } catch (ObjectNotFound $e) {
+                $this->logger->error($e->getMessage());
+            }
         }
     }
 
@@ -72,7 +76,6 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
             } catch (ObjectNotFound $e) {
                 $this->logger->error($e->getMessage());
             }
-
         }
     }
 
