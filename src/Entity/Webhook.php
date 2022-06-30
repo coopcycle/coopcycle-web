@@ -45,6 +45,7 @@ class Webhook
         'delivery.started',
         'delivery.failed',
         'delivery.picked',
+        'delivery.in_transit',
         'delivery.completed',
         'order.created',
     ];

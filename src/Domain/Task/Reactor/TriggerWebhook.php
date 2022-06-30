@@ -44,8 +44,8 @@ class TriggerWebhook
             return 'delivery.assigned';
         }
 
-        if ($event instanceof Event\TaskStarted && $task->isPickup()) {
-            return 'delivery.started';
+        if ($event instanceof Event\TaskStarted) {
+            return $task->isPickup() ? 'delivery.started' : 'delivery.in_transit';
         }
 
         if ($event instanceof Event\TaskFailed) {
