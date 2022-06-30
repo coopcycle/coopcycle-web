@@ -263,8 +263,8 @@ Feature: Multi-step deliveries
             "contactName":null,
             "geo":{
               "@type":"GeoCoordinates",
-              "latitude":48.8698848,
-              "longitude":2.332091
+              "latitude":@double@,
+              "longitude":@double@
             },
             "streetAddress":"Christofle, 24 Rue de la Paix, 75002 Paris, France",
             "telephone":null,
