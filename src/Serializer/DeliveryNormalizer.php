@@ -13,7 +13,9 @@ use AppBundle\Service\Geocoder;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Persistence\ManagerRegistry;
+use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -27,17 +29,27 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         ItemNormalizer $normalizer,
         Geocoder $geocoder,
         IriConverterInterface $iriConverter,
-        ManagerRegistry $doctrine)
+        ManagerRegistry $doctrine,
+        UrlGeneratorInterface $urlGenerator,
+        Hashids $hashids8)
     {
         $this->normalizer = $normalizer;
         $this->geocoder = $geocoder;
         $this->iriConverter = $iriConverter;
         $this->doctrine = $doctrine;
+        $this->urlGenerator = $urlGenerator;
+        $this->hashids = $hashids8;
     }
 
     public function normalize($object, $format = null, array $context = array())
     {
-        return $this->normalizer->normalize($object, $format, $context);
+        $data = $this->normalizer->normalize($object, $format, $context);
+
+        $data['trackingUrl'] = $this->urlGenerator->generate('public_delivery', [
+            'hashid' => $this->hashids->encode($object->getId())
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return $data;
     }
 
     public function supportsNormalization($data, $format = null)

@@ -157,7 +157,8 @@ Feature: Deliveries
           "comments": "Beware of the dog\nShe bites",
           "weight":null,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -259,7 +260,8 @@ Feature: Deliveries
           "comments": "Beware of the dog\nShe bites",
           "weight": 2000,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -376,7 +378,8 @@ Feature: Deliveries
               "quantity": 2
             }
           ]
-        }
+        },
+        "trackingUrl": @string@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -477,7 +480,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -562,7 +566,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -643,7 +648,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -728,7 +734,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -815,7 +822,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -900,7 +908,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -986,7 +995,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -1055,7 +1065,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -1275,6 +1286,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
