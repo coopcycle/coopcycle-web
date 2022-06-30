@@ -87,7 +87,8 @@ Feature: Multi-step deliveries
           "comments": "",
           "weight":1500,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -202,7 +203,8 @@ Feature: Multi-step deliveries
               "quantity":2
             }
           ]
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -313,6 +315,7 @@ Feature: Multi-step deliveries
               "quantity":2
             }
           ]
-        }
+        },
+        "trackingUrl": @string@
       }
       """

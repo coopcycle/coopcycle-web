@@ -272,7 +272,8 @@ Feature: Urbantz
         "deliveries":[
           {
             "@id":"/api/deliveries/1",
-            "@type":"http://schema.org/ParcelDelivery"
+            "@type":"http://schema.org/ParcelDelivery",
+            "trackingUrl": @string@
           }
         ]
       }
@@ -621,7 +622,8 @@ Feature: Urbantz
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
           "packages": []
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 

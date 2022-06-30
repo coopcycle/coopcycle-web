@@ -916,7 +916,8 @@ Feature: Manage restaurants
               "doneBefore":"@string@.isDateTime()",
               "weight":null,
               "packages": []
-            }
+            },
+            "trackingUrl": @string@
           }
         ],
         "hydra:totalItems":1
