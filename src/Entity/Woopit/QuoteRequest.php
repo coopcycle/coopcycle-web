@@ -6,6 +6,7 @@ use ApiPlatform\Core\Action\NotFoundAction;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Woopit\QuoteRequest as QuoteRequestController;
 use AppBundle\Action\Woopit\DeliveryRequest as DeliveryRequestController;
+use AppBundle\Action\Woopit\DeliveryCancel as DeliveryCancelController;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -52,6 +53,17 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *       "controller"=NotFoundAction::class,
  *       "read"=false,
  *       "output"=false
+ *     },
+ *     "delete_deliveries"={
+ *       "method"="DELETE",
+ *       "path"="/woopit/deliveries/{deliveryId}",
+ *       "controller"=DeliveryCancelController::class,
+ *       "security"="is_granted('ROLE_API_KEY')",
+ *       "read"=false,
+ *       "write"=false,
+ *       "openapi_context"={
+ *         "summary"="Cancel a delivery.",
+ *       }
  *     }
  *   }
  * )
