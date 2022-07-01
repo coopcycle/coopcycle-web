@@ -3,7 +3,6 @@
 namespace AppBundle\Entity\Woopit;
 
 use ApiPlatform\Core\Action\NotFoundAction;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Woopit\QuoteRequest as QuoteRequestController;
 use AppBundle\Action\Woopit\DeliveryRequest as DeliveryRequestController;
@@ -38,6 +37,13 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *       "openapi_context"={
  *         "summary"="Receives requests for deliveries.",
  *       }
+ *     },
+ *     "get": {
+ *       "method"="GET",
+ *       "controller"=NotFoundAction::class,
+ *       "path"="/woopit/quotes",
+ *       "read"=false,
+ *       "output"=false
  *     }
  *   },
  *   itemOperations={
