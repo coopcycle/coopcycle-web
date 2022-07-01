@@ -321,7 +321,6 @@ Feature: Dispatch
       }
       """
 
-  @debug
   Scenario: Retrieve task lists as OAuth client
     Given the fixtures files are loaded:
       | stores_with_orgs.yml |
@@ -383,22 +382,63 @@ Feature: Dispatch
           }
         ],
         "hydra:totalItems":2,
-        "hydra:view":{
-          "@id":"/api/task_lists?date=2018-12-01",
-          "@type":"hydra:PartialCollectionView"
-        },
-        "hydra:search":{
-          "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/task_lists{?date}",
-          "hydra:variableRepresentation":"BasicRepresentation",
-          "hydra:mapping":[
-            {
-              "@type":"IriTemplateMapping",
-              "variable":"date",
-              "property":"date",
-              "required":false
-            }
-          ]
-        }
+        
+      }
+      """
+
+  Scenario: Retrieve tasks filtered by organization
+    Given the fixtures files are loaded:
+      | stores_with_orgs.yml |
+      | tasks_with_orgs.yml  |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/tasks?date=2018-12-01&organization='Acme'"
+    Then print last response
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "id":1,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":{
+              "@id":"/api/addresses/1",
+              "@*@":"@*@"
+            },
+            "doneAfter":"@string@.isDateTime()",
+            "doneBefore":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "orgName":"Acme",
+            "assignedTo":"sarah",
+            "@*@":"@*@"
+          },
+          {
+            "id":3,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":{
+              "@id":"/api/addresses/1",
+              "@*@":"@*@"
+            },
+            "doneAfter":"@string@.isDateTime()",
+            "doneBefore":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "orgName":"Acme",
+            "assignedTo":"bob",
+            "@*@":"@*@"
+          }
+        ],
+        "hydra:totalItems":2,
+        "@*@":"@*@"
       }
       """
