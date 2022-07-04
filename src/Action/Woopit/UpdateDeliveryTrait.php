@@ -51,11 +51,11 @@ trait UpdateDeliveryTrait
             $contact = $data['contact'];
 
             if (isset($contact['firstName']) && isset($contact['lastName'])) {
-                $address->setContactName($contact['firstName'] . ' ' . $contact['lastName']);
+                $task->getAddress()->setContactName($contact['firstName'] . ' ' . $contact['lastName']);
             }
 
             if (isset($contact['phone'])) {
-                $address->setTelephone($this->phoneNumberUtil->parse($contact['phone']));
+                $task->getAddress()->setTelephone($this->phoneNumberUtil->parse($contact['phone']));
             }
         }
 
