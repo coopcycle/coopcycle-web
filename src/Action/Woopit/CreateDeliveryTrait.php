@@ -41,6 +41,14 @@ trait CreateDeliveryTrait
 
         $address = $this->geocoder->geocode($streetAddress);
 
+        if (isset($data['contact'])) {
+            $contact = $data['contact'];
+            $address->setContactName($contact['firstName'] . ' ' . $contact['lastName']);
+            $address->setTelephone($this->phoneNumberUtil->parse($contact['phone']));
+
+            // Should be save $contact['email']? User or guest customer?
+        }
+
         $task = new Task();
         $task->setType($type);
         $task->setAddress($address);

@@ -658,7 +658,12 @@ Feature: Woopit
               "start": "2019-12-04T12:30:00+0000",
               "end": "2019-12-04T13:30:00+0000"
             }
-          ]
+          ],
+          "contact": {
+            "firstName": "joe",
+            "lastName": "doe",
+            "phone": "+3312345678"
+          }
         },
         "delivery": {
           "location": {
@@ -675,7 +680,12 @@ Feature: Woopit
               "start": "2019-12-06T13:00:00+0000",
               "end": "2019-12-06T15:00:00+0000"
             }
-          ]
+          ],
+          "contact": {
+            "firstName": "path",
+            "lastName": "met",
+            "phone": "+3312345687"
+          }
         },
         "packages": [
           {
@@ -730,7 +740,7 @@ Feature: Woopit
         "referenceNumber": "65zq1d5qz1d56q1-456",
         "quoteId": "yXJPEP30xgja",
         "picking": {
-          "location": {
+          "address": {
             "addressLine1": "24, Rue de la Paix",
             "addressLine2": "",
             "postalCode": "75002",
@@ -743,11 +753,16 @@ Feature: Woopit
               "start": "2019-12-04T13:00:00+0000",
               "end": "2019-12-04T13:30:00+0000"
             }
-          ]
+          ],
+          "contact": {
+            "firstName": "joe",
+            "lastName": "pass",
+            "phone": "+3312345678"
+          }
         },
         "delivery": {
-          "location": {
-            "addressLine1": "48, Rue de Rivoli",
+          "address": {
+            "addressLine1": "20, Rue Malher",
             "addressLine2": "",
             "elevator": true,
             "floor": 2,
@@ -760,7 +775,12 @@ Feature: Woopit
               "start": "2019-12-06T14:00:00+0000",
               "end": "2019-12-06T15:00:00+0000"
             }
-          ]
+          ],
+          "contact": {
+            "firstName": "path",
+            "lastName": "met",
+            "phone": "+3345671238"
+          }
         },
         "packages": [
           {

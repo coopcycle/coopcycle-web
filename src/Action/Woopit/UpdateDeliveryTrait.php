@@ -34,17 +34,29 @@ trait UpdateDeliveryTrait
 
     protected function updateTask(array $data, Task $task): Task
     {
-        if (isset($data['location'])) {
-            $location = $data['location'];
+        if (isset($data['address'])) {
+            $addressData = $data['address'];
 
             $streetAddress = sprintf('%s, %s',
-                implode(', ', array_filter([$location['addressLine1'], $location['addressLine2']])),
-                sprintf('%s %s', $location['postalCode'], $location['city'])
+                implode(', ', array_filter([$addressData['addressLine1'], $addressData['addressLine2']])),
+                sprintf('%s %s', $addressData['postalCode'], $addressData['city'])
             );
 
             $address = $this->geocoder->geocode($streetAddress);
 
             $task->setAddress($address);
+        }
+
+        if (isset($data['contact'])) {
+            $contact = $data['contact'];
+
+            if (isset($contact['firstName']) && isset($contact['lastName'])) {
+                $address->setContactName($contact['firstName'] . ' ' . $contact['lastName']);
+            }
+
+            if (isset($contact['phone'])) {
+                $address->setTelephone($this->phoneNumberUtil->parse($contact['phone']));
+            }
         }
 
         if (isset($data['interval'])) {

@@ -30,13 +30,15 @@ class DeliveryRequest
         DeliveryManager $deliveryManager,
         Geocoder $geocoder,
         Hashids $hashids12,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        PhoneNumberUtil $phoneNumberUtil)
     {
         $this->tokenExtractor = $tokenExtractor;
         $this->deliveryManager = $deliveryManager;
         $this->geocoder = $geocoder;
         $this->hashids12 = $hashids12;
         $this->entityManager = $entityManager;
+        $this->phoneNumberUtil = $phoneNumberUtil;
     }
 
     public function __invoke(WoopitQuoteRequest $data)
