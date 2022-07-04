@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Woopit\QuoteRequest as QuoteRequestController;
 use AppBundle\Action\Woopit\DeliveryRequest as DeliveryRequestController;
 use AppBundle\Action\Woopit\DeliveryCancel as DeliveryCancelController;
+use AppBundle\Action\Woopit\DeliveryUpdate as DeliveryUpdateController;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -64,7 +65,21 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *       "openapi_context"={
  *         "summary"="Cancel a delivery.",
  *       }
- *     }
+ *     },
+ *     "patch_deliveries"={
+ *       "method"="PATCH",
+ *       "path"="/woopit/deliveries/{deliveryId}",
+ *       "controller"=DeliveryUpdateController::class,
+ *       "security"="is_granted('ROLE_API_KEY')",
+ *       "status"=204,
+ *       "read"=false,
+ *       "write"=false,
+ *       "denormalization_context"={"groups"={"woopit_delivery_input"}},
+ *       "normalization_context"={"groups"={"woopit_delivery_output"}},
+ *       "openapi_context"={
+ *         "summary"="Receives requests to update a delivery.",
+ *       }
+ *     },
  *   }
  * )
  */
