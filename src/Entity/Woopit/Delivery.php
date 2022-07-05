@@ -8,17 +8,17 @@ use Gedmo\Timestampable\Traits\Timestampable;
 
 /**
  * @ApiResource(
+ *   routePrefix="/woopit",
  *   collectionOperations={
- *     "get": {
+ *     "woopit_deliveries": {
  *       "method"="GET",
  *       "controller"=NotFoundAction::class,
- *       "path"="/woopit/deliveries",
  *       "read"=false,
  *       "output"=false
  *     }
  *   },
  *   itemOperations={
- *     "get": {
+ *     "woopit_deliveries": {
  *       "method"="GET",
  *       "controller"=NotFoundAction::class,
  *       "read"=false,
