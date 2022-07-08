@@ -1963,3 +1963,152 @@ Feature: Carts
         ]
       }
       """
+
+  Scenario: Start cart session with address
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/carts/session" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/1",
+        "shippingAddress":{
+          "streetAddress": "190 Rue de Rivoli, Paris",
+          "postalCode": "75001",
+          "addressLocality": "Paris",
+          "geo": {
+            "latitude": 48.863814,
+            "longitude": 2.3329
+          }
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "token":@string@,
+        "cart":{
+          "@context":"/api/contexts/Order",
+          "@id":"/api/orders/1",
+          "@type":"http://schema.org/Order",
+          "customer":null,
+          "restaurant":"/api/restaurants/1",
+          "shippingAddress":{"@*@":"@*@"},
+          "shippedAt":null,
+          "shippingTimeRange": null,
+          "reusablePackagingEnabled":false,
+          "reusablePackagingPledgeReturn": 0,
+          "notes":null,
+          "items":[],
+          "itemsTotal":0,
+          "total":0,
+          "adjustments":@...@,
+          "fulfillmentMethod":"delivery"
+        }
+      }
+      """
+
+  Scenario: Start cart session as an authenticated user with existing address not belonging to user
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    And the user "bob" has delivery address:
+      | streetAddress | 1, rue de Rivoli    |
+      | postalCode    | 75004               |
+      | geo           | 48.855799, 2.359207 |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/carts/session" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/1",
+        "shippingAddress": "/api/addresses/1"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "token":@string@,
+        "cart":{
+          "@context":"/api/contexts/Order",
+          "@id":"/api/orders/1",
+          "@type":"http://schema.org/Order",
+          "customer":"/api/customers/1",
+          "restaurant":"/api/restaurants/1",
+          "shippingAddress":null,
+          "shippedAt":null,
+          "shippingTimeRange": null,
+          "reusablePackagingEnabled":false,
+          "reusablePackagingPledgeReturn": 0,
+          "notes":null,
+          "items":[],
+          "itemsTotal":0,
+          "total":0,
+          "adjustments":@...@,
+          "fulfillmentMethod":"delivery"
+        }
+      }
+      """
+
+  Scenario: Start cart session as an authenticated user with existing address
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    And the user "bob" has delivery address:
+      | streetAddress | 1, rue de Rivoli    |
+      | postalCode    | 75004               |
+      | geo           | 48.855799, 2.359207 |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/carts/session" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/1",
+        "shippingAddress": "/api/addresses/4"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "token":@string@,
+        "cart":{
+          "@context":"/api/contexts/Order",
+          "@id":"/api/orders/1",
+          "@type":"http://schema.org/Order",
+          "customer":"/api/customers/1",
+          "restaurant":"/api/restaurants/1",
+          "shippingAddress":{"@*@":"@*@"},
+          "shippedAt":null,
+          "shippingTimeRange": null,
+          "reusablePackagingEnabled":false,
+          "reusablePackagingPledgeReturn": 0,
+          "notes":null,
+          "items":[],
+          "itemsTotal":0,
+          "total":0,
+          "adjustments":@...@,
+          "fulfillmentMethod":"delivery"
+        }
+      }
+      """
