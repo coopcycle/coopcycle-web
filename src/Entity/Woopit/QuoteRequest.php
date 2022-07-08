@@ -52,6 +52,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *     "get": {
  *       "method"="GET",
  *       "controller"=NotFoundAction::class,
+ *       "path"="/woopit/quotes/{quoteId}",
  *       "read"=false,
  *       "output"=false
  *     },

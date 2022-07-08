@@ -2,10 +2,7 @@
 
 namespace AppBundle\Command;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\ApiApp;
-use AppBundle\Entity\Woopit\Delivery;
-use AppBundle\Entity\Woopit\QuoteRequest;
 use BenjaminFavre\OAuthHttpClient\OAuthHttpClient;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
@@ -22,13 +19,13 @@ class WoopitSubscriptionsCommand extends Command
 {
     public function __construct(
         OAuthHttpClient $woopitClient,
-        IriConverterInterface $iriConverter,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        UrlGeneratorInterface $urlGenerator
     )
     {
         $this->woopitClient = $woopitClient;
-        $this->iriConverter = $iriConverter;
         $this->entityManager = $entityManager;
+        $this->urlGenerator = $urlGenerator;
 
         parent::__construct();
     }
@@ -96,8 +93,8 @@ class WoopitSubscriptionsCommand extends Command
     {
         $defaultVersion = '1.6.0'; // Current Woopit version available
 
-        $quoteUrl = $this->iriConverter->getIriFromResourceClass(QuoteRequest::class, UrlGeneratorInterface::ABSOLUTE_URL);
-        $deliveryUrl = $this->iriConverter->getIriFromResourceClass(Delivery::class, UrlGeneratorInterface::ABSOLUTE_URL);
+        $quoteUrl = $this->urlGenerator->generate('api_quote_requests_get_collection', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $deliveryUrl = $this->urlGenerator->generate('api_quote_requests_post_deliveries_collection', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return [
             "quote" => [
