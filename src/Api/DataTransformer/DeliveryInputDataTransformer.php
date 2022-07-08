@@ -4,6 +4,7 @@ namespace AppBundle\Api\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\DeliveryQuote;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
@@ -67,6 +68,6 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
           return false;
         }
 
-        return RetailPrice::class === $to && null !== ($context['input']['class'] ?? null);
+        return in_array($to, [ RetailPrice::class, DeliveryQuote::class ]) && null !== ($context['input']['class'] ?? null);
     }
 }
