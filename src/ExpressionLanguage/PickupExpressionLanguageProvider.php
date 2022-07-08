@@ -24,6 +24,12 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
                 $now = Carbon::instance($task->createdAt);
             }
 
+            // May happen for multiple points
+            // FIXME Won't work as expected when using "less than", i.e diff_days(pickup) < 3
+            if (null === $task->before) {
+                return -1;
+            }
+
             $before = Carbon::instance($task->before);
             $diff = $before->diffInDays($now);
 
@@ -44,6 +50,12 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
 
             if (isset($task->createdAt) && null !== $task->createdAt) {
                 $now = Carbon::instance($task->createdAt);
+            }
+
+            // May happen for multiple points
+            // FIXME Won't work as expected when using "less than", i.e diff_days(pickup) < 3
+            if (null === $task->before) {
+                return -1;
             }
 
             $before = Carbon::instance($task->before);

@@ -417,11 +417,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     {
         $taskObject = new \stdClass();
         if ($task) {
-            $taskObject->address = $task->getAddress();
-            $taskObject->createdAt = $task->getCreatedAt();
-            $taskObject->after = $task->getAfter();
-            $taskObject->before = $task->getBefore();
-            $taskObject->doorstep = $task->isDoorstep();
+
+            return $task->toExpressionLanguageObject();
         }
 
         return $taskObject;

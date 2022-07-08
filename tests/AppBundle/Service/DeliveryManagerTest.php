@@ -11,6 +11,10 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderTimeline;
+use AppBundle\Entity\Task;
+use AppBundle\Entity\Zone;
+use AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider;
+use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
@@ -18,7 +22,9 @@ use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 
@@ -206,5 +212,141 @@ class DeliveryManagerTest extends KernelTestCase
         );
 
         $delivery = $deliveryManager->createFromOrder($order);
+    }
+
+    public function testGetMultiPriceWithZones()
+    {
+        $pickupAddress = new Address();
+        $pickupAddress->setStreetAddress('Pickup 1');
+
+        $dropoff1Address = new Address();
+        $dropoff1Address->setStreetAddress('Dropoff 1');
+
+        $dropoff2Address = new Address();
+        $dropoff2Address->setStreetAddress('Dropoff 2');
+
+        $rule1 = new PricingRule();
+        $rule1->setExpression('in_zone(pickup.address, "Zone A")');
+        $rule1->setPrice(100);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('in_zone(dropoff.address, "Zone B")');
+        $rule2->setPrice(200);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $zoneA = $this->prophesize(Zone::class);
+        $zoneA
+            ->containsAddress(Argument::type(Address::class))
+            ->will(function ($args) use ($pickupAddress) {
+
+                if ($args[0] === $pickupAddress) {
+
+                    return true;
+                }
+
+                return false;
+            });
+
+        $zoneB = $this->prophesize(Zone::class);
+        $zoneB
+            ->containsAddress(Argument::type(Address::class))
+            ->will(function ($args) use ($dropoff1Address, $dropoff2Address) {
+
+                if ($args[0] === $dropoff1Address || $args[0] === $dropoff2Address) {
+
+                    return true;
+                }
+
+                return false;
+            });
+
+        $zoneRepository = $this->prophesize(EntityRepository::class);
+        $zoneRepository
+            ->findOneBy(['name' => 'Zone A'])
+            ->willReturn($zoneA->reveal());
+        $zoneRepository
+            ->findOneBy(['name' => 'Zone B'])
+            ->willReturn($zoneB->reveal());
+
+        $expressionLanguage = new ExpressionLanguage();
+        $expressionLanguage->registerProvider(
+            new ZoneExpressionLanguageProvider($zoneRepository->reveal())
+        );
+
+        $deliveryManager = new DeliveryManager(
+            $expressionLanguage,
+            $this->routing->reveal(),
+            $this->orderTimeHelper->reveal(),
+            $this->orderTimelineCalculator->reveal(),
+            $this->storeExtractor->reveal()
+        );
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setAddress($pickupAddress);
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setAddress($dropoff1Address);
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2->setAddress($dropoff2Address);
+
+        $delivery = Delivery::createWithTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
+
+        $this->assertEquals(500, $deliveryManager->getPrice($delivery, $ruleSet));
+    }
+
+    public function testGetMultiPriceWithTimeDiff()
+    {
+        $rule1 = new PricingRule();
+        $rule1->setExpression('diff_hours(pickup) > 3');
+        $rule1->setPrice(100);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('weight > 5000');
+        $rule2->setPrice(200);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $expressionLanguage = new ExpressionLanguage();
+        $expressionLanguage->registerProvider(
+            new PickupExpressionLanguageProvider()
+        );
+
+        $deliveryManager = new DeliveryManager(
+            $expressionLanguage,
+            $this->routing->reveal(),
+            $this->orderTimeHelper->reveal(),
+            $this->orderTimelineCalculator->reveal(),
+            $this->storeExtractor->reveal()
+        );
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setWeight(6000);
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2->setWeight(5500);
+
+        $delivery = Delivery::createWithTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
+
+        $this->assertEquals(400, $deliveryManager->getPrice($delivery, $ruleSet));
     }
 }
