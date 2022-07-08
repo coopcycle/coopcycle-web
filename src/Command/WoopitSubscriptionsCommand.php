@@ -17,6 +17,8 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class WoopitSubscriptionsCommand extends Command
 {
+    private $defaultVersion = '1.6.0'; // Current Woopit version available
+
     public function __construct(
         OAuthHttpClient $woopitClient,
         EntityManagerInterface $entityManager,
@@ -61,6 +63,9 @@ class WoopitSubscriptionsCommand extends Command
         try {
 
             $response = $this->woopitClient->request('POST', "subscriptions", [
+                'headers' => [
+                    'x-api-version' => $this->defaultVersion
+                ],
                 'json' => $body
             ]);
 
@@ -91,31 +96,29 @@ class WoopitSubscriptionsCommand extends Command
 
     private function getCallbacks()
     {
-        $defaultVersion = '1.6.0'; // Current Woopit version available
-
         $quoteUrl = $this->urlGenerator->generate('api_quote_requests_get_collection', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $deliveryUrl = $this->urlGenerator->generate('api_quote_requests_post_deliveries_collection', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return [
             "quote" => [
                 'url' => $quoteUrl,
-                'version' => $defaultVersion,
+                'version' => $this->defaultVersion,
             ],
             "cancelQuote" => [
                 'url' => "${quoteUrl}/{quoteId}",
-                'version' => $defaultVersion,
+                'version' => $this->defaultVersion,
             ],
             "delivery" => [
                 'url' => $deliveryUrl,
-                'version' => $defaultVersion,
+                'version' => $this->defaultVersion,
             ],
             "update" => [
                 'url' => "${deliveryUrl}/{deliveryId}",
-                'version' => $defaultVersion,
+                'version' => $this->defaultVersion,
             ],
             "cancelDelivery" => [
                 'url' => "${deliveryUrl}/{deliveryId}",
-                'version' => $defaultVersion,
+                'version' => $this->defaultVersion,
             ],
         ];
     }
@@ -131,10 +134,12 @@ class WoopitSubscriptionsCommand extends Command
         }
 
         return [
-            'client_id' => $clientId,
-            'client_secret' => $app->getOauth2Client()->getSecret(),
-            'grant_type' => OAuth2Grants::CLIENT_CREDENTIALS,
-            'tokenEndpointUrl' => '', // TODO: Which URL should we provide?
+            'oauth' => [
+                'client_id' => $clientId,
+                'client_secret' => $app->getOauth2Client()->getSecret(),
+                'grant_type' => OAuth2Grants::CLIENT_CREDENTIALS,
+                'tokenEndPoint' => '', // TODO: Which URL should we provide?
+            ]
         ];
     }
 }
