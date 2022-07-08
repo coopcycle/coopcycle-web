@@ -29,6 +29,9 @@ class ConfirmQuote
         $delivery = $this->serializer->deserialize($data->getPayload(), Delivery::class, 'jsonld');
         $order = $this->orderFactory->createForDelivery($delivery, $data->getAmount());
 
+        $store = $data->getStore();
+        $store->addDelivery($delivery);
+
         $this->entityManager->persist($order);
 
         $data->setDelivery($delivery);
