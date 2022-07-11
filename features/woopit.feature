@@ -731,7 +731,7 @@ Feature: Woopit
         "deliveryId":"yXJPEP30xgja"
       }
       """
-    When I add "Content-Type" header equal to "application/merge-patch+json"
+    When I add "Content-Type" header equal to "application/json"
     And I add "Accept" header equal to "application/json"
     And the store with name "Acme" sends a "PATCH" request to "/api/woopit/deliveries/yXJPEP30xgja" with body:
       """

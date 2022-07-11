@@ -337,7 +337,7 @@ api_platform:
         csv: ['text/csv']
         html: ['text/html']
     patch_formats:
-        json: ['application/merge-patch+json']
+        json: ['application/json']
     swagger:
         versions: [3, 2]
 
