@@ -138,7 +138,7 @@ class WoopitSubscriptionsCommand extends Command
                 'client_id' => $clientId,
                 'client_secret' => $app->getOauth2Client()->getSecret(),
                 'grant_type' => OAuth2Grants::CLIENT_CREDENTIALS,
-                'tokenEndPoint' => '', // TODO: Which URL should we provide?
+                'tokenEndPoint' => $this->urlGenerator->generate('oauth2_token', [], UrlGeneratorInterface::ABSOLUTE_URL)
             ]
         ];
     }
