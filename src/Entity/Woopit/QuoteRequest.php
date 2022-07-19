@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * @ApiResource(
+ *   formats={"json"},
  *   collectionOperations={
  *     "post"={
  *       "method"="POST",
