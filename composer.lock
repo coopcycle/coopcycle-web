@@ -1356,16 +1356,16 @@
         },
         {
             "name": "doctrine/annotations",
-            "version": "1.13.2",
+            "version": "1.13.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/annotations.git",
-                "reference": "5b668aef16090008790395c02c893b1ba13f7e08"
+                "reference": "648b0343343565c4a056bfc8392201385e8d89f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/annotations/zipball/5b668aef16090008790395c02c893b1ba13f7e08",
-                "reference": "5b668aef16090008790395c02c893b1ba13f7e08",
+                "url": "https://api.github.com/repos/doctrine/annotations/zipball/648b0343343565c4a056bfc8392201385e8d89f0",
+                "reference": "648b0343343565c4a056bfc8392201385e8d89f0",
                 "shasum": ""
             },
             "require": {
@@ -1377,9 +1377,10 @@
             "require-dev": {
                 "doctrine/cache": "^1.11 || ^2.0",
                 "doctrine/coding-standard": "^6.0 || ^8.1",
-                "phpstan/phpstan": "^0.12.20",
+                "phpstan/phpstan": "^1.4.10 || ^1.8.0",
                 "phpunit/phpunit": "^7.5 || ^8.0 || ^9.1.5",
-                "symfony/cache": "^4.4 || ^5.2"
+                "symfony/cache": "^4.4 || ^5.2",
+                "vimeo/psalm": "^4.10"
             },
             "type": "library",
             "autoload": {
@@ -1422,22 +1423,22 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/annotations/issues",
-                "source": "https://github.com/doctrine/annotations/tree/1.13.2"
+                "source": "https://github.com/doctrine/annotations/tree/1.13.3"
             },
-            "time": "2021-08-05T19:00:23+00:00"
+            "time": "2022-07-02T10:48:51+00:00"
         },
         {
             "name": "doctrine/cache",
-            "version": "2.1.1",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "331b4d5dbaeab3827976273e9356b3b453c300ce"
+                "reference": "1ca8f21980e770095a31456042471a57bc4c68fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/cache/zipball/331b4d5dbaeab3827976273e9356b3b453c300ce",
-                "reference": "331b4d5dbaeab3827976273e9356b3b453c300ce",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/1ca8f21980e770095a31456042471a57bc4c68fb",
+                "reference": "1ca8f21980e770095a31456042471a57bc4c68fb",
                 "shasum": ""
             },
             "require": {
@@ -1447,18 +1448,12 @@
                 "doctrine/common": ">2.2,<2.4"
             },
             "require-dev": {
-                "alcaeus/mongo-php-adapter": "^1.1",
                 "cache/integration-tests": "dev-master",
-                "doctrine/coding-standard": "^8.0",
-                "mongodb/mongodb": "^1.1",
-                "phpunit/phpunit": "^7.0 || ^8.0 || ^9.0",
-                "predis/predis": "~1.0",
+                "doctrine/coding-standard": "^9",
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
                 "psr/cache": "^1.0 || ^2.0 || ^3.0",
-                "symfony/cache": "^4.4 || ^5.2 || ^6.0@dev",
-                "symfony/var-exporter": "^4.4 || ^5.2 || ^6.0@dev"
-            },
-            "suggest": {
-                "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver"
+                "symfony/cache": "^4.4 || ^5.4 || ^6",
+                "symfony/var-exporter": "^4.4 || ^5.4 || ^6"
             },
             "type": "library",
             "autoload": {
@@ -1507,7 +1502,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/cache/issues",
-                "source": "https://github.com/doctrine/cache/tree/2.1.1"
+                "source": "https://github.com/doctrine/cache/tree/2.2.0"
             },
             "funding": [
                 {
@@ -1523,7 +1518,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-07-17T14:49:29+00:00"
+            "time": "2022-05-20T20:07:39+00:00"
         },
         {
             "name": "doctrine/collections",
@@ -1596,20 +1591,20 @@
         },
         {
             "name": "doctrine/common",
-            "version": "3.2.2",
+            "version": "3.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/common.git",
-                "reference": "295082d3750987065912816a9d536c2df735f637"
+                "reference": "c824e95d4c83b7102d8bc60595445a6f7d540f96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/common/zipball/295082d3750987065912816a9d536c2df735f637",
-                "reference": "295082d3750987065912816a9d536c2df735f637",
+                "url": "https://api.github.com/repos/doctrine/common/zipball/c824e95d4c83b7102d8bc60595445a6f7d540f96",
+                "reference": "c824e95d4c83b7102d8bc60595445a6f7d540f96",
                 "shasum": ""
             },
             "require": {
-                "doctrine/persistence": "^2.0",
+                "doctrine/persistence": "^2.0 || ^3.0",
                 "php": "^7.1 || ^8.0"
             },
             "require-dev": {
@@ -1666,7 +1661,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/common/issues",
-                "source": "https://github.com/doctrine/common/tree/3.2.2"
+                "source": "https://github.com/doctrine/common/tree/3.3.0"
             },
             "funding": [
                 {
@@ -1682,7 +1677,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-02-02T09:15:57+00:00"
+            "time": "2022-02-05T18:28:51+00:00"
         },
         {
             "name": "doctrine/data-fixtures",
@@ -2654,45 +2649,45 @@
         },
         {
             "name": "doctrine/persistence",
-            "version": "2.3.0",
+            "version": "2.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/persistence.git",
-                "reference": "f8af155c1e7963f3d2b4415097d55757bbaa53d8"
+                "reference": "d7edf274b6d35ad82328e223439cc2bb2f92bd9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/persistence/zipball/f8af155c1e7963f3d2b4415097d55757bbaa53d8",
-                "reference": "f8af155c1e7963f3d2b4415097d55757bbaa53d8",
+                "url": "https://api.github.com/repos/doctrine/persistence/zipball/d7edf274b6d35ad82328e223439cc2bb2f92bd9e",
+                "reference": "d7edf274b6d35ad82328e223439cc2bb2f92bd9e",
                 "shasum": ""
             },
             "require": {
                 "doctrine/cache": "^1.11 || ^2.0",
                 "doctrine/collections": "^1.0",
-                "doctrine/deprecations": "^0.5.3",
+                "doctrine/deprecations": "^0.5.3 || ^1",
                 "doctrine/event-manager": "^1.0",
                 "php": "^7.1 || ^8.0",
                 "psr/cache": "^1.0 || ^2.0 || ^3.0"
             },
             "conflict": {
                 "doctrine/annotations": "<1.0 || >=2.0",
-                "doctrine/common": "<2.10@dev"
+                "doctrine/common": "<2.10"
             },
             "require-dev": {
                 "composer/package-versions-deprecated": "^1.11",
                 "doctrine/annotations": "^1.0",
-                "doctrine/coding-standard": "^6.0 || ^9.0",
+                "doctrine/coding-standard": "^9.0",
                 "doctrine/common": "^3.0",
-                "phpstan/phpstan": "1.2.0",
-                "phpunit/phpunit": "^7.5.20 || ^8.0 || ^9.0",
-                "symfony/cache": "^4.4 || ^5.0 || ^6.0",
-                "vimeo/psalm": "4.13.1"
+                "phpstan/phpstan": "~1.4.10 || 1.5.0",
+                "phpunit/phpunit": "^7.5.20 || ^8.5 || ^9.5",
+                "symfony/cache": "^4.4 || ^5.4 || ^6.0",
+                "vimeo/psalm": "4.22.0"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Doctrine\\Common\\": "lib/Doctrine/Common",
-                    "Doctrine\\Persistence\\": "lib/Doctrine/Persistence"
+                    "Doctrine\\Common\\": "src/Common",
+                    "Doctrine\\Persistence\\": "src/Persistence"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2736,9 +2731,23 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/persistence/issues",
-                "source": "https://github.com/doctrine/persistence/tree/2.3.0"
+                "source": "https://github.com/doctrine/persistence/tree/2.5.3"
             },
-            "time": "2022-01-09T19:58:46+00:00"
+            "funding": [
+                {
+                    "url": "https://www.doctrine-project.org/sponsorship.html",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://www.patreon.com/phpdoctrine",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fpersistence",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-05-03T09:16:53+00:00"
         },
         {
             "name": "doctrine/sql-formatter",
@@ -8572,16 +8581,16 @@
         },
         {
             "name": "mercadopago/dx-php",
-            "version": "2.4.5",
+            "version": "2.4.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mercadopago/sdk-php.git",
-                "reference": "f10f278386baf7bf055681c67a95eeafc217d180"
+                "reference": "8389608ab859e5f9394910ec1bd74d603d7c17a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mercadopago/sdk-php/zipball/f10f278386baf7bf055681c67a95eeafc217d180",
-                "reference": "f10f278386baf7bf055681c67a95eeafc217d180",
+                "url": "https://api.github.com/repos/mercadopago/sdk-php/zipball/8389608ab859e5f9394910ec1bd74d603d7c17a6",
+                "reference": "8389608ab859e5f9394910ec1bd74d603d7c17a6",
                 "shasum": ""
             },
             "require": {
@@ -8591,11 +8600,10 @@
             },
             "require-dev": {
                 "doctrine/orm": "~2.3",
-                "phpdocumentor/phpdocumentor": "^2.0",
                 "phpmd/phpmd": "@stable",
-                "phpunit/phpunit": "^5",
+                "phpunit/phpunit": "^7",
                 "sebastian/phpcpd": "*",
-                "squizlabs/php_codesniffer": "2.3.*",
+                "squizlabs/php_codesniffer": "2.8.1",
                 "symfony/yaml": "~2.5",
                 "vlucas/phpdotenv": "^2.5"
             },
@@ -8618,9 +8626,9 @@
             "description": "Mercado Pago PHP SDK",
             "homepage": "https://github.com/mercadopago/sdk-php",
             "support": {
-                "source": "https://github.com/mercadopago/sdk-php/tree/2.4.5"
+                "source": "https://github.com/mercadopago/sdk-php/tree/2.4.9"
             },
-            "time": "2022-01-24T18:22:34+00:00"
+            "time": "2022-07-18T13:33:02+00:00"
         },
         {
             "name": "michelf/php-markdown",
@@ -22264,5 +22272,5 @@
         "php": ">=8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
