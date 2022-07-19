@@ -83,7 +83,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *   }
  * )
  */
-final class QuoteRequest
+class QuoteRequest
 {
     use Timestampable;
 
