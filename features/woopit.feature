@@ -8,7 +8,7 @@ Feature: Woopit
     And the setting "subject_to_vat" has value "1"
     And the store with name "Acme" has an API key
     When I add "Content-Type" header equal to "application/json"
-    And I add "Accept" header equal to "application/json"
+    And I add "Accept" header equal to "application/json, text/plain, */*"
     And the store with name "Acme" sends a "POST" request to "/api/woopit/quotes" with body:
       """
       {
@@ -98,23 +98,25 @@ Feature: Woopit
       }
       """
     Then print last response
-    Then the response status code should be 200
+    Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
-      {
-        "quoteId":"yXJPEP30xgja",
-        "price":{
-          "taxExcludedAmount":416,
-          "taxIncludedAmount":499,
-          "taxAmount":83,
-          "currency":"EUR"
-        },
-        "vehicleType":"VEHICLE_TYPE_BIKE"
-      }
+      [
+        {
+          "quoteId":"yXJPEP30xgja",
+          "price":{
+            "taxExcludedAmount":416,
+            "taxIncludedAmount":499,
+            "taxAmount":83,
+            "currency":"EUR"
+          },
+          "vehicleType":"VEHICLE_TYPE_BIKE"
+        }
+      ]
       """
     When I add "Content-Type" header equal to "application/json"
-    And I add "Accept" header equal to "application/json"
+    And I add "Accept" header equal to "application/json, text/plain, */*"
     # https://woop.stoplight.io/docs/carrier/b3A6MzYyMDcwOTU-delivery-request
     And the store with name "Acme" sends a "POST" request to "/api/woopit/deliveries" with body:
       """
@@ -192,7 +194,7 @@ Feature: Woopit
       }
       """
     Then print last response
-    Then the response status code should be 200
+    Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
@@ -209,7 +211,7 @@ Feature: Woopit
     And the setting "subject_to_vat" has value "1"
     And the store with name "Acme" has an API key
     When I add "Content-Type" header equal to "application/json"
-    And I add "Accept" header equal to "application/json"
+    And I add "Accept" header equal to "application/json, text/plain, */*"
     And the store with name "Acme" sends a "POST" request to "/api/woopit/quotes" with body:
       """
       {
@@ -299,23 +301,25 @@ Feature: Woopit
       }
       """
     Then print last response
-    Then the response status code should be 200
+    Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
-      {
-        "quoteId":"yXJPEP30xgja",
-        "price":{
-          "taxExcludedAmount":416,
-          "taxIncludedAmount":499,
-          "taxAmount":83,
-          "currency":"EUR"
-        },
-        "vehicleType":"VEHICLE_TYPE_BIKE"
-      }
+      [
+        {
+          "quoteId":"yXJPEP30xgja",
+          "price":{
+            "taxExcludedAmount":416,
+            "taxIncludedAmount":499,
+            "taxAmount":83,
+            "currency":"EUR"
+          },
+          "vehicleType":"VEHICLE_TYPE_BIKE"
+        }
+      ]
       """
     When I add "Content-Type" header equal to "application/json"
-    And I add "Accept" header equal to "application/json"
+    And I add "Accept" header equal to "application/json, text/plain, */*"
     # https://woop.stoplight.io/docs/carrier/b3A6MzYyMDcwOTU-delivery-request
     And the store with name "Acme" sends a "DELETE" request to "/api/woopit/quotes/yXJPEP30xgja"
 
@@ -327,7 +331,7 @@ Feature: Woopit
     And the setting "subject_to_vat" has value "1"
     And the store with name "Acme" has an API key
     When I add "Content-Type" header equal to "application/json"
-    And I add "Accept" header equal to "application/json"
+    And I add "Accept" header equal to "application/json, text/plain, */*"
     And the store with name "Acme" sends a "POST" request to "/api/woopit/quotes" with body:
       """
       {
@@ -416,11 +420,12 @@ Feature: Woopit
         ]
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 201
     And the response should be in JSON
+    And print last response
     And the JSON should match:
       """
-      {
+      [{
         "quoteId":"yXJPEP30xgja",
         "price":{
           "taxExcludedAmount":416,
@@ -429,10 +434,10 @@ Feature: Woopit
           "currency":"EUR"
         },
         "vehicleType":"VEHICLE_TYPE_BIKE"
-      }
+      }]
       """
     When I add "Content-Type" header equal to "application/json"
-    And I add "Accept" header equal to "application/json"
+    And I add "Accept" header equal to "application/json, text/plain, */*"
     # https://woop.stoplight.io/docs/carrier/b3A6MzYyMDcwOTU-delivery-request
     And the store with name "Acme" sends a "POST" request to "/api/woopit/deliveries" with body:
       """
@@ -509,7 +514,7 @@ Feature: Woopit
         ]
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
@@ -531,7 +536,7 @@ Feature: Woopit
     And the setting "subject_to_vat" has value "1"
     And the store with name "Acme" has an API key
     When I add "Content-Type" header equal to "application/json"
-    And I add "Accept" header equal to "application/json"
+    And I add "Accept" header equal to "application/json, text/plain, */*"
     And the store with name "Acme" sends a "POST" request to "/api/woopit/quotes" with body:
       """
       {
@@ -620,23 +625,25 @@ Feature: Woopit
         ]
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
-      {
-        "quoteId":"yXJPEP30xgja",
-        "price":{
-          "taxExcludedAmount":416,
-          "taxIncludedAmount":499,
-          "taxAmount":83,
-          "currency":"EUR"
-        },
-        "vehicleType":"VEHICLE_TYPE_BIKE"
-      }
+      [
+        {
+          "quoteId":"yXJPEP30xgja",
+          "price":{
+            "taxExcludedAmount":416,
+            "taxIncludedAmount":499,
+            "taxAmount":83,
+            "currency":"EUR"
+          },
+          "vehicleType":"VEHICLE_TYPE_BIKE"
+        }
+      ]
       """
     When I add "Content-Type" header equal to "application/json"
-    And I add "Accept" header equal to "application/json"
+    And I add "Accept" header equal to "application/json, text/plain, */*"
     # https://woop.stoplight.io/docs/carrier/b3A6MzYyMDcwOTU-delivery-request
     And the store with name "Acme" sends a "POST" request to "/api/woopit/deliveries" with body:
       """
@@ -723,7 +730,7 @@ Feature: Woopit
         ]
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
@@ -732,7 +739,7 @@ Feature: Woopit
       }
       """
     When I add "Content-Type" header equal to "application/json"
-    And I add "Accept" header equal to "application/json"
+    And I add "Accept" header equal to "application/json, text/plain, */*"
     And the store with name "Acme" sends a "PATCH" request to "/api/woopit/deliveries/yXJPEP30xgja" with body:
       """
       {

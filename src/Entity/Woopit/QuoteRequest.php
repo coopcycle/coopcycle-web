@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *       "path"="/woopit/quotes",
  *       "controller"=QuoteRequestController::class,
  *       "security"="is_granted('ROLE_API_KEY')",
- *       "status"=200,
+ *       "status"=201,
  *       "denormalization_context"={"groups"={"woopit_quote_input"}},
  *       "normalization_context"={"groups"={"woopit_quote_output"}},
  *       "openapi_context"={
@@ -33,7 +33,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *       "path"="/woopit/deliveries",
  *       "controller"=DeliveryRequestController::class,
  *       "security"="is_granted('ROLE_API_KEY')",
- *       "status"=200,
+ *       "status"=201,
  *       "write"=false,
  *       "denormalization_context"={"groups"={"woopit_delivery_input"}},
  *       "normalization_context"={"groups"={"woopit_delivery_output"}},

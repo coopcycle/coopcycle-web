@@ -25,7 +25,9 @@ class WoopitQuoteRequestNormalizer implements NormalizerInterface
 
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        return $data;
+        return [
+            $data
+        ];
     }
 
     public function supportsNormalization($data, $format = null)
