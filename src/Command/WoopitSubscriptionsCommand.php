@@ -134,7 +134,7 @@ class WoopitSubscriptionsCommand extends Command
         }
 
         return [
-            'oauth' => [
+            'oauth2' => [
                 'client_id' => $clientId,
                 'client_secret' => $app->getOauth2Client()->getSecret(),
                 'grant_type' => OAuth2Grants::CLIENT_CREDENTIALS,
