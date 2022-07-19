@@ -112,7 +112,7 @@
         "ppshobi/psonic": "^2.0",
         "doctrine/cache": "^2.0",
         "spatie/opening-hours": "^2.10",
-        "centrifugal/phpcent": "~3.0",
+        "centrifugal/phpcent": "~4.0",
         "twig/string-extra": "^3.1",
         "simshaun/recurr": "^5.0",
         "jaybizzle/crawler-detect": "^1.2",
