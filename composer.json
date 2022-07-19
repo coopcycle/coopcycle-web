@@ -125,7 +125,7 @@
         "symfony/doctrine-messenger": "^5.3",
         "azimolabs/apple-sign-in-php-sdk": "^2.0",
         "google/apiclient": "^2.11",
-        "theofidry/alice-data-fixtures": "1.4.0",
+        "theofidry/alice-data-fixtures": "1.5.2",
         "php-http/guzzle7-adapter": "^1.0",
         "shahonseven/php-color-hash": "dev-master",
         "league/oauth2-server-bundle": "^0.3.0",
