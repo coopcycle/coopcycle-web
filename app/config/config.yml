@@ -196,6 +196,8 @@ framework:
                 timeout: 1.0
             cubejs.client:
                 base_uri: "%env(CUBEJS_API_URL)%/"
+            woopit.http_client:
+                base_uri: 'https://car-api.%env(WOOPIT_HOST)%/'
 
 # Twig Configuration
 twig:
@@ -334,6 +336,8 @@ api_platform:
         json: ['application/json']
         csv: ['text/csv']
         html: ['text/html']
+    patch_formats:
+        json: ['application/json']
     swagger:
         versions: [3, 2]
 

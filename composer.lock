@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c5125bbb070a25b8718f46d534b34eee",
+    "content-hash": "d6be9c20d565688d68d2374bcd35f010",
     "packages": [
         {
             "name": "api-platform/core",
@@ -626,6 +626,65 @@
                 "source": "https://github.com/Behat/Transliterator/tree/v1.3.0"
             },
             "time": "2020-01-14T16:39:13+00:00"
+        },
+        {
+            "name": "benjaminfavre/oauth2-http-client",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/BenjaminFavre/oauth2-http-client.git",
+                "reference": "1cebbf980dbc5730c41a829364f7ef425d9ea409"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/BenjaminFavre/oauth2-http-client/zipball/1cebbf980dbc5730c41a829364f7ef425d9ea409",
+                "reference": "1cebbf980dbc5730c41a829364f7ef425d9ea409",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.2.5 || ^8.0.0",
+                "symfony/cache-contracts": "^2.2.0",
+                "symfony/http-client-contracts": "^2.3.1"
+            },
+            "provide": {
+                "symfony/http-client-implementation": "^2.3.1"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.12.64",
+                "phpunit/phpunit": "^9.4.3",
+                "symfony/cache": "5.2.0",
+                "symfony/http-client": "^5.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "BenjaminFavre\\OAuthHttpClient\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Benjamin Favre",
+                    "email": "favre.benjamin@gmail.com",
+                    "homepage": "https://github.com/BenjaminFavre"
+                }
+            ],
+            "description": "A lightweight OAuth 2 decorator for the Symfony HTTP Client.",
+            "homepage": "https://github.com/BenjaminFavre/oauth2-http-client",
+            "keywords": [
+                "http-client",
+                "oauth",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/BenjaminFavre/oauth2-http-client/issues",
+                "source": "https://github.com/BenjaminFavre/oauth2-http-client/tree/1.0.0"
+            },
+            "time": "2021-04-19T12:54:38+00:00"
         },
         {
             "name": "box/spout",

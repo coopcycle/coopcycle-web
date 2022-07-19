@@ -104,6 +104,8 @@ services:
   Nucleos\ProfileBundle\Mailer\MailerInterface: '@nucleos_profile.mailer.default'
   Lcobucci\JWT\Configuration $cubeJsJwtConfiguration: '@cubejs.jwt.config'
   Hashids\Hashids $hashids8: '@hashids.8'
+  Hashids\Hashids $hashids12: '@hashids.12'
+  BenjaminFavre\OAuthHttpClient\OAuthHttpClient $woopitClient: '@woopit.oauth_http_client'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -1202,3 +1204,28 @@ services:
   hashids.8:
     class: Hashids\Hashids
     arguments: ['%secret%', 8]
+
+  AppBundle\Service\PriceHelper:
+    arguments:
+      $state: "%region_iso%"
+
+  hashids.12:
+    class: Hashids\Hashids
+    arguments: ['%secret%', 12]
+
+
+  woopit.grant_type:
+    class: BenjaminFavre\OAuthHttpClient\GrantType\ClientCredentialsGrantType
+    arguments: [
+      '@woopit.http_client',
+      'https://connect.%env(WOOPIT_HOST)%/api/oauth/token',
+      '%env(WOOPIT_CLIENT_ID)%',
+      '%env(WOOPIT_CLIENT_SECRET)%'
+    ]
+
+  woopit.oauth_http_client:
+      class: BenjaminFavre\OAuthHttpClient\OAuthHttpClient
+      arguments: [
+        '@woopit.http_client',
+        '@woopit.grant_type'
+      ]

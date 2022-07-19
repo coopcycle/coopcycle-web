@@ -94,3 +94,13 @@ services:
 
   AppBundle\Serializer\TaskImportQueueNormalizer:
     tags: [ { name: serializer.normalizer, priority: 64 } ]
+
+  AppBundle\Serializer\WoopitQuoteRequestNormalizer:
+    arguments:
+      $normalizer: "@serializer.normalizer.object"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\WoopitDeliveryRequestNormalizer:
+    arguments:
+      $normalizer: "@serializer.normalizer.object"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]

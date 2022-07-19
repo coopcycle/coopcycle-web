@@ -120,6 +120,7 @@ services:
     arguments:
       - '@messenger.default_bus'
       - '@api_platform.iri_converter'
+      - '@doctrine.orm.default_entity_manager'
     tags:
       - name: event_subscriber
         subscribes_to: task:assigned

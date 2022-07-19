@@ -91,6 +91,7 @@
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\TaskListener">
         <lifecycle-callback type="prePersist" method="prePersist"/>
+        <lifecycle-callback type="preUpdate" method="preUpdate"/>
       </entity-listener>
     </entity-listeners>
   </entity>

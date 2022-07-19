@@ -179,3 +179,8 @@ services:
   AppBundle\Command\Typesense\CreateAllCollectionsCommand:
     tags:
       - { name: 'console.command', command: 'typesense:collections:create' }
+
+  AppBundle\Command\WoopitSubscriptionsCommand:
+    tags:
+      - { name: 'console.command', command: 'woopit:subscriptions:create' }
+

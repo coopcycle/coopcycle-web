@@ -130,7 +130,8 @@
         "shahonseven/php-color-hash": "dev-master",
         "league/oauth2-server-bundle": "^0.3.0",
         "phpoffice/phpspreadsheet": "^1.23",
-        "typesense/typesense-php": "^4.7"
+        "typesense/typesense-php": "^4.7",
+        "benjaminfavre/oauth2-http-client": "^1.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
