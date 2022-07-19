@@ -78,6 +78,13 @@ export const onSuggestionsFetchRequested = function({ value }) {
 export function onSuggestionSelected(event, { suggestion }) {
 
   // TODO Remove code duplication
+
+  if (suggestion.type === 'restaurant') {
+    window.location.href = window.Routing.generate('restaurant', {
+      id: suggestion.restaurant.id
+    })
+  }
+
   if (suggestion.type === 'address') {
 
     const geohash = ngeohash.encode(
