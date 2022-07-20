@@ -1,7 +1,6 @@
 import React from 'react'
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
-import { Bar } from 'react-chartjs-2';
 import _ from 'lodash'
 
 const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
@@ -10,6 +9,7 @@ const commonOptions = {
 };
 
 import { getCubeDateRange } from '../utils'
+import BarChart from '../../widgets/BarChart'
 
 const renderChart = ({ resultSet, error }) => {
   if (error) {
@@ -57,7 +57,7 @@ const renderChart = ({ resultSet, error }) => {
       },
     },
   };
-  return <Bar data={data} options={options} />;
+  return <BarChart data={data} options={options} />
 
 };
 

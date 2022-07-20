@@ -1,7 +1,6 @@
 import React from 'react'
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
-import { Line } from 'react-chartjs-2';
 import moment from 'moment'
 
 const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
@@ -10,6 +9,7 @@ const commonOptions = {
 };
 
 import { getCubeDateRange } from '../utils'
+import LineChart from '../../widgets/LineChart'
 
 const renderChart = ({ resultSet, error }) => {
   if (error) {
@@ -42,9 +42,9 @@ const renderChart = ({ resultSet, error }) => {
       },
     },
   };
-  // return <Bar data={data} options={options} />;
+  // return <BarChart data={data} options={options} />
 
-  return <Line data={data} options={options} />;
+  return <LineChart data={data} options={options} />
 
 };
 

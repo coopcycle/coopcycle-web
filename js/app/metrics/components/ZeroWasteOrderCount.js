@@ -1,7 +1,6 @@
 import React from 'react';
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
-import { Bar } from 'react-chartjs-2';
 import moment from 'moment'
 
 const commonOptions = {
@@ -9,6 +8,7 @@ const commonOptions = {
 };
 
 import { getCubeDateRange } from '../utils'
+import BarChart from '../../widgets/BarChart'
 
 const renderChart = ({ resultSet, error }) => {
   if (error) {
@@ -47,7 +47,7 @@ const options = {
     },
   },
 };
-return <Bar data={data} options={options} />;
+return <BarChart data={data} options={options} />
 
 };
 

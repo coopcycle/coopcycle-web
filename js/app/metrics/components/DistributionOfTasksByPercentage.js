@@ -1,7 +1,6 @@
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
 import React from 'react';
-import { Bar } from 'react-chartjs-2';
 import {getCubeDateRange} from "../utils";
 import { useDeepCompareMemo } from 'use-deep-compare'
 import {
@@ -9,6 +8,7 @@ import {
   TIMING_TOO_EARLY,
   TIMING_TOO_LATE,
 } from '../tasksGraphUtils'
+import BarChart from '../../widgets/BarChart'
 
 const defaultMinMaxX = 450 // see cube/Task.js; == 400%
 const defaultMinX = -1 * defaultMinMaxX
@@ -164,7 +164,7 @@ const BarChartRenderer = ({ resultSet, pivotConfig, taskType }) => {
       y: { ...commonOptions.scales.y, stacked },
     },
   };
-  return <Bar type="bar" data={data} options={options} />;
+  return <BarChart type="bar" data={data} options={options} />
 };
 
 const renderChart = ({ resultSet, error, pivotConfig, taskType }) => {

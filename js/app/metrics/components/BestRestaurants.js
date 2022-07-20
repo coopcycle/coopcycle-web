@@ -1,7 +1,6 @@
 import React from 'react'
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
-import { Pie } from 'react-chartjs-2';
 import chroma from 'chroma-js'
 
 const commonOptions = {
@@ -9,6 +8,7 @@ const commonOptions = {
 };
 
 import { getCubeDateRange } from '../utils'
+import PieChart from '../../widgets/PieChart'
 
 const renderChart = ({ resultSet, error }) => {
   if (error) {
@@ -44,7 +44,7 @@ const renderChart = ({ resultSet, error }) => {
     },
   };
 
-  return <Pie data={data} options={options} />;
+  return <PieChart data={data} options={options} />
 };
 
 const Chart = ({ cubejsApi, dateRange }) => {

@@ -4,8 +4,8 @@ import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
 import 'antd/dist/antd.css';
 import React from 'react';
-import { Line } from 'react-chartjs-2';
 import moment from 'moment'
+import LineChart from '../widgets/LineChart';
 
 const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
 const commonOptions = {
@@ -40,7 +40,7 @@ if (rootElement) {
       })),
     };
     const options = { ...commonOptions };
-    return <Line data={data} options={options} />;
+    return <LineChart data={data} options={options} />;
 
   };
 
