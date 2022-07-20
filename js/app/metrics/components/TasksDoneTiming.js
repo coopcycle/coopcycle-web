@@ -1,7 +1,6 @@
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
 import React from 'react';
-import { Bar } from 'react-chartjs-2';
 import {getCubeDateRange} from "../utils";
 import { useDeepCompareMemo } from 'use-deep-compare';
 import {
@@ -14,6 +13,7 @@ import {
   TYPE_PICKUP,
 } from '../tasksGraphUtils'
 import _ from 'lodash'
+import BarChart from '../../widgets/BarChart'
 
 const commonOptions = {
   maintainAspectRatio: false,
@@ -188,7 +188,7 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
       y: { ...commonOptions.scales.y, stacked },
     },
   };
-  return <Bar type="bar" data={data} options={options} />;
+  return <BarChart type="bar" data={data} options={options} />
 };
 
 const renderChart = ({ resultSet, error, pivotConfig }) => {

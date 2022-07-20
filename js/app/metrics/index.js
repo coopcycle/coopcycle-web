@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom'
 import cubejs from '@cubejs-client/core';
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin, ConfigProvider, DatePicker, Select } from 'antd';
-import { Bar } from 'react-chartjs-2';
 import moment from 'moment'
 
 import { antdLocale } from '../i18n'
 
 import './index.scss'
+import BarChart from '../widgets/BarChart'
 
 const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
 const commonOptions = {
@@ -50,7 +50,7 @@ if (rootElement) {
         },
       },
     };
-    return <Bar data={data} options={options} />;
+    return <BarChart data={data} options={options} />;
 
   };
 
