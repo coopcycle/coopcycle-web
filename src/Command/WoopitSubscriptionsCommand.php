@@ -5,7 +5,6 @@ namespace AppBundle\Command;
 use AppBundle\Entity\ApiApp;
 use BenjaminFavre\OAuthHttpClient\OAuthHttpClient;
 use Doctrine\ORM\EntityManagerInterface;
-use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -55,9 +54,27 @@ class WoopitSubscriptionsCommand extends Command
     {
         $clientId = $input->getArgument('client_id');
 
+        $app = $this->entityManager->getRepository(ApiApp::class)
+            ->findOneBy(['oauth2Client' => $clientId]);
+
+        if (!$app) {
+            $this->io->caution(sprintf('App with client_id %s does not exist', $clientId));
+            return 1;
+        }
+
+        if ($app->getType() !== 'api_key') {
+            $this->io->caution(sprintf('App with client_id %s is not using API Key authentication', $clientId));
+            return 1;
+        }
+
         $body = [
             'callbacks' => $this->getCallbacks(),
-            'auth' => $this->getAuthConfig($clientId),
+            'headers' => [
+                [
+                    'key' => 'Authorization',
+                    'value' => sprintf('Bearer %s', $app->getApiKey()),
+                ],
+            ]
         ];
 
         try {
@@ -120,26 +137,6 @@ class WoopitSubscriptionsCommand extends Command
                 'url' => "${deliveryUrl}/{deliveryId}",
                 'version' => $this->defaultVersion,
             ],
-        ];
-    }
-
-    private function getAuthConfig($clientId)
-    {
-        $app = $this->entityManager->getRepository(ApiApp::class)
-            ->findOneBy(['oauth2Client' => $clientId]);
-
-        if (!$app) {
-            $this->io->caution(sprintf('App with client_id %s does not exist', $clientId));
-            return 1;
-        }
-
-        return [
-            'oauth2' => [
-                'client_id' => $clientId,
-                'client_secret' => $app->getOauth2Client()->getSecret(),
-                'grant_type' => OAuth2Grants::CLIENT_CREDENTIALS,
-                'tokenEndPoint' => $this->urlGenerator->generate('oauth2_token', [], UrlGeneratorInterface::ABSOLUTE_URL)
-            ]
         ];
     }
 }
