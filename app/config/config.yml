@@ -171,6 +171,7 @@ framework:
             'AppBundle\Message\TopBarNotification': async
             'AppBundle\Message\Webhook': async
             'AppBundle\Message\IndexDeliveries': async
+            'AppBundle\Message\WoopitDocumentWebhook': async
     workflows:
         enabled: true
     mailer:
