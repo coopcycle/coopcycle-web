@@ -4,7 +4,7 @@ namespace AppBundle\Form\Restaurant;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -27,6 +27,14 @@ class DabbaType extends AbstractType
             $restaurant = $parentForm->getData();
 
             $form->get('enabled')->setData($restaurant->isDabbaEnabled());
+
+            if ($restaurant->isDabbaEnabled()) {
+                $form->add('dabbaCode', TextType::class, [
+                    'label' => 'restaurant.form.dabba_code.label',
+                    'required' => false,
+                    'data' => $restaurant->getDabbaCode(),
+                ]);
+            }
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
@@ -37,6 +45,11 @@ class DabbaType extends AbstractType
 
             $enabled = $form->get('enabled')->getData();
             $restaurant->setDabbaEnabled($enabled);
+
+            if ($form->has('dabbaCode')) {
+                $dabbaCode = $form->get('dabbaCode')->getData();
+                $restaurant->setDabbaCode($dabbaCode);
+            }
         });
     }
 

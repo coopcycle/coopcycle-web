@@ -1252,3 +1252,4 @@ form.checkout_address.reusable_packaging.dabba.return_pledge_label: Vous allez r
   %field% consigne(s) Dabba au coursier
 form.checkout_address.reusable_packaging.dabba.learn_more: En savoir plus sur Dabba
 form.checkout_address.reusable_packaging.dabba.add: Ajouter %missing% sur votre cagnotte
+restaurant.form.dabba_code.label: Code restaurant Dabba

@@ -1013,4 +1013,9 @@ class LocalBusiness extends BaseLocalBusiness implements
     {
         return $this->dabbaCode;
     }
+
+    public function setDabbaCode($dabbaCode)
+    {
+        $this->dabbaCode = $dabbaCode;
+    }
 }

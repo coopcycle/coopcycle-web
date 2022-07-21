@@ -1266,3 +1266,4 @@ form.checkout_address.reusable_packaging.dabba.learn_more: Learn more about Dabb
 dabba.oauth_connect.success: Dabba account connected successfully!
 form.checkout_address.reusable_packaging.dabba.wallet.label: You have <strong>%amount%</strong> on your Dabba wallet
 form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% per lunchbox)
+restaurant.form.dabba_code.label: Dabba restaurant code
