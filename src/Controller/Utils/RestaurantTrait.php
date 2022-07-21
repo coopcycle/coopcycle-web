@@ -108,6 +108,7 @@ trait RestaurantTrait
             'edenred_enabled' => $this->getParameter('edenred_enabled'),
             'vytal_enabled' => $this->getParameter('vytal_enabled'),
             'en_boite_le_plat_enabled' => $this->getParameter('en_boite_le_plat_enabled'),
+            'dabba_enabled' => $this->getParameter('dabba_enabled'),
         ]);
 
         // Associate Stripe account with restaurant
@@ -134,6 +135,7 @@ trait RestaurantTrait
         $wasLoopEatEnabled = $restaurant->isLoopeatEnabled();
         $wasDepositRefundEnabled = $restaurant->isDepositRefundEnabled();
         $wasVytalEnabled = $restaurant->isVytalEnabled();
+        $wasDabbaEnabled = $restaurant->isDabbaEnabled();
 
         $activationErrors = [];
         $formErrors = [];
@@ -182,6 +184,20 @@ trait RestaurantTrait
                     if (!$restaurant->hasReusablePackagingWithName('Vytal')) {
                         $reusablePackaging = new ReusablePackaging();
                         $reusablePackaging->setName('Vytal');
+                        $reusablePackaging->setPrice(0);
+                        $reusablePackaging->setOnHold(0);
+                        $reusablePackaging->setOnHand(9999);
+                        $reusablePackaging->setTracked(false);
+
+                        $restaurant->addReusablePackaging($reusablePackaging);
+                    }
+                }
+
+                if (!$wasDabbaEnabled && $restaurant->isDabbaEnabled()) {
+
+                    if (!$restaurant->hasReusablePackagingWithName('Dabba')) {
+                        $reusablePackaging = new ReusablePackaging();
+                        $reusablePackaging->setName('Dabba');
                         $reusablePackaging->setPrice(0);
                         $reusablePackaging->setOnHold(0);
                         $reusablePackaging->setOnHand(9999);
@@ -642,7 +658,7 @@ trait RestaurantTrait
         return $this->createForm(ProductType::class, $product, [
             'owner' => $restaurant,
             'with_reusable_packaging' =>
-                $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled(),
+                $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled() || $restaurant->isDabbaEnabled(),
             'reusable_packaging_choices' => $restaurant->getReusablePackagings(),
             'options_loader' => function (ProductInterface $product) use ($restaurant) {
 

@@ -7,8 +7,12 @@ use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
+use AppBundle\Dabba\Client as DabbaClient;
+use AppBundle\Dabba\Context as DabbaContext;
+use AppBundle\Dabba\GuestCheckoutAwareAdapter as DabbaAdapter;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\PriceFormatter;
+use AppBundle\Validator\Constraints\DabbaOrder;
 use AppBundle\Validator\Constraints\LoopEatOrder;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -41,6 +45,8 @@ class CheckoutAddressType extends AbstractType
         LoopEatClient $loopeatClient,
         LoopEatContext $loopeatContext,
         SessionInterface $session,
+        DabbaClient $dabbaClient,
+        DabbaContext $dabbaContext,
         string $loopeatOAuthFlow,
         bool $nonProfitsEnabled)
     {
@@ -49,6 +55,8 @@ class CheckoutAddressType extends AbstractType
         $this->loopeatClient = $loopeatClient;
         $this->loopeatContext = $loopeatContext;
         $this->session = $session;
+        $this->dabbaClient = $dabbaClient;
+        $this->dabbaContext = $dabbaContext;
         $this->loopeatOAuthFlow = $loopeatOAuthFlow;
         $this->nonProfitsEnabled = $nonProfitsEnabled;
 
@@ -106,12 +114,12 @@ class CheckoutAddressType extends AbstractType
             if ($order->isEligibleToReusablePackaging()) {
 
                 $supportsLoopEat = $restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials();
+                $supportsDabba = $restaurant->isDabbaEnabled(); // TODO Check if Dabba code is configured
 
                 // FIXME
                 // We need to check if $packagingQuantity > 0
 
                 if (!$order->isMultiVendor() && $supportsLoopEat) {
-
 
                     $this->loopeatContext->initialize();
 
@@ -144,6 +152,39 @@ class CheckoutAddressType extends AbstractType
                         // https://github.com/symfony/symfony/issues/12499
                         'empty_data' => '0',
                     ]);
+
+                } elseif (!$order->isMultiVendor() && $supportsDabba) {
+
+                    $this->dabbaContext->initialize();
+
+                    $dabbaAdapter = new DabbaAdapter($order, $this->session);
+
+                    $dabbaAuthorizeParams = [
+                        'state' => $this->dabbaClient->createStateParamForOrder($order),
+                    ];
+
+                    $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                        'required' => false,
+                        'label' => 'form.checkout_address.reusable_packaging_dabba_enabled.label',
+                        'attr' => [
+                            'data-dabba' => 'true',
+                            'data-dabba-credentials' => var_export($dabbaAdapter->hasDabbaCredentials(), true),
+                            'data-dabba-authorize-url' => $this->dabbaClient->getOAuthAuthorizeUrl($dabbaAuthorizeParams),
+                            'data-dabba-expected-wallet' => $packagingQuantity * $this->dabbaContext->getUnitPrice(),
+                        ],
+                    ]);
+
+                    /*
+                    $form->add('reusablePackagingPledgeReturn', NumberType::class, [
+                        'required' => false,
+                        'html5' => true,
+                        'label' => 'form.checkout_address.reusable_packaging_dabba_returns.label',
+                        // WARNING
+                        // Need to use a string here, or it won't work as expected
+                        // https://github.com/symfony/symfony/issues/12499
+                        'empty_data' => '0',
+                    ]);
+                    */
 
                 } elseif (!$order->isMultiVendor() && $restaurant->isVytalEnabled()) {
 
@@ -232,6 +273,7 @@ class CheckoutAddressType extends AbstractType
 
         $resolver->setDefault('constraints', [
             new LoopEatOrder(),
+            new DabbaOrder(),
         ]);
     }
 }

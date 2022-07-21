@@ -256,6 +256,15 @@ services:
         - name: event_subscriber
           subscribes_to: order:picked
 
+  coopcycle.domain.order.reactor.trade_dabba:
+    class: AppBundle\Domain\Order\Reactor\TradeDabba
+    arguments:
+      - '@AppBundle\Dabba\Client'
+      - '@monolog.logger.dabba'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:picked
+
   coopcycle.domain.order.reactor.create_geofencing_channel:
     class: AppBundle\Domain\Order\Reactor\CreateGeofencingChannel
     arguments:

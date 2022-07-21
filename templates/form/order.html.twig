@@ -44,6 +44,7 @@
   {% set isLoopeat = attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}
   {% set isVytal   = attr['data-vytal'] is defined and attr['data-vytal'] == 'true' %}
   {% set isEnBoiteLePlat = attr['data-en-boite-le-plat'] is defined and attr['data-en-boite-le-plat'] == 'true' %}
+  {% set isDabba = attr['data-dabba'] is defined and attr['data-dabba'] == 'true' %}
   {% set isChecked = form.vars.data %}
 
   {% if isLoopeat %}
@@ -141,6 +142,68 @@
         <span class="en-boite-le-plat-logo-orange my-3"></span>
       </div>
     </div>
+  {% elseif isDabba %}
+
+    {% set order = form.parent.vars.data %}
+    {% set missing = dabba_context.getMissing(order) %}
+
+    <div id="dabba-block" class="p-3{{ isChecked ? " active": "" }}">
+      <div class="py-0 m-0">
+        {{ form_widget(form) }}
+      </div>
+      {% if isChecked %}
+        <div>
+          <ul class="list-unstyled loopeat-summary">
+            <li>
+              <span>
+                {{ 'form.checkout_address.reusable_packaging.loopeat.reusable_quantity.label'|trans({
+                  '%count%': order.reusablePackagingQuantity
+                })|raw }}
+              </span>
+            </li>
+            <li>
+              <span>
+                {{ 'form.checkout_address.reusable_packaging.dabba.wallet.label'|trans({
+                  '%amount%': (dabba_context.wallet * 100)|price_format
+                })|raw }}
+                <em>{{ 'form.checkout_address.reusable_packaging.dabba.wallet.help'|trans({
+                  '%price%': (dabba_context.unitPrice * 100)|price_format
+                }) }}</em>
+              </span>
+            </li>
+            {# {{ form_row(form.parent.reusablePackagingPledgeReturn) }} #}
+            <li>
+              {% if missing > 0 %}
+                <strong>{{ 'dabba.insufficient_wallet'|trans({ '%amount%': (missing * 100)|price_format }, 'validators') }}</strong>
+              {% else %}
+                <strong>{{ 'form.checkout_address.reusable_packaging.loopeat.enough_credits'|trans }}</strong>
+              {% endif %}
+            </li>
+          </ul>
+          <div id="dabba-buttons" class="{% if missing == 0 %}d-none{% endif %}">
+            <div class="d-flex flex-row justify-content-between ">
+              <button type="button" id="checkout_address_cancelReusablePackaging" class="btn btn-link btn">
+                {{ 'basics.cancel'|trans }}
+              </button>
+              <a id="dabba-add-credit" href="" class="btn btn-default">
+                {{ 'form.checkout_address.reusable_packaging.dabba.add'|trans({ '%missing%': (missing * 100)|price_format }) }}
+              </a>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        {# <div class="d-none">
+          {{ form_widget(form.parent.reusablePackagingPledgeReturn) }}
+        </div> #}
+        <div class="my-2">
+          <a href="https://www.dabba-consigne.fr/" target="_blank">
+            <span class="mr-2">{{ 'form.checkout_address.reusable_packaging.dabba.learn_more'|trans }}</span>
+            <i class="fa fa-external-link"></i>
+          </a>
+        </div>
+        <img class="dabba-logo" src="{{ asset('img/dabba/dabba-logo.png') }}" alt="Dabba" />
+      {% endif %}
+    </div>
   {% else %}
     <div>
       <div class="alert alert-info py-0 m-0">
@@ -151,29 +214,58 @@
 {% endblock %}
 
 {% block _checkout_address_reusablePackagingPledgeReturn_row %}
-  {% set max = (loopeat_context.loopeatCredit - loopeat_context.loopeatBalance) %}
-  <li>
-    <span class="loopeat-icon loopeat-icon-gamelle"></span>
-    <span>
-      {% if max > 0 %}
-        {{ form_widget(form) }}
-      {% else %}
-        {{ 'form.checkout_address.reusable_packaging.loopeat.no_pledge_label'|trans }}
-      {% endif %}
-    </span>
-  </li>
+
+  {% set is_loopeat = form.parent.reusablePackagingEnabled.vars.attr['data-loopeat'] is defined and form.parent.reusablePackagingEnabled.vars.attr['data-loopeat'] == 'true' %}
+  {% set is_dabba = form.parent.reusablePackagingEnabled.vars.attr['data-dabba'] is defined and form.parent.reusablePackagingEnabled.vars.attr['data-dabba'] == 'true' %}
+
+  {% if is_loopeat %}
+    {% set max = (loopeat_context.loopeatCredit - loopeat_context.loopeatBalance) %}
+    <li>
+      <span class="loopeat-icon loopeat-icon-gamelle"></span>
+      <span>
+        {% if max > 0 %}
+          {{ form_widget(form) }}
+        {% else %}
+          {{ 'form.checkout_address.reusable_packaging.loopeat.no_pledge_label'|trans }}
+        {% endif %}
+      </span>
+    </li>
+  {% elseif is_dabba %}
+    {% set max = dabba_context.containers %}
+    <li>
+      <span>
+        {% if max > 0 %}
+          {{ form_widget(form) }}
+        {% else %}
+          {{ 'form.checkout_address.reusable_packaging.loopeat.no_pledge_label'|trans }}
+        {% endif %}
+      </span>
+    </li>
+  {% endif %}
 {% endblock %}
 
 {% block _checkout_address_reusablePackagingPledgeReturn_widget %}
 
-  {% set max = (loopeat_context.loopeatCredit - loopeat_context.loopeatBalance) %}
-  {% set attr = attr|merge({ 'min': 0, 'max': max }) %}
+  {% set is_loopeat = form.parent.reusablePackagingEnabled.vars.attr['data-loopeat'] is defined and form.parent.reusablePackagingEnabled.vars.attr['data-loopeat'] == 'true' %}
+  {% set is_dabba = form.parent.reusablePackagingEnabled.vars.attr['data-dabba'] is defined and form.parent.reusablePackagingEnabled.vars.attr['data-dabba'] == 'true' %}
 
-  <label for="{{ form.parent.reusablePackagingPledgeReturn.vars.id }}">
-    {{ 'form.checkout_address.reusable_packaging.loopeat.return_pledge_label'|trans({
-      '%field%': form_widget(form, { attr: attr, label_attr: { class: 'm-0' } })
-    })|raw }}
-  </label>
+  {% if is_loopeat %}
+    {% set max = (loopeat_context.loopeatCredit - loopeat_context.loopeatBalance) %}
+    {% set attr = attr|merge({ 'min': 0, 'max': max }) %}
+    <label for="{{ form.parent.reusablePackagingPledgeReturn.vars.id }}">
+      {{ 'form.checkout_address.reusable_packaging.loopeat.return_pledge_label'|trans({
+        '%field%': form_widget(form, { attr: attr, label_attr: { class: 'm-0' } })
+      })|raw }}
+    </label>
+  {% elseif is_dabba %}
+    {% set max = dabba_context.containers %}
+    {% set attr = attr|merge({ 'min': 0, 'max': max }) %}
+    <label for="{{ form.parent.reusablePackagingPledgeReturn.vars.id }}">
+      {{ 'form.checkout_address.reusable_packaging.dabba.return_pledge_label'|trans({
+        '%field%': form_widget(form, { attr: attr, label_attr: { class: 'm-0' } })
+      })|raw }}
+    </label>
+  {% endif %}
 {% endblock %}
 
 {% block _checkout_address_customer_row %}

@@ -52,3 +52,5 @@ order.shippingTimeRange.notAvailable: Indisponible pour l'instant
 
 store.multi_drop.conflict: Vous ne pouvez pas créer des commandes et activer les dépôts multiples en même temps
 
+dabba.insufficient_wallet: Il vous manque %amount% sur votre cagnotte Dabba
+

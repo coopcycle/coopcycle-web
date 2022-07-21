@@ -35,6 +35,7 @@ use AppBundle\Payment\MercadopagoPreferenceResponse;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
+use AppBundle\Validator\Constraints\DabbaOrder as AssertDabbaOrder;
 use AppBundle\Validator\Constraints\IsOrderModifiable as AssertOrderIsModifiable;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
 use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
@@ -288,6 +289,7 @@ use Webmozart\Assert\Assert as WMAssert;
  * @AssertOrder(groups={"Default"})
  * @AssertOrderIsModifiable(groups={"cart"})
  * @AssertLoopEatOrder(groups={"loopeat"})
+ * @AssertDabbaOrder(groups={"dabba"})
  */
 class Order extends BaseOrder implements OrderInterface
 {
@@ -820,7 +822,8 @@ class Order extends BaseOrder implements OrderInterface
 
         if (!$restaurant->isDepositRefundEnabled()
             && !$restaurant->isLoopeatEnabled()
-            && !$restaurant->isVytalEnabled()) {
+            && !$restaurant->isVytalEnabled()
+            && !$restaurant->isDabbaEnabled()) {
             return false;
         }
 

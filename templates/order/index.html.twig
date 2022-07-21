@@ -232,6 +232,20 @@
       </div>
     </div>
 
+    <div class="modal" id="modal-dabba-redirect-warning" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <p>{{ 'dabba.oauth_redirect.warning'|trans }}</p>
+          </div>
+          <div class="d-flex justify-content-between p-4 border-top">
+            <button type="button" class="btn btn-default btn-rounded btn-md" data-dismiss="modal">{{ 'basics.close'|trans }}</button>
+            <button type="button" class="btn btn-primary btn-rounded btn-md" data-continue>{{ 'basics.continue'|trans }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   {% else %}
     <div class="alert alert-warning">
       {% trans from 'validators' %}cart.empty{% endtrans %}

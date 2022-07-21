@@ -11,6 +11,11 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
+    <one-to-one field="dabbaCredentials" target-entity="AppBundle\Entity\Dabba\CustomerCredentials" mapped-by="customer" orphan-removal="true">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-one>
     <one-to-one field="edenredCredentials" target-entity="AppBundle\Entity\Edenred\CustomerCredentials" mapped-by="customer" orphan-removal="true">
       <cascade>
         <cascade-all/>

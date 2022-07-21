@@ -1213,7 +1213,6 @@ services:
     class: Hashids\Hashids
     arguments: ['%secret%', 12]
 
-
   woopit.grant_type:
     class: BenjaminFavre\OAuthHttpClient\GrantType\ClientCredentialsGrantType
     arguments: [
@@ -1229,3 +1228,13 @@ services:
         '@woopit.http_client',
         '@woopit.grant_type'
       ]
+
+  AppBundle\Dabba\Client:
+    arguments:
+      $baseUrl: "%dabba_base_url%"
+      $clientId: "%dabba_client_id%"
+      $clientSecret: "%dabba_client_secret%"
+
+  AppBundle\Dabba\Context:
+    tags:
+      - { name: monolog.logger, channel: dabba }
