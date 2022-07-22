@@ -382,7 +382,23 @@ Feature: Dispatch
           }
         ],
         "hydra:totalItems":2,
-        
+        "hydra:view":{
+          "@id":"/api/task_lists?date=2018-12-01",
+          "@type":"hydra:PartialCollectionView"
+        },
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/task_lists{?date}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":[
+            {
+              "@type":"IriTemplateMapping",
+              "variable":"date",
+              "property":"date",
+              "required":false
+            }
+          ]
+        }
       }
       """
 
