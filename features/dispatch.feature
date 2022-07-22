@@ -410,7 +410,7 @@ Feature: Dispatch
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "GET" request to "/api/tasks?date=2018-12-01&organization='Acme'"
+    And the user "bob" sends a "GET" request to "/api/tasks?date=2018-12-01&organization=Acme"
     Then print last response
     Then the response status code should be 200
     And the response should be in JSON

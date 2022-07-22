@@ -55,7 +55,10 @@ final class OrganizationFilter extends AbstractContextAwareFilter
         if ($user->hasRole('ROLE_ADMIN')) {
             $orgName = filter_var($value);
 
-            $queryBuilder->andWhere(sprintf('org.name = %s', $orgName));
+            $valueParameter = $queryNameGenerator->generateParameterName('org_name');
+
+            $queryBuilder->andWhere(sprintf('org.name = :%s', $valueParameter));
+            $queryBuilder->setParameter($valueParameter, $orgName);
             $queryBuilder->innerJoin(Organization::class, 'org', Expr\Join::WITH, 'o.organization = org.id');
         }
     }
