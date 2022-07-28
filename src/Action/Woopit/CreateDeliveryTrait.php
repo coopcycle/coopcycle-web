@@ -61,15 +61,15 @@ trait CreateDeliveryTrait
         }
 
         if (isset($location['floor'])) {
-            $streetDescription = $streetDescription . ', Floor ' . $location['floor'];
+            $streetDescription .= ' | Floor: ' . $location['floor'];
         }
 
         if (isset($location['doorCode'])) {
-            $streetDescription = $streetDescription . ', Door code ' . $location['doorCode'];
+            $streetDescription .= ' | Door code: ' . $location['doorCode'];
         }
 
         if (isset($location['comment'])) {
-            $streetDescription = $streetDescription . ', ' . $location['comment'];
+            $streetDescription .= ' | ' . $location['comment'];
         }
 
         $address->setDescription($streetDescription);

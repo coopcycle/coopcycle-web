@@ -29,6 +29,22 @@ trait UpdateDeliveryTrait
         $this->updateTask($data->picking, $delivery->getPickup());
         $this->updateTask($data->delivery, $delivery->getDropoff());
 
+        if ($data->packages) {
+            $packagesString = '';
+
+            foreach($data->packages as $package) {
+                if (!empty($packagesString)) {
+                    $packagesString .= ', ';
+                }
+                $packagesString .= $package['quantity'];
+                if (isset($package['weight'])) {
+                    $packagesString .= ' x ' . $package['weight']['value'] . ' ' . $package['weight']['unit'];
+                }
+            }
+
+            $delivery->getPickup()->setComments(sprintf('Packages: %s', $packagesString));
+        }
+
         return $delivery;
     }
 
@@ -37,12 +53,29 @@ trait UpdateDeliveryTrait
         if (isset($data['address'])) {
             $addressData = $data['address'];
 
-            $streetAddress = sprintf('%s, %s',
-                implode(', ', array_filter([$addressData['addressLine1'], $addressData['addressLine2']])),
-                sprintf('%s %s', $addressData['postalCode'], $addressData['city'])
-            );
+            $streetAddress = sprintf('%s %s %s', $addressData['addressLine1'], $addressData['postalCode'], $addressData['city']);
 
             $address = $this->geocoder->geocode($streetAddress);
+
+            $streetDescription = null;
+
+            if (isset($addressData['addressLine2'])) {
+                $streetDescription = $addressData['addressLine2'];
+            }
+
+            if (isset($addressData['floor'])) {
+                $streetDescription .= ' | Floor ' . $addressData['floor'];
+            }
+
+            if (isset($addressData['doorCode'])) {
+                $streetDescription .= ' | Door code ' . $addressData['doorCode'];
+            }
+
+            if (isset($addressData['comment'])) {
+                $streetDescription .= ' | ' . $addressData['comment'];
+            }
+
+            $address->setDescription($streetDescription);
 
             $task->setAddress($address);
         }

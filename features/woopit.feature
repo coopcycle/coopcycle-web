@@ -813,10 +813,12 @@ Feature: Woopit
         "picking": {
           "address": {
             "addressLine1": "24, Rue de la Paix",
-            "addressLine2": "",
+            "addressLine2": "Entrée B",
             "postalCode": "75002",
             "city": "Paris",
-            "country": "FR"
+            "country": "FR",
+            "floor": 3,
+            "doorCode": "A"
           },
           "infos": "Travaux sur le boulevard.",
           "interval": [
@@ -834,12 +836,13 @@ Feature: Woopit
         "delivery": {
           "address": {
             "addressLine1": "20, Rue Malher",
-            "addressLine2": "",
+            "addressLine2": "Entrée D",
             "elevator": true,
             "floor": 2,
             "postalCode": "75004",
             "city": "Paris",
-            "country": "FR"
+            "country": "FR",
+            "doorCode": 23
           },
           "interval": [
             {
