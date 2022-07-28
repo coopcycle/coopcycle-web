@@ -23,6 +23,22 @@ trait CreateDeliveryTrait
         $pickup = $this->createTask($data->picking, Task::TYPE_PICKUP);
         $dropoff = $this->createTask($data->delivery, Task::TYPE_DROPOFF);
 
+        if ($data->packages) {
+            $packagesString = '';
+
+            foreach($data->packages as $package) {
+                if (!empty($packagesString)) {
+                    $packagesString .= ', ';
+                }
+                $packagesString .= $package['quantity'];
+                if (isset($package['weight'])) {
+                    $packagesString .= ' x ' . $package['weight']['value'] . ' ' . $package['weight']['unit'];
+                }
+            }
+
+            $pickup->setComments(sprintf('Packages: %s', $packagesString));
+        }
+
         $delivery = Delivery::createWithTasks($pickup, $dropoff);
 
         $this->deliveryManager->setDefaults($delivery);
@@ -34,12 +50,29 @@ trait CreateDeliveryTrait
     {
         $location = $data['location'];
 
-        $streetAddress = sprintf('%s, %s',
-            implode(', ', array_filter([$location['addressLine1'], $location['addressLine2']])),
-            sprintf('%s %s', $location['postalCode'], $location['city'])
-        );
+        $streetAddress = sprintf('%s %s %s', $location['addressLine1'], $location['postalCode'], $location['city']);
 
         $address = $this->geocoder->geocode($streetAddress);
+
+        $streetDescription = null;
+
+        if (isset($location['addressLine2'])) {
+            $streetDescription = $location['addressLine2'];
+        }
+
+        if (isset($location['floor'])) {
+            $streetDescription = $streetDescription . ', Floor ' . $location['floor'];
+        }
+
+        if (isset($location['doorCode'])) {
+            $streetDescription = $streetDescription . ', Door code ' . $location['doorCode'];
+        }
+
+        if (isset($location['comment'])) {
+            $streetDescription = $streetDescription . ', ' . $location['comment'];
+        }
+
+        $address->setDescription($streetDescription);
 
         if (isset($data['contact'])) {
             $contact = $data['contact'];

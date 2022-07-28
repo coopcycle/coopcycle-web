@@ -31,10 +31,14 @@ Feature: Woopit
         "picking": {
           "location": {
             "addressLine1": "24, Rue de la Paix",
-            "addressLine2": "",
+            "addressLine2": "Entrée B",
             "postalCode": "75002",
             "city": "Paris",
-            "country": "FR"
+            "country": "FR",
+            "elevator": false,
+            "floor": 4,
+            "comment": "Paquet à l'accueil",
+            "doorCode": "1234"
           },
           "infos": "Travaux sur le boulevard.",
           "interval": [
@@ -47,12 +51,14 @@ Feature: Woopit
         "delivery": {
           "location": {
             "addressLine1": "48, Rue de Rivoli",
-            "addressLine2": "",
+            "addressLine2": "Appt 9",
             "elevator": true,
             "floor": 2,
             "postalCode": "75004",
             "city": "Paris",
-            "country": "FR"
+            "country": "FR",
+            "doorCode": "5678",
+            "comment": "Ascenseur à gauche"
           },
           "interval": [
             {
@@ -90,6 +96,32 @@ Feature: Woopit
               }
             ],
             "quantity": 2
+          },
+          {
+            "length": {
+                "value": 12,
+                "unit": "cm"
+            },
+            "width": {
+                "value": 12,
+                "unit": "cm"
+            },
+            "height": {
+                "value": 12,
+                "unit": "cm"
+            },
+            "weight": {
+                "value": 1,
+                "unit": "kg"
+            },
+            "quantity": 1,
+            "products": [
+                {
+                    "quantity": 1,
+                    "type": "TYPOLOGY_GENERIC",
+                    "label": "Produit 1"
+                }
+            ]
           }
         ],
         "services": [
@@ -127,10 +159,14 @@ Feature: Woopit
         "picking": {
           "location": {
             "addressLine1": "24, Rue de la Paix",
-            "addressLine2": "",
+            "addressLine2": "Entrée B",
+            "elevator": false,
+            "floor": 4,
             "postalCode": "75002",
             "city": "Paris",
-            "country": "FR"
+            "country": "FR",
+            "comment": "Paquet à l'accueil",
+            "doorCode": "1234"
           },
           "infos": "Travaux sur le boulevard.",
           "interval": [
@@ -143,12 +179,14 @@ Feature: Woopit
         "delivery": {
           "location": {
             "addressLine1": "48, Rue de Rivoli",
-            "addressLine2": "",
+            "addressLine2": "Appt 9",
             "elevator": true,
             "floor": 2,
             "postalCode": "75004",
             "city": "Paris",
-            "country": "FR"
+            "country": "FR",
+            "doorCode": "5678",
+            "comment": "Ascenseur à gauche"
           },
           "interval": [
             {
@@ -186,6 +224,32 @@ Feature: Woopit
               }
             ],
             "quantity": 2
+          },
+          {
+            "length": {
+                "value": 12,
+                "unit": "cm"
+            },
+            "width": {
+                "value": 12,
+                "unit": "cm"
+            },
+            "height": {
+                "value": 12,
+                "unit": "cm"
+            },
+            "weight": {
+                "value": 1,
+                "unit": "kg"
+            },
+            "quantity": 1,
+            "products": [
+                {
+                    "quantity": 1,
+                    "type": "TYPOLOGY_GENERIC",
+                    "label": "Produit 1"
+                }
+            ]
           }
         ],
         "services": [

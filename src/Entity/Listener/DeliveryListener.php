@@ -24,11 +24,13 @@ class DeliveryListener
             $comments .= $weight;
         }
 
-        $prevComments = $delivery->getPickup()->getComments();
+        if (!empty($comments)) {
+            $prevComments = $delivery->getPickup()->getComments();
 
-        $delivery->getPickup()->setComments(
-            $prevComments ? ($prevComments . "\n\n" . $comments) : $comments
-        );
+            $delivery->getPickup()->setComments(
+                $prevComments ? ($prevComments . "\n\n" . $comments) : $comments
+            );
+        }
 
         $store = $delivery->getStore();
 
