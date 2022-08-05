@@ -12,6 +12,7 @@ class Package
     protected $name;
     protected $volumeUnits;
     protected $packageSet;
+    protected $slug;
 
     /**
      * @return mixed
@@ -77,6 +78,26 @@ class Package
     public function setPackageSet(PackageSet $packageSet)
     {
         $this->packageSet = $packageSet;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param mixed $slug
+     *
+     * @return self
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
 
         return $this;
     }

@@ -17,5 +17,8 @@
         <join-column name="package_set_id" referenced-column-name="id" on-delete="SET NULL"/>
       </join-columns>
     </many-to-one>
+    <field name="slug" type="string" column="slug" unique="true" nullable="true">
+      <gedmo:slug fields="name" />
+    </field>
   </entity>
 </doctrine-mapping>
