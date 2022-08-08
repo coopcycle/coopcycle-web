@@ -6,12 +6,14 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
+use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 
@@ -27,11 +29,13 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     private $phoneNumberUtil;
     private $countryCode;
 
-    public function __construct(Geocoder $geocoder, PhoneNumberUtil $phoneNumberUtil, string $countryCode)
+    public function __construct(Geocoder $geocoder, PhoneNumberUtil $phoneNumberUtil, string $countryCode,
+        EntityManagerInterface $entityManager)
     {
         $this->geocoder = $geocoder;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->countryCode = $countryCode;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -71,6 +75,10 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 
             if (isset($record['weight']) && is_numeric($record['weight'])) {
                 $delivery->setWeight(floatval($record['weight']) * 1000);
+            }
+
+            if (isset($record['dropoff.packages']) && !empty($record['dropoff.packages'])) {
+                $this->parseAndApplyPackages($delivery->getDropoff(), $record['dropoff.packages']);
             }
 
             $deliveries[] = $delivery;
@@ -198,5 +206,21 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'weight' => '8.0'
             ],
         ];
+    }
+
+    private function parseAndApplyPackages(Task $task, $packagesRecord)
+    {
+        array_map(function ($packageString) use($task) {
+            [$packageSlug, $packageQty] = explode("=", $packageString);
+
+            $package = $this->entityManager->getRepository(Package::class)
+                ->findOneBy([
+                    'slug' => strtolower($packageSlug),
+                ]);
+
+            if ($package) {
+                $task->addPackageWithQuantity($package, $packageQty);
+            }
+        }, explode(" ", $packagesRecord));
     }
 }

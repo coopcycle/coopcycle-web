@@ -9,6 +9,7 @@ use AppBundle\Service\Geocoder;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Cocur\Slugify\Slugify;
+use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
@@ -23,6 +24,7 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->geocoder = $this->prophesize(Geocoder::class);
         $this->phoneNumberUtil = $this->prophesize(PhoneNumberUtil::class);
         $this->userManager = $this->prophesize(UserManagerInterface::class);
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
         $this->bob = new User();
         $this->bob->addRole('ROLE_COURIER');
@@ -38,7 +40,8 @@ class TaskSpreadsheetParserTest extends TestCase
             new Slugify(),
             $this->phoneNumberUtil->reveal(),
             $this->userManager->reveal(),
-            'fr'
+            'fr',
+            $this->entityManager->reveal(),
         );
     }
 
