@@ -18,26 +18,14 @@ use libphonenumber\PhoneNumberUtil;
 
 trait CreateDeliveryTrait
 {
+    use PackagesTrait;
+
     protected function createDelivery(WoopitQuoteRequest $data): Delivery
     {
         $pickup = $this->createTask($data->picking, Task::TYPE_PICKUP);
         $dropoff = $this->createTask($data->delivery, Task::TYPE_DROPOFF);
 
-        if ($data->packages) {
-            $packagesString = '';
-
-            foreach($data->packages as $package) {
-                if (!empty($packagesString)) {
-                    $packagesString .= ', ';
-                }
-                $packagesString .= $package['quantity'];
-                if (isset($package['weight'])) {
-                    $packagesString .= ' x ' . $package['weight']['value'] . ' ' . $package['weight']['unit'];
-                }
-            }
-
-            $pickup->setComments(sprintf('Packages: %s', $packagesString));
-        }
+        $this->parseAndApplyPackages($data, $pickup);
 
         $delivery = Delivery::createWithTasks($pickup, $dropoff);
 

@@ -786,7 +786,7 @@ Feature: Woopit
                 "quantity": 1
               }
             ],
-            "quantity": 2
+            "quantity": 1
           }
         ],
         "services": [
@@ -884,7 +884,33 @@ Feature: Woopit
                 "quantity": 1
               }
             ],
-            "quantity": 2
+            "quantity": 1
+          },
+          {
+            "length": {
+                "value": 12,
+                "unit": "cm"
+            },
+            "width": {
+                "value": 12,
+                "unit": "cm"
+            },
+            "height": {
+                "value": 12,
+                "unit": "cm"
+            },
+            "weight": {
+                "value": 1,
+                "unit": "kg"
+            },
+            "quantity": 2,
+            "products": [
+                {
+                    "quantity": 1,
+                    "type": "TYPOLOGY_GENERIC",
+                    "label": "Produit 1"
+                }
+            ]
           }
         ],
         "services": [

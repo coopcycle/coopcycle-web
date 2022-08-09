@@ -10,6 +10,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 trait UpdateDeliveryTrait
 {
+    use PackagesTrait;
+
     protected function updateDelivery(WoopitQuoteRequest $data, $deliveryId): Delivery
     {
         $decoded = $this->hashids12->decode($deliveryId);
@@ -29,21 +31,7 @@ trait UpdateDeliveryTrait
         $this->updateTask($data->picking, $delivery->getPickup());
         $this->updateTask($data->delivery, $delivery->getDropoff());
 
-        if ($data->packages) {
-            $packagesString = '';
-
-            foreach($data->packages as $package) {
-                if (!empty($packagesString)) {
-                    $packagesString .= ', ';
-                }
-                $packagesString .= $package['quantity'];
-                if (isset($package['weight'])) {
-                    $packagesString .= ' x ' . $package['weight']['value'] . ' ' . $package['weight']['unit'];
-                }
-            }
-
-            $delivery->getPickup()->setComments(sprintf('Packages: %s', $packagesString));
-        }
+        $this->parseAndApplyPackages($data, $delivery->getPickup());
 
         return $delivery;
     }
