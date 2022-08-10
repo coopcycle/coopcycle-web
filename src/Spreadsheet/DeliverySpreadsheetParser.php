@@ -190,6 +190,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.address.telephone' => '+33612345678',
                 'dropoff.comments' => '',
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
+                'dropoff.packages' => 'small-box=1 big-box=2',
                 'weight' => '5.5'
             ],
             [
@@ -205,6 +206,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.address.telephone' => '+33612345678',
                 'dropoff.comments' => '',
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
+                'dropoff.packages' => 'small-box=1 big-box=2',
                 'weight' => '8.0'
             ],
         ];

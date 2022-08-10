@@ -62,6 +62,7 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
                 'address.description' => '',
                 'address.telephone' => '+33612345678',
                 'address.contactName' => '',
+                'packages' => 'small-box=1 big-box=2',
             ],
             [
                 'type' => 'dropoff',
@@ -73,6 +74,7 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
                 'address.description' => '',
                 'address.telephone' => '+33612345678',
                 'address.contactName' => 'John Doe',
+                'packages' => 'small-box=1 big-box=2',
             ],
         ];
     }
