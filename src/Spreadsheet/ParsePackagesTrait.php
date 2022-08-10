@@ -3,6 +3,7 @@
 namespace AppBundle\Spreadsheet;
 
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Package;
 
 trait ParsePackagesTrait
 {
