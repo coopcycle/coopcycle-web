@@ -6,17 +6,21 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
+use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 
 class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 {
+    use ParsePackagesTrait;
+
     const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
     const DATE_PATTERN_SLASH = '#(?<day>[0-9]{2})/(?<month>[0-9]{2})/?(?<year>[0-9]{4})?#';
     const TIME_PATTERN = '/(?<hour>[0-9]{1,2})[:hH]+(?<minute>[0-9]{1,2})?/';
@@ -27,11 +31,13 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     private $phoneNumberUtil;
     private $countryCode;
 
-    public function __construct(Geocoder $geocoder, PhoneNumberUtil $phoneNumberUtil, string $countryCode)
+    public function __construct(Geocoder $geocoder, PhoneNumberUtil $phoneNumberUtil, string $countryCode,
+        EntityManagerInterface $entityManager)
     {
         $this->geocoder = $geocoder;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->countryCode = $countryCode;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -71,6 +77,10 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 
             if (isset($record['weight']) && is_numeric($record['weight'])) {
                 $delivery->setWeight(floatval($record['weight']) * 1000);
+            }
+
+            if (isset($record['dropoff.packages']) && !empty($record['dropoff.packages'])) {
+                $this->parseAndApplyPackages($delivery->getDropoff(), $record['dropoff.packages']);
             }
 
             $deliveries[] = $delivery;
@@ -180,6 +190,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.address.telephone' => '+33612345678',
                 'dropoff.comments' => '',
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
+                'dropoff.packages' => 'small-box=1 big-box=2',
                 'weight' => '5.5'
             ],
             [
@@ -195,6 +206,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.address.telephone' => '+33612345678',
                 'dropoff.comments' => '',
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
+                'dropoff.packages' => 'small-box=1 big-box=2',
                 'weight' => '8.0'
             ],
         ];
