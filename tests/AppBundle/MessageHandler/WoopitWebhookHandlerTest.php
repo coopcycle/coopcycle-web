@@ -76,7 +76,7 @@ class WoopitWebhookHandlerTest extends TestCase
         );
 
         $this->assertEquals(
-            'DELIVERY_STARTED',
+            'DELIVERY_PICK_UP_STARTED',
             json_decode($mockResponse->getRequestOptions()['body'], true)['status']
         );
     }
@@ -111,7 +111,7 @@ class WoopitWebhookHandlerTest extends TestCase
         );
 
         $this->assertEquals(
-            'DELIVERY_DELIVERED_OK',
+            'DELIVERY_OK',
             json_decode($mockResponse->getRequestOptions()['body'], true)['status']
         );
     }
@@ -146,7 +146,7 @@ class WoopitWebhookHandlerTest extends TestCase
         );
 
         $this->assertEquals(
-            'DELIVERY_FAILED_WITH_RETURN',
+            'DELIVERY_KO',
             json_decode($mockResponse->getRequestOptions()['body'], true)['status']
         );
     }

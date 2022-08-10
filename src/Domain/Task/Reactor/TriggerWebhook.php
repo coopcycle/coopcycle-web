@@ -81,6 +81,10 @@ class TriggerWebhook
     {
         $task = $event->getTask();
 
+        if ($event instanceof Event\TaskAssigned && $task->isDropoff()) {
+            return 'delivery.assigned';
+        }
+
         if ($event instanceof Event\TaskStarted) {
             return $task->isPickup() ? 'delivery.started' : 'delivery.in_progress';
         }
