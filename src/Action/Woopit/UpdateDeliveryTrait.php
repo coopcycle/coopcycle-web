@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 trait UpdateDeliveryTrait
 {
     use PackagesTrait;
+    use AddressTrait;
 
     protected function updateDelivery(WoopitQuoteRequest $data, $deliveryId): Delivery
     {
@@ -45,25 +46,9 @@ trait UpdateDeliveryTrait
 
             $address = $this->geocoder->geocode($streetAddress);
 
-            $streetDescription = null;
-
-            if (isset($addressData['addressLine2'])) {
-                $streetDescription = $addressData['addressLine2'];
-            }
-
-            if (isset($addressData['floor'])) {
-                $streetDescription .= ' | Floor ' . $addressData['floor'];
-            }
-
-            if (isset($addressData['doorCode'])) {
-                $streetDescription .= ' | Door code ' . $addressData['doorCode'];
-            }
-
-            if (isset($addressData['comment'])) {
-                $streetDescription .= ' | ' . $addressData['comment'];
-            }
-
-            $address->setDescription($streetDescription);
+            $address->setDescription(
+                $this->getAddressDescription($addressData)
+            );
 
             $task->setAddress($address);
         }

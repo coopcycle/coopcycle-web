@@ -19,6 +19,7 @@ use libphonenumber\PhoneNumberUtil;
 trait CreateDeliveryTrait
 {
     use PackagesTrait;
+    use AddressTrait;
 
     protected function createDelivery(WoopitQuoteRequest $data): Delivery
     {
@@ -42,25 +43,9 @@ trait CreateDeliveryTrait
 
         $address = $this->geocoder->geocode($streetAddress);
 
-        $streetDescription = null;
-
-        if (isset($location['addressLine2'])) {
-            $streetDescription = $location['addressLine2'];
-        }
-
-        if (isset($location['floor'])) {
-            $streetDescription .= ' | Floor: ' . $location['floor'];
-        }
-
-        if (isset($location['doorCode'])) {
-            $streetDescription .= ' | Door code: ' . $location['doorCode'];
-        }
-
-        if (isset($location['comment'])) {
-            $streetDescription .= ' | ' . $location['comment'];
-        }
-
-        $address->setDescription($streetDescription);
+        $address->setDescription(
+            $this->getAddressDescription($location)
+        );
 
         if (isset($data['contact'])) {
             $contact = $data['contact'];
