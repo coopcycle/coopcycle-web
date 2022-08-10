@@ -19,6 +19,8 @@ use libphonenumber\PhoneNumberUtil;
 
 class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 {
+    use ParsePackagesTrait;
+
     const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
     const DATE_PATTERN_SLASH = '#(?<day>[0-9]{2})/(?<month>[0-9]{2})/?(?<year>[0-9]{4})?#';
     const TIME_PATTERN = '/(?<hour>[0-9]{1,2})[:hH]+(?<minute>[0-9]{1,2})?/';
@@ -206,21 +208,5 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'weight' => '8.0'
             ],
         ];
-    }
-
-    private function parseAndApplyPackages(Task $task, $packagesRecord)
-    {
-        array_map(function ($packageString) use($task) {
-            [$packageSlug, $packageQty] = explode("=", $packageString);
-
-            $package = $this->entityManager->getRepository(Package::class)
-                ->findOneBy([
-                    'slug' => strtolower($packageSlug),
-                ]);
-
-            if ($package) {
-                $task->addPackageWithQuantity($package, $packageQty);
-            }
-        }, explode(" ", $packagesRecord));
     }
 }
