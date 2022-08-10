@@ -149,3 +149,20 @@ Feature: Delivery quotes
         "expiresAt":"@string@.isDateTime()"
       }
       """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/quotes/1/confirm" with body:
+      """
+      {}
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/DeliveryQuote",
+        "@id":"/api/delivery_quotes/1",
+        "@type":"DeliveryQuote",
+        "delivery":"/api/deliveries/1"
+      }
+      """
