@@ -42,8 +42,11 @@ class WoopitWebhookHandler implements MessageHandlerInterface
 
         $status = null;
         switch ($message->getEvent()) {
+            case 'delivery.assigned':
+                $status = 'DELIVERY_TEAM_ASSIGNED';
+                break;
             case 'delivery.started':
-                $status = 'DELIVERY_STARTED';
+                $status = 'DELIVERY_PICK_UP_STARTED';
                 break;
             case 'delivery.in_progress':
                 $status = 'DELIVERY_IN_PROGRESS';
@@ -52,13 +55,13 @@ class WoopitWebhookHandler implements MessageHandlerInterface
                 $status = 'DELIVERY_PICK_UP_OK';
                 break;
             case 'delivery.completed':
-                $status = 'DELIVERY_DELIVERED_OK';
+                $status = 'DELIVERY_OK';
                 break;
             case 'delivery.pickup_failed':
-                $status = 'DELIVERY_PICK_UP_FAILED';
+                $status = 'DELIVERY_PICK_UP_KO';
                 break;
             case 'delivery.failed':
-                $status = 'DELIVERY_FAILED_WITH_RETURN';
+                $status = 'DELIVERY_KO';
                 break;
         }
 

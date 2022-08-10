@@ -18,10 +18,15 @@ use libphonenumber\PhoneNumberUtil;
 
 trait CreateDeliveryTrait
 {
+    use PackagesTrait;
+    use AddressTrait;
+
     protected function createDelivery(WoopitQuoteRequest $data): Delivery
     {
         $pickup = $this->createTask($data->picking, Task::TYPE_PICKUP);
         $dropoff = $this->createTask($data->delivery, Task::TYPE_DROPOFF);
+
+        $this->parseAndApplyPackages($data, $pickup);
 
         $delivery = Delivery::createWithTasks($pickup, $dropoff);
 
@@ -34,12 +39,13 @@ trait CreateDeliveryTrait
     {
         $location = $data['location'];
 
-        $streetAddress = sprintf('%s, %s',
-            implode(', ', array_filter([$location['addressLine1'], $location['addressLine2']])),
-            sprintf('%s %s', $location['postalCode'], $location['city'])
-        );
+        $streetAddress = sprintf('%s %s %s', $location['addressLine1'], $location['postalCode'], $location['city']);
 
         $address = $this->geocoder->geocode($streetAddress);
+
+        $address->setDescription(
+            $this->getAddressDescription($location)
+        );
 
         if (isset($data['contact'])) {
             $contact = $data['contact'];

@@ -10,6 +10,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 trait UpdateDeliveryTrait
 {
+    use PackagesTrait;
+    use AddressTrait;
+
     protected function updateDelivery(WoopitQuoteRequest $data, $deliveryId): Delivery
     {
         $decoded = $this->hashids12->decode($deliveryId);
@@ -29,6 +32,8 @@ trait UpdateDeliveryTrait
         $this->updateTask($data->picking, $delivery->getPickup());
         $this->updateTask($data->delivery, $delivery->getDropoff());
 
+        $this->parseAndApplyPackages($data, $delivery->getPickup());
+
         return $delivery;
     }
 
@@ -37,12 +42,13 @@ trait UpdateDeliveryTrait
         if (isset($data['address'])) {
             $addressData = $data['address'];
 
-            $streetAddress = sprintf('%s, %s',
-                implode(', ', array_filter([$addressData['addressLine1'], $addressData['addressLine2']])),
-                sprintf('%s %s', $addressData['postalCode'], $addressData['city'])
-            );
+            $streetAddress = sprintf('%s %s %s', $addressData['addressLine1'], $addressData['postalCode'], $addressData['city']);
 
             $address = $this->geocoder->geocode($streetAddress);
+
+            $address->setDescription(
+                $this->getAddressDescription($addressData)
+            );
 
             $task->setAddress($address);
         }
