@@ -233,7 +233,7 @@ Feature: Multi-step deliveries
           },
           {
             "type": "dropoff",
-            "address": "48, Rue de Rivoli",
+            "address": "48, Rue de Rivoli Paris",
             "before": "tomorrow 13:30",
             "weight": 1500,
             "packages": [
@@ -295,8 +295,8 @@ Feature: Multi-step deliveries
             "contactName":null,
             "geo":{
               "@type":"GeoCoordinates",
-              "latitude":48.8568634,
-              "longitude":2.3546134
+              "latitude":48.856872,
+              "longitude":2.354618
             },
             "streetAddress":"48 Rue de Rivoli, 75004 Paris",
             "telephone":null,
