@@ -61,10 +61,10 @@ jobs:
         run: docker-compose exec -T php bin/console doctrine:schema:create --env=test
       - name: Validate database schema
         run: docker-compose exec -T php bin/console doctrine:schema:validate --env=test --skip-sync
-      - name: Run PHPUnit
-        run: |
-          cp phpunit.xml.dist phpunit.xml
-          docker-compose exec -T php vendor/bin/phpunit
+      # - name: Run PHPUnit
+      #   run: |
+      #     cp phpunit.xml.dist phpunit.xml
+      #     docker-compose exec -T php vendor/bin/phpunit
       - name: Run Behat
         run: docker-compose exec -T php vendor/bin/behat --tags="@debug"
       - name: Run Jest
