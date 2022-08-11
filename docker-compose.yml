@@ -127,7 +127,7 @@ services:
       - DEBUG=browserless/chrome*
 
   mjml:
-    image: adrianrudnik/mjml-server
+    image: adrianrudnik/mjml-server:2.4.0
     ports:
       - 8889:80
     environment:
