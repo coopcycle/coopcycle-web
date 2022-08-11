@@ -4,12 +4,14 @@ namespace Tests\AppBundle\Spreadsheet;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Tag;
 use AppBundle\Service\Geocoder;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Cocur\Slugify\Slugify;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
@@ -34,6 +36,12 @@ class TaskSpreadsheetParserTest extends TestCase
 
         $this->userManager->findUserByUsername('sarah')
             ->willReturn(null);
+
+        $this->packageRepository = $this->prophesize(ObjectRepository::class);
+
+        $this->entityManager
+            ->getRepository(Package::class)
+            ->willReturn($this->packageRepository->reveal());
 
         return new TaskSpreadsheetParser(
             $this->geocoder->reveal(),

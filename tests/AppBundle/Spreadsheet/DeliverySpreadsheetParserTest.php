@@ -3,10 +3,12 @@
 namespace Tests\AppBundle\Spreadsheet;
 
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Package;
 use AppBundle\Service\Geocoder;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
 use Prophecy\Argument;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
@@ -21,6 +23,12 @@ class DeliverySpreadsheetParserTest extends TestCase
         $this->geocoder
             ->geocode(Argument::type('string'))
             ->willReturn(new Address());
+
+        $this->packageRepository = $this->prophesize(ObjectRepository::class);
+
+        $this->entityManager
+            ->getRepository(Package::class)
+            ->willReturn($this->packageRepository->reveal());
 
         return new DeliverySpreadsheetParser(
             $this->geocoder->reveal(),
