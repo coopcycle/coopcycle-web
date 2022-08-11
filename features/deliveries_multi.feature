@@ -223,12 +223,12 @@ Feature: Multi-step deliveries
         "tasks": [
           {
             "type": "pickup",
-            "address": "24, Rue de la Paix",
+            "address": "24, Rue de la Paix Paris",
             "before": "tomorrow 13:00"
           },
           {
             "type": "pickup",
-            "address": "56, Rue de la Paix",
+            "address": "22, Rue de la Paix Paris",
             "before": "tomorrow 13:15"
           },
           {
@@ -266,7 +266,7 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
-            "streetAddress":"Christofle, 24 Rue de la Paix, 75002 Paris, France",
+            "streetAddress":"24 Rue de la Paix, 75002 Paris",
             "telephone":null,
             "name":null
           },
@@ -298,7 +298,7 @@ Feature: Multi-step deliveries
               "latitude":48.8568634,
               "longitude":2.3546134
             },
-            "streetAddress":"48 Rue de Rivoli, 75008 Paris, France",
+            "streetAddress":"48 Rue de Rivoli, 75004 Paris",
             "telephone":null,
             "name":null
           },
