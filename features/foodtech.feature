@@ -110,6 +110,7 @@ Feature: Food Tech
       }
       """
 
+  @debug
   Scenario: Refuse order with reason
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -142,6 +143,7 @@ Feature: Food Tech
         "reason": "Restaurant is closing"
       }
       """
+    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -177,6 +179,7 @@ Feature: Food Tech
       }
       """
 
+  @debug
   Scenario: Delay order
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -209,6 +212,7 @@ Feature: Food Tech
         "delay": 20
       }
       """
+    Then print last response
     Then the response status code should be 200
 
   Scenario: Not authorized to delay order

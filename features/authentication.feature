@@ -386,6 +386,7 @@ Feature: Authenticate
     Then the response status code should be 401
     And the response should be in JSON
 
+  @debug
   Scenario: Reset request success
     Given the user is loaded:
       | email    | bob@coopcycle.org |
@@ -395,6 +396,7 @@ Feature: Authenticate
     And I send a "POST" request to "/api/resetting/send-email" with parameters:
       | key         | value             |
       | username    | bob               |
+    Then print last response
     Then the response status code should be 202
     And the response should be in JSON
     And the JSON should match:

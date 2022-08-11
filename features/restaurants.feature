@@ -819,6 +819,7 @@ Feature: Manage restaurants
       }
       """
 
+  @debug
   Scenario: Retrieve restaurant deliveries
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -845,6 +846,7 @@ Feature: Manage restaurants
     Given I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
     When the user "bob" sends a "PUT" request to "/api/orders/1/accept"
+    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     Given I add "Accept" header equal to "application/ld+json"
