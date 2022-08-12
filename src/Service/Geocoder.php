@@ -121,7 +121,7 @@ class Geocoder
     /**
      * @return Address|null
      */
-    public function geocode($value)
+    public function geocode($value, $address = null)
     {
         $query = GeocodeQuery::create($value);
 
@@ -150,7 +150,9 @@ class Geocoder
 
             [ $longitude, $latitude ] = $result->getCoordinates()->toArray();
 
-            $address = new Address();
+            if (!$address) {
+                $address = new Address();
+            }
             $address->setGeo(new GeoCoordinates($latitude, $longitude));
             $address->setStreetAddress($this->formatAddress($result));
             $address->setAddressLocality($result->getLocality());
