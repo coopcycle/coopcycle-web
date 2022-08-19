@@ -1,0 +1,24 @@
+<table class="table">
+  <thead>
+    <th>#</th>
+    <th>{{ 'form.integration.name.label'|trans }}</th>
+    <th>{{ 'form.integration.store.label'|trans }}</th>
+  </thead>
+  <tbody>
+  {% for integration in integrations %}
+    <tr>
+      <td width="5%">
+        <a href="{{ path('admin_integration', { id: integration.id }) }}">
+          #{{ integration.id }}
+        </a>
+      </td>
+      <td>
+        {{ integration.name }}
+      </td>
+      <td>
+        {{ integration.store.name }}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>

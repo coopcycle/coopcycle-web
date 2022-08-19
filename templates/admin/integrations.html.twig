@@ -1,0 +1,14 @@
+{% extends "deliveries.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_integrations') }}">{{ 'integrations.breadcrumb'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+<p class="text-right">
+  <a href="{{ path('admin_new_integration') }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
+  </a>
+</p>
+{% include '_partials/integration/list.html.twig' %}
+{% endblock %}
