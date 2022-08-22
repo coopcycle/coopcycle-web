@@ -19,6 +19,8 @@ use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Action\Order\Centrifugo as CentrifugoController;
+use AppBundle\Action\Order\Invoice as InvoiceController;
+use AppBundle\Action\Order\GenerateInvoice as GenerateInvoiceController;
 use AppBundle\Action\Order\MercadopagoPreference;
 use AppBundle\Action\MyOrders;
 use AppBundle\Api\Dto\CartItemInput;
@@ -277,7 +279,26 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "openapi_context"={
  *         "summary"="Creates a MercadoPago preference and returns its ID."
  *       }
- *     }
+ *     },
+ *     "invoice"={
+ *      "method"="GET",
+ *      "path"="/orders/{id}/invoice",
+ *      "controller"=InvoiceController::class,
+ *      "security"="is_granted('view', object)",
+ *      "openapi_context"={
+ *        "summary"="Get Invoice for a Order resource."
+ *      }
+ *     },
+ *     "generate_invoice"={
+ *      "method"="POST",
+ *      "path"="/orders/{id}/invoice",
+ *      "normalization_context"={"groups"={"order"}},
+ *      "controller"=GenerateInvoiceController::class,
+ *      "security"="is_granted('view', object)",
+ *      "openapi_context"={
+ *        "summary"="Generate Invoice for a Order resource."
+ *      }
+ *     },
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order_create"}},
@@ -918,6 +939,11 @@ class Order extends BaseOrder implements OrderInterface
     public function getReceipt()
     {
         return $this->receipt;
+    }
+
+    public function getHasReceipt()
+    {
+        return $this->hasReceipt();
     }
 
     public function setReceipt($receipt)
