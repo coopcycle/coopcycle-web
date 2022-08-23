@@ -39,6 +39,8 @@ Sylius\Component\Order\Model\Order:
   attributes:
     id:
       groups: ['order']
+    hasReceipt:
+      groups: [ 'order', 'order_create', 'order_update' ]
     restaurant:
       groups: ['order', 'order_create', 'cart', 'order_update']
     vendor:
