@@ -40,11 +40,15 @@ class CheckDeliveryValidator extends ConstraintValidator
         } else {
             // TODO For Woopit the preference is to get the checkExpression from getStore() instead of extractStore()
             $store = $object->getStore();
-            $checkExpression = $store->getCheckExpression();
-            if (null !== $checkExpression && !$this->expressionLanguage->evaluate($checkExpression, Delivery::toExpressionLanguageValues($object))) {
-                $this->context->buildViolation($constraint->notValidMessage)
-                    ->atPath('items')
-                    ->addViolation();
+
+            if (null !== $store) {
+                $checkExpression = $store->getCheckExpression();
+
+                if (null !== $checkExpression && !$this->expressionLanguage->evaluate($checkExpression, Delivery::toExpressionLanguageValues($object))) {
+                    $this->context->buildViolation($constraint->notValidMessage)
+                        ->atPath('items')
+                        ->addViolation();
+                }
             }
         }
 

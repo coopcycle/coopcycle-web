@@ -220,7 +220,7 @@ class WoopitIntegration
     /**
      * Sets name.
      *
-     * @param Name $name
+     * @param string $name
      *
      * @return $this
      */
@@ -268,7 +268,7 @@ class WoopitIntegration
     /**
      * Sets woopitStoreId.
      *
-     * @param WoopitStoreId $woopitStoreId
+     * @param string $woopitStoreId
      *
      * @return $this
      */

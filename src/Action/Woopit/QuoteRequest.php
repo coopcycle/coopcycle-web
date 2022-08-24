@@ -5,7 +5,6 @@ namespace AppBundle\Action\Woopit;
 use AppBundle\Entity\Woopit\QuoteRequest as WoopitQuoteRequest;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Woopit\WoopitIntegration;
-use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\PriceHelper;
@@ -22,14 +21,12 @@ class QuoteRequest
     private $geocoder;
 
     public function __construct(
-        TokenStoreExtractor $tokenExtractor,
         DeliveryManager $deliveryManager,
         Geocoder $geocoder,
         PriceHelper $priceHelper,
         EntityManagerInterface $entityManager,
         ValidatorInterface $checkDeliveryValidator)
     {
-        $this->tokenExtractor = $tokenExtractor;
         $this->deliveryManager = $deliveryManager;
         $this->geocoder = $geocoder;
         $this->priceHelper = $priceHelper;

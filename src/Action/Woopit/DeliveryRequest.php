@@ -6,7 +6,6 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Woopit\QuoteRequest as WoopitQuoteRequest;
 use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
 use AppBundle\Entity\Woopit\WoopitIntegration;
-use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,7 +23,6 @@ class DeliveryRequest
     private $geocoder;
 
     public function __construct(
-        TokenStoreExtractor $tokenExtractor,
         DeliveryManager $deliveryManager,
         Geocoder $geocoder,
         Hashids $hashids12,
@@ -32,7 +30,6 @@ class DeliveryRequest
         PhoneNumberUtil $phoneNumberUtil,
         ValidatorInterface $checkDeliveryValidator)
     {
-        $this->tokenExtractor = $tokenExtractor;
         $this->deliveryManager = $deliveryManager;
         $this->geocoder = $geocoder;
         $this->hashids12 = $hashids12;
