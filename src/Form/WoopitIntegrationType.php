@@ -66,6 +66,7 @@ class WoopitIntegrationType extends AbstractType
                 'query_builder' => new OrderByNameQueryBuilder(),
                 'label' => 'form.integration.store.label',
                 'choice_label' => 'name',
+                'required' => true,
             ])
             ->add('zone', EntityType::class, [
                 'class' => Zone::class,
@@ -88,7 +89,7 @@ class WoopitIntegrationType extends AbstractType
             $woopitIntegration = $event->getData();
 
             if (null !== $woopitIntegration->getZone()) {
-                $woopitIntegration->setDeliveryZoneExpression(
+                $woopitIntegration->getStore()->setCheckExpression(
                     sprintf('in_zone(dropoff.address, "%s")', $woopitIntegration->getZone()->getName())
                 );
             }

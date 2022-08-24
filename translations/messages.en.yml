@@ -1273,10 +1273,10 @@ integrations.breadcrumb: Integrations
 form.integration.name.label: Integration name
 form.integration.store.label: Store
 form.integration.zone.label: Zona
-form.integration.maxWeight.label: Maximum weight allowed
-form.integration.maxHeight.label: Maximum height allowed
-form.integration.maxWidth.label: Maximum width allowed
-form.integration.maxLength.label: Maximum length allowed
+form.integration.maxWeight.label: Maximum weight allowed (kg)
+form.integration.maxHeight.label: Maximum height allowed (cm)
+form.integration.maxWidth.label: Maximum width allowed (cm)
+form.integration.maxLength.label: Maximum length allowed (cm)
 form.integration.productTypes.label: Product types allowed
 form.integration.woopitStoreId.label: Woopit store identifier
 integration.created.message: The integration has been created.

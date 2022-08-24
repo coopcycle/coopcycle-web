@@ -48,11 +48,6 @@ class WoopitIntegration
     private $zone;
 
     /**
-     * @var string Expression for the delivery zone allowed of the integration.
-     */
-    private $deliveryZoneExpression;
-
-    /**
      * @var array Product types supported for the integration.
      */
     private $productTypes;
@@ -66,30 +61,6 @@ class WoopitIntegration
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Get deliveryZoneExpression
-     *
-     * @return string
-     */
-    public function getDeliveryZoneExpression()
-    {
-        return $this->deliveryZoneExpression;
-    }
-
-    /**
-     * Sets deliveryZoneExpression
-     *
-     * @param string $deliveryZoneExpression
-     *
-     * @return $this
-     */
-    public function setDeliveryZoneExpression($deliveryZoneExpression)
-    {
-        $this->deliveryZoneExpression = $deliveryZoneExpression;
-
-        return $this;
     }
 
      /**

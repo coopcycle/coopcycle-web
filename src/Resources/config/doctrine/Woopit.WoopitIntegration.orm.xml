@@ -12,7 +12,7 @@
     <field name="woopitStoreId" type="string" column="woopit_store_id"/>
     <many-to-one field="store" target-entity="AppBundle\Entity\Store">
       <join-columns>
-        <join-column name="store_id" referenced-column-name="id" nullable="true"/>
+        <join-column name="store_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
     <many-to-one field="zone" target-entity="AppBundle\Entity\Zone">
@@ -20,7 +20,6 @@
         <join-column name="zone_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
-    <field name="deliveryZoneExpression" type="string" column="delivery_zone_expression" nullable="true"/>
     <field name="productTypes" type="json_array" column="product_types" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
