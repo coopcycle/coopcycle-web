@@ -18,7 +18,6 @@ class DeliveryRequest
 {
     use CreateDeliveryTrait;
 
-    private $tokenExtractor;
     private $deliveryManager;
     private $geocoder;
 

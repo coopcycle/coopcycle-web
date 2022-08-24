@@ -16,7 +16,6 @@ class QuoteRequest
 {
     use CreateDeliveryTrait;
 
-    private $tokenExtractor;
     private $deliveryManager;
     private $geocoder;
 
