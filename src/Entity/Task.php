@@ -251,6 +251,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     private $events;
 
+    /**
+     * @Groups({"task", "delivery"})
+     */
     private $createdAt;
 
     /**
