@@ -1497,6 +1497,14 @@ class AdminController extends AbstractController
      */
     public function integrationsAction(Request $request)
     {
+        return $this->render('admin/integrations.html.twig');
+    }
+
+    /**
+     * @Route("/admin/integrations/woopit", name="admin_integrations_woopit")
+     */
+    public function integrationWoopitAction(Request $request)
+    {
         if ($request->isMethod('POST') && $request->request->has('oauth2_client')) {
 
             $oAuth2ClientId = $request->get('oauth2_client');
@@ -1518,13 +1526,13 @@ class AdminController extends AbstractController
 
         $integrations = $qb->getQuery()->getResult();
 
-        return $this->render('admin/integrations.html.twig', [
+        return $this->render('_partials/integrations/woopit/list.html.twig', [
             'integrations' => $integrations
         ]);
     }
 
     /**
-     * @Route("/admin/integrations/new", name="admin_new_integration")
+     * @Route("/admin/integrations/woopit/new", name="admin_new_integration_woopit")
      */
     public function newIntegrationAction(Request $request)
     {
@@ -1549,16 +1557,16 @@ class AdminController extends AbstractController
                 $this->translator->trans('integration.created.message')
             );
 
-            return $this->redirectToRoute('admin_integration', [ 'id' => $woopitIntegration->getId() ]);
+            return $this->redirectToRoute('admin_integration_woopit', [ 'id' => $woopitIntegration->getId() ]);
         }
 
-        return $this->render('admin/integration_form.html.twig', [
+        return $this->render('_partials/integrations/woopit/form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/admin/integrtations/{id}", name="admin_integration")
+     * @Route("/admin/integrtations/woopit/{id}", name="admin_integration_woopit")
      */
     public function integrationAction($id, Request $request)
     {
@@ -1576,10 +1584,10 @@ class AdminController extends AbstractController
                 ->getManagerForClass(WoopitIntegration::class)
                 ->flush();
 
-            return $this->redirectToRoute('admin_integrations');
+            return $this->redirectToRoute('admin_integrations_woopit');
         }
 
-        return $this->render('admin/integration_form.html.twig', [
+        return $this->render('_partials/integrations/woopit/form.html.twig', [
             'form' => $form->createView(),
         ]);
     }

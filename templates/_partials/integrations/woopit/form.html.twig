@@ -6,6 +6,7 @@
 {% set integration = form.vars.data %}
 {% set is_new_integration = (integration.id is null) %}
 <li><a href="{{ path('admin_integrations') }}">{{ 'integrations.breadcrumb'|trans }}</a></li>
+<li><a href="{{ path('admin_integrations_woopit') }}">Woopit</a></li>
 <li>{{ is_new_integration ? 'basics.add'|trans : integration.name }}</li>
 {% endblock %}
 

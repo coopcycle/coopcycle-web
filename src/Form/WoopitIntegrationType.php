@@ -26,6 +26,7 @@ class WoopitIntegrationType extends AbstractType
                 'label' => 'form.integration.name.label',
             ])
             ->add('maxWeight', NumberType::class, [
+                'required' => false,
                 'html5' => true,
                 'label' => 'form.integration.maxWeight.label',
                 'attr'  => array(
@@ -34,6 +35,7 @@ class WoopitIntegrationType extends AbstractType
                 ),
             ])
             ->add('maxHeight', NumberType::class, [
+                'required' => false,
                 'html5' => true,
                 'label' => 'form.integration.maxHeight.label',
                 'attr'  => array(
@@ -42,6 +44,7 @@ class WoopitIntegrationType extends AbstractType
                 ),
             ])
             ->add('maxWidth', NumberType::class, [
+                'required' => false,
                 'html5' => true,
                 'label' => 'form.integration.maxWidth.label',
                 'attr'  => array(
@@ -50,6 +53,7 @@ class WoopitIntegrationType extends AbstractType
                 ),
             ])
             ->add('maxLength', NumberType::class, [
+                'required' => false,
                 'html5' => true,
                 'label' => 'form.integration.maxLength.label',
                 'attr'  => array(

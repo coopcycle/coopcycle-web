@@ -5,10 +5,11 @@
 {% endblock %}
 
 {% block content %}
-<p class="text-right">
-  <a href="{{ path('admin_new_integration') }}" class="btn btn-success">
-    <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
-  </a>
-</p>
-{% include '_partials/integration/list.html.twig' %}
+<ul>
+  <li>
+    <a href="{{ path('admin_integrations_woopit') }}">
+      Woopit
+    </a>
+  </li>
+</ul>
 {% endblock %}
