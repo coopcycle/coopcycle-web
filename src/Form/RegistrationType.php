@@ -15,21 +15,34 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use AppBundle\Enum\Optin;
+use AppBundle\Form\Type\TermsAndConditionsAndPrivacyPolicyType;
 
 class RegistrationType extends AbstractTypeExtension
 {
     private $settingsManager;
     private $isDemo;
+    private $splitTermsAndConditionsAndPrivacyPolicy;
 
-    public function __construct(SettingsManager $settingsManager, bool $isDemo = false)
+    public function __construct(
+        SettingsManager $settingsManager,
+        bool $isDemo = false,
+        bool $splitTermsAndConditionsAndPrivacyPolicy = false)
     {
         $this->settingsManager = $settingsManager;
         $this->isDemo = $isDemo;
+        $this->splitTermsAndConditionsAndPrivacyPolicy = $splitTermsAndConditionsAndPrivacyPolicy;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('legal', LegalType::class);
+        if ($this->splitTermsAndConditionsAndPrivacyPolicy) {
+            $builder->add('termsAndConditionsAndPrivacyPolicy', TermsAndConditionsAndPrivacyPolicyType::class, [
+                'label' => false,
+                'mapped' => false,
+            ]);
+        } else {
+            $builder->add('legal', LegalType::class);
+        }
 
         if ($this->isDemo) {
             $builder->add('accountType', ChoiceType::class, [

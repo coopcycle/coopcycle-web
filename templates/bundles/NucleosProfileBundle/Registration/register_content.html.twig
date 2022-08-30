@@ -14,7 +14,12 @@
       {{ form_row(form.email) }}
       {{ form_row(form.username) }}
       {{ form_row(form.plainPassword) }}
-      {{ form_row(form.legal) }}
+
+      {% if form.legal is defined %}
+        {{ form_row(form.legal) }}
+      {% elseif form.termsAndConditionsAndPrivacyPolicy is defined %}
+        {{ form_row(form.termsAndConditionsAndPrivacyPolicy) }}
+      {% endif %}
 
       {% for optin in form.optins.vars.value|split(',') %}
         {{ form_row(form[optin]) }}
