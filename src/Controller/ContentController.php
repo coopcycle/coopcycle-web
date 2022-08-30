@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use League\Flysystem\Filesystem;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -120,4 +121,37 @@ class ContentController extends AbstractController
             'text' => $translator->trans('covid_19.body', [], 'emails')
         ]);
     }
+
+    /**
+     * @Route("/terms-text", name="terms-text")
+     */
+    public function termsTextAction(Request $request, Filesystem $assetsFilesystem)
+    {
+        if ($assetsFilesystem->has('custom_terms.md')) {
+            $text = $assetsFilesystem->read('custom_terms.md');
+        } else {
+            $text = $this->localizeRemoteFile($request, 'terms');
+        }
+
+        return new JsonResponse([
+            'text' => $text
+        ]);
+    }
+
+    /**
+     * @Route("/privacy-text", name="privacy-text")
+     */
+    public function privacyTextAction(Request $request, Filesystem $assetsFilesystem)
+    {
+        if ($assetsFilesystem->has('custom_privacy.md')) {
+            $text = $assetsFilesystem->read('custom_privacy.md');
+        } else {
+            $text = $this->localizeRemoteFile($request, 'privacy');
+        }
+
+        return new JsonResponse([
+            'text' => $text
+        ]);
+    }
+
 }
