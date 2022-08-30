@@ -36,6 +36,7 @@ use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Vehicle;
+use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AddOrganizationType;
 use AppBundle\Form\AttachToOrganizationType;
@@ -47,6 +48,7 @@ use AppBundle\Form\DeliveryImportType;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\HubType;
+use AppBundle\Form\WoopitIntegrationType;
 use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\MercadopagoLivemodeType;
@@ -1486,6 +1488,106 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/api_app_form.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/integrations", name="admin_integrations")
+     */
+    public function integrationsAction(Request $request)
+    {
+        return $this->render('admin/integrations.html.twig');
+    }
+
+    /**
+     * @Route("/admin/integrations/woopit", name="admin_integrations_woopit")
+     */
+    public function integrationWoopitAction(Request $request)
+    {
+        if ($request->isMethod('POST') && $request->request->has('oauth2_client')) {
+
+            $oAuth2ClientId = $request->get('oauth2_client');
+            $oAuth2Client = $this->entityManager
+                ->getRepository(OAuth2Client::class)
+                ->find($oAuth2ClientId);
+
+            $newSecret = hash('sha512', random_bytes(32));
+            $oAuth2Client->setSecret($newSecret);
+
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_integrations');
+        }
+
+        $qb = $this->entityManager
+            ->getRepository(WoopitIntegration::class)
+            ->createQueryBuilder('i');
+
+        $integrations = $qb->getQuery()->getResult();
+
+        return $this->render('_partials/integrations/woopit/list.html.twig', [
+            'integrations' => $integrations
+        ]);
+    }
+
+    /**
+     * @Route("/admin/integrations/woopit/new", name="admin_new_integration_woopit")
+     */
+    public function newIntegrationAction(Request $request)
+    {
+        $woopitIntegration = new WoopitIntegration();
+
+        $form = $this->createForm(WoopitIntegrationType::class, $woopitIntegration);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $woopitIntegration = $form->getData();
+
+            $this->getDoctrine()
+                ->getManagerForClass(WoopitIntegration::class)
+                ->persist($woopitIntegration);
+
+            $this->getDoctrine()
+                ->getManagerForClass(WoopitIntegration::class)
+                ->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('integration.created.message')
+            );
+
+            return $this->redirectToRoute('admin_integration_woopit', [ 'id' => $woopitIntegration->getId() ]);
+        }
+
+        return $this->render('_partials/integrations/woopit/form.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/integrtations/woopit/{id}", name="admin_integration_woopit")
+     */
+    public function integrationAction($id, Request $request)
+    {
+        $apiApp = $this->getDoctrine()
+            ->getRepository(WoopitIntegration::class)
+            ->find($id);
+
+        $form = $this->createForm(WoopitIntegrationType::class, $apiApp);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $apiApp = $form->getData();
+
+            $this->getDoctrine()
+                ->getManagerForClass(WoopitIntegration::class)
+                ->flush();
+
+            return $this->redirectToRoute('admin_integrations_woopit');
+        }
+
+        return $this->render('_partials/integrations/woopit/form.html.twig', [
             'form' => $form->createView(),
         ]);
     }

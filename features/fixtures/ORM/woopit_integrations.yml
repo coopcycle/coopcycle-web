@@ -1,0 +1,10 @@
+AppBundle\Entity\Woopit\WoopitIntegration:
+  integration_1:
+    name: 'Woopit store123'
+    maxWeight: 40
+    maxWidth: 60.00
+    maxHeight: 70.00
+    maxLength: 160.00
+    store: "@store_1"
+    woopitStoreId: 'store123'
+    productTypes: ['TYPOLOGY_GENERIC']

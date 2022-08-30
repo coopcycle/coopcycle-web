@@ -2,51 +2,62 @@
 
 namespace AppBundle\Action\Woopit;
 
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Woopit\QuoteRequest as WoopitQuoteRequest;
 use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Task;
-use AppBundle\Security\TokenStoreExtractor;
+use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
-use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
-use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DeliveryRequest
 {
     use CreateDeliveryTrait;
 
-    private $tokenExtractor;
     private $deliveryManager;
     private $geocoder;
 
     public function __construct(
-        TokenStoreExtractor $tokenExtractor,
         DeliveryManager $deliveryManager,
         Geocoder $geocoder,
         Hashids $hashids12,
         EntityManagerInterface $entityManager,
-        PhoneNumberUtil $phoneNumberUtil)
+        PhoneNumberUtil $phoneNumberUtil,
+        ValidatorInterface $checkDeliveryValidator)
     {
-        $this->tokenExtractor = $tokenExtractor;
         $this->deliveryManager = $deliveryManager;
         $this->geocoder = $geocoder;
         $this->hashids12 = $hashids12;
         $this->entityManager = $entityManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
+        $this->checkDeliveryValidator = $checkDeliveryValidator;
     }
 
     public function __invoke(WoopitQuoteRequest $data)
     {
-        $store = $this->tokenExtractor->extractStore();
+        $integration = $this->entityManager->getRepository(WoopitIntegration::class)
+            ->findOneBy([
+                'woopitStoreId' => $data->retailer['store']['id']
+            ]);
+
+        if (!$integration) {
+            return new JsonResponse([
+                "reasons" => [
+                    "REFUSED_EXCEPTION"
+                ],
+                "comments" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
+            ], 202);
+        }
+
+        $store = $this->entityManager->getRepository(Store::class)
+            ->find($integration->getStore()->getId());
 
         if (!$store) {
-            // TODO Throw Exception
+            // TODO Throw Exception ??
         }
 
         $decoded = $this->hashids12->decode($data->quoteId);
@@ -63,7 +74,13 @@ class DeliveryRequest
              // TODO Throw Exception (Not Found)
         }
 
-        $delivery = $this->createDelivery($data);
+        $delivery = $this->createDelivery($data, $integration);
+
+        $violations = $this->validateDeliveryWithIntegrationConstraints($data, $delivery, $integration);
+
+        if (null !== $violations) {
+            return $violations;
+        }
 
         $woopitDelivery = new WoopitDelivery();
         $woopitDelivery->setDelivery($delivery);

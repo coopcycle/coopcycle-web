@@ -78,4 +78,12 @@
     </h4>
     <small class="deliveries-nav-item-text">{% trans %}vehicles.breadcrumb.help{% endtrans %}</small>
   </a>
+  <a href="{{ path('admin_integrations') }}"
+    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_integrations', 'admin_integration' ] ? 'active' : '' }}">
+    <h4 class="deliveries-nav-item-heading">
+      <i class="fa fa-database mr-2"></i>
+      <span>{% trans %}adminDashboard.integrations.title{% endtrans %}</span>
+    </h4>
+    <small class="deliveries-nav-item-text">{% trans %}adminDashboard.integrations.help{% endtrans %}</small>
+  </a>
 </div>

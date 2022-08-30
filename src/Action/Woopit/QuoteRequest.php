@@ -3,47 +3,66 @@
 namespace AppBundle\Action\Woopit;
 
 use AppBundle\Entity\Woopit\QuoteRequest as WoopitQuoteRequest;
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Task;
-use AppBundle\Security\TokenStoreExtractor;
+use AppBundle\Entity\Store;
+use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\PriceHelper;
-use Carbon\Carbon;
-use libphonenumber\NumberParseException;
-use libphonenumber\PhoneNumberUtil;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class QuoteRequest
 {
     use CreateDeliveryTrait;
 
-    private $tokenExtractor;
     private $deliveryManager;
     private $geocoder;
 
     public function __construct(
-        TokenStoreExtractor $tokenExtractor,
         DeliveryManager $deliveryManager,
         Geocoder $geocoder,
-        PriceHelper $priceHelper)
+        PriceHelper $priceHelper,
+        EntityManagerInterface $entityManager,
+        ValidatorInterface $checkDeliveryValidator)
     {
-        $this->tokenExtractor = $tokenExtractor;
         $this->deliveryManager = $deliveryManager;
         $this->geocoder = $geocoder;
         $this->priceHelper = $priceHelper;
+        $this->entityManager = $entityManager;
+        $this->checkDeliveryValidator = $checkDeliveryValidator;
     }
 
     public function __invoke(WoopitQuoteRequest $data)
     {
-        $store = $this->tokenExtractor->extractStore();
+        $integration = $this->entityManager->getRepository(WoopitIntegration::class)
+            ->findOneBy([
+                'woopitStoreId' => $data->retailer['store']['id']
+            ]);
 
-        if (!$store) {
-            // TODO Throw Exception
+        if (!$integration) {
+            return new JsonResponse([
+                "reasons" => [
+                    "REFUSED_EXCEPTION"
+                ],
+                "comments" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
+            ], 202);
         }
 
-        $delivery = $this->createDelivery($data);
+        $store = $this->entityManager->getRepository(Store::class)
+            ->find($integration->getStore()->getId());
+
+        if (!$store) {
+            // TODO Throw Exception ??
+        }
+
+        $delivery = $this->createDelivery($data, $integration);
+
+        $violation = $this->validateDeliveryWithIntegrationConstraints($data, $delivery, $integration);
+
+        if (null !== $violation) {
+            return $violation;
+        }
 
         $pricingRuleSet = $store->getPricingRuleSet();
 

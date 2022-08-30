@@ -21,6 +21,7 @@ use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Zone;
 use AppBundle\Typesense\CollectionManager;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Behat\Behat\Context\Context;
@@ -57,6 +58,7 @@ use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use DMore\ChromeDriver\ChromeDriver;
+use GeoJson\GeoJson;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpFoundation\Request;
@@ -1252,5 +1254,40 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->doctrine->getManagerForClass(UrbantzHub::class)->persist($urbantzHub);
         $this->doctrine->getManagerForClass(UrbantzHub::class)->flush();
+    }
+
+    /**
+     * @Given the geojson file :filename for a zone is loaded
+     */
+    public function theZoneFileIsLoaded($filename)
+    {
+        $filePath = __DIR__.'/../../features/fixtures/'.$filename.'.geojson';
+
+        $contents = file_get_contents($filePath);
+
+        $data = json_decode($contents, true);
+
+        $geojson = GeoJson::jsonUnserialize($data);
+
+        foreach ($geojson as $feature) {
+            $zone = new Zone();
+            $zone->setGeoJSON($feature->getGeometry()->jsonSerialize());
+            $zone->setName($filename);
+            $this->doctrine->getManagerForClass(Zone::class)->persist($zone);
+        }
+
+        $this->doctrine->getManagerForClass(Zone::class)->flush();
+    }
+
+    /**
+     * @Given the store with name :storeName has a check expression for zone :zoneName
+     */
+    public function theStoreWithNameHasACheckExpressionForZone($storeName, $zoneName)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+        $store->setCheckExpression(
+            sprintf('in_zone(dropoff.address, "%s")', $zoneName)
+        );
+        $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 }
