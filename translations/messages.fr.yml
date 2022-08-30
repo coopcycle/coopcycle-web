@@ -1253,3 +1253,16 @@ form.checkout_address.reusable_packaging.dabba.return_pledge_label: Vous allez r
 form.checkout_address.reusable_packaging.dabba.learn_more: En savoir plus sur Dabba
 form.checkout_address.reusable_packaging.dabba.add: Ajouter %missing% sur votre cagnotte
 restaurant.form.dabba_code.label: Code restaurant Dabba
+adminDashboard.integrations.title : Intégrations
+adminDashboard.integrations.help : Permet de configurer les contraintes d'une intégration
+integrations.breadcrumb : Intégrations
+form.integration.name.label : Nom de l'intégration
+form.integration.store.label : Magasin
+form.integration.zone.label : Zone
+form.integration.maxWeight.label : Poids maximum autorisé (kg)
+form.integration.maxHeight.label : Hauteur maximum autorisée (cm)
+form.integration.maxWidth.label : Largeur maximum autorisée (cm)
+form.integration.maxLength.label : Longueur maximale autorisée (cm)
+form.integration.productTypes.label : Types de produits autorisés
+form.integration.woopitStoreId.label : Identifiant du magasin Woopit
+integration.created.message : L'intégration a été créée.
