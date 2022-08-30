@@ -161,7 +161,7 @@ class TaskSubscriber implements EventSubscriber
 
                     if (isset($entityChangeset['streetAddress'])) {
                         [$oldValue, $newValue] = $entityChangeset['streetAddress'];
-                        if ($oldValue && !empty($oldValue) && $newValue && !empty($newValue) && $oldValue !== $newValue) {
+                        if (!empty($oldValue) && !empty($newValue) && $oldValue !== $newValue) {
                             $taskAddress = $this->geocoder->geocode($newValue, $taskAddress);
 
                             $newAddress = $taskAddress->clone();
