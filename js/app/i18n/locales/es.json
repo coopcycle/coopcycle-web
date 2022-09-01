@@ -264,6 +264,8 @@
         "OPTIN_CONSENT_MARKETING_LABEL": "Estoy de acuerdo en recibir promociones",
         "OPTIN_CONSENT_MODAL_TITLE": "Actualice su configuración personal",
         "OPTIN_CONSENT_MODAL_DISCLAIMER": "Para servirle mejor, nos gustaría ponernos en contacto con usted de vez en cuando. Por favor, seleccione los correos electrónicos que desea recibir de la lista siguiente.",
-        "OPTIN_CONSENT_MODAL_SUBMIT": "Actualizar"
+        "OPTIN_CONSENT_MODAL_SUBMIT": "Actualizar",
+        "CANCEL": "Cancelar",
+        "AGREE": "Acepto"
     }
 }
