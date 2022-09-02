@@ -32,6 +32,8 @@ service:
       standard: 0.19
     hu:
       standard: 0.27
+    pt:
+      standard: 0.23
 
 service_tax_exempt:
   rates:
@@ -64,6 +66,8 @@ service_tax_exempt:
     cl:
       zero: 0.0
     hu:
+      zero: 0.0
+    pt:
       zero: 0.0
 
 drink:
@@ -139,6 +143,8 @@ base_standard:
       standard: 0.19
     hu:
       standard: 0.27
+    pt:
+      standard: 0.23
 
 base_intermediary:
   rates:
@@ -163,6 +169,8 @@ base_intermediary:
       intermediary: 0.1
     hu:
       intermediary: 0.18
+    pt:
+      intermediary: 0.13
 
 base_reduced:
   rates:
@@ -186,6 +194,8 @@ base_reduced:
       reduced: 0.04
     hu:
       reduced: 0.05
+    pt:
+      reduced: 0.06
 
 base_exempt:
   rates:
@@ -219,4 +229,6 @@ base_exempt:
     cl:
       zero: 0.00
     hu:
+      zero: 0.00
+    pt:
       zero: 0.00
