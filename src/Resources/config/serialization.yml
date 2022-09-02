@@ -55,6 +55,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order', 'cart', 'order_minimal']
     items:
       groups: ['order', 'order_create', 'cart']
+    tipAmount:
+      groups: ['order', 'order_create', 'cart', 'order_update', 'order_minimal']
     total:
       groups: ['order', 'cart', 'order_minimal']
     number:
