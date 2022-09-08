@@ -30,6 +30,7 @@ Feature: Settings
         "currency_code":"eur",
         "phone_number":"+33612345678",
         "administrator_email":"dev@coopcycle.org",
-        "guest_checkout_enabled":true
+        "guest_checkout_enabled":true,
+        "split_terms_and_conditions_and_privacy_policy":false
       }
       """

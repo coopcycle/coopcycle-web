@@ -17,6 +17,7 @@ class Settings
     private $assetsFilesystem;
     private $country;
     private $locale;
+    private $splitTermsAndConditionsAndPrivacyPolicy;
 
     private $keys = [
         'brand_name',
@@ -36,7 +37,8 @@ class Settings
         FilterService $imagineFilter,
         PhoneNumberNormalizer $phoneNumberNormalizer,
         $country,
-        $locale)
+        $locale,
+        $splitTermsAndConditionsAndPrivacyPolicy)
     {
         $this->settingsManager = $settingsManager;
         $this->assetsFilesystem = $assetsFilesystem;
@@ -44,6 +46,7 @@ class Settings
         $this->phoneNumberNormalizer = $phoneNumberNormalizer;
         $this->country = $country;
         $this->locale = $locale;
+        $this->splitTermsAndConditionsAndPrivacyPolicy = (bool) $splitTermsAndConditionsAndPrivacyPolicy;
     }
 
     /**
@@ -58,6 +61,7 @@ class Settings
         $data = [
             'country' => $this->country,
             'locale' => $this->locale,
+            'split_terms_and_conditions_and_privacy_policy' => $this->splitTermsAndConditionsAndPrivacyPolicy,
         ];
 
         foreach ($this->keys as $key) {
