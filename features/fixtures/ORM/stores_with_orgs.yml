@@ -1,0 +1,114 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.864577", "2.333338" ]
+  geo_2:
+    __construct: [ "48.846656", "2.369052" ]
+  geo_3:
+    __construct: [ "48.884625", "2.322084" ]
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: Default
+    rules: [ '@pricing_rule_1' ]
+  pricing_rule_set_2:
+    name: Default
+    rules: [ '@pricing_rule_2' ]
+  pricing_rule_set_3:
+    name: Default
+    rules: [ '@pricing_rule_3' ]
+  pricing_rule_set_4:
+    name: Default
+    rules: [ '@pricing_rule_4' ]
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_1:
+    expression: 'distance \> 0'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_1'
+  pricing_rule_2:
+    expression: 'diff_hours(pickup) < 2'
+    price: 899
+    position: 1
+    ruleSet: '@pricing_rule_set_2'
+  pricing_rule_3:
+    expression: 'packages.containsAtLeastOne("XL")'
+    price: 1299
+    position: 1
+    ruleSet: '@pricing_rule_set_3'
+  pricing_rule_4:
+    expression: 'weight \< 2000'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_4'
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_1"
+  address_2:
+    addressLocality: 'Paris'
+    postalCode: '75012'
+    streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
+    geo: "@geo_1"
+  address_3:
+    addressLocality: 'Paris'
+    postalCode: '75017'
+    streetAddress: '18 Rue des Batignolles'
+    geo: "@geo_3"
+
+AppBundle\Entity\TimeSlot:
+  time_slot_1:
+    name: 'Acme time slot'
+    openingHours:
+      - 'Mo-Su 12:00-14:00'
+      - 'Mo-Su 14:00-17:00'
+  time_slot_2:
+    name: 'Time slot with opening hours'
+    workingDaysOnly: false
+    openingHours:
+      - 'Mo-Sa 10:00-11:00'
+      - 'Mo-Sa 11:00-13:00'
+      - 'Su 14:00-15:00'
+
+AppBundle\Entity\PackageSet:
+  package_set_1:
+    name: 'Standard'
+
+AppBundle\Entity\Package:
+  package_small:
+    name: 'SMALL'
+    volumeUnits: 1.0
+    packageSet: '@package_set_1'
+  package_xl:
+    name: 'XL'
+    volumeUnits: 3.0
+    packageSet: '@package_set_1'
+
+AppBundle\Entity\Organization:
+  org_1:
+    name: 'Acme'
+  org_2:
+    name: 'Acme2'
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'
+    timeSlot: '@time_slot_1'
+    organization: '@org_1'
+    __calls:
+      - addAddress: [ "@address_1" ]
+  store_2:
+    name: 'Acme2'
+    address: "@address_2"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_2'
+    timeSlot: '@time_slot_1'
+    organization: '@org_2'
+    __calls:
+      - addAddress: [ "@address_2" ]
