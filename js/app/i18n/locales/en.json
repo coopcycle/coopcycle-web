@@ -264,6 +264,8 @@
         "OPTIN_CONSENT_MODAL_TITLE": "Please update your personal settings",
         "OPTIN_CONSENT_MODAL_DISCLAIMER": "To better serve you, we would like to contact you from time to time. Choose the emails you wish to receive from the list below.",
         "OPTIN_CONSENT_MODAL_SUBMIT": "Update settings",
-        "ADMIN_DASHBOARD_SETTINGS_AVATAR_COLORS_ENABLED": "Use avatar colors for markers and polylines"
+        "ADMIN_DASHBOARD_SETTINGS_AVATAR_COLORS_ENABLED": "Use avatar colors for markers and polylines",
+        "CANCEL": "Cancel",
+        "AGREE": "Agree"
     }
 }

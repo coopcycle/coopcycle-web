@@ -14,7 +14,12 @@
       {{ form_row(form.email) }}
       {{ form_row(form.username) }}
       {{ form_row(form.plainPassword) }}
-      {{ form_row(form.legal) }}
+
+      {% if form.legal is defined %}
+        {{ form_row(form.legal) }}
+      {% elseif form.termsAndConditionsAndPrivacyPolicy is defined %}
+        {{ form_row(form.termsAndConditionsAndPrivacyPolicy) }}
+      {% endif %}
 
       {% for optin in form.optins.vars.value|split(',') %}
         {{ form_row(form[optin]) }}
@@ -36,3 +41,15 @@
     </div>
   </div>
 </div>
+
+{% if form.termsAndConditionsAndPrivacyPolicy is defined %}
+  <div id="termsAndConditionsAndPrivacyPolicy">
+  </div>
+  {% block styles %}
+  {{ encore_entry_link_tags('terms-and-conditions-and-privacy-policy') }}
+  {% endblock %}
+
+  {% block scripts %}
+    {{ encore_entry_script_tags('terms-and-conditions-and-privacy-policy') }}
+  {% endblock %}
+{% endif %}

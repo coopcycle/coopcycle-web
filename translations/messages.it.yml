@@ -1086,6 +1086,11 @@ form.registration.legal.help: Spuntando questa casella, accetti i nostri <a href
   e condizioni</a> e <a href="%privacy_url%">l'informativa sulla privacy</a>.
 form.registration.legal.label: Accetto i termini e condizioni e l'Informativa sulla
   privacy
+form.registration.terms.and.conditions.help: Spuntando questa casella, accetti i nostri <a href="%terms_url%">termini
+  e condizioni</a>.
+form.registration.terms.and.conditions.label: Accetto i termini e condizioni
+form.registration.privacy.policy.help: Spuntando questa casella, accetti i nostri <a href="%privacy_url%">l'informativa sulla privacy</a>.
+form.registration.privacy.policy.label: Accetto i l'Informativa sulla privacy
 form.settings.sms_gateway_config.twilio.from.label: Numero di telefono Twilio
 form.settings.sms_gateway_config.twilio.auth_token.label: Twilio Auth Token
 form.settings.sms_gateway_config.twilio.sid.label: Twilio SID

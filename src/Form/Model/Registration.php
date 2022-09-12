@@ -12,6 +12,16 @@ class Registration extends BaseRegistration
     protected $legal = false;
 
     /**
+     * @var bool
+     */
+    protected $termsAndConditions = false;
+
+    /**
+     * @var bool
+     */
+    protected $privacyPolicy = false;
+
+    /**
      * @return mixed
      */
     public function getLegal()
@@ -27,6 +37,46 @@ class Registration extends BaseRegistration
     public function setLegal($legal)
     {
         $this->legal = $legal;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTermsAndConditions()
+    {
+        return $this->termsAndConditions;
+    }
+
+    /**
+     * @param mixed $termsAndConditions
+     *
+     * @return self
+     */
+    public function setTermsAndConditions($termsAndConditions)
+    {
+        $this->termsAndConditions = $termsAndConditions;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPrivacyPolicy()
+    {
+        return $this->privacyPolicy;
+    }
+
+    /**
+     * @param mixed $privacyPolicy
+     *
+     * @return self
+     */
+    public function setPrivacyPolicy($privacyPolicy)
+    {
+        $this->privacyPolicy = $privacyPolicy;
 
         return $this;
     }
