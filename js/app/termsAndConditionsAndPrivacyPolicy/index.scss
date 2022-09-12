@@ -1,0 +1,26 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+
+.ReactModal__Overlay--termsAndPolicy {
+  z-index: 2;
+}
+
+.ReactModal__Content--termsAndPolicy {
+  max-height: calc(100vh - 30px);
+  @media (min-width: $screen-lg-min) {
+    width: 50%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 66%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+  }
+}
+
+.legal {
+  font-size: $font-size-large;
+  letter-spacing: 0.02em;
+  h1, h2, h3, h4 {
+    font-weight: 700;
+  }
+}
