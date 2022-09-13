@@ -15,6 +15,7 @@ use AppBundle\Action\Order\Cancel as OrderCancel;
 use AppBundle\Action\Order\Delay as OrderDelay;
 use AppBundle\Action\Order\Fulfill as OrderFulfill;
 use AppBundle\Action\Order\Pay as OrderPay;
+use AppBundle\Action\Order\Tip as OrderTip;
 use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
@@ -187,6 +188,17 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/orders/{id}/assign",
  *       "controller"=OrderAssign::class,
  *       "validation_groups"={"cart"},
+ *       "normalization_context"={"groups"={"cart"}},
+ *       "openapi_context"={
+ *         "summary"="Assigns a Order resource to a User."
+ *       }
+ *     },
+ *     "tip"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/tip",
+ *       "controller"=OrderTip::class,
+ *       "validation_groups"={"cart"},
+ *       "security"="is_granted('session', object)",
  *       "normalization_context"={"groups"={"cart"}},
  *       "openapi_context"={
  *         "summary"="Assigns a Order resource to a User."
@@ -1203,6 +1215,8 @@ class Order extends BaseOrder implements OrderInterface
             array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->toArray());
         $taxAdjustments =
             array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT)->toArray());
+        $tipAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::TIP_ADJUSTMENT)->toArray());
 
         return [
             AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
@@ -1210,6 +1224,7 @@ class Order extends BaseOrder implements OrderInterface
             AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT => array_values($orderPromotionAdjustments),
             AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments),
             AdjustmentInterface::TAX_ADJUSTMENT => array_values($taxAdjustments),
+            AdjustmentInterface::TIP_ADJUSTMENT => array_values($tipAdjustments),
         ];
     }
 
