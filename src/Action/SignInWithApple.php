@@ -74,6 +74,7 @@ class SignInWithApple
                 [
                     new IssuedBy('https://appleid.apple.com'),
                     new PermittedFor('org.coopcycle.CoopCycle'),
+                    new PermittedFor('org.coopcycle.Naofood'),
                 ]
             ),
             new Auth\Factory\AppleJwtStructFactory()
