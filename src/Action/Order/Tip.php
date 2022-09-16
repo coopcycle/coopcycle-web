@@ -28,10 +28,12 @@ class Tip
             $body = json_decode($content, true);
         }
 
-        $tipAmount = $body['tipAmount'] ?? null;
+        if (!isset($body['tipAmount']) && !is_numeric($body['tipAmount'])) {
+            return throw new BadRequestHttpException();
+        }
 
         try {
-            $data->setTipAmount((int)$tipAmount);
+            $data->setTipAmount(intval($body['tipAmount']));
 
             $this->orderProcessor->process($data);
             $this->entityManager->flush();
