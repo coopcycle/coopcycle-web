@@ -201,7 +201,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "security"="is_granted('session', object)",
  *       "normalization_context"={"groups"={"cart"}},
  *       "openapi_context"={
- *         "summary"="Assigns a Order resource to a User."
+ *         "summary"="Updates tip amount of an Order resource."
  *       }
  *     },
  *     "get_cart_timing"={
