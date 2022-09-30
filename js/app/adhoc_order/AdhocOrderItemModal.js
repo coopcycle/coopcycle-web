@@ -44,7 +44,7 @@ class AdhocOrderItemModal extends Component {
 
   render() {
 
-    const initialValues = {
+    const initialValues = this.props.itemToEdit || {
       name: "",
       price: 0,
       taxCategory: "",

@@ -276,6 +276,8 @@
         "ADHOC_ORDER_ITEM_PRICE_ERROR": "Por favor ingrese un precio válido",
         "ADHOC_ORDER_ITEM_TAXATION_ERROR": "Por favor selecccione un impuesto",
         "ADHOC_ORDER_SAVE": "Guardar",
-        "ADHOC_ORDER_ITEMS_TOTAL": "Total"
+        "ADHOC_ORDER_ITEMS_TOTAL": "Total",
+        "ADHOC_ORDER_DELETE_ITEM_CONFIRM": "Está seguro que desea borrar este producto?",
+        "ADHOC_ORDER_SAVE_FINISH_ORDER": "Finalizar pedido"
     }
 }
