@@ -266,6 +266,16 @@
         "OPTIN_CONSENT_MODAL_DISCLAIMER": "Para servirle mejor, nos gustaría ponernos en contacto con usted de vez en cuando. Por favor, seleccione los correos electrónicos que desea recibir de la lista siguiente.",
         "OPTIN_CONSENT_MODAL_SUBMIT": "Actualizar",
         "CANCEL": "Cancelar",
-        "AGREE": "Acepto"
+        "AGREE": "Acepto",
+        "ADHOC_ORDER_ADD_ITEM": "Agregar nuevo producto",
+        "ADHOC_ORDER_ITEM_TITLE": "Datos del producto",
+        "ADHOC_ORDER_ITEM_NAME_LABEL": "Nombre",
+        "ADHOC_ORDER_ITEM_PRICE_LABEL": "Precio",
+        "ADHOC_ORDER_ITEM_TAXATION_LABEL": "Impuesto",
+        "ADHOC_ORDER_ITEM_NAME_ERROR": "Por favor ingrese un nombre",
+        "ADHOC_ORDER_ITEM_PRICE_ERROR": "Por favor ingrese un precio válido",
+        "ADHOC_ORDER_ITEM_TAXATION_ERROR": "Por favor selecccione un impuesto",
+        "ADHOC_ORDER_SAVE": "Guardar",
+        "ADHOC_ORDER_ITEMS_TOTAL": "Total"
     }
 }

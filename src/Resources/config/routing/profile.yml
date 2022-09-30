@@ -108,6 +108,18 @@ dashboard_restaurant_deposit_refund:
             restaurant: dashboard_restaurant
     methods: [ GET, POST ]
 
+dashboard_restaurant_new_adhoc_order:
+    path: /dashboard/restaurants/{restaurantId}/orders/adhoc/new
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantNewAdhocOrderAction
+        layout: 'dashboard.html.twig'
+        template: 'restaurant/new_adhoc_order.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+            dashboard: dashboard_restaurant_dashboard
+    methods: [ GET ]
+
 dashboard_order_accept:
     path: /dashboard/orders/{id}/accept
     defaults:

@@ -267,6 +267,16 @@
         "ADMIN_DASHBOARD_SETTINGS_AVATAR_COLORS_ENABLED": "Use avatar colors for markers and polylines",
         "CANCEL": "Cancel",
         "AGREE": "Agree",
-        "CONFIRM_DELETE": "Do you confirm the deletion?"
+        "CONFIRM_DELETE": "Do you confirm the deletion?",
+        "ADHOC_ORDER_ADD_ITEM": "Add new product",
+        "ADHOC_ORDER_ITEM_TITLE": "Product information",
+        "ADHOC_ORDER_ITEM_NAME_LABEL": "Name",
+        "ADHOC_ORDER_ITEM_PRICE_LABEL": "Price",
+        "ADHOC_ORDER_ITEM_TAXATION_LABEL": "Taxation",
+        "ADHOC_ORDER_ITEM_NAME_ERROR": "Please enter a name",
+        "ADHOC_ORDER_ITEM_PRICE_ERROR": "Please enter a valid price",
+        "ADHOC_ORDER_ITEM_TAXATION_ERROR": "Please select a taxation",
+        "ADHOC_ORDER_SAVE": "Save",
+        "ADHOC_ORDER_ITEMS_TOTAL": "Total"
     }
 }

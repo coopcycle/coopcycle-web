@@ -18,6 +18,7 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
+use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxonRepository;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\ClosingRuleType;
@@ -32,6 +33,7 @@ use AppBundle\Form\Restaurant\ReusablePackagingType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
+use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -310,6 +312,33 @@ trait RestaurantTrait
         $restaurant->setContract(new Contract());
 
         return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator);
+    }
+
+    public function restaurantNewAdhocOrderAction($restaurantId, Request $request)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        $form = $this->createFormBuilder()
+            ->add('taxCategory', ProductTaxCategoryChoiceType::class)
+            ->getForm();
+
+        $view = $form->get('taxCategory')->createView();
+
+        $taxCategories = [];
+        foreach($view->vars['choices'] as $taxCategoryView) {
+            $taxCategories[] = [
+                'name' => $taxCategoryView->label,
+                'code' => $taxCategoryView->value,
+            ];
+        }
+
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'taxCategories' => $taxCategories,
+        ], []));
     }
 
     public function restaurantDashboardAction($restaurantId, Request $request,

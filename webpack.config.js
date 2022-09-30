@@ -13,6 +13,7 @@ Encore
   // .setPublicPath('http://192.168.0.11:8080')
   // .setManifestKeyPrefix('/build')
 
+  .addEntry('adhoc-order', './js/app/adhoc_order/index.js')
   .addEntry('admin-orders', './js/app/admin/orders.js')
   .addEntry('admin-restaurants', './js/app/admin/restaurants.js')
   .addEntry('common', './js/app/common.js')
