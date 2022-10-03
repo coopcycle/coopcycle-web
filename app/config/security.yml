@@ -162,7 +162,7 @@ security:
             cart_session: true
 
         api_cart_operations:
-            pattern:   ^/api/orders/[0-9]+/(assign|timing|validate)$
+            pattern:   ^/api/orders/[0-9]+/(assign|timing|validate|tip)$
             methods: [ GET, PUT ]
             stateless: true
             cart_session: true
