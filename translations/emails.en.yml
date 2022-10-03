@@ -113,3 +113,39 @@ order.payment_failed.subject: There was an error processing your payment
 order.payment_failed.body: "Hello,\n<br>\nWe are sorry, there was an error processing\
   \ your payment. Please try again with a different payment method."
 order.payment_failed.return_to_order: Return to order
+
+task.pickup.done.subject: 'The delivery #%id% has been picked'
+task.pickup.done.body: |
+  Hello,
+  <br>
+  <br>
+  The delivery <strong>#%id%</strong> has been picked at the following address:
+  <br>
+  %address%
+
+task.pickup.failed.subject: "The delivery #%id% could not be picked"
+task.pickup.failed.body: |
+  Bonjour,
+  <br>
+  <br>
+  The delivery <strong>#%id%</strong> could not be picked at the following address:
+  <br>
+  %address%
+
+task.dropoff.done.subject: 'The delivery #%id% has been dropped'
+task.dropoff.done.body: |
+  Bonjour,
+  <br>
+  <br>
+  The delivery <strong>#%id%</strong> has been dropped at the following address:
+  <br>
+  %address%
+
+task.dropoff.failed.subject: "The delivery #%id% could not be dropped"
+task.dropoff.failed.body: |
+  Bonjour,
+  <br>
+  <br>
+  The delivery <strong>#%id%</strong> could not be dropped at the following address:
+  <br>
+  %address%
