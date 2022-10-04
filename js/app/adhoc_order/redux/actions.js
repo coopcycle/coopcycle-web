@@ -31,7 +31,7 @@ export function createAdhocOrder(adhocOrder) {
             token => dispatch(refreshTokenSuccess(token))
           )
 
-        httpClient.request({
+        return httpClient.request({
             method: 'post',
             url: '/api/orders/adhoc',
             data: adhocOrder,

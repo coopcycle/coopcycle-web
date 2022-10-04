@@ -18,9 +18,10 @@ class AdhocOrderForm extends Component {
 
     this.state = {
       orderItemModalOpen: false,
-      items: [],
       itemToEdit: null,
       itemToEditIndex: null,
+      showSuccessMessage: false,
+      showErrorMessage: false,
     }
 
     this.openAdhocOrderItemModal = this.openAdhocOrderItemModal.bind(this)
@@ -137,7 +138,9 @@ class AdhocOrderForm extends Component {
   }
 
   _onSubmit(values) {
-    this.props.createAdhocOrder(this._toApiFormat(values));
+    return this.props.createAdhocOrder(this._toApiFormat(values))
+      .then(() => this.setState({showSuccessMessage: true}))
+      .catch(() => this.setState({showErrorMessage: true}))
   }
 
   render() {
@@ -175,6 +178,7 @@ class AdhocOrderForm extends Component {
                   <input type="text" name="email" className="form-control" autoComplete="off"
                     onChange={ handleChange }
                     onBlur={ handleBlur }
+                    disabled={ this.props.isFetching || this.state.showSuccessMessage }
                     value={ values.email } />
                   { errors.email && touched.email && (
                     <small className="help-block">{ errors.email }</small>
@@ -188,6 +192,7 @@ class AdhocOrderForm extends Component {
                   <input type="text" name="phoneNumber" className="form-control" autoComplete="off"
                     onChange={ handleChange }
                     onBlur={ handleBlur }
+                    disabled={ this.props.isFetching || this.state.showSuccessMessage }
                     value={ values.phoneNumber } />
                   { errors.phoneNumber && touched.phoneNumber && (
                     <small className="help-block">{ errors.phoneNumber }</small>
@@ -201,6 +206,7 @@ class AdhocOrderForm extends Component {
                   <input type="text" name="fullName" className="form-control" autoComplete="off"
                     onChange={ handleChange }
                     onBlur={ handleBlur }
+                    disabled={ this.props.isFetching || this.state.showSuccessMessage }
                     value={ values.fullName } />
                   { errors.fullName && touched.fullName && (
                     <small className="help-block">{ errors.fullName }</small>
@@ -212,7 +218,9 @@ class AdhocOrderForm extends Component {
 
               <h4 className="title">{ this.props.t('ADHOC_ORDER_ITEMS_LIST_TITLE') }</h4>
 
-              <button type="button" className="btn btn-md btn-primary my-2" onClick={ (e) => this.openAdhocOrderItemModal(e) } >
+              <button type="button" className="btn btn-md btn-primary my-2"
+                disabled={ this.props.isFetching || this.state.showSuccessMessage }
+                onClick={ (e) => this.openAdhocOrderItemModal(e) } >
                 { this.props.t('ADHOC_ORDER_ADD_ITEM') }
               </button>
 
@@ -273,7 +281,22 @@ class AdhocOrderForm extends Component {
 
               <hr />
 
-              <button type="submit" className="btn btn-md btn-success mt-4">
+              {
+                !this.props.isFetching && this.state.showSuccessMessage &&
+                <div className="alert alert-success">
+                  { this.props.t('ADHOC_ORDER_SAVED_SUCCESSFULLY') }
+                </div>
+              }
+
+              {
+                !this.props.isFetching && this.state.showErrorMessage &&
+                <div className="alert alert-danger">
+                  { this.props.t('ADHOC_ORDER_FAILURE') }
+                </div>
+              }
+
+              <button type="submit" className="btn btn-md btn-success mt-4"
+                disabled={ this.props.isFetching || this.state.showSuccessMessage }>
                 { this.props.t('ADHOC_ORDER_SAVE_FINISH_ORDER') }
               </button>
 
@@ -289,7 +312,6 @@ class AdhocOrderForm extends Component {
           )}
 
         </Formik>
-
       </div>
     )
   }
@@ -299,6 +321,7 @@ function mapStateToProps(state) {
   return {
     taxCategories: state.taxCategories,
     restaurant: state.restaurant,
+    isFetching: state.isFetching,
   }
 }
 
