@@ -20,6 +20,7 @@ class ProductTaxCategoryChoiceType extends AbstractType
     private $translator;
     private $country;
     private $legacyTaxes = true;
+    private $locale;
 
     public function __construct(
         EntityRepository $taxCategoryRepository,
@@ -27,7 +28,8 @@ class ProductTaxCategoryChoiceType extends AbstractType
         TaxRateResolverInterface $taxRateResolver,
         ProductVariantFactoryInterface $productVariantFactory,
         string $country,
-        bool $legacyTaxes)
+        bool $legacyTaxes,
+        string $locale)
     {
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->translator = $translator;
@@ -35,6 +37,7 @@ class ProductTaxCategoryChoiceType extends AbstractType
         $this->productVariantFactory = $productVariantFactory;
         $this->country = $country;
         $this->legacyTaxes = $legacyTaxes;
+        $this->locale = $locale;
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -81,7 +84,7 @@ class ProductTaxCategoryChoiceType extends AbstractType
                 0.0
             );
 
-            $formatter = new \NumberFormatter($this->country, \NumberFormatter::PERCENT);
+            $formatter = new \NumberFormatter($this->locale, \NumberFormatter::PERCENT);
             $formatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
 
             return sprintf('%s (%s)',
