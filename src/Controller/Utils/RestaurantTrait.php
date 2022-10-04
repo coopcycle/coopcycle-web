@@ -50,6 +50,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Csv\Writer as CsvWriter;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use MercadoPago;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
@@ -314,7 +315,8 @@ trait RestaurantTrait
         return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator);
     }
 
-    public function restaurantNewAdhocOrderAction($restaurantId, Request $request)
+    public function restaurantNewAdhocOrderAction($restaurantId, Request $request,
+        JWTTokenManagerInterface $jwtManager)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -336,7 +338,14 @@ trait RestaurantTrait
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
+            'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
+                'resource_class' => LocalBusiness::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['restaurant']
+            ]),
             'restaurant' => $restaurant,
+            'jwt' => $jwtManager->create($this->getUser()),
             'taxCategories' => $taxCategories,
         ], []));
     }

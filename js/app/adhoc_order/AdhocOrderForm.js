@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { withTranslation } from "react-i18next";
 import { isValidPhoneNumber } from "react-phone-number-input";
+import { connect } from "react-redux";
 import Popconfirm from 'antd/lib/popconfirm'
 import { Formik } from "formik";
 
 import AdhocOrderItemModal from "./AdhocOrderItemModal";
 import { getCountry } from "../i18n";
+import { createAdhocOrder } from "./redux/actions";
 
 const country = getCountry().toUpperCase()
 
@@ -95,13 +97,21 @@ class AdhocOrderForm extends Component {
     this.openAdhocOrderItemModal()
   }
 
-  _itemsToApiFormat() {
-    return this.state.items.map((item) => {
-      return {
-        ...item,
-        price: item.price * 100
+  _toApiFormat(values) {
+    return {
+      restaurant: this.props.restaurant['@id'],
+      items: values.items.map((item) => {
+        return {
+          ...item,
+          price: item.price * 100
+        }
+      }),
+      customer: {
+        email: values.email,
+        phoneNumber: values.phoneNumber,
+        fullName: values.fullName
       }
-    })
+    }
   }
 
   _validate(values) {
@@ -120,18 +130,14 @@ class AdhocOrderForm extends Component {
     }
 
     if (!values.items || values.items.length <= 0) {
-      errors.items = "Por favor agregue al menos un producto"
+      errors.items = this.props.t('ADHOC_ORDER_ITEMS_LIST_ERROR')
     }
 
     return errors
   }
 
   _onSubmit(values) {
-    console.log(values)
-
-    // if (!this.state.showItemsError && this.state.customerErrors !== {}) {
-    //   this._itemsToApiFormat()
-    // }
+    this.props.createAdhocOrder(this._toApiFormat(values));
   }
 
   render() {
@@ -289,4 +295,17 @@ class AdhocOrderForm extends Component {
   }
 }
 
-export default withTranslation()(AdhocOrderForm)
+function mapStateToProps(state) {
+  return {
+    taxCategories: state.taxCategories,
+    restaurant: state.restaurant,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    createAdhocOrder: (order) => dispatch(createAdhocOrder(order)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(AdhocOrderForm))

@@ -1,9 +1,11 @@
 {% extends 'restaurant/layout.html.twig' %}
 
 {% block content %}
-    <div id="adhoc-order"
-        data-tax-categories="{{ taxCategories|json_encode|e('html_attr') }}">
-    </div>
+  <div id="adhoc-order"
+    data-jwt="{{ jwt }}"
+    data-restaurant="{{ restaurant_normalized|json_encode|e('html_attr') }}"
+    data-tax-categories="{{ taxCategories|json_encode|e('html_attr') }}">
+  </div>
 {% endblock %}
 
 {% block styles %}
