@@ -1,8 +1,13 @@
 import React, { Component } from "react";
 import { withTranslation } from "react-i18next";
+import { isValidPhoneNumber } from "react-phone-number-input";
 import Popconfirm from 'antd/lib/popconfirm'
+import { Formik } from "formik";
 
 import AdhocOrderItemModal from "./AdhocOrderItemModal";
+import { getCountry } from "../i18n";
+
+const country = getCountry().toUpperCase()
 
 class AdhocOrderForm extends Component {
 
@@ -23,33 +28,42 @@ class AdhocOrderForm extends Component {
     this._renderItemsTotal = this._renderItemsTotal.bind(this)
     this.onConfirmOrderItemDelete = this.onConfirmOrderItemDelete.bind(this)
     this.onEditPressed = this.onEditPressed.bind(this)
-    this.onSaveOrder = this.onSaveOrder.bind(this)
+
+    this._validate = this._validate.bind(this)
+    this._onSubmit = this._onSubmit.bind(this)
   }
 
-  openAdhocOrderItemModal() {
+  openAdhocOrderItemModal(e) {
+    if (e) {
+      e.preventDefault()
+    }
     this.setState({ orderItemModalOpen: true })
   }
 
   closeAdhocOrderItemModal() {
-    this.setState({ orderItemModalOpen: false })
+    this.setState({
+      orderItemModalOpen: false,
+      itemToEdit: null,
+      itemToEditIndex: null
+    })
   }
 
-  onOrderItemSubmited(item) {
+  onOrderItemSubmited(item, values) {
     if (this.state.itemToEdit && null !== this.state.itemToEditIndex) {
-      this._onEditedItemSubmited(item)
+      this._onEditedItemSubmited(item, values)
     } else {
-      this.setState({items: this.state.items.concat(item)})
+      values.items.push(item)
     }
   }
 
-  _onEditedItemSubmited(editedItem) {
+  _onEditedItemSubmited(editedItem, values) {
+    values.items = values.items.map((item, idx) => {
+      if (idx === this.state.itemToEditIndex) {
+        return editedItem
+      }
+      return item
+    })
     this.setState({
-      items: this.state.items.map((item, idx) => {
-        if (idx === this.state.itemToEditIndex) {
-          return editedItem
-        }
-        return item
-      }),
       itemToEdit: null,
       itemToEditIndex: null
     })
@@ -61,29 +75,24 @@ class AdhocOrderForm extends Component {
     }
   }
 
-  _itemsTotal() {
-    return this.state.items.reduce((acc, item) => acc + item.price, 0)
-  }
-
-  _renderItemsTotal() {
-    const total = this.state.items.reduce((acc, item) => acc + item.price, 0)
+  _renderItemsTotal(values) {
+    const total = values.items.reduce((acc, item) => acc + item.price, 0)
     const totalWithFormat = total ? total.formatMoney() : (0).formatMoney()
     return `${this.props.t('ADHOC_ORDER_ITEMS_TOTAL')} - ${totalWithFormat}`
   }
 
-  onConfirmOrderItemDelete(itemToDeleteIndex) {
-    this.setState({
-      items: this.state.items.filter((item, idx) => {
-        if (idx !== itemToDeleteIndex) {
-          return item
-        }
-      }),
-    })
+  onConfirmOrderItemDelete(itemToDeleteIndex, values, setFieldValue) {
+    setFieldValue('items', values.items.filter((item, idx) => {
+      if (idx !== itemToDeleteIndex) {
+        return item
+      }
+    }))
   }
 
-  onEditPressed(itemToEdit, itemToEditIndex) {
+  onEditPressed(e, itemToEdit, itemToEditIndex) {
+    e.preventDefault()
     this.setState({itemToEdit, itemToEditIndex})
-    this.openAdhocOrderItemModal();
+    this.openAdhocOrderItemModal()
   }
 
   _itemsToApiFormat() {
@@ -95,77 +104,186 @@ class AdhocOrderForm extends Component {
     })
   }
 
-  onSaveOrder() {
-    this._itemsToApiFormat()
-    return;
+  _validate(values) {
+    let errors = {}
+
+    if (!values.email || !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+      errors.email = this.props.t('ADHOC_ORDER_CUSTOMER_EMAIL_ERROR')
+    }
+
+    if (!values.phoneNumber || !isValidPhoneNumber(values.phoneNumber, country)) {
+      errors.phoneNumber = this.props.t('ADHOC_ORDER_CUSTOMER_PHONE_NUMBER_ERROR')
+    }
+
+    if (!values.fullName) {
+      errors.fullName = this.props.t('ADHOC_ORDER_CUSTOMER_FULL_NAME_ERROR')
+    }
+
+    if (!values.items || values.items.length <= 0) {
+      errors.items = "Por favor agregue al menos un producto"
+    }
+
+    return errors
+  }
+
+  _onSubmit(values) {
+    console.log(values)
+
+    // if (!this.state.showItemsError && this.state.customerErrors !== {}) {
+    //   this._itemsToApiFormat()
+    // }
   }
 
   render() {
+
+    const initialValues = {
+      email: "",
+      phoneNumber: "",
+      fullName: "",
+      items: [], // pre load existing items
+    }
+
     return (
       <div>
-        <button className="btn btn-md btn-primary" onClick={ this.openAdhocOrderItemModal }>
-          { this.props.t('ADHOC_ORDER_ADD_ITEM') }
-        </button>
+        <Formik
+          initialValues={ initialValues }
+          validate={ this._validate }
+          onSubmit={ this._onSubmit }
+          validateOnBlur={ false }
+          validateOnChange={ false }>
+          {({
+            values,
+            errors,
+            touched,
+            handleSubmit,
+            handleChange,
+            handleBlur,
+            setFieldValue,
+          }) => (
+            <form onSubmit={ handleSubmit } autoComplete="off" className="form">
+              <h4 className="title">{ this.props.t('ADHOC_ORDER_CUSTOMER_TITLE') }</h4>
 
-        <table className="table table-condensed nomargin">
-          <thead>
-            <tr>
-              <th>{ this.props.t('ADHOC_ORDER_ITEM_NAME_LABEL') }</th>
-              <th>{ this.props.t('ADHOC_ORDER_ITEM_TAXATION_LABEL') }</th>
-              <th>{ this.props.t('ADHOC_ORDER_ITEM_PRICE_LABEL') }</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            { this.state.items.map((item, index) =>
-              <tr key={ index }>
-                <td className="text-blur">
-                  <span>{ item.name }</span>
-                </td>
-                <td className="text-blur">
-                  <span>{ this._taxLabel(item.taxCategory) }</span>
-                </td>
-                <td className="text-right">{ item.price.formatMoney() }</td>
-                <td className="text-right">
-                  <a role="button" href="#" className="text-reset mx-4"
-                    onClick={ () => this.onEditPressed(item, index) }>
-                    <i className="fa fa-pencil"></i>
-                  </a>
-                  <Popconfirm
-                    placement="left"
-                    title={ this.props.t('ADHOC_ORDER_DELETE_ITEM_CONFIRM') }
-                    onConfirm={ () => this.onConfirmOrderItemDelete(index) }
-                    okText={ this.props.t('CROPPIE_CONFIRM') }
-                    cancelText={ this.props.t('ADMIN_DASHBOARD_CANCEL') }
-                    >
-                    <a role="button" href="#" className="text-reset"
-                      onClick={ e => e.preventDefault() }>
-                      <i className="fa fa-trash"></i>
-                    </a>
-                  </Popconfirm>
-                </td>
-              </tr>
-            ) }
-          </tbody>
-          <tfoot>
-            <tr>
-              <td className="text-right font-weight-bold" colSpan={3}>{ this._renderItemsTotal() }</td>
-              <td></td>
-            </tr>
-          </tfoot>
-        </table>
+              <div className="row">
+                <div className={ `form-group col-md-6 ${errors.email ? 'has-error': ''}` }>
+                  <label className="control-label" htmlFor="email">{ this.props.t('ADHOC_ORDER_CUSTOMER_EMAIL_LABEL') }</label>
+                  <input type="text" name="email" className="form-control" autoComplete="off"
+                    onChange={ handleChange }
+                    onBlur={ handleBlur }
+                    value={ values.email } />
+                  { errors.email && touched.email && (
+                    <small className="help-block">{ errors.email }</small>
+                  ) }
+                </div>
+              </div>
 
-        <button className="btn btn-md btn-success mt-4" onClick={ this.onSaveOrder }>
-          { this.props.t('ADHOC_ORDER_SAVE_FINISH_ORDER') }
-        </button>
+              <div className="row">
+                <div className={ `form-group col-md-6 ${errors.phoneNumber ? 'has-error': ''}` }>
+                  <label className="control-label" htmlFor="phoneNumber">{ this.props.t('ADHOC_ORDER_CUSTOMER_PHONE_NUMBER_LABEL') }</label>
+                  <input type="text" name="phoneNumber" className="form-control" autoComplete="off"
+                    onChange={ handleChange }
+                    onBlur={ handleBlur }
+                    value={ values.phoneNumber } />
+                  { errors.phoneNumber && touched.phoneNumber && (
+                    <small className="help-block">{ errors.phoneNumber }</small>
+                  ) }
+                </div>
+              </div>
 
-        <AdhocOrderItemModal
-          isOpen={ this.state.orderItemModalOpen }
-          taxCategories={ this.props.taxCategories }
-          itemToEdit={ this.state.itemToEdit }
-          closeModal={ this.closeAdhocOrderItemModal }
-          onSubmitItem={ this.onOrderItemSubmited }>
-        </AdhocOrderItemModal>
+              <div className="row">
+                <div className={ `form-group col-md-6 ${errors.fullName ? 'has-error': ''}` }>
+                  <label className="control-label" htmlFor="fullName">{ this.props.t('ADHOC_ORDER_CUSTOMER_FULL_NAME_LABEL') }</label>
+                  <input type="text" name="fullName" className="form-control" autoComplete="off"
+                    onChange={ handleChange }
+                    onBlur={ handleBlur }
+                    value={ values.fullName } />
+                  { errors.fullName && touched.fullName && (
+                    <small className="help-block">{ errors.fullName }</small>
+                  ) }
+                </div>
+              </div>
+
+              <hr />
+
+              <h4 className="title">{ this.props.t('ADHOC_ORDER_ITEMS_LIST_TITLE') }</h4>
+
+              <button type="button" className="btn btn-md btn-primary my-2" onClick={ (e) => this.openAdhocOrderItemModal(e) } >
+                { this.props.t('ADHOC_ORDER_ADD_ITEM') }
+              </button>
+
+              <table className="table table-condensed nomargin">
+                <thead>
+                  <tr>
+                    <th>{ this.props.t('ADHOC_ORDER_ITEM_NAME_LABEL') }</th>
+                    <th>{ this.props.t('ADHOC_ORDER_ITEM_TAXATION_LABEL') }</th>
+                    <th>{ this.props.t('ADHOC_ORDER_ITEM_PRICE_LABEL') }</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  { values.items.map((item, index) =>
+                    <tr key={ index }>
+                      <td className="text-blur">
+                        <span>{ item.name }</span>
+                      </td>
+                      <td className="text-blur">
+                        <span>{ this._taxLabel(item.taxCategory) }</span>
+                      </td>
+                      <td className="text-right">{ item.price.formatMoney() }</td>
+                      <td className="text-right">
+                        <a role="button" href="#" className="text-reset mx-4"
+                          onClick={ (e) => this.onEditPressed(e, item, index) }>
+                          <i className="fa fa-pencil"></i>
+                        </a>
+                        <Popconfirm
+                          placement="left"
+                          title={ this.props.t('ADHOC_ORDER_DELETE_ITEM_CONFIRM') }
+                          onConfirm={ () => this.onConfirmOrderItemDelete(index, values, setFieldValue) }
+                          okText={ this.props.t('CROPPIE_CONFIRM') }
+                          cancelText={ this.props.t('ADMIN_DASHBOARD_CANCEL') }
+                          >
+                          <a role="button" href="#" className="text-reset"
+                            onClick={ e => e.preventDefault() }>
+                            <i className="fa fa-trash"></i>
+                          </a>
+                        </Popconfirm>
+                      </td>
+                    </tr>
+                  ) }
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td className="text-right font-weight-bold" colSpan={3}>{ this._renderItemsTotal(values) }</td>
+                    <td></td>
+                  </tr>
+                  { errors.items && touched.items && (
+                    <tr>
+                      <td className="has-error" colSpan={3}>
+                        <small className="help-block">{ errors.items }</small>
+                      </td>
+                    </tr>
+                  ) }
+                </tfoot>
+              </table>
+
+              <hr />
+
+              <button type="submit" className="btn btn-md btn-success mt-4">
+                { this.props.t('ADHOC_ORDER_SAVE_FINISH_ORDER') }
+              </button>
+
+              <AdhocOrderItemModal
+                isOpen={ this.state.orderItemModalOpen }
+                taxCategories={ this.props.taxCategories }
+                itemToEdit={ this.state.itemToEdit }
+                closeModal={ this.closeAdhocOrderItemModal }
+                onSubmitItem={ (item) => this.onOrderItemSubmited(item, values) }>
+              </AdhocOrderItemModal>
+
+            </form>
+          )}
+
+        </Formik>
+
       </div>
     )
   }

@@ -278,6 +278,15 @@
         "ADHOC_ORDER_SAVE": "Guardar",
         "ADHOC_ORDER_ITEMS_TOTAL": "Total",
         "ADHOC_ORDER_DELETE_ITEM_CONFIRM": "Está seguro que desea borrar este producto?",
-        "ADHOC_ORDER_SAVE_FINISH_ORDER": "Finalizar pedido"
+        "ADHOC_ORDER_SAVE_FINISH_ORDER": "Finalizar pedido",
+        "ADHOC_ORDER_CUSTOMER_TITLE": "Datos del cliente",
+        "ADHOC_ORDER_CUSTOMER_EMAIL_LABEL": "Email",
+        "ADHOC_ORDER_CUSTOMER_PHONE_NUMBER_LABEL": "Número de teléfono",
+        "ADHOC_ORDER_CUSTOMER_FULL_NAME_LABEL": "Nombre y apellido",
+        "ADHOC_ORDER_CUSTOMER_EMAIL_ERROR": "Por favor ingrese un email válido",
+        "ADHOC_ORDER_CUSTOMER_PHONE_NUMBER_ERROR": "Por favor ingrese un número de télefono válido",
+        "ADHOC_ORDER_CUSTOMER_FULL_NAME_ERROR": "Por favor complete el nombre y apellido",
+        "ADHOC_ORDER_ITEMS_LIST_TITLE": "Listado de productos",
+        "ADHOC_ORDER_ITEMS_LIST_ERROR": "Por favor agregue al menos un producto"
     }
 }

@@ -1,7 +1,7 @@
-import { Formik } from "formik";
 import React, { Component } from "react";
 import { withTranslation } from "react-i18next";
 import Modal from 'react-modal'
+import { Formik } from "formik";
 
 import './index.scss'
 
@@ -76,7 +76,7 @@ class AdhocOrderItemModal extends Component {
                 <button type="button" className="close" onClick={ this._closeModal } aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 className="modal-title" id="user-modal-label">{ this.props.t('ADHOC_ORDER_ITEM_TITLE') }</h4>
+                <h4 className="modal-title">{ this.props.t('ADHOC_ORDER_ITEM_TITLE') }</h4>
               </div>
               <form onSubmit={ handleSubmit } autoComplete="off" className="modal-body form">
                 <div className={ errors.name && touched.name ? 'form-group has-error' : 'form-group' }>
