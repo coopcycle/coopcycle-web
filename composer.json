@@ -131,7 +131,8 @@
         "league/oauth2-server-bundle": "^0.3.0",
         "phpoffice/phpspreadsheet": "^1.23",
         "typesense/typesense-php": "^4.7",
-        "benjaminfavre/oauth2-http-client": "^1.0"
+        "benjaminfavre/oauth2-http-client": "^1.0",
+        "sylius/calendar": "^0.3"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

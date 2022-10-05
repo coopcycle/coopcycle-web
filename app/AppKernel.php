@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new Sylius\Bundle\TaxonomyBundle\SyliusTaxonomyBundle(),
             new Sylius\Bundle\CurrencyBundle\SyliusCurrencyBundle(),
             new Sylius\Bundle\ChannelBundle\SyliusChannelBundle(),
+            new Sylius\Calendar\SyliusCalendarBundle(),
             new Sylius\Bundle\PromotionBundle\SyliusPromotionBundle(),
             new Sylius\Bundle\PaymentBundle\SyliusPaymentBundle(),
             new Sylius\Bundle\CustomerBundle\SyliusCustomerBundle(),

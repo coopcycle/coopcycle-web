@@ -14,18 +14,18 @@ class PhoneNumberNormalizer extends BasePhoneNumberNormalizer
         parent::__construct($phoneNumberUtil, strtoupper($region), $format);
     }
 
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, $class, $format = null, array $context = []): ?PhoneNumber
     {
         // Also support "false"
         // https://github.com/coopcycle/coopcycle-plugins/issues/21
         if (false === $data) {
-            return;
+            return null;
         }
 
         return parent::denormalize($data, $class, $format, $context);
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
         // Also support "false"
         // https://github.com/coopcycle/coopcycle-plugins/issues/21
