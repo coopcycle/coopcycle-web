@@ -142,9 +142,9 @@ class TaskSubscriber implements EventSubscriber
      * When a task's address is modified, we need to create a new address, instead of updating the existing address.
      * See https://github.com/coopcycle/coopcycle-web/issues/3306
      *
-     * @var UnitOfWork $uow
-     * @var array $tasksToUpdate
-     * @var \SplObjectStorage $createdAddresses
+     * @param UnitOfWork $uow
+     * @param array $tasksToUpdate
+     * @param \SplObjectStorage $createdAddresses
      */
     private function handleAddressesChangesForTasks(/* UnitOfWork */ $uow, array $tasksToUpdate, \SplObjectStorage $createdAddresses)
     {
