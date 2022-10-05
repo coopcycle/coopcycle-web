@@ -518,23 +518,6 @@ $pulse-color: #2ECC40;
   cursor: row-resize;
 }
 
-.leaftlet-restaurant-icon {
-
-  $icon-size: 28px;
-  $icon-border-size: 2px;
-  $icon-image-size: ($icon-size - ($icon-border-size * 2));
-
-  width: $icon-size;
-  height: $icon-size;
-  border: 2px solid #333;
-  border-radius: 50%;
-  opacity: 0.65;
-  > img {
-    width: $icon-image-size;
-    height: $icon-image-size;
-  }
-}
-
 .leaflet-popup-pickup-group {
   .leaflet-popup-content {
     margin: 0;
