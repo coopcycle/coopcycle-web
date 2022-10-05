@@ -4,8 +4,8 @@ env:
   APP_ENV: test
   NODE_ENV: test
 jobs:
-  LINT:
-    name: Lint
+  LINT_PHP:
+    name: Lint PHP
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -13,8 +13,6 @@ jobs:
           - '8.0'
           - '8.1'
       fail-fast: false
-    env:
-      CYPRESS_INSTALL_BINARY: '0'
     steps:
       - uses: actions/checkout@v2
       - name: Setup PHP
@@ -25,16 +23,23 @@ jobs:
           extensions: redis
       - name: Install PHP dependencies
         run: composer install --prefer-dist --no-progress --no-scripts
-      - name: Install JS dependencies
-        run: npm ci
       - name: Run PHPStan
         run: phpstan analyse
-      - name: Run ESLint
-        run: node_modules/.bin/eslint --quiet js/app/
       - name: Clear Symfony cache
         run: bin/console cache:clear
       - name: Warmup Symfony cache
         run: bin/console cache:warmup
+  LINT_JS:
+    name: Lint JS
+    runs-on: ubuntu-latest
+    env:
+      CYPRESS_INSTALL_BINARY: '0'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install JS dependencies
+        run: npm ci
+      - name: Run ESLint
+        run: node_modules/.bin/eslint --quiet js/app/
   BASE:
     name: Run base tests
     runs-on: ubuntu-latest
