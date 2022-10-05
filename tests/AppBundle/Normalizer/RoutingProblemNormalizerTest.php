@@ -67,21 +67,21 @@ class RoutingProblemNormalizerTest extends TestCase
             "jobs"=>[
                 [
                     "id"=>0,
-                    "location"=>[2.3363113403320312, 48.87261892829001],
+                    "location"=>[2.336311340332, 48.87261892829],
                     "time_windows"=>[
                         [ (int) $after->format('U'), (int) $before->format('U') ]
                     ]
                 ],
                 [
                     "id"=>1,
-                    "location"=>[2.3548507690429683, 48.86923158125418],
+                    "location"=>[2.354850769043, 48.869231581254],
                     "time_windows"=>[
                         [ (int) $after->format('U'), (int) $before->format('U') ]
                     ]
                 ],
                 [
                     "id"=>2,
-                    "location"=>[2.3466110229492188, 48.876006045998984],
+                    "location"=>[2.3466110229492, 48.876006045999],
                     "time_windows"=>[
                         [ (int) $after->format('U'), (int) $before->format('U') ]
                     ]
@@ -89,7 +89,7 @@ class RoutingProblemNormalizerTest extends TestCase
             ],
             "shipments"=>[],
             "vehicles"=>[
-                ["id"=>1, "profile"=>"bike", "start"=>[2.3363113403320312, 48.87261892829001], "end"=>[2.3363113403320312, 48.87261892829001],]
+                ["id"=>1, "profile"=>"bike", "start"=>[2.336311340332, 48.87261892829], "end"=>[2.336311340332, 48.87261892829],]
             ]
         ], $result);
     }
