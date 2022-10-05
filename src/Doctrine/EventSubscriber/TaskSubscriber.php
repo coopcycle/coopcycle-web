@@ -5,11 +5,14 @@ namespace AppBundle\Doctrine\EventSubscriber;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor;
 use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskCreated;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
+use AppBundle\Service\Geocoder;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\UnitOfWork;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -23,17 +26,22 @@ class TaskSubscriber implements EventSubscriber
 
     private $createdTasks = [];
     private $postFlushEvents = [];
+    private $createdAddresses;
 
     public function __construct(
         MessageBus $eventBus,
         EventStore $eventStore,
         EntityChangeSetProcessor $processor,
-        LoggerInterface $logger)
+        LoggerInterface $logger,
+        Geocoder $geocoder)
     {
         $this->eventBus = $eventBus;
         $this->eventStore = $eventStore;
         $this->processor = $processor;
         $this->logger = $logger;
+        $this->geocoder = $geocoder;
+
+        $this->createdAddresses = new \SplObjectStorage();
     }
 
     public function getSubscribedEvents()
@@ -50,6 +58,7 @@ class TaskSubscriber implements EventSubscriber
         $this->createdTasks = [];
         $this->postFlushEvents = [];
         $this->processor->eraseMessages();
+        $this->createdAddresses = new \SplObjectStorage();
 
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
@@ -74,6 +83,8 @@ class TaskSubscriber implements EventSubscriber
         if (count($tasksToInsert) > 0) {
             $uow->computeChangeSets();
         }
+
+        $this->handleAddressesChangesForTasks($uow, $tasksToUpdate, $this->createdAddresses);
 
         $tasks = array_merge($tasksToInsert, $tasksToUpdate);
 
@@ -102,6 +113,15 @@ class TaskSubscriber implements EventSubscriber
 
     public function postFlush(PostFlushEventArgs $args)
     {
+        $em = $args->getEntityManager();
+        foreach ($this->createdAddresses as $address) {
+            $em->persist($address);
+            $item = $this->createdAddresses[$address];
+            $task = $item['task'];
+            $task->setAddress($address);
+            $em->flush();
+        }
+
         $this->logger->debug(sprintf('There are %d "task:created" events to handle', count($this->createdTasks)));
         foreach ($this->createdTasks as $task) {
             $this->eventBus->handle(new TaskCreated($task));
@@ -116,5 +136,48 @@ class TaskSubscriber implements EventSubscriber
         $this->createdTasks = [];
         $this->postFlushEvents = [];
         $this->processor->eraseMessages();
+    }
+
+    /**
+     * When a task's address is modified, we need to create a new address, instead of updating the existing address.
+     * See https://github.com/coopcycle/coopcycle-web/issues/3306
+     */
+    private function handleAddressesChangesForTasks(UnitOfWork $uow, array $tasksToUpdate, \SplObjectStorage $createdAddresses)
+    {
+        $isAddress = function ($entity) {
+            return $entity instanceof Address;
+        };
+
+        $addressesToUpdate = array_filter($uow->getScheduledEntityUpdates(), $isAddress);
+
+        if (count($tasksToUpdate) > 0 && count($addressesToUpdate) > 0) {
+
+            foreach ($tasksToUpdate as $task) {
+                $index = array_search($task->getAddress(), $addressesToUpdate);
+
+                if ($index) {
+                    $taskAddress = $addressesToUpdate[$index];
+                    $entityChangeset = $uow->getEntityChangeSet($taskAddress);
+
+                    if (isset($entityChangeset['streetAddress'])) {
+                        [$oldValue, $newValue] = $entityChangeset['streetAddress'];
+                        if (!empty($oldValue) && !empty($newValue) && $oldValue !== $newValue) {
+                            $taskAddress = $this->geocoder->geocode($newValue, $taskAddress);
+
+                            $newAddress = $taskAddress->clone();
+
+                            $uow->detach($taskAddress); // do not impact updates on previous task
+
+                            $createdAddresses[$newAddress] = [
+                                'task' => $task
+                            ];
+                        }
+                    }
+
+                }
+
+            }
+
+        }
     }
 }

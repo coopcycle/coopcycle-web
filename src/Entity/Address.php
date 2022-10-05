@@ -152,4 +152,24 @@ class Address extends BaseAddress
 
         return $this;
     }
+
+    public function clone()
+    {
+        $address = new Address();
+
+        $address->setDescription($this->description);
+        $address->setCompany($this->company);
+        $address->setContactName($this->contactName);
+        $address->setGeo($this->getGeo());
+        $address->setStreetAddress($this->streetAddress);
+        $address->setAddressLocality($this->addressLocality);
+        $address->setAddressCountry($this->addressCountry);
+        $address->setAddressRegion($this->addressRegion);
+        $address->setPostOfficeBoxNumber($this->postOfficeBoxNumber);
+        $address->setTelephone($this->telephone);
+        $address->setName($this->getName());
+        $address->setPostalCode($this->postalCode);
+
+        return $address;
+    }
 }

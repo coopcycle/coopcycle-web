@@ -68,6 +68,17 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
                 } elseif (!isset($address['@id'])) {
                     $addressObj = $this->geocoder->geocode($address['streetAddress']);
                     $em->persist($addressObj);
+                } elseif (isset($address['@id'])) {
+                    $entityChangeSet = $uow->getEntityChangeSet($object);
+                    [ $oldTemplate, $newTemplate ] = $entityChangeSet['template'];
+                    if (isset($oldTemplate['address'])) {
+                        if ($this->_hasChangedAddress($oldTemplate, $template)) {
+                            // when editing an address of a RRule we should recreate a new address
+                            // https://github.com/coopcycle/coopcycle-web/issues/3306#issuecomment-1192525281
+                            $addressObj = $this->geocoder->geocode($template['address']['streetAddress']);
+                            $em->persist($addressObj);
+                        }
+                    }
                 }
 
                 if ($addressObj) {
@@ -86,6 +97,20 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
                     } elseif (!isset($task['address']['@id'])) {
                         $addressObj = $this->geocoder->geocode($task['address']['streetAddress']);
                         $em->persist($addressObj);
+                    } elseif (isset($task['address']['@id'])) {
+                        $entityChangeSet = $uow->getEntityChangeSet($object);
+                        if (isset($entityChangeSet['template'])) {
+                            [ $oldTemplate, $newTemplate ] = $entityChangeSet['template'];
+                            if ($oldTemplate) {
+                                $oldTask = $oldTemplate['hydra:member'][$i];
+                                if ($this->_hasChangedAddress($oldTask, $task)) {
+                                    // when editing an address of a RRule we should recreate a new address
+                                    // https://github.com/coopcycle/coopcycle-web/issues/3306#issuecomment-1192525281
+                                    $addressObj = $this->geocoder->geocode($task['address']['streetAddress']);
+                                    $em->persist($addressObj);
+                                }
+                            }
+                        }
                     }
 
                     if ($addressObj) {
@@ -128,5 +153,11 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
         }
 
         $em->flush();
+    }
+
+    private function _hasChangedAddress($oldTask, $newTask) {
+        return isset($oldTask['address']['@id'])
+            && $oldTask['address']['@id'] === $newTask['address']['@id']
+            && $oldTask['address']['streetAddress'] !== $newTask['address']['streetAddress'];
     }
 }

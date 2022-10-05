@@ -12,6 +12,7 @@ use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
+use AppBundle\Service\Geocoder;
 use Doctrine\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
@@ -69,11 +70,14 @@ class TaskSubscriberTest extends TestCase
         $taskListProvider = new TaskListProvider($this->entityManager->reveal());
         $changeSetProcessor = new EntityChangeSetProcessor($taskListProvider);
 
+        $this->geocoder = $this->prophesize(Geocoder::class);
+
         $this->subscriber = new TaskSubscriber(
             $this->eventBus->reveal(),
             $eventStore,
             $changeSetProcessor,
-            new NullLogger()
+            new NullLogger(),
+            $this->geocoder->reveal()
         );
     }
 
