@@ -501,6 +501,21 @@ trait RestaurantTrait
         $menuTaxon = $taxonRepository
             ->find($menuId);
 
+        // Handle deletion
+        $menuForm = $this->createForm(MenuTaxonType::class, $menuTaxon);
+        $menuForm->handleRequest($request);
+        if ($menuForm->isSubmitted() && $menuForm->isValid()) {
+            if ($menuForm->getClickedButton() && 'delete' === $menuForm->getClickedButton()->getName()) {
+
+                $restaurant->removeTaxon($menuTaxon);
+                $entityManager->remove($menuTaxon);
+
+                $entityManager->flush();
+
+                return $this->redirectToRoute($routes['menu_taxons'], ['id' => $restaurantId]);
+            }
+        }
+
         $form = $this->createFormBuilder()
             ->add('name', TextType::class)
             ->getForm();
@@ -556,15 +571,13 @@ trait RestaurantTrait
 
             $newSectionPositions = [];
 
-            $em = $this->getDoctrine()->getManagerForClass(ProductTaxon::class);
-
             foreach ($menuEditor->getChildren() as $child) {
 
                 // The section is empty
                 if (count($originalTaxonProducts[$child]) > 0 && count($child->getTaxonProducts()) === 0) {
                     foreach ($originalTaxonProducts[$child] as $originalTaxonProduct) {
                         $originalTaxonProducts[$child]->removeElement($originalTaxonProduct);
-                        $em->remove($originalTaxonProduct);
+                        $entityManager->remove($originalTaxonProduct);
                     }
                     continue;
                 }
@@ -578,7 +591,7 @@ trait RestaurantTrait
                     foreach ($originalTaxonProducts[$child] as $originalTaxonProduct) {
                         if (!$child->getTaxonProducts()->contains($originalTaxonProduct)) {
                             $child->getTaxonProducts()->removeElement($originalTaxonProduct);
-                            $em->remove($originalTaxonProduct);
+                            $entityManager->remove($originalTaxonProduct);
                         }
                     }
                 }
