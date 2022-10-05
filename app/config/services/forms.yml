@@ -240,7 +240,6 @@ services:
   AppBundle\Form\Type\AutocompleteAdapterType:
     arguments:
       $autocompleteAdapter: '%env(COOPCYCLE_AUTOCOMPLETE_ADAPTER)%'
-      $algoliaApiKey: '%env(ALGOLIA_PLACES_API_KEY)%'
       $locationIqAccessToken: '%env(LOCATIONIQ_ACCESS_TOKEN)%'
       $geocodeEarthApiKey: '%env(GEOCODE_EARTH_API_KEY)%'
     tags: [ form.type ]
