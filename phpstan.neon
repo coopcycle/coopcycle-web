@@ -10,6 +10,7 @@ parameters:
     excludePaths:
         # Class AppBundle\Api\DataProvider\RestaurantCollectionDataProvider extends final class ApiPlatform\Core\Bridge\Doctrine\Orm\CollectionDataProvider
         - src/Api/DataProvider/RestaurantCollectionDataProvider
+        - src/Api/DataProvider/TaskListCollectionDataProvider
         - src/Doctrine/EventSubscriber/TaskSubscriber/EntityChangeSetProcessor
     ignoreErrors:
         - '#Access to an undefined property #'
