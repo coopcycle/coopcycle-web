@@ -208,7 +208,7 @@ services:
       $taxCategoryRepository: '@sylius.repository.tax_category'
       $country: '%region_iso%'
       $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
-      $locale: '%coopcycle.locale%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
     tags: [ form.type ]
 
   AppBundle\Form\Restaurant\FulfillmentMethodType:
