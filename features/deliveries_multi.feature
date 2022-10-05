@@ -60,7 +60,8 @@ Feature: Multi-step deliveries
           "doneBefore":"@string@.isDateTime()",
           "comments": "1.50 kg",
           "weight":1500,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -86,7 +87,8 @@ Feature: Multi-step deliveries
           "doneBefore":"@string@.isDateTime()",
           "comments": "",
           "weight":1500,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
       }
@@ -170,7 +172,8 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":4
             }
-          ]
+          ],
+          "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":@string@,
@@ -202,7 +205,8 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2
             }
-          ]
+          ],
+          "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
       }
@@ -282,7 +286,8 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2
             }
-          ]
+          ],
+          "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"/api/tasks/3",
@@ -314,7 +319,8 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2
             }
-          ]
+          ],
+          "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
       }
@@ -392,7 +398,8 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2
             }
-          ]
+          ],
+          "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"/api/tasks/3",
@@ -424,7 +431,8 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2
             }
-          ]
+          ],
+          "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
       }

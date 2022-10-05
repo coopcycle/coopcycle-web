@@ -49,7 +49,8 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
-            "position":0
+            "position":0,
+            "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -78,7 +79,8 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
-            "position":1
+            "position":1,
+            "createdAt":"@string@.isDateTime()"
           }
         ],
         "hydra:totalItems":2,
@@ -110,7 +112,8 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
-            "position":0
+            "position":0,
+            "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -139,7 +142,8 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
-            "position":1
+            "position":1,
+            "createdAt":"@string@.isDateTime()"
           }
         ],
         "distance":@integer@,
@@ -211,22 +215,9 @@ Feature: Tasks
         "hydra:totalItems":2,
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/tasks/2/events{?date,assigned}",
+          "hydra:template":"/api/tasks/2/events{?date,assigned,organization}",
           "hydra:variableRepresentation":"BasicRepresentation",
-          "hydra:mapping":[
-            {
-              "@type":"IriTemplateMapping",
-              "variable":"date",
-              "property":"date",
-              "required":false
-            },
-            {
-              "@type":"IriTemplateMapping",
-              "variable":"assigned",
-              "property":"assigned",
-              "required":false
-            }
-          ]
+          "hydra:mapping":@array@
         }
       }
       """
@@ -484,7 +475,8 @@ Feature: Tasks
         "recurrenceRule": null,
         "metadata": [],
         "weight":null,
-        "packages": []
+        "packages": [],
+        "createdAt":"@string@.isDateTime()"
       }
       """
 
@@ -776,7 +768,8 @@ Feature: Tasks
         "recurrenceRule": null,
         "metadata": [],
         "weight": 800,
-        "packages": []
+        "packages": [],
+        "createdAt":"@string@.isDateTime()"
       }
       """
 
@@ -855,7 +848,8 @@ Feature: Tasks
         "recurrenceRule": null,
         "metadata": [],
         "weight":null,
-        "packages": []
+        "packages": [],
+        "createdAt":"@string@.isDateTime()"
       }
       """
 
@@ -984,7 +978,8 @@ Feature: Tasks
               "baz":"bat"
             },
             "weight":null,
-            "packages": []
+            "packages": [],
+            "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"/api/tasks/2",
@@ -1012,7 +1007,8 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":[],
             "weight":null,
-            "packages": []
+            "packages": [],
+            "createdAt":"@string@.isDateTime()"
           }
         ],
         "hydra:totalItems":2,
@@ -1022,22 +1018,9 @@ Feature: Tasks
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/tasks{?date,assigned}",
+          "hydra:template":"/api/tasks{?date,assigned,organization}",
           "hydra:variableRepresentation":"BasicRepresentation",
-          "hydra:mapping":[
-            {
-              "@type":"IriTemplateMapping",
-              "variable":"date",
-              "property":"date",
-              "required":false
-            },
-            {
-              "@type":"IriTemplateMapping",
-              "variable":"assigned",
-              "property":"assigned",
-              "required":false
-            }
-          ]
+          "hydra:mapping":@array@
         }
       }
       """
@@ -1148,7 +1131,7 @@ Feature: Tasks
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/tasks{?date,assigned}",
+          "hydra:template":"/api/tasks{?date,assigned,organization}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":@array@
         }
@@ -1200,7 +1183,7 @@ Feature: Tasks
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/tasks{?date,assigned}",
+          "hydra:template":"/api/tasks{?date,assigned,organization}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":@array@
         }

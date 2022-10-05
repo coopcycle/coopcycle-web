@@ -700,7 +700,8 @@ Feature: Orders
         "assignedTo":"@string@||@null@",
         "preparationTime":"@string@||@null@",
         "shippingTime":"@string@||@null@",
-        "paymentMethod":"@string@||@null@"
+        "paymentMethod":"@string@||@null@",
+        "hasReceipt":@boolean@
       }
       """
 

@@ -84,9 +84,11 @@ Feature: Food Tech
               "delivery_promotion":[],
               "order_promotion":[],
               "reusable_packaging":[],
-              "tax":@array@
+              "tax":@array@,
+              "tip":[]
             },
-            "paymentMethod": "CARD"
+            "paymentMethod": "CARD",
+            "hasReceipt":@boolean@
           }
         ],
         "hydra:totalItems":1,

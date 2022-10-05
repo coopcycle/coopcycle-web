@@ -888,7 +888,8 @@ Feature: Manage restaurants
               "doneAfter":"@string@.isDateTime()",
               "doneBefore":"@string@.isDateTime()",
               "weight": null,
-              "packages": []
+              "packages": [],
+              "createdAt":"@string@.isDateTime()"
             },
             "dropoff":{
               "@id":"/api/tasks/2",
@@ -915,7 +916,8 @@ Feature: Manage restaurants
               "doneAfter":"@string@.isDateTime()",
               "doneBefore":"@string@.isDateTime()",
               "weight":null,
-              "packages": []
+              "packages": [],
+              "createdAt":"@string@.isDateTime()"
             },
             "trackingUrl": @string@
           }

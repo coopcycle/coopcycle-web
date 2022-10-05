@@ -87,7 +87,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax":[]
+          "tax":[],
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -160,7 +161,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax":[]
+          "tax":[],
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -233,7 +235,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax":[]
+          "tax":[],
+          "tip":[]
         },
         "fulfillmentMethod": "delivery"
       }
@@ -291,7 +294,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax":[]
+          "tax":[],
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -352,7 +356,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax":[]
+          "tax":[],
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -407,7 +412,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax":[]
+          "tax":[],
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -469,7 +475,8 @@ Feature: Carts
           ],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax":@array@
+          "tax":@array@,
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -524,7 +531,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax": @array@
+          "tax": @array@,
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -623,7 +631,8 @@ Feature: Carts
               "label":"TVA 20%",
               "amount":@integer@
             }
-          ]
+          ],
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -722,7 +731,8 @@ Feature: Carts
               "label":"TVA 20%",
               "amount":@integer@
             }
-          ]
+          ],
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -821,7 +831,8 @@ Feature: Carts
               "label":"TVA 20%",
               "amount":@integer@
             }
-          ]
+          ],
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -1466,7 +1477,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax":[]
+          "tax":[],
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -1583,7 +1595,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax":[]
+          "tax":[],
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -1663,7 +1676,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax":[]
+          "tax":[],
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -1743,7 +1757,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax":[]
+          "tax":[],
+          "tip":[]
         },
         "fulfillmentMethod":"delivery"
       }
@@ -1840,7 +1855,8 @@ Feature: Carts
           "delivery_promotion":[],
           "order_promotion":[],
           "reusable_packaging":[],
-          "tax":[]
+          "tax":[],
+          "tip":[]
         }
       }
       """
