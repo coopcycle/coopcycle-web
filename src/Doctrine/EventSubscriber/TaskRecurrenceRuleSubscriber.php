@@ -3,9 +3,11 @@
 namespace AppBundle\Doctrine\EventSubscriber;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Service\Geocoder;
 use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
@@ -13,6 +15,7 @@ use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class TaskRecurrenceRuleSubscriber implements EventSubscriber
 {
@@ -21,12 +24,14 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
     public function __construct(
         Geocoder $geocoder,
         IriConverterInterface $iriConverter,
-        PropertyAccessorInterface $propertyAccessor)
+        PropertyAccessorInterface $propertyAccessor,
+        DenormalizerInterface $denormalizer)
     {
         $this->geocoder = $geocoder;
         $this->iriConverter = $iriConverter;
         $this->propertyAccessor = $propertyAccessor;
         $this->createdAddresses = new \SplObjectStorage();
+        $this->denormalizer = $denormalizer;
     }
 
     public function getSubscribedEvents()
@@ -72,12 +77,7 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
                     $entityChangeSet = $uow->getEntityChangeSet($object);
                     [ $oldTemplate, $newTemplate ] = $entityChangeSet['template'];
                     if (isset($oldTemplate['address'])) {
-                        if ($this->_hasChangedAddress($oldTemplate, $template)) {
-                            // when editing an address of a RRule we should recreate a new address
-                            // https://github.com/coopcycle/coopcycle-web/issues/3306#issuecomment-1192525281
-                            $addressObj = $this->geocoder->geocode($template['address']['streetAddress']);
-                            $em->persist($addressObj);
-                        }
+                        $addressObj = $this->_handleAddressChange($oldTemplate, $template, $em);
                     }
                 }
 
@@ -103,12 +103,7 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
                             [ $oldTemplate, $newTemplate ] = $entityChangeSet['template'];
                             if ($oldTemplate) {
                                 $oldTask = $oldTemplate['hydra:member'][$i];
-                                if ($this->_hasChangedAddress($oldTask, $task)) {
-                                    // when editing an address of a RRule we should recreate a new address
-                                    // https://github.com/coopcycle/coopcycle-web/issues/3306#issuecomment-1192525281
-                                    $addressObj = $this->geocoder->geocode($task['address']['streetAddress']);
-                                    $em->persist($addressObj);
-                                }
+                                $addressObj = $this->_handleAddressChange($oldTask, $task, $em);
                             }
                         }
                     }
@@ -144,10 +139,10 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
 
             $template = $item['object']->getTemplate();
 
-            $this->propertyAccessor->setValue($template, $item['path'], [
-                '@id' => $this->iriConverter->getIriFromItem($address),
-                'streetAddress' => $address->getStreetAddress(),
-            ]);
+            $this->propertyAccessor->setValue($template,
+                sprintf('%s[@id]', $item['path']), $this->iriConverter->getIriFromItem($address));
+            $this->propertyAccessor->setValue($template,
+                sprintf('%s[streetAddress]', $item['path']), $address->getStreetAddress());
 
             $item['object']->setTemplate($template);
         }
@@ -155,9 +150,49 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
         $em->flush();
     }
 
-    private function _hasChangedAddress($oldTask, $newTask) {
-        return isset($oldTask['address']['@id'])
-            && $oldTask['address']['@id'] === $newTask['address']['@id']
-            && $oldTask['address']['streetAddress'] !== $newTask['address']['streetAddress'];
+    private function _hasChangedAddress($oldTask, $newTask)
+    {
+        if (!isset($oldTask['address']['@id'])) {
+            return false;
+        }
+
+        if ($oldTask['address']['@id'] !== $newTask['address']['@id']) {
+            return false;
+        }
+
+        $diff = array_diff($newTask['address'], $oldTask['address']);
+
+        return !empty($diff);
+    }
+
+    private function _handleAddressChange($oldTask, $task, EntityManagerInterface $em): ?Address
+    {
+        // when editing an address of a RRule we should recreate a new address
+        // https://github.com/coopcycle/coopcycle-web/issues/3306#issuecomment-1192525281
+        if ($this->_hasChangedAddress($oldTask, $task)) {
+
+            $addressObj = $this->geocoder->geocode($task['address']['streetAddress']);
+            $a = $this->denormalizer->denormalize($task['address'], Address::class, 'jsonld');
+
+            $this->_merge($addressObj, $a);
+
+            // We need to detach the previous address,
+            // or the denormalized changes would be persisted
+            $em->detach($a);
+
+            $em->persist($addressObj);
+
+            return $addressObj;
+        }
+
+        return null;
+    }
+
+    private function _merge(Address $address, Address $from)
+    {
+        $address->setDescription($from->getDescription());
+        $address->setContactName($from->getContactName());
+        $address->setTelephone($from->getTelephone());
+        $address->setName($from->getName());
     }
 }
