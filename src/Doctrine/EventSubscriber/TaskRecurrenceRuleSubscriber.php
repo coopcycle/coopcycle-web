@@ -73,7 +73,7 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
                     $addressObj = $this->iriConverter->getItemFromIri($address);
                 } elseif (!isset($address['@id'])) {
                     $addressObj = $this->geocoder->geocode($address['streetAddress']);
-                    $this->_populateAddressDetails($addressObj, $task['address']);
+                    $this->_populateAddressDetails($addressObj, $address);
                     $em->persist($addressObj);
                 } elseif (isset($address['@id'])) {
                     $entityChangeSet = $uow->getEntityChangeSet($object);
