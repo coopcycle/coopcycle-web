@@ -2,6 +2,7 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
+use libphonenumber\PhoneNumber;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Task\RecurrenceRule;
@@ -11,11 +12,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
+use Misd\PhoneNumberBundle\Serializer\Normalizer\PhoneNumberNormalizer;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class TaskRecurrenceRuleSubscriber implements EventSubscriber
 {
@@ -25,13 +26,13 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
         Geocoder $geocoder,
         IriConverterInterface $iriConverter,
         PropertyAccessorInterface $propertyAccessor,
-        DenormalizerInterface $denormalizer)
+        PhoneNumberNormalizer $phoneNumberNormalizer)
     {
         $this->geocoder = $geocoder;
         $this->iriConverter = $iriConverter;
         $this->propertyAccessor = $propertyAccessor;
         $this->createdAddresses = new \SplObjectStorage();
-        $this->denormalizer = $denormalizer;
+        $this->phoneNumberNormalizer = $phoneNumberNormalizer;
     }
 
     public function getSubscribedEvents()
@@ -172,13 +173,27 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
         if ($this->_hasChangedAddress($oldTask, $task)) {
 
             $addressObj = $this->geocoder->geocode($task['address']['streetAddress']);
-            $a = $this->denormalizer->denormalize($task['address'], Address::class, 'jsonld');
 
-            $this->_merge($addressObj, $a);
+            if (isset($task['address']['telephone'])) {
+                $addressObj->setTelephone(
+                    $this->phoneNumberNormalizer->denormalize(
+                        $task['address']['telephone'],
+                        PhoneNumber::class
+                    )
+                );
+            }
 
-            // We need to detach the previous address,
-            // or the denormalized changes would be persisted
-            $em->detach($a);
+            if (isset($task['address']['contactName'])) {
+                $addressObj->setContactName(
+                    $task['address']['contactName']
+                );
+            }
+
+            if (isset($task['address']['description'])) {
+                $addressObj->setDescription(
+                    $task['address']['description']
+                );
+            }
 
             $em->persist($addressObj);
 
@@ -186,13 +201,5 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
         }
 
         return null;
-    }
-
-    private function _merge(Address $address, Address $from)
-    {
-        $address->setDescription($from->getDescription());
-        $address->setContactName($from->getContactName());
-        $address->setTelephone($from->getTelephone());
-        $address->setName($from->getName());
     }
 }
