@@ -73,6 +73,7 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
                     $addressObj = $this->iriConverter->getItemFromIri($address);
                 } elseif (!isset($address['@id'])) {
                     $addressObj = $this->geocoder->geocode($address['streetAddress']);
+                    $this->_populateAddressDetails($addressObj, $task['address']);
                     $em->persist($addressObj);
                 } elseif (isset($address['@id'])) {
                     $entityChangeSet = $uow->getEntityChangeSet($object);
@@ -97,6 +98,7 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
                         $addressObj = $this->iriConverter->getItemFromIri($task['address']);
                     } elseif (!isset($task['address']['@id'])) {
                         $addressObj = $this->geocoder->geocode($task['address']['streetAddress']);
+                        $this->_populateAddressDetails($addressObj, $task['address']);
                         $em->persist($addressObj);
                     } elseif (isset($task['address']['@id'])) {
                         $entityChangeSet = $uow->getEntityChangeSet($object);
@@ -174,26 +176,7 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
 
             $addressObj = $this->geocoder->geocode($task['address']['streetAddress']);
 
-            if (isset($task['address']['telephone'])) {
-                $addressObj->setTelephone(
-                    $this->phoneNumberNormalizer->denormalize(
-                        $task['address']['telephone'],
-                        PhoneNumber::class
-                    )
-                );
-            }
-
-            if (isset($task['address']['contactName'])) {
-                $addressObj->setContactName(
-                    $task['address']['contactName']
-                );
-            }
-
-            if (isset($task['address']['description'])) {
-                $addressObj->setDescription(
-                    $task['address']['description']
-                );
-            }
+            $this->_populateAddressDetails($addressObj, $task['address']);
 
             $em->persist($addressObj);
 
@@ -201,5 +184,29 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
         }
 
         return null;
+    }
+
+    private function _populateAddressDetails(Address $address, $payload)
+    {
+        if (isset($payload['telephone'])) {
+            $address->setTelephone(
+                $this->phoneNumberNormalizer->denormalize(
+                    $payload['telephone'],
+                    PhoneNumber::class
+                )
+            );
+        }
+
+        if (isset($payload['contactName'])) {
+            $address->setContactName(
+                $payload['contactName']
+            );
+        }
+
+        if (isset($payload['description'])) {
+            $address->setDescription(
+                $payload['description']
+            );
+        }
     }
 }

@@ -184,7 +184,8 @@ Feature: Task recurrence rules
             {
               "@type":"Task",
               "address": {
-                "streetAddress": "1, Rue de Rivoli, 75004 Paris"
+                "streetAddress": "1, Rue de Rivoli, 75004 Paris",
+                "telephone": "+33612345678"
               },
               "after":"11:30",
               "before":"12:00"
@@ -219,7 +220,8 @@ Feature: Task recurrence rules
               "@type":"Task",
               "address": {
                 "@id": @string@,
-                "streetAddress": @string@
+                "streetAddress": @string@,
+                "telephone": "+33612345678"
               },
               "after":"11:30",
               "before":"12:00"
