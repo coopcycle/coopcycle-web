@@ -142,6 +142,12 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
 
             $template = $item['object']->getTemplate();
 
+            if (is_string($template['address'])) {
+                $template['address'] = [
+                    '@id' => $template['address']
+                ];
+            }
+
             $this->propertyAccessor->setValue($template,
                 sprintf('%s[@id]', $item['path']), $this->iriConverter->getIriFromItem($address));
             $this->propertyAccessor->setValue($template,
