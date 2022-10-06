@@ -38,7 +38,6 @@ final class Version20221005223114 extends AbstractMigration
 
         $this->addSql('ALTER TABLE sylius_product_attribute_value DROP CONSTRAINT FK_8A053E54B6E62EFA');
         $this->addSql('ALTER TABLE sylius_product_attribute_value ADD CONSTRAINT FK_8A053E54B6E62EFA FOREIGN KEY (attribute_id) REFERENCES sylius_product_attribute (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('DROP INDEX idx_a29b52373f32dd8');
 
         $this->addSql('ALTER TABLE sylius_promotion ADD applies_to_discounted BOOLEAN DEFAULT \'true\' NOT NULL');
     }
