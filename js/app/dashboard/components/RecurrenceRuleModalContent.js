@@ -11,6 +11,7 @@ import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { parsePhoneNumberFromString, AsYouType, isValidPhoneNumber } from 'libphonenumber-js'
 import classNames from 'classnames'
+import Popconfirm from 'antd/lib/popconfirm'
 
 import { getCountry } from '../../i18n'
 import AddressAutosuggest from '../../components/AddressAutosuggest'
@@ -417,11 +418,18 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
             'justify-content-between': isSaved
           })}>
             { isSaved &&
-              <Button type="danger" size="large" icon={ <DeleteOutlined /> }
-                onClick={ () => deleteRecurrenceRule(recurrenceRule) }
-                disabled={ loading }>
-                { t('ADMIN_DASHBOARD_CANCEL') }
-              </Button>
+              <Popconfirm
+                placement="right"
+                title={ t('CONFIRM_DELETE') }
+                onConfirm={ () => deleteRecurrenceRule(recurrenceRule) }
+                okText={ t('CROPPIE_CONFIRM') }
+                cancelText={ t('CROPPIE_CANCEL') }
+                >
+                <Button type="danger" size="large" icon={ <DeleteOutlined /> }
+                  disabled={ loading }>
+                  { t('ADMIN_DASHBOARD_CANCEL') }
+                </Button>
+              </Popconfirm>
             }
             <span>
               { isSaved &&

@@ -266,6 +266,7 @@
         "OPTIN_CONSENT_MODAL_SUBMIT": "Update settings",
         "ADMIN_DASHBOARD_SETTINGS_AVATAR_COLORS_ENABLED": "Use avatar colors for markers and polylines",
         "CANCEL": "Cancel",
-        "AGREE": "Agree"
+        "AGREE": "Agree",
+        "CONFIRM_DELETE": "Do you confirm the deletion?"
     }
 }
