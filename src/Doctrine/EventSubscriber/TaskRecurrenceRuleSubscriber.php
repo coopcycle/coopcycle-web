@@ -142,10 +142,22 @@ class TaskRecurrenceRuleSubscriber implements EventSubscriber
 
             $template = $item['object']->getTemplate();
 
-            if (is_string($template['address'])) {
-                $template['address'] = [
-                    '@id' => $template['address']
-                ];
+            if ($template['@type'] === 'Task') {
+                if (is_string($template['address'])) {
+                    $template['address'] = [
+                        '@id' => $template['address']
+                    ];
+                }
+            } else {
+                $template['hydra:member'] = array_map(function ($member) {
+                    if (is_string($member['address'])) {
+                        $member['address'] = [
+                            '@id' => $member['address']
+                        ];
+                    }
+
+                    return $member;
+                }, $template['hydra:member']);
             }
 
             $this->propertyAccessor->setValue($template,
