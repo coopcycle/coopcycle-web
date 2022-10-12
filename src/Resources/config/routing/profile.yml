@@ -67,6 +67,7 @@ dashboard_restaurant_dashboard:
             order_delay: dashboard_order_delay
             order_fulfill: dashboard_order_fulfill
             user_details: user
+            restaurant_new_adhoc_order: dashboard_restaurant_new_adhoc_order
     methods: [ GET ]
 
 dashboard_restaurant_preparation_time:

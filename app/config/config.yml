@@ -690,6 +690,7 @@ fos_js_routing:
         - dashboard_restaurant_stats
         - routing_route
         - user_avatar
+        - dashboard_restaurant_new_adhoc_order
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'
