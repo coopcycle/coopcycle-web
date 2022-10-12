@@ -61,21 +61,13 @@ class AnonymizeCommand extends Command
             return 1;
         }
 
-        $anonymousEmail = sprintf('anon%s@coopcycle.org', bin2hex(random_bytes(8)));
+        if (!$customer->hasUser()) {
+            $this->io->text('Customer has no user associated');
 
-        $customer->setEmail($anonymousEmail);
-        $customer->setEmailCanonical($anonymousEmail);
-
-        if ($customer->hasUser()) {
-            $user = $customer->getUser();
-            $user->setEmail($anonymousEmail);
-            $user->setEmailCanonical($anonymousEmail);
-            $user->setEnabled(false);
-
-            $this->userManager->updateUser($user, false);
+            return 1;
         }
 
-        $this->entityManager->flush();
+        $this->userManager->deleteUser($customer->getUser());
 
         $this->io->text('Customer anonymized successfully!');
 

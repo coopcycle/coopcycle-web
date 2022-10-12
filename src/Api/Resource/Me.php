@@ -3,6 +3,7 @@
 namespace AppBundle\Api\Resource;
 
 use AppBundle\Action\Me as MeController;
+use AppBundle\Action\DeleteMe as DeleteMeController;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 
@@ -37,6 +38,13 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *           }
  *         }
  *       }
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "path"="/me",
+ *       "controller"=DeleteMeController::class,
+ *       "read"=false,
+ *       "write"=false
  *     }
  *   }
  * )
