@@ -5,7 +5,7 @@ import Modal from 'react-modal'
 import { Provider } from 'react-redux'
 
 import i18n from '../i18n'
-import AdhocOrderForm from './AdhocOrderForm'
+import AdhocOrderStart from './AdhocOrderStart'
 import { createStoreFromPreloadedState } from './redux/store'
 
 const container = document.getElementById('adhoc-order')
@@ -24,7 +24,7 @@ if (container) {
   render(
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
-        <AdhocOrderForm />
+        <AdhocOrderStart />
       </I18nextProvider>
     </Provider>,
     container

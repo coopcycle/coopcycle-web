@@ -290,6 +290,11 @@
         "ADHOC_ORDER_ITEMS_LIST_ERROR": "Por favor agregue al menos un producto",
         "ADHOC_ORDER_SAVED_SUCCESSFULLY": "Pedido guardado con éxito",
         "ADHOC_ORDER_FAILURE": "Se produjo un error al guardar el pedido. Por favor verifique los datos ingresados e intente nuevamente.",
-        "CREATE_ORDER": "Crear pedido"
+        "CREATE_ORDER": "Crear pedido",
+        "CREATE_NEW_ORDER": "Crear nuevo pedido",
+        "SEARCH_EXISTING_ORDER": "Buscar un pedido existente",
+        "ORDER_NUMBER": "Número de pedido",
+        "CONTINUE_EXISTING_ORDER": "Continuar con un pedido existente",
+        "SEARCH_ORDER_NUMBER_ERROR": "Ingrese un número de pedido válido"
     }
 }

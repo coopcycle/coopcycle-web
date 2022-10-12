@@ -295,10 +295,17 @@ class AdhocOrderForm extends Component {
                 </div>
               }
 
-              <button type="submit" className="btn btn-md btn-success mt-4"
-                disabled={ this.props.isFetching || this.state.showSuccessMessage }>
-                { this.props.t('ADHOC_ORDER_SAVE_FINISH_ORDER') }
-              </button>
+              <div className="d-flex justify-content-between mt-4">
+                <button type="submit" className="btn btn-md btn-success "
+                  disabled={ this.props.isFetching || this.state.showSuccessMessage }>
+                  { this.props.t('ADHOC_ORDER_SAVE_FINISH_ORDER') }
+                </button>
+
+                <button className="btn btn-md btn-info" type="button" onClick={this.props.onSearchOrderPressed}>
+                  { this.props.t('SEARCH_EXISTING_ORDER') }
+                </button>
+              </div>
+
 
               <AdhocOrderItemModal
                 isOpen={ this.state.orderItemModalOpen }
