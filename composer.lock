@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8fa7b6bcff916616b7772fb0d4af068d",
+    "content-hash": "7dfa56e7a91c9ec4c8d673494b95bd44",
     "packages": [
         {
             "name": "api-platform/core",
@@ -8181,16 +8181,16 @@
         },
         {
             "name": "league/oauth2-server-bundle",
-            "version": "v0.3.0",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/oauth2-server-bundle.git",
-                "reference": "c306e318d24a712efd0973f91fb02eb373a3151b"
+                "reference": "ef1d5e55a0ffb6253591e5f6ec9500879180be04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/oauth2-server-bundle/zipball/c306e318d24a712efd0973f91fb02eb373a3151b",
-                "reference": "c306e318d24a712efd0973f91fb02eb373a3151b",
+                "url": "https://api.github.com/repos/thephpleague/oauth2-server-bundle/zipball/ef1d5e55a0ffb6253591e5f6ec9500879180be04",
+                "reference": "ef1d5e55a0ffb6253591e5f6ec9500879180be04",
                 "shasum": ""
             },
             "require": {
@@ -8215,7 +8215,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.1-dev"
+                    "dev-master": "0.4-dev"
                 }
             },
             "autoload": {
@@ -8248,9 +8248,9 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/oauth2-server-bundle/issues",
-                "source": "https://github.com/thephpleague/oauth2-server-bundle/tree/v0.3.0"
+                "source": "https://github.com/thephpleague/oauth2-server-bundle/tree/v0.4.0"
             },
-            "time": "2021-12-28T16:51:16+00:00"
+            "time": "2022-06-21T09:59:32+00:00"
         },
         {
             "name": "league/omnipay",
@@ -22861,5 +22861,5 @@
         "php": ">=8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
