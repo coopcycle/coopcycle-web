@@ -43,7 +43,6 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Misd\PhoneNumberBundle\MisdPhoneNumberBundle(),
             new winzou\Bundle\StateMachineBundle\winzouStateMachineBundle(),
-            new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
             new Craue\ConfigBundle\CraueConfigBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new Sonata\SeoBundle\SonataSeoBundle(),

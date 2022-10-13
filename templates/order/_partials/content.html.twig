@@ -43,7 +43,7 @@
           <span>{{ coopcycle_setting('brand_name') }}</span>
           </h4>
         <div class="px-3 py-4">
-          {{ custom_message|markdown }}
+          {{ custom_message|markdown_to_html }}
         </div>
       </div>
     {% endif %}

@@ -176,7 +176,7 @@
 
   {% if restaurant.description is defined and restaurant.description is not empty %}
   <section class="restaurant-description text-muted d-none d-lg-block">
-    {{ restaurant.description|markdown }}
+    {{ restaurant.description|markdown_to_html }}
   </section>
   {% endif %}
 

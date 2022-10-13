@@ -55,7 +55,6 @@
         "ramsey/uuid": "^3.9",
         "nesbot/carbon": "^2.0",
         "sylius/taxation-bundle": "^1.7.5",
-        "knplabs/knp-markdown-bundle": "^1.6",
         "craue/config-bundle": "~2.0",
         "knplabs/knp-paginator-bundle": "^5.0",
         "league/csv": "^9.3",
@@ -132,7 +131,8 @@
         "phpoffice/phpspreadsheet": "^1.23",
         "typesense/typesense-php": "^4.7",
         "benjaminfavre/oauth2-http-client": "^1.0",
-        "sylius/calendar": "^0.3"
+        "sylius/calendar": "^0.3",
+        "twig/markdown-extra": "^3.4"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
