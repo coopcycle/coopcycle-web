@@ -35,8 +35,9 @@ final class Version20221013115138 extends AbstractMigration
                 }, $template['hydra:member']);
             }
 
-            $this->addSql('UPDATE task_rrule SET template = :template', [
-                'template' => json_encode($template)
+            $this->addSql('UPDATE task_rrule SET template = :template WHERE id = :id', [
+                'template' => json_encode($template),
+                'id' => $rrule['id'],
             ]);
         }
     }
