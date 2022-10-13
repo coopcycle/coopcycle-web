@@ -621,10 +621,6 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
-  AppBundle\Doctrine\EventSubscriber\TaskRecurrenceRuleSubscriber:
-    tags:
-      - { name: doctrine.event_subscriber }
-
   AppBundle\Doctrine\EventSubscriber\SearchDeliveriesSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.search }
