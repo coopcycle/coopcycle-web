@@ -47,6 +47,14 @@ services:
       $proxyUri: '%env(COOPCYCLE_OAUTH2_PROXY_URI)%'
       $enabled: '%env(bool:COOPCYCLE_OAUTH2_PROXY_ENABLED)%'
 
+  Twig\Extra\Markdown\MarkdownInterface: '@Twig\Extra\Markdown\DefaultMarkdown'
+
+  Twig\Extra\Markdown\DefaultMarkdown: ~
+
+  Twig\Extra\Markdown\MarkdownRuntime:
+    tags:
+      - { name: twig.runtime }
+
   Twig\Extra\Markdown\MarkdownExtension:
     tags:
       - { name: twig.extension }
