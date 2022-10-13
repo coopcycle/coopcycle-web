@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "914cac436b0cc8635c4e4b49e94d0ec7",
+    "content-hash": "387b83afa841421240c5bcc5dd92e2c8",
     "packages": [
         {
             "name": "api-platform/core",
@@ -2980,16 +2980,16 @@
         },
         {
             "name": "edamov/pushok",
-            "version": "0.13.0",
+            "version": "0.14.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/edamov/pushok.git",
-                "reference": "743397b7590867f4d6396af6562edb3ca664f9b9"
+                "reference": "e8091f6a7b5b5510208f35361cdf2e47e79d3487"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/edamov/pushok/zipball/743397b7590867f4d6396af6562edb3ca664f9b9",
-                "reference": "743397b7590867f4d6396af6562edb3ca664f9b9",
+                "url": "https://api.github.com/repos/edamov/pushok/zipball/e8091f6a7b5b5510208f35361cdf2e47e79d3487",
+                "reference": "e8091f6a7b5b5510208f35361cdf2e47e79d3487",
                 "shasum": ""
             },
             "require": {
@@ -3000,7 +3000,7 @@
                 "ext-xml": "*",
                 "lib-curl": ">=7.46.0",
                 "lib-openssl": ">=1.0.2.5",
-                "php": "^7.2|^8.0",
+                "php": "^8.0",
                 "web-token/jwt-key-mgmt": "^2.0",
                 "web-token/jwt-signature-algorithm-ecdsa": "^2.0"
             },
@@ -3027,7 +3027,7 @@
             ],
             "authors": [
                 {
-                    "name": "Arthur Edamov",
+                    "name": "Artur Edamov",
                     "email": "edamov@gmail.com",
                     "homepage": "https://github.com/edamov",
                     "role": "Developer"
@@ -3043,9 +3043,9 @@
             ],
             "support": {
                 "issues": "https://github.com/edamov/pushok/issues",
-                "source": "https://github.com/edamov/pushok/tree/0.13.0"
+                "source": "https://github.com/edamov/pushok/tree/0.14.2"
             },
-            "time": "2021-03-22T09:47:30+00:00"
+            "time": "2022-09-22T11:33:30+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -4263,21 +4263,21 @@
         },
         {
             "name": "geocoder-php/photon-provider",
-            "version": "0.4.0",
+            "version": "0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/geocoder-php/photon-provider.git",
-                "reference": "483a9c18b483996883e536d64328ea375d9b67df"
+                "reference": "fa0c5c141cf9c4ad7a1222596f667b8fdfcf3782"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/geocoder-php/photon-provider/zipball/483a9c18b483996883e536d64328ea375d9b67df",
-                "reference": "483a9c18b483996883e536d64328ea375d9b67df",
+                "url": "https://api.github.com/repos/geocoder-php/photon-provider/zipball/fa0c5c141cf9c4ad7a1222596f667b8fdfcf3782",
+                "reference": "fa0c5c141cf9c4ad7a1222596f667b8fdfcf3782",
                 "shasum": ""
             },
             "require": {
                 "geocoder-php/common-http": "^4.1",
-                "php": "^7.3 || ^8.0",
+                "php": "^7.4 || ^8.0",
                 "willdurand/geocoder": "^4.0"
             },
             "provide": {
@@ -4310,9 +4310,9 @@
             "description": "Geocoder Photon adapter",
             "homepage": "http://geocoder-php.org/Geocoder/",
             "support": {
-                "source": "https://github.com/geocoder-php/photon-provider/tree/0.4.0"
+                "source": "https://github.com/geocoder-php/photon-provider/tree/0.5.0"
             },
-            "time": "2022-02-12T09:59:25+00:00"
+            "time": "2022-07-30T12:09:30+00:00"
         },
         {
             "name": "gesdinet/jwt-refresh-token-bundle",
