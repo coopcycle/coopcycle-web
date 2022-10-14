@@ -10,13 +10,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ApiResource(
  *   collectionOperations={
- *     "create_session"={
+ *     "create"={
  *       "method"="POST",
  *       "path"="/orders/adhoc",
  *       "controller"=AdhocOrderController::class,
  *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')",
  *       "validation_groups"={"cart"},
- *       "normalization_context"={"groups"={"cart"}}
+ *       "normalization_context"={"groups"={"order"}}
  *     }
  *   },
  *   itemOperations={}

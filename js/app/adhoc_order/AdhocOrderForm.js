@@ -143,6 +143,16 @@ class AdhocOrderForm extends Component {
       .catch(() => this.setState({showErrorMessage: true}))
   }
 
+  _loadSuccessMessage() {
+    if (!this.props.isFetching && this.state.showSuccessMessage && this.props.order) {
+      return (
+        <div className="alert alert-success">
+          { this.props.t('ADHOC_ORDER_SAVED_SUCCESSFULLY', {number: this.props.order.number}) }
+        </div>
+      )
+    }
+  }
+
   render() {
 
     const initialValues = {
@@ -281,12 +291,7 @@ class AdhocOrderForm extends Component {
 
               <hr />
 
-              {
-                !this.props.isFetching && this.state.showSuccessMessage &&
-                <div className="alert alert-success">
-                  { this.props.t('ADHOC_ORDER_SAVED_SUCCESSFULLY') }
-                </div>
-              }
+              { this._loadSuccessMessage() }
 
               {
                 !this.props.isFetching && this.state.showErrorMessage &&
@@ -329,6 +334,7 @@ function mapStateToProps(state) {
     taxCategories: state.taxCategories,
     restaurant: state.restaurant,
     isFetching: state.isFetching,
+    order: state.order,
   }
 }
 

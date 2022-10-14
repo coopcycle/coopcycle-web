@@ -288,7 +288,7 @@
         "ADHOC_ORDER_CUSTOMER_FULL_NAME_ERROR": "Por favor complete el nombre y apellido",
         "ADHOC_ORDER_ITEMS_LIST_TITLE": "Listado de productos",
         "ADHOC_ORDER_ITEMS_LIST_ERROR": "Por favor agregue al menos un producto",
-        "ADHOC_ORDER_SAVED_SUCCESSFULLY": "Pedido guardado con éxito",
+        "ADHOC_ORDER_SAVED_SUCCESSFULLY": "Pedido con número #{{number}} guardado con éxito",
         "ADHOC_ORDER_FAILURE": "Se produjo un error al guardar el pedido. Por favor verifique los datos ingresados e intente nuevamente.",
         "CREATE_ORDER": "Crear pedido",
         "CREATE_NEW_ORDER": "Crear nuevo pedido",

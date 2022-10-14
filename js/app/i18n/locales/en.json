@@ -289,7 +289,7 @@
         "ADHOC_ORDER_CUSTOMER_FULL_NAME_ERROR": "Please complete full name",
         "ADHOC_ORDER_ITEMS_LIST_TITLE": "Products list",
         "ADHOC_ORDER_ITEMS_LIST_ERROR": "Pleas add one product at least",
-        "ADHOC_ORDER_SAVED_SUCCESSFULLY": "Order saved successfully",
+        "ADHOC_ORDER_SAVED_SUCCESSFULLY": "Order with number #{{number}} saved successfully",
         "ADHOC_ORDER_FAILURE": "There was an error trying to save the order. Please check the information and tray again.",
         "CREATE_ORDER": "Create order",
         "CREATE_NEW_ORDER": "Create new order",
