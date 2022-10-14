@@ -3,8 +3,10 @@
 namespace AppBundle\Action\Order;
 
 use AppBundle\Sylius\Order\OrderFactory;
+use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Util\CanonicalizerInterface;
 use Ramsey\Uuid\Uuid;
+use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
@@ -27,7 +29,9 @@ class Adhoc
         TaxCategoryRepositoryInterface $taxCategoryRepository,
         RepositoryInterface $customerRepository,
         CanonicalizerInterface $canonicalizer,
-        FactoryInterface $customerFactory)
+        FactoryInterface $customerFactory,
+        OrderNumberAssignerInterface $orderNumberAssigner,
+        EntityManagerInterface $objectManager)
     {
         $this->orderFactory = $orderFactory;
         $this->orderModifier = $orderModifier;
@@ -40,6 +44,8 @@ class Adhoc
         $this->customerRepository = $customerRepository;
         $this->canonicalizer = $canonicalizer;
         $this->customerFactory = $customerFactory;
+        $this->orderNumberAssigner = $orderNumberAssigner;
+        $this->objectManager = $objectManager;
     }
 
     public function __invoke($data)
@@ -90,6 +96,11 @@ class Adhoc
             $customer = $this->findOrCreateCustomer($data->customer);
             $order->setCustomer($customer);
         }
+
+        $this->objectManager->persist($order);
+        $this->objectManager->flush();
+
+        $this->orderNumberAssigner->assignNumber($order);
 
         return $order;
     }
