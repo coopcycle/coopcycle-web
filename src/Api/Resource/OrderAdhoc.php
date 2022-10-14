@@ -3,6 +3,7 @@
 namespace AppBundle\Api\Resource;
 
 use AppBundle\Action\Order\Adhoc as AdhocOrderController;
+use AppBundle\Action\Order\SearchAdhoc as SearchAdhocOrdersController;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\LocalBusiness;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -16,6 +17,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "controller"=AdhocOrderController::class,
  *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')",
  *       "validation_groups"={"cart"},
+ *       "normalization_context"={"groups"={"order"}}
+ *     },
+ *     "get"={
+ *       "method"="GET",
+ *       "path"="/orders/adhoc/search",
+ *       "controller"=SearchAdhocOrdersController::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')",
  *       "normalization_context"={"groups"={"order"}}
  *     }
  *   },
