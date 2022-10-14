@@ -25,6 +25,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -35,7 +36,7 @@ class CheckoutAddressType extends AbstractType
     private $priceFormatter;
     private $loopeatClient;
     private $loopeatContext;
-    private $session;
+    private $requestStack;
     private $loopeatOAuthFlow;
 
     public function __construct(
@@ -44,7 +45,7 @@ class CheckoutAddressType extends AbstractType
         OrderTimeHelper $orderTimeHelper,
         LoopEatClient $loopeatClient,
         LoopEatContext $loopeatContext,
-        SessionInterface $session,
+        RequestStack $requestStack,
         DabbaClient $dabbaClient,
         DabbaContext $dabbaContext,
         string $loopeatOAuthFlow,
@@ -54,7 +55,7 @@ class CheckoutAddressType extends AbstractType
         $this->priceFormatter = $priceFormatter;
         $this->loopeatClient = $loopeatClient;
         $this->loopeatContext = $loopeatContext;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->dabbaClient = $dabbaClient;
         $this->dabbaContext = $dabbaContext;
         $this->loopeatOAuthFlow = $loopeatOAuthFlow;
@@ -123,7 +124,7 @@ class CheckoutAddressType extends AbstractType
 
                     $this->loopeatContext->initialize();
 
-                    $loopeatAdapter = new LoopEatAdapter($order, $this->session);
+                    $loopeatAdapter = new LoopEatAdapter($order, $this->requestStack->getSession());
 
                     $loopeatAuthorizeParams = [
                         'state' => $this->loopeatClient->createStateParamForOrder($order),
@@ -157,7 +158,7 @@ class CheckoutAddressType extends AbstractType
 
                     $this->dabbaContext->initialize();
 
-                    $dabbaAdapter = new DabbaAdapter($order, $this->session);
+                    $dabbaAdapter = new DabbaAdapter($order, $this->requestStack->getSession());
 
                     $dabbaAuthorizeParams = [
                         'state' => $this->dabbaClient->createStateParamForOrder($order),

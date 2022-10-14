@@ -8,7 +8,7 @@ use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -17,16 +17,16 @@ use Symfony\Component\Validator\Validation;
 class LoopEatOrderValidator extends ConstraintValidator
 {
     private $client;
-    private $session;
+    private $requestStack;
     private $logger;
 
     public function __construct(
         LoopEatClient $client,
-        SessionInterface $session,
+        RequestStack $requestStack,
         LoggerInterface $logger)
     {
         $this->client = $client;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->logger = $logger;
     }
 
@@ -59,7 +59,7 @@ class LoopEatOrderValidator extends ConstraintValidator
             return;
         }
 
-        $adapter = new LoopEatAdapter($object, $this->session);
+        $adapter = new LoopEatAdapter($object, $this->requestStack->getSession());
 
         try {
 

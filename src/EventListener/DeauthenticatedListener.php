@@ -2,22 +2,22 @@
 
 namespace AppBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Http\Event\DeauthenticatedEvent;
 
 class DeauthenticatedListener
 {
-    private $session;
+    private $requestStack;
     private $sessionKeyName;
 
-    public function __construct(SessionInterface $session, string $sessionKeyName)
+    public function __construct(RequestStack $requestStack, string $sessionKeyName)
     {
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->sessionKeyName = $sessionKeyName;
     }
 
     public function logoutOnChange(DeauthenticatedEvent $event)
     {
-        $this->session->remove($this->sessionKeyName);
+        $this->requestStack->getSession()->remove($this->sessionKeyName);
     }
 }
