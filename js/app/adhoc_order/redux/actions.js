@@ -84,7 +84,7 @@ export function searchAdhocOrder(orderNumber) {
 
     return httpClient.request({
       method: 'get',
-      url: `/api/orders/adhoc/search?hubId=1&orderNumber=${orderNumber}&restaurant=${restaurant['@id']}`,
+      url: `/api/orders/adhoc/search?hub=${restaurant.hub['@id']}&orderNumber=${orderNumber}&restaurant=${restaurant['@id']}`,
       headers: {
         'Authorization': `Bearer ${jwt}`,
         'Accept': 'application/ld+json',

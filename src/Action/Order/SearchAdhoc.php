@@ -39,9 +39,7 @@ class SearchAdhoc
             throw new BadRequestException("Restaurant not found");
         }
 
-        $hub = $this->doctrine
-            ->getRepository(Hub::class)
-            ->findOneBy(['id' => $request->query->get('hubId')]);
+        $hub = $this->iriConverter->getItemFromIri($request->query->get('hub'));
 
         if (!$hub) {
             throw new BadRequestException("Hub not found");
