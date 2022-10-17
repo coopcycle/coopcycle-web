@@ -2,7 +2,7 @@ import { Formik } from "formik";
 import React, { Component } from "react";
 import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
-import { searchAdhocOrder } from "./redux/actions";
+import { clearAdhocOrder, searchAdhocOrder } from "./redux/actions";
 
 class SearchOrder extends Component {
 
@@ -50,6 +50,11 @@ class SearchOrder extends Component {
         <small className="help-block">Hubo un error al buscar la orden</small>
       </div>
     )
+  }
+
+  _onCreateNewOrderPressed() {
+    this.props.clearOrder()
+    this.props.onCreateNewOrderPressed()
   }
 
   render() {
@@ -105,7 +110,7 @@ class SearchOrder extends Component {
 
         <button className="btn btn-md btn-info" type="button"
           disabled={this.props.isFetching}
-          onClick={this.props.onCreateNewOrderPressed}>
+          onClick={() => this._onCreateNewOrderPressed()}>
           { this.props.t('CREATE_NEW_ORDER') }
         </button>
       </div>
@@ -124,6 +129,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     searchOrder: (orderNumber) => dispatch(searchAdhocOrder(orderNumber)),
+    clearOrder: () => dispatch(clearAdhocOrder()),
   }
 }
 

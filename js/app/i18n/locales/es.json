@@ -295,6 +295,7 @@
         "SEARCH_EXISTING_ORDER": "Buscar un pedido existente",
         "ORDER_NUMBER": "Número de pedido",
         "CONTINUE_EXISTING_ORDER": "Continuar con un pedido existente",
-        "SEARCH_ORDER_NUMBER_ERROR": "Ingrese un número de pedido válido"
+        "SEARCH_ORDER_NUMBER_ERROR": "Ingrese un número de pedido válido",
+        "ADD_PRODUCTS_TO_ORDER_TITLE": "Agregar productos al pedido #{{number}}"
     }
 }

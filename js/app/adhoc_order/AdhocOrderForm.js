@@ -202,7 +202,9 @@ class AdhocOrderForm extends Component {
                 this.props.existingOrderLoaded &&
                 (
                   <div>
-                    <h4 className="title mb-4">Agregar productos a la ordern #{this.props.order.number}</h4>
+                    <h4 className="title mb-4">
+                      { this.props.t('ADD_PRODUCTS_TO_ORDER_TITLE', {number: this.props.order.number}) }
+                    </h4>
                     <hr />
                   </div>
                 )
@@ -215,7 +217,7 @@ class AdhocOrderForm extends Component {
                   <input type="text" name="email" className="form-control" autoComplete="off"
                     onChange={ handleChange }
                     onBlur={ handleBlur }
-                    disabled={ this.props.isFetching || this.state.showSuccessMessage }
+                    disabled={ this.props.isFetching || this.state.showSuccessMessage || this.props.existingOrderLoaded }
                     value={ values.email } />
                   { errors.email && touched.email && (
                     <small className="help-block">{ errors.email }</small>
@@ -229,7 +231,7 @@ class AdhocOrderForm extends Component {
                   <input type="text" name="phoneNumber" className="form-control" autoComplete="off"
                     onChange={ handleChange }
                     onBlur={ handleBlur }
-                    disabled={ this.props.isFetching || this.state.showSuccessMessage }
+                    disabled={ this.props.isFetching || this.state.showSuccessMessage || this.props.existingOrderLoaded }
                     value={ values.phoneNumber } />
                   { errors.phoneNumber && touched.phoneNumber && (
                     <small className="help-block">{ errors.phoneNumber }</small>
@@ -243,7 +245,7 @@ class AdhocOrderForm extends Component {
                   <input type="text" name="fullName" className="form-control" autoComplete="off"
                     onChange={ handleChange }
                     onBlur={ handleBlur }
-                    disabled={ this.props.isFetching || this.state.showSuccessMessage }
+                    disabled={ this.props.isFetching || this.state.showSuccessMessage || this.props.existingOrderLoaded }
                     value={ values.fullName } />
                   { errors.fullName && touched.fullName && (
                     <small className="help-block">{ errors.fullName }</small>
@@ -312,7 +314,7 @@ class AdhocOrderForm extends Component {
                   { errors.items && touched.items && (
                     <tr>
                       <td className="has-error" colSpan={3}>
-                        <small className="help-block">{ errors.items }</small>
+                        <span className="help-block">{ errors.items }</span>
                       </td>
                     </tr>
                   ) }

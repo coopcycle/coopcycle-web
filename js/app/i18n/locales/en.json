@@ -296,6 +296,7 @@
         "SEARCH_EXISTING_ORDER": "Search an existing order",
         "ORDER_NUMBER": "Order number",
         "CONTINUE_EXISTING_ORDER": "Continue an existing order",
-        "SEARCH_ORDER_NUMBER_ERROR": "Enter a valid order number"
+        "SEARCH_ORDER_NUMBER_ERROR": "Enter a valid order number",
+        "ADD_PRODUCTS_TO_ORDER_TITLE": "Add products to order #{{number}}"
     }
 }
