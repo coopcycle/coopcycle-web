@@ -1,6 +1,8 @@
 import { Formik } from "formik";
 import React, { Component } from "react";
 import { withTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import { searchAdhocOrder } from "./redux/actions";
 
 class SearchOrder extends Component {
 
@@ -21,7 +23,34 @@ class SearchOrder extends Component {
     return errors;
   }
 
-  _onSubmit() {}
+  _onSubmit(values) {
+    return this.props.searchOrder(values.orderNumber)
+      .then(() => {
+        if (this.props.order) {
+          this.props.onOrderLoaded()
+        }
+      })
+  }
+
+  _loadErrorMessage() {
+    if (!this.props.searchError) {
+      return
+    }
+
+    if (this.props.searchError.message.indexOf('404') !== -1) {
+      return (
+        <div className="has-error px-4">
+          <small className="help-block">No se encontró ninguna ordern con ese número</small>
+        </div>
+      )
+    }
+
+    return (
+      <div className="has-error px-4">
+        <small className="help-block">Hubo un error al buscar la orden</small>
+      </div>
+    )
+  }
 
   render() {
     const initialValues = {
@@ -55,7 +84,9 @@ class SearchOrder extends Component {
                     onBlur={ handleBlur }
                     value={ values.orderNumber } />
                   <div className="input-group-btn">
-                    <button className="btn btn-outline-secondary" type="submit">{ this.props.t('ADMIN_DASHBOARD_SEARCH') }</button>
+                    <button className="btn btn-outline-secondary" type="submit" disabled={this.props.isFetching}>
+                      { this.props.t('ADMIN_DASHBOARD_SEARCH') }
+                    </button>
                   </div>
                 </div>
                 { errors.orderNumber && touched.orderNumber && (
@@ -63,6 +94,7 @@ class SearchOrder extends Component {
                     <small className="help-block">{ errors.orderNumber }</small>
                   </div>
                 ) }
+                { this._loadErrorMessage() }
               </div>
             </form>
           )}
@@ -71,7 +103,9 @@ class SearchOrder extends Component {
 
         <hr />
 
-        <button className="btn btn-md btn-info" type="button" onClick={this.props.onCreateNewOrderPressed}>
+        <button className="btn btn-md btn-info" type="button"
+          disabled={this.props.isFetching}
+          onClick={this.props.onCreateNewOrderPressed}>
           { this.props.t('CREATE_NEW_ORDER') }
         </button>
       </div>
@@ -79,4 +113,18 @@ class SearchOrder extends Component {
   }
 }
 
-export default withTranslation()(SearchOrder)
+function mapStateToProps(state) {
+  return {
+    isFetching: state.isFetching,
+    order: state.order,
+    searchError: state.error,
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    searchOrder: (orderNumber) => dispatch(searchAdhocOrder(orderNumber)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)( withTranslation()(SearchOrder))
