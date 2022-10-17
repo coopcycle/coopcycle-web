@@ -85,8 +85,8 @@ class SearchAdhoc
     {
         return $qb
             ->join(Vendor::class, 'v', Join::WITH, sprintf('%s.vendor = v.id', $alias))
-            ->andWhere('v.restaurant = :restaurant OR v.hub = :hub')
-            ->setParameter('restaurant', $restaurant)
+            ->andWhere('v.hub = :hub OR v.restaurant in (:hub_restaurants)')
+            ->setParameter('hub_restaurants', $hub->getRestaurants())
             ->setParameter('hub', $hub);
     }
 }

@@ -11,23 +11,23 @@ class AdhocOrderStart extends Component {
 
     this.state = {
       createNewOrder: false,
-      exstingOrderLoaded: false,
+      existingOrderLoaded: false,
     }
   }
 
   render() {
     return (
       <div>
-        { this.state.createNewOrder || this.state.exstingOrderLoaded
+        { this.state.createNewOrder || this.state.existingOrderLoaded
           ?
             <AdhocOrderForm
-              onSearchOrderPressed={() => this.setState({createNewOrder: false, exstingOrderLoaded: false})}
-              exstingOrderLoaded={this.state.exstingOrderLoaded}>
+              onSearchOrderPressed={() => this.setState({createNewOrder: false, existingOrderLoaded: false})}
+              existingOrderLoaded={this.state.existingOrderLoaded}>
             </AdhocOrderForm>
           :
             <SearchOrder
               onCreateNewOrderPressed={() => this.setState({createNewOrder: true})}
-              onOrderLoaded={() => this.setState({exstingOrderLoaded: true})}>
+              onOrderLoaded={() => this.setState({existingOrderLoaded: true})}>
             </SearchOrder>
         }
       </div>

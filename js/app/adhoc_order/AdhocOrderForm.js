@@ -101,13 +101,15 @@ class AdhocOrderForm extends Component {
   _toApiFormat(values) {
     return {
       restaurant: this.props.restaurant['@id'],
-      items: values.items.map(({name, price, taxCategory}) => {
-        return {
-          name,
-          taxCategory,
-          price: price * 100
-        }
-      }),
+      items: values.items
+        .filter(item => !item.existingItem)
+        .map(({name, price, taxCategory}) => {
+          return {
+            name,
+            taxCategory,
+            price: price * 100
+          }
+        }),
       customer: {
         email: values.email,
         phoneNumber: values.phoneNumber,
@@ -139,7 +141,7 @@ class AdhocOrderForm extends Component {
   }
 
   _onSubmit(values) {
-    return this.props.createAdhocOrder(this._toApiFormat(values))
+    return this.props.createAdhocOrder(this._toApiFormat(values), this.props.existingOrderLoaded)
       .then(() => this.setState({showSuccessMessage: true}))
       .catch(() => this.setState({showErrorMessage: true}))
   }
@@ -161,7 +163,7 @@ class AdhocOrderForm extends Component {
           name: item.name,
           price: item.unitPrice / 100,
           taxCategory: null,
-          exisingItem: true,
+          existingItem: true,
         }
       })
     }
@@ -197,7 +199,7 @@ class AdhocOrderForm extends Component {
           }) => (
             <form onSubmit={ handleSubmit } autoComplete="off" className="form">
               {
-                this.props.exstingOrderLoaded &&
+                this.props.existingOrderLoaded &&
                 (
                   <div>
                     <h4 className="title mb-4">Agregar productos a la ordern #{this.props.order.number}</h4>
@@ -280,8 +282,8 @@ class AdhocOrderForm extends Component {
                       <td className="text-right">{ item.price.formatMoney() }</td>
                       <td className="text-right">
                         <a role="button" href="#" className="text-reset mx-4"
-                          disabled={item.exisingItem}
-                          onClick={ (e) => item.exisingItem ? e.preventDefault() : this.onEditPressed(e, item, index) }>
+                          disabled={item.existingItem}
+                          onClick={ (e) => item.existingItem ? e.preventDefault() : this.onEditPressed(e, item, index) }>
                           <i className="fa fa-pencil"></i>
                         </a>
                         <Popconfirm
@@ -289,11 +291,11 @@ class AdhocOrderForm extends Component {
                           title={ this.props.t('ADHOC_ORDER_DELETE_ITEM_CONFIRM') }
                           onConfirm={ () => this.onConfirmOrderItemDelete(index, values, setFieldValue) }
                           okText={ this.props.t('CROPPIE_CONFIRM') }
-                          disabled={item.exisingItem}
+                          disabled={item.existingItem}
                           cancelText={ this.props.t('ADMIN_DASHBOARD_CANCEL') }
                           >
                           <a role="button" href="#" className="text-reset"
-                            disabled={item.exisingItem}
+                            disabled={item.existingItem}
                             onClick={ e => e.preventDefault() }>
                             <i className="fa fa-trash"></i>
                           </a>
@@ -368,7 +370,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    createAdhocOrder: (order) => dispatch(createAdhocOrder(order)),
+    createAdhocOrder: (order, existingOrder) => dispatch(createAdhocOrder(order, existingOrder)),
   }
 }
 

@@ -15,6 +15,7 @@ use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class Adhoc
 {
@@ -48,7 +49,7 @@ class Adhoc
         $this->objectManager = $objectManager;
     }
 
-    public function __invoke($data)
+    public function __invoke($data, Request $request)
     {
         $order = null;
 
@@ -58,6 +59,11 @@ class Adhoc
 
         $order = $this->orderFactory->createForRestaurant($data->restaurant);
 
+        return $this->parseOrderData($data, $order);
+    }
+
+    protected function parseOrderData($data, $order)
+    {
         foreach($data->items as $item) {
             if (!isset($item['name']) || !isset($item['price']) || !isset($item['taxCategory'])) {
                 return null;
@@ -92,7 +98,7 @@ class Adhoc
             $this->orderModifier->addToOrder($order, $orderItem);
         }
 
-        if (isset($data->customer['email'])) {
+        if (isset($data->customer) && isset($data->customer['email'])) {
             $customer = $this->findOrCreateCustomer($data->customer);
             $order->setCustomer($customer);
         }

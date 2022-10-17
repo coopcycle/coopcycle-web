@@ -25,9 +25,9 @@ export const searchAdhocOrderRequestFailure = createAction(SEARCH_ADHOC_ORDER_RE
 
 export const clearAdhocOrder = createAction(CLEAR_ADHOC_ORDER)
 
-export function createAdhocOrder(adhocOrder) {
+export function createAdhocOrder(adhocOrder, existingOrder) {
   return function (dispatch, getState) {
-    const { jwt } = getState()
+    const { jwt, order } = getState()
 
     dispatch(createAdhocOrderRequest())
 
@@ -42,9 +42,12 @@ export function createAdhocOrder(adhocOrder) {
       token => dispatch(refreshTokenSuccess(token))
     )
 
+    const method = existingOrder ? 'put' : 'post'
+    const url = existingOrder ? order['@id'].replace('/api/orders/', '/api/orders/adhoc/') : '/api/orders/adhoc'
+
     return httpClient.request({
-      method: 'post',
-      url: '/api/orders/adhoc',
+      method,
+      url,
       data: adhocOrder,
       headers: {
         'Authorization': `Bearer ${jwt}`,
