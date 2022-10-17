@@ -101,10 +101,11 @@ class AdhocOrderForm extends Component {
   _toApiFormat(values) {
     return {
       restaurant: this.props.restaurant['@id'],
-      items: values.items.map((item) => {
+      items: values.items.map(({name, price, taxCategory}) => {
         return {
-          ...item,
-          price: item.price * 100
+          name,
+          taxCategory,
+          price: price * 100
         }
       }),
       customer: {
@@ -153,13 +154,28 @@ class AdhocOrderForm extends Component {
     }
   }
 
+  _loadItemsFromExistinOrder() {
+    if (this.props.order && this.props.order.items?.length) {
+      return this.props.order.items.map((item) => {
+        return {
+          name: item.name,
+          price: item.unitPrice / 100,
+          taxCategory: null,
+          exisingItem: true,
+        }
+      })
+    }
+
+    return []
+  }
+
   render() {
 
     const initialValues = {
-      email: "",
-      phoneNumber: "",
-      fullName: "",
-      items: [], // pre load existing items
+      email: this.props.order?.customer?.email || "",
+      phoneNumber: this.props.order?.customer?.phoneNumber || "",
+      fullName: this.props.order?.customer?.fullName || "",
+      items: this._loadItemsFromExistinOrder(),
     }
 
     return (
@@ -180,6 +196,15 @@ class AdhocOrderForm extends Component {
             setFieldValue,
           }) => (
             <form onSubmit={ handleSubmit } autoComplete="off" className="form">
+              {
+                this.props.exstingOrderLoaded &&
+                (
+                  <div>
+                    <h4 className="title mb-4">Agregar productos a la ordern #{this.props.order.number}</h4>
+                    <hr />
+                  </div>
+                )
+              }
               <h4 className="title">{ this.props.t('ADHOC_ORDER_CUSTOMER_TITLE') }</h4>
 
               <div className="row">
@@ -255,7 +280,8 @@ class AdhocOrderForm extends Component {
                       <td className="text-right">{ item.price.formatMoney() }</td>
                       <td className="text-right">
                         <a role="button" href="#" className="text-reset mx-4"
-                          onClick={ (e) => this.onEditPressed(e, item, index) }>
+                          disabled={item.exisingItem}
+                          onClick={ (e) => item.exisingItem ? e.preventDefault() : this.onEditPressed(e, item, index) }>
                           <i className="fa fa-pencil"></i>
                         </a>
                         <Popconfirm
@@ -263,9 +289,11 @@ class AdhocOrderForm extends Component {
                           title={ this.props.t('ADHOC_ORDER_DELETE_ITEM_CONFIRM') }
                           onConfirm={ () => this.onConfirmOrderItemDelete(index, values, setFieldValue) }
                           okText={ this.props.t('CROPPIE_CONFIRM') }
+                          disabled={item.exisingItem}
                           cancelText={ this.props.t('ADMIN_DASHBOARD_CANCEL') }
                           >
                           <a role="button" href="#" className="text-reset"
+                            disabled={item.exisingItem}
                             onClick={ e => e.preventDefault() }>
                             <i className="fa fa-trash"></i>
                           </a>
