@@ -65,6 +65,9 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
     if (visible) {
       inputRef.current && inputRef.current.focus({
         cursor: _.isEmpty(value) ? 'start' : 'end',
+        // Make sure the page is not scrolled to top when focusing
+        // https://github.com/coopcycle/coopcycle-web/issues/3411
+        preventScroll: true,
       })
     }
   }, [ visible ]);
