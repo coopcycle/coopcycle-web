@@ -72,6 +72,17 @@ function replaceOrder(orders, order, force = false) {
   return orders
 }
 
+function rangeOverlaps(state, action) {
+  const range = moment.range(
+    moment(state.date).set({ hour: 0, minute: 0, second: 0 }),
+    moment(state.date).set({ hour: 23, minute: 59, second: 59 })
+  )
+
+  const shippingTimeRange = moment.range(action.payload.shippingTimeRange)
+
+  return shippingTimeRange.overlaps(range)
+}
+
 export default (state = initialState, action = {}) => {
 
   switch (action.type) {
@@ -108,15 +119,8 @@ export default (state = initialState, action = {}) => {
 
   case ORDER_CREATED:
 
-    const range = moment.range(
-      moment(state.date).set({ hour: 0, minute: 0, second: 0 }),
-      moment(state.date).set({ hour: 23, minute: 59, second: 59 })
-    )
-
-    const shippingTimeRange = moment.range(action.payload.shippingTimeRange)
-
     // The order is not for the current date, skip
-    if (!shippingTimeRange.overlaps(range)) {
+    if (!rangeOverlaps(state, action)) {
 
       return state
     }
@@ -145,6 +149,12 @@ export default (state = initialState, action = {}) => {
     }
 
   case ORDER_ACCEPTED:
+
+    // The order is not for the current date, skip
+    if (!rangeOverlaps(state, action)) {
+
+      return state
+    }
 
     return {
       ...state,
