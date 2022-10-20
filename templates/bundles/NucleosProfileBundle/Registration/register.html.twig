@@ -8,6 +8,15 @@
   {% endblock nucleos_user_content %}
 {% endblock %}
 
+{% block styles %}
+  {% if form.termsAndConditionsAndPrivacyPolicy is defined %}
+    {{ encore_entry_link_tags('terms-and-conditions-and-privacy-policy') }}
+  {% endif %}
+{% endblock %}
+
 {% block scripts %}
   {{ encore_entry_script_tags('register') }}
+  {% if form.termsAndConditionsAndPrivacyPolicy is defined %}
+    {{ encore_entry_script_tags('terms-and-conditions-and-privacy-policy') }}
+  {% endif %}
 {% endblock %}
