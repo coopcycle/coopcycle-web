@@ -136,7 +136,7 @@ class TaskType extends AbstractType
             $form = $event->getForm();
             $task = $event->getData();
 
-            if ($form->has('switchTimeSlot') && null !== $task->getId()) {
+            if ($form->has('switchTimeSlot') && null !== $task && null !== $task->getId()) {
                 $form->remove('switchTimeSlot');
             }
 
