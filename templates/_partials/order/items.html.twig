@@ -29,7 +29,7 @@
       {% include '_partials/order/item.html.twig' with { item: item } %}
     {% endfor %}
   {% endif %}
-  <tbody>
+  </tbody>
   {% endif %}
   {% set delivery_adjustments = order.getAdjustments('delivery') %}
   {% set promotion_adjustments = [] %}

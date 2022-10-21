@@ -1,11 +1,85 @@
 {% extends "base.html.twig" %}
 
+{% set gateway = payment_gateway_resolver.resolve() %}
+{% set gateway_configs = {} %}
+
 {% block body %}
 <div class="container">
-  {{ form_start(form) }}
+  <div class="row">
+    <h3 class="col-md-12 mb-4">Detalle del pedido #{{order.number}}</h3>
+    <div class="adhoc-order-detail col-12 col-md-5">
 
-    {{ form_widget(form) }}
+      {% include '_partials/order/items.html.twig' with { with_total_excluding_tax: true } %}
+    </div>
+    <div class="adhoc-order-form col-12 col-md-7">
+      <h4 class="title mb-4">Complete la siguiente información para finalizar el pedido</h4>
+      {{ form_start(form) }}
 
-  {{ form_end(form) }}
+        <div class="form-group mb-0">
+          <label class="control-label required">Dirección</label>
+          {{ form_widget(form.shippingAddress) }}
+        </div>
+
+        <div class="form-group mb-0">
+          <label class="control-label required">Intervalo de tiempo</label>
+          {{ form_widget(form.shippingTimeRange) }}
+        </div>
+
+        {% if form.payment is defined %}
+          {{ form_errors(form.payment) }}
+
+          {{ form_widget(form.payment.stripeToken) }}
+          <div id="card-element" class="mt-4">
+            <!-- a React element will be inserted here. -->
+          </div>
+
+          <input type="hidden" name="checkout_payment[method]" value="card">
+
+          <!-- Used to display form errors -->
+          <div id="card-errors" role="alert"></div>
+
+          <div class="text-center mb-4">
+            <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
+              <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+            </button>
+          </div>
+        {% endif %}
+
+        {% if payment.state == 'completed' %}
+          <div class="alert alert-success mt-4">
+            <i class="fa fa-check"></i> {{ 'embed.delivery.paid_at'|trans({ '%date%': payment.updatedAt|format_datetime('medium', 'short') }) }}
+          </div>
+        {% elseif payment.state == 'failed' %}
+          <div class="alert alert-danger">{{ payment.lastError }}</div>
+        {% endif %}
+
+      {{ form_end(form) }}
+    </div>
+  </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+
+{% if gateway == 'stripe' %}
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+{% set gateway_configs = gateway_configs|merge({
+  stripe: {
+    publishableKey: coopcycle_setting('stripe_publishable_key'),
+    createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid }),
+  }
+}) %}
+{% endif %}
+
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+<script type="text/javascript">
+new CoopCycle.StripePaymentForm(document.querySelector('form[name="adhoc_order"]'), {
+  card: "{{ gateway }}",
+  amount: {{ order.total }},
+  gatewayConfigs: {{ gateway_configs|json_encode|raw }},
+  tokenElement: document.querySelector('#adhoc_order_payment_stripeToken'),
+  selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}"
+});
+</script>
+
 {% endblock %}

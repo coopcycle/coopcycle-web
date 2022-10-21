@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Delivery;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\Order\AdhocOrderType;
+use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -159,7 +160,7 @@ class PublicController extends AbstractController
      */
     public function adhocOrderAction($hashid, Request $request,
         EntityManagerInterface $objectManager,
-        StripeManager $stripeManager,
+        OrderManager $orderManager,
         Hashids $hashids8)
     {
         $decoded = $hashids8->decode($hashid);
@@ -175,15 +176,25 @@ class PublicController extends AbstractController
             throw new NotFoundHttpException(sprintf('Order #%d does not exist', $id));
         }
 
+        $payment = $order->getLastPayment();
+
         $form = $this->createForm(AdhocOrderType::class, $order);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $order = $form->getData();
 
+            $orderManager->checkout($order, [
+                'stripeToken' => $form->get('payment')->get('stripeToken')->getData()
+            ]);
+
+            $objectManager->flush();
         }
 
         return $this->render('public/adhoc_order.html.twig', [
+            'order' => $order,
             'form' => $form->createView(),
+            'payment' => $payment,
         ]);
     }
 }
