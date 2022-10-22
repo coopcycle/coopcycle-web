@@ -1249,3 +1249,14 @@ restaurant_promotion.items_total.help: Esto le permite aplicar un descuento sobr
   disminuirá</strong> la tarifa percibida por la plataforma.
 form.items_total_promotion.fixed_discount_amount.label: Aplicar un descuento de
 order.preparation_expected_for: Preparación esperada a las %date%
+form.store_type.multi_drop_enabled.label: Habilitar entregas multiples
+api_apps.regenerate_secret: Renovar clave secreto
+restaurant.form.cash_on_delivery_enabled.label: Activar el pago con efectivo
+promotion_rule.is_items_total_above: El valor total de los productos está por encima
+  de %amount%
+form.store_type.multi_drop_enabled.help: Permitir usarios añadir varios puntos de
+  entrega al crear un encargo
+api_apps.regenerate_secret_warning: Cualquier app usando esta salida de API con el
+  secreto anterior dejará de funcionar.
+restaurant.form.cash_on_delivery_enabled.help: Esto permitirá clientes pagar en efectivo
+  al repartidor. Use con cuidado.
