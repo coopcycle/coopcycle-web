@@ -232,7 +232,7 @@
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Mover {{count}} tareas al día siguiente",
         "CASH_ON_DELIVERY_DISCLAIMER": "El pago se realizará contra reembolso. Por favor, prepare la cantidad exacta y asegúrese de estar al alcance.",
         "PRICE_RANGE_EDITOR": {
-            "ABOVE": "a partir de",
+            "ABOVE": "arriba de",
             "FOR_EVERY": "Por cada",
             "PER_PACKAGE_STARTING": "Comenzado a partir de",
             "PER_PACKAGE": "Por paquete",
@@ -242,10 +242,10 @@
             "PER_PACKAGE_DEL_DISCOUNT": "Quitar descuento",
             "PER_PACKAGE_ADD_DISCOUNT": "Agregar descuento"
         },
-        "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Mostrar pedidos periódicos",
+        "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Mostrar reglas recurrentes",
         "EDENRED_SPLIT_AMOUNTS": "Usted puede pagar {{edenred}} con su tarjeta Edenred, pero aún así usted necesita pagar{{card}} con tarjeta de crédito",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Mostrar las entregas de forma ascendente.",
-        "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "¿Confirma  borrar todas las tareas del grupo?",
+        "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "¿Estas segura que quieres borrar todas las tareas del grupo?",
         "RRULE": {
             "every": "cada",
             "week": "semana",
