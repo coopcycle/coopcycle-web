@@ -98,6 +98,7 @@ Feature: Manage restaurants
           "image":@string@,
           "fulfillmentMethods":@array@,
           "isOpen":true,
+          "hub":null,
           "facets": {
             "@*@": "@*@"
           }
@@ -176,7 +177,8 @@ Feature: Manage restaurants
         },
         "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
       },
-      "isOpen":true
+      "isOpen":true,
+      "hub":null
     }
     """
 
@@ -248,7 +250,8 @@ Feature: Manage restaurants
         "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
       },
       "isOpen":false,
-      "nextOpeningDate":@string@
+      "nextOpeningDate":@string@,
+      "hub":null
     }
     """
 
