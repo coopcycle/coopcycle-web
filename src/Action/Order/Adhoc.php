@@ -2,6 +2,7 @@
 
 namespace AppBundle\Action\Order;
 
+use AppBundle\Service\EmailManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Util\CanonicalizerInterface;
@@ -32,7 +33,8 @@ class Adhoc
         CanonicalizerInterface $canonicalizer,
         FactoryInterface $customerFactory,
         OrderNumberAssignerInterface $orderNumberAssigner,
-        EntityManagerInterface $objectManager)
+        EntityManagerInterface $objectManager,
+        EmailManager $emailManager)
     {
         $this->orderFactory = $orderFactory;
         $this->orderModifier = $orderModifier;
@@ -47,6 +49,7 @@ class Adhoc
         $this->customerFactory = $customerFactory;
         $this->orderNumberAssigner = $orderNumberAssigner;
         $this->objectManager = $objectManager;
+        $this->emailManager = $emailManager;
     }
 
     public function __invoke($data, Request $request)
@@ -107,6 +110,10 @@ class Adhoc
         $this->objectManager->flush();
 
         $this->orderNumberAssigner->assignNumber($order);
+
+        $message = $this->emailManager->createAdhocOrderMessage($order);
+
+        $this->emailManager->sendTo($message, $order->getCustomer()->getEmail());
 
         return $order;
     }

@@ -74,7 +74,8 @@ class AdhocOrderForm extends Component {
 
   _taxLabel(taxCode) {
     if (taxCode) {
-      return this.props.taxCategories.find(tax => tax.code === taxCode).name
+      const tax = this.props.taxCategories.find(tax => tax.code === taxCode)
+      return tax ? tax.name : taxCode
     }
   }
 
@@ -162,7 +163,7 @@ class AdhocOrderForm extends Component {
         return {
           name: item.name,
           price: item.unitPrice / 100,
-          taxCategory: null,
+          taxCategory: item.adjustments?.tax.length ? item.adjustments?.tax[0].label : null,
           existingItem: true,
         }
       })

@@ -56,6 +56,7 @@ class AdhocOrderType extends AbstractType
             );
 
             $payment = $cart->getLastPayment();
+            $pendingPayment = in_array($payment->getState(), [PaymentInterface::STATE_CART, PaymentInterface::STATE_NEW]);
 
             $form->add('shippingTimeRange', ChoiceType::class, [
                 'choice_loader' => $choiceLoader,
@@ -67,16 +68,17 @@ class AdhocOrderType extends AbstractType
                 },
                 'data' => null,
                 'mapped' => false,
+                'disabled' => !$pendingPayment,
             ]);
 
             $form->add('shippingAddress', AddressType::class, [
                 'with_widget' => true,
                 'with_description' => false,
                 'label' => 'Dirección',
-                'disabled' => $payment->getState() === PaymentInterface::STATE_COMPLETED,
+                'disabled' => !$pendingPayment,
             ]);
 
-            if ($payment->getState() !== PaymentInterface::STATE_COMPLETED) {
+            if ($pendingPayment) {
                 $form->add('payment', StripePaymentType::class, [
                     'data' => $payment,
                     'mapped' => false,

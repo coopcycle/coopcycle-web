@@ -188,7 +188,13 @@ class PublicController extends AbstractController
                 'stripeToken' => $form->get('payment')->get('stripeToken')->getData()
             ]);
 
+            $orderManager->accept($order);
+
             $objectManager->flush();
+
+            return $this->redirectToRoute('public_adhoc_order', [
+                'hashid' => $hashid,
+            ]);
         }
 
         return $this->render('public/adhoc_order.html.twig', [
