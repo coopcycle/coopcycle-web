@@ -410,6 +410,7 @@ trait RestaurantTrait
             'initial_order' => $request->query->get('order'),
             'routes' => $routes,
             'date' => $date,
+            'adhoc_order_enabled' => $this->adhocOrderEnabled,
         ], $routes));
     }
 

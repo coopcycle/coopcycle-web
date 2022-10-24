@@ -28,6 +28,13 @@ class DashboardController extends AbstractController
     use RestaurantTrait;
     use StoreTrait;
 
+    public function __construct(
+        bool $adhocOrderEnabled
+    )
+    {
+        $this->adhocOrderEnabled = $adhocOrderEnabled;
+    }
+
     protected function getRestaurantRoutes()
     {
         return [

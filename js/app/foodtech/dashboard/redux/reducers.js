@@ -49,6 +49,7 @@ export const initialState = {
   activeTab: 'new',
   httpClient: null,
   initialOrder: null,
+  adhocOrderEnabled: false,
 }
 
 // The "force" parameter is useful for multi vendor orders,
