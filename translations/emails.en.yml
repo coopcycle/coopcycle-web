@@ -113,3 +113,10 @@ order.payment_failed.subject: There was an error processing your payment
 order.payment_failed.body: "Hello,\n<br>\nWe are sorry, there was an error processing\
   \ your payment. Please try again with a different payment method."
 order.payment_failed.return_to_order: Return to order
+
+order.adhoc.body: |
+  Hello,
+  <br>
+  A new order has been created for you.
+  <br>
+  In order to finalize your order, click on the link below to specify your address, choose a delivery slot, and pay by credit card.

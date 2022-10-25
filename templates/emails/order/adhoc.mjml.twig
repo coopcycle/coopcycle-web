@@ -3,7 +3,11 @@
 {% block content %}
 <mj-column>
   <mj-text align="left" line-height="20px">
-    {{ 'order.payment.body' | trans({}, 'emails') | raw }}
+    {{ 'order.adhoc.body' | trans({}, 'emails') | raw }}
+  </mj-text>
+  <mj-text font-family="'Roboto Mono', monospace" align="center" line-height="30px" font-size="26px"
+    container-background-color="#ffeaa7">
+    {{ order.number }}
   </mj-text>
   {% include 'emails/order/_partials/items.mjml.twig' %}
   <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white"
