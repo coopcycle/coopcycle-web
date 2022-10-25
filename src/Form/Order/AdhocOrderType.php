@@ -72,7 +72,7 @@ class AdhocOrderType extends AbstractType
                 'choice_value' => function ($choice) {
                     return $choice;
                 },
-                'data' => null,
+                'data' => !$pendingPayment ? new TsRangeChoice($cart->getShippingTimeRange()) : null,
                 'mapped' => false,
                 'disabled' => !$pendingPayment,
             ]);
