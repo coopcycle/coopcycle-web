@@ -3,6 +3,8 @@
 {% set gateway = payment_gateway_resolver.resolve() %}
 {% set gateway_configs = {} %}
 
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
 {% block body %}
 <div class="container">
   <div class="row">
@@ -15,17 +17,11 @@
       <h4 class="title mb-4">Complete la siguiente información para finalizar el pedido</h4>
       {{ form_start(form) }}
 
-        {{ form_errors(form.shippingTimeRange) }}
+        {{ form_errors(form) }}
 
-        <div class="form-group mb-0">
-          <label class="control-label required">Dirección</label>
-          {{ form_widget(form.shippingAddress) }}
-        </div>
+        {{ form_row(form.shippingAddress) }}
 
-        <div class="form-group mb-0">
-          <label class="control-label required">Intervalo de tiempo</label>
-          {{ form_widget(form.shippingTimeRange) }}
-        </div>
+        {{ form_row(form.shippingTimeRange) }}
 
         {% if form.payment is defined %}
           {{ form_errors(form.payment) }}
