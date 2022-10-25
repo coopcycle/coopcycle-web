@@ -102,7 +102,7 @@ class Dashboard extends React.Component {
           {
             this.props.adhocOrderEnabled && this.props.restaurant && (
             <div>
-              <a href={window.Routing.generate('dashboard_restaurant_new_adhoc_order', {restaurantId: this.props.restaurant.id})} className="btn btn-success">
+              <a href={window.Routing.generate('dashboard_restaurant_new_adhoc_order', {restaurantId: this.props.restaurant.id})} className="btn btn-sm btn-success">
                 { this.props.t('CREATE_ORDER') }
               </a>
             </div>
