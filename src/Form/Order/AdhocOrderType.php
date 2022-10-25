@@ -6,7 +6,9 @@ use AppBundle\Form\AddressType;
 use AppBundle\Form\StripePaymentType;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Form\Type\AsapChoiceLoader;
+use AppBundle\Form\Type\TsRangeChoice;
 use AppBundle\Service\TimeRegistry;
+use AppBundle\Translation\DatePeriodFormatter;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Form\AbstractType;
@@ -20,13 +22,16 @@ class AdhocOrderType extends AbstractType
 {
     private $timeRegistry;
     private $orderProcessor;
+    private $datePeriodFormatter;
 
     public function __construct(
         TimeRegistry $timeRegistry,
-        OrderProcessorInterface $orderProcessor)
+        OrderProcessorInterface $orderProcessor,
+        DatePeriodFormatter $datePeriodFormatter)
     {
         $this->timeRegistry = $timeRegistry;
         $this->orderProcessor = $orderProcessor;
+        $this->datePeriodFormatter = $datePeriodFormatter;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -59,9 +64,10 @@ class AdhocOrderType extends AbstractType
             $pendingPayment = in_array($payment->getState(), [PaymentInterface::STATE_CART, PaymentInterface::STATE_NEW]);
 
             $form->add('shippingTimeRange', ChoiceType::class, [
+                'label' => 'form.delivery.time_slot.label',
                 'choice_loader' => $choiceLoader,
-                'choice_label' => function ($choice, $key, $value) {
-                    return (string) $choice;
+                'choice_label' => function(TsRangeChoice $choice) {
+                    return $this->datePeriodFormatter->toHumanReadable($choice->toDatePeriod());
                 },
                 'choice_value' => function ($choice) {
                     return $choice;

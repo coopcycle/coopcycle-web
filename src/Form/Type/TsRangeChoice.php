@@ -26,4 +26,12 @@ class TsRangeChoice
             $this->range->getUpper()->format('Y-m-d H:i')
         );
     }
+
+    public function toDatePeriod(): \DatePeriod
+    {
+        $start = $this->range->getLower();
+        $end = $this->range->getUpper();
+
+        return new \DatePeriod($start, $end->diff($start), $end);
+    }
 }
