@@ -59,7 +59,7 @@
         {% elseif payment.state == 'failed' %}
         {% endif %}
 
-        {% if not form.payment is defined and not payment.state in ['authorized', 'completed'] %}
+        {% if not form.payment is defined and payment.state not in ['authorized', 'completed'] %}
         <button type="submit" class="btn btn-lg btn-block btn-primary">{{ 'basics.continue'|trans }}</button>
         {% endif %}
 
