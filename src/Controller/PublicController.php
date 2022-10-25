@@ -182,7 +182,50 @@ class PublicController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $order = $form->getData();
+
+            $objectManager->flush();
+
+            return $this->redirectToRoute('public_adhoc_order_payment', [
+                'hashid' => $hashid,
+            ]);
+        }
+
+        return $this->render('public/adhoc_order.html.twig', [
+            'order' => $order,
+            'form' => $form->createView(),
+            'payment' => $payment,
+        ]);
+    }
+
+    /**
+     * @Route("/ado/{hashid}/p", name="public_adhoc_order_payment")
+     */
+    public function adhocOrderPaymentAction($hashid, Request $request,
+        EntityManagerInterface $objectManager,
+        OrderManager $orderManager,
+        Hashids $hashids8)
+    {
+        $decoded = $hashids8->decode($hashid);
+
+        if (count($decoded) !== 1) {
+            throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
+        }
+
+        $id = current($decoded);
+        $order = $this->orderRepository->find($id);
+
+        if (null === $order) {
+            throw new NotFoundHttpException(sprintf('Order #%d does not exist', $id));
+        }
+
+        $payment = $order->getLastPayment();
+
+        $form = $this->createForm(AdhocOrderType::class, $order, [
+            'with_payment' => true,
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $orderManager->checkout($order, [
                 'stripeToken' => $form->get('payment')->get('stripeToken')->getData()

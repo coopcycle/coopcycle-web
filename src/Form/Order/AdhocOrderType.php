@@ -43,7 +43,7 @@ class AdhocOrderType extends AbstractType
             ])
             ;
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
             $cart = $event->getData();
@@ -72,19 +72,20 @@ class AdhocOrderType extends AbstractType
                 'choice_value' => function ($choice) {
                     return $choice;
                 },
-                'data' => !$pendingPayment ? new TsRangeChoice($cart->getShippingTimeRange()) : null,
+                'data' => ($options['with_payment'] || !$pendingPayment) ?
+                    new TsRangeChoice($cart->getShippingTimeRange()) : null,
                 'mapped' => false,
-                'disabled' => !$pendingPayment,
+                'disabled' => $options['with_payment'] || !$pendingPayment,
             ]);
 
             $form->add('shippingAddress', AddressType::class, [
                 'with_widget' => true,
                 'with_description' => false,
                 'label' => 'Dirección',
-                'disabled' => !$pendingPayment,
+                'disabled' => $options['with_payment'] || !$pendingPayment,
             ]);
 
-            if ($pendingPayment) {
+            if ($options['with_payment'] && $pendingPayment) {
                 $form->add('payment', StripePaymentType::class, [
                     'data' => $payment,
                     'mapped' => false,
@@ -94,7 +95,7 @@ class AdhocOrderType extends AbstractType
         });
 
         $builder->addEventListener(
-            FormEvents::POST_SUBMIT,
+            FormEvents::SUBMIT,
             function (FormEvent $event) {
 
                 $form = $event->getForm();
@@ -113,6 +114,7 @@ class AdhocOrderType extends AbstractType
         $resolver
             ->setDefaults([
                 'data_class' => OrderInterface::class,
+                'with_payment' => false,
             ]);
     }
 }
