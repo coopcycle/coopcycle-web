@@ -258,13 +258,7 @@ class AdhocOrderForm extends Component {
 
               <h4 className="title">{ this.props.t('ADHOC_ORDER_ITEMS_LIST_TITLE') }</h4>
 
-              <button type="button" className="btn btn-md btn-primary my-2"
-                disabled={ this.props.isFetching || this.state.showSuccessMessage }
-                onClick={ (e) => this.openAdhocOrderItemModal(e) } >
-                { this.props.t('ADHOC_ORDER_ADD_ITEM') }
-              </button>
-
-              <table className="table table-condensed nomargin">
+              <table className="table table-condensed">
                 <thead>
                   <tr>
                     <th>{ this.props.t('ADHOC_ORDER_ITEM_NAME_LABEL') }</th>
@@ -322,6 +316,14 @@ class AdhocOrderForm extends Component {
                 </tfoot>
               </table>
 
+              <div className="text-right">
+                <button type="button" className="btn btn-md btn-primary my-2"
+                  disabled={ this.props.isFetching || this.state.showSuccessMessage }
+                  onClick={ (e) => this.openAdhocOrderItemModal(e) } >
+                  { this.props.t('ADHOC_ORDER_ADD_ITEM') }
+                </button>
+              </div>
+
               <hr />
 
               { this._loadSuccessMessage() }
@@ -334,13 +336,14 @@ class AdhocOrderForm extends Component {
               }
 
               <div className="d-flex justify-content-between mt-4">
+                <button className="btn btn-md btn-info" type="button" onClick={this.props.onSearchOrderPressed}>
+                  <i className="fa fa-chevron-left mr-2"></i>
+                  <span>{ this.props.t('SEARCH_EXISTING_ORDER') }</span>
+                </button>
+
                 <button type="submit" className="btn btn-md btn-success "
                   disabled={ this.props.isFetching || this.state.showSuccessMessage }>
                   { this.props.t('ADHOC_ORDER_SAVE_FINISH_ORDER') }
-                </button>
-
-                <button className="btn btn-md btn-info" type="button" onClick={this.props.onSearchOrderPressed}>
-                  { this.props.t('SEARCH_EXISTING_ORDER') }
                 </button>
               </div>
 
