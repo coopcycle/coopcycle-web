@@ -2,6 +2,7 @@
 
 {% block content %}
   <div id="adhoc-order"
+    class="mb-4"
     data-jwt="{{ jwt }}"
     data-restaurant="{{ restaurant_normalized|json_encode|e('html_attr') }}"
     data-tax-categories="{{ taxCategories|json_encode|e('html_attr') }}">
