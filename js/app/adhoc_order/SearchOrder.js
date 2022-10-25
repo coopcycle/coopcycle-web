@@ -40,14 +40,14 @@ class SearchOrder extends Component {
     if (this.props.searchError.message.indexOf('404') !== -1) {
       return (
         <div className="has-error px-4">
-          <small className="help-block">No se encontró ninguna ordern con ese número</small>
+          <small className="help-block">No se encontró ningun pedido con ese número</small>
         </div>
       )
     }
 
     return (
       <div className="has-error px-4">
-        <small className="help-block">Hubo un error al buscar la orden</small>
+        <small className="help-block">Hubo un error al buscar el pedido</small>
       </div>
     )
   }
