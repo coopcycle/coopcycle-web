@@ -347,9 +347,21 @@ class OrderController extends AbstractController
             $this->objectManager->flush();
 
             if (PaymentInterface::STATE_FAILED === $payment->getState()) {
+
+                $error = $payment->getLastError();
+
+                // Make sure to retrieve the last payment
+                $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
+
+                // Make sure to call StripeManager::configurePayment()
+                // It will resolve the Stripe account that will be used
+                // TODO Make sure we are using Stripe, not MercadoPago
+                $stripeManager->configurePayment($payment);
+
                 return $this->render('order/payment.html.twig', array_merge($parameters, [
                     'form' => $form->createView(),
-                    'error' => $payment->getLastError()
+                    'error' => $error,
+                    'payment' => $payment,
                 ]));
             }
 
