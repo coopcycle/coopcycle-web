@@ -140,6 +140,13 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['type'] = strtoupper($data['type']);
         }
 
+        // Ignore weight & packages for pickup tasks
+        // @see https://github.com/coopcycle/coopcycle-web/issues/3461
+        if ($data['type'] === 'PICKUP') {
+            unset($data['weight']);
+            unset($data['packages']);
+        }
+
         $task = $this->normalizer->denormalize($data, $class, $format, $context);
 
         if (null === $task->getId() && null !== $task->getAddress()) {
