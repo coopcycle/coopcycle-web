@@ -109,7 +109,13 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
      */
     public function addTask(Task $task, $position = null)
     {
-        $task->assignTo($this->getCourier(), $this->getDate());
+        // adding this if the error seems to be 'fixed'
+        // if (!$task->isAssigned()) {
+
+        // with this if the error still happens because the comparison of users is false when it should be true because are the same user
+        // if (!$task->isAssignedTo($this->getCourier())) {
+            $task->assignTo($this->getCourier(), $this->getDate());
+        // }
 
         return parent::addTask($task, $position);
     }
