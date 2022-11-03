@@ -50,6 +50,7 @@ import {
   CLOSE_CREATE_GROUP_MODAL,
   OPEN_ADD_TASK_TO_GROUP_MODAL,
   CLOSE_ADD_TASK_TO_GROUP_MODAL,
+  RESTORE_TASK_FAILURE,
 } from './actions'
 
 import {
@@ -201,6 +202,7 @@ export const isTaskModalLoading = (state = false, action) => {
   case CREATE_TASK_FAILURE:
   case COMPLETE_TASK_FAILURE:
   case CANCEL_TASK_FAILURE:
+  case RESTORE_TASK_FAILURE:
     return false
   default:
     return state

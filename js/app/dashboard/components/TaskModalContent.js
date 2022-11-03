@@ -15,7 +15,7 @@ import TaskModalHeader from './TaskModalHeader'
 import TaskCompleteForm from './TaskCompleteForm'
 import { timePickerProps } from '../../utils/antd'
 
-import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents } from '../redux/actions'
+import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents, restoreTask } from '../redux/actions'
 import { selectCurrentTask, selectCurrentTaskEvents } from '../redux/selectors'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import { phoneNumberExample } from '../utils'
@@ -86,6 +86,12 @@ class TaskModalContent extends React.Component {
     }
   }
 
+  onRestoreClick(task) {
+    if (window.confirm(this.props.t('ADMIN_DASHBOARD_RESTORE_TASK_CONFIRM', { id: task.id }))) {
+      this.props.restoreTask(task)
+    }
+  }
+
   _validate(values) {
     let errors = {}
 
@@ -137,6 +143,13 @@ class TaskModalContent extends React.Component {
             onClick={ () => this.onCancelClick(task) }
             disabled={ this.props.loading }>
             <i className="fa fa-trash"></i> <span>{ this.props.t('ADMIN_DASHBOARD_CANCEL_TASK') }</span>
+          </button>
+        )}
+        { (!!task && task.status === 'CANCELLED') && (
+          <button type="button" className="btn btn-success pull-left"
+            onClick={ () => this.onRestoreClick(task) }
+            disabled={ this.props.loading }>
+            <i className="fa fa-rotate-left"></i> <span>{ this.props.t('ADMIN_DASHBOARD_RESTORE') }</span>
           </button>
         )}
         { (!!task && Object.prototype.hasOwnProperty.call(task, '@id')) && (
@@ -496,6 +509,7 @@ function mapDispatchToProps(dispatch) {
     cancelTask: (task) => dispatch(cancelTask(task)),
     duplicateTask: (task) => dispatch(duplicateTask(task)),
     loadTaskEvents: (task) => dispatch(loadTaskEvents(task)),
+    restoreTask: (task) => dispatch(restoreTask(task)),
   }
 }
 
