@@ -1826,3 +1826,74 @@ Feature: Tasks
         "@type":"TaskImportQueue"
       }
       """
+
+  Scenario: Restore a cancelled task
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/tasks/1/cancel" with body:
+    """
+      {}
+    """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"@string@.startsWith('/api/tasks')",
+        "@type":"Task",
+        "id":@integer@,
+        "type":"DROPOFF",
+        "status":"CANCELLED",
+        "address":@...@,
+        "after":"2018-12-01T10:30:00+01:00",
+        "before":"2018-12-01T11:00:00+01:00",
+        "doneAfter":"2018-12-01T10:30:00+01:00",
+        "doneBefore":"2018-12-01T11:00:00+01:00",
+        "comments":"",
+        "updatedAt":"@string@.isDateTime()",
+        "isAssigned":false,
+        "assignedTo":null,
+        "previous":null,
+        "next":null,
+        "group":null,
+        "tags":@array@
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/tasks/1/restore" with body:
+    """
+      {}
+    """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"@string@.startsWith('/api/tasks')",
+        "@type":"Task",
+        "id":@integer@,
+        "type":"DROPOFF",
+        "status":"TODO",
+        "address":@...@,
+        "after":"2018-12-01T10:30:00+01:00",
+        "before":"2018-12-01T11:00:00+01:00",
+        "doneAfter":"2018-12-01T10:30:00+01:00",
+        "doneBefore":"2018-12-01T11:00:00+01:00",
+        "comments":"",
+        "updatedAt":"@string@.isDateTime()",
+        "isAssigned":false,
+        "assignedTo":null,
+        "previous":null,
+        "next":null,
+        "group":null,
+        "tags":@array@
+      }
+      """
