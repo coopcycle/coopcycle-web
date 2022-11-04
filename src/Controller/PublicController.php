@@ -4,6 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
+use AppBundle\Form\Order\AdhocOrderType;
+use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -33,10 +35,10 @@ class PublicController extends AbstractController
      */
     public function orderAction($hashid, Request $request,
         EntityManagerInterface $objectManager,
-        StripeManager $stripeManager)
+        StripeManager $stripeManager,
+        Hashids $hashids8)
     {
-        $hashids = new Hashids($this->getParameter('secret'), 8);
-        $decoded = $hashids->decode($hashid);
+        $decoded = $hashids8->decode($hashid);
 
         if (count($decoded) !== 1) {
             throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
@@ -112,11 +114,10 @@ class PublicController extends AbstractController
      * @Route("/d/{hashid}", name="public_delivery")
      */
     public function deliveryAction($hashid, Request $request,
-        CentrifugoClient $centrifugoClient)
+        CentrifugoClient $centrifugoClient,
+        Hashids $hashids8)
     {
-        $hashids = new Hashids($this->getParameter('secret'), 8);
-
-        $decoded = $hashids->decode($hashid);
+        $decoded = $hashids8->decode($hashid);
 
         if (count($decoded) !== 1) {
             throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
@@ -152,5 +153,91 @@ class PublicController extends AbstractController
             'centrifugo_token' => $token,
             'centrifugo_channel' => $channel,
         ]);
+    }
+
+    /**
+     * @Route("/ado/{hashid}", name="public_adhoc_order")
+     */
+    public function adhocOrderAction($hashid, Request $request,
+        EntityManagerInterface $objectManager,
+        OrderManager $orderManager,
+        Hashids $hashids8)
+    {
+        $order = $this->decodeOrderFromHashid($hashid, $hashids8);
+        $payment = $order->getLastPayment();
+
+        $form = $this->createForm(AdhocOrderType::class, $order);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $objectManager->flush();
+
+            return $this->redirectToRoute('public_adhoc_order_payment', [
+                'hashid' => $hashid,
+            ]);
+        }
+
+        return $this->render('public/adhoc_order.html.twig', [
+            'order' => $order,
+            'form' => $form->createView(),
+            'payment' => $payment,
+        ]);
+    }
+
+    /**
+     * @Route("/ado/{hashid}/p", name="public_adhoc_order_payment")
+     */
+    public function adhocOrderPaymentAction($hashid, Request $request,
+        EntityManagerInterface $objectManager,
+        OrderManager $orderManager,
+        Hashids $hashids8)
+    {
+        $order = $this->decodeOrderFromHashid($hashid, $hashids8);
+        $payment = $order->getLastPayment();
+
+        $form = $this->createForm(AdhocOrderType::class, $order, [
+            'with_payment' => true,
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $orderManager->checkout($order, [
+                'stripeToken' => $form->get('payment')->get('stripeToken')->getData()
+            ]);
+
+            $orderManager->accept($order);
+
+            $objectManager->flush();
+
+            return $this->redirectToRoute('public_adhoc_order', [
+                'hashid' => $hashid,
+            ]);
+        }
+
+        return $this->render('public/adhoc_order.html.twig', [
+            'order' => $order,
+            'form' => $form->createView(),
+            'payment' => $payment,
+        ]);
+    }
+
+    private function decodeOrderFromHashid($hashid, Hashids $hashids8)
+    {
+        $decoded = $hashids8->decode($hashid);
+
+        if (count($decoded) !== 1) {
+            throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
+        }
+
+        $id = current($decoded);
+        $order = $this->orderRepository->find($id);
+
+        if (null === $order) {
+            throw new NotFoundHttpException(sprintf('Order #%d does not exist', $id));
+        }
+
+        return $order;
     }
 }

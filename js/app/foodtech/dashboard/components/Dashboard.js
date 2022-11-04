@@ -99,6 +99,15 @@ class Dashboard extends React.Component {
               </div>
             </div>
           )}
+          {
+            this.props.adhocOrderEnabled && this.props.restaurant && (
+            <div>
+              <a href={window.Routing.generate('dashboard_restaurant_new_adhoc_order', {restaurantId: this.props.restaurant.id})} className="btn btn-sm btn-success">
+                { this.props.t('CREATE_ORDER') }
+              </a>
+            </div>
+            )
+          }
           <div>
             <DatePicker
               format={ 'll' }
@@ -196,6 +205,7 @@ function mapStateToProps(state) {
     restaurant: state.restaurant,
     activeTab: state.activeTab,
     initialOrder: state.initialOrder,
+    adhocOrderEnabled: state.adhocOrderEnabled,
   }
 }
 

@@ -256,3 +256,6 @@ services:
         default: '@AppBundle\Spreadsheet\DeliveryDataExporter'
         dv4cul: '@AppBundle\Spreadsheet\DV4CULDataExporter'
     tags: [ form.type ]
+
+  AppBundle\Form\Order\AdhocOrderType:
+    tags: [ form.type ]

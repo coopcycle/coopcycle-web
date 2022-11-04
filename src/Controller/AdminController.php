@@ -168,7 +168,8 @@ class AdminController extends AbstractController
         FactoryInterface $promotionFactory,
         HttpClientInterface $browserlessClient,
         bool $optinExportUsersEnabled,
-        TypesenseShopsClient $typesenseShopsClient
+        TypesenseShopsClient $typesenseShopsClient,
+        bool $adhocOrderEnabled,
     )
     {
         $this->orderRepository = $orderRepository;
@@ -180,6 +181,7 @@ class AdminController extends AbstractController
         $this->browserlessClient = $browserlessClient;
         $this->optinExportUsersEnabled = $optinExportUsersEnabled;
         $this->typesenseShopsClient = $typesenseShopsClient;
+        $this->adhocOrderEnabled = $adhocOrderEnabled;
     }
 
     /**

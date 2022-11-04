@@ -149,3 +149,10 @@ task.dropoff.failed.body: |
   The delivery <strong>#%id%</strong> could not be dropped at the following address:
   <br>
   %address%
+
+order.adhoc.body: |
+  Hello,
+  <br>
+  A new order has been created for you.
+  <br>
+  In order to finalize your order, click on the link below to specify your address, choose a delivery slot, and pay by credit card.

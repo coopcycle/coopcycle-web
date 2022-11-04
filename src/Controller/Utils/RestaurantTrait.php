@@ -18,6 +18,7 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
+use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxonRepository;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\ClosingRuleType;
@@ -32,6 +33,7 @@ use AppBundle\Form\Restaurant\ReusablePackagingType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
+use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -48,6 +50,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Csv\Writer as CsvWriter;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use MercadoPago;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
@@ -312,6 +315,41 @@ trait RestaurantTrait
         return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator);
     }
 
+    public function restaurantNewAdhocOrderAction($restaurantId, Request $request,
+        JWTTokenManagerInterface $jwtManager)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        $form = $this->createFormBuilder()
+            ->add('taxCategory', ProductTaxCategoryChoiceType::class)
+            ->getForm();
+
+        $view = $form->get('taxCategory')->createView();
+
+        $taxCategories = [];
+        foreach($view->vars['choices'] as $taxCategoryView) {
+            $taxCategories[] = [
+                'name' => $taxCategoryView->label,
+                'code' => $taxCategoryView->value,
+            ];
+        }
+
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
+                'resource_class' => LocalBusiness::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['restaurant']
+            ]),
+            'restaurant' => $restaurant,
+            'jwt' => $jwtManager->create($this->getUser()),
+            'taxCategories' => $taxCategories,
+        ], []));
+    }
+
     public function restaurantDashboardAction($restaurantId, Request $request,
         EntityManagerInterface $entityManager,
         IriConverterInterface $iriConverter,
@@ -372,6 +410,7 @@ trait RestaurantTrait
             'initial_order' => $request->query->get('order'),
             'routes' => $routes,
             'date' => $date,
+            'adhoc_order_enabled' => $this->adhocOrderEnabled && $restaurant->belongsToHub(),
         ], $routes));
     }
 

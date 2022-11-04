@@ -251,6 +251,9 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $edenredMerchantId;
 
+    /**
+     * @Groups({"restaurant"})
+     */
     protected $hub;
 
     protected $vytalEnabled = false;

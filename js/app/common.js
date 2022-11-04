@@ -119,7 +119,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 addressEl.value = address[addressProp]
               }
             }
-          }
+          },
+          disabled: el.disabled,
         }
       )
     })
