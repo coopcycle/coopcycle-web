@@ -61,7 +61,6 @@ export default ({termsAndConditionsCheck, privacyPolicyCheck}) => {
             return
           }
         } catch (err) {
-          console.error(err)
           setModalOpen(false)
           return
         }

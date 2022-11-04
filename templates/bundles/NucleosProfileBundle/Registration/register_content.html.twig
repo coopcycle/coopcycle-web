@@ -45,11 +45,4 @@
 {% if form.termsAndConditionsAndPrivacyPolicy is defined %}
   <div id="termsAndConditionsAndPrivacyPolicy">
   </div>
-  {% block styles %}
-  {{ encore_entry_link_tags('terms-and-conditions-and-privacy-policy') }}
-  {% endblock %}
-
-  {% block scripts %}
-    {{ encore_entry_script_tags('terms-and-conditions-and-privacy-policy') }}
-  {% endblock %}
 {% endif %}

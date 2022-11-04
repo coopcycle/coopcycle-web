@@ -131,3 +131,39 @@ registration.restaurant: Nouvelle demande d'ajout de restaurant
 
 order.receipt.subject: Reçu pour votre commande %order.number%
 order.receipt.body: "Bonjour,\n<br>\nVeuillez trouver ci-joint le reçu pour votre commande."
+
+task.pickup.done.subject: 'La livraison #%id% a été récupérée'
+task.pickup.done.body: |
+  Bonjour,
+  <br>
+  <br>
+  La livraison <strong>#%id%</strong> a été récupérée à l'adresse suivante :
+  <br>
+  %address%
+
+task.pickup.failed.subject: "La livraison #%id% n'a pas pû être récupérée"
+task.pickup.failed.body: |
+  Bonjour,
+  <br>
+  <br>
+  La livraison <strong>#%id%</strong> n'a pas pû être récupérée à l'adresse suivante :
+  <br>
+  %address%
+
+task.dropoff.done.subject: 'La livraison #%id% a été déposée'
+task.dropoff.done.body: |
+  Bonjour,
+  <br>
+  <br>
+  La livraison <strong>#%id%</strong> a été déposée à l'adresse suivante :
+  <br>
+  %address%
+
+task.dropoff.failed.subject: "La livraison #%id% n'a pas pû être déposée"
+task.dropoff.failed.body: |
+  Bonjour,
+  <br>
+  <br>
+  La livraison <strong>#%id%</strong> n'a pas pû être déposée à l'adresse suivante :
+  <br>
+  %address%
