@@ -5,9 +5,7 @@ namespace AppBundle\Form\Order;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\StripePaymentType;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Form\Type\AsapChoiceLoader;
 use AppBundle\Form\Type\TsRangeChoice;
-use AppBundle\Service\TimeRegistry;
 use AppBundle\Translation\DatePeriodFormatter;
 use AppBundle\Utils\OrderTimeHelper;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -21,18 +19,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AdhocOrderType extends AbstractType
 {
-    private $timeRegistry;
     private $orderProcessor;
     private $datePeriodFormatter;
     private $orderTimeHelper;
 
     public function __construct(
-        TimeRegistry $timeRegistry,
         OrderProcessorInterface $orderProcessor,
         DatePeriodFormatter $datePeriodFormatter,
         OrderTimeHelper $orderTimeHelper)
     {
-        $this->timeRegistry = $timeRegistry;
         $this->orderProcessor = $orderProcessor;
         $this->datePeriodFormatter = $datePeriodFormatter;
         $this->orderTimeHelper = $orderTimeHelper;
