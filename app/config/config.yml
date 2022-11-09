@@ -198,7 +198,7 @@ framework:
                 base_uri: "%router.request_context.scheme%://%router.request_context.host%"
             osrm.client:
                 base_uri: "http://%osrm_host%"
-                timeout: 1.0
+                timeout: 5.0
             cubejs.client:
                 base_uri: "%env(CUBEJS_API_URL)%/"
             woopit.http_client:
