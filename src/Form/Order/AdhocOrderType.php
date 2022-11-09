@@ -9,6 +9,7 @@ use AppBundle\Form\Type\AsapChoiceLoader;
 use AppBundle\Form\Type\TsRangeChoice;
 use AppBundle\Service\TimeRegistry;
 use AppBundle\Translation\DatePeriodFormatter;
+use AppBundle\Utils\OrderTimeHelper;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Form\AbstractType;
@@ -23,15 +24,18 @@ class AdhocOrderType extends AbstractType
     private $timeRegistry;
     private $orderProcessor;
     private $datePeriodFormatter;
+    private $orderTimeHelper;
 
     public function __construct(
         TimeRegistry $timeRegistry,
         OrderProcessorInterface $orderProcessor,
-        DatePeriodFormatter $datePeriodFormatter)
+        DatePeriodFormatter $datePeriodFormatter,
+        OrderTimeHelper $orderTimeHelper)
     {
         $this->timeRegistry = $timeRegistry;
         $this->orderProcessor = $orderProcessor;
         $this->datePeriodFormatter = $datePeriodFormatter;
+        $this->orderTimeHelper = $orderTimeHelper;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -48,24 +52,15 @@ class AdhocOrderType extends AbstractType
             $form = $event->getForm();
             $cart = $event->getData();
 
-            $vendor = $cart->getVendor();
-            $fulfillmentMethod = $cart->getFulfillmentMethodObject();
-
-            $choiceLoader = new AsapChoiceLoader(
-                $fulfillmentMethod->getOpeningHours(),
-                $this->timeRegistry,
-                $vendor->getClosingRules(),
-                $fulfillmentMethod->getOrderingDelayMinutes(),
-                $fulfillmentMethod->getOption('range_duration', 10),
-                $fulfillmentMethod->isPreOrderingAllowed()
-            );
+            $choices = $this->orderTimeHelper->getShippingTimeRanges($cart);
+            $choices = array_map(fn ($tsRange) => new TsRangeChoice($tsRange), $choices);
 
             $payment = $cart->getLastPayment();
             $pendingPayment = in_array($payment->getState(), [PaymentInterface::STATE_CART, PaymentInterface::STATE_NEW]);
 
             $form->add('shippingTimeRange', ChoiceType::class, [
                 'label' => 'form.delivery.time_slot.label',
-                'choice_loader' => $choiceLoader,
+                'choices' => $choices,
                 'choice_label' => function(TsRangeChoice $choice) {
                     return $this->datePeriodFormatter->toHumanReadable($choice->toDatePeriod());
                 },
