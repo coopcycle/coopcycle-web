@@ -124,8 +124,7 @@ function getTaskType(name, type) {
   return document.querySelector(`#${name}_${type}_type`).value.toUpperCase()
 }
 
-function createDatePickerWidget(name, type) {
-
+function createDatePickerWidget(name, type, userAdmin) {
   const datePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
   const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
 
@@ -156,7 +155,8 @@ function createDatePickerWidget(name, type) {
         taskIndex: getTaskIndex(type),
         value: date.format()
       })
-    }
+    },
+    allowPastDates: userAdmin, // admins are allowed to select a free date range
   })
 }
 
@@ -369,7 +369,7 @@ function createElementFromHTML(htmlString) {
   return div.firstChild;
 }
 
-function initSubForm(name, taskEl, preloadedState) {
+function initSubForm(name, taskEl, preloadedState, userAdmin) {
   const taskForm = taskEl.getAttribute('id').replace(name + '_', '')
   const taskIndex = getTaskIndex(taskForm)
 
@@ -397,7 +397,7 @@ function initSubForm(name, taskEl, preloadedState) {
       }
     }
   })
-  createDatePickerWidget(name, taskForm)
+  createDatePickerWidget(name, taskForm, userAdmin)
 
   const tagsEl = document.querySelector(`#${name}_${taskForm}_tagsAsString`)
   if (tagsEl) {
@@ -480,7 +480,7 @@ export default function(name, options) {
 
     // tasks_0, tasks_1...
     const taskForms = Array.from(el.querySelectorAll('[data-form="task"]'))
-    taskForms.forEach((taskEl) => initSubForm(name, taskEl, preloadedState))
+    taskForms.forEach((taskEl) => initSubForm(name, taskEl, preloadedState, !!el.dataset.userAdmin))
 
     store = createStore(
       reducer, preloadedState,
@@ -543,7 +543,7 @@ export default function(name, options) {
 
         collectionHolder.appendChild(item)
 
-        initSubForm(name, item)
+        initSubForm(name, item, null, !!el.dataset.userAdmin)
 
         collectionHolder.dataset.index++
       })
