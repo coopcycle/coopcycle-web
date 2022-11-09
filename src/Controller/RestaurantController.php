@@ -292,7 +292,7 @@ class RestaurantController extends AbstractController
             'addresses_normalized' => $this->getUserAddresses(),
             'address' => $request->query->has('address') ? $request->query->get('address') : null,
             'types' => $types,
-            'cuisines' => $this->get('serializer')->normalize($cuisines, 'jsonld'),
+            'cuisines' => $cuisines,
         ));
     }
 
