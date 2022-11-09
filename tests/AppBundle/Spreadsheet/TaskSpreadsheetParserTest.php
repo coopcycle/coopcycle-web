@@ -34,6 +34,9 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->userManager->findUserByUsername('bob')
             ->willReturn($this->bob);
 
+        $this->userManager->findUserByUsername('username')
+            ->willReturn($this->bob);
+
         $this->userManager->findUserByUsername('sarah')
             ->willReturn(null);
 
