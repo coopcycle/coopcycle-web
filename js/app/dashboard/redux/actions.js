@@ -112,6 +112,7 @@ export const CREATE_TASK_FAILURE = 'CREATE_TASK_FAILURE'
 export const COMPLETE_TASK_FAILURE = 'COMPLETE_TASK_FAILURE'
 export const CANCEL_TASK_FAILURE = 'CANCEL_TASK_FAILURE'
 export const TOKEN_REFRESH_SUCCESS = 'TOKEN_REFRESH_SUCCESS'
+export const RESTORE_TASK_FAILURE = 'RESTORE_TASK_FAILURE'
 
 export const OPEN_FILTERS_MODAL = 'OPEN_FILTERS_MODAL'
 export const CLOSE_FILTERS_MODAL = 'CLOSE_FILTERS_MODAL'
@@ -429,6 +430,10 @@ export function createTaskFailure(error) {
   return { type: CREATE_TASK_FAILURE, error }
 }
 
+export function restoreTaskFailure(error) {
+  return { type: RESTORE_TASK_FAILURE, error }
+}
+
 export function completeTaskFailure(error) {
   return { type: COMPLETE_TASK_FAILURE, error }
 }
@@ -716,6 +721,68 @@ export function duplicateTask(task) {
         dispatch(closeNewTaskModal())
       })
       .catch(error => dispatch(cancelTaskFailure(error)))
+  }
+}
+
+export function restoreTasks(tasks) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const requests = tasks.map(task => {
+
+      return httpClient.request({
+        method: 'put',
+        url: `${task['@id']}/restore`,
+        data: {},
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    })
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+      })
+      .catch(error => dispatch(restoreTaskFailure(error)))
+  }
+}
+
+export function restoreTask(task) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const url = `${task['@id']}/restore`
+
+    createClient(dispatch).request({
+      method: 'put',
+      url,
+      data: {},
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        dispatch(createTaskSuccess())
+        dispatch(updateTask(response.data))
+        dispatch(closeNewTaskModal())
+      })
+      .catch(error => dispatch(restoreTaskFailure(error)))
   }
 }
 

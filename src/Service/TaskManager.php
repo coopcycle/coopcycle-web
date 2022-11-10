@@ -9,6 +9,7 @@ use AppBundle\Domain\Task\Command\MarkAsFailed;
 use AppBundle\Domain\Task\Command\Start;
 use AppBundle\Domain\Task\Command\AddToGroup;
 use AppBundle\Domain\Task\Command\RemoveFromGroup;
+use AppBundle\Domain\Task\Command\Restore;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use SimpleBus\SymfonyBridge\Bus\CommandBus;
@@ -55,5 +56,10 @@ class TaskManager
     public function start(Task $task)
     {
         $this->commandBus->handle(new Start($task));
+    }
+
+    public function restore(Task $task)
+    {
+        $this->commandBus->handle(new Restore($task));
     }
 }

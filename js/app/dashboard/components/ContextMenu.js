@@ -6,7 +6,7 @@ import { Menu, Item } from 'react-contexify'
 
 import moment from 'moment'
 
-import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup } from '../redux/actions'
+import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks } from '../redux/actions'
 import { selectNextWorkingDay, selectSelectedTasks } from '../redux/selectors'
 
 const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
@@ -19,6 +19,7 @@ const MOVE_TO_NEXT_WORKING_DAY_MULTI = 'MOVE_TO_NEXT_WORKING_DAY_MULTI'
 const CREATE_GROUP = 'CREATE_GROUP'
 const ADD_TO_GROUP = 'ADD_TO_GROUP'
 const REMOVE_FROM_GROUP = 'REMOVE_FROM_GROUP'
+const RESTORE = 'RESTORE'
 
 import { selectUnassignedTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
@@ -32,7 +33,7 @@ function _unassign(tasksToUnassign, unassignTasks) {
 const DynamicMenu = ({
   unassignedTasks, selectedTasks, nextWorkingDay,
   unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
-  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup
+  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks
 }) => {
 
   const { t } = useTranslation()
@@ -42,6 +43,7 @@ const DynamicMenu = ({
       !_.find(unassignedTasks, unassignedTask => unassignedTask['@id'] === selectedTask['@id']))
 
   const containsOnlyUnassignedTasks = !_.find(selectedTasks, t => t.isAssigned)
+  const containsOnlyCancelledTasks = _.every(selectedTasks, t => t.status === 'CANCELLED')
 
   const containsOnlyGroupedTasks = selectedTasks.every(task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group)
 
@@ -98,6 +100,10 @@ const DynamicMenu = ({
       if (!containsOnlyGroupedTasks) {
         actions.push(ADD_TO_GROUP)
       }
+    }
+
+    if (containsOnlyCancelledTasks) {
+      actions.push(RESTORE)
     }
   }
 
@@ -163,6 +169,12 @@ const DynamicMenu = ({
       >
         { t('ADMIN_DASHBOARD_REMOVE_FROM_GROUP') }
       </Item>
+      <Item
+        hidden={ !actions.includes(RESTORE) }
+        onClick={ () => restoreTasks(selectedTasks) }
+      >
+        { t('ADMIN_DASHBOARD_RESTORE') }
+      </Item>
       { actions.length === 0 && (
         <Item disabled>
           { t('ADMIN_DASHBOARD_NO_ACTION_AVAILABLE') }
@@ -192,6 +204,7 @@ function mapDispatchToProps(dispatch) {
     openCreateGroupModal: () => dispatch(openCreateGroupModal()),
     openAddTaskToGroupModal: tasks => dispatch(openAddTaskToGroupModal(tasks)),
     removeTasksFromGroup: tasks => dispatch(removeTasksFromGroup(tasks)),
+    restoreTasks: tasks => dispatch(restoreTasks(tasks)),
   }
 }
 

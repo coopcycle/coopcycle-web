@@ -11,6 +11,7 @@ use AppBundle\Action\Task\Events as TaskEvents;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
+use AppBundle\Action\Task\Restore as TaskRestore;
 use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Api\Filter\AssignedFilter;
@@ -178,6 +179,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "security"="is_granted('view', object)",
  *       "openapi_context"={
  *         "summary"="Retrieves events for a Task"
+ *       }
+ *     },
+ *     "task_restore"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/restore",
+ *       "controller"=TaskRestore::class,
+ *       "denormalization_context"={"groups"={"task_operation"}},
+ *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "openapi_context"={
+ *         "summary"="Restores a Task"
  *       }
  *     }
  *   }
