@@ -146,7 +146,7 @@ export const geocode = function (text) {
     geocoderService.geocode({ address: text }, (results, status) => {
       if (status === window.google.maps.GeocoderStatus.OK && results.length > 0) {
         const place = results[0]
-        resolve(placeToAddress(place))
+        resolve(placeToAddress(place, text))
       } else {
         resolve(null)
       }
