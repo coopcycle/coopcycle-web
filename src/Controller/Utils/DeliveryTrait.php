@@ -13,6 +13,8 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderFactory;
+use Doctrine\ORM\EntityManagerInterface;
+use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -57,7 +59,8 @@ trait DeliveryTrait
         return (int) ($price);
     }
 
-    private function renderDeliveryForm(Delivery $delivery, Request $request, array $options = [])
+    private function renderDeliveryForm(Delivery $delivery, Request $request, array $options = [],
+        OrderFactory $orderFactory, EntityManagerInterface $entityManager, OrderNumberAssignerInterface $orderNumberAssigner)
     {
         $routes = $request->attributes->get('routes');
 
@@ -68,8 +71,16 @@ trait DeliveryTrait
 
             $delivery = $form->getData();
 
-            $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-            $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
+            $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
+                $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
+
+            if ($useArbitraryPrice) {
+                $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
+                    $entityManager, $orderNumberAssigner);
+            } else {
+                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
+                $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
+            }
 
             return $this->redirectToRoute($routes['success']);
         }
@@ -83,7 +94,12 @@ trait DeliveryTrait
         ]);
     }
 
-    public function deliveryAction($id, Request $request)
+    public function deliveryAction($id,
+        Request $request,
+        OrderFactory $orderFactory,
+        EntityManagerInterface $entityManager,
+        OrderNumberAssignerInterface $orderNumberAssigner
+    )
     {
         $delivery = $this->getDoctrine()
             ->getRepository(Delivery::class)
@@ -93,6 +109,7 @@ trait DeliveryTrait
 
         return $this->renderDeliveryForm($delivery, $request, [
             'with_address_props' => true,
-        ]);
+            'with_arbitrary_price' => null === $delivery->getOrder(),
+        ], $orderFactory, $entityManager, $orderNumberAssigner);
     }
 }

@@ -125,8 +125,7 @@ class DeliveryType extends AbstractType
 
             // Allow admins to define an arbitrary price
             if (true === $options['with_arbitrary_price'] &&
-                null === $delivery->getId()
-                && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 $form->add('arbitraryPrice', CheckboxType::class, [
                     'label' => 'form.delivery.arbitrary_price.label',
                     'mapped' => false,

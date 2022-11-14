@@ -267,24 +267,8 @@ trait StoreTrait
 
             if ($useArbitraryPrice) {
 
-                $variantPrice = $form->get('variantPrice')->getData();
-                $variantName = $form->get('variantName')->getData();
-
-                $order = $this->createOrderForDelivery($orderFactory, $delivery, $variantPrice);
-
-                $variant = $order->getItems()->get(0)->getVariant();
-
-                $variant->setName($variantName);
-                $variant->setCode(Uuid::uuid4()->toString());
-
-                $order->setState(OrderInterface::STATE_ACCEPTED);
-
-                $entityManager->persist($order);
-                $entityManager->flush();
-
-                $orderNumberAssigner->assignNumber($order);
-
-                $entityManager->flush();
+                $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
+                    $entityManager, $orderNumberAssigner);
 
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
