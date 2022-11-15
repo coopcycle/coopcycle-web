@@ -119,10 +119,10 @@ jobs:
       - name: Compile assets
         run: until docker-compose exec -T webpack node_modules/.bin/encore dev; do sleep 5; done
       - name: Run Cypress
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4
         with:
           spec: |
-            cypress/integration/*.spec.js
+            cypress/e2e/*.cy.js
       # - name: Print logs
       #   if: always()
       #   run: cat var/logs/*.log
