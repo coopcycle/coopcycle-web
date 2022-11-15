@@ -113,7 +113,7 @@ jobs:
       - name: Create database
         run: docker-compose exec -T php bin/console doctrine:schema:create --env=test
       - name: Create typesense collections
-        run: docker-compose exec -T php bin/console typesense:collections:create test
+        run: docker-compose exec -T php bin/console typesense:collections:create
       - name: Setup CoopCycle
         run: docker-compose exec -T php bin/console coopcycle:setup --env=test
       - name: Compile assets
