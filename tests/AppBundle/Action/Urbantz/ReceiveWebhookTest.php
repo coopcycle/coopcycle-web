@@ -63,8 +63,7 @@ class ReceiveWebhookTest extends TestCase
                 'id' => 'abcdefgh123456',
                 'taskId' => '1269-00099999991',
                 'source' => [
-                    'number' => '4',
-                    'street' => 'Rue Perrault',
+                    'street' => '4 Rue Perrault',
                     'city' => 'Nantes',
                     'zip' => '44000',
                     'country' => 'FR',
