@@ -33,17 +33,7 @@ class DeliveryListener
             );
         }
 
-        $store = $delivery->getStore();
-
-        if (null === $store) {
-            return;
-        }
-
-        $tags = $store->getTags();
-
-        foreach ($delivery->getTasks() as $task) {
-            $task->addTags($tags);
-        }
+        $this->applyStoreTags($delivery);
 
         $tasks = $delivery->getTasks();
 
@@ -60,6 +50,21 @@ class DeliveryListener
                     $dropoff->setNext(null);
                 }
             }
+        }
+    }
+
+    private function applyStoreTags(Delivery $delivery)
+    {
+        $store = $delivery->getStore();
+
+        if (null === $store) {
+            return;
+        }
+
+        $tags = $store->getTags();
+
+        foreach ($delivery->getTasks() as $task) {
+            $task->addTags($tags);
         }
     }
 }
