@@ -59,8 +59,9 @@ trait DeliveryTrait
         return (int) ($price);
     }
 
-    private function renderDeliveryForm(Delivery $delivery, Request $request, array $options = [],
-        OrderFactory $orderFactory, EntityManagerInterface $entityManager, OrderNumberAssignerInterface $orderNumberAssigner)
+    private function renderDeliveryForm(Delivery $delivery, Request $request,
+        OrderFactory $orderFactory, EntityManagerInterface $entityManager, OrderNumberAssignerInterface $orderNumberAssigner, 
+        array $options = [])
     {
         $routes = $request->attributes->get('routes');
 
@@ -107,9 +108,9 @@ trait DeliveryTrait
 
         $this->accessControl($delivery);
 
-        return $this->renderDeliveryForm($delivery, $request, [
+        return $this->renderDeliveryForm($delivery, $request, $orderFactory, $entityManager, $orderNumberAssigner, [
             'with_address_props' => true,
             'with_arbitrary_price' => null === $delivery->getOrder(),
-        ], $orderFactory, $entityManager, $orderNumberAssigner);
+        ]);
     }
 }
