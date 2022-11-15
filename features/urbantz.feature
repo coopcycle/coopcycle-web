@@ -305,7 +305,7 @@ Feature: Urbantz
             "geocodeScore":0,
             "cleanScore":0,
             "number":"4",
-            "street":"Rue Perrault",
+            "street":"4 Rue Perrault",
             "city":"Nantes",
             "zip":"44000",
             "country":"FR",

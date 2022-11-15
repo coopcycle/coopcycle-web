@@ -54,7 +54,7 @@ class ReceiveWebhook
         $address = new Address();
 
         $streetAddress = sprintf('%s, %s',
-            ($task['source']['number'] . ' ' . $task['source']['street']),
+            $task['source']['street'],
             ($task['source']['zip'] . ' ' . $task['source']['city'])
         );
 
