@@ -1,7 +1,8 @@
 module.exports = {
   "chromeWebSecurity": false,
   "env": {
-    "COMMAND_PREFIX": "/usr/local/bin/docker compose exec -T php",
+    "COMMAND_PREFIX": "docker-compose exec -T php",
+    "DEBUG": "cypress:*",
     "coverage": false
   },
   "nodeVersion": "system",
