@@ -56,7 +56,7 @@
     "core-js": "^3.26.1",
     "cropperjs": "^1.5.12",
     "croppie": "^2.6.5",
-    "cypress": "^6.9.1",
+    "cypress": "^11.0.1",
     "database-cleaner": "^1.3.0",
     "date-holidays": "^3.16.10",
     "dropzone": "^5.9.3",
