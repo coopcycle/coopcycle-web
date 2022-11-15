@@ -13,9 +13,10 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
-use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -112,5 +113,33 @@ trait DeliveryTrait
             'with_address_props' => true,
             'with_arbitrary_price' => null === $delivery->getOrder(),
         ]);
+    }
+
+    protected function createOrderForDeliveryWithArbitraryPrice(
+        FormInterface $form,
+        OrderFactory $orderFactory,
+        Delivery $delivery,
+        EntityManagerInterface $entityManager,
+        OrderNumberAssignerInterface $orderNumberAssigner
+    )
+    {
+        $variantPrice = $form->get('variantPrice')->getData();
+        $variantName = $form->get('variantName')->getData();
+
+        $order = $this->createOrderForDelivery($orderFactory, $delivery, $variantPrice);
+
+        $variant = $order->getItems()->get(0)->getVariant();
+
+        $variant->setName($variantName);
+        $variant->setCode(Uuid::uuid4()->toString());
+
+        $order->setState(OrderInterface::STATE_ACCEPTED);
+
+        $entityManager->persist($order);
+        $entityManager->flush();
+
+        $orderNumberAssigner->assignNumber($order);
+
+        $entityManager->flush();
     }
 }
