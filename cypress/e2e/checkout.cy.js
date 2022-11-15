@@ -145,7 +145,7 @@ context('Checkout', () => {
 
     cy.get('[data-search="address"]')
       .find('ul[role="listbox"] li', { timeout: 5000 })
-      .contains('Rue De Rivoli, 75001 Paris, France')
+      .contains('Rue de Rivoli, Paris, France')
       .click()
 
     cy.location('pathname').should('match', /\/fr\/restaurants/)
@@ -155,7 +155,7 @@ context('Checkout', () => {
     cy.location('pathname').should('match', /\/fr\/restaurant\/[0-9]+-crazy-hamburger/)
 
     cy.get('.cart [data-testid="cart.shippingAddress"]')
-      .should('have.text', 'Rue De Rivoli, 75001 Paris, France')
+      .should('have.text', 'Rue de Rivoli, Paris, France')
 
     cy.wait('@geocodeAddress')
 
