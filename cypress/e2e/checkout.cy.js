@@ -1,6 +1,7 @@
 context('Checkout', () => {
   beforeEach(() => {
 
+    cy.exec('whoami')
     cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
 
     cy.window().then((win) => {

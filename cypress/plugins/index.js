@@ -11,16 +11,16 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
-require('dotenv').config()
+// require('dotenv').config()
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
-  config.env.ALGOLIA_PLACES_APP_ID = process.env.ALGOLIA_PLACES_APP_ID
-  config.env.ALGOLIA_PLACES_API_KEY = process.env.ALGOLIA_PLACES_API_KEY
-  config.env.GEOCODE_EARTH_API_KEY = process.env.GEOCODE_EARTH_API_KEY
-  config.env.LOCATIONIQ_ACCESS_TOKEN = process.env.LOCATIONIQ_ACCESS_TOKEN
+  // config.env.ALGOLIA_PLACES_APP_ID = process.env.ALGOLIA_PLACES_APP_ID
+  // config.env.ALGOLIA_PLACES_API_KEY = process.env.ALGOLIA_PLACES_API_KEY
+  // config.env.GEOCODE_EARTH_API_KEY = process.env.GEOCODE_EARTH_API_KEY
+  // config.env.LOCATIONIQ_ACCESS_TOKEN = process.env.LOCATIONIQ_ACCESS_TOKEN
 
   // https://github.com/cypress-io/cypress/tree/master/npm/webpack-preprocessor#options
   // const options = {
@@ -33,8 +33,8 @@ module.exports = (on, config) => {
 
   // https://github.com/cypress-io/cypress/blob/master/npm/react/docs/recipes.md#your-webpack-config
   // from the root of the project (folder with cypress.json file)
-  config.env.webpackFilename = 'webpack.cypress.js'
-  require('@cypress/react/plugins/load-webpack')(on, config)
+  // config.env.webpackFilename = 'webpack.cypress.js'
+  // require('@cypress/react/plugins/load-webpack')(on, config)
 
   // IMPORTANT to return the config object
   // with the any changed environment variables
