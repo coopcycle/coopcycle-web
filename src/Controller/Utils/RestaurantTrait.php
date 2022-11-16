@@ -283,7 +283,7 @@ trait RestaurantTrait
             'form' => $form->createView(),
             'layout' => $request->attributes->get('layout'),
             'loopeat_authorize_url' => $loopeatAuthorizeUrl,
-            'cuisines' => $this->get('serializer')->normalize($cuisines, 'jsonld'),
+            'cuisines' => $this->get('serializer')->normalize($cuisines, 'json', ['groups' => ['restaurant']]),
         ], $routes));
     }
 
