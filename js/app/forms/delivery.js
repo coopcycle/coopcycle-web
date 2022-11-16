@@ -7,6 +7,7 @@ import { createSelector } from 'reselect'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
+import DateRangePicker from '../widgets/DateRangePicker'
 import TagsInput from '../widgets/TagsInput'
 import { validateForm } from '../utils/address'
 
@@ -124,7 +125,49 @@ function getTaskType(name, type) {
   return document.querySelector(`#${name}_${type}_type`).value.toUpperCase()
 }
 
-function createDatePickerWidget(name, type, userAdmin) {
+function createDateRangePickerWidget(name, type) {
+  const doneBeforePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
+  const doneAfterPickerEl = document.querySelector(`#${name}_${type}_doneAfter`)
+
+  const beforeDefaultValue = doneBeforePickerEl.value || selectLastDropoff(store.getState()).before
+  const afterDefaultValue = doneAfterPickerEl.value || moment().set({ hour: 0, minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss')
+
+  // When adding a new task, initialize hidden input value
+  if (!doneBeforePickerEl.value) {
+    doneBeforePickerEl.value = moment(beforeDefaultValue).format('YYYY-MM-DD HH:mm:ss')
+  }
+
+  if (!doneAfterPickerEl.value) {
+    doneAfterPickerEl.value = moment(afterDefaultValue).format('YYYY-MM-DD HH:mm:ss')
+  }
+
+  const defaultValue = {
+    after: afterDefaultValue,
+    before: beforeDefaultValue,
+  }
+
+  new DateRangePicker(document.querySelector(`#${name}_${type}_doneBefore_widget`), {
+    defaultValue,
+    onChange: function({after, before}) {
+      doneAfterPickerEl.value = after.format('YYYY-MM-DD HH:mm:ss')
+      doneBeforePickerEl.value = before.format('YYYY-MM-DD HH:mm:ss')
+
+      store.dispatch({
+        type: 'SET_BEFORE',
+        taskIndex: getTaskIndex(type),
+        value: before.format()
+      })
+
+      store.dispatch({
+        type: 'SET_AFTER',
+        taskIndex: getTaskIndex(type),
+        value: after.format()
+      })
+    }
+  })
+}
+
+function createDatePickerWidget(name, type) {
   const datePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
   const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
 
@@ -155,8 +198,7 @@ function createDatePickerWidget(name, type, userAdmin) {
         taskIndex: getTaskIndex(type),
         value: date.format()
       })
-    },
-    allowPastDates: userAdmin, // admins are allowed to select a free date range
+    }
   })
 }
 
@@ -315,6 +357,11 @@ function reducer(state = {}, action) {
       ...state,
       tasks: replaceTasks(state, action.taskIndex, 'before', action.value),
     }
+  case 'SET_AFTER':
+      return {
+        ...state,
+        tasks: replaceTasks(state, action.taskIndex, 'after', action.value),
+      }
   case 'SET_WEIGHT':
     return {
       ...state,
@@ -397,7 +444,12 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
       }
     }
   })
-  createDatePickerWidget(name, taskForm, userAdmin)
+
+  if (userAdmin) {
+    createDateRangePickerWidget(name, taskForm)
+  } else {
+    createDatePickerWidget(name, taskForm)
+  }
 
   const tagsEl = document.querySelector(`#${name}_${taskForm}_tagsAsString`)
   if (tagsEl) {
