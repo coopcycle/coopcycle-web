@@ -237,9 +237,21 @@ class RestaurantController extends AbstractController
 
         $matches = array_values(array_filter($matches));
 
-        if ($request->query->has('geohash') && strlen($request->query->get('geohash')) > 0) {
+        if ($request->query->has('geohash') || $request->query->has('address')) {
+
+            if ($request->query->has('geohash') && strlen($request->query->get('geohash')) > 0) {
+                $geohash = $request->query->get('geohash');
+            } else if ($request->query->has('address') && strlen($request->query->get('address')) > 0) {
+                $address = base64_decode($request->query->get('address'));
+
+                if (!$address) {
+                    return;
+                }
+
+                $geohash = json_decode($address)->geohash;
+            }
+
             $geotools = new Geotools();
-            $geohash = $request->query->get('geohash');
 
             try {
 
@@ -296,7 +308,7 @@ class RestaurantController extends AbstractController
             'pages' => $pages,
             'geohash' => $request->query->get('geohash'),
             'addresses_normalized' => $this->getUserAddresses(),
-            'address' => $request->query->has('address') ? $request->query->get('address') : null,
+            'address' => $request->query->get('address'),
             'types' => $types,
             'cuisines' => $cuisines,
         ));
