@@ -2,6 +2,7 @@ import React, {useState, useRef, useEffect} from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
 import moment from 'moment'
 import Swiper, { Navigation } from 'swiper'
+import qs from 'qs'
 
 import { asText } from '../components/ShippingTimeRange'
 import { useIntersection } from '../hooks/useIntersection'
@@ -212,6 +213,8 @@ function submitFilter(e) {
 
       renderFulfillmentBadgeAfterAjax()
 
+      applyClickListenerForRestaurantItem()
+
       // update URL with applied filters
       const searchParams = new URLSearchParams($(e.target).closest('form').serialize())
       const path = `${$(e.target).closest('form').attr('path')}?${searchParams.toString()}`
@@ -231,3 +234,37 @@ $('.shops-side-bar-filters input[type=radio]').on('click', function (e) {
 $('.shops-side-bar-filters input[type=checkbox]').on('click', function (e) {
   submitFilter(e)
 });
+
+/**
+ * When the user clicks on a restaurant and
+ * there is no address scroll into the search bar, and ask for an address.
+ */
+function applyClickListenerForRestaurantItem() {
+  document.querySelectorAll('[data-restaurant-path]').forEach(el => {
+    el.addEventListener("click", function (e) {
+
+      const urlParams = qs.parse(window.location.search.substring(1))
+
+      // check if there is an address query param
+      if (!Object.prototype.hasOwnProperty.call(urlParams, 'address') || !urlParams.address) {
+        // if there is not an address do not navigate to restaurant page
+        e.preventDefault()
+
+        // scroll into the search bar and ask for an address
+        document.querySelectorAll('[data-search="address"]').forEach((container) => {
+          const el = container.querySelector('[data-element]')
+          if (el) {
+            el.scrollIntoView({behavior: "smooth"})
+            const inputEl = el.querySelector('input[type="search"]')
+            if (inputEl) {
+              inputEl.focus();
+            }
+          }
+        })
+      }
+
+    })
+  })
+}
+
+applyClickListenerForRestaurantItem()
