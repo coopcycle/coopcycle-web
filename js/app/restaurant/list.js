@@ -2,7 +2,6 @@ import React, {useState, useRef, useEffect} from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
 import moment from 'moment'
 import Swiper, { Navigation } from 'swiper'
-import qs from 'qs'
 
 import { asText } from '../components/ShippingTimeRange'
 import { useIntersection } from '../hooks/useIntersection'
@@ -243,10 +242,10 @@ function applyClickListenerForRestaurantItem() {
   document.querySelectorAll('[data-restaurant-path]').forEach(el => {
     el.addEventListener("click", function (e) {
 
-      const urlParams = qs.parse(window.location.search.substring(1))
+      const searchParams = new URLSearchParams(window.location.search);
 
       // check if there is an address query param
-      if (!Object.prototype.hasOwnProperty.call(urlParams, 'address') || !urlParams.address) {
+      if (!searchParams.has('address')) {
         // if there is not an address do not navigate to restaurant page
         e.preventDefault()
 
