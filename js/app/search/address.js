@@ -74,6 +74,19 @@ document.querySelectorAll('[data-search="address"]').forEach((container) => {
             geohashInput.value = address.geohash
             addressInput.value = btoa(JSON.stringify(address))
 
+            const searchParams = new URLSearchParams(window.location.search);
+
+            // submit form including existing filters applied
+            for (const [key, value] of searchParams.entries()) {
+              if (key !== 'geohash' || key !== 'address') {
+                const newInput = document.createElement('input')
+                newInput.setAttribute('type', 'hidden')
+                newInput.setAttribute('name', key)
+                newInput.value = value
+                form.appendChild(newInput)
+              }
+            }
+
             form.submit()
           }
 
