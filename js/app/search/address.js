@@ -37,6 +37,28 @@ document.querySelectorAll('[data-search="address"]').forEach((container) => {
         addresses={ addresses }
         restaurants={ restaurants }
         geohash={ store.get('search_geohash', '') }
+        onClear={ () => {
+          // clear geohash and address query params but keep others (filters)
+          const addressInput = form.querySelector('input[name="address"]')
+          const geohashInput = form.querySelector('input[name="geohash"]')
+
+          addressInput.parentNode.removeChild(addressInput)
+          geohashInput.parentNode.removeChild(geohashInput)
+
+          const searchParams = new URLSearchParams(window.location.search);
+          searchParams.delete('geohash')
+          searchParams.delete('address')
+
+          for (const [key, value] of searchParams.entries()) {
+            const newInput = document.createElement('input')
+            newInput.setAttribute('type', 'hidden')
+            newInput.setAttribute('name', key)
+            newInput.value = value
+            form.appendChild(newInput)
+          }
+
+          form.submit()
+        }}
         onAddressSelected={ (value, address) => {
 
           const addressInput = form.querySelector('input[name="address"]')
