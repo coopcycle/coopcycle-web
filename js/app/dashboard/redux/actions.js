@@ -1366,3 +1366,41 @@ export function removeTasksFromGroup(tasks) {
       .catch(error => console.log(error))
   }
 }
+
+export function createDelivery(tasks) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    createClient(dispatch).request({
+      method: 'post',
+      url: '/api/deliveries/from_tasks',
+      data: {
+        tasks: _.map(tasks, t => t['@id'])
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      // eslint-disable-next-line no-unused-vars
+      .then((response) => {
+
+        const pickup = _.find(tasks, t => t.type === 'PICKUP')
+        const dropoffs = _.without(tasks, pickup)
+        const dropoffsWithPrevious = _.map(dropoffs, t => {
+          return {
+            ...t,
+            previous: pickup['@id'],
+          }
+        })
+
+        dropoffsWithPrevious.forEach(t => dispatch(updateTask(t)))
+
+      })
+      // eslint-disable-next-line no-console
+      .catch(error => console.log(error))
+  }
+}
