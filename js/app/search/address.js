@@ -78,7 +78,7 @@ document.querySelectorAll('[data-search="address"]').forEach((container) => {
 
             // submit form including existing filters applied
             for (const [key, value] of searchParams.entries()) {
-              if (key !== 'geohash' || key !== 'address') {
+              if (key !== 'geohash' && key !== 'address') {
                 const newInput = document.createElement('input')
                 newInput.setAttribute('type', 'hidden')
                 newInput.setAttribute('name', key)
