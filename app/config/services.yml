@@ -856,6 +856,7 @@ services:
   AppBundle\Api\DataTransformer\RestaurantInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RemotePushTokenInputDataTransformer: ~
   AppBundle\Api\DataTransformer\UrbantzWebhookInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\ArrayOfTasksInputDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:

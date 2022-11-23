@@ -9,6 +9,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
+use AppBundle\Api\Dto\ArrayOfTasksInput;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Package\PackagesAwareInterface;
@@ -50,6 +51,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *         "summary"="Asserts a Delivery is feasible",
  *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
  *       }
+ *     },
+ *     "from_tasks"={
+ *       "method"="POST",
+ *       "path"="/deliveries/from_tasks",
+ *       "input"=ArrayOfTasksInput::class,
+ *       "denormalization_context"={"groups"={"delivery_create"}}
  *     }
  *   },
  *   itemOperations={
