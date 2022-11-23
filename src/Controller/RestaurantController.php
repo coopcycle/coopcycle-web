@@ -239,6 +239,8 @@ class RestaurantController extends AbstractController
 
         if ($request->query->has('geohash') || $request->query->has('address')) {
 
+            $geohash = null;
+
             if ($request->query->has('geohash') && strlen($request->query->get('geohash')) > 0) {
                 $geohash = $request->query->get('geohash');
             } else if ($request->query->has('address') && strlen($request->query->get('address')) > 0) {
@@ -251,7 +253,7 @@ class RestaurantController extends AbstractController
                 $geohash = json_decode($address)->geohash;
             }
 
-            if ($geohash) {
+            if (null !== $geohash) {
                 $geotools = new Geotools();
 
                 try {
