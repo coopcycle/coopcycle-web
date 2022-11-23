@@ -251,19 +251,21 @@ class RestaurantController extends AbstractController
                 $geohash = json_decode($address)->geohash;
             }
 
-            $geotools = new Geotools();
+            if ($geohash) {
+                $geotools = new Geotools();
 
-            try {
+                try {
 
-                $decoded = $geotools->geohash()->decode($geohash);
+                    $decoded = $geotools->geohash()->decode($geohash);
 
-                $latitude = $decoded->getCoordinate()->getLatitude();
-                $longitude = $decoded->getCoordinate()->getLongitude();
+                    $latitude = $decoded->getCoordinate()->getLatitude();
+                    $longitude = $decoded->getCoordinate()->getLongitude();
 
-                $matches = $this->restaurantFilter->matchingLatLng($matches, $latitude, $longitude);
+                    $matches = $this->restaurantFilter->matchingLatLng($matches, $latitude, $longitude);
 
-            } catch (\InvalidArgumentException|\RuntimeException $e) {
-                // Some funny guys may have tried a SQL injection
+                } catch (\InvalidArgumentException|\RuntimeException $e) {
+                    // Some funny guys may have tried a SQL injection
+                }
             }
         }
 
