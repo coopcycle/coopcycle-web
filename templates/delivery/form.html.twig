@@ -25,7 +25,7 @@
 {% set delivery = form.vars.value %}
 {% set is_new = delivery.id is null %}
 
-{{ form_start(form, { attr: { 'data-store': delivery.store is not empty ? delivery.store|get_iri_from_item : null } }) }}
+{{ form_start(form, { attr: { 'data-store': delivery.store is not empty ? delivery.store|get_iri_from_item : null, 'data-user-admin': is_granted('ROLE_ADMIN') } }) }}
 
   {% if is_granted('ROLE_ADMIN') and not is_new and delivery.order is not empty %}
     {% include '_partials/delivery/order_alert.html.twig' with { order: delivery.order } %}

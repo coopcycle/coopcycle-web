@@ -73,7 +73,7 @@ class DateTimePicker extends React.Component {
   }
 
   disabledDate(date) {
-    if (date) {
+    if (date && !this.props.allowPastDates) {
       return date.isBefore(today)
     }
   }
@@ -107,7 +107,7 @@ class DateTimePicker extends React.Component {
       <div>
         <Form.Item {...formItemProps}>
           <DatePicker
-            disabledDate={this.disabledDate}
+            disabledDate={this.disabledDate.bind(this)}
             onChange={this.onDateChange.bind(this)}
             format={dateFormat}
             placeholder="Date"

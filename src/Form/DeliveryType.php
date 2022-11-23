@@ -84,7 +84,15 @@ class DeliveryType extends AbstractType
                 $dropoffBefore = clone $pickupBefore;
                 $dropoffBefore->modify('+1 hour');
 
+                $pickupAfter = clone $pickupBefore;
+                $pickupBefore->modify('-15 minute');
+
+                $dropoffAfter = clone $dropoffBefore;
+                $dropoffAfter->modify('-15 minute');
+
                 $delivery->getPickup()->setDoneBefore($pickupBefore);
+                $delivery->getPickup()->setDoneAfter($pickupAfter);
+                $delivery->getDropoff()->setDoneAfter($dropoffAfter);
                 $delivery->getDropoff()->setDoneBefore($dropoffBefore);
             }
 
@@ -175,6 +183,12 @@ class DeliveryType extends AbstractType
      */
     private function getTimeSlot(array $options, ?Store $store = null): ?TimeSlot
     {
+        // See https://github.com/coopcycle/coopcycle-web/issues/3465
+        // For admin users we do not show timeslots dropdown, now we show a date picker so they can select a free range
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) { //check if user is administrator
+            return null;
+        }
+
         if (null !== $options['with_time_slot']) {
 
             return $options['with_time_slot'];
@@ -193,6 +207,12 @@ class DeliveryType extends AbstractType
      */
     private function getTimeSlots(array $options, ?Store $store = null)
     {
+        // See https://github.com/coopcycle/coopcycle-web/issues/3465
+        // For admin users we do not show timeslots dropdown, now we show a date picker so they can select a free range
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) { //check if user is administrator
+            return null;
+        }
+
         if (null !== $options['with_time_slots']) {
 
             return $options['with_time_slots'];
