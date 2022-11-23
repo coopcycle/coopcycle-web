@@ -47,8 +47,8 @@ class AddressValueResolver implements ArgumentValueResolverInterface
 
         $user = $this->security->getUser();
 
-        $data = base64_decode($value);
-        $data = get_object_vars(json_decode($data));
+        $data = urldecode(base64_decode($value));
+        $data = json_decode($data, true);
 
         $address = null;
 

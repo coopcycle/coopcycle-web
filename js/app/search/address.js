@@ -11,7 +11,7 @@ function resolveAddress(form) {
   const addressInput = form.querySelector('input[name="address"]')
 
   if (addressInput && addressInput.value) {
-    return JSON.parse(atob(addressInput.value))
+    return JSON.parse(decodeURIComponent(atob(addressInput.value)))
   }
 
 }
@@ -72,7 +72,7 @@ document.querySelectorAll('[data-search="address"]').forEach((container) => {
             }
 
             geohashInput.value = address.geohash
-            addressInput.value = btoa(JSON.stringify(address))
+            addressInput.value = btoa(encodeURIComponent(JSON.stringify(address)))
 
             const searchParams = new URLSearchParams(window.location.search);
 

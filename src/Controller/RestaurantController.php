@@ -242,7 +242,7 @@ class RestaurantController extends AbstractController
             if ($request->query->has('geohash') && strlen($request->query->get('geohash')) > 0) {
                 $geohash = $request->query->get('geohash');
             } else if ($request->query->has('address') && strlen($request->query->get('address')) > 0) {
-                $address = base64_decode($request->query->get('address'));
+                $address = urldecode(base64_decode($request->query->get('address')));
 
                 if (!$address) {
                     return;
