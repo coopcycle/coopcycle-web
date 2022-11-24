@@ -301,6 +301,9 @@
         "SEARCH_ORDER_NUMBER_ERROR": "Enter a valid order number",
         "ADD_PRODUCTS_TO_ORDER_TITLE": "Add products to order #{{number}}",
         "ADMIN_DASHBOARD_CREATE_DELIVERY": "Create delivery",
-        "ADMIN_DASHBOARD_CHOOSE_STORE_LABEL": "Choose a store"
+        "ADMIN_DASHBOARD_CHOOSE_STORE_LABEL": "Choose a store",
+        "SEARCH_SHOPS": "Shops",
+        "SEARCH_PRODUCTS": "Products",
+        "SEARCH_PRODUCT_ITEM_SUBTITLE": "In {{- shop}}"
     }
 }

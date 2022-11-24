@@ -298,5 +298,6 @@ security:
         - { path: ^/api/settings, roles: PUBLIC_ACCESS }
         - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
         - { path: ^/api/restaurants, roles: PUBLIC_ACCESS, methods: [ GET ] }
+        - { path: ^/api/search/shops_products, roles: PUBLIC_ACCESS, methods: [ GET ] }
         - { path: ^/api/carts/session$, roles: PUBLIC_ACCESS, methods: [ POST ] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
