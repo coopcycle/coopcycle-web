@@ -64,6 +64,7 @@ parameters:
     dv4cul_enabled: '%env(bool:DV4CUL_ENABLED)%'
     typesense_schemas_dir: "%kernel.project_dir%/src/Resources/config/typesense/schemas"
     typesense_shops_collection_name: "%database_name%_shops"
+    typesense_products_collection_name: "%database_name%_products"
     dabba_enabled: '%env(bool:DABBA_ENABLED)%'
     dabba_base_url: '%env(DABBA_BASE_URL)%'
     dabba_client_id: '%env(DABBA_CLIENT_ID)%'
@@ -956,3 +957,32 @@ doctrine_migrations:
             table_name: migration_versions
             version_column_name: version
             executed_at_column_name: executed_at
+
+acseo_typesense:
+    typesense:
+        url: 'http://%env(TYPESENSE_HOST)%:%env(TYPESENSE_PORT)%'
+        key: '%env(TYPESENSE_API_KEY)%'
+        collection_prefix: '%database_name%_'
+    collections:
+        products:
+            entity: 'AppBundle\Entity\Sylius\Product'
+            fields:
+                id:
+                    name: id
+                    type: primary
+                sortable_id:
+                    entity_attribute: id
+                    name: sortable_id
+                    type: int32
+                name:
+                    name: name
+                    type: string
+            default_sorting_field: sortable_id
+            finders:
+                products_autocomplete:
+                    finder_parameters:
+                        query_by: title
+                        limit: 10
+                        prefix: true
+                        num_typos: 1
+                        drop_tokens_threshold: 1
