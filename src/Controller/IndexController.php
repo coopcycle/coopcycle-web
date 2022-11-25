@@ -27,6 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use AppBundle\Typesense\ShopsClient as TypesenseShopsClient;
 
 class IndexController extends AbstractController
 {
@@ -79,8 +80,21 @@ class IndexController extends AbstractController
     public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache,
         TimingRegistry $timingRegistry,
         UrlGeneratorInterface $urlGenerator,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        TypesenseShopsClient $shopsClient)
     {
+
+        $result = $shopsClient->search([
+            'q'         => '*',
+            'query_by'  => 'category,cuisine,type',
+            'facet_by'  => 'category,cuisine,type'
+            'filter_by' => 'enabled:true',
+        ]);
+
+        echo '<pre>';
+        print_r($result);
+        exit;
+
         $user = $this->getUser();
 
         if ($user && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_RESTAURANT'))) {
