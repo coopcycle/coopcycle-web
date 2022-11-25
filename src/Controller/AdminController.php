@@ -1013,6 +1013,20 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/deliveries/pricing/{id}/duplicate", name="admin_deliveries_pricing_ruleset_duplicate")
+     */
+    public function duplicatePricingRuleSetAction($id, Request $request)
+    {
+        $ruleSet = $this->getDoctrine()
+            ->getRepository(Delivery\PricingRuleSet::class)
+            ->find($id);
+
+        $duplicated = $ruleSet->duplicate($this->translator);
+
+        return $this->renderPricingRuleSetForm($duplicated, $request);
+    }
+
+    /**
      * @Route("/admin/zones/{id}/delete", methods={"POST"}, name="admin_zone_delete")
      */
     public function deleteZoneAction($id)
