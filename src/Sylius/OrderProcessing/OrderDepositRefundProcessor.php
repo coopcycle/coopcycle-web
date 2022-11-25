@@ -37,7 +37,7 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
         $restaurant = $order->getRestaurant();
 
         if ($restaurant->isDepositRefundOptin()) {
-            if (!$restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {
+            if (!$restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled() && !$restaurant->isDabbaEnabled()) {
                 return;
             }
             if (!$order->isReusablePackagingEnabled()) {

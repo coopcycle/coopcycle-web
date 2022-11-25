@@ -575,7 +575,7 @@ class LocalBusiness extends BaseLocalBusiness implements
      */
     public function isDepositRefundOptin(): bool
     {
-        if ($this->isLoopeatEnabled()) {
+        if ($this->isLoopeatEnabled() || $this->isDabbaEnabled()) {
 
             return true;
         }
