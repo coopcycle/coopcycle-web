@@ -81,6 +81,8 @@ adminDashboard.settings.title: Settings
 adminDashboard.pricing.title: Pricing
 adminDashboard.pricing.manage: Manage
 adminDashboard.pricing.settings: Settings
+adminDashboard.pricing.duplicate: Duplicate
+adminDashboard.pricing.copyOf: Copy of %rule_set_name%
 adminDashboard.pricing.noPricings: There are no pricings yet
 adminDashboard.pricing.createNew: Create a new pricing
 adminDashboard.pricing.noRuleFound: No pricing rule found. Pricing rules define how

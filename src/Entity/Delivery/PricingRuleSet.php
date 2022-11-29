@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PricingRuleSet
 {
@@ -81,4 +82,27 @@ class PricingRuleSet
 
         return $this;
     }
+
+    public function duplicate(TranslatorInterface $translator)
+    {
+        $ruleSet = new self();
+
+        $translatedName = $translator->trans('adminDashboard.pricing.copyOf', [
+            '%rule_set_name%' => $this->getName(),
+        ]);
+
+        $ruleSet->setName($translatedName);
+
+        $rules = new ArrayCollection();
+        foreach ($this->getRules() as $rule) {
+            // do not assign same rule reference
+            $rules->add(clone $rule);
+        }
+        $ruleSet->setRules($rules);
+
+        $ruleSet->setStrategy($this->getStrategy());
+
+        return $ruleSet;
+    }
+
 }
