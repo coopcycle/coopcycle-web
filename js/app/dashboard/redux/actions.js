@@ -175,6 +175,9 @@ export const REMOVE_TASKS_FROM_GROUP_SUCCESS = 'REMOVE_TASKS_FROM_GROUP_SUCCESS'
 export const CREATE_GROUP_REQUEST = 'CREATE_GROUP_REQUEST'
 export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
 
+export const OPEN_CREATE_DELIVERY_MODAL = 'OPEN_CREATE_DELIVERY_MODAL'
+export const CLOSE_CREATE_DELIVERY_MODAL = 'CLOSE_CREATE_DELIVERY_MODAL'
+
 export function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
 }
@@ -1367,7 +1370,7 @@ export function removeTasksFromGroup(tasks) {
   }
 }
 
-export function createDelivery(tasks) {
+export function createDelivery(tasks, store) {
 
   return function(dispatch, getState) {
 
@@ -1377,7 +1380,8 @@ export function createDelivery(tasks) {
       method: 'post',
       url: '/api/deliveries/from_tasks',
       data: {
-        tasks: _.map(tasks, t => t['@id'])
+        tasks: _.map(tasks, t => t['@id']),
+        store: store['@id'],
       },
       headers: {
         'Authorization': `Bearer ${jwt}`,
@@ -1399,8 +1403,21 @@ export function createDelivery(tasks) {
 
         dropoffsWithPrevious.forEach(t => dispatch(updateTask(t)))
 
+        dispatch(closeCreateDeliveryModal())
+
       })
-      // eslint-disable-next-line no-console
-      .catch(error => console.log(error))
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.log(error)
+        dispatch(closeCreateDeliveryModal())
+      })
   }
+}
+
+export function openCreateDeliveryModal() {
+  return { type: OPEN_CREATE_DELIVERY_MODAL }
+}
+
+export function closeCreateDeliveryModal() {
+  return { type: CLOSE_CREATE_DELIVERY_MODAL }
 }

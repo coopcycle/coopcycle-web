@@ -6,7 +6,7 @@ import { Menu, Item } from 'react-contexify'
 
 import moment from 'moment'
 
-import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, createDelivery } from '../redux/actions'
+import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal } from '../redux/actions'
 import { selectNextWorkingDay, selectSelectedTasks, selectLinkedTasksIds } from '../redux/selectors'
 
 const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
@@ -34,7 +34,7 @@ function _unassign(tasksToUnassign, unassignTasks) {
 const DynamicMenu = ({
   unassignedTasks, selectedTasks, nextWorkingDay, linkedTasksIds,
   unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
-  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, createDelivery
+  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal,
 }) => {
 
   const { t } = useTranslation()
@@ -186,7 +186,7 @@ const DynamicMenu = ({
       </Item>
       <Item
         hidden={ !actions.includes(CREATE_DELIVERY) }
-        onClick={ () => createDelivery(selectedTasks) }
+        onClick={ () => openCreateDeliveryModal() }
       >
         { t('ADMIN_DASHBOARD_CREATE_DELIVERY') }
       </Item>
@@ -221,7 +221,7 @@ function mapDispatchToProps(dispatch) {
     openAddTaskToGroupModal: tasks => dispatch(openAddTaskToGroupModal(tasks)),
     removeTasksFromGroup: tasks => dispatch(removeTasksFromGroup(tasks)),
     restoreTasks: tasks => dispatch(restoreTasks(tasks)),
-    createDelivery: tasks => dispatch(createDelivery(tasks)),
+    openCreateDeliveryModal: () => dispatch(openCreateDeliveryModal()),
   }
 }
 
