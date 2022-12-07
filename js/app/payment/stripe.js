@@ -69,7 +69,7 @@ const CardholderNameInput = ({ onChange }) => {
   )
 }
 
-const StripeForm = ({ onChange, onCardholderNameChange, options, country }) => {
+const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards }) => {
 
   const { t } = useTranslation()
 
@@ -80,6 +80,22 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country }) => {
 
   return (
     <React.Fragment>
+      { cards && cards.length &&
+        <div className="form-group">
+          {
+            cards.map((c) => {
+              return (
+                <li key={c.id}>
+                  <input type="radio" id={c.id} value={c.id} className="mr-2"></input>
+                  <label>
+                    {c.card.brand.toUpperCase()} | XXXX - XXXX - XXXX - { c.card.last4 } | { c.card.exp_month }/{ c.card.exp_year }
+                  </label>
+                </li>
+              )
+            })
+          }
+        </div>
+      }
       <div className="form-group">
         <CardholderNameInput onChange={ onCardholderNameChange } />
       </div>
@@ -123,20 +139,9 @@ const GiropayForm = ({ onCardholderNameChange }) => {
 
 export default {
   init() {
-
-    let stripeOptions = {}
-
-    if (this.config.gatewayConfig.account) {
-      stripeOptions = {
-        ...stripeOptions,
-        stripeAccount: this.config.gatewayConfig.account,
-      }
-    }
-
-    // @see https://stripe.com/docs/payments/payment-methods/connect#creating-paymentmethods-directly-on-the-connected-account
-    this.stripe = Stripe(this.config.gatewayConfig.publishableKey, stripeOptions)
+    this.stripe = Stripe(this.config.gatewayConfig.publishableKey)
   },
-  mount(el, method, options) {
+  async mount(el, method, options) {
 
     this.cardholderName = ''
     this.el = el
@@ -152,6 +157,8 @@ export default {
             }} />, el, resolve)
       })
     }
+
+    const resultCards = await axios.get(this.config.gatewayConfig.customerPaymentMethodsURL)
 
     return new Promise((resolve) => {
 
@@ -171,7 +178,8 @@ export default {
                 onCardholderNameChange={ cardholderName => {
                   this.cardholderName = cardholderName
                 }}
-                options={ options } />
+                options={ options }
+                cards={ resultCards.data.cards.data } />
             )
           }}
           </ElementsConsumer>
@@ -187,36 +195,57 @@ export default {
   createToken() {
     return new Promise((resolve, reject) => {
 
-      this.stripe.createPaymentMethod({
-        type: 'card',
-        card: this.elements.getElement(CardElement),
-        billing_details: {
-          name: this.cardholderName,
-        }
-      }).then((createPaymentMethodResult) => {
-        if (createPaymentMethodResult.error) {
-          reject(new Error(createPaymentMethodResult.error.message))
-        } else {
-          axios.post(this.config.gatewayConfig.createPaymentIntentURL, {
-            payment_method_id: createPaymentMethodResult.paymentMethod.id
-          }).then((response) => {
-            if (response.data.error) {
-              reject(new Error(response.data.error.message))
-            } else {
-              handleServerResponse(response.data, this.stripe)
-                .then(paymentIntentId => resolve(paymentIntentId))
-                .catch(e => reject(new Error(e.error.message)))
+      // TODO get this value from some form field!!
+      const savePaymentMethod = false
+
+      // Create a SetupIntent which represents your intent to set up a customer’s payment method to pay now or for future payments.
+      axios.post(this.config.gatewayConfig.createCustomerSetupIntentURL, {
+        save_payment_method: savePaymentMethod,
+      })
+        .then((result) => {
+          // submit payment method details to Stripe
+          this.stripe.confirmCardSetup(
+            result.data.setup_intent.client_secret, {
+              payment_method: {
+                card: this.elements.getElement(CardElement),
+                billing_details: {
+                  name: this.cardholderName,
+                }
+              }
             }
-          }).catch(e => {
-            // https://github.com/axios/axios#handling-errors
-            if (e.response) {
-              reject(new Error(e.response.data.error.message))
+          ).then((result) => {
+            if (result.error) {
+              reject(new Error(result.error.message))
             } else {
-              reject(new Error('An unexpected error occurred, please try again later'))
+                axios.post(this.config.gatewayConfig.shareCardToConnectedAccountURL, {
+                  payment_method: result.setupIntent.payment_method,
+                  save_payment_method: savePaymentMethod,
+                })
+                  .then((result) => {
+                    axios.post(this.config.gatewayConfig.createPaymentIntentURL, {
+                      payment_method_id: result.data.shared_card.id
+                    })
+                      .then((response) => {
+                        if (response.data.error) {
+                          reject(new Error(response.data.error.message))
+                        } else {
+                          handleServerResponse(response.data, this.stripe)
+                            .then(paymentIntentId => resolve(paymentIntentId))
+                            .catch(e => reject(new Error(e.error.message)))
+                        }
+                      })
+                  })
             }
           })
-        }
-      })
+        })
+        .catch(e => {
+          // https://github.com/axios/axios#handling-errors
+          if (e.response) {
+            reject(new Error(e.response.data.error.message))
+          } else {
+            reject(new Error('An unexpected error occurred, please try again later'))
+          }
+        })
     })
   },
   // @see https://stripe.com/docs/payments/giropay/accept-a-payment#confirm-giropay-payment

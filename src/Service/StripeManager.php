@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\User;
 use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
 use Stripe;
@@ -293,5 +294,67 @@ class StripeManager
                 }
             }
         }
+    }
+
+    /**
+     * @return Stripe\Customer
+     */
+    public function findOrCreateCustomer(User $user)
+    {
+        if (null !== $user->getStripeCustomerId()) {
+            return Stripe\Customer::retrieve($user->getStripeCustomerId());
+        }
+
+        // create customer on Platform Account
+        $customer =  Stripe\Customer::create([
+            'email' => $user->getEmail(),
+            'name' => $user->getUserName()
+        ]);
+
+        $user->setStripeCustomerId($customer->id);
+
+        return $customer;
+    }
+
+    /**
+     * @return Stripe\SetupIntent
+     */
+    public function createSetupIntent(Stripe\Customer $customer = null)
+    {
+        $payload = [
+            'payment_method_types' => ['card'],
+        ];
+
+        if (null !== $customer) {
+            $payload['customer'] = $customer->id;
+        }
+
+        $intent = Stripe\SetupIntent::create($payload);
+        // check param usage: on_session, off_session
+
+        return $intent;
+    }
+
+    public function clonePaymentMethodToConnectedAccount(PaymentInterface $payment, $paymentMethod)
+    {
+        $options = $this->getStripeOptions($payment);
+
+        $order = $payment->getOrder();
+        $user = $order->getCustomer()->getUser();
+
+        $payload = [
+            'payment_method' => $paymentMethod,
+        ];
+
+        if (null !== $user->getStripeCustomerId()) {
+            $payload['customer'] = $user->getStripeCustomerId();
+        }
+
+        return Stripe\PaymentMethod::create($payload, $options);
+    }
+
+    public function getCustomerPaymentMethods($customerId)
+    {
+        return Stripe\Customer::allPaymentMethods($customerId, ['type' => 'card']);
     }
 }

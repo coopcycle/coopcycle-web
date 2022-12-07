@@ -119,6 +119,9 @@
     publishableKey: coopcycle_setting('stripe_publishable_key'),
     account: payment.stripeUserId ? payment.stripeUserId : null,
     createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid }),
+    createCustomerSetupIntentURL: path('stripe_customer_setup_intent', { hashId: payment|hashid }),
+    shareCardToConnectedAccountURL: path('stripe_share_payment_method', { hashId: payment|hashid }),
+    customerPaymentMethodsURL: path('stripe_customer_payment_methods', { hashId: order.customer|hashid }),
     createGiropayPaymentIntentURL: path('stripe_create_giropay_payment_intent', { hashId: payment|hashid }),
   }
 }) %}
