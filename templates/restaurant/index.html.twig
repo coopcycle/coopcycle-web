@@ -54,7 +54,7 @@
           <span>{% trans %}index.view_all_shops{% endtrans %}</span>
         </a>
       {% else %}
-        <a class="restaurant-show-more" href="{{ path('restaurants') }}">
+        <a class="restaurant-show-more" href="{{ path('restaurants', app.request.query.all()) }}">
           <i class="fa fa-arrow-left mr-2"></i>
           <span>{% trans %}index.view_all_restaurants{% endtrans %}</span>
         </a>

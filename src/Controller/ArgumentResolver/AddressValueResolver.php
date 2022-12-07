@@ -6,6 +6,7 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
 use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Base\GeoCoordinates;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -46,27 +47,35 @@ class AddressValueResolver implements ArgumentValueResolverInterface
 
         $user = $this->security->getUser();
 
-        if (!is_object($user)) {
-            // e.g. anonymous authentication
-            return yield null;
+        $data = urldecode(base64_decode($value));
+        $data = json_decode($data, true);
+
+        $address = null;
+
+        if (is_object($user) && count($user->getAddresses()) > 0 && isset($data['@id'])) {
+            try {
+                $address = $this->iriConverter->getItemFromIri($data['@id']);
+
+                if ($user->getAddresses()->contains($address)) {
+                    return yield $address;
+                }
+            } catch (InvalidArgumentException | ItemNotFoundException $e) {}
         }
 
-        if (count($user->getAddresses()) === 0) {
-            return yield null;
-        }
+        if (isset($data['streetAddress'])) {
+            $address = new Address();
 
-        try {
+            $address->setStreetAddress($data['streetAddress']);
 
-            $address = $this->iriConverter->getItemFromIri(
-                base64_decode($value)
-            );
+            $longitude = $data['longitude'];
+            $latitude = $data['latitude'];
 
-            if ($user->getAddresses()->contains($address)) {
-
-                return yield $address;
+            if ($latitude && $longitude) {
+                $address->setGeo(new GeoCoordinates($latitude, $longitude));
             }
 
-        } catch (InvalidArgumentException | ItemNotFoundException $e) {}
+            return yield $address;
+        }
 
         yield null;
     }
