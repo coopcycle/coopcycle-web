@@ -86,6 +86,14 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
           return false;
         }
 
-        return in_array($to, [ RetailPrice::class, DeliveryQuote::class ]) && null !== ($context['input']['class'] ?? null);
+        if ($data instanceof DeliveryQuote) {
+          return false;
+        }
+
+        if ($data instanceof Delivery) {
+          return false;
+        }
+
+        return in_array($to, [ RetailPrice::class, DeliveryQuote::class, Delivery::class ]) && null !== ($context['input']['class'] ?? null);
     }
 }
