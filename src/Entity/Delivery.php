@@ -56,7 +56,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "method"="POST",
  *       "path"="/deliveries/from_tasks",
  *       "input"=DeliveryInput::class,
- *       "denormalization_context"={"groups"={"delivery_create"}}
+ *       "denormalization_context"={"groups"={"delivery_create_from_tasks"}},
+ *       "security"="is_granted('ROLE_ADMIN')"
  *     }
  *   },
  *   itemOperations={
