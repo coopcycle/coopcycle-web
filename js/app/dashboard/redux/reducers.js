@@ -51,6 +51,8 @@ import {
   OPEN_ADD_TASK_TO_GROUP_MODAL,
   CLOSE_ADD_TASK_TO_GROUP_MODAL,
   RESTORE_TASK_FAILURE,
+  OPEN_CREATE_DELIVERY_MODAL,
+  CLOSE_CREATE_DELIVERY_MODAL,
 } from './actions'
 
 import {
@@ -81,6 +83,7 @@ const initialState = {
   recurrenceRulesErrorMessage: '',
   exportModalIsOpen: false,
   createGroupModalIsOpen: false,
+  isCreateDeliveryModalVisible: false,
 }
 
 export const addModalIsOpen = (state = false, action) => {
@@ -451,6 +454,17 @@ export const addTaskToGroupModalIsOpen = (state = false, action) => {
   case OPEN_ADD_TASK_TO_GROUP_MODAL:
     return true
   case CLOSE_ADD_TASK_TO_GROUP_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
+export const isCreateDeliveryModalVisible = (state = initialState.isCreateDeliveryModalVisible, action) => {
+  switch (action.type) {
+  case OPEN_CREATE_DELIVERY_MODAL:
+    return true
+  case CLOSE_CREATE_DELIVERY_MODAL:
     return false
   default:
     return state

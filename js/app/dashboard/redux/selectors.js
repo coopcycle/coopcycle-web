@@ -10,6 +10,7 @@ import { moment } from '../../coopcycle-frontend-js'
 import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter, taskAdapter } from '../../coopcycle-frontend-js/logistics/redux'
 import { filter, forEach, find, reduce, map, differenceWith, includes, mapValues } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
+import { taskUtils } from '../../coopcycle-frontend-js/logistics/redux';
 
 const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
 const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
@@ -285,3 +286,11 @@ export const selectVisiblePickupTasks = createSelector(
 )
 
 export const selectRestaurantAddressIds = state => state.config.pickupClusterAddresses
+
+export const selectLinkedTasksIds = createSelector(
+  taskSelectors.selectAll,
+  (tasks) => {
+    const groups = taskUtils.groupLinkedTasks(tasks)
+    return Object.keys(groups)
+  }
+)

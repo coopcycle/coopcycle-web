@@ -299,6 +299,8 @@
         "ORDER_NUMBER": "Order number",
         "CONTINUE_EXISTING_ORDER": "Continue an existing order",
         "SEARCH_ORDER_NUMBER_ERROR": "Enter a valid order number",
-        "ADD_PRODUCTS_TO_ORDER_TITLE": "Add products to order #{{number}}"
+        "ADD_PRODUCTS_TO_ORDER_TITLE": "Add products to order #{{number}}",
+        "ADMIN_DASHBOARD_CREATE_DELIVERY": "Create delivery",
+        "ADMIN_DASHBOARD_CHOOSE_STORE_LABEL": "Choose a store"
     }
 }

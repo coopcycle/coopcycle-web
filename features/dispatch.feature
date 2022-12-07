@@ -458,3 +458,86 @@ Feature: Dispatch
         "@*@":"@*@"
       }
       """
+
+  Scenario: Create delivery from tasks
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/deliveries/from_tasks" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/4",
+          "/api/tasks/5"
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+         "@context":"/api/contexts/Delivery",
+         "@id":@string@,
+         "@type":"http://schema.org/ParcelDelivery",
+         "id":@integer@,
+         "pickup":{
+            "@id":"/api/tasks/4",
+            "@type":"Task",
+            "id":4,
+            "@*@":"@*@"
+         },
+         "dropoff":{
+            "@id":"/api/tasks/5",
+            "@type":"Task",
+            "id":5,
+            "@*@":"@*@"
+         },
+         "trackingUrl":@string@
+      }
+      """
+
+  Scenario: Create delivery from tasks (multiple)
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/deliveries/from_tasks" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/4",
+          "/api/tasks/5",
+          "/api/tasks/8"
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+         "@context":"/api/contexts/Delivery",
+         "@id":@string@,
+         "@type":"http://schema.org/ParcelDelivery",
+         "id":@integer@,
+         "pickup":{
+            "@id":"/api/tasks/4",
+            "@type":"Task",
+            "id":4,
+            "@*@":"@*@"
+         },
+         "dropoff":{
+            "@id":"/api/tasks/8",
+            "@type":"Task",
+            "id":8,
+            "@*@":"@*@"
+         },
+         "trackingUrl":@string@
+      }
+      """

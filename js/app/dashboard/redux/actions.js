@@ -175,6 +175,9 @@ export const REMOVE_TASKS_FROM_GROUP_SUCCESS = 'REMOVE_TASKS_FROM_GROUP_SUCCESS'
 export const CREATE_GROUP_REQUEST = 'CREATE_GROUP_REQUEST'
 export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
 
+export const OPEN_CREATE_DELIVERY_MODAL = 'OPEN_CREATE_DELIVERY_MODAL'
+export const CLOSE_CREATE_DELIVERY_MODAL = 'CLOSE_CREATE_DELIVERY_MODAL'
+
 export function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
 }
@@ -1365,4 +1368,56 @@ export function removeTasksFromGroup(tasks) {
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))
   }
+}
+
+export function createDelivery(tasks, store) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    createClient(dispatch).request({
+      method: 'post',
+      url: '/api/deliveries/from_tasks',
+      data: {
+        tasks: _.map(tasks, t => t['@id']),
+        store: store['@id'],
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      // eslint-disable-next-line no-unused-vars
+      .then((response) => {
+
+        const pickup = _.find(tasks, t => t.type === 'PICKUP')
+        const dropoffs = _.without(tasks, pickup)
+        const dropoffsWithPrevious = _.map(dropoffs, t => {
+          return {
+            ...t,
+            previous: pickup['@id'],
+          }
+        })
+
+        dropoffsWithPrevious.forEach(t => dispatch(updateTask(t)))
+
+        dispatch(closeCreateDeliveryModal())
+
+      })
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.log(error)
+        dispatch(closeCreateDeliveryModal())
+      })
+  }
+}
+
+export function openCreateDeliveryModal() {
+  return { type: OPEN_CREATE_DELIVERY_MODAL }
+}
+
+export function closeCreateDeliveryModal() {
+  return { type: CLOSE_CREATE_DELIVERY_MODAL }
 }

@@ -10,7 +10,7 @@ final class DeliveryInput
 {
     /**
      * @var Store|null
-     * @Groups({"pricing_deliveries"})
+     * @Groups({"pricing_deliveries", "delivery_create_from_tasks"})
      */
     public $store;
 
@@ -40,7 +40,7 @@ final class DeliveryInput
 
     /**
      * @var Task[]
-     * @Groups({"delivery_create"})
+     * @Groups({"delivery_create", "delivery_create_from_tasks"})
      */
     public $tasks;
 }

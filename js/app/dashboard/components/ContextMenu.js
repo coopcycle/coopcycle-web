@@ -6,8 +6,8 @@ import { Menu, Item } from 'react-contexify'
 
 import moment from 'moment'
 
-import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks } from '../redux/actions'
-import { selectNextWorkingDay, selectSelectedTasks } from '../redux/selectors'
+import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal } from '../redux/actions'
+import { selectNextWorkingDay, selectSelectedTasks, selectLinkedTasksIds } from '../redux/selectors'
 
 const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
 const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
@@ -20,6 +20,7 @@ const CREATE_GROUP = 'CREATE_GROUP'
 const ADD_TO_GROUP = 'ADD_TO_GROUP'
 const REMOVE_FROM_GROUP = 'REMOVE_FROM_GROUP'
 const RESTORE = 'RESTORE'
+const CREATE_DELIVERY = 'CREATE_DELIVERY'
 
 import { selectUnassignedTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
@@ -31,9 +32,9 @@ function _unassign(tasksToUnassign, unassignTasks) {
 }
 
 const DynamicMenu = ({
-  unassignedTasks, selectedTasks, nextWorkingDay,
+  unassignedTasks, selectedTasks, nextWorkingDay, linkedTasksIds,
   unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
-  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks
+  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal,
 }) => {
 
   const { t } = useTranslation()
@@ -46,6 +47,10 @@ const DynamicMenu = ({
   const containsOnlyCancelledTasks = _.every(selectedTasks, t => t.status === 'CANCELLED')
 
   const containsOnlyGroupedTasks = selectedTasks.every(task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group)
+  const containsOnlyLinkedTasks = selectedTasks.every(task => linkedTasksIds.includes(task['@id']))
+
+  const selectedTasksByType = _.countBy(selectedTasks, t => t.type)
+  const containsOnePickupAndAtLeastOneDropoff = selectedTasksByType.PICKUP === 1 && selectedTasksByType.DROPOFF > 0
 
   const actions = []
 
@@ -68,6 +73,10 @@ const DynamicMenu = ({
 
       if (containsOnlyGroupedTasks) {
         actions.push(REMOVE_FROM_GROUP)
+      }
+
+      if (containsOnePickupAndAtLeastOneDropoff && !containsOnlyLinkedTasks) {
+        actions.push(CREATE_DELIVERY)
       }
 
     } else {
@@ -175,6 +184,12 @@ const DynamicMenu = ({
       >
         { t('ADMIN_DASHBOARD_RESTORE') }
       </Item>
+      <Item
+        hidden={ !actions.includes(CREATE_DELIVERY) }
+        onClick={ () => openCreateDeliveryModal() }
+      >
+        { t('ADMIN_DASHBOARD_CREATE_DELIVERY') }
+      </Item>
       { actions.length === 0 && (
         <Item disabled>
           { t('ADMIN_DASHBOARD_NO_ACTION_AVAILABLE') }
@@ -190,6 +205,7 @@ function mapStateToProps(state) {
     unassignedTasks: selectUnassignedTasks(state),
     selectedTasks: selectSelectedTasks(state),
     nextWorkingDay: selectNextWorkingDay(state),
+    linkedTasksIds: selectLinkedTasksIds(state),
   }
 }
 
@@ -205,6 +221,7 @@ function mapDispatchToProps(dispatch) {
     openAddTaskToGroupModal: tasks => dispatch(openAddTaskToGroupModal(tasks)),
     removeTasksFromGroup: tasks => dispatch(removeTasksFromGroup(tasks)),
     restoreTasks: tasks => dispatch(restoreTasks(tasks)),
+    openCreateDeliveryModal: () => dispatch(openCreateDeliveryModal()),
   }
 }
 

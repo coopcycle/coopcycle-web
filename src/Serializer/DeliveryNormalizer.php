@@ -4,6 +4,7 @@ namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
@@ -181,6 +182,11 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         $delivery = $this->normalizer->denormalize($data, $class, $format, $context);
+
+        $inputClass = ($context['input']['class'] ?? null);
+        if ($inputClass === DeliveryInput::class) {
+            return $delivery;
+        }
 
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();

@@ -17,7 +17,8 @@ import {
   closeExportModal,
   closeCreateGroupModal,
   exportTasks,
-  closeAddTaskToGroupModal } from '../redux/actions'
+  closeAddTaskToGroupModal,
+  closeCreateDeliveryModal } from '../redux/actions'
 import TaskModalContent from './TaskModalContent'
 import FiltersModalContent from './FiltersModalContent'
 import SettingsModalContent from './SettingsModalContent'
@@ -27,6 +28,7 @@ import RecurrenceRuleModalContent from './RecurrenceRuleModalContent'
 import ExportModalContent from './ExportModalContent'
 import CreateGroupModalContent from './CreateGroupModalContent'
 import AddTaskToGroupModalContent from './AddTaskToGroupModalContent'
+import CreateDeliveryModalContent from './CreateDeliveryModalContent'
 
 class Modals extends React.Component {
 
@@ -116,6 +118,14 @@ class Modals extends React.Component {
           <AddTaskToGroupModalContent
             onClickClose={ this.props.closeAddTaskToGroupModal } />
         </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.isCreateDeliveryModalVisible }
+          onRequestClose={ this.props.closeCreateDeliveryModal }
+          className="ReactModal__Content--select-courier"
+          shouldCloseOnOverlayClick={ true }>
+          <CreateDeliveryModalContent />
+        </Modal>
       </React.Fragment>
     )
   }
@@ -134,6 +144,7 @@ function mapStateToProps(state) {
     exportModalIsOpen: state.exportModalIsOpen,
     createGroupModalIsOpen: state.createGroupModalIsOpen,
     addTaskToGroupModalIsOpen: state.addTaskToGroupModalIsOpen,
+    isCreateDeliveryModalVisible: state.isCreateDeliveryModalVisible,
   }
 }
 
@@ -153,6 +164,7 @@ function mapDispatchToProps (dispatch) {
     closeCreateGroupModal: () => dispatch(closeCreateGroupModal()),
     exportTasks: (start, end) => dispatch(exportTasks(start, end)),
     closeAddTaskToGroupModal: () => dispatch(closeAddTaskToGroupModal()),
+    closeCreateDeliveryModal: () => dispatch(closeCreateDeliveryModal()),
   }
 }
 
