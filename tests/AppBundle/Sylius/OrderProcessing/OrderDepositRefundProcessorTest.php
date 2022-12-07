@@ -45,16 +45,6 @@ class OrderDepositRefundProcessorTest extends TestCase
         );
     }
 
-    private static function createContract($flatDeliveryPrice, $customerAmount, $feeRate)
-    {
-        $contract = new Contract();
-        $contract->setFlatDeliveryPrice($flatDeliveryPrice);
-        $contract->setCustomerAmount($customerAmount);
-        $contract->setFeeRate($feeRate);
-
-        return $contract;
-    }
-
     private function createOrderItem(LocalBusiness $restaurant, ReusablePackaging $reusablePackaging, $quantity, $units, $enabled)
     {
         $orderItem = $this->prophesize(OrderItemInterface::class);
@@ -192,6 +182,53 @@ class OrderDepositRefundProcessorTest extends TestCase
                 return $adjustment->getAmount() === 300;
             }))
             ->shouldBeCalled();
+
+        $this->orderDepositRefundProcessor->process($order->reveal());
+    }
+
+    public function testRestaurantDepositRefundDisabledDoesNothingWithOptinFalse()
+    {
+        $reusablePackaging = new ReusablePackaging();
+        $reusablePackaging->setPrice(100);
+
+        $restaurant = new LocalBusiness();
+        $restaurant->setDepositRefundEnabled(false);
+        $restaurant->setDepositRefundOptin(false);
+        $restaurant->addReusablePackaging($reusablePackaging);
+
+        $order = $this->prophesize(Order::class);
+        $order
+            ->isReusablePackagingEnabled()
+            ->willReturn(true);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->removeAdjustmentsRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
+            ->shouldBeCalled();
+
+        $item1 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 1, $units = 0.5, $enabled = true);
+        $items = new ArrayCollection([ $item1->reveal() ]);
+        $order->getItems()->willReturn($items);
+
+        $this->adjustmentFactory->createWithData(
+            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+            Argument::type('string'),
+            Argument::type('int'),
+            Argument::type('bool')
+        )->shouldNotBeCalled();
+
+        $order
+            ->addAdjustment(
+                Argument::type(AdjustmentInterface::class)
+            )
+            ->shouldNotBeCalled();
 
         $this->orderDepositRefundProcessor->process($order->reveal());
     }
