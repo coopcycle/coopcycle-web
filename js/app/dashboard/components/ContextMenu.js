@@ -7,7 +7,7 @@ import { Menu, Item } from 'react-contexify'
 import moment from 'moment'
 
 import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, createDelivery } from '../redux/actions'
-import { selectNextWorkingDay, selectSelectedTasks } from '../redux/selectors'
+import { selectNextWorkingDay, selectSelectedTasks, selectLinkedTasksIds } from '../redux/selectors'
 
 const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
 const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
@@ -32,7 +32,7 @@ function _unassign(tasksToUnassign, unassignTasks) {
 }
 
 const DynamicMenu = ({
-  unassignedTasks, selectedTasks, nextWorkingDay,
+  unassignedTasks, selectedTasks, nextWorkingDay, linkedTasksIds,
   unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
   openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, createDelivery
 }) => {
@@ -47,6 +47,7 @@ const DynamicMenu = ({
   const containsOnlyCancelledTasks = _.every(selectedTasks, t => t.status === 'CANCELLED')
 
   const containsOnlyGroupedTasks = selectedTasks.every(task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group)
+  const containsOnlyLinkedTasks = selectedTasks.every(task => linkedTasksIds.includes(task['@id']))
 
   const selectedTasksByType = _.countBy(selectedTasks, t => t.type)
   const containsOnePickupAndAtLeastOneDropoff = selectedTasksByType.PICKUP === 1 && selectedTasksByType.DROPOFF > 0
@@ -74,7 +75,7 @@ const DynamicMenu = ({
         actions.push(REMOVE_FROM_GROUP)
       }
 
-      if (containsOnePickupAndAtLeastOneDropoff) {
+      if (containsOnePickupAndAtLeastOneDropoff && !containsOnlyLinkedTasks) {
         actions.push(CREATE_DELIVERY)
       }
 
@@ -204,6 +205,7 @@ function mapStateToProps(state) {
     unassignedTasks: selectUnassignedTasks(state),
     selectedTasks: selectSelectedTasks(state),
     nextWorkingDay: selectNextWorkingDay(state),
+    linkedTasksIds: selectLinkedTasksIds(state),
   }
 }
 
