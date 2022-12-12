@@ -167,7 +167,8 @@ function createDateRangePickerWidget(name, type) {
   })
 }
 
-function createDatePickerWidget(name, type) {
+function createDatePickerWidget(name, type, isAdmin = false) {
+
   const datePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
   const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
 
@@ -179,6 +180,11 @@ function createDatePickerWidget(name, type) {
         value: e.target.value
       })
     })
+    return
+  }
+
+  if (isAdmin) {
+    createDateRangePickerWidget(name, type)
     return
   }
 
@@ -445,11 +451,7 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
     }
   })
 
-  if (userAdmin) {
-    createDateRangePickerWidget(name, taskForm)
-  } else {
-    createDatePickerWidget(name, taskForm)
-  }
+  createDatePickerWidget(name, taskForm, userAdmin)
 
   const tagsEl = document.querySelector(`#${name}_${taskForm}_tagsAsString`)
   if (tagsEl) {
