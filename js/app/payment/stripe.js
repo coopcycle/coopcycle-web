@@ -69,7 +69,7 @@ const CardholderNameInput = ({ onChange }) => {
   )
 }
 
-const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards }) => {
+const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards, onSaveCreditCardChange }) => {
 
   const { t } = useTranslation()
 
@@ -117,6 +117,14 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards 
           </span>
         )}
       </div>
+      <div className="form-group">
+        <div className="checkbox">
+          <label>
+            <input type="checkbox" onChange={(e) => onSaveCreditCardChange(e.target.checked)}/>
+              {t('SAVE_CREDIT_CARD')}
+          </label>
+        </div>
+      </div>
     </React.Fragment>
   )
 }
@@ -145,6 +153,7 @@ export default {
 
     this.cardholderName = ''
     this.el = el
+    this.saveCard = false
 
     if (method === 'giropay') {
 
@@ -179,7 +188,11 @@ export default {
                   this.cardholderName = cardholderName
                 }}
                 options={ options }
-                cards={ resultCards.data.cards.data } />
+                cards={ resultCards.data.cards.data }
+                onSaveCreditCardChange={ saveCard => {
+                  this.saveCard = saveCard
+                }
+              }/>
             )
           }}
           </ElementsConsumer>
@@ -195,12 +208,9 @@ export default {
   createToken() {
     return new Promise((resolve, reject) => {
 
-      // TODO get this value from some form field!!
-      const savePaymentMethod = false
-
       // Create a SetupIntent which represents your intent to set up a customer’s payment method to pay now or for future payments.
       axios.post(this.config.gatewayConfig.createCustomerSetupIntentURL, {
-        save_payment_method: savePaymentMethod,
+        save_payment_method: this.saveCard,
       })
         .then((result) => {
           // submit payment method details to Stripe
@@ -219,7 +229,6 @@ export default {
             } else {
                 axios.post(this.config.gatewayConfig.shareCardToConnectedAccountURL, {
                   payment_method: result.setupIntent.payment_method,
-                  save_payment_method: savePaymentMethod,
                 })
                   .then((result) => {
                     axios.post(this.config.gatewayConfig.createPaymentIntentURL, {
