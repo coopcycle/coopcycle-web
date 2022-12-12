@@ -301,6 +301,8 @@
         "ADD_PRODUCTS_TO_ORDER_TITLE": "Agregar productos al pedido #{{number}}",
         "ADMIN_DASHBOARD_CREATE_TOUR": "Crear una ruta",
         "ADMIN_DASHBOARD_TOUR_NAME": "Nombre de la ruta",
-        "SAVE_CREDIT_CARD": "Guardar tarjeta de crédito"
+        "SAVE_CREDIT_CARD": "Guardar tarjeta de crédito",
+        "PAY_WITH_SAVED_CREDIT_CARD": "Pagar con una tarjeta de crédito guardada",
+        "ADD_NEW_CREDIT_CARD": "Ingresar nueva tarjeta de crédito"
     }
 }

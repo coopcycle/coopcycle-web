@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 
 import { getCountry } from '../i18n'
+import SavedCreditCard from '../components/SavedCreditCard'
 
 const style = {
   base: {
@@ -69,62 +70,83 @@ const CardholderNameInput = ({ onChange }) => {
   )
 }
 
-const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards, onSaveCreditCardChange }) => {
+const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards, onSaveCreditCardChange, onSavedCreditCardSelected }) => {
 
   const { t } = useTranslation()
+
+  const [addNewCard, setAddNewCard] = useState(false)
 
   const hasBreakdown = !!options
     && Object.prototype.hasOwnProperty.call(options, 'amount_breakdown')
     && Object.prototype.hasOwnProperty.call(options.amount_breakdown, 'edenred')
     && Object.prototype.hasOwnProperty.call(options.amount_breakdown, 'card')
 
+  const handleCardClicked = (e, c) => {
+    if (e.target.checked) {
+      onSavedCreditCardSelected(c)
+    }
+  }
+
+  const toggleCardForm = () => {
+    setAddNewCard(!addNewCard)
+  }
+
   return (
     <React.Fragment>
       { cards && cards.length &&
         <div className="form-group">
+          <label className="control-label">
+            {t('PAY_WITH_SAVED_CREDIT_CARD')}
+          </label>
           {
             cards.map((c) => {
               return (
-                <li key={c.id}>
-                  <input type="radio" id={c.id} value={c.id} className="mr-2"></input>
-                  <label>
-                    {c.card.brand.toUpperCase()} | XXXX - XXXX - XXXX - { c.card.last4 } | { c.card.exp_month }/{ c.card.exp_year }
-                  </label>
-                </li>
+                <div className="d-flex align-items-center mb-2" key={c.id}>
+                  <input type="radio" name="credit-cards" id={c.id} className="mr-4" onClick={(e) => handleCardClicked(e, c)} />
+                  <SavedCreditCard card={c.card} />
+                </div>
               )
             })
           }
         </div>
       }
-      <div className="form-group">
-        <CardholderNameInput onChange={ onCardholderNameChange } />
-      </div>
-      <div className="form-group">
-        <label className="control-label hidden">
-          { t('PAYMENT_FORM_TITLE') }
-        </label>
-        <CardElement options={{ style, hidePostalCode: true }} onChange={ onChange } />
-        { hasBreakdown && (
-          <span className="help-block mt-3">
-            <i className="fa fa-info-circle mr-2"></i>
-            <span>{ t('EDENRED_SPLIT_AMOUNTS', _.mapValues(options.amount_breakdown, value => (value / 100).formatMoney())) }</span>
-          </span>
-        )}
-        { (!hasBreakdown && _.includes(['es', 'fr'], country)) && (
-          <span className="help-block mt-3">
-            <i className="fa fa-info-circle mr-2"></i>
-            <span>{ t('PAYMENT_FORM_NOT_SUPPORTED') }</span>
-          </span>
-        )}
-      </div>
-      <div className="form-group">
-        <div className="checkbox">
-          <label>
-            <input type="checkbox" onChange={(e) => onSaveCreditCardChange(e.target.checked)}/>
-              {t('SAVE_CREDIT_CARD')}
-          </label>
+      <button type="button" className="btn btn-primary mb-4" onClick={() => toggleCardForm()}>
+        {t('ADD_NEW_CREDIT_CARD')}
+      </button>
+      {
+        addNewCard &&
+        <div id="card-form">
+          <div className="form-group">
+            <CardholderNameInput onChange={ onCardholderNameChange } />
+          </div>
+          <div className="form-group">
+            <label className="control-label hidden">
+              { t('PAYMENT_FORM_TITLE') }
+            </label>
+            <CardElement options={{ style, hidePostalCode: true }} onChange={ onChange } />
+            { hasBreakdown && (
+              <span className="help-block mt-3">
+                <i className="fa fa-info-circle mr-2"></i>
+                <span>{ t('EDENRED_SPLIT_AMOUNTS', _.mapValues(options.amount_breakdown, value => (value / 100).formatMoney())) }</span>
+              </span>
+            )}
+            { (!hasBreakdown && _.includes(['es', 'fr'], country)) && (
+              <span className="help-block mt-3">
+                <i className="fa fa-info-circle mr-2"></i>
+                <span>{ t('PAYMENT_FORM_NOT_SUPPORTED') }</span>
+              </span>
+            )}
+          </div>
+          <div className="form-group">
+            <div className="checkbox">
+              <label>
+                <input type="checkbox" onChange={(e) => onSaveCreditCardChange(e.target.checked)}/>
+                  {t('SAVE_CREDIT_CARD')}
+              </label>
+            </div>
+          </div>
         </div>
-      </div>
+      }
     </React.Fragment>
   )
 }
@@ -191,8 +213,9 @@ export default {
                 cards={ resultCards.data.cards.data }
                 onSaveCreditCardChange={ saveCard => {
                   this.saveCard = saveCard
-                }
-              }/>
+                }}
+                onSavedCreditCardSelected={ card => this.config.onSavedCreditCardSelected(card) }
+              />
             )
           }}
           </ElementsConsumer>
