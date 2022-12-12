@@ -85,7 +85,7 @@ class DeliveryType extends AbstractType
                 $dropoffBefore->modify('+1 hour');
 
                 $pickupAfter = clone $pickupBefore;
-                $pickupBefore->modify('-15 minute');
+                $pickupAfter->modify('-15 minute');
 
                 $dropoffAfter = clone $dropoffBefore;
                 $dropoffAfter->modify('-15 minute');
