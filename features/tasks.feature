@@ -1897,3 +1897,38 @@ Feature: Tasks
         "tags":@array@
       }
       """
+
+  Scenario: Doesn't double package quantity
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/tasks/9" with body:
+      """
+      {
+        "packages": [
+          {
+            "type":"SMALL",
+            "quantity": 4
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+         "packages":[
+            {
+               "type":"SMALL",
+               "name":"SMALL",
+               "quantity":4
+            }
+         ],
+         "@*@": "@*@"
+      }
+      """

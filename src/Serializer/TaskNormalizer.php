@@ -210,7 +210,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             foreach ($data['packages'] as $p) {
                 $package = $packageRepository->findOneByName($p['type']);
                 if ($package) {
-                    $task->addPackageWithQuantity($package, $p['quantity']);
+                    $task->setQuantityForPackage($package, $p['quantity']);
                 }
             }
         }
