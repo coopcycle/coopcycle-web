@@ -1,0 +1,13 @@
+AppBundle\Entity\PackageSet:
+  package_set_1:
+    name: 'Standard'
+
+AppBundle\Entity\Package:
+  package_small:
+    name: 'SMALL'
+    volumeUnits: 1.0
+    packageSet: '@package_set_1'
+  package_xl:
+    name: 'XL'
+    volumeUnits: 3.0
+    packageSet: '@package_set_1'
