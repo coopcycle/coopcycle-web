@@ -431,7 +431,7 @@ class TaskModalContent extends React.Component {
               )}
               { (values.packages && values.packages.length) && (
                 <div className="form-group form-group-sm">
-                  <label className="control-label" htmlFor="task_comments">{ this.props.t('ADMIN_DASHBOARD_PACKAGES') }</label>
+                  <label className="control-label">{ this.props.t('ADMIN_DASHBOARD_PACKAGES') }</label>
                   <ul className="list-group table-hover">
                     { values.packages.map(p => (
                       <li key={p.name} className="task-package list-group-item d-flex justify-content-between align-items-center">
@@ -448,15 +448,15 @@ class TaskModalContent extends React.Component {
                   </ul>
                 </div>
               )}
-              { values.weight && (
+              { (values.weight && values.weight > 0) ? (
                 <div className="form-group form-group-sm">
-                  <label className="control-label" htmlFor="task_comments">{ this.props.t('ADMIN_DASHBOARD_WEIGHT') }</label>
+                  <label className="control-label" htmlFor="task_weight">{ this.props.t('ADMIN_DASHBOARD_WEIGHT') }</label>
                   <input id="task_weight" name="weight"
                     className="form-control"
                     disabled
                     value={`${(Number(values.weight) / 1000).toFixed(2)} kg`}/>
                 </div>
-              )}
+              ) : null }
               { (values.status === 'DONE' && values.type === 'DROPOFF') && (
                 <div className="text-center">
                   <a href={ window.Routing.generate('admin_task_receipt', { id: values.id }) } target="_blank" rel="noopener noreferrer">
