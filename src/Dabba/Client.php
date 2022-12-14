@@ -10,7 +10,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
-use Symfony\Component\HttpClient\Exception\ServerException;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 
 class Client
 {
@@ -121,21 +121,30 @@ class Client
             ];
         }
 
-        $response = $this->request(
-            'POST',
-            'api/trades',
-            [
-                'json' => [
-                    'items' => $items,
-                    'code_from_qr' => $restaurantCode,
-                ],
-                'extra' => [
-                    'oauth_credentials' => $customer,
-                ],
-            ]
-        );
+        try {
 
-        return $response->toArray();
+            $response = $this->request(
+                'POST',
+                'api/trades',
+                [
+                    'json' => [
+                        'items' => $items,
+                        'code_from_qr' => $restaurantCode,
+                    ],
+                    'extra' => [
+                        'oauth_credentials' => $customer,
+                    ],
+                ]
+            );
+
+            return $response->toArray();
+
+        } catch (ClientExceptionInterface $e) {
+
+            $data = $e->getResponse()->toArray(false);
+
+            throw new TradeException($data['message']);
+        }
     }
 
     public function getOAuthAuthorizeUrl(array $params = [])

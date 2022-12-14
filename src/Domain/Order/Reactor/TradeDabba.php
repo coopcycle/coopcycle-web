@@ -4,6 +4,7 @@ namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Dabba\Client as DabbaClient;
 use AppBundle\Dabba\OAuthCredentialsInterface;
+use AppBundle\Dabba\TradeException;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use Psr\Log\LoggerInterface;
@@ -37,17 +38,26 @@ class TradeDabba
             return;
         }
 
-        $response = $this->client->trade($order->getCustomer(), $restaurant->getDabbaCode(),
-            $order->getReusablePackagingQuantity(), $order->getReusablePackagingPledgeReturn());
+        try {
 
-        $this->logger->info('Sucessfully traded Dabba');
+            $response = $this->client->trade($order->getCustomer(), $restaurant->getDabbaCode(),
+                $order->getReusablePackagingQuantity(), $order->getReusablePackagingPledgeReturn());
 
-        Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
-        Assert::isInstanceOf($order->getCustomer(), OAuthCredentialsInterface::class);
+            $this->logger->info('Successfully completed Dabba trade');
 
-        // When this is a guest checkout, we clear the credentials after grabbing
-        if (!$order->getCustomer()->hasUser()) {
-            $order->getCustomer()->clearDabbaCredentials();
+            Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
+            Assert::isInstanceOf($order->getCustomer(), OAuthCredentialsInterface::class);
+
+            // When this is a guest checkout, we clear the credentials after grabbing
+            if (!$order->getCustomer()->hasUser()) {
+                $order->getCustomer()->clearDabbaCredentials();
+            }
+
+        } catch (TradeException $e) {
+            $this->logger->error(
+                sprintf('Could not complete trade for order #%d. Dabba API returned error "%s"', $order->getId(), $e->getMessage()),
+                ['exception' => $e]
+            );
         }
     }
 }
