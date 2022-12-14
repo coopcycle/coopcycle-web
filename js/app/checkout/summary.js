@@ -160,8 +160,9 @@ $('#checkout_address_reusablePackagingEnabled').on('change', function() {
   var iframeUrl = $(this).data('loopeatAuthorizeUrl');
   var oAuthFlow = $(this).data('loopeatOauthFlow');
   var hasCredentials = $(this).data('loopeatCredentials') === true;
-  var dabbaAuthorizeUrl = $(this).data('dabbaAuthorizeUrl');
+  var expectedWallet = $(this).data('dabbaExpectedWallet');
   var hasDabbaCredentials = $(this).data('dabbaCredentials') === true;
+  var dabbaAuthorizeUrl = $(this).data('dabbaAuthorizeUrl') + `&expected_wallet=${expectedWallet}`;
 
   if (isLoopeat && !hasCredentials && isChecked && iframeUrl) {
 
