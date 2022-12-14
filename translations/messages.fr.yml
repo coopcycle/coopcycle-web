@@ -1266,3 +1266,4 @@ form.integration.maxLength.label : Longueur maximale autorisée (cm)
 form.integration.productTypes.label : Types de produits autorisés
 form.integration.woopitStoreId.label : Identifiant du magasin Woopit
 integration.created.message : L'intégration a été créée.
+dabba.oauth_redirect.warning: Vous allez être redirigé·e vers le site de Dabba pour vous identifier ou créer votre compte
