@@ -184,7 +184,10 @@ export default function(form, options) {
     disableBtn(submitButton)
 
 
-    const savedPaymentMethod = options.savedPaymentMethodElement.getAttribute('value')
+    let savedPaymentMethod = null
+    if (options.savedPaymentMethodElement) {
+      savedPaymentMethod = options.savedPaymentMethodElement.getAttribute('value')
+    }
 
     if (methods.length === 1 && containsMethod(methods, 'card')) {
       handleCardPayment(cc, options, form, submitButton, savedPaymentMethod)
