@@ -70,7 +70,7 @@ const CardholderNameInput = ({ onChange }) => {
   )
 }
 
-const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards, onSaveCreditCardChange, onSavedCreditCardSelected }) => {
+const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards, onSaveCreditCardChange, onSavedCreditCardSelected, formOptions }) => {
 
   const { t } = useTranslation()
 
@@ -84,37 +84,54 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
   const handleCardClicked = (e, c) => {
     if (e.target.checked) {
       onSavedCreditCardSelected(c)
+      setAddNewCard(false)
     }
   }
 
   const toggleCardForm = () => {
+    // blank saved payment method selected
+    onSavedCreditCardSelected(null)
+    const selectedCard = document.querySelector('input[type="radio"][name="credit-cards"]:checked')
+    if (selectedCard) {
+      selectedCard.checked = false
+    }
+
     setAddNewCard(!addNewCard)
   }
 
+  useEffect(() => {
+    if (addNewCard) {
+      document.getElementById('card-form').scrollIntoView()
+    }
+  }, [addNewCard])
+
   return (
     <React.Fragment>
-      { cards && cards.length &&
-        <div className="form-group">
-          <label className="control-label">
-            {t('PAY_WITH_SAVED_CREDIT_CARD')}
-          </label>
-          {
-            cards.map((c) => {
-              return (
-                <div className="d-flex align-items-center mb-2" key={c.id}>
-                  <input type="radio" name="credit-cards" id={c.id} className="mr-4" onClick={(e) => handleCardClicked(e, c)} />
-                  <SavedCreditCard card={c.card} />
-                </div>
-              )
-            })
-          }
-        </div>
-      }
-      <button type="button" className="btn btn-primary mb-4" onClick={() => toggleCardForm()}>
-        {t('ADD_NEW_CREDIT_CARD')}
-      </button>
       {
-        addNewCard &&
+        cards && cards.length ?
+        <div>
+          <div className="form-group">
+            <label className="control-label">
+              {t('PAY_WITH_SAVED_CREDIT_CARD')}
+            </label>
+            {
+              cards.map((c) => {
+                return (
+                  <div className="d-flex align-items-center mb-2" key={c.id}>
+                    <input type="radio" name="credit-cards" id={c.id} className="mr-4" onClick={(e) => handleCardClicked(e, c)} />
+                    <SavedCreditCard card={c.card} />
+                  </div>
+                )
+              })
+            }
+          </div>
+          <button type="button" className="btn btn-primary mb-4" onClick={() => toggleCardForm()}>
+            {t('ADD_NEW_CREDIT_CARD')}
+          </button>
+        </div> : null
+      }
+      {
+        (addNewCard || (!cards || !cards.length) || (formOptions && !formOptions.orderHasUser)) &&
         <div id="card-form">
           <div className="form-group">
             <CardholderNameInput onChange={ onCardholderNameChange } />
@@ -137,14 +154,17 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
               </span>
             )}
           </div>
-          <div className="form-group">
-            <div className="checkbox">
-              <label>
-                <input type="checkbox" onChange={(e) => onSaveCreditCardChange(e.target.checked)}/>
-                  {t('SAVE_CREDIT_CARD')}
-              </label>
+          {
+            formOptions && formOptions.orderHasUser && (
+            <div className="form-group">
+              <div className="checkbox">
+                <label>
+                  <input type="checkbox" onChange={(e) => onSaveCreditCardChange(e.target.checked)}/>
+                    {t('SAVE_CREDIT_CARD')}
+                </label>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       }
     </React.Fragment>
@@ -171,11 +191,12 @@ export default {
   init() {
     this.stripe = Stripe(this.config.gatewayConfig.publishableKey)
   },
-  async mount(el, method, options) {
+  async mount(el, method, options, formOptions) {
 
     this.cardholderName = ''
     this.el = el
     this.saveCard = false
+    this.savedPaymentMethod = null
 
     if (method === 'giropay') {
 
@@ -189,7 +210,10 @@ export default {
       })
     }
 
-    const resultCards = await axios.get(this.config.gatewayConfig.customerPaymentMethodsURL)
+    let resultCards = []
+    if (formOptions.orderHasUser) {
+      resultCards = await axios.get(this.config.gatewayConfig.customerPaymentMethodsURL)
+    }
 
     return new Promise((resolve) => {
 
@@ -210,11 +234,12 @@ export default {
                   this.cardholderName = cardholderName
                 }}
                 options={ options }
-                cards={ resultCards.data.cards.data }
+                cards={ resultCards && resultCards.data && resultCards.data.cards ? resultCards.data.cards.data : [] }
                 onSaveCreditCardChange={ saveCard => {
                   this.saveCard = saveCard
                 }}
-                onSavedCreditCardSelected={ card => this.config.onSavedCreditCardSelected(card) }
+                onSavedCreditCardSelected={ (card) => this.config.onSavedCreditCardSelected(card) }
+                formOptions={formOptions}
               />
             )
           }}
@@ -228,56 +253,55 @@ export default {
       this.el = null
     }
   },
-  createToken() {
+  createToken(savedPaymentMethodId = null) {
     return new Promise((resolve, reject) => {
 
-      // Create a SetupIntent which represents your intent to set up a customer’s payment method to pay now or for future payments.
-      axios.post(this.config.gatewayConfig.createCustomerSetupIntentURL, {
-        save_payment_method: this.saveCard,
-      })
-        .then((result) => {
-          // submit payment method details to Stripe
-          this.stripe.confirmCardSetup(
-            result.data.setup_intent.client_secret, {
-              payment_method: {
-                card: this.elements.getElement(CardElement),
-                billing_details: {
-                  name: this.cardholderName,
-                }
-              }
-            }
-          ).then((result) => {
-            if (result.error) {
-              reject(new Error(result.error.message))
+      return this.getPaymentMethod(savedPaymentMethodId)
+        .then((paymentMethodId) => {
+          axios.post(this.config.gatewayConfig.createPaymentIntentURL, {
+            payment_method_id: paymentMethodId,
+            save_payment_method: this.saveCard,
+          }).then((response) => {
+            if (response.data.error) {
+              reject(new Error(response.data.error.message))
             } else {
-                axios.post(this.config.gatewayConfig.shareCardToConnectedAccountURL, {
-                  payment_method: result.setupIntent.payment_method,
+              handleServerResponse(response.data, this.stripe)
+                .then((paymentIntentId) => {
+                  resolve(paymentIntentId)
                 })
-                  .then((result) => {
-                    axios.post(this.config.gatewayConfig.createPaymentIntentURL, {
-                      payment_method_id: result.data.shared_card.id
-                    })
-                      .then((response) => {
-                        if (response.data.error) {
-                          reject(new Error(response.data.error.message))
-                        } else {
-                          handleServerResponse(response.data, this.stripe)
-                            .then(paymentIntentId => resolve(paymentIntentId))
-                            .catch(e => reject(new Error(e.error.message)))
-                        }
-                      })
-                  })
+                .catch(e => reject(new Error(e.error.message)))
+            }
+          }).catch(e => {
+            // https://github.com/axios/axios#handling-errors
+            if (e.response) {
+              reject(new Error(e.response.data.error.message))
+            } else {
+              reject(new Error('An unexpected error occurred, please try again later'))
             }
           })
         })
-        .catch(e => {
-          // https://github.com/axios/axios#handling-errors
-          if (e.response) {
-            reject(new Error(e.response.data.error.message))
-          } else {
-            reject(new Error('An unexpected error occurred, please try again later'))
-          }
-        })
+    })
+  },
+  getPaymentMethod(savedPaymentMethodId = null) {
+    return new Promise((resolve, reject) => {
+      if (savedPaymentMethodId) {
+        resolve(savedPaymentMethodId)
+        return
+      }
+
+      return this.stripe.createPaymentMethod({
+        type: 'card',
+        card: this.elements.getElement(CardElement),
+        billing_details: {
+          name: this.cardholderName,
+        }
+      }).then((createPaymentMethodResult) => {
+        if (createPaymentMethodResult.error) {
+          reject(new Error(createPaymentMethodResult.error.message))
+        } else {
+          resolve(createPaymentMethodResult.paymentMethod.id)
+        }
+      })
     })
   },
   // @see https://stripe.com/docs/payments/giropay/accept-a-payment#confirm-giropay-payment

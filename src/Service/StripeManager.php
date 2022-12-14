@@ -113,7 +113,7 @@ class StripeManager
     /**
      * @return Stripe\PaymentIntent
      */
-    public function createIntent(PaymentInterface $payment): Stripe\PaymentIntent
+    public function createIntent(PaymentInterface $payment, $savePaymentMethod = false): Stripe\PaymentIntent
     {
         $this->configure();
 
@@ -136,6 +136,10 @@ class StripeManager
 
         $payload = $this->configureCreateIntentPayload($payment, $payload);
         $stripeOptions = $this->getStripeOptions($payment);
+
+        $payload = $this->handleSaveOfPaymentMethod($payload, $stripeOptions, $payment, $savePaymentMethod);
+
+        $payload = $this->handlePaymentForConnectedAccount($payload, $stripeOptions, $payment);
 
         $this->logger->info(
             sprintf('Order #%d | StripeManager::createIntent | %s', $order->getId(), json_encode($payload))
@@ -299,7 +303,7 @@ class StripeManager
     /**
      * @return Stripe\Customer
      */
-    public function findOrCreateCustomer(User $user)
+    public function createCustomer(User $user)
     {
         if (null !== $user->getStripeCustomerId()) {
             return Stripe\Customer::retrieve($user->getStripeCustomerId());
@@ -319,42 +323,86 @@ class StripeManager
     /**
      * @return Stripe\SetupIntent
      */
-    public function createSetupIntent(Stripe\Customer $customer = null)
+    public function createSetupIntent(PaymentInterface $payment)
     {
-        $payload = [
-            'payment_method_types' => ['card'],
-        ];
+        $user = $payment->getOrder()->getCustomer()->getUser();
+        $customerId = $user->getStripeCustomerId();
 
-        if (null !== $customer) {
-            $payload['customer'] = $customer->id;
+        if (null === $customerId) {
+            $customer = $this->createCustomer($user);
+            $customerId = $customer->id;
         }
 
-        $intent = Stripe\SetupIntent::create($payload);
-        // check param usage: on_session, off_session
-
-        return $intent;
+        return Stripe\SetupIntent::create([
+            'payment_method' => $payment->getPaymentMethod(),
+            'payment_method_types' => ['card'],
+            'usage' => 'on_session',
+            'customer' => $customerId
+        ]);
     }
 
-    public function clonePaymentMethodToConnectedAccount(PaymentInterface $payment, $paymentMethod)
+    /**
+     * @return Stripe\PaymentMethod
+     */
+    public function clonePaymentMethodToConnectedAccount(PaymentInterface $payment, $stripeOptions)
     {
-        $options = $this->getStripeOptions($payment);
-
         $order = $payment->getOrder();
         $user = $order->getCustomer()->getUser();
 
         $payload = [
-            'payment_method' => $paymentMethod,
+            'payment_method' => $payment->getPaymentMethod(),
         ];
 
         if (null !== $user->getStripeCustomerId()) {
             $payload['customer'] = $user->getStripeCustomerId();
         }
 
-        return Stripe\PaymentMethod::create($payload, $options);
+        return Stripe\PaymentMethod::create($payload, $stripeOptions);
     }
 
     public function getCustomerPaymentMethods($customerId)
     {
         return Stripe\Customer::allPaymentMethods($customerId, ['type' => 'card']);
+    }
+
+    /**
+     * To attach a new PaymentMethod to a customer for future payments,
+     * we recommend you use a SetupIntent or a PaymentIntent with setup_future_usage
+     * @see https://stripe.com/docs/api/payment_methods/attach
+     */
+    private function handleSaveOfPaymentMethod($payload, $stripeOptions, PaymentInterface $payment, $savePaymentMethod)
+    {
+        if ($savePaymentMethod) {
+            if (isset($stripeOptions['stripe_account']) && null !== $stripeOptions['stripe_account']) {
+                // to save a payment method and then pay through a connected account
+                // first we have to create a SetupIntent associated to the payment method and customer of the platform account
+                $setupIntent = $this->createSetupIntent($payment);
+                if ($setupIntent) {
+                    // https://stripe.com/docs/api/setup_intents/confirm
+                    $setupIntent->confirm(['payment_method' => $payment->getPaymentMethod()]);
+                }
+            } else {
+                // save payment method directly on platform account using 'setup_future_usage' param
+                // https://stripe.com/docs/api/payment_intents/create#create_payment_intent-setup_future_usage
+                $payload['setup_future_usage'] = 'on_session';
+            }
+        }
+
+        return $payload;
+    }
+
+    private function handlePaymentForConnectedAccount($payload, $stripeOptions, PaymentInterface $payment)
+    {
+        if (isset($stripeOptions['stripe_account']) && null !== $stripeOptions['stripe_account']) {
+            // we have to clone/share the payment method to associate it to the connected account
+            $sharedCard = $this->clonePaymentMethodToConnectedAccount($payment, $stripeOptions);
+
+            if ($sharedCard && null !== $sharedCard->id) {
+                $payment->setPaymentMethod($sharedCard->id);
+                $payload['payment_method'] = $sharedCard->id;
+            }
+        }
+
+        return $payload;
     }
 }

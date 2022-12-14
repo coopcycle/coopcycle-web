@@ -19,6 +19,9 @@ class StripePaymentType extends AbstractType
         $builder
             ->add('stripeToken', HiddenType::class, [
                 'mapped' => false,
+            ])
+            ->add('savedPaymentMethodId', HiddenType::class, [
+                'mapped' => false,
             ]);
     }
 
