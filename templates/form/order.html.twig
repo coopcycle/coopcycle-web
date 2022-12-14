@@ -185,9 +185,11 @@
               <button type="button" id="checkout_address_cancelReusablePackaging" class="btn btn-link btn">
                 {{ 'basics.cancel'|trans }}
               </button>
+              {% if missing > 0 %}
               <a id="dabba-add-credit" href="" class="btn btn-default">
                 {{ 'form.checkout_address.reusable_packaging.dabba.add'|trans({ '%missing%': (missing * 100)|price_format }) }}
               </a>
+              {% endif %}
             </div>
           </div>
         </div>
