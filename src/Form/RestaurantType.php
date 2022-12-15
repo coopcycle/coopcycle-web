@@ -184,7 +184,7 @@ class RestaurantType extends LocalBusinessType
                         ->add('cuisines', HiddenType::class, [
                             'mapped' => false,
                             'required' => false,
-                            'data' => $this->serializer->serialize($restaurant->getServesCuisine(), 'jsonld')
+                            'data' => $this->serializer->serialize($restaurant->getServesCuisine(), 'jsonld', ['groups' => ['restaurant']])
                         ]);
 
                     if ($options['edenred_enabled']) {
