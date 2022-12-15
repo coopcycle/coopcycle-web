@@ -377,7 +377,7 @@ class StripeManager
                 // to save a payment method and then pay through a connected account
                 // first we have to create a SetupIntent associated to the payment method and customer of the platform account
                 $setupIntent = $this->createSetupIntent($payment);
-                if ($setupIntent) {
+                if (null !== $setupIntent) {
                     // https://stripe.com/docs/api/setup_intents/confirm
                     $setupIntent->confirm(['payment_method' => $payment->getPaymentMethod()]);
                 }
@@ -397,7 +397,7 @@ class StripeManager
             // we have to clone/share the payment method to associate it to the connected account
             $sharedCard = $this->clonePaymentMethodToConnectedAccount($payment, $stripeOptions);
 
-            if ($sharedCard && null !== $sharedCard->id) {
+            if (null !== $sharedCard && null !== $sharedCard->id) {
                 $payment->setPaymentMethod($sharedCard->id);
                 $payload['payment_method'] = $sharedCard->id;
             }
