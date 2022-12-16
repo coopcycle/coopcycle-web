@@ -164,11 +164,11 @@ export default function(form, options) {
       onSavedCreditCardSelected: (card) => {
         if (!card) {
           // used to blanck field when the card form is enabled
-          options.savedPaymentMethodElement.setAttribute('value', null)
-          return
+          options.savedPaymentMethodElement.removeAttribute('value')
+        } else {
+          options.savedPaymentMethodElement.setAttribute('value', card.id)
         }
 
-        options.savedPaymentMethodElement.setAttribute('value', card.id)
       }
     })
 
@@ -183,6 +183,7 @@ export default function(form, options) {
     $('.btn-payment').addClass('btn-payment__loading')
     disableBtn(submitButton)
 
+    // TODO check if a saved card is selected or a new card was added
 
     let savedPaymentMethod = null
     if (options.savedPaymentMethodElement) {
