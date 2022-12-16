@@ -26,10 +26,19 @@ const style = {
 
 // @see https://stripe.com/docs/payments/accept-a-payment-synchronously
 
-function handleServerResponse(response, stripe) {
+function handleServerResponse(response, config) {
 
   return new Promise((resolve, reject) => {
     if (response.requires_action) {
+      let stripeOptions = {}
+
+      if (config.gatewayConfig.account) {
+        stripeOptions = {
+          ...stripeOptions,
+          stripeAccount: config.gatewayConfig.account,
+        }
+      }
+      const stripe = Stripe(config.gatewayConfig.publishableKey, stripeOptions)
 
       // Use Stripe.js to handle required card action
       stripe.handleCardAction(
@@ -265,7 +274,7 @@ export default {
             if (response.data.error) {
               reject(new Error(response.data.error.message))
             } else {
-              handleServerResponse(response.data, this.stripe)
+              handleServerResponse(response.data, this.config)
                 .then((paymentIntentId) => {
                   resolve(paymentIntentId)
                 })
