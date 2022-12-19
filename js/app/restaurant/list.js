@@ -212,7 +212,7 @@ function submitFilter(e) {
 
       renderFulfillmentBadgeAfterAjax()
 
-      applyClickListenerForRestaurantItem()
+      // applyClickListenerForRestaurantItem()
 
       // update URL with applied filters
       const searchParams = new URLSearchParams($(e.target).closest('form').serialize())
@@ -238,6 +238,7 @@ $('.shops-side-bar-filters input[type=checkbox]').on('click', function (e) {
  * When the user clicks on a restaurant and
  * there is no address scroll into the search bar, and ask for an address.
  */
+// eslint-disable-next-line no-unused-vars
 function applyClickListenerForRestaurantItem() {
   document.querySelectorAll('[data-restaurant-path]').forEach(el => {
     el.addEventListener("click", function (e) {
@@ -266,4 +267,4 @@ function applyClickListenerForRestaurantItem() {
   })
 }
 
-applyClickListenerForRestaurantItem()
+// applyClickListenerForRestaurantItem()
