@@ -267,9 +267,23 @@ export default {
 
       return this.getPaymentMethod(savedPaymentMethodId)
         .then((paymentMethodId) => {
+          if (this.config.gatewayConfig.account) {
+            // for connected account we have to clone the platform payment method
+            return axios.post(this.config.gatewayConfig.clonePaymentMethodToConnectedAccountURL, {
+              payment_method_id: paymentMethodId,
+            }).then((res) => {
+              return [paymentMethodId, res.data.cloned_payment_method.id]
+            })
+          } else {
+            // use the platform payment method
+            return [paymentMethodId]
+          }
+        })
+        .then(([platformAccountPaymentMethodId, clonedPaymentMethodId]) => {
           axios.post(this.config.gatewayConfig.createPaymentIntentURL, {
-            payment_method_id: paymentMethodId,
+            payment_method_id: clonedPaymentMethodId || platformAccountPaymentMethodId,
             save_payment_method: this.saveCard,
+            payment_method_to_save: platformAccountPaymentMethodId
           }).then((response) => {
             if (response.data.error) {
               reject(new Error(response.data.error.message))

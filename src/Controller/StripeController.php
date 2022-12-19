@@ -493,6 +493,7 @@ class StripeController extends AbstractController
             $payment->setPaymentMethod($data['payment_method_id']);
 
             $intent = $stripeManager->createIntent($payment, $data['save_payment_method']);
+
             $payment->setPaymentIntent($intent);
 
             $this->entityManager->flush();
@@ -542,6 +543,69 @@ class StripeController extends AbstractController
                 ['message' => 'Invalid PaymentIntent status']
             ], 400);
         }
+
+        return new JsonResponse($response);
+    }
+
+    /**
+     * @see https://stripe.com/docs/connect/cloning-customers-across-accounts
+     *
+     * @Route("/stripe/payment/{hashId}/clone-payment-method", name="stripe_clone_payment_method", methods={"POST"})
+     */
+    public function clonePaymentMethodToConnectedAccountAction($hashId, Request $request,
+        StripeManager $stripeManager)
+    {
+        $hashids = new Hashids($this->secret, 8);
+
+        $decoded = $hashids->decode($hashId);
+        if (count($decoded) !== 1) {
+
+            return new JsonResponse(['error' =>
+                ['message' => sprintf('Payment with hash "%s" does not exist', $hashId)]
+            ], 400);
+        }
+
+        $paymentId = current($decoded);
+
+        $payment = $this->entityManager
+            ->getRepository(PaymentInterface::class)
+            ->find($paymentId);
+
+        if (null === $payment) {
+
+            return new JsonResponse(['error' =>
+                ['message' => sprintf('Payment with id "%d" does not exist', $paymentId)]
+            ], 400);
+        }
+
+        $content = $request->getContent();
+
+        $data = !empty($content) ? json_decode($content, true) : [];
+
+        if (!isset($data['payment_method_id'])) {
+
+            return new JsonResponse(['error' =>
+                ['message' => 'No payment_method_id key found in request']
+            ], 400);
+        }
+
+        $stripeManager->configure();
+
+        try {
+            $payment->setPaymentMethod($data['payment_method_id']);
+
+            $clonedPaymentMethod = $stripeManager->clonePaymentMethodToConnectedAccount($payment);
+
+            $this->entityManager->flush();
+        } catch (ApiErrorException $e) {
+            return new JsonResponse(['error' =>
+                ['message' => $e->getMessage()]
+            ], 400);
+        }
+
+        $response = [
+            'cloned_payment_method' => $clonedPaymentMethod
+        ];
 
         return new JsonResponse($response);
     }
