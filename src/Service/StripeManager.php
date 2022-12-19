@@ -340,9 +340,6 @@ class StripeManager
         ]);
     }
 
-    /**
-     * @return Stripe\SetupIntent
-     */
     public function attachPaymentMethodToCustomer(PaymentInterface $payment)
     {
         $user = $payment->getOrder()->getCustomer()->getUser();
@@ -392,7 +389,7 @@ class StripeManager
      */
     private function handleSaveOfPaymentMethod(PaymentInterface $payment, $payload, $stripeOptions, $savePaymentMethod)
     {
-        $notSavingForConnectedAccount = !isset($stripeOptions['stripe_account']) || null === $stripeOptions['stripe_account'];
+        $notSavingForConnectedAccount = !isset($stripeOptions['stripe_account']) || null == $stripeOptions['stripe_account'];
 
         if ($savePaymentMethod && $notSavingForConnectedAccount) {
             // when there is not a connected account save payment method directly on platform account using 'setup_future_usage' param
@@ -400,7 +397,7 @@ class StripeManager
 
             $user = $payment->getOrder()->getCustomer()->getUser();
 
-            if (null === $user->getStripeCustomerId()) {
+            if (null == $user->getStripeCustomerId()) {
                 $customer = $this->createCustomer($payment->getOrder()->getCustomer()->getUser());
                 $payload['customer'] = $customer->id;
             } else {
