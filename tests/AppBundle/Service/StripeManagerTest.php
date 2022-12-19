@@ -399,6 +399,43 @@ class StripeManagerTest extends TestCase
 
         $this->stripeManager->createIntent($payment, true);
     }
+
+    public function testCreateSetupIntentForSavePaymentMethod()
+    {
+        $payment = new Payment();
+        $payment->setStripeToken('tok_123456');
+
+        $user = $this->prophesize(User::class);
+
+        $user
+            ->getStripeCustomerId()
+            ->willReturn('cus_123456abcdef');
+
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->getUser()
+            ->willReturn($user->reveal());
+
+        $order = $this->prophesize(OrderInterface::class);
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
+
+        $payment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequest('POST', '/v1/setup_intents', [
+            "payment_method_types" => ["card"],
+            "payment_method" => "pm_123456",
+            "usage" => "on_session",
+            "customer" => "cus_123456abcdef",
+            "confirm" => true
+        ]);
+
+        $this->stripeManager->createSetupIntent($payment, "pm_123456");
+    }
+
     public function testClonePaymentMethodForConnectedAccount()
     {
         $payment = new Payment();
@@ -588,5 +625,38 @@ class StripeManagerTest extends TestCase
         ]);
 
         $this->stripeManager->createIntent($payment);
+    }
+
+    public function testAttachPaymentMethodToCustomer()
+    {
+        $order = $this->prophesize(OrderInterface::class);
+
+        $user = $this->prophesize(User::class);
+
+        $user
+            ->getStripeCustomerId()
+            ->willReturn('cus_123456abcdef');
+
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->getUser()
+            ->willReturn($user->reveal());
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
+
+        $payment = new Payment();
+        $payment->setOrder($order->reveal());
+
+        $payment->setPaymentDataToSaveAndReuse('pm_12345678');
+
+        $this->shouldSendStripeRequest('GET',  '/v1/payment_methods/pm_12345678');
+        $this->shouldSendStripeRequest('POST', '/v1/payment_methods/pm_12345678/attach', [
+            'customer' => 'cus_123456abcdef'
+        ]);
+
+        $this->stripeManager->attachPaymentMethodToCustomer($payment);
     }
 }

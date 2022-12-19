@@ -321,7 +321,7 @@ class StripeManager
     /**
      * @return Stripe\SetupIntent
      */
-    public function createSetupIntent(PaymentInterface $payment)
+    public function createSetupIntent(PaymentInterface $payment, $paymentMethod)
     {
         $user = $payment->getOrder()->getCustomer()->getUser();
         $customerId = $user->getStripeCustomerId();
@@ -332,11 +332,34 @@ class StripeManager
         }
 
         return Stripe\SetupIntent::create([
-            'payment_method' => $payment->getPaymentMethod(),
+            'payment_method' => $paymentMethod,
             'payment_method_types' => ['card'],
             'usage' => 'on_session',
-            'customer' => $customerId
+            'customer' => $customerId,
+            'confirm' => true
         ]);
+    }
+
+    /**
+     * @return Stripe\SetupIntent
+     */
+    public function attachPaymentMethodToCustomer(PaymentInterface $payment)
+    {
+        $user = $payment->getOrder()->getCustomer()->getUser();
+        $customerId = $user->getStripeCustomerId();
+
+        if (null === $customerId) {
+            $customer = $this->createCustomer($user);
+            $customerId = $customer->id;
+        }
+
+        $paymentMethod = Stripe\PaymentMethod::retrieve($payment->getPaymentMethodToSave());
+
+        if (null !== $paymentMethod) {
+            $paymentMethod->attach([
+                'customer' => $customerId
+            ]);
+        }
     }
 
     /**

@@ -121,6 +121,7 @@
     account: payment.stripeUserId ? payment.stripeUserId : null,
     createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid }),
     clonePaymentMethodToConnectedAccountURL: path('stripe_clone_payment_method', { hashId: payment|hashid }),
+    createSetupIntentOrAttachPMURL: path('stripe_create_setup_intent_or_attach_pm', { hashId: payment|hashid }),
     customerPaymentMethodsURL: path('stripe_customer_payment_methods', { hashId: order.customer|hashid }),
     createGiropayPaymentIntentURL: path('stripe_create_giropay_payment_intent', { hashId: payment|hashid }),
   }

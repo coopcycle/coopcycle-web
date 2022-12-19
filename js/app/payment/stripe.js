@@ -24,6 +24,22 @@ const style = {
   }
 }
 
+function handleSaveOfPaymentMethod(config, saveCard, paymentMethodToSave) {
+  if (saveCard && config.gatewayConfig.account) {
+    // if user chose to save the payment method and we are in a connected account
+    axios.post(config.gatewayConfig.createSetupIntentOrAttachPMURL, {
+      payment_method_to_save: paymentMethodToSave
+    }).catch(e => {
+      // do not interrupt flow if there is an error with this
+      if (e.response) {
+        console.log(e.response.data.error.message)
+      } else {
+        console.log('An unexpected error occurred while trying to create a SetupIntent')
+      }
+    })
+  }
+}
+
 // @see https://stripe.com/docs/payments/accept-a-payment-synchronously
 
 function handleServerResponse(response, config) {
@@ -290,6 +306,7 @@ export default {
             } else {
               handleServerResponse(response.data, this.config)
                 .then((paymentIntentId) => {
+                  handleSaveOfPaymentMethod(this.config, this.saveCard, platformAccountPaymentMethodId)
                   resolve(paymentIntentId)
                 })
                 .catch(e => reject(new Error(e.error.message)))
