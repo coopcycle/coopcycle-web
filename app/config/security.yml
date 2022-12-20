@@ -79,6 +79,12 @@ security:
             stateless: true
             bearer_token: true
 
+        api_task_put_bio_deliver:
+            pattern:   ^/api/tasks/[0-9]+/bio_deliver$
+            methods: [ PUT ]
+            stateless: true
+            bearer_token: true
+
         api_task_lists_get:
             pattern:   ^/api/task_lists$
             methods: [ GET ]

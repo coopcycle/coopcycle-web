@@ -14,6 +14,7 @@ use AppBundle\Action\Task\Duplicate as TaskDuplicate;
 use AppBundle\Action\Task\Restore as TaskRestore;
 use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
+use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskFilter;
@@ -190,6 +191,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "openapi_context"={
  *         "summary"="Restores a Task"
  *       }
+ *     },
+ *     "put_bio_deliver"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/bio_deliver",
+ *       "security"="is_granted('ROLE_OAUTH2_TASKS')",
+ *       "input"=BioDeliverInput::class,
+ *       "denormalization_context"={"groups"={"task_edit"}}
  *     }
  *   }
  * )
