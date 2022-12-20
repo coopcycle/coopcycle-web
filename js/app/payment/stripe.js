@@ -5,7 +5,7 @@ import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 
-import { getCountry } from '../i18n'
+import i18n, { getCountry } from '../i18n'
 import SavedCreditCard from '../components/SavedCreditCard'
 
 const style = {
@@ -320,12 +320,24 @@ export default {
             }
           })
         })
+        .catch(e => {
+          if (e.message) {
+            reject(new Error(e.message))
+          } else {
+            reject(new Error('An unexpected error occurred, please try again later'))
+          }
+        })
     })
   },
   getPaymentMethod(savedPaymentMethodId = null) {
     return new Promise((resolve, reject) => {
       if (savedPaymentMethodId) {
         resolve(savedPaymentMethodId)
+        return
+      }
+
+      if (!savedPaymentMethodId && !this.elements.getElement(CardElement)) {
+        reject(new Error(i18n.t('ADD_OR_SELECT_A_CARD_TO_PAY')))
         return
       }
 

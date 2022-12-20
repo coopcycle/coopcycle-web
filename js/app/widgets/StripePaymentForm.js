@@ -183,8 +183,6 @@ export default function(form, options) {
     $('.btn-payment').addClass('btn-payment__loading')
     disableBtn(submitButton)
 
-    // TODO check if a saved card is selected or a new card was added
-
     let savedPaymentMethod = null
     if (options.savedPaymentMethodElement) {
       savedPaymentMethod = options.savedPaymentMethodElement.getAttribute('value')
