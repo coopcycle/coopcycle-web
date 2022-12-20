@@ -192,7 +192,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *         "summary"="Restores a Task"
  *       }
  *     },
- *     "put_gw"={
+ *     "put_bio_deliver"={
  *       "method"="PUT",
  *       "path"="/tasks/{id}/bio_deliver",
  *       "security"="is_granted('ROLE_OAUTH2_TASKS')",
