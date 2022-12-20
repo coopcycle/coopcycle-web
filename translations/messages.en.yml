@@ -1287,3 +1287,4 @@ form.integration.maxLength.label: Maximum length allowed (cm)
 form.integration.productTypes.label: Product types allowed
 form.integration.woopitStoreId.label: Woopit store identifier
 integration.created.message: The integration has been created.
+profile.dabba.disconnect: Disconnect Dabba

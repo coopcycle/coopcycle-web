@@ -1,7 +1,9 @@
 {% extends 'bootstrap_3_horizontal_layout.html.twig' %}
 
-{% block _update_profile_loopeatDisconnect_row %}
-  <div class="form-group">
+{% block _update_profile_loopeatDisconnect_widget %}
   {{ form_widget(form, { attr: { class: 'btn-danger' } }) }}
-  </div>
+{% endblock %}
+
+{% block _update_profile_dabbaDisconnect_widget %}
+  {{ form_widget(form, { attr: { class: 'btn-danger' } }) }}
 {% endblock %}

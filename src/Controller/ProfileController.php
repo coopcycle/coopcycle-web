@@ -140,6 +140,10 @@ class ProfileController extends AbstractController
                 $user->getCustomer()->clearLoopEatCredentials();
             }
 
+            if ($editForm->getClickedButton() && 'dabbaDisconnect' === $editForm->getClickedButton()->getName()) {
+                $user->getCustomer()->clearDabbaCredentials();
+            }
+
             $userManager->updateUser($user);
 
             return $this->redirectToRoute('nucleos_profile_profile_show');

@@ -111,6 +111,12 @@ class UpdateProfileType extends AbstractType
                     ]);
                 }
 
+                if ($user->getCustomer()->hasDabbaCredentials()) {
+                    $event->getForm()->add('dabbaDisconnect', SubmitType::class, [
+                        'label' => 'profile.dabba.disconnect',
+                    ]);
+                }
+
                 if ($user->hasRole('ROLE_RESTAURANT') && $options['with_restaurants']) {
                     $event->getForm()->add('restaurants', CollectionType::class, array(
                         'entry_type' => EntityType::class,
