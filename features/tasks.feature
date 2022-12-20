@@ -1932,3 +1932,38 @@ Feature: Tasks
          "@*@": "@*@"
       }
       """
+
+  Scenario: Can update address.name & comments
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    Given the store with name "Acme" has imported tasks:
+      | type    | address.streetAddress                 | after            | before           |
+      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+    Given the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "PUT" request to "/api/tasks/1/bio_deliver" with body:
+      """
+      {
+        "address": {
+          "name": "Foo"
+        },
+        "comments": "Lorem ipsum"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "address":{
+          "name": "Foo",
+          "@*@": "@*@"
+        },
+        "comments": "Lorem ipsum",
+        "@*@": "@*@"
+      }
+      """
