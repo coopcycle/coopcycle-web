@@ -27,6 +27,7 @@ const style = {
 function handleSaveOfPaymentMethod(el) {
   return new Promise((resolve) => {
     if (el.saveCard && el.config.gatewayConfig.account) {
+      // if user chose to save the payment method and we are in a connected account
 
       /**
        * From Stripe support: You'll need to create a new payment method and as you are passing a customer ID,
@@ -42,7 +43,6 @@ function handleSaveOfPaymentMethod(el) {
         if (createPaymentMethodResult.error) {
           resolve()
         } else {
-          // if user chose to save the payment method and we are in a connected account
           axios.post(el.gatewayConfig.createSetupIntentOrAttachPMURL, {
             payment_method_to_save: createPaymentMethodResult.paymentMethod.id
           })
@@ -130,6 +130,9 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
     && Object.prototype.hasOwnProperty.call(options.amount_breakdown, 'edenred')
     && Object.prototype.hasOwnProperty.call(options.amount_breakdown, 'card')
 
+  const thereAreCardsToShow = cards && cards.length
+  const isGuest = formOptions && !formOptions.orderHasUser
+
   const handleCardClicked = (e, c) => {
     if (e.target.checked) {
       onSavedCreditCardSelected(c)
@@ -157,7 +160,7 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
   return (
     <React.Fragment>
       {
-        cards && cards.length ?
+        thereAreCardsToShow ?
         <div>
           <div className="form-group">
             <label className="control-label">
@@ -180,7 +183,7 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
         </div> : null
       }
       {
-        (addNewCard || (!cards || !cards.length) || (formOptions && !formOptions.orderHasUser)) &&
+        (addNewCard || !thereAreCardsToShow || isGuest) ?
         <div id="card-form">
           <div className="form-group">
             <CardholderNameInput onChange={ onCardholderNameChange } />
@@ -204,7 +207,7 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
             )}
           </div>
           {
-            formOptions && formOptions.orderHasUser && (
+            !isGuest ?
             <div className="form-group">
               <div className="checkbox">
                 <label>
@@ -212,9 +215,9 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
                     {t('SAVE_CREDIT_CARD')}
                 </label>
               </div>
-            </div>
-          )}
-        </div>
+            </div> : null
+          }
+        </div> : null
       }
     </React.Fragment>
   )
@@ -260,7 +263,7 @@ export default {
     }
 
     let resultCards = []
-    if (formOptions.orderHasUser) {
+    if (formOptions.orderHasUser) { // avoid this API call if the customer is a guest
       resultCards = await axios.get(this.config.gatewayConfig.customerPaymentMethodsURL)
     }
 
