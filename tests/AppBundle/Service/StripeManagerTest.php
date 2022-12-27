@@ -446,6 +446,18 @@ class StripeManagerTest extends TestCase
 
         $restaurant = $this->createRestaurant('acct_123456');
 
+        $user = $this->prophesize(User::class);
+
+        $user
+            ->getStripeCustomerId()
+            ->willReturn('cus_123456abcdef');
+
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->getUser()
+            ->willReturn($user->reveal());
+
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getId()
@@ -469,10 +481,15 @@ class StripeManagerTest extends TestCase
             ->getFeeTotal()
             ->willReturn(750);
 
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
+
         $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_methods', 'acct_123456', [
             "payment_method" => "pm_123456",
+            "customer" => "cus_123456abcdef"
         ]);
 
         $this->stripeManager->clonePaymentMethodToConnectedAccount($payment);
