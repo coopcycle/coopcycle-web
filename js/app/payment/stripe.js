@@ -24,22 +24,39 @@ const style = {
   }
 }
 
-function handleSaveOfPaymentMethod(config, saveCard, paymentMethodToSave) {
+function handleSaveOfPaymentMethod(el) {
   return new Promise((resolve) => {
-    if (saveCard && config.gatewayConfig.account) {
-      // if user chose to save the payment method and we are in a connected account
-      return axios.post(config.gatewayConfig.createSetupIntentOrAttachPMURL, {
-        payment_method_to_save: paymentMethodToSave
-      })
-      .then(() => resolve())
-      .catch(e => {
-        // do not interrupt flow if there is an error with this
-        if (e.response) {
-          console.log(e.response.data.error.message)
-        } else {
-          console.log('An unexpected error occurred while trying to create a SetupIntent')
+    if (el.saveCard && el.config.gatewayConfig.account) {
+
+      /**
+       * From Stripe support: You'll need to create a new payment method and as you are passing a customer ID,
+       * the payment method created by the setupintent will be automatically attached to the customer.
+      */
+      return el.stripe.createPaymentMethod({
+        type: 'card',
+        card: el.elements.getElement(CardElement),
+        billing_details: {
+          name: el.cardholderName,
         }
-        resolve()
+      }).then((createPaymentMethodResult) => {
+        if (createPaymentMethodResult.error) {
+          resolve()
+        } else {
+          // if user chose to save the payment method and we are in a connected account
+          axios.post(el.gatewayConfig.createSetupIntentOrAttachPMURL, {
+            payment_method_to_save: createPaymentMethodResult.paymentMethod.id
+          })
+          .then(() => resolve())
+          .catch(e => {
+            // do not interrupt flow if there is an error with this
+            if (e.response) {
+              console.log(e.response.data.error.message)
+            } else {
+              console.log('An unexpected error occurred while trying to create a SetupIntent')
+            }
+            resolve()
+          })
+        }
       })
     } else {
       resolve()
@@ -312,15 +329,8 @@ export default {
             } else {
               handleServerResponse(response.data, this.config)
                 .then((paymentIntentId) => {
-                  /**
-                   * From Stripe support: You'll need to create a new payment method and as you are passing a customer ID,
-                   * the payment method created by the setupintent will be automatically attached to the customer.
-                   */
-                  this.getPaymentMethod()
-                    .then((paymentMethodToSave) => {
-                      handleSaveOfPaymentMethod(this.config, this.saveCard, paymentMethodToSave)
-                        .then(() => resolve(paymentIntentId))
-                    })
+                  handleSaveOfPaymentMethod(this)
+                    .then(() => resolve(paymentIntentId))
                 })
                 .catch(e => reject(new Error(e.error.message)))
             }
