@@ -197,6 +197,12 @@ security:
             stateless: true
             cart_session: true
 
+        api_cart_stripe_clone_payment_method:
+            pattern:   ^/api/orders/[0-9]+/stripe/clone-payment-method$
+            methods: [ GET ]
+            stateless: true
+            cart_session: true
+
         api_me:
             pattern:   ^/api/me$
             methods: [ GET ]

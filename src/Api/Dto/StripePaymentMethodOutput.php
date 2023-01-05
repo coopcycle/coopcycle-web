@@ -6,36 +6,50 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 final class StripePaymentMethodOutput
 {
-    public function __construct($id, $expMont, $expYear, $last4, $brand) {
-        $this->id = $id;
-        $this->expMont = $expMont;
-        $this->expYear = $expYear;
-        $this->last4 = $last4;
-        $this->brand = $brand;
+    private $data;
+
+    public function __construct($data) {
+        $this->data = $data;
+    }
+
+    /**
+     * @var string
+     * @Groups({"order"})
+     */
+    public function getId()
+    {
+        return $this->data->id;
     }
 
     /**
      * @var string
      */
-    public $id;
+    public function getExpMonth()
+    {
+        return $this->data->expMonth;
+    }
 
     /**
      * @var string
      */
-    public $expMonth;
+    public function getExpYear()
+    {
+        return $this->data->expYear;
+    }
 
     /**
      * @var string
      */
-    public $expYear;
+    public function getLast4()
+    {
+        return $this->data->last4;
+    }
 
     /**
      * @var string
      */
-    public $last4;
-
-    /**
-     * @var string
-     */
-    public $brand;
+    public function getBrand()
+    {
+        return $this->data->brand;
+    }
 }

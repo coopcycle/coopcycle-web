@@ -12,6 +12,7 @@ use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
 use AppBundle\Action\Order\Accept as OrderAccept;
 use AppBundle\Action\Order\Assign as OrderAssign;
 use AppBundle\Action\Order\Cancel as OrderCancel;
+use AppBundle\Action\Order\CloneStripePayment;
 use AppBundle\Action\Order\Delay as OrderDelay;
 use AppBundle\Action\Order\Fulfill as OrderFulfill;
 use AppBundle\Action\Order\Pay as OrderPay;
@@ -26,6 +27,7 @@ use AppBundle\Action\Order\MercadopagoPreference;
 use AppBundle\Action\MyOrders;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
+use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\User;
@@ -310,6 +312,16 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "openapi_context"={
  *        "summary"="Generate Invoice for a Order resource."
  *      }
+ *     },
+ *     "stripe_clone_payment_method"={
+ *       "method"="GET",
+ *       "path"="/orders/{id}/stripe/clone-payment-method/{paymentMethodId}",
+ *       "controller"=CloneStripePayment::class,
+ *       "output"=StripePaymentMethodOutput::class,
+ *       "security"="is_granted('session', object)",
+ *       "openapi_context"={
+ *         "summary"=""
+ *       }
  *     },
  *   },
  *   attributes={
