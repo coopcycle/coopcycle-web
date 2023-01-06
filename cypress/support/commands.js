@@ -58,6 +58,7 @@ Cypress.Commands.add('searchAddress', (selector, search, match) => {
 })
 
 Cypress.Commands.add('enterCreditCard', () => {
+  // FIXME Cypress.moment() has been removed
   const expDate = Cypress.moment().add(6, 'month').format('MMYY')
   // @see https://github.com/cypress-io/cypress/issues/136
   cy.get('.StripeElement iframe')
