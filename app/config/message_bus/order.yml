@@ -65,6 +65,7 @@ services:
     arguments:
       - '@coopcycle.stripe_manager'
       - '@event_recorder'
+      - '@sm.factory'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\CancelOrder
