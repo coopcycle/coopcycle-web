@@ -1056,4 +1056,9 @@ class LocalBusiness extends BaseLocalBusiness implements
 
         return $categories;
     }
+
+    public function getShopType()
+    {
+        return self::getKeyForType($this->getType());
+    }
 }

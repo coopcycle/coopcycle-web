@@ -64,7 +64,6 @@ parameters:
     dv4cul_enabled: '%env(bool:DV4CUL_ENABLED)%'
     typesense_schemas_dir: "%kernel.project_dir%/src/Resources/config/typesense/schemas"
     typesense_shops_collection_name: "%database_name%_shops"
-    typesense_products_collection_name: "%database_name%_products"
     dabba_enabled: '%env(bool:DABBA_ENABLED)%'
     dabba_base_url: '%env(DABBA_BASE_URL)%'
     dabba_client_id: '%env(DABBA_CLIENT_ID)%'
@@ -986,3 +985,35 @@ acseo_typesense:
                         prefix: true
                         num_typos: 1
                         drop_tokens_threshold: 1
+        shops:
+            entity: 'AppBundle\Entity\LocalBusiness'
+            fields:
+                id:
+                    name: id
+                    type: primary
+                sortable_id:
+                    entity_attribute: id
+                    name: sortable_id
+                    type: int32
+                name:
+                    name: name
+                    type: string
+                type:
+                    name: type
+                    type: string
+                    facet: true
+                    entity_attribute: shopType
+                cuisine:
+                    name: cuisine
+                    type: string[]
+                    facet: true
+                    entity_attribute: shopCuisines
+                category:
+                    name: category
+                    type: string[]
+                    facet: true
+                    entity_attribute: shopCategories
+                enabled:
+                    name: enabled
+                    type: bool
+            default_sorting_field: sortable_id

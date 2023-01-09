@@ -106,6 +106,7 @@ services:
   Hashids\Hashids $hashids8: '@hashids.8'
   Hashids\Hashids $hashids12: '@hashids.12'
   BenjaminFavre\OAuthHttpClient\OAuthHttpClient $woopitClient: '@woopit.oauth_http_client'
+  ACSEO\TypesenseBundle\Finder\CollectionFinderInterface $typesenseShopsFinder: '@typesense.finder.shops'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
