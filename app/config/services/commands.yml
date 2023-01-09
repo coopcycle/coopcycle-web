@@ -163,23 +163,6 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:avatars:regenerate' }
 
-  AppBundle\Command\Typesense\CreateCollectionCommand:
-    tags:
-      - { name: 'console.command', command: 'typesense:collection:create' }
-
-  AppBundle\Command\Typesense\DeleteCollectionCommand:
-    tags:
-      - { name: 'console.command', command: 'typesense:collection:delete' }
-
-  AppBundle\Command\Typesense\IndexShopsCommand:
-    tags:
-      - { name: 'console.command', command: 'typesense:shops:index' }
-
-  # used to create all collections in a test environment
-  AppBundle\Command\Typesense\CreateAllCollectionsCommand:
-    tags:
-      - { name: 'console.command', command: 'typesense:collections:create' }
-
   AppBundle\Command\WoopitSubscriptionsCommand:
     tags:
       - { name: 'console.command', command: 'woopit:subscriptions:create' }

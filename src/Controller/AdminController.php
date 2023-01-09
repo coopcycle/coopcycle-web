@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use ACSEO\TypesenseBundle\Finder\CollectionFinderInterface;
+use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\AccessControlTrait;
@@ -118,8 +120,6 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
 use Twig\Environment as TwigEnvironment;
-use Typesense\Client as TypesenseClient;
-use AppBundle\Typesense\ShopsClient as TypesenseShopsClient;
 
 class AdminController extends AbstractController
 {
@@ -168,8 +168,8 @@ class AdminController extends AbstractController
         FactoryInterface $promotionFactory,
         HttpClientInterface $browserlessClient,
         bool $optinExportUsersEnabled,
-        TypesenseShopsClient $typesenseShopsClient,
-        bool $adhocOrderEnabled,
+        CollectionFinderInterface $typesenseShopsFinder,
+        bool $adhocOrderEnabled
     )
     {
         $this->orderRepository = $orderRepository;
@@ -180,8 +180,8 @@ class AdminController extends AbstractController
         $this->promotionFactory = $promotionFactory;
         $this->browserlessClient = $browserlessClient;
         $this->optinExportUsersEnabled = $optinExportUsersEnabled;
-        $this->typesenseShopsClient = $typesenseShopsClient;
         $this->adhocOrderEnabled = $adhocOrderEnabled;
+        $this->typesenseShopsFinder = $typesenseShopsFinder;
     }
 
     /**
@@ -1096,12 +1096,9 @@ class AdminController extends AbstractController
      */
     public function searchRestaurantsAction(Request $request)
     {
-        $searchParameters = [
-            'q'         => $request->query->get('q'),
-            'query_by'  => 'name',
-        ];
+        $query = new TypesenseQuery($request->query->get('q'), 'name');
 
-        $result = $this->typesenseShopsClient->search($searchParameters);
+        $results = $this->typesenseShopsFinder->rawQuery($query)->getResults();
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
             $data = array_map(function ($hit) {
@@ -1109,7 +1106,7 @@ class AdminController extends AbstractController
                     'id' => $hit['document']['id'],
                     'name' => $hit['document']['name'],
                 ];
-            }, $result['hits']);
+            }, $results);
 
             return new JsonResponse($data);
         }

@@ -133,7 +133,8 @@
         "benjaminfavre/oauth2-http-client": "^1.0",
         "sylius/calendar": "^0.3",
         "twig/markdown-extra": "^3.4",
-        "league/commonmark": "^2.3"
+        "league/commonmark": "^2.3",
+        "acseo/typesense-bundle": "dev-fix-indexer"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -160,6 +161,10 @@
         {
             "type": "vcs",
             "url": "git@github.com:rkeet/behatch-contexts.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/alexsegura/TypesenseBundle"
         }
     ],
     "scripts": {

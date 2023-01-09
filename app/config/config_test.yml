@@ -4,7 +4,8 @@ imports:
 parameters:
     tile38_fleet_key: '%database_name%_test:fleet'
     tile38_doorstep_chan_namespace: '%database_name%_test'
-    typesense_shops_collection_name: "%database_name%_shops_test"
+    typesense_shops_collection_name: "shops_test"
+    typesense_products_collection_name: "products_test"
 
 framework:
     test: ~

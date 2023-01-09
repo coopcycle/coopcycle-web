@@ -106,6 +106,9 @@ services:
   Hashids\Hashids $hashids8: '@hashids.8'
   Hashids\Hashids $hashids12: '@hashids.12'
   BenjaminFavre\OAuthHttpClient\OAuthHttpClient $woopitClient: '@woopit.oauth_http_client'
+  ACSEO\TypesenseBundle\Finder\CollectionFinderInterface $typesenseShopsFinder: '@typesense.finder.shops'
+  ACSEO\TypesenseBundle\Manager\CollectionManager: '@typesense.collection_manager'
+  ACSEO\TypesenseBundle\Manager\DocumentManager: '@typesense.document_manager'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -677,7 +680,6 @@ services:
 
   AppBundle\Doctrine\EventSubscriber\ShopsEventsForTypesenseSubscriber:
     tags:
-      - { name: monolog.logger }
       - { name: doctrine.event_subscriber }
 
   AppBundle\Action\Settings:
@@ -1084,15 +1086,6 @@ services:
     arguments:
       $productOptionValueRepository: '@sylius.repository.product_option_value'
 
-  Typesense\Client:
-    arguments:
-      - api_key: '%env(TYPESENSE_API_KEY)%'
-        nodes:
-          - host: '%env(TYPESENSE_HOST)%'
-            port: '%env(TYPESENSE_PORT)%'
-            protocol: 'http'
-        connection_timeout_seconds: 2
-
   Psonic\Client:
     arguments:
       - '%env(SONIC_HOST)%'
@@ -1203,16 +1196,6 @@ services:
   AppBundle\Translation\DatePeriodFormatter:
     arguments:
       $locale: '%env(COOPCYCLE_LOCALE)%'
-
-  AppBundle\Typesense\ShopsClient:
-    arguments:
-      $collectionName: '%typesense_shops_collection_name%'
-
-  AppBundle\Typesense\CollectionManager:
-    arguments:
-      $schemasDir: '%typesense_schemas_dir%'
-      $collections:
-        shops: "%typesense_shops_collection_name%"
 
   hashids.8:
     class: Hashids\Hashids

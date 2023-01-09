@@ -1021,4 +1021,44 @@ class LocalBusiness extends BaseLocalBusiness implements
     {
         $this->dabbaCode = $dabbaCode;
     }
+
+    public function getShopCuisines()
+    {
+        $isFoodEstablishment = FoodEstablishment::isValid($this->getType());
+
+        if (!$isFoodEstablishment) {
+            return [];
+        }
+
+        $cuisines = [];
+        foreach($this->getServesCuisine() as $c) {
+            $cuisines[] = $c->getName();
+        }
+
+        return $cuisines;
+    }
+
+    public function getShopCategories()
+    {
+        $categories = [];
+
+        if ($this->isFeatured()) {
+            $categories[] = 'featured';
+        }
+
+        if ($this->isExclusive()) {
+            $categories[] = 'exclusive';
+        }
+
+        if ($this->isDepositRefundEnabled() || $this->isLoopeatEnabled()) {
+            $categories[] = 'zerowaste';
+        }
+
+        return $categories;
+    }
+
+    public function getShopType()
+    {
+        return self::getKeyForType($this->getType());
+    }
 }

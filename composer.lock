@@ -4,8 +4,70 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8fa7b6bcff916616b7772fb0d4af068d",
+    "content-hash": "c0d407aeaf18c42e11be8c12e5ad8d6f",
     "packages": [
+        {
+            "name": "acseo/typesense-bundle",
+            "version": "dev-fix-indexer",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alexsegura/TypesenseBundle.git",
+                "reference": "4e50e42baab76307006244d78bdd18cc6a238528"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alexsegura/TypesenseBundle/zipball/4e50e42baab76307006244d78bdd18cc6a238528",
+                "reference": "4e50e42baab76307006244d78bdd18cc6a238528",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/orm": "~2.8,>=2.8.0",
+                "monolog/monolog": "^2.3|^3.0",
+                "php": "^7.4||^8.0",
+                "php-http/curl-client": "^2.2",
+                "symfony/framework-bundle": "^3.4|^4.3|^5|^6.0",
+                "symfony/http-client-contracts": "^1.0|^2.0|^3.0",
+                "symfony/property-access": "^3.4|^4.3|^5|^6.0",
+                "typesense/typesense-php": "^4.1.0"
+            },
+            "require-dev": {
+                "phpspec/prophecy-phpunit": "^2.0",
+                "phpunit/phpunit": "^9.5",
+                "symfony/phpunit-bridge": "^5.0|^6.0",
+                "symfony/yaml": "^3.4 || ^4.4 || ^5.4 || ^6.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "ACSEO\\TypesenseBundle\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "ACSEO\\TypesenseBundle\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "typesenseServer": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "docker run -i -p 8108:8108 -v/tmp/typesense-server-data-1c/:/data typesense/typesense:0.23.0 --data-dir /data --api-key=123 --listen-port 8108 --enable-cors"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Potier",
+                    "email": "nicolas.potier@acseo.fr"
+                }
+            ],
+            "description": "This bundle provides integration with Typesense in Symfony",
+            "support": {
+                "source": "https://github.com/alexsegura/TypesenseBundle/tree/fix-indexer"
+            },
+            "time": "2023-01-09T13:45:22+00:00"
+        },
         {
             "name": "api-platform/core",
             "version": "v2.6.8",
@@ -10924,6 +10986,75 @@
                 "source": "https://github.com/php-http/client-common/tree/2.6.0"
             },
             "time": "2022-09-29T09:59:43+00:00"
+        },
+        {
+            "name": "php-http/curl-client",
+            "version": "2.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-http/curl-client.git",
+                "reference": "2ed4245a817d859dd0c1d51c7078cdb343cf5233"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-http/curl-client/zipball/2ed4245a817d859dd0c1d51c7078cdb343cf5233",
+                "reference": "2ed4245a817d859dd0c1d51c7078cdb343cf5233",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": "^7.1 || ^8.0",
+                "php-http/discovery": "^1.6",
+                "php-http/httplug": "^2.0",
+                "php-http/message": "^1.2",
+                "psr/http-client": "^1.0",
+                "psr/http-factory": "^1.0",
+                "symfony/options-resolver": "^3.4 || ^4.0 || ^5.0 || ^6.0"
+            },
+            "provide": {
+                "php-http/async-client-implementation": "1.0",
+                "php-http/client-implementation": "1.0",
+                "psr/http-client-implementation": "1.0"
+            },
+            "require-dev": {
+                "guzzlehttp/psr7": "^1.0",
+                "laminas/laminas-diactoros": "^2.0",
+                "php-http/client-integration-tests": "^3.0",
+                "phpunit/phpunit": "^7.5 || ^9.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Http\\Client\\Curl\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Михаил Красильников",
+                    "email": "m.krasilnikov@yandex.ru"
+                }
+            ],
+            "description": "PSR-18 and HTTPlug Async client with cURL",
+            "homepage": "http://php-http.org",
+            "keywords": [
+                "curl",
+                "http",
+                "psr-18"
+            ],
+            "support": {
+                "issues": "https://github.com/php-http/curl-client/issues",
+                "source": "https://github.com/php-http/curl-client/tree/2.2.1"
+            },
+            "time": "2021-12-10T18:02:07+00:00"
         },
         {
             "name": "php-http/discovery",
@@ -22859,6 +22990,7 @@
         "nucleos/user-bundle": 20,
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
+        "acseo/typesense-bundle": 20,
         "behatch/contexts": 20
     },
     "prefer-stable": false,
@@ -22867,5 +22999,5 @@
         "php": ">=8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
