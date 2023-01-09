@@ -62,8 +62,6 @@ parameters:
     en_boite_le_plat_enabled: '%env(bool:EN_BOITE_LE_PLAT_ENABLED)%'
     nonprofits_enabled: '%env(bool:NONPROFITS_ENABLED)%'
     dv4cul_enabled: '%env(bool:DV4CUL_ENABLED)%'
-    typesense_schemas_dir: "%kernel.project_dir%/src/Resources/config/typesense/schemas"
-    typesense_shops_collection_name: "%database_name%_shops"
     dabba_enabled: '%env(bool:DABBA_ENABLED)%'
     dabba_base_url: '%env(DABBA_BASE_URL)%'
     dabba_client_id: '%env(DABBA_CLIENT_ID)%'
