@@ -41,8 +41,8 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
                 "id" => strval($entity->getId()), // index with same ID so we can query by ID in database after a selection
                 "name" => $entity->getName(),
                 "type" => LocalBusiness::getKeyForType($entity->getType()),
-                "cuisine" => $this->getShopCuisines($entity),
-                "category" => $this->getShopCategories($entity),
+                "cuisine" => $entity->getShopCuisines(),
+                "category" => $entity->getShopCategories(),
                 "enabled" => $entity->isEnabled(),
             ];
             try {
@@ -67,8 +67,8 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
             $document = [
                 "name" => $entity->getName(),
                 "type" => LocalBusiness::getKeyForType($entity->getType()),
-                "cuisine" => $this->getShopCuisines($entity),
-                "category" => $this->getShopCategories($entity),
+                "cuisine" => $entity->getShopCuisines(),
+                "category" => $entity->getShopCategories(),
                 "enabled" => $entity->isEnabled(),
             ];
             try {
@@ -91,40 +91,5 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
                 $this->logger->error($e->getMessage());
             }
         }
-    }
-
-    private function getShopCuisines($shop)
-    {
-        $isFoodEstablishment = FoodEstablishment::isValid($shop->getType());
-
-        if (!$isFoodEstablishment) {
-            return [];
-        }
-
-        $cuisines = [];
-        foreach($shop->getServesCuisine() as $c) {
-            $cuisines[] = $c->getName();
-        }
-
-        return $cuisines;
-    }
-
-    private function getShopCategories($shop)
-    {
-        $categories = [];
-
-        if ($shop->isFeatured()) {
-            $categories[] = 'featured';
-        }
-
-        if ($shop->isExclusive()) {
-            $categories[] = 'exclusive';
-        }
-
-        if ($shop->isDepositRefundEnabled() || $shop->isLoopeatEnabled()) {
-            $categories[] = 'zerowaste';
-        }
-
-        return $categories;
     }
  }

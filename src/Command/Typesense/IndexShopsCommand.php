@@ -45,46 +45,13 @@ class IndexShopsCommand extends AbstractIndexCommand
                 "id" => strval($shop->getId()), // index with same ID so we can query by ID in database after a selection
                 "name" => $shop->getName(),
                 "type" => LocalBusiness::getKeyForType($shop->getType()),
-                "cuisine" => $this->getShopCuisines($shop),
-                "category" => $this->getShopCategories($shop),
+                "cuisine" => $shop->getShopCuisines(),
+                "category" => $shop->getShopCategories(),
                 "enabled" => $shop->isEnabled(),
             ];
         }, $shops);
     }
 
-    private function getShopCuisines($shop)
-    {
-        $isFoodEstablishment = FoodEstablishment::isValid($shop->getType());
 
-        if (!$isFoodEstablishment) {
-            return [];
-        }
-
-        $cuisines = [];
-        foreach($shop->getServesCuisine() as $c) {
-            $cuisines[] = $c->getName();
-        }
-
-        return $cuisines;
-    }
-
-    private function getShopCategories($shop)
-    {
-        $categories = [];
-
-        if ($shop->isFeatured()) {
-            $categories[] = 'featured';
-        }
-
-        if ($shop->isExclusive()) {
-            $categories[] = 'exclusive';
-        }
-
-        if ($shop->isDepositRefundEnabled() || $shop->isLoopeatEnabled()) {
-            $categories[] = 'zerowaste';
-        }
-
-        return $categories;
-    }
 
 }
