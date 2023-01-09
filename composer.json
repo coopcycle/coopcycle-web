@@ -90,7 +90,7 @@
         "hashids/hashids": "^4.0",
         "sylius/inventory": "^1.7.5",
         "oneup/flysystem-bundle": "^3.1",
-        "drupal/core-vendor-hardening": "9.2.x-dev",
+        "drupal/core-vendor-hardening": "10.0.1",
         "league/flysystem-aws-s3-v3": "^1.0",
         "sylius/resource-bundle": "^1.7.1",
         "kreait/firebase-bundle": "^2.2",
