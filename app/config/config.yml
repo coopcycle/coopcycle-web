@@ -66,6 +66,8 @@ parameters:
     dabba_base_url: '%env(DABBA_BASE_URL)%'
     dabba_client_id: '%env(DABBA_CLIENT_ID)%'
     dabba_client_secret: '%env(DABBA_CLIENT_SECRET)%'
+    typesense_shops_collection_name: "shops"
+    typesense_products_collection_name: "products"
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -963,6 +965,7 @@ acseo_typesense:
     collections:
         products:
             entity: 'AppBundle\Entity\Sylius\Product'
+            collection_name: '%typesense_products_collection_name%'
             fields:
                 id:
                     name: id
@@ -985,6 +988,7 @@ acseo_typesense:
                         drop_tokens_threshold: 1
         shops:
             entity: 'AppBundle\Entity\LocalBusiness'
+            collection_name: '%typesense_shops_collection_name%'
             fields:
                 id:
                     name: id

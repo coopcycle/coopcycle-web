@@ -2,6 +2,7 @@
 
 namespace Tests\Behat;
 
+use ACSEO\TypesenseBundle\Manager\CollectionManager;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\ApiApp;
@@ -22,7 +23,6 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Zone;
-use AppBundle\Typesense\CollectionManager;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
@@ -66,6 +66,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
+use Typesense\Exceptions\ObjectNotFound;
 
 /**
  * Defines application features from the specific context.
@@ -230,18 +231,13 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function createTypesenseCollections()
     {
-        foreach ($this->typesenseCollectionManager->getCollections() as $name) {
-            $this->typesenseCollectionManager->create($name);
-        }
-    }
+        $defs = $this->typesenseCollectionManager->getCollectionDefinitions();
+        foreach ($defs as $name => $def) {
+            try {
+                $this->typesenseCollectionManager->deleteCollection($name);
+            } catch (ObjectNotFound $e) {}
 
-    /**
-     * @AfterScenario
-     */
-    public function deleteTypesenseCollections()
-    {
-        foreach ($this->typesenseCollectionManager->getCollections() as $name) {
-            $this->typesenseCollectionManager->delete($name);
+            $this->typesenseCollectionManager->createCollection($name);
         }
     }
 

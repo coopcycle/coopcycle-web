@@ -1,5 +1,6 @@
 Feature: Authenticate
 
+  @debug
   Scenario: Login success
     Given the user is loaded:
       | email    | bob@coopcycle.org |
