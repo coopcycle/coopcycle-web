@@ -109,6 +109,7 @@ services:
   ACSEO\TypesenseBundle\Finder\CollectionFinderInterface $typesenseShopsFinder: '@typesense.finder.shops'
   ACSEO\TypesenseBundle\Manager\CollectionManager: '@typesense.collection_manager'
   ACSEO\TypesenseBundle\Manager\DocumentManager: '@typesense.document_manager'
+  ACSEO\TypesenseBundle\Client\CollectionClient: '@typesense.collection_client'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:

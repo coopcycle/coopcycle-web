@@ -977,6 +977,16 @@ acseo_typesense:
                 name:
                     name: name
                     type: string
+                shop_id:
+                    name: shop_id
+                    type: int32
+                    entity_attribute: restaurant.id
+                    optional: true
+                shop_name:
+                    name: shop_name
+                    type: string
+                    entity_attribute: restaurant.name
+                    optional: true
             default_sorting_field: sortable_id
             finders:
                 products_autocomplete:

@@ -14,6 +14,7 @@ import './i18n'
 import { setTimezone, getCurrencySymbol } from './i18n'
 import CartTop from './cart/CartTop'
 import AddressAutosuggest from './widgets/AddressAutosuggest'
+import SearchNavbar from './search/navbar'
 
 global.ClipboardJS = require('clipboard')
 
@@ -63,6 +64,11 @@ document.addEventListener('DOMContentLoaded', function() {
   const cartTopElement = document.querySelector('#cart-top')
   if (cartTopElement) {
     render(<CartTop url={ cartTopElement.dataset.url } href={ cartTopElement.dataset.href } />, cartTopElement)
+  }
+
+  const searchNavbarElement = document.querySelector('#search-navbar')
+  if (searchNavbarElement) {
+    render(<SearchNavbar />, searchNavbarElement)
   }
 
   const inputs = document.querySelectorAll('[data-widget="address-input"]')
