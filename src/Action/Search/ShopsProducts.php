@@ -28,14 +28,15 @@ class ShopsProducts
         // https://github.com/acseo/TypesenseBundle#perform-multisearch
         $searchRequests = [
             (new TypesenseQuery($q))
+                ->addParameter('query_by', 'name,cuisine')
                 ->filterBy('enabled:true')
                 ->addParameter('collection', array_search(LocalBusiness::class, $managedClassNames, true)),
-            (new TypesenseQuery($q))->addParameter('collection', array_search(Product::class, $managedClassNames, true))
+            (new TypesenseQuery($q))
+                ->addParameter('query_by', 'name')
+                ->addParameter('collection', array_search(Product::class, $managedClassNames, true))
         ];
 
-        $commonParams = (new TypesenseQuery())->addParameter('query_by', 'name');
-
-        $response = $this->collectionClient->multisearch($searchRequests, $commonParams);
+        $response = $this->collectionClient->multisearch($searchRequests, null);
 
         [ $shopsResults, $productsResults ] = $response['results'];
 
