@@ -35,3 +35,9 @@
   overflow: scroll;
   font-size: 0.8em;
 }
+
+.search-navbar-input {
+  @media (min-width: $screen-lg-min) {
+    width: 390px !important;
+  }
+}

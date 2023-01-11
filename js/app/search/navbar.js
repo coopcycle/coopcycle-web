@@ -137,7 +137,7 @@ function ComboBox({ t }) {
       <div className={ cx('form-group has-loader', isLoading && 'has-loader-loading') }>
         <input
           placeholder={ t('ADMIN_DASHBOARD_SEARCH') }
-          className="form-control"
+          className="form-control search-navbar-input"
           { ...getInputProps() }
         />
       </div>
