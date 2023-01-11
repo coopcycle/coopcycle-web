@@ -263,6 +263,7 @@
         "CONFIRM_DELETE": "Confirmez-vous la suppression ?",
         "SEARCH_SHOPS": "Boutiques",
         "SEARCH_PRODUCTS": "Produits",
-        "SEARCH_PRODUCT_ITEM_SUBTITLE": "Dans {{- shop}}"
+        "SEARCH_PRODUCT_ITEM_SUBTITLE": "Dans {{- shop}}",
+        "SEARCH_PLACEHOLDER": "Une boutique, un plat…"
     }
 }

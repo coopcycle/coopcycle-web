@@ -304,6 +304,6 @@
         "ADMIN_DASHBOARD_CHOOSE_STORE_LABEL": "Choose a store",
         "SEARCH_SHOPS": "Shops",
         "SEARCH_PRODUCTS": "Products",
-        "SEARCH_PRODUCT_ITEM_SUBTITLE": "In {{- shop}}"
+        "SEARCH_PLACEHOLDER": "A shop, a dish…"
     }
 }
