@@ -134,7 +134,7 @@ function ComboBox({ t }) {
 
   return (
     <>
-      <div className={ cx('form-group has-loader', isLoading && 'has-loader-loading') }>
+      <div className={ cx('form-group form-group-search has-loader', isLoading && 'has-loader-loading') }>
         <input
           placeholder={ t('SEARCH_PLACEHOLDER') }
           className="form-control search-navbar-input"

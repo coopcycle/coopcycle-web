@@ -23,6 +23,26 @@
   }
 }
 
+.form-group-search {
+
+  position: relative;
+
+  &:before {
+    @include fa-icon();
+    content: $fa-var-search;
+    display: block;
+    position: absolute;
+    top: calc(50% - 7px);
+    left: $padding-base-horizontal;
+    color: #6c757d;
+  }
+
+  & > input {
+    padding-left: 34px;
+  }
+
+}
+
 .search-navbar-menu {
 	position: absolute;
   background-color: white;
