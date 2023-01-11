@@ -20,6 +20,8 @@ const search = _.debounce((inputValue, setItems, setLoading) => {
 
   setLoading(true)
 
+  window._paq.push(['trackEvent', 'Search', 'search', inputValue])
+
   axios
     .get(`/api/search/shops_products?q=${encodeURIComponent(inputValue)}`)
     .then((response) => {
@@ -107,6 +109,7 @@ function ComboBox({ t }) {
     },
     onSelectedItemChange(changes) {
       const selectedItem = changes.selectedItem
+      window._paq.push(['trackEvent', 'Search', 'selectItem', selectedItem.name])
       window.location.href = window.Routing.generate('restaurant', {
         id: selectedItem.result_type === 'product' ? selectedItem.shop_id : selectedItem.id
       })
