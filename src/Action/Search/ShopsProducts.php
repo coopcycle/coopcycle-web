@@ -27,7 +27,9 @@ class ShopsProducts
 
         // https://github.com/acseo/TypesenseBundle#perform-multisearch
         $searchRequests = [
-            (new TypesenseQuery($q))->addParameter('collection', array_search(LocalBusiness::class, $managedClassNames, true)),
+            (new TypesenseQuery($q))
+                ->filterBy('enabled:true')
+                ->addParameter('collection', array_search(LocalBusiness::class, $managedClassNames, true)),
             (new TypesenseQuery($q))->addParameter('collection', array_search(Product::class, $managedClassNames, true))
         ];
 
