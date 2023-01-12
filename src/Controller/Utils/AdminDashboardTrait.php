@@ -16,6 +16,7 @@ use AppBundle\Entity\TaskImage;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Task\RecurrenceRule as TaskRecurrenceRule;
+use AppBundle\Entity\Warehouse;
 use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
@@ -178,6 +179,12 @@ trait AdminDashboardTrait
             ]);
         }, $stores);
 
+        $warehouses = $this->getDoctrine()->getRepository(Warehouse::class)->findAll();
+
+        $warehousesNormalized = array_map(function (Warehouse $warehouse) {
+            return $this->get('serializer')->normalize($warehouse, 'jsonld');
+        }, $warehouses);
+
         $qb = $this->getDoctrine()
             ->getRepository(Address::class)
             ->createQueryBuilder('a');
@@ -213,6 +220,7 @@ trait AdminDashboardTrait
             'task_recurrence_rules' => $recurrenceRulesNormalized,
             'stores' => $storesNormalized,
             'pickup_cluster_addresses' => $addressIris,
+            'warehouses' => $warehousesNormalized,
         ]);
     }
 

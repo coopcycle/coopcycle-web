@@ -618,3 +618,15 @@ admin_nonprofit:
     _controller: AppBundle\Controller\AdminController::nonprofitAction
     layout: 'admin.html.twig'
   methods: [ GET, POST ]
+
+admin_new_warehouse:
+    path: /admin/warehouses/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newWarehouseAction
+    methods: [ GET, POST ]
+
+admin_warehouses:
+    path: /admin/warehouses
+    defaults:
+        _controller: AppBundle\Controller\AdminController::warehousesAction
+    methods: [ GET ]

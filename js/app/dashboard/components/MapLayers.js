@@ -85,6 +85,19 @@ const ClustersToggle = ({ clustersEnabled }) => {
   return null
 }
 
+const WarehouseLayer = ({ warehouses }) => {
+
+  const map = useMap()
+
+  React.useEffect(() => {
+    warehouses.forEach(wh => {
+      map.addWarehouse(wh)
+    })
+  }, [ warehouses ])
+
+  return null
+}
+
 function mapStateToPropsTask(state) {
 
   return {
@@ -113,7 +126,15 @@ function mapStateToPropsClusters(state) {
   }
 }
 
+function mapStateToPropsWarehouses(state) {
+
+  return {
+    warehouses: state.config.warehouses,
+  }
+}
+
 export const CourierMapLayer = connect(state => ({ positions: selectPositions(state) }))(CourierLayer)
 export const PolylineMapLayer = connect(mapStateToPropsPolyline)(PolylineLayer)
 export const TaskMapLayer = connect(mapStateToPropsTask)(TaskLayer)
 export const ClustersMapToggle = connect(mapStateToPropsClusters)(ClustersToggle)
+export const WarehouseMapLayer = connect(mapStateToPropsWarehouses)(WarehouseLayer)

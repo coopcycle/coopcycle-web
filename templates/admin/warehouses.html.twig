@@ -1,0 +1,16 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+{# <li>
+  <a href="{{ path('admin_restaurants') }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a>
+</li>
+<li>{% trans %}adminDashboard.hubs.title{% endtrans %}</li> #}
+{% endblock %}
+
+{% block content %}
+	{% include 'admin/_partials/item_list.html.twig' with {
+		items: warehouses,
+		add_item_route: 'admin_new_warehouse',
+		cols: ['name', 'address.streetAddress']
+	} %}
+{% endblock %}

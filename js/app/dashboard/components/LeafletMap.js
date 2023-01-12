@@ -8,7 +8,7 @@ import moment from 'moment'
 import classNames from 'classnames'
 
 import { setCurrentTask, assignAfter, selectTask, selectTasksByIds } from '../redux/actions'
-import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle } from './MapLayers'
+import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle, WarehouseMapLayer } from './MapLayers'
 import { selectVisibleTaskIds } from '../redux/selectors'
 import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
@@ -260,6 +260,7 @@ class LeafletMap extends Component {
         <TaskMapLayer />
         <PolylineMapLayer />
         <ClustersMapToggle />
+        <WarehouseMapLayer />
       </MapProvider>
     )
   }

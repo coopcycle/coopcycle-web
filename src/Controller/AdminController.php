@@ -38,6 +38,7 @@ use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Vehicle;
+use AppBundle\Entity\Warehouse;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AddOrganizationType;
@@ -69,6 +70,7 @@ use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\VehicleType;
+use AppBundle\Form\WarehouseType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
@@ -2412,6 +2414,39 @@ class AdminController extends AbstractController
 
         return $this->render('admin/vehicles.html.twig', [
             'vehicles' => $vehicles,
+        ]);
+    }
+
+    public function warehousesAction(Request $request)
+    {
+        $warehouses = $this->getDoctrine()->getRepository(Warehouse::class)->findAll();
+
+        return $this->render('admin/warehouses.html.twig', [
+            'warehouses' => $warehouses,
+        ]);
+    }
+
+    public function newWarehouseAction(Request $request)
+    {
+        $warehouse = new Warehouse();
+
+        $form = $this->createForm(WarehouseType::class, $warehouse);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+
+            $this->getDoctrine()->getManager()->persist($warehouse);
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_warehouses');
+        }
+
+        return $this->render('admin/warehouse.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }

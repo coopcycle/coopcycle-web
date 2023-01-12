@@ -104,6 +104,9 @@ export default class MapProxy {
       showCoverageOnHover: false,
     })
 
+    this.warehousesLayerGroup = new L.LayerGroup()
+    this.warehousesLayerGroup.addTo(this.map)
+
     this.pickupClusterGroup = L.markerClusterGroup({
       showCoverageOnHover: false,
       spiderfyOnMaxZoom: false,
@@ -539,5 +542,10 @@ export default class MapProxy {
 
     window.sessionStorage.setItem('use_avatar_colors', JSON.stringify(useAvatarColors))
 
+  }
+
+  addWarehouse(warehouse) {
+    const m = MapHelper.createMarker([warehouse.address.geo.latitude, warehouse.address.geo.longitude], 'home', 'marker', '#000000')
+    this.warehousesLayerGroup.addLayer(m)
   }
 }

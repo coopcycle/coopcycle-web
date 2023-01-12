@@ -1,0 +1,40 @@
+<div class="text-right mb-4">
+  <a href="{{ path(add_item_route) }}" class="btn btn-success">
+    <i class="fa fa-plus mr-2"></i>
+    <span>{% trans %}basics.add{% endtrans %}</span>
+  </a>
+</div>
+
+{% if items|length > 0 %}
+  <table class="table">
+    <tbody>
+    {% for item in items %}
+      <tr>
+      	{% for col in cols %}
+      	<td>
+      		{#
+      		Manage nested properties
+      		https://stackoverflow.com/a/67035446/333739
+      		#}
+      		{{ col|split('.')|reduce((carry, v) => carry ? attribute(carry, v) : null, item) }}
+      	</td>
+      	{% endfor %}
+        {# <td width="5%"><a href="{{ path('admin_hub', { id: hub.id }) }}">#{{ hub.id }}</a></td>
+        <td width="20%">
+          <span>{{ hub.name }}</span>
+        </td>
+        <td width="25%">{{ hub.address.streetAddress }}</td>
+        <td class="text-right" width="5%">
+          <a target="_blank" href="{{ path('hub', { id: hub.id, 'slug': hub.name|slugify }) }}">
+            <i class="fa fa-external-link" aria-hidden="true"></i>
+          </a>
+        </td> #}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}basics.no_entries{% endtrans %}
+  </div>
+{% endif %}
