@@ -95,7 +95,7 @@ html, body {
     }
 
     &__scroll {
-      overflow: scroll;
+      overflow: auto;
     }
 
     &__search {
@@ -157,7 +157,6 @@ html, body {
   }
 
   &__aside {
-    overflow: scroll;
 
     flex-direction: column;
 
