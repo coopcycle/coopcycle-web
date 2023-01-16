@@ -203,6 +203,12 @@ security:
             stateless: true
             cart_session: true
 
+        api_cart_stripe_create_setup_intent_or_attach_pm:
+            pattern:   ^/api/orders/[0-9]+/stripe/create-setup-intent-or-attach-pm$
+            methods: [ POST ]
+            stateless: true
+            cart_session: true
+
         api_me:
             pattern:   ^/api/me$
             methods: [ GET ]
