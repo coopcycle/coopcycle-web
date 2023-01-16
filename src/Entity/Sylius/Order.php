@@ -322,6 +322,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "security"="is_granted('session', object)",
  *      "openapi_context"={
  *        "summary"=""
+ *      }
  *     },
  *     "stripe_create_setup_intent_or_attach_pm"={
  *      "method"="POST",

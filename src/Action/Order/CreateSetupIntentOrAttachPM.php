@@ -35,7 +35,7 @@ class CreateSetupIntentOrAttachPM
             throw new BadRequestHttpException('Mandatory parameters are missing');
         }
 
-        $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
+        $payment = $data->getLastPayment(PaymentInterface::STATE_AUTHORIZED);
 
         $this->stripeManager->configure();
 
