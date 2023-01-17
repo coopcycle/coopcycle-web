@@ -143,8 +143,9 @@ class Pay
             $payment->setPaymentMethod($body['paymentMethodId']);
 
             $saveCard = isset($body['saveCard']) ? $body['saveCard'] : false;
+            $usingCustomerPaymentMethodFromPlatformAccount = isset($body['usingCustomerPaymentMethodFromPlatformAccount']) ? $body['usingCustomerPaymentMethodFromPlatformAccount'] : false;
 
-            $intent = $this->stripeManager->createIntent($payment, $saveCard);
+            $intent = $this->stripeManager->createIntent($payment, $saveCard, $usingCustomerPaymentMethodFromPlatformAccount);
             $payment->setPaymentIntent($intent);
 
             $this->entityManager->flush();

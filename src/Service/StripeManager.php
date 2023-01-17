@@ -125,7 +125,8 @@ class StripeManager
     /**
      * @return Stripe\PaymentIntent
      */
-    public function createIntent(PaymentInterface $payment, $savePaymentMethod = false): Stripe\PaymentIntent
+    public function createIntent(PaymentInterface $payment, $savePaymentMethod = false,
+        $usingCustomerPaymentMethodFromPlatformAccount = false): Stripe\PaymentIntent
     {
         $this->configure();
 
@@ -150,6 +151,15 @@ class StripeManager
         $stripeOptions = $this->getStripeOptions($payment);
 
         $payload = $this->handleSaveOfPaymentMethod($payment, $payload, $stripeOptions, $savePaymentMethod);
+
+        if ($usingCustomerPaymentMethodFromPlatformAccount) {
+            /**
+             * Required by Stripe: when the payment method supplied belongs to a Customer
+             * we have to include the Customer in the `customer` parameter on the PaymentIntent.
+             */
+            $user = $order->getCustomer()->getUser();
+            $payload['customer'] = $user->getStripeCustomerId();
+        }
 
         $this->logger->info(
             sprintf('Order #%d | StripeManager::createIntent | %s', $order->getId(), json_encode($payload))
