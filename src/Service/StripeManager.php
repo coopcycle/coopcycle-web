@@ -125,8 +125,7 @@ class StripeManager
     /**
      * @return Stripe\PaymentIntent
      */
-    public function createIntent(PaymentInterface $payment, $savePaymentMethod = false,
-        $usingCustomerPaymentMethodFromPlatformAccount = false): Stripe\PaymentIntent
+    public function createIntent(PaymentInterface $payment, $savePaymentMethod = false): Stripe\PaymentIntent
     {
         $this->configure();
 
