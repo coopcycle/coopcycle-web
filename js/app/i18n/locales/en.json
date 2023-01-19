@@ -311,6 +311,7 @@
         "SAVE_CREDIT_CARD": "Save credit card",
         "PAY_WITH_SAVED_CREDIT_CARD": "Pay with a saved credit card",
         "ADD_NEW_CREDIT_CARD": "Add a new credit card",
-        "ADD_OR_SELECT_A_CARD_TO_PAY": "Please select or enter a new credit card to pay"
+        "ADD_OR_SELECT_A_CARD_TO_PAY": "Please select or enter a new credit card to pay",
+        "EXPIRATION": "Expiration"
     }
 }

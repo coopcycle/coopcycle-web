@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 import alipay from 'payment-icons/min/flat/alipay.svg'
 import amex from 'payment-icons/min/flat/amex.svg'
@@ -16,6 +17,8 @@ import visa from 'payment-icons/min/flat/visa.svg'
 import defaultCard from 'payment-icons/min/flat/default.svg'
 
 export default ({card}) => {
+
+  const { t } = useTranslation()
 
   const creditCardIcon = () => {
     const availableIcons = {
@@ -44,7 +47,7 @@ export default ({card}) => {
       { creditCardIcon() }
       <div className="d-flex flex-column">
         <label className="mb-0">···· { card.last4 }</label>
-        <small>Expiración: { card.exp_month }/{ card.exp_year }</small>
+        <small>{ t('EXPIRATION') }: { card.exp_month }/{ card.exp_year }</small>
       </div>
     </div>
   )
