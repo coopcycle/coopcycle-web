@@ -370,18 +370,21 @@ class StripeManager
      */
     public function clonePaymentMethodToConnectedAccount(PaymentInterface $payment)
     {
-        $user = $payment->getOrder()->getCustomer()->getUser();
-        $customerId = $user->getStripeCustomerId();
-
-        if (null === $customerId) {
-            $customer = $this->createCustomer($user);
-            $customerId = $customer->id;
-        }
-
         $payload = [
-            'payment_method' => $payment->getPaymentMethod(),
-            'customer' => $customerId
+            'payment_method' => $payment->getPaymentMethod()
         ];
+
+        if ($payment->getOrder()->getCustomer()->hasUser()) {
+            $user = $payment->getOrder()->getCustomer()->getUser();
+            $customerId = $user->getStripeCustomerId();
+
+            if (null === $customerId) {
+                $customer = $this->createCustomer($user);
+                $customerId = $customer->id;
+            }
+
+            $payload['customer'] = $customerId;
+        }
 
         $stripeOptions = $this->getStripeOptions($payment);
 
