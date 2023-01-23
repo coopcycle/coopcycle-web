@@ -198,7 +198,7 @@ security:
             cart_session: true
 
         api_cart_stripe_clone_payment_method:
-            pattern:   ^/api/orders/[0-9]+/stripe/clone-payment-method/pm_[0-9a-zA-Z]$
+            pattern:   ^/api/orders/[0-9]+/stripe/clone-payment-method/pm_[0-9a-zA-Z]+$
             methods: [ GET ]
             stateless: true
             cart_session: true
