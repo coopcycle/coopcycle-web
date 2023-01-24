@@ -387,6 +387,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
             $needsUpdate = true;
         }
 
+        if (isset($data['stripeCustomerId'])) {
+            $user->setStripeCustomerId($data['stripeCustomerId']);
+            $needsUpdate = true;
+        }
+
         if ($needsUpdate) {
             $this->userManager->updateUser($user);
         }
