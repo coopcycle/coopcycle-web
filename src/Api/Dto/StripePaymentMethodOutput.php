@@ -13,7 +13,6 @@ final class StripePaymentMethodOutput
     }
 
     /**
-     * @var string
      * @Groups({"order"})
      */
     public function getId()
@@ -21,33 +20,21 @@ final class StripePaymentMethodOutput
         return $this->data->id;
     }
 
-    /**
-     * @var string
-     */
     public function getExpMonth()
     {
         return $this->data->expMonth;
     }
 
-    /**
-     * @var string
-     */
     public function getExpYear()
     {
         return $this->data->expYear;
     }
 
-    /**
-     * @var string
-     */
     public function getLast4()
     {
         return $this->data->last4;
     }
 
-    /**
-     * @var string
-     */
     public function getBrand()
     {
         return $this->data->brand;
