@@ -458,6 +458,10 @@ class StripeManagerTest extends TestCase
             ->getUser()
             ->willReturn($user->reveal());
 
+        $customer
+            ->hasUser()
+            ->willReturn(true);
+
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getId()
