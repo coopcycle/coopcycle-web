@@ -137,7 +137,7 @@
         "acseo/typesense-bundle": "dev-fix-indexer"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^5.0",
+        "symfony/phpunit-bridge": "^6.2",
         "phpunit/phpunit": "^9.0",
         "behat/behat": "^3.7",
         "behatch/contexts": "dev-php80 as 3.3.0",
