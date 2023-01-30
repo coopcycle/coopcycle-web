@@ -4,6 +4,7 @@ namespace AppBundle\Action;
 
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimeRegistry;
+use Aws\S3\Exception\S3Exception;
 use League\Flysystem\Filesystem;
 use Liip\ImagineBundle\Service\FilterService;
 use Misd\PhoneNumberBundle\Serializer\Normalizer\PhoneNumberNormalizer;
@@ -72,9 +73,13 @@ class Settings
             $data[$key] = $this->settingsManager->get($key);
         }
 
-        $companyLogo = $this->settingsManager->get('company_logo');
-        if (!empty($companyLogo) && $this->assetsFilesystem->has($companyLogo)) {
-            $data['logo'] = $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');
+        try {
+            $companyLogo = $this->settingsManager->get('company_logo');
+            if (!empty($companyLogo) && $this->assetsFilesystem->has($companyLogo)) {
+                $data['logo'] = $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');
+            }
+        } catch (S3Exception $e) {
+            // TODO Log error
         }
 
         $phoneNumber = $this->settingsManager->get('phone_number');

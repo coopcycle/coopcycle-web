@@ -2,6 +2,7 @@
 
 namespace AppBundle\Twig;
 
+use Aws\S3\Exception\S3Exception;
 use Twig\Extension\RuntimeExtensionInterface;
 use Intervention\Image\ImageManagerStatic;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
@@ -86,7 +87,11 @@ class AssetsRuntime implements RuntimeExtensionInterface
 
             $item->expiresAfter(3600);
 
-            return $this->assetsFilesystem->has('banner.svg');
+            try {
+                return $this->assetsFilesystem->has('banner.svg');
+            } catch (S3Exception $e) {
+                return false;
+            }
         });
     }
 }
