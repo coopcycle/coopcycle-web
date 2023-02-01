@@ -89,7 +89,7 @@ trait AdminDashboardTrait
     {
         $hashids = new Hashids($this->getParameter('secret'), 8);
 
-        $date = new \DateTime($date);
+        $date = new \DateTime('2021-12-01');
 
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
