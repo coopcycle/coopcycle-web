@@ -29,6 +29,13 @@ export const CLOSE_PRODUCT_OPTIONS_MODAL = 'CLOSE_PRODUCT_OPTIONS_MODAL'
 export const OPEN_PRODUCT_DETAILS_MODAL = 'OPEN_PRODUCT_DETAILS_MODAL'
 export const CLOSE_PRODUCT_DETAILS_MODAL = 'CLOSE_PRODUCT_DETAILS_MODAL'
 
+export const OPEN_INVITE_PEOPLE_TO_ORDER_MODAL = 'OPEN_INVITE_PEOPLE_TO_ORDER_MODAL'
+export const CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL = 'CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL'
+
+export const INVITE_PEOPLE_REQUEST = 'INVITE_PEOPLE_REQUEST'
+export const INVITE_PEOPLE_REQUEST_SUCCESS = 'INVITE_PEOPLE_REQUEST_SUCCESS'
+export const INVITE_PEOPLE_REQUEST_FAILURE = 'INVITE_PEOPLE_REQUEST_FAILURE'
+
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const fetchSuccess = createAction(FETCH_SUCCESS)
 export const fetchFailure = createAction(FETCH_FAILURE)
@@ -52,6 +59,13 @@ export const openProductOptionsModal =
 export const closeProductDetailsModal = createAction(CLOSE_PRODUCT_DETAILS_MODAL)
 export const openProductDetailsModal =
   createAction(OPEN_PRODUCT_DETAILS_MODAL, (name, images, price, formAction) => ({ name, images, price, formAction }))
+
+export const openInvitePeopleToOrderModal = createAction(OPEN_INVITE_PEOPLE_TO_ORDER_MODAL)
+export const closeInvitePeopleToOrderModal = createAction(CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL)
+
+export const invitePeopleRequest = createAction(INVITE_PEOPLE_REQUEST)
+export const invitePeopleSuccess = createAction(INVITE_PEOPLE_REQUEST_SUCCESS)
+export const invitePeopleFailure = createAction(INVITE_PEOPLE_REQUEST_FAILURE)
 
 const httpClient = axios.create()
 
@@ -467,5 +481,16 @@ export function retryLastAddItemRequest() {
         handleAjaxResponse(res, dispatch)
       })
       .fail(e => handleAjaxError(e, dispatch))
+  }
+}
+
+export function invitePeopleToOrder(guests) {
+  return (dispatch, getState) => {
+    dispatch(invitePeopleRequest())
+
+    // FIXME: this call is failing with a 401 error response
+    return $.post(`${getState().cart['@id']}/invite`, { guests })
+      .then(dispatch(invitePeopleSuccess()))
+      .fail(dispatch(invitePeopleFailure()))
   }
 }

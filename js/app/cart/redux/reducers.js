@@ -19,6 +19,12 @@ import {
   OPEN_PRODUCT_OPTIONS_MODAL,
   CLOSE_PRODUCT_DETAILS_MODAL,
   OPEN_PRODUCT_DETAILS_MODAL,
+  CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL,
+  OPEN_INVITE_PEOPLE_TO_ORDER_MODAL,
+  INVITE_PEOPLE_REQUEST,
+  INVITE_PEOPLE_REQUEST_SUCCESS,
+  INVITE_PEOPLE_REQUEST_FAILURE,
+  REFRESH_TOKEN_SUCCESS
 } from './actions'
 
 const initialState = {
@@ -57,6 +63,8 @@ const initialState = {
   isProductDetailsModalOpen: false,
   productDetailsModalContext: {},
   addressModalContext: {},
+  isInvitePeopleToOrderModalOpen: false,
+  invitePeopleToOrderContext: {},
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -281,6 +289,45 @@ const productDetailsModalContext = (state = initialState.productDetailsModalCont
   return state
 }
 
+const isInvitePeopleToOrderModalOpen = (state = initialState.isInvitePeopleToOrderModalOpen, action = {}) => {
+  switch (action.type) {
+  case CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL:
+    return false
+  case OPEN_INVITE_PEOPLE_TO_ORDER_MODAL:
+    return true
+  default:
+    return state
+  }
+}
+
+const invitePeopleToOrderContext = (state = initialState.invitePeopleToOrderContext, action = {}) => {
+  switch (action.type) {
+    case INVITE_PEOPLE_REQUEST:
+      return {
+        ...state,
+        isRequesting: true,
+        hasError: false,
+      }
+
+    case INVITE_PEOPLE_REQUEST_SUCCESS:
+      return {
+        ...state,
+        isRequesting: false,
+        hasError: false,
+      }
+
+    case INVITE_PEOPLE_REQUEST_FAILURE:
+      return {
+        ...state,
+        isRequesting: false,
+        hasError: true,
+      }
+
+    default:
+      return state
+  }
+}
+
 export default combineReducers({
   isFetching,
   cart,
@@ -301,4 +348,6 @@ export default combineReducers({
   isProductDetailsModalOpen,
   productDetailsModalContext,
   addressModalContext,
+  isInvitePeopleToOrderModalOpen,
+  invitePeopleToOrderContext,
 })

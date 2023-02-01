@@ -664,3 +664,15 @@ button.menu-item:active {
     }
   }
 }
+
+.ReactModal__Content--invite-people-to-order {
+  @media (min-width: $screen-lg-min) {
+    width: 50%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 66%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+  }
+}

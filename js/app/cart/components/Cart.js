@@ -17,7 +17,9 @@ import ProductOptionsModal from './ProductOptionsModal'
 import ProductDetailsModal from './ProductDetailsModal'
 
 import { changeAddress, sync, disableTakeaway, enableTakeaway, openAddressModal } from '../redux/actions'
-import { selectIsDeliveryEnabled, selectIsCollectionEnabled, selectIsOrderingAvailable } from '../redux/selectors'
+import { selectIsDeliveryEnabled, selectIsCollectionEnabled, selectIsOrderingAvailable, selectItems } from '../redux/selectors'
+import InvitePeopleToOrderButton from './InvitePeopleToOrderButton'
+import InvitePeopleToOrderModal from './InvitePeopleToOrderModal'
 
 class Cart extends Component {
 
@@ -52,6 +54,7 @@ class Cart extends Component {
                 <CartTotal />
                 { this.props.isOrderingAvailable && <hr /> }
                 { this.props.isOrderingAvailable && <CartButton /> }
+                { this.props.isOrderingAvailable && this.props.hasItems && <InvitePeopleToOrderButton /> }
               </div>
             </div>
           </div>
@@ -61,12 +64,15 @@ class Cart extends Component {
         <DateModal />
         <ProductOptionsModal />
         <ProductDetailsModal />
+        <InvitePeopleToOrderModal />
       </Sticky>
     )
   }
 }
 
 function mapStateToProps(state) {
+
+  const items = selectItems(state)
 
   return {
     shippingAddress: state.cart.shippingAddress,
@@ -80,6 +86,7 @@ function mapStateToProps(state) {
     loading: state.isFetching,
     isOrderingAvailable: selectIsOrderingAvailable(state),
     restaurant: state.cart.restaurant,
+    hasItems: !!items.length
   }
 }
 
