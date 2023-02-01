@@ -116,6 +116,8 @@ trait AdminDashboardTrait
             return $response;
         }
 
+        $taskExportAuth = false;
+
         $allTasks = $this->getDoctrine()
             ->getRepository(Task::class)
             ->findByDate($date)
@@ -204,6 +206,7 @@ trait AdminDashboardTrait
             'all_tasks' => $allTasksNormalized,
             'task_lists' => $taskListsNormalized,
             'task_export_form' => $taskExportForm->createView(),
+            'task_export_auth' => $taskExportAuth,
             'tags' => $tagManager->getAllTags(),
             'jwt' => $jwtManager->create($this->getUser()),
             'centrifugo_token' => $centrifugoClient->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600)),
