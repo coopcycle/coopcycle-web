@@ -124,7 +124,8 @@ class Navbar extends React.Component {
                   </a>
                 </div>
               </li>
-              {taskExportAuth==true && <li>
+              {console.log(this)}
+              {this.taskExportAuth==true && <li>
                 <a href="#" onClick={ this._onExportClick.bind(this) }>
                   <i className="fa fa-download" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_EXPORT') }
                 </a>
