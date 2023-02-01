@@ -124,11 +124,12 @@ class Navbar extends React.Component {
                   </a>
                 </div>
               </li>
-              <li>
+              {1==1 && <li>
                 <a href="#" onClick={ this._onExportClick.bind(this) }>
                   <i className="fa fa-download" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_EXPORT') }
                 </a>
-              </li>
+              </li>}
+              
               <li>
                 <a href="#" onClick={ this._onImportClick.bind(this) }>
                   <i className="fa fa-upload" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_IMPORT') }
