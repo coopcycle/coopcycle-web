@@ -50,7 +50,7 @@ trait AdminDashboardTrait
         $nav = $request->query->getBoolean('nav', true);
 
         $defaultParams = [
-            'date' => $request->get('date', (new \DateTime())->format('Y-m-d')),
+            'date' => '2021-12-01',
         ];
 
         if (!$nav) {
