@@ -18,6 +18,7 @@
     data-centrifugo-token="{{ centrifugo_token }}"
     data-centrifugo-tracking-channel="{{ centrifugo_tracking_channel }}"
     data-centrifugo-events-channel="{{ centrifugo_events_channel }}"
+    data-task-export-auth="{{ task_export_auth }}"
     data-date="{{ date|date('Y-m-d') }}"
     data-tags="{{ tags|json_encode|e('html_attr') }}"
     data-couriers-list="{{ couriers|json_encode|e('html_attr') }}"

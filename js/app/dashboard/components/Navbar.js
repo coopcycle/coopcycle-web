@@ -95,7 +95,6 @@ class Navbar extends React.Component {
   }
 
   render () {
-
     return (
       <nav className="navbar navbar-default">
         <div className="container-fluid">
@@ -124,13 +123,12 @@ class Navbar extends React.Component {
                   </a>
                 </div>
               </li>
-              {console.log(this)}
-              {task_export_auth==true && <li>
-                <a href="#" onClick={ this._onExportClick.bind(this) }>
-                  <i className="fa fa-download" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_EXPORT') }
-                </a>
-              </li>}
-              
+              {this.props.taskExportAuth == '1' ?
+                (<li>
+                  <a href="#" onClick={ this._onExportClick.bind(this) }>
+                    <i className="fa fa-download" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_EXPORT') }
+                  </a>
+              </li>) : null }
               <li>
                 <a href="#" onClick={ this._onImportClick.bind(this) }>
                   <i className="fa fa-upload" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_IMPORT') }
@@ -162,7 +160,6 @@ class Navbar extends React.Component {
 
 function mapStateToProps(state) {
   let selectedDate = selectSelectedDate(state)
-
   return {
     date: selectedDate,
     prev: window.Routing.generate('admin_dashboard_fullscreen', {
@@ -177,6 +174,7 @@ function mapStateToProps(state) {
     nav: state.config.nav,
     isDefaultFilters: state.settings.isDefaultFilters,
     taskImportToken: state.taskImportToken,
+    taskExportAuth: state.config.taskExportAuth,
   }
 }
 

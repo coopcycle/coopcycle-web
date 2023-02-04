@@ -50,7 +50,7 @@ trait AdminDashboardTrait
         $nav = $request->query->getBoolean('nav', true);
 
         $defaultParams = [
-            'date' => '2021-12-01',
+            'date' => $request->get('date', (new \DateTime())->format('Y-m-d')),
         ];
 
         if (!$nav) {
@@ -89,7 +89,7 @@ trait AdminDashboardTrait
     {
         $hashids = new Hashids($this->getParameter('secret'), 8);
 
-        $date = new \DateTime('2021-12-01');
+        $date = new \DateTime($date);
 
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
