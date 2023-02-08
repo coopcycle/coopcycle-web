@@ -9,6 +9,8 @@ use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use Cocur\Slugify\SlugifyInterface;
@@ -29,9 +31,13 @@ class DashboardController extends AbstractController
     use StoreTrait;
 
     public function __construct(
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
         bool $adhocOrderEnabled
     )
     {
+        $this->entityManager = $entityManager;
+        $this->translator = $translator;
         $this->adhocOrderEnabled = $adhocOrderEnabled;
     }
 
@@ -85,7 +91,10 @@ class DashboardController extends AbstractController
         PaginatorInterface $paginator,
         EntityManagerInterface $entityManager,
         TaxesHelper $taxesHelper,
-        CubeJsTokenFactory $tokenFactory)
+        CubeJsTokenFactory $tokenFactory,
+        OrderManager $orderManager,
+        DeliveryManager $deliveryManager,
+        OrderFactory $orderFactory)
     {
         $user = $this->getUser();
 
@@ -101,7 +110,7 @@ class DashboardController extends AbstractController
             $request->attributes->set('layout', 'dashboard.html.twig');
             $request->attributes->set('routes', $routes);
 
-            return $this->storeDeliveriesAction($store->getId(), $request, $translator, $paginator);
+            return $this->storeDeliveriesAction($store->getId(), $request, $paginator, $orderManager, $deliveryManager, $orderFactory);
         }
 
         if ($user->hasRole('ROLE_RESTAURANT') && $request->attributes->has('_restaurant')) {

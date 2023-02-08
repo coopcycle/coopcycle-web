@@ -709,7 +709,10 @@ class AdminController extends AbstractController
      * @Route("/admin/deliveries", name="admin_deliveries")
      */
     public function deliveriesAction(Request $request,
-        PaginatorInterface $paginator)
+        PaginatorInterface $paginator,
+        DeliveryManager $deliveryManager,
+        OrderFactory $orderFactory,
+        OrderManager $orderManager)
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
             'with_store' => true
@@ -719,19 +722,8 @@ class AdminController extends AbstractController
         if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
             $store = $deliveryImportForm->get('store')->getData();
 
-            $deliveries = $deliveryImportForm->getData();
-            foreach ($deliveries as $delivery) {
-                $store->addDelivery($delivery);
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-            }
-            $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->translator->trans('delivery.import.success_message', ['%count%' => count($deliveries)])
-            );
-
-            return $this->redirectToRoute('admin_deliveries');
+            return $this->handleDeliveryImportForStore($store, $deliveryImportForm, 'admin_deliveries',
+                $orderManager, $deliveryManager, $orderFactory,);
         }
 
         $dataExportForm = $this->createForm(DataExportType::class);
