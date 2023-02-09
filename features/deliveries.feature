@@ -1005,7 +1005,8 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1032,7 +1033,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }
@@ -1077,7 +1079,8 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1104,7 +1107,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }

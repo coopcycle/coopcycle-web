@@ -481,7 +481,10 @@ Feature: Tasks
         "weight":null,
         "packages": [],
         "createdAt":"@string@.isDateTime()",
-        "tour":null
+        "tour":{
+          "@id":"/api/tours/1",
+          "name":"Example tour"
+        }
       }
       """
 
