@@ -317,12 +317,14 @@ Feature: Task recurrence rules
           {
             "@id":"/api/tasks/1",
             "@type":"Task",
-            "packages": []
+            "packages": [],
+            "tour":null
           },
           {
             "@id":"/api/tasks/2",
             "@type":"Task",
-            "packages": []
+            "packages": [],
+            "tour":null
           }
         ],
         "hydra:totalItems":2
@@ -359,17 +361,20 @@ Feature: Task recurrence rules
             "@id":"/api/tasks/1",
             "@type":"Task",
             "packages": [],
-            "weight": null
+            "weight": null,
+            "tour":null
           },
           {
             "@id":"/api/tasks/2",
             "@type":"Task",
-            "packages": []
+            "packages": [],
+            "tour":null
           },
           {
             "@id":"/api/tasks/3",
             "@type":"Task",
-            "packages": []
+            "packages": [],
+            "tour":null
           }
         ],
         "hydra:totalItems":3

@@ -1,6 +1,5 @@
 Feature: Tasks
 
-  @debug
   Scenario: Retrieve assigned tasks
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -51,7 +50,8 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":0,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -81,7 +81,8 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":1,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           }
         ],
         "hydra:totalItems":2,
@@ -114,7 +115,8 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":0,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -144,7 +146,8 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":1,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           }
         ],
         "distance":@integer@,
@@ -477,7 +480,8 @@ Feature: Tasks
         "metadata": [],
         "weight":null,
         "packages": [],
-        "createdAt":"@string@.isDateTime()"
+        "createdAt":"@string@.isDateTime()",
+        "tour":null
       }
       """
 
@@ -770,7 +774,8 @@ Feature: Tasks
         "metadata": [],
         "weight": 800,
         "packages": [],
-        "createdAt":"@string@.isDateTime()"
+        "createdAt":"@string@.isDateTime()",
+        "tour":null
       }
       """
 
@@ -850,7 +855,8 @@ Feature: Tasks
         "metadata": [],
         "weight":null,
         "packages": [],
-        "createdAt":"@string@.isDateTime()"
+        "createdAt":"@string@.isDateTime()",
+        "tour":null
       }
       """
 
@@ -980,7 +986,8 @@ Feature: Tasks
             },
             "weight":null,
             "packages": [],
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           },
           {
             "@id":"/api/tasks/2",
@@ -1009,7 +1016,8 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "packages": [],
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           }
         ],
         "hydra:totalItems":2,
