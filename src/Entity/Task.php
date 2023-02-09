@@ -335,6 +335,11 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $metadata = [];
 
     /**
+     * @var array
+     */
+    private $tour;
+
+    /**
      * @var int
      * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create", "pricing_deliveries"})
      */
@@ -900,5 +905,17 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function addToStore(Store $store)
     {
         $this->setOrganization($store->getOrganization());
+    }
+
+    public function getTour()
+    {
+        return $this->tour;
+    }
+
+    public function setTour($tour)
+    {
+        $this->tour = $tour;
+
+        return $this;
     }
 }
