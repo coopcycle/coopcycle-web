@@ -264,6 +264,8 @@
         "SEARCH_SHOPS": "Boutiques",
         "SEARCH_PRODUCTS": "Produits",
         "SEARCH_PRODUCT_ITEM_SUBTITLE": "Dans {{- shop}}",
-        "SEARCH_PLACEHOLDER": "Une boutique, un plat…"
+        "SEARCH_PLACEHOLDER": "Une boutique, un plat…",
+        "ADMIN_DASHBOARD_CREATE_TOUR": "Créer une tournée",
+        "ADMIN_DASHBOARD_TOUR_NAME": "Nom de la tournée"
     }
 }

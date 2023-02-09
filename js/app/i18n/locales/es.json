@@ -298,6 +298,8 @@
         "ORDER_NUMBER": "Número de pedido",
         "CONTINUE_EXISTING_ORDER": "Continuar con un pedido existente",
         "SEARCH_ORDER_NUMBER_ERROR": "Ingrese un número de pedido válido",
-        "ADD_PRODUCTS_TO_ORDER_TITLE": "Agregar productos al pedido #{{number}}"
+        "ADD_PRODUCTS_TO_ORDER_TITLE": "Agregar productos al pedido #{{number}}",
+        "ADMIN_DASHBOARD_CREATE_TOUR": "Crear una ruta",
+        "ADMIN_DASHBOARD_TOUR_NAME": "Nombre de la ruta"
     }
 }

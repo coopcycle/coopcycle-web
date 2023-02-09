@@ -6,7 +6,7 @@ import { Menu, Item } from 'react-contexify'
 
 import moment from 'moment'
 
-import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal } from '../redux/actions'
+import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal, openCreateTourModal } from '../redux/actions'
 import { selectNextWorkingDay, selectSelectedTasks, selectLinkedTasksIds } from '../redux/selectors'
 
 const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
@@ -21,6 +21,7 @@ const ADD_TO_GROUP = 'ADD_TO_GROUP'
 const REMOVE_FROM_GROUP = 'REMOVE_FROM_GROUP'
 const RESTORE = 'RESTORE'
 const CREATE_DELIVERY = 'CREATE_DELIVERY'
+const CREATE_TOUR = 'CREATE_TOUR'
 
 import { selectUnassignedTasks } from '../../coopcycle-frontend-js/logistics/redux'
 
@@ -34,7 +35,7 @@ function _unassign(tasksToUnassign, unassignTasks) {
 const DynamicMenu = ({
   unassignedTasks, selectedTasks, nextWorkingDay, linkedTasksIds,
   unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
-  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal,
+  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal, openCreateTourModal,
 }) => {
 
   const { t } = useTranslation()
@@ -75,8 +76,11 @@ const DynamicMenu = ({
         actions.push(REMOVE_FROM_GROUP)
       }
 
-      if (containsOnePickupAndAtLeastOneDropoff && !containsOnlyLinkedTasks) {
-        actions.push(CREATE_DELIVERY)
+      if (containsOnePickupAndAtLeastOneDropoff) {
+        actions.push(CREATE_TOUR)
+        if (!containsOnlyLinkedTasks) {
+          actions.push(CREATE_DELIVERY)
+        }
       }
 
     } else {
@@ -190,6 +194,12 @@ const DynamicMenu = ({
       >
         { t('ADMIN_DASHBOARD_CREATE_DELIVERY') }
       </Item>
+      <Item
+        hidden={ !actions.includes(CREATE_TOUR) }
+        onClick={ () => openCreateTourModal() }
+      >
+        { t('ADMIN_DASHBOARD_CREATE_TOUR') }
+      </Item>
       { actions.length === 0 && (
         <Item disabled>
           { t('ADMIN_DASHBOARD_NO_ACTION_AVAILABLE') }
@@ -222,6 +232,7 @@ function mapDispatchToProps(dispatch) {
     removeTasksFromGroup: tasks => dispatch(removeTasksFromGroup(tasks)),
     restoreTasks: tasks => dispatch(restoreTasks(tasks)),
     openCreateDeliveryModal: () => dispatch(openCreateDeliveryModal()),
+    openCreateTourModal: () => dispatch(openCreateTourModal()),
   }
 }
 
