@@ -19,7 +19,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/TaskList",
-        "@id":"/api/task_lists/1",
+        "@id":"/api/task_lists/2",
         "@type":"TaskList",
         "hydra:member":[
           {
@@ -179,7 +179,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/TaskList",
-        "@id":"/api/task_lists/4",
+        "@id":"/api/task_lists/5",
         "@type":"TaskList",
         "hydra:member":[],
         "hydra:totalItems":0,
