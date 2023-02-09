@@ -51,7 +51,10 @@ Feature: Tasks
             "packages":[],
             "position":0,
             "createdAt":"@string@.isDateTime()",
-            "tour":null
+            "tour":{
+              "@id":"/api/tours/1",
+              "name":"Example tour"
+            }
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -116,7 +119,10 @@ Feature: Tasks
             "packages":[],
             "position":0,
             "createdAt":"@string@.isDateTime()",
-            "tour":null
+            "tour":{
+              "@id":"/api/tours/1",
+              "name":"Example tour"
+            }
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
