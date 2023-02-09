@@ -1,5 +1,6 @@
 Feature: Tasks
 
+  @debug
   Scenario: Retrieve assigned tasks
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -315,8 +316,8 @@ Feature: Tasks
     And the JSON should match:
       """
       {
-          "@context": "\/api\/contexts\/TaskGroup",
-          "@id": "\/api\/task_groups\/1",
+          "@context": "/api/contexts/TaskGroup",
+          "@id": "/api/task_groups/1",
           "@type": "TaskGroup",
           "id": 1,
           "name": "Group #1",
@@ -1965,5 +1966,35 @@ Feature: Tasks
         },
         "comments": "Lorem ipsum",
         "@*@": "@*@"
+      }
+      """
+
+
+  Scenario: Retrieve task with tour
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+      | users.yml           |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/tasks/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/1",
+        "@type":"Task",
+        "id":1,
+        "type":"DROPOFF",
+        "status":"TODO",
+        "tour":{
+          "@id":"/api/tours/1",
+          "name":"Example tour"
+        },
+        "@*@":"@*@"
       }
       """
