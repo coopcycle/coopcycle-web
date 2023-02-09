@@ -116,7 +116,7 @@ trait AdminDashboardTrait
             return $response;
         }
 
-        $taskExportAuth = false;
+        $taskExportAuth = $this->isGranted('ROLE_ADMIN');
 
         $allTasks = $this->getDoctrine()
             ->getRepository(Task::class)

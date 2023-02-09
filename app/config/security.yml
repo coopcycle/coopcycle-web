@@ -15,7 +15,7 @@ security:
         ROLE_STORE: ROLE_USER
         ROLE_LOOPEAT: ROLE_USER
         ROLE_DISPATCHER: [ ROLE_COURIER, ROLE_LOOPEAT ]
-        ROLE_ADMIN: [ ROLE_COURIER, ROLE_LOOPEAT ]
+        ROLE_ADMIN: [ ROLE_DISPATCHER ]
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
@@ -288,6 +288,9 @@ security:
         - { path: ^/profile/jwt, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/profile/notifications, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/profile, roles: IS_AUTHENTICATED_REMEMBERED }
+        - { path: ^/admin/dashboard$, roles: ROLE_DISPATCHER }
+        - { path: ^/admin/task-lists/.*$, roles: ROLE_DISPATCHER }
+        - { path: ^/admin/tasks/.*$, roles: ROLE_DISPATCHER }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/_uploader/restaurant, roles: [ ROLE_ADMIN, ROLE_RESTAURANT ] }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }

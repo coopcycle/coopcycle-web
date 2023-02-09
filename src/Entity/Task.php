@@ -54,7 +54,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  *     "post"={
  *       "method"="POST",
- *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "access_control"="is_granted('ROLE_DISPATCHER')",
  *       "denormalization_context"={"groups"={"task_create"}},
  *       "validation_groups"={"Default"}
  *     }
@@ -66,7 +66,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  *     "put"={
  *       "method"="PUT",
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
  *       "denormalization_context"={"groups"={"task_edit"}}
  *     },
  *     "task_start"={
