@@ -344,8 +344,8 @@ trait StoreTrait
         return $this->renderStoreForm($store, $request, $translator);
     }
 
-    public function storeDeliveriesAction($id, Request $request,
-        TranslatorInterface $translator, PaginatorInterface $paginator)
+    public function storeDeliveriesAction($id, Request $request, PaginatorInterface $paginator,
+        OrderManager $orderManager, DeliveryManager $deliveryManager, OrderFactory $orderFactory)
     {
         $store = $this->getDoctrine()
             ->getRepository(Store::class)
@@ -360,19 +360,8 @@ trait StoreTrait
         $deliveryImportForm->handleRequest($request);
         if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
 
-            $deliveries = $deliveryImportForm->getData();
-            foreach ($deliveries as $delivery) {
-                $store->addDelivery($delivery);
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-            }
-            $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-            $this->addFlash(
-                'notice',
-                $translator->trans('delivery.import.success_message', ['%count%' => count($deliveries)])
-            );
-
-            return $this->redirectToRoute($routes['import_success']);
+            return $this->handleDeliveryImportForStore($store, $deliveryImportForm,
+                $routes['import_success'], $orderManager, $deliveryManager, $orderFactory,);
         }
 
         $sections = $this->getDoctrine()
@@ -501,5 +490,49 @@ trait StoreTrait
         unlink($zipName);
 
         return $response;
+    }
+
+    protected function handleDeliveryImportForStore(
+        Store $store,
+        FormInterface $deliveryImportForm,
+        string $routeTo,
+        OrderManager $orderManager,
+        DeliveryManager $deliveryManager,
+        OrderFactory $orderFactory)
+    {
+        $deliveries = $deliveryImportForm->getData();
+
+        foreach ($deliveries as $delivery) {
+            $store->addDelivery($delivery);
+
+            $this->entityManager->persist($delivery);
+
+            if ($store->getCreateOrders()) {
+                try {
+                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
+                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price);
+
+                    $this->entityManager->persist($order);
+                    $this->entityManager->flush();
+
+                    $orderManager->onDemand($order);
+                } catch (NoRuleMatchedException $e) {
+                    $this->addFlash(
+                        'error',
+                        $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators')
+                    );
+                    return $this->redirectToRoute($routeTo);
+                }
+            }
+        }
+
+        $this->entityManager->flush();
+
+        $this->addFlash(
+            'notice',
+            $this->translator->trans('delivery.import.success_message', ['%count%' => count($deliveries)])
+        );
+
+        return $this->redirectToRoute($routeTo);
     }
 }
