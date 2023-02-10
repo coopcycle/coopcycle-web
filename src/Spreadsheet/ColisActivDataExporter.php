@@ -8,6 +8,7 @@ use AppBundle\Entity\Package;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskEvent;
 use AppBundle\Entity\Task\Package as TaskPackage;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\TaskRepository;
@@ -53,25 +54,24 @@ final class ColisActivDataExporter implements DataExporterInterface
         // Add join with delivery, to exclude standalone tasks
         $qb = $qb->join(Delivery::class, 'd', Expr\Join::WITH, 't.delivery = d.id');
 
-        $qb = $qb->leftJoin(User::class, 'u', Expr\Join::WITH, 't.assignedTo = u.id');
+        $qb = $qb->leftJoin(TaskEvent::class, 'te', Expr\Join::WITH, 't.id = te.task AND te.name = :task_done_event');
 
         $qb
             ->select('t.id')
             ->addSelect('t.type')
             ->addSelect('IDENTITY(t.delivery) AS delivery')
-            ->addSelect('t.doneAfter')
-            ->addSelect('t.doneBefore')
-            ->addSelect('t.weight')
             ->addSelect('a.geo')
-            ->addSelect('d.distance')
             ->addSelect('o.name AS orgName')
-            ->addSelect('u.username as courier')
+            ->addSelect('te.createdAt AS completedAt')
             ;
 
         $qb
+            ->andWhere('t.status = :status_done')
             ->andWhere(
                 $qb->expr()->in('t.delivery', $deliveryIds)
-            );
+            )
+            ->setParameter('status_done', Task::STATUS_DONE)
+            ->setParameter('task_done_event', 'task:done');
 
         $tasks = $qb->getQuery()->getArrayResult();
 
@@ -100,10 +100,10 @@ final class ColisActivDataExporter implements DataExporterInterface
 	            	'tour_id' => $id,
 	            	'carrier_id' => $pickup['orgName'],
 	            	'transport_type' => 'bike',
-	            	'pickup_time' => $pickup['doneBefore']->getTimestamp(),
+                    'pickup_time' => $pickup['completedAt']->getTimestamp(),
 	            	'pickup_latitude' => $pickupCoords->getLatitude(),
 	            	'pickup_longitude' => $pickupCoords->getLongitude(),
-	            	'delivery_time' => $dropoff['doneBefore']->getTimestamp(),
+                    'delivery_time' => $dropoff['completedAt']->getTimestamp(),
 	            	'delivery_latitude' => $coords->getLatitude(),
 	            	'delivery_longitude' => $coords->getLongitude(),
 	            ];
