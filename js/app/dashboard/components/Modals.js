@@ -18,7 +18,8 @@ import {
   closeCreateGroupModal,
   exportTasks,
   closeAddTaskToGroupModal,
-  closeCreateDeliveryModal } from '../redux/actions'
+  closeCreateDeliveryModal,
+  closeCreateTourModal } from '../redux/actions'
 import TaskModalContent from './TaskModalContent'
 import FiltersModalContent from './FiltersModalContent'
 import SettingsModalContent from './SettingsModalContent'
@@ -29,6 +30,7 @@ import ExportModalContent from './ExportModalContent'
 import CreateGroupModalContent from './CreateGroupModalContent'
 import AddTaskToGroupModalContent from './AddTaskToGroupModalContent'
 import CreateDeliveryModalContent from './CreateDeliveryModalContent'
+import CreateTourModalContent from './CreateTourModalContent'
 
 class Modals extends React.Component {
 
@@ -126,6 +128,14 @@ class Modals extends React.Component {
           shouldCloseOnOverlayClick={ true }>
           <CreateDeliveryModalContent />
         </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.isCreateTourModalVisible }
+          onRequestClose={ this.props.closeCreateTourModal }
+          className="ReactModal__Content--select-courier"
+          shouldCloseOnOverlayClick={ true }>
+          <CreateTourModalContent />
+        </Modal>
       </React.Fragment>
     )
   }
@@ -145,6 +155,7 @@ function mapStateToProps(state) {
     createGroupModalIsOpen: state.createGroupModalIsOpen,
     addTaskToGroupModalIsOpen: state.addTaskToGroupModalIsOpen,
     isCreateDeliveryModalVisible: state.isCreateDeliveryModalVisible,
+    isCreateTourModalVisible: state.isCreateTourModalVisible,
   }
 }
 
@@ -165,6 +176,7 @@ function mapDispatchToProps (dispatch) {
     exportTasks: (start, end) => dispatch(exportTasks(start, end)),
     closeAddTaskToGroupModal: () => dispatch(closeAddTaskToGroupModal()),
     closeCreateDeliveryModal: () => dispatch(closeCreateDeliveryModal()),
+    closeCreateTourModal: () => dispatch(closeCreateTourModal()),
   }
 }
 

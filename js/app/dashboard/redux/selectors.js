@@ -28,6 +28,9 @@ export const selectTaskLists = taskListSelectors.selectAll
 
 export const selectBookedUsernames = taskListSelectors.selectIds
 
+const belongsToGroup = task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group
+const belongsToTour = task => Object.prototype.hasOwnProperty.call(task, 'tour') && task.tour
+
 export const selectGroups = createSelector(
   selectUnassignedTasks,
   state => state.taskListGroupMode,
@@ -40,7 +43,7 @@ export const selectGroups = createSelector(
     const groupsMap = new Map()
     const groups = []
 
-    const tasksWithGroup = filter(unassignedTasks, task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group)
+    const tasksWithGroup = filter(unassignedTasks, task => belongsToGroup(task))
 
     forEach(tasksWithGroup, task => {
       const keys = Array.from(groupsMap.keys())
@@ -71,7 +74,7 @@ export const selectStandaloneTasks = createSelector(
     let standaloneTasks = unassignedTasks
 
     if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
-      standaloneTasks = filter(unassignedTasks, task => !Object.prototype.hasOwnProperty.call(task, 'group') || !task.group)
+      standaloneTasks = filter(unassignedTasks, task => !belongsToGroup(task) && !belongsToTour(task))
     }
 
     // Order by dropoff desc, with pickup before
@@ -292,5 +295,35 @@ export const selectLinkedTasksIds = createSelector(
   (tasks) => {
     const groups = taskUtils.groupLinkedTasks(tasks)
     return Object.keys(groups)
+  }
+)
+
+export const selectTours = createSelector(
+  selectUnassignedTasks,
+  (unassignedTasks) => {
+
+    const toursMap = new Map()
+    const tours = []
+
+    const tasksWithTour = filter(unassignedTasks, task => belongsToTour(task))
+
+    forEach(tasksWithTour, task => {
+      const keys = Array.from(toursMap.keys())
+      const tour = find(keys, tour => tour['@id'] === task.tour['@id'])
+      if (!tour) {
+        toursMap.set(task.tour, [ task ])
+      } else {
+        toursMap.get(tour).push(task)
+      }
+    })
+
+    toursMap.forEach((tasks, tour) => {
+      tours.push({
+        ...tour,
+        items: tasks,
+      })
+    })
+
+    return tours
   }
 )

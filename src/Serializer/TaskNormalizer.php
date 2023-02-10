@@ -105,6 +105,15 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['packages'] = $this->_normalizeTaskPackages($object->getPackages());
         }
 
+        // FIXME Manage this with serialization groups
+        $data['tour'] = null;
+        if (null !== ($tour = $object->getTour())) {
+            $data['tour'] = [
+                '@id' => $this->iriConverter->getIriFromItem($tour),
+                'name' => $tour->getName(),
+            ];
+        }
+
         return $data;
     }
 

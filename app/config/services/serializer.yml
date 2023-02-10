@@ -104,3 +104,8 @@ services:
     arguments:
       $normalizer: "@serializer.normalizer.object"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\TourNormalizer:
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]

@@ -597,7 +597,8 @@ Feature: Urbantz
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
           "packages":[],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"/api/tasks/2",
@@ -624,7 +625,8 @@ Feature: Urbantz
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }

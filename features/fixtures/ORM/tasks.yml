@@ -74,3 +74,10 @@ AppBundle\Entity\Task:
     doneBefore: <identity(new \DateTime('2018-02-02 12:30:00'))>
     comments: "#bob"
     status: "DONE"
+
+AppBundle\Entity\Tour:
+  tour_1:
+    name: "Example tour"
+    __calls:
+      - addTask: [ "@task_1" ]
+      - addTask: [ "@task_2" ]

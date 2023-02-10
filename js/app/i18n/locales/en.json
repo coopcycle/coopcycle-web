@@ -305,6 +305,8 @@
         "SEARCH_SHOPS": "Shops",
         "SEARCH_PRODUCTS": "Products",
         "SEARCH_PLACEHOLDER": "A shop, a dish…",
-        "SEARCH_PRODUCT_ITEM_SUBTITLE": "In {{- shop}}"
+        "SEARCH_PRODUCT_ITEM_SUBTITLE": "In {{- shop}}",
+        "ADMIN_DASHBOARD_CREATE_TOUR": "Create tour",
+        "ADMIN_DASHBOARD_TOUR_NAME": "Tour name"
     }
 }

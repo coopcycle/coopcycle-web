@@ -178,6 +178,9 @@ export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
 export const OPEN_CREATE_DELIVERY_MODAL = 'OPEN_CREATE_DELIVERY_MODAL'
 export const CLOSE_CREATE_DELIVERY_MODAL = 'CLOSE_CREATE_DELIVERY_MODAL'
 
+export const OPEN_CREATE_TOUR_MODAL = 'OPEN_CREATE_TOUR_MODAL'
+export const CLOSE_CREATE_TOUR_MODAL = 'CLOSE_CREATE_TOUR_MODAL'
+
 export function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
 }
@@ -1208,7 +1211,7 @@ export function handleDragEnd(result) {
       Array.prototype.splice.apply(newTasks,
         Array.prototype.concat([ result.destination.index, 0 ], selectedTasks))
 
-    } else if (result.draggableId.startsWith('group:')) {
+    } else if (result.draggableId.startsWith('group:') || result.draggableId.startsWith('tour:')) {
 
       const groupEl = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`)
 
@@ -1420,4 +1423,43 @@ export function openCreateDeliveryModal() {
 
 export function closeCreateDeliveryModal() {
   return { type: CLOSE_CREATE_DELIVERY_MODAL }
+}
+
+export function openCreateTourModal() {
+  return { type: OPEN_CREATE_TOUR_MODAL }
+}
+
+export function closeCreateTourModal() {
+  return { type: CLOSE_CREATE_TOUR_MODAL }
+}
+
+export function createTour(tasks, name) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    createClient(dispatch).request({
+      method: 'post',
+      url: '/api/tours',
+      data: {
+        name,
+        tasks: _.map(tasks, t => t['@id']),
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then((response) => {
+        tasks.forEach(task => dispatch(updateTask({ ...task, tour: response.data })))
+        dispatch(closeCreateTourModal())
+      })
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.log(error)
+        dispatch(closeCreateDeliveryModal())
+      })
+  }
 }

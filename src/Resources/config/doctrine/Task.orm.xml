@@ -88,6 +88,11 @@
         <join-column name="rrule_id" referenced-column-name="id" nullable="true" on-delete="SET NULL" />
       </join-columns>
     </many-to-one>
+    <many-to-one field="tour" target-entity="AppBundle\Entity\Tour">
+      <join-columns>
+        <join-column name="tour_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\TaskListener">
         <lifecycle-callback type="prePersist" method="prePersist"/>

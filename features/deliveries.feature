@@ -131,7 +131,8 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -158,7 +159,8 @@ Feature: Deliveries
           "comments": "Beware of the dog\nShe bites",
           "weight":null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }
@@ -236,7 +238,8 @@ Feature: Deliveries
           "comments": "2.00 kg",
           "weight": 2000,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -263,7 +266,8 @@ Feature: Deliveries
           "comments": "Beware of the dog\nShe bites",
           "weight": 2000,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }
@@ -350,7 +354,8 @@ Feature: Deliveries
               "quantity": 2
             }
           ],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -383,7 +388,8 @@ Feature: Deliveries
               "quantity": 2
             }
           ],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }
@@ -460,7 +466,8 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -487,7 +494,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }
@@ -548,7 +556,8 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -575,7 +584,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }
@@ -632,7 +642,8 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -659,7 +670,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }
@@ -720,7 +732,8 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -747,7 +760,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }
@@ -810,7 +824,8 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -837,7 +852,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }
@@ -898,7 +914,8 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -925,7 +942,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }
@@ -987,7 +1005,8 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1014,7 +1033,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }
@@ -1059,7 +1079,8 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1086,7 +1107,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }
@@ -1282,7 +1304,8 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1309,7 +1332,8 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "trackingUrl": @string@
       }

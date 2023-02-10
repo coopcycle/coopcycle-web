@@ -19,7 +19,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/TaskList",
-        "@id":"/api/task_lists/1",
+        "@id":"/api/task_lists/2",
         "@type":"TaskList",
         "hydra:member":[
           {
@@ -50,7 +50,11 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":0,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "tour":{
+              "@id":"/api/tours/1",
+              "name":"Example tour"
+            }
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -80,7 +84,8 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":1,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           }
         ],
         "hydra:totalItems":2,
@@ -113,7 +118,11 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":0,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "tour":{
+              "@id":"/api/tours/1",
+              "name":"Example tour"
+            }
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -143,7 +152,8 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":1,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           }
         ],
         "distance":@integer@,
@@ -175,7 +185,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/TaskList",
-        "@id":"/api/task_lists/4",
+        "@id":"/api/task_lists/5",
         "@type":"TaskList",
         "hydra:member":[],
         "hydra:totalItems":0,
@@ -315,8 +325,8 @@ Feature: Tasks
     And the JSON should match:
       """
       {
-          "@context": "\/api\/contexts\/TaskGroup",
-          "@id": "\/api\/task_groups\/1",
+          "@context": "/api/contexts/TaskGroup",
+          "@id": "/api/task_groups/1",
           "@type": "TaskGroup",
           "id": 1,
           "name": "Group #1",
@@ -476,7 +486,11 @@ Feature: Tasks
         "metadata": [],
         "weight":null,
         "packages": [],
-        "createdAt":"@string@.isDateTime()"
+        "createdAt":"@string@.isDateTime()",
+        "tour":{
+          "@id":"/api/tours/1",
+          "name":"Example tour"
+        }
       }
       """
 
@@ -769,7 +783,8 @@ Feature: Tasks
         "metadata": [],
         "weight": 800,
         "packages": [],
-        "createdAt":"@string@.isDateTime()"
+        "createdAt":"@string@.isDateTime()",
+        "tour":null
       }
       """
 
@@ -849,7 +864,8 @@ Feature: Tasks
         "metadata": [],
         "weight":null,
         "packages": [],
-        "createdAt":"@string@.isDateTime()"
+        "createdAt":"@string@.isDateTime()",
+        "tour":null
       }
       """
 
@@ -979,7 +995,8 @@ Feature: Tasks
             },
             "weight":null,
             "packages": [],
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           },
           {
             "@id":"/api/tasks/2",
@@ -1008,7 +1025,8 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "packages": [],
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           }
         ],
         "hydra:totalItems":2,
@@ -1965,5 +1983,35 @@ Feature: Tasks
         },
         "comments": "Lorem ipsum",
         "@*@": "@*@"
+      }
+      """
+
+
+  Scenario: Retrieve task with tour
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+      | users.yml           |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/tasks/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/1",
+        "@type":"Task",
+        "id":1,
+        "type":"DROPOFF",
+        "status":"TODO",
+        "tour":{
+          "@id":"/api/tours/1",
+          "name":"Example tour"
+        },
+        "@*@":"@*@"
       }
       """
