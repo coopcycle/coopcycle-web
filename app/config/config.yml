@@ -68,6 +68,7 @@ parameters:
     dabba_client_secret: '%env(DABBA_CLIENT_SECRET)%'
     typesense_shops_collection_name: "shops"
     typesense_products_collection_name: "products"
+    colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.

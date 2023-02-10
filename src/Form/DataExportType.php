@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Spreadsheet\DataExporterInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -14,10 +15,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DataExportType extends AbstractType
 {
-    public function __construct(bool $dv4culEnabled, array $exporters)
+    public function __construct(bool $dv4culEnabled, bool $colisactivEnabled, array $exporters)
     {
         $this->dv4culEnabled = $dv4culEnabled;
+        $this->colisactivEnabled = $colisactivEnabled;
         $this->exporters = $exporters;
+    }
+
+    private function getExporter(array $data)
+    {
+        if (isset($data['format']) && !empty($data['format'])) {
+
+            return $this->exporters[$data['format']];
+        }
+
+        return $this->exporters['default'];
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -38,11 +50,23 @@ class DataExportType extends AbstractType
                 'data' => new \DateTime('now'),
             ]);
 
+        $formats = [];
+
         if ($this->dv4culEnabled) {
+            $formats['form.task_export.dv4cul.label'] = 'dv4cul';
+        }
+        if ($this->colisactivEnabled) {
+            $formats['form.task_export.colisactiv.label'] = 'colisactiv';
+        }
+
+        if (count($formats) > 0) {
             $builder
-                ->add('dv4cul', CheckboxType::class, [
-                    'label' => 'form.task_export.dv4cul.label',
+                ->add('format', ChoiceType::class, [
+                    'choices' => $formats,
+                    'label' => 'form.task_export.format.label',
                     'required' => false,
+                    'expanded' => false,
+                    'multiple' => false,
                 ]);
         }
 
@@ -52,8 +76,7 @@ class DataExportType extends AbstractType
 
             $data = $event->getData();
 
-            $exporter = isset($data['dv4cul']) && $data['dv4cul'] ?
-                $this->exporters['dv4cul'] : $this->exporters['default'];
+            $exporter = $this->getExporter($data);
 
             $start = new \DateTime($data['start']);
             $start->setTime(0, 0, 0);

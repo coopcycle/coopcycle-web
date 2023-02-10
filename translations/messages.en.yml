@@ -1289,3 +1289,5 @@ form.integration.productTypes.label: Product types allowed
 form.integration.woopitStoreId.label: Woopit store identifier
 integration.created.message: The integration has been created.
 profile.dabba.disconnect: Disconnect Dabba
+form.task_export.colisactiv.label: Export using ColivActiv format
+form.task_export.format.label: Export format

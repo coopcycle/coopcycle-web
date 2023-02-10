@@ -1122,6 +1122,7 @@ services:
 
   AppBundle\Spreadsheet\DeliveryDataExporter: ~
   AppBundle\Spreadsheet\DV4CULDataExporter: ~
+  AppBundle\Spreadsheet\ColisActivDataExporter: ~
 
   AppBundle\Edenred\Authentication:
     arguments:
