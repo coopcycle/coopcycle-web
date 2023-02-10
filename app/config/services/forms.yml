@@ -252,9 +252,11 @@ services:
   AppBundle\Form\DataExportType:
     arguments:
       $dv4culEnabled: '%dv4cul_enabled%'
+      $colisactivEnabled: '%colisactiv_enabled%'
       $exporters:
         default: '@AppBundle\Spreadsheet\DeliveryDataExporter'
         dv4cul: '@AppBundle\Spreadsheet\DV4CULDataExporter'
+        colisactiv: '@AppBundle\Spreadsheet\ColisActivDataExporter'
     tags: [ form.type ]
 
   AppBundle\Form\Order\AdhocOrderType:
