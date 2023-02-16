@@ -36,6 +36,8 @@ service:
       standard: 0.23
     fr-re:
       standard: 0.085
+    co:
+      standard: 0.19
 
 service_tax_exempt:
   rates:
@@ -72,6 +74,8 @@ service_tax_exempt:
     pt:
       zero: 0.0
     fr-re:
+      zero: 0.0
+    co:
       zero: 0.0
 
 drink:
@@ -151,6 +155,8 @@ base_standard:
       standard: 0.23
     fr-re:
       standard: 0.085
+    co:
+      standard: 0.19
 
 base_intermediary:
   rates:
@@ -204,6 +210,8 @@ base_reduced:
       reduced: 0.06
     fr-re:
       reduced: 0.021
+    co:
+      reduced: 0.05
 
 base_exempt:
   rates:
@@ -241,4 +249,6 @@ base_exempt:
     pt:
       zero: 0.00
     fr-re:
+      zero: 0.00
+    co:
       zero: 0.00

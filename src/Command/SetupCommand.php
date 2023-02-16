@@ -76,6 +76,7 @@ class SetupCommand extends Command
         'DKK',
         'CLP',
         'HUF',
+        'COP',
     ];
 
     public function __construct(
