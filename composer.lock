@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0d407aeaf18c42e11be8c12e5ad8d6f",
+    "content-hash": "484559d906f9d3b69997a48aa20d7cb9",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
-            "version": "dev-fix-indexer",
+            "version": "dev-allow_to_call_method_from_a_service_on_convert",
             "source": {
                 "type": "git",
-                "url": "https://github.com/alexsegura/TypesenseBundle.git",
-                "reference": "4e50e42baab76307006244d78bdd18cc6a238528"
+                "url": "https://github.com/lucasferraro/TypesenseBundle.git",
+                "reference": "271356e3bfac59cfdc1dbe2dbf271089c4261cc4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexsegura/TypesenseBundle/zipball/4e50e42baab76307006244d78bdd18cc6a238528",
-                "reference": "4e50e42baab76307006244d78bdd18cc6a238528",
+                "url": "https://api.github.com/repos/lucasferraro/TypesenseBundle/zipball/271356e3bfac59cfdc1dbe2dbf271089c4261cc4",
+                "reference": "271356e3bfac59cfdc1dbe2dbf271089c4261cc4",
                 "shasum": ""
             },
             "require": {
@@ -64,9 +64,9 @@
             ],
             "description": "This bundle provides integration with Typesense in Symfony",
             "support": {
-                "source": "https://github.com/alexsegura/TypesenseBundle/tree/fix-indexer"
+                "source": "https://github.com/lucasferraro/TypesenseBundle/tree/allow_to_call_method_from_a_service_on_convert"
             },
-            "time": "2023-01-09T13:45:22+00:00"
+            "time": "2023-02-16T21:04:42+00:00"
         },
         {
             "name": "api-platform/core",
