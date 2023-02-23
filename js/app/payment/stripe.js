@@ -43,7 +43,7 @@ function handleSaveOfPaymentMethod(el) {
         if (createPaymentMethodResult.error) {
           resolve()
         } else {
-          axios.post(el.gatewayConfig.createSetupIntentOrAttachPMURL, {
+          axios.post(el.config.gatewayConfig.createSetupIntentOrAttachPMURL, {
             payment_method_to_save: createPaymentMethodResult.paymentMethod.id
           })
           .then(() => resolve())
