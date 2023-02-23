@@ -334,6 +334,75 @@ class StripeManagerTest extends TestCase
         $this->stripeManager->createIntent($payment);
     }
 
+    public function testCreateIntentForNotConnectedAccount()
+    {
+        $payment = new Payment();
+        $payment->setStripeToken('tok_123456');
+        $payment->setAmount(3000);
+        $payment->setCurrencyCode('EUR');
+        $payment->setPaymentMethod('pm_123456');
+
+        $restaurant = $this->createRestaurant();
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getId()
+            ->willReturn(1);
+        $order
+            ->getNumber()
+            ->willReturn('ABC');
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
+        $order
+            ->getFeeTotal()
+            ->willReturn(750);
+
+        $user = $this->prophesize(User::class);
+
+        $user
+            ->getStripeCustomerId()
+            ->willReturn('cus_123456abcdef');
+
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->hasUser()
+            ->willReturn(true);
+
+        $customer
+            ->getUser()
+            ->willReturn($user->reveal());
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
+
+        $payment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequest('POST', '/v1/payment_intents', [
+            "amount" => 3000,
+            "currency" => "eur",
+            "description" => "Order ABC",
+            "payment_method" => "pm_123456",
+            "confirmation_method" => "manual",
+            "confirm" => "true",
+            "capture_method" => "manual",
+            "customer" => "cus_123456abcdef"
+        ]);
+
+        $this->stripeManager->createIntent($payment);
+    }
+
     public function testCreateIntentWithSavePaymentForFutureUsage()
     {
         $payment = new Payment();
@@ -374,6 +443,10 @@ class StripeManagerTest extends TestCase
             ->willReturn('cus_123456abcdef');
 
         $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->hasUser()
+            ->willReturn(true);
 
         $customer
             ->getUser()

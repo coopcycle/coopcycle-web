@@ -105,6 +105,18 @@ class StripeManager
                     'amount' => $order->getTotal() - $applicationFee
                 );
             }
+        } else {
+            /** When the payment is done directly to the platform account and current user
+             * has a stripe Customer associated, we send the Customer paramater to associate the payment to the customer.
+             * (this param is mandatory when the payment method belongs to the customer, i.e. when user selects a saved pm)
+             */
+            if ($order->getCustomer()->hasUser()) {
+                $stripeCustomer = $order->getCustomer()->getUser()->getStripeCustomerId();
+
+                if (null !== $stripeCustomer) {
+                    $attrs['customer'] = $stripeCustomer;
+                }
+            }
         }
 
         return $payload + $attrs;
