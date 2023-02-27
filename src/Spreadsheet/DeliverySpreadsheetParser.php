@@ -156,7 +156,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         $commentsColumn            = $this->getColumn($prefix, 'comments');
 
         if (isset($record[$addressNameColumn]) && !empty($record[$addressNameColumn])) {
-            $task->getAddress()->setName($record[$addressNameColumn]);
+            $task->getAddress()->setName((string) $record[$addressNameColumn]);
         }
 
         if (isset($record[$addressDescriptionColumn]) && !empty($record[$addressDescriptionColumn])) {
