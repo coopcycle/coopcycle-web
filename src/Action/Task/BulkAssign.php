@@ -3,8 +3,6 @@
 namespace AppBundle\Action\Task;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\ItemNotFoundException;
-use AppBundle\Api\Exception\BadRequestHttpException;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManagerInterface;
@@ -15,7 +13,6 @@ class BulkAssign extends Base
 {
     use AssignTrait;
 
-    private $userManager;
     private $iriConverter;
     private $entityManager;
 
@@ -42,29 +39,13 @@ class BulkAssign extends Base
             $payload = json_decode($content, true);
         }
 
-        if (isset($payload['username'])) {
-            $user = $this->userManager->findUserByUsername($payload['username']);
-
-            if (!$user) {
-
-                throw new ItemNotFoundException(sprintf('User "%s" does not exist',
-                    $this->getUser()->getUsername()));
-            }
-        } else {
-            $user = $this->getUser();
-        }
-
-        if (!isset($payload["tasks"])) {
-            throw new BadRequestHttpException('Mandatory parameters are missing');
-        }
-
         $tasks = $payload["tasks"];
 
         $tasksResults= [];
 
         foreach($tasks as $task) {
             $taskObj = $this->iriConverter->getItemFromIri($task);
-            $tasksResults[] = $this->assign($taskObj, $user);
+            $tasksResults[] = $this->assign($taskObj, $payload);
         }
 
         $this->entityManager->flush();
