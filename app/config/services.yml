@@ -110,6 +110,7 @@ services:
   ACSEO\TypesenseBundle\Manager\CollectionManager: '@typesense.collection_manager'
   ACSEO\TypesenseBundle\Manager\DocumentManager: '@typesense.document_manager'
   ACSEO\TypesenseBundle\Client\CollectionClient: '@typesense.collection_client'
+  ACSEO\TypesenseBundle\Client\TypesenseClient: '@typesense.client'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
