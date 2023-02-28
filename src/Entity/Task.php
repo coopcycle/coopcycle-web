@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Task\Assign as TaskAssign;
+use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Events as TaskEvents;
@@ -57,7 +58,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "access_control"="is_granted('ROLE_ADMIN')",
  *       "denormalization_context"={"groups"={"task_create"}},
  *       "validation_groups"={"Default"}
- *     }
+ *     },
+ *     "tasks_assign"={
+ *       "method"="PUT",
+ *       "path"="/tasks/assign",
+ *       "controller"=TaskBulkAssign::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "openapi_context"={
+ *         "summary"="Assigns multiple Tasks at once to a messenger",
+ *         "parameters"={
+ *           {
+ *             "in"="body",
+ *             "name"="N/A",
+ *             "schema"={"type"="object", "properties"={"username"={"type"="string"}, "tasks"={"type"="array"}}},
+ *             "style"="form"
+ *           }
+ *         }
+ *       }
+ *     },
  *   },
  *   itemOperations={
  *     "get"={
