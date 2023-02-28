@@ -2,34 +2,39 @@
 
 namespace AppBundle\Action\Task;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Api\Exception\BadRequestHttpException;
 use AppBundle\Service\TaskManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class Assign extends Base
+class BulkAssign extends Base
 {
     use AssignTrait;
 
     private $userManager;
+    private $iriConverter;
+    private $entityManager;
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
         TaskManager $taskManager,
-        UserManagerInterface $userManager)
+        UserManagerInterface $userManager,
+        IriConverterInterface $iriConverter,
+        EntityManagerInterface $entityManager)
     {
         parent::__construct($tokenStorage, $taskManager);
 
         $this->userManager = $userManager;
+        $this->iriConverter = $iriConverter;
+        $this->entityManager = $entityManager;
     }
 
-    public function __invoke($data, Request $request)
+    public function __invoke(Request $request)
     {
-        $task = $data;
-
         $payload = [];
 
         $content = $request->getContent();
@@ -49,6 +54,21 @@ class Assign extends Base
             $user = $this->getUser();
         }
 
-        return $this->assign($task, $user);
+        if (!isset($payload["tasks"])) {
+            throw new BadRequestHttpException('Mandatory parameters are missing');
+        }
+
+        $tasks = $payload["tasks"];
+
+        $tasksResults= [];
+
+        foreach($tasks as $task) {
+            $taskObj = $this->iriConverter->getItemFromIri($task);
+            $tasksResults[] = $this->assign($taskObj, $user);
+        }
+
+        $this->entityManager->flush();
+
+        return $tasksResults;
     }
 }
