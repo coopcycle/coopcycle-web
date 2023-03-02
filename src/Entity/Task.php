@@ -15,6 +15,7 @@ use AppBundle\Action\Task\Duplicate as TaskDuplicate;
 use AppBundle\Action\Task\Restore as TaskRestore;
 use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
+use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
@@ -71,6 +72,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             "in"="body",
  *             "name"="N/A",
  *             "schema"={"type"="object", "properties"={"username"={"type"="string"}, "tasks"={"type"="array"}}},
+ *             "style"="form"
+ *           }
+ *         }
+ *       }
+ *     },
+ *     "tasks_done"={
+ *       "method"="PUT",
+ *       "path"="/tasks/done",
+ *       "controller"=TaskBulkMarkAsDone::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "openapi_context"={
+ *         "summary"="Mark multiple Tasks as done at once",
+ *         "parameters"={
+ *           {
+ *             "in"="body",
+ *             "name"="N/A",
+ *             "schema"={"type"="object", "properties"={"tasks"={"type"="array"}}},
  *             "style"="form"
  *           }
  *         }
