@@ -25,6 +25,15 @@
           </p>
         </li>
         {% endif %}
+        {% if is_granted('ROLE_DISPATCHER') and not is_granted('ROLE_ADMIN') %}
+        <li>
+          <p class="navbar-btn">
+            <a class="btn btn-primary" href="{{ path('admin_dashboard') }}">
+              {% trans %}adminDashboard.title{% endtrans %}
+            </a>
+          </p>
+        </li>
+        {% endif %}
         {% if coopcycle_has_about_us() %}
         <li>
           <a href="{{ path('about_us') }}">

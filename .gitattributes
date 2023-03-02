@@ -4,6 +4,7 @@
 # Force the following filetypes to have unix eols, so Windows does not break them
 * text eol=lf
 *.cmd text eol=eol=crlf
+bin/console text eol=lf
 
 # Denote all files that are truly binary and should not be modified.
 *.png binary

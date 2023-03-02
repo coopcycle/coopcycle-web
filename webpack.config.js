@@ -7,11 +7,11 @@ Encore
 
   .setOutputPath(__dirname + '/web/build')
 
-  .setPublicPath('/build')
+  //.setPublicPath('/build')
 
   // Use this if you want to debug on a real device
-  // .setPublicPath('http://192.168.0.11:8080')
-  // .setManifestKeyPrefix('/build')
+   .setPublicPath('http://192.168.100.6:8080/build')
+   .setManifestKeyPrefix('build')
 
   .addEntry('adhoc-order', './js/app/adhoc_order/index.js')
   .addEntry('admin-orders', './js/app/admin/orders.js')

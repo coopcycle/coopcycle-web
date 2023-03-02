@@ -1,5 +1,4 @@
 version: '3'
-
 services:
 
   postgres:
@@ -251,3 +250,7 @@ volumes:
   typesense_data:
   webpack_php_cache:
   php_logs:
+
+networks:
+  my-network:
+    driver: bridge
