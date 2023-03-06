@@ -92,7 +92,7 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
 
         foreach ($sResults['hits'] as $sResult) {
             $product = $sResult['document'];
-            $product['enabled'] = $enabled;
+            $product['shop_enabled'] = $enabled;
             $productsToUpsert[] = $product;
         }
 

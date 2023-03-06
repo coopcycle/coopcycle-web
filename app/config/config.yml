@@ -988,8 +988,8 @@ acseo_typesense:
                     type: string
                     entity_attribute: restaurant.name
                     optional: true
-                enabled:
-                    name: enabled
+                shop_enabled:
+                    name: shop_enabled
                     type: bool
                     entity_attribute: restaurant.enabled
                     optional: true
