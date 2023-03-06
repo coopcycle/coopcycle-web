@@ -9,7 +9,7 @@ use AppBundle\Entity\Sylius\Product;
 use AppBundle\Enum\FoodEstablishment;
 use Doctrine\ORM\Events;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Psr\Log\LoggerInterface;
 use Gedmo\SoftDeleteable\SoftDeleteableListener;
 use Typesense\Exceptions\ObjectNotFound;
@@ -120,8 +120,8 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
         $entity = $args->getEntity();
 
         if ($entity instanceof LocalBusiness) {
-            $em = $args->getEntityManager();
-            $uow = $em->getUnitOfWork();
+            $om = $args->getObjectManager();
+            $uow = $om->getUnitOfWork();
             $uow->computeChangeSets();
             $changeset = $uow->getEntityChangeSet($entity);
             
