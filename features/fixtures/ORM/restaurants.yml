@@ -72,7 +72,6 @@ AppBundle\Entity\LocalBusiness:
       - '@cuisine_asian'
     featured: true
     exclusive: true
-    image_name: '623226af51f1c.jpg'
   restaurant_2:
     name: 'Café Barjot'
     address: "@address_2"

@@ -30,7 +30,7 @@ Feature: Search
                "sortable_id":1,
                "type":"restaurant",
                "result_type":"shop",
-               "image_url":"@string@.endsWith('/restaurant_thumbnail/62/32/623226af51f1c.jpg')"
+               "image_url":""
             }
          ],
          "hydra:totalItems":1,
