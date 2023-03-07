@@ -134,7 +134,7 @@
         "sylius/calendar": "^0.3",
         "twig/markdown-extra": "^3.4",
         "league/commonmark": "^2.3",
-        "acseo/typesense-bundle": "dev-allow_to_call_method_from_a_service_on_convert"
+        "acseo/typesense-bundle": "dev-service-as-getter"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
