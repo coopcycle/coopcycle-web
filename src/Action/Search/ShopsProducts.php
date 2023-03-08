@@ -33,6 +33,7 @@ class ShopsProducts
                 ->addParameter('collection', array_search(LocalBusiness::class, $managedClassNames, true)),
             (new TypesenseQuery($q))
                 ->addParameter('query_by', 'name')
+                ->filterBy('shop_enabled:true')
                 ->addParameter('collection', array_search(Product::class, $managedClassNames, true))
         ];
 

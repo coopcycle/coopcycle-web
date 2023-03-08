@@ -62,7 +62,8 @@ Feature: Search
             "shop_id":1,
             "shop_name":"Nodaiwa",
             "sortable_id":1,
-            "result_type":"product"
+            "result_type":"product",
+            "shop_enabled": true
           }
         ],
         "hydra:totalItems":1,
