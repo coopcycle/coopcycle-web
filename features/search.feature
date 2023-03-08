@@ -29,7 +29,8 @@ Feature: Search
                "name":"Nodaiwa",
                "sortable_id":1,
                "type":"restaurant",
-               "result_type":"shop"
+               "result_type":"shop",
+               "image_url":""
             }
          ],
          "hydra:totalItems":1,
@@ -63,7 +64,8 @@ Feature: Search
             "shop_name":"Nodaiwa",
             "sortable_id":1,
             "result_type":"product",
-            "shop_enabled": true
+            "shop_enabled": true,
+            "image_url": ""
           }
         ],
         "hydra:totalItems":1,

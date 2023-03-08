@@ -993,6 +993,11 @@ acseo_typesense:
                     type: bool
                     entity_attribute: restaurant.enabled
                     optional: true
+                image_url:
+                    name: image_url
+                    type: string
+                    entity_attribute: 'AppBundle\Typesense\Converter\ProductConverter::getImageURL'
+                    optional: true
             default_sorting_field: sortable_id
             finders:
                 products_autocomplete:
@@ -1034,4 +1039,9 @@ acseo_typesense:
                 enabled:
                     name: enabled
                     type: bool
+                image_url:
+                    name: image_url
+                    type: string
+                    entity_attribute: 'AppBundle\Typesense\Converter\ShopConverter::getImageURL'
+                    optional: true
             default_sorting_field: sortable_id

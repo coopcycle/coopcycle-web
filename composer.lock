@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0d407aeaf18c42e11be8c12e5ad8d6f",
+    "content-hash": "ebfb8fb44d13db67c12276b30c3c3f97",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
-            "version": "dev-fix-indexer",
+            "version": "dev-service-as-getter",
             "source": {
                 "type": "git",
-                "url": "https://github.com/alexsegura/TypesenseBundle.git",
-                "reference": "4e50e42baab76307006244d78bdd18cc6a238528"
+                "url": "https://github.com/lucasferraro/TypesenseBundle.git",
+                "reference": "c8a2da1b6e9077b69357c847222408a7c7fe0251"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexsegura/TypesenseBundle/zipball/4e50e42baab76307006244d78bdd18cc6a238528",
-                "reference": "4e50e42baab76307006244d78bdd18cc6a238528",
+                "url": "https://api.github.com/repos/lucasferraro/TypesenseBundle/zipball/c8a2da1b6e9077b69357c847222408a7c7fe0251",
+                "reference": "c8a2da1b6e9077b69357c847222408a7c7fe0251",
                 "shasum": ""
             },
             "require": {
@@ -31,6 +31,7 @@
                 "typesense/typesense-php": "^4.1.0"
             },
             "require-dev": {
+                "dg/bypass-finals": "^1.4",
                 "phpspec/prophecy-phpunit": "^2.0",
                 "phpunit/phpunit": "^9.5",
                 "symfony/phpunit-bridge": "^5.0|^6.0",
@@ -64,9 +65,9 @@
             ],
             "description": "This bundle provides integration with Typesense in Symfony",
             "support": {
-                "source": "https://github.com/alexsegura/TypesenseBundle/tree/fix-indexer"
+                "source": "https://github.com/lucasferraro/TypesenseBundle/tree/service-as-getter"
             },
-            "time": "2023-01-09T13:45:22+00:00"
+            "time": "2023-03-07T14:48:54+00:00"
         },
         {
             "name": "api-platform/core",

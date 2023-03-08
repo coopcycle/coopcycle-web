@@ -134,7 +134,7 @@
         "sylius/calendar": "^0.3",
         "twig/markdown-extra": "^3.4",
         "league/commonmark": "^2.3",
-        "acseo/typesense-bundle": "dev-fix-indexer"
+        "acseo/typesense-bundle": "dev-service-as-getter"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -164,7 +164,7 @@
         },
         {
             "type": "vcs",
-            "url": "https://github.com/alexsegura/TypesenseBundle"
+            "url": "https://github.com/lucasferraro/TypesenseBundle"
         }
     ],
     "scripts": {

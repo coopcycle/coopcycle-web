@@ -1238,3 +1238,7 @@ services:
   AppBundle\Dabba\Context:
     tags:
       - { name: monolog.logger, channel: dabba }
+
+  AppBundle\Typesense\Converter\:
+    resource: '../../src/Typesense/Converter/*'
+    public: true
