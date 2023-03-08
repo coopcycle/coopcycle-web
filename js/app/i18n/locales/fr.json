@@ -226,7 +226,7 @@
         "PAYMENT_FORM_CARDHOLDER_NAME": "Nom du titulaire de la carte",
         "PAYMENT_FORM_TITLE": "Vos informations de paiement",
         "EDENRED_SPLIT_AMOUNTS": "Vous pouvez payer {{edenred}} avec votre carte Edenred, mais vous devez payer {{card}} avec votre carte bancaire",
-        "PAYMENT_FORM_NOT_SUPPORTED": "Nous nʼacceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique.",
+        "PAYMENT_FORM_NOT_SUPPORTED": "Nous nʼacceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique ou une carte Swile.",
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "par tranche de",
             "ABOVE": "à partir de",
