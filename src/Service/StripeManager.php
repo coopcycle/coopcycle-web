@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\User;
 use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
 use Stripe;
@@ -104,6 +105,18 @@ class StripeManager
                     'amount' => $order->getTotal() - $applicationFee
                 );
             }
+        } else {
+            /** When the payment is done directly to the platform account and current user
+             * has a stripe Customer associated, we send the Customer paramater to associate the payment to the customer.
+             * (this param is mandatory when the payment method belongs to the customer, i.e. when user selects a saved pm)
+             */
+            if ($order->getCustomer()->hasUser()) {
+                $stripeCustomer = $order->getCustomer()->getUser()->getStripeCustomerId();
+
+                if (null !== $stripeCustomer) {
+                    $attrs['customer'] = $stripeCustomer;
+                }
+            }
         }
 
         return $payload + $attrs;
@@ -112,7 +125,7 @@ class StripeManager
     /**
      * @return Stripe\PaymentIntent
      */
-    public function createIntent(PaymentInterface $payment): Stripe\PaymentIntent
+    public function createIntent(PaymentInterface $payment, $savePaymentMethod = false): Stripe\PaymentIntent
     {
         $this->configure();
 
@@ -135,6 +148,8 @@ class StripeManager
 
         $payload = $this->configureCreateIntentPayload($payment, $payload);
         $stripeOptions = $this->getStripeOptions($payment);
+
+        $payload = $this->handleSaveOfPaymentMethod($payment, $payload, $stripeOptions, $savePaymentMethod);
 
         $this->logger->info(
             sprintf('Order #%d | StripeManager::createIntent | %s', $order->getId(), json_encode($payload))
@@ -294,4 +309,129 @@ class StripeManager
             }
         }
     }
+
+    /**
+     * @return Stripe\Customer
+     */
+    public function createCustomer(User $user)
+    {
+        if (null !== $user->getStripeCustomerId()) {
+            return Stripe\Customer::retrieve($user->getStripeCustomerId());
+        }
+
+        // create customer on Platform Account
+        $customer =  Stripe\Customer::create([
+            'email' => $user->getEmail(),
+            'name' => $user->getUserName()
+        ]);
+
+        $user->setStripeCustomerId($customer->id);
+
+        return $customer;
+    }
+
+    /**
+     * @return Stripe\SetupIntent
+     */
+    public function createSetupIntent(PaymentInterface $payment, $paymentMethod)
+    {
+        $user = $payment->getOrder()->getCustomer()->getUser();
+        $customerId = $user->getStripeCustomerId();
+
+        if (null === $customerId) {
+            $customer = $this->createCustomer($user);
+            $customerId = $customer->id;
+        }
+
+        return Stripe\SetupIntent::create([
+            'payment_method' => $paymentMethod,
+            'payment_method_types' => ['card'],
+            'usage' => 'on_session',
+            'customer' => $customerId,
+            'confirm' => true
+        ]);
+    }
+
+    public function attachPaymentMethodToCustomer(PaymentInterface $payment)
+    {
+        $user = $payment->getOrder()->getCustomer()->getUser();
+        $customerId = $user->getStripeCustomerId();
+
+        if (null === $customerId) {
+            $customer = $this->createCustomer($user);
+            $customerId = $customer->id;
+        }
+
+        $paymentMethod = Stripe\PaymentMethod::retrieve($payment->getPaymentMethodToSave());
+
+        if (null !== $paymentMethod) {
+            $paymentMethod->attach([
+                'customer' => $customerId
+            ]);
+        }
+    }
+
+    /**
+     * @see https://stripe.com/docs/connect/cloning-customers-across-accounts
+     * @see https://stripe.com/docs/payments/payment-methods/connect#cloning-payment-methods
+     *
+     * We clone the PaymentMethod in the connected account and then we use the clonned payment method id
+     * when we create the PaymentIntent to create the direct charge in the connected account.
+     *
+     * @return Stripe\PaymentMethod
+     */
+    public function clonePaymentMethodToConnectedAccount(PaymentInterface $payment)
+    {
+        $payload = [
+            'payment_method' => $payment->getPaymentMethod()
+        ];
+
+        if ($payment->getOrder()->getCustomer()->hasUser()) {
+            $user = $payment->getOrder()->getCustomer()->getUser();
+            $customerId = $user->getStripeCustomerId();
+
+            if (null === $customerId) {
+                $customer = $this->createCustomer($user);
+                $customerId = $customer->id;
+            }
+
+            $payload['customer'] = $customerId;
+        }
+
+        $stripeOptions = $this->getStripeOptions($payment);
+
+        return Stripe\PaymentMethod::create($payload, $stripeOptions);
+    }
+
+    public function getCustomerPaymentMethods($customerId)
+    {
+        return Stripe\Customer::allPaymentMethods($customerId, ['type' => 'card']);
+    }
+
+    /**
+     * @see https://stripe.com/docs/api/payment_methods/attach
+     */
+    private function handleSaveOfPaymentMethod(PaymentInterface $payment, $payload, $stripeOptions, $savePaymentMethod)
+    {
+        $notSavingForConnectedAccount = !isset($stripeOptions['stripe_account']) || null == $stripeOptions['stripe_account'];
+
+        if ($savePaymentMethod && $notSavingForConnectedAccount) {
+            // when there is not a connected account save payment method directly on platform account using 'setup_future_usage' param
+            // https://stripe.com/docs/api/payment_intents/create#create_payment_intent-setup_future_usage
+
+            $user = $payment->getOrder()->getCustomer()->getUser();
+
+            if (null == $user->getStripeCustomerId()) {
+                $customer = $this->createCustomer($payment->getOrder()->getCustomer()->getUser());
+                $payload['customer'] = $customer->id;
+            } else {
+                $payload['customer'] = $user->getStripeCustomerId();
+            }
+
+            $payload['setup_future_usage'] = 'on_session';
+        }
+
+        return $payload;
+    }
+
 }

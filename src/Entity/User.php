@@ -98,6 +98,8 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     protected $optinConsents;
 
+    private $stripeCustomerId;
+
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
@@ -427,6 +429,18 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
         $optinConsent->setUser($this);
 
         $this->optinConsents->add($optinConsent);
+
+        return $this;
+    }
+
+    public function getStripeCustomerId()
+    {
+        return $this->stripeCustomerId;
+    }
+
+    public function setStripeCustomerId($stripeCustomerId)
+    {
+        $this->stripeCustomerId = $stripeCustomerId;
 
         return $this;
     }

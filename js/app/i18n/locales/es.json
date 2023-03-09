@@ -300,6 +300,11 @@
         "SEARCH_ORDER_NUMBER_ERROR": "Ingrese un número de pedido válido",
         "ADD_PRODUCTS_TO_ORDER_TITLE": "Agregar productos al pedido #{{number}}",
         "ADMIN_DASHBOARD_CREATE_TOUR": "Crear una ruta",
-        "ADMIN_DASHBOARD_TOUR_NAME": "Nombre de la ruta"
+        "ADMIN_DASHBOARD_TOUR_NAME": "Nombre de la ruta",
+        "SAVE_CREDIT_CARD": "Guardar tarjeta de crédito",
+        "PAY_WITH_SAVED_CREDIT_CARD": "Pagar con una tarjeta de crédito guardada",
+        "ADD_NEW_CREDIT_CARD": "Ingresar nueva tarjeta de crédito",
+        "ADD_OR_SELECT_A_CARD_TO_PAY": "Por favor seleccione o ingrese una tarjeta de crédito para realizar el pago",
+        "EXPIRATION": "Expiración"
     }
 }

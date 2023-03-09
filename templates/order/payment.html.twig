@@ -67,6 +67,7 @@
             {% endif %}
 
             {{ form_widget(form.stripePayment.stripeToken) }}
+            {{ form_widget(form.stripePayment.savedPaymentMethodId) }}
 
             <div id="card-element">
               <!-- a React element will be inserted here. -->
@@ -119,6 +120,9 @@
     publishableKey: coopcycle_setting('stripe_publishable_key'),
     account: payment.stripeUserId ? payment.stripeUserId : null,
     createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid }),
+    clonePaymentMethodToConnectedAccountURL: path('stripe_clone_payment_method', { hashId: payment|hashid }),
+    createSetupIntentOrAttachPMURL: path('stripe_create_setup_intent_or_attach_pm', { hashId: payment|hashid }),
+    customerPaymentMethodsURL: path('stripe_customer_payment_methods', { hashId: order.customer|hashid }),
     createGiropayPaymentIntentURL: path('stripe_create_giropay_payment_intent', { hashId: payment|hashid }),
   }
 }) %}
@@ -140,9 +144,11 @@
   new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
     card: "{{ gateway }}",
     amount: {{ order.total }},
+    orderHasUser: "{{ order.customer.hasUser() }}",
     gatewayConfigs: {{ gateway_configs|json_encode|raw }},
     tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
-    selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}"
+    savedPaymentMethodElement: document.querySelector('#checkout_payment_stripePayment_savedPaymentMethodId'),
+    selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}",
   });
 </script>
 {% endif %}

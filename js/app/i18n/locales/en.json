@@ -307,6 +307,11 @@
         "SEARCH_PLACEHOLDER": "A shop, a dish…",
         "SEARCH_PRODUCT_ITEM_SUBTITLE": "In {{- shop}}",
         "ADMIN_DASHBOARD_CREATE_TOUR": "Create tour",
-        "ADMIN_DASHBOARD_TOUR_NAME": "Tour name"
+        "ADMIN_DASHBOARD_TOUR_NAME": "Tour name",
+        "SAVE_CREDIT_CARD": "Save credit card",
+        "PAY_WITH_SAVED_CREDIT_CARD": "Pay with a saved credit card",
+        "ADD_NEW_CREDIT_CARD": "Add a new credit card",
+        "ADD_OR_SELECT_A_CARD_TO_PAY": "Please select or enter a new credit card to pay",
+        "EXPIRATION": "Expiration"
     }
 }

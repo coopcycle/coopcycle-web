@@ -63,6 +63,10 @@ class Gateway
                     $this->stripeManager->confirmIntent($payment);
                 }
 
+                if ($payment->hasToSavePaymentMethod()) {
+                    $this->stripeManager->attachPaymentMethodToCustomer($payment);
+                }
+
                 if ($payment->isEdenredWithCard()) {
                     $authorizationId = $this->edenred->authorizeTransaction($payment);
                     $payment->setEdenredAuthorizationId($authorizationId);

@@ -78,6 +78,29 @@ trait StripeTrait
         ]);
     }
 
+    public function setPaymentDataToSaveAndReuse($paymentMethodToSave)
+    {
+        if (null !== $paymentMethodToSave) {
+            $this->details = array_merge($this->details, [
+                'save_payment_method' => true,
+                'payment_method_to_save' => $paymentMethodToSave
+            ]);
+        }
+    }
+
+    public function hasToSavePaymentMethod()
+    {
+        return isset($this->details['save_payment_method'])
+            && $this->details['save_payment_method'];
+    }
+
+    public function getPaymentMethodToSave() {
+        if (isset($this->details['payment_method_to_save'])) {
+            return $this->details['payment_method_to_save'];
+        }
+        return null;
+    }
+
     /**
      * @return string|null
      */
