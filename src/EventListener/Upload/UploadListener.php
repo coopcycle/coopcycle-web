@@ -181,13 +181,9 @@ final class UploadListener
 
             $this->logger->debug(sprintf('UploadListener | encoding = %s', var_export($encoding, true)));
 
-            if ($encoding == 'Windows-1252') {
+            if ($encoding === 'Windows-1252') {
                 $converted = mb_convert_encoding($fileSystem->read($file->getPathname()), "Windows-1252", "UTF-8");
-                try {
-                    $fileSystem->delete($file->getPathname());
-                } catch (FilesystemException | UnableToDeleteFile $exception) {
-                    $this->logger->debug(sprintf('UploadListener | Could not replace converted'));
-                }
+                $fileSystem->delete($file->getPathname());
                 $fileSystem->write($file->getPathname(), $converted);
                 $encoding = "UTF-8";
             }
