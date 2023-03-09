@@ -177,9 +177,17 @@ final class UploadListener
         if (in_array($mimeType, ['text/csv', 'text/plain'])) {
 
             // Make sure the file is in UTF-8
-            $encoding = mb_detect_encoding($fileSystem->read($file->getPathname()), 'UTF-8', true);
+            $encoding = mb_detect_encoding($fileSystem->read($file->getPathname()), ['UTF-8','Windows-1252'], true);
 
             $this->logger->debug(sprintf('UploadListener | encoding = %s', var_export($encoding, true)));
+
+            if ($encoding === 'Windows-1252') {
+                $converted = mb_convert_encoding($fileSystem->read($file->getPathname()), "Windows-1252", "UTF-8");
+                $fileSystem->delete($file->getPathname());
+                $fileSystem->write($file->getPathname(), $converted);
+                $encoding = "UTF-8";
+            }
+
 
             if ($encoding !== 'UTF-8') {
                 $fileSystem->delete($file->getPathname());
