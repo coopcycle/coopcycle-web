@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Action\Task\AddImagesToTasks;
 use AppBundle\Action\Task\Assign as TaskAssign;
 use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
@@ -89,6 +90,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             "in"="body",
  *             "name"="N/A",
  *             "schema"={"type"="object", "properties"={"tasks"={"type"="array"}}},
+ *             "style"="form"
+ *           }
+ *         }
+ *       }
+ *     },
+ *     "tasks_images"={
+ *       "method"="PUT",
+ *       "path"="/tasks/images",
+ *       "denormalization_context"={"groups"={"tasks_images"}},
+ *       "controller"=AddImagesToTasks::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "openapi_context"={
+ *         "summary"="",
+ *         "parameters"={
+ *           {
+ *             "in"="body",
+ *             "name"="N/A",
+ *             "schema"={"type"="object", "properties"={"tasks"={"type"="array"}, "images"={"type"="array"}}},
  *             "style"="form"
  *           }
  *         }
@@ -698,6 +717,18 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function addImage($image)
     {
         $this->images->add($image);
+        $this->imageCount = count($this->images);
+
+        return $this;
+    }
+
+    public function addImages($images)
+    {
+        foreach ($images as $image) {
+            $this->addImage($image);
+            $image->setTask($this);
+        }
+
         $this->imageCount = count($this->images);
 
         return $this;

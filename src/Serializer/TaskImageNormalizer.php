@@ -4,6 +4,7 @@ namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\TaskImage;
+use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Liip\ImagineBundle\Service\FilterService;
 use Symfony\Component\Serializer\Exception\LogicException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -30,8 +31,12 @@ class TaskImageNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $data =  $this->normalizer->normalize($object, $format, $context);
 
-        $imagePath = $this->uploaderHelper->asset($object, 'file');
-        $data['thumbnail'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'task_image_thumbnail');
+        try {
+            $imagePath = $this->uploaderHelper->asset($object, 'file');
+            $data['thumbnail'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'task_image_thumbnail');
+        } catch (NotLoadableException $e) {
+            return $data;
+        }
 
         return $data;
     }
