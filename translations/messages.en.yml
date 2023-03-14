@@ -768,6 +768,7 @@ promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option_value: Custom price
 roles.ROLE_ADMIN: Administrator
+roles.ROLE_DISPATCHER: Dispatcher
 roles.ROLE_COURIER: Courier
 roles.ROLE_RESTAURANT: Restaurant
 roles.ROLE_STORE: Store
@@ -779,6 +780,7 @@ user.edit.enabled.help: A deactivated user will be logged out and can't login ba
 user.profile.familyName: Family name
 user.profile.givenName: Given name
 roles.ROLE_ADMIN.help: "Administrator: Full access to all features\n"
+roles.ROLE_DISPATCHER.help: "Dispatcher: Full access on tasks\n"
 roles.ROLE_COURIER.help: "Courier: view waiting tasks, modify assigned tasks…\n"
 roles.ROLE_RESTAURANT.help: 'Restaurant owner: manage assigned restaurants, manage
   orders…'
@@ -1057,6 +1059,7 @@ users.couriers: Couriers
 users.restaurant_owners: Restaurant owners
 users.store_owners: Store owners
 users.administrators: Administrators
+users.dispatchers: Dispatchers
 users.sort.alphabetically: Alphabetically
 users.sort.newest: Registered recently
 sms.simple: |
