@@ -45,6 +45,7 @@ use Behatch\HttpCall\HttpCallResultPool;
 use PHPUnit\Framework\Assert;
 use Ramsey\Uuid\Uuid;
 use Redis;
+use Stripe\Stripe;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
@@ -383,6 +384,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
             $timestamp->sub($ageInSeconds);
 
             $user->setPasswordRequestedAt($timestamp);
+            $needsUpdate = true;
+        }
+
+        if (isset($data['stripeCustomerId'])) {
+            $user->setStripeCustomerId($data['stripeCustomerId']);
             $needsUpdate = true;
         }
 
@@ -1285,5 +1291,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
             sprintf('in_zone(dropoff.address, "%s")', $zoneName)
         );
         $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
+     * @Given stripe client is ready to use
+     */
+    public function theStripeClientIsReadyToUse()
+    {
+        $stripeMockApiBase = getenv('STRIPE_MOCK_API_BASE');
+        if (!$stripeMockApiBase) {
+            // By default, use Docker
+            $stripeMockApiBase = 'http://stripe_mock:12111';
+        }
+
+        Stripe::$apiBase = $stripeMockApiBase;
     }
 }
