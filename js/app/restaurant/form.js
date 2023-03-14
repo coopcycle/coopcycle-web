@@ -159,3 +159,11 @@ $(function() {
   }
 
 })
+
+
+// Delete confirmation
+$('#restaurant_delete').on('click', e => {
+  if (!window.confirm(i18n.t('CONFIRM_DELETE'))) {
+    e.preventDefault()
+  }
+})
