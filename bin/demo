@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 
+php bin/console typesense:create "$@"
 php bin/console coopcycle:setup "$@"
+php bin/console typesense:create "$@"
 php bin/console coopcycle:demo:init "$@"
+php bin/console typesense:create "$@"
 php bin/console coopcycle:setup "$@"
 php bin/console cache:clear --no-warmup "$@"
