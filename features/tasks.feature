@@ -2015,3 +2015,106 @@ Feature: Tasks
         "@*@":"@*@"
       }
       """
+
+  Scenario: Mark multiple tasks as done
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/done" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/2"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+        {
+          "@context":"/api/contexts/Task",
+          "@id":"/api/tasks",
+          "@type":"hydra:Collection",
+          "hydra:member": [
+            {
+              "@id":"/api/tasks/1",
+              "@type":"Task",
+              "id":1,
+              "status": "DONE",
+              "@*@":"@*@"
+            },
+            {
+              "@id":"/api/tasks/2",
+              "@type":"Task",
+              "id":2,
+              "status": "DONE",
+              "@*@":"@*@"
+            }
+          ],
+          "hydra:totalItems": 2,
+          "@*@":"@*@"
+        }
+      """
+
+  Scenario: Assign images to multiple tasks
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/images" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/2"
+        ],
+        "images": [
+          "/api/task_images/1",
+          "/api/task_images/2"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+        {
+          "@context":"/api/contexts/Task",
+          "@id":"/api/tasks",
+          "@type":"hydra:Collection",
+          "hydra:member": [
+            {
+              "@id":"/api/tasks/1",
+              "@type":"Task",
+              "id":1,
+              "images": "@array@.count(2)",
+              "@*@":"@*@"
+            },
+            {
+              "@id":"/api/tasks/2",
+              "@type":"Task",
+              "id":2,
+              "images": "@array@.count(2)",
+              "@*@":"@*@"
+            }
+          ],
+          "hydra:totalItems": 2,
+          "@*@":"@*@"
+        }
+      """

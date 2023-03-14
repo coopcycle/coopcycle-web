@@ -4,7 +4,9 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Action\Task\AddImagesToTasks;
 use AppBundle\Action\Task\Assign as TaskAssign;
+use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Events as TaskEvents;
@@ -14,6 +16,7 @@ use AppBundle\Action\Task\Duplicate as TaskDuplicate;
 use AppBundle\Action\Task\Restore as TaskRestore;
 use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
+use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
@@ -57,7 +60,59 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "access_control"="is_granted('ROLE_ADMIN')",
  *       "denormalization_context"={"groups"={"task_create"}},
  *       "validation_groups"={"Default"}
- *     }
+ *     },
+ *     "tasks_assign"={
+ *       "method"="PUT",
+ *       "path"="/tasks/assign",
+ *       "controller"=TaskBulkAssign::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "openapi_context"={
+ *         "summary"="Assigns multiple Tasks at once to a messenger",
+ *         "parameters"={
+ *           {
+ *             "in"="body",
+ *             "name"="N/A",
+ *             "schema"={"type"="object", "properties"={"username"={"type"="string"}, "tasks"={"type"="array"}}},
+ *             "style"="form"
+ *           }
+ *         }
+ *       }
+ *     },
+ *     "tasks_done"={
+ *       "method"="PUT",
+ *       "path"="/tasks/done",
+ *       "controller"=TaskBulkMarkAsDone::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "openapi_context"={
+ *         "summary"="Mark multiple Tasks as done at once",
+ *         "parameters"={
+ *           {
+ *             "in"="body",
+ *             "name"="N/A",
+ *             "schema"={"type"="object", "properties"={"tasks"={"type"="array"}}},
+ *             "style"="form"
+ *           }
+ *         }
+ *       }
+ *     },
+ *     "tasks_images"={
+ *       "method"="PUT",
+ *       "path"="/tasks/images",
+ *       "denormalization_context"={"groups"={"tasks_images"}},
+ *       "controller"=AddImagesToTasks::class,
+ *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "openapi_context"={
+ *         "summary"="",
+ *         "parameters"={
+ *           {
+ *             "in"="body",
+ *             "name"="N/A",
+ *             "schema"={"type"="object", "properties"={"tasks"={"type"="array"}, "images"={"type"="array"}}},
+ *             "style"="form"
+ *           }
+ *         }
+ *       }
+ *     },
  *   },
  *   itemOperations={
  *     "get"={
@@ -662,6 +717,18 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function addImage($image)
     {
         $this->images->add($image);
+        $this->imageCount = count($this->images);
+
+        return $this;
+    }
+
+    public function addImages($images)
+    {
+        foreach ($images as $image) {
+            $this->addImage($image);
+            $image->setTask($this);
+        }
+
         $this->imageCount = count($this->images);
 
         return $this;

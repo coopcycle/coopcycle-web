@@ -579,3 +579,52 @@ Feature: Dispatch
          "updatedAt":"@string@.isDateTime()"
       }
       """
+
+  Scenario: Administrator can assign multiple tasks at once
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/assign" with body:
+      """
+      {
+        "username": "sarah",
+        "tasks": [
+          "/api/tasks/8",
+          "/api/tasks/9"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member": [
+          {
+            "@id":"/api/tasks/8",
+            "@type":"Task",
+            "id":8,
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "@*@":"@*@"
+          },
+          {
+            "@id":"/api/tasks/9",
+            "@type":"Task",
+            "id":9,
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "@*@":"@*@"
+          }
+        ],
+        "hydra:totalItems": 2,
+        "@*@":"@*@"
+      }
+      """
