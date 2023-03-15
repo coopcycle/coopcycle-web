@@ -6,6 +6,7 @@ use AppBundle\Entity\Tag;
 use AppBundle\Form\TagType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class TagController extends AbstractController
 {
@@ -33,6 +34,9 @@ class TagController extends AbstractController
 
     public function tagAction($slug, Request $request)
     {
+        if (!$this->isGranted("ROLE_ADMIN")) {
+            throw new AccessDeniedException();
+        }
         $tag = $this->getDoctrine()->getRepository(Tag::class)->findOneBySlug($slug);
 
         $form = $this->createForm(TagType::class, $tag);

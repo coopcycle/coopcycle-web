@@ -116,6 +116,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
@@ -892,6 +893,9 @@ class AdminController extends AbstractController
     public function tagsAction(Request $request, TagManager $tagManager)
     {
         if ($request->isMethod('POST') && $request->request->has('delete')) {
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                throw new AccessDeniedException();
+            }
             $id = $request->request->get('tag');
             $tag = $this->getDoctrine()->getRepository(Tag::class)->find($id);
             $tagManager->untagAll($tag);
