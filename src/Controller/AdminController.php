@@ -893,9 +893,7 @@ class AdminController extends AbstractController
     public function tagsAction(Request $request, TagManager $tagManager)
     {
         if ($request->isMethod('POST') && $request->request->has('delete')) {
-            if (!$this->isGranted('ROLE_ADMIN')) {
-                throw new AccessDeniedException();
-            }
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
             $id = $request->request->get('tag');
             $tag = $this->getDoctrine()->getRepository(Tag::class)->find($id);
             $tagManager->untagAll($tag);

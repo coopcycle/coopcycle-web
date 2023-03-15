@@ -34,9 +34,7 @@ class TagController extends AbstractController
 
     public function tagAction($slug, Request $request)
     {
-        if (!$this->isGranted("ROLE_ADMIN")) {
-            throw new AccessDeniedException();
-        }
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $tag = $this->getDoctrine()->getRepository(Tag::class)->findOneBySlug($slug);
 
         $form = $this->createForm(TagType::class, $tag);
