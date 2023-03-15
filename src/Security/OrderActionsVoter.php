@@ -111,13 +111,14 @@ class OrderActionsVoter extends Voter
             && $subject->getCustomer()->hasUser()
             && $subject->getCustomer()->getUser() === $user;
 
-        if (self::VIEW === $attribute) {
+        $dispatcher = $this->authorizationChecker->isGranted('ROLE_DISPATCHER');
 
-            return $ownsRestaurant || $isCustomer;
+        if (self::VIEW === $attribute) {
+            return $ownsRestaurant || $isCustomer || $dispatcher;
         }
 
         // For actions like "accept", "refuse", etc...
-        return $ownsRestaurant;
+        return $ownsRestaurant || $dispatcher;
     }
 
     private function isGrantedRestaurant($subject)
