@@ -2376,6 +2376,7 @@ class AdminController extends AbstractController
         CubeJsTokenFactory $tokenFactory,
         Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $zeroWasteCount = $localBusinessRepository->countZeroWaste();
 
         return $this->render('admin/metrics.html.twig', [
