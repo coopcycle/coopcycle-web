@@ -1588,6 +1588,7 @@ class AdminController extends AbstractController
      */
     public function promotionsAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $qb = $this->promotionCouponRepository->createQueryBuilder('c');
         $qb->andWhere('c.expiresAt IS NULL OR c.expiresAt > :date');
         $qb->setParameter('date', new \DateTime());
@@ -1607,6 +1608,8 @@ class AdminController extends AbstractController
         PromotionCouponFactoryInterface $promotionCouponFactory
     )
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $promotion = $promotionRepository->find($id);
 
         $promotionCoupon = $promotionCouponFactory->createForPromotion($promotion);
@@ -1666,6 +1669,8 @@ class AdminController extends AbstractController
         PromotionCouponFactoryInterface $promotionCouponFactory
     )
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $template = $request->query->get('template');
 
         switch ($template) {
@@ -1685,6 +1690,8 @@ class AdminController extends AbstractController
      */
     public function promotionCouponAction($id, $code, Request $request, PromotionRepositoryInterface $promotionRepository)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $promotionCoupon = $this->promotionCouponRepository->findOneByCode($code);
         $promotion = $promotionRepository->find($id);
 
@@ -2177,6 +2184,7 @@ class AdminController extends AbstractController
 
     public function newHubAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $hub = new Hub();
 
         return $this->handleHubForm($hub, $request);
@@ -2184,6 +2192,7 @@ class AdminController extends AbstractController
 
     public function hubAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $hub = $this->getDoctrine()->getRepository(Hub::class)->find($id);
 
         if (!$hub) {
@@ -2195,6 +2204,7 @@ class AdminController extends AbstractController
 
     public function hubsAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $hubs = $this->getDoctrine()->getRepository(Hub::class)->findAll();
 
         return $this->render('admin/hubs.html.twig', [
