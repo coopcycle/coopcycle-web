@@ -892,7 +892,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/settings/tags", name="admin_tags")
+     * @Route("/admin/tags", name="admin_tags")
      */
     public function tagsAction(Request $request, TagManager $tagManager)
     {
