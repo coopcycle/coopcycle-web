@@ -16,7 +16,7 @@
     <div class="collapse navbar-collapse" id="navbar-main">
 
       <ul class="nav navbar-nav">
-        {% if is_granted('ROLE_ADMIN') %}
+        {% if is_granted('ROLE_DISPATCHER') %}
         <li>
           <p class="navbar-btn">
             <a class="btn btn-primary" href="{{ path('admin_index') }}">
