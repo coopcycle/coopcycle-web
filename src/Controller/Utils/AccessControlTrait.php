@@ -13,18 +13,18 @@ trait AccessControlTrait
     /**
      * @param Delivery|LocalBusiness|Store $object
      */
-    protected function accessControl($object)
+    protected function accessControl($object, $attribute = 'edit')
     {
         if ($object instanceof Delivery) {
-            $this->denyAccessUnlessGranted('edit', $object);
+            $this->denyAccessUnlessGranted($attribute, $object);
         }
 
         if ($object instanceof LocalBusiness) {
-            $this->denyAccessUnlessGranted('edit', $object);
+            $this->denyAccessUnlessGranted($attribute, $object);
         }
 
         if ($object instanceof Store) {
-            $this->denyAccessUnlessGranted('edit', $object);
+            $this->denyAccessUnlessGranted($attribute, $object);
         }
     }
 }
