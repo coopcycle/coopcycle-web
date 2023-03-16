@@ -61,7 +61,7 @@ trait DeliveryTrait
     }
 
     private function renderDeliveryForm(Delivery $delivery, Request $request,
-        OrderFactory $orderFactory, EntityManagerInterface $entityManager, OrderNumberAssignerInterface $orderNumberAssigner, 
+        OrderFactory $orderFactory, EntityManagerInterface $entityManager, OrderNumberAssignerInterface $orderNumberAssigner,
         array $options = [])
     {
         $routes = $request->attributes->get('routes');
@@ -107,7 +107,7 @@ trait DeliveryTrait
             ->getRepository(Delivery::class)
             ->find($id);
 
-        $this->accessControl($delivery);
+        $this->accessControl($delivery, 'view');
 
         return $this->renderDeliveryForm($delivery, $request, $orderFactory, $entityManager, $orderNumberAssigner, [
             'with_address_props' => true,
