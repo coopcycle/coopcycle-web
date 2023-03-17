@@ -124,11 +124,11 @@ class Navbar extends React.Component {
                   </a>
                 </div>
               </li>
-              <li>
+              {this.props.exportEnabled && <li>
                 <a href="#" onClick={ this._onExportClick.bind(this) }>
                   <i className="fa fa-download" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_EXPORT') }
                 </a>
-              </li>
+              </li>}
               <li>
                 <a href="#" onClick={ this._onImportClick.bind(this) }>
                   <i className="fa fa-upload" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_IMPORT') }
@@ -175,6 +175,7 @@ function mapStateToProps(state) {
     nav: state.config.nav,
     isDefaultFilters: state.settings.isDefaultFilters,
     taskImportToken: state.taskImportToken,
+    exportEnabled: state.config.exportEnabled === 'on',
   }
 }
 

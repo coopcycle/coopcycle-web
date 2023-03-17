@@ -213,6 +213,7 @@ trait AdminDashboardTrait
             'task_recurrence_rules' => $recurrenceRulesNormalized,
             'stores' => $storesNormalized,
             'pickup_cluster_addresses' => $addressIris,
+            'export_enabled' => $this->isGranted('ROLE_ADMIN') ? 'on' : 'off',
         ]);
     }
 

@@ -71,6 +71,7 @@ function start() {
       couriersList: JSON.parse(dashboardEl.dataset.couriersList),
       nav: dashboardEl.dataset.nav,
       pickupClusterAddresses: JSON.parse(dashboardEl.dataset.pickupClusterAddresses),
+      exportEnabled: dashboardEl.dataset.exportEnabled,
     },
     tracking: {
       positions,
