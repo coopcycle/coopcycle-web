@@ -274,6 +274,7 @@ trait AdminDashboardTrait
 
     protected function getTaskList(\DateTime $date, UserInterface $user)
     {
+        $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
         $taskList = $this->getDoctrine()
             ->getRepository(TaskList::class)
             ->findOneBy(['date' => $date, 'courier' => $user]);
@@ -297,6 +298,8 @@ trait AdminDashboardTrait
         UserManagerInterface $userManager,
         LoggerInterface $logger)
     {
+        $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
+
         $date = new \DateTime($date);
         $user = $userManager->findUserByUsername($username);
 
@@ -343,6 +346,8 @@ trait AdminDashboardTrait
      */
     public function createTaskListAction($date, $username, Request $request, UserManagerInterface $userManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
+
         $date = new \DateTime($date);
         $user = $userManager->findUserByUsername($username);
 
@@ -375,6 +380,8 @@ trait AdminDashboardTrait
         SlugifyInterface $slugify,
         Filesystem $taskImagesFilesystem)
     {
+        $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
+
         $image = $this->getDoctrine()->getRepository(TaskImage::class)->find($imageId);
 
         if (!$image) {
