@@ -532,12 +532,25 @@ class AdminController extends AbstractController
             $invitation = $form->getData();
 
             $roles = $form->get('roles')->getData();
-            $restaurants = $form->get('restaurants')->getData();
-            $stores = $form->get('stores')->getData();
 
+            $restaurants = [];
+            $stores = [];
+            if ($form->has('restaurants')) {
+                $restaurants = $form->get('restaurants')->getData();
+            }
+            if ($form->has('stores')) {
+                $stores = $form->get('stores')->getData();
+            }
+
+            // Prevent non admin user to invite users as admin
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                $roles = array_diff($roles, ['ROLE_ADMIN']);
+            }
             foreach ($roles as $role) {
                 $invitation->addRole($role);
             }
+
+
 
             foreach ($restaurants as $restaurant) {
                 $invitation->addRestaurant($restaurant);
