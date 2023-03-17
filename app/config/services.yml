@@ -1051,6 +1051,9 @@ services:
   AppBundle\Security\StoreVoter:
     tags: [ 'security.voter' ]
 
+  AppBundle\Security\UserVoter:
+    tags: [ 'security.voter' ]
+
   AppBundle\Security\CartSessionVoter:
     tags: [ 'security.voter' ]
 

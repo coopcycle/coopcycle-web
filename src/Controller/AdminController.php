@@ -585,6 +585,7 @@ class AdminController extends AbstractController
     public function userAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
+        $this->accessControl($user, 'view');
 
         if (!$user) {
             throw $this->createNotFoundException();
@@ -601,6 +602,7 @@ class AdminController extends AbstractController
     public function userEditAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
+        $this->accessControl($user);
 
         if (!$user) {
             throw $this->createNotFoundException();
@@ -660,6 +662,7 @@ class AdminController extends AbstractController
     public function userDeleteAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
+        $this->accessControl($user, 'delete');
 
         if (!$user) {
             throw $this->createNotFoundException();
