@@ -416,7 +416,7 @@ class AdminController extends AbstractController
      */
     public function usersAction(Request $request, PaginatorInterface $paginator)
     {
-        if ($this->isGranted('ROLE_DISPATCHER')) {
+        if (!$this->isGranted('ROLE_ADMIN')) {
             return new RedirectResponse($this->generateUrl('admin_users_invite'));
         }
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
