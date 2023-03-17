@@ -1,7 +1,9 @@
 {% extends "deliveries.html.twig" %}
 
 {% form_theme delivery_import_form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% if is_granted('ROLE_ADMIN') %}
 {% form_theme delivery_export_form 'form/deliveries_export.html.twig' %}
+{% endif %}
 
 {% block content %}
 
@@ -13,9 +15,11 @@
       <a href="#" class="btn btn-sm btn-default mr-4" data-toggle="modal" data-target="#import-deliveries-modal">
         <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
       </a>
+      {% if is_granted('ROLE_ADMIN') %}
       <a href="#" class="btn btn-sm btn-default mr-4" data-toggle="modal" data-target="#export-deliveries-modal">
         <i class="fa fa-download"></i> {% trans %}basics.export{% endtrans %}
       </a>
+      {% endif %}
       <a href="#" class="btn btn-success" data-toggle="modal" data-target="#choose-store-modal">
         <i class="fa fa-plus"></i> {% trans %}delivery.createNew{% endtrans %}
       </a>
