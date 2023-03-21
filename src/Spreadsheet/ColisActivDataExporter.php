@@ -75,6 +75,9 @@ final class ColisActivDataExporter implements DataExporterInterface
 
         $tasks = $qb->getQuery()->getArrayResult();
 
+        $taskIds = array_map(fn ($task) => $task['id'], $tasks);
+        $packageCountByTask = $this->countPackagesByTask($taskIds);
+
         $deliveries = array();
         foreach ($tasks as $task) {
             $deliveries[$task['delivery']][$task['type']][] = $task;
@@ -106,6 +109,7 @@ final class ColisActivDataExporter implements DataExporterInterface
                     'delivery_time' => $dropoff['completedAt']->getTimestamp(),
 	            	'delivery_latitude' => $coords->getLatitude(),
 	            	'delivery_longitude' => $coords->getLongitude(),
+                    'package_count' => $packageCountByTask[$dropoff['id']] ?? '',
 	            ];
             }
         }
@@ -128,6 +132,33 @@ final class ColisActivDataExporter implements DataExporterInterface
     public function getFilename(\DateTime $start, \DateTime $end): string
     {
         return sprintf('deliveries-colisactiv-%s-%s.csv', $start->format('Y-m-d'), $end->format('Y-m-d'));
+    }
+
+    private function countPackagesByTask(array $taskIds)
+    {
+        $packagesQb = $this->entityManager
+            ->getRepository(Package::class)
+            ->createQueryBuilder('p');
+
+        $packagesQb = $packagesQb->join(TaskPackage::class, 'tp', Expr\Join::WITH, 'tp.package = p.id');
+        $packagesQb = $packagesQb->join(Task::class, 't', Expr\Join::WITH, 'tp.task = t.id');
+
+        $packagesQb
+            ->select('t.id AS task')
+            ->addSelect('SUM(tp.quantity) AS count')
+            ->andWhere(
+                $packagesQb->expr()->in('t.id', $taskIds)
+            )
+            ->groupBy('t.id');
+
+        $packages = $packagesQb->getQuery()->getArrayResult();
+
+        $countByTask = [];
+        foreach ($packages as $package) {
+            $countByTask[$package['task']] = $package['count'];
+        }
+
+        return $countByTask;
     }
 }
 
