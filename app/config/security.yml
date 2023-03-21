@@ -289,7 +289,7 @@ security:
         - { path: ^/profile/notifications, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/profile, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/admin/settings, roles: ROLE_ADMIN }
-        - { path: ^/admin/.*$, roles: ROLE_DISPATCHER }
+        - { path: ^/admin, roles: ROLE_DISPATCHER }
         - { path: ^/_uploader/restaurant, roles: [ ROLE_ADMIN, ROLE_RESTAURANT ] }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/facebook/login$, roles: PUBLIC_ACCESS }
