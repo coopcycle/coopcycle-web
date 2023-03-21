@@ -7,10 +7,11 @@ class InvitePeopleToOrderButton extends Component {
 
   render() {
     return (
-      <button type="button" onClick={() => this.props.openInvitePeopleModal()} className="btn btn-md btn-success mt-4">
-        <span>{this.props.loading && <i className="fa fa-spinner fa-spin mr-2"></i>}</span>
-        <span>{this.props.t('INVITE_PEOPLE_TO_ADD_ITEMS')}</span>
-      </button>
+      <div className="text-center mt-4">
+        <a onClick={() => this.props.openInvitePeopleModal()}>
+          <span>{this.props.t('INVITE_PEOPLE_TO_ADD_ITEMS')}</span>
+        </a>
+      </div>
     )
   }
 }
