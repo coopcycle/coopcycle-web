@@ -4,31 +4,30 @@ namespace AppBundle\Controller;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\OrderConfirmTrait;
-use AppBundle\DataType\TsRange;
+use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Embed\Context as EmbedContext;
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Delivery;
-use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderInvitation;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutCouponType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\Checkout\CheckoutTipType;
 use AppBundle\Form\Checkout\CheckoutVytalType;
+use AppBundle\Form\Order\CartType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
+use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use phpcent\Client as CentrifugoClient;
-use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -42,12 +41,13 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrderController extends AbstractController
 {
     use OrderConfirmTrait;
+    use UserTrait;
 
     private $objectManager;
 
@@ -654,4 +654,39 @@ class OrderController extends AbstractController
 
         return new JsonResponse($orderNormalized, 200);
     }
+
+    /**
+     * @Route("/order/share/{slug}", name="public_share_order")
+     */
+    public function shareOrderAction($slug, Request $request,
+        SessionInterface $session,
+        OrderTimeHelper $orderTimeHelper)
+    {
+        $invitation =
+            $this->objectManager->getRepository(OrderInvitation::class)->findOneBy(['slug' => $slug]);
+
+        if (null === $invitation) {
+            throw $this->createNotFoundException();
+        }
+
+        $order = $invitation->getOrder();
+
+        if ($order->getState() !== OrderInterface::STATE_CART) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // $this->denyAccessUnlessGranted('view_public', $order);
+
+        $session->set($this->sessionKeyName, $order->getId());
+
+        $cartForm = $this->createForm(CartType::class, $order);
+
+        return $this->render('restaurant/index.html.twig', array(
+            'restaurant' => $order->getRestaurant(),
+            'times' => $orderTimeHelper->getTimeInfo($order),
+            'cart_form' => $cartForm->createView(),
+            'addresses_normalized' => $this->getUserAddresses(),
+        ));
+    }
+
 }
