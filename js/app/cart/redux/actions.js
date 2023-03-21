@@ -36,6 +36,9 @@ export const INVITE_PEOPLE_REQUEST = 'INVITE_PEOPLE_REQUEST'
 export const INVITE_PEOPLE_REQUEST_SUCCESS = 'INVITE_PEOPLE_REQUEST_SUCCESS'
 export const INVITE_PEOPLE_REQUEST_FAILURE = 'INVITE_PEOPLE_REQUEST_FAILURE'
 
+export const OPEN_SET_GUEST_CUSTOMER_EMAIL_MODAL = 'OPEN_SET_GUEST_CUSTOMER_EMAIL_MODAL'
+export const CLOSE_SET_GUEST_CUSTOMER_EMAIL_MODAL = 'CLOSE_SET_GUEST_CUSTOMER_EMAIL_MODAL'
+
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const fetchSuccess = createAction(FETCH_SUCCESS)
 export const fetchFailure = createAction(FETCH_FAILURE)
@@ -66,6 +69,9 @@ export const closeInvitePeopleToOrderModal = createAction(CLOSE_INVITE_PEOPLE_TO
 export const invitePeopleRequest = createAction(INVITE_PEOPLE_REQUEST)
 export const invitePeopleSuccess = createAction(INVITE_PEOPLE_REQUEST_SUCCESS)
 export const invitePeopleFailure = createAction(INVITE_PEOPLE_REQUEST_FAILURE)
+
+export const openSetGuestCustomerEmailModal = createAction(OPEN_SET_GUEST_CUSTOMER_EMAIL_MODAL)
+export const closeSetGuestCustomerEmailModal = createAction(CLOSE_SET_GUEST_CUSTOMER_EMAIL_MODAL)
 
 const httpClient = axios.create()
 
@@ -280,7 +286,7 @@ export function sync() {
 
   return (dispatch, getState) => {
 
-    const { cart } = getState()
+    const { cart, isGuest } = getState()
 
     if (cart.takeaway) {
       $('#menu').LoadingOverlay('hide')
@@ -294,6 +300,10 @@ export function sync() {
         .catch(e  => handleAjaxError(e, dispatch))
     } else {
       dispatch(geocodeAndSync())
+    }
+
+    if (isGuest) {
+      dispatch(openSetGuestCustomerEmailModal())
     }
   }
 }
@@ -492,5 +502,16 @@ export function invitePeopleToOrder(guests) {
     return $.post(`${getState().cart['@id']}/invite`, { guests })
       .then(dispatch(invitePeopleSuccess()))
       .fail(dispatch(invitePeopleFailure()))
+  }
+}
+
+export function setGuestCustomerEmail(email) {
+  return (dispatch) => {
+
+    const url = window.Routing.generate('order_set_guest_customer_email')
+
+    return $.post(url, { email })
+      .then(dispatch(closeSetGuestCustomerEmailModal()))
+      // TODO Handle failure
   }
 }

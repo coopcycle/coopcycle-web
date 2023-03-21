@@ -23,7 +23,9 @@ import {
   OPEN_INVITE_PEOPLE_TO_ORDER_MODAL,
   INVITE_PEOPLE_REQUEST,
   INVITE_PEOPLE_REQUEST_SUCCESS,
-  INVITE_PEOPLE_REQUEST_FAILURE
+  INVITE_PEOPLE_REQUEST_FAILURE,
+  OPEN_SET_GUEST_CUSTOMER_EMAIL_MODAL,
+  CLOSE_SET_GUEST_CUSTOMER_EMAIL_MODAL,
 } from './actions'
 
 const initialState = {
@@ -64,6 +66,8 @@ const initialState = {
   addressModalContext: {},
   isInvitePeopleToOrderModalOpen: false,
   invitePeopleToOrderContext: {},
+  isGuest: false,
+  isSetGuestCustomerEmailModalOpen: false,
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -327,6 +331,23 @@ const invitePeopleToOrderContext = (state = initialState.invitePeopleToOrderCont
   }
 }
 
+const isGuest = (state = initialState.isGuest) => {
+
+  return state
+}
+
+const isSetGuestCustomerEmailModalOpen = (state = initialState.isSetGuestCustomerEmailModalOpen, action = {}) => {
+
+  switch (action.type) {
+  case CLOSE_SET_GUEST_CUSTOMER_EMAIL_MODAL:
+    return false
+  case OPEN_SET_GUEST_CUSTOMER_EMAIL_MODAL:
+    return true
+  default:
+    return state
+  }
+}
+
 export default combineReducers({
   isFetching,
   cart,
@@ -349,4 +370,6 @@ export default combineReducers({
   addressModalContext,
   isInvitePeopleToOrderModalOpen,
   invitePeopleToOrderContext,
+  isGuest,
+  isSetGuestCustomerEmailModalOpen,
 })

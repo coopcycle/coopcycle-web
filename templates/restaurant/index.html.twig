@@ -294,7 +294,8 @@
 <div id="js-restaurant-data"
   data-restaurant="{{ restaurant_json|json_encode|e('html_attr') }}"
   data-cart="{{ cart_json|json_encode|e('html_attr') }}"
-  data-times="{{ times|json_encode|e('html_attr') }}"></div>
+  data-times="{{ times|json_encode|e('html_attr') }}"
+  data-is-guest="{{ (is_guest is defined ? is_guest : false)|json_encode|e('html_attr') }}"></div>
 
 <div id="js-addresses-data"
   data-addresses="{{ addresses_normalized|json_encode|e('html_attr') }}"></div>

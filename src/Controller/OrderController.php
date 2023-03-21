@@ -37,6 +37,7 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -659,7 +660,7 @@ class OrderController extends AbstractController
      * @Route("/order/share/{slug}", name="public_share_order")
      */
     public function shareOrderAction($slug, Request $request,
-        SessionInterface $session,
+        RequestStack $requestStack,
         OrderTimeHelper $orderTimeHelper)
     {
         $invitation =
@@ -677,15 +678,18 @@ class OrderController extends AbstractController
 
         // $this->denyAccessUnlessGranted('view_public', $order);
 
-        $session->set($this->sessionKeyName, $order->getId());
+        $requestStack->getSession()->set($this->sessionKeyName, $order->getId());
 
         $cartForm = $this->createForm(CartType::class, $order);
+
+        $guestCustomerEmail = $requestStack->getSession()->get('guest_customer_email');
 
         return $this->render('restaurant/index.html.twig', array(
             'restaurant' => $order->getRestaurant(),
             'times' => $orderTimeHelper->getTimeInfo($order),
             'cart_form' => $cartForm->createView(),
             'addresses_normalized' => $this->getUserAddresses(),
+            'is_guest' => true,
         ));
     }
 

@@ -1249,3 +1249,7 @@ services:
     public: true
 
   AppBundle\Utils\OrdersRateLimit: ~
+
+  coopcycle.sylius.order_modifier:
+    class: AppBundle\Sylius\Order\OrderModifier
+    decorates: sylius.order_modifier

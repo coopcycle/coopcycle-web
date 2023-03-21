@@ -19,5 +19,13 @@
         <join-column name="variant_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
+    <many-to-one field="customer" target-entity="AppBundle\Entity\Sylius\Customer">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="customer_id" referenced-column-name="id" nullable="true"/>
+      </join-columns>
+    </many-to-one>
   </entity>
 </doctrine-mapping>

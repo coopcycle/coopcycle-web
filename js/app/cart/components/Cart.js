@@ -20,6 +20,7 @@ import { changeAddress, sync, disableTakeaway, enableTakeaway, openAddressModal 
 import { selectIsDeliveryEnabled, selectIsCollectionEnabled, selectIsOrderingAvailable, selectItems } from '../redux/selectors'
 import InvitePeopleToOrderButton from './InvitePeopleToOrderButton'
 import InvitePeopleToOrderModal from './InvitePeopleToOrderModal'
+import SetGuestCustomerEmailModal from './SetGuestCustomerEmailModal'
 
 class Cart extends Component {
 
@@ -54,7 +55,7 @@ class Cart extends Component {
                 <CartTotal />
                 { this.props.isOrderingAvailable && <hr /> }
                 { this.props.isOrderingAvailable && <CartButton /> }
-                { this.props.isOrderingAvailable && this.props.hasItems && <InvitePeopleToOrderButton /> }
+                { (this.props.isOrderingAvailable && this.props.hasItems && !this.props.isGuest) && <InvitePeopleToOrderButton /> }
               </div>
             </div>
           </div>
@@ -65,6 +66,7 @@ class Cart extends Component {
         <ProductOptionsModal />
         <ProductDetailsModal />
         <InvitePeopleToOrderModal />
+        <SetGuestCustomerEmailModal />
       </Sticky>
     )
   }
@@ -86,7 +88,8 @@ function mapStateToProps(state) {
     loading: state.isFetching,
     isOrderingAvailable: selectIsOrderingAvailable(state),
     restaurant: state.cart.restaurant,
-    hasItems: !!items.length
+    hasItems: !!items.length,
+    isGuest: state.isGuest,
   }
 }
 
