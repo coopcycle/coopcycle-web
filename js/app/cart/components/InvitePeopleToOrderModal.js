@@ -1,94 +1,47 @@
-import { Formik } from 'formik'
 import React, { Component } from 'react'
 import { withTranslation } from 'react-i18next'
 import Modal from 'react-modal'
 import { connect } from 'react-redux'
+import ClipboardJS from 'clipboard'
 import { closeInvitePeopleToOrderModal, invitePeopleToOrder } from '../redux/actions'
 
 class InvitePeopleToOrderModal extends Component {
 
-  _validate(values) {
-    const errors = {}
+  componentDidMount() {
+    const clipboard = new ClipboardJS('#invitation_link', {
+      text: () => {
+        return this.props.link
+      },
+    })
 
-    if (!values.emails) {
-      errors.emails = this.props.t('ADD_AT_LEAST_ONE_EMAIL')
-    } else {
-      const emails = values.emails.split(",")
-      const someEmailIsInvalid = emails.some(email => !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email.trim()))
-      if (someEmailIsInvalid) {
-        errors.emails = this.props.t('ONE_OR_MORE_EMAIL_IS_INVALID')
-      }
-    }
+    clipboard.on('success', function (e) {
+      console.info('Action:', e.action);
+      console.info('Text:', e.text);
+      console.info('Trigger:', e.trigger);
 
-    return errors
+      e.clearSelection();
+    });
+
   }
 
-  _onSubmit(values) {
-    const emails = values.emails.split(",").map((email) => email.trim())
-    this.props.invitePeopleToOrder(emails)
+  afterOpen() {
+    if (!this.props.link) {
+      console.log('Generate link');
+    }
   }
 
   render() {
 
-    const initialValues = {
-      emails: '',
-    }
-
     return (
       <Modal
         isOpen={this.props.isOpen}
+        onAfterOpen={ this.afterOpen.bind(this) }
         onRequestClose={() => this.props.closeInvitePeopleToOrderModal() }
         contentLabel={this.props.t('INVITE_PEOPLOE_TO_ORDER_MODAL_LABEL')}
         className="ReactModal__Content--invite-people-to-order">
-        <div>
-          <Formik
-            initialValues={ initialValues }
-            validate={ this._validate.bind(this) }
-            onSubmit={ this._onSubmit.bind(this) }
-            validateOnBlur={ false }
-            validateOnChange={ false }>
-              {({
-            values,
-            errors,
-            touched,
-            handleSubmit,
-            handleChange,
-            handleBlur,
-          }) => (
-            <div>
-              <div className="modal-header">
-                <button type="button" className="close" onClick={ () => this.props.closeInvitePeopleToOrderModal() } aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 className="modal-title">{ this.props.t('ADD_GUESTS_EMAILS_TITLE') }</h4>
-              </div>
-              <form onSubmit={ handleSubmit } autoComplete="off" className="modal-body form">
-                <div className={ errors.emails && touched.emails ? 'form-group has-error mb-0' : 'form-group mb-0' }>
-                  <input type="text" className="form-control" name="emails"
-                    onChange={ handleChange }
-                    onBlur={ handleBlur }
-                    value={ values.emails } />
-                  { errors.emails && touched.emails && (
-                    <small className="help-block">{ errors.emails }</small>
-                  ) }
-                </div>
-                <small className="help-block mb-2">{ this.props.t('ENTER_EMAILS_SEPARATED_BY_COMMA') }</small>
-
-                {
-                  (!this.props.isRequesting && this.props.hasError) ?
-                  <div className="alert alert-danger">
-                    { this.props.t('SEND_INVITATIONS_FAILURE') }
-                  </div> : null
-                }
-
-                <button type="submit" className="btn btn-primary mt-4" disabled={this.props.isRequesting}>
-                  <span>{this.props.isRequesting && <i className="fa fa-spinner fa-spin mr-2"></i>}</span>
-                  <span>{ this.props.t('SEND_INVITATIONS') }</span>
-                </button>
-              </form>
-            </div>
-          )}
-          </Formik>
+        <div className="text-center">
+          <span className="text-monospace">{ this.props.link }</span>
+          <a href="#" id="invitation_link" className="ml-2" onClick={ e => e.preventDefault() }><i className="fa fa-clipboard"></i></a>
         </div>
       </Modal>
     )
@@ -101,6 +54,7 @@ function mapStateToProps(state) {
     isOpen: state.isInvitePeopleToOrderModalOpen,
     isRequesting: state.invitePeopleToOrderContext.isRequesting,
     hasError: state.invitePeopleToOrderContext.hasError,
+    link: state.cart.invitationLink,
   }
 }
 
