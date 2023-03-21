@@ -48,6 +48,8 @@
     </field>
     <field name="vatID" type="string" column="vat_id" nullable="true"/>
     <field name="additionalProperties" type="json_array" column="additional_properties" nullable="true"/>
+    <field name="maxOrdersRangeDuration" type="integer" column="max_orders_range_duration" nullable="true" />
+    <field name="maxOrdersAmount" type="integer" column="max_orders_amount" nullable="true" />
     <field name="state" type="string" column="state"/>
     <field name="stripeConnectRoles" type="json_array" column="stripe_connect_roles"/>
     <field name="mercadopagoConnectRoles" type="json_array" column="mercadopago_connect_roles" nullable="true"/>

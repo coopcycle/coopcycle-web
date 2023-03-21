@@ -266,6 +266,11 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $dabbaCode;
 
+
+    protected ?int $maxOrdersRangeDuration;
+
+    protected ?int $maxOrdersAmount;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -1061,4 +1066,42 @@ class LocalBusiness extends BaseLocalBusiness implements
     {
         return self::getKeyForType($this->getType());
     }
+
+    /**
+     * @return int|null
+     */
+    public function getMaxOrdersRangeDuration(): ?int
+    {
+        return $this->maxOrdersRangeDuration;
+    }
+
+    /**
+     * @param int|null $maxOrdersRangeDuration
+     * @return LocalBusiness
+     */
+    public function setMaxOrdersRangeDuration(?int $maxOrdersRangeDuration): LocalBusiness
+    {
+        $this->maxOrdersRangeDuration = $maxOrdersRangeDuration;
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getMaxOrdersAmount(): ?int
+    {
+        return $this->maxOrdersAmount;
+    }
+
+    /**
+     * @param int|null $maxOrdersAmount
+     * @return LocalBusiness
+     */
+    public function setMaxOrdersAmount(?int $maxOrdersAmount): LocalBusiness
+    {
+        $this->maxOrdersAmount = $maxOrdersAmount;
+        return $this;
+    }
+
+
 }
