@@ -37,7 +37,7 @@ class OrdersRateLimit
         $end_time = $start_time + ( $params['max_orders_range_duration'] * 60 );
 
         // Get all order timestamps within the current window
-        $count = count($this->redis->zrangebyscore($params['key'], $start_time, $end_time, ['withscores' => false]));
+        $count = $this->redis->zCount($params['key'], $start_time, $end_time);
 
 
         //TODO: Conditional logging
