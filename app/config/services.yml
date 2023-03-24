@@ -1242,3 +1242,5 @@ services:
   AppBundle\Typesense\Converter\:
     resource: '../../src/Typesense/Converter/*'
     public: true
+
+  AppBundle\Utils\OrdersRateLimit: ~

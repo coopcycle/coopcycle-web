@@ -2,6 +2,11 @@
 
 {{ form_row(form.shippingOptionsDays) }}
 
+<hr>
+{{ form_row(form.maxOrdersAmount) }}
+{{ form_row(form.maxOrdersRangeDuration) }}
+<hr>
+
 {% if form.deliveryPerimeterExpression is defined %}
   {{ form_row(form.deliveryPerimeterExpression) }}
 {% endif %}

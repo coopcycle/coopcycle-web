@@ -331,3 +331,19 @@ services:
     tags:
       - name: event_subscriber
         subscribes_to: order:created
+
+  coopcycle.domain.order.reactor.orders_rate_limit:
+    class: AppBundle\Domain\Order\Reactor\OrdersRateLimitReactor
+    arguments:
+      - '@AppBundle\Utils\OrdersRateLimit'
+    tags:
+      - name: event_subscriber
+        subscribes_to: order:created
+      - name: event_subscriber
+        subscribes_to: order:delayed
+      - name: event_subscriber
+        subscribes_to: order:picked
+      - name: event_subscriber
+        subscribes_to: order:refused
+      - name: event_subscriber
+        subscribes_to: order:cancelled
