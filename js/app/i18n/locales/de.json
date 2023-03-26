@@ -95,6 +95,12 @@
         "PAYMENT_FORM_CARDHOLDER_NAME": "Name des Karteninhabers",
         "PAYMENT_FORM_TITLE": "Deine Zahlungsinformationen",
         "RULE_PICKER_LINE_OPTGROUP_DELIVERY": "Lieferung",
-        "TIME_RANGE_FROM": "ab {{start}}"
+        "TIME_RANGE_FROM": "ab {{start}}",
+        "ORDERS_RATE_LIMIT": {
+          "ORDER_UNIT": "Bestellung(en)",
+          "TIME_UNIT": "Minute(n)",
+          "NO_LIMIT": "Keine Bestellbegrenzung",
+          "LIMIT": "Maximal {{command}} Bestellungen alle {{time}}"
+        }
     }
 }

@@ -210,6 +210,8 @@ restaurant.contract.title: Deal
 restaurant.deliveryPerimeterExpression.title: Lieferradius
 restaurant.deliveryPerimeterExpression.help: Definieren Sie den maximalen Lieferradius.
   Sie können diesen in Kilometern oder als Zone festlegen
+restaurant.ordersRateLimiter.title: Verwaltung der Bestellgrenzen
+restaurant.ordersRateLimiter.help: Die Funktion zur Bestellbegrenzung ermöglicht es Ihnen, die Anzahl der Bestellungen zu steuern, die Sie in einem bestimmten Zeitraum annehmen können. Durch Festlegen einer Begrenzung vermeiden Sie, mehr Bestellungen zu erhalten, als Sie bewältigen können. Sie müssen lediglich die maximale Anzahl von Bestellungen und die Dauer des Zeitraums angeben. Zusätzliche Bestellungen werden automatisch auf den nächsten Zeitraum verschoben. Diese Funktion hilft Ihnen, Ihre Produktionskapazität besser zu verwalten und Verzögerungen und Fehler zu vermeiden.
 restaurant.contract.minimumCartAmount.label: Mindestbestellwert
 restaurant.contract.flatDeliveryPrice.label: Liefergebühr Kunde + Liefergebühr Resto
 restaurant.contract.flatDeliveryPrice.help: Der Betrag wird nicht im Warenkorb angezeigt

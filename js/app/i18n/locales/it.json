@@ -243,6 +243,12 @@
         "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Differenza (ore)",
         "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Map clusters abilitato",
         "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Mostra sempre non assegnato",
-        "TIME_RANGE_FROM": "dalle {{start}}"
+        "TIME_RANGE_FROM": "dalle {{start}}",
+        "ORDERS_RATE_LIMIT": {
+          "ORDER_UNIT": "ordine(i)",
+          "TIME_UNIT": "minuto(i)",
+          "NO_LIMIT": "Nessun limite di ordini",
+          "LIMIT": "Un massimo di {{command}} ordini ogni {{time}}"
+        }
     }
 }
