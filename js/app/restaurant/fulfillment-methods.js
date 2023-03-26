@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import OpeningHoursInput from '../widgets/OpeningHoursInput'
 import DeliveryZonePicker from '../components/DeliveryZonePicker'
+import OrdersRateLimiter from "../components/OrdersRateLimiter";
 
 $(function() {
 
@@ -62,5 +63,22 @@ $(function() {
       el.appendChild(container)
     }
   })
+
+  // Orders Rate Limiter component scope
+  {
+    const widget = document.querySelector('[data-widget="orders-rate-limiter"]')
+    const container = document.createElement('div')
+    const input = widget.querySelector('input[type="hidden"]')
+
+    render(
+      <OrdersRateLimiter
+        defaultValue={widget.dataset.defaultValue}
+        onChange={v => input.value = v}
+      />,
+      container
+    )
+
+    widget.appendChild(container)
+  }
 
 })

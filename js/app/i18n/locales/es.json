@@ -305,6 +305,12 @@
         "PAY_WITH_SAVED_CREDIT_CARD": "Pagar con una tarjeta de crédito guardada",
         "ADD_NEW_CREDIT_CARD": "Ingresar nueva tarjeta de crédito",
         "ADD_OR_SELECT_A_CARD_TO_PAY": "Por favor seleccione o ingrese una tarjeta de crédito para realizar el pago",
-        "EXPIRATION": "Expiración"
+        "EXPIRATION": "Expiración",
+        "ORDERS_RATE_LIMIT": {
+          "ORDER_UNIT": "pedido(s)",
+          "TIME_UNIT": "minuto(s)",
+          "NO_LIMIT": "Sin límite de pedidos",
+          "LIMIT": "Un máximo de {{command}} pedidos cada {{time}}"
+        }
     }
 }

@@ -271,6 +271,12 @@
         "PAY_WITH_SAVED_CREDIT_CARD": "Payer avec une carte bancaire sauvegardée",
         "ADD_NEW_CREDIT_CARD": "Ajouter une nouvelle carte bancaire",
         "ADD_OR_SELECT_A_CARD_TO_PAY": "Veuillez sélectionner une carte existante, ou entrez une nouvelle carte",
-        "EXPIRATION": "Expiration"
+        "EXPIRATION": "Expiration",
+        "ORDERS_RATE_LIMIT": {
+          "ORDER_UNIT": "commande(s)",
+          "TIME_UNIT": "minute(s)",
+          "NO_LIMIT": "Aucune limitation de commande",
+          "LIMIT": "Un maximum de {{command}} commandes toutes les {{time}}"
+        }
     }
 }

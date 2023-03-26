@@ -1103,5 +1103,28 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this;
     }
 
+    public function setOrdersRateLimiter(string $expression): LocalBusiness
+    {
+        [$amount, $timeWindow] = explode(':', $expression);
+
+        if (!empty($amount) && !empty($timeWindow)) {
+            $this->setMaxOrdersAmount(intval($amount));
+            $this->setMaxOrdersRangeDuration(intval($timeWindow));
+            return $this;
+        }
+
+        $this->setMaxOrdersAmount(null);
+        $this->setMaxOrdersRangeDuration(null);
+        return $this;
+    }
+
+    public function getOrdersRateLimiter(): string
+    {
+        return sprintf('%s:%s',
+            $this->getMaxOrdersAmount(),
+            $this->getMaxOrdersRangeDuration()
+        );
+    }
+
 
 }

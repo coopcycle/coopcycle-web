@@ -129,6 +129,8 @@ restaurant.contract.title: Contrato
 restaurant.deliveryPerimeterExpression.title: Perímetro de entrega
 restaurant.deliveryPerimeterExpression.help: Define el perímetro permitido para la
   entrega. Puedes escoger un radio (en km) o una zona
+restaurant.ordersRateLimiter.title: Límite de pedido
+restaurant.ordersRateLimiter.help: La función de límite de pedido le permite controlar la cantidad de pedidos que puede aceptar en un período de tiempo determinado. Al establecer un límite, puede evitar recibir más pedidos de los que puede manejar. Solo necesita especificar el número máximo de pedidos y la duración del período de tiempo. Los pedidos adicionales se reprograman automáticamente para el próximo intervalo de tiempo disponible. Esta función lo ayuda a administrar mejor su capacidad de producción y evitar retrasos y errores.
 restaurant.contract.minimumCartAmount.label: Pedido mínimo
 restaurant.contract.flatDeliveryPrice.label: Suma cargada por la plataforma
 restaurant.contract.flatDeliveryPrice.help: Esta suma no se mostrará en el carrito
