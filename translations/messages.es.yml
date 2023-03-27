@@ -561,6 +561,7 @@ activity.order.refused: "El pedido #order/%aggregate_id% ha sido rechazado\n"
 activity.order.picked: "@%owner% ha recuperado el pedido #order/%aggregate_id%\n"
 activity.order.dropped: "@%owner% ha entregado el pedido #order/%aggregate_id%\n"
 activity.order.fulfilled: "El pedido #order/%aggregate_id% esta terminado\n"
+activity.order.delayed: "El pedido #order/%aggregate_id% has sido atrasado\n"
 pagination.previous: Anterior
 pagination.next: Siguiente
 basics.save: Guardar

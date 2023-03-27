@@ -819,6 +819,7 @@ activity.order.picked: "@%owner% has picked order #order/%aggregate_id%\n"
 activity.order.dropped: "@%owner% has dropped order #order/%aggregate_id%\n"
 activity.order.fulfilled: "Order #order/#%aggregate_id% is fulfilled\n"
 activity.order.cancelled: "Order #order/#%aggregate_id% is cancelled\n"
+activity.order.delayed: "Order #order/#%aggregate_id% has been delayed\n"
 social.sign_in_with_facebook: Sign in with Facebook
 embed.delivery.summary: "You have requested a delivery on <strong>%dropoff_date%</strong>\
   \ at the following address: <strong>%dropoff_address%</strong> <br> We calculated\

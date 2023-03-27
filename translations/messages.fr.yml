@@ -759,6 +759,7 @@ activity.order.picked: "@%owner% a récupéré la commande #order/%aggregate_id%
 activity.order.dropped: "@%owner% a livré la commande #order/%aggregate_id%\n"
 activity.order.fulfilled: "La commande #order/%aggregate_id% est terminée\n"
 activity.order.cancelled: "La commande #order/%aggregate_id% est annulée\n"
+activity.order.delayed: "La commande #order/%aggregate_id% a été retardée\n"
 social.sign_in_with_facebook: Se connecter avec Facebook
 embed.delivery.summary: "Vous avez demandé une course qui vous sera déposée le <strong>%dropoff_date%</strong>\
   \ à l'adresse suivante : <strong>%dropoff_address%</strong><br>Nous avons calculé\
