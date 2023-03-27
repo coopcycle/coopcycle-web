@@ -10,7 +10,7 @@
       </a>
     </div>
     <hr>
-    {{ form_start(form, {'method': 'post', 'action': path('nucleos_profile_registration_register'), 'attr': {'class': 'nucleos_profile_registration_register'}}) }}
+    {{ form_start(form, {'method': 'post', 'action': path('api_register'), 'attr': {'class': 'api_register'}}) }}
       {{ form_row(form.email) }}
       {{ form_row(form.username) }}
       {{ form_row(form.plainPassword) }}

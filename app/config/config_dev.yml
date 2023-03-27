@@ -79,6 +79,13 @@ monolog:
             level: info
             max_files: 3
             channels: [dabba]
+        register:
+            type: stream
+            path: "php://stdout"
+            level: debug
+            include_stacktraces: true
+            channels: [register]
+        #    channels: [register]
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
         #firephp:

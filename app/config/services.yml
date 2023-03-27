@@ -86,7 +86,7 @@ services:
   League\Flysystem\Filesystem $taskImportsFilesystem: '@task_imports_filesystem'
   League\Flysystem\Filesystem $receiptsFilesystem: '@receipts_filesystem'
   Nucleos\UserBundle\Util\CanonicalizerInterface: '@nucleos_user.util.canonicalizer.default'
-
+  
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
 
   # Autowiring variables in controllers
@@ -212,6 +212,8 @@ services:
   coopcycle.user_provider:
     class: AppBundle\Security\NucleosUserBundleUserProvider
     arguments: ['@nucleos_user.user_manager', { facebook: facebookId }]
+    tags:
+      - { name: monolog.logger, channel: register }
 
   AppBundle\EventListener\MaintenanceListener:
     arguments:
@@ -581,6 +583,8 @@ services:
       - '@coopcycle.user_manager.inner'
       - '@nucleos_user.object_manager'
     class: AppBundle\Security\UserManager
+    tags:
+      - { name: monolog.logger, channel: register }
 
   AppBundle\Service\SettingsManager:
     arguments:
@@ -697,6 +701,8 @@ services:
     arguments:
       $confirmationEnabled: '%nucleos_profile.registration.confirmation.enabled%'
       $mailer: '@nucleos_profile.mailer.default'
+    tags:
+      - { name: monolog.logger, channel: register }
 
   AppBundle\Action\ResettingSendEmail:
     public: true
@@ -1025,6 +1031,8 @@ services:
       $orderRepository: '@sylius.repository.order'
       $customerRepository: '@sylius.repository.customer'
       $secret: '%secret%'
+    tags:
+      - { name: monolog.logger, channel: register }
 
   AppBundle\Embed\Context: ~
 

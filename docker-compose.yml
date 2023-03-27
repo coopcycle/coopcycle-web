@@ -168,7 +168,7 @@ services:
       /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/restaurants/;
       /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/stores/;
       /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/tasks/;
-      /usr/bin/mc policy set public coopcycle/images/;
+      /usr/bin/mc anonymous set public coopcycle/images/;
       "
 
   tile38:
