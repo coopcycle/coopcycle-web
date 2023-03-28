@@ -7,6 +7,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Utils\OrdersRateLimit;
+use Carbon\Carbon;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Redis;
 use Prophecy\Argument;
@@ -58,6 +59,8 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
 
     public function testHandleOrderCreatedEvent()
     {
+        Carbon::setTestNow(Carbon::parse('2023-03-28 12:30:00'));
+
     	$orders = [
     		new \DateTime('2023-03-28 12:05:00'),
     		new \DateTime('2023-03-28 12:05:00'),
@@ -69,11 +72,12 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
     		new \DateTime('2023-03-28 12:08:00'),
     		new \DateTime('2023-03-28 12:09:00'),
     		new \DateTime('2023-03-28 12:10:00'),
-    		new \DateTime('2023-03-28 12:10:00'),
     	];
 
     	$restaurant = $this->prophesize(LocalBusiness::class);
     	$restaurant->getId()->willReturn(1);
+
+        // We want a max 10 orders per 30 minutes
     	$restaurant->getMaxOrdersAmount()->willReturn(10);
     	$restaurant->getMaxOrdersRangeDuration()->willReturn(30);
 
@@ -87,9 +91,14 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
 
     	$this->assertEquals(1, $this->redis->exists('rate_limit:1'));
 
-    	$anotherOrderPickup = new \DateTime('2023-03-28 12:06:00');
-    	$anotherOrder = $this->createOrder(99, $restaurant->reveal(), $anotherOrderPickup);
+        $anotherOrderPickup = new \DateTime('2023-03-28 12:05:00');
+    	$anotherOrder = $this->createOrder(($i + 1), $restaurant->reveal(), $anotherOrderPickup);
 
     	$this->assertEquals(true, $this->rateLimiter->isRangeFull($anotherOrder, $anotherOrderPickup));
+
+        $anotherOrderPickup = new \DateTime('2023-03-28 12:36:00');
+        $anotherOrder = $this->createOrder(($i + 1), $restaurant->reveal(), $anotherOrderPickup);
+
+        $this->assertEquals(false, $this->rateLimiter->isRangeFull($anotherOrder, $anotherOrderPickup));
     }
 }
