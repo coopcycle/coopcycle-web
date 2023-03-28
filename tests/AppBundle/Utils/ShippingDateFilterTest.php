@@ -9,6 +9,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Entity\Vendor;
+use AppBundle\Utils\OrdersRateLimit;
 use AppBundle\Utils\OrderTimelineCalculator;
 use AppBundle\Utils\ShippingDateFilter;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -28,9 +29,11 @@ class ShippingDateFilterTest extends TestCase
     {
         $this->restaurant = $this->prophesize(LocalBusiness::class);
         $this->orderTimelineCalculator = $this->prophesize(OrderTimelineCalculator::class);
+        $this->rateLimiter = $this->prophesize(OrdersRateLimit::class);
 
         $this->filter = new ShippingDateFilter(
-            $this->orderTimelineCalculator->reveal()
+            $this->orderTimelineCalculator->reveal(),
+            $this->rateLimiter->reveal()
         );
     }
 
@@ -45,10 +48,12 @@ class ShippingDateFilterTest extends TestCase
                     new \DateTime('2018-10-12 11:35:00')
                 ),
                 $preparation = new \DateTime('2018-10-12 11:15:00'),
+                $pickup = new \DateTime('2018-10-12 11:25:00'),
                 $preparationTime = '10 minutes',
                 $shippingTime = '10 minutes',
                 $openingHours = ['Mo-Su 11:30-14:30'],
                 $closingRules = [],
+                $isRangeFull = false,
                 false,
             ],
             [
@@ -59,10 +64,12 @@ class ShippingDateFilterTest extends TestCase
                     new \DateTime('2018-10-12 12:00:00')
                 ),
                 $preparation = new \DateTime('2018-10-12 11:45:00'),
+                $pickup = new \DateTime('2018-10-12 11:55:00'),
                 $preparationTime = '10 minutes',
                 $shippingTime = '10 minutes',
                 $openingHours = ['Mo-Su 11:30-14:30'],
                 $closingRules = [],
+                $isRangeFull = false,
                 false,
             ],
             [
@@ -73,10 +80,12 @@ class ShippingDateFilterTest extends TestCase
                     new \DateTime('2018-10-12 12:10:00')
                 ),
                 $preparation = new \DateTime('2018-10-12 11:50:00'),
+                $pickup = new \DateTime('2018-10-12 12:00:00'),
                 $preparationTime = '10 minutes',
                 $shippingTime = '10 minutes',
                 $openingHours = ['Mo-Su 11:30-14:30'],
                 $closingRules = [],
+                $isRangeFull = false,
                 false,
             ],
             [
@@ -87,12 +96,14 @@ class ShippingDateFilterTest extends TestCase
                     new \DateTime('2018-10-12 12:50:00')
                 ),
                 $preparation = new \DateTime('2018-10-12 12:30:00'),
+                $pickup = new \DateTime('2018-10-12 12:40:00'),
                 $preparationTime = '10 minutes',
                 $shippingTime = '10 minutes',
                 $openingHours = ['Mo-Su 11:30-14:30'],
                 $closingRules = [
                     ['2018-10-12 12:00:00', '2018-10-12 13:00:00']
                 ],
+                $isRangeFull = false,
                 false,
             ],
             [
@@ -103,10 +114,12 @@ class ShippingDateFilterTest extends TestCase
                     new \DateTime('2018-10-19 11:35:00')
                 ),
                 $preparation = new \DateTime('2018-10-12 11:15:00'),
+                $pickup = new \DateTime('2018-10-12 11:25:00'),
                 $preparationTime = '10 minutes',
                 $shippingTime = '10 minutes',
                 $openingHours = ['Mo-Su 11:30-14:30'],
                 $closingRules = [],
+                $isRangeFull = false,
                 false,
             ],
             [
@@ -117,10 +130,12 @@ class ShippingDateFilterTest extends TestCase
                     new \DateTime('2018-10-12 12:50:00')
                 ),
                 $preparation = new \DateTime('2018-10-12 12:30:00'),
+                $pickup = new \DateTime('2018-10-12 11:40:00'),
                 $preparationTime = '10 minutes',
                 $shippingTime = '10 minutes',
                 $openingHours = ['Mo-Su 11:30-14:30'],
                 $closingRules = [],
+                $isRangeFull = false,
                 true,
             ],
         ];
@@ -133,10 +148,12 @@ class ShippingDateFilterTest extends TestCase
         \DateTime $now,
         TsRange $tsRange,
         \DateTime $preparation,
+        \DateTime $pickup,
         string $preparationTime,
         string $shippingTime,
         array $openingHours,
         array $closingRules,
+        bool $isRangeFull,
         $expected)
     {
         $restaurantClosingRules = new ArrayCollection();
@@ -169,10 +186,15 @@ class ShippingDateFilterTest extends TestCase
         $timeline->setPreparationTime($preparationTime);
         $timeline->setShippingTime($shippingTime);
         $timeline->setPreparationExpectedAt($preparation);
+        $timeline->setPickupExpectedAt($pickup);
 
         $this->orderTimelineCalculator
             ->calculate($order->reveal(), $tsRange)
             ->willReturn($timeline);
+
+        $this->rateLimiter
+            ->isRangeFull($order, $pickup)
+            ->willReturn($isRangeFull);
 
         $this->assertEquals($expected, $this->filter->accept($order->reveal(), $tsRange, $now));
     }
