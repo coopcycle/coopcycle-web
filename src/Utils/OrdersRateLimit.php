@@ -6,6 +6,7 @@ use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Event\OrderCreated;
 use AppBundle\Domain\Order\Event\OrderDelayed;
 use AppBundle\Entity\Sylius\Order;
+use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
 use Redis;
 
@@ -64,7 +65,8 @@ class OrdersRateLimit
      * @throws \RedisException
      * @throws \Exception
      */
-    public function handleEvent(Event $event): void {
+    public function handleEvent(Event $event): void
+    {
         if (!$this->featureEnabled($event->getOrder())) {
             return;
         }
@@ -204,6 +206,8 @@ class OrdersRateLimit
      */
     private function garbageCollect(array $params): void
     {
-        $this->redis->zRemRangeByScore($params['key'], 0, time() - 3600);
+        $now = Carbon::now();
+
+        $this->redis->zRemRangeByScore($params['key'], 0, $now->getTimestamp() - 3600);
     }
 }
