@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 trait AccessControlTrait
 {
     /**
-     * @param Delivery|LocalBusiness|Store $object
+     * @param Delivery|LocalBusiness|Store|User $object
      */
     protected function accessControl($object, $attribute = 'edit')
     {
