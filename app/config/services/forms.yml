@@ -79,7 +79,6 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\TaskExportType:
-    arguments: [ '@coopcycle.repository.task' ]
     tags: [ form.type ]
 
   AppBundle\Form\SettingsType:
