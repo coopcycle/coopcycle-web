@@ -34,7 +34,7 @@ export default class OrdersRateLimiter extends React.Component {
             <div className="input-group">
               <input type="number"
                      value={this.state.amount}
-                     placeholder="10"
+                     placeholder="5"
                      onChange={e => this.setState({amount: e.target.value})}
                      className="form-control"/>
               <span className="input-group-addon"><small>{i18next.t('ORDERS_RATE_LIMIT.ORDER_UNIT')}</small></span>
@@ -45,7 +45,7 @@ export default class OrdersRateLimiter extends React.Component {
               <input type="number"
                      value={this.state.time}
                      onChange={e => this.setState({time: e.target.value})}
-                     placeholder="60"
+                     placeholder="10"
                      className="form-control"/>
               <span className="input-group-addon"><small>{i18next.t('ORDERS_RATE_LIMIT.TIME_UNIT')}</small></span>
             </div>
