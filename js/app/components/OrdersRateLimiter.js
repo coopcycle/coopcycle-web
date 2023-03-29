@@ -23,7 +23,7 @@ export default class OrdersRateLimiter extends React.Component {
 
   limitColor() {
     const ratio = parseInt(this.state.amount, 10) / parseInt(this.state.time, 10)
-    return ratio > 1 ? {color:"red"} : {}
+    return ratio > 1 ? "text-warning" : ""
   }
 
   render() {
@@ -51,7 +51,7 @@ export default class OrdersRateLimiter extends React.Component {
             </div>
           </div>
         </div>
-        {this.enabled() && <div style={{...this.limitColor()}}>{i18next.t('ORDERS_RATE_LIMIT.LIMIT', {
+        {this.enabled() && <div className={this.limitColor()}>{i18next.t('ORDERS_RATE_LIMIT.LIMIT', {
           command: this.state.amount,
           time: moment.duration(this.state.time, 'minutes').humanize()
         })}</div>}
