@@ -26,14 +26,14 @@ trait FulfillmentMethodsTrait
                 'allow_add' => false,
                 'allow_delete' => false,
                 'prototype' => false,
-            ])
-            ->add('ordersRateLimiter', HiddenType::class);
+            ]);
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
                 ->add('deliveryPerimeterExpression', HiddenType::class, [
                     'label' => 'localBusiness.form.deliveryPerimeterExpression'
-                ]);
+                ])
+                ->add('ordersRateLimiter', HiddenType::class);
         }
     }
 }
