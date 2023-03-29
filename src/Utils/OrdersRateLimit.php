@@ -172,8 +172,8 @@ class OrdersRateLimit
             return false;
         }
         $localBusiness = $order->getRestaurant();
-        return $localBusiness->getMaxOrdersAmount() &&
-            $localBusiness->getMaxOrdersRangeDuration();
+        return $localBusiness->getRateLimitAmount() &&
+            $localBusiness->getRateLimitRangeDuration();
     }
 
     /**
@@ -187,8 +187,8 @@ class OrdersRateLimit
         $params = [
             'key' => 'rate_limit:' . $business->getId(),
             'id' => $order->getId(),
-            'max_orders_amount' => $business->getMaxOrdersAmount(),
-            'max_orders_range_duration' => $business->getMaxOrdersRangeDuration()
+            'max_orders_amount' => $business->getRateLimitAmount(),
+            'max_orders_range_duration' => $business->getRateLimitRangeDuration()
         ];
 
         if ($timeline) {

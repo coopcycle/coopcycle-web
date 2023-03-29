@@ -83,8 +83,8 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
     	$restaurant->getId()->willReturn(1);
 
         // We want a max 10 orders per 30 minutes
-    	$restaurant->getMaxOrdersAmount()->willReturn(10);
-    	$restaurant->getMaxOrdersRangeDuration()->willReturn(30);
+    	$restaurant->getRateLimitAmount()->willReturn(10);
+    	$restaurant->getRateLimitRangeDuration()->willReturn(30);
 
     	foreach ($orders as $i => $pickupExpectedAt) {
 
@@ -120,8 +120,8 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
         $restaurant->getId()->willReturn(1);
 
         // We want a max 10 orders per 30 minutes
-        $restaurant->getMaxOrdersAmount()->willReturn(2);
-        $restaurant->getMaxOrdersRangeDuration()->willReturn(30);
+        $restaurant->getRateLimitAmount()->willReturn(2);
+        $restaurant->getRateLimitRangeDuration()->willReturn(30);
 
         foreach ($orders as $i => $pickupExpectedAt) {
             $order = $this->createOrder(($i + 1), $restaurant->reveal(), $pickupExpectedAt);
@@ -165,8 +165,8 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
         $restaurant->getId()->willReturn(1);
 
         // We want a max 10 orders per 30 minutes
-        $restaurant->getMaxOrdersAmount()->willReturn(2);
-        $restaurant->getMaxOrdersRangeDuration()->willReturn(30);
+        $restaurant->getRateLimitAmount()->willReturn(2);
+        $restaurant->getRateLimitRangeDuration()->willReturn(30);
 
         foreach ($orders as $i => $pickupExpectedAt) {
             $order = $this->createOrder(($i + 1), $restaurant->reveal(), $pickupExpectedAt);
@@ -212,8 +212,8 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
         $restaurant->getId()->willReturn(1);
 
         // We want a max 10 orders per 30 minutes
-        $restaurant->getMaxOrdersAmount()->willReturn(2);
-        $restaurant->getMaxOrdersRangeDuration()->willReturn(30);
+        $restaurant->getRateLimitAmount()->willReturn(2);
+        $restaurant->getRateLimitRangeDuration()->willReturn(30);
 
         foreach ($orders as $i => $pickupExpectedAt) {
             $order = $this->createOrder(($i + 1), $restaurant->reveal(), $pickupExpectedAt);
@@ -250,8 +250,8 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
         $restaurant->getId()->willReturn(1);
 
         // We want a max 10 orders per 30 minutes
-        $restaurant->getMaxOrdersAmount()->willReturn(2);
-        $restaurant->getMaxOrdersRangeDuration()->willReturn(30);
+        $restaurant->getRateLimitAmount()->willReturn(2);
+        $restaurant->getRateLimitRangeDuration()->willReturn(30);
 
         foreach ($orders as $i => $pickupExpectedAt) {
             $order = $this->createOrder(($i + 1), $restaurant->reveal(), $pickupExpectedAt);
@@ -287,8 +287,8 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
         $restaurant->getId()->willReturn(1);
 
         // We want a max 10 orders per 30 minutes
-        $restaurant->getMaxOrdersAmount()->willReturn(2);
-        $restaurant->getMaxOrdersRangeDuration()->willReturn(30);
+        $restaurant->getRateLimitAmount()->willReturn(2);
+        $restaurant->getRateLimitRangeDuration()->willReturn(30);
 
         foreach ($orders as $i => $pickupExpectedAt) {
             $order = $this->createOrder(($i + 1), $restaurant->reveal(), $pickupExpectedAt);
