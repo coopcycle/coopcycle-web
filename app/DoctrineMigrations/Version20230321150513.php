@@ -20,7 +20,7 @@ final class Version20230321150513 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE restaurant ADD rate_limitr_range_duration INT DEFAULT NULL');
+        $this->addSql('ALTER TABLE restaurant ADD rate_limit_range_duration INT DEFAULT NULL');
         $this->addSql('ALTER TABLE restaurant ADD rate_limit_amount INT DEFAULT NULL');
     }
 
