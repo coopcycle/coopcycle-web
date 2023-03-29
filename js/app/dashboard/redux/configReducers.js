@@ -9,6 +9,7 @@ const initialState = {
   couriersList: [],
   nav: '',
   pickupClusterAddresses: [],
+  exportEnabled: 'off',
 }
 
 export default (state = initialState) => state

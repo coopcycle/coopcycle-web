@@ -52,12 +52,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')",
  *       "pagination_enabled"=false
  *     },
  *     "post"={
  *       "method"="POST",
- *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "access_control"="is_granted('ROLE_DISPATCHER')",
  *       "denormalization_context"={"groups"={"task_create"}},
  *       "validation_groups"={"Default"}
  *     },
@@ -121,14 +121,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     },
  *     "put"={
  *       "method"="PUT",
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
  *       "denormalization_context"={"groups"={"task_edit"}}
  *     },
  *     "task_start"={
  *       "method"="PUT",
  *       "path"="/tasks/{id}/start",
  *       "controller"=TaskStart::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
  *       "openapi_context"={
  *         "summary"="Marks a Task as started"
  *       }
@@ -138,7 +138,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "path"="/tasks/{id}/done",
  *       "controller"=TaskDone::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
  *       "openapi_context"={
  *         "summary"="Marks a Task as done",
  *         "parameters"={
@@ -156,7 +156,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "path"="/tasks/{id}/failed",
  *       "controller"=TaskFailed::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
  *       "openapi_context"={
  *         "summary"="Marks a Task as failed",
  *         "parameters"={
@@ -174,7 +174,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "path"="/tasks/{id}/assign",
  *       "controller"=TaskAssign::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')",
  *       "openapi_context"={
  *         "summary"="Assigns a Task to a messenger",
  *         "parameters"={
@@ -193,7 +193,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "controller"=RemoveFromGroup::class,
  *       "write"=false,
  *       "denormalization_context"={"groups"={"task_operation"}},
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('edit', object)",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Remove a task from the group to which it belongs",
  *        }
@@ -203,7 +203,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "path"="/tasks/{id}/unassign",
  *       "controller"=TaskUnassign::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
- *       "access_control"="is_granted('ROLE_ADMIN') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
  *       "openapi_context"={
  *         "summary"="Unassigns a Task from a messenger"
  *       }
@@ -213,7 +213,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "path"="/tasks/{id}/cancel",
  *       "controller"=TaskCancel::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
- *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "access_control"="is_granted('ROLE_DISPATCHER')",
  *       "openapi_context"={
  *         "summary"="Cancels a Task"
  *       }
@@ -223,7 +223,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "path"="/tasks/{id}/duplicate",
  *       "controller"=TaskDuplicate::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
- *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "access_control"="is_granted('ROLE_DISPATCHER')",
  *       "openapi_context"={
  *         "summary"="Duplicates a Task"
  *       }
@@ -242,7 +242,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "path"="/tasks/{id}/restore",
  *       "controller"=TaskRestore::class,
  *       "denormalization_context"={"groups"={"task_operation"}},
- *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "access_control"="is_granted('ROLE_DISPATCHER')",
  *       "openapi_context"={
  *         "summary"="Restores a Task"
  *       }

@@ -11,7 +11,6 @@
 {% block footer %}{% endblock %}
 
 {% block body %}
-
 <div class="dashboard {% if nav %}dashboard--nav{% endif %}">
   <div class="dashboard__wrapper" id="dashboard"
     data-jwt="{{ jwt }}"
@@ -29,7 +28,9 @@
     data-example-spreadsheet-url="{{ path('spreadsheet_example_tasks') }}"
     data-rrules="{{ task_recurrence_rules|json_encode|e('html_attr') }}"
     data-stores="{{ stores|json_encode|e('html_attr') }}"
-    data-pickup-cluster-addresses="{{ pickup_cluster_addresses|json_encode|e('html_attr') }}">
+    data-pickup-cluster-addresses="{{ pickup_cluster_addresses|json_encode|e('html_attr') }}"
+    data-export-enabled="{{ export_enabled }}"
+>
   </div>
   <div class="dashboard__loader">
     <div id="dashboard__loader" style="margin: 0 auto;"></div>

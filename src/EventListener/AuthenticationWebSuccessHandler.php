@@ -61,7 +61,7 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
 
             if (is_object($user) && is_callable([ $user, 'hasRole' ])) {
 
-                if ($user->hasRole('ROLE_ADMIN')) {
+                if ($user->hasRole('ROLE_DISPATCHER')) {
                     return new RedirectResponse($this->router->generate('admin_index'));
                 }
 

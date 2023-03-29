@@ -1,89 +1,103 @@
-<a href="{{ path('admin_deliveries') }}"
-  class="deliveries-nav-item {{ app.request.attributes.get('_route') == 'admin_deliveries' ? 'active' : '' }}">
-  <h4 class="deliveries-nav-item-heading">
-    <i class="fa fa-bicycle mr-2"></i>
-    <span>{% trans %}adminDashboard.deliveries.title{% endtrans %}</span>
-  </h4>
-</a>
+{% set nav = [
+  {
+    title: 'adminDashboard.deliveries.title' | trans,
+    help: '',
+    path: path('admin_deliveries'),
+    icon: 'bicycle',
+    active: ['admin_deliveries'],
+    enabled: is_granted('ROLE_DISPATCHER'),
+  },
+  {
+    title: 'adminDashboard.stores.title' | trans,
+    help: 'adminDashboard.stores.help' | trans,
+    path: path('admin_stores'),
+    icon: 'shopping-cart',
+    active: ['admin_stores'],
+    enabled: is_granted('ROLE_ADMIN'),
+  },
+  {
+    title: 'adminDashboard.pricing.title' | trans,
+    help: 'adminDashboard.pricing.help' | trans,
+    path: path('admin_deliveries_pricing'),
+    icon: 'percent',
+    active: ['admin_deliveries_pricing', 'admin_deliveries_pricing_ruleset', 'admin_deliveries_pricing_ruleset_new'],
+    enabled: is_granted('ROLE_ADMIN'),
+  },
+  {
+    title: 'adminDashboard.embed.title' | trans,
+    help: 'adminDashboard.embed.help' | trans,
+    path: path('admin_embed'),
+    icon: 'check-square-o',
+    active: ['admin_embed', 'admin_forms', 'admin_form', 'admin_form_new'],
+    enabled: is_granted('ROLE_ADMIN'),
+  },
+  {
+    title: 'adminDashboard.time_slots.title' | trans,
+    help: 'adminDashboard.time_slots.help' | trans,
+    path: path('admin_time_slots'),
+    icon: 'clock-o',
+    active: ['admin_time_slots', 'admin_time_slot'],
+    enabled: is_granted('ROLE_ADMIN'),
+  },
+  {
+    title: 'adminDashboard.package_sets.title' | trans,
+    help: 'adminDashboard.package_sets.help' | trans,
+    path: path('admin_packages'),
+    icon: 'cube',
+    active: [ 'admin_packages', 'admin_package', 'admin_new_package' ],
+    enabled: is_granted('ROLE_ADMIN'),
+  },
+  {
+    title: 'adminDashboard.zones.title' | trans,
+    help: 'adminDashboard.zones.help' | trans,
+    path: path('admin_zones'),
+    icon: 'bullseye',
+    active: ['admin_zones'],
+    enabled: is_granted('ROLE_ADMIN'),
+  },
+  {
+    title: 'adminDashboard.tags.title' | trans,
+    help: 'adminDashboard.tags.help' | trans,
+    path: path('admin_tags'),
+    icon: 'tags',
+    active: ['admin_tags'],
+    enabled: is_granted('ROLE_DISPATCHER'),
+  },{
+    title: 'adminDashboard.api.title' | trans,
+    help: 'adminDashboard.api.help' | trans,
+    path: path('admin_api_apps'),
+    icon: 'database',
+    active: ['admin_api_apps', 'admin_api_app'],
+    enabled: is_granted('ROLE_ADMIN'),
+  },
+  {
+    title: 'vehicles.breadcrumb' | trans,
+    help: 'vehicles.breadcrumb.help' | trans,
+    path: path('admin_vehicles'),
+    icon: 'bicycle',
+    active: ['admin_vehicles', 'admin_vehicle'],
+    enabled: is_granted('ROLE_ADMIN'),
+  },
+  {
+    title: 'adminDashboard.integrations.title' | trans,
+    help: 'adminDashboard.integrations.help' | trans,
+    path: path('admin_integrations'),
+    icon: 'database',
+    active: ['admin_integrations', 'admin_integration'],
+    enabled: is_granted('ROLE_ADMIN'),
+  }
+] %}
 <div class="deliveries-nav">
-  <a href="{{ path('admin_stores') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') == 'admin_stores' ? 'active' : '' }}">
+  {% for row in nav %}
+    {% if row.enabled %}
+  <a href="{{ row.path }}"
+    class="deliveries-nav-item {{ app.request.attributes.get('_route') in row.active ? 'active' : '' }}">
     <h4 class="deliveries-nav-item-heading">
-      <i class="fa fa-shopping-cart mr-2"></i>
-      <span>{% trans %}adminDashboard.stores.title{% endtrans %}</span>
+      <i class="fa fa-{{ row.icon}} mr-2"></i>
+      <span>{{ row.title }}</span>
     </h4>
-    <small class="deliveries-nav-item-text">{% trans %}adminDashboard.stores.help{% endtrans %}</small>
+    <small class="deliveries-nav-item-text">{{ row.help }}</small>
   </a>
-  <a href="{{ path('admin_deliveries_pricing') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_deliveries_pricing', 'admin_deliveries_pricing_ruleset', 'admin_deliveries_pricing_ruleset_new' ] ? 'active' : '' }}">
-    <h4 class="deliveries-nav-item-heading">
-      <i class="fa fa-percent mr-2"></i>
-      <span>{% trans %}adminDashboard.pricing.title{% endtrans %}</span>
-    </h4>
-    <small class="deliveries-nav-item-text">{% trans %}adminDashboard.pricing.help{% endtrans %}</small>
-  </a>
-  <a href="{{ path('admin_embed') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_embed', 'admin_forms', 'admin_form', 'admin_form_new' ] ? 'active' : '' }}">
-    <h4 class="deliveries-nav-item-heading">
-      <i class="fa fa-check-square-o mr-2"></i>
-      <span>{% trans %}adminDashboard.embed.title{% endtrans %}</span>
-    </h4>
-    <small class="deliveries-nav-item-text">{% trans %}adminDashboard.embed.help{% endtrans %}</small>
-  </a>
-  <a href="{{ path('admin_time_slots') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_time_slots', 'admin_time_slot' ] ? 'active' : '' }}">
-    <h4 class="deliveries-nav-item-heading">
-      <i class="fa fa-clock-o mr-2"></i>
-      <span>{% trans %}adminDashboard.time_slots.title{% endtrans %}</span>
-    </h4>
-    <small class="deliveries-nav-item-text">{% trans %}adminDashboard.time_slots.help{% endtrans %}</small>
-  </a>
-  <a href="{{ path('admin_packages') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_packages', 'admin_package', 'admin_new_package' ] ? 'active' : '' }}">
-    <h4 class="deliveries-nav-item-heading">
-      <i class="fa fa-cube mr-2"></i>
-      <span>{% trans %}adminDashboard.package_sets.title{% endtrans %}</span>
-    </h4>
-    <small class="deliveries-nav-item-text">{% trans %}adminDashboard.package_sets.help{% endtrans %}</small>
-  </a>
-  <a href="{{ path('admin_zones') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') == 'admin_zones' ? 'active' : '' }}">
-    <h4 class="deliveries-nav-item-heading">
-      <i class="fa fa-bullseye mr-2"></i>
-      <span>{% trans %}adminDashboard.zones.title{% endtrans %}</span>
-    </h4>
-    <small class="deliveries-nav-item-text">{% trans %}adminDashboard.zones.help{% endtrans %}</small>
-  </a>
-  <a href="{{ path('admin_tags') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') == 'admin_tags' ? 'active' : '' }}">
-    <h4 class="deliveries-nav-item-heading">
-      <i class="fa fa-tags mr-2"></i>
-      <span>{% trans %}adminDashboard.tags.title{% endtrans %}</span>
-    </h4>
-    <small class="deliveries-nav-item-text">{% trans %}adminDashboard.tags.help{% endtrans %}</small>
-  </a>
-  <a href="{{ path('admin_api_apps') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_api_apps', 'admin_api_app' ] ? 'active' : '' }}">
-    <h4 class="deliveries-nav-item-heading">
-      <i class="fa fa-database mr-2"></i>
-      <span>{% trans %}adminDashboard.api.title{% endtrans %}</span>
-    </h4>
-    <small class="deliveries-nav-item-text">{% trans %}adminDashboard.api.help{% endtrans %}</small>
-  </a>
-  <a href="{{ path('admin_vehicles') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_vehicles', 'admin_vehicle' ] ? 'active' : '' }}">
-    <h4 class="deliveries-nav-item-heading">
-      <i class="fa fa-bicycle mr-2"></i>
-      <span>{% trans %}vehicles.breadcrumb{% endtrans %}</span>
-    </h4>
-    <small class="deliveries-nav-item-text">{% trans %}vehicles.breadcrumb.help{% endtrans %}</small>
-  </a>
-  <a href="{{ path('admin_integrations') }}"
-    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_integrations', 'admin_integration' ] ? 'active' : '' }}">
-    <h4 class="deliveries-nav-item-heading">
-      <i class="fa fa-database mr-2"></i>
-      <span>{% trans %}adminDashboard.integrations.title{% endtrans %}</span>
-    </h4>
-    <small class="deliveries-nav-item-text">{% trans %}adminDashboard.integrations.help{% endtrans %}</small>
-  </a>
+    {% endif %}
+  {% endfor %}
 </div>

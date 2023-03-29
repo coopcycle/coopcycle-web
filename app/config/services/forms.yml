@@ -261,3 +261,8 @@ services:
 
   AppBundle\Form\Order\AdhocOrderType:
     tags: [ form.type ]
+
+  AppBundle\Form\InviteUserType:
+    arguments:
+      - '@security.authorization_checker'
+    tags: [ form.type ]

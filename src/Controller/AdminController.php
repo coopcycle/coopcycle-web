@@ -116,6 +116,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
@@ -415,6 +416,10 @@ class AdminController extends AbstractController
      */
     public function usersAction(Request $request, PaginatorInterface $paginator)
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return new RedirectResponse($this->generateUrl('admin_users_invite'));
+        }
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $qb = $this->getDoctrine()
             ->getRepository(Customer::class)
             ->createQueryBuilder('c');
@@ -527,12 +532,25 @@ class AdminController extends AbstractController
             $invitation = $form->getData();
 
             $roles = $form->get('roles')->getData();
-            $restaurants = $form->get('restaurants')->getData();
-            $stores = $form->get('stores')->getData();
 
+            $restaurants = [];
+            $stores = [];
+            if ($form->has('restaurants')) {
+                $restaurants = $form->get('restaurants')->getData();
+            }
+            if ($form->has('stores')) {
+                $stores = $form->get('stores')->getData();
+            }
+
+            // Prevent non admin user to invite users as admin
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                $roles = array_diff($roles, ['ROLE_ADMIN']);
+            }
             foreach ($roles as $role) {
                 $invitation->addRole($role);
             }
+
+
 
             foreach ($restaurants as $restaurant) {
                 $invitation->addRestaurant($restaurant);
@@ -580,6 +598,7 @@ class AdminController extends AbstractController
     public function userAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
+        $this->accessControl($user, 'view');
 
         if (!$user) {
             throw $this->createNotFoundException();
@@ -596,13 +615,14 @@ class AdminController extends AbstractController
     public function userEditAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
+        $this->accessControl($user);
 
         if (!$user) {
             throw $this->createNotFoundException();
         }
 
         // Roles that can be edited by admin
-        $editableRoles = ['ROLE_ADMIN', 'ROLE_COURIER', 'ROLE_RESTAURANT', 'ROLE_STORE'];
+        $editableRoles = ['ROLE_ADMIN', 'ROLE_COURIER', 'ROLE_RESTAURANT', 'ROLE_STORE', 'ROLE_DISPATCHER'];
 
         $originalRoles = array_filter($user->getRoles(), function ($role) use ($editableRoles) {
             return in_array($role, $editableRoles);
@@ -655,6 +675,7 @@ class AdminController extends AbstractController
     public function userDeleteAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
+        $this->accessControl($user, 'delete');
 
         if (!$user) {
             throw $this->createNotFoundException();
@@ -887,11 +908,12 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/settings/tags", name="admin_tags")
+     * @Route("/admin/tags", name="admin_tags")
      */
     public function tagsAction(Request $request, TagManager $tagManager)
     {
         if ($request->isMethod('POST') && $request->request->has('delete')) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
             $id = $request->request->get('tag');
             $tag = $this->getDoctrine()->getRepository(Tag::class)->find($id);
             $tagManager->untagAll($tag);
@@ -920,6 +942,7 @@ class AdminController extends AbstractController
      */
     public function pricingRuleSetsAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $ruleSets = $this->getDoctrine()
             ->getRepository(Delivery\PricingRuleSet::class)
             ->findAll();
@@ -930,6 +953,7 @@ class AdminController extends AbstractController
 
     private function renderPricingRuleSetForm(Delivery\PricingRuleSet $ruleSet, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $originalRules = new ArrayCollection();
 
         foreach ($ruleSet->getRules() as $rule) {
@@ -987,6 +1011,7 @@ class AdminController extends AbstractController
      */
     public function newPricingRuleSetAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $ruleSet = new Delivery\PricingRuleSet();
 
         return $this->renderPricingRuleSetForm($ruleSet, $request);
@@ -997,6 +1022,7 @@ class AdminController extends AbstractController
      */
     public function pricingRuleSetAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $ruleSet = $this->getDoctrine()
             ->getRepository(Delivery\PricingRuleSet::class)
             ->find($id);
@@ -1009,6 +1035,7 @@ class AdminController extends AbstractController
      */
     public function duplicatePricingRuleSetAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $ruleSet = $this->getDoctrine()
             ->getRepository(Delivery\PricingRuleSet::class)
             ->find($id);
@@ -1023,6 +1050,7 @@ class AdminController extends AbstractController
      */
     public function deleteZoneAction($id)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $zone = $this->getDoctrine()->getRepository(Zone::class)->find($id);
 
         $this->getDoctrine()->getManagerForClass(Zone::class)->remove($zone);
@@ -1036,6 +1064,7 @@ class AdminController extends AbstractController
      */
     public function zonesAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $zoneCollection = new \stdClass();
         $zoneCollection->zones = [];
 
@@ -1078,6 +1107,7 @@ class AdminController extends AbstractController
 
     public function newStoreAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $store = new Store();
 
         return $this->renderStoreForm($store, $request, $this->translator);
@@ -1172,6 +1202,7 @@ class AdminController extends AbstractController
     public function settingsAction(Request $request, SettingsManager $settingsManager, Redis $redis)
     {
         /* Stripe live mode */
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $isStripeLivemode = $settingsManager->isStripeLivemode();
         $canEnableStripeLivemode = $settingsManager->canEnableStripeLivemode();
@@ -1316,6 +1347,7 @@ class AdminController extends AbstractController
      */
     public function newFormAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $deliveryForm = new DeliveryForm();
         $form = $this->createForm(EmbedSettingsType::class, $deliveryForm);
 
@@ -1341,6 +1373,7 @@ class AdminController extends AbstractController
      */
     public function formAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $deliveryForm = $this->getDoctrine()->getRepository(DeliveryForm::class)->find($id);
 
         $form = $this->createForm(EmbedSettingsType::class, $deliveryForm);
@@ -1393,6 +1426,7 @@ class AdminController extends AbstractController
      */
     public function apiAppsAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         if ($request->isMethod('POST') && $request->request->has('oauth2_client')) {
 
             $oAuth2ClientId = $request->get('oauth2_client');
@@ -1425,6 +1459,7 @@ class AdminController extends AbstractController
      */
     public function newApiAppAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $apiApp = new ApiApp();
 
         $form = $this->createForm(ApiAppType::class, $apiApp);
@@ -1459,6 +1494,8 @@ class AdminController extends AbstractController
      */
     public function apiAppAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $apiApp = $this->getDoctrine()
             ->getRepository(ApiApp::class)
             ->find($id);
@@ -1486,6 +1523,8 @@ class AdminController extends AbstractController
      */
     public function integrationsAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         return $this->render('admin/integrations.html.twig');
     }
 
@@ -1494,6 +1533,8 @@ class AdminController extends AbstractController
      */
     public function integrationWoopitAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         if ($request->isMethod('POST') && $request->request->has('oauth2_client')) {
 
             $oAuth2ClientId = $request->get('oauth2_client');
@@ -1525,6 +1566,8 @@ class AdminController extends AbstractController
      */
     public function newIntegrationAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $woopitIntegration = new WoopitIntegration();
 
         $form = $this->createForm(WoopitIntegrationType::class, $woopitIntegration);
@@ -1559,6 +1602,8 @@ class AdminController extends AbstractController
      */
     public function integrationAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $apiApp = $this->getDoctrine()
             ->getRepository(WoopitIntegration::class)
             ->find($id);
@@ -1586,6 +1631,7 @@ class AdminController extends AbstractController
      */
     public function promotionsAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $qb = $this->promotionCouponRepository->createQueryBuilder('c');
         $qb->andWhere('c.expiresAt IS NULL OR c.expiresAt > :date');
         $qb->setParameter('date', new \DateTime());
@@ -1605,6 +1651,8 @@ class AdminController extends AbstractController
         PromotionCouponFactoryInterface $promotionCouponFactory
     )
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $promotion = $promotionRepository->find($id);
 
         $promotionCoupon = $promotionCouponFactory->createForPromotion($promotion);
@@ -1631,6 +1679,8 @@ class AdminController extends AbstractController
      */
     public function newCreditNoteAction(Request $request, PromotionCouponFactoryInterface $promotionCouponFactory)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $form = $this->createForm(CreditNoteType::class);
 
         $form->handleRequest($request);
@@ -1664,6 +1714,8 @@ class AdminController extends AbstractController
         PromotionCouponFactoryInterface $promotionCouponFactory
     )
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $template = $request->query->get('template');
 
         switch ($template) {
@@ -1683,6 +1735,8 @@ class AdminController extends AbstractController
      */
     public function promotionCouponAction($id, $code, Request $request, PromotionRepositoryInterface $promotionRepository)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $promotionCoupon = $this->promotionCouponRepository->findOneByCode($code);
         $promotion = $promotionRepository->find($id);
 
@@ -1806,6 +1860,8 @@ class AdminController extends AbstractController
      */
     public function restaurantsPledgesListAction(Request $request, EntityManagerInterface $manager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $pledges = $this->getDoctrine()->getRepository(Pledge::class)->findAll();
 
         if ($request->isMethod('POST')) {
@@ -1837,6 +1893,8 @@ class AdminController extends AbstractController
      */
     public function pledgeEmailPreviewAction($id, Request $request, EmailManager $emailManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $pledge = $this->getDoctrine()->getRepository(Pledge::class)->find($id);
 
         if (!$pledge) {
@@ -1860,6 +1918,8 @@ class AdminController extends AbstractController
      */
     public function timeSlotsAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $timeSlots = $this->getDoctrine()->getRepository(TimeSlot::class)->findAll();
         return $this->render('admin/time_slots.html.twig', [
             'time_slots' => $timeSlots,
@@ -1891,6 +1951,8 @@ class AdminController extends AbstractController
      */
     public function newTimeSlotAction(Request $request, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $timeSlot = new TimeSlot();
 
         return $this->renderTimeSlotForm($request, $timeSlot, $objectManager);
@@ -1930,6 +1992,8 @@ class AdminController extends AbstractController
      */
     public function timeSlotAction($id, Request $request, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $timeSlot = $this->getDoctrine()->getRepository(TimeSlot::class)->find($id);
 
         if (!$timeSlot) {
@@ -1944,6 +2008,8 @@ class AdminController extends AbstractController
      */
     public function packageSetsAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
         return $this->render('admin/package_sets.html.twig', [
             'package_sets' => $packageSets,
@@ -1952,6 +2018,8 @@ class AdminController extends AbstractController
 
     private function renderPackageSetForm(Request $request, PackageSet $packageSet, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $form = $this->createForm(PackageSetType::class, $packageSet);
 
         $form->handleRequest($request);
@@ -1972,6 +2040,8 @@ class AdminController extends AbstractController
      */
     public function newPackageSetAction(Request $request, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $packageSet = new PackageSet();
 
         return $this->renderPackageSetForm($request, $packageSet, $objectManager);
@@ -1982,6 +2052,8 @@ class AdminController extends AbstractController
      */
     public function packageSetAction($id, Request $request, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $packageSet = $this->getDoctrine()->getRepository(PackageSet::class)->find($id);
 
         if (!$packageSet) {
@@ -2087,6 +2159,8 @@ class AdminController extends AbstractController
      */
     public function organizationsAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $organizations = $this->getDoctrine()->getRepository(Organization::class)->findAll();
 
         return $this->render('admin/organizations.html.twig', [
@@ -2099,6 +2173,8 @@ class AdminController extends AbstractController
      */
     public function addOrganizationAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $form = $this->createForm(OrganizationType::class);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
@@ -2120,6 +2196,8 @@ class AdminController extends AbstractController
      */
     public function configureOrganizationAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $organization = $this->getDoctrine()->getRepository(Organization::class)->find($id);
 
         if (!$organization) {
@@ -2175,6 +2253,7 @@ class AdminController extends AbstractController
 
     public function newHubAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $hub = new Hub();
 
         return $this->handleHubForm($hub, $request);
@@ -2182,6 +2261,7 @@ class AdminController extends AbstractController
 
     public function hubAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $hub = $this->getDoctrine()->getRepository(Hub::class)->find($id);
 
         if (!$hub) {
@@ -2193,6 +2273,7 @@ class AdminController extends AbstractController
 
     public function hubsAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $hubs = $this->getDoctrine()->getRepository(Hub::class)->findAll();
 
         return $this->render('admin/hubs.html.twig', [
@@ -2205,6 +2286,8 @@ class AdminController extends AbstractController
      */
     public function restaurantListAction(Request $request, SettingsManager $settingsManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $routes = $request->attributes->get('routes');
 
         $pledgeCount = $this->getDoctrine()
@@ -2274,6 +2357,8 @@ class AdminController extends AbstractController
      */
     private function handleNonprofitForm(Nonprofit $nonprofit, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $form = $this->createForm(NonprofitType::class, $nonprofit);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
@@ -2301,6 +2386,8 @@ class AdminController extends AbstractController
      */
     public function newNonprofitAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $nonprofit = new Nonprofit();
 
         return $this->handleNonprofitForm($nonprofit, $request);
@@ -2360,6 +2447,7 @@ class AdminController extends AbstractController
         CubeJsTokenFactory $tokenFactory,
         Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $zeroWasteCount = $localBusinessRepository->countZeroWaste();
 
         return $this->render('admin/metrics.html.twig', [
@@ -2373,6 +2461,8 @@ class AdminController extends AbstractController
      */
     public function newVehicleAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $vehicle = new Vehicle();
 
         $form = $this->createForm(VehicleType::class, $vehicle);
@@ -2400,6 +2490,8 @@ class AdminController extends AbstractController
      */
     public function vehiclesAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findAll();
 
         return $this->render('admin/vehicles.html.twig', [

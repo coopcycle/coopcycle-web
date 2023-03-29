@@ -556,14 +556,14 @@ admin_store_addresses:
     methods:  [ GET, POST ]
 
 admin_tag_new:
-    path: /admin/settings/tags/new
+    path: /admin/tags/new
     defaults:
         _controller: AppBundle\Controller\TagController::newTagAction
         template: 'admin/tag.html.twig'
         redirect_route: admin_tags
 
 admin_tag:
-    path: /admin/settings/tags/{slug}
+    path: /admin/tags/{slug}
     defaults:
         _controller: AppBundle\Controller\TagController::tagAction
         template: 'admin/tag.html.twig'

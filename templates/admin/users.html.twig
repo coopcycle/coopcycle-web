@@ -68,6 +68,12 @@
     path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_STORE*' })
   },
   {
+    title: 'users.dispatchers'|trans,
+    icon: 'code-fork',
+    active: (customers.params.filterField is defined and customers.params.filterField == 'u.roles' and customers.params.filterValue == '*ROLE_DISPATCHER*'),
+    path: path('admin_users', { filterField: 'u.roles', filterValue: '*ROLE_DISPATCHER*' })
+  },
+  {
     title: 'users.administrators'|trans,
     icon: 'lock',
     active: (customers.params.filterField is defined and customers.params.filterField == 'u.roles' and customers.params.filterValue == '*ROLE_ADMIN*'),
