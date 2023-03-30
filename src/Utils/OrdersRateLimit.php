@@ -167,11 +167,18 @@ class OrdersRateLimit
      * @param Order $order
      * @return bool
      */
-    private function featureEnabled(Order $order): bool {
+    private function featureEnabled(Order $order): bool
+    {
+        if (!$order->hasVendor()) {
+            return false;
+        }
+
         if ($order->isMultiVendor()) {
             return false;
         }
+
         $localBusiness = $order->getRestaurant();
+
         return $localBusiness->getRateLimitAmount() &&
             $localBusiness->getRateLimitRangeDuration();
     }
