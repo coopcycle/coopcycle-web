@@ -72,3 +72,54 @@ export const makeSelectTaskListItemsByUsername = () => {
     }
   )
 }
+
+
+const belongsToTour = task => Object.prototype.hasOwnProperty.call(task, 'tour') && task.tour
+
+export const makeSelectOrganizedTaskListItemsByUsername = () => {
+
+  return createSelector(
+    taskSelectors.selectEntities, // FIXME This is recalculated all the time
+    selectTaskListByUsername,
+    (tasks, taskList) => {
+
+      if (!taskList) {
+        return []
+      }
+
+      const items = taskList.itemIds
+        .filter(id => Object.prototype.hasOwnProperty.call(tasks, id)) // a task with this id may be not loaded yet
+        .map(id => tasks[id])
+
+        const standaloneTasks = _.filter(items, task => !belongsToTour(task))
+
+        const toursMap = new Map()
+        const tours = []
+    
+        const tasksWithTour = _.filter(items, task => belongsToTour(task))
+    
+        _.forEach(tasksWithTour, task => {
+          const keys = Array.from(toursMap.keys())
+          const tour = _.find(keys, tour => tour['@id'] === task.tour['@id'])
+          if (!tour) {
+            toursMap.set(task.tour, [ task ])
+          } else {
+            toursMap.get(tour).push(task)
+          }
+        })
+    
+        toursMap.forEach((tasks, tour) => {
+          tours.push({
+            ...tour,
+            items: tasks,
+          })
+        })
+    
+        return {
+          standaloneTasks,
+          tours,
+          allTasks: items
+        }
+    }
+  )
+}
