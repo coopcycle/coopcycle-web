@@ -173,11 +173,9 @@
         <div role="tabpanel" class="tab-pane" id="fulfillment">
           {% include "restaurant/form/_partials/fulfillment.html.twig" %}
         </div>
-        {% if show_payment %}
-        <div role="tabpanel" class="tab-pane" id="payment">
+        <div role="tabpanel" class="tab-pane {% if not show_payment %}d-none{% endif %}" id="payment">
           {% include "restaurant/form/_partials/payment.html.twig" %}
         </div>
-        {% endif %}
         <div role="tabpanel" class="tab-pane" id="settlement">
           {% include "restaurant/form/_partials/settlement.html.twig" %}
         </div>
