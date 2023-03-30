@@ -152,6 +152,8 @@ restaurant.form.cuisines.label: Styles de cuisine
 restaurant.deliveryPerimeterExpression.title: Périmètre de livraison
 restaurant.deliveryPerimeterExpression.help: Définit le périmètre de livraison accepté.
   Vous pouvez choisir un rayon (en km) ou une zone
+restaurant.ordersRateLimiter.title: Gestion des limites de commande
+restaurant.ordersRateLimiter.help: La fonction de limite de commande vous permet de contrôler le nombre de commandes que vous pouvez accepter sur une période de temps donnée. En définissant une limite, vous évitez de recevoir plus de commandes que ce que vous pouvez gérer. Il vous suffit de spécifier le nombre maximal de commandes et la durée de la période de temps. Les commandes supplémentaires sont automatiquement reportées sur le créneau suivant. Cette fonctionnalité vous aide à mieux gérer votre capacité de production et à éviter les retards et les erreurs.
 restaurant.contract.title: Contrat
 restaurant.contract.minimumCartAmount.label: Montant minimum du panier
 restaurant.contract.flatDeliveryPrice.label: Montant facturé par la plateforme pour

@@ -48,6 +48,8 @@
     </field>
     <field name="vatID" type="string" column="vat_id" nullable="true"/>
     <field name="additionalProperties" type="json_array" column="additional_properties" nullable="true"/>
+    <field name="rateLimitRangeDuration" type="integer" column="rate_limit_range_duration" nullable="true" />
+    <field name="rateLimitAmount" type="integer" column="rate_limit_amount" nullable="true" />
     <field name="state" type="string" column="state"/>
     <field name="stripeConnectRoles" type="json_array" column="stripe_connect_roles"/>
     <field name="mercadopagoConnectRoles" type="json_array" column="mercadopago_connect_roles" nullable="true"/>

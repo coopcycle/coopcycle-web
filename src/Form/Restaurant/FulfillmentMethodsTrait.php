@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -31,7 +32,8 @@ trait FulfillmentMethodsTrait
             $builder
                 ->add('deliveryPerimeterExpression', HiddenType::class, [
                     'label' => 'localBusiness.form.deliveryPerimeterExpression'
-                ]);
+                ])
+                ->add('ordersRateLimiter', HiddenType::class);
         }
     }
 }

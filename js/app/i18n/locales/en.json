@@ -312,6 +312,12 @@
         "PAY_WITH_SAVED_CREDIT_CARD": "Pay with a saved credit card",
         "ADD_NEW_CREDIT_CARD": "Add a new credit card",
         "ADD_OR_SELECT_A_CARD_TO_PAY": "Please select or enter a new credit card to pay",
-        "EXPIRATION": "Expiration"
+        "EXPIRATION": "Expiration",
+        "ORDERS_RATE_LIMIT": {
+          "ORDER_UNIT": "order(s)",
+          "TIME_UNIT": "minute(s)",
+          "NO_LIMIT": "No order limit",
+          "LIMIT": "A maximum of {{command}} orders every {{time}}"
+        }
     }
 }

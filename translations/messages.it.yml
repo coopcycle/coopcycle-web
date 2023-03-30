@@ -157,6 +157,8 @@ restaurant.temporaryClosedWarning: Questo ristorante è chiuso fino alle <strong
 restaurant.form.loopeat_enabled.label: Abilita il sistema di deposito e rimborso LoopEat
 restaurant.deliveryPerimeterExpression.help: Definisci il perimetro per la consegna.
   Puoi selezionare un raggio (in km) o una zona
+restaurant.ordersRateLimiter.title: Gestione dei limiti degli ordini
+restaurant.ordersRateLimiter.help: La funzione di limitazione degli ordini consente di controllare il numero di ordini che è possibile accettare in un determinato periodo di tempo. Impostando un limite, si evita di ricevere più ordini di quanto si possa gestire. È sufficiente specificare il numero massimo di ordini e la durata del periodo di tempo. Gli ordini aggiuntivi vengono automaticamente riprogrammati per il prossimo slot. Questa funzione aiuta a gestire meglio la capacità di produzione e a evitare ritardi ed errori.
 restaurant.contract.variableDeliveryPrice.help: L'importo addebitato verrà calcolato
   usando le regole di prezzo selezionate
 restaurant.contract.feeRate.label: Commissione della piattaforma per la consegna

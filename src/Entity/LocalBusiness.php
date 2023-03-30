@@ -266,6 +266,11 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $dabbaCode;
 
+
+    protected ?int $rateLimitRangeDuration;
+
+    protected ?int $rateLimitAmount;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -1061,4 +1066,72 @@ class LocalBusiness extends BaseLocalBusiness implements
     {
         return self::getKeyForType($this->getType());
     }
+
+    /**
+     * @return int|null
+     */
+    public function getRateLimitRangeDuration(): ?int
+    {
+        return $this->rateLimitRangeDuration;
+    }
+
+    /**
+     * @param int|null $rateLimitRangeDuration
+     * @return LocalBusiness
+     */
+    public function setRateLimitRangeDuration(?int $rateLimitRangeDuration): LocalBusiness
+    {
+        $this->rateLimitRangeDuration = $rateLimitRangeDuration;
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getRateLimitAmount(): ?int
+    {
+        return $this->rateLimitAmount;
+    }
+
+    /**
+     * @param int|null $rateLimitAmount
+     * @return LocalBusiness
+     */
+    public function setRateLimitAmount(?int $rateLimitAmount): LocalBusiness
+    {
+        $this->rateLimitAmount = $rateLimitAmount;
+        return $this;
+    }
+
+    /**
+     * @param string $expression
+     * @return $this
+     */
+    public function setOrdersRateLimiter(string $expression): LocalBusiness
+    {
+        [$amount, $timeWindow] = explode(':', $expression);
+
+        if (!empty($amount) && !empty($timeWindow)) {
+            $this->setRateLimitAmount(intval($amount));
+            $this->setRateLimitRangeDuration(intval($timeWindow));
+            return $this;
+        }
+
+        $this->setRateLimitAmount(null);
+        $this->setRateLimitRangeDuration(null);
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrdersRateLimiter(): string
+    {
+        return sprintf('%s:%s',
+            $this->getRateLimitAmount(),
+            $this->getRateLimitRangeDuration()
+        );
+    }
+
+
 }

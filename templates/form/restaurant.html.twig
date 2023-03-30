@@ -202,6 +202,21 @@
   </span>
 {% endblock %}
 
+{% block _restaurant_ordersRateLimiter_row %}
+<div class="panel panel-default">
+  <div class="panel-heading">{% trans %}restaurant.ordersRateLimiter.title{% endtrans %}</div>
+  <div class="panel-body">
+  <div
+    data-widget="orders-rate-limiter"
+    data-default-value="{{ form.vars.data|e('html_attr') }}">
+    {{ form_widget(form) }}
+  </div>
+  <span class="help-block">
+    <i class="fa fa-info-circle"></i> {{ 'restaurant.ordersRateLimiter.help'|trans|raw }}</span>
+  </div>
+</div>
+{% endblock %}
+
 {% block _restaurant_deliveryPerimeterExpression_row %}
   {{ block('delivery_perimeter_expression_widget') }}
 {% endblock %}

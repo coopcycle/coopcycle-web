@@ -193,6 +193,8 @@ restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries.
   You can chose a radius (in km) or a zone
+restaurant.ordersRateLimiter.title: Orders limit
+restaurant.ordersRateLimiter.help: The order limit function allows you to control the number of orders you can accept within a given time period. By setting a limit, you can avoid receiving more orders than you can handle. You just need to specify the maximum number of orders and the duration of the time period. Additional orders are automatically rescheduled to the next available time slot. This feature helps you better manage your production capacity and avoid delays and errors.
 restaurant.contract.minimumCartAmount.label: Minimum cart amount
 restaurant.contract.flatDeliveryPrice.label: Amount charged by the platform
 restaurant.contract.flatDeliveryPrice.help: This amount will not be displayed in the
