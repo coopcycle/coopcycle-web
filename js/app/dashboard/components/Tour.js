@@ -17,7 +17,7 @@ const Tour = ({ tour, tasks }) => {
         </h4>
       </div>
       <div id={ `${collapseId}` } className="panel-collapse collapse" role="tabpanel">
-        <ul className="list-group">
+        <ul className="list-group list-group-padded">
           { tasks.map(task => {
             return (
               <Task
