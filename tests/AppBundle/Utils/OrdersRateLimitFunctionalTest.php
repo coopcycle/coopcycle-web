@@ -49,6 +49,11 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
 		);
     }
 
+    public function tearDown(): void
+    {
+        Carbon::setTestNow();
+    }
+
     private function createOrder(int $id, LocalBusiness $restaurant, \DateTime $pickupExpectedAt)
     {
     	$timeline = $this->prophesize(OrderTimeline::class);
