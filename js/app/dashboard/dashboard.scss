@@ -188,6 +188,11 @@ html, body {
   }
 }
 
+.list-group-padded {
+  padding-left: 15px;
+  background-color: #E8E8E8;
+}
+
 :not(.task-package).list-group-item {
 
   font-size: 12px;
