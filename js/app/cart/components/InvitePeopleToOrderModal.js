@@ -3,7 +3,7 @@ import { withTranslation } from 'react-i18next'
 import Modal from 'react-modal'
 import { connect } from 'react-redux'
 import ClipboardJS from 'clipboard'
-import { closeInvitePeopleToOrderModal, invitePeopleToOrder } from '../redux/actions'
+import { closeInvitePeopleToOrderModal, invitePeopleToOrder, createInvitation } from '../redux/actions'
 
 class InvitePeopleToOrderModal extends Component {
 
@@ -26,7 +26,7 @@ class InvitePeopleToOrderModal extends Component {
 
   afterOpen() {
     if (!this.props.link) {
-      console.log('Generate link');
+      this.props.createInvitation()
     }
   }
 
@@ -63,6 +63,7 @@ function mapDispatchToProps(dispatch) {
   return {
     closeInvitePeopleToOrderModal: () => dispatch(closeInvitePeopleToOrderModal()),
     invitePeopleToOrder: (emails) => dispatch(invitePeopleToOrder(emails)),
+    createInvitation: () => dispatch(createInvitation()),
   }
 }
 

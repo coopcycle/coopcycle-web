@@ -515,3 +515,15 @@ export function setGuestCustomerEmail(email) {
       // TODO Handle failure
   }
 }
+
+export function createInvitation() {
+  return (dispatch, getState) => {
+
+    const { cart } = getState()
+
+    // FIXME
+    // Fix 401
+    return $.post(`${cart['@id']}/create_invitation`, {})
+      // TODO Update state
+  }
+}
