@@ -1250,6 +1250,8 @@ services:
 
   AppBundle\Utils\OrdersRateLimit: ~
 
+  AppBundle\Sylius\Order\OrderInvitationContext: ~
+
   coopcycle.sylius.order_modifier:
     class: AppBundle\Sylius\Order\OrderModifier
     decorates: sylius.order_modifier
