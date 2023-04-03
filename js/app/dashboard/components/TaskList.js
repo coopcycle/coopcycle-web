@@ -21,7 +21,7 @@ import Avatar from '../../components/Avatar'
 
 import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
-import { makeSelectTaskListItemsByUsername, makeSelectOrganizedTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
+import { makeSelectOrganizedTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
 
 moment.locale($('html').attr('lang'))
 
@@ -198,7 +198,7 @@ class TaskList extends React.Component {
                             tour={ tour }
                             tasks={ tour.items }
                             username={ username }
-                            unassignTasks={ unassignTasks }
+                            unassignTasks={ this.props.unassignTasks }
                             />
                         </div>
                       )}
@@ -221,7 +221,6 @@ class TaskList extends React.Component {
 
 const makeMapStateToProps = () => {
 
-  // const selectTaskListItemsByUsername = makeSelectTaskListItemsByUsername()
   const selectOrganizedTaskListItemsByUsername = makeSelectOrganizedTaskListItemsByUsername()
 
   const mapStateToProps = (state, ownProps) => {

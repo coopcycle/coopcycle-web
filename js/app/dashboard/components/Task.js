@@ -190,6 +190,7 @@ class Task extends React.Component {
 
         this.props.selectTask(task)
 
+        // FIXME: this is temporary
         // disable menu if task from assigned tour
         if (task.isAssigned && task.tour) {
           return

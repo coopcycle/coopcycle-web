@@ -70,6 +70,7 @@
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Assigned to {{username}}",
         "ADMIN_DASHBOARD_UNASSIGN_TASK": "Unassign task #{{id}}",
         "ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI": "Unassign {{count}} task(s)",
+        "ADMIN_DASHBOARD_UNASSIGN_TOUR": "Unassign tour: {{name}}",
         "ADMIN_DASHBOARD_NAV_IMPORT": "Import",
         "ADMIN_DASHBOARD_NAV_EXPORT": "Export",
         "ADMIN_DASHBOARD_NAV_FILTERS": "Filters",
