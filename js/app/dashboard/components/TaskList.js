@@ -18,12 +18,32 @@ import Task from './Task'
 import Tour from './Tour'
 
 import Avatar from '../../components/Avatar'
-
 import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
-import { makeSelectOrganizedTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
+import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
 
 moment.locale($('html').attr('lang'))
+
+const TaskOrTour = ({ item, onRemove, unassignTasks, username }) => {
+
+  if (item['@type'] === 'Tour') {
+
+    return (
+      <Tour
+        tour={ item }
+        tasks={ item.items }
+        username={ username }
+        unassignTasks={ unassignTasks } />
+    )
+  }
+
+  return (
+    <Task
+      task={ item }
+      assigned={ true }
+      onRemove={ item => onRemove(item) } />
+  )
+}
 
 // OPTIMIZATION
 // Avoid useless re-rendering when starting to drag
@@ -48,10 +68,12 @@ class InnerList extends React.Component {
               { ...provided.draggableProps }
               { ...provided.dragHandleProps }
             >
-              <Task
-                task={ task }
+              <TaskOrTour
+                item={ task }
                 assigned={ true }
-                onRemove={ task => this.props.onRemove(task) } />
+                onRemove={ task => this.props.onRemove(task) }
+                username={ this.props.username }
+                unassignTasks={ this.props.unassignTasks } />
             </div>
           )}
         </Draggable>
@@ -86,11 +108,7 @@ class TaskList extends React.Component {
       isEmpty,
     } = this.props
 
-    const { 
-      tasks,
-      standaloneTasks, 
-      tours,
-    } = this.props
+    const { tasks } = this.props
 
     const uncompletedTasks = _.filter(tasks, t => t.status === 'TODO')
     const completedTasks = _.filter(tasks, t => t.status === 'DONE')
@@ -184,31 +202,11 @@ class TaskList extends React.Component {
                 }) }
                 { ...provided.droppableProps }
               >
-                { _.map(tours, (tour, index) => {
-                  return (
-                    <Draggable key={ `tour-${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ this.props.tours.length + index }>
-                      {(provided) => (
-                        <div
-                          ref={ provided.innerRef }
-                          { ...provided.draggableProps }
-                          { ...provided.dragHandleProps }
-                        >
-                          <Tour
-                            key={ tour['@id'] }
-                            tour={ tour }
-                            tasks={ tour.items }
-                            username={ username }
-                            unassignTasks={ this.props.unassignTasks }
-                            />
-                        </div>
-                      )}
-                    </Draggable>
-                  )
-                })}
-
                 <InnerList
-                  tasks={ standaloneTasks }
-                  onRemove={ task => this.remove(task) } />
+                  tasks={ tasks }
+                  onRemove={ task => this.remove(task) }
+                  unassignTasks={ this.props.unassignTasks }
+                  username={ username } />
                 { provided.placeholder }
               </div>
             )}
@@ -221,23 +219,21 @@ class TaskList extends React.Component {
 
 const makeMapStateToProps = () => {
 
-  const selectOrganizedTaskListItemsByUsername = makeSelectOrganizedTaskListItemsByUsername()
+  const selectTaskListItemsByUsername = makeSelectTaskListItemsByUsername()
 
   const mapStateToProps = (state, ownProps) => {
 
-    const {standaloneTasks, tours, allTasks} = selectOrganizedTaskListItemsByUsername(state, ownProps)
+    const items = selectTaskListItemsByUsername(state, ownProps)
 
     const visibleTaskIds = _.intersectionWith(
       selectVisibleTaskIds(state),
-      allTasks.map(task => task['@id'])
+      items.map(task => task['@id'])
     )
 
     return {
       polylineEnabled: state.polylineEnabled[ownProps.username],
-      tasks: allTasks,
-      standaloneTasks,
-      tours,
-      isEmpty: allTasks.length === 0 || visibleTaskIds.length === 0,
+      tasks: items,
+      isEmpty: items.length === 0 || visibleTaskIds.length === 0,
       distance: ownProps.distance,
       duration: ownProps.duration,
       filters: state.settings.filters,

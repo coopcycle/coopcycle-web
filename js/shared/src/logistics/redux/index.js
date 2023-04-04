@@ -12,7 +12,6 @@ export {
   selectAllTasks,
   selectTasksWithColor,
   makeSelectTaskListItemsByUsername,
-  makeSelectOrganizedTaskListItemsByUsername,
 } from './selectors'
 
 export * from './actions'

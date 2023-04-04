@@ -53,6 +53,8 @@ export const selectTasksWithColor = createSelector(
 const selectTaskListByUsername = (state, props) =>
   taskListSelectors.selectById(state, props.username)
 
+const belongsToTour = task => Object.prototype.hasOwnProperty.call(task, 'tour') && task.tour
+
 // https://github.com/reduxjs/reselect#connecting-a-selector-to-the-redux-store
 // https://redux.js.org/recipes/computing-derived-data
 export const makeSelectTaskListItemsByUsername = () => {
@@ -69,57 +71,36 @@ export const makeSelectTaskListItemsByUsername = () => {
       return taskList.itemIds
         .filter(id => Object.prototype.hasOwnProperty.call(tasks, id)) // a task with this id may be not loaded yet
         .map(id => tasks[id])
-    }
-  )
-}
+        .reduce((items, task) => {
 
+          if (belongsToTour(task)) {
 
-const belongsToTour = task => Object.prototype.hasOwnProperty.call(task, 'tour') && task.tour
+            const tourIndex = _.findIndex(items, item => {
 
-export const makeSelectOrganizedTaskListItemsByUsername = () => {
+              return belongsToTour(task)
+                && item['@type'] === 'Tour' && task.tour['@id'] === item['@id']
+            })
 
-  return createSelector(
-    taskSelectors.selectEntities, // FIXME This is recalculated all the time
-    selectTaskListByUsername,
-    (tasks, taskList) => {
+            if (-1 === tourIndex) {
+              items.push({
+                ...task.tour,
+                '@type': 'Tour',
+                items: [
+                  task
+                ]
+              })
+            } else {
+              const tour = items[tourIndex]
+              tour.items.push(task)
+            }
 
-      if (!taskList) {
-        return []
-      }
-
-      const items = taskList.itemIds
-        .filter(id => Object.prototype.hasOwnProperty.call(tasks, id)) // a task with this id may be not loaded yet
-        .map(id => tasks[id])
-
-        const standaloneTasks = _.filter(items, task => !belongsToTour(task))
-
-        const toursMap = new Map()
-        const tours = []
-    
-        const tasksWithTour = _.filter(items, task => belongsToTour(task))
-    
-        _.forEach(tasksWithTour, task => {
-          const keys = Array.from(toursMap.keys())
-          const tour = _.find(keys, tour => tour['@id'] === task.tour['@id'])
-          if (!tour) {
-            toursMap.set(task.tour, [ task ])
           } else {
-            toursMap.get(tour).push(task)
+            items.push(task)
           }
-        })
-    
-        toursMap.forEach((tasks, tour) => {
-          tours.push({
-            ...tour,
-            items: tasks,
-          })
-        })
-    
-        return {
-          standaloneTasks,
-          tours,
-          allTasks: items
-        }
+
+          return items
+
+        }, [])
     }
   )
 }
