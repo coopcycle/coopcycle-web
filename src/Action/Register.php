@@ -137,8 +137,7 @@ class Register
                     $violations->add($cause);
                 }
             }
-            return new RedirectResponse('/register');
-            //throw new ValidationException($violations);
+            throw new ValidationException($violations);
         }
 
         $registration = $form->getData();
@@ -150,8 +149,7 @@ class Register
             'violations' => $violations
         ]);
         if (count($violations) > 0) {
-            return new RedirectResponse('/register');
-            //throw new ValidationException($violations);
+            throw new ValidationException($violations);
         }
 
         $user->setEnabled($this->confirmationEnabled ? false : true);
@@ -175,9 +173,6 @@ class Register
         $this->dispatcher->dispatch($event, Events::AUTHENTICATION_SUCCESS);
         $response->setData($event->getData());
 
-        return new Response($this->twig->render('@NucleosProfile/Registration/register.html.twig', [
-            'form' => $form->createView(),
-        ]));
-        //return $response;
+        return $response;
     }
 }
