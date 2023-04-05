@@ -692,7 +692,9 @@ fos_js_routing:
         - routing_route
         - user_avatar
         - dashboard_restaurant_new_adhoc_order
+        - public_share_order
         - order_set_guest_customer_email
+        - api_orders_add_player_item
         - api_orders_create_invitation_item
 
 webpack_encore:

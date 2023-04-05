@@ -76,7 +76,7 @@ function mapStateToProps(state) {
     isOpen: state.isInvitePeopleToOrderModalOpen,
     isRequesting: state.invitePeopleToOrderContext.isRequesting,
     hasError: state.invitePeopleToOrderContext.hasError,
-    link: state.cart.invitationLink,
+    link: location.protocol + '//' + location.hostname + window.Routing.generate('public_share_order', {slug: state.cart.invitation}),
   }
 }
 

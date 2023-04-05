@@ -506,13 +506,20 @@ export function invitePeopleToOrder(guests) {
 }
 
 export function setGuestCustomerEmail(email) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
 
-    const url = window.Routing.generate('order_set_guest_customer_email')
+    const { cart: {id, invitation} } = getState()
+    const url = window.Routing.generate('api_orders_add_player_item', getRoutingParams({id}))
 
-    return $.post(url, { email })
-      .then(dispatch(closeSetGuestCustomerEmailModal()))
-      // TODO Handle failure
+    httpClient.request({
+      method: "post",
+      url,
+      data: {email, slug: invitation},
+      headers: {
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    }) .then(dispatch(closeSetGuestCustomerEmailModal()))
   }
 }
 
@@ -534,7 +541,7 @@ export function createInvitation() {
           'Content-Type': 'application/ld+json'
         }
       })
-        .then(res => dispatch(invitePeopleSuccess(res.data.invitationLink)))
+        .then(res => dispatch(invitePeopleSuccess(res.data.invitation)))
         .catch(e => dispatch(invitePeopleFailure(e)))
     })
 

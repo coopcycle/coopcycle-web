@@ -170,16 +170,10 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['takeaway'] = $object->isTakeaway();
         }
 
-        $data['invitationLink'] = '';
+        $data['invitation'] = null;
 
         if (null !== ($invitation = $object->getInvitation())) {
-            $data['invitationLink'] = $this->urlGenerator->generate(
-                'public_share_order',
-                [
-                    'slug' => $invitation->getSlug(),
-                ],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            );
+            $data['invitation'] = $invitation->getSlug();
         }
 
         return $data;

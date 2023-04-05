@@ -38,7 +38,7 @@
     And the JSON should match:
       """
         {
-          "invitationLink":@string@,
+          "invitation":@string@,
           "@*@":"@*@"
         }
       """
