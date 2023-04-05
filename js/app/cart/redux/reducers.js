@@ -139,6 +139,11 @@ const cart = (state = initialState.cart, action = {}) => {
       ...state,
       takeaway: false,
     }
+   case INVITE_PEOPLE_REQUEST_SUCCESS:
+      return {
+        ...state,
+        invitationLink: action.payload,
+      }
   default:
 
     return state

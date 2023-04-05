@@ -517,13 +517,26 @@ export function setGuestCustomerEmail(email) {
 }
 
 export function createInvitation() {
+
   return (dispatch, getState) => {
+    dispatch(invitePeopleRequest())
 
-    const { cart } = getState()
+    const { cart: {id} } = getState()
+    const url = window.Routing.generate('api_orders_create_invitation_item', getRoutingParams({id}))
+    $.getJSON(window.Routing.generate('profile_jwt')).then(({jwt}) => {
+      httpClient.request({
+        method: 'post',
+        url,
+        data: {},
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+        .then(res => dispatch(invitePeopleSuccess(res.data.invitationLink)))
+        .catch(e => dispatch(invitePeopleFailure(e)))
+    })
 
-    // FIXME
-    // Fix 401
-    return $.post(`${cart['@id']}/create_invitation`, {})
-      // TODO Update state
   }
 }

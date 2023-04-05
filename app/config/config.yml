@@ -693,6 +693,7 @@ fos_js_routing:
         - user_avatar
         - dashboard_restaurant_new_adhoc_order
         - order_set_guest_customer_email
+        - api_orders_create_invitation_item
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'
