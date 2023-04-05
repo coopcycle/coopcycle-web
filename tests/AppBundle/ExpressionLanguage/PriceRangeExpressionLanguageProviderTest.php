@@ -29,6 +29,7 @@ class PriceRangeExpressionLanguageProviderTest extends TestCase
             [  5500,  900 ],
             [  6500,  900 ],
             [ 12000, 2250 ],
+            [  null,    0 ],
         ];
     }
 
@@ -67,6 +68,30 @@ class PriceRangeExpressionLanguageProviderTest extends TestCase
 
         $value = $this->language->evaluate('price_range(packages.totalVolumeUnits(), 100, 1, 0)', [
             'packages' => new PackagesResolver($delivery),
+        ]);
+
+        $this->assertThat($value, $this->isType('int'));
+        $this->assertEquals($expectedValue, $value);
+    }
+
+    public function returnValueProviderForWeight()
+    {
+        return [
+            [  35000,      0 ],
+            [  45000,    360 ],
+            [  80000,    360 ],
+            [  81000,    720 ],
+            [   null,      0 ]
+        ];
+    }
+
+    /**
+     * @dataProvider returnValueProviderForWeight
+     */
+    public function testReturnValueWithWeight($weight, $expectedValue)
+    {
+        $value = $this->language->evaluate('price_range(weight, 360, 40000, 40000)', [
+            'weight' => $weight,
         ]);
 
         $this->assertThat($value, $this->isType('int'));
