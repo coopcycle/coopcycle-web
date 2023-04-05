@@ -338,6 +338,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "security"="is_granted('session', object)",
  *      "normalization_context"={"groups"={"cart"}},
  *      "controller"=CreateInvitationController::class,
+ *      "validate"=false,
  *      "openapi_context"={
  *       "summary"="Generates an invitation link for an order"
  *      }
