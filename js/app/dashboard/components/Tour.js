@@ -1,8 +1,10 @@
 import React from 'react'
-import { withTranslation } from 'react-i18next'
+import { withTranslation, useTranslation } from 'react-i18next'
 import Task from './Task'
 
-const Tour = ({ tour, tasks }) => {
+const Tour = ({ tour, tasks, username = null, unassignTasks = null }) => {
+
+  const { t } = useTranslation()
 
   const collapseId = `tour-panel-${tour['@id'].replaceAll('/', '-')}`
 
@@ -14,6 +16,14 @@ const Tour = ({ tour, tasks }) => {
             <a role="button" data-toggle="collapse" href={ `#${collapseId}` } className="ml-2 flex-grow-1 text-truncate">
               { tour.name } <span className="badge">{ tasks.length }</span>
             </a>
+            { username && (
+              <a 
+                onClick={() => unassignTasks(username, tasks)}
+                title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
+              >
+                <i className="fa fa-times"></i>
+              </a>
+            )}
         </h4>
       </div>
       <div id={ `${collapseId}` } className="panel-collapse collapse" role="tabpanel">

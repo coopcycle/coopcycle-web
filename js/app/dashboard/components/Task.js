@@ -189,6 +189,13 @@ class Task extends React.Component {
         e.preventDefault()
 
         this.props.selectTask(task)
+
+        // FIXME: this is temporary
+        // disable menu if task from assigned tour
+        if (task.isAssigned && task.tour) {
+          return
+        }
+
         show(e, {
           props: { task }
         })

@@ -10,6 +10,7 @@ import {
   createTaskListRequest,
   createTaskListSuccess,
   createTaskListFailure,
+  makeSelectTaskListItemsByUsername,
 } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
 
@@ -1201,6 +1202,9 @@ export function handleDragEnd(result) {
     const taskList = _.find(taskLists, tl => tl.username === username)
     const newTasks = [ ...taskList.items ]
 
+    const selectTaskListItemsByUsername = makeSelectTaskListItemsByUsername()
+    const taskListItemsByUsername = selectTaskListItemsByUsername(getState(), { username })
+
     if (selectedTasks.length > 1) {
 
       // FIXME Manage linked tasks
@@ -1226,8 +1230,23 @@ export function handleDragEnd(result) {
 
       // Reorder inside same list
       if (source.droppableId === destination.droppableId) {
-        const [ removed ] = newTasks.splice(result.source.index, 1);
-        newTasks.splice(result.destination.index, 0, removed)
+        const [ removed ] = taskListItemsByUsername.splice(result.source.index, 1);
+        const newTaskListItemsByUsername = [ ...taskListItemsByUsername ]
+        newTaskListItemsByUsername.splice(result.destination.index, 0, removed)
+
+        // Flatten list
+        const flatArray = newTaskListItemsByUsername.reduce((items, item) => {
+          if (item['@type'] === 'Tour') {
+            item.items.forEach(t => items.push(t))
+          } else {
+            items.push(item)
+          }
+          return items
+        }, [])
+
+        newTasks.length = 0; // Clear the array
+        newTasks.push(...flatArray);
+
       } else {
         const task = _.find(allTasks, t => t['@id'] === result.draggableId)
         if (task) {
