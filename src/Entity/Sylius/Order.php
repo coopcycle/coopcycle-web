@@ -9,6 +9,7 @@ use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
 use AppBundle\Action\MyOrders;
 use AppBundle\Action\Order\Accept as OrderAccept;
+use AppBundle\Action\Order\AddPlayer as AddPlayer;
 use AppBundle\Action\Order\Assign as OrderAssign;
 use AppBundle\Action\Order\Cancel as OrderCancel;
 use AppBundle\Action\Order\Centrifugo as CentrifugoController;
@@ -342,6 +343,11 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "openapi_context"={
  *       "summary"="Generates an invitation link for an order"
  *      }
+ *     },
+ *     "add_player"={
+ *      "method"="POST",
+ *      "path"="/orders/{id}/players",
+ *      "controller"=AddPlayer::class,
  *     },
  *   },
  *   attributes={

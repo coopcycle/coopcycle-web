@@ -210,6 +210,12 @@ security:
             stateless: true
             cart_session: true
 
+        api_cart_add_player:
+            pattern:   ^/api/orders/[0-9]+/players$
+            methods: [ POST ]
+            stateless: true
+            security: false
+
         api_me:
             pattern:   ^/api/me$
             methods: [ GET ]
