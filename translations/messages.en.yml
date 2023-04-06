@@ -868,6 +868,7 @@ authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?
 authentication.create_account: Create your account
 authentication.already_registered: Already registered?
+authentication.registration_error: There is a problem with the information you provided. Please review it and try again.
 authentication.unsubscribe: You can easily unsubscribe at any time via the unsubscribe links in each of our emails
 authentication.sign_in: Sign in
 authentication.choose_password: Choose your password

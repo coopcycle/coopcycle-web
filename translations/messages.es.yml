@@ -583,6 +583,7 @@ authentication.forgot_password: ¿Contraseña olvidada?
 authentication.not_registered_yet: ¿Todavía no estas registrado?
 authentication.create_account: Crea tu cuenta
 authentication.already_registered: ¿Ya tienes una cuenta?
+authentication.registration_error: Hay un problema con tu registro. Revisa tus datos e intenta de nuevo por favor.
 authentication.sign_in: Regístrate
 maintenance.text: Sitio en mantenimiento. Volveremos pronto
 api_apps.breadcrumb: Clientes API
