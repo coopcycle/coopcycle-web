@@ -19,7 +19,7 @@ class InvitePeopleToOrderModal extends Component {
   componentDidMount() {
     const clipboard = new ClipboardJS('#copy-button', {
       text: () => {
-        return this.props.link
+        return this.generateLink()
       },
     })
 
@@ -31,13 +31,19 @@ class InvitePeopleToOrderModal extends Component {
   }
 
   afterOpen() {
-    if (!this.props.link) {
+    if (!this.props.invitation) {
       this.props.createInvitation()
     }
   }
 
-  render() {
+  generateLink() {
+    if (this.state.isRequesting || !this.props.invitation) {
+      return null;
+    }
+    return location.protocol + '//' + location.hostname + window.Routing.generate('public_share_order', {slug: this.props.invitation})
+  }
 
+  render() {
     return (
       <Modal
         isOpen={this.props.isOpen}
@@ -52,7 +58,7 @@ class InvitePeopleToOrderModal extends Component {
           <h2>Start a group order</h2>
           <p>Share the link with others to participate in your order. Once they have finished, you can place the order.</p>
             <div className="input-group">
-              <input type="text" className="form-control" defaultValue={this.props.link} />
+              <input type="text" className="form-control" defaultValue={this.generateLink()} />
             <span className="input-group-btn">
               <button className={classNames("btn", {"btn-primary": !this.state.copied, "btn-success": this.state.copied})}
                       disabled={this.props.isRequesting}
@@ -76,7 +82,7 @@ function mapStateToProps(state) {
     isOpen: state.isInvitePeopleToOrderModalOpen,
     isRequesting: state.invitePeopleToOrderContext.isRequesting,
     hasError: state.invitePeopleToOrderContext.hasError,
-    link: location.protocol + '//' + location.hostname + window.Routing.generate('public_share_order', {slug: state.cart.invitation}),
+    invitation: state.cart.invitation,
   }
 }
 
