@@ -24,8 +24,8 @@ import {
   INVITE_PEOPLE_REQUEST,
   INVITE_PEOPLE_REQUEST_SUCCESS,
   INVITE_PEOPLE_REQUEST_FAILURE,
-  OPEN_SET_GUEST_CUSTOMER_EMAIL_MODAL,
-  CLOSE_SET_GUEST_CUSTOMER_EMAIL_MODAL,
+  OPEN_SET_PLAYER_EMAIL_MODAL,
+  CLOSE_SET_PLAYER_EMAIL_MODAL, SET_PLAYER_TOKEN,
 } from './actions'
 
 const initialState = {
@@ -67,7 +67,8 @@ const initialState = {
   isInvitePeopleToOrderModalOpen: false,
   invitePeopleToOrderContext: {},
   isGuest: false,
-  isSetGuestCustomerEmailModalOpen: false,
+  isSetPlayerEmailModalOpen: false,
+  playerToken: null,
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -341,15 +342,24 @@ const isGuest = (state = initialState.isGuest) => {
   return state
 }
 
-const isSetGuestCustomerEmailModalOpen = (state = initialState.isSetGuestCustomerEmailModalOpen, action = {}) => {
+const isSetPlayerEmailModalOpen = (state = initialState.isSetPlayerEmailModalOpen, action = {}) => {
 
   switch (action.type) {
-  case CLOSE_SET_GUEST_CUSTOMER_EMAIL_MODAL:
+  case CLOSE_SET_PLAYER_EMAIL_MODAL:
     return false
-  case OPEN_SET_GUEST_CUSTOMER_EMAIL_MODAL:
+  case OPEN_SET_PLAYER_EMAIL_MODAL:
     return true
   default:
     return state
+  }
+}
+
+const playerToken = (state = initialState.playerToken, action = {}) => {
+  switch (action.type) {
+    case SET_PLAYER_TOKEN:
+      return action.payload
+    default:
+      return state
   }
 }
 
@@ -376,5 +386,6 @@ export default combineReducers({
   isInvitePeopleToOrderModalOpen,
   invitePeopleToOrderContext,
   isGuest,
-  isSetGuestCustomerEmailModalOpen,
+  isSetPlayerEmailModalOpen,
+  playerToken,
 })

@@ -2,7 +2,7 @@ import React from 'react'
 import { withTranslation } from 'react-i18next'
 import Modal from 'react-modal'
 import { connect } from 'react-redux'
-import { closeSetGuestCustomerEmailModal, setGuestCustomerEmail } from '../redux/actions'
+import { closeSetPlayerEmailModal, setGuestCustomerEmail } from '../redux/actions'
 import { Formik } from 'formik'
 
 const SetGuestCustomerEmailModal = ({ isOpen, closeInvitePeopleToOrderModal, t, setGuestCustomerEmail }) => {
@@ -21,7 +21,6 @@ const SetGuestCustomerEmailModal = ({ isOpen, closeInvitePeopleToOrderModal, t, 
         initialValues={ initialValues }
         // validate={ this._validate }
         onSubmit={ (values) => {
-          console.log(values)
           setGuestCustomerEmail(values.email)
         }}
         validateOnBlur={ false }
@@ -57,14 +56,14 @@ const SetGuestCustomerEmailModal = ({ isOpen, closeInvitePeopleToOrderModal, t, 
 function mapStateToProps(state) {
 
   return {
-    isOpen: state.isSetGuestCustomerEmailModalOpen,
+    isOpen: state.isSetPlayerEmailModalOpen,
   }
 }
 
 function mapDispatchToProps(dispatch) {
 
   return {
-    closeSetGuestCustomerEmailModal: () => dispatch(closeSetGuestCustomerEmailModal()),
+    closeSetGuestCustomerEmailModal: () => dispatch(closeSetPlayerEmailModal()),
     setGuestCustomerEmail: (email) => dispatch(setGuestCustomerEmail(email)),
   }
 }

@@ -73,6 +73,7 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
         } else {
             $data['vendor'] = null;
         }
+        $data['player'] = $object->getCustomer();
 
         return $data;
     }
