@@ -7,6 +7,7 @@ use AppBundle\Controller\Utils\OrderConfirmTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Embed\Context as EmbedContext;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderInvitation;
 use AppBundle\Entity\Sylius\OrderRepository;
@@ -19,6 +20,7 @@ use AppBundle\Form\Order\CartType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
+use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
@@ -27,6 +29,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
+use Nucleos\UserBundle\Util\CanonicalFieldsUpdater;
 use phpcent\Client as CentrifugoClient;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
@@ -693,4 +696,33 @@ class OrderController extends AbstractController
         ));
     }
 
+    /**
+     * @Route("/order/set-guest-customer-email", name="order_set_guest_customer_email")
+     */
+    public function setGuestCustomerEmailAction(Request $request,
+        RequestStack $requestStack,
+        OrderTimeHelper $orderTimeHelper,
+        EntityManagerInterface $entityManager,
+        CanonicalFieldsUpdater $canonicalFieldsUpdater,
+        IriConverterInterface $iriConverter)
+    {
+        $email = $request->request->get('email');
+        $emailCanonical = $canonicalFieldsUpdater->canonicalizeEmail($email);
+
+        $customer =
+            $entityManager->getRepository(CustomerInterface::class)->findOneBy(['emailCanonical' => $emailCanonical]);
+
+        if (null === $customer) {
+            $customer = new Customer();
+            $customer->setEmail($email);
+            $customer->setEmailCanonical($emailCanonical);
+
+            $entityManager->persist($customer);
+            $entityManager->flush();
+        }
+
+        $requestStack->getSession()->set('guest_customer', $iriConverter->getIriFromItem($customer));
+
+        return new JsonResponse([], 200);
+    }
 }
