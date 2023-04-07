@@ -4,34 +4,58 @@ namespace AppBundle\Sylius\Order;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Sylius\Customer\CustomerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
+use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 final class OrderInvitationContext
 {
+
+    private ?array $payload;
+
 	public function __construct(
         RequestStack $requestStack,
-        IriConverterInterface $iriConverter)
+        private JWSProviderInterface $JWSProvider,
+        private IriConverterInterface $iriConverter)
     {
-        $this->requestStack = $requestStack;
-        $this->iriConverter = $iriConverter;
+        $token = $requestStack->getCurrentRequest()->headers->get('X-Player-Token');
+        $this->payload = $this->getPayload($token);
     }
 
-    public function isGuest(): bool
+    public function isPlayerOf(OrderInterface $order): bool
     {
-    	$session = $this->requestStack->getSession();
+        if (is_null($this->payload)) {
+            return false;
+        }
+        $iriOrder = $this->iriConverter->getIriFromItem($order);
+        return $iriOrder === $this->payload['order'];
 
-    	return $session->has('guest_customer');
     }
 
-    public function getCustomer(): ?CustomerInterface
+    public function getPlayer(): ?CustomerInterface
     {
-    	$session = $this->requestStack->getSession();
+        if (is_null($this->payload)) {
+            return null;
+        }
 
-    	if ($session->has('guest_customer')) {
+        return $this->iriConverter->getItemFromIri($this->payload['player']);
+    }
 
-    		return $this->iriConverter->getItemFromIri($session->get('guest_customer'));
-    	}
+    /**
+     * @param string|null $token
+     * @return array|null
+     */
+    private function getPayload(?string $token): ?array
+    {
+        if (empty($token)) {
+            return null;
+        }
 
-    	return null;
+        $JWSToken = $this->JWSProvider->load($token);
+        if ($JWSToken->isExpired() || $JWSToken->isInvalid()) {
+            return null;
+        }
+
+        return $JWSToken->getPayload();
     }
 }
