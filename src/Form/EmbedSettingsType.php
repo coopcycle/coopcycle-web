@@ -59,6 +59,10 @@ class EmbedSettingsType extends AbstractType
             ->add('withWeight', CheckboxType::class, [
                 'label' => 'form.embed_settings.with_weight.label',
                 'required' => false
+            ])
+            ->add('showHomePage', CheckboxType::class, [
+                'label' => 'form.embed_settings.show_home_page.label',
+                'required' => false
             ]);
     }
 

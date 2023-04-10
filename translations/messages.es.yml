@@ -936,6 +936,7 @@ form.checkout_address.takeaway.contact: Si tiene algún problema, contacte con e
 form.checkout_payment.method.label: Elija un método de pago
 form.checkout_address.reusable_packaging.loopeat.learn_more: Saber más sobre LoopEat
 form.embed_settings.with_weight.label: Consultar peso de bienes
+form.embed_settings.show_home_page.label: Mostrar en Inicio
 form.time_slot.working_days_only.label: Permitir seleccionar sólo días laborales
 form.reusable_packaging.price.label: Precio
 form.reusable_packaging.on_hand.label: Cantidad
