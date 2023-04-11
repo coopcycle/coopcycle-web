@@ -692,7 +692,7 @@ class OrderController extends AbstractController
             'times' => $orderTimeHelper->getTimeInfo($order),
             'cart_form' => $cartForm->createView(),
             'addresses_normalized' => $this->getUserAddresses(),
-            'is_guest' => true,
+            'is_player' => true,
         ));
     }
 

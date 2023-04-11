@@ -89,7 +89,8 @@ function mapStateToProps(state) {
     isOrderingAvailable: selectIsOrderingAvailable(state),
     restaurant: state.cart.restaurant,
     hasItems: !!items.length,
-    isGuest: state.isGuest,
+    isPlayer: state.isPlayer,
+    player: state.player,
   }
 }
 

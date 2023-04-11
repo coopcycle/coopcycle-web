@@ -66,9 +66,15 @@ const initialState = {
   addressModalContext: {},
   isInvitePeopleToOrderModalOpen: false,
   invitePeopleToOrderContext: {},
-  isGuest: false,
+  isPlayer: false,
   isSetPlayerEmailModalOpen: false,
-  playerToken: null,
+  player: {
+    token: null,
+    centrifugo: {
+      token: null,
+      channel: null
+    }
+  },
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -337,8 +343,7 @@ const invitePeopleToOrderContext = (state = initialState.invitePeopleToOrderCont
   }
 }
 
-const isGuest = (state = initialState.isGuest) => {
-
+const isPlayer = (state = initialState.isPlayer) => {
   return state
 }
 
@@ -354,7 +359,7 @@ const isSetPlayerEmailModalOpen = (state = initialState.isSetPlayerEmailModalOpe
   }
 }
 
-const playerToken = (state = initialState.playerToken, action = {}) => {
+const player = (state = initialState.player, action = {}) => {
   switch (action.type) {
     case SET_PLAYER_TOKEN:
       return action.payload
@@ -385,7 +390,7 @@ export default combineReducers({
   addressModalContext,
   isInvitePeopleToOrderModalOpen,
   invitePeopleToOrderContext,
-  isGuest,
+  isPlayer,
   isSetPlayerEmailModalOpen,
-  playerToken,
+  player,
 })

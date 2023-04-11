@@ -154,11 +154,11 @@ function handleAjaxError(e, dispatch) {
   dispatch(fetchFailure())
 }
 
-function playerHeader({playerToken}, headers = {}) {
-  if (playerToken !== null) {
+function playerHeader({player: {token}}, headers = {}) {
+  if (token !== null) {
     headers = {
       ...headers,
-      'X-Player-Token': playerToken
+      'X-Player-Token': token
     }
   }
   return headers
@@ -330,7 +330,7 @@ export function sync() {
 
   return (dispatch, getState) => {
 
-    const { cart, isGuest } = getState()
+    const { cart, isPlayer } = getState()
 
     if (cart.takeaway) {
       $('#menu').LoadingOverlay('hide')
@@ -346,7 +346,7 @@ export function sync() {
       dispatch(geocodeAndSync())
     }
 
-    if (isGuest) {
+    if (isPlayer) {
       dispatch(openSetPlayerEmailModal())
     }
   }
@@ -564,7 +564,7 @@ export function setGuestCustomerEmail(email) {
         'Content-Type': 'application/ld+json'
       }
     }).then(res => {
-      dispatch(setPlayerToken(res.data.token))
+      dispatch(setPlayerToken(res.data))
       dispatch(closeSetPlayerEmailModal())
     })
   }
