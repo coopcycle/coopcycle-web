@@ -11,15 +11,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class OrderInvitationContext
 {
 
-    private ?array $payload;
+    private ?array $payload = null;
 
 	public function __construct(
         RequestStack $requestStack,
         private JWSProviderInterface $JWSProvider,
         private IriConverterInterface $iriConverter)
     {
-        $token = $requestStack->getCurrentRequest()->headers->get('X-Player-Token');
-        $this->payload = $this->getPayload($token);
+        if ($requestStack->getCurrentRequest()->headers->has('X-Player-Token')) {
+            $token = $requestStack->getCurrentRequest()->headers->get('X-Player-Token');
+            $this->payload = $this->getPayload($token);
+        }
     }
 
     public function isPlayerOf(OrderInterface $order): bool
