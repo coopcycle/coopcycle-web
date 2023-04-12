@@ -3,7 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
-use AppBundle\Service\Geocoder;
+use AppBundle\Utils\GeoUtils;
 use League\Csv\Writer as CsvWriter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -16,16 +16,13 @@ class TaskExportType extends AbstractType
 {
     private $cubejsClient;
     private $tokenFactory;
-    private $geocoder;
 
     public function __construct(
         HttpClientInterface $cubejsClient,
-        CubeJsTokenFactory $tokenFactory,
-        Geocoder $geocoder)
+        CubeJsTokenFactory $tokenFactory)
     {
         $this->cubejsClient = $cubejsClient;
         $this->tokenFactory = $tokenFactory;
-        $this->geocoder = $geocoder;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -146,7 +143,7 @@ class TaskExportType extends AbstractType
             $records = [];
             foreach ($resultSet['data'] as $resultObject) {
 
-                $address = $this->geocoder->geocode($resultObject['TasksExportUnified.addressStreetAddress']);
+                $geo = GeoUtils::asGeoCoordinates($resultObject['TasksExportUnified.addressGeo']);
 
                 $records[] = [
                     $resultObject['TasksExportUnified.taskId'],
@@ -155,7 +152,7 @@ class TaskExportType extends AbstractType
                     $resultObject['TasksExportUnified.taskType'],
                     $resultObject['TasksExportUnified.addressName'],
                     $resultObject['TasksExportUnified.addressStreetAddress'],
-                    implode(',', [$address->getGeo()->getLatitude(), $address->getGeo()->getLongitude()]),
+                    implode(',', [$geo->getLatitude(), $geo->getLongitude()]),
                     $resultObject['TasksExportUnified.addressDescription'],
                     $resultObject['TasksExportUnified.taskAfterDay'],
                     $resultObject['TasksExportUnified.taskAfterTime'],

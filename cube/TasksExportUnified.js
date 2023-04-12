@@ -7,7 +7,7 @@ cube(`TasksExportUnified`, {
     t.type AS task_type,
     a.name AS address_name,
     a.street_address AS address_street_address,
-    a.geo AS address_geo,
+    ST_AsText(a.geo) AS address_geo,
     a.description AS address_description,
     t.done_after AS after,
     t.done_before AS before,
