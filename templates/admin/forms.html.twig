@@ -15,6 +15,7 @@
 <table class="table">
   <thead>
     <th>#</th>
+    <th>{{ 'form.embed_settings.show_home_page.label'|trans }}</th>
     <th>{{ 'form.store_type.pricing_rule_set.label'|trans }}</th>
     <th>{{ 'form.store_type.time_slot.label'|trans }}</th>
     <th>{{ 'form.store_type.package_set.label'|trans }}</th>
@@ -28,6 +29,11 @@
         <a href="{{ path('admin_form', { id: form.id }) }}">
           <span class="text-monospace">{{ form|hashid(12) }}</span>
         </a>
+      </td>
+      <td class="text-center">
+        <span>
+          <i class="fa fa-{{ form.showHomePage ? 'check' : '' }}"></i>
+        </span>
       </td>
       <td>
         {{ form.pricingRuleSet.name }}

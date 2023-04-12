@@ -1349,10 +1349,20 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $deliveryForm = new DeliveryForm();
+        
         $form = $this->createForm(EmbedSettingsType::class, $deliveryForm);
-
+        
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            // Disable "Show on Home Page" on all forms ONLY if this new form is setted true
+            if($deliveryForm->getShowHomepage()){
+                $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
+                foreach ($forms as $formTemp) {
+                    $formTemp->setShowHomepage(false);
+                }
+            }
+
             $this->getDoctrine()
                 ->getManagerForClass(DeliveryForm::class)
                 ->persist($deliveryForm);
@@ -1380,6 +1390,17 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            // Disable "Show on Home Page" on all forms except current form if setted true
+            if($deliveryForm->getShowHomepage()){
+                $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
+                foreach ($forms as $formTemp) {
+                    if($deliveryForm->getId() != $formTemp->getId()){ //except current form
+                        $formTemp->setShowHomepage(false);
+                    }
+                }
+            }
+
             $this->getDoctrine()
                 ->getManagerForClass(DeliveryForm::class)
                 ->flush();

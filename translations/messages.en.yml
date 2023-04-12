@@ -731,6 +731,7 @@ form.credit_note.restaurant.help: The promotion will only be usable when orderin
 form.resend_confirmation_email.submit.label: Send email again
 form.embed_settings.with_vehicle.label: Add vehicle choice
 form.embed_settings.with_weight.label: Ask for weight of goods
+form.embed_settings.show_home_page.label: Show on Home Page
 form.time_slot.name.label: Name
 form.time_slot.interval.label: Interval
 form.time_slot.working_days_only.label: Allow selecting only working days
