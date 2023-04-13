@@ -22,14 +22,14 @@ cube(`TasksExportUnified`, {
     org.name AS task_organization_name,
     tci.position AS task_position
   FROM task t
+  JOIN address a ON a.id = t.address_id
   LEFT JOIN task_collection_item tci ON tci.task_id = t.id
-  JOIN task_list tl ON tl.id = tci.parent_id
-  JOIN task_collection tc ON tc.id = tl.id
-  JOIN delivery d ON d.id = t.delivery_id
-  JOIN sylius_order o ON o.id = d.order_id
+  LEFT JOIN task_list tl ON tl.id = tci.parent_id
+  LEFT JOIN task_collection tc ON tc.id = tl.id
+  LEFT JOIN delivery d ON d.id = t.delivery_id
+  LEFT JOIN sylius_order o ON o.id = d.order_id
   LEFT JOIN task_package tp ON tp.task_id = t.id
   LEFT JOIN package p ON p.id=tp.package_id
-  JOIN address a ON a.id = t.address_id
   LEFT JOIN task_event task_done ON task_done.id = (SELECT tde.id FROM ${TaskDoneEvent.sql()} tde WHERE tde.task_id=t.id ORDER BY tde.created_at DESC LIMIT 1)
   LEFT JOIN task_event task_failed ON task_failed.id = (SELECT tfe.id FROM ${TaskFailedEvent.sql()} tfe WHERE tfe.task_id=t.id ORDER BY tfe.created_at DESC LIMIT 1)
   LEFT JOIN task_event task_finished ON task_finished.id = (SELECT tfe.id FROM ${TaskFinishedEvent.sql()} tfe WHERE tfe.task_id=t.id ORDER BY tfe.created_at DESC LIMIT 1)
