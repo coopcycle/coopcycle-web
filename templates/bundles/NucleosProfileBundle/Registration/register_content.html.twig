@@ -10,7 +10,6 @@
       </a>
     </div>
     <hr>
-    {{ dump(form.vars.errors) }}
     {{ form_start(form, {'method': 'post', 'action': path('nucleos_profile_registration_register'), 'attr': {'class': 'nucleos_profile_registration_register'}}) }}
       {{ form_row(form.email) }}
       {{ form_row(form.username) }}
