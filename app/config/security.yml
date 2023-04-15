@@ -168,6 +168,18 @@ security:
             stateless: true
             cart_session: true
 
+        api_cart_create_invitation:
+            pattern:   ^/api/orders/[0-9]+/create_invitation$
+            methods: [ POST ]
+            stateless: true
+            cart_session: true
+
+        api_cart_add_player:
+            pattern:   ^/api/orders/[0-9]+/players$
+            methods: [ POST ]
+            stateless: true
+            security: false
+
         api_cart_operations:
             pattern:   ^/api/orders/[0-9]+/(assign|timing|validate|tip)$
             methods: [ GET, PUT ]
@@ -209,12 +221,6 @@ security:
             methods: [ POST ]
             stateless: true
             cart_session: true
-
-        api_cart_add_player:
-            pattern:   ^/api/orders/[0-9]+/players$
-            methods: [ POST ]
-            stateless: true
-            security: false
 
         api_me:
             pattern:   ^/api/me$

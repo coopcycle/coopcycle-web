@@ -8,9 +8,12 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterfa
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Parse Symfony request in the search of `X-Player-Token`.
+ * If found, parse it and provides few usefull functions
+ */
 final class OrderInvitationContext
 {
-
     private ?array $payload = null;
 
 	public function __construct(
@@ -18,12 +21,18 @@ final class OrderInvitationContext
         private JWSProviderInterface $JWSProvider,
         private IriConverterInterface $iriConverter)
     {
-        if ($requestStack->getCurrentRequest()->headers->has('X-Player-Token')) {
+        $request = $requestStack->getCurrentRequest();
+        if (!is_null($request) && $request->headers->has('X-Player-Token')) {
             $token = $requestStack->getCurrentRequest()->headers->get('X-Player-Token');
             $this->payload = $this->getPayload($token);
         }
     }
 
+    /**
+     * Check if the valid provided player token is matching with the order in parameter
+     * @param OrderInterface $order
+     * @return bool
+     */
     public function isPlayerOf(OrderInterface $order): bool
     {
         if (is_null($this->payload)) {
@@ -34,7 +43,11 @@ final class OrderInvitationContext
 
     }
 
-    public function getPlayer(): ?CustomerInterface
+    /**
+     * Get `Customer` from player token
+     * @return CustomerInterface|null
+     */
+    public function getCustomer(): ?CustomerInterface
     {
         if (is_null($this->payload)) {
             return null;

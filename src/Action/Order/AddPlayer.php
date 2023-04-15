@@ -3,7 +3,6 @@
 namespace AppBundle\Action\Order;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Customer\CustomerInterface;
@@ -29,27 +28,19 @@ class AddPlayer
         private ContainerInterface $container,
         private Client $centrifugoClient,
     )
-    {}
+    { }
 
     public function __invoke(Request $request, Order $data)
     {
-
         // Parse json content
         $content = $request->getContent();
+        $body = [];
         if (!empty($content)) {
             $body = json_decode($content, true);
         }
 
-        if (
-            !isset($body) ||
-            !array_key_exists('email', $body) ||
-            !array_key_exists('slug', $body)
-        ) {
-            throw new BadRequestHttpException();
-        }
-
         // Generate or get a customer
-        $customer = $this->getCustomer($body["email"]);
+        $customer = $this->getCustomer($body);
 
         // Validate if the invitation slug is real
         $invitation = $data->getInvitation();
@@ -57,34 +48,45 @@ class AddPlayer
             throw new NotFoundHttpException("Invitation not found");
         }
 
-        //TODO: get centrifugo token
         $order = $this->iriConverter->getIriFromItem($data);
         $player = $this->iriConverter->getIriFromItem($customer);
 
+        // Generate X-Player-Token
         $jws = $this->JWSProvider->create([
             'order' => $order,
             'player' => $player
         ])->getToken();
 
+        // Generate the response
         return new JsonResponse([
             'token' => $jws,
+            'player' => $player,
             'centrifugo' => [
-                'token' => $this->centrifugoClient->generateConnectionToken($player, time() + 6 * 3600),
-                'channel' => sprintf('%s_player_events#%d', $this->container->getParameter('centrifugo_namespace'), $data->getId())
+                'token' => $this->centrifugoClient->generateConnectionToken($data->getId(), time() + 6 * 3600),
+                'channel' => sprintf('%s_order_events#%d', $this->container->getParameter('centrifugo_namespace'), $data->getId())
             ]
         ], 200);
     }
 
     /**
-     * @param $email
+     * @param array $body
      * @return CustomerInterface
      */
-    private function getCustomer($email): CustomerInterface
+    private function getCustomer(array $body): CustomerInterface
     {
-        $emailCanonical = $this->canonicalFieldsUpdater->canonicalizeEmail($email);
+        if (
+            !array_key_exists('email', $body) ||
+            !array_key_exists('name', $body) ||
+            !array_key_exists('slug', $body)
+        ) {
+            throw new BadRequestHttpException();
+        }
 
+        $emailCanonical = $this->canonicalFieldsUpdater->canonicalizeEmail($body['email']);
+
+        //FEAT: Maybe there is a way to validate it in a better way with API Platform
         if (!filter_var($emailCanonical, FILTER_VALIDATE_EMAIL)) {
-            throw new ValidatorException(sprintf("[%s] is not a valid email", $email));
+            throw new ValidatorException(sprintf("[%s] is not a valid email", $body['email']));
         }
 
         $customer =
@@ -92,7 +94,8 @@ class AddPlayer
 
         if (null === $customer) {
             $customer = new Customer();
-            $customer->setEmail($email);
+            $customer->setEmail($body['email']);
+            $customer->setFirstName($body['name']);
             $customer->setEmailCanonical($emailCanonical);
 
             $this->entityManager->persist($customer);

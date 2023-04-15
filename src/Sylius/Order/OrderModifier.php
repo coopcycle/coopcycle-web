@@ -23,7 +23,7 @@ final class OrderModifier implements OrderModifierInterface
     public function addToOrder(OrderInterface $cart, OrderItemInterface $cartItem): void
     {
         if ($this->context->isPlayerOf($cart)) {
-            $customer = $this->context->getPlayer();
+            $customer = $this->context->getCustomer();
             $cartItem->setCustomer($customer);
             $this->logger->debug("OrderModifier | adding item by {$customer->getEmail()}");
         }
