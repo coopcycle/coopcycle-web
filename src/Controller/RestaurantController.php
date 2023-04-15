@@ -6,11 +6,7 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\UserTrait;
-use AppBundle\Sylius\Order\AdjustmentInterface;
-use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Order\OrderItemInterface;
-use AppBundle\Entity\Cuisine;
-use AppBundle\Entity\User;
+use AppBundle\Domain\Order\Event\OrderUpdated;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
@@ -29,7 +25,7 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Cart\RestaurantResolver;
-use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\RestaurantFilter;
@@ -37,26 +33,23 @@ use AppBundle\Utils\SortableRestaurantIterator;
 use AppBundle\Utils\ValidationUtils;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
-use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
@@ -107,7 +100,9 @@ class RestaurantController extends AbstractController
         $orderModifier,
         OrderTimeHelper $orderTimeHelper,
         SerializerInterface $serializer,
-        RestaurantFilter $restaurantFilter)
+        RestaurantFilter $restaurantFilter,
+        private EventBus $eventBus
+    )
     {
         $this->orderManager = $orderManager;
         $this->validator = $validator;
@@ -567,6 +562,7 @@ class RestaurantController extends AbstractController
             $this->orderManager->flush();
         }
 
+        $this->eventBus->handle(new OrderUpdated($cart));
         return $this->jsonResponse($cart, $errors);
     }
 
@@ -631,6 +627,8 @@ class RestaurantController extends AbstractController
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
 
+        $this->eventBus->handle(new OrderUpdated($cart));
+
         return $this->jsonResponse($cart, $errors);
     }
 
@@ -691,6 +689,7 @@ class RestaurantController extends AbstractController
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
 
+        $this->eventBus->handle(new OrderUpdated($cart));
         return $this->jsonResponse($cart, $errors);
     }
 
@@ -716,6 +715,7 @@ class RestaurantController extends AbstractController
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
 
+        $this->eventBus->handle(new OrderUpdated($cart));
         return $this->jsonResponse($cart, $errors);
     }
 
