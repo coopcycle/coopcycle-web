@@ -638,6 +638,7 @@ form.time_slot.working_days_only.label: Limiter les choix aux jours ouvrés
 form.time_slot_choice.start_time.label: Date de début
 form.time_slot_choice.end_time.label: Date de fin
 form.time_slot.prior_notice_hours.label: Délai de prévenance (heures)
+form.user.self_employed.label: Ce coursier a un statut d'auto entrepreneur
 form.user.quotes_allowed.label: Autoriser cet utilisateur à faire des demandes de
   devis
 form.reusable_packaging.name.label: Nom

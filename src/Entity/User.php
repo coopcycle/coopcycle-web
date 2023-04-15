@@ -109,6 +109,8 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     private $stripeCustomerId;
 
+    private bool $selfEmployed;
+
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
@@ -451,6 +453,24 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
     {
         $this->stripeCustomerId = $stripeCustomerId;
 
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSelfEmployed(): bool
+    {
+        return $this->selfEmployed;
+    }
+
+    /**
+     * @param bool $selfEmployed
+     * @return User
+     */
+    public function setSelfEmployed(bool $selfEmployed): User
+    {
+        $this->selfEmployed = $selfEmployed;
         return $this;
     }
 }

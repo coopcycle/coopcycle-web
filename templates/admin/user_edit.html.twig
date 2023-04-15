@@ -22,6 +22,9 @@
       {% if form.quotesAllowed is defined %}
         {{ form_row(form.quotesAllowed) }}
       {% endif %}
+      {% if form.selfEmployed is defined %}
+        {{ form_row(form.selfEmployed) }}
+      {% endif %}
       <div class="switch-wrapper mb-4">
         {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: { class: 'checkbox switch' }}) }}<br>
         <span class="help-block">{{ "user.edit.enabled.help" | trans | raw }}</span>

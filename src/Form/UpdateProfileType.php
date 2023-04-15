@@ -24,14 +24,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UpdateProfileType extends AbstractType
 {
-    private $tokenStorage;
-    private $translator;
-    private $countryIso;
+    private string $countryIso;
 
-    public function __construct(TokenStorageInterface $tokenStorage, TranslatorInterface $translator, $countryIso)
+    public function __construct(
+        private TokenStorageInterface $tokenStorage,
+        private TranslatorInterface $translator,
+        string $countryIso,
+        private bool $selfEmployed
+    )
     {
-        $this->tokenStorage = $tokenStorage;
-        $this->translator = $translator;
         $this->countryIso = strtoupper($countryIso);
     }
 
@@ -143,6 +144,13 @@ class UpdateProfileType extends AbstractType
                         'allow_delete' => true,
                         'label' => 'profile.managedStores'
                     ));
+                }
+
+                //FEAT: Set feature flag
+                if ($isAdmin && $user->hasRole('ROLE_COURIER') && $this->selfEmployed) {
+                    $form->add('selfEmployed', CheckboxType::class, [
+                        'label' => 'form.user.self_employed.label'
+                    ]);
                 }
             }
         );

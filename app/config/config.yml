@@ -69,6 +69,7 @@ parameters:
     typesense_shops_collection_name: "shops"
     typesense_products_collection_name: "products"
     colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
+    self_employed_couriers_enabled: '%env(bool:SELF_EMPLOYED_COURIERS_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.

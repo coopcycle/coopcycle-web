@@ -27,7 +27,7 @@ services:
       - { name: form.type }
 
   AppBundle\Form\UpdateProfileType:
-    arguments: [ '@security.token_storage', '@translator', '%country_iso%' ]
+    arguments: [ '@security.token_storage', '@translator', '%country_iso%', '%self_employed_couriers_enabled%' ]
     tags:
       - { name: form.type, alias: app_update_profile }
 
