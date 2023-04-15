@@ -314,7 +314,11 @@
         "ADD_NEW_CREDIT_CARD": "Add a new credit card",
         "ADD_OR_SELECT_A_CARD_TO_PAY": "Please select or enter a new credit card to pay",
         "EXPIRATION": "Expiration",
-        "INVITE_PEOPLE_TO_ADD_ITEMS": "Invite friends to add products"
+        "GROUP_ORDER_PLAYER_NAME_LABEL": "Firstname",
+        "GROUP_ORDER_PLAYER_EMAIL_LABEL": "Email",
+        "GROUP_ORDER_TITLE": "Join group order ?",
+        "GROUP_ORDER_SUBTEXT": "Add items to this order and everything will be delivered together",
+        "INVITE_PEOPLE_TO_ADD_ITEMS": "Invite friends to add products",
         "ORDERS_RATE_LIMIT": {
           "ORDER_UNIT": "order(s)",
           "TIME_UNIT": "minute(s)",

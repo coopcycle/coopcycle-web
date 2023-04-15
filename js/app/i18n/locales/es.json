@@ -311,7 +311,7 @@
         "SEND_INVITATIONS": "Enviar invitaciones",
         "ADD_AT_LEAST_ONE_EMAIL": "Agregar al menos un email",
         "ONE_OR_MORE_EMAIL_IS_INVALID": "Uno o más emails son inválidos. Por favor chequea las direcciones ingresadas.",
-        "SEND_INVITATIONS_FAILURE": "Ha ocurrido un error al intentar enviar las invitaciones."
+        "SEND_INVITATIONS_FAILURE": "Ha ocurrido un error al intentar enviar las invitaciones.",
         "EXPIRATION": "Expiración",
         "ORDERS_RATE_LIMIT": {
           "ORDER_UNIT": "pedido(s)",

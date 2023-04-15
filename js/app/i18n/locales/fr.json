@@ -272,6 +272,11 @@
         "ADD_NEW_CREDIT_CARD": "Ajouter une nouvelle carte bancaire",
         "ADD_OR_SELECT_A_CARD_TO_PAY": "Veuillez sélectionner une carte existante, ou entrez une nouvelle carte",
         "EXPIRATION": "Expiration",
+        "INVITE_PEOPLE_TO_ADD_ITEMS": "Inviter des amis à la commande",
+        "GROUP_ORDER_PLAYER_NAME_LABEL": "Prénom",
+        "GROUP_ORDER_PLAYER_EMAIL_LABEL": "Email",
+        "GROUP_ORDER_TITLE": "Rejoindre la commande groupée ?",
+        "GROUP_ORDER_SUBTEXT": "Ajoutez des articles à cette commande et tout sera livré ensemble",
         "ORDERS_RATE_LIMIT": {
           "ORDER_UNIT": "commande(s)",
           "TIME_UNIT": "minute(s)",

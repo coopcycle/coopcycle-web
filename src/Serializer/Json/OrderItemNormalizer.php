@@ -2,10 +2,8 @@
 
 namespace AppBundle\Serializer\Json;
 
-use AppBundle\Sylius\Order\AdjustmentInterface;
 use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
-use Sylius\Component\Order\Model\OrderInterface;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;

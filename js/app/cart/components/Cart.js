@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { withTranslation } from 'react-i18next'
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {withTranslation} from 'react-i18next'
 import Sticky from 'react-stickynode'
 import classNames from 'classnames'
 
@@ -16,8 +16,21 @@ import FulfillmentMethod from './FulfillmentMethod'
 import ProductOptionsModal from './ProductOptionsModal'
 import ProductDetailsModal from './ProductDetailsModal'
 
-import { changeAddress, sync, disableTakeaway, enableTakeaway, openAddressModal } from '../redux/actions'
-import { selectIsDeliveryEnabled, selectIsCollectionEnabled, selectIsOrderingAvailable, selectItems } from '../redux/selectors'
+import {
+  changeAddress,
+  disableTakeaway,
+  enableTakeaway,
+  openAddressModal, setPlayer,
+  subscribe,
+  sync,
+  unsubscribe
+} from '../redux/actions'
+import {
+  selectIsCollectionEnabled,
+  selectIsDeliveryEnabled,
+  selectIsOrderingAvailable,
+  selectItems
+} from '../redux/selectors'
 import InvitePeopleToOrderButton from './InvitePeopleToOrderButton'
 import InvitePeopleToOrderModal from './InvitePeopleToOrderModal'
 import SetGuestCustomerEmailModal from './SetGuestCustomerEmailModal'
@@ -26,6 +39,25 @@ class Cart extends Component {
 
   componentDidMount() {
     this.props.sync()
+    if (this.props.invitation && !this.props.isPlayer) {
+      this.props.setPlayer()
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+
+    if (prevProps.player.token === null && this.props.player.token)  {
+      console.log(">> Subscribe at update")
+      this.props.subscribe()
+    }
+
+    if (this.props.player.token === null && prevProps.player.token)  {
+      this.props.unsubscribe()
+    }
+
+  }
+  componentWillUnmount() {
+    this.props.unsubscribe()
   }
 
   render() {
@@ -55,7 +87,7 @@ class Cart extends Component {
                 <CartTotal />
                 { this.props.isOrderingAvailable && <hr /> }
                 { this.props.isOrderingAvailable && <CartButton /> }
-                { (this.props.isOrderingAvailable && this.props.hasItems && !this.props.isGuest) && <InvitePeopleToOrderButton /> }
+                { (this.props.isOrderingAvailable && this.props.hasItems && !this.props.isPlayer) && <InvitePeopleToOrderButton /> }
               </div>
             </div>
           </div>
@@ -91,6 +123,7 @@ function mapStateToProps(state) {
     hasItems: !!items.length,
     isPlayer: state.isPlayer,
     player: state.player,
+    invitation: state.cart.invitation,
   }
 }
 
@@ -102,6 +135,9 @@ function mapDispatchToProps(dispatch) {
     enableTakeaway: () => dispatch(enableTakeaway()),
     disableTakeaway: () => dispatch(disableTakeaway()),
     openAddressModal: (restaurant) => dispatch(openAddressModal({restaurant})),
+    subscribe: () => dispatch(subscribe()),
+    unsubscribe: () => dispatch(unsubscribe()),
+    setPlayer: (options = {}) => dispatch(setPlayer(options))
   }
 }
 

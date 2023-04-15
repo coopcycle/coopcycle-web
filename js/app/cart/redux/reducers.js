@@ -25,7 +25,7 @@ import {
   INVITE_PEOPLE_REQUEST_SUCCESS,
   INVITE_PEOPLE_REQUEST_FAILURE,
   OPEN_SET_PLAYER_EMAIL_MODAL,
-  CLOSE_SET_PLAYER_EMAIL_MODAL, SET_PLAYER_TOKEN,
+  CLOSE_SET_PLAYER_EMAIL_MODAL, SET_PLAYER_TOKEN, PLAYER_UPDATE_EVENT,
 } from './actions'
 
 const initialState = {
@@ -70,6 +70,7 @@ const initialState = {
   isSetPlayerEmailModalOpen: false,
   player: {
     token: null,
+    player: null,
     centrifugo: {
       token: null,
       channel: null
@@ -151,6 +152,9 @@ const cart = (state = initialState.cart, action = {}) => {
         ...state,
         invitation: action.payload,
       }
+    case PLAYER_UPDATE_EVENT:
+
+      return action.payload
   default:
 
     return state

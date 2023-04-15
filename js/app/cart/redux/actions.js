@@ -5,6 +5,7 @@ import qs from 'qs'
 
 import i18n, { getCountry } from '../../i18n'
 import { geocode } from '../../components/AddressAutosuggest'
+import Centrifuge from "centrifuge";
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const FETCH_SUCCESS = 'FETCH_SUCCESS'
@@ -39,6 +40,8 @@ export const INVITE_PEOPLE_REQUEST_FAILURE = 'INVITE_PEOPLE_REQUEST_FAILURE'
 export const OPEN_SET_PLAYER_EMAIL_MODAL = 'OPEN_SET_PLAYER_EMAIL_MODAL'
 export const CLOSE_SET_PLAYER_EMAIL_MODAL = 'CLOSE_SET_PLAYER_EMAIL_MODAL'
 export const SET_PLAYER_TOKEN = 'SET_PLAYER_TOKEN'
+
+export const PLAYER_UPDATE_EVENT = 'PLAYER_UPDATE_EVENT'
 
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const fetchSuccess = createAction(FETCH_SUCCESS)
@@ -75,8 +78,9 @@ export const openSetPlayerEmailModal = createAction(OPEN_SET_PLAYER_EMAIL_MODAL)
 export const closeSetPlayerEmailModal = createAction(CLOSE_SET_PLAYER_EMAIL_MODAL)
 export const setPlayerToken = createAction(SET_PLAYER_TOKEN)
 
-const httpClient = axios.create()
+export const playerUpdateEvent = createAction(PLAYER_UPDATE_EVENT)
 
+const httpClient = axios.create()
 function getRoutingParams(params) {
 
   const urlParams = qs.parse(window.location.search.substring(1))
@@ -162,6 +166,22 @@ function playerHeader({player: {token}}, headers = {}) {
     }
   }
   return headers
+}
+
+const callbacks = []
+
+function addCallback(order, cb) {
+  callbacks.push({
+    order, cb,
+  })
+}
+
+function applyCallback(order) {
+  const callback = _.find(callbacks, (cb) => cb.order === order)
+  if (callback) {
+    callback.cb()
+    callbacks.splice(callbacks.indexOf(callback), 1)
+  }
 }
 
 const QUEUE_CART_ITEMS = 'QUEUE_CART_ITEMS'
@@ -549,24 +569,47 @@ export function invitePeopleToOrder(guests) {
   }
 }
 
-export function setGuestCustomerEmail(email) {
-  return (dispatch, getState) => {
+export function setPlayer({email, name, jwt}) {
+  return async (dispatch, getState) => {
 
-    const { cart: {id, invitation} } = getState()
+    const { cart: {id, invitation: slug} } = getState()
     const url = window.Routing.generate('api_orders_add_player_item', getRoutingParams({id}))
 
-    httpClient.request({
-      method: "post",
-      url,
-      data: {email, slug: invitation},
-      headers: {
-        'Accept': 'application/ld+json',
-        'Content-Type': 'application/ld+json'
-      }
-    }).then(res => {
-      dispatch(setPlayerToken(res.data))
-      dispatch(closeSetPlayerEmailModal())
-    })
+    // Try to get jwt if no data is provided
+    if (!email && !name && !jwt) {
+      let {jwt: token} = await $.getJSON(window.Routing.generate('profile_jwt'))
+      jwt = token
+    }
+
+    // Try to get data with the /api/me endpoint
+    if (!email && !name && jwt) {
+      let {data} = await httpClient.get('/api/me', {
+        headers: {
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json',
+          'Authorization': `Bearer ${jwt}`
+        }
+      })
+      email = data.email
+      name = data.username
+    }
+
+
+    // Set player
+    if (email && slug && name) {
+      httpClient.request({
+        method: "post",
+        url,
+        data: {email, slug, name},
+        headers: {
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      }).then(res => {
+        dispatch(setPlayerToken(res.data))
+        dispatch(closeSetPlayerEmailModal())
+      })
+    }
   }
 }
 
@@ -589,9 +632,40 @@ export function createInvitation() {
           'Content-Type': 'application/ld+json'
         }
       })
-        .then(res => dispatch(invitePeopleSuccess(res.data.invitation)))
+        .then(res => {
+          dispatch(invitePeopleSuccess(res.data.invitation))
+          dispatch(setPlayer({jwt}))
+        })
         .catch(e => dispatch(invitePeopleFailure(e)))
     })
 
+  }
+}
+
+export function subscribe() {
+  return (dispatch, getState) => {
+    const { player, cart: { id } } = getState()
+    const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
+    const centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`, {
+      // In this case, we don't refresh the connection
+      // https://github.com/centrifugal/centrifuge-js#refreshendpoint
+      refreshAttempts: 0,
+      onRefresh: function(ctx, cb) {
+        cb({ status: 403 })
+      }
+    })
+    addCallback(id, () => centrifuge.disconnect())
+
+    centrifuge.setToken(player.centrifugo.token)
+
+    centrifuge.subscribe(player.centrifugo.channel, message => {
+      dispatch(playerUpdateEvent(message.data.event.data.order))
+    })
+    centrifuge.connect()
+    }
+}
+export function unsubscribe() {
+  return function (dispatch, getState) {
+    applyCallback(getState().cart.id)
   }
 }

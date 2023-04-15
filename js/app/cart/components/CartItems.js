@@ -5,9 +5,17 @@ import _ from 'lodash'
 
 import CartItem from './CartItem'
 import { removeItem, updateItemQuantity } from '../redux/actions'
-import { selectItems, selectItemsGroups, selectShowPricesTaxExcluded } from '../redux/selectors'
+import {selectItems, selectItemsGroups, selectPlayersGroups, selectShowPricesTaxExcluded} from '../redux/selectors'
+import classNames from "classnames";
 
 class CartItems extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      tabSelected: null
+    }
+  }
 
   _onChangeQuantity(itemID, quantity) {
     if (!_.isNumber(quantity)) {
@@ -27,6 +35,11 @@ class CartItems extends React.Component {
   }
 
   renderItems(items) {
+
+    if (this.state.tabSelected &&
+      this.props.playersGroups[this.state.tabSelected] !== undefined) {
+      items = this.props.playersGroups[this.state.tabSelected]
+    }
 
     // Make sure items are always in the same order
     // We order them by id asc
@@ -48,6 +61,21 @@ class CartItems extends React.Component {
         )) }
       </div>
     )
+  }
+
+  renderTabs(items) {
+    return <ul className="nav nav-tabs">
+      {_.map(items, (item, playerID) =>  (
+          <li key={playerID} onClick={(e) => {
+            e.preventDefault()
+            this.setState({tabSelected: playerID})}
+          } className={classNames({
+            active: playerID === this.state.tabSelected
+          })}>
+            <a href="#">{playerID}</a>
+          </li>
+        )) }
+    </ul>
   }
 
   render() {
@@ -75,8 +103,11 @@ class CartItems extends React.Component {
     }
 
     return (
+      <div>
+        { this.props.showTabs && this.renderTabs(this.props.playersGroups) }
       <div className="cart__items">
         { this.renderItems(this.props.items) }
+      </div>
       </div>
     )
   }
@@ -86,11 +117,14 @@ function mapStateToProps (state) {
 
   const items = selectItems(state)
   const itemsGroups = selectItemsGroups(state)
+  const playersGroups = selectPlayersGroups(state)
 
   return {
     items,
     itemsGroups,
+    playersGroups,
     showPricesTaxExcluded: selectShowPricesTaxExcluded(state),
+    showTabs: !state.isPlayer && Object.keys(playersGroups).length > 1
   }
 }
 
