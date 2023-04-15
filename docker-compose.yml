@@ -45,6 +45,8 @@ services:
       dockerfile: './docker/php/Dockerfile'
       context: '.'
     image: coopcycle/php:8.1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - postgres
       - redis
