@@ -499,6 +499,16 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getTaxTotalByRate($taxRate): int
     {
+
+        // If the assigned user is self employed, no tax is applied
+        if (!is_null($delivery = $this->getDelivery())) {
+            if ($delivery->isAssigned()) {
+                if ($this->getDelivery()->getPickup()->getAssignedCourier()->getSelfEmployed()) {
+                    return 0;
+                }
+            }
+        }
+
         if ($taxRate instanceof TaxRateInterface) {
             $taxRateCode = $taxRate->getCode();
         } else {

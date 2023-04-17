@@ -27,7 +27,7 @@ class GenerateInvoice
     public function __invoke(Order $data, Request $request): Order
     {
 
-        if (!$data->hasReceipt()) {
+        //if (!$data->hasReceipt()) {
 
             $body = [];
             $content = $request->getContent();
@@ -49,7 +49,7 @@ class GenerateInvoice
 
             $this->receiptGenerator->generate($data, sprintf('%s.pdf', $data->getNumber()));
 
-        }
+       // }
         return $data;
     }
 }
