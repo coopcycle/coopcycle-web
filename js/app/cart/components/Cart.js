@@ -16,15 +16,7 @@ import FulfillmentMethod from './FulfillmentMethod'
 import ProductOptionsModal from './ProductOptionsModal'
 import ProductDetailsModal from './ProductDetailsModal'
 
-import {
-  changeAddress,
-  disableTakeaway,
-  enableTakeaway,
-  openAddressModal, setPlayer,
-  subscribe,
-  sync,
-  unsubscribe
-} from '../redux/actions'
+import {changeAddress, disableTakeaway, enableTakeaway, openAddressModal, setPlayer, sync} from '../redux/actions'
 import {
   selectIsCollectionEnabled,
   selectIsDeliveryEnabled,
@@ -39,25 +31,6 @@ class Cart extends Component {
 
   componentDidMount() {
     this.props.sync()
-    if (this.props.invitation && !this.props.isPlayer) {
-      this.props.setPlayer()
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-
-    if (prevProps.player.token === null && this.props.player.token)  {
-      console.log(">> Subscribe at update")
-      this.props.subscribe()
-    }
-
-    if (this.props.player.token === null && prevProps.player.token)  {
-      this.props.unsubscribe()
-    }
-
-  }
-  componentWillUnmount() {
-    this.props.unsubscribe()
   }
 
   render() {
@@ -123,7 +96,7 @@ function mapStateToProps(state) {
     hasItems: !!items.length,
     isPlayer: state.isPlayer,
     player: state.player,
-    invitation: state.cart.invitation,
+    invitation: state.cart.invitation
   }
 }
 
@@ -135,8 +108,6 @@ function mapDispatchToProps(dispatch) {
     enableTakeaway: () => dispatch(enableTakeaway()),
     disableTakeaway: () => dispatch(disableTakeaway()),
     openAddressModal: (restaurant) => dispatch(openAddressModal({restaurant})),
-    subscribe: () => dispatch(subscribe()),
-    unsubscribe: () => dispatch(unsubscribe()),
     setPlayer: (options = {}) => dispatch(setPlayer(options))
   }
 }

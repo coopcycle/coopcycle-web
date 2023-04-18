@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Domain\Order\Event\OrderUpdated;
 use AppBundle\Entity\Address;
@@ -34,6 +35,7 @@ use AppBundle\Utils\ValidationUtils;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Geotools;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Sylius\Component\Order\Context\CartContextInterface;
@@ -58,6 +60,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class RestaurantController extends AbstractController
 {
     use UserTrait;
+    use InjectAuthTrait;
 
     const ITEMS_PER_PAGE = 21;
 
@@ -101,7 +104,8 @@ class RestaurantController extends AbstractController
         OrderTimeHelper $orderTimeHelper,
         SerializerInterface $serializer,
         RestaurantFilter $restaurantFilter,
-        private EventBus $eventBus
+        private EventBus $eventBus,
+        protected JWTTokenManagerInterface $JWTTokenManager
     )
     {
         $this->orderManager = $orderManager;
@@ -452,12 +456,12 @@ class RestaurantController extends AbstractController
             }
         }
 
-        return $this->render('restaurant/index.html.twig', array(
+        return $this->render('restaurant/index.html.twig', $this->auth([
             'restaurant' => $restaurant,
             'times' => $this->orderTimeHelper->getTimeInfo($cart),
             'cart_form' => $cartForm->createView(),
             'addresses_normalized' => $this->getUserAddresses(),
-        ));
+        ]));
     }
 
     /**

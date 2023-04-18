@@ -1,11 +1,10 @@
-import { createAction } from 'redux-actions'
+import {createAction} from 'redux-actions'
 import _ from 'lodash'
 import axios from 'axios'
 import qs from 'qs'
 
-import i18n, { getCountry } from '../../i18n'
-import { geocode } from '../../components/AddressAutosuggest'
-import Centrifuge from "centrifuge";
+import i18n, {getCountry} from '../../i18n'
+import {geocode} from '../../components/AddressAutosuggest'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const FETCH_SUCCESS = 'FETCH_SUCCESS'
@@ -40,6 +39,7 @@ export const INVITE_PEOPLE_REQUEST_FAILURE = 'INVITE_PEOPLE_REQUEST_FAILURE'
 export const OPEN_SET_PLAYER_EMAIL_MODAL = 'OPEN_SET_PLAYER_EMAIL_MODAL'
 export const CLOSE_SET_PLAYER_EMAIL_MODAL = 'CLOSE_SET_PLAYER_EMAIL_MODAL'
 export const SET_PLAYER_TOKEN = 'SET_PLAYER_TOKEN'
+export const SET_PLAYER_FAILURE = 'SET_PLAYER_FAILURE'
 
 export const PLAYER_UPDATE_EVENT = 'PLAYER_UPDATE_EVENT'
 
@@ -77,6 +77,8 @@ export const invitePeopleFailure = createAction(INVITE_PEOPLE_REQUEST_FAILURE)
 export const openSetPlayerEmailModal = createAction(OPEN_SET_PLAYER_EMAIL_MODAL)
 export const closeSetPlayerEmailModal = createAction(CLOSE_SET_PLAYER_EMAIL_MODAL)
 export const setPlayerToken = createAction(SET_PLAYER_TOKEN)
+
+export const setPlayerFailure = createAction(SET_PLAYER_FAILURE)
 
 export const playerUpdateEvent = createAction(PLAYER_UPDATE_EVENT)
 
@@ -166,22 +168,6 @@ function playerHeader({player: {token}}, headers = {}) {
     }
   }
   return headers
-}
-
-const callbacks = []
-
-function addCallback(order, cb) {
-  callbacks.push({
-    order, cb,
-  })
-}
-
-function applyCallback(order) {
-  const callback = _.find(callbacks, (cb) => cb.order === order)
-  if (callback) {
-    callback.cb()
-    callbacks.splice(callbacks.indexOf(callback), 1)
-  }
 }
 
 const QUEUE_CART_ITEMS = 'QUEUE_CART_ITEMS'
@@ -350,7 +336,7 @@ export function sync() {
 
   return (dispatch, getState) => {
 
-    const { cart, isPlayer } = getState()
+    const { cart, player: {player} } = getState()
 
     if (cart.takeaway) {
       $('#menu').LoadingOverlay('hide')
@@ -366,8 +352,8 @@ export function sync() {
       dispatch(geocodeAndSync())
     }
 
-    if (isPlayer) {
-      dispatch(openSetPlayerEmailModal())
+    if (cart.invitation && !player) {
+      dispatch(setPlayer())
     }
   }
 }
@@ -558,42 +544,22 @@ export function retryLastAddItemRequest() {
   }
 }
 
-export function invitePeopleToOrder(guests) {
-  return (dispatch, getState) => {
-    dispatch(invitePeopleRequest())
-
-    // FIXME: this call is failing with a 401 error response
-    return $.post(`${getState().cart['@id']}/invite`, { guests })
-      .then(dispatch(invitePeopleSuccess()))
-      .fail(dispatch(invitePeopleFailure()))
-  }
-}
-
-export function setPlayer({email, name, jwt}) {
+export function setPlayer({email, name} = {}) {
   return async (dispatch, getState) => {
+
+    const {isAuth, user} = window._auth
+
+    if (!isAuth && !email && !name) {
+      return dispatch(openSetPlayerEmailModal())
+    }
+
+    if (!email || !name) {
+      email = user.email
+      name = user.username
+    }
 
     const { cart: {id, invitation: slug} } = getState()
     const url = window.Routing.generate('api_orders_add_player_item', getRoutingParams({id}))
-
-    // Try to get jwt if no data is provided
-    if (!email && !name && !jwt) {
-      let {jwt: token} = await $.getJSON(window.Routing.generate('profile_jwt'))
-      jwt = token
-    }
-
-    // Try to get data with the /api/me endpoint
-    if (!email && !name && jwt) {
-      let {data} = await httpClient.get('/api/me', {
-        headers: {
-          'Accept': 'application/ld+json',
-          'Content-Type': 'application/ld+json',
-          'Authorization': `Bearer ${jwt}`
-        }
-      })
-      email = data.email
-      name = data.username
-    }
-
 
     // Set player
     if (email && slug && name) {
@@ -619,53 +585,22 @@ export function createInvitation() {
     dispatch(invitePeopleRequest())
 
     const { cart: {id} } = getState()
+    const {jwt, user} = window._auth
     const url = window.Routing.generate('api_orders_create_invitation_item', getRoutingParams({id}))
-    //TODO: Check if this work as guest
-    $.getJSON(window.Routing.generate('profile_jwt')).then(({jwt}) => {
-      httpClient.request({
-        method: 'post',
-        url,
-        data: {},
-        headers: {
-          'Authorization': `Bearer ${jwt}`,
-          'Accept': 'application/ld+json',
-          'Content-Type': 'application/ld+json'
-        }
-      })
-        .then(res => {
-          dispatch(invitePeopleSuccess(res.data.invitation))
-          dispatch(setPlayer({jwt}))
-        })
-        .catch(e => dispatch(invitePeopleFailure(e)))
-    })
-
-  }
-}
-
-export function subscribe() {
-  return (dispatch, getState) => {
-    const { player, cart: { id } } = getState()
-    const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
-    const centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`, {
-      // In this case, we don't refresh the connection
-      // https://github.com/centrifugal/centrifuge-js#refreshendpoint
-      refreshAttempts: 0,
-      onRefresh: function(ctx, cb) {
-        cb({ status: 403 })
+    httpClient.request({
+      method: 'post',
+      url,
+      data: {},
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
       }
     })
-    addCallback(id, () => centrifuge.disconnect())
-
-    centrifuge.setToken(player.centrifugo.token)
-
-    centrifuge.subscribe(player.centrifugo.channel, message => {
-      dispatch(playerUpdateEvent(message.data.event.data.order))
-    })
-    centrifuge.connect()
-    }
-}
-export function unsubscribe() {
-  return function (dispatch, getState) {
-    applyCallback(getState().cart.id)
+      .then(res => {
+        dispatch(invitePeopleSuccess(res.data.invitation))
+        dispatch(setPlayer({email: user.email, name: user.username}))
+      })
+      .catch(e => dispatch(invitePeopleFailure(e)))
   }
 }
