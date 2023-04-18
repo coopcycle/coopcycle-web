@@ -56,6 +56,7 @@ Encore
   .addEntry('user-tracking', './js/app/user/tracking.js')
   .addEntry('user-form', './js/app/user/form.js')
   .addEntry('user-invite', './js/app/user/invite.js')
+  .addEntry('user-data', './js/app/user/user-data.js')
   .addEntry('widgets', './js/app/widgets/index.js')
   .addEntry('widgets-admin', './js/app/widgets/admin.js')
   .addEntry('zone-preview', './js/app/zone/preview.js')
