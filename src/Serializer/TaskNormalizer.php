@@ -111,6 +111,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['tour'] = [
                 '@id' => $this->iriConverter->getIriFromItem($tour),
                 'name' => $tour->getName(),
+                'position' => $tour->getTaskPosition($object),
             ];
         }
 

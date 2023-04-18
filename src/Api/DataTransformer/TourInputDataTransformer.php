@@ -8,6 +8,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Tour;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class TourInputDataTransformer implements DataTransformerInterface
 {
@@ -21,12 +22,29 @@ class TourInputDataTransformer implements DataTransformerInterface
      */
     public function transform($data, string $to, array $context = [])
     {
-    	$tour = new Tour();
+        // error_log(serialize($data->tasks));
+        // error_log(serialize($to));
+        // error_log(serialize($context));
+        // dd($context);
 
-    	$tour->setName($data->name);
+        if ($context["operation_type"] == "item" && $context["item_operation_name"] == "put") {
+            $tour = $context['object_to_populate'];
+            $tour->setName($data->name);
+            
+            $tour->setTasks($data->tasks);
 
-        foreach ($data->tasks as $task) {
-            $tour->addTask($task);
+            foreach ($data->tasks as $task) {
+                $task->setTour($tour);
+            }
+
+        } else {
+            $tour = new Tour();
+            
+            $tour->setName($data->name);
+
+            foreach ($data->tasks as $task) {
+                $tour->addTask($task);
+            }
         }
 
         $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $tour->getTasks());

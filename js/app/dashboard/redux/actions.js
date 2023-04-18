@@ -11,8 +11,12 @@ import {
   createTaskListSuccess,
   createTaskListFailure,
   makeSelectTaskListItemsByUsername,
+  // enableUnassignedToursDroppable,
+  // disableUnassignedToursDroppable,
+  enableUnassignedTourTasksDroppable,
+  disableUnassignedTourTasksDroppable,
 } from '../../coopcycle-frontend-js/logistics/redux'
-import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
+import { selectNextWorkingDay, selectSelectedTasks, selectUnassignedTours } from './selectors'
 
 function createClient(dispatch) {
 
@@ -182,6 +186,10 @@ export const CLOSE_CREATE_DELIVERY_MODAL = 'CLOSE_CREATE_DELIVERY_MODAL'
 export const OPEN_CREATE_TOUR_MODAL = 'OPEN_CREATE_TOUR_MODAL'
 export const CLOSE_CREATE_TOUR_MODAL = 'CLOSE_CREATE_TOUR_MODAL'
 
+export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
+export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
+
+
 export function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
 }
@@ -296,6 +304,8 @@ export function modifyTaskList(username, tasks) {
       }
     })
 
+    console.log(newTasks)
+
     dispatch(modifyTaskListRequest(username, newTasks))
 
     axios
@@ -305,7 +315,10 @@ export function modifyTaskList(username, tasks) {
           'Content-Type': 'application/ld+json'
         },
       })
-      .then(res => dispatch(modifyTaskListRequestSuccess(res.data)))
+      .then(res => {
+        console.log(res.data)
+        dispatch(modifyTaskListRequestSuccess(res.data))
+      })
       .catch(error => {
         // eslint-disable-next-line no-console
         console.error(error)
@@ -1146,7 +1159,8 @@ export function exportTasks(start, end) {
 }
 
 export function handleDragStart(result) {
-
+  console.log('DRAGSTART')
+  console.log(result.source)
   return function(dispatch, getState) {
 
     const selectedTasks = getState().selectedTasks
@@ -1158,12 +1172,18 @@ export function handleDragStart(result) {
     if (!isDraggableSelected) {
       dispatch(clearSelectedTasks())
     }
+
+    if (result.source.droppableId == 'unassigned_tours') {
+      dispatch(disableUnassignedTourTasksDroppable())
+    }
   }
 }
 
 export function handleDragEnd(result) {
 
   return function(dispatch, getState) {
+
+    dispatch(enableUnassignedTourTasksDroppable())
 
     // dropped nowhere
     if (!result.destination) {
@@ -1172,11 +1192,14 @@ export function handleDragEnd(result) {
 
     const source = result.source;
     const destination = result.destination;
+    console.log('DRAGEND')
+    console.log(source)
+    console.log(destination)
 
-    // reodered inside the unassigned list, do nothing
+    // reordered inside the unassigned list or unassigned tours list, do nothing
     if (
       source.droppableId === destination.droppableId &&
-      source.droppableId === 'unassigned'
+      ( source.droppableId === 'unassigned' || source.droppableId === 'unassigned_tours' )
     ) {
       return;
     }
@@ -1191,6 +1214,43 @@ export function handleDragEnd(result) {
 
     // cannot unassign by drag'n'drop atm
     if (source.droppableId.startsWith('assigned:') && destination.droppableId === 'unassigned') {
+      return
+    }
+
+    // cannot unassign from tour by drag'n'drop atm
+    if (source.droppableId.startsWith('unassigned_tour:') && destination.droppableId === 'unassigned') {
+      return
+    }
+
+    // Unassigned Tour: Reorder inside same list
+    if (source.droppableId.startsWith('unassigned_tour:') && source.droppableId === destination.droppableId) {
+      console.log('UNASSIGNED TOUR REORDER')
+
+      const tours = selectUnassignedTours(getState())
+      const tourId = parseInt(destination.droppableId.replace('unassigned_tour:', ''))
+
+      const tour = tours.find(t => t['@id'] == `/api/tours/${tourId}`)
+
+      const newTasks = []
+
+      console.log(tours)
+      console.log(tour)
+      
+      const [ removed ] = tour.items.splice(result.source.index, 1);
+      
+      const newTourItems = [ ...tour.items ]
+      
+      // add again to current tour, will be overriden by server response
+      tour.items.splice(result.destination.index, 0, removed)
+
+      newTourItems.splice(result.destination.index, 0, removed)
+
+      newTasks.push(...newTourItems);
+
+      console.log(newTasks)
+      
+      dispatch(modifyTour(tourId, tour.name, newTasks))
+
       return
     }
 
@@ -1237,6 +1297,7 @@ export function handleDragEnd(result) {
         // Flatten list
         const flatArray = newTaskListItemsByUsername.reduce((items, item) => {
           if (item['@type'] === 'Tour') {
+            console.log('ITS ATOUR')
             item.items.forEach(t => items.push(t))
           } else {
             items.push(item)
@@ -1452,6 +1513,15 @@ export function closeCreateTourModal() {
   return { type: CLOSE_CREATE_TOUR_MODAL }
 }
 
+export function modifyTourRequest(tourId, tasks) {
+  return { type: MODIFY_TOUR_REQUEST, tourId, tasks }
+}
+
+export function modifyTourRequestSuccess(tour) {
+  return { type: MODIFY_TOUR_REQUEST_SUCCESS, tour }
+}
+
+
 export function createTour(tasks, name) {
 
   return function(dispatch, getState) {
@@ -1479,6 +1549,58 @@ export function createTour(tasks, name) {
         // eslint-disable-next-line no-console
         console.log(error)
         dispatch(closeCreateDeliveryModal())
+      })
+  }
+}
+
+export function modifyTour(tourId, tourName, tasks) {
+
+  // const data = tasks.map((task, index) => ({
+  //   task: task['@id'],
+  //   position: index,
+  // }))
+
+  return function(dispatch, getState) {
+
+    let state = getState()
+    let allTasks = selectAllTasks(state)
+    // let date = selectSelectedDate(state)
+
+    // const url = window.Routing.generate('admin_tour_modify', {
+    //   date: date.format('YYYY-MM-DD'),
+    //   tourId,
+    // })
+
+    const newTasks = tasks.map((task, position) => {
+      const rt = _.find(allTasks, t => t['@id'] === task['@id'])
+
+      return {
+        ...rt,
+        position,
+      }
+    })
+
+    dispatch(modifyTourRequest(tourId, newTasks))
+    
+    const { jwt } = getState()
+
+    createClient(dispatch).request({
+      method: 'put',
+      url: `/api/tours/${tourId}`,
+      data: {
+        name: tourName,
+        tasks: _.map(tasks, t => t['@id'])
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(res => dispatch(modifyTourRequestSuccess(res.data)))
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.error(error)
       })
   }
 }
