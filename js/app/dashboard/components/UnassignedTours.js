@@ -18,7 +18,7 @@ class UnassignedTours extends React.Component {
           <span>{ this.props.t('DASHBOARD_UNASSIGNED_TOURS') }</span>
         </h4>
         <div className="dashboard__panel__scroll">
-          <Droppable droppableId="unassigned">
+          <Droppable droppableId="unassigned_tours">
             {(provided) => (
               <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
                 { _.map(this.props.tours, (tour, index) => {
