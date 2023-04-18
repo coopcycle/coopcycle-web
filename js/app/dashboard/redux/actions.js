@@ -1173,10 +1173,10 @@ export function handleDragEnd(result) {
     const source = result.source;
     const destination = result.destination;
 
-    // reodered inside the unassigned list, do nothing
+    // reordered inside the unassigned list or unassigned tours list, do nothing
     if (
       source.droppableId === destination.droppableId &&
-      source.droppableId === 'unassigned'
+      ( source.droppableId === 'unassigned' || source.droppableId === 'unassigned_tours' )
     ) {
       return;
     }
