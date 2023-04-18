@@ -1,9 +1,9 @@
 import React from 'react'
-import { withTranslation } from 'react-i18next'
+import {withTranslation} from 'react-i18next'
 import Modal from 'react-modal'
-import { connect } from 'react-redux'
-import { closeSetPlayerEmailModal, setPlayer } from '../redux/actions'
-import { Formik } from 'formik'
+import {connect} from 'react-redux'
+import {closeSetPlayerEmailModal, setPlayer} from '../redux/actions'
+import {Formik} from 'formik'
 
 const SetGuestCustomerEmailModal = ({ isOpen, closeInvitePeopleToOrderModal, t, setGuestCustomer }) => {
 
@@ -34,7 +34,11 @@ const SetGuestCustomerEmailModal = ({ isOpen, closeInvitePeopleToOrderModal, t, 
           handleChange,
           handleBlur,
         }) => (
-          <div>
+          <div className="container-fluid">
+            <div className="page-header">
+              <h3>{t('GROUP_ORDER_TITLE')}</h3>
+              <small>{t('GROUP_ORDER_SUBTEXT')}</small>
+            </div>
             <form onSubmit={ handleSubmit } autoComplete="off" className="modal-body form">
               <div className={ errors.name && touched.name ? 'form-group has-error' : 'form-group' }>
                 <label className="control-label" htmlFor="name">{ t('GROUP_ORDER_PLAYER_NAME_LABEL') }</label>
@@ -42,14 +46,15 @@ const SetGuestCustomerEmailModal = ({ isOpen, closeInvitePeopleToOrderModal, t, 
                        onChange={ handleChange }
                        onBlur={ handleBlur }
                        value={ values.name }
-                       placeholder={ t('GROUP_ORDER_PLAYER_NAME_PLACEHOLDER') } />
+                       placeholder={ t('GROUP_ORDER_PLAYER_NAME_LABEL') } />
+              </div>
+              <div className={ errors.email && touched.email ? 'form-group has-error' : 'form-group' }>
                 <label className="control-label" htmlFor="email">{ t('GROUP_ORDER_PLAYER_EMAIL_LABEL') }</label>
                 <input type="email" name="email" className="form-control" autoComplete="off"
                   onChange={ handleChange }
                   onBlur={ handleBlur }
                   value={ values.email }
-                  placeholder={ t('GROUP_ORDER_GUEST_PLAYER_PLACEHOLDER') } />
-                <span className="help-block">Yop</span>
+                  placeholder={ t('GROUP_ORDER_PLAYER_EMAIL_LABEL') } />
               </div>
               <button type="submit" className="btn btn-md btn-block btn-primary">{ t('ADHOC_ORDER_SAVE') }</button>
             </form>
@@ -59,7 +64,7 @@ const SetGuestCustomerEmailModal = ({ isOpen, closeInvitePeopleToOrderModal, t, 
     </Modal>
   )
 }
-
+//<span className="help-block">Yop</span>
 function mapStateToProps(state) {
 
   return {
