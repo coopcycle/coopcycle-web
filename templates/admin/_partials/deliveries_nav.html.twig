@@ -30,6 +30,14 @@
     </h4>
     <small class="deliveries-nav-item-text">{% trans %}adminDashboard.embed.help{% endtrans %}</small>
   </a>
+  <a href="{{ path('admin_embed_quote') }}"
+    class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_embed_quote', 'admin_forms_quote', 'admin_form_quote', 'admin_form_quote_new' ] ? 'active' : '' }}">
+    <h4 class="deliveries-nav-item-heading">
+      <i class="fa fa-check-square-o mr-2"></i>
+      <span>{% trans %}adminDashboard.embedquote.title{% endtrans %}</span>
+    </h4>
+    <small class="deliveries-nav-item-text">{% trans %}adminDashboard.embedquote.help{% endtrans %}</small>
+  </a>
   <a href="{{ path('admin_time_slots') }}"
     class="deliveries-nav-item {{ app.request.attributes.get('_route') in [ 'admin_time_slots', 'admin_time_slot' ] ? 'active' : '' }}">
     <h4 class="deliveries-nav-item-heading">

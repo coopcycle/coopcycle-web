@@ -19,6 +19,7 @@ use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
+use AppBundle\Entity\QuoteForm;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\Invitation;
@@ -1320,6 +1321,14 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/embed_quote", name="admin_embed_quote")
+     */
+    public function embedQuoteAction()
+    {
+        return $this->redirectToRoute('admin_forms_quote', [], 301);
+    }
+
+    /**
      * @Route("/admin/forms/new", name="admin_form_new")
      */
     public function newFormAction(Request $request)
@@ -1374,6 +1383,17 @@ class AdminController extends AbstractController
     {
         $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
         return $this->render('admin/forms.html.twig', [
+            'forms' => $forms,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/forms_quote", name="admin_forms_quote")
+     */
+    public function formsQuoteAction()
+    {
+        $forms = $this->getDoctrine()->getRepository(QuoteForm::class)->findAll();
+        return $this->render('admin/forms_quote.html.twig', [
             'forms' => $forms,
         ]);
     }

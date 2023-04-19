@@ -33,6 +33,7 @@ adminDashboard.deliveries.delivery: Delivery
 adminDashboard.deliveries.originAddress: Origin address
 adminDashboard.deliveries.deliveryAddress: Delivery address
 adminDashboard.embed.title: Forms
+adminDashboard.embedquote.title: Quote Forms
 adminDashboard.package_sets.title: Packages
 adminDashboard.customize.title: Customize
 embed.delivery.title: Delivery creation form
@@ -1177,6 +1178,7 @@ order.number: 'Your order has number <strong><span class="text-monospace">%numbe
 adminDashboard.stores.help: Create customer accounts
 adminDashboard.pricing.help: Define rules to calculate the price of a delivery
 adminDashboard.embed.help: Create forms to order deliveries
+adminDashboard.embedquote.help: Create forms to quote deliveries
 adminDashboard.time_slots.help: Set up time slots
 adminDashboard.package_sets.help: Configure the types of goods to transport
 adminDashboard.zones.help: Define geographical areas
