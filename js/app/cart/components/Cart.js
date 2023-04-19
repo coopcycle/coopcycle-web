@@ -91,7 +91,7 @@ function mapStateToProps(state) {
     isCollectionOnly: (selectIsCollectionEnabled(state) && !selectIsDeliveryEnabled(state)),
     takeaway: state.cart.takeaway,
     loading: state.isFetching,
-    isOrderingAvailable: selectIsOrderingAvailable(state),
+    isOrderingAvailable: selectIsOrderingAvailable(state) && !state.isPlayer,
     restaurant: state.cart.restaurant,
     hasItems: !!items.length,
     isPlayer: state.isPlayer,

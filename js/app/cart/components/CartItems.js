@@ -1,10 +1,10 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { withTranslation } from 'react-i18next'
+import {connect} from 'react-redux'
+import {withTranslation} from 'react-i18next'
 import _ from 'lodash'
 
 import CartItem from './CartItem'
-import { removeItem, updateItemQuantity } from '../redux/actions'
+import {removeItem, updateItemQuantity} from '../redux/actions'
 import {selectItems, selectItemsGroups, selectPlayersGroups, selectShowPricesTaxExcluded} from '../redux/selectors'
 import classNames from "classnames";
 
@@ -16,6 +16,16 @@ class CartItems extends React.Component {
       tabSelected: null
     }
   }
+
+shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.showTabs && nextState.tabSelected !== null) {
+      if(!Object.keys(nextProps.playersGroups).includes(nextState.tabSelected)) {
+        this.setState({tabSelected: null})
+        return false
+      }
+    }
+    return true
+}
 
   _onChangeQuantity(itemID, quantity) {
     if (!_.isNumber(quantity)) {
