@@ -4,6 +4,7 @@ namespace AppBundle\Sylius\Order;
 
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Quote;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Product\ProductVariantFactory;
@@ -113,6 +114,47 @@ class OrderFactory implements FactoryInterface
         }
 
         $variant = $this->productVariantFactory->createForDelivery($delivery, $price);
+
+        $orderItem = $this->orderItemFactory->createNew();
+        $orderItem->setVariant($variant);
+        $orderItem->setUnitPrice($variant->getPrice());
+
+        $this->orderItemQuantityModifier->modify($orderItem, 1);
+
+        $this->orderModifier->addToOrder($order, $orderItem);
+
+        return $order;
+    }
+
+    public function createForQuote(Quote $quote, int $price, ?CustomerInterface $customer = null, $attach = true)
+    {
+        Assert::isInstanceOf($this->productVariantFactory, ProductVariantFactory::class);
+
+        $order = $this->factory->createNew();
+
+        if ($attach) {
+            $order->setDelivery($quote);
+        }
+
+        $order->setShippingAddress($quote->getDropoff()->getAddress());
+
+        $shippingTimeRange = new TsRange();
+
+        if (null === $quote->getDropoff()->getAfter()) {
+            $dropoffAfter = clone $quote->getDropoff()->getBefore();
+            $dropoffAfter->modify('-15 minutes');
+            $quote->getDropoff()->setAfter($dropoffAfter);
+        }
+        $shippingTimeRange->setLower($quote->getDropoff()->getAfter());
+        $shippingTimeRange->setUpper($quote->getDropoff()->getBefore());
+
+        $order->setShippingTimeRange($shippingTimeRange);
+
+        if (null !== $customer) {
+            $order->setCustomer($customer);
+        }
+
+        $variant = $this->productVariantFactory->createForQuote($quote, $price);
 
         $orderItem = $this->orderItemFactory->createNew();
         $orderItem->setVariant($variant);

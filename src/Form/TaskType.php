@@ -49,6 +49,7 @@ class TaskType extends AbstractType
             'with_addresses' => $options['with_addresses'],
             'with_remember_address' => $options['with_remember_address'],
             'with_address_props' => $options['with_address_props'],
+            'with_description' => $options['with_description'],
         ];
 
         $builder
@@ -61,12 +62,7 @@ class TaskType extends AbstractType
                 'multiple' => false,
                 'disabled' => !$options['can_edit_type']
             ])
-            ->add('address', AddressBookType::class, $addressBookOptions)
-            ->add('comments', TextareaType::class, [
-                'label' => 'form.task.comments.label',
-                'required' => false,
-                'attr' => ['rows' => '2', 'placeholder' => 'form.task.comments.placeholder']
-            ]);
+            ->add('address', AddressBookType::class, $addressBookOptions);
 
         if (null !== $options['with_time_slot']
         && null !== $options['with_time_slots']
@@ -178,6 +174,14 @@ class TaskType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'label' => 'adminDashboard.tags.title'
+            ]);
+        }
+
+        if ($options['with_comments']) {
+            $builder->add('comments', TextareaType::class, [
+                'label' => 'form.task.comments.label',
+                'required' => false,
+                'attr' => ['rows' => '2', 'placeholder' => 'form.task.comments.placeholder']
             ]);
         }
 
@@ -370,6 +374,8 @@ class TaskType extends AbstractType
             'with_packages_required' => false,
             'with_weight' => true,
             'with_weight_required' => false,
+            'with_comments' => true,
+            'with_description' => true,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

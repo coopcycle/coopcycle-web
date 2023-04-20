@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Quote;
 use AppBundle\Entity\QuoteForm;
 use AppBundle\Entity\QuoteFormSubmission;
 use AppBundle\Entity\Delivery\PricingRuleSet;
@@ -74,17 +74,18 @@ class EmbedQuoteController extends AbstractController
             'with_vehicle'     => $quoteForm->getWithVehicle(),
             'with_time_slot'   => $quoteForm->getTimeSlot(),
             'with_package_set' => $quoteForm->getPackageSet(),
+            //'data_class'       => QuoteForm::class,
         ];
 
-        $delivery = Delivery::create();
+        $quote = \AppBundle\Entity\Quote::create();
 
         if ($readRequest) {
-            if ($d = $this->getDeliveryFromRequest($request)) {
-                $delivery = $d;
+            if ($d = $this->getQuoteFromRequest($request)) {
+                $quote = $d;
             }
         }
 
-        return $this->get('form.factory')->createNamed('delivery', QuoteEmbedType::class, $delivery, $options);
+        return $this->get('form.factory')->createNamed('delivery', QuoteEmbedType::class, $quote, $options);
     }
 
     private function findOrCreateCustomer($email, PhoneNumber $telephone, CanonicalizerInterface $canonicalizer)
@@ -176,10 +177,10 @@ class EmbedQuoteController extends AbstractController
             try {
 
                 $log->warning('quoteStartAction - isSubmitted $request->request->all()[\'delivery\'][\'pricingRuleSet\'] = '.json_encode($request->request->all()['delivery']));
-                $delivery = $form->getData();
+                $quote = $form->getData();
                 //$log->warning('quoteStartAction - isSubmitted Testpoint 1');
-                $price = $this->getDeliveryPrice(
-                    $delivery,
+                $price = $this->getQuotePrice(
+                    $quote,
                     $this->doctrine->getRepository(PricingRuleSet::class)->find($request->request->all()['delivery']['pricingRuleSet']),
                     $deliveryManager
                 );
@@ -234,7 +235,7 @@ class EmbedQuoteController extends AbstractController
             $this->container->get('profiler')->disable();
         }
 
-        $submission = $this->getDeliverySubmissionFromRequest($request);
+        $submission = $this->getQuoteSubmissionFromRequest($request);
 
         if (null === $submission) {
 
@@ -333,7 +334,7 @@ class EmbedQuoteController extends AbstractController
                 }
             }
 
-            $order    = $this->createOrderForDelivery($orderFactory, $delivery, $price, $customer = null, $attach = false);
+            $order    = $this->createOrderForQuote($orderFactory, $delivery, $price, $customer = null, $attach = false);
 
             $paymentForm = $this->createForm(CheckoutPaymentType::class, $order, [
                 'csrf_protection' => false,
@@ -372,11 +373,11 @@ class EmbedQuoteController extends AbstractController
     }
 
     /**
-     * @return Delivery|null
+     * @return Quote|null
      */
-    private function getDeliveryFromRequest(Request $request): ?Delivery
+    private function getQuoteFromRequest(Request $request): ?Quote
     {
-        $submission = $this->getDeliverySubmissionFromRequest($request);
+        $submission = $this->getQuoteSubmissionFromRequest($request);
 
         if (null === $submission) {
 
@@ -404,7 +405,7 @@ class EmbedQuoteController extends AbstractController
     /**
      * @return QuoteFormSubmission|null
      */
-    private function getDeliverySubmissionFromRequest(Request $request): ?QuoteFormSubmission
+    private function getQuoteSubmissionFromRequest(Request $request): ?QuoteFormSubmission
     {
         $hashids = new Hashids($this->getParameter('secret'), 12);
 

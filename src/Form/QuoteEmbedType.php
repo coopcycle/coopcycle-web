@@ -23,7 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class QuoteEmbedType extends DeliveryType
+class QuoteEmbedType extends QuoteType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

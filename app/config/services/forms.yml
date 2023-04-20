@@ -51,6 +51,15 @@ services:
       $locale: '%env(COOPCYCLE_LOCALE)%'
     tags: [ form.type ]
 
+  AppBundle\Form\QuoteType:
+    arguments:
+      $routing: '@routing_service'
+      $translator: '@translator'
+      $authorizationChecker: '@security.authorization_checker'
+      $country: '%country_iso%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+    tags: [ form.type ]
+
   AppBundle\Form\DeliveryEmbedType:
     parent: AppBundle\Form\DeliveryType
     autowire: false
@@ -58,7 +67,7 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\QuoteEmbedType:
-    parent: AppBundle\Form\DeliveryType
+    parent: AppBundle\Form\QuoteType
     autowire: false
     autoconfigure: false
     tags: [ form.type ]

@@ -1,12 +1,11 @@
 <?php
 
-namespace AppBundle\Entity\Delivery;
+namespace AppBundle\Entity\Quote;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\PricingRule\Evaluate as EvaluateController;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\YesNoOutput;
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Quote;
 use AppBundle\Entity\Task;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
@@ -122,39 +121,21 @@ class PricingRule
         return $this;
     }
 
-    public function evaluatePrice(Delivery $delivery, ExpressionLanguage $language = null)
+    public function evaluatePrice(Quote $delivery, ExpressionLanguage $language = null)
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
         }
 
-        return $language->evaluate($this->getPrice(), Delivery::toExpressionLanguageValues($delivery));
+        return $language->evaluate($this->getPrice(), Quote::toExpressionLanguageValues($delivery));
     }
 
-    public function evaluatePrice_quote(Quote $quote, ExpressionLanguage $language = null)
+    public function matches(Quote $delivery, ExpressionLanguage $language = null)
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
         }
 
-        return $language->evaluate($this->getPrice(), Quote::toExpressionLanguageValues($quote));
-    }
-
-    public function matches(Delivery $delivery, ExpressionLanguage $language = null)
-    {
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
-
-        return $language->evaluate($this->getExpression(), Delivery::toExpressionLanguageValues($delivery));
-    }
-
-    public function matches_quote(Quote $quote, ExpressionLanguage $language = null)
-    {
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
-
-        return $language->evaluate($this->getExpression(), Quote::toExpressionLanguageValues($quote));
+        return $language->evaluate($this->getExpression(), Quote::toExpressionLanguageValues($delivery));
     }
 }

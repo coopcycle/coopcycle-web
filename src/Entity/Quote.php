@@ -17,7 +17,7 @@ use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
-use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\ExpressionLanguage\PackagesQuoteResolver;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
@@ -439,19 +439,19 @@ class Quote extends TaskCollection implements TaskCollectionInterface, PackagesA
         return $object;
     }
 
-    public static function toExpressionLanguageValues(Quote $delivery)
+    public static function toExpressionLanguageValues(Quote $quote)
     {
-        $pickup = self::createTaskObject($delivery->getPickup());
-        $dropoff = self::createTaskObject($delivery->getDropoff());
-        $order = self::createOrderObject($delivery->getOrder());
+        $pickup = self::createTaskObject($quote->getPickup());
+        $dropoff = self::createTaskObject($quote->getDropoff());
+        $order = self::createOrderObject($quote->getOrder());
 
         return [
-            'distance' => $delivery->getDistance(),
-            'weight' => $delivery->getWeight(),
-            'vehicle' => $delivery->getVehicle(),
+            'distance' => $quote->getDistance(),
+            'weight' => $quote->getWeight(),
+            'vehicle' => $quote->getVehicle(),
             'pickup' => $pickup,
             'dropoff' => $dropoff,
-            'packages' => new PackagesResolver($delivery),
+            'packages' => new PackagesQuoteResolver($quote),
             'order' => $order,
         ];
     }

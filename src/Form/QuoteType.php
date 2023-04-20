@@ -2,7 +2,7 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Quote;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class DeliveryType extends AbstractType
+class QuoteType extends AbstractType
 {
     protected $routing;
     protected $translator;
@@ -66,13 +66,13 @@ class DeliveryType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
-            $delivery = $event->getData();
+            $quote = $event->getData();
 
-            $store = $delivery->getStore();
+            $store = $quote->getStore();
 
             // When this is a new delivery,
             // set defaults for pickup/dropoff date
-            if (null === $delivery->getId()) {
+            if (null === $quote->getId()) {
 
                 $now = Carbon::now();
 
@@ -90,10 +90,10 @@ class DeliveryType extends AbstractType
                 $dropoffAfter = clone $dropoffBefore;
                 $dropoffAfter->modify('-15 minute');
 
-                $delivery->getPickup()->setDoneBefore($pickupBefore);
-                $delivery->getPickup()->setDoneAfter($pickupAfter);
-                $delivery->getDropoff()->setDoneAfter($dropoffAfter);
-                $delivery->getDropoff()->setDoneBefore($dropoffBefore);
+                $quote->getPickup()->setDoneBefore($pickupBefore);
+                $quote->getPickup()->setDoneAfter($pickupAfter);
+                $quote->getDropoff()->setDoneAfter($dropoffAfter);
+                $quote->getDropoff()->setDoneBefore($dropoffBefore);
             }
 
             $form->add('tasks', CollectionType::class, [
@@ -113,6 +113,7 @@ class DeliveryType extends AbstractType
                     'with_packages_required' => null !== $store ? $store->isPackagesRequired() : true,
                     'with_weight' => $options['with_weight'],
                     'with_weight_required' => null !== $store ? $store->isWeightRequired() : true,
+                    'with_comments' => false,
                     'with_description' => true,
                 ],
                 'allow_add' => true,
@@ -162,19 +163,19 @@ class DeliveryType extends AbstractType
                 return;
             }
 
-            $delivery = $event->getForm()->getData();
+            $quote = $event->getForm()->getData();
 
             $coordinates = [];
-            foreach ($delivery->getTasks() as $task) {
+            foreach ($quote->getTasks() as $task) {
                 if ($address = $task->getAddress()) {
                     $coordinates[] = $address->getGeo();
                 }
             }
 
             if (count($coordinates) > 0) {
-                $delivery->setDistance($this->routing->getDistance(...$coordinates));
-                $delivery->setDuration($this->routing->getDuration(...$coordinates));
-                $delivery->setPolyline($this->routing->getPolyline(...$coordinates));
+                $quote->setDistance($this->routing->getDistance(...$coordinates));
+                $quote->setDuration($this->routing->getDuration(...$coordinates));
+                $quote->setPolyline($this->routing->getPolyline(...$coordinates));
             }
         });
     }
@@ -252,7 +253,7 @@ class DeliveryType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => Delivery::class,
+            'data_class' => Quote::class,
             'with_vehicle' => false,
             'with_weight' => true,
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
@@ -272,8 +273,8 @@ class DeliveryType extends AbstractType
     private function getVehicleChoices()
     {
         return [
-            $this->translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Delivery::VEHICLE_BIKE,
-            $this->translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Delivery::VEHICLE_CARGO_BIKE,
+            $this->translator->trans('form.delivery.vehicle.VEHICLE_BIKE') => Quote::VEHICLE_BIKE,
+            $this->translator->trans('form.delivery.vehicle.VEHICLE_CARGO_BIKE') => Quote::VEHICLE_CARGO_BIKE,
         ];
     }
 

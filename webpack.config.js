@@ -25,6 +25,7 @@ Encore
   .addEntry('delivery-list', './js/app/delivery/list.js')
   .addEntry('delivery-map', './js/app/delivery/map.js')
   .addEntry('delivery-embed-start-form', './js/app/delivery/embed-start.js')
+  .addEntry('delivery-embedquote-start-form', './js/app/delivery/embedquote-start.js')
   .addEntry('delivery-pricing-rules', './js/app/delivery/pricing-rules.js')
   .addEntry('delivery-tracking', './js/app/delivery/tracking.js')
   .addEntry('notifications', './js/app/notifications/index.js')

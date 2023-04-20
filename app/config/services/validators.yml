@@ -14,6 +14,11 @@ services:
     tags:
       - { name: validator.constraint_validator }
 
+  AppBundle\Validator\Constraints\QuoteValidator:
+    arguments: [ '@routing_service' ]
+    tags:
+      - { name: validator.constraint_validator }
+
   AppBundle\Validator\Constraints\OrderValidator:
     tags:
       - { name: validator.constraint_validator }

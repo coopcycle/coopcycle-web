@@ -3,6 +3,7 @@
 namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Quote;
 use AppBundle\Service\SettingsManager;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
@@ -89,6 +90,45 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $name = sprintf('%s, %s km',
             $this->translator->trans(sprintf('vehicle.%s', $delivery->getVehicle())),
             (string) number_format($delivery->getDistance() / 1000, 2)
+        );
+
+        $productVariant->setName($name);
+        $productVariant->setPosition(1);
+
+        $productVariant->setPrice($price);
+        $productVariant->setTaxCategory($taxCategory);
+        $productVariant->setCode($code);
+
+        return $productVariant;
+    }
+
+    /**
+     * @param Quote $quote
+     * @param int $price
+     */
+    public function createForQuote(Quote $quote, int $price): ProductVariantInterface
+    {
+        $hash = sprintf('%s-%d-%d', $quote->getVehicle(), $quote->getDistance(), $price);
+        $code = sprintf('CPCCL-ODDLVR-%s', strtoupper(substr(sha1($hash), 0, 7)));
+
+        if ($productVariant = $this->productVariantRepository->findOneByCode($code)) {
+
+            return $productVariant;
+        }
+
+        $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+
+        $subjectToVat = $this->settingsManager->get('subject_to_vat');
+
+        $taxCategory = $this->taxCategoryRepository->findOneBy([
+            'code' => $subjectToVat ? 'SERVICE' : 'SERVICE_TAX_EXEMPT'
+        ]);
+
+        $productVariant = $this->createForProduct($product);
+
+        $name = sprintf('%s, %s km',
+            $this->translator->trans(sprintf('vehicle.%s', $quote->getVehicle())),
+            (string) number_format($quote->getDistance() / 1000, 2)
         );
 
         $productVariant->setName($name);

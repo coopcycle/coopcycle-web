@@ -6,7 +6,9 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Quote;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Quote\PricingRuleSet as QuotePricingRuleSet;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Service\DeliveryManager;
@@ -44,6 +46,20 @@ trait DeliveryTrait
         return $factory->createForDelivery($delivery, $price, $customer, $attach);
     }
 
+    /**
+     * @param OrderFactory $factory
+     * @param Quote $quote
+     * @param int $price
+     * @param CustomerInterface $customer
+     *
+     * @return OrderInterface
+     */
+    protected function createOrderForQuote(OrderFactory $factory, Quote $quote, int $price, ?CustomerInterface $customer = null, $attach = true)
+    {
+        return $factory->createForQuote($quote, $price, $customer, $attach);
+    }
+
+
     protected function createDeliveryForm(Delivery $delivery, array $options = [])
     {
         return $this->createForm(DeliveryType::class, $delivery, $options);
@@ -52,6 +68,17 @@ trait DeliveryTrait
     protected function getDeliveryPrice(Delivery $delivery, PricingRuleSet $pricingRuleSet, DeliveryManager $deliveryManager)
     {
         $price = $deliveryManager->getPrice($delivery, $pricingRuleSet);
+
+        if (null === $price) {
+            throw new NoRuleMatchedException();
+        }
+
+        return (int) ($price);
+    }
+
+    protected function getQuotePrice(Quote $quote, PricingRuleSet $pricingRuleSet, DeliveryManager $deliveryManager)
+    {
+        $price = $deliveryManager->getQuotePrice($quote, $pricingRuleSet);
 
         if (null === $price) {
             throw new NoRuleMatchedException();

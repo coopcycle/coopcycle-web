@@ -214,6 +214,7 @@ twig:
         - 'form/address_book.html.twig'
         - 'form/price_with_tax.html.twig'
         - 'form/delivery.html.twig'
+        - 'form/quote.html.twig'
         - '@VichUploader/Form/fields.html.twig'
     globals:
         is_demo: "%is_demo%"

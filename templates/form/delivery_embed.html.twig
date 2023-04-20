@@ -23,7 +23,9 @@
     {{ form_row(form.weight) }}
   {% endif %}
 
-  {{ form_row(form.address.newAddress.description) }}
+  {% if form.address.newAddress.description is defined %}
+    {{ form_row(form.address.newAddress.description) }}
+  {% endif %}
 
   {{ form_widget(form.type) }}
 

@@ -3,8 +3,11 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Quote;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Quote\PricingRule as QuotePricingRule;
+use AppBundle\Entity\Quote\PricingRuleSet as QuotePricingRuleSet;
 use AppBundle\Entity\Task;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Exception\NoAvailableTimeSlotException;
@@ -69,6 +72,46 @@ class DeliveryManager
                     $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()));
 
                     $price = $rule->evaluatePrice($delivery, $this->expressionLanguage);
+                    $totalPrice += $price;
+
+                    $matchedAtLeastOne = true;
+                }
+            }
+
+            if ($matchedAtLeastOne) {
+
+                return $totalPrice;
+            }
+        }
+
+        return null;
+    }
+
+    public function getQuotePrice(Quote $quote, PricingRuleSet $ruleSet)
+    {
+        if ($ruleSet->getStrategy() === 'find') {
+
+            foreach ($ruleSet->getRules() as $rule) {
+                if ($rule->matches_quote($quote, $this->expressionLanguage)) {
+                    $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()));
+
+                    return $rule->evaluatePrice_quote($quote, $this->expressionLanguage);
+                }
+            }
+
+            return null;
+        }
+
+        if ($ruleSet->getStrategy() === 'map') {
+
+            $totalPrice = 0;
+            $matchedAtLeastOne = false;
+
+            foreach ($ruleSet->getRules() as $rule) {
+                if ($rule->matches($quote, $this->expressionLanguage)) {
+                    $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()));
+
+                    $price = $rule->evaluatePrice($quote, $this->expressionLanguage);
                     $totalPrice += $price;
 
                     $matchedAtLeastOne = true;
