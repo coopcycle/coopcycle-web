@@ -57,6 +57,12 @@ services:
     autoconfigure: false
     tags: [ form.type ]
 
+  AppBundle\Form\QuoteEmbedType:
+    parent: AppBundle\Form\DeliveryType
+    autowire: false
+    autoconfigure: false
+    tags: [ form.type ]
+
   AppBundle\Form\NewOrderType:
     parent: AppBundle\Form\DeliveryType
     autowire: false

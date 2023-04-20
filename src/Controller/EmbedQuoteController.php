@@ -10,7 +10,7 @@ use AppBundle\Entity\QuoteFormSubmission;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
-use AppBundle\Form\DeliveryEmbedType;
+use AppBundle\Form\QuoteEmbedType;
 use AppBundle\Form\StripePaymentType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
@@ -37,6 +37,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
@@ -46,11 +47,13 @@ class EmbedQuoteController extends AbstractController
     use DeliveryTrait;
 
     public function __construct(
+        ManagerRegistry $doctrine,
         EntityManagerInterface $entityManager,
         RepositoryInterface $customerRepository,
         FactoryInterface $customerFactory,
         TranslatorInterface $translator)
     {
+        $this->doctrine = $doctrine;
         $this->entityManager = $entityManager;
         $this->customerRepository = $customerRepository;
         $this->customerFactory = $customerFactory;
@@ -81,7 +84,7 @@ class EmbedQuoteController extends AbstractController
             }
         }
 
-        return $this->get('form.factory')->createNamed('delivery', DeliveryEmbedType::class, $delivery, $options);
+        return $this->get('form.factory')->createNamed('delivery', QuoteEmbedType::class, $delivery, $options);
     }
 
     private function findOrCreateCustomer($email, PhoneNumber $telephone, CanonicalizerInterface $canonicalizer)
@@ -172,11 +175,12 @@ class EmbedQuoteController extends AbstractController
             $log->warning('quoteStartAction - isSubmitted');
             try {
 
+                $log->warning('quoteStartAction - isSubmitted $request->request->all()[\'delivery\'][\'pricingRuleSet\'] = '.json_encode($request->request->all()['delivery']));
                 $delivery = $form->getData();
                 //$log->warning('quoteStartAction - isSubmitted Testpoint 1');
                 $price = $this->getDeliveryPrice(
                     $delivery,
-                    $this->getPricingRuleSet($request),
+                    $this->doctrine->getRepository(PricingRuleSet::class)->find($request->request->all()['delivery']['pricingRuleSet']),
                     $deliveryManager
                 );
                 //$log->warning('quoteStartAction - isSubmitted Testpoint 2');
@@ -208,7 +212,7 @@ class EmbedQuoteController extends AbstractController
 
         }
 
-        return $this->render('embed/delivery/start.html.twig', [
+        return $this->render('embed/delivery/quotestart.html.twig', [
             'form' => $form->createView(),
             'hashid' => $hashid,
         ]);
@@ -329,19 +333,11 @@ class EmbedQuoteController extends AbstractController
                 }
             }
 
-            $email     = $form->get('email')->getData();
-            $telephone = $form->get('telephone')->getData();
-
-            $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
-            $order    = $this->createOrderForDelivery($orderFactory, $delivery, $price, $customer, $attach = false);
+            $order    = $this->createOrderForDelivery($orderFactory, $delivery, $price, $customer = null, $attach = false);
 
             $paymentForm = $this->createForm(CheckoutPaymentType::class, $order, [
                 'csrf_protection' => false,
             ]);
-
-            if ($billingAddress = $form->get('billingAddress')->getData()) {
-                $this->setBillingAddress($order, $billingAddress);
-            }
 
             $orderProcessor->process($order);
 

@@ -1,0 +1,40 @@
+{% extends "base.html.twig" %}
+
+{% form_theme form with ['form/delivery.html.twig', 'form/delivery_embed.html.twig'] %}
+
+{% block banner %}{% endblock %}
+{% block menu %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+
+<div style="padding: 20px;">
+
+  {% include "embed/delivery/quotebreadcrumb.html.twig" %}
+
+  {{ form_start(form, { attr: { autocomplete: 'off' } }) }}
+
+    {{ form_errors(form) }}
+
+    {{ form_widget(form.tasks) }}
+
+    {% if form.vehicle is defined %}
+      {{ form_row(form.vehicle) }}
+    {% endif %}
+
+    <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }}</button>
+
+  {{ form_end(form) }}
+
+  {% include "embed/delivery/quotefooter.html.twig" %}
+
+</div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('delivery-embed-start-form') }}
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('delivery-embed-start-form') }}
+{% endblock %}

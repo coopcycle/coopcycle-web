@@ -12,6 +12,7 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
+    <many-to-one field="pricingRuleSet" target-entity="AppBundle\Entity\Delivery\PricingRuleSet" />
     <many-to-one field="quoteForm" target-entity="AppBundle\Entity\QuoteForm" />
   </entity>
 </doctrine-mapping>

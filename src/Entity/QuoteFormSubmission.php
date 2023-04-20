@@ -12,6 +12,27 @@ class QuoteFormSubmission
     private $quoteForm;
     private $data;
     private $price;
+    private $pricingRuleSet;
+
+    /**
+     * @return mixed
+     */
+    public function getPricingRuleSet()
+    {
+        return $this->pricingRuleSet;
+    }
+
+    /**
+     * @param mixed $pricingRuleSet
+     *
+     * @return self
+     */
+    public function setPricingRuleSet($pricingRuleSet)
+    {
+        $this->pricingRuleSet = $pricingRuleSet;
+
+        return $this;
+    }
 
     /**
      * @return mixed
