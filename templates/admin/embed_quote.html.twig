@@ -1,0 +1,34 @@
+{% extends "deliveries.html.twig" %}
+
+{% form_theme embed_quote_settings_form 'bootstrap_3_layout.html.twig' %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.embedquote.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+  {% set quote_form = embed_quote_settings_form.vars.data %}
+
+  <h3>{% trans %}embedquote.delivery.title{% endtrans %}</h3>
+
+  {{ form_start(embed_quote_settings_form) }}
+    {{ form_widget(embed_quote_settings_form) }}
+    <hr>
+    {% if quote_form.id is not null %}
+      <p>{% trans %}embedquote.delivery.iframe_code{% endtrans %}</p>
+      {% set iframe_code %}<iframe src="{{ url('embed_quote_start', { hashid: quote_form|hashid(12) }) }}" width="600" height="800" frameborder="0"></iframe>{% endset %}
+      <pre><code class="language-html">{{ iframe_code|e }}</code></pre>
+      <hr>
+      {% include "_partials/sdk.html.twig" with {
+        url: url('embed_quote_start', { hashid: quote_form|hashid(12) })
+      } %}
+      <hr>
+    {% endif %}
+    <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>
+  {{ form_end(embed_quote_settings_form) }}
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

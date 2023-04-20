@@ -37,9 +37,11 @@ adminDashboard.embedquote.title: Quote Forms
 adminDashboard.package_sets.title: Packages
 adminDashboard.customize.title: Customize
 embed.delivery.title: Delivery creation form
+embedquote.delivery.title: Quote creation form
 embed.delivery.configure_pricing_rule_set: You must first configure a pricing rule
   to apply
 embed.delivery.iframe_code: Use the HTML code below to embed the form on your website
+embedquote.delivery.iframe_code: Use the HTML code below to embed the form on your website
 embed.breadcrumb.start: Information
 embed.breadcrumb.summary: Summary
 embed.breadcrumb.confirm: Confirmation

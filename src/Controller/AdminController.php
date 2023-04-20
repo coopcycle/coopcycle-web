@@ -49,6 +49,7 @@ use AppBundle\Form\CustomizeType;
 use AppBundle\Form\DataExportType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Form\EmbedSettingsType;
+use AppBundle\Form\EmbedQuoteSettingsType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\HubType;
 use AppBundle\Form\WoopitIntegrationType;
@@ -1354,6 +1355,31 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/forms_quote/new", name="admin_form_quote_new")
+     */
+    public function newQuoteFormAction(Request $request)
+    {
+        $quoteForm = new QuoteForm();
+        $form = $this->createForm(EmbedQuoteSettingsType::class, $quoteForm);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()
+                ->getManagerForClass(QuoteForm::class)
+                ->persist($quoteForm);
+            $this->getDoctrine()
+                ->getManagerForClass(QuoteForm::class)
+                ->flush();
+
+            return $this->redirectToRoute('admin_forms_quote');
+        }
+
+        return $this->render('admin/embed_quote.html.twig', [
+            'embed_quote_settings_form' => $form->createView(),
+        ]);
+    }
+
+    /**
      * @Route("/admin/forms/{id}", name="admin_form")
      */
     public function formAction($id, Request $request)
@@ -1373,6 +1399,29 @@ class AdminController extends AbstractController
 
         return $this->render('admin/embed.html.twig', [
             'embed_settings_form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/forms_quote/{id}", name="admin_form_quote")
+     */
+    public function formQuoteAction($id, Request $request)
+    {
+        $quoteForm = $this->getDoctrine()->getRepository(QuoteForm::class)->find($id);
+
+        $form = $this->createForm(EmbedQuoteSettingsType::class, $quoteForm);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()
+                ->getManagerForClass(QuoteForm::class)
+                ->flush();
+
+            return $this->redirectToRoute('admin_forms_quote');
+        }
+
+        return $this->render('admin/embed_quote.html.twig', [
+            'embed_quote_settings_form' => $form->createView(),
         ]);
     }
 

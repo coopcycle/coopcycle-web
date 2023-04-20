@@ -1,13 +1,13 @@
 {% extends "deliveries.html.twig" %}
 
 {% block breadcrumb %}
-<li>{% trans %}adminDashboard.embed.title{% endtrans %}</li>
+<li>{% trans %}adminDashboard.embedquote.title{% endtrans %}</li>
 {% endblock %}
 
 {% block content %}
 
 <div class="text-right mb-4">
-  <a href="{{ path('admin_form_new') }}" class="btn btn-success">
+  <a href="{{ path('admin_form_quote_new') }}" class="btn btn-success">
     <i class="fa fa-plus"></i><span>{{ 'basics.add'|trans }}</span>
   </a>
 </div>
@@ -25,7 +25,7 @@
   {% for form in forms %}
     <tr>
       <td width="5%">
-        <a href="{{ path('admin_form', { id: form.id }) }}">
+        <a href="{{ path('admin_form_quote', { id: form.id }) }}">
           <span class="text-monospace">{{ form|hashid(12) }}</span>
         </a>
       </td>
@@ -51,7 +51,7 @@
         </ul>
       </td>
       <td class="text-right">
-        <a href="{{ path('embed_delivery_start', { hashid: form|hashid(12) }) }}" target="_blank">
+        <a href="{{ path('embed_quote_start', { hashid: form|hashid(12) }) }}" target="_blank">
           <i class="fa fa-external-link"></i>
         </a>
       </td>
