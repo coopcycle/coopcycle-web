@@ -35,6 +35,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
@@ -165,33 +167,41 @@ class EmbedQuoteController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            $log = new Logger('quoteStartAction');
+            $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+            $log->warning('quoteStartAction - isSubmitted');
             try {
 
                 $delivery = $form->getData();
-
+                //$log->warning('quoteStartAction - isSubmitted Testpoint 1');
                 $price = $this->getDeliveryPrice(
                     $delivery,
                     $this->getPricingRuleSet($request),
                     $deliveryManager
                 );
-
+                //$log->warning('quoteStartAction - isSubmitted Testpoint 2');
                 $submission = new QuoteFormSubmission();
+                //$log->warning('quoteStartAction - isSubmitted Testpoint 2.1');
                 $submission->setQuoteForm($this->getQuoteForm($request));
+                //$log->warning('quoteStartAction - isSubmitted Testpoint 2.2');
                 $submission->setData(serialize($request->request->get($form->getName())));
+                //$log->warning('quoteStartAction - isSubmitted Testpoint 2.3');
                 $submission->setPrice($price);
-
+                //$log->warning('quoteStartAction - isSubmitted Testpoint 3');
                 $entityManager->persist($submission);
                 $entityManager->flush();
-
+                //$log->warning('quoteStartAction - isSubmitted Testpoint 4');
                 $hashids = new Hashids($this->getParameter('secret'), 12);
-
-                return $this->redirectToRoute('embed_delivery_summary', [
+                //$log->warning('quoteStartAction - isSubmitted Testpoint 5');
+                return $this->redirectToRoute('embed_quote_delivery_summary', [
                     'hashid' => $hashid,
                     'data' => $hashids->encode($submission->getId()),
                 ]);
 
+            //} catch (\Exception $e) {
+            //    $log->warning('quoteStartAction - isSubmitted Exception: ' . $e->message());
             } catch (NoRuleMatchedException $e) {
+                //$log->warning('quoteStartAction - isSubmitted Exception:');
                 $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                 $form->addError(new FormError($message));
             }
@@ -205,9 +215,9 @@ class EmbedQuoteController extends AbstractController
     }
 
     /**
-     * @Route("/forms/{hashid}/summary", name="embed_delivery_summary")
+     * @Route("/forms_quote/{hashid}/summary", name="embed_quote_delivery_summary")
      */
-    public function deliverySummaryAction($hashid, Request $request,
+    public function quoteSummaryAction($hashid, Request $request,
         DeliveryManager $deliveryManager,
         OrderRepositoryInterface $orderRepository,
         OrderManager $orderManager,
@@ -224,7 +234,7 @@ class EmbedQuoteController extends AbstractController
 
         if (null === $submission) {
 
-            return $this->redirectToRoute('embed_delivery_start', ['hashid' => $hashid]);
+            return $this->redirectToRoute('embed_quote_start', ['hashid' => $hashid]);
         }
 
         $form = $this->doCreateQuoteForm($request);
@@ -245,14 +255,14 @@ class EmbedQuoteController extends AbstractController
 
                 if (!$request->query->has('order')) {
 
-                    return $this->redirectToRoute('embed_delivery_start', ['hashid' => $hashid]);
+                    return $this->redirectToRoute('embed_quote_start', ['hashid' => $hashid]);
                 }
 
                 $decoded = $hashidsForOrder->decode($request->query->get('order'));
 
                 if (count($decoded) !== 1) {
 
-                    return $this->redirectToRoute('embed_delivery_start', ['hashid' => $hashid]);
+                    return $this->redirectToRoute('embed_quote_start', ['hashid' => $hashid]);
                 }
 
                 $orderId = current($decoded);
@@ -261,7 +271,7 @@ class EmbedQuoteController extends AbstractController
 
                 if (null === $order) {
 
-                    return $this->redirectToRoute('embed_delivery_start', ['hashid' => $hashid]);
+                    return $this->redirectToRoute('embed_quote_start', ['hashid' => $hashid]);
                 }
 
                 $paymentForm = $this->createForm(CheckoutPaymentType::class, $order, [
@@ -293,7 +303,7 @@ class EmbedQuoteController extends AbstractController
                     $objectManager->flush();
 
                     if (PaymentInterface::STATE_FAILED === $payment->getState()) {
-                        return $this->render('embed/delivery/summary.html.twig', [
+                        return $this->render('embed/delivery/quotesummary.html.twig', [
                             'hashid' => $hashid,
                             'delivery' => $delivery,
                             'price' => $price,
@@ -340,7 +350,7 @@ class EmbedQuoteController extends AbstractController
 
             $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
-            return $this->render('embed/delivery/summary.html.twig', [
+            return $this->render('embed/delivery/quotesummary.html.twig', [
                 'hashid' => $hashid,
                 'delivery' => $delivery,
                 'price' => $price,

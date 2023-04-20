@@ -37,6 +37,7 @@ adminDashboard.embedquote.title: Quote Forms
 adminDashboard.package_sets.title: Packages
 adminDashboard.customize.title: Customize
 embed.delivery.title: Delivery creation form
+embed.quote.title: Quote creation form
 embedquote.delivery.title: Quote creation form
 embed.delivery.configure_pricing_rule_set: You must first configure a pricing rule
   to apply
@@ -46,6 +47,7 @@ embed.breadcrumb.start: Information
 embed.breadcrumb.summary: Summary
 embed.breadcrumb.confirm: Confirmation
 embed.delivery.summary.title: Order summary
+embed.quote.summary.title: Quote summary
 embed.delivery.use_form_below: Use the form below to pay for your order by credit
   card
 embed.delivery.paid_at: Payment made on %date%
@@ -325,6 +327,7 @@ order.payment.month.label: Month
 order.payment.year.label: Year
 order.payment.card_number.label: Card number
 order.payment.total: Pay %total%
+quote.payment.total: Share Total of %total%
 order.payment.cvc: CVC
 order.delivery_time: Delivery %time%
 order.payment.card_number.help: A stripe <a href="https://stripe.com/docs/testing#cards"
@@ -829,7 +832,14 @@ embed.delivery.summary: "You have requested a delivery on <strong>%dropoff_date%
   \ is <strong>%total_excluding_tax% (excl. VAT); </strong> %total_including_tax%\
   \ (incl. VAT). <br><br>If any of the above details are incorrect, please change\
   \ them by clicking the 'Edit' button. "
+embed.quote.summary: "You have requested a quote for <strong>%dropoff_date%</strong>\
+  \ at the following address: <strong>%dropoff_address%</strong> <br> We calculated\
+  \ a distance of <strong>%distance% kilometers</strong>. <br> The delivery price\
+  \ is <strong>%total_excluding_tax% (excl. VAT); </strong> %total_including_tax%\
+  \ (incl. VAT). <br><br>If any of the above details are incorrect, please change\
+  \ them by clicking the 'Edit' button. "
 embed.delivery.submit.help: Click to book the delivery.
+embed.quote.submit.help: Click to share the quote.
 embed.delivery.confirm_message: Your delivery order has been placed and you will receive
   a summary email shortly. We'll check your order and send a confirmation email as
   soon as possible.

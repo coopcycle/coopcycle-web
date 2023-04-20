@@ -1,0 +1,158 @@
+{% extends "base.html.twig" %}
+
+{% form_theme form with ['form/delivery.html.twig', 'form/delivery_embed.html.twig'] %}
+
+{% set gateway = payment_gateway_resolver.resolve() %}
+{% set gateway_configs = {} %}
+{% set country = country_iso %}
+
+{% block banner %}{% endblock %}
+{% block menu %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+
+<div style="padding: 20px;">
+
+  {% include "embed/delivery/breadcrumb.html.twig" %}
+
+  <h3>{{ 'embed.quote.summary.title'|trans }}</h3>
+
+  {% set form_action_params = app.request.attributes.get('_route_params')|merge({
+    data: submission_hashid,
+    order: order|hashid(16)
+  }) %}
+
+  {{ form_start(form, { action: path(app.request.attributes.get('_route'), form_action_params) }) }}
+  <div class="alert alert-info">
+    {% trans with {
+      '%dropoff_date%':        delivery.dropoff.doneBefore|format_datetime('medium', 'short'),
+      '%dropoff_address%':     delivery.dropoff.address.streetAddress,
+      '%distance%':            (delivery.distance / 1000)|round(2, 'floor'),
+      '%total_including_tax%': price|price_format,
+      '%total_excluding_tax%': price_excluding_tax|price_format
+    } %}
+      embed.quote.summary
+    {% endtrans %}
+    <br>
+    <br>
+
+    <p class="text-center">
+      <a href="{{ path('embed_quote_start', { hashid: hashid, data: submission_hashid }) }}" class="btn btn-xs btn-default">{{ 'basics.edit'|trans }}</a>
+    </p>
+  </div>
+
+  {% if error is defined %}
+    <div class="alert alert-danger">
+      {{ error }}
+    </div>
+  {% endif %}
+
+  {{ form_errors(form) }}
+
+  {% if form.method is defined %}
+    {{ form_row(form.method) }}
+  {% endif %}
+
+  {% if gateway == 'mercadopago' and (mercadopago_can_enable_testmode() or mercadopago_can_enable_livemode()) %}
+    <div id="mercadopago_identification_fields" style="display: none;">
+      <div class="form-group">
+        <label for="email">{{ 'order.payer.email'|trans }}</label>
+        <input class="form-control" id="email" name="email" type="text" value="{{ order.customer.email }}" />
+      </div>
+      {#
+      In Mexico, we don't need identification documents
+      https://www.mercadopago.com.br/developers/en/guides/resources/localization/identification-types/
+      #}
+      {% if country != 'mx' %}
+        <div class="form-group">
+          <label for="docType">{{ 'order.payer.identificationType'|trans }}</label>
+          <select class="form-control" id="docType" name="docType" data-checkout="docType" type="text"></select>
+        </div>
+        <div class="form-group">
+          <label for="docNumber">{{ 'order.payer.identificationNumber'|trans }}</label>
+          <input class="form-control" id="docNumber" name="docNumber" data-checkout="docNumber" type="text"/>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  {{ form_widget(form.stripePayment.stripeToken) }}
+  <div id="card-element">
+    <!-- a React element will be inserted here. -->
+  </div>
+  <!-- Used to display form errors -->
+  <div id="card-errors" role="alert"></div>
+
+  <button type="submit" class="btn btn-block btn-lg btn-primary">
+    {% trans with { '%total%': price|price_format } %}quote.payment.total{% endtrans %}
+  </button>
+
+  <p class="text-center">
+    <small class="text-muted">{{ 'embed.quote.submit.help'|trans }}</small>
+  </p>
+
+  {{ form_end(form) }}
+
+  <hr>
+
+  <div id="map" style="height: 250px; margin-bottom: 20px;"></div>
+
+  {% include "embed/delivery/footer.html.twig" %}
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+
+{% if gateway == 'stripe' %}
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+{% set gateway_configs = gateway_configs|merge({
+  stripe: {
+    account: null,
+    publishableKey: coopcycle_setting('stripe_publishable_key'),
+    createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid })
+  }
+}) %}
+{% endif %}
+
+{% if gateway == 'mercadopago' %}
+<script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
+{% set gateway_configs = gateway_configs|merge({
+  mercadopago: {
+    publishableKey: coopcycle_setting('mercadopago_publishable_key'),
+    country: country
+  }
+}) %}
+{% endif %}
+
+{% set pickup = delivery.pickup %}
+{% set dropoff = delivery.dropoff %}
+
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+{{ encore_entry_script_tags('delivery-map') }}
+<script>
+
+new CoopCycle.DeliveryMap('map', {
+  pickup: [ {{ pickup.address.geo.latitude }}, {{ pickup.address.geo.longitude }} ],
+  dropoff: [ {{ dropoff.address.geo.latitude }}, {{ dropoff.address.geo.longitude }} ],
+  polyline: "{{ delivery.polyline|e('js') }}"
+});
+
+$("#modify-form").on('click', function() {
+  $('form[name="delivery"]')
+    .attr('action', "{{ path('embed_quote_start', { hashid: hashid }) }}")
+    .submit()
+});
+
+new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
+  card: "{{ gateway }}",
+  amount: {{ price }},
+  gatewayConfigs: {{ gateway_configs|json_encode|raw }},
+  tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
+  selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}"
+});
+
+</script>
+{% endblock %}
