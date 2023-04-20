@@ -16,6 +16,10 @@
 
     {{ form_errors(form) }}
 
+    {% if form.pricingRuleSet is defined %}
+      {{ form_row(form.pricingRuleSet) }}
+    {% endif %}
+    
     {{ form_widget(form.tasks) }}
 
     {% if form.vehicle is defined %}
