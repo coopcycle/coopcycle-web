@@ -1,7 +1,8 @@
 cube(`TasksExportUnified`, {
   sql: `
   SELECT
-    t.id AS task_id,
+    DISTINCT ON (t.id) t.id,
+    tci.position AS task_position,
     o.id AS order_id,
     o.number AS order_number,
     t.type AS task_type,
@@ -19,8 +20,7 @@ cube(`TasksExportUnified`, {
     u.username AS task_courier,
     (SELECT string_agg(TaskTagging.tag_name, ', ') FROM ${TaskTagging.sql()} TaskTagging WHERE TaskTagging.resource_id = t.id GROUP BY TaskTagging.resource_id) AS tags,
     a.contact_name AS address_contact_name,
-    org.name AS task_organization_name,
-    tci.position AS task_position
+    org.name AS task_organization_name
   FROM task t
   JOIN address a ON a.id = t.address_id
   LEFT JOIN task_collection_item tci ON tci.task_id = t.id
@@ -35,11 +35,12 @@ cube(`TasksExportUnified`, {
   LEFT JOIN task_event task_finished ON task_finished.id = (SELECT tfe.id FROM ${TaskFinishedEvent.sql()} tfe WHERE tfe.task_id=t.id ORDER BY tfe.created_at DESC LIMIT 1)
   LEFT JOIN api_user u ON u.id = t.assigned_to
   LEFT JOIN organization org ON org.id = t.organization_id
+  ORDER BY t.id, tci.position ASC
   `,
 
   dimensions: {
     taskId: {
-      sql: `task_id`,
+      sql: `id`,
       type: `number`,
     },
     orderId: {
