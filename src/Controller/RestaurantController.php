@@ -482,7 +482,11 @@ class RestaurantController extends AbstractController
         $cart = $cartContext->getCart();
 
         $user = $this->getUser();
-        if ($request->request->has('address') && $user && count($user->getAddresses()) > 0) {
+        if ($request->request->has('address') && $user && count($user->getAddresses()) > 0)
+        {
+            if (is_null($cart->getCustomer())) {
+                $cart->setCustomer($user->getCustomer());
+            }
 
             $addressIRI = $request->request->get('address');
 
