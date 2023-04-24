@@ -27,6 +27,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Doctrine\Persistence\ManagerRegistry;
 
 class QuoteType extends AbstractType
 {
@@ -35,6 +38,7 @@ class QuoteType extends AbstractType
     protected $authorizationChecker;
     protected $country;
     protected $locale;
+    protected $log;
 
     public function __construct(
         RoutingInterface $routing,
@@ -48,10 +52,13 @@ class QuoteType extends AbstractType
         $this->authorizationChecker = $authorizationChecker;
         $this->country = $country;
         $this->locale = $locale;
+        $this->log = new Logger('QuoteType');
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $this->log = new Logger('QuoteType');
+        $this->log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
         if (true === $options['with_vehicle']) {
             $builder->add('vehicle', ChoiceType::class, [
                 'required' => true,
@@ -64,6 +71,8 @@ class QuoteType extends AbstractType
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+
+            $this->log->warning('buildForm - POST_SET_DATA');
 
             $form = $event->getForm();
             $quote = $event->getData();
@@ -157,26 +166,35 @@ class QuoteType extends AbstractType
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
 
+            $this->log->warning('buildForm - POST_SUBMIT');
             $form = $event->getForm();
-
+            $this->log->warning('buildForm - POST_SUBMIT Testpoint 1');
             if (!$form->isValid()) {
                 return;
             }
-
+            $this->log->warning('buildForm - POST_SUBMIT Testpoint 2');
             $quote = $event->getForm()->getData();
 
+            $this->log->warning('buildForm - POST_SUBMIT Testpoint 3');
             $coordinates = [];
             foreach ($quote->getTasks() as $task) {
                 if ($address = $task->getAddress()) {
                     $coordinates[] = $address->getGeo();
                 }
             }
-
+            $this->log->warning('buildForm - POST_SUBMIT Testpoint 4');
+            //Posible error acá
             if (count($coordinates) > 0) {
+                $this->log->warning('buildForm - POST_SUBMIT Testpoint 4.1');
+                $this->log->warning('buildForm - POST_SUBMIT $coordinates: '.print_r($coordinates, true));
                 $quote->setDistance($this->routing->getDistance(...$coordinates));
+                $this->log->warning('buildForm - POST_SUBMIT $quote->getDistance(): ' . $quote->getDistance());
                 $quote->setDuration($this->routing->getDuration(...$coordinates));
+                $this->log->warning('buildForm - POST_SUBMIT $quote->getDuration(): ' . $quote->getDuration());
                 $quote->setPolyline($this->routing->getPolyline(...$coordinates));
+                $this->log->warning('buildForm - POST_SUBMIT $quote->getPolyline(): ' . $quote->getPolyline());
             }
+            $this->log->warning('buildForm - POST_SUBMIT Testpoint 5');
         });
     }
 

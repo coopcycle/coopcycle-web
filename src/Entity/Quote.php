@@ -25,6 +25,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
@@ -159,8 +162,22 @@ class Quote extends TaskCollection implements TaskCollectionInterface, PackagesA
         $pickup->setNext($dropoff);
         $dropoff->setPrevious($pickup);
 
+        $pickup2 = new Task();
+        $pickup2->setType(Task::TYPE_PICKUP);
+        $pickup2->setDelivery($this);
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2->setDelivery($this);
+
+        $pickup2->setPrevious($dropoff);
+        $pickup2->setNext($dropoff2);
+        $dropoff2->setPrevious($pickup2);
+
         $this->addTask($pickup);
         $this->addTask($dropoff);
+        $this->addTask($pickup2);
+        $this->addTask($dropoff2);
 
         $this->packages = new ArrayCollection();
     }
@@ -228,6 +245,7 @@ class Quote extends TaskCollection implements TaskCollectionInterface, PackagesA
      */
     public function getPickup()
     {
+       
         foreach ($this->getTasks() as $task) {
             if ($task->getType() === Task::TYPE_PICKUP) {
                 return $task;
@@ -429,21 +447,41 @@ class Quote extends TaskCollection implements TaskCollectionInterface, PackagesA
 
     private static function createOrderObject(?Order $order)
     {
+        $log = new Logger('Quote');
+        $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+        $log->warning('Quote - createOrderObject - $order: ' . $order);
         $object = new \stdClass();
         if ($order) {
+            $log->warning('Quote - createOrderObject - SI');
             $object->itemsTotal = $order->getItemsTotal();
         } else {
+            $log->warning('Quote - createOrderObject - NO');
             $object->itemsTotal = 0;
         }
+
+        $log->warning('Quote - createOrderObject - $object: ' . print_r($object, true));
 
         return $object;
     }
 
     public static function toExpressionLanguageValues(Quote $quote)
     {
+        $log = new Logger('Quote');
+        $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+        $log->warning('Quote - toExpressionLanguageValues - $quote->getPickup(): ' . $quote->getPickup()->getAddress()->getStreetAddress());
+        $log->warning('Quote - toExpressionLanguageValues - $quote->getDropoff(): ' . $quote->getDropoff()->getAddress()->getStreetAddress());
+        $log->warning('Quote - toExpressionLanguageValues - $quote->getOrder(): ' . $quote->getOrder());
+        $log->warning('Quote - toExpressionLanguageValues - $quote->getDistance(): ' . $quote->getDistance());
+        $log->warning('Quote - toExpressionLanguageValues - $quote->getWeight(): ' . $quote->getWeight());
+        $log->warning('Quote - toExpressionLanguageValues - $quote->getVehicle(): ' . $quote->getVehicle());
+
         $pickup = self::createTaskObject($quote->getPickup());
         $dropoff = self::createTaskObject($quote->getDropoff());
         $order = self::createOrderObject($quote->getOrder());
+
+        $log->warning('Quote - toExpressionLanguageValues - $quote->getPickup() 2: ' . $quote->getPickup()->getAddress()->getStreetAddress());
+        $log->warning('Quote - toExpressionLanguageValues - $quote->getDropoff() 2: ' . $quote->getDropoff()->getAddress()->getStreetAddress());
+        $log->warning('Quote - toExpressionLanguageValues - $quote->getOrder() 2: ' . $quote->getOrder());
 
         return [
             'distance' => $quote->getDistance(),

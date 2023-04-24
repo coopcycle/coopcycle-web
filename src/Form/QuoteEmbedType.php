@@ -30,6 +30,26 @@ class QuoteEmbedType extends QuoteType
         parent::buildForm($builder, $options);
 
         $builder
+        ->add('name', TextType::class, [
+            'mapped' => false,
+            'label' => 'form.delivery_embed.name.label',
+            'help' => 'form.delivery_embed.name.help'
+        ])
+        ->add('email', EmailType::class, [
+            'mapped' => false,
+            'label' => 'form.email',
+            'translation_domain' => 'NucleosProfileBundle'
+        ])
+        ->add('telephone', PhoneNumberType::class, [
+            'mapped' => false,
+            'format' => PhoneNumberFormat::NATIONAL,
+            'default_region' => strtoupper($this->country),
+            'label' => 'form.delivery_embed.telephone.label',
+            'constraints' => [
+                new AssertPhoneNumber()
+            ],
+
+        ])
         ->add('pricingRuleSet', EntityType::class, array(
             'required' => true,
             'placeholder' => 'form.store_type.pricing_rule_set.placeholder',

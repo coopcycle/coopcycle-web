@@ -21,6 +21,9 @@ use AppBundle\Utils\PickupTimeResolver;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Doctrine\Persistence\ManagerRegistry;
 
 class DeliveryManager
 {
@@ -89,13 +92,23 @@ class DeliveryManager
 
     public function getQuotePrice(Quote $quote, PricingRuleSet $ruleSet)
     {
+        $log = new Logger('getQuotePrice');
+        $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+        $log->warning('DeliveryManager - getQuotePrice - $quote->getDistance(): ' . $quote->getDistance());
+        $log->warning('DeliveryManager - getQuotePrice - $quote->getDuration(): ' . $quote->getDuration());
+        $log->warning('DeliveryManager - getQuotePrice - ruleSet->getStrategy(): ' . $ruleSet->getStrategy());
+
         if ($ruleSet->getStrategy() === 'find') {
 
             foreach ($ruleSet->getRules() as $rule) {
+                $log->warning('DeliveryManager - getQuotePrice - $rule->getExpression(): ' . $rule->getExpression());
                 if ($rule->matches_quote($quote, $this->expressionLanguage)) {
+                    $log->warning('DeliveryManager - getQuotePrice - $rule->matches_quote($quote, $this->expressionLanguage): ' . $rule->matches_quote($quote, $this->expressionLanguage));
                     $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()));
 
                     return $rule->evaluatePrice_quote($quote, $this->expressionLanguage);
+                } else {
+                    $log->warning('DeliveryManager - getQuotePrice - $rule->getExpression(): ' . $rule->getExpression() . " Doesn't match");
                 }
             }
 
@@ -108,13 +121,17 @@ class DeliveryManager
             $matchedAtLeastOne = false;
 
             foreach ($ruleSet->getRules() as $rule) {
-                if ($rule->matches($quote, $this->expressionLanguage)) {
+                $log->warning('DeliveryManager - getQuotePrice - $rule->getExpression(): ' . $rule->getExpression());
+                if ($rule->matches_quote($quote, $this->expressionLanguage)) {
+                    $log->warning('DeliveryManager - getQuotePrice - $rule->matches_quote($quote, $this->expressionLanguage): ' . $rule->matches_quote($quote, $this->expressionLanguage));
                     $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()));
 
-                    $price = $rule->evaluatePrice($quote, $this->expressionLanguage);
+                    $price = $rule->evaluatePrice_quote($quote, $this->expressionLanguage);
                     $totalPrice += $price;
 
                     $matchedAtLeastOne = true;
+                } else {
+                    $log->warning('DeliveryManager - getQuotePrice - $rule->getExpression(): ' . $rule->getExpression() . " Doesn't match");
                 }
             }
 

@@ -13,6 +13,9 @@ use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @ApiResource(
@@ -136,7 +139,10 @@ class PricingRule
         if (null === $language) {
             $language = new ExpressionLanguage();
         }
-
+        $log = new Logger('evaluatePrice_quote');
+        $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+        $log->warning('PricingRule - evaluatePrice_quote - $this->getPrice(): ' . $this->getPrice());
+        $log->warning('PricingRule - evaluatePrice_quote - Quote::toExpressionLanguageValues($quote): ' . print_r(Quote::toExpressionLanguageValues($quote), true));
         return $language->evaluate($this->getPrice(), Quote::toExpressionLanguageValues($quote));
     }
 

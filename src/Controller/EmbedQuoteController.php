@@ -178,35 +178,35 @@ class EmbedQuoteController extends AbstractController
 
                 $log->warning('quoteStartAction - isSubmitted $request->request->all()[\'delivery\'][\'pricingRuleSet\'] = '.json_encode($request->request->all()['delivery']));
                 $quote = $form->getData();
-                //$log->warning('quoteStartAction - isSubmitted Testpoint 1');
+                $log->warning('quoteStartAction - isSubmitted Testpoint 1');
                 $price = $this->getQuotePrice(
                     $quote,
                     $this->doctrine->getRepository(PricingRuleSet::class)->find($request->request->all()['delivery']['pricingRuleSet']),
                     $deliveryManager
                 );
-                //$log->warning('quoteStartAction - isSubmitted Testpoint 2');
+                $log->warning('quoteStartAction - isSubmitted Testpoint 2');
                 $submission = new QuoteFormSubmission();
-                //$log->warning('quoteStartAction - isSubmitted Testpoint 2.1');
+                $log->warning('quoteStartAction - isSubmitted Testpoint 2.1');
                 $submission->setQuoteForm($this->getQuoteForm($request));
-                //$log->warning('quoteStartAction - isSubmitted Testpoint 2.2');
+                $log->warning('quoteStartAction - isSubmitted Testpoint 2.2');
                 $submission->setData(serialize($request->request->get($form->getName())));
-                //$log->warning('quoteStartAction - isSubmitted Testpoint 2.3');
+                $log->warning('quoteStartAction - isSubmitted Testpoint 2.3');
                 $submission->setPrice($price);
-                //$log->warning('quoteStartAction - isSubmitted Testpoint 3');
+                $log->warning('quoteStartAction - isSubmitted Testpoint 3');
                 $entityManager->persist($submission);
                 $entityManager->flush();
-                //$log->warning('quoteStartAction - isSubmitted Testpoint 4');
+                $log->warning('quoteStartAction - isSubmitted Testpoint 4');
                 $hashids = new Hashids($this->getParameter('secret'), 12);
-                //$log->warning('quoteStartAction - isSubmitted Testpoint 5');
+                $log->warning('quoteStartAction - isSubmitted Testpoint 5');
                 return $this->redirectToRoute('embed_quote_delivery_summary', [
                     'hashid' => $hashid,
                     'data' => $hashids->encode($submission->getId()),
                 ]);
 
             //} catch (\Exception $e) {
-            //    $log->warning('quoteStartAction - isSubmitted Exception: ' . $e->message());
+            //    $log->warning('quoteStartAction - isSubmitted Exception: ' . $e);
             } catch (NoRuleMatchedException $e) {
-                //$log->warning('quoteStartAction - isSubmitted Exception:');
+                $log->warning('quoteStartAction - isSubmitted Exception:' . $e);
                 $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                 $form->addError(new FormError($message));
             }
@@ -231,6 +231,13 @@ class EmbedQuoteController extends AbstractController
         CanonicalizerInterface $canonicalizer,
         OrderProcessorInterface $orderProcessor)
     {
+
+        
+        $log = new Logger('quoteSummaryAction');
+        $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+        $log->warning('quoteSummaryAction');
+
+
         if ($this->container->has('profiler')) {
             $this->container->get('profiler')->disable();
         }
@@ -334,7 +341,17 @@ class EmbedQuoteController extends AbstractController
                 }
             }
 
+
+            $email     = $form->get('email')->getData();
+            $telephone = $form->get('telephone')->getData();
+
+            $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
+
+            $log->warning('quoteSummaryAction - createOrderForQuote Test point');
+            
             $order    = $this->createOrderForQuote($orderFactory, $delivery, $price, $customer = null, $attach = false);
+
+            //$log->warning('quoteSummaryAction - createOrderForQuote' . $order);
 
             $paymentForm = $this->createForm(CheckoutPaymentType::class, $order, [
                 'csrf_protection' => false,

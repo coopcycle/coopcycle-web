@@ -25,6 +25,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
@@ -429,10 +432,15 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     private static function createOrderObject(?Order $order)
     {
+        //$log = new Logger('Quote');
+        //$log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+        //$log->warning('Quote - createOrderObject - $order: ' . $order);
         $object = new \stdClass();
         if ($order) {
+            //$log->warning('Quote - createOrderObject - SI');
             $object->itemsTotal = $order->getItemsTotal();
         } else {
+            //$log->warning('Quote - createOrderObject - NO');
             $object->itemsTotal = 0;
         }
 

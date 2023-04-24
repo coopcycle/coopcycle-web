@@ -13,6 +13,9 @@ use Sylius\Component\Product\Repository\ProductVariantRepositoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Doctrine\Persistence\ManagerRegistry;
 
 class ProductVariantFactory implements ProductVariantFactoryInterface
 {
@@ -108,11 +111,14 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
      */
     public function createForQuote(Quote $quote, int $price): ProductVariantInterface
     {
+        $log = new Logger('createForQuote');
+        $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+        $log->warning('createForQuote - Test point 1');
         $hash = sprintf('%s-%d-%d', $quote->getVehicle(), $quote->getDistance(), $price);
         $code = sprintf('CPCCL-ODDLVR-%s', strtoupper(substr(sha1($hash), 0, 7)));
-
+        $log->warning('createForQuote - Test point 2');
         if ($productVariant = $this->productVariantRepository->findOneByCode($code)) {
-
+            $log->warning('createForQuote - Test point 3');
             return $productVariant;
         }
 
@@ -123,21 +129,21 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $taxCategory = $this->taxCategoryRepository->findOneBy([
             'code' => $subjectToVat ? 'SERVICE' : 'SERVICE_TAX_EXEMPT'
         ]);
-
+        $log->warning('createForQuote - Test point 4');
         $productVariant = $this->createForProduct($product);
 
         $name = sprintf('%s, %s km',
             $this->translator->trans(sprintf('vehicle.%s', $quote->getVehicle())),
             (string) number_format($quote->getDistance() / 1000, 2)
         );
-
+        $log->warning('createForQuote - Test point 5');
         $productVariant->setName($name);
         $productVariant->setPosition(1);
-
+        $log->warning('createForQuote - Test point 6');
         $productVariant->setPrice($price);
         $productVariant->setTaxCategory($taxCategory);
         $productVariant->setCode($code);
-
+        $log->warning('createForQuote - Test point 7');
         return $productVariant;
     }
 }

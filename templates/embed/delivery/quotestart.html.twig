@@ -26,6 +26,10 @@
       {{ form_row(form.vehicle) }}
     {% endif %}
 
+    {{ form_row(form.name) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.telephone) }}
+    
     <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }}</button>
 
   {{ form_end(form) }}
