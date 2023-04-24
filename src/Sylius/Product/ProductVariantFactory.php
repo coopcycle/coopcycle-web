@@ -72,11 +72,16 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
      */
     public function createForDelivery(Delivery $delivery, int $price): ProductVariantInterface
     {
+        $log = new Logger('createForDelivery');
+        $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+        $log->warning('createForDelivery - Test point 1');
         $hash = sprintf('%s-%d-%d', $delivery->getVehicle(), $delivery->getDistance(), $price);
         $code = sprintf('CPCCL-ODDLVR-%s', strtoupper(substr(sha1($hash), 0, 7)));
-
+        $log->warning('createForDelivery - Test point 2');
+        $log->warning('createForDelivery - $delivery->getDistance(): '. $delivery->getDistance());
+        $log->warning('createForDelivery - $price: '. $price);
         if ($productVariant = $this->productVariantRepository->findOneByCode($code)) {
-
+            $log->warning('createForDelivery - Test point 3');
             return $productVariant;
         }
 
@@ -87,21 +92,21 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $taxCategory = $this->taxCategoryRepository->findOneBy([
             'code' => $subjectToVat ? 'SERVICE' : 'SERVICE_TAX_EXEMPT'
         ]);
-
+        $log->warning('createForDelivery - Test point 4');
         $productVariant = $this->createForProduct($product);
 
         $name = sprintf('%s, %s km',
             $this->translator->trans(sprintf('vehicle.%s', $delivery->getVehicle())),
             (string) number_format($delivery->getDistance() / 1000, 2)
         );
-
+        $log->warning('createForDelivery - Test point 5');
         $productVariant->setName($name);
         $productVariant->setPosition(1);
-
+        $log->warning('createForDelivery - Test point 6');
         $productVariant->setPrice($price);
         $productVariant->setTaxCategory($taxCategory);
         $productVariant->setCode($code);
-
+        $log->warning('createForDelivery - Test point 7');
         return $productVariant;
     }
 

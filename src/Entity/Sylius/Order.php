@@ -30,6 +30,7 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Quote;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Vendor;
@@ -343,6 +344,8 @@ class Order extends BaseOrder implements OrderInterface
     protected $payments;
 
     protected $delivery;
+
+    protected $quote;
 
     protected $events;
 
@@ -707,6 +710,16 @@ class Order extends BaseOrder implements OrderInterface
         $delivery->setOrder($this);
 
         $this->delivery = $delivery;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setQuote(Quote $quote): void
+    {
+        $quote->setOrder($this);
+
+        $this->quote = $quote;
     }
 
     public function getTimeline(): ?OrderTimeline

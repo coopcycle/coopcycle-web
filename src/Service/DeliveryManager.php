@@ -146,6 +146,10 @@ class DeliveryManager
 
     public function createFromOrder(OrderInterface $order)
     {
+        $log = new Logger('getQuotePrice');
+        $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+        $log->warning('DeliveryManager - createFromOrder - start: ');
+
         if (!$order->hasVendor()) {
             throw new \InvalidArgumentException('Order should reference a vendor');
         }

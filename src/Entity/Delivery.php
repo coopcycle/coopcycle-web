@@ -449,10 +449,14 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     public static function toExpressionLanguageValues(Delivery $delivery)
     {
+        $log = new Logger('Delivery');
+        $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+        $log->warning('Delivery - toExpressionLanguageValues');
         $pickup = self::createTaskObject($delivery->getPickup());
         $dropoff = self::createTaskObject($delivery->getDropoff());
         $order = self::createOrderObject($delivery->getOrder());
-
+        $log->warning('Delivery - toExpressionLanguageValues - $delivery->getOrder()' . $delivery->getOrder());
+        $log->warning('Delivery - toExpressionLanguageValues - $delivery->getDistance()' . $delivery->getDistance());
         return [
             'distance' => $delivery->getDistance(),
             'weight' => $delivery->getWeight(),

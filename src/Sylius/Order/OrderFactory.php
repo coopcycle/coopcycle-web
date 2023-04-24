@@ -15,6 +15,9 @@ use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Webmozart\Assert\Assert;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Doctrine\Persistence\ManagerRegistry;
 
 class OrderFactory implements FactoryInterface
 {
@@ -87,53 +90,76 @@ class OrderFactory implements FactoryInterface
 
     public function createForDelivery(Delivery $delivery, int $price, ?CustomerInterface $customer = null, $attach = true)
     {
+        $log = new Logger('createForQuote');
+        $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+        $log->warning('OrderFactory - createForDelivery - Test point 1');
+
         Assert::isInstanceOf($this->productVariantFactory, ProductVariantFactory::class);
 
+        $log->warning('OrderFactory - createForDelivery - Test point 2');
         $order = $this->factory->createNew();
 
+        $log->warning('OrderFactory - createForDelivery - Test point 3');
         if ($attach) {
             $order->setDelivery($delivery);
         }
 
+        $log->warning('OrderFactory - createForDelivery - Test point 4');
         $order->setShippingAddress($delivery->getDropoff()->getAddress());
 
+        $log->warning('OrderFactory - createForDelivery - Test point 5');
         $shippingTimeRange = new TsRange();
 
+        $log->warning('OrderFactory - createForDelivery - Test point 6');
         if (null === $delivery->getDropoff()->getAfter()) {
             $dropoffAfter = clone $delivery->getDropoff()->getBefore();
             $dropoffAfter->modify('-15 minutes');
             $delivery->getDropoff()->setAfter($dropoffAfter);
         }
+        $log->warning('OrderFactory - createForDelivery - Test point 7');
         $shippingTimeRange->setLower($delivery->getDropoff()->getAfter());
         $shippingTimeRange->setUpper($delivery->getDropoff()->getBefore());
 
+        $log->warning('OrderFactory - createForDelivery - Test point 8');
         $order->setShippingTimeRange($shippingTimeRange);
 
+        $log->warning('OrderFactory - createForDelivery - Test point 9');
         if (null !== $customer) {
             $order->setCustomer($customer);
         }
 
+        $log->warning('OrderFactory - createForDelivery - Test point 10');
         $variant = $this->productVariantFactory->createForDelivery($delivery, $price);
 
+        $log->warning('OrderFactory - createForDelivery - Test point 11');
         $orderItem = $this->orderItemFactory->createNew();
         $orderItem->setVariant($variant);
         $orderItem->setUnitPrice($variant->getPrice());
 
+        $log->warning('OrderFactory - createForDelivery - Test point 12');
         $this->orderItemQuantityModifier->modify($orderItem, 1);
 
+        $log->warning('OrderFactory - createForDelivery - Test point 13');
         $this->orderModifier->addToOrder($order, $orderItem);
 
+        $log->warning('OrderFactory - createForDelivery - Test point 14');
+        $log->warning('OrderFactory - createForDelivery - $order: ' . $order->getItemsTotalExcludingTax());
+        
         return $order;
     }
 
     public function createForQuote(Quote $quote, int $price, ?CustomerInterface $customer = null, $attach = true)
     {
+        $log = new Logger('createForQuote');
+        $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+        $log->warning('OrderFactory - createForQuote - Test point 1');
+
         Assert::isInstanceOf($this->productVariantFactory, ProductVariantFactory::class);
 
         $order = $this->factory->createNew();
 
         if ($attach) {
-            $order->setDelivery($quote);
+            $order->setQuote($quote);
         }
 
         $order->setShippingAddress($quote->getDropoff()->getAddress());

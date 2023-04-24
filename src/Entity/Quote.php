@@ -483,6 +483,9 @@ class Quote extends TaskCollection implements TaskCollectionInterface, PackagesA
         $log->warning('Quote - toExpressionLanguageValues - $quote->getDropoff() 2: ' . $quote->getDropoff()->getAddress()->getStreetAddress());
         $log->warning('Quote - toExpressionLanguageValues - $quote->getOrder() 2: ' . $quote->getOrder());
 
+        $log->warning('Quote - toExpressionLanguageValues - $quote->getDistance() 2: ' . $quote->getDistance());
+        $log->warning('Quote - toExpressionLanguageValues - $quote->getWeight() 2: ' . $quote->getWeight());
+        $log->warning('Quote - toExpressionLanguageValues - $quote->getVehicle() 2: ' . $quote->getVehicle());
         return [
             'distance' => $quote->getDistance(),
             'weight' => $quote->getWeight(),
