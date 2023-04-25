@@ -81,5 +81,6 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
+    <field name="stripeCustomerId" type="string" column="stripe_customer_id" nullable="true"/>
   </entity>
 </doctrine-mapping>

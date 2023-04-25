@@ -1,5 +1,6 @@
 Feature: Authenticate
 
+  @debug
   Scenario: Login success
     Given the user is loaded:
       | email    | bob@coopcycle.org |
@@ -524,3 +525,16 @@ Feature: Authenticate
       }
       """
     Then the response status code should be 403
+
+  Scenario: Delete account
+    Given the user is loaded:
+      | email     | bob@coopcycle.org |
+      | username  | bob               |
+      | password  | 123456            |
+      | telephone | +33612345678      |
+    And the user "bob" is authenticated
+    When I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "DELETE" request to "/api/me"
+    Then the response status code should be 204
+    Given the user "bob" sends a "GET" request to "/api/me"
+    Then the response status code should be 401

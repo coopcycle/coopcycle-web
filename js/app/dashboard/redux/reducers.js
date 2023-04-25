@@ -50,6 +50,11 @@ import {
   CLOSE_CREATE_GROUP_MODAL,
   OPEN_ADD_TASK_TO_GROUP_MODAL,
   CLOSE_ADD_TASK_TO_GROUP_MODAL,
+  RESTORE_TASK_FAILURE,
+  OPEN_CREATE_DELIVERY_MODAL,
+  CLOSE_CREATE_DELIVERY_MODAL,
+  OPEN_CREATE_TOUR_MODAL,
+  CLOSE_CREATE_TOUR_MODAL,
 } from './actions'
 
 import {
@@ -80,6 +85,8 @@ const initialState = {
   recurrenceRulesErrorMessage: '',
   exportModalIsOpen: false,
   createGroupModalIsOpen: false,
+  isCreateDeliveryModalVisible: false,
+  isCreateTourModalVisible: false,
 }
 
 export const addModalIsOpen = (state = false, action) => {
@@ -201,6 +208,7 @@ export const isTaskModalLoading = (state = false, action) => {
   case CREATE_TASK_FAILURE:
   case COMPLETE_TASK_FAILURE:
   case CANCEL_TASK_FAILURE:
+  case RESTORE_TASK_FAILURE:
     return false
   default:
     return state
@@ -449,6 +457,28 @@ export const addTaskToGroupModalIsOpen = (state = false, action) => {
   case OPEN_ADD_TASK_TO_GROUP_MODAL:
     return true
   case CLOSE_ADD_TASK_TO_GROUP_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
+export const isCreateDeliveryModalVisible = (state = initialState.isCreateDeliveryModalVisible, action) => {
+  switch (action.type) {
+  case OPEN_CREATE_DELIVERY_MODAL:
+    return true
+  case CLOSE_CREATE_DELIVERY_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
+export const isCreateTourModalVisible = (state = initialState.isCreateTourModalVisible, action) => {
+  switch (action.type) {
+  case OPEN_CREATE_TOUR_MODAL:
+    return true
+  case CLOSE_CREATE_TOUR_MODAL:
     return false
   default:
     return state

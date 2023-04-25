@@ -45,6 +45,8 @@ services:
       dockerfile: './docker/php/Dockerfile'
       context: '.'
     image: coopcycle/php:8.1
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - postgres
       - redis
@@ -117,7 +119,7 @@ services:
       - 25:25
 
   stripe_mock:
-    image: stripemock/stripe-mock:v0.94.0
+    image: stripe/stripe-mock:latest
     ports:
       - '12111:12111'
 
@@ -127,7 +129,7 @@ services:
       - DEBUG=browserless/chrome*
 
   mjml:
-    image: adrianrudnik/mjml-server
+    image: adrianrudnik/mjml-server:2.4.0
     ports:
       - 8889:80
     environment:
@@ -232,7 +234,7 @@ services:
       driver: none
 
   typesense:
-    image: typesense/typesense:0.19.0
+    image: typesense/typesense:0.22.2
     ports:
       - 8108:8108
     environment:

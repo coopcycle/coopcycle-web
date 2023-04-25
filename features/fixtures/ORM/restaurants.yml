@@ -23,6 +23,12 @@ AppBundle\Entity\Address:
     streetAddress: '17, rue Milton 75009 Paris 9ème'
     geo: "@geo_3"
 
+AppBundle\Entity\Cuisine:
+  cuisine_asian:
+    name: 'asian'
+  cuisine_italian:
+    name: 'italian'
+
 AppBundle\Entity\Contract:
   contract_1:
     flatDeliveryPrice: 350
@@ -62,6 +68,10 @@ AppBundle\Entity\LocalBusiness:
     productOptions:
       - '@pizza_topping'
       - '@gluten_intolerance'
+    servesCuisine:
+      - '@cuisine_asian'
+    featured: true
+    exclusive: true
   restaurant_2:
     name: 'Café Barjot'
     address: "@address_2"

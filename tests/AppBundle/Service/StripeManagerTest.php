@@ -7,7 +7,9 @@ use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\StripeAccount;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Payment;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Vendor;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
@@ -332,6 +334,248 @@ class StripeManagerTest extends TestCase
         $this->stripeManager->createIntent($payment);
     }
 
+    public function testCreateIntentForNotConnectedAccount()
+    {
+        $payment = new Payment();
+        $payment->setStripeToken('tok_123456');
+        $payment->setAmount(3000);
+        $payment->setCurrencyCode('EUR');
+        $payment->setPaymentMethod('pm_123456');
+
+        $restaurant = $this->createRestaurant();
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getId()
+            ->willReturn(1);
+        $order
+            ->getNumber()
+            ->willReturn('ABC');
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
+        $order
+            ->getFeeTotal()
+            ->willReturn(750);
+
+        $user = $this->prophesize(User::class);
+
+        $user
+            ->getStripeCustomerId()
+            ->willReturn('cus_123456abcdef');
+
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->hasUser()
+            ->willReturn(true);
+
+        $customer
+            ->getUser()
+            ->willReturn($user->reveal());
+
+        $customer
+            ->hasUser()
+            ->willReturn(true);
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
+
+        $payment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequest('POST', '/v1/payment_intents', [
+            "amount" => 3000,
+            "currency" => "eur",
+            "description" => "Order ABC",
+            "payment_method" => "pm_123456",
+            "confirmation_method" => "manual",
+            "confirm" => "true",
+            "capture_method" => "manual",
+            "customer" => "cus_123456abcdef"
+        ]);
+
+        $this->stripeManager->createIntent($payment);
+    }
+
+    public function testCreateIntentWithSavePaymentForFutureUsage()
+    {
+        $payment = new Payment();
+        $payment->setStripeToken('tok_123456');
+        $payment->setAmount(3000);
+        $payment->setCurrencyCode('EUR');
+        $payment->setPaymentMethod('pm_123456');
+
+        $restaurant = $this->createRestaurant();
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getId()
+            ->willReturn(1);
+        $order
+            ->getNumber()
+            ->willReturn('ABC');
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
+        $order
+            ->getFeeTotal()
+            ->willReturn(750);
+
+        $user = $this->prophesize(User::class);
+
+        $user
+            ->getStripeCustomerId()
+            ->willReturn('cus_123456abcdef');
+
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->hasUser()
+            ->willReturn(true);
+
+        $customer
+            ->getUser()
+            ->willReturn($user->reveal());
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
+
+        $payment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequest('POST', '/v1/payment_intents', [
+            "amount" => 3000,
+            "currency" => "eur",
+            "description" => "Order ABC",
+            "payment_method" => "pm_123456",
+            "confirmation_method" => "manual",
+            "confirm" => "true",
+            "capture_method" => "manual",
+            "setup_future_usage" => "on_session",
+            "customer" => "cus_123456abcdef"
+        ]);
+
+        $this->stripeManager->createIntent($payment, true);
+    }
+
+    public function testCreateSetupIntentForSavePaymentMethod()
+    {
+        $payment = new Payment();
+        $payment->setStripeToken('tok_123456');
+
+        $user = $this->prophesize(User::class);
+
+        $user
+            ->getStripeCustomerId()
+            ->willReturn('cus_123456abcdef');
+
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->getUser()
+            ->willReturn($user->reveal());
+
+        $order = $this->prophesize(OrderInterface::class);
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
+
+        $payment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequest('POST', '/v1/setup_intents', [
+            "payment_method_types" => ["card"],
+            "payment_method" => "pm_123456",
+            "usage" => "on_session",
+            "customer" => "cus_123456abcdef",
+            "confirm" => true
+        ]);
+
+        $this->stripeManager->createSetupIntent($payment, "pm_123456");
+    }
+
+    public function testClonePaymentMethodForConnectedAccount()
+    {
+        $payment = new Payment();
+        $payment->setStripeToken('tok_123456');
+        $payment->setAmount(3000);
+        $payment->setCurrencyCode('EUR');
+        $payment->setPaymentMethod('pm_123456');
+
+        $restaurant = $this->createRestaurant('acct_123456');
+
+        $user = $this->prophesize(User::class);
+
+        $user
+            ->getStripeCustomerId()
+            ->willReturn('cus_123456abcdef');
+
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->getUser()
+            ->willReturn($user->reveal());
+
+        $customer
+            ->hasUser()
+            ->willReturn(true);
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->getId()
+            ->willReturn(1);
+        $order
+            ->getNumber()
+            ->willReturn('ABC');
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant));
+        $order
+            ->getFeeTotal()
+            ->willReturn(750);
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
+
+        $payment->setOrder($order->reveal());
+
+        $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_methods', 'acct_123456', [
+            "payment_method" => "pm_123456",
+            "customer" => "cus_123456abcdef"
+        ]);
+
+        $this->stripeManager->clonePaymentMethodToConnectedAccount($payment);
+    }
+
     public function testCreateIntentWithTransferData()
     {
         $payment = new Payment();
@@ -479,5 +723,38 @@ class StripeManagerTest extends TestCase
         ]);
 
         $this->stripeManager->createIntent($payment);
+    }
+
+    public function testAttachPaymentMethodToCustomer()
+    {
+        $order = $this->prophesize(OrderInterface::class);
+
+        $user = $this->prophesize(User::class);
+
+        $user
+            ->getStripeCustomerId()
+            ->willReturn('cus_123456abcdef');
+
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->getUser()
+            ->willReturn($user->reveal());
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
+
+        $payment = new Payment();
+        $payment->setOrder($order->reveal());
+
+        $payment->setPaymentDataToSaveAndReuse('pm_12345678');
+
+        $this->shouldSendStripeRequest('GET',  '/v1/payment_methods/pm_12345678');
+        $this->shouldSendStripeRequest('POST', '/v1/payment_methods/pm_12345678/attach', [
+            'customer' => 'cus_123456abcdef'
+        ]);
+
+        $this->stripeManager->attachPaymentMethodToCustomer($payment);
     }
 }

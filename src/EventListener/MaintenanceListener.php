@@ -20,6 +20,7 @@ class MaintenanceListener
         '#^/api/routing#',
         '#^/invitation/define-password#',
         '#^/resetting#',
+        '#^/js/routing#'
     ];
 
     public function __construct(

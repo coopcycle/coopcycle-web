@@ -1,0 +1,63 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+@import "~font-awesome/scss/_variables.scss";
+@import "~font-awesome/scss/_mixins.scss";
+@import "~font-awesome/scss/_animated.scss";
+
+.form-group.has-loader {
+
+  position: relative;
+
+  &:after {
+    @include fa-icon();
+    content: $fa-var-spinner;
+    @extend .fa-pulse;
+    display: block;
+    position: absolute;
+    top: calc(50% - 7px);
+    right: $padding-base-horizontal;
+    display: none;
+  }
+
+  &.has-loader-loading:after {
+		display: inline;
+  }
+}
+
+.form-group-search {
+
+  position: relative;
+
+  &:before {
+    @include fa-icon();
+    content: $fa-var-search;
+    display: block;
+    position: absolute;
+    top: calc(50% - 7px);
+    left: $padding-base-horizontal;
+    color: #6c757d;
+  }
+
+  & > input {
+    padding-left: 34px;
+  }
+
+}
+
+.search-navbar-menu {
+	position: absolute;
+  background-color: white;
+  z-index: 2;
+  cursor: pointer;
+  left: 0;
+  right: 0;
+  margin-left: 15px;
+  margin-right: 15px;
+  overflow: auto;
+  font-size: 0.8em;
+}
+
+.search-navbar-input {
+  @media (min-width: $screen-lg-min) {
+    width: 390px !important;
+  }
+}

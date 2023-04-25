@@ -9,7 +9,10 @@ use AppBundle\Entity\Delivery;
 // use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
 use AppBundle\Message\Webhook;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -35,9 +38,17 @@ class TriggerWebhookTest extends TestCase
             ->getIriFromItem(Argument::type(Delivery::class))
             ->willReturn('/api/deliveries/1');
 
+        $this->woopitDeliveryRepository = $this->prophesize(ObjectRepository::class);
+
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+        $this->entityManager
+            ->getRepository(WoopitDelivery::class)
+            ->willReturn($this->woopitDeliveryRepository->reveal());
+
         $this->triggerWebhook = new TriggerWebhook(
             $this->messageBus->reveal(),
-            $this->iriConverter->reveal()
+            $this->iriConverter->reveal(),
+            $this->entityManager->reveal()
         );
     }
 

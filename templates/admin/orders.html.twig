@@ -1,6 +1,8 @@
 {% extends "admin.html.twig" %}
 
+{% if is_granted('ROLE_ADMIN') %}
 {% form_theme order_export_form 'form/order_export.html.twig' %}
+{% endif %}
 
 {% block breadcrumb %}
 <li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
@@ -21,9 +23,11 @@
       <label class="mr-2">{{ 'adminDashboard.orders.showCanceled'|trans }}</label>
       <span id="show-cancelled-switch"></span>
     </span>
+    {% if is_granted('ROLE_ADMIN') %}
     <button class="btn btn-primary btn-success" type="button" data-toggle="modal" data-target="#order-export-modal">
       <i class="fa fa-download"></i> {{ 'adminDashboard.dashboard.export'|trans }}
     </button>
+    {% endif %}
     <a class="btn btn-default" href="{{ path('admin_foodtech_dashboard', { date: 'now'|date('Y-m-d') }) }}">
       <i class="fa fa-th-large"></i> Dashboard
     </a>
@@ -41,6 +45,7 @@
 {% include "admin/pagination.html.twig" %}
 {% include "_partials/order/list.html.twig" %}
 
+{% if is_granted('ROLE_ADMIN') %}
 <div class="modal fade" tabindex="-1" role="dialog" id="order-export-modal">
   <div class="modal-dialog" role="document">
     {{ form_start(order_export_form, { attr: { class: 'modal-content' } }) }}
@@ -62,6 +67,7 @@
     {{ form_end(order_export_form) }}
   </div>
 </div>
+{% endif %}
 
 {% include "_partials/order/receipt_modal.html.twig" %}
 

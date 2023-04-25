@@ -63,7 +63,9 @@ services:
   coopcycle.domain.order.handler.cancel_order:
     class: AppBundle\Domain\Order\Handler\CancelOrderHandler
     arguments:
+      - '@coopcycle.stripe_manager'
       - '@event_recorder'
+      - '@sm.factory'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\CancelOrder
@@ -122,6 +124,8 @@ services:
     tags:
         - name: event_subscriber
           subscribes_to: order:cancelled
+        - name: event_subscriber
+          subscribes_to: order:refused
 
   coopcycle.domain.order.reactor.calculate_timeline:
     class: AppBundle\Domain\Order\Reactor\CalculateTimeline
@@ -174,7 +178,7 @@ services:
   coopcycle.domain.order.reactor.clear_session:
     class: AppBundle\Domain\Order\Reactor\ClearSession
     arguments:
-      - '@session'
+      - '@request_stack'
       - '%sylius_cart_restaurant_session_key_name%'
     tags:
         - name: event_subscriber
@@ -253,6 +257,15 @@ services:
         - name: event_subscriber
           subscribes_to: order:picked
 
+  coopcycle.domain.order.reactor.trade_dabba:
+    class: AppBundle\Domain\Order\Reactor\TradeDabba
+    arguments:
+      - '@AppBundle\Dabba\Client'
+      - '@monolog.logger.dabba'
+    tags:
+        - name: event_subscriber
+          subscribes_to: order:picked
+
   coopcycle.domain.order.reactor.create_geofencing_channel:
     class: AppBundle\Domain\Order\Reactor\CreateGeofencingChannel
     arguments:
@@ -318,3 +331,19 @@ services:
     tags:
       - name: event_subscriber
         subscribes_to: order:created
+
+  coopcycle.domain.order.reactor.orders_rate_limit:
+    class: AppBundle\Domain\Order\Reactor\OrdersRateLimitReactor
+    arguments:
+      - '@AppBundle\Utils\OrdersRateLimit'
+    tags:
+      - name: event_subscriber
+        subscribes_to: order:created
+      - name: event_subscriber
+        subscribes_to: order:delayed
+      - name: event_subscriber
+        subscribes_to: order:picked
+      - name: event_subscriber
+        subscribes_to: order:refused
+      - name: event_subscriber
+        subscribes_to: order:cancelled

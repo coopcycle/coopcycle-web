@@ -195,4 +195,24 @@ class SchemaDotOrgParserTest extends TestCase
             '18:30-21:00'
         ], $exceptions['2021-07-14']);
     }
+
+    public function testRayon9Issue()
+    {
+        $closingRules = new ArrayCollection();
+
+        $closingRule = new ClosingRule();
+        $closingRule->setStartDate(new \DateTime("2022-06-23T00:00:00+02:00"));
+        $closingRule->setEndDate(new \DateTime("2022-06-25T12:00:00+02:00"));
+
+        $closingRules->add($closingRule);
+
+        $exceptions = SchemaDotOrgParser::parseExceptions(
+            $closingRules,
+            SchemaDotOrgParser::parseCollection([
+                "Sa 09:00-12:00",
+            ])
+        );
+
+        $this->assertEmpty($exceptions['2022-06-25']);
+    }
 }

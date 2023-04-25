@@ -63,6 +63,14 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\RemoveFromGroup
 
+  coopcycle.domain.task.handler.restore:
+    class: AppBundle\Domain\Task\Handler\RestoreHandler
+    arguments:
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\Restore
+
   #
   # Reactors
   #
@@ -120,6 +128,7 @@ services:
     arguments:
       - '@messenger.default_bus'
       - '@api_platform.iri_converter'
+      - '@doctrine.orm.default_entity_manager'
     tags:
       - name: event_subscriber
         subscribes_to: task:assigned

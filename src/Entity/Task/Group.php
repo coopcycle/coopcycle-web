@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "input_formats"={"csv"={"text/csv"}},
  *       "denormalization_context"={"groups"={"task", "task_create"}},
  *       "controller"=TaskBulk::class,
- *       "security"="is_granted('ROLE_OAUTH2_TASKS')"
+ *       "security"="is_granted('ROLE_OAUTH2_TASKS') or is_granted('ROLE_ADMIN')"
  *     },
  *     "tasks_import_async"={
  *       "method"="POST",
@@ -36,7 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "input_formats"={"csv"={"text/csv"}},
  *       "deserialize"=false,
  *       "controller"=TaskBulkAsync::class,
- *       "security"="is_granted('ROLE_OAUTH2_TASKS')"
+ *       "security"="is_granted('ROLE_OAUTH2_TASKS') or is_granted('ROLE_ADMIN')"
  *     },
  *     "post"={
  *       "method"="POST",

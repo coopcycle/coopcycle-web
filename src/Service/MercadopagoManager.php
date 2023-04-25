@@ -30,21 +30,25 @@ class MercadopagoManager
      */
     public function authorize(PaymentInterface $payment)
     {
-        $this->configure();
-
         $order = $payment->getOrder();
         $restaurant = $order->getRestaurant();
 
         $options = [];
 
         $applicationFee = 0;
+        $accessToken = null;
         if (null !== $restaurant) {
             $account = $restaurant->getMercadopagoAccount();
             if ($account) {
                 $applicationFee = $order->getFeeTotal();
-                // @see MercadoPago\Manager::processOptions()
-                $options['custom_access_token'] = $account->getAccessToken();
+                $accessToken = $account->getAccessToken();
             }
+        }
+
+        if (null !== $accessToken) {
+            MercadoPago\SDK::setAccessToken($accessToken);
+        } else {
+            $this->configure();
         }
 
         $order = $payment->getOrder();
@@ -79,23 +83,27 @@ class MercadopagoManager
      */
     public function capture(PaymentInterface $payment)
     {
-        $this->configure();
-
         // FIXME: should be refactored
 
         $order = $payment->getOrder();
 
         $options = [];
 
+        $accessToken = null;
         if (null !== $order->getRestaurant()) {
             $account = $order->getRestaurant()->getMercadopagoAccount();
             if ($account) {
-                // @see MercadoPago\Manager::processOptions()
-                $options['custom_access_token'] = $account->getAccessToken();
+                $accessToken = $account->getAccessToken();
             }
         }
 
-        $payment = MercadoPago\Payment::read(["id" => $payment->getCharge()], ["custom_access_token" => $options['custom_access_token']]);
+        if (null !== $accessToken) {
+            MercadoPago\SDK::setAccessToken($accessToken);
+        } else {
+            $this->configure();
+        }
+
+        $payment = MercadoPago\Payment::read(["id" => $payment->getCharge()]);
         $payment->capture = true;
 
         if (!$payment->update()) {

@@ -103,6 +103,14 @@ services:
   League\Flysystem\Filesystem $taskImagesFilesystem: '@task_images_filesystem'
   Nucleos\ProfileBundle\Mailer\MailerInterface: '@nucleos_profile.mailer.default'
   Lcobucci\JWT\Configuration $cubeJsJwtConfiguration: '@cubejs.jwt.config'
+  Hashids\Hashids $hashids8: '@hashids.8'
+  Hashids\Hashids $hashids12: '@hashids.12'
+  BenjaminFavre\OAuthHttpClient\OAuthHttpClient $woopitClient: '@woopit.oauth_http_client'
+  ACSEO\TypesenseBundle\Finder\CollectionFinderInterface $typesenseShopsFinder: '@typesense.finder.shops'
+  ACSEO\TypesenseBundle\Manager\CollectionManager: '@typesense.collection_manager'
+  ACSEO\TypesenseBundle\Manager\DocumentManager: '@typesense.document_manager'
+  ACSEO\TypesenseBundle\Client\CollectionClient: '@typesense.collection_client'
+  ACSEO\TypesenseBundle\Client\TypesenseClient: '@typesense.client'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -185,6 +193,11 @@ services:
       $promotionRuleFactory: '@sylius.factory.promotion_rule'
       $promotionFactory: '@sylius.factory.promotion'
       $optinExportUsersEnabled: '%env(bool:OPTIN_EXPORT_USERS_ENABLED)%'
+      $adhocOrderEnabled: '%env(bool:ADHOC_ORDER_ENABLED)%'
+
+  AppBundle\Controller\DashboardController:
+    arguments:
+      $adhocOrderEnabled: '%env(bool:ADHOC_ORDER_ENABLED)%'
 
   AppBundle\EventListener\LocaleListener:
     arguments: ['%env(COOPCYCLE_LOCALE)%']
@@ -618,10 +631,6 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
-  AppBundle\Doctrine\EventSubscriber\TaskRecurrenceRuleSubscriber:
-    tags:
-      - { name: doctrine.event_subscriber }
-
   AppBundle\Doctrine\EventSubscriber\SearchDeliveriesSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.search }
@@ -671,6 +680,10 @@ services:
       - { name: kernel.event_subscriber }
       - { name: monolog.logger, channel: urbantz }
 
+  AppBundle\Doctrine\EventSubscriber\ShopsEventsForTypesenseSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
   AppBundle\Action\Settings:
     public: true
     arguments:
@@ -678,6 +691,7 @@ services:
       $phoneNumberNormalizer: '@misd_phone_number.serializer.normalizer'
       $country: '%country_iso%'
       $locale: '%env(COOPCYCLE_LOCALE)%'
+      $splitTermsAndConditionsAndPrivacyPolicy: '%env(SPLIT_TERMS_AND_CONDITIONS_AND_PRIVACY_POLICY)%'
 
   AppBundle\Action\Register:
     public: true
@@ -761,6 +775,16 @@ services:
     autowire: false
     public: false
 
+  AppBundle\Api\DataProvider\TaskListCollectionDataProvider:
+    parent: 'api_platform.doctrine.orm.collection_data_provider'
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+    calls:
+      - setTokenExtractor: ['@AppBundle\Security\TokenStoreExtractor']
+    autoconfigure: false
+    autowire: false
+    public: false
+
   AppBundle\Api\DataProvider\RestaurantPledgeFilterExtension:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
@@ -836,6 +860,8 @@ services:
   AppBundle\Api\DataTransformer\RestaurantInputDataTransformer: ~
   AppBundle\Api\DataTransformer\RemotePushTokenInputDataTransformer: ~
   AppBundle\Api\DataTransformer\UrbantzWebhookInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\BioDeliverInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\TourInputDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:
@@ -1025,6 +1051,9 @@ services:
   AppBundle\Security\StoreVoter:
     tags: [ 'security.voter' ]
 
+  AppBundle\Security\UserVoter:
+    tags: [ 'security.voter' ]
+
   AppBundle\Security\CartSessionVoter:
     tags: [ 'security.voter' ]
 
@@ -1035,6 +1064,9 @@ services:
     tags: [ 'security.voter' ]
 
   AppBundle\Security\ProductOptionValueVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\DeliveryQuoteVoter:
     tags: [ 'security.voter' ]
 
   # While adding a priority is optional, it’s recommended to add one to make sure the expected value is injected.
@@ -1093,6 +1125,8 @@ services:
       $namespace: '%centrifugo_namespace%'
 
   AppBundle\Spreadsheet\DeliveryDataExporter: ~
+  AppBundle\Spreadsheet\DV4CULDataExporter: ~
+  AppBundle\Spreadsheet\ColisActivDataExporter: ~
 
   AppBundle\Edenred\Authentication:
     arguments:
@@ -1169,3 +1203,47 @@ services:
   AppBundle\Translation\DatePeriodFormatter:
     arguments:
       $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  hashids.8:
+    class: Hashids\Hashids
+    arguments: ['%secret%', 8]
+
+  AppBundle\Service\PriceHelper:
+    arguments:
+      $state: "%region_iso%"
+
+  hashids.12:
+    class: Hashids\Hashids
+    arguments: ['%secret%', 12]
+
+  woopit.grant_type:
+    class: BenjaminFavre\OAuthHttpClient\GrantType\ClientCredentialsGrantType
+    arguments: [
+      '@woopit.http_client',
+      'https://connect.%env(WOOPIT_HOST)%/api/oauth/token',
+      '%env(WOOPIT_CLIENT_ID)%',
+      '%env(WOOPIT_CLIENT_SECRET)%'
+    ]
+
+  woopit.oauth_http_client:
+      class: BenjaminFavre\OAuthHttpClient\OAuthHttpClient
+      arguments: [
+        '@woopit.http_client',
+        '@woopit.grant_type'
+      ]
+
+  AppBundle\Dabba\Client:
+    arguments:
+      $baseUrl: "%dabba_base_url%"
+      $clientId: "%dabba_client_id%"
+      $clientSecret: "%dabba_client_secret%"
+
+  AppBundle\Dabba\Context:
+    tags:
+      - { name: monolog.logger, channel: dabba }
+
+  AppBundle\Typesense\Converter\:
+    resource: '../../src/Typesense/Converter/*'
+    public: true
+
+  AppBundle\Utils\OrdersRateLimit: ~

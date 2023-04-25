@@ -47,13 +47,10 @@ CoopCycle uses [OpenStreetMap](https://www.openstreetmap.org/) to geocode addres
 To configure address autocomplete, choose a provider below, grab the credentials, and configure environment variables accordingly.
 
 ```
-ALGOLIA_PLACES_APP_ID
-ALGOLIA_PLACES_API_KEY
 LOCATIONIQ_ACCESS_TOKEN
 GEOCODE_EARTH_API_KEY
 ```
 
-- For [Algolia Places](https://community.algolia.com/places/), set `COOPCYCLE_AUTOCOMPLETE_ADAPTER=algolia`
 - For [Geocode Earth](https://geocode.earth/), set `COOPCYCLE_AUTOCOMPLETE_ADAPTER=geocode-earth`
 - For [LocationIQ](https://locationiq.com/), set `COOPCYCLE_AUTOCOMPLETE_ADAPTER=locationiq`
 

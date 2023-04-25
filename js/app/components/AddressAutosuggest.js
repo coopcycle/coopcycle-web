@@ -24,14 +24,6 @@ import {
   highlightFirstSuggestion as highlightFirstSuggestionGB } from './AddressAutosuggest/gb'
 
 import {
-  onSuggestionsFetchRequested as onSuggestionsFetchRequestedAlgolia,
-  poweredBy as poweredByAlgolia,
-  transformSuggestion as transformSuggestionAlgolia,
-  geocode as geocodeAlgolia,
-  configure as configureAlgolia
-  } from './AddressAutosuggest/algolia'
-
-import {
   onSuggestionsFetchRequested as onSuggestionsFetchRequestedLocationIQ,
   poweredBy as poweredByLocationIQ,
   transformSuggestion as transformSuggestionLocationIQ,
@@ -99,16 +91,6 @@ const localized = {
 }
 
 const adapters = {
-  algolia: {
-    onSuggestionsFetchRequested: onSuggestionsFetchRequestedAlgolia,
-    poweredBy: poweredByAlgolia,
-    transformSuggestion: transformSuggestionAlgolia,
-    geocode: geocodeAlgolia,
-    useCache: function () {
-      return true
-    },
-    configure: configureAlgolia,
-  },
   locationiq: {
     onSuggestionsFetchRequested: onSuggestionsFetchRequestedLocationIQ,
     poweredBy: poweredByLocationIQ,

@@ -12,6 +12,7 @@ class Cuisine
 {
     /**
      * @var int
+     * @Groups({"restaurant"})
      */
     private $id;
 

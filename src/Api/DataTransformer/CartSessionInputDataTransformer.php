@@ -55,6 +55,19 @@ class CartSessionInputDataTransformer implements DataTransformerInterface
             $cart->setCustomer($user->getCustomer());
         }
 
+        if ($data->shippingAddress) {
+            $isNewAddress = null === $data->shippingAddress->getId();
+
+            // When this is an existing address,
+            // make sure it belongs to the customer, if any
+            $addressBelongsToCustomer = !$isNewAddress
+                && (null !== $cart->getCustomer() && $cart->getCustomer()->hasAddress($data->shippingAddress));
+
+            if ($isNewAddress || $addressBelongsToCustomer) {
+                $cart->setShippingAddress($data->shippingAddress);
+            }
+        }
+
         $session->cart = $cart;
 
         return $session;

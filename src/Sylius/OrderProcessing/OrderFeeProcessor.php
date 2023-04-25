@@ -162,10 +162,19 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             }
         }
 
+        $feeAmount = (int) (($order->getItemsTotal() * $feeRate) + $businessAmount);
+
+        // HOTFIX
+        // When the promotion amount is higher than the platform fee,
+        // make sure we don't add an adjustment with a negative amount
+        if ($feeAmount < 0) {
+            $feeAmount = 0;
+        }
+
         $feeAdjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::FEE_ADJUSTMENT,
             $this->translator->trans('order.adjustment_type.platform_fees'),
-            (int) (($order->getItemsTotal() * $feeRate) + $businessAmount),
+            $feeAmount,
             $neutral = true
         );
         $order->addAdjustment($feeAdjustment);

@@ -42,12 +42,14 @@
           </a>
         </li>
         {% endif %}
+        {% if is_granted('ROLE_ADMIN') %}
         <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.restaurants{% endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_restaurants') }}">
             <i class="fa fa-shopping-basket"></i>
             <span class="navbar-label">{% trans %}adminDashboard.shops.title{% endtrans %}</span>
           </a>
         </li>
+        {% endif %}
         <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.users{% endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_users') }}">
             <i class="fa fa-user"></i>
@@ -61,15 +63,19 @@
           </a>
           <ul class="dropdown-menu">
             <li><a href="{{ path('admin_activity') }}">{% trans %}adminDashboard.activity.title{% endtrans %}</a></li>
+            {% if is_granted('ROLE_ADMIN') %}
             <li><a href="{{ path('admin_metrics') }}">{% trans %}adminDashboard.metrics.title{% endtrans %}</a></li>
+            {% endif %}
           </ul>
         </li>
+        {% if is_granted('ROLE_ADMIN') %}
         <li>
           <a class="admin-navbar__link" href="{{ path('admin_settings') }}">
             <i class="fa fa-cog"></i>
             <span class="navbar-label">{% trans %}adminDashboard.settings.title{% endtrans %}</span>
           </a>
         </li>
+        {% endif %}
         {% include '_partials/user/account_dropdown.html.twig' %}
       </ul>
     </div>

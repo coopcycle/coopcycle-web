@@ -3,6 +3,7 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\OrderCancelled;
+use AppBundle\Domain\Order\Event\OrderRefused;
 use AppBundle\Service\TaskManager;
 
 class CancelTasks
@@ -14,7 +15,7 @@ class CancelTasks
         $this->taskManager = $taskManager;
     }
 
-    public function __invoke(OrderCancelled $event)
+    public function __invoke(OrderCancelled|OrderRefused $event)
     {
         $order = $event->getOrder();
 

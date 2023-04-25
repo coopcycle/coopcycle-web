@@ -320,3 +320,311 @@ Feature: Dispatch
         "tasks":"@array@.count(2)"
       }
       """
+
+  Scenario: Retrieve task lists as OAuth client
+    Given the fixtures files are loaded:
+      | stores_with_orgs.yml |
+      | tasks_with_orgs.yml  |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/task_lists?date=2018-12-01"
+    Then print last response
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskList",
+        "@id":"/api/task_lists",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/task_lists/1",
+            "@type":"TaskList",
+            "items":[
+              {
+                "@id":"/api/tasks/1",
+                "@type":"Task",
+                "id":1,
+                "type":"DROPOFF",
+                "@*@": "@*@"
+              }
+            ],
+            "distance":0,
+            "duration":0,
+            "polyline":"iyfiH}tfM??",
+            "date":"2018-12-01",
+            "username":"sarah",
+            "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()"
+          },
+          {
+            "@id":"/api/task_lists/2",
+            "@type":"TaskList",
+            "items":[
+              {
+                "@id":"/api/tasks/3",
+                "@type":"Task",
+                "id":3,
+                "type":"DROPOFF",
+                "@*@": "@*@"
+              }
+            ],
+            "distance":0,
+            "duration":0,
+            "polyline":"iyfiH}tfM??",
+            "date":"2018-12-01",
+            "username":"bob",
+            "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()"
+          }
+        ],
+        "hydra:totalItems":2,
+        "hydra:view":{
+          "@id":"/api/task_lists?date=2018-12-01",
+          "@type":"hydra:PartialCollectionView"
+        },
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/task_lists{?date}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":[
+            {
+              "@type":"IriTemplateMapping",
+              "variable":"date",
+              "property":"date",
+              "required":false
+            }
+          ]
+        }
+      }
+      """
+
+  Scenario: Retrieve tasks filtered by organization
+    Given the fixtures files are loaded:
+      | stores_with_orgs.yml |
+      | tasks_with_orgs.yml  |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/tasks?date=2018-12-01&organization=Acme"
+    Then print last response
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "id":1,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":{
+              "@id":"/api/addresses/1",
+              "@*@":"@*@"
+            },
+            "doneAfter":"@string@.isDateTime()",
+            "doneBefore":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "orgName":"Acme",
+            "assignedTo":"sarah",
+            "@*@":"@*@"
+          },
+          {
+            "id":3,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":{
+              "@id":"/api/addresses/1",
+              "@*@":"@*@"
+            },
+            "doneAfter":"@string@.isDateTime()",
+            "doneBefore":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "orgName":"Acme",
+            "assignedTo":"bob",
+            "@*@":"@*@"
+          }
+        ],
+        "hydra:totalItems":2,
+        "@*@":"@*@"
+      }
+      """
+
+  Scenario: Create delivery from tasks
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/deliveries/from_tasks" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/4",
+          "/api/tasks/5"
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+         "@context":"/api/contexts/Delivery",
+         "@id":@string@,
+         "@type":"http://schema.org/ParcelDelivery",
+         "id":@integer@,
+         "pickup":{
+            "@id":"/api/tasks/4",
+            "@type":"Task",
+            "id":4,
+            "@*@":"@*@"
+         },
+         "dropoff":{
+            "@id":"/api/tasks/5",
+            "@type":"Task",
+            "id":5,
+            "@*@":"@*@"
+         },
+         "trackingUrl":@string@
+      }
+      """
+
+  Scenario: Create delivery from tasks (multiple)
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/deliveries/from_tasks" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/4",
+          "/api/tasks/5",
+          "/api/tasks/8"
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+         "@context":"/api/contexts/Delivery",
+         "@id":@string@,
+         "@type":"http://schema.org/ParcelDelivery",
+         "id":@integer@,
+         "pickup":{
+            "@id":"/api/tasks/4",
+            "@type":"Task",
+            "id":4,
+            "@*@":"@*@"
+         },
+         "dropoff":{
+            "@id":"/api/tasks/8",
+            "@type":"Task",
+            "id":8,
+            "@*@":"@*@"
+         },
+         "trackingUrl":@string@
+      }
+      """
+
+  Scenario: Create tour from tasks
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/tours" with body:
+      """
+      {
+        "name":"Monday tour",
+        "tasks":[
+          "/api/tasks/4",
+          "/api/tasks/5"
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+         "@context":"/api/contexts/Tour",
+         "@id":"/api/tours/5",
+         "@type":"Tour",
+         "name":"Monday tour",
+         "items":[
+            "/api/tasks/4",
+            "/api/tasks/5"
+         ],
+         "distance":@integer@,
+         "duration":@integer@,
+         "polyline":@string@,
+         "createdAt":"@string@.isDateTime()",
+         "updatedAt":"@string@.isDateTime()"
+      }
+      """
+
+  Scenario: Administrator can assign multiple tasks at once
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/assign" with body:
+      """
+      {
+        "username": "sarah",
+        "tasks": [
+          "/api/tasks/8",
+          "/api/tasks/9"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member": [
+          {
+            "@id":"/api/tasks/8",
+            "@type":"Task",
+            "id":8,
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "@*@":"@*@"
+          },
+          {
+            "@id":"/api/tasks/9",
+            "@type":"Task",
+            "id":9,
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "@*@":"@*@"
+          }
+        ],
+        "hydra:totalItems": 2,
+        "@*@":"@*@"
+      }
+      """

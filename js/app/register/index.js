@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import './split-terms-and-privacy'
 
 const emailInput =
   document.querySelector('[name="registration_form[email]"]')

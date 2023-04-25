@@ -41,6 +41,7 @@
 {% set cannot_be_enabled = ('enabled' in activationErrors|keys or 'data.enabled' in activationErrors|keys) %}
 
 {% set show_stripe_connect = false %}
+{% set show_mercadopago_connect = false %}
 
 {% if restaurant.id is not null %}
   {% for role in restaurant.stripeConnectRoles %}
@@ -48,9 +49,14 @@
       {% set show_stripe_connect = true %}
     {% endif %}
   {% endfor %}
+  {% for role in restaurant.mercadopagoConnectRoles %}
+    {% if is_granted(role) %}
+      {% set show_mercadopago_connect = true %}
+    {% endif %}
+  {% endfor %}
 {% endif %}
 
-{% set show_payment = (restaurant.id is not null and show_stripe_connect) %}
+{% set show_payment = (restaurant.id is not null and (show_stripe_connect or show_mercadopago_connect)) %}
 
 {{ form_start(form) }}
 
@@ -60,7 +66,7 @@
     </span>
     <div class="switch-wrapper">
       {% set enabled_checkbox_attr = { class: 'checkbox switch' } %}
-      {% if cannot_be_enabled and (form.vars.data.enabled or restaurant.id is null) %}
+      {% if cannot_be_enabled and not form.vars.data.enabled %}
         {% set enabled_checkbox_attr = enabled_checkbox_attr|merge({ disabled: 'disabled' }) %}
       {% endif %}
       {{ form_label(form.enabled) }} {{ form_widget(form.enabled, { attr: enabled_checkbox_attr }) }}
@@ -138,6 +144,13 @@
           </a>
         </li>
         {% endif %}
+        {% if form.dabba is defined %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#dabba" aria-controls="dabba">
+            {{ 'restaurant.form.section.dabba'|trans }}
+          </a>
+        </li>
+        {% endif %}
         {% if restaurant.id is not null %}
         <li role="presentation">
           <a role="tab" data-toggle="tab" href="#embed" aria-controls="embed">
@@ -160,11 +173,9 @@
         <div role="tabpanel" class="tab-pane" id="fulfillment">
           {% include "restaurant/form/_partials/fulfillment.html.twig" %}
         </div>
-        {% if show_payment %}
-        <div role="tabpanel" class="tab-pane" id="payment">
+        <div role="tabpanel" class="tab-pane {% if not show_payment %}d-none{% endif %}" id="payment">
           {% include "restaurant/form/_partials/payment.html.twig" %}
         </div>
-        {% endif %}
         <div role="tabpanel" class="tab-pane" id="settlement">
           {% include "restaurant/form/_partials/settlement.html.twig" %}
         </div>
@@ -186,6 +197,11 @@
         {% if form.enBoitLePlatEnabled is defined %}
         <div role="tabpanel" class="tab-pane" id="en-boite-le-plat">
           {{ form_row(form.enBoitLePlatEnabled) }}
+        </div>
+        {% endif %}
+        {% if form.dabba is defined %}
+        <div role="tabpanel" class="tab-pane" id="dabba">
+          {{ form_row(form.dabba) }}
         </div>
         {% endif %}
         {% if restaurant.id is not null %}

@@ -1,0 +1,11 @@
+include:
+  - restaurants.yml
+
+AppBundle\Entity\Hub:
+  hub_1:
+    name: 'El Mercado'
+    address: "@address_1"
+    contract: "@contract_1"
+    restaurants:
+      - "@restaurant_1"
+      - "@restaurant_2"

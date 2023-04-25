@@ -49,8 +49,6 @@ class RecurrenceRuleBetween
 
         $payloads = array_map(function ($payload) use ($transformer, $constraint, $rule, $startDate) {
 
-            $payload['address'] = $payload['address']['@id'];
-
             $rule->setStartDate(
                 new \DateTime($startDate->format('Y-m-d') . ' ' . $payload['after'])
             );
@@ -68,7 +66,9 @@ class RecurrenceRuleBetween
 
         $tasks = [];
         foreach ($payloads as $payload) {
-            $task = $this->denormalizer->denormalize($payload, Task::class, 'jsonld');
+            $task = $this->denormalizer->denormalize($payload, Task::class, 'jsonld', [
+                'groups' => ['task_create']
+            ]);
             $task->setOrganization($data->getStore()->getOrganization());
             $task->setRecurrenceRule($data);
             $this->entityManager->persist($task);

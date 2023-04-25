@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\LocalBusiness\ClosingRulesTrait;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethodsTrait;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
@@ -13,6 +14,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Sylius\Component\Resource\Model\ToggleableInterface;
 use Sylius\Component\Resource\Model\ToggleableTrait;
 
+/**
+ * @ApiResource(
+ *   collectionOperations={},
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *     },
+ *   }
+ * )
+ */
 class Hub implements OpenCloseInterface, ToggleableInterface
 {
     use ClosingRulesTrait;

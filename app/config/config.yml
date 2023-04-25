@@ -61,6 +61,14 @@ parameters:
     vytal_enabled: '%env(bool:VYTAL_ENABLED)%'
     en_boite_le_plat_enabled: '%env(bool:EN_BOITE_LE_PLAT_ENABLED)%'
     nonprofits_enabled: '%env(bool:NONPROFITS_ENABLED)%'
+    dv4cul_enabled: '%env(bool:DV4CUL_ENABLED)%'
+    dabba_enabled: '%env(bool:DABBA_ENABLED)%'
+    dabba_base_url: '%env(DABBA_BASE_URL)%'
+    dabba_client_id: '%env(DABBA_CLIENT_ID)%'
+    dabba_client_secret: '%env(DABBA_CLIENT_SECRET)%'
+    typesense_shops_collection_name: "shops"
+    typesense_products_collection_name: "products"
+    colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -168,6 +176,7 @@ framework:
             'AppBundle\Message\TopBarNotification': async
             'AppBundle\Message\Webhook': async
             'AppBundle\Message\IndexDeliveries': async
+            'AppBundle\Message\WoopitDocumentWebhook': async
     workflows:
         enabled: true
     mailer:
@@ -190,9 +199,13 @@ framework:
                 base_uri: "%router.request_context.scheme%://%router.request_context.host%"
             osrm.client:
                 base_uri: "http://%osrm_host%"
-                timeout: 1.0
+                timeout: 5.0
             cubejs.client:
                 base_uri: "%env(CUBEJS_API_URL)%/"
+            woopit.http_client:
+                base_uri: 'https://car-api.%env(WOOPIT_HOST)%/'
+            dabba.client:
+                base_uri: "%env(DABBA_BASE_URL)%/"
 
 # Twig Configuration
 twig:
@@ -225,9 +238,6 @@ twig:
         context_channel: "@sylius.context.channel"
         loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
         embed_context: '@AppBundle\Embed\Context'
-        algolia_places_app_id: '%env(ALGOLIA_PLACES_APP_ID)%'
-        algolia_places_api_key: '%env(ALGOLIA_PLACES_API_KEY)%'
-        algolia_places_address_template: '%env(ALGOLIA_PLACES_ADDRESS_TEMPLATE)%'
         locationiq_access_token: '%env(LOCATIONIQ_ACCESS_TOKEN)%'
         autocomplete_adapter: '%env(COOPCYCLE_AUTOCOMPLETE_ADAPTER)%'
         geocode_earth_api_key: '%env(GEOCODE_EARTH_API_KEY)%'
@@ -236,6 +246,7 @@ twig:
         edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
         cubejs_api_url: '%env(CUBEJS_API_URL)%'
         ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
+        dabba_context: '@AppBundle\Dabba\Context'
 
     exception_controller: null
 
@@ -331,6 +342,8 @@ api_platform:
         json: ['application/json']
         csv: ['text/csv']
         html: ['text/html']
+    patch_formats:
+        json: ['application/json']
     swagger:
         versions: [3, 2]
 
@@ -378,6 +391,7 @@ lexik_jwt_authentication:
 
 gesdinet_jwt_refresh_token:
     ttl_update: true
+    refresh_token_class: AppBundle\Entity\RefreshToken
 
 snc_redis:
     clients:
@@ -677,6 +691,7 @@ fos_js_routing:
         - dashboard_restaurant_stats
         - routing_route
         - user_avatar
+        - dashboard_restaurant_new_adhoc_order
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'
@@ -942,3 +957,91 @@ doctrine_migrations:
             table_name: migration_versions
             version_column_name: version
             executed_at_column_name: executed_at
+
+acseo_typesense:
+    typesense:
+        url: 'http://%env(TYPESENSE_HOST)%:%env(TYPESENSE_PORT)%'
+        key: '%env(TYPESENSE_API_KEY)%'
+        collection_prefix: '%database_name%_'
+    collections:
+        products:
+            entity: 'AppBundle\Entity\Sylius\Product'
+            collection_name: '%typesense_products_collection_name%'
+            fields:
+                id:
+                    name: id
+                    type: primary
+                sortable_id:
+                    entity_attribute: id
+                    name: sortable_id
+                    type: int32
+                name:
+                    name: name
+                    type: string
+                shop_id:
+                    name: shop_id
+                    type: int32
+                    entity_attribute: restaurant.id
+                    optional: true
+                shop_name:
+                    name: shop_name
+                    type: string
+                    entity_attribute: restaurant.name
+                    optional: true
+                shop_enabled:
+                    name: shop_enabled
+                    type: bool
+                    entity_attribute: restaurant.enabled
+                    optional: true
+                image_url:
+                    name: image_url
+                    type: string
+                    entity_attribute: 'AppBundle\Typesense\Converter\ProductConverter::getImageURL'
+                    optional: true
+            default_sorting_field: sortable_id
+            finders:
+                products_autocomplete:
+                    finder_parameters:
+                        query_by: title
+                        limit: 10
+                        prefix: true
+                        num_typos: 1
+                        drop_tokens_threshold: 1
+        shops:
+            entity: 'AppBundle\Entity\LocalBusiness'
+            collection_name: '%typesense_shops_collection_name%'
+            fields:
+                id:
+                    name: id
+                    type: primary
+                sortable_id:
+                    entity_attribute: id
+                    name: sortable_id
+                    type: int32
+                name:
+                    name: name
+                    type: string
+                type:
+                    name: type
+                    type: string
+                    facet: true
+                    entity_attribute: shopType
+                cuisine:
+                    name: cuisine
+                    type: string[]
+                    facet: true
+                    entity_attribute: shopCuisines
+                category:
+                    name: category
+                    type: string[]
+                    facet: true
+                    entity_attribute: shopCategories
+                enabled:
+                    name: enabled
+                    type: bool
+                image_url:
+                    name: image_url
+                    type: string
+                    entity_attribute: 'AppBundle\Typesense\Converter\ShopConverter::getImageURL'
+                    optional: true
+            default_sorting_field: sortable_id

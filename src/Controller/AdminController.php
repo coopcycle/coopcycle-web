@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use ACSEO\TypesenseBundle\Finder\CollectionFinderInterface;
+use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\AccessControlTrait;
@@ -35,6 +37,8 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
+use AppBundle\Entity\Vehicle;
+use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AddOrganizationType;
 use AppBundle\Form\AttachToOrganizationType;
@@ -46,6 +50,7 @@ use AppBundle\Form\DeliveryImportType;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\HubType;
+use AppBundle\Form\WoopitIntegrationType;
 use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\MercadopagoLivemodeType;
@@ -63,6 +68,7 @@ use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
+use AppBundle\Form\VehicleType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
@@ -70,7 +76,6 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
-use AppBundle\Spreadsheet\DeliveryDataExporter;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
@@ -111,6 +116,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
@@ -162,7 +168,9 @@ class AdminController extends AbstractController
         FactoryInterface $promotionRuleFactory,
         FactoryInterface $promotionFactory,
         HttpClientInterface $browserlessClient,
-        bool $optinExportUsersEnabled
+        bool $optinExportUsersEnabled,
+        CollectionFinderInterface $typesenseShopsFinder,
+        bool $adhocOrderEnabled
     )
     {
         $this->orderRepository = $orderRepository;
@@ -173,6 +181,8 @@ class AdminController extends AbstractController
         $this->promotionFactory = $promotionFactory;
         $this->browserlessClient = $browserlessClient;
         $this->optinExportUsersEnabled = $optinExportUsersEnabled;
+        $this->adhocOrderEnabled = $adhocOrderEnabled;
+        $this->typesenseShopsFinder = $typesenseShopsFinder;
     }
 
     /**
@@ -406,6 +416,10 @@ class AdminController extends AbstractController
      */
     public function usersAction(Request $request, PaginatorInterface $paginator)
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return new RedirectResponse($this->generateUrl('admin_users_invite'));
+        }
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $qb = $this->getDoctrine()
             ->getRepository(Customer::class)
             ->createQueryBuilder('c');
@@ -518,12 +532,25 @@ class AdminController extends AbstractController
             $invitation = $form->getData();
 
             $roles = $form->get('roles')->getData();
-            $restaurants = $form->get('restaurants')->getData();
-            $stores = $form->get('stores')->getData();
 
+            $restaurants = [];
+            $stores = [];
+            if ($form->has('restaurants')) {
+                $restaurants = $form->get('restaurants')->getData();
+            }
+            if ($form->has('stores')) {
+                $stores = $form->get('stores')->getData();
+            }
+
+            // Prevent non admin user to invite users as admin
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                $roles = array_diff($roles, ['ROLE_ADMIN']);
+            }
             foreach ($roles as $role) {
                 $invitation->addRole($role);
             }
+
+
 
             foreach ($restaurants as $restaurant) {
                 $invitation->addRestaurant($restaurant);
@@ -571,6 +598,7 @@ class AdminController extends AbstractController
     public function userAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
+        $this->accessControl($user, 'view');
 
         if (!$user) {
             throw $this->createNotFoundException();
@@ -587,13 +615,14 @@ class AdminController extends AbstractController
     public function userEditAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
+        $this->accessControl($user);
 
         if (!$user) {
             throw $this->createNotFoundException();
         }
 
         // Roles that can be edited by admin
-        $editableRoles = ['ROLE_ADMIN', 'ROLE_COURIER', 'ROLE_RESTAURANT', 'ROLE_STORE'];
+        $editableRoles = ['ROLE_ADMIN', 'ROLE_COURIER', 'ROLE_RESTAURANT', 'ROLE_STORE', 'ROLE_DISPATCHER'];
 
         $originalRoles = array_filter($user->getRoles(), function ($role) use ($editableRoles) {
             return in_array($role, $editableRoles);
@@ -646,28 +675,13 @@ class AdminController extends AbstractController
     public function userDeleteAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
+        $this->accessControl($user, 'delete');
 
         if (!$user) {
             throw $this->createNotFoundException();
         }
 
-        $anonymousEmail = sprintf('anon%s@coopcycle.org', bin2hex(random_bytes(8)));
-
-        $user->setEmail($anonymousEmail);
-        $user->setEmailCanonical($anonymousEmail);
-        $user->setEnabled(false);
-
-        $customer = $user->getCustomer();
-        if (null !== $customer) {
-            $customer->setEmail($anonymousEmail);
-            $customer->setEmailCanonical($anonymousEmail);
-            $customer->setFullName('');
-            $customer->setPhoneNumber('');
-        }
-
-        $userManager->updateUser($user, false);
-
-        $this->entityManager->flush();
+        $userManager->deleteUser($user);
 
         $this->addFlash(
             'notice',
@@ -715,7 +729,11 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/deliveries", name="admin_deliveries")
      */
-    public function deliveriesAction(Request $request, DeliveryDataExporter $dataExporter, PaginatorInterface $paginator)
+    public function deliveriesAction(Request $request,
+        PaginatorInterface $paginator,
+        DeliveryManager $deliveryManager,
+        OrderFactory $orderFactory,
+        OrderManager $orderManager)
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
             'with_store' => true
@@ -725,39 +743,24 @@ class AdminController extends AbstractController
         if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
             $store = $deliveryImportForm->get('store')->getData();
 
-            $deliveries = $deliveryImportForm->getData();
-            foreach ($deliveries as $delivery) {
-                $store->addDelivery($delivery);
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-            }
-            $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->translator->trans('delivery.import.success_message', ['%count%' => count($deliveries)])
-            );
-
-            return $this->redirectToRoute('admin_deliveries');
+            return $this->handleDeliveryImportForStore($store, $deliveryImportForm, 'admin_deliveries',
+                $orderManager, $deliveryManager, $orderFactory,);
         }
 
-        $dataExportForm = $this->createForm(DataExportType::class, null, [
-            'data_exporter' => $dataExporter
-        ]);
+        $dataExportForm = $this->createForm(DataExportType::class);
 
         $dataExportForm->handleRequest($request);
         if ($dataExportForm->isSubmitted() && $dataExportForm->isValid()) {
+
             $data = $dataExportForm->getData();
 
-            $start = $dataExportForm->get('start')->getData();
-            $end = $dataExportForm->get('end')->getData();
+            $response = new Response($data['content']);
 
-            $response = new Response($data['csv']);
-
-            $response->headers->add(['Content-Type' => 'text/csv']);
+            $response->headers->add(['Content-Type' => $data['content_type']]);
             $response->headers->add([
                 'Content-Disposition' => $response->headers->makeDisposition(
                     ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                    sprintf('deliveries-%s-%s.csv', $start->format('Y-m-d'), $end->format('Y-m-d'))
+                    $data['filename']
                 )
             ]);
 
@@ -905,11 +908,12 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/settings/tags", name="admin_tags")
+     * @Route("/admin/tags", name="admin_tags")
      */
     public function tagsAction(Request $request, TagManager $tagManager)
     {
         if ($request->isMethod('POST') && $request->request->has('delete')) {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
             $id = $request->request->get('tag');
             $tag = $this->getDoctrine()->getRepository(Tag::class)->find($id);
             $tagManager->untagAll($tag);
@@ -938,6 +942,7 @@ class AdminController extends AbstractController
      */
     public function pricingRuleSetsAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $ruleSets = $this->getDoctrine()
             ->getRepository(Delivery\PricingRuleSet::class)
             ->findAll();
@@ -948,6 +953,7 @@ class AdminController extends AbstractController
 
     private function renderPricingRuleSetForm(Delivery\PricingRuleSet $ruleSet, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $originalRules = new ArrayCollection();
 
         foreach ($ruleSet->getRules() as $rule) {
@@ -1005,6 +1011,7 @@ class AdminController extends AbstractController
      */
     public function newPricingRuleSetAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $ruleSet = new Delivery\PricingRuleSet();
 
         return $this->renderPricingRuleSetForm($ruleSet, $request);
@@ -1015,6 +1022,7 @@ class AdminController extends AbstractController
      */
     public function pricingRuleSetAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $ruleSet = $this->getDoctrine()
             ->getRepository(Delivery\PricingRuleSet::class)
             ->find($id);
@@ -1023,10 +1031,26 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/deliveries/pricing/{id}/duplicate", name="admin_deliveries_pricing_ruleset_duplicate")
+     */
+    public function duplicatePricingRuleSetAction($id, Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $ruleSet = $this->getDoctrine()
+            ->getRepository(Delivery\PricingRuleSet::class)
+            ->find($id);
+
+        $duplicated = $ruleSet->duplicate($this->translator);
+
+        return $this->renderPricingRuleSetForm($duplicated, $request);
+    }
+
+    /**
      * @Route("/admin/zones/{id}/delete", methods={"POST"}, name="admin_zone_delete")
      */
     public function deleteZoneAction($id)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $zone = $this->getDoctrine()->getRepository(Zone::class)->find($id);
 
         $this->getDoctrine()->getManagerForClass(Zone::class)->remove($zone);
@@ -1040,6 +1064,7 @@ class AdminController extends AbstractController
      */
     public function zonesAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $zoneCollection = new \stdClass();
         $zoneCollection->zones = [];
 
@@ -1082,6 +1107,7 @@ class AdminController extends AbstractController
 
     public function newStoreAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $store = new Store();
 
         return $this->renderStoreForm($store, $request, $this->translator);
@@ -1092,15 +1118,15 @@ class AdminController extends AbstractController
      */
     public function searchRestaurantsAction(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(LocalBusiness::class);
+        $query = new TypesenseQuery($request->query->get('q'), 'name');
 
-        $results = $repository->search($request->query->get('q'));
+        $results = $this->typesenseShopsFinder->rawQuery($query)->getResults();
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
-            $data = array_map(function (LocalBusiness $restaurant) {
+            $data = array_map(function ($hit) {
                 return [
-                    'id' => $restaurant->getId(),
-                    'name' => $restaurant->getName(),
+                    'id' => $hit['document']['id'],
+                    'name' => $hit['document']['name'],
                 ];
             }, $results);
 
@@ -1176,6 +1202,7 @@ class AdminController extends AbstractController
     public function settingsAction(Request $request, SettingsManager $settingsManager, Redis $redis)
     {
         /* Stripe live mode */
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $isStripeLivemode = $settingsManager->isStripeLivemode();
         $canEnableStripeLivemode = $settingsManager->canEnableStripeLivemode();
@@ -1320,11 +1347,22 @@ class AdminController extends AbstractController
      */
     public function newFormAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $deliveryForm = new DeliveryForm();
+        
         $form = $this->createForm(EmbedSettingsType::class, $deliveryForm);
-
+        
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            // Disable "Show on Home Page" on all forms ONLY if this new form is setted true
+            if($deliveryForm->getShowHomepage()){
+                $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
+                foreach ($forms as $formTemp) {
+                    $formTemp->setShowHomepage(false);
+                }
+            }
+
             $this->getDoctrine()
                 ->getManagerForClass(DeliveryForm::class)
                 ->persist($deliveryForm);
@@ -1345,12 +1383,24 @@ class AdminController extends AbstractController
      */
     public function formAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $deliveryForm = $this->getDoctrine()->getRepository(DeliveryForm::class)->find($id);
 
         $form = $this->createForm(EmbedSettingsType::class, $deliveryForm);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            // Disable "Show on Home Page" on all forms except current form if setted true
+            if($deliveryForm->getShowHomepage()){
+                $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
+                foreach ($forms as $formTemp) {
+                    if($deliveryForm->getId() != $formTemp->getId()){ //except current form
+                        $formTemp->setShowHomepage(false);
+                    }
+                }
+            }
+
             $this->getDoctrine()
                 ->getManagerForClass(DeliveryForm::class)
                 ->flush();
@@ -1397,6 +1447,7 @@ class AdminController extends AbstractController
      */
     public function apiAppsAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         if ($request->isMethod('POST') && $request->request->has('oauth2_client')) {
 
             $oAuth2ClientId = $request->get('oauth2_client');
@@ -1429,6 +1480,7 @@ class AdminController extends AbstractController
      */
     public function newApiAppAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $apiApp = new ApiApp();
 
         $form = $this->createForm(ApiAppType::class, $apiApp);
@@ -1463,6 +1515,8 @@ class AdminController extends AbstractController
      */
     public function apiAppAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $apiApp = $this->getDoctrine()
             ->getRepository(ApiApp::class)
             ->find($id);
@@ -1486,10 +1540,119 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/integrations", name="admin_integrations")
+     */
+    public function integrationsAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/integrations.html.twig');
+    }
+
+    /**
+     * @Route("/admin/integrations/woopit", name="admin_integrations_woopit")
+     */
+    public function integrationWoopitAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        if ($request->isMethod('POST') && $request->request->has('oauth2_client')) {
+
+            $oAuth2ClientId = $request->get('oauth2_client');
+            $oAuth2Client = $this->entityManager
+                ->getRepository(OAuth2Client::class)
+                ->find($oAuth2ClientId);
+
+            $newSecret = hash('sha512', random_bytes(32));
+            $oAuth2Client->setSecret($newSecret);
+
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_integrations');
+        }
+
+        $qb = $this->entityManager
+            ->getRepository(WoopitIntegration::class)
+            ->createQueryBuilder('i');
+
+        $integrations = $qb->getQuery()->getResult();
+
+        return $this->render('_partials/integrations/woopit/list.html.twig', [
+            'integrations' => $integrations
+        ]);
+    }
+
+    /**
+     * @Route("/admin/integrations/woopit/new", name="admin_new_integration_woopit")
+     */
+    public function newIntegrationAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $woopitIntegration = new WoopitIntegration();
+
+        $form = $this->createForm(WoopitIntegrationType::class, $woopitIntegration);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $woopitIntegration = $form->getData();
+
+            $this->getDoctrine()
+                ->getManagerForClass(WoopitIntegration::class)
+                ->persist($woopitIntegration);
+
+            $this->getDoctrine()
+                ->getManagerForClass(WoopitIntegration::class)
+                ->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('integration.created.message')
+            );
+
+            return $this->redirectToRoute('admin_integration_woopit', [ 'id' => $woopitIntegration->getId() ]);
+        }
+
+        return $this->render('_partials/integrations/woopit/form.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/integrtations/woopit/{id}", name="admin_integration_woopit")
+     */
+    public function integrationAction($id, Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $apiApp = $this->getDoctrine()
+            ->getRepository(WoopitIntegration::class)
+            ->find($id);
+
+        $form = $this->createForm(WoopitIntegrationType::class, $apiApp);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $apiApp = $form->getData();
+
+            $this->getDoctrine()
+                ->getManagerForClass(WoopitIntegration::class)
+                ->flush();
+
+            return $this->redirectToRoute('admin_integrations_woopit');
+        }
+
+        return $this->render('_partials/integrations/woopit/form.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
      * @Route("/admin/promotions", name="admin_promotions")
      */
     public function promotionsAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $qb = $this->promotionCouponRepository->createQueryBuilder('c');
         $qb->andWhere('c.expiresAt IS NULL OR c.expiresAt > :date');
         $qb->setParameter('date', new \DateTime());
@@ -1509,6 +1672,8 @@ class AdminController extends AbstractController
         PromotionCouponFactoryInterface $promotionCouponFactory
     )
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $promotion = $promotionRepository->find($id);
 
         $promotionCoupon = $promotionCouponFactory->createForPromotion($promotion);
@@ -1535,6 +1700,8 @@ class AdminController extends AbstractController
      */
     public function newCreditNoteAction(Request $request, PromotionCouponFactoryInterface $promotionCouponFactory)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $form = $this->createForm(CreditNoteType::class);
 
         $form->handleRequest($request);
@@ -1568,6 +1735,8 @@ class AdminController extends AbstractController
         PromotionCouponFactoryInterface $promotionCouponFactory
     )
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $template = $request->query->get('template');
 
         switch ($template) {
@@ -1587,6 +1756,8 @@ class AdminController extends AbstractController
      */
     public function promotionCouponAction($id, $code, Request $request, PromotionRepositoryInterface $promotionRepository)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $promotionCoupon = $this->promotionCouponRepository->findOneByCode($code);
         $promotion = $promotionRepository->find($id);
 
@@ -1710,6 +1881,8 @@ class AdminController extends AbstractController
      */
     public function restaurantsPledgesListAction(Request $request, EntityManagerInterface $manager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $pledges = $this->getDoctrine()->getRepository(Pledge::class)->findAll();
 
         if ($request->isMethod('POST')) {
@@ -1741,6 +1914,8 @@ class AdminController extends AbstractController
      */
     public function pledgeEmailPreviewAction($id, Request $request, EmailManager $emailManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $pledge = $this->getDoctrine()->getRepository(Pledge::class)->find($id);
 
         if (!$pledge) {
@@ -1764,6 +1939,8 @@ class AdminController extends AbstractController
      */
     public function timeSlotsAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $timeSlots = $this->getDoctrine()->getRepository(TimeSlot::class)->findAll();
         return $this->render('admin/time_slots.html.twig', [
             'time_slots' => $timeSlots,
@@ -1795,6 +1972,8 @@ class AdminController extends AbstractController
      */
     public function newTimeSlotAction(Request $request, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $timeSlot = new TimeSlot();
 
         return $this->renderTimeSlotForm($request, $timeSlot, $objectManager);
@@ -1834,6 +2013,8 @@ class AdminController extends AbstractController
      */
     public function timeSlotAction($id, Request $request, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $timeSlot = $this->getDoctrine()->getRepository(TimeSlot::class)->find($id);
 
         if (!$timeSlot) {
@@ -1848,6 +2029,8 @@ class AdminController extends AbstractController
      */
     public function packageSetsAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
         return $this->render('admin/package_sets.html.twig', [
             'package_sets' => $packageSets,
@@ -1856,6 +2039,8 @@ class AdminController extends AbstractController
 
     private function renderPackageSetForm(Request $request, PackageSet $packageSet, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $form = $this->createForm(PackageSetType::class, $packageSet);
 
         $form->handleRequest($request);
@@ -1876,6 +2061,8 @@ class AdminController extends AbstractController
      */
     public function newPackageSetAction(Request $request, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $packageSet = new PackageSet();
 
         return $this->renderPackageSetForm($request, $packageSet, $objectManager);
@@ -1886,6 +2073,8 @@ class AdminController extends AbstractController
      */
     public function packageSetAction($id, Request $request, EntityManagerInterface $objectManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $packageSet = $this->getDoctrine()->getRepository(PackageSet::class)->find($id);
 
         if (!$packageSet) {
@@ -1991,6 +2180,8 @@ class AdminController extends AbstractController
      */
     public function organizationsAction()
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $organizations = $this->getDoctrine()->getRepository(Organization::class)->findAll();
 
         return $this->render('admin/organizations.html.twig', [
@@ -2003,6 +2194,8 @@ class AdminController extends AbstractController
      */
     public function addOrganizationAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $form = $this->createForm(OrganizationType::class);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
@@ -2024,6 +2217,8 @@ class AdminController extends AbstractController
      */
     public function configureOrganizationAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $organization = $this->getDoctrine()->getRepository(Organization::class)->find($id);
 
         if (!$organization) {
@@ -2079,6 +2274,7 @@ class AdminController extends AbstractController
 
     public function newHubAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $hub = new Hub();
 
         return $this->handleHubForm($hub, $request);
@@ -2086,6 +2282,7 @@ class AdminController extends AbstractController
 
     public function hubAction($id, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $hub = $this->getDoctrine()->getRepository(Hub::class)->find($id);
 
         if (!$hub) {
@@ -2097,6 +2294,7 @@ class AdminController extends AbstractController
 
     public function hubsAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $hubs = $this->getDoctrine()->getRepository(Hub::class)->findAll();
 
         return $this->render('admin/hubs.html.twig', [
@@ -2109,6 +2307,8 @@ class AdminController extends AbstractController
      */
     public function restaurantListAction(Request $request, SettingsManager $settingsManager)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $routes = $request->attributes->get('routes');
 
         $pledgeCount = $this->getDoctrine()
@@ -2178,6 +2378,8 @@ class AdminController extends AbstractController
      */
     private function handleNonprofitForm(Nonprofit $nonprofit, Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $form = $this->createForm(NonprofitType::class, $nonprofit);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
@@ -2205,6 +2407,8 @@ class AdminController extends AbstractController
      */
     public function newNonprofitAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $nonprofit = new Nonprofit();
 
         return $this->handleNonprofitForm($nonprofit, $request);
@@ -2265,12 +2469,56 @@ class AdminController extends AbstractController
         TagManager $tagManager,
         Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $zeroWasteCount = $localBusinessRepository->countZeroWaste();
 
         return $this->render('admin/metrics.html.twig', [
             'cube_token' => $tokenFactory->createToken(),
             'zero_waste' => $zeroWasteCount > 0,
             'tags' => $tagManager->getAllTags(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/vehicles/new", name="admin_new_vehicle")
+     */
+    public function newVehicleAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $vehicle = new Vehicle();
+
+        $form = $this->createForm(VehicleType::class, $vehicle);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+
+            $this->getDoctrine()->getManager()->persist($vehicle);
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_vehicles');
+        }
+
+        return $this->render('admin/vehicle.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/vehicles", name="admin_vehicles")
+     */
+    public function vehiclesAction()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findAll();
+
+        return $this->render('admin/vehicles.html.twig', [
+            'vehicles' => $vehicles,
         ]);
     }
 }

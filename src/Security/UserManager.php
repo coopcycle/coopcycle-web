@@ -65,7 +65,22 @@ class UserManager implements UserManagerInterface
 
     public function deleteUser(UserInterface $user): void
     {
-        $this->decorated->deleteUser($user);
+        $anonymousEmail = sprintf('anon%s@coopcycle.org', bin2hex(random_bytes(8)));
+
+        $user->setEmail($anonymousEmail);
+        $user->setEmailCanonical($anonymousEmail);
+        $user->setUsername(sprintf('anon_%s', bin2hex(random_bytes(8))));
+        $user->setEnabled(false);
+
+        $customer = $user->getCustomer();
+        if (null !== $customer) {
+            $customer->setEmail($anonymousEmail);
+            $customer->setEmailCanonical($anonymousEmail);
+            $customer->setFullName('');
+            $customer->setPhoneNumber('');
+        }
+
+        $this->objectManager->flush();
     }
 
     public function getClass(): string

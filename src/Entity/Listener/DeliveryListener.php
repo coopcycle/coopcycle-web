@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Listener;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Task;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 class DeliveryListener
@@ -24,12 +25,36 @@ class DeliveryListener
             $comments .= $weight;
         }
 
-        $prevComments = $delivery->getPickup()->getComments();
+        if (!empty($comments)) {
+            $prevComments = $delivery->getPickup()->getComments();
 
-        $delivery->getPickup()->setComments(
-            $prevComments ? ($prevComments . "\n\n" . $comments) : $comments
-        );
+            $delivery->getPickup()->setComments(
+                $prevComments ? ($prevComments . "\n\n" . $comments) : $comments
+            );
+        }
 
+        $this->applyStoreTags($delivery);
+
+        $tasks = $delivery->getTasks();
+
+        if (count($tasks) > 2) {
+
+            $firstTask = array_shift($tasks);
+            $dropoffs = array_filter($tasks, fn (Task $t) => $t->getType() === Task::TYPE_DROPOFF);
+            $otherTasksAreDropoffs = count($dropoffs) === count($tasks);
+
+            if ($firstTask->isPickup() && $otherTasksAreDropoffs) {
+                $firstTask->setNext(null);
+                foreach ($dropoffs as $dropoff) {
+                    $dropoff->setPrevious($firstTask);
+                    $dropoff->setNext(null);
+                }
+            }
+        }
+    }
+
+    private function applyStoreTags(Delivery $delivery)
+    {
         $store = $delivery->getStore();
 
         if (null === $store) {

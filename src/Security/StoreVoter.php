@@ -11,9 +11,13 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 class StoreVoter extends Voter
 {
     const EDIT = 'edit';
+    const VIEW = 'view';
+    const EDIT_DELIVERY = 'edit_delivery';
 
     private static $actions = [
         self::EDIT,
+        self::VIEW,
+        self::EDIT_DELIVERY
     ];
 
     private $authorizationChecker;
@@ -53,6 +57,13 @@ class StoreVoter extends Voter
 
         if ($this->authorizationChecker->isGranted('ROLE_STORE')
             && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($subject)) {
+            return true;
+        }
+
+        if (
+            in_array($attribute, [self::VIEW, self::EDIT_DELIVERY]) &&
+            $this->authorizationChecker->isGranted('ROLE_DISPATCHER')
+        ) {
             return true;
         }
 

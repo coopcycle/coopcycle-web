@@ -44,7 +44,7 @@ class DeliveriesVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+        if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
             return true;
         }
 

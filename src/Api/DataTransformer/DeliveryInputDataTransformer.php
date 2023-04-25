@@ -4,10 +4,12 @@ namespace AppBundle\Api\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\DeliveryQuote;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Api\Resource\RetailPrice;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,11 +19,13 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
     public function __construct(
         RoutingInterface $routing,
         IriConverterInterface $iriConverter,
-        ManagerRegistry $doctrine)
+        ManagerRegistry $doctrine,
+        DeliveryManager $deliveryManager)
     {
         $this->routing = $routing;
         $this->iriConverter = $iriConverter;
         $this->doctrine = $doctrine;
+        $this->deliveryManager = $deliveryManager;
     }
 
     /**
@@ -32,7 +36,22 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
         if (is_array($data->tasks) && count($data->tasks) > 0) {
             $delivery = Delivery::createWithTasks(...$data->tasks);
         } else {
-            $delivery = Delivery::createWithTasks($data->pickup, $data->dropoff);
+            if ($data->pickup && $data->dropoff) {
+                $delivery = Delivery::createWithTasks($data->pickup, $data->dropoff);
+            } else {
+                $delivery = Delivery::create();
+                $delivery->removeTask($delivery->getDropoff());
+
+                $pickup = $delivery->getPickup();
+                $dropoff = $data->dropoff;
+
+                $pickup->setNext($dropoff);
+                $dropoff->setPrevious($pickup);
+
+                $delivery->addTask($dropoff);
+
+                $this->deliveryManager->setDefaults($delivery);
+            }
         }
 
         if ($data->store && $data->store instanceof Store) {
@@ -67,6 +86,14 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
           return false;
         }
 
-        return RetailPrice::class === $to && null !== ($context['input']['class'] ?? null);
+        if ($data instanceof DeliveryQuote) {
+          return false;
+        }
+
+        if ($data instanceof Delivery) {
+          return false;
+        }
+
+        return in_array($to, [ RetailPrice::class, DeliveryQuote::class, Delivery::class ]) && null !== ($context['input']['class'] ?? null);
     }
 }

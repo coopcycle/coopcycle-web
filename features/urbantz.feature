@@ -272,7 +272,8 @@ Feature: Urbantz
         "deliveries":[
           {
             "@id":"/api/deliveries/1",
-            "@type":"http://schema.org/ParcelDelivery"
+            "@type":"http://schema.org/ParcelDelivery",
+            "trackingUrl": @string@
           }
         ]
       }
@@ -304,7 +305,7 @@ Feature: Urbantz
             "geocodeScore":0,
             "cleanScore":0,
             "number":"4",
-            "street":"Rue Perrault",
+            "street":"4 Rue Perrault",
             "city":"Nantes",
             "zip":"44000",
             "country":"FR",
@@ -552,7 +553,8 @@ Feature: Urbantz
         "deliveries":[
           {
             "@id":"/api/deliveries/1",
-            "@type":"http://schema.org/ParcelDelivery"
+            "@type":"http://schema.org/ParcelDelivery",
+            "trackingUrl": @string@
           }
         ]
       }
@@ -594,7 +596,9 @@ Feature: Urbantz
           "doneAfter":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
-          "packages":[]
+          "packages":[],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"/api/tasks/2",
@@ -620,8 +624,11 @@ Feature: Urbantz
           "doneAfter":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
-          "packages": []
-        }
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """
 

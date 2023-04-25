@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Sylius;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Dabba\CustomerCredentials as DabbaCustomerCredentials;
 use AppBundle\Entity\LoopEat\CustomerCredentials;
 use AppBundle\Entity\Edenred\CustomerCredentials as EdenredCustomerCredentials;
 use AppBundle\Entity\User;
@@ -54,6 +55,8 @@ class Customer extends BaseCustomer implements CustomerInterface
     protected ?CustomerCredentials $loopeatCredentials = null;
 
     protected ?EdenredCustomerCredentials $edenredCredentials = null;
+
+    protected ?DabbaCustomerCredentials $dabbaCredentials = null;
 
     public function __construct()
     {
@@ -303,5 +306,63 @@ class Customer extends BaseCustomer implements CustomerInterface
 
         $this->edenredCredentials->setCustomer(null);
         $this->edenredCredentials = null;
+    }
+
+    public function getDabbaAccessToken()
+    {
+        if (null == $this->dabbaCredentials) {
+
+            return null;
+        }
+
+        return $this->dabbaCredentials->getAccessToken();
+    }
+
+    public function setDabbaAccessToken($accessToken)
+    {
+        if (null === $this->dabbaCredentials) {
+
+            $this->dabbaCredentials = new DabbaCustomerCredentials();
+            $this->dabbaCredentials->setCustomer($this);
+        }
+
+        $this->dabbaCredentials->setAccessToken($accessToken);
+    }
+
+    public function getDabbaRefreshToken()
+    {
+        if (null === $this->dabbaCredentials) {
+
+            return null;
+        }
+
+        return $this->dabbaCredentials->getRefreshToken();
+    }
+
+    public function setDabbaRefreshToken($refreshToken)
+    {
+        if (null === $this->dabbaCredentials) {
+
+            $this->dabbaCredentials = new DabbaCustomerCredentials();
+            $this->dabbaCredentials->setCustomer($this);
+        }
+
+        $this->dabbaCredentials->setRefreshToken($refreshToken);
+    }
+
+    public function hasDabbaCredentials(): bool
+    {
+        return null !== $this->dabbaCredentials && $this->dabbaCredentials->hasCredentials();
+    }
+
+    public function clearDabbaCredentials()
+    {
+        if (null === $this->dabbaCredentials) {
+
+            return;
+        }
+
+        $this->dabbaCredentials->setCustomer(null);
+        $this->dabbaCredentials = null;
     }
 }

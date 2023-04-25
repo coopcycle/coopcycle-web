@@ -446,3 +446,8 @@ h1, h2, h3, h4, h5, h6 {
     text-decoration: none;
   }
 }
+
+// https://github.com/coopcycle/coopcycle-web/issues/3296
+.leaflet-container {
+  font-size: 12px;
+}

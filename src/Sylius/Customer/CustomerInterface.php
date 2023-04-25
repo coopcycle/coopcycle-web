@@ -2,17 +2,18 @@
 
 namespace AppBundle\Sylius\Customer;
 
+use AppBundle\Dabba\OAuthCredentialsInterface as DabbaCredentialsInterface;
 use AppBundle\Entity\Edenred\CustomerCredentials as EdenredCustomerCredentials;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\User;
-use AppBundle\LoopEat\OAuthCredentialsInterface;
+use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatCredentialsInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\Collection;
 use libphonenumber\PhoneNumber;
 use Sylius\Component\Customer\Model\CustomerInterface as BaseCustomerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-interface CustomerInterface extends BaseCustomerInterface, OAuthCredentialsInterface
+interface CustomerInterface extends BaseCustomerInterface, LoopeatCredentialsInterface, DabbaCredentialsInterface
 {
     /**
      * @return Collection|OrderInterface[]

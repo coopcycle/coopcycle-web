@@ -2,6 +2,7 @@
 
 namespace Tests\Behat;
 
+use ACSEO\TypesenseBundle\Manager\CollectionManager;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\ApiApp;
@@ -21,6 +22,7 @@ use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Zone;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
@@ -43,6 +45,7 @@ use Behatch\HttpCall\HttpCallResultPool;
 use PHPUnit\Framework\Assert;
 use Ramsey\Uuid\Uuid;
 use Redis;
+use Stripe\Stripe;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
@@ -56,6 +59,7 @@ use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use DMore\ChromeDriver\ChromeDriver;
+use GeoJson\GeoJson;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,6 +67,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
+use Typesense\Exceptions\ObjectNotFound;
 
 /**
  * Defines application features from the specific context.
@@ -127,7 +132,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         OrderProcessorInterface $orderProcessor,
         KernelInterface $kernel,
         ContainerInterface $behatContainer,
-        UserManagerInterface $userManager)
+        UserManagerInterface $userManager,
+        CollectionManager $typesenseCollectionManager)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -151,6 +157,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->kernel = $kernel;
         $this->behatContainer = $behatContainer;
         $this->userManager = $userManager;
+        $this->typesenseCollectionManager = $typesenseCollectionManager;
     }
 
     protected function getContainer()
@@ -218,6 +225,21 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function createMandatorySettings()
     {
         $this->theSettingHasValue('latlng', '48.856613,2.352222');
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function createTypesenseCollections()
+    {
+        $defs = $this->typesenseCollectionManager->getCollectionDefinitions();
+        foreach ($defs as $name => $def) {
+            try {
+                $this->typesenseCollectionManager->deleteCollection($name);
+            } catch (ObjectNotFound $e) {}
+
+            $this->typesenseCollectionManager->createCollection($name);
+        }
     }
 
     /**
@@ -362,6 +384,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
             $timestamp->sub($ageInSeconds);
 
             $user->setPasswordRequestedAt($timestamp);
+            $needsUpdate = true;
+        }
+
+        if (isset($data['stripeCustomerId'])) {
+            $user->setStripeCustomerId($data['stripeCustomerId']);
             $needsUpdate = true;
         }
 
@@ -1229,5 +1256,54 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->doctrine->getManagerForClass(UrbantzHub::class)->persist($urbantzHub);
         $this->doctrine->getManagerForClass(UrbantzHub::class)->flush();
+    }
+
+    /**
+     * @Given the geojson file :filename for a zone is loaded
+     */
+    public function theZoneFileIsLoaded($filename)
+    {
+        $filePath = __DIR__.'/../../features/fixtures/'.$filename.'.geojson';
+
+        $contents = file_get_contents($filePath);
+
+        $data = json_decode($contents, true);
+
+        $geojson = GeoJson::jsonUnserialize($data);
+
+        foreach ($geojson as $feature) {
+            $zone = new Zone();
+            $zone->setGeoJSON($feature->getGeometry()->jsonSerialize());
+            $zone->setName($filename);
+            $this->doctrine->getManagerForClass(Zone::class)->persist($zone);
+        }
+
+        $this->doctrine->getManagerForClass(Zone::class)->flush();
+    }
+
+    /**
+     * @Given the store with name :storeName has a check expression for zone :zoneName
+     */
+    public function theStoreWithNameHasACheckExpressionForZone($storeName, $zoneName)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+        $store->setCheckExpression(
+            sprintf('in_zone(dropoff.address, "%s")', $zoneName)
+        );
+        $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
+     * @Given stripe client is ready to use
+     */
+    public function theStripeClientIsReadyToUse()
+    {
+        $stripeMockApiBase = getenv('STRIPE_MOCK_API_BASE');
+        if (!$stripeMockApiBase) {
+            // By default, use Docker
+            $stripeMockApiBase = 'http://stripe_mock:12111';
+        }
+
+        Stripe::$apiBase = $stripeMockApiBase;
     }
 }

@@ -9,7 +9,7 @@
 {% endif %}
 
 <div class="restaurant-item {% if not restaurant.enabled %}restaurant-item--disabled{% endif %}">
-  <a href="{{ local_business_path(restaurant, restaurant_path_params) }}">
+  <a href="{{ local_business_path(restaurant, restaurant_path_params) }}" data-restaurant-path>
     <div class="position-relative">
       <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
       {% if should_show_pre_order(restaurant) %}

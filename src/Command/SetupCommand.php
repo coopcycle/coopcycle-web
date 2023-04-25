@@ -75,6 +75,8 @@ class SetupCommand extends Command
         'MXN',
         'DKK',
         'CLP',
+        'HUF',
+        'COP',
     ];
 
     public function __construct(

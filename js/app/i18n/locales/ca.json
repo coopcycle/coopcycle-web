@@ -194,6 +194,7 @@
         "ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_LABEL": "Comentaris",
         "ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS": "Completar",
         "ADMIN_DASHBOARD_TASK_FORM_SAVE": "Guardar",
+        "ADMIN_DASHBOARD_TASK_FORM_CREATE": "Crear tascas",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP": "Exemple: {{example}}",
         "ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR": "Aquest telèfon no és vàlid",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_ERROR": "Si us plau, tria una adreça",

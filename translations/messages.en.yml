@@ -81,6 +81,8 @@ adminDashboard.settings.title: Settings
 adminDashboard.pricing.title: Pricing
 adminDashboard.pricing.manage: Manage
 adminDashboard.pricing.settings: Settings
+adminDashboard.pricing.duplicate: Duplicate
+adminDashboard.pricing.copyOf: Copy of %rule_set_name%
 adminDashboard.pricing.noPricings: There are no pricings yet
 adminDashboard.pricing.createNew: Create a new pricing
 adminDashboard.pricing.noRuleFound: No pricing rule found. Pricing rules define how
@@ -164,6 +166,8 @@ restaurant.form.enabled.tooltip: "When disabled, a restaurant is not visible on 
   \ by visitors.\n"
 restaurant.form.allow_stripe_connect.label: Allow the restaurant to manage Stripe
   account on its own
+restaurant.form.allow_mercadopago_connect.label: Allow the restaurant to manage Mercadopago
+  account on its own
 restaurant.form.temporaryClosingRule: Click here to temporarily disable orders to
   your restaurant.
 restaurant.form.deposit_refund_enabled.label: Enable deposit-refund system
@@ -189,6 +193,8 @@ restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
 restaurant.deliveryPerimeterExpression.help: Define the accepted perimeter for deliveries.
   You can chose a radius (in km) or a zone
+restaurant.ordersRateLimiter.title: Orders limit
+restaurant.ordersRateLimiter.help: The order limit function allows you to control the number of orders you can accept within a given time period. By setting a limit, you can avoid receiving more orders than you can handle. You just need to specify the maximum number of orders and the duration of the time period. Additional orders are automatically rescheduled to the next available time slot. This feature helps you better manage your production capacity and avoid delays and errors.
 restaurant.contract.minimumCartAmount.label: Minimum cart amount
 restaurant.contract.flatDeliveryPrice.label: Amount charged by the platform
 restaurant.contract.flatDeliveryPrice.help: This amount will not be displayed in the
@@ -584,6 +590,11 @@ form.registration.username.help: "Your username cannot be longer than 15 charact
 form.registration.legal.label: I agree with the Terms and Conditions and Privacy Policy
 form.registration.legal.help: By checking this box, you agree to our <a href="%terms_url%">Terms
   and Conditions</a> and <a href="%privacy_url%">Privacy Policy</a>.
+form.registration.terms.and.conditions.label: I agree with the Terms and Conditions
+form.registration.terms.and.conditions.help: By checking this box, you agree to our <a href="%terms_url%">Terms
+  and Conditions</a>.
+form.registration.privacy.policy.label: I agree with the Privacy Policy
+form.registration.privacy.policy.help: By checking this box, you agree to our <a href="%privacy_url%">Privacy Policy</a>.
 form.registration.optin.newsletter.label: I agree to receive the %brand_name% newsletter.
 form.registration.optin.marketing.label: I agree to receive occasional promotions.
 form.local_business.stripe_account.title: Stripe account
@@ -687,7 +698,7 @@ form.checkout_address.telephone.label: Phone number
 form.checkout_address.reusable_packaging_enabled.label: I want reusable packaging
   (%price%)
 form.checkout_address.reusable_packaging_loopeat_enabled.label: I want to use LoopEat
-  containers (%price%)
+  containers
 form.checkout_address.add_promotion.label: Apply
 form.checkout_address.tip_amount.label: Tip
 form.checkout_address.tip_amount.help: Thank you ❤
@@ -720,6 +731,7 @@ form.credit_note.restaurant.help: The promotion will only be usable when orderin
 form.resend_confirmation_email.submit.label: Send email again
 form.embed_settings.with_vehicle.label: Add vehicle choice
 form.embed_settings.with_weight.label: Ask for weight of goods
+form.embed_settings.show_home_page.label: Show on Home Page
 form.time_slot.name.label: Name
 form.time_slot.interval.label: Interval
 form.time_slot.working_days_only.label: Allow selecting only working days
@@ -759,6 +771,7 @@ promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option_value: Custom price
 roles.ROLE_ADMIN: Administrator
+roles.ROLE_DISPATCHER: Dispatcher
 roles.ROLE_COURIER: Courier
 roles.ROLE_RESTAURANT: Restaurant
 roles.ROLE_STORE: Store
@@ -770,6 +783,7 @@ user.edit.enabled.help: A deactivated user will be logged out and can't login ba
 user.profile.familyName: Family name
 user.profile.givenName: Given name
 roles.ROLE_ADMIN.help: "Administrator: Full access to all features\n"
+roles.ROLE_DISPATCHER.help: "Dispatcher: Full access on tasks\n"
 roles.ROLE_COURIER.help: "Courier: view waiting tasks, modify assigned tasks…\n"
 roles.ROLE_RESTAURANT.help: 'Restaurant owner: manage assigned restaurants, manage
   orders…'
@@ -809,6 +823,8 @@ activity.order.refused: "Order #order/%aggregate_id% has been refused\n"
 activity.order.picked: "@%owner% has picked order #order/%aggregate_id%\n"
 activity.order.dropped: "@%owner% has dropped order #order/%aggregate_id%\n"
 activity.order.fulfilled: "Order #order/#%aggregate_id% is fulfilled\n"
+activity.order.cancelled: "Order #order/#%aggregate_id% is cancelled\n"
+activity.order.delayed: "Order #order/#%aggregate_id% has been delayed\n"
 social.sign_in_with_facebook: Sign in with Facebook
 embed.delivery.summary: "You have requested a delivery on <strong>%dropoff_date%</strong>\
   \ at the following address: <strong>%dropoff_address%</strong> <br> We calculated\
@@ -1047,6 +1063,7 @@ users.couriers: Couriers
 users.restaurant_owners: Restaurant owners
 users.store_owners: Store owners
 users.administrators: Administrators
+users.dispatchers: Dispatchers
 users.sort.alphabetically: Alphabetically
 users.sort.newest: Registered recently
 sms.simple: |
@@ -1250,3 +1267,34 @@ shops.filters.title.cuisines: Cuisines
 shops.filters.title: Filters
 form.local_business.mercadopago.remove.connection: Remove connection with Mercadopago
 form.local_business.mercadopago.remove.connection.success: Mercadopago connection removed successfully
+form.vehicle.volume_units.label: Volume units
+form.vehicle.max_weight.label: Maximum weight
+vehicles.breadcrumb: Vehicles
+vehicles.breadcrumb.help: Define fleet of vehicles
+form.task_export.dv4cul.label: Export using DV4CUL format
+restaurant.form.section.dabba: Dabba
+restaurant.form.dabba_enabled.label: Enable Dabba deposit-refund system
+dabba.oauth_redirect.warning: You will be redirected to the Dabba website to login or create your account
+form.checkout_address.reusable_packaging_dabba_enabled.label: I want to use Dabba
+  containers
+form.checkout_address.reusable_packaging.dabba.learn_more: Learn more about Dabba
+dabba.oauth_connect.success: Dabba account connected successfully!
+form.checkout_address.reusable_packaging.dabba.wallet.label: You have <strong>%amount%</strong> on your Dabba wallet
+form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% per lunchbox)
+restaurant.form.dabba_code.label: Dabba restaurant code
+adminDashboard.integrations.title: Integrations
+adminDashboard.integrations.help: Allow to configure the constraints of an integration
+integrations.breadcrumb: Integrations
+form.integration.name.label: Integration name
+form.integration.store.label: Store
+form.integration.zone.label: Zona
+form.integration.maxWeight.label: Maximum weight allowed (kg)
+form.integration.maxHeight.label: Maximum height allowed (cm)
+form.integration.maxWidth.label: Maximum width allowed (cm)
+form.integration.maxLength.label: Maximum length allowed (cm)
+form.integration.productTypes.label: Product types allowed
+form.integration.woopitStoreId.label: Woopit store identifier
+integration.created.message: The integration has been created.
+profile.dabba.disconnect: Disconnect Dabba
+form.task_export.colisactiv.label: Export using ColivActiv format
+form.task_export.format.label: Export format

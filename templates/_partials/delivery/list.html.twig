@@ -42,7 +42,11 @@
           <li>
             <small>
               <span class="mr-1">{% include "_partials/task/type_icon.html.twig" with { task: task } %}</span>
-              <span>{{ task.address.streetAddress }}</span>
+              <span>
+                {% if task.isCancelled() %}<del>{% endif %}
+                  {{ task.address.streetAddress }}
+                {% if task.isCancelled() %}</del>{% endif %}
+              </span>
             </small>
           </li>
           {% endfor %}

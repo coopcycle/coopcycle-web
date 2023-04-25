@@ -85,6 +85,7 @@
         "ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR": "Ce numéro de téléphone n'est pas valide",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP": "Exemple : {{example}}",
         "ADMIN_DASHBOARD_TASK_FORM_SAVE": "Enregistrer",
+        "ADMIN_DASHBOARD_TASK_FORM_CREATE": "Générer les tâches",
         "ADMIN_DASHBOARD_TASK_DOWNLOAD_PDF": "Télécharger en PDF",
         "ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS": "Terminer",
         "ADMIN_DASHBOARD_COMPLETE_FORM_FAILURE": "Signaler un problème",
@@ -225,7 +226,7 @@
         "PAYMENT_FORM_CARDHOLDER_NAME": "Nom du titulaire de la carte",
         "PAYMENT_FORM_TITLE": "Vos informations de paiement",
         "EDENRED_SPLIT_AMOUNTS": "Vous pouvez payer {{edenred}} avec votre carte Edenred, mais vous devez payer {{card}} avec votre carte bancaire",
-        "PAYMENT_FORM_NOT_SUPPORTED": "Nous nʼacceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique.",
+        "PAYMENT_FORM_NOT_SUPPORTED": "Nous nʼacceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique ou une carte Swile.",
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "par tranche de",
             "ABOVE": "à partir de",
@@ -258,6 +259,24 @@
         "OPTIN_CONSENT_MODAL_TITLE": "Veuillez mettre à jour vos réglages",
         "OPTIN_CONSENT_MODAL_DISCLAIMER": "Pour mieux vous servir, nous voudrions pouvoir vous contacter de temps en temps. Choisissez les emails que vous souhaitez recevoir dans la liste ci-dessous.",
         "OPTIN_CONSENT_MODAL_SUBMIT": "Mettre à jour",
-        "ADMIN_DASHBOARD_SETTINGS_AVATAR_COLORS_ENABLED": "Utiliser les couleurs des avatars pour les marqueurs et les tracés"
+        "ADMIN_DASHBOARD_SETTINGS_AVATAR_COLORS_ENABLED": "Utiliser les couleurs des avatars pour les marqueurs et les tracés",
+        "CONFIRM_DELETE": "Confirmez-vous la suppression ?",
+        "SEARCH_SHOPS": "Boutiques",
+        "SEARCH_PRODUCTS": "Produits",
+        "SEARCH_PRODUCT_ITEM_SUBTITLE": "Dans {{- shop}}",
+        "SEARCH_PLACEHOLDER": "Une boutique, un plat…",
+        "ADMIN_DASHBOARD_CREATE_TOUR": "Créer une tournée",
+        "ADMIN_DASHBOARD_TOUR_NAME": "Nom de la tournée",
+        "SAVE_CREDIT_CARD": "Sauvegarder la carte bancaire",
+        "PAY_WITH_SAVED_CREDIT_CARD": "Payer avec une carte bancaire sauvegardée",
+        "ADD_NEW_CREDIT_CARD": "Ajouter une nouvelle carte bancaire",
+        "ADD_OR_SELECT_A_CARD_TO_PAY": "Veuillez sélectionner une carte existante, ou entrez une nouvelle carte",
+        "EXPIRATION": "Expiration",
+        "ORDERS_RATE_LIMIT": {
+          "ORDER_UNIT": "commande(s)",
+          "TIME_UNIT": "minute(s)",
+          "NO_LIMIT": "Aucune limitation de commande",
+          "LIMIT": "Un maximum de {{command}} commandes toutes les {{time}}"
+        }
     }
 }

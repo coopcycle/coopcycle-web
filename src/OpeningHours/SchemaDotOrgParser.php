@@ -121,7 +121,7 @@ class SchemaDotOrgParser
                     $range = TimeRange::fromString($exceptionRange);
 
                     if ($range->overlaps($dayRange)) {
-                        if ($dayRange->start()->isAfter($range->start()) && $range->end()->isAfter($dayRange->end())) {
+                        if ($dayRange->start()->isSameOrAfter($range->start()) && $range->end()->isSameOrAfter($dayRange->end())) {
                             continue 2;
                         }
 

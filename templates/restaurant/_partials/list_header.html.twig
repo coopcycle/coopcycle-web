@@ -16,5 +16,6 @@
   <!-- Do NOT put the search component inside the form -->
   <form method="GET" action="{{ path('restaurants') }}" data-form>
     <input type="hidden" name="geohash" value="{{ geohash }}">
+    <input type="hidden" name="address" value="{{ address }}">
   </form>
 </header>

@@ -3,16 +3,14 @@
 {% block content %}
 <mj-column>
   <mj-text align="left" line-height="20px">
-  {% if task.done %}
-    {{ 'task.done.body' | trans({
-      '%task.id%': task.id,
-    }, 'emails') | raw }}
-  {% endif %}
-  {% if task.failed %}
-    {{ 'task.failed.body' | trans({
-      '%task.id%': task.id,
-    }, 'emails') | raw }}
-  {% endif %}
+  {% set trans_key = 'task.%s.%s.body'|format(task.type|lower, (task.done ? 'done' : 'failed')) %}
+  {{ trans_key|trans({
+    '%id%': task.delivery.id,
+    '%address%': task.address.streetAddress,
+  }, 'emails') | raw }}
   </mj-text>
+  <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white" href="{{ url('dashboard_delivery', { 'id': task.delivery.id }) }}">
+    {{ 'basics.view'|trans({}, 'messages') }}
+  </mj-button>
 </mj-column>
 {% endblock %}

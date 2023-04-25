@@ -5,6 +5,7 @@ namespace AppBundle\Spreadsheet;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use Box\Spout\Reader\ReaderFactory;
@@ -12,12 +13,15 @@ use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
 use Cocur\Slugify\SlugifyInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 
 class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 {
+    use ParsePackagesTrait;
+
     const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
     const DATE_PATTERN_SLASH = '#(?<day>[0-9]{1,2})/(?<month>[0-9]{1,2})/?(?<year>[0-9]{4})?#';
     const DATE_PATTERN_DOT = '#(?<day>[0-9]{1,2})\.(?<month>[0-9]{1,2})\.?(?<year>[0-9]{4})?#';
@@ -34,13 +38,15 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         SlugifyInterface $slugify,
         PhoneNumberUtil $phoneNumberUtil,
         UserManagerInterface $userManager,
-        string $countryCode)
+        string $countryCode,
+        EntityManagerInterface $entityManager)
     {
         $this->geocoder = $geocoder;
         $this->slugify = $slugify;
         $this->userManager = $userManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->countryCode = $countryCode;
+        $this->entityManager = $entityManager;
     }
 
     public function getExampleData(): array
@@ -56,6 +62,8 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
                 'address.description' => '',
                 'address.telephone' => '+33612345678',
                 'address.contactName' => '',
+                'packages' => 'small-box=1 big-box=2',
+                'assign' => '',
             ],
             [
                 'type' => 'dropoff',
@@ -67,6 +75,8 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
                 'address.description' => '',
                 'address.telephone' => '+33612345678',
                 'address.contactName' => 'John Doe',
+                'packages' => 'small-box=1 big-box=2',
+                'assign' => 'username:' . date('Y-m-d')
             ],
         ];
     }
@@ -170,6 +180,10 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
             if (isset($record['ref']) && !empty($record['ref'])) {
                 $task->setRef($record['ref']);
+            }
+
+            if (isset($record['packages']) && !empty($record['packages'])) {
+                $this->parseAndApplyPackages($task, $record['packages']);
             }
 
             $tasks[] = $task;

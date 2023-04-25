@@ -30,7 +30,12 @@ const placeToAddress = (place, value) => {
     // corresponds to the "streetAddress" property
     streetAddress: value, // place.formatted_address,
     // street_address indicates a precise street address
-    isPrecise: _.includes(place.types, 'street_address') || _.includes(place.types, 'premise'),
+    // premise indicates a named location, usually a building or collection of buildings with a common name
+    // subpremise indicates a first-order entity below a named location, usually a singular building within a collection of buildings with a common name
+    // WARNING
+    // we may have "subpremise" when the user enters the floor after the address,
+    // for ex: Calle Gorbea, 46, 6d
+    isPrecise: _.includes(place.types, 'street_address') || _.includes(place.types, 'premise') || _.includes(place.types, 'subpremise'),
     needsGeocoding: false,
   }
 }
@@ -78,6 +83,13 @@ export const onSuggestionsFetchRequested = function({ value }) {
 export function onSuggestionSelected(event, { suggestion }) {
 
   // TODO Remove code duplication
+
+  if (suggestion.type === 'restaurant') {
+    window.location.href = window.Routing.generate('restaurant', {
+      id: suggestion.restaurant.id
+    })
+  }
+
   if (suggestion.type === 'address') {
 
     const geohash = ngeohash.encode(
@@ -134,7 +146,7 @@ export const geocode = function (text) {
     geocoderService.geocode({ address: text }, (results, status) => {
       if (status === window.google.maps.GeocoderStatus.OK && results.length > 0) {
         const place = results[0]
-        resolve(placeToAddress(place))
+        resolve(placeToAddress(place, text))
       } else {
         resolve(null)
       }

@@ -3,6 +3,8 @@
 namespace AppBundle\Action;
 
 use AppBundle\Service\SettingsManager;
+use AppBundle\Service\TimeRegistry;
+use Aws\S3\Exception\S3Exception;
 use League\Flysystem\Filesystem;
 use Liip\ImagineBundle\Service\FilterService;
 use Misd\PhoneNumberBundle\Serializer\Normalizer\PhoneNumberNormalizer;
@@ -17,6 +19,8 @@ class Settings
     private $assetsFilesystem;
     private $country;
     private $locale;
+    private $splitTermsAndConditionsAndPrivacyPolicy;
+    private $timeRegistry;
 
     private $keys = [
         'brand_name',
@@ -35,15 +39,19 @@ class Settings
         Filesystem $assetsFilesystem,
         FilterService $imagineFilter,
         PhoneNumberNormalizer $phoneNumberNormalizer,
+        TimeRegistry $timeRegistry,
         $country,
-        $locale)
+        $locale,
+        $splitTermsAndConditionsAndPrivacyPolicy)
     {
         $this->settingsManager = $settingsManager;
         $this->assetsFilesystem = $assetsFilesystem;
         $this->imagineFilter = $imagineFilter;
         $this->phoneNumberNormalizer = $phoneNumberNormalizer;
+        $this->timeRegistry = $timeRegistry;
         $this->country = $country;
         $this->locale = $locale;
+        $this->splitTermsAndConditionsAndPrivacyPolicy = (bool) $splitTermsAndConditionsAndPrivacyPolicy;
     }
 
     /**
@@ -58,21 +66,29 @@ class Settings
         $data = [
             'country' => $this->country,
             'locale' => $this->locale,
+            'split_terms_and_conditions_and_privacy_policy' => $this->splitTermsAndConditionsAndPrivacyPolicy,
         ];
 
         foreach ($this->keys as $key) {
             $data[$key] = $this->settingsManager->get($key);
         }
 
-        $companyLogo = $this->settingsManager->get('company_logo');
-        if (!empty($companyLogo) && $this->assetsFilesystem->has($companyLogo)) {
-            $data['logo'] = $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');
+        try {
+            $companyLogo = $this->settingsManager->get('company_logo');
+            if (!empty($companyLogo) && $this->assetsFilesystem->has($companyLogo)) {
+                $data['logo'] = $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');
+            }
+        } catch (S3Exception $e) {
+            // TODO Log error
         }
 
         $phoneNumber = $this->settingsManager->get('phone_number');
         if ($phoneNumber) {
             $data['phone_number'] = $this->phoneNumberNormalizer->normalize($phoneNumber);
         }
+
+        $data['average_preparation_time'] = $this->timeRegistry->getAveragePreparationTime();
+        $data['average_shipping_time'] = $this->timeRegistry->getAverageShippingTime();
 
         if ($request->query->has('format') && 'hash' === $request->query->get('format')) {
             return new JsonResponse(sha1(json_encode($data)));

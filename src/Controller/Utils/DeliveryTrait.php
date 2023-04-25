@@ -13,7 +13,10 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderFactory;
-use Sylius\Component\Order\Model\OrderInterface;
+use AppBundle\Sylius\Order\OrderInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Uuid;
+use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -57,7 +60,9 @@ trait DeliveryTrait
         return (int) ($price);
     }
 
-    private function renderDeliveryForm(Delivery $delivery, Request $request, array $options = [])
+    private function renderDeliveryForm(Delivery $delivery, Request $request,
+        OrderFactory $orderFactory, EntityManagerInterface $entityManager, OrderNumberAssignerInterface $orderNumberAssigner,
+        array $options = [])
     {
         $routes = $request->attributes->get('routes');
 
@@ -68,8 +73,16 @@ trait DeliveryTrait
 
             $delivery = $form->getData();
 
-            $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-            $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
+            $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
+                $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
+
+            if ($useArbitraryPrice) {
+                $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
+                    $entityManager, $orderNumberAssigner);
+            } else {
+                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
+                $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
+            }
 
             return $this->redirectToRoute($routes['success']);
         }
@@ -83,16 +96,50 @@ trait DeliveryTrait
         ]);
     }
 
-    public function deliveryAction($id, Request $request)
+    public function deliveryAction($id,
+        Request $request,
+        OrderFactory $orderFactory,
+        EntityManagerInterface $entityManager,
+        OrderNumberAssignerInterface $orderNumberAssigner
+    )
     {
         $delivery = $this->getDoctrine()
             ->getRepository(Delivery::class)
             ->find($id);
 
-        $this->accessControl($delivery);
+        $this->accessControl($delivery, 'view');
 
-        return $this->renderDeliveryForm($delivery, $request, [
+        return $this->renderDeliveryForm($delivery, $request, $orderFactory, $entityManager, $orderNumberAssigner, [
             'with_address_props' => true,
+            'with_arbitrary_price' => null === $delivery->getOrder(),
         ]);
+    }
+
+    protected function createOrderForDeliveryWithArbitraryPrice(
+        FormInterface $form,
+        OrderFactory $orderFactory,
+        Delivery $delivery,
+        EntityManagerInterface $entityManager,
+        OrderNumberAssignerInterface $orderNumberAssigner
+    )
+    {
+        $variantPrice = $form->get('variantPrice')->getData();
+        $variantName = $form->get('variantName')->getData();
+
+        $order = $this->createOrderForDelivery($orderFactory, $delivery, $variantPrice);
+
+        $variant = $order->getItems()->get(0)->getVariant();
+
+        $variant->setName($variantName);
+        $variant->setCode(Uuid::uuid4()->toString());
+
+        $order->setState(OrderInterface::STATE_ACCEPTED);
+
+        $entityManager->persist($order);
+        $entityManager->flush();
+
+        $orderNumberAssigner->assignNumber($order);
+
+        $entityManager->flush();
     }
 }

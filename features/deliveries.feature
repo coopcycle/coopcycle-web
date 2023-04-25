@@ -130,7 +130,9 @@ Feature: Deliveries
           "before":"@string@.isDateTime()",
           "comments": "",
           "weight": null,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -156,8 +158,11 @@ Feature: Deliveries
           "before":"@string@.isDateTime()",
           "comments": "Beware of the dog\nShe bites",
           "weight":null,
-          "packages": []
-        }
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -232,7 +237,9 @@ Feature: Deliveries
           "before":"@string@.isDateTime()",
           "comments": "2.00 kg",
           "weight": 2000,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -258,8 +265,11 @@ Feature: Deliveries
           "before":"@string@.isDateTime()",
           "comments": "Beware of the dog\nShe bites",
           "weight": 2000,
-          "packages": []
-        }
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -343,7 +353,9 @@ Feature: Deliveries
               "name": "XL",
               "quantity": 2
             }
-          ]
+          ],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -375,8 +387,11 @@ Feature: Deliveries
               "name": "XL",
               "quantity": 2
             }
-          ]
-        }
+          ],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -450,7 +465,9 @@ Feature: Deliveries
           "doneBefore":"@string@.isDateTime()",
           "comments": "",
           "weight": null,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -476,8 +493,11 @@ Feature: Deliveries
           "doneBefore":"@string@.isDateTime()",
           "comments": "",
           "weight":null,
-          "packages": []
-        }
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -535,7 +555,9 @@ Feature: Deliveries
           "doneBefore":"@string@.isDateTime()",
           "comments": "",
           "weight": null,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -561,8 +583,11 @@ Feature: Deliveries
           "doneBefore":"@string@.isDateTime()",
           "comments": "",
           "weight":null,
-          "packages": []
-        }
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -616,7 +641,9 @@ Feature: Deliveries
           "doneBefore":"@string@.startsWith('2018-08-29')",
           "comments": "",
           "weight": null,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -642,8 +669,11 @@ Feature: Deliveries
           "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')",
           "comments": "",
           "weight":null,
-          "packages": []
-        }
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -701,7 +731,9 @@ Feature: Deliveries
           "doneBefore":"@string@.startsWith('2018-08-29')",
           "comments": "",
           "weight": null,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -727,8 +759,11 @@ Feature: Deliveries
           "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')",
           "comments": "",
           "weight":null,
-          "packages": []
-        }
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -788,7 +823,9 @@ Feature: Deliveries
           "doneBefore":"@string@.startsWith('2018-08-29')",
           "comments": "",
           "weight": null,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -814,8 +851,11 @@ Feature: Deliveries
           "doneBefore":"@string@.startsWith('2018-08-29T13:30:00')",
           "comments": "",
           "weight":null,
-          "packages": []
-        }
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -873,7 +913,9 @@ Feature: Deliveries
           "doneBefore":"@string@.startsWith('2018-08-29')",
           "comments": "",
           "weight": null,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -899,8 +941,11 @@ Feature: Deliveries
           "doneBefore":"@string@.startsWith('2018-08-29T11:00')",
           "comments": "",
           "weight":null,
-          "packages": []
-        }
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -959,7 +1004,9 @@ Feature: Deliveries
           "doneBefore":"@string@.isDateTime()",
           "comments": "",
           "weight": null,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -985,8 +1032,11 @@ Feature: Deliveries
           "doneBefore":"2020-04-02T14:00:00+02:00",
           "comments": "",
           "weight":null,
-          "packages": []
-        }
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -1028,7 +1078,9 @@ Feature: Deliveries
           "doneBefore":"@string@.startsWith('2018-08-29T11:00')",
           "comments": "",
           "weight": null,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1054,8 +1106,11 @@ Feature: Deliveries
           "doneBefore":"@string@.startsWith('2018-08-29T11:00')",
           "comments": "",
           "weight":null,
-          "packages": []
-        }
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -1248,7 +1303,9 @@ Feature: Deliveries
           "doneBefore":"@string@.isDateTime()",
           "comments": "",
           "weight": null,
-          "packages": []
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1274,7 +1331,10 @@ Feature: Deliveries
           "doneBefore":"@string@.isDateTime()",
           "comments": "",
           "weight":null,
-          "packages": []
-        }
+          "packages": [],
+          "createdAt":"@string@.isDateTime()",
+          "tour":null
+        },
+        "trackingUrl": @string@
       }
       """

@@ -82,3 +82,9 @@ order.payment_failed.body: "Hola,\n<br>\nLo sentimos, hubo un error al procesar 
 order.payment_failed.subject: Hubo un error al procesar su pago
 order.receipt.body: "Hola,\n<br>\nEl recibo de su pedido se encuentra adjunto."
 order.receipt.subject: Recibo de su pedido %order.number%
+order.adhoc.body: |
+  Hola,
+  <br>
+  Se ha creado un nuevo pedido para usted.
+  <br>
+  Para finalizar su pedido, haga clic en el siguiente enlace para especificar su dirección, elegir una franja de entrega y pagar con tarjeta de crédito.

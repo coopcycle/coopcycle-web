@@ -131,6 +131,18 @@ $('#loopeat-add-credit').on('click', function(e) {
   }
 });
 
+$('#dabba-add-credit').on('click', function(e) {
+  e.preventDefault();
+
+  var expectedWallet = $('#checkout_address_reusablePackagingEnabled').data('dabbaExpectedWallet');
+  var authorizeUrl = $('#checkout_address_reusablePackagingEnabled').data('dabbaAuthorizeUrl');
+
+  $('#modal-dabba-redirect-warning [data-continue]')
+    .off('click')
+    .on('click', () => window.location.href = authorizeUrl + '&expected_wallet='+expectedWallet)
+  $('#modal-dabba-redirect-warning').modal('show');
+});
+
 $('#checkout_address_cancelReusablePackaging').on('click', function() {
   $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
   submitForm();
@@ -144,9 +156,13 @@ $('#checkout_address_reusablePackagingEnabled').on('change', function() {
   var isChecked = $(this).is(':checked');
   var isLoopeat = $(this).data('loopeat') === true;
   var isVytal = $(this).data('vytal') === true;
+  var isDabba = $(this).data('dabba') === true;
   var iframeUrl = $(this).data('loopeatAuthorizeUrl');
   var oAuthFlow = $(this).data('loopeatOauthFlow');
   var hasCredentials = $(this).data('loopeatCredentials') === true;
+  var expectedWallet = $(this).data('dabbaExpectedWallet');
+  var hasDabbaCredentials = $(this).data('dabbaCredentials') === true;
+  var dabbaAuthorizeUrl = $(this).data('dabbaAuthorizeUrl') + `&expected_wallet=${expectedWallet}`;
 
   if (isLoopeat && !hasCredentials && isChecked && iframeUrl) {
 
@@ -163,6 +179,13 @@ $('#checkout_address_reusablePackagingEnabled').on('change', function() {
   } else if (isVytal) {
 
     $('#modal-vytal').modal('show');
+
+  } else if (isDabba && !hasDabbaCredentials && isChecked) {
+
+    $('#modal-dabba-redirect-warning [data-continue]')
+      .off('click')
+      .on('click', () => window.location.href = dabbaAuthorizeUrl)
+    $('#modal-dabba-redirect-warning').modal('show');
 
   } else {
     submitForm();

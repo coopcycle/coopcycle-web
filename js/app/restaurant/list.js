@@ -212,6 +212,8 @@ function submitFilter(e) {
 
       renderFulfillmentBadgeAfterAjax()
 
+      // applyClickListenerForRestaurantItem()
+
       // update URL with applied filters
       const searchParams = new URLSearchParams($(e.target).closest('form').serialize())
       const path = `${$(e.target).closest('form').attr('path')}?${searchParams.toString()}`
@@ -231,3 +233,38 @@ $('.shops-side-bar-filters input[type=radio]').on('click', function (e) {
 $('.shops-side-bar-filters input[type=checkbox]').on('click', function (e) {
   submitFilter(e)
 });
+
+/**
+ * When the user clicks on a restaurant and
+ * there is no address scroll into the search bar, and ask for an address.
+ */
+// eslint-disable-next-line no-unused-vars
+function applyClickListenerForRestaurantItem() {
+  document.querySelectorAll('[data-restaurant-path]').forEach(el => {
+    el.addEventListener("click", function (e) {
+
+      const searchParams = new URLSearchParams(window.location.search);
+
+      // check if there is an address query param
+      if (!searchParams.has('address')) {
+        // if there is not an address do not navigate to restaurant page
+        e.preventDefault()
+
+        // scroll into the search bar and ask for an address
+        document.querySelectorAll('[data-search="address"]').forEach((container) => {
+          const el = container.querySelector('[data-element]')
+          if (el) {
+            el.scrollIntoView({behavior: "smooth"})
+            const inputEl = el.querySelector('input[type="search"]')
+            if (inputEl) {
+              inputEl.focus();
+            }
+          }
+        })
+      }
+
+    })
+  })
+}
+
+// applyClickListenerForRestaurantItem()

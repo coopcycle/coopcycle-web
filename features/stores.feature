@@ -334,7 +334,8 @@ Feature: Stores
               "before":"2019-11-12T20:30:00+01:00",
               "doneBefore":"2019-11-12T20:30:00+01:00",
               "comments": ""
-            }
+            },
+            "trackingUrl": @string@
           },
           {
             "@id":"/api/deliveries/1",
@@ -363,7 +364,8 @@ Feature: Stores
               "before":"2019-11-12T19:30:00+01:00",
               "doneBefore":"2019-11-12T19:30:00+01:00",
               "comments": ""
-            }
+            },
+            "trackingUrl": @string@
           }
         ],
         "hydra:totalItems":2,
@@ -421,7 +423,8 @@ Feature: Stores
               "before":"2019-11-12T19:30:00+01:00",
               "doneBefore":"2019-11-12T19:30:00+01:00",
               "comments": ""
-            }
+            },
+            "trackingUrl": @string@
           },
           {
             "@id":"/api/deliveries/2",
@@ -450,7 +453,8 @@ Feature: Stores
               "before":"2019-11-12T20:30:00+01:00",
               "doneBefore":"2019-11-12T20:30:00+01:00",
               "comments": ""
-            }
+            },
+            "trackingUrl": @string@
           }
         ],
         "hydra:totalItems":2,
@@ -504,7 +508,8 @@ Feature: Stores
               "before":"2019-11-12T20:30:00+01:00",
               "doneBefore":"2019-11-12T20:30:00+01:00",
               "comments": ""
-            }
+            },
+            "trackingUrl": @string@
           },
           {
             "@id":"/api/deliveries/1",
@@ -533,7 +538,8 @@ Feature: Stores
               "before":"2019-11-12T19:30:00+01:00",
               "doneBefore":"2019-11-12T19:30:00+01:00",
               "comments": ""
-            }
+            },
+            "trackingUrl": @string@
           }
         ],
         "hydra:totalItems":2,

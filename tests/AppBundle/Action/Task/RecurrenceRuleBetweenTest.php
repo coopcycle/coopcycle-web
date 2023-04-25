@@ -9,6 +9,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Recurr\Rule;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,7 +55,9 @@ class RecurrenceRuleBetweenTest extends TestCase
                 [
                     '@type' => 'Task',
                     'type' => 'PICKUP',
-                    'address' => '/api/addresses/875',
+                    'address' => [
+                        'streetAddress' => '78 Avenue Victoria, 75001 Paris, France',
+                    ],
                     'after' => '2021-02-12T00:00:00+01:00',
                     'before' => '2021-02-12T23:59:00+01:00'
                 ]
@@ -69,7 +72,9 @@ class RecurrenceRuleBetweenTest extends TestCase
                 [
                     '@type' => 'Task',
                     'type' => 'PICKUP',
-                    'address' => '/api/addresses/875',
+                    'address' => [
+                        'streetAddress' => '78 Avenue Victoria, 75001 Paris, France',
+                    ],
                     'after' => '2021-02-12T10:00:00+01:00',
                     'before' => '2021-02-12T11:00:00+01:00'
                 ]
@@ -102,7 +107,6 @@ class RecurrenceRuleBetweenTest extends TestCase
                     "@type" => "Task",
                     "type" => "PICKUP",
                     "address" => [
-                        "@id" => "/api/addresses/875",
                         "streetAddress" => "78 Avenue Victoria, 75001 Paris, France"
                     ],
                     "after" => $after,
@@ -113,7 +117,7 @@ class RecurrenceRuleBetweenTest extends TestCase
 
         $expectedTask = new Task();
 
-        $this->denormalizer->denormalize($expectedPayload, Task::class, 'jsonld')
+        $this->denormalizer->denormalize($expectedPayload, Task::class, 'jsonld', Argument::type('array'))
             ->willReturn($expectedTask)
             ->shouldBeCalled();
 

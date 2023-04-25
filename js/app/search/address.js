@@ -1,22 +1,19 @@
 import React from 'react'
 import { render } from 'react-dom'
-import _ from 'lodash'
 
 import store from './address-storage'
 import AddressAutosuggest from '../components/AddressAutosuggest'
 
 // We used to store a string in "search_address", but now, we want objects
 // This function will cleanup legacy behavior
-function resolveAddress() {
+function resolveAddress(form) {
 
-  const address = store.get('search_address')
+  const addressInput = form.querySelector('input[name="address"]')
 
-  if (_.isObject(address)) {
-
-    return address
+  if (addressInput && addressInput.value) {
+    return JSON.parse(decodeURIComponent(atob(addressInput.value)))
   }
 
-  store.remove('search_address')
 }
 
 window._paq = window._paq || []
@@ -36,35 +33,38 @@ document.querySelectorAll('[data-search="address"]').forEach((container) => {
 
     render(
       <AddressAutosuggest
-        address={ resolveAddress() }
+        address={ resolveAddress(form) }
         addresses={ addresses }
         restaurants={ restaurants }
         geohash={ store.get('search_geohash', '') }
-        onAddressSelected={ (value, address, type) => {
+        onClear={ () => {
+          // clear geohash and address query params but keep others (filters)
+          const addressInput = form.querySelector('input[name="address"]')
+          const geohashInput = form.querySelector('input[name="geohash"]')
+
+          addressInput.parentNode.removeChild(addressInput)
+          geohashInput.parentNode.removeChild(geohashInput)
+
+          const searchParams = new URLSearchParams(window.location.search);
+          searchParams.delete('geohash')
+          searchParams.delete('address')
+
+          for (const [key, value] of searchParams.entries()) {
+            const newInput = document.createElement('input')
+            newInput.setAttribute('type', 'hidden')
+            newInput.setAttribute('name', key)
+            newInput.value = value
+            form.appendChild(newInput)
+          }
+
+          form.submit()
+        }}
+        onAddressSelected={ (value, address) => {
 
           const addressInput = form.querySelector('input[name="address"]')
           const geohashInput = form.querySelector('input[name="geohash"]')
 
           if (address.geohash !== geohashInput.value) {
-
-            if (type === 'address') {
-              if (!addressInput) {
-                const newAddressInput = document.createElement('input')
-                newAddressInput.setAttribute('type', 'hidden')
-                newAddressInput.setAttribute('name', 'address')
-                newAddressInput.value = btoa(address['@id'])
-                form.appendChild(newAddressInput)
-              }
-            }
-
-            if (type === 'prediction') {
-              if (addressInput) {
-                addressInput.parentNode.removeChild(addressInput)
-              }
-            }
-
-            store.set('search_geohash', address.geohash)
-            store.set('search_address', address)
 
             const trackingCategory = container.dataset.trackingCategory
             if (trackingCategory) {
@@ -72,9 +72,22 @@ document.querySelectorAll('[data-search="address"]').forEach((container) => {
             }
 
             geohashInput.value = address.geohash
+            addressInput.value = btoa(encodeURIComponent(JSON.stringify(address)))
+
+            const searchParams = new URLSearchParams(window.location.search);
+
+            // submit form including existing filters applied
+            for (const [key, value] of searchParams.entries()) {
+              if (key !== 'geohash' && key !== 'address') {
+                const newInput = document.createElement('input')
+                newInput.setAttribute('type', 'hidden')
+                newInput.setAttribute('name', key)
+                newInput.value = value
+                form.appendChild(newInput)
+              }
+            }
 
             form.submit()
-
           }
 
         }}

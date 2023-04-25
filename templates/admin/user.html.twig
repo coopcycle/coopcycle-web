@@ -8,9 +8,11 @@
 {% block content %}
   <h2 class="page-header">
     {% trans with { '%username%': user.username } %}User %username%{% endtrans %}
+    {% if is_granted('edit', user) %}
     <a class="btn btn-success pull-right" href="{{ path('admin_user_edit', { username: user.username }) }}">
       <i class="fa fa-pencil" aria-hidden="true"></i>  {% trans from 'messages' %}Edit{%  endtrans %}
     </a>
+    {% endif %}
   </h2>
   {% include "profile/profile.html.twig" %}
 {% endblock %}

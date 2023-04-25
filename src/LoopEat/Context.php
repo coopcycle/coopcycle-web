@@ -7,13 +7,13 @@ use GuzzleHttp\Exception\RequestException;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class Context
 {
     private $client;
     private $cartContext;
-    private $session;
+    private $requestStack;
     private $logger;
 
     private $loopeatBalance = 0;
@@ -22,12 +22,12 @@ class Context
     public function __construct(
         Client $client,
         CartContextInterface $cartContext,
-        SessionInterface $session,
+        RequestStack $requestStack,
         LoggerInterface $logger = null)
     {
         $this->client = $client;
         $this->cartContext = $cartContext;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -42,7 +42,7 @@ class Context
 
         $this->logger->info(sprintf('Initializing LoopEat context for order #%d', $order->getId()));
 
-        $adapter = new LoopEatAdapter($order, $this->session);
+        $adapter = new LoopEatAdapter($order, $this->requestStack->getSession());
 
         if ($adapter->hasLoopEatCredentials()) {
 

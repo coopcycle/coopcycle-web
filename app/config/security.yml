@@ -14,7 +14,8 @@ security:
         ROLE_RESTAURANT: ROLE_USER
         ROLE_STORE: ROLE_USER
         ROLE_LOOPEAT: ROLE_USER
-        ROLE_ADMIN: [ ROLE_COURIER, ROLE_LOOPEAT ]
+        ROLE_DISPATCHER: [ ROLE_COURIER, ROLE_LOOPEAT ]
+        ROLE_ADMIN: ROLE_DISPATCHER
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
@@ -75,6 +76,18 @@ security:
 
         api_task_get:
             pattern:   ^/api/tasks/[0-9]+$
+            methods: [ GET ]
+            stateless: true
+            bearer_token: true
+
+        api_task_put_bio_deliver:
+            pattern:   ^/api/tasks/[0-9]+/bio_deliver$
+            methods: [ PUT ]
+            stateless: true
+            bearer_token: true
+
+        api_task_lists_get:
+            pattern:   ^/api/task_lists$
             methods: [ GET ]
             stateless: true
             bearer_token: true
@@ -156,7 +169,7 @@ security:
             cart_session: true
 
         api_cart_operations:
-            pattern:   ^/api/orders/[0-9]+/(assign|timing|validate)$
+            pattern:   ^/api/orders/[0-9]+/(assign|timing|validate|tip)$
             methods: [ GET, PUT ]
             stateless: true
             cart_session: true
@@ -185,6 +198,18 @@ security:
             stateless: true
             cart_session: true
 
+        api_cart_stripe_clone_payment_method:
+            pattern:   ^/api/orders/[0-9]+/stripe/clone-payment-method/pm_[0-9a-zA-Z]+$
+            methods: [ GET ]
+            stateless: true
+            cart_session: true
+
+        api_cart_stripe_create_setup_intent_or_attach_pm:
+            pattern:   ^/api/orders/[0-9]+/stripe/create-setup-intent-or-attach-pm$
+            methods: [ POST ]
+            stateless: true
+            cart_session: true
+
         api_me:
             pattern:   ^/api/me$
             methods: [ GET ]
@@ -193,6 +218,11 @@ security:
 
         api_webhooks:
             pattern:   ^/api/webhooks
+            stateless: true
+            bearer_token: true
+
+        api_woopit:
+            pattern:   ^/api/woopit
             stateless: true
             bearer_token: true
 
@@ -270,7 +300,8 @@ security:
         - { path: ^/profile/jwt, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/profile/notifications, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/profile, roles: IS_AUTHENTICATED_REMEMBERED }
-        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin/settings, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: ROLE_DISPATCHER }
         - { path: ^/_uploader/restaurant, roles: [ ROLE_ADMIN, ROLE_RESTAURANT ] }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/facebook/login$, roles: PUBLIC_ACCESS }
@@ -281,5 +312,6 @@ security:
         - { path: ^/api/settings, roles: PUBLIC_ACCESS }
         - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
         - { path: ^/api/restaurants, roles: PUBLIC_ACCESS, methods: [ GET ] }
+        - { path: ^/api/search/shops_products, roles: PUBLIC_ACCESS, methods: [ GET ] }
         - { path: ^/api/carts/session$, roles: PUBLIC_ACCESS, methods: [ POST ] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

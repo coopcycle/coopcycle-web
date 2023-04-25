@@ -2,6 +2,7 @@
 
 namespace AppBundle\Action;
 
+use AppBundle\JWT\Validation\Constraint\PermittedForOneOf;
 use Azimo\Apple\Api;
 use Azimo\Apple\Auth;
 use Azimo\Apple\Auth\Exception\ValidationFailedException;
@@ -73,7 +74,7 @@ class SignInWithApple
                 new Validator(),
                 [
                     new IssuedBy('https://appleid.apple.com'),
-                    new PermittedFor('org.coopcycle.CoopCycle'),
+                    new PermittedForOneOf('org.coopcycle.CoopCycle', 'org.coopcycle.Naofood'),
                 ]
             ),
             new Auth\Factory\AppleJwtStructFactory()

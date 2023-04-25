@@ -70,7 +70,7 @@ export default ({ defaultValue, onChange }) => {
 
   const [ attribute, setAttribute ] = useState(defaultAttribute)
   const [ price, setPrice ] = useState(defaultValue.price || 0)
-  const [ step, setStep ] = useState(defaultValue.step || 0)
+  const [ step, setStep ] = useState(defaultValue.step || 1000)
   const [ threshold, setThreshold ] = useState(defaultValue.threshold || 0)
 
   const stepEl = useRef(null)
@@ -96,7 +96,7 @@ export default ({ defaultValue, onChange }) => {
       </label>
       <label>
         <span className="mx-2">{ t('PRICE_RANGE_EDITOR.FOR_EVERY') }</span>
-        <input type="number" size="4" min="0" step=".1" defaultValue={ divideIfNeeded(step, unit) }
+        <input type="number" size="4" min="0.1" step=".1" defaultValue={ divideIfNeeded(step, unit) }
           ref={ stepEl }
           className="form-control d-inline-block"
           style={{ width: '80px' }}

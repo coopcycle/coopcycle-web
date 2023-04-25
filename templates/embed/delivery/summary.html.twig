@@ -78,6 +78,7 @@
   {% endif %}
 
   {{ form_widget(form.stripePayment.stripeToken) }}
+  {{ form_widget(form.stripePayment.savedPaymentMethodId) }}
   <div id="card-element">
     <!-- a React element will be inserted here. -->
   </div>

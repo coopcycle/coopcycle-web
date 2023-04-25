@@ -154,6 +154,7 @@ export default ({ onChange }) => ({
       Mercadopago.createToken(this.form, function(status, response) {
         if (status !== 200 && status !== 201) {
           // TODO Show error
+          console.error(response)
           reject(new Error('The payment data is not valid'))
         } else {
           resolve(response.id)

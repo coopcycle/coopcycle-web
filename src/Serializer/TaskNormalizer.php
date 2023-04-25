@@ -9,6 +9,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Package;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
+use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -104,6 +105,15 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['packages'] = $this->_normalizeTaskPackages($object->getPackages());
         }
 
+        // FIXME Manage this with serialization groups
+        $data['tour'] = null;
+        if (null !== ($tour = $object->getTour())) {
+            $data['tour'] = [
+                '@id' => $this->iriConverter->getIriFromItem($tour),
+                'name' => $tour->getName(),
+            ];
+        }
+
         return $data;
     }
 
@@ -137,6 +147,12 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if (isset($data['type'])) {
             $data['type'] = strtoupper($data['type']);
+            // Ignore weight & packages for pickup tasks
+            // @see https://github.com/coopcycle/coopcycle-web/issues/3461
+            if ($data['type'] === 'PICKUP') {
+                unset($data['weight']);
+                unset($data['packages']);
+            }
         }
 
         $task = $this->normalizer->denormalize($data, $class, $format, $context);
@@ -164,24 +180,36 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
             // TODO Validate time slot
 
-            preg_match('/^([0-9]{4}-[0-9]{2}-[0-9]{2}) ([0-9:]+-[0-9:]+)$/', $data['timeSlot'], $matches);
+            if (1 === preg_match('/^([0-9]{4}-[0-9]{2}-[0-9]{2}) ([0-9:]+-[0-9:]+)$/', $data['timeSlot'], $matches)) {
 
-            $date = $matches[1];
-            $timeRange = $matches[2];
+                $date = $matches[1];
+                $timeRange = $matches[2];
 
-            [ $start, $end ] = explode('-', $timeRange);
+                [ $start, $end ] = explode('-', $timeRange);
 
-            [ $startHour, $startMinute ] = explode(':', $start);
-            [ $endHour, $endMinute ] = explode(':', $end);
+                [ $startHour, $startMinute ] = explode(':', $start);
+                [ $endHour, $endMinute ] = explode(':', $end);
 
-            $after = new \DateTime($date);
-            $after->setTime($startHour, $startMinute);
+                $after = new \DateTime($date);
+                $after->setTime($startHour, $startMinute);
 
-            $before = new \DateTime($date);
-            $before->setTime($endHour, $endMinute);
+                $before = new \DateTime($date);
+                $before->setTime($endHour, $endMinute);
 
-            $task->setAfter($after);
-            $task->setBefore($before);
+                $task->setAfter($after);
+                $task->setBefore($before);
+
+            } else {
+
+                $tz = date_default_timezone_get();
+
+                // FIXME Catch Exception
+                $period = CarbonPeriod::createFromIso($data['timeSlot']);
+
+                $task->setAfter($period->getStartDate()->tz($tz)->toDateTime());
+                $task->setBefore($period->getEndDate()->tz($tz)->toDateTime());
+
+            }
         }
 
         if (isset($data['packages'])) {
@@ -191,7 +219,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             foreach ($data['packages'] as $p) {
                 $package = $packageRepository->findOneByName($p['type']);
                 if ($package) {
-                    $task->addPackageWithQuantity($package, $p['quantity']);
+                    $task->setQuantityForPackage($package, $p['quantity']);
                 }
             }
         }

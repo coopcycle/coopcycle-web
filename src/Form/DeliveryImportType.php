@@ -63,7 +63,7 @@ class DeliveryImportType extends AbstractType
                 foreach ($deliveries as $delivery) {
                     $violations = $this->validator->validate($delivery);
                     if (count($violations) > 0) {
-                        throw new \Exception($violations->get(0)->getMessage());
+                        throw new \Exception((string) $violations->get(0));
                     }
                 }
 

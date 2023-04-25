@@ -114,14 +114,38 @@ class TaxesProvider
         return $migrations;
     }
 
+    /**
+     * @return TaxRate|null
+     */
     private function lookupTaxRate(TaxCategory $category, TaxRate $rate)
     {
+        $matches = [];
+
         foreach ($category->getRates() as $r) {
             if ($r instanceof TaxRate) {
                 if ($r->getAmount() === $rate->getAmount() && $r->getCountry() === $rate->getCountry()) {
-                    return $r;
+                    $matches[] = $r;
                 }
             }
         }
+
+        if (count($matches) === 0) {
+            return null;
+        }
+
+        if (count($matches) === 1) {
+            return current($matches);
+        }
+
+        // This happens when there is GST/PST with the same rate amount
+        foreach ($matches as $r) {
+            if ($rate->getCode() === $r->getCode()) {
+                return $r;
+            }
+        }
+
+        throw new \LogicException(sprintf('Could not lookup tax rate with amount %f for tax category « %s »',
+            $rate->getAmount(),
+            $category->getCode()));
     }
 }

@@ -19,7 +19,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/TaskList",
-        "@id":"/api/task_lists/1",
+        "@id":"/api/task_lists/2",
         "@type":"TaskList",
         "hydra:member":[
           {
@@ -49,7 +49,12 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
-            "position":0
+            "position":0,
+            "createdAt":"@string@.isDateTime()",
+            "tour":{
+              "@id":"/api/tours/1",
+              "name":"Example tour"
+            }
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -78,7 +83,9 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
-            "position":1
+            "position":1,
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           }
         ],
         "hydra:totalItems":2,
@@ -110,7 +117,12 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
-            "position":0
+            "position":0,
+            "createdAt":"@string@.isDateTime()",
+            "tour":{
+              "@id":"/api/tours/1",
+              "name":"Example tour"
+            }
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -139,7 +151,9 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
-            "position":1
+            "position":1,
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           }
         ],
         "distance":@integer@,
@@ -171,7 +185,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/TaskList",
-        "@id":"/api/task_lists/4",
+        "@id":"/api/task_lists/5",
         "@type":"TaskList",
         "hydra:member":[],
         "hydra:totalItems":0,
@@ -211,22 +225,9 @@ Feature: Tasks
         "hydra:totalItems":2,
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/tasks/2/events{?date,assigned}",
+          "hydra:template":"/api/tasks/2/events{?date,assigned,organization}",
           "hydra:variableRepresentation":"BasicRepresentation",
-          "hydra:mapping":[
-            {
-              "@type":"IriTemplateMapping",
-              "variable":"date",
-              "property":"date",
-              "required":false
-            },
-            {
-              "@type":"IriTemplateMapping",
-              "variable":"assigned",
-              "property":"assigned",
-              "required":false
-            }
-          ]
+          "hydra:mapping":@array@
         }
       }
       """
@@ -324,8 +325,8 @@ Feature: Tasks
     And the JSON should match:
       """
       {
-          "@context": "\/api\/contexts\/TaskGroup",
-          "@id": "\/api\/task_groups\/1",
+          "@context": "/api/contexts/TaskGroup",
+          "@id": "/api/task_groups/1",
           "@type": "TaskGroup",
           "id": 1,
           "name": "Group #1",
@@ -484,7 +485,12 @@ Feature: Tasks
         "recurrenceRule": null,
         "metadata": [],
         "weight":null,
-        "packages": []
+        "packages": [],
+        "createdAt":"@string@.isDateTime()",
+        "tour":{
+          "@id":"/api/tours/1",
+          "name":"Example tour"
+        }
       }
       """
 
@@ -776,7 +782,9 @@ Feature: Tasks
         "recurrenceRule": null,
         "metadata": [],
         "weight": 800,
-        "packages": []
+        "packages": [],
+        "createdAt":"@string@.isDateTime()",
+        "tour":null
       }
       """
 
@@ -855,7 +863,9 @@ Feature: Tasks
         "recurrenceRule": null,
         "metadata": [],
         "weight":null,
-        "packages": []
+        "packages": [],
+        "createdAt":"@string@.isDateTime()",
+        "tour":null
       }
       """
 
@@ -984,7 +994,9 @@ Feature: Tasks
               "baz":"bat"
             },
             "weight":null,
-            "packages": []
+            "packages": [],
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           },
           {
             "@id":"/api/tasks/2",
@@ -1012,7 +1024,9 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":[],
             "weight":null,
-            "packages": []
+            "packages": [],
+            "createdAt":"@string@.isDateTime()",
+            "tour":null
           }
         ],
         "hydra:totalItems":2,
@@ -1022,22 +1036,9 @@ Feature: Tasks
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/tasks{?date,assigned}",
+          "hydra:template":"/api/tasks{?date,assigned,organization}",
           "hydra:variableRepresentation":"BasicRepresentation",
-          "hydra:mapping":[
-            {
-              "@type":"IriTemplateMapping",
-              "variable":"date",
-              "property":"date",
-              "required":false
-            },
-            {
-              "@type":"IriTemplateMapping",
-              "variable":"assigned",
-              "property":"assigned",
-              "required":false
-            }
-          ]
+          "hydra:mapping":@array@
         }
       }
       """
@@ -1148,7 +1149,7 @@ Feature: Tasks
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/tasks{?date,assigned}",
+          "hydra:template":"/api/tasks{?date,assigned,organization}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":@array@
         }
@@ -1200,7 +1201,7 @@ Feature: Tasks
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/tasks{?date,assigned}",
+          "hydra:template":"/api/tasks{?date,assigned,organization}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":@array@
         }
@@ -1345,7 +1346,8 @@ Feature: Tasks
           "comments":"",
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00"
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -1396,7 +1398,8 @@ Feature: Tasks
           "comments":"",
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00"
-        }
+        },
+        "trackingUrl": @string@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1439,7 +1442,8 @@ Feature: Tasks
           "comments":"",
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00"
-        }
+        },
+        "trackingUrl": @string@
       }
       """
 
@@ -1839,4 +1843,278 @@ Feature: Tasks
         "@id":"/api/task_import_queues/1",
         "@type":"TaskImportQueue"
       }
+      """
+
+  Scenario: Restore a cancelled task
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/tasks/1/cancel" with body:
+    """
+      {}
+    """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"@string@.startsWith('/api/tasks')",
+        "@type":"Task",
+        "id":@integer@,
+        "type":"DROPOFF",
+        "status":"CANCELLED",
+        "address":@...@,
+        "after":"2018-12-01T10:30:00+01:00",
+        "before":"2018-12-01T11:00:00+01:00",
+        "doneAfter":"2018-12-01T10:30:00+01:00",
+        "doneBefore":"2018-12-01T11:00:00+01:00",
+        "comments":"",
+        "updatedAt":"@string@.isDateTime()",
+        "isAssigned":false,
+        "assignedTo":null,
+        "previous":null,
+        "next":null,
+        "group":null,
+        "tags":@array@
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/tasks/1/restore" with body:
+    """
+      {}
+    """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"@string@.startsWith('/api/tasks')",
+        "@type":"Task",
+        "id":@integer@,
+        "type":"DROPOFF",
+        "status":"TODO",
+        "address":@...@,
+        "after":"2018-12-01T10:30:00+01:00",
+        "before":"2018-12-01T11:00:00+01:00",
+        "doneAfter":"2018-12-01T10:30:00+01:00",
+        "doneBefore":"2018-12-01T11:00:00+01:00",
+        "comments":"",
+        "updatedAt":"@string@.isDateTime()",
+        "isAssigned":false,
+        "assignedTo":null,
+        "previous":null,
+        "next":null,
+        "group":null,
+        "tags":@array@
+      }
+      """
+
+  Scenario: Doesn't double package quantity
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/tasks/9" with body:
+      """
+      {
+        "packages": [
+          {
+            "type":"SMALL",
+            "quantity": 4
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+         "packages":[
+            {
+               "type":"SMALL",
+               "name":"SMALL",
+               "quantity":4
+            }
+         ],
+         "@*@": "@*@"
+      }
+      """
+
+  Scenario: Can update address.name & comments
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    Given the store with name "Acme" has imported tasks:
+      | type    | address.streetAddress                 | after            | before           |
+      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+    Given the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "PUT" request to "/api/tasks/1/bio_deliver" with body:
+      """
+      {
+        "address": {
+          "name": "Foo"
+        },
+        "comments": "Lorem ipsum"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "address":{
+          "name": "Foo",
+          "@*@": "@*@"
+        },
+        "comments": "Lorem ipsum",
+        "@*@": "@*@"
+      }
+      """
+
+
+  Scenario: Retrieve task with tour
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+      | users.yml           |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/tasks/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/1",
+        "@type":"Task",
+        "id":1,
+        "type":"DROPOFF",
+        "status":"TODO",
+        "tour":{
+          "@id":"/api/tours/1",
+          "name":"Example tour"
+        },
+        "@*@":"@*@"
+      }
+      """
+
+  Scenario: Mark multiple tasks as done
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/done" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/2"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+        {
+          "@context":"/api/contexts/Task",
+          "@id":"/api/tasks",
+          "@type":"hydra:Collection",
+          "hydra:member": [
+            {
+              "@id":"/api/tasks/1",
+              "@type":"Task",
+              "id":1,
+              "status": "DONE",
+              "@*@":"@*@"
+            },
+            {
+              "@id":"/api/tasks/2",
+              "@type":"Task",
+              "id":2,
+              "status": "DONE",
+              "@*@":"@*@"
+            }
+          ],
+          "hydra:totalItems": 2,
+          "@*@":"@*@"
+        }
+      """
+
+  Scenario: Assign images to multiple tasks
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/images" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/2"
+        ],
+        "images": [
+          "/api/task_images/1",
+          "/api/task_images/2"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+        {
+          "@context":"/api/contexts/Task",
+          "@id":"/api/tasks",
+          "@type":"hydra:Collection",
+          "hydra:member": [
+            {
+              "@id":"/api/tasks/1",
+              "@type":"Task",
+              "id":1,
+              "images": "@array@.count(2)",
+              "@*@":"@*@"
+            },
+            {
+              "@id":"/api/tasks/2",
+              "@type":"Task",
+              "id":2,
+              "images": "@array@.count(2)",
+              "@*@":"@*@"
+            }
+          ],
+          "hydra:totalItems": 2,
+          "@*@":"@*@"
+        }
       """

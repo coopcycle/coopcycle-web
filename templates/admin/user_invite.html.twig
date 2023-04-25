@@ -19,9 +19,10 @@
         {{ form_row(form.email) }}
         {{ form_row(form.roles, { label: false }) }}
 
+        {% if is_granted('ROLE_ADMIN') %}
         {{ form_widget(form.restaurants, { attr: { 'data-search-url': path('admin_restaurants_search', { format: 'json'  }) } }) }}
         {{ form_widget(form.stores, { attr: { 'data-search-url': path('admin_stores_search', { format: 'json'  }) } }) }}
-
+        {% endif %}
         <hr>
         <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.send_invitation'|trans }}</button>
       {{ form_end(form) }}

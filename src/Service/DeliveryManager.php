@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Task;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Security\TokenStoreExtractor;
@@ -65,9 +66,11 @@ class DeliveryManager
 
             foreach ($ruleSet->getRules() as $rule) {
                 if ($rule->matches($delivery, $this->expressionLanguage)) {
-                    $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()));
 
                     $price = $rule->evaluatePrice($delivery, $this->expressionLanguage);
+
+                    $this->logger->info(sprintf('Matched rule "%s", adding %d to price', $rule->getExpression(), $price));
+
                     $totalPrice += $price;
 
                     $matchedAtLeastOne = true;
@@ -154,17 +157,19 @@ class DeliveryManager
             $pickup->setAddress($store->getAddress());
         }
 
-        // If no pickup time is specified, calculate it
-        if (null !== $dropoff->getDoneBefore() && null === $pickup->getDoneBefore()) {
-            if (null !== $dropoff->getAddress() && null !== $pickup->getAddress()) {
+        if (null !== $dropoff->getBefore() && null !== $dropoff->getAddress()) {
 
-                $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
-                $duration = $this->routing->getDuration(...$coords);
+            foreach ($delivery->getTasksByType(Task::TYPE_PICKUP) as $p) {
+                if (null === $p->getBefore() && null !== $p->getAddress()) {
 
-                $pickupDoneBefore = clone $dropoff->getDoneBefore();
-                $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
+                    $coords = [$p->getAddress()->getGeo(), $dropoff->getAddress()->getGeo()];
+                    $duration = $this->routing->getDuration(...$coords);
 
-                $pickup->setDoneBefore($pickupDoneBefore);
+                    $pickupDoneBefore = clone $dropoff->getDoneBefore();
+                    $pickupDoneBefore->modify(sprintf('-%d seconds', $duration));
+
+                    $p->setBefore($pickupDoneBefore);
+                }
             }
         }
 

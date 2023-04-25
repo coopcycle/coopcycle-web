@@ -1,5 +1,6 @@
 include:
   - sylius_channels.yml
+  - packages.yml
 
 AppBundle\Entity\Base\GeoCoordinates:
   geo_1:
@@ -91,6 +92,16 @@ AppBundle\Entity\Task:
     doneBefore: <identity(new \DateTime('2018-12-01 12:30:00'))>
     __calls:
       - assignTo: [ "@bob", <identity(new \DateTime('2018-12-01'))> ]
+  task_8:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-12-02 13:30:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-02 13:45:00'))>
+  task_9:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-12-02 14:30:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-02 15:45:00'))>
+    __calls:
+      - addPackageWithQuantity: [ "@package_small", 4 ]
 
 AppBundle\Entity\Tag:
   tag_important:

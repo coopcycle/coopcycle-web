@@ -169,9 +169,10 @@ class EmailManager
 
     public function createTaskCompletedMessage(Task $task)
     {
-        $key = $task->isDone() ? 'task.done.subject' : 'task.failed.subject';
+        $key = sprintf('task.%s.%s.subject', strtolower($task->getType()), $task->isDone() ? 'done' : 'failed');
 
-        $subject = $this->translator->trans($key, ['%task.id%' => $task->getId()], 'emails');
+        $subject = $this->translator->trans($key, ['%id%' => $task->getDelivery()->getId()], 'emails');
+
         $body = $this->mjml->render($this->templating->render('emails/task/completed.mjml.twig', [
             'task' => $task,
         ]));
@@ -260,5 +261,15 @@ class EmailManager
         ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createAdhocOrderMessage(OrderInterface $order)
+    {
+        $subject = $this->translator->trans('order.created.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/order/adhoc.mjml.twig', [
+            'order' => $order
+        ]));
+
+        return $this->createHtmlMessage($subject, $body);
     }
 }

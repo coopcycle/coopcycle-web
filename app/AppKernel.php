@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new Sylius\Bundle\TaxonomyBundle\SyliusTaxonomyBundle(),
             new Sylius\Bundle\CurrencyBundle\SyliusCurrencyBundle(),
             new Sylius\Bundle\ChannelBundle\SyliusChannelBundle(),
+            new Sylius\Calendar\SyliusCalendarBundle(),
             new Sylius\Bundle\PromotionBundle\SyliusPromotionBundle(),
             new Sylius\Bundle\PaymentBundle\SyliusPaymentBundle(),
             new Sylius\Bundle\CustomerBundle\SyliusCustomerBundle(),
@@ -42,7 +43,6 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Misd\PhoneNumberBundle\MisdPhoneNumberBundle(),
             new winzou\Bundle\StateMachineBundle\winzouStateMachineBundle(),
-            new Knp\Bundle\MarkdownBundle\KnpMarkdownBundle(),
             new Craue\ConfigBundle\CraueConfigBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             new Sonata\SeoBundle\SonataSeoBundle(),
@@ -63,6 +63,7 @@ class AppKernel extends Kernel
             new M6Web\Bundle\DaemonBundle\M6WebDaemonBundle(),
             new Oneup\FlysystemBundle\OneupFlysystemBundle(),
             new Kreait\Firebase\Symfony\Bundle\FirebaseBundle(),
+            new ACSEO\TypesenseBundle\ACSEOTypesenseBundle(),
             new AppBundle\AppBundle(),
         ];
 

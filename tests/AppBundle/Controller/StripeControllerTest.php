@@ -77,6 +77,16 @@ class StripeControllerTest extends TestCase
         return Stripe\PaymentIntent::constructFrom($payload);
     }
 
+    private function createSetupIntent($intentStatus): Stripe\SetupIntent
+    {
+        $payload = [
+            'id' => 'seti_12345678',
+            'status' => $intentStatus,
+        ];
+
+        return Stripe\SetupIntent::constructFrom($payload);
+    }
+
     public function testCreatePaymentActionWithNextAction()
     {
         $order = $this->prophesize(OrderInterface::class);
@@ -94,7 +104,7 @@ class StripeControllerTest extends TestCase
         $paymentIntent = $this->createPaymentIntent('requires_source_action', 'use_stripe_sdk', '123456');
 
         $this->stripeManager->configure()->shouldBeCalled();
-        $this->stripeManager->createIntent($payment)->willReturn($paymentIntent);
+        $this->stripeManager->createIntent($payment, false)->willReturn($paymentIntent);
 
         $payload = [
             'payment_method_id' => 'pm_123456'
@@ -148,7 +158,7 @@ class StripeControllerTest extends TestCase
         $paymentIntent = $this->createPaymentIntent('requires_capture');
 
         $this->stripeManager->configure()->shouldBeCalled();
-        $this->stripeManager->createIntent($payment)->willReturn($paymentIntent);
+        $this->stripeManager->createIntent($payment, false)->willReturn($paymentIntent);
 
         $payload = [
             'payment_method_id' => 'pm_123456'
@@ -231,5 +241,100 @@ class StripeControllerTest extends TestCase
 
         $this->assertArrayHasKey('error', $data);
         $this->assertArrayHasKey('message', $data['error']);
+    }
+
+    public function testCreateSetupIntentOrAttachPMActionWithSetupIntent()
+    {
+        $order = $this->prophesize(OrderInterface::class);
+
+        $payment = new Payment();
+        $payment->setOrder($order->reveal());
+
+        $paymentRepository = $this->prophesize(ObjectRepository::class);
+        $paymentRepository->find(1)->willReturn($payment);
+
+        $this->entityManager
+            ->getRepository(PaymentInterface::class)
+            ->willReturn($paymentRepository->reveal());
+
+        $setupIntent = $this->createSetupIntent('succeeded');
+
+        $this->stripeManager->configure()->shouldBeCalled();
+        $this->stripeManager->createSetupIntent($payment, 'pm_123456')->willReturn($setupIntent);
+
+        $payload = [
+            'payment_method_to_save' => 'pm_123456'
+        ];
+
+        $hashids = new Hashids($this->secret, 8);
+        $hashId = $hashids->encode(1);
+
+        $request = Request::create(sprintf('/stripe/payment/%s/create-setup-intent-or-attach-pm', $hashId), 'POST',
+            $parameters = [],
+            $cookies = [],
+            $files = [],
+            $server = [],
+            $content = json_encode($payload));
+
+        // $this->entityManager->flush()->shouldBeCalled();
+
+        $response = $this->controller->createSetupIntentOrAttachPMAction(
+            $hashId,
+            $request,
+            $this->stripeManager->reveal()
+        );
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testCreateSetupIntentOrAttachPMActionWithAttach()
+    {
+        $order = $this->prophesize(OrderInterface::class);
+
+        $payment = new Payment();
+        $payment->setOrder($order->reveal());
+
+        $paymentRepository = $this->prophesize(ObjectRepository::class);
+        $paymentRepository->find(1)->willReturn($payment);
+
+        $this->entityManager
+            ->getRepository(PaymentInterface::class)
+            ->willReturn($paymentRepository->reveal());
+
+        $setupIntent = $this->createSetupIntent('requires_action');
+
+        $this->stripeManager->configure()->shouldBeCalled();
+        $this->stripeManager->createSetupIntent($payment, 'pm_123456')->willReturn($setupIntent);
+
+        $payload = [
+            'payment_method_to_save' => 'pm_123456'
+        ];
+
+        $hashids = new Hashids($this->secret, 8);
+        $hashId = $hashids->encode(1);
+
+        $request = Request::create(sprintf('/stripe/payment/%s/create-setup-intent-or-attach-pm', $hashId), 'POST',
+            $parameters = [],
+            $cookies = [],
+            $files = [],
+            $server = [],
+            $content = json_encode($payload));
+
+        $this->entityManager->flush()->shouldBeCalled();
+
+        $response = $this->controller->createSetupIntentOrAttachPMAction(
+            $hashId,
+            $request,
+            $this->stripeManager->reveal()
+        );
+
+        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->assertArrayHasKey('save_payment_method', $payment->getDetails());
+        $this->assertEquals(true, $payment->hasToSavePaymentMethod());
+        $this->assertArrayHasKey('payment_method_to_save', $payment->getDetails());
+        $this->assertEquals('pm_123456', $payment->getPaymentMethodToSave());
     }
 }

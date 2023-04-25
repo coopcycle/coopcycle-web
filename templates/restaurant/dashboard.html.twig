@@ -26,6 +26,7 @@ new CoopCycle.FoodtechDashboard(document.querySelector('#restaurant-dashboard'),
   restaurant: {{ restaurant_normalized|json_encode()|raw }},
   currentRoute: "{{ current_route }}",
   showSettings: false,
+  adhocOrderEnabled: "{{ adhoc_order_enabled }}",
 }, {
   onDateChange: function(date) {
     window.location.href =

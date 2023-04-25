@@ -138,6 +138,7 @@
         "ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR": "Questo numero non è valido",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP": "Esempio: {{example}}",
         "ADMIN_DASHBOARD_TASK_FORM_SAVE": "Salva",
+        "ADMIN_DASHBOARD_TASK_FORM_CREATE": "Create tasks",
         "ADMIN_DASHBOARD_TASK_DOWNLOAD_PDF": "Scarica come PDF",
         "ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS": "Completa",
         "RULE_PICKER_LINE_WEIGHT": "Peso (kg)",
@@ -242,6 +243,12 @@
         "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Differenza (ore)",
         "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Map clusters abilitato",
         "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Mostra sempre non assegnato",
-        "TIME_RANGE_FROM": "dalle {{start}}"
+        "TIME_RANGE_FROM": "dalle {{start}}",
+        "ORDERS_RATE_LIMIT": {
+          "ORDER_UNIT": "ordine(i)",
+          "TIME_UNIT": "minuto(i)",
+          "NO_LIMIT": "Nessun limite di ordini",
+          "LIMIT": "Un massimo di {{command}} ordini ogni {{time}}"
+        }
     }
 }

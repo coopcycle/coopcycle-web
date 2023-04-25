@@ -39,7 +39,7 @@ class TaskGroup extends React.Component {
 
   renderEditNameForm() {
     return (
-      <form onSubmit={(e) => this.onEditSubmitted(e)} onAbort={e => this.onEditCancelled(e)} className="d-flex flex-grow-1">
+      <form onSubmit={(e) => this.onEditSubmitted(e)} className="d-flex flex-grow-1">
         <input autoFocus type="text" name="group-name" className="mx-2 flex-grow-1 group__editable"
           value={this.state.newName}
           onChange={ (e) => this.setState({newName: e.target.value})}
@@ -125,7 +125,7 @@ class TaskGroup extends React.Component {
           </h4>
         </div>
         <div id={ `task-group-panel-${this.state.group.id}` } className="panel-collapse collapse" role="tabpanel">
-          <ul className="list-group">
+          <ul className="list-group list-group-padded">
             { tasks.map(task => {
               return (
                 <Task

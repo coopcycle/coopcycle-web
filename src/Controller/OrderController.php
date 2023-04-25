@@ -123,11 +123,31 @@ class OrderController extends AbstractController
                 );
             }
 
+            // Make sure to move Dabba credentials if any
+            $dabbaAccessTokenKey =
+                sprintf('dabba.order.%d.access_token', $order->getId());
+            $dabbaRefreshTokenKey =
+                sprintf('dabba.order.%d.refresh_token', $order->getId());
+
+            if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
+                $order->getCustomer()->setDabbaAccessToken(
+                    $session->get($dabbaAccessTokenKey)
+                );
+                $order->getCustomer()->setDabbaRefreshToken(
+                    $session->get($dabbaRefreshTokenKey)
+                );
+            }
+
             $this->objectManager->flush();
 
             if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
                 $session->remove($loopeatAccessTokenKey);
                 $session->remove($loopeatRefreshTokenKey);
+            }
+
+            if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
+                $session->remove($dabbaAccessTokenKey);
+                $session->remove($dabbaRefreshTokenKey);
             }
         }
 
@@ -327,9 +347,21 @@ class OrderController extends AbstractController
             $this->objectManager->flush();
 
             if (PaymentInterface::STATE_FAILED === $payment->getState()) {
+
+                $error = $payment->getLastError();
+
+                // Make sure to retrieve the last payment
+                $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
+
+                // Make sure to call StripeManager::configurePayment()
+                // It will resolve the Stripe account that will be used
+                // TODO Make sure we are using Stripe, not MercadoPago
+                $stripeManager->configurePayment($payment);
+
                 return $this->render('order/payment.html.twig', array_merge($parameters, [
                     'form' => $form->createView(),
-                    'error' => $payment->getLastError()
+                    'error' => $error,
+                    'payment' => $payment,
                 ]));
             }
 
@@ -475,6 +507,26 @@ class OrderController extends AbstractController
 
             $session->remove($loopeatAccessTokenKey);
             $session->remove($loopeatRefreshTokenKey);
+        }
+
+        $dabbaAccessTokenKey =
+            sprintf('dabba.order.%d.access_token', $id);
+        $dabbaRefreshTokenKey =
+            sprintf('dabba.order.%d.refresh_token', $id);
+
+        if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
+
+            $order->getCustomer()->setDabbaAccessToken(
+                $session->get($dabbaAccessTokenKey)
+            );
+            $order->getCustomer()->setDabbaRefreshToken(
+                $session->get($dabbaRefreshTokenKey)
+            );
+
+            $this->objectManager->flush();
+
+            $session->remove($dabbaAccessTokenKey);
+            $session->remove($dabbaRefreshTokenKey);
         }
 
         $resetSession = $flashBag->has('reset_session') && !empty($flashBag->get('reset_session'));

@@ -18,9 +18,11 @@ class ShippingDateFilter
 
     public function __construct(
         OrderTimelineCalculator $orderTimelineCalculator,
-        LoggerInterface $logger = null)
+        OrdersRateLimit         $ordersRateLimit,
+        LoggerInterface         $logger = null)
     {
         $this->orderTimelineCalculator = $orderTimelineCalculator;
+        $this->ordersRateLimit = $ordersRateLimit;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -29,6 +31,7 @@ class ShippingDateFilter
      * @param TsRange $range
      *
      * @return bool
+     * @throws \RedisException
      */
     public function accept(OrderInterface $order, TsRange $range, \DateTime $now = null): bool
     {
@@ -80,6 +83,10 @@ class ShippingDateFilter
                 $dropoff->format(\DateTime::ATOM))
             );
 
+            return false;
+        }
+
+        if ($this->ordersRateLimit->isRangeFull($order, $timeline->getPickupExpectedAt())) {
             return false;
         }
 

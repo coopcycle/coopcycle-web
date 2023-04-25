@@ -1,0 +1,15 @@
+{% extends "deliveries.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_integrations') }}">{{ 'integrations.breadcrumb'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+<ul>
+  <li>
+    <a href="{{ path('admin_integrations_woopit') }}">
+      Woopit
+    </a>
+  </li>
+</ul>
+{% endblock %}

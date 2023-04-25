@@ -15,14 +15,17 @@
   <th>#</th>
   <th>{% trans %}adminDashboard.tags.name{% endtrans %}</th>
   <th>{% trans %}adminDashboard.tags.color{% endtrans %}</th>
+  {% if is_granted('ROLE_ADMIN') %}
   <th></th>
+  {% endif %}
 </thead>
 <tbody>
 {% for tag in tags %}
 <tr>
-  <td><a href="{{ path('admin_tag', { slug: tag.slug }) }}">#{{ tag.id }}</a></td>
+  <td><a href="{{ is_granted("ROLE_ADMIN") ? path('admin_tag', { slug: tag.slug }) : '#' }}">#{{ tag.id }}</a></td>
   <td>{{ tag.name }}</td>
   <td><span class="label label-default" style="background-color: {{ tag.color }};">{{ tag.slug }}</span></td>
+  {% if is_granted('ROLE_ADMIN') %}
   <td>
   	<form method="POST">
   	 <input type="hidden" name="tag" value="{{ tag.id }}">
@@ -32,6 +35,7 @@
      </p>
     </form>
   </td>
+  {% endif %}
 </tr>
 {% endfor %}
 </tbody>

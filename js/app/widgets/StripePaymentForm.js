@@ -106,8 +106,8 @@ class CreditCard {
 
 const containsMethod = (methods, method) => !!_.find(methods, m => m.type === method)
 
-const handleCardPayment = (cc, options, form, submitButton) => {
-  cc.createToken()
+const handleCardPayment = (cc, options, form, submitButton, savedPaymentMethodId = null) => {
+  cc.createToken(savedPaymentMethodId)
     .then(token => {
       options.tokenElement.setAttribute('value', token)
       form.submit()
@@ -161,6 +161,15 @@ export default function(form, options) {
           document.getElementById('card-errors').textContent = ''
         }
       },
+      onSavedCreditCardSelected: (card) => {
+        if (!card) {
+          // used to blanck field when the card form is enabled
+          options.savedPaymentMethodElement.removeAttribute('value')
+        } else {
+          options.savedPaymentMethodElement.setAttribute('value', card.id)
+        }
+
+      }
     })
 
     cc.init(form)
@@ -174,8 +183,13 @@ export default function(form, options) {
     $('.btn-payment').addClass('btn-payment__loading')
     disableBtn(submitButton)
 
+    let savedPaymentMethod = null
+    if (options.savedPaymentMethodElement) {
+      savedPaymentMethod = options.savedPaymentMethodElement.getAttribute('value')
+    }
+
     if (methods.length === 1 && containsMethod(methods, 'card')) {
-      handleCardPayment(cc, options, form, submitButton)
+      handleCardPayment(cc, options, form, submitButton, savedPaymentMethod)
     } else {
 
       const selectedMethod =
@@ -199,7 +213,7 @@ export default function(form, options) {
           break
         case 'edenred+card':
         case 'card':
-          handleCardPayment(cc, options, form, submitButton)
+          handleCardPayment(cc, options, form, submitButton, savedPaymentMethod)
           break
       }
     }
@@ -225,7 +239,7 @@ export default function(form, options) {
               document.getElementById('mercadopago_identification_fields').style.display = "block"
             }
 
-            cc.mount(document.getElementById('card-element'), value, response.data).then(() => {
+            cc.mount(document.getElementById('card-element'), value, response.data, options).then(() => {
               document.getElementById('card-element').scrollIntoView()
               enableBtn(submitButton)
             })
@@ -277,7 +291,7 @@ export default function(form, options) {
       document.getElementById('mercadopago_identification_fields').style.display = "block"
     }
 
-    cc.mount(document.getElementById('card-element')).then(() => enableBtn(submitButton))
+    cc.mount(document.getElementById('card-element'), null, null, options).then(() => enableBtn(submitButton))
   } else {
 
     const el = document.createElement('div')

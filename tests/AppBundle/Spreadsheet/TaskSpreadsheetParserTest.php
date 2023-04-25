@@ -4,11 +4,14 @@ namespace Tests\AppBundle\Spreadsheet;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Tag;
 use AppBundle\Service\Geocoder;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Cocur\Slugify\Slugify;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectRepository;
 use Nucleos\UserBundle\Model\UserManagerInterface;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
@@ -23,6 +26,7 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->geocoder = $this->prophesize(Geocoder::class);
         $this->phoneNumberUtil = $this->prophesize(PhoneNumberUtil::class);
         $this->userManager = $this->prophesize(UserManagerInterface::class);
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
         $this->bob = new User();
         $this->bob->addRole('ROLE_COURIER');
@@ -30,15 +34,25 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->userManager->findUserByUsername('bob')
             ->willReturn($this->bob);
 
+        $this->userManager->findUserByUsername('username')
+            ->willReturn($this->bob);
+
         $this->userManager->findUserByUsername('sarah')
             ->willReturn(null);
+
+        $this->packageRepository = $this->prophesize(ObjectRepository::class);
+
+        $this->entityManager
+            ->getRepository(Package::class)
+            ->willReturn($this->packageRepository->reveal());
 
         return new TaskSpreadsheetParser(
             $this->geocoder->reveal(),
             new Slugify(),
             $this->phoneNumberUtil->reveal(),
             $this->userManager->reveal(),
-            'fr'
+            'fr',
+            $this->entityManager->reveal(),
         );
     }
 

@@ -19,6 +19,11 @@ Feature: Manage restaurants
       "hydra:member":[
         {
           "@id":"/api/restaurants/1",
+          "facets": {
+            "category":["Exclusivités","À la une"],
+            "cuisine":["Asiatique"],
+            "type":"Restaurant"
+          },
           "@*@": "@*@"
         },
         {
@@ -92,7 +97,11 @@ Feature: Manage restaurants
           "specialOpeningHoursSpecification":[],
           "image":@string@,
           "fulfillmentMethods":@array@,
-          "isOpen":true
+          "isOpen":true,
+          "hub":null,
+          "facets": {
+            "@*@": "@*@"
+          }
         }
       ],
       "hydra:totalItems":1,
@@ -168,7 +177,8 @@ Feature: Manage restaurants
         },
         "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
       },
-      "isOpen":true
+      "isOpen":true,
+      "hub":null
     }
     """
 
@@ -240,7 +250,8 @@ Feature: Manage restaurants
         "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
       },
       "isOpen":false,
-      "nextOpeningDate":@string@
+      "nextOpeningDate":@string@,
+      "hub":null
     }
     """
 
@@ -880,7 +891,9 @@ Feature: Manage restaurants
               "doneAfter":"@string@.isDateTime()",
               "doneBefore":"@string@.isDateTime()",
               "weight": null,
-              "packages": []
+              "packages": [],
+              "createdAt":"@string@.isDateTime()",
+              "tour":null
             },
             "dropoff":{
               "@id":"/api/tasks/2",
@@ -907,8 +920,11 @@ Feature: Manage restaurants
               "doneAfter":"@string@.isDateTime()",
               "doneBefore":"@string@.isDateTime()",
               "weight":null,
-              "packages": []
-            }
+              "packages": [],
+              "createdAt":"@string@.isDateTime()",
+              "tour":null
+            },
+            "trackingUrl": @string@
           }
         ],
         "hydra:totalItems":1

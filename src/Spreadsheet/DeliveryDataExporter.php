@@ -12,11 +12,18 @@ use AppBundle\Entity\Task\Package as TaskPackage;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\TaskRepository;
 use AppBundle\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
+use League\Csv\Writer as CsvWriter;
 
-final class DeliveryDataExporter extends AbstractDataExporter
+final class DeliveryDataExporter implements DataExporterInterface
 {
-    protected function getData(\DateTime $start, \DateTime $end): array
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    public function export(\DateTime $start, \DateTime $end): string
     {
         // 1. We load all the deliveries whose tasks are matching the date range
         // We need to do this, because some deliveries may have one task inside the range,
@@ -115,7 +122,22 @@ final class DeliveryDataExporter extends AbstractDataExporter
 
         }, $deliveries);
 
-        return $deliveries;
+        $csv = CsvWriter::createFromString('');
+        $csv->insertOne(array_keys($deliveries[0]));
+
+        $csv->insertAll($deliveries);
+
+        return $csv->getContent();
+    }
+
+    public function getContentType(): string
+    {
+        return 'text/csv';
+    }
+
+    public function getFilename(\DateTime $start, \DateTime $end): string
+    {
+        return sprintf('deliveries-%s-%s.csv', $start->format('Y-m-d'), $end->format('Y-m-d'));
     }
 
     private function getPackagesByTask(array $taskIds)

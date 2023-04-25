@@ -15,12 +15,35 @@ import {
 import classNames from 'classnames'
 
 import Task from './Task'
+import Tour from './Tour'
+
 import Avatar from '../../components/Avatar'
 import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
 import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
 
 moment.locale($('html').attr('lang'))
+
+const TaskOrTour = ({ item, onRemove, unassignTasks, username }) => {
+
+  if (item['@type'] === 'Tour') {
+
+    return (
+      <Tour
+        tour={ item }
+        tasks={ item.items }
+        username={ username }
+        unassignTasks={ unassignTasks } />
+    )
+  }
+
+  return (
+    <Task
+      task={ item }
+      assigned={ true }
+      onRemove={ item => onRemove(item) } />
+  )
+}
 
 // OPTIMIZATION
 // Avoid useless re-rendering when starting to drag
@@ -45,10 +68,12 @@ class InnerList extends React.Component {
               { ...provided.draggableProps }
               { ...provided.dragHandleProps }
             >
-              <Task
-                task={ task }
+              <TaskOrTour
+                item={ task }
                 assigned={ true }
-                onRemove={ task => this.props.onRemove(task) } />
+                onRemove={ task => this.props.onRemove(task) }
+                username={ this.props.username }
+                unassignTasks={ this.props.unassignTasks } />
             </div>
           )}
         </Draggable>
@@ -179,7 +204,9 @@ class TaskList extends React.Component {
               >
                 <InnerList
                   tasks={ tasks }
-                  onRemove={ task => this.remove(task) } />
+                  onRemove={ task => this.remove(task) }
+                  unassignTasks={ this.props.unassignTasks }
+                  username={ username } />
                 { provided.placeholder }
               </div>
             )}

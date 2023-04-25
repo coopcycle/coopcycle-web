@@ -237,16 +237,38 @@ class RestaurantController extends AbstractController
 
         $matches = array_values(array_filter($matches));
 
-        if ($request->query->has('geohash') && strlen($request->query->get('geohash')) > 0) {
-            $geotools = new Geotools();
-            $geohash = $request->query->get('geohash');
+        if ($request->query->has('geohash') || $request->query->has('address')) {
 
-            $decoded = $geotools->geohash()->decode($geohash);
+            $geohash = null;
 
-            $latitude = $decoded->getCoordinate()->getLatitude();
-            $longitude = $decoded->getCoordinate()->getLongitude();
+            if ($request->query->has('geohash') && strlen($request->query->get('geohash')) > 0) {
+                $geohash = $request->query->get('geohash');
+            } else if ($request->query->has('address') && strlen($request->query->get('address')) > 0) {
+                $address = urldecode(base64_decode($request->query->get('address')));
 
-            $matches = $this->restaurantFilter->matchingLatLng($matches, $latitude, $longitude);
+                if (!$address) {
+                    return;
+                }
+
+                $geohash = json_decode($address)->geohash;
+            }
+
+            if (null !== $geohash) {
+                $geotools = new Geotools();
+
+                try {
+
+                    $decoded = $geotools->geohash()->decode($geohash);
+
+                    $latitude = $decoded->getCoordinate()->getLatitude();
+                    $longitude = $decoded->getCoordinate()->getLongitude();
+
+                    $matches = $this->restaurantFilter->matchingLatLng($matches, $latitude, $longitude);
+
+                } catch (\InvalidArgumentException|\RuntimeException $e) {
+                    // Some funny guys may have tried a SQL injection
+                }
+            }
         }
 
         $iterator = new SortableRestaurantIterator($matches, $timingRegistry);
@@ -290,9 +312,9 @@ class RestaurantController extends AbstractController
             'pages' => $pages,
             'geohash' => $request->query->get('geohash'),
             'addresses_normalized' => $this->getUserAddresses(),
-            'address' => $request->query->has('address') ? $request->query->get('address') : null,
+            'address' => $request->query->get('address'),
             'types' => $types,
-            'cuisines' => $this->get('serializer')->normalize($cuisines, 'jsonld'),
+            'cuisines' => $cuisines,
         ));
     }
 

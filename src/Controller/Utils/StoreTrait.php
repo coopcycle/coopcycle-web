@@ -47,14 +47,14 @@ trait StoreTrait
         $qb = $this->getDoctrine()
         ->getRepository(Store::class)
         ->createQueryBuilder('c');
-        
+
         $STORES_PER_PAGE = 20;
 
         $stores = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
             $STORES_PER_PAGE,
-            [                
+            [
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'c.name',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
             ],
@@ -64,10 +64,10 @@ trait StoreTrait
 
         return $this->render($request->attributes->get('template'), [
             'stores' => $stores,
-            'layout' => $request->attributes->get('layout'), 
-            'store_route' => $routes['store'], 
-            'store_delivery_new_route' => $routes['store_delivery_new'], 
-            'store_deliveries_route' => $routes['store_deliveries'], 
+            'layout' => $request->attributes->get('layout'),
+            'store_route' => $routes['store'],
+            'store_delivery_new_route' => $routes['store_delivery_new'],
+            'store_deliveries_route' => $routes['store_deliveries'],
         ]);
     }
 
@@ -139,7 +139,7 @@ trait StoreTrait
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($storeId);
 
-        $this->accessControl($store);
+        $this->accessControl($store, 'view');
 
         $address = $this->getDoctrine()->getRepository(Address::class)->find($addressId);
 
@@ -154,7 +154,7 @@ trait StoreTrait
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
 
-        $this->accessControl($store);
+        $this->accessControl($store, 'edit_delivery');
 
         $address = new Address();
 
@@ -169,6 +169,8 @@ trait StoreTrait
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->accessControl($store);
 
             $store = $form->getData();
 
@@ -246,7 +248,7 @@ trait StoreTrait
             ->getRepository(Store::class)
             ->find($id);
 
-        $this->accessControl($store);
+        $this->accessControl($store, 'edit_delivery');
 
         $delivery = $store->createDelivery();
 
@@ -267,24 +269,8 @@ trait StoreTrait
 
             if ($useArbitraryPrice) {
 
-                $variantPrice = $form->get('variantPrice')->getData();
-                $variantName = $form->get('variantName')->getData();
-
-                $order = $this->createOrderForDelivery($orderFactory, $delivery, $variantPrice);
-
-                $variant = $order->getItems()->get(0)->getVariant();
-
-                $variant->setName($variantName);
-                $variant->setCode(Uuid::uuid4()->toString());
-
-                $order->setState(OrderInterface::STATE_ACCEPTED);
-
-                $entityManager->persist($order);
-                $entityManager->flush();
-
-                $orderNumberAssigner->assignNumber($order);
-
-                $entityManager->flush();
+                $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
+                    $entityManager, $orderNumberAssigner);
 
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
@@ -355,19 +341,19 @@ trait StoreTrait
     {
         $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
 
-        $this->accessControl($store);
+        $this->accessControl($store, 'view');
 
         return $this->renderStoreForm($store, $request, $translator);
     }
 
-    public function storeDeliveriesAction($id, Request $request,
-        TranslatorInterface $translator, PaginatorInterface $paginator)
+    public function storeDeliveriesAction($id, Request $request, PaginatorInterface $paginator,
+        OrderManager $orderManager, DeliveryManager $deliveryManager, OrderFactory $orderFactory)
     {
         $store = $this->getDoctrine()
             ->getRepository(Store::class)
             ->find($id);
 
-        $this->accessControl($store);
+        $this->accessControl($store, 'view');
 
         $routes = $request->attributes->get('routes');
 
@@ -375,20 +361,10 @@ trait StoreTrait
 
         $deliveryImportForm->handleRequest($request);
         if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
+            $this->accessControl($store, 'edit_delivery');
 
-            $deliveries = $deliveryImportForm->getData();
-            foreach ($deliveries as $delivery) {
-                $store->addDelivery($delivery);
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-            }
-            $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
-
-            $this->addFlash(
-                'notice',
-                $translator->trans('delivery.import.success_message', ['%count%' => count($deliveries)])
-            );
-
-            return $this->redirectToRoute($routes['import_success']);
+            return $this->handleDeliveryImportForStore($store, $deliveryImportForm,
+                $routes['import_success'], $orderManager, $deliveryManager, $orderFactory,);
         }
 
         $sections = $this->getDoctrine()
@@ -426,7 +402,7 @@ trait StoreTrait
             ->getRepository(Store::class)
             ->find($id);
 
-        $this->accessControl($store);
+        $this->accessControl($store, 'view');
 
         $routes = $request->attributes->get('routes');
 
@@ -517,5 +493,49 @@ trait StoreTrait
         unlink($zipName);
 
         return $response;
+    }
+
+    protected function handleDeliveryImportForStore(
+        Store $store,
+        FormInterface $deliveryImportForm,
+        string $routeTo,
+        OrderManager $orderManager,
+        DeliveryManager $deliveryManager,
+        OrderFactory $orderFactory)
+    {
+        $deliveries = $deliveryImportForm->getData();
+
+        foreach ($deliveries as $delivery) {
+            $store->addDelivery($delivery);
+
+            $this->entityManager->persist($delivery);
+
+            if ($store->getCreateOrders()) {
+                try {
+                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
+                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price);
+
+                    $this->entityManager->persist($order);
+                    $this->entityManager->flush();
+
+                    $orderManager->onDemand($order);
+                } catch (NoRuleMatchedException $e) {
+                    $this->addFlash(
+                        'error',
+                        $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators')
+                    );
+                    return $this->redirectToRoute($routeTo);
+                }
+            }
+        }
+
+        $this->entityManager->flush();
+
+        $this->addFlash(
+            'notice',
+            $this->translator->trans('delivery.import.success_message', ['%count%' => count($deliveries)])
+        );
+
+        return $this->redirectToRoute($routeTo);
     }
 }

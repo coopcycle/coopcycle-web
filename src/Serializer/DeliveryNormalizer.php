@@ -4,6 +4,7 @@ namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
@@ -13,7 +14,9 @@ use AppBundle\Service\Geocoder;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Persistence\ManagerRegistry;
+use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -27,17 +30,27 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         ItemNormalizer $normalizer,
         Geocoder $geocoder,
         IriConverterInterface $iriConverter,
-        ManagerRegistry $doctrine)
+        ManagerRegistry $doctrine,
+        UrlGeneratorInterface $urlGenerator,
+        Hashids $hashids8)
     {
         $this->normalizer = $normalizer;
         $this->geocoder = $geocoder;
         $this->iriConverter = $iriConverter;
         $this->doctrine = $doctrine;
+        $this->urlGenerator = $urlGenerator;
+        $this->hashids = $hashids8;
     }
 
     public function normalize($object, $format = null, array $context = array())
     {
-        return $this->normalizer->normalize($object, $format, $context);
+        $data = $this->normalizer->normalize($object, $format, $context);
+
+        $data['trackingUrl'] = $this->urlGenerator->generate('public_delivery', [
+            'hashid' => $this->hashids->encode($object->getId())
+        ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        return $data;
     }
 
     public function supportsNormalization($data, $format = null)
@@ -169,6 +182,11 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         $delivery = $this->normalizer->denormalize($data, $class, $format, $context);
+
+        $inputClass = ($context['input']['class'] ?? null);
+        if ($inputClass === DeliveryInput::class) {
+            return $delivery;
+        }
 
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();

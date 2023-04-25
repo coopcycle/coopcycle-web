@@ -22,7 +22,19 @@ class AddressModal extends Component {
   closeModal() {
   }
 
-  render() {
+  renderBackButton() {
+    if (this.props.restaurant) {
+      // if user is in a restaurant page we should just keep the user in that page
+      return (
+        <a className="text-muted" href="#" onClick={ (e) => {
+            e.preventDefault();
+            this.props.closeAddressModal();
+          }}>
+          <i className="fa fa-arrow-left mr-2"></i>
+          <span>{ this.props.t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANT') }</span>
+        </a>
+      )
+    }
 
     let params = {}
     if (this.props.isAddressTooFar && this.props.shippingAddress?.geo) {
@@ -33,6 +45,16 @@ class AddressModal extends Component {
         geohash
       }
     }
+
+    return (
+      <a className="text-muted" href={window.Routing.generate('restaurants', params)}>
+        <i className="fa fa-arrow-left mr-2"></i>
+        <span>{ this.props.t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS') }</span>
+      </a>
+    )
+  }
+
+  render() {
 
     return (
       <Modal
@@ -46,10 +68,7 @@ class AddressModal extends Component {
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
         <header className="d-flex align-items-center justify-content-between mb-5">
-          <a className="text-muted" href={ window.Routing.generate('restaurants', params) }>
-            <i className="fa fa-arrow-left mr-2"></i>
-            <span>{ this.props.t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS') }</span>
-          </a>
+          { this.renderBackButton() }
           <button type="button" className="close pl-4" onClick={ this.props.closeAddressModal }>
             <i className="fa fa-close"></i>
           </button>
@@ -122,6 +141,7 @@ function mapStateToProps(state) {
     addresses: state.addresses,
     isCollectionEnabled: selectIsCollectionEnabled(state),
     shippingAddress: state.cart.shippingAddress,
+    restaurant: state.addressModalContext.restaurant,
   }
 }
 

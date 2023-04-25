@@ -190,4 +190,15 @@ abstract class TaskCollection
             }
         }
     }
+
+    public function getTasksByType(string $type)
+    {
+        return $this->getItems()
+            ->filter(function (TaskCollectionItem $item) use ($type) {
+                return $item->getTask()->getType() === $type;
+            })
+            ->map(function (TaskCollectionItem $item) {
+                return $item->getTask();
+            })->toArray();
+    }
 }

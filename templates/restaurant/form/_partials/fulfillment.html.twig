@@ -2,6 +2,12 @@
 
 {{ form_row(form.shippingOptionsDays) }}
 
+{% if form.ordersRateLimiter is defined %}
+<hr>
+{{ form_row(form.ordersRateLimiter) }}
+<hr>
+{% endif %}
+
 {% if form.deliveryPerimeterExpression is defined %}
   {{ form_row(form.deliveryPerimeterExpression) }}
 {% endif %}

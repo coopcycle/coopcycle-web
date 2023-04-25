@@ -157,6 +157,8 @@ restaurant.temporaryClosedWarning: Questo ristorante è chiuso fino alle <strong
 restaurant.form.loopeat_enabled.label: Abilita il sistema di deposito e rimborso LoopEat
 restaurant.deliveryPerimeterExpression.help: Definisci il perimetro per la consegna.
   Puoi selezionare un raggio (in km) o una zona
+restaurant.ordersRateLimiter.title: Gestione dei limiti degli ordini
+restaurant.ordersRateLimiter.help: La funzione di limitazione degli ordini consente di controllare il numero di ordini che è possibile accettare in un determinato periodo di tempo. Impostando un limite, si evita di ricevere più ordini di quanto si possa gestire. È sufficiente specificare il numero massimo di ordini e la durata del periodo di tempo. Gli ordini aggiuntivi vengono automaticamente riprogrammati per il prossimo slot. Questa funzione aiuta a gestire meglio la capacità di produzione e a evitare ritardi ed errori.
 restaurant.contract.variableDeliveryPrice.help: L'importo addebitato verrà calcolato
   usando le regole di prezzo selezionate
 restaurant.contract.feeRate.label: Commissione della piattaforma per la consegna
@@ -1086,6 +1088,11 @@ form.registration.legal.help: Spuntando questa casella, accetti i nostri <a href
   e condizioni</a> e <a href="%privacy_url%">l'informativa sulla privacy</a>.
 form.registration.legal.label: Accetto i termini e condizioni e l'Informativa sulla
   privacy
+form.registration.terms.and.conditions.help: Spuntando questa casella, accetti i nostri <a href="%terms_url%">termini
+  e condizioni</a>.
+form.registration.terms.and.conditions.label: Accetto i termini e condizioni
+form.registration.privacy.policy.help: Spuntando questa casella, accetti i nostri <a href="%privacy_url%">l'informativa sulla privacy</a>.
+form.registration.privacy.policy.label: Accetto i l'Informativa sulla privacy
 form.settings.sms_gateway_config.twilio.from.label: Numero di telefono Twilio
 form.settings.sms_gateway_config.twilio.auth_token.label: Twilio Auth Token
 form.settings.sms_gateway_config.twilio.sid.label: Twilio SID

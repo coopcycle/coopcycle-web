@@ -162,3 +162,11 @@ services:
       $avatarDir: '%avatar_dir%'
     tags:
       - { name: 'console.command', command: 'coopcycle:avatars:regenerate' }
+
+  AppBundle\Command\WoopitSubscriptionsCommand:
+    tags:
+      - { name: 'console.command', command: 'woopit:subscriptions:create' }
+
+  AppBundle\Command\CopyStoreAddressesCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:stores:copy_addresses' }

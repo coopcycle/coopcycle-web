@@ -3,23 +3,23 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\CheckoutSucceeded;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class ClearSession
 {
-    private $session;
+    private $requestStack;
     private $sessionKeyName;
 
     public function __construct(
-        SessionInterface $session,
+        RequestStack $requestStack,
         $sessionKeyName)
     {
-        $this->session = $session;
+        $this->requestStack = $requestStack;
         $this->sessionKeyName = $sessionKeyName;
     }
 
     public function __invoke(CheckoutSucceeded $event)
     {
-        $this->session->remove($this->sessionKeyName);
+        $this->requestStack->getSession()->remove($this->sessionKeyName);
     }
 }

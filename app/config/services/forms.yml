@@ -22,6 +22,7 @@ services:
   AppBundle\Form\RegistrationType:
     arguments:
       $isDemo: '%is_demo%'
+      $splitTermsAndConditionsAndPrivacyPolicy: '%env(bool:SPLIT_TERMS_AND_CONDITIONS_AND_PRIVACY_POLICY)%'
     tags:
       - { name: form.type }
 
@@ -78,7 +79,6 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\TaskExportType:
-    arguments: [ '@coopcycle.repository.task' ]
     tags: [ form.type ]
 
   AppBundle\Form\SettingsType:
@@ -207,6 +207,7 @@ services:
       $taxCategoryRepository: '@sylius.repository.tax_category'
       $country: '%region_iso%'
       $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
     tags: [ form.type ]
 
   AppBundle\Form\Restaurant\FulfillmentMethodType:
@@ -226,6 +227,9 @@ services:
   AppBundle\Form\Type\LegalType:
     tags: [ form.type ]
 
+  AppBundle\Form\Type\TermsAndConditionsAndPrivacyPolicyType:
+    tags: [ form.type ]
+
   AppBundle\Form\HubType:
     tags: [ form.type ]
 
@@ -235,7 +239,6 @@ services:
   AppBundle\Form\Type\AutocompleteAdapterType:
     arguments:
       $autocompleteAdapter: '%env(COOPCYCLE_AUTOCOMPLETE_ADAPTER)%'
-      $algoliaApiKey: '%env(ALGOLIA_PLACES_API_KEY)%'
       $locationIqAccessToken: '%env(LOCATIONIQ_ACCESS_TOKEN)%'
       $geocodeEarthApiKey: '%env(GEOCODE_EARTH_API_KEY)%'
     tags: [ form.type ]
@@ -243,4 +246,22 @@ services:
   AppBundle\Form\Type\GeocodingProviderType:
     arguments:
       $opencageApiKey: '%env(OPENCAGE_API_KEY)%'
+    tags: [ form.type ]
+
+  AppBundle\Form\DataExportType:
+    arguments:
+      $dv4culEnabled: '%dv4cul_enabled%'
+      $colisactivEnabled: '%colisactiv_enabled%'
+      $exporters:
+        default: '@AppBundle\Spreadsheet\DeliveryDataExporter'
+        dv4cul: '@AppBundle\Spreadsheet\DV4CULDataExporter'
+        colisactiv: '@AppBundle\Spreadsheet\ColisActivDataExporter'
+    tags: [ form.type ]
+
+  AppBundle\Form\Order\AdhocOrderType:
+    tags: [ form.type ]
+
+  AppBundle\Form\InviteUserType:
+    arguments:
+      - '@security.authorization_checker'
     tags: [ form.type ]

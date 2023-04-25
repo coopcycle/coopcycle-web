@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Domain\Order\Event\CheckoutFailed;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\StripeAccount;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
@@ -491,7 +492,10 @@ class StripeController extends AbstractController
 
             $payment->setPaymentMethod($data['payment_method_id']);
 
-            $intent = $stripeManager->createIntent($payment);
+            $savePaymentMethod = isset($data['save_payment_method']) ? $data['save_payment_method'] : false;
+
+            $intent = $stripeManager->createIntent($payment, $savePaymentMethod);
+
             $payment->setPaymentIntent($intent);
 
             $this->entityManager->flush();
@@ -541,6 +545,189 @@ class StripeController extends AbstractController
                 ['message' => 'Invalid PaymentIntent status']
             ], 400);
         }
+
+        return new JsonResponse($response);
+    }
+
+    /**
+     * @see https://stripe.com/docs/connect/cloning-customers-across-accounts
+     *
+     * @Route("/stripe/payment/{hashId}/clone-payment-method", name="stripe_clone_payment_method", methods={"POST"})
+     */
+    public function clonePaymentMethodToConnectedAccountAction($hashId, Request $request,
+        StripeManager $stripeManager)
+    {
+        $hashids = new Hashids($this->secret, 8);
+
+        $decoded = $hashids->decode($hashId);
+        if (count($decoded) !== 1) {
+
+            return new JsonResponse(['error' =>
+                ['message' => sprintf('Payment with hash "%s" does not exist', $hashId)]
+            ], 400);
+        }
+
+        $paymentId = current($decoded);
+
+        $payment = $this->entityManager
+            ->getRepository(PaymentInterface::class)
+            ->find($paymentId);
+
+        if (null === $payment) {
+
+            return new JsonResponse(['error' =>
+                ['message' => sprintf('Payment with id "%d" does not exist', $paymentId)]
+            ], 400);
+        }
+
+        $content = $request->getContent();
+
+        $data = !empty($content) ? json_decode($content, true) : [];
+
+        if (!isset($data['payment_method_id'])) {
+
+            return new JsonResponse(['error' =>
+                ['message' => 'No payment_method_id key found in request']
+            ], 400);
+        }
+
+        $stripeManager->configure();
+
+        try {
+            $payment->setPaymentMethod($data['payment_method_id']);
+
+            $clonedPaymentMethod = $stripeManager->clonePaymentMethodToConnectedAccount($payment);
+
+            $this->entityManager->flush();
+        } catch (ApiErrorException $e) {
+            return new JsonResponse(['error' =>
+                ['message' => $e->getMessage()]
+            ], 400);
+        }
+
+        $response = [
+            'cloned_payment_method' => $clonedPaymentMethod
+        ];
+
+        return new JsonResponse($response);
+    }
+
+    /**
+     * @see https://stripe.com/docs/api/payment_methods/attach
+     *
+     * To attach a new PaymentMethod to a customer for future payments, Stripe recommends to use a SetupIntent
+     * But if SetupIntent requires an extra action we'll attach the payment method to the customer later
+     *
+     * @Route("/stripe/payment/{hashId}/create-setup-intent-or-attach-pm", name="stripe_create_setup_intent_or_attach_pm", methods={"POST"})
+     */
+    public function createSetupIntentOrAttachPMAction($hashId, Request $request,
+        StripeManager $stripeManager)
+    {
+        $hashids = new Hashids($this->secret, 8);
+
+        $decoded = $hashids->decode($hashId);
+        if (count($decoded) !== 1) {
+
+            return new JsonResponse(['error' =>
+                ['message' => sprintf('Payment with hash "%s" does not exist', $hashId)]
+            ], 400);
+        }
+
+        $paymentId = current($decoded);
+
+        $payment = $this->entityManager
+            ->getRepository(PaymentInterface::class)
+            ->find($paymentId);
+
+        if (null === $payment) {
+
+            return new JsonResponse(['error' =>
+                ['message' => sprintf('Payment with id "%d" does not exist', $paymentId)]
+            ], 400);
+        }
+
+        $content = $request->getContent();
+
+        $data = !empty($content) ? json_decode($content, true) : [];
+
+        if (!isset($data['payment_method_to_save'])) {
+
+            return new JsonResponse(['error' =>
+                ['message' => 'No payment_method_to_save key found in request']
+            ], 400);
+        }
+
+        $stripeManager->configure();
+
+        try {
+
+            $intent = $stripeManager->createSetupIntent($payment, $data['payment_method_to_save']);
+
+            // if payment method requires some extra action we can not save the payment method through the SetupIntent
+            // because we want to avoid request an extra action to the client now
+            if ($intent->status === 'requires_action') {
+                // in this case we save the payment method data and when the payment is finally authorised
+                // $gateway->authorize() we'll attach it to the customer
+                $payment->setPaymentDataToSaveAndReuse($data['payment_method_to_save']);
+
+                $this->entityManager->flush();
+            }
+
+        } catch (ApiErrorException $e) {
+
+            return new JsonResponse(['error' =>
+                ['message' => $e->getMessage()]
+            ], 400);
+        }
+
+        return new JsonResponse();
+    }
+
+    /**
+     * @Route("/stripe/customer/{hashId}/payment-methods", name="stripe_customer_payment_methods", methods={"GET"})
+     */
+    public function customerPaymentMethodsActions($hashId, StripeManager $stripeManager)
+    {
+        $hashids = new Hashids($this->secret, 8);
+
+        $decoded = $hashids->decode($hashId);
+        if (count($decoded) !== 1) {
+
+            return new JsonResponse(['error' =>
+                ['message' => sprintf('Customer with hash "%s" does not exist', $hashId)]
+            ], 400);
+        }
+
+        $customerId = current($decoded);
+
+        $customer = $this->entityManager
+            ->getRepository(Customer::class)
+            ->find($customerId);
+
+        if (null === $customer) {
+
+            return new JsonResponse(['error' =>
+                ['message' => sprintf('Customer with id "%d" does not exist', $customerId)]
+            ], 400);
+        }
+
+        $user = $customer->getUser();
+
+        if (null === $user->getStripeCustomerId()) {
+            return new JsonResponse(['cards' => []]);
+        }
+
+        $stripeManager->configure();
+
+        try {
+            $cards = $stripeManager->getCustomerPaymentMethods($user->getStripeCustomerId());
+        } catch (ApiErrorException $e) {
+            return new JsonResponse(['cards' => []]);
+        }
+
+        $response = [
+            'cards' => $cards
+        ];
 
         return new JsonResponse($response);
     }

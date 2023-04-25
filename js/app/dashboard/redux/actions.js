@@ -10,6 +10,7 @@ import {
   createTaskListRequest,
   createTaskListSuccess,
   createTaskListFailure,
+  makeSelectTaskListItemsByUsername,
 } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
 
@@ -112,6 +113,7 @@ export const CREATE_TASK_FAILURE = 'CREATE_TASK_FAILURE'
 export const COMPLETE_TASK_FAILURE = 'COMPLETE_TASK_FAILURE'
 export const CANCEL_TASK_FAILURE = 'CANCEL_TASK_FAILURE'
 export const TOKEN_REFRESH_SUCCESS = 'TOKEN_REFRESH_SUCCESS'
+export const RESTORE_TASK_FAILURE = 'RESTORE_TASK_FAILURE'
 
 export const OPEN_FILTERS_MODAL = 'OPEN_FILTERS_MODAL'
 export const CLOSE_FILTERS_MODAL = 'CLOSE_FILTERS_MODAL'
@@ -173,6 +175,12 @@ export const REMOVE_TASKS_FROM_GROUP_SUCCESS = 'REMOVE_TASKS_FROM_GROUP_SUCCESS'
 
 export const CREATE_GROUP_REQUEST = 'CREATE_GROUP_REQUEST'
 export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
+
+export const OPEN_CREATE_DELIVERY_MODAL = 'OPEN_CREATE_DELIVERY_MODAL'
+export const CLOSE_CREATE_DELIVERY_MODAL = 'CLOSE_CREATE_DELIVERY_MODAL'
+
+export const OPEN_CREATE_TOUR_MODAL = 'OPEN_CREATE_TOUR_MODAL'
+export const CLOSE_CREATE_TOUR_MODAL = 'CLOSE_CREATE_TOUR_MODAL'
 
 export function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
@@ -427,6 +435,10 @@ export function createTaskSuccess(task) {
 
 export function createTaskFailure(error) {
   return { type: CREATE_TASK_FAILURE, error }
+}
+
+export function restoreTaskFailure(error) {
+  return { type: RESTORE_TASK_FAILURE, error }
 }
 
 export function completeTaskFailure(error) {
@@ -716,6 +728,68 @@ export function duplicateTask(task) {
         dispatch(closeNewTaskModal())
       })
       .catch(error => dispatch(cancelTaskFailure(error)))
+  }
+}
+
+export function restoreTasks(tasks) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const requests = tasks.map(task => {
+
+      return httpClient.request({
+        method: 'put',
+        url: `${task['@id']}/restore`,
+        data: {},
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    })
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+      })
+      .catch(error => dispatch(restoreTaskFailure(error)))
+  }
+}
+
+export function restoreTask(task) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const url = `${task['@id']}/restore`
+
+    createClient(dispatch).request({
+      method: 'put',
+      url,
+      data: {},
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        dispatch(createTaskSuccess())
+        dispatch(updateTask(response.data))
+        dispatch(closeNewTaskModal())
+      })
+      .catch(error => dispatch(restoreTaskFailure(error)))
   }
 }
 
@@ -1128,6 +1202,9 @@ export function handleDragEnd(result) {
     const taskList = _.find(taskLists, tl => tl.username === username)
     const newTasks = [ ...taskList.items ]
 
+    const selectTaskListItemsByUsername = makeSelectTaskListItemsByUsername()
+    const taskListItemsByUsername = selectTaskListItemsByUsername(getState(), { username })
+
     if (selectedTasks.length > 1) {
 
       // FIXME Manage linked tasks
@@ -1138,7 +1215,7 @@ export function handleDragEnd(result) {
       Array.prototype.splice.apply(newTasks,
         Array.prototype.concat([ result.destination.index, 0 ], selectedTasks))
 
-    } else if (result.draggableId.startsWith('group:')) {
+    } else if (result.draggableId.startsWith('group:') || result.draggableId.startsWith('tour:')) {
 
       const groupEl = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`)
 
@@ -1153,8 +1230,23 @@ export function handleDragEnd(result) {
 
       // Reorder inside same list
       if (source.droppableId === destination.droppableId) {
-        const [ removed ] = newTasks.splice(result.source.index, 1);
-        newTasks.splice(result.destination.index, 0, removed)
+        const [ removed ] = taskListItemsByUsername.splice(result.source.index, 1);
+        const newTaskListItemsByUsername = [ ...taskListItemsByUsername ]
+        newTaskListItemsByUsername.splice(result.destination.index, 0, removed)
+
+        // Flatten list
+        const flatArray = newTaskListItemsByUsername.reduce((items, item) => {
+          if (item['@type'] === 'Tour') {
+            item.items.forEach(t => items.push(t))
+          } else {
+            items.push(item)
+          }
+          return items
+        }, [])
+
+        newTasks.length = 0; // Clear the array
+        newTasks.push(...flatArray);
+
       } else {
         const task = _.find(allTasks, t => t['@id'] === result.draggableId)
         if (task) {
@@ -1297,5 +1389,96 @@ export function removeTasksFromGroup(tasks) {
       })
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))
+  }
+}
+
+export function createDelivery(tasks, store) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    createClient(dispatch).request({
+      method: 'post',
+      url: '/api/deliveries/from_tasks',
+      data: {
+        tasks: _.map(tasks, t => t['@id']),
+        store: store['@id'],
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      // eslint-disable-next-line no-unused-vars
+      .then((response) => {
+
+        const pickup = _.find(tasks, t => t.type === 'PICKUP')
+        const dropoffs = _.without(tasks, pickup)
+        const dropoffsWithPrevious = _.map(dropoffs, t => {
+          return {
+            ...t,
+            previous: pickup['@id'],
+          }
+        })
+
+        dropoffsWithPrevious.forEach(t => dispatch(updateTask(t)))
+
+        dispatch(closeCreateDeliveryModal())
+
+      })
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.log(error)
+        dispatch(closeCreateDeliveryModal())
+      })
+  }
+}
+
+export function openCreateDeliveryModal() {
+  return { type: OPEN_CREATE_DELIVERY_MODAL }
+}
+
+export function closeCreateDeliveryModal() {
+  return { type: CLOSE_CREATE_DELIVERY_MODAL }
+}
+
+export function openCreateTourModal() {
+  return { type: OPEN_CREATE_TOUR_MODAL }
+}
+
+export function closeCreateTourModal() {
+  return { type: CLOSE_CREATE_TOUR_MODAL }
+}
+
+export function createTour(tasks, name) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    createClient(dispatch).request({
+      method: 'post',
+      url: '/api/tours',
+      data: {
+        name,
+        tasks: _.map(tasks, t => t['@id']),
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then((response) => {
+        tasks.forEach(task => dispatch(updateTask({ ...task, tour: response.data })))
+        dispatch(closeCreateTourModal())
+      })
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.log(error)
+        dispatch(closeCreateDeliveryModal())
+      })
   }
 }

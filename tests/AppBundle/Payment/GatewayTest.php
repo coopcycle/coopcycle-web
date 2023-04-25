@@ -183,4 +183,28 @@ class GatewayTest extends TestCase
         $this->assertCount(1, $payment->getRefunds());
         $this->assertInstanceOf(Collection::class, $payment->getRefunds());
     }
+
+    public function testAuthorizeAndAttachPaymentMethod()
+    {
+        $payment = new Payment();
+        $payment->setState(PaymentInterface::STATE_CART);
+
+        $paymentIntent = Stripe\PaymentIntent::constructFrom([
+            'id' => 'pi_12345678',
+            'status' => 'succeeded',
+            'next_action' => null,
+            'client_secret' => ''
+        ]);
+        $payment->setPaymentIntent($paymentIntent);
+        $payment->setPaymentDataToSaveAndReuse('pm_12345678');
+
+        $order = new Order();
+        $order->addPayment($payment);
+
+        $this->stripeManager
+            ->attachPaymentMethodToCustomer($payment)
+            ->shouldBeCalled();
+
+        $this->gateway->authorize($payment, ['token' => 'pi_12345678']);
+    }
 }

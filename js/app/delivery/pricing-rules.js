@@ -32,13 +32,6 @@ const wrapper = document.getElementById('rule-set')
 const zones = JSON.parse(wrapper.dataset.zones)
 const packages = JSON.parse(wrapper.dataset.packages)
 
-new Sortable(document.querySelector('.delivery-pricing-ruleset'), {
-  group: 'rules',
-  handle: '.delivery-pricing-ruleset__rule__handle',
-  animation: 250,
-  onUpdate: onListChange,
-})
-
 const onListChange = () => {
   if ($('.delivery-pricing-ruleset > li').length === 0) {
     warning.removeClass('hidden')
@@ -50,6 +43,13 @@ const onListChange = () => {
     $(el).find('.delivery-pricing-ruleset__rule__position').val(index)
   })
 }
+
+new Sortable(document.querySelector('.delivery-pricing-ruleset'), {
+  group: 'rules',
+  handle: '.delivery-pricing-ruleset__rule__handle',
+  animation: 250,
+  onUpdate: onListChange,
+})
 
 const renderPriceChoice = (item) => {
 

@@ -74,3 +74,16 @@ AppBundle\Entity\Task:
     doneBefore: <identity(new \DateTime('2018-02-02 12:30:00'))>
     comments: "#bob"
     status: "DONE"
+
+AppBundle\Entity\Tour:
+  tour_1:
+    name: "Example tour"
+    __calls:
+      - addTask: [ "@task_1" ]
+      - addTask: [ "@task_2" ]
+
+AppBundle\Entity\TaskImage:
+  image_1:
+    imageName: "abcd1234.jpg"
+  image_2:
+    imageName: "efgh5678.jpg"

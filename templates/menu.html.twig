@@ -16,7 +16,7 @@
     <div class="collapse navbar-collapse" id="navbar-main">
 
       <ul class="nav navbar-nav">
-        {% if is_granted('ROLE_ADMIN') %}
+        {% if is_granted('ROLE_DISPATCHER') %}
         <li>
           <p class="navbar-btn">
             <a class="btn btn-primary" href="{{ path('admin_index') }}">
@@ -33,6 +33,12 @@
         </li>
         {% endif %}
       </ul>
+
+      <div class="navbar-form navbar-left" id="search-navbar" style="position: relative;">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="{{ 'basics.search'|trans }}">
+        </div>
+      </div>
 
       {% set default_locale = 'en' %}
       {% set locales = {

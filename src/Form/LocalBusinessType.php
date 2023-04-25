@@ -18,6 +18,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Vich\UploaderBundle\Form\Type\VichImageType;
+use AppBundle\Payment\GatewayResolver;
 
 abstract class LocalBusinessType extends AbstractType
 {
@@ -34,6 +35,7 @@ abstract class LocalBusinessType extends AbstractType
         TokenStorageInterface $tokenStorage,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
+        GatewayResolver $gatewayResolver,
         string $country,
         bool $debug = false,
         bool $cashOnDeliveryOptinEnabled = false)
@@ -45,6 +47,7 @@ abstract class LocalBusinessType extends AbstractType
         $this->country = $country;
         $this->debug = $debug;
         $this->cashOnDeliveryOptinEnabled = $cashOnDeliveryOptinEnabled;
+        $this->gatewayResolver = $gatewayResolver;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

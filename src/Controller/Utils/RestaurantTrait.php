@@ -18,6 +18,7 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
+use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxonRepository;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\ClosingRuleType;
@@ -32,6 +33,7 @@ use AppBundle\Form\Restaurant\ReusablePackagingType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
+use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -48,6 +50,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Csv\Writer as CsvWriter;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use MercadoPago;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
@@ -108,6 +111,7 @@ trait RestaurantTrait
             'edenred_enabled' => $this->getParameter('edenred_enabled'),
             'vytal_enabled' => $this->getParameter('vytal_enabled'),
             'en_boite_le_plat_enabled' => $this->getParameter('en_boite_le_plat_enabled'),
+            'dabba_enabled' => $this->getParameter('dabba_enabled'),
         ]);
 
         // Associate Stripe account with restaurant
@@ -134,6 +138,7 @@ trait RestaurantTrait
         $wasLoopEatEnabled = $restaurant->isLoopeatEnabled();
         $wasDepositRefundEnabled = $restaurant->isDepositRefundEnabled();
         $wasVytalEnabled = $restaurant->isVytalEnabled();
+        $wasDabbaEnabled = $restaurant->isDabbaEnabled();
 
         $activationErrors = [];
         $formErrors = [];
@@ -182,6 +187,20 @@ trait RestaurantTrait
                     if (!$restaurant->hasReusablePackagingWithName('Vytal')) {
                         $reusablePackaging = new ReusablePackaging();
                         $reusablePackaging->setName('Vytal');
+                        $reusablePackaging->setPrice(0);
+                        $reusablePackaging->setOnHold(0);
+                        $reusablePackaging->setOnHand(9999);
+                        $reusablePackaging->setTracked(false);
+
+                        $restaurant->addReusablePackaging($reusablePackaging);
+                    }
+                }
+
+                if (!$wasDabbaEnabled && $restaurant->isDabbaEnabled()) {
+
+                    if (!$restaurant->hasReusablePackagingWithName('Dabba')) {
+                        $reusablePackaging = new ReusablePackaging();
+                        $reusablePackaging->setName('Dabba');
                         $reusablePackaging->setPrice(0);
                         $reusablePackaging->setOnHold(0);
                         $reusablePackaging->setOnHand(9999);
@@ -264,7 +283,7 @@ trait RestaurantTrait
             'form' => $form->createView(),
             'layout' => $request->attributes->get('layout'),
             'loopeat_authorize_url' => $loopeatAuthorizeUrl,
-            'cuisines' => $this->get('serializer')->normalize($cuisines, 'jsonld'),
+            'cuisines' => $this->get('serializer')->normalize($cuisines, 'json', ['groups' => ['restaurant']]),
         ], $routes));
     }
 
@@ -294,6 +313,41 @@ trait RestaurantTrait
         $restaurant->setContract(new Contract());
 
         return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator);
+    }
+
+    public function restaurantNewAdhocOrderAction($restaurantId, Request $request,
+        JWTTokenManagerInterface $jwtManager)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        $form = $this->createFormBuilder()
+            ->add('taxCategory', ProductTaxCategoryChoiceType::class)
+            ->getForm();
+
+        $view = $form->get('taxCategory')->createView();
+
+        $taxCategories = [];
+        foreach($view->vars['choices'] as $taxCategoryView) {
+            $taxCategories[] = [
+                'name' => $taxCategoryView->label,
+                'code' => $taxCategoryView->value,
+            ];
+        }
+
+        return $this->render($request->attributes->get('template'), $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
+                'resource_class' => LocalBusiness::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['restaurant']
+            ]),
+            'restaurant' => $restaurant,
+            'jwt' => $jwtManager->create($this->getUser()),
+            'taxCategories' => $taxCategories,
+        ], []));
     }
 
     public function restaurantDashboardAction($restaurantId, Request $request,
@@ -356,6 +410,7 @@ trait RestaurantTrait
             'initial_order' => $request->query->get('order'),
             'routes' => $routes,
             'date' => $date,
+            'adhoc_order_enabled' => $this->adhocOrderEnabled && $restaurant->belongsToHub(),
         ], $routes));
     }
 
@@ -485,6 +540,21 @@ trait RestaurantTrait
         $menuTaxon = $taxonRepository
             ->find($menuId);
 
+        // Handle deletion
+        $menuForm = $this->createForm(MenuTaxonType::class, $menuTaxon);
+        $menuForm->handleRequest($request);
+        if ($menuForm->isSubmitted() && $menuForm->isValid()) {
+            if ($menuForm->getClickedButton() && 'delete' === $menuForm->getClickedButton()->getName()) {
+
+                $restaurant->removeTaxon($menuTaxon);
+                $entityManager->remove($menuTaxon);
+
+                $entityManager->flush();
+
+                return $this->redirectToRoute($routes['menu_taxons'], ['id' => $restaurantId]);
+            }
+        }
+
         $form = $this->createFormBuilder()
             ->add('name', TextType::class)
             ->getForm();
@@ -540,15 +610,13 @@ trait RestaurantTrait
 
             $newSectionPositions = [];
 
-            $em = $this->getDoctrine()->getManagerForClass(ProductTaxon::class);
-
             foreach ($menuEditor->getChildren() as $child) {
 
                 // The section is empty
                 if (count($originalTaxonProducts[$child]) > 0 && count($child->getTaxonProducts()) === 0) {
                     foreach ($originalTaxonProducts[$child] as $originalTaxonProduct) {
                         $originalTaxonProducts[$child]->removeElement($originalTaxonProduct);
-                        $em->remove($originalTaxonProduct);
+                        $entityManager->remove($originalTaxonProduct);
                     }
                     continue;
                 }
@@ -562,7 +630,7 @@ trait RestaurantTrait
                     foreach ($originalTaxonProducts[$child] as $originalTaxonProduct) {
                         if (!$child->getTaxonProducts()->contains($originalTaxonProduct)) {
                             $child->getTaxonProducts()->removeElement($originalTaxonProduct);
-                            $em->remove($originalTaxonProduct);
+                            $entityManager->remove($originalTaxonProduct);
                         }
                     }
                 }
@@ -642,7 +710,7 @@ trait RestaurantTrait
         return $this->createForm(ProductType::class, $product, [
             'owner' => $restaurant,
             'with_reusable_packaging' =>
-                $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled(),
+                $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled() || $restaurant->isDabbaEnabled(),
             'reusable_packaging_choices' => $restaurant->getReusablePackagings(),
             'options_loader' => function (ProductInterface $product) use ($restaurant) {
 
@@ -1088,6 +1156,7 @@ trait RestaurantTrait
 
     public function mercadopagoOAuthRemoveAction(
         $id,
+        Request $request,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator)
     {
@@ -1104,7 +1173,10 @@ trait RestaurantTrait
             $translator->trans('form.local_business.mercadopago.remove.connection.success')
         );
 
-        return $this->redirectToRoute('admin_restaurant', ['id' => $id]);
+        return $this->redirectToRoute(
+            $request->attributes->get('redirect_after'),
+            ['id' => $id]
+        );
     }
 
     public function preparationTimeAction($id, Request $request, PreparationTimeCalculator $calculator)

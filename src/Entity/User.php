@@ -9,6 +9,8 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Me as MeController;
+use AppBundle\Action\MyStripePaymentMethods;
+use AppBundle\Api\Dto\StripePaymentMethodsOutput;
 use AppBundle\Api\Filter\UserRoleFilter;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -40,6 +42,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN')",
  *       "pagination_enabled"=false
+ *     },
+ *     "get_stripe_payment_methods"={
+ *       "method"="GET",
+ *       "path"="/me/stripe-payment-methods",
+ *       "controller"=MyStripePaymentMethods::class,
+ *       "output"=StripePaymentMethodsOutput::class,
+ *       "normalization_context"={"api_sub_level"=true}
  *     }
  *   },
  *   attributes={
@@ -97,6 +106,8 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
     protected $customer;
 
     protected $optinConsents;
+
+    private $stripeCustomerId;
 
     public function __construct()
     {
@@ -427,6 +438,18 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
         $optinConsent->setUser($this);
 
         $this->optinConsents->add($optinConsent);
+
+        return $this;
+    }
+
+    public function getStripeCustomerId()
+    {
+        return $this->stripeCustomerId;
+    }
+
+    public function setStripeCustomerId($stripeCustomerId)
+    {
+        $this->stripeCustomerId = $stripeCustomerId;
 
         return $this;
     }

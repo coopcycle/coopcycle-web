@@ -52,7 +52,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "get"={
  *       "method"="GET",
  *       "pagination_enabled"=false,
- *       "normalization_context"={"groups"={"restaurant", "address", "order"}}
+ *       "normalization_context"={"groups"={"restaurant", "address", "order", "restaurant_list"}}
  *     },
  *     "me_restaurants"={
  *       "method"="GET",
@@ -227,6 +227,11 @@ class LocalBusiness extends BaseLocalBusiness implements
      */
     protected $stripeConnectRoles = ['ROLE_ADMIN'];
 
+    /**
+     * The roles needed to be able to manage Mercadopago connect.
+     */
+    protected $mercadopagoConnectRoles = ['ROLE_ADMIN'];
+
     protected $preparationTimeRules;
 
     protected $reusablePackagings;
@@ -246,6 +251,9 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $edenredMerchantId;
 
+    /**
+     * @Groups({"restaurant"})
+     */
     protected $hub;
 
     protected $vytalEnabled = false;
@@ -253,6 +261,15 @@ class LocalBusiness extends BaseLocalBusiness implements
     protected $enBoitLePlatEnabled = false;
 
     protected $cashOnDeliveryEnabled = false;
+
+    protected $dabbaEnabled = false;
+
+    protected $dabbaCode;
+
+
+    protected ?int $rateLimitRangeDuration;
+
+    protected ?int $rateLimitAmount;
 
     public function __construct()
     {
@@ -451,6 +468,18 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this;
     }
 
+    public function getMercadopagoConnectRoles()
+    {
+        return $this->mercadopagoConnectRoles;
+    }
+
+    public function setMercadopagoConnectRoles($mercadopagoConnectRoles)
+    {
+        $this->mercadopagoConnectRoles = $mercadopagoConnectRoles;
+
+        return $this;
+    }
+
     public function getStripeConnectRoles()
     {
         return $this->stripeConnectRoles;
@@ -551,7 +580,7 @@ class LocalBusiness extends BaseLocalBusiness implements
      */
     public function isDepositRefundOptin(): bool
     {
-        if ($this->isLoopeatEnabled()) {
+        if ($this->isLoopeatEnabled() || $this->isDabbaEnabled()) {
 
             return true;
         }
@@ -929,4 +958,180 @@ class LocalBusiness extends BaseLocalBusiness implements
 
         return $this;
     }
+
+    /**
+     * @SerializedName("facets")
+     * @Groups("restaurant_list")
+     */
+    public function getFacets()
+    {
+        $facets = [
+            'category' => [],
+            'cuisine'  => [],
+            'type'     => [],
+        ];
+
+        if ($this->isExclusive()) {
+            $facets['category'][] = 'exclusive';
+        }
+
+        if ($this->isFeatured()) {
+            $facets['category'][] = 'featured';
+        }
+
+        if ($this->isZeroWaste()) {
+            $facets['category'][] = 'zero_waste';
+        }
+
+        foreach ($this->getServesCuisine() as $cuisine) {
+            $facets['cuisine'][] = $cuisine->getName();
+        }
+
+        $facets['type'] = $this->getType();
+
+        return $facets;
+    }
+
+    public function isZeroWaste()
+    {
+        return $this->isDepositRefundEnabled() || $this->isLoopeatEnabled() || $this->isDabbaEnabled();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDabbaEnabled()
+    {
+        return $this->dabbaEnabled;
+    }
+
+    /**
+     * @param bool $enabled
+     *
+     * @return self
+     */
+    public function setDabbaEnabled($enabled)
+    {
+        $this->dabbaEnabled = $enabled;
+
+        return $this;
+    }
+
+    public function getDabbaCode()
+    {
+        return $this->dabbaCode;
+    }
+
+    public function setDabbaCode($dabbaCode)
+    {
+        $this->dabbaCode = $dabbaCode;
+    }
+
+    public function getShopCuisines()
+    {
+        $isFoodEstablishment = FoodEstablishment::isValid($this->getType());
+
+        if (!$isFoodEstablishment) {
+            return [];
+        }
+
+        $cuisines = [];
+        foreach($this->getServesCuisine() as $c) {
+            $cuisines[] = $c->getName();
+        }
+
+        return $cuisines;
+    }
+
+    public function getShopCategories()
+    {
+        $categories = [];
+
+        if ($this->isFeatured()) {
+            $categories[] = 'featured';
+        }
+
+        if ($this->isExclusive()) {
+            $categories[] = 'exclusive';
+        }
+
+        if ($this->isDepositRefundEnabled() || $this->isLoopeatEnabled()) {
+            $categories[] = 'zerowaste';
+        }
+
+        return $categories;
+    }
+
+    public function getShopType()
+    {
+        return self::getKeyForType($this->getType());
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getRateLimitRangeDuration(): ?int
+    {
+        return $this->rateLimitRangeDuration;
+    }
+
+    /**
+     * @param int|null $rateLimitRangeDuration
+     * @return LocalBusiness
+     */
+    public function setRateLimitRangeDuration(?int $rateLimitRangeDuration): LocalBusiness
+    {
+        $this->rateLimitRangeDuration = $rateLimitRangeDuration;
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getRateLimitAmount(): ?int
+    {
+        return $this->rateLimitAmount;
+    }
+
+    /**
+     * @param int|null $rateLimitAmount
+     * @return LocalBusiness
+     */
+    public function setRateLimitAmount(?int $rateLimitAmount): LocalBusiness
+    {
+        $this->rateLimitAmount = $rateLimitAmount;
+        return $this;
+    }
+
+    /**
+     * @param string $expression
+     * @return $this
+     */
+    public function setOrdersRateLimiter(string $expression): LocalBusiness
+    {
+        [$amount, $timeWindow] = explode(':', $expression);
+
+        if (!empty($amount) && !empty($timeWindow)) {
+            $this->setRateLimitAmount(intval($amount));
+            $this->setRateLimitRangeDuration(intval($timeWindow));
+            return $this;
+        }
+
+        $this->setRateLimitAmount(null);
+        $this->setRateLimitRangeDuration(null);
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOrdersRateLimiter(): string
+    {
+        return sprintf('%s:%s',
+            $this->getRateLimitAmount(),
+            $this->getRateLimitRangeDuration()
+        );
+    }
+
+
 }
