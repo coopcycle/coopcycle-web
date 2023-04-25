@@ -665,6 +665,7 @@ class OrderController extends AbstractController
      */
     public function shareOrderAction($slug, Request $request,
         RequestStack $requestStack,
+        SessionInterface $session,
         OrderTimeHelper $orderTimeHelper)
     {
         $invitation =
@@ -681,6 +682,7 @@ class OrderController extends AbstractController
         }
 
         // $this->denyAccessUnlessGranted('view_public', $order);
+        $session->set($this->sessionKeyName, $order->getId());
 
         $cartForm = $this->createForm(CartType::class, $order);
 
