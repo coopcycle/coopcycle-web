@@ -33,10 +33,10 @@ class InviteUserType extends AbstractType
             ],
         ]);
 
-        $choices = ['roles.ROLE_COURIER.help' => 'ROLE_COURIER',];
+        $choices = ['roles.ROLE_COURIER.help' => 'ROLE_COURIER', 'roles.ROLE_DISPATCHER.help' => 'ROLE_DISPATCHER'];
 
         if ($this->asAdmin) {
-            array_unshift($choices, ['roles.ROLE_ADMIN.help' => 'ROLE_ADMIN']);
+            $choices = array_merge(['roles.ROLE_ADMIN.help' => 'ROLE_ADMIN'], $choices);
         }
 
         $builder->add('roles', ChoiceType::class, [
