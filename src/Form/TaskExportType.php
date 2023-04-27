@@ -63,7 +63,6 @@ class TaskExportType extends AbstractType
                     'order' => [
                         ["TasksExportUnified.orderId","asc"],
                         ["TasksExportUnified.taskType","desc"],
-                        ["TasksExportUnified.taskPosition","asc"],
                     ],
                     'filters' => [
                       [
@@ -118,7 +117,7 @@ class TaskExportType extends AbstractType
             $csv->insertOne([
                 '#',
                 '# order',
-                'orderNumber',
+                'orderCode',
                 'type',
                 'address.name',
                 'address.streetAddress',
