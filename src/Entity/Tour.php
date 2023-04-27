@@ -15,12 +15,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   collectionOperations={
  *     "post"={
  *       "method"="POST",
- *       "input"=TourInput::class
+ *       "input"=TourInput::class,
+ *       "security"="is_granted('ROLE_DISPATCHER')"
  *     }
  *   },
  *   itemOperations={
  *     "get"={
- *       "method"="GET"
+ *       "method"="GET",
+ *       "security"="is_granted('ROLE_DISPATCHER')"
  *     }
  *   },
  *   attributes={
