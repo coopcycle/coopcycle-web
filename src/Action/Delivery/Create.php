@@ -29,7 +29,8 @@ class Create
     public function __invoke(Delivery $data, Request $request)
     {
         $store = $data->getStore();
-        if ($store->getCreateOrders()) {
+
+        if (null !== $store && $store->getCreateOrders()) {
             $price = $this->getDeliveryPrice($data, $store->getPricingRuleSet(), $this->deliveryManager);
             $order = $this->createOrderForDelivery($this->orderFactory, $data, $price);
 
