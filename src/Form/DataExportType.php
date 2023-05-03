@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Exception\NoDataException;
 use AppBundle\Spreadsheet\DataExporterInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -84,13 +85,19 @@ class DataExportType extends AbstractType
             $end = new \DateTime($data['end']);
             $end->setTime(23, 59, 59);
 
-            $content = $exporter->export($start, $end);
+            try {
 
-            $event->getForm()->setData([
-                'content' => $content,
-                'content_type' => $exporter->getContentType(),
-                'filename' => $exporter->getFilename($start, $end),
-            ]);
+                $content = $exporter->export($start, $end);
+
+                $event->getForm()->setData([
+                    'content' => $content,
+                    'content_type' => $exporter->getContentType(),
+                    'filename' => $exporter->getFilename($start, $end),
+                ]);
+
+            } catch (NoDataException $e) {
+                $event->getForm()->addError(new FormError('No data'));
+            }
         });
     }
 }

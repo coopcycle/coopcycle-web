@@ -36,6 +36,10 @@
     </div>
   {% endif %}
 
+  {% if delivery_export_form.vars.submitted and not delivery_export_form.vars.valid %}
+    {{ form_errors(delivery_export_form) }}
+  {% endif %}
+
   {# {% include '_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %} #}
 
   <h3>{{ 'basics.today'|trans }}</h3>
