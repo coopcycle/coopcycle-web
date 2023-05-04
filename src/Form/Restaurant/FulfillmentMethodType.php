@@ -64,6 +64,7 @@ class FulfillmentMethodType extends AbstractType
                 'mapped' => false,
                 'choices' => [
                     '10 minutes' => 10,
+                    '20 minutes' => 20,
                     '30 minutes' => 30,
                     '60 minutes' => 60,
                 ],
