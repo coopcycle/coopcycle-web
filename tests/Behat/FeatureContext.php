@@ -563,6 +563,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @When the user :username sends a :method request to :url with parameters:
+     */
+    public function theUserSendsARequestToWithParameters($username, $method, $url, TableNode $data)
+    {
+        if (!isset($this->tokens[$username])) {
+            throw new \RuntimeException("User {$username} is not authenticated");
+        }
+
+        $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->tokens[$username]);
+        $this->restContext->iSendARequestToWithParameters($method, $url, $data);
+    }
+
+    /**
      * @When the OAuth client :clientName sends a :method request to :url
      */
     public function theOAuthClientSendsARequestTo($clientName, $method, $url)

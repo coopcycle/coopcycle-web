@@ -18,4 +18,5 @@ default:
       sessions:
         default:
           symfony: ~
+      files_path: 'features/fixtures'
     Behatch\Extension: ~

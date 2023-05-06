@@ -2118,3 +2118,29 @@ Feature: Tasks
           "@*@":"@*@"
         }
       """
+
+  Scenario: Upload image
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "multipart/form-data"
+    And the user "bob" sends a "POST" request to "/api/task_images" with parameters:
+      | key      | value              |
+      | file     | @beer.jpg |
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskImage",
+        "@id":@string@,
+        "@type":"http://schema.org/MediaObject",
+        "imageName":@string@,
+        "thumbnail":@string@
+      }
+      """
