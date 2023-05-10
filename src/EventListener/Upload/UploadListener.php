@@ -199,14 +199,7 @@ final class UploadListener
         $date = $request->get('date');
         $hashids = new Hashids($this->secret, 8);
 
-        $taskGroup = new TaskGroup();
-        $taskGroup->setName(sprintf('Import %s', date('d/m H:i')));
-
-        // The TaskGroup will serve as a unique identifier
-        $this->entityManager->persist($taskGroup);
-        $this->entityManager->flush();
-
-        $encoded = $hashids->encode($taskGroup->getId());
+        $encoded = $hashids->encode(mt_rand());
         $this->logger->debug(sprintf('UploadListener | hashid = %s', $encoded));
 
         $filename = sprintf('%s.%s', $encoded, TaskSpreadsheetParser::getFileExtension($mimeType));

@@ -51,23 +51,6 @@ class ImportTasksHandler implements MessageHandlerInterface
     {
         RemotePushNotificationManager::disable();
 
-        $decoded = $this->hashids->decode($message->getToken());
-        if (count($decoded) !== 1) {
-            $this->logger->error(sprintf('Token "%s" could not be decoded', $message->getToken()));
-            return;
-        }
-
-        $taskGroupId = current($decoded);
-
-        $taskGroup = $this->objectManager
-            ->getRepository(TaskGroup::class)
-            ->find($taskGroupId);
-
-        if (!$taskGroup) {
-            $this->logger->error(sprintf('TaskGroup #%d does not exist', $taskGroupId));
-            return;
-        }
-
         // Download file locally
         $tempDir = sys_get_temp_dir();
         $tempnam = tempnam($tempDir, 'coopcycle_task_import');
@@ -109,9 +92,20 @@ class ImportTasksHandler implements MessageHandlerInterface
         }
 
         try {
+            $taskGroup = null;
 
             foreach ($tasks as $task) {
-                $task->setGroup($taskGroup);
+                if (null === $task->getGroup()) {
+                    // if a group was not provided for the task
+                    // we add it to the default group for Imports
+                    if (null === $taskGroup) {
+                        $taskGroup = new TaskGroup();
+                        $taskGroup->setName(sprintf('Import %s', date('d/m H:i')));
+
+                        $this->objectManager->persist($taskGroup);
+                    }
+                    $task->setGroup($taskGroup);
+                }
 
                 if (null !== $message->getOrgId()) {
                     $organization = $this->objectManager
