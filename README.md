@@ -72,6 +72,7 @@ docker-compose pull
 #### Start the Docker containers
 
 ```
+cp .env.dist .env
 docker-compose up
 ```
 
