@@ -44,11 +44,15 @@ const TaskCaption = ({ task }) => {
 }
 
 const TaskAttrs = ({ task }) => {
-  if (task.images && task.images.length > 0) {
+  const hasImages = task.images && task.images.length
+  const hasComments = task.comments && task.comments.length
+
+  if (hasImages || hasComments) {
 
     return (
       <span className="task__attrs">
-        <i className="fa fa-camera"></i>
+        {hasImages ? <i className="fa fa-camera"></i> : null}
+        {hasComments ? <i className="fa fa-comments"></i> : null}
       </span>
     )
   }
