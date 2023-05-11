@@ -107,6 +107,9 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         // Suggest the customer to use reusable packaging via order payload
         if (null !== $restaurant &&
             $restaurant->isDepositRefundEnabled() && $restaurant->isDepositRefundOptin() &&
+            // We don't allow (yet) to toggle reusable packaging for LoopEat & Dabba
+            // https://github.com/coopcycle/coopcycle-app/issues/1503
+            (!$restaurant->isLoopeatEnabled() && !$restaurant->isDabbaEnabled()) &&
             $object->isEligibleToReusablePackaging()) {
 
             $transKey = 'form.checkout_address.reusable_packaging_enabled.label';
