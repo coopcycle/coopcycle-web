@@ -2,9 +2,11 @@
 
 namespace AppBundle\Action\Task;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
+use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Form\TaskImageType;
-use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,23 +17,23 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class CreateImage
 {
-    protected $doctrine;
-    protected $formFactory;
-    protected $validator;
 
     public function __construct(
-        ManagerRegistry $doctrine,
-        FormFactoryInterface $formFactory,
-        ValidatorInterface $validator)
-    {
-        $this->doctrine = $doctrine;
-        $this->formFactory = $formFactory;
-        $this->validator = $validator;
-    }
+        protected ManagerRegistry $doctrine,
+        protected FormFactoryInterface $formFactory,
+        protected IriConverterInterface $iriConverter,
+        protected ValidatorInterface $validator)
+    { }
 
     public function __invoke(Request $request)
     {
         $taskImage = new TaskImage();
+
+        // Ugly hack to improve task validation speed
+        if ($request->headers->has('X-Attach-To')) {
+            /** @var Task $task */
+            $task = $this->iriConverter->getItemFromIri($request->headers->get('X-Attach-To'));
+        }
 
         $form = $this->formFactory->create(TaskImageType::class, $taskImage);
         $form->handleRequest($request);
@@ -41,6 +43,12 @@ class CreateImage
             $em = $this->doctrine->getManager();
             $em->persist($taskImage);
             $em->flush();
+
+            if (isset($task)) {
+                $task->addImages([$taskImage]);
+                $em->persist($task);
+                $em->flush();
+            }
 
             return $taskImage;
         }
