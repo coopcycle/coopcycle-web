@@ -12,7 +12,8 @@ framework:
     session:
         storage_id: session.storage.mock_file
     profiler:
-        collect: false
+        collect: true
+        dsn: 'file:%kernel.project_dir%/var/cache/dev/profiler'
     cache:
         prefix_seed: "%database_name%_test"
         app: cache.adapter.array
@@ -51,8 +52,10 @@ oneup_flysystem:
             local:
                 directory: '/tmp'
         task_images:
-            local:
-                directory: '/tmp'
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: tasks
         receipts:
             local:
                 directory: '/tmp'

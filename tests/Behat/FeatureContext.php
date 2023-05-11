@@ -240,6 +240,10 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
             $this->typesenseCollectionManager->createCollection($name);
         }
+
+        if ($this->getContainer()->has('profiler')) {
+            $this->getContainer()->get('profiler')->enable();
+        }
     }
 
     /**

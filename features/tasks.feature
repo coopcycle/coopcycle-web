@@ -2119,6 +2119,7 @@ Feature: Tasks
         }
       """
 
+  @debug
   Scenario: Upload image
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -2129,7 +2130,7 @@ Feature: Tasks
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "multipart/form-data"
-    And the user "bob" sends a "POST" request to "/api/task_images" with parameters:
+    And the user "bob" sends a "POST" request to "/api/task_images?profile=1" with parameters:
       | key      | value              |
       | file     | @beer.jpg |
     Then the response status code should be 201
