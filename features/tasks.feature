@@ -2144,3 +2144,57 @@ Feature: Tasks
         "thumbnail":@string@
       }
       """
+
+  Scenario: Upload image with task in header
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "multipart/form-data"
+    When I add "X-Attach-To" header equal to "/api/tasks/1"
+    And the user "bob" sends a "POST" request to "/api/task_images" with parameters:
+      | key      | value              |
+      | file     | @beer.jpg |
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskImage",
+        "@id":@string@,
+        "@type":"http://schema.org/MediaObject",
+        "imageName":@string@,
+        "thumbnail":@string@
+      }
+      """
+
+  Scenario: Upload image with tasks in header
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "multipart/form-data"
+    When I add "X-Attach-To" header equal to "/api/tasks/1;/api/tasks/2"
+    And the user "bob" sends a "POST" request to "/api/task_images" with parameters:
+      | key      | value              |
+      | file     | @beer.jpg |
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskImage",
+        "@id":@string@,
+        "@type":"http://schema.org/MediaObject",
+        "imageName":@string@,
+        "thumbnail":@string@
+      }
+      """
