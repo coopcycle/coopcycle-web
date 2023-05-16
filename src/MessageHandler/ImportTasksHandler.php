@@ -3,17 +3,14 @@
 namespace AppBundle\MessageHandler;
 
 use AppBundle\Entity\Organization;
-use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Task\ImportQueue as TaskImportQueue;
 use AppBundle\Message\ImportTasks;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\LiveUpdates;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
-use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
-use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
@@ -26,7 +23,6 @@ class ImportTasksHandler implements MessageHandlerInterface
     private $spreadsheetParser;
     private $validator;
     private $liveUpdates;
-    private $hashids;
     private $logger;
 
     public function __construct(
@@ -35,7 +31,6 @@ class ImportTasksHandler implements MessageHandlerInterface
         TaskSpreadsheetParser $spreadsheetParser,
         ValidatorInterface $validator,
         LiveUpdates $liveUpdates,
-        string $secret,
         LoggerInterface $logger)
     {
         $this->objectManager = $objectManager;
@@ -44,7 +39,6 @@ class ImportTasksHandler implements MessageHandlerInterface
         $this->validator = $validator;
         $this->liveUpdates = $liveUpdates;
         $this->logger = $logger;
-        $this->hashids = new Hashids($secret, 8);
     }
 
     public function __invoke(ImportTasks $message)

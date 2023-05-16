@@ -930,9 +930,7 @@ services:
       arguments: [ '@AppBundle\Api\Swagger\SwaggerDecorator.inner' ]
       autoconfigure: false
 
-  AppBundle\MessageHandler\ImportTasksHandler:
-    arguments:
-      $secret: '%secret%'
+  AppBundle\MessageHandler\ImportTasksHandler: ~
 
   AppBundle\MessageHandler\CalculateRouteHandler:
     arguments:
