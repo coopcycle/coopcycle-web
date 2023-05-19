@@ -1289,3 +1289,4 @@ form.integration.maxLength.label: Tamaño máximo permitido (cm)
 form.integration.productTypes.label: Tipo de productos permitidos
 form.integration.woopitStoreId.label: ID de tienda de Woopit
 integration.created.message: La integración ha sido creada.
+tasks.mark_as_done.has_previous: 'La tarea #%failed_task% no puede finalizarse porque tiene una tarea previa #%previous_task% que debe ser finalizada antes.'
