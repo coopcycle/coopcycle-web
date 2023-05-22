@@ -3,17 +3,14 @@
 namespace AppBundle\MessageHandler;
 
 use AppBundle\Entity\Organization;
-use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Task\ImportQueue as TaskImportQueue;
 use AppBundle\Message\ImportTasks;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\LiveUpdates;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
-use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
-use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
@@ -26,7 +23,6 @@ class ImportTasksHandler implements MessageHandlerInterface
     private $spreadsheetParser;
     private $validator;
     private $liveUpdates;
-    private $hashids;
     private $logger;
 
     public function __construct(
@@ -35,7 +31,6 @@ class ImportTasksHandler implements MessageHandlerInterface
         TaskSpreadsheetParser $spreadsheetParser,
         ValidatorInterface $validator,
         LiveUpdates $liveUpdates,
-        string $secret,
         LoggerInterface $logger)
     {
         $this->objectManager = $objectManager;
@@ -44,29 +39,11 @@ class ImportTasksHandler implements MessageHandlerInterface
         $this->validator = $validator;
         $this->liveUpdates = $liveUpdates;
         $this->logger = $logger;
-        $this->hashids = new Hashids($secret, 8);
     }
 
     public function __invoke(ImportTasks $message)
     {
         RemotePushNotificationManager::disable();
-
-        $decoded = $this->hashids->decode($message->getToken());
-        if (count($decoded) !== 1) {
-            $this->logger->error(sprintf('Token "%s" could not be decoded', $message->getToken()));
-            return;
-        }
-
-        $taskGroupId = current($decoded);
-
-        $taskGroup = $this->objectManager
-            ->getRepository(TaskGroup::class)
-            ->find($taskGroupId);
-
-        if (!$taskGroup) {
-            $this->logger->error(sprintf('TaskGroup #%d does not exist', $taskGroupId));
-            return;
-        }
 
         // Download file locally
         $tempDir = sys_get_temp_dir();
@@ -109,9 +86,20 @@ class ImportTasksHandler implements MessageHandlerInterface
         }
 
         try {
+            $taskGroup = null;
 
             foreach ($tasks as $task) {
-                $task->setGroup($taskGroup);
+                if (null === $task->getGroup()) {
+                    // if a group was not provided for the task
+                    // we add it to the default group for Imports
+                    if (null === $taskGroup) {
+                        $taskGroup = new TaskGroup();
+                        $taskGroup->setName(sprintf('Import %s', date('d/m H:i')));
+
+                        $this->objectManager->persist($taskGroup);
+                    }
+                    $task->setGroup($taskGroup);
+                }
 
                 if (null !== $message->getOrgId()) {
                     $organization = $this->objectManager
