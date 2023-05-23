@@ -16,7 +16,7 @@ import FulfillmentMethod from './FulfillmentMethod'
 import ProductOptionsModal from './ProductOptionsModal'
 import ProductDetailsModal from './ProductDetailsModal'
 
-import {changeAddress, disableTakeaway, enableTakeaway, openAddressModal, setPlayer, sync} from '../redux/actions'
+import {changeAddress, disableTakeaway, enableTakeaway, openAddressModal, sync} from '../redux/actions'
 import {
   selectIsCollectionEnabled,
   selectIsDeliveryEnabled,
@@ -108,7 +108,6 @@ function mapDispatchToProps(dispatch) {
     enableTakeaway: () => dispatch(enableTakeaway()),
     disableTakeaway: () => dispatch(disableTakeaway()),
     openAddressModal: (restaurant) => dispatch(openAddressModal({restaurant})),
-    setPlayer: (options = {}) => dispatch(setPlayer(options))
   }
 }
 
