@@ -1,5 +1,5 @@
+Feature: Group orders
 
-  @debug
   Scenario: Create invitation link for order
     Given the current time is "2023-01-25 11:00:00"
     And the fixtures files are loaded:
@@ -32,7 +32,6 @@
       """
       {}
       """
-    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
