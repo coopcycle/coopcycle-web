@@ -60,7 +60,7 @@ class Cart extends Component {
                 <CartTotal />
                 { this.props.isOrderingAvailable && <hr /> }
                 { this.props.isOrderingAvailable && <CartButton /> }
-                { (this.props.isOrderingAvailable && this.props.hasItems && !this.props.isPlayer) && <InvitePeopleToOrderButton /> }
+                { (this.props.isGroupOrdersEnabled && this.props.isOrderingAvailable && this.props.hasItems && !this.props.isPlayer) && <InvitePeopleToOrderButton /> }
               </div>
             </div>
           </div>
@@ -96,7 +96,8 @@ function mapStateToProps(state) {
     hasItems: !!items.length,
     isPlayer: state.isPlayer,
     player: state.player,
-    invitation: state.cart.invitation
+    invitation: state.cart.invitation,
+    isGroupOrdersEnabled: state.isGroupOrdersEnabled,
   }
 }
 

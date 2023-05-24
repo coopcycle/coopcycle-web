@@ -79,6 +79,7 @@ const initialState = {
       channel: null
     }
   },
+  isGroupOrdersEnabled: false,
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -375,6 +376,10 @@ const player = (state = initialState.player, action = {}) => {
   }
 }
 
+const isGroupOrdersEnabled = (state = initialState.isGroupOrdersEnabled) => {
+  return state
+}
+
 export default combineReducers({
   isFetching,
   cart,
@@ -400,4 +405,5 @@ export default combineReducers({
   isPlayer,
   isSetPlayerEmailModalOpen,
   player,
+  isGroupOrdersEnabled,
 })

@@ -295,7 +295,8 @@
   data-restaurant="{{ restaurant_json|json_encode|e('html_attr') }}"
   data-cart="{{ cart_json|json_encode|e('html_attr') }}"
   data-times="{{ times|json_encode|e('html_attr') }}"
-  data-is-player="{{ (is_player is defined ? is_player : false)|json_encode|e('html_attr') }}"></div>
+  data-is-player="{{ (is_player is defined ? is_player : false)|json_encode|e('html_attr') }}"
+  data-is-group-orders-enabled="{{ group_orders_enabled|json_encode|e('html_attr') }}"></div>
 
 <div id="js-addresses-data"
   data-addresses="{{ addresses_normalized|json_encode|e('html_attr') }}"></div>
