@@ -1614,7 +1614,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1730,7 +1731,8 @@ Feature: Carts
           "itemsTotal":0,
           "total":0,
           "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@"
         }
       }
       """
@@ -1778,7 +1780,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 

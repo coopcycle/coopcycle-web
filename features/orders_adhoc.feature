@@ -107,7 +107,8 @@ Feature: Orders Adhoc
               },
               "adjustments": {
                 "@*@":"@*@"
-              }
+              },
+              "player": {"@*@":"@*@"}
           },
           {
               "id": @integer@,
@@ -121,7 +122,8 @@ Feature: Orders Adhoc
               },
               "adjustments": {
                 "@*@":"@*@"
-              }
+              },
+              "player": {"@*@":"@*@"}
           }
         ],
         "itemsTotal": 1600,
@@ -145,7 +147,8 @@ Feature: Orders Adhoc
         "assignedTo": null,
         "adjustments": {
           "@*@":"@*@"
-        }
+        },
+        "invitation": "@string@||@null@"
       }
     """
 
@@ -223,7 +226,8 @@ Feature: Orders Adhoc
               },
               "adjustments": {
                 "@*@":"@*@"
-              }
+              },
+              "player": {"@*@":"@*@"}
           },
           {
               "id": @integer@,
@@ -237,7 +241,8 @@ Feature: Orders Adhoc
               },
               "adjustments": {
                 "@*@":"@*@"
-              }
+              },
+              "player": {"@*@":"@*@"}
           }
         ],
         "itemsTotal": 1600,
@@ -261,7 +266,8 @@ Feature: Orders Adhoc
         "assignedTo": null,
         "adjustments": {
           "@*@":"@*@"
-        }
+        },
+        "invitation": "@string@||@null@"
       }
     """
     When the user "bob" is loaded:
@@ -290,7 +296,6 @@ Feature: Orders Adhoc
         ]
       }
       """
-    And print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -327,7 +332,8 @@ Feature: Orders Adhoc
               },
               "adjustments": {
                 "@*@":"@*@"
-              }
+              },
+              "player": {"@*@":"@*@"}
           },
           {
               "id": @integer@,
@@ -341,7 +347,8 @@ Feature: Orders Adhoc
               },
               "adjustments": {
                 "@*@":"@*@"
-              }
+              },
+              "player": {"@*@":"@*@"}
           },
           {
               "id": @integer@,
@@ -355,7 +362,8 @@ Feature: Orders Adhoc
               },
               "adjustments": {
                 "@*@":"@*@"
-              }
+              },
+              "player": {"@*@":"@*@"}
           }
         ],
         "itemsTotal": 6200,
@@ -374,6 +382,7 @@ Feature: Orders Adhoc
         "assignedTo": null,
         "adjustments": {
           "@*@":"@*@"
-        }
+        },
+        "invitation": "@string@||@null@"
       }
     """
