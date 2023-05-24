@@ -16,12 +16,13 @@ const SetGuestCustomerEmailModal = ({ isOpen, closeInvitePeopleToOrderModal, t, 
     <Modal
       isOpen={ isOpen }
       onRequestClose={ () => closeInvitePeopleToOrderModal() }
-      contentLabel={ t('INVITE_PEOPLOE_TO_ORDER_MODAL_LABEL') }
+      contentLabel={ t('GROUP_ORDER_TITLE') }
       className="ReactModal__Content--invite-people-to-order">
       <Formik
         initialValues={ initialValues }
         // validate={ this._validate }
         onSubmit={ (values) => {
+          console.log('onSubmit')
           setGuestCustomer(values.email, values.name)
         }}
         validateOnBlur={ false }
@@ -64,7 +65,7 @@ const SetGuestCustomerEmailModal = ({ isOpen, closeInvitePeopleToOrderModal, t, 
     </Modal>
   )
 }
-//<span className="help-block">Yop</span>
+
 function mapStateToProps(state) {
 
   return {
