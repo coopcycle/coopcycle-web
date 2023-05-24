@@ -90,10 +90,10 @@ class StripeManager
 
         $livemode = $this->settingsManager->isStripeLivemode();
         $stripeAccount = $restaurant->getStripeAccount($livemode);
+        $restaurantPaysStripeFee = $restaurant->getContract()->isRestaurantPaysStripeFee();
 
         if (null !== $stripeAccount) {
 
-            $restaurantPaysStripeFee = $restaurant->getContract()->isRestaurantPaysStripeFee();
             $applicationFee = $order->getFeeTotal();
 
             // @see https://stripe.com/docs/payments/payment-intents/use-cases#connected-accounts
@@ -105,12 +105,14 @@ class StripeManager
                     'amount' => $order->getTotal() - $applicationFee
                 );
             }
-        } else {
-            /** When the payment is done directly to the platform account and current user
-             * has a stripe Customer associated, we send the Customer paramater to associate the payment to the customer.
+        }
+
+        if (null === $stripeAccount || !$restaurantPaysStripeFee) {
+            /** For payments done directly in the platform account
+             *  we send the Customer paramater to associate the payment to the customer.
              * (this param is mandatory when the payment method belongs to the customer, i.e. when user selects a saved pm)
              */
-            if ($order->getCustomer()->hasUser()) {
+            if ($order->getCustomer() && $order->getCustomer()->hasUser()) {
                 $stripeCustomer = $order->getCustomer()->getUser()->getStripeCustomerId();
 
                 if (null !== $stripeCustomer) {
