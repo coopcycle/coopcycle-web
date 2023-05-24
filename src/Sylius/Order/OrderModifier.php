@@ -2,20 +2,19 @@
 
 namespace AppBundle\Sylius\Order;
 
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use AppBundle\Entity\User;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 final class OrderModifier implements OrderModifierInterface
 {
 	public function __construct(
         private OrderModifierInterface $orderModifier,
         private OrderInvitationContext $context,
-        private ContainerInterface $container,
+        private TokenStorageInterface $tokenStorage,
     	private LoggerInterface $logger)
     { }
 
@@ -29,12 +28,15 @@ final class OrderModifier implements OrderModifierInterface
             $cartItem->setCustomer($customer);
             $this->logger->debug("OrderModifier | adding item by {$customer->getEmail()}");
         } else {
-                if (
-                    !is_null($token = $this->container->get('security.token_storage')->getToken()) &&
-                    !is_null($user = $token->getUser())
-                ) {
-                    $cartItem->setCustomer($user->getCustomer());
-                }
+            if (
+                !is_null($token = $this->tokenStorage->getToken()) &&
+                !is_null($user = $token->getUser()) &&
+                // Make sure it doesn't break when authenticated with OAuth
+                // because we have an instance of League\Bundle\OAuth2ServerBundle\Security\User\NullUser
+                $user instanceof User
+            ) {
+                $cartItem->setCustomer($user->getCustomer());
+            }
         }
 
         $this->orderModifier->addToOrder($cart, $cartItem);
