@@ -1298,5 +1298,4 @@ integration.created.message: The integration has been created.
 profile.dabba.disconnect: Disconnect Dabba
 form.task_export.colisactiv.label: Export using ColivActiv format
 form.task_export.format.label: Export format
-tasks.mark_as_done.has_previous: 'Task #%failed_task% could not be closed because has a previos task #%previous_task% which must be completed first.'
-
+tasks.mark_as_done.has_previous: 'Task #%failed_task% could not be completed because it has a previous task #%previous_task% which must be completed first.'
