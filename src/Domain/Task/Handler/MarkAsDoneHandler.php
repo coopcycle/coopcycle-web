@@ -9,14 +9,17 @@ use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Exception\TaskAlreadyCompletedException;
 use AppBundle\Exception\TaskCancelledException;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MarkAsDoneHandler
 {
     private $eventRecorder;
+    private $translator;
 
-    public function __construct(RecordsMessages $eventRecorder)
+    public function __construct(RecordsMessages $eventRecorder, TranslatorInterface $translator)
     {
         $this->eventRecorder = $eventRecorder;
+        $this->translator = $translator;
     }
 
     public function __invoke(MarkAsDone $command)
@@ -34,7 +37,12 @@ class MarkAsDoneHandler
         }
 
         if ($task->hasPrevious() && !$task->getPrevious()->isCompleted()) {
-            throw new PreviousTaskNotCompletedException('Previous task must be completed first');
+            throw new PreviousTaskNotCompletedException(
+                $this->translator->trans('tasks.mark_as_done.has_previous', [
+                    '%failed_task%' => $task->getId(),
+                    '%previous_task%' => $task->getPrevious()->getId(),
+                ])
+            );
         }
 
         $this->eventRecorder->record(new Event\TaskDone($task, $command->getNotes()));

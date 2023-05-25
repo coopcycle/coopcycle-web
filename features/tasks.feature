@@ -2042,10 +2042,7 @@ Feature: Tasks
     And the JSON should match:
       """
         {
-          "@context":"/api/contexts/Task",
-          "@id":"/api/tasks",
-          "@type":"hydra:Collection",
-          "hydra:member": [
+          "success": [
             {
               "@id":"/api/tasks/1",
               "@type":"Task",
@@ -2061,8 +2058,48 @@ Feature: Tasks
               "@*@":"@*@"
             }
           ],
-          "hydra:totalItems": 2,
-          "@*@":"@*@"
+          "failed": []
+        }
+      """
+
+  Scenario: Mark one tasks as done and another one as failed
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/done" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/5"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+        {
+          "success": [
+            {
+              "@id":"/api/tasks/1",
+              "@type":"Task",
+              "id":1,
+              "status": "DONE",
+              "@*@":"@*@"
+            }
+          ],
+          "failed": {
+            "/api/tasks/5": @string@
+          }
         }
       """
 
