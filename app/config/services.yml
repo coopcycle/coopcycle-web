@@ -1013,6 +1013,7 @@ services:
         - cr
         - mx
         - cl
+        - co
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
 
   AppBundle\Payment\Gateway: ~
