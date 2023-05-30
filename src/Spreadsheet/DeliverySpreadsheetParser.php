@@ -2,19 +2,12 @@
 
 namespace AppBundle\Spreadsheet;
 
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
-use Box\Spout\Reader\ReaderFactory;
-use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Common\Type;
+use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 
 class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
@@ -30,14 +23,17 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     private $geocoder;
     private $phoneNumberUtil;
     private $countryCode;
+    private $entityManager;
+    private $slugify;
 
     public function __construct(Geocoder $geocoder, PhoneNumberUtil $phoneNumberUtil, string $countryCode,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager, SlugifyInterface $slugify)
     {
         $this->geocoder = $geocoder;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->countryCode = $countryCode;
         $this->entityManager = $entityManager;
+        $this->slugify = $slugify;
     }
 
     /**
@@ -81,6 +77,14 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 
             if (isset($record['dropoff.packages']) && !empty($record['dropoff.packages'])) {
                 $this->parseAndApplyPackages($delivery->getDropoff(), $record['dropoff.packages']);
+            }
+
+            if (isset($record['pickup.tags']) && !empty($record['pickup.tags'])) {
+                $this->applyTags($delivery->getPickup(), $record['pickup.tags']);
+            }
+
+            if (isset($record['dropoff.tags']) && !empty($record['dropoff.tags'])) {
+                $this->applyTags($delivery->getDropoff(), $record['dropoff.tags']);
             }
 
             $deliveries[] = $delivery;
@@ -174,6 +178,17 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         }
     }
 
+    private function applyTags(TaggableInterface $task, $tagsAsString)
+    {
+        $tagsAsString = preg_replace("/[[:blank:]]+/", " ", trim($tagsAsString));
+
+        if (!empty($tagsAsString)) {
+            $slugs = explode(' ', $tagsAsString);
+            $tags = array_map([$this->slugify, 'slugify'], $slugs);
+            $task->setTags($tags);
+        }
+    }
+
     public function getExampleData(): array
     {
         return [
@@ -184,6 +199,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'pickup.address.telephone' => '+33612345678',
                 'pickup.comments' => 'Fragile',
                 'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
+                'pickup.tags' => 'warn heavy',
                 'dropoff.address' => '58 av parmentier paris',
                 'dropoff.address.name' => 'Awesome business',
                 'dropoff.address.description' => 'Buzzer AB12',
@@ -191,6 +207,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.comments' => '',
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
                 'dropoff.packages' => 'small-box=1 big-box=2',
+                'dropoff.tags' => 'warn heavy',
                 'weight' => '5.5'
             ],
             [
@@ -200,6 +217,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'pickup.address.telephone' => '+33612345678',
                 'pickup.comments' => 'Fragile',
                 'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
+                'pickup.tags' => 'warn',
                 'dropoff.address' => '34 bd de magenta paris',
                 'dropoff.address.name' => 'Awesome business',
                 'dropoff.address.description' => 'Buzzer AB12',
@@ -207,6 +225,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.comments' => '',
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
                 'dropoff.packages' => 'small-box=1 big-box=2',
+                'dropoff.tags' => 'warn',
                 'weight' => '8.0'
             ],
         ];
