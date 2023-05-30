@@ -180,7 +180,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 
     private function applyTags(TaggableInterface $task, $tagsAsString)
     {
-        $tagsAsString = trim($tagsAsString);
+        $tagsAsString = preg_replace("/[[:blank:]]+/", " ", trim($tagsAsString));
 
         if (!empty($tagsAsString)) {
             $slugs = explode(' ', $tagsAsString);
