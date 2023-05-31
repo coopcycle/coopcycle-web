@@ -14,19 +14,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 final class OrderInvitationContext
 {
-    private ?array $payload = null;
-
 	public function __construct(
-        RequestStack $requestStack,
+        private RequestStack $requestStack,
         private JWSProviderInterface $JWSProvider,
         private IriConverterInterface $iriConverter)
-    {
-        $request = $requestStack->getCurrentRequest();
-        if (!is_null($request) && $request->headers->has('X-Player-Token')) {
-            $token = $requestStack->getCurrentRequest()->headers->get('X-Player-Token');
-            $this->payload = $this->getPayload($token);
-        }
-    }
+    {}
 
     /**
      * Check if the valid provided player token is matching with the order in parameter
@@ -35,11 +27,13 @@ final class OrderInvitationContext
      */
     public function isPlayerOf(OrderInterface $order): bool
     {
-        if (is_null($this->payload)) {
+        $payload = $this->getPayload();
+        if (is_null($payload)) {
             return false;
         }
+
         $iriOrder = $this->iriConverter->getIriFromItem($order);
-        return $iriOrder === $this->payload['order'];
+        return $iriOrder === $payload['order'];
 
     }
 
@@ -49,19 +43,26 @@ final class OrderInvitationContext
      */
     public function getCustomer(): ?CustomerInterface
     {
-        if (is_null($this->payload)) {
+        $payload = $this->getPayload();
+        if (is_null($payload)) {
             return null;
         }
 
-        return $this->iriConverter->getItemFromIri($this->payload['player']);
+        return $this->iriConverter->getItemFromIri($payload['player']);
     }
 
     /**
-     * @param string|null $token
      * @return array|null
      */
-    private function getPayload(?string $token): ?array
+    private function getPayload(): ?array
     {
+        $request = $this->requestStack->getCurrentRequest();
+
+        $token = null;
+        if (!is_null($request) && $request->headers->has('X-Player-Token')) {
+            $token = $this->requestStack->getCurrentRequest()->headers->get('X-Player-Token');
+        }
+
         if (empty($token)) {
             return null;
         }
