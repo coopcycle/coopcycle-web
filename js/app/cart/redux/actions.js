@@ -303,7 +303,13 @@ function geocodeAndSync() {
 
   return (dispatch, getState) => {
 
-    const { cart } = getState()
+    const { cart, isPlayer } = getState()
+
+    // No need to sync address for guests
+    if (isPlayer) {
+      $('#menu').LoadingOverlay('hide')
+      return
+    }
 
     dispatch(fetchRequest())
 
