@@ -16,6 +16,12 @@ class Context
     {
         $request = $this->requestStack->getCurrentRequest();
 
+        if ($request->attributes->has('_route')) {
+            if ($request->attributes->get('_route') == 'public_share_order') {
+                return true;
+            }
+        }
+
         return $request->query->has('embed')
             && ('' === $request->query->get('embed') || true === $request->query->getBoolean('embed'));
     }

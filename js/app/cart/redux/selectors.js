@@ -13,11 +13,39 @@ export const selectIsCollectionEnabled = createSelector(
   (fulfillmentMethods) => _.includes(fulfillmentMethods, 'collection')
 )
 
-export const selectItems = state => state.cart.items
+export const selectItems = createSelector(
+  state => state.cart.items,
+  state => state.isPlayer,
+  state => state.player.player,
+  (items, isPlayer, player) => {
+    if (!isPlayer) {
+      return items;
+    }
+    return _.filter(items, (item) => {
+      if (item.player === null) {
+        return false
+      }
+      return item.player['@id'] === player
+    })
+  }
+)
 
 export const selectItemsGroups = createSelector(
   selectItems,
   (items) =>  _.groupBy(items, 'vendor.name')
+)
+
+export const selectPlayersGroups = createSelector(
+  selectItems,
+  (items) => _.groupBy(items, (item) => {
+    if (item.player === null) {
+      return 'Admin'
+    }
+    if (item.player.username !== undefined) {
+      return item.player.username
+    }
+    return 'Unknown'
+  })
 )
 
 export const selectShowPricesTaxExcluded = createSelector(
@@ -29,11 +57,21 @@ export const selectItemsTotal = createSelector(
   selectItems,
   state => state.cart.itemsTotal,
   selectShowPricesTaxExcluded,
-  (items, itemsTotal, showPricesTaxExcluded) => {
+  state => state.isPlayer,
+  (items, itemsTotal, showPricesTaxExcluded, isPlayer) => {
 
     if (showPricesTaxExcluded) {
       return _.reduce(items, (sum, item) => {
         return sum + totalTaxExcluded(item)
+      }, 0)
+    }
+
+    if (isPlayer) {
+      return _.reduce(items, (sum, item) => {
+        if (showPricesTaxExcluded) {
+          return sum + totalTaxExcluded(item)
+        }
+        return sum + item.total
       }, 0)
     }
 

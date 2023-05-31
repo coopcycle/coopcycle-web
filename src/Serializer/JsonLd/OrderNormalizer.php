@@ -22,6 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 {
@@ -51,7 +52,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         PromotionCouponRepository $promotionCouponRepository,
         OrderProcessorInterface $orderProcessor,
         PriceFormatter $priceFormatter,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        UrlGeneratorInterface $urlGenerator)
     {
         $this->normalizer = $normalizer;
         $this->channelContext = $channelContext;
@@ -67,6 +69,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->orderProcessor = $orderProcessor;
         $this->priceFormatter = $priceFormatter;
         $this->translator = $translator;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -165,6 +168,12 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             }
 
             $data['takeaway'] = $object->isTakeaway();
+        }
+
+        $data['invitation'] = null;
+
+        if (null !== ($invitation = $object->getInvitation())) {
+            $data['invitation'] = $invitation->getSlug();
         }
 
         return $data;

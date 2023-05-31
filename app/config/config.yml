@@ -69,6 +69,7 @@ parameters:
     typesense_shops_collection_name: "shops"
     typesense_products_collection_name: "products"
     colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
+    group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -247,6 +248,7 @@ twig:
         cubejs_api_url: '%env(CUBEJS_API_URL)%'
         ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
         dabba_context: '@AppBundle\Dabba\Context'
+        group_orders_enabled: '%group_orders_enabled%'
 
     exception_controller: null
 
@@ -692,6 +694,10 @@ fos_js_routing:
         - routing_route
         - user_avatar
         - dashboard_restaurant_new_adhoc_order
+        - public_share_order
+        - order_set_guest_customer_email
+        - api_orders_add_player_item
+        - api_orders_create_invitation_item
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'

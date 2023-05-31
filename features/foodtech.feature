@@ -88,7 +88,8 @@ Feature: Food Tech
               "tip":[]
             },
             "paymentMethod": "CARD",
-            "hasReceipt":@boolean@
+            "hasReceipt":@boolean@,
+            "invitation": "@string@||@null@"
           }
         ],
         "hydra:totalItems":1,

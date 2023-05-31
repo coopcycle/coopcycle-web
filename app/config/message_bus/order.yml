@@ -238,6 +238,8 @@ services:
           subscribes_to: order:dropped
         - name: event_subscriber
           subscribes_to: order:fulfilled
+        - name: event_subscriber
+          subscribes_to: order:updated
 
   coopcycle.domain.order.reactor.modify_promotions_usage:
     class: AppBundle\Domain\Order\Reactor\ModifyPromotionsUsage
