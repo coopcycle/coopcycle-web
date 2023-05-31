@@ -52,7 +52,8 @@ class Cart extends Component {
                 <FulfillmentMethod
                   value={ fulfillmentMethod }
                   shippingAddress={ this.props.shippingAddress }
-                  onClick={ () => this.props.openAddressModal(this.props.restaurant) } />
+                  onClick={ () => this.props.openAddressModal(this.props.restaurant) }
+                  allowEdit={ !this.props.isPlayer } />
                 { this.props.isOrderingAvailable && <Time /> }
               </div>
               <CartItems />

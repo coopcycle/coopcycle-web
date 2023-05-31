@@ -12,7 +12,7 @@ const Icon = ({ type }) => (
   </span>
 )
 
-const FulfillmentMethod = ({ value, shippingAddress, onClick }) => {
+const FulfillmentMethod = ({ value, shippingAddress, onClick, allowEdit }) => {
 
   const { t } = useTranslation()
 
@@ -21,7 +21,9 @@ const FulfillmentMethod = ({ value, shippingAddress, onClick }) => {
       className="d-flex align-items-start justify-content-between border-bottom pb-4 text-decoration-none"
       onClick={ e => {
         e.preventDefault()
-        onClick()
+        if (allowEdit) {
+          onClick()
+        }
       }}>
       <span>
         { value === 'collection' && (
@@ -41,9 +43,10 @@ const FulfillmentMethod = ({ value, shippingAddress, onClick }) => {
           </React.Fragment>
         ) }
       </span>
+      { allowEdit &&
       <span className="pl-4">
         <small>{ t('CART_DELIVERY_TIME_EDIT') }</small>
-      </span>
+      </span> }
     </a>
   )
 }
