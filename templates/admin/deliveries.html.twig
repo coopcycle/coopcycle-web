@@ -40,19 +40,36 @@
     {{ form_errors(delivery_export_form) }}
   {% endif %}
 
-  {# {% include '_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %} #}
+  {% set tab_items = [
+    {
+      title: 'basics.today'|trans,
+      active: ((deliveries.params.section is not defined) or (deliveries.params.section == 'today')),
+      path: path('admin_deliveries')
+    },
+    {
+      title: 'deliveries.section.upcoming'|trans,
+      active: (deliveries.params.section is defined and deliveries.params.section == 'upcoming'),
+      path: path('admin_deliveries', { section: 'upcoming' })
+    },
+    {
+      title: 'deliveries.section.past'|trans,
+      active: (deliveries.params.section is defined and deliveries.params.section == 'past'),
+      path: path('admin_deliveries', { section: 'past' })
+    }
+  ] %}
 
-  <h3>{{ 'basics.today'|trans }}</h3>
-  {% include '_partials/delivery/list.html.twig' with { deliveries: today, with_store: true, with_order: true } %}
-
-  <h3>{{ 'deliveries.section.upcoming'|trans }}</h3>
-  {% include '_partials/delivery/list.html.twig' with { deliveries: upcoming, with_store: true, with_order: true } %}
-
-  <hr>
+  <ul class="nav nav-tabs">
+    {% for tab_item in tab_items %}
+    <li role="presentation" class="{% if tab_item.active %}active{% endif %}">
+      <a href="{{ tab_item.path }}">
+        {{ tab_item.title }}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
 
   <div class="d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center mt-4 mb-3">
-      <h3 class="m-0 mr-4">{{ 'deliveries.section.past'|trans }}</h3>
       <div class="dropdown d-inline-block mr-4">
         {% include '_partials/delivery/sort.html.twig' %}
       </div>
