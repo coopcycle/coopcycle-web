@@ -951,13 +951,13 @@ class Order extends BaseOrder implements OrderInterface
 
             if ($product->isReusablePackagingEnabled()) {
 
-                $reusablePackaging = $product->getReusablePackaging();
-
-                if (null === $reusablePackaging) {
+                if (!$product->hasReusablePackagings()) {
                     continue;
                 }
 
-                $quantity += ceil($product->getReusablePackagingUnit() * $item->getQuantity());
+                foreach ($product->getReusablePackagings() as $reusablePackaging) {
+                    $quantity += ceil($reusablePackaging->getUnits() * $item->getQuantity());
+                }
             }
         }
 
@@ -973,15 +973,14 @@ class Order extends BaseOrder implements OrderInterface
 
             if ($product->isReusablePackagingEnabled()) {
 
-                $reusablePackaging = $product->getReusablePackaging();
-
-                if (null === $reusablePackaging) {
+                if (!$product->hasReusablePackagings()) {
                     continue;
                 }
 
-                $quantity = ceil($product->getReusablePackagingUnit() * $item->getQuantity());
-
-                $amount += $reusablePackaging->getPrice() * $quantity;
+                foreach ($product->getReusablePackagings() as $reusablePackaging) {
+                    $quantity = ceil($reusablePackaging->getUnits() * $item->getQuantity());
+                    $amount += $reusablePackaging->getReusablePackaging()->getPrice() * $quantity;
+                }
             }
         }
 

@@ -44,18 +44,37 @@ $(function() {
 
 $('#product_reusablePackagingEnabled').click(function() {
   if ($(this).is(":checked")) {
-    $('#product_reusablePackaging').closest('.form-group').show()
-    $('#product_reusablePackagingUnit').closest('.form-group').show()
+    $('.reusablePackagings').show()
   } else {
-    $('#product_reusablePackaging').closest('.form-group').hide()
-    $('#product_reusablePackagingUnit').closest('.form-group').hide()
+    $('.reusablePackagings').hide()
   }
 })
 
-if (!$('#product_reusablePackagingEnabled').is(":checked")) {
-  $('#product_reusablePackaging').closest('.form-group').hide()
-  $('#product_reusablePackagingUnit').closest('.form-group').hide()
+if (!$('#product_reusablePackagingEnabled').is(':checked')) {
+  $('.reusablePackagings').hide()
 }
+
+const addFormToCollection = () => {
+  const collectionHolder = document.querySelector('.reusablePackagings > ul');
+
+  const item = document.createElement('li');
+
+  item.innerHTML = collectionHolder
+    .dataset
+    .prototype
+    .replace(
+      /__name__/g,
+      collectionHolder.dataset.index
+    );
+
+  collectionHolder.appendChild(item);
+
+  collectionHolder.dataset.index++;
+};
+
+document
+  .querySelector('.add_item_link')
+  .addEventListener("click", addFormToCollection)
 
 new Sortable(document.querySelector('#product_options'), {
   group: 'products',
