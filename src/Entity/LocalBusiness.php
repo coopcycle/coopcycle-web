@@ -8,6 +8,7 @@ use AppBundle\Action\MyRestaurants;
 use AppBundle\Action\Restaurant\Close as CloseController;
 use AppBundle\Action\Restaurant\Menu;
 use AppBundle\Action\Restaurant\Deliveries as RestaurantDeliveriesController;
+use AppBundle\Action\Restaurant\ReusablePackagings;
 use AppBundle\Action\Restaurant\Menus;
 use AppBundle\Action\Restaurant\Orders;
 use AppBundle\Action\Restaurant\Timing;
@@ -181,6 +182,10 @@ class LocalBusiness extends BaseLocalBusiness implements
      */
     protected $depositRefundOptin = true;
 
+    /**
+     * @var bool
+     * @Groups({"order"})
+     */
     protected $loopeatEnabled = false;
 
     protected $pledge;

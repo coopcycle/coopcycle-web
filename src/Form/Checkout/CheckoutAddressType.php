@@ -4,7 +4,6 @@ namespace AppBundle\Form\Checkout;
 
 use AppBundle\Entity\Nonprofit;
 use AppBundle\Form\AddressType;
-use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use AppBundle\Dabba\Client as DabbaClient;
@@ -17,6 +16,7 @@ use AppBundle\Validator\Constraints\LoopEatOrder;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -34,31 +34,25 @@ class CheckoutAddressType extends AbstractType
 {
     private $translator;
     private $priceFormatter;
-    private $loopeatClient;
     private $loopeatContext;
     private $requestStack;
-    private $loopeatOAuthFlow;
 
     public function __construct(
         TranslatorInterface $translator,
         PriceFormatter $priceFormatter,
         OrderTimeHelper $orderTimeHelper,
-        LoopEatClient $loopeatClient,
         LoopEatContext $loopeatContext,
         RequestStack $requestStack,
         DabbaClient $dabbaClient,
         DabbaContext $dabbaContext,
-        string $loopeatOAuthFlow,
         bool $nonProfitsEnabled)
     {
         $this->translator = $translator;
         $this->priceFormatter = $priceFormatter;
-        $this->loopeatClient = $loopeatClient;
         $this->loopeatContext = $loopeatContext;
         $this->requestStack = $requestStack;
         $this->dabbaClient = $dabbaClient;
         $this->dabbaContext = $dabbaContext;
-        $this->loopeatOAuthFlow = $loopeatOAuthFlow;
         $this->nonProfitsEnabled = $nonProfitsEnabled;
 
         parent::__construct($orderTimeHelper);
@@ -124,34 +118,18 @@ class CheckoutAddressType extends AbstractType
 
                     $this->loopeatContext->initialize();
 
-                    $loopeatAdapter = new LoopEatAdapter($order, $this->requestStack->getSession());
-
-                    $loopeatAuthorizeParams = [
-                        'state' => $this->loopeatClient->createStateParamForOrder($order),
-                    ];
-
-                    if (null !== $customer && !empty($customer->getEmailCanonical())) {
-                        $loopeatAuthorizeParams['login_hint'] = $customer->getEmailCanonical();
-                    }
-
                     $form->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
                         'label' => 'form.checkout_address.reusable_packaging_loopeat_enabled.label',
                         'attr' => [
                             'data-loopeat' => 'true',
-                            'data-loopeat-credentials' => var_export($loopeatAdapter->hasLoopEatCredentials(), true),
-                            'data-loopeat-authorize-url' => $this->loopeatClient->getOAuthAuthorizeUrl($loopeatAuthorizeParams),
-                            'data-loopeat-oauth-flow' => $this->loopeatOAuthFlow,
                         ],
                     ]);
-                    $form->add('reusablePackagingPledgeReturn', NumberType::class, [
+
+                    $form->add('loopeatReturns', HiddenType::class, [
                         'required' => false,
-                        'html5' => true,
-                        'label' => 'form.checkout_address.reusable_packaging_loopeat_returns.label',
-                        // WARNING
-                        // Need to use a string here, or it won't work as expected
-                        // https://github.com/symfony/symfony/issues/12499
-                        'empty_data' => '0',
+                        'mapped' => false,
+                        'empty_data' => '[]'
                     ]);
 
                 } elseif (!$order->isMultiVendor() && $supportsDabba) {
@@ -238,6 +216,17 @@ class CheckoutAddressType extends AbstractType
                 $form->add('quote', SubmitType::class, [
                     'label' => 'form.checkout_address.quote.label'
                 ]);
+            }
+        });
+
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $order = $form->getData();
+
+            if ($form->has('loopeatReturns')) {
+                $returns = $form->get('loopeatReturns')->getData();
+                $order->setLoopeatReturns(json_decode($returns, true));
             }
         });
 

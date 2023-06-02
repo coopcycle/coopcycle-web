@@ -65,6 +65,19 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
 
                     $pkg = $reusablePackaging->getReusablePackaging();
 
+                    // TODO Move this to method
+                    if ($restaurant->isLoopeatEnabled()) {
+                        $pkgData = $pkg->getData();
+                        $loopeatDeliver = $order->getLoopeatDeliver();
+                        if (isset($loopeatDeliver[$item->getId()])) {
+                            foreach ($loopeatDeliver[$item->getId()] as $loopeatDeliverFormat) {
+                                if ($loopeatDeliverFormat['format_id'] === $pkgData['id']) {
+                                    $units = ceil($loopeatDeliverFormat['quantity'] * $item->getQuantity());
+                                }
+                            }
+                        }
+                    }
+
                     $label = $pkg->getAdjustmentLabel($this->translator, $units);
                     $amount = $pkg->getPrice() * $units;
 

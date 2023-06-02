@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LoopEatController extends AbstractController
@@ -43,6 +44,7 @@ class LoopEatController extends AbstractController
             'code' => $code,
             'client_id' => $this->loopeatClientId,
             'client_secret' => $this->loopeatClientSecret,
+            'redirect_uri' => $this->generateUrl('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL),
         );
 
         $ch = curl_init(sprintf('%s/oauth/token', $this->loopeatBaseUrl));
@@ -90,7 +92,7 @@ class LoopEatController extends AbstractController
     }
 
     /**
-     * @Route("/loopeat/oauth/callback", name="loopeat_oauth_callback")
+     * @Route("/impec/oauth/callback", name="loopeat_oauth_callback")
      */
     public function connectStandardAccountAction(
         Request $request,

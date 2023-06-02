@@ -121,6 +121,11 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
+    <one-to-one field="loopeatDetails" target-entity="AppBundle\Entity\Sylius\LoopeatOrderDetails" mapped-by="order">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-one>
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\OrderListener">
         <lifecycle-callback type="preFlush" method="preFlush"/>

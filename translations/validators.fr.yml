@@ -38,8 +38,7 @@ product_option.valuesRange.notAllowed: Vous ne pouvez pas définir d'intervalle 
 
 product.reusablePackagingUnit.mustBeGreaterThanZero: Vous devez spécifier une quantité supérieure à 0
 
-loopeat.insufficient_balance:
-  Il vous manque %count% crédit pour être livré·e zero déchet|Il vous manque %count% crédits pour être livré·e zero déchet
+loopeat.insufficient_balance: Votre cagnotte %name% est insuffisante pour bénéficier de la consigne. Veuillez rendre des boîtes ou recréditer votre cagnotte.
 
 restaurant.contract.variableCustomerAmount.pickOne: Veuillez sélectionner une tarification
 restaurant.contract.variableDeliveryPrice.pickOne: Veuillez sélectionner une tarification

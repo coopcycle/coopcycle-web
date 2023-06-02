@@ -309,6 +309,7 @@ doctrine:
                 OVERLAPS: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Overlaps
                 CAST: DoctrineExtensions\Query\Mysql\Cast
                 JSON_GET_FIELD_AS_TEXT: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetFieldAsText
+                JSON_GET_FIELD: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetField
             datetime_functions:
                 date: DoctrineExtensions\Query\Mysql\Date
         filters:

@@ -115,7 +115,6 @@ services:
 
   AppBundle\Form\Checkout\CheckoutAddressType:
     arguments:
-      $loopeatOAuthFlow: '%env(LOOPEAT_OAUTH_FLOW)%'
       $nonProfitsEnabled: '%env(bool:NONPROFITS_ENABLED)%'
     tags: [ form.type ]
 

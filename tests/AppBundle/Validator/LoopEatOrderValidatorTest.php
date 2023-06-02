@@ -102,7 +102,10 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
             ->getReusablePackagingQuantity()
             ->willReturn(3);
         $order
-            ->getReusablePackagingPledgeReturn()
+            ->getRequiredAmountForLoopeat()
+            ->willReturn(1200);
+        $order
+            ->getReturnsAmountForLoopeat()
             ->willReturn(0);
         $order
             ->isReusablePackagingEnabled()
@@ -110,14 +113,14 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
 
         $this->loopeatClient
             ->currentCustomer(Argument::type(LoopEatAdapter::class))
-            ->willReturn(['loopeatBalance' => 2]);
+            ->willReturn(['credits_count_cents' => 1000]);
 
         $constraint = new LoopEatOrderConstraint();
         $violations = $this->validator->validate($order->reveal(), $constraint);
 
         $this->buildViolation($constraint->insufficientBalance)
             ->atPath('property.path.reusablePackagingEnabled')
-            ->setParameter('%count%', 1)
+            ->setParameter('%count%', 200)
             ->assertRaised();
     }
 
@@ -157,7 +160,7 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testInsufficientBalanceWithPledgeReturn()
+    public function testInsufficientBalanceWithReturns()
     {
         $user = new User();
 
@@ -178,22 +181,25 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
             ->getReusablePackagingQuantity()
             ->willReturn(4);
         $order
-            ->getReusablePackagingPledgeReturn()
-            ->willReturn(1);
+            ->getRequiredAmountForLoopeat()
+            ->willReturn(1500);
+        $order
+            ->getReturnsAmountForLoopeat()
+            ->willReturn(500);
         $order
             ->isReusablePackagingEnabled()
             ->willReturn(true);
 
         $this->loopeatClient
             ->currentCustomer(Argument::type(LoopEatAdapter::class))
-            ->willReturn(['loopeatBalance' => 2]);
+            ->willReturn(['credits_count_cents' => 500]);
 
         $constraint = new LoopEatOrderConstraint();
         $violations = $this->validator->validate($order->reveal(), $constraint);
 
         $this->buildViolation($constraint->insufficientBalance)
             ->atPath('property.path.reusablePackagingEnabled')
-            ->setParameter('%count%', 1)
+            ->setParameter('%count%', 500)
             ->assertRaised();
     }
 
@@ -218,7 +224,10 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
             ->getReusablePackagingQuantity()
             ->willReturn(3);
         $order
-            ->getReusablePackagingPledgeReturn()
+            ->getRequiredAmountForLoopeat()
+            ->willReturn(1000);
+        $order
+            ->getReturnsAmountForLoopeat()
             ->willReturn(0);
         $order
             ->isReusablePackagingEnabled()
@@ -226,7 +235,7 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
 
         $this->loopeatClient
             ->currentCustomer(Argument::type(LoopEatAdapter::class))
-            ->willReturn(['loopeatBalance' => 3]);
+            ->willReturn(['credits_count_cents' => 1000]);
 
         $constraint = new LoopEatOrderConstraint();
         $violations = $this->validator->validate($order->reveal(), $constraint);

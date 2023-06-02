@@ -64,16 +64,19 @@ class LoopEatOrderValidator extends ConstraintValidator
         try {
 
             $currentCustomer = $this->client->currentCustomer($adapter);
-            $loopeatBalance = $currentCustomer['loopeatBalance'];
-            $pledgeReturn = $object->getReusablePackagingPledgeReturn();
-            $missing = $quantity - $loopeatBalance - $pledgeReturn;
+            $requiredAmount  = $object->getRequiredAmountForLoopeat();
+            $returnsAmount   = $object->getReturnsAmountForLoopeat();
+
+            $missing = $requiredAmount - ($currentCustomer['credits_count_cents'] + $returnsAmount);
 
             if ($missing > 0) {
+
                 $this->context->buildViolation($constraint->insufficientBalance)
                     ->setParameter('%count%', $missing)
                     ->atPath('reusablePackagingEnabled')
                     ->addViolation();
             }
+
         } catch (RequestException $e) {
 
             $this->context->buildViolation($constraint->requestFailed)

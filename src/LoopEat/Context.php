@@ -3,6 +3,7 @@
 namespace AppBundle\LoopEat;
 
 use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
+use AppBundle\Sylius\Order\OrderInterface;
 use GuzzleHttp\Exception\RequestException;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Psr\Log\LoggerInterface;
@@ -16,8 +17,16 @@ class Context
     private $requestStack;
     private $logger;
 
-    private $loopeatBalance = 0;
-    private $loopeatCredit = 0;
+    public $logoUrl;
+    public $name;
+    public $customerAppUrl;
+    public $hasCredentials = false;
+    public $formats = [];
+
+    public $creditsCountCents = 0;
+    public $containersCount = 0;
+    public $requiredAmount = 0;
+    public $containers = [];
 
     public function __construct(
         Client $client,
@@ -42,16 +51,29 @@ class Context
 
         $this->logger->info(sprintf('Initializing LoopEat context for order #%d', $order->getId()));
 
+        $initiative = $this->client->initiative();
+
+        $this->logoUrl = $initiative['logo_url'];
+        $this->name = $initiative['name'];
+        $this->customerAppUrl = $initiative['customer_app_url'];
+        $this->formats = $this->client->getFormats($order->getRestaurant());
+
         $adapter = new LoopEatAdapter($order, $this->requestStack->getSession());
 
         if ($adapter->hasLoopEatCredentials()) {
 
             try {
 
-                $loopeatCustomer = $this->client->currentCustomer($adapter);
+                $currentCustomer = $this->client->currentCustomer($adapter);
 
-                $this->loopeatBalance = $loopeatCustomer['loopeatBalance'];
-                $this->loopeatCredit  = $loopeatCustomer['loopeatCredit'];
+                $this->hasCredentials = true;
+                $this->creditsCountCents = $currentCustomer['credits_count_cents'];
+                $this->containersCount = $currentCustomer['containers_count'];
+                $this->requiredAmount = $order->getRequiredAmountForLoopeat();
+
+                if ($currentCustomer['containers_count'] > 0) {
+                    $this->containers = $this->client->listContainers($adapter);
+                }
 
                 $this->logger->info(sprintf('LoopEat context for order #%d successfully initialized', $order->getId()));
 
@@ -64,13 +86,16 @@ class Context
         }
     }
 
-    public function getLoopeatBalance()
+    public function getAuthorizationUrl(OrderInterface $order, int $requiredCredits = 0)
     {
-        return $this->loopeatBalance;
-    }
+        $params = [
+            'state' => $this->client->createStateParamForOrder($order),
+        ];
 
-    public function getLoopeatCredit()
-    {
-        return $this->loopeatCredit;
+        if ($requiredCredits > 0) {
+            $params['required_credits_cents'] = $requiredCredits;
+        }
+
+        return $this->client->getOAuthAuthorizeUrl($params);
     }
 }
