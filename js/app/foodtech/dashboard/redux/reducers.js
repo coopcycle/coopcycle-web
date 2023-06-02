@@ -142,6 +142,7 @@ export default (state = initialState, action = {}) => {
       'takeaway',
       'fulfillmentMethod',
       'paymentMethod',
+      'notes'
     ]))
 
     return {

@@ -20,6 +20,9 @@
         '%restaurant_name%': order.vendor.restaurant.name
       } %}order.list.summary.restaurant.text{% endtrans %}
     {% endif %}
+    {% if order.notes %}
+      <i title='{% trans %}order.notes{% endtrans %}' class="fa fa-comments ml-2"></i>
+    {% endif %}
   {% endif %}
 {% else %}
   {% for item in order.items %}

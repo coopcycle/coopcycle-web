@@ -23,7 +23,10 @@ export default withTranslation()(({ order, onClick }) => {
       <div className="panel-body">
         <ul className="list-unstyled">
           <li><i className="fa fa-cutlery"></i> { order.vendor.name }</li>
-          <li><Customer customer={ order.customer } /></li>
+          <li>
+            <Customer customer={ order.customer } />
+            { order.notes && <i className="fa fa-comments ml-4"></i> }
+          </li>
           <li><i className="fa fa-money"></i> { (order.total / 100).formatMoney() }</li>
           <li><PaymentMethodIcon code={ order.paymentMethod } height="18" /></li>
           { order.assignedTo && (
