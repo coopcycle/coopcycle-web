@@ -65,7 +65,7 @@ class ReusablePackagings
     }
 
     /**
-     * @return int
+     * @return float
      */
     public function getUnits(): float
     {
@@ -73,7 +73,7 @@ class ReusablePackagings
     }
 
     /**
-     * @param int $units
+     * @param float $units
      */
     public function setUnits(float $units)
     {
