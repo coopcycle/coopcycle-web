@@ -445,8 +445,7 @@ button.menu-item:active {
   &__items {
 
     margin: 15px 0;
-    padding: 15px 0;
-    border-top: 1px solid #eeeeee;
+    padding: 0 0 15px 0;
     border-bottom: 1px solid #eeeeee;
 
     max-height: 200px;
@@ -662,5 +661,17 @@ button.menu-item:active {
       flex: 1;
       overflow: auto;
     }
+  }
+}
+
+.ReactModal__Content--invite-people-to-order {
+  @media (min-width: $screen-lg-min) {
+    width: 50%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 66%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
   }
 }

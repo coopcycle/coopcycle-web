@@ -23,10 +23,12 @@ use AppBundle\Service\SettingsManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 use Ramsey\Uuid\Uuid;
+use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository as SyliusEntityRepository;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
@@ -117,6 +119,9 @@ class RestaurantControllerTest extends WebTestCase
             ->get('parameter_bag')
             ->willReturn($parameterBag->reveal());
 
+        $eventBus = $this->prophesize(EventBus::class);
+        $jwtTokenManager = $this->prophesize(JWTTokenManagerInterface::class);
+
         $this->controller = new RestaurantController(
             $this->objectManager->reveal(),
             $this->validator->reveal(),
@@ -128,7 +133,9 @@ class RestaurantControllerTest extends WebTestCase
             $this->orderModifier->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->serializer,
-            $this->restaurantFilter->reveal()
+            $this->restaurantFilter->reveal(),
+            $eventBus->reveal(),
+            $jwtTokenManager->reveal()
         );
 
         $this->controller->setContainer($container->reveal());

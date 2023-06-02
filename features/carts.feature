@@ -90,7 +90,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -164,7 +165,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -238,7 +240,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod": "delivery"
+        "fulfillmentMethod": "delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -297,7 +300,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -359,7 +363,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -415,7 +420,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -478,7 +484,8 @@ Feature: Carts
           "tax":@array@,
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -534,7 +541,8 @@ Feature: Carts
           "tax": @array@,
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -609,7 +617,8 @@ Feature: Carts
             "vendor": {
               "@id":@string@,
               "name":@string@
-            }
+            },
+            "player": {"@*@":"@*@"}
           }
         ],
         "itemsTotal":1800,
@@ -634,7 +643,8 @@ Feature: Carts
           ],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -709,7 +719,8 @@ Feature: Carts
             "vendor": {
               "@id":@string@,
               "name":@string@
-            }
+            },
+            "player": {"@*@":"@*@"}
           }
         ],
         "itemsTotal":1800,
@@ -734,7 +745,8 @@ Feature: Carts
           ],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -809,7 +821,8 @@ Feature: Carts
             "vendor": {
               "@id":@string@,
               "name":@string@
-            }
+            },
+            "player": null
           }
         ],
         "itemsTotal":1800,
@@ -834,7 +847,8 @@ Feature: Carts
           ],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -1480,7 +1494,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -1550,7 +1565,8 @@ Feature: Carts
           "itemsTotal":0,
           "total":0,
           "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@"
         }
       }
       """
@@ -1598,7 +1614,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1631,7 +1648,8 @@ Feature: Carts
           "itemsTotal":0,
           "total":0,
           "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@"
         }
       }
       """
@@ -1679,7 +1697,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1712,7 +1731,8 @@ Feature: Carts
           "itemsTotal":0,
           "total":0,
           "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@"
         }
       }
       """
@@ -1760,7 +1780,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -1857,7 +1878,8 @@ Feature: Carts
           "reusable_packaging":[],
           "tax":[],
           "tip":[]
-        }
+        },
+        "invitation": "@string@||@null@"
       }
       """
 

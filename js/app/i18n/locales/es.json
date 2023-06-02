@@ -305,6 +305,7 @@
         "PAY_WITH_SAVED_CREDIT_CARD": "Pagar con una tarjeta de crédito guardada",
         "ADD_NEW_CREDIT_CARD": "Ingresar nueva tarjeta de crédito",
         "ADD_OR_SELECT_A_CARD_TO_PAY": "Por favor seleccione o ingrese una tarjeta de crédito para realizar el pago",
+        "INVITE_PEOPLE_TO_ADD_ITEMS": "Invita amigos para que agreguen productos",
         "EXPIRATION": "Expiración",
         "ORDERS_RATE_LIMIT": {
           "ORDER_UNIT": "pedido(s)",

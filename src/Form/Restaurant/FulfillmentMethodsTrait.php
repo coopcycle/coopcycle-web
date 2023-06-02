@@ -28,7 +28,7 @@ trait FulfillmentMethodsTrait
                 'prototype' => false,
             ]);
 
-        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && (!isset($options['is_hub']) || !$options['is_hub'])) {
             $builder
                 ->add('deliveryPerimeterExpression', HiddenType::class, [
                     'label' => 'localBusiness.form.deliveryPerimeterExpression'

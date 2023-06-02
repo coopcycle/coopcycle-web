@@ -22,6 +22,7 @@ services:
     class: AppBundle\Domain\Task\Handler\MarkAsDoneHandler
     arguments:
       - '@event_recorder'
+      - '@translator'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\MarkAsDone

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity name="AppBundle\Entity\Sylius\OrderInvitation" table="sylius_order_invitation">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="slug" type="string" column="slug"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <one-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="invitation">
+      <join-columns>
+        <join-column name="order_id" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
+    <entity-listeners>
+      <entity-listener class="AppBundle\Entity\Listener\OrderInvitationListener">
+        <lifecycle-callback type="prePersist" method="prePersist"/>
+      </entity-listener>
+    </entity-listeners>
+  </entity>
+</doctrine-mapping>

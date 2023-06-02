@@ -37,7 +37,9 @@ class HubType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->buildShippingOptionsForm($builder, $options);
-        $this->buildFulfillmentMethodsForm($builder, $options);
+        $this->buildFulfillmentMethodsForm($builder, [
+            'is_hub' => true,
+        ]);
 
         $builder
             ->add('name', TextType::class, ['label' => 'basics.name'])

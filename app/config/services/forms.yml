@@ -265,3 +265,6 @@ services:
     arguments:
       - '@security.authorization_checker'
     tags: [ form.type ]
+
+  AppBundle\Form\PackageWithQuantityType:
+    tags: [ form.type ]

@@ -314,11 +314,20 @@
         "ADD_NEW_CREDIT_CARD": "Add a new credit card",
         "ADD_OR_SELECT_A_CARD_TO_PAY": "Please select or enter a new credit card to pay",
         "EXPIRATION": "Expiration",
+        "GROUP_ORDER_PLAYER_NAME_LABEL": "Firstname",
+        "GROUP_ORDER_PLAYER_EMAIL_LABEL": "Email",
+        "GROUP_ORDER_TITLE": "Join group order ?",
+        "GROUP_ORDER_SUBTEXT": "Add items to this order and everything will be delivered together",
+        "INVITE_PEOPLE_TO_ADD_ITEMS": "Invite friends to add products",
+        "GROUP_ORDER_START": "Start a group order",
+        "GROUP_ORDER_SHARE_LINK": "Share the link with others to participate in your order. Once they have finished, you can place the order.",
         "ORDERS_RATE_LIMIT": {
           "ORDER_UNIT": "order(s)",
           "TIME_UNIT": "minute(s)",
           "NO_LIMIT": "No order limit",
           "LIMIT": "A maximum of {{command}} orders every {{time}}"
-        }
+        },
+        "COPY": "Copy",
+        "COPIED": "Copied"
     }
 }
