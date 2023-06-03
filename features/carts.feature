@@ -854,9 +854,10 @@ Feature: Carts
 
   Scenario: Obtain reusable packaging potential action (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
-      | products.yml        |
-      | restaurants.yml     |
+      | sylius_channels.yml    |
+      | products.yml           |
+      | restaurants.yml        |
+      | reusable_packaging.yml |
     And the setting "default_tax_category" has value "tva_livraison"
     And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
@@ -868,7 +869,7 @@ Feature: Carts
       | PIZZA     |
       | HAMBURGER |
     And the restaurant with id "1" has deposit-refund enabled
-    And the product with code "PIZZA" has reusable packaging enabled with unit "1"
+    And the product with code "PIZZA" has reusable packaging "Dummy" enabled with unit "1"
     Given there is a cart at restaurant with id "1"
     And there is a token for the last cart at restaurant with id "1"
     When I add "Content-Type" header equal to "application/ld+json"

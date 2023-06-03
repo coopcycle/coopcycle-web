@@ -15,6 +15,8 @@ use AppBundle\Entity\DeliveryAddress;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\RemotePushToken;
+use AppBundle\Entity\ReusablePackaging;
+use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Store\Token as StoreToken;
 use AppBundle\Entity\Task;
@@ -1148,13 +1150,21 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given the product with code :code has reusable packaging enabled with unit :units
+     * @Given the product with code :code has reusable packaging :name enabled with unit :units
      */
-    public function enableReusablePackagingForProductWithQuantity($code, $unit)
+    public function enableReusablePackagingForProductWithQuantity($code, $name, $unit)
     {
         $product = $this->doctrine->getRepository(Product::class)->findOneByCode($code);
         $product->setReusablePackagingEnabled(true);
-        $product->setReusablePackagingUnit($unit);
+
+        $reusablePackaging = $this->doctrine->getRepository(ReusablePackaging::class)->findOneByName($name);
+
+        $reusablePackagings = new ReusablePackagings();
+        $reusablePackagings->setReusablePackaging($reusablePackaging);
+        $reusablePackagings->setProduct($product);
+        $reusablePackagings->setUnits($unit);
+
+        $product->addReusablePackaging($reusablePackagings);
 
         $em = $this->doctrine->getManagerForClass(Product::class);
         $em->flush();
