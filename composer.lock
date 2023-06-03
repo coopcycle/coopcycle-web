@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ebfb8fb44d13db67c12276b30c3c3f97",
+    "content-hash": "00ff5530d2fe3960a629193431d11a90",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -13079,6 +13079,70 @@
             "time": "2022-10-12T17:22:51+00:00"
         },
         {
+            "name": "sabas/edifact",
+            "version": "0.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-edifact/edifact.git",
+                "reference": "053f8db9a2a44e6ab763e3e4262d519949360647"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-edifact/edifact/zipball/053f8db9a2a44e6ab763e3e4262d519949360647",
+                "reference": "053f8db9a2a44e6ab763e3e4262d519949360647",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-simplexml": "*",
+                "php": ">=7.0.0",
+                "voku/arrayy": "~7.1"
+            },
+            "require-dev": {
+                "php-edifact/edifact-mapping": "dev-master",
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "EDI\\": "src/EDI/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Stefano Sabatini",
+                    "email": "sabas88@gmail.com",
+                    "homepage": "http://stefanosabatini.eu",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Uldis Nelsons",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Emil Vikström",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Tools in PHP for UN/EDIFACT",
+            "homepage": "https://github.com/php-edifact/edifact",
+            "keywords": [
+                "container",
+                "edi",
+                "edifact",
+                "message"
+            ],
+            "support": {
+                "issues": "https://github.com/php-edifact/edifact/issues",
+                "source": "https://github.com/php-edifact/edifact/tree/0.6.0"
+            },
+            "time": "2022-02-01T08:50:15+00:00"
+        },
+        {
             "name": "sebastian/comparator",
             "version": "4.0.8",
             "source": {
@@ -19592,6 +19656,89 @@
                 "source": "https://github.com/dustin10/VichUploaderBundle/tree/1.16.1"
             },
             "time": "2021-01-19T11:35:18+00:00"
+        },
+        {
+            "name": "voku/arrayy",
+            "version": "7.9.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/voku/Arrayy.git",
+                "reference": "0e20b8c6eef7fc46694a2906e0eae2f9fc11cade"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/voku/Arrayy/zipball/0e20b8c6eef7fc46694a2906e0eae2f9fc11cade",
+                "reference": "0e20b8c6eef7fc46694a2906e0eae2f9fc11cade",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=7.0.0",
+                "phpdocumentor/reflection-docblock": "~4.3 || ~5.0",
+                "symfony/polyfill-mbstring": "~1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0 || ~7.0 || ~9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Create.php"
+                ],
+                "psr-4": {
+                    "Arrayy\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lars Moelleken",
+                    "email": "lars@moelleken.org",
+                    "homepage": "https://www.moelleken.org/",
+                    "role": "Maintainer"
+                }
+            ],
+            "description": "Array manipulation library for PHP, called Arrayy!",
+            "keywords": [
+                "Arrayy",
+                "array",
+                "helpers",
+                "manipulation",
+                "methods",
+                "utility",
+                "utils"
+            ],
+            "support": {
+                "docs": "https://voku.github.io/Arrayy/",
+                "issues": "https://github.com/voku/Arrayy/issues",
+                "source": "https://github.com/voku/Arrayy"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/moelleken",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/voku",
+                    "type": "github"
+                },
+                {
+                    "url": "https://opencollective.com/arrayy",
+                    "type": "open_collective"
+                },
+                {
+                    "url": "https://www.patreon.com/voku",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/voku/arrayy",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-12-27T12:58:32+00:00"
         },
         {
             "name": "voku/portable-ascii",
