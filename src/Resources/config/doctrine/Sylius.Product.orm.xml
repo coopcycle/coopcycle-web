@@ -7,7 +7,6 @@
         <option name="default">0</option>
       </options>
     </field>
-    <field name="reusablePackagingUnit" type="float" column="reusable_packaging_unit" nullable="true"/>
     <field name="alcohol" type="boolean" column="alcohol">
       <options>
         <option name="default">0</option>
@@ -43,13 +42,13 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <many-to-one field="reusablePackaging" target-entity="AppBundle\Entity\ReusablePackaging">
-      <join-columns>
-        <join-column name="reusable_packaging_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
-      </join-columns>
-    </many-to-one>
     <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="products">
       <join-column name="restaurant_id" referenced-column-name="id" />
     </many-to-one>
+    <one-to-many field="reusablePackagings" target-entity="AppBundle\Entity\ReusablePackagings" mapped-by="product" orphan-removal="true">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
   </entity>
 </doctrine-mapping>

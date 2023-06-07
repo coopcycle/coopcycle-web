@@ -5,6 +5,7 @@ namespace Tests\AppBundle\Sylius\OrderProcessing;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\ReusablePackaging;
+use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -52,14 +53,18 @@ class OrderDepositRefundProcessorTest extends TestCase
 
         $product = new Product();
         $product->setReusablePackagingEnabled($enabled);
-        $product->setReusablePackagingUnit($units);
+
+        $reusablePackagings = new ReusablePackagings();
+        $reusablePackagings->setReusablePackaging($reusablePackaging);
+        $reusablePackagings->setUnits($units);
+
+        $product->addReusablePackaging($reusablePackagings);
 
         $variant->getProduct()->willReturn($product);
         $orderItem->getVariant()->willReturn($variant->reveal());
         $orderItem->getQuantity()->willReturn($quantity);
 
         $restaurant->addProduct($product);
-        $product->setReusablePackaging($reusablePackaging);
 
         return $orderItem;
     }

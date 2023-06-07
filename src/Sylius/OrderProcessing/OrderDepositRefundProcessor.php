@@ -53,27 +53,30 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
 
             if ($product->isReusablePackagingEnabled()) {
 
-                $reusablePackaging = $product->getReusablePackaging();
-
-                if (null === $reusablePackaging) {
+                if (!$product->hasReusablePackagings()) {
                     continue;
                 }
 
-                $units = ceil($product->getReusablePackagingUnit() * $item->getQuantity());
-                $label = $this->translator->trans('order_item.adjustment_type.reusable_packaging', [
-                    '%quantity%' => ceil($product->getReusablePackagingUnit() * $item->getQuantity())
-                ]);
+                $reusablePackagings = $product->getReusablePackagings();
 
-                $amount = $reusablePackaging->getPrice() * $units;
+                foreach ($reusablePackagings as $reusablePackaging) {
 
-                $item->addAdjustment($this->adjustmentFactory->createWithData(
-                    AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
-                    $label,
-                    $amount,
-                    $neutral = true
-                ));
+                    $units = ceil($reusablePackaging->getUnits() * $item->getQuantity());
 
-                $totalAmount += $amount;
+                    $pkg = $reusablePackaging->getReusablePackaging();
+
+                    $label = $pkg->getAdjustmentLabel($this->translator, $units);
+                    $amount = $pkg->getPrice() * $units;
+
+                    $item->addAdjustment($this->adjustmentFactory->createWithData(
+                        AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+                        $label,
+                        $amount,
+                        $neutral = true
+                    ));
+
+                    $totalAmount += $amount;
+                }
             }
         }
 

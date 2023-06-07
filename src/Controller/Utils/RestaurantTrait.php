@@ -31,6 +31,7 @@ use AppBundle\Form\ProductType;
 use AppBundle\Form\Restaurant\DepositRefundSettingsType;
 use AppBundle\Form\Restaurant\ReusablePackagingType;
 use AppBundle\Form\RestaurantType;
+use AppBundle\Form\ReusablePackagingChoiceLoader;
 use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
@@ -173,6 +174,7 @@ trait RestaurantTrait
                     if (!$restaurant->hasReusablePackagingWithName('LoopEat')) {
                         $reusablePackaging = new ReusablePackaging();
                         $reusablePackaging->setName('LoopEat');
+                        $reusablePackaging->setType(ReusablePackaging::TYPE_LOOPEAT);
                         $reusablePackaging->setPrice(0);
                         $reusablePackaging->setOnHold(0);
                         $reusablePackaging->setOnHand(9999);
@@ -187,6 +189,7 @@ trait RestaurantTrait
                     if (!$restaurant->hasReusablePackagingWithName('Vytal')) {
                         $reusablePackaging = new ReusablePackaging();
                         $reusablePackaging->setName('Vytal');
+                        $reusablePackaging->setType(ReusablePackaging::TYPE_VYTAL);
                         $reusablePackaging->setPrice(0);
                         $reusablePackaging->setOnHold(0);
                         $reusablePackaging->setOnHand(9999);
@@ -201,6 +204,7 @@ trait RestaurantTrait
                     if (!$restaurant->hasReusablePackagingWithName('Dabba')) {
                         $reusablePackaging = new ReusablePackaging();
                         $reusablePackaging->setName('Dabba');
+                        $reusablePackaging->setType(ReusablePackaging::TYPE_DABBA);
                         $reusablePackaging->setPrice(0);
                         $reusablePackaging->setOnHold(0);
                         $reusablePackaging->setOnHand(9999);
@@ -711,7 +715,7 @@ trait RestaurantTrait
             'owner' => $restaurant,
             'with_reusable_packaging' =>
                 $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled() || $restaurant->isDabbaEnabled(),
-            'reusable_packaging_choices' => $restaurant->getReusablePackagings(),
+            'reusable_packaging_choice_loader' => new ReusablePackagingChoiceLoader($restaurant),
             'options_loader' => function (ProductInterface $product) use ($restaurant) {
 
                 $opts = [];
