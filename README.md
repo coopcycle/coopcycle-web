@@ -45,7 +45,7 @@ Search for sysdm.cpl
 Advanced system settings 
 In Performance, select settings data execution prevention  "enable for all except those I select...". click on apply 
 
-install, from your ShellPower WSL 2 terminal
+install, from your PowerShell WSL 2 terminal
  https://learn.microsoft.com/en-us/windows/wsl/install
 
 configure your WSL 2 environment by creating a Linux administrator account. The password is not displayed (this is normal), so remember it.
