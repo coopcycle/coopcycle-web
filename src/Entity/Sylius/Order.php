@@ -40,6 +40,7 @@ use AppBundle\Payment\MercadopagoPreferenceResponse;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
+use AppBundle\Validator\Constraints\OrderCustomer as AssertOrderCustomer;
 use AppBundle\Validator\Constraints\DabbaOrder as AssertDabbaOrder;
 use AppBundle\Validator\Constraints\IsOrderModifiable as AssertOrderIsModifiable;
 use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
@@ -366,6 +367,9 @@ class Order extends BaseOrder implements OrderInterface
 {
     use VytalCodeAwareTrait;
 
+    /**
+     * @AssertOrderCustomer
+     */
     protected $customer;
 
     protected $vendor;
