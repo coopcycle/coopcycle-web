@@ -31,7 +31,7 @@ Use [Docker for Windows](https://www.docker.com/docker-windows) which will provi
 Depending on your platform, Docker could be installed as Native or you have to install Docker toolbox which use VirtualBox instead of Hyper-V causing a lot a differences in implementations.
 If you have the luck to have a CPU that supports native Docker you can [share your hard disk as a virtual volume for your appliances](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/).
 
-Docker doesn't work under window, you need to install linux in hypervisualization. Follow the recommendations here to activate the necessary features under windows 11 and make sure you have an administrator account 
+Docker doesn't work under Windows, you need to install linux in hypervisualization. Follow the recommendations here to activate the necessary features under windows 11 and make sure you have an administrator account 
   https://docs.docker.com/desktop/troubleshoot/topics/
 
 Download docker 
