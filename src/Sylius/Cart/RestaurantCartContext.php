@@ -11,6 +11,7 @@ use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class RestaurantCartContext implements CartContextInterface
@@ -33,6 +34,8 @@ final class RestaurantCartContext implements CartContextInterface
      */
     private AuthorizationCheckerInterface $authorizationChecker;
 
+    private TokenStorageInterface $tokenStorage;
+
     /** @var OrderInterface|null */
     private $cart;
 
@@ -48,7 +51,8 @@ final class RestaurantCartContext implements CartContextInterface
         string $sessionKeyName,
         ChannelContextInterface $channelContext,
         RestaurantResolver $resolver,
-        AuthorizationCheckerInterface $authorizationChecker)
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenStorageInterface $tokenStorage)
     {
         $this->session = $session;
         $this->orderRepository = $orderRepository;
@@ -57,6 +61,7 @@ final class RestaurantCartContext implements CartContextInterface
         $this->channelContext = $channelContext;
         $this->resolver = $resolver;
         $this->authorizationChecker = $authorizationChecker;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -113,6 +118,11 @@ final class RestaurantCartContext implements CartContextInterface
             }
 
             $cart = $this->orderFactory->createForRestaurant($restaurant);
+        }
+
+        if (is_null($cart->getCustomer())) {
+            $token = $this->tokenStorage->getToken();
+            $cart->setCustomer($token?->getUser()?->getCustomer());
         }
 
         $this->cart = $cart;
