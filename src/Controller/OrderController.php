@@ -684,7 +684,7 @@ class OrderController extends AbstractController
         // $this->denyAccessUnlessGranted('view_public', $order);
 
         // Hacky fix to correctly set the session and reload all the context
-        if (!$session->has($this->sessionKeyName)) {
+        if (!$session->has($this->sessionKeyName) || $session->get($this->sessionKeyName) != $order->getId()) {
             $session->set($this->sessionKeyName, $order->getId());
             return $this->redirectToRoute($request->attributes->get('_route'), ['slug' => $slug]);
         }
