@@ -2,23 +2,23 @@
 
 namespace Tests\AppBundle\Sylius\Cart;
 
-use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Cart\RestaurantCartContext;
 use AppBundle\Sylius\Cart\RestaurantResolver;
+use AppBundle\Sylius\Customer\CustomerInterface;
+use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class RestaurantCartContextTest extends TestCase
@@ -28,6 +28,8 @@ class RestaurantCartContextTest extends TestCase
     private $session;
     private $orderRepository;
     private $orderFactory;
+
+    private $tokenStorage;
     private $sessionKeyName = 'foo';
 
     private $context;
@@ -40,6 +42,7 @@ class RestaurantCartContextTest extends TestCase
         $this->channelContext = $this->prophesize(ChannelContextInterface::class);
         $this->restaurantResolver = $this->prophesize(RestaurantResolver::class);
         $this->authorizationChecker = $this->prophesize(AuthorizationCheckerInterface::class);
+        $this->tokenStorage = $this->prophesize(TokenStorageInterface::class);
 
         $this->webChannel = $this->prophesize(ChannelInterface::class);
         $this->webChannel->getCode()->willReturn('web');
@@ -53,7 +56,8 @@ class RestaurantCartContextTest extends TestCase
             $this->sessionKeyName,
             $this->channelContext->reveal(),
             $this->restaurantResolver->reveal(),
-            $this->authorizationChecker->reveal()
+            $this->authorizationChecker->reveal(),
+            $this->tokenStorage->reveal(),
         );
     }
 
@@ -119,6 +123,7 @@ class RestaurantCartContextTest extends TestCase
             ->willReturn(1);
 
         $expectedCart = $this->prophesize(Order::class);
+        $expectedCart->getCustomer()->willReturn($this->prophesize(CustomerInterface::class));
         $expectedCart->getRestaurant()->willReturn($restaurant->reveal());
         $expectedCart->getVendor()->willReturn(
             Vendor::withRestaurant(
@@ -167,6 +172,7 @@ class RestaurantCartContextTest extends TestCase
             ->willReturn(1);
 
         $expectedCart = $this->prophesize(Order::class);
+        $expectedCart->getCustomer()->willReturn($this->prophesize(CustomerInterface::class));
         $expectedCart->getRestaurant()->willReturn($restaurant->reveal());
         $expectedCart->getChannel()->willReturn($this->webChannel->reveal());
         $expectedCart->getVendor()->willReturn(
@@ -291,6 +297,7 @@ class RestaurantCartContextTest extends TestCase
             ->willReturn(1);
 
         $cartProphecy = $this->prophesize(OrderInterface::class);
+        $cartProphecy->getCustomer()->willReturn($this->prophesize(CustomerInterface::class));
         $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
         $cartProphecy->getVendor()->willReturn(Vendor::withRestaurant($restaurant->reveal()));
         $cartProphecy->isMultiVendor()->willReturn(false);

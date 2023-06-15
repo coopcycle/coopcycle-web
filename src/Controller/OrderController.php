@@ -682,7 +682,13 @@ class OrderController extends AbstractController
         }
 
         // $this->denyAccessUnlessGranted('view_public', $order);
-        $session->set($this->sessionKeyName, $order->getId());
+
+        // Hacky fix to correctly set the session and reload all the context
+        if (!$session->has($this->sessionKeyName) || $session->get($this->sessionKeyName) != $order->getId()) {
+            $session->set($this->sessionKeyName, $order->getId());
+            return $this->redirectToRoute($request->attributes->get('_route'), ['slug' => $slug]);
+        }
+
 
         $cartForm = $this->createForm(CartType::class, $order);
 
