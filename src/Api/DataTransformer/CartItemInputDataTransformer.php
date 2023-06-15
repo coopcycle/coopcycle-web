@@ -4,6 +4,7 @@ namespace AppBundle\Api\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
+use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
@@ -71,6 +72,6 @@ class CartItemInputDataTransformer implements DataTransformerInterface
           return false;
         }
 
-        return Order::class === $to && null !== ($context['input']['class'] ?? null);
+        return Order::class === $to && CartItemInput::class === ($context['input']['class'] ?? null);
     }
 }
