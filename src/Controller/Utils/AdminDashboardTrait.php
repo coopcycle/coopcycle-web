@@ -108,6 +108,8 @@ trait AdminDashboardTrait
             $filename = sprintf('tasks-%s.csv', $date->format('Y-m-d'));
 
             $response = new Response($taskExport->csv);
+
+            $response->headers->set('Content-Type', 'text/csv');
             $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
                 $filename
