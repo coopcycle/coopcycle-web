@@ -7,7 +7,6 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
 {
@@ -15,7 +14,7 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
     private $iriConverter;
 
     public function __construct(
-        ObjectNormalizer $normalizer,
+        NormalizerInterface $normalizer,
         IriConverterInterface $iriConverter)
     {
         $this->normalizer = $normalizer;

@@ -95,7 +95,7 @@ Sylius\Component\Order\Model\OrderItem:
     id:
       groups: ['order', 'cart']
     quantity:
-      groups: ['order', 'cart']
+      groups: ['order', 'cart', 'order_create']
     total:
       groups: ['order', 'cart']
     unitPrice:
