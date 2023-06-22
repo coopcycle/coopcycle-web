@@ -496,13 +496,13 @@ trait StoreTrait
     }
 
     protected function handleDeliveryImportForStore(
-        Store $store,
         FormInterface $deliveryImportForm,
         string $routeTo,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
         OrderFactory $orderFactory)
     {
+        $store = $deliveryImportForm->get('store')->getData();
         $deliveries = $deliveryImportForm->getData();
 
         foreach ($deliveries as $delivery) {
@@ -537,5 +537,44 @@ trait StoreTrait
         );
 
         return $this->redirectToRoute($routeTo);
+    }
+
+    public function persistImportedDeliveries(
+        FormInterface $deliveryImportForm,
+        OrderManager $orderManager,
+        DeliveryManager $deliveryManager,
+        OrderFactory $orderFactory
+    )
+    {
+        $store = $deliveryImportForm->get('store')->getData();
+        $result = $deliveryImportForm->getData();
+
+        foreach ($result as $rowNumber => $delivery) {
+            $store->addDelivery($delivery);
+
+            $this->entityManager->persist($delivery);
+
+            if ($store->getCreateOrders()) {
+                try {
+                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
+                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price);
+
+                    $this->entityManager->persist($order);
+                    $this->entityManager->flush();
+
+                    $orderManager->onDemand($order);
+                } catch (NoRuleMatchedException $e) {
+                    $deliveryImportForm->addError(new FormError(
+                        $this->translator->trans('import.delivery.price.error.priceCalculation.row', [
+                            '%row_number%' => $rowNumber
+                        ])
+                    ));
+                }
+            }
+        }
+
+        $this->entityManager->flush();
+
+        return $result;
     }
 }

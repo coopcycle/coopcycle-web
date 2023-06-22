@@ -5,10 +5,13 @@ namespace AppBundle\Spreadsheet;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
+use AppBundle\Exception\DateTimeParseException;
 use AppBundle\Service\Geocoder;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 {
@@ -25,51 +28,71 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     private $countryCode;
     private $entityManager;
     private $slugify;
+    private $translator;
 
     public function __construct(Geocoder $geocoder, PhoneNumberUtil $phoneNumberUtil, string $countryCode,
-        EntityManagerInterface $entityManager, SlugifyInterface $slugify)
+        EntityManagerInterface $entityManager, SlugifyInterface $slugify, TranslatorInterface $translator)
     {
         $this->geocoder = $geocoder;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->countryCode = $countryCode;
         $this->entityManager = $entityManager;
         $this->slugify = $slugify;
+        $this->translator = $translator;
     }
 
     /**
      * @inheritdoc
      */
-    public function parseData(array $data, array $options = []): array
+    public function parseData(array $data, array $options = []): SpreadsheetParseResult
     {
-        $deliveries = [];
+        $parseResult = new SpreadsheetParseResult();
 
-        foreach ($data as $record) {
+        foreach ($data as $index=>$record) {
+            $rowNumber = $index + 1;
 
             if (!$pickupAddress = $this->geocoder->geocode($record['pickup.address'])) {
-                // TODO Translate
-                throw new \Exception(sprintf('Could not geocode %s', $record['pickup.address']));
+                $translatedError = $this->translator->trans('import.address.geocode.error', [
+                    '%failed_address%' => $record['pickup.address']
+                ]);
+                $parseResult->addErrorToRow($rowNumber,
+                    sprintf('pickup.address: %s', $translatedError)
+                );
             }
 
             if (!$dropoffAddress = $this->geocoder->geocode($record['dropoff.address'])) {
-                // TODO Translate
-                throw new \Exception(sprintf('Could not geocode %s', $record['dropoff.address']));
+                $translatedError = $this->translator->trans('import.address.geocode.error', [
+                    '%failed_address%' => $record['dropoff.address']
+                ]);
+                $parseResult->addErrorToRow($rowNumber,
+                    sprintf('dropoff.address: %s', $translatedError)
+                );
             }
-
-            [ $pickupAfter, $pickupBefore ] = $this->parseTimeRange($record['pickup.timeslot']);
-            [ $dropoffAfter, $dropoffBefore ] = $this->parseTimeRange($record['dropoff.timeslot']);
 
             $delivery = new Delivery();
 
             $delivery->getPickup()->setAddress($pickupAddress);
-            $delivery->getPickup()->setDoneAfter($pickupAfter);
-            $delivery->getPickup()->setDoneBefore($pickupBefore);
 
             $delivery->getDropoff()->setAddress($dropoffAddress);
-            $delivery->getDropoff()->setDoneAfter($dropoffAfter);
-            $delivery->getDropoff()->setDoneBefore($dropoffBefore);
 
-            $this->enhanceTask($delivery->getPickup(), 'pickup', $record);
-            $this->enhanceTask($delivery->getDropoff(), 'dropoff', $record);
+            try {
+                [ $pickupAfter, $pickupBefore ] = $this->parseTimeRange($record, 'pickup.timeslot');
+                [ $dropoffAfter, $dropoffBefore ] = $this->parseTimeRange($record, 'dropoff.timeslot');
+
+                $delivery->getPickup()->setDoneAfter($pickupAfter);
+                $delivery->getPickup()->setDoneBefore($pickupBefore);
+                $delivery->getDropoff()->setDoneAfter($dropoffAfter);
+                $delivery->getDropoff()->setDoneBefore($dropoffBefore);
+            } catch(DateTimeParseException $e) {
+                $parseResult->addErrorToRow($rowNumber, $e->getMessage());
+            }
+
+            try {
+                $this->enhanceTask($delivery->getPickup(), 'pickup', $record);
+                $this->enhanceTask($delivery->getDropoff(), 'dropoff', $record);
+            } catch(NumberParseException $e) {
+                $parseResult->addErrorToRow($rowNumber, $e->getMessage());
+            }
 
             if (isset($record['weight']) && is_numeric($record['weight'])) {
                 $delivery->setWeight(floatval($record['weight']) * 1000);
@@ -87,10 +110,12 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 $this->applyTags($delivery->getDropoff(), $record['dropoff.tags']);
             }
 
-            $deliveries[] = $delivery;
-        }
+            if (!$parseResult->rowHasErrors($rowNumber)) {
+                $parseResult->addData($rowNumber, $delivery);
+            }
 
-        return $deliveries;
+        }
+        return $parseResult;
     }
 
     public function validateHeader(array $header)
@@ -107,16 +132,28 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         }
     }
 
-    private function parseTimeRange($timeSlotAsText)
+    private function parseTimeRange($data, $key)
     {
+        $timeSlotAsText = $data[$key];
+
         if (false === strpos($timeSlotAsText, '-')) {
-            throw new \Exception(sprintf('Time range "%s" is not valid', $timeSlotAsText));
+            throw new DateTimeParseException(
+                $this->translator->trans('import.time.range.error', [
+                    '%key%' => $key,
+                    '%value%' => $timeSlotAsText
+                ])
+            );
         }
 
         $pattern = sprintf('#^(%s)[^0-9]+(%s)$#', self::TIME_RANGE_PATTERN, self::TIME_RANGE_PATTERN);
 
         if (1 !== preg_match($pattern, $timeSlotAsText, $matches)) {
-            throw new \Exception(sprintf('Time range "%s" is not valid', $timeSlotAsText));
+            throw new DateTimeParseException(
+                $this->translator->trans('import.time.range.error', [
+                    '%key%' => $key,
+                    '%value%' => $timeSlotAsText
+                ])
+            );
         }
 
         $start = new \DateTime();
@@ -159,18 +196,20 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         $addressTelephoneColumn    = $this->getColumn($prefix, 'address.telephone');
         $commentsColumn            = $this->getColumn($prefix, 'comments');
 
-        if (isset($record[$addressNameColumn]) && !empty($record[$addressNameColumn])) {
-            $task->getAddress()->setName((string) $record[$addressNameColumn]);
-        }
+        if (null !== $task->getAddress()) {
+            if (isset($record[$addressNameColumn]) && !empty($record[$addressNameColumn])) {
+                $task->getAddress()->setName((string) $record[$addressNameColumn]);
+            }
 
-        if (isset($record[$addressDescriptionColumn]) && !empty($record[$addressDescriptionColumn])) {
-            $task->getAddress()->setDescription($record[$addressDescriptionColumn]);
-        }
+            if (isset($record[$addressDescriptionColumn]) && !empty($record[$addressDescriptionColumn])) {
+                $task->getAddress()->setDescription($record[$addressDescriptionColumn]);
+            }
 
-        if (isset($record[$addressTelephoneColumn]) && !empty($record[$addressTelephoneColumn])) {
-            /* @throws NumberParseException */
-            $phoneNumber = $this->phoneNumberUtil->parse($record[$addressTelephoneColumn], strtoupper($this->countryCode));
-            $task->getAddress()->setTelephone($phoneNumber);
+            if (isset($record[$addressTelephoneColumn]) && !empty($record[$addressTelephoneColumn])) {
+                /* @throws NumberParseException */
+                $phoneNumber = $this->phoneNumberUtil->parse($record[$addressTelephoneColumn], strtoupper($this->countryCode));
+                $task->getAddress()->setTelephone($phoneNumber);
+            }
         }
 
         if (isset($record[$commentsColumn]) && !empty($record[$commentsColumn])) {
