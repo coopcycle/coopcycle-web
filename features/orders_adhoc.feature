@@ -96,6 +96,8 @@ Feature: Orders Adhoc
         "notes": null,
         "items": [
           {
+              "@id":@string@,
+              "@type":"OrderItem",
               "id": @integer@,
               "quantity": 1,
               "unitPrice": 1200,
@@ -111,6 +113,8 @@ Feature: Orders Adhoc
               "player": {"@*@":"@*@"}
           },
           {
+              "@id":@string@,
+              "@type":"OrderItem",
               "id": @integer@,
               "quantity": 1,
               "unitPrice": 400,
@@ -215,6 +219,8 @@ Feature: Orders Adhoc
         "notes": null,
         "items": [
           {
+              "@id":@string@,
+              "@type":"OrderItem",
               "id": @integer@,
               "quantity": 1,
               "unitPrice": 1200,
@@ -230,6 +236,8 @@ Feature: Orders Adhoc
               "player": {"@*@":"@*@"}
           },
           {
+              "@id":@string@,
+              "@type":"OrderItem",
               "id": @integer@,
               "quantity": 1,
               "unitPrice": 400,
@@ -321,6 +329,8 @@ Feature: Orders Adhoc
         "notes": null,
         "items": [
           {
+              "@id":@string@,
+              "@type":"OrderItem",
               "id": @integer@,
               "quantity": 1,
               "unitPrice": 1200,
@@ -336,6 +346,8 @@ Feature: Orders Adhoc
               "player": {"@*@":"@*@"}
           },
           {
+              "@id":@string@,
+              "@type":"OrderItem",
               "id": @integer@,
               "quantity": 1,
               "unitPrice": 400,
@@ -351,6 +363,8 @@ Feature: Orders Adhoc
               "player": {"@*@":"@*@"}
           },
           {
+              "@id":@string@,
+              "@type":"OrderItem",
               "id": @integer@,
               "quantity": 1,
               "unitPrice": 4600,
