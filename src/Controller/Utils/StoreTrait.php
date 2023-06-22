@@ -496,6 +496,7 @@ trait StoreTrait
     }
 
     protected function handleDeliveryImportForStore(
+        Store $store,
         FormInterface $deliveryImportForm,
         string $routeTo,
         OrderManager $orderManager,

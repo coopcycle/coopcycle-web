@@ -741,7 +741,9 @@ class AdminController extends AbstractController
 
         $deliveryImportForm->handleRequest($request);
         if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
-            return $this->handleDeliveryImportForStore($deliveryImportForm, 'admin_deliveries',
+            $store = $deliveryImportForm->get('store')->getData();
+
+            return $this->handleDeliveryImportForStore($store, $deliveryImportForm, 'admin_deliveries',
                 $orderManager, $deliveryManager, $orderFactory);
         } else if ($deliveryImportForm->isSubmitted() && !$deliveryImportForm->isValid()) {
             if (count($deliveryImportForm->getData()) > 0) {
