@@ -141,6 +141,7 @@ Feature: Orders
           "telephone": null
         },
         "telephone":"+33612345678",
+        "loopeatEnabled":false,
         "isOpen":false,
         "nextOpeningDate":"@string@.isDateTime()"
       },
@@ -304,6 +305,7 @@ Feature: Orders
           "telephone": null
         },
         "telephone":"+33612345678",
+        "loopeatEnabled":false,
         "isOpen":false,
         "nextOpeningDate":"@string@.isDateTime()"
       },
