@@ -744,7 +744,18 @@ class AdminController extends AbstractController
             $store = $deliveryImportForm->get('store')->getData();
 
             return $this->handleDeliveryImportForStore($store, $deliveryImportForm, 'admin_deliveries',
-                $orderManager, $deliveryManager, $orderFactory,);
+                $orderManager, $deliveryManager, $orderFactory);
+        } else if ($deliveryImportForm->isSubmitted() && !$deliveryImportForm->isValid()) {
+            if (count($deliveryImportForm->getData()) > 0) {
+                // This is the case when some rows have errors and some others were parsed successfuly and have to be persisted
+                $importedDeliveries = $this->persistImportedDeliveries($deliveryImportForm, $orderManager,
+                    $deliveryManager, $orderFactory);
+
+                $importedRowsMessage = $this->translator->trans('import.successful.rows', [
+                    '%count%' => count(array_keys($importedDeliveries)),
+                    '%rows%' => implode(", ", array_keys($importedDeliveries))
+                ]);
+            }
         }
 
         $dataExportForm = $this->createForm(DataExportType::class);
@@ -799,6 +810,7 @@ class AdminController extends AbstractController
         return $this->render('admin/deliveries.html.twig', [
             'deliveries' => $deliveries,
             'routes' => $this->getDeliveryRoutes(),
+            'imported_rows_message' => $importedRowsMessage ?? null,
             'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']),
             'delivery_import_form' => $deliveryImportForm->createView(),
             'delivery_export_form' => $dataExportForm->createView(),
