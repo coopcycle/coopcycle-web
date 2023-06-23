@@ -66,14 +66,26 @@ class DeliveryImportType extends AbstractType
                 $deliveries = array_filter($result->getData(), function($delivery, $rowNumber) use ($result) {
                     $violations = $this->validator->validate($delivery);
                     if (count($violations) > 0) {
-                        $result->addErrorToRow($rowNumber, (string) $violations->get(0));
+                        foreach($violations as $violation) {
+                            $result->addErrorToRow($rowNumber,
+                                sprintf('%s: %s', $violation->getMessage(), (string) $violation->getInvalidValue())
+                            );
+                        }
                         return false;
                     }
                     return true;
                 }, ARRAY_FILTER_USE_BOTH);
 
                 if ($result->hasErrors()) {
-                    foreach($result->getSortedErrors() as $rowNumber => $failedRow) {
+                    $errors = $result->getSortedErrors();
+
+                    $event->getForm()->addError(new FormError(
+                        $this->translator->trans('import.unsuccessful.rows', [
+                            '%rows%' => implode(", ", array_keys($errors))
+                        ])
+                    ));
+
+                    foreach($errors as $rowNumber => $failedRow) {
                         $event->getForm()->addError(new FormError(
                             $this->translator->trans('import.errors.at.row', [
                                 '%row_number%' => $rowNumber
