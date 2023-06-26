@@ -15,7 +15,7 @@
         {{ variant.price|price_format }}
       </span>
       {% if product.isReusablePackagingEnabled() %}
-      <span class="label label-info ml-2">Zéro déchet</span>
+      <span class="label label-info ml-2">{{ 'restaurant.list.tags.zerowaste'|trans }}</span>
       {% endif %}
     </span>
   </span>
