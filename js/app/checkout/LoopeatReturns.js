@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
 
 function getNameFromId(formatId, formats) {
-  const format = _.find(formats, f => f.id === formatId)
+  const format = formats.find(f => f.id === formatId)
   return format.title
 }
 
