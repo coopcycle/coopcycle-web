@@ -966,7 +966,7 @@ form.delivery_import.file.label: File
 form.delivery_import.store.label: Store
 basics.view_example: View example
 notifications.restaurant.new_order: New order to accept
-profile.loopeat.connect: Connect my LoopEat account
+profile.loopeat.connect: Connect my IMPEC account
 profile.loopeat.connected: IMPEC account connected
 profile.loopeat.disconnect: Disconnect IMPEC
 basics.free: free

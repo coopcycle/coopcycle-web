@@ -139,7 +139,7 @@ restaurant.form.createRestaurant: Créer un restaurant
 restaurant.form.exclusive.label: Ce restaurant est une exclusivité
 restaurant.form.quotes_allowed.label: 'Ce restaurant accepte également des commandes
   sur devis (ex : traiteur)'
-restaurant.form.loopeat_enabled.label: Activer le système de consignes LoopEat
+restaurant.form.loopeat_enabled.label: Activer le système de consignes IMPEC
 restaurant.form.loopeat_disconnect.label: Déconnecter mon compte IMPEC
 restaurant.form.featured.label: Ce restaurant apparaît sur la page d'accueil
 restaurant.form.fulfillment_methods.label: Modes d'exécution
@@ -910,7 +910,7 @@ receipt.total: Total TTC
 receipt.billing_details: Commande payée par carte de crédit le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nouvelle commande à confirmer
-profile.loopeat.connect: Connecter mon compte LoopEat
+profile.loopeat.connect: Connecter mon compte IMPEC
 profile.loopeat.connected: Compte IMPEC connecté
 profile.loopeat.disconnect: Déconnecter mon compte IMPEC
 basics.free: gratuit
