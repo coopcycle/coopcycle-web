@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import _ from 'lodash'
+import { withTranslation } from 'react-i18next'
 
 function getNameFromId(formatId, formats) {
   const format = _.find(formats, f => f.id === formatId)
@@ -11,14 +12,14 @@ function getPriceFromId(formatId, formats) {
   return format.cost_cents
 }
 
-export default function({ customerContainers, formats, formatsToDeliver, initialReturns, closeModal, onChange }) {
+const LoopeatReturns = function({ t, customerContainers, formats, formatsToDeliver, initialReturns, closeModal, onChange }) {
 
   const [ returns, setReturns ] = useState(initialReturns)
 
   return (
     <div className="p-4">
       <section>
-        <h5>Je rends mes boîtes</h5>
+        <h5>{ t('CART_LOOPEAT_RETURNS_WIDGET') }</h5>
         <table className="table">
           <tbody>
           { customerContainers.map((container, index) => {
@@ -32,12 +33,10 @@ export default function({ customerContainers, formats, formatsToDeliver, initial
                     const newReturns = _.find(returns, r => r.format_id === container.format_id) ?
                       _.filter(returns, r => r.format_id !== container.format_id) : [ ...returns, container ]
 
-                    console.log(newReturns)
-
                     setReturns(newReturns)
                     onChange(newReturns)
 
-                  } }>{ _.find(returns, r => r.format_id === container.format_id) ? 'Annuler' : 'Rendre la boîte' }</button>
+                  } }>{ _.find(returns, r => r.format_id === container.format_id) ? t('CART_LOOPEAT_RETURNS_TURN_OFF') : t('CART_LOOPEAT_RETURNS_TURN_ON') }</button>
                 </td>
               </tr>
             )
@@ -46,7 +45,7 @@ export default function({ customerContainers, formats, formatsToDeliver, initial
         </table>
       </section>
       <section>
-        <h5>Votre commande comporte les boîtes consignées suivantes</h5>
+        <h5>{ t('CART_LOOPEAT_RETURNS_SUMMARY') }</h5>
         <table className="table">
           <tbody>
           { formatsToDeliver.map((container, index) => {
@@ -61,7 +60,11 @@ export default function({ customerContainers, formats, formatsToDeliver, initial
           </tbody>
         </table>
       </section>
-      <button type="button" className="btn btn-lg btn-block" onClick={ closeModal }>Valider et retourner au panier</button>
+      <button type="button" className="btn btn-lg btn-block" onClick={ closeModal }>
+        { t('CART_LOOPEAT_RETURNS_VALIDATE') }
+      </button>
     </div>
   )
 }
+
+export default withTranslation()(LoopeatReturns)
