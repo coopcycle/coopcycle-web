@@ -30,8 +30,8 @@ const LoopeatReturns = function({ t, customerContainers, formats, formatsToDeliv
                 <td className="text-right">
                   <button type="button" className="btn btn-md" onClick={ () => {
 
-                    let newReturns = returns.filter(r => r.format_id === container.format_id)
-                    if (!newReturns.length) newReturns = [ ...returns, container ]
+                    const newReturns = _.find(returns, r => r.format_id === container.format_id) ?
+                      _.filter(returns, r => r.format_id !== container.format_id) : [ ...returns, container ]
 
                     setReturns(newReturns)
                     onChange(newReturns)
