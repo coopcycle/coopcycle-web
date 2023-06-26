@@ -211,12 +211,20 @@ class Client
         ]);
     }
 
-    public function getRestaurantOAuthAuthorizeUrl()
+    public function getRestaurantOAuthAuthorizeUrl($params)
     {
-        // TODO
-        // Retrieve it from /api/v1/partners/initiatives + cache results
+        $defaults = [
+            'client_id' => $this->loopEatClientId,
+            'response_type' => 'code',
+            'scope' => 'read write partner:manage user_account:read',
+        ];
 
-        return 'https://resto.green.preprod.collectif-impec.org/oauth/authorize';
+        $params = array_merge($defaults, $params);
+        $queryString = http_build_query($params);
+
+        $initiative = $this->initiative();
+
+        return sprintf('%s?%s', $initiative['restaurant_authorization_url'], $queryString);
     }
 
     private function getPartnerToken()

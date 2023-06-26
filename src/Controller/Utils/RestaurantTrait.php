@@ -256,15 +256,12 @@ trait RestaurantTrait
                 'iss' => $redirectAfterUri,
             ]);
 
-            $queryString = http_build_query([
-                'client_id' => $this->getParameter('loopeat_client_id'),
-                'response_type' => 'code',
+            $params = [
                 'state' => $state,
                 'redirect_uri' => $redirectUri,
-                'scope' => 'read write partner:manage user_account:read',
-            ]);
+            ];
 
-            $loopeatAuthorizeUrl = sprintf('%s?%s', $loopeatClient->getRestaurantOAuthAuthorizeUrl(), $queryString);
+            $loopeatAuthorizeUrl = $loopeatClient->getRestaurantOAuthAuthorizeUrl($params);
         }
 
         $cuisines = $this->getDoctrine()->getRepository(Cuisine::class)->findAll();
