@@ -46,7 +46,7 @@ const Reasons = withTranslation()(({ order, onClick, loading, t }) => {
   )
 })
 
-const LoopeatFormats = ({ order, loopeatFormats, updateLoopeatFormats }) => {
+const LoopeatFormats = withTranslation()(({ t, order, loopeatFormats, updateLoopeatFormats }) => {
 
   const initialValues = {
     loopeatFormats,
@@ -66,8 +66,6 @@ const LoopeatFormats = ({ order, loopeatFormats, updateLoopeatFormats }) => {
       }) => (
       <div>
         { loopeatFormats.map((loopeatFormat, index) => {
-
-          console.log('values', values)
 
           return (
             <div key={ `loopeat-format-${index}` }>
@@ -93,13 +91,15 @@ const LoopeatFormats = ({ order, loopeatFormats, updateLoopeatFormats }) => {
           )
         }) }
         <div className="text-right">
-          <button type="button" className="btn" onClick={ submitForm }>Valider</button>
+          <button type="button" className="btn" onClick={ submitForm }>
+            { t('CART_DELIVERY_TIME_SUBMIT') }
+          </button>
         </div>
       </div>
     )}
     </Formik>
   )
-}
+})
 
 class ModalContent extends React.Component {
 
