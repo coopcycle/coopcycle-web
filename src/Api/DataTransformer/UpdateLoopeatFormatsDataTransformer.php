@@ -9,6 +9,7 @@ use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
 use AppBundle\Api\Dto\LoopeatFormats;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class UpdateLoopeatFormatsDataTransformer implements DataTransformerInterface
 {
@@ -36,10 +37,10 @@ class UpdateLoopeatFormatsDataTransformer implements DataTransformerInterface
             $orderItem = $this->entityManager->getRepository(OrderItem::class)->find($itemId);
 
             if (null === $orderItem) {
-                // TODO Throw 400
+                throw new BadRequestHttpException(sprintf('Could not find item #%s', $itemId));
             }
             if (!$order->hasItem($orderItem)) {
-                // TODO Throw 400
+                throw new BadRequestHttpException(sprintf('Item #%s does not belong to order #%s', $itemId, $order->getId()));
             }
 
             $deliver[$itemId] = array_map(function($format) {
