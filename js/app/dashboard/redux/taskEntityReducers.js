@@ -83,16 +83,13 @@ export default (state = initialState, action) => {
 
     case MODIFY_TOUR_REQUEST:
 
-      const newT = action.tasks.map((t, index) => ({
+      return taskAdapter.upsertMany(state, action.tasks.map((t, index) => ({
         '@id': t['@id'],
         tour: {
-          '@id': '/api/tours/' + action.tourId,
-          name: action.tourName,
+          ...action.tour,
           position: index
         }
-      }))
-
-      return taskAdapter.upsertMany(state, newT)
+      })))
   }
 
   return state

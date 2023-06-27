@@ -30,7 +30,7 @@ const UnassignedTour = ({ tour, tasks, username = null, unassignTasks = null, is
         </h4>
       </div>
       <div id={ `${collapseId}` } className="panel-collapse collapse" role="tabpanel">
-        <Droppable isDropDisabled={isDropDisabled} droppableId={ `unassigned_tour:${tour['@id'].replace('/api/tours/', '')}` }>
+        <Droppable isDropDisabled={isDropDisabled} droppableId={ `unassigned_tour:${tour['@id']}` }>
             {(provided) => (
               <div className="list-group list-group-padded nomargin taskList__tasks m-0" ref={ provided.innerRef } { ...provided.droppableProps }>
                 { _.map(tasks, (task, index) => {

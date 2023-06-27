@@ -1220,9 +1220,9 @@ export function handleDragEnd(result) {
     if (destination.droppableId.startsWith('unassigned_tour:') && source.droppableId === 'unassigned') {
 
       const tours = selectUnassignedTours(getState())
-      const tourId = parseInt(destination.droppableId.replace('unassigned_tour:', ''))
+      const tourId = destination.droppableId.replace('unassigned_tour:', '')
 
-      const tour = tours.find(t => t['@id'] == `/api/tours/${tourId}`)
+      const tour = tours.find(t => t['@id'] == tourId)
 
       const newTourItems = [ ...tour.items ]
 
@@ -1230,7 +1230,7 @@ export function handleDragEnd(result) {
 
       newTourItems.splice(result.destination.index, 0, task)
 
-      dispatch(modifyTour(tourId, tour.name, newTourItems))
+      dispatch(modifyTour(tour, newTourItems))
 
       return
     }
@@ -1239,9 +1239,9 @@ export function handleDragEnd(result) {
     if (source.droppableId.startsWith('unassigned_tour:') && source.droppableId === destination.droppableId) {
 
       const tours = selectUnassignedTours(getState())
-      const tourId = parseInt(destination.droppableId.replace('unassigned_tour:', ''))
+      const tourId = destination.droppableId.replace('unassigned_tour:', '')
 
-      const tour = tours.find(t => t['@id'] == `/api/tours/${tourId}`)
+      const tour = tours.find(t => t['@id'] == tourId)
 
       const [ removed ] = tour.items.splice(result.source.index, 1);
 
@@ -1249,7 +1249,7 @@ export function handleDragEnd(result) {
 
       newTourItems.splice(result.destination.index, 0, removed)
 
-      dispatch(modifyTour(tourId, tour.name, newTourItems))
+      dispatch(modifyTour(tour, newTourItems))
 
       return
     }
@@ -1508,8 +1508,8 @@ export function closeCreateTourModal() {
   return { type: CLOSE_CREATE_TOUR_MODAL }
 }
 
-export function modifyTourRequest(tourId, tourName, tasks) {
-  return { type: MODIFY_TOUR_REQUEST, tourId, tourName, tasks }
+export function modifyTourRequest(tour, tasks) {
+  return { type: MODIFY_TOUR_REQUEST, tour, tasks }
 }
 
 export function modifyTourRequestSuccess(tour) {
@@ -1548,29 +1548,17 @@ export function createTour(tasks, name) {
   }
 }
 
-export function modifyTour(tourId, tourName, tasks) {
+export function modifyTour(tour, tasks) {
 
   return function(dispatch, getState) {
 
-    let state = getState()
-    let allTasks = selectAllTasks(state)
-
-    const newTasks = tasks.map((task, position) => {
-      const rt = _.find(allTasks, t => t['@id'] === task['@id'])
-
-      return {
-        ...rt,
-        position,
-      }
-    })
-
-    dispatch(modifyTourRequest(tourId, tourName, newTasks))
+    dispatch(modifyTourRequest(tour, tasks))
     
     const { jwt } = getState()
 
     createClient(dispatch).request({
       method: 'put',
-      url: `/api/tours/${tourId}`,
+      url: tour['@id'],
       data: {
         tasks: _.map(tasks, t => t['@id'])
       },
