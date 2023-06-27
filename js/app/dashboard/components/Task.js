@@ -78,6 +78,11 @@ const TaskIconRight = ({ task, onRemove }) => {
   if (task.isAssigned) {
     switch (task.status) {
     case 'TODO':
+
+      if (task.tour) {
+        return null
+      }
+
       return (
         <a
           href="#"
