@@ -11,8 +11,6 @@ import {
   createTaskListSuccess,
   createTaskListFailure,
   makeSelectTaskListItemsByUsername,
-  // enableUnassignedToursDroppable,
-  // disableUnassignedToursDroppable,
   enableUnassignedTourTasksDroppable,
   disableUnassignedTourTasksDroppable,
 } from '../../coopcycle-frontend-js/logistics/redux'
@@ -304,8 +302,6 @@ export function modifyTaskList(username, tasks) {
       }
     })
 
-    console.log(newTasks)
-
     dispatch(modifyTaskListRequest(username, newTasks))
 
     axios
@@ -316,7 +312,6 @@ export function modifyTaskList(username, tasks) {
         },
       })
       .then(res => {
-        console.log(res.data)
         dispatch(modifyTaskListRequestSuccess(res.data))
       })
       .catch(error => {
@@ -1159,8 +1154,6 @@ export function exportTasks(start, end) {
 }
 
 export function handleDragStart(result) {
-  console.log('DRAGSTART')
-  console.log(result.source)
   return function(dispatch, getState) {
 
     const selectedTasks = getState().selectedTasks
@@ -1192,9 +1185,6 @@ export function handleDragEnd(result) {
 
     const source = result.source;
     const destination = result.destination;
-    console.log('DRAGEND')
-    console.log(source)
-    console.log(destination)
 
     // reordered inside the unassigned list or unassigned tours list, do nothing
     if (
@@ -1224,7 +1214,6 @@ export function handleDragEnd(result) {
 
     // Unassigned Tour: Reorder inside same list
     if (source.droppableId.startsWith('unassigned_tour:') && source.droppableId === destination.droppableId) {
-      console.log('UNASSIGNED TOUR REORDER')
 
       const tours = selectUnassignedTours(getState())
       const tourId = parseInt(destination.droppableId.replace('unassigned_tour:', ''))
@@ -1233,9 +1222,6 @@ export function handleDragEnd(result) {
 
       const newTasks = []
 
-      console.log(tours)
-      console.log(tour)
-      
       const [ removed ] = tour.items.splice(result.source.index, 1);
       
       const newTourItems = [ ...tour.items ]
@@ -1247,8 +1233,6 @@ export function handleDragEnd(result) {
 
       newTasks.push(...newTourItems);
 
-      console.log(newTasks)
-      
       dispatch(modifyTour(tourId, tour.name, newTasks))
 
       return
@@ -1297,7 +1281,6 @@ export function handleDragEnd(result) {
         // Flatten list
         const flatArray = newTaskListItemsByUsername.reduce((items, item) => {
           if (item['@type'] === 'Tour') {
-            console.log('ITS ATOUR')
             item.items.forEach(t => items.push(t))
           } else {
             items.push(item)
@@ -1555,21 +1538,10 @@ export function createTour(tasks, name) {
 
 export function modifyTour(tourId, tourName, tasks) {
 
-  // const data = tasks.map((task, index) => ({
-  //   task: task['@id'],
-  //   position: index,
-  // }))
-
   return function(dispatch, getState) {
 
     let state = getState()
     let allTasks = selectAllTasks(state)
-    // let date = selectSelectedDate(state)
-
-    // const url = window.Routing.generate('admin_tour_modify', {
-    //   date: date.format('YYYY-MM-DD'),
-    //   tourId,
-    // })
 
     const newTasks = tasks.map((task, position) => {
       const rt = _.find(allTasks, t => t['@id'] === task['@id'])
