@@ -582,23 +582,24 @@ Feature: Dispatch
 
   Scenario: Add/reorder tasks of a tour
     Given the fixtures files are loaded:
-      | dispatch.yml        |
+      | dispatch.yml |
+      | tours.yml    |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "sarah" sends a "PUT" request to "/api/tour/5" with body:
+    And the user "sarah" sends a "PUT" request to "/api/tours/5" with body:
       """
       {
         "name":"Monday tour",
         "tasks":[
-          "/api/tasks/1",
-          "/api/tasks/2",
           "/api/tasks/3",
+          "/api/tasks/2",
+          "/api/tasks/1"
         ]
       }
       """
-    Then the response status code should be 201
+    Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """
@@ -608,9 +609,9 @@ Feature: Dispatch
          "@type":"Tour",
          "name":"Monday tour",
          "items":[
-            "/api/tasks/1",
-            "/api/tasks/2",
             "/api/tasks/3",
+            "/api/tasks/2",
+            "/api/tasks/1"
          ],
          "distance":@integer@,
          "duration":@integer@,
