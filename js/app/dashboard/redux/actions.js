@@ -1212,6 +1212,29 @@ export function handleDragEnd(result) {
       return
     }
 
+    const allTasks = selectAllTasks(getState())
+    const taskLists = selectTaskLists(getState())
+    const selectedTasks = selectSelectedTasks(getState())
+
+    // Drop new task into existing tour
+    if (destination.droppableId.startsWith('unassigned_tour:') && source.droppableId === 'unassigned') {
+
+      const tours = selectUnassignedTours(getState())
+      const tourId = parseInt(destination.droppableId.replace('unassigned_tour:', ''))
+
+      const tour = tours.find(t => t['@id'] == `/api/tours/${tourId}`)
+
+      const newTourItems = [ ...tour.items ]
+
+      const task = _.find(allTasks, t => t['@id'] === result.draggableId)
+
+      newTourItems.splice(result.destination.index, 0, task)
+
+      dispatch(modifyTour(tourId, tour.name, newTourItems))
+
+      return
+    }
+
     // Unassigned Tour: Reorder inside same list
     if (source.droppableId.startsWith('unassigned_tour:') && source.droppableId === destination.droppableId) {
 
@@ -1220,27 +1243,16 @@ export function handleDragEnd(result) {
 
       const tour = tours.find(t => t['@id'] == `/api/tours/${tourId}`)
 
-      const newTasks = []
-
       const [ removed ] = tour.items.splice(result.source.index, 1);
-      
+
       const newTourItems = [ ...tour.items ]
-      
-      // add again to current tour, will be overriden by server response
-      tour.items.splice(result.destination.index, 0, removed)
 
       newTourItems.splice(result.destination.index, 0, removed)
 
-      newTasks.push(...newTourItems);
-
-      dispatch(modifyTour(tourId, tour.name, newTasks))
+      dispatch(modifyTour(tourId, tour.name, newTourItems))
 
       return
     }
-
-    const allTasks = selectAllTasks(getState())
-    const taskLists = selectTaskLists(getState())
-    const selectedTasks = selectSelectedTasks(getState())
 
     const username = destination.droppableId.replace('assigned:', '')
     const taskList = _.find(taskLists, tl => tl.username === username)
@@ -1496,8 +1508,8 @@ export function closeCreateTourModal() {
   return { type: CLOSE_CREATE_TOUR_MODAL }
 }
 
-export function modifyTourRequest(tourId, tasks) {
-  return { type: MODIFY_TOUR_REQUEST, tourId, tasks }
+export function modifyTourRequest(tourId, tourName, tasks) {
+  return { type: MODIFY_TOUR_REQUEST, tourId, tourName, tasks }
 }
 
 export function modifyTourRequestSuccess(tour) {
@@ -1552,7 +1564,7 @@ export function modifyTour(tourId, tourName, tasks) {
       }
     })
 
-    dispatch(modifyTourRequest(tourId, newTasks))
+    dispatch(modifyTourRequest(tourId, tourName, newTasks))
     
     const { jwt } = getState()
 

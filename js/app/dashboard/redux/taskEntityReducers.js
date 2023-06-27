@@ -8,6 +8,7 @@ import {
   CREATE_GROUP_SUCCESS,
   REMOVE_TASKS_FROM_GROUP_SUCCESS,
   ADD_TASKS_TO_GROUP_SUCCESS,
+  MODIFY_TOUR_REQUEST,
 } from './actions'
 import { taskAdapter } from '../../coopcycle-frontend-js/logistics/redux'
 
@@ -79,6 +80,19 @@ export default (state = initialState, action) => {
           tags: [],
         }, (value, key) => key !== 'tasks')
       })))
+
+    case MODIFY_TOUR_REQUEST:
+
+      const newT = action.tasks.map((t, index) => ({
+        '@id': t['@id'],
+        tour: {
+          '@id': '/api/tours/' + action.tourId,
+          name: action.tourName,
+          position: index
+        }
+      }))
+
+      return taskAdapter.upsertMany(state, newT)
   }
 
   return state
