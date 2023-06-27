@@ -1243,9 +1243,9 @@ export function handleDragEnd(result) {
 
       const tour = tours.find(t => t['@id'] == tourId)
 
-      const [ removed ] = tour.items.splice(result.source.index, 1);
-
       const newTourItems = [ ...tour.items ]
+
+      const [ removed ] = newTourItems.splice(result.source.index, 1);
 
       newTourItems.splice(result.destination.index, 0, removed)
 
