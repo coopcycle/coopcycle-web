@@ -1213,46 +1213,34 @@ export function handleDragEnd(result) {
     }
 
     const allTasks = selectAllTasks(getState())
+
+    if (destination.droppableId.startsWith('unassigned_tour:')) {
+
+      const tours = selectUnassignedTours(getState())
+      const tourId = destination.droppableId.replace('unassigned_tour:', '')
+      const tour = tours.find(t => t['@id'] == tourId)
+
+      const newTourItems = [ ...tour.items ]
+
+      // Drop new task into existing tour
+      if (source.droppableId === 'unassigned') {
+        const task = _.find(allTasks, t => t['@id'] === result.draggableId)
+        newTourItems.splice(result.destination.index, 0, task)
+      }
+
+      // Reorder tasks of existing tour
+      if (source.droppableId === destination.droppableId) {
+        const [ removed ] = newTourItems.splice(result.source.index, 1);
+        newTourItems.splice(result.destination.index, 0, removed)
+      }
+
+      dispatch(modifyTour(tour, newTourItems))
+
+      return
+    }
+
     const taskLists = selectTaskLists(getState())
     const selectedTasks = selectSelectedTasks(getState())
-
-    // Drop new task into existing tour
-    if (destination.droppableId.startsWith('unassigned_tour:') && source.droppableId === 'unassigned') {
-
-      const tours = selectUnassignedTours(getState())
-      const tourId = destination.droppableId.replace('unassigned_tour:', '')
-
-      const tour = tours.find(t => t['@id'] == tourId)
-
-      const newTourItems = [ ...tour.items ]
-
-      const task = _.find(allTasks, t => t['@id'] === result.draggableId)
-
-      newTourItems.splice(result.destination.index, 0, task)
-
-      dispatch(modifyTour(tour, newTourItems))
-
-      return
-    }
-
-    // Unassigned Tour: Reorder inside same list
-    if (source.droppableId.startsWith('unassigned_tour:') && source.droppableId === destination.droppableId) {
-
-      const tours = selectUnassignedTours(getState())
-      const tourId = destination.droppableId.replace('unassigned_tour:', '')
-
-      const tour = tours.find(t => t['@id'] == tourId)
-
-      const newTourItems = [ ...tour.items ]
-
-      const [ removed ] = newTourItems.splice(result.source.index, 1);
-
-      newTourItems.splice(result.destination.index, 0, removed)
-
-      dispatch(modifyTour(tour, newTourItems))
-
-      return
-    }
 
     const username = destination.droppableId.replace('assigned:', '')
     const taskList = _.find(taskLists, tl => tl.username === username)
