@@ -53,7 +53,8 @@ Feature: Tasks
             "createdAt":"@string@.isDateTime()",
             "tour":{
               "@id":"/api/tours/1",
-              "name":"Example tour"
+              "name":"Example tour",
+              "position":@integer@
             }
           },
           {
@@ -121,7 +122,8 @@ Feature: Tasks
             "createdAt":"@string@.isDateTime()",
             "tour":{
               "@id":"/api/tours/1",
-              "name":"Example tour"
+              "name":"Example tour",
+              "position":@integer@
             }
           },
           {
@@ -489,7 +491,8 @@ Feature: Tasks
         "createdAt":"@string@.isDateTime()",
         "tour":{
           "@id":"/api/tours/1",
-          "name":"Example tour"
+          "name":"Example tour",
+          "position":@integer@
         }
       }
       """
@@ -2010,7 +2013,8 @@ Feature: Tasks
         "status":"TODO",
         "tour":{
           "@id":"/api/tours/1",
-          "name":"Example tour"
+          "name":"Example tour",
+          "position":@integer@
         },
         "@*@":"@*@"
       }
