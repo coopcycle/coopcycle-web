@@ -1563,3 +1563,10 @@ export function modifyTour(tour, tasks) {
       })
   }
 }
+
+export function removeTaskFromTour(tour, task) {
+
+  return function(dispatch) {
+    dispatch(modifyTour(tour, withoutTasks(tour.items, [ task ])))
+  }
+}

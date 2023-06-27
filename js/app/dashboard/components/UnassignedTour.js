@@ -4,8 +4,9 @@ import { withTranslation, useTranslation } from 'react-i18next'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 import _ from 'lodash'
 import Task from './Task'
+import { removeTaskFromTour } from '../redux/actions'
 
-const UnassignedTour = ({ tour, tasks, username = null, unassignTasks = null, isDropDisabled }) => {
+const UnassignedTour = ({ tour, tasks, removeTaskFromTour, username = null, unassignTasks = null, isDropDisabled }) => {
 
   const { t } = useTranslation()
 
@@ -45,7 +46,7 @@ const UnassignedTour = ({ tour, tasks, username = null, unassignTasks = null, is
                           <Task
                             key={ task['@id'] }
                             task={ task }
-                            assigned={ false }
+                            onRemove={ (taskToRemove) => removeTaskFromTour(tour, taskToRemove) }
                             />
                         </div>
                       )}
@@ -67,5 +68,12 @@ function mapStateToProps (state) {
         isDropDisabled: state.logistics.ui.unassignedTourTasksDroppableDisabled,
     }
   }
+
+function mapDispatchToProps(dispatch) {
+
+  return {
+    removeTaskFromTour: (tour, task) => dispatch(removeTaskFromTour(tour, task)),
+  }
+}
   
-export default connect(mapStateToProps)(withTranslation()(UnassignedTour))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(UnassignedTour))

@@ -40,7 +40,6 @@ const TaskOrTour = ({ item, onRemove, unassignTasks, username }) => {
   return (
     <Task
       task={ item }
-      assigned={ true }
       onRemove={ item => onRemove(item) } />
   )
 }
@@ -70,7 +69,6 @@ class InnerList extends React.Component {
             >
               <TaskOrTour
                 item={ task }
-                assigned={ true }
                 onRemove={ task => this.props.onRemove(task) }
                 username={ this.props.username }
                 unassignTasks={ this.props.unassignTasks } />

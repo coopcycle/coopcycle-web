@@ -11,6 +11,7 @@ import {
   MODIFY_TOUR_REQUEST,
 } from './actions'
 import { taskAdapter } from '../../coopcycle-frontend-js/logistics/redux'
+import { taskComparator } from './utils'
 
 const initialState = taskAdapter.getInitialState()
 const selectors = taskAdapter.getSelectors((state) => state)
@@ -83,13 +84,23 @@ export default (state = initialState, action) => {
 
     case MODIFY_TOUR_REQUEST:
 
-      return taskAdapter.upsertMany(state, action.tasks.map((t, index) => ({
+      const toKeep = action.tasks.map((t, index) => ({
         '@id': t['@id'],
         tour: {
           ...action.tour,
           position: index
         }
-      })))
+      }))
+
+      const toRemove =
+        _.differenceWith(action.tour.items, action.tasks, taskComparator)
+        .map((t) => ({
+          '@id': t['@id'],
+          tour: null,
+        }))
+
+      return taskAdapter
+        .upsertMany(state, [ ...toKeep, ...toRemove ])
   }
 
   return state
