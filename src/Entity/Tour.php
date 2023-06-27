@@ -26,7 +26,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     "put"={
  *       "method"="PUT",
- *       "input"=TourInput::class
+ *       "input"=TourInput::class,
+ *       "security"="is_granted('ROLE_DISPATCHER')"
  *     }
  *   },
  *   attributes={
