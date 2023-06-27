@@ -1560,7 +1560,6 @@ export function modifyTour(tourId, tourName, tasks) {
       method: 'put',
       url: `/api/tours/${tourId}`,
       data: {
-        name: tourName,
         tasks: _.map(tasks, t => t['@id'])
       },
       headers: {
