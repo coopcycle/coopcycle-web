@@ -69,5 +69,3 @@ function mapStateToProps (state) {
   }
   
 export default connect(mapStateToProps)(withTranslation()(UnassignedTour))
-
-// export default withTranslation()(UnassignedTour)
