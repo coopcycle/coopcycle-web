@@ -33,7 +33,6 @@ const Tour = ({ tour, tasks, username = null, unassignTasks = null }) => {
               <Task
                 key={ task['@id'] }
                 task={ task }
-                assigned={ false }
               />
             )
           })}

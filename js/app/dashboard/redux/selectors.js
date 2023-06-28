@@ -298,7 +298,7 @@ export const selectLinkedTasksIds = createSelector(
   }
 )
 
-export const selectTours = createSelector(
+export const selectUnassignedTours = createSelector(
   selectUnassignedTasks,
   (unassignedTasks) => {
 
@@ -310,11 +310,15 @@ export const selectTours = createSelector(
     forEach(tasksWithTour, task => {
       const keys = Array.from(toursMap.keys())
       const tour = find(keys, tour => tour['@id'] === task.tour['@id'])
+
       if (!tour) {
         toursMap.set(task.tour, [ task ])
       } else {
         toursMap.get(tour).push(task)
+        toursMap.get(tour).sort((a, b) => a.tour.position - b.tour.position)
       }
+
+
     })
 
     toursMap.forEach((tasks, tour) => {

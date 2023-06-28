@@ -131,7 +131,6 @@ class TaskGroup extends React.Component {
                 <Task
                   key={ task['@id'] }
                   task={ task }
-                  assigned={ false }
                 />
               )
             })}

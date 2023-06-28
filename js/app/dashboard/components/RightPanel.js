@@ -15,6 +15,7 @@ import UnassignedTasks from './UnassignedTasks'
 import TaskLists from './TaskLists'
 import ContextMenu from './ContextMenu'
 import SearchPanel from './SearchPanel'
+import UnassignedTours from './UnassignedTours'
 
 class DashboardApp extends React.Component {
 
@@ -41,13 +42,14 @@ class DashboardApp extends React.Component {
           onDragStart={ this.props.handleDragStart }
           onDragEnd={ this.props.handleDragEnd }>
           <Split
-            sizes={ [ 50, 50 ] }
+            sizes={ [ 33.33, 33.33, 33.33 ] }
             direction={ this.props.splitDirection }
             style={{ display: 'flex', flexDirection: this.props.splitDirection === 'vertical' ? 'column' : 'row', width: '100%' }}
             // We need to use a "key" prop,
             // to force a re-render when the direction has changed
             key={ this.props.splitDirection }>
             <UnassignedTasks />
+            <UnassignedTours />
             <TaskLists couriersList={ this.props.couriersList } />
           </Split>
         </DragDropContext>
