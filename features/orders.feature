@@ -615,7 +615,8 @@ Feature: Orders
         },
         "telephone":"+33612345678",
         "isOpen":false,
-        "nextOpeningDate":"@string@.isDateTime()"
+        "nextOpeningDate":"@string@.isDateTime()",
+        "loopeatEnabled":false
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -766,7 +767,8 @@ Feature: Orders
             "telephone": null
           },
           "telephone":"+33612345678",
-          "isOpen":true
+          "isOpen":true,
+          "loopeatEnabled":false
         },
         "shippingAddress":{
           "@id":"@string@.startsWith('/api/addresses')",

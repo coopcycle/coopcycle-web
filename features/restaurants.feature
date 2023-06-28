@@ -101,7 +101,8 @@ Feature: Manage restaurants
           "hub":null,
           "facets": {
             "@*@": "@*@"
-          }
+          },
+          "loopeatEnabled":false
         }
       ],
       "hydra:totalItems":1,
@@ -251,7 +252,8 @@ Feature: Manage restaurants
       },
       "isOpen":false,
       "nextOpeningDate":@string@,
-      "hub":null
+      "hub":null,
+      "loopeatEnabled":false
     }
     """
 
@@ -573,7 +575,8 @@ Feature: Manage restaurants
         "openingHoursSpecification":@array@,
         "specialOpeningHoursSpecification":@array@,
         "hasMenu":"/api/restaurants/menus/2",
-        "image":@string@
+        "image":@string@,
+        "loopeatEnabled":false
       }
       """
 
@@ -655,7 +658,8 @@ Feature: Manage restaurants
         "telephone":null,
         "openingHoursSpecification":@array@,
         "specialOpeningHoursSpecification":@array@,
-        "image":@string@
+        "image":@string@,
+        "loopeatEnabled":false
       }
       """
 
