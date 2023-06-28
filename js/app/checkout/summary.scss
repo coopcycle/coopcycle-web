@@ -2,87 +2,6 @@
 
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 
-#loopeat-block {
-
-  background-color: #FBDEDC;
-  color: #621e5b;
-  position: relative;
-
-  .loopeat-summary li {
-    line-height: 2;
-  }
-
-  .checkbox label {
-    font-weight: 700;
-  }
-
-  label {
-    font-weight: 400;
-    margin-bottom: 0;
-  }
-
-  & img.loopeat-bowl1 {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 1rem;
-    height: calc(100% - 4rem);
-    @media (min-width: $screen-sm-min) {
-      height: calc(100% - 2rem);
-    }
-  }
-
-  & a {
-    color: #621e5b;
-  }
-  &.active {
-    border: 2px solid #621e5b;
-  }
-  &:not(.active){
-    padding-right: 8rem !important;
-  }
-  & #checkout_address_cancelReusablePackaging {
-    color: #621e5b;
-  }
-  & #loopeat-add-credit {
-    background-color: #621e5b;
-    color: #FBDEDC;
-  }
-  & #checkout_address_reusablePackagingPledgeReturn {
-    display: inline-block;
-    width: 3em;
-    padding: .1em .1em .1em .3em;
-    height: auto;
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button {
-     opacity: 1;
-    }
-  }
-}
-
-.loopeat-icon {
-
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-
-  vertical-align: middle;
-
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
-
-  &-flying-circle {
-    background-image: url(./svg/flying-cycle-square-24x.svg);
-  }
-  &-euro {
-    background-image: url(./svg/euro-square-24x.svg);
-  }
-  &-gamelle {
-    background-image: url(./svg/gamelle-square-24x.svg);
-  }
-}
-
 #modal-loopeat {
   @media (max-width: $screen-xs-max) {
     .modal-dialog {
@@ -159,6 +78,14 @@ $vytalGreen: #53b848;
       border: 1px solid #66afe9;
       background-color: #f3faff;
     }
+  }
+}
+
+.loopeat-links {
+  opacity: 0.6;
+  > a {
+    color: #1D1D1D;
+    font-weight: 600;
   }
 }
 
