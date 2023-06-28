@@ -179,7 +179,8 @@ Feature: Manage restaurants
         "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
       },
       "isOpen":true,
-      "hub":null
+      "hub":null,
+      "loopeatEnabled":false
     }
     """
 
