@@ -9,6 +9,8 @@ import stripe from '../payment/stripe'
 import mercadopago from '../payment/mercadopago'
 import { Disclaimer } from '../payment/cashOnDelivery'
 
+import { useTranslation } from 'react-i18next'
+
 function disableBtn(btn) {
   btn.setAttribute('disabled', '')
   btn.disabled = true
@@ -24,6 +26,7 @@ const methodPickerStyles = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
+  marginTop: '8px'
 }
 
 const methodPickerBtnClassNames = {
@@ -32,7 +35,16 @@ const methodPickerBtnClassNames = {
   'p-2': true
 }
 
+const methodStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'start',
+  justifyContent: 'space-between',
+}
+
 const PaymentMethodPicker = ({ methods, onSelect }) => {
+
+  const { t } = useTranslation()
 
   const [ method, setMethod ] = useState('')
 
@@ -50,46 +62,58 @@ const PaymentMethodPicker = ({ methods, onSelect }) => {
 
         case 'card':
           return (
-            <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'card' }) }
-              onClick={ () => setMethod('card') }>
-              <PaymentMethodIcon code={ m.type } height="45" />
-            </button>
+            <div style={ methodStyles }>
+              <label>{ t('PM_CREDIT_OR_DEBIT_CARD') }</label>
+              <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'card' }) }
+                onClick={ () => setMethod('card') }>
+                <PaymentMethodIcon code={ m.type } height="45" />
+              </button>
+            </div>
           )
 
         case 'giropay':
 
           return (
-            <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
-              onClick={ () => setMethod('giropay') }>
-              <PaymentMethodIcon code={ m.type } height="45" />
-            </button>
+            <div style={ methodStyles }>
+              <label>{ t('PM_GIROPAY') }</label>
+              <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
+                onClick={ () => setMethod('giropay') }>
+                <PaymentMethodIcon code={ m.type } height="45" />
+              </button>
+            </div>
           )
 
         case 'edenred':
         case 'edenred+card':
 
           return (
-            <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
-              onClick={ () => {
+            <div style={ methodStyles }>
+              <label>{ t('PM_EDENRED') }</label>
+              <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                onClick={ () => {
 
-                if (!m.data.edenredIsConnected) {
-                  window.location.href = m.data.edenredAuthorizeUrl
-                  return
-                }
+                  if (!m.data.edenredIsConnected) {
+                    window.location.href = m.data.edenredAuthorizeUrl
+                    return
+                  }
 
-                setMethod(m.type)
-              }}>
-              <PaymentMethodIcon code={ m.type } height="45" />
-            </button>
+                  setMethod(m.type)
+                }}>
+                <PaymentMethodIcon code={ m.type } height="45" />
+              </button>
+            </div>
           )
 
         case 'cash_on_delivery':
 
           return (
-            <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
-              onClick={ () => setMethod('cash_on_delivery') }>
-              <PaymentMethodIcon code={ m.type } height="45" />
-            </button>
+            <div style={ methodStyles }>
+              <label>{ t('PM_CASH') }</label>
+              <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                onClick={ () => setMethod('cash_on_delivery') }>
+                <PaymentMethodIcon code={ m.type } height="45" />
+              </button>
+              </div>
           )
 
         }

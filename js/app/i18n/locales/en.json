@@ -328,6 +328,10 @@
           "LIMIT": "A maximum of {{command}} orders every {{time}}"
         },
         "COPY": "Copy",
-        "COPIED": "Copied"
+        "COPIED": "Copied",
+        "PM_CREDIT_OR_DEBIT_CARD": "Credit or debit card",
+        "PM_CASH": "Cash",
+        "PM_EDENRED": "Edenred",
+        "PM_GIROPAY": "Giropay"
     }
 }
