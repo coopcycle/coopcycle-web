@@ -86,12 +86,16 @@ $('#modal-loopeat').on('shown.bs.modal', function(e) {
   const formats = JSON.parse(e.relatedTarget.dataset.formats)
   const formatsToDeliver = JSON.parse(e.relatedTarget.dataset.formatsToDeliver)
   const returns = JSON.parse(e.relatedTarget.dataset.returns)
+  const creditsCountCents = JSON.parse(e.relatedTarget.dataset.creditsCountCents)
+  const requiredAmount = JSON.parse(e.relatedTarget.dataset.requiredAmount)
 
   render(<LoopeatReturns
     customerContainers={ customerContainers }
     formats={ formats }
     formatsToDeliver={ formatsToDeliver }
     initialReturns={ returns }
+    creditsCountCents={ creditsCountCents }
+    requiredAmount={ requiredAmount }
     closeModal={ () => $('#modal-loopeat').modal('hide') }
     onChange={ returns => {
       $('#checkout_address_loopeatReturns').val(

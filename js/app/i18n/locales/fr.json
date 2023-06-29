@@ -289,6 +289,9 @@
         "CART_LOOPEAT_RETURNS_SUMMARY": "Votre commande comporte les boîtes consignées suivantes",
         "CART_LOOPEAT_RETURNS_WIDGET": "Je rends mes boîtes",
         "CART_LOOPEAT_RETURNS_TURN_OFF": "Annuler",
-        "CART_LOOPEAT_RETURNS_TURN_ON": "Rendre la boîte"
+        "CART_LOOPEAT_RETURNS_TURN_ON": "Rendre la boîte",
+        "CART_LOOPEAT_RETURNS_CREDITS_COUNT": "Montant de votre cagnotte",
+        "CART_LOOPEAT_RETURNS_RETURNS_AMOUNT": "Montant des retours",
+        "CART_LOOPEAT_RETURNS_RETURNS_DIFF": "Différence"
     }
 }

@@ -60,23 +60,23 @@
 
     {{ form_widget(form) }}
 
-    <div class="d-flex align-items-center mb-4">
+    <div class="d-flex flex-sm-row flex-column align-items-center justify-content-between mb-4">
       <div>
-        <img src="{{ loopeat_context.logoUrl }}" height="96">
+        <img src="{{ loopeat_context.logoUrl }}" class="mb-4" height="96">
       </div>
-      <div class="mx-3">
+      <div class="mx-3 mb-4">
         <div>
           {% if isChecked %}
           <div class="mb-3">
             {% if loopeat_context.hasCredentials %}
               {% if missing > 0 %}
-                <div class="alert alert-danger m-0">
+                <div class="alert alert-warning m-0">
                   <span class="mr-2">⚠️</span>
-                  <strong>{{ 'loopeat.insufficient_balance'|trans({ '%name%': loopeat_context.name }, 'validators') }}</strong>
+                  {{ 'loopeat.insufficient_balance'|trans({ '%name%': loopeat_context.name }, 'validators') }}
                 </div>
               {% else %}
                 <span class="mr-2">✅</span>
-                <strong>{{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}</strong>
+                {{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}
               {% endif %}
             {% else %}
               {{ (loopeat_trans_prefix ~ '.connect')|trans({ '%name%': loopeat_context.name, '%brand_name%': coopcycle_setting('brand_name') }) }}
@@ -88,11 +88,11 @@
           </div>
           {% endif %}
           <div class="d-flex justify-content-between loopeat-links">
-            <a href="#">{{ (loopeat_trans_prefix ~ '.how_it_works')|trans }}</a>
+            <a href="#">{{ (loopeat_trans_prefix ~ '.how_it_works')|trans }} ›</a>
             {% if loopeat_context.hasCredentials and missing > 0 %}
-            <a href="{{ loopeat_context.getAuthorizationUrl(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.add_credits')|trans }}</a>
+            <a href="{{ loopeat_context.getAuthorizationUrl(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.add_credits')|trans }} ›</a>
             {% endif %}
-            <a href="{{ loopeat_context.customerAppUrl }}" target="_blank">{{ (loopeat_trans_prefix ~ '.website')|trans({ '%name%': loopeat_context.name }) }}</a>
+            <a href="{{ loopeat_context.customerAppUrl }}" target="_blank">{{ (loopeat_trans_prefix ~ '.website')|trans({ '%name%': loopeat_context.name }) }} ›</a>
           </div>
         </div>
       </div>
@@ -107,6 +107,8 @@
                 data-formats="{{ loopeat_context.formats|json_encode|e('html_attr') }}"
                 data-formats-to-deliver="{{ order.getFormatsToDeliverForLoopeat()|json_encode|e('html_attr') }}"
                 data-returns="{{ order.getLoopeatReturns()|json_encode|e('html_attr') }}"
+                data-credits-count-cents="{{ loopeat_context.creditsCountCents|json_encode|e('html_attr') }}"
+                data-required-amount="{{ loopeat_context.requiredAmount|json_encode|e('html_attr') }}"
               >{{ (loopeat_trans_prefix ~ '.return_containers')|trans }}</a>
             {% else %}
               <a class="btn btn-warning" href="{{ loopeat_context.getAuthorizationUrl(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.add_credits')|trans({ '%name%': loopeat_context.name }) }}</a>
