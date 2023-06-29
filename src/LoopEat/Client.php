@@ -412,7 +412,10 @@ class Client
 
             $res = json_decode((string) $response->getBody(), true);
 
-            return $res['data'];
+            $containers = $res['data'];
+            $containers = array_filter($containers, fn ($container) => $container['quantity'] > 0);
+
+            return array_values($containers);
 
         } catch (RequestException $e) {
             $this->logger->error($e->getMessage());
