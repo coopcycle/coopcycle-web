@@ -398,6 +398,7 @@ Feature: Manage restaurants
               "description":null,
               "identifier":"PIZZA",
               "enabled":@boolean@,
+              "reusablePackagingEnabled":@boolean@,
               "offers": {
                 "@type":"Offer",
                 "price":@integer@
@@ -444,6 +445,7 @@ Feature: Manage restaurants
               "description":null,
               "identifier":"HAMBURGER",
               "enabled":@boolean@,
+              "reusablePackagingEnabled":@boolean@,
               "suitableForDiet":["http://schema.org/HalalDiet"],
               "allergens":["NUTS"],
               "offers": {
