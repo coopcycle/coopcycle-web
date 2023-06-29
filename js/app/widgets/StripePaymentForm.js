@@ -128,8 +128,6 @@ export default function(form, options) {
 
   const submitButton = form.querySelector('input[type="submit"],button[type="submit"]')
 
-  const toggleButton = isValidForm => isValidForm ? enableBtn(submitButton) : disableBtn(submitButton)
-
   const methods = Array
     .from(form.querySelectorAll('input[name="checkout_payment[method]"]'))
     .map((el) => ({
