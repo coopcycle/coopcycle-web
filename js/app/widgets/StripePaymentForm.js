@@ -109,8 +109,13 @@ const containsMethod = (methods, method) => !!_.find(methods, m => m.type === me
 const handleCardPayment = (cc, options, form, submitButton, savedPaymentMethodId = null) => {
   cc.createToken(savedPaymentMethodId)
     .then(token => {
-      options.tokenElement.setAttribute('value', token)
-      form.submit()
+      if (token) {
+        options.tokenElement.setAttribute('value', token)
+        form.submit()
+      } else {
+        $('.btn-payment').removeClass('btn-payment__loading')
+        enableBtn(submitButton)
+      }
     })
     .catch(e => {
       $('.btn-payment').removeClass('btn-payment__loading')
@@ -143,7 +148,7 @@ export default function(form, options) {
 
     switch (gatewayForCard) {
       case 'mercadopago':
-        Object.assign(CreditCard.prototype, mercadopago({ onChange: toggleButton }))
+        Object.assign(CreditCard.prototype, mercadopago)
         break
       case 'stripe':
       default:
@@ -235,10 +240,6 @@ export default function(form, options) {
               cashDisclaimer.remove()
             }
 
-            if ("mercadopago" === options.card) {
-              document.getElementById('mercadopago_identification_fields').style.display = "block"
-            }
-
             cc.mount(document.getElementById('card-element'), value, response.data, options).then(() => {
               document.getElementById('card-element').scrollIntoView()
               enableBtn(submitButton)
@@ -254,10 +255,6 @@ export default function(form, options) {
             if (document.getElementById('card-element').children.length) {
               // remove cc form if it was previously mounted
               cc && cc.unmount()
-              if ("mercadopago" === options.card) {
-                // remove mercadopago identification fields if it was previously selected
-                document.getElementById('mercadopago_identification_fields').style.display = "none"
-              }
             }
 
             enableBtn(submitButton)
@@ -287,10 +284,6 @@ export default function(form, options) {
     .forEach(el => el.classList.add('d-none'))
 
   if (methods.length === 1 && containsMethod(methods, 'card')) {
-    if ("mercadopago" === options.card) {
-      document.getElementById('mercadopago_identification_fields').style.display = "block"
-    }
-
     cc.mount(document.getElementById('card-element'), null, null, options).then(() => enableBtn(submitButton))
   } else {
 

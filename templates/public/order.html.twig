@@ -113,7 +113,7 @@
 {% endif %}
 
 {% if gateway == 'mercadopago' %}
-<script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
+<script src="https://sdk.mercadopago.com/js/v2"></script>
 {% set gateway_configs = gateway_configs|merge({
   mercadopago: {
     publishableKey: coopcycle_setting('mercadopago_test_publishable_key'),
