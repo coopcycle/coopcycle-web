@@ -1495,7 +1495,7 @@ class Order extends BaseOrder implements OrderInterface
 
                 foreach ($product->getReusablePackagings() as $reusablePackaging) {
                     $data = $reusablePackaging->getReusablePackaging()->getData();
-                    $amount += (int) ceil($data['cost_cents'] * $item->getQuantity());
+                    $amount += (int) ceil($data['cost_cents'] * ($item->getQuantity() * $reusablePackaging->getUnits()));
                 }
             }
         }
