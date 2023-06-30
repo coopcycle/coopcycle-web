@@ -90,7 +90,7 @@
           <div class="d-flex justify-content-between loopeat-links">
             <a href="#">{{ (loopeat_trans_prefix ~ '.how_it_works')|trans }} ›</a>
             {% if loopeat_context.hasCredentials and missing > 0 %}
-            <a href="{{ loopeat_context.getAuthorizationUrl(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.add_credits')|trans }} ›</a>
+            <a href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.add_credits')|trans }} ›</a>
             {% endif %}
             <a href="{{ loopeat_context.customerAppUrl }}" target="_blank">{{ (loopeat_trans_prefix ~ '.website')|trans({ '%name%': loopeat_context.name }) }} ›</a>
           </div>
@@ -111,13 +111,13 @@
                 data-required-amount="{{ loopeat_context.requiredAmount|json_encode|e('html_attr') }}"
               >{{ (loopeat_trans_prefix ~ '.return_containers')|trans }}</a>
             {% else %}
-              <a class="btn btn-warning" href="{{ loopeat_context.getAuthorizationUrl(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.add_credits')|trans({ '%name%': loopeat_context.name }) }}</a>
+              <a class="btn btn-warning" href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.add_credits')|trans({ '%name%': loopeat_context.name }) }}</a>
             {% endif %}
           {% else %}
           <a class="btn btn-warning" href="{{ loopeat_context.customerAppUrl }}" target="_blank">{{ (loopeat_trans_prefix ~ '.manage_account')|trans }}</a>
           {% endif %}
         {% else %}
-          <a class="btn btn-warning" href="{{ loopeat_context.getAuthorizationUrl(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.connect_account')|trans({ '%name%': loopeat_context.name }) }}</a>
+          <a class="btn btn-warning" href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.connect_account')|trans({ '%name%': loopeat_context.name }) }}</a>
         {% endif %}
       {% endif %}
     </div>

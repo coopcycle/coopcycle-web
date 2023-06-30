@@ -142,7 +142,9 @@ services:
     tags:
       - { name: monolog.logger, channel: loopeat }
 
-  AppBundle\LoopEat\Context:
+  AppBundle\LoopEat\Context: ~
+
+  AppBundle\LoopEat\ContextInitializer:
     tags:
       - { name: monolog.logger, channel: loopeat }
 
@@ -867,6 +869,7 @@ services:
   AppBundle\Api\DataTransformer\BioDeliverInputDataTransformer: ~
   AppBundle\Api\DataTransformer\TourInputDataTransformer: ~
   AppBundle\Api\DataTransformer\UpdateLoopeatFormatsDataTransformer: ~
+  AppBundle\Api\DataTransformer\UpdateLoopeatReturnsDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:

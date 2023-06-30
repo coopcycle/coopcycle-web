@@ -28,15 +28,18 @@ use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Action\Order\Tip as OrderTip;
 use AppBundle\Action\Order\UpdateLoopeatFormats as UpdateLoopeatFormatsController;
+use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
+use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
+use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
 use AppBundle\Payment\MercadopagoPreferenceResponse;
@@ -375,6 +378,19 @@ use Webmozart\Assert\Assert as WMAssert;
  *         "summary"="Update Loopeat formats for an order"
  *       }
  *     },
+ *     "update_loopeat_returns"={
+ *       "method"="POST",
+ *       "path"="/orders/{id}/loopeat_returns",
+ *       "controller"=UpdateLoopeatReturnsController::class,
+ *       "security"="is_granted('session', object)",
+ *       "input"=LoopeatReturns::class,
+ *       "validate"=false,
+ *       "normalization_context"={"groups"={"cart"}},
+ *       "denormalization_context"={"groups"={"update_loopeat_returns"}},
+ *       "openapi_context"={
+ *         "summary"="Update Loopeat returns for an order"
+ *       }
+ *     },
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order_create"}},
@@ -452,6 +468,8 @@ class Order extends BaseOrder implements OrderInterface
     protected $invitation;
 
     protected $loopeatDetails;
+
+    protected ?OrderCredentials $loopeatCredentials = null;
 
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
@@ -1589,5 +1607,63 @@ class Order extends BaseOrder implements OrderInterface
     public function getLoopeatDeliver()
     {
         return $this->getLoopeatDetails()->getDeliver();
+    }
+
+    public function getLoopeatAccessToken()
+    {
+        if (null === $this->loopeatCredentials) {
+
+            return null;
+        }
+
+        return $this->loopeatCredentials->getLoopeatAccessToken();
+    }
+
+    public function setLoopeatAccessToken($accessToken)
+    {
+        if (null === $this->loopeatCredentials) {
+
+            $this->loopeatCredentials = new OrderCredentials();
+            $this->loopeatCredentials->setOrder($this);
+        }
+
+        $this->loopeatCredentials->setLoopeatAccessToken($accessToken);
+    }
+
+    public function getLoopeatRefreshToken()
+    {
+        if (null === $this->loopeatCredentials) {
+
+            return null;
+        }
+
+        return $this->loopeatCredentials->getLoopeatRefreshToken();
+    }
+
+    public function setLoopeatRefreshToken($refreshToken)
+    {
+        if (null === $this->loopeatCredentials) {
+
+            $this->loopeatCredentials = new OrderCredentials();
+            $this->loopeatCredentials->setOrder($this);
+        }
+
+        $this->loopeatCredentials->setLoopeatRefreshToken($refreshToken);
+    }
+
+    public function hasLoopEatCredentials(): bool
+    {
+        return null !== $this->loopeatCredentials && $this->loopeatCredentials->hasLoopEatCredentials();
+    }
+
+    public function clearLoopEatCredentials()
+    {
+        if (null === $this->loopeatCredentials) {
+
+            return;
+        }
+
+        $this->loopeatCredentials->setOrder(null);
+        $this->loopeatCredentials = null;
     }
 }

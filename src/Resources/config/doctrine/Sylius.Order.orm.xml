@@ -126,6 +126,11 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
+    <one-to-one field="loopeatCredentials" target-entity="AppBundle\Entity\LoopEat\OrderCredentials" mapped-by="order" orphan-removal="true">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-one>
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\OrderListener">
         <lifecycle-callback type="preFlush" method="preFlush"/>

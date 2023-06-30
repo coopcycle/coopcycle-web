@@ -5,6 +5,7 @@ namespace AppBundle\Form\Checkout;
 use AppBundle\Entity\Nonprofit;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Context as LoopEatContext;
+use AppBundle\LoopEat\ContextInitializer as LoopEatContextInitializer;
 use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use AppBundle\Dabba\Client as DabbaClient;
 use AppBundle\Dabba\Context as DabbaContext;
@@ -42,6 +43,7 @@ class CheckoutAddressType extends AbstractType
         PriceFormatter $priceFormatter,
         OrderTimeHelper $orderTimeHelper,
         LoopEatContext $loopeatContext,
+        LoopEatContextInitializer $loopeatContextInitializer,
         RequestStack $requestStack,
         DabbaClient $dabbaClient,
         DabbaContext $dabbaContext,
@@ -50,6 +52,7 @@ class CheckoutAddressType extends AbstractType
         $this->translator = $translator;
         $this->priceFormatter = $priceFormatter;
         $this->loopeatContext = $loopeatContext;
+        $this->loopeatContextInitializer = $loopeatContextInitializer;
         $this->requestStack = $requestStack;
         $this->dabbaClient = $dabbaClient;
         $this->dabbaContext = $dabbaContext;
@@ -116,7 +119,7 @@ class CheckoutAddressType extends AbstractType
 
                 if (!$order->isMultiVendor() && $supportsLoopEat) {
 
-                    $this->loopeatContext->initialize();
+                    $this->loopeatContextInitializer->initialize($order, $this->loopeatContext);
 
                     $form->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,

@@ -206,7 +206,7 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
 
     public function getLoopeatAccessToken()
     {
-        if (null == $this->loopeatCredentials) {
+        if (null === $this->loopeatCredentials) {
 
             return null;
         }
