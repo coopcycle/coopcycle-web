@@ -508,6 +508,12 @@ class Order extends BaseOrder implements OrderInterface
     public function setCustomer(?CustomerInterface $customer): void
     {
         $this->customer = $customer;
+
+        if ($this->hasLoopEatCredentials()) {
+            $this->customer->setLoopeatAccessToken($this->loopeatCredentials->getLoopeatAccessToken());
+            $this->customer->setLoopeatRefreshToken($this->loopeatCredentials->getLoopeatRefreshToken());
+            $this->clearLoopEatCredentials();
+        }
     }
 
     public function getTaxTotal(): int
