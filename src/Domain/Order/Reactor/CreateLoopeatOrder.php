@@ -16,11 +16,9 @@ class CreateLoopeatOrder
     {
         $order = $event->getOrder();
 
-        if (!$order->isReusablePackagingEnabled()) {
+        if (!$order->isLoopeat()) {
             return;
         }
-
-        // TODO More tests, implement a useful supportsLoopeat method
 
         $result = $this->client->createOrder($order);
 

@@ -28,14 +28,28 @@ class CreateLoopeatOrderTest extends TestCase
         );
     }
 
-    public function testCreatesOrder()
+    public function testDoesNothing()
     {
-        $restaurant = new Restaurant();
-
         $order = $this->prophesize(OrderInterface::class);
 
         $order
-            ->isReusablePackagingEnabled()
+            ->isLoopeat()
+            ->willReturn(false);
+
+        $this->loopeatClient
+            ->createOrder($order)
+            ->willReturn(['id' => 123456])
+            ->shouldNotBeCalled();
+
+        call_user_func_array($this->createLoopeatOrder, [ new OrderCreated($order->reveal()) ]);
+    }
+
+    public function testCreatesOrder()
+    {
+        $order = $this->prophesize(OrderInterface::class);
+
+        $order
+            ->isLoopeat()
             ->willReturn(true);
 
         $this->loopeatClient

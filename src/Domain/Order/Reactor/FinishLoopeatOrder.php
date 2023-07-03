@@ -16,11 +16,9 @@ class FinishLoopeatOrder
     {
         $order = $event->getOrder();
 
-        if (!$order->isReusablePackagingEnabled()) {
+        if (!$order->isLoopeat()) {
             return;
         }
-
-        // TODO More tests, implement a useful supportsLoopeat method
 
         $this->client->finishOrder($order);
     }

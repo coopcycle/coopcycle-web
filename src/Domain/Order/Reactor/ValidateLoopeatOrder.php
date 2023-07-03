@@ -16,15 +16,11 @@ class ValidateLoopeatOrder
     {
         $order = $event->getOrder();
 
-        if (!$order->isReusablePackagingEnabled()) {
+        if (!$order->isLoopeat()) {
             return;
         }
 
-        // TODO More tests, implement a useful supportsLoopeat method
-
         $this->client->validateOrder($order);
-
-        // TODO Clear loopeat credentials for guests
     }
 }
 
