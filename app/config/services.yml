@@ -292,6 +292,7 @@ services:
   AppBundle\Sylius\OrderProcessing\OrderDepositRefundProcessor:
     arguments:
       $adjustmentFactory: "@sylius.factory.adjustment"
+      $loopeatProcessingFee: "%env(LOOPEAT_PROCESSING_FEE)%"
     tags:
       - { name: sylius.order_processor, priority: 52 }
 

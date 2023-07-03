@@ -12,14 +12,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class OrderDepositRefundProcessor implements OrderProcessorInterface
 {
-    const LOOPEAT_PROCESSING_FEE = 200;
-
     public function __construct(
         AdjustmentFactoryInterface $adjustmentFactory,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        int $loopeatProcessingFee = 0)
     {
         $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
+        $this->loopeatProcessingFee = $loopeatProcessingFee;
     }
 
     /**
@@ -95,11 +95,11 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
 
         // Collect an additional fee for LoopEat, *PER ORDER*
         // https://github.com/coopcycle/coopcycle-web/issues/2284
-        if ($restaurant->isLoopeatEnabled()) {
+        if ($restaurant->isLoopeatEnabled() && $this->loopeatProcessingFee > 0) {
             $order->addAdjustment($this->adjustmentFactory->createWithData(
                 AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
                 $this->translator->trans('order.adjustment_type.reusable_packaging.loopeat'),
-                self::LOOPEAT_PROCESSING_FEE,
+                $this->loopeatProcessingFee,
                 $neutral = false
             ));
         } else if ($totalAmount > 0) {
