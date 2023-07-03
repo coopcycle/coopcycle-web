@@ -113,21 +113,6 @@ class OrderController extends AbstractController
 
             $order->setCustomer($user->getCustomer());
 
-            // Make sure to move LoopEat credentials if any
-            $loopeatAccessTokenKey =
-                sprintf('loopeat.order.%d.access_token', $order->getId());
-            $loopeatRefreshTokenKey =
-                sprintf('loopeat.order.%d.refresh_token', $order->getId());
-
-            if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
-                $order->getCustomer()->setLoopeatAccessToken(
-                    $session->get($loopeatAccessTokenKey)
-                );
-                $order->getCustomer()->setLoopeatRefreshToken(
-                    $session->get($loopeatRefreshTokenKey)
-                );
-            }
-
             // Make sure to move Dabba credentials if any
             $dabbaAccessTokenKey =
                 sprintf('dabba.order.%d.access_token', $order->getId());
