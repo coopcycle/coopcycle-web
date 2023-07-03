@@ -15,7 +15,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
@@ -30,9 +29,6 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
         $this->tokenStorage = $this->prophesize(TokenStorageInterface::class);
         $this->loopeatClient = $this->prophesize(LoopEatClient::class);
         $this->session = $this->prophesize(SessionInterface::class);
-        $this->requestStack = $this->prophesize(RequestStack::class);
-
-        $this->requestStack->getSession()->willReturn($this->session->reveal());
 
         parent::setUp();
     }
@@ -41,7 +37,6 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
     {
         return new LoopEatOrderValidator(
             $this->loopeatClient->reveal(),
-            $this->requestStack->reveal(),
             new NullLogger()
         );
     }
