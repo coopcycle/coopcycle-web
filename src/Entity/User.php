@@ -64,7 +64,7 @@ use AppBundle\Entity\Model\TaggableTrait;
  * @UniqueEntity(fields={"usernameCanonical"}, errorPath="username")
  * @UniqueEntity("facebookId")
  */
-class User extends BaseUser implements TaggableInterface, JWTUserInterface, ChannelAwareInterface
+class User extends BaseUser implements TaggableInterface
 {
 
     use TaggableTrait;

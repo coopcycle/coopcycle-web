@@ -4,6 +4,7 @@
   </a>
 </div>
 
+<p><strong>{% trans %}profile.tags{% endtrans %}</strong>: {{ user.tags|join(', ', ' and ') }}</p>
 <p><strong>{% trans %}profile.username{% endtrans %}</strong>: {{ user.username }}</p>
 <p><strong>{% trans %}profile.email{% endtrans %}</strong>: {% if is_demo %}✴✴✴{% else %}{{ user.email }}{% endif %}</p>
 <p><strong>{% trans %}profile.fullName{% endtrans %}</strong>: {{ user.customer.fullName }}</p>

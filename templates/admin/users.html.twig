@@ -101,6 +101,7 @@
 <thead>
   <th>{% trans %}profile.email{% endtrans  %}</th>
   <th>{% trans %}profile.fullName{% endtrans  %}</th>
+  <th>{% trans %}profile.tags{% endtrans  %}</th>
   <th>{% trans %}profile.telephone{% endtrans  %}</th>
   <th class="text-right">{% trans %}adminDashboard.users.orders_count{% endtrans  %}</th>
   <th class="text-right">{% trans %}adminDashboard.users.registered_at{% endtrans  %}</th>
@@ -118,6 +119,13 @@
     </td>
     <td>
       {% if customer.fullName is not empty %}{{ customer.fullName }}{% endif %}
+    </td>
+    <td>
+      {% if customer.user.getTags() is not empty %}
+      <span className="task__tags">
+        {{ customer.user.getTags()|map(tag => "<i key=\"#{tag}\" className=\"fa fa-circle\" style=\"#{tag}\"></i>")|join(' ') }}
+      </span>
+      {% endif %}
     </td>
     <td>
       {% if customer.phoneNumber is not empty %}{{ customer.phoneNumber }}{% endif %}

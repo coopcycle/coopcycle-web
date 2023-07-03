@@ -69,6 +69,9 @@ class UpdateProfileType extends AbstractType
                 ->add('quotesAllowed', CheckboxType::class, [
                 'label' => 'form.user.quotes_allowed.label',
                 'required' => false,
+            ])->add('tags', TagsType::class, [
+                'mapped' => false,
+                'label' => 'adminDashboard.tags.title'
             ]);
         }
 
@@ -78,7 +81,10 @@ class UpdateProfileType extends AbstractType
 
                 $form = $event->getForm();
                 $user = $event->getData();
-
+                $log = new Logger('PRE_SET_DATA');
+                $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+                $log->warning('UpdateProfileType');
+                $log->warning('PRE_SET_DATA');
                 if ($isAdmin) {
                     $form
                         ->add('enabled', CheckboxType::class, [
@@ -149,50 +155,43 @@ class UpdateProfileType extends AbstractType
                 }
             }
         );
-
-        
-        $builder->add('tags', TagsType::class, [
-            'mapped' => false,
-            'required' => false,
-            'label' => 'adminDashboard.tags.title'
-        ]);
 /*
-        if ($builder->has('tags')) {
-            $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
-                $form = $event->getForm();
-                $user = $event->getData();
+            $form = $event->getForm();
+            $user = $event->getData();
 
-                if (null === $user) {
-                    return;
-                }
-                $log = new Logger('POST_SET_DATA');
-                $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
-                $log->warning('UpdateProfileType');
-                $log->warning('POST_SET_DATA');
-                $log->warning(print_r($user->getTags(), true));
-                //$form->get('tags')->setData(implode(' ', $user->getTags()));
-            });
+            if (null === $user) {
+                return;
+            }
+            $log = new Logger('POST_SET_DATA');
+            $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+            $log->warning('UpdateProfileType');
+            $log->warning('POST_SET_DATA');
+            //$log->warning($user->getTags()->count());
+            $form->get('tags')->setData(implode(' ', $user->getTags()));
+            $log->warning(print_r($user->getCustomer()->getTags(), true));
+            $form->get('tags')->setData($user->getTags());
+        });
 
-            $builder->get('tags')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+        $builder->get('tags')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $user = $event->getForm()->getParent()->getData();
+            if (null === $user) {
+                return;
+            }
+            $log = new Logger('PRE_SUBMIT');
+            $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
+            $log->warning('UpdateProfileType');
+            $log->warning('PRE_SUBMIT');
+            //$log->warning(var_dump($user));
+            //$log->warning(var_dump($event));
+            $tags = $event->getData();
+            //$tags = explode(' ', $tags);
 
-                $user = $event->getForm()->getParent()->getData();
+            $user->setTags($tags);
+            //$user->getUser()->setTags($tags);
+        });
 
-                if (null === $user) {
-                    return;
-                }
-                $log = new Logger('PRE_SUBMIT');
-                $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
-                $log->warning('UpdateProfileType');
-                $log->warning('PRE_SUBMIT');
-                $log->warning(print_r($user->getTags(), true));
-                $log->warning(print_r($event->getData(), true));
-                //$tags = $event->getData();
-                //$tags = explode(' ', $tags);
-
-                $user->setTags($user->getTags());
-            });
-        }
         */
     }
 

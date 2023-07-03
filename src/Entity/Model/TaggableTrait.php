@@ -23,7 +23,7 @@ trait TaggableTrait
 
     /**
      * @SerializedName("tags")
-     * @Groups({"task", "customer", "update_profile"})
+     * @Groups({"task", "users", "user", "admin_user_edit", "customer", "update_profile"})
      */
     public function getTags()
     {
@@ -39,7 +39,7 @@ trait TaggableTrait
 
     /**
      * @SerializedName("tags")
-     * @Groups({"task_create", "task_edit", "update_profile"})
+     * @Groups({"task_create", "task_edit", "admin_user_edit", "update_profile"})
      */
     public function setTags($tags)
     {
@@ -51,6 +51,7 @@ trait TaggableTrait
         $log->warning(print_r($this->tags, true));
         $this->tags = array_unique($this->tags);
         $log->warning(print_r($this->tags, true));
+        $log->warning(print_r($this->getTags(), true));
     }
 
     public function addTags($tags)
