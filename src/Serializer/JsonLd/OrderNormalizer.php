@@ -252,9 +252,13 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
             }, $data['items']);
 
-            $order->clearItems();
-            foreach ($orderItems as $orderItem) {
-                $this->orderModifier->addToOrder($order, $orderItem);
+            $orderItems = array_filter($orderItems);
+
+            if (count($orderItems) > 0) {
+                $order->clearItems();
+                foreach ($orderItems as $orderItem) {
+                    $this->orderModifier->addToOrder($order, $orderItem);
+                }
             }
         }
 
