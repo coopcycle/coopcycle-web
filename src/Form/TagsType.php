@@ -54,6 +54,14 @@ class TagsType extends AbstractType
             $slugs = explode(' ', $tagsAsString);
 
             $taggable->setTags($slugs);
+
+            // As the "tags" property isn't mapped directly to objects,
+            // we need to force Doctrine to schedule an update.
+            // Otherwise, TaggableSubscriber won't detect the change.
+            $unitOfWork = $this->objectManager->getUnitOfWork();
+            if ($unitOfWork->isInIdentityMap($taggable)) {
+                $this->objectManager->getUnitOfWork()->scheduleForUpdate($taggable);
+            }
         });
     }
 
