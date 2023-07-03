@@ -163,9 +163,6 @@ class LoopEatController extends AbstractController
 
         $this->addFlash('notice', $translator->trans('loopeat.oauth_connect.success'));
 
-        // TODO Use deep link when redirecting inside app
-        // return $this->redirect('coopcycle://loopeat_oauth_redirect');
-
         return $this->redirect($this->getSuccessRedirect($payload));
     }
 

@@ -198,16 +198,16 @@ class Client
         ]);
     }
 
-    public function createStateParamForOrder(OrderInterface $order)
+    public function createStateParamForOrder(OrderInterface $order, $useDeepLink = false)
     {
         return $this->jwtEncoder->encode([
             'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
             'sub' => $this->iriConverter->getIriFromItem($order),
             // Custom claims
             self::JWT_CLAIM_SUCCESS_REDIRECT =>
-                $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                $useDeepLink ? 'coopcycle://loopeat_oauth_redirect' : $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
             self::JWT_CLAIM_FAILURE_REDIRECT =>
-                $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                $useDeepLink ? 'coopcycle://loopeat_oauth_redirect' : $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
     }
 

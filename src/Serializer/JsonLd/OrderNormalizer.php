@@ -141,7 +141,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
             if ($restaurant->isLoopeatEnabled()) {
                 $enableReusablePackagingAction['loopeatOAuthUrl'] = $this->loopeatClient->getOAuthAuthorizeUrl([
-                    'state' => $this->loopeatClient->createStateParamForOrder($object),
+                    'state' => $this->loopeatClient->createStateParamForOrder($object, $useDeepLink = true),
                 ]);
             }
 
