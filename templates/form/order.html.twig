@@ -88,7 +88,7 @@
           </div>
           {% endif %}
           <div class="d-flex justify-content-between loopeat-links">
-            <a href="#">{{ (loopeat_trans_prefix ~ '.how_it_works')|trans }} ›</a>
+            <a href="#" data-toggle="modal" data-target="#modal-loopeat-howitworks">{{ (loopeat_trans_prefix ~ '.how_it_works')|trans }} ›</a>
             {% if loopeat_context.hasCredentials and missing > 0 %}
             <a href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.add_credits')|trans }} ›</a>
             {% endif %}
@@ -120,6 +120,28 @@
           <a class="btn btn-warning" href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.connect_account')|trans({ '%name%': loopeat_context.name }) }}</a>
         {% endif %}
       {% endif %}
+    </div>
+
+    <div class="modal fade" id="modal-loopeat-howitworks" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <span>{{ 'loopeat.how_it_works.title'|trans({ '%name%': loopeat_context.name }) }}</span>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body mb-0 p-0">
+            <img src="{{ asset('img/loopeat/how_it_works.png') }}" class="w-100" />`
+            <div class="d-flex justify-content-between">
+              {% for loopeat_step in 1..4 %}
+                <div class="text-center w-25 m-2">
+                  <h5>{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.title')|trans({ '%name%': loopeat_context.name }) }}</h5>
+                  <p>{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.text')|trans({ '%name%': loopeat_context.name }) }}</p>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   {% elseif isVytal %}

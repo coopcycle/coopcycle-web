@@ -1279,3 +1279,13 @@ integration.created.message : L'intégration a été créée.
 dabba.oauth_redirect.warning: Vous allez être redirigé·e vers le site de Dabba pour vous identifier ou créer votre compte
 profile.dabba.disconnect: Déconnecter mon compte Dabba
 security.login.remember_me: Se souvenir de moi
+loopeat.how_it_works.title: |
+  Votre restaurant fait partie du réseau « %name% » : bénéficiez de plats à emporter ou livrés en boîtes consignées. Vous pouvez désactiver cette option à tout moment dans votre panier de commande.
+loopeat.how_it_works.step_1.title: Je m'inscris
+loopeat.how_it_works.step_1.text: Inscrivez-vous sur %name% lors de la finalisation de votre commande.
+loopeat.how_it_works.step_2.title: Je paie ma 1ère consigne
+loopeat.how_it_works.step_2.text: Créditez votre cagnotte pour emprunter vos premières boîtes consignées.
+loopeat.how_it_works.step_3.title: Je commande
+loopeat.how_it_works.step_3.text: Faites-vous livrer en boites consignées.
+loopeat.how_it_works.step_4.title: Je rends mes boîtes
+loopeat.how_it_works.step_4.text: Restituez vos boîtes lors de votre prochaine commande et récupérez la consigne sur votre cagnotte.
