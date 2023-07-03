@@ -51,7 +51,7 @@ services:
 
   AppBundle\Serializer\Json\OrderItemNormalizer:
     arguments:
-      - "@serializer.normalizer.object"
+      - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\JsonLd\RestaurantMenuNormalizer:

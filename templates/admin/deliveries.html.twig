@@ -26,14 +26,34 @@
     </div>
   </div>
 
-  {% if delivery_import_form.vars.submitted and (not delivery_import_form.vars.valid and not delivery_import_form.file.vars.valid) %}
-    <div class="alert alert-danger">
-      <ul class="list-unstyled">
-      {% for error in delivery_import_form.file.vars.errors %}
-        <li>{{ error.message }}</li>
-      {% endfor %}
-      </ul>
+  {% if imported_rows_message is defined and imported_rows_message is not empty %}
+    <div class="alert alert-success">
+      {{ imported_rows_message }}
     </div>
+  {% endif %}
+
+  {% if delivery_import_form.vars.submitted and (not delivery_import_form.vars.valid and not delivery_import_form.file.vars.valid) %}
+    <!-- Delivery errors: i.e. when orders can not be created because errors in price calculation -->
+    {% if delivery_import_form.vars.errors is defined and delivery_import_form.vars.errors is not empty %}
+      <div class="alert alert-danger">
+        <ul class="list-unstyled">
+        {% for error in delivery_import_form.vars.errors %}
+          <li>{{ error.message }}</li>
+        {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <!-- Errors at rows level then trying to parse the file -->
+    {% if delivery_import_form.file.vars.errors is defined and delivery_import_form.file.vars.errors is not empty %}
+      <div class="alert alert-danger">
+        <ul class="list-unstyled">
+        {% for error in delivery_import_form.file.vars.errors %}
+          <li>{{ error.message }}</li>
+        {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
   {% endif %}
 
   {% if delivery_export_form.vars.submitted and not delivery_export_form.vars.valid %}

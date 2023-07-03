@@ -142,6 +142,11 @@ class Product extends BaseProduct implements ProductInterface, Comparable
 
     }
 
+    public function clearReusablePackagings()
+    {
+        $this->reusablePackagings->clear();
+    }
+
     public function hasReusablePackagings()
     {
         return count($this->reusablePackagings) > 0;

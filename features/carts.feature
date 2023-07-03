@@ -593,6 +593,8 @@ Feature: Carts
         "notes":null,
         "items":[
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":@integer@,
             "quantity":2,
             "unitPrice":900,
@@ -695,6 +697,8 @@ Feature: Carts
         "notes":null,
         "items":[
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":@integer@,
             "quantity":2,
             "unitPrice":900,
@@ -797,6 +801,8 @@ Feature: Carts
         "notes":null,
         "items":[
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":1,
             "quantity":2,
             "unitPrice":900,
@@ -974,6 +980,8 @@ Feature: Carts
         "notes":null,
         "items":[
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":1,
             "quantity":3,
             "unitPrice":900,
@@ -1046,6 +1054,8 @@ Feature: Carts
         "notes":null,
         "items":[
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":1,
             "quantity":3,
             "unitPrice":900,

@@ -1290,3 +1290,9 @@ form.integration.productTypes.label: Tipo de productos permitidos
 form.integration.woopitStoreId.label: ID de tienda de Woopit
 integration.created.message: La integración ha sido creada.
 tasks.mark_as_done.has_previous: 'La tarea #%failed_task% no puede finalizarse porque tiene una tarea previa #%previous_task% que debe ser finalizada antes.'
+import.errors.at.row: Errores en fila %row_number%
+import.address.geocode.error: No se pudo geocodificar la dirección %failed_address%
+import.time.range.error: Rango de tiempo "%value%" en %key% no es válido
+import.successful.rows: 'Se procesó el archivo y se crearon %count% entregas correspondientes a las filas: %rows%'
+import.delivery.price.error.priceCalculation.row: El precio de la entrega no pudo ser calculado para la fila %row_number%
+import.unsuccessful.rows: "Se encontraron errores y no fue posible crear entregas para las filas: %rows%."

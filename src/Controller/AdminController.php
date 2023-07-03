@@ -445,30 +445,29 @@ class AdminController extends AbstractController
 
         $attributes = [];
 
+        $countOrders = $this->orderRepository->createQueryBuilder('o');
+        $countOrders->select('COUNT(o)');
+        $countOrders->andWhere('o.customer = :customer');
+        $countOrders->andWhere('o.state != :state');
+
+        $lastOrder = $this->orderRepository->createQueryBuilder('o');
+        $lastOrder->andWhere('o.customer = :customer');
+        $lastOrder->andWhere('o.state != :state');
+        $lastOrder->orderBy('o.updatedAt', 'DESC');
+        $lastOrder->setMaxResults(1);
+
         foreach ($customers as $customer) {
             $key = $customer->getEmailCanonical();
 
-            $qb = $this->orderRepository->createQueryBuilder('o');
-            $qb->andWhere('o.customer = :customer');
-            $qb->andWhere('o.state != :state');
-            $qb->setParameter('customer', $customer);
-            $qb->setParameter('state', OrderInterface::STATE_CART);
+            $countOrders->setParameter('customer', $customer);
+            $countOrders->setParameter('state', OrderInterface::STATE_CART);
 
-            $res = $qb->getQuery()->getResult();
+            $attributes[$key]['orders_count'] = $countOrders->getQuery()->getSingleScalarResult();
 
-            $attributes[$key]['orders_count'] = count($res);
+            $lastOrder->setParameter('customer', $customer);
+            $lastOrder->setParameter('state', OrderInterface::STATE_CART);
 
-            $qb = $this->orderRepository->createQueryBuilder('o');
-            $qb->andWhere('o.customer = :customer');
-            $qb->andWhere('o.state != :state');
-            $qb->setParameter('customer', $customer);
-            $qb->setParameter('state', OrderInterface::STATE_CART);
-            $qb->orderBy('o.updatedAt', 'DESC');
-            $qb->setMaxResults(1);
-
-            $res = $qb->getQuery()->getOneOrNullResult();
-
-            $attributes[$key]['last_order'] = $res;
+            $attributes[$key]['last_order'] = $lastOrder->getQuery()->getOneOrNullResult();
         }
 
         $parameters = [
@@ -744,7 +743,18 @@ class AdminController extends AbstractController
             $store = $deliveryImportForm->get('store')->getData();
 
             return $this->handleDeliveryImportForStore($store, $deliveryImportForm, 'admin_deliveries',
-                $orderManager, $deliveryManager, $orderFactory,);
+                $orderManager, $deliveryManager, $orderFactory);
+        } else if ($deliveryImportForm->isSubmitted() && !$deliveryImportForm->isValid()) {
+            if (count($deliveryImportForm->getData()) > 0) {
+                // This is the case when some rows have errors and some others were parsed successfuly and have to be persisted
+                $importedDeliveries = $this->persistImportedDeliveries($deliveryImportForm, $orderManager,
+                    $deliveryManager, $orderFactory);
+
+                $importedRowsMessage = $this->translator->trans('import.successful.rows', [
+                    '%count%' => count(array_keys($importedDeliveries)),
+                    '%rows%' => implode(", ", array_keys($importedDeliveries))
+                ]);
+            }
         }
 
         $dataExportForm = $this->createForm(DataExportType::class);
@@ -799,6 +809,7 @@ class AdminController extends AbstractController
         return $this->render('admin/deliveries.html.twig', [
             'deliveries' => $deliveries,
             'routes' => $this->getDeliveryRoutes(),
+            'imported_rows_message' => $importedRowsMessage ?? null,
             'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']),
             'delivery_import_form' => $deliveryImportForm->createView(),
             'delivery_export_form' => $dataExportForm->createView(),

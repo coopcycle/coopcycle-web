@@ -1299,3 +1299,9 @@ profile.dabba.disconnect: Disconnect Dabba
 form.task_export.colisactiv.label: Export using ColivActiv format
 form.task_export.format.label: Export format
 tasks.mark_as_done.has_previous: 'Task #%failed_task% could not be completed because it has a previous task #%previous_task% which must be completed first.'
+import.errors.at.row: Errors at row %row_number%
+import.address.geocode.error: Could not geocode address %failed_address%
+import.time.range.error: Time range "%value%" in %key% is not valid
+import.successful.rows: 'Your file was processed and %count% deliveries were created for rows: %rows%'
+import.delivery.price.error.priceCalculation.row: The delivery price could not be calculated for row %row_number%
+import.unsuccessful.rows: "There were errors and deliveries could not be created for rows: %rows%."

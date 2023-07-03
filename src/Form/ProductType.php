@@ -129,6 +129,7 @@ class ProductType extends AbstractType
                             'label' => 'form.product.reusable_packaging_enabled.label',
                         ])
                         ->add('reusablePackagings', CollectionType::class, [
+                            'label' => false,
                             'entry_type' => ReusablePackagingType::class,
                             'entry_options' => [
                                 'label' => false,

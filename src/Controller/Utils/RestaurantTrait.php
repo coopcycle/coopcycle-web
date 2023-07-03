@@ -804,8 +804,7 @@ trait RestaurantTrait
             $product = $form->getData();
 
             if (!$product->isReusablePackagingEnabled()) {
-                $product->setReusablePackaging(null);
-                $product->setReusablePackagingUnit(0);
+                $product->clearReusablePackagings();
             }
 
             if ($form->getClickedButton()) {
