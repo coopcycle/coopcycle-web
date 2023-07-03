@@ -263,7 +263,7 @@ export function updateLoopeatFormats(order, loopeatFormats) {
 
     const { httpClient } = getState()
 
-    httpClient.post(order['@id'] + '/loopeat_formats', {
+    httpClient.put(order['@id'] + '/loopeat_formats', {
       items: loopeatFormats,
     })
       .then(res => {
