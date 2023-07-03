@@ -445,30 +445,29 @@ class AdminController extends AbstractController
 
         $attributes = [];
 
+        $countOrders = $this->orderRepository->createQueryBuilder('o');
+        $countOrders->select('COUNT(o)');
+        $countOrders->andWhere('o.customer = :customer');
+        $countOrders->andWhere('o.state != :state');
+
+        $lastOrder = $this->orderRepository->createQueryBuilder('o');
+        $lastOrder->andWhere('o.customer = :customer');
+        $lastOrder->andWhere('o.state != :state');
+        $lastOrder->orderBy('o.updatedAt', 'DESC');
+        $lastOrder->setMaxResults(1);
+
         foreach ($customers as $customer) {
             $key = $customer->getEmailCanonical();
 
-            $qb = $this->orderRepository->createQueryBuilder('o');
-            $qb->andWhere('o.customer = :customer');
-            $qb->andWhere('o.state != :state');
-            $qb->setParameter('customer', $customer);
-            $qb->setParameter('state', OrderInterface::STATE_CART);
+            $countOrders->setParameter('customer', $customer);
+            $countOrders->setParameter('state', OrderInterface::STATE_CART);
 
-            $res = $qb->getQuery()->getResult();
+            $attributes[$key]['orders_count'] = $countOrders->getQuery()->getSingleScalarResult();
 
-            $attributes[$key]['orders_count'] = count($res);
+            $lastOrder->setParameter('customer', $customer);
+            $lastOrder->setParameter('state', OrderInterface::STATE_CART);
 
-            $qb = $this->orderRepository->createQueryBuilder('o');
-            $qb->andWhere('o.customer = :customer');
-            $qb->andWhere('o.state != :state');
-            $qb->setParameter('customer', $customer);
-            $qb->setParameter('state', OrderInterface::STATE_CART);
-            $qb->orderBy('o.updatedAt', 'DESC');
-            $qb->setMaxResults(1);
-
-            $res = $qb->getQuery()->getOneOrNullResult();
-
-            $attributes[$key]['last_order'] = $res;
+            $attributes[$key]['last_order'] = $lastOrder->getQuery()->getOneOrNullResult();
         }
 
         $parameters = [
