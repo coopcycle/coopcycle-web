@@ -130,11 +130,6 @@ class OrderController extends AbstractController
 
             $this->objectManager->flush();
 
-            if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
-                $session->remove($loopeatAccessTokenKey);
-                $session->remove($loopeatRefreshTokenKey);
-            }
-
             if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
                 $session->remove($dabbaAccessTokenKey);
                 $session->remove($dabbaRefreshTokenKey);

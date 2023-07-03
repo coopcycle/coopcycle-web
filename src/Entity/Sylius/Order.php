@@ -42,6 +42,7 @@ use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
+use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
 use AppBundle\Payment\MercadopagoPreferenceResponse;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -511,6 +512,9 @@ class Order extends BaseOrder implements OrderInterface
         $this->customer = $customer;
 
         if ($this->hasLoopEatCredentials()) {
+
+            WMAssert::isInstanceOf($this->customer, LoopeatOAuthCredentialsInterface::class);
+
             $this->customer->setLoopeatAccessToken($this->loopeatCredentials->getLoopeatAccessToken());
             $this->customer->setLoopeatRefreshToken($this->loopeatCredentials->getLoopeatRefreshToken());
             $this->clearLoopEatCredentials();
