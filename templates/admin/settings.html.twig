@@ -288,6 +288,7 @@
     var isMercadopagoLivemode = {{ mercadopago_livemode ? 'true' : 'false' }};
     var canEnableMercadopagoLivemode = {{ can_enable_mercadopago_livemode ? 'true' : 'false' }};
     var isDemo = {{ is_demo ? 'true' : 'false' }};
+    var isGoogleApiKeyCustomEmpty = {{ (form.vars.value.google_api_key_custom is empty)|json_encode|e('js') }};
 
     var maintenanceSwitch, bannerSwitch, stripeLiveModeSwitch, mercadopagoLiveModeSwitch, smsEnableSwitch;
 
@@ -516,8 +517,10 @@
       var geocodingVal = $('#settings_geocoding_provider').val();
 
       if (autocompleteVal === 'google' || geocodingVal === 'google') {
-        $('[data-autocomplete-provider="google"]').removeClass('d-none');
-        $('[data-autocomplete-provider="google"] input').prop('required', true);
+        if (isGoogleApiKeyCustomEmpty) {
+          $('[data-autocomplete-provider="google"]').removeClass('d-none');
+          $('[data-autocomplete-provider="google"] input').prop('required', true);
+        }
       } else {
         $('[data-autocomplete-provider="google"]').addClass('d-none');
         $('[data-autocomplete-provider="google"] input').prop('required', false);
@@ -527,6 +530,8 @@
 
     $('#settings_autocomplete_provider').on('change', onProviderChange);
     $('#settings_geocoding_provider').on('change', onProviderChange);
+
+    onProviderChange()
 
   })();
 
