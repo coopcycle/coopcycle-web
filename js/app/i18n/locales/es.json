@@ -313,6 +313,10 @@
           "TIME_UNIT": "minuto(s)",
           "NO_LIMIT": "Sin límite de pedidos",
           "LIMIT": "Un máximo de {{command}} pedidos cada {{time}}"
-        }
+        },
+        "PM_CREDIT_OR_DEBIT_CARD": "Tarjeta de crédito o débito",
+        "PM_CASH": "Efectivo",
+        "PM_EDENRED": "Edenred",
+        "PM_GIROPAY": "Giropay"
     }
 }

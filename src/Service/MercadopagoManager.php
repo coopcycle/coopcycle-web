@@ -13,11 +13,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class MercadopagoManager
 {
     private $settingsManager;
+    private $logger;
 
     public function __construct(
-        SettingsManager $settingsManager)
+        SettingsManager $settingsManager,
+        LoggerInterface $logger)
     {
         $this->settingsManager = $settingsManager;
+        $this->logger = $logger;
     }
 
     public function configure()
@@ -65,7 +68,13 @@ class MercadopagoManager
             'email' => $order->getCustomer()->getEmail() // this email must be the same as the one entered in the payment form
         );
 
-        $p->capture = false;
+        $mpPaymentMethod = $this->getPaymentMethod($payment);
+
+        if (null !== $mpPaymentMethod && $mpPaymentMethod->deferred_capture === "supported") {
+            $p->capture = false;
+        } else {
+            $p->capture = true;
+        }
 
         if ($applicationFee > 0) {
             $p->application_fee = ($applicationFee / 100);
@@ -104,10 +113,13 @@ class MercadopagoManager
         }
 
         $payment = MercadoPago\Payment::read(["id" => $payment->getCharge()]);
-        $payment->capture = true;
 
-        if (!$payment->update()) {
-            throw new \Exception((string) $payment->error);
+        if (!$payment->capture) {
+            $payment->capture = true;
+
+            if (!$payment->update()) {
+                throw new \Exception((string) $payment->error);
+            }
         }
 
         return $payment;
@@ -137,5 +149,27 @@ class MercadopagoManager
         }
 
         return MercadoPago\Payment::read(["id" => $payment->getMercadopagoPaymentId()], ["custom_access_token" => $options['custom_access_token']]);
+    }
+
+    public function getPaymentMethod(PaymentInterface $payment)
+    {
+        try {
+            $paymentMethods = MercadoPago\PaymentMethod::all();
+            foreach($paymentMethods as $paymentMethod) {
+                if ($paymentMethod->id === $payment->getMercadopagoPaymentMethod()) {
+                    return $paymentMethod;
+                }
+            }
+        } catch(\Exception $e) {
+            $this->logger->error(
+                sprintf('Mercadopago - Error %s while tryinh to read payment method with id %s', $e->getMessage(), $payment->getMercadopagoPaymentMethod())
+            );
+            return null;
+        }
+
+        $this->logger->error(
+            sprintf('Mercadopago - Error MercadoPago\PaymentMethod not found for payment method with id %s', $payment->getMercadopagoPaymentMethod())
+        );
+        return null;
     }
 }
