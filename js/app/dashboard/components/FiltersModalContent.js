@@ -129,7 +129,7 @@ class FiltersModalContent extends React.Component {
                     <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED') }
                       help={
                         <span className="help-block mt-1">
-                          <i className="fa fa-info-circle"></i>
+                          <i className="fa fa-info-circle mr-1"></i>
                           <span>{ this.props.t('ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED_HELP_TEXT') }</span>
                         </span>
                       }>
