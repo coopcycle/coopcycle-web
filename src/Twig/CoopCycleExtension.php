@@ -66,6 +66,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('opening_hours_for_day_matches', array($this, 'openingHoursForDayMatches')),
             new TwigFilter('cache_key', array(KeyGenerator::class, 'generateKey')),
             new TwigFilter('parse_expression', array(ExpressionLanguageRuntime::class, 'parseExpression')),
+            new TwigFilter('expand_tags', array(TagsRuntime::class, 'expandTags')),
         );
     }
 
