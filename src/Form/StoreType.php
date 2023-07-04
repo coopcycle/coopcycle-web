@@ -77,9 +77,7 @@ class StoreType extends LocalBusinessType
                     'multiple' => true,
                     'query_builder' => new OrderByNameQueryBuilder(),
                 ])
-                ->add('tags', TagsType::class, [
-                    'mapped' => false,
-                ]);
+                ->add('tags', TagsType::class);
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
