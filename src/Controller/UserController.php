@@ -175,7 +175,7 @@ class UserController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $user = new User();
+        $user = $userManager->createUser();
         $user->setEmail($invitation->getEmail());
 
         $form = $this->createForm(RegistrationFormType::class, $user);
