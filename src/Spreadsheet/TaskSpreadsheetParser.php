@@ -15,7 +15,7 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 
@@ -39,7 +39,7 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         Geocoder $geocoder,
         SlugifyInterface $slugify,
         PhoneNumberUtil $phoneNumberUtil,
-        UserManagerInterface $userManager,
+        UserManager $userManager,
         string $countryCode,
         EntityManagerInterface $entityManager)
     {

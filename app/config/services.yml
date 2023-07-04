@@ -85,7 +85,7 @@ services:
 
   League\Flysystem\Filesystem $taskImportsFilesystem: '@task_imports_filesystem'
   League\Flysystem\Filesystem $receiptsFilesystem: '@receipts_filesystem'
-  Nucleos\UserBundle\Util\CanonicalizerInterface: '@nucleos_user.util.canonicalizer.default'
+  Nucleos\UserBundle\Util\Canonicalizer: '@nucleos_user.util.canonicalizer.simple'
 
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
 
@@ -701,7 +701,7 @@ services:
     public: true
     arguments:
       $confirmationEnabled: '%nucleos_profile.registration.confirmation.enabled%'
-      $mailer: '@nucleos_profile.mailer.default'
+      $mailer: '@nucleos_profile.mailer'
 
   AppBundle\Action\ResettingSendEmail:
     public: true

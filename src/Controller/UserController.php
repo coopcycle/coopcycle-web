@@ -6,15 +6,16 @@ use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
+use AppBundle\Entity\User;
 use AppBundle\Sylius\Order\OrderFactory;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\ProfileBundle\NucleosProfileEvents;
 use AppBundle\Form\Model\Registration;
-use Nucleos\ProfileBundle\Mailer\MailerInterface as ProfileMailerInterface;
+use Nucleos\ProfileBundle\Mailer\RegistrationMailer;
 use Nucleos\UserBundle\Event\FilterUserResponseEvent;
-use Nucleos\UserBundle\Model\UserManagerInterface;
-use Nucleos\UserBundle\Util\CanonicalizerInterface;
+use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
+use Nucleos\UserBundle\Util\Canonicalizer;
 use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Laravolt\Avatar\Avatar;
 use Shahonseven\ColorHash;
@@ -26,6 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -144,7 +146,7 @@ class UserController extends AbstractController
     /**
      * @Route("/register/resend-email", name="register_resend_email", methods={"POST"})
      */
-    public function resendRegistrationEmailAction(Request $request, UserManagerInterface $userManager, ProfileMailerInterface $mailer, SessionInterface $session)
+    public function resendRegistrationEmailAction(Request $request, UserManagerInterface $userManager, RegistrationMailer $mailer, SessionInterface $session)
     {
         if ($request->request->has('email')) {
             $email = $request->request->get('email');
@@ -165,7 +167,7 @@ class UserController extends AbstractController
         EntityManagerInterface $objectManager,
         UserManagerInterface $userManager,
         EventDispatcherInterface $eventDispatcher,
-        CanonicalizerInterface $canonicalizer)
+        Canonicalizer $canonicalizer)
     {
         $repository = $this->getDoctrine()->getRepository(Invitation::class);
 
@@ -173,15 +175,16 @@ class UserController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $registration = new Registration();
-        $registration->setEmail($invitation->getEmail());
+        $user = new User();
+        $user->setEmail($invitation->getEmail());
 
-        $form = $this->createForm(RegistrationFormType::class, $registration);
+        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form->add('save', SubmitType::class, [
+            'label'  => 'registration.submit',
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $user = $registration->toUser($userManager);
 
             $existingCustomer = $objectManager->getRepository(Customer::class)
                 ->findOneBy([

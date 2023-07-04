@@ -4,7 +4,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Sylius\Customer;
 use Doctrine\ORM\EntityManagerInterface;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

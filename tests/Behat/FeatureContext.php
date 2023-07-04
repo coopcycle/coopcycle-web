@@ -41,7 +41,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
 use Faker\Generator as FakerGenerator;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager;
 use Nucleos\UserBundle\Util\UserManipulator;
 use Behatch\HttpCall\HttpCallResultPool;
 use PHPUnit\Framework\Assert;
@@ -134,7 +134,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         OrderProcessorInterface $orderProcessor,
         KernelInterface $kernel,
         ContainerInterface $behatContainer,
-        UserManagerInterface $userManager,
+        UserManager $userManager,
         CollectionManager $typesenseCollectionManager)
     {
         $this->tokens = [];
