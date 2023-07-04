@@ -121,11 +121,9 @@
       {% if customer.fullName is not empty %}{{ customer.fullName }}{% endif %}
     </td>
     <td>
-      {% if customer.hasUser() %}
-        {% for tag in customer.user.tags|expand_tags %}
-        <span class="label label-default" style="background-color: {{ tag.color }};">{{ tag.slug }}</span>
-        {% endfor %}
-      {% endif %}
+      {% for tag in customer.tags|expand_tags %}
+      <span class="label label-default" style="background-color: {{ tag.color }};">{{ tag.slug }}</span>
+      {% endfor %}
     </td>
     <td>
       {% if customer.phoneNumber is not empty %}{{ customer.phoneNumber }}{% endif %}

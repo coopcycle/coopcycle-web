@@ -70,8 +70,8 @@ class UpdateProfileType extends AbstractType
                 'label' => 'form.user.quotes_allowed.label',
                 'required' => false,
             ])->add('tags', TagsType::class, [
-                'mapped' => false,
-                'label' => 'adminDashboard.tags.title'
+                'label' => 'adminDashboard.tags.title',
+                'property_path' => 'customer.tags'
             ]);
         }
 
