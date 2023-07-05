@@ -1256,3 +1256,6 @@ services:
   coopcycle.sylius.order_modifier:
     class: AppBundle\Sylius\Order\OrderModifier
     decorates: sylius.order_modifier
+
+  AppBundle\CubeJs\HttpClient:
+    decorates: cubejs.client
