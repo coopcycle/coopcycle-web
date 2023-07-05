@@ -116,7 +116,7 @@
         "simshaun/recurr": "^5.0",
         "jaybizzle/crawler-detect": "^1.2",
         "nucleos/user-bundle": "^2.0",
-        "nucleos/profile-bundle": "^2.0",
+        "nucleos/profile-bundle": "2.3.x-dev",
         "twig/cache-extra": "^3.3",
         "geocoder-php/google-maps-provider": "^4.6",
         "symfony/redis-messenger": "^5.3",
