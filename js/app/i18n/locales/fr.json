@@ -283,6 +283,7 @@
           "NO_LIMIT": "Aucune limitation de commande",
           "LIMIT": "Un maximum de {{command}} commandes toutes les {{time}}"
         },
-        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED_HELP_TEXT": "Lorsque ce filtre est activé, aucun des autres filtres n'est appliqué aux tâches non assignées."
+        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED_HELP_TEXT": "Lorsque ce filtre est activé, aucun des autres filtres n'est appliqué aux tâches non assignées.",
+        "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Afficher le panneau des tournées"
     }
 }

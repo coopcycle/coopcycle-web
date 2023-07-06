@@ -187,6 +187,7 @@ export const CLOSE_CREATE_TOUR_MODAL = 'CLOSE_CREATE_TOUR_MODAL'
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
 
+export const SET_TOURS_ENABLED = 'SET_TOURS_ENABLED'
 
 export function setTaskListsLoading(loading = true) {
   return { type: SET_TASK_LISTS_LOADING, loading }
@@ -1569,4 +1570,8 @@ export function removeTaskFromTour(tour, task) {
   return function(dispatch) {
     dispatch(modifyTour(tour, withoutTasks(tour.items, [ task ])))
   }
+}
+
+export function setToursEnabled(enabled) {
+  return {type: SET_TOURS_ENABLED, enabled}
 }

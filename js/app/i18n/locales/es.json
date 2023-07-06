@@ -317,6 +317,7 @@
         "PM_CREDIT_OR_DEBIT_CARD": "Tarjeta de crédito o débito",
         "PM_CASH": "Efectivo",
         "PM_EDENRED": "Edenred",
-        "PM_GIROPAY": "Giropay"
+        "PM_GIROPAY": "Giropay",
+        "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Mostrar el tablero de rutas"
     }
 }

@@ -7,6 +7,7 @@ import {
   SET_POLYLINE_STYLE,
   SHOW_RECURRENCE_RULES,
   SET_USE_AVATAR_COLORS,
+  SET_TOURS_ENABLED,
 } from './actions'
 
 const defaultFilters = {
@@ -18,13 +19,14 @@ const defaultFilters = {
   timeRange: [0, 24],
 }
 
-const initialState = {
+export const initialState = {
   filters: defaultFilters,
   isDefaultFilters: true,
   clustersEnabled: false,
   polylineStyle: 'normal',
   isRecurrenceRulesVisible: true,
   useAvatarColors: false,
+  toursEnabled: false,
 }
 
 export default (state = initialState, action) => {
@@ -76,6 +78,13 @@ export default (state = initialState, action) => {
     return {
       ...state,
       polylineStyle: action.style
+    }
+
+  case SET_TOURS_ENABLED:
+
+    return {
+      ...state,
+      toursEnabled: action.enabled
     }
   }
 
