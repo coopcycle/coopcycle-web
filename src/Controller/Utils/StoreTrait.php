@@ -22,6 +22,7 @@ use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
@@ -369,7 +370,11 @@ trait StoreTrait
 
         $sections = $this->getDoctrine()
             ->getRepository(Delivery::class)
-            ->getSections($store);
+        ->getSections(function (QueryBuilder &$qb) use (&$store) {
+             $qb
+                ->andWhere('d.store = :store')
+                ->setParameter('store', $store);
+        });
 
         $deliveries = $paginator->paginate(
             $sections['past'],

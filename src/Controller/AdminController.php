@@ -84,6 +84,7 @@ use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\Query\Expr;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
@@ -91,6 +92,7 @@ use Nucleos\UserBundle\Util\TokenGenerator as TokenGeneratorInterface;
 use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
 use Nucleos\ProfileBundle\Mailer\Mail\RegistrationMail;
 use Knp\Component\Pager\PaginatorInterface;
+use Psonic\Client;
 use Ramsey\Uuid\Uuid;
 use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -114,6 +116,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Intl\Languages;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -734,7 +737,9 @@ class AdminController extends AbstractController
         PaginatorInterface $paginator,
         DeliveryManager $deliveryManager,
         OrderFactory $orderFactory,
-        OrderManager $orderManager)
+        OrderManager $orderManager,
+        Client $client,
+    )
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
             'with_store' => true
@@ -779,9 +784,27 @@ class AdminController extends AbstractController
             return $response;
         }
 
+        if (!is_null($request->query->get('q'))) {
+            $locale = $request->getLocale();
+            $search = new \Psonic\Search($client);
+            $search->connect($this->getParameter('sonic_secret_password'));
+
+            $ids = $search->query('store:*:deliveries', $this->getParameter('sonic_namespace'),
+                $request->query->get('q'), $limit = null, $offset = null, Languages::getAlpha3Code($locale));
+
+            $search->disconnect();
+
+            $ids = array_filter($ids);
+        }
+
         $sections = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->getSections();
+        ->getRepository(Delivery::class)->getSections(function(QueryBuilder &$qb) use (&$ids) {
+            if (!empty($ids)) {
+                $qb->andWhere('d.id IN (:ids)')
+                ->setParameter('ids', $ids);
+            }
+        });
+
 
         if ($request->query->has('section')) {
             $qb = $sections[$request->query->get('section')];
@@ -1364,12 +1387,12 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $deliveryForm = new DeliveryForm();
-        
+
         $form = $this->createForm(EmbedSettingsType::class, $deliveryForm);
-        
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            
+
             // Disable "Show on Home Page" on all forms ONLY if this new form is setted true
             if($deliveryForm->getShowHomepage()){
                 $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
@@ -1405,7 +1428,7 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            
+
             // Disable "Show on Home Page" on all forms except current form if setted true
             if($deliveryForm->getShowHomepage()){
                 $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();

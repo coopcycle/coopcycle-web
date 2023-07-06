@@ -16,7 +16,7 @@ class DeliveryRepository extends EntityRepository
         $this->secret = $secret;
     }
 
-    public function getSections(?Store $store = null)
+    public function getSections(?callable $query = null): array
     {
         $today = Carbon::now();
 
@@ -28,10 +28,9 @@ class DeliveryRepository extends EntityRepository
             ->join(Task::class, 't', Expr\Join::WITH, 'i.task = t.id')
             ;
 
-        if ($store) {
-            $qb
-                ->andWhere('d.store = :store')
-                ->setParameter('store', $store);
+        if (is_callable($query)) {
+            // Pass QueryBuilder reference to callable, so it can modify it
+            $query($qb);
         }
 
         $qbToday = (clone $qb)
