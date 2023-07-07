@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Sylius\Order\OrderFactory;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +14,7 @@ use AppBundle\Form\Model\Registration;
 use Nucleos\ProfileBundle\Mailer\MailerInterface as ProfileMailerInterface;
 use Nucleos\UserBundle\Event\FilterUserResponseEvent;
 use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Util\CanonicalizerInterface;
 use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Laravolt\Avatar\Avatar;
 use Shahonseven\ColorHash;
@@ -162,7 +164,8 @@ class UserController extends AbstractController
     public function confirmInvitationAction(Request $request, string $code,
         EntityManagerInterface $objectManager,
         UserManagerInterface $userManager,
-        EventDispatcherInterface $eventDispatcher)
+        EventDispatcherInterface $eventDispatcher,
+        CanonicalizerInterface $canonicalizer)
     {
         $repository = $this->getDoctrine()->getRepository(Invitation::class);
 
@@ -179,6 +182,15 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             $user = $registration->toUser($userManager);
+
+            $existingCustomer = $objectManager->getRepository(Customer::class)
+                ->findOneBy([
+                    'emailCanonical' => $canonicalizer->canonicalize($user->getEmail())
+                ]);
+
+            if (null !== $existingCustomer) {
+                $user->setCustomer($existingCustomer);
+            }
 
             if ($grants = $invitation->getGrants()) {
                 if (isset($grants['roles'])) {
