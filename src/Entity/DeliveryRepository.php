@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Carbon\Carbon;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
 use Hashids\Hashids;
 
@@ -61,6 +62,23 @@ class DeliveryRepository extends EntityRepository
             'upcoming' => $qbUpcoming,
             'past' => $qbPast,
         ];
+    }
+    /**
+     * @param array<int> $ids
+     */
+    public function findByIds(array $ids): QueryBuilder
+    {
+
+        $qb = $this->createQueryBuilder('d')
+            ->join(TaskCollectionItem::class, 'i', Expr\Join::WITH, 'i.parent = d.id')
+            ->join(Task::class, 't', Expr\Join::WITH, 'i.task = t.id')
+            ;
+
+        $qb->andWhere('d.id IN (:ids)')
+                ->setParameter('ids', $ids);
+
+        return $qb;
+
     }
 
     public function findOneByHashId(string $hashId)

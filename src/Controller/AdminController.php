@@ -82,6 +82,7 @@ use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -784,7 +785,14 @@ class AdminController extends AbstractController
             return $response;
         }
 
+        $filters = [
+            'query' => null,
+            'range' => null,
+        ];
         if (!is_null($request->query->get('q'))) {
+
+            $filters['query'] = $request->query->get('q');
+
             $locale = $request->getLocale();
             $search = new \Psonic\Search($client);
             $search->connect($this->getParameter('sonic_secret_password'));
@@ -795,21 +803,29 @@ class AdminController extends AbstractController
             $search->disconnect();
 
             $ids = array_filter($ids);
+
+            $qb = $this->getDoctrine()->getRepository(Delivery::class)->findByIds($ids);
+
+        } else {
+            $sections = $this->getDoctrine()
+            ->getRepository(Delivery::class)->getSections();
+
+
+            if ($request->query->has('section')) {
+                $qb = $sections[$request->query->get('section')];
+            } else {
+                $qb = $sections['today'];
+            }
         }
 
-        $sections = $this->getDoctrine()
-        ->getRepository(Delivery::class)->getSections(function(QueryBuilder &$qb) use (&$ids) {
-            if (!empty($ids)) {
-                $qb->andWhere('d.id IN (:ids)')
-                ->setParameter('ids', $ids);
-            }
-        });
+        if (!is_null($request->query->get('start_at')) && !is_null($request->query->get('end_at'))) {
+            $start = Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime();
+            $end = Carbon::parse($request->query->get('end_at'))->setTime(23, 59, 59)->toDateTime();
+            $filters['range'] = [$start, $end];
 
-
-        if ($request->query->has('section')) {
-            $qb = $sections[$request->query->get('section')];
-        } else {
-            $qb = $sections['today'];
+            $qb->andWhere('d.createdAt BETWEEN :start AND :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
         }
 
         // Allow filtering by store & restaurant with KnpPaginator
@@ -833,6 +849,7 @@ class AdminController extends AbstractController
 
         return $this->render('admin/deliveries.html.twig', [
             'deliveries' => $deliveries,
+            'filters' => $filters,
             'routes' => $this->getDeliveryRoutes(),
             'imported_rows_message' => $importedRowsMessage ?? null,
             'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']),
