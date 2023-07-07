@@ -22,6 +22,7 @@ use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 
 /**
  * @ApiResource(
@@ -58,7 +59,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(UserRoleFilter::class, properties={"roles"})
  * @UniqueEntity("facebookId")
  */
-class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
+class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface
 {
     use Timestampable;
 
@@ -104,6 +105,8 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
     protected $optinConsents;
 
     private $stripeCustomerId;
+
+    protected ?string $salt = null;
 
     public function __construct()
     {
@@ -453,5 +456,10 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
         $this->stripeCustomerId = $stripeCustomerId;
 
         return $this;
+    }
+
+    public function getSalt(): ?string
+    {
+        return $this->salt;
     }
 }
