@@ -1296,3 +1296,4 @@ import.time.range.error: Rango de tiempo "%value%" en %key% no es válido
 import.successful.rows: 'Se procesó el archivo y se crearon %count% entregas correspondientes a las filas: %rows%'
 import.delivery.price.error.priceCalculation.row: El precio de la entrega no pudo ser calculado para la fila %row_number%
 import.unsuccessful.rows: "Se encontraron errores y no fue posible crear entregas para las filas: %rows%."
+security.login.remember_me: Recordar
