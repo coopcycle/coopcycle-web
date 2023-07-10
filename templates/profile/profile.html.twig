@@ -4,10 +4,14 @@
   </a>
 </div>
       
-<p><strong>{% trans %}profile.tags{% endtrans %}</strong>:
-  {% for tag in user.customer.tags|expand_tags %}
-    <span class="label label-default" style="background-color: {{ tag.color }};">{{ tag.slug }}</span>
-  {% endfor %}</p>
+
+{% if (user.isSuperAdmin) %}
+  <p><strong>{% trans %}profile.tags{% endtrans %}</strong>:
+    {% for tag in user.customer.tags|expand_tags %}
+      <span class="label label-default" style="background-color: {{ tag.color }};">{{ tag.slug }}</span>
+    {% endfor %}
+  </p>
+{% endif %}  
 <p><strong>{% trans %}profile.username{% endtrans %}</strong>: {{ user.username }}</p>
 <p><strong>{% trans %}profile.email{% endtrans %}</strong>: {% if is_demo %}✴✴✴{% else %}{{ user.email }}{% endif %}</p>
 <p><strong>{% trans %}profile.fullName{% endtrans %}</strong>: {{ user.customer.fullName }}</p>
