@@ -16,6 +16,10 @@ services:
     arguments:
       $assetsFilesystem: '@assets_filesystem'
 
+  AppBundle\Twig\TagsRuntime:
+    tags:
+        - { name: twig.tagsruntime }
+
   AppBundle\Twig\OrderRuntime:
     arguments:
       $redis: '@snc_redis.default'

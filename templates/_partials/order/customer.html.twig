@@ -1,4 +1,9 @@
 {% if customer.hasUser() %}
+  <span class="customer__tags d-flex mr-2">
+    {% for tag in customer.tags|expand_tags %}
+      <i title="{{ tag.slug }}" class="fa fa-circle" style="color: {{ tag.color }};"></i>
+    {% endfor %}
+  </span>
   <a href="{{ path('admin_user_details', { username: customer.username }) }}"
     class="d-inline-block text-truncate" style="max-width: 120px;"
     title="{{ customer.user.username|e('html_attr') }}">
