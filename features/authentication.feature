@@ -254,11 +254,6 @@ Feature: Authenticate
           "propertyPath":"username",
           "message":@string@,
           "code":@string@
-        },
-        {
-          "propertyPath":"username",
-          "message":@string@,
-          "code":@string@
         }
       ]
     }
