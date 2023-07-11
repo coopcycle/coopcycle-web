@@ -14,17 +14,13 @@ services:
 
   AppBundle\Spreadsheet\ProductSpreadsheetParser: ~
 
-  AppBundle\Form\ApiRegistrationType:
-    arguments: ['%country_iso%']
-    tags:
-      - { name: form.type, alias: app_user_api_registration }
-
   AppBundle\Form\RegistrationType:
     arguments:
       $isDemo: '%is_demo%'
       $splitTermsAndConditionsAndPrivacyPolicy: '%env(bool:SPLIT_TERMS_AND_CONDITIONS_AND_PRIVACY_POLICY)%'
+      $country: '%country_iso%'
     tags:
-      - { name: form.type }
+      - { name: form.type_extension }
 
   AppBundle\Form\UpdateProfileType:
     arguments: [ '@security.token_storage', '@translator', '%country_iso%' ]

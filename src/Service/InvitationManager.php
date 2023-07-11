@@ -4,8 +4,8 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Invitation;
 use Doctrine\ORM\EntityManagerInterface;
-use Nucleos\UserBundle\Util\TokenGeneratorInterface;
-use Nucleos\UserBundle\Util\CanonicalizerInterface;
+use Nucleos\UserBundle\Util\TokenGenerator as TokenGeneratorInterface;
+use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
 
 class InvitationManager
 {

@@ -8,7 +8,7 @@ use AppBundle\Form\Type\LegalType;
 use AppBundle\Form\Type\PhoneNumberType;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as AssertUserWithSameEmailNotExists;
-use Nucleos\UserBundle\Util\CanonicalizerInterface;
+use Nucleos\UserBundle\Util\Canonicalizer;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -28,7 +28,7 @@ class CheckoutCustomerType extends AbstractType
     private $customerRepository;
 
     public function __construct(
-        CanonicalizerInterface $canonicalizer,
+        Canonicalizer $canonicalizer,
         RepositoryInterface $customerRepository)
     {
         $this->canonicalizer = $canonicalizer;

@@ -5,7 +5,7 @@ namespace AppBundle\Action\Task;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 

@@ -1305,3 +1305,4 @@ import.time.range.error: Time range "%value%" in %key% is not valid
 import.successful.rows: 'Your file was processed and %count% deliveries were created for rows: %rows%'
 import.delivery.price.error.priceCalculation.row: The delivery price could not be calculated for row %row_number%
 import.unsuccessful.rows: "There were errors and deliveries could not be created for rows: %rows%."
+security.login.remember_me: Remember me
