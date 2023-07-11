@@ -247,6 +247,11 @@ class ModalContent extends React.Component {
           <div className="row">
             <div className="col-xs-6">
               <h5>
+                <span className="task__tags">
+                  { order.customer.tags.map((/** @type {{ slug: React.Key | null | undefined; color: any; }} */ tag) => (
+                    <i key="{ tag.slug }" title="{ tag.slug }" className="fa fa-circle" style={{ color: tag.color }}></i>
+                  )) }
+                </span>
                 <i className="fa fa-user"></i>  { order.customer.username }
               </h5>
             </div>

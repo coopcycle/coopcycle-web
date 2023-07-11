@@ -20,6 +20,9 @@ export default withTranslation()(({ order, onClick }) => {
         </span>
       </div>
       <div className="panel-body">
+        <pre>
+          {JSON.stringify(order.customer.tags, null, 2)}
+        </pre>
         <ul className="list-unstyled">
           <li><i className="fa fa-cutlery"></i> { order.vendor.name }</li>
           <li><i className="fa fa-user"></i> { order.customer.username }</li>
