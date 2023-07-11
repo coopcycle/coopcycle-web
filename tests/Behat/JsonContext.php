@@ -8,7 +8,7 @@ use Behatch\Context\JsonContext as BaseJsonContext;
 
 class JsonContext extends BaseJsonContext
 {
-	/**
+    /**
      * @Then the JSON should match:
      */
     public function theJsonShouldMatch(PyStringNode $string)
