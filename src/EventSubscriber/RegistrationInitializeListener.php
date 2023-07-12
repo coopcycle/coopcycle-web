@@ -6,7 +6,7 @@ use Nucleos\ProfileBundle\NucleosProfileEvents;
 use Nucleos\UserBundle\Event\FormEvent;
 use Nucleos\ProfileBundle\Event\GetResponseRegistrationEvent;
 use Nucleos\ProfileBundle\Event\UserFormEvent;
-use Nucleos\UserBundle\Util\CanonicalizerInterface;
+use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
 use Hashids\Hashids;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -55,9 +55,9 @@ class RegistrationInitializeListener implements EventSubscriberInterface
             return;
         }
 
-        $registration = $event->getRegistration();
+        $user = $event->getUser();
 
-        $registration->setEmail($customer->getEmailCanonical());
+        $user->setEmail($customer->getEmailCanonical());
     }
 
     public function onRegistrationSuccess(UserFormEvent $event)

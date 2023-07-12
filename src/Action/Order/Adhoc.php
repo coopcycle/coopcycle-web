@@ -5,7 +5,7 @@ namespace AppBundle\Action\Order;
 use AppBundle\Service\EmailManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use Nucleos\UserBundle\Util\CanonicalizerInterface;
+use Nucleos\UserBundle\Util\Canonicalizer;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
@@ -30,7 +30,7 @@ class Adhoc
         ProductVariantFactoryInterface $variantFactory,
         TaxCategoryRepositoryInterface $taxCategoryRepository,
         RepositoryInterface $customerRepository,
-        CanonicalizerInterface $canonicalizer,
+        Canonicalizer $canonicalizer,
         FactoryInterface $customerFactory,
         OrderNumberAssignerInterface $orderNumberAssigner,
         EntityManagerInterface $objectManager,

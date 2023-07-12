@@ -22,11 +22,24 @@ web:
     resource: '@AppBundle/Controller/'
     type:     'annotation'
 
-nucleos_user:
-    resource: "@NucleosUserBundle/Resources/config/routing/all.xml"
+nucleos_user_security:
+    resource: "@NucleosUserBundle/Resources/config/routing/security.php"
 
-nucleos_profile:
-    resource: "@NucleosProfileBundle/Resources/config/routing/all.xml"
+nucleos_user_resetting:
+    resource: "@NucleosUserBundle/Resources/config/routing/resetting.php"
+    prefix: /resetting
+
+nucleos_user_change_password:
+    resource: "@NucleosUserBundle/Resources/config/routing/change_password.php"
+    prefix: /security
+
+nucleos_profile_profile:
+    resource: "@NucleosProfileBundle/Resources/config/routing/profile.php"
+    prefix: /profile
+
+nucleos_profile_change_registration:
+    resource: "@NucleosProfileBundle/Resources/config/routing/registration.php"
+    prefix: /register
 
 # Override NucleosProfileBundle route
 nucleos_profile_profile_show:

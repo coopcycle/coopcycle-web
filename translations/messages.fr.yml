@@ -1272,3 +1272,4 @@ form.integration.woopitStoreId.label : Identifiant du magasin Woopit
 integration.created.message : L'intégration a été créée.
 dabba.oauth_redirect.warning: Vous allez être redirigé·e vers le site de Dabba pour vous identifier ou créer votre compte
 profile.dabba.disconnect: Déconnecter mon compte Dabba
+security.login.remember_me: Se souvenir de moi

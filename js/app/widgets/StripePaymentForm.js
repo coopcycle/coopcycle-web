@@ -9,6 +9,8 @@ import stripe from '../payment/stripe'
 import mercadopago from '../payment/mercadopago'
 import { Disclaimer } from '../payment/cashOnDelivery'
 
+import { useTranslation } from 'react-i18next'
+
 function disableBtn(btn) {
   btn.setAttribute('disabled', '')
   btn.disabled = true
@@ -24,6 +26,7 @@ const methodPickerStyles = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
+  marginTop: '8px'
 }
 
 const methodPickerBtnClassNames = {
@@ -32,7 +35,16 @@ const methodPickerBtnClassNames = {
   'p-2': true
 }
 
+const methodStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'start',
+  justifyContent: 'space-between',
+}
+
 const PaymentMethodPicker = ({ methods, onSelect }) => {
+
+  const { t } = useTranslation()
 
   const [ method, setMethod ] = useState('')
 
@@ -50,46 +62,58 @@ const PaymentMethodPicker = ({ methods, onSelect }) => {
 
         case 'card':
           return (
-            <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'card' }) }
-              onClick={ () => setMethod('card') }>
-              <PaymentMethodIcon code={ m.type } height="45" />
-            </button>
+            <div style={ methodStyles }>
+              <label>{ t('PM_CREDIT_OR_DEBIT_CARD') }</label>
+              <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'card' }) }
+                onClick={ () => setMethod('card') }>
+                <PaymentMethodIcon code={ m.type } height="45" />
+              </button>
+            </div>
           )
 
         case 'giropay':
 
           return (
-            <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
-              onClick={ () => setMethod('giropay') }>
-              <PaymentMethodIcon code={ m.type } height="45" />
-            </button>
+            <div style={ methodStyles }>
+              <label>{ t('PM_GIROPAY') }</label>
+              <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
+                onClick={ () => setMethod('giropay') }>
+                <PaymentMethodIcon code={ m.type } height="45" />
+              </button>
+            </div>
           )
 
         case 'edenred':
         case 'edenred+card':
 
           return (
-            <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
-              onClick={ () => {
+            <div style={ methodStyles }>
+              <label>{ t('PM_EDENRED') }</label>
+              <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                onClick={ () => {
 
-                if (!m.data.edenredIsConnected) {
-                  window.location.href = m.data.edenredAuthorizeUrl
-                  return
-                }
+                  if (!m.data.edenredIsConnected) {
+                    window.location.href = m.data.edenredAuthorizeUrl
+                    return
+                  }
 
-                setMethod(m.type)
-              }}>
-              <PaymentMethodIcon code={ m.type } height="45" />
-            </button>
+                  setMethod(m.type)
+                }}>
+                <PaymentMethodIcon code={ m.type } height="45" />
+              </button>
+            </div>
           )
 
         case 'cash_on_delivery':
 
           return (
-            <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
-              onClick={ () => setMethod('cash_on_delivery') }>
-              <PaymentMethodIcon code={ m.type } height="45" />
-            </button>
+            <div style={ methodStyles }>
+              <label>{ t('PM_CASH') }</label>
+              <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                onClick={ () => setMethod('cash_on_delivery') }>
+                <PaymentMethodIcon code={ m.type } height="45" />
+              </button>
+              </div>
           )
 
         }
@@ -109,8 +133,13 @@ const containsMethod = (methods, method) => !!_.find(methods, m => m.type === me
 const handleCardPayment = (cc, options, form, submitButton, savedPaymentMethodId = null) => {
   cc.createToken(savedPaymentMethodId)
     .then(token => {
-      options.tokenElement.setAttribute('value', token)
-      form.submit()
+      if (token) {
+        options.tokenElement.setAttribute('value', token)
+        form.submit()
+      } else {
+        $('.btn-payment').removeClass('btn-payment__loading')
+        enableBtn(submitButton)
+      }
     })
     .catch(e => {
       $('.btn-payment').removeClass('btn-payment__loading')
@@ -122,8 +151,6 @@ const handleCardPayment = (cc, options, form, submitButton, savedPaymentMethodId
 export default function(form, options) {
 
   const submitButton = form.querySelector('input[type="submit"],button[type="submit"]')
-
-  const toggleButton = isValidForm => isValidForm ? enableBtn(submitButton) : disableBtn(submitButton)
 
   const methods = Array
     .from(form.querySelectorAll('input[name="checkout_payment[method]"]'))
@@ -143,7 +170,7 @@ export default function(form, options) {
 
     switch (gatewayForCard) {
       case 'mercadopago':
-        Object.assign(CreditCard.prototype, mercadopago({ onChange: toggleButton }))
+        Object.assign(CreditCard.prototype, mercadopago)
         break
       case 'stripe':
       default:
@@ -235,10 +262,6 @@ export default function(form, options) {
               cashDisclaimer.remove()
             }
 
-            if ("mercadopago" === options.card) {
-              document.getElementById('mercadopago_identification_fields').style.display = "block"
-            }
-
             cc.mount(document.getElementById('card-element'), value, response.data, options).then(() => {
               document.getElementById('card-element').scrollIntoView()
               enableBtn(submitButton)
@@ -254,10 +277,6 @@ export default function(form, options) {
             if (document.getElementById('card-element').children.length) {
               // remove cc form if it was previously mounted
               cc && cc.unmount()
-              if ("mercadopago" === options.card) {
-                // remove mercadopago identification fields if it was previously selected
-                document.getElementById('mercadopago_identification_fields').style.display = "none"
-              }
             }
 
             enableBtn(submitButton)
@@ -287,10 +306,6 @@ export default function(form, options) {
     .forEach(el => el.classList.add('d-none'))
 
   if (methods.length === 1 && containsMethod(methods, 'card')) {
-    if ("mercadopago" === options.card) {
-      document.getElementById('mercadopago_identification_fields').style.display = "block"
-    }
-
     cc.mount(document.getElementById('card-element'), null, null, options).then(() => enableBtn(submitButton))
   } else {
 

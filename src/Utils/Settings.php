@@ -99,10 +99,13 @@ class Settings
     public $autocomplete_provider;
 
     /**
+     * The regex to validate Google API Key was found on https://github.com/odomojuli/RegExAPI
+     *
      * @Assert\Expression(
      *   "this.autocomplete_provider != 'google' or this.geocoding_provider != 'google' or value != ''",
      *   message="This value should not be blank."
      * )
+     * @Assert\Regex("/AIza[0-9A-Za-z-_]{35}/")
      */
     public $google_api_key_custom;
 

@@ -4,7 +4,7 @@ namespace AppBundle\EventSubscriber;
 
 use Nucleos\UserBundle\Event\UserEvent;
 use Nucleos\UserBundle\NucleosUserEvents;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Channel\Context\ChannelNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

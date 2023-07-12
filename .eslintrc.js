@@ -27,8 +27,7 @@ module.exports = {
     io: true,
     CoopCycle: true,
     Stripe: true,
-    google: true,
-    Mercadopago: true
+    google: true
   },
   settings: {
     react: {

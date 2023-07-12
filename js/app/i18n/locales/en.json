@@ -57,7 +57,8 @@
         "ADMIN_DASHBOARD_USERS_SEARCHRESTAURANT": "Search restaurant…",
         "ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS": "Finished tasks",
         "ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS": "Cancelled tasks",
-        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Always show unassigned",
+        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Always show unassigned tasks",
+        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED_HELP_TEXT": "When this filter is ON none of the other filters will be applied to the unassigned tasks.",
         "ADMIN_DASHBOARD_FILTERS_NONTAGGED_TASKS": "Untagged tasks",
         "ADMIN_DASHBOARD_FILTERS_APPLY": "Apply",
         "ADMIN_DASHBOARD_FILTERS_TAB_GENERAL": "General",
@@ -329,6 +330,11 @@
           "LIMIT": "A maximum of {{command}} orders every {{time}}"
         },
         "COPY": "Copy",
-        "COPIED": "Copied"
+        "COPIED": "Copied",
+        "PM_CREDIT_OR_DEBIT_CARD": "Credit or debit card",
+        "PM_CASH": "Cash",
+        "PM_EDENRED": "Edenred",
+        "PM_GIROPAY": "Giropay",
+        "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Show tours panel"
     }
 }
