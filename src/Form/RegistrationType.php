@@ -63,7 +63,9 @@ class RegistrationType extends AbstractTypeExtension
                 'mapped' => false,
             ]);
         } else {
-            $builder->add('legal', LegalType::class);
+            $builder->add('legal', LegalType::class, [
+                'mapped' => false,
+            ]);
         }
 
         if ($this->isDemo) {
