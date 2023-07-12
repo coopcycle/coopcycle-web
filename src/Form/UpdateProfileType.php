@@ -155,44 +155,6 @@ class UpdateProfileType extends AbstractType
                 }
             }
         );
-/*
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
-
-            $form = $event->getForm();
-            $user = $event->getData();
-
-            if (null === $user) {
-                return;
-            }
-            $log = new Logger('POST_SET_DATA');
-            $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
-            $log->warning('UpdateProfileType');
-            $log->warning('POST_SET_DATA');
-            //$log->warning($user->getTags()->count());
-            $form->get('tags')->setData(implode(' ', $user->getTags()));
-            $log->warning(print_r($user->getCustomer()->getTags(), true));
-            $form->get('tags')->setData($user->getTags());
-        });
-
-        $builder->get('tags')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            $user = $event->getForm()->getParent()->getData();
-            if (null === $user) {
-                return;
-            }
-            $log = new Logger('PRE_SUBMIT');
-            $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
-            $log->warning('UpdateProfileType');
-            $log->warning('PRE_SUBMIT');
-            //$log->warning(var_dump($user));
-            //$log->warning(var_dump($event));
-            $tags = $event->getData();
-            //$tags = explode(' ', $tags);
-
-            $user->setTags($tags);
-            //$user->getUser()->setTags($tags);
-        });
-
-        */
     }
 
     public function configureOptions(OptionsResolver $resolver)

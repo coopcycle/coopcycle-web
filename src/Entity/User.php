@@ -22,8 +22,6 @@ use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-use AppBundle\Entity\Model\TaggableInterface;
-use AppBundle\Entity\Model\TaggableTrait;
 
 /**
  * @ApiResource(
@@ -64,10 +62,8 @@ use AppBundle\Entity\Model\TaggableTrait;
  * @UniqueEntity(fields={"usernameCanonical"}, errorPath="username")
  * @UniqueEntity("facebookId")
  */
-class User extends BaseUser implements TaggableInterface
+class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface
 {
-
-    use TaggableTrait;
 
     use Timestampable;
 
