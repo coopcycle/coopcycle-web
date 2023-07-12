@@ -17,7 +17,7 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use Nucleos\UserBundle\Util\CanonicalizerInterface;
+use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
 use Hashids\Hashids;
 use libphonenumber\PhoneNumber;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;

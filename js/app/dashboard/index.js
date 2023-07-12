@@ -16,6 +16,7 @@ import Navbar from './components/Navbar'
 import Modals from './components/Modals'
 import { updateRightPanelSize } from './redux/actions'
 import { recurrenceRulesAdapter } from './redux/selectors'
+import { initialState as settingsInitialState } from './redux/settingsReducers'
 
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
@@ -75,7 +76,8 @@ function start() {
     },
     tracking: {
       positions,
-    }
+    },
+    settings: settingsInitialState,
   }
 
   const key = date.format('YYYY-MM-DD')
@@ -107,6 +109,17 @@ function start() {
       settings: {
         ...preloadedState.settings,
         useAvatarColors: JSON.parse(persistedUseAvatarColors)
+      }
+    }
+  }
+
+  const persistedToursEnabled = window.sessionStorage.getItem(`tours_enabled`)
+  if (persistedToursEnabled) {
+    preloadedState = {
+      ...preloadedState,
+      settings: {
+        ...preloadedState.settings,
+        toursEnabled: JSON.parse(persistedToursEnabled)
       }
     }
   }

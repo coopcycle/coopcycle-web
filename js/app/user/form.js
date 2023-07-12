@@ -31,8 +31,6 @@ function renderSwitch($input) {
 
   if (tagsEl) {
 
-    console.log(tagsEl.dataset)
-
     const el = document.createElement('div')
     tagsEl.closest('.form-group').appendChild(el)
   

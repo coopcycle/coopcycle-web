@@ -21,9 +21,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Doctrine\Persistence\ManagerRegistry;
 
 class UpdateProfileType extends AbstractType
 {
@@ -81,10 +78,7 @@ class UpdateProfileType extends AbstractType
 
                 $form = $event->getForm();
                 $user = $event->getData();
-                $log = new Logger('PRE_SET_DATA');
-                $log->pushHandler(new StreamHandler('php://stdout', Logger::WARNING)); // <<< uses a stream
-                $log->warning('UpdateProfileType');
-                $log->warning('PRE_SET_DATA');
+
                 if ($isAdmin) {
                     $form
                         ->add('enabled', CheckboxType::class, [

@@ -19,7 +19,7 @@ security:
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
-        fos_userbundle:
+        nucleos_userbundle:
             id: nucleos_user.user_provider.username_email
         # jwt:
         #     lexik_jwt:
@@ -242,7 +242,7 @@ security:
             pattern:  ^/api/token/refresh
             stateless: true
             refresh_jwt:
-                provider: fos_userbundle
+                provider: nucleos_userbundle
 
         api_docs:
             pattern:   ^/api/docs
@@ -284,8 +284,9 @@ security:
 
         web:
             pattern:            ^/
+            user_checker: Nucleos\UserBundle\Security\UserChecker
             form_login:
-                provider:       fos_userbundle
+                provider: nucleos_userbundle
                 success_handler: coopcycle.web_success_handler
             oauth:
                 resource_owners:

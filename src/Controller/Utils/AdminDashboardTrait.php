@@ -25,7 +25,7 @@ use AppBundle\Utils\TaskImageNamer;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\Query\Expr;
 use Nucleos\UserBundle\Model\UserInterface;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
