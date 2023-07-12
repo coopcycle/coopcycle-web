@@ -45,8 +45,14 @@ class TourInputDataTransformer implements DataTransformerInterface
             }
         }
 
-        $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $tour->getTasks());
-        $distance = $this->routing->getDistance(...$coords);
+        $tasks = $tour->getTasks();
+        $distance = 0;
+
+        // Distance can't be calculated without at least 2 tasks
+        if (count($tasks) >= 2) {
+            $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $tasks);
+            $distance = $this->routing->getDistance(...$coords);
+        }
 
         $tour->setDistance(ceil($distance));
 
