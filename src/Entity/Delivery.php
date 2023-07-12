@@ -100,7 +100,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   attributes={
  *     "order"={"createdAt": "DESC"},
  *     "denormalization_context"={"groups"={"order_create"}},
- *     "normalization_context"={"groups"={"delivery", "address", "order"}},
+ *     "normalization_context"={"groups"={"delivery", "address"}},
  *     "pagination_items_per_page"=15
  *   }
  * )
