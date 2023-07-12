@@ -61,7 +61,6 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
  */
 class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface
 {
-
     use Timestampable;
 
     protected $id;
