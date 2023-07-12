@@ -20,19 +20,20 @@ trait TaggableTrait
 
     /**
      * @SerializedName("tags")
-     * @Groups({"task", "users", "user", "admin_user_edit", "customer", "update_profile"})
+     * @Groups({"task"})
      */
     public function getTags()
     {
         if (null === $this->tags) {
             $this->tags = [];
         }
+
         return $this->tags;
     }
 
     /**
      * @SerializedName("tags")
-     * @Groups({"task_create", "task_edit", "admin_user_edit", "update_profile"})
+     * @Groups({"task_create", "task_edit"})
      */
     public function setTags($tags)
     {
