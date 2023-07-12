@@ -4,6 +4,10 @@ import { Switch } from 'antd'
 
 import i18n from '../i18n'
 
+import TagsSelect from '../components/TagsSelect'
+
+var tagsEl = document.querySelector('#update_profile_tags');
+
 function renderSwitch($input) {
 
   const $parent = $input.closest('div.checkbox').parent()
@@ -24,6 +28,26 @@ function renderSwitch($input) {
   const checked = $input.is(':checked')
 
   $input.closest('div.checkbox').remove()
+
+  if (tagsEl) {
+
+    const el = document.createElement('div')
+    tagsEl.closest('.form-group').appendChild(el)
+  
+    tagsEl.classList.add('d-none')
+  
+    const tags = JSON.parse(tagsEl.dataset.tags)
+  
+    const defaultValue = tagsEl.value
+    render(
+      <TagsSelect
+        tags={ tags }
+        defaultValue={ defaultValue }
+        onChange={ tags => {
+          const slugs = tags.map(tag => tag.slug)
+          tagsEl.value = slugs.join(' ')
+        } } />, el)
+  }
 
   render(
     <Switch

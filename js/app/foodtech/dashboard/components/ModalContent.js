@@ -19,6 +19,7 @@ import OrderTotal from './OrderTotal'
 import OrderNumber from './OrderNumber'
 import Timeline from './Timeline'
 import Button from './Button'
+import Customer from './Customer'
 
 const Reasons = withTranslation()(({ order, onClick, loading, t }) => {
 
@@ -247,7 +248,7 @@ class ModalContent extends React.Component {
           <div className="row">
             <div className="col-xs-6">
               <h5>
-                <i className="fa fa-user"></i>  { order.customer.username }
+                <Customer customer={ order.customer } />
               </h5>
             </div>
             <div className="col-xs-6">

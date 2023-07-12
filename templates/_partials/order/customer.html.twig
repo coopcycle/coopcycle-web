@@ -4,6 +4,13 @@
     title="{{ customer.user.username|e('html_attr') }}">
     <i class="fa fa-user mr-1"></i>
     <span>{{ customer.user.username }}</span>
+    {% if customer.tags|length > 0 %}
+    <span class="ml-1">
+      {% for tag in customer.tags|expand_tags %}
+        <i title="{{ tag.slug }}" class="fa fa-circle mr-1" style="color: {{ tag.color }};"></i>
+      {% endfor %}
+    </span>
+    {% endif %}
   </a>
 {% else %}
   <span

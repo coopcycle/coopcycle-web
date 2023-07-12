@@ -66,6 +66,9 @@ class UpdateProfileType extends AbstractType
                 ->add('quotesAllowed', CheckboxType::class, [
                 'label' => 'form.user.quotes_allowed.label',
                 'required' => false,
+            ])->add('tags', TagsType::class, [
+                'label' => 'adminDashboard.tags.title',
+                'property_path' => 'customer.tags'
             ]);
         }
 
