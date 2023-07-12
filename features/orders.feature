@@ -177,7 +177,8 @@ Feature: Orders
             "phoneNumber":"+33612345678",
             "telephone":"+33612345678",
             "username":"bob",
-            "fullName":"Bob Doe"
+            "fullName":"Bob Doe",
+            "tags":@array@
           }
         },
         {
@@ -200,7 +201,8 @@ Feature: Orders
             "phoneNumber":"+33612345678",
             "telephone":"+33612345678",
             "username":"bob",
-            "fullName":"Bob Doe"
+            "fullName":"Bob Doe",
+            "tags":@array@
           }
         }
       ],
@@ -338,7 +340,8 @@ Feature: Orders
             "phoneNumber":"+33612345678",
             "telephone":"+33612345678",
             "username":"bob",
-            "fullName":"Bob Doe"
+            "fullName":"Bob Doe",
+            "tags":@array@
           }
         },
         {
@@ -361,7 +364,8 @@ Feature: Orders
             "phoneNumber":"+33612345678",
             "telephone":"+33612345678",
             "username":"bob",
-            "fullName":"Bob Doe"
+            "fullName":"Bob Doe",
+            "tags":@array@
           }
         }
       ],
@@ -738,7 +742,8 @@ Feature: Orders
           "email":"bob@coopcycle.org",
           "telephone": "+33612345678",
           "phoneNumber": "+33612345678",
-          "fullName": "Bob Doe"
+          "fullName": "Bob Doe",
+          "tags":[]
         },
         "vendor":{"@*@":"@*@"},
         "restaurant":{
