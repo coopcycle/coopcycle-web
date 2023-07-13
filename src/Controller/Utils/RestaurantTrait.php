@@ -179,7 +179,7 @@ trait RestaurantTrait
                     if (!$restaurant->hasReusablePackagingWithName('Vytal')) {
                         $reusablePackaging = new ReusablePackaging();
                         $reusablePackaging->setName('Vytal');
-                        $reusablePackaging->setType('vytal');
+                        $reusablePackaging->setType(ReusablePackaging::TYPE_VYTAL);
                         $reusablePackaging->setPrice(0);
                         $reusablePackaging->setOnHold(0);
                         $reusablePackaging->setOnHand(9999);
@@ -194,7 +194,7 @@ trait RestaurantTrait
                     if (!$restaurant->hasReusablePackagingWithName('Dabba')) {
                         $reusablePackaging = new ReusablePackaging();
                         $reusablePackaging->setName('Dabba');
-                        $reusablePackaging->setType('dabba');
+                        $reusablePackaging->setType(ReusablePackaging::TYPE_DABBA);
                         $reusablePackaging->setPrice(0);
                         $reusablePackaging->setOnHold(0);
                         $reusablePackaging->setOnHand(9999);
