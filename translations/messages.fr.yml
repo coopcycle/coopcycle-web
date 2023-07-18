@@ -139,8 +139,8 @@ restaurant.form.createRestaurant: Créer un restaurant
 restaurant.form.exclusive.label: Ce restaurant est une exclusivité
 restaurant.form.quotes_allowed.label: 'Ce restaurant accepte également des commandes
   sur devis (ex : traiteur)'
-restaurant.form.loopeat_enabled.label: Activer le système de consignes LoopEat
-restaurant.form.loopeat_disconnect.label: Déconnecter mon compte LoopEat
+restaurant.form.loopeat_enabled.label: Activer le système de consignes IMPEC
+restaurant.form.loopeat_disconnect.label: Déconnecter mon compte IMPEC
 restaurant.form.featured.label: Ce restaurant apparaît sur la page d'accueil
 restaurant.form.fulfillment_methods.label: Modes d'exécution
 restaurant.form.section.general: Général
@@ -585,8 +585,7 @@ form.checkout_address.promotion_coupon.label: Code promotionnel
 form.checkout_address.telephone.label: Téléphone
 form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages réutilisables
   (%price%)
-form.checkout_address.reusable_packaging_loopeat_enabled.label: Je veux des lunchbox
-  consignées LoopEat
+form.checkout_address.reusable_packaging_loopeat_enabled.label: Activer l'option zéro déchet
 form.checkout_address.reusable_packaging.loopeat.learn_more: En savoir plus à propos
   de LoopEat
 form.checkout_address.reusable_packaging.loopeat.reusable_quantity.label: Votre commande
@@ -601,10 +600,17 @@ form.checkout_address.reusable_packaging.loopeat.return_pledge_label: Vous allez
   %field% lunchbox LoopEat au coursier
 form.checkout_address.reusable_packaging.loopeat.no_pledge_label: Vous n'avez pas
   de lunchbox à rendre.
-form.checkout_address.reusable_packaging.loopeat.enough_credits: Vous avez assez de
-  crédits pour être livré·e zero déchet
+form.checkout_address.reusable_packaging.loopeat.enough_credits: Vous avez activé l'option zéro déchet qui vous permet de bénéficier d’un service de boîtes consignées. Vous pouvez finaliser votre commande !
 form.checkout_address.reusable_packaging.loopeat.confirm: Valider
 form.checkout_address.reusable_packaging.loopeat.add: Ajouter %missing% crédits
+form.checkout_address.reusable_packaging.loopeat.manage_account: Gérer mon compte zéro déchet
+form.checkout_address.reusable_packaging.loopeat.website: Site Internet %name%
+form.checkout_address.reusable_packaging.loopeat.how_it_works: Comment ça marche ?
+form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activez l'option zéro déchet pour bénéficier d'un service de boîtes consignées et lavables sur votre commande
+form.checkout_address.reusable_packaging.loopeat.connect: L'option zéro déchet est activée et vous permet d'être livré en boîtes consignées. Veuillez créer ou connecter votre compte %name% à %brand_name% pour régler votre consigne, ou désactivez l'option zéro déchet.
+form.checkout_address.reusable_packaging.loopeat.connect_account: Se connecter à %name%
+form.checkout_address.reusable_packaging.loopeat.add_credits: Créditer ma cagnotte
+form.checkout_address.reusable_packaging.loopeat.return_containers: Rendre des boîtes
 form.checkout_address.quote.label: Demander un devis
 form.checkout_address.add_promotion.label: Appliquer
 form.checkout_address.tip_amount.label: Pourboire
@@ -904,9 +910,9 @@ receipt.total: Total TTC
 receipt.billing_details: Commande payée par carte de crédit le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nouvelle commande à confirmer
-profile.loopeat.connect: Connecter mon compte LoopEat
-profile.loopeat.connected: Compte LoopEat connecté
-profile.loopeat.disconnect: Déconnecter mon compte LoopEat
+profile.loopeat.connect: Connecter mon compte IMPEC
+profile.loopeat.connected: Compte IMPEC connecté
+profile.loopeat.disconnect: Déconnecter mon compte IMPEC
 basics.free: gratuit
 task.receipt.greeting: Cher client, chère cliente,
 task.receipt.message: Par la présente, nous confirmons que nous avons bien livré votre
@@ -1012,7 +1018,7 @@ localBusiness.form.use_different_business_address.label: Utiliser une adresse co
   différente
 localBusiness.form.business_address.label: Adresse commerciale
 restaurant.form.giropay_enabled.label: Activer Giropay
-restaurant.form.section.loopeat: LoopEat
+restaurant.form.section.loopeat: IMPEC
 form.settings.company_logo.help: Ce logo sera utilisé pour les factures et les preuves
   de livraison
 form.product_option.preview_title: Aperçu de l'option
@@ -1273,3 +1279,13 @@ integration.created.message : L'intégration a été créée.
 dabba.oauth_redirect.warning: Vous allez être redirigé·e vers le site de Dabba pour vous identifier ou créer votre compte
 profile.dabba.disconnect: Déconnecter mon compte Dabba
 security.login.remember_me: Se souvenir de moi
+loopeat.how_it_works.title: |
+  Votre restaurant fait partie du réseau « %name% » : bénéficiez de plats à emporter ou livrés en boîtes consignées. Vous pouvez désactiver cette option à tout moment dans votre panier de commande.
+loopeat.how_it_works.step_1.title: Je m'inscris
+loopeat.how_it_works.step_1.text: Inscrivez-vous sur %name% lors de la finalisation de votre commande.
+loopeat.how_it_works.step_2.title: Je paie ma 1ère consigne
+loopeat.how_it_works.step_2.text: Créditez votre cagnotte pour emprunter vos premières boîtes consignées.
+loopeat.how_it_works.step_3.title: Je commande
+loopeat.how_it_works.step_3.text: Faites-vous livrer en boites consignées.
+loopeat.how_it_works.step_4.title: Je rends mes boîtes
+loopeat.how_it_works.step_4.text: Restituez vos boîtes lors de votre prochaine commande et récupérez la consigne sur votre cagnotte.

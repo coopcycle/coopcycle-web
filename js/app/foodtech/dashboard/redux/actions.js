@@ -27,6 +27,12 @@ export const CHANGE_RESTAURANT_STATE = 'CHANGE_RESTAURANT_STATE'
 
 export const SEARCH_RESULTS = 'SEARCH_RESULTS'
 
+export const SET_REUSABLE_PACKAGINGS = 'SET_REUSABLE_PACKAGINGS'
+export const OPEN_LOOPEAT_SECTION = 'OPEN_LOOPEAT_SECTION'
+export const CLOSE_LOOPEAT_SECTION = 'CLOSE_LOOPEAT_SECTION'
+export const SET_LOOPEAT_FORMATS = 'SET_LOOPEAT_FORMATS'
+export const UPDATE_LOOPEAT_FORMATS_SUCCESS = 'UPDATE_LOOPEAT_FORMATS_SUCCESS'
+
 export const ACTIVE_TAB = 'ACTIVE_TAB'
 
 export const orderCreated = createAction(ORDER_CREATED)
@@ -48,6 +54,12 @@ export const fulfillOrderRequestSuccess = createAction(FULFILL_ORDER_REQUEST_SUC
 export const fulfillOrderRequestFailure = createAction(FULFILL_ORDER_REQUEST_FAILURE)
 
 export const searchResults = createAction(SEARCH_RESULTS, (q, results) => ({ q, results }))
+
+export const setReusablePackagings = createAction(SET_REUSABLE_PACKAGINGS, (restaurant, reusablePackagings) => ({ restaurant, reusablePackagings }))
+export const openLoopeatSection = createAction(OPEN_LOOPEAT_SECTION)
+export const closeLoopeatSection = createAction(CLOSE_LOOPEAT_SECTION)
+export const setLoopeatFormats = createAction(SET_LOOPEAT_FORMATS)
+export const updateLoopeatFormatsSuccess = createAction(UPDATE_LOOPEAT_FORMATS_SUCCESS)
 
 export const setActiveTab = createAction(ACTIVE_TAB)
 
@@ -223,5 +235,40 @@ export function search(q) {
     const fuse = new Fuse(orders, fuseOptions)
     const results = fuse.search(q)
     dispatch(searchResults(q, results.map(result => result.item)))
+  }
+}
+
+export function toggleReusablePackagings(order) {
+
+  return (dispatch, getState) => {
+
+    const { httpClient, isLoopeatSectionOpen } = getState()
+
+    if (isLoopeatSectionOpen) {
+      dispatch(closeLoopeatSection())
+      return
+    }
+
+    httpClient.get(order['@id'] + '/loopeat_formats')
+      .then(res => {
+        dispatch(setLoopeatFormats(res.data.items))
+        dispatch(openLoopeatSection())
+      })
+  }
+}
+
+export function updateLoopeatFormats(order, loopeatFormats) {
+
+  return (dispatch, getState) => {
+
+    const { httpClient } = getState()
+
+    httpClient.put(order['@id'] + '/loopeat_formats', {
+      items: loopeatFormats,
+    })
+      .then(res => {
+        dispatch(updateLoopeatFormatsSuccess(res.data))
+        dispatch(closeLoopeatSection())
+      })
   }
 }

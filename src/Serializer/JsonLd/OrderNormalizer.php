@@ -5,6 +5,9 @@ namespace AppBundle\Serializer\JsonLd;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\LoopEat\Client as LoopeatClient;
+use AppBundle\LoopEat\Context as LoopeatContext;
+use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\DateUtils;
@@ -53,7 +56,9 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         OrderProcessorInterface $orderProcessor,
         PriceFormatter $priceFormatter,
         TranslatorInterface $translator,
-        UrlGeneratorInterface $urlGenerator)
+        UrlGeneratorInterface $urlGenerator,
+        LoopeatClient $loopeatClient,
+        LoopeatContextInitializer $loopeatContextInitializer)
     {
         $this->normalizer = $normalizer;
         $this->channelContext = $channelContext;
@@ -70,6 +75,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->priceFormatter = $priceFormatter;
         $this->translator = $translator;
         $this->urlGenerator = $urlGenerator;
+        $this->loopeatClient = $loopeatClient;
+        $this->loopeatContextInitializer = $loopeatContextInitializer;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -109,11 +116,11 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
         // Suggest the customer to use reusable packaging via order payload
         if (null !== $restaurant &&
-            $restaurant->isDepositRefundEnabled() && $restaurant->isDepositRefundOptin() &&
-            // We don't allow (yet) to toggle reusable packaging for LoopEat & Dabba
+            $object->isEligibleToReusablePackaging() &&
+            $restaurant->isDepositRefundOptin() &&
+            // We don't allow (yet) to toggle reusable packaging for Dabba
             // https://github.com/coopcycle/coopcycle-app/issues/1503
-            (!$restaurant->isLoopeatEnabled() && !$restaurant->isDabbaEnabled()) &&
-            $object->isEligibleToReusablePackaging()) {
+            !$restaurant->isDabbaEnabled()) {
 
             $transKey = 'form.checkout_address.reusable_packaging_enabled.label';
             $packagingAmount = $object->getReusablePackagingAmount();
@@ -129,10 +136,20 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 "@context" => "http://schema.org",
                 "@type" => "EnableReusablePackagingAction",
                 "actionStatus" => "PotentialActionStatus",
-                "description" => $this->translator->trans($transKey, [ '%price%' => $packagingPrice ])
+                "description" => $this->translator->trans($transKey, [ '%price%' => $packagingPrice ]),
             ];
 
+            if ($restaurant->isLoopeatEnabled()) {
+                $enableReusablePackagingAction['loopeatOAuthUrl'] = $this->loopeatClient->getOAuthAuthorizeUrl([
+                    'state' => $this->loopeatClient->createStateParamForOrder($object, $useDeepLink = true),
+                ]);
+            }
+
             $data['potentialAction'] = [ $enableReusablePackagingAction ];
+        }
+
+        if ($object->isReusablePackagingEnabled() && $object->getRestaurant()->isLoopeatEnabled()) {
+            $data['loopeatContext'] = $this->loopeatContextInitializer->initialize($object);
         }
 
         if (isset($context['is_web']) && $context['is_web']) {
@@ -235,9 +252,13 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
             }, $data['items']);
 
-            $order->clearItems();
-            foreach ($orderItems as $orderItem) {
-                $this->orderModifier->addToOrder($order, $orderItem);
+            $orderItems = array_filter($orderItems);
+
+            if (count($orderItems) > 0) {
+                $order->clearItems();
+                foreach ($orderItems as $orderItem) {
+                    $this->orderModifier->addToOrder($order, $orderItem);
+                }
             }
         }
 

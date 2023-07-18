@@ -284,6 +284,14 @@
           "LIMIT": "Un maximum de {{command}} commandes toutes les {{time}}"
         },
         "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED_HELP_TEXT": "Lorsque ce filtre est activé, aucun des autres filtres n'est appliqué aux tâches non assignées.",
-        "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Afficher le panneau des tournées"
+        "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Afficher le panneau des tournées",
+        "CART_LOOPEAT_RETURNS_VALIDATE": "Valider et retourner au panier",
+        "CART_LOOPEAT_RETURNS_SUMMARY": "Votre commande comporte les boîtes consignées suivantes",
+        "CART_LOOPEAT_RETURNS_WIDGET": "Je rends mes boîtes",
+        "CART_LOOPEAT_RETURNS_TURN_OFF": "Annuler",
+        "CART_LOOPEAT_RETURNS_TURN_ON": "Rendre la boîte",
+        "CART_LOOPEAT_RETURNS_CREDITS_COUNT": "Montant de votre cagnotte",
+        "CART_LOOPEAT_RETURNS_RETURNS_AMOUNT": "Montant des retours",
+        "CART_LOOPEAT_RETURNS_RETURNS_DIFF": "Différence"
     }
 }

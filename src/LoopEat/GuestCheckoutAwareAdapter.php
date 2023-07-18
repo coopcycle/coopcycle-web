@@ -7,10 +7,9 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
 {
-    public function __construct(OrderInterface $order, SessionInterface $session)
+    public function __construct(OrderInterface $order)
     {
         $this->order = $order;
-        $this->session = $session;
     }
 
     public function getLoopeatAccessToken()
@@ -20,7 +19,7 @@ class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
             return $this->order->getCustomer()->getLoopeatAccessToken();
         }
 
-        return $this->session->get(sprintf('loopeat.order.%d.access_token', $this->order->getId()));
+        return $this->order->getLoopeatAccessToken();
     }
 
     public function setLoopeatAccessToken($accessToken)
@@ -30,10 +29,7 @@ class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
             return $this->order->getCustomer()->setLoopeatAccessToken($accessToken);
         }
 
-        $this->session->set(
-            sprintf('loopeat.order.%d.access_token', $this->order->getId()),
-            $accessToken
-        );
+        $this->order->setLoopeatAccessToken($accessToken);
     }
 
     public function getLoopeatRefreshToken()
@@ -43,7 +39,7 @@ class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
             return $this->order->getCustomer()->getLoopeatRefreshToken();
         }
 
-        return $this->session->get(sprintf('loopeat.order.%d.refresh_token', $this->order->getId()));
+        return $this->order->getLoopeatRefreshToken();
     }
 
     public function setLoopeatRefreshToken($refreshToken)
@@ -53,10 +49,7 @@ class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
             return $this->order->getCustomer()->setLoopeatRefreshToken($refreshToken);
         }
 
-        $this->session->set(
-            sprintf('loopeat.order.%d.refresh_token', $this->order->getId()),
-            $refreshToken
-        );
+        $this->order->setLoopeatRefreshToken($refreshToken);
     }
 
     public function hasLoopEatCredentials(): bool
@@ -66,8 +59,7 @@ class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
             return $this->order->getCustomer()->hasLoopEatCredentials();
         }
 
-        return $this->session->has(sprintf('loopeat.order.%d.access_token', $this->order->getId()))
-            && $this->session->has(sprintf('loopeat.order.%d.refresh_token', $this->order->getId()));
+        return $this->order->hasLoopEatCredentials();
     }
 
     public function clearLoopEatCredentials()

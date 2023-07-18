@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
 use Sylius\Component\Inventory\Model\StockableInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -18,6 +19,9 @@ class ReusablePackaging implements StockableInterface
 
     protected $price = 0;
 
+    /**
+     * @Groups({"restaurant"})
+     */
     protected $name;
 
     protected $onHold = 0;
@@ -26,8 +30,14 @@ class ReusablePackaging implements StockableInterface
 
     protected $tracked = false;
 
+    /**
+     * @Groups({"restaurant"})
+     */
     protected $type = self::TYPE_INTERNAL;
 
+    /**
+     * @Groups({"restaurant"})
+     */
     protected $data = [];
 
     public function getId()

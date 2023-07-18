@@ -13,12 +13,18 @@ export default withTranslation()(({ order, t }) => {
         <div>
           <strong>{ t('RESTAURANT_DASHBOARD_PREPARATION_AT', { time: moment(order.preparationExpectedAt).format('LT') }) }</strong>
         </div>
+        <ul className="list-unstyled">
         { order.reusablePackagingEnabled && (
-          <span className="text-warning">{ t('ADMIN_DASHBOARD_ORDERS_PACKAGING_ALERT') }</span>
+          <li>
+            <span className="text-warning">{ t('ADMIN_DASHBOARD_ORDERS_PACKAGING_ALERT') }</span>
+          </li>
         )}
         { order.preparationTime && (
-          <span className="text-muted">{ order.preparationTime }</span>
+          <li>
+            <span className="text-muted">{ order.preparationTime }</span>
+          </li>
         ) }
+        </ul>
       </Timeline.Item>
       <Timeline.Item dot={<i className="fa fa-cube"></i>}>
         <div>

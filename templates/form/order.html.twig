@@ -52,75 +52,98 @@
     {% set loopeat_trans_prefix = 'form.checkout_address.reusable_packaging.loopeat' %}
 
     {% set order = form.parent.vars.data %}
-    {% set pledge_return = form.parent.reusablePackagingPledgeReturn.vars.data %}
-    {% set missing = (order.reusablePackagingQuantity - loopeat_context.loopeatBalance - pledge_return) %}
+    {% set missing = (loopeat_context.requiredAmount - loopeat_context.creditsCountCents) %}
 
     {% if missing < 0 %}
       {% set missing = 0 %}
     {% endif %}
 
-    <div id="loopeat-block" class="p-3{{ isChecked ? " active": "" }}">
-      <div class="py-0 m-0">
-        {{ form_widget(form, { attr: attr|merge({
-          'data-loopeat-required': (order.reusablePackagingQuantity - pledge_return)
-        }) }) }}
+    {{ form_widget(form) }}
+
+    <div class="d-flex flex-sm-row flex-column align-items-center justify-content-between mb-4">
+      <div>
+        <img src="{{ loopeat_context.logoUrl }}" class="mb-4" height="96">
+      </div>
+      <div class="mx-3 mb-4">
+        <div>
+          {% if isChecked %}
+          <div class="mb-3">
+            {% if loopeat_context.hasCredentials %}
+              {% if missing > 0 %}
+                <div class="alert alert-warning m-0">
+                  <span class="mr-2">⚠️</span>
+                  {{ 'loopeat.insufficient_balance'|trans({ '%name%': loopeat_context.name }, 'validators') }}
+                </div>
+              {% else %}
+                <span class="mr-2">✅</span>
+                {{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}
+              {% endif %}
+            {% else %}
+              {{ (loopeat_trans_prefix ~ '.connect')|trans({ '%name%': loopeat_context.name, '%brand_name%': coopcycle_setting('brand_name') }) }}
+            {% endif %}
+          </div>
+          {% else %}
+          <div>
+            <div>{{ (loopeat_trans_prefix ~ '.enable_zero_waste')|trans }}</div>
+          </div>
+          {% endif %}
+          <div class="d-flex justify-content-between loopeat-links">
+            <a href="#" data-toggle="modal" data-target="#modal-loopeat-howitworks">{{ (loopeat_trans_prefix ~ '.how_it_works')|trans }} ›</a>
+            {% if loopeat_context.hasCredentials and missing > 0 %}
+            <a href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.add_credits')|trans }} ›</a>
+            {% endif %}
+            <a href="{{ loopeat_context.customerAppUrl }}" target="_blank">{{ (loopeat_trans_prefix ~ '.website')|trans({ '%name%': loopeat_context.name }) }} ›</a>
+          </div>
+        </div>
       </div>
       {% if isChecked %}
-        <div>
-          <ul class="list-unstyled loopeat-summary">
-            <li>
-              <span class="loopeat-icon loopeat-icon-flying-circle"></span>
-              <span>
-                {{ (loopeat_trans_prefix ~ '.reusable_quantity.label')|trans({
-                  '%count%': order.reusablePackagingQuantity
-                })|raw }}
-              </span>
-            </li>
-            <li>
-              <span class="loopeat-icon loopeat-icon-euro"></span>
-              <span>
-                {{ (loopeat_trans_prefix ~ '.available_credits.label')|trans({
-                  '%count%': loopeat_context.loopeatBalance
-                })|raw }}
-                <em>{{ (loopeat_trans_prefix ~ '.available_credits.help')|trans }}</em>
-              </span>
-            </li>
-            {{ form_row(form.parent.reusablePackagingPledgeReturn) }}
-            <li>
-              {% if missing > 0 %}
-                <span class="loopeat-icon">🤔</span>
-                <strong>{{ 'loopeat.insufficient_balance'|trans({ '%count%': missing }, 'validators') }}</strong>
-              {% else %}
-                <span class="loopeat-icon">👍</span>
-                <strong>{{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}</strong>
-              {% endif %}
-            </li>
-          </ul>
-          <div id="loopeat-buttons" class="{% if missing == 0 %}d-none{% endif %}">
-            <div class="d-flex flex-row justify-content-between ">
-              <button type="button" id="checkout_address_cancelReusablePackaging" class="btn btn-link btn">
-                {{ 'basics.cancel'|trans }}
-              </button>
-              <a id="loopeat-add-credit" href="" class="btn btn-default">
-                {{ 'form.checkout_address.reusable_packaging.loopeat.add'|trans({ '%missing%': missing }) }}
-              </a>
+        {% if loopeat_context.hasCredentials %}
+          {% if missing > 0 %}
+            {% if loopeat_context.containersCount > 0 %}
+              <a class="btn btn-warning" href="#"
+                data-toggle="modal"
+                data-target="#modal-loopeat"
+                data-customer-containers="{{ loopeat_context.containers|json_encode|e('html_attr') }}"
+                data-formats="{{ loopeat_context.formats|json_encode|e('html_attr') }}"
+                data-formats-to-deliver="{{ order.getFormatsToDeliverForLoopeat()|json_encode|e('html_attr') }}"
+                data-returns="{{ order.getLoopeatReturns()|json_encode|e('html_attr') }}"
+                data-credits-count-cents="{{ loopeat_context.creditsCountCents|json_encode|e('html_attr') }}"
+                data-required-amount="{{ loopeat_context.requiredAmount|json_encode|e('html_attr') }}"
+              >{{ (loopeat_trans_prefix ~ '.return_containers')|trans }}</a>
+            {% else %}
+              <a class="btn btn-warning" href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.add_credits')|trans({ '%name%': loopeat_context.name }) }}</a>
+            {% endif %}
+          {% else %}
+          <a class="btn btn-warning" href="{{ loopeat_context.customerAppUrl }}" target="_blank">{{ (loopeat_trans_prefix ~ '.manage_account')|trans }}</a>
+          {% endif %}
+        {% else %}
+          <a class="btn btn-warning" href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.connect_account')|trans({ '%name%': loopeat_context.name }) }}</a>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <div class="modal fade" id="modal-loopeat-howitworks" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <span>{{ 'loopeat.how_it_works.title'|trans({ '%name%': loopeat_context.name }) }}</span>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          </div>
+          <div class="modal-body mb-0 p-0">
+            <img src="{{ asset('img/loopeat/how_it_works.png') }}" class="w-100" />`
+            <div class="d-flex justify-content-between">
+              {% for loopeat_step in 1..4 %}
+                <div class="text-center w-25 m-2">
+                  <h5>{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.title')|trans({ '%name%': loopeat_context.name }) }}</h5>
+                  <p>{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.text')|trans({ '%name%': loopeat_context.name }) }}</p>
+                </div>
+              {% endfor %}
             </div>
           </div>
         </div>
-      {% else %}
-        {# TODO: figure how to remove these fields from the form #}
-        <div class="d-none">
-          {{ form_widget(form.parent.reusablePackagingPledgeReturn) }}
-        </div>
-        <div class="my-2">
-          <a href="https://loopeat.fr/en-savoir-plus/" target="_blank">
-            <span class="mr-2">{{ 'form.checkout_address.reusable_packaging.loopeat.learn_more'|trans }}</span>
-            <i class="fa fa-external-link"></i>
-          </a>
-        </div>
-        <img class="loopeat-bowl1" src="{{ asset('img/loopeat/bowl1.png') }}" alt="Loopeat" />
-      {% endif %}
+      </div>
     </div>
+
   {% elseif isVytal %}
     <div>
       <div class="alert alert-vytal py-0 m-0">
@@ -217,22 +240,9 @@
 
 {% block _checkout_address_reusablePackagingPledgeReturn_row %}
 
-  {% set is_loopeat = form.parent.reusablePackagingEnabled.vars.attr['data-loopeat'] is defined and form.parent.reusablePackagingEnabled.vars.attr['data-loopeat'] == 'true' %}
   {% set is_dabba = form.parent.reusablePackagingEnabled.vars.attr['data-dabba'] is defined and form.parent.reusablePackagingEnabled.vars.attr['data-dabba'] == 'true' %}
 
-  {% if is_loopeat %}
-    {% set max = (loopeat_context.loopeatCredit - loopeat_context.loopeatBalance) %}
-    <li>
-      <span class="loopeat-icon loopeat-icon-gamelle"></span>
-      <span>
-        {% if max > 0 %}
-          {{ form_widget(form) }}
-        {% else %}
-          {{ 'form.checkout_address.reusable_packaging.loopeat.no_pledge_label'|trans }}
-        {% endif %}
-      </span>
-    </li>
-  {% elseif is_dabba %}
+  {% if is_dabba %}
     {% set max = dabba_context.containers %}
     <li>
       <span>
@@ -248,18 +258,9 @@
 
 {% block _checkout_address_reusablePackagingPledgeReturn_widget %}
 
-  {% set is_loopeat = form.parent.reusablePackagingEnabled.vars.attr['data-loopeat'] is defined and form.parent.reusablePackagingEnabled.vars.attr['data-loopeat'] == 'true' %}
   {% set is_dabba = form.parent.reusablePackagingEnabled.vars.attr['data-dabba'] is defined and form.parent.reusablePackagingEnabled.vars.attr['data-dabba'] == 'true' %}
 
-  {% if is_loopeat %}
-    {% set max = (loopeat_context.loopeatCredit - loopeat_context.loopeatBalance) %}
-    {% set attr = attr|merge({ 'min': 0, 'max': max }) %}
-    <label for="{{ form.parent.reusablePackagingPledgeReturn.vars.id }}">
-      {{ 'form.checkout_address.reusable_packaging.loopeat.return_pledge_label'|trans({
-        '%field%': form_widget(form, { attr: attr, label_attr: { class: 'm-0' } })
-      })|raw }}
-    </label>
-  {% elseif is_dabba %}
+  {% if is_dabba %}
     {% set max = dabba_context.containers %}
     {% set attr = attr|merge({ 'min': 0, 'max': max }) %}
     <label for="{{ form.parent.reusablePackagingPledgeReturn.vars.id }}">

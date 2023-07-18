@@ -40,13 +40,17 @@ class OrderDepositRefundProcessorTest extends TestCase
         $this->translator->trans('order_item.adjustment_type.reusable_packaging', Argument::type('array'))
             ->willReturn('1 × packaging(s)');
 
+        $this->translator->trans('order.adjustment_type.reusable_packaging.loopeat')
+            ->willReturn('Loopeat processing fee');
+
         $this->orderDepositRefundProcessor = new OrderDepositRefundProcessor(
             $this->adjustmentFactory->reveal(),
-            $this->translator->reveal()
+            $this->translator->reveal(),
+            200
         );
     }
 
-    private function createOrderItem(LocalBusiness $restaurant, ReusablePackaging $reusablePackaging, $quantity, $units, $enabled)
+    private function createOrderItem(LocalBusiness $restaurant, ReusablePackaging $reusablePackaging, $quantity, $units, $enabled, $id)
     {
         $orderItem = $this->prophesize(OrderItemInterface::class);
         $variant = $this->prophesize(ProductVariant::class);
@@ -63,6 +67,7 @@ class OrderDepositRefundProcessorTest extends TestCase
         $variant->getProduct()->willReturn($product);
         $orderItem->getVariant()->willReturn($variant->reveal());
         $orderItem->getQuantity()->willReturn($quantity);
+        $orderItem->getId()->willReturn($id);
 
         $restaurant->addProduct($product);
 
@@ -165,14 +170,14 @@ class OrderDepositRefundProcessorTest extends TestCase
                 return $adjustment;
             });
 
-        $item1 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 1, $units = 0.5, $enabled = true);
+        $item1 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 1, $units = 0.5, $enabled = true, $id = 1);
         $item1
             ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
                 return $adjustment->getAmount() === 100;
             }))
             ->shouldBeCalled();
 
-        $item2 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 2, $units = 1, $enabled = true);
+        $item2 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 2, $units = 1, $enabled = true, $id = 2);
         $item2
             ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
                 return $adjustment->getAmount() === 200;
@@ -218,7 +223,7 @@ class OrderDepositRefundProcessorTest extends TestCase
             ->removeAdjustmentsRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
             ->shouldBeCalled();
 
-        $item1 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 1, $units = 0.5, $enabled = true);
+        $item1 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 1, $units = 0.5, $enabled = true, $id = 1);
         $items = new ArrayCollection([ $item1->reveal() ]);
         $order->getItems()->willReturn($items);
 
@@ -234,6 +239,86 @@ class OrderDepositRefundProcessorTest extends TestCase
                 Argument::type(AdjustmentInterface::class)
             )
             ->shouldNotBeCalled();
+
+        $this->orderDepositRefundProcessor->process($order->reveal());
+    }
+
+    public function testLoopeatDeliverOverridesQuantity()
+    {
+        $reusablePackaging = new ReusablePackaging();
+        $reusablePackaging->setPrice(0);
+        $reusablePackaging->setData(['id' => 1]);
+        $reusablePackaging->setType(reusablePackaging::TYPE_LOOPEAT);
+        $reusablePackaging->setName('Small box');
+
+        $restaurant = new LocalBusiness();
+        $restaurant->setDepositRefundEnabled(true);
+        $restaurant->addReusablePackaging($reusablePackaging);
+        $restaurant->setLoopeatEnabled(true);
+
+        $order = $this->prophesize(Order::class);
+        $order
+            ->isReusablePackagingEnabled()
+            ->willReturn(true);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->removeAdjustmentsRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
+            ->shouldBeCalled();
+        $order
+            ->getLoopeatDeliver()
+            ->willReturn([
+                1 => [
+                    ['format_id' => 1, 'quantity' => 3]
+                ]
+            ]);
+
+        $adjustment = $this->prophesize(AdjustmentInterface::class)->reveal();
+
+        $this->adjustmentFactory->createWithData(
+            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+            Argument::type('string'),
+            Argument::type('integer'),
+            Argument::type('bool')
+        )
+            ->shouldBeCalled()
+            ->will(function ($args) {
+                $adjustment = new Adjustment();
+                $adjustment->setType($args[0]);
+                $adjustment->setAmount($args[2]);
+
+                return $adjustment;
+            });
+
+        $item1 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 1, $units = 0.5, $enabled = true, $id = 1);
+        $item1
+            ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
+                return $adjustment->getAmount() === 0;
+            }))
+            ->shouldBeCalled();
+
+        $item2 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 2, $units = 1, $enabled = true, $id = 2);
+        $item2
+            ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
+                return $adjustment->getAmount() === 0;
+            }))
+            ->shouldBeCalled();
+
+        $items = new ArrayCollection([ $item1->reveal(), $item2->reveal() ]);
+        $order->getItems()->willReturn($items);
+
+        $order
+            ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
+                return $adjustment->getAmount() === 200;
+            }))
+            ->shouldBeCalled();
 
         $this->orderDepositRefundProcessor->process($order->reveal());
     }

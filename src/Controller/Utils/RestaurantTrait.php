@@ -35,6 +35,7 @@ use AppBundle\Form\ReusablePackagingChoiceLoader;
 use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
+use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -105,7 +106,8 @@ trait RestaurantTrait
         ValidatorInterface $validator,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        LoopeatClient $loopeatClient)
     {
         $form = $this->createForm(RestaurantType::class, $restaurant, [
             'loopeat_enabled' => $this->getParameter('loopeat_enabled'),
@@ -169,20 +171,8 @@ trait RestaurantTrait
                     $restaurant->setEnabled(false);
                 }
 
-                if (!$wasLoopEatEnabled && $restaurant->isLoopeatEnabled()) {
-
-                    if (!$restaurant->hasReusablePackagingWithName('LoopEat')) {
-                        $reusablePackaging = new ReusablePackaging();
-                        $reusablePackaging->setName('LoopEat');
-                        $reusablePackaging->setType(ReusablePackaging::TYPE_LOOPEAT);
-                        $reusablePackaging->setPrice(0);
-                        $reusablePackaging->setOnHold(0);
-                        $reusablePackaging->setOnHand(9999);
-                        $reusablePackaging->setTracked(false);
-
-                        $restaurant->addReusablePackaging($reusablePackaging);
-                    }
-                }
+                // For Loopeat, ReusablePackaging instances
+                // will be created via ReusablePackagingChoiceLoader
 
                 if (!$wasVytalEnabled && $restaurant->isVytalEnabled()) {
 
@@ -266,16 +256,12 @@ trait RestaurantTrait
                 'iss' => $redirectAfterUri,
             ]);
 
-            $queryString = http_build_query([
-                'client_id' => $this->getParameter('loopeat_client_id'),
-                'response_type' => 'code',
+            $params = [
                 'state' => $state,
-                'restaurant' => 'true',
-                // FIXME redirect_uri doesn't work yet
-                // 'redirect_uri' => $redirectUri,
-            ]);
+                'redirect_uri' => $redirectUri,
+            ];
 
-            $loopeatAuthorizeUrl = sprintf('%s/oauth/authorize?%s', $this->getParameter('loopeat_base_url'), $queryString);
+            $loopeatAuthorizeUrl = $loopeatClient->getRestaurantOAuthAuthorizeUrl($params);
         }
 
         $cuisines = $this->getDoctrine()->getRepository(Cuisine::class)->findAll();
@@ -295,7 +281,8 @@ trait RestaurantTrait
         ValidatorInterface $validator,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        LoopeatClient $loopeatClient)
     {
         $repository = $this->getDoctrine()->getRepository(LocalBusiness::class);
 
@@ -303,20 +290,21 @@ trait RestaurantTrait
 
         $this->accessControl($restaurant);
 
-        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator);
+        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient);
     }
 
     public function newRestaurantAction(Request $request,
         ValidatorInterface $validator,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        LoopeatClient $loopeatClient)
     {
         // TODO Check roles
         $restaurant = new LocalBusiness();
         $restaurant->setContract(new Contract());
 
-        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator);
+        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient);
     }
 
     public function restaurantNewAdhocOrderAction($restaurantId, Request $request,
@@ -709,13 +697,13 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    private function createRestaurantProductForm(LocalBusiness $restaurant, ProductInterface $product)
+    private function createRestaurantProductForm(LocalBusiness $restaurant, ProductInterface $product, LoopeatClient $loopeatClient, EntityManagerInterface $entityManager)
     {
         return $this->createForm(ProductType::class, $product, [
             'owner' => $restaurant,
             'with_reusable_packaging' =>
                 $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled() || $restaurant->isDabbaEnabled(),
-            'reusable_packaging_choice_loader' => new ReusablePackagingChoiceLoader($restaurant),
+            'reusable_packaging_choice_loader' => new ReusablePackagingChoiceLoader($restaurant, $loopeatClient, $entityManager),
             'options_loader' => function (ProductInterface $product) use ($restaurant) {
 
                 $opts = [];
@@ -782,7 +770,8 @@ trait RestaurantTrait
     public function restaurantProductAction($restaurantId, $productId, Request $request,
         ObjectRepository $productRepository,
         EntityManagerInterface $entityManager,
-        EventDispatcherInterface $dispatcher)
+        EventDispatcherInterface $dispatcher,
+        LoopeatClient $loopeatClient)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -794,7 +783,7 @@ trait RestaurantTrait
             ->find($productId);
 
         $form =
-            $this->createRestaurantProductForm($restaurant, $product);
+            $this->createRestaurantProductForm($restaurant, $product, $loopeatClient, $entityManager);
 
         $routes = $request->attributes->get('routes');
 
@@ -830,7 +819,8 @@ trait RestaurantTrait
 
     public function newRestaurantProductAction($id, Request $request,
         FactoryInterface $productFactory,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        LoopeatClient $loopeatClient)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -844,7 +834,7 @@ trait RestaurantTrait
         $product->setEnabled(false);
 
         $form =
-            $this->createRestaurantProductForm($restaurant, $product);
+            $this->createRestaurantProductForm($restaurant, $product, $loopeatClient, $entityManager);
 
         $routes = $request->attributes->get('routes');
 

@@ -222,6 +222,12 @@ security:
             stateless: true
             cart_session: true
 
+        api_cart_loopeat_returns:
+            pattern:   ^/api/orders/[0-9]+/loopeat_returns$
+            methods: [ POST ]
+            stateless: true
+            cart_session: true
+
         api_me:
             pattern:   ^/api/me$
             methods: [ GET ]

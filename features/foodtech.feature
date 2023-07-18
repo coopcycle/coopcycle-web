@@ -592,7 +592,8 @@ Feature: Food Tech
         "image":@string@,
         "isOpen":false,
         "nextOpeningDate":@string@,
-        "hub":null
+        "hub":null,
+        "loopeatEnabled":false
       }
       """
 
