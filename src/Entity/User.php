@@ -21,7 +21,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 
 /**
@@ -66,15 +65,11 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
     protected $id;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Length(min="3", max="15")
-     * @Assert\Regex(pattern="/^[a-zA-Z0-9_]{3,15}$/")
      * @var string
      */
     protected ?string $username;
 
     /**
-     * @Assert\NotBlank()
      * @var string
      */
     protected ?string $email;

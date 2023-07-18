@@ -90,7 +90,7 @@ class Register
 
         $user = $form->getData();
 
-        $violations = $this->validator->validate($user);
+        $violations = $this->validator->validate($user, null, ['Registration', 'Default']);
 
         if (count($violations) > 0) {
             throw new ValidationException($violations);
