@@ -133,12 +133,6 @@ services:
       - method: setLoopEatClientSecret
         arguments:
             - '%loopeat_client_secret%'
-      - method: setLoopEatPartnerId
-        arguments:
-            - '%loopeat_partner_id%'
-      - method: setLoopEatPartnerSecret
-        arguments:
-            - '%loopeat_partner_secret%'
     tags:
       - { name: monolog.logger, channel: loopeat }
 

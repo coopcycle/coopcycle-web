@@ -34,8 +34,6 @@ parameters:
     loopeat_base_url: '%env(LOOPEAT_BASE_URL)%'
     loopeat_client_id: '%env(LOOPEAT_CLIENT_ID)%'
     loopeat_client_secret: '%env(LOOPEAT_CLIENT_SECRET)%'
-    loopeat_partner_id: '%env(LOOPEAT_PARTNER_ID)%'
-    loopeat_partner_secret: '%env(LOOPEAT_PARTNER_SECRET)%'
     tile38_fleet_key: '%database_name%:fleet'
     tile38_doorstep_chan_namespace: '%database_name%'
     centrifugo_namespace: '%database_name%'

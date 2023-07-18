@@ -69,16 +69,6 @@ class Client
         $this->loopEatClientSecret = $loopEatClientSecret;
     }
 
-    public function setLoopEatPartnerId($loopEatPartnerId)
-    {
-        $this->loopEatPartnerId = $loopEatPartnerId;
-    }
-
-    public function setLoopEatPartnerSecret($loopEatPartnerSecret)
-    {
-        $this->loopEatPartnerSecret = $loopEatPartnerSecret;
-    }
-
     public function refreshToken()
     {
         return function (callable $handler) {
