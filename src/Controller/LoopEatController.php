@@ -152,6 +152,8 @@ class LoopEatController extends AbstractController
         // they will be attached to customer later
         if ($subject instanceof Order) {
             $this->logger->info(sprintf('Attaching LoopEat credentials to order #%d', $subject->getId()));
+        } elseif ($subject instanceof LocalBusiness) {
+            $this->logger->info(sprintf('Attaching LoopEat credentials to restaurant "%s"', $subject->getName()));
         } else {
             $this->logger->info(sprintf('Attaching LoopEat credentials to customer "%s"', $subject->getEmailCanonical()));
         }
