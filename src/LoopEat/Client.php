@@ -88,7 +88,7 @@ class Client
                                     'refresh_token' => $options['oauth_credentials']->getLoopeatRefreshToken(),
                                     'client_id' => $this->loopEatClientId,
                                     'client_secret' => $this->loopEatClientSecret,
-                                    'redirect_uri' => 'http://localhost/impec/oauth/callback',
+                                    'redirect_uri' => $this->urlGenerator->generate('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL),
                                 );
 
                                 // https://www.oauth.com/oauth2-servers/access-tokens/refreshing-access-tokens/
@@ -151,6 +151,7 @@ class Client
         $defaults = [
             'client_id' => $this->loopEatClientId,
             'response_type' => 'code',
+            'redirect_uri' => $this->urlGenerator->generate('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL),
         ];
 
         $params = array_merge($defaults, $params);
