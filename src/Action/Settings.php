@@ -90,10 +90,25 @@ class Settings
         $data['average_preparation_time'] = $this->timeRegistry->getAveragePreparationTime();
         $data['average_shipping_time'] = $this->timeRegistry->getAverageShippingTime();
 
+        //$data['default_delivery_form_url'] = $this->getDoctrine()->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true]);
+        /*
+        $data['default_delivery_form_url'] = '<body style="display:flex; flex-direction: column;justify-content: center; 
+          align-items:center; background-color: black; color:white; height: 100%;">
+            <h1 style="font-size:100px; padding: 50px; text-align: center;" 
+            id="h1_element">
+              This is simple html
+            </h1>
+            <h2 style="display: block; font-size:80px; padding: 50px; 
+            text-align: center;" id="h2_element">
+              '.$this->getDoctrine()->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true]).'
+            </h2>
+         </body>';
+
         if ($request->query->has('format') && 'hash' === $request->query->get('format')) {
             return new JsonResponse(sha1(json_encode($data)));
         }
-
+        */
+        $data['default_delivery_form_url'] = 'https://letmegooglethat.com/?q=a'.$this->getDoctrine()->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true]);
         return new JsonResponse($data);
     }
 }
