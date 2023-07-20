@@ -58,7 +58,7 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
  * @ApiFilter(UserRoleFilter::class, properties={"roles"})
  * @UniqueEntity("facebookId")
  */
-class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface
+class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface, \Serializable
 {
     use Timestampable;
 
@@ -456,5 +456,49 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
     public function getSalt(): ?string
     {
         return $this->salt;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function __serialize(): array
+    {
+        return [
+            $this->password,
+            $this->salt,
+            $this->usernameCanonical,
+            $this->username,
+            $this->enabled,
+            $this->id,
+            $this->email,
+            $this->emailCanonical,
+        ];
+    }
+
+    /**
+     * @param mixed[] $data
+     */
+    public function __unserialize(array $data): void
+    {
+        [
+            $this->password,
+            $this->salt,
+            $this->usernameCanonical,
+            $this->username,
+            $this->enabled,
+            $this->id,
+            $this->email,
+            $this->emailCanonical
+        ] = $data;
+    }
+
+    public function serialize(): string
+    {
+        return serialize($this->__serialize());
+    }
+
+    public function unserialize($data): void
+    {
+        $this->__unserialize(unserialize($data));
     }
 }
