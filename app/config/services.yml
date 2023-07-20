@@ -696,6 +696,7 @@ services:
       $country: '%country_iso%'
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $splitTermsAndConditionsAndPrivacyPolicy: '%env(SPLIT_TERMS_AND_CONDITIONS_AND_PRIVACY_POLICY)%'
+      $secret: '%secret%'
 
   AppBundle\Action\Register:
     public: true

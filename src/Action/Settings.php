@@ -12,6 +12,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Persistence\ManagerRegistry;
+use AppBundle\Entity\DeliveryForm;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Hashids\Hashids;
 
 class Settings
 {
@@ -21,6 +25,9 @@ class Settings
     private $locale;
     private $splitTermsAndConditionsAndPrivacyPolicy;
     private $timeRegistry;
+    private $doctrine;
+    private $router;
+    private $secret;
 
     private $keys = [
         'brand_name',
@@ -42,7 +49,10 @@ class Settings
         TimeRegistry $timeRegistry,
         $country,
         $locale,
-        $splitTermsAndConditionsAndPrivacyPolicy)
+        $splitTermsAndConditionsAndPrivacyPolicy,
+        ManagerRegistry $doctrine,
+        UrlGeneratorInterface $router,
+        string $secret)
     {
         $this->settingsManager = $settingsManager;
         $this->assetsFilesystem = $assetsFilesystem;
@@ -52,6 +62,9 @@ class Settings
         $this->country = $country;
         $this->locale = $locale;
         $this->splitTermsAndConditionsAndPrivacyPolicy = (bool) $splitTermsAndConditionsAndPrivacyPolicy;
+        $this->doctrine = $doctrine;
+        $this->router = $router;
+        $this->secret = $secret;
     }
 
     /**
@@ -89,26 +102,22 @@ class Settings
 
         $data['average_preparation_time'] = $this->timeRegistry->getAveragePreparationTime();
         $data['average_shipping_time'] = $this->timeRegistry->getAverageShippingTime();
-
-        //$data['default_delivery_form_url'] = $this->getDoctrine()->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true]);
-        /*
-        $data['default_delivery_form_url'] = '<body style="display:flex; flex-direction: column;justify-content: center; 
-          align-items:center; background-color: black; color:white; height: 100%;">
-            <h1 style="font-size:100px; padding: 50px; text-align: center;" 
-            id="h1_element">
-              This is simple html
-            </h1>
-            <h2 style="display: block; font-size:80px; padding: 50px; 
-            text-align: center;" id="h2_element">
-              '.$this->getDoctrine()->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true]).'
-            </h2>
-         </body>';
-
-        if ($request->query->has('format') && 'hash' === $request->query->get('format')) {
-            return new JsonResponse(sha1(json_encode($data)));
-        }
-        */
-        $data['default_delivery_form_url'] = 'https://letmegooglethat.com/?q=a'.$this->getDoctrine()->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true]);
+        //url('embed_delivery_start', { hashid: delivery_form|hashid(12) })
+        $data['default_delivery_form_url'] = $this->router->generate('embed_delivery_start', ['hashid'=> $this->hashid($this->doctrine->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true]), 12)], UrlGeneratorInterface::ABSOLUTE_URL);
+        
         return new JsonResponse($data);
+    }
+
+    public function hashid(object $object, $minHashLength = 8)
+    {
+        $hashids = new Hashids($this->secret, $minHashLength ?? 8);
+
+        if (is_callable([$object, 'getId'])) {
+            $id = $object->getId();
+
+            return $hashids->encode($id);
+        }
+
+        throw new \InvalidArgumentException(sprintf('Object of class %s has no method getId()', get_class($object)));
     }
 }
