@@ -72,9 +72,11 @@ const addFormToCollection = () => {
   collectionHolder.dataset.index++;
 };
 
-document
-  .querySelector('.add_item_link')
-  .addEventListener("click", addFormToCollection)
+const addReusablePackaging = document.querySelector('.add_item_link')
+
+if (addReusablePackaging) {
+  addReusablePackaging.addEventListener("click", addFormToCollection)
+}
 
 new Sortable(document.querySelector('#product_options'), {
   group: 'products',
