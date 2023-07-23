@@ -649,8 +649,11 @@ embed.payment.heading: Pagar mi pedido
 embed.delivery.contact_heading: Contacto
 embed.delivery.specify_billing_address: Especifica una dirección de facturación
 embed.delivery.billing_address: Dirección de Envio
-embed.delivery.summary: "Has solicitado un pedido que será entregado en <strong>%dropoff_date%</strong>\
-  \ a la siguiente dirección: <strong>%dropoff_address%</strong> <br> Calculamos la\
+embed.delivery.summary: "Has solicitado un pedido de
+  \ que será recogido en <strong>%pickup_date%</strong>\
+  \ de la siguiente dirección: <strong>%pickup_address%</strong>.<br>
+  \ que será entregado en <strong>%dropoff_date%</strong>\
+  \ a la siguiente dirección: <strong>%dropoff_address%</strong>.<br> Calculamos la\
   \ distancia de <strong>%distance% kilometers</strong>. <br> El precio del pedido\
   \ es <strong>%total_excluding_tax% (sin IVA); </strong> %total_including_tax% (con\
   \ IVA). <br><br>Si alguno de estos datos están equivocados, por favor, cambialos\
