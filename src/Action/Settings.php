@@ -16,6 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use AppBundle\Entity\DeliveryForm;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Hashids\Hashids;
+use Exception;
 
 class Settings
 {
@@ -52,7 +53,8 @@ class Settings
         $splitTermsAndConditionsAndPrivacyPolicy,
         ManagerRegistry $doctrine,
         UrlGeneratorInterface $router,
-        string $secret)
+        string $secret,
+        Hashids $hashids12)
     {
         $this->settingsManager = $settingsManager;
         $this->assetsFilesystem = $assetsFilesystem;
@@ -65,6 +67,7 @@ class Settings
         $this->doctrine = $doctrine;
         $this->router = $router;
         $this->secret = $secret;
+        $this->hashids12 = $hashids12;
     }
 
     /**
@@ -102,22 +105,8 @@ class Settings
 
         $data['average_preparation_time'] = $this->timeRegistry->getAveragePreparationTime();
         $data['average_shipping_time'] = $this->timeRegistry->getAverageShippingTime();
-        //url('embed_delivery_start', { hashid: delivery_form|hashid(12) })
-        $data['default_delivery_form_url'] = $this->router->generate('embed_delivery_start', ['hashid'=> $this->hashid($this->doctrine->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true]), 12)], UrlGeneratorInterface::ABSOLUTE_URL);
+        $data['default_delivery_form_url'] = $this->router->generate('embed_delivery_start', ['hashid'=> $this->hashids12->encode($this->doctrine->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true])->getId())], UrlGeneratorInterface::ABSOLUTE_URL);
         
         return new JsonResponse($data);
-    }
-
-    public function hashid(object $object, $minHashLength = 8)
-    {
-        $hashids = new Hashids($this->secret, $minHashLength ?? 8);
-
-        if (is_callable([$object, 'getId'])) {
-            $id = $object->getId();
-
-            return $hashids->encode($id);
-        }
-
-        throw new \InvalidArgumentException(sprintf('Object of class %s has no method getId()', get_class($object)));
     }
 }
