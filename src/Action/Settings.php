@@ -28,8 +28,6 @@ class Settings
     private $timeRegistry;
     private $doctrine;
     private $router;
-    private $secret;
-
     private $keys = [
         'brand_name',
         'stripe_publishable_key',
@@ -53,7 +51,6 @@ class Settings
         $splitTermsAndConditionsAndPrivacyPolicy,
         ManagerRegistry $doctrine,
         UrlGeneratorInterface $router,
-        string $secret,
         Hashids $hashids12)
     {
         $this->settingsManager = $settingsManager;
@@ -66,7 +63,6 @@ class Settings
         $this->splitTermsAndConditionsAndPrivacyPolicy = (bool) $splitTermsAndConditionsAndPrivacyPolicy;
         $this->doctrine = $doctrine;
         $this->router = $router;
-        $this->secret = $secret;
         $this->hashids12 = $hashids12;
     }
 
@@ -105,8 +101,21 @@ class Settings
 
         $data['average_preparation_time'] = $this->timeRegistry->getAveragePreparationTime();
         $data['average_shipping_time'] = $this->timeRegistry->getAverageShippingTime();
-        $data['default_delivery_form_url'] = $this->router->generate('embed_delivery_start', ['hashid'=> $this->hashids12->encode($this->doctrine->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true])->getId())], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        $deliveryForm = $this->doctrine->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true]);
+
+        if ($deliveryForm) {
+            $deliveryFormId = $deliveryForm->getId();
+            $deliveryFormIdHash = $this->hashids12->encode($deliveryFormId);
+            $data['default_delivery_form_url'] = $this->router->generate('embed_delivery_start', ['hashid'=> $deliveryFormIdHash], UrlGeneratorInterface::ABSOLUTE_URL);
+        } else {
+            throw new Exception("More than 1 or zero deliveryForm with showHomepage = true");
+        }
         
+        if ($request->query->has('format') && 'hash' === $request->query->get('format')) {
+            return new JsonResponse(sha1(json_encode($data)));
+        }
+
         return new JsonResponse($data);
     }
 }
