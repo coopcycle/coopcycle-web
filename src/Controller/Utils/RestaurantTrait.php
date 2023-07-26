@@ -138,7 +138,6 @@ trait RestaurantTrait
             }
         }
 
-        $wasLoopEatEnabled = $restaurant->isLoopeatEnabled();
         $wasDepositRefundEnabled = $restaurant->isDepositRefundEnabled();
         $wasVytalEnabled = $restaurant->isVytalEnabled();
         $wasDabbaEnabled = $restaurant->isDabbaEnabled();

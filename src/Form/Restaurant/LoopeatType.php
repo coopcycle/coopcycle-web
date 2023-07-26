@@ -45,7 +45,7 @@ class LoopeatType extends AbstractType
             $enabled = $form->get('enabled')->getData();
             $restaurant->setLoopeatEnabled($enabled);
 
-            if ($form->getClickedButton() && 'loopeatDisconnect' === $form->getClickedButton()->getName()) {
+            if ($form->getClickedButton() && 'disconnect' === $form->getClickedButton()->getName()) {
                 $restaurant->clearLoopEatCredentials();
             }
         });
