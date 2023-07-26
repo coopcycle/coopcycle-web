@@ -177,6 +177,7 @@ class UserController extends AbstractController
 
         $user = $userManager->createUser();
         $user->setEmail($invitation->getEmail());
+        $user->setEnabled(true);
 
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->add('save', SubmitType::class, [
