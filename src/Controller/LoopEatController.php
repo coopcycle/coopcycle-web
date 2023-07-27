@@ -27,12 +27,14 @@ class LoopEatController extends AbstractController
         string $loopeatClientId,
         string $loopeatClientSecret,
         string $loopeatOAuthFlow,
+        LoopEatClient $loopeatClient,
         LoggerInterface $logger)
     {
         $this->loopeatBaseUrl = $loopeatBaseUrl;
         $this->loopeatClientId = $loopeatClientId;
         $this->loopeatClientSecret = $loopeatClientSecret;
         $this->loopeatOAuthFlow = $loopeatOAuthFlow;
+        $this->loopeatClient = $loopeatClient;
         $this->logger = $logger;
     }
 
@@ -163,7 +165,11 @@ class LoopEatController extends AbstractController
 
         $objectManager->flush();
 
-        $this->addFlash('notice', $translator->trans('loopeat.oauth_connect.success'));
+        $initiative = $this->loopEatClient->initiative();
+
+        $this->addFlash('notice', $translator->trans('loopeat.oauth_connect.success', [
+            '%name%' => $initiative['name']
+        ]));
 
         return $this->redirect($this->getSuccessRedirect($payload));
     }
