@@ -1025,7 +1025,6 @@ form.payment.refund_application_fee.help: "Si marqueu aquesta casella, la comiss
   https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Learn more</a>\n"
 form.store_type.packages_required.label: Requerir l'entrada de paquets
 form.store_type.package_set.placeholder: Triar un conjunt de paquets
-restaurant.form.section.loopeat: LoopEat
 adminDashboard.customize.title: Personalitzar
 form.settings.mercadopago_testmode.help: "En mode « test », cal utilitzar <a href=\"\
   https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba\"\

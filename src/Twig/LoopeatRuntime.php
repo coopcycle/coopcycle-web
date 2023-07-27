@@ -23,4 +23,11 @@ class LoopeatRuntime implements RuntimeExtensionInterface
 
         return $this->client->getOAuthAuthorizeUrl($params);
     }
+
+    public function getName()
+    {
+        $initiative = $this->client->initiative();
+
+        return $initiative['name'];
+    }
 }

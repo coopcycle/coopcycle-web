@@ -1045,7 +1045,6 @@ guest_checkout.use_another_email: Usar otro correo electrónico
 form.store_type.package_set.placeholder: Elija un paquete conjunto
 form.store_type.time_slot.placeholder: Elija una franja horaria
 profile.fullName: Nombre completo
-restaurant.form.section.loopeat: LoopEat
 restaurant.form.section.taxonomy: Taxonomía
 localBusiness.form.business_address.label: Dirección comercial
 localBusiness.form.use_different_business_address.label: Utilice una dirección comercial

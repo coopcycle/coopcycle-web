@@ -139,8 +139,8 @@ restaurant.form.createRestaurant: Créer un restaurant
 restaurant.form.exclusive.label: Ce restaurant est une exclusivité
 restaurant.form.quotes_allowed.label: 'Ce restaurant accepte également des commandes
   sur devis (ex : traiteur)'
-restaurant.form.loopeat_enabled.label: Activer le système de consignes IMPEC
-restaurant.form.loopeat_disconnect.label: Déconnecter mon compte IMPEC
+restaurant.form.loopeat_enabled.label: Activer le système de consignes %name%
+restaurant.form.loopeat_disconnect.label: Déconnecter mon compte %name%
 restaurant.form.featured.label: Ce restaurant apparaît sur la page d'accueil
 restaurant.form.fulfillment_methods.label: Modes d'exécution
 restaurant.form.section.general: Général
@@ -910,9 +910,9 @@ receipt.total: Total TTC
 receipt.billing_details: Commande payée par carte de crédit le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nouvelle commande à confirmer
-profile.loopeat.connect: Connecter mon compte IMPEC
-profile.loopeat.connected: Compte IMPEC connecté
-profile.loopeat.disconnect: Déconnecter mon compte IMPEC
+profile.loopeat.connect: Connecter mon compte %name%
+profile.loopeat.connected: Compte %name% connecté
+profile.loopeat.disconnect: Déconnecter mon compte %name%
 basics.free: gratuit
 task.receipt.greeting: Cher client, chère cliente,
 task.receipt.message: Par la présente, nous confirmons que nous avons bien livré votre
@@ -1018,7 +1018,6 @@ localBusiness.form.use_different_business_address.label: Utiliser une adresse co
   différente
 localBusiness.form.business_address.label: Adresse commerciale
 restaurant.form.giropay_enabled.label: Activer Giropay
-restaurant.form.section.loopeat: IMPEC
 form.settings.company_logo.help: Ce logo sera utilisé pour les factures et les preuves
   de livraison
 form.product_option.preview_title: Aperçu de l'option

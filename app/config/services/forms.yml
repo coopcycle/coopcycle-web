@@ -263,3 +263,6 @@ services:
 
   AppBundle\Form\PackageWithQuantityType:
     tags: [ form.type ]
+
+  AppBundle\Form\Restaurant\LoopeatType:
+    tags: [ form.type ]
