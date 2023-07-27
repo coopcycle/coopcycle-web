@@ -78,6 +78,10 @@ if (addReusablePackaging) {
   addReusablePackaging.addEventListener("click", addFormToCollection)
 }
 
+$(document).on('click', '[data-reusable-packaging-delete]', function (e) {
+  $(e.currentTarget).closest('li').remove()
+})
+
 new Sortable(document.querySelector('#product_options'), {
   group: 'products',
   animation: 250,
