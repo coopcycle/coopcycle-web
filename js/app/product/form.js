@@ -42,9 +42,14 @@ $(function() {
   }
 })
 
+const collectionHolder = document.querySelector('.reusablePackagings > ul');
+
 $('#product_reusablePackagingEnabled').click(function() {
   if ($(this).is(":checked")) {
     $('.reusablePackagings').show()
+    if (collectionHolder.querySelectorAll('li').length === 0) {
+      addFormToCollection()
+    }
   } else {
     $('.reusablePackagings').hide()
   }
@@ -55,7 +60,6 @@ if (!$('#product_reusablePackagingEnabled').is(':checked')) {
 }
 
 const addFormToCollection = () => {
-  const collectionHolder = document.querySelector('.reusablePackagings > ul');
 
   const item = document.createElement('li');
 
