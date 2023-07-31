@@ -101,7 +101,7 @@ services:
   Redis $tile38: '@snc_redis.tile38'
   Sylius\Component\Resource\Repository\RepositoryInterface $taxRateRepository: '@sylius.repository.tax_rate'
   League\Flysystem\Filesystem $taskImagesFilesystem: '@task_images_filesystem'
-  Nucleos\ProfileBundle\Mailer\MailerInterface: '@nucleos_profile.mailer.default'
+  Nucleos\ProfileBundle\Mailer\RegistrationMailer: '@nucleos_profile.mailer.simple'
   Lcobucci\JWT\Configuration $cubeJsJwtConfiguration: '@cubejs.jwt.config'
   Hashids\Hashids $hashids8: '@hashids.8'
   Hashids\Hashids $hashids12: '@hashids.12'
