@@ -1259,3 +1259,7 @@ services:
 
   AppBundle\CubeJs\HttpClient:
     decorates: cubejs.client
+
+  AppBundle\Service\Tile38Helper:
+    arguments:
+      $fleetKey: '%tile38_fleet_key%'
