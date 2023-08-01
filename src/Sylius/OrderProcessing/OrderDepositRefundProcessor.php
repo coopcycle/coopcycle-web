@@ -12,14 +12,36 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class OrderDepositRefundProcessor implements OrderProcessorInterface
 {
+    /**
+     * Always add Loopeat processing fee
+     */
+    public const LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS = 'always';
+
+    /**
+     * Add Loopeat processing fee when customers returns containers
+     */
+    public const LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS = 'on_returns';
+
     public function __construct(
         AdjustmentFactoryInterface $adjustmentFactory,
         TranslatorInterface $translator,
-        int $loopeatProcessingFee = 0)
+        int $loopeatProcessingFee = 0,
+        string $loopeatProcessingFeeBehavior = self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS)
     {
         $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
         $this->loopeatProcessingFee = $loopeatProcessingFee;
+
+        if (!in_array($loopeatProcessingFeeBehavior, [self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS, self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS])) {
+            throw new \InvalidArgumentException(sprintf('$loopeatProcessingFeeBehavior should have value "%s" or "%s"', self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS, self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS));
+        }
+
+        $this->loopeatProcessingFeeBehavior = $loopeatProcessingFeeBehavior;
+    }
+
+    public function setLoopeatProcessingFeeBehavior($loopeatProcessingFeeBehavior)
+    {
+        $this->loopeatProcessingFeeBehavior = $loopeatProcessingFeeBehavior;
     }
 
     /**
@@ -96,12 +118,15 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
         // Collect an additional fee for LoopEat, *PER ORDER*
         // https://github.com/coopcycle/coopcycle-web/issues/2284
         if ($restaurant->isLoopeatEnabled() && $this->loopeatProcessingFee > 0) {
-            $order->addAdjustment($this->adjustmentFactory->createWithData(
-                AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
-                $this->translator->trans('order.adjustment_type.reusable_packaging.loopeat'),
-                $this->loopeatProcessingFee,
-                $neutral = false
-            ));
+            if (self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS === $this->loopeatProcessingFeeBehavior
+                || (self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS === $this->loopeatProcessingFeeBehavior && $order->hasLoopeatReturns())) {
+                $order->addAdjustment($this->adjustmentFactory->createWithData(
+                    AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+                    $this->translator->trans('order.adjustment_type.reusable_packaging.loopeat'),
+                    $this->loopeatProcessingFee,
+                    $neutral = false
+                ));
+            }
         } else if ($totalAmount > 0) {
             $order->addAdjustment($this->adjustmentFactory->createWithData(
                 AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,

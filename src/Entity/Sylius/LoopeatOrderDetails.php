@@ -113,4 +113,9 @@ class LoopeatOrderDetails
 
         return $this;
     }
+
+    public function hasReturns()
+    {
+        return count($this->returns) > 0;
+    }
 }

@@ -46,7 +46,7 @@ class OrderDepositRefundProcessorTest extends TestCase
         $this->orderDepositRefundProcessor = new OrderDepositRefundProcessor(
             $this->adjustmentFactory->reveal(),
             $this->translator->reveal(),
-            200
+            $loopeatProcessingFee = 200
         );
     }
 
@@ -279,6 +279,176 @@ class OrderDepositRefundProcessorTest extends TestCase
                     ['format_id' => 1, 'quantity' => 3]
                 ]
             ]);
+
+        $adjustment = $this->prophesize(AdjustmentInterface::class)->reveal();
+
+        $this->adjustmentFactory->createWithData(
+            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+            Argument::type('string'),
+            Argument::type('integer'),
+            Argument::type('bool')
+        )
+            ->shouldBeCalled()
+            ->will(function ($args) {
+                $adjustment = new Adjustment();
+                $adjustment->setType($args[0]);
+                $adjustment->setAmount($args[2]);
+
+                return $adjustment;
+            });
+
+        $item1 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 1, $units = 0.5, $enabled = true, $id = 1);
+        $item1
+            ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
+                return $adjustment->getAmount() === 0;
+            }))
+            ->shouldBeCalled();
+
+        $item2 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 2, $units = 1, $enabled = true, $id = 2);
+        $item2
+            ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
+                return $adjustment->getAmount() === 0;
+            }))
+            ->shouldBeCalled();
+
+        $items = new ArrayCollection([ $item1->reveal(), $item2->reveal() ]);
+        $order->getItems()->willReturn($items);
+
+        $order
+            ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
+                return $adjustment->getAmount() === 200;
+            }))
+            ->shouldBeCalled();
+
+        $this->orderDepositRefundProcessor->process($order->reveal());
+    }
+
+    public function testLoopeatProcessingFeeOnReturnsWithoutReturns()
+    {
+        $this->orderDepositRefundProcessor
+            ->setLoopeatProcessingFeeBehavior(OrderDepositRefundProcessor::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS);
+
+        $reusablePackaging = new ReusablePackaging();
+        $reusablePackaging->setPrice(0);
+        $reusablePackaging->setData(['id' => 1]);
+        $reusablePackaging->setType(reusablePackaging::TYPE_LOOPEAT);
+        $reusablePackaging->setName('Small box');
+
+        $restaurant = new LocalBusiness();
+        $restaurant->setDepositRefundEnabled(true);
+        $restaurant->addReusablePackaging($reusablePackaging);
+        $restaurant->setLoopeatEnabled(true);
+
+        $order = $this->prophesize(Order::class);
+        $order
+            ->isReusablePackagingEnabled()
+            ->willReturn(true);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->removeAdjustmentsRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
+            ->shouldBeCalled();
+        $order
+            ->getLoopeatDeliver()
+            ->willReturn([
+                1 => [
+                    ['format_id' => 1, 'quantity' => 3]
+                ]
+            ]);
+        $order
+            ->hasLoopeatReturns()
+            ->willReturn(false);
+
+        $adjustment = $this->prophesize(AdjustmentInterface::class)->reveal();
+
+        $this->adjustmentFactory->createWithData(
+            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+            Argument::type('string'),
+            Argument::type('integer'),
+            Argument::type('bool')
+        )
+            ->shouldBeCalled()
+            ->will(function ($args) {
+                $adjustment = new Adjustment();
+                $adjustment->setType($args[0]);
+                $adjustment->setAmount($args[2]);
+
+                return $adjustment;
+            });
+
+        $item1 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 1, $units = 0.5, $enabled = true, $id = 1);
+        $item1
+            ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
+                return $adjustment->getAmount() === 0;
+            }))
+            ->shouldBeCalled();
+
+        $item2 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 2, $units = 1, $enabled = true, $id = 2);
+        $item2
+            ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
+                return $adjustment->getAmount() === 0;
+            }))
+            ->shouldBeCalled();
+
+        $items = new ArrayCollection([ $item1->reveal(), $item2->reveal() ]);
+        $order->getItems()->willReturn($items);
+
+        $order
+            ->addAdjustment(Argument::type(Adjustment::class))
+            ->shouldNotBeCalled();
+
+        $this->orderDepositRefundProcessor->process($order->reveal());
+    }
+
+    public function testLoopeatProcessingFeeOnReturnsWithReturns()
+    {
+        $this->orderDepositRefundProcessor
+            ->setLoopeatProcessingFeeBehavior(OrderDepositRefundProcessor::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS);
+
+        $reusablePackaging = new ReusablePackaging();
+        $reusablePackaging->setPrice(0);
+        $reusablePackaging->setData(['id' => 1]);
+        $reusablePackaging->setType(reusablePackaging::TYPE_LOOPEAT);
+        $reusablePackaging->setName('Small box');
+
+        $restaurant = new LocalBusiness();
+        $restaurant->setDepositRefundEnabled(true);
+        $restaurant->addReusablePackaging($reusablePackaging);
+        $restaurant->setLoopeatEnabled(true);
+
+        $order = $this->prophesize(Order::class);
+        $order
+            ->isReusablePackagingEnabled()
+            ->willReturn(true);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->removeAdjustmentsRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
+            ->shouldBeCalled();
+        $order
+            ->getLoopeatDeliver()
+            ->willReturn([
+                1 => [
+                    ['format_id' => 1, 'quantity' => 3]
+                ]
+            ]);
+        $order
+            ->hasLoopeatReturns()
+            ->willReturn(true);
 
         $adjustment = $this->prophesize(AdjustmentInterface::class)->reveal();
 
