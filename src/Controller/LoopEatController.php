@@ -165,7 +165,7 @@ class LoopEatController extends AbstractController
 
         $objectManager->flush();
 
-        $initiative = $this->loopEatClient->initiative();
+        $initiative = $this->loopeatClient->initiative();
 
         $this->addFlash('notice', $translator->trans('loopeat.oauth_connect.success', [
             '%name%' => $initiative['name']
