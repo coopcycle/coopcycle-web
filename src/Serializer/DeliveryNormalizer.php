@@ -11,6 +11,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\Tile38Helper;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Persistence\ManagerRegistry;
@@ -32,7 +33,8 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         IriConverterInterface $iriConverter,
         ManagerRegistry $doctrine,
         UrlGeneratorInterface $urlGenerator,
-        Hashids $hashids8)
+        Hashids $hashids8,
+        Tile38Helper $tile38Helper)
     {
         $this->normalizer = $normalizer;
         $this->geocoder = $geocoder;
@@ -40,6 +42,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->doctrine = $doctrine;
         $this->urlGenerator = $urlGenerator;
         $this->hashids = $hashids8;
+        $this->tile38Helper = $tile38Helper;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -49,6 +52,23 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         $data['trackingUrl'] = $this->urlGenerator->generate('public_delivery', [
             'hashid' => $this->hashids->encode($object->getId())
         ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+        if (!$object->isCompleted()) {
+
+            $point = $this->tile38Helper->getLastLocationByDelivery($object);
+
+            if (null !== $point) {
+
+                // Warning: format is lng,lat
+                [$longitude, $latitude, $timestamp] = $point['coordinates'];
+
+                $data['location'] = [
+                    'lat' => $latitude,
+                    'lng' => $longitude,
+                    'updatedAt' => $timestamp,
+                ];
+            }
+        }
 
         return $data;
     }
