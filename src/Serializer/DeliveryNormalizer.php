@@ -53,17 +53,21 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
             'hashid' => $this->hashids->encode($object->getId())
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $point = $this->tile38Helper->getLastLocationByDelivery($object);
-        if (null !== $point) {
+        if (!$object->isCompleted()) {
 
-            // Warning: format is lng,lat
-            [$longitude, $latitude, $timestamp] = $point['coordinates'];
+            $point = $this->tile38Helper->getLastLocationByDelivery($object);
 
-            $data['location'] = [
-                'lat' => $latitude,
-                'lng' => $longitude,
-                'updatedAt' => $timestamp,
-            ];
+            if (null !== $point) {
+
+                // Warning: format is lng,lat
+                [$longitude, $latitude, $timestamp] = $point['coordinates'];
+
+                $data['location'] = [
+                    'lat' => $latitude,
+                    'lng' => $longitude,
+                    'updatedAt' => $timestamp,
+                ];
+            }
         }
 
         return $data;
