@@ -44,7 +44,7 @@ class PriceVisitor
 
 			$price = $rule->evaluatePrice($this->delivery, $this->expressionLanguage);
 
-			$variant = $this->productVariantFactory->createForPricingRule($rule, $price);
+			$variant = $this->productVariantFactory->createForPricingRule($rule, $price, $this->expressionLanguage);
 
 			$orderItem = $this->orderItemFactory->createNew();
 	        $orderItem->setVariant($variant);

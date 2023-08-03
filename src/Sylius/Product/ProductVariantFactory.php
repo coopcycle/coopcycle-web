@@ -4,6 +4,7 @@ namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
+use AppBundle\Pricing\RuleHumanizer;
 use AppBundle\Service\SettingsManager;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Model\ProductInterface;
@@ -14,6 +15,7 @@ use Sylius\Component\Product\Repository\ProductVariantRepositoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ProductVariantFactory implements ProductVariantFactoryInterface
 {
@@ -103,7 +105,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         return $productVariant;
     }
 
-    public function createForPricingRule(PricingRule $rule, int $price): ProductVariantInterface
+    public function createForPricingRule(PricingRule $rule, int $price, ExpressionLanguage $expressionLanguage): ProductVariantInterface
     {
         $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
 
@@ -115,12 +117,16 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
         $productVariant = $this->createForProduct($product);
 
-        $productVariant->setName('Distance XXX'); // TODO Make this dynamic
+
         $productVariant->setPosition(1);
 
         $productVariant->setPrice($price);
         $productVariant->setTaxCategory($taxCategory);
         $productVariant->setCode($uuid = Uuid::uuid4()->toString());
+
+        $humanizer = new RuleHumanizer($expressionLanguage);
+
+        $productVariant->setName($humanizer->humanize($rule));
 
         return $productVariant;
     }
