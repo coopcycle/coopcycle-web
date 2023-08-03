@@ -26,6 +26,16 @@ class PriceVisitor
 	{
 	}
 
+	public function getMatchedRules(): array
+	{
+		return $this->matchedRules;
+	}
+
+	public function getOrder(): OrderInterface
+	{
+		return $this->order;
+	}
+
 	public function visit(PricingRule $rule)
 	{
 		if ($rule->matches($this->delivery, $this->expressionLanguage)) {

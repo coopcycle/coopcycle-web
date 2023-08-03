@@ -106,8 +106,14 @@ class PriceCalculatorTest extends KernelTestCase
         $delivery->setStore($store);
         $delivery->setDistance(3500);
 
-        $order = $this->priceCalculator->createOrder($delivery);
+        $visitor = $this->priceCalculator->visit($delivery);
+
+        $this->assertCount(1, $visitor->getMatchedRules());
+        $this->assertContains($rule2, $visitor->getMatchedRules());
+
+        $order = $visitor->getOrder();
 
         $this->assertEquals(699, $order->getTotal());
+        $this->assertEquals(1, $order->countItems());
     }
 }

@@ -25,7 +25,7 @@ class PriceCalculator
 
 	}
 
-	public function createOrder(Delivery $delivery): OrderInterface
+	public function visit(Delivery $delivery): PriceVisitor
 	{
 		$order = $this->orderFactory->createNew();
 
@@ -53,6 +53,6 @@ class PriceCalculator
             }
         }
 
-		return $order;
+		return $visitor;
 	}
 }
