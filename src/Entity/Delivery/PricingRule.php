@@ -8,6 +8,7 @@ use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\YesNoOutput;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
+use AppBundle\Pricing\PriceVisitor;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -137,5 +138,10 @@ class PricingRule
         }
 
         return $language->evaluate($this->getExpression(), Delivery::toExpressionLanguageValues($delivery));
+    }
+
+    public function accept(PriceVisitor $visitor)
+    {
+        $visitor->visit($this);
     }
 }

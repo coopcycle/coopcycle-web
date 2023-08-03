@@ -3,7 +3,9 @@
 namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Service\SettingsManager;
+use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
@@ -97,6 +99,28 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $productVariant->setPrice($price);
         $productVariant->setTaxCategory($taxCategory);
         $productVariant->setCode($code);
+
+        return $productVariant;
+    }
+
+    public function createForPricingRule(PricingRule $rule, int $price): ProductVariantInterface
+    {
+        $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+
+        $subjectToVat = $this->settingsManager->get('subject_to_vat');
+
+        $taxCategory = $this->taxCategoryRepository->findOneBy([
+            'code' => $subjectToVat ? 'SERVICE' : 'SERVICE_TAX_EXEMPT'
+        ]);
+
+        $productVariant = $this->createForProduct($product);
+
+        $productVariant->setName('Distance XXX'); // TODO Make this dynamic
+        $productVariant->setPosition(1);
+
+        $productVariant->setPrice($price);
+        $productVariant->setTaxCategory($taxCategory);
+        $productVariant->setCode($uuid = Uuid::uuid4()->toString());
 
         return $productVariant;
     }
