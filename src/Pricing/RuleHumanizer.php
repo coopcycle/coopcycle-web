@@ -71,22 +71,12 @@ class RuleHumanizer
 
 		} else {
 
-			$rawValue = $node->nodes['right']->attributes['value'];
-			$formattedValue = '';
-			switch ($attributeName) {
-				case 'weight':
-					$formattedValue = sprintf('%s kg', number_format($rawValue / 1000, 2));
-					break;
-				case 'distance':
-					$formattedValue = sprintf('%s km', number_format($rawValue / 1000, 2));
-					break;
-			}
-
+			$value = $node->nodes['right']->attributes['value'];
 			if ($node->attributes['operator'] === '<') {
-				return sprintf('less than %s', $formattedValue);
+				return sprintf('less than %s', $this->formatValue($value, $attributeName));
 			}
 			if ($node->attributes['operator'] === '>') {
-				return sprintf('more than %s', $formattedValue);
+				return sprintf('more than %s', $this->formatValue($value, $attributeName));
 			}
 		}
 	}
