@@ -24,9 +24,23 @@ class RuleHumanizerTest extends KernelTestCase
     public function testDistance()
     {
     	$rule = new PricingRule();
-        $rule->setExpression('distance in 3000..5000');
 
-        $this->assertEquals('distance between 3.00 km and 5.00 km', $this->humanizer->humanize($rule));
+    	$rule->setExpression('distance > 5000');
+        $this->assertEquals('more than 5.00 km', $this->humanizer->humanize($rule));
+
+        $rule->setExpression('distance in 3000..5000');
+        $this->assertEquals('between 3.00 km and 5.00 km', $this->humanizer->humanize($rule));
+    }
+
+    public function testWeight()
+    {
+    	$rule = new PricingRule();
+
+        $rule->setExpression('weight > 5000');
+        $this->assertEquals('more than 5.00 kg', $this->humanizer->humanize($rule));
+
+        $rule->setExpression('weight in 3000..5000');
+        $this->assertEquals('between 3.00 kg and 5.00 kg', $this->humanizer->humanize($rule));
     }
 
     public function testInZone()
@@ -34,14 +48,14 @@ class RuleHumanizerTest extends KernelTestCase
     	$rule = new PricingRule();
         $rule->setExpression('in_zone(dropoff.address, "south")');
 
-        $this->assertEquals('dropoff address in zone "south"', $this->humanizer->humanize($rule));
+        $this->assertEquals('dropoff address inside zone "south"', $this->humanizer->humanize($rule));
     }
 
     public function testInZoneOutZone()
     {
     	$rule = new PricingRule();
-        $rule->setExpression('in_zone(pickup.address, "south") and out_zone(dropoff.address, "north")');
+        $rule->setExpression('in_zone(pickup.address, "south") and out_zone(dropoff.address, "north") and weight > 5000');
 
-        $this->assertEquals('pickup address in zone "south", dropoff address in zone "north"', $this->humanizer->humanize($rule));
+        $this->assertEquals('pickup address inside zone "south", dropoff address outside zone "north", more than 5.00 kg', $this->humanizer->humanize($rule));
     }
 }

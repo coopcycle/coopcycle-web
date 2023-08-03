@@ -4,6 +4,9 @@ namespace AppBundle\Pricing;
 
 use AppBundle\Entity\Delivery\PricingRule;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\ExpressionLanguage\Node\BinaryNode;
+use Symfony\Component\ExpressionLanguage\Node\Node;
+use Symfony\Component\ExpressionLanguage\Node\FunctionNode;
 
 class RuleHumanizer
 {
@@ -23,22 +26,80 @@ class RuleHumanizer
             'order',
         ]);
 
-        $rootNode = $parsedExpression->getNodes();
+        $accumulator = new \ArrayObject();
 
-        $text = '';
+        $this->traverseNode($parsedExpression->getNodes(), $accumulator);
 
-        if ($rootNode->nodes['left']->attributes['name'] === 'distance') {
-            if ($rootNode->attributes['operator'] === 'in') {
-                $left = $rootNode->nodes['right']->nodes['left']->attributes['value'];
-                $right = $rootNode->nodes['right']->nodes['right']->attributes['value'];
+        return implode(', ', $accumulator->getArrayCopy());
+	}
 
-                $text .= sprintf('distance between %s and %s',
-                    sprintf('%s km', number_format($left / 1000, 2)),
-                    sprintf('%s km', number_format($right / 1000, 2))
-                );
-            }
+	private function traverseNode(Node $node, $accumulator)
+	{
+		if (isset($node->attributes['operator']) && $node->attributes['operator'] === 'and') {
+        	$this->traverseNode($node->nodes['left'], $accumulator);
+        	$this->traverseNode($node->nodes['right'], $accumulator);
+        } else {
+        	if ($node instanceof FunctionNode) {
+        		if ($node->attributes['name'] === 'in_zone' || $node->attributes['name'] === 'out_zone') {
+        			$accumulator[] = $this->humanizeZoneFunction($node);
+        		}
+        	} elseif ($node instanceof BinaryNode) {
+        		$accumulator[] = $this->humanizeBinaryNode($node);
+        	}
         }
+	}
 
-        return $text;
+	private function humanizeZoneFunction(FunctionNode $node): string
+	{
+		$taskType = $node->nodes['arguments']->nodes[0]->nodes['node']->attributes['name'];
+		$zoneName = $node->nodes['arguments']->nodes[1]->attributes['value'];
+		$direction = $node->attributes['name'] === 'in_zone' ? 'inside' : 'outside';
+
+		return sprintf('%s address %s zone "%s"', $taskType, $direction, $zoneName);
+	}
+
+	private function humanizeBinaryNode(BinaryNode $node): string
+	{
+		$attributeName = $node->nodes['left']->attributes['name'];
+
+		if ($node->attributes['operator'] === 'in') {
+
+			$left = $node->nodes['right']->nodes['left']->attributes['value'];
+			$right = $node->nodes['right']->nodes['right']->attributes['value'];
+
+			return sprintf('between %s and %s', $this->formatValue($left, $attributeName), $this->formatValue($right, $attributeName));
+
+		} else {
+
+			$rawValue = $node->nodes['right']->attributes['value'];
+			$formattedValue = '';
+			switch ($attributeName) {
+				case 'weight':
+					$formattedValue = sprintf('%s kg', number_format($rawValue / 1000, 2));
+					break;
+				case 'distance':
+					$formattedValue = sprintf('%s km', number_format($rawValue / 1000, 2));
+					break;
+			}
+
+			if ($node->attributes['operator'] === '<') {
+				return sprintf('less than %s', $formattedValue);
+			}
+			if ($node->attributes['operator'] === '>') {
+				return sprintf('more than %s', $formattedValue);
+			}
+		}
+	}
+
+	private function formatValue($value, $unit)
+	{
+		switch ($unit) {
+			case 'weight':
+				return sprintf('%s kg', number_format($value / 1000, 2));
+			case 'distance':
+				return sprintf('%s km', number_format($value / 1000, 2));
+		}
+
+		return $value;
 	}
 }
