@@ -5,7 +5,6 @@ default:
     default:
       contexts:
         - Tests\Behat\FeatureContext
-            httpMessageFactory: '@league.oauth2_server.factory.psr_http'
         - Behat\MinkExtension\Context\MinkContext
         - Behatch\Context\RestContext
         - Tests\Behat\JsonContext:

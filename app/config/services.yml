@@ -111,6 +111,7 @@ services:
   ACSEO\TypesenseBundle\Manager\DocumentManager: '@typesense.document_manager'
   ACSEO\TypesenseBundle\Client\CollectionClient: '@typesense.collection_client'
   ACSEO\TypesenseBundle\Client\TypesenseClient: '@typesense.client'
+  Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface: '@league.oauth2_server.factory.psr_http'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
