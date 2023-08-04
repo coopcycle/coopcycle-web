@@ -36,7 +36,6 @@ use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Geotools;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -762,7 +761,6 @@ class RestaurantController extends AbstractController
 
     /**
      * @Route("/restaurants/suggest", name="restaurants_suggest")
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
     public function suggestRestaurantAction(Request $request,
         EntityManagerInterface $manager,
@@ -770,6 +768,8 @@ class RestaurantController extends AbstractController
         SettingsManager $settingsManager,
         TranslatorInterface $translator)
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         if ('yes' !== $settingsManager->get('enable_restaurant_pledges')) {
             throw new NotFoundHttpException();
         }
@@ -808,10 +808,11 @@ class RestaurantController extends AbstractController
 
     /**
      * @Route("/restaurant/{id}/vote", name="restaurant_vote", methods={"POST"})
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
     public function voteAction($id, SettingsManager $settingsManager)
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         if ('yes' !== $settingsManager->get('enable_restaurant_pledges')) {
             throw new NotFoundHttpException();
         }

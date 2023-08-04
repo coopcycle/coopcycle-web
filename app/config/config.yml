@@ -946,13 +946,6 @@ mjml:
     options:
         service_id: 'AppBundle\Mjml\MjmlServerRenderer'
 
-sensio_framework_extra:
-    router:
-        annotations: false
-    request:
-        converters: true
-        disable: ['doctrine.orm']
-
 # https://github.com/doctrine/DoctrineMigrationsBundle/issues/305
 doctrine_migrations:
     migrations_paths:
