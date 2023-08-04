@@ -291,6 +291,8 @@ class AdminController extends AbstractController
 
         foreach ($form->get('payments') as $paymentForm) {
             if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
+                // https://github.com/symfony/symfony/issues/35277
+                /** @var \Symfony\Component\Form\Form $paymentForm */
                 $hasClickedRefund =
                     $paymentForm->getClickedButton() && 'refund' === $paymentForm->getClickedButton()->getName();
 

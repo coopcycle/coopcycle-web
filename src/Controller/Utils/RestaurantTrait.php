@@ -117,9 +117,12 @@ trait RestaurantTrait
             'dabba_enabled' => $this->getParameter('dabba_enabled'),
         ]);
 
+        /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
+        $session = $request->getSession();
+
         // Associate Stripe account with restaurant
-        if ($request->getSession()->getFlashBag()->has('stripe_account')) {
-            $messages = $request->getSession()->getFlashBag()->get('stripe_account');
+        if ($session->getFlashBag()->has('stripe_account')) {
+            $messages = $session->getFlashBag()->get('stripe_account');
             if (!empty($messages)) {
                 foreach ($messages as $stripeAccountId) {
                     $stripeAccount = $this->getDoctrine()
