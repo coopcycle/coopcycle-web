@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "95aacbf0d0222c06951c5e6daf0b903d",
+    "content-hash": "7d75875a5c1ba2bf6211f4d01308df9e",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -20372,24 +20372,23 @@
     "packages-dev": [
         {
             "name": "aeon-php/calendar",
-            "version": "1.0.8",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aeon-php/calendar.git",
-                "reference": "7951c3e5c49d713cd27e3345b4a137fd2fa3e68a"
+                "reference": "0ea9a520a058e8a18ee70bfddad1117f490f0ffb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aeon-php/calendar/zipball/7951c3e5c49d713cd27e3345b4a137fd2fa3e68a",
-                "reference": "7951c3e5c49d713cd27e3345b4a137fd2fa3e68a",
+                "url": "https://api.github.com/repos/aeon-php/calendar/zipball/0ea9a520a058e8a18ee70bfddad1117f490f0ffb",
+                "reference": "0ea9a520a058e8a18ee70bfddad1117f490f0ffb",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.1.10 || ~8.2"
+                "php": "^7.4.2 || ~8.0 || ~8.1"
             },
             "require-dev": {
-                "ext-bcmath": "*",
-                "ext-pcov": "*"
+                "ext-bcmath": "*"
             },
             "suggest": {
                 "ext-bcmath": "Compare time units with high precision"
@@ -20416,9 +20415,9 @@
             ],
             "support": {
                 "issues": "https://github.com/aeon-php/calendar/issues",
-                "source": "https://github.com/aeon-php/calendar/tree/1.0.8"
+                "source": "https://github.com/aeon-php/calendar/tree/1.0.6"
             },
-            "time": "2023-03-28T11:08:43+00:00"
+            "time": "2022-08-22T16:52:49+00:00"
         },
         {
             "name": "behat/behat",

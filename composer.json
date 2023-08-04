@@ -151,7 +151,8 @@
         "friends-of-behat/mink-extension": "^2.5",
         "friends-of-behat/mink-browserkit-driver": "^1.4",
         "rector/rector": "^0.12",
-        "phpstan/phpstan-doctrine": "^1.0"
+        "phpstan/phpstan-doctrine": "^1.0",
+        "aeon-php/calendar": "1.0.6"
     },
     "repositories": [
         {
