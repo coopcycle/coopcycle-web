@@ -23,7 +23,8 @@
     "config": {
         "process-timeout":0,
         "allow-plugins": {
-            "drupal/core-vendor-hardening": true
+            "drupal/core-vendor-hardening": true,
+            "php-http/discovery": true
         }
     },
     "require": {
@@ -97,7 +98,7 @@
         "phpdocumentor/reflection-docblock": "^5.1",
         "sylius/customer-bundle": "^1.6",
         "mailjet/mailjet-apiv3-php": "^1.4",
-        "edamov/pushok": "^0.14",
+        "edamov/pushok": "^0.15",
         "twig/intl-extra": "^3.0",
         "odolbeau/phone-number-bundle": "^3.1",
         "league/omnipay": "^3.2.1",
@@ -107,7 +108,7 @@
         "friendsofsymfony/rest-bundle": "^3.0",
         "geocoder-php/open-cage-provider": "^4.4",
         "spatie/guzzle-rate-limiter-middleware": "^2.0",
-        "geocoder-php/photon-provider": "^0.5.0",
+        "geocoder-php/photon-provider": "^0.6.0",
         "ppshobi/psonic": "^2.0",
         "doctrine/cache": "^2.0",
         "spatie/opening-hours": "^2.10",
