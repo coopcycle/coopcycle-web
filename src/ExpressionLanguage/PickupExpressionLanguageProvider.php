@@ -69,6 +69,12 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
 
         $timeRangeLengthEvaluator = function ($arguments, $task, $unit) {
 
+            // May happen for multiple points
+            // FIXME Won't work as expected when using "less than", i.e time_range_length(pickup) < 3
+            if (null === $task->after || null === $task->before) {
+                return -1;
+            }
+
             $after = Carbon::instance($task->after);
             $before = Carbon::instance($task->before);
 
