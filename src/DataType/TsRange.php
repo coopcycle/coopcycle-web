@@ -9,7 +9,7 @@ class TsRange
     /**
      * @return \DateTime
      */
-    public function getLower(): \DateTime
+    public function getLower(): \DateTimeInterface
     {
         return $this->lower;
     }
@@ -19,7 +19,7 @@ class TsRange
      *
      * @return self
      */
-    public function setLower(\DateTime $lower)
+    public function setLower(\DateTimeInterface $lower)
     {
         $this->lower = $lower;
 
@@ -29,7 +29,7 @@ class TsRange
     /**
      * @return \DateTime
      */
-    public function getUpper(): \DateTime
+    public function getUpper(): \DateTimeInterface
     {
         return $this->upper;
     }
@@ -39,7 +39,7 @@ class TsRange
      *
      * @return self
      */
-    public function setUpper(\DateTime $upper)
+    public function setUpper(\DateTimeInterface $upper)
     {
         $this->upper = $upper;
 
