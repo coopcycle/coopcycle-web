@@ -24,6 +24,7 @@ use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Api\Filter\OrganizationFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
+use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Task\Group as TaskGroup;
@@ -34,12 +35,15 @@ use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareTrait;
+use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\Pricing\PricingRuleMatcherInterface;
 use AppBundle\Validator\Constraints\Task as AssertTask;
 use AppBundle\Vroom\Job as VroomJob;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -263,7 +267,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(OrganizationFilter::class, properties={"organization"})
  * @UniqueEntity(fields={"organization", "ref"}, errorPath="ref")
  */
-class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface
+class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface, PricingRuleMatcherInterface
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
@@ -984,5 +988,48 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->tour = $tour;
 
         return $this;
+    }
+
+    public function toExpressionLanguageObject()
+    {
+        $taskObject = new \stdClass();
+
+        $taskObject->address = $this->getAddress();
+        $taskObject->createdAt = $this->getCreatedAt();
+        $taskObject->after = $this->getAfter();
+        $taskObject->before = $this->getBefore();
+        $taskObject->doorstep = $this->isDoorstep();
+
+        return $taskObject;
+    }
+
+    public function toExpressionLanguageValues()
+    {
+        $values = Delivery::toExpressionLanguageValues($this->getDelivery());
+
+        $emptyObject = new \stdClass();
+        $emptyObject->address = null;
+        $emptyObject->createdAt = null;
+        $emptyObject->after = null;
+        $emptyObject->before = null;
+        $emptyObject->doorstep = false;
+
+        $values['distance'] = -1;
+        $values['weight'] = $this->getWeight();
+        $values['pickup'] = $this->isPickup() ? $this->toExpressionLanguageObject() : $emptyObject;
+        $values['dropoff'] = $this->isDropoff() ? $this->toExpressionLanguageObject() : $emptyObject;
+
+        return $values;
+    }
+
+    public function matchesPricingRule(PricingRule $pricingRule, ExpressionLanguage $language = null)
+    {
+        if (null === $language) {
+            $language = new ExpressionLanguage();
+        }
+
+        $expression = $pricingRule->getExpression();
+
+        return $language->evaluate($expression, $this->toExpressionLanguageValues());
     }
 }
