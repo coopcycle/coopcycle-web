@@ -23,6 +23,8 @@ class DeliverySpreadsheetParserTest extends TestCase
         $this->slugify = $this->prophesize(SlugifyInterface::class);
         $this->translator = $this->prophesize(TranslatorInterface::class);
 
+        $this->slugify->slugify(Argument::type('string'))->willReturn('');
+
         $this->geocoder
             ->geocode(Argument::type('string'))
             ->willReturn(new Address());
