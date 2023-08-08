@@ -49,7 +49,5 @@ time_range_jump.next_day: Il n'est plus possible de commander pour aujourd'hui
 
 order.shippingTimeRange.notAvailable: Indisponible pour l'instant
 
-store.multi_drop.conflict: Vous ne pouvez pas créer des commandes et activer les dépôts multiples en même temps
-
 dabba.insufficient_wallet: Il vous manque %amount% sur votre cagnotte Dabba
 

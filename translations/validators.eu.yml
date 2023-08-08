@@ -1,6 +1,4 @@
 restaurant.stripeAccount.notSet: Lotu jatetxea Stripe kontu batera
-store.multi_drop.conflict: Ezin dituzu eskaerak sortu eta banaketa-puntu anitzak gaitu
-  aldi berean
 pricing_rule.expression.syntax_error: Sintaxi-errorea "%expression%" adierazpenean
 order.shippingTimeRange.notAvailable: Ez dago eskuragarri momentuz
 time_range_jump.next_day: Ez da posible gaurko eskatzea
