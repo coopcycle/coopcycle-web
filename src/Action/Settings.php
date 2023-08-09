@@ -16,7 +16,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use AppBundle\Entity\DeliveryForm;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Hashids\Hashids;
-use Exception;
 
 class Settings
 {
@@ -108,8 +107,6 @@ class Settings
             $deliveryFormId = $deliveryForm->getId();
             $deliveryFormIdHash = $this->hashids12->encode($deliveryFormId);
             $data['default_delivery_form_url'] = $this->router->generate('embed_delivery_start', ['hashid'=> $deliveryFormIdHash], UrlGeneratorInterface::ABSOLUTE_URL);
-        } else {
-            throw new Exception("More than 1 or zero deliveryForm with showHomepage = true");
         }
         
         if ($request->query->has('format') && 'hash' === $request->query->get('format')) {
