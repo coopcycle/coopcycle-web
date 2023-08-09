@@ -26,8 +26,6 @@
   {{ form_start(form, { action: path(app.request.attributes.get('_route'), form_action_params) }) }}
   <div class="alert alert-info">
     {% trans with {
-      '%pickup_date%':        delivery.pickup.doneBefore|format_datetime('medium', 'short'),
-      '%pickup_address%':     delivery.pickup.address.streetAddress,
       '%dropoff_date%':        delivery.dropoff.doneBefore|format_datetime('medium', 'short'),
       '%dropoff_address%':     delivery.dropoff.address.streetAddress,
       '%distance%':            (delivery.distance / 1000)|round(2, 'floor'),
