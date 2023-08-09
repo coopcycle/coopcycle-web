@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "edb7677e02f221024dc9ed1a65ba0e8c",
+    "content-hash": "855d86dc3d81bf503b65c2a51f1d1ca8",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -13873,39 +13873,37 @@
         },
         {
             "name": "snc/redis-bundle",
-            "version": "4.6.0",
+            "version": "4.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/snc/SncRedisBundle.git",
-                "reference": "dc5f4438d669f1c52234f1d2b7bc558f8399c58e"
+                "reference": "5ac15ab0824a4a4448ba27edd2e2773c159c373d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/snc/SncRedisBundle/zipball/dc5f4438d669f1c52234f1d2b7bc558f8399c58e",
-                "reference": "dc5f4438d669f1c52234f1d2b7bc558f8399c58e",
+                "url": "https://api.github.com/repos/snc/SncRedisBundle/zipball/5ac15ab0824a4a4448ba27edd2e2773c159c373d",
+                "reference": "5ac15ab0824a4a4448ba27edd2e2773c159c373d",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4 || ^8.0",
-                "symfony/deprecation-contracts": "^2 || ^3",
                 "symfony/framework-bundle": "^4.4 || ^5.3 || ^6.0",
                 "symfony/http-foundation": "^4.4 || ^5.3 || ^6.0",
-                "symfony/service-contracts": ">=1.0",
                 "symfony/var-dumper": "^4.4 || ^5.3 || ^6.0"
             },
             "conflict": {
                 "ext-redis": "<5.3",
-                "predis/predis": "<2.0 || >=3.0"
+                "predis/predis": "<1.1,>=2.0"
             },
             "require-dev": {
                 "doctrine/annotations": "^1.13",
-                "doctrine/coding-standard": "^10.0",
+                "doctrine/coding-standard": "^9.0",
                 "ext-pdo_sqlite": "*",
                 "ext-redis": "*",
                 "friendsofphp/proxy-manager-lts": "^1.0.6",
                 "monolog/monolog": "*",
-                "phpunit/phpunit": "^8.5.32 || ^9.5.28",
-                "predis/predis": "^2.0",
+                "phpunit/phpunit": "^8.5 || ^9.5",
+                "predis/predis": ">=1.1",
                 "symfony/browser-kit": "^4.4 || ^5.3 || ^6.0",
                 "symfony/cache": "^4.4 || ^5.3 || ^6.0",
                 "symfony/console": "^4.4 || ^5.3 || ^6.0",
@@ -13917,7 +13915,7 @@
                 "symfony/stopwatch": "^4.4 || ^5.3 || ^6.0",
                 "symfony/twig-bundle": "^4.4 || ^5.3 || ^6.0",
                 "symfony/yaml": "^4.4 || ^5.3 || ^6.0",
-                "vimeo/psalm": "^5.2"
+                "vimeo/psalm": "^4.13"
             },
             "suggest": {
                 "monolog/monolog": "If you want to use the monolog redis handler.",
@@ -13959,9 +13957,9 @@
             ],
             "support": {
                 "issues": "https://github.com/snc/SncRedisBundle/issues",
-                "source": "https://github.com/snc/SncRedisBundle/tree/4.6.0"
+                "source": "https://github.com/snc/SncRedisBundle/tree/4.3.0"
             },
-            "time": "2023-01-29T15:18:19+00:00"
+            "time": "2022-07-13T20:58:05+00:00"
         },
         {
             "name": "sonata-project/block-bundle",
