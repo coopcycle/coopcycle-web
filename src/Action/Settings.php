@@ -5,6 +5,7 @@ namespace AppBundle\Action;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimeRegistry;
 use Aws\S3\Exception\S3Exception;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use Liip\ImagineBundle\Service\FilterService;
 use Misd\PhoneNumberBundle\Serializer\Normalizer\PhoneNumberNormalizer;
@@ -12,7 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Persistence\ManagerRegistry;
 use AppBundle\Entity\DeliveryForm;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Hashids\Hashids;
@@ -25,7 +25,7 @@ class Settings
     private $locale;
     private $splitTermsAndConditionsAndPrivacyPolicy;
     private $timeRegistry;
-    private $doctrine;
+    private $entityManager;
     private $router;
     private $keys = [
         'brand_name',
@@ -48,7 +48,7 @@ class Settings
         $country,
         $locale,
         $splitTermsAndConditionsAndPrivacyPolicy,
-        ManagerRegistry $doctrine,
+        EntityManagerInterface $entityManager,
         UrlGeneratorInterface $router,
         Hashids $hashids12)
     {
@@ -60,7 +60,7 @@ class Settings
         $this->country = $country;
         $this->locale = $locale;
         $this->splitTermsAndConditionsAndPrivacyPolicy = (bool) $splitTermsAndConditionsAndPrivacyPolicy;
-        $this->doctrine = $doctrine;
+        $this->entityManager = $entityManager;
         $this->router = $router;
         $this->hashids12 = $hashids12;
     }
@@ -101,7 +101,7 @@ class Settings
         $data['average_preparation_time'] = $this->timeRegistry->getAveragePreparationTime();
         $data['average_shipping_time'] = $this->timeRegistry->getAverageShippingTime();
 
-        $deliveryForm = $this->doctrine->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true]);
+        $deliveryForm = $this->entityManager->getRepository(DeliveryForm::class)->findOneBy(['showHomepage' => true]);
 
         if ($deliveryForm) {
             $deliveryFormId = $deliveryForm->getId();
