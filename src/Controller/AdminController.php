@@ -789,7 +789,7 @@ class AdminController extends AbstractController
             'query' => null,
             'range' => null,
         ];
-        if (!is_null($request->query->get('q'))) {
+        if ($request->query->has('q')) {
 
             $filters['query'] = $request->query->get('q');
 
