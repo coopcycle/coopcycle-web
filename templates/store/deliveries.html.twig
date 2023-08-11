@@ -66,4 +66,9 @@
 
 {% block scripts %}
   {{ encore_entry_script_tags('delivery-list') }}
+  <script>
+    new CoopCycle.DateRangePicker(document.getElementById('daterange_widget'), {
+      showTime: false
+    })
+  </script>
 {% endblock %}
