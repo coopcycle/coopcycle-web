@@ -818,7 +818,7 @@ class AdminController extends AbstractController
             }
         }
 
-        if (!is_null($request->query->get('start_at')) && !is_null($request->query->get('end_at'))) {
+        if ($request->query->has('start_at') && $request->query->has('end_at')) {
             $start = Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime();
             $end = Carbon::parse($request->query->get('end_at'))->setTime(23, 59, 59)->toDateTime();
             $filters['range'] = [$start, $end];
