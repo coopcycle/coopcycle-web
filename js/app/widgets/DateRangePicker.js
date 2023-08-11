@@ -13,9 +13,14 @@ class DateRangePicker extends React.Component {
 
   constructor(props) {
     super(props)
+
+    let value = []
+    if (this.props.defaultValue) {
+      value = [moment(this.props.defaultValue.after), moment(this.props.defaultValue.before)]
+    }
+
     this.state = {
-      after: this.props.defaultValue.after,
-      before: this.props.defaultValue.before,
+      value
     }
 
     this.onChange = this.onChange.bind(this)
@@ -32,23 +37,29 @@ class DateRangePicker extends React.Component {
       before: value[1],
     }
 
-    this.setState(values)
+    this.setState(value)
 
     this.props.onChange(values)
   }
 
   render() {
 
+    let props = {}
+    if (this.props.showTime) {
+      props = {showTime: {
+      ...timePickerProps,
+          hideDisabledOptions: true,
+      }}
+    }
+
     return (
       <DatePicker.RangePicker
         style={{ width: '100%' }}
-        showTime={{
-          ...timePickerProps,
-          hideDisabledOptions: true,
-        }}
-        format="LLL"
-        defaultValue={[ moment(this.state.after), moment(this.state.before) ]}
-        onChange={(value) => this.onChange(value)} />
+        format={this.props.format}
+        defaultValue={this.state.value}
+        onChange={(value) => this.onChange(value)}
+        {...props}
+    />
     )
   }
 }
@@ -58,7 +69,8 @@ export default function(el, options) {
   const defaultProps = {
     getDatePickerContainer: null,
     getTimePickerContainer: null,
-    onChange: () => {}
+    onChange: () => {},
+    format: 'LLL',
   }
 
   const props = { ...defaultProps, ...options }
