@@ -16,6 +16,7 @@ use AppBundle\Sylius\Taxation\TaxesHelper;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Psonic\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -94,7 +95,9 @@ class DashboardController extends AbstractController
         CubeJsTokenFactory $tokenFactory,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
-        OrderFactory $orderFactory)
+        OrderFactory $orderFactory,
+        Client $client
+    )
     {
         $user = $this->getUser();
 
@@ -110,7 +113,15 @@ class DashboardController extends AbstractController
             $request->attributes->set('layout', 'dashboard.html.twig');
             $request->attributes->set('routes', $routes);
 
-            return $this->storeDeliveriesAction($store->getId(), $request, $paginator, $orderManager, $deliveryManager, $orderFactory);
+            return $this->storeDeliveriesAction(
+                $store->getId(),
+                $request,
+                $paginator,
+                $orderManager,
+                $deliveryManager,
+                $orderFactory,
+                $client
+            );
         }
 
         if ($user->hasRole('ROLE_RESTAURANT') && $request->attributes->has('_restaurant')) {

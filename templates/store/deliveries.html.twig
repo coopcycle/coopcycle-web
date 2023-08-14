@@ -24,6 +24,7 @@
   </div>
 {% endif %}
 
+{% if not filters.enabled %}
 <h3>{{ 'basics.today'|trans }}</h3>
 {% include '_partials/delivery/list.html.twig' with { deliveries: today } %}
 
@@ -33,6 +34,7 @@
 <hr>
 
 <h3>{{ 'deliveries.section.past'|trans }}</h3>
+{% endif %}
 {% include '_partials/delivery/list.html.twig' %}
 
 <nav class="text-center">
@@ -67,12 +69,32 @@
 {% block scripts %}
   {{ encore_entry_script_tags('delivery-list') }}
   <script>
+    const startEl = document.getElementById('start_at')
+    const endEl = document.getElementById('end_at')
+    let defaultValue = {}
+
+    if (startEl.dataset.default) {
+      defaultValue = {
+        before: startEl.dataset.default,
+        ...defaultValue
+      }
+    }
+
+    if (endEl.dataset.default) {
+      defaultValue = {
+        after: endEl.dataset.default,
+        ...defaultValue
+      }
+    }
+
+    console.log(defaultValue)
     new CoopCycle.DateRangePicker(document.getElementById('daterange_widget'), {
+      defaultValue,
       showTime: false,
       format: 'DD MMM',
-      onChange: function ({before, after}) {
-        document.getElementById('start_at').value = before.format('YYYY-MM-DD')
-        document.getElementById('end_at').value = after.format('YYYY-MM-DD')
+      onChange: function ({after, before}) {
+        startEl.value = after.format('YYYY-MM-DD')
+        endEl.value = before.format('YYYY-MM-DD')
       }
     })
   </script>

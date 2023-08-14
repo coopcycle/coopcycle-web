@@ -28,6 +28,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Psonic\Client;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
@@ -38,6 +39,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Intl\Languages;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
@@ -348,7 +350,7 @@ trait StoreTrait
     }
 
     public function storeDeliveriesAction($id, Request $request, PaginatorInterface $paginator,
-        OrderManager $orderManager, DeliveryManager $deliveryManager, OrderFactory $orderFactory)
+        OrderManager $orderManager, DeliveryManager $deliveryManager, OrderFactory $orderFactory, Client $client)
     {
         $store = $this->getDoctrine()
             ->getRepository(Store::class)
@@ -368,16 +370,60 @@ trait StoreTrait
                 $routes['import_success'], $orderManager, $deliveryManager, $orderFactory,);
         }
 
-        $sections = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-        ->getSections(function (QueryBuilder &$qb) use (&$store) {
-             $qb
-                ->andWhere('d.store = :store')
-                ->setParameter('store', $store);
-        });
+        $filters = [
+            'enabled' => false,
+            'query' => null,
+            'range' => [null, null],
+        ];
+        if ($request->query->get('q')) {
+
+            $filters['enabled'] = true;
+            $filters['query'] = $request->query->get('q');
+
+            $locale = $request->getLocale();
+            $search = new \Psonic\Search($client);
+            $search->connect($this->getParameter('sonic_secret_password'));
+
+            $ids = $search->query(sprintf('store:%d:deliveries', $id), $this->getParameter('sonic_namespace'),
+                $filters['query'], $limit = null, $offset = null, Languages::getAlpha3Code($locale));
+
+            $search->disconnect();
+
+            $ids = array_filter($ids);
+
+            $qb = $this->getDoctrine()->getRepository(Delivery::class)->findByIds($ids);
+
+        } else {
+            $sections = $this->getDoctrine()
+                ->getRepository(Delivery::class)
+                ->getSections(function (QueryBuilder &$qb) use (&$store) {
+                    $qb
+                        ->andWhere('d.store = :store')
+                        ->setParameter('store', $store);
+                });
+        }
+
+        //TODO: Remove duplicated code (AdminController.php~L820)
+        if ($request->query->get('start_at') && $request->query->get('end_at')) {
+            $start = Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime();
+            $end = Carbon::parse($request->query->get('end_at'))->setTime(23, 59, 59)->toDateTime();
+            $filters['enabled'] = true;
+            $filters['range'] = [$start, $end];
+
+            if ($request->query->get('q')) {
+                $qb->andWhere('d.createdAt BETWEEN :start AND :end')
+                    ->setParameter('start', $start)
+                    ->setParameter('end', $end);
+            } else {
+                $sections['past']->andWhere('d.createdAt BETWEEN :start AND :end')
+                    ->setParameter('start', $start)
+                    ->setParameter('end', $end);
+            }
+
+        }
 
         $deliveries = $paginator->paginate(
-            $sections['past'],
+            $filters['enabled'] ? $qb : $sections['past'],
             $request->query->getInt('page', 1),
             6,
             [
@@ -392,8 +438,9 @@ trait StoreTrait
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'deliveries' => $deliveries,
-            'today' => $sections['today']->getQuery()->getResult(),
-            'upcoming' => $sections['upcoming']->getQuery()->getResult(),
+            'filters' => $filters,
+            'today' => $filters['enabled'] ?: $sections['today']->getQuery()->getResult(),
+            'upcoming' => $filters['enabled'] ?: $sections['upcoming']->getQuery()->getResult(),
             'routes' => $this->getDeliveryRoutes(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],

@@ -9,15 +9,17 @@
         {% include "store/_partials/buttons.html.twig" %}
       </div>
     </div>
+    {% if filters is defined %}
     <form class="d-flex align-items-center justify-content-between pt-4">
-        <input type="search" class="form-control mr-5" name="q" placeholder="Search by address, name or #id">
+        <input type="search" class="form-control mr-5" name="q" value="{{ filters.query }}" placeholder="Search by address, name or #id">
       <div class="d-inline-flex">
         <div id="daterange_widget" class="mr-5" style="width: 230px; background-color: #FFFFFFAB"></div>
-        <input type="hidden" id="start_at" name="start_at">
-        <input type="hidden" id="end_at" name="end_at">
+        <input type="hidden" id="start_at" data-default="{{ filters.range[0]|format_datetime('short', 'none', locale='en') }}" name="start_at">
+        <input type="hidden" id="end_at" data-default="{{ filters.range[1]|format_datetime('short', 'none', locale='en') }}" name="end_at">
         <button type="submit" class="btn btn-default">Search</button>
       </div>
     </form>
+    {% endif %}
   {% else %}
     <div class="d-flex align-items-center justify-content-end">
       {% include "store/_partials/buttons.html.twig" %}
