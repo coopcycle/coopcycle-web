@@ -71,31 +71,25 @@
   <script>
     const startEl = document.getElementById('start_at')
     const endEl = document.getElementById('end_at')
-    let defaultValue = {}
-
-    if (startEl.dataset.default) {
-      defaultValue = {
-        before: startEl.dataset.default,
-        ...defaultValue
-      }
-    }
-
-    if (endEl.dataset.default) {
-      defaultValue = {
-        after: endEl.dataset.default,
-        ...defaultValue
-      }
-    }
-
-    console.log(defaultValue)
-    new CoopCycle.DateRangePicker(document.getElementById('daterange_widget'), {
-      defaultValue,
+    let options = {
       showTime: false,
       format: 'DD MMM',
       onChange: function ({after, before}) {
         startEl.value = after.format('YYYY-MM-DD')
         endEl.value = before.format('YYYY-MM-DD')
       }
-    })
+    }
+
+    if (startEl.dataset.default && endEl.dataset.default) {
+      options = {
+        defaultValue: {
+          before: startEl.dataset.default,
+          after: endEl.dataset.default
+        },
+        ...options
+      }
+    }
+
+    new CoopCycle.DateRangePicker(document.getElementById('daterange_widget'), options)
   </script>
 {% endblock %}

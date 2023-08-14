@@ -380,6 +380,10 @@ trait StoreTrait
             $filters['enabled'] = true;
             $filters['query'] = $request->query->get('q');
 
+            if (str_starts_with($filters['query'], '#')) {
+                return $this->redirectToRoute($this->getDeliveryRoutes()['view'], ['id' => intval(trim($filters['query'], '#'))]);
+            }
+
             $locale = $request->getLocale();
             $search = new \Psonic\Search($client);
             $search->connect($this->getParameter('sonic_secret_password'));
@@ -423,7 +427,7 @@ trait StoreTrait
         }
 
         $deliveries = $paginator->paginate(
-            $filters['enabled'] ? $qb : $sections['past'],
+            !is_null($filters['query']) ? $qb : $sections['past'],
             $request->query->getInt('page', 1),
             6,
             [
