@@ -423,7 +423,7 @@ trait StoreTrait
         }
 
         $deliveries = $paginator->paginate(
-            $qb,
+            $filters['enabled'] ? $qb : $sections['past'],
             $request->query->getInt('page', 1),
             10,
             [
