@@ -80,11 +80,11 @@
       }
     }
 
-    if (startEl.dataset.default && endEl.dataset.default) {
+    if (startEl.value && endEl.value) {
       options = {
         defaultValue: {
-          before: startEl.dataset.default,
-          after: endEl.dataset.default
+          before: startEl.value,
+          after: endEl.value
         },
         ...options
       }

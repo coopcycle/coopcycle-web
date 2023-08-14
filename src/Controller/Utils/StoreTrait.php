@@ -380,6 +380,7 @@ trait StoreTrait
             $filters['enabled'] = true;
             $filters['query'] = $request->query->get('q');
 
+            // Redirect startin with #
             if (str_starts_with($filters['query'], '#')) {
                 return $this->redirectToRoute($this->getDeliveryRoutes()['view'], ['id' => intval(trim($filters['query'], '#'))]);
             }
@@ -407,6 +408,8 @@ trait StoreTrait
                 });
         }
 
+        $qb = $filters['enabled'] ? $qb : $sections['qb'];
+
         //TODO: Remove duplicated code (AdminController.php~L820)
         if ($request->query->get('start_at') && $request->query->get('end_at')) {
             $start = Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime();
@@ -414,22 +417,15 @@ trait StoreTrait
             $filters['enabled'] = true;
             $filters['range'] = [$start, $end];
 
-            if ($request->query->get('q')) {
-                $qb->andWhere('d.createdAt BETWEEN :start AND :end')
-                    ->setParameter('start', $start)
-                    ->setParameter('end', $end);
-            } else {
-                $sections['past']->andWhere('d.createdAt BETWEEN :start AND :end')
-                    ->setParameter('start', $start)
-                    ->setParameter('end', $end);
-            }
-
+            $qb->andWhere('d.createdAt BETWEEN :start AND :end')
+                ->setParameter('start', $start)
+                ->setParameter('end', $end);
         }
 
         $deliveries = $paginator->paginate(
-            !is_null($filters['query']) ? $qb : $sections['past'],
+            $qb,
             $request->query->getInt('page', 1),
-            6,
+            10,
             [
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.doneBefore',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',

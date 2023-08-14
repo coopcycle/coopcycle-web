@@ -58,6 +58,7 @@ class DeliveryRepository extends EntityRepository
             ;
 
         return [
+            'qb' => $qb,
             'today' => $qbToday,
             'upcoming' => $qbUpcoming,
             'past' => $qbPast,
