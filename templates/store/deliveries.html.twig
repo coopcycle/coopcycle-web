@@ -68,7 +68,12 @@
   {{ encore_entry_script_tags('delivery-list') }}
   <script>
     new CoopCycle.DateRangePicker(document.getElementById('daterange_widget'), {
-      showTime: false
+      showTime: false,
+      format: 'DD MMM',
+      onChange: function ({before, after}) {
+        document.getElementById('start_at').value = before.format('YYYY-MM-DD')
+        document.getElementById('end_at').value = after.format('YYYY-MM-DD')
+      }
     })
   </script>
 {% endblock %}
