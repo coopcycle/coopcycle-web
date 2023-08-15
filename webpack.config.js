@@ -13,6 +13,7 @@ Encore
   // .setPublicPath('http://192.168.0.11:8080')
   // .setManifestKeyPrefix('/build')
 
+  .addEntry('app', './assets/app.js')
   .addEntry('adhoc-order', './js/app/adhoc_order/index.js')
   .addEntry('admin-orders', './js/app/admin/orders.js')
   .addEntry('admin-restaurants', './js/app/admin/restaurants.js')
@@ -68,6 +69,8 @@ Encore
     /moment[/\\]locale$/,
     /ca|de|es|fr|pl|pt-br/
   ))
+
+  .enableStimulusBridge('./assets/controllers.json')
 
   .enableSingleRuntimeChunk()
   .splitEntryChunks()

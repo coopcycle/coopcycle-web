@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1c27675de450d9f7a0b2366a71fe4606",
+    "content-hash": "d2f3b284ba1533ce011353cc70f0f484",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
