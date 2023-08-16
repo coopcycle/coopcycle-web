@@ -20,12 +20,14 @@ class TopBarNotifications
         $this->messageBus = $messageBus;
     }
 
-    public function getLastNotifications(UserInterface $user)
+    public function getNotifications(UserInterface $user, $page = 1)
     {
         $listKey = sprintf('user:%s:notifications', $user->getUsername());
         $hashKey = sprintf('user:%s:notifications_data', $user->getUsername());
 
-        $uuids = $this->redis->lrange($listKey, 0, 5);
+        $offsetStop = 20;
+
+        $uuids = $this->redis->lrange($listKey, $offsetStop * ($page - 1) , ($offsetStop * $page) - 1);
 
         $notifications = [];
         foreach ($uuids as $uuid) {
