@@ -335,6 +335,7 @@
         "PM_CASH": "Cash",
         "PM_EDENRED": "Edenred",
         "PM_GIROPAY": "Giropay",
-        "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Show tours panel"
+        "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Show tours panel",
+        "SEE_ALL": "See all"
     }
 }
