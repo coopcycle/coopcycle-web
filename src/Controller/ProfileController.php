@@ -405,9 +405,8 @@ class ProfileController extends AbstractController
      */
     public function notificationsAction(Request $request, TopBarNotifications $topBarNotifications, NormalizerInterface $normalizer)
     {
-        $notifications = $topBarNotifications->getLastNotifications($this->getUser());
-
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
+            $notifications = $topBarNotifications->getNotifications($this->getUser());
 
             return new JsonResponse([
                 'notifications' => $normalizer->normalize($notifications, 'json'),
@@ -415,8 +414,66 @@ class ProfileController extends AbstractController
             ]);
         }
 
+        $page = $request->query->getInt('page', 1);
+
+        $notifications = $topBarNotifications->getNotifications($this->getUser(), $page);
+
         return $this->render('profile/notifications.html.twig', [
-            'notifications' => $notifications
+            'notifications' => $notifications,
+            'currentPage' => $page,
+            'nextPage' => $page + 1,
+        ]);
+    }
+
+    /**
+     * @Route("/profile/notifications/remove", methods={"POST"}, name="profile_notifications_remove")
+     */
+    public function removeNotificationsAction(Request $request, TopBarNotifications $topBarNotifications, NormalizerInterface $normalizer)
+    {
+        $ids = [];
+        $content = $request->getContent();
+        if (!empty($content)) {
+            parse_str($content, $ids);
+        }
+
+        $topBarNotifications->markAsRead($this->getUser(), array_keys($ids));
+
+        return $this->notificationsAction($request, $topBarNotifications, $normalizer);
+    }
+
+    /**
+     * @Route("/profile/notification/{id}", methods={"DELETE"}, name="profile_notification_remove")
+     */
+    public function removeNotificationAction(Request $request, TopBarNotifications $topBarNotifications, NormalizerInterface $normalizer)
+    {
+        $topBarNotifications->markAsRead($this->getUser(), [$request->get('id')]);
+
+
+        if ($request->query->has('format') && 'json' === $request->query->get('format')) {
+            $notifications = $topBarNotifications->getNotifications($this->getUser());
+
+            return new JsonResponse([
+                'notifications' => $normalizer->normalize($notifications, 'json'),
+                'unread' => (int) $topBarNotifications->countNotifications($this->getUser())
+            ]);
+        }
+
+        $page = 1;
+        $content = $request->getContent();
+        if (!empty($content)) {
+            $contentArray = [];
+            parse_str($content, $contentArray);
+            if (array_key_exists('page', $contentArray)) {
+                $page = $contentArray['page'];
+            }
+        }
+
+        $notifications = $topBarNotifications->getNotifications($this->getUser(), $page);
+
+        return $this->render('profile/notifications.html.twig', [
+            'notifications' => $notifications,
+            'currentPage' => $page ?? 1,
+            'nextPage' => ($page ?? 1) + 1,
         ]);
     }
 
