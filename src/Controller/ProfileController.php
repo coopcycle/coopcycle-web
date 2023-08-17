@@ -472,8 +472,8 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/notifications.html.twig', [
             'notifications' => $notifications,
-            'currentPage' => $page ?? 1,
-            'nextPage' => ($page ?? 1) + 1,
+            'currentPage' => $page,
+            'nextPage' => $page + 1,
         ]);
     }
 
