@@ -3,23 +3,12 @@
     <div class="d-flex align-items-center justify-content-between">
       <div>
         <h3 class="m-0 mb-2 font-weight-bold">{{ 'stores.deliveries'|trans }}</h3>
-        <small class="text-muted">{{ 'now'|format_datetime('full', 'none') }}</small>
+        <small class="text-muted text-white">{{ 'now'|format_datetime('full', 'none') }}</small>
       </div>
       <div>
         {% include "store/_partials/buttons.html.twig" %}
       </div>
     </div>
-    {% if filters is defined %}
-    <form class="d-flex align-items-center justify-content-between pt-4">
-        <input type="search" class="form-control mr-5" name="q" value="{{ filters.query }}" placeholder="Search by address, name or #id">
-      <div class="d-inline-flex">
-        <div id="daterange_widget" class="mr-5" style="width: 230px; background-color: #FFFFFFAB"></div>
-        <input type="hidden" id="start_at" value="{{ filters.range[0] is empty ? "" : filters.range[0]|date('Y-m-d') }}" name="start_at">
-        <input type="hidden" id="end_at" value="{{ filters.range[1] is empty ? "" : filters.range[1]|date('Y-m-d') }}" name="end_at">
-        <button type="submit" class="btn btn-default">Search</button>
-      </div>
-    </form>
-    {% endif %}
   {% else %}
     <div class="d-flex align-items-center justify-content-end">
       {% include "store/_partials/buttons.html.twig" %}
