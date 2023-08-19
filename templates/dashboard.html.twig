@@ -14,11 +14,13 @@
   {% block dashboard_subnav %}{% endblock %}
   </div>
 </section>
+  {% if block('dashboard_actions') %}
 <section class="dashboard-actions py-5">
     <div class="container container--full-height">
       {% block dashboard_actions %}{% endblock %}
     </div>
 </section>
+  {% endif %}
 <div class="container container--full-height mt-5">
   <div class="row">
     <div class="col-xs-12">
