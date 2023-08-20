@@ -13,13 +13,17 @@
 {% endblock %}
 {% block dashboard_actions %}
  {% if filters is defined %}
-   <form class="d-flex align-items-center justify-content-between dashboard-subnav__filters">
-     <input type="search" class="form-control mr-5" name="q" value="{{ filters.query }}" placeholder="Search by address, name or #id">
+   <form class="d-flex align-items-center justify-content-between">
+     <div id="search_input_widget" class="w-100 mr-5"></div>
+     <input type="hidden" id="search_input" name="q" value="{{ filters.query }}">
      <div class="d-inline-flex">
        <div id="daterange_widget" class="mr-5" style="width: 230px"></div>
        <input type="hidden" id="start_at" value="{{ filters.range[0] is empty ? "" : filters.range[0]|date('Y-m-d') }}" name="start_at">
        <input type="hidden" id="end_at" value="{{ filters.range[1] is empty ? "" : filters.range[1]|date('Y-m-d') }}" name="end_at">
-       <button type="submit" class="btn btn-primary">Search</button>
+       <button type="submit" class="btn btn-sm btn-primary">
+         <i class="fa fa-filter"></i> {{ 'basics.filter'|trans }}
+       </button>
+
      </div>
    </form>
  {% endif %}
@@ -113,5 +117,15 @@
     }
 
     new CoopCycle.DateRangePicker(document.getElementById('daterange_widget'), options)
+
+    const searchEl = document.getElementById('search_input')
+    new CoopCycle.Input(document.getElementById('search_input_widget'), {
+      allowClear: true,
+      placeholder: "{{ 'dashboard.shops.filters.input.placeholder'|trans }}",
+      defaultValue: searchEl.value,
+      onChange: function(e) {
+        searchEl.value = e.target.value
+      }
+    })
   </script>
 {% endblock %}
