@@ -132,11 +132,11 @@
       {{ attributes[customer.emailCanonical]['orders_count'] }}
     </td>
     <td class="text-right">
-      {{ customer.createdAt|ago }}
+      {{ customer.createdAt|time_diff }}
     </td>
     <td class="text-right">
       {% if attributes[customer.emailCanonical]['last_order'] is not empty %}
-        {{ attributes[customer.emailCanonical]['last_order'].updatedAt|ago }}
+        {{ attributes[customer.emailCanonical]['last_order'].updatedAt|time_diff }}
       {% endif %}
     </td>
     <td class="text-right">

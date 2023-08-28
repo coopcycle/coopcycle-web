@@ -40,7 +40,7 @@
         "league/geotools": "@stable",
         "gedmo/doctrine-extensions": "^3.0.3",
         "snc/redis-bundle": "4.3.0",
-        "knplabs/knp-time-bundle": "^1.7",
+        "knplabs/knp-time-bundle": "^2.0",
         "cocur/slugify": "^4.0",
         "gesdinet/jwt-refresh-token-bundle": "^1.0",
         "emcconville/google-map-polyline-encoding-tool": "^1.3",

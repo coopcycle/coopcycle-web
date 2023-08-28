@@ -65,7 +65,7 @@
       <td width="10%">
         <small>
           {% if delivery.dropoff.before|date('Ymd') == 'now'|date('Ymd') %}
-            {{ delivery.dropoff.before|ago }}
+            {{ delivery.dropoff.before|time_diff }}
           {% else %}
             {{ delivery.dropoff.before|format_datetime('short', 'short') }}
           {% endif %}
@@ -97,7 +97,7 @@
         {% endif %}
       </td>
       <td class="text-center" width="10%">
-        <small class="text-muted">{{ delivery.createdAt|ago }}</small>
+        <small class="text-muted">{{ delivery.createdAt|time_diff }}</small>
       </td>
       <td class="text-right">
         <a href="{{ path(routes.view, { id: delivery.id }) }}">{{ 'basics.view'|trans }}</a>

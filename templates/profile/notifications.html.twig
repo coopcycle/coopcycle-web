@@ -7,7 +7,7 @@
     {% for notification in notifications %}
       <tr>
         <td>{{ notification.message }}</td>
-        <td class="text-right">{{ notification.timestamp|ago }}</td>
+        <td class="text-right">{{ notification.timestamp|time_diff }}</td>
       </tr>
     {% endfor %}
   </tbody>
