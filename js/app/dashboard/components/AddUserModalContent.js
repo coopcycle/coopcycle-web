@@ -15,7 +15,10 @@ const ModalContent = ({ onClickClose, onClickSubmit }) => {
         <h4 className="modal-title" id="user-modal-label">{ t('ADMIN_DASHBOARD_ADDUSER_TO_PLANNING') }</h4>
       </div>
       <div className="modal-body">
-        <form method="post" >
+        <form method="post" onSubmit={ (e) => {
+          e.preventDefault()
+          onClickSubmit(selected)
+        } } >
           <div className="form-group" data-action="dispatch">
             <label htmlFor="courier" className="control-label">
               { t('ADMIN_DASHBOARD_COURIER') }
