@@ -15,6 +15,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
+    "@symfony/stimulus-bridge": "^3.2.2",
     "dotenv": "^8.6.0",
     "form-data": "^2.3.3",
     "lodash": "^4.17.21",
@@ -35,6 +37,7 @@
     "@stripe/react-stripe-js": "^1.7.0",
     "@stripe/stripe-js": "^1.22.0",
     "@symfony/webpack-encore": "^1.1.2",
+    "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
     "antd": "^4.24.5",
     "autoprefixer": "^10.4.13",
     "axios": "^0.25.0",

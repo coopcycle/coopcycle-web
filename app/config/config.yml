@@ -683,6 +683,8 @@ fos_js_routing:
         - profile_jwt
         - profile_notifications
         - profile_notifications_mark_as_read
+        - profile_notifications_remove
+        - profile_notification_remove
         - dashboard_order_accept
         - dashboard_order_refuse
         - dashboard_order_cancel
