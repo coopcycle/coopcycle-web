@@ -15,6 +15,13 @@ jobs:
       - uses: actions/setup-python@v1
         with:
           python-version: 3.7
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.1
+          tools: composer:v2
+          extensions: redis
+      - run: composer install --prefer-dist --no-progress --no-scripts
       - run: npm ci
       - name: Install dependencies
         run: |
