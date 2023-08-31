@@ -3,26 +3,24 @@
 namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use AppBundle\Action\Delivery\Cancel as CancelDelivery;
+use AppBundle\Action\Delivery\Create as CreateDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
-use AppBundle\Entity\Package;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
-use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
+use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -34,6 +32,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "post"={
  *       "method"="POST",
  *       "denormalization_context"={"groups"={"delivery_create"}},
+ *       "controller"=CreateDelivery::class,
  *       "openapi_context"={
  *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
  *       },
@@ -350,7 +349,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         }
     }
 
-    public function getStore()
+    public function getStore(): ?Store
     {
         return $this->store;
     }
