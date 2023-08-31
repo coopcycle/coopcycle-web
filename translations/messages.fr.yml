@@ -1288,3 +1288,6 @@ loopeat.how_it_works.step_3.title: Je commande
 loopeat.how_it_works.step_3.text: Faites-vous livrer en boites consignées.
 loopeat.how_it_works.step_4.title: Je rends mes boîtes
 loopeat.how_it_works.step_4.text: Restituez vos boîtes lors de votre prochaine commande et récupérez la consigne sur votre cagnotte.
+stores.filters.input.placeholder: "Recherche par adresse, nom ou #id"
+basics.filter: "Filtrer"
+stores.search.results_for: 'Résultats pour la recherche <mark>%query%</mark>'

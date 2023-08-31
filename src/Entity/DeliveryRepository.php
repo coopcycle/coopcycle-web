@@ -4,64 +4,83 @@ namespace AppBundle\Entity;
 
 use Carbon\Carbon;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
 use Hashids\Hashids;
+use Psonic\Client as SonicClient;
+use Symfony\Component\Intl\Languages;
 
 class DeliveryRepository extends EntityRepository
 {
     private $secret;
+    private $sonicClient;
+    private $sonicSecretPassword;
+    private $sonicNamespace;
 
     public function setSecret(string $secret)
     {
         $this->secret = $secret;
     }
 
-    public function getSections(?Store $store = null)
+    public function setSonicClient(SonicClient $client)
     {
-        $today = Carbon::now();
+        $this->sonicClient = $client;
+    }
 
-        $after = new \DateTime('+2 days');
-        $after->setTime(0, 0, 0);
+    public function setSonicSecretPassword(string $password)
+    {
+        $this->sonicSecretPassword = $password;
+    }
 
-        $qb = $this->createQueryBuilder('d')
+    public function setSonicNamespace(string $namespace)
+    {
+        $this->sonicNamespace = $namespace;
+    }
+
+    public function createQueryBuilderWithTasks(): QueryBuilder
+    {
+        return $this->createQueryBuilder('d')
             ->join(TaskCollectionItem::class, 'i', Expr\Join::WITH, 'i.parent = d.id')
             ->join(Task::class, 't', Expr\Join::WITH, 'i.task = t.id')
             ;
+    }
 
-        if ($store) {
-            $qb
-                ->andWhere('d.store = :store')
-                ->setParameter('store', $store);
-        }
+    public function today(QueryBuilder $qb): QueryBuilder
+    {
+        $today = Carbon::now();
 
-        $qbToday = (clone $qb)
+        return (clone $qb)
             ->andWhere('t.type = :pickup')
             ->andWhere('t.doneAfter >= :after')
             ->andWhere('t.doneBefore <= :before')
             ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->copy()->hour(0)->minute(0)->second(0))
             ->setParameter('before', $today->copy()->hour(23)->minute(59)->second(59));
+    }
 
-        $qbUpcoming = (clone $qb)
+    public function upcoming(QueryBuilder $qb): QueryBuilder
+    {
+        $today = Carbon::now();
+
+        return (clone $qb)
             ->andWhere('t.type = :pickup')
             ->andWhere('t.doneAfter >= :after')
             ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->copy()->add(1, 'day')->hour(0)->minute(0)->second(0))
             ->orderBy('t.doneBefore', 'asc')
             ;
+    }
 
-        $qbPast = (clone $qb)
+    public function past(QueryBuilder $qb): QueryBuilder
+    {
+        $today = Carbon::now();
+
+        return (clone $qb)
             ->andWhere('t.type = :pickup')
             ->andWhere('t.doneBefore < :after')
             ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->copy()->sub(1, 'day')->hour(23)->minute(59)->second(59))
             ;
-
-        return [
-            'today' => $qbToday,
-            'upcoming' => $qbUpcoming,
-            'past' => $qbPast,
-        ];
     }
 
     public function findOneByHashId(string $hashId)
@@ -86,5 +105,25 @@ class DeliveryRepository extends EntityRepository
         $id = current($ids);
 
         return $this->find($id);
+    }
+
+    public function searchWithSonic(QueryBuilder $qb, string $q, string $locale, ?Store $store = null)
+    {
+        $search = new \Psonic\Search($this->sonicClient);
+        $search->connect($this->sonicSecretPassword);
+
+        $collection = (null !== $store) ? sprintf('store:%d:deliveries', $store->getId()) : 'store:*:deliveries';
+
+        $ids = $search->query($collection, $this->sonicNamespace,
+            // We use $limit = 100, which is the value of query_limit_maximum in sonic.cfg
+            $q, $limit = 100, $offset = null, Languages::getAlpha3Code($locale));
+
+        $search->disconnect();
+
+        $ids = array_filter($ids);
+
+        $qb
+            ->andWhere('d.id IN (:ids)')
+            ->setParameter('ids', $ids);
     }
 }

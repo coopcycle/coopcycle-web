@@ -1,9 +1,6 @@
 <a href="#" class="btn btn-success mr-2" data-toggle="modal" data-target="#export-deliveries-modal">
   <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
 </a>
-<div class="dropdown mr-2 d-inline-block">
-  {% include '_partials/delivery/sort.html.twig' %}
-</div>
 <a href="{{ path(routes.store_new, { id: store.id }) }}" class="btn btn-success">
   <i class="fa fa-plus"></i> {{ 'delivery.createNew'|trans }}
 </a>

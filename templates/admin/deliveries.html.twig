@@ -8,9 +8,9 @@
 {% block content %}
 
   <div class="d-flex justify-content-between mb-5">
-    <div id="search-deliveries" class="w-50">
-      <input type="text" class="form-control">
-    </div>
+    <form class="w-50" method="get">
+      <input type="text" class="form-control" placeholder="{{ 'stores.filters.input.placeholder'|trans|e('html_attr') }}" name="q" value="{{ filters.query }}">
+    </form>
     <div class="text-right">
       <a href="#" class="btn btn-sm btn-default mr-4" data-toggle="modal" data-target="#import-deliveries-modal">
         <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
@@ -77,8 +77,14 @@
       path: path('admin_deliveries', { section: 'past' })
     }
   ] %}
-
   <ul class="nav nav-tabs">
+    {% if filters is defined and filters.query %}
+    <p><i class="fa fa-search" aria-hidden="true"></i> {% trans with { '%query%': filters.query } %}stores.search.results_for{% endtrans %}</p>
+    {% endif %}
+    {% if filters is defined and filters.range %}
+    <p><i class="fa fa-calendar" aria-hidden="true"></i> {{filters.range[0]|date("m/d/Y")}} <i class="fa fa-long-arrow-right" aria-hidden="true"></i>  {{filters.range[1]|date("m/d/Y")}}</p>
+    {% endif %}
+    {% if filters is defined and filters.query == null and filters.range == null %}
     {% for tab_item in tab_items %}
     <li role="presentation" class="{% if tab_item.active %}active{% endif %}">
       <a href="{{ tab_item.path }}">
@@ -86,6 +92,7 @@
       </a>
     </li>
     {% endfor %}
+    {% endif %}
   </ul>
 
   <div class="d-flex align-items-center justify-content-between">

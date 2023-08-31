@@ -19,6 +19,7 @@ use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
+use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\Invitation;
@@ -82,8 +83,10 @@ use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\Query\Expr;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
@@ -734,7 +737,9 @@ class AdminController extends AbstractController
         PaginatorInterface $paginator,
         DeliveryManager $deliveryManager,
         OrderFactory $orderFactory,
-        OrderManager $orderManager)
+        OrderManager $orderManager,
+        DeliveryRepository $deliveryRepository
+    )
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
             'with_store' => true
@@ -779,14 +784,44 @@ class AdminController extends AbstractController
             return $response;
         }
 
-        $sections = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->getSections();
+        /** @var QueryBuilder $qb */
+        $qb = $deliveryRepository->createQueryBuilderWithTasks();
 
-        if ($request->query->has('section')) {
-            $qb = $sections[$request->query->get('section')];
+        $filters = [
+            'query' => null,
+            'range' => null,
+        ];
+
+        if ($request->query->get('q')) {
+
+            $filters['query'] = $request->query->get('q');
+
+            // Redirect startin with #
+            if (str_starts_with($filters['query'], '#')) {
+                $searchId = intval(trim($filters['query'], '#'));
+                if (null !== $deliveryRepository->find($searchId)) {
+                    return $this->redirectToRoute($this->getDeliveryRoutes()['view'], ['id' => $searchId]);
+                }
+            }
+
+            $deliveryRepository->searchWithSonic($qb, $filters['query'], $request->getLocale());
+
         } else {
-            $qb = $sections['today'];
+            if ($request->query->has('section') && is_callable([ $deliveryRepository, $request->query->get('section') ])) {
+                $qb = call_user_func([ $deliveryRepository, $request->query->get('section') ], $qb);
+            } else {
+                $qb = $deliveryRepository->today($qb);
+            }
+        }
+
+        if ($request->query->has('start_at') && $request->query->has('end_at')) {
+            $start = Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime();
+            $end = Carbon::parse($request->query->get('end_at'))->setTime(23, 59, 59)->toDateTime();
+            $filters['range'] = [$start, $end];
+
+            $qb->andWhere('d.createdAt BETWEEN :start AND :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
         }
 
         // Allow filtering by store & restaurant with KnpPaginator
@@ -810,6 +845,7 @@ class AdminController extends AbstractController
 
         return $this->render('admin/deliveries.html.twig', [
             'deliveries' => $deliveries,
+            'filters' => $filters,
             'routes' => $this->getDeliveryRoutes(),
             'imported_rows_message' => $importedRowsMessage ?? null,
             'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']),
@@ -1364,12 +1400,12 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $deliveryForm = new DeliveryForm();
-        
+
         $form = $this->createForm(EmbedSettingsType::class, $deliveryForm);
-        
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            
+
             // Disable "Show on Home Page" on all forms ONLY if this new form is setted true
             if($deliveryForm->getShowHomepage()){
                 $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
@@ -1405,7 +1441,7 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            
+
             // Disable "Show on Home Page" on all forms except current form if setted true
             if($deliveryForm->getShowHomepage()){
                 $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();

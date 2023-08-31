@@ -545,6 +545,15 @@ services:
       - method: setSecret
         arguments:
             - '%secret%'
+      - method: setSonicClient
+        arguments:
+            - '@Psonic\Client'
+      - method: setSonicSecretPassword
+        arguments:
+            - '%sonic_secret_password%'
+      - method: setSonicNamespace
+        arguments:
+            - '%sonic_namespace%'
 
   AppBundle\Service\Routing\Osrm: ~
 
