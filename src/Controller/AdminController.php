@@ -796,6 +796,14 @@ class AdminController extends AbstractController
 
             $filters['query'] = $request->query->get('q');
 
+            // Redirect startin with #
+            if (str_starts_with($filters['query'], '#')) {
+                $searchId = intval(trim($filters['query'], '#'));
+                if (null !== $deliveryRepository->find($searchId)) {
+                    return $this->redirectToRoute($this->getDeliveryRoutes()['view'], ['id' => $searchId]);
+                }
+            }
+
             $deliveryRepository->searchWithSonic($qb, $filters['query'], $request->getLocale());
 
         } else {

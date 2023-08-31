@@ -385,7 +385,10 @@ trait StoreTrait
 
             // Redirect startin with #
             if (str_starts_with($filters['query'], '#')) {
-                return $this->redirectToRoute($this->getDeliveryRoutes()['view'], ['id' => intval(trim($filters['query'], '#'))]);
+                $searchId = intval(trim($filters['query'], '#'));
+                if (null !== $deliveryRepository->find($searchId)) {
+                    return $this->redirectToRoute($this->getDeliveryRoutes()['view'], ['id' => $searchId]);
+                }
             }
 
             $deliveryRepository->searchWithSonic($qb, $filters['query'], $request->getLocale(), $store);
