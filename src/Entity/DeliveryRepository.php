@@ -115,7 +115,8 @@ class DeliveryRepository extends EntityRepository
         $collection = (null !== $store) ? sprintf('store:%d:deliveries', $store->getId()) : 'store:*:deliveries';
 
         $ids = $search->query($collection, $this->sonicNamespace,
-            $q, $limit = null, $offset = null, Languages::getAlpha3Code($locale));
+            // We use $limit = 100, which is the value of query_limit_maximum in sonic.cfg
+            $q, $limit = 100, $offset = null, Languages::getAlpha3Code($locale));
 
         $search->disconnect();
 
