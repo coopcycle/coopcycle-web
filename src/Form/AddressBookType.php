@@ -55,6 +55,7 @@ class AddressBookType extends AbstractType
             'with_name' => false,
             'with_telephone' => false,
             'with_contact_name' => false,
+            'with_description' => $options['with_address_description']
         ];
 
         if (isset($options['new_address_placeholder']) && !empty($options['new_address_placeholder'])) {
@@ -200,6 +201,7 @@ class AddressBookType extends AbstractType
             'with_addresses' => [],
             'new_address_placeholder' => null,
             'with_remember_address' => false,
+            'with_address_description' => false,
             'with_address_props' => false,
         ));
     }

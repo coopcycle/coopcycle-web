@@ -105,6 +105,7 @@ class DeliveryType extends AbstractType
                     'with_tags' => $options['with_tags'],
                     'with_addresses' => null !== $store ? $store->getAddresses() : [],
                     'with_remember_address' => $options['with_remember_address'],
+                    'with_address_description' => $options['with_address_description'],
                     'with_time_slot' => $this->getTimeSlot($options, $store),
                     'with_time_slots' => $this->getTimeSlots($options, $store),
                     'with_doorstep' => $options['with_dropoff_doorstep'],
@@ -260,6 +261,7 @@ class DeliveryType extends AbstractType
             'with_time_slots' => null,
             'with_package_set' => null,
             'with_remember_address' => false,
+            'with_address_description' => false,
             'with_address_props' => false,
             'with_arbitrary_price' => false,
         ));

@@ -69,6 +69,7 @@ class EmbedController extends AbstractController
             'with_vehicle'     => $deliveryForm->getWithVehicle(),
             'with_time_slot'   => $deliveryForm->getTimeSlot(),
             'with_package_set' => $deliveryForm->getPackageSet(),
+            'with_address_description' => true,
         ];
 
         $delivery = Delivery::create();

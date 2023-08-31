@@ -255,6 +255,7 @@ trait StoreTrait
         $form = $this->createDeliveryForm($delivery, [
             'with_dropoff_doorstep' => true,
             'with_remember_address' => true,
+            'with_address_description' => true,
             'with_address_props' => true,
             'with_arbitrary_price' => true,
         ]);
@@ -445,6 +446,7 @@ trait StoreTrait
             'with_widget' => true,
             'with_telephone' => true,
             'with_contact_name' => true,
+            'with_description' => true,
         ]);
     }
 

@@ -48,6 +48,7 @@ class TaskType extends AbstractType
             'label' => 'form.task.address.label',
             'with_addresses' => $options['with_addresses'],
             'with_remember_address' => $options['with_remember_address'],
+            'with_address_description' => $options['with_address_description'],
             'with_address_props' => $options['with_address_props'],
         ];
 
@@ -363,6 +364,7 @@ class TaskType extends AbstractType
             'with_addresses' => [],
             'with_doorstep' => false,
             'with_remember_address' => false,
+            'with_address_description' => false,
             'with_time_slot' => null,
             'with_time_slots' => null,
             'with_address_props' => false,
