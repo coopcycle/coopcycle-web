@@ -8,9 +8,9 @@
 {% block content %}
 
   <div class="d-flex justify-content-between mb-5">
-    <div id="search-deliveries" class="w-50">
-      <input type="text" class="form-control">
-    </div>
+    <form class="w-50" method="get">
+      <input type="text" class="form-control" placeholder="{{ 'stores.filters.input.placeholder'|trans|e('html_attr') }}" name="q" value="{{ filters.query }}">
+    </form>
     <div class="text-right">
       <a href="#" class="btn btn-sm btn-default mr-4" data-toggle="modal" data-target="#import-deliveries-modal">
         <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
