@@ -15,7 +15,7 @@
  {% if filters is defined %}
    <form class="d-flex align-items-center justify-content-between" method="get">
      <div id="search_input_widget" class="w-100 mr-5"></div>
-     <input type="hidden" id="search_input" name="q" value="{{ filters.query }}">
+     <input type="hidden" id="search_input" name="q" value="{{ filters.query }}" placeholder="{{ 'stores.filters.input.placeholder'|trans|e('html_attr') }}">
      <div class="d-inline-flex">
        <div id="daterange_widget" class="mr-5" style="width: 230px"></div>
        <input type="hidden" id="start_at" value="{{ filters.range[0] is empty ? "" : filters.range[0]|date('Y-m-d') }}" name="start_at">
@@ -94,38 +94,4 @@
 
 {% block scripts %}
   {{ encore_entry_script_tags('delivery-list') }}
-  <script>
-    const startEl = document.getElementById('start_at')
-    const endEl = document.getElementById('end_at')
-    let options = {
-      showTime: false,
-      format: 'DD MMM',
-      onChange: function ({after, before}) {
-        startEl.value = after.format('YYYY-MM-DD')
-        endEl.value = before.format('YYYY-MM-DD')
-      }
-    }
-
-    if (startEl.value && endEl.value) {
-      options = {
-        defaultValue: {
-          before: startEl.value,
-          after: endEl.value
-        },
-        ...options
-      }
-    }
-
-    new CoopCycle.DateRangePicker(document.getElementById('daterange_widget'), options)
-
-    const searchEl = document.getElementById('search_input')
-    new CoopCycle.Input(document.getElementById('search_input_widget'), {
-      allowClear: true,
-      placeholder: "{{ 'stores.filters.input.placeholder'|trans }}",
-      defaultValue: searchEl.value,
-      onChange: function(e) {
-        searchEl.value = e.target.value
-      }
-    })
-  </script>
 {% endblock %}
