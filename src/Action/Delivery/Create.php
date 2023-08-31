@@ -2,7 +2,6 @@
 
 namespace AppBundle\Action\Delivery;
 
-use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Entity\Delivery;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Service\DeliveryManager;
@@ -13,8 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Create
 {
-    use DeliveryTrait;
-
     public function __construct(
         private DeliveryManager $deliveryManager,
         private EntityManagerInterface $entityManager,
@@ -31,8 +28,16 @@ class Create
         $store = $data->getStore();
 
         if (null !== $store && $store->getCreateOrders()) {
-            $price = $this->getDeliveryPrice($data, $store->getPricingRuleSet(), $this->deliveryManager);
-            $order = $this->createOrderForDelivery($this->orderFactory, $data, $price);
+
+            $price = $this->deliveryManager->getPrice($data, $store->getPricingRuleSet());
+
+            if (null === $price) {
+                throw new NoRuleMatchedException();
+            }
+
+            $price = (int) $price;
+
+            $order = $this->orderFactory->createForDelivery($data, $price);
 
             $this->entityManager->persist($order);
             $this->entityManager->flush();
@@ -41,10 +46,5 @@ class Create
         }
 
         return $data;
-    }
-
-    protected function getDeliveryRoutes()
-    {
-        // TODO: Implement getDeliveryRoutes() method.
     }
 }
