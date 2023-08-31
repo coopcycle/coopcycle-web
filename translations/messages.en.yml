@@ -1307,5 +1307,6 @@ import.successful.rows: 'Your file was processed and %count% deliveries were cre
 import.delivery.price.error.priceCalculation.row: The delivery price could not be calculated for row %row_number%
 import.unsuccessful.rows: "There were errors and deliveries could not be created for rows: %rows%."
 security.login.remember_me: Remember me
-dashboard.shops.filters.input.placeholder: "Search by address, name or #id"
+stores.filters.input.placeholder: "Search by address, name or #id"
 basics.filter: "Filter"
+stores.search.results_for: 'Search results for <mark>%query%</mark>'

@@ -79,7 +79,7 @@
   ] %}
   <ul class="nav nav-tabs">
     {% if filters is defined and filters.query %}
-    <p><i class="fa fa-search" aria-hidden="true"></i> Résultat(s) pour la recherche <mark>{{filters.query}}</mark></p>
+    <p><i class="fa fa-search" aria-hidden="true"></i> {% trans with { '%query%': filters.query } %}stores.search.results_for{% endtrans %}</p>
     {% endif %}
     {% if filters is defined and filters.range %}
     <p><i class="fa fa-calendar" aria-hidden="true"></i> {{filters.range[0]|date("m/d/Y")}} <i class="fa fa-long-arrow-right" aria-hidden="true"></i>  {{filters.range[1]|date("m/d/Y")}}</p>
