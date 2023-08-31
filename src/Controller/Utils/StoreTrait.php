@@ -370,11 +370,15 @@ trait StoreTrait
                 $routes['import_success'], $orderManager, $deliveryManager, $orderFactory,);
         }
 
+        $deliveryRepository = $this->getDoctrine()->getRepository(Delivery::class);
+        $qb = $deliveryRepository->createQueryBuilderWithTasks();
+
         $filters = [
             'enabled' => false,
             'query' => null,
             'range' => [null, null],
         ];
+
         if ($request->query->get('q')) {
 
             $filters['enabled'] = true;
@@ -396,34 +400,33 @@ trait StoreTrait
 
             $ids = array_filter($ids);
 
-            $qb = $this->getDoctrine()->getRepository(Delivery::class)->findByIds($ids);
+            $qb
+                ->andWhere('d.id IN (:ids)')
+                ->setParameter('ids', $ids);
 
         } else {
-            $sections = $this->getDoctrine()
-                ->getRepository(Delivery::class)
-                ->getSections(function (QueryBuilder &$qb) use (&$store) {
-                    $qb
-                        ->andWhere('d.store = :store')
-                        ->setParameter('store', $store);
-                });
+            $qb
+                ->andWhere('d.store = :store')
+                ->setParameter('store', $store);
         }
-
-        $qb = $filters['enabled'] ? $qb : $sections['qb'];
 
         //TODO: Remove duplicated code (AdminController.php~L820)
         if ($request->query->get('start_at') && $request->query->get('end_at')) {
+
             $start = Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime();
             $end = Carbon::parse($request->query->get('end_at'))->setTime(23, 59, 59)->toDateTime();
+
             $filters['enabled'] = true;
             $filters['range'] = [$start, $end];
 
-            $qb->andWhere('d.createdAt BETWEEN :start AND :end')
+            $qb
+                ->andWhere('d.createdAt BETWEEN :start AND :end')
                 ->setParameter('start', $start)
                 ->setParameter('end', $end);
         }
 
         $deliveries = $paginator->paginate(
-            $filters['enabled'] ? $qb : $sections['past'],
+            $filters['enabled'] ? $qb : $deliveryRepository->past($qb),
             $request->query->getInt('page', 1),
             10,
             [
@@ -439,8 +442,8 @@ trait StoreTrait
             'store' => $store,
             'deliveries' => $deliveries,
             'filters' => $filters,
-            'today' => $filters['enabled'] ?: $sections['today']->getQuery()->getResult(),
-            'upcoming' => $filters['enabled'] ?: $sections['upcoming']->getQuery()->getResult(),
+            'today' => $filters['enabled'] ?: $deliveryRepository->today($qb)->getQuery()->getResult(),
+            'upcoming' => $filters['enabled'] ?: $deliveryRepository->upcoming($qb)->getQuery()->getResult(),
             'routes' => $this->getDeliveryRoutes(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],

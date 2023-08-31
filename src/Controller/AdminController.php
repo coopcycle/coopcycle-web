@@ -785,11 +785,15 @@ class AdminController extends AbstractController
             return $response;
         }
 
+        $deliveryRepository = $this->getDoctrine()->getRepository(Delivery::class);
+        $qb = $deliveryRepository->createQueryBuilderWithTasks();
+
         $filters = [
             'query' => null,
             'range' => null,
         ];
-        if ($request->query->has('q')) {
+
+        if ($request->query->get('q')) {
 
             $filters['query'] = $request->query->get('q');
 
@@ -804,17 +808,15 @@ class AdminController extends AbstractController
 
             $ids = array_filter($ids);
 
-            $qb = $this->getDoctrine()->getRepository(Delivery::class)->findByIds($ids);
+            $qb
+                ->andWhere('d.id IN (:ids)')
+                ->setParameter('ids', $ids);
 
         } else {
-            $sections = $this->getDoctrine()
-            ->getRepository(Delivery::class)->getSections();
-
-
-            if ($request->query->has('section')) {
-                $qb = $sections[$request->query->get('section')];
+            if ($request->query->has('section') && is_callable([ $deliveryRepository, $request->query->get('section') ])) {
+                $qb = call_user_func([ $deliveryRepository, $request->query->get('section') ], $qb);
             } else {
-                $qb = $sections['today'];
+                $qb = $deliveryRepository->today($qb);
             }
         }
 

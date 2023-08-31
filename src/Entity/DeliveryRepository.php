@@ -17,69 +17,50 @@ class DeliveryRepository extends EntityRepository
         $this->secret = $secret;
     }
 
-    public function getSections(?callable $query = null): array
+    public function createQueryBuilderWithTasks(): QueryBuilder
     {
-        $today = Carbon::now();
-
-        $after = new \DateTime('+2 days');
-        $after->setTime(0, 0, 0);
-
-        $qb = $this->createQueryBuilder('d')
+        return $this->createQueryBuilder('d')
             ->join(TaskCollectionItem::class, 'i', Expr\Join::WITH, 'i.parent = d.id')
             ->join(Task::class, 't', Expr\Join::WITH, 'i.task = t.id')
             ;
+    }
 
-        if (is_callable($query)) {
-            // Pass QueryBuilder reference to callable, so it can modify it
-            $query($qb);
-        }
+    public function today(QueryBuilder $qb): QueryBuilder
+    {
+        $today = Carbon::now();
 
-        $qbToday = (clone $qb)
+        return (clone $qb)
             ->andWhere('t.type = :pickup')
             ->andWhere('t.doneAfter >= :after')
             ->andWhere('t.doneBefore <= :before')
             ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->copy()->hour(0)->minute(0)->second(0))
             ->setParameter('before', $today->copy()->hour(23)->minute(59)->second(59));
+    }
 
-        $qbUpcoming = (clone $qb)
+    public function upcoming(QueryBuilder $qb): QueryBuilder
+    {
+        $today = Carbon::now();
+
+        return (clone $qb)
             ->andWhere('t.type = :pickup')
             ->andWhere('t.doneAfter >= :after')
             ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->copy()->add(1, 'day')->hour(0)->minute(0)->second(0))
             ->orderBy('t.doneBefore', 'asc')
             ;
+    }
 
-        $qbPast = (clone $qb)
+    public function past(QueryBuilder $qb): QueryBuilder
+    {
+        $today = Carbon::now();
+
+        return (clone $qb)
             ->andWhere('t.type = :pickup')
             ->andWhere('t.doneBefore < :after')
             ->setParameter('pickup', Task::TYPE_PICKUP)
             ->setParameter('after', $today->copy()->sub(1, 'day')->hour(23)->minute(59)->second(59))
             ;
-
-        return [
-            'qb' => $qb,
-            'today' => $qbToday,
-            'upcoming' => $qbUpcoming,
-            'past' => $qbPast,
-        ];
-    }
-    /**
-     * @param array<int> $ids
-     */
-    public function findByIds(array $ids): QueryBuilder
-    {
-
-        $qb = $this->createQueryBuilder('d')
-            ->join(TaskCollectionItem::class, 'i', Expr\Join::WITH, 'i.parent = d.id')
-            ->join(Task::class, 't', Expr\Join::WITH, 'i.task = t.id')
-            ;
-
-        $qb->andWhere('d.id IN (:ids)')
-                ->setParameter('ids', $ids);
-
-        return $qb;
-
     }
 
     public function findOneByHashId(string $hashId)
