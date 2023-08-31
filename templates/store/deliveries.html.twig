@@ -13,7 +13,7 @@
 {% endblock %}
 {% block dashboard_actions %}
  {% if filters is defined %}
-   <form class="d-flex align-items-center justify-content-between">
+   <form class="d-flex align-items-center justify-content-between" method="get">
      <div id="search_input_widget" class="w-100 mr-5"></div>
      <input type="hidden" id="search_input" name="q" value="{{ filters.query }}">
      <div class="d-inline-flex">
