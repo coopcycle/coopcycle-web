@@ -7,14 +7,34 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
 use Hashids\Hashids;
+use Psonic\Client as SonicClient;
+use Symfony\Component\Intl\Languages;
 
 class DeliveryRepository extends EntityRepository
 {
     private $secret;
+    private $sonicClient;
+    private $sonicSecretPassword;
+    private $sonicNamespace;
 
     public function setSecret(string $secret)
     {
         $this->secret = $secret;
+    }
+
+    public function setSonicClient(SonicClient $client)
+    {
+        $this->sonicClient = $client;
+    }
+
+    public function setSonicSecretPassword(string $password)
+    {
+        $this->sonicSecretPassword = $password;
+    }
+
+    public function setSonicNamespace(string $namespace)
+    {
+        $this->sonicNamespace = $namespace;
     }
 
     public function createQueryBuilderWithTasks(): QueryBuilder
@@ -85,5 +105,24 @@ class DeliveryRepository extends EntityRepository
         $id = current($ids);
 
         return $this->find($id);
+    }
+
+    public function searchWithSonic(QueryBuilder $qb, string $q, string $locale, ?Store $store = null)
+    {
+        $search = new \Psonic\Search($this->sonicClient);
+        $search->connect($this->sonicSecretPassword);
+
+        $collection = (null !== $store) ? sprintf('store:%d:deliveries', $store->getId()) : 'store:*:deliveries';
+
+        $ids = $search->query($collection, $this->sonicNamespace,
+            $q, $limit = null, $offset = null, Languages::getAlpha3Code($locale));
+
+        $search->disconnect();
+
+        $ids = array_filter($ids);
+
+        $qb
+            ->andWhere('d.id IN (:ids)')
+            ->setParameter('ids', $ids);
     }
 }

@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
@@ -28,7 +29,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Psonic\Client;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
@@ -39,7 +39,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Intl\Languages;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
@@ -350,7 +349,7 @@ trait StoreTrait
     }
 
     public function storeDeliveriesAction($id, Request $request, PaginatorInterface $paginator,
-        OrderManager $orderManager, DeliveryManager $deliveryManager, OrderFactory $orderFactory, Client $client)
+        OrderManager $orderManager, DeliveryManager $deliveryManager, OrderFactory $orderFactory, DeliveryRepository $deliveryRepository)
     {
         $store = $this->getDoctrine()
             ->getRepository(Store::class)
@@ -370,7 +369,7 @@ trait StoreTrait
                 $routes['import_success'], $orderManager, $deliveryManager, $orderFactory,);
         }
 
-        $deliveryRepository = $this->getDoctrine()->getRepository(Delivery::class);
+        /** @var QueryBuilder $qb */
         $qb = $deliveryRepository->createQueryBuilderWithTasks();
 
         $filters = [
@@ -389,20 +388,7 @@ trait StoreTrait
                 return $this->redirectToRoute($this->getDeliveryRoutes()['view'], ['id' => intval(trim($filters['query'], '#'))]);
             }
 
-            $locale = $request->getLocale();
-            $search = new \Psonic\Search($client);
-            $search->connect($this->getParameter('sonic_secret_password'));
-
-            $ids = $search->query(sprintf('store:%d:deliveries', $id), $this->getParameter('sonic_namespace'),
-                $filters['query'], $limit = null, $offset = null, Languages::getAlpha3Code($locale));
-
-            $search->disconnect();
-
-            $ids = array_filter($ids);
-
-            $qb
-                ->andWhere('d.id IN (:ids)')
-                ->setParameter('ids', $ids);
+            $deliveryRepository->searchWithSonic($qb, $filters['query'], $request->getLocale(), $store);
 
         } else {
             $qb

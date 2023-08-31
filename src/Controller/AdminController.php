@@ -19,6 +19,7 @@ use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
+use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\Invitation;
@@ -93,7 +94,6 @@ use Nucleos\UserBundle\Util\TokenGenerator as TokenGeneratorInterface;
 use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
 use Nucleos\ProfileBundle\Mailer\Mail\RegistrationMail;
 use Knp\Component\Pager\PaginatorInterface;
-use Psonic\Client;
 use Ramsey\Uuid\Uuid;
 use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -117,7 +117,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Intl\Languages;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -739,7 +738,7 @@ class AdminController extends AbstractController
         DeliveryManager $deliveryManager,
         OrderFactory $orderFactory,
         OrderManager $orderManager,
-        Client $client,
+        DeliveryRepository $deliveryRepository
     )
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
@@ -785,7 +784,7 @@ class AdminController extends AbstractController
             return $response;
         }
 
-        $deliveryRepository = $this->getDoctrine()->getRepository(Delivery::class);
+        /** @var QueryBuilder $qb */
         $qb = $deliveryRepository->createQueryBuilderWithTasks();
 
         $filters = [
@@ -797,20 +796,7 @@ class AdminController extends AbstractController
 
             $filters['query'] = $request->query->get('q');
 
-            $locale = $request->getLocale();
-            $search = new \Psonic\Search($client);
-            $search->connect($this->getParameter('sonic_secret_password'));
-
-            $ids = $search->query('store:*:deliveries', $this->getParameter('sonic_namespace'),
-                $request->query->get('q'), $limit = null, $offset = null, Languages::getAlpha3Code($locale));
-
-            $search->disconnect();
-
-            $ids = array_filter($ids);
-
-            $qb
-                ->andWhere('d.id IN (:ids)')
-                ->setParameter('ids', $ids);
+            $deliveryRepository->searchWithSonic($qb, $filters['query'], $request->getLocale());
 
         } else {
             if ($request->query->has('section') && is_callable([ $deliveryRepository, $request->query->get('section') ])) {

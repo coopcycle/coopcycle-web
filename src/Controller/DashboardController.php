@@ -8,6 +8,7 @@ use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
+use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
@@ -16,7 +17,6 @@ use AppBundle\Sylius\Taxation\TaxesHelper;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Psonic\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -96,7 +96,7 @@ class DashboardController extends AbstractController
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
         OrderFactory $orderFactory,
-        Client $client
+        DeliveryRepository $deliveryRepository
     )
     {
         $user = $this->getUser();
@@ -120,7 +120,7 @@ class DashboardController extends AbstractController
                 $orderManager,
                 $deliveryManager,
                 $orderFactory,
-                $client
+                $deliveryRepository
             );
         }
 
