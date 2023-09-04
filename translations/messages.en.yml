@@ -1121,7 +1121,7 @@ refund.list.disclaimer.admin: "When the platform is responsible for the incident
   \ merchant actually refunded the customer."
 form.time_slot.choices.error.empty: The list of choices cannot be empty
 form.attach_to_org.modal.title: Attach to store
-loopeat.oauth_connect.success: LoopEat account connected successfully!
+loopeat.oauth_connect.success: %name% account connected successfully!
 loopeat.oauth_redirect.warning: You will be redirected to the LoopEat website to login
   or create your account
 authentication.register_benefits: Register for a faster checkout experience. You will

@@ -1034,7 +1034,7 @@ refund.list.refunded_at: Remboursé à
 refund.list.liable_party: Partie responsable
 refund.list.amount: Montant du remboursement
 refund.list.comments: Commentaires
-loopeat.oauth_connect.success: Votre compte LoopEat est connecté !
+loopeat.oauth_connect.success: Votre compte %name% est connecté !
 loopeat.oauth_redirect.warning: Vous allez être redirigé·e vers le site de LoopEat
   pour vous identifier ou créer votre compte
 authentication.register_benefits: Créez un compte pour commander plus rapidement.
