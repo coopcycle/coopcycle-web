@@ -8,6 +8,7 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Create
@@ -16,7 +17,8 @@ class Create
         private DeliveryManager $deliveryManager,
         private EntityManagerInterface $entityManager,
         private OrderManager $orderManager,
-        private OrderFactory $orderFactory
+        private OrderFactory $orderFactory,
+        private LoggerInterface $logger
     )
     { }
 
@@ -32,7 +34,9 @@ class Create
             $price = $this->deliveryManager->getPrice($data, $store->getPricingRuleSet());
 
             if (null === $price) {
-                throw new NoRuleMatchedException();
+                $this->logger->error('Price could not be calculated');
+
+                return $data;
             }
 
             $price = (int) $price;
