@@ -198,8 +198,6 @@ function createDatePickerWidget(name, type, isAdmin = false) {
 
   new DateTimePicker(document.querySelector(`#${name}_${type}_doneBefore_widget`), {
     defaultValue,
-    showTime: true,
-    format: 'LLL',
     onChange: function(date) {
       datePickerEl.value = date.format('YYYY-MM-DD HH:mm:ss')
       store.dispatch({
