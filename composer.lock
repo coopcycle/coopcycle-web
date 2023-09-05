@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2ac6603898206505046544b33d1737c8",
+    "content-hash": "dd750e5c57c9103199a1546bb0c419ab",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -10022,7 +10022,6 @@
                 "symfony/doctrine-bridge": "^5.4 || ^6.2",
                 "symfony/yaml": "^5.4 || ^6.2"
             },
-            "default-branch": true,
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
@@ -20710,7 +20709,7 @@
                 "Symfony"
             ],
             "support": {
-                "source": "https://github.com/rkeet/behatch-contexts/tree/php80"
+                "source": "https://github.com/rkeet/behatch-contexts/tree/main"
             },
             "time": "2022-01-29T14:05:23+00:00"
         },
