@@ -16,6 +16,7 @@ use AppBundle\Form\Checkout\CheckoutCouponType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\Checkout\CheckoutTipType;
 use AppBundle\Form\Checkout\CheckoutVytalType;
+use AppBundle\Form\Checkout\LoopeatReturnsType;
 use AppBundle\Form\Order\CartType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
@@ -198,6 +199,21 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order');
         }
 
+        $loopeatReturnsForm = $this->createForm(LoopeatReturnsType::class, $order);
+        $loopeatReturnsForm->handleRequest($request);
+
+        if ($loopeatReturnsForm->isSubmitted()) {
+
+            $returns = $loopeatReturnsForm->get('returns')->getData();
+
+            $order->setLoopeatReturns(json_decode($returns, true));
+
+            $orderProcessor->process($order);
+            $this->objectManager->flush();
+
+            return $this->redirectToRoute('order');
+        }
+
         $form = $this->createForm(CheckoutAddressType::class, $order);
         $form->handleRequest($request);
 
@@ -222,6 +238,7 @@ class OrderController extends AbstractController
                 // Make sure to reset return counter
                 if (!$order->isReusablePackagingEnabled()) {
                     $order->setReusablePackagingPledgeReturn(0);
+                    $order->setLoopeatReturns([]);
                 }
 
                 $orderProcessor->process($order);
@@ -266,6 +283,7 @@ class OrderController extends AbstractController
             'form_tip' => $tipForm->createView(),
             'form_coupon' => $couponForm->createView(),
             'form_vytal' => $vytalForm->createView(),
+            'form_loopeat_returns' => $loopeatReturnsForm->createView(),
         ));
     }
 

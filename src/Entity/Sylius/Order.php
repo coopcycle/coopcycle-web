@@ -1682,4 +1682,15 @@ class Order extends BaseOrder implements OrderInterface
         $this->loopeatCredentials->setOrder(null);
         $this->loopeatCredentials = null;
     }
+
+    public function getLoopeatReturnsCount(): int
+    {
+        $count = 0;
+
+        foreach ($this->getLoopeatReturns() as $return) {
+            $count += $return['quantity'];
+        }
+
+        return $count;
+    }
 }

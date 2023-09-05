@@ -98,10 +98,13 @@ $('#modal-loopeat').on('shown.bs.modal', function(e) {
     requiredAmount={ requiredAmount }
     closeModal={ () => $('#modal-loopeat').modal('hide') }
     onChange={ returns => {
-      $('#checkout_address_loopeatReturns').val(
+      $('#loopeat_returns_returns').val(
         JSON.stringify(returns)
       )
-    } } />, this.querySelector('.modal-body'))
+    }}
+    onSubmit={ () => {
+      document.querySelector('form[name="loopeat_returns"]').submit()
+    }} />, this.querySelector('.modal-body [data-widget="loopeat-returns"]'))
 });
 
 $('#dabba-add-credit').on('click', function(e) {

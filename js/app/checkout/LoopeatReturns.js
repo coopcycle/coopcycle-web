@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
+import { Checkbox } from 'antd'
 
 function getNameFromId(formatId, formats) {
   const format = formats.find(f => f.id === formatId)
@@ -18,7 +19,7 @@ const getReturnsTotalAmount = (returns, formats) => returns.reduce(
   0
 )
 
-const LoopeatReturns = function({ customerContainers, formats, formatsToDeliver, initialReturns, closeModal, creditsCountCents, requiredAmount, onChange }) {
+const LoopeatReturns = function({ customerContainers, formats, formatsToDeliver, initialReturns, creditsCountCents, requiredAmount, onChange, onSubmit }) {
 
   const { t } = useTranslation()
   const [ returns, setReturns ] = useState(initialReturns)
@@ -29,24 +30,48 @@ const LoopeatReturns = function({ customerContainers, formats, formatsToDeliver,
   return (
     <div className="p-4">
       <section>
-        <h5>{ t('CART_LOOPEAT_RETURNS_WIDGET') }</h5>
         <table className="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>{ t('CART_LOOPEAT_RETURNS_TYPE') }</th>
+              <th className="text-right">{ t('CART_LOOPEAT_RETURNS_QUANTITY') }</th>
+            </tr>
+          </thead>
           <tbody>
           { customerContainers.map((container, index) => {
 
+            const isSelected = !!_.find(returns, r => r.format_id === container.format_id)
+
             return (
-              <tr key={ `container-${index}` }>
-                <td>{ `${container.quantity} × ${getNameFromId(container.format_id, formats)} (${(getPriceFromId(container.format_id, formats) / 100).formatMoney()})` }</td>
-                <td className="text-right">
-                  <button type="button" className="btn btn-sm" onClick={ () => {
-
-                    const newReturns = _.find(returns, r => r.format_id === container.format_id) ?
-                      _.filter(returns, r => r.format_id !== container.format_id) : [ ...returns, container ]
-
+              <tr key={ `container-${index}` } className={ classNames({
+                'active': isSelected
+              }) }>
+                <td style={{ width: '1px', whiteSpace: 'nowrap' }}>
+                  <Checkbox checked={ isSelected } onChange={ e => {
+                    const newReturns = e.target.checked ?
+                      [ ...returns, container ] : _.filter(returns, r => r.format_id !== container.format_id)
                     setReturns(newReturns)
                     onChange(newReturns)
-
-                  } }>{ _.find(returns, r => r.format_id === container.format_id) ? t('CART_LOOPEAT_RETURNS_TURN_OFF') : t('CART_LOOPEAT_RETURNS_TURN_ON') }</button>
+                  }} />
+                </td>
+                <td>{ `${getNameFromId(container.format_id, formats)} (${(getPriceFromId(container.format_id, formats) / 100).formatMoney()})` }</td>
+                <td style={{ width: '1px', whiteSpace: 'nowrap' }}>
+                  <input type="number" className="form-control"
+                    disabled={ !isSelected }
+                    style={{ width: '5em' }}
+                    defaultValue={ container.quantity }
+                    min={ 1 } max={ container.quantity }
+                    onChange={ e => {
+                      const idx = _.findIndex(returns, r => r.format_id === container.format_id)
+                      if (idx !== -1) {
+                        const newReturns = returns.map(function(ret, retIndex) {
+                          return retIndex === idx ? { ...ret, quantity: parseInt(e.target.value, 10) } : ret;
+                        });
+                        setReturns(newReturns)
+                        onChange(newReturns)
+                      }
+                    }} />
                 </td>
               </tr>
             )
@@ -91,7 +116,7 @@ const LoopeatReturns = function({ customerContainers, formats, formatsToDeliver,
           </tfoot>
         </table>
       </section>
-      <button type="button" className="btn btn-lg btn-block" onClick={ closeModal }>
+      <button type="button" className="btn btn-lg btn-block btn-primary" onClick={ onSubmit }>
         { t('CART_LOOPEAT_RETURNS_VALIDATE') }
       </button>
     </div>

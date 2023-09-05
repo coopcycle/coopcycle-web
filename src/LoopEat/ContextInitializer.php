@@ -38,6 +38,8 @@ class ContextInitializer
         $context->formats = $this->client->getFormats($order->getRestaurant());
         $context->returns = $order->getLoopeatReturns();
         $context->returnsTotalAmount = $order->getReturnsAmountForLoopeat();
+        $context->returnsCount = $order->getLoopeatReturnsCount();
+        $context->requiredAmount = $order->getRequiredAmountForLoopeat();
 
         $adapter = new GuestCheckoutAwareAdapter($order);
 
@@ -50,11 +52,14 @@ class ContextInitializer
                 $context->hasCredentials = true;
                 $context->creditsCountCents = $currentCustomer['credits_count_cents'];
                 $context->containersCount = $currentCustomer['containers_count'];
-                $context->requiredAmount = $order->getRequiredAmountForLoopeat();
 
                 if ($currentCustomer['containers_count'] > 0) {
                     $context->containers = $this->client->listContainers($adapter);
                 }
+
+                $context->containersTotalAmount = $this->getContainersTotalAmount($context->containers, $context->formats);
+
+                $context->suggestion = $context->suggest($order);
 
                 $this->logger->info(sprintf('Loopeat context for order #%d successfully initialized', $order->getId()));
 
@@ -67,5 +72,15 @@ class ContextInitializer
         }
 
         return $context;
+    }
+
+    private function getContainersTotalAmount(array $containers, array $formats)
+    {
+        // Index formats by id
+        $formatsById = array_column($formats, 'cost_cents', 'id');
+
+        return array_reduce($containers, function ($amount, $container) use ($formatsById) {
+            return $amount + (($formatsById[$container['format_id']] ?? 0) * $container['quantity']);
+        }, 0);
     }
 }

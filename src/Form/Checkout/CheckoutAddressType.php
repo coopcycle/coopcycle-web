@@ -129,12 +129,6 @@ class CheckoutAddressType extends AbstractType
                         ],
                     ]);
 
-                    $form->add('loopeatReturns', HiddenType::class, [
-                        'required' => false,
-                        'mapped' => false,
-                        'empty_data' => '[]'
-                    ]);
-
                 } elseif (!$order->isMultiVendor() && $supportsDabba) {
 
                     $this->dabbaContext->initialize();
@@ -219,17 +213,6 @@ class CheckoutAddressType extends AbstractType
                 $form->add('quote', SubmitType::class, [
                     'label' => 'form.checkout_address.quote.label'
                 ]);
-            }
-        });
-
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-
-            $form = $event->getForm();
-            $order = $form->getData();
-
-            if ($form->has('loopeatReturns')) {
-                $returns = $form->get('loopeatReturns')->getData();
-                $order->setLoopeatReturns(json_decode($returns, true));
             }
         });
 

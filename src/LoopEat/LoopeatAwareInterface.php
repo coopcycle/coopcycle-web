@@ -14,4 +14,8 @@ interface LoopeatAwareInterface
     public function setLoopeatOrderId($loopeatOrderId);
 
     public function getLoopeatReturns();
+
+    public function getReturnsAmountForLoopeat(): int;
+
+    public function hasLoopeatReturns();
 }
