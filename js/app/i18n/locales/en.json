@@ -337,6 +337,7 @@
         "PM_EDENRED": "Edenred",
         "PM_GIROPAY": "Giropay",
         "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Show tours panel",
-        "SEE_ALL": "See all"
+        "SEE_ALL": "See all",
+        "ORDER_DELAYED_NOTIFICATION": "Order {{orderNumber}} was delayed. New shipping time range: {{shippingTimeRange}}"
     }
 }
