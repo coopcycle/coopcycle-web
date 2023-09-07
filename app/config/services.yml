@@ -513,7 +513,7 @@ services:
     tags:
       - { name: doctrine.orm.entity_listener }
 
-  AppBundle\Loopeat\TaskListener:
+  AppBundle\LoopEat\TaskListener:
     tags:
       - { name: doctrine.orm.entity_listener }
 
