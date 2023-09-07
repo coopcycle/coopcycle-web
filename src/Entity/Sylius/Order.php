@@ -1693,4 +1693,27 @@ class Order extends BaseOrder implements OrderInterface
 
         return $count;
     }
+
+    public function getLoopeatReturnsAsText(): string
+    {
+        $text = '';
+
+        $reusablePackagings = $this->getRestaurant()->getReusablePackagings();
+
+        $findFormat = function ($formatId) use ($reusablePackagings) {
+            foreach ($reusablePackagings as $reusablePackaging) {
+                $data = $reusablePackaging->getData();
+                if ($data['id'] === $formatId) {
+                    return $data;
+                }
+            }
+        };
+
+        foreach ($this->getLoopeatReturns() as $return) {
+            $format = $findFormat($return['format_id']);
+            $text .= "‒ {$format['title']} × {$return['quantity']}\n";
+        }
+
+        return $text;
+    }
 }

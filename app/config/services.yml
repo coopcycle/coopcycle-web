@@ -513,6 +513,10 @@ services:
     tags:
       - { name: doctrine.orm.entity_listener }
 
+  AppBundle\Loopeat\TaskListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
   AppBundle\EventListener\JwtListener:
     tags:
       - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess }

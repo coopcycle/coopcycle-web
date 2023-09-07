@@ -1298,3 +1298,4 @@ loopeat.returns_modal.title: Je rends mes boîtes
 form.checkout_address.reusable_packaging.loopeat.returns.label: Vous allez rendre
   <strong>%count%</strong> boîte, pour un total de <strong>%amount%</strong>|Vous allez rendre
   <strong>%count%</strong> boîtes, pour un total de <strong>%amount%</strong>
+loopeat.task_comments.returns: Attention, vous devez récupérer des boîtes chez le client

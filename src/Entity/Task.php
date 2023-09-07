@@ -1032,4 +1032,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $language->evaluate($expression, $this->toExpressionLanguageValues());
     }
+
+    public function appendToComments($comments)
+    {
+        $this->comments = ($this->comments ?? '') . "\n\n" . $comments;
+    }
 }
