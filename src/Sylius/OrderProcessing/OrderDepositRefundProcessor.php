@@ -5,7 +5,10 @@ namespace AppBundle\Sylius\OrderProcessing;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Model\Adjustment;
+use AppBundle\Entity\ReusablePackagings;
+use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Order\AdjustmentInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -83,22 +86,8 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
 
                 foreach ($reusablePackagings as $reusablePackaging) {
 
-                    $units = ceil($reusablePackaging->getUnits() * $item->getQuantity());
-
                     $pkg = $reusablePackaging->getReusablePackaging();
-
-                    // TODO Move this to method
-                    if ($restaurant->isLoopeatEnabled()) {
-                        $pkgData = $pkg->getData();
-                        $loopeatDeliver = $order->getLoopeatDeliver();
-                        if (isset($loopeatDeliver[$item->getId()])) {
-                            foreach ($loopeatDeliver[$item->getId()] as $loopeatDeliverFormat) {
-                                if ($loopeatDeliverFormat['format_id'] === $pkgData['id']) {
-                                    $units = $loopeatDeliverFormat['quantity'];
-                                }
-                            }
-                        }
-                    }
+                    $units = $this->getUnits($order, $item, $reusablePackaging, $pkg);
 
                     $label = $pkg->getAdjustmentLabel($this->translator, $units);
                     $amount = $pkg->getPrice() * $units;
@@ -135,5 +124,29 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
                 $neutral = false
             ));
         }
+    }
+
+    private function getUnits(
+        BaseOrderInterface $order,
+        OrderItemInterface $item,
+        ReusablePackagings $reusablePackaging,
+        ReusablePackaging $pkg): int
+    {
+        $restaurant = $order->getRestaurant();
+
+        if ($restaurant->isLoopeatEnabled()) {
+            $pkgData = $pkg->getData();
+            $loopeatDeliver = $order->getLoopeatDeliver();
+            if (isset($loopeatDeliver[$item->getId()])) {
+                foreach ($loopeatDeliver[$item->getId()] as $loopeatDeliverFormat) {
+                    if ($loopeatDeliverFormat['format_id'] === $pkgData['id']) {
+
+                        return $loopeatDeliverFormat['quantity'];
+                    }
+                }
+            }
+        }
+
+        return ceil($reusablePackaging->getUnits() * $item->getQuantity());
     }
 }
