@@ -92,6 +92,10 @@ class TaskModalContent extends React.Component {
     }
   }
 
+  onRescheduleClick(task) {
+    alert('Reschedule')
+  }
+
   _validate(values) {
     let errors = {}
 
@@ -157,6 +161,13 @@ class TaskModalContent extends React.Component {
             onClick={ () => this.props.duplicateTask(task) }
             disabled={ this.props.loading }>
             <span className="text-success">{ this.props.t('ADMIN_DASHBOARD_DUPLICATE_TASK') }</span>
+          </button>
+        )}
+        { (!!task && (task.status === 'CANCELLED' || task.status === 'FAILED')) && (
+          <button type="button" className="btn btn-warning pull-left"
+                  onClick={ () => this.onRescheduleClick(task) }
+                  disabled={ this.props.loading }>
+            <i className="fa fa-repeat"></i> <span>{ this.props.t('ADMIN_DASHBOARD_RESCHEDULE') }</span>
           </button>
         )}
         { (!!task && task.isAssigned && (task.status === 'TODO' || task.status === 'DOING')) && (

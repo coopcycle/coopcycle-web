@@ -21,6 +21,7 @@ class RescheduleHandler
         $this->eventRecorder->record(new Event\TaskRescheduled($task, $rescheduleDateTime));
 
         $task->setDoneBefore($rescheduleDateTime);
+        $task->setMetadata('rescheduled', true);
         $task->setStatus(Task::STATUS_TODO);
     }
 }
