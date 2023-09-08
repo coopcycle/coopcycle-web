@@ -94,7 +94,7 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
                         if (isset($loopeatDeliver[$item->getId()])) {
                             foreach ($loopeatDeliver[$item->getId()] as $loopeatDeliverFormat) {
                                 if ($loopeatDeliverFormat['format_id'] === $pkgData['id']) {
-                                    $units = ceil($loopeatDeliverFormat['quantity'] * $item->getQuantity());
+                                    $units = $loopeatDeliverFormat['quantity'];
                                 }
                             }
                         }
