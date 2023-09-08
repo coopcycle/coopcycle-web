@@ -224,4 +224,6 @@ interface OrderInterface extends
     public function isFree(): bool;
 
     public function isReusablePackagingEnabled();
+
+    public function getPaymentMethod(): ?string;
 }
