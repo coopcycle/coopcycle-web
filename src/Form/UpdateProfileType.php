@@ -33,7 +33,7 @@ class UpdateProfileType extends AbstractType
     {
         $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
-        $this->loopeatClient = $loopEatClient;
+        $this->loopeatClient = $loopeatClient;
         $this->countryIso = strtoupper($countryIso);
     }
 
