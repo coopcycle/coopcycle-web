@@ -1720,7 +1720,7 @@ class Order extends BaseOrder implements OrderInterface
     public function supportsLoopeat(): bool
     {
         foreach ($this->getVendors() as $vendor) {
-            if ($vendor->getRestaurant()->isLoopeatEnabled()) {
+            if ($vendor->getRestaurant()->isLoopeatEnabled() && $vendor->getRestaurant()->hasLoopEatCredentials()) {
 
                 return true;
             }

@@ -28,6 +28,9 @@ import {
   SET_PLAYER_TOKEN,
   SET_STREET_ADDRESS,
   TOGGLE_MOBILE_CART,
+  STOP_ASKING_ENABLE_REUSABLE_PACKAGING,
+  ENABLE_REUSABLE_PACKAGING,
+  DISABLE_REUSABLE_PACKAGING,
 } from './actions'
 
 const initialState = {
@@ -41,6 +44,7 @@ const initialState = {
     shippingTimeRange: null,
     takeaway: false,
     invitation: null,
+    reusablePackagingEnabled: false,
   },
   restaurant: null,
   isFetching: false,
@@ -80,6 +84,7 @@ const initialState = {
     }
   },
   isGroupOrdersEnabled: false,
+  shouldAskToEnableReusablePackaging: true,
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -151,14 +156,27 @@ const cart = (state = initialState.cart, action = {}) => {
       ...state,
       takeaway: false,
     }
-   case INVITE_PEOPLE_REQUEST_SUCCESS:
-      return {
-        ...state,
-        invitation: action.payload,
-      }
-    case PLAYER_UPDATE_EVENT:
+  case INVITE_PEOPLE_REQUEST_SUCCESS:
+    return {
+      ...state,
+      invitation: action.payload,
+    }
+  case PLAYER_UPDATE_EVENT:
 
-      return action.payload
+    return action.payload
+  case ENABLE_REUSABLE_PACKAGING:
+
+    return {
+      ...state,
+      reusablePackagingEnabled: true,
+    }
+  case DISABLE_REUSABLE_PACKAGING:
+
+    return {
+      ...state,
+      reusablePackagingEnabled: false,
+    }
+
   default:
 
     return state
@@ -380,6 +398,15 @@ const isGroupOrdersEnabled = (state = initialState.isGroupOrdersEnabled) => {
   return state
 }
 
+const shouldAskToEnableReusablePackaging = (state = initialState.shouldAskToEnableReusablePackaging, action = {}) => {
+  switch (action.type) {
+  case STOP_ASKING_ENABLE_REUSABLE_PACKAGING:
+    return false
+  default:
+    return state
+  }
+}
+
 export default combineReducers({
   isFetching,
   cart,
@@ -406,4 +433,5 @@ export default combineReducers({
   isSetPlayerEmailModalOpen,
   player,
   isGroupOrdersEnabled,
+  shouldAskToEnableReusablePackaging,
 })

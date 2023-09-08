@@ -90,6 +90,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order', 'cart', 'order_update']
     reusablePackagingPledgeReturn:
       groups: ['order', 'cart', 'order_update']
+    reusablePackagingQuantity:
+      groups: ['order', 'cart', 'order_update']
     takeaway:
       groups: ['order', 'order_minimal']
     fulfillmentMethod:

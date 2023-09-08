@@ -16,6 +16,7 @@ import Time from './Time'
 import FulfillmentMethod from './FulfillmentMethod'
 import ProductOptionsModal from './ProductOptionsModal'
 import ProductDetailsModal from './ProductDetailsModal'
+import LoopeatModal from './LoopeatModal'
 
 import {changeAddress, disableTakeaway, enableTakeaway, openAddressModal, sync, toggleReusablePackaging} from '../redux/actions'
 import {
@@ -63,7 +64,7 @@ class Cart extends Component {
               <div>
                 { (this.props.reusablePackagingFeatureEnabled && this.props.hasItems) &&
                 <div className="d-flex align-items-center mb-2">
-                  <Switch size="small" defaultChecked={ this.props.reusablePackagingEnabled } onChange={ (checked) => {
+                  <Switch size="small" checked={ this.props.reusablePackagingEnabled } onChange={ (checked) => {
                     this.props.toggleReusablePackaging(checked)
                   } } />
                   <span className="ml-2">{ this.props.t('CART_ENABLE_ZERO_WASTE') }</span>
@@ -89,6 +90,7 @@ class Cart extends Component {
         <ProductDetailsModal />
         <InvitePeopleToOrderModal />
         <SetGuestCustomerEmailModal />
+        <LoopeatModal />
       </Sticky>
     )
   }

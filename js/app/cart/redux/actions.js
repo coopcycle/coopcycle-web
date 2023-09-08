@@ -43,6 +43,10 @@ export const SET_PLAYER_FAILURE = 'SET_PLAYER_FAILURE'
 
 export const PLAYER_UPDATE_EVENT = 'PLAYER_UPDATE_EVENT'
 
+export const STOP_ASKING_ENABLE_REUSABLE_PACKAGING = 'STOP_ASKING_ENABLE_REUSABLE_PACKAGING'
+export const DISABLE_REUSABLE_PACKAGING = 'DISABLE_REUSABLE_PACKAGING'
+export const ENABLE_REUSABLE_PACKAGING = 'ENABLE_REUSABLE_PACKAGING'
+
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const fetchSuccess = createAction(FETCH_SUCCESS)
 export const fetchFailure = createAction(FETCH_FAILURE)
@@ -81,6 +85,8 @@ export const setPlayerToken = createAction(SET_PLAYER_TOKEN)
 export const setPlayerFailure = createAction(SET_PLAYER_FAILURE)
 
 export const playerUpdateEvent = createAction(PLAYER_UPDATE_EVENT)
+
+export const stopAskingToEnableReusablePackaging = createAction(STOP_ASKING_ENABLE_REUSABLE_PACKAGING)
 
 const httpClient = axios.create()
 function getRoutingParams(params) {
@@ -201,7 +207,6 @@ export function queueAddItem(itemURL, quantity = 1) {
 
       dispatch(fetchRequest())
       dispatch(setLastAddItemRequest(itemURL, { quantity }))
-
 
       httpClient.request({
         method: "post",
@@ -611,6 +616,9 @@ export function createInvitation() {
   }
 }
 
+const _enableReusablePackaging = createAction(ENABLE_REUSABLE_PACKAGING)
+const _disableReusablePackaging = createAction(DISABLE_REUSABLE_PACKAGING)
+
 export function toggleReusablePackaging(checked = true) {
 
   return (dispatch) => {
@@ -621,6 +629,12 @@ export function toggleReusablePackaging(checked = true) {
     if ($reusablePackagingEnabled.length === 1) {
 
       $reusablePackagingEnabled.prop('checked', checked)
+
+      if (checked) {
+        dispatch(_enableReusablePackaging())
+      } else {
+        dispatch(_disableReusablePackaging())
+      }
 
       dispatch(fetchRequest())
       postForm()

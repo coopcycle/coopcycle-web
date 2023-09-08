@@ -301,6 +301,9 @@
 <div id="js-addresses-data"
   data-addresses="{{ addresses_normalized|json_encode|e('html_attr') }}"></div>
 
+<div id="js-loopeat"
+  data-context="{{ loopeat_context|json_encode|e('html_attr') }}"></div>
+
 <div id="optins"
   data-brand-name={{ coopcycle_setting('brand_name')|json_encode|e('html_attr') }}></div>
 

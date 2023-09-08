@@ -10,6 +10,7 @@ import { createStoreFromPreloadedState } from '../cart/redux/store'
 import { queueAddItem, openProductOptionsModal, openProductDetailsModal } from '../cart/redux/actions'
 import Cart from '../cart/components/Cart'
 import storage from '../search/address-storage'
+import { initLoopeatContext } from './loopeat'
 
 require('gasparesganga-jquery-loading-overlay')
 
@@ -62,6 +63,7 @@ const init = function() {
 
   const restaurantDataElement = document.querySelector('#js-restaurant-data')
   const addressesDataElement = document.querySelector('#js-addresses-data')
+  const loopeatDataElement = document.querySelector('#js-loopeat')
 
   const restaurant = JSON.parse(restaurantDataElement.dataset.restaurant)
   const times = JSON.parse(restaurantDataElement.dataset.times)
@@ -70,6 +72,8 @@ const init = function() {
   const addresses = JSON.parse(addressesDataElement.dataset.addresses)
 
   let cart = JSON.parse(restaurantDataElement.dataset.cart)
+
+  initLoopeatContext(JSON.parse(loopeatDataElement.dataset.context))
 
   if (!cart.shippingAddress) {
 

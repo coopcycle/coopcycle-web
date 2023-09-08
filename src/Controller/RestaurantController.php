@@ -22,6 +22,8 @@ use AppBundle\Form\Checkout\Action\AddProductToCartAction as CheckoutAddProductT
 use AppBundle\Form\Checkout\Action\Validator\AddProductToCart as AssertAddProductToCart;
 use AppBundle\Form\Order\CartType;
 use AppBundle\Form\PledgeType;
+use AppBundle\LoopEat\Context as LoopEatContext;
+use AppBundle\LoopEat\ContextInitializer as LoopEatContextInitializer;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
@@ -378,6 +380,8 @@ class RestaurantController extends AbstractController
         SlugifyInterface $slugify,
         CartContextInterface $cartContext,
         RestaurantResolver $restaurantResolver,
+        LoopEatContextInitializer $loopeatContextInitializer,
+        LoopEatContext $loopeatContext,
         Address $address = null)
     {
         $restaurant = $this->getDoctrine()
@@ -453,6 +457,10 @@ class RestaurantController extends AbstractController
 
                 return $this->redirectToRoute('order');
             }
+        }
+
+        if ($cart->supportsLoopeat()) {
+            $loopeatContextInitializer->initialize($cart, $loopeatContext);
         }
 
         return $this->render('restaurant/index.html.twig', $this->auth([

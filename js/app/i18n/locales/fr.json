@@ -298,6 +298,9 @@
         "ORDER_DELAYED_NOTIFICATION": "La commande {{orderNumber}} a été retardée. Nouveau créneau de livraison : {{shippingTimeRange}}",
         "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Nom de la règle",
         "RULE_PICKER_LINE_TASK_TYPE": "Type de tâche",
-        "CART_ENABLE_ZERO_WASTE": "Activer l'option zéro déchet"
+        "CART_ENABLE_ZERO_WASTE": "Activer l'option zéro déchet",
+        "CART_ZERO_WASTE_POPUP_TEXT": "Bravo, votre panier contient un plat éligible à la livraison zéro-déchet avec notre partenaire « {{name}} ». Faites-vous livrer en boîtes consignées et retournez vos boîtes partout dans le réseau « {{name}} » ou à votre coursier à la prochaine commande. Vous pouvez désactiver cette option à tout moment.",
+        "LEARN_MORE": "En savoir plus",
+        "I_UNDERSTAND": "Jʼai compris"
     }
 }
