@@ -275,8 +275,8 @@ class OrderDepositRefundProcessorTest extends TestCase
         $order
             ->getLoopeatDeliver()
             ->willReturn([
-                1 => [
-                    ['format_id' => 1, 'quantity' => 3]
+                2 => [
+                    ['format_id' => 1, 'quantity' => 2]
                 ]
             ]);
 
@@ -292,22 +292,23 @@ class OrderDepositRefundProcessorTest extends TestCase
             ->will(function ($args) {
                 $adjustment = new Adjustment();
                 $adjustment->setType($args[0]);
+                $adjustment->setLabel($args[1]);
                 $adjustment->setAmount($args[2]);
 
                 return $adjustment;
             });
 
-        $item1 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 1, $units = 0.5, $enabled = true, $id = 1);
+        $item1 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 1, $units = 1, $enabled = true, $id = 1);
         $item1
             ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
                 return $adjustment->getAmount() === 0;
             }))
             ->shouldBeCalled();
 
-        $item2 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 2, $units = 1, $enabled = true, $id = 2);
+        $item2 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 2, $units = 3, $enabled = true, $id = 2);
         $item2
             ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
-                return $adjustment->getAmount() === 0;
+                return $adjustment->getAmount() === 0 && '2 × Small box' === $adjustment->getLabel();
             }))
             ->shouldBeCalled();
 
