@@ -23,7 +23,8 @@ services:
       - { name: form.type_extension }
 
   AppBundle\Form\UpdateProfileType:
-    arguments: [ '@security.token_storage', '@translator', '%country_iso%' ]
+    arguments:
+      $countryIso: '%country_iso%'
     tags:
       - { name: form.type, alias: app_update_profile }
 
