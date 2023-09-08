@@ -589,8 +589,8 @@ form.checkout_address.reusable_packaging_loopeat_enabled.label: Activer l'option
 form.checkout_address.reusable_packaging.loopeat.learn_more: En savoir plus à propos
   de LoopEat
 form.checkout_address.reusable_packaging.loopeat.reusable_quantity.label: Votre commande
-  présente <strong>%count%</strong> plat adapté à la livraison zero déchet, pour un total de <strong>%amount%</strong>|Votre commande
-  présente <strong>%count%</strong> plats adaptés à la livraison zero déchet, pour un total de <strong>%amount%</strong>
+  présente <strong>%count%</strong> plat adapté à la livraison zero déchet, pour un total de <strong>%amount%</strong> de consigne|Votre commande
+  présente <strong>%count%</strong> plats adaptés à la livraison zero déchet, pour un total de <strong>%amount%</strong> de consigne
 form.checkout_address.reusable_packaging.loopeat.available_credits.label: Vous avez
   <strong>%amount%</strong> sur votre cagnotte %name%
 form.checkout_address.reusable_packaging.loopeat.available_credits.help: (1 crédit
