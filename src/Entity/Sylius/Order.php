@@ -374,7 +374,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "security"="is_granted('view', object)",
  *       "input"=LoopeatFormatsOutput::class,
  *       "validate"=false,
- *       "normalization_context"={"groups"={"cart"}},
+ *       "normalization_context"={"groups"={"cart", "order"}},
  *       "denormalization_context"={"groups"={"update_loopeat_formats"}},
  *       "openapi_context"={
  *         "summary"="Update Loopeat formats for an order"
