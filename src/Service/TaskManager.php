@@ -6,6 +6,7 @@ use AppBundle\Domain\Task\Command\Cancel;
 use AppBundle\Domain\Task\Command\DeleteGroup;
 use AppBundle\Domain\Task\Command\MarkAsDone;
 use AppBundle\Domain\Task\Command\MarkAsFailed;
+use AppBundle\Domain\Task\Command\Reschedule;
 use AppBundle\Domain\Task\Command\Start;
 use AppBundle\Domain\Task\Command\AddToGroup;
 use AppBundle\Domain\Task\Command\RemoveFromGroup;
@@ -61,5 +62,9 @@ class TaskManager
     public function restore(Task $task)
     {
         $this->commandBus->handle(new Restore($task));
+    }
+
+    public function reschedule(Task $task, \DateTime $rescheduleDateTime) {
+        $this->commandBus->handle(new Reschedule($task, $rescheduleDateTime));
     }
 }

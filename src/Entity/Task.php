@@ -13,6 +13,7 @@ use AppBundle\Action\Task\Events as TaskEvents;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
+use AppBundle\Action\Task\Reschedule as TaskReschedule;
 use AppBundle\Action\Task\Restore as TaskRestore;
 use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
@@ -232,6 +233,24 @@ use Symfony\Component\Validator\Constraints as Assert;
  *         "summary"="Duplicates a Task"
  *       }
  *     },
+ *     "task_reschedule"={
+ *        "method"="PUT",
+ *        "path"="/tasks/{id}/reschedule",
+ *        "controller"=TaskReschedule::class,
+ *        "denormalization_context"={"groups"={"task_operation"}},
+ *        "access_control"="is_granted('ROLE_DISPATCHER')",
+ *        "openapi_context"={
+ *          "summary"="Reschedules a Task",
+ *          "parameters"={
+ *            {
+ *              "in"="body",
+ *              "name"="N/A",
+ *              "schema"={"type"="object", "properties"={"reschedule_at"={"type"="string","format"="date-time"}}},
+ *              "style"="form"
+ *            }
+ *          }
+ *        }
+ *      },
  *     "task_events"={
  *       "method"="GET",
  *       "path"="/tasks/{id}/events",

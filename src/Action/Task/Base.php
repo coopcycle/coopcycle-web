@@ -52,4 +52,15 @@ abstract class Base
 
         return '';
     }
+
+    /**
+     * @throws \Exception
+     */
+    protected function getRescheduleAt(Request $request): ?\DateTime
+    {
+        $content = $request->getContent();
+        $data = !empty($content) ? json_decode($content, true) : [];
+
+        return isset($data['reschedule_at']) ? new \DateTime($data['reschedule_at']) : null;
+    }
 }
