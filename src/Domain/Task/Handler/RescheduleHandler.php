@@ -16,11 +16,13 @@ class RescheduleHandler
     public function __invoke(Reschedule $command)
     {
         $task = $command->getTask();
-        $rescheduleDateTime = $command->getRescheduleDateTime();
+        $rescheduledAfter = $command->getRescheduleAfter();
+        $rescheduledBefore = $command->getRescheduledBefore();
 
-        $this->eventRecorder->record(new Event\TaskRescheduled($task, $rescheduleDateTime));
+        $this->eventRecorder->record(new Event\TaskRescheduled($task, $rescheduledAfter, $rescheduledBefore));
 
-        $task->setDoneBefore($rescheduleDateTime);
+        $task->setAfter($rescheduledAfter);
+        $task->setBefore($rescheduledBefore);
         $task->setMetadata('rescheduled', true);
         $task->setStatus(Task::STATUS_TODO);
     }

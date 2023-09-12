@@ -6,17 +6,26 @@ use AppBundle\Entity\Task;
 
 class Reschedule
 {
-    public function __construct(private Task $task, private \DateTime $rescheduleDateTime)
+    public function __construct(
+        private Task $task,
+        private \DateTime $rescheduleAfter,
+        private \DateTime $rescheduledBefore
+    )
     { }
 
-    public function getTask()
+    public function getTask(): Task
     {
         return $this->task;
     }
 
-    public function getRescheduleDateTime(): \DateTime
+    public function getRescheduleAfter(): \DateTime
     {
-        return $this->rescheduleDateTime;
+        return $this->rescheduleAfter;
+    }
+
+    public function getRescheduledBefore(): \DateTime
+    {
+        return $this->rescheduledBefore;
     }
 }
 

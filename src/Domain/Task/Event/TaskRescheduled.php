@@ -10,7 +10,7 @@ use AppBundle\Entity\Task;
 class TaskRescheduled extends Event implements DomainEvent, HasIconInterface
 {
 
-    public function __construct(Task $task, private \DateTime $rescheduledDateTime)
+    public function __construct(Task $task, private \DateTime $rescheduledAfter, private \DateTime $rescheduledBefore)
     {
         parent::__construct($task);
     }
@@ -18,7 +18,8 @@ class TaskRescheduled extends Event implements DomainEvent, HasIconInterface
     public function toPayload()
     {
         return [
-            'rescheduled_at' => $this->rescheduledDateTime,
+            'rescheduled_after' => $this->rescheduledAfter,
+            'rescheduled_before' => $this->rescheduledBefore,
         ];
     }
 

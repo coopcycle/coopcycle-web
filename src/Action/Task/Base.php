@@ -56,11 +56,11 @@ abstract class Base
     /**
      * @throws \Exception
      */
-    protected function getRescheduleAt(Request $request): ?\DateTime
+    protected function getDateTimeKey(Request $request, string $key): ?\DateTime
     {
         $content = $request->getContent();
         $data = !empty($content) ? json_decode($content, true) : [];
 
-        return isset($data['reschedule_at']) ? new \DateTime($data['reschedule_at']) : null;
+        return isset($data[$key]) ? new \DateTime($data[$key]) : null;
     }
 }

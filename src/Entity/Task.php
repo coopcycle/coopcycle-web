@@ -245,7 +245,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *            {
  *              "in"="body",
  *              "name"="N/A",
- *              "schema"={"type"="object", "properties"={"reschedule_at"={"type"="string","format"="date-time"}}},
+ *              "schema"={"type"="object", "properties"={
+ *                  "after"={"type"="string","format"="date-time"},
+ *                  "before"={"type"="string","format"="date-time"},
+ *              }},
  *              "style"="form"
  *            }
  *          }
@@ -799,21 +802,39 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     /* Legacy */
 
+    /**
+     * @deprecated
+     * @return mixed
+     */
     public function getDoneAfter()
     {
         return $this->getAfter();
     }
 
+    /**
+     * @deprecated
+     * @param \DateTime|null $after
+     * @return $this
+     */
     public function setDoneAfter(?\DateTime $after)
     {
         return $this->setAfter($after);
     }
 
+    /**
+     * @deprecated
+     * @return mixed
+     */
     public function getDoneBefore()
     {
         return $this->getBefore();
     }
 
+    /**
+     * @deprecated
+     * @param \DateTime|null $before
+     * @return $this
+     */
     public function setDoneBefore(?\DateTime $before)
     {
         return $this->setBefore($before);
