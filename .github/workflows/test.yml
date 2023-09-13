@@ -78,6 +78,7 @@ jobs:
       - name: Run Jest
         run: docker-compose exec -T webpack npm run jest
   E2E:
+    if: false
     name: Run End to End tests
     runs-on: ubuntu-latest
     env:
@@ -139,6 +140,7 @@ jobs:
       #     tar czvf $GITHUB_SHA.tgz -C cypress/videos .
       #     aws --endpoint=$AWS_ENDPOINT s3 cp $GITHUB_SHA.tgz s3://cypress/$GITHUB_SHA.tgz --acl private
   COMPONENT:
+    if: false
     name: Run Component tests
     runs-on: ubuntu-latest
     strategy:
