@@ -6,6 +6,7 @@ use ApiPlatform\Core\EventListener\EventPriorities;
 use AppBundle\Api\Resource\UrbantzWebhook;
 use AppBundle\Entity\Urbantz\Delivery as UrbantzDelivery;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,6 +32,7 @@ final class UrbantzSubscriber implements EventSubscriberInterface
         EntityManagerInterface $entityManager,
         TokenStoreExtractor $storeExtractor,
         DeliveryManager $deliveryManager,
+        PricingManager $pricingManager,
         LoggerInterface $logger,
         string $secret)
     {
@@ -38,6 +40,7 @@ final class UrbantzSubscriber implements EventSubscriberInterface
         $this->entityManager = $entityManager;
         $this->storeExtractor = $storeExtractor;
         $this->deliveryManager = $deliveryManager;
+        $this->pricingManager = $pricingManager;
         $this->logger = $logger;
         $this->secret = $secret;
     }
@@ -52,6 +55,7 @@ final class UrbantzSubscriber implements EventSubscriberInterface
             KernelEvents::VIEW => [
                 ['addToStore', EventPriorities::PRE_WRITE],
                 ['setTrackingId', EventPriorities::POST_WRITE],
+                ['createOrder', EventPriorities::POST_WRITE],
             ],
         ];
     }
@@ -165,6 +169,25 @@ final class UrbantzSubscriber implements EventSubscriberInterface
             } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
                 $this->logger->error($e->getMessage());
             }
+        }
+    }
+
+    public function createOrder(ViewEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if ('api_urbantz_webhooks_receive_webhook_item' !== $request->attributes->get('_route')) {
+            return;
+        }
+
+        $webhook = $event->getControllerResult();
+
+        if ($webhook->id !== UrbantzWebhook::TASKS_ANNOUNCED) {
+            return;
+        }
+
+        foreach ($webhook->deliveries as $delivery) {
+            $this->pricingManager->createOrder($delivery);
         }
     }
 }
