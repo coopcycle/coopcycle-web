@@ -1277,3 +1277,5 @@ services:
   AppBundle\Service\Tile38Helper:
     arguments:
       $fleetKey: '%tile38_fleet_key%'
+
+  AppBundle\Pricing\PricingManager: ~
