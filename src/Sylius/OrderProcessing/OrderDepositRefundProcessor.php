@@ -130,7 +130,7 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
         BaseOrderInterface $order,
         OrderItemInterface $item,
         ReusablePackagings $reusablePackaging,
-        ReusablePackaging $pkg): int
+        ReusablePackaging $pkg): float
     {
         $restaurant = $order->getRestaurant();
 
