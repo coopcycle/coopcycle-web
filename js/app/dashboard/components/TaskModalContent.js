@@ -1,11 +1,11 @@
 import React from 'react'
 import _ from 'lodash'
 import moment from 'moment'
-import { connect } from 'react-redux'
-import { withTranslation } from 'react-i18next'
-import { DatePicker, Radio, Timeline } from 'antd';
-import { Formik } from 'formik'
-import { isValidPhoneNumber } from 'react-phone-number-input'
+import {connect} from 'react-redux'
+import {withTranslation} from 'react-i18next'
+import {DatePicker, Radio, Timeline} from 'antd';
+import {Formik} from 'formik'
+import {isValidPhoneNumber} from 'react-phone-number-input'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
@@ -13,12 +13,22 @@ import CourierSelect from './CourierSelect'
 import PhoneNumberInput from './PhoneNumberInput'
 import TaskModalHeader from './TaskModalHeader'
 import TaskCompleteForm from './TaskCompleteForm'
-import { timePickerProps } from '../../utils/antd'
+import {timePickerProps} from '../../utils/antd'
 
-import { closeNewTaskModal, createTask, startTask, completeTask, cancelTask, duplicateTask, loadTaskEvents, restoreTask } from '../redux/actions'
-import { selectCurrentTask, selectCurrentTaskEvents } from '../redux/selectors'
-import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
-import { phoneNumberExample } from '../utils'
+import {
+  cancelTask,
+  closeNewTaskModal,
+  completeTask,
+  createTask,
+  duplicateTask,
+  loadTaskEvents,
+  openTaskRescheduleModal,
+  restoreTask,
+  startTask
+} from '../redux/actions'
+import {selectCurrentTask, selectCurrentTaskEvents} from '../redux/selectors'
+import {selectSelectedDate} from '../../coopcycle-frontend-js/logistics/redux'
+import {phoneNumberExample} from '../utils'
 
 const itemColor = event => {
   switch (event.name) {
@@ -27,6 +37,8 @@ const itemColor = event => {
   case 'task:failed':
   case 'task:cancelled':
     return 'red'
+  case 'task:rescheduled':
+    return 'orange'
   default:
     return 'blue'
   }
@@ -45,7 +57,7 @@ class TaskModalContent extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      complete: false
+      complete: false,
     }
   }
 
@@ -90,10 +102,6 @@ class TaskModalContent extends React.Component {
     if (window.confirm(this.props.t('ADMIN_DASHBOARD_RESTORE_TASK_CONFIRM', { id: task.id }))) {
       this.props.restoreTask(task)
     }
-  }
-
-  onRescheduleClick(task) {
-    alert('Reschedule')
   }
 
   _validate(values) {
@@ -165,7 +173,7 @@ class TaskModalContent extends React.Component {
         )}
         { (!!task && (task.status === 'CANCELLED' || task.status === 'FAILED')) && (
           <button type="button" className="btn btn-warning pull-left"
-                  onClick={ () => this.onRescheduleClick(task) }
+                  onClick={ () => this.props.openTaskRescheduleModal() }
                   disabled={ this.props.loading }>
             <i className="fa fa-repeat"></i> <span>{ this.props.t('ADMIN_DASHBOARD_RESCHEDULE') }</span>
           </button>
@@ -521,6 +529,7 @@ function mapDispatchToProps(dispatch) {
     duplicateTask: (task) => dispatch(duplicateTask(task)),
     loadTaskEvents: (task) => dispatch(loadTaskEvents(task)),
     restoreTask: (task) => dispatch(restoreTask(task)),
+    openTaskRescheduleModal: () => dispatch(openTaskRescheduleModal()),
   }
 }
 

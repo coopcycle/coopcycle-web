@@ -19,7 +19,8 @@ import {
   exportTasks,
   closeAddTaskToGroupModal,
   closeCreateDeliveryModal,
-  closeCreateTourModal } from '../redux/actions'
+  closeCreateTourModal, closeTaskRescheduleModal
+} from '../redux/actions'
 import TaskModalContent from './TaskModalContent'
 import FiltersModalContent from './FiltersModalContent'
 import SettingsModalContent from './SettingsModalContent'
@@ -31,6 +32,7 @@ import CreateGroupModalContent from './CreateGroupModalContent'
 import AddTaskToGroupModalContent from './AddTaskToGroupModalContent'
 import CreateDeliveryModalContent from './CreateDeliveryModalContent'
 import CreateTourModalContent from './CreateTourModalContent'
+import TaskRescheduleModalContent from "./TaskRescheduleModalContent";
 
 class Modals extends React.Component {
 
@@ -136,6 +138,14 @@ class Modals extends React.Component {
           shouldCloseOnOverlayClick={ true }>
           <CreateTourModalContent />
         </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.isTaskRescheduleModalVisible }
+          onRequestClose={ this.props.closeTaskRescheduleModal }
+          className="ReactModal__Content--task-reschedule"
+          shouldCloseOnOverlayClick={ true }>
+          <TaskRescheduleModalContent />
+        </Modal>
       </React.Fragment>
     )
   }
@@ -156,6 +166,7 @@ function mapStateToProps(state) {
     addTaskToGroupModalIsOpen: state.addTaskToGroupModalIsOpen,
     isCreateDeliveryModalVisible: state.isCreateDeliveryModalVisible,
     isCreateTourModalVisible: state.isCreateTourModalVisible,
+    isTaskRescheduleModalVisible: state.isTaskRescheduleModalVisible
   }
 }
 
@@ -177,6 +188,7 @@ function mapDispatchToProps (dispatch) {
     closeAddTaskToGroupModal: () => dispatch(closeAddTaskToGroupModal()),
     closeCreateDeliveryModal: () => dispatch(closeCreateDeliveryModal()),
     closeCreateTourModal: () => dispatch(closeCreateTourModal()),
+    closeTaskRescheduleModal: () => dispatch(closeTaskRescheduleModal())
   }
 }
 
