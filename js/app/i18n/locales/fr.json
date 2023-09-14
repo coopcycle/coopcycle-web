@@ -294,6 +294,7 @@
         "CART_LOOPEAT_RETURNS_RETURNS_AMOUNT": "Montant des retours",
         "CART_LOOPEAT_RETURNS_RETURNS_DIFF": "Différence",
         "CART_LOOPEAT_RETURNS_TYPE": "Type de boîte",
-        "CART_LOOPEAT_RETURNS_QUANTITY": "Quantité"
+        "CART_LOOPEAT_RETURNS_QUANTITY": "Quantité",
+        "ORDER_DELAYED_NOTIFICATION": "La commande {{orderNumber}} a été retardée. Nouveau créneau de livraison : {{shippingTimeRange}}"
     }
 }
