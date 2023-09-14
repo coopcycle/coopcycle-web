@@ -1299,3 +1299,4 @@ form.checkout_address.reusable_packaging.loopeat.returns.label: Vous allez rendr
   <strong>%count%</strong> boîte, pour un total de <strong>%amount%</strong>|Vous allez rendre
   <strong>%count%</strong> boîtes, pour un total de <strong>%amount%</strong>
 loopeat.task_comments.returns: Attention, vous devez récupérer des boîtes chez le client
+activity.task.rescheduled: "@%owner% a reprogrammé la tâche #task/%aggregate_id%\n"
