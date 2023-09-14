@@ -319,6 +319,7 @@
         "PM_EDENRED": "Edenred",
         "PM_GIROPAY": "Giropay",
         "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Mostrar el tablero de rutas",
-        "SEE_ALL": "Ver todo"
+        "SEE_ALL": "Ver todo",
+        "ORDER_DELAYED_NOTIFICATION": "Orden {{orderNumber}} atrasada. Nuevo rango horario de entrega: {{shippingTimeRange}}"
     }
 }

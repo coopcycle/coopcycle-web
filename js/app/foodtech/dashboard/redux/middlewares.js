@@ -8,6 +8,8 @@ import {
   orderRefused,
   orderCancelled,
   orderFulfilled,
+  orderDelayed,
+  ORDER_DELAYED,
   ORDER_CREATED,
   initHttpClient,
   INIT_HTTP_CLIENT,
@@ -48,6 +50,9 @@ export const socketIO = ({ dispatch, getState }) => {
           break
         case 'order:fulfilled':
           dispatch(orderFulfilled(event.data.order))
+          break
+        case 'order:delayed':
+          dispatch(orderDelayed(event.data.order))
           break
       }
     })
@@ -139,6 +144,19 @@ export const notification = ({ getState }) => {
         notify(restaurant.name, {
           body: asText(shippingTimeRange),
           tag: 'order:created',
+        })
+      }
+    }
+
+    if (action.type === ORDER_DELAYED) {
+      const { restaurant, number, shippingTimeRange } = action.payload
+      if (window.Notification && Notification.permission === 'granted') {
+        notify(restaurant.name, {
+          body: i18n.t('ORDER_DELAYED_NOTIFICATION', {
+            orderNumber: number,
+            shippingTimeRange: asText(shippingTimeRange)
+          }),
+          tag: 'order:delayed',
         })
       }
     }
