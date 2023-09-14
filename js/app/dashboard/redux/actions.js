@@ -184,6 +184,9 @@ export const CLOSE_CREATE_DELIVERY_MODAL = 'CLOSE_CREATE_DELIVERY_MODAL'
 export const OPEN_CREATE_TOUR_MODAL = 'OPEN_CREATE_TOUR_MODAL'
 export const CLOSE_CREATE_TOUR_MODAL = 'CLOSE_CREATE_TOUR_MODAL'
 
+export const OPEN_TASK_RESCHEDULE_MODAL = 'OPEN_TASK_RESCHEDULE_MODAL'
+export const CLOSE_TASK_RESCHEDULE_MODAL = 'CLOSE_TASK_RESCHEDULE_MODAL'
+
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
 
@@ -799,6 +802,34 @@ export function restoreTask(task) {
         dispatch(closeNewTaskModal())
       })
       .catch(error => dispatch(restoreTaskFailure(error)))
+  }
+}
+
+export function rescheduleTask(task, after, before) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    createClient(dispatch).request({
+      method: 'put',
+      url: `${task['@id']}/reschedule`,
+      data: { before, after },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(response => {
+        dispatch(createTaskSuccess())
+        dispatch(updateTask(response.data))
+        dispatch(closeTaskRescheduleModal())
+        dispatch(closeNewTaskModal())
+      })
+      .catch(error => dispatch(completeTaskFailure(error)))
   }
 }
 
@@ -1497,6 +1528,14 @@ export function closeCreateTourModal() {
   return { type: CLOSE_CREATE_TOUR_MODAL }
 }
 
+export function openTaskRescheduleModal() {
+  return { type: OPEN_TASK_RESCHEDULE_MODAL }
+}
+
+export function closeTaskRescheduleModal() {
+  return { type: CLOSE_TASK_RESCHEDULE_MODAL }
+}
+
 export function modifyTourRequest(tour, tasks) {
   return { type: MODIFY_TOUR_REQUEST, tour, tasks }
 }
@@ -1542,7 +1581,7 @@ export function modifyTour(tour, tasks) {
   return function(dispatch, getState) {
 
     dispatch(modifyTourRequest(tour, tasks))
-    
+
     const { jwt } = getState()
 
     createClient(dispatch).request({

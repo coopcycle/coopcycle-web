@@ -54,6 +54,7 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task:created':
         case 'task:assigned':
         case 'task:unassigned':
+        case 'task:rescheduled':
           dispatch(updateTask(event.data.task))
           break
         case 'task_import:success':

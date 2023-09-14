@@ -31,6 +31,7 @@ class ActivityManager
         TaskEvents\TaskDone::class,
         TaskEvents\TaskFailed::class,
         TaskEvents\TaskCancelled::class,
+        TaskEvents\TaskRescheduled::class,
     ];
 
     public function __construct(

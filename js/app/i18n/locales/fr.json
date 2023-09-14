@@ -105,6 +105,7 @@
         "ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING": "Importation en cours…",
         "ADMIN_DASHBOARD_CANCEL_TASK_CONFIRM": "Êtes-vous sûr·e de vouloir annuler la tâche #{{id}} ?",
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Formats de fichiers supportés : csv, ods, xlsx",
+        "ADMIN_DASHBOARD_RESCHEDULE": "Relivrer",
         "USER_EDIT_ENABLED_LABEL": "Activé",
         "USER_EDIT_DISABLED_LABEL": "Désactivé",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Commande créée",

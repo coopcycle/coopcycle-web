@@ -1310,3 +1310,4 @@ security.login.remember_me: Remember me
 stores.filters.input.placeholder: "Search by address, name or #id"
 basics.filter: "Filter"
 stores.search.results_for: 'Search results for <mark>%query%</mark>'
+activity.task.rescheduled: "@%owner% has rescheduled task #task/%aggregate_id%\n"

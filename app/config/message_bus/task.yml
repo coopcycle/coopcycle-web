@@ -72,6 +72,14 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\Restore
 
+  coopcycle.domain.task.handler.reschedule:
+    class: AppBundle\Domain\Task\Handler\RescheduleHandler
+    arguments:
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\Reschedule
+
   #
   # Reactors
   #
@@ -99,6 +107,8 @@ services:
         subscribes_to: task_collections:updated
       - name: event_subscriber
         subscribes_to: task_list:updated
+      - name: event_subscriber
+        subscribes_to: task:rescheduled
 
   coopcycle.domain.task.reactor.send_email:
     class: AppBundle\Domain\Task\Reactor\SendEmail

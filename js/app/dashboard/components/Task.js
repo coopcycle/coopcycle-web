@@ -74,7 +74,6 @@ const TaskTags = ({ task }) => {
 const TaskIconRight = ({ task, onRemove }) => {
 
   const { t } = useTranslation()
-
   if (task.isAssigned) {
     switch (task.status) {
     case 'TODO':
@@ -228,6 +227,7 @@ class Task extends React.Component {
         <span className="list-group-item-color" style={{ backgroundColor: color }}></span>
         <span>
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
+          {task.metadata?.rescheduled ? <i className="task__icon task__icon--type fa fa-repeat"></i> : null}
           <TaskCaption task={ task } />
           <TaskAttrs task={ task } />
           <TaskTags task={ task } />
