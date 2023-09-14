@@ -100,7 +100,7 @@ const MoreOptions = ({ item, onChange }) => {
       )}
       title={ t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_MORE_OPTIONS') }
       trigger="click"
-      onVisibleChange={ visible => {
+      onOpenChange={ visible => {
         if (!visible) {
 
           let values = {

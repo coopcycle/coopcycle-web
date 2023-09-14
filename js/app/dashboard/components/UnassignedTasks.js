@@ -109,8 +109,8 @@ const Buttons = connect(
           showRecurrenceRules={showRecurrenceRules}
            />
         }
-        visible={ visible }
-        onVisibleChange={ value => setVisible(value) }
+        open={ visible }
+        onOpenChange={ value => setVisible(value) }
       >
         <a href="#" onClick={ e => e.preventDefault() } title={ t('ADMIN_DASHBOARD_DISPLAY') }>
           <i className="fa fa-list"></i>
