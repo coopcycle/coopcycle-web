@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Loopeat;
+namespace AppBundle\LoopEat;
 
 use AppBundle\Entity\Task;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
