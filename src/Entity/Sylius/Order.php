@@ -511,7 +511,7 @@ class Order extends BaseOrder implements OrderInterface
     {
         $this->customer = $customer;
 
-        if ($this->hasLoopEatCredentials()) {
+        if (null !== $customer && $this->hasLoopEatCredentials()) {
 
             WMAssert::isInstanceOf($this->customer, LoopeatOAuthCredentialsInterface::class);
 
