@@ -564,6 +564,7 @@ activity.order.picked: "@%owner% ha recuperado el pedido #order/%aggregate_id%\n
 activity.order.dropped: "@%owner% ha entregado el pedido #order/%aggregate_id%\n"
 activity.order.fulfilled: "El pedido #order/%aggregate_id% esta terminado\n"
 activity.order.delayed: "El pedido #order/%aggregate_id% has sido atrasado\n"
+activity.order.updated: "El pedido #order/%aggregate_id% has sido actualizado\n"
 pagination.previous: Anterior
 pagination.next: Siguiente
 basics.save: Guardar
@@ -1300,3 +1301,27 @@ import.unsuccessful.rows: "Se encontraron errores y no fue posible crear entrega
 security.login.remember_me: Recordar
 profile.delete_my_account: "Eliminar mi cuenta"
 profile.type_username_to_confirm: "Escribe tu nombre de usuario para confirmar la eliminación de la cuenta"
+adminDashboard.notifications.title: Notificaciones
+adminDashboard.notifications.help: Permite configurar qué notificaciones serán mostradas
+adminDashboard.notifications.order:created: Pedido creado
+adminDashboard.notifications.order:accepted: Pedido aceptado
+adminDashboard.notifications.order:refused: Pedido rechazado
+adminDashboard.notifications.order:delayed: Pedido atrasado
+adminDashboard.notifications.order:cancelled: Pedido cancelado
+adminDashboard.notifications.order:picked: Pedido recojido
+adminDashboard.notifications.order:dropped: Pedido entregado
+adminDashboard.notifications.order:fulfilled: Pedido finalizado
+adminDashboard.notifications.order:updated: Pedido actualizado
+adminDashboard.notifications.task:created: Tarea creada
+adminDashboard.notifications.task:assigned: Tarea asignada
+adminDashboard.notifications.task:unassigned: Tarea desasignada
+adminDashboard.notifications.task:started: Tarea comenzada
+adminDashboard.notifications.task:done: Tarea finalizada
+adminDashboard.notifications.task:failed: Tarea fallida
+adminDashboard.notifications.task:cancelled: Tarea cancelada
+adminDashboard.notifications.task_collections:updated: Colección de tareas actualizada
+adminDashboard.notifications.task_list:updated: Lista de tareas actualizada
+adminDashboard.notifications.task:rescheduled: Tarea reprogramada
+adminDashboard.notifications.task_import:success: Tareas importadas con éxito
+adminDashboard.notifications.task_import:failure: Error al importar tareas
+adminDashboard.notifications.success: Notificaciones guardadas con éxito

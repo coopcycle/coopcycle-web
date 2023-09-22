@@ -824,6 +824,7 @@ activity.order.dropped: "@%owner% has dropped order #order/%aggregate_id%\n"
 activity.order.fulfilled: "Order #order/#%aggregate_id% is fulfilled\n"
 activity.order.cancelled: "Order #order/#%aggregate_id% is cancelled\n"
 activity.order.delayed: "Order #order/#%aggregate_id% has been delayed\n"
+activity.order.updated: "Order #order/%aggregate_id% has been updated\n"
 social.sign_in_with_facebook: Sign in with Facebook
 embed.delivery.summary: "You have requested a delivery on <strong>%dropoff_date%</strong>\
   \ at the following address: <strong>%dropoff_address%</strong> <br> We calculated\
@@ -1315,3 +1316,27 @@ profile.delete_my_account: "Delete my account"
 profile.type_username_to_confirm: "Type your username to confirm the account deletion"
 form.pricing_rule_set.options.label: Options
 form.pricing_rule_set.options.map_all_tasks.label: Apply to all the tasks
+adminDashboard.notifications.title: Notifications
+adminDashboard.notifications.help: Allow to configure which notifications will be displayed
+adminDashboard.notifications.order:created: Order created
+adminDashboard.notifications.order:accepted: Order accepted
+adminDashboard.notifications.order:refused: Order refused
+adminDashboard.notifications.order:delayed: Order deyaled
+adminDashboard.notifications.order:cancelled: Order cancelled
+adminDashboard.notifications.order:picked: Order picked
+adminDashboard.notifications.order:dropped: Order dropped
+adminDashboard.notifications.order:fulfilled: Order fulfilled
+adminDashboard.notifications.order:updated: Order updated
+adminDashboard.notifications.task:created: Task created
+adminDashboard.notifications.task:assigned: Task assigned
+adminDashboard.notifications.task:unassigned: Task unassigned
+adminDashboard.notifications.task:started: Task started
+adminDashboard.notifications.task:done: Task done
+adminDashboard.notifications.task:failed: Task failed
+adminDashboard.notifications.task:cancelled: Task cancelled
+adminDashboard.notifications.task_collections:updated: Task collecion updated
+adminDashboard.notifications.task_list:updated: Task list updated
+adminDashboard.notifications.task:rescheduled: Task rescheduled
+adminDashboard.notifications.task_import:success: Tasks import success
+adminDashboard.notifications.task_import:failure: Tasks import failure
+adminDashboard.notifications.success: Notificaions saved successfully

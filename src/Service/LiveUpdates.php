@@ -7,9 +7,11 @@ use AppBundle\Domain\Order\Event as OrderEvent;
 use AppBundle\Domain\HumanReadableEventInterface;
 use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Domain\Task\Event as TaskEvent;
+use AppBundle\Entity\Notification;
 use AppBundle\Entity\User;
 use AppBundle\Message\TopBarNotification;
 use AppBundle\Sylius\Order\OrderInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use phpcent\Client as CentrifugoClient;
 use Ramsey\Uuid\Uuid;
@@ -29,6 +31,7 @@ class LiveUpdates
     private $translator;
     private $centrifugoClient;
     private $messageBus;
+    private $objectManager;
     private $namespace;
 
     public function __construct(
@@ -38,6 +41,7 @@ class LiveUpdates
         TranslatorInterface $translator,
         CentrifugoClient $centrifugoClient,
         MessageBusInterface $messageBus,
+        EntityManagerInterface $objectManager,
         string $namespace)
     {
         $this->userManager = $userManager;
@@ -46,6 +50,7 @@ class LiveUpdates
         $this->translator = $translator;
         $this->centrifugoClient = $centrifugoClient;
         $this->messageBus = $messageBus;
+        $this->objectManager = $objectManager;
         $this->namespace = $namespace;
     }
 
@@ -72,6 +77,10 @@ class LiveUpdates
     {
         $messageName = $message instanceof NamedMessage ? $message::messageName() : $message;
 
+        if (!$this->shouldNotifyEvent($messageName)) {
+            return;
+        }
+
         if ($message instanceof SerializableEventInterface && empty($data)) {
             $data = $message->normalize($this->serializer);
         }
@@ -95,6 +104,10 @@ class LiveUpdates
     public function toUsers($users, $message, array $data = [])
     {
         $messageName = $message instanceof NamedMessage ? $message::messageName() : $message;
+
+        if (!$this->shouldNotifyEvent($messageName)) {
+            return;
+        }
 
         if ($message instanceof SerializableEventInterface && empty($data)) {
             $data = $message->normalize($this->serializer);
@@ -171,5 +184,18 @@ class LiveUpdates
         $channel = $this->getEventsChannelName($user);
 
         $this->centrifugoClient->publish($channel, ['event' => $payload]);
+    }
+
+    private function shouldNotifyEvent(string $messageName)
+    {
+        $notification = $this->objectManager
+            ->getRepository(Notification::class)
+            ->createQueryBuilder('n')
+            ->where('n.enabled = true and n.name = :messageName')
+            ->setParameter('messageName', $messageName)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return null !== $notification;
     }
 }
