@@ -430,13 +430,16 @@ class ProfileController extends AbstractController
      */
     public function removeNotificationsAction(Request $request, TopBarNotifications $topBarNotifications, NormalizerInterface $normalizer)
     {
-        $ids = [];
-        $content = $request->getContent();
-        if (!empty($content)) {
-            parse_str($content, $ids);
+        if ($request->query->has('all') && 'true' === $request->query->get('all')) {
+            $topBarNotifications->markAllAsRead($this->getUser());
+        } else {
+            $ids = [];
+            $content = $request->getContent();
+            if (!empty($content)) {
+                parse_str($content, $ids);
+            }
+            $topBarNotifications->markAsRead($this->getUser(), array_keys($ids));
         }
-
-        $topBarNotifications->markAsRead($this->getUser(), array_keys($ids));
 
         return $this->notificationsAction($request, $topBarNotifications, $normalizer);
     }

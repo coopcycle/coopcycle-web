@@ -338,6 +338,7 @@
         "PM_GIROPAY": "Giropay",
         "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Show tours panel",
         "SEE_ALL": "See all",
-        "ORDER_DELAYED_NOTIFICATION": "Order {{orderNumber}} was delayed. New shipping time range: {{shippingTimeRange}}"
+        "ORDER_DELAYED_NOTIFICATION": "Order {{orderNumber}} was delayed. New shipping time range: {{shippingTimeRange}}",
+        "DELETE_ALL": "Delete all"
     }
 }
