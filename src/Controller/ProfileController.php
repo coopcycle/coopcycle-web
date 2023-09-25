@@ -405,12 +405,14 @@ class ProfileController extends AbstractController
      */
     public function notificationsAction(Request $request, TopBarNotifications $topBarNotifications, NormalizerInterface $normalizer)
     {
+        $unread = (int) $topBarNotifications->countNotifications($this->getUser());
+
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
             $notifications = $topBarNotifications->getNotifications($this->getUser());
 
             return new JsonResponse([
                 'notifications' => $normalizer->normalize($notifications, 'json'),
-                'unread' => (int) $topBarNotifications->countNotifications($this->getUser())
+                'unread' => $unread
             ]);
         }
 
@@ -422,6 +424,7 @@ class ProfileController extends AbstractController
             'notifications' => $notifications,
             'currentPage' => $page,
             'nextPage' => $page + 1,
+            'hasNextPage' => $unread / TopBarNotifications::NOTIFICATIONS_OFFSET > $page,
         ]);
     }
 
@@ -450,14 +453,14 @@ class ProfileController extends AbstractController
     public function removeNotificationAction(Request $request, TopBarNotifications $topBarNotifications, NormalizerInterface $normalizer)
     {
         $topBarNotifications->markAsRead($this->getUser(), [$request->get('id')]);
-
+        $unread = (int) $topBarNotifications->countNotifications($this->getUser());
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
             $notifications = $topBarNotifications->getNotifications($this->getUser());
 
             return new JsonResponse([
                 'notifications' => $normalizer->normalize($notifications, 'json'),
-                'unread' => (int) $topBarNotifications->countNotifications($this->getUser())
+                'unread' => $unread
             ]);
         }
 
@@ -477,6 +480,7 @@ class ProfileController extends AbstractController
             'notifications' => $notifications,
             'currentPage' => $page,
             'nextPage' => $page + 1,
+            'hasNextPage' => $unread / TopBarNotifications::NOTIFICATIONS_OFFSET > $page,
         ]);
     }
 

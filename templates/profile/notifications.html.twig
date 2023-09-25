@@ -35,11 +35,13 @@
           {% endfor %}
         </tbody>
       </table>
-      <turbo-frame id="notifications-list-{{nextPage}}" src="{{ path('profile_notifications', {page: nextPage}) }}" loading="lazy">
-        <div class="d-flex justify-content-center">
-          <i class="fa fa-spinner fa-spin"></i>
-        </div>
-      </turbo-frame>
+      {% if hasNextPage %}
+        <turbo-frame id="notifications-list-{{nextPage}}" src="{{ path('profile_notifications', {page: nextPage}) }}" loading="lazy">
+          <div class="d-flex justify-content-center">
+            <i class="fa fa-spinner fa-spin"></i>
+          </div>
+        </turbo-frame>
+      {% endif %}
     </turbo-frame>
   </form>
 </turbo-frame>
