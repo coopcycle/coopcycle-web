@@ -46,7 +46,7 @@ class NotificationList extends React.Component {
               </a>
               <a disabled={ this.state.loading } role="button" href="#" className="text-reset"
                 onClick={ () => onRemove(notification) }>
-                <i className="fa fa-trash"></i>
+                <i className="fa fa-close"></i>
               </a>
             </li>
           ))}
