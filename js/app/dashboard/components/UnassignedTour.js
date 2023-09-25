@@ -5,6 +5,7 @@ import { Draggable, Droppable } from "react-beautiful-dnd"
 import _ from 'lodash'
 import Task from './Task'
 import { removeTaskFromTour } from '../redux/actions'
+import classNames from 'classnames'
 
 const UnassignedTour = ({ tour, tasks, removeTaskFromTour, username = null, unassignTasks = null, isDropDisabled }) => {
 
@@ -33,7 +34,16 @@ const UnassignedTour = ({ tour, tasks, removeTaskFromTour, username = null, unas
       <div id={ `${collapseId}` } className="panel-collapse collapse" role="tabpanel">
         <Droppable isDropDisabled={isDropDisabled} droppableId={ `unassigned_tour:${tour['@id']}` }>
             {(provided) => (
-              <div className="list-group list-group-padded nomargin taskList__tasks m-0" ref={ provided.innerRef } { ...provided.droppableProps }>
+              <div
+              className={ classNames({
+                'taskList__tasks': true,
+                'list-group': true,
+                'm-0': true,
+                'list-group-padded': true,
+                'nomargin': true,
+                'taskList__tasks--empty': !tasks.length
+              }) }
+              ref={ provided.innerRef } { ...provided.droppableProps }>
                 { _.map(tasks, (task, index) => {
                   return (
                     <Draggable key={ `task-${task.id}` } draggableId={ `task:${task.id}` } index={ index }>

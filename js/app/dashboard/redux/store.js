@@ -7,6 +7,7 @@ import {
   taskEntityReducers as coreTaskEntityReducers,
   taskListEntityReducers as coreTaskListEntityReducers,
   uiReducers as coreUiReducers,
+  tourEntityReducers as coreTourEntityReducers,
 } from '../../coopcycle-frontend-js/logistics/redux'
 import * as webReducers from './reducers'
 import webTaskEntityReducers from './taskEntityReducers'
@@ -15,6 +16,7 @@ import webUiReducers from './uiReducers'
 import configReducers from './configReducers'
 import settingsReducers from './settingsReducers'
 import trackingReducers from './trackingReducers'
+import tourEntityReducers from './tourEntityReducers';
 
 const middlewares = [ thunk, socketIO, persistFilters ]
 
@@ -31,6 +33,7 @@ const reducer = combineReducers({
     entities: combineReducers({
       tasks: reduceReducers(coreTaskEntityReducers, webTaskEntityReducers),
       taskLists: reduceReducers(coreTaskListEntityReducers, webTaskListEntityReducers),
+      tours: reduceReducers(coreTourEntityReducers, tourEntityReducers),
     }),
     ui: reduceReducers(coreUiReducers, webUiReducers)
   }),

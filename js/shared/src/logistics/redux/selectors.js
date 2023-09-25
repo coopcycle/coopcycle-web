@@ -1,11 +1,12 @@
-import _ from 'lodash';
+import _, { forEach } from 'lodash';
 import { createSelector } from 'reselect';
 import { mapToColor } from './taskUtils';
 import { assignedTasks } from './taskListUtils';
-import { taskAdapter, taskListAdapter } from './adapters'
+import { taskAdapter, taskListAdapter, tourAdapter } from './adapters'
 
 const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
 const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
+const tourSelectors = tourAdapter.getSelectors((state) => state.logistics.entities.tours)
 
 export const selectSelectedDate = state => state.logistics.date
 
@@ -104,3 +105,39 @@ export const makeSelectTaskListItemsByUsername = () => {
     }
   )
 }
+
+export const selectAllTours = tourSelectors.selectAll
+
+
+export const selectAssignedTours = createSelector(
+  selectAllTours,
+  selectAssignedTasks,
+  (allTours, assignedTasks) =>
+    _.filter(allTours, tour => assignedTasks.some(assignedTask => tour.itemIds.includes(assignedTask['@id'])))
+)
+
+export const selectUnassignedTours = createSelector(
+  selectAllTours,
+  selectAssignedTours,
+  selectUnassignedTasks,
+  (allTours, assignedTours, unassignedTasks) => {
+    const unassignedTours = _.filter(allTours, tour => assignedTours.findIndex(assignedTour => tour['@id'] == assignedTour['@id']) == -1)
+
+    const unassignedToursWithItems = []
+
+    forEach(unassignedTours, unassignedTour => {
+      const items = []
+      forEach(unassignedTour.itemIds, itemId => {
+        items.push(unassignedTasks.find(task => task['@id'] == itemId))
+      })
+
+      unassignedToursWithItems.push({
+        ...unassignedTour,
+        items
+      })
+    })
+
+    return unassignedToursWithItems
+  }
+)
+

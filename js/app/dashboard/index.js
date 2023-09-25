@@ -21,7 +21,7 @@ import { initialState as settingsInitialState } from './redux/settingsReducers'
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
-import { taskListUtils, taskAdapter, taskListAdapter } from '../coopcycle-frontend-js/logistics/redux'
+import { taskListUtils, taskAdapter, taskListAdapter, tourAdapter } from '../coopcycle-frontend-js/logistics/redux'
 
 function start() {
 
@@ -30,9 +30,11 @@ function start() {
   let date = moment(dashboardEl.dataset.date)
   let allTasks = JSON.parse(dashboardEl.dataset.allTasks)
   let taskLists = JSON.parse(dashboardEl.dataset.taskLists)
+  let tours = JSON.parse(dashboardEl.dataset.tours)  
 
   // normalize data, keep only task ids, instead of the whole objects
   taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
+  tours = tours.map(tour => taskListUtils.replaceTasksWithIds(tour))
 
   const preloadedPositions = JSON.parse(dashboardEl.dataset.positions)
   const positions = preloadedPositions.map(pos => ({
@@ -52,6 +54,10 @@ function start() {
         taskLists: taskListAdapter.upsertMany(
           taskListAdapter.getInitialState(),
           taskLists
+        ),
+        tours: tourAdapter.upsertMany(
+          tourAdapter.getInitialState(),
+          tours
         )
       }
     },

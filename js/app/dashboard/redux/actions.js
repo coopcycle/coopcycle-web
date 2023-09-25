@@ -14,7 +14,8 @@ import {
   enableUnassignedTourTasksDroppable,
   disableUnassignedTourTasksDroppable,
 } from '../../coopcycle-frontend-js/logistics/redux'
-import { selectNextWorkingDay, selectSelectedTasks, selectUnassignedTours } from './selectors'
+import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
+import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
 
 function createClient(dispatch) {
 
@@ -189,6 +190,7 @@ export const CLOSE_TASK_RESCHEDULE_MODAL = 'CLOSE_TASK_RESCHEDULE_MODAL'
 
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
+export const UPDATE_TOUR = 'UPDATE_TOUR'
 
 export const SET_TOURS_ENABLED = 'SET_TOURS_ENABLED'
 
@@ -543,6 +545,10 @@ export function updateTask(task) {
       dispatch(removeTask(task))
     }
   }
+}
+
+export function updateTour(tour) {
+  return {type: UPDATE_TOUR, tour}
 }
 
 export function createTask(task) {
@@ -1541,13 +1547,12 @@ export function modifyTourRequest(tour, tasks) {
   return { type: MODIFY_TOUR_REQUEST, tour, tasks }
 }
 
-export function modifyTourRequestSuccess(tour) {
-  return { type: MODIFY_TOUR_REQUEST_SUCCESS, tour }
+export function modifyTourRequestSuccess(tour, tasks) {
+  return { type: MODIFY_TOUR_REQUEST_SUCCESS, tour, tasks }
 }
 
 
-export function createTour(tasks, name) {
-
+export function createTour(tasks, name, date) {
   return function(dispatch, getState) {
 
     const { jwt } = getState()
@@ -1558,6 +1563,7 @@ export function createTour(tasks, name) {
       data: {
         name,
         tasks: _.map(tasks, t => t['@id']),
+        date: date.format('YYYY-MM-DD'),
       },
       headers: {
         'Authorization': `Bearer ${jwt}`,
@@ -1566,6 +1572,8 @@ export function createTour(tasks, name) {
       }
     })
       .then((response) => {
+        console.log(response.data)
+        dispatch(updateTour(response.data))
         tasks.forEach(task => dispatch(updateTask({ ...task, tour: response.data })))
         dispatch(closeCreateTourModal())
       })
@@ -1597,7 +1605,14 @@ export function modifyTour(tour, tasks) {
         'Content-Type': 'application/ld+json'
       }
     })
-      .then(res => dispatch(modifyTourRequestSuccess(res.data)))
+      .then(res => {
+        let _tour = res.data
+        // TODO: do this in the backend?
+        _tour.itemIds = _tour.items.map(item => item['@id'])
+        
+        dispatch(updateTour(_tour))
+        dispatch(modifyTourRequestSuccess(_tour, tasks))
+      })
       .catch(error => {
         // eslint-disable-next-line no-console
         console.error(error)

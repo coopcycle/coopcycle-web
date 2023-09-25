@@ -5,9 +5,9 @@ import { Form, Button, Input } from 'antd'
 
 import { createTour } from '../redux/actions'
 import { selectSelectedTasks } from '../redux/selectors'
+import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 
-const ModalContent = ({ selectedTasks, createTour }) => {
-
+const ModalContent = ({ selectedTasks, createTour, date }) => {
   const { t } = useTranslation()
 
   return (
@@ -16,7 +16,7 @@ const ModalContent = ({ selectedTasks, createTour }) => {
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        onFinish={ (values) => createTour(selectedTasks, values.name) }
+        onFinish={ (values) => {createTour(selectedTasks, values.name, date)} }
         autoComplete="off"
       >
         <Form.Item
@@ -40,13 +40,14 @@ function mapStateToProps(state) {
 
   return {
     selectedTasks: selectSelectedTasks(state),
+    date: selectSelectedDate(state),
   }
 }
 
 function mapDispatchToProps(dispatch) {
 
   return {
-    createTour: (tasks, name) => dispatch(createTour(tasks, name)),
+    createTour: (tasks, name, date) => dispatch(createTour(tasks, name, date)),
   }
 }
 

@@ -5,7 +5,27 @@ import { withTranslation } from 'react-i18next'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 
 import UnassignedTour from './UnassignedTour'
-import { selectUnassignedTours } from '../redux/selectors'
+import { openCreateTourModal } from '../redux/actions'
+import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
+
+
+const Buttons = connect(
+  () => ({}),
+  (dispatch) => ({
+    openCreateTourModal: () => dispatch(openCreateTourModal()),
+  })
+)(({ openCreateTourModal }) => {
+  return (
+    <React.Fragment>
+      <a href="#" className="mr-3" onClick={ e => {
+        e.preventDefault()
+        openCreateTourModal()
+      }}>
+        <i className="fa fa-plus"></i>
+      </a>
+    </React.Fragment>
+  )
+})
 
 
 class UnassignedTours extends React.Component {
@@ -15,6 +35,9 @@ class UnassignedTours extends React.Component {
       <div className="dashboard__panel">
         <h4 className="d-flex justify-content-between">
           <span>{ this.props.t('DASHBOARD_UNASSIGNED_TOURS') }</span>
+          <span>
+            <Buttons />
+          </span>
         </h4>
         <div className="dashboard__panel__scroll">
           <Droppable isDropDisabled={ this.props.isDropDisabled } droppableId="unassigned_tours">
