@@ -152,7 +152,8 @@ Feature: Orders Adhoc
         "adjustments": {
           "@*@":"@*@"
         },
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "events":@array@
       }
     """
 
@@ -275,7 +276,8 @@ Feature: Orders Adhoc
         "adjustments": {
           "@*@":"@*@"
         },
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "events":@array@
       }
     """
     When the user "bob" is loaded:
