@@ -1572,9 +1572,12 @@ export function createTour(tasks, name, date) {
       }
     })
       .then((response) => {
-        console.log(response.data)
-        dispatch(updateTour(response.data))
         tasks.forEach(task => dispatch(updateTask({ ...task, tour: response.data })))
+        // flatten items to itmIds
+        let tour = {...response.data}
+        tour.itemIds = tour.items.map(item => item['@id'])
+
+        dispatch(updateTour(tour))
         dispatch(closeCreateTourModal())
       })
       .catch(error => {
