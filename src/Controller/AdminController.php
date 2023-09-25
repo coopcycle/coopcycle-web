@@ -25,7 +25,6 @@ use AppBundle\Entity\Hub;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
-use AppBundle\Entity\Notification;
 use AppBundle\Entity\OptinConsent;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\OrganizationConfig;
@@ -2572,39 +2571,4 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/notifications", name="admin_notifications")
-     */
-    public function notificationsAction(Request $request)
-    {
-        $notifications = $this->entityManager
-            ->getRepository(Notification::class)
-            ->createQueryBuilder('n')
-            ->orderBy('n.id')
-            ->getQuery()
-            ->getResult();
-
-        if ($request->isMethod('POST')) {
-            // only checked options are submitted
-            $submitedNotifications = $request->request->keys();
-
-            foreach($notifications as $notification) {
-                if (in_array($notification->getName(), $submitedNotifications)) {
-                    $notification->setEnabled(true);
-                } else {
-                    $notification->setEnabled(false);
-                }
-            }
-            $this->entityManager->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->translator->trans('adminDashboard.notifications.success')
-            );
-        }
-
-        return $this->render('admin/notifications.html.twig', [
-            'notifications' => $notifications
-        ]);
-    }
 }

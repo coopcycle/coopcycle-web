@@ -1316,27 +1316,25 @@ profile.delete_my_account: "Delete my account"
 profile.type_username_to_confirm: "Type your username to confirm the account deletion"
 form.pricing_rule_set.options.label: Options
 form.pricing_rule_set.options.map_all_tasks.label: Apply to all the tasks
-adminDashboard.notifications.title: Notifications
-adminDashboard.notifications.help: Allow to configure which notifications will be displayed
-adminDashboard.notifications.order:created: Order created
-adminDashboard.notifications.order:accepted: Order accepted
-adminDashboard.notifications.order:refused: Order refused
-adminDashboard.notifications.order:delayed: Order deyaled
-adminDashboard.notifications.order:cancelled: Order cancelled
-adminDashboard.notifications.order:picked: Order picked
-adminDashboard.notifications.order:dropped: Order dropped
-adminDashboard.notifications.order:fulfilled: Order fulfilled
-adminDashboard.notifications.order:updated: Order updated
-adminDashboard.notifications.task:created: Task created
-adminDashboard.notifications.task:assigned: Task assigned
-adminDashboard.notifications.task:unassigned: Task unassigned
-adminDashboard.notifications.task:started: Task started
-adminDashboard.notifications.task:done: Task done
-adminDashboard.notifications.task:failed: Task failed
-adminDashboard.notifications.task:cancelled: Task cancelled
-adminDashboard.notifications.task_collections:updated: Task collecion updated
-adminDashboard.notifications.task_list:updated: Task list updated
-adminDashboard.notifications.task:rescheduled: Task rescheduled
-adminDashboard.notifications.task_import:success: Tasks import success
-adminDashboard.notifications.task_import:failure: Tasks import failure
-adminDashboard.notifications.success: Notificaions saved successfully
+form.settings.notifications.title: Notifications
+form.settings.notifications.order:created: Order created
+form.settings.notifications.order:accepted: Order accepted
+form.settings.notifications.order:refused: Order refused
+form.settings.notifications.order:delayed: Order deyaled
+form.settings.notifications.order:cancelled: Order cancelled
+form.settings.notifications.order:picked: Order picked
+form.settings.notifications.order:dropped: Order dropped
+form.settings.notifications.order:fulfilled: Order fulfilled
+form.settings.notifications.order:updated: Order updated
+form.settings.notifications.task:created: Task created
+form.settings.notifications.task:assigned: Task assigned
+form.settings.notifications.task:unassigned: Task unassigned
+form.settings.notifications.task:started: Task started
+form.settings.notifications.task:done: Task done
+form.settings.notifications.task:failed: Task failed
+form.settings.notifications.task:cancelled: Task cancelled
+form.settings.notifications.task_collections:updated: Task collecion updated
+form.settings.notifications.task_list:updated: Task list updated
+form.settings.notifications.task:rescheduled: Task rescheduled
+form.settings.notifications.task_import:success: Tasks import success
+form.settings.notifications.task_import:failure: Tasks import failure

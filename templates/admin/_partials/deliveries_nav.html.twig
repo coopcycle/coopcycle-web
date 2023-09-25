@@ -85,14 +85,6 @@
     icon: 'database',
     active: ['admin_integrations', 'admin_integration'],
     enabled: is_granted('ROLE_ADMIN'),
-  },
-  {
-    title: 'adminDashboard.notifications.title' | trans,
-    help: 'adminDashboard.notifications.help' | trans,
-    path: path('admin_notifications'),
-    icon: 'bell',
-    active: ['admin_notifications'],
-    enabled: is_granted('ROLE_ADMIN'),
   }
 ] %}
 <div class="deliveries-nav">

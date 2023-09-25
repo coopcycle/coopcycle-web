@@ -2,12 +2,14 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\Notification;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Form\PaymentGateway\MercadopagoType;
 use AppBundle\Form\PaymentGateway\StripeType;
 use AppBundle\Form\Type\AutocompleteAdapterType;
 use AppBundle\Form\Type\GeocodingProviderType;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
@@ -41,11 +43,13 @@ class SettingsType extends AbstractType
     private $isDemo;
     private $googleEnabled;
     private $cashEnabled;
+    private $entityManager;
 
     public function __construct(
         SettingsManager $settingsManager,
         PhoneNumberUtil $phoneNumberUtil,
         GatewayResolver $gatewayResolver,
+        EntityManagerInterface $entityManager,
         string $country,
         bool $isDemo,
         bool $googleEnabled,
@@ -54,6 +58,7 @@ class SettingsType extends AbstractType
         $this->settingsManager = $settingsManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->gatewayResolver = $gatewayResolver;
+        $this->entityManager = $entityManager;
         $this->country = $country;
         $this->isDemo = $isDemo;
         $this->googleEnabled = $googleEnabled;
@@ -158,6 +163,35 @@ class SettingsType extends AbstractType
                 $builder->add('stripe', StripeType::class, ['mapped' => false]);
                 break;
         }
+
+        $builder->add('notifications', NotificationsType::class, ['mapped' => false]);
+
+        $builder->get('notifications')->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+            $data = $event->getForm()->getParent()->getData();
+            $submitedNotifications = $event->getData();
+
+            $enabledNotifications = array_keys(array_filter($submitedNotifications, function($value) {
+                return $value;
+            }));
+
+            // we don't want 'notifications' field to be handled as a setting later
+            unset($data->notifications);
+
+            $notifications = $this->entityManager
+                ->getRepository(Notification::class)
+                ->createQueryBuilder('n')
+                ->getQuery()
+                ->getResult();
+
+            foreach($notifications as $notification) {
+                if (in_array($notification->getName(), $enabledNotifications)) {
+                    $notification->setEnabled(true);
+                } else {
+                    $notification->setEnabled(false);
+                }
+            }
+            $this->entityManager->flush();
+        });
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 

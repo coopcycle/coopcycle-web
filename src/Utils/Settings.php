@@ -98,6 +98,8 @@ class Settings
 
     public $autocomplete_provider;
 
+    public $notifications;
+
     /**
      * The regex to validate Google API Key was found on https://github.com/odomojuli/RegExAPI
      *
