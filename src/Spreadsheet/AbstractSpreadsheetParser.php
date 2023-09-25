@@ -81,7 +81,7 @@ abstract class AbstractSpreadsheetParser
     /**
      * @param File|string $file
      * @param array $options
-     * @throws IOException
+     * @throws \Exception
      */
     public function parse($file, array $options = [])
     {
@@ -93,7 +93,7 @@ abstract class AbstractSpreadsheetParser
             if ($file instanceof File) {
                 $tempnam = tempnam(sys_get_temp_dir(), 'coopcycle_spreadsheet_parser_');
                 if (false === file_put_contents($tempnam, $file->read())) {
-                    throw new IOException(sprintf('Could not write temp file %s', $tempnam));
+                    throw new \Exception(sprintf('Could not write temp file %s', $tempnam));
                 }
 
                 $isTempFile = true;
