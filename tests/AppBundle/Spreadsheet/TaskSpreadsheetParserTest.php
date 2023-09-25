@@ -250,4 +250,16 @@ class TaskSpreadsheetParserTest extends TestCase
             'latlong',
         ]));
     }
+
+    public function testCsvWithAccents()
+    {
+        $this->mockDependencies();
+
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks_with_accents.csv');
+        $tasks = $this->parser->parse($filename);
+
+        $this->assertCount(1, $tasks);
+
+        $this->geocoder->geocode('Calle 181b #16-13, Bogotá, Colombia')->shouldHaveBeenCalled();
+    }
 }
