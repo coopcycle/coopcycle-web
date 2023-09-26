@@ -107,12 +107,22 @@ class AddressType extends AbstractType
                 ]);
         }
 
+        if (true === $options['with_complement']) {
+            $builder
+                ->add('complement', TextType::class, [
+                    'required' => false,
+                    'label' => 'form.address.complement.label',
+                    'attr' => ['rows' => '3', 'placeholder' => 'form.address.complement.placeholder']
+                ]);
+        }
+
         if (true === $options['with_description']) {
             $builder
                 ->add('description', TextareaType::class, [
                     'required' => false,
                     'label' => 'form.address.description.label',
-                    'attr' => ['rows' => '3', 'placeholder' => 'form.address.description.placeholder']
+                    'attr' => ['rows' => '3', 'placeholder' => 'form.address.description.placeholder'],
+                    'help' => 'form.address.description.help',
                 ]);
         }
 
@@ -179,6 +189,7 @@ class AddressType extends AbstractType
             'street_address_label' => 'form.address.streetAddress.label',
             'with_widget' => false,
             'with_description' => true,
+            'with_complement' => true,
             'with_contact_name' => false,
         ));
     }

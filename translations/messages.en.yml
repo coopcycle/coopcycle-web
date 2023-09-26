@@ -471,7 +471,8 @@ form.payment.refund_application_fee.help: "If you check this box, the commission
 form.address.addressLocality.label: City
 form.address.postalCode.label: Postal code
 form.address.description.label: Instructions
-form.address.description.placeholder: 2nd door on the left…
+form.address.description.placeholder: The doorbell does not work...
+form.address.description.help: The person delivering your order will see what you write here
 form.address.streetAddress.label: Address
 form.address.streetAddress.error.noLatLng: Please select an address in the dropdown
 form.address.name.label: Name
@@ -482,6 +483,8 @@ form.address.company.business_reference.label: Contact person for the company
 form.address.company.function.label: Contact person position
 form.address.company.collaborator_number.label: Number of employees
 form.address.company.meal_estimate.label: Estimated number of meals (per day)
+form.address.complement.label: Apt/Floor/Etc
+form.address.complement.placeholder: Apt, suite, unit, building, floor, etc.
 form.company.make_the_request.label: Send request
 form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Rules

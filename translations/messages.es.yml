@@ -331,7 +331,10 @@ form.address.name.placeholder: Casa, oficina…
 form.address.addressLocality.label: Ciudad
 form.address.postalCode.label: Código postal
 form.address.description.label: Instrucciones para la entrega
-form.address.description.placeholder: 2ª puerta a la izquierda…
+form.address.description.placeholder: El timbre no funciona…
+form.address.description.help: La persona que entregue tu pedido va a ver lo que escribas acá
+form.address.complement.label: Dpto./Piso/Etc
+form.address.complement.placeholder: Depto., unididad, edificio, piso, etc.
 form.pricing_rule_set.name.label: Nombre
 form.pricing_rule_set.rules.label: Reglas
 form.pricing_rule.price.label: Precio

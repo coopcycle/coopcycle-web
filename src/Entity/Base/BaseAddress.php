@@ -9,13 +9,22 @@ use Symfony\Component\Validator\Constraints as Assert;
 class BaseAddress extends Place
 {
     /**
+     * @var string Additional instructions about the delivery
+     *
+     * @Groups({"address_create", "task", "task_create", "task_edit", "order_update", "restaurant_delivery"})
+     * @Assert\Type(type="string")
+     * @ApiProperty(iri="https://schema.org/description")
+     */
+    protected $description;
+
+    /**
      * @var string Additional instructions about the place
      *
      * @Groups({"address_create", "task", "task_create", "task_edit", "order_update", "restaurant_delivery"})
      * @Assert\Type(type="string")
      * @ApiProperty(iri="https://schema.org/addressLocality")
      */
-    protected $description;
+    protected $complement;
 
     /**
      * @return string
@@ -31,5 +40,21 @@ class BaseAddress extends Place
     public function setDescription(string $description = null)
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return string
+     */
+    public function getComplement()
+    {
+        return $this->complement;
+    }
+
+    /**
+     * @param string $complement
+     */
+    public function setComplement(string $complement = null)
+    {
+        $this->complement = $complement;
     }
 }

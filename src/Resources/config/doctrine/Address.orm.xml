@@ -8,6 +8,7 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="description" type="text" column="description" nullable="true"/>
+    <field name="complement" type="text" column="complement" nullable="true"/>
     <field name="geo" type="geography" column="geo">
       <options>
         <option name="geometry_type">GEOMETRY</option>

@@ -143,6 +143,7 @@
         <div>
           {% if form.shippingAddress is defined %}
             {{ form_row(form.shippingAddress.streetAddress) }}
+            {{ form_row(form.shippingAddress.complement) }}
             {{ form_row(form.shippingAddress.description) }}
           {% endif %}
         </div>
