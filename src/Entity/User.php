@@ -103,6 +103,8 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
 
     protected ?string $salt = null;
 
+    private $businessAccount;
+
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
@@ -456,6 +458,16 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
     public function getSalt(): ?string
     {
         return $this->salt;
+    }
+
+    public function getBusinessAccount(): ?BusinessAccount
+    {
+        return $this->businessAccount;
+    }
+
+    public function setBusinessAccount(?BusinessAccount $businessAccount)
+    {
+        $this->businessAccount = $businessAccount;
     }
 
     /**
