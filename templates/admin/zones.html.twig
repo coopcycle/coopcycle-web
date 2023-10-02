@@ -41,6 +41,11 @@
                 <button type="submit" class="btn btn-sm btn-danger">
                   <i class="fa fa-trash"></i> {% trans %}basics.delete{% endtrans %}
                 </button>
+              <a class="btn btn-sm btn-default download-geojson"
+                 data-name="{{ zone.name }}"
+                 data-download="{{ zone.geoJSON|json_encode|e('html_attr') }}">
+                <i class="fa fa-download"></i>
+              </a>
               </form>
             </p>
           </div>
