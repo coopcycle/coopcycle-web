@@ -399,6 +399,7 @@ Feature: Orders Adhoc
         "adjustments": {
           "@*@":"@*@"
         },
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "events":@array@
       }
     """
