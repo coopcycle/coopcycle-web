@@ -19,6 +19,11 @@
     <a href="{{ path('admin_promotions') }}" class="btn btn-default mr-4">
       {% trans %}adminDashboard.promotions.title{% endtrans %}
     </a>
+    {% if business_account_enabled %}
+      <a href="{{ path('admin_business_accounts') }}" class="btn btn-default mr-4">
+        {{ 'adminDashboard.business_accounts.title'|trans }}
+      </a>
+    {% endif %}
     {{ form_start(pledge_form, { attr: { class: 'form-inline d-inline-block border-left pl-4' } }) }}
       {{ form_widget(pledge_form.enable_restaurant_pledges) }}
       <a href="{{ path('admin_restaurants_pledges') }}" class="btn btn-default ml-4">

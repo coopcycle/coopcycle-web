@@ -1,0 +1,12 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+<mj-column>
+  <mj-text align="left" line-height="20px">
+    {{ 'business_account.send_invitation.body' | trans({'%name%': account.name}, 'emails') | raw }}
+  </mj-text>
+  <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white" href="{{ url('invitation_define_password', {'code': invitation.code}) }}">
+  	{{ 'admin.send_invitation.create_password' | trans({}, 'emails') }}
+  </mj-button>
+</mj-column>
+{% endblock %}
