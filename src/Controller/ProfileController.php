@@ -424,7 +424,7 @@ class ProfileController extends AbstractController
             'notifications' => $notifications,
             'currentPage' => $page,
             'nextPage' => $page + 1,
-            'hasNextPage' => $unread / TopBarNotifications::NOTIFICATIONS_OFFSET > $page,
+            'hasNextPage' => ($unread / TopBarNotifications::NOTIFICATIONS_OFFSET) > $page,
         ]);
     }
 
@@ -464,13 +464,14 @@ class ProfileController extends AbstractController
             ]);
         }
 
+        /** @var int $page */
         $page = 1;
         $content = $request->getContent();
         if (!empty($content)) {
             $contentArray = [];
             parse_str($content, $contentArray);
             if (array_key_exists('page', $contentArray)) {
-                $page = $contentArray['page'];
+                $page = (int) $contentArray['page'];
             }
         }
 
@@ -480,7 +481,7 @@ class ProfileController extends AbstractController
             'notifications' => $notifications,
             'currentPage' => $page,
             'nextPage' => $page + 1,
-            'hasNextPage' => $unread / TopBarNotifications::NOTIFICATIONS_OFFSET > $page,
+            'hasNextPage' => ($unread / TopBarNotifications::NOTIFICATIONS_OFFSET) > $page,
         ]);
     }
 
