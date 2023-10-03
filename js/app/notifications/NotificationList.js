@@ -6,6 +6,24 @@ moment.locale($('html').attr('lang'))
 
 class NotificationList extends React.Component {
 
+  constructor() {
+    super()
+
+    this.state = {
+      loading: false,
+    }
+
+    this.onDeleteAll = this.onDeleteAll.bind(this)
+  }
+
+  onDeleteAll() {
+    this.setState({loading: true})
+    this.props.onDeleteAll()
+      .then(() => {
+        this.setState({loading: false})
+      })
+  }
+
   render() {
 
     const { notifications, count, onSeeAll, onRemove } = this.props
@@ -26,19 +44,22 @@ class NotificationList extends React.Component {
                 <br />
                 <small>{ moment.unix(notification.timestamp).fromNow() }</small>
               </a>
-              <a role="button" href="#" className="text-reset"
+              <a disabled={ this.state.loading } role="button" href="#" className="text-reset"
                 onClick={ () => onRemove(notification) }>
-                <i className="fa fa-trash"></i>
+                <i className="fa fa-close"></i>
               </a>
             </li>
           ))}
         </ul>
-        {
-          count > notifications.length &&
-          <button type="button" className="btn btn-block btn-primary mt-2" onClick={ onSeeAll }>
+        <div className="d-flex mt-2">
+          <button disabled={ this.state.loading } type="button" className="btn btn-block btn-primary mt-0 mr-2" onClick={ onSeeAll }>
             { this.props.t('SEE_ALL') } ({count})
           </button>
-        }
+          <button disabled={ this.state.loading } type="button" className="btn btn-block btn-danger mt-0" onClick={ this.onDeleteAll }>
+            { this.state.loading && <span><i className="fa fa-spinner fa-spin mr-2"></i></span> }
+            { this.props.t('DELETE_ALL') } ({count})
+          </button>
+        </div>
       </div>
     )
   }

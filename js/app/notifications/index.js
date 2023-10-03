@@ -17,7 +17,7 @@ const zeroStyleDark = {
   boxShadow: '0 0 0 1px #d9d9d9 inset'
 }
 
-const Notifications = ({ initialNotifications, initialCount, centrifuge, namespace, username, theme, onSeeAll, removeURL }) => {
+const Notifications = ({ initialNotifications, initialCount, centrifuge, namespace, username, theme, onSeeAll, removeURL, removeNotificationsURL }) => {
 
   const [ notifications, setNotifications ] = useState(initialNotifications)
   const [ count, setCount ] = useState(initialCount)
@@ -52,13 +52,23 @@ const Notifications = ({ initialNotifications, initialCount, centrifuge, namespa
     })
   }
 
+  const onDeleteAll = async () => {
+    return $.ajax(`${removeNotificationsURL}?all=true&format=json`, {
+      type: 'POST',
+      contentType: 'application/json',
+    }).then((res) => {
+      setNotifications(Object.values(res.notifications))
+      setCount(res.unread)
+    })
+  }
+
   const badgeProps = count === 0 ?
     { style: theme === 'dark' ? zeroStyleDark : zeroStyle } : { style: { backgroundColor: '#52c41a' } }
 
   return (
     <Popover
       placement="bottomRight"
-      content={ <NotificationList onSeeAll={ onSeeAll } onRemove={ onRemove } count={ count } notifications={ notifications } /> }
+      content={ <NotificationList onSeeAll={ onSeeAll } onRemove={ onRemove } onDeleteAll={ onDeleteAll } count={ count } notifications={ notifications } /> }
       title="Notifications"
       trigger="click">
       <a href="#">
@@ -89,6 +99,7 @@ function bootstrap(el, options) {
       initialNotifications={ notifications }
       initialCount={ unread }
       removeURL={ options.removeNotificationURL }
+      removeNotificationsURL={ options.removeNotificationsURL }
       onSeeAll={ () => { window.location.href = options.notificationsURL } }
       centrifuge={ centrifuge }
       namespace={ options.namespace }
@@ -103,6 +114,7 @@ $.getJSON(window.Routing.generate('profile_jwt'))
     const options = {
       notificationsURL: window.Routing.generate('profile_notifications'),
       removeNotificationURL:    window.Routing.generate('profile_notification_remove'),
+      removeNotificationsURL: window.Routing.generate('profile_notifications_remove'),
       token:     result.cent_tok,
       namespace: result.cent_ns,
       username:  result.cent_usr,
