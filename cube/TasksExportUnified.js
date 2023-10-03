@@ -5,6 +5,7 @@ cube(`TasksExportUnified`, {
     tci.position AS task_position,
     o.id AS order_id,
     o.number AS order_number,
+    o.total AS order_total,
     t.type AS task_type,
     a.name AS address_name,
     a.street_address AS address_street_address,
@@ -50,6 +51,10 @@ cube(`TasksExportUnified`, {
     orderNumber: {
       sql: `order_number`,
       type: `string`,
+    },
+    orderTotal: {
+      sql: `order_total`,
+      type: `number`,
     },
     taskType: {
       sql: `task_type`,

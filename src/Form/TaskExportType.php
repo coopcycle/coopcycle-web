@@ -17,6 +17,32 @@ class TaskExportType extends AbstractType
     private $cubejsClient;
     private $tokenFactory;
 
+    private static $columns = [
+        '#',
+        '# order',
+        'orderCode',
+        'orderTotal',
+        'type',
+        'address.name',
+        'address.streetAddress',
+        'address.latlng',
+        'address.description',
+        'afterDay',
+        'afterTime',
+        'beforeDay',
+        'beforeTime',
+        'status',
+        'comments',
+        'event.DONE.notes',
+        'event.FAILED.notes',
+        'finishedAtDay',
+        'finishedAtTime',
+        'courier',
+        'tags',
+        'address.contactName',
+        'organization'
+    ];
+
     public function __construct(
         HttpClientInterface $cubejsClient,
         CubeJsTokenFactory $tokenFactory)
@@ -80,6 +106,7 @@ class TaskExportType extends AbstractType
                         "TasksExportUnified.taskId",
                         "TasksExportUnified.orderId",
                         "TasksExportUnified.orderNumber",
+                        "TasksExportUnified.orderTotal",
                         "TasksExportUnified.taskType",
                         "TasksExportUnified.addressName",
                         "TasksExportUnified.addressStreetAddress",
@@ -114,40 +141,18 @@ class TaskExportType extends AbstractType
             $resultSet = json_decode($content, true);
 
             $csv = CsvWriter::createFromString('');
-            $csv->insertOne([
-                '#',
-                '# order',
-                'orderCode',
-                'type',
-                'address.name',
-                'address.streetAddress',
-                'address.latlng',
-                'address.description',
-                'afterDay',
-                'afterTime',
-                'beforeDay',
-                'beforeTime',
-                'status',
-                'comments',
-                'event.DONE.notes',
-                'event.FAILED.notes',
-                'finishedAtDay',
-                'finishedAtTime',
-                'courier',
-                'tags',
-                'address.contactName',
-                'organization'
-            ]);
+            $csv->insertOne(self::$columns);
 
             $records = [];
             foreach ($resultSet['data'] as $resultObject) {
 
                 $geo = GeoUtils::asGeoCoordinates($resultObject['TasksExportUnified.addressGeo']);
 
-                $records[] = [
+                $records[] = array_combine(self::$columns, [
                     $resultObject['TasksExportUnified.taskId'],
                     $resultObject['TasksExportUnified.orderId'],
                     $resultObject['TasksExportUnified.orderNumber'],
+                    $resultObject['TasksExportUnified.orderTotal'],
                     $resultObject['TasksExportUnified.taskType'],
                     $resultObject['TasksExportUnified.addressName'],
                     $resultObject['TasksExportUnified.addressStreetAddress'],
@@ -167,10 +172,32 @@ class TaskExportType extends AbstractType
                     $resultObject['TasksExportUnified.taskTags'],
                     $resultObject['TasksExportUnified.addressContactName'],
                     $resultObject['TasksExportUnified.taskOrganizationName'],
-                ];
+                ]);
             }
-            $csv->insertAll($records);
 
+            // Make sure the order total only appears in one row
+            $orderNumbers = [];
+            $records = array_map(function ($row) use (&$orderNumbers) {
+
+                if (empty($row['orderCode'])) {
+
+                    return $row;
+                }
+
+                if (in_array($row['orderCode'], $orderNumbers)) {
+
+                    $row['orderTotal'] = '';
+
+                    return $row;
+                }
+
+                $orderNumbers[] = $row['orderCode'];
+
+                return $row;
+
+            }, $records);
+
+            $csv->insertAll($records);
             $taskExport->csv = $csv->getContent();
 
             $event->getForm()->setData($taskExport);
