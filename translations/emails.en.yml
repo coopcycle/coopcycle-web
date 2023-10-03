@@ -156,3 +156,7 @@ order.adhoc.body: |
   A new order has been created for you.
   <br>
   In order to finalize your order, click on the link below to specify your address, choose a delivery slot, and pay by credit card.
+business_account.send_invitation.body: |
+  Hello %name%,
+  <br>
+  This is an invitation to configure the business account in CoopCycle, to continue with the activation please click on the following link.

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\BusinessAccountInvitation;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
@@ -219,6 +220,14 @@ class UserController extends AbstractController
                         }
                     }
                 }
+            }
+
+            if ($this->getParameter('business_account_enabled') && $user->hasRole('ROLE_BUSINESS_ACCOUNT')) {
+                $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
+                    'invitation' => $invitation,
+                ]);
+                $user->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
+                $objectManager->remove($businessAccountInvitation);
             }
 
             $userManager->updateUser($user);

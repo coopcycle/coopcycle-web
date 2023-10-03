@@ -1,0 +1,82 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'form/restaurant.html.twig' %}
+
+{% block breadcrumb %}
+<li>
+  <a href="{{ path('admin_restaurants') }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a>
+</li>
+<li>
+  <a href="{{ path('admin_business_accounts') }}">{% trans %}adminDashboard.business_accounts.title{% endtrans %}</a>
+</li>
+<li>
+  {{ 'basics.add'|trans }}
+</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+
+  <div class="row">
+    <div class="col-sm-3">
+      <ul class="nav nav-pills nav-stacked">
+        <li role="presentation" class="active">
+          <a role="tab" data-toggle="tab" href="#general" aria-controls="general">
+            {{ 'restaurant.form.section.general'|trans }}
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-9">
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="general">
+          {{ form_row(form.name) }}
+          {% if is_granted('ROLE_ADMIN') and form.managerEmail is defined %}
+            {{ form_row(form.managerEmail) }}
+          {% endif %}
+          {% if is_granted('ROLE_BUSINESS_ACCOUNT') %}
+            {{ form_row(form.address) }}
+          {% endif %}
+          {{ form_row(form.restaurants) }}
+          <!-- TODO generation of invitation link -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <button type="submit" class="btn btn-block btn-lg btn-primary">
+    {% if is_granted('ROLE_BUSINESS_ACCOUNT') %}
+      {{ 'basics.save'|trans }}
+    {% else %}
+      {{ 'form.business_account.save_and_send_invitation.label'|trans }}
+    {% endif %}
+  </button>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    var $restaurants = $('#business_account_restaurants')
+    new CoopCycle.Search(document.querySelector('#restaurant-search'), {
+      url: "{{ path('admin_restaurants_search', { format: 'json' }) }}",
+      placeholder: "{{ 'basics.search'|trans }}",
+      onSuggestionSelected: function(suggestion) {
+
+        var newRestaurant = $restaurants.attr('data-prototype');
+
+        newRestaurant = newRestaurant.replace(/__name__/g, $restaurants.find('tbody > tr').length);
+        newRestaurant = newRestaurant.replace(/__value__/g, suggestion.id);
+        newRestaurant = newRestaurant.replace(/__restaurant_name__/g, suggestion.name);
+
+        $restaurants.find('tbody').append($(newRestaurant));
+      }
+    });
+
+    $(document).on('click', '[data-remove="restaurant"]', function(e) {
+      e.preventDefault();
+      $(this).closest('tr').remove();
+    });
+  </script>
+{% endblock %}

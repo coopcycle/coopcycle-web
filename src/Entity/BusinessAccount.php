@@ -9,7 +9,6 @@ class BusinessAccount
     private $address;
     private $restaurants;
     private $employees;
-    private $invitation;
 
     /**
      * @return mixed
@@ -95,26 +94,6 @@ class BusinessAccount
     public function setEmployees($employees)
     {
         $this->employees = $employees;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getInvitation()
-    {
-        return $this->invitation;
-    }
-
-    /**
-     * @param mixed $invitation
-     *
-     * @return self
-     */
-    public function setInvitation($invitation)
-    {
-        $this->invitation = $invitation;
 
         return $this;
     }

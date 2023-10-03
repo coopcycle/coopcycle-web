@@ -1214,6 +1214,17 @@ adminDashboard.hubs.help: Una agrupación de comercios permite agrupar comercios
   comparten un espacio común., como un mercado,plaza comercial o galería .
 adminDashboard.hubs.createNew: Crear una nueva agrupación de comercios
 adminDashboard.hubs.title: Agrupación de comercios
+adminDashboard.business_accounts.title: Cuentas de empresa
+adminDashboard.business_accounts.createNew: Crear una nueva cuenta de empresa
+form.business_account.restaurants.label: Lista de restaurantes
+form.business_account.employees.label: Lista de empleados
+form.business_account.restaurants.add: Agregar un restaurante
+form.business_account.employees.add: Agregar un empleado
+form.business_account.manager.email.label: Email del administrador de la cuenta
+form.business_account.manager.email.help: Se enviará un link de invitación a Coopcycle
+form.business_account.manager.email_sent.help: Link de invitación a Coopcycle enviado
+form.business_account.save_and_send_invitation.label: Guardar y enviar invitación
+form.business_acount.send_invitation.confirm: El email de invitación a Coopcycle ha sido enviado
 store.form.section.settings: Ajustes
 stores.address_book: Direcciones guardadas
 form.payment.method.name.label: Método de pago
