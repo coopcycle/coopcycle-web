@@ -17,6 +17,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
+use AppBundle\Form\BusinessAccountType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
@@ -571,6 +572,43 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/loopeat.html.twig', [
             'cube_token' => $cubeJsToken,
+        ]);
+    }
+
+    /**
+     * @Route("/profile/business-account", name="profile_business_account")
+     */
+    public function businessAccountAction(
+        Request $request,
+        EntityManagerInterface $objectManager,
+        TranslatorInterface $translator)
+    {
+        $this->denyAccessUnlessGranted('ROLE_BUSINESS_ACCOUNT');
+
+        $user = $this->getUser();
+
+        $businessAccount = $user->getBusinessAccount();
+
+        if (!$businessAccount) {
+            throw $this->createNotFoundException('User does not have a business account associated');
+        }
+
+        $form = $this->createForm(BusinessAccountType::class, $businessAccount);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $objectManager->persist($businessAccount);
+            $objectManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('profile_business_account');
+        }
+
+        return $this->render('admin/business_account.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }

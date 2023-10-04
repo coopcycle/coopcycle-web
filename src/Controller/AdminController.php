@@ -2503,45 +2503,33 @@ class AdminController extends AbstractController
         $form = $this->createForm(BusinessAccountType::class, $businessAccount);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-            if ($this->isGranted('ROLE_ADMIN')) {
-                $managerEmail = $form->get('managerEmail')->getData();
+            $managerEmail = $form->get('managerEmail')->getData();
 
-                $invitation = new Invitation();
-                $invitation->setEmail($canonicalizer->canonicalize($managerEmail));
-                $invitation->setUser($this->getUser());
-                $invitation->setCode($tokenGenerator->generateToken());
-                $invitation->addRole('ROLE_BUSINESS_ACCOUNT');
+            $invitation = new Invitation();
+            $invitation->setEmail($canonicalizer->canonicalize($managerEmail));
+            $invitation->setUser($this->getUser());
+            $invitation->setCode($tokenGenerator->generateToken());
+            $invitation->addRole('ROLE_BUSINESS_ACCOUNT');
 
-                // Send invitation email
-                $message = $emailManager->createBusinessAccountInvitationMessage($invitation, $businessAccount);
-                $emailManager->sendTo($message, $invitation->getEmail());
-                $invitation->setSentAt(new \DateTime());
+            // Send invitation email
+            $message = $emailManager->createBusinessAccountInvitationMessage($invitation, $businessAccount);
+            $emailManager->sendTo($message, $invitation->getEmail());
+            $invitation->setSentAt(new \DateTime());
 
-                $businessAccountInvitation = new BusinessAccountInvitation();
-                $businessAccountInvitation->setBusinessAccount($businessAccount);
-                $businessAccountInvitation->setInvitation($invitation);
+            $businessAccountInvitation = new BusinessAccountInvitation();
+            $businessAccountInvitation->setBusinessAccount($businessAccount);
+            $businessAccountInvitation->setInvitation($invitation);
 
-                $objectManager->persist($businessAccountInvitation);
-                $objectManager->persist($businessAccount);
-                $objectManager->flush();
+            $objectManager->persist($businessAccountInvitation);
+            $objectManager->persist($businessAccount);
+            $objectManager->flush();
 
-                $this->addFlash(
-                    'notice',
-                    $this->translator->trans('form.business_acount.send_invitation.confirm')
-                );
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('form.business_acount.send_invitation.confirm')
+            );
 
-                return $this->redirectToRoute('admin_business_accounts');
-            } else if ($this->isGranted('ROLE_BUSINESS_ACCOUNT')) {
-                $objectManager->persist($businessAccount);
-                $objectManager->flush();
-
-                $this->addFlash(
-                    'notice',
-                    $this->translator->trans('global.changesSaved')
-                );
-
-                return $this->redirectToRoute('admin_business_account', ['id' => $businessAccount->getId()]);
-            }
+            return $this->redirectToRoute('admin_business_accounts');
         }
 
         return $this->render('admin/business_account.html.twig', [
