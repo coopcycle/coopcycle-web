@@ -67,6 +67,7 @@ Feature: Manage shops
         },
         "isOpen":true,
         "hub":null,
-        "loopeatEnabled":false
+        "loopeatEnabled":false,
+        "businessAccount":null
       }
       """
