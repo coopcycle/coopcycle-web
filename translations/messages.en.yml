@@ -1317,24 +1317,20 @@ profile.type_username_to_confirm: "Type your username to confirm the account del
 form.pricing_rule_set.options.label: Options
 form.pricing_rule_set.options.map_all_tasks.label: Apply to all the tasks
 form.settings.notifications.title: Notifications
-form.settings.notifications.order:created: Order created
-form.settings.notifications.order:accepted: Order accepted
-form.settings.notifications.order:refused: Order refused
-form.settings.notifications.order:delayed: Order deyaled
-form.settings.notifications.order:cancelled: Order cancelled
-form.settings.notifications.order:picked: Order picked
-form.settings.notifications.order:dropped: Order dropped
-form.settings.notifications.order:fulfilled: Order fulfilled
-form.settings.notifications.order:updated: Order updated
-form.settings.notifications.task:created: Task created
-form.settings.notifications.task:assigned: Task assigned
-form.settings.notifications.task:unassigned: Task unassigned
-form.settings.notifications.task:started: Task started
-form.settings.notifications.task:done: Task done
-form.settings.notifications.task:failed: Task failed
-form.settings.notifications.task:cancelled: Task cancelled
-form.settings.notifications.task_collections:updated: Task collecion updated
-form.settings.notifications.task_list:updated: Task list updated
-form.settings.notifications.task:rescheduled: Task rescheduled
-form.settings.notifications.task_import:success: Tasks import success
-form.settings.notifications.task_import:failure: Tasks import failure
+form.settings.notifications.order.created: Order created
+form.settings.notifications.order.accepted: Order accepted
+form.settings.notifications.order.refused: Order refused
+form.settings.notifications.order.delayed: Order deyaled
+form.settings.notifications.order.cancelled: Order cancelled
+form.settings.notifications.order.picked: Order picked
+form.settings.notifications.order.dropped: Order dropped
+form.settings.notifications.order.fulfilled: Order fulfilled
+form.settings.notifications.order.updated: Order updated
+form.settings.notifications.task.created: Task created
+form.settings.notifications.task.assigned: Task assigned
+form.settings.notifications.task.unassigned: Task unassigned
+form.settings.notifications.task.started: Task started
+form.settings.notifications.task.done: Task done
+form.settings.notifications.task.failed: Task failed
+form.settings.notifications.task.cancelled: Task cancelled
+form.settings.notifications.task.rescheduled: Task rescheduled

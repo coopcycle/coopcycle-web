@@ -27,7 +27,9 @@ class NotificationsType extends AbstractType
 
         foreach ($events as $event) {
             $builder->add($event, CheckboxType::class, [
-                'label' => $this->translator->trans(sprintf('form.settings.notifications.%s', $event)),
+                'label' => $this->translator->trans(
+                    sprintf('form.settings.notifications.%s', str_replace(':', '.', $event))
+                ),
                 'translation_domain' => 'messages',
                 'required'   => false,
                 'data' => $this->notifications->isEventEnabled($event),
