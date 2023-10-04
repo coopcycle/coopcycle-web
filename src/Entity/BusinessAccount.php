@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 class BusinessAccount
 {
     private $id;
@@ -9,6 +11,12 @@ class BusinessAccount
     private $address;
     private $restaurants;
     private $employees;
+
+    public function __construct()
+    {
+        $this->restaurants = new ArrayCollection();
+        $this->employees = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -79,6 +87,26 @@ class BusinessAccount
     }
 
     /**
+     * @param LocalBusiness $restaurant
+     */
+    public function addRestaurant(LocalBusiness $restaurant)
+    {
+        if (!$this->restaurants->contains($restaurant)) {
+            $restaurant->setBusinessAccount($this);
+            $this->restaurants->add($restaurant);
+        }
+    }
+
+    /**
+     * @param LocalBusiness $restaurant
+     */
+    public function removeRestaurant(LocalBusiness $restaurant): void
+    {
+        $this->restaurants->removeElement($restaurant);
+        $restaurant->setBusinessAccount(null);
+    }
+
+    /**
      * @return mixed
      */
     public function getEmployees()
@@ -96,6 +124,26 @@ class BusinessAccount
         $this->employees = $employees;
 
         return $this;
+    }
+
+    /**
+     * @param User $employee
+     */
+    public function addEmployee(User $employee)
+    {
+        if (!$this->employees->contains($employee)) {
+            $employee->setBusinessAccount($this);
+            $this->employees->add($employee);
+        }
+    }
+
+    /**
+     * @param User $employee
+     */
+    public function removeEmployee(User $employee): void
+    {
+        $this->employees->removeElement($employee);
+        $employee->setBusinessAccount(null);
     }
 
 }
