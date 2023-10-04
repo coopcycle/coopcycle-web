@@ -54,7 +54,6 @@ class SettingsType extends AbstractType
         $this->settingsManager = $settingsManager;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->gatewayResolver = $gatewayResolver;
-        $this->entityManager = $entityManager;
         $this->country = $country;
         $this->isDemo = $isDemo;
         $this->googleEnabled = $googleEnabled;
