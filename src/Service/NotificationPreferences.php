@@ -7,7 +7,7 @@ use AppBundle\Domain\Task\Event as TaskEvents;
 use AppBundle\Entity\Notification;
 use Doctrine\ORM\EntityManagerInterface;
 
-class Notifications
+class NotificationPreferences
 {
 	private $events = [];
 

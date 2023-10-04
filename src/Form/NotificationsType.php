@@ -3,7 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Notification;
-use AppBundle\Service\Notifications;
+use AppBundle\Service\NotificationPreferences;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -16,14 +16,14 @@ class NotificationsType extends AbstractType
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private Notifications $notifications,
+        private NotificationPreferences $notificationPreferences,
         private TranslatorInterface $translator)
     {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $events = $this->notifications->getConfigurableEvents();
+        $events = $this->notificationPreferences->getConfigurableEvents();
 
         foreach ($events as $event) {
             $builder->add($event, CheckboxType::class, [
@@ -32,7 +32,7 @@ class NotificationsType extends AbstractType
                 ),
                 'translation_domain' => 'messages',
                 'required'   => false,
-                'data' => $this->notifications->isEventEnabled($event),
+                'data' => $this->notificationPreferences->isEventEnabled($event),
             ]);
         }
 
