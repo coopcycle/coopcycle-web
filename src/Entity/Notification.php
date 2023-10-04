@@ -5,11 +5,6 @@ namespace AppBundle\Entity;
 class Notification
 {
     /**
-     * @var int
-     */
-    private $id;
-
-    /**
      * @var string
      */
     private string $name;
@@ -29,7 +24,7 @@ class Notification
         $this->name = $name;
     }
 
-    public function getEnabled()
+    public function isEnabled(): bool
     {
         return $this->enabled;
     }

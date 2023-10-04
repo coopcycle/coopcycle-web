@@ -3,42 +3,55 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Notification;
+use AppBundle\Service\Notifications;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NotificationsType extends AbstractType
 {
-    private $translator;
-    private $entityManager;
-
     public function __construct(
-        TranslatorInterface $translator,
-        EntityManagerInterface $entityManager)
+        private EntityManagerInterface $entityManager,
+        private Notifications $notifications,
+        private TranslatorInterface $translator)
     {
-        $this->translator = $translator;
-        $this->entityManager = $entityManager;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $notifications = $this->entityManager
-            ->getRepository(Notification::class)
-            ->createQueryBuilder('n')
-            ->orderBy('n.id')
-            ->getQuery()
-            ->getResult();
+        $events = $this->notifications->getConfigurableEvents();
 
-        foreach($notifications as $notification) {
-            $builder->add($notification->getName(), CheckboxType::class, [
-                'label' => $this->translator->trans(sprintf('form.settings.notifications.%s', $notification->getName())),
+        foreach ($events as $event) {
+            $builder->add($event, CheckboxType::class, [
+                'label' => $this->translator->trans(sprintf('form.settings.notifications.%s', $event)),
                 'translation_domain' => 'messages',
                 'required'   => false,
-                'data' => $notification->getEnabled()
+                'data' => $this->notifications->isEventEnabled($event),
             ]);
         }
-    }
 
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+
+            foreach ($event->getData() as $name => $checked) {
+
+                $notification = $this->entityManager
+                    ->getRepository(Notification::class)
+                    ->find($name);
+
+                if (null === $notification) {
+                    $notification = new Notification();
+                    $notification->setName($name);
+                    $this->entityManager->persist($notification);
+                }
+
+                $notification->setEnabled($checked);
+            }
+
+            $this->entityManager->flush();
+        });
+    }
 }
