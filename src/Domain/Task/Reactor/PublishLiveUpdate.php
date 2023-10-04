@@ -6,7 +6,7 @@ use AppBundle\Domain\Event;
 use AppBundle\Domain\Task\Event\TaskListUpdated;
 use AppBundle\Service\LiveUpdates;
 
-class PublishRedisMessage
+class PublishLiveUpdate
 {
     private $liveUpdates;
 
