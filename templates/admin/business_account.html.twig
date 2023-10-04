@@ -62,20 +62,22 @@
 {% block scripts %}
   <script>
     var $restaurants = $('#business_account_restaurants')
-    new CoopCycle.Search(document.querySelector('#restaurant-search'), {
-      url: "{{ path('admin_restaurants_search', { format: 'json' }) }}",
-      placeholder: "{{ 'basics.search'|trans }}",
-      onSuggestionSelected: function(suggestion) {
+    if (document.querySelector('#restaurant-search')) {
+      new CoopCycle.Search(document.querySelector('#restaurant-search'), {
+        url: "{{ path('admin_restaurants_search', { format: 'json' }) }}",
+        placeholder: "{{ 'basics.search'|trans }}",
+        onSuggestionSelected: function(suggestion) {
 
-        var newRestaurant = $restaurants.attr('data-prototype');
+          var newRestaurant = $restaurants.attr('data-prototype');
 
-        newRestaurant = newRestaurant.replace(/__name__/g, $restaurants.find('tbody > tr').length);
-        newRestaurant = newRestaurant.replace(/__value__/g, suggestion.id);
-        newRestaurant = newRestaurant.replace(/__restaurant_name__/g, suggestion.name);
+          newRestaurant = newRestaurant.replace(/__name__/g, $restaurants.find('tbody > tr').length);
+          newRestaurant = newRestaurant.replace(/__value__/g, suggestion.id);
+          newRestaurant = newRestaurant.replace(/__restaurant_name__/g, suggestion.name);
 
-        $restaurants.find('tbody').append($(newRestaurant));
-      }
-    });
+          $restaurants.find('tbody').append($(newRestaurant));
+        }
+      });
+    }
 
     $(document).on('click', '[data-remove="restaurant"]', function(e) {
       e.preventDefault();
