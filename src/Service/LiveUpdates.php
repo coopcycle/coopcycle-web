@@ -6,6 +6,7 @@ use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Domain\Order\Event as OrderEvent;
 use AppBundle\Domain\HumanReadableEventInterface;
 use AppBundle\Domain\SerializableEventInterface;
+use AppBundle\Domain\SilentEventInterface;
 use AppBundle\Domain\Task\Event as TaskEvent;
 use AppBundle\Entity\User;
 use AppBundle\Message\TopBarNotification;
@@ -133,6 +134,10 @@ class LiveUpdates
     private function createNotification($users, $message)
     {
         $messageName = $message instanceof NamedMessage ? $message::messageName() : $message;
+
+        if ($message instanceof SilentEventInterface) {
+            return;
+        }
 
         if (!$this->shouldNotifyEvent($messageName)) {
             return;
