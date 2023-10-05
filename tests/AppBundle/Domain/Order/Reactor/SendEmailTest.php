@@ -11,6 +11,7 @@ use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Message\OrderReceiptEmail;
 use AppBundle\Service\EmailManager;
+use AppBundle\Service\NotificationPreferences;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
@@ -35,6 +36,7 @@ class SendEmailTest extends TestCase
         $this->settingsManager = $this->prophesize(SettingsManager::class);
         $this->eventBus = $this->prophesize(MessageBus::class);
         $this->messageBus = $this->prophesize(MessageBusInterface::class);
+        $this->notificationPreferences = $this->prophesize(NotificationPreferences::class);
 
         $this->settingsManager->get('administrator_email')->willReturn('admin@acme.com');
 
@@ -44,11 +46,16 @@ class SendEmailTest extends TestCase
                 return new Envelope($args[0]);
             });
 
+        $this->notificationPreferences
+            ->isEventEnabled(Event\OrderCreated::messageName())
+            ->willReturn(true);
+
         $this->sendEmail = new SendEmail(
             $this->emailManager->reveal(),
             $this->settingsManager->reveal(),
             $this->eventBus->reveal(),
-            $this->messageBus->reveal()
+            $this->messageBus->reveal(),
+            $this->notificationPreferences->reveal()
         );
     }
 
@@ -299,5 +306,86 @@ class SendEmailTest extends TestCase
             ->messageBus
             ->dispatch(new OrderReceiptEmail('ABC123'))
             ->shouldHaveBeenCalled();
+    }
+
+    public function testOrderCreatedWithDisabledEvent()
+    {
+        $customer = $this->prophesize(Customer::class);
+
+        $customer->getEmail()->willReturn('john@example.com');
+        $customer->getFullName()->willReturn('John Doe');
+
+        $bob = $this->prophesize(User::class);
+        $jane = $this->prophesize(User::class);
+
+        $bob->getEmail()->willReturn('bob@example.com');
+        $bob->getFullName()->willReturn('Bob');
+
+        $jane->getEmail()->willReturn('jane@example.com');
+        $jane->getFullName()->willReturn('Jane');
+
+        $restaurant = $this->prophesize(LocalBusiness::class);
+
+        $restaurant->getOwners()->willReturn(new ArrayCollection([
+            $bob->reveal(),
+            $jane->reveal()
+        ]));
+
+        $order = $this->prophesize(OrderInterface::class);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection([
+                $restaurant->reveal()
+            ]));
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
+        $order
+            ->getVendor()
+            ->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+
+        $this->emailManager
+            ->createOrderCreatedMessageForCustomer($order->reveal())
+            ->willReturn(new Email());
+
+        $this->notificationPreferences
+            ->isEventEnabled(Event\OrderCreated::messageName())
+            ->willReturn(false);
+
+        $this->emailManager
+            ->createOrderCreatedMessageForAdmin($order->reveal())
+            ->shouldNotBeCalled();
+
+        $this->emailManager
+            ->createOrderCreatedMessageForOwner($order->reveal(), Argument::type(LocalBusiness::class))
+            ->willReturn(new Email());
+
+        $this->emailManager
+            ->sendTo(Argument::type(Email::class), Argument::any(), Argument::any())
+            ->shouldBeCalledTimes(2);
+
+        $this->eventBus
+            ->handle(Argument::that(function (Event\EmailSent $event) {
+
+                $payload = $event->toPayload();
+
+                $emails = [
+                    'john@example.com',
+                    'bob@example.com',
+                    'jane@example.com',
+                    'admin@acme.com',
+                ];
+
+                return isset($payload['recipient']) && in_array($payload['recipient'], $emails);
+            }))
+            ->shouldBeCalled(4);
+
+        call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
     }
 }
