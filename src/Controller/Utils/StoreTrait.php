@@ -547,7 +547,6 @@ trait StoreTrait
         DeliveryManager $deliveryManager,
         OrderFactory $orderFactory)
     {
-        $store = $deliveryImportForm->get('store')->getData();
         $deliveries = $deliveryImportForm->getData();
 
         foreach ($deliveries as $delivery) {
