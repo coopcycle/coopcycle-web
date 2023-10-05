@@ -191,6 +191,7 @@ class TaskExportType extends AbstractType
                 if (in_array($row['orderCode'], $orderNumbers)) {
 
                     $row['orderTotal'] = '';
+                    $row['orderRevenue'] = '';
 
                     return $row;
                 }
