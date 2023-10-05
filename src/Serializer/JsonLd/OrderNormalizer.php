@@ -5,6 +5,9 @@ namespace AppBundle\Serializer\JsonLd;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\LoopEat\Client as LoopeatClient;
+use AppBundle\LoopEat\Context as LoopeatContext;
+use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\DateUtils;
@@ -22,6 +25,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 {
@@ -51,7 +55,10 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         PromotionCouponRepository $promotionCouponRepository,
         OrderProcessorInterface $orderProcessor,
         PriceFormatter $priceFormatter,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        UrlGeneratorInterface $urlGenerator,
+        LoopeatClient $loopeatClient,
+        LoopeatContextInitializer $loopeatContextInitializer)
     {
         $this->normalizer = $normalizer;
         $this->channelContext = $channelContext;
@@ -67,6 +74,9 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->orderProcessor = $orderProcessor;
         $this->priceFormatter = $priceFormatter;
         $this->translator = $translator;
+        $this->urlGenerator = $urlGenerator;
+        $this->loopeatClient = $loopeatClient;
+        $this->loopeatContextInitializer = $loopeatContextInitializer;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -106,8 +116,11 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
         // Suggest the customer to use reusable packaging via order payload
         if (null !== $restaurant &&
-            $restaurant->isDepositRefundEnabled() && $restaurant->isDepositRefundOptin() &&
-            $object->isEligibleToReusablePackaging()) {
+            $object->isEligibleToReusablePackaging() &&
+            $restaurant->isDepositRefundOptin() &&
+            // We don't allow (yet) to toggle reusable packaging for Dabba
+            // https://github.com/coopcycle/coopcycle-app/issues/1503
+            !$restaurant->isDabbaEnabled()) {
 
             $transKey = 'form.checkout_address.reusable_packaging_enabled.label';
             $packagingAmount = $object->getReusablePackagingAmount();
@@ -123,10 +136,20 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 "@context" => "http://schema.org",
                 "@type" => "EnableReusablePackagingAction",
                 "actionStatus" => "PotentialActionStatus",
-                "description" => $this->translator->trans($transKey, [ '%price%' => $packagingPrice ])
+                "description" => $this->translator->trans($transKey, [ '%price%' => $packagingPrice ]),
             ];
 
+            if ($restaurant->isLoopeatEnabled()) {
+                $enableReusablePackagingAction['loopeatOAuthUrl'] = $this->loopeatClient->getOAuthAuthorizeUrl([
+                    'state' => $this->loopeatClient->createStateParamForOrder($object, $useDeepLink = true),
+                ]);
+            }
+
             $data['potentialAction'] = [ $enableReusablePackagingAction ];
+        }
+
+        if ($object->isReusablePackagingEnabled() && $object->getRestaurant()->isLoopeatEnabled()) {
+            $data['loopeatContext'] = $this->loopeatContextInitializer->initialize($object);
         }
 
         if (isset($context['is_web']) && $context['is_web']) {
@@ -162,6 +185,12 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             }
 
             $data['takeaway'] = $object->isTakeaway();
+        }
+
+        $data['invitation'] = null;
+
+        if (null !== ($invitation = $object->getInvitation())) {
+            $data['invitation'] = $invitation->getSlug();
         }
 
         return $data;
@@ -223,9 +252,13 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
             }, $data['items']);
 
-            $order->clearItems();
-            foreach ($orderItems as $orderItem) {
-                $this->orderModifier->addToOrder($order, $orderItem);
+            $orderItems = array_filter($orderItems);
+
+            if (count($orderItems) > 0) {
+                $order->clearItems();
+                foreach ($orderItems as $orderItem) {
+                    $this->orderModifier->addToOrder($order, $orderItem);
+                }
             }
         }
 

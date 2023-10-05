@@ -12,7 +12,7 @@ use AppBundle\Spreadsheet\TaskSpreadsheetParser;
 use Cocur\Slugify\Slugify;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
 use Prophecy\Argument;
@@ -25,7 +25,7 @@ class TaskSpreadsheetParserTest extends TestCase
     {
         $this->geocoder = $this->prophesize(Geocoder::class);
         $this->phoneNumberUtil = $this->prophesize(PhoneNumberUtil::class);
-        $this->userManager = $this->prophesize(UserManagerInterface::class);
+        $this->userManager = $this->prophesize(UserManager::class);
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
         $this->bob = new User();
@@ -249,5 +249,17 @@ class TaskSpreadsheetParserTest extends TestCase
             'address',
             'latlong',
         ]));
+    }
+
+    public function testCsvWithAccents()
+    {
+        $this->mockDependencies();
+
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/tasks_with_accents.csv');
+        $tasks = $this->parser->parse($filename);
+
+        $this->assertCount(1, $tasks);
+
+        $this->geocoder->geocode('Calle 181b #16-13, Bogotá, Colombia')->shouldHaveBeenCalled();
     }
 }

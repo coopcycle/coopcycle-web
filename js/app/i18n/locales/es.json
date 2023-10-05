@@ -231,7 +231,8 @@
         "RULE_PICKER_LINE_PACKAGES": "Paquetes",
         "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Diferencia (horas)",
         "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Mapa de clusters habilitado",
-        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Mostrar siempre sin asignar",
+        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Mostrar siempre tareas sin asignar",
+        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED_HELP_TEXT": "Cuando éste filtro está activo ningun de los demás filtros se aplicarán a las tareas sin asignar.",
         "PAYMENT_FORM_REDIRECT_HELP": "Será redirigido a la entidad bancaria para completar su pago",
         "PAYMENT_FORM_CARDHOLDER_NAME": "Nombre del titular de la tarjeta",
         "PAYMENT_FORM_TITLE": "Información de tú pago",
@@ -305,12 +306,21 @@
         "PAY_WITH_SAVED_CREDIT_CARD": "Pagar con una tarjeta de crédito guardada",
         "ADD_NEW_CREDIT_CARD": "Ingresar nueva tarjeta de crédito",
         "ADD_OR_SELECT_A_CARD_TO_PAY": "Por favor seleccione o ingrese una tarjeta de crédito para realizar el pago",
+        "INVITE_PEOPLE_TO_ADD_ITEMS": "Invita amigos para que agreguen productos",
         "EXPIRATION": "Expiración",
         "ORDERS_RATE_LIMIT": {
           "ORDER_UNIT": "pedido(s)",
           "TIME_UNIT": "minuto(s)",
           "NO_LIMIT": "Sin límite de pedidos",
           "LIMIT": "Un máximo de {{command}} pedidos cada {{time}}"
-        }
+        },
+        "PM_CREDIT_OR_DEBIT_CARD": "Tarjeta de crédito o débito",
+        "PM_CASH": "Efectivo",
+        "PM_EDENRED": "Edenred",
+        "PM_GIROPAY": "Giropay",
+        "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Mostrar el tablero de rutas",
+        "SEE_ALL": "Ver todo",
+        "ORDER_DELAYED_NOTIFICATION": "Orden {{orderNumber}} atrasada. Nuevo rango horario de entrega: {{shippingTimeRange}}",
+        "DELETE_ALL": "Eliminar todo"
     }
 }

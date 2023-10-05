@@ -19,6 +19,8 @@ use Sylius\Component\Customer\Model\Customer as BaseCustomer;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Webmozart\Assert\Assert;
+use AppBundle\Entity\Model\TaggableInterface;
+use AppBundle\Entity\Model\TaggableTrait;
 
 /**
  * @ApiResource(
@@ -38,8 +40,10 @@ use Webmozart\Assert\Assert;
  *   collectionOperations={}
  * )
  */
-class Customer extends BaseCustomer implements CustomerInterface
+class Customer extends BaseCustomer implements TaggableInterface, CustomerInterface
 {
+    use TaggableTrait;
+    
     /** @var User */
     protected $user;
 
@@ -202,7 +206,7 @@ class Customer extends BaseCustomer implements CustomerInterface
 
     public function getLoopeatAccessToken()
     {
-        if (null == $this->loopeatCredentials) {
+        if (null === $this->loopeatCredentials) {
 
             return null;
         }

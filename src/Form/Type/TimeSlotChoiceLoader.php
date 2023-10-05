@@ -61,14 +61,21 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
         if ($this->workingDaysOnly && null !== $this->workingDaysProviderClass) {
             $provider = Yasumi::create($this->workingDaysProviderClass, $now->format('Y'));
             if (!$provider->isWorkingDay($now)) {
-                return Yasumi::nextWorkingDay($this->workingDaysProviderClass, $now);
+
+                $nextWorkingDay = Yasumi::nextWorkingDay($this->workingDaysProviderClass, $now);
+
+                if ($nextWorkingDay instanceof \DateTimeImmutable) {
+                    return \DateTime::createFromImmutable($nextWorkingDay);
+                }
+
+                return $nextWorkingDay;
             }
         }
 
         return clone $now;
     }
 
-    private function moveCursor(\DateTime $cursor)
+    private function moveCursor(\DateTimeInterface $cursor)
     {
         $newCursor = clone $cursor;
 
@@ -78,7 +85,9 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
             $newCursor->modify('+1 day');
         }
 
-        // $newCursor->setTime(0, 0, 0);
+        if ($newCursor instanceof \DateTimeImmutable) {
+            return \DateTime::createFromImmutable($newCursor);
+        }
 
         return $newCursor;
     }
@@ -117,7 +126,8 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                     return $this->OHSToCarbon[$dayOfWeek];
                 }, $spec->dayOfWeek);
 
-                if (in_array($cursor->weekday(), $weekdays)) {
+                if (in_array(Carbon::instance($cursor)->weekday(), $weekdays)) {
+
                     $choice = new TimeSlotChoice(
                         clone $cursor,
                         sprintf('%s-%s', $spec->opens, $spec->closes)

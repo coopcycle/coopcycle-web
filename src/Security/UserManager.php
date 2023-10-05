@@ -5,7 +5,7 @@ namespace AppBundle\Security;
 use AppBundle\Entity\Sylius\Customer;
 use Doctrine\Persistence\ObjectManager;
 use Nucleos\UserBundle\Model\UserInterface;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Nucleos\UserBundle\Doctrine\UserManager as DoctrineUserManager;
 use Nucleos\UserBundle\Util\CanonicalFieldsUpdater;
 
@@ -124,7 +124,13 @@ class UserManager implements UserManagerInterface
 
     public function findUserByUsernameOrEmail(string $usernameOrEmail): ?UserInterface
     {
-        return $this->decorated->findUserByUsernameOrEmail($usernameOrEmail);
+        $user = $this->decorated->findUserByEmail($usernameOrEmail);
+
+        if (null === $user) {
+            $user = $this->decorated->findUserByUsername($usernameOrEmail);
+        }
+
+        return $user;
     }
 
     public function findUserByConfirmationToken(string $token): ?UserInterface

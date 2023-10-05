@@ -238,6 +238,8 @@ services:
           subscribes_to: order:dropped
         - name: event_subscriber
           subscribes_to: order:fulfilled
+        - name: event_subscriber
+          subscribes_to: order:updated
 
   coopcycle.domain.order.reactor.modify_promotions_usage:
     class: AppBundle\Domain\Order\Reactor\ModifyPromotionsUsage
@@ -248,14 +250,6 @@ services:
           subscribes_to: order:created
         - name: event_subscriber
           subscribes_to: order:cancelled
-
-  coopcycle.domain.order.reactor.grab_loopeats:
-    class: AppBundle\Domain\Order\Reactor\GrabLoopEats
-    arguments:
-      - '@AppBundle\LoopEat\Client'
-    tags:
-        - name: event_subscriber
-          subscribes_to: order:picked
 
   coopcycle.domain.order.reactor.trade_dabba:
     class: AppBundle\Domain\Order\Reactor\TradeDabba
@@ -347,3 +341,27 @@ services:
         subscribes_to: order:refused
       - name: event_subscriber
         subscribes_to: order:cancelled
+
+  coopcycle.domain.order.reactor.create_impec_order:
+    class: AppBundle\Domain\Order\Reactor\CreateLoopeatOrder
+    arguments:
+      - '@AppBundle\LoopEat\Client'
+    tags:
+      - name: event_subscriber
+        subscribes_to: order:created
+
+  coopcycle.domain.order.reactor.validate_impec_order:
+    class: AppBundle\Domain\Order\Reactor\ValidateLoopeatOrder
+    arguments:
+      - '@AppBundle\LoopEat\Client'
+    tags:
+      - name: event_subscriber
+        subscribes_to: order:picked
+
+  coopcycle.domain.order.reactor.finish_impec_order:
+    class: AppBundle\Domain\Order\Reactor\FinishLoopeatOrder
+    arguments:
+      - '@AppBundle\LoopEat\Client'
+    tags:
+      - name: event_subscriber
+        subscribes_to: order:fulfilled

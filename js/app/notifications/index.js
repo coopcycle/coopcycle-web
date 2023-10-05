@@ -17,9 +17,8 @@ const zeroStyleDark = {
   boxShadow: '0 0 0 1px #d9d9d9 inset'
 }
 
-const Notifications = ({ initialNotifications, initialCount, onOpen, centrifuge, namespace, username, theme }) => {
+const Notifications = ({ initialNotifications, initialCount, centrifuge, namespace, username, theme, onSeeAll, removeURL, removeNotificationsURL }) => {
 
-  const [ visible, setVisible ] = useState(false)
   const [ notifications, setNotifications ] = useState(initialNotifications)
   const [ count, setCount ] = useState(initialCount)
 
@@ -43,11 +42,25 @@ const Notifications = ({ initialNotifications, initialCount, onOpen, centrifuge,
     centrifuge.connect()
   }, [])
 
-  useEffect(() => {
-    if (visible) {
-      onOpen(notifications)
-    }
-  }, [ visible ])
+  const onRemove = (notification) => {
+    $.ajax(`${removeURL}/${notification.id}?format=json`, {
+      type: 'DELETE',
+      contentType: 'application/json',
+    }).then((res) => {
+      setNotifications(Object.values(res.notifications))
+      setCount(res.unread)
+    })
+  }
+
+  const onDeleteAll = async () => {
+    return $.ajax(`${removeNotificationsURL}?all=true&format=json`, {
+      type: 'POST',
+      contentType: 'application/json',
+    }).then((res) => {
+      setNotifications(Object.values(res.notifications))
+      setCount(res.unread)
+    })
+  }
 
   const badgeProps = count === 0 ?
     { style: theme === 'dark' ? zeroStyleDark : zeroStyle } : { style: { backgroundColor: '#52c41a' } }
@@ -55,12 +68,9 @@ const Notifications = ({ initialNotifications, initialCount, onOpen, centrifuge,
   return (
     <Popover
       placement="bottomRight"
-      content={ <NotificationList notifications={ notifications } /> }
+      content={ <NotificationList onSeeAll={ onSeeAll } onRemove={ onRemove } onDeleteAll={ onDeleteAll } count={ count } notifications={ notifications } /> }
       title="Notifications"
-      trigger="click"
-      visible={ visible }
-      onVisibleChange={ value => setVisible(value) }
-    >
+      trigger="click">
       <a href="#">
         <Badge count={ count } showZero { ...badgeProps } title={ `${count} new notification(s)` } />
       </a>
@@ -88,14 +98,9 @@ function bootstrap(el, options) {
     render(<Notifications
       initialNotifications={ notifications }
       initialCount={ unread }
-      onOpen={ (notifications) => {
-        const notificationsIds = notifications.map(notification => notification.id)
-        $.ajax(options.markAsReadURL, {
-          type: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify(notificationsIds),
-        })
-      }}
+      removeURL={ options.removeNotificationURL }
+      removeNotificationsURL={ options.removeNotificationsURL }
+      onSeeAll={ () => { window.location.href = options.notificationsURL } }
       centrifuge={ centrifuge }
       namespace={ options.namespace }
       username={ options.username }
@@ -108,7 +113,8 @@ $.getJSON(window.Routing.generate('profile_jwt'))
   .then(result => {
     const options = {
       notificationsURL: window.Routing.generate('profile_notifications'),
-      markAsReadURL:    window.Routing.generate('profile_notifications_mark_as_read'),
+      removeNotificationURL:    window.Routing.generate('profile_notification_remove'),
+      removeNotificationsURL: window.Routing.generate('profile_notifications_remove'),
       token:     result.cent_tok,
       namespace: result.cent_ns,
       username:  result.cent_usr,

@@ -1,24 +1,33 @@
-import { combineReducers } from 'redux'
+import {combineReducers} from 'redux'
 
 import {
+  CLEAR_LAST_ADD_ITEM_REQUEST,
+  CLOSE_ADDRESS_MODAL,
+  CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL,
+  CLOSE_PRODUCT_DETAILS_MODAL,
+  CLOSE_PRODUCT_OPTIONS_MODAL,
+  CLOSE_SET_PLAYER_EMAIL_MODAL,
+  DISABLE_TAKEAWAY,
+  ENABLE_TAKEAWAY,
+  FETCH_FAILURE,
   FETCH_REQUEST,
   FETCH_SUCCESS,
-  FETCH_FAILURE,
+  GEOCODING_FAILURE,
+  INVITE_PEOPLE_REQUEST,
+  INVITE_PEOPLE_REQUEST_FAILURE,
+  INVITE_PEOPLE_REQUEST_SUCCESS,
+  OPEN_ADDRESS_MODAL,
+  OPEN_INVITE_PEOPLE_TO_ORDER_MODAL,
+  OPEN_PRODUCT_DETAILS_MODAL,
+  OPEN_PRODUCT_OPTIONS_MODAL,
+  OPEN_SET_PLAYER_EMAIL_MODAL,
+  PLAYER_UPDATE_EVENT,
+  REPLACE_ERRORS,
+  SET_DATE_MODAL_OPEN,
+  SET_LAST_ADD_ITEM_REQUEST,
+  SET_PLAYER_TOKEN,
   SET_STREET_ADDRESS,
   TOGGLE_MOBILE_CART,
-  REPLACE_ERRORS,
-  SET_LAST_ADD_ITEM_REQUEST,
-  CLEAR_LAST_ADD_ITEM_REQUEST,
-  SET_DATE_MODAL_OPEN,
-  CLOSE_ADDRESS_MODAL,
-  GEOCODING_FAILURE,
-  ENABLE_TAKEAWAY,
-  DISABLE_TAKEAWAY,
-  OPEN_ADDRESS_MODAL,
-  CLOSE_PRODUCT_OPTIONS_MODAL,
-  OPEN_PRODUCT_OPTIONS_MODAL,
-  CLOSE_PRODUCT_DETAILS_MODAL,
-  OPEN_PRODUCT_DETAILS_MODAL,
 } from './actions'
 
 const initialState = {
@@ -31,6 +40,7 @@ const initialState = {
     shippedAt: null,
     shippingTimeRange: null,
     takeaway: false,
+    invitation: null,
   },
   restaurant: null,
   isFetching: false,
@@ -57,6 +67,19 @@ const initialState = {
   isProductDetailsModalOpen: false,
   productDetailsModalContext: {},
   addressModalContext: {},
+  isInvitePeopleToOrderModalOpen: false,
+  invitePeopleToOrderContext: {},
+  isPlayer: false,
+  isSetPlayerEmailModalOpen: false,
+  player: {
+    token: null,
+    player: null,
+    centrifugo: {
+      token: null,
+      channel: null
+    }
+  },
+  isGroupOrdersEnabled: false,
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -128,6 +151,14 @@ const cart = (state = initialState.cart, action = {}) => {
       ...state,
       takeaway: false,
     }
+   case INVITE_PEOPLE_REQUEST_SUCCESS:
+      return {
+        ...state,
+        invitation: action.payload,
+      }
+    case PLAYER_UPDATE_EVENT:
+
+      return action.payload
   default:
 
     return state
@@ -281,6 +312,74 @@ const productDetailsModalContext = (state = initialState.productDetailsModalCont
   return state
 }
 
+const isInvitePeopleToOrderModalOpen = (state = initialState.isInvitePeopleToOrderModalOpen, action = {}) => {
+  switch (action.type) {
+  case CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL:
+    return false
+  case OPEN_INVITE_PEOPLE_TO_ORDER_MODAL:
+    return true
+  default:
+    return state
+  }
+}
+
+const invitePeopleToOrderContext = (state = initialState.invitePeopleToOrderContext, action = {}) => {
+  switch (action.type) {
+    case INVITE_PEOPLE_REQUEST:
+      return {
+        ...state,
+        isRequesting: true,
+        hasError: false,
+      }
+
+    case INVITE_PEOPLE_REQUEST_SUCCESS:
+      return {
+        ...state,
+        isRequesting: false,
+        hasError: false,
+      }
+
+    case INVITE_PEOPLE_REQUEST_FAILURE:
+      return {
+        ...state,
+        isRequesting: false,
+        hasError: true,
+      }
+
+    default:
+      return state
+  }
+}
+
+const isPlayer = (state = initialState.isPlayer) => {
+  return state
+}
+
+const isSetPlayerEmailModalOpen = (state = initialState.isSetPlayerEmailModalOpen, action = {}) => {
+
+  switch (action.type) {
+  case CLOSE_SET_PLAYER_EMAIL_MODAL:
+    return false
+  case OPEN_SET_PLAYER_EMAIL_MODAL:
+    return true
+  default:
+    return state
+  }
+}
+
+const player = (state = initialState.player, action = {}) => {
+  switch (action.type) {
+    case SET_PLAYER_TOKEN:
+      return action.payload
+    default:
+      return state
+  }
+}
+
+const isGroupOrdersEnabled = (state = initialState.isGroupOrdersEnabled) => {
+  return state
+}
+
 export default combineReducers({
   isFetching,
   cart,
@@ -301,4 +400,10 @@ export default combineReducers({
   isProductDetailsModalOpen,
   productDetailsModalContext,
   addressModalContext,
+  isInvitePeopleToOrderModalOpen,
+  invitePeopleToOrderContext,
+  isPlayer,
+  isSetPlayerEmailModalOpen,
+  player,
+  isGroupOrdersEnabled,
 })

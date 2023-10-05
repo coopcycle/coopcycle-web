@@ -49,3 +49,5 @@
 .env
 
 /js/app/shared-js-lib-local
+
+.phpactor.json

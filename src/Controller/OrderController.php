@@ -3,32 +3,34 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\OrderConfirmTrait;
-use AppBundle\DataType\TsRange;
+use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Embed\Context as EmbedContext;
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Delivery;
-use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderInvitation;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutCouponType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\Checkout\CheckoutTipType;
 use AppBundle\Form\Checkout\CheckoutVytalType;
+use AppBundle\Form\Checkout\LoopeatReturnsType;
+use AppBundle\Form\Order\CartType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
+use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use phpcent\Client as CentrifugoClient;
-use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -38,22 +40,26 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrderController extends AbstractController
 {
     use OrderConfirmTrait;
+    use UserTrait;
+    use InjectAuthTrait;
 
     private $objectManager;
 
     public function __construct(
         EntityManagerInterface $objectManager,
         FactoryInterface $orderFactory,
+        protected JWTTokenManagerInterface $JWTTokenManager,
         string $sessionKeyName)
     {
         $this->objectManager = $objectManager;
@@ -108,21 +114,6 @@ class OrderController extends AbstractController
 
             $order->setCustomer($user->getCustomer());
 
-            // Make sure to move LoopEat credentials if any
-            $loopeatAccessTokenKey =
-                sprintf('loopeat.order.%d.access_token', $order->getId());
-            $loopeatRefreshTokenKey =
-                sprintf('loopeat.order.%d.refresh_token', $order->getId());
-
-            if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
-                $order->getCustomer()->setLoopeatAccessToken(
-                    $session->get($loopeatAccessTokenKey)
-                );
-                $order->getCustomer()->setLoopeatRefreshToken(
-                    $session->get($loopeatRefreshTokenKey)
-                );
-            }
-
             // Make sure to move Dabba credentials if any
             $dabbaAccessTokenKey =
                 sprintf('dabba.order.%d.access_token', $order->getId());
@@ -139,11 +130,6 @@ class OrderController extends AbstractController
             }
 
             $this->objectManager->flush();
-
-            if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
-                $session->remove($loopeatAccessTokenKey);
-                $session->remove($loopeatRefreshTokenKey);
-            }
 
             if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
                 $session->remove($dabbaAccessTokenKey);
@@ -213,6 +199,21 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order');
         }
 
+        $loopeatReturnsForm = $this->createForm(LoopeatReturnsType::class, $order);
+        $loopeatReturnsForm->handleRequest($request);
+
+        if ($loopeatReturnsForm->isSubmitted()) {
+
+            $returns = $loopeatReturnsForm->get('returns')->getData();
+
+            $order->setLoopeatReturns(json_decode($returns, true));
+
+            $orderProcessor->process($order);
+            $this->objectManager->flush();
+
+            return $this->redirectToRoute('order');
+        }
+
         $form = $this->createForm(CheckoutAddressType::class, $order);
         $form->handleRequest($request);
 
@@ -237,6 +238,7 @@ class OrderController extends AbstractController
                 // Make sure to reset return counter
                 if (!$order->isReusablePackagingEnabled()) {
                     $order->setReusablePackagingPledgeReturn(0);
+                    $order->setLoopeatReturns([]);
                 }
 
                 $orderProcessor->process($order);
@@ -281,6 +283,7 @@ class OrderController extends AbstractController
             'form_tip' => $tipForm->createView(),
             'form_coupon' => $couponForm->createView(),
             'form_vytal' => $vytalForm->createView(),
+            'form_loopeat_returns' => $loopeatReturnsForm->createView(),
         ));
     }
 
@@ -653,5 +656,46 @@ class OrderController extends AbstractController
         ]);
 
         return new JsonResponse($orderNormalized, 200);
+    }
+
+    /**
+     * @Route("/order/share/{slug}", name="public_share_order")
+     */
+    public function shareOrderAction($slug, Request $request,
+        RequestStack $requestStack,
+        SessionInterface $session,
+        OrderTimeHelper $orderTimeHelper)
+    {
+        $invitation =
+            $this->objectManager->getRepository(OrderInvitation::class)->findOneBy(['slug' => $slug]);
+
+        if (null === $invitation) {
+            throw $this->createNotFoundException();
+        }
+
+        $order = $invitation->getOrder();
+
+        if ($order->getState() !== OrderInterface::STATE_CART) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // $this->denyAccessUnlessGranted('view_public', $order);
+
+        // Hacky fix to correctly set the session and reload all the context
+        if (!$session->has($this->sessionKeyName) || $session->get($this->sessionKeyName) != $order->getId()) {
+            $session->set($this->sessionKeyName, $order->getId());
+            return $this->redirectToRoute($request->attributes->get('_route'), ['slug' => $slug]);
+        }
+
+
+        $cartForm = $this->createForm(CartType::class, $order);
+
+        return $this->render('restaurant/index.html.twig', $this->auth([
+            'restaurant' => $order->getRestaurant(),
+            'times' => $orderTimeHelper->getTimeInfo($order),
+            'cart_form' => $cartForm->createView(),
+            'addresses_normalized' => $this->getUserAddresses(),
+            'is_player' => true,
+        ]));
     }
 }

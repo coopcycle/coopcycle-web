@@ -116,6 +116,21 @@
         <join-column name="nonprofit_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
+    <one-to-one field="invitation" target-entity="AppBundle\Entity\Sylius\OrderInvitation" mapped-by="order">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-one>
+    <one-to-one field="loopeatDetails" target-entity="AppBundle\Entity\Sylius\LoopeatOrderDetails" mapped-by="order">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-one>
+    <one-to-one field="loopeatCredentials" target-entity="AppBundle\Entity\LoopEat\OrderCredentials" mapped-by="order" orphan-removal="true">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-one>
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\OrderListener">
         <lifecycle-callback type="preFlush" method="preFlush"/>

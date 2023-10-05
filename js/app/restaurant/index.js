@@ -65,6 +65,8 @@ const init = function() {
 
   const restaurant = JSON.parse(restaurantDataElement.dataset.restaurant)
   const times = JSON.parse(restaurantDataElement.dataset.times)
+  const isPlayer = JSON.parse(restaurantDataElement.dataset.isPlayer)
+  const isGroupOrdersEnabled = JSON.parse(restaurantDataElement.dataset.isGroupOrdersEnabled)
   const addresses = JSON.parse(addressesDataElement.dataset.addresses)
 
   let cart = JSON.parse(restaurantDataElement.dataset.cart)
@@ -105,6 +107,8 @@ const init = function() {
     addresses,
     times,
     country: getCountry(),
+    isPlayer,
+    isGroupOrdersEnabled,
   }
 
   store = createStoreFromPreloadedState(state)

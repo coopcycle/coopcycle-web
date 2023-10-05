@@ -148,6 +148,7 @@ function createDateRangePickerWidget(name, type) {
 
   new DateRangePicker(document.querySelector(`#${name}_${type}_doneBefore_widget`), {
     defaultValue,
+    showTime: true,
     onChange: function({after, before}) {
       doneAfterPickerEl.value = after.format('YYYY-MM-DD HH:mm:ss')
       doneBeforePickerEl.value = before.format('YYYY-MM-DD HH:mm:ss')

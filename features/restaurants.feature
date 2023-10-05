@@ -101,7 +101,8 @@ Feature: Manage restaurants
           "hub":null,
           "facets": {
             "@*@": "@*@"
-          }
+          },
+          "loopeatEnabled":false
         }
       ],
       "hydra:totalItems":1,
@@ -178,7 +179,8 @@ Feature: Manage restaurants
         "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
       },
       "isOpen":true,
-      "hub":null
+      "hub":null,
+      "loopeatEnabled":false
     }
     """
 
@@ -251,7 +253,8 @@ Feature: Manage restaurants
       },
       "isOpen":false,
       "nextOpeningDate":@string@,
-      "hub":null
+      "hub":null,
+      "loopeatEnabled":false
     }
     """
 
@@ -395,6 +398,7 @@ Feature: Manage restaurants
               "description":null,
               "identifier":"PIZZA",
               "enabled":@boolean@,
+              "reusablePackagingEnabled":@boolean@,
               "offers": {
                 "@type":"Offer",
                 "price":@integer@
@@ -441,6 +445,7 @@ Feature: Manage restaurants
               "description":null,
               "identifier":"HAMBURGER",
               "enabled":@boolean@,
+              "reusablePackagingEnabled":@boolean@,
               "suitableForDiet":["http://schema.org/HalalDiet"],
               "allergens":["NUTS"],
               "offers": {
@@ -573,7 +578,8 @@ Feature: Manage restaurants
         "openingHoursSpecification":@array@,
         "specialOpeningHoursSpecification":@array@,
         "hasMenu":"/api/restaurants/menus/2",
-        "image":@string@
+        "image":@string@,
+        "loopeatEnabled":false
       }
       """
 
@@ -655,7 +661,8 @@ Feature: Manage restaurants
         "telephone":null,
         "openingHoursSpecification":@array@,
         "specialOpeningHoursSpecification":@array@,
-        "image":@string@
+        "image":@string@,
+        "loopeatEnabled":false
       }
       """
 

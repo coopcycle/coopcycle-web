@@ -20,6 +20,9 @@ use Psr\Log\NullLogger;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Webmozart\Assert\Assert;
 
 class Client
 {
@@ -33,11 +36,16 @@ class Client
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         UrlGeneratorInterface $urlGenerator,
+        CacheInterface $projectCache,
         LoggerInterface $logger,
         array $config = [])
     {
-        $stack = HandlerStack::create();
-        $stack->push($this->refreshToken());
+        if (isset($config['handler']) && $config['handler'] instanceof HandlerStack) {
+            $stack = $config['handler'];
+        } else {
+            $stack = HandlerStack::create();
+            $stack->push($this->refreshToken());
+        }
 
         $config['handler'] = $stack;
 
@@ -47,6 +55,7 @@ class Client
         $this->jwtEncoder = $jwtEncoder;
         $this->iriConverter = $iriConverter;
         $this->urlGenerator = $urlGenerator;
+        $this->projectCache = $projectCache;
         $this->logger = $logger;
     }
 
@@ -58,16 +67,6 @@ class Client
     public function setLoopEatClientSecret($loopEatClientSecret)
     {
         $this->loopEatClientSecret = $loopEatClientSecret;
-    }
-
-    public function setLoopEatPartnerId($loopEatPartnerId)
-    {
-        $this->loopEatPartnerId = $loopEatPartnerId;
-    }
-
-    public function setLoopEatPartnerSecret($loopEatPartnerSecret)
-    {
-        $this->loopEatPartnerSecret = $loopEatPartnerSecret;
     }
 
     public function refreshToken()
@@ -89,6 +88,7 @@ class Client
                                     'refresh_token' => $options['oauth_credentials']->getLoopeatRefreshToken(),
                                     'client_id' => $this->loopEatClientId,
                                     'client_secret' => $this->loopEatClientSecret,
+                                    'redirect_uri' => $this->urlGenerator->generate('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL),
                                 );
 
                                 // https://www.oauth.com/oauth2-servers/access-tokens/refreshing-access-tokens/
@@ -114,6 +114,11 @@ class Client
                                             $options['oauth_credentials']->getName()));
                                     }
 
+                                    if (isset($data['refresh_token'])
+                                        && $data['refresh_token'] !== $options['oauth_credentials']->getLoopeatRefreshToken()) {
+                                        $options['oauth_credentials']->setLoopeatRefreshToken($data['refresh_token']);
+                                    }
+
                                     $this->objectManager->flush();
 
                                     $request = Utils::modifyRequest($request, [
@@ -125,6 +130,9 @@ class Client
                                     return $handler($request, $options);
 
                                 } catch (RequestException $e) {
+
+                                    $this->logger->error($e->getMessage());
+
                                     return $handler($request, $options);
                                 }
 
@@ -143,109 +151,29 @@ class Client
         $defaults = [
             'client_id' => $this->loopEatClientId,
             'response_type' => 'code',
+            'redirect_uri' => $this->urlGenerator->generate('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL),
         ];
 
         $params = array_merge($defaults, $params);
         $queryString = http_build_query($params);
 
-        return sprintf('%s/oauth/authorize?%s', $this->client->getConfig('base_uri'), $queryString);
+        $initiative = $this->initiative();
+
+        return sprintf('%s?%s', $initiative['customer_authorization_url'], $queryString);
     }
 
     public function currentCustomer(OAuthCredentialsInterface $credentials)
     {
-        $response = $this->client->request('GET', '/customers/current', [
+        $response = $this->client->request('GET', '/api/v1/partners/customer/current', [
             'headers' => [
                 'Authorization' => sprintf('Bearer %s', $credentials->getLoopeatAccessToken())
             ],
             'oauth_credentials' => $credentials,
         ]);
 
-        return json_decode((string) $response->getBody(), true);
-    }
+        $res = json_decode((string) $response->getBody(), true);
 
-    public function return(Customer $customer, $quantity = 1): bool
-    {
-        $this->logger->info(sprintf('Returning %d Loopeats from "%s"',
-            $quantity, $customer->getEmailCanonical()));
-
-        if ($quantity < 1) {
-
-            return true;
-        }
-
-        try {
-
-            $response = $this->client->request('GET', '/customers/return_loopeat?amount='.$quantity, [
-                'headers' => [
-                    'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
-                ],
-                'oauth_credentials' => $customer,
-            ]);
-
-            $url = (string) $response->getBody();
-
-            # returns the loopeats to the coopcycle's owner account
-            $url = str_replace(
-                '/restaurants/return_loopeat',
-                '/partners/customer_return_loopeat',
-                $url);
-
-            $this->logger->info(sprintf('Got token "%s" to return for "%s"', $url, $customer->getEmailCanonical()));
-
-            $response = $this->client->request('GET', $url, [
-                'auth' => [$this->loopEatPartnerId, $this->loopEatPartnerSecret]
-            ]);
-
-        } catch (RequestException $e) {
-            $this->logger->error($e->getMessage());
-            return false;
-        }
-
-        $this->logger->info(sprintf('Successfully returned %d Loopeats from "%s"',
-            $quantity, $customer->getEmailCanonical()));
-
-        return true;
-    }
-
-    public function grab(Customer $customer, LocalBusiness $restaurant, $quantity = 1): bool
-    {
-        $this->logger->info(sprintf('Grabbing %d Loopeats at "%s" for "%s"',
-            $quantity, $restaurant->getName(), $customer->getEmailCanonical()));
-
-        if ($quantity < 1) {
-
-            return true;
-        }
-
-        try {
-
-            $response = $this->client->request('GET', '/customers/grab_loopeat?amount='.$quantity, [
-                'headers' => [
-                    'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
-                ],
-                'oauth_credentials' => $customer,
-            ]);
-
-            $url = (string) $response->getBody();
-
-            $this->logger->info(sprintf('Got token "%s" to grab for "%s"', $url, $customer->getEmailCanonical()));
-
-            $response = $this->client->request('GET', $url, [
-                'headers' => [
-                    'Authorization' => sprintf('Bearer %s', $restaurant->getLoopeatAccessToken())
-                ],
-                'oauth_credentials' => $restaurant,
-            ]);
-
-        } catch (RequestException $e) {
-            $this->logger->error($e->getMessage());
-            return false;
-        }
-
-        $this->logger->info(sprintf('Successfully grabbed %d Loopeats at "%s" for "%s"',
-            $quantity, $restaurant->getName(), $customer->getEmailCanonical()));
-
-        return true;
+        return $res['data'];
     }
 
     public function createStateParamForCustomer(Customer $customer)
@@ -261,16 +189,284 @@ class Client
         ]);
     }
 
-    public function createStateParamForOrder(OrderInterface $order)
+    public function createStateParamForOrder(OrderInterface $order, $useDeepLink = false)
     {
         return $this->jwtEncoder->encode([
             'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
             'sub' => $this->iriConverter->getIriFromItem($order),
             // Custom claims
             self::JWT_CLAIM_SUCCESS_REDIRECT =>
-                $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                $useDeepLink ? 'coopcycle://loopeat_oauth_redirect' : $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
             self::JWT_CLAIM_FAILURE_REDIRECT =>
-                $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                $useDeepLink ? 'coopcycle://loopeat_oauth_redirect' : $this->urlGenerator->generate('loopeat_failure', [], UrlGeneratorInterface::ABSOLUTE_URL),
         ]);
+    }
+
+    public function getRestaurantOAuthAuthorizeUrl($params)
+    {
+        $defaults = [
+            'client_id' => $this->loopEatClientId,
+            'response_type' => 'code',
+            'scope' => 'read write partner:manage user_account:read',
+        ];
+
+        $params = array_merge($defaults, $params);
+        $queryString = http_build_query($params);
+
+        $initiative = $this->initiative();
+
+        return sprintf('%s?%s', $initiative['restaurant_authorization_url'], $queryString);
+    }
+
+    private function getPartnerToken()
+    {
+        return base64_encode(sprintf('%s:%s', $this->loopEatClientId, $this->loopEatClientSecret));
+    }
+
+    public function currentRestaurantOwner(LocalBusiness $restaurant)
+    {
+        $response = $this->client->request('GET', '/api/v1/partners/restaurant_owner/current', [
+            'headers' => [
+                'Authorization' => sprintf('Bearer %s', $restaurant->getLoopeatAccessToken())
+            ],
+            'oauth_credentials' => $restaurant,
+        ]);
+
+        $res = json_decode((string) $response->getBody(), true);
+
+        return $res['data'];
+    }
+
+    public function currentRestaurant(LocalBusiness $restaurant)
+    {
+        $response = $this->client->request('GET', '/api/v1/partners/restaurants/current', [
+            'headers' => [
+                'Authorization' => sprintf('Bearer %s', $restaurant->getLoopeatAccessToken())
+            ],
+            'oauth_credentials' => $restaurant,
+        ]);
+
+        $res = json_decode((string) $response->getBody(), true);
+
+        return $res['data'];
+    }
+
+    public function getFormats(LocalBusiness $restaurant)
+    {
+        try {
+
+            $currentRestaurant = $this->currentRestaurant($restaurant);
+
+            $response = $this->client->request('GET', sprintf('/api/v1/partners/restaurants/%s/formats', $currentRestaurant['id']), [
+                'headers' => [
+                    'Authorization' => sprintf('Basic %s', $this->getPartnerToken())
+                ],
+            ]);
+
+            $res = json_decode((string) $response->getBody(), true);
+
+            return $res['data'];
+
+        } catch (RequestException $e) {
+            $this->logger->error($e->getMessage());
+            return false;
+        }
+    }
+
+    public function initiative()
+    {
+        return $this->projectCache->get('loopeat.initiative', function (ItemInterface $item) {
+
+            $item->expiresAfter(60 * 60 * 24);
+
+            $response = $this->client->request('GET', '/api/v1/partners/initiatives', [
+                'headers' => [
+                    'Authorization' => sprintf('Basic %s', $this->getPartnerToken())
+                ],
+            ]);
+
+            $res = json_decode((string) $response->getBody(), true);
+
+            $initiatives = $res['data'];
+
+            return current($initiatives);
+        });
+    }
+
+    public function createOrder(OrderInterface $order)
+    {
+        $deliver = array_map(function ($format) {
+            return [
+                ...$format,
+                'act' => 'deliver',
+            ];
+        }, $order->getFormatsToDeliverForLoopeat());
+
+        $pickup = array_map(function ($format) {
+            return [
+                ...$format,
+                'act' => 'pickup',
+            ];
+        }, $order->getLoopeatReturns());
+
+        $formats = [ ...$deliver, ...$pickup ];
+
+        try {
+
+            $restaurant = $order->getRestaurant();
+
+            $currentRestaurant = $this->currentRestaurant($restaurant);
+
+            // Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
+            Assert::isInstanceOf($order->getCustomer(), OAuthCredentialsInterface::class);
+
+            $response = $this->client->request('POST', sprintf('/api/v1/partners/restaurants/%s/orders', $currentRestaurant['id']), [
+                'headers' => [
+                    'Authorization' => sprintf('Bearer %s', $order->getCustomer()->getLoopeatAccessToken())
+                ],
+                'oauth_credentials' => $order->getCustomer(),
+                'json' => [
+                    'order' => [
+                        'external_id' => $order->getId(),
+                        'formats' => $formats,
+                    ]
+                ],
+            ]);
+
+            $res = json_decode((string) $response->getBody(), true);
+
+            return $res['data'];
+
+        } catch (RequestException $e) {
+            $this->logger->error($e->getMessage());
+            return false;
+        }
+    }
+
+    public function validateOrder(OrderInterface $order)
+    {
+        try {
+
+            $this->logger->info(sprintf('Validating order "%s", with id "%s"', $order->getNumber(), $order->getLoopeatOrderId()));
+
+            $response = $this->client->request('POST', sprintf('/api/v1/partners/orders/%s/validate', $order->getLoopeatOrderId()), [
+                'headers' => [
+                    'Authorization' => sprintf('Bearer %s', $order->getRestaurant()->getLoopeatAccessToken())
+                ],
+                'oauth_credentials' => $order->getRestaurant(),
+                'json' => [],
+            ]);
+
+            $res = json_decode((string) $response->getBody(), true);
+
+            return $res['data'];
+
+        } catch (RequestException $e) {
+            $this->logger->error($e->getMessage());
+            return false;
+        }
+    }
+
+    public function finishOrder(OrderInterface $order)
+    {
+        try {
+
+            $this->logger->info(sprintf('Finishing order "%s", with id "%s"', $order->getNumber(), $order->getLoopeatOrderId()));
+
+            $response = $this->client->request('POST', sprintf('/api/v1/partners/orders/%s/finish', $order->getLoopeatOrderId()), [
+                'headers' => [
+                    'Authorization' => sprintf('Basic %s', $this->getPartnerToken())
+                ],
+                'json' => [],
+            ]);
+
+            $res = json_decode((string) $response->getBody(), true);
+
+            return $res['data'];
+
+        } catch (RequestException $e) {
+            $this->logger->error($e->getMessage());
+            return false;
+        }
+    }
+
+    public function listContainers(OAuthCredentialsInterface $customer)
+    {
+        try {
+
+            $response = $this->client->request('GET', '/api/v1/partners/customer/containers', [
+                'headers' => [
+                    'Authorization' => sprintf('Bearer %s', $customer->getLoopeatAccessToken())
+                ],
+                'oauth_credentials' => $customer,
+            ]);
+
+            $res = json_decode((string) $response->getBody(), true);
+
+            $containers = $res['data'];
+            $containers = array_filter($containers, fn ($container) => $container['quantity'] > 0);
+
+            return array_values($containers);
+
+        } catch (RequestException $e) {
+            $this->logger->error($e->getMessage());
+            return false;
+        }
+    }
+
+    public function updateDeliverFormats(OrderInterface $order)
+    {
+        $this->logger->info(sprintf('Updating formats for order "%s", with id "%s"', $order->getNumber(), $order->getLoopeatOrderId()));
+
+        $response = $this->client->request('GET', sprintf('/api/v1/partners/orders/%s/formats', $order->getLoopeatOrderId()), [
+            'headers' => [
+                'Authorization' => sprintf('Basic %s', $this->getPartnerToken())
+            ],
+        ]);
+
+        $res = json_decode((string) $response->getBody(), true);
+
+        $orderFormats = $res['data'];
+
+        $getOrderFormatId = function($formatId) use ($orderFormats) {
+            foreach ($orderFormats as $orderFormat) {
+                if ($orderFormat['act'] === 'deliver' && $orderFormat['details']['id'] === $formatId) {
+                    return $orderFormat['id'];
+                }
+            }
+        };
+
+        foreach ($order->getLoopeatDeliver() as $itemId => $formats) {
+
+            foreach ($formats as $format) {
+
+                try {
+
+                    $this->logger->info(sprintf('Updating formats for order "%s", setting format "%s" quantity to "%s"',
+                        $order->getNumber(), $format['format_id'], $format['quantity']));
+
+                    $restaurant = $order->getRestaurant();
+
+                    $url = sprintf('/api/v1/partners/orders/%s/formats/%s', $order->getLoopeatOrderId(), $getOrderFormatId($format['format_id']));
+
+                    $response = $this->client->request('PATCH', $url, [
+                        'headers' => [
+                            'Authorization' => sprintf('Bearer %s', $restaurant->getLoopeatAccessToken())
+                        ],
+                        'oauth_credentials' => $restaurant,
+                        'json' => [
+                            'order_format' => [
+                                'quantity' => $format['quantity'],
+                            ]
+                        ],
+                    ]);
+
+                    $res = json_decode((string) $response->getBody(), true);
+
+                } catch (RequestException $e) {
+                    $this->logger->error($e->getMessage());
+                }
+            }
+        }
     }
 }

@@ -586,6 +586,12 @@ class StripeManagerTest extends TestCase
 
         $restaurant = $this->createRestaurant('acct_123456', $paysStripeFee = false);
 
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->hasUser()
+            ->willReturn(false);
+
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getId()
@@ -611,6 +617,9 @@ class StripeManagerTest extends TestCase
         $order
             ->getFeeTotal()
             ->willReturn(750);
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
 
         $payment->setOrder($order->reveal());
 

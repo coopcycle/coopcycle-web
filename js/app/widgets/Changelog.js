@@ -87,8 +87,8 @@ const Changelog = ({ releaseNotes, newReleasesCount }) => {
       content={ <ChangelogContent releaseNotes={ releaseNotes } /> }
       title="Changelog"
       trigger="click"
-      visible={ visible }
-      onVisibleChange={ value => setVisible(value) }
+      open={ visible }
+      onOpenChange={ value => setVisible(value) }
     >
       <a href="#">
         <Badge count={ releasesCount } showZero { ...badgeProps } title={ `${releasesCount} new release(s)` } />

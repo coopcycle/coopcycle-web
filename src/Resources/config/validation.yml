@@ -1,0 +1,10 @@
+Nucleos\UserBundle\Model\User:
+  properties:
+    username:
+      - Length:
+          min: 3
+          minMessage: nucleos_user.username.short
+          max: 15
+          maxMessage: nucleos_user.username.long
+      - Regex:
+          pattern: "/^[a-zA-Z0-9_]{3,15}$/"

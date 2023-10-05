@@ -68,11 +68,8 @@ services:
     _defaults:
         autowire: true
         autoconfigure: true
-        bind:
-            $behatContainer: '@test.service_container'
 
-    Tests\Behat\:
-        resource: '../../tests/Behat/*'
+    Tests\Behat\FeatureContext: ~
 
     Fidry\AliceDataFixtures\LoaderInterface $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
 

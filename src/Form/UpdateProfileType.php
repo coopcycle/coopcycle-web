@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Entity\User;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
+use AppBundle\LoopEat\Client as LoopeatClient;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -28,10 +29,11 @@ class UpdateProfileType extends AbstractType
     private $translator;
     private $countryIso;
 
-    public function __construct(TokenStorageInterface $tokenStorage, TranslatorInterface $translator, $countryIso)
+    public function __construct(TokenStorageInterface $tokenStorage, TranslatorInterface $translator, LoopeatClient $loopeatClient, $countryIso)
     {
         $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
+        $this->loopeatClient = $loopeatClient;
         $this->countryIso = strtoupper($countryIso);
     }
 
@@ -66,6 +68,9 @@ class UpdateProfileType extends AbstractType
                 ->add('quotesAllowed', CheckboxType::class, [
                 'label' => 'form.user.quotes_allowed.label',
                 'required' => false,
+            ])->add('tags', TagsType::class, [
+                'label' => 'adminDashboard.tags.title',
+                'property_path' => 'customer.tags'
             ]);
         }
 
@@ -106,8 +111,14 @@ class UpdateProfileType extends AbstractType
                 }
 
                 if ($user->getCustomer()->hasLoopEatCredentials()) {
+
+                    $initiative = $this->loopeatClient->initiative();
+
                     $event->getForm()->add('loopeatDisconnect', SubmitType::class, [
                         'label' => 'profile.loopeat.disconnect',
+                        'label_translation_parameters' => [
+                            '%name%' => $initiative['name'],
+                        ]
                     ]);
                 }
 

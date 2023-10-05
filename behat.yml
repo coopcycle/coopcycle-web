@@ -7,7 +7,8 @@ default:
         - Tests\Behat\FeatureContext
         - Behat\MinkExtension\Context\MinkContext
         - Behatch\Context\RestContext
-        - Behatch\Context\JsonContext
+        - Tests\Behat\JsonContext:
+            httpCallResultPool: '@behatch.http_call.result_pool'
   extensions:
     FriendsOfBehat\SymfonyExtension:
       kernel:
@@ -18,4 +19,5 @@ default:
       sessions:
         default:
           symfony: ~
+      files_path: 'features/fixtures'
     Behatch\Extension: ~

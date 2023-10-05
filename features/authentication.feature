@@ -1,6 +1,5 @@
 Feature: Authenticate
 
-  @debug
   Scenario: Login success
     Given the user is loaded:
       | email    | bob@coopcycle.org |
@@ -255,21 +254,6 @@ Feature: Authenticate
           "propertyPath":"username",
           "message":@string@,
           "code":@string@
-        },
-        {
-          "propertyPath":"username",
-          "message":@string@,
-          "code":@string@
-        },
-        {
-          "propertyPath":"username",
-          "message":@string@,
-          "code":@string@
-        },
-        {
-          "propertyPath":"username",
-          "message":@string@,
-          "code":@string@
         }
       ]
     }
@@ -302,11 +286,6 @@ Feature: Authenticate
           "propertyPath":"username",
           "message":@string@,
           "code":@string@
-        },
-        {
-          "propertyPath":"username",
-          "message":@string@,
-          "code":@string@
         }
       ]
     }
@@ -335,11 +314,6 @@ Feature: Authenticate
       "title":@string@,
       "detail":@string@,
       "violations":[
-        {
-          "propertyPath":"email",
-          "message":@string@,
-          "code":@string@
-        },
         {
           "propertyPath":"email",
           "message":@string@,

@@ -139,8 +139,8 @@ restaurant.form.createRestaurant: Créer un restaurant
 restaurant.form.exclusive.label: Ce restaurant est une exclusivité
 restaurant.form.quotes_allowed.label: 'Ce restaurant accepte également des commandes
   sur devis (ex : traiteur)'
-restaurant.form.loopeat_enabled.label: Activer le système de consignes LoopEat
-restaurant.form.loopeat_disconnect.label: Déconnecter mon compte LoopEat
+restaurant.form.loopeat_enabled.label: Activer le système de consignes %name%
+restaurant.form.loopeat_disconnect.label: Déconnecter mon compte %name%
 restaurant.form.featured.label: Ce restaurant apparaît sur la page d'accueil
 restaurant.form.fulfillment_methods.label: Modes d'exécution
 restaurant.form.section.general: Général
@@ -585,26 +585,34 @@ form.checkout_address.promotion_coupon.label: Code promotionnel
 form.checkout_address.telephone.label: Téléphone
 form.checkout_address.reusable_packaging_enabled.label: Je veux des emballages réutilisables
   (%price%)
-form.checkout_address.reusable_packaging_loopeat_enabled.label: Je veux des lunchbox
-  consignées LoopEat
+form.checkout_address.reusable_packaging_loopeat_enabled.label: Activer l'option zéro déchet
 form.checkout_address.reusable_packaging.loopeat.learn_more: En savoir plus à propos
   de LoopEat
 form.checkout_address.reusable_packaging.loopeat.reusable_quantity.label: Votre commande
-  présente <strong>%count%</strong> plat adapté à la livraison zero déchet|Votre commande
-  présente <strong>%count%</strong> plats adaptés à la livraison zero déchet
+  présente <strong>%count%</strong> plat adapté à la livraison zero déchet, pour un total de <strong>%amount%</strong> de consigne|Votre commande
+  présente <strong>%count%</strong> plats adaptés à la livraison zero déchet, pour un total de <strong>%amount%</strong> de consigne
 form.checkout_address.reusable_packaging.loopeat.available_credits.label: Vous avez
-  <strong>%count%</strong> crédit LoopEat disponible|Vous avez <strong>%count%</strong>
-  crédits LoopEat disponibles
+  <strong>%amount%</strong> sur votre cagnotte %name%
 form.checkout_address.reusable_packaging.loopeat.available_credits.help: (1 crédit
   = 1 plat dans une lunchbox)
+form.checkout_address.reusable_packaging.loopeat.containers.label: Vous avez
+  <strong>%count%</strong> boîte chez vous, pour un total de <strong>%amount%</strong>|Vous avez
+  <strong>%count%</strong> boîtes chez vous, pour un total de <strong>%amount%</strong>
 form.checkout_address.reusable_packaging.loopeat.return_pledge_label: Vous allez rendre
   %field% lunchbox LoopEat au coursier
 form.checkout_address.reusable_packaging.loopeat.no_pledge_label: Vous n'avez pas
   de lunchbox à rendre.
-form.checkout_address.reusable_packaging.loopeat.enough_credits: Vous avez assez de
-  crédits pour être livré·e zero déchet
+form.checkout_address.reusable_packaging.loopeat.enough_credits: C'est tout bon, vous pouvez finaliser votre commande !
 form.checkout_address.reusable_packaging.loopeat.confirm: Valider
 form.checkout_address.reusable_packaging.loopeat.add: Ajouter %missing% crédits
+form.checkout_address.reusable_packaging.loopeat.manage_account: Gérer mon compte zéro déchet
+form.checkout_address.reusable_packaging.loopeat.website: Site Internet %name%
+form.checkout_address.reusable_packaging.loopeat.how_it_works: Comment ça marche ?
+form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activez l'option zéro déchet pour bénéficier d'un service de boîtes consignées et lavables sur votre commande
+form.checkout_address.reusable_packaging.loopeat.connect: Veuillez créer ou connecter votre compte %name% à %brand_name% pour régler votre consigne, ou désactivez l'option zéro déchet.
+form.checkout_address.reusable_packaging.loopeat.connect_account: Se connecter à %name%
+form.checkout_address.reusable_packaging.loopeat.add_credits: Créditer ma cagnotte
+form.checkout_address.reusable_packaging.loopeat.return_containers: Rendre des boîtes
 form.checkout_address.quote.label: Demander un devis
 form.checkout_address.add_promotion.label: Appliquer
 form.checkout_address.tip_amount.label: Pourboire
@@ -904,9 +912,9 @@ receipt.total: Total TTC
 receipt.billing_details: Commande payée par carte de crédit le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nouvelle commande à confirmer
-profile.loopeat.connect: Connecter mon compte LoopEat
-profile.loopeat.connected: Compte LoopEat connecté
-profile.loopeat.disconnect: Déconnecter mon compte LoopEat
+profile.loopeat.connect: Connecter mon compte %name%
+profile.loopeat.connected: Compte %name% connecté
+profile.loopeat.disconnect: Déconnecter mon compte %name%
 basics.free: gratuit
 task.receipt.greeting: Cher client, chère cliente,
 task.receipt.message: Par la présente, nous confirmons que nous avons bien livré votre
@@ -1012,7 +1020,6 @@ localBusiness.form.use_different_business_address.label: Utiliser une adresse co
   différente
 localBusiness.form.business_address.label: Adresse commerciale
 restaurant.form.giropay_enabled.label: Activer Giropay
-restaurant.form.section.loopeat: LoopEat
 form.settings.company_logo.help: Ce logo sera utilisé pour les factures et les preuves
   de livraison
 form.product_option.preview_title: Aperçu de l'option
@@ -1029,7 +1036,7 @@ refund.list.refunded_at: Remboursé à
 refund.list.liable_party: Partie responsable
 refund.list.amount: Montant du remboursement
 refund.list.comments: Commentaires
-loopeat.oauth_connect.success: Votre compte LoopEat est connecté !
+loopeat.oauth_connect.success: Votre compte %name% est connecté !
 loopeat.oauth_redirect.warning: Vous allez être redirigé·e vers le site de LoopEat
   pour vous identifier ou créer votre compte
 authentication.register_benefits: Créez un compte pour commander plus rapidement.
@@ -1272,3 +1279,24 @@ form.integration.woopitStoreId.label : Identifiant du magasin Woopit
 integration.created.message : L'intégration a été créée.
 dabba.oauth_redirect.warning: Vous allez être redirigé·e vers le site de Dabba pour vous identifier ou créer votre compte
 profile.dabba.disconnect: Déconnecter mon compte Dabba
+security.login.remember_me: Se souvenir de moi
+loopeat.how_it_works.title: |
+  Votre restaurant fait partie du réseau « %name% » : bénéficiez de plats à emporter ou livrés en boîtes consignées. Vous pouvez désactiver cette option à tout moment dans votre panier de commande.
+loopeat.how_it_works.step_1.title: Je m'inscris
+loopeat.how_it_works.step_1.text: Inscrivez-vous sur %name% lors de la finalisation de votre commande.
+loopeat.how_it_works.step_2.title: Je paie ma 1ère consigne
+loopeat.how_it_works.step_2.text: Créditez votre cagnotte pour emprunter vos premières boîtes consignées.
+loopeat.how_it_works.step_3.title: Je commande
+loopeat.how_it_works.step_3.text: Faites-vous livrer en boites consignées.
+loopeat.how_it_works.step_4.title: Je rends mes boîtes
+loopeat.how_it_works.step_4.text: Restituez vos boîtes lors de votre prochaine commande et récupérez la consigne sur votre cagnotte.
+stores.filters.input.placeholder: "Recherche par adresse, nom ou #id"
+basics.filter: "Filtrer"
+stores.search.results_for: 'Résultats pour la recherche <mark>%query%</mark>'
+form.checkout_address.reusable_packaging.loopeat.suggest_returns.label: Nous vous suggérons de rendre vos boîtes lors de la livraison
+loopeat.returns_modal.title: Je rends mes boîtes
+form.checkout_address.reusable_packaging.loopeat.returns.label: Vous allez rendre
+  <strong>%count%</strong> boîte, pour un total de <strong>%amount%</strong>|Vous allez rendre
+  <strong>%count%</strong> boîtes, pour un total de <strong>%amount%</strong>
+loopeat.task_comments.returns: Attention, vous devez récupérer des boîtes chez le client
+activity.task.rescheduled: "@%owner% a reprogrammé la tâche #task/%aggregate_id%\n"

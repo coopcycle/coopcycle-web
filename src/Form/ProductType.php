@@ -122,27 +122,23 @@ class ProductType extends AbstractType
 
             if (null !== $product->getId()) {
 
-                if ($options['with_reusable_packaging'] && count($options['reusable_packaging_choices']) > 0) {
+                if ($options['with_reusable_packaging']) {
                     $form
                         ->add('reusablePackagingEnabled', CheckboxType::class, [
                             'required' => false,
                             'label' => 'form.product.reusable_packaging_enabled.label',
                         ])
-                        ->add('reusablePackaging', EntityType::class, [
-                            'label' => 'form.product.reusable_packaging.label',
-                            'class' => ReusablePackaging::class,
-                            'choices' => $options['reusable_packaging_choices'],
-                            'choice_label' => 'name',
+                        ->add('reusablePackagings', CollectionType::class, [
+                            'label' => false,
+                            'entry_type' => ReusablePackagingType::class,
+                            'entry_options' => [
+                                'label' => false,
+                                'reusable_packaging_choice_loader' => $options['reusable_packaging_choice_loader'],
+                            ],
+                            'allow_add' => true,
+                            'by_reference' => false,
                         ])
-                        ->add('reusablePackagingUnit', NumberType::class, [
-                            'label' => 'form.product.reusable_packaging_unit.label',
-                            'html5' => true,
-                            'attr'  => array(
-                                'min'  => 0,
-                                'max'  => 3,
-                                'step' => 0.5,
-                            )
-                        ]);
+                        ;
                 }
 
             }
@@ -323,15 +319,11 @@ class ProductType extends AbstractType
             'data_class' => Product::class,
             'owner' => null,
             'with_reusable_packaging' => false,
-            'reusable_packaging_choices' => [],
+            'reusable_packaging_choice_loader' => null,
             'options_loader' => null,
         ));
         $resolver->setAllowedTypes('owner', CatalogInterface::class);
         $resolver->setAllowedTypes('with_reusable_packaging', 'bool');
-        $resolver->setAllowedTypes('reusable_packaging_choices', [
-            Collection::class,
-            sprintf('%s[]', ReusablePackaging::class)
-        ]);
         $resolver->setAllowedTypes('options_loader', ['null', 'callable']);
     }
 }

@@ -8,6 +8,7 @@ use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
+use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
@@ -94,7 +95,9 @@ class DashboardController extends AbstractController
         CubeJsTokenFactory $tokenFactory,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
-        OrderFactory $orderFactory)
+        OrderFactory $orderFactory,
+        DeliveryRepository $deliveryRepository
+    )
     {
         $user = $this->getUser();
 
@@ -110,7 +113,15 @@ class DashboardController extends AbstractController
             $request->attributes->set('layout', 'dashboard.html.twig');
             $request->attributes->set('routes', $routes);
 
-            return $this->storeDeliveriesAction($store->getId(), $request, $paginator, $orderManager, $deliveryManager, $orderFactory);
+            return $this->storeDeliveriesAction(
+                $store->getId(),
+                $request,
+                $paginator,
+                $orderManager,
+                $deliveryManager,
+                $orderFactory,
+                $deliveryRepository
+            );
         }
 
         if ($user->hasRole('ROLE_RESTAURANT') && $request->attributes->has('_restaurant')) {

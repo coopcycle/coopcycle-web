@@ -1,20 +1,75 @@
 {% extends "profile.html.twig" %}
 
 {% block content %}
-{% if notifications|length > 0 %}
-<table class="table">
-  <tbody>
-    {% for notification in notifications %}
-      <tr>
-        <td>{{ notification.message }}</td>
-        <td class="text-right">{{ notification.timestamp|ago }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% else %}
-  <div class="alert alert-warning">
-    {{ 'notifications.empty'|trans }}
-  </div>
-{% endif %}
+<turbo-frame id="notifications">
+  <form action="{{ path('profile_notifications_remove') }}" method="post">
+    <div class="d-flex justify-content-start align-items-center">
+      <div class="form-group m-2">
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" id="select-all" />
+            {{ 'basics.select_all'|trans }}
+          </label>
+        </div>
+      </div>
+      <div class="form-group m-2">
+        <input id="notifications-remove-btn" class="btn btn-sm btn-primary" type="submit" value="{{ 'basics.delete_selected'|trans }}" />
+      </div>
+    </div>
+    <turbo-frame id="notifications-list-{{currentPage}}">
+      <table id="notifications-table" class="table mb-0">
+        <tbody>
+          {% for notification in notifications %}
+            <tr>
+              <td>
+                <input type="checkbox" id="{{notification.id}}" name="{{notification.id}}" />
+              </td>
+              <td>{{ notification.message }}</td>
+              <td class="text-right">{{ notification.timestamp|ago }}</td>
+              <td class="text-center">
+                <a role="button" href="{{ path('profile_notification_remove', {id: notification.id, page: currentPage}) }}" data-turbo-method="delete">
+                  <i class="fa fa-close"></i>
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if hasNextPage %}
+        <turbo-frame id="notifications-list-{{nextPage}}" src="{{ path('profile_notifications', {page: nextPage}) }}" loading="lazy">
+          <div class="d-flex justify-content-center">
+            <i class="fa fa-spinner fa-spin"></i>
+          </div>
+        </turbo-frame>
+      {% endif %}
+    </turbo-frame>
+  </form>
+</turbo-frame>
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('app') }}
+  <script>
+    const originalNotificationRemoveBtnLabel = $('#notifications-remove-btn').val();
+
+    $(document).on('change', '#select-all', function() {
+      $('#notifications-table input[type="checkbox"]').prop('checked', $(this).prop('checked'));
+      setNotificationRemoveBtnLabel()
+    })
+
+    $(document).on('change', '#notifications-table input[type="checkbox"]', function() {
+      setNotificationRemoveBtnLabel()
+    })
+
+    function setNotificationRemoveBtnLabel() {
+      const countChecked = $('#notifications-table input[type="checkbox"]:checked').length;
+
+      if (countChecked > 0) {
+        $('#notifications-remove-btn').val(`${originalNotificationRemoveBtnLabel} (${countChecked})`)
+      } else {
+        $('#notifications-remove-btn').val(originalNotificationRemoveBtnLabel)
+      }
+    }
+  </script>
+>>>>>>> 2b994c11f (infinite scroll in notifications screen with turbo)
 {% endblock %}

@@ -3,13 +3,6 @@ import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
 import classNames from 'classnames'
 
-const hasAdjustments = (item) => {
-  const hasOptions = Object.prototype.hasOwnProperty.call(item.adjustments, 'menu_item_modifier') && item.adjustments['menu_item_modifier'].length > 0
-  const hasPackaging = Object.prototype.hasOwnProperty.call(item.adjustments, 'reusable_packaging') && item.adjustments['reusable_packaging'].length > 0
-
-  return hasOptions || hasPackaging
-}
-
 const isSameVendor = (restaurant, items) => {
 
   const ids = _.uniq(items.map(item => item.vendor['@id']))
@@ -17,30 +10,30 @@ const isSameVendor = (restaurant, items) => {
   return ids.length === 1 && ids[0] === restaurant['@id']
 }
 
-class OrderItems extends React.Component {
+const Adjustments = ({ item, type }) => {
 
-  renderOrderItemAdjustments(item) {
+  if (!Object.prototype.hasOwnProperty.call(item.adjustments, type)) {
 
-    let adjustments = []
-
-    if (Object.prototype.hasOwnProperty.call(item.adjustments, 'menu_item_modifier')) {
-      adjustments = adjustments.concat(item.adjustments['menu_item_modifier'])
-    }
-
-    if (Object.prototype.hasOwnProperty.call(item.adjustments, 'reusable_packaging')) {
-      adjustments = adjustments.concat(item.adjustments['reusable_packaging'])
-    }
-
-    return (
-      <ul className="list-unstyled">
-        { adjustments.map((adjustment) =>
-          <li key={ adjustment.id }>
-            <small className="text-muted">{ adjustment.label }</small>
-          </li>
-        ) }
-      </ul>
-    )
+    return null
   }
+
+  if (item.adjustments[type].length === 0) {
+
+    return null
+  }
+
+  return (
+    <ul className="list-unstyled">
+      { item.adjustments[type].map((adjustment) =>
+        <li key={ `adjustment-${adjustment.id}` }>
+          <small className="text-muted">{ adjustment.label }</small>
+        </li>
+      ) }
+    </ul>
+  )
+}
+
+class OrderItems extends React.Component {
 
   renderItems(items) {
 
@@ -52,9 +45,9 @@ class OrderItems extends React.Component {
               <td className={ classNames({
                 'text-blur': this.props.restaurant ? !isSameVendor(this.props.restaurant, [ item ]) : false
               }) }>
-                <span>{ item.quantity } x { item.name }</span>
-                { hasAdjustments(item) && ( <br /> ) }
-                { hasAdjustments(item) && this.renderOrderItemAdjustments(item) }
+                <span className="d-block">{ item.quantity } x { item.name }</span>
+                <Adjustments item={ item } type="menu_item_modifier" />
+                <Adjustments item={ item } type="reusable_packaging" />
               </td>
               <td className="text-right">{ (item.total / 100).formatMoney() }</td>
             </tr>

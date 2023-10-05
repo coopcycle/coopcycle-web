@@ -581,6 +581,8 @@ basics.name: Nombre
 basics.today: Hoy
 basics.are_you_sure: ¿Estás segur@?
 basics.no_entries: Ningun elemento por el momento
+basics.select_all: Seleccionar todo
+basics.delete_selected: Eliminar seleccionados
 profile.password.change: Cambiar la contraseña
 authentication.forgot_password: ¿Contraseña olvidada?
 authentication.not_registered_yet: ¿Todavía no estas registrado?
@@ -1045,7 +1047,6 @@ guest_checkout.use_another_email: Usar otro correo electrónico
 form.store_type.package_set.placeholder: Elija un paquete conjunto
 form.store_type.time_slot.placeholder: Elija una franja horaria
 profile.fullName: Nombre completo
-restaurant.form.section.loopeat: LoopEat
 restaurant.form.section.taxonomy: Taxonomía
 localBusiness.form.business_address.label: Dirección comercial
 localBusiness.form.use_different_business_address.label: Utilice una dirección comercial
@@ -1289,3 +1290,11 @@ form.integration.maxLength.label: Tamaño máximo permitido (cm)
 form.integration.productTypes.label: Tipo de productos permitidos
 form.integration.woopitStoreId.label: ID de tienda de Woopit
 integration.created.message: La integración ha sido creada.
+tasks.mark_as_done.has_previous: 'La tarea #%failed_task% no puede finalizarse porque tiene una tarea previa #%previous_task% que debe ser finalizada antes.'
+import.errors.at.row: Errores en fila %row_number%
+import.address.geocode.error: No se pudo geocodificar la dirección %failed_address%
+import.time.range.error: Rango de tiempo "%value%" en %key% no es válido
+import.successful.rows: 'Se procesó el archivo y se crearon %count% entregas correspondientes a las filas: %rows%'
+import.delivery.price.error.priceCalculation.row: El precio de la entrega no pudo ser calculado para la fila %row_number%
+import.unsuccessful.rows: "Se encontraron errores y no fue posible crear entregas para las filas: %rows%."
+security.login.remember_me: Recordar

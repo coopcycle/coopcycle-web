@@ -15,6 +15,7 @@ import UnassignedTasks from './UnassignedTasks'
 import TaskLists from './TaskLists'
 import ContextMenu from './ContextMenu'
 import SearchPanel from './SearchPanel'
+import UnassignedTours from './UnassignedTours'
 
 class DashboardApp extends React.Component {
 
@@ -34,6 +35,17 @@ class DashboardApp extends React.Component {
   }
 
   render () {
+
+    const sizes = this.props.toursEnabled ? [ 33.33, 33.33, 33.33 ] : [ 50, 50 ]
+    const children = this.props.toursEnabled ? [
+      <UnassignedTasks key="split_unassigned" />,
+      <UnassignedTours key="split_unassigned_tours" />,
+      <TaskLists key="split_task_lists" couriersList={ this.props.couriersList } />
+    ] : [
+      <UnassignedTasks key="split_unassigned" />,
+      <TaskLists key="split_task_lists" couriersList={ this.props.couriersList } />
+    ]
+
     return (
       <div className="dashboard__aside-container">
         <DragDropContext
@@ -41,14 +53,13 @@ class DashboardApp extends React.Component {
           onDragStart={ this.props.handleDragStart }
           onDragEnd={ this.props.handleDragEnd }>
           <Split
-            sizes={ [ 50, 50 ] }
+            sizes={ sizes }
             direction={ this.props.splitDirection }
             style={{ display: 'flex', flexDirection: this.props.splitDirection === 'vertical' ? 'column' : 'row', width: '100%' }}
             // We need to use a "key" prop,
             // to force a re-render when the direction has changed
-            key={ this.props.splitDirection }>
-            <UnassignedTasks />
-            <TaskLists couriersList={ this.props.couriersList } />
+            key={ (this.props.splitDirection + (this.props.toursEnabled ? '-tours' : '')) }>
+            { children }
           </Split>
         </DragDropContext>
         <SearchPanel />
@@ -65,6 +76,7 @@ function mapStateToProps(state) {
     couriersList: state.config.couriersList,
     searchIsOn: state.searchIsOn,
     splitDirection: state.rightPanelSplitDirection,
+    toursEnabled: state.settings.toursEnabled,
   }
 }
 

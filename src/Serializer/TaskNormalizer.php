@@ -11,7 +11,7 @@ use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
 use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -111,6 +111,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['tour'] = [
                 '@id' => $this->iriConverter->getIriFromItem($tour),
                 'name' => $tour->getName(),
+                'position' => $tour->getTaskPosition($object),
             ];
         }
 

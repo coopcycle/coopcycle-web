@@ -118,6 +118,9 @@ class CreateTasksTest extends TestCase
         $order
             ->getNumber()
             ->willReturn('AB123');
+        $order
+            ->getPaymentMethod()
+            ->willReturn('CARD');
 
         $delivery = new Delivery();
 

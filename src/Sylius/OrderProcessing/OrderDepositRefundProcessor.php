@@ -5,21 +5,46 @@ namespace AppBundle\Sylius\OrderProcessing;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Model\Adjustment;
+use AppBundle\Entity\ReusablePackagings;
+use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Order\AdjustmentInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class OrderDepositRefundProcessor implements OrderProcessorInterface
 {
-    const LOOPEAT_PROCESSING_FEE = 200;
+    /**
+     * Always add Loopeat processing fee
+     */
+    public const LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS = 'always';
+
+    /**
+     * Add Loopeat processing fee when customers returns containers
+     */
+    public const LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS = 'on_returns';
 
     public function __construct(
         AdjustmentFactoryInterface $adjustmentFactory,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        int $loopeatProcessingFee = 0,
+        string $loopeatProcessingFeeBehavior = self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS)
     {
         $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
+        $this->loopeatProcessingFee = $loopeatProcessingFee;
+
+        if (!in_array($loopeatProcessingFeeBehavior, [self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS, self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS])) {
+            throw new \InvalidArgumentException(sprintf('$loopeatProcessingFeeBehavior should have value "%s" or "%s"', self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS, self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS));
+        }
+
+        $this->loopeatProcessingFeeBehavior = $loopeatProcessingFeeBehavior;
+    }
+
+    public function setLoopeatProcessingFeeBehavior($loopeatProcessingFeeBehavior)
+    {
+        $this->loopeatProcessingFeeBehavior = $loopeatProcessingFeeBehavior;
     }
 
     /**
@@ -53,39 +78,44 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
 
             if ($product->isReusablePackagingEnabled()) {
 
-                $reusablePackaging = $product->getReusablePackaging();
-
-                if (null === $reusablePackaging) {
+                if (!$product->hasReusablePackagings()) {
                     continue;
                 }
 
-                $units = ceil($product->getReusablePackagingUnit() * $item->getQuantity());
-                $label = $this->translator->trans('order_item.adjustment_type.reusable_packaging', [
-                    '%quantity%' => ceil($product->getReusablePackagingUnit() * $item->getQuantity())
-                ]);
+                $reusablePackagings = $product->getReusablePackagings();
 
-                $amount = $reusablePackaging->getPrice() * $units;
+                foreach ($reusablePackagings as $reusablePackaging) {
 
-                $item->addAdjustment($this->adjustmentFactory->createWithData(
-                    AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
-                    $label,
-                    $amount,
-                    $neutral = true
-                ));
+                    $pkg = $reusablePackaging->getReusablePackaging();
+                    $units = $this->getUnits($order, $item, $reusablePackaging, $pkg);
 
-                $totalAmount += $amount;
+                    $label = $pkg->getAdjustmentLabel($this->translator, $units);
+                    $amount = $pkg->getPrice() * $units;
+
+                    $item->addAdjustment($this->adjustmentFactory->createWithData(
+                        AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+                        $label,
+                        $amount,
+                        $neutral = true
+                    ));
+
+                    $totalAmount += $amount;
+                }
             }
         }
 
         // Collect an additional fee for LoopEat, *PER ORDER*
         // https://github.com/coopcycle/coopcycle-web/issues/2284
-        if ($restaurant->isLoopeatEnabled()) {
-            $order->addAdjustment($this->adjustmentFactory->createWithData(
-                AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
-                $this->translator->trans('order.adjustment_type.reusable_packaging.loopeat'),
-                self::LOOPEAT_PROCESSING_FEE,
-                $neutral = false
-            ));
+        if ($restaurant->isLoopeatEnabled() && $this->loopeatProcessingFee > 0) {
+            if (self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS === $this->loopeatProcessingFeeBehavior
+                || (self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS === $this->loopeatProcessingFeeBehavior && $order->hasLoopeatReturns())) {
+                $order->addAdjustment($this->adjustmentFactory->createWithData(
+                    AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+                    $this->translator->trans('order.adjustment_type.reusable_packaging.loopeat'),
+                    $this->loopeatProcessingFee,
+                    $neutral = false
+                ));
+            }
         } else if ($totalAmount > 0) {
             $order->addAdjustment($this->adjustmentFactory->createWithData(
                 AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
@@ -94,5 +124,29 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
                 $neutral = false
             ));
         }
+    }
+
+    private function getUnits(
+        BaseOrderInterface $order,
+        OrderItemInterface $item,
+        ReusablePackagings $reusablePackaging,
+        ReusablePackaging $pkg): float
+    {
+        $restaurant = $order->getRestaurant();
+
+        if ($restaurant->isLoopeatEnabled()) {
+            $pkgData = $pkg->getData();
+            $loopeatDeliver = $order->getLoopeatDeliver();
+            if (isset($loopeatDeliver[$item->getId()])) {
+                foreach ($loopeatDeliver[$item->getId()] as $loopeatDeliverFormat) {
+                    if ($loopeatDeliverFormat['format_id'] === $pkgData['id']) {
+
+                        return $loopeatDeliverFormat['quantity'];
+                    }
+                }
+            }
+        }
+
+        return ceil($reusablePackaging->getUnits() * $item->getQuantity());
     }
 }

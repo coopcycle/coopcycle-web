@@ -4,10 +4,10 @@ namespace AppBundle\Action;
 
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\User;
-use AppBundle\Form\ApiRegistrationType;
-use Nucleos\ProfileBundle\Mailer\MailerInterface;
-use Nucleos\UserBundle\Model\UserManagerInterface;
-use Nucleos\UserBundle\Util\TokenGeneratorInterface;
+use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
+use Nucleos\ProfileBundle\Mailer\RegistrationMailer;
+use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
+use Nucleos\UserBundle\Util\TokenGenerator as TokenGeneratorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
@@ -38,7 +38,7 @@ class Register
         EventDispatcherInterface $dispatcher,
         FormFactoryInterface $formFactory,
         TokenGeneratorInterface $tokenGenerator,
-        MailerInterface $mailer,
+        RegistrationMailer $mailer,
         ValidatorInterface $validator,
         bool $confirmationEnabled)
     {
@@ -73,8 +73,8 @@ class Register
             'email' => $email,
             'username' => $username,
             'plainPassword' => [
-                'password' => $password,
-                'password_confirmation' => $password
+                'first' => $password,
+                'second' => $password
             ],
             'givenName' => $givenName,
             'familyName' => $familyName,
@@ -82,27 +82,15 @@ class Register
             'fullName' => $fullName,
         ];
 
-        $form = $this->formFactory->create(ApiRegistrationType::class);
+        $user = $this->userManager->createUser();
+
+        $form = $this->formFactory->create(RegistrationFormType::class, $user, ['usage_context' => 'api']);
+
         $form->submit($data);
 
-        if (!$form->isValid()) {
+        $user = $form->getData();
 
-            $violations = new ConstraintViolationList();
-            foreach ($form->getErrors(true) as $error) {
-                $cause = $error->getCause();
-                if ($cause instanceof ConstraintViolationInterface) {
-                    $violations->add($cause);
-                }
-            }
-
-            throw new ValidationException($violations);
-        }
-
-        $registration = $form->getData();
-
-        $user = $registration->toUser($this->userManager);
-
-        $violations = $this->validator->validate($user);
+        $violations = $this->validator->validate($user, null, ['Registration', 'Default']);
 
         if (count($violations) > 0) {
             throw new ValidationException($violations);

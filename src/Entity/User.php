@@ -21,7 +21,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 
 /**
  * @ApiResource(
@@ -56,31 +56,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   }
  * )
  * @ApiFilter(UserRoleFilter::class, properties={"roles"})
- * @UniqueEntity("email")
- * @UniqueEntity(fields={"emailCanonical"}, errorPath="email")
- * @UniqueEntity("username")
- * @UniqueEntity(fields={"usernameCanonical"}, errorPath="username")
  * @UniqueEntity("facebookId")
  */
-class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
+class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface, \Serializable
 {
     use Timestampable;
 
     protected $id;
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Length(min="3", max="15")
-     * @Assert\Regex(pattern="/^[a-zA-Z0-9_]{3,15}$/")
      * @var string
      */
-    protected $username;
+    protected ?string $username;
 
     /**
-     * @Assert\NotBlank()
      * @var string
      */
-    protected $email;
+    protected ?string $email;
 
     private $restaurants;
 
@@ -109,6 +101,8 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
 
     private $stripeCustomerId;
 
+    protected ?string $salt = null;
+
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
@@ -118,6 +112,11 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
         $this->optinConsents = new ArrayCollection();
 
         parent::__construct();
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -452,5 +451,54 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface
         $this->stripeCustomerId = $stripeCustomerId;
 
         return $this;
+    }
+
+    public function getSalt(): ?string
+    {
+        return $this->salt;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function __serialize(): array
+    {
+        return [
+            $this->password,
+            $this->salt,
+            $this->usernameCanonical,
+            $this->username,
+            $this->enabled,
+            $this->id,
+            $this->email,
+            $this->emailCanonical,
+        ];
+    }
+
+    /**
+     * @param mixed[] $data
+     */
+    public function __unserialize(array $data): void
+    {
+        [
+            $this->password,
+            $this->salt,
+            $this->usernameCanonical,
+            $this->username,
+            $this->enabled,
+            $this->id,
+            $this->email,
+            $this->emailCanonical
+        ] = $data;
+    }
+
+    public function serialize(): string
+    {
+        return serialize($this->__serialize());
+    }
+
+    public function unserialize($data): void
+    {
+        $this->__unserialize(unserialize($data));
     }
 }

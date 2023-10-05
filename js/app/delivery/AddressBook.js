@@ -89,8 +89,8 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
     <Popover
       trigger="click"
       placement="bottom"
-      visible={ visible }
-      onVisibleChange={ visible => setVisible(visible) }
+      open={ visible }
+      onOpenChange={ visible => setVisible(visible) }
       content={
         <Form form={ form } name="horizontal_login" layout="inline" onFinish={ onFinish }
           initialValues={{ [ prop ]: getFormattedValue(prop, value) }}>

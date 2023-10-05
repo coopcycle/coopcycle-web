@@ -140,9 +140,10 @@ services:
 
   minio:
     image: minio/minio
-    command: server /data
+    command: server --console-address ":9001" /data
     ports:
       - "9000:9000"
+      - "9001:9001"
     volumes:
       - minio_data:/data
     environment:

@@ -35,6 +35,15 @@ AppBundle\Entity\Sylius\Taxon:
     name:
       groups: ['restaurant_menu', 'restaurant_menus']
 
+AppBundle\Entity\Sylius\OrderEvent:
+  attributes:
+    type:
+      groups: ['order']
+    data:
+      groups: ['order']
+    createdAt:
+      groups: ['order']
+
 Sylius\Component\Order\Model\Order:
   attributes:
     id:
@@ -65,8 +74,10 @@ Sylius\Component\Order\Model\Order:
       groups: ['order']
     state:
       groups: ['order', 'order_minimal']
+    events:
+      groups: ['order']
     notes:
-      groups: ['order', 'cart', 'order_update']
+      groups: ['order', 'cart', 'order_update', 'order_minimal']
     createdAt:
       groups: ['order']
     timeline:
@@ -95,7 +106,7 @@ Sylius\Component\Order\Model\OrderItem:
     id:
       groups: ['order', 'cart']
     quantity:
-      groups: ['order', 'cart']
+      groups: ['order', 'cart', 'order_create']
     total:
       groups: ['order', 'cart']
     unitPrice:

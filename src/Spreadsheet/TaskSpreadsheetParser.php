@@ -7,14 +7,11 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Service\Geocoder;
-use Box\Spout\Reader\ReaderFactory;
-use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Common\Type;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 
@@ -32,12 +29,13 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
     private $userManager;
     private $phoneNumberUtil;
     private $countryCode;
+    private $entityManager;
 
     public function __construct(
         Geocoder $geocoder,
         SlugifyInterface $slugify,
         PhoneNumberUtil $phoneNumberUtil,
-        UserManagerInterface $userManager,
+        UserManager $userManager,
         string $countryCode,
         EntityManagerInterface $entityManager)
     {
@@ -87,6 +85,7 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
     public function parseData(array $data, array $options = []): array
     {
         $tasks = [];
+        $tasksGroups = [];
 
         $defaultDate = new \DateTime('now');
         if (isset($options['date'])) {
@@ -184,6 +183,12 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
             if (isset($record['packages']) && !empty($record['packages'])) {
                 $this->parseAndApplyPackages($task, $record['packages']);
+            }
+
+            if (isset($record['group']) && !empty(trim($record['group']))) {
+                $taskGroup = $this->getOrCreateTaskGroup($record['group'], $tasksGroups);
+                $task->setGroup($taskGroup);
+                $tasksGroups[$taskGroup->getName()] = $taskGroup;
             }
 
             $tasks[] = $task;
@@ -332,5 +337,19 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         $this->parseDate($assignAt, $date);
 
         return [ $user, $assignAt ];
+    }
+
+    private function getOrCreateTaskGroup($groupName, $tasksGroups)
+    {
+        if (array_key_exists($groupName, $tasksGroups)) {
+            return $tasksGroups[$groupName];
+        }
+
+        $taskGroup = new TaskGroup();
+        $taskGroup->setName($groupName);
+
+        $this->entityManager->persist($taskGroup);
+
+        return $taskGroup;
     }
 }

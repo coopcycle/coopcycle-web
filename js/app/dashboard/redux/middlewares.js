@@ -8,6 +8,7 @@ import {
   RESET_FILTERS,
   scanPositions,
   SHOW_RECURRENCE_RULES,
+  SET_TOURS_ENABLED,
 } from './actions'
 import _ from 'lodash'
 import Centrifuge from 'centrifuge'
@@ -53,6 +54,7 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task:created':
         case 'task:assigned':
         case 'task:unassigned':
+        case 'task:rescheduled':
           dispatch(updateTask(event.data.task))
           break
         case 'task_import:success':
@@ -108,6 +110,11 @@ export const persistFilters = ({ getState }) => (next) => (action) => {
   if (action.type === SHOW_RECURRENCE_RULES) {
     state = getState()
     window.sessionStorage.setItem(`recurrence_rules_visible`, JSON.stringify(state.settings.isRecurrenceRulesVisible))
+  }
+
+  if (action.type === SET_TOURS_ENABLED) {
+    state = getState()
+    window.sessionStorage.setItem(`tours_enabled`, JSON.stringify(state.settings.toursEnabled))
   }
 
   return result

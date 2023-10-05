@@ -15,6 +15,8 @@ use AppBundle\Entity\DeliveryAddress;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\RemotePushToken;
+use AppBundle\Entity\ReusablePackaging;
+use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Store\Token as StoreToken;
 use AppBundle\Entity\Task;
@@ -34,14 +36,12 @@ use Behat\Mink\Exception\ExpectationException;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\ExceptionResult;
 use Behat\Behat\Tester\Exception\PendingException;
-use Coduo\PHPMatcher\PHPMatcher;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\Tools\SchemaTool;
 use Faker\Generator as FakerGenerator;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager;
 use Nucleos\UserBundle\Util\UserManipulator;
-use Behatch\HttpCall\HttpCallResultPool;
 use PHPUnit\Framework\Assert;
 use Ramsey\Uuid\Uuid;
 use Redis;
@@ -65,7 +65,6 @@ use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 use Typesense\Exceptions\ObjectNotFound;
 
@@ -94,8 +93,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     private $classes;
 
-    private $httpCallResultPool;
-
     private $kernel;
 
     private $restContext;
@@ -117,7 +114,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function __construct(
         ManagerRegistry $doctrine,
-        // HttpCallResultPool $httpCallResultPool,
         PhoneNumberUtil $phoneNumberUtil,
         LoaderInterface $fixturesLoader,
         SettingsManager $settingsManager,
@@ -131,8 +127,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         FakerGenerator $faker,
         OrderProcessorInterface $orderProcessor,
         KernelInterface $kernel,
-        ContainerInterface $behatContainer,
-        UserManagerInterface $userManager,
+        UserManager $userManager,
         CollectionManager $typesenseCollectionManager)
     {
         $this->tokens = [];
@@ -141,7 +136,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine = $doctrine;
         $this->manager = $doctrine->getManager();
         $this->schemaTool = new SchemaTool($this->manager);
-        // $this->httpCallResultPool = $httpCallResultPool;
         $this->phoneNumberUtil = $phoneNumberUtil;
         $this->fixturesLoader = $fixturesLoader;
         $this->settingsManager = $settingsManager;
@@ -155,7 +149,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->faker = $faker;
         $this->orderProcessor = $orderProcessor;
         $this->kernel = $kernel;
-        $this->behatContainer = $behatContainer;
         $this->userManager = $userManager;
         $this->typesenseCollectionManager = $typesenseCollectionManager;
     }
@@ -174,11 +167,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->restContext = $environment->getContext('Behatch\Context\RestContext');
         $this->minkContext = $environment->getContext('Behat\MinkExtension\Context\MinkContext');
-
-        // @see https://github.com/FriendsOfBehat/SymfonyExtension/issues/56
-        // @see https://github.com/FriendsOfBehat/SymfonyExtension/issues/111
-        $container = $this->behatContainer->get('behat.service_container');
-        $this->httpCallResultPool = $container->get('behatch.http_call.result_pool');
     }
 
     /**
@@ -324,27 +312,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function enableMaintenance()
     {
         $this->redis->set('maintenance', '1');
-    }
-
-    /**
-     * @Then the JSON should match:
-     */
-    public function theJsonShouldMatch(PyStringNode $string)
-    {
-        $expectedJson = $string->getRaw();
-        $responseJson = $this->httpCallResultPool->getResult()->getValue();
-
-        if (null === $expectedJson) {
-            throw new \RuntimeException("Can not convert given JSON string to valid JSON format.");
-        }
-
-        $matcher = new PHPMatcher();
-        $match = $matcher->match($responseJson, $expectedJson);
-
-        if ($match !== true) {
-            throw new \RuntimeException(sprintf("Expected JSON doesn't match response JSON.\n%s",
-                (string) $matcher->error()));
-        }
     }
 
     private function createUser($username, $email, $password, array $data = [])
@@ -560,6 +527,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->tokens[$username]);
         $this->restContext->iSendARequestTo($method, $url, $body);
+    }
+
+    /**
+     * @When the user :username sends a :method request to :url with parameters:
+     */
+    public function theUserSendsARequestToWithParameters($username, $method, $url, TableNode $data)
+    {
+        if (!isset($this->tokens[$username])) {
+            throw new \RuntimeException("User {$username} is not authenticated");
+        }
+
+        $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->tokens[$username]);
+        $this->restContext->iSendARequestToWithParameters($method, $url, $data);
     }
 
     /**
@@ -1135,13 +1115,21 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given the product with code :code has reusable packaging enabled with unit :units
+     * @Given the product with code :code has reusable packaging :name enabled with unit :units
      */
-    public function enableReusablePackagingForProductWithQuantity($code, $unit)
+    public function enableReusablePackagingForProductWithQuantity($code, $name, $unit)
     {
         $product = $this->doctrine->getRepository(Product::class)->findOneByCode($code);
         $product->setReusablePackagingEnabled(true);
-        $product->setReusablePackagingUnit($unit);
+
+        $reusablePackaging = $this->doctrine->getRepository(ReusablePackaging::class)->findOneByName($name);
+
+        $reusablePackagings = new ReusablePackagings();
+        $reusablePackagings->setReusablePackaging($reusablePackaging);
+        $reusablePackagings->setProduct($product);
+        $reusablePackagings->setUnits($unit);
+
+        $product->addReusablePackaging($reusablePackagings);
 
         $em = $this->doctrine->getManagerForClass(Product::class);
         $em->flush();

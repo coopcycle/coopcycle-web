@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { Formik, Field } from 'formik'
 
 import { getCountry } from '../../../i18n'
 import {
@@ -11,6 +12,8 @@ import {
   delayOrder,
   cancelOrder,
   fulfillOrder,
+  toggleReusablePackagings,
+  updateLoopeatFormats,
 } from '../redux/actions'
 import { selectItemsGroups } from '../redux/selectors'
 
@@ -19,6 +22,7 @@ import OrderTotal from './OrderTotal'
 import OrderNumber from './OrderNumber'
 import Timeline from './Timeline'
 import Button from './Button'
+import Customer from './Customer'
 
 const Reasons = withTranslation()(({ order, onClick, loading, t }) => {
 
@@ -39,6 +43,61 @@ const Reasons = withTranslation()(({ order, onClick, loading, t }) => {
       </Button>
       )}
     </div>
+  )
+})
+
+const LoopeatFormats = withTranslation()(({ t, order, loopeatFormats, updateLoopeatFormats }) => {
+
+  const initialValues = {
+    loopeatFormats,
+  }
+
+  return (
+    <Formik
+      initialValues={ initialValues }
+      onSubmit={ (values) => {
+        updateLoopeatFormats(order, values.loopeatFormats)
+      }}
+      validateOnBlur={ false }
+      validateOnChange={ false }>
+      {({
+        values,
+        submitForm,
+      }) => (
+      <div>
+        { loopeatFormats.map((loopeatFormat, index) => {
+
+          return (
+            <div key={ `loopeat-format-${index}` }>
+              <h5>{ loopeatFormat.orderItem.name }</h5>
+              <table className="table table-condensed">
+                <tbody>
+                { loopeatFormat.formats.map((format, formatIndex) => (
+                  <tr key={ `loopeat-format-format-${formatIndex}` }>
+                    <td width="15%">
+                      <Field className="form-control input-sm"
+                        type="number"
+                        value={ values.loopeatFormats[index].formats[formatIndex].quantity }
+                        min="0"
+                        max={ format.quantity }
+                        name={ `loopeatFormats.${index}.formats.${formatIndex}.quantity` } />
+                    </td>
+                    <td><small>{ format.format_name }</small></td>
+                  </tr>)
+                ) }
+                </tbody>
+              </table>
+            </div>
+          )
+        }) }
+        <div className="text-right">
+          <button type="button" className="btn" onClick={ submitForm }>
+            { t('CART_DELIVERY_TIME_SUBMIT') }
+          </button>
+        </div>
+      </div>
+    )}
+    </Formik>
   )
 })
 
@@ -231,6 +290,28 @@ class ModalContent extends React.Component {
     )
   }
 
+  renderLoopeatSection() {
+
+    const { order } = this.props
+
+    return (
+      <div>
+        <div className="text-right mb-3">
+          <button type="button" className="btn btn-md"
+            onClick={ () => this.props.toggleReusablePackagings(this.props.order) }>Modifier les emballages</button>
+        </div>
+        { this.props.isLoopeatSectionOpen && (
+        <div>
+          <LoopeatFormats
+            order={ order }
+            loopeatFormats={ this.props.loopeatFormats }
+            updateLoopeatFormats={ this.props.updateLoopeatFormats } />
+        </div>
+        ) }
+      </div>
+    )
+  }
+
   render() {
 
     const { order, itemsGroups, restaurant } = this.props
@@ -247,7 +328,7 @@ class ModalContent extends React.Component {
           <div className="row">
             <div className="col-xs-6">
               <h5>
-                <i className="fa fa-user"></i>  { order.customer.username }
+                <Customer customer={ order.customer } />
               </h5>
             </div>
             <div className="col-xs-6">
@@ -270,6 +351,7 @@ class ModalContent extends React.Component {
           <OrderItems itemsGroups={ itemsGroups } restaurant={ restaurant } />
           <OrderTotal order={ order } />
           { order.notes && this.renderNotes() }
+          { (order.restaurant.loopeatEnabled && order.reusablePackagingEnabled) && this.renderLoopeatSection() }
           <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_TIMELINE') }</h5>
           <Timeline order={ order } />
           { this.renderButtons() }
@@ -286,6 +368,9 @@ function mapStateToProps(state) {
     loading: state.isFetching,
     itemsGroups: selectItemsGroups(state),
     restaurant: state.restaurant,
+    isLoopeatSectionOpen: state.isLoopeatSectionOpen,
+    reusablePackagings: state.reusablePackagings,
+    loopeatFormats: state.loopeatFormats,
   }
 }
 
@@ -297,6 +382,8 @@ function mapDispatchToProps(dispatch) {
     delayOrder: order => dispatch(delayOrder(order)),
     cancelOrder: (order, reason) => dispatch(cancelOrder(order, reason)),
     fulfillOrder: order => dispatch(fulfillOrder(order)),
+    toggleReusablePackagings: order => dispatch(toggleReusablePackagings(order)),
+    updateLoopeatFormats: (order, loopeatFormats) => dispatch(updateLoopeatFormats(order, loopeatFormats)),
   }
 }
 

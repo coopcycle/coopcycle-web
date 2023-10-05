@@ -12,9 +12,9 @@
 
 {% if loopeat_enabled %}
   {% if customer.hasLoopEatCredentials() %}
-    <p><a class="btn btn-default btn-sm"><i class="fa fa-check"></i> {% trans %}profile.loopeat.connected{% endtrans %}</a></p>
+    <p><a class="btn btn-default btn-sm"><i class="fa fa-check"></i> {% trans with { '%name%': loopeat_name() } %}profile.loopeat.connected{% endtrans %}</a></p>
   {% else %}
-    <p><a href="{{ loopeat_authorize_url }}" class="btn btn-success btn-sm">{% trans %}profile.loopeat.connect{% endtrans %}</a></p>
+    <p><a href="{{ loopeat_authorize_url }}" class="btn btn-success btn-sm">{% trans with { '%name%': loopeat_name() } %}profile.loopeat.connect{% endtrans %}</a></p>
   {% endif %}
 {% endif %}
 

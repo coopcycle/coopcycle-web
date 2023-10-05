@@ -960,7 +960,6 @@ form.store_type.packages_required.label: Richiesta di pacchetti
 form.store_type.weight_required.label: Richiesta di peso
 form.store_type.package_set.placeholder: Scegli un set di pacchi
 form.store_type.time_slot.placeholder: Scegli una fascia oraria
-restaurant.form.section.loopeat: LoopEat
 checkout.breadcrumb.confirm: Conferma
 order.payer.identificationNumber: Numero del documento
 order.payer.identificationType: Tipo di documento

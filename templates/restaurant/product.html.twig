@@ -49,16 +49,25 @@
     </div>
   </section>
 
-  {% if form.reusablePackagingEnabled is defined and form.reusablePackaging is defined and form.reusablePackagingUnit is defined %}
+  {% if form.reusablePackagingEnabled is defined and form.reusablePackagings is defined %}
   <div class="panel panel-default">
     <div class="panel-body">
       {{ form_widget(form.reusablePackagingEnabled) }}
-      <div class="row">
-        <div class="col-sm-6">
-          {{ form_row(form.reusablePackaging) }}
-        </div>
-        <div class="col-sm-6">
-          {{ form_row(form.reusablePackagingUnit) }}
+      <div class="reusablePackagings">
+        <ul class="list-unstyled"
+          data-index="{{ form.reusablePackagings|length > 0 ? form.reusablePackagings|last.vars.name + 1 : 0 }}"
+          data-prototype="{{ form_widget(form.reusablePackagings.vars.prototype)|e('html_attr') }}">
+          {% for reusable_packaging in form.reusablePackagings %}
+          <li>
+            {{ form_widget(reusable_packaging) }}
+          </li>
+          {% endfor %}
+        </ul>
+        <div class="text-right">
+          <button type="button" class="btn btn-success add_item_link">
+            <i class="fa fa-plus mr-1"></i>
+            <span>{{ 'basics.add'|trans }}</span>
+          </button>
         </div>
       </div>
     </div>

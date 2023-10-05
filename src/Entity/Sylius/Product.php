@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\ReusablePackaging;
+use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -42,15 +43,7 @@ class Product extends BaseProduct implements ProductInterface, Comparable
 
     protected $reusablePackagingEnabled = false;
 
-    /**
-     * @Assert\Expression(
-     *   "!this.isReusablePackagingEnabled() or (this.isReusablePackagingEnabled() and this.getReusablePackagingUnit() > 0)",
-     *   message="product.reusablePackagingUnit.mustBeGreaterThanZero"
-     * )
-     */
-    protected $reusablePackagingUnit = 0;
-
-    protected $reusablePackaging;
+    protected $reusablePackagings;
 
     protected $images;
 
@@ -63,6 +56,7 @@ class Product extends BaseProduct implements ProductInterface, Comparable
         parent::__construct();
 
         $this->images = new ArrayCollection();
+        $this->reusablePackagings = new ArrayCollection();
     }
 
     public function getAllergens()
@@ -124,67 +118,38 @@ class Product extends BaseProduct implements ProductInterface, Comparable
     /**
      * @return mixed
      */
-    public function getReusablePackagingUnit()
+    public function getReusablePackagings()
     {
-        return $this->reusablePackagingUnit;
+        return $this->reusablePackagings;
     }
 
     /**
-     * @param mixed $reusablePackagingUnit
+     * @param ReusablePackagings $reusablePackagings
      *
      * @return self
      */
-    public function setReusablePackagingUnit($reusablePackagingUnit)
+    public function addReusablePackaging(ReusablePackagings $reusablePackagings)
     {
-        $this->reusablePackagingUnit = $reusablePackagingUnit;
+        $reusablePackagings->setProduct($this);
+
+        $this->reusablePackagings->add($reusablePackagings);
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getReusablePackaging()
+    public function removeReusablePackaging(ReusablePackagings $reusablePackagings)
     {
-        return $this->reusablePackaging;
+
     }
 
-    /**
-     * @param ReusablePackaging|null $reusablePackaging
-     *
-     * @return self
-     */
-    public function setReusablePackaging(?ReusablePackaging $reusablePackaging)
+    public function clearReusablePackagings()
     {
-        // FIXME
-        // Does not work when using test fixtures
-        // It triggers an error
-        // "Reusable packaging #0 is associated with restaurant #0, but product #0 is not"
-        // see cypress/fixtures/restaurants.yml
+        $this->reusablePackagings->clear();
+    }
 
-        /*
-        if (null !== $reusablePackaging) {
-
-            $restaurant = $reusablePackaging->getRestaurant();
-
-            if (null === $restaurant) {
-                throw new \InvalidArgumentException(
-                    sprintf('Reusable packaging #%d is not associated with any restaurant', $reusablePackaging->getId())
-                );
-            }
-
-            if (!$restaurant->hasProduct($this)) {
-                throw new \LogicException(
-                    sprintf('Reusable packaging #%d is associated with restaurant #%d, but product #%d is not',
-                        $reusablePackaging->getId(), $restaurant->getId(), $this->getId())
-                );
-            }
-        }
-        */
-
-        $this->reusablePackaging = $reusablePackaging;
-
-        return $this;
+    public function hasReusablePackagings()
+    {
+        return count($this->reusablePackagings) > 0;
     }
 
     /**

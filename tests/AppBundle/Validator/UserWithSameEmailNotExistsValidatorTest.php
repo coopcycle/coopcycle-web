@@ -5,7 +5,7 @@ namespace AppBundle\Validator;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as UserWithSameEmailNotExistsConstraint;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExistsValidator;
 use Nucleos\UserBundle\Model\UserInterface;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 use Symfony\Component\Validator\ValidatorBuilder;
@@ -18,7 +18,7 @@ class UserWithSameEmailNotExistsValidatorTest extends ConstraintValidatorTestCas
 
     public function setUp() :void
     {
-        $this->userManager = $this->prophesize(UserManagerInterface::class);
+        $this->userManager = $this->prophesize(UserManager::class);
 
         parent::setUp();
     }

@@ -8,11 +8,10 @@ import { useTranslation } from 'react-i18next'
 
 import Task from './Task'
 import TaskGroup from './TaskGroup'
-import Tour from './Tour'
 import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules } from '../redux/actions'
-import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectSelectedTasks, selectTours } from '../redux/selectors'
+import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectSelectedTasks } from '../redux/selectors'
 
 class StandaloneTasks extends React.Component {
 
@@ -110,8 +109,8 @@ const Buttons = connect(
           showRecurrenceRules={showRecurrenceRules}
            />
         }
-        visible={ visible }
-        onVisibleChange={ value => setVisible(value) }
+        open={ visible }
+        onOpenChange={ value => setVisible(value) }
       >
         <a href="#" onClick={ e => e.preventDefault() } title={ t('ADMIN_DASHBOARD_DISPLAY') }>
           <i className="fa fa-list"></i>
@@ -163,28 +162,10 @@ class UnassignedTasks extends React.Component {
                     </Draggable>
                   )
                 })}
-                { _.map(this.props.tours, (tour, index) => {
-                  return (
-                    <Draggable key={ `tour-${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ this.props.groups.length + index }>
-                      {(provided) => (
-                        <div
-                          ref={ provided.innerRef }
-                          { ...provided.draggableProps }
-                          { ...provided.dragHandleProps }
-                        >
-                          <Tour
-                            key={ tour['@id'] }
-                            tour={ tour }
-                            tasks={ tour.items }
-                            />
-                        </div>
-                      )}
-                    </Draggable>
-                  )
-                })}
+
                 <StandaloneTasksWithConnect
                   tasks={ this.props.standaloneTasks }
-                  offset={ this.props.groups.length + this.props.tours.length } />
+                  offset={ this.props.groups.length } />
                 { provided.placeholder }
               </div>
             )}
@@ -199,7 +180,6 @@ function mapStateToProps (state) {
 
   return {
     groups: selectGroups(state),
-    tours: selectTours(state),
     standaloneTasks: selectStandaloneTasks(state),
     recurrenceRules: selectRecurrenceRules(state),
     isRecurrenceRulesVisible: state.settings.isRecurrenceRulesVisible,

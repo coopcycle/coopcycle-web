@@ -34,8 +34,6 @@ parameters:
     loopeat_base_url: '%env(LOOPEAT_BASE_URL)%'
     loopeat_client_id: '%env(LOOPEAT_CLIENT_ID)%'
     loopeat_client_secret: '%env(LOOPEAT_CLIENT_SECRET)%'
-    loopeat_partner_id: '%env(LOOPEAT_PARTNER_ID)%'
-    loopeat_partner_secret: '%env(LOOPEAT_PARTNER_SECRET)%'
     tile38_fleet_key: '%database_name%:fleet'
     tile38_doorstep_chan_namespace: '%database_name%'
     centrifugo_namespace: '%database_name%'
@@ -69,6 +67,7 @@ parameters:
     typesense_shops_collection_name: "shops"
     typesense_products_collection_name: "products"
     colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
+    group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -247,6 +246,7 @@ twig:
         cubejs_api_url: '%env(CUBEJS_API_URL)%'
         ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
         dabba_context: '@AppBundle\Dabba\Context'
+        group_orders_enabled: '%group_orders_enabled%'
 
     exception_controller: null
 
@@ -307,6 +307,7 @@ doctrine:
                 OVERLAPS: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Overlaps
                 CAST: DoctrineExtensions\Query\Mysql\Cast
                 JSON_GET_FIELD_AS_TEXT: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetFieldAsText
+                JSON_GET_FIELD: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetField
             datetime_functions:
                 date: DoctrineExtensions\Query\Mysql\Date
         filters:
@@ -366,14 +367,14 @@ nucleos_user:
     service:
         user_manager: coopcycle.user_manager
     from_email: "%transactional_sender_name% <%transactional_address%>"
+    loggedin:
+        route: homepage
 
 nucleos_profile:
     registration:
         confirmation:
             from_email: "%transactional_sender_name% <%transactional_address%>"
             enabled: "%nucleos_profile.registration.confirmation.enabled%"
-        form:
-            model: AppBundle\Form\Model\Registration
 
 lexik_jwt_authentication:
     secret_key:  "%jwt_private_key_path%"
@@ -682,6 +683,8 @@ fos_js_routing:
         - profile_jwt
         - profile_notifications
         - profile_notifications_mark_as_read
+        - profile_notifications_remove
+        - profile_notification_remove
         - dashboard_order_accept
         - dashboard_order_refuse
         - dashboard_order_cancel
@@ -692,6 +695,10 @@ fos_js_routing:
         - routing_route
         - user_avatar
         - dashboard_restaurant_new_adhoc_order
+        - public_share_order
+        - order_set_guest_customer_email
+        - api_orders_add_player_item
+        - api_orders_create_invitation_item
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'
@@ -940,13 +947,6 @@ mjml:
     renderer: 'service'
     options:
         service_id: 'AppBundle\Mjml\MjmlServerRenderer'
-
-sensio_framework_extra:
-    router:
-        annotations: false
-    request:
-        converters: true
-        disable: ['doctrine.orm']
 
 # https://github.com/doctrine/DoctrineMigrationsBundle/issues/305
 doctrine_migrations:

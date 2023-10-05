@@ -40,7 +40,6 @@ const TaskOrTour = ({ item, onRemove, unassignTasks, username }) => {
   return (
     <Task
       task={ item }
-      assigned={ true }
       onRemove={ item => onRemove(item) } />
   )
 }
@@ -51,7 +50,7 @@ const TaskOrTour = ({ item, onRemove, unassignTasks, username }) => {
 class InnerList extends React.Component {
 
   shouldComponentUpdate(nextProps) {
-    if (nextProps.tasks === this.props.tasks) {
+    if (nextProps.items === this.props.items) {
       return false
     }
 
@@ -59,9 +58,9 @@ class InnerList extends React.Component {
   }
 
   render() {
-    return _.map(this.props.tasks, (task, index) => {
+    return _.map(this.props.items, (item, index) => {
       return (
-        <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ index }>
+        <Draggable key={ item['@id'] } draggableId={ item['@id'] } index={ index }>
           {(provided) => (
             <div
               ref={ provided.innerRef }
@@ -69,9 +68,8 @@ class InnerList extends React.Component {
               { ...provided.dragHandleProps }
             >
               <TaskOrTour
-                item={ task }
-                assigned={ true }
-                onRemove={ task => this.props.onRemove(task) }
+                item={ item }
+                onRemove={ item => this.props.onRemove(item) }
                 username={ this.props.username }
                 unassignTasks={ this.props.unassignTasks } />
             </div>
@@ -108,7 +106,7 @@ class TaskList extends React.Component {
       isEmpty,
     } = this.props
 
-    const { tasks } = this.props
+    const { tasks, items } = this.props
 
     const uncompletedTasks = _.filter(tasks, t => t.status === 'TODO')
     const completedTasks = _.filter(tasks, t => t.status === 'DONE')
@@ -203,7 +201,7 @@ class TaskList extends React.Component {
                 { ...provided.droppableProps }
               >
                 <InnerList
-                  tasks={ tasks }
+                  items={ items }
                   onRemove={ task => this.remove(task) }
                   unassignTasks={ this.props.unassignTasks }
                   username={ username } />
@@ -223,16 +221,28 @@ const makeMapStateToProps = () => {
 
   const mapStateToProps = (state, ownProps) => {
 
+    // items is a prop of mixed task and tours
     const items = selectTaskListItemsByUsername(state, ownProps)
+
+    // we also need a flatten list of tasks
+    const tasks = items.reduce((acc, item) => {
+      if (item['@type'] === 'Tour') {
+        acc.push(...item.items)
+      } else {
+        acc.push(item)
+      }
+      return acc
+    }, [])
 
     const visibleTaskIds = _.intersectionWith(
       selectVisibleTaskIds(state),
-      items.map(task => task['@id'])
+      tasks.map(task => task['@id'])
     )
 
     return {
       polylineEnabled: state.polylineEnabled[ownProps.username],
-      tasks: items,
+      tasks,
+      items,
       isEmpty: items.length === 0 || visibleTaskIds.length === 0,
       distance: ownProps.distance,
       duration: ownProps.duration,

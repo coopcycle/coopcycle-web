@@ -23,7 +23,8 @@
     "config": {
         "process-timeout":0,
         "allow-plugins": {
-            "drupal/core-vendor-hardening": true
+            "drupal/core-vendor-hardening": true,
+            "php-http/discovery": true
         }
     },
     "require": {
@@ -33,14 +34,13 @@
         "doctrine/orm": "^2.7",
         "doctrine/doctrine-bundle": "^2.4",
         "symfony/monolog-bundle": "^3.5",
-        "sensio/framework-extra-bundle": "^5.4",
         "nelmio/cors-bundle": "~2.0",
         "lexik/jwt-authentication-bundle": "^2.8",
         "jsor/doctrine-postgis": "^1.1",
         "league/geotools": "@stable",
         "gedmo/doctrine-extensions": "^3.0.3",
-        "snc/redis-bundle": "^4.0",
-        "knplabs/knp-time-bundle": "^1.7",
+        "snc/redis-bundle": "4.3.0",
+        "knplabs/knp-time-bundle": "^2.0",
         "cocur/slugify": "^4.0",
         "gesdinet/jwt-refresh-token-bundle": "^1.0",
         "emcconville/google-map-polyline-encoding-tool": "^1.3",
@@ -58,19 +58,18 @@
         "craue/config-bundle": "~2.0",
         "knplabs/knp-paginator-bundle": "^5.0",
         "league/csv": "^9.3",
-        "twig/twig": "^2.0",
+        "twig/twig": "^2.0 || ^3.0",
         "sylius/order-bundle": "^1.7.5",
         "sylius/payment-bundle": "^1.7.5",
         "laravolt/avatar": "^4",
         "sylius/product-bundle": "^1.7.5",
         "sylius/taxonomy-bundle": "^1.7.5",
-        "sonata-project/seo-bundle": "3.x-dev",
+        "sonata-project/seo-bundle": "^3.0",
         "sylius/currency-bundle": "^1.7.5",
         "php-http/message": "^1.6",
         "geo6/geocoder-php-addok-provider": "^1.0",
         "geocoder-php/chain-provider": "^4.0",
         "geocoder-php/nominatim-provider": "^5.0",
-        "box/spout": "^3.0",
         "jmikola/geojson": "~1.0",
         "simple-bus/symfony-bridge": "^6.0",
         "friendsofsymfony/jsrouting-bundle": "^2.2",
@@ -97,7 +96,7 @@
         "phpdocumentor/reflection-docblock": "^5.1",
         "sylius/customer-bundle": "^1.6",
         "mailjet/mailjet-apiv3-php": "^1.4",
-        "edamov/pushok": "^0.14",
+        "edamov/pushok": "^0.15",
         "twig/intl-extra": "^3.0",
         "odolbeau/phone-number-bundle": "^3.1",
         "league/omnipay": "^3.2.1",
@@ -107,7 +106,7 @@
         "friendsofsymfony/rest-bundle": "^3.0",
         "geocoder-php/open-cage-provider": "^4.4",
         "spatie/guzzle-rate-limiter-middleware": "^2.0",
-        "geocoder-php/photon-provider": "^0.5.0",
+        "geocoder-php/photon-provider": "^0.6.0",
         "ppshobi/psonic": "^2.0",
         "doctrine/cache": "^2.0",
         "spatie/opening-hours": "^2.10",
@@ -115,8 +114,8 @@
         "twig/string-extra": "^3.1",
         "simshaun/recurr": "^5.0",
         "jaybizzle/crawler-detect": "^1.2",
-        "nucleos/user-bundle": "1.12.x-dev",
-        "nucleos/profile-bundle": "1.7.x-dev",
+        "nucleos/user-bundle": "^2.0",
+        "nucleos/profile-bundle": "2.3.x-dev",
         "twig/cache-extra": "^3.3",
         "geocoder-php/google-maps-provider": "^4.6",
         "symfony/redis-messenger": "^5.3",
@@ -134,7 +133,9 @@
         "sylius/calendar": "^0.3",
         "twig/markdown-extra": "^3.4",
         "league/commonmark": "^2.3",
-        "acseo/typesense-bundle": "dev-service-as-getter"
+        "acseo/typesense-bundle": "dev-service-as-getter",
+        "symfony/stimulus-bundle": "^2.10",
+        "symfony/ux-turbo": "^2.10"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -150,8 +151,9 @@
         "friends-of-behat/mink": "^1.8",
         "friends-of-behat/mink-extension": "^2.5",
         "friends-of-behat/mink-browserkit-driver": "^1.4",
-        "rector/rector": "^0.12",
-        "phpstan/phpstan-doctrine": "^1.0"
+        "rector/rector": "^0.17",
+        "phpstan/phpstan-doctrine": "^1.0",
+        "aeon-php/calendar": "1.0.6"
     },
     "repositories": [
         {

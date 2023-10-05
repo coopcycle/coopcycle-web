@@ -1,0 +1,8 @@
+AppBundle\Entity\ReusablePackaging:
+  reusable_packaging_dummy:
+    name: Dummy
+    type: internal
+    price: 0
+    onHold: 0
+    onHand: 9999
+    tracked: false

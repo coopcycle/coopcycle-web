@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\Restaurant;
 
+use AppBundle\LoopEat\Client;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -12,15 +13,23 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LoopeatType extends AbstractType
 {
+    public function __construct(private Client $client)
+    {}
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $initiative = $this->client->initiative();
+
         $builder->add('enabled', CheckboxType::class, [
             'label' => 'restaurant.form.loopeat_enabled.label',
+            'label_translation_parameters' => [
+                '%name%' => $initiative['name'],
+            ],
             'required' => false,
             'disabled' => !$options['allow_toggle'],
         ]);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($initiative) {
 
             $form = $event->getForm();
             $parentForm = $form->getParent();
@@ -32,6 +41,9 @@ class LoopeatType extends AbstractType
                 $form
                     ->add('disconnect', SubmitType::class, [
                         'label' => 'restaurant.form.loopeat_disconnect.label',
+                        'label_translation_parameters' => [
+                            '%name%' => $initiative['name'],
+                        ],
                     ]);
             }
         });
@@ -45,7 +57,7 @@ class LoopeatType extends AbstractType
             $enabled = $form->get('enabled')->getData();
             $restaurant->setLoopeatEnabled($enabled);
 
-            if ($form->getClickedButton() && 'loopeatDisconnect' === $form->getClickedButton()->getName()) {
+            if ($form->getClickedButton() && 'disconnect' === $form->getClickedButton()->getName()) {
                 $restaurant->clearLoopEatCredentials();
             }
         });

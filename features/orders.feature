@@ -122,7 +122,7 @@ Feature: Orders
       "@context":"/api/contexts/Order",
       "@id":"@string@.startsWith('/api/orders')",
       "@type":"http://schema.org/Order",
-      "customer":@...@,
+      "customer":{"@*@":"@*@"},
       "restaurant":{
         "@id":"/api/restaurants/1",
         "@type":"http://schema.org/Restaurant",
@@ -132,6 +132,7 @@ Feature: Orders
           "@id":"@string@.startsWith('/api/addresses')",
           "@type":"http://schema.org/Place",
           "geo":{
+            "@type":"GeoCoordinates",
             "latitude":@double@,
             "longitude":@double@
           },
@@ -139,12 +140,16 @@ Feature: Orders
           "name":null,
           "telephone": null
         },
-        "telephone": null
+        "telephone":"+33612345678",
+        "loopeatEnabled":false,
+        "isOpen":false,
+        "nextOpeningDate":"@string@.isDateTime()"
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
         "@type":"http://schema.org/Place",
         "geo":{
+          "@type":"GeoCoordinates",
           "latitude":48.855799,
           "longitude":2.359207
         },
@@ -154,23 +159,55 @@ Feature: Orders
       },
       "items":[
         {
+          "@id":"@string@.startsWith('/api/orders/1/items')",
+          "@type":"OrderItem",
           "id":@integer@,
           "quantity":@integer@,
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
-          "adjustments":@...@
+          "adjustments":{"@*@":"@*@"},
+          "vendor":{
+            "@id":"/api/restaurants/1",
+            "name":"Nodaiwa"
+          },
+          "player":{
+            "@id":"/api/customers/1",
+            "@type":"Customer",
+            "email":"bob@coopcycle.org",
+            "phoneNumber":"+33612345678",
+            "telephone":"+33612345678",
+            "username":"bob",
+            "fullName":"Bob Doe",
+            "tags":@array@
+          }
         },
         {
+          "@id":"@string@.startsWith('/api/orders/1/items')",
+          "@type":"OrderItem",
           "id":@integer@,
           "quantity":@integer@,
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
-          "adjustments":@...@
+          "adjustments":{"@*@":"@*@"},
+          "vendor":{
+            "@id":"/api/restaurants/1",
+            "name":"Nodaiwa"
+          },
+          "player":{
+            "@id":"/api/customers/1",
+            "@type":"Customer",
+            "email":"bob@coopcycle.org",
+            "phoneNumber":"+33612345678",
+            "telephone":"+33612345678",
+            "username":"bob",
+            "fullName":"Bob Doe",
+            "tags":@array@
+          }
         }
       ],
-      "adjustments":@...@,
+      "adjustments":{"@*@":"@*@"},
       "id":@integer@,
       "number":null,
       "total":@integer@,
@@ -182,7 +219,18 @@ Feature: Orders
       "shippedAt":"@string@.startsWith('2017-09-02T12:30:00')",
       "preparationExpectedAt":null,
       "pickupExpectedAt":null,
-      "reusablePackagingEnabled": false
+      "reusablePackagingEnabled": false,
+      "reusablePackagingPledgeReturn":0,
+      "vendor":{"@*@":"@*@"},
+      "shippingTimeRange":["2017-09-02T12:25:00+02:00","2017-09-02T12:35:00+02:00"],
+      "takeaway":false,
+      "preparationTime":null,
+      "shippingTime":null,
+      "hasReceipt":false,
+      "paymentMethod":"CARD",
+      "assignedTo":null,
+      "invitation":null,
+      "events":@array@
     }
     """
 
@@ -239,7 +287,7 @@ Feature: Orders
       "@context":"/api/contexts/Order",
       "@id":"@string@.startsWith('/api/orders')",
       "@type":"http://schema.org/Order",
-      "customer":@...@,
+      "customer":{"@*@":"@*@"},
       "restaurant":{
         "@id":"/api/restaurants/1",
         "@type":"http://schema.org/Restaurant",
@@ -249,6 +297,7 @@ Feature: Orders
           "@id":"@string@.startsWith('/api/addresses')",
           "@type":"http://schema.org/Place",
           "geo":{
+            "@type":"GeoCoordinates",
             "latitude":@double@,
             "longitude":@double@
           },
@@ -256,12 +305,16 @@ Feature: Orders
           "name":null,
           "telephone": null
         },
-        "telephone": null
+        "telephone":"+33612345678",
+        "loopeatEnabled":false,
+        "isOpen":false,
+        "nextOpeningDate":"@string@.isDateTime()"
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
         "@type":"http://schema.org/Place",
         "geo":{
+          "@type":"GeoCoordinates",
           "latitude":48.855799,
           "longitude":2.359207
         },
@@ -271,23 +324,55 @@ Feature: Orders
       },
       "items":[
         {
+          "@id":"@string@.startsWith('/api/orders/1/items')",
+          "@type":"OrderItem",
           "id":@integer@,
           "quantity":@integer@,
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
-          "adjustments":@...@
+          "adjustments":{"@*@":"@*@"},
+          "vendor":{
+            "@id":"/api/restaurants/1",
+            "name":"Nodaiwa"
+          },
+          "player":{
+            "@id":"/api/customers/1",
+            "@type":"Customer",
+            "email":"bob@coopcycle.org",
+            "phoneNumber":"+33612345678",
+            "telephone":"+33612345678",
+            "username":"bob",
+            "fullName":"Bob Doe",
+            "tags":@array@
+          }
         },
         {
+          "@id":"@string@.startsWith('/api/orders/1/items')",
+          "@type":"OrderItem",
           "id":@integer@,
           "quantity":@integer@,
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
-          "adjustments":@...@
+          "adjustments":{"@*@":"@*@"},
+          "vendor":{
+            "@id":"/api/restaurants/1",
+            "name":"Nodaiwa"
+          },
+          "player":{
+            "@id":"/api/customers/1",
+            "@type":"Customer",
+            "email":"bob@coopcycle.org",
+            "phoneNumber":"+33612345678",
+            "telephone":"+33612345678",
+            "username":"bob",
+            "fullName":"Bob Doe",
+            "tags":@array@
+          }
         }
       ],
-      "adjustments":@...@,
+      "adjustments":{"@*@":"@*@"},
       "id":@integer@,
       "number":null,
       "total":@integer@,
@@ -299,7 +384,18 @@ Feature: Orders
       "shippedAt":"@string@.startsWith('2017-09-02T12:30:00')",
       "preparationExpectedAt":null,
       "pickupExpectedAt":null,
-      "reusablePackagingEnabled": false
+      "reusablePackagingEnabled": false,
+      "reusablePackagingPledgeReturn":0,
+      "vendor":{"@*@":"@*@"},
+      "shippingTimeRange":["2017-09-02T12:25:00+02:00","2017-09-02T12:35:00+02:00"],
+      "takeaway":false,
+      "preparationTime":null,
+      "shippingTime":null,
+      "hasReceipt":false,
+      "paymentMethod":"CARD",
+      "assignedTo":null,
+      "invitation":null,
+      "events":@array@
     }
     """
 
@@ -501,7 +597,7 @@ Feature: Orders
       "@context":"/api/contexts/Order",
       "@id":"@string@.startsWith('/api/orders')",
       "@type":"http://schema.org/Order",
-      "customer":@...@,
+      "customer":{"@*@":"@*@"},
       "restaurant":{
         "@id":"/api/restaurants/1",
         "@type":"http://schema.org/Restaurant",
@@ -511,6 +607,7 @@ Feature: Orders
           "@id":"@string@.startsWith('/api/addresses')",
           "@type":"http://schema.org/Place",
           "geo":{
+            "@type":"GeoCoordinates",
             "latitude":@double@,
             "longitude":@double@
           },
@@ -518,12 +615,16 @@ Feature: Orders
           "name":null,
           "telephone": null
         },
-        "telephone": null
+        "telephone":"+33612345678",
+        "isOpen":false,
+        "nextOpeningDate":"@string@.isDateTime()",
+        "loopeatEnabled":false
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
         "@type":"http://schema.org/Place",
         "geo":{
+          "@type":"GeoCoordinates",
           "latitude": 48.863814,
           "longitude": 2.3329
         },
@@ -533,23 +634,31 @@ Feature: Orders
       },
       "items":[
         {
+          "@id":@string@,
+          "@type":"OrderItem",
           "id":@integer@,
           "quantity":@integer@,
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
-          "adjustments":@...@
+          "adjustments":{"@*@":"@*@"},
+          "vendor":{"@*@":"@*@"},
+          "player":{"@*@":"@*@"}
         },
         {
+          "@id":@string@,
+          "@type":"OrderItem",
           "id":@integer@,
           "quantity":@integer@,
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
-          "adjustments":@...@
+          "adjustments":{"@*@":"@*@"},
+          "vendor":{"@*@":"@*@"},
+          "player":{"@*@":"@*@"}
         }
       ],
-      "adjustments":@...@,
+      "adjustments":{"@*@":"@*@"},
       "id":@integer@,
       "number":null,
       "total":@integer@,
@@ -561,7 +670,18 @@ Feature: Orders
       "shippedAt":"@string@.startsWith('2017-09-02T12:30:00')",
       "preparationExpectedAt":null,
       "pickupExpectedAt":null,
-      "reusablePackagingEnabled": false
+      "reusablePackagingEnabled": false,
+      "reusablePackagingPledgeReturn":0,
+      "vendor":{"@*@":"@*@"},
+      "shippingTimeRange":@array@,
+      "takeaway":false,
+      "preparationTime":null,
+      "shippingTime":null,
+      "hasReceipt":false,
+      "paymentMethod":"CARD",
+      "assignedTo":null,
+      "invitation":null,
+      "events":@array@
     }
     """
 
@@ -628,7 +748,8 @@ Feature: Orders
           "email":"bob@coopcycle.org",
           "telephone": "+33612345678",
           "phoneNumber": "+33612345678",
-          "fullName": "Bob Doe"
+          "fullName": "Bob Doe",
+          "tags":[]
         },
         "vendor":{"@*@":"@*@"},
         "restaurant":{
@@ -649,7 +770,8 @@ Feature: Orders
             "telephone": null
           },
           "telephone":"+33612345678",
-          "isOpen":true
+          "isOpen":true,
+          "loopeatEnabled":false
         },
         "shippingAddress":{
           "@id":"@string@.startsWith('/api/addresses')",
@@ -665,23 +787,31 @@ Feature: Orders
         },
         "items":[
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":@integer@,
             "quantity":@integer@,
             "unitPrice":@integer@,
             "total":@integer@,
             "name":@string@,
-            "adjustments":@...@
+            "adjustments":{"@*@":"@*@"},
+            "vendor":{"@*@":"@*@"},
+            "player":{"@*@":"@*@"}
           },
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":@integer@,
             "quantity":@integer@,
             "unitPrice":@integer@,
             "total":@integer@,
             "name":@string@,
-            "adjustments":@...@
+            "adjustments":{"@*@":"@*@"},
+            "vendor":{"@*@":"@*@"},
+            "player":{"@*@":"@*@"}
           }
         ],
-        "adjustments":@...@,
+        "adjustments":{"@*@":"@*@"},
         "id":@integer@,
         "number":null,
         "total":@integer@,
@@ -701,7 +831,9 @@ Feature: Orders
         "preparationTime":"@string@||@null@",
         "shippingTime":"@string@||@null@",
         "paymentMethod":"@string@||@null@",
-        "hasReceipt":@boolean@
+        "hasReceipt":@boolean@,
+        "invitation":null,
+        "events":@array@
       }
       """
 
@@ -758,12 +890,13 @@ Feature: Orders
       "@context":"/api/contexts/Order",
       "@id":"@string@.startsWith('/api/orders')",
       "@type":"http://schema.org/Order",
-      "customer":@...@,
-      "restaurant":@...@,
+      "customer":{"@*@":"@*@"},
+      "restaurant":{"@*@":"@*@"},
       "shippingAddress":{
         "@id":"/api/addresses/4",
         "@type":"http://schema.org/Place",
         "geo":{
+          "@type":"GeoCoordinates",
           "latitude":48.855799,
           "longitude":2.359207
         },
@@ -773,39 +906,61 @@ Feature: Orders
       },
       "items":[
         {
+          "@id":@string@,
+          "@type":"OrderItem",
           "id":@integer@,
           "quantity":1,
           "unitPrice":900,
           "total":900,
           "name":"Pizza",
+          "vendor":{"@*@":"@*@"},
+          "player":{"@*@":"@*@"},
           "adjustments":{
             "menu_item_modifier":[
               {
-                "id":1,
-                "label":"Pepperoni",
+                "id":@string@,
+                "label":"1 × Pepperoni",
                 "amount":0
+              }
+            ],
+            "tax":[
+              {
+                "id":@string@,
+                "label":"TVA 10%",
+                "amount":82
               }
             ]
           }
         },
         {
+          "@id":@string@,
+          "@type":"OrderItem",
           "id":@integer@,
           "quantity":2,
           "unitPrice":699,
           "total":1398,
           "name":"Fish and Chips",
+          "vendor":{"@*@":"@*@"},
+          "player":{"@*@":"@*@"},
           "adjustments":{
             "menu_item_modifier":[
               {
-                "id":3,
-                "label":"Gluten free",
+                "id":@string@,
+                "label":"1 × Gluten free",
                 "amount":0
+              }
+            ],
+            "tax":[
+              {
+                "id":@string@,
+                "label":"TVA 10%",
+                "amount":127
               }
             ]
           }
         }
       ],
-      "adjustments":@...@,
+      "adjustments":{"@*@":"@*@"},
       "id":@integer@,
       "number":null,
       "total":@integer@,
@@ -817,7 +972,18 @@ Feature: Orders
       "shippedAt":"@string@.startsWith('2017-09-02T12:30:00')",
       "preparationExpectedAt":null,
       "pickupExpectedAt":null,
-      "reusablePackagingEnabled": false
+      "reusablePackagingEnabled": false,
+      "reusablePackagingPledgeReturn":0,
+      "vendor":{"@*@":"@*@"},
+      "shippingTimeRange":["2017-09-02T12:25:00+02:00","2017-09-02T12:35:00+02:00"],
+      "takeaway":false,
+      "preparationTime":null,
+      "shippingTime":null,
+      "hasReceipt":false,
+      "paymentMethod":"CARD",
+      "assignedTo":null,
+      "invitation":null,
+      "events":@array@
     }
     """
 
@@ -983,9 +1149,9 @@ Feature: Orders
         "@context":"/api/contexts/Order",
         "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
-        "customer":@...@,
-        "restaurant":@...@,
-        "shippingAddress":@...@,
+        "customer":{"@*@":"@*@"},
+        "restaurant":{"@*@":"@*@"},
+        "shippingAddress":{"@*@":"@*@"},
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
@@ -994,6 +1160,8 @@ Feature: Orders
         "notes":null,
         "items":[
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":1,
             "quantity":3,
             "unitPrice":900,
@@ -1002,12 +1170,21 @@ Feature: Orders
             "adjustments":{
               "menu_item_modifier":[
                 {
-                  "id":1,
+                  "id":@string@,
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
+              ],
+              "tax":[
+                {
+                  "id":@string@,
+                  "label":"TVA 10%",
+                  "amount":245
+                }
               ]
-            }
+            },
+            "vendor":{"@*@":"@*@"},
+            "player":{"@*@":"@*@"}
           }
         ],
         "itemsTotal":@integer@,
@@ -1017,7 +1194,18 @@ Feature: Orders
         "taxTotal":@integer@,
         "preparationExpectedAt":null,
         "pickupExpectedAt":null,
-        "adjustments":@array@
+        "adjustments":@array@,
+        "reusablePackagingPledgeReturn":0,
+        "vendor":{"@*@":"@*@"},
+        "shippingTimeRange":["2017-09-02T12:25:00+02:00","2017-09-02T12:35:00+02:00"],
+        "takeaway":false,
+        "preparationTime":null,
+        "shippingTime":null,
+        "hasReceipt":false,
+        "paymentMethod":"CARD",
+        "assignedTo":null,
+        "invitation":null,
+        "events":@array@
       }
       """
 

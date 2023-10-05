@@ -2,16 +2,26 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
 use Sylius\Component\Inventory\Model\StockableInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ReusablePackaging implements StockableInterface
 {
+    public const TYPE_INTERNAL = 'internal';
+    public const TYPE_LOOPEAT = 'loopeat';
+    public const TYPE_DABBA = 'dabba';
+    public const TYPE_VYTAL = 'vytal';
+
     private $id;
 
     protected $restaurant;
 
     protected $price = 0;
 
+    /**
+     * @Groups({"restaurant"})
+     */
     protected $name;
 
     protected $onHold = 0;
@@ -19,6 +29,16 @@ class ReusablePackaging implements StockableInterface
     protected $onHand = 0;
 
     protected $tracked = false;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $type = self::TYPE_INTERNAL;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $data = [];
 
     public function getId()
     {
@@ -123,5 +143,44 @@ class ReusablePackaging implements StockableInterface
     public function getInventoryName(): ?string
     {
         return $this->getRestaurant()->getName();
+    }
+
+    /**
+     * @return array
+     */
+    public function getData(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param array $data
+     */
+    public function setData(array $data = [])
+    {
+        $this->data = $data;
+    }
+
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getAdjustmentLabel(TranslatorInterface $translator, int $units): string
+    {
+        if ($this->type === self::TYPE_LOOPEAT) {
+            return sprintf('%s × %s', $units, $this->getName());
+        }
+
+        return $translator->trans('order_item.adjustment_type.reusable_packaging', [
+            '%quantity%' => $units,
+        ]);
     }
 }

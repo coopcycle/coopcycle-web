@@ -14,6 +14,7 @@ use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\TaskRepository;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Vehicle;
+use AppBundle\Exception\NoDataException;
 use AppBundle\Utils\GeoUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
@@ -44,6 +45,10 @@ final class ColisActivDataExporter implements DataExporterInterface
 
         $deliveryIds = array_map(fn ($t) => $t['delivery'], $tasks);
         $deliveryIds = array_values(array_unique($deliveryIds));
+
+        if (count($deliveryIds) === 0) {
+            throw new NoDataException();
+        }
 
         // 2. We load all the tasks matching those deliveries
 

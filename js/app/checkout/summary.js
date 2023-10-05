@@ -1,7 +1,10 @@
 import Inputmask from 'inputmask'
 import numbro from 'numbro'
 import _ from 'lodash'
+import React from 'react'
+import { render } from 'react-dom'
 import { getCurrencySymbol } from '../i18n'
+import LoopeatReturns from './LoopeatReturns'
 
 require('gasparesganga-jquery-loading-overlay')
 
@@ -74,61 +77,34 @@ const updateTip = _.debounce(function() {
 
 }, 350)
 
-const loopeatIframe = document.querySelector('#modal-loopeat iframe');
-const wasChecked = $('#checkout_address_reusablePackagingEnabled').is(':checked');
-
-let preventUncheck = false;
-
 function submitForm() {
   $('#checkout_address_reusablePackagingEnabled').closest('form').submit();
 }
 
-function onMessage(e) {
-  if (e.source === loopeatIframe.contentWindow) {
-    var messageData = JSON.parse(e.data)
-    if (messageData && messageData.loopeat) {
-      if (messageData.loopeat.success) {
-        preventUncheck = true;
-        $('#modal-loopeat').modal('hide');
+$('#modal-loopeat').on('shown.bs.modal', function(e) {
+  const customerContainers = JSON.parse(e.relatedTarget.dataset.customerContainers)
+  const formats = JSON.parse(e.relatedTarget.dataset.formats)
+  const formatsToDeliver = JSON.parse(e.relatedTarget.dataset.formatsToDeliver)
+  const returns = JSON.parse(e.relatedTarget.dataset.returns)
+  const creditsCountCents = JSON.parse(e.relatedTarget.dataset.creditsCountCents)
+  const requiredAmount = JSON.parse(e.relatedTarget.dataset.requiredAmount)
 
-        $('#checkout_address_reusablePackagingEnabled').prop('checked', true);
-        submitForm();
-      } else {
-        $('#modal-loopeat').modal('hide');
-      }
-    }
-  }
-}
-window.addEventListener('message', onMessage, true);
-
-$('#modal-loopeat').on('shown.bs.modal', function() {
-  preventUncheck = false;
-});
-$('#modal-loopeat').on('hidden.bs.modal', function() {
-  if (!preventUncheck) {
-    $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
-    if (wasChecked) submitForm();
-  }
-});
-
-$('#loopeat-add-credit').on('click', function(e) {
-  e.preventDefault();
-
-  var required = $('#checkout_address_reusablePackagingEnabled').data('loopeatRequired');
-  var iframeUrl = $('#checkout_address_reusablePackagingEnabled').data('loopeatAuthorizeUrl');
-  var oAuthFlow = $('#checkout_address_reusablePackagingEnabled').data('loopeatOauthFlow');
-
-  if (iframeUrl) {
-    if (oAuthFlow === 'iframe') {
-      $('#modal-loopeat iframe').attr('src', iframeUrl + '&loopeats_required='+required);
-      $('#modal-loopeat').modal('show');
-    } else {
-      $('#modal-loopeat-redirect-warning [data-continue]')
-        .off('click')
-        .on('click', () => window.location.href = iframeUrl + '&loopeats_required='+required)
-      $('#modal-loopeat-redirect-warning').modal('show');
-    }
-  }
+  render(<LoopeatReturns
+    customerContainers={ customerContainers }
+    formats={ formats }
+    formatsToDeliver={ formatsToDeliver }
+    initialReturns={ returns }
+    creditsCountCents={ creditsCountCents }
+    requiredAmount={ requiredAmount }
+    closeModal={ () => $('#modal-loopeat').modal('hide') }
+    onChange={ returns => {
+      $('#loopeat_returns_returns').val(
+        JSON.stringify(returns)
+      )
+    }}
+    onSubmit={ () => {
+      document.querySelector('form[name="loopeat_returns"]').submit()
+    }} />, this.querySelector('.modal-body [data-widget="loopeat-returns"]'))
 });
 
 $('#dabba-add-credit').on('click', function(e) {
@@ -154,29 +130,13 @@ $('#checkout_address_reusablePackagingPledgeReturn').on('change', _.debounce(fun
 
 $('#checkout_address_reusablePackagingEnabled').on('change', function() {
   var isChecked = $(this).is(':checked');
-  var isLoopeat = $(this).data('loopeat') === true;
   var isVytal = $(this).data('vytal') === true;
   var isDabba = $(this).data('dabba') === true;
-  var iframeUrl = $(this).data('loopeatAuthorizeUrl');
-  var oAuthFlow = $(this).data('loopeatOauthFlow');
-  var hasCredentials = $(this).data('loopeatCredentials') === true;
   var expectedWallet = $(this).data('dabbaExpectedWallet');
   var hasDabbaCredentials = $(this).data('dabbaCredentials') === true;
   var dabbaAuthorizeUrl = $(this).data('dabbaAuthorizeUrl') + `&expected_wallet=${expectedWallet}`;
 
-  if (isLoopeat && !hasCredentials && isChecked && iframeUrl) {
-
-    if (oAuthFlow === 'iframe') {
-      $('#modal-loopeat iframe').attr('src', iframeUrl);
-      $('#modal-loopeat').modal('show');
-    } else {
-      $('#modal-loopeat-redirect-warning [data-continue]')
-        .off('click')
-        .on('click', () => window.location.href = iframeUrl)
-      $('#modal-loopeat-redirect-warning').modal('show');
-    }
-
-  } else if (isVytal) {
+  if (isVytal) {
 
     $('#modal-vytal').modal('show');
 
@@ -191,11 +151,6 @@ $('#checkout_address_reusablePackagingEnabled').on('change', function() {
     submitForm();
   }
 
-});
-
-$('#modal-loopeat-redirect-warning').on('hidden.bs.modal', function() {
-  $('#modal-loopeat-redirect-warning [data-continue]').off('click');
-  $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
 });
 
 $('#modal-vytal').on('hidden.bs.modal', function() {

@@ -942,7 +942,6 @@ nav.about_us: O nás
 receipt.line_item.tax_total: DPH
 form.settings.subject_to_vat.label: S DPH
 form.customize.motto.label: Slogan
-restaurant.form.section.loopeat: LoopEat
 order.reusable_packaging.pledge_return.disclaimer: Zákazník uvedl, že %count% balíčků
   bude vráceno
 form.time_slot.same_day_cutoff.help: Například podle vašeho výběru 11:00 se volby

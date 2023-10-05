@@ -9,6 +9,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class TopBarNotifications
 {
+    const NOTIFICATIONS_OFFSET = 20;
+
     private $redis;
     private $messageBus;
 
@@ -20,12 +22,12 @@ class TopBarNotifications
         $this->messageBus = $messageBus;
     }
 
-    public function getLastNotifications(UserInterface $user)
+    public function getNotifications(UserInterface $user, $page = 1)
     {
         $listKey = sprintf('user:%s:notifications', $user->getUsername());
         $hashKey = sprintf('user:%s:notifications_data', $user->getUsername());
 
-        $uuids = $this->redis->lrange($listKey, 0, 5);
+        $uuids = $this->redis->lrange($listKey, self::NOTIFICATIONS_OFFSET * ($page - 1) , (self::NOTIFICATIONS_OFFSET * $page) - 1);
 
         $notifications = [];
         foreach ($uuids as $uuid) {
@@ -54,6 +56,21 @@ class TopBarNotifications
             $this->redis->lrem($listKey, $uuid, 0);
             $this->redis->hdel($hashKey, $uuid);
         }
+
+        $count = $this->redis->llen($listKey);
+
+        $this->messageBus->dispatch(
+            new UpdateNotificationsCount($user->getUsername(), $count)
+        );
+    }
+
+    public function markAllAsRead(UserInterface $user)
+    {
+        $listKey = sprintf('user:%s:notifications', $user->getUsername());
+        $hashKey = sprintf('user:%s:notifications_data', $user->getUsername());
+
+        $this->redis->del($listKey);
+        $this->redis->del($hashKey);
 
         $count = $this->redis->llen($listKey);
 

@@ -1,9 +1,13 @@
 cube(`TasksExportUnified`, {
   sql: `
   SELECT
-    t.id AS task_id,
+    DISTINCT ON (t.id) t.id,
+    tci.position AS task_position,
     o.id AS order_id,
     o.number AS order_number,
+    o.total AS order_total,
+    (SELECT SUM(platform_fee.amount) FROM ${PlatformFee.sql()} platform_fee WHERE platform_fee.order_id = o.id GROUP BY platform_fee.order_id) AS order_fee_total,
+    (SELECT SUM(stripe_fee.amount) FROM ${StripeFee.sql()} stripe_fee WHERE stripe_fee.order_id = o.id GROUP BY stripe_fee.order_id) AS order_stripe_fee_total,
     t.type AS task_type,
     a.name AS address_name,
     a.street_address AS address_street_address,
@@ -19,8 +23,7 @@ cube(`TasksExportUnified`, {
     u.username AS task_courier,
     (SELECT string_agg(TaskTagging.tag_name, ', ') FROM ${TaskTagging.sql()} TaskTagging WHERE TaskTagging.resource_id = t.id GROUP BY TaskTagging.resource_id) AS tags,
     a.contact_name AS address_contact_name,
-    org.name AS task_organization_name,
-    tci.position AS task_position
+    org.name AS task_organization_name
   FROM task t
   JOIN address a ON a.id = t.address_id
   LEFT JOIN task_collection_item tci ON tci.task_id = t.id
@@ -29,17 +32,18 @@ cube(`TasksExportUnified`, {
   LEFT JOIN delivery d ON d.id = t.delivery_id
   LEFT JOIN sylius_order o ON o.id = d.order_id
   LEFT JOIN task_package tp ON tp.task_id = t.id
-  LEFT JOIN package p ON p.id=tp.package_id
-  LEFT JOIN task_event task_done ON task_done.id = (SELECT tde.id FROM ${TaskDoneEvent.sql()} tde WHERE tde.task_id=t.id ORDER BY tde.created_at DESC LIMIT 1)
-  LEFT JOIN task_event task_failed ON task_failed.id = (SELECT tfe.id FROM ${TaskFailedEvent.sql()} tfe WHERE tfe.task_id=t.id ORDER BY tfe.created_at DESC LIMIT 1)
-  LEFT JOIN task_event task_finished ON task_finished.id = (SELECT tfe.id FROM ${TaskFinishedEvent.sql()} tfe WHERE tfe.task_id=t.id ORDER BY tfe.created_at DESC LIMIT 1)
+  LEFT JOIN package p ON p.id = tp.package_id
+  LEFT JOIN task_event task_done ON task_done.id = (SELECT tde.id FROM ${TaskDoneEvent.sql()} tde WHERE tde.task_id = t.id ORDER BY tde.created_at DESC LIMIT 1)
+  LEFT JOIN task_event task_failed ON task_failed.id = (SELECT tfe.id FROM ${TaskFailedEvent.sql()} tfe WHERE tfe.task_id = t.id ORDER BY tfe.created_at DESC LIMIT 1)
+  LEFT JOIN task_event task_finished ON task_finished.id = (SELECT tfe.id FROM ${TaskFinishedEvent.sql()} tfe WHERE tfe.task_id = t.id ORDER BY tfe.created_at DESC LIMIT 1)
   LEFT JOIN api_user u ON u.id = t.assigned_to
   LEFT JOIN organization org ON org.id = t.organization_id
+  ORDER BY t.id, tci.position ASC
   `,
 
   dimensions: {
     taskId: {
-      sql: `task_id`,
+      sql: `id`,
       type: `number`,
     },
     orderId: {
@@ -49,6 +53,18 @@ cube(`TasksExportUnified`, {
     orderNumber: {
       sql: `order_number`,
       type: `string`,
+    },
+    orderTotal: {
+      sql: `order_total`,
+      type: `number`,
+    },
+    orderFeeTotal: {
+      sql: `order_fee_total`,
+      type: `number`,
+    },
+    orderStripeFeeTotal: {
+      sql: `order_stripe_fee_total`,
+      type: `number`,
     },
     taskType: {
       sql: `task_type`,

@@ -3,48 +3,54 @@
 namespace AppBundle\Entity\Sylius;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use AppBundle\Action\Cart\AddItem as AddCartItem;
 use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
+use AppBundle\Action\MyOrders;
 use AppBundle\Action\Order\Accept as OrderAccept;
+use AppBundle\Action\Order\AddPlayer as AddPlayer;
 use AppBundle\Action\Order\Assign as OrderAssign;
 use AppBundle\Action\Order\Cancel as OrderCancel;
+use AppBundle\Action\Order\Centrifugo as CentrifugoController;
 use AppBundle\Action\Order\CloneStripePayment;
+use AppBundle\Action\Order\CreateInvitation as CreateInvitationController;
 use AppBundle\Action\Order\CreateSetupIntentOrAttachPM;
 use AppBundle\Action\Order\Delay as OrderDelay;
 use AppBundle\Action\Order\Fulfill as OrderFulfill;
+use AppBundle\Action\Order\GenerateInvoice as GenerateInvoiceController;
+use AppBundle\Action\Order\Invoice as InvoiceController;
+use AppBundle\Action\Order\LoopeatFormats as LoopeatFormatsController;
+use AppBundle\Action\Order\MercadopagoPreference;
 use AppBundle\Action\Order\Pay as OrderPay;
-use AppBundle\Action\Order\Tip as OrderTip;
 use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
-use AppBundle\Action\Order\Centrifugo as CentrifugoController;
-use AppBundle\Action\Order\Invoice as InvoiceController;
-use AppBundle\Action\Order\GenerateInvoice as GenerateInvoiceController;
-use AppBundle\Action\Order\MercadopagoPreference;
-use AppBundle\Action\MyOrders;
+use AppBundle\Action\Order\Tip as OrderTip;
+use AppBundle\Action\Order\UpdateLoopeatFormats as UpdateLoopeatFormatsController;
+use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
+use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
+use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
+use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
+use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
 use AppBundle\Payment\MercadopagoPreferenceResponse;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Validator\Constraints\DabbaOrder as AssertDabbaOrder;
 use AppBundle\Validator\Constraints\IsOrderModifiable as AssertOrderIsModifiable;
-use AppBundle\Validator\Constraints\Order as AssertOrder;
 use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
+use AppBundle\Validator\Constraints\Order as AssertOrder;
 use AppBundle\Validator\Constraints\ShippingAddress as AssertShippingAddress;
 use AppBundle\Validator\Constraints\ShippingTimeRange as AssertShippingTimeRange;
 use AppBundle\Vytal\CodeAwareTrait as VytalCodeAwareTrait;
@@ -57,13 +63,13 @@ use Sylius\Component\Customer\Model\CustomerInterface;
 use Sylius\Component\Order\Model\AdjustmentInterface as BaseAdjustmentInterface;
 use Sylius\Component\Order\Model\Order as BaseOrder;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Sylius\Component\Promotion\Model\PromotionInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
+use Sylius\Component\Promotion\Model\PromotionInterface;
+use Sylius\Component\Taxation\Model\TaxRateInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
-use Sylius\Component\Taxation\Model\TaxRateInterface;
 use Webmozart\Assert\Assert as WMAssert;
 
 /**
@@ -333,6 +339,60 @@ use Webmozart\Assert\Assert as WMAssert;
  *        "summary"=""
  *      }
  *     },
+ *     "create_invitation"={
+ *      "method"="POST",
+ *      "path"="/orders/{id}/create_invitation",
+ *      "status"=200,
+ *      "security"="is_granted('session', object)",
+ *      "normalization_context"={"groups"={"cart"}},
+ *      "controller"=CreateInvitationController::class,
+ *      "validate"=false,
+ *      "openapi_context"={
+ *       "summary"="Generates an invitation link for an order"
+ *      }
+ *     },
+ *     "add_player"={
+ *      "method"="POST",
+ *      "path"="/orders/{id}/players",
+ *      "controller"=AddPlayer::class,
+ *     },
+ *     "loopeat_formats"={
+ *       "method"="GET",
+ *       "path"="/orders/{id}/loopeat_formats",
+ *       "controller"=LoopeatFormatsController::class,
+ *       "output"=LoopeatFormatsOutput::class,
+ *       "normalization_context"={"api_sub_level"=true},
+ *       "security"="is_granted('view', object)",
+ *       "openapi_context"={
+ *         "summary"="Get Loopeat formats for an order"
+ *       }
+ *     },
+ *     "update_loopeat_formats"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/loopeat_formats",
+ *       "controller"=UpdateLoopeatFormatsController::class,
+ *       "security"="is_granted('view', object)",
+ *       "input"=LoopeatFormatsOutput::class,
+ *       "validate"=false,
+ *       "normalization_context"={"groups"={"cart", "order"}},
+ *       "denormalization_context"={"groups"={"update_loopeat_formats"}},
+ *       "openapi_context"={
+ *         "summary"="Update Loopeat formats for an order"
+ *       }
+ *     },
+ *     "update_loopeat_returns"={
+ *       "method"="POST",
+ *       "path"="/orders/{id}/loopeat_returns",
+ *       "controller"=UpdateLoopeatReturnsController::class,
+ *       "security"="is_granted('session', object)",
+ *       "input"=LoopeatReturns::class,
+ *       "validate"=false,
+ *       "normalization_context"={"groups"={"cart"}},
+ *       "denormalization_context"={"groups"={"update_loopeat_returns"}},
+ *       "openapi_context"={
+ *         "summary"="Update Loopeat returns for an order"
+ *       }
+ *     },
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order_create"}},
@@ -407,6 +467,12 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $vendors;
 
+    protected $invitation;
+
+    protected $loopeatDetails;
+
+    protected ?OrderCredentials $loopeatCredentials = null;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -444,6 +510,15 @@ class Order extends BaseOrder implements OrderInterface
     public function setCustomer(?CustomerInterface $customer): void
     {
         $this->customer = $customer;
+
+        if (null !== $customer && $this->hasLoopEatCredentials()) {
+
+            WMAssert::isInstanceOf($this->customer, LoopeatOAuthCredentialsInterface::class);
+
+            $this->customer->setLoopeatAccessToken($this->loopeatCredentials->getLoopeatAccessToken());
+            $this->customer->setLoopeatRefreshToken($this->loopeatCredentials->getLoopeatRefreshToken());
+            $this->clearLoopEatCredentials();
+        }
     }
 
     public function getTaxTotal(): int
@@ -933,13 +1008,13 @@ class Order extends BaseOrder implements OrderInterface
 
             if ($product->isReusablePackagingEnabled()) {
 
-                $reusablePackaging = $product->getReusablePackaging();
-
-                if (null === $reusablePackaging) {
+                if (!$product->hasReusablePackagings()) {
                     continue;
                 }
 
-                $quantity += ceil($product->getReusablePackagingUnit() * $item->getQuantity());
+                foreach ($product->getReusablePackagings() as $reusablePackaging) {
+                    $quantity += ceil($reusablePackaging->getUnits() * $item->getQuantity());
+                }
             }
         }
 
@@ -955,15 +1030,14 @@ class Order extends BaseOrder implements OrderInterface
 
             if ($product->isReusablePackagingEnabled()) {
 
-                $reusablePackaging = $product->getReusablePackaging();
-
-                if (null === $reusablePackaging) {
+                if (!$product->hasReusablePackagings()) {
                     continue;
                 }
 
-                $quantity = ceil($product->getReusablePackagingUnit() * $item->getQuantity());
-
-                $amount += $reusablePackaging->getPrice() * $quantity;
+                foreach ($product->getReusablePackagings() as $reusablePackaging) {
+                    $quantity = ceil($reusablePackaging->getUnits() * $item->getQuantity());
+                    $amount += $reusablePackaging->getReusablePackaging()->getPrice() * $quantity;
+                }
             }
         }
 
@@ -1422,5 +1496,224 @@ class Order extends BaseOrder implements OrderInterface
     public function setNonprofit($nonprofit)
     {
         $this->nonprofit = $nonprofit;
+    }
+
+    public function getInvitation()
+    {
+        return $this->invitation;
+    }
+
+    public function createInvitation()
+    {
+        $this->invitation = new OrderInvitation();
+        $this->invitation->setOrder($this);
+    }
+
+    public function getRequiredAmountForLoopeat(): int
+    {
+        $amount = 0;
+        foreach ($this->getItems() as $item) {
+
+            $product = $item->getVariant()->getProduct();
+
+            if ($product->isReusablePackagingEnabled()) {
+
+                if (!$product->hasReusablePackagings()) {
+                    continue;
+                }
+
+                foreach ($product->getReusablePackagings() as $reusablePackaging) {
+                    $data = $reusablePackaging->getReusablePackaging()->getData();
+                    $amount += (int) ceil($data['cost_cents'] * ($item->getQuantity() * $reusablePackaging->getUnits()));
+                }
+            }
+        }
+
+        return $amount;
+    }
+
+    public function getFormatsToDeliverForLoopeat(): array
+    {
+        $formats = [];
+        foreach ($this->getItems() as $item) {
+
+            $product = $item->getVariant()->getProduct();
+
+            if ($product->isReusablePackagingEnabled()) {
+
+                if (!$product->hasReusablePackagings()) {
+                    continue;
+                }
+
+                foreach ($product->getReusablePackagings() as $reusablePackaging) {
+                    $data = $reusablePackaging->getReusablePackaging()->getData();
+                    $formats[] = [
+                        'format_id' => $data['id'],
+                        'quantity' => ($item->getQuantity() * $reusablePackaging->getUnits()),
+                    ];
+                }
+            }
+        }
+
+        return $formats;
+    }
+
+    private function getLoopeatDetails()
+    {
+        if (null === $this->loopeatDetails) {
+            $this->loopeatDetails = new LoopeatOrderDetails();
+            $this->loopeatDetails->setOrder($this);
+        }
+
+        return $this->loopeatDetails;
+    }
+
+    public function setLoopeatOrderId($loopeatOrderId)
+    {
+        $this->getLoopeatDetails()->setOrderId($loopeatOrderId);
+    }
+
+    public function getLoopeatOrderId()
+    {
+        return $this->getLoopeatDetails()->getOrderId();
+    }
+
+    public function setLoopeatReturns(array $returns = [])
+    {
+        $this->getLoopeatDetails()->setReturns($returns);
+    }
+
+    public function getLoopeatReturns()
+    {
+        return $this->getLoopeatDetails()->getReturns();
+    }
+
+    public function hasLoopeatReturns()
+    {
+        return $this->getLoopeatDetails()->hasReturns();
+    }
+
+    public function getReturnsAmountForLoopeat(): int
+    {
+        $reusablePackagings = $this->getRestaurant()->getReusablePackagings();
+
+        $findFormat = function ($formatId) use ($reusablePackagings) {
+            foreach ($reusablePackagings as $reusablePackaging) {
+                $data = $reusablePackaging->getData();
+                if ($data['id'] === $formatId) {
+                    return $data;
+                }
+            }
+        };
+
+        $amount = 0;
+        foreach ($this->getLoopeatReturns() as $return) {
+            $format = $findFormat($return['format_id']);
+            $amount += ($format['cost_cents'] * $return['quantity']);
+        }
+
+        return $amount;
+    }
+
+    public function setLoopeatDeliver(array $deliver = [])
+    {
+        $this->getLoopeatDetails()->setDeliver($deliver);
+    }
+
+    public function getLoopeatDeliver()
+    {
+        return $this->getLoopeatDetails()->getDeliver();
+    }
+
+    public function getLoopeatAccessToken()
+    {
+        if (null === $this->loopeatCredentials) {
+
+            return null;
+        }
+
+        return $this->loopeatCredentials->getLoopeatAccessToken();
+    }
+
+    public function setLoopeatAccessToken($accessToken)
+    {
+        if (null === $this->loopeatCredentials) {
+
+            $this->loopeatCredentials = new OrderCredentials();
+            $this->loopeatCredentials->setOrder($this);
+        }
+
+        $this->loopeatCredentials->setLoopeatAccessToken($accessToken);
+    }
+
+    public function getLoopeatRefreshToken()
+    {
+        if (null === $this->loopeatCredentials) {
+
+            return null;
+        }
+
+        return $this->loopeatCredentials->getLoopeatRefreshToken();
+    }
+
+    public function setLoopeatRefreshToken($refreshToken)
+    {
+        if (null === $this->loopeatCredentials) {
+
+            $this->loopeatCredentials = new OrderCredentials();
+            $this->loopeatCredentials->setOrder($this);
+        }
+
+        $this->loopeatCredentials->setLoopeatRefreshToken($refreshToken);
+    }
+
+    public function hasLoopEatCredentials(): bool
+    {
+        return null !== $this->loopeatCredentials && $this->loopeatCredentials->hasLoopEatCredentials();
+    }
+
+    public function clearLoopEatCredentials()
+    {
+        if (null === $this->loopeatCredentials) {
+
+            return;
+        }
+
+        $this->loopeatCredentials->setOrder(null);
+        $this->loopeatCredentials = null;
+    }
+
+    public function getLoopeatReturnsCount(): int
+    {
+        $count = 0;
+
+        foreach ($this->getLoopeatReturns() as $return) {
+            $count += $return['quantity'];
+        }
+
+        return $count;
+    }
+
+    public function getLoopeatReturnsAsText(): string
+    {
+        $text = '';
+
+        $reusablePackagings = $this->getRestaurant()->getReusablePackagings();
+
+        $findFormat = function ($formatId) use ($reusablePackagings) {
+            foreach ($reusablePackagings as $reusablePackaging) {
+                $data = $reusablePackaging->getData();
+                if ($data['id'] === $formatId) {
+                    return $data;
+                }
+            }
+        };
+
+        foreach ($this->getLoopeatReturns() as $return) {
+            $format = $findFormat($return['format_id']);
+            $text .= "‒ {$format['title']} × {$return['quantity']}\n";
+        }
+
+        return $text;
     }
 }

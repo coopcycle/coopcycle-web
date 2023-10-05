@@ -5,12 +5,9 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\UserTrait;
-use AppBundle\Sylius\Order\AdjustmentInterface;
-use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Order\OrderItemInterface;
-use AppBundle\Entity\Cuisine;
-use AppBundle\Entity\User;
+use AppBundle\Domain\Order\Event\OrderUpdated;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
@@ -29,7 +26,7 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Cart\RestaurantResolver;
-use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\RestaurantFilter;
@@ -37,26 +34,23 @@ use AppBundle\Utils\SortableRestaurantIterator;
 use AppBundle\Utils\ValidationUtils;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Geotools;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
-use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
@@ -65,6 +59,7 @@ use Psr\Log\LoggerInterface;
 class RestaurantController extends AbstractController
 {
     use UserTrait;
+    use InjectAuthTrait;
 
     const ITEMS_PER_PAGE = 21;
 
@@ -107,7 +102,10 @@ class RestaurantController extends AbstractController
         $orderModifier,
         OrderTimeHelper $orderTimeHelper,
         SerializerInterface $serializer,
-        RestaurantFilter $restaurantFilter)
+        RestaurantFilter $restaurantFilter,
+        private EventBus $eventBus,
+        protected JWTTokenManagerInterface $JWTTokenManager
+    )
     {
         $this->orderManager = $orderManager;
         $this->validator = $validator;
@@ -457,12 +455,12 @@ class RestaurantController extends AbstractController
             }
         }
 
-        return $this->render('restaurant/index.html.twig', array(
+        return $this->render('restaurant/index.html.twig', $this->auth([
             'restaurant' => $restaurant,
             'times' => $this->orderTimeHelper->getTimeInfo($cart),
             'cart_form' => $cartForm->createView(),
             'addresses_normalized' => $this->getUserAddresses(),
-        ));
+        ]));
     }
 
     /**
@@ -483,7 +481,11 @@ class RestaurantController extends AbstractController
         $cart = $cartContext->getCart();
 
         $user = $this->getUser();
-        if ($request->request->has('address') && $user && count($user->getAddresses()) > 0) {
+        if ($request->request->has('address') && $user && count($user->getAddresses()) > 0)
+        {
+            if (is_null($cart->getCustomer())) {
+                $cart->setCustomer($user->getCustomer());
+            }
 
             $addressIRI = $request->request->get('address');
 
@@ -567,6 +569,7 @@ class RestaurantController extends AbstractController
             $this->orderManager->flush();
         }
 
+        $this->eventBus->handle(new OrderUpdated($cart));
         return $this->jsonResponse($cart, $errors);
     }
 
@@ -631,6 +634,8 @@ class RestaurantController extends AbstractController
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
 
+        $this->eventBus->handle(new OrderUpdated($cart));
+
         return $this->jsonResponse($cart, $errors);
     }
 
@@ -691,6 +696,7 @@ class RestaurantController extends AbstractController
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
 
+        $this->eventBus->handle(new OrderUpdated($cart));
         return $this->jsonResponse($cart, $errors);
     }
 
@@ -716,6 +722,7 @@ class RestaurantController extends AbstractController
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
 
+        $this->eventBus->handle(new OrderUpdated($cart));
         return $this->jsonResponse($cart, $errors);
     }
 
@@ -754,7 +761,6 @@ class RestaurantController extends AbstractController
 
     /**
      * @Route("/restaurants/suggest", name="restaurants_suggest")
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
     public function suggestRestaurantAction(Request $request,
         EntityManagerInterface $manager,
@@ -762,6 +768,8 @@ class RestaurantController extends AbstractController
         SettingsManager $settingsManager,
         TranslatorInterface $translator)
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         if ('yes' !== $settingsManager->get('enable_restaurant_pledges')) {
             throw new NotFoundHttpException();
         }
@@ -800,10 +808,11 @@ class RestaurantController extends AbstractController
 
     /**
      * @Route("/restaurant/{id}/vote", name="restaurant_vote", methods={"POST"})
-     * @IsGranted("IS_AUTHENTICATED_FULLY")
      */
     public function voteAction($id, SettingsManager $settingsManager)
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         if ('yes' !== $settingsManager->get('enable_restaurant_pledges')) {
             throw new NotFoundHttpException();
         }

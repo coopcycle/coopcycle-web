@@ -26,30 +26,6 @@
           </div>
         </div>
 
-        {% if gateway == 'mercadopago' and (mercadopago_can_enable_testmode() or mercadopago_can_enable_livemode()) %}
-          <div id="mercadopago_identification_fields" style="display: none;">
-            <h4 class="bg-light p-3 m-0 mb-4">{{ 'order.payer.title'|trans }}</h4>
-            <div class="form-group">
-              <label for="email">{{ 'order.payer.email'|trans }}</label>
-              <input class="form-control" id="email" name="email" type="text" />
-            </div>
-            {#
-            In Mexico, we don't need identification documents
-            https://www.mercadopago.com.br/developers/en/guides/resources/localization/identification-types/
-            #}
-            {% if country != 'mx' %}
-              <div class="form-group">
-                <label for="docType">{{ 'order.payer.identificationType'|trans }}</label>
-                <select class="form-control" id="docType" name="docType" data-checkout="docType" type="text"></select>
-              </div>
-              <div class="form-group">
-                <label for="docNumber">{{ 'order.payer.identificationNumber'|trans }}</label>
-                <input class="form-control" id="docNumber" name="docNumber" data-checkout="docNumber" type="text"/>
-              </div>
-            {% endif %}
-          </div>
-        {% endif %}
-
         <div>
           <h4 class="bg-light p-3 m-0 mb-4">{% trans %}order.payment.title{% endtrans %}</h4>
           <div>
@@ -129,7 +105,7 @@
 {% endif %}
 
 {% if gateway == 'mercadopago' and (mercadopago_can_enable_testmode() or mercadopago_can_enable_livemode()) %}
-<script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
+<script src="https://sdk.mercadopago.com/js/v2"></script>
 {% set gateway_configs = gateway_configs|merge({
   mercadopago: {
     publishableKey: coopcycle_setting('mercadopago_publishable_key'),

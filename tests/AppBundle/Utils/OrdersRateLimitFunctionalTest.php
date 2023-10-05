@@ -61,6 +61,7 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
 
     	$order = $this->prophesize(Order::class);
     	$order->getId()->willReturn($id);
+        $order->hasVendor()->willReturn(true);
     	$order->isMultiVendor()->willReturn(false);
     	$order->getRestaurant()->willReturn($restaurant);
     	$order->getTimeline()->willReturn($timeline->reveal());

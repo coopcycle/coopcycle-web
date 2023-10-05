@@ -293,7 +293,6 @@ restaurant.contract.restaurantPaysStripeFee.help: Escolha quem será responsáve
   custo das taxas do Stripe e pelo gerenciamento de reembolsos e estornos
 restaurant.contract.restaurantPaysStripeFee.label: Responsável pelo custo das taxas,
   reembolsos e estornos do Stripe
-restaurant.form.section.loopeat: LoopEat
 restaurant.form.section.taxonomy: Taxonomia
 restaurant.form.fulfillment_methods.label: Métodos de preenchimento
 restaurant.form.giropay_enabled.label: Habilitar Giropay

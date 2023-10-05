@@ -88,7 +88,9 @@ Feature: Food Tech
               "tip":[]
             },
             "paymentMethod": "CARD",
-            "hasReceipt":@boolean@
+            "hasReceipt":@boolean@,
+            "invitation": "@string@||@null@",
+            "events":@array@
           }
         ],
         "hydra:totalItems":1,
@@ -175,7 +177,8 @@ Feature: Food Tech
         "shippedAt":"2018-08-27T12:30:00+02:00",
         "preparationExpectedAt":"2018-08-27T12:25:00+02:00",
         "pickupExpectedAt":"2018-08-27T12:35:00+02:00",
-        "adjustments":@...@
+        "adjustments":{"@*@": "@*@"},
+        "events":@array@
       }
       """
 
@@ -591,7 +594,8 @@ Feature: Food Tech
         "image":@string@,
         "isOpen":false,
         "nextOpeningDate":@string@,
-        "hub":null
+        "hub":null,
+        "loopeatEnabled":false
       }
       """
 

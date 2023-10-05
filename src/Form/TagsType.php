@@ -6,6 +6,7 @@ use AppBundle\Entity\Tag;
 use AppBundle\Entity\Model\TaggableInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -13,6 +14,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class TagsType extends AbstractType
 {
@@ -25,35 +27,36 @@ class TagsType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+        $builder->addModelTransformer(new CallbackTransformer(
+            function ($tagsAsArray): string {
+                return implode(' ', $tagsAsArray);
+            },
+            function ($tagsAsString): array {
+                return explode(' ', $tagsAsString);
+            }
+        ));
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
 
             $form = $event->getForm();
-            $taggable = $form->getParent()->getData();
+
+            $propertyAccessor = PropertyAccess::createPropertyAccessor();
+
+            $parentPropertyPath = $form->getPropertyPath()->getParent();
+
+            $taggable = $parentPropertyPath === null ? $form->getParent()->getData() : $propertyAccessor->getValue($form->getParent()->getData(), $parentPropertyPath);
 
             if (!$taggable instanceof TaggableInterface) {
                 return;
             }
 
-            $tags = $taggable->getTags();
-
-            if (!empty($tags)) {
-                $event->setData(implode(' ', $tags));
+            // As the "tags" property isn't mapped directly to objects,
+            // we need to force Doctrine to schedule an update.
+            // Otherwise, TaggableSubscriber won't detect the change.
+            $unitOfWork = $this->objectManager->getUnitOfWork();
+            if ($unitOfWork->isInIdentityMap($taggable)) {
+                $this->objectManager->getUnitOfWork()->scheduleForUpdate($taggable);
             }
-        });
-
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-
-            $form = $event->getForm();
-            $taggable = $form->getParent()->getData();
-
-            if (!$taggable instanceof TaggableInterface) {
-                return;
-            }
-
-            $tagsAsString = $event->getData();
-            $slugs = explode(' ', $tagsAsString);
-
-            $taggable->setTags($slugs);
         });
     }
 

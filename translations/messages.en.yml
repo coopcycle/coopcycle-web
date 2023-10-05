@@ -177,7 +177,7 @@ restaurant.form.exclusive.label: This restaurant is exclusive
 restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (e.g.:
   catering)'
 restaurant.form.loopeat_enabled.label: Enable LoopEat deposit-refund system
-restaurant.form.loopeat_disconnect.label: Disconnect LoopEat
+restaurant.form.loopeat_disconnect.label: Disconnect %name%
 restaurant.form.featured.label: This restaurant is featured on homepage
 restaurant.form.giropay_enabled.label: Enable Giropay
 restaurant.form.fulfillment_methods.label: Fulfillment methods
@@ -187,7 +187,6 @@ restaurant.form.section.fulfillment: Fulfillment
 restaurant.form.section.payment: Payment
 restaurant.form.section.settlement: Settlement
 restaurant.form.section.taxonomy: Taxonomy
-restaurant.form.section.loopeat: LoopEat
 restaurant.form.cuisines.label: Cuisines
 restaurant.contract.title: Contract
 restaurant.deliveryPerimeterExpression.title: Delivery perimeter
@@ -869,6 +868,8 @@ basics.send_invitation: Send an invitation
 basics.send_invitation.confirm: Your invitation has been sent! You can now edit the
   settings of the new user.
 basics.configure: Configure
+basics.select_all: Select all
+basics.delete_selected: Delete selected
 profile.password.change: Change your password
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?
@@ -966,9 +967,9 @@ form.delivery_import.file.label: File
 form.delivery_import.store.label: Store
 basics.view_example: View example
 notifications.restaurant.new_order: New order to accept
-profile.loopeat.connect: Connect my LoopEat account
-profile.loopeat.connected: LoopEat account connected
-profile.loopeat.disconnect: Disconnect LoopEat
+profile.loopeat.connect: Connect my %name% account
+profile.loopeat.connected: '%name% account connected'
+profile.loopeat.disconnect: Disconnect %name%
 basics.free: free
 task.receipt.greeting: Dear customer,
 task.receipt.message: Hereby we confirm that we have delivered your parcel at <strong>%address%</strong>
@@ -1120,7 +1121,7 @@ refund.list.disclaimer.admin: "When the platform is responsible for the incident
   \ merchant actually refunded the customer."
 form.time_slot.choices.error.empty: The list of choices cannot be empty
 form.attach_to_org.modal.title: Attach to store
-loopeat.oauth_connect.success: LoopEat account connected successfully!
+loopeat.oauth_connect.success: '%name% account connected successfully!'
 loopeat.oauth_redirect.warning: You will be redirected to the LoopEat website to login
   or create your account
 authentication.register_benefits: Register for a faster checkout experience. You will
@@ -1298,3 +1299,15 @@ integration.created.message: The integration has been created.
 profile.dabba.disconnect: Disconnect Dabba
 form.task_export.colisactiv.label: Export using ColivActiv format
 form.task_export.format.label: Export format
+tasks.mark_as_done.has_previous: 'Task #%failed_task% could not be completed because it has a previous task #%previous_task% which must be completed first.'
+import.errors.at.row: Errors at row %row_number%
+import.address.geocode.error: Could not geocode address %failed_address%
+import.time.range.error: Time range "%value%" in %key% is not valid
+import.successful.rows: 'Your file was processed and %count% deliveries were created for rows: %rows%'
+import.delivery.price.error.priceCalculation.row: The delivery price could not be calculated for row %row_number%
+import.unsuccessful.rows: "There were errors and deliveries could not be created for rows: %rows%."
+security.login.remember_me: Remember me
+stores.filters.input.placeholder: "Search by address, name or #id"
+basics.filter: "Filter"
+stores.search.results_for: 'Search results for <mark>%query%</mark>'
+activity.task.rescheduled: "@%owner% has rescheduled task #task/%aggregate_id%\n"

@@ -2,11 +2,11 @@
 
 namespace AppBundle\Spreadsheet;
 
-use Box\Spout\Reader\ReaderFactory;
-use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Common\Type;
 use League\Flysystem\File;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Reader\IReader;
+use PhpOffice\PhpSpreadsheet\Reader\Ods;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 abstract class AbstractSpreadsheetParser
 {
@@ -48,51 +48,23 @@ abstract class AbstractSpreadsheetParser
         throw new \Exception('Unsupported file type');
     }
 
-    protected function createReader($filename)
+    protected function createReader($filename): IReader
     {
         $mimeType = mime_content_type($filename);
 
         if (in_array($mimeType, self::MIME_TYPE_CSV)) {
-            return $this->createCsvReader($filename);
+            return new Csv();
         }
 
         if (in_array($mimeType, self::MIME_TYPE_ODS)) {
-            return ReaderEntityFactory::createODSReader();
+            return new Ods();
         }
 
         if (in_array($mimeType, self::MIME_TYPE_XLSX)) {
-            return ReaderEntityFactory::createXLSXReader();
+            return new Xlsx();
         }
 
         throw new \Exception('Unsupported file type');
-    }
-
-    protected function createCsvReader($filename)
-    {
-        $csvReader = ReaderEntityFactory::createCSVReader();
-        $csvReader->setFieldDelimiter($this->getCsvDelimiter($filename));
-
-        return $csvReader;
-    }
-
-    protected function getCsvDelimiter($filename)
-    {
-        $delimiters = array(
-            ';' => 0,
-            ',' => 0,
-            "\t" => 0,
-            '|' => 0,
-        );
-
-        $handle = fopen($filename, "r");
-        $firstLine = fgets($handle);
-        fclose($handle);
-
-        foreach ($delimiters as $delimiter => &$count) {
-            $count = count(str_getcsv($firstLine, $delimiter));
-        }
-
-        return array_search(max($delimiters), $delimiters);
     }
 
     abstract public function validateHeader(array $header);
@@ -102,14 +74,14 @@ abstract class AbstractSpreadsheetParser
     /**
      * @param array $data
      * @param array $options
-     * @return array
+     * @return array|SpreadsheetParseResult
      */
-    abstract public function parseData(array $data, array $options = []): array;
+    abstract public function parseData(array $data, array $options = []): array | SpreadsheetParseResult;
 
     /**
      * @param File|string $file
      * @param array $options
-     * @throws IOException
+     * @throws \Exception
      */
     public function parse($file, array $options = [])
     {
@@ -121,7 +93,7 @@ abstract class AbstractSpreadsheetParser
             if ($file instanceof File) {
                 $tempnam = tempnam(sys_get_temp_dir(), 'coopcycle_spreadsheet_parser_');
                 if (false === file_put_contents($tempnam, $file->read())) {
-                    throw new IOException(sprintf('Could not write temp file %s', $tempnam));
+                    throw new \Exception(sprintf('Could not write temp file %s', $tempnam));
                 }
 
                 $isTempFile = true;
@@ -131,24 +103,24 @@ abstract class AbstractSpreadsheetParser
 
         $reader = $this->createReader($filename);
 
-        $reader->open($filename);
+        $spreadsheet = $reader->load($filename);
 
         $data = [];
         $header = [];
 
-        foreach ($reader->getSheetIterator() as $sheet) {
-            foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-                if ($rowIndex === 1) {
-                    $header = $row->toArray();
+        foreach ($spreadsheet->getWorksheetIterator() as $sheet) {
+            foreach ($sheet->toArray() as $rowIndex => $row) {
+                if ($rowIndex === 0) {
+                    $header = $row;
                     continue;
                 }
 
                 // Verify that the row is not completely empty
-                if (0 === count(array_filter($row->toArray()))) {
+                if (0 === count(array_filter($row))) {
                     continue;
                 }
 
-                $data[] = $row->toArray();
+                $data[] = $row;
             }
         }
 

@@ -71,13 +71,17 @@ const TaskTags = ({ task }) => {
   return null
 }
 
-const TaskIconRight = ({ task, assigned, onRemove }) => {
+const TaskIconRight = ({ task, onRemove }) => {
 
   const { t } = useTranslation()
-
-  if (assigned) {
+  if (task.isAssigned) {
     switch (task.status) {
     case 'TODO':
+
+      if (task.tour) {
+        return null
+      }
+
       return (
         <a
           href="#"
@@ -112,6 +116,22 @@ const TaskIconRight = ({ task, assigned, onRemove }) => {
         </span>
       )
     }
+  }
+
+  if (typeof onRemove === 'function') {
+
+    return (
+      <a
+        href="#"
+        className="task__icon task__icon--right"
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          onRemove(task)
+        }}
+        title={ t('ADMIN_DASHBOARD_UNASSIGN_TASK', { id: task.id }) }
+      ><i className="fa fa-times"></i></a>
+    )
   }
 
   return null
@@ -154,7 +174,7 @@ class Task extends React.Component {
 
   render() {
 
-    const { color, task, selected, isVisible, date, assigned } = this.props
+    const { color, task, selected, isVisible, date } = this.props
 
     const classNames = [
       'list-group-item',
@@ -207,10 +227,11 @@ class Task extends React.Component {
         <span className="list-group-item-color" style={{ backgroundColor: color }}></span>
         <span>
           <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
+          {task.metadata?.rescheduled ? <i className="task__icon task__icon--type fa fa-repeat"></i> : null}
           <TaskCaption task={ task } />
           <TaskAttrs task={ task } />
           <TaskTags task={ task } />
-          <TaskIconRight task={ task } assigned={ assigned } onRemove={ this.props.onRemove } />
+          <TaskIconRight task={ task } onRemove={ this.props.onRemove } />
           <TaskEta
             after={ task.after }
             before={ task.before }

@@ -11,3 +11,13 @@
   {{ block('form_help') }}
   {{ block('choice_widget_expanded') }}
 {% endblock %}
+
+{% block _product_reusablePackagings_entry_widget %}
+  <div class="d-flex mb-3">
+  {{ form_widget(form.reusablePackaging) }}
+  {{ form_widget(form.units, { attr: { class: 'ml-2' } }) }}
+  <button type="button" class="btn btn-transparent" data-reusable-packaging-delete>
+    <i class="fa fa-lg fa-close"></i>
+  </button>
+  </div>
+{% endblock %}

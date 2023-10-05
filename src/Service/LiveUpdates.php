@@ -10,9 +10,8 @@ use AppBundle\Domain\Task\Event as TaskEvent;
 use AppBundle\Entity\User;
 use AppBundle\Message\TopBarNotification;
 use AppBundle\Sylius\Order\OrderInterface;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use phpcent\Client as CentrifugoClient;
-use Redis;
 use Ramsey\Uuid\Uuid;
 use SimpleBus\Message\Name\NamedMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -25,7 +24,6 @@ class LiveUpdates
 {
     use TokenStorageTrait;
 
-    private $redis;
     private $userManager;
     private $serializer;
     private $translator;
@@ -34,7 +32,6 @@ class LiveUpdates
     private $namespace;
 
     public function __construct(
-        Redis $redis,
         UserManagerInterface $userManager,
         TokenStorageInterface $tokenStorage,
         SerializerInterface $serializer,
@@ -43,7 +40,6 @@ class LiveUpdates
         MessageBusInterface $messageBus,
         string $namespace)
     {
-        $this->redis = $redis;
         $this->userManager = $userManager;
         $this->tokenStorage = $tokenStorage;
         $this->serializer = $serializer;
@@ -108,18 +104,6 @@ class LiveUpdates
             'name' => $messageName,
             'data' => $data
         ];
-
-        //
-        // Redis (legacy)
-        //
-
-        $redisChannels = array_map(function (UserInterface $user) {
-            return sprintf('users:%s', $user->getUsername());
-        }, $users);
-
-        foreach ($redisChannels as $channel) {
-            $this->redis->publish($channel, json_encode($payload));
-        }
 
         //
         // Centrifugo

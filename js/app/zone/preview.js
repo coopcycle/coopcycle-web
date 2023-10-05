@@ -33,3 +33,18 @@ document.querySelectorAll('[data-zone]').forEach(el => {
   const layer = L.geoJSON(JSON.parse(el.dataset.zone)).addTo(map)
   MapHelper.fitToLayers(map, [ layer ])
 })
+
+document.querySelectorAll('[data-download]').forEach(el => {
+  const geojson = {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {},
+        "geometry": JSON.parse(el.dataset.download)
+      }]
+  };
+  const blob = new Blob([ JSON.stringify(geojson) ], { type: 'application/octet-stream' })
+  el.href = window.URL.createObjectURL(blob)
+  el.download = 'geojson-' + el.dataset.name + '.json'
+})

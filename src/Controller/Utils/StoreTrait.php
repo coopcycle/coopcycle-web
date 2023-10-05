@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
@@ -22,10 +23,11 @@ use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -347,7 +349,7 @@ trait StoreTrait
     }
 
     public function storeDeliveriesAction($id, Request $request, PaginatorInterface $paginator,
-        OrderManager $orderManager, DeliveryManager $deliveryManager, OrderFactory $orderFactory)
+        OrderManager $orderManager, DeliveryManager $deliveryManager, OrderFactory $orderFactory, DeliveryRepository $deliveryRepository)
     {
         $store = $this->getDoctrine()
             ->getRepository(Store::class)
@@ -367,14 +369,55 @@ trait StoreTrait
                 $routes['import_success'], $orderManager, $deliveryManager, $orderFactory,);
         }
 
-        $sections = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->getSections($store);
+        /** @var QueryBuilder $qb */
+        $qb = $deliveryRepository->createQueryBuilderWithTasks();
+
+        $filters = [
+            'enabled' => false,
+            'query' => null,
+            'range' => [null, null],
+        ];
+
+        if ($request->query->get('q')) {
+
+            $filters['enabled'] = true;
+            $filters['query'] = $request->query->get('q');
+
+            // Redirect startin with #
+            if (str_starts_with($filters['query'], '#')) {
+                $searchId = intval(trim($filters['query'], '#'));
+                if (null !== $deliveryRepository->find($searchId)) {
+                    return $this->redirectToRoute($this->getDeliveryRoutes()['view'], ['id' => $searchId]);
+                }
+            }
+
+            $deliveryRepository->searchWithSonic($qb, $filters['query'], $request->getLocale(), $store);
+
+        } else {
+            $qb
+                ->andWhere('d.store = :store')
+                ->setParameter('store', $store);
+        }
+
+        //TODO: Remove duplicated code (AdminController.php~L820)
+        if ($request->query->get('start_at') && $request->query->get('end_at')) {
+
+            $start = Carbon::parse($request->query->get('start_at'))->setTime(0, 0, 0)->toDateTime();
+            $end = Carbon::parse($request->query->get('end_at'))->setTime(23, 59, 59)->toDateTime();
+
+            $filters['enabled'] = true;
+            $filters['range'] = [$start, $end];
+
+            $qb
+                ->andWhere('d.createdAt BETWEEN :start AND :end')
+                ->setParameter('start', $start)
+                ->setParameter('end', $end);
+        }
 
         $deliveries = $paginator->paginate(
-            $sections['past'],
+            $filters['enabled'] ? $qb : $deliveryRepository->past($qb),
             $request->query->getInt('page', 1),
-            6,
+            10,
             [
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.doneBefore',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
@@ -387,8 +430,9 @@ trait StoreTrait
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'deliveries' => $deliveries,
-            'today' => $sections['today']->getQuery()->getResult(),
-            'upcoming' => $sections['upcoming']->getQuery()->getResult(),
+            'filters' => $filters,
+            'today' => $filters['enabled'] ?: $deliveryRepository->today($qb)->getQuery()->getResult(),
+            'upcoming' => $filters['enabled'] ?: $deliveryRepository->upcoming($qb)->getQuery()->getResult(),
             'routes' => $this->getDeliveryRoutes(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
@@ -537,5 +581,44 @@ trait StoreTrait
         );
 
         return $this->redirectToRoute($routeTo);
+    }
+
+    public function persistImportedDeliveries(
+        FormInterface $deliveryImportForm,
+        OrderManager $orderManager,
+        DeliveryManager $deliveryManager,
+        OrderFactory $orderFactory
+    )
+    {
+        $store = $deliveryImportForm->get('store')->getData();
+        $result = $deliveryImportForm->getData();
+
+        foreach ($result as $rowNumber => $delivery) {
+            $store->addDelivery($delivery);
+
+            $this->entityManager->persist($delivery);
+
+            if ($store->getCreateOrders()) {
+                try {
+                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
+                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price);
+
+                    $this->entityManager->persist($order);
+                    $this->entityManager->flush();
+
+                    $orderManager->onDemand($order);
+                } catch (NoRuleMatchedException $e) {
+                    $deliveryImportForm->addError(new FormError(
+                        $this->translator->trans('import.delivery.price.error.priceCalculation.row', [
+                            '%row_number%' => $rowNumber
+                        ])
+                    ));
+                }
+            }
+        }
+
+        $this->entityManager->flush();
+
+        return $result;
     }
 }

@@ -25,7 +25,7 @@ use AppBundle\Utils\TaskImageNamer;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\Query\Expr;
 use Nucleos\UserBundle\Model\UserInterface;
-use Nucleos\UserBundle\Model\UserManagerInterface;
+use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
@@ -108,6 +108,8 @@ trait AdminDashboardTrait
             $filename = sprintf('tasks-%s.csv', $date->format('Y-m-d'));
 
             $response = new Response($taskExport->csv);
+
+            $response->headers->set('Content-Type', 'text/csv');
             $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
                 ResponseHeaderBag::DISPOSITION_ATTACHMENT,
                 $filename

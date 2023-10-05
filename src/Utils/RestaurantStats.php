@@ -2,6 +2,7 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
@@ -709,8 +710,9 @@ class RestaurantStats implements \Countable
         $sql = 'SELECT ' . $rsm->generateSelectClause() . ' '
             . 'FROM sylius_order o '
             . 'LEFT JOIN sylius_order_vendor v ON (o.id = v.order_id) '
+            . 'LEFT JOIN sylius_order_event evt ON (o.id = evt.aggregate_id AND type = :event_type) '
             . 'WHERE '
-            . '(o.shipping_time_range && CAST(:range AS tsrange)) = true '
+            . 'evt.created_at BETWEEN :start AND :end '
             . 'AND o.state = :state'
             ;
 
@@ -722,7 +724,9 @@ class RestaurantStats implements \Countable
 
         $query = $this->entityManager->createNativeQuery($sql, $rsm);
         $query->setParameter('state', OrderInterface::STATE_FULFILLED);
-        $query->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d H:i:s'), $end->format('Y-m-d H:i:s')));
+        $query->setParameter('event_type', OrderFulfilled::messageName());
+        $query->setParameter('start', $start);
+        $query->setParameter('end', $end);
         if (null !== $restaurant) {
             $query->setParameter('restaurant', $restaurant);
         }

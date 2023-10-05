@@ -98,6 +98,9 @@
         <lifecycle-callback type="prePersist" method="prePersist"/>
         <lifecycle-callback type="preUpdate" method="preUpdate"/>
       </entity-listener>
+      <entity-listener class="AppBundle\LoopEat\TaskListener">
+        <lifecycle-callback type="prePersist" method="prePersist"/>
+      </entity-listener>
     </entity-listeners>
   </entity>
 </doctrine-mapping>

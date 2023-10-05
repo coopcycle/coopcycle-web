@@ -110,8 +110,7 @@ class FiltersModalContent extends React.Component {
               <div role="tabpanel" className="tab-pane active" id="filters_general">
                 <div className="dashboard__modal-filters__tabpane">
                   <Form layout="horizontal" component="div"
-                    labelCol={{ span: 18 }}
-                    wrapperCol={{ span: 6 }}
+                    labelCol={{ span: 8 }}
                     colon={ false }>
                     <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS') }>
                       <Switch
@@ -127,7 +126,13 @@ class FiltersModalContent extends React.Component {
                         defaultChecked={ values.showCancelledTasks }
                         onChange={ (checked) => setFieldValue('showCancelledTasks', checked) } />
                     </Form.Item>
-                    <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED') }>
+                    <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED') }
+                      help={
+                        <span className="help-block mt-1">
+                          <i className="fa fa-info-circle mr-1"></i>
+                          <span>{ this.props.t('ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED_HELP_TEXT') }</span>
+                        </span>
+                      }>
                       <Switch
                         checkedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
                         unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }

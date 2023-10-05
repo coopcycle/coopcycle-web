@@ -85,7 +85,7 @@ services:
 
   League\Flysystem\Filesystem $taskImportsFilesystem: '@task_imports_filesystem'
   League\Flysystem\Filesystem $receiptsFilesystem: '@receipts_filesystem'
-  Nucleos\UserBundle\Util\CanonicalizerInterface: '@nucleos_user.util.canonicalizer.default'
+  Nucleos\UserBundle\Util\Canonicalizer: '@nucleos_user.util.canonicalizer.simple'
 
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
 
@@ -101,7 +101,7 @@ services:
   Redis $tile38: '@snc_redis.tile38'
   Sylius\Component\Resource\Repository\RepositoryInterface $taxRateRepository: '@sylius.repository.tax_rate'
   League\Flysystem\Filesystem $taskImagesFilesystem: '@task_images_filesystem'
-  Nucleos\ProfileBundle\Mailer\MailerInterface: '@nucleos_profile.mailer.default'
+  Nucleos\ProfileBundle\Mailer\RegistrationMailer: '@nucleos_profile.mailer.simple'
   Lcobucci\JWT\Configuration $cubeJsJwtConfiguration: '@cubejs.jwt.config'
   Hashids\Hashids $hashids8: '@hashids.8'
   Hashids\Hashids $hashids12: '@hashids.12'
@@ -111,6 +111,7 @@ services:
   ACSEO\TypesenseBundle\Manager\DocumentManager: '@typesense.document_manager'
   ACSEO\TypesenseBundle\Client\CollectionClient: '@typesense.collection_client'
   ACSEO\TypesenseBundle\Client\TypesenseClient: '@typesense.client'
+  Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface: '@league.oauth2_server.factory.psr_http'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -133,16 +134,12 @@ services:
       - method: setLoopEatClientSecret
         arguments:
             - '%loopeat_client_secret%'
-      - method: setLoopEatPartnerId
-        arguments:
-            - '%loopeat_partner_id%'
-      - method: setLoopEatPartnerSecret
-        arguments:
-            - '%loopeat_partner_secret%'
     tags:
       - { name: monolog.logger, channel: loopeat }
 
-  AppBundle\LoopEat\Context:
+  AppBundle\LoopEat\Context: ~
+
+  AppBundle\LoopEat\ContextInitializer:
     tags:
       - { name: monolog.logger, channel: loopeat }
 
@@ -290,6 +287,8 @@ services:
   AppBundle\Sylius\OrderProcessing\OrderDepositRefundProcessor:
     arguments:
       $adjustmentFactory: "@sylius.factory.adjustment"
+      $loopeatProcessingFee: "%env(LOOPEAT_PROCESSING_FEE)%"
+      $loopeatProcessingFeeBehavior: "%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%"
     tags:
       - { name: sylius.order_processor, priority: 52 }
 
@@ -510,6 +509,14 @@ services:
     tags:
       - { name: doctrine.orm.entity_listener }
 
+  AppBundle\Entity\Listener\OrderInvitationListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
+  AppBundle\LoopEat\TaskListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
   AppBundle\EventListener\JwtListener:
     tags:
       - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess }
@@ -542,6 +549,15 @@ services:
       - method: setSecret
         arguments:
             - '%secret%'
+      - method: setSonicClient
+        arguments:
+            - '@Psonic\Client'
+      - method: setSonicSecretPassword
+        arguments:
+            - '%sonic_secret_password%'
+      - method: setSonicNamespace
+        arguments:
+            - '%sonic_namespace%'
 
   AppBundle\Service\Routing\Osrm: ~
 
@@ -697,7 +713,7 @@ services:
     public: true
     arguments:
       $confirmationEnabled: '%nucleos_profile.registration.confirmation.enabled%'
-      $mailer: '@nucleos_profile.mailer.default'
+      $mailer: '@nucleos_profile.mailer'
 
   AppBundle\Action\ResettingSendEmail:
     public: true
@@ -862,6 +878,8 @@ services:
   AppBundle\Api\DataTransformer\UrbantzWebhookInputDataTransformer: ~
   AppBundle\Api\DataTransformer\BioDeliverInputDataTransformer: ~
   AppBundle\Api\DataTransformer\TourInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\UpdateLoopeatFormatsDataTransformer: ~
+  AppBundle\Api\DataTransformer\UpdateLoopeatReturnsDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:
@@ -930,9 +948,7 @@ services:
       arguments: [ '@AppBundle\Api\Swagger\SwaggerDecorator.inner' ]
       autoconfigure: false
 
-  AppBundle\MessageHandler\ImportTasksHandler:
-    arguments:
-      $secret: '%secret%'
+  AppBundle\MessageHandler\ImportTasksHandler: ~
 
   AppBundle\MessageHandler\CalculateRouteHandler:
     arguments:
@@ -1015,6 +1031,7 @@ services:
         - cr
         - mx
         - cl
+        - co
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
 
   AppBundle\Payment\Gateway: ~
@@ -1247,3 +1264,18 @@ services:
     public: true
 
   AppBundle\Utils\OrdersRateLimit: ~
+
+  AppBundle\Sylius\Order\OrderInvitationContext: ~
+
+  coopcycle.sylius.order_modifier:
+    class: AppBundle\Sylius\Order\OrderModifier
+    decorates: sylius.order_modifier
+
+  AppBundle\CubeJs\HttpClient:
+    decorates: cubejs.client
+
+  AppBundle\Service\Tile38Helper:
+    arguments:
+      $fleetKey: '%tile38_fleet_key%'
+
+  AppBundle\Pricing\PricingManager: ~

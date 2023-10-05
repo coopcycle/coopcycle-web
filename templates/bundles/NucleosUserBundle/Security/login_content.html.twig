@@ -32,8 +32,8 @@
           <div class="form-group">
             <div class="checkbox">
               <label>
-                <input type="checkbox" id="remember_me" name="_remember_me" value="on" />
-                {{ 'security.login.remember_me'|trans }}
+                <input type="checkbox" id="remember_me" name="_remember_me" checked />
+                {{ 'security.login.remember_me'|trans({}, 'messages') }}
               </label>
             </div>
           </div>

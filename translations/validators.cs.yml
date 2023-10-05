@@ -1,4 +1,3 @@
-store.multi_drop.conflict: Nemůžete vytvářet objednávky a povolit více výdejů současně
 pricing_rule.expression.syntax_error: Syntaktická chyba ve výrazu "%expression%"
 order.shippingTimeRange.notAvailable: V současné době není k dispozici
 time_range_jump.next_day: Na dnešek již není možné objednat

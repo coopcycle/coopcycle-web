@@ -11,6 +11,7 @@ import {
   ORDER_REFUSED,
   ORDER_CANCELLED,
   ORDER_FULFILLED,
+  ORDER_DELAYED,
   FETCH_REQUEST,
   ACCEPT_ORDER_REQUEST_SUCCESS,
   ACCEPT_ORDER_REQUEST_FAILURE,
@@ -26,6 +27,11 @@ import {
   ACTIVE_TAB,
   INIT_HTTP_CLIENT,
   REFRESH_TOKEN_SUCCESS,
+  SET_REUSABLE_PACKAGINGS,
+  OPEN_LOOPEAT_SECTION,
+  CLOSE_LOOPEAT_SECTION,
+  SET_LOOPEAT_FORMATS,
+  UPDATE_LOOPEAT_FORMATS_SUCCESS,
 } from './actions'
 
 export const initialState = {
@@ -50,6 +56,9 @@ export const initialState = {
   httpClient: null,
   initialOrder: null,
   adhocOrderEnabled: false,
+  reusablePackagings: {},
+  isLoopeatSectionOpen: false,
+  loopeatFormats: [],
 }
 
 // The "force" parameter is useful for multi vendor orders,
@@ -142,6 +151,7 @@ export default (state = initialState, action = {}) => {
       'takeaway',
       'fulfillmentMethod',
       'paymentMethod',
+      'notes'
     ]))
 
     return {
@@ -183,6 +193,13 @@ export default (state = initialState, action = {}) => {
       orders: replaceOrder(state.orders, Object.assign({}, action.payload, { state: 'fulfilled' })),
     }
 
+  case ORDER_DELAYED:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload), true),
+    }
+
   case SET_CURRENT_ORDER:
 
     return {
@@ -218,6 +235,46 @@ export default (state = initialState, action = {}) => {
       ...state,
       jwt: action.payload
     }
+
+  case SET_REUSABLE_PACKAGINGS:
+
+    return {
+      ...state,
+      reusablePackagings: {
+        ...state.reusablePackagings,
+        [ action.payload.restaurant['@id'] ]: action.payload.reusablePackagings,
+      }
+    }
+
+  case SET_LOOPEAT_FORMATS:
+
+    return {
+      ...state,
+      loopeatFormats: action.payload,
+    }
+
+  case OPEN_LOOPEAT_SECTION:
+
+    return {
+      ...state,
+      isLoopeatSectionOpen: true,
+    }
+
+  case CLOSE_LOOPEAT_SECTION:
+
+    return {
+      ...state,
+      isLoopeatSectionOpen: false,
+    }
+
+  case UPDATE_LOOPEAT_FORMATS_SUCCESS:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, action.payload),
+      order: action.payload,
+    }
+
   }
 
   return state

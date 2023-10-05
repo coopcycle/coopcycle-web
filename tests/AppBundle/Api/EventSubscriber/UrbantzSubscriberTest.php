@@ -7,6 +7,7 @@ use AppBundle\Api\Resource\UrbantzWebhook;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -42,11 +43,14 @@ class UrbantzSubscriberTest extends TestCase
 
         $this->deliveryManager = $this->prophesize(DeliveryManager::class);
 
+        $this->pricingManager = $this->prophesize(PricingManager::class);
+
         $this->subscriber = new UrbantzSubscriber(
             $this->httpClient,
             $this->entityManager->reveal(),
             $this->storeExtractor->reveal(),
             $this->deliveryManager->reveal(),
+            $this->pricingManager->reveal(),
             new NullLogger(),
             'secret'
         );
@@ -170,5 +174,30 @@ class UrbantzSubscriberTest extends TestCase
             ->shouldBeCalled();
 
         $this->subscriber->addToStore($event);
+    }
+
+    public function testCreateOrder()
+    {
+        $httpKernel = $this->prophesize(HttpKernelInterface::class);
+
+        $request = Request::create('/api/urbantz/webhook/tasks_announced', 'POST', [], [], [], [], '');
+        $request->attributes->set('_route', 'api_urbantz_webhooks_receive_webhook_item');
+
+        $delivery = $this->prophesize(Delivery::class);
+
+        $controllerResult = new UrbantzWebhook(UrbantzWebhook::TASKS_ANNOUNCED);
+        $controllerResult->deliveries[] = $delivery->reveal();
+        $controllerResult->hub = '618a4fce108a386e4699725f';
+
+        $event = new ViewEvent(
+            $httpKernel->reveal(),
+            $request,
+            HttpKernelInterface::MAIN_REQUEST,
+            $controllerResult
+        );
+
+        $this->pricingManager->createOrder($delivery)->shouldBeCalled();
+
+        $this->subscriber->createOrder($event);
     }
 }

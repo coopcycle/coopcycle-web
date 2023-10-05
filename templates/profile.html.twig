@@ -65,7 +65,7 @@
           class="{{ app.request.attributes.get('_route') == 'profile_loopeat' ? 'active' : '' }}">
           <a href="{{ path('profile_loopeat') }}">
             <i class="fa fa-bar-chart mr-1"></i>
-            <span>{{ 'restaurant.form.section.loopeat'|trans }}</span>
+            <span>{{ loopeat_name() }}</span>
           </a>
         </li>
         {% endif %}

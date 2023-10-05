@@ -10,8 +10,13 @@
     <span class="menu-item-content">
       {% include '_partials/restaurant/menu_item_content.html.twig' %}
     </span>
-    <span class="menu-item-price">
-      {{ variant.price|price_format }}
+    <span class="d-flex align-items-center">
+      <span class="menu-item-price">
+        {{ variant.price|price_format }}
+      </span>
+      {% if product.isReusablePackagingEnabled() %}
+      <span class="label label-info ml-2">{{ 'restaurant.list.tags.zerowaste'|trans }}</span>
+      {% endif %}
     </span>
   </span>
   <span class="menu-item-image-wrapper">

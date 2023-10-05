@@ -15,9 +15,9 @@ use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LoopEatController extends AbstractController
@@ -27,12 +27,14 @@ class LoopEatController extends AbstractController
         string $loopeatClientId,
         string $loopeatClientSecret,
         string $loopeatOAuthFlow,
+        LoopEatClient $loopeatClient,
         LoggerInterface $logger)
     {
         $this->loopeatBaseUrl = $loopeatBaseUrl;
         $this->loopeatClientId = $loopeatClientId;
         $this->loopeatClientSecret = $loopeatClientSecret;
         $this->loopeatOAuthFlow = $loopeatOAuthFlow;
+        $this->loopeatClient = $loopeatClient;
         $this->logger = $logger;
     }
 
@@ -43,6 +45,7 @@ class LoopEatController extends AbstractController
             'code' => $code,
             'client_id' => $this->loopeatClientId,
             'client_secret' => $this->loopeatClientSecret,
+            'redirect_uri' => $this->generateUrl('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL),
         );
 
         $ch = curl_init(sprintf('%s/oauth/token', $this->loopeatBaseUrl));
@@ -90,17 +93,17 @@ class LoopEatController extends AbstractController
     }
 
     /**
-     * @Route("/loopeat/oauth/callback", name="loopeat_oauth_callback")
+     * @Route("/impec/oauth/callback", name="loopeat_oauth_callback")
      */
     public function connectStandardAccountAction(
         Request $request,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         EntityManagerInterface $objectManager,
-        SessionInterface $session,
         TranslatorInterface $translator)
     {
         if (!$request->query->has('state')) {
+            $this->logger->error('No "state" parameter found in request');
             throw $this->createAccessDeniedException();
         }
 
@@ -109,6 +112,7 @@ class LoopEatController extends AbstractController
         try {
             $payload = $jwtEncoder->decode($state);
         } catch (JWTDecodeFailureException $e) {
+            $this->logger->error('Could not decode JWT');
             throw $this->createAccessDeniedException();
         }
 
@@ -146,19 +150,26 @@ class LoopEatController extends AbstractController
         }
 
         // If the customer is not defined yet,
-        // we store the credentials in session
+        // we store the credentials in order
         // they will be attached to customer later
         if ($subject instanceof Order) {
-            $this->logger->info(sprintf('Storing LoopEat credentials for order #%d in session', $subject->getId()));
-            $session->set(sprintf('loopeat.order.%d.access_token', $subject->getId()), $data['access_token']);
-            $session->set(sprintf('loopeat.order.%d.refresh_token', $subject->getId()), $data['refresh_token']);
+            $this->logger->info(sprintf('Attaching LoopEat credentials to order #%d', $subject->getId()));
+        } elseif ($subject instanceof LocalBusiness) {
+            $this->logger->info(sprintf('Attaching LoopEat credentials to restaurant "%s"', $subject->getName()));
         } else {
-            $subject->setLoopeatAccessToken($data['access_token']);
-            $subject->setLoopeatRefreshToken($data['refresh_token']);
-            $objectManager->flush();
+            $this->logger->info(sprintf('Attaching LoopEat credentials to customer "%s"', $subject->getEmailCanonical()));
         }
 
-        $this->addFlash('notice', $translator->trans('loopeat.oauth_connect.success'));
+        $subject->setLoopeatAccessToken($data['access_token']);
+        $subject->setLoopeatRefreshToken($data['refresh_token']);
+
+        $objectManager->flush();
+
+        $initiative = $this->loopeatClient->initiative();
+
+        $this->addFlash('notice', $translator->trans('loopeat.oauth_connect.success', [
+            '%name%' => $initiative['name']
+        ]));
 
         return $this->redirect($this->getSuccessRedirect($payload));
     }

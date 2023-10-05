@@ -2,6 +2,8 @@
 
 namespace AppBundle\Form;
 
+use libphonenumber\PhoneNumberFormat;
+use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use AppBundle\Form\Type\LegalType;
 use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -14,6 +16,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use AppBundle\Enum\Optin;
 use AppBundle\Form\Type\TermsAndConditionsAndPrivacyPolicyType;
 
@@ -25,23 +28,44 @@ class RegistrationType extends AbstractTypeExtension
 
     public function __construct(
         SettingsManager $settingsManager,
+        string $country,
         bool $isDemo = false,
         bool $splitTermsAndConditionsAndPrivacyPolicy = false)
     {
         $this->settingsManager = $settingsManager;
         $this->isDemo = $isDemo;
         $this->splitTermsAndConditionsAndPrivacyPolicy = $splitTermsAndConditionsAndPrivacyPolicy;
+        $this->country = strtoupper($country);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if ('api' === $options['usage_context']) {
+
+            $builder
+                ->add('givenName', TextType::class)
+                ->add('familyName', TextType::class)
+                ->add('fullName', TextType::class, [
+                    'property_path' => 'customer.fullName'
+                ])
+                ->add('telephone', PhoneNumberType::class, [
+                    'required' => false,
+                    'format' => PhoneNumberFormat::NATIONAL,
+                    'default_region' => strtoupper($this->country)
+                ]);
+
+            return;
+        }
+
         if ($this->splitTermsAndConditionsAndPrivacyPolicy) {
             $builder->add('termsAndConditionsAndPrivacyPolicy', TermsAndConditionsAndPrivacyPolicyType::class, [
                 'label' => false,
                 'mapped' => false,
             ]);
         } else {
-            $builder->add('legal', LegalType::class);
+            $builder->add('legal', LegalType::class, [
+                'mapped' => false,
+            ]);
         }
 
         if ($this->isDemo) {
@@ -87,6 +111,15 @@ class RegistrationType extends AbstractTypeExtension
             $options['help'] = 'form.registration.username.help';
             $form->add('username', get_class($config->getType()->getInnerType()), $options);
         });
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'usage_context' => 'web',
+        ]);
+
+        $resolver->setAllowedValues('usage_context', ['web', 'api']);
     }
 
     public static function getExtendedTypes(): iterable

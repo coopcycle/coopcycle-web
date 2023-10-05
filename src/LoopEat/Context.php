@@ -2,75 +2,56 @@
 
 namespace AppBundle\LoopEat;
 
-use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
-use GuzzleHttp\Exception\RequestException;
-use Sylius\Component\Order\Context\CartContextInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
-use Symfony\Component\HttpFoundation\RequestStack;
+use AppBundle\Sylius\Order\OrderInterface;
 
 class Context
 {
-    private $client;
-    private $cartContext;
-    private $requestStack;
-    private $logger;
+    public $logoUrl;
+    public $name;
+    public $customerAppUrl;
+    public $hasCredentials = false;
+    public $formats = [];
 
-    private $loopeatBalance = 0;
-    private $loopeatCredit = 0;
+    public $creditsCountCents = 0;
+    public $containersCount = 0;
+    public $containersTotalAmount = 0;
+    public $requiredAmount = 0;
+    public $containers = [];
 
-    public function __construct(
-        Client $client,
-        CartContextInterface $cartContext,
-        RequestStack $requestStack,
-        LoggerInterface $logger = null)
+    public $returns = [];
+    public $returnsCount = 0;
+    public $returnsTotalAmount;
+
+    public $suggestion = self::SUGGESTION_NONE;
+
+    public const SUGGESTION_NONE = 'none';
+    public const SUGGESTION_RETURNS = 'returns';
+    public const SUGGESTION_ADD_CREDITS = 'add_credits';
+
+    public function suggest(OrderInterface $order): string
     {
-        $this->client = $client;
-        $this->cartContext = $cartContext;
-        $this->requestStack = $requestStack;
-        $this->logger = $logger ?? new NullLogger();
-    }
+        $missing = $this->requiredAmount - ($this->creditsCountCents + $order->getReturnsAmountForLoopeat());
+        $missing = $missing < 0 ? 0 : $missing;
 
-    public function initialize()
-    {
-        $order = $this->cartContext->getCart();
+        if ($this->containersCount === 0) {
 
-        if (null === $order || !$order->hasVendor() || $order->isMultiVendor()) {
+            if ($missing > 0) {
 
-            return;
-        }
-
-        $this->logger->info(sprintf('Initializing LoopEat context for order #%d', $order->getId()));
-
-        $adapter = new LoopEatAdapter($order, $this->requestStack->getSession());
-
-        if ($adapter->hasLoopEatCredentials()) {
-
-            try {
-
-                $loopeatCustomer = $this->client->currentCustomer($adapter);
-
-                $this->loopeatBalance = $loopeatCustomer['loopeatBalance'];
-                $this->loopeatCredit  = $loopeatCustomer['loopeatCredit'];
-
-                $this->logger->info(sprintf('LoopEat context for order #%d successfully initialized', $order->getId()));
-
-            } catch (RequestException $e) {
-                $this->logger->error($e->getMessage());
+                return self::SUGGESTION_ADD_CREDITS;
             }
 
-        } else {
-            $this->logger->info(sprintf('No LoopEat credentials found for order #%d', $order->getId()));
+            return self::SUGGESTION_NONE;
         }
-    }
 
-    public function getLoopeatBalance()
-    {
-        return $this->loopeatBalance;
-    }
+        if ($this->containersCount > 0) {
 
-    public function getLoopeatCredit()
-    {
-        return $this->loopeatCredit;
+            if ($order->getReturnsAmountForLoopeat() >= $this->requiredAmount) {
+                return self::SUGGESTION_NONE;
+            }
+
+            return self::SUGGESTION_RETURNS;
+        }
+
+        return self::SUGGESTION_NONE;
     }
 }

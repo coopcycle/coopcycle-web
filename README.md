@@ -31,6 +31,26 @@ Use [Docker for Windows](https://www.docker.com/docker-windows) which will provi
 Depending on your platform, Docker could be installed as Native or you have to install Docker toolbox which use VirtualBox instead of Hyper-V causing a lot a differences in implementations.
 If you have the luck to have a CPU that supports native Docker you can [share your hard disk as a virtual volume for your appliances](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/).
 
+Docker doesn't work under Windows, you need to install linux in hypervisualization. Follow the recommendations here to activate the necessary features under windows 11 and make sure you have an administrator account 
+  https://docs.docker.com/desktop/troubleshoot/topics/
+
+Download docker 
+https://www.docker.com/products/docker-desktop/
+Check in the BIOS that : 
+-hypervisualization (HYPER-V) 
+-Data Execution Prevention (DEP). 
+You can also use the following procedure for DEP: 
+Windows + r
+Search for sysdm.cpl
+Advanced system settings 
+In Performance, select settings data execution prevention  "enable for all except those I select...". click on apply 
+
+install, from your PowerShell WSL 2 terminal
+ https://learn.microsoft.com/en-us/windows/wsl/install
+
+configure your WSL 2 environment by creating a Linux administrator account. The password is not displayed (this is normal), so remember it.
+https://learn.microsoft.com/fr-fr/windows/wsl/setup/environment#file-storage
+
 #### Linux
 
 Follow [the instructions for your distribution](https://docs.docker.com/install/). `docker-compose` binary is to be installed independently.
@@ -72,6 +92,7 @@ docker-compose pull
 #### Start the Docker containers
 
 ```
+cp .env.dist .env
 docker-compose up
 ```
 

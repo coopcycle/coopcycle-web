@@ -14,20 +14,17 @@ services:
 
   AppBundle\Spreadsheet\ProductSpreadsheetParser: ~
 
-  AppBundle\Form\ApiRegistrationType:
-    arguments: ['%country_iso%']
-    tags:
-      - { name: form.type, alias: app_user_api_registration }
-
   AppBundle\Form\RegistrationType:
     arguments:
       $isDemo: '%is_demo%'
       $splitTermsAndConditionsAndPrivacyPolicy: '%env(bool:SPLIT_TERMS_AND_CONDITIONS_AND_PRIVACY_POLICY)%'
+      $country: '%country_iso%'
     tags:
-      - { name: form.type }
+      - { name: form.type_extension }
 
   AppBundle\Form\UpdateProfileType:
-    arguments: [ '@security.token_storage', '@translator', '%country_iso%' ]
+    arguments:
+      $countryIso: '%country_iso%'
     tags:
       - { name: form.type, alias: app_update_profile }
 
@@ -119,7 +116,6 @@ services:
 
   AppBundle\Form\Checkout\CheckoutAddressType:
     arguments:
-      $loopeatOAuthFlow: '%env(LOOPEAT_OAUTH_FLOW)%'
       $nonProfitsEnabled: '%env(bool:NONPROFITS_ENABLED)%'
     tags: [ form.type ]
 
@@ -264,4 +260,10 @@ services:
   AppBundle\Form\InviteUserType:
     arguments:
       - '@security.authorization_checker'
+    tags: [ form.type ]
+
+  AppBundle\Form\PackageWithQuantityType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Restaurant\LoopeatType:
     tags: [ form.type ]

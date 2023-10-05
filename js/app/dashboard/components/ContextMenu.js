@@ -1,13 +1,30 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import {connect} from 'react-redux'
 import _ from 'lodash'
-import { useTranslation } from 'react-i18next'
-import { Menu, Item } from 'react-contexify'
+import {useTranslation} from 'react-i18next'
+import {Item, Menu} from 'react-contexify'
 
 import moment from 'moment'
 
-import { unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay, openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal, openCreateTourModal } from '../redux/actions'
-import { selectNextWorkingDay, selectSelectedTasks, selectLinkedTasksIds } from '../redux/selectors'
+import {
+  cancelTasks,
+  moveTasksToNextDay,
+  moveTasksToNextWorkingDay,
+  moveToBottom,
+  moveToTop,
+  openAddTaskToGroupModal,
+  openCreateDeliveryModal,
+  openCreateGroupModal,
+  openCreateTourModal,
+  openTaskRescheduleModal,
+  removeTasksFromGroup,
+  restoreTasks, setCurrentTask,
+  unassignTasks
+} from '../redux/actions'
+import {selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks} from '../redux/selectors'
+import {selectUnassignedTasks} from '../../coopcycle-frontend-js/logistics/redux'
+
+import 'react-contexify/dist/ReactContexify.css'
 
 const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
 const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
@@ -20,12 +37,9 @@ const CREATE_GROUP = 'CREATE_GROUP'
 const ADD_TO_GROUP = 'ADD_TO_GROUP'
 const REMOVE_FROM_GROUP = 'REMOVE_FROM_GROUP'
 const RESTORE = 'RESTORE'
+const RESCHEDULE = 'RESCHEDULE'
 const CREATE_DELIVERY = 'CREATE_DELIVERY'
 const CREATE_TOUR = 'CREATE_TOUR'
-
-import { selectUnassignedTasks } from '../../coopcycle-frontend-js/logistics/redux'
-
-import 'react-contexify/dist/ReactContexify.css'
 
 function _unassign(tasksToUnassign, unassignTasks) {
   const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo)
@@ -33,9 +47,10 @@ function _unassign(tasksToUnassign, unassignTasks) {
 }
 
 const DynamicMenu = ({
-  unassignedTasks, selectedTasks, nextWorkingDay, linkedTasksIds,
+  unassignedTasks, selectedTasks, setCurrentTask, nextWorkingDay, linkedTasksIds,
   unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
-  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal, openCreateTourModal,
+  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal,
+  openCreateTourModal, openTaskRescheduleModal
 }) => {
 
   const { t } = useTranslation()
@@ -104,6 +119,10 @@ const DynamicMenu = ({
       }
 
       actions.push(CANCEL_MULTI)
+
+      if (selectedTask.status === 'FAILED' || selectedTask.status === 'CANCELLED') {
+        actions.push(RESCHEDULE)
+      }
 
     }
 
@@ -189,6 +208,15 @@ const DynamicMenu = ({
         { t('ADMIN_DASHBOARD_RESTORE') }
       </Item>
       <Item
+        hidden={ !actions.includes(RESCHEDULE) }
+        onClick={ () => {
+          setCurrentTask(selectedTasks[0])
+          openTaskRescheduleModal()
+        }}
+        >
+        { t('ADMIN_DASHBOARD_RESCHEDULE') }
+      </Item>
+      <Item
         hidden={ !actions.includes(CREATE_DELIVERY) }
         onClick={ () => openCreateDeliveryModal() }
       >
@@ -222,6 +250,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     unassignTasks: (username, tasks) => dispatch(unassignTasks(username, tasks)),
+    setCurrentTask: (task) => dispatch(setCurrentTask(task)),
     cancelTasks: tasks => dispatch(cancelTasks(tasks)),
     moveToTop: task => dispatch(moveToTop(task)),
     moveToBottom: task => dispatch(moveToBottom(task)),
@@ -233,6 +262,7 @@ function mapDispatchToProps(dispatch) {
     restoreTasks: tasks => dispatch(restoreTasks(tasks)),
     openCreateDeliveryModal: () => dispatch(openCreateDeliveryModal()),
     openCreateTourModal: () => dispatch(openCreateTourModal()),
+    openTaskRescheduleModal: () => dispatch(openTaskRescheduleModal()),
   }
 }
 

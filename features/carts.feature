@@ -90,7 +90,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -164,7 +165,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -238,7 +240,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod": "delivery"
+        "fulfillmentMethod": "delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -297,7 +300,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -359,7 +363,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -415,7 +420,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -478,7 +484,8 @@ Feature: Carts
           "tax":@array@,
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -534,7 +541,8 @@ Feature: Carts
           "tax": @array@,
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -585,6 +593,8 @@ Feature: Carts
         "notes":null,
         "items":[
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":@integer@,
             "quantity":2,
             "unitPrice":900,
@@ -609,7 +619,8 @@ Feature: Carts
             "vendor": {
               "@id":@string@,
               "name":@string@
-            }
+            },
+            "player": {"@*@":"@*@"}
           }
         ],
         "itemsTotal":1800,
@@ -634,7 +645,8 @@ Feature: Carts
           ],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -685,6 +697,8 @@ Feature: Carts
         "notes":null,
         "items":[
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":@integer@,
             "quantity":2,
             "unitPrice":900,
@@ -709,7 +723,8 @@ Feature: Carts
             "vendor": {
               "@id":@string@,
               "name":@string@
-            }
+            },
+            "player": {"@*@":"@*@"}
           }
         ],
         "itemsTotal":1800,
@@ -734,7 +749,8 @@ Feature: Carts
           ],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -785,6 +801,8 @@ Feature: Carts
         "notes":null,
         "items":[
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":1,
             "quantity":2,
             "unitPrice":900,
@@ -809,7 +827,8 @@ Feature: Carts
             "vendor": {
               "@id":@string@,
               "name":@string@
-            }
+            },
+            "player": null
           }
         ],
         "itemsTotal":1800,
@@ -834,15 +853,17 @@ Feature: Carts
           ],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
   Scenario: Obtain reusable packaging potential action (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
-      | products.yml        |
-      | restaurants.yml     |
+      | sylius_channels.yml    |
+      | products.yml           |
+      | restaurants.yml        |
+      | reusable_packaging.yml |
     And the setting "default_tax_category" has value "tva_livraison"
     And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
@@ -854,7 +875,7 @@ Feature: Carts
       | PIZZA     |
       | HAMBURGER |
     And the restaurant with id "1" has deposit-refund enabled
-    And the product with code "PIZZA" has reusable packaging enabled with unit "1"
+    And the product with code "PIZZA" has reusable packaging "Dummy" enabled with unit "1"
     Given there is a cart at restaurant with id "1"
     And there is a token for the last cart at restaurant with id "1"
     When I add "Content-Type" header equal to "application/ld+json"
@@ -959,6 +980,8 @@ Feature: Carts
         "notes":null,
         "items":[
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":1,
             "quantity":3,
             "unitPrice":900,
@@ -1031,6 +1054,8 @@ Feature: Carts
         "notes":null,
         "items":[
           {
+            "@id":@string@,
+            "@type":"OrderItem",
             "id":1,
             "quantity":3,
             "unitPrice":900,
@@ -1480,7 +1505,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -1550,7 +1576,8 @@ Feature: Carts
           "itemsTotal":0,
           "total":0,
           "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@"
         }
       }
       """
@@ -1598,7 +1625,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1631,7 +1659,8 @@ Feature: Carts
           "itemsTotal":0,
           "total":0,
           "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@"
         }
       }
       """
@@ -1679,7 +1708,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1712,7 +1742,8 @@ Feature: Carts
           "itemsTotal":0,
           "total":0,
           "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@"
         }
       }
       """
@@ -1760,7 +1791,8 @@ Feature: Carts
           "tax":[],
           "tip":[]
         },
-        "fulfillmentMethod":"delivery"
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@"
       }
       """
 
@@ -1857,7 +1889,8 @@ Feature: Carts
           "reusable_packaging":[],
           "tax":[],
           "tip":[]
-        }
+        },
+        "invitation": "@string@||@null@"
       }
       """
 

@@ -105,6 +105,7 @@
         "ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING": "Importation en cours…",
         "ADMIN_DASHBOARD_CANCEL_TASK_CONFIRM": "Êtes-vous sûr·e de vouloir annuler la tâche #{{id}} ?",
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Formats de fichiers supportés : csv, ods, xlsx",
+        "ADMIN_DASHBOARD_RESCHEDULE": "Relivrer",
         "USER_EDIT_ENABLED_LABEL": "Activé",
         "USER_EDIT_DISABLED_LABEL": "Désactivé",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Commande créée",
@@ -272,11 +273,28 @@
         "ADD_NEW_CREDIT_CARD": "Ajouter une nouvelle carte bancaire",
         "ADD_OR_SELECT_A_CARD_TO_PAY": "Veuillez sélectionner une carte existante, ou entrez une nouvelle carte",
         "EXPIRATION": "Expiration",
+        "INVITE_PEOPLE_TO_ADD_ITEMS": "Inviter des amis à la commande",
+        "GROUP_ORDER_PLAYER_NAME_LABEL": "Prénom",
+        "GROUP_ORDER_PLAYER_EMAIL_LABEL": "Email",
+        "GROUP_ORDER_TITLE": "Rejoindre la commande groupée ?",
+        "GROUP_ORDER_SUBTEXT": "Ajoutez des articles à cette commande et tout sera livré ensemble",
         "ORDERS_RATE_LIMIT": {
           "ORDER_UNIT": "commande(s)",
           "TIME_UNIT": "minute(s)",
           "NO_LIMIT": "Aucune limitation de commande",
           "LIMIT": "Un maximum de {{command}} commandes toutes les {{time}}"
-        }
+        },
+        "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED_HELP_TEXT": "Lorsque ce filtre est activé, aucun des autres filtres n'est appliqué aux tâches non assignées.",
+        "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Afficher le panneau des tournées",
+        "CART_LOOPEAT_RETURNS_VALIDATE": "Valider et retourner au panier",
+        "CART_LOOPEAT_RETURNS_SUMMARY": "Votre commande comporte les boîtes consignées suivantes",
+        "CART_LOOPEAT_RETURNS_TURN_OFF": "Annuler",
+        "CART_LOOPEAT_RETURNS_TURN_ON": "Sélectionner",
+        "CART_LOOPEAT_RETURNS_CREDITS_COUNT": "Montant de votre cagnotte",
+        "CART_LOOPEAT_RETURNS_RETURNS_AMOUNT": "Montant des retours",
+        "CART_LOOPEAT_RETURNS_RETURNS_DIFF": "Différence",
+        "CART_LOOPEAT_RETURNS_TYPE": "Type de boîte",
+        "CART_LOOPEAT_RETURNS_QUANTITY": "Quantité",
+        "ORDER_DELAYED_NOTIFICATION": "La commande {{orderNumber}} a été retardée. Nouveau créneau de livraison : {{shippingTimeRange}}"
     }
 }

@@ -9,6 +9,8 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Sylius\OrderEvent;
 use AppBundle\Entity\Vendor;
+use AppBundle\LoopEat\LoopeatAwareInterface;
+use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Customer\Model\CustomerAwareInterface;
@@ -26,7 +28,9 @@ interface OrderInterface extends
     PromotionSubjectInterface,
     PromotionCouponAwarePromotionSubjectInterface,
     CustomerAwareInterface,
-    OrderSupportInterface
+    OrderSupportInterface,
+    LoopeatAwareInterface,
+    LoopeatOAuthCredentialsInterface
 {
     public const STATE_ACCEPTED = 'accepted';
     public const STATE_REFUSED = 'refused';
@@ -218,4 +222,8 @@ interface OrderInterface extends
     public function getTipAmount();
 
     public function isFree(): bool;
+
+    public function isReusablePackagingEnabled();
+
+    public function getPaymentMethod(): ?string;
 }

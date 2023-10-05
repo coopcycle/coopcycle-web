@@ -260,6 +260,9 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #ECFFFD;
   border-bottom: 1px solid #BDFFF6;
   margin-top: -20px;
+  h3 {
+    color: white;
+  }
   .navbar {
     .navbar-toggle {
       background-color: darken(#ECFFFD, 50%);
@@ -269,6 +272,11 @@ h1, h2, h3, h4, h5, h6 {
       }
     }
   }
+}
+
+.dashboard-actions {
+  background-color: #ededed;
+  border-bottom: 1px solid darken(#ededed, 10%);
 }
 
 .btn-payment > .fa-spinner {

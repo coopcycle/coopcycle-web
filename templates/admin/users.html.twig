@@ -101,6 +101,7 @@
 <thead>
   <th>{% trans %}profile.email{% endtrans  %}</th>
   <th>{% trans %}profile.fullName{% endtrans  %}</th>
+  <th>{% trans %}adminDashboard.tags.title{% endtrans  %}</th>
   <th>{% trans %}profile.telephone{% endtrans  %}</th>
   <th class="text-right">{% trans %}adminDashboard.users.orders_count{% endtrans  %}</th>
   <th class="text-right">{% trans %}adminDashboard.users.registered_at{% endtrans  %}</th>
@@ -120,17 +121,22 @@
       {% if customer.fullName is not empty %}{{ customer.fullName }}{% endif %}
     </td>
     <td>
+      {% for tag in customer.tags|expand_tags %}
+      <span class="label label-default" style="background-color: {{ tag.color }};">{{ tag.slug }}</span>
+      {% endfor %}
+    </td>
+    <td>
       {% if customer.phoneNumber is not empty %}{{ customer.phoneNumber }}{% endif %}
     </td>
     <td class="text-right">
       {{ attributes[customer.emailCanonical]['orders_count'] }}
     </td>
     <td class="text-right">
-      {{ customer.createdAt|ago }}
+      {{ customer.createdAt|time_diff }}
     </td>
     <td class="text-right">
       {% if attributes[customer.emailCanonical]['last_order'] is not empty %}
-        {{ attributes[customer.emailCanonical]['last_order'].updatedAt|ago }}
+        {{ attributes[customer.emailCanonical]['last_order'].updatedAt|time_diff }}
       {% endif %}
     </td>
     <td class="text-right">
