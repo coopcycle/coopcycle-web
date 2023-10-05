@@ -21,6 +21,8 @@ jobs:
           php-version: 8.1
           tools: composer:v2
           extensions: redis
+        env:
+          GITHUB_TOKEN: ${{ secrets.COMPOSER_TOKEN }}
       - run: composer install --prefer-dist --no-progress --no-scripts
       - run: npm ci
       - name: Install dependencies
