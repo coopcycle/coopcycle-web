@@ -159,7 +159,10 @@ class SettingsType extends AbstractType
                 break;
         }
 
-        $builder->add('notifications', NotificationsType::class, ['mapped' => false]);
+        $builder->add('notifications', NotificationsType::class, [
+            'help' => 'form.settings.notifications.help',
+            'mapped' => false
+        ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 

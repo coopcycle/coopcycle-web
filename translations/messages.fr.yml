@@ -1322,3 +1322,4 @@ form.settings.notifications.task.done: Tâche terminée
 form.settings.notifications.task.failed: Tâche échouée
 form.settings.notifications.task.cancelled: Tâche annulée
 form.settings.notifications.task.rescheduled: Tâche reprogrammée
+form.settings.notifications.help: En désactivant les notifications pour les événements ci-dessous, les administrateurs ne recevront pas d'e-mails, ni de notifications dans la barre de menu.
