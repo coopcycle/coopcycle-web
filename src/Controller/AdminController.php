@@ -2570,5 +2570,4 @@ class AdminController extends AbstractController
             'vehicles' => $vehicles,
         ]);
     }
-
 }
