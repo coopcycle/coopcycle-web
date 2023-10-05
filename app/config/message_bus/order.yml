@@ -148,6 +148,7 @@ services:
       - '@coopcycle.settings_manager'
       - '@event_bus'
       - '@Symfony\Component\Messenger\MessageBusInterface'
+      - '@AppBundle\Service\NotificationPreferences'
     tags:
         - name: event_subscriber
           subscribes_to: order:created
