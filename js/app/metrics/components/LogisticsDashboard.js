@@ -53,19 +53,23 @@ const Dashboard = ({ cubejsApi, dateRange, allTags, tasksMetricsEnabled }) => {
           <ChartPanel title="Number of tasks">
             <NumberOfTasks cubejsApi={ cubejsApi } dateRange={ dateRange } tags={ selectedTags } />
           </ChartPanel>
-          <ChartPanel title="Tasks done on time, too early or too late">
-            <TasksDoneTiming
-              cubejsApi={ cubejsApi }
-              dateRange={ dateRange }
-              tags={ selectedTags } />
-          </ChartPanel>
-          <div/>
-          <ChartPanel title="Average number of minutes Tasks are done too early/late">
-            <AverageTiming
-              cubejsApi={ cubejsApi }
-              dateRange={ dateRange }
-              tags={ selectedTags } />
-          </ChartPanel>
+          {tasksMetricsEnabled && (
+            <>
+              <ChartPanel title="Tasks done on time, too early or too late">
+                <TasksDoneTiming
+                  cubejsApi={ cubejsApi }
+                  dateRange={ dateRange }
+                  tags={ selectedTags } />
+              </ChartPanel>
+              <div/>
+              <ChartPanel title="Average number of minutes Tasks are done too early/late">
+                <AverageTiming
+                  cubejsApi={ cubejsApi }
+                  dateRange={ dateRange }
+                  tags={ selectedTags } />
+              </ChartPanel>
+            </>
+          )}
         </div>
       </div>
       <div className="metrics-grid">
