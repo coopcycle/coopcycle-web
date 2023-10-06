@@ -45,6 +45,7 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":[],
             "weight":null,
+            "failureReason":null,
             "orgName":"",
             "images":[],
             "next":null,
@@ -80,6 +81,7 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":[],
             "weight":null,
+            "failureReason":null,
             "orgName":"",
             "images":[],
             "next":null,
@@ -114,6 +116,7 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":[],
             "weight":null,
+            "failureReason":null,
             "orgName":"",
             "images":[],
             "next":null,
@@ -149,6 +152,7 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":[],
             "weight":null,
+            "failureReason":null,
             "orgName":"",
             "images":[],
             "next":null,
@@ -541,6 +545,7 @@ Feature: Tasks
         "recurrenceRule": null,
         "metadata": [],
         "weight":null,
+        "failureReason":null,
         "packages": [],
         "createdAt":"@string@.isDateTime()",
         "tour":{
@@ -839,6 +844,7 @@ Feature: Tasks
         "recurrenceRule": null,
         "metadata": [],
         "weight": 800,
+        "failureReason":null,
         "packages": [],
         "createdAt":"@string@.isDateTime()",
         "tour":null
@@ -920,6 +926,7 @@ Feature: Tasks
         "recurrenceRule": null,
         "metadata": [],
         "weight":null,
+        "failureReason":null,
         "packages": [],
         "createdAt":"@string@.isDateTime()",
         "tour":null
@@ -1051,6 +1058,7 @@ Feature: Tasks
               "baz":"bat"
             },
             "weight":null,
+            "failureReason":null,
             "packages": [],
             "createdAt":"@string@.isDateTime()",
             "tour":null
@@ -1081,6 +1089,7 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":[],
             "weight":null,
+            "failureReason":null,
             "packages": [],
             "createdAt":"@string@.isDateTime()",
             "tour":null

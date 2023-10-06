@@ -1240,5 +1240,37 @@ restaurant.form.cash_on_delivery_enabled.label: Attivare pagamento in contanti a
   consegna
 api_apps.regenerate_secret: Rinnovare la chiave segreta
 promotion_rule.is_items_total_above: Il totale dell'importo è superiore a %amount%
+delivery.failure_reason:
+  damaged: "Danneggiato"
+  lost: "Smarrimento"
+  late: "Consegna in ritardo"
+  incorrect_address: "Indirizzo errato"
+  customer_refused: "Cliente ha rifiutato la consegna"
+  item_missing: "Articolo mancante"
+  incorrect_item: "Articolo errato"
+  bad_weather: "Condizioni meteorologiche avverse"
+  vehicle_breakdown: "Guasto del veicolo"
+  traffic_delays: "Ritardi dovuti al traffico"
+  routing_problems: "Problemi di instradamento"
+  customs_issues: "Problemi doganali"
+  inventory_shortage: "Scarsità di inventario"
+  address_unreachable: "Indirizzo non raggiungibile"
+  insufficient_funds: "Fondi insufficienti"
+  data_entry_error: "Errore di inserimento dati"
+  packaging_problems: "Problemi di imballaggio"
+  holiday_closure: "Chiusura per festività"
+  closed_store: "Negozio chiuso"
+adminDashboard.failureSet.title: "Motivi di Fallimento"
+adminDashboard.failureSet.help: "Imposta i motivi per cui le tue consegne possono fallire."
+adminDashboard.failureSet.nofailureSet: "Nessun motivo di fallimento"
+adminDashboard.failureSet.createNew: "Crea un nuovo motivo"
+adminDashboard.failureSet.settings: "Impostazioni"
+adminDashboard.failureSet.cant_delete_failure_reason_used: "Questo motivo non può essere eliminato in quanto è utilizzato nei negozi."
+form.failure_reason_set.name.label: Nome
+form.failure_reason.code.label: Codice
+form.failure_reason.description.label: Descrizione
+basics.manage: Gestisci
+basics.settings: Impostazioni
+form.store_type.failure_reason_set.label: "Motivi di Fallimento"
 profile.delete_my_account: "Elimina il mio account"
 profile.type_username_to_confirm: "Inserisci il tuo nome utente per confermare l'eliminazione dell'account"

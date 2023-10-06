@@ -678,5 +678,37 @@ restaurant.form.loopeat_enabled.label: LoopEat System einschalten
 checkout.breadcrumb.confirm: Bestätigung
 products.on_demand_delivery.name: Lieferung auf Anfrage
 security.login.remember_me: An mich erinnern
+delivery.failure_reason:
+  damaged: "Beschädigt"
+  lost: "Verloren"
+  late: "Verspätete Lieferung"
+  incorrect_address: "Falsche Adresse"
+  customer_refused: "Kunde hat die Lieferung verweigert"
+  item_missing: "Fehlendes Element"
+  incorrect_item: "Falsches Element geliefert"
+  bad_weather: "Schlechtes Wetter"
+  vehicle_breakdown: "Fahrzeugausfall"
+  traffic_delays: "Verkehrsverzögerungen"
+  routing_problems: "Routing-Probleme"
+  customs_issues: "Zollprobleme"
+  inventory_shortage: "Inventurmangel"
+  address_unreachable: "Nicht erreichbare Adresse"
+  insufficient_funds: "Unzureichende Mittel"
+  data_entry_error: "Datenfehler"
+  packaging_problems: "Probleme der Verpackung"
+  holiday_closure: "Ferienverlängerung"
+  closed_store: "Geschäft geschlossen"
+adminDashboard.failureSet.title: "Fehlergründe"
+adminDashboard.failureSet.help: "Legen Sie die Gründe fest, warum Ihre Lieferungen fehlschlagen können."
+adminDashboard.failureSet.nofailureSet: "Keine Fehlergründe"
+adminDashboard.failureSet.createNew: "Neuen Grund erstellen"
+adminDashboard.failureSet.settings: "Einstellungen"
+adminDashboard.failureSet.cant_delete_failure_reason_used: "Dieser Grund kann nicht gelöscht werden, da er in Geschäften verwendet wird."
+form.failure_reason_set.name.label: Name
+form.failure_reason.code.label: Code
+form.failure_reason.description.label: Beschreibung
+basics.manage: Verwalten
+basics.settings: Einstellungen
+form.store_type.failure_reason_set.label: "Fehlergründe"
 profile.delete_my_account: "Mein Konto löschen"
 profile.type_username_to_confirm: "Gib deinen Benutzernamen ein, um die Kontolöschung zu bestätigen"

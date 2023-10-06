@@ -54,6 +54,14 @@
         <join-column name="pricing_rule_set_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
+    <many-to-one field="failureReasonSet" target-entity="AppBundle\Entity\Delivery\FailureReasonSet">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="failure_reason_set_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
     <many-to-one field="timeSlot" target-entity="AppBundle\Entity\TimeSlot">
       <cascade>
         <cascade-persist/>

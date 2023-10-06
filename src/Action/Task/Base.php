@@ -53,6 +53,21 @@ abstract class Base
         return '';
     }
 
+    protected function getReason(Request $request)
+    {
+        $data = [];
+        $content = $request->getContent();
+        if (!empty($content)) {
+            $data = json_decode($content, true);
+        }
+
+        if (isset($data['reason'])) {
+            return $data['reason'];
+        }
+
+        return null;
+    }
+
     /**
      * @throws \Exception
      */

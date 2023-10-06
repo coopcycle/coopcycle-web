@@ -56,6 +56,14 @@
     enabled: is_granted('ROLE_ADMIN'),
   },
   {
+    title: 'adminDashboard.failureSet.title' | trans,
+    help: 'adminDashboard.failureSet.help' | trans,
+    path: path('admin_failures_list'),
+    icon: 'exclamation-triangle',
+    active: ['admin_failures_list', 'admin_deliveries_failures_failurereasonset', 'admin_deliveries_failures_failurereasonset_new'],
+    enabled: is_granted('ROLE_ADMIN'),
+  },
+  {
     title: 'adminDashboard.tags.title' | trans,
     help: 'adminDashboard.tags.help' | trans,
     path: path('admin_tags'),

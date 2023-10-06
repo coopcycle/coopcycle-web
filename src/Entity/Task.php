@@ -10,6 +10,7 @@ use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Events as TaskEvents;
+use AppBundle\Action\Task\FailureReasons as TaskFailureReasons;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
@@ -25,6 +26,7 @@ use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Api\Filter\OrganizationFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
+use AppBundle\Entity\Delivery\FailureReason;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Package\PackagesAwareInterface;
@@ -254,6 +256,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *        }
  *      },
+ *      "task_failure_reasons"={
+ *        "method"="GET",
+ *        "path"="/tasks/{id}/failure_reasons",
+ *        "controller"=TaskFailureReasons::class,
+ *        "security"="is_granted('view', object)",
+ *        "openapi_context"={
+ *          "summary"="Retrieves possible failure reasons for a Task"
+ *        }
+ *      },
  *     "task_events"={
  *       "method"="GET",
  *       "path"="/tasks/{id}/events",
@@ -425,6 +436,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create", "pricing_deliveries"})
      */
     private $weight;
+
+    /**
+     * @var string|null
+     * @Groups({"task"})
+     */
+    private $failureReason;
 
     public function __construct()
     {
@@ -1090,5 +1107,21 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         }
 
         return $language->evaluate($pricingRule->getPrice(), $this->toExpressionLanguageValues());
+    }
+
+    public function getFailureReasons(): array
+    {
+        return [];
+    }
+
+    public function getFailureReason(): ?string
+    {
+        return $this->failureReason;
+    }
+
+    public function setFailureReason(?string $failureReason): Task
+    {
+        $this->failureReason = $failureReason;
+        return $this;
     }
 }

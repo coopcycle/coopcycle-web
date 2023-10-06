@@ -1300,6 +1300,38 @@ form.checkout_address.reusable_packaging.loopeat.returns.label: Vous allez rendr
   <strong>%count%</strong> boîtes, pour un total de <strong>%amount%</strong>
 loopeat.task_comments.returns: Attention, vous devez récupérer des boîtes chez le client
 activity.task.rescheduled: "@%owner% a reprogrammé la tâche #task/%aggregate_id%\n"
+delivery.failure_reason:
+  damaged: "Endommagé"
+  lost: "Perdu"
+  late: "Livraison en retard"
+  incorrect_address: "Adresse incorrecte"
+  customer_refused: "Refus du client"
+  item_missing: "Article manquant"
+  incorrect_item: "Article incorrect"
+  bad_weather: "Mauvaises conditions météorologiques"
+  vehicle_breakdown: "Panne de véhicule"
+  traffic_delays: "Retards de circulation"
+  routing_problems: "Problèmes de routage"
+  customs_issues: "Problèmes de dédouanement"
+  inventory_shortage: "Rupture de stock"
+  address_unreachable: "Adresse inaccessible"
+  insufficient_funds: "Fonds insuffisants"
+  data_entry_error: "Erreur de saisie des données"
+  packaging_problems: "Problèmes d'emballage"
+  holiday_closure: "Fermeture pour congé"
+  closed_store: "Magasin fermé"
+adminDashboard.failureSet.title: "Motifs d'échec"
+adminDashboard.failureSet.help: "Définissez les motifs pour lesquelles vos livraisons peuvent échouer."
+adminDashboard.failureSet.nofailureSet: "Aucun motif d'échec"
+adminDashboard.failureSet.createNew: "Créer un nouveau motif"
+adminDashboard.failureSet.settings: "Paramétrer"
+adminDashboard.failureSet.cant_delete_failure_reason_used: "Ce motif ne peut pas être supprimé car il est utilisé dans des magasins."
+form.failure_reason_set.name.label: Nom
+form.failure_reason.code.label: Code
+form.failure_reason.description.label: Description
+basics.manage: Gérer
+basics.settings: Paramètres
+form.store_type.failure_reason_set.label: "Motifs d'échec"
 profile.delete_my_account: "Supprimer mon compte"
 profile.type_username_to_confirm: "Saisissez votre nom d'utilisateur pour confirmer la suppression du compte"
 form.pricing_rule_set.options.label: Options

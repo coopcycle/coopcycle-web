@@ -49,3 +49,7 @@
 {% if form.tags is defined %}
   {{ form_row(form.tags) }}
 {% endif %}
+<hr>
+{% if form.failureReasonSet is defined %}
+  {{ form_row(form.failureReasonSet) }}
+{% endif %}

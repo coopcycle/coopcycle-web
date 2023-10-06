@@ -199,3 +199,10 @@ AppBundle\Entity\Vendor:
       groups: ['order', 'order_minimal']
     address:
       groups: ['order']
+
+AppBundle\Entity\Delivery\FailureReason:
+  attributes:
+    code:
+      groups: ['task']
+    description:
+      groups: ['task']
