@@ -44,15 +44,58 @@ class PriceVisitor
 
 			$price = $rule->evaluatePrice($this->delivery, $this->expressionLanguage);
 
-			$variant = $this->productVariantFactory->createForPricingRule($rule, $price, $this->expressionLanguage);
+			if (is_numeric($rule->getPrice())) {
 
-			$orderItem = $this->orderItemFactory->createNew();
-	        $orderItem->setVariant($variant);
-	        $orderItem->setUnitPrice($variant->getPrice());
+				$variant = $this->productVariantFactory->createForPricingRule($rule, $price, $this->expressionLanguage);
 
-	        $this->orderItemQuantityModifier->modify($orderItem, 1);
+				$orderItem = $this->orderItemFactory->createNew();
+		        $orderItem->setVariant($variant);
+		        $orderItem->setUnitPrice($variant->getPrice());
 
-	        $this->orderModifier->addToOrder($this->order, $orderItem);
+		        $this->orderItemQuantityModifier->modify($orderItem, 1);
+
+		        $this->orderModifier->addToOrder($this->order, $orderItem);
+
+			} else {
+
+				$parsedExpression = $this->expressionLanguage->parse($rule->getPrice(), [
+		            'distance',
+		            'weight',
+		            'vehicle',
+		            'pickup',
+		            'dropoff',
+		            'packages',
+		            'order',
+		        ]);
+
+		        $nodes = $parsedExpression->getNodes();
+
+		        if ($nodes->attributes['name'] === 'price_range') {
+
+		        	$name          = $nodes->nodes['arguments']->nodes[0]->attributes['name'];
+		        	$pricePerRange = $nodes->nodes['arguments']->nodes[1]->attributes['value'];
+		        	$size          = $nodes->nodes['arguments']->nodes[2]->attributes['value'];
+		        	$over          = $nodes->nodes['arguments']->nodes[3]->attributes['value'];
+
+		        	$value = $this->expressionLanguage->evaluate($name, Delivery::toExpressionLanguageValues($this->delivery));
+
+		        	$quantity = (int) ceil(($value - $over) / $size);
+
+		        	$variant =
+		        		$this->productVariantFactory->createForPricingRulePriceRange($pricePerRange, $size, $this->expressionLanguage);
+
+		        	$orderItem = $this->orderItemFactory->createNew();
+			        $orderItem->setVariant($variant);
+			        $orderItem->setUnitPrice($variant->getPrice());
+
+			        $this->orderItemQuantityModifier->modify($orderItem, $quantity);
+
+			        $this->orderModifier->addToOrder($this->order, $orderItem);
+
+		        }
+
+				// var_dump('price is a formula');
+			}
 		}
 	}
 }

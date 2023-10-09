@@ -116,4 +116,50 @@ class PriceCalculatorTest extends KernelTestCase
         $this->assertEquals(699, $order->getTotal());
         $this->assertEquals(1, $order->countItems());
     }
+
+    public function testCreatesVariantsWithQuantityWithPriceRange()
+    {
+        $rule1 = new PricingRule();
+        $rule1->setExpression('distance > 0');
+        // 1€ per km above 2km
+        $rule1->setPrice('price_range(distance, 100, 1000, 2000)');
+
+        // $rule2 = new PricingRule();
+        // $rule2->setExpression('distance in 3000..5000');
+        // $rule2->setPrice(699);
+
+        // $rule3 = new PricingRule();
+        // $rule3->setExpression('distance in 5000..7500');
+        // $rule3->setPrice(899);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            // $rule2,
+            // $rule3,
+        ]));
+
+        $store = new Store();
+        $store->setPricingRuleSet($ruleSet);
+
+        $delivery = new Delivery();
+        $delivery->setStore($store);
+        $delivery->setDistance(3500);
+
+        $visitor = $this->priceCalculator->visit($delivery);
+
+        $this->assertCount(1, $visitor->getMatchedRules());
+        $this->assertContains($rule1, $visitor->getMatchedRules());
+
+        $order = $visitor->getOrder();
+
+        $this->assertEquals(200, $order->getTotal());
+        $this->assertEquals(1, $order->countItems());
+
+        $items = $order->getItems();
+
+        $this->assertEquals(2, $items[0]->getQuantity());
+        $this->assertEquals('€1.00 par tranche de 1000', $items[0]->getVariant()->getName());
+
+    }
 }

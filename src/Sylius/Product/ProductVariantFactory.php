@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Pricing\RuleHumanizer;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Utils\PriceFormatter;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
@@ -40,7 +41,8 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         ProductVariantRepositoryInterface $productVariantRepository,
         TaxCategoryRepositoryInterface $taxCategoryRepository,
         SettingsManager $settingsManager,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        PriceFormatter $priceFormatter)
     {
         $this->factory = $factory;
         $this->productRepository = $productRepository;
@@ -48,6 +50,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $this->taxCategoryRepository = $taxCategoryRepository;
         $this->settingsManager = $settingsManager;
         $this->translator = $translator;
+        $this->priceFormatter = $priceFormatter;
     }
 
     /**
@@ -127,6 +130,34 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $humanizer = new RuleHumanizer($expressionLanguage);
 
         $productVariant->setName($humanizer->humanize($rule));
+
+        return $productVariant;
+    }
+
+    public function createForPricingRulePriceRange(int $price, int $size, ExpressionLanguage $expressionLanguage): ProductVariantInterface
+    {
+        // TODO Use a different product
+        $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+
+        $subjectToVat = $this->settingsManager->get('subject_to_vat');
+
+        $taxCategory = $this->taxCategoryRepository->findOneBy([
+            'code' => $subjectToVat ? 'SERVICE' : 'SERVICE_TAX_EXEMPT'
+        ]);
+
+        $productVariant = $this->createForProduct($product);
+
+        $productVariant->setPosition(1);
+
+        $productVariant->setPrice($price);
+        $productVariant->setTaxCategory($taxCategory);
+        $productVariant->setCode($uuid = Uuid::uuid4()->toString());
+
+        // $humanizer = new RuleHumanizer($expressionLanguage);
+
+        $productVariant->setName(
+            sprintf('%s par tranche de %s', $this->priceFormatter->formatWithSymbol($price), $size)
+        );
 
         return $productVariant;
     }

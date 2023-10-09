@@ -58,4 +58,22 @@ class RuleHumanizerTest extends KernelTestCase
 
         $this->assertEquals('pickup address inside zone "south", dropoff address outside zone "north", more than 5.00 kg', $this->humanizer->humanize($rule));
     }
+
+    public function testPricePerPackage()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('packages.containsAtLeastOne("Bouquet L")');
+        $rule->setPrice('price_per_package(packages, "Bouquet L", 100, 0, 100)');
+
+        // $this->assertEquals('contains one package', $this->humanizer->humanize($rule));
+    }
+
+    public function testPriceRange()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('distance > 0');
+        $rule->setPrice('price_range(distance, 100, 1000, 2000)');
+
+        // $this->assertEquals('contains one package', $this->humanizer->humanize($rule));
+    }
 }

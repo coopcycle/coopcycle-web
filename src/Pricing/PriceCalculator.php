@@ -47,11 +47,13 @@ class PriceCalculator
 			$this->orderItemQuantityModifier
 		);
 
-		if ($ruleSet->getStrategy() === 'find') {
+		// TODO Do differently depending on strategy (map/find)
+
+		// if ($ruleSet->getStrategy() === 'map') {
             foreach ($ruleSet->getRules() as $rule) {
             	$rule->accept($visitor);
             }
-        }
+        // }
 
 		return $visitor;
 	}
