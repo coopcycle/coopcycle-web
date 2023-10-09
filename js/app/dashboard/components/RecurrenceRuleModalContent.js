@@ -320,6 +320,7 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
     recurrence: recurrenceRule ? recurrenceRule.rule : defaultRecurrence,
     items: recurrenceRule ?
       recurrenceTemplateToArray(recurrenceRule.template) : [ { ...defaultTask } ],
+    name: recurrenceRule?.name,
   }
 
   const isSaved = recurrenceRule && Object.prototype.hasOwnProperty.call(recurrenceRule, '@id')
@@ -336,7 +337,8 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
           template: {
             '@type': 'hydra:Collection',
             'hydra:member': values.items
-          }
+          },
+          name: values.name,
         })
       }}
       validateOnBlur={ true }
@@ -349,7 +351,12 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
         setFieldValue,
       }) => (
         <div>
-
+            <div className="p-4 border-bottom" >
+                <input className="form-control"
+                       placeholder={ t('ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER') }
+                       value={ values.name }
+                       onChange={ e => setFieldValue('name', e.target.value) } />
+            </div>
           <div className="p-4 border-bottom">
             <Select
               defaultValue={ _.find(storesOptions, o => o.value === values.store) }

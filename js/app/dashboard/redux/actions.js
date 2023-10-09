@@ -1018,6 +1018,7 @@ export function saveRecurrenceRule(recurrenceRule) {
       'store',
       'rule',
       'template',
+      'name',
     ])
 
     dispatch(updateRecurrenceRuleRequest())

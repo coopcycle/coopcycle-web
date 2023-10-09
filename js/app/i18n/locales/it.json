@@ -249,6 +249,7 @@
           "TIME_UNIT": "minuto(i)",
           "NO_LIMIT": "Nessun limite di ordini",
           "LIMIT": "Un massimo di {{command}} ordini ogni {{time}}"
-        }
+        },
+        "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Nome della regola"
     }
 }
