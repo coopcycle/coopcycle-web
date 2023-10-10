@@ -147,10 +147,6 @@ const MoreOptions = ({ item, onChange }) => {
   )
 }
 
-// https://github.com/atlassian/react-beautiful-dnd/blob/master/stories/src/portal/portal-app.jsx
-const portal = document.createElement('div')
-document.body.appendChild(portal)
-
 const TemplateItem =({ item, setFieldValues, onClickRemove, errors, ...props}) => {
 
   const provided = props.provided
@@ -238,11 +234,12 @@ const TemplateItem =({ item, setFieldValues, onClickRemove, errors, ...props}) =
     </li>
   )
 
+  // https://github.com/atlassian/react-beautiful-dnd/blob/master/stories/src/portal/portal-app.jsx
   if (!usePortal) {
     return child
   }
 
-  return ReactDOM.createPortal(child, portal)
+  return ReactDOM.createPortal(child, document.body)
 }
 
 const RecurrenceEditor = ({ recurrence, onChange }) => {
@@ -344,11 +341,9 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
   const isSaved = recurrenceRule && Object.prototype.hasOwnProperty.call(recurrenceRule, '@id')
 
   const reorder = (list, oldIndex, newIndex) => {
-    console.log(list)
       const result = Array.from(list);
       const [removed] = result.splice(oldIndex, 1);
       result.splice(newIndex, 0, removed);
-
       return result;
     }
 
