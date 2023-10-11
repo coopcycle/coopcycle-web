@@ -120,9 +120,8 @@ class DeliveryType extends AbstractType
             ]);
 
             $isMultiDropEnabled = null !== $store ? $store->isMultiDropEnabled() : false;
-            $createOrders = null !== $store ? $store->getCreateOrders() : false;
 
-            if ($isMultiDropEnabled && !$createOrders) {
+            if ($isMultiDropEnabled) {
                 $form->add('addTask', ButtonType::class, [
                     'label' => 'basics.add',
                     'attr' => [
