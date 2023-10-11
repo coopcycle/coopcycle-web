@@ -4,6 +4,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
+    <field name="name" type="string" column="name" nullable="true" />
     <field name="rule" type="rrule" column="rule" nullable="false"/>
     <field name="template" type="json_array" column="template" nullable="false"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>

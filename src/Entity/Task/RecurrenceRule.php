@@ -60,6 +60,13 @@ class RecurrenceRule
      */
     private $id;
 
+
+    /**
+     * @var string|null
+     * @Groups({"task_recurrence_rule"})
+     */
+    private $name;
+
     /**
      * @var Rule
      * @Groups({"task_recurrence_rule"})
@@ -94,6 +101,26 @@ class RecurrenceRule
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Sets the name of the object.
+     *
+     * @param string|null $name The name to set.
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Retrieves the name associated with the object.
+     *
+     * @return string|null The name of the object.
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**

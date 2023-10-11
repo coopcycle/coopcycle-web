@@ -14,6 +14,7 @@ Feature: Task recurrence rules
       {
         "store":"/api/stores/1",
         "rule":"FREQ=WEEKLY;",
+        "name":"test rule",
         "template": {
           "@type":"Task",
           "address": {
@@ -34,6 +35,7 @@ Feature: Task recurrence rules
         "@type":"RecurrenceRule",
         "store":"/api/stores/1",
         "orgName":"Acme",
+        "name":"test rule",
         "rule":"FREQ=WEEKLY",
         "template":{
           "@type":"Task",
@@ -95,6 +97,7 @@ Feature: Task recurrence rules
         "rule":"FREQ=WEEKLY",
         "store":"/api/stores/1",
         "orgName":"Acme",
+        "name":null,
         "template": {
           "@type":"hydra:Collection",
           "hydra:member": [
@@ -153,6 +156,7 @@ Feature: Task recurrence rules
         "@type":"RecurrenceRule",
         "store":"/api/stores/1",
         "orgName":"Acme",
+        "name":null,
         "rule":"FREQ=WEEKLY",
         "template":{
           "@type":"Task",
@@ -234,7 +238,8 @@ Feature: Task recurrence rules
           ]
         },
         "store":"/api/stores/1",
-        "orgName":"Acme"
+        "orgName":"Acme",
+        "name":null
       }
       """
 

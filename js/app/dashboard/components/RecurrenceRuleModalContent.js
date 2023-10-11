@@ -23,6 +23,8 @@ import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import RecurrenceRuleAsText from './RecurrenceRuleAsText'
 
 import { phoneNumberExample } from '../utils'
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import ReactDOM from "react-dom";
 
 const freqOptions = [
   { value: RRule.DAILY, label: 'Every day' },
@@ -145,12 +147,18 @@ const MoreOptions = ({ item, onChange }) => {
   )
 }
 
-const TemplateItem = ({ item, setFieldValues, onClickRemove, errors }) => {
+const TemplateItem =({ item, setFieldValues, onClickRemove, errors, ...props}) => {
 
-  return (
-    <li className="mb-4">
+  const provided = props.provided
+  const snapshot = props.snapshot
+  const usePortal = snapshot.isDragging
+
+  const child = (
+    <li className="mb-4" ref={provided.innerRef}
+        {...provided.draggableProps}>
       <span className="d-flex justify-content-between align-items-center mb-2">
-        <span className="mr-2">
+      <i {...provided.dragHandleProps} className="fa fa-bars"></i>
+        <span className="mr-2 ml-3">
           <Radio.Group
             defaultValue={ item.type }
             size="medium"
@@ -225,6 +233,13 @@ const TemplateItem = ({ item, setFieldValues, onClickRemove, errors }) => {
         }} />
     </li>
   )
+
+  // https://github.com/atlassian/react-beautiful-dnd/blob/master/stories/src/portal/portal-app.jsx
+  if (!usePortal) {
+    return child
+  }
+
+  return ReactDOM.createPortal(child, document.body)
 }
 
 const RecurrenceEditor = ({ recurrence, onChange }) => {
@@ -320,9 +335,17 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
     recurrence: recurrenceRule ? recurrenceRule.rule : defaultRecurrence,
     items: recurrenceRule ?
       recurrenceTemplateToArray(recurrenceRule.template) : [ { ...defaultTask } ],
+    name: recurrenceRule?.name,
   }
 
   const isSaved = recurrenceRule && Object.prototype.hasOwnProperty.call(recurrenceRule, '@id')
+
+  const reorder = (list, oldIndex, newIndex) => {
+      const result = Array.from(list);
+      const [removed] = result.splice(oldIndex, 1);
+      result.splice(newIndex, 0, removed);
+      return result;
+    }
 
   return (
     <Formik
@@ -336,7 +359,8 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
           template: {
             '@type': 'hydra:Collection',
             'hydra:member': values.items
-          }
+          },
+          name: values.name,
         })
       }}
       validateOnBlur={ true }
@@ -349,7 +373,12 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
         setFieldValue,
       }) => (
         <div>
-
+            <div className="p-4 border-bottom" >
+                <input className="form-control"
+                       placeholder={ t('ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER') }
+                       value={ values.name }
+                       onChange={ e => setFieldValue('name', e.target.value) } />
+            </div>
           <div className="p-4 border-bottom">
             <Select
               defaultValue={ _.find(storesOptions, o => o.value === values.store) }
@@ -374,32 +403,46 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
                 setFieldValue('recurrence', RRule.optionsToString(cleanOpts))
               }} />
           </div>
-          <div className="px-4 pt-4 border-bottom"
-            style={{ maxHeight: '50vh', overflow: 'auto' }}>
-            <ol className="list-unstyled">
-            { values.items.map((item, index) => (
-              <TemplateItem
-                key={ `${index}-${hash(item)}` }
-                item={ item }
-                setFieldValues={ (item, fieldValues) => {
-                  const index = values.items.indexOf(item)
-                  if (-1 !== index) {
-                    const newItems = values.items.slice(0)
-                    newItems.splice(index, 1, { ...item, ...fieldValues })
-                    setFieldValue('items', newItems)
-                  }
-                }}
-                onClickRemove={ item => {
-                  const index = values.items.indexOf(item)
-                  if (-1 !== index) {
-                    const newItems = values.items.slice(0)
-                    newItems.splice(index, 1)
-                    setFieldValue('items', newItems)
-                  }
-                }}
-                errors={ (errors && errors.items && errors.items[index]) || {} } />
-            )) }
-            </ol>
+          <div className="px-4 pt-4 border-bottom" style={{ maxHeight: '50vh', overflow: 'auto' }}>
+          <DragDropContext onDragEnd={ e => {
+            if (!e.destination)
+            { return }
+            setFieldValue('items', reorder(values.items, e.source.index, e.destination.index))
+          } }>
+            <Droppable direction="vertical" droppableId="droppable">
+              {(provided) => (
+                <ol className="list-unstyled" ref={provided.innerRef}
+                    {...provided.droppableProps}>
+                  { values.items.map((item, index) => (
+                      <Draggable key={index} draggableId={'pos:' + index} index={index}>
+                        {(provided, snapshot) => <TemplateItem
+                            provided={provided}
+                            snapshot={snapshot}
+                            key={ `${index}-${hash(item)}` }
+                            item={ item }
+                            setFieldValues={ (item, fieldValues) => {
+                              const index = values.items.indexOf(item)
+                              if (-1 !== index) {
+                                const newItems = values.items.slice(0)
+                                newItems.splice(index, 1, { ...item, ...fieldValues })
+                                setFieldValue('items', newItems)
+                              }
+                            }}
+                            onClickRemove={ item => {
+                              const index = values.items.indexOf(item)
+                              if (-1 !== index) {
+                                const newItems = values.items.slice(0)
+                                newItems.splice(index, 1)
+                                setFieldValue('items', newItems)
+                              }
+                            }}
+                            errors={ (errors && errors.items && errors.items[index]) || {} } />}
+                      </Draggable>
+                  )) }
+                  {provided.placeholder}
+                </ol>)}
+            </Droppable>
+          </DragDropContext>
           </div>
           <div className="p-4 border-bottom">
             <Button icon={ <PlusOutlined /> } onClick={ () => {

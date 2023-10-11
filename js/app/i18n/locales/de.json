@@ -101,6 +101,7 @@
           "TIME_UNIT": "Minute(n)",
           "NO_LIMIT": "Keine Bestellbegrenzung",
           "LIMIT": "Maximal {{command}} Bestellungen alle {{time}}"
-        }
+        },
+        "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Regelname"
     }
 }

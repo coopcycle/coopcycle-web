@@ -15,7 +15,7 @@ export default ({ rrule, onClick }) => {
     <span className="list-group-item text-info" onClick={ onClick }>
       <i className="fa fa-clock-o mr-2"></i>
       <span>
-        <span className="font-weight-bold">{ rrule.orgName }</span>
+        <span className="font-weight-bold">{ rrule?.name ? rrule.name : rrule.orgName }</span>
         <span className="mx-1">›</span>
       </span>
       <span>
