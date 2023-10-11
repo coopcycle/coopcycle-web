@@ -1300,3 +1300,5 @@ form.checkout_address.reusable_packaging.loopeat.returns.label: Vous allez rendr
   <strong>%count%</strong> boîtes, pour un total de <strong>%amount%</strong>
 loopeat.task_comments.returns: Attention, vous devez récupérer des boîtes chez le client
 activity.task.rescheduled: "@%owner% a reprogrammé la tâche #task/%aggregate_id%\n"
+profile.delete_my_account: "Supprimer mon compte"
+profile.type_username_to_confirm: "Saisissez votre nom d'utilisateur pour confirmer la suppression du compte"

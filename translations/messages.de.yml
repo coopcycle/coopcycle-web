@@ -678,3 +678,5 @@ restaurant.form.loopeat_enabled.label: LoopEat System einschalten
 checkout.breadcrumb.confirm: Bestätigung
 products.on_demand_delivery.name: Lieferung auf Anfrage
 security.login.remember_me: An mich erinnern
+profile.delete_my_account: "Mein Konto löschen"
+profile.type_username_to_confirm: "Gib deinen Benutzernamen ein, um die Kontolöschung zu bestätigen"

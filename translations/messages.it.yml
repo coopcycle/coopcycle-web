@@ -1240,3 +1240,5 @@ restaurant.form.cash_on_delivery_enabled.label: Attivare pagamento in contanti a
   consegna
 api_apps.regenerate_secret: Rinnovare la chiave segreta
 promotion_rule.is_items_total_above: Il totale dell'importo è superiore a %amount%
+profile.delete_my_account: "Elimina il mio account"
+profile.type_username_to_confirm: "Inserisci il tuo nome utente per confermare l'eliminazione dell'account"

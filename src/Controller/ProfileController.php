@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
@@ -26,6 +27,7 @@ use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Csv\Writer as CsvWriter;
@@ -57,11 +59,13 @@ class ProfileController extends AbstractController
 
     use OrderTrait;
     use UserTrait;
+    use InjectAuthTrait;
 
-    public function __construct(OrderRepositoryInterface $orderRepository)
-    {
-        $this->orderRepository = $orderRepository;
-    }
+    public function __construct(
+        protected OrderRepositoryInterface $orderRepository,
+        protected JWTTokenManagerInterface $JWTTokenManager
+    )
+    { }
 
     public function indexAction(Request $request,
         SlugifyInterface $slugify,
@@ -149,9 +153,9 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('nucleos_profile_profile_show');
         }
 
-        return $this->render('profile/edit_profile.html.twig', array(
+        return $this->render('profile/edit_profile.html.twig', $this->auth(array(
             'form' => $editForm->createView()
-        ));
+        )));
     }
 
     protected function getOrderList(Request $request, $showCanceled = false)

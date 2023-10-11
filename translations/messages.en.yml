@@ -1311,3 +1311,5 @@ stores.filters.input.placeholder: "Search by address, name or #id"
 basics.filter: "Filter"
 stores.search.results_for: 'Search results for <mark>%query%</mark>'
 activity.task.rescheduled: "@%owner% has rescheduled task #task/%aggregate_id%\n"
+profile.delete_my_account: "Delete my account"
+profile.type_username_to_confirm: "Type your username to confirm the account deletion"

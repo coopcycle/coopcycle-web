@@ -13,4 +13,34 @@
     {{ form_rest(form) }}
     <button type="submit" class="btn btn-lg btn-block btn-primary">{% trans %}basics.save{% endtrans %}</button>
   {{ form_end(form) }}
+<button type="button" onclick="delete_my_account()" class="btn btn-link">{% trans %}profile.delete_my_account{% endtrans %}</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function delete_my_account() {
+  if (window._auth) {
+    if (prompt("{% trans %}profile.type_username_to_confirm{% endtrans %}") === window._auth.user.username) {
+      fetch('{{ path('api_mes_delete_item') }}', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${window._auth.jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+        .then(response => {
+          if (response.status === 204) {
+            window.location.href = '/'
+          } else {
+            alert('Delete request failed');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  }
+}
+</script>
 {% endblock %}
