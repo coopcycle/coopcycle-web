@@ -92,17 +92,16 @@
       {% endif %}
       <td width="12%">
         {% if delivery.order is defined and delivery.order is not empty %}
-          <small>
-            {% trans %}order.total_excluding_tax{% endtrans %}
+          <p>
+            <span class="label label-default">{% trans %}order.total_excluding_tax{% endtrans %}</span>
             {{ (delivery.order.itemsTotal - delivery.order.itemsTaxTotal)|price_format }}
-            </small>
-          <br>
-          <small>
-            {% trans %}order.total_including_tax{% endtrans %}
-           {{ delivery.order.total|price_format }}
-            </small>
+          </p>
+          <p>
+            <span class="label label-primary">{% trans %}order.total_including_tax{% endtrans %}</span>
+            {{ delivery.order.total|price_format }}
+          </p>
           {% else %}
-          -
+          <p>-</p>
         {% endif %}
       </td>
       <td class="text-center">
