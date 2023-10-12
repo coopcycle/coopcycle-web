@@ -11,6 +11,7 @@
     {% if with_order is defined and with_order %}
     <th class="text-center">{{ 'delivery.table.heading.order'|trans }}</th>
     {% endif %}
+    <th>{% trans %}basics.price{% endtrans %}</th>
     <th></th>
     <th></th>
     <th></th>
@@ -89,6 +90,21 @@
         {% endif %}
       </td>
       {% endif %}
+      <td width="12%">
+        {% if delivery.order is defined and delivery.order is not empty %}
+          <small>
+            {% trans %}order.total_excluding_tax{% endtrans %}
+            {{ (delivery.order.itemsTotal - delivery.order.itemsTaxTotal)|price_format }}
+            </small>
+          <br>
+          <small>
+            {% trans %}order.total_including_tax{% endtrans %}
+           {{ delivery.order.total|price_format }}
+            </small>
+          {% else %}
+          -
+        {% endif %}
+      </td>
       <td class="text-center">
         {% if delivery.hasImages() and store is defined %}
           <a href="{{ path(routes.download_images, { storeId: store.id, deliveryId: delivery.id }) }}">
