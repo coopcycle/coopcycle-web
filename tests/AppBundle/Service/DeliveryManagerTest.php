@@ -8,12 +8,14 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
 use AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider;
+use AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Security\TokenStoreExtractor;
@@ -389,5 +391,54 @@ class DeliveryManagerTest extends KernelTestCase
         $delivery = Delivery::createWithTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
 
         $this->assertEquals(500, $deliveryManager->getPrice($delivery, $ruleSet));
+    }
+
+    public function testGetMultiPriceWithPricePerPackage()
+    {
+        $rule1 = new PricingRule();
+        $rule1->setExpression('task.type == "PICKUP"');
+        $rule1->setPrice(100);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('task.type == "DROPOFF"');
+        $rule2->setPrice('price_per_package(packages, "XXL", 100, 0, 0)');
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $expressionLanguage = new ExpressionLanguage();
+        $expressionLanguage->registerProvider(
+            new PricePerPackageExpressionLanguageProvider()
+        );
+
+        $deliveryManager = new DeliveryManager(
+            $expressionLanguage,
+            $this->routing->reveal(),
+            $this->orderTimeHelper->reveal(),
+            $this->orderTimelineCalculator->reveal(),
+            $this->storeExtractor->reveal()
+        );
+
+        $package = new Package();
+        $package->setName('XXL');
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->addPackageWithQuantity($package, 1);
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2->addPackageWithQuantity($package, 2);
+
+        $delivery = Delivery::createWithTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
+
+        $this->assertEquals(400, $deliveryManager->getPrice($delivery, $ruleSet));
     }
 }

@@ -69,7 +69,7 @@ class DeliveryManager
                     foreach ($ruleSet->getRules() as $rule) {
                         if ($task->matchesPricingRule($rule, $this->expressionLanguage)) {
 
-                            $price = $rule->evaluatePrice($delivery, $this->expressionLanguage);
+                            $price = $task->evaluatePrice($rule, $this->expressionLanguage);
 
                             $this->logger->info(sprintf('Matched rule "%s", adding %d to price', $rule->getExpression(), $price));
 

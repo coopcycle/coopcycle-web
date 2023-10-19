@@ -1058,6 +1058,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $values['weight'] = $this->getWeight();
         $values['pickup'] = $this->isPickup() ? $this->toExpressionLanguageObject() : $emptyObject;
         $values['dropoff'] = $this->isDropoff() ? $this->toExpressionLanguageObject() : $emptyObject;
+        $values['packages'] = new PackagesResolver($this);
 
         $thisObj = new \stdClass();
         $thisObj->type = $this->getType();
@@ -1080,5 +1081,14 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function appendToComments($comments)
     {
         $this->comments = ($this->comments ?? '') . "\n\n" . $comments;
+    }
+
+    public function evaluatePrice(PricingRule $pricingRule, ExpressionLanguage $language = null)
+    {
+        if (null === $language) {
+            $language = new ExpressionLanguage();
+        }
+
+        return $language->evaluate($pricingRule->getPrice(), $this->toExpressionLanguageValues());
     }
 }
