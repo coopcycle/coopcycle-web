@@ -441,6 +441,9 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         $dropoff = self::createTaskObject($delivery->getDropoff());
         $order = self::createOrderObject($delivery->getOrder());
 
+        $emptyTaskObject = new \stdClass();
+        $emptyTaskObject->type = '';
+
         return [
             'distance' => $delivery->getDistance(),
             'weight' => $delivery->getWeight(),
@@ -449,6 +452,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
             'dropoff' => $dropoff,
             'packages' => new PackagesResolver($delivery),
             'order' => $order,
+            'task' => $emptyTaskObject,
         ];
     }
 

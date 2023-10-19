@@ -39,6 +39,7 @@ const typeToOperators = {
   'packages.totalVolumeUnits()': ['<', '>', 'in'],
   'time_range_length(pickup, \'hours\')': ['<', '>', 'in'],
   'time_range_length(dropoff, \'hours\')': ['<', '>', 'in'],
+  'task.type': ['=='],
 }
 
 const isK = type => type === 'distance' || type === 'weight'
@@ -201,6 +202,16 @@ class RulePickerLine extends React.Component {
         )
       }
 
+      if (this.state.type === 'task.type') {
+        return (
+          <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
+            <option value="">-</option>
+            <option value="PICKUP">Pickup</option>
+            <option value="DROPOFF">Dropoff</option>
+          </select>
+        )
+      }
+
       if (this.state.type === 'dropoff.doorstep') {
         return this.renderBooleanInput()
       }
@@ -253,6 +264,7 @@ class RulePickerLine extends React.Component {
               <option value="packages.totalVolumeUnits()">{ this.props.t('RULE_PICKER_LINE_VOLUME_UNITS') }</option>
               <option value="time_range_length(pickup, 'hours')">{ this.props.t('RULE_PICKER_LINE_PICKUP_TIME_RANGE_LENGTH_HOURS') }</option>
               <option value="time_range_length(dropoff, 'hours')">{ this.props.t('RULE_PICKER_LINE_DROPOFF_TIME_RANGE_LENGTH_HOURS') }</option>
+              <option value="task.type">{ this.props.t('RULE_PICKER_LINE_TASK_TYPE') }</option>
             </optgroup>
             <optgroup label={ this.props.t('RULE_PICKER_LINE_OPTGROUP_ORDER') }>
               <option value="order.itemsTotal">{ this.props.t('RULE_PICKER_LINE_ORDER_ITEMS_TOTAL') }</option>

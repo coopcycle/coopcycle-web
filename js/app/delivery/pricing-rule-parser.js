@@ -187,8 +187,14 @@ const traverseNode = (node, accumulator) => {
           ],
         })
       } else {
+
+        let left = node.nodes.left.attributes.name
+        if (node.nodes?.left?.nodes?.node?.attributes?.name === 'task' && node.nodes?.left?.nodes?.attribute?.attributes?.value === 'type') {
+          left = 'task.type'
+        }
+
         accumulator.push({
-          left:     node.nodes.left.attributes.name,
+          left,
           operator: node.attributes.operator,
           right:    node.nodes.right.attributes.value,
         })
