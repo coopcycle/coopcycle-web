@@ -4,6 +4,7 @@ namespace Tests\AppBundle\ExpressionLanguage;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
+use AppBundle\Entity\Task;
 use AppBundle\ExpressionLanguage\PackagesResolver;
 use PHPUnit\Framework\TestCase;
 
@@ -61,5 +62,22 @@ class PackagesResolverTest extends TestCase
         $resolver = new PackagesResolver($delivery);
 
         $this->assertEquals(7.0, $resolver->totalVolumeUnits());
+    }
+
+    public function testQuantityWithTask()
+    {
+        $task = new Task();
+
+        $packageOne = new Package();
+        $packageOne->setName('PackageOne');
+        $packageTwo = new Package();
+        $packageTwo->setName('PackageTwo');
+
+        $task->addPackageWithQuantity($packageOne, 2);
+
+        $resolver = new PackagesResolver($task);
+
+        $this->assertEquals(2, $resolver->quantity('PackageOne'));
+        $this->assertEquals(0, $resolver->quantity('PackageTwo'));
     }
 }
