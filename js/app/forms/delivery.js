@@ -20,6 +20,8 @@ const selectLastDropoff = createSelector(
   }
 )
 
+const collectionHolder = document.querySelector('#delivery_tasks')
+
 class DeliveryForm {
   disable() {
     $('#delivery-submit').attr('disabled', true)
@@ -478,6 +480,7 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
           type: 'REMOVE_DROPOFF',
           taskIndex,
         })
+        collectionHolder.dataset.index--
       })
     }
   }
@@ -582,9 +585,6 @@ export default function(name, options) {
     const addTaskButton = el.querySelector('[data-add="dropoff"]')
     if (addTaskButton) {
       addTaskButton.addEventListener('click', () => {
-
-        const collectionHolder =
-          document.querySelector('#delivery_tasks')
 
         const newHtml = collectionHolder
           .dataset
