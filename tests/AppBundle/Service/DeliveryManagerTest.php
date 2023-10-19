@@ -349,4 +349,45 @@ class DeliveryManagerTest extends KernelTestCase
 
         $this->assertEquals(400, $deliveryManager->getPrice($delivery, $ruleSet));
     }
+
+    public function testGetMultiPriceWithTaskTypeCondition()
+    {
+        $rule1 = new PricingRule();
+        $rule1->setExpression('task.type == "PICKUP"');
+        $rule1->setPrice(100);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('task.type == "DROPOFF"');
+        $rule2->setPrice(200);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $expressionLanguage = new ExpressionLanguage();
+
+        $deliveryManager = new DeliveryManager(
+            $expressionLanguage,
+            $this->routing->reveal(),
+            $this->orderTimeHelper->reveal(),
+            $this->orderTimelineCalculator->reveal(),
+            $this->storeExtractor->reveal()
+        );
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+
+        $delivery = Delivery::createWithTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
+
+        $this->assertEquals(500, $deliveryManager->getPrice($delivery, $ruleSet));
+    }
 }

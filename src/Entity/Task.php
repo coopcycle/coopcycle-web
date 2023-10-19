@@ -1059,6 +1059,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $values['pickup'] = $this->isPickup() ? $this->toExpressionLanguageObject() : $emptyObject;
         $values['dropoff'] = $this->isDropoff() ? $this->toExpressionLanguageObject() : $emptyObject;
 
+        $thisObj = new \stdClass();
+        $thisObj->type = $this->getType();
+        $values['task'] = $thisObj;
+
         return $values;
     }
 
