@@ -27,6 +27,7 @@ use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -52,6 +53,7 @@ use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Webmozart\Assert\Assert;
 
 class ProfileController extends AbstractController
 {
@@ -160,6 +162,8 @@ class ProfileController extends AbstractController
 
     protected function getOrderList(Request $request, $showCanceled = false)
     {
+        Assert::isInstanceOf($this->orderRepository, EntityRepository::class);
+
         $qb = $this->orderRepository
             ->createQueryBuilder('o')
             ->andWhere('o.customer = :customer')
