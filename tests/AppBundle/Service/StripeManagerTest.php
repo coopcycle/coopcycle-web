@@ -356,7 +356,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->getFeeTotal()
             ->willReturn(750);
@@ -429,7 +429,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->getFeeTotal()
             ->willReturn(750);
@@ -551,7 +551,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->getFeeTotal()
             ->willReturn(750);
