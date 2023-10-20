@@ -6,7 +6,7 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
-use AppBundle\Entity\Vendor;
+use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -57,7 +57,7 @@ class SearchAdhoc
             ->setParameter('number', $request->query->get('orderNumber'))
             ->setParameter('state', OrderInterface::STATE_CART);
 
-        $qb = $this->addRestaurantOrHubVendorClause($qb, 'o', $restaurant, $hub);
+        $qb = $this->addOrderVendorClause($qb, 'o', $hub);
 
         $result = $qb->getQuery()->getOneOrNullResult();
 
@@ -81,12 +81,11 @@ class SearchAdhoc
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    private function addRestaurantOrHubVendorClause(QueryBuilder $qb, $alias, LocalBusiness $restaurant, Hub $hub)
+    private function addOrderVendorClause(QueryBuilder $qb, $alias, Hub $hub)
     {
         return $qb
-            ->join(Vendor::class, 'v', Join::WITH, sprintf('%s.vendor = v.id', $alias))
-            ->andWhere('v.hub = :hub OR v.restaurant in (:hub_restaurants)')
-            ->setParameter('hub_restaurants', $hub->getRestaurants())
-            ->setParameter('hub', $hub);
+            ->join(OrderVendor::class, 'ov', Join::WITH, sprintf('ov.order = %s.id', $alias))
+            ->andWhere('ov.restaurant in (:hub_restaurants)')
+            ->setParameter('hub_restaurants', $hub->getRestaurants());
     }
 }
