@@ -69,6 +69,7 @@
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_DESCRIPTION_PLACEHOLDER": "2ª puerta a la izquierda…",
         "ADMIN_DASHBOARD_TASK_FORM_TIME_RANGE_LABEL": "Rango de fechas",
         "ADMIN_DASHBOARD_TASK_FORM_COMMENTS_LABEL": "Comentarios",
+        "ADMIN_DASHBOARD_TASK_FORM_ORDER_NOTES_LABEL": "Notas del cliente",
         "ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER": "Especifique cualquier detalle útil para completar la tarea",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_ERROR": "Por favor, selecciona una dirección",
         "ADMIN_DASHBOARD_TASK_FORM_CREATE": "Crear las tareas",
