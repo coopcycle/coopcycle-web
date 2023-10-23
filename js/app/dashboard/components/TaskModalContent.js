@@ -448,7 +448,7 @@ class TaskModalContent extends React.Component {
                   </div>
                 </div>
               )}
-              { (values.packages && values.packages.length) && (
+              { (values.packages && !!values.packages.length) && (
                 <div className="form-group form-group-sm">
                   <label className="control-label">{ this.props.t('ADMIN_DASHBOARD_PACKAGES') }</label>
                   <ul className="list-group table-hover">
