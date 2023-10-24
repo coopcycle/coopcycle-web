@@ -44,7 +44,7 @@ class CreateTasks
         $delivery->getDropoff()->setMetadata('order_number', $order->getNumber());
         $delivery->getDropoff()->setMetadata('payment_method', $order->getPaymentMethod());
 
-        if ($order->getNotes() && !empty($order->getNotes())) {
+        if (!empty($order->getNotes())) {
             $delivery->getPickup()->setMetadata('order_notes', $order->getNotes());
         }
 
