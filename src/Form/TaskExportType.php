@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Utils\GeoUtils;
+use AppBundle\Sylius\Order\OrderInterface;
 use League\Csv\Writer as CsvWriter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -42,6 +43,11 @@ class TaskExportType extends AbstractType
         'tags',
         'address.contactName',
         'organization'
+    ];
+
+    private static $ignoredStates = [
+        OrderInterface::STATE_CANCELLED,
+        OrderInterface::STATE_REFUSED,
     ];
 
     public function __construct(
@@ -109,6 +115,7 @@ class TaskExportType extends AbstractType
                         "TasksExportUnified.orderNumber",
                         "TasksExportUnified.orderTotal",
                         "TasksExportUnified.orderFeeTotal",
+                        "TasksExportUnified.orderState",
                         "TasksExportUnified.taskType",
                         "TasksExportUnified.addressName",
                         "TasksExportUnified.addressStreetAddress",
@@ -154,8 +161,15 @@ class TaskExportType extends AbstractType
                     $resultObject['TasksExportUnified.taskId'],
                     $resultObject['TasksExportUnified.orderId'],
                     $resultObject['TasksExportUnified.orderNumber'],
-                    $resultObject['TasksExportUnified.orderTotal'],
-                    $resultObject['TasksExportUnified.orderFeeTotal'] > 0 ? $resultObject['TasksExportUnified.orderFeeTotal'] : $resultObject['TasksExportUnified.orderTotal'],
+                    $this->getOrderTotal(
+                        $resultObject['TasksExportUnified.orderState'],
+                        $resultObject['TasksExportUnified.orderTotal']
+                    ),
+                    $this->getOrderRevenue(
+                        $resultObject['TasksExportUnified.orderState'],
+                        $resultObject['TasksExportUnified.orderTotal'],
+                        $resultObject['TasksExportUnified.orderFeeTotal']
+                    ),
                     $resultObject['TasksExportUnified.taskType'],
                     $resultObject['TasksExportUnified.addressName'],
                     $resultObject['TasksExportUnified.addressStreetAddress'],
@@ -206,5 +220,25 @@ class TaskExportType extends AbstractType
 
             $event->getForm()->setData($taskExport);
         });
+    }
+
+    private function getOrderTotal(?string $state, ?int $total): ?int
+    {
+        if (in_array($state, self::$ignoredStates)) {
+
+            return 0;
+        }
+
+        return $total;
+    }
+
+    private function getOrderRevenue(?string $state, ?int $total, ?int $feeTotal): ?int
+    {
+        if (in_array($state, self::$ignoredStates)) {
+
+            return 0;
+        }
+
+        return $feeTotal > 0 ? $feeTotal : $total;
     }
 }

@@ -6,6 +6,7 @@ cube(`TasksExportUnified`, {
     o.id AS order_id,
     o.number AS order_number,
     o.total AS order_total,
+    o.state AS order_state,
     (SELECT SUM(platform_fee.amount) FROM ${PlatformFee.sql()} platform_fee WHERE platform_fee.order_id = o.id GROUP BY platform_fee.order_id) AS order_fee_total,
     (SELECT SUM(stripe_fee.amount) FROM ${StripeFee.sql()} stripe_fee WHERE stripe_fee.order_id = o.id GROUP BY stripe_fee.order_id) AS order_stripe_fee_total,
     t.type AS task_type,
@@ -64,6 +65,10 @@ cube(`TasksExportUnified`, {
     },
     orderStripeFeeTotal: {
       sql: `order_stripe_fee_total`,
+      type: `number`,
+    },
+    orderState: {
+      sql: `order_state`,
       type: `number`,
     },
     taskType: {
