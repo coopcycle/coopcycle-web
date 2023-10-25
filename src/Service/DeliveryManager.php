@@ -64,7 +64,7 @@ class DeliveryManager
             $totalPrice = 0;
             $matchedAtLeastOne = false;
 
-            if (count($delivery->getTasks()) > 2) {
+            if (count($delivery->getTasks()) > 2 || $ruleSet->hasOption(PricingRuleSet::OPTION_MAP_ALL_TASKS)) {
                 foreach ($delivery->getTasks() as $task) {
                     foreach ($ruleSet->getRules() as $rule) {
                         if ($task->matchesPricingRule($rule, $this->expressionLanguage)) {

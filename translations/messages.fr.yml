@@ -1302,3 +1302,5 @@ loopeat.task_comments.returns: Attention, vous devez récupérer des boîtes che
 activity.task.rescheduled: "@%owner% a reprogrammé la tâche #task/%aggregate_id%\n"
 profile.delete_my_account: "Supprimer mon compte"
 profile.type_username_to_confirm: "Saisissez votre nom d'utilisateur pour confirmer la suppression du compte"
+form.pricing_rule_set.options.label: Options
+form.pricing_rule_set.options.map_all_tasks.label: Appliquer à toutes les tâches

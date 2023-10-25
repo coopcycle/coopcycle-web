@@ -33,6 +33,15 @@ class PricingRuleSetType extends AbstractType
                 'multiple' => false,
                 'expanded' => true,
             ])
+            ->add('options', ChoiceType::class, [
+                'required' => false,
+                'choices'  => [
+                    'form.pricing_rule_set.options.map_all_tasks.label' => PricingRuleSet::OPTION_MAP_ALL_TASKS,
+                ],
+                'label' => 'form.pricing_rule_set.options.label',
+                'multiple' => true,
+                'expanded' => true,
+            ])
             ->add('rules', CollectionType::class, array(
                 'label' => 'form.pricing_rule_set.rules.label',
                 'entry_type' => PricingRuleType::class,

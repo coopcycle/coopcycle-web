@@ -24,6 +24,10 @@ class PricingRuleSet
 
     protected $strategy = 'find';
 
+    protected array $options = [];
+
+    public const OPTION_MAP_ALL_TASKS = 'map_all_tasks';
+
     public function __construct()
     {
         $this->rules = new ArrayCollection();
@@ -105,4 +109,18 @@ class PricingRuleSet
         return $ruleSet;
     }
 
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+    }
+
+    public function hasOption(string $option)
+    {
+        return in_array($option, $this->options);
+    }
 }
