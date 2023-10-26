@@ -1351,3 +1351,9 @@ form.settings.notifications.task.done: Tarea finalizada
 form.settings.notifications.task.failed: Tarea fallida
 form.settings.notifications.task.cancelled: Tarea cancelada
 form.settings.notifications.task.rescheduled: Tarea reprogramada
+registration.navigation.title: "Creación de cuenta personal"
+registration.info.title: "Qué es CoopCycle?"
+registration.info.text: "En CoopCycle, puedes pedir comida elaborada por restaurantes cerca de tí y será entregada por tu cooperativa local. Estamos orgullosos de ser una alternativa ética a la uberización de nuestra sociedad!"
+registration.info.invitation.from.businessAccount: "Serás agregado a la cuenta de la compañía %businessAccountName%, sin embargo también podrás pedir comida por tu propia cuenta."
+registration.alert.text: "Has sido invitado por %invitedBy% para crear una cuenta en %brandName%."
+registration.form.title: "Tu información"

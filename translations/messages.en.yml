@@ -1367,3 +1367,9 @@ form.settings.notifications.task.failed: Task failed
 form.settings.notifications.task.cancelled: Task cancelled
 form.settings.notifications.task.rescheduled: Task rescheduled
 form.settings.notifications.help: When disabling notifications for events below, administrators won't receive emails, nor top bar notifications.
+registration.navigation.title: "Personal account creation"
+registration.info.title: "What is CoopCycle?"
+registration.info.text: "On CoopCycle, you can order food provided by restaurants near you and delivered by your local cooperative. We are proud to be an ethical alternative to the uberization of our society!"
+registration.info.invitation.from.businessAccount: "You will be attached to the business account %businessAccountName%, but you can also command under your name."
+registration.alert.text: "You have been invited to create an account on %brandName% by %invitedBy%."
+registration.form.title: "Your information"
