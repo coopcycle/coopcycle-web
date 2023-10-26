@@ -78,6 +78,9 @@ services:
   AppBundle\Form\TaskExportType:
     tags: [ form.type ]
 
+  AppBundle\Form\NotificationsType:
+    tags: [ form.type ]
+
   AppBundle\Form\SettingsType:
     arguments:
       $country: '%country_iso%'

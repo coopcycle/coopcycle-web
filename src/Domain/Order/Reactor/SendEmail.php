@@ -14,6 +14,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Message\OrderReceiptEmail;
 use AppBundle\Service\EmailManager;
+use AppBundle\Service\NotificationPreferences;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\Collection;
@@ -31,12 +32,14 @@ class SendEmail
         EmailManager $emailManager,
         SettingsManager $settingsManager,
         MessageBus $eventBus,
-        MessageBusInterface $messageBus)
+        MessageBusInterface $messageBus,
+        NotificationPreferences $notificationPreferences)
     {
         $this->emailManager = $emailManager;
         $this->settingsManager = $settingsManager;
         $this->eventBus = $eventBus;
         $this->messageBus = $messageBus;
+        $this->notificationPreferences = $notificationPreferences;
     }
 
     public function __invoke(Event $event)
@@ -103,11 +106,13 @@ class SendEmail
         $this->eventBus->handle(new EmailSent($order, $order->getCustomer()->getEmail()));
 
         // Send email to admin
-        $this->emailManager->sendTo(
-            $this->emailManager->createOrderCreatedMessageForAdmin($order),
-            $this->settingsManager->get('administrator_email')
-        );
-        $this->eventBus->handle(new EmailSent($order, $this->settingsManager->get('administrator_email')));
+        if ($this->notificationPreferences->isEventEnabled(OrderCreated::messageName())) {
+            $this->emailManager->sendTo(
+                $this->emailManager->createOrderCreatedMessageForAdmin($order),
+                $this->settingsManager->get('administrator_email')
+            );
+            $this->eventBus->handle(new EmailSent($order, $this->settingsManager->get('administrator_email')));
+        }
 
         // Send email to shop owners
         // When this is a multi vendor order,
@@ -160,11 +165,13 @@ class SendEmail
         );
         $this->eventBus->handle(new EmailSent($order, $order->getCustomer()->getEmail()));
 
-        // Send email to admin
-        $this->emailManager->sendTo(
-            $this->emailManager->createOrderCreatedMessageForAdmin($order),
-            $this->settingsManager->get('administrator_email')
-        );
-        $this->eventBus->handle(new EmailSent($order, $this->settingsManager->get('administrator_email')));
+        if ($this->notificationPreferences->isEventEnabled(OrderCreated::messageName())) {
+            // Send email to admin
+            $this->emailManager->sendTo(
+                $this->emailManager->createOrderCreatedMessageForAdmin($order),
+                $this->settingsManager->get('administrator_email')
+            );
+            $this->eventBus->handle(new EmailSent($order, $this->settingsManager->get('administrator_email')));
+        }
     }
 }

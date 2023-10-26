@@ -84,8 +84,8 @@ services:
   # Reactors
   #
 
-  coopcycle.domain.task.reactor.publish_redis_message:
-    class: AppBundle\Domain\Task\Reactor\PublishRedisMessage
+  coopcycle.domain.task.reactor.publish_live_update:
+    class: AppBundle\Domain\Task\Reactor\PublishLiveUpdate
     arguments:
       - '@AppBundle\Service\LiveUpdates'
     tags:

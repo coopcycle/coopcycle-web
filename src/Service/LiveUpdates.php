@@ -6,9 +6,11 @@ use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Domain\Order\Event as OrderEvent;
 use AppBundle\Domain\HumanReadableEventInterface;
 use AppBundle\Domain\SerializableEventInterface;
+use AppBundle\Domain\SilentEventInterface;
 use AppBundle\Domain\Task\Event as TaskEvent;
 use AppBundle\Entity\User;
 use AppBundle\Message\TopBarNotification;
+use AppBundle\Service\NotificationPreferences;
 use AppBundle\Sylius\Order\OrderInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use phpcent\Client as CentrifugoClient;
@@ -29,6 +31,7 @@ class LiveUpdates
     private $translator;
     private $centrifugoClient;
     private $messageBus;
+    private $notificationPreferences;
     private $namespace;
 
     public function __construct(
@@ -38,6 +41,7 @@ class LiveUpdates
         TranslatorInterface $translator,
         CentrifugoClient $centrifugoClient,
         MessageBusInterface $messageBus,
+        NotificationPreferences $notificationPreferences,
         string $namespace)
     {
         $this->userManager = $userManager;
@@ -46,6 +50,7 @@ class LiveUpdates
         $this->translator = $translator;
         $this->centrifugoClient = $centrifugoClient;
         $this->messageBus = $messageBus;
+        $this->notificationPreferences = $notificationPreferences;
         $this->namespace = $namespace;
     }
 
@@ -128,6 +133,16 @@ class LiveUpdates
      */
     private function createNotification($users, $message)
     {
+        $messageName = $message instanceof NamedMessage ? $message::messageName() : $message;
+
+        if ($message instanceof SilentEventInterface) {
+            return;
+        }
+
+        if (!$this->shouldNotifyEvent($messageName)) {
+            return;
+        }
+
         // Since we use Centrifugo the execution time to publish events has increased.
         // This is because for each event, it needs to send 3 HTTP requests.
         // To improve performance, we manage top bar notifications via an async job.
@@ -171,5 +186,10 @@ class LiveUpdates
         $channel = $this->getEventsChannelName($user);
 
         $this->centrifugoClient->publish($channel, ['event' => $payload]);
+    }
+
+    private function shouldNotifyEvent(string $messageName)
+    {
+        return $this->notificationPreferences->isEventEnabled($messageName);
     }
 }

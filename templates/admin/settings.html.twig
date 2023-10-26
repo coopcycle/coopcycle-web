@@ -137,6 +137,20 @@
 
   <hr>
 
+  {% if form.notifications is defined %}
+    <h4>{% trans %}form.settings.notifications.title{% endtrans %}</h4>
+    {{ form_help(form.notifications) }}
+    <div class="d-flex flex-row flex-wrap">
+    {% for notification in form.notifications %}
+      <div class="w-25 ">
+        {{ form_row(notification) }}
+      </div>
+    {% endfor %}
+    </div>
+  {% endif %}
+
+  <hr>
+
   {{ form_rest(form) }}
 
   <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>

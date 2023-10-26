@@ -564,6 +564,7 @@ activity.order.picked: "@%owner% ha recuperado el pedido #order/%aggregate_id%\n
 activity.order.dropped: "@%owner% ha entregado el pedido #order/%aggregate_id%\n"
 activity.order.fulfilled: "El pedido #order/%aggregate_id% esta terminado\n"
 activity.order.delayed: "El pedido #order/%aggregate_id% has sido atrasado\n"
+activity.order.updated: "El pedido #order/%aggregate_id% has sido actualizado\n"
 pagination.previous: Anterior
 pagination.next: Siguiente
 basics.save: Guardar
@@ -1300,3 +1301,21 @@ import.unsuccessful.rows: "Se encontraron errores y no fue posible crear entrega
 security.login.remember_me: Recordar
 profile.delete_my_account: "Eliminar mi cuenta"
 profile.type_username_to_confirm: "Escribe tu nombre de usuario para confirmar la eliminación de la cuenta"
+form.settings.notifications.title: Notificaciones
+form.settings.notifications.order.created: Pedido creado
+form.settings.notifications.order.accepted: Pedido aceptado
+form.settings.notifications.order.refused: Pedido rechazado
+form.settings.notifications.order.delayed: Pedido atrasado
+form.settings.notifications.order.cancelled: Pedido cancelado
+form.settings.notifications.order.picked: Pedido recojido
+form.settings.notifications.order.dropped: Pedido entregado
+form.settings.notifications.order.fulfilled: Pedido finalizado
+form.settings.notifications.order.updated: Pedido actualizado
+form.settings.notifications.task.created: Tarea creada
+form.settings.notifications.task.assigned: Tarea asignada
+form.settings.notifications.task.unassigned: Tarea desasignada
+form.settings.notifications.task.started: Tarea comenzada
+form.settings.notifications.task.done: Tarea finalizada
+form.settings.notifications.task.failed: Tarea fallida
+form.settings.notifications.task.cancelled: Tarea cancelada
+form.settings.notifications.task.rescheduled: Tarea reprogramada

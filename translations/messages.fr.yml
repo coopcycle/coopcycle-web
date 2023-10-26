@@ -1304,3 +1304,22 @@ profile.delete_my_account: "Supprimer mon compte"
 profile.type_username_to_confirm: "Saisissez votre nom d'utilisateur pour confirmer la suppression du compte"
 form.pricing_rule_set.options.label: Options
 form.pricing_rule_set.options.map_all_tasks.label: Appliquer à toutes les tâches
+form.settings.notifications.title: Notifications
+form.settings.notifications.order.created: Commande créée
+form.settings.notifications.order.accepted: Commande acceptée
+form.settings.notifications.order.refused: Commande refusée
+form.settings.notifications.order.delayed: Commande retardée
+form.settings.notifications.order.cancelled: Commande annulée
+form.settings.notifications.order.picked: Commande récupérée
+form.settings.notifications.order.dropped: Commande déposée
+form.settings.notifications.order.fulfilled: Commande terminée
+form.settings.notifications.order.updated: Commande mise à jour
+form.settings.notifications.task.created: Tâche créée
+form.settings.notifications.task.assigned: Tâche assignée
+form.settings.notifications.task.unassigned: Tâche désassignée
+form.settings.notifications.task.started: Tâche commencée
+form.settings.notifications.task.done: Tâche terminée
+form.settings.notifications.task.failed: Tâche échouée
+form.settings.notifications.task.cancelled: Tâche annulée
+form.settings.notifications.task.rescheduled: Tâche reprogrammée
+form.settings.notifications.help: En désactivant les notifications pour les événements ci-dessous, les administrateurs ne recevront pas d'e-mails, ni de notifications dans la barre de menu.
