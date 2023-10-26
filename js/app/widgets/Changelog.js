@@ -53,11 +53,16 @@ const Release = ({ release }) => {
 const ChangelogContent = ({ releases }) => {
 
   return (
-    <ul className="list-unstyled">
-      { releases.map((release) => (
-        <Release key={ release.version } release={ release } />
-      )) }
-    </ul>
+    <div>
+      <ul className="list-unstyled">
+        { releases.map((release) => (
+          <Release key={ release.version } release={ release } />
+        )) }
+      </ul>
+      <div className="text-right">
+        <a target="_blank" rel="noreferrer" href="https://github.com/coopcycle/coopcycle-web/blob/master/CHANGELOG.md">View all</a>
+      </div>
+    </div>
   )
 }
 
@@ -102,19 +107,22 @@ export default function(el) {
   const lastViewedVersion = Cookies.get('__changelog_latest')
 
   axios.get('/CHANGELOG.md').then(response => {
-    const releaseNotes = changelogParser.parse(response.data)
+    const { releases } = changelogParser.parse(response.data)
 
-    const latestVersion = getLatestVersion(releaseNotes.releases)
+    // Show only the last 5 releases
+    releases.splice(5)
+
+    const latestVersion = getLatestVersion(releases)
 
     let newReleasesCount = 0
     if (lastViewedVersion !== latestVersion) {
       if (!lastViewedVersion) {
-        newReleasesCount = releaseNotes.releases.length
+        newReleasesCount = releases.length
       } else {
-        newReleasesCount = getNewReleasesCount(releaseNotes.releases, lastViewedVersion)
+        newReleasesCount = getNewReleasesCount(releases, lastViewedVersion)
       }
     }
 
-    render(<Changelog releases={ releaseNotes.releases } newReleasesCount={ newReleasesCount } />, el)
+    render(<Changelog releases={ releases } newReleasesCount={ newReleasesCount } />, el)
   })
 }
