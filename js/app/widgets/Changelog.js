@@ -5,20 +5,20 @@ import changelogParser from '@release-notes/changelog-parser'
 import axios from 'axios'
 import moment from 'moment'
 import Cookies from 'js-cookie'
-import compareVersions from 'compare-versions'
+import { compare } from 'compare-versions'
 
 import { Badge, Popover } from 'antd'
 
-const getLatestVersion = releaseNotes => releaseNotes.releases[0].version
+const getLatestVersion = releases => releases[0].version
 
-const getNewReleasesCount = (releaseNotes, lastViewedVersion) => {
+const getNewReleasesCount = (releases, lastViewedVersion) => {
 
-  const newReleases = releaseNotes.releases.reduce((releases, release) => {
-    if (compareVersions.compare(release.version, lastViewedVersion, '>')) {
-      releases.push(release)
+  const newReleases = releases.reduce((accumulator, release) => {
+    if (compare(release.version, lastViewedVersion, '>')) {
+      accumulator.push(release)
     }
 
-    return releases
+    return accumulator
   }, [])
 
   return newReleases.length
@@ -28,7 +28,7 @@ const Release = ({ release }) => {
 
   return (
     <li>
-      <h5>{ moment(release.date).format('LL') }</h5>
+      <h5>{ `${release.version} – ${moment(release.date).format('LL')}` }</h5>
       <div>
         { release.added.map((content, index) => (
           <ReactMarkdown key={ `added-${index}` }>{ content }</ReactMarkdown>
@@ -50,11 +50,11 @@ const Release = ({ release }) => {
   )
 }
 
-const ChangelogContent = ({ releaseNotes }) => {
+const ChangelogContent = ({ releases }) => {
 
   return (
     <ul className="list-unstyled">
-      { releaseNotes.releases.map((release) => (
+      { releases.map((release) => (
         <Release key={ release.version } release={ release } />
       )) }
     </ul>
@@ -67,14 +67,14 @@ const zeroStyle = {
   boxShadow: '0 0 0 1px #d9d9d9 inset'
 }
 
-const Changelog = ({ releaseNotes, newReleasesCount }) => {
+const Changelog = ({ releases, newReleasesCount }) => {
 
   const [ visible, setVisible ] = useState(false)
   const [ releasesCount, setReleasesCount ] = useState(newReleasesCount)
 
   useEffect(() => {
     if (visible) {
-      const latestVersion = getLatestVersion(releaseNotes)
+      const latestVersion = getLatestVersion(releases)
       Cookies.set('__changelog_latest', latestVersion)
       setTimeout(() => setReleasesCount(0), 800)
     }
@@ -84,7 +84,7 @@ const Changelog = ({ releaseNotes, newReleasesCount }) => {
 
   return (
     <Popover
-      content={ <ChangelogContent releaseNotes={ releaseNotes } /> }
+      content={ <ChangelogContent releases={ releases } /> }
       title="Changelog"
       trigger="click"
       open={ visible }
@@ -104,17 +104,17 @@ export default function(el) {
   axios.get('/CHANGELOG.md').then(response => {
     const releaseNotes = changelogParser.parse(response.data)
 
-    const latestVersion = getLatestVersion(releaseNotes)
+    const latestVersion = getLatestVersion(releaseNotes.releases)
 
     let newReleasesCount = 0
     if (lastViewedVersion !== latestVersion) {
       if (!lastViewedVersion) {
         newReleasesCount = releaseNotes.releases.length
       } else {
-        newReleasesCount = getNewReleasesCount(releaseNotes, lastViewedVersion)
+        newReleasesCount = getNewReleasesCount(releaseNotes.releases, lastViewedVersion)
       }
     }
 
-    render(<Changelog releaseNotes={ releaseNotes } newReleasesCount={ newReleasesCount } />, el)
+    render(<Changelog releases={ releaseNotes.releases } newReleasesCount={ newReleasesCount } />, el)
   })
 }
