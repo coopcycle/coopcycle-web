@@ -1,0 +1,75 @@
+.navbar-coopcycle {
+  .container {
+
+    h5 {
+      font-size: 16px !important;
+      margin-top: 0px;
+      margin-bottom: 20px;
+    }
+  }
+}
+
+.main {
+  background-color: #f8f9fa !important;
+
+  .container {
+    padding-top: 84px;
+    padding-bottom: 20px;
+
+    @media only screen and (max-width: 992px) {
+      padding-top: 53px;
+    }
+
+    img {
+      width: 453px;
+
+      @media only screen and (max-width: 992px) {
+        margin-bottom: 53px;
+        width: 100%;
+      }
+    }
+  }
+
+}
+
+.info-section {
+  background-color: #fff !important;
+  max-width: 453px;
+  margin-top: 72.5px;
+  margin-bottom: 53px;
+  margin-right: 87px;
+  padding: 24px;
+  box-shadow: 0px 0px 64px 0px #0000000D;
+
+  @media only screen and (max-width: 992px) {
+    margin-top: 0px;
+    margin-right: 0px;
+  }
+
+  h5 {
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    margin-top: 0;
+  }
+}
+
+.form-section {
+  background-color: #fff !important;
+  box-shadow: 0px 0px 64px 0px #0000000D;
+
+  .header {
+    background-color: #0053F5;
+    color: $white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+
+    h5 {
+      font-size: 16px !important;
+    }
+  }
+
+  form {
+    padding: 24px;
+  }
+}
