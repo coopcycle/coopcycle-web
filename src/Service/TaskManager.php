@@ -49,9 +49,9 @@ class TaskManager
         $this->commandBus->handle(new MarkAsDone($task, $notes, $contactName));
     }
 
-    public function markAsFailed(Task $task, $notes = null, $contactName = null)
+    public function markAsFailed(Task $task, $notes = null, $contactName = null, $reason = null)
     {
-        $this->commandBus->handle(new MarkAsFailed($task, $notes, $contactName));
+        $this->commandBus->handle(new MarkAsFailed($task, $notes, $contactName, $reason));
     }
 
     public function start(Task $task)

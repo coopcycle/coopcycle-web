@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\MyStores;
 use AppBundle\Entity\Base\LocalBusiness;
+use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Model\TaggableInterface;
@@ -148,6 +149,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     private $multiDropEnabled = false;
 
     private $timeSlots;
+
+    private $failureReasonSet;
 
     public function __construct() {
         $this->deliveries = new ArrayCollection();
@@ -483,5 +486,23 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function addTimeSlot(TimeSlot $timeSlot)
     {
         $this->timeSlots->add($timeSlot);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFailureReasonSet()
+    {
+        return $this->failureReasonSet;
+    }
+
+    /**
+     * @param mixed $failureReasonSet
+     * @return Store
+     */
+    public function setFailureReasonSet($failureReasonSet)
+    {
+        $this->failureReasonSet = $failureReasonSet;
+        return $this;
     }
 }

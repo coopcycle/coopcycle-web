@@ -1299,6 +1299,38 @@ import.successful.rows: 'Se procesó el archivo y se crearon %count% entregas co
 import.delivery.price.error.priceCalculation.row: El precio de la entrega no pudo ser calculado para la fila %row_number%
 import.unsuccessful.rows: "Se encontraron errores y no fue posible crear entregas para las filas: %rows%."
 security.login.remember_me: Recordar
+delivery.failure_reason:
+  damaged: "Dañado"
+  lost: "Perdido"
+  late: "Entrega retrasada"
+  incorrect_address: "Dirección incorrecta"
+  customer_refused: "Cliente rechazó la entrega"
+  item_missing: "Artículo faltante"
+  incorrect_item: "Artículo incorrecto"
+  bad_weather: "Condiciones climáticas adversas"
+  vehicle_breakdown: "Avería del vehículo"
+  traffic_delays: "Retrasos por tráfico"
+  routing_problems: "Problemas de enrutamiento"
+  customs_issues: "Problemas aduaneros"
+  inventory_shortage: "Escasez de inventario"
+  address_unreachable: "Dirección inaccesible"
+  insufficient_funds: "Fondos insuficientes"
+  data_entry_error: "Error en la entrada de datos"
+  packaging_problems: "Problemas de embalaje"
+  holiday_closure: "Cierre por vacaciones"
+  closed_store: "Tienda cerrada"
+adminDashboard.failureSet.title: "Motivos de Fallo"
+adminDashboard.failureSet.help: "Establezca los motivos por los cuales sus entregas pueden fallar."
+adminDashboard.failureSet.nofailureSet: "Ningún motivo de fallo"
+adminDashboard.failureSet.createNew: "Crear un nuevo motivo"
+adminDashboard.failureSet.settings: "Configuración"
+adminDashboard.failureSet.cant_delete_failure_reason_used: "No se puede eliminar este motivo, ya que se utiliza en tiendas."
+form.failure_reason_set.name.label: Nombre
+form.failure_reason.code.label: Código
+form.failure_reason.description.label: Descripción
+basics.manage: Gestionar
+basics.settings: Configuración
+form.store_type.failure_reason_set.label: "Motivos de Fallo"
 profile.delete_my_account: "Eliminar mi cuenta"
 profile.type_username_to_confirm: "Escribe tu nombre de usuario para confirmar la eliminación de la cuenta"
 form.settings.notifications.title: Notificaciones

@@ -1,0 +1,21 @@
+failure_reasons:
+  - { code: "DAMAGED", description: "delivery.failure_reason.damaged" }
+  - { code: "LOST", description: "delivery.failure_reason.lost" }
+  - { code: "LATE", description: "delivery.failure_reason.late" }
+  - { code: "WRONG_ADDR", description: "delivery.failure_reason.incorrect_address" }
+  - { code: "REFUSED", description: "delivery.failure_reason.customer_refused" }
+  - { code: "ITEM_MISSING", description: "delivery.failure_reason.item_missing" }
+  - { code: "INCORRECT_ITEM", description: "delivery.failure_reason.incorrect_item" }
+  - { code: "WEATHER", description: "delivery.failure_reason.bad_weather" }
+  - { code: "VEHICLE_BREAKDOWN", description: "delivery.failure_reason.vehicle_breakdown" }
+  - { code: "TRAFFIC", description: "delivery.failure_reason.traffic_delays" }
+  - { code: "ROUTE_ISSUE", description: "delivery.failure_reason.routing_problems" }
+  - { code: "CUSTOMS_ISSUE", description: "delivery.failure_reason.customs_issues" }
+  - { code: "INVENTORY_ISSUE", description: "delivery.failure_reason.inventory_shortage" }
+  - { code: "ADDRESS_UNREACHABLE", description: "delivery.failure_reason.address_unreachable" }
+  - { code: "INSUFFICIENT_FUND", description: "delivery.failure_reason.insufficient_funds" }
+  - { code: "DATA_ERROR", description: "delivery.failure_reason.data_entry_error" }
+  - { code: "PACKAGING_ISSUE", description: "delivery.failure_reason.packaging_problems" }
+  - { code: "CLOSED_STORE", description: "delivery.failure_reason.closed_store" }
+  - { code: "HOLIDAY", description: "delivery.failure_reason.holiday_closure" }
+

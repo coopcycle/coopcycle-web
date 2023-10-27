@@ -1312,6 +1312,38 @@ stores.filters.input.placeholder: "Search by address, name or #id"
 basics.filter: "Filter"
 stores.search.results_for: 'Search results for <mark>%query%</mark>'
 activity.task.rescheduled: "@%owner% has rescheduled task #task/%aggregate_id%\n"
+delivery.failure_reason:
+  damaged: "Damaged"
+  lost: "Lost"
+  late: "Late Delivery"
+  incorrect_address: "Incorrect Address"
+  customer_refused: "Customer Refused Delivery"
+  item_missing: "Item Missing"
+  incorrect_item: "Incorrect Item Delivered"
+  bad_weather: "Bad Weather Conditions"
+  vehicle_breakdown: "Vehicle Breakdown"
+  traffic_delays: "Traffic Delays"
+  routing_problems: "Routing Problems"
+  customs_issues: "Customs Clearance Issues"
+  inventory_shortage: "Inventory Shortage"
+  address_unreachable: "Address Unreachable"
+  insufficient_funds: "Insufficient Funds"
+  data_entry_error: "Data Entry Error"
+  packaging_problems: "Packaging Problems"
+  holiday_closure: "Holiday Closure"
+  closed_store: "Closed Store"
+adminDashboard.failureSet.title: "Failure Reasons"
+adminDashboard.failureSet.help: "Set the reasons for which your deliveries can fail."
+adminDashboard.failureSet.nofailureSet: "No failure reasons"
+adminDashboard.failureSet.createNew: "Create a new reason"
+adminDashboard.failureSet.settings: "Settings"
+adminDashboard.failureSet.cant_delete_failure_reason_used: "This reason cannot be deleted as it is used in stores."
+form.failure_reason_set.name.label: Name
+form.failure_reason.code.label: Code
+form.failure_reason.description.label: Description
+basics.manage: Manage
+basics.settings: Settings
+form.store_type.failure_reason_set.label: "Failure Reasons"
 profile.delete_my_account: "Delete my account"
 profile.type_username_to_confirm: "Type your username to confirm the account deletion"
 form.pricing_rule_set.options.label: Options

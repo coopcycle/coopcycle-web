@@ -51,6 +51,7 @@ use AppBundle\Form\DeliveryImportType;
 use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\HubType;
+use AppBundle\Form\FailureReasonSetType;
 use AppBundle\Form\WoopitIntegrationType;
 use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
@@ -85,6 +86,7 @@ use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -1094,6 +1096,117 @@ class AdminController extends AbstractController
         $duplicated = $ruleSet->duplicate($this->translator);
 
         return $this->renderPricingRuleSetForm($duplicated, $request);
+    }
+
+    private function renderFailureReasonSetForm(Delivery\FailureReasonSet $failureReasonSet, Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $originalReasons = new ArrayCollection();
+
+        foreach ($failureReasonSet->getReasons() as $reason) {
+            $originalReasons->add($reason);
+        }
+
+        $form = $this->createForm(FailureReasonSetType::class, $failureReasonSet);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $failureReasonSet = $form->getData();
+
+            $em = $this->getDoctrine()->getManagerForClass(Delivery\PricingRule::class);
+
+            foreach ($originalReasons as $originalReason) {
+                if (!$failureReasonSet->getReasons()->contains($originalReason)) {
+                    $em->remove($originalReason);
+                }
+            }
+
+            foreach ($failureReasonSet->getReasons() as $reason) {
+                $reason->setFailureReasonSet($failureReasonSet);
+            }
+
+            if (null === $failureReasonSet->getId()) {
+                $em->persist($failureReasonSet);
+            }
+
+            $em->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_deliveries_failures_failurereasonset', ['id' => $failureReasonSet->getId()]);
+        }
+
+        return $this->render('admin/failure_reason_set.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/deliveries/failures", name="admin_failures_list")
+     */
+    public function failuresAction()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $failureReasonSets = $this->getDoctrine()
+            ->getRepository(Delivery\FailureReasonSet::class)
+            ->findAll();
+        return $this->render('admin/failures.html.twig', [
+            'failureReasonSets' => $failureReasonSets
+        ]);
+    }
+
+    /**
+     * @Route("/admin/deliveries/failures/new", name="admin_deliveries_failures_failurereasonset_new")
+     */
+    public function newFailureReasonSetAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $failureReasonSet = new Delivery\FailureReasonSet();
+
+        return $this->renderFailureReasonSetForm($failureReasonSet, $request);
+    }
+
+    /**
+     * @Route("/admin/deliveries/failures/{id}", name="admin_deliveries_failures_failurereasonset")
+     */
+    public function failureReasonSetAction($id, Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $failureReasonSet = $this->getDoctrine()
+            ->getRepository(Delivery\FailureReasonSet::class)
+            ->find($id);
+
+        return $this->renderFailureReasonSetForm($failureReasonSet, $request);
+    }
+
+    /**
+     * @Route("/admin/deliveries/failures/{id}/delete", methods={"POST"}, name="admin_failures_delete")
+     */
+    public function deleteFailureReasonSetAction($id)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $failureReasonSet = $this->getDoctrine()->getRepository(Delivery\FailureReasonSet::class)->find($id);
+
+        $em = $this->getDoctrine()->getManagerForClass(Delivery\FailureReason::class);
+
+        try {
+            $em->remove($failureReasonSet);
+            $em->flush();
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
+        } catch (ForeignKeyConstraintViolationException $_) {
+            $this->addFlash(
+                'error',
+                $this->translator->trans('adminDashboard.failureSet.cant_delete_failure_reason_used')
+            );
+        }
+
+        return $this->redirectToRoute('admin_failures_list');
     }
 
     /**

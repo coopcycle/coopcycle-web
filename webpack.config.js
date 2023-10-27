@@ -61,6 +61,7 @@ Encore
   .addEntry('widgets', './js/app/widgets/index.js')
   .addEntry('widgets-admin', './js/app/widgets/admin.js')
   .addEntry('zone-preview', './js/app/zone/preview.js')
+  .addEntry('failure-form', './js/app/failure/form.js')
 
   // @see https://symfony.com/doc/current/frontend/encore/custom-loaders-plugins.html#adding-custom-plugins
   // @see https://github.com/moment/moment/issues/2373

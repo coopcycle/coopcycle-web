@@ -8,13 +8,15 @@ class MarkAsFailed
 {
     private $task;
     private $notes;
+    private $reason;
     private $contactName;
 
-    public function __construct(Task $task, $notes = null, $contactName = null)
+    public function __construct(Task $task, $notes = null, $contactName = null, $reason = null)
     {
         $this->task = $task;
         $this->notes = $notes;
         $this->contactName = $contactName;
+        $this->reason = $reason;
     }
 
     public function getTask()
@@ -30,6 +32,11 @@ class MarkAsFailed
     public function getContactName()
     {
         return $this->contactName;
+    }
+
+    public function getReason(): mixed
+    {
+        return $this->reason;
     }
 }
 

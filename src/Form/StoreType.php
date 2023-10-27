@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Store;
@@ -77,7 +78,14 @@ class StoreType extends LocalBusinessType
                     'multiple' => true,
                     'query_builder' => new OrderByNameQueryBuilder(),
                 ])
-                ->add('tags', TagsType::class);
+                ->add('tags', TagsType::class)
+                ->add('failureReasonSet', EntityType::class, array(
+                    'label' => 'form.store_type.failure_reason_set.label',
+                    'class' => FailureReasonSet::class,
+                    'choice_label' => 'name',
+                    'query_builder' => new OrderByNameQueryBuilder(),
+                    'required' => false,
+                ));
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {

@@ -1,0 +1,58 @@
+{% extends "deliveries.html.twig" %}
+
+{% block breadcrumb %}
+  {{ parent() }}
+  <li>{% trans %}adminDashboard.failureSet.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="text-right mb-4">
+    <a class="btn btn-success" href="{{ path('admin_deliveries_failures_failurereasonset_new') }}"><i class="fa fa-plus"></i> {% trans %}adminDashboard.failureSet.createNew{% endtrans %}</a>
+  </div>
+  <table class="table">
+    <tbody>
+    {% if failureReasonSets|length > 0 %}
+      {% for failureReasonSet in failureReasonSets %}
+        <tr>
+          <td><a href="{{ path('admin_deliveries_failures_failurereasonset', { id: failureReasonSet.id }) }}">#{{ failureReasonSet.id }}</a></td>
+          <td>{{ failureReasonSet.name }}</td>
+          <td class="text-right">
+            <form method="post" id="delete_failure_{{ failureReasonSet.id }}" action="{{ path('admin_failures_delete', { id: failureReasonSet.id }) }}">
+            </form>
+
+            <div class="btn-group">
+              <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {% trans %}basics.manage{% endtrans %}   <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-right">
+                <li>
+                  <a href="{{ path('admin_deliveries_failures_failurereasonset', { id: failureReasonSet.id }) }}">
+                    {% trans %}basics.settings{% endtrans %}
+                  </a>
+                  <a href="#" onclick="deleteFailureSet('delete_failure_{{ failureReasonSet.id }}')">{% trans %}basics.delete{% endtrans %}</a>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    {% else %}
+      <div class="alert alert-info">
+        {% trans %}adminDashboard.failureSet.nofailureSet{% endtrans %}
+      </div>
+    {% endif %}
+    </tbody>
+  </table>
+{% endblock %}
+
+
+
+{% block scripts %}
+  <script>
+    window.deleteFailureSet = function(id) {
+      if (confirm('{% trans %}basics.are_you_sure{% endtrans %}')) {
+        document.getElementById(id).submit()
+      }
+    }
+  </script>
+{% endblock %}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Delivery\FailureReason" table="failure_reason">
+    <id name="code" type="string" length="32" column="code">
+      <generator strategy="NONE" />
+    </id>
+    <field name="description" type="string" column="description" nullable="false"/>
+    <field name="metadata" type="json_array" column="metadata"/>
+    <many-to-one field="failureReasonSet" target-entity="AppBundle\Entity\Delivery\FailureReasonSet" inversed-by="reasons">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-column name="rule_set_id" referenced-column-name="id" nullable="false"/>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
