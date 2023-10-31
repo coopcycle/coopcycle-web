@@ -273,3 +273,6 @@ services:
 
   AppBundle\Form\BusinessAccountType:
     tags: [ form.type ]
+
+  AppBundle\Form\BusinessAccountRegistrationForm:
+    tags: [ form.type ]

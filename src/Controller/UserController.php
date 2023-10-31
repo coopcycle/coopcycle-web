@@ -8,6 +8,8 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\User;
+use AppBundle\Form\BusinessAccountRegistration;
+use AppBundle\Form\BusinessAccountRegistrationFlow;
 use AppBundle\Sylius\Order\OrderFactory;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,6 +21,7 @@ use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Nucleos\UserBundle\Util\Canonicalizer;
 use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Laravolt\Avatar\Avatar;
+use Psr\Log\LoggerInterface;
 use Shahonseven\ColorHash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -168,7 +171,9 @@ class UserController extends AbstractController
         EntityManagerInterface $objectManager,
         UserManagerInterface $userManager,
         EventDispatcherInterface $eventDispatcher,
-        Canonicalizer $canonicalizer)
+        Canonicalizer $canonicalizer,
+        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
+        LoggerInterface $logger)
     {
         $repository = $this->getDoctrine()->getRepository(Invitation::class);
 
@@ -179,6 +184,16 @@ class UserController extends AbstractController
         $user = $userManager->createUser();
         $user->setEmail($invitation->getEmail());
         $user->setEnabled(true);
+
+        if ($this->getParameter('business_account_enabled')) {
+            $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
+                'invitation' => $invitation,
+            ]);
+            if (null !== $businessAccountInvitation) {
+                return $this->loadBusinessAccountRegistrationFlow(
+                    $businessAccountRegistrationFlow, $user, $businessAccountInvitation, $logger);
+            }
+        }
 
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->add('save', SubmitType::class, [
@@ -246,5 +261,55 @@ class UserController extends AbstractController
             'form' => $form->createView(),
             'invitationUser' => $invitation->getUser()
         ]);
+    }
+
+    private function loadBusinessAccountRegistrationFlow(
+        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
+        User $user,
+        BusinessAccountInvitation $businessAccountInvitation,
+        LoggerInterface $logger
+    )
+    {
+        $businessAccountRegistrationFlow->bind(new BusinessAccountRegistration(
+            $user, $businessAccountInvitation->getBusinessAccount()
+        ));
+        $form = $submittedForm = $businessAccountRegistrationFlow->createForm();
+
+        // $form->add('save', SubmitType::class, [
+        //     'label'  => 'registration.submit',
+        // ]);
+
+        $logger->error(sprintf('[FLOW] CurrentStepNumber %d', $businessAccountRegistrationFlow->getCurrentStepNumber()));
+        if ($businessAccountRegistrationFlow->isValid($submittedForm)) {
+            $logger->error(sprintf('[FLOW] isValid'));
+            $businessAccountRegistrationFlow->saveCurrentStepData($submittedForm);
+
+            if ($businessAccountRegistrationFlow->nextStep()) {
+                $logger->error(sprintf('[FLOW] NewStepNumber %d', $businessAccountRegistrationFlow->getCurrentStepNumber()));
+                // form for the next step
+                $form = $businessAccountRegistrationFlow->createForm();
+            } else {
+                $logger->error(sprintf('[FLOW] No next step'));
+                // flow finished
+                // $em = $this->getDoctrine()->getManager();
+                // $em->persist($formData);
+                // $em->flush();
+
+                $businessAccountRegistrationFlow->reset(); // remove step data from the session
+
+                return $this->redirectToRoute('home'); // redirect when done
+            }
+        }
+
+        return $this->render('profile/invitation_define_password.html.twig', [
+            'form' => $form->createView(),
+            'flow' => $businessAccountRegistrationFlow,
+            'invitationUser' => $businessAccountInvitation->getInvitation()->getUser(),
+        ]);
+        // return $this->render('profile/invitation_business_account_define_password.html.twig', [
+        //     'form' => $form->createView(),
+        //     'flow' => $businessAccountRegistrationFlow,
+        //     'invitationUser' => $businessAccountInvitation->getInvitation()->getUser(),
+        // ]);
     }
 }

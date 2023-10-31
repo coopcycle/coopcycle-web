@@ -38,80 +38,12 @@ class BusinessAccountType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, ['label' => 'basics.name'])
-            ->add('restaurants', CollectionType::class, [
-                'entry_type' => EntityType::class,
-                'entry_options' => [
-                    'label' => false,
-                    'class' => LocalBusiness::class,
-                    'choice_label' => 'name',
-                ],
-                'label' => 'form.business_account.restaurants.label',
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false,
+            ->add('address', AddressType::class, [
+                'with_widget' => true,
+                'with_description' => false,
+                'label' => 'basics.address',
             ]);
 
-        if ($this->authorizationChecker->isGranted('ROLE_BUSINESS_ACCOUNT')) {
-            $builder
-                ->add('address', AddressType::class, [
-                    'with_widget' => true,
-                    'with_description' => false,
-                    'label' => false,
-                ]);
-        }
-
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
-            $businessAccount = $event->getData();
-            $form = $event->getForm();
-
-            if (null !== $businessAccount->getId()) {
-                if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-                    $businessAccountInvitation = $this->objectManager->getRepository(BusinessAccountInvitation::class)
-                        ->findOneBy([
-                            'businessAccount' => $businessAccount,
-                        ]);
-                    if (null !== $businessAccountInvitation) {
-                        $form->add('managerEmail', EmailType::class, [
-                            'label' => 'form.business_account.manager.email.label',
-                            'help' => 'form.business_account.manager.email_sent.help',
-                            'disabled' => true,
-                            'required'=> false,
-                            'mapped'=> false,
-                            'data' => $businessAccountInvitation->getInvitation()->getEmail(),
-                        ]);
-                    }
-                }
-            } else {
-                if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-                    $form->add('managerEmail', EmailType::class, [
-                        'constraints' => [
-                            new Assert\NotBlank(),
-                            new Assert\Email([
-                                'mode' => Assert\Email::VALIDATION_MODE_STRICT,
-                            ]),
-                            new AssertUserWithSameEmailNotExists(),
-                        ],
-                        'label' => 'form.business_account.manager.email.label',
-                        'help' => 'form.business_account.manager.email.help',
-                        'required'=> true,
-                        'mapped'=> false,
-                    ]);
-                }
-            }
-        });
-    }
-
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        usort($view['restaurants']->children, function (FormView $a, FormView $b) {
-
-            /** @var LocalBusiness $objectA */
-            $objectA = $a->vars['data'];
-            /** @var LocalBusiness $objectB */
-            $objectB = $b->vars['data'];
-
-            return ($objectA->getName() < $objectB->getName()) ? -1 : 1;
-        });
     }
 
     public function configureOptions(OptionsResolver $resolver)
@@ -120,4 +52,8 @@ class BusinessAccountType extends AbstractType
             'data_class' => BusinessAccount::class,
         ));
     }
+
+    public function getBlockPrefix() {
+		return 'company';
+	}
 }

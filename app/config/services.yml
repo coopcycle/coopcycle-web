@@ -1279,3 +1279,6 @@ services:
       $fleetKey: '%tile38_fleet_key%'
 
   AppBundle\Pricing\PricingManager: ~
+
+  AppBundle\Form\BusinessAccountRegistrationFlow:
+    autoconfigure: true
