@@ -14,15 +14,15 @@ class BusinessAccountRegistrationFlow extends FormFlow
 
         return [
 			[
-				'label' => 'personal',
+				'label' => 'registration.step.personal',
 				'form_type' => $formType,
 			],
 			[
-				'label' => 'company',
+				'label' => 'registration.step.company',
 				'form_type' => $formType,
 			],
 			[
-				'label' => 'invitation',
+				'label' => 'registration.step.invitation',
 			],
 		];
     }

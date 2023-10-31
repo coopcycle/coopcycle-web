@@ -1,18 +1,10 @@
 <div class="form-section">
   <div class="header rounded-top">
-    <h5>{{ 'registration.form.title'|trans }}</h5>
+    <h5>{{ flow.currentStepLabel|trans }}</h5>
   </div>
   <div class="form rounded-bottom">
     {{ form_row(form.name) }}
     {{ form_row(form.address) }}
-    <div class="row">
-    <div class="col-md-6"></div>
-    {% include '@CraueFormFlow/FormFlow/buttons.html.twig' with {
-      craue_formflow_button_class_last: 'btn btn-primary',
-      craue_formflow_button_class_back: 'btn',
-      craue_formflow_button_class_reset: 'btn btn-warning',
-      craue_formflow_button_render_reset: false,
-    } %}
-    </div>
+    {% include '_partials/profile/flow_buttons.html.twig' %}
   </div>
 </div>

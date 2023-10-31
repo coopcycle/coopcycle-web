@@ -82,3 +82,41 @@
     padding: 24px;
   }
 }
+
+.step {
+  .label-inactive {
+    color: #878787;
+  }
+}
+
+.step-number {
+  border-radius: 50% !important;
+  background-color: #0053F5;
+  color: $white;
+  padding: 4px 10px;
+  margin-left: 8px;
+  margin-right: 4px;
+
+  &.inactive {
+    background-color: #98BBFC;
+  }
+}
+
+.flow-buttons {
+  display: flex;
+  justify-content: end;
+  margin-right: 15px;
+
+  button {
+    &.btn-primary{
+      background-color: #0053F5;
+    }
+
+    &.btn-primary-outline {
+      background-color: $white;
+      border: 2px solid;
+      border-color: #0053F5;
+      color: #0053F5;
+    }
+  }
+}
