@@ -4,10 +4,13 @@ registration:
       <br>
       Contiene un enlace de activación al que debes acceder para activar tu cuenta.
     confirmed: |
-      Felicidades <strong>%username%</strong>, tu cuenta está ahora confirmada.
+      Hola %username%, tu cuenta ya está activada!
     before_confirmation_continue_order: |
       Una vez que haya activado su cuenta, puede completar su pedido.
     after_confirmation_continue_order: Completa tu pedido
+    congratulations: Felicitaciones
+    after_confirmation_redirect_to_dashboard: Serás redirigido a tu panel
+    go_to_dashboard: Ir a mi panel
 
 form.registration.username.help: 'Su nombre de usuario no puede tener más de 15 caracteres.
 

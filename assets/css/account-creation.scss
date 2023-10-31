@@ -48,8 +48,17 @@
 
   h5 {
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    font-size: 16px !important;
     font-weight: 400;
     margin-top: 0;
+  }
+
+  img {
+    width: 44px !important;
+
+    @media only screen and (max-width: 992px) {
+      margin-bottom: 0px !important;
+    }
   }
 }
 
