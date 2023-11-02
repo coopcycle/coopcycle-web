@@ -13,6 +13,11 @@ class BusinessAccount
     private $employees;
     private $billingAddress;
 
+    /**
+     * Only to keep data in form flow
+     */
+    private $differentAddressForBilling;
+
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
@@ -165,6 +170,17 @@ class BusinessAccount
     {
         $this->employees->removeElement($employee);
         $employee->setBusinessAccount(null);
+    }
+
+    public function getDifferentAddressForBilling()
+    {
+        return $this->differentAddressForBilling;
+    }
+
+    public function setDifferentAddressForBilling($differentAddressForBilling)
+    {
+        $this->differentAddressForBilling = $differentAddressForBilling;
+        return $this;
     }
 
 }
