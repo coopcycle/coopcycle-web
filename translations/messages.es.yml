@@ -556,7 +556,7 @@ activity.task.cancelled: "@%owner% ha cancelado la tarea #task/%aggregate_id%\n"
 activity.order.created: "El pedido #order/%aggregate_id% ha sido creado por @%owner%\n"
 activity.order.accepted: "El pedido #order/%aggregate_id% ha sido aceptado\n"
 activity.order.refused: "El pedido #order/%aggregate_id% ha sido rechazado\n"
-activity.order.picked: "@%owner% ha recuperado el pedido #order/%aggregate_id%\n"
+activity.order.picked: "@%owner% ha recogido el pedido #order/%aggregate_id%\n"
 activity.order.dropped: "@%owner% ha entregado el pedido #order/%aggregate_id%\n"
 activity.order.fulfilled: "El pedido #order/%aggregate_id% esta terminado\n"
 pagination.previous: Anterior
