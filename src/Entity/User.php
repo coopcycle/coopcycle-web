@@ -105,6 +105,11 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
 
     private $businessAccount;
 
+    /**
+     * Only to keep data in form flow
+     */
+    private $termsAndConditionsAndPrivacyPolicy;
+
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
@@ -468,6 +473,15 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
     public function setBusinessAccount(?BusinessAccount $businessAccount)
     {
         $this->businessAccount = $businessAccount;
+    }
+
+    public function getTermsAndConditionsAndPrivacyPolicy() {
+        return $this->termsAndConditionsAndPrivacyPolicy;
+    }
+
+    public function setTermsAndConditionsAndPrivacyPolicy($termsAndConditionsAndPrivacyPolicy) {
+        $this->termsAndConditionsAndPrivacyPolicy = $termsAndConditionsAndPrivacyPolicy;
+        return $this;
     }
 
     /**
