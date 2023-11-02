@@ -11,6 +11,7 @@ class BusinessAccount
     private $address;
     private $restaurants;
     private $employees;
+    private $billingAddress;
 
     public function __construct()
     {
@@ -62,6 +63,26 @@ class BusinessAccount
     public function setAddress($address)
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBillingAddress()
+    {
+        return $this->billingAddress;
+    }
+
+    /**
+     * @param mixed $billingAddress
+     *
+     * @return self
+     */
+    public function setBillingAddress($billingAddress)
+    {
+        $this->billingAddress = $billingAddress;
 
         return $this;
     }
