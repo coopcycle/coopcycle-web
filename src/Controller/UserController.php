@@ -172,8 +172,7 @@ class UserController extends AbstractController
         UserManagerInterface $userManager,
         EventDispatcherInterface $eventDispatcher,
         Canonicalizer $canonicalizer,
-        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
-        LoggerInterface $logger)
+        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow)
     {
         $repository = $this->getDoctrine()->getRepository(Invitation::class);
 
@@ -191,7 +190,7 @@ class UserController extends AbstractController
             ]);
             if (null !== $businessAccountInvitation) {
                 return $this->loadBusinessAccountRegistrationFlow(
-                    $businessAccountRegistrationFlow, $user, $businessAccountInvitation, $logger);
+                    $businessAccountRegistrationFlow, $user, $businessAccountInvitation);
             }
         }
 
@@ -257,7 +256,7 @@ class UserController extends AbstractController
             return $response;
         }
 
-        return $this->render('profile/invitation_define_password.html.twig', [
+        return $this->render('_partials/profile/definition_password_for_classical_users.html.twig', [
             'form' => $form->createView(),
             'invitationUser' => $invitation->getUser()
         ]);
@@ -266,8 +265,7 @@ class UserController extends AbstractController
     private function loadBusinessAccountRegistrationFlow(
         BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
         User $user,
-        BusinessAccountInvitation $businessAccountInvitation,
-        LoggerInterface $logger
+        BusinessAccountInvitation $businessAccountInvitation
     )
     {
         $businessAccountRegistrationFlow->bind(new BusinessAccountRegistration(
@@ -275,21 +273,13 @@ class UserController extends AbstractController
         ));
         $form = $submittedForm = $businessAccountRegistrationFlow->createForm();
 
-        // $form->add('save', SubmitType::class, [
-        //     'label'  => 'registration.submit',
-        // ]);
-
-        $logger->error(sprintf('[FLOW] CurrentStepNumber %d', $businessAccountRegistrationFlow->getCurrentStepNumber()));
         if ($businessAccountRegistrationFlow->isValid($submittedForm)) {
-            $logger->error(sprintf('[FLOW] isValid'));
             $businessAccountRegistrationFlow->saveCurrentStepData($submittedForm);
 
             if ($businessAccountRegistrationFlow->nextStep()) {
-                $logger->error(sprintf('[FLOW] NewStepNumber %d', $businessAccountRegistrationFlow->getCurrentStepNumber()));
                 // form for the next step
                 $form = $businessAccountRegistrationFlow->createForm();
             } else {
-                $logger->error(sprintf('[FLOW] No next step'));
                 // flow finished
                 // $em = $this->getDoctrine()->getManager();
                 // $em->persist($formData);
@@ -301,15 +291,10 @@ class UserController extends AbstractController
             }
         }
 
-        return $this->render('profile/invitation_define_password.html.twig', [
+        return $this->render('_partials/profile/definition_password_for_business_account.html.twig', [
             'form' => $form->createView(),
             'flow' => $businessAccountRegistrationFlow,
             'invitationUser' => $businessAccountInvitation->getInvitation()->getUser(),
         ]);
-        // return $this->render('profile/invitation_business_account_define_password.html.twig', [
-        //     'form' => $form->createView(),
-        //     'flow' => $businessAccountRegistrationFlow,
-        //     'invitationUser' => $businessAccountInvitation->getInvitation()->getUser(),
-        // ]);
     }
 }

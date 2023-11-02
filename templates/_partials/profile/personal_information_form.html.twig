@@ -1,6 +1,6 @@
 <div class="form-section">
   <div class="header rounded-top">
-    <h5>{{ flow.currentStepLabel|trans }}</h5>
+    <h5>{{ 'registration.step.personal'|trans }}</h5>
   </div>
   <div class="form rounded-bottom">
     {{ form_row(form.username) }}
@@ -21,7 +21,19 @@
     {% for optin in form.optins.vars.value|split(',') %}
       {{ form_row(form[optin]) }}
     {% endfor %}
-    {% include '_partials/profile/flow_buttons.html.twig' %}
+    {% if form.save is defined %}
+      <div class="row">
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+            <button name="{{ field_name(form.save) }}" type="submit" class="btn btn-block btn-md bg-primary">
+            {{ 'registration.submit'|trans({}, 'NucleosProfileBundle') }}
+            <i class="fa fa-angle-right ml-2"></i>
+            </button>
+        </div>
+      </div>
+    {% elseif flow is defined %}
+      {% include '_partials/profile/flow_buttons.html.twig' %}
+    {% endif %}
   </div>
 </div>
 
@@ -29,3 +41,11 @@
   <div id="termsAndConditionsAndPrivacyPolicy">
   </div>
 {% endif %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('register') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('register') }}
+{% endblock %}
