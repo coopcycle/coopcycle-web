@@ -189,8 +189,8 @@ class UserController extends AbstractController
                 'invitation' => $invitation,
             ]);
             if (null !== $businessAccountInvitation) {
-                return $this->loadBusinessAccountRegistrationFlow(
-                    $businessAccountRegistrationFlow, $user, $businessAccountInvitation);
+                return $this->loadBusinessAccountRegistrationFlow($request, $businessAccountRegistrationFlow, $user,
+                    $businessAccountInvitation, $objectManager, $userManager, $eventDispatcher, $canonicalizer);
             }
         }
 
@@ -201,8 +201,65 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            return $this->handleInvitationConfirmed($request, $user, $invitation,
+                $objectManager, $userManager, $eventDispatcher, $canonicalizer
+            );
+        }
 
-            $existingCustomer = $objectManager->getRepository(Customer::class)
+        return $this->render('_partials/profile/definition_password_for_classical_users.html.twig', [
+            'form' => $form->createView(),
+            'invitationUser' => $invitation->getUser()
+        ]);
+    }
+
+    private function loadBusinessAccountRegistrationFlow(Request $request,
+        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
+        User $user,
+        BusinessAccountInvitation $businessAccountInvitation,
+        EntityManagerInterface $objectManager,
+        UserManagerInterface $userManager,
+        EventDispatcherInterface $eventDispatcher,
+        Canonicalizer $canonicalizer
+    )
+    {
+        $flowData = new BusinessAccountRegistration($user, $businessAccountInvitation->getBusinessAccount());
+        $businessAccountRegistrationFlow->bind($flowData);
+        $form = $submittedForm = $businessAccountRegistrationFlow->createForm();
+
+        if ($businessAccountRegistrationFlow->isValid($submittedForm)) {
+            $businessAccountRegistrationFlow->saveCurrentStepData($submittedForm);
+
+            if ($businessAccountRegistrationFlow->nextStep()) {
+                // form for the next step
+                $form = $businessAccountRegistrationFlow->createForm();
+            } else {
+                $response = $this->handleInvitationConfirmed($request, $flowData->user, $businessAccountInvitation->getInvitation(),
+                    $objectManager, $userManager, $eventDispatcher, $canonicalizer
+                );
+
+                $businessAccountRegistrationFlow->reset(); // remove step data from the session
+
+                return $response;
+            }
+        }
+
+        return $this->render('_partials/profile/definition_password_for_business_account.html.twig', [
+            'form' => $form->createView(),
+            'flow' => $businessAccountRegistrationFlow,
+            'invitationUser' => $businessAccountInvitation->getInvitation()->getUser(),
+        ]);
+    }
+
+    private function handleInvitationConfirmed(
+        Request $request,
+        User $user,
+        Invitation $invitation,
+        EntityManagerInterface $objectManager,
+        UserManagerInterface $userManager,
+        EventDispatcherInterface $eventDispatcher,
+        Canonicalizer $canonicalizer)
+    {
+        $existingCustomer = $objectManager->getRepository(Customer::class)
                 ->findOneBy([
                     'emailCanonical' => $canonicalizer->canonicalize($user->getEmail())
                 ]);
@@ -254,47 +311,5 @@ class UserController extends AbstractController
             $eventDispatcher->dispatch(new FilterUserResponseEvent($user, $request, $response), NucleosProfileEvents::REGISTRATION_CONFIRMED);
 
             return $response;
-        }
-
-        return $this->render('_partials/profile/definition_password_for_classical_users.html.twig', [
-            'form' => $form->createView(),
-            'invitationUser' => $invitation->getUser()
-        ]);
-    }
-
-    private function loadBusinessAccountRegistrationFlow(
-        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
-        User $user,
-        BusinessAccountInvitation $businessAccountInvitation
-    )
-    {
-        $businessAccountRegistrationFlow->bind(new BusinessAccountRegistration(
-            $user, $businessAccountInvitation->getBusinessAccount()
-        ));
-        $form = $submittedForm = $businessAccountRegistrationFlow->createForm();
-
-        if ($businessAccountRegistrationFlow->isValid($submittedForm)) {
-            $businessAccountRegistrationFlow->saveCurrentStepData($submittedForm);
-
-            if ($businessAccountRegistrationFlow->nextStep()) {
-                // form for the next step
-                $form = $businessAccountRegistrationFlow->createForm();
-            } else {
-                // flow finished
-                // $em = $this->getDoctrine()->getManager();
-                // $em->persist($formData);
-                // $em->flush();
-
-                $businessAccountRegistrationFlow->reset(); // remove step data from the session
-
-                return $this->redirectToRoute('home'); // redirect when done
-            }
-        }
-
-        return $this->render('_partials/profile/definition_password_for_business_account.html.twig', [
-            'form' => $form->createView(),
-            'flow' => $businessAccountRegistrationFlow,
-            'invitationUser' => $businessAccountInvitation->getInvitation()->getUser(),
-        ]);
     }
 }

@@ -16,7 +16,7 @@ class BusinessAccountType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class, ['label' => 'basics.name'])
+            ->add('name', TextType::class, ['label' => 'registration.step.company.name'])
             ->add('address', AddressType::class, [
                 'with_widget' => true,
                 'with_description' => false,
