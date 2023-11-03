@@ -59,9 +59,14 @@ class Cart extends Component {
               <CartItems />
               <div>
                 <CartTotal />
-                { this.props.isOrderingAvailable && <hr /> }
-                { this.props.isOrderingAvailable && <CartButton /> }
-                { (this.props.isGroupOrdersEnabled && this.props.isOrderingAvailable && this.props.hasItems && !this.props.isPlayer && window._auth.isAuth) && <InvitePeopleToOrderButton /> }
+                { this.props.isOrderingAvailable &&
+                <>
+                <hr />
+                <CartButton />
+                { (this.props.isGroupOrdersEnabled && this.props.hasItems && !this.props.isPlayer && window._auth.isAuth) &&
+                <InvitePeopleToOrderButton /> }
+                </>
+                }
               </div>
             </div>
           </div>
