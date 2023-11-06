@@ -342,6 +342,7 @@
         "ORDER_DELAYED_NOTIFICATION": "Order {{orderNumber}} was delayed. New shipping time range: {{shippingTimeRange}}",
         "DELETE_ALL": "Delete all",
         "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Rule Name",
-        "RULE_PICKER_LINE_TASK_TYPE": "Type of task"
+        "RULE_PICKER_LINE_TASK_TYPE": "Type of task",
+        "CART_ENABLE_ZERO_WASTE": "Enable zero-waste option"
     }
 }

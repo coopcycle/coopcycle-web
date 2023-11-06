@@ -1716,4 +1716,16 @@ class Order extends BaseOrder implements OrderInterface
 
         return $text;
     }
+
+    public function supportsLoopeat(): bool
+    {
+        foreach ($this->getVendors() as $vendor) {
+            if ($vendor->getRestaurant()->isLoopeatEnabled()) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

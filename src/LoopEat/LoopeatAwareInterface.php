@@ -18,4 +18,6 @@ interface LoopeatAwareInterface
     public function getReturnsAmountForLoopeat(): int;
 
     public function hasLoopeatReturns();
+
+    public function supportsLoopeat(): bool;
 }

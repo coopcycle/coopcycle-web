@@ -610,3 +610,23 @@ export function createInvitation() {
       .catch(e => dispatch(invitePeopleFailure(e)))
   }
 }
+
+export function toggleReusablePackaging(checked = true) {
+
+  return (dispatch) => {
+
+    const $form = $('form[name="cart"]')
+    const $reusablePackagingEnabled = $form.find('input[name="cart[reusablePackagingEnabled]"]')
+
+    if ($reusablePackagingEnabled.length === 1) {
+
+      $reusablePackagingEnabled.prop('checked', checked)
+
+      dispatch(fetchRequest())
+      postForm()
+        .then(res => handleAjaxResponse(res, dispatch))
+        .catch(e  => handleAjaxError(e, dispatch))
+
+    }
+  }
+}

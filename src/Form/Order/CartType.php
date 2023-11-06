@@ -69,6 +69,12 @@ class CartType extends AbstractType
                     'data' => $isCollectionOnly ? true : $cart->isTakeaway(),
                 ]);
             }
+
+            if ($cart->supportsLoopeat()) {
+                $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                    'required' => false,
+                ]);
+            }
         });
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($removeAddressFields) {

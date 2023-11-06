@@ -156,3 +156,25 @@ export const selectWarningMessages = createSelector(
     return messages
   }
 )
+
+export const selectReusablePackagingFeatureEnabled = createSelector(
+  state => state.cart,
+  (cart) => {
+    if (cart.restaurant) {
+      return cart.restaurant.loopeatEnabled
+    }
+
+    return true
+  }
+)
+
+export const selectReusablePackagingEnabled = createSelector(
+  state => state.cart,
+  (cart) => {
+    if (cart) {
+      return cart.reusablePackagingEnabled
+    }
+
+    return false
+  }
+)

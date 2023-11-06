@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {withTranslation} from 'react-i18next'
 import Sticky from 'react-stickynode'
 import classNames from 'classnames'
+import { Switch } from 'antd'
 
 import AddressModal from './AddressModal'
 import DateModal from './DateModal'
@@ -16,12 +17,14 @@ import FulfillmentMethod from './FulfillmentMethod'
 import ProductOptionsModal from './ProductOptionsModal'
 import ProductDetailsModal from './ProductDetailsModal'
 
-import {changeAddress, disableTakeaway, enableTakeaway, openAddressModal, sync} from '../redux/actions'
+import {changeAddress, disableTakeaway, enableTakeaway, openAddressModal, sync, toggleReusablePackaging} from '../redux/actions'
 import {
   selectIsCollectionEnabled,
   selectIsDeliveryEnabled,
   selectIsOrderingAvailable,
-  selectItems
+  selectItems,
+  selectReusablePackagingFeatureEnabled,
+  selectReusablePackagingEnabled,
 } from '../redux/selectors'
 import InvitePeopleToOrderButton from './InvitePeopleToOrderButton'
 import InvitePeopleToOrderModal from './InvitePeopleToOrderModal'
@@ -58,6 +61,14 @@ class Cart extends Component {
               </div>
               <CartItems />
               <div>
+                { (this.props.reusablePackagingFeatureEnabled && this.props.hasItems) &&
+                <div className="d-flex align-items-center mb-2">
+                  <Switch size="small" defaultChecked={ this.props.reusablePackagingEnabled } onChange={ (checked) => {
+                    this.props.toggleReusablePackaging(checked)
+                  } } />
+                  <span className="ml-2">{ this.props.t('CART_ENABLE_ZERO_WASTE') }</span>
+                </div>
+                }
                 <CartTotal />
                 { this.props.isOrderingAvailable &&
                 <>
@@ -104,6 +115,8 @@ function mapStateToProps(state) {
     player: state.player,
     invitation: state.cart.invitation,
     isGroupOrdersEnabled: state.isGroupOrdersEnabled,
+    reusablePackagingFeatureEnabled: selectReusablePackagingFeatureEnabled(state),
+    reusablePackagingEnabled: selectReusablePackagingEnabled(state),
   }
 }
 
@@ -115,6 +128,7 @@ function mapDispatchToProps(dispatch) {
     enableTakeaway: () => dispatch(enableTakeaway()),
     disableTakeaway: () => dispatch(disableTakeaway()),
     openAddressModal: (restaurant) => dispatch(openAddressModal({restaurant})),
+    toggleReusablePackaging: (checked) => dispatch(toggleReusablePackaging(checked)),
   }
 }
 
