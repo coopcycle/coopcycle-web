@@ -9,23 +9,23 @@ use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
-use AppBundle\Entity\User;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
+use AppBundle\Entity\User;
 use AppBundle\Service\Geocoder;
-use Doctrine\Persistence\ObjectRepository;
+use AppBundle\Service\OrderManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
-use Prophecy\Argument;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
+
 
 // Avoid error "Returning by reference not supported" with Prophecy
 class UnitOfWork
@@ -71,13 +71,15 @@ class TaskSubscriberTest extends TestCase
         $changeSetProcessor = new EntityChangeSetProcessor($taskListProvider);
 
         $this->geocoder = $this->prophesize(Geocoder::class);
+        $this->orderManager = $this->prophesize(OrderManager::class);
 
         $this->subscriber = new TaskSubscriber(
             $this->eventBus->reveal(),
             $eventStore,
             $changeSetProcessor,
             new NullLogger(),
-            $this->geocoder->reveal()
+            $this->geocoder->reveal(),
+            $this->orderManager->reveal()
         );
     }
 
