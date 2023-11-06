@@ -188,6 +188,9 @@ export const CLOSE_CREATE_TOUR_MODAL = 'CLOSE_CREATE_TOUR_MODAL'
 export const OPEN_TASK_RESCHEDULE_MODAL = 'OPEN_TASK_RESCHEDULE_MODAL'
 export const CLOSE_TASK_RESCHEDULE_MODAL = 'CLOSE_TASK_RESCHEDULE_MODAL'
 
+export const CREATE_TOUR_REQUEST = 'CREATE_TOUR_REQUEST'
+export const CREATE_TOUR_REQUEST_SUCCESS = 'CREATE_TOUR_REQUEST_SUCCESS'
+
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
 export const UPDATE_TOUR = 'UPDATE_TOUR'
@@ -1543,6 +1546,14 @@ export function closeTaskRescheduleModal() {
   return { type: CLOSE_TASK_RESCHEDULE_MODAL }
 }
 
+export function createTourRequest() {
+  return { type: CREATE_TOUR_REQUEST }
+}
+
+export function createTourRequestSuccess() {
+  return { type: CREATE_TOUR_REQUEST_SUCCESS }
+}
+
 export function modifyTourRequest(tour, tasks) {
   return { type: MODIFY_TOUR_REQUEST, tour, tasks }
 }
@@ -1556,6 +1567,9 @@ export function createTour(tasks, name, date) {
   return function(dispatch, getState) {
 
     const { jwt } = getState()
+
+    dispatch(createTourRequest())
+
 
     createClient(dispatch).request({
       method: 'post',
@@ -1579,11 +1593,12 @@ export function createTour(tasks, name, date) {
 
         dispatch(updateTour(tour))
         dispatch(closeCreateTourModal())
+        dispatch(createTourRequestSuccess())
       })
       .catch(error => {
         // eslint-disable-next-line no-console
         console.log(error)
-        dispatch(closeCreateDeliveryModal())
+        dispatch(closeCreateTourModal())
       })
   }
 }

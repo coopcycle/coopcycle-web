@@ -7,7 +7,7 @@ import { createTour } from '../redux/actions'
 import { selectSelectedTasks } from '../redux/selectors'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 
-const ModalContent = ({ selectedTasks, createTour, date }) => {
+const ModalContent = ({ selectedTasks, createTour, date, isCreateTourButtonLoading }) => {
   const { t } = useTranslation()
 
   return (
@@ -27,7 +27,7 @@ const ModalContent = ({ selectedTasks, createTour, date }) => {
           <Input placeholder="Basic usage" />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={isCreateTourButtonLoading}>
             { t('ADMIN_DASHBOARD_TASK_FORM_SAVE') }
           </Button>
         </Form.Item>
@@ -41,6 +41,7 @@ function mapStateToProps(state) {
   return {
     selectedTasks: selectSelectedTasks(state),
     date: selectSelectedDate(state),
+    isCreateTourButtonLoading: state.isCreateTourButtonLoading
   }
 }
 
