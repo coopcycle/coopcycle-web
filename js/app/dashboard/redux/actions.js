@@ -1615,6 +1615,7 @@ export function modifyTour(tour, tasks) {
       method: 'put',
       url: tour['@id'],
       data: {
+        name: tour.name,
         tasks: _.map(tasks, t => t['@id'])
       },
       headers: {
@@ -1630,6 +1631,7 @@ export function modifyTour(tour, tasks) {
         
         dispatch(updateTour(_tour))
         dispatch(modifyTourRequestSuccess(_tour, tasks))
+        return _tour
       })
       .catch(error => {
         // eslint-disable-next-line no-console

@@ -1,34 +1,76 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { connect } from 'react-redux'
 import { withTranslation, useTranslation } from 'react-i18next'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 import _ from 'lodash'
 import Task from './Task'
-import { removeTaskFromTour } from '../redux/actions'
+import { removeTaskFromTour, modifyTour } from '../redux/actions'
 import classNames from 'classnames'
 
-const UnassignedTour = ({ tour, tasks, removeTaskFromTour, username = null, unassignTasks = null, isDropDisabled }) => {
+const UnassignedTour = ({ tour, tasks, removeTaskFromTour, isDropDisabled, modifyTour }) => {
 
-  const { t } = useTranslation()
-
-  const collapseId = `tour-panel-${tour['@id'].replaceAll('/', '-')}`
+  const { t } = useTranslation(),
+        collapseId = `tour-panel-${tour['@id'].replaceAll('/', '-')}`,
+        [toggleInputForName, setToggleInputForName] = useState(false),
+        [tourName, setNewName] = useState(tour.name),
+        onEditSubmitted = async (e) => {
+          e.preventDefault()
+          $('.task__draggable').LoadingOverlay('show', {image: false})
+          let _tour = Object.assign({}, tour, {name : tourName})
+          await modifyTour(_tour, tasks)
+          setToggleInputForName(false)
+          $('.task__draggable').LoadingOverlay('hide')
+        },
+        onEditCancelled = (e) => {
+          e.preventDefault()
+          setToggleInputForName(false)
+        },
+        renderEditNameForm = () => {
+          return (
+            <form onSubmit={(e) => onEditSubmitted(e)} className="d-flex flex-grow-1">
+              <input autoFocus type="text" name="group-name" className="mx-2 flex-grow-1 group__editable"
+                value={tourName}
+                onChange={ (e) => setNewName(e.target.value) }
+                onKeyDown={e => e.key === 'Escape' ? onEditCancelled(e) : null }>
+              </input>
+              <div className="flex-grow-0">
+                <a role="button" href="#" className="text-reset mr-3"
+                  onClick={ e =>  onEditSubmitted(e)}
+                  title={t("CHANGE_TOUR_NAME")}
+                  >
+                  <i className="fa fa-check"></i>
+                </a>
+                <a role="button" href="#" className="text-reset flex-grow-0"
+                  onClick={ e => onEditCancelled(e) }>
+                  <i className="fa fa-times"></i>
+                </a>
+              </div>
+            </form>
+          )
+        }
 
   return (
     <div className="panel panel-default nomargin task__draggable">
       <div className="panel-heading" role="tab">
         <h4 className="panel-title d-flex align-items-center">
           <i className="fa fa-repeat flex-grow-0"></i>
-            <a role="button" data-toggle="collapse" href={ `#${collapseId}` } className="ml-2 flex-grow-1 text-truncate">
-              { tour.name } <span className="badge">{ tasks.length }</span>
-            </a>
-            { username && (
-              <a 
-                onClick={() => unassignTasks(username, tasks)}
-                title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
-              >
-                <i className="fa fa-times"></i>
-              </a>
-            )}
+            {
+              !toggleInputForName &&
+              <>
+                <a role="button" data-toggle="collapse" href={ `#${collapseId}` } className="ml-2 flex-grow-1 text-truncate">
+                  { tourName } <span className="badge">{ tasks.length }</span>
+                </a>
+                <div className="d-flex flex-grow-0">
+                      <a role="button" href="#" className="text-reset mr-2"
+                        onClick={ () => setToggleInputForName(true) }>
+                        <i className="fa fa-pencil"></i>
+                      </a>
+                </div>
+            </>
+            }
+            {
+              toggleInputForName && renderEditNameForm()
+            }
         </h4>
       </div>
       <div id={ `${collapseId}` } className="panel-collapse collapse" role="tabpanel">
@@ -83,6 +125,7 @@ function mapDispatchToProps(dispatch) {
 
   return {
     removeTaskFromTour: (tour, task) => dispatch(removeTaskFromTour(tour, task)),
+    modifyTour: (tour, tasks) => dispatch(modifyTour(tour, tasks)),
   }
 }
   
