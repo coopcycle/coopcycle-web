@@ -123,6 +123,16 @@ class ProductType extends AbstractType
             if (null !== $product->getId()) {
 
                 if ($options['with_reusable_packaging']) {
+
+                    $entryOptions = [
+                        'label' => false,
+                        'reusable_packaging_choice_loader' => $options['reusable_packaging_choice_loader'],
+                    ];
+
+                    if ($product->getRestaurant()->isLoopeatEnabled()) {
+                        $entryOptions['units_step'] = 1;
+                    }
+
                     $form
                         ->add('reusablePackagingEnabled', CheckboxType::class, [
                             'required' => false,
@@ -131,10 +141,7 @@ class ProductType extends AbstractType
                         ->add('reusablePackagings', CollectionType::class, [
                             'label' => false,
                             'entry_type' => ReusablePackagingType::class,
-                            'entry_options' => [
-                                'label' => false,
-                                'reusable_packaging_choice_loader' => $options['reusable_packaging_choice_loader'],
-                            ],
+                            'entry_options' => $entryOptions,
                             'allow_add' => true,
                             'by_reference' => false,
                         ])

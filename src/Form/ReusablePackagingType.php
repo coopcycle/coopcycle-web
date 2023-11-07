@@ -26,8 +26,7 @@ class ReusablePackagingType extends AbstractType
                 'html5' => true,
                 'attr'  => array(
                     'min'  => 0,
-                    'max'  => 3,
-                    'step' => 0.5,
+                    'step' => $options['units_step'],
                 )
             ])
             ;
@@ -38,6 +37,7 @@ class ReusablePackagingType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => ReusablePackagings::class,
             'reusable_packaging_choice_loader' => null,
+            'units_step' => 0.5,
         ));
     }
 }
