@@ -92,6 +92,7 @@
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_CONTACT_NAME_PLACEHOLDER": "John Doe",
         "ADMIN_DASHBOARD_TASK_FORM_TIME_RANGE_LABEL": "Time range",
         "ADMIN_DASHBOARD_TASK_FORM_COMMENTS_LABEL": "Comments",
+        "ADMIN_DASHBOARD_TASK_FORM_ORDER_NOTES_LABEL": "Customer notes",
         "ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER": "Specify any useful details to complete task",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_ERROR": "Please specify an address",
         "ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR": "This is not a valid phone number",

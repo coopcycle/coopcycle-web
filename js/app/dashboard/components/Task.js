@@ -15,6 +15,23 @@ import OrderNumber from './OrderNumber'
 
 moment.locale($('html').attr('lang'))
 
+const TaskComments = ({ task }) => {
+  switch(task.type) {
+    case 'PICKUP':
+      if (task.metadata.order_notes && task.metadata.order_notes.length){
+        return <i className="fa fa-comments ml-2"></i>;
+      }
+      return null;
+    case 'DROPOFF':
+      if (task.address.description && task.address.description.length) {
+        return <i className="fa fa-comments ml-2"></i>;
+      }
+      return null;
+    default:
+      return null;
+  }
+}
+
 const TaskCaption = ({ task }) => {
 
   const { t } = useTranslation()
@@ -236,6 +253,7 @@ class Task extends React.Component {
             after={ task.after }
             before={ task.before }
             date={ date } />
+          <TaskComments task={ task } />
         </span>
       </span>
     )
