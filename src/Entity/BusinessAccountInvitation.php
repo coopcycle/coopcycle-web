@@ -31,4 +31,14 @@ class BusinessAccountInvitation
 
         return $this;
     }
+
+    public function isInvitationForManager()
+    {
+        if ($grants = $this->invitation->getGrants()) {
+            if (isset($grants['roles'])) {
+                return in_array('ROLE_BUSINESS_ACCOUNT', $grants['roles']);
+            }
+        }
+        return false;
+    }
 }

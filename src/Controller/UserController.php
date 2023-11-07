@@ -187,7 +187,7 @@ class UserController extends AbstractController
             $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
                 'invitation' => $invitation,
             ]);
-            if (null !== $businessAccountInvitation) {
+            if (null !== $businessAccountInvitation && $businessAccountInvitation->isInvitationForManager()) {
                 return $this->loadBusinessAccountRegistrationFlow($request, $businessAccountRegistrationFlow, $user,
                     $businessAccountInvitation, $objectManager, $userManager, $eventDispatcher, $canonicalizer);
             }
@@ -304,18 +304,29 @@ class UserController extends AbstractController
             }
         }
 
-        if ($this->getParameter('business_account_enabled') && $user->hasRole('ROLE_BUSINESS_ACCOUNT')) {
+        $businessAccountInvitation = null;
+        if ($this->getParameter('business_account_enabled')) {
             $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
                 'invitation' => $invitation,
             ]);
-            $user->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
-            $objectManager->remove($businessAccountInvitation);
+            if (null !== $businessAccountInvitation) {
+                $user->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
+            }
         }
 
-        $userManager->updateUser($user);
+        if (null === $businessAccountInvitation || $businessAccountInvitation->isInvitationForManager()) {
+            if (null !== $businessAccountInvitation && $businessAccountInvitation->isInvitationForManager()) {
+                $objectManager->remove($businessAccountInvitation);
+            }
 
-        $objectManager->remove($invitation);
-        $objectManager->flush();
+            $userManager->updateUser($user);
+
+            $objectManager->remove($invitation);
+            $objectManager->flush();
+        } else if (!$businessAccountInvitation->isInvitationForManager()) {
+            $userManager->updateUser($user);
+            $objectManager->flush();
+        }
 
         $response = new RedirectResponse($this->generateUrl('nucleos_profile_registration_confirmed'));
 

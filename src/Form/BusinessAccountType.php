@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\BusinessAccount;
+use AppBundle\Entity\BusinessAccountInvitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as AssertUserWithSameEmailNotExists;
 use Doctrine\ORM\EntityManagerInterface;
