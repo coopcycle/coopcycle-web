@@ -23,9 +23,15 @@ class BusinessAccountRegistration
 	 */
 	public $invitationLink;
 
-    public function __construct(User $user, BusinessAccount $businessAccount, $invitationLink = null) {
+	/**
+	 * @Assert\Valid
+	 */
+	public $code;
+
+    public function __construct(User $user, BusinessAccount $businessAccount, $invitationLink = null, $code = null) {
 		$this->user = $user;
 		$this->businessAccount = $businessAccount;
 		$this->invitationLink = $invitationLink;
+		$this->code = $code;
 	}
 }

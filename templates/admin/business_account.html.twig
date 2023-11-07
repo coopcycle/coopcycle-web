@@ -61,7 +61,7 @@
 
 {% block scripts %}
   <script>
-    var $restaurants = $('#business_account_restaurants')
+    var $restaurants = $('#company_restaurants')
     if (document.querySelector('#restaurant-search')) {
       new CoopCycle.Search(document.querySelector('#restaurant-search'), {
         url: "{{ path('admin_restaurants_search', { format: 'json' }) }}",

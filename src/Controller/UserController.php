@@ -21,7 +21,6 @@ use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Nucleos\UserBundle\Util\Canonicalizer;
 use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Laravolt\Avatar\Avatar;
-use Psr\Log\LoggerInterface;
 use Shahonseven\ColorHash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -233,9 +232,21 @@ class UserController extends AbstractController
                 // form for the next step
                 $form = $businessAccountRegistrationFlow->createForm();
             } else {
+                $invitation = new Invitation();
+                $invitation->setEmail($canonicalizer->canonicalize($user->getEmail()));
+                $invitation->setUser($user);
+                $invitation->setCode($flowData->code);
+
+                $businessAccountEmployeeInvitation = new BusinessAccountInvitation();
+                $businessAccountEmployeeInvitation->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
+                $businessAccountEmployeeInvitation->setInvitation($invitation);
+
                 $response = $this->handleInvitationConfirmed($request, $flowData->user, $businessAccountInvitation->getInvitation(),
                     $objectManager, $userManager, $eventDispatcher, $canonicalizer
                 );
+
+                $objectManager->persist($businessAccountEmployeeInvitation);
+                $objectManager->flush();
 
                 $businessAccountRegistrationFlow->reset(); // remove step data from the session
 

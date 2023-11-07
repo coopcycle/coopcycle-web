@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -39,24 +40,21 @@ class BusinessAccountRegistrationForm extends AbstractType
                 ]);
 				break;
             case 3:
-                $builder->add('invitationLink', UrlType::class, [
-                    'label' => 'registration.step.invitation.copy.link'
-                ]);
+                $code = $this->tokenGenerator->generateToken();
+                $invitationLink = $this->urlGenerator->generate('invitation_define_password', [
+                    'code' => $code
+                ], UrlGeneratorInterface::ABSOLUTE_URL);
 
-                $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-                    $form = $event->getForm();
+                $builder
+                    ->add('invitationLink', UrlType::class, [
+                        'label' => 'registration.step.invitation.copy.link',
+                        'data' => $invitationLink
+                    ])
+                    ->add('code', HiddenType::class, [
+                        'required' => false,
+                        'data' => $code
+                    ]);
 
-                    $invitationLink = $form->get('invitationLink');
-                    $config = $invitationLink->getConfig();
-                    $options = $config->getOptions();
-
-                    $generatedLink = $this->urlGenerator->generate('invitation_define_password', [
-                        'code' => $this->tokenGenerator->generateToken()
-                    ], UrlGeneratorInterface::ABSOLUTE_URL);
-
-                    $options['data'] = $generatedLink;
-                    $form->add('invitationLink', get_class($config->getType()->getInnerType()), $options);
-                });
                 break;
         }
     }
