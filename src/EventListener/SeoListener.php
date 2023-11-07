@@ -6,6 +6,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\ImagineBundle\Service\FilterService;
+use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -145,8 +146,10 @@ class SeoListener
 
         $imagePath = $this->uploaderHelper->asset($restaurant, 'imageFile');
         if (null !== $imagePath) {
-            $this->seoPage->addMeta('property', 'og:image',
-                $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail'));
+            try {
+                $this->seoPage->addMeta('property', 'og:image',
+                    $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail'));
+            } catch (NotLoadableException $e) {}
         }
     }
 }

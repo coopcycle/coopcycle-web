@@ -11,6 +11,7 @@ use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Utils\PriceFormatter;
 use Cocur\Slugify\SlugifyInterface;
 use Liip\ImagineBundle\Service\FilterService;
+use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -74,7 +75,9 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
                 $data['image'] = $request->getUriForPath($imagePath);
             }
         } else {
-            $data['image'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail');
+            try {
+                $data['image'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail');
+            } catch (NotLoadableException $e) {}
         }
 
         // Stop now if this is for SEO
