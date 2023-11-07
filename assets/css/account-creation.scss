@@ -90,8 +90,29 @@
 }
 
 .step {
+  margin-bottom: 20px;
+
   .label-inactive {
     color: #878787;
+  }
+}
+
+.step-1 {
+  @media only screen and (max-width: 992px) {
+    position: relative;
+    left: 0;
+  }
+}
+.step-2 {
+  @media only screen and (max-width: 992px) {
+    position: relative;
+    left: -50%;
+  }
+}
+.step-3 {
+  @media only screen and (max-width: 992px) {
+    position: relative;
+    left: -80%;
   }
 }
 

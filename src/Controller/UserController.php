@@ -260,56 +260,56 @@ class UserController extends AbstractController
         Canonicalizer $canonicalizer)
     {
         $existingCustomer = $objectManager->getRepository(Customer::class)
-                ->findOneBy([
-                    'emailCanonical' => $canonicalizer->canonicalize($user->getEmail())
-                ]);
+            ->findOneBy([
+                'emailCanonical' => $canonicalizer->canonicalize($user->getEmail())
+            ]);
 
-            if (null !== $existingCustomer) {
-                $user->setCustomer($existingCustomer);
-            }
+        if (null !== $existingCustomer) {
+            $user->setCustomer($existingCustomer);
+        }
 
-            if ($grants = $invitation->getGrants()) {
-                if (isset($grants['roles'])) {
-                    foreach ($grants['roles'] as $role) {
-                        $user->addRole($role);
-                    }
-                }
-                if (isset($grants['restaurants'])) {
-                    foreach ($grants['restaurants'] as $restaurantId) {
-                        if ($restaurant = $objectManager->getRepository(LocalBusiness::class)->find($restaurantId)) {
-                            $user->addRestaurant($restaurant);
-                            $user->addRole('ROLE_RESTAURANT');
-                        }
-
-                    }
-                }
-                if (isset($grants['stores'])) {
-                    foreach ($grants['stores'] as $storeId) {
-                        if ($store = $objectManager->getRepository(Store::class)->find($storeId)) {
-                            $user->addStore($store);
-                            $user->addRole('ROLE_STORE');
-                        }
-                    }
+        if ($grants = $invitation->getGrants()) {
+            if (isset($grants['roles'])) {
+                foreach ($grants['roles'] as $role) {
+                    $user->addRole($role);
                 }
             }
+            if (isset($grants['restaurants'])) {
+                foreach ($grants['restaurants'] as $restaurantId) {
+                    if ($restaurant = $objectManager->getRepository(LocalBusiness::class)->find($restaurantId)) {
+                        $user->addRestaurant($restaurant);
+                        $user->addRole('ROLE_RESTAURANT');
+                    }
 
-            if ($this->getParameter('business_account_enabled') && $user->hasRole('ROLE_BUSINESS_ACCOUNT')) {
-                $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
-                    'invitation' => $invitation,
-                ]);
-                $user->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
-                $objectManager->remove($businessAccountInvitation);
+                }
             }
+            if (isset($grants['stores'])) {
+                foreach ($grants['stores'] as $storeId) {
+                    if ($store = $objectManager->getRepository(Store::class)->find($storeId)) {
+                        $user->addStore($store);
+                        $user->addRole('ROLE_STORE');
+                    }
+                }
+            }
+        }
 
-            $userManager->updateUser($user);
+        if ($this->getParameter('business_account_enabled') && $user->hasRole('ROLE_BUSINESS_ACCOUNT')) {
+            $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
+                'invitation' => $invitation,
+            ]);
+            $user->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
+            $objectManager->remove($businessAccountInvitation);
+        }
 
-            $objectManager->remove($invitation);
-            $objectManager->flush();
+        $userManager->updateUser($user);
 
-            $response = new RedirectResponse($this->generateUrl('nucleos_profile_registration_confirmed'));
+        $objectManager->remove($invitation);
+        $objectManager->flush();
 
-            $eventDispatcher->dispatch(new FilterUserResponseEvent($user, $request, $response), NucleosProfileEvents::REGISTRATION_CONFIRMED);
+        $response = new RedirectResponse($this->generateUrl('nucleos_profile_registration_confirmed'));
 
-            return $response;
+        $eventDispatcher->dispatch(new FilterUserResponseEvent($user, $request, $response), NucleosProfileEvents::REGISTRATION_CONFIRMED);
+
+        return $response;
     }
 }
