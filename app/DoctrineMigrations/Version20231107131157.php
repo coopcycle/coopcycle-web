@@ -14,18 +14,28 @@ final class Version20231107131157 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Updates orders state when delivery\'s tasks are cancelled';
     }
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
-
+        $this->addSql("
+        UPDATE sylius_order
+        SET state = 'cancelled'
+        WHERE id IN (
+            SELECT order_id FROM delivery d
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM task t
+                WHERE d.id = t.delivery_id
+                AND t.status != 'CANCELLED'
+            ) AND d.order_id IS NOT NULL
+        );
+    ");
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-
+        $this->write("Cannot revert this migration.");
     }
 }
