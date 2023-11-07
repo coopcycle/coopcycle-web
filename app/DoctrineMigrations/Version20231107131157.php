@@ -36,6 +36,6 @@ final class Version20231107131157 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $this->write("Cannot revert this migration.");
+        $this->throwIrreversibleMigrationException();
     }
 }
