@@ -183,6 +183,7 @@ class UserController extends AbstractController
         $user->setEmail($invitation->getEmail());
         $user->setEnabled(true);
 
+        $businessAccountInvitation = null;
         if ($this->getParameter('business_account_enabled')) {
             $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
                 'invitation' => $invitation,
@@ -207,7 +208,8 @@ class UserController extends AbstractController
 
         return $this->render('_partials/profile/definition_password_for_classical_users.html.twig', [
             'form' => $form->createView(),
-            'invitationUser' => $invitation->getUser()
+            'invitationUser' => $invitation->getUser(),
+            'businessAccountInvitation' => $businessAccountInvitation
         ]);
     }
 
