@@ -1904,6 +1904,7 @@ Feature: Carts
         "shippedAt":null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn":0,
+        "reusablePackagingQuantity": @integer@,
         "shippingTimeRange":null,
         "notes":null,
         "items":[],
