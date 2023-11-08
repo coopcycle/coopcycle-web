@@ -4,6 +4,10 @@ namespace AppBundle\Action\Order;
 
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsObject;
 use AppBundle\Api\Dto\LoopeatFormat;
+use Sylius\Component\Order\Model\OrderInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
+use AppBundle\Entity\ReusablePackagings;
+use AppBundle\Entity\ReusablePackaging;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class LoopeatFormats
@@ -33,7 +37,7 @@ class LoopeatFormats
                     $format->formats[] = [
                         'format_id' => $packagingData['id'],
                         'format_name' => $reusablePackaging->getReusablePackaging()->getName(),
-                        'quantity' => ($item->getQuantity() * $reusablePackaging->getUnits()),
+                        'quantity' => $this->getQuantity($data, $item, $reusablePackaging, $reusablePackaging->getReusablePackaging()),
                     ];
                 }
 
@@ -42,5 +46,25 @@ class LoopeatFormats
         }
 
         return $output;
+    }
+
+    private function getQuantity(
+        OrderInterface $order,
+        OrderItemInterface $item,
+        ReusablePackagings $reusablePackaging,
+        ReusablePackaging $pkg): float
+    {
+        $pkgData = $pkg->getData();
+        $loopeatDeliver = $order->getLoopeatDeliver();
+        if (isset($loopeatDeliver[$item->getId()])) {
+            foreach ($loopeatDeliver[$item->getId()] as $loopeatDeliverFormat) {
+                if ($loopeatDeliverFormat['format_id'] === $pkgData['id']) {
+
+                    return $loopeatDeliverFormat['quantity'];
+                }
+            }
+        }
+
+        return ceil($reusablePackaging->getUnits() * $item->getQuantity());
     }
 }
