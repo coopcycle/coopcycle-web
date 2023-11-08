@@ -63,6 +63,7 @@ Feature: Food Tech
             "shippedAt":"@string@.isDateTime()",
             "reusablePackagingEnabled":false,
             "reusablePackagingPledgeReturn":0,
+            "reusablePackagingQuantity": @integer@,
             "shippingTimeRange":@array@,
             "takeaway":false,
             "id":@integer@,
