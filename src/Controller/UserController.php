@@ -325,7 +325,7 @@ class UserController extends AbstractController
 
             $objectManager->remove($invitation);
             $objectManager->flush();
-        } else if (!$businessAccountInvitation->isInvitationForManager()) {
+        } else {
             $userManager->updateUser($user);
             $objectManager->flush();
         }
