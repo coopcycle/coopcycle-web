@@ -19,7 +19,7 @@ const getReturnsTotalAmount = (returns, formats) => returns.reduce(
   0
 )
 
-const LoopeatReturns = function({ customerContainers, formats, formatsToDeliver, initialReturns, creditsCountCents, requiredAmount, onChange, onSubmit }) {
+const LoopeatModal = function({ customerContainers, formats, formatsToDeliver, initialReturns, creditsCountCents, requiredAmount, containersCount, oauthUrl, onChange, onSubmit }) {
 
   const { t } = useTranslation()
   const [ returns, setReturns ] = useState(initialReturns)
@@ -29,6 +29,8 @@ const LoopeatReturns = function({ customerContainers, formats, formatsToDeliver,
 
   return (
     <div className="p-4">
+      <h4>{ t('CART_LOOPEAT_MODAL_RETURN_SECTION_TITLE', { count: containersCount }) }</h4>
+      <p className="text-muted">{ t('CART_LOOPEAT_MODAL_RETURN_SECTION_SUBTITLE') }</p>
       <section>
         <table className="table">
           <thead>
@@ -79,6 +81,11 @@ const LoopeatReturns = function({ customerContainers, formats, formatsToDeliver,
           </tbody>
         </table>
       </section>
+      <h4>{ t('CART_LOOPEAT_MODAL_WALLET_SECTION_TITLE', { count: (creditsCountCents / 100).formatMoney() }) }</h4>
+      <section>
+        <a href={ oauthUrl} className="btn btn-default btn-lg btn-block">{ t('CART_LOOPEAT_MODAL_ADD_CREDITS') }</a>
+      </section>
+      <hr />
       <section>
         <h5>{ t('CART_LOOPEAT_RETURNS_SUMMARY') }</h5>
         <table className="table table-condensed">
@@ -95,7 +102,7 @@ const LoopeatReturns = function({ customerContainers, formats, formatsToDeliver,
           </tbody>
           <tfoot>
             <tr>
-              <th>{ t('CART_TOTAL') }</th>
+              <th>{ t('CART_LOOPEAT_MODAL_TOTAL_DEPOSIT') }</th>
               <td className="text-right">{ (requiredAmount / 100).formatMoney() }</td>
             </tr>
             <tr>
@@ -103,18 +110,19 @@ const LoopeatReturns = function({ customerContainers, formats, formatsToDeliver,
               <td className="text-right">{ (creditsCountCents / 100).formatMoney() }</td>
             </tr>
             <tr>
-              <th>{ t('CART_LOOPEAT_RETURNS_RETURNS_AMOUNT') }</th>
+              <th>{ t('CART_LOOPEAT_MODAL_RETURNS_AMOUNT') }</th>
               <td className="text-right">{ (returnsTotalAmount / 100).formatMoney() }</td>
-            </tr>
-            <tr className={ classNames({
-              'text-success': missing <= 0,
-              'text-danger': missing > 0,
-            }) }>
-              <th>{ t('CART_LOOPEAT_RETURNS_RETURNS_DIFF') }</th>
-              <td className="text-right">{ ((missing * -1) / 100).formatMoney() }</td>
             </tr>
           </tfoot>
         </table>
+        <p className={ classNames({
+          'text-center': true,
+          'text-success': missing <= 0,
+          'text-danger': missing > 0,
+        }) }>
+          { missing <= 0 && t('CART_LOOPEAT_MODAL_OK') }
+          { missing > 0 && t('CART_LOOPEAT_MODAL_NOK') }
+        </p>
       </section>
       <button type="button" className="btn btn-lg btn-block btn-primary" onClick={ onSubmit }>
         { t('CART_LOOPEAT_RETURNS_VALIDATE') }
@@ -123,4 +131,4 @@ const LoopeatReturns = function({ customerContainers, formats, formatsToDeliver,
   )
 }
 
-export default LoopeatReturns
+export default LoopeatModal

@@ -612,7 +612,7 @@ form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activez l'op
 form.checkout_address.reusable_packaging.loopeat.connect: Veuillez créer ou connecter votre compte %name% à %brand_name% pour régler votre consigne, ou désactivez l'option zéro déchet.
 form.checkout_address.reusable_packaging.loopeat.connect_account: Se connecter à %name%
 form.checkout_address.reusable_packaging.loopeat.add_credits: Créditer ma cagnotte
-form.checkout_address.reusable_packaging.loopeat.return_containers: Rendre des boîtes
+form.checkout_address.reusable_packaging.loopeat.manage_deposit: Gérer ma consigne
 form.checkout_address.quote.label: Demander un devis
 form.checkout_address.add_promotion.label: Appliquer
 form.checkout_address.tip_amount.label: Pourboire
@@ -1294,7 +1294,8 @@ stores.filters.input.placeholder: "Recherche par adresse, nom ou #id"
 basics.filter: "Filtrer"
 stores.search.results_for: 'Résultats pour la recherche <mark>%query%</mark>'
 form.checkout_address.reusable_packaging.loopeat.suggest_returns.label: Nous vous suggérons de rendre vos boîtes lors de la livraison
-loopeat.returns_modal.title: Je rends mes boîtes
+loopeat.manage_modal.title: Je règle ma consigne %name%
+loopeat.manage_modal.text: Vous pouvez régler la consigne avec une somme à charger sur votre cagnotte ou en rendant vos boîtes consignées.
 form.checkout_address.reusable_packaging.loopeat.returns.label: Vous allez rendre
   <strong>%count%</strong> boîte, pour un total de <strong>%amount%</strong>|Vous allez rendre
   <strong>%count%</strong> boîtes, pour un total de <strong>%amount%</strong>

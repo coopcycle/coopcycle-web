@@ -4,7 +4,7 @@ import _ from 'lodash'
 import React from 'react'
 import { render } from 'react-dom'
 import { getCurrencySymbol } from '../i18n'
-import LoopeatReturns from './LoopeatReturns'
+import LoopeatModal from './LoopeatModal'
 
 require('gasparesganga-jquery-loading-overlay')
 
@@ -88,14 +88,18 @@ $('#modal-loopeat').on('shown.bs.modal', function(e) {
   const returns = JSON.parse(e.relatedTarget.dataset.returns)
   const creditsCountCents = JSON.parse(e.relatedTarget.dataset.creditsCountCents)
   const requiredAmount = JSON.parse(e.relatedTarget.dataset.requiredAmount)
+  const containersCount = JSON.parse(e.relatedTarget.dataset.containersCount)
+  const oauthUrl = e.relatedTarget.dataset.oauthUrl
 
-  render(<LoopeatReturns
+  render(<LoopeatModal
     customerContainers={ customerContainers }
     formats={ formats }
     formatsToDeliver={ formatsToDeliver }
     initialReturns={ returns }
     creditsCountCents={ creditsCountCents }
     requiredAmount={ requiredAmount }
+    containersCount={ containersCount }
+    oauthUrl={ oauthUrl }
     closeModal={ () => $('#modal-loopeat').modal('hide') }
     onChange={ returns => {
       $('#loopeat_returns_returns').val(

@@ -291,16 +291,22 @@
         "CART_LOOPEAT_RETURNS_TURN_OFF": "Annuler",
         "CART_LOOPEAT_RETURNS_TURN_ON": "Sélectionner",
         "CART_LOOPEAT_RETURNS_CREDITS_COUNT": "Montant de votre cagnotte",
-        "CART_LOOPEAT_RETURNS_RETURNS_AMOUNT": "Montant des retours",
-        "CART_LOOPEAT_RETURNS_RETURNS_DIFF": "Différence",
+        "CART_LOOPEAT_MODAL_RETURNS_AMOUNT": "Total retour de boîtes",
         "CART_LOOPEAT_RETURNS_TYPE": "Type de boîte",
         "CART_LOOPEAT_RETURNS_QUANTITY": "Quantité",
+        "CART_LOOPEAT_MODAL_RETURN_SECTION_TITLE": "Je rends mes boîtes ({{count}})",
+        "CART_LOOPEAT_MODAL_WALLET_SECTION_TITLE": "Ma cagnotte ({{count}})",
         "ORDER_DELAYED_NOTIFICATION": "La commande {{orderNumber}} a été retardée. Nouveau créneau de livraison : {{shippingTimeRange}}",
         "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Nom de la règle",
         "RULE_PICKER_LINE_TASK_TYPE": "Type de tâche",
         "CART_ENABLE_ZERO_WASTE": "Activer l'option zéro déchet",
         "CART_ZERO_WASTE_POPUP_TEXT": "Bravo, votre panier contient un plat éligible à la livraison zéro-déchet avec notre partenaire « {{name}} ». Faites-vous livrer en boîtes consignées et retournez vos boîtes partout dans le réseau « {{name}} » ou à votre coursier à la prochaine commande. Vous pouvez désactiver cette option à tout moment.",
         "LEARN_MORE": "En savoir plus",
-        "I_UNDERSTAND": "Jʼai compris"
+        "I_UNDERSTAND": "Jʼai compris",
+        "CART_LOOPEAT_MODAL_TOTAL_DEPOSIT": "Total consigne de la commande",
+        "CART_LOOPEAT_MODAL_OK": "Cʼest tout bon, vous pouvez finaliser votre commande",
+        "CART_LOOPEAT_MODAL_NOK": "Il manque {{amount}} pour finaliser votre commande",
+        "CART_LOOPEAT_MODAL_ADD_CREDITS": "Créditer ma cagnotte",
+        "CART_LOOPEAT_MODAL_RETURN_SECTION_SUBTITLE": "Rendez vos boîtes pour alimenter votre cagnotte"
     }
 }
