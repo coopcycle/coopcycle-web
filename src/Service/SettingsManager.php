@@ -356,4 +356,15 @@ class SettingsManager
     {
         $this->craueCache->clear();
     }
+
+    public function delete($name)
+    {
+        $setting = $this->doctrine->getRepository($this->configEntityName)->findOneBy([
+            'name' => $name,
+        ]);
+
+        if ($setting !== null) {
+            $this->doctrine->getManagerForClass($this->configEntityName)->remove($setting);
+        }
+    }
 }

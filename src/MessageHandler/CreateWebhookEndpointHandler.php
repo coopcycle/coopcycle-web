@@ -58,12 +58,22 @@ class CreateWebhookEndpointHandler implements MessageHandlerInterface
 
         if (null !== $webhookId) {
 
-            $webhookEndpoint = $stripe->webhookEndpoints->retrieve($webhookId);
+            try {
 
-            $stripe->webhookEndpoints->update($webhookEndpoint->id, [
-                'url' => $message->getUrl(),
-                'enabled_events' => $message->getEvents(),
-            ]);
+                $webhookEndpoint = $stripe->webhookEndpoints->retrieve($webhookId);
+
+                $stripe->webhookEndpoints->update($webhookEndpoint->id, [
+                    'url' => $message->getUrl(),
+                    'enabled_events' => $message->getEvents(),
+                ]);
+
+            } catch (Stripe\Exception\InvalidRequestException $e) {
+                if (404 === $e->getHttpStatus()) {
+                    $this->settingsManager->delete(sprintf('stripe_%s_webhook_id', $mode));
+                    $this->settingsManager->delete(sprintf('stripe_%s_webhook_secret', $mode));
+                    $this->settingsManager->flush();
+                }
+            }
 
         } else {
 
