@@ -12,7 +12,7 @@
       <div class="d-flex justify-content-end mt-3">
         <button id="copy-button" type="button" class="btn btn-primary" data-toggle="copy" data-clipboard-text="{{ field_value(form.invitationLink) }}">
           <i class="fa fa-copy mr-2"></i>
-          Copy the link
+          {{ 'registration.step.invitation.copy.button'|trans }}
         </button></div>
     </div>
     {% include '_partials/profile/flow_buttons.html.twig' %}

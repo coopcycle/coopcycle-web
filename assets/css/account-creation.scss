@@ -67,7 +67,7 @@
   box-shadow: 0px 0px 64px 0px #0000000D;
 
   .header {
-    background-color: #0053F5;
+    background-color: $primary-default;
     color: $white;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -83,7 +83,7 @@
 
     button {
       &.btn-primary {
-        background-color: #0053F5;
+        background-color: $primary-default;
       }
     }
   }
@@ -118,14 +118,14 @@
 
 .step-number {
   border-radius: 50% !important;
-  background-color: #0053F5;
+  background-color: $primary-default;
   color: $white;
   padding: 4px 10px;
   margin-left: 8px;
   margin-right: 4px;
 
   &.inactive {
-    background-color: #98BBFC;
+    background-color: $primary-desactivated;
   }
 }
 
@@ -138,8 +138,8 @@
     &.btn-primary-outline {
       background-color: $white;
       border: 2px solid;
-      border-color: #0053F5;
-      color: #0053F5;
+      border-color: $primary-default;
+      color: $primary-default;
     }
   }
 }
