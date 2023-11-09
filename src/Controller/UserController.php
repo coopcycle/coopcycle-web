@@ -191,6 +191,9 @@ class UserController extends AbstractController
             if (null !== $businessAccountInvitation && $businessAccountInvitation->isInvitationForManager()) {
                 return $this->loadBusinessAccountRegistrationFlow($request, $businessAccountRegistrationFlow, $user,
                     $businessAccountInvitation, $objectManager, $userManager, $eventDispatcher, $canonicalizer);
+            } else {
+                // The email has to be entered by the invited user in the form
+                $user->setEmail('');
             }
         }
 
