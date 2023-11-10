@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "60ac2e77e4c284bc141eef0b0735f9a0",
+    "content-hash": "ca377d9ae90c183578e81ca79209ad76",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
-            "version": "v0.7.5",
+            "version": "dev-fix-delete-upsert",
             "source": {
                 "type": "git",
-                "url": "https://github.com/acseo/TypesenseBundle.git",
-                "reference": "9069cdb79ea4b54b8dababbd09864d5885e5a2de"
+                "url": "https://github.com/alexsegura/TypesenseBundle.git",
+                "reference": "d413b52817fe3c0df6924541db483ea50149e41d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/acseo/TypesenseBundle/zipball/9069cdb79ea4b54b8dababbd09864d5885e5a2de",
-                "reference": "9069cdb79ea4b54b8dababbd09864d5885e5a2de",
+                "url": "https://api.github.com/repos/alexsegura/TypesenseBundle/zipball/d413b52817fe3c0df6924541db483ea50149e41d",
+                "reference": "d413b52817fe3c0df6924541db483ea50149e41d",
                 "shasum": ""
             },
             "require": {
@@ -44,7 +44,17 @@
                     "ACSEO\\TypesenseBundle\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "ACSEO\\TypesenseBundle\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "typesenseServer": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "docker run -i -p 8108:8108 -v/tmp/typesense-server-data-1c/:/data typesense/typesense:0.23.0 --data-dir /data --api-key=123 --listen-port 8108 --enable-cors"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -56,10 +66,9 @@
             ],
             "description": "This bundle provides integration with Typesense in Symfony",
             "support": {
-                "issues": "https://github.com/acseo/TypesenseBundle/issues",
-                "source": "https://github.com/acseo/TypesenseBundle/tree/v0.7.5"
+                "source": "https://github.com/alexsegura/TypesenseBundle/tree/fix-delete-upsert"
             },
-            "time": "2023-11-08T16:16:48+00:00"
+            "time": "2023-11-10T11:49:35+00:00"
         },
         {
             "name": "api-platform/core",
@@ -22930,6 +22939,7 @@
         "drupal/core-vendor-hardening": 20,
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
+        "acseo/typesense-bundle": 20,
         "behatch/contexts": 20
     },
     "prefer-stable": false,
