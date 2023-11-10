@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/alexsegura/TypesenseBundle.git",
-                "reference": "d413b52817fe3c0df6924541db483ea50149e41d"
+                "reference": "f5fbbe5be1fe6e7b5b43b03bb5715137b8b8f1df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexsegura/TypesenseBundle/zipball/d413b52817fe3c0df6924541db483ea50149e41d",
-                "reference": "d413b52817fe3c0df6924541db483ea50149e41d",
+                "url": "https://api.github.com/repos/alexsegura/TypesenseBundle/zipball/f5fbbe5be1fe6e7b5b43b03bb5715137b8b8f1df",
+                "reference": "f5fbbe5be1fe6e7b5b43b03bb5715137b8b8f1df",
                 "shasum": ""
             },
             "require": {
@@ -68,7 +68,7 @@
             "support": {
                 "source": "https://github.com/alexsegura/TypesenseBundle/tree/fix-delete-upsert"
             },
-            "time": "2023-11-10T11:49:35+00:00"
+            "time": "2023-11-10T12:23:00+00:00"
         },
         {
             "name": "api-platform/core",
