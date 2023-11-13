@@ -9,15 +9,24 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class StorybookController extends AbstractController
 {
+    private $mapping = [
+        'list_thumbnail' => 'components/restaurant_card.html.twig'
+    ];
+
 	/**
      * @Route("/storybook/component/{id}", name="storybook_component")
      */
     public function componentAction($id, Request $request)
     {
-        // $id is the path to the Twig template in the storybook/ directory
-        // Args are read from the query parameters and sent to the template
-        $template = sprintf('storybook/%s.html.twig', $id);
-        $context = ['args' => $request->query->all(), 'id' => $id];
+        if (array_key_exists($id, $this->mapping)) {
+            $template = $this->mapping[$id];
+        } else {
+            // $id is the path to the Twig template in the storybook/ directory
+            // Args are read from the query parameters and sent to the template
+            $template = sprintf('storybook/%s.html.twig', $id);
+        }
+
+        // $context = [ $request->query->all(), 'id' => $id];
         // $content = $this->render($template, $context);
 
         // // During development, storybook is served from a different port than the Symfony app
@@ -26,6 +35,6 @@ class StorybookController extends AbstractController
 
         // return new Response($content, Response::HTTP_OK, $headers);
 
-        return $this->render($template, $context);
+        return $this->render($template, $request->query->all());
     }
 }

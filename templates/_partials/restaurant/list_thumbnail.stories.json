@@ -1,0 +1,30 @@
+{
+  "title": "Restaurant card",
+  "parameters": {
+    "server": {
+      "url": "http://localhost/storybook/component",
+      "id": "list_thumbnail"
+    }
+  },
+  "args": {
+    "name": "Acme",
+    "description": "Lorem ipsum",
+    "enabled": true,
+    "exclusive": false,
+    "address": "1, rue de Rivoli"
+  },
+  "argTypes": {
+  	"name": { "control": "text" },
+  	"withLogo": { "control": "boolean" }
+  },
+  "tags": ["autodocs"],
+  "stories": [
+    {
+      "name": "Default"
+    },
+    {
+      "name": "With logo",
+      "args": { "withLogo": true }
+    }
+  ]
+}
