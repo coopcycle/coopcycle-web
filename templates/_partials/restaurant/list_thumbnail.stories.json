@@ -9,7 +9,8 @@
   "args": {
     "name": "Acme",
     "description": "Lorem ipsum",
-    "url": "http://localhost/fr/restaurant/1-acme",
+    "url": "https://localhost/fr/restaurant/1-acme",
+    "image": "https://source.unsplash.com/MQUqbmszGGM",
     "enabled": true,
     "exclusive": false,
     "address": "1, rue de Rivoli"
