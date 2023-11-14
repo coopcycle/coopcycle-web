@@ -955,6 +955,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $this->metadata;
     }
 
+    public function getImportedFrom(): ?string {
+        return collect($this->getMetadata())->get('imported_from');
+    }
+
     public function getPackages()
     {
         return $this->packages;
