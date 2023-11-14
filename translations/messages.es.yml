@@ -1351,3 +1351,7 @@ form.settings.notifications.task.done: Tarea finalizada
 form.settings.notifications.task.failed: Tarea fallida
 form.settings.notifications.task.cancelled: Tarea cancelada
 form.settings.notifications.task.rescheduled: Tarea reprogramada
+tags.featured: Destacados
+tags.exclusive: Exclusivos
+tags.shops.new: Tiendas nuevas
+tags.zero_waste: Residuo cero

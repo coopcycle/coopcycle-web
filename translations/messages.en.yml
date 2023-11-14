@@ -1367,3 +1367,7 @@ form.settings.notifications.task.failed: Task failed
 form.settings.notifications.task.cancelled: Task cancelled
 form.settings.notifications.task.rescheduled: Task rescheduled
 form.settings.notifications.help: When disabling notifications for events below, administrators won't receive emails, nor top bar notifications.
+tags.featured: Featured
+tags.exclusive: Exclusives
+tags.shops.new: New shops
+tags.zero_waste: Zero waste
