@@ -27,13 +27,15 @@ const renderChart = ({ resultSet, error }) => {
     labels.push(moment().isoWeekday(d).format('dddd'))
   }
 
+  console.log(resultSet.series())
+
   const data = {
     labels,
     datasets: resultSet.series().map((s, index) => ({
       label: s.title,
       data: labels.map((label, index) => {
         const isoWeekday = index + 1
-        const r = _.find(s.series, s => parseInt(s.category, 10) === isoWeekday)
+        const r = _.find(s.series, s => parseInt(s.x, 10) === isoWeekday)
         return r ? r.value : 0
       }),
       backgroundColor: COLORS_SERIES[index],

@@ -34,7 +34,7 @@ if (rootElement) {
     }
 
     const data = {
-      labels: resultSet.categories().map((c) => moment(c.category).format('dddd D')),
+      labels: resultSet.categories().map((c) => moment(c.x).format('dddd D')),
       datasets: resultSet.series().map((s, index) => ({
         label: 'Orders', // s.title,
         data: s.series.map((r) => r.value),

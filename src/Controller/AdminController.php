@@ -2683,4 +2683,17 @@ class AdminController extends AbstractController
             'vehicles' => $vehicles,
         ]);
     }
+
+    /**
+     * @Route("/admin/cube", name="admin_cube")
+     */
+    public function cubeAction(CubeJsTokenFactory $tokenFactory)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/cube.html.twig', [
+            'cube_token' => $tokenFactory->createToken(),
+        ]);
+    }
+
 }

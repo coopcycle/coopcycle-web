@@ -30,7 +30,7 @@ const renderChart = ({ resultSet, error }) => {
     datasets: resultSet.series().map((s, index) => ({
       label: s.title,
       data: labels.map((label) => {
-        const r = _.find(s.series, s => s.category === label)
+        const r = _.find(s.series, s => s.x === label)
         return r ? r.value : 0
       }),
       backgroundColor: COLORS_SERIES[index],

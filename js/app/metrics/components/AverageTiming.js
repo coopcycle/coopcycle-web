@@ -108,7 +108,7 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
     [resultSet]
   );
   const data = {
-    labels: resultSet.categories().map((c) => formatDayDimension(c.category)),
+    labels: resultSet.categories().map((c) => formatDayDimension(c.x)),
     datasets,
   };
   const stacked = !(pivotConfig.x || []).includes('measures');
