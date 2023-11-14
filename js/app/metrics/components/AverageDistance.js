@@ -21,7 +21,7 @@ const renderChart = ({ resultSet, error }) => {
   }
 
   const data = {
-    labels: resultSet.categories().map((c) => moment(c.category).format('ll')),
+    labels: resultSet.categories().map((c) => moment(c.x).format('ll')),
     datasets: resultSet.series().map((s, index) => ({
       label: 'Average distance',
       data: s.series.map((r) => r.value),

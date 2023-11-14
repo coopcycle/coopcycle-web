@@ -11,6 +11,7 @@ const commonOptions = {
 import { getCubeDateRange } from '../utils'
 
 const renderChart = ({ resultSet, error }) => {
+
   if (error) {
     return <div>{error.toString()}</div>;
   }
@@ -19,8 +20,10 @@ const renderChart = ({ resultSet, error }) => {
     return <Spin />;
   }
 
+  console.log(resultSet.categories())
+
   const data = {
-    labels: resultSet.categories().map((c) => c.category),
+    labels: resultSet.categories().map((c) => c.x),
     datasets: resultSet.series().map((s) => {
 
       const colorScale = chroma.scale(['#10ac84', '#feca57']).domain([ 0, s.series.length - 1 ])
@@ -34,6 +37,7 @@ const renderChart = ({ resultSet, error }) => {
       }
     }),
   };
+
 
   const options = {
     ...commonOptions,
