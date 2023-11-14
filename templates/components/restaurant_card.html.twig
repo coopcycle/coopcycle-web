@@ -1,15 +1,8 @@
-{% set restaurant_image = '//via.placeholder.com/512.jpg' %}
-
-{# {% set restaurant_path_params = {} %}
-{% if address is defined and address is not empty %}
-  {% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
-{% endif %} #}
-
 <div class="restaurant-item {% if not enabled %}restaurant-item--disabled{% endif %}">
   <a href="{{ url }}" data-restaurant-path>
     <div class="position-relative">
       <img class="restaurant-image" src="{{ image }}" alt="{{ name }}">
-      {# {% if should_show_pre_order(restaurant) %}
+       {% if should_show_pre_order %}
         <figcaption>
           <div class="w-100 h-100 position-absolute bg-dark" style="opacity: 0.5;"></div>
           <div class="text-white font-weight-bold d-flex flex-column justify-content-center align-items-center w-100 h-100 position-absolute p-5">
@@ -17,7 +10,7 @@
             <span>{{ 'restaurants.pre_order'|trans }}</span>
           </div>
         </figcaption>
-      {% endif %} #}
+      {% endif %}
     </div>
     <h4 class="restaurant-item__title">{{ name|u.truncate(48, '…', false) }}</h4>
   </a>
@@ -34,12 +27,12 @@
       </div>
     {% endif %}
     {# {% endcache %} #}
-    {# <div data-fulfillment="{{ path('restaurant_fulfillment_timing', { id: id }) }}">
+    <div data-fulfillment="{{ fulfillment_timing_url }}">
+      {# Managed with React #}
       <span class="restaurant-item__time-range">
         <i class="fa fa-clock-o"></i>
       </span>
     </div>
-    #}
   </div>
 
   {% if not enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) %}
@@ -56,14 +49,14 @@
     </div>
   {% endif %}
 
-  {# {% if restaurant.supportsEdenred() %}
+  {% if supports_edenred %}
     <div class="restaurant-item__top-right">
       <span class="restaurant-supports-edenred"></span>
     </div>
-  {% elseif restaurant.isVytalEnabled() %}
+  {% elseif vytal_enabled %}
     <div class="restaurant-item__top-right">
       <span class="restaurant-supports-vytal"></span>
     </div>
-  {% endif %} #}
+  {% endif %}
 
 </div>

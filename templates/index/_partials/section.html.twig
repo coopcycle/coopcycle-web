@@ -10,8 +10,28 @@
       <div class="swiper">
         <div class="swiper-wrapper">
           {% for restaurant in items %}
+            {% set restaurant_path_params = {} %}
+            {% if address is defined and address is not empty %}
+              {% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
+            {% endif %}
+            {% set restaurant_image = coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') %}
+            {% if restaurant_image is empty %}
+              {% set restaurant_image = '//via.placeholder.com/512.jpg' %}
+            {% endif %}
             <div class="swiper-slide">
-              {% include "_partials/restaurant/list_thumbnail.html.twig" %}
+              {% include "components/restaurant_card.html.twig" with {
+                enabled: restaurant.enabled,
+                url: local_business_path(restaurant, restaurant_path_params),
+                image: restaurant_image,
+                name: restaurant.name,
+                description: restaurant.description,
+                address: restaurant.address.streetAddress,
+                exclusive: restaurant.exclusive,
+                fulfillment_timing_url: path('restaurant_fulfillment_timing', { id: restaurant.id }),
+                should_show_pre_order: should_show_pre_order(restaurant),
+                supports_edenred: restaurant.supportsEdenred(),
+                vytal_enabled: restaurant.isVytalEnabled()
+              } %}
             </div>
           {% endfor %}
         </div>
