@@ -253,13 +253,4 @@ class OrderRepository extends BaseOrderRepository
         return $id;
     }
 
-    public function findOneByNumber(string $number): ?OrderInterface
-    {
-        $qb = $this->createQueryBuilder('o');
-        $qb
-            ->andWhere('o.number = :number')
-            ->setParameter('number', $number);
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
 }
