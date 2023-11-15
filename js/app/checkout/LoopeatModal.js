@@ -121,7 +121,7 @@ const LoopeatModal = function({ customerContainers, formats, formatsToDeliver, i
           'text-danger': missing > 0,
         }) }>
           { missing <= 0 && t('CART_LOOPEAT_MODAL_OK') }
-          { missing > 0 && t('CART_LOOPEAT_MODAL_NOK') }
+          { missing > 0 && t('CART_LOOPEAT_MODAL_NOK', { amount: (missing / 100).formatMoney() }) }
         </p>
       </section>
       <button type="button" className="btn btn-lg btn-block btn-primary" onClick={ onSubmit }>
