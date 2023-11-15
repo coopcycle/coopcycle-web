@@ -51,8 +51,12 @@ class OrderListener
         }
     }
 
-    private function findNumberWithoutCollision(EntityManagerInterface $objectManager, string $number)
+    private function findNumberWithoutCollision(EntityManagerInterface $objectManager, string $number, int $depth = 10)
     {
+        if ($depth <= 0) {
+            throw new \Exception('Could not find a unique number');
+        }
+
         $orderRepository = $objectManager->getRepository(Order::class);
         $orderWithSameNumber = $orderRepository->findOneByNumber($number);
 
@@ -62,6 +66,6 @@ class OrderListener
 
         $nextId = $orderRepository->fetchNextSeqId();
         $newNumber = Crockford::encode($nextId);
-        return $this->findNumberWithoutCollision($objectManager, $newNumber);
+        return $this->findNumberWithoutCollision($objectManager, $newNumber, $depth - 1);
     }
 }
