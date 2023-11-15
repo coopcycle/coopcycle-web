@@ -68,6 +68,7 @@ parameters:
     typesense_products_collection_name: "products"
     colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
     group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
+    dbshenker_sync_uri: '%env(DBSHENKER_SYNC_URI)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.

@@ -104,6 +104,7 @@ services:
   AppBundle\Form\StoreType:
     arguments:
       $country: '%country_iso%'
+      $dbshenkerEnabled: '%dbshenker_sync_uri%'
     tags: [ form.type ]
 
   AppBundle\Form\MenuEditor\TaxonProductType:
