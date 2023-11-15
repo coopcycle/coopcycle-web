@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Formik, Field } from 'formik'
+import classNames from 'classnames'
 
 import { getCountry } from '../../../i18n'
 import {
@@ -83,6 +84,17 @@ const LoopeatFormats = withTranslation()(({ t, order, loopeatFormats, updateLoop
                         name={ `loopeatFormats.${index}.formats.${formatIndex}.quantity` } />
                     </td>
                     <td><small>{ format.format_name }</small></td>
+                    <td className="text-right">
+                      <small className={
+                        classNames({
+                          'text-success': format.missing_quantity === 0,
+                          'text-warning': format.missing_quantity > 0,
+                        })
+                      }>
+                      { format.missing_quantity === 0 && t('ADMIN_DASHBOARD_ORDERS_LOOPEAT_STOCK_OK') }
+                      { format.missing_quantity > 0 && t('ADMIN_DASHBOARD_ORDERS_LOOPEAT_STOCK_NOK', { quantity: format.missing_quantity }) }
+                      </small>
+                    </td>
                   </tr>)
                 ) }
                 </tbody>

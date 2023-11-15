@@ -346,6 +346,8 @@
         "CART_ENABLE_ZERO_WASTE": "Enable zero-waste option",
         "CART_ZERO_WASTE_POPUP_TEXT": "Congratulations, your cart contains a dish eligible for zero-waste delivery with our partner « {{name}} ». Have it delivered in returnable boxes and return them anywhere in the « {{name}} » network or to your courier with your next order. You can disable this option at any time.",
         "LEARN_MORE": "Learn more",
-        "I_UNDERSTAND": "I understand"
+        "I_UNDERSTAND": "I understand",
+        "ADMIN_DASHBOARD_ORDERS_LOOPEAT_STOCK_OK": "In stock",
+        "ADMIN_DASHBOARD_ORDERS_LOOPEAT_STOCK_NOK": "Not enough stock, {{quantity}} missing"
     }
 }
