@@ -17,11 +17,13 @@
     "should_show_pre_order": false,
     "fulfillment_timing_url": "https://localhost/fr/restaurant/1-acme/timing",
     "supports_edenred": false,
-    "vytal_enabled": false
+    "vytal_enabled": false,
+    "cuisines": ["italian", "pizza"]
   },
   "argTypes": {
   	"name": { "control": "text" },
-    "should_show_pre_order": { "control": "boolean" }
+    "should_show_pre_order": { "control": "boolean" },
+    "cuisines": { "control": "array" }
   },
   "tags": ["autodocs"],
   "stories": [

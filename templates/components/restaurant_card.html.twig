@@ -15,9 +15,16 @@
     <h4 class="restaurant-item__title">{{ name|u.truncate(48, '…', false) }}</h4>
   </a>
   <div>
-    {# {% set cache_key = restaurant|cache_key(restaurant_caption_cache_annotation) %} #}
-    {# {% cache cache_key ttl(300) %} #}
-    {% if description is not empty %}
+    {% if cuisines|length > 0 %}
+      <div class="restaurant-item__caption mb-3">
+        {% for cuisine in cuisines %}
+          <a href="{{ path('restaurants_by_cuisine', { cuisineName: cuisine }) }}">{{ cuisine|trans({}, 'cuisines') }}</a>
+          {% if not loop.last %}
+            <span class="mx-2">·</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% elseif description is not empty %}
       <div class="restaurant-item__caption mb-3">
         <span class="text-muted">{{ description|striptags|slice(0, 140) ~ '…'|raw|nl2br }}</span>
       </div>
@@ -26,7 +33,6 @@
         <span class="text-muted">{{ address }}</span>
       </div>
     {% endif %}
-    {# {% endcache %} #}
     <div data-fulfillment="{{ fulfillment_timing_url }}">
       {# Managed with React #}
       <span class="restaurant-item__time-range">

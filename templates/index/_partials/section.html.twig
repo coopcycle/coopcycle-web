@@ -30,7 +30,8 @@
                 fulfillment_timing_url: path('restaurant_fulfillment_timing', { id: restaurant.id }),
                 should_show_pre_order: should_show_pre_order(restaurant),
                 supports_edenred: restaurant.supportsEdenred(),
-                vytal_enabled: restaurant.isVytalEnabled()
+                vytal_enabled: restaurant.isVytalEnabled(),
+                cuisines: restaurant_cuisines(restaurant)
               } %}
             </div>
           {% endfor %}

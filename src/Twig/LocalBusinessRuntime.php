@@ -175,4 +175,21 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
         return $start->diffInHours(Carbon::now()) > 1;
     }
+
+    public function cuisines(LocalBusiness $restaurant): array
+    {
+        $cacheKey = sprintf('restaurant.%s.cuisines', $restaurant->getId());
+
+        return $this->projectCache->get($cacheKey, function (ItemInterface $item) use ($restaurant) {
+
+            $item->expiresAfter(60 * 5);
+
+            $cuisines = [];
+            foreach ($restaurant->getServesCuisine() as $cuisine) {
+                $cuisines[] = $cuisine->getName();
+            }
+
+            return $cuisines;
+        });
+    }
 }
