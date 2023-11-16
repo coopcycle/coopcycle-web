@@ -30,6 +30,14 @@ class StorybookController extends AbstractController
 
         $args = array_map(function ($value) {
 
+            if (str_starts_with($value, '[')) {
+                return json_decode($value, true);
+            }
+
+            if (false !== strpos($value, ',')) {
+                return explode(',', $value);
+            }
+
             switch ($value) {
                 case 'true':
                     return true;
