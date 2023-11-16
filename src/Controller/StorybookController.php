@@ -26,15 +26,29 @@ class StorybookController extends AbstractController
             $template = sprintf('storybook/%s.html.twig', $id);
         }
 
-        // $context = [ $request->query->all(), 'id' => $id];
-        // $content = $this->render($template, $context);
+        $args = $request->query->all();
 
-        // // During development, storybook is served from a different port than the Symfony app
-        // // You can use nelmio/cors-bundle to set the Access-Control-Allow-Origin header correctly
-        // $headers = ['Access-Control-Allow-Origin' => 'http://localhost:6006'];
+        $args = array_map(function ($value) {
 
-        // return new Response($content, Response::HTTP_OK, $headers);
+            if (str_starts_with($value, '[')) {
+                return json_decode($value, true);
+            }
 
-        return $this->render($template, $request->query->all());
+            if (false !== strpos($value, ',')) {
+                return explode(',', $value);
+            }
+
+            switch ($value) {
+                case 'true':
+                    return true;
+                case 'false':
+                    return false;
+            }
+
+            return $value;
+
+        }, $args);
+
+        return $this->render($template, $args);
     }
 }

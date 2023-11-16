@@ -97,6 +97,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('should_show_pre_order', array(LocalBusinessRuntime::class, 'shouldShowPreOrder')),
             new TwigFunction('loopeat_authorization_url', array(LoopeatRuntime::class, 'getAuthorizationUrl')),
             new TwigFunction('loopeat_name', array(LoopeatRuntime::class, 'getName')),
+            new TwigFunction('restaurant_cuisines', array(LocalBusinessRuntime::class, 'cuisines')),
         );
     }
 

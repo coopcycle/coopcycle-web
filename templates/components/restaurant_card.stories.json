@@ -13,11 +13,17 @@
     "image": "https://source.unsplash.com/MQUqbmszGGM",
     "enabled": true,
     "exclusive": false,
-    "address": "1, rue de Rivoli"
+    "address": "1, rue de Rivoli",
+    "should_show_pre_order": false,
+    "fulfillment_timing_url": "https://localhost/fr/restaurant/1-acme/timing",
+    "supports_edenred": false,
+    "vytal_enabled": false,
+    "cuisines": ["italian", "pizza"]
   },
   "argTypes": {
   	"name": { "control": "text" },
-  	"withLogo": { "control": "boolean" }
+    "should_show_pre_order": { "control": "boolean" },
+    "cuisines": { "control": "array" }
   },
   "tags": ["autodocs"],
   "stories": [
@@ -25,8 +31,8 @@
       "name": "Default"
     },
     {
-      "name": "With logo",
-      "args": { "withLogo": true }
+      "name": "Pre-order",
+      "args": { "should_show_pre_order": true }
     }
   ]
 }
