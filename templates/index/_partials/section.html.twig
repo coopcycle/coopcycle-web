@@ -20,7 +20,7 @@
 							{% set restaurant_image = '//via.placeholder.com/512.jpg' %}
 						{% endif %}
 						<div class="swiper-slide">
-							{% include "components/restaurant_card.html.twig" with {
+							{% include "components/restaurant_card/restaurant_card.html.twig" with {
                 enabled: restaurant.enabled,
                 url: local_business_path(restaurant, restaurant_path_params),
                 image: restaurant_image,

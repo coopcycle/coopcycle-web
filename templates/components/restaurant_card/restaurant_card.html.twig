@@ -1,21 +1,12 @@
 <div class="restaurant-item {% if not enabled %}restaurant-item--disabled{% endif %}">
 	<a href="{{ url }}" data-restaurant-path>
 		<div class="restaurant-image">
-			<div class="restaurant-banner" >
-			<img src="{{ image }}" alt="{{ name }}">
+			<div class="restaurant-banner">
+				<img src="{{ image }}" alt="{{ name }}">
 			</div>
 			<div class="restaurant-logo">
 				<img src="{{ image }}" alt="{{ name }}">
 			</div>
-			{# {% if should_show_pre_order %}
-							        <figcaption>
-							          <div class="w-100 h-100 position-absolute bg-dark" style="opacity: 0.5;"></div>
-							          <div class="text-white font-weight-bold d-flex flex-column justify-content-center align-items-center w-100 h-100 position-absolute p-5">
-							            <i class="fa fa-clock-o"></i>
-							            <span>{{ 'restaurants.pre_order'|trans }}</span>
-							          </div>
-							        </figcaption>
-							      {% endif %} #}
 		</div>
 		<div class="restaurant-details">
 			<h4 class="restaurant-item__title">{{ name|u.truncate(48, '…', false) }}</h4>
@@ -23,38 +14,33 @@
 			{# {% cache cache_key ttl(300) %} #}
 
 			{# {% if description is not empty %}
-										<div class="restaurant-item__caption mb-3">
-											<span class="text-muted">{{ description|striptags|slice(0, 140) ~ '…'|raw|nl2br }}</span>
-										</div>
-									{% else %}
-										<div class="restaurant-item__caption mb-3">
-											<span class="text-muted">{{ address }}</span>
-										</div>
-									{% endif %} #}
+																			<div class="restaurant-item__caption mb-3">
+																				<span class="text-muted">{{ description|striptags|slice(0, 140) ~ '…'|raw|nl2br }}</span>
+																			</div>
+																		{% else %}
+																			<div class="restaurant-item__caption mb-3">
+																				<span class="text-muted">{{ address }}</span>
+																			</div>
+																		{% endif %} #}
 
 			{# {% endcache %} #}
 				<div
 				data-fulfillment="{{ fulfillment_timing_url }}"> {# Managed with React #}
 				<span class="restaurant-item__time-range">
 					<i class="fa fa-clock-o"></i>
+					Dans 30 - 40 minutes
 				</span>
 			</div>
 
 			<div class="tags">
 				{% for tag in tags %}
-					<span>{{tag}}</span>
+					{% include "components/restaurant_card/tag/tag.html.twig" with {value: tag} %}
 				{% endfor %}
 			</div>
 		</div>
 
-		{% if not enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) %}
-			<div class="restaurant-item__top-left">
-				<span class="btn btn-sm btn-warning">
-					<i class="fa fa-eye"></i>
-					{{ 'restaurants.visible_by_you_only'|trans }}
-				</span>
-			</div>
-		{% elseif enabled and exclusive %}
+
+		{% if exclusive %}
 			<div class="restaurant-item__top-left">
 				<span class="btn btn-sm btn-warning">
 					<i class="fa fa-star"></i>

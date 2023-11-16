@@ -1,0 +1,27 @@
+{
+  "title": "Badge",
+  "parameters": {
+    "server": {
+      "url": "http://localhost/storybook/component",
+      "id": "badge"
+    }
+  },
+  "args": {
+    "type": ""
+  },
+  "argTypes": {
+    "type": {
+      "control": {
+        "type": "text",
+        "options": ["exclusive", "zero-dechet"]
+      }
+    }
+  },
+  "tags": ["autodocs"],
+  "stories": [
+    {
+      "name": "Exclusive",
+      "args": { "type": "exclusive" }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+<span class="restaurant-tag">
+	{% if value == "" or value is empty %}
+		<span class="muted">Empty tag</span>
+	{% else %}
+		{{ value|capitalize }}
+	{% endif %}
+</span>

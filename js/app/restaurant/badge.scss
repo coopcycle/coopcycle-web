@@ -1,0 +1,19 @@
+.restaurant-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: rgba($color: #000000, $alpha: 0.05);
+  padding: 4px 12px 4px 8px;
+  color: white;
+  border-radius: 16px;
+
+  svg {
+    --size: 17px;
+    width: var(--size);
+    height: var(--size);
+  }
+
+  &.exclusive {
+    background-color: #7785FF;
+  }
+}

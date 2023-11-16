@@ -10,7 +10,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class StorybookController extends AbstractController
 {
     private $mapping = [
-        'list_thumbnail' => 'components/restaurant_card.html.twig'
+        'restaurant-card' => 'components/restaurant_card/restaurant_card.html.twig',
+        'tag' => 'components/restaurant_card/tag/tag.html.twig',
+        'badge' => 'components/restaurant_card/badge/badge.html.twig'
     ];
 
 	/**

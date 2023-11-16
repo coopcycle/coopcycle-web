@@ -4,6 +4,8 @@
 @import "../../../assets/css/vars.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
 
+@import "./restaurant-card.scss";
+
 .shops-content {
   display: flex;
   flex-direction: row;
@@ -23,6 +25,7 @@
 }
 
 .restaurant-list {
+  // gap: 32px;
   h1 {
     display: inline-block;
   }
@@ -51,37 +54,39 @@ button[aria-expanded='false'] .filter-caret {
   background-size: cover;
   background-position: center center;
 }
-
+/*
 .restaurant-item {
 
-  position: relative;
-  margin-bottom: $line-height-computed;
+  background-color: red;
 
-  &, & > a {
-    color: #212121;
-    &:hover {
-      color: lighten(#212121, 10%);
-    }
-  }
+  // position: relative;
+  // margin-bottom: $line-height-computed;
 
-  &--disabled > * {
-    opacity: 0.6;
-  }
-  &--disabled > &__top-left,
-  &--disabled > &__top-right {
-    opacity: 0.9;
-  }
-  &__top-left,
-  &__top-right {
-    position: absolute;
-    top: 12px;
-  }
-  &__top-left {
-    left: 12px;
-  }
-  &__top-right {
-    right: 12px;
-  }
+  // &, & > a {
+  //   color: #212121;
+  //   &:hover {
+  //     color: lighten(#212121, 10%);
+  //   }
+  // }
+
+  // &--disabled > * {
+  //   opacity: 0.6;
+  // }
+  // &--disabled > &__top-left,
+  // &--disabled > &__top-right {
+  //   opacity: 0.9;
+  // }
+  // &__top-left,
+  // &__top-right {
+  //   position: absolute;
+  //   top: 12px;
+  // }
+  // &__top-left {
+  //   left: 12px;
+  // }
+  // &__top-right {
+  //   right: 12px;
+  // }
 
   &__title {
     font-weight: 700;
@@ -118,14 +123,14 @@ button[aria-expanded='false'] .filter-caret {
     margin-left: auto;
   }
 
-  figcaption {
-    position: absolute;
-    right: 0;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    font-size: $font-size-h3;
-  }
+    figcaption {
+      position: absolute;
+      right: 0;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      font-size: $font-size-h3;
+    }
 }
 
 .restaurant-item:hover {
@@ -135,6 +140,7 @@ button[aria-expanded='false'] .filter-caret {
 .restaurant-item:hover img {
   opacity: 0.8;
 }
+*/
 
 .restaurant-supports-edenred {
 
