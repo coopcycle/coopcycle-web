@@ -8,7 +8,7 @@
   {% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
 {% endif %}
 
-<div class="restaurant-item {% if not restaurant.enabled %}restaurant-item--disabled{% endif %}">
+<div class="restaurant-item">
   <a href="{{ local_business_path(restaurant, restaurant_path_params) }}" data-restaurant-path>
     <div class="position-relative">
       <img class="restaurant-image" src="{{ restaurant_image }}" alt="{{ restaurant.name }}">
@@ -54,13 +54,7 @@
     </div>
   </div>
 
-  {% if not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) %}
-    <div class="restaurant-item__top-left">
-      <span class="btn btn-sm btn-warning">
-        <i class="fa fa-eye"></i>  {{ 'restaurants.visible_by_you_only'|trans }}
-      </span>
-    </div>
-  {% elseif restaurant.enabled and restaurant.exclusive %}
+  {% if restaurant.exclusive %}
     <div class="restaurant-item__top-left">
       <span class="btn btn-sm btn-warning">
         <i class="fa fa-star"></i>  {{ 'adminDashboard.restaurants.exclusive'|trans }}

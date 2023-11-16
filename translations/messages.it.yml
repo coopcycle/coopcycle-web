@@ -94,7 +94,6 @@ delivery.tracking_link: Link di tracciamento
 delivery.with_id: 'Consegna #%id%'
 help.title: Aiuto
 help.home: Home
-restaurants.visible_by_you_only: Visibile solo a te
 adminDashboard.pledges.title: Suggerimenti
 deliveryForm.noPriceWarning: Non è stato possibile calcolare il prezzo. Per favore
   inserirlo manualmente.

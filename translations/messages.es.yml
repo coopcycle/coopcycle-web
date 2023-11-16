@@ -78,7 +78,6 @@ deliveryForm.noPriceFromPricingWarning: No se ha podido calcular un precio a par
 delivery.createNew: Crear nueva entrega
 restaurants.no_results: No hemos encontrado ningún comercio/restaurante que coincida con tu
   búsqueda ☹<br>prueba con una dirección diferente u otros filtros
-restaurants.visible_by_you_only: Visible solo por ti
 localBusiness.form.orderingDelayMinutes: Tiempo adicional antes del pedido
 localBusiness.form.orderingDelayMinutes.help: Usa éstos campos para añadir un tiempo
   adicional antes del pedido de un usuario. Esta opción no cambia los tiempos de preparación

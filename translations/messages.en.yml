@@ -114,7 +114,6 @@ help.title: Help
 help.home: Home
 restaurants.no_results: We did not find any restaurants matching your search ☹<br>Try
   with a different address or other filters
-restaurants.visible_by_you_only: Visible by you only
 localBusiness.form.orderingDelayMinutes: Additional delay before ordering
 localBusiness.form.orderingDelayMinutes.help: Use this field to add some time before
   the customer can order. This setting doesn't change the time needed for cooking

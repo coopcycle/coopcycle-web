@@ -106,7 +106,6 @@ help.title: 'Laguntza'
 help.home: 'Hasiera'
 restaurants.no_results: 'Ez dugu zure bilaketarekin bat datorren jatetxerik aurkitu
   ☹<br>Saiatu helbide desberdin batekin'
-restaurants.visible_by_you_only: 'Zugatik ikusgarri soilik'
 localBusiness.form.orderingDelayMinutes: 'Gehitutako atzerapena eskatu aurretik'
 localBusiness.form.orderingDelayMinutes.help: 'Erabili eremu hau denbora gehitzeko
   bezeroak eskatu ahal izan baino lehen. Ezarpen honek ez du janaria prestatzearen

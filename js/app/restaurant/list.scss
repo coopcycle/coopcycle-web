@@ -64,13 +64,6 @@ button[aria-expanded='false'] .filter-caret {
     }
   }
 
-  &--disabled > * {
-    opacity: 0.6;
-  }
-  &--disabled > &__top-left,
-  &--disabled > &__top-right {
-    opacity: 0.9;
-  }
   &__top-left,
   &__top-right {
     position: absolute;
