@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Api\Dto\TourInput;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Action\Task\DeleteTour as DeleteTourController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -30,6 +31,11 @@ use AppBundle\Api\Filter\DateFilter;
  *       "method"="PUT",
  *       "input"=TourInput::class,
  *       "security"="is_granted('ROLE_DISPATCHER')"
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_DISPATCHER')",
+ *       "controller"=DeleteTourController::class
  *     }
  *   },
  *   attributes={

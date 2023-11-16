@@ -24,7 +24,7 @@ const ModalContent = ({ selectedTasks, createTour, date, isCreateTourButtonLoadi
           name="name"
           rules={[{ required: true }]}
         >
-          <Input placeholder="Basic usage" />
+          <Input placeholder="" />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Button type="primary" htmlType="submit" loading={isCreateTourButtonLoading}>

@@ -194,6 +194,7 @@ export const CREATE_TOUR_REQUEST_SUCCESS = 'CREATE_TOUR_REQUEST_SUCCESS'
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
 export const UPDATE_TOUR = 'UPDATE_TOUR'
+export const DELETE_TOUR_SUCCESS = 'DELETE_TOUR_SUCCESS'
 
 export const SET_TOURS_ENABLED = 'SET_TOURS_ENABLED'
 
@@ -1637,6 +1638,33 @@ export function modifyTour(tour, tasks) {
         // eslint-disable-next-line no-console
         console.error(error)
       })
+  }
+}
+
+export function deleteTourSuccess(tour) {
+  return { type: DELETE_TOUR_SUCCESS, tour }
+}
+
+export function deleteTour(tour) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    let resourceId = tour['@id'];
+
+    createClient(dispatch).request({
+      method: 'delete',
+      url: resourceId,
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(() => dispatch(deleteTourSuccess(resourceId)))
+      // eslint-disable-next-line no-console
+      .catch(error => console.log(error))
   }
 }
 
