@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "53b02f7e885bbf75960306e065e4f677",
+    "content-hash": "593f95b5c0502d58552cc4326ec2ac21",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
-            "version": "dev-fix-delete-upsert",
+            "version": "v0.7.6",
             "source": {
                 "type": "git",
-                "url": "https://github.com/alexsegura/TypesenseBundle.git",
-                "reference": "f5fbbe5be1fe6e7b5b43b03bb5715137b8b8f1df"
+                "url": "https://github.com/acseo/TypesenseBundle.git",
+                "reference": "686bc6f866d9405e02316f1faf501a3c962f5756"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexsegura/TypesenseBundle/zipball/f5fbbe5be1fe6e7b5b43b03bb5715137b8b8f1df",
-                "reference": "f5fbbe5be1fe6e7b5b43b03bb5715137b8b8f1df",
+                "url": "https://api.github.com/repos/acseo/TypesenseBundle/zipball/686bc6f866d9405e02316f1faf501a3c962f5756",
+                "reference": "686bc6f866d9405e02316f1faf501a3c962f5756",
                 "shasum": ""
             },
             "require": {
@@ -44,17 +44,7 @@
                     "ACSEO\\TypesenseBundle\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "ACSEO\\TypesenseBundle\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "typesenseServer": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "docker run -i -p 8108:8108 -v/tmp/typesense-server-data-1c/:/data typesense/typesense:0.23.0 --data-dir /data --api-key=123 --listen-port 8108 --enable-cors"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -66,9 +56,10 @@
             ],
             "description": "This bundle provides integration with Typesense in Symfony",
             "support": {
-                "source": "https://github.com/alexsegura/TypesenseBundle/tree/fix-delete-upsert"
+                "issues": "https://github.com/acseo/TypesenseBundle/issues",
+                "source": "https://github.com/acseo/TypesenseBundle/tree/v0.7.6"
             },
-            "time": "2023-11-10T12:23:00+00:00"
+            "time": "2023-11-13T14:01:04+00:00"
         },
         {
             "name": "api-platform/core",
@@ -16948,16 +16939,16 @@
         },
         {
             "name": "symfony/amqp-messenger",
-            "version": "v5.4.28",
+            "version": "v5.4.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/amqp-messenger.git",
-                "reference": "24e5cc90da041e0e1b7bbe15b82ad7f27a508c01"
+                "reference": "8ba6a2c482d3fce9d450b702098ca033bbe42de4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/amqp-messenger/zipball/24e5cc90da041e0e1b7bbe15b82ad7f27a508c01",
-                "reference": "24e5cc90da041e0e1b7bbe15b82ad7f27a508c01",
+                "url": "https://api.github.com/repos/symfony/amqp-messenger/zipball/8ba6a2c482d3fce9d450b702098ca033bbe42de4",
+                "reference": "8ba6a2c482d3fce9d450b702098ca033bbe42de4",
                 "shasum": ""
             },
             "require": {
@@ -16997,7 +16988,7 @@
             "description": "Symfony AMQP extension Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/amqp-messenger/tree/v5.4.28"
+                "source": "https://github.com/symfony/amqp-messenger/tree/v5.4.31"
             },
             "funding": [
                 {
@@ -17013,7 +17004,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-09T17:16:27+00:00"
+            "time": "2023-11-03T16:16:43+00:00"
         },
         {
             "name": "symfony/contracts",
@@ -17118,16 +17109,16 @@
         },
         {
             "name": "symfony/doctrine-messenger",
-            "version": "v5.4.30",
+            "version": "v5.4.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/doctrine-messenger.git",
-                "reference": "132e2a95ef2fa634d3280103f3fb07ab76daf3e1"
+                "reference": "1ff223f53c5f33b03756779a059b5411b76b8005"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/doctrine-messenger/zipball/132e2a95ef2fa634d3280103f3fb07ab76daf3e1",
-                "reference": "132e2a95ef2fa634d3280103f3fb07ab76daf3e1",
+                "url": "https://api.github.com/repos/symfony/doctrine-messenger/zipball/1ff223f53c5f33b03756779a059b5411b76b8005",
+                "reference": "1ff223f53c5f33b03756779a059b5411b76b8005",
                 "shasum": ""
             },
             "require": {
@@ -17171,7 +17162,7 @@
             "description": "Symfony Doctrine Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/doctrine-messenger/tree/v5.4.30"
+                "source": "https://github.com/symfony/doctrine-messenger/tree/v5.4.31"
             },
             "funding": [
                 {
@@ -17187,7 +17178,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-25T13:42:14+00:00"
+            "time": "2023-11-07T09:59:10+00:00"
         },
         {
             "name": "symfony/monolog-bundle",
@@ -18415,16 +18406,16 @@
         },
         {
             "name": "symfony/redis-messenger",
-            "version": "v5.4.26",
+            "version": "v5.4.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/redis-messenger.git",
-                "reference": "55258642bca0d1869d147c85ee3277305549d5a3"
+                "reference": "9735a30ac8f37b42f1714bc1634dc8066b34e72f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/redis-messenger/zipball/55258642bca0d1869d147c85ee3277305549d5a3",
-                "reference": "55258642bca0d1869d147c85ee3277305549d5a3",
+                "url": "https://api.github.com/repos/symfony/redis-messenger/zipball/9735a30ac8f37b42f1714bc1634dc8066b34e72f",
+                "reference": "9735a30ac8f37b42f1714bc1634dc8066b34e72f",
                 "shasum": ""
             },
             "require": {
@@ -18462,7 +18453,7 @@
             "description": "Symfony Redis extension Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/redis-messenger/tree/v5.4.26"
+                "source": "https://github.com/symfony/redis-messenger/tree/v5.4.31"
             },
             "funding": [
                 {
@@ -18478,7 +18469,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-19T20:11:33+00:00"
+            "time": "2023-11-03T16:16:43+00:00"
         },
         {
             "name": "symfony/stimulus-bundle",
@@ -18550,16 +18541,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v5.4.30",
+            "version": "v5.4.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "987c5f69083d7832c4c72305da37244837e01ebb"
+                "reference": "adf54cdee267ad025961c41ad1c2a0681600ede3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/987c5f69083d7832c4c72305da37244837e01ebb",
-                "reference": "987c5f69083d7832c4c72305da37244837e01ebb",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/adf54cdee267ad025961c41ad1c2a0681600ede3",
+                "reference": "adf54cdee267ad025961c41ad1c2a0681600ede3",
                 "shasum": ""
             },
             "require": {
@@ -18751,7 +18742,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/symfony/issues",
-                "source": "https://github.com/symfony/symfony/tree/v5.4.30"
+                "source": "https://github.com/symfony/symfony/tree/v5.4.31"
             },
             "funding": [
                 {
@@ -18767,7 +18758,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-29T00:07:57+00:00"
+            "time": "2023-11-10T13:39:24+00:00"
         },
         {
             "name": "symfony/ux-turbo",
@@ -22999,7 +22990,6 @@
         "drupal/core-vendor-hardening": 20,
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
-        "acseo/typesense-bundle": 20,
         "behatch/contexts": 20
     },
     "prefer-stable": false,
@@ -23008,5 +22998,5 @@
         "php": ">=8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

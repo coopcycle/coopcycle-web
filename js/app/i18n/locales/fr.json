@@ -307,6 +307,8 @@
         "CART_LOOPEAT_MODAL_OK": "Cʼest tout bon, vous pouvez finaliser votre commande",
         "CART_LOOPEAT_MODAL_NOK": "Il manque {{amount}} pour finaliser votre commande",
         "CART_LOOPEAT_MODAL_ADD_CREDITS": "Créditer ma cagnotte",
-        "CART_LOOPEAT_MODAL_RETURN_SECTION_SUBTITLE": "Rendez vos boîtes pour alimenter votre cagnotte"
+        "CART_LOOPEAT_MODAL_RETURN_SECTION_SUBTITLE": "Rendez vos boîtes pour alimenter votre cagnotte",
+        "ADMIN_DASHBOARD_ORDERS_LOOPEAT_STOCK_OK": "En stock",
+        "ADMIN_DASHBOARD_ORDERS_LOOPEAT_STOCK_NOK": "Pas assez de stock, {{quantity}} manquant(s)"
     }
 }
