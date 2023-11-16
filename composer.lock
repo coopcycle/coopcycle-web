@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fc8b1665fddb690d7d5d1e21f61836fb",
+    "content-hash": "593f95b5c0502d58552cc4326ec2ac21",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1398,6 +1398,66 @@
                 "source": "https://github.com/defuse/php-encryption/tree/v2.4.0"
             },
             "time": "2023-06-19T06:10:36+00:00"
+        },
+        {
+            "name": "dflydev/base32-crockford",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dflydev/dflydev-base32-crockford.git",
+                "reference": "8e8f6cb86b130198cbaaeae298fe150094c26760"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dflydev/dflydev-base32-crockford/zipball/8e8f6cb86b130198cbaaeae298fe150094c26760",
+                "reference": "8e8f6cb86b130198cbaaeae298fe150094c26760",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Dflydev\\Base32\\Crockford": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dragonfly Development Inc.",
+                    "email": "info@dflydev.com",
+                    "homepage": "http://dflydev.com"
+                },
+                {
+                    "name": "Beau Simensen",
+                    "email": "beau@dflydev.com",
+                    "homepage": "http://beausimensen.com"
+                }
+            ],
+            "description": "Encode/decode numbers using Douglas Crockford's Base32 Encoding",
+            "homepage": "https://github.com/dflydev/dflydev-base32-crockford",
+            "keywords": [
+                "base32",
+                "crockford",
+                "decode",
+                "decoder",
+                "encode",
+                "encoder"
+            ],
+            "support": {
+                "issues": "https://github.com/dflydev/dflydev-base32-crockford/issues",
+                "source": "https://github.com/dflydev/dflydev-base32-crockford/tree/v1.0.0"
+            },
+            "time": "2012-07-14T18:36:41+00:00"
         },
         {
             "name": "dflydev/dot-access-data",

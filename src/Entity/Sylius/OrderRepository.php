@@ -245,4 +245,12 @@ class OrderRepository extends BaseOrderRepository
             ->andWhere(sprintf('%s.restaurant = :restaurant', $vendorAlias))
             ->setParameter('restaurant', $restaurant);
     }
+
+    public function fetchNextSeqId(){
+        $dbConnection = $this->getEntityManager()->getConnection();
+        $nextValQuery = $dbConnection->getDatabasePlatform()->getSequenceNextValSQL('sylius_order_id_seq');
+        $id = (int) $dbConnection->executeQuery($nextValQuery)->fetchOne();
+        return $id;
+    }
+
 }
