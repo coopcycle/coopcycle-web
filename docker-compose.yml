@@ -252,6 +252,8 @@ services:
       context: '.'
     ports:
       - '6006:6006'
+    depends_on:
+      - webpack
     volumes:
       # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
       - '.:/srv/coopcycle'
