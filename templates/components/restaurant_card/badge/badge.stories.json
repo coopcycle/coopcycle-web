@@ -11,10 +11,8 @@
   },
   "argTypes": {
     "type": {
-      "control": {
-        "type": "text",
-        "options": ["exclusive", "zero-dechet"]
-      }
+      "control": "select",
+      "options": ["exclusive", "zero-waste"]
     }
   },
   "tags": ["autodocs"],
