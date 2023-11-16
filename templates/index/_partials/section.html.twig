@@ -1,25 +1,26 @@
 <section class="homepage-restaurants hidden">
-  <div class="container">
-    <div class="d-flex flex-row justify-content-between align-items-center py-4">
-      <h3 class="m-0">{{ section_title }}</h3>
-      {% if show_more %}
-      <a class="restaurant-show-more" href="{{ view_all_path }}">{{ view_all }}<i class="fa fa-arrow-right ml-2"></i></a>
-      {% endif %}
-    </div>
-    <div class="row restaurant-list mb-4 px-4">
-      <div class="swiper">
-        <div class="swiper-wrapper">
-          {% for restaurant in items %}
-            {% set restaurant_path_params = {} %}
-            {% if address is defined and address is not empty %}
-              {% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
-            {% endif %}
-            {% set restaurant_image = coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') %}
-            {% if restaurant_image is empty %}
-              {% set restaurant_image = '//via.placeholder.com/512.jpg' %}
-            {% endif %}
-            <div class="swiper-slide">
-              {% include "components/restaurant_card.html.twig" with {
+	<div class="container">
+		<div class="d-flex flex-row justify-content-between align-items-center py-4">
+			<h3 class="m-0">{{ section_title }}</h3>
+			{% if show_more %}
+				<a class="restaurant-show-more" href="{{ view_all_path }}">{{ view_all }}<i class="fa fa-arrow-right ml-2"></i>
+				</a>
+			{% endif %}
+		</div>
+		<div class="row restaurant-list mb-4 px-4">
+			<div class="swiper">
+				<div class="swiper-wrapper">
+					{% for restaurant in items %}
+						{% set restaurant_path_params = {} %}
+						{% if address is defined and address is not empty %}
+							{% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
+						{% endif %}
+						{% set restaurant_image = coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') %}
+						{% if restaurant_image is empty %}
+							{% set restaurant_image = '//via.placeholder.com/512.jpg' %}
+						{% endif %}
+						<div class="swiper-slide">
+							{% include "components/restaurant_card.html.twig" with {
                 enabled: restaurant.enabled,
                 url: local_business_path(restaurant, restaurant_path_params),
                 image: restaurant_image,
@@ -30,14 +31,19 @@
                 fulfillment_timing_url: path('restaurant_fulfillment_timing', { id: restaurant.id }),
                 should_show_pre_order: should_show_pre_order(restaurant),
                 supports_edenred: restaurant.supportsEdenred(),
-                vytal_enabled: restaurant.isVytalEnabled()
+                vytal_enabled: restaurant.isVytalEnabled(),
+				        tags: ["Fastfood", "Pizza", "Burger"]
               } %}
-            </div>
-          {% endfor %}
-        </div>
-        <button class="btn swiper-nav-prev d-none d-sm-block"><i class="fa fa-arrow-left"></i></button>
-        <button class="btn swiper-nav-next d-none d-sm-block"><i class="fa fa-arrow-right"></i></button>
-      </div>
-    </div>
-  </div>
+						</div>
+					{% endfor %}
+				</div>
+				<button class="btn swiper-nav-prev d-none d-sm-block">
+					<i class="fa fa-arrow-left"></i>
+				</button>
+				<button class="btn swiper-nav-next d-none d-sm-block">
+					<i class="fa fa-arrow-right"></i>
+				</button>
+			</div>
+		</div>
+	</div>
 </section>
