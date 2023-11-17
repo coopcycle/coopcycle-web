@@ -1,0 +1,49 @@
+{% extends "profile.html.twig" %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block content %}
+  {{ form_start(form) }}
+    {% include '_partials/profile/business_account_company_information_form.html.twig' %}
+
+    <div class="d-flex justify-content-end">
+      <div class="link-section form-section">
+        {% include '_partials/profile/invitation_link.html.twig' with {
+          title: 'business.account.settings.link'|trans
+        } %}
+      </div>
+    </div>
+
+  {{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    const widgetSwitch = document.querySelector('[data-widget="company-address-for-billing-switch"]')
+    const billingAddressEl = document.querySelector('[data-billing-address]')
+
+    if (widgetSwitch) {
+      const targetSelector = widgetSwitch.dataset.switchTarget;
+      const el = document.querySelector(`[name="${targetSelector}"]`)
+
+      if (el.checked) {
+        billingAddressEl.classList.remove('d-none')
+        document.querySelector('[id$=company_billingAddress_streetAddress]').setAttribute('required','')
+      }
+
+      new CoopCycle.Switch(widgetSwitch, {
+        checked: el.checked,
+        onChange: function(checked) {
+          el.checked = checked
+          if (checked) {
+            billingAddressEl.classList.remove('d-none')
+            document.querySelector('[id$=company_billingAddress_streetAddress]').setAttribute('required','')
+          } else {
+            billingAddressEl.classList.add('d-none')
+            document.querySelector('[id$=company_billingAddress_streetAddress]').removeAttribute('required')
+          }
+        }
+      });
+    }
+  </script>
+{% endblock %}

@@ -43,6 +43,7 @@ use phpcent\Client as CentrifugoClient;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -595,6 +596,9 @@ class ProfileController extends AbstractController
         }
 
         $form = $this->createForm(BusinessAccountType::class, $businessAccount);
+        $form->add('save', SubmitType::class, [
+            'label'  => 'form.menu_editor.save.label',
+        ]);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
             $objectManager->persist($businessAccount);
@@ -608,7 +612,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('profile_business_account');
         }
 
-        return $this->render('admin/business_account.html.twig', [
+        return $this->render('profile/business_account.html.twig', [
             'form' => $form->createView(),
         ]);
     }
