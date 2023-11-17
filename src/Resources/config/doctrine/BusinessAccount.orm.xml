@@ -13,7 +13,11 @@
         <join-column name="address_id" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
-    <one-to-many field="restaurants" target-entity="AppBundle\Entity\LocalBusiness" mapped-by="businessAccount" />
+    <one-to-one field="hub" target-entity="AppBundle\Entity\Hub">
+      <join-columns>
+        <join-column name="hub_id" referenced-column-name="id"/>
+      </join-columns>
+    </one-to-one>
     <one-to-many field="employees" target-entity="AppBundle\Entity\User" mapped-by="businessAccount" />
     <one-to-one field="billingAddress" target-entity="AppBundle\Entity\Address">
       <cascade>

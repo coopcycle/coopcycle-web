@@ -4,12 +4,14 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\BusinessAccountInvitation;
+use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as AssertUserWithSameEmailNotExists;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -40,19 +42,17 @@ class BusinessAccountType extends AbstractType
         $builder
             ->add('name', TextType::class, ['label' => 'registration.step.company.name']);
 
+        $hubs = $this->objectManager->getRepository(Hub::class)->findAll();
+
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
-                ->add('restaurants', CollectionType::class, [
-                    'entry_type' => EntityType::class,
-                    'entry_options' => [
-                        'label' => false,
-                        'class' => LocalBusiness::class,
-                        'choice_label' => 'name',
-                    ],
-                    'label' => 'form.business_account.restaurants.label',
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'by_reference' => false,
+                ->add('hub', ChoiceType::class, [
+                    'label' => 'form.business_account.hub.label',
+                    'placeholder' => 'form.business_account.hub.placeholder',
+                    'choices' => $hubs,
+                    'choice_label' => 'name',
+                    'expanded' => false,
+                    'multiple' => false,
                 ]);
         } else {
             $builder
@@ -120,21 +120,6 @@ class BusinessAccountType extends AbstractType
                 $businessAccount->setBillingAddress(null);
             }
         });
-    }
-
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        if (isset($view['restaurants'])) {
-            usort($view['restaurants']->children, function (FormView $a, FormView $b) {
-
-                /** @var LocalBusiness $objectA */
-                $objectA = $a->vars['data'];
-                /** @var LocalBusiness $objectB */
-                $objectB = $b->vars['data'];
-
-                return ($objectA->getName() < $objectB->getName()) ? -1 : 1;
-            });
-        }
     }
 
     public function configureOptions(OptionsResolver $resolver)

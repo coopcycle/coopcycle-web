@@ -9,7 +9,7 @@ class BusinessAccount
     private $id;
     private $name;
     private $address;
-    private $restaurants;
+    private $hub;
     private $employees;
     private $billingAddress;
 
@@ -20,7 +20,6 @@ class BusinessAccount
 
     public function __construct()
     {
-        $this->restaurants = new ArrayCollection();
         $this->employees = new ArrayCollection();
     }
 
@@ -95,41 +94,21 @@ class BusinessAccount
     /**
      * @return mixed
      */
-    public function getRestaurants()
+    public function getHub()
     {
-        return $this->restaurants;
+        return $this->hub;
     }
 
     /**
-     * @param mixed $restaurants
+     * @param mixed $hub
      *
      * @return self
      */
-    public function setRestaurants($restaurants)
+    public function setHub($hub)
     {
-        $this->restaurants = $restaurants;
+        $this->hub = $hub;
 
         return $this;
-    }
-
-    /**
-     * @param LocalBusiness $restaurant
-     */
-    public function addRestaurant(LocalBusiness $restaurant)
-    {
-        if (!$this->restaurants->contains($restaurant)) {
-            $restaurant->setBusinessAccount($this);
-            $this->restaurants->add($restaurant);
-        }
-    }
-
-    /**
-     * @param LocalBusiness $restaurant
-     */
-    public function removeRestaurant(LocalBusiness $restaurant): void
-    {
-        $this->restaurants->removeElement($restaurant);
-        $restaurant->setBusinessAccount(null);
     }
 
     /**

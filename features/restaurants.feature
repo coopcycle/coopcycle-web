@@ -102,8 +102,7 @@ Feature: Manage restaurants
           "facets": {
             "@*@": "@*@"
           },
-          "loopeatEnabled":false,
-          "businessAccount":null
+          "loopeatEnabled":false
         }
       ],
       "hydra:totalItems":1,
@@ -181,8 +180,7 @@ Feature: Manage restaurants
       },
       "isOpen":true,
       "hub":null,
-      "loopeatEnabled":false,
-      "businessAccount":null
+      "loopeatEnabled":false
     }
     """
 
@@ -256,8 +254,7 @@ Feature: Manage restaurants
       "isOpen":false,
       "nextOpeningDate":@string@,
       "hub":null,
-      "loopeatEnabled":false,
-      "businessAccount":null
+      "loopeatEnabled":false
     }
     """
 

@@ -261,11 +261,6 @@ class LocalBusiness extends BaseLocalBusiness implements
      */
     protected $hub;
 
-    /**
-     * @Groups({"restaurant"})
-     */
-    protected $businessAccount;
-
     protected $vytalEnabled = false;
 
     protected $enBoitLePlatEnabled = false;
@@ -852,16 +847,6 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function belongsToHub(): bool
     {
         return null !== $this->hub;
-    }
-
-    public function getBusinessAccount(): ?BusinessAccount
-    {
-        return $this->businessAccount;
-    }
-
-    public function setBusinessAccount(?BusinessAccount $businessAccount)
-    {
-        $this->businessAccount = $businessAccount;
     }
 
     /**

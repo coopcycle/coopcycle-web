@@ -1217,7 +1217,8 @@ adminDashboard.hubs.createNew: Crear una nueva agrupación de comercios
 adminDashboard.hubs.title: Agrupación de comercios
 adminDashboard.business_accounts.title: Cuentas de empresa
 adminDashboard.business_accounts.createNew: Crear una nueva cuenta de empresa
-form.business_account.restaurants.label: Lista de restaurantes
+form.business_account.hub.label: Agrupación de restaurantes
+form.business_account.hub.placeholder: Elija una agrupación
 form.business_account.employees.label: Lista de empleados
 form.business_account.restaurants.add: Agregar un restaurante
 form.business_account.employees.add: Agregar un empleado

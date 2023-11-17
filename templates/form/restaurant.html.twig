@@ -189,50 +189,6 @@
 {% endspaceless %}
 {% endblock %}
 
-{% block _company_restaurants_row %}
-{% spaceless %}
-<div class="form-group">
-  <table class="table" id="{{ form.vars.id }}" data-prototype="{{ form_widget(form.vars.prototype)|e('html_attr') }}">
-    <thead>
-      <th colspan="2">{{ (form.vars.label)|trans }}</th>
-    </thead>
-    <tbody>
-    {% for child in form.children %}
-      {{ form_widget(child) }}
-    {% endfor %}
-    </tbody>
-  </table>
-</div>
-{% if is_granted('ROLE_ADMIN') %}
-  <!-- only admins can use the existin search restaurants endpoint  -->
-  <div class="form-horizontal">
-    <div class="form-group form-group-sm">
-      <label class="col-sm-2 control-label">{{ 'adminDashboard.users.edit.addRestaurant'|trans }}</label>
-      <div class="col-sm-10">
-        <div id="restaurant-search"></div>
-      </div>
-    </div>
-  </div>
-{% endif %}
-{% endspaceless %}
-{% endblock %}
-
-{% block _company_restaurants_entry_widget %}
-{% spaceless %}
-<tr>
-  <td>
-    {{ form.vars.data ? form.vars.data.name : '__restaurant_name__' }}
-    <input type="hidden" id="{{ form.vars.id ? form.vars.id : '' }}"
-      name="{{ form.vars.full_name ? form.vars.full_name : '' }}"
-      value="{{ form.vars.value ? form.vars.value : '__value__' }}">
-  </td>
-  <td class="text-right">
-    <a href="#" data-remove="restaurant"><span class="glyphicon glyphicon-trash"></span></a>
-  </td>
-</tr>
-{% endspaceless %}
-{% endblock %}
-
 {% block delivery_perimeter_expression_widget %}
   <h4>{% trans %}restaurant.deliveryPerimeterExpression.title{% endtrans %}</h4>
   <div

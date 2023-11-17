@@ -1,7 +1,5 @@
 {% extends "admin.html.twig" %}
 
-{% form_theme form 'form/restaurant.html.twig' %}
-
 {% set business_account = form.vars.data %}
 {% set is_new_business_account = (business_account.id is null) %}
 
@@ -40,8 +38,9 @@
           {% if is_granted('ROLE_BUSINESS_ACCOUNT') %}
             {{ form_row(form.address) }}
           {% endif %}
-          {{ form_row(form.restaurants) }}
-          <!-- TODO generation of invitation link -->
+          {% if is_granted('ROLE_ADMIN') %}
+            {{ form_row(form.hub) }}
+          {% endif %}
         </div>
       </div>
     </div>
@@ -57,31 +56,4 @@
     {% endif %}
   </button>
 {{ form_end(form) }}
-{% endblock %}
-
-{% block scripts %}
-  <script>
-    var $restaurants = $('#company_restaurants')
-    if (document.querySelector('#restaurant-search')) {
-      new CoopCycle.Search(document.querySelector('#restaurant-search'), {
-        url: "{{ path('admin_restaurants_search', { format: 'json' }) }}",
-        placeholder: "{{ 'basics.search'|trans }}",
-        onSuggestionSelected: function(suggestion) {
-
-          var newRestaurant = $restaurants.attr('data-prototype');
-
-          newRestaurant = newRestaurant.replace(/__name__/g, $restaurants.find('tbody > tr').length);
-          newRestaurant = newRestaurant.replace(/__value__/g, suggestion.id);
-          newRestaurant = newRestaurant.replace(/__restaurant_name__/g, suggestion.name);
-
-          $restaurants.find('tbody').append($(newRestaurant));
-        }
-      });
-    }
-
-    $(document).on('click', '[data-remove="restaurant"]', function(e) {
-      e.preventDefault();
-      $(this).closest('tr').remove();
-    });
-  </script>
 {% endblock %}

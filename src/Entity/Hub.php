@@ -38,6 +38,7 @@ class Hub implements OpenCloseInterface, ToggleableInterface
     private $address;
     private $restaurants;
     private $contract;
+    private $businessAccount;
 
     public function __construct()
     {
@@ -164,5 +165,15 @@ class Hub implements OpenCloseInterface, ToggleableInterface
         }
 
         return array_unique($types);
+    }
+
+    public function getBusinessAccount(): ?BusinessAccount
+    {
+        return $this->businessAccount;
+    }
+
+    public function setBusinessAccount(?BusinessAccount $businessAccount)
+    {
+        $this->businessAccount = $businessAccount;
     }
 }
