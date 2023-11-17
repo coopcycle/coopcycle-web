@@ -417,7 +417,7 @@ class TaskModalContent extends React.Component {
                   value={values.comments}></textarea>
               </div>
               {
-                (values.type === "PICKUP" && values.metadata.order_notes && !!values.metadata.order_notes.length) && (
+                (values.type === "PICKUP" && values.metadata?.order_notes && !!values.metadata?.order_notes?.length) && (
                   <div className="form-group form-group-sm">
                     <label className="control-label" htmlFor="order_notes">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ORDER_NOTES_LABEL') }</label>
                     <textarea id="order_notes" name="order_notes" rows="2"
