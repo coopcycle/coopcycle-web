@@ -55,4 +55,4 @@ jobs:
           token: ${{ secrets.REPO_DISPATCH_TOKEN }}
           repository: coopcycle/coopcycle-ops
           event-type: coopcycle-release
-          client-payload: '{"tag": "${{ github.event.release.name }}"}'
+          client-payload: '{"tag": "${{ github.event.release.tag_name }}"}'
