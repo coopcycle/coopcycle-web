@@ -6,8 +6,8 @@ use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor;
 use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\OrderManager;
 use Doctrine\Common\EventSubscriber;
@@ -18,7 +18,7 @@ use Doctrine\ORM\Events;
 use Doctrine\ORM\UnitOfWork;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Bus\MessageBus;
-use Symfony\Component\Messenger\MessageBusInterface;
+use Sylius\Component\Order\Model\OrderInterface;
 
 class TaskSubscriber implements EventSubscriber
 {
@@ -33,12 +33,13 @@ class TaskSubscriber implements EventSubscriber
     private $createdAddresses;
 
     public function __construct(
-        MessageBus $eventBus,
-        EventStore $eventStore,
+        MessageBus               $eventBus,
+        EventStore               $eventStore,
         EntityChangeSetProcessor $processor,
-        LoggerInterface $logger,
-        Geocoder $geocoder,
-        private OrderManager $orderManager
+        LoggerInterface          $logger,
+        Geocoder                 $geocoder,
+        private OrderManager     $orderManager,
+        private PricingManager   $pricingManager
     )
     {
         $this->eventBus = $eventBus;
@@ -222,5 +223,19 @@ class TaskSubscriber implements EventSubscriber
                 }
             }
         }
+
+        // Update pricing in a different loop to avoid race condition on cancelled orders
+        foreach ($tasksToUpdate as $taskToUpdate) {
+            $delivery = $taskToUpdate->getDelivery();
+            if (
+                $delivery !== null &&
+                ($order = $delivery->getOrder()) !== null &&
+                $order->getState() !== OrderInterface::STATE_CANCELLED
+            ) {
+                $this->pricingManager->updateOrder($delivery, $taskToUpdate);
+                $em->flush();
+            }
+        }
     }
+
 }

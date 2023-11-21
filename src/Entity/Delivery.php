@@ -187,7 +187,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function getWeight()
     {
         $totalWeight = null;
-        foreach ($this->getTasks() as $task) {
+        foreach ($this->getTasks('not task.isCancelled()') as $task) {
             if (null !== $task->getWeight()) {
                 $totalWeight += $task->getWeight();
             }
@@ -372,6 +372,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     public function isCompleted()
     {
+        //TODO: Should we check if all tasks are completed or only active ones?
         foreach ($this->getTasks() as $task) {
             if (!$task->isCompleted()) {
 
@@ -388,7 +389,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
         $hash = new \SplObjectStorage();
 
-        foreach ($this->getTasks() as $task) {
+        foreach ($this->getTasks('not task.isCancelled()') as $task) {
             if ($task->hasPackages()) {
                 foreach ($task->getPackages() as $package) {
                     $object = $package->getPackage();
@@ -433,7 +434,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     {
         $taskObject = new \stdClass();
         if ($task) {
-
             return $task->toExpressionLanguageObject();
         }
 

@@ -741,6 +741,17 @@ class Order extends BaseOrder implements OrderInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isPayed(): bool
+    {
+        return $this->getPayments()->filter(function (PaymentInterface $payment) {
+            //TODO: Check if payment is completed only in this state (e.g. PaymentInterface::STATE_PROCESSING)
+            return PaymentInterface::STATE_COMPLETED === $payment->getState();
+        })->count() > 0;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function addPayment(PaymentInterface $payment): void

@@ -14,6 +14,7 @@ class OrderEventCollection extends ArrayCollection
         'order:picked',
         'order:dropped',
         'order:cancelled',
+        'order:price_recalculated'
     ];
 
     public function __construct(OrderInterface $order)
