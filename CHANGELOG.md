@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.17.0] - 2023-11-21
+
+### Added
+
+- Use [Base 32](https://www.crockford.com/base32.html) to generate order numbers.
+- Create orders from recurring tasks.
+- Display delivery state in lists.
+
 ## [1.16.3] - 2023-11-14
 
 ### Added
