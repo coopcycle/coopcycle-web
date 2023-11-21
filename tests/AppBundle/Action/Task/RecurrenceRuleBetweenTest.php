@@ -58,8 +58,8 @@ class RecurrenceRuleBetweenTest extends TestCase
                     'address' => [
                         'streetAddress' => '78 Avenue Victoria, 75001 Paris, France',
                     ],
-                    'after' => '2021-02-12T00:00:00+01:00',
-                    'before' => '2021-02-12T23:59:00+01:00'
+                    'after' => (new \DateTime('2021-02-12 00:00:00'))->format(\DateTime::ATOM),
+                    'before' => (new \DateTime('2021-02-12 23:59:00'))->format(\DateTime::ATOM)
                 ]
             ],
             [
@@ -75,8 +75,8 @@ class RecurrenceRuleBetweenTest extends TestCase
                     'address' => [
                         'streetAddress' => '78 Avenue Victoria, 75001 Paris, France',
                     ],
-                    'after' => '2021-02-12T10:00:00+01:00',
-                    'before' => '2021-02-12T11:00:00+01:00'
+                    'after' => (new \DateTime('2021-02-12 10:00:00'))->format(\DateTime::ATOM),
+                    'before' => (new \DateTime('2021-02-12 11:00:00'))->format(\DateTime::ATOM)
                 ]
             ],
         ];
