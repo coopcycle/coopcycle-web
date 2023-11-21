@@ -27,7 +27,7 @@ module.exports = {
 
         return await Promise.resolve(schemaFiles.map((schemaFile) => {
           return {
-            fileName: schemaFile.id + '.js',
+            fileName: schemaFile.filename,
             content: schemaFile.contents
           }
         }))

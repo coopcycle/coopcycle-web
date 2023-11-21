@@ -28,8 +28,7 @@ final class CubeDataSchemaFileItemDataProvider implements ItemDataProviderInterf
 
 		$file = current(iterator_to_array($finder));
 
-		$schemaFile = new CubeDataSchemaFile();
-		$schemaFile->id = $file->getBasename('.js');
+		$schemaFile = new CubeDataSchemaFile($file->getBasename());
 		$schemaFile->contents = $file->getContents();
 
         return $schemaFile;

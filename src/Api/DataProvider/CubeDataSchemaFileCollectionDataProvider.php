@@ -6,11 +6,17 @@ use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use AppBundle\Api\Resource\CubeDataSchemaFile;
 use Symfony\Component\Finder\Finder;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
-final class CubeDataSchemaFileCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
+final class CubeDataSchemaFileCollectionDataProvider implements
+    ContextAwareCollectionDataProviderInterface,
+    RestrictedDataProviderInterface
 {
-	public function __construct(private string $schemaPath)
-	{}
+    public function __construct(
+        private string $schemaPath,
+        private CacheInterface $appCache)
+    {}
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
@@ -19,17 +25,26 @@ final class CubeDataSchemaFileCollectionDataProvider implements ContextAwareColl
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
-    	$finder = new Finder();
-		$finder->files()->in($this->schemaPath)->name('*.js');
+        $filenames = $this->appCache->get('cube.data_schema_files', function (ItemInterface $item) {
 
-		foreach ($finder as $file) {
+            $item->expiresAfter(60 * 60 * 24);
 
-			$schemaFile = new CubeDataSchemaFile();
-        	$schemaFile->id = $file->getBasename('.js');
+            $finder = new Finder();
+            $finder->files()->in($this->schemaPath)->name('*.js');
 
-		    $contents = $file->getContents();
+            $filenames = [];
+            foreach ($finder as $file) {
+                $filenames[] = $file->getBasename();
+            }
 
-		    yield $schemaFile;
-		}
+            return $filenames;
+        });
+
+        foreach ($filenames as $filename) {
+
+            $schemaFile = new CubeDataSchemaFile($filename);
+
+            yield $schemaFile;
+        }
     }
 }
