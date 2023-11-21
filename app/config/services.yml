@@ -1279,3 +1279,15 @@ services:
       $fleetKey: '%tile38_fleet_key%'
 
   AppBundle\Pricing\PricingManager: ~
+
+  AppBundle\Api\DataProvider\CubeDataSchemaFileCollectionDataProvider:
+    arguments:
+      $schemaPath: "%kernel.project_dir%/cube"
+    tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
+    # Autoconfiguration must be disabled to set a custom priority
+    autoconfigure: false
+
+  AppBundle\Api\DataProvider\CubeDataSchemaFileItemDataProvider:
+    arguments:
+      $schemaPath: "%kernel.project_dir%/cube"
+    tags: [ 'api_platform.item_data_provider' ]

@@ -250,6 +250,16 @@ security:
             refresh_jwt:
                 provider: nucleos_userbundle
 
+        api_cube_data_schema_files:
+            pattern: ^/api/cube_data_schema_files$
+            methods: [ GET ]
+            security: false
+
+        api_cube_data_schema_file:
+            pattern: ^/api/cube_data_schema_files/[0-9a-zA-Z]+$
+            methods: [ GET ]
+            security: false
+
         api_docs:
             pattern:   ^/api/docs
             security: false
