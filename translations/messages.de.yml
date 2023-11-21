@@ -711,3 +711,9 @@ basics.settings: Einstellungen
 form.store_type.failure_reason_set.label: "Fehlergründe"
 profile.delete_my_account: "Mein Konto löschen"
 profile.type_username_to_confirm: "Gib deinen Benutzernamen ein, um die Kontolöschung zu bestätigen"
+delivery.state:
+  pending: 'Ausstehend, Abholbereit'
+  in_delivery: 'Abgeholt, in Lieferung'
+  delivered: 'Zugestellt'
+  failed: 'Fehlgeschlagen'
+  cancelled: 'Abgebrochen'

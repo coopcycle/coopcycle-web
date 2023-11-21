@@ -1370,3 +1370,9 @@ tags.featured: Featured
 tags.exclusive: Exclusives
 tags.shops.new: New shops
 tags.zero_waste: Zero waste
+delivery.state:
+  pending: 'Pending, To be picked up'
+  in_delivery: 'Picked up, in delivery'
+  delivered: 'Delivered'
+  failed: 'Failed'
+  cancelled: 'Cancelled'

@@ -1359,3 +1359,9 @@ tags.featured: À la une
 tags.exclusive: Exclusivités
 tags.shops.new: Nouveautés
 tags.zero_waste: Zéro déchet
+delivery.state:
+  pending: 'En attente, À récupérer'
+  in_delivery: 'Récupéré, en livraison'
+  delivered: 'Livré'
+  failed: 'Échoué'
+  cancelled: 'Annulé'

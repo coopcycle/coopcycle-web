@@ -1354,3 +1354,9 @@ tags.featured: Destacados
 tags.exclusive: Exclusivos
 tags.shops.new: Tiendas nuevas
 tags.zero_waste: Residuo cero
+delivery.state:
+  pending: 'Pendiente, Por recoger'
+  in_delivery: 'Recogido, en entrega'
+  delivered: 'Entregado'
+  failed: 'Fallido'
+  cancelled: 'Cancelado'
