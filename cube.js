@@ -25,9 +25,9 @@ module.exports = {
           schemaFiles.push(itemResponse.data)
         }));
 
-        await Promise.resolve(schemaFiles.map((schemaFile) => {
+        return await Promise.resolve(schemaFiles.map((schemaFile) => {
           return {
-            filename: schemaFile.id + '.js',
+            fileName: schemaFile.id + '.js',
             content: schemaFile.contents
           }
         }))
