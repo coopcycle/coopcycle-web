@@ -17,6 +17,9 @@ const config = {
   docs: {
     autodocs: "tag",
   },
+  core: {
+    disableTelemetry: true,
+  },
   webpackFinal: async (config) => {
 
     config.plugins.push(new MiniCssExtractPlugin())
