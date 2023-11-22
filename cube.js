@@ -3,18 +3,34 @@
 const PostgresDriver = require('@cubejs-backend/postgres-driver');
 const axios = require('axios')
 
+const schemaFilesByHost = {}
+
 module.exports = {
   contextToAppId: ({ securityContext }) =>
+    `CUBEJS_APP_${securityContext && securityContext.database ? securityContext.database : 'coopcycle'}`,
+  contextToOrchestratorId: ({ securityContext }) =>
     `CUBEJS_APP_${securityContext && securityContext.database ? securityContext.database : 'coopcycle'}`,
   driverFactory: ({ securityContext }) =>
     new PostgresDriver({
       database: `${securityContext && securityContext.database ? securityContext.database : 'coopcycle'}`,
     }),
+  schemaVersion: ({ securityContext }) => {
+    return 'v1';
+  },
   // https://cube.dev/docs/reference/configuration/config#repository_factory
   repositoryFactory: ({ securityContext }) => {
 
+    // TODO Use CUBEJS_DEV_MODE or NODE_ENV for http/https
+    // console.log(process.env)
+
     return {
       dataSchemaFiles: async () => {
+
+        if (schemaFilesByHost.hasOwnProperty(securityContext.base_url)) {
+          return Promise.resolve(
+            schemaFilesByHost[securityContext.base_url]
+          )
+        }
 
         const schemaFiles = []
 
@@ -25,14 +41,18 @@ module.exports = {
           schemaFiles.push(itemResponse.data)
         }));
 
-        return await Promise.resolve(schemaFiles.map((schemaFile) => {
+        const files = schemaFiles.map((schemaFile) => {
           return {
             fileName: schemaFile.filename,
             content: schemaFile.contents
           }
-        }))
+        })
+
+        schemaFilesByHost[securityContext.base_url] = files
+
+        return Promise.resolve(files)
       }
-    };
+    }
   },
   // Leaving scheduled_refresh_contexts unconfigured will lead to issues where the security context will be undefined.
   // This is because there is no way for Cube to know how to generate a context without the required input.
