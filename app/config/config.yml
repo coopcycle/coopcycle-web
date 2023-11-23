@@ -205,6 +205,10 @@ framework:
                 base_uri: 'https://car-api.%env(WOOPIT_HOST)%/'
             dabba.client:
                 base_uri: "%env(DABBA_BASE_URL)%/"
+            unsplash.client:
+                base_uri: "https://api.unsplash.com/"
+                headers:
+                    Authorization: 'Client-ID %env(UNSPLASH_ACCESS_KEY)%'
 
 # Twig Configuration
 twig:

@@ -14,6 +14,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 use Vich\UploaderBundle\Storage\StorageInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AssetsRuntime implements RuntimeExtensionInterface
 {
@@ -24,7 +25,8 @@ class AssetsRuntime implements RuntimeExtensionInterface
         CacheManager $cacheManager,
         Filesystem $assetsFilesystem,
         UrlGeneratorInterface $urlGenerator,
-        CacheInterface $projectCache)
+        CacheInterface $projectCache,
+        HttpClientInterface $unsplashClient)
     {
         $this->storage = $storage;
         $this->mountManager = $mountManager;
@@ -33,6 +35,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         $this->assetsFilesystem = $assetsFilesystem;
         $this->urlGenerator = $urlGenerator;
         $this->projectCache = $projectCache;
+        $this->unsplashClient = $unsplashClient;
     }
 
     public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false, bool $cacheUrl = false): ?string
@@ -60,6 +63,23 @@ class AssetsRuntime implements RuntimeExtensionInterface
         }
 
         return $this->cacheManager->getBrowserPath($uri, $filter);
+    }
+
+    public function restaurantBanner($restaurant) {
+        $query = implode(" ", $restaurant->getShopCuisines());
+
+        $response = $this->unsplashClient->request(
+            'GET',
+            "search/photos",
+            ["query"=> ["query" => $query, "page"=> 1]]
+        );
+
+        $data = $response->toArray();
+
+        
+        $url = $data["results"][0]["urls"]["raw"];
+
+        return $url;
     }
 
     public function assetBase64($obj, string $fieldName, string $filter): ?string

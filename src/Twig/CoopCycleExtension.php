@@ -98,6 +98,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('loopeat_authorization_url', array(LoopeatRuntime::class, 'getAuthorizationUrl')),
             new TwigFunction('loopeat_name', array(LoopeatRuntime::class, 'getName')),
             new TwigFunction('restaurant_cuisines', array(LocalBusinessRuntime::class, 'cuisines')),
+            new TwigFunction('restaurant_banner', array(AssetsRuntime::class, 'restaurantBanner')),
         );
     }
 
