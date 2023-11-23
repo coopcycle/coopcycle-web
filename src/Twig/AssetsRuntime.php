@@ -15,6 +15,8 @@ use Symfony\Contracts\Cache\ItemInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 use Vich\UploaderBundle\Storage\StorageInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Entity\LocalBusiness;
 
 class AssetsRuntime implements RuntimeExtensionInterface
 {
@@ -26,7 +28,8 @@ class AssetsRuntime implements RuntimeExtensionInterface
         Filesystem $assetsFilesystem,
         UrlGeneratorInterface $urlGenerator,
         CacheInterface $projectCache,
-        HttpClientInterface $unsplashClient)
+        HttpClientInterface $unsplashClient,
+        EntityManagerInterface $entityManager)
     {
         $this->storage = $storage;
         $this->mountManager = $mountManager;
@@ -36,6 +39,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         $this->urlGenerator = $urlGenerator;
         $this->projectCache = $projectCache;
         $this->unsplashClient = $unsplashClient;
+        $this->entityManager = $entityManager;
     }
 
     public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false, bool $cacheUrl = false): ?string
@@ -66,6 +70,25 @@ class AssetsRuntime implements RuntimeExtensionInterface
     }
 
     public function restaurantBanner($restaurant) {
+
+        if ($restaurant->getBannerImageName()) {
+            return $restaurant->getBannerImageName();
+        }
+
+        return "";
+
+        $qb = $this->entityManager->getRepository(LocalBusiness::class)->createQueryBuilder("r");
+
+        $qb->select("r.bannerImageName")->andWhere("r.bannerImageName is not null");
+
+        $banners = $qb->getQuery()->getArrayResult();
+
+        $banners = array_map(function($banner) {
+            return $banner["bannerImageName"];
+        }, $banners);
+
+        print_r($banners);
+
         $query = implode(" ", $restaurant->getShopCuisines());
 
         $response = $this->unsplashClient->request(
@@ -76,8 +99,11 @@ class AssetsRuntime implements RuntimeExtensionInterface
 
         $data = $response->toArray();
 
-        
         $url = $data["results"][0]["urls"]["raw"];
+
+        $restaurant->setBannerImageName($url);
+
+        $this->entityManager->flush();
 
         return $url;
     }
