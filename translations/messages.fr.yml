@@ -1365,3 +1365,9 @@ delivery.state:
   delivered: 'Livré'
   failed: 'Échoué'
   cancelled: 'Annulé'
+order.export.heading.payment_method: Moyen de paiement
+payment_method:
+  card: Carte de crédit
+  edenred: Edenred
+  edenred+card: Edenred
+  cash_on_delivery: Contre remboursement

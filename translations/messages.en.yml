@@ -1376,3 +1376,9 @@ delivery.state:
   delivered: 'Delivered'
   failed: 'Failed'
   cancelled: 'Cancelled'
+order.export.heading.payment_method: Payment method
+payment_method:
+  card: Credit card
+  edenred: Edenred
+  edenred+card: Edenred
+  cash_on_delivery: Cash on delivery

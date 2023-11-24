@@ -1360,3 +1360,9 @@ delivery.state:
   delivered: 'Entregado'
   failed: 'Fallido'
   cancelled: 'Cancelado'
+order.export.heading.payment_method: Método de pago
+payment_method:
+  card: Tarjeta de crédito
+  edenred: Edenred
+  edenred+card: Edenred
+  cash_on_delivery: Contra reembolso
