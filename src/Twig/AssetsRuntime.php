@@ -75,37 +75,45 @@ class AssetsRuntime implements RuntimeExtensionInterface
             return $restaurant->getBannerImageName();
         }
 
-        return "";
-
         $qb = $this->entityManager->getRepository(LocalBusiness::class)->createQueryBuilder("r");
-
         $qb->select("r.bannerImageName")->andWhere("r.bannerImageName is not null");
-
-        $banners = $qb->getQuery()->getArrayResult();
-
-        $banners = array_map(function($banner) {
+        $existingBanners = $qb->getQuery()->getArrayResult();
+        $existingBanners = array_map(function($banner) {
             return $banner["bannerImageName"];
-        }, $banners);
-
-        print_r($banners);
+        }, $existingBanners);
 
         $query = implode(" ", $restaurant->getShopCuisines());
-
-        $response = $this->unsplashClient->request(
-            'GET',
-            "search/photos",
-            ["query"=> ["query" => $query, "page"=> 1]]
-        );
-
-        $data = $response->toArray();
-
-        $url = $data["results"][0]["urls"]["raw"];
-
-        $restaurant->setBannerImageName($url);
-
-        $this->entityManager->flush();
-
-        return $url;
+        if (!$query) {
+            $query = "restaurant";
+        }
+        $page = 1;
+        $maxRequests = 10;
+    
+        while ($page <= $maxRequests) {
+            $response = $this->unsplashClient->request(
+                'GET',
+                "search/photos",
+                ["query"=> ["query" => $query, "page" => $page, "orientation" => "landscape", "content_filter" => "high"]]
+            );
+            $data = $response->toArray();
+            $results = $data["results"];
+            
+            if (!empty($results)) {
+                $urls = array_map(function ($result) {
+                    return $result['urls']['raw'] ?? null;
+                }, $results);
+                $uniqueUrls = array_values(array_diff(array_filter($urls), $existingBanners));
+                if (!empty($uniqueUrls)) {
+                    $url = $uniqueUrls[0];
+                    $restaurant->setBannerImageName($url);
+                    $this->entityManager->flush();
+                    return $url;
+                }
+                return "";
+            }
+            $page++;
+        }
+        return "";
     }
 
     public function assetBase64($obj, string $fieldName, string $filter): ?string
