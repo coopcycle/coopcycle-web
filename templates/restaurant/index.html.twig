@@ -40,6 +40,9 @@
 {% block body %}
 <div class="container">
 
+{# <img src="{{restaurant_banner(restaurant)}}" /> #}
+{{restaurant_banner(restaurant)}}
+
   {% block restaurant_nav %}
     {% if not embed_context.enabled %}
     <div class="homepage-restaurants__show-more text-left mb-4">

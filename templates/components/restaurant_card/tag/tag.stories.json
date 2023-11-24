@@ -1,5 +1,5 @@
 {
-  "title": "Tag",
+  "title": "RestaurantCard/2. Tag/Tags",
   "parameters": {
     "server": {
       "url": "http://localhost/storybook/component",

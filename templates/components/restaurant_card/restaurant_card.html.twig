@@ -1,46 +1,75 @@
-<div class="restaurant-item {% if not enabled %}restaurant-item--disabled{% endif %}">
-	<a href="{{ url }}" data-restaurant-path>
+<div class="restaurant-item {% if enabled is defined and not enabled %}restaurant-item--disabled{% endif %}">
+	<a title="{{ name is defined ? name : "Empty name"|u.truncate(48, '…', false) }}" href="{{ url is defined ? url : "#" }}" data-restaurant-path>
+
 		<div class="restaurant-image">
+
 			<div class="restaurant-banner">
-				<img src="{{ image }}" alt="{{ name }}">
+				<img src="{{ banner_image is defined ? banner_image : "https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=1000" }}" alt="{{ name is defined ? name ~ "'s banner" : "banner" }}">
 			</div>
+
 			<div class="restaurant-logo">
-				<img src="{{ image }}" alt="{{ name }}">
+				<img src="{{ image is defined ? image : "https://img.freepik.com/free-vector/vector-pastel-plate-food-sticker-clipart_53876-170585.jpg" }}" alt="{{ name is defined ? name ~ "'s logo" : "logo" }}">
 			</div>
+
+			{% if badges is defined %}
+				<div class="badges">
+					{% for badge in badges %}
+						{% include "components/restaurant_card/badge/badge.html.twig" with {type: badge} %}
+					{% endfor %}
+				</div>
+			{% endif %}
+
 		</div>
+
 		<div class="restaurant-details">
-			<h4 class="restaurant-item__title">{{ name|u.truncate(48, '…', false) }}</h4>
-			{# {% set cache_key = restaurant|cache_key(restaurant_caption_cache_annotation) %} #}
-			{# {% cache cache_key ttl(300) %} #}
+			<h4 class="restaurant-item__title">{{ name is defined and name|trim != "" ? name|u.truncate(48, '…', false) : "Empty name"|u.truncate(48, '…', false) }}</h4>
 
-			{# {% if description is not empty %}
-																			<div class="restaurant-item__caption mb-3">
-																				<span class="text-muted">{{ description|striptags|slice(0, 140) ~ '…'|raw|nl2br }}</span>
-																			</div>
-																		{% else %}
-																			<div class="restaurant-item__caption mb-3">
-																				<span class="text-muted">{{ address }}</span>
-																			</div>
-																		{% endif %} #}
+			{# 
+				{% set cache_key = restaurant|cache_key(restaurant_caption_cache_annotation) %}
+				{% cache cache_key ttl(300) %}
+				{% if description is not empty %}
+					<div class="restaurant-item__caption mb-3">
+						<span class="text-muted">{{ description|striptags|slice(0, 140) ~ '…'|raw|nl2br }}</span>
+					</div>
+				{% else %}
+					<div class="restaurant-item__caption mb-3">
+						<span class="text-muted">{{ address }}</span>
+					</div>
+				{% endif %}
+				{% endcache %}
+			#}
 
-			{# {% endcache %} #}
-				<div
-				data-fulfillment="{{ fulfillment_timing_url }}"> {# Managed with React #}
+
+			<div
+				class="timing" data-fulfillment="{{ fulfillment_timing_url is defined ? fulfillment_timing_url : "" }}">
+				{# Managed with React #}
 				<span class="restaurant-item__time-range">
-					<i class="fa fa-clock-o"></i>
+					<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="44" height="44" viewbox="0 0 24 24" stroke-width="2" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+						<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/>
+						<path d="M12 7v5l3 3"/>
+					</svg>
 					Dans 30 - 40 minutes
 				</span>
 			</div>
 
 			<div class="tags">
-				{% for tag in tags %}
-					{% include "components/restaurant_card/tag/tag.html.twig" with {value: tag} %}
-				{% endfor %}
+				{% if tags is defined %}
+					{% for tag in tags %}
+						{% include "components/restaurant_card/tag/tag.html.twig" with {value: tag} %}
+					{% endfor %}
+				{% elseif description is defined %}
+					<span class="text-muted">{{ description|striptags|slice(0, 140) ~ '…'|raw|nl2br }}</span>
+				{% elseif address is defined %}
+					<span class="text-muted">{{ address }}</span>
+				{% else %}
+					<span class="text-muted">No description</span>
+				{% endif %}
 			</div>
 		</div>
 
 
-		{% if exclusive %}
+		{% if exclusive is defined and exclusive %}
 			<div class="restaurant-item__top-left">
 				<span class="btn btn-sm btn-warning">
 					<i class="fa fa-star"></i>
@@ -49,11 +78,11 @@
 			</div>
 		{% endif %}
 
-		{% if supports_edenred %}
+		{% if supports_edenred is defined and supports_edenred %}
 			<div class="restaurant-item__top-right">
 				<span class="restaurant-supports-edenred"></span>
 			</div>
-		{% elseif vytal_enabled %}
+		{% elseif vytal_enabled is defined and vytal_enabled %}
 			<div class="restaurant-item__top-right">
 				<span class="restaurant-supports-vytal"></span>
 			</div>
