@@ -565,6 +565,7 @@ class SetupCommand extends Command
 
             $jsonData = $response->toArray();
 
+            /** @var \GeoJson\Feature\FeatureCollection */
             $featureCollection = GeoJson::jsonUnserialize($jsonData);
             foreach ($featureCollection->getFeatures() as $feature) {
 
