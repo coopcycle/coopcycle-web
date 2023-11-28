@@ -222,8 +222,10 @@ class SetupCommand extends Command
         $output->writeln('<info>Configuring Stripe webhook endpoint…</info>');
         $this->configureStripeWebhooks($output);
 
-        $output->writeln('<info>Configuring city zones…</info>');
-        $this->configureCityZones($output);
+        if (!empty($this->cityZonesUrl) && !empty($this->cityZonesProvider)) {
+            $output->writeln('<info>Configuring city zones…</info>');
+            $this->configureCityZones($output);
+        }
 
         return 0;
     }
@@ -528,9 +530,9 @@ class SetupCommand extends Command
     {
         $qb = $this->doctrine->getRepository(CityZone::class)->createQueryBuilder('cz');
 
-        // TODO Remove this
-        $qb->delete()->getQuery()->execute();
-        $this->doctrine->getManagerForClass(CityZone::class)->flush();
+        // Useful for debugging
+        // $qb->delete()->getQuery()->execute();
+        // $this->doctrine->getManagerForClass(CityZone::class)->flush();
 
         $count = $qb->select('COUNT(cz.id)')->getQuery()->getSingleScalarResult();
 
