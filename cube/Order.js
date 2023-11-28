@@ -5,6 +5,10 @@ cube(`Order`, {
     OrderVendor: {
       relationship: `hasMany`,
       sql: `${Order}.id = ${OrderVendor}.order_id`
+    },
+    Address: {
+      relationship: `hasOne`,
+      sql: `${Order}.shipping_address_id = ${Address}.id`
     }
   },
 
