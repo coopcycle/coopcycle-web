@@ -109,7 +109,8 @@ class SetupCommand extends Command
         string $country,
         string $localeRegex,
         string $cityZonesUrl,
-        string $cityZonesProvider)
+        string $cityZonesProvider,
+        $cityZonesOptions)
     {
         $this->productRepository = $productRepository;
         $this->productFactory = $productFactory;
@@ -156,6 +157,7 @@ class SetupCommand extends Command
         $this->cityZoneImporter = $cityZoneImporter;
         $this->cityZonesUrl = $cityZonesUrl;
         $this->cityZonesProvider = $cityZonesProvider;
+        $this->cityZonesOptions = $cityZonesOptions;
 
         parent::__construct();
     }
@@ -535,7 +537,13 @@ class SetupCommand extends Command
             return;
         }
 
-        $cityZones = $this->cityZoneImporter->import($this->cityZonesUrl, $this->cityZonesProvider);
+        $cityZones = $this->cityZoneImporter->import(
+            $this->cityZonesUrl,
+            $this->cityZonesProvider,
+            $this->cityZonesOptions
+        );
+
+        $output->writeln(sprintf('Found %d city zones', count($cityZones)));
 
         foreach ($cityZones as $cityZone) {
             $this->doctrine->getManagerForClass(CityZone::class)->persist($cityZone);
