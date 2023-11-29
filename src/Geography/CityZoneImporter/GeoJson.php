@@ -27,10 +27,12 @@ class GeoJson implements CityZoneImporterInterface
             foreach ($geoJson->getFeatures() as $feature) {
                 $properties = $feature->getProperties();
 
-                $cityZone = new CityZone();
-                $cityZone->setGeoJSON($feature->getGeometry());
-
-                $ciyZones[] = $cityZone;
+                $geometry = $feature->getGeometry();
+                if (null !== $geometry) {
+                    $cityZone = new CityZone();
+                    $cityZone->setGeoJSON($feature->getGeometry());
+                    $ciyZones[] = $cityZone;
+                }
             }
         }
 
