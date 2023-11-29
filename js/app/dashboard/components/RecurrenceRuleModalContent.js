@@ -402,12 +402,9 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
 
   const { t } = useTranslation()
 
-  let intialPackages = []
-  if (recurrenceRule.store) {
-    intialPackages = _.find(stores, s => s['@id'] === recurrenceRule.store).packages
-  }
-
-  const [ packages, setPackages ] = useState(intialPackages)
+  const [ packages, setPackages ] = useState(
+    recurrenceRule ? (_.find(stores, s => s['@id'] === recurrenceRule.store)?.packages || []) : []
+  )
 
   const storesOptions = storesAsOptions(stores)
 
