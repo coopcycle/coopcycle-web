@@ -207,6 +207,7 @@ profile.givenName: Nombre
 profile.managedStores: Tiendas gestionadas por el usuario
 profile.managedRestaurants: Restaurantes gestionados por el usuario
 profile.accountType: Tipo de cuenta
+profile.businessAccount: Cuenta de empresa
 order.cart.title: Cesta
 order.items.products_with_count: Productos (%count%)
 order.summary.heading: Pedido %number% (#%id%)
@@ -1214,6 +1215,18 @@ adminDashboard.hubs.help: Una agrupación de comercios permite agrupar comercios
   comparten un espacio común., como un mercado,plaza comercial o galería .
 adminDashboard.hubs.createNew: Crear una nueva agrupación de comercios
 adminDashboard.hubs.title: Agrupación de comercios
+adminDashboard.business_accounts.title: Cuentas de empresa
+adminDashboard.business_accounts.createNew: Crear una nueva cuenta de empresa
+form.business_account.hub.label: Agrupación de restaurantes
+form.business_account.hub.placeholder: Elija una agrupación
+form.business_account.employees.label: Lista de empleados
+form.business_account.restaurants.add: Agregar un restaurante
+form.business_account.employees.add: Agregar un empleado
+form.business_account.manager.email.label: Email del administrador de la cuenta
+form.business_account.manager.email.help: Se enviará un link de invitación a Coopcycle
+form.business_account.manager.email_sent.help: Link de invitación a Coopcycle enviado
+form.business_account.save_and_send_invitation.label: Guardar y enviar invitación
+form.business_acount.send_invitation.confirm: El email de invitación a Coopcycle ha sido enviado
 store.form.section.settings: Ajustes
 stores.address_book: Direcciones guardadas
 form.payment.method.name.label: Método de pago
@@ -1366,3 +1379,23 @@ payment_method:
   edenred: Edenred
   edenred+card: Edenred
   cash_on_delivery: Contra reembolso
+registration.navigation.title: "Creación de cuenta personal"
+registration.info.title: "Qué es CoopCycle?"
+registration.info.text: "En CoopCycle, puedes pedir comida elaborada por restaurantes cerca de tí y será entregada por tu cooperativa local. Estamos orgullosos de ser una alternativa ética a la uberización de nuestra sociedad!"
+registration.info.business.account.attachment: "Tu cuenta se asociará a la cuenta de la empresa %businessAccountName%, sin embargo también podrás realizar pedidos de forma personal."
+registration.alert.text: "Has sido invitado por %invitedBy% para crear una cuenta en %brandName%."
+registration.alert.business.account.text: "Bienvenido a CoopCycle - %brandName% ! Por favor crea tu cuenta de empresa antes de realizar tu primer pedido."
+registration.form.title: "Tu información"
+registration.step.personal: "Información personal"
+registration.step.company: "Información de la empresa"
+registration.step.invitation: "Invita a tus colegas"
+registration.flow.next: "Siguiente"
+registration.flow.back: "Atrás"
+registration.flow.finish: "Finalizar alta"
+registration.company.address: "Dirección"
+registration.company.address.different.for.billing: "Usar una dirección diferente para facturación"
+registration.company.billing.address: "Dirección de facturación"
+registration.step.company.name: "Nombre de la empresa"
+registration.step.invitation.copy.link: "Copia el siguiente enlace y envíalo a tus colegas"
+registration.step.invitation.copy.button: "Copiar el enlace"
+registration.step.invitation.link.copied: "Copiado"

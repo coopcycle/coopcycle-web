@@ -69,6 +69,15 @@
           </a>
         </li>
         {% endif %}
+        {% if business_account_enabled and is_granted('ROLE_BUSINESS_ACCOUNT') %}
+          <li
+            class="{{ app.request.attributes.get('_route') == 'profile_business_account' ? 'active' : '' }}">
+            <a href="{{ path('profile_business_account') }}">
+              <i class="fa fa-gear mr-1"></i>
+              <span>{% trans %}profile.businessAccount{% endtrans %}</span>
+            </a>
+          </li>
+        {% endif %}
       </ul>
     </div>
     {% endif %}

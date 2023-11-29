@@ -1414,13 +1414,12 @@ Feature: Tasks
   Scenario: Can't edit task status
     Given the fixtures files are loaded:
       | sylius_channels.yml |
-      | dispatch.yml        |
       | deliveries.yml      |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/5" with body:
+    And the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/1" with body:
       """
       {
         "pickup": {
@@ -1434,9 +1433,9 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Delivery",
-        "@id":"/api/deliveries/5",
+        "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
-        "id":5,
+        "id":1,
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
@@ -1468,13 +1467,12 @@ Feature: Tasks
   Scenario: Can complete pickup & dropoff
     Given the fixtures files are loaded:
       | sylius_channels.yml |
-      | dispatch.yml        |
       | deliveries.yml      |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/5/pick" with body:
+    And the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/1/pick" with body:
       """
       {
         "comments": "no problem"
@@ -1486,9 +1484,9 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Delivery",
-        "@id":"/api/deliveries/5",
+        "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
-        "id":5,
+        "id":1,
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
@@ -1518,7 +1516,7 @@ Feature: Tasks
       """
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/5/drop" with body:
+    And the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/1/drop" with body:
       """
       {
         "comments": "no problem"
@@ -1530,9 +1528,9 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Delivery",
-        "@id":"/api/deliveries/5",
+        "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
-        "id":5,
+        "id":1,
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",

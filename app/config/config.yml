@@ -68,6 +68,7 @@ parameters:
     typesense_products_collection_name: "products"
     colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
     group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
+    business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -247,6 +248,7 @@ twig:
         ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
         dabba_context: '@AppBundle\Dabba\Context'
         group_orders_enabled: '%group_orders_enabled%'
+        business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
 
     exception_controller: null
 

@@ -1,0 +1,46 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>
+  <a href="{{ path('admin_restaurants') }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a>
+</li>
+<li>{% trans %}adminDashboard.business_accounts.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="text-right mb-4">
+  <a href="{{ path('admin_business_account_new') }}" class="btn btn-success">
+    <i class="fa fa-plus mr-2"></i>
+    <span>{% trans %}adminDashboard.business_accounts.createNew{% endtrans %}</span>
+  </a>
+</div>
+
+{% if accounts|length > 0 %}
+  <table class="table">
+    <thead>
+      <th></th>
+      <th>Nombre</th>
+      <th>Dirección</th>
+    <thead>
+    <tbody>
+    {% for account in accounts %}
+      <tr>
+        <td width="5%"><a href="{{ path('admin_business_account', { id: account.id }) }}">#{{ account.id }}</a></td>
+        <td width="20%">
+          <span>{{ account.name }}</span>
+        </td>
+        {% if account.address is not null %}
+          <td width="25%">{{ account.address.streetAddress }}</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}basics.no_entries{% endtrans %}
+  </div>
+{% endif %}
+
+{% endblock %}

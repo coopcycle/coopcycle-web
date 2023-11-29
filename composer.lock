@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "593f95b5c0502d58552cc4326ec2ac21",
+    "content-hash": "968a697d998cf74e2a75251ddd397b48",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1331,6 +1331,92 @@
                 "source": "https://github.com/craue/CraueConfigBundle/tree/2.7.0"
             },
             "time": "2023-08-06T22:32:54+00:00"
+        },
+        {
+            "name": "craue/formflow-bundle",
+            "version": "3.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/craue/CraueFormFlowBundle.git",
+                "reference": "af3db3519a9e62920c439b80d17ff4db689a5d60"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/craue/CraueFormFlowBundle/zipball/af3db3519a9e62920c439b80d17ff4db689a5d60",
+                "reference": "af3db3519a9e62920c439b80d17ff4db689a5d60",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3|^8",
+                "symfony/config": "~4.4|~5.3|^6.0",
+                "symfony/dependency-injection": "~4.4|~5.3|^6.0",
+                "symfony/event-dispatcher": "~4.4|~5.3|^6.0",
+                "symfony/form": "~4.4|~5.3|^6.0",
+                "symfony/http-foundation": "~4.4|~5.3|^6.0",
+                "symfony/http-kernel": "~4.4|~5.3|^6.0",
+                "symfony/options-resolver": "~4.4|~5.3|^6.0",
+                "symfony/security-core": "~4.4|~5.3|^6.0",
+                "symfony/translation": "~4.4|~5.3|^6.0",
+                "symfony/validator": "~4.4|~5.3|^6.0",
+                "symfony/yaml": "~4.4|~5.3|^6.0"
+            },
+            "require-dev": {
+                "craue/translations-tests": "^1.1",
+                "doctrine/annotations": "^1.6",
+                "doctrine/common": "~2.9|~3.0",
+                "doctrine/doctrine-bundle": "~1.10|~2.0",
+                "phpunit/phpunit": "^9.5",
+                "symfony/browser-kit": "~4.4|~5.3|^6.0",
+                "symfony/css-selector": "~4.4|~5.3|^6.0",
+                "symfony/mime": "~4.4|~5.3|^6.0",
+                "symfony/phpunit-bridge": "^6",
+                "symfony/security-bundle": "~4.4|~5.3|^6.0",
+                "symfony/twig-bundle": "~4.4|~5.3|^6.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.6.x-dev"
+                },
+                "symfony": {
+                    "require": "~4.4|~5.3|^6.0"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Craue\\FormFlowBundle\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Raue",
+                    "email": "christian.raue@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://github.com/craue/CraueFormFlowBundle/contributors"
+                }
+            ],
+            "description": "Multi-step forms for your Symfony project.",
+            "homepage": "https://github.com/craue/CraueFormFlowBundle",
+            "keywords": [
+                "form",
+                "step",
+                "symfony",
+                "wizard"
+            ],
+            "support": {
+                "issues": "https://github.com/craue/CraueFormFlowBundle/issues",
+                "source": "https://github.com/craue/CraueFormFlowBundle/tree/3.6.0"
+            },
+            "time": "2022-01-24T14:43:05+00:00"
         },
         {
             "name": "defuse/php-encryption",

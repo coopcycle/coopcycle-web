@@ -27,6 +27,8 @@
     }
     </style>
     {% endif %}
+
+    <link type="text/css" rel="stylesheet" href="{{ asset('bundles/craueformflow/css/buttons.css') }}" />
   </head>
   <body data-country="{{ country_iso }}" data-currency-symbol="{{ currency_context.currencyCode|sylius_currency_symbol }}" data-timezone="{{ coopcycle_setting('timezone') }}">
     {% block menu %}

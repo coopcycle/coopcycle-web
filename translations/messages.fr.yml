@@ -1371,3 +1371,28 @@ payment_method:
   edenred: Edenred
   edenred+card: Edenred
   cash_on_delivery: Contre remboursement
+profile.businessAccount: Compte professionnel
+adminDashboard.business_accounts.title: Comptes professionnels
+adminDashboard.business_accounts.createNew: Créer un nouveau compte professionnel
+form.business_account.hub.label: Hub
+form.business_account.hub.placeholder: Choisir un hub
+form.business_account.employees.label: Liste des employés
+form.business_account.restaurants.add: Ajouter un restaurant
+form.business_account.employees.add: Ajouter un employé
+form.business_account.manager.email.label: Courriel du gestionnaire de compte
+form.business_account.manager.email.help: Un email d'invitation à Coopcycle sera envoyé
+form.business_account.manager.email_sent.help: Un email d'invitation à Coopcycle a été envoyé
+form.business_account.save_and_send_invitation.label: Sauvegarder et envoyer l'invitation
+form.business_acount.send_invitation.confirm: Le courriel d'invitation à Coopcycle a été envoyé
+registration.navigation.title: "Personal account creation"
+registration.info.title: "What is CoopCycle?"
+registration.info.text: "On CoopCycle, you can order food provided by restaurants near you and delivered by your local cooperative. We are proud to be an ethical alternative to the uberization of our society!"
+registration.info.business.account.attachment: "You will be attached to the business account %businessAccountName%, but you can also command under your name."
+registration.alert.text: "You have been invited to create an account on %brandName% by %invitedBy%."
+registration.alert.business.account.text: "Welcome in CoopCycle - %brandName% ! Please create your business account before making your first order."
+registration.form.title: "Your information"
+registration.step.personal: "Personal information"
+registration.step.company: "Company information"
+registration.step.invitation: "Invite your colleagues"
+registration.flow.next: "Next"
+registration.flow.back: "Back"

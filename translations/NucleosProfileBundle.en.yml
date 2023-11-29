@@ -4,10 +4,13 @@ registration:
       <br>
       It contains an activation link you must click to activate your account.
     confirmed: |
-      Congrats <strong>%username%</strong>, your account is now activated.
+      Hello %username%, your account is now activated!
     before_confirmation_continue_order: |
       Once you have activated your account, you can complete your order.
     after_confirmation_continue_order: Complete your order
+    congratulations: Congratulations
+    after_confirmation_redirect_to_dashboard: You are going to be redirecte to your dashboard
+    go_to_dashboard: Go to check it out
 
 form.registration.username.help: |
   Your username cannot be longer than 15 characters.
