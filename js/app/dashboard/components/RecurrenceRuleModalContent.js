@@ -1,12 +1,10 @@
-/* eslint-disable */
-
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { RRule, rrulestr } from 'rrule'
 import _ from 'lodash'
 import Select from 'react-select'
 import { Button, Checkbox, Radio, TimePicker, Input, Popover, Alert, InputNumber, Select as AntSelect, Tag } from 'antd'
-import { PlusOutlined, ThunderboltOutlined, UserOutlined, PhoneOutlined, DeleteOutlined, CodeSandboxOutlined, CloseOutlined } from '@ant-design/icons'
+import { PlusOutlined, ThunderboltOutlined, UserOutlined, PhoneOutlined, DeleteOutlined, CodeSandboxOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import hash from 'object-hash'
 import { Formik } from 'formik'
