@@ -1283,6 +1283,13 @@ services:
   AppBundle\Form\BusinessAccountRegistrationFlow:
     autoconfigure: true
 
+  proj4php\Proj4php:
+    calls:
+      - method: addDef
+        arguments:
+          - 'EPSG:25830'
+          - '+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs'
+
   AppBundle\Geography\CityZoneImporter\Umap: ~
   AppBundle\Geography\CityZoneImporter\EsriJson: ~
 
