@@ -49,10 +49,8 @@ class Umap implements CityZoneImporterInterface
             $cityZone->setGeoJSON($feature->getGeometry());
 
             $ciyZones[] = $cityZone;
-            // $this->doctrine->getManagerForClass(CityZone::class)->persist($cityZone);
         }
 
-        // $this->doctrine->getManagerForClass(CityZone::class)->flush();
 		return $ciyZones;
 	}
 }
