@@ -7,13 +7,20 @@ import _ from 'lodash'
 
 import { getCubeDateRange } from '../utils'
 
+const el = document.querySelector('#cpccl_settings')
+let center
+if (el) {
+  const [ latitude, longitude ] = JSON.parse(el.dataset.latlng).split(',')
+  center = [ parseFloat(latitude), parseFloat(longitude) ]
+}
+
 const Chart = ({ cubejsApi, dateRange }) => {
 
   const [ map, setMap ] = useState(null)
   const [ tileLayer, setTileLayer ] = useState(null)
 
   useEffect(() => {
-    const LMap = L.map('order-count-per-zone-map').setView([ 48.856613, 2.352222 ], 11)
+    const LMap = L.map('order-count-per-zone-map').setView(center, 11)
     const LTileLayer = L.tileLayer.provider('CartoDB.PositronNoLabels').addTo(LMap)
     setMap(LMap)
     setTileLayer(LTileLayer)
