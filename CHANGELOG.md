@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.18.0] - 2023-11-29
+
+### Added
+
+- Allow configuring packages in recurrent rules ([#3884](https://github.com/coopcycle/coopcycle-web/issues/3884)).
+- Introduce business accounts ([#3848](https://github.com/coopcycle/coopcycle-web/pull/3848)).
+- Add chart with map of orders per zone.
+
 ## [1.17.0] - 2023-11-21
 
 ### Added
