@@ -12,7 +12,7 @@ class Umap implements CityZoneImporterInterface
 	public function __construct(private HttpClientInterface $umapClient)
 	{}
 
-	public function import(string $url): array
+	public function import(string $url, array $options = []): array
 	{
 		// https://github.com/umap-project/umap/issues/78
         preg_match('#umap.openstreetmap.fr/[a-z]{2}/map/[a-z0-9\-]+_([0-9]+)#', $url, $matches);
@@ -36,7 +36,7 @@ class Umap implements CityZoneImporterInterface
 
         $jsonData = $response->toArray();
 
-        $ciyZones = [];
+        $cityZones = [];
 
         /** @var \GeoJson\Feature\FeatureCollection */
         $featureCollection = GeoJson::jsonUnserialize($jsonData);
@@ -48,9 +48,9 @@ class Umap implements CityZoneImporterInterface
             $cityZone->setName($properties['name'] ?? '');
             $cityZone->setGeoJSON($feature->getGeometry());
 
-            $ciyZones[] = $cityZone;
+            $cityZones[] = $cityZone;
         }
 
-		return $ciyZones;
+		return $cityZones;
 	}
 }

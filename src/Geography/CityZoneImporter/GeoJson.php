@@ -13,9 +13,9 @@ class GeoJson implements CityZoneImporterInterface
     public function __construct(private HttpClientInterface $client)
     {}
 
-    public function import(string $url): array
+    public function import(string $url, array $options = []): array
     {
-        $ciyZones = [];
+        $cityZones = [];
 
         $response = $this->client->request('GET', $url);
 
@@ -31,12 +31,12 @@ class GeoJson implements CityZoneImporterInterface
                 if (null !== $geometry) {
                     $cityZone = new CityZone();
                     $cityZone->setGeoJSON($feature->getGeometry());
-                    $ciyZones[] = $cityZone;
+                    $cityZones[] = $cityZone;
                 }
             }
         }
 
-        return $ciyZones;
+        return $cityZones;
     }
 }
 

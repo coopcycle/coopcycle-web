@@ -15,7 +15,7 @@ class EsriJson implements CityZoneImporterInterface
 	public function __construct(private HttpClientInterface $client, private Proj4php $proj4)
 	{}
 
-	public function import(string $url): array
+	public function import(string $url, array $options = []): array
 	{
 		$response = $this->client->request('GET', $url);
 

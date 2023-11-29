@@ -83,6 +83,7 @@ services:
       $localeRegex: "%locale_regex%"
       $cityZonesUrl: "%env(CITY_ZONES_URL)%"
       $cityZonesProvider: "%env(CITY_ZONES_PROVIDER)%"
+      $cityZonesOptions: "%env(json:CITY_ZONES_OPTIONS)%"
     tags:
       - { name: 'console.command', command: 'coopcycle:setup' }
 

@@ -9,5 +9,5 @@ interface CityZoneImporterInterface
 	/**
 	 * @return CityZone[]
 	 */
-	public function import(string $url): array;
+	public function import(string $url, array $options = []): array;
 }

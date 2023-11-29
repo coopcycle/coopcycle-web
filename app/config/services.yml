@@ -1293,6 +1293,7 @@ services:
   AppBundle\Geography\CityZoneImporter\Umap: ~
   AppBundle\Geography\CityZoneImporter\EsriJson: ~
   AppBundle\Geography\CityZoneImporter\GeoJson: ~
+  AppBundle\Geography\CityZoneImporter\Json: ~
 
   AppBundle\Geography\CityZoneImporter:
     arguments:
@@ -1300,3 +1301,4 @@ services:
         umap: '@AppBundle\Geography\CityZoneImporter\Umap'
         esrijson: '@AppBundle\Geography\CityZoneImporter\EsriJson'
         geojson: '@AppBundle\Geography\CityZoneImporter\GeoJson'
+        json: '@AppBundle\Geography\CityZoneImporter\Json'

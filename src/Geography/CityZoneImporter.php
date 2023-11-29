@@ -16,11 +16,11 @@ class CityZoneImporter
     /**
      * @return CityZone[]
      */
-    public function import(string $url, string $type): array
+    public function import(string $url, string $type, array $options = []): array
     {
         if (isset($this->importers[$type])) {
 
-            return $this->importers[$type]->import($url);
+            return $this->importers[$type]->import($url, $options);
         }
 
         throw new \InvalidArgumentException(sprintf('Unknow importer "%s"', $type));
