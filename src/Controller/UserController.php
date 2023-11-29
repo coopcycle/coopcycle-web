@@ -21,7 +21,6 @@ use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Nucleos\UserBundle\Util\Canonicalizer;
 use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Laravolt\Avatar\Avatar;
-use Psr\Log\LoggerInterface;
 use Shahonseven\ColorHash;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -339,55 +338,5 @@ class UserController extends AbstractController
         $eventDispatcher->dispatch(new FilterUserResponseEvent($user, $request, $response), NucleosProfileEvents::REGISTRATION_CONFIRMED);
 
         return $response;
-    }
-
-    private function loadBusinessAccountRegistrationFlow(
-        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
-        User $user,
-        BusinessAccountInvitation $businessAccountInvitation,
-        LoggerInterface $logger
-    )
-    {
-        $businessAccountRegistrationFlow->bind(new BusinessAccountRegistration(
-            $user, $businessAccountInvitation->getBusinessAccount()
-        ));
-        $form = $submittedForm = $businessAccountRegistrationFlow->createForm();
-
-        // $form->add('save', SubmitType::class, [
-        //     'label'  => 'registration.submit',
-        // ]);
-
-        $logger->error(sprintf('[FLOW] CurrentStepNumber %d', $businessAccountRegistrationFlow->getCurrentStepNumber()));
-        if ($businessAccountRegistrationFlow->isValid($submittedForm)) {
-            $logger->error(sprintf('[FLOW] isValid'));
-            $businessAccountRegistrationFlow->saveCurrentStepData($submittedForm);
-
-            if ($businessAccountRegistrationFlow->nextStep()) {
-                $logger->error(sprintf('[FLOW] NewStepNumber %d', $businessAccountRegistrationFlow->getCurrentStepNumber()));
-                // form for the next step
-                $form = $businessAccountRegistrationFlow->createForm();
-            } else {
-                $logger->error(sprintf('[FLOW] No next step'));
-                // flow finished
-                // $em = $this->getDoctrine()->getManager();
-                // $em->persist($formData);
-                // $em->flush();
-
-                $businessAccountRegistrationFlow->reset(); // remove step data from the session
-
-                return $this->redirectToRoute('home'); // redirect when done
-            }
-        }
-
-        return $this->render('profile/invitation_define_password.html.twig', [
-            'form' => $form->createView(),
-            'flow' => $businessAccountRegistrationFlow,
-            'invitationUser' => $businessAccountInvitation->getInvitation()->getUser(),
-        ]);
-        // return $this->render('profile/invitation_business_account_define_password.html.twig', [
-        //     'form' => $form->createView(),
-        //     'flow' => $businessAccountRegistrationFlow,
-        //     'invitationUser' => $businessAccountInvitation->getInvitation()->getUser(),
-        // ]);
     }
 }
