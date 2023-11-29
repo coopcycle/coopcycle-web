@@ -1282,3 +1282,23 @@ services:
 
   AppBundle\Form\BusinessAccountRegistrationFlow:
     autoconfigure: true
+
+  proj4php\Proj4php:
+    calls:
+      - method: addDef
+        arguments:
+          - 'EPSG:25830'
+          - '+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs'
+
+  AppBundle\Geography\CityZoneImporter\Umap: ~
+  AppBundle\Geography\CityZoneImporter\EsriJson: ~
+  AppBundle\Geography\CityZoneImporter\GeoJson: ~
+  AppBundle\Geography\CityZoneImporter\Json: ~
+
+  AppBundle\Geography\CityZoneImporter:
+    arguments:
+      $importers:
+        umap: '@AppBundle\Geography\CityZoneImporter\Umap'
+        esrijson: '@AppBundle\Geography\CityZoneImporter\EsriJson'
+        geojson: '@AppBundle\Geography\CityZoneImporter\GeoJson'
+        json: '@AppBundle\Geography\CityZoneImporter\Json'

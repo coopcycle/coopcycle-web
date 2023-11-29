@@ -2,8 +2,10 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\CityZone;
 use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\TaxCategory;
+use AppBundle\Geography\CityZoneImporter;
 use AppBundle\Message\CreateWebhookEndpoint;
 use AppBundle\MessageHandler\CreateWebhookEndpointHandler;
 use AppBundle\Service\StripeManager;
@@ -102,9 +104,13 @@ class SetupCommand extends Command
         TranslatorInterface $translator,
         UrlGeneratorInterface $urlGenerator,
         CreateWebhookEndpointHandler $createWebhookEndpointHandler,
+        CityZoneImporter $cityZoneImporter,
         string $locale,
         string $country,
-        string $localeRegex)
+        string $localeRegex,
+        string $cityZonesUrl,
+        string $cityZonesProvider,
+        $cityZonesOptions)
     {
         $this->productRepository = $productRepository;
         $this->productFactory = $productFactory;
@@ -147,6 +153,11 @@ class SetupCommand extends Command
         $this->locale = $locale;
         $this->country = $country;
         $this->localeRegex = $localeRegex;
+
+        $this->cityZoneImporter = $cityZoneImporter;
+        $this->cityZonesUrl = $cityZonesUrl;
+        $this->cityZonesProvider = $cityZonesProvider;
+        $this->cityZonesOptions = $cityZonesOptions;
 
         parent::__construct();
     }
@@ -206,6 +217,11 @@ class SetupCommand extends Command
 
         $output->writeln('<info>Configuring Stripe webhook endpoint…</info>');
         $this->configureStripeWebhooks($output);
+
+        if (!empty($this->cityZonesUrl) && !empty($this->cityZonesProvider)) {
+            $output->writeln('<info>Configuring city zones…</info>');
+            $this->configureCityZones($output);
+        }
 
         return 0;
     }
@@ -504,5 +520,35 @@ class SetupCommand extends Command
             $message = new CreateWebhookEndpoint($url, $mode);
             call_user_func_array($this->createWebhookEndpointHandler, [ $message ]);
         }
+    }
+
+    private function configureCityZones(OutputInterface $output)
+    {
+        $qb = $this->doctrine->getRepository(CityZone::class)->createQueryBuilder('cz');
+
+        // Useful for debugging
+        // $qb->delete()->getQuery()->execute();
+        // $this->doctrine->getManagerForClass(CityZone::class)->flush();
+
+        $count = $qb->select('COUNT(cz.id)')->getQuery()->getSingleScalarResult();
+
+        if ($count > 0) {
+            $output->writeln('City zones already configured');
+            return;
+        }
+
+        $cityZones = $this->cityZoneImporter->import(
+            $this->cityZonesUrl,
+            $this->cityZonesProvider,
+            $this->cityZonesOptions
+        );
+
+        $output->writeln(sprintf('Found %d city zones', count($cityZones)));
+
+        foreach ($cityZones as $cityZone) {
+            $this->doctrine->getManagerForClass(CityZone::class)->persist($cityZone);
+        }
+
+        $this->doctrine->getManagerForClass(CityZone::class)->flush();
     }
 }

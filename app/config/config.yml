@@ -206,6 +206,8 @@ framework:
                 base_uri: 'https://car-api.%env(WOOPIT_HOST)%/'
             dabba.client:
                 base_uri: "%env(DABBA_BASE_URL)%/"
+            umap.client:
+                base_uri: "https://umap.openstreetmap.fr/"
 
 # Twig Configuration
 twig:
