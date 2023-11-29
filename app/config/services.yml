@@ -1282,3 +1282,12 @@ services:
 
   AppBundle\Form\BusinessAccountRegistrationFlow:
     autoconfigure: true
+
+  AppBundle\Geography\CityZoneImporter\Umap: ~
+  AppBundle\Geography\CityZoneImporter\EsriJson: ~
+
+  AppBundle\Geography\CityZoneImporter:
+    arguments:
+      $importers:
+        umap: '@AppBundle\Geography\CityZoneImporter\Umap'
+        esrijson: '@AppBundle\Geography\CityZoneImporter\EsriJson'

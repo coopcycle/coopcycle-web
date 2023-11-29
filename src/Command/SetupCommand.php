@@ -5,6 +5,7 @@ namespace AppBundle\Command;
 use AppBundle\Entity\CityZone;
 use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\TaxCategory;
+use AppBundle\Geography\CityZoneImporter;
 use AppBundle\Message\CreateWebhookEndpoint;
 use AppBundle\MessageHandler\CreateWebhookEndpointHandler;
 use AppBundle\Service\StripeManager;
@@ -15,8 +16,6 @@ use AppBundle\Taxonomy\CuisineProvider;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use GeoJson\GeoJson;
-use GeoJson\Geometry\Polygon;
 use Psr\Log\LogLevel;
 use Stripe;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
@@ -40,7 +39,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SetupCommand extends Command
@@ -106,8 +104,7 @@ class SetupCommand extends Command
         TranslatorInterface $translator,
         UrlGeneratorInterface $urlGenerator,
         CreateWebhookEndpointHandler $createWebhookEndpointHandler,
-        HttpClientInterface $umapClient,
-        HttpClientInterface $client,
+        CityZoneImporter $cityZoneImporter,
         string $locale,
         string $country,
         string $localeRegex,
@@ -152,16 +149,13 @@ class SetupCommand extends Command
 
         $this->createWebhookEndpointHandler = $createWebhookEndpointHandler;
 
-        $this->client = $client;
-
         $this->locale = $locale;
         $this->country = $country;
         $this->localeRegex = $localeRegex;
 
+        $this->cityZoneImporter = $cityZoneImporter;
         $this->cityZonesUrl = $cityZonesUrl;
         $this->cityZonesProvider = $cityZonesProvider;
-        $this->umapClient = $umapClient;
-
 
         parent::__construct();
     }
@@ -541,86 +535,12 @@ class SetupCommand extends Command
             return;
         }
 
-        if ('umap' === $this->cityZonesProvider) {
+        $cityZones = $this->cityZoneImporter->import($this->cityZonesUrl, $this->cityZonesProvider);
 
-            // https://github.com/umap-project/umap/issues/78
-            preg_match('#umap.openstreetmap.fr/[a-z]{2}/map/[a-z0-9\-]+_([0-9]+)#', $this->cityZonesUrl, $matches);
-
-            $mapId = $matches[1];
-
-            $response = $this->umapClient->request('GET', sprintf('fr/map/%s/geojson/', $mapId));
-
-            $umapData = $response->toArray();
-
-            $dataLayerViewUrl = $umapData['properties']['urls']['datalayer_view'];
-
-            // TODO Find which layer to use
-
-            $datalayer = $umapData['properties']['datalayers'][0];
-
-            $url = str_replace('{map_id}', $mapId, $dataLayerViewUrl);
-            $url = str_replace('{pk}', $datalayer['id'], $url);
-
-            $response = $this->umapClient->request('GET', ltrim($url, '/'));
-
-            $jsonData = $response->toArray();
-
-            /** @var \GeoJson\Feature\FeatureCollection */
-            $featureCollection = GeoJson::jsonUnserialize($jsonData);
-            foreach ($featureCollection->getFeatures() as $feature) {
-
-                $properties = $feature->getProperties();
-
-                $cityZone = new CityZone();
-                $cityZone->setName($properties['name'] ?? '');
-                $cityZone->setGeoJSON($feature->getGeometry());
-
-                $this->doctrine->getManagerForClass(CityZone::class)->persist($cityZone);
-            }
-
-            $this->doctrine->getManagerForClass(CityZone::class)->flush();
-
-        } elseif ('esrijson' === $this->cityZonesProvider) {
-
-            $response = $this->client->request(
-                'GET',
-                $this->cityZonesUrl
-            );
-
-            $jsonData = $response->toArray();
-
-            $proj4 = new \proj4php\Proj4php();
-
-            $fromProj = new \proj4php\Proj(sprintf('EPSG:%s', $jsonData['spatialReference']['wkid']), $proj4);
-            $toProj = new \proj4php\Proj('EPSG:4326', $proj4);
-
-            foreach ($jsonData['features'] as $feature) {
-
-                $rings = [];
-
-                foreach ($feature['geometry']['rings'] as $ring) {
-
-                    $coords = array_map(function ($coord) use ($proj4, $fromProj, $toProj) {
-                        $pointSrc = new \proj4php\Point($coord[0], $coord[1], $fromProj);
-                        $pointDest = $proj4->transform($toProj, $pointSrc);
-
-                        return [ $pointDest->x, $pointDest->y ];
-                    }, $ring);
-
-                    $rings[] = $coords;
-
-                }
-
-                $polygon = new Polygon($rings);
-                $cityZone = new CityZone();
-                // $cityZone->setName($properties['name'] ?? '');
-                $cityZone->setGeoJSON($polygon);
-
-                $this->doctrine->getManagerForClass(CityZone::class)->persist($cityZone);
-            }
-
-            $this->doctrine->getManagerForClass(CityZone::class)->flush();
-
+        foreach ($cityZones as $cityZone) {
+            $this->doctrine->getManagerForClass(CityZone::class)->persist($cityZone);
         }
+
+        $this->doctrine->getManagerForClass(CityZone::class)->flush();
     }
 }
