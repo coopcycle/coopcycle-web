@@ -1,7 +1,8 @@
 import React, {useState, useRef, useEffect} from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
 import moment from 'moment'
-import Swiper, { Navigation } from 'swiper'
+import Swiper from 'swiper'
+import { Navigation } from 'swiper/modules'
 
 import { asText } from '../components/ShippingTimeRange'
 import { useIntersection } from '../hooks/useIntersection'
@@ -140,7 +141,7 @@ if (paginator) {
 
 new Swiper('.swiper', {
   modules: [ Navigation ],
-  slidesPerView: 1.25,
+  slidesPerView: 'auto',
   spaceBetween: 2,
   slidesPerGroup: 1,
   navigation: {
@@ -150,23 +151,23 @@ new Swiper('.swiper', {
   lazyLoading: true,
   breakpoints: {
     480: {
-      slidesPerView: 2.25,
+      slidesPerView: 1.25,
       spaceBetween: 2,
       slidesPerGroup: 1,
     },
     768: {
-      slidesPerView: 3.25,
+      slidesPerView: 2.1,
       spaceBetween: 2,
       slidesPerGroup: 2,
     },
     992: {
-      slidesPerView: 4.25,
-      spaceBetween: 3,
+      slidesPerView: 2.75,
+      spaceBetween: 2,
       slidesPerGroup: 2,
     },
     1200: {
-      slidesPerView: 5.25,
-      spaceBetween: 4,
+      slidesPerView: 3.3,
+      spaceBetween: 2.5,
       slidesPerGroup: 3,
     },
   },

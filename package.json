@@ -21,7 +21,6 @@
     "form-data": "^2.3.3",
     "lodash": "^4.17.21",
     "promise": "^8.3.0",
-    "swiper": "^8.4.4",
     "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
@@ -150,6 +149,7 @@
     "store": "^2.0.12",
     "storybook": "^7.5.3",
     "styled-components": "^5.3.6",
+    "swiper": "^11.0.5",
     "to-string-loader": "^1.2.0",
     "url-loader": "^4.1.1",
     "use-deep-compare": "^1.1.0",
