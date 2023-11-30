@@ -2,6 +2,7 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\Unsplash\Client as UnsplashClient;
 use Aws\S3\Exception\S3Exception;
 use Twig\Extension\RuntimeExtensionInterface;
 use Intervention\Image\ImageManagerStatic;
@@ -14,7 +15,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 use Vich\UploaderBundle\Storage\StorageInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Entity\LocalBusiness;
 
@@ -28,8 +28,8 @@ class AssetsRuntime implements RuntimeExtensionInterface
         Filesystem $assetsFilesystem,
         UrlGeneratorInterface $urlGenerator,
         CacheInterface $projectCache,
-        HttpClientInterface $unsplashClient,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        UnsplashClient $unsplash)
     {
         $this->storage = $storage;
         $this->mountManager = $mountManager;
@@ -38,7 +38,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         $this->assetsFilesystem = $assetsFilesystem;
         $this->urlGenerator = $urlGenerator;
         $this->projectCache = $projectCache;
-        $this->unsplashClient = $unsplashClient;
+        $this->unsplash = $unsplash;
         $this->entityManager = $entityManager;
     }
 
@@ -72,48 +72,39 @@ class AssetsRuntime implements RuntimeExtensionInterface
     public function restaurantBanner($restaurant) {
 
         if ($restaurant->getBannerImageName()) {
+
             return $restaurant->getBannerImageName();
         }
 
-        $qb = $this->entityManager->getRepository(LocalBusiness::class)->createQueryBuilder("r");
-        $qb->select("r.bannerImageName")->andWhere("r.bannerImageName is not null");
-        $existingBanners = $qb->getQuery()->getArrayResult();
-        $existingBanners = array_map(function($banner) {
-            return $banner["bannerImageName"];
-        }, $existingBanners);
+        $existingBanners = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->findBannerImageNames();
 
-        $query = implode(" ", $restaurant->getShopCuisines());
+        $query = implode(' ', $restaurant->getShopCuisines());
         if (!$query) {
-            $query = "restaurant";
+            $query = $restaurant->getShopType();
         }
+
         $page = 1;
-        $maxRequests = 10;
-    
-        while ($page <= $maxRequests) {
-            $response = $this->unsplashClient->request(
-                'GET',
-                "search/photos",
-                ["query"=> ["query" => $query, "page" => $page, "orientation" => "landscape", "content_filter" => "high"]]
-            );
-            $data = $response->toArray();
-            $results = $data["results"];
-            
-            if (!empty($results)) {
-                $urls = array_map(function ($result) {
-                    return $result['urls']['raw'] ?? null;
-                }, $results);
-                $uniqueUrls = array_values(array_diff(array_filter($urls), $existingBanners));
-                if (!empty($uniqueUrls)) {
-                    $url = $uniqueUrls[0];
-                    $restaurant->setBannerImageName($url);
-                    $this->entityManager->flush();
-                    return $url;
-                }
-                return "";
+        while ($page <= 10) {
+
+            $results = $this->unsplash->search($query, $page);
+
+            $uniqueUrls = array_diff($results, $existingBanners);
+
+            if (!empty($uniqueUrls)) {
+                $url = array_shift($uniqueUrls);
+
+                $restaurant->setBannerImageName($url);
+                $this->entityManager->flush();
+
+                return $url;
             }
+
             $page++;
         }
-        return "";
+
+        return '';
     }
 
     public function assetBase64($obj, string $fieldName, string $filter): ?string

@@ -381,4 +381,14 @@ class LocalBusinessRepository extends EntityRepository
 
         return $repository->setTypeFilter(null);
     }
+
+    public function findBannerImageNames()
+    {
+        $qb = $this->createQueryBuilder('r');
+        $qb
+            ->select('r.bannerImageName')
+            ->andWhere('r.bannerImageName IS NOT NULL');
+
+        return array_map(fn ($r) => $r['bannerImageName'], $qb->getQuery()->getArrayResult());
+    }
 }
