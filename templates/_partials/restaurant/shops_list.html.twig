@@ -15,13 +15,11 @@
 		{% endif %}
 		<div class="">
 			{% include "components/restaurant_card/restaurant_card.html.twig" with {
-                enabled: restaurant.enabled,
                 url: local_business_path(restaurant, restaurant_path_params),
                 image: restaurant_image,
                 name: restaurant.name,
                 description: restaurant.description,
                 address: restaurant.address.streetAddress,
-                exclusive: restaurant.exclusive,
                 fulfillment_timing_url: path('restaurant_fulfillment_timing', { id: restaurant.id }),
                 should_show_pre_order: should_show_pre_order(restaurant),
 				tags: restaurant_tags(restaurant),

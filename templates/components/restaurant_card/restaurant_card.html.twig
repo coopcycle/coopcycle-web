@@ -1,4 +1,4 @@
-<div class="restaurant-item {% if enabled is defined and not enabled %}restaurant-item--disabled{% endif %}">
+<div class="restaurant-item">
 	<a title="{{ name is defined ? name : "Empty name"|u.truncate(48, '…', false) }}" href="{{ url is defined ? url : "#" }}" data-restaurant-path>
 
 		<div class="restaurant-image">
