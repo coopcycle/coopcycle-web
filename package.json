@@ -145,6 +145,7 @@
     "rrule": "^2.7.1",
     "sass": "^1.56.1",
     "sass-loader": "^12.0.0",
+    "skeleton-screen-css": "^1.1.0",
     "sortablejs": "^1.15.0",
     "store": "^2.0.12",
     "storybook": "^7.5.3",
