@@ -180,8 +180,6 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
     {
         $cacheKey = sprintf('twig.restaurant.%s.tags', $restaurant->getId());
 
-        $this->projectCache->delete($cacheKey);
-
         return $this->projectCache->get($cacheKey, function (ItemInterface $item) use ($restaurant) {
 
             $item->expiresAfter(60 * 5);
@@ -193,5 +191,34 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
             return $tags;
         });
+    }
+
+    public function badges(LocalBusiness $restaurant): array
+    {
+        $badges = [];
+
+        if ($restaurant->isExclusive()) {
+            $badges[] = 'exclusive';
+        }
+
+        if ($restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled()) {
+            $badges[] = 'zero-waste';
+        }
+
+        if ($restaurant->supportsEdenred()) {
+            $badges[] = 'edenred';
+        }
+
+        if ($restaurant->isVytalEnabled()) {
+            $badges[] = 'vytal';
+        }
+
+        // exclusive
+        // zero-waste
+        // new
+        // edenred
+        // vytal
+
+        return $badges;
     }
 }
