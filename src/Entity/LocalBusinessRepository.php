@@ -391,4 +391,18 @@ class LocalBusinessRepository extends EntityRepository
 
         return array_map(fn ($r) => $r['bannerImageName'], $qb->getQuery()->getArrayResult());
     }
+
+    /**
+     * @return int[]
+     */
+    public function findNewRestaurantIds()
+    {
+        $qb = $this->createQueryBuilder('r');
+        $qb
+            ->select('r.id')
+            ->setMaxResults(self::LATESTS_SHOPS_LIMIT)
+            ->orderBy('r.createdAt', 'DESC');
+
+        return array_map(fn ($result) => $result['id'], $qb->getQuery()->getArrayResult());
+    }
 }

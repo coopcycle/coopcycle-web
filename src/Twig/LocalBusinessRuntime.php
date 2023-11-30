@@ -213,11 +213,16 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
             $badges[] = 'vytal';
         }
 
-        // exclusive
-        // zero-waste
-        // new
-        // edenred
-        // vytal
+        $newRestaurantIds = $this->projectCache->get('twig.new_restaurants.ids', function (ItemInterface $item) {
+
+            $item->expiresAfter(60 * 60 * 24);
+
+            return $this->repository->findNewRestaurantIds();
+        });
+
+        if (in_array($restaurant->getId(), $newRestaurantIds)) {
+            $badges[] = 'new';
+        }
 
         return $badges;
     }
