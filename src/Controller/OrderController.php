@@ -47,6 +47,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Psr\Log\LoggerInterface;
 
 class OrderController extends AbstractController
 {
@@ -295,7 +296,8 @@ class OrderController extends AbstractController
         CartContextInterface $cartContext,
         StripeManager $stripeManager,
         SettingsManager $settingsManager,
-        EmbedContext $embedContext)
+        EmbedContext $embedContext,
+        LoggerInterface $logger)
     {
         if (!$settingsManager->get('guest_checkout_enabled')) {
             if (!$embedContext->isEnabled()) {
@@ -369,6 +371,19 @@ class OrderController extends AbstractController
             }
 
             return $this->redirectToOrderConfirm($order);
+        }
+
+        /**
+         * added to debug issues with stripe payment:
+         * https://github.com/coopcycle/coopcycle-web/issues/3688
+         * https://github.com/coopcycle/coopcycle-app/issues/1603
+         */
+        if ($request->isMethod('POST')) {
+            if ($form->isSubmitted()) {
+                $logger->info(sprintf('Order #%d | OrderController::paymentAction | isSubmitted: true, isValid: %d errors: %s', $order->getId(), $form->isValid(), json_encode($form->getErrors()->__toString())));
+            } else {
+                $logger->info(sprintf('Order #%d | OrderController::paymentAction | isSubmitted: false, errors: %s', $order->getId(), json_encode($form->getErrors()->__toString())));
+            }
         }
 
         $parameters['form'] = $form->createView();
