@@ -10,8 +10,7 @@
   },
   "argTypes": {
     "name": { "control": "text", "description": "Restaurant name" },
-    "should_show_pre_order": { "control": "boolean" },
-    "cuisines": { "control": "array" }
+    "should_show_pre_order": { "control": "boolean" }
   },
   "tags": ["autodocs"],
   "stories": [

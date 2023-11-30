@@ -19,8 +19,7 @@
   },
   "argTypes": {
     "name": { "control": "text" },
-    "should_show_pre_order": { "control": "boolean" },
-    "cuisines": { "control": "array" }
+    "should_show_pre_order": { "control": "boolean" }
   },
   "tags": [],
   "stories": [
