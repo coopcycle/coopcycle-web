@@ -13,7 +13,6 @@
 		{% if restaurant_image is empty %}
 			{% set restaurant_image = '//via.placeholder.com/512.jpg' %}
 		{% endif %}
-		{# <div class="col-sm-6 col-md-4 display-flex"> #}
 		<div class="">
 			{% include "components/restaurant_card/restaurant_card.html.twig" with {
                 enabled: restaurant.enabled,
@@ -27,7 +26,7 @@
                 should_show_pre_order: should_show_pre_order(restaurant),
                 supports_edenred: restaurant.supportsEdenred(),
                 vytal_enabled: restaurant.isVytalEnabled(),
-				tags: ["Fastfood", "Pizza", "Burger"],
+				tags: restaurant_tags(restaurant),
 				banner_image: restaurant_banner(restaurant)
               } %}
 		</div>

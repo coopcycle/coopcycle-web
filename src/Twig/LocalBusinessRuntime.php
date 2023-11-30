@@ -176,20 +176,22 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         return $start->diffInHours(Carbon::now()) > 1;
     }
 
-    public function cuisines(LocalBusiness $restaurant): array
+    public function tags(LocalBusiness $restaurant): array
     {
-        $cacheKey = sprintf('restaurant.%s.cuisines', $restaurant->getId());
+        $cacheKey = sprintf('twig.restaurant.%s.tags', $restaurant->getId());
+
+        $this->projectCache->delete($cacheKey);
 
         return $this->projectCache->get($cacheKey, function (ItemInterface $item) use ($restaurant) {
 
             $item->expiresAfter(60 * 5);
 
-            $cuisines = [];
+            $tags = [];
             foreach ($restaurant->getServesCuisine() as $cuisine) {
-                $cuisines[] = $cuisine->getName();
+                $tags[] = $this->translator->trans($cuisine->getName(), [], 'cuisines');
             }
 
-            return $cuisines;
+            return $tags;
         });
     }
 }
