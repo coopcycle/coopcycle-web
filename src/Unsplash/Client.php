@@ -24,8 +24,6 @@ class Client
     {
     	$cacheKey = sprintf('unsplash-search-%s-p%d', $this->slugger->slug($query), $page);
 
-    	$this->appCache->delete($cacheKey);
-
     	return $this->appCache->get($cacheKey, function (ItemInterface $item) use ($query, $page) {
 
             $item->expiresAfter(3600);

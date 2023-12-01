@@ -112,6 +112,7 @@ services:
   ACSEO\TypesenseBundle\Client\CollectionClient: '@typesense.collection_client'
   ACSEO\TypesenseBundle\Client\TypesenseClient: '@typesense.client'
   Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface: '@league.oauth2_server.factory.psr_http'
+  League\Flysystem\Filesystem $restaurantImagesFilesystem: '@restaurant_images_filesystem'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -1281,3 +1282,4 @@ services:
   AppBundle\Pricing\PricingManager: ~
 
   AppBundle\Unsplash\Client: ~
+  AppBundle\Pixabay\Client: ~

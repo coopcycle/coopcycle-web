@@ -209,6 +209,10 @@ framework:
                 base_uri: "https://api.unsplash.com/"
                 headers:
                     Authorization: 'Client-ID %env(UNSPLASH_ACCESS_KEY)%'
+            pixabay.client:
+                base_uri: "https://pixabay.com/api/"
+                query:
+                    key: "%env(PIXABAY_API_KEY)%"
 
 # Twig Configuration
 twig:
