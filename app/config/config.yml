@@ -520,6 +520,15 @@ vich_uploader:
                 options:
                     chars_per_dir: 2
                     dirs: 2
+        restaurant_banner_image:
+            uri_prefix: ''
+            upload_destination: restaurant_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
         store_image:
             uri_prefix: ''
             upload_destination: store_images_filesystem
@@ -722,6 +731,23 @@ liip_imagine:
                     min: [ 512, 512 ]
                 thumbnail:
                     size: [ 512, 512 ]
+                    mode: outbound
+                    allow_upscale: true
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
+        restaurant_banner:
+            data_loader: restaurant_images
+            filters:
+                upscale:
+                    min: [ 480, 270 ]
+                thumbnail:
+                    size: [ 480, 270 ]
                     mode: outbound
                     allow_upscale: true
             post_processors:

@@ -126,6 +126,18 @@ $(function() {
     size: [ 512, 512 ]
   })
 
+  new DropzoneWidget($formGroup, {
+    dropzone: {
+      url: formData.dataset.bannerActionUrl,
+      params: {
+        type: 'restaurant_banner',
+        id: formData.dataset.restaurantId
+      }
+    },
+    image: formData.dataset.restaurantBannerImage,
+    size: [ 480, 270 ]
+  })
+
   const cuisinesEl = document.querySelector('#cuisines')
   if (cuisinesEl) {
 

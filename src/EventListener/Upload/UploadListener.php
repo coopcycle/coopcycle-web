@@ -110,12 +110,12 @@ final class UploadListener
             return $this->onTasksUpload($event);
         }
 
-        if ($type === 'restaurant') {
+        if ($type === 'restaurant' || $type === 'restaurant_banner') {
             $object = $this->entityManager->getRepository(LocalBusiness::class)->find(
                 $request->get('id')
             );
             // Remove previous file
-            $this->uploadHandler->remove($object, 'imageFile');
+            $this->uploadHandler->remove($object, $type === 'restaurant_banner' ? 'bannerImageFile' : 'imageFile');
         } elseif ($type === 'product') {
             $product = $this->entityManager->getRepository(Product::class)->find(
                 $request->get('id')
@@ -131,11 +131,16 @@ final class UploadListener
         }
 
         // Update image_name column in database
-        $object->setImageName($file->getBasename());
+        if ($type === 'restaurant_banner') {
+            $object->setBannerImageName($file->getBasename());
+        } else {
+            $object->setImageName($file->getBasename());
+        }
+
         $this->entityManager->flush();
 
         // Invoke VichUploaderBundle's directory namer
-        $propertyMapping = $this->mappingFactory->fromField($object, 'imageFile');
+        $propertyMapping = $this->mappingFactory->fromField($object, $type === 'restaurant_banner' ? 'bannerImageFile' : 'imageFile');
         $directoryNamer = $propertyMapping->getDirectoryNamer();
 
         $directoryName = $directoryNamer->directoryName($object, $propertyMapping);

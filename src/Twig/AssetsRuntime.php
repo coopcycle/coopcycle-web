@@ -69,11 +69,16 @@ class AssetsRuntime implements RuntimeExtensionInterface
         return $this->cacheManager->getBrowserPath($uri, $filter);
     }
 
-    public function restaurantBanner($restaurant) {
+    public function restaurantBanner($restaurant)
+    {
+        $imageName = $restaurant->getBannerImageName();
+        if (!empty($imageName)) {
 
-        if ($restaurant->getBannerImageName()) {
+            if (filter_var($imageName, FILTER_VALIDATE_URL)) {
+                return $imageName;
+            }
 
-            return $restaurant->getBannerImageName();
+            return $this->asset($restaurant, 'bannerImageFile', 'restaurant_banner');
         }
 
         $existingBanners = $this->entityManager
