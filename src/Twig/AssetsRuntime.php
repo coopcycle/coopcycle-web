@@ -232,5 +232,11 @@ class AssetsRuntime implements RuntimeExtensionInterface
         if ($provider === 'placehold') {
             return "//placehold.co/{$width}x{$height}";
         }
+
+        if ($provider === 'picsum') {
+            $seed = substr(md5(uniqid(mt_rand(), true)), 0, 8);
+
+            return "//picsum.photos/seed/{$seed}/{$width}/{$height}";
+        }
     }
 }
