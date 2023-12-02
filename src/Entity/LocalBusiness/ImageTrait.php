@@ -125,4 +125,12 @@ trait ImageTrait
     {
         return $this->bannerImageFile;
     }
+
+    /**
+     * @return bool
+     */
+    public function hasBannerImage()
+    {
+        return null !== $this->bannerImageName;
+    }
 }
