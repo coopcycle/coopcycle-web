@@ -18,7 +18,7 @@ class Client
     {}
 
     /**
-     * @return string[]
+     * @return array
      */
     public function search(string $query, int $page = 1)
     {
