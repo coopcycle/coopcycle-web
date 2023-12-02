@@ -67,6 +67,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('cache_key', array(KeyGenerator::class, 'generateKey')),
             new TwigFilter('parse_expression', array(ExpressionLanguageRuntime::class, 'parseExpression')),
             new TwigFilter('expand_tags', array(TagsRuntime::class, 'expandTags')),
+            new TwigFilter('placeholder_image', array(AssetsRuntime::class, 'placeholderImage')),
         );
     }
 

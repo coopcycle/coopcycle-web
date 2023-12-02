@@ -9,14 +9,10 @@
 		{% if address is defined and address is not empty %}
 			{% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
 		{% endif %}
-		{% set restaurant_image = coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') %}
-		{% if restaurant_image is empty %}
-			{% set restaurant_image = '//via.placeholder.com/512.jpg' %}
-		{% endif %}
 		<div class="">
 			{% include "components/restaurant_card/restaurant_card.html.twig" with {
                 url: local_business_path(restaurant, restaurant_path_params),
-                image: restaurant_image,
+                image: coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail')|placeholder_image('restaurant_thumbnail'),
                 name: restaurant.name,
                 description: restaurant.description,
                 address: restaurant.address.streetAddress,
@@ -24,7 +20,7 @@
                 should_show_pre_order: should_show_pre_order(restaurant),
 				tags: restaurant_tags(restaurant),
 				badges: restaurant_badges(restaurant),
-				banner_image: restaurant_banner(restaurant)
+				banner_image: coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner')|placeholder_image('restaurant_banner')
               } %}
 		</div>
 	{% endfor %}

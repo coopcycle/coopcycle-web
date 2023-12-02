@@ -217,4 +217,20 @@ class AssetsRuntime implements RuntimeExtensionInterface
             }
         });
     }
+
+    public function placeholderImage(?string $url, string $filter, string $provider = 'placehold')
+    {
+        if (!empty($url)) {
+
+            return $url;
+        }
+
+        $filterConfig = $this->filterManager->getFilterConfiguration()->get($filter);
+
+        [$width, $height] = $filterConfig['filters']['thumbnail']['size'];
+
+        if ($provider === 'placehold') {
+            return "//placehold.co/{$width}x{$height}";
+        }
+    }
 }
