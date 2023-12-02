@@ -135,8 +135,7 @@
         "league/commonmark": "^2.3",
         "acseo/typesense-bundle": "dev-fix-delete-upsert",
         "symfony/stimulus-bundle": "^2.10",
-        "symfony/ux-turbo": "^2.10",
-        "sapientpro/image-comparator": "^1.0"
+        "symfony/ux-turbo": "^2.10"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
