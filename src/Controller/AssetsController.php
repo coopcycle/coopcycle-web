@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Pixabay\Client as PixabayClient;
 use League\Flysystem\Filesystem;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Liip\ImagineBundle\Exception\Imagine\Filter\NonExistingFilterException;
@@ -68,5 +69,30 @@ class AssetsController extends AbstractController
         } catch (NotLoadableException|NonExistingFilterException $e) {
             throw $this->createNotFoundException();
         }
+    }
+
+    /**
+     * @Route("/placeholder/{filter}/placeholders/{hashid}.jpg", name="placeholder_image")
+     */
+    public function placeholderImageAction($filter, $hashid, Request $request,
+        PixabayClient $pixabay,
+        Filesystem $restaurantImagesFilesystem)
+    {
+        $path = "placeholders/{$hashid}.jpg";
+
+        if (!$restaurantImagesFilesystem->has($path)) {
+
+            $results = $pixabay->search('', rand(1, 10));
+
+            $restaurantImagesFilesystem->put(
+                $path,
+                file_get_contents($results[rand(0, 19)]['webformatURL'])
+            );
+        }
+
+        return $this->redirectToRoute('liip_imagine_cache', [
+            'filter' => $filter,
+            'path' => $path,
+        ], 301);
     }
 }

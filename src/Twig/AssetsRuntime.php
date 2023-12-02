@@ -7,6 +7,7 @@ use AppBundle\Unsplash\Client as UnsplashClient;
 use AppBundle\Pixabay\Client as PixabayClient;
 use Aws\S3\Exception\S3Exception;
 use Twig\Extension\RuntimeExtensionInterface;
+use Hashids\Hashids;
 use Intervention\Image\ImageManagerStatic;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
@@ -42,7 +43,8 @@ class AssetsRuntime implements RuntimeExtensionInterface
         Filesystem $restaurantImagesFilesystem,
         UploadHandler $uploadHandler,
         DataManager $dataManager,
-        FilterManager $filterManager)
+        FilterManager $filterManager,
+        Hashids $hashids12)
     {
         $this->storage = $storage;
         $this->mountManager = $mountManager;
@@ -58,6 +60,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         $this->uploadHandler = $uploadHandler;
         $this->dataManager = $dataManager;
         $this->filterManager = $filterManager;
+        $this->hashids12 = $hashids12;
     }
 
     public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false, bool $cacheUrl = false): ?string
@@ -218,11 +221,20 @@ class AssetsRuntime implements RuntimeExtensionInterface
         });
     }
 
-    public function placeholderImage(?string $url, string $filter, string $provider = 'placehold')
+    public function placeholderImage(?string $url, string $filter, string $provider = 'placehold', object|array $obj = null)
     {
         if (!empty($url)) {
 
             return $url;
+        }
+
+        // FIXME Check if Pixabay is configured
+        if (null !== $obj) {
+
+            return $this->urlGenerator->generate('placeholder_image', [
+                'filter' => $filter,
+                'hashid'=> $this->hashids12->encode($obj->getId())
+            ]);
         }
 
         $filterConfig = $this->filterManager->getFilterConfiguration()->get($filter);
