@@ -119,22 +119,24 @@ $(function() {
       url: formData.dataset.actionUrl,
       params: {
         type: 'restaurant',
-        id: formData.dataset.restaurantId
+        id: formData.dataset.restaurantId,
       }
     },
     image: formData.dataset.restaurantImage,
+    imageType: 'Logo',
     size: [ 512, 512 ]
   })
 
   new DropzoneWidget($formGroup, {
     dropzone: {
-      url: formData.dataset.bannerActionUrl,
+      url: formData.dataset.actionUrl,
       params: {
         type: 'restaurant_banner',
-        id: formData.dataset.restaurantId
+        id: formData.dataset.restaurantId,
       }
     },
     image: formData.dataset.restaurantBannerImage,
+    imageType: 'Banner',
     size: [ 480, 270 ]
   })
 
