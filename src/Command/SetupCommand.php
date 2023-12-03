@@ -2,12 +2,10 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Message\CreateWebhookEndpoint;
 use AppBundle\MessageHandler\CreateWebhookEndpointHandler;
-use AppBundle\Pixabay\Client as PixabayClient;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Taxation\TaxesInitializer;
@@ -38,10 +36,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Vich\UploaderBundle\Handler\UploadHandler;
 
 class SetupCommand extends Command
 {
@@ -106,8 +102,6 @@ class SetupCommand extends Command
         TranslatorInterface $translator,
         UrlGeneratorInterface $urlGenerator,
         CreateWebhookEndpointHandler $createWebhookEndpointHandler,
-        PixabayClient $pixabay,
-        UploadHandler $uploadHandler,
         string $locale,
         string $country,
         string $localeRegex)
@@ -149,9 +143,6 @@ class SetupCommand extends Command
         $this->urlGenerator = $urlGenerator;
 
         $this->createWebhookEndpointHandler = $createWebhookEndpointHandler;
-
-        $this->pixabay = $pixabay;
-        $this->uploadHandler = $uploadHandler;
 
         $this->locale = $locale;
         $this->country = $country;
@@ -215,9 +206,6 @@ class SetupCommand extends Command
 
         $output->writeln('<info>Configuring Stripe webhook endpoint…</info>');
         $this->configureStripeWebhooks($output);
-
-        $output->writeln('<info>Creating banners from stock photos…</info>');
-        $this->createBannersFromStockPhotos($output);
 
         return 0;
     }
@@ -516,72 +504,5 @@ class SetupCommand extends Command
             $message = new CreateWebhookEndpoint($url, $mode);
             call_user_func_array($this->createWebhookEndpointHandler, [ $message ]);
         }
-    }
-
-    private function createBannersFromStockPhotos(OutputInterface $output)
-    {
-        $restaurants = $this->doctrine->getRepository(LocalBusiness::class)->findAll();
-
-        $urls = [];
-        foreach ($restaurants as $restaurant) {
-
-            if ($restaurant->hasBannerImage()) {
-                continue;
-            }
-
-            $urls[] = $url = $this->getStockPhoto($restaurant, $urls);
-
-            // https://stackoverflow.com/questions/40454950/set-symfony-uploaded-file-by-url-input
-
-            $file = tmpfile();
-            $newfile = stream_get_meta_data($file)['uri'];
-
-            copy($url, $newfile);
-            $mimeType = mime_content_type($newfile);
-            $size = filesize($newfile);
-            $finalName = md5(uniqid(rand(), true)) . '.jpg';
-
-            $uploadedFile = new UploadedFile($newfile, $finalName, $mimeType, $size);
-
-            $restaurant->setBannerImageFile($uploadedFile);
-
-            $this->uploadHandler->upload($restaurant, 'bannerImageFile');
-
-            unlink($newfile);
-
-            $restaurant->setBannerImageName(
-                $restaurant->getBannerImageFile()->getBasename()
-            );
-        }
-
-        $this->doctrine->getManagerForClass(LocalBusiness::class)->flush();
-    }
-
-    private function getStockPhoto(LocalBusiness $restaurant, array $urls, $page = 1)
-    {
-        $keywords = $restaurant->getShopCuisines();
-        if (count($keywords) === 0) {
-            $keywords[] = $restaurant->getShopType();
-        }
-        $query = implode(' ', $keywords);
-
-        $results = $this->pixabay->search($query, $page);
-
-        if (count($results) === 0) {
-            foreach ($keywords as $keyword) {
-                $results = $this->pixabay->search($keyword);
-                if (count($results) > 0) {
-                    break;
-                }
-            }
-        }
-
-        foreach ($results as $result) {
-            if (!in_array($result['webformatURL'], $urls)) {
-                return $result['webformatURL'];
-            }
-        }
-
-        return $this->getStockPhoto($restaurant, $urls, ++$page);
     }
 }
