@@ -109,7 +109,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         }
 
         // FIXME Check if Pixabay is configured
-        if (null !== $obj) {
+        if (null !== $obj && is_callable([ $obj, 'getId' ])) {
 
             return $this->urlGenerator->generate('placeholder_image', [
                 'filter' => $filter,
