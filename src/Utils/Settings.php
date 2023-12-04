@@ -4,6 +4,7 @@ namespace AppBundle\Utils;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
+use AppBundle\Validator\Constraints\GoogleApiKey as AssertGoogleApiKey;
 
 class Settings
 {
@@ -106,6 +107,7 @@ class Settings
      *   message="This value should not be blank."
      * )
      * @Assert\Regex("/AIza[0-9A-Za-z-_]{35}/")
+     * @AssertGoogleApiKey()
      */
     public $google_api_key_custom;
 

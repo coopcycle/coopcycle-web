@@ -72,3 +72,9 @@ services:
   AppBundle\Validator\Constraints\DabbaOrderValidator:
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\GoogleApiKeyValidator:
+    arguments:
+      $country: "%country_iso%"
+    tags:
+      - { name: validator.constraint_validator }
