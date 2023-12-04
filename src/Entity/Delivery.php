@@ -11,6 +11,7 @@ use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
+use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Package\PackageWithQuantity;
@@ -111,6 +112,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Delivery extends TaskCollection implements TaskCollectionInterface, PackagesAwareInterface
 {
     use PackagesAwareTrait;
+    use EDIFACTMessageAwareTrait;
 
     const VEHICLE_BIKE = 'bike';
     const VEHICLE_CARGO_BIKE = 'cargo_bike';

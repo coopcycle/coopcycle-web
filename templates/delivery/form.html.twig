@@ -43,6 +43,7 @@
           {{ form_row(form.vehicle) }}
         {% endif %}
 
+        {% if delivery.store is not empty and delivery.store.isDBShenkerEnabled %}
         <div class="panel panel-primary">
           <div class="panel-heading">
             <h3 class="panel-title">DBShenker</h3>
@@ -55,6 +56,7 @@
             <button type="button" class="btn btn-primary">Sync</button>
           </div>
         </div>
+        {% endif %}
 
         {% if not is_new %}
         <div class="alert alert-info">

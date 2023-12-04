@@ -24,7 +24,7 @@ class DeliveryImportType extends AbstractType
 
     public function __construct(
         DeliverySpreadsheetParser $spreadsheetParser,
-        ValidatorInterface $validator, 
+        ValidatorInterface $validator,
         TranslatorInterface $translator)
     {
         $this->spreadsheetParser = $spreadsheetParser;
@@ -49,7 +49,7 @@ class DeliveryImportType extends AbstractType
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('store')
                         ->orderBy('store.name', 'ASC');
-                },            
+                },
                 'choice_label' => 'name',
             ]);
         }

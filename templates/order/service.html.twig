@@ -51,6 +51,10 @@
   </div>
 </div>
 
+  <pre>
+    {{ dump(order.getEvents().toArray()) }}
+  </pre>
+
 <h3 id="payments">{{ 'order.payments'|trans }}</h3>
 {% do form.payments.setRendered %}
 {% include 'order/_partials/payments.html.twig' %}

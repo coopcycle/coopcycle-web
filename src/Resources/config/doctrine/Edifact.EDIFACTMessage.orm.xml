@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Edifact\EDIFACTMessage" table="edifact_message">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="transporter" type="string" column="transporter" nullable="false"/>
+    <field name="reference" type="string" column="reference" length="255" nullable="false" />
+    <field name="messageType" type="string" column="message_type" length="255" nullable="false"/>
+    <field name="subMessageType" type="string" column="sub_message_type" length="255" nullable="true"/>
+    <field name="ediMessage" type="text" column="edi" nullable="true"/>
+    <field name="syncedAt" type="datetime" column="synced_at" nullable="true"/>
+    <many-to-one field="delivery" target-entity="AppBundle\Entity\Delivery" inversed-by="edifactMessages">
+      <join-columns>
+        <join-column name="delivery_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
