@@ -20,7 +20,7 @@
         "name": "Lorem ipsum",
         "description": "Lorem ipsumLorem ipsum Lorem ipsumLorem ipsumLorem ipsum Lorem ipsum",
         "url": "https://localhost/fr/restaurant/1-acme",
-        "image": "https://source.unsplash.com/MQUqbmszGGM",
+        "image": "https://img.logoipsum.com/300.png",
         "address": "1, rue de Rivoli",
         "should_show_pre_order": false,
         "fulfillment_timing_url": "https://localhost/fr/restaurant/1-acme/timing",
