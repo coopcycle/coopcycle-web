@@ -69,6 +69,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -1730,5 +1731,44 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'form' => $form->createView(),
         ], $routes));
+    }
+
+    public function restaurantImageFromUrlAction($id, Request $request,
+        UploadHandler $uploadHandler,
+        EntityManagerInterface $entityManager)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        $url = $request->request->get('url');
+
+        // https://stackoverflow.com/questions/40454950/set-symfony-uploaded-file-by-url-input
+
+        $file = tmpfile();
+        $newfile = stream_get_meta_data($file)['uri'];
+
+        copy($url, $newfile);
+        $mimeType = mime_content_type($newfile);
+        $size = filesize($newfile);
+        $finalName = md5(uniqid(rand(), true)) . '.jpg';
+
+        $uploadedFile = new UploadedFile($newfile, $finalName, $mimeType, $size);
+
+        $restaurant->setBannerImageFile($uploadedFile);
+
+        $uploadHandler->upload($restaurant, 'bannerImageFile');
+
+        unlink($newfile);
+
+        $restaurant->setBannerImageName(
+            $restaurant->getBannerImageFile()->getBasename()
+        );
+
+        $entityManager->flush();
+
+        return new JsonResponse(
+            ['imageName' => $restaurant->getBannerImageName()]
+        );
     }
 }

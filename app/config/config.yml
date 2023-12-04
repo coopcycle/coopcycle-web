@@ -689,6 +689,7 @@ fos_js_routing:
         - admin_order_fulfill
         - admin_restaurant
         - admin_restaurant_dashboard
+        - admin_restaurant_image_from_url
         - admin_restaurant_stats
         - admin_tags
         - admin_task_image_download
@@ -708,6 +709,7 @@ fos_js_routing:
         - dashboard_order_delay
         - dashboard_order_fulfill
         - dashboard_restaurant_dashboard
+        - dashboard_restaurant_image_from_url
         - dashboard_restaurant_stats
         - routing_route
         - user_avatar

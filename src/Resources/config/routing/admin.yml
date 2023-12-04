@@ -618,3 +618,13 @@ admin_nonprofit:
     _controller: AppBundle\Controller\AdminController::nonprofitAction
     layout: 'admin.html.twig'
   methods: [ GET, POST ]
+
+admin_restaurant_image_from_url:
+  path: /admin/restaurants/{id}/image-from-url
+  defaults:
+    _controller: AppBundle\Controller\AdminController::restaurantImageFromUrlAction
+    layout: 'admin.html.twig'
+    routes:
+      restaurants: admin_restaurants
+      restaurant: admin_restaurant
+  methods: [ POST ]
