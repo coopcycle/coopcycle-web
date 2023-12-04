@@ -4,7 +4,7 @@
 		<div class="restaurant-image">
 
 			<div class="restaurant-banner">
-				<img src="{{ banner_image is defined ? banner_image : "https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=1000" }}" alt="{{ name is defined ? name ~ "'s banner" : "banner" }}">
+				<img src="{{ banner_image|default(null)|placeholder_image('restaurant_banner') }}" alt="{{ name is defined ? name ~ "'s banner" : "banner" }}">
                 {% if should_show_pre_order %}
                 <figcaption class="w-100 h-100 position-absolute">
                     <div class="w-100 h-100 position-absolute bg-dark" style="opacity: 0.5;"></div>
@@ -17,7 +17,7 @@
 			</div>
 
 			<div class="restaurant-logo">
-				<img src="{{ image is defined ? image : "https://img.freepik.com/free-vector/vector-pastel-plate-food-sticker-clipart_53876-170585.jpg" }}" alt="{{ name is defined ? name ~ "'s logo" : "logo" }}">
+				<img src="{{ image|default(null)|placeholder_image('restaurant_thumbnail') }}" alt="{{ name is defined ? name ~ "'s logo" : "logo" }}">
 			</div>
 
 			{% if badges is defined %}
