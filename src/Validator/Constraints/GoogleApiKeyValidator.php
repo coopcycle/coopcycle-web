@@ -15,11 +15,6 @@ use Symfony\Component\HttpClient\HttplugClient;
 
 class GoogleApiKeyValidator extends ConstraintValidator
 {
-    public function __construct(private string $country)
-    {
-        $this->country = $country;
-    }
-
     public function validate($value, Constraint $constraint)
     {
         $object = $this->context->getObject();
@@ -34,10 +29,8 @@ class GoogleApiKeyValidator extends ConstraintValidator
 
         $httpClient = new HttplugClient();
 
-        $region = strtoupper($this->country);
-
         $geocoder = new StatefulGeocoder(
-            new GoogleMaps($httpClient, $region, $value)
+            new GoogleMaps(client: $httpClient, apiKey: $value)
         );
 
         try {
