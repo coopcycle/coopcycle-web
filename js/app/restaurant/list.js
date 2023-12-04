@@ -1,7 +1,8 @@
 import React, {useState, useRef, useEffect} from 'react'
 import { render, unmountComponentAtNode } from 'react-dom'
 import moment from 'moment'
-import Swiper, { Navigation } from 'swiper'
+import Swiper from 'swiper'
+import { Navigation } from 'swiper/modules'
 
 import { asText } from '../components/ShippingTimeRange'
 import { useIntersection } from '../hooks/useIntersection'
@@ -32,8 +33,17 @@ const FulfillmentBadge = ({ range }) => {
 
   return (
     <span className="restaurant-item__time-range rendered-badge">
-      <i className="fa fa-clock-o mr-2"></i>
-      <span>{ asText(range, false, true) }</span>
+      <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-clock"
+        width="44" height="44"
+        viewBox="0 0 24 24"
+        strokeWidth="2"
+        stroke="#2c3e50" fill="none"
+        strokeLinecap="round" strokeLinejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+        <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/>
+        <path d="M12 7v5l3 3"/>
+      </svg>
+      { asText(range, false, true) }
     </span>
   )
 }
@@ -131,7 +141,7 @@ if (paginator) {
 
 new Swiper('.swiper', {
   modules: [ Navigation ],
-  slidesPerView: 1.25,
+  slidesPerView: 'auto',
   spaceBetween: 2,
   slidesPerGroup: 1,
   navigation: {
@@ -141,23 +151,23 @@ new Swiper('.swiper', {
   lazyLoading: true,
   breakpoints: {
     480: {
-      slidesPerView: 2.25,
+      slidesPerView: 1.25,
       spaceBetween: 2,
       slidesPerGroup: 1,
     },
     768: {
-      slidesPerView: 3.25,
+      slidesPerView: 2.1,
       spaceBetween: 2,
       slidesPerGroup: 2,
     },
     992: {
-      slidesPerView: 4.25,
-      spaceBetween: 3,
+      slidesPerView: 2.75,
+      spaceBetween: 2,
       slidesPerGroup: 2,
     },
     1200: {
-      slidesPerView: 5.25,
-      spaceBetween: 4,
+      slidesPerView: 3.3,
+      spaceBetween: 2.5,
       slidesPerGroup: 3,
     },
   },

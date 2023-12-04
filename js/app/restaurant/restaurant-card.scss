@@ -1,0 +1,112 @@
+@import "./tag.scss";
+@import "./badge.scss";
+
+.restaurant-item {
+  background-color: white;
+  width: 333px;
+  min-width: 333px;
+  // height: 346px;
+  box-shadow: 0 4px 32px rgba($color: #000000, $alpha: 0.05);
+  margin: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.25s;
+
+  &:hover {
+    box-shadow: 0 4px 32px rgba($color: #000000, $alpha: 0.1);
+  }
+
+  > a {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: black;
+  }
+
+  .restaurant-image {
+    position: relative;
+
+    .restaurant-banner {
+      position: relative;
+      width: 100%;
+      // height: 150px;
+      // height: 187.31px;
+      aspect-ratio: 16/9;
+      margin-bottom: -50px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+
+      img {
+        width: 100%;
+      }
+    }
+
+    .restaurant-logo {
+      position: relative;
+      display: inline-block;
+      background-color: white;
+      border-radius: 16px;
+      padding: 8px;
+      margin-left: 16px;
+
+      > img {
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+      }
+    }
+
+    .badges {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 8px;
+      padding: 12px;
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+  }
+
+  .restaurant-details {
+    width: 100%;
+    height: 100%;
+    padding: 24px;
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+
+    h4 {
+      color: black;
+      font-size: 16px;
+      font-weight: bold;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+    }
+  }
+
+  .timing {
+    span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    svg {
+      height: 18px;
+      width: 18px;
+    }
+  }
+}

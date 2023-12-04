@@ -175,4 +175,55 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
         return $start->diffInHours(Carbon::now()) > 1;
     }
+
+    public function tags(LocalBusiness $restaurant): array
+    {
+        $cacheKey = sprintf('twig.restaurant.%s.tags', $restaurant->getId());
+
+        return $this->projectCache->get($cacheKey, function (ItemInterface $item) use ($restaurant) {
+
+            $item->expiresAfter(60 * 5);
+
+            $tags = [];
+            foreach ($restaurant->getServesCuisine() as $cuisine) {
+                $tags[] = $this->translator->trans($cuisine->getName(), [], 'cuisines');
+            }
+
+            return $tags;
+        });
+    }
+
+    public function badges(LocalBusiness $restaurant): array
+    {
+        $badges = [];
+
+        if ($restaurant->isExclusive()) {
+            $badges[] = 'exclusive';
+        }
+
+        if ($restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled()) {
+            $badges[] = 'zero-waste';
+        }
+
+        if ($restaurant->supportsEdenred()) {
+            $badges[] = 'edenred';
+        }
+
+        if ($restaurant->isVytalEnabled()) {
+            $badges[] = 'vytal';
+        }
+
+        $newRestaurantIds = $this->projectCache->get('twig.new_restaurants.ids', function (ItemInterface $item) {
+
+            $item->expiresAfter(60 * 60 * 24);
+
+            return $this->repository->findNewRestaurantIds();
+        });
+
+        if (in_array($restaurant->getId(), $newRestaurantIds)) {
+            $badges[] = 'new';
+        }
+
+        return $badges;
+    }
 }

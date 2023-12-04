@@ -1,0 +1,25 @@
+{
+  "title": "RestaurantCard/2. Tag/Tags",
+  "parameters": {
+    "server": {
+      "url": "http://localhost/storybook/component",
+      "id": "tag"
+    }
+  },
+  "args": {
+    "value": ""
+  },
+  "argTypes": {
+    "value": { "control": "text" }
+  },
+  "tags": ["autodocs"],
+  "stories": [
+    {
+      "name": "Default",
+      "args": { "value": "Default tag" }
+    },
+    {
+      "name": "Without value"
+    }
+  ]
+}

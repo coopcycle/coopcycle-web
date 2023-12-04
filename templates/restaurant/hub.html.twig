@@ -46,9 +46,25 @@
     <div class="row display-flex restaurant-list">
       {% for restaurant in hub.restaurants %}
         {% if business_type_filter is empty or business_type_filter == restaurant.type %}
-        <div class="col-sm-6 col-md-4 display-flex">
-          {% include "_partials/restaurant/list_thumbnail.html.twig" %}
-        </div>
+          {% set restaurant_path_params = {} %}
+          {% if address is defined and address is not empty %}
+            {% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
+          {% endif %}
+          {% include "components/restaurant_card/restaurant_card.html.twig" with {
+            url: local_business_path(restaurant, restaurant_path_params),
+            image: coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail')|placeholder_image('restaurant_thumbnail'),
+            name: restaurant.name,
+            description: restaurant.description,
+            address: restaurant.address.streetAddress,
+            fulfillment_timing_url: path('restaurant_fulfillment_timing', { id: restaurant.id }),
+            should_show_pre_order: should_show_pre_order(restaurant),
+            tags: restaurant_tags(restaurant),
+            badges: restaurant_badges(restaurant),
+            banner_image: coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner')|placeholder_image(filter='restaurant_banner', obj=restaurant)
+          } %}
+          <div class="col-sm-6 col-md-4 display-flex">
+            {% include "_partials/restaurant/list_thumbnail.html.twig" %}
+          </div>
         {% endif %}
       {% endfor %}
     </div>

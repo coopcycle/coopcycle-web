@@ -208,6 +208,14 @@ framework:
                 base_uri: "%env(DABBA_BASE_URL)%/"
             umap.client:
                 base_uri: "https://umap.openstreetmap.fr/"
+            unsplash.client:
+                base_uri: "https://api.unsplash.com/"
+                headers:
+                    Authorization: 'Client-ID %env(UNSPLASH_ACCESS_KEY)%'
+            pixabay.client:
+                base_uri: "https://pixabay.com/api/"
+                query:
+                    key: "%env(PIXABAY_API_KEY)%"
 
 # Twig Configuration
 twig:
@@ -520,6 +528,15 @@ vich_uploader:
                 options:
                     chars_per_dir: 2
                     dirs: 2
+        restaurant_banner_image:
+            uri_prefix: ''
+            upload_destination: restaurant_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
         store_image:
             uri_prefix: ''
             upload_destination: store_images_filesystem
@@ -676,6 +693,7 @@ fos_js_routing:
         - admin_order_fulfill
         - admin_restaurant
         - admin_restaurant_dashboard
+        - admin_restaurant_image_from_url
         - admin_restaurant_stats
         - admin_tags
         - admin_task_image_download
@@ -695,6 +713,7 @@ fos_js_routing:
         - dashboard_order_delay
         - dashboard_order_fulfill
         - dashboard_restaurant_dashboard
+        - dashboard_restaurant_image_from_url
         - dashboard_restaurant_stats
         - routing_route
         - user_avatar
@@ -722,6 +741,23 @@ liip_imagine:
                     min: [ 512, 512 ]
                 thumbnail:
                     size: [ 512, 512 ]
+                    mode: outbound
+                    allow_upscale: true
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
+        restaurant_banner:
+            data_loader: restaurant_images
+            filters:
+                upscale:
+                    min: [ 480, 270 ]
+                thumbnail:
+                    size: [ 480, 270 ]
                     mode: outbound
                     allow_upscale: true
             post_processors:

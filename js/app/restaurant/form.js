@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { render } from 'react-dom'
-import { Switch } from 'antd'
+import { Switch, Modal, Input, Image } from 'antd'
 import Dropzone from 'dropzone'
 import _ from 'lodash'
 import Select from 'react-select'
 import 'prismjs'
 import 'prismjs/plugins/toolbar/prism-toolbar'
 import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard'
+import axios from 'axios'
+import Grid from '@react-css/grid'
+import { useTranslation } from 'react-i18next'
 
 import i18n from '../i18n'
 import DropzoneWidget from '../widgets/Dropzone'
@@ -60,6 +63,94 @@ function renderSwitch($input) {
         }
       }}
       disabled={disabled} />, $switch.get(0)
+  )
+}
+
+const StockPhotoSearch = ({ url }) => {
+
+  const { t } = useTranslation()
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [results, setResults] = useState([])
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
+
+  const doSearch = () => {
+    axios({
+      method: 'get',
+      url: '/search/pixabay',
+      params: { q: search, page }
+    }).then(response => setResults(response.data.hits))
+  }
+
+  useEffect(() => {
+    if (search !== '') {
+      doSearch(search)
+    }
+  }, [ search, page ])
+
+  const showModal = (e) => {
+    e.preventDefault()
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <div className="text-right my-2">
+      <a href="#" onClick={showModal}><i className="fa fa-camera fa-lg mr-2"></i>{ t('RESTAURANT_STOCK_PHOTOS_SEARCH') }</a>
+      <Modal title={ t('RESTAURANT_STOCK_PHOTOS_SEARCH') } open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={ null }>
+        <Input.Search placeholder={ t('RESTAURANT_STOCK_PHOTOS_PLACEHOLDER') } onSearch={ (value) => setSearch(value) } />
+        <span className="d-block text-right">
+          <small
+            dangerouslySetInnerHTML={{ __html: t('RESTAURANT_STOCK_PHOTOS_ATTRIBUTION', { url: 'https://pixabay.com/', name: 'pixabay.com' }) }} />
+        </span>
+        { results.length > 0 && (
+          <>
+            <hr />
+            <Grid columns="repeat(3, 1fr)" gap="5px">
+            { results.map((result, index) => {
+
+              return (
+                <div
+                  key={ `pixabay-result-${index}` }
+                  className="border p-3 d-flex flex-column justify-content-between align-items-center">
+                  <Image
+                    width={ result.previewWidth * 0.8 }
+                    height={ result.previewHeight * 0.8 }
+                    src={ result.previewURL }
+                    preview={{
+                      src: result.webformatURL
+                    }} />
+                  <a href="#" className="mt-2" onClick={ e => {
+                    e.preventDefault()
+                    axios({
+                      method: 'POST',
+                      url,
+                      data: {
+                        url: result.webformatURL
+                      }
+                    }).then(() => window.document.location.reload())
+                  }}>{ t('RESTAURANT_STOCK_PHOTOS_SELECT') }</a>
+                </div>
+              )
+            }) }
+            </Grid>
+            <div className="my-2 text-right">
+              <button type="button" className="btn btn-default" onClick={ () => {
+                setPage(page + 1)
+              }}>More results</button>
+            </div>
+          </>
+        )}
+      </Modal>
+    </div>
   )
 }
 
@@ -119,11 +210,40 @@ $(function() {
       url: formData.dataset.actionUrl,
       params: {
         type: 'restaurant',
-        id: formData.dataset.restaurantId
+        id: formData.dataset.restaurantId,
       }
     },
     image: formData.dataset.restaurantImage,
+    imageType: 'Logo',
     size: [ 512, 512 ]
+  })
+
+  const $bannerContainer = $('<div>')
+
+  const $bannerDropzoneContainer = $('<div>')
+  const $bannerStockPhotoContainer = $('<div>')
+
+  const imageFromURL = window.Routing.generate(formData.dataset.imageFromUrlRoute, { id: formData.dataset.restaurantId })
+
+  render(<StockPhotoSearch url={ imageFromURL } />, $bannerStockPhotoContainer.get(0))
+
+  $bannerDropzoneContainer.appendTo($bannerContainer)
+  $bannerStockPhotoContainer.appendTo($bannerContainer)
+
+  $bannerContainer.addClass('mt-3')
+  $bannerContainer.appendTo($formGroup)
+
+  new DropzoneWidget($bannerDropzoneContainer, {
+    dropzone: {
+      url: formData.dataset.actionUrl,
+      params: {
+        type: 'restaurant_banner',
+        id: formData.dataset.restaurantId,
+      }
+    },
+    image: formData.dataset.restaurantBannerImage,
+    imageType: 'Banner',
+    size: [ 480, 270 ]
   })
 
   const cuisinesEl = document.querySelector('#cuisines')

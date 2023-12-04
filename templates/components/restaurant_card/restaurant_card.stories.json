@@ -1,0 +1,44 @@
+{
+  "title": "RestaurantCard/3. General/RestaurantCard",
+  "parameters": {
+    "server": {
+      "url": "http://localhost/storybook/component",
+      "id": "restaurant-card"
+    }
+  },
+  "args": {
+  },
+  "argTypes": {
+    "name": { "control": "text", "description": "Restaurant name" },
+    "should_show_pre_order": { "control": "boolean" }
+  },
+  "tags": ["autodocs"],
+  "stories": [
+    {
+      "name": "Default",
+      "args": {
+        "name": "Lorem ipsum",
+        "description": "Lorem ipsumLorem ipsum Lorem ipsumLorem ipsumLorem ipsum Lorem ipsum",
+        "url": "https://localhost/fr/restaurant/1-acme",
+        "image": "https://img.logoipsum.com/300.png",
+        "address": "1, rue de Rivoli",
+        "should_show_pre_order": false,
+        "fulfillment_timing_url": "https://localhost/fr/restaurant/1-acme/timing",
+        "tags": ["italian", "pizza"],
+        "badges": [],
+        "banner_image": "https://source.unsplash.com/MQUqbmszGGM"
+      }
+    },
+    {
+      "name": "Without values"
+    },
+    {
+      "name": "Badge",
+      "args": { "badges": ["exclusive"] }
+    },
+    {
+      "name": "Pre-order",
+      "args": { "should_show_pre_order": true }
+    }
+  ]
+}

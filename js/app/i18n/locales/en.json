@@ -350,6 +350,10 @@
         "LEARN_MORE": "Learn more",
         "I_UNDERSTAND": "I understand",
         "ADMIN_DASHBOARD_ORDERS_LOOPEAT_STOCK_OK": "In stock",
-        "ADMIN_DASHBOARD_ORDERS_LOOPEAT_STOCK_NOK": "Not enough stock, {{quantity}} missing"
+        "ADMIN_DASHBOARD_ORDERS_LOOPEAT_STOCK_NOK": "Not enough stock, {{quantity}} missing",
+        "RESTAURANT_STOCK_PHOTOS_SEARCH": "Search images",
+        "RESTAURANT_STOCK_PHOTOS_PLACEHOLDER": "Pizza, burger…",
+        "RESTAURANT_STOCK_PHOTOS_ATTRIBUTION": "Search results from <a href=\"{{url}}\">{{name}}</a>",
+        "RESTAURANT_STOCK_PHOTOS_SELECT": "Select this image"
     }
 }

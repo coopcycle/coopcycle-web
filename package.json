@@ -6,7 +6,9 @@
   "scripts": {
     "jest": "jest --config jest.config.js",
     "sdk:watch": "webpack --config webpack.sdk.config.js --watch",
-    "sdk:build": "webpack --config webpack.sdk.config.js --mode production"
+    "sdk:build": "webpack --config webpack.sdk.config.js --mode production",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "repository": {
     "type": "git",
@@ -19,7 +21,6 @@
     "form-data": "^2.3.3",
     "lodash": "^4.17.21",
     "promise": "^8.3.0",
-    "swiper": "^8.4.4",
     "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
@@ -32,8 +33,14 @@
     "@cubejs-client/react": "^0.29.0",
     "@hotwired/stimulus": "^3.2.2",
     "@mapbox/polyline": "^1.1.0",
+    "@react-css/grid": "^2.2.0",
     "@reduxjs/toolkit": "^1.8.6",
     "@release-notes/changelog-parser": "^0.1.2",
+    "@storybook/addon-essentials": "^7.5.3",
+    "@storybook/addon-links": "^7.5.3",
+    "@storybook/blocks": "^7.5.3",
+    "@storybook/server": "^7.5.3",
+    "@storybook/server-webpack5": "^7.5.3",
     "@stripe/react-stripe-js": "^1.7.0",
     "@stripe/stripe-js": "^1.22.0",
     "@symfony/stimulus-bridge": "^3.2.2",
@@ -68,6 +75,7 @@
     "eslint": "^7.32.0",
     "eslint-plugin-jest": "^24.7.0",
     "eslint-plugin-react": "^7.31.10",
+    "eslint-plugin-storybook": "^0.6.15",
     "eslint-webpack-plugin": "^2.6.0",
     "font-awesome": "^4.7.0",
     "fontawesome-markers": "^4.6.1",
@@ -137,9 +145,12 @@
     "rrule": "^2.7.1",
     "sass": "^1.56.1",
     "sass-loader": "^12.0.0",
+    "skeleton-screen-css": "^1.1.0",
     "sortablejs": "^1.15.0",
     "store": "^2.0.12",
+    "storybook": "^7.5.3",
     "styled-components": "^5.3.6",
+    "swiper": "^11.0.5",
     "to-string-loader": "^1.2.0",
     "url-loader": "^4.1.1",
     "use-deep-compare": "^1.1.0",

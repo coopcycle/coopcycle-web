@@ -32,6 +32,7 @@
       </options>
     </field>
     <field name="imageName" type="string" column="image_name" length="255" nullable="true"/>
+    <field name="bannerImageName" type="string" column="banner_image_name" length="512" nullable="true"/>
     <field name="website" type="string" column="website" nullable="true"/>
     <field name="telephone" type="phone_number" column="telephone" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
