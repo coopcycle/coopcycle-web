@@ -56,31 +56,6 @@ button[aria-expanded='false'] .filter-caret {
   background-position: center center;
 }
 
-.restaurant-supports-edenred {
-
-  $originalWidth: 413.24px;
-  $originalHeight: 265.47px;
-
-  background-image: url('../../../assets/svg/Edenred_Logo.svg');
-  background-repeat: no-repeat;
-  display: block;
-  width: math.div($originalWidth, 6);
-  height: math.div($originalHeight, 6);
-}
-
-.restaurant-supports-vytal {
-
-    $vytalWidth: 964px;
-    $vytalHeight: 893px;
-
-    background-image: url('../../../assets/logos/vytal_logo_green.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-    display: block;
-    width: math.div($vytalWidth, 15);
-    height: math.div($vytalHeight, 15);
-}
-
 .swiper {
   figcaption {
     font-size: $font-size-h4;
