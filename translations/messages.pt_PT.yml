@@ -101,7 +101,6 @@ help.title: Ajuda
 help.home: Página inicial
 restaurants.no_results: Não encontramos nenhum restaurante que satisfaça os critérios
   da sua pesquisa. ☹ <br>Tente com um endereço diferente
-restaurants.visible_by_you_only: Visível apenas para si
 localBusiness.form.orderingDelayMinutes: Atraso adicional antes de fazer o pedido
 localBusiness.form.orderingDelayMinutes.help: Use este campo para adicionar algum
   tempo antes do cliente poder pedir. Esta configuração não altera o tempo de confeção

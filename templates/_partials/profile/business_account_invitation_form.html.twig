@@ -1,0 +1,41 @@
+<div class="form-section">
+  <div class="header rounded-top">
+    <h5>{{ flow.currentStepLabel|trans }}</h5>
+  </div>
+  <div class="form rounded-bottom">
+    <div class="form-group">
+      <label class="control-label">{{ field_label(form.invitationLink) }}</label>
+      <div class="input-group">
+        <span class="input-group-addon bg-primary"><i class="fa fa-link fa-rotate-90 text-white"></i></span>
+        {{ form_widget(form.invitationLink) }}
+      </div>
+      <div class="d-flex justify-content-end mt-3">
+        <button id="copy-button" type="button" class="btn btn-primary" data-toggle="copy" data-clipboard-text="{{ field_value(form.invitationLink) }}">
+          <i class="fa fa-copy mr-2"></i>
+          {{ 'registration.step.invitation.copy.button'|trans }}
+        </button></div>
+    </div>
+    {% include '_partials/profile/flow_buttons.html.twig' %}
+  </div>
+</div>
+
+{% block scripts %}
+  <script>
+    document.getElementById('copy-button').addEventListener('click', function(e) {
+      const iconClass = this.childNodes[1].className
+      const text = this.childNodes[2].nodeValue
+
+      this.childNodes[1].className = 'fa fa-check mr-2'
+      this.childNodes[2].nodeValue = "{{ 'registration.step.invitation.link.copied'|trans }}"
+
+      resetValues(this, iconClass, text)
+    })
+
+    function resetValues(el, iconClass, text) {
+      setTimeout(() => {
+        el.childNodes[1].className = iconClass
+        el.childNodes[2].nodeValue = text
+      }, 1000)
+    }
+  </script>
+{% endblock %}

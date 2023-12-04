@@ -1,0 +1,59 @@
+{% extends "admin.html.twig" %}
+
+{% set business_account = form.vars.data %}
+{% set is_new_business_account = (business_account.id is null) %}
+
+{% block breadcrumb %}
+<li>
+  <a href="{{ path('admin_restaurants') }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a>
+</li>
+<li>
+  <a href="{{ path('admin_business_accounts') }}">{% trans %}adminDashboard.business_accounts.title{% endtrans %}</a>
+</li>
+<li>
+  {{ 'basics.add'|trans }}
+</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+
+  <div class="row">
+    <div class="col-sm-3">
+      <ul class="nav nav-pills nav-stacked">
+        <li role="presentation" class="active">
+          <a role="tab" data-toggle="tab" href="#general" aria-controls="general">
+            {{ 'restaurant.form.section.general'|trans }}
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-9">
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="general">
+          {{ form_row(form.name) }}
+          {% if is_granted('ROLE_ADMIN') and form.managerEmail is defined %}
+            {{ form_row(form.managerEmail) }}
+          {% endif %}
+          {% if is_granted('ROLE_BUSINESS_ACCOUNT') %}
+            {{ form_row(form.address) }}
+          {% endif %}
+          {% if is_granted('ROLE_ADMIN') %}
+            {{ form_row(form.hub) }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <button type="submit" class="btn btn-block btn-lg btn-primary">
+    {% if is_granted('ROLE_BUSINESS_ACCOUNT') or not is_new_business_account %}
+      {{ 'basics.save'|trans }}
+    {% else %}
+      {{ 'form.business_account.save_and_send_invitation.label'|trans }}
+    {% endif %}
+  </button>
+{{ form_end(form) }}
+{% endblock %}

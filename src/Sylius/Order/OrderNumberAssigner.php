@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\Order;
 
+use Dflydev\Base32\Crockford\Crockford;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 
@@ -16,7 +17,7 @@ final class OrderNumberAssigner implements OrderNumberAssignerInterface
             return;
         }
 
-        $number = strtoupper(base_convert($order->getId(), 10, 36));
+        $number = Crockford::encode($order->getId());
 
         $order->setNumber($number);
     }

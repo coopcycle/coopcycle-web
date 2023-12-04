@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant\Pledge;
@@ -217,6 +218,18 @@ class EmailManager
         $body = $this->mjml->render($this->templating->render('emails/admin_send_invitation.mjml.twig', [
             'user' => $invitation->getUser(),
             'invitation' => $invitation,
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createBusinessAccountInvitationMessage(Invitation $invitation, BusinessAccount $account)
+    {
+        $subject = $this->translator->trans('admin.send_invitation.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/business_account_send_invitation.mjml.twig', [
+            'user' => $invitation->getUser(),
+            'invitation' => $invitation,
+            'account' => $account,
         ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);

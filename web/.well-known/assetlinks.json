@@ -19,5 +19,17 @@
         "EC:70:90:52:26:FC:17:B2:8D:F5:55:C6:3C:5F:A3:13:89:50:DA:9C:28:F8:90:23:57:A9:DB:2C:6C:3E:66:5A"
       ]
     }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "fr.coopcycle.kooglof",
+      "sha256_cert_fingerprints": [
+        "1F:44:DC:5F:8B:8D:EA:12:49:95:34:7D:09:D9:8F:5C:6C:D7:26:B7:57:BD:59:E7:93:6E:69:55:97:0D:AA:25"
+      ]
+    }
   }
 ]

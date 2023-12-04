@@ -3,33 +3,45 @@
 {% trans_default_domain 'NucleosProfileBundle' %}
 
 {% block body %}
-  <div class="container container--full-height container--center">
-    <div class="row">
-      <div class="col-xs-12">
+  <div class="navbar-coopcycle">
+    <div class="container">
+      <h5>{{ 'registration.navigation.title'|trans({}, 'messages') }}</h5>
+    </div>
+  </div>
+  <div class="main">
+    <div class="container">
       {% block nucleos_user_content %}
-        <p class="text-center">
-          <span class="text-success">
-            <i class="fa fa-check-circle fa-3x" aria-hidden="true"></i>
-          </span>
-          <br>
-          {% trans with { '%username%': user.username } %}registration.confirmed{% endtrans %}
-        </p>
-        {% set cart = cart_provider.getCart() %}
-        {% if cart is not empty and cart.restaurant is not empty and cart.state == 'cart' %}
-          <div class="text-center">
-            <a href="{{ path('order') }}" class="btn btn-success">
-              {{ 'registration.after_confirmation_continue_order'|trans }} <i class="fa fa-arrow-right" aria-hidden="true"></i>
-            </a>
+        <div class="d-flex justify-content-center">
+          <div class="info-section text-center rounded">
+            <img src="{{ asset('img/registration-congrats.svg') }}">
+            <h5>{{ 'registration.congratulations'|trans }}</h5>
+            <strong>{% trans with { '%username%': user.username } %}registration.confirmed{% endtrans %}</strong>
+            {% set cart = cart_provider.getCart() %}
+            {% if cart is not empty and cart.restaurant is not empty and cart.state == 'cart' %}
+              <div class="text-center">
+                <a href="{{ path('order') }}" class="btn btn-md bg-primary mt-3">
+                  {{ 'registration.after_confirmation_continue_order'|trans }}
+                  <i class="fa fa-angle-right ml-2" aria-hidden="true"></i>
+                </a>
+              </div>
+            {% elseif targetUrl %}
+              <p class="text-center mt-2">
+                <a href="{{ targetUrl }}">
+                  {{ 'registration.back'|trans }}
+                </a>
+              </p>
+            {% else %}
+              <p class="mt-2">{{ 'registration.after_confirmation_redirect_to_dashboard'|trans }}</p>
+              <a href="{{ is_granted('DASHBOARD_VIEW') ? path('dashboard') : path('nucleos_profile_profile_show') }}" class="btn btn-md bg-primary mt-3">
+                {{ 'registration.go_to_dashboard'|trans }}
+              </a>
+            {% endif %}
           </div>
-        {% elseif targetUrl %}
-          <p class="text-center">
-            <a href="{{ targetUrl }}">
-              {{ 'registration.back'|trans }}
-            </a>
-          </p>
-        {% endif %}
+        </div>
+        <div class="d-flex">
+          <img src="{{ asset('img/registration-image.svg') }}">
+        </div>
       {% endblock nucleos_user_content %}
-      </div>
     </div>
   </div>
 {% endblock body %}

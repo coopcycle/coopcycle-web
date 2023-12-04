@@ -6,6 +6,7 @@
     <th>{{ 'delivery.table.heading.owner'|trans }}</th>
     {% endif %}
     <th>{{ 'delivery.table.heading.summary'|trans }}</th>
+    <th>{{ 'order.list.state'|trans }}</th>
     <th>{{ 'task.type.DROPOFF'|trans }}</th>
     <th>{{ 'delivery.table.heading.courier'|trans }}</th>
     {% if with_order is defined and with_order %}
@@ -62,6 +63,12 @@
           {% endfor %}
         {% endif %}
         <small>{{ details|join(' - ') }}</small>
+      </td>
+      {% set deliveryState = delivery.computeState() %}
+      <td>
+        <span title="{{ deliveryState.toLabel()|trans }}" style="color: {{ deliveryState.toColor() }}">
+          <i class="fa fa-lg fa-{{ deliveryState.toFontAwesome() }}"></i>
+      </span>
       </td>
       <td width="10%">
         <small>

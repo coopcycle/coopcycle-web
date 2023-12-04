@@ -99,7 +99,6 @@ help.title: Nápověda
 help.home: Úvodní strana
 restaurants.no_results: Nebyly nalezeny žádné restaurace odpovídající vašemu hledání.
   ☹<br> Zkuste jinou adresu
-restaurants.visible_by_you_only: Viditelné pouze vámi
 localBusiness.form.orderingDelayMinutes: Další zpoždění před objednáním
 localBusiness.form.orderingDelayMinutes.help: Pomocí tohoto pole můžete přidat nějaký
   čas, než si zákazník může objednat. Toto nastavení nemění čas potřebný pro vaření

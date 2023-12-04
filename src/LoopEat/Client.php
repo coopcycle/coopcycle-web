@@ -24,6 +24,9 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Webmozart\Assert\Assert;
 
+/**
+ * @see https://collectif-impec-api-preprod.herokuapp.com/api-docs/index.html
+ */
 class Client
 {
     const JWT_CLAIM_SUCCESS_REDIRECT = 'https://coopcycle.org/loopeat_success_redirect';
@@ -467,6 +470,30 @@ class Client
                     $this->logger->error($e->getMessage());
                 }
             }
+        }
+    }
+
+    public function getRestaurantContainers(OrderInterface $order)
+    {
+        try {
+
+            $restaurant = $order->getRestaurant();
+
+            $currentRestaurant = $this->currentRestaurant($restaurant);
+
+            $response = $this->client->request('GET', sprintf('/api/v1/partners/restaurants/%s/containers', $currentRestaurant['id']), [
+                'headers' => [
+                    'Authorization' => sprintf('Basic %s', $this->getPartnerToken())
+                ],
+            ]);
+
+            $res = json_decode((string) $response->getBody(), true);
+
+            return $res['data'];
+
+        } catch (RequestException $e) {
+            $this->logger->error($e->getMessage());
+            return false;
         }
     }
 }

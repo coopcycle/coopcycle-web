@@ -270,3 +270,9 @@ services:
 
   AppBundle\Form\Restaurant\LoopeatType:
     tags: [ form.type ]
+
+  AppBundle\Form\BusinessAccountType:
+    tags: [ form.type ]
+
+  AppBundle\Form\BusinessAccountRegistrationForm:
+    tags: [ form.type ]

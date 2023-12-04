@@ -64,6 +64,7 @@ class AppKernel extends Kernel
             new Kreait\Firebase\Symfony\Bundle\FirebaseBundle(),
             new ACSEO\TypesenseBundle\ACSEOTypesenseBundle(),
             new AppBundle\AppBundle(),
+            new Craue\FormFlowBundle\CraueFormFlowBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

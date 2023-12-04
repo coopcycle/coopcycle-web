@@ -114,7 +114,6 @@ help.title: Help
 help.home: Home
 restaurants.no_results: We did not find any restaurants matching your search ☹<br>Try
   with a different address or other filters
-restaurants.visible_by_you_only: Visible by you only
 localBusiness.form.orderingDelayMinutes: Additional delay before ordering
 localBusiness.form.orderingDelayMinutes.help: Use this field to add some time before
   the customer can order. This setting doesn't change the time needed for cooking
@@ -302,6 +301,7 @@ profile.fullName: Full name
 profile.managedStores: Stores managed by user
 profile.managedRestaurants: Restaurants managed by user
 profile.accountType: Account type
+profile.businessAccount: Business account
 order.cart.title: Cart
 order.items.products_with_count: Products (%count%)
 order.summary.heading: Order %number% (#%id%)
@@ -1178,6 +1178,18 @@ store.form.section.settings: Settings
 adminDashboard.hubs.title: Hubs
 adminDashboard.hubs.createNew: Create a new hub
 adminDashboard.hubs.help: Hubs allow to group together shops sharing the same pickup address, like a market for example.
+adminDashboard.business_accounts.title: Business accounts
+adminDashboard.business_accounts.createNew: Create a new business account
+form.business_account.hub.label: Hub
+form.business_account.hub.placeholder: Choose a hub
+form.business_account.employees.label: List of employees
+form.business_account.restaurants.add: Add a restaurant
+form.business_account.employees.add: Add an employee
+form.business_account.manager.email.label: Account manager email
+form.business_account.manager.email.help: An invitation email to Coopcycle will be sent
+form.business_account.manager.email_sent.help: Invitation email to Coopcycle has been sent
+form.business_account.save_and_send_invitation.label: Save and send invitation
+form.business_acount.send_invitation.confirm: Invitation email to Coopcycle has been sent
 restaurant.form.edenred_merchant_id.label: Edenred Merchant ID
 restaurant.form.edenred_merchant_id.help: Leave empty to disable Edenred
 restaurants.mode.list: View as list
@@ -1371,3 +1383,35 @@ tags.featured: Featured
 tags.exclusive: Exclusives
 tags.shops.new: New shops
 tags.zero_waste: Zero waste
+delivery.state:
+  pending: 'Pending, To be picked up'
+  in_delivery: 'Picked up, in delivery'
+  delivered: 'Delivered'
+  failed: 'Failed'
+  cancelled: 'Cancelled'
+order.export.heading.payment_method: Payment method
+payment_method:
+  card: Credit card
+  edenred: Edenred
+  edenred+card: Edenred
+  cash_on_delivery: Cash on delivery
+registration.navigation.title: "Personal account creation"
+registration.info.title: "What is CoopCycle?"
+registration.info.text: "On CoopCycle, you can order food provided by restaurants near you and delivered by your local cooperative. We are proud to be an ethical alternative to the uberization of our society!"
+registration.info.business.account.attachment: "You will be attached to the business account %businessAccountName%, but you can also command under your name."
+registration.alert.text: "You have been invited to create an account on %brandName% by %invitedBy%."
+registration.alert.business.account.text: "Welcome in CoopCycle - %brandName% ! Please create your business account before making your first order."
+registration.form.title: "Your information"
+registration.step.personal: "Personal information"
+registration.step.company: "Company information"
+registration.step.invitation: "Invite your colleagues"
+registration.flow.next: "Next"
+registration.flow.back: "Back"
+registration.flow.finish: "Finish my inscription"
+registration.company.address: "Address"
+registration.company.address.different.for.billing: "Different address for billing"
+registration.company.billing.address: "Billing address"
+registration.step.company.name: "Name of the company"
+registration.step.invitation.copy.link: "Copy the link below and send it to your collegues"
+registration.step.invitation.copy.button: "Copy the link"
+registration.step.invitation.link.copied: "Copied"

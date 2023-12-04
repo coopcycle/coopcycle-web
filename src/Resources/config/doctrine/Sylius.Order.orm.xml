@@ -134,6 +134,7 @@
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\OrderListener">
         <lifecycle-callback type="preFlush" method="preFlush"/>
+        <lifecycle-callback type="preUpdate" method="preUpdate"/>
       </entity-listener>
     </entity-listeners>
   </entity>

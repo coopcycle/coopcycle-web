@@ -107,7 +107,6 @@ help.title: 'Aduya'
 help.home: 'Inicio'
 restaurants.no_results: 'No hemos trobau garra restaurant que coincida con a tuya
   busqueda ☹<br> Torna a prebar con una adreza diferent'
-restaurants.visible_by_you_only: 'Visible solo pa tu'
 localBusiness.form.orderingDelayMinutes: 'Retardo adicional antes d''o pediu'
 localBusiness.form.orderingDelayMinutes.help: 'Usa estes campos pa anyadir un tiempo
   adicional antes d''o pediu d''un usuario. Esta opción no cambia los tiempos de cocina

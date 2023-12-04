@@ -195,6 +195,11 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $totalWeight;
     }
 
+    /**
+     * @deprecated Set weight via Task::setWeight()
+     * @param $weight
+     * @return self
+     */
     public function setWeight($weight)
     {
         if (null !== $weight) {
@@ -314,6 +319,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $this;
     }
 
+    /**
+     * @deprecated Set address via Task::setAddress()
+     * @param $pickupAddress
+     * @param $dropoffAddress
+     * @return self
+     */
     public static function createWithAddress($pickupAddress, $dropoffAddress)
     {
         $delivery = self::createWithDefaults();
@@ -398,6 +409,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $packages;
     }
 
+    /**
+     * @deprecated set quantity via Task::setPackageWithQuantity()
+     * @param Package $package
+     * @param $quantity
+     * @return void
+     */
     public function addPackageWithQuantity(Package $package, $quantity = 1)
     {
         if (0 === $quantity) {
@@ -465,6 +482,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $this;
     }
 
+    /**
+     * @deprecated Set dropoff range via Task::setDoneAfter() and Task::setDoneBefore()
+     * @param \DateTime $after
+     * @param \DateTime $before
+     * @return $this
+     */
     public function setDropoffRange(\DateTime $after, \DateTime $before)
     {
         $this->getDropoff()

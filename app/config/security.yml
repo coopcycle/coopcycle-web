@@ -16,6 +16,7 @@ security:
         ROLE_LOOPEAT: ROLE_USER
         ROLE_DISPATCHER: [ ROLE_COURIER, ROLE_LOOPEAT ]
         ROLE_ADMIN: ROLE_DISPATCHER
+        ROLE_BUSINESS_ACCOUNT: ROLE_USER
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:

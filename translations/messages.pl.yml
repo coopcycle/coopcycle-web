@@ -168,7 +168,6 @@ adminDashboard.taxation.button: Dodaj opodatkowanie
 deliveryForm.noPriceFromPricingWarning: Ceny nie można ustalić na podstawie cennika.
   Proszę wprowadź ją ręcznie lub edytuj cennik.
 help.home: Dom
-restaurants.visible_by_you_only: Widoczny tylko przez ciebie
 localBusiness.form.orderingDelayMinutes: Dodatkowe opóźnienie przed złożeniem zamówienia
 localBusiness.form.orderingDelayMinutes.help: Użyj tego pola, aby dodać trochę czasu
   zanim klient będzie mógł złożyć zamówienie. To ustawienie nie zmienia czasu potrzebnego

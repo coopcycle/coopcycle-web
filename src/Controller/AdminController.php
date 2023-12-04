@@ -22,6 +22,8 @@ use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Hub;
+use AppBundle\Entity\BusinessAccount;
+use AppBundle\Entity\BusinessAccountInvitation;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
@@ -52,6 +54,7 @@ use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\HubType;
 use AppBundle\Form\FailureReasonSetType;
+use AppBundle\Form\BusinessAccountType;
 use AppBundle\Form\WoopitIntegrationType;
 use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
@@ -2466,6 +2469,105 @@ class AdminController extends AbstractController
             'hubs' => $hubs,
         ]);
     }
+
+    public function businessAccountsAction()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $accounts = $this->getDoctrine()->getRepository(BusinessAccount::class)->findAll();
+
+        return $this->render('admin/business_accounts.html.twig', [
+            'accounts' => $accounts,
+        ]);
+    }
+
+    public function newBusinessAccountAction(
+        Request $request,
+        CanonicalizerInterface $canonicalizer,
+        EmailManager $emailManager,
+        TokenGeneratorInterface $tokenGenerator,
+        EntityManagerInterface $objectManager)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $account = new BusinessAccount();
+
+        return $this->handleBusinessAccountForm($account, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager);
+    }
+
+    private function handleBusinessAccountForm(
+        BusinessAccount $businessAccount,
+        Request $request,
+        CanonicalizerInterface $canonicalizer,
+        EmailManager $emailManager,
+        TokenGeneratorInterface $tokenGenerator,
+        EntityManagerInterface $objectManager)
+    {
+        $form = $this->createForm(BusinessAccountType::class, $businessAccount);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            if (null === $businessAccount->getId()) {
+                $managerEmail = $form->get('managerEmail')->getData();
+
+                $invitation = new Invitation();
+                $invitation->setEmail($canonicalizer->canonicalize($managerEmail));
+                $invitation->setUser($this->getUser());
+                $invitation->setCode($tokenGenerator->generateToken());
+                $invitation->addRole('ROLE_BUSINESS_ACCOUNT');
+
+                // Send invitation email
+                $message = $emailManager->createBusinessAccountInvitationMessage($invitation, $businessAccount);
+                $emailManager->sendTo($message, $invitation->getEmail());
+                $invitation->setSentAt(new \DateTime());
+
+                $businessAccountInvitation = new BusinessAccountInvitation();
+                $businessAccountInvitation->setBusinessAccount($businessAccount);
+                $businessAccountInvitation->setInvitation($invitation);
+
+                $objectManager->persist($businessAccountInvitation);
+
+                $this->addFlash(
+                    'notice',
+                    $this->translator->trans('form.business_acount.send_invitation.confirm')
+                );
+            } else {
+                $this->addFlash(
+                    'notice',
+                    $this->translator->trans('global.changesSaved')
+                );
+            }
+
+            $objectManager->persist($businessAccount);
+            $objectManager->flush();
+
+            return $this->redirectToRoute('admin_business_accounts');
+        }
+
+        return $this->render('admin/business_account.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    public function businessAccountAction(
+        $id,
+        Request $request,
+        CanonicalizerInterface $canonicalizer,
+        EmailManager $emailManager,
+        TokenGeneratorInterface $tokenGenerator,
+        EntityManagerInterface $objectManager)
+    {
+        if ($this->isGranted('ROLE_BUSINESS_ACCOUNT')) {
+            $businessAccount = $this->getUser()->getBusinessAccount();
+        } else {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+            $businessAccount = $this->getDoctrine()->getRepository(BusinessAccount::class)->find($id);
+        }
+
+        if (!$businessAccount) {
+            throw $this->createNotFoundException(sprintf('Business account #%d does not exist', $id));
+        }
+
+        return $this->handleBusinessAccountForm($businessAccount, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager);
+    }
+
 
     /**
      * @HideSoftDeleted
