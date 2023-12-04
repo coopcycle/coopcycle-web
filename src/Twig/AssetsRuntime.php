@@ -28,7 +28,8 @@ class AssetsRuntime implements RuntimeExtensionInterface
         UrlGeneratorInterface $urlGenerator,
         CacheInterface $projectCache,
         FilterManager $filterManager,
-        Hashids $hashids12)
+        Hashids $hashids12,
+        string $pixabayApiKey)
     {
         $this->storage = $storage;
         $this->mountManager = $mountManager;
@@ -39,6 +40,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         $this->projectCache = $projectCache;
         $this->filterManager = $filterManager;
         $this->hashids12 = $hashids12;
+        $this->isPixabayConfigured = !empty($pixabayApiKey);
     }
 
     public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false, bool $cacheUrl = false): ?string
@@ -109,7 +111,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         }
 
         // FIXME Check if Pixabay is configured
-        if (null !== $obj && is_callable([ $obj, 'getId' ])) {
+        if (null !== $obj && is_callable([ $obj, 'getId' ]) && $this->isPixabayConfigured) {
 
             return $this->urlGenerator->generate('placeholder_image', [
                 'filter' => $filter,
