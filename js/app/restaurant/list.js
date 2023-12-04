@@ -138,7 +138,6 @@ if (paginator) {
   )
 }
 
-
 new Swiper('.swiper', {
   modules: [ Navigation ],
   slidesPerView: 'auto',
@@ -172,13 +171,7 @@ new Swiper('.swiper', {
     },
   },
   observer: true, // to be initialized properly inside a hidden container
-  observeParents: true,
-  on: {
-    afterInit: function() {
-      // we need to hide the swiper at the begining because until is not initialized the images do not look very well
-      document.querySelectorAll('.homepage-restaurants').forEach(element => element.classList.remove('hidden'))
-    }
-  }
+  observeParents: true
 })
 
 function resetPaginator(data) {
