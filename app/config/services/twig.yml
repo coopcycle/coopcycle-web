@@ -60,3 +60,7 @@ services:
   Twig\Extra\Markdown\MarkdownExtension:
     tags:
       - { name: twig.extension }
+
+  AppBundle\Twig\SettingResolver:
+    arguments:
+      $cache: '@craue_config_cache_provider'

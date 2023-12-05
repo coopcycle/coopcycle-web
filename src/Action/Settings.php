@@ -32,7 +32,6 @@ class Settings
         'stripe_publishable_key',
         'payment_gateway',
         'mercadopago_publishable_key',
-        'google_api_key',
         'latlng',
         'currency_code',
         'administrator_email',

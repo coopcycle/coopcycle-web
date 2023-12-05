@@ -1248,8 +1248,6 @@ homepage.featured: À la une
 homepage.exclusive: Exclusivités
 homepage.shops.new: Nouveautés
 users.disabled: Désactivés
-admin.settings.stop_using_algolia: |
-  Vous utilisez le moteur de suggestions Algolia, qui <a href="https://www.algolia.com/blog/product/sunsetting-our-places-feature/">cessera de fonctionner à partir du 31 mai 2022</a>. Aller à la <a href="%settings_url%">page des paramètres</a> pour configurer un autre moteur, comme par exemple <a href="https://docs.coopcycle.org/en/admin/google/">Google Maps</a>
 shops.filters.clear_all: Effacer tout
 shops.filters.title.types: Type de commerce
 shops.filters.title.categories: Catégories

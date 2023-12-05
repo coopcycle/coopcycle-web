@@ -61,3 +61,5 @@ pricing_rule.expression.syntax_error: Syntax error in expression "%expression%"
 order.adjustments.unexpectedCount: Unexpected number of "%type%" adjustments
 
 dabba.insufficient_wallet: Your Dabba wallet is missing %amount%
+
+googlemaps.api_key.invalid: The Google Maps API Key is not valid
