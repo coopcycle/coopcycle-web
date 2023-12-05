@@ -44,6 +44,15 @@ class SettingResolver implements RuntimeExtensionInterface
         return implode(',', GeoUtils::getViewbox($lat, $lng, 15));
     }
 
+    public function getLatLngBounds(): string
+    {
+        $latlng = $this->settingsManager->get('latlng');
+
+        [ $lat, $lng ] = explode(',', $latlng);
+
+        return GeoUtils::getLatLngBounds($lat, $lng);
+    }
+
     /**
      * @return string[]
      */
