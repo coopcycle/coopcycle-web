@@ -58,8 +58,6 @@ class Settings
      */
     public $stripe_livemode;
 
-    public $google_api_key;
-
     public $latlng;
 
     public $subject_to_vat;

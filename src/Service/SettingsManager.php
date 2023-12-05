@@ -23,7 +23,6 @@ class SettingsManager
     private $mandatorySettings = [
         'brand_name',
         'administrator_email',
-        'google_api_key',
         'latlng',
         'currency_code',
     ];
@@ -37,7 +36,6 @@ class SettingsManager
         'stripe_live_connect_client_id',
         'payment_gateway',
         'payment_method_publishable_key',
-        'google_api_key',
         'mercadopago_test_publishable_key',
         'mercadopago_live_publishable_key',
         'mercadopago_test_access_token',
