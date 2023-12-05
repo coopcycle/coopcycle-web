@@ -7,6 +7,8 @@ use AppBundle\Utils\GeoUtils;
 use AppBundle\Validator\Constraints\GoogleApiKey;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -18,12 +20,14 @@ class SettingResolver implements RuntimeExtensionInterface
         SettingsManager $settingsManager,
         ValidatorInterface $validator,
         TranslatorInterface $translator,
-        UrlGeneratorInterface $urlGenerator)
+        UrlGeneratorInterface $urlGenerator,
+        CacheInterface $appCache)
     {
         $this->settingsManager = $settingsManager;
         $this->validator = $validator;
         $this->translator = $translator;
         $this->urlGenerator = $urlGenerator;
+        $this->appCache = $appCache;
     }
 
     public function resolveSetting($name)
@@ -56,12 +60,25 @@ class SettingResolver implements RuntimeExtensionInterface
             ]);
         }
 
-        $violations = $this->validator->validate($settings);
-        if (count($violations) > 0) {
-            $invalidApiKey = array_filter(iterator_to_array($violations), fn ($v) => $v->getCode() === GoogleApiKey::INVALID_API_KEY_ERROR);
-            if (count($invalidApiKey) === 1) {
-                $messages[] = $this->translator->trans(id: 'googlemaps.api_key.invalid', domain: 'validators');
+        $isGoogleApiKeyValid = $this->appCache->get('settings.google_api_key_invalid', function (ItemInterface $item) use ($settings) {
+
+            $item->expiresAfter(
+                \DateInterval::createFromDateString('1 day')
+            );
+
+            $violations = $this->validator->validate($settings);
+            if (count($violations) > 0) {
+                $invalidApiKey = array_filter(iterator_to_array($violations), fn ($v) => $v->getCode() === GoogleApiKey::INVALID_API_KEY_ERROR);
+                if (count($invalidApiKey) === 1) {
+                    return false;
+                }
             }
+
+            return true;
+        });
+
+        if (!$isGoogleApiKeyValid) {
+            $messages[] = $this->translator->trans(id: 'googlemaps.api_key.invalid', domain: 'validators');
         }
 
         return $messages;
