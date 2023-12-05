@@ -100,7 +100,12 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
         } catch (InvalidPayloadException $e) {
 
             // Then, try with League\OAuth2
-            $passport = $this->oauth2Authenticator->authenticate($request);
+            $passport = null;
+            try {
+                $passport = $this->oauth2Authenticator->authenticate($request);
+            } catch (\Throwable $e) {
+                throw new AuthenticationException();
+            }
 
             $token = $this->oauth2Authenticator->createAuthenticatedToken($passport, $this->firewallName);
             $passport->setAttribute('oauth2_token', $token);
