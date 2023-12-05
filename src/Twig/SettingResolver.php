@@ -21,13 +21,13 @@ class SettingResolver implements RuntimeExtensionInterface
         ValidatorInterface $validator,
         TranslatorInterface $translator,
         UrlGeneratorInterface $urlGenerator,
-        CacheInterface $appCache)
+        CacheInterface $cache)
     {
         $this->settingsManager = $settingsManager;
         $this->validator = $validator;
         $this->translator = $translator;
         $this->urlGenerator = $urlGenerator;
-        $this->appCache = $appCache;
+        $this->cache = $cache;
     }
 
     public function resolveSetting($name)
@@ -60,7 +60,7 @@ class SettingResolver implements RuntimeExtensionInterface
             ]);
         }
 
-        $isGoogleApiKeyValid = $this->appCache->get('settings.google_api_key_invalid', function (ItemInterface $item) use ($settings) {
+        $isGoogleApiKeyValid = $this->cache->get('google_api_key_invalid', function (ItemInterface $item) use ($settings) {
 
             $item->expiresAfter(
                 \DateInterval::createFromDateString('1 day')
