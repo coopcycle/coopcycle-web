@@ -20,13 +20,6 @@ class SettingsManager
     private $doctrine;
     private $gatewayResolver;
 
-    private $mandatorySettings = [
-        'brand_name',
-        'administrator_email',
-        'latlng',
-        'currency_code',
-    ];
-
     private $secretSettings = [
         'stripe_test_publishable_key',
         'stripe_test_secret_key',
@@ -311,22 +304,6 @@ class SettingsManager
     {
         $this->doctrine->getManagerForClass($this->configEntityName)->flush();
         $this->craueCache->clear();
-    }
-
-    public function isFullyConfigured()
-    {
-        foreach ($this->mandatorySettings as $name) {
-            try {
-                $value = $this->craueConfig->get($name);
-                if (null === $value) {
-                    return false;
-                }
-            } catch (\RuntimeException $e) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     public function asEntity()

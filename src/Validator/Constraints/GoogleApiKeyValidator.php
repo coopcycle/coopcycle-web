@@ -39,6 +39,7 @@ class GoogleApiKeyValidator extends ConstraintValidator
             );
         } catch (InvalidCredentials | InvalidServerResponse $e) {
             $this->context->buildViolation($constraint->invalidApiKeyMessage)
+                ->setCode(GoogleApiKey::INVALID_API_KEY_ERROR)
                 ->addViolation();
         }
     }

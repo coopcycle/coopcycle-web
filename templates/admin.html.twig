@@ -6,14 +6,15 @@
 
 {% block banner %}
   {% include '_partials/maintenance.html.twig' %}
-  {% if not settings_manager.fullyConfigured %}
+  {% set error_messages = coopcycle_configtest() %}
+  {% if error_messages is not empty %}
   <div class="alert alert-danger" style="margin-top: -20px;">
     <ul class="list-unstyled">
+      {% for error_message in error_messages %}
       <li>
-      {% trans with { '%settings_url%': path('admin_settings') } %}
-      admin.settings.missing_mandatory_settings
-      {% endtrans %}
+      {{ error_message|raw }}
       </li>
+      {% endfor %}
     </ul>
   </div>
   {% endif %}

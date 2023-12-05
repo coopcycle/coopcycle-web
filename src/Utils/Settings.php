@@ -8,8 +8,15 @@ use AppBundle\Validator\Constraints\GoogleApiKey as AssertGoogleApiKey;
 
 class Settings
 {
+    /**
+     * @Assert\NotBlank(groups={"Default", "mandatory"})
+     */
     public $brand_name;
 
+    /**
+     * @Assert\NotBlank(groups={"Default", "mandatory"})
+     * @Assert\Email(groups={"Default", "mandatory"})
+     */
     public $administrator_email;
 
     /**
@@ -58,10 +65,16 @@ class Settings
      */
     public $stripe_livemode;
 
+    /**
+     * @Assert\NotBlank(groups={"Default", "mandatory"})
+     */
     public $latlng;
 
     public $subject_to_vat;
 
+    /**
+     * @Assert\NotBlank(groups={"Default", "mandatory"})
+     */
     public $currency_code;
 
     /**
