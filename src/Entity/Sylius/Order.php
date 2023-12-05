@@ -115,7 +115,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "security"="is_granted('view', object)"
+ *       "security"="is_granted('session', object)"
  *     },
  *     "payment_details"={
  *       "method"="GET",
@@ -286,7 +286,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/orders/{id}/centrifugo",
  *       "controller"=CentrifugoController::class,
  *       "normalization_context"={"groups"={"centrifugo", "centrifugo_for_order"}},
- *       "security"="is_granted('view', object)",
+ *       "security"="is_granted('session', object)",
  *       "openapi_context"={
  *         "summary"="Get Centrifugo connection details for a Order resource."
  *       }

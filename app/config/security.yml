@@ -143,7 +143,7 @@ security:
             pattern:   ^/api/orders/[0-9]+$
             methods: [ GET ]
             stateless: true
-            bearer_token: true
+            cart_session: true
 
         api_orders_accept:
             pattern:   ^/api/orders/[0-9]+/accept$
@@ -182,7 +182,7 @@ security:
             security: false
 
         api_cart_operations:
-            pattern:   ^/api/orders/[0-9]+/(assign|timing|validate|tip)$
+            pattern:   ^/api/orders/[0-9]+/(assign|timing|validate|tip|centrifugo)$
             methods: [ GET, PUT ]
             stateless: true
             cart_session: true
