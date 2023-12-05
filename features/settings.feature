@@ -6,7 +6,6 @@ Feature: Settings
     And the setting "stripe_test_publishable_key" has value "pk_1234567890"
     And the setting "mercadopago_test_publishable_key" has value "TEST_123456"
     And the setting "mercadopago_access_token" has value "TEST_123456"
-    And the setting "google_api_key" has value "abc123456"
     And the setting "currency_code" has value "eur"
     And the setting "phone_number" has value "+33612345678"
     And the setting "administrator_email" has value "dev@coopcycle.org"
@@ -25,7 +24,6 @@ Feature: Settings
         "stripe_publishable_key":"pk_1234567890",
         "payment_gateway":"stripe",
         "mercadopago_publishable_key":"TEST_123456",
-        "google_api_key":"abc123456",
         "latlng":"48.856613,2.352222",
         "currency_code":"eur",
         "phone_number":"+33612345678",
