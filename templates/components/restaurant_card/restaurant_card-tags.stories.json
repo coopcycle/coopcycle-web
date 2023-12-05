@@ -1,0 +1,33 @@
+{
+  "title": "RestaurantCard/2. Tag/z_RestaurantCard",
+  "parameters": {
+    "server": {
+      "url": "http://localhost/storybook/component",
+      "id": "restaurant-card"
+    }
+  },
+  "args": {
+  },
+  "argTypes": {
+  },
+  "tags": [],
+  "stories": [
+    {
+      "name": "Few tags",
+      "args": { "tags": ["italian", "pizza"] }
+    },
+    {
+      "name": "Many tags",
+      "args": {
+        "tags": [
+          "italian test",
+          "pizza",
+          "italian",
+          "pizza test",
+          "italian",
+          "pizza"
+        ]
+      }
+    }
+  ]
+}

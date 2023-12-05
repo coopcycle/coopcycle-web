@@ -5,15 +5,15 @@
 
 			<div class="restaurant-banner">
 				<img src="{{ banner_image|default(null)|placeholder_image('restaurant_banner') }}" alt="{{ name is defined ? name ~ "'s banner" : "banner" }}">
-                {% if should_show_pre_order %}
-                <figcaption class="w-100 h-100 position-absolute">
-                    <div class="w-100 h-100 position-absolute bg-dark" style="opacity: 0.5;"></div>
-                    <div class="w-100 h-100 position-absolute text-white font-weight-bold d-flex flex-column justify-content-center align-items-center p-5">
-                        <i class="fa fa-clock-o"></i>
-                        <span>{{ 'restaurants.pre_order'|trans }}</span>
-                    </div>
-                </figcaption>
-                {% endif %}
+				{% if should_show_pre_order is defined and should_show_pre_order %}
+					<figcaption class="w-100 h-100 position-absolute">
+						<div class="w-100 h-100 position-absolute bg-dark" style="opacity: 0.5;"></div>
+						<div class="w-100 h-100 position-absolute text-white font-weight-bold d-flex flex-column justify-content-center align-items-center p-5">
+							<i class="fa fa-clock-o"></i>
+							<span>{{ 'restaurants.pre_order'|trans }}</span>
+						</div>
+					</figcaption>
+				{% endif %}
 			</div>
 
 			<div class="restaurant-logo">
