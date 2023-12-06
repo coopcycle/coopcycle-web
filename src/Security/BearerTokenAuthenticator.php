@@ -95,7 +95,7 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
             return $this->authenticateWithCartSession($request);
         } catch (AuthenticationException $e) {
             $this->logAuthenticationException($request, 'CartSession token', $e);
-            throw new AuthenticationException();
+            throw $e;
         }
     }
 
