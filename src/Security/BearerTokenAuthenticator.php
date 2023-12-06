@@ -26,6 +26,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\PreAuthenticatedUserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
@@ -57,7 +58,7 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
             || $this->oauth2Authenticator->supports($request);
     }
 
-    public function authenticate(Request $request): PassportInterface
+    public function authenticate(Request $request): Passport
     {
         // This means the token starts with "ak_"
         if ($this->apiKeyManager->supports($request)) {
@@ -97,7 +98,7 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
         }
     }
 
-    private function authenticateWithApiKey(Request $request): PassportInterface {
+    private function authenticateWithApiKey(Request $request): Passport {
         $token = $this->apiKeyManager->getCredentials($request);
 
         $apiApp = $this->entityManager
@@ -124,8 +125,8 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
         return $passport;
     }
 
-    private function authenticateWithLexik(Request $request): PassportInterface {
-        $passport = $this->jwtAuthenticator->authenticate($request);
+    private function authenticateWithLexik(Request $request): Passport {
+        $passport = $this->jwtAuthenticator->doAuthenticate($request);
 
         $token = $this->jwtAuthenticator->createAuthenticatedToken($passport, $this->firewallName);
 
@@ -145,10 +146,10 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
         return $passport;
     }
 
-    private function authenticateWithOAuth2(Request $request): PassportInterface {
+    private function authenticateWithOAuth2(Request $request): Passport {
         try {
             $passport = $this->oauth2Authenticator->authenticate($request);
-        } catch (\TypeError $e) {
+        } catch (\Throwable $e) {
             throw new AuthenticationException("Invalid OAuth2 token", 0, $e);
         }
 
@@ -158,7 +159,7 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
         return $passport;
     }
 
-    private function authenticateWithCartSession(Request $request): PassportInterface {
+    private function authenticateWithCartSession(Request $request): Passport {
         $rawToken = $this->tokenExtractor->extract($request);
 
         try {
@@ -188,6 +189,8 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
 
             return $passport;
         }
+
+        throw new AuthenticationException();
     }
 
     private function extractCart($payload)
