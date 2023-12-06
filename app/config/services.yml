@@ -1186,9 +1186,6 @@ services:
   AppBundle\Security\BearerTokenAuthenticator:
     abstract: true
 
-  AppBundle\Security\CartSessionAuthenticator:
-    abstract: true
-
   # https://symfony.com/doc/5.4/session/database.html#store-sessions-in-a-key-value-database-redis
   Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
     arguments:
