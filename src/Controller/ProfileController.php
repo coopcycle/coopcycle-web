@@ -91,7 +91,7 @@ class ProfileController extends AbstractController
             $redirectUri = $this->generateUrl('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
             $redirectAfterUri = $this->generateUrl(
-                'nucleos_profile_profile_show',
+                'profile_edit',
                 [],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
