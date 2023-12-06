@@ -6,10 +6,8 @@
       "id": "restaurant-card"
     }
   },
-  "args": {
-  },
-  "argTypes": {
-  },
+  "args": {},
+  "argTypes": {},
   "tags": [],
   "stories": [
     {
@@ -28,6 +26,24 @@
           "pizza"
         ]
       }
+    },
+    {
+      "name": "No tags, short description",
+      "args": { "description": "Lorem ipsum dolor sit amet" }
+    },
+    {
+      "name": "No tags, long description",
+      "args": {
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Nullam facilisis tellus eget justo interdum, at facilisis mauris commodo."
+      }
+    },
+    {
+      "name": "No tags, no description",
+      "args": { "address": "123 Example Street" }
+    },
+    {
+      "name": "No tags, no description, no address",
+      "args": {  }
     }
   ]
 }

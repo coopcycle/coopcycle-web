@@ -95,13 +95,15 @@
       text-overflow: ellipsis;
     }
 
-    .tags {
+    .details {
       display: flex;
       gap: 8px;
       overflow-x: hidden;
 
       span {
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }
