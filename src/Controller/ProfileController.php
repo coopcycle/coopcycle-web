@@ -131,7 +131,7 @@ class ProfileController extends AbstractController
     /**
      * @Route("/profile/edit", name="profile_edit")
      */
-    public function editProfileAction(Request $request, UserManagerInterface $userManager) {
+    public function editProfileAction(Request $request, UserManagerInterface $userManager, TranslatorInterface $translator) {
 
         $user = $this->getUser();
 
@@ -149,7 +149,10 @@ class ProfileController extends AbstractController
 
             $userManager->updateUser($user);
 
-            return $this->redirectToRoute('nucleos_profile_profile_show');
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
         }
 
         return $this->render('profile/edit_profile.html.twig', $this->auth(array(
