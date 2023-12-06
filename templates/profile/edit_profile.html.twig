@@ -1,6 +1,6 @@
 {% extends "profile.html.twig" %}
 
-{% form_theme form 'form/edit_profile.html.twig' %}
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
 
 {% block content %}
   {{ form_start(form) }}
@@ -20,7 +20,19 @@
         {{ form_row(form.email) }}
         {{ form_row(form.telephone) }}
 
-        <p><a class="btn btn-link-primary-default" href="{{ path('nucleos_user_change_password') }}">{% trans %}profile.password.change{% endtrans %}</a></p>
+        <p><a class="btn btn-link-primary-default pl-0" href="{{ path('nucleos_user_change_password') }}">{% trans %}profile.password.change{% endtrans %}</a></p>
+
+        {% if form.loopeatDisconnect is defined %}
+          <div class="form-group">
+            {{ form_widget(form.loopeatDisconnect, { attr: { class: 'btn-primary-default' } }) }}
+          </div>
+        {% endif %}
+
+        {% if form.dabbaDisconnect is defined %}
+          <div class="form-group">
+            {{ form_widget(form.dabbaDisconnect, { attr: { class: 'btn-primary-default' } }) }}
+          </div>
+        {% endif %}
 
         {{ form_rest(form) }}
       </div>
