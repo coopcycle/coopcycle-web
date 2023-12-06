@@ -5,7 +5,7 @@
 
 			<div class="restaurant-banner">
 				<img src="{{ banner_image|default(null)|placeholder_image('restaurant_banner') }}" alt="{{ name is defined ? name ~ "'s banner" : "banner" }}">
-				{% if should_show_pre_order is defined and should_show_pre_order %}
+				{% if should_show_pre_order|default(false) %}
 					<figcaption class="w-100 h-100 position-absolute">
 						<div class="w-100 h-100 position-absolute bg-dark" style="opacity: 0.5;"></div>
 						<div class="w-100 h-100 position-absolute text-white font-weight-bold d-flex flex-column justify-content-center align-items-center p-5">
