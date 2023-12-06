@@ -3,6 +3,7 @@
 namespace AppBundle\Security;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\User;
 use AppBundle\Security\ApiKeyManager;
@@ -197,10 +198,8 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
     {
         if (isset($payload['sub'])) {
             try {
-                if ($cart = $this->iriConverter->getItemFromIri($payload['sub'])) {
-                    return $cart;
-                }
-            } catch (InvalidArgumentException $e) {}
+                return $this->iriConverter->getItemFromIri($payload['sub']);
+            } catch (InvalidArgumentException | ItemNotFoundException $e) {}
         }
 
         return false;
