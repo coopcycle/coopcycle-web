@@ -1072,9 +1072,6 @@ services:
   AppBundle\Security\UserVoter:
     tags: [ 'security.voter' ]
 
-  AppBundle\Security\CartSessionVoter:
-    tags: [ 'security.voter' ]
-
   AppBundle\Security\TaskGroupVoter:
     tags: [ 'security.voter' ]
 
