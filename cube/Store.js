@@ -19,7 +19,10 @@ cube(`Store`, {
       type: `number`,
       primaryKey: true
     },
-
+    name: {
+      sql: `name`,
+      type: `string`
+    },
     createdAt: {
       sql: `DATE(created_at)`,
       type: `time`
