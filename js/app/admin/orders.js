@@ -49,7 +49,7 @@ if (rootElement) {
       <QueryRenderer
         query={{
           "measures": [
-            "PlatformFee.amount"
+            "PlatformFee.totalAmount"
           ],
           "timeDimensions": [
             {
