@@ -3,17 +3,21 @@
 namespace AppBundle\Command;
 
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\SettingsManager;
 use DBShenker\DBShenkerOptions;
 use DBShenker\DBShenkerSync;
 use DBShenker\DBShenker;
 use DBShenker\DTO\CommunicationMean;
+use DBShenker\DTO\GR7;
 use DBShenker\DTO\Mesurement;
 use DBShenker\DTO\NameAndAddress;
 use DBShenker\Enum\CommunicationMeanType;
 use DBShenker\Enum\NameAndAddressType;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Adapter\Ftp;
 use League\Flysystem\Filesystem;
@@ -24,14 +28,19 @@ use libphonenumber\PhoneNumberUtil;
 
 class SyncTransportersCommand extends Command {
 
+    private readonly Address $HQAdress;
+
     public function __construct(
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $params,
+        private SettingsManager $settingsManager,
         private Geocoder $geocoder,
         private PhoneNumberUtil $phoneUtil,
     )
     {
         parent::__construct();
+        [$lat, $lng] = explode(',', $this->settingsManager->get('latlng'));
+        $this->HQAdress = $this->geocoder->reverse(floatval($lat), floatval($lng));
     }
 
     protected function configure(): void
@@ -76,7 +85,8 @@ class SyncTransportersCommand extends Command {
             $messages = DBShenker::parse($content);
             foreach ($messages as $tasks) {
                 foreach ($tasks->getTasks() as $task) {
-                    $this->importTask($task);
+                    $this->importTask($task, $store);
+                    die("Only imported one task.");
                 }
             }
         }
@@ -87,7 +97,7 @@ class SyncTransportersCommand extends Command {
     // Here we need to check if the address is conform and fillable
     // Translate DBShenker entity into CC entity
     // Save EDIFACT message
-    private function importTask($task): void {
+    private function importTask(GR7 $task, Store $store): void {
         print_r("Task ID: ".$task->getID()."\n");
         print_r("Recipient address: ".$task->getNamesAndAddresses(NameAndAddressType::RECIPIENT)[0]->getAddress()."\n");
         print_r("Number of packages: ".count($task->getPackages())."\n");
@@ -95,6 +105,12 @@ class SyncTransportersCommand extends Command {
         print_r("Comments: ".$task->getComments()."\n");
         print_r("\n\n");
 
+
+
+        // PICKUP SETUP
+        $pickup = $this->generatePickupTask();
+
+        // DROPOFF SETUP
         $nad = $task->getNamesAndAddresses(NameAndAddressType::RECIPIENT)[0];
         $address = $this->DBShenkerToCCAddress($nad);
 
@@ -102,12 +118,31 @@ class SyncTransportersCommand extends Command {
         $CCTask->setAddress($address);
         $CCTask->setComments($task->getComments());
 
-        $weight = array_sum(array_map(fn(Mesurement $p) => $p->getQuantity() ,$task->getMesurements()));
+        //TODO: Check if mesurements are in kg
+        $weight = array_sum(array_map(
+            fn(Mesurement $p) => $p->getQuantity(),
+            $task->getMesurements()
+        ));
         $CCTask->setWeight($weight);
 
+        // DELIVERY SETUP
+        $delivery = new Delivery();
+        $delivery->setTasks([$pickup, $CCTask]);
+        $delivery->setStore($store);
+        $delivery->setPickupRange(new DateTime(), new DateTime());
+        $delivery->setDropoffRange(new DateTime(), new DateTime());
 
-        print_r($CCTask);
+        $this->entityManager->persist($delivery);
+        $this->entityManager->flush();
 
+    }
+
+    private function generatePickupTask(): Task
+    {
+        $task = new Task();
+        $task->setType(Task::TYPE_PICKUP);
+        $task->setAddress($this->HQAdress->clone());
+        return $task;
     }
 
     private function DBShenkerToCCAddress(NameAndAddress $nad): Address
