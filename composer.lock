@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0d031d0e2700fbc743c507f991bad7f1",
+    "content-hash": "c40d1391b60b443243b90ce127223414",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1261,12 +1261,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:coopcycle/DBSchenkerClient.git",
-                "reference": "49a5101497befb8e45dc43ae01620b9ab767c056"
+                "reference": "d0f45d8d1ccfaf1262a67b8dd0438cb792763db8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/49a5101497befb8e45dc43ae01620b9ab767c056",
-                "reference": "49a5101497befb8e45dc43ae01620b9ab767c056",
+                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/d0f45d8d1ccfaf1262a67b8dd0438cb792763db8",
+                "reference": "d0f45d8d1ccfaf1262a67b8dd0438cb792763db8",
                 "shasum": ""
             },
             "require": {
@@ -1293,7 +1293,7 @@
                 "source": "https://github.com/coopcycle/DBSchenkerClient/tree/master",
                 "issues": "https://github.com/coopcycle/DBSchenkerClient/issues"
             },
-            "time": "2023-12-06T13:36:12+00:00"
+            "time": "2023-12-07T12:07:16+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -10767,13 +10767,13 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/php-edifact/edifact-generator.git",
-                "reference": "122f52c6c5d6c12e470007241e55cfcfafb687f3"
+                "url": "https://github.com/coopcycle/edifact-generator.git",
+                "reference": "d87ce1d945adebf6482c993e778f4b471995073e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-edifact/edifact-generator/zipball/122f52c6c5d6c12e470007241e55cfcfafb687f3",
-                "reference": "122f52c6c5d6c12e470007241e55cfcfafb687f3",
+                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/d87ce1d945adebf6482c993e778f4b471995073e",
+                "reference": "d87ce1d945adebf6482c993e778f4b471995073e",
                 "shasum": ""
             },
             "require-dev": {
@@ -10788,36 +10788,45 @@
                     "EDI\\Generator\\": "src/Generator/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "codestyle:fix": [
+                    "vendor/bin/php-cs-fixer fix"
+                ],
+                "codestyle:lint": [
+                    "vendor/bin/php-cs-fixer fix --dry-run"
+                ]
+            },
             "license": [
                 "LGPL-3.0-or-later"
             ],
             "description": "EDIFACT message generators",
             "homepage": "https://github.com/php-edifact/edifact-generator",
             "keywords": [
-                "edi",
-                "edifact",
+                "EDI",
+                "EDIFACT",
                 "generator",
                 "message"
             ],
             "support": {
-                "issues": "https://github.com/php-edifact/edifact-generator/issues",
-                "source": "https://github.com/php-edifact/edifact-generator/tree/master"
+                "source": "https://github.com/coopcycle/edifact-generator/tree/master"
             },
-            "time": "2023-11-24T09:53:17+00:00"
+            "time": "2023-11-30T14:55:40+00:00"
         },
         {
             "name": "php-edifact/edifact-mapping",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/php-edifact/edifact-mapping.git",
-                "reference": "efb7355d6fc7fc85c3aab5c0b64facd089f27503"
+                "url": "https://github.com/coopcycle/edifact-mapping.git",
+                "reference": "888e8b522fc2bf17132586ad348cfb434b21a23c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-edifact/edifact-mapping/zipball/efb7355d6fc7fc85c3aab5c0b64facd089f27503",
-                "reference": "efb7355d6fc7fc85c3aab5c0b64facd089f27503",
+                "url": "https://api.github.com/repos/coopcycle/edifact-mapping/zipball/888e8b522fc2bf17132586ad348cfb434b21a23c",
+                "reference": "888e8b522fc2bf17132586ad348cfb434b21a23c",
                 "shasum": ""
             },
             "default-branch": true,
@@ -10827,24 +10836,22 @@
                     "EDI\\Mapping\\": "src/Mapping/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "LGPL-3.0-or-later"
             ],
             "description": "XML mappings from UNTDID",
             "homepage": "https://github.com/php-edifact/edifact-mapping",
             "keywords": [
+                "EDI",
+                "EDIFACT",
                 "UNECE",
-                "edi",
-                "edifact",
                 "mapping",
                 "message"
             ],
             "support": {
-                "issues": "https://github.com/php-edifact/edifact-mapping/issues",
-                "source": "https://github.com/php-edifact/edifact-mapping/tree/master"
+                "source": "https://github.com/coopcycle/edifact-mapping/tree/master"
             },
-            "time": "2023-08-06T16:40:56+00:00"
+            "time": "2023-12-07T11:41:17+00:00"
         },
         {
             "name": "php-http/client-common",
@@ -23128,7 +23135,6 @@
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
         "acseo/typesense-bundle": 20,
-        "coopcycle/db-shenker": 20,
         "behatch/contexts": 20
     },
     "prefer-stable": true,

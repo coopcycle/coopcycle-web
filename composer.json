@@ -136,7 +136,7 @@
         "acseo/typesense-bundle": "dev-fix-delete-upsert",
         "symfony/stimulus-bundle": "^2.10",
         "symfony/ux-turbo": "^2.10",
-        "coopcycle/db-shenker": "dev-master"
+        "coopcycle/db-shenker": "*"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -171,7 +171,15 @@
         },
         {
           "type": "vcs",
-          "url": "git@github.com:coopcycle/DBSchenkerClient.git"
+          "url": "https://github.com/coopcycle/DBSchenkerClient"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/coopcycle/edifact-mapping"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/coopcycle/edifact-generator"
         }
     ],
     "minimum-stability": "dev",

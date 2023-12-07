@@ -152,7 +152,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $failureReasonSet;
 
-    private $DBShenkerEnabled = true;
+    private $DBShenkerEnabled = false;
 
     public function __construct() {
         $this->deliveries = new ArrayCollection();
