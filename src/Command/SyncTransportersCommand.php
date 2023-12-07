@@ -86,7 +86,6 @@ class SyncTransportersCommand extends Command {
             foreach ($messages as $tasks) {
                 foreach ($tasks->getTasks() as $task) {
                     $this->importTask($task, $store);
-                    die("Only imported one task.");
                 }
             }
         }
@@ -123,7 +122,7 @@ class SyncTransportersCommand extends Command {
             fn(Mesurement $p) => $p->getQuantity(),
             $task->getMesurements()
         ));
-        $CCTask->setWeight($weight);
+        $CCTask->setWeight($weight * 1000);
 
         // DELIVERY SETUP
         $delivery = new Delivery();
@@ -154,6 +153,7 @@ class SyncTransportersCommand extends Command {
         }
 
         $address->setCompany($nad->getAddressLabel());
+        $address->setName($nad->getAddressLabel());
         $address->setContactName($nad->getContactName());
         $address->setTelephone($this->DBShenkerToCCPhone($nad->getCommunicationMeans()));
 
