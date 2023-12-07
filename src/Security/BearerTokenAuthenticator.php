@@ -179,6 +179,7 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
 
             $user = new User();
             $user->setUsername($rawToken);
+            $user->setRoles(['ROLE_AD_HOC_CUSTOMER']);
 
             $token = new JWTUserToken([], $user, $rawToken, $this->firewallName);
             $token->setAttribute('cart', $cart);

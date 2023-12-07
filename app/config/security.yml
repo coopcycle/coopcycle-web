@@ -9,14 +9,20 @@ security:
         Nucleos\UserBundle\Model\UserInterface: sha512
 
     role_hierarchy:
-        ROLE_CUSTOMER: ROLE_USER
-        ROLE_COURIER: ROLE_CUSTOMER
+#        ROLE_AD_HOC_CUSTOMER (base role)
+#        ROLE_USER (base role)
+        ROLE_COURIER: ROLE_USER
         ROLE_RESTAURANT: ROLE_USER
         ROLE_STORE: ROLE_USER
         ROLE_LOOPEAT: ROLE_USER
         ROLE_DISPATCHER: [ ROLE_COURIER, ROLE_LOOPEAT ]
         ROLE_ADMIN: ROLE_DISPATCHER
         ROLE_BUSINESS_ACCOUNT: ROLE_USER
+#        ROLE_API_APP (base role)
+        ROLE_API_KEY: ROLE_API_APP
+        ROLE_OAUTH2_TASKS: ROLE_API_APP
+        ROLE_OAUTH2_DELIVERIES: ROLE_API_APP
+        ROLE_OAUTH2_ORDERS: ROLE_API_APP
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
@@ -323,15 +329,27 @@ security:
         - { path: ^/admin/settings, roles: ROLE_ADMIN }
         - { path: ^/admin, roles: ROLE_DISPATCHER }
         - { path: ^/_uploader/restaurant, roles: [ ROLE_ADMIN, ROLE_RESTAURANT ] }
+
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/facebook/login$, roles: PUBLIC_ACCESS }
-        - { path: ^/api/orders/timing, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/resetting, role: PUBLIC_ACCESS }
-        - { path: ^/api/routing, roles: PUBLIC_ACCESS }
-        - { path: ^/api/settings, roles: PUBLIC_ACCESS }
         - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api/me$, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET ] }
+
+        - { path: ^/api/settings, roles: PUBLIC_ACCESS }
+
         - { path: ^/api/restaurants, roles: PUBLIC_ACCESS, methods: [ GET ] }
         - { path: ^/api/search/shops_products, roles: PUBLIC_ACCESS, methods: [ GET ] }
         - { path: ^/api/carts/session$, roles: PUBLIC_ACCESS, methods: [ POST ] }
+        - { path: ^/api/orders/timing, roles: PUBLIC_ACCESS }
+        - { path: ^/api/time_slots, roles: [ ROLE_USER, ROLE_API_APP ] }
+        - { path: ^/api/deliveries, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET, POST, PUT, DELETE ] }
+        - { path: ^/api/task_import_queues, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET ] }
+        - { path: ^/api/routing, roles: PUBLIC_ACCESS }
+
+        - { path: ^/api/webhooks, roles: [ ROLE_USER, ROLE_API_APP ] }
+        - { path: ^/api/urbantz, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET, POST, PUT, DELETE ] }
+        - { path: ^/api/woopit, roles: [ ROLE_USER, ROLE_API_APP ] }
+
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
