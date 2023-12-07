@@ -67,9 +67,14 @@ class DeliveryImportType extends AbstractType
                     $violations = $this->validator->validate($delivery);
                     if (count($violations) > 0) {
                         foreach($violations as $violation) {
-                            $result->addErrorToRow($rowNumber,
-                                sprintf('%s: %s', $violation->getMessage(), (string) $violation->getInvalidValue())
-                            );
+
+                            if ($violation->getInvalidValue() instanceof \Stringable) {
+                                $errorMessage = sprintf('%s: %s', $violation->getMessage(), (string) $violation->getInvalidValue());
+                            } else {
+                                $errorMessage = $violation->getMessage();
+                            }
+                            $result->addErrorToRow($rowNumber, $errorMessage);
+                            
                         }
                         return false;
                     }
