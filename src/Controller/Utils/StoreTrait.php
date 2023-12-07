@@ -179,18 +179,19 @@ trait StoreTrait
             $objectManager = $this->getDoctrine()->getManagerForClass(Store::class);
 
             if ($store->isDBShenkerEnabled()) {
-                $id = $objectManager->getRepository(Store::class)->findOneBy([
+                $fstore = $objectManager->getRepository(Store::class)->findOneBy([
                     'DBShenkerEnabled' => true
-                ])->getId();
+                ]);
 
-                if ($store->getId() != $id) {
+                if (!is_null($fstore) && $store->getId() != $fstore->getId()) {
                     $this->addFlash(
                         'error',
                         'DBShenker is already enabled for another store'
                     );
+
+                    return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);
                 }
 
-                return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);
             }
 
             $objectManager->persist($store);
