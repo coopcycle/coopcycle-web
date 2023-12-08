@@ -8,6 +8,7 @@ use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TimeSlot;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\SettingsManager;
 use DBShenker\DBShenkerOptions;
@@ -57,10 +58,20 @@ class SyncTransportersCommand extends Command {
     protected function execute($input, $output): int
     {
         $repo = $this->entityManager->getRepository(Store::class);
+
+        /** @var Store $store */
         $store = $repo->findOneBy(['DBShenkerEnabled' => true]);
         if (is_null($store)) {
             throw new \Exception('No store with transporter connected');
         }
+
+        //TODO: Take a look at this
+        //$store->getPrefillPickupAddress();
+
+        $hours = collect($store->getTimeSlots())->map(fn (TimeSlot $ts) => $ts->getOpeningHours())->first();
+
+        var_dump($hours);
+        die();
 
         $auth_details = parse_url($this->params->get('dbshenker_sync_uri'));
 

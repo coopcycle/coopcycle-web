@@ -466,6 +466,12 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: nonprofits
+        edi_messages:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: edi_messages
+
     filesystems:
         assets:
             adapter: assets
@@ -503,6 +509,10 @@ oneup_flysystem:
             adapter: nonprofits_images
             alias: nonprofits_images_filesystem
             mount: nonprofits_images_filesystem
+        edi_messages:
+            adapter: edi_messages
+            alias: edi_messages_filesystem
+            mount: edi_messages_filesystem
 
 vich_uploader:
     db_driver: orm
