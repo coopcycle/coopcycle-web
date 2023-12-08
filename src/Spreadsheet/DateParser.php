@@ -2,8 +2,6 @@
 
 namespace AppBundle\Spreadsheet;
 
-use AppBundle\Exception\DateTimeParseException;
-
 class DateParser
 {
     const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
@@ -14,7 +12,7 @@ class DateParser
 
     public static function parseTimeslot($text)
     {
-        if (false === strpos($text, '-')) {
+        if (!str_contains($text, '-')) {
             throw new \Exception(sprintf('"%s" is not a valid timeslot', $text));
         }
 
