@@ -44,10 +44,14 @@ class CalculateTimeline
 
         if ($event instanceof Event\OrderDelayed) {
             $this->calculator->delay($order, $event->getDelay());
-            foreach ($order->getDelivery()->getTasks() as $task) {
-                $this->eventBus->handle(
-                    new TaskRescheduled($task, $task->getAfter(), $task->getBefore())
-                );
+
+            $delivery = $order->getDelivery();
+            if (null !== $delivery) {
+                foreach ($delivery->getTasks() as $task) {
+                    $this->eventBus->handle(
+                        new TaskRescheduled($task, $task->getAfter(), $task->getBefore())
+                    );
+                }
             }
         }
     }
