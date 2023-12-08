@@ -1299,4 +1299,6 @@ services:
         json: '@AppBundle\Geography\CityZoneImporter\Json'
 
   AppBundle\Unsplash\Client: ~
-  AppBundle\Pixabay\Client: ~
+  AppBundle\Pixabay\Client:
+    arguments:
+      $lang: "%env(COOPCYCLE_LOCALE)%"
