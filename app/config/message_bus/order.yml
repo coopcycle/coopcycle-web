@@ -131,6 +131,7 @@ services:
     class: AppBundle\Domain\Order\Reactor\CalculateTimeline
     arguments:
       - '@coopcycle.order_timeline_calculator'
+      - '@event_bus'
     tags:
         - name: event_subscriber
           subscribes_to: order:created
