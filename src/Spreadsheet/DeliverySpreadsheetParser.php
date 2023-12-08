@@ -17,12 +17,6 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 {
     use ParsePackagesTrait;
 
-    const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
-    const DATE_PATTERN_SLASH = '#(?<day>[0-9]{2})/(?<month>[0-9]{2})/?(?<year>[0-9]{4})?#';
-    const TIME_PATTERN = '/(?<hour>[0-9]{1,2})[:hH]+(?<minute>[0-9]{1,2})?/';
-
-    const TIME_RANGE_PATTERN = '[0-9]{2,4}[-/]?[0-9]{2,4}[-/]?[0-9]{2,4} [0-9]{1,2}[:hH]?[0-9]{2}';
-
     private $geocoder;
     private $phoneNumberUtil;
     private $countryCode;
@@ -136,51 +130,15 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     {
         $timeSlotAsText = $data[$key];
 
-        if (false === strpos($timeSlotAsText, '-')) {
+        try {
+            return DateParser::parseTimeslot($timeSlotAsText);
+        } catch (\Exception $e) {
             throw new DateTimeParseException(
                 $this->translator->trans('import.time.range.error', [
                     '%key%' => $key,
                     '%value%' => $timeSlotAsText
                 ])
             );
-        }
-
-        $pattern = sprintf('#^(%s)[^0-9]+(%s)$#', self::TIME_RANGE_PATTERN, self::TIME_RANGE_PATTERN);
-
-        if (1 !== preg_match($pattern, $timeSlotAsText, $matches)) {
-            throw new DateTimeParseException(
-                $this->translator->trans('import.time.range.error', [
-                    '%key%' => $key,
-                    '%value%' => $timeSlotAsText
-                ])
-            );
-        }
-
-        $start = new \DateTime();
-        $end = new \DateTime();
-
-        $this->parseDate($start, $matches[1]);
-        $this->parseTime($start, $matches[1]);
-
-        $this->parseDate($end, $matches[2]);
-        $this->parseTime($end, $matches[2]);
-
-        return [ $start, $end ];
-    }
-
-    private function parseDate(\DateTime $date, $text)
-    {
-        if (1 === preg_match(self::DATE_PATTERN_HYPHEN, $text, $matches)) {
-            $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
-        } elseif (1 === preg_match(self::DATE_PATTERN_SLASH, $text, $matches)) {
-            $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
-        }
-    }
-
-    private function parseTime(\DateTime $date, $text)
-    {
-        if (1 === preg_match(self::TIME_PATTERN, $text, $matches)) {
-            $date->setTime($matches['hour'], isset($matches['minute']) ? $matches['minute'] : 00);
         }
     }
 
