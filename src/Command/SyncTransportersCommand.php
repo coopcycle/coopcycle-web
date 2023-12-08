@@ -4,7 +4,9 @@ namespace AppBundle\Command;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\SettingsManager;
@@ -29,6 +31,7 @@ use libphonenumber\PhoneNumberUtil;
 class SyncTransportersCommand extends Command {
 
     private readonly Address $HQAdress;
+    private readonly Tag $premiumTag;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -41,6 +44,7 @@ class SyncTransportersCommand extends Command {
         parent::__construct();
         [$lat, $lng] = explode(',', $this->settingsManager->get('latlng'));
         $this->HQAdress = $this->geocoder->reverse(floatval($lat), floatval($lng));
+        $this->premiumTag = $this->entityManager->getRepository(Tag::class)->findOneBy(['name' => 'PREMIUM']);
     }
 
     protected function configure(): void
@@ -81,11 +85,17 @@ class SyncTransportersCommand extends Command {
         // Each file can contain multiple messages
         // Each message can contain multiple tasks
 
+        $i = 0;
         foreach ($sync->pull() as $content) {
+            $edi = $this->storeEDI($content);
             $messages = DBShenker::parse($content);
             foreach ($messages as $tasks) {
                 foreach ($tasks->getTasks() as $task) {
                     $this->importTask($task, $store);
+                    if ($i > 10) {
+                        die("Imported 10 messages");
+                    }
+                    $i++;
                 }
             }
         }
@@ -97,13 +107,14 @@ class SyncTransportersCommand extends Command {
     // Translate DBShenker entity into CC entity
     // Save EDIFACT message
     private function importTask(GR7 $task, Store $store): void {
-        print_r("Task ID: ".$task->getID()."\n");
-        print_r("Recipient address: ".$task->getNamesAndAddresses(NameAndAddressType::RECIPIENT)[0]->getAddress()."\n");
-        print_r("Number of packages: ".count($task->getPackages())."\n");
-        print_r("Total weight: ".array_sum(array_map(fn(Mesurement $p) => $p->getQuantity() ,$task->getMesurements()))." kg\n");
-        print_r("Comments: ".$task->getComments()."\n");
-        print_r("\n\n");
-
+        if (false) {
+            print_r("Task ID: ".$task->getId()."\n");
+            print_r("Recipient address: ".$task->getNamesAndAddresses(NameAndAddressType::RECIPIENT)[0]->getAddress()."\n");
+            print_r("Number of packages: ".count($task->getPackages())."\n");
+            print_r("Total weight: ".array_sum(array_map(fn(Mesurement $p) => $p->getQuantity() ,$task->getMesurements()))." kg\n");
+            print_r("Comments: ".$task->getComments()."\n");
+            print_r("\n\n");
+        }
 
 
         // PICKUP SETUP
@@ -113,9 +124,20 @@ class SyncTransportersCommand extends Command {
         $nad = $task->getNamesAndAddresses(NameAndAddressType::RECIPIENT)[0];
         $address = $this->DBShenkerToCCAddress($nad);
 
+        $imported_from = sprintf(
+            "%s\n%s\n\n%s\n",
+            $nad->getAddressLabel(),
+            $nad->getAddress(),
+            $nad->getContactName()
+        );
+        $imported_from .= collect($nad->getCommunicationMeans())
+        ->map(fn(CommunicationMean $c) => $c->getType()->name . ': ' . $c->getValue())
+        ->join("\n");
+
         $CCTask = new Task();
         $CCTask->setAddress($address);
         $CCTask->setComments($task->getComments());
+        $CCTask->setMetadata('imported_from', $imported_from);
 
         //TODO: Check if mesurements are in kg
         $weight = array_sum(array_map(
@@ -124,6 +146,12 @@ class SyncTransportersCommand extends Command {
         ));
         $CCTask->setWeight($weight * 1000);
 
+        //TODO: Check if product is premium only based on its name or not
+        if (str_contains($task->getProductClass()->name, 'PREMIUM')) {
+            $CCTask->setTags('premium');
+        }
+
+
         // DELIVERY SETUP
         $delivery = new Delivery();
         $delivery->setTasks([$pickup, $CCTask]);
@@ -131,6 +159,8 @@ class SyncTransportersCommand extends Command {
         $delivery->setPickupRange(new DateTime(), new DateTime());
         $delivery->setDropoffRange(new DateTime(), new DateTime());
 
+        $this->entityManager->persist($pickup);
+        $this->entityManager->persist($CCTask);
         $this->entityManager->persist($delivery);
         $this->entityManager->flush();
 
@@ -180,6 +210,13 @@ class SyncTransportersCommand extends Command {
         }
 
         return $phone;
+
+    }
+
+    private function storeEDI(string $content): EDIFACTMessage
+    {
+        $edi = new EDIFACTMessage();
+        return $edi;
 
     }
 }
