@@ -12,6 +12,7 @@ use AppBundle\Service\Geocoder;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager;
+use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 
@@ -62,6 +63,7 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
                 'address.contactName' => '',
                 'packages' => 'small-box=1 big-box=2',
                 'assign' => '',
+                'weight' => '',
             ],
             [
                 'type' => 'dropoff',
@@ -74,7 +76,8 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
                 'address.telephone' => '+33612345678',
                 'address.contactName' => 'John Doe',
                 'packages' => 'small-box=1 big-box=2',
-                'assign' => 'username:' . date('Y-m-d')
+                'assign' => 'username:' . date('Y-m-d'),
+                'weight' => '50.0',
             ],
         ];
     }
@@ -183,6 +186,10 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
             if (isset($record['packages']) && !empty($record['packages'])) {
                 $this->parseAndApplyPackages($task, $record['packages']);
+            }
+
+            if (isset($record['weight']) && !empty($record['weight']) && $task->isDropoff()) {
+                $this->applyWeight($task, $record['weight']);
             }
 
             if (isset($record['group']) && !empty(trim($record['group']))) {
@@ -351,5 +358,12 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         $this->entityManager->persist($taskGroup);
 
         return $taskGroup;
+    }
+
+    private function applyWeight(Task $task, $weight)
+    {
+        $mass = new Mass($weight, 'kg');
+
+        return $mass->toUnit('g');
     }
 }
