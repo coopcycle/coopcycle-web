@@ -121,7 +121,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/orders/{id}/payment",
  *       "controller"=PaymentDetailsController::class,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Get payment details for a Order resource."
  *       }
@@ -132,7 +132,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "controller"=PaymentMethodsController::class,
  *       "output"=PaymentMethodsOutput::class,
  *       "normalization_context"={"api_sub_level"=true},
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Get available payment methods for a Order resource."
  *       }
@@ -141,7 +141,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="PUT",
  *       "path"="/orders/{id}/pay",
  *       "controller"=OrderPay::class,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Pays a Order resource."
  *       }
@@ -207,7 +207,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/orders/{id}/tip",
  *       "controller"=OrderTip::class,
  *       "validation_groups"={"cart"},
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "normalization_context"={"groups"={"cart"}},
  *       "openapi_context"={
  *         "summary"="Updates tip amount of an Order resource."
@@ -216,7 +216,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *     "get_cart_timing"={
  *       "method"="GET",
  *       "path"="/orders/{id}/timing",
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('view', object)",
  *       "openapi_context"={
  *         "summary"="Retrieves timing information about a Order resource.",
  *         "responses"={
@@ -235,7 +235,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/orders/{id}/validate",
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="is_granted('session', object)"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "put_cart"={
  *       "method"="PUT",
@@ -243,7 +243,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "validation_groups"={"cart"},
  *       "normalization_context"={"groups"={"cart"}},
  *       "denormalization_context"={"groups"={"order_update"}},
- *       "security"="is_granted('session', object)"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "post_cart_items"={
  *       "method"="POST",
@@ -253,7 +253,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "validation_groups"={"cart"},
  *       "denormalization_context"={"groups"={"cart"}},
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Adds items to a Order resource."
  *       }
@@ -265,7 +265,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "validation_groups"={"cart"},
  *       "denormalization_context"={"groups"={"cart"}},
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="is_granted('session', object)"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "delete_item"={
  *       "method"="DELETE",
@@ -276,7 +276,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "validate"=false,
  *       "write"=false,
  *       "status"=200,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Deletes items from a Order resource."
  *       }
@@ -296,7 +296,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/orders/{id}/mercadopago-preference",
  *       "controller"=MercadopagoPreference::class,
  *       "output"=MercadopagoPreferenceResponse::class,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Creates a MercadoPago preference and returns its ID."
  *       }
@@ -325,7 +325,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "path"="/orders/{id}/stripe/clone-payment-method/{paymentMethodId}",
  *      "controller"=CloneStripePayment::class,
  *      "output"=StripePaymentMethodOutput::class,
- *      "security"="is_granted('session', object)",
+ *      "security"="is_granted('edit', object)",
  *      "openapi_context"={
  *        "summary"=""
  *      }
@@ -334,7 +334,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "method"="POST",
  *      "path"="/orders/{id}/stripe/create-setup-intent-or-attach-pm",
  *      "controller"=CreateSetupIntentOrAttachPM::class,
- *      "security"="is_granted('session', object)",
+ *      "security"="is_granted('edit', object)",
  *      "openapi_context"={
  *        "summary"=""
  *      }
@@ -343,7 +343,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "method"="POST",
  *      "path"="/orders/{id}/create_invitation",
  *      "status"=200,
- *      "security"="is_granted('session', object)",
+ *      "security"="is_granted('edit', object)",
  *      "normalization_context"={"groups"={"cart"}},
  *      "controller"=CreateInvitationController::class,
  *      "validate"=false,
@@ -384,7 +384,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="POST",
  *       "path"="/orders/{id}/loopeat_returns",
  *       "controller"=UpdateLoopeatReturnsController::class,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "input"=LoopeatReturns::class,
  *       "validate"=false,
  *       "normalization_context"={"groups"={"cart"}},

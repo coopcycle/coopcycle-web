@@ -1072,9 +1072,6 @@ services:
   AppBundle\Security\UserVoter:
     tags: [ 'security.voter' ]
 
-  AppBundle\Security\CartSessionVoter:
-    tags: [ 'security.voter' ]
-
   AppBundle\Security\TaskGroupVoter:
     tags: [ 'security.voter' ]
 
@@ -1184,9 +1181,6 @@ services:
   AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~
 
   AppBundle\Security\BearerTokenAuthenticator:
-    abstract: true
-
-  AppBundle\Security\CartSessionAuthenticator:
     abstract: true
 
   # https://symfony.com/doc/5.4/session/database.html#store-sessions-in-a-key-value-database-redis
