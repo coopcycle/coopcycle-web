@@ -20,11 +20,6 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 {
     use ParsePackagesTrait;
 
-    const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
-    const DATE_PATTERN_SLASH = '#(?<day>[0-9]{1,2})/(?<month>[0-9]{1,2})/?(?<year>[0-9]{4})?#';
-    const DATE_PATTERN_DOT = '#(?<day>[0-9]{1,2})\.(?<month>[0-9]{1,2})\.?(?<year>[0-9]{4})?#';
-    const TIME_PATTERN = '/(?<hour>[0-9]{1,2})[:hH]+(?<minute>[0-9]{1,2})?/';
-
     private $geocoder;
     private $slugify;
     private $userManager;
@@ -97,7 +92,7 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
         foreach ($data as $record) {
 
-            [ $doneAfter, $doneBefore ] = self::parseTimeWindow($record, $defaultDate);
+            [ $after, $before ] = self::parseTimeWindow($record, $defaultDate);
 
             $address = null;
 
@@ -160,8 +155,8 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
             $task = new Task();
             $task->setAddress($address);
-            $task->setDoneAfter($doneAfter);
-            $task->setDoneBefore($doneBefore);
+            $task->setAfter($after);
+            $task->setBefore($before);
 
             if (isset($record['type'])) {
                 $this->applyType($task, $record['type']);
@@ -226,64 +221,36 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
 
     public static function parseTimeWindow(array $record, \DateTime $defaultDate)
     {
-        // Default fallback values
-        $doneAfter = clone $defaultDate;
-        $doneAfter->setTime(00, 00);
+        $isAfterNotEmpty = isset($record['after']) && !empty(trim($record['after']));
+        $isBeforeNotEmpty = isset($record['before']) && !empty(trim($record['before']));
+        $isTimeslotNotEmpty = isset($record['timeslot']) && !empty(trim($record['timeslot']));
 
-        $doneBefore = clone $defaultDate;
-        $doneBefore->setTime(23, 59);
+        if ($isAfterNotEmpty && $isBeforeNotEmpty && $isTimeslotNotEmpty) {
+            throw new \Exception('You may provide a "after" and "before" columns, or a "timeslot" column, not both');
+        }
+
+        if ($isTimeslotNotEmpty) {
+            return DateParser::parseTimeslot($record['timeslot']);
+        }
+
+        // Default fallback values
+        $after = clone $defaultDate;
+        $after->setTime(00, 00);
+
+        $before = clone $defaultDate;
+        $before->setTime(23, 59);
 
         if (isset($record['after'])) {
-            self::parseDate($doneAfter, $record['after']);
-            self::parseTime($doneAfter, $record['after']);
+            DateParser::parseDate($after, $record['after']);
+            DateParser::parseTime($after, $record['after']);
         }
 
         if (isset($record['before'])) {
-            self::parseDate($doneBefore, $record['before']);
-            self::parseTime($doneBefore, $record['before']);
+            DateParser::parseDate($before, $record['before']);
+            DateParser::parseTime($before, $record['before']);
         }
 
-        return [ $doneAfter, $doneBefore ];
-    }
-
-    private static function patchXLSXDate(\DateTimeInterface $date)
-    {
-        // This can happen when the cell has format numeric
-        if ('1899-12-30' === $date->format('Y-m-d')) {
-            return $date->format('H:i:s');
-        }
-
-        return $date->format(\DateTime::W3C);
-    }
-
-    private static function parseDate(\DateTime $date, $text)
-    {
-        if (!is_string($text)) {
-            if ($text instanceof \DateTimeInterface) {
-                $text = self::patchXLSXDate($text);
-            }
-        }
-
-        if (1 === preg_match(self::DATE_PATTERN_HYPHEN, $text, $matches)) {
-            $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
-        } elseif (1 === preg_match(self::DATE_PATTERN_SLASH, $text, $matches)) {
-            $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
-        } elseif (1 === preg_match(self::DATE_PATTERN_DOT, $text, $matches)) {
-            $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
-        }
-    }
-
-    private static function parseTime(\DateTime $date, $text)
-    {
-        if (!is_string($text)) {
-            if ($text instanceof \DateTimeInterface) {
-                $text = self::patchXLSXDate($text);
-            }
-        }
-
-        if (1 === preg_match(self::TIME_PATTERN, $text, $matches)) {
-            $date->setTime($matches['hour'], isset($matches['minute']) ? $matches['minute'] : 00);
-        }
+        return [ $after, $before ];
     }
 
     private function applyType(Task $task, $type)
@@ -310,15 +277,6 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         }
     }
 
-    private function matchesDatePattern($text)
-    {
-        $hyphen = preg_match(self::DATE_PATTERN_HYPHEN, $text);
-        $slash = preg_match(self::DATE_PATTERN_SLASH, $text);
-        $dot = preg_match(self::DATE_PATTERN_DOT, $text);
-
-        return $hyphen === 1 || $slash === 1 || $dot === 1;
-    }
-
     private function extractAssign($text)
     {
         if (false === strpos($text, ':')) {
@@ -336,12 +294,12 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
             throw new \Exception(sprintf('Can\'t assign tasks to user with username "%s"', $username));
         }
 
-        if (!$this->matchesDatePattern($date)) {
+        if (!DateParser::matchesDatePattern($date)) {
             throw new \Exception(sprintf('Date "%s" is not valid', $date));
         }
 
         $assignAt = new \DateTime();
-        $this->parseDate($assignAt, $date);
+        DateParser::parseDate($assignAt, $date);
 
         return [ $user, $assignAt ];
     }
