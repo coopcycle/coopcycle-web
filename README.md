@@ -128,10 +128,10 @@ make phpunit
 make behat
 ```
 
-#### Launch the Mocha tests
+#### Launch the Jest tests
 
 ```
-make mocha
+make jest
 ```
 Debugging
 ------------------

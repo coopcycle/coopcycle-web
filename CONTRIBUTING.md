@@ -19,4 +19,4 @@ Please check you are [in the correct repository](https://github.com/coopcycle/co
 
 All PRs are welcome and will be reviewed. Please explains in the concise way what you are trying to achieve with your PR & make sure that the Travis status build is ok.
 
-Note we have test suites both in PHP (Behat, PHPUnit) and JS (Mocha), so be sure to complete them as needed. **Adding tests is always welcome!**
+Note we have test suites both in PHP (Behat, PHPUnit) and JS (Jest), so be sure to complete them as needed. **Adding tests is always welcome!**
