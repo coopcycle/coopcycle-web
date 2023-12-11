@@ -1,5 +1,5 @@
 {
-  "title": "RestaurantCard/2. Tag/z_RestaurantCard",
+  "title": "RestaurantCard/3. Tag/2. RestaurantCard",
   "parameters": {
     "server": {
       "url": "http://localhost/storybook/component",
@@ -18,7 +18,7 @@
       "name": "Many tags",
       "args": {
         "tags": [
-          "italian test",
+          "italian testtest",
           "pizza",
           "italian",
           "pizza test",
@@ -34,7 +34,7 @@
     {
       "name": "No tags, long description",
       "args": {
-        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla facilisi. Nullam facilisis tellus eget justo interdum, at facilisis mauris commodo."
+        "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit Nulla facilisi Nullam facilisis tellus eget justo interdum at facilisis mauris commodo"
       }
     },
     {

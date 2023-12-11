@@ -1,5 +1,5 @@
 {
-  "title": "RestaurantCard/1. Badge/RestaurantCard",
+  "title": "RestaurantCard/1. Badge/2. RestaurantCard",
   "parameters": {
     "server": {
       "url": "http://localhost/storybook/component",
@@ -7,19 +7,9 @@
     }
   },
   "args": {
-    "name": "Acme",
-    "description": "Lorem ipsum",
-    "url": "https://localhost/fr/restaurant/1-acme",
-    "image": "https://img.logoipsum.com/300.png",
-    "address": "1, rue de Rivoli",
-    "should_show_pre_order": false,
-    "fulfillment_timing_url": "https://localhost/fr/restaurant/1-acme/timing",
-    "tags": ["italian", "pizza"],
-    "badges": []
+    "banner_image": "https://source.unsplash.com/MQUqbmszGGM"
   },
   "argTypes": {
-    "name": { "control": "text" },
-    "should_show_pre_order": { "control": "boolean" }
   },
   "tags": [],
   "stories": [
