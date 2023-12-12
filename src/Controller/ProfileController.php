@@ -81,11 +81,6 @@ class ProfileController extends AbstractController
     {
         $user = $this->getUser();
 
-        if ($user->hasRole('ROLE_COURIER')) {
-
-            return $this->tasksAction($request);
-        }
-
         $customer = $user->getCustomer();
 
         $loopeatAuthorizeUrl = '';
