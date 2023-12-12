@@ -157,6 +157,7 @@ Feature: Manage restaurants
       },
       "telephone":"+33612345678",
       "image":@string@,
+      "bannerImage":@string@,
       "hasMenu":"@string@.startsWith('/api/restaurants/menus')",
       "openingHoursSpecification":[
         {

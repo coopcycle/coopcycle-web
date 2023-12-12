@@ -3,6 +3,7 @@
 namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\Assets\PlaceholderImageResolver;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
@@ -42,6 +43,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         SlugifyInterface $slugify,
         FilterService $imagineFilter,
         TranslatorInterface $translator,
+        PlaceholderImageResolver $placeholderImageResolver,
         string $locale)
     {
         $this->normalizer = $normalizer;
@@ -53,6 +55,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->slugify = $slugify;
         $this->imagineFilter = $imagineFilter;
         $this->translator = $translator;
+        $this->placeholderImageResolver = $placeholderImageResolver;
         $this->locale = $locale;
     }
 
@@ -77,6 +80,15 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         } else {
             try {
                 $data['image'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail');
+            } catch (NotLoadableException $e) {}
+        }
+
+        $bannerImagePath = $this->uploaderHelper->asset($object, 'bannerImageFile');
+        if (empty($bannerImagePath)) {
+            $data['bannerImage'] = $this->placeholderImageResolver->resolve(filter: 'restaurant_banner', obj: $object, referenceType: UrlGeneratorInterface::ABSOLUTE_URL);
+        } else {
+            try {
+                $data['bannerImage'] = $this->imagineFilter->getUrlOfFilteredImage($bannerImagePath, 'restaurant_banner');
             } catch (NotLoadableException $e) {}
         }
 
