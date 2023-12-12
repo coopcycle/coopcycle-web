@@ -93,7 +93,7 @@ const UnassignedTour = ({ tour, tasks, removeTaskFromTour, isDropDisabled, modif
             }
         </h4>
       </div>
-      <div id={ `${collapseId}` } className="panel-collapse collapse" role="tabpanel">
+      <div id={ `${collapseId}` } className={ !tasks.length ? "panel-collapse collapse in" : "panel-collapse collapse" } role="tabpanel">
         <Droppable isDropDisabled={isDropDisabled} droppableId={ `unassigned_tour:${tour['@id']}` }>
             {(provided) => (
               <div
