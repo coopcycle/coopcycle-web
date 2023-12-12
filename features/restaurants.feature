@@ -181,7 +181,9 @@ Feature: Manage restaurants
       },
       "isOpen":true,
       "hub":null,
-      "loopeatEnabled":false
+      "loopeatEnabled":false,
+      "tags":@array@,
+      "badges":@array@
     }
     """
 

@@ -10,6 +10,7 @@ use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Utils\PriceFormatter;
+use AppBundle\Utils\RestaurantDecorator;
 use Cocur\Slugify\SlugifyInterface;
 use Liip\ImagineBundle\Service\FilterService;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
@@ -44,6 +45,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         FilterService $imagineFilter,
         TranslatorInterface $translator,
         PlaceholderImageResolver $placeholderImageResolver,
+        RestaurantDecorator $restaurantDecorator,
         string $locale)
     {
         $this->normalizer = $normalizer;
@@ -56,6 +58,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->imagineFilter = $imagineFilter;
         $this->translator = $translator;
         $this->placeholderImageResolver = $placeholderImageResolver;
+        $this->restaurantDecorator = $restaurantDecorator;
         $this->locale = $locale;
     }
 
@@ -127,6 +130,9 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
                 array_map(fn ($c) => $this->translator->trans(sprintf('tags.%s', $c)), $data['facets']['category']);
             $data['facets']['category'] = $categories;
         }
+
+        $data['tags'] = $this->restaurantDecorator->getTags($object);
+        $data['badges'] = $this->restaurantDecorator->getBadges($object);
 
         return $data;
     }
