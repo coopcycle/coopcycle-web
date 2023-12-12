@@ -3,8 +3,6 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
-    bind:
-      $pixabayApiKey: '%env(PIXABAY_API_KEY)%'
 
   AppBundle\Twig\:
     resource: '../../../src/Twig/*'
