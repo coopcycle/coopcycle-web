@@ -1306,3 +1306,5 @@ services:
   AppBundle\Assets\PlaceholderImageResolver:
     arguments:
       $pixabayApiKey: '%env(PIXABAY_API_KEY)%'
+
+  AppBundle\Utils\RestaurantDecorator: ~
