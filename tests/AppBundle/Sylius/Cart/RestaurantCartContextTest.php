@@ -5,6 +5,7 @@ namespace Tests\AppBundle\Sylius\Cart;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Vendor;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Cart\RestaurantCartContext;
 use AppBundle\Sylius\Cart\RestaurantResolver;
 use AppBundle\Sylius\Customer\CustomerInterface;
@@ -13,6 +14,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Log\NullLogger;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
@@ -58,6 +60,8 @@ class RestaurantCartContextTest extends TestCase
             $this->restaurantResolver->reveal(),
             $this->authorizationChecker->reveal(),
             $this->tokenStorage->reveal(),
+            new NullLogger(),
+            new NullLoggingUtils()
         );
     }
 
@@ -88,17 +92,19 @@ class RestaurantCartContextTest extends TestCase
             ->resolve()
             ->willReturn($restaurant);
 
-        $expectedCart = $this->prophesize(OrderInterface::class)->reveal();
+        $expectedCart = $this->prophesize(OrderInterface::class);
+        $expectedCart->getCustomer()->willReturn($this->prophesize(CustomerInterface::class));
+        $expectedCart->getCreatedAt()->willReturn(new \DateTime());
 
         $this->orderFactory
             ->createForRestaurant($restaurant)
             ->shouldBeCalled()
-            ->willReturn($expectedCart);
+            ->willReturn($expectedCart->reveal());
 
         $cart = $this->context->getCart();
 
         $this->assertNotNull($cart);
-        $this->assertSame($expectedCart, $cart);
+        $this->assertSame($expectedCart->reveal(), $cart);
 
         // Multiple calls should not recreate an instance
         $this->assertSame($cart, $this->context->getCart());
@@ -228,6 +234,8 @@ class RestaurantCartContextTest extends TestCase
             ->shouldBeCalled();
 
         $cartProphecy = $this->prophesize(OrderInterface::class);
+        $cartProphecy->getCustomer()->willReturn($this->prophesize(CustomerInterface::class));
+        $cartProphecy->getCreatedAt()->willReturn(new \DateTime());
         $expectedCart = $cartProphecy->reveal();
 
         $this->orderFactory

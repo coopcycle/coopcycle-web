@@ -7,6 +7,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
 use AppBundle\Sylius\OrderProcessing\OrderOptionsFeeProcessor;
@@ -65,7 +66,8 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
             $this->translator->reveal(),
             $this->deliveryManager->reveal(),
             $this->promotionRepository->reveal(),
-            new NullLogger()
+            new NullLogger(),
+            new NullLoggingUtils()
         );
         $this->orderOptionsProcessor = new OrderOptionsProcessor($this->adjustmentFactory);
 
