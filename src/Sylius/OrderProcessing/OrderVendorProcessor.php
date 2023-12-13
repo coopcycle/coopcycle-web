@@ -3,6 +3,7 @@
 namespace AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Entity\Vendor;
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -20,7 +21,9 @@ class OrderVendorProcessor implements OrderProcessorInterface
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        LoggerInterface $logger)
+        LoggerInterface $logger,
+        private LoggingUtils $loggingUtils
+    )
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -52,11 +55,13 @@ class OrderVendorProcessor implements OrderProcessorInterface
     private function processVendors(OrderInterface $order, \SplObjectStorage $restaurants)
     {
         if (count($restaurants) === 0 && $order->isEmpty()) {
-            $this->logger->debug('Order is empty, skipping');
+            $this->logger->debug(sprintf('Order %s | is empty, skipping',
+                $this->loggingUtils->getOrderId($order)));
             return;
         }
 
-        $this->logger->debug(sprintf('Adding %d vendors to order #%d', count($restaurants), $order->getId()));
+        $this->logger->debug(sprintf('Order %s | Adding %d vendors to order',
+            $this->loggingUtils->getOrderId($order), count($restaurants)));
 
         $originalVendors = new ArrayCollection();
         foreach ($order->getVendors() as $vendor) {
@@ -76,7 +81,8 @@ class OrderVendorProcessor implements OrderProcessorInterface
         foreach ($originalVendors as $vendor) {
             // Make sure $vendor is already managed by Doctrine
             if ($this->entityManager->contains($vendor) && !$restaurants->contains($vendor->getRestaurant())) {
-                $this->logger->debug('Removing vendor from order');
+                $this->logger->debug(sprintf('Order %s | Removing vendor from order',
+                    $this->loggingUtils->getOrderId($order)));
                 $order->getVendors()->removeElement($vendor);
                 $this->entityManager->remove($vendor);
             }
@@ -85,11 +91,13 @@ class OrderVendorProcessor implements OrderProcessorInterface
 
     private function processVendor(OrderInterface $order, \SplObjectStorage $restaurants): Vendor
     {
-        $this->logger->debug(sprintf('Checking if order #%d needs vendor upgrade/downgrade', $order->getId()));
+        $this->logger->debug(sprintf('Order %s | Checking if order needs vendor upgrade/downgrade',
+            $this->loggingUtils->getOrderId($order)));
 
         $vendor = $order->getVendor();
 
-        $this->logger->debug(sprintf('There are %d vendors in order #%d', count($restaurants), $order->getId()));
+        $this->logger->debug(sprintf('Order %s | There are %d vendors in order',
+            $this->loggingUtils->getOrderId($order), count($restaurants)));
 
         if (count($restaurants) === 0) {
 
@@ -106,12 +114,14 @@ class OrderVendorProcessor implements OrderProcessorInterface
             foreach ($restaurants as $restaurant) {
 
                 if ($vendor->getRestaurant() === $restaurant) {
-                    $this->logger->debug(sprintf('The vendor for order %d is OK, skipping', $order->getId()));
+                    $this->logger->debug(sprintf('Order %s | The vendor for order is OK, skipping',
+                        $this->loggingUtils->getOrderId($order)));
 
                     return $vendor;
                 }
 
-                $this->logger->debug(sprintf('The vendor for order %d is KO, fixing', $order->getId()));
+                $this->logger->debug(sprintf('Order %s | The vendor for order is KO, fixing',
+                    $this->loggingUtils->getOrderId($order)));
 
                 return Vendor::withRestaurant($restaurant);
             }
@@ -134,12 +144,14 @@ class OrderVendorProcessor implements OrderProcessorInterface
             $hub = $hubs->current();
 
             if ($vendor->getHub() === $hub) {
-                $this->logger->debug(sprintf('The vendor for order %d is OK, skipping', $order->getId()));
+                $this->logger->debug(sprintf('Order %s | The vendor for order is OK, skipping',
+                    $this->loggingUtils->getOrderId($order)));
 
                 return $vendor;
             }
 
-            $this->logger->debug(sprintf('The vendor for order %d is KO, fixing', $order->getId()));
+            $this->logger->debug(sprintf('Order %s | The vendor for order is KO, fixing',
+                $this->loggingUtils->getOrderId($order)));
 
             return Vendor::withHub($hub);
         }

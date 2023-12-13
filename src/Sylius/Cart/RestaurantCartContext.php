@@ -2,8 +2,10 @@
 
 namespace AppBundle\Sylius\Cart;
 
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityNotFoundException;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
@@ -52,7 +54,10 @@ final class RestaurantCartContext implements CartContextInterface
         ChannelContextInterface $channelContext,
         RestaurantResolver $resolver,
         AuthorizationCheckerInterface $authorizationChecker,
-        TokenStorageInterface $tokenStorage)
+        TokenStorageInterface $tokenStorage,
+        private LoggerInterface $logger,
+        private LoggingUtils $loggingUtils
+    )
     {
         $this->session = $session;
         $this->orderRepository = $orderRepository;
@@ -118,6 +123,9 @@ final class RestaurantCartContext implements CartContextInterface
             }
 
             $cart = $this->orderFactory->createForRestaurant($restaurant);
+
+            $this->logger->info(sprintf('Order (cart) object created (created_at = %s) | RestaurantCartContext | called by %s',
+                $cart->getCreatedAt()->format(\DateTime::ATOM), $this->loggingUtils->getCaller()));
         }
 
         if (is_null($cart->getCustomer())) {

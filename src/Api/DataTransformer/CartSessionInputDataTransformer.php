@@ -6,6 +6,7 @@ use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use AppBundle\Api\Resource\CartSession;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -14,7 +15,9 @@ class CartSessionInputDataTransformer implements DataTransformerInterface
 {
     public function __construct(
         FactoryInterface $orderFactory,
-        TokenStorageInterface $tokenStorage)
+        TokenStorageInterface $tokenStorage,
+        private LoggerInterface $logger
+    )
     {
         $this->orderFactory = $orderFactory;
         $this->tokenStorage = $tokenStorage;
@@ -49,6 +52,9 @@ class CartSessionInputDataTransformer implements DataTransformerInterface
             $cart->setRestaurant($data->restaurant);
         } else {
             $cart = $this->orderFactory->createForRestaurant($data->restaurant);
+
+            $this->logger->info(sprintf('Order (cart) object created (created_at = %s) | CartSessionInputDataTransformer',
+                $cart->getCreatedAt()->format(\DateTime::ATOM)));
         }
 
         if (null === $cart->getCustomer() && $user = $this->getUserFromToken()) {

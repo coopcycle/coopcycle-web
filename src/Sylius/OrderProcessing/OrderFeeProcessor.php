@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Psr\Log\LoggerInterface;
@@ -30,7 +31,9 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         TranslatorInterface $translator,
         DeliveryManager $deliveryManager,
         PromotionRepositoryInterface $promotionRepository,
-        LoggerInterface $logger)
+        LoggerInterface $logger,
+        private LoggingUtils $loggingUtils
+    )
     {
         $this->adjustmentFactory = $adjustmentFactory;
         $this->translator = $translator;
@@ -64,7 +67,8 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             try {
                 $delivery = $this->getDelivery($order);
             } catch (ShippingAddressMissingException|NoAvailableTimeSlotException $e) {
-                $this->logger->error(sprintf('OrderFeeProcessor | %s', $e->getMessage()));
+                $this->logger->error(sprintf('Order %s | OrderFeeProcessor | error: %s',
+                    $this->loggingUtils->getOrderId($order),  $e->getMessage()));
             }
         }
 
@@ -81,11 +85,12 @@ final class OrderFeeProcessor implements OrderProcessorInterface
                     $contract->getVariableCustomerAmount()
                 );
                 if (null === $customerAmount) {
-                    $this->logger->error('OrderFeeProcessor | customer amount | could not calculate price, falling back to flat price');
+                    $this->logger->error(sprintf('Order %s | OrderFeeProcessor | customer amount | could not calculate price, falling back to flat price',
+                        $this->loggingUtils->getOrderId($order)));
                     $customerAmount = $contract->getCustomerAmount();
                 } else {
-                    $this->logger->info(sprintf('Order #%d | customer amount | price calculated successfully',
-                        $order->getId()));
+                    $this->logger->info(sprintf('Order %s | OrderFeeProcessor | customer amount | price calculated successfully',
+                        $this->loggingUtils->getOrderId($order)));
                 }
             }
         }
@@ -102,11 +107,12 @@ final class OrderFeeProcessor implements OrderProcessorInterface
                     $contract->getVariableDeliveryPrice()
                 );
                 if (null === $businessAmount) {
-                    $this->logger->error('OrderFeeProcessor | business amount | could not calculate price, falling back to flat price');
+                    $this->logger->error(sprintf('Order %s | OrderFeeProcessor | business amount | could not calculate price, falling back to flat price',
+                        $this->loggingUtils->getOrderId($order)));
                     $businessAmount = $contract->getFlatDeliveryPrice();
                 } else {
-                    $this->logger->info(sprintf('Order #%d | business amount | price calculated successfully',
-                        $order->getId()));
+                    $this->logger->info(sprintf('Order %s | OrderFeeProcessor | business amount | price calculated successfully',
+                        $this->loggingUtils->getOrderId($order)));
                 }
             }
         } else {
