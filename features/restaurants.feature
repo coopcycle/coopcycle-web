@@ -96,13 +96,16 @@ Feature: Manage restaurants
           ],
           "specialOpeningHoursSpecification":[],
           "image":@string@,
+          "bannerImage":@string@,
           "fulfillmentMethods":@array@,
           "isOpen":true,
           "hub":null,
           "facets": {
             "@*@": "@*@"
           },
-          "loopeatEnabled":false
+          "loopeatEnabled":false,
+          "tags":@array@,
+          "badges":@array@
         }
       ],
       "hydra:totalItems":1,
@@ -157,6 +160,7 @@ Feature: Manage restaurants
       },
       "telephone":"+33612345678",
       "image":@string@,
+      "bannerImage":@string@,
       "hasMenu":"@string@.startsWith('/api/restaurants/menus')",
       "openingHoursSpecification":[
         {
@@ -180,7 +184,9 @@ Feature: Manage restaurants
       },
       "isOpen":true,
       "hub":null,
-      "loopeatEnabled":false
+      "loopeatEnabled":false,
+      "tags":@array@,
+      "badges":@array@
     }
     """
 
@@ -230,6 +236,7 @@ Feature: Manage restaurants
       },
       "telephone":"+33612345678",
       "image":@string@,
+      "bannerImage":@string@,
       "hasMenu":"@string@.startsWith('/api/restaurants/menus')",
       "openingHoursSpecification":[
         {
@@ -254,7 +261,9 @@ Feature: Manage restaurants
       "isOpen":false,
       "nextOpeningDate":@string@,
       "hub":null,
-      "loopeatEnabled":false
+      "loopeatEnabled":false,
+      "tags":@array@,
+      "badges":@array@
     }
     """
 

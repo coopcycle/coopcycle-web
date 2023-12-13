@@ -1302,3 +1302,9 @@ services:
   AppBundle\Pixabay\Client:
     arguments:
       $lang: "%env(COOPCYCLE_LOCALE)%"
+
+  AppBundle\Assets\PlaceholderImageResolver:
+    arguments:
+      $pixabayApiKey: '%env(PIXABAY_API_KEY)%'
+
+  AppBundle\Utils\RestaurantDecorator: ~

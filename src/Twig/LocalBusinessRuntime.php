@@ -9,6 +9,7 @@ use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\RestaurantDecorator;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,7 +27,8 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
         EntityManagerInterface $entityManager,
-        TimingRegistry $timingRegistry)
+        TimingRegistry $timingRegistry,
+        RestaurantDecorator $restaurantDecorator)
     {
         $this->translator = $translator;
         $this->serializer = $serializer;
@@ -34,6 +36,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         $this->projectCache = $projectCache;
         $this->entityManager = $entityManager;
         $this->timingRegistry = $timingRegistry;
+        $this->restaurantDecorator = $restaurantDecorator;
     }
 
     /**
@@ -178,52 +181,11 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
     public function tags(LocalBusiness $restaurant): array
     {
-        $cacheKey = sprintf('twig.restaurant.%s.tags', $restaurant->getId());
-
-        return $this->projectCache->get($cacheKey, function (ItemInterface $item) use ($restaurant) {
-
-            $item->expiresAfter(60 * 5);
-
-            $tags = [];
-            foreach ($restaurant->getServesCuisine() as $cuisine) {
-                $tags[] = $this->translator->trans($cuisine->getName(), [], 'cuisines');
-            }
-
-            return $tags;
-        });
+        return $this->restaurantDecorator->getTags($restaurant);
     }
 
     public function badges(LocalBusiness $restaurant): array
     {
-        $badges = [];
-
-        if ($restaurant->isExclusive()) {
-            $badges[] = 'exclusive';
-        }
-
-        if ($restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled()) {
-            $badges[] = 'zero-waste';
-        }
-
-        if ($restaurant->supportsEdenred()) {
-            $badges[] = 'edenred';
-        }
-
-        if ($restaurant->isVytalEnabled()) {
-            $badges[] = 'vytal';
-        }
-
-        $newRestaurantIds = $this->projectCache->get('twig.new_restaurants.ids', function (ItemInterface $item) {
-
-            $item->expiresAfter(60 * 60 * 24);
-
-            return $this->repository->findNewRestaurantIds();
-        });
-
-        if (in_array($restaurant->getId(), $newRestaurantIds)) {
-            $badges[] = 'new';
-        }
-
-        return $badges;
+        return $this->restaurantDecorator->getBadges($restaurant);
     }
 }

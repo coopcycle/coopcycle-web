@@ -2,15 +2,14 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\Assets\PlaceholderImageResolver;
 use Aws\S3\Exception\S3Exception;
 use Twig\Extension\RuntimeExtensionInterface;
-use Hashids\Hashids;
 use Intervention\Image\ImageManagerStatic;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
 use League\Flysystem\MountManager;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
-use Liip\ImagineBundle\Imagine\Filter\FilterManager;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -27,9 +26,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         Filesystem $assetsFilesystem,
         UrlGeneratorInterface $urlGenerator,
         CacheInterface $projectCache,
-        FilterManager $filterManager,
-        Hashids $hashids12,
-        string $pixabayApiKey)
+        PlaceholderImageResolver $placeholderImageResolver)
     {
         $this->storage = $storage;
         $this->mountManager = $mountManager;
@@ -38,9 +35,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         $this->assetsFilesystem = $assetsFilesystem;
         $this->urlGenerator = $urlGenerator;
         $this->projectCache = $projectCache;
-        $this->filterManager = $filterManager;
-        $this->hashids12 = $hashids12;
-        $this->isPixabayConfigured = !empty($pixabayApiKey);
+        $this->placeholderImageResolver = $placeholderImageResolver;
     }
 
     public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false, bool $cacheUrl = false): ?string
@@ -110,27 +105,6 @@ class AssetsRuntime implements RuntimeExtensionInterface
             return $url;
         }
 
-        // FIXME Check if Pixabay is configured
-        if (null !== $obj && is_callable([ $obj, 'getId' ]) && $this->isPixabayConfigured) {
-
-            return $this->urlGenerator->generate('placeholder_image', [
-                'filter' => $filter,
-                'hashid'=> $this->hashids12->encode($obj->getId())
-            ]);
-        }
-
-        $filterConfig = $this->filterManager->getFilterConfiguration()->get($filter);
-
-        [$width, $height] = $filterConfig['filters']['thumbnail']['size'];
-
-        if ($provider === 'placehold') {
-            return "//placehold.co/{$width}x{$height}";
-        }
-
-        if ($provider === 'picsum') {
-            $seed = substr(md5(uniqid(mt_rand(), true)), 0, 8);
-
-            return "//picsum.photos/seed/{$seed}/{$width}/{$height}";
-        }
+        return $this->placeholderImageResolver->resolve($filter, $provider, $obj);
     }
 }

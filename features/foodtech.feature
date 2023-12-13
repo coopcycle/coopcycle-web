@@ -593,10 +593,13 @@ Feature: Food Tech
           }
         ],
         "image":@string@,
+        "bannerImage":@string@,
         "isOpen":false,
         "nextOpeningDate":@string@,
         "hub":null,
-        "loopeatEnabled":false
+        "loopeatEnabled":false,
+        "tags":@array@,
+        "badges":@array@
       }
       """
 

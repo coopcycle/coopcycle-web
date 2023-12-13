@@ -54,6 +54,7 @@ Feature: Manage shops
         ],
         "specialOpeningHoursSpecification":[],
         "image":@string@,
+        "bannerImage":@string@,
         "fulfillmentMethods":@array@,
         "potentialAction":{
           "@type":"OrderAction",
@@ -67,6 +68,8 @@ Feature: Manage shops
         },
         "isOpen":true,
         "hub":null,
-        "loopeatEnabled":false
+        "loopeatEnabled":false,
+        "tags":@array@,
+        "badges":@array@
       }
       """
