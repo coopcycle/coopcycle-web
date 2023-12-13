@@ -899,15 +899,22 @@ class RestaurantController extends AbstractController
         $this->orderManager->persist($cart);
         $this->orderManager->flush();
 
+        if ($isExisting) {
+            $this->logger->info(sprintf('Order #%d updated in the database | RestaurantController | triggered by %s',
+                $cart->getId(), $this->loggingUtils->getCaller()));
+        } else {
+            $this->logger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | RestaurantController | triggered by %s',
+                $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId(), $this->loggingUtils->getCaller()));
+        }
+
         // added to debug the issue with multiple delivery fees: https://github.com/coopcycle/coopcycle-web/issues/3929
         $deliveryAdjustments = $cart->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        if (count($deliveryAdjustments) > 1) {
+            $message = sprintf('Order #%d has multiple delivery fees: %d | RestaurantController | triggered by %s',
+                $cart->getId(), count($deliveryAdjustments), $this->loggingUtils->getCaller());
 
-        if ($isExisting) {
-            $this->logger->info(sprintf('Order #%d updated in the database | RestaurantController | deliveryAdjustments: %d | triggered by %s',
-                $cart->getId(), count($deliveryAdjustments),  $this->loggingUtils->getCaller()));
-        } else {
-            $this->logger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | RestaurantController | deliveryAdjustments: %d | triggered by %s',
-                $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId(), count($deliveryAdjustments), $this->loggingUtils->getCaller()));
+            $this->logger->error($message);
+            \Sentry\captureException(new \Exception($message));
         }
     }
 }

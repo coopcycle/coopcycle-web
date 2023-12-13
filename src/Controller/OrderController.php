@@ -737,10 +737,17 @@ class OrderController extends AbstractController
     }
 
     private function logFlushOrder($order): void {
+        $this->logger->info(sprintf('Order #%d updated in the database | OrderController | triggered by %s',
+            $order->getId(),  $this->loggingUtils->getCaller()));
+
         // added to debug the issue with multiple delivery fees: https://github.com/coopcycle/coopcycle-web/issues/3929
         $deliveryAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        if (count($deliveryAdjustments) > 1) {
+            $message = sprintf('Order #%d has multiple delivery fees: %d | OrderController | triggered by %s',
+                $order->getId(), count($deliveryAdjustments), $this->loggingUtils->getCaller());
 
-        $this->logger->info(sprintf('Order #%d updated in the database | OrderController | deliveryAdjustments: %d | triggered by %s',
-            $order->getId(), count($deliveryAdjustments),  $this->loggingUtils->getCaller()));
+            $this->logger->error($message);
+            \Sentry\captureException(new \Exception($message));
+        }
     }
 }
