@@ -62,11 +62,11 @@ const FulfillmentBadge = ({ range, isPreOrder }) => {
 function addFulfillmentBadge(el) {
   $.getJSON(el.dataset.fulfillment).then(data => {
 
-    const isPreOrder = el.dataset.preorder === "1"
-
     if (!data.delivery && !data.collection) {
       return
     }
+
+    const isPreOrder = JSON.parse(el.dataset.preorder)
 
     const ranges = []
     if (data.delivery && data.delivery.range) {

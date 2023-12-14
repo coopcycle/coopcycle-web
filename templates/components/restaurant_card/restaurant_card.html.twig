@@ -25,7 +25,7 @@
 			<h4 class="restaurant-item__title">{{ name is defined and name|trim != "" ? name|u.truncate(48, '…', false) : "Empty name" }}</h4>
 
 			<div
-				class="timing" data-preorder="{{ should_show_pre_order|default(false) }}" data-fulfillment="{{ fulfillment_timing_url is defined ? fulfillment_timing_url : "" }}">
+				class="timing" data-preorder="{{ should_show_pre_order|default(false)|json_encode|e('html_attr') }}" data-fulfillment="{{ fulfillment_timing_url is defined ? fulfillment_timing_url : "" }}">
 				{# Managed with React #}
 				<span class="restaurant-item__time-range"><div class="ssc-line w-50"></div></span>
 			</div>
