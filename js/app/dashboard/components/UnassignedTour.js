@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { connect } from 'react-redux'
 import { withTranslation, useTranslation } from 'react-i18next'
 import { Draggable, Droppable } from "react-beautiful-dnd"
@@ -10,6 +10,7 @@ import { removeTaskFromTour, modifyTour, deleteTour } from '../redux/actions'
 import classNames from 'classnames'
 
 const UnassignedTour = ({ tour, tasks, removeTaskFromTour, isDropDisabled, modifyTour, deleteTour }) => {
+
 
   const { t } = useTranslation(),
         collapseId = `tour-panel-${tour['@id'].replaceAll('/', '-')}`,
@@ -56,6 +57,13 @@ const UnassignedTour = ({ tour, tasks, removeTaskFromTour, isDropDisabled, modif
           await deleteTour(tour, tasks)
           $('.task__draggable').LoadingOverlay('hide')
         }
+      
+    useEffect(() => {
+      if(!tour.items || !tour.items.length) {
+        $(`#${collapseId}`).collapse('show')
+      }
+    }, [tour.items])        
+
 
   return (
     <div className="panel panel-default nomargin task__draggable">
@@ -93,7 +101,7 @@ const UnassignedTour = ({ tour, tasks, removeTaskFromTour, isDropDisabled, modif
             }
         </h4>
       </div>
-      <div id={ `${collapseId}` } className={ !tasks.length ? "panel-collapse collapse in" : "panel-collapse collapse" } role="tabpanel">
+      <div id={ `${collapseId}` } className="panel-collapse collapse" role="tabpanel">
         <Droppable isDropDisabled={isDropDisabled} droppableId={ `unassigned_tour:${tour['@id']}` }>
             {(provided) => (
               <div
