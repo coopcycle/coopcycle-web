@@ -9,6 +9,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Entity\Vendor;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
@@ -39,7 +40,8 @@ class OrderVendorProcessorTest extends TestCase
 
         $this->orderProcessor = new OrderVendorProcessor(
             $this->entityManager->reveal(),
-            new NullLogger()
+            new NullLogger(),
+            new NullLoggingUtils()
         );
     }
 

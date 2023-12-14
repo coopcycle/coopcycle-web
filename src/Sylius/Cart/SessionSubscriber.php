@@ -83,11 +83,11 @@ final class SessionSubscriber implements EventSubscriberInterface
         }
 
         if (null === $cart->getId()) {
-            $this->logger->debug('SessionSubscriber | Cart has not been persisted yet');
+            $this->logger->debug(sprintf('SessionSubscriber | Order (cart) (created_at = %s) has not been persisted yet', $cart->getCreatedAt()->format(\DateTime::ATOM)));
             return;
         }
 
-        $this->logger->debug(sprintf('SessionSubscriber | Saving cart #%d in session', $cart->getId()));
+        $this->logger->debug(sprintf('SessionSubscriber | Order #%d | Saving in session', $cart->getId()));
         $request->getSession()->set($this->sessionKeyName, $cart->getId());
     }
 }

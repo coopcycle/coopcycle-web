@@ -6,6 +6,7 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Api\UrlGeneratorInterface;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -15,7 +16,9 @@ final class CreateSession
         DataPersisterInterface $dataPersister,
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
-        NormalizerInterface $itemNormalizer)
+        NormalizerInterface $itemNormalizer,
+        private LoggerInterface $logger
+    )
     {
         $this->dataPersister = $dataPersister;
         $this->jwtEncoder = $jwtEncoder;
@@ -25,7 +28,18 @@ final class CreateSession
 
     public function __invoke($data)
     {
-        $this->dataPersister->persist($data->cart);
+        $cart = $data->cart;
+        $isExisting = $cart->getId() === null;
+
+        $this->dataPersister->persist($cart);
+
+        if ($isExisting) {
+            $this->logger->info(sprintf('Order #%d updated in the database | CreateSession',
+                $cart->getId()));
+        } else {
+            $this->logger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | CreateSession',
+                $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId()));
+        }
 
         $payload = [
             'sub' => $this->iriConverter->getIriFromItem($data->cart, UrlGeneratorInterface::ABS_URL),
