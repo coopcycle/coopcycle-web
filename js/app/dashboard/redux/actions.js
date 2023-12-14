@@ -193,6 +193,7 @@ export const CREATE_TOUR_REQUEST_SUCCESS = 'CREATE_TOUR_REQUEST_SUCCESS'
 
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
+export const MODIFY_TOUR_REQUEST_ERROR = 'MODIFY_TOUR_REQUEST_ERROR'
 export const UPDATE_TOUR = 'UPDATE_TOUR'
 export const DELETE_TOUR_SUCCESS = 'DELETE_TOUR_SUCCESS'
 
@@ -1563,6 +1564,10 @@ export function modifyTourRequestSuccess(tour, tasks) {
   return { type: MODIFY_TOUR_REQUEST_SUCCESS, tour, tasks }
 }
 
+export function modifyTourRequestError(tour, tasks) {
+  return { type: MODIFY_TOUR_REQUEST_ERROR, tour, tasks }
+}
+
 
 export function createTour(tasks, name, date) {
   return function(dispatch, getState) {
@@ -1593,8 +1598,8 @@ export function createTour(tasks, name, date) {
         tour.itemIds = tour.items.map(item => item['@id'])
 
         dispatch(updateTour(tour))
-        dispatch(closeCreateTourModal())
         dispatch(createTourRequestSuccess())
+        dispatch(closeCreateTourModal())
       })
       .catch(error => {
         // eslint-disable-next-line no-console
@@ -1637,6 +1642,7 @@ export function modifyTour(tour, tasks) {
       .catch(error => {
         // eslint-disable-next-line no-console
         console.error(error)
+        dispatch(modifyTourRequestError(tour))
       })
   }
 }
