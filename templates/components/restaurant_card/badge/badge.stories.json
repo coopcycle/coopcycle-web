@@ -1,5 +1,5 @@
 {
-  "title": "RestaurantCard/1. Badge/Badges",
+  "title": "RestaurantCard/1. Badge/1. Badges",
   "parameters": {
     "server": {
       "url": "http://localhost/storybook/component",
@@ -12,7 +12,7 @@
   "argTypes": {
     "type": {
       "control": "select",
-      "options": ["exclusive", "zero-waste", "edenred", "vytal"]
+      "options": ["exclusive", "zero-waste", "edenred", "vytal", "new"]
     }
   },
   "tags": [],
@@ -36,14 +36,6 @@
     {
       "name": "Edenred",
       "args": { "type": "edenred" }
-    },
-    {
-      "name": "Edenred2",
-      "args": { "type": "edenred2" }
-    },
-    {
-      "name": "Edenred3",
-      "args": { "type": "edenred3" }
     }
   ]
 }

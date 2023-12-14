@@ -1,21 +1,47 @@
 {
-  "title": "RestaurantCard/3. General/RestaurantCard",
+  "title": "RestaurantCard/4. General/RestaurantCard",
   "parameters": {
     "server": {
       "url": "http://localhost/storybook/component",
       "id": "restaurant-card"
     }
   },
-  "args": {
-  },
+  "args": {},
   "argTypes": {
     "name": { "control": "text", "description": "Restaurant name" },
-    "should_show_pre_order": { "control": "boolean" }
+    "description": {
+      "control": "text",
+      "description": "Restaurant description"
+    },
+    "url": { "control": "text", "description": "Restaurant URL" },
+    "image": { "control": "text", "description": "Restaurant logo" },
+    "address": { "control": "text", "description": "Restaurant address" },
+    "should_show_pre_order": {
+      "control": "boolean",
+      "description": "If the restaurant is in pre-order status"
+    },
+    "fulfillment_timing_url": {
+      "control": "text",
+      "description": "Restaurant timing url"
+    },
+    "tags": {
+      "control": "array",
+      "description": "Restaurant tags"
+    }
+  },
+  "badges": {
+    "control": "select",
+    "options": ["exclusive", "zero-waste", "edenred", "vytal", "new"],
+    "description": "Restaurant badges"
+  },
+  "banner_image": {
+    "control": "text",
+    "description": "Restaurant banner"
   },
   "tags": ["autodocs"],
   "stories": [
     {
-      "name": "Default",
+      "name": "Basic",
       "args": {
         "name": "Lorem ipsum",
         "description": "Lorem ipsumLorem ipsum Lorem ipsumLorem ipsumLorem ipsum Lorem ipsum",
