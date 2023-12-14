@@ -5,15 +5,6 @@
 
 			<div class="restaurant-banner">
 				<img src="{{ banner_image|default(null)|placeholder_image('restaurant_banner') }}" alt="{{ name is defined ? name ~ "'s banner" : "banner" }}">
-				{% if should_show_pre_order|default(false) %}
-					<figcaption class="w-100 h-100 position-absolute">
-						<div class="w-100 h-100 position-absolute bg-dark" style="opacity: 0.5;"></div>
-						<div class="w-100 h-100 position-absolute text-white font-weight-bold d-flex flex-column justify-content-center align-items-center p-5">
-							<i class="fa fa-clock-o"></i>
-							<span>{{ 'restaurants.pre_order'|trans }}</span>
-						</div>
-					</figcaption>
-				{% endif %}
 			</div>
 
 			<div class="restaurant-logo">
@@ -34,16 +25,9 @@
 			<h4 class="restaurant-item__title">{{ name is defined and name|trim != "" ? name|u.truncate(48, '…', false) : "Empty name" }}</h4>
 
 			<div
-				class="timing" data-fulfillment="{{ fulfillment_timing_url is defined ? fulfillment_timing_url : "" }}">
+				class="timing" data-preorder="{{ should_show_pre_order|default(false) }}" data-fulfillment="{{ fulfillment_timing_url is defined ? fulfillment_timing_url : "" }}">
 				{# Managed with React #}
-				<span class="restaurant-item__time-range">
-					<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="44" height="44" viewbox="0 0 24 24" stroke-width="2" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
-						<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-						<path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"/>
-						<path d="M12 7v5l3 3"/>
-					</svg>
-					<div class="ssc-line w-50"></div>
-				</span>
+				<span class="restaurant-item__time-range"><div class="ssc-line w-50"></div></span>
 			</div>
 
 			<div class="details">
