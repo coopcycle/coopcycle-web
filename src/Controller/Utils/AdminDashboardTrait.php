@@ -16,6 +16,7 @@ use AppBundle\Entity\TaskImage;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Task\RecurrenceRule as TaskRecurrenceRule;
+use AppBundle\Entity\Tour;
 use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
@@ -127,6 +128,10 @@ trait AdminDashboardTrait
             ->getRepository(TaskList::class)
             ->findByDate($date);
 
+        $tours = $this->getDoctrine()
+            ->getRepository(Tour::class)
+            ->findByDate($date);
+
         $allTasksNormalized = array_map(function (Task $task) {
             return $this->get('serializer')->normalize($task, 'jsonld', [
                 'resource_class' => Task::class,
@@ -144,6 +149,15 @@ trait AdminDashboardTrait
                 'groups' => ['task_collection']
             ]);
         }, $taskLists);
+
+        $toursNormalized = array_map(function (Tour $tour) {
+            return $this->get('serializer')->normalize($tour, 'jsonld', [
+                'resource_class' => Tour::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['task_collection']
+            ]);
+        }, $tours);
 
         $couriers = $this->getDoctrine()
             ->getRepository(User::class)
@@ -206,6 +220,7 @@ trait AdminDashboardTrait
             'couriers' => $couriers,
             'all_tasks' => $allTasksNormalized,
             'task_lists' => $taskListsNormalized,
+            'tours' => $toursNormalized,
             'task_export_form' => $taskExportForm->createView(),
             'tags' => $tagManager->getAllTags(),
             'jwt' => $jwtManager->create($this->getUser()),

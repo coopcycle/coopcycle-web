@@ -19,7 +19,18 @@ class TourNormalizer implements NormalizerInterface
 
     private function flattenItems(array $items)
     {
-        return array_values(array_map(fn ($item) => $item['task']['@id'], $items));
+        return array_values(array_map(function ($item) {
+
+            if (!is_array($item['task'])) {
+
+                return $item;
+            }
+
+            $position = $item['position'];
+            $task = $item['task'];
+
+            return array_merge($task, ['position' => $position]);
+        }, $items));
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -29,6 +40,8 @@ class TourNormalizer implements NormalizerInterface
         if (isset($data['items'])) {
             $data['items'] = $this->flattenItems($data['items']);
         }
+
+        $data['name'] = $object->getName();
 
         return $data;
     }

@@ -91,8 +91,9 @@ const DynamicMenu = ({
         actions.push(REMOVE_FROM_GROUP)
       }
 
+      actions.push(CREATE_TOUR)
+
       if (containsOnePickupAndAtLeastOneDropoff) {
-        actions.push(CREATE_TOUR)
         if (!containsOnlyLinkedTasks) {
           actions.push(CREATE_DELIVERY)
         }

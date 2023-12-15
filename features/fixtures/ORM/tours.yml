@@ -1,6 +1,7 @@
 AppBundle\Entity\Tour:
   tour_1:
     name: Foo
+    date: <identity(new \DateTime('2018-03-02 12:00:00'))>
     tasks:
       - '@task_1'
       - '@task_2'

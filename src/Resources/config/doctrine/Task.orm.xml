@@ -91,7 +91,7 @@
     </many-to-one>
     <many-to-one field="tour" target-entity="AppBundle\Entity\Tour">
       <join-columns>
-        <join-column name="tour_id" referenced-column-name="id"/>
+        <join-column name="tour_id" referenced-column-name="id" />
       </join-columns>
     </many-to-one>
     <entity-listeners>

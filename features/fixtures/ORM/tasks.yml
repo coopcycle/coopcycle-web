@@ -78,6 +78,7 @@ AppBundle\Entity\Task:
 AppBundle\Entity\Tour:
   tour_1:
     name: "Example tour"
+    date: <identity(new \DateTime('2018-03-02 12:00:00'))>
     __calls:
       - addTask: [ "@task_1" ]
       - addTask: [ "@task_2" ]

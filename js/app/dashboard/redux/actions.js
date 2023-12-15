@@ -14,7 +14,8 @@ import {
   enableUnassignedTourTasksDroppable,
   disableUnassignedTourTasksDroppable,
 } from '../../coopcycle-frontend-js/logistics/redux'
-import { selectNextWorkingDay, selectSelectedTasks, selectUnassignedTours } from './selectors'
+import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
+import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
 
 function createClient(dispatch) {
 
@@ -187,8 +188,14 @@ export const CLOSE_CREATE_TOUR_MODAL = 'CLOSE_CREATE_TOUR_MODAL'
 export const OPEN_TASK_RESCHEDULE_MODAL = 'OPEN_TASK_RESCHEDULE_MODAL'
 export const CLOSE_TASK_RESCHEDULE_MODAL = 'CLOSE_TASK_RESCHEDULE_MODAL'
 
+export const CREATE_TOUR_REQUEST = 'CREATE_TOUR_REQUEST'
+export const CREATE_TOUR_REQUEST_SUCCESS = 'CREATE_TOUR_REQUEST_SUCCESS'
+
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
+export const MODIFY_TOUR_REQUEST_ERROR = 'MODIFY_TOUR_REQUEST_ERROR'
+export const UPDATE_TOUR = 'UPDATE_TOUR'
+export const DELETE_TOUR_SUCCESS = 'DELETE_TOUR_SUCCESS'
 
 export const SET_TOURS_ENABLED = 'SET_TOURS_ENABLED'
 
@@ -543,6 +550,10 @@ export function updateTask(task) {
       dispatch(removeTask(task))
     }
   }
+}
+
+export function updateTour(tour) {
+  return {type: UPDATE_TOUR, tour}
 }
 
 export function createTask(task) {
@@ -1537,20 +1548,34 @@ export function closeTaskRescheduleModal() {
   return { type: CLOSE_TASK_RESCHEDULE_MODAL }
 }
 
+export function createTourRequest() {
+  return { type: CREATE_TOUR_REQUEST }
+}
+
+export function createTourRequestSuccess() {
+  return { type: CREATE_TOUR_REQUEST_SUCCESS }
+}
+
 export function modifyTourRequest(tour, tasks) {
   return { type: MODIFY_TOUR_REQUEST, tour, tasks }
 }
 
-export function modifyTourRequestSuccess(tour) {
-  return { type: MODIFY_TOUR_REQUEST_SUCCESS, tour }
+export function modifyTourRequestSuccess(tour, tasks) {
+  return { type: MODIFY_TOUR_REQUEST_SUCCESS, tour, tasks }
+}
+
+export function modifyTourRequestError(tour, tasks) {
+  return { type: MODIFY_TOUR_REQUEST_ERROR, tour, tasks }
 }
 
 
-export function createTour(tasks, name) {
-
+export function createTour(tasks, name, date) {
   return function(dispatch, getState) {
 
     const { jwt } = getState()
+
+    dispatch(createTourRequest())
+
 
     createClient(dispatch).request({
       method: 'post',
@@ -1558,6 +1583,7 @@ export function createTour(tasks, name) {
       data: {
         name,
         tasks: _.map(tasks, t => t['@id']),
+        date: date.format('YYYY-MM-DD'),
       },
       headers: {
         'Authorization': `Bearer ${jwt}`,
@@ -1567,12 +1593,18 @@ export function createTour(tasks, name) {
     })
       .then((response) => {
         tasks.forEach(task => dispatch(updateTask({ ...task, tour: response.data })))
+        // flatten items to itmIds
+        let tour = {...response.data}
+        tour.itemIds = tour.items.map(item => item['@id'])
+
+        dispatch(updateTour(tour))
+        dispatch(createTourRequestSuccess())
         dispatch(closeCreateTourModal())
       })
       .catch(error => {
         // eslint-disable-next-line no-console
         console.log(error)
-        dispatch(closeCreateDeliveryModal())
+        dispatch(closeCreateTourModal())
       })
   }
 }
@@ -1589,6 +1621,7 @@ export function modifyTour(tour, tasks) {
       method: 'put',
       url: tour['@id'],
       data: {
+        name: tour.name,
         tasks: _.map(tasks, t => t['@id'])
       },
       headers: {
@@ -1597,11 +1630,47 @@ export function modifyTour(tour, tasks) {
         'Content-Type': 'application/ld+json'
       }
     })
-      .then(res => dispatch(modifyTourRequestSuccess(res.data)))
+      .then(res => {
+        let _tour = res.data
+        // TODO: do this in the backend?
+        _tour.itemIds = _tour.items.map(item => item['@id'])
+        
+        dispatch(updateTour(_tour))
+        dispatch(modifyTourRequestSuccess(_tour, tasks))
+        return _tour
+      })
       .catch(error => {
         // eslint-disable-next-line no-console
         console.error(error)
+        dispatch(modifyTourRequestError(tour))
       })
+  }
+}
+
+export function deleteTourSuccess(tour) {
+  return { type: DELETE_TOUR_SUCCESS, tour }
+}
+
+export function deleteTour(tour) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    let resourceId = tour['@id'];
+
+    createClient(dispatch).request({
+      method: 'delete',
+      url: resourceId,
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+      .then(() => dispatch(deleteTourSuccess(resourceId)))
+      // eslint-disable-next-line no-console
+      .catch(error => console.log(error))
   }
 }
 
