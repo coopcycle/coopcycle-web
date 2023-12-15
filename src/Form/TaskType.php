@@ -67,9 +67,7 @@ class TaskType extends AbstractType
                 'required' => false,
                 'attr' => ['rows' => '2', 'placeholder' => 'form.task.comments.placeholder']
             ])
-        ->add('imported_from', TextareaType::class, [
-            'mapped' => false,
-        ]);
+        ->add('imported_from');
 
         if (null !== $options['with_time_slot']
         && null !== $options['with_time_slots']
