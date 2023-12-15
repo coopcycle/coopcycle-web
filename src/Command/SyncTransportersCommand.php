@@ -50,6 +50,7 @@ class SyncTransportersCommand extends Command {
         private SettingsManager $settingsManager,
         private Geocoder $geocoder,
         private PhoneNumberUtil $phoneUtil,
+        private Filesystem $edifactFs
     )
     {
         parent::__construct();
@@ -125,6 +126,9 @@ class SyncTransportersCommand extends Command {
                     $count++;
                 }
             }
+            $filename = sprintf("%s_%s.%s.edi", "dbshenker", date('Y-m-d_His'), uniqid());
+            $output->writeln("Saving EDI file: $filename...");
+            $this->edifactFs->write($filename, $content);
         }
         $output->writeln("Done syncing, imported $count tasks");
 
@@ -140,8 +144,8 @@ class SyncTransportersCommand extends Command {
             $this->output->writeln("Recipient address: ".$task->getNamesAndAddresses(NameAndAddressType::RECIPIENT)[0]->getAddress());
             $this->output->write("Times: ");
             $this->output->writeln(collect($task->getDates())->map(fn($date) => $date->getEvent()->name . ' -> ' . $date->getDate()->format('d/m/Y'))->join("\n"));
-            $this->output->writeln("Number of packages: ".count($task->getPackages()));
-            $this->output->writeln("Total weight: ".array_sum(array_map(fn(Mesurement $p) => $p->getQuantity() ,$task->getMesurements()))." kg");
+            $this->output->writeln("Number of packages: " . count($task->getPackages()));
+            $this->output->writeln("Total weight: " . array_sum(array_map(fn(Mesurement $p) => $p->getQuantity(), $task->getMesurements()))." kg");
             $this->output->writeln("Comments: ".$task->getComments());
             $this->output->writeln("");
         }
