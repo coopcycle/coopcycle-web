@@ -262,6 +262,11 @@ class LocalBusiness extends BaseLocalBusiness implements
      */
     protected $hub;
 
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $businessRestaurantGroup;
+
     protected $vytalEnabled = false;
 
     protected $enBoitLePlatEnabled = false;
@@ -843,6 +848,16 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setHub(?Hub $hub)
     {
         $this->hub = $hub;
+    }
+
+    public function getBusinessRestaurantGroup(): ?BusinessRestaurantGroup
+    {
+        return $this->businessRestaurantGroup;
+    }
+
+    public function setBusinessRestaurantGroup(?BusinessRestaurantGroup $businessRestaurantGroup)
+    {
+        $this->businessRestaurantGroup = $businessRestaurantGroup;
     }
 
     public function belongsToHub(): bool
