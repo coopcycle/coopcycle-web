@@ -9,6 +9,7 @@ use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Domain\Order\Event\OrderUpdated;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\BusinessRestaurantGroups;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
@@ -356,6 +357,43 @@ class RestaurantController extends AbstractController
 
         return $this->render('restaurant/hub.html.twig', [
             'hub' => $hub,
+            'business_type_filter' => $request->query->get('type'),
+        ]);
+    }
+
+    /**
+     * @Route("/business_restaurant_group/{id}-{slug}", name="business_restaurant_group",
+     *   requirements={
+     *     "id"="(\d+)",
+     *     "slug"="([a-z0-9-]+)"
+     *   },
+     *   defaults={
+     *     "slug"=""
+     *   }
+     * )
+     */
+    public function business_restaurant_groupAction($id, $slug, Request $request,
+        SlugifyInterface $slugify)
+    {
+        $businessRestaurantGroup = $this->getDoctrine()->getRepository(BusinessRestaurantGroup::class)->find($id);
+
+        if (!$businessRestaurantGroup) {
+            throw new NotFoundHttpException();
+        }
+
+        $expectedSlug = $slugify->slugify($businessRestaurantGroup->getName());
+        $redirectToCanonicalRoute = $slug !== $expectedSlug;
+
+        if ($redirectToCanonicalRoute) {
+
+            return $this->redirectToRoute('business_restaurant_group', [
+                'id' => $id,
+                'slug' => $expectedSlug,
+            ], Response::HTTP_MOVED_PERMANENTLY);
+        }
+
+        return $this->render('restaurant/business_restaurant_group.html.twig', [
+            'business_restaurant_group' => $businessRestaurantGroup,
             'business_type_filter' => $request->query->get('type'),
         ]);
     }
