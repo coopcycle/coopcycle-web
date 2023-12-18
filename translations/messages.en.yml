@@ -1190,6 +1190,9 @@ form.business_account.manager.email.help: An invitation email to Coopcycle will 
 form.business_account.manager.email_sent.help: Invitation email to Coopcycle has been sent
 form.business_account.save_and_send_invitation.label: Save and send invitation
 form.business_acount.send_invitation.confirm: Invitation email to Coopcycle has been sent
+adminDashboard.business_restaurant_group_list.title: Business restaurant group list
+adminDashboard.business_restaurant_group.title: Business restaurant group
+adminDashboard.business_restaurant_group.createNew: Create a new business restaurant group
 restaurant.form.edenred_merchant_id.label: Edenred Merchant ID
 restaurant.form.edenred_merchant_id.help: Leave empty to disable Edenred
 restaurants.mode.list: View as list

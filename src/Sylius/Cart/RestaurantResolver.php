@@ -84,13 +84,26 @@ class RestaurantResolver
             return true;
         }
 
-        $hub = $restaurants->first()->getHub();
-
-        if (null === $hub) {
-
+        if (null === $cart->getLocalBusinessGroupVendor()) {
             return $restaurants->first() === $restaurant;
         }
 
-        return $hub === $restaurant->getHub();
+        if ($cart->getLocalBusinessGroupVendor()->isHub()) {
+            return $cart->getLocalBusinessGroupVendor()->getHub() === $restaurant->getHub();
+        }
+
+        if ($cart->getLocalBusinessGroupVendor()->isBusinessRestaurantGroup()) {
+            return $cart->getLocalBusinessGroupVendor()->getBusinessRestaurantGroup() === $restaurant->getBusinessRestaurantGroup();
+        }
+
+        return false;
+        // $hub = $restaurants->first()->getHub();
+
+        // if (null === $hub) {
+
+        //     return $restaurants->first() === $restaurant;
+        // }
+
+        // return $hub === $restaurant->getHub();
     }
 }

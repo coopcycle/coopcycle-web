@@ -1227,6 +1227,9 @@ form.business_account.manager.email.help: Se enviará un link de invitación a C
 form.business_account.manager.email_sent.help: Link de invitación a Coopcycle enviado
 form.business_account.save_and_send_invitation.label: Guardar y enviar invitación
 form.business_acount.send_invitation.confirm: El email de invitación a Coopcycle ha sido enviado
+adminDashboard.business_restaurant_group_list.title: Listado de grupos de restaurantes para empresas
+adminDashboard.business_restaurant_group.title: Group de restaurantes para empresas
+adminDashboard.business_restaurant_group.createNew: Crear un nuevo grupo de restaurantes para empresas
 store.form.section.settings: Ajustes
 stores.address_book: Direcciones guardadas
 form.payment.method.name.label: Método de pago
