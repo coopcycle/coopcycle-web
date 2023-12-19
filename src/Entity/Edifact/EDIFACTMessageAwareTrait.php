@@ -17,6 +17,11 @@ trait EDIFACTMessageAwareTrait
         return $this->edifactMessages;
     }
 
+    public function getImportMessage(): ?EDIFACTMessage
+    {
+        return collect($this->edifactMessages)->filter(fn (EDIFACTMessage $message) => $message->getMessageType() === "SCONTR")->first();
+    }
+
     /**
      * @param mixed $edifactMessages
      */

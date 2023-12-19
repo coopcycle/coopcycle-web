@@ -44,13 +44,21 @@
         {% endif %}
 
         {% if delivery.store is not empty and delivery.store.isDBShenkerEnabled %}
+        {% set importMessage = delivery.getDropoff().getImportMessage() %}
+        {% set ediMessages = delivery.getDropoff().getEdifactMessages() %}
         <div class="panel panel-primary">
           <div class="panel-heading">
             <h3 class="panel-title">DBShenker</h3>
           </div>
           <div class="panel-body">
             This task is tracked by DBShenker<br>
-            Last sync: 5 hours ago
+            <p>{{ importMessage.getReference() }}</p>
+            <h4>Messages</h4>
+            <ol>
+            {% for message in ediMessages %}
+              <li>{{ message.getMessageType() }} @ {{ message.getCreatedAt()|date('Y-m-d H:i:s') }}</li>
+            {% endfor %}
+            </ol>
           </div>
           <div class="panel-footer">
             <button type="button" class="btn btn-primary">Sync</button>
