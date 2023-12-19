@@ -4,23 +4,18 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\BusinessAccountInvitation;
-use AppBundle\Entity\Hub;
-use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\BusinessRestaurantGroup;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as AssertUserWithSameEmailNotExists;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -47,17 +42,18 @@ class BusinessAccountType extends AbstractType
         $builder
             ->add('name', TextType::class, ['label' => 'registration.step.company.name']);
 
-        $hubs = $this->objectManager->getRepository(Hub::class)->findAll();
+        $businessRestaurantGroup = $this->objectManager->getRepository(BusinessRestaurantGroup::class)->findAll();
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
-                ->add('hub', ChoiceType::class, [
-                    'label' => 'form.business_account.hub.label',
-                    'placeholder' => 'form.business_account.hub.placeholder',
-                    'choices' => $hubs,
+                ->add('businessRestaurantGroup', ChoiceType::class, [
+                    'label' => 'form.business_account.businessRestaurantGroup.label',
+                    'placeholder' => 'form.business_account.businessRestaurantGroup.placeholder',
+                    'choices' => $businessRestaurantGroup,
                     'choice_label' => 'name',
                     'expanded' => false,
                     'multiple' => false,
+                    'required' => false,
                 ]);
         } else {
             $builder

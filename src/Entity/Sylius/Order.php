@@ -38,7 +38,6 @@ use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\LocalBusinessGroupVendor;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LoopEat\OrderCredentials;
@@ -481,8 +480,6 @@ class Order extends BaseOrder implements OrderInterface
     protected $loopeatDetails;
 
     protected ?OrderCredentials $loopeatCredentials = null;
-
-    protected $localBusinessGroupVendor;
 
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
@@ -1262,11 +1259,6 @@ class Order extends BaseOrder implements OrderInterface
         return $this->customer->getUser();
     }
 
-    public function getLocalBusinessGroupVendor(): ?LocalBusinessGroupVendor
-    {
-        return $this->localBusinessGroupVendor;
-    }
-
     public function getVendor(): ?Vendor
     {
         if (!$this->hasVendor()) {
@@ -1274,19 +1266,9 @@ class Order extends BaseOrder implements OrderInterface
             return null;
         }
 
-        if (null !== $this->getLocalBusinessGroupVendor()) {
-            if ($this->getLocalBusinessGroupVendor()->isHub()) {
-                return $this->getLocalBusinessGroupVendor()->getHub();
-            } else if ($this->getLocalBusinessGroupVendor()->isBusinessRestaurantGroup()) {
-                return $this->getLocalBusinessGroupVendor()->getBusinessRestaurantGroup();
-            }
-        }
+        $first = $this->getRestaurants()->first();
 
-        return $this->getRestaurants()->first();
-
-        // $first = $this->getRestaurants()->first();
-
-        // return $this->isMultiVendor() ? $first->getHub() : $first;
+        return $this->isMultiVendor() ? $first->getHub() : $first;
     }
 
     public function getItemsGroupedByVendor(): \SplObjectStorage
