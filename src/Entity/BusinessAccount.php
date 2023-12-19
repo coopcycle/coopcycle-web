@@ -9,7 +9,7 @@ class BusinessAccount
     private $id;
     private $name;
     private $address;
-    private $hub;
+    private $businessRestaurantGroup;
     private $employees;
     private $billingAddress;
 
@@ -94,19 +94,19 @@ class BusinessAccount
     /**
      * @return mixed
      */
-    public function getHub()
+    public function getBusinessRestaurantGroup()
     {
-        return $this->hub;
+        return $this->businessRestaurantGroup;
     }
 
     /**
-     * @param mixed $hub
+     * @param mixed $businessRestaurantGroup
      *
      * @return self
      */
-    public function setHub($hub)
+    public function setBusinessRestaurantGroup($businessRestaurantGroup)
     {
-        $this->hub = $hub;
+        $this->businessRestaurantGroup = $businessRestaurantGroup;
 
         return $this;
     }

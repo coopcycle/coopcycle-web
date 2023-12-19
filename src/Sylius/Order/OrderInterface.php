@@ -5,7 +5,6 @@ namespace AppBundle\Sylius\Order;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\LocalBusinessGroupVendor;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Sylius\OrderEvent;
@@ -223,5 +222,4 @@ interface OrderInterface extends
 
     public function getPaymentMethod(): ?string;
 
-    public function getLocalBusinessGroupVendor(): ?LocalBusinessGroupVendor;
 }

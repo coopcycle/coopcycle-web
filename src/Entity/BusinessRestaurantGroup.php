@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 class BusinessRestaurantGroup extends LocalBusinessGroup
 {
     private $cutoffTime;
+    private $businessAccount;
 
     public function getCutoffTime()
     {
@@ -14,6 +15,18 @@ class BusinessRestaurantGroup extends LocalBusinessGroup
     public function setCutoffTime($cutoffTime)
     {
         $this->cutoffTime = $cutoffTime;
+
+        return $this;
+    }
+
+    public function getBusinessAccount()
+    {
+        return $this->businessAccount;
+    }
+
+    public function setBusinessAccount($businessAccount)
+    {
+        $this->businessAccount = $businessAccount;
 
         return $this;
     }
