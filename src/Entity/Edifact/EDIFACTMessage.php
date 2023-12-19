@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity\Edifact;
 
-use AppBundle\Entity\Delivery;
+use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 
 class EDIFACTMessage
@@ -11,21 +11,30 @@ class EDIFACTMessage
 
     const TRANSPORTER_DBSHENKER = 'DBSHENKER';
 
-    private int $id;
+    const DIRECTION_INBOUND = 'INBOUND';
+    const DIRECTION_OUTBOUND = 'OUTBOUND';
 
-    private ?Delivery $delivery;
+    private int $id;
 
     private string $transporter;
 
     private string $reference;
 
+    private string $direction;
+
     private string $messageType;
 
     private ?string $subMessageType;
 
-    private string $ediMessage;
+    private string $edifactFile;
 
     private ?\DateTime $syncedAt;
+
+    private $tasks;
+
+    public function __construct() {
+        $this->tasks = new ArrayCollection();
+    }
 
     public function getId(): int
     {
@@ -35,17 +44,6 @@ class EDIFACTMessage
     public function setId(int $id): EDIFACTMessage
     {
         $this->id = $id;
-        return $this;
-    }
-
-    public function getDelivery(): ?Delivery
-    {
-        return $this->delivery;
-    }
-
-    public function setDelivery(?Delivery $delivery): EDIFACTMessage
-    {
-        $this->delivery = $delivery;
         return $this;
     }
 
@@ -68,6 +66,17 @@ class EDIFACTMessage
     public function setReference(string $reference): EDIFACTMessage
     {
         $this->reference = $reference;
+        return $this;
+    }
+
+    public function getDirection(): string
+    {
+        return $this->direction;
+    }
+
+    public function setDirection(string $direction): EDIFACTMessage
+    {
+        $this->direction = $direction;
         return $this;
     }
 
@@ -95,12 +104,12 @@ class EDIFACTMessage
 
     public function getEdiMessage(): string
     {
-        return $this->ediMessage;
+        return $this->edifactFile;
     }
 
-    public function setEdiMessage(string $ediMessage): EDIFACTMessage
+    public function setEdifactFile(string $file): EDIFACTMessage
     {
-        $this->ediMessage = $ediMessage;
+        $this->edifactFile = $file;
         return $this;
     }
 
@@ -112,6 +121,17 @@ class EDIFACTMessage
     public function setSyncedAt(?\DateTime $syncedAt): EDIFACTMessage
     {
         $this->syncedAt = $syncedAt;
+        return $this;
+    }
+
+    public function getTasks()
+    {
+        return $this->tasks;
+    }
+
+    public function addTask(Task $task): EDIFACTMessage
+    {
+        $this->tasks[] = $task;
         return $this;
     }
 

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity\Edifact;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 trait EDIFACTMessageAwareTrait
 {
 
@@ -18,9 +20,9 @@ trait EDIFACTMessageAwareTrait
     /**
      * @param mixed $edifactMessages
      */
-    public function setEdifactMessages($edifactMessages)
+    public function addEdifactMessage(EDIFACTMessage $edifactMessage): self
     {
-        $this->edifactMessages = $edifactMessages;
+        $this->edifactMessages[] = $edifactMessage;
         return $this;
     }
 
