@@ -135,6 +135,5 @@
         <lifecycle-callback type="preUpdate" method="preUpdate"/>
       </entity-listener>
     </entity-listeners>
-    <many-to-one field="localBusinessGroupVendor" target-entity="AppBundle\Entity\LocalBusinessGroupVendor" />
   </entity>
 </doctrine-mapping>
