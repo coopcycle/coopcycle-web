@@ -51,8 +51,11 @@
             <h3 class="panel-title">DBShenker</h3>
           </div>
           <div class="panel-body">
-            This task is tracked by DBShenker<br>
-            <p>{{ importMessage.getReference() }}</p>
+            <svg class="barcode img-thumbnail img-responsive center-block"
+              jsbarcode-format="code128"
+              jsbarcode-height="60"
+              jsbarcode-value="{{ importMessage.getReference() }}"
+              jsbarcode-textmargin="0" />
             <h4>Messages</h4>
             <ol>
             {% for message in ediMessages %}
