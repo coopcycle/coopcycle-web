@@ -118,19 +118,28 @@ class SyncTransportersCommand extends Command {
 
         $count = 0;
         foreach ($sync->pull() as $content) {
-            $edi = $this->storeEDI($content);
             $messages = DBShenker::parse($content);
+            $filename = sprintf(
+                "%s_%s.%s.edi", "dbshenker",
+                date('Y-m-d_His'), uniqid()
+            );
+
+            if (!$this->dryRun) {
+                $this->edifactFs->write($filename, $content);
+            }
+
             foreach ($messages as $tasks) {
                 foreach ($tasks->getTasks() as $task) {
-                    $this->importTask($task);
+                    $this->importTask($task, $filename);
+                    if($count > 5) {
+                        break;
+                    }
                     $count++;
                 }
             }
-            $filename = sprintf("%s_%s.%s.edi", "dbshenker", date('Y-m-d_His'), uniqid());
-            $output->writeln("Saving EDI file: $filename...");
-            $this->edifactFs->write($filename, $content);
         }
         $output->writeln("Done syncing, imported $count tasks");
+        print_r($this->edifactFs->listContents(""));
 
         return 0;
     }
@@ -138,7 +147,7 @@ class SyncTransportersCommand extends Command {
     // Here we need to check if the address is conform and fillable
     // Translate DBShenker entity into CC entity
     // Save EDIFACT message
-    private function importTask(GR7 $task): void {
+    private function importTask(GR7 $task, string $filename): void {
         if ($this->output->isVerbose()) {
             $this->output->writeln("Task ID: ".$task->getId()."\n");
             $this->output->writeln("Recipient address: ".$task->getNamesAndAddresses(NameAndAddressType::RECIPIENT)[0]->getAddress());
@@ -150,6 +159,12 @@ class SyncTransportersCommand extends Command {
             $this->output->writeln("");
         }
 
+        $edi = new EDIFACTMessage();
+        $edi->setMessageType("SCONTR");
+        $edi->setTransporter(EDIFACTMessage::TRANSPORTER_DBSHENKER);
+        $edi->setDirection(EDIFACTMessage::DIRECTION_INBOUND);
+        $edi->setReference($task->getId());
+        $edi->setEdifactFile($filename);
 
         // PICKUP SETUP
         $pickup = $this->generatePickupTask();
@@ -177,6 +192,7 @@ class SyncTransportersCommand extends Command {
         $CCTask->setAddress($address);
         $CCTask->setComments($task->getComments());
         $CCTask->setMetadata('imported_from', $imported_from);
+        $CCTask->addEdifactMessage($edi);
 
         if ($address->getGeo()->isEqualTo($this->defaultCoordinates)) {
             $this->output->writeln("Address without coordinates: ".$nad->getAddress());
@@ -194,6 +210,8 @@ class SyncTransportersCommand extends Command {
         if (str_contains($task->getProductClass()->name, 'PREMIUM')) {
             $CCTask->setTags('premium');
         }
+
+        //TODO: Maybe add package codes
 
 
         // DELIVERY SETUP
@@ -271,9 +289,14 @@ class SyncTransportersCommand extends Command {
 
     }
 
-    private function storeEDI(string $content): EDIFACTMessage
+    private function storeEDI(string $filename, string $ref): EDIFACTMessage
     {
         $edi = new EDIFACTMessage();
+        $edi->setMessageType("SCONTR");
+        $edi->setReference($ref);
+        $edi->setTransporter(EDIFACTMessage::TRANSPORTER_DBSHENKER);
+        $edi->setDirection(EDIFACTMessage::DIRECTION_OUTBOUND);
+        $edi->setEdifactFile($filename);
         return $edi;
 
     }
