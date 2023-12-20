@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c40d1391b60b443243b90ce127223414",
+    "content-hash": "9238692b0a361cfd72c1c39576bbb1e0",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1261,12 +1261,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:coopcycle/DBSchenkerClient.git",
-                "reference": "d0f45d8d1ccfaf1262a67b8dd0438cb792763db8"
+                "reference": "4d3926dedbe336eee7a66b7da662a064dd28c1d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/d0f45d8d1ccfaf1262a67b8dd0438cb792763db8",
-                "reference": "d0f45d8d1ccfaf1262a67b8dd0438cb792763db8",
+                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/4d3926dedbe336eee7a66b7da662a064dd28c1d6",
+                "reference": "4d3926dedbe336eee7a66b7da662a064dd28c1d6",
                 "shasum": ""
             },
             "require": {
@@ -1293,7 +1293,7 @@
                 "source": "https://github.com/coopcycle/DBSchenkerClient/tree/master",
                 "issues": "https://github.com/coopcycle/DBSchenkerClient/issues"
             },
-            "time": "2023-12-07T12:07:16+00:00"
+            "time": "2023-12-08T17:46:26+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -19231,6 +19231,70 @@
                 }
             ],
             "time": "2023-02-09T06:45:16+00:00"
+        },
+        {
+            "name": "twig/html-extra",
+            "version": "v3.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twigphp/html-extra.git",
+                "reference": "95ceb36e70fa8d07af08cf5135ecbf5e0bd8f386"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twigphp/html-extra/zipball/95ceb36e70fa8d07af08cf5135ecbf5e0bd8f386",
+                "reference": "95ceb36e70fa8d07af08cf5135ecbf5e0bd8f386",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.3",
+                "symfony/mime": "^5.4|^6.0",
+                "twig/twig": "^2.7|^3.0"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "^5.4|^6.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Twig\\Extra\\Html\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                }
+            ],
+            "description": "A Twig extension for HTML",
+            "homepage": "https://twig.symfony.com",
+            "keywords": [
+                "html",
+                "twig"
+            ],
+            "support": {
+                "source": "https://github.com/twigphp/html-extra/tree/v3.7.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/twig/twig",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-07-29T15:34:56+00:00"
         },
         {
             "name": "twig/intl-extra",

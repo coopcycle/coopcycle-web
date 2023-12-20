@@ -58,3 +58,7 @@ services:
   Twig\Extra\Markdown\MarkdownExtension:
     tags:
       - { name: twig.extension }
+
+  Twig\Extra\Html\HtmlExtension:
+    tags:
+      - { name: twig.extension }
