@@ -20,19 +20,35 @@ final class Version20230807105004 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('ALTER TABLE tour ADD date DATE');
-        $this->addSql('CREATE INDEX IDX_6AD1F969AA9E377A ON tour (date)');      
+        $this->addSql('CREATE INDEX IDX_6AD1F969AA9E377A ON tour (date)');
 
-        // Get a Task from each Tour to set Tour's date to Task's `done_after` date. 
-        $stmt = $this->connection->prepare('select distinct on (tour_id) tour_id, id, done_after from task where tour_id is not null;');
+        $tasksStmt = $this->connection->prepare('SELECT t.id, t.done_after FROM task t JOIN task_collection_item i ON i.task_id = t.id WHERE i.parent_id = :tour_id');
+
+        $stmt = $this->connection->prepare('SELECT id FROM tour');
+
         $stmt->execute();
 
-        while ($row = $stmt->fetch()) {
+        while ($tour = $stmt->fetchAssociative()) {
 
-            $date = substr($row['done_after'], 0, 10);
+            $tasksStmt->bindParam('tour_id', $tour['id']);
+            $tasksStmt->execute();
+
+            $dates = [];
+            while ($task = $tasksStmt->fetchAssociative()) {
+                $dates[] = new \DateTime($task['done_after']);
+            }
+
+            $date = array_reduce($dates, function (\DateTime $carry, \DateTime $date) {
+                if ($date < $carry) {
+                    return $date;
+                }
+
+                return $date;
+            }, new \DateTime());
 
             $this->addSql('UPDATE tour SET date = :date WHERE id = :id', [
-                'date' => $date,
-                'id' => $row['tour_id'],
+                'date' => $date->format('Y-m-d'),
+                'id' => $tour['id'],
             ]);
         }
 
