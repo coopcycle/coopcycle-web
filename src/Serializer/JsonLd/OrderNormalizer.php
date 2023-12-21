@@ -125,6 +125,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             $transKey = 'form.checkout_address.reusable_packaging_enabled.label';
             $packagingAmount = $object->getReusablePackagingAmount();
 
+            $packagingPrice = '';
             if ($restaurant->isLoopeatEnabled()) {
                 $transKey = 'form.checkout_address.reusable_packaging_loopeat_enabled.label';
             } elseif ($packagingAmount > 0) {
