@@ -148,7 +148,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['potentialAction'] = [ $enableReusablePackagingAction ];
         }
 
-        if ($object->getRestaurant()->isLoopeatEnabled()) {
+        if (null !== $restaurant && $restaurant->isLoopeatEnabled()) {
             $data['loopeatContext'] = $this->loopeatContextInitializer->initialize($object);
         }
 
