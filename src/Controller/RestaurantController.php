@@ -9,6 +9,7 @@ use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Domain\Order\Event\OrderUpdated;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\BusinessRestaurantGroup;
 use AppBundle\Entity\BusinessRestaurantGroups;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
@@ -372,7 +373,7 @@ class RestaurantController extends AbstractController
      *   }
      * )
      */
-    public function business_restaurant_groupAction($id, $slug, Request $request,
+    public function businessRestaurantGroupAction($id, $slug, Request $request,
         SlugifyInterface $slugify)
     {
         $businessRestaurantGroup = $this->getDoctrine()->getRepository(BusinessRestaurantGroup::class)->find($id);

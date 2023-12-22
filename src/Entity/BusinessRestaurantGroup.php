@@ -37,7 +37,6 @@ class BusinessRestaurantGroup extends LocalBusinessGroup
     public function addRestaurant(LocalBusiness $restaurant)
     {
         if (!$this->restaurants->contains($restaurant)) {
-            $restaurant->setBusinessRestaurantGroup($this);
             $this->restaurants->add($restaurant);
         }
     }
@@ -48,6 +47,16 @@ class BusinessRestaurantGroup extends LocalBusinessGroup
     public function removeRestaurant(LocalBusiness $restaurant): void
     {
         $this->restaurants->removeElement($restaurant);
-        $restaurant->setBusinessRestaurantGroup(null);
+    }
+
+    /**
+     * TODO: should be defined how will be handle i.e. the order pickup address
+     */
+    public function getAddress()
+    {
+        if (count($this->restaurants) > 0) {
+            return $this->restaurants->first->getAddress();
+        }
+        return null;
     }
 }
