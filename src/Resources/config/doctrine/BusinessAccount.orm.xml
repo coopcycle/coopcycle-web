@@ -27,5 +27,10 @@
         <join-column name="billing_address_id" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
+    <one-to-many field="orders" target-entity="Sylius\Component\Order\Model\OrderInterface" mapped-by="businessAccount">
+      <cascade>
+        <cascade-all />
+      </cascade>
+    </one-to-many>
   </entity>
 </doctrine-mapping>

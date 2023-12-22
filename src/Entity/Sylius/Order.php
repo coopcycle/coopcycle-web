@@ -36,6 +36,7 @@ use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
 use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
@@ -470,6 +471,8 @@ class Order extends BaseOrder implements OrderInterface
     protected $loopeatDetails;
 
     protected ?OrderCredentials $loopeatCredentials = null;
+
+    protected $businessAccount;
 
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
@@ -1256,6 +1259,10 @@ class Order extends BaseOrder implements OrderInterface
             return null;
         }
 
+        if (null !== $this->getBusinessAccount()) {
+            return $this->getBusinessAccount()->getBusinessRestaurantGroup();
+        }
+
         $first = $this->getRestaurants()->first();
 
         return $this->isMultiVendor() ? $first->getHub() : $first;
@@ -1720,5 +1727,15 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return false;
+    }
+
+    public function getBusinessAccount(): ?BusinessAccount
+    {
+        return $this->businessAccount;
+    }
+
+    public function setBusinessAccount(BusinessAccount $businessAccount): void
+    {
+        $this->businessAccount = $businessAccount;
     }
 }
