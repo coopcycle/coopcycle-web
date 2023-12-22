@@ -12,6 +12,7 @@ class BusinessAccount
     private $businessRestaurantGroup;
     private $employees;
     private $billingAddress;
+    private $orders;
 
     /**
      * Only to keep data in form flow
@@ -94,7 +95,7 @@ class BusinessAccount
     /**
      * @return mixed
      */
-    public function getBusinessRestaurantGroup()
+    public function getBusinessRestaurantGroup(): BusinessRestaurantGroup
     {
         return $this->businessRestaurantGroup;
     }
@@ -159,6 +160,26 @@ class BusinessAccount
     public function setDifferentAddressForBilling($differentAddressForBilling)
     {
         $this->differentAddressForBilling = $differentAddressForBilling;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOrders()
+    {
+        return $this->orders;
+    }
+
+    /**
+     * @param mixed $orders
+     *
+     * @return self
+     */
+    public function setOrders($orders)
+    {
+        $this->orders = $orders;
+
         return $this;
     }
 
