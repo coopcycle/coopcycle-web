@@ -47,9 +47,7 @@ final class Version20231219182856 extends AbstractMigration
         $this->addSql('ALTER TABLE hub DROP business_account_id');
         $this->addSql('ALTER TABLE restaurant DROP CONSTRAINT fk_eb95123f5bc85711');
         $this->addSql('DROP INDEX idx_eb95123f5bc85711');
-        $this->addSql('ALTER TABLE restaurant RENAME COLUMN business_account_id TO business_restaurant_group_id');
-        $this->addSql('ALTER TABLE restaurant ADD CONSTRAINT FK_EB95123FC4EC76B FOREIGN KEY (business_restaurant_group_id) REFERENCES business_restaurant_group (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('CREATE INDEX IDX_EB95123FC4EC76B ON restaurant (business_restaurant_group_id)');
+        $this->addSql('ALTER TABLE restaurant DROP COLUMN business_account_id');
     }
 
     public function down(Schema $schema): void

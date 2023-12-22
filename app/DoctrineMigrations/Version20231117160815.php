@@ -32,9 +32,6 @@ final class Version20231117160815 extends AbstractMigration
         $this->addSql('ALTER TABLE hub DROP CONSTRAINT FK_4871CE4D5BC85711');
         $this->addSql('DROP INDEX UNIQ_4871CE4D5BC85711');
         $this->addSql('ALTER TABLE hub DROP business_account_id');
-        $this->addSql('ALTER TABLE restaurant ADD business_account_id INT DEFAULT NULL');
-        $this->addSql('ALTER TABLE restaurant ADD CONSTRAINT fk_eb95123f5bc85711 FOREIGN KEY (business_account_id) REFERENCES business_account (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('CREATE INDEX idx_eb95123f5bc85711 ON restaurant (business_account_id)');
         $this->addSql('ALTER TABLE business_account DROP CONSTRAINT FK_2005EDE96C786081');
         $this->addSql('DROP INDEX UNIQ_2005EDE96C786081');
         $this->addSql('ALTER TABLE business_account DROP hub_id');
