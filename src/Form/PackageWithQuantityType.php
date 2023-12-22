@@ -6,6 +6,7 @@ use AppBundle\Entity\Package;
 use AppBundle\Entity\Package\PackageWithQuantity;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,27 +27,38 @@ class PackageWithQuantityType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $qb= $this->entityManager->getRepository(Package::class)
-                    ->createQueryBuilder('p')
-                    ->andWhere('p.packageSet = :package_set')
-                    ->setParameter('package_set', $options['package_set'])
-                    ->orderBy('p.name', 'ASC');
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
-        $packages = $qb->getQuery()->getResult();
+            $form = $event->getForm();
+            $data = $event->getData();
 
-        $builder
-            ->add('package', EntityType::class, [
-                'class' => Package::class,
-                'choices' => $packages,
-                'label' => 'form.package_with_quantity.package.label',
-                'choice_label' => 'name',
-                'choice_value' => 'name',
-                'placeholder' => 'form.package_with_quantity.package.placeholder',
-                'data' => count($packages) === 1 ? $packages[0] : null,
-            ])
-            ->add('quantity', IntegerType::class, [
-                'label' => 'form.package_with_quantity.quantity.label',
-            ]);
+            $qb = $this->entityManager->getRepository(Package::class)
+                ->createQueryBuilder('p')
+                ->andWhere('p.packageSet = :package_set')
+                ->setParameter('package_set', $options['package_set'])
+                ->orderBy('p.name', 'ASC');
+
+            if (null !== $data) {
+                // This is here to make sure the dropdownn displays something
+                // even if the package set does not contain the package
+                // This can happen if the configured package set has been changed
+                $qb->orWhere('p.id = :package_id');
+                $qb->setParameter('package_id', $data->getPackage()->getId());
+            }
+
+            $form
+                ->add('package', EntityType::class, [
+                    'class' => Package::class,
+                    'choices' => $qb->getQuery()->getResult(),
+                    'label' => 'form.package_with_quantity.package.label',
+                    'choice_label' => 'name',
+                    'choice_value' => 'name',
+                    'placeholder' => 'form.package_with_quantity.package.placeholder',
+                ])
+                ->add('quantity', IntegerType::class, [
+                    'label' => 'form.package_with_quantity.quantity.label',
+                ]);
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver)
