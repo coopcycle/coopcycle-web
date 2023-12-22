@@ -529,6 +529,19 @@ class ProfileController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_LOOPEAT');
 
+        $query = [
+            'measures' => [],
+            'timeDimensions' => [],
+            'order' => [['Loopeat.orderDate','desc']],
+            'dimensions' => [
+                'Loopeat.restaurantName',
+                'Loopeat.orderNumber',
+                'Loopeat.orderDate',
+                'Loopeat.customerEmail',
+                'Loopeat.packagingFee'
+            ],
+        ];
+
         $cubeJsToken = $tokenFactory->createToken();
 
         if ($request->isMethod('POST')) {
@@ -538,7 +551,7 @@ class ProfileController extends AbstractController
                     'Authorization' => $cubeJsToken,
                     'Content-Type' => 'application/json',
                 ],
-                'body' => '{"query":{"measures":[],"timeDimensions":[],"order":[["Loopeat.orderDate","desc"]],"dimensions":["Loopeat.restaurantName","Loopeat.orderNumber","Loopeat.orderDate","Loopeat.customerEmail","Loopeat.grabbedQuantity","Loopeat.returnedQuantity"]}}'
+                'body' => json_encode(['query' => $query])
             ]);
 
             // Need to invoke a method on the Response,
@@ -567,6 +580,7 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/loopeat.html.twig', [
             'cube_token' => $cubeJsToken,
+            'query' => $query,
         ]);
     }
 

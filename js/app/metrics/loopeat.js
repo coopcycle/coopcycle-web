@@ -41,24 +41,7 @@ if (rootElement) {
   const ChartRenderer = () => {
     return (
       <QueryRenderer
-        query={{
-          "measures": [],
-          "timeDimensions": [],
-          "order": [
-            [
-              "Loopeat.orderDate",
-              "desc"
-            ]
-          ],
-          "dimensions": [
-            "Loopeat.restaurantName",
-            "Loopeat.orderNumber",
-            "Loopeat.orderDate",
-            "Loopeat.customerEmail",
-            "Loopeat.grabbedQuantity",
-            "Loopeat.returnedQuantity",
-          ]
-        }}
+        query={ JSON.parse(rootElement.dataset.query) }
         cubejsApi={cubejsApi}
         resetResultSetOnChange={false}
         render={(props) => renderChart({
@@ -70,8 +53,6 @@ if (rootElement) {
               "Loopeat.orderNumber",
               "Loopeat.orderDate",
               "Loopeat.customerEmail",
-              "Loopeat.grabbedQuantity",
-              "Loopeat.returnedQuantity",
             ],
             "y": [],
             "fillMissingDates": true,
