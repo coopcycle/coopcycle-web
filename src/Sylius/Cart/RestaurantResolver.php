@@ -85,7 +85,7 @@ class RestaurantResolver
         }
 
         if (null !== $cart->getBusinessAccount()) {
-            return $cart->getBusinessAccount()->getBusinessRestaurantGroup();
+            return $cart->getBusinessAccount()->getBusinessRestaurantGroup()->getRestaurants()->contains($restaurant);
         }
 
         $hub = $restaurants->first()->getHub();

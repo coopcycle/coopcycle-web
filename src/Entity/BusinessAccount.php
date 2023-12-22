@@ -93,7 +93,7 @@ class BusinessAccount
     }
 
     /**
-     * @return mixed
+     * @return BusinessRestaurantGroup
      */
     public function getBusinessRestaurantGroup(): BusinessRestaurantGroup
     {

@@ -10,6 +10,8 @@ interface Vendor extends ShippingOptionsInterface
 {
     public function getId();
 
+    public function getAddress();
+
     public function getOpeningHours($method = 'delivery');
 
     public function hasClosingRuleFor(\DateTime $date = null, \DateTime $now = null): bool;
