@@ -18,6 +18,7 @@ web_profiler:
     intercept_redirects: false
 
 monolog:
+    channels: ['checkout'] # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
     handlers:
         main:
             type: rotating_file

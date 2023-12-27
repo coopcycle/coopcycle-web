@@ -43,6 +43,7 @@ doctrine:
             pool: doctrine.result_cache_pool
 
 monolog:
+    channels: [ 'checkout' ] # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
     handlers:
         main:
             type: fingers_crossed

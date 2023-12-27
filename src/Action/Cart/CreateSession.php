@@ -17,7 +17,7 @@ final class CreateSession
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         NormalizerInterface $itemNormalizer,
-        private LoggerInterface $logger
+        private LoggerInterface $checkoutLogger
     )
     {
         $this->dataPersister = $dataPersister;
@@ -34,10 +34,10 @@ final class CreateSession
         $this->dataPersister->persist($cart);
 
         if ($isExisting) {
-            $this->logger->info(sprintf('Order #%d updated in the database | CreateSession',
+            $this->checkoutLogger->info(sprintf('Order #%d updated in the database | CreateSession',
                 $cart->getId()));
         } else {
-            $this->logger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | CreateSession',
+            $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | CreateSession',
                 $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId()));
         }
 

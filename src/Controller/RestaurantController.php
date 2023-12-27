@@ -110,7 +110,7 @@ class RestaurantController extends AbstractController
         RestaurantFilter $restaurantFilter,
         private EventBus $eventBus,
         protected JWTTokenManagerInterface $JWTTokenManager,
-        private LoggerInterface $logger,
+        private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils
     )
     {
@@ -900,10 +900,10 @@ class RestaurantController extends AbstractController
         $this->orderManager->flush();
 
         if ($isExisting) {
-            $this->logger->info(sprintf('Order #%d updated in the database | RestaurantController | triggered by %s',
+            $this->checkoutLogger->info(sprintf('Order #%d updated in the database | RestaurantController | triggered by %s',
                 $cart->getId(), $this->loggingUtils->getCaller()));
         } else {
-            $this->logger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | RestaurantController | triggered by %s',
+            $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | RestaurantController | triggered by %s',
                 $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId(), $this->loggingUtils->getCaller()));
         }
 
@@ -913,7 +913,7 @@ class RestaurantController extends AbstractController
             $message = sprintf('Order #%d has multiple delivery fees: %d | RestaurantController | triggered by %s',
                 $cart->getId(), count($deliveryAdjustments), $this->loggingUtils->getCaller());
 
-            $this->logger->error($message);
+            $this->checkoutLogger->error($message);
             \Sentry\captureException(new \Exception($message));
         }
     }

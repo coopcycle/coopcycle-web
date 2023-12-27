@@ -1101,7 +1101,6 @@ services:
       $enabled: "%foodtech_enabled%"
     tags:
       - { name: kernel.event_subscriber }
-      - { name: monolog.logger, channel: checkout }
 
   AppBundle\Utils\OptionsPayloadConverter:
     arguments:
