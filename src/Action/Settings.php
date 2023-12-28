@@ -36,6 +36,7 @@ class Settings
         'currency_code',
         'administrator_email',
         'guest_checkout_enabled',
+        'motto',
     ];
 
     public function __construct(
@@ -107,6 +108,12 @@ class Settings
             $deliveryFormIdHash = $this->hashids12->encode($deliveryFormId);
             $data['default_delivery_form_url'] = $this->router->generate('embed_delivery_start', ['hashid'=> $deliveryFormIdHash], UrlGeneratorInterface::ABSOLUTE_URL);
         }
+
+        $orderConfirmMessage = '';
+        if ($this->assetsFilesystem->has('order_confirm.md')) {
+            $orderConfirmMessage = $assetsFilesystem->read('order_confirm.md');
+        }
+        $data['order_confirm_message'] = $orderConfirmMessage;
         
         if ($request->query->has('format') && 'hash' === $request->query->get('format')) {
             return new JsonResponse(sha1(json_encode($data)));

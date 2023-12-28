@@ -31,6 +31,8 @@ Feature: Settings
         "guest_checkout_enabled":@boolean@,
         "split_terms_and_conditions_and_privacy_policy":@boolean@,
         "average_preparation_time": @number@,
-        "average_shipping_time": @number@
+        "average_shipping_time": @number@,
+        "motto": "@string@||@null@",
+        "order_confirm_message": @string@
       }
       """
