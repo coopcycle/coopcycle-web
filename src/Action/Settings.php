@@ -111,7 +111,7 @@ class Settings
 
         $orderConfirmMessage = '';
         if ($this->assetsFilesystem->has('order_confirm.md')) {
-            $orderConfirmMessage = $assetsFilesystem->read('order_confirm.md');
+            $orderConfirmMessage = $this->assetsFilesystem->read('order_confirm.md');
         }
         $data['order_confirm_message'] = $orderConfirmMessage;
         
