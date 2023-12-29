@@ -18,6 +18,7 @@ class MaintenanceListener
     private $patterns = [
         '#^/login#',
         '#^/api/routing#',
+        '#^/api/settings#',
         '#^/invitation/define-password#',
         '#^/resetting#',
         '#^/js/routing#'
