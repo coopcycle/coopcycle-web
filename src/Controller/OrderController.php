@@ -64,7 +64,7 @@ class OrderController extends AbstractController
         FactoryInterface $orderFactory,
         protected JWTTokenManagerInterface $JWTTokenManager,
         string $sessionKeyName,
-        private LoggerInterface $logger,
+        private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils
     )
     {
@@ -343,6 +343,22 @@ class OrderController extends AbstractController
         ];
 
         $form->handleRequest($request);
+
+        /**
+         * added to debug issues with stripe payment:
+         * https://github.com/coopcycle/coopcycle-web/issues/3688
+         * https://github.com/coopcycle/coopcycle-app/issues/1603
+         */
+        if ($request->isMethod('POST')) {
+            if ($form->isSubmitted()) {
+                $this->checkoutLogger->info(sprintf('Order #%d | OrderController::paymentAction | isSubmitted: true, isValid: %d errors: %s',
+                    $order->getId(), $form->isValid(), json_encode($form->getErrors()->__toString())));
+            } else {
+                $this->checkoutLogger->info(sprintf('Order #%d | OrderController::paymentAction | isSubmitted: false, errors: %s',
+                    $order->getId(), json_encode($form->getErrors()->__toString())));
+            }
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
@@ -383,21 +399,6 @@ class OrderController extends AbstractController
             }
 
             return $this->redirectToOrderConfirm($order);
-        }
-
-        /**
-         * added to debug issues with stripe payment:
-         * https://github.com/coopcycle/coopcycle-web/issues/3688
-         * https://github.com/coopcycle/coopcycle-app/issues/1603
-         */
-        if ($request->isMethod('POST')) {
-            if ($form->isSubmitted()) {
-                $this->logger->info(sprintf('Order #%d | OrderController::paymentAction | isSubmitted: true, isValid: %d errors: %s',
-                    $order->getId(), $form->isValid(), json_encode($form->getErrors()->__toString())));
-            } else {
-                $this->logger->info(sprintf('Order #%d | OrderController::paymentAction | isSubmitted: false, errors: %s',
-                    $order->getId(), json_encode($form->getErrors()->__toString())));
-            }
         }
 
         $parameters['form'] = $form->createView();
@@ -620,7 +621,7 @@ class OrderController extends AbstractController
         $restaurant = $order->getRestaurant();
 
         $cart = $this->orderFactory->createForRestaurant($restaurant);
-        $this->logger->info(sprintf('Order (cart) object created (created_at = %s) | OrderController',
+        $this->checkoutLogger->info(sprintf('Order (cart) object created (created_at = %s) | OrderController',
             $cart->getCreatedAt()->format(\DateTime::ATOM)));
 
         $cart->setCustomer($this->getUser()->getCustomer());
@@ -634,7 +635,7 @@ class OrderController extends AbstractController
         $this->objectManager->persist($cart);
         $this->objectManager->flush();
 
-        $this->logger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | OrderController',
+        $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | OrderController',
             $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId()));
 
         $session->set($this->sessionKeyName, $cart->getId());
@@ -737,7 +738,7 @@ class OrderController extends AbstractController
     }
 
     private function logFlushOrder($order): void {
-        $this->logger->info(sprintf('Order #%d updated in the database | OrderController | triggered by %s',
+        $this->checkoutLogger->info(sprintf('Order #%d updated in the database | OrderController | triggered by %s',
             $order->getId(),  $this->loggingUtils->getCaller()));
 
         // added to debug the issue with multiple delivery fees: https://github.com/coopcycle/coopcycle-web/issues/3929
@@ -746,7 +747,7 @@ class OrderController extends AbstractController
             $message = sprintf('Order #%d has multiple delivery fees: %d | OrderController | triggered by %s',
                 $order->getId(), count($deliveryAdjustments), $this->loggingUtils->getCaller());
 
-            $this->logger->error($message);
+            $this->checkoutLogger->error($message);
             \Sentry\captureException(new \Exception($message));
         }
     }

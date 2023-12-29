@@ -43,6 +43,7 @@ doctrine:
             pool: doctrine.result_cache_pool
 
 monolog:
+    channels: [ 'checkout' ] # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
     handlers:
         main:
             type: fingers_crossed
@@ -85,6 +86,13 @@ monolog:
             level: info
             max_files: 7
             channels: [timing]
+        checkout:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/checkout.%kernel.environment%.log"
+            level: debug
+            formatter: monolog.formatter.json
+            max_files: 7
+            channels: [ checkout ]
         geofencing:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/geofencing.%kernel.environment%.log"

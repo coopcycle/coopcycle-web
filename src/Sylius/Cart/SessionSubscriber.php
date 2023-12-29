@@ -30,12 +30,12 @@ final class SessionSubscriber implements EventSubscriberInterface
         CartContextInterface $cartContext,
         string $sessionKeyName,
         bool $enabled,
-        LoggerInterface $logger = null)
+        LoggerInterface $checkoutLogger = null)
     {
         $this->cartContext = $cartContext;
         $this->sessionKeyName = $sessionKeyName;
         $this->enabled = $enabled;
-        $this->logger = $logger ?? new NullLogger();
+        $this->logger = $checkoutLogger ?? new NullLogger();
     }
 
     /**
@@ -77,13 +77,13 @@ final class SessionSubscriber implements EventSubscriberInterface
         /** @var OrderInterface $cart */
         Assert::isInstanceOf($cart, OrderInterface::class);
 
-        if (!$cart->hasVendor()) {
-            $this->logger->debug('SessionSubscriber | No vendor(s) associated to cart');
+        if (null === $cart->getId()) {
+            $this->logger->debug(sprintf('SessionSubscriber | Order (cart) (created_at = %s) has not been persisted yet', $cart->getCreatedAt()->format(\DateTime::ATOM)));
             return;
         }
 
-        if (null === $cart->getId()) {
-            $this->logger->debug(sprintf('SessionSubscriber | Order (cart) (created_at = %s) has not been persisted yet', $cart->getCreatedAt()->format(\DateTime::ATOM)));
+        if (!$cart->hasVendor()) {
+            $this->logger->debug(sprintf('SessionSubscriber | Order #%d | No vendor(s) associated to cart', $cart->getId()));
             return;
         }
 

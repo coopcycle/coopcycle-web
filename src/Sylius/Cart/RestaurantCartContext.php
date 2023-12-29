@@ -55,7 +55,7 @@ final class RestaurantCartContext implements CartContextInterface
         RestaurantResolver $resolver,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage,
-        private LoggerInterface $logger,
+        private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils
     )
     {
@@ -124,7 +124,7 @@ final class RestaurantCartContext implements CartContextInterface
 
             $cart = $this->orderFactory->createForRestaurant($restaurant);
 
-            $this->logger->info(sprintf('Order (cart) object created (created_at = %s) | RestaurantCartContext | called by %s',
+            $this->checkoutLogger->info(sprintf('Order (cart) object created (created_at = %s) | RestaurantCartContext | called by %s',
                 $cart->getCreatedAt()->format(\DateTime::ATOM), $this->loggingUtils->getCaller()));
         }
 
