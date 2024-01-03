@@ -1257,7 +1257,7 @@ localBusiness.form.business_address.help: This address will be used in receipts
 form.local_business.mercadopago.connected: Connected
 restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 restaurant.form.en_boite_le_plat_enabled.label: Enable En Boîte Le Plat deposit-refund system
-form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'I want <a href="https://enboiteleplat.fr/rennes/" target="_blank">En Boîte Le Plat</a> reusable containers.'
+form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'I want <a href="%url%" target="_blank">En Boîte Le Plat</a> reusable containers.'
 order.cart.donation: Donation
 order.export.heading.nonprofit: Nonprofit
 adminDashboard.nonprofits.createNew: Add a new nonprofit

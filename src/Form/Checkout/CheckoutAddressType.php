@@ -47,7 +47,8 @@ class CheckoutAddressType extends AbstractType
         RequestStack $requestStack,
         DabbaClient $dabbaClient,
         DabbaContext $dabbaContext,
-        bool $nonProfitsEnabled)
+        bool $nonProfitsEnabled,
+        string $enBoitLePlatUrl)
     {
         $this->translator = $translator;
         $this->priceFormatter = $priceFormatter;
@@ -57,6 +58,7 @@ class CheckoutAddressType extends AbstractType
         $this->dabbaClient = $dabbaClient;
         $this->dabbaContext = $dabbaContext;
         $this->nonProfitsEnabled = $nonProfitsEnabled;
+        $this->enBoitLePlatUrl = $enBoitLePlatUrl;
 
         parent::__construct($orderTimeHelper);
     }
@@ -177,6 +179,9 @@ class CheckoutAddressType extends AbstractType
                     $form->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
                         'label' => 'form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label',
+                        'label_translation_parameters' => [
+                            '%url%' => $this->enBoitLePlatUrl
+                        ],
                         'label_html' => true,
                         'attr' => [
                             'data-en-boite-le-plat' => 'true',
