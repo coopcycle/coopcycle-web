@@ -5,17 +5,21 @@ namespace AppBundle\Action\Order;
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsObject;
 use AppBundle\Api\Dto\LoopeatFormat;
 use AppBundle\LoopEat\Client as LoopEatClient;
+use AppBundle\Validator\Constraints\LoopeatStock as AssertLoopeatStock;
 use Sylius\Component\Order\Model\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\ReusablePackaging;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class LoopeatFormats
 {
     public function __construct(
         private NormalizerInterface $normalizer,
-        private LoopEatClient $loopeatClient)
+        private LoopEatClient $loopeatClient,
+        private ValidatorInterface $validator)
     {}
 
     public function __invoke($data)
@@ -37,6 +41,8 @@ class LoopeatFormats
                     continue;
                 }
 
+                $violations = $this->validator->validate($item, new AssertLoopeatStock());
+
                 foreach ($product->getReusablePackagings() as $reusablePackaging) {
 
                     $packagingData = $reusablePackaging->getReusablePackaging()->getData();
@@ -44,11 +50,20 @@ class LoopeatFormats
                     $originalQuantity = ceil($reusablePackaging->getUnits() * $item->getQuantity());
                     $overridenQuantity = $this->getQuantity($data, $item, $reusablePackaging, $reusablePackaging->getReusablePackaging());
 
+                    $missingQuantity = 0;
+                    foreach ($violations as $violation) {
+                        /** @var ConstraintViolation $violation */
+                        if ($violation->getCause() === $reusablePackaging->getReusablePackaging()) {
+                            $missingQuantity = $violation->getInvalidValue();
+                            break;
+                        }
+                    }
+
                     $format->formats[] = [
                         'format_id' => $packagingData['id'],
                         'format_name' => $reusablePackaging->getReusablePackaging()->getName(),
                         'quantity' => $overridenQuantity,
-                        'missing_quantity' => $this->getMissingQuantity($packagingData['id'], $originalQuantity, $restaurantContainers),
+                        'missing_quantity' => $missingQuantity,
                     ];
                 }
 
@@ -77,22 +92,5 @@ class LoopeatFormats
         }
 
         return ceil($reusablePackaging->getUnits() * $item->getQuantity());
-    }
-
-    private function getMissingQuantity($formatId, $expectedQuantity, $restaurantContainers)
-    {
-        $format = current(array_filter($restaurantContainers, function ($format) use ($formatId) {
-            return $format['format_id'] === $formatId;
-        }));
-
-        $quantityInStock = $format['quantity'];
-
-        $restQuantity = $quantityInStock - $expectedQuantity;
-
-        if ($restQuantity >= 0) {
-            return 0;
-        }
-
-        return $restQuantity * -1;
     }
 }

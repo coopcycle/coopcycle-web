@@ -347,6 +347,7 @@ api_platform:
         ApiPlatform\Core\Exception\InvalidArgumentException: 400
         ApiPlatform\Core\Validator\Exception\ValidationException: 400
         AppBundle\Api\Exception\BadRequestHttpException: 400
+        AppBundle\Exception\LoopeatInsufficientStockException: 400
     # see https://github.com/api-platform/core/pull/2721
     messenger:
         enabled: false

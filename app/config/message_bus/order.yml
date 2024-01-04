@@ -47,6 +47,7 @@ services:
     class: AppBundle\Domain\Order\Handler\AcceptOrderHandler
     arguments:
       - '@event_recorder'
+      - '@validator'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\AcceptOrder
