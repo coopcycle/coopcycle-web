@@ -1256,20 +1256,23 @@ export function handleDragEnd(result) {
       return
     }
 
-    const allTasks = selectAllTasks(getState())
+    const allTasks = selectAllTasks(getState()),
+          selectedTasks = selectSelectedTasks(getState())
 
+
+    // handle drop in a tour
     if (destination.droppableId.startsWith('unassigned_tour:')) {
 
       const tours = selectUnassignedTours(getState())
       const tourId = destination.droppableId.replace('unassigned_tour:', '')
       const tour = tours.find(t => t['@id'] == tourId)
 
-      const newTourItems = [ ...tour.items ]
+      let newTourItems = [ ...tour.items ]
 
       // Drop new task into existing tour
       if (source.droppableId === 'unassigned') {
-        const task = _.find(allTasks, t => t['@id'] === result.draggableId)
-        newTourItems.splice(result.destination.index, 0, task)
+        Array.prototype.splice.apply(newTourItems,
+          Array.prototype.concat([ result.destination.index, 0 ], selectedTasks))
       }
 
       // Reorder tasks of existing tour
@@ -1283,8 +1286,8 @@ export function handleDragEnd(result) {
       return
     }
 
+    // handle drop in a tasklist
     const taskLists = selectTaskLists(getState())
-    const selectedTasks = selectSelectedTasks(getState())
 
     const username = destination.droppableId.replace('assigned:', '')
     const taskList = _.find(taskLists, tl => tl.username === username)
