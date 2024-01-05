@@ -21,6 +21,7 @@ import Avatar from '../../components/Avatar'
 import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
 import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
+import ProgressBar from './ProgressBar'
 
 moment.locale($('html').attr('lang'))
 
@@ -82,11 +83,54 @@ class InnerList extends React.Component {
 
 // OPTIMIZATION
 // Use React.memo to avoid re-renders when percentage hasn't changed
-const ProgressBar = React.memo(({ completedTasks, tasks }) => {
+const ProgressBarMemo = React.memo(({
+  completedTasks, inProgressTasks,
+  incidentReported, failureTasks, tasks, t
+}) => {
+
+  const completedPer = completedTasks / tasks * 100
+  const incidentPer = incidentReported / tasks * 100
+  const inProgressPer = inProgressTasks / tasks * 100
+  const failurePer = failureTasks / tasks * 100
+    const title = (
+      <table style={{ width: '100%' }}>
+        <tr>
+          <td style={{ paddingRight: '10px' }}><span style={{ color: '#28a745' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_COMPLETED')}</td>
+          <td style={{ textAlign: 'right' }}>{completedTasks}</td>
+        </tr>
+        <tr>
+          <td style={{ paddingRight: '10px' }}><span style={{ color: '#ffc107' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_INCIDENT_REPORTED')}</td>
+          <td style={{ textAlign: 'right' }}>{incidentReported}</td>
+        </tr>
+        <tr>
+          <td style={{ paddingRight: '10px' }}><span style={{ color: '#dc3545' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_FAILED')}</td>
+          <td style={{ textAlign: 'right' }}>{failureTasks}</td>
+        </tr>
+        <tr>
+          <td style={{ paddingRight: '10px' }}><span style={{ color: '#6c757d' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_IN_PROGRESS')}</td>
+          <td style={{ textAlign: 'right' }}>{inProgressTasks}</td>
+        </tr>
+        <tr>
+          <td>───</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td style={{ paddingRight: '10px' }}>{t('ADMIN_DASHBOARD_TOOLTIP_TOTAL')}</td>
+          <td style={{ textAlign: 'right' }}>{tasks}</td>
+        </tr>
+      </table>
+    )
 
   return (
-    <Tooltip title={ `${completedTasks} / ${tasks}` }>
-      <Progress percent={ Math.round((completedTasks * 100) / tasks) } size="small" />
+    <Tooltip title={title}>
+        <div>
+          <ProgressBar width="100%" height="8" backgroundColor="white" segments={[
+            {value: `${completedPer}%`, color: '#28a745'},
+            {value: `${incidentPer}%`, color: '#ffc107'},
+            {value: `${failurePer}%`, color: '#dc3545'},
+            {value: `${inProgressPer}%`, color: '#6c757d'},
+          ]} />
+        </div>
     </Tooltip>
   )
 })
@@ -110,6 +154,9 @@ class TaskList extends React.Component {
 
     const uncompletedTasks = _.filter(tasks, t => t.status === 'TODO')
     const completedTasks = _.filter(tasks, t => t.status === 'DONE')
+    const inProgressTasks = _.filter(tasks, t => t.status === 'DOING')
+    const failureTasks = _.filter(tasks, t => t.status === 'FAILED')
+    const incidentReported = _.filter(tasks, t => t.failureReason !== null)
 
     const durationFormatted = moment.utc()
       .startOf('day')
@@ -131,7 +178,14 @@ class TaskList extends React.Component {
             </span>
             { tasks.length > 0 && (
             <div style={{ width: '33.3333%' }}>
-              <ProgressBar completedTasks={ completedTasks.length } tasks={ tasks.length } />
+              <ProgressBarMemo
+                  completedTasks={ completedTasks.length }
+                  tasks={ tasks.length }
+                  inProgressTasks={ inProgressTasks.length }
+                  incidentReported={ incidentReported.length }
+                  failureTasks={ failureTasks.length }
+                  t={this.props.t.bind(this)}
+                />
             </div>
             ) }
             <Popconfirm
