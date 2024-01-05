@@ -95,7 +95,7 @@ class BusinessAccount
     /**
      * @return BusinessRestaurantGroup
      */
-    public function getBusinessRestaurantGroup(): BusinessRestaurantGroup
+    public function getBusinessRestaurantGroup(): ?BusinessRestaurantGroup
     {
         return $this->businessRestaurantGroup;
     }
