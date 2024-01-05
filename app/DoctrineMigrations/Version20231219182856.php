@@ -23,7 +23,6 @@ final class Version20231219182856 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_AA077D532576E0FD ON business_restaurant_group (contract_id)');
         $this->addSql('CREATE TABLE business_restaurant_group_restaurant (business_restaurant_group_id INT NOT NULL, restaurant_id INT NOT NULL, PRIMARY KEY(business_restaurant_group_id, restaurant_id))');
         $this->addSql('CREATE INDEX IDX_35D9C1C7C4EC76B ON business_restaurant_group_restaurant (business_restaurant_group_id)');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_35D9C1C7B1E7706E ON business_restaurant_group_restaurant (restaurant_id)');
         $this->addSql('CREATE TABLE business_restaurant_group_closing_rule (business_restaurant_group_id INT NOT NULL, rule_id INT NOT NULL, PRIMARY KEY(business_restaurant_group_id, rule_id))');
         $this->addSql('CREATE INDEX IDX_88A97212C4EC76B ON business_restaurant_group_closing_rule (business_restaurant_group_id)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_88A97212744E0351 ON business_restaurant_group_closing_rule (rule_id)');

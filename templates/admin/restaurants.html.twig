@@ -8,7 +8,7 @@
 
 {% block content %}
 
-<div class="d-flex align-items-center justify-content-between">
+<div class="d-flex flex-column justify-content-between">
   <div class="d-flex align-items-center flex-fill">
     <div id="search-restaurants" class="w-25 mr-4">
       <input type="text" class="form-control">
@@ -23,8 +23,13 @@
       <a href="{{ path('admin_business_accounts') }}" class="btn btn-default mr-4">
         {{ 'adminDashboard.business_accounts.title'|trans }}
       </a>
+      <a href="{{ path('admin_business_restaurant_group_list') }}" class="btn btn-default mr-4">
+        {{ 'adminDashboard.business_restaurant_group.title'|trans }}
+      </a>
     {% endif %}
-    {{ form_start(pledge_form, { attr: { class: 'form-inline d-inline-block border-left pl-4' } }) }}
+  </div>
+  <div class="d-flex align-items-center flex-fill pt-4">
+    {{ form_start(pledge_form, { attr: { class: 'form-inline d-inline-block' } }) }}
       {{ form_widget(pledge_form.enable_restaurant_pledges) }}
       <a href="{{ path('admin_restaurants_pledges') }}" class="btn btn-default ml-4">
         {% trans %}adminDashboard.pledges.title{% endtrans %} <span class="badge">{{ pledge_count }}</span>
@@ -42,10 +47,12 @@
       </a>
     </div>
     {% endif %}
+    <div class="border-left pl-4 ml-4">
+      <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success">
+        <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
+      </a>
+    </div>
   </div>
-  <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success">
-    <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
-  </a>
 </div>
 {% include "admin/pagination.html.twig" %}
 {% include "_partials/restaurant/list.html.twig" %}
