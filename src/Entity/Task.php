@@ -11,6 +11,7 @@ use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Events as TaskEvents;
 use AppBundle\Action\Task\FailureReasons as TaskFailureReasons;
+use AppBundle\Action\Task\Incident as TaskIncident;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
@@ -265,6 +266,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "summary"="Retrieves possible failure reasons for a Task"
  *        }
  *      },
+ *     "task_incident"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/incident",
+ *       "controller"=TaskIncident::class,
+ *       "security"="is_granted('view', object)",
+ *       "openapi_context"={
+ *         "summary"="Creates an incident for a Task"
+ *       }
+ *     },
  *     "task_events"={
  *       "method"="GET",
  *       "path"="/tasks/{id}/events",

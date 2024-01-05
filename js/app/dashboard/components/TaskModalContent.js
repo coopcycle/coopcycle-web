@@ -38,6 +38,7 @@ const itemColor = event => {
   case 'task:cancelled':
     return 'red'
   case 'task:rescheduled':
+  case 'task:incident-reported':
     return 'orange'
   default:
     return 'blue'
