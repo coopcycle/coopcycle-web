@@ -17,7 +17,7 @@ class BusinessRestaurantGroupPriceType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
 
@@ -35,7 +35,7 @@ class BusinessRestaurantGroupPriceType extends AbstractType
                 ]);
         });
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             $businessRestaurantGroupPriceWithTax = $form->getData();
 
