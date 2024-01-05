@@ -114,7 +114,9 @@ services:
     arguments:
       $productAttributeRepository: '@sylius.repository.product_attribute'
       $productAttributeValueFactory: '@sylius.factory.product_attribute_value'
+      $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
       $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
+      $businessAccountEnabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
     tags: [ form.type ]
 
   AppBundle\Form\Checkout\CheckoutAddressType:
@@ -195,6 +197,7 @@ services:
   AppBundle\Form\Type\PriceWithTaxType:
     tags: [ form.type ]
     arguments:
+      $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
       $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
 
   AppBundle\Form\CustomizeType:
@@ -282,4 +285,7 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\LocalBusinessWithMenuType:
+    tags: [ form.type ]
+
+  AppBundle\Form\BusinessRestaurantGroupPriceType:
     tags: [ form.type ]
