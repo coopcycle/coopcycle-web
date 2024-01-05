@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\BusinessRestaurantGroup;
+use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 
 class BusinessRestaurantGroupPriceWithTax
 {

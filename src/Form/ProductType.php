@@ -321,7 +321,7 @@ class ProductType extends AbstractType
 
                 $submitedBusinessRestaurantGroups = new ArrayCollection();
                 foreach ($businessRestaurantGroupPrices as $businessRestaurantGroupPrice) {
-                    $submitedBusinessRestaurantGroups->add($businessRestaurantGroupPrice->getBusinessRestaurantGroup());
+                    $submitedBusinessRestaurantGroups->add($businessRestaurantGroupPrice->getBusinessRestaurantGroup()->getId());
 
                     if (null === $product->getId()) {
                         $this->createAndAddVariantForProduct($product, $businessRestaurantGroupPrice);
@@ -339,7 +339,7 @@ class ProductType extends AbstractType
                 }
 
                 foreach ($businessRestaurantGroups as $businessRestaurantGroup) {
-                    if (!$submitedBusinessRestaurantGroups->contains($businessRestaurantGroup)) {
+                    if (!in_array($businessRestaurantGroup->getId(), $submitedBusinessRestaurantGroups->toArray())) {
                         $variantToRemove = $this->variantResolver->getVariantForBusinessRestaurantGroup($product, $businessRestaurantGroup);
                         $product->removeVariant($variantToRemove);
                     }
