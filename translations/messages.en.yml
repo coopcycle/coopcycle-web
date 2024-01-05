@@ -1428,3 +1428,6 @@ business.account.settings.link: Link with my account
 form.business_restaurant_group.restaurants_with_menu: Restaurants with menu
 form.business_restaurant_group.restaurant: Restaurant
 form.business_restaurant_group.menu: Menu
+form.product.business_restaurant_group.price_definition.label: Define prices for Business Restaurant Groups
+form.product.business_restaurant_group.price_definition.placeholder: Please select one
+business_restaurant_group.label: Business restaurant group
