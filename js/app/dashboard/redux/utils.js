@@ -70,6 +70,7 @@ export const isTaskVisible = (task, filters, date) => {
   const {
     showFinishedTasks,
     showCancelledTasks,
+    showIncidentReportedTasks,
     alwayShowUnassignedTasks,
     tags,
     hiddenCouriers,
@@ -78,6 +79,7 @@ export const isTaskVisible = (task, filters, date) => {
 
   const isFinished = _.includes(['DONE', 'FAILED'], task.status)
   const isCancelled = 'CANCELLED' === task.status
+  const isIncidentReported = task.failureReason != null
 
   if (alwayShowUnassignedTasks && !task.isAssigned) {
     if (!showCancelledTasks && isCancelled) {
@@ -91,6 +93,10 @@ export const isTaskVisible = (task, filters, date) => {
   }
 
   if (!showCancelledTasks && isCancelled) {
+    return false
+  }
+
+  if (!showIncidentReportedTasks && isIncidentReported) {
     return false
   }
 

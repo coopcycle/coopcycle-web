@@ -1634,7 +1634,7 @@ export function modifyTour(tour, tasks) {
         let _tour = res.data
         // TODO: do this in the backend?
         _tour.itemIds = _tour.items.map(item => item['@id'])
-        
+
         dispatch(updateTour(_tour))
         dispatch(modifyTourRequestSuccess(_tour, tasks))
         return _tour

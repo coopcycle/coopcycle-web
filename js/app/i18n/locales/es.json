@@ -55,6 +55,8 @@
         "ADMIN_DASHBOARD_NAV_IMPORT": "Importar",
         "ADMIN_DASHBOARD_NAV_EXPORT": "Exportar",
         "ADMIN_DASHBOARD_NAV_FILTERS": "Filtros",
+        "ADMIN_DASHBOARD_FILTERS_INCIDENT_REPORTED_TASKS": "Tareas con informes de incidentes",
+        "ONLY_SHOW_THESE": "Mostrar solo estos",
         "ADMIN_DASHBOARD_NAV_IMPORT_ERRORS": "Errores de importación",
         "ADMIN_DASHBOARD_TASK_TITLE": "Tarea #{{id}}",
         "ADMIN_DASHBOARD_TASK_TITLE_NEW": "Nueva tarea",
