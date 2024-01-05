@@ -61,6 +61,7 @@ class SyncTransportersCommand extends Command {
         /** @var Store $store */
         $store = $repo->findOneBy(['DBShenkerEnabled' => true]);
         if (is_null($store)) {
+            //TODO: Do not throw to avoid log pollution
             throw new \Exception('No store with transporter connected');
         }
 
@@ -197,6 +198,7 @@ class SyncTransportersCommand extends Command {
         if ($address->getGeo()->isEqualTo($this->defaultCoordinates)) {
             $this->output->writeln("Address without coordinates: ".$nad->getAddress());
             $CCTask->setTags('review-needed');
+            //TODO: Trigger a incident
         }
 
         //TODO: Check if mesurements are in kg

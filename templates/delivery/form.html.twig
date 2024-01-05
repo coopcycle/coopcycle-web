@@ -43,31 +43,7 @@
           {{ form_row(form.vehicle) }}
         {% endif %}
 
-        {% if delivery.store is not empty and delivery.store.isDBShenkerEnabled %}
-        {% set importMessage = delivery.getDropoff().getImportMessage() %}
-        {% set ediMessages = delivery.getDropoff().getEdifactMessages() %}
-        <div class="panel panel-primary">
-          <div class="panel-heading">
-            <h3 class="panel-title">DBShenker</h3>
-          </div>
-          <div class="panel-body">
-            <svg class="barcode img-thumbnail img-responsive center-block"
-              jsbarcode-format="code128"
-              jsbarcode-height="60"
-              jsbarcode-value="{{ importMessage.getReference() }}"
-              jsbarcode-textmargin="0" />
-            <h4>Messages</h4>
-            <ol>
-            {% for message in ediMessages %}
-              <li>{{ message.getMessageType() }} @ {{ message.getCreatedAt()|date('Y-m-d H:i:s') }}</li>
-            {% endfor %}
-            </ol>
-          </div>
-          <div class="panel-footer">
-            <button type="button" class="btn btn-primary">Sync</button>
-          </div>
-        </div>
-        {% endif %}
+        {% include "_partials/delivery/transporter.html.twig" with {delivery: delivery} only %}
 
         {% if not is_new %}
         <div class="alert alert-info">
