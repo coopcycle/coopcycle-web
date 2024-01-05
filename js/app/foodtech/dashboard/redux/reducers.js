@@ -59,6 +59,7 @@ export const initialState = {
   reusablePackagings: {},
   isLoopeatSectionOpen: false,
   loopeatFormats: [],
+  errorMessage: '',
 }
 
 // The "force" parameter is useful for multi vendor orders,
@@ -100,6 +101,7 @@ export default (state = initialState, action = {}) => {
 
     return {
       ...state,
+      errorMessage: '',
       isFetching: true,
     }
 
@@ -108,6 +110,14 @@ export default (state = initialState, action = {}) => {
   case REFUSE_ORDER_REQUEST_FAILURE:
   case DELAY_ORDER_REQUEST_FAILURE:
   case FULFILL_ORDER_REQUEST_FAILURE:
+
+    if (action.payload.response && 400 === action.payload.response.status) {
+      return {
+        ...state,
+        errorMessage: action.payload.response.data['hydra:description'],
+        isFetching: false,
+      }
+    }
 
     return {
       ...state,
@@ -122,6 +132,7 @@ export default (state = initialState, action = {}) => {
 
     return {
       ...state,
+      errorMessage: '',
       isFetching: false,
       orders: replaceOrder(state.orders, action.payload),
       order: null,
@@ -206,6 +217,7 @@ export default (state = initialState, action = {}) => {
       ...state,
       isLoopeatSectionOpen: false,
       loopeatFormats: [],
+      errorMessage: '',
       order: action.payload,
     }
 

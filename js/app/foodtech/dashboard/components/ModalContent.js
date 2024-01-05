@@ -326,7 +326,7 @@ class ModalContent extends React.Component {
 
   render() {
 
-    const { order, itemsGroups, restaurant } = this.props
+    const { order, itemsGroups, restaurant, errorMessage } = this.props
 
     return (
       <div className="panel panel-default">
@@ -366,6 +366,7 @@ class ModalContent extends React.Component {
           { (order.restaurant.loopeatEnabled && order.reusablePackagingEnabled) && this.renderLoopeatSection() }
           <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_TIMELINE') }</h5>
           <Timeline order={ order } />
+          { errorMessage ? <div className="alert alert-danger">{ errorMessage }</div> : null }
           { this.renderButtons() }
         </div>
       </div>
@@ -383,6 +384,7 @@ function mapStateToProps(state) {
     isLoopeatSectionOpen: state.isLoopeatSectionOpen,
     reusablePackagings: state.reusablePackagings,
     loopeatFormats: state.loopeatFormats,
+    errorMessage: state.errorMessage,
   }
 }
 
