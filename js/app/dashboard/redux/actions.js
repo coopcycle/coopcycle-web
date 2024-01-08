@@ -1263,7 +1263,7 @@ export function handleDragEnd(result) {
     // Instead, we should respect the order of the unassigned tasks
 
 
-    // FIXME : if a tour or a group is selected, selectSelectedTasks yields [ undefined ]
+    // FIXME : if a tour or a group is selected, selectSelectedTasks yields [ undefined ] so we test > 1 no > 0
     let selectedTasks = selectSelectedTasks(getState()).length > 1 ? selectSelectedTasks(getState()) : [_.find(allTasks, t => t['@id'] === result.draggableId)]
 
     // we are moving a whole group or tour, override selectedTasks
@@ -1653,9 +1653,10 @@ export function deleteTour(tour) {
 }
 
 export function removeTaskFromTour(tour, task) {
-
-  return function(dispatch) {
-    dispatch(modifyTour(tour, withoutTasks(tour.items, [ task ])))
+  return function(dispatch, getState) {
+    let state = getState()
+    let allTasks = selectAllTasks(state)
+    dispatch(modifyTour(tour, withoutTasks(tour.items, withLinkedTasks([ task ], allTasks))))
   }
 }
 
