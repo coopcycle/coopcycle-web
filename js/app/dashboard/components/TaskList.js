@@ -88,36 +88,38 @@ const ProgressBarMemo = React.memo(({
   incidentReported, failureTasks, tasks, t
 }) => {
 
-  const completedPer = completedTasks / tasks * 100
-  const incidentPer = incidentReported / tasks * 100
-  const inProgressPer = inProgressTasks / tasks * 100
-  const failurePer = failureTasks / tasks * 100
+    const completedPer = completedTasks / tasks * 100
+    const incidentPer = incidentReported / tasks * 100
+    const inProgressPer = inProgressTasks / tasks * 100
+    const failurePer = failureTasks / tasks * 100
     const title = (
       <table style={{ width: '100%' }}>
-        <tr>
-          <td style={{ paddingRight: '10px' }}><span style={{ color: '#28a745' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_COMPLETED')}</td>
-          <td style={{ textAlign: 'right' }}>{completedTasks}</td>
-        </tr>
-        <tr>
-          <td style={{ paddingRight: '10px' }}><span style={{ color: '#ffc107' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_INCIDENT_REPORTED')}</td>
-          <td style={{ textAlign: 'right' }}>{incidentReported}</td>
-        </tr>
-        <tr>
-          <td style={{ paddingRight: '10px' }}><span style={{ color: '#dc3545' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_FAILED')}</td>
-          <td style={{ textAlign: 'right' }}>{failureTasks}</td>
-        </tr>
-        <tr>
-          <td style={{ paddingRight: '10px' }}><span style={{ color: '#6c757d' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_IN_PROGRESS')}</td>
-          <td style={{ textAlign: 'right' }}>{inProgressTasks}</td>
-        </tr>
-        <tr>
-          <td>───</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td style={{ paddingRight: '10px' }}>{t('ADMIN_DASHBOARD_TOOLTIP_TOTAL')}</td>
-          <td style={{ textAlign: 'right' }}>{tasks}</td>
-        </tr>
+        <tbody>
+          <tr>
+            <td style={{ paddingRight: '10px' }}><span style={{ color: '#28a745' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_COMPLETED')}</td>
+            <td style={{ textAlign: 'right' }}>{completedTasks}</td>
+          </tr>
+          <tr>
+            <td style={{ paddingRight: '10px' }}><span style={{ color: '#ffc107' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_INCIDENT_REPORTED')}</td>
+            <td style={{ textAlign: 'right' }}>{incidentReported}</td>
+          </tr>
+          <tr>
+            <td style={{ paddingRight: '10px' }}><span style={{ color: '#dc3545' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_FAILED')}</td>
+            <td style={{ textAlign: 'right' }}>{failureTasks}</td>
+          </tr>
+          <tr>
+            <td style={{ paddingRight: '10px' }}><span style={{ color: '#6c757d' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_IN_PROGRESS')}</td>
+            <td style={{ textAlign: 'right' }}>{inProgressTasks}</td>
+          </tr>
+          <tr>
+            <td>───</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td style={{ paddingRight: '10px' }}>{t('ADMIN_DASHBOARD_TOOLTIP_TOTAL')}</td>
+            <td style={{ textAlign: 'right' }}>{tasks}</td>
+          </tr>
+        </tbody>
       </table>
     )
 
