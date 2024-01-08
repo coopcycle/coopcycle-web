@@ -1275,8 +1275,8 @@ export function handleDragEnd(result) {
         .from(groupEl.querySelectorAll('[data-task-id]'))
         .map(el => _.find(allTasks, t => t['@id'] === el.getAttribute('data-task-id')))
     }
-
-    selectedTasks = withLinkedTasks(selectedTasks, allTasks)
+    
+    selectedTasks = withLinkedTasks(selectedTasks, allTasks, true)
 
     // handle drop in a tour
     if (destination.droppableId.startsWith('unassigned_tour:')) {
