@@ -4,7 +4,7 @@ import moment from 'moment'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
-import { Progress, Tooltip } from 'antd'
+import { Tooltip } from 'antd'
 import Popconfirm from 'antd/lib/popconfirm'
 import {
   AccordionItem,

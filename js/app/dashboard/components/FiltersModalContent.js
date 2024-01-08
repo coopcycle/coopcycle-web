@@ -138,7 +138,7 @@ class FiltersModalContent extends React.Component {
                         defaultChecked={ values.showCancelledTasks }
                         onChange={ (checked) => setFieldValue('showCancelledTasks', checked) } />
                         <button type="button" onClick={() => this._onlyFilter('showCancelledTasks')}
-                          class="btn btn-link">{ this.props.t('ONLY_SHOW_THESE') }</button>
+                          className="btn btn-link">{ this.props.t('ONLY_SHOW_THESE') }</button>
                     </Form.Item>
                     <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_INCIDENT_REPORTED_TASKS') }>
                       <Switch
@@ -147,7 +147,7 @@ class FiltersModalContent extends React.Component {
                         defaultChecked={ values.showIncidentReportedTasks }
                         onChange={ (checked) => setFieldValue('showIncidentReportedTasks', checked) } />
                          <button type="button" onClick={() => this._onlyFilter('showIncidentReportedTasks')}
-                          class="btn btn-link">{ this.props.t('ONLY_SHOW_THESE') }</button>
+                          className="btn btn-link">{ this.props.t('ONLY_SHOW_THESE') }</button>
                     </Form.Item>
                     <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED') }
                       help={
