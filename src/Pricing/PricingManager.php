@@ -71,7 +71,7 @@ class PricingManager
             return null;
         }
 
-        if ($order->isPayed()) {
+        if ($order->isPaid()) {
             $this->logger->info("Order is already payed, skipping");
             return null;
         }
