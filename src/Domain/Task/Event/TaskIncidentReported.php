@@ -12,6 +12,7 @@ class TaskIncidentReported extends Event implements DomainEvent, HasIconInterfac
 
     public function __construct(
         Task $task,
+        private string $reason,
         private ?string $notes = null
     )
     {
@@ -21,6 +22,7 @@ class TaskIncidentReported extends Event implements DomainEvent, HasIconInterfac
     public function toPayload()
     {
         return [
+            'reason' => $this->reason,
             'notes' => $this->notes
         ];
     }

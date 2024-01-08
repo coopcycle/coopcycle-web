@@ -21,7 +21,7 @@ class IncidentHandler
         $notes = $command->getNotes();
         $data = $command->getData();
 
-        $this->eventRecorder->record(new Event\TaskIncidentReported($task, $notes));
+        $this->eventRecorder->record(new Event\TaskIncidentReported($task, $reason, $notes));
         $task->setFailureReason($reason);
     }
 }
