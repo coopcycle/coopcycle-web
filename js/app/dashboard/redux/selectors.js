@@ -43,7 +43,10 @@ export const selectGroups = createSelector(
     const groupsMap = new Map()
     const groups = []
 
-    const tasksWithGroup = filter(unassignedTasks, task => belongsToGroup(task))
+    const tasksWithGroup = filter(
+      unassignedTasks, 
+      task => belongsToGroup(task) && !belongsToTour(task) // if the task is in a tour we don't want it to be displayed in "Unassigned > Group"
+    )
 
     forEach(tasksWithGroup, task => {
       const keys = Array.from(groupsMap.keys())
