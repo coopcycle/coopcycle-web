@@ -1257,13 +1257,26 @@ export function handleDragEnd(result) {
     }
 
     const allTasks = selectAllTasks(getState())
-    let selectedTasks = selectSelectedTasks(getState()).length > 0 ? selectSelectedTasks(getState()) : [_.find(allTasks, t => t['@id'] === result.draggableId)]
 
-    // FIXME Manage linked tasks
     // FIXME
     // The tasks are dropped in the order they were selected
     // Instead, we should respect the order of the unassigned tasks
 
+
+    // FIXME : if a tour or a group is selected, selectSelectedTasks yields [ undefined ]
+    let selectedTasks = selectSelectedTasks(getState()).length > 1 ? selectSelectedTasks(getState()) : [_.find(allTasks, t => t['@id'] === result.draggableId)]
+
+    // we are moving a whole group or tour, override selectedTasks
+    if (result.draggableId.includes('group') || result.draggableId.includes('tour')) {
+
+      const groupEl = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`)
+
+      selectedTasks = Array
+        .from(groupEl.querySelectorAll('[data-task-id]'))
+        .map(el => _.find(allTasks, t => t['@id'] === el.getAttribute('data-task-id')))
+    }
+
+    selectedTasks = withLinkedTasks(selectedTasks, allTasks)
 
     // handle drop in a tour
     if (destination.droppableId.startsWith('unassigned_tour:')) {
@@ -1273,9 +1286,6 @@ export function handleDragEnd(result) {
       const tour = tours.find(t => t['@id'] == tourId)
 
       let newTourItems = [ ...tour.items ]
-
-      // FIXME Manage linked tasks
-      // FIXME Won't work if we both multiselect outside and inside from tour
 
       // Drop new task into existing tour
       if (source.droppableId === 'unassigned') {
@@ -1302,16 +1312,7 @@ export function handleDragEnd(result) {
 
     let newTasksList = [...tasksList.items]
 
-    // we are moving a whole group or tour, override selectedTasks
-    if (result.draggableId.includes('group') || result.draggableId.includes('tour')) {
 
-      const groupEl = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`)
-
-      selectedTasks = Array
-        .from(groupEl.querySelectorAll('[data-task-id]'))
-        .map(el => _.find(allTasks, t => t['@id'] === el.getAttribute('data-task-id')))
-    }
-    
     selectedTasks.forEach((task) => {
       let taskIndex = newTasksList.findIndex((item) => item['@id'] === task['@id'])
       // if the task was already in the tasklist, remove from its original place 
