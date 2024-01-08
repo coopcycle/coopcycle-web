@@ -75,11 +75,23 @@ export const isTaskVisible = (task, filters, date) => {
     tags,
     hiddenCouriers,
     timeRange,
+    onlyFilter,
   } = filters
 
   const isFinished = _.includes(['DONE', 'FAILED'], task.status)
   const isCancelled = 'CANCELLED' === task.status
-  const isIncidentReported = task.failureReason != null
+  const isIncidentReported = task.failureReason !== null
+
+  if (onlyFilter !== null) {
+    switch (onlyFilter) {
+      case 'showCancelledTasks':
+        return isCancelled
+      case 'showIncidentReportedTasks':
+        return isIncidentReported
+      default:
+        return false
+    }
+  }
 
   if (alwayShowUnassignedTasks && !task.isAssigned) {
     if (!showCancelledTasks && isCancelled) {

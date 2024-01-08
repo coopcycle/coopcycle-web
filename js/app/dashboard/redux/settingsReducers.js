@@ -18,6 +18,7 @@ const defaultFilters = {
   tags: [],
   hiddenCouriers: [],
   timeRange: [0, 24],
+  onlyFilter: null,
 }
 
 export const initialState = {

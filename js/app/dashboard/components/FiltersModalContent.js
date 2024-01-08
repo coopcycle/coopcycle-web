@@ -67,6 +67,7 @@ class FiltersModalContent extends React.Component {
       this.props.setFilterValue(key, key == filter)
     })
 
+    this.props.setFilterValue('onlyFilter', filter)
     this.props.closeFiltersModal()
   }
 
