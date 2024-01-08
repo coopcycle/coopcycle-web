@@ -10,7 +10,7 @@ import {
   createTaskListRequest,
   createTaskListSuccess,
   createTaskListFailure,
-  makeSelectTaskListItemsByUsername,
+  // makeSelectTaskListItemsByUsername,
   enableUnassignedTourTasksDroppable,
   disableUnassignedTourTasksDroppable,
 } from '../../coopcycle-frontend-js/logistics/redux'
@@ -1256,8 +1256,13 @@ export function handleDragEnd(result) {
       return
     }
 
-    const allTasks = selectAllTasks(getState()),
-          selectedTasks = selectSelectedTasks(getState())
+    const allTasks = selectAllTasks(getState())
+    let selectedTasks = selectSelectedTasks(getState()).length > 0 ? selectSelectedTasks(getState()) : [_.find(allTasks, t => t['@id'] === result.draggableId)]
+
+    // FIXME Manage linked tasks
+    // FIXME
+    // The tasks are dropped in the order they were selected
+    // Instead, we should respect the order of the unassigned tasks
 
 
     // handle drop in a tour
@@ -1268,6 +1273,9 @@ export function handleDragEnd(result) {
       const tour = tours.find(t => t['@id'] == tourId)
 
       let newTourItems = [ ...tour.items ]
+
+      // FIXME Manage linked tasks
+      // FIXME Won't work if we both multiselect outside and inside from tour
 
       // Drop new task into existing tour
       if (source.droppableId === 'unassigned') {
@@ -1287,69 +1295,35 @@ export function handleDragEnd(result) {
     }
 
     // handle drop in a tasklist
-    const taskLists = selectTaskLists(getState())
+    const tasksLists = selectTaskLists(getState())
 
     const username = destination.droppableId.replace('assigned:', '')
-    const taskList = _.find(taskLists, tl => tl.username === username)
-    const newTasks = [ ...taskList.items ]
+    const tasksList = _.find(tasksLists, tl => tl.username === username)
 
-    const selectTaskListItemsByUsername = makeSelectTaskListItemsByUsername()
-    const taskListItemsByUsername = selectTaskListItemsByUsername(getState(), { username })
+    let newTasksList = [...tasksList.items]
 
-    if (selectedTasks.length > 1) {
-
-      // FIXME Manage linked tasks
-      // FIXME
-      // The tasks are dropped in the order they were selected
-      // Instead, we should respect the order of the unassigned tasks
-
-      Array.prototype.splice.apply(newTasks,
-        Array.prototype.concat([ result.destination.index, 0 ], selectedTasks))
-
-    } else if (result.draggableId.startsWith('group:') || result.draggableId.startsWith('tour:')) {
+    // we are moving a whole group or tour, override selectedTasks
+    if (result.draggableId.includes('group') || result.draggableId.includes('tour')) {
 
       const groupEl = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`)
 
-      const tasksFromGroup = Array
+      selectedTasks = Array
         .from(groupEl.querySelectorAll('[data-task-id]'))
         .map(el => _.find(allTasks, t => t['@id'] === el.getAttribute('data-task-id')))
-
-      Array.prototype.splice.apply(newTasks,
-        Array.prototype.concat([ result.destination.index, 0 ], tasksFromGroup))
-
-    } else {
-
-      // Reorder inside same list
-      if (source.droppableId === destination.droppableId) {
-        const [ removed ] = taskListItemsByUsername.splice(result.source.index, 1);
-        const newTaskListItemsByUsername = [ ...taskListItemsByUsername ]
-        newTaskListItemsByUsername.splice(result.destination.index, 0, removed)
-
-        // Flatten list
-        const flatArray = newTaskListItemsByUsername.reduce((items, item) => {
-          if (item['@type'] === 'Tour') {
-            item.items.forEach(t => items.push(t))
-          } else {
-            items.push(item)
-          }
-          return items
-        }, [])
-
-        newTasks.length = 0; // Clear the array
-        newTasks.push(...flatArray);
-
-      } else {
-        const task = _.find(allTasks, t => t['@id'] === result.draggableId)
-        if (task) {
-          const linkedTasks = withLinkedTasks(task, allTasks)
-          Array.prototype.splice.apply(newTasks,
-            Array.prototype.concat([ result.destination.index, 0 ], linkedTasks))
-        }
-      }
-
     }
+    
+    selectedTasks.forEach((task) => {
+      let taskIndex = newTasksList.findIndex((item) => item['@id'] === task['@id'])
+      // if the task was already in the tasklist, remove from its original place 
+      if ( taskIndex > -1) {
+        newTasksList.splice(taskIndex, 1)
+      }
+    })
 
-    dispatch(modifyTaskList(username, newTasks))
+    // insert all the selected tasks at the destination index
+    newTasksList.splice(result.destination.index, 0, ...selectedTasks)
+
+    dispatch(modifyTaskList(username, newTasksList))
   }
 }
 
