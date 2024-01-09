@@ -3,7 +3,6 @@
 namespace AppBundle\Geography;
 
 use AppBundle\Entity\CityZone;
-use AppBundle\Geography\CityZoneImporter;
 
 class CityZoneImporter
 {
