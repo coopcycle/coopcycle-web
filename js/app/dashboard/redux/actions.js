@@ -1216,7 +1216,8 @@ export function handleDragStart(result) {
   }
 }
 
-export function handleDragEnd(result) {
+// modifyTaskList is passed as argument so we can test this function thanks to dependency injection
+export function handleDragEnd(result, modifyTaskList) {
 
   return function(dispatch, getState) {
 
