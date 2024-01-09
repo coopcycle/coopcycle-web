@@ -10,12 +10,12 @@ import {
   createTaskListRequest,
   createTaskListSuccess,
   createTaskListFailure,
-  // makeSelectTaskListItemsByUsername,
   enableUnassignedTourTasksDroppable,
   disableUnassignedTourTasksDroppable,
 } from '../../coopcycle-frontend-js/logistics/redux'
-import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
+import { selectGroups, selectNextWorkingDay, selectSelectedTasks } from './selectors'
 import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
+import { tourSelectors, taskSelectors } from './selectors'
 
 function createClient(dispatch) {
 
@@ -1267,13 +1267,14 @@ export function handleDragEnd(result) {
     let selectedTasks = selectSelectedTasks(getState()).length > 1 ? selectSelectedTasks(getState()) : [_.find(allTasks, t => t['@id'] === result.draggableId)]
 
     // we are moving a whole group or tour, override selectedTasks
-    if (result.draggableId.includes('group') || result.draggableId.includes('tour')) {
-
-      const groupEl = document.querySelector(`[data-rbd-draggable-id="${result.draggableId}"]`)
-
-      selectedTasks = Array
-        .from(groupEl.querySelectorAll('[data-task-id]'))
-        .map(el => _.find(allTasks, t => t['@id'] === el.getAttribute('data-task-id')))
+    if (result.draggableId.startsWith('group')) {
+      let groupId = result.draggableId.split(':')[1]
+      selectedTasks = selectGroups(getState()).find(g => g.id = groupId).tasks
+    }
+    else if (result.draggableId.startsWith('tour')) {
+      let tourId = result.draggableId.split(':')[1],
+      tour = tourSelectors.selectById(getState(), tourId)
+      selectedTasks = tour.itemIds.map(taskId => taskSelectors.selectById(getState(), taskId))
     }
     
     selectedTasks = withLinkedTasks(selectedTasks, allTasks, true)

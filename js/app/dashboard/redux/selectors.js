@@ -7,13 +7,14 @@ import {
 } from '@reduxjs/toolkit'
 
 import { moment } from '../../coopcycle-frontend-js'
-import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter, taskAdapter } from '../../coopcycle-frontend-js/logistics/redux'
+import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter, taskAdapter, tourAdapter } from '../../coopcycle-frontend-js/logistics/redux'
 import { filter, forEach, find, reduce, map, differenceWith, includes, mapValues } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
 import { taskUtils } from '../../coopcycle-frontend-js/logistics/redux';
 
 const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
-const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
+export const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
+export const tourSelectors = tourAdapter.getSelectors((state) => state.logistics.entities.tours)
 
 export const recurrenceRulesAdapter = createEntityAdapter({
   selectId: (o) => o['@id'],
@@ -300,4 +301,3 @@ export const selectLinkedTasksIds = createSelector(
     return Object.keys(groups)
   }
 )
-
