@@ -204,6 +204,8 @@ export default (state = initialState, action = {}) => {
 
     return {
       ...state,
+      isLoopeatSectionOpen: false,
+      loopeatFormats: [],
       order: action.payload,
     }
 
