@@ -2,6 +2,6 @@
 <br>
 {{ order.vendor.address.postalCode }} {{ order.vendor.address.addressLocality }}
 <br>
-{% if not order.vendor.isHub() and order.vendor.restaurant.telephone %}
-  {{ order.vendor.restaurant.telephone|phone_number_format('NATIONAL') }}
+{% if not order.isMultiVendor() and order.vendor.telephone %}
+  {{ order.vendor.telephone|phone_number_format('NATIONAL') }}
 {% endif %}

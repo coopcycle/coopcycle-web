@@ -5,19 +5,19 @@
 {% endif %}
 <span>
 {% if order.hasVendor() %}
-  {% if order.vendor.isHub() %}
+  {% if order.isMultiVendor() %}
     {% trans with {
         '%name%': order.vendor.name
       } %}order.list.summary.hub.text{% endtrans %}
   {% else %}
-    {% if order.vendor.restaurant.deleted %}
+    {% if order.vendor.deleted %}
       {% trans with {
-        '%restaurant_name%': order.vendor.restaurant.name
+        '%restaurant_name%': order.vendor.name
       } %}order.list.summary.deleted_restaurant.text{% endtrans %}
     {% else %}
       {% trans with {
-        '%restaurant_url%': path(routes.restaurant, { id: order.vendor.restaurant.id }),
-        '%restaurant_name%': order.vendor.restaurant.name
+        '%restaurant_url%': path(routes.restaurant, { id: order.vendor.id }),
+        '%restaurant_name%': order.vendor.name
       } %}order.list.summary.restaurant.text{% endtrans %}
     {% endif %}
     {% if order.notes %}

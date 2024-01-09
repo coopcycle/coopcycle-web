@@ -553,7 +553,7 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $order = $this->prophesize(OrderInterface::class); // new Order();
         $order->hasVendor()->willReturn(true);
-        $order->getVendor()->willReturn(Vendor::withRestaurant($restaurant));
+        $order->getVendor()->willReturn($restaurant);
         $order->isTakeAway()->willReturn(false);
         $order->getItemsTotal()->willReturn(2000);
 

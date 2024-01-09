@@ -61,7 +61,7 @@
     <td class="text-right">{{ order.shippingTimeRange|time_range_for_humans_short }}</td>
     {% if with_reorder ?? false %}
     <td class="text-right">
-      {% if order.hasVendor() and not order.vendor.isHub() and order.vendor.restaurant.enabled %}
+      {% if order.hasVendor() and not order.isMultiVendor() and order.vendor.enabled %}
       <a class="btn btn-sm btn-success" href="{{ path('order_reorder', { hashid: order|hashid(16) }) }}">
         <i class="fa fa-shopping-basket mr-1"></i>
         <span>{{ 'order.list.reorder'|trans }}</span>

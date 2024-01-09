@@ -112,7 +112,7 @@ class SendEmailTest extends TestCase
             ->willReturn($customer->reveal());
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+            ->willReturn($restaurant->reveal());
 
         $this->emailManager
             ->createOrderCreatedMessageForCustomer($order->reveal())
@@ -194,7 +194,7 @@ class SendEmailTest extends TestCase
             ->willReturn($customer->reveal());
         $order
             ->getVendor()
-            ->willReturn(Vendor::withHub($hub));
+            ->willReturn($hub);
         $order
             ->getItems()
             ->willReturn(new ArrayCollection([
@@ -348,7 +348,7 @@ class SendEmailTest extends TestCase
             ->willReturn($customer->reveal());
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant->reveal()));
+            ->willReturn($restaurant->reveal());
 
         $this->emailManager
             ->createOrderCreatedMessageForCustomer($order->reveal())

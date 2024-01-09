@@ -176,7 +176,7 @@ class ShippingDateFilterTest extends TestCase
         $order
             ->getVendor()
             ->willReturn(
-                Vendor::withRestaurant($this->restaurant->reveal())
+                $this->restaurant->reveal()
             );
         $order
             ->getFulfillmentMethod()
