@@ -1394,3 +1394,7 @@ registration.step.company: "Company information"
 registration.step.invitation: "Invite your colleagues"
 registration.flow.next: "Next"
 registration.flow.back: "Back"
+error.404: Page non trouvée.
+error.502: Le serveur a dépassé sa capacité. Veuillez réessayer plus tard.
+error.504: Le serveur a mis trop de temps à répondre.
+error.return_to_homepage: Retourner à la page d'accueil
