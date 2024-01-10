@@ -1413,3 +1413,7 @@ registration.step.company.name: "Name of the company"
 registration.step.invitation.copy.link: "Copy the link below and send it to your collegues"
 registration.step.invitation.copy.button: "Copy the link"
 registration.step.invitation.link.copied: "Copied"
+error.404: Page not found.
+error.502: The server is over capacity. Please try again later.
+error.504: The server took too much time to respond.
+error.return_to_homepage: Return to homepage
