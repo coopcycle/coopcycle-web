@@ -1278,8 +1278,12 @@ export function handleDragEnd(result, modifyTaskList) {
       selectedTasks = tour.itemIds.map(taskId => taskSelectors.selectById(getState(), taskId))
     }
     
-    selectedTasks = withLinkedTasks(selectedTasks, allTasks, true)
-
+    // we want to move linked tasks together only when assigning and adding to a tour
+    // so we can keep fine grained control for reordering at will
+    if (source.droppableId !== destination.droppableId) {
+      selectedTasks =  withLinkedTasks(selectedTasks, allTasks, true)
+    }
+    
     // handle drop in a tour
     if (destination.droppableId.startsWith('unassigned_tour:')) {
 
