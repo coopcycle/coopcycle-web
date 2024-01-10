@@ -6,7 +6,6 @@ import { updateTask, UPDATE_TASK, REMOVE_TASK, handleDragEnd }  from '../actions
 // import * as dashboardActions from '../actions';
 import { storeFixture } from './storeFixture'
 import { ENABLE_UNASSIGNED_TOUR_TASKS_DROPPABLE } from '../../../coopcycle-frontend-js/logistics/redux';
-import { object } from 'prop-types';
 
 
 // https://github.com/dmitry-zaets/redux-mock-store#asynchronous-actions
