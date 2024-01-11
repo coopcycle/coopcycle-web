@@ -2,10 +2,11 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Form\PaymentGateway\StripeType;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Form\PaymentGateway\MercadopagoType;
-use AppBundle\Form\PaymentGateway\StripeType;
+use AppBundle\Form\PaymentGateway\PaygreenType;
 use AppBundle\Form\Type\AutocompleteAdapterType;
 use AppBundle\Form\Type\GeocodingProviderType;
 use Doctrine\ORM\EntityRepository;
@@ -147,8 +148,11 @@ class SettingsType extends AbstractType
         }
 
         $gateway = $this->gatewayResolver->resolve();
-
         switch ($gateway) {
+            case 'paygreen':
+                $builder->add('paygreen', PaygreenType::class, ['mapped' => false]);
+                break;
+
             case 'mercadopago':
                 $builder->add('mercadopago', MercadopagoType::class, ['mapped' => false]);
                 break;

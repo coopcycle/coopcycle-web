@@ -1,0 +1,50 @@
+<h4>{% trans %}form.settings.paygreen.title{% endtrans %}</h4>
+
+<div class="alert alert-info">
+  <i class="fa fa-info-circle"></i> {{ "form.settings.paygreen.help" | trans | raw }}
+</div>
+
+<div class="form-group">
+  <label class="control-label">{% trans %}form.settings.paygreen_client_id_key.label{% endtrans %}</label>
+  <div class="row">
+    <div class="col-md-6">
+      {{ form_widget(form.paygreen.paygreen_test_client_id) }}
+      <span class="help-block">{% trans %}form.settings.paygreen_client_id_key.help{% endtrans %}</span>
+    </div>
+    <div class="col-md-6">
+      {{ form_widget(form.paygreen.paygreen_live_client_id) }}
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="control-label">{% trans %}form.settings.paygreen_secret_key.label{% endtrans %}</label>
+  <div class="row">
+    <div class="col-md-6">
+      {{ form_widget(form.paygreen.paygreen_test_secret) }}
+      <span class="help-block">{% trans %}form.settings.paygreen_secret_key.help{% endtrans %}</span>
+    </div>
+    <div class="col-md-6">
+      {{ form_widget(form.paygreen.paygreen_live_secret) }}
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-danger">
+  <i class="fa fa-warning"></i> {{ 'form.paygreen_livemode.enable.label'|trans }}
+  <div class="pull-right">
+    <div id="paygreen_livemode_switch"></div>
+  </div>
+</div>
+
+{% if not paygreen_livemode %}
+<p class="help-block">
+  <i class="fa fa-info-circle"></i> {{ 'form.settings.paygreen_testmode.help'|trans|raw }}
+</p>
+{% endif %}
+
+{% if not can_enable_paygreen_livemode %}
+<p class="help-block">
+  <i class="fa fa-info-circle"></i> {{ 'form.settings.paygreen_enable_livemode.help'|trans|raw }}
+</p>
+{% endif %}
