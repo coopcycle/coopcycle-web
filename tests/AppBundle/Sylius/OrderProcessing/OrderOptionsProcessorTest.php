@@ -77,7 +77,10 @@ class OrderOptionsProcessorTest extends KernelTestCase
         $productVariant
             ->getQuantityForOptionValue(Argument::type(ProductOptionValueInterface::class))
             ->willReturn(1);
-
+        $productVariant
+            ->getCode()
+            ->willReturn('code');
+        
         return $productVariant->reveal();
     }
 
