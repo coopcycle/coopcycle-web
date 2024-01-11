@@ -1273,6 +1273,10 @@ services:
     class: AppBundle\Sylius\Order\OrderModifier
     decorates: sylius.order_modifier
 
+  coopcycle.sylius.order_item_quantity_modifier:
+    class: AppBundle\Sylius\Order\OrderItemQuantityModifier
+    decorates: sylius.order_item_quantity_modifier
+
   AppBundle\CubeJs\HttpClient:
     decorates: cubejs.client
 
