@@ -21,16 +21,8 @@
         <cascade-persist/>
       </cascade>
     </many-to-one>
-    <many-to-many field="restaurants" target-entity="AppBundle\Entity\LocalBusiness" >
-      <join-table name="business_restaurant_group_restaurant">
-        <join-columns>
-          <join-column name="business_restaurant_group_id" referenced-column-name="id" />
-        </join-columns>
-        <inverse-join-columns>
-          <join-column name="restaurant_id" referenced-column-name="id" />
-        </inverse-join-columns>
-      </join-table>
-    </many-to-many>
+    <one-to-many field="restaurantsWithMenu" target-entity="AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu" mapped-by="businessRestaurantGroup">
+    </one-to-many>
     <many-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule">
       <join-table name="business_restaurant_group_closing_rule">
         <join-columns>

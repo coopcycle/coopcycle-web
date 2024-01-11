@@ -2,10 +2,20 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 class BusinessRestaurantGroup extends LocalBusinessGroup
 {
     private $cutoffTime;
     private $businessAccount;
+    private $restaurantsWithMenu;
+
+    public function __construct()
+    {
+        $this->restaurantsWithMenu = new ArrayCollection();
+
+        parent::__construct();
+    }
 
     public function getCutoffTime()
     {
@@ -58,5 +68,33 @@ class BusinessRestaurantGroup extends LocalBusinessGroup
             return $this->restaurants->first->getAddress();
         }
         return null;
+    }
+
+    public function getRestaurantsWithMenu()
+    {
+        return $this->restaurantsWithMenu;
+    }
+
+    public function setRestaurantsWithMenu($restaurantsWithMenu)
+    {
+        $this->restaurantsWithMenu = $restaurantsWithMenu;
+
+        return $this;
+    }
+
+    /**
+     * @param BusinessRestaurantGroupRestaurantMenu $restaurantMenu
+     */
+    public function addRestaurantWithMenu(BusinessRestaurantGroupRestaurantMenu $restaurantMenu)
+    {
+        $this->restaurantsWithMenu->add($restaurantMenu);
+    }
+
+    /**
+     * @param BusinessRestaurantGroupRestaurantMenu $restaurantMenu
+     */
+    public function removeRestaurantWithMenu(BusinessRestaurantGroupRestaurantMenu $restaurantMenu): void
+    {
+        $this->restaurantsWithMenu->removeElement($restaurantMenu);
     }
 }

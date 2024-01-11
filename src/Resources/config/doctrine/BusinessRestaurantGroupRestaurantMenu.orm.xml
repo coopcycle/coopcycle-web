@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu" table="business_restaurant_group_restaurant_menu">
+    <id name="businessRestaurantGroup" association-key="true" />
+    <id name="restaurant" association-key="true" />
+    <id name="menu" association-key="true" />
+    <many-to-one field="businessRestaurantGroup" target-entity="AppBundle\Entity\BusinessRestaurantGroup" inversed-by="restaurantsWithMenu">
+    </many-to-one>
+    <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness">
+    </many-to-one>
+    <many-to-one field="menu" target-entity="AppBundle\Entity\Sylius\Taxon">
+    </many-to-one>
+  </entity>
+</doctrine-mapping>
