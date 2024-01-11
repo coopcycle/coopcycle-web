@@ -69,7 +69,11 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
             new NullLogger(),
             new NullLoggingUtils()
         );
-        $this->orderOptionsProcessor = new OrderOptionsProcessor($this->adjustmentFactory);
+        $this->orderOptionsProcessor = new OrderOptionsProcessor(
+            $this->adjustmentFactory,
+            new NullLogger(),
+            new NullLoggingUtils()
+        );
 
         $this->orderVendorProcessor = $this->prophesize(OrderVendorProcessor::class);
         // $this->orderVendorProcessor->process(Argument::type(OrderInterface::class))->shouldBeCalled();
