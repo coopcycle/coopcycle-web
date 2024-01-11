@@ -108,7 +108,7 @@ const ProgressBarMemo = React.memo(({
             <td style={{ textAlign: 'right' }}>{failureTasks}</td>
           </tr>
           <tr>
-            <td style={{ paddingRight: '10px' }}><span style={{ color: '#6c757d' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_IN_PROGRESS')}</td>
+            <td style={{ paddingRight: '10px' }}><span style={{ color: '#337ab7' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_IN_PROGRESS')}</td>
             <td style={{ textAlign: 'right' }}>{inProgressTasks}</td>
           </tr>
           <tr>
@@ -130,7 +130,7 @@ const ProgressBarMemo = React.memo(({
             {value: `${completedPer}%`, color: '#28a745'},
             {value: `${incidentPer}%`, color: '#ffc107'},
             {value: `${failurePer}%`, color: '#dc3545'},
-            {value: `${inProgressPer}%`, color: '#6c757d'},
+            {value: `${inProgressPer}%`, color: '#337ab7'},
           ]} />
         </div>
     </Tooltip>
