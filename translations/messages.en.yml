@@ -1417,3 +1417,6 @@ error.404: Page not found.
 error.502: The server is over capacity. Please try again later.
 error.504: The server took too much time to respond.
 error.return_to_homepage: Return to homepage
+deliveries.imports: Imported files
+deliveries.importing: The file %filename% is being imported.
+deliveries.imports.created_at: Created at

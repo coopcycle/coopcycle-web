@@ -346,6 +346,7 @@ security:
         - { path: ^/api/time_slots, roles: [ ROLE_USER, ROLE_API_APP ] }
         - { path: ^/api/deliveries, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET, POST, PUT, DELETE ] }
         - { path: ^/api/task_import_queues, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET ] }
+        - { path: ^/api/delivery_import_queues, roles: PUBLIC_ACCESS }
         - { path: ^/api/routing, roles: PUBLIC_ACCESS }
 
         - { path: ^/api/webhooks, roles: [ ROLE_USER, ROLE_API_APP ] }
