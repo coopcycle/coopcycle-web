@@ -19,12 +19,22 @@ final class OrderItemQuantityModifier implements OrderItemQuantityModifierInterf
     public function modify(OrderItemInterface $orderItem, int $targetQuantity): void
     {
         $order = $orderItem->getOrder();
-        $this->checkoutLogger->info(sprintf('Order %s | OrderItemQuantityModifier | modifying %s | target quantity: %d | itemsTotal: %d (old)',
-            $this->loggingUtils->getOrderId($order), $orderItem->getVariant()->getCode(), $targetQuantity, $order->getItemsTotal()));
+        if ($order !== null) {
+            $this->checkoutLogger->info(sprintf('Order %s | OrderItemQuantityModifier | modifying %s | target quantity: %d | itemsTotal: %d (old)',
+                $this->loggingUtils->getOrderId($order), $orderItem->getVariant()->getCode(), $targetQuantity, $order->getItemsTotal()));
+        } else {
+            $this->checkoutLogger->info(sprintf('Order %s | OrderItemQuantityModifier | modifying %s | target quantity: %d',
+                'not set', $orderItem->getVariant()->getCode(), $targetQuantity));
+        }
 
         $this->orderItemQuantityModifier->modify($orderItem, $targetQuantity);
 
-        $this->checkoutLogger->info(sprintf('Order %s | OrderItemQuantityModifier | modified %s | target quantity: %d | itemsTotal: %d (new)',
-            $this->loggingUtils->getOrderId($order), $orderItem->getVariant()->getCode(), $targetQuantity, $order->getItemsTotal()));
+        if ($order !== null) {
+            $this->checkoutLogger->info(sprintf('Order %s | OrderItemQuantityModifier | modified %s | target quantity: %d | itemsTotal: %d (new)',
+                $this->loggingUtils->getOrderId($order), $orderItem->getVariant()->getCode(), $targetQuantity, $order->getItemsTotal()));
+        } else {
+            $this->checkoutLogger->info(sprintf('Order %s | OrderItemQuantityModifier | modified %s | target quantity: %d',
+                'not set', $orderItem->getVariant()->getCode(), $targetQuantity));
+        }
     }
 }
