@@ -1398,3 +1398,6 @@ error.404: Page non trouvée.
 error.502: Le serveur a dépassé sa capacité. Veuillez réessayer plus tard.
 error.504: Le serveur a mis trop de temps à répondre.
 error.return_to_homepage: Retourner à la page d'accueil
+deliveries.imports: Fichiers importés
+deliveries.importing: Le fichier %filename% va bientôt être importé.
+deliveries.imports.created_at: Créé le
