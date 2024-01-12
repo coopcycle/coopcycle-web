@@ -19,12 +19,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "normalizationContext"={"groups"={"delivery_import_queue"}}
+ *       "normalizationContext"={"groups"={"delivery_import_queue"}},
+ *       "security"="is_granted('view', object)"
  *     },
  *     "csv"={
  *       "method"="GET",
  *       "path"="/delivery_import_queues/{id}/csv",
  *       "controller"=CsvController::class,
+ *       "security"="is_granted('view', object)"
  *     }
  *   }
  * )

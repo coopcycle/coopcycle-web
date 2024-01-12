@@ -1083,6 +1083,9 @@ services:
   AppBundle\Security\DeliveryQuoteVoter:
     tags: [ 'security.voter' ]
 
+  AppBundle\Security\DeliveryImportQueueVoter:
+    tags: [ 'security.voter' ]
+
   # While adding a priority is optional, it’s recommended to add one to make sure the expected value is injected.
   # The built-in RequestAttributeValueResolver, which fetches attributes from the Request, has a priority of 100.
   # If your resolver also fetches Request attributes, set a priority of 100 or more.
