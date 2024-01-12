@@ -7,15 +7,14 @@ use AppBundle\Utils\OrderTimeHelper;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use ApiPlatform\Core\Validator\ValidatorInterface;
+use AppBundle\Utils\ValidationUtils;
 use Carbon\Carbon;
-use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -33,7 +32,8 @@ final class OrderSubscriber implements EventSubscriberInterface
         OrderTimeHelper $orderTimeHelper,
         ValidatorInterface $validator,
         DataPersisterInterface $dataPersister,
-        OrderProcessorInterface $orderProcessor
+        OrderProcessorInterface $orderProcessor,
+        private LoggerInterface $checkoutLogger,
     ) {
         $this->tokenStorage = $tokenStorage;
         $this->orderTimeHelper = $orderTimeHelper;
@@ -54,6 +54,7 @@ final class OrderSubscriber implements EventSubscriberInterface
                 ['validateResponse', EventPriorities::POST_VALIDATE],
                 ['process', EventPriorities::PRE_WRITE],
                 ['deleteItemPostWrite', EventPriorities::POST_WRITE],
+                ['logPostWrite', EventPriorities::POST_WRITE],
             ],
         ];
     }
@@ -166,7 +167,8 @@ final class OrderSubscriber implements EventSubscriberInterface
     public function process(ViewEvent $event)
     {
         $resource = $event->getControllerResult();
-        $method = $event->getRequest()->getMethod();
+        $request = $event->getRequest();
+        $method = $request->getMethod();
 
         if (!$resource instanceof Order || Request::METHOD_PUT !== $method) {
             return;
@@ -176,6 +178,33 @@ final class OrderSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $this->checkoutLogger->info(sprintf('Order #%d | OrderSubscriber | started orderProcessor->process | request: %s | %s',
+            $resource->getId(), $method, $request->getRequestUri()));
+
         $this->orderProcessor->process($resource);
+    }
+
+    public function logPostWrite(ViewEvent $event)
+    {
+        $resource = $event->getControllerResult();
+        $request = $event->getRequest();
+        $method = $request->getMethod();
+
+        if (!$resource instanceof Order || !(Request::METHOD_POST === $method || Request::METHOD_PUT === $method || Request::METHOD_DELETE === $method)) {
+            return;
+        }
+
+        $this->checkoutLogger->info(sprintf('Order #%d updated in the database | OrderSubscriber | request: %s | %s',
+            $resource->getId(), $method, $request->getRequestUri()));
+
+        // added to debug the issues with invalid orders in the database, including multiple delivery fees:
+        // probably due to the race conditions between instances
+        $errors = $this->validator->validate($resource);
+        if ($errors && $errors->count() > 0) {
+            $message = sprintf('Order #%d has errors: %s | OrderSubscriber',
+                $resource->getId(), json_encode(ValidationUtils::serializeViolationList($errors)));
+
+            $this->checkoutLogger->error($message);
+        }
     }
 }
