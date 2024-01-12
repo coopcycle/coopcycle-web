@@ -191,7 +191,7 @@ final class OrderSubscriber implements EventSubscriberInterface
         // added to debug the issues with invalid orders in the database, including multiple delivery fees:
         // probably due to the race conditions between instances
         $errors = $this->symfonyValidator->validate($resource);
-        if ($errors && $errors->count() > 0) {
+        if ($errors->count() > 0) {
             $message = sprintf('Order #%d has errors: %s | OrderSubscriber',
                 $resource->getId(), json_encode(ValidationUtils::serializeViolationList($errors)));
 
