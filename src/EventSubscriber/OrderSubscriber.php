@@ -6,7 +6,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Utils\OrderTimeHelper;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
-use ApiPlatform\Core\Validator\ValidatorInterface;
+use ApiPlatform\Core\Validator\ValidatorInterface as ApiPlatformValidatorInterface;
 use AppBundle\Utils\ValidationUtils;
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
@@ -18,29 +18,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface as SymfonyValidatorInterface;
 
 final class OrderSubscriber implements EventSubscriberInterface
 {
-    private $tokenStorage;
-    private $orderTimeHelper;
-    private $validator;
-    private $dataPersister;
-    private $orderProcessor;
 
     public function __construct(
-        TokenStorageInterface $tokenStorage,
-        OrderTimeHelper $orderTimeHelper,
-        ValidatorInterface $validator,
-        DataPersisterInterface $dataPersister,
-        OrderProcessorInterface $orderProcessor,
+        private TokenStorageInterface $tokenStorage,
+        private OrderTimeHelper $orderTimeHelper,
+        private ApiPlatformValidatorInterface $validator,
+        private DataPersisterInterface $dataPersister,
+        private OrderProcessorInterface $orderProcessor,
+        private SymfonyValidatorInterface $symfonyValidator,
         private LoggerInterface $checkoutLogger,
-    ) {
-        $this->tokenStorage = $tokenStorage;
-        $this->orderTimeHelper = $orderTimeHelper;
-        $this->validator = $validator;
-        $this->dataPersister = $dataPersister;
-        $this->orderProcessor = $orderProcessor;
-    }
+    ) { }
 
     /**
      * @return array
@@ -199,7 +190,7 @@ final class OrderSubscriber implements EventSubscriberInterface
 
         // added to debug the issues with invalid orders in the database, including multiple delivery fees:
         // probably due to the race conditions between instances
-        $errors = $this->validator->validate($resource);
+        $errors = $this->symfonyValidator->validate($resource);
         if ($errors && $errors->count() > 0) {
             $message = sprintf('Order #%d has errors: %s | OrderSubscriber',
                 $resource->getId(), json_encode(ValidationUtils::serializeViolationList($errors)));
