@@ -1425,3 +1425,6 @@ deliveries.imports: Imported files
 deliveries.importing: The file %filename% is being imported.
 deliveries.imports.created_at: Created at
 business.account.settings.link: Link with my account
+form.business_restaurant_group.restaurants_with_menu: Restaurants with menu
+form.business_restaurant_group.restaurant: Restaurant
+form.business_restaurant_group.menu: Menu

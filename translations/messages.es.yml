@@ -1406,3 +1406,6 @@ deliveries.imports: Ficheros importados
 deliveries.importing: El fichero %filename% va a ser importado.
 deliveries.imports.created_at: Creado el
 business.account.settings.link: Asociar a mi cuenta
+form.business_restaurant_group.restaurants_with_menu: Restaurantes con menú
+form.business_restaurant_group.restaurant: Restaurante
+form.business_restaurant_group.menu: Menú

@@ -70,6 +70,15 @@ class BusinessRestaurantGroup extends LocalBusinessGroup
         return null;
     }
 
+    public function getRestaurants()
+    {
+        $restaurants = array_map(function ($restaurantWithMenu) {
+            return $restaurantWithMenu->getRestaurant();
+        }, $this->restaurantsWithMenu->toArray());
+
+        return new ArrayCollection($restaurants);
+    }
+
     public function getRestaurantsWithMenu()
     {
         return $this->restaurantsWithMenu;

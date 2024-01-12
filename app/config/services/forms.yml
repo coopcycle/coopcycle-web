@@ -280,3 +280,6 @@ services:
 
   AppBundle\Form\BusinessAccountRegistrationForm:
     tags: [ form.type ]
+
+  AppBundle\Form\LocalBusinessWithMenuType:
+    tags: [ form.type ]

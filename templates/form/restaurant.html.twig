@@ -189,17 +189,21 @@
 {% endspaceless %}
 {% endblock %}
 
-{% block _business_restaurant_group_restaurants_row %}
+{% block _business_restaurant_group_restaurantsWithMenu_row %}
 {% spaceless %}
 <div class="form-group">
-  <table class="table" id="{{ form.vars.id }}" data-prototype="{{ form_widget(form.vars.prototype)|e('html_attr') }}">
+  {{ form_label(form) }}
+  <table class="table" id="{{ form.vars.id }}"
+    data-index="{{ form.children|length > 0 ? form.children|last.vars.name + 1 : 0 }}"
+    data-prototype="{{ form_widget(form.vars.prototype)|e('html_attr') }}">
     <thead>
-      <th colspan="2">{{ (form.vars.label)|trans }}</th>
+      <th>{{ 'form.business_restaurant_group.restaurant'|trans }}</th>
+      <th>{{ 'form.business_restaurant_group.menu'|trans }}</th>
     </thead>
     <tbody>
-    {% for child in form.children %}
-      {{ form_widget(child) }}
-    {% endfor %}
+      {% for child in form %}
+        {{ form_widget(child) }}
+      {% endfor %}
     </tbody>
   </table>
 </div>
@@ -214,19 +218,35 @@
 {% endspaceless %}
 {% endblock %}
 
-{% block _business_restaurant_group_restaurants_entry_widget %}
+{% block _business_restaurant_group_restaurantsWithMenu_entry_widget %}
 {% spaceless %}
-<tr>
-  <td>
-    {{ form.vars.data ? form.vars.data.name : '__restaurant_name__' }}
-    <input type="hidden" id="{{ form.vars.id ? form.vars.id : '' }}"
-      name="{{ form.vars.full_name ? form.vars.full_name : '' }}"
-      value="{{ form.vars.value ? form.vars.value : '__value__' }}">
-  </td>
-  <td class="text-right">
-    <a href="#" data-remove="restaurant"><span class="glyphicon glyphicon-trash"></span></a>
-  </td>
-</tr>
+  <tr>
+    <td>
+      {{ form.vars.data ? form.vars.data.restaurant.name : '__restaurant_name__' }}
+      <input type="hidden" id="{{ form.restaurant.vars.id ? form.restaurant.vars.id : '' }}"
+        name="{{ form.restaurant.vars.full_name ? form.restaurant.vars.full_name : '' }}"
+        value="{{ form.restaurant.vars.value ? form.restaurant.vars.value : '__value__' }}">
+    </td>
+    <td>
+      <select id="{{ form.menu.vars.id ? form.menu.vars.id : '' }}_select"
+        value="{{ form.menu.vars.value }}"
+        class="form-control">
+        {% if form.menu.vars.choices|length > 0 %}
+          {% for choice in form.menu.vars.choices %}
+            <option value="{{ choice.value }}" {% if choice.value == form.menu.vars.value %} selected="selected"{% endif %}>{{ choice.label }}</option>
+          {% endfor %}
+        {% else %}
+          {{ '__restaurant_menus__' }}
+        {% endif %}
+      </select>
+      <input type="hidden" id="{{ form.menu.vars.id ? form.menu.vars.id : '' }}"
+        name="{{ form.menu.vars.full_name ? form.menu.vars.full_name : '' }}"
+        value="{{ form.menu.vars.value ? form.menu.vars.value : '' }}">
+    </td>
+    <td class="text-right">
+      <a href="#" data-remove="restaurant"><span class="glyphicon glyphicon-trash"></span></a>
+    </td>
+  </tr>
 {% endspaceless %}
 {% endblock %}
 

@@ -2,19 +2,17 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\BusinessRestaurantGroup;
 use AppBundle\Form\Restaurant\ShippingOptionsTrait;
 use AppBundle\Form\Restaurant\FulfillmentMethodsTrait;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -57,30 +55,23 @@ class BusinessRestaurantGroupType extends AbstractType
             ->add('contract', ContractType::class, [
                 'with_advanced_options' => false,
             ])
-            ->add('restaurants', CollectionType::class, [
-                'entry_type' => EntityType::class,
-                'entry_options' => [
-                    'label' => false,
-                    'class' => LocalBusiness::class,
-                    'choice_label' => 'name',
-                ],
-                'label' => 'form.hub.restaurants.label',
+            ->add('restaurantsWithMenu', CollectionType::class, [
+                'entry_type' => LocalBusinessWithMenuType::class,
+                'label' => 'form.business_restaurant_group.restaurants_with_menu',
                 'allow_add' => true,
                 'allow_delete' => true,
-                'by_reference' => false,
+                'prototype_name' => '__restaurantWithMenu__'
             ]);
-    }
 
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        usort($view['restaurants']->children, function (FormView $a, FormView $b) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+            $businessRestaurantGroup = $form->getData();
 
-            /** @var LocalBusiness $objectA */
-            $objectA = $a->vars['data'];
-            /** @var LocalBusiness $objectB */
-            $objectB = $b->vars['data'];
+            $restaurantsWithMenu = $form->get('restaurantsWithMenu')->getData();
 
-            return ($objectA->getName() < $objectB->getName()) ? -1 : 1;
+            foreach ($restaurantsWithMenu as $restaurantWithMenu) {
+                $restaurantWithMenu->setBusinessRestaurantGroup($businessRestaurantGroup);
+            }
         });
     }
 

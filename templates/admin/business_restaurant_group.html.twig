@@ -43,7 +43,7 @@
           {{ form_row(form.name) }}
           {{ form_row(form.cutoffTime) }}
           {{ form_row(form.enabled) }}
-          {{ form_row(form.restaurants) }}
+          {{ form_row(form.restaurantsWithMenu) }}
         </div>
         <div role="tabpanel" class="tab-pane" id="fulfillment">
           {{ form_row(form.fulfillmentMethods, { label: false }) }}
@@ -74,19 +74,41 @@
 {% block scripts %}
   {{ encore_entry_script_tags('restaurant-fulfillment-methods') }}
   <script>
-    var $restaurants = $('#business_restaurant_group_restaurants')
+    var $restaurants = $('#business_restaurant_group_restaurantsWithMenu')
+    var menusURL = "{{ path('admin_restaurant_menus', { restaurantId: '__ID__' }) }}";
     new CoopCycle.Search(document.querySelector('#restaurant-search'), {
       url: "{{ path('admin_restaurants_search', { format: 'json' }) }}",
       placeholder: "{{ 'basics.search'|trans }}",
       onSuggestionSelected: function(suggestion) {
 
+        var counter = $restaurants.find('tbody > tr').length;
+        console.log(`counter ${counter}`)
+        console.log(`index ${$restaurants.attr('data-index')}`)
         var newRestaurant = $restaurants.attr('data-prototype');
 
-        newRestaurant = newRestaurant.replace(/__name__/g, $restaurants.find('tbody > tr').length);
+        newRestaurant = newRestaurant.replace(/__restaurantWithMenu__/g, counter);
         newRestaurant = newRestaurant.replace(/__value__/g, suggestion.id);
         newRestaurant = newRestaurant.replace(/__restaurant_name__/g, suggestion.name);
 
-        $restaurants.find('tbody').append($(newRestaurant));
+        var options= ''
+        $.getJSON(menusURL.replace('__ID__', suggestion.id), {}, (menus) => {
+          menus.forEach(({id, name}) => {
+            options += `<option value="${id}">${name}</option>`
+
+          })
+          newRestaurant = newRestaurant.replace(/__restaurant_menus__/g, options);
+
+          $restaurants.find('tbody').append($(newRestaurant));
+
+          if (menus.length === 1) {
+            $(`#business_restaurant_group_restaurantsWithMenu_${counter}_menu`).val(menus[0].id)
+          }
+
+          $(`#business_restaurant_group_restaurantsWithMenu_${counter}_menu_select`).on("change", function() {
+            $(`#business_restaurant_group_restaurantsWithMenu_${counter}_menu`).val(this.value)
+          })
+        })
+
       }
     });
 
