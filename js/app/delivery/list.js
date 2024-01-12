@@ -70,8 +70,6 @@ if (searchEl && searchWidgetEl) {
   })
 }
 
-Modal.setAppElement('#delivery_import_spreadsheet')
-
 function SpreadsheetViewer({ data, errors }) {
 
   const [ isOpen, setIsOpen ] = useState(true)
@@ -205,6 +203,8 @@ if (deliveryImports) {
   })
 
   centrifuge.connect()
+
+  Modal.setAppElement('#delivery_import_spreadsheet')
 
   deliveryImports.querySelectorAll('[data-delivery-import]').forEach(el => {
     addSpreadsheetView(el.querySelector('[data-delivery-import-view]'))
