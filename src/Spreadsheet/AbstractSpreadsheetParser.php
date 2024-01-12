@@ -3,10 +3,12 @@
 namespace AppBundle\Spreadsheet;
 
 use League\Flysystem\File;
+use League\Csv\Writer;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\IReader;
 use PhpOffice\PhpSpreadsheet\Reader\Ods;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 abstract class AbstractSpreadsheetParser
 {
@@ -148,5 +150,52 @@ abstract class AbstractSpreadsheetParser
         }
 
         return $this->parseData($data, $options);
+    }
+
+    /**
+     * @param File|string $file
+     * @return Spreadsheet
+     * @throws \Exception
+     */
+    private function loadSpreadsheet($file): Spreadsheet
+    {
+        $isTempFile = false;
+
+        if (is_string($file)) {
+            $filename = $file;
+        } else {
+            if ($file instanceof File) {
+                $tempnam = tempnam(sys_get_temp_dir(), 'coopcycle_spreadsheet_parser_');
+                if (false === file_put_contents($tempnam, $file->read())) {
+                    throw new \Exception(sprintf('Could not write temp file %s', $tempnam));
+                }
+
+                $isTempFile = true;
+                $filename = $tempnam;
+            }
+        }
+
+        $reader = $this->createReader($filename);
+
+        $spreadsheet = $reader->load($filename);
+
+        if ($isTempFile) {
+            unlink($filename);
+        }
+
+        return $spreadsheet;
+    }
+
+    public function toCsv($file): string
+    {
+        $spreadsheet = $this->loadSpreadsheet($file);
+
+        $records = $spreadsheet->getSheet($spreadsheet->getFirstSheetIndex())->toArray();
+
+        $csv = Writer::createFromString();
+
+        $csv->insertAll($records);
+
+        return $csv->toString();
     }
 }
