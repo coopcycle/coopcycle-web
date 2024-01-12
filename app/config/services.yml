@@ -113,6 +113,7 @@ services:
   ACSEO\TypesenseBundle\Client\TypesenseClient: '@typesense.client'
   Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface: '@league.oauth2_server.factory.psr_http'
   League\Flysystem\Filesystem $restaurantImagesFilesystem: '@restaurant_images_filesystem'
+  League\Flysystem\Filesystem $deliveryImportsFilesystem: '@delivery_imports_filesystem'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -1080,6 +1081,9 @@ services:
     tags: [ 'security.voter' ]
 
   AppBundle\Security\DeliveryQuoteVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\DeliveryImportQueueVoter:
     tags: [ 'security.voter' ]
 
   # While adding a priority is optional, it’s recommended to add one to make sure the expected value is injected.

@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Utils;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
+use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
@@ -16,6 +17,7 @@ use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Message\DeliveryCreated;
+use AppBundle\Message\ImportDeliveries;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
@@ -26,6 +28,7 @@ use Carbon\Carbon;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\EntityManagerInterface;
+use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -39,6 +42,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
@@ -349,7 +354,11 @@ trait StoreTrait
     }
 
     public function storeDeliveriesAction($id, Request $request, PaginatorInterface $paginator,
-        OrderManager $orderManager, DeliveryManager $deliveryManager, OrderFactory $orderFactory, DeliveryRepository $deliveryRepository)
+        DeliveryRepository $deliveryRepository,
+        MessageBusInterface $messageBus,
+        EntityManagerInterface $entityManager,
+        Hashids $hashids8,
+        Filesystem $deliveryImportsFilesystem)
     {
         $store = $this->getDoctrine()
             ->getRepository(Store::class)
@@ -365,8 +374,15 @@ trait StoreTrait
         if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
             $this->accessControl($store, 'edit_delivery');
 
-            return $this->handleDeliveryImportForStore($store, $deliveryImportForm,
-                $routes['import_success'], $orderManager, $deliveryManager, $orderFactory,);
+            return $this->handleDeliveryImportForStore(
+                store: $store,
+                form: $deliveryImportForm,
+                routeTo: $routes['import_success'],
+                messageBus: $messageBus,
+                entityManager: $entityManager,
+                hashids: $hashids8,
+                filesystem: $deliveryImportsFilesystem
+            );
         }
 
         /** @var QueryBuilder $qb */
@@ -541,84 +557,38 @@ trait StoreTrait
 
     protected function handleDeliveryImportForStore(
         Store $store,
-        FormInterface $deliveryImportForm,
-        string $routeTo,
-        OrderManager $orderManager,
-        DeliveryManager $deliveryManager,
-        OrderFactory $orderFactory)
+        FormInterface $form,
+        EntityManagerInterface $entityManager,
+        Hashids $hashids,
+        Filesystem $filesystem,
+        MessageBusInterface $messageBus,
+        string $routeTo)
     {
-        $deliveries = $deliveryImportForm->getData();
+        $uploadedFile = $form->get('file')->getData();
 
-        foreach ($deliveries as $delivery) {
-            $store->addDelivery($delivery);
+        $queue = new DeliveryImportQueue();
+        $queue->setStore($store);
 
-            $this->entityManager->persist($delivery);
+        $entityManager->persist($queue);
+        $entityManager->flush();
 
-            if ($store->getCreateOrders()) {
-                try {
-                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price);
+        $filename = sprintf('%s.%s', $hashids->encode($queue->getId()), $uploadedFile->guessExtension());
 
-                    $this->entityManager->persist($order);
-                    $this->entityManager->flush();
+        $filesystem->write($filename, $uploadedFile->getContent());
+        $queue->setFilename($filename);
 
-                    $orderManager->onDemand($order);
-                } catch (NoRuleMatchedException $e) {
-                    $this->addFlash(
-                        'error',
-                        $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators')
-                    );
-                    return $this->redirectToRoute($routeTo);
-                }
-            }
-        }
+        $entityManager->flush();
 
-        $this->entityManager->flush();
+        $messageBus->dispatch(
+            new ImportDeliveries($filename),
+            [ new DelayStamp(5000) ]
+        );
 
         $this->addFlash(
             'notice',
-            $this->translator->trans('delivery.import.success_message', ['%count%' => count($deliveries)])
+            $this->translator->trans('deliveries.importing', ['%filename%' => $filename])
         );
 
-        return $this->redirectToRoute($routeTo);
-    }
-
-    public function persistImportedDeliveries(
-        FormInterface $deliveryImportForm,
-        OrderManager $orderManager,
-        DeliveryManager $deliveryManager,
-        OrderFactory $orderFactory
-    )
-    {
-        $store = $deliveryImportForm->get('store')->getData();
-        $result = $deliveryImportForm->getData();
-
-        foreach ($result as $rowNumber => $delivery) {
-            $store->addDelivery($delivery);
-
-            $this->entityManager->persist($delivery);
-
-            if ($store->getCreateOrders()) {
-                try {
-                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price);
-
-                    $this->entityManager->persist($order);
-                    $this->entityManager->flush();
-
-                    $orderManager->onDemand($order);
-                } catch (NoRuleMatchedException $e) {
-                    $deliveryImportForm->addError(new FormError(
-                        $this->translator->trans('import.delivery.price.error.priceCalculation.row', [
-                            '%row_number%' => $rowNumber
-                        ])
-                    ));
-                }
-            }
-        }
-
-        $this->entityManager->flush();
-
-        return $result;
+        return $this->redirectToRoute($routeTo, ['section' => 'imports']);
     }
 }
