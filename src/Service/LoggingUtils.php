@@ -19,7 +19,10 @@ class LoggingUtils
          * (1) | function: persistAndFlushCart | file: /var/www/html/src/Controller/RestaurantController.php | line: 639
          * (2) | function: addProductToCartAction | file: /var/www/html/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/HttpKernel.php | line: 163
          */
-        return $this->getCallerAtFrame(2);
+
+        $frameNumber = 2 + 1; // 2 frames from this function + 1 frame from getCallerAtFrame
+        
+        return $this->getCallerAtFrame($frameNumber);
     }
 
     public function getOrderId($order): string {
