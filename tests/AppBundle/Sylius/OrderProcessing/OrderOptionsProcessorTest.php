@@ -198,6 +198,9 @@ class OrderOptionsProcessorTest extends KernelTestCase
         $variant
             ->getQuantityForOptionValue($salad)
             ->willReturn(2);
+        $variant
+            ->getCode()
+            ->willReturn('code');
 
         $order = new Order();
         $order->addItem($this->createOrderItem(700, $variant->reveal()));
