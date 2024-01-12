@@ -17,7 +17,7 @@ class BusinessRestaurantGroupPriceType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use($options) {
 
             $form = $event->getForm();
 
@@ -25,6 +25,7 @@ class BusinessRestaurantGroupPriceType extends AbstractType
                 ->add('businessRestaurantGroup', EntityType::class, [
                     'class' => BusinessRestaurantGroup::class,
                     'label' => 'business_restaurant_group.label',
+                    'choices' => $options['choices'],
                     'choice_label' => 'name',
                     'choice_value' => 'id',
                     'placeholder' => 'form.product.business_restaurant_group.price_definition.placeholder',

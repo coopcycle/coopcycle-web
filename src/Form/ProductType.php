@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\BusinessRestaurantGroup;
 use AppBundle\Entity\BusinessRestaurantGroupPriceWithTax;
+use AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\Sylius\Product;
@@ -16,6 +17,7 @@ use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
@@ -125,11 +127,11 @@ class ProductType extends AbstractType
         $businessRestaurantGroups = null;
         if ($this->businessAccountEnabled && null !== $options['owner']) {
             $qb = $this->entityManager->getRepository(BusinessRestaurantGroup::class)
-                ->createQueryBuilder('g')
-                ->innerJoin('g.restaurants', 'r')
-                ->where('r.id = :restaurant')
+                ->createQueryBuilder('b')
+                ->select('b')
+                ->innerJoin(BusinessRestaurantGroupRestaurantMenu::class, 'g', Expr\Join::WITH, 'g.businessRestaurantGroup = b.id AND g.restaurant = :restaurant')
                 ->setParameter('restaurant', $options['owner'])
-                ->orderBy('g.name');
+                ->orderBy('b.name');
 
             $businessRestaurantGroups = $qb->getQuery()->getResult();
 
