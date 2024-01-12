@@ -2495,11 +2495,24 @@ class AdminController extends AbstractController
 
     private function handleBusinessRestaurantGroupForm(BusinessRestaurantGroup $businessRestaurantGroup, Request $request)
     {
+        $originalRestaurantsWithMenu = new ArrayCollection();
+
+        foreach($businessRestaurantGroup->getRestaurantsWithMenu() as $restaurantMenu) {
+            $originalRestaurantsWithMenu->add($restaurantMenu);
+        }
+
         $form = $this->createForm(BusinessRestaurantGroupType::class, $businessRestaurantGroup);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-            $this->getDoctrine()->getManager()->persist($businessRestaurantGroup);
-            $this->getDoctrine()->getManager()->flush();
+            foreach ($originalRestaurantsWithMenu as $restaurantMenu) {
+                if (false === $businessRestaurantGroup->getRestaurantsWithMenu()->contains($restaurantMenu)) {
+                    $businessRestaurantGroup->removeRestaurantWithMenu($restaurantMenu);
+                    $this->entityManager->remove($restaurantMenu);
+                }
+            }
+
+            $this->entityManager->persist($businessRestaurantGroup);
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
