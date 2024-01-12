@@ -922,7 +922,7 @@ class RestaurantController extends AbstractController
         // added to debug the issues with invalid orders in the database, including multiple delivery fees:
         // probably due to the race conditions between instances
         $errors = $this->validator->validate($cart);
-        if ($errors && $errors->count() > 0) {
+        if ($errors->count() > 0) {
             $message = sprintf('Order #%d has errors: %s | RestaurantController | triggered by %s',
                 $cart->getId(), json_encode(ValidationUtils::serializeViolationList($errors)), $this->loggingUtils->getCaller());
 
