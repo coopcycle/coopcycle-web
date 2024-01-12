@@ -64,14 +64,14 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         $lastPayment = $order->getLastPayment($targetState);
 
         if (null !== $lastPayment) {
-            $this->checkoutLogger->info(sprintf('Order %s | OrderPaymentProcessor | payment: %d %s (initial)',
-                $this->loggingUtils->getOrderId($order), $lastPayment->getAmount(), $lastPayment->getCurrencyCode()));
+            $this->checkoutLogger->info(sprintf('Order %s | OrderPaymentProcessor | payment: %d (initial)',
+                $this->loggingUtils->getOrderId($order), $lastPayment->getAmount()));
 
             $lastPayment->setCurrencyCode($this->currencyContext->getCurrencyCode());
             $lastPayment->setAmount($order->getTotal());
 
-            $this->checkoutLogger->info(sprintf('Order %s | OrderPaymentProcessor | finished | payment: %d %s (updated)',
-                $this->loggingUtils->getOrderId($order), $lastPayment->getAmount(), $lastPayment->getCurrencyCode()));
+            $this->checkoutLogger->info(sprintf('Order %s | OrderPaymentProcessor | finished | payment: %d (updated)',
+                $this->loggingUtils->getOrderId($order), $lastPayment->getAmount()));
 
             return;
         }
@@ -89,7 +89,7 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
 
         $order->addPayment($payment);
 
-        $this->checkoutLogger->info(sprintf('Order %s | OrderPaymentProcessor | finished | payment: %d %s',
-            $this->loggingUtils->getOrderId($order), $payment->getAmount(), $payment->getCurrencyCode()));
+        $this->checkoutLogger->info(sprintf('Order %s | OrderPaymentProcessor | finished | payment: %d',
+            $this->loggingUtils->getOrderId($order), $payment->getAmount()));
     }
 }
