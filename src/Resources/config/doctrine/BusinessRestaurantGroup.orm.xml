@@ -22,6 +22,9 @@
       </cascade>
     </many-to-one>
     <one-to-many field="restaurantsWithMenu" target-entity="AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu" mapped-by="businessRestaurantGroup">
+      <cascade>
+        <cascade-all/>
+      </cascade>
     </one-to-many>
     <many-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule">
       <join-table name="business_restaurant_group_closing_rule">

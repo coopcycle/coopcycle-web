@@ -1324,6 +1324,24 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/restaurant/{restaurantId}/menus", name="admin_restaurant_menus")
+     */
+    public function searchRestaurantMenusAction($restaurantId)
+    {
+        $restaurant = $this->getDoctrine()->getRepository(LocalBusiness::class)->find($restaurantId);
+
+        $data = [];
+        foreach($restaurant->getTaxons() as $taxon) {
+            $data[] = [
+                'id' => $taxon->getId(),
+                'name' => $taxon->getName()
+            ];
+        }
+
+        return new JsonResponse($data);
+    }
+
+    /**
      * @Route("/admin/stores/search", name="admin_stores_search")
      */
     public function searchStoresAction(Request $request)
