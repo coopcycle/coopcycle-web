@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Delivery;
 
 use AppBundle\Entity\Store;
 use AppBundle\Action\Delivery\ImportQueueCsv as CsvController;
+use AppBundle\Action\Delivery\ImportQueueRedownload as RedownloadController;
 use AppBundle\Spreadsheet\SpreadsheetParseResult;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Gedmo\Timestampable\Traits\Timestampable;
@@ -26,6 +27,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="GET",
  *       "path"="/delivery_import_queues/{id}/csv",
  *       "controller"=CsvController::class,
+ *       "security"="is_granted('view', object)"
+ *     },
+ *     "redownload"={
+ *       "method"="GET",
+ *       "path"="/delivery_import_queues/{id}/redownload",
+ *       "controller"=RedownloadController::class,
  *       "security"="is_granted('view', object)"
  *     }
  *   }

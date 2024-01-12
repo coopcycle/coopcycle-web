@@ -198,4 +198,11 @@ abstract class AbstractSpreadsheetParser
 
         return $csv->toString();
     }
+
+    public function toRawData($file): array
+    {
+        $spreadsheet = $this->loadSpreadsheet($file);
+
+        return $spreadsheet->getSheet($spreadsheet->getFirstSheetIndex())->toArray();
+    }
 }

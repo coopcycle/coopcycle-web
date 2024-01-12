@@ -179,6 +179,41 @@ function addSpreadsheetView(viewIcon) {
   }, false)
 }
 
+function addRedownload(el) {
+  el.addEventListener('click', function (e) {
+
+    e.preventDefault()
+
+    const parentEl = e.target.closest('[data-delivery-import]')
+
+    axios({
+      method: 'get',
+      url: parentEl.dataset.deliveryImportRedownload,
+      headers: {
+        Authorization: `Bearer ${window._auth.jwt}`
+      }
+    }).then(response => {
+
+      const basenameWithoutExtension = parentEl.dataset.deliveryImportFilename.replace(/\.[^/.]+$/, "")
+
+      const file = new File([ response.data ], `${basenameWithoutExtension}.csv`, {
+        type: 'text/csv',
+      })
+
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(file)
+
+      link.href = url
+      link.download = file.name
+      document.body.appendChild(link)
+      link.click()
+
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    })
+  }, false)
+}
+
 const deliveryImports = document.querySelector('[data-delivery-imports]')
 if (deliveryImports) {
 
@@ -192,12 +227,15 @@ if (deliveryImports) {
       const row = document.querySelector(`[data-delivery-import-filename="${event.data.filename}"]`)
       const statusIcon = row.querySelector('[data-delivery-import-status]')
       const viewIcon = row.querySelector('[data-delivery-import-view]')
+      const downloadIcon = row.querySelector('[data-delivery-import-redownload]')
       statusIcon.classList.remove(...statusIcon.classList)
       statusIcon.classList.add('fa', `fa-${importStatusIcon[event.data.status]}`)
       if (event.data.status === 'failed') {
         row.classList.add('danger')
         viewIcon.classList.remove('d-none')
+        downloadIcon.classList.remove('d-none')
         addSpreadsheetView(viewIcon)
+        addRedownload(downloadIcon)
       }
     }
   })
@@ -208,6 +246,6 @@ if (deliveryImports) {
 
   deliveryImports.querySelectorAll('[data-delivery-import]').forEach(el => {
     addSpreadsheetView(el.querySelector('[data-delivery-import-view]'))
+    addRedownload(el.querySelector('[data-delivery-import-redownload]'))
   })
-
 }

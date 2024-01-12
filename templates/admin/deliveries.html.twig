@@ -106,7 +106,7 @@
       'completed': 'check',
       'failed': 'exclamation-circle'
     } %}
-    <table class="table"
+    <table class="table mt-4"
       data-delivery-imports
       data-centrifugo-token="{{ centrifugo_token }}"
       data-centrifugo-channel="{{ centrifugo_channel }}">
@@ -122,13 +122,17 @@
             data-delivery-import
             data-delivery-import-filename="{{ import_queue.filename }}"
             data-delivery-import-queue="{{ path('api_delivery_import_queues_get_item', { id: import_queue.id }) }}"
-            data-delivery-import-csv="{{ path('api_delivery_import_queues_csv_item', { id: import_queue.id }) }}">
+            data-delivery-import-csv="{{ path('api_delivery_import_queues_csv_item', { id: import_queue.id }) }}"
+            data-delivery-import-redownload="{{ path('api_delivery_import_queues_redownload_item', { id: import_queue.id }) }}">
             <td width="5%"><i class="fa fa-{{ import_status_icon[import_queue.status] }}" data-delivery-import-status></i></td>
             <td>{{ import_queue.filename }}</td>
             <td>{{ import_queue.createdAt|time_diff }}</td>
             <td class="text-right">
-              <a href="#" class="{% if import_queue.status != 'failed' %}d-none{% endif %}" data-delivery-import-view>
+              <a href="#" class="mr-3 {% if import_queue.status != 'failed' %}d-none{% endif %}" data-delivery-import-view>
                 <i class="fa fa-eye"></i>
+              </a>
+              <a href="#" class="{% if import_queue.status != 'failed' %}d-none{% endif %}" data-delivery-import-redownload>
+                <i class="fa fa-download"></i>
               </a>
             </td>
           </tr>
