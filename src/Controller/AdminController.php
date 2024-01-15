@@ -212,15 +212,19 @@ class AdminController extends AbstractController
 
     protected function getOrderList(Request $request, $showCanceled = false)
     {
-        $qb = $this->orderRepository
-            ->createQueryBuilder('o');
-        $qb
-            ->andWhere('o.state != :state')
-            ->setParameter('state', OrderInterface::STATE_CART)
-            ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
-            ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE)
-            ->setMaxResults(self::ITEMS_PER_PAGE)
-            ;
+        if ($request->query->has('q')) {
+            $qb = $this->orderRepository->search($request->query->get('q'));
+        } else {
+            $qb = $this->orderRepository
+                ->createQueryBuilder('o');
+            $qb
+                ->andWhere('o.state != :state')
+                ->setParameter('state', OrderInterface::STATE_CART)
+                ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
+                ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE)
+                ->setMaxResults(self::ITEMS_PER_PAGE)
+                ;
+        }
 
         if (!$showCanceled) {
             $qb
@@ -246,17 +250,28 @@ class AdminController extends AbstractController
         OrderRepository $orderRepository
     )
     {
-        $results = $orderRepository->search($request->query->get('q'));
+        $qb = $orderRepository->search($request->query->get('q'));
+
+        $qb->setMaxResults(10);
+
+        $results = $qb->getQuery()->getResult();
 
         $data = [];
         foreach ($results as $order) {
-            $data[] = [
-                'id' => $order->getId(),
-                'name' => sprintf(
+
+            if (null !== $order->getCustomer()) {
+                $name = sprintf(
                     '%s (%s)',
                     $order->getNumber(),
                     $order->getCustomer()->getEmailCanonical()
-                ),
+                );
+            } else {
+                $name = $order->getNumber();
+            }
+
+            $data[] = [
+                'id' => $order->getId(),
+                'name' => $name,
                 'path' => $this->generateUrl('admin_order', ['id' => $order->getId()]),
             ];
         }
