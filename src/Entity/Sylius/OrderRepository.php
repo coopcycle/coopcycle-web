@@ -198,7 +198,7 @@ class OrderRepository extends BaseOrderRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function search($q)
+    public function search($q): QueryBuilder
     {
         $qb = $this->createQueryBuilder('o');
 
@@ -215,9 +215,7 @@ class OrderRepository extends BaseOrderRepository
             ->setParameter('q', strtolower($q))
             ->setParameter('state_cart', OrderInterface::STATE_CART);
 
-        $qb->setMaxResults(10);
-
-        return $qb->getQuery()->getResult();
+        return $qb;
     }
 
     public function findRefundedOrdersByRestaurantAndDateRange(LocalBusiness $restaurant, \DateTime $start, \DateTime $end)
