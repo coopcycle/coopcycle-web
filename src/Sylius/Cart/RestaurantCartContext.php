@@ -124,7 +124,7 @@ final class RestaurantCartContext implements CartContextInterface
             $cart = $this->orderFactory->createForRestaurant($restaurant);
 
             $this->checkoutLogger->info(sprintf('Order (cart) object created (created_at = %s) | RestaurantCartContext | called by %s',
-                $cart->getCreatedAt()->format(\DateTime::ATOM), $this->loggingUtils->getCaller()));
+                $cart->getCreatedAt()->format(\DateTime::ATOM), $this->loggingUtils->getBacktrace()));
         }
 
         if (is_null($cart->getCustomer())) {

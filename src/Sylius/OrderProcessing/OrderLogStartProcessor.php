@@ -21,7 +21,9 @@ final class OrderLogStartProcessor implements OrderProcessorInterface
      */
     public function process(BaseOrderInterface $order): void
     {
-        $this->checkoutLogger->info(sprintf('Order %s | OrderLogStartProcessor | processing started | triggered by %s',
-            $this->loggingUtils->getOrderId($order), $this->loggingUtils->getBacktrace()));
+        $this->checkoutLogger->info(sprintf('Order %s | OrderLogStartProcessor | processing started | triggered by: %s; at: %s',
+            $this->loggingUtils->getOrderId($order),
+            $this->loggingUtils->getRequest(),
+            $this->loggingUtils->getBacktrace()));
     }
 }

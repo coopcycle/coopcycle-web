@@ -4,14 +4,14 @@ namespace AppBundle\Service;
 
 class NullLoggingUtils extends LoggingUtils
 {
-    public function getBacktrace(int $firstFrame = 2, int $lastFrame = 4): string
+    public function getBacktrace(int $firstFrame = 1, int $lastFrame = 3): string
     {
         return 'function: ? | file: ? | line: ?';
     }
 
-    public function getCaller(): string
+    public function getRequest(): string
     {
-        return 'function: ? | file: ? | line: ?';
+        return 'GET /';
     }
 
     public function getOrderId($order): string

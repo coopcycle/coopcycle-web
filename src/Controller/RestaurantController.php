@@ -901,10 +901,10 @@ class RestaurantController extends AbstractController
 
         if ($isExisting) {
             $this->checkoutLogger->info(sprintf('Order #%d updated in the database | RestaurantController | triggered by %s',
-                $cart->getId(), $this->loggingUtils->getCaller()));
+                $cart->getId(), $this->loggingUtils->getBacktrace()));
         } else {
             $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | RestaurantController | triggered by %s',
-                $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId(), $this->loggingUtils->getCaller()));
+                $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId(), $this->loggingUtils->getBacktrace()));
         }
     }
 }

@@ -12,7 +12,6 @@ use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CheckoutSubscriber implements EventSubscriber
@@ -25,7 +24,6 @@ class CheckoutSubscriber implements EventSubscriber
     private array $deletions = [];
 
     public function __construct(
-        private RequestStack $requestStack,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils,
         private ValidatorInterface $validator)
@@ -107,11 +105,9 @@ class CheckoutSubscriber implements EventSubscriber
         $em = $args->getObjectManager();
         $uow = $em->getUnitOfWork();
 
-        $currentRequest = $this->requestStack->getCurrentRequest();
-        $this->checkoutLogger->info(sprintf('Order %s | CheckoutSubscriber | postFlush | triggered by: %s %s; at: %s',
+        $this->checkoutLogger->info(sprintf('Order %s | CheckoutSubscriber | postFlush | triggered by: %s; at: %s',
             $this->loggingUtils->getOrderId($this->order),
-            $currentRequest->getMethod(),
-            $currentRequest->getRequestUri(),
+            $this->loggingUtils->getRequest(),
             $this->loggingUtils->getBacktrace(4, 8)));
 
         foreach ($this->insertions as $entity) {

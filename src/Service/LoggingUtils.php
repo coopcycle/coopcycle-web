@@ -2,10 +2,23 @@
 
 namespace AppBundle\Service;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
 class LoggingUtils
 {
-    public function getBacktrace(int $firstFrame = 2, int $lastFrame = 4): string
+    public function __construct(
+        private RequestStack $requestStack,
+    ) {}
+
+    public function getBacktrace(int $firstFrame = 1, int $lastFrame = 3): string
     {
+        /**
+         * Example:
+         * (0) | function: getBacktrace | file: /var/www/html/src/Controller/RestaurantController.php | line: 907
+         * (1) | function: persistAndFlushCart | file: /var/www/html/src/Controller/RestaurantController.php | line: 639
+         * (2) | function: addProductToCartAction | file: /var/www/html/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/HttpKernel.php | line: 163
+         */
+
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,$lastFrame + 1);
 
         $stack = [];
@@ -19,17 +32,14 @@ class LoggingUtils
         return implode(' | ', $stack);
     }
 
-    public function getCaller(): string {
-        /**
-         * Example:
-         * (0) | function: getCaller | file: /var/www/html/src/Controller/RestaurantController.php | line: 907
-         * (1) | function: persistAndFlushCart | file: /var/www/html/src/Controller/RestaurantController.php | line: 639
-         * (2) | function: addProductToCartAction | file: /var/www/html/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/HttpKernel.php | line: 163
-         */
+    public function getRequest(): string {
+        $request = $this->requestStack->getCurrentRequest();
 
-        $frameNumber = 2 + 1; // 2 frames from this function + 1 frame from getBacktrace
+        if ($request === null) {
+            return '';
+        }
 
-        return $this->getBacktrace($frameNumber, $frameNumber);
+        return sprintf('%s %s', $request->getMethod(), $request->getRequestUri());
     }
 
     public function getOrderId($order): string {
