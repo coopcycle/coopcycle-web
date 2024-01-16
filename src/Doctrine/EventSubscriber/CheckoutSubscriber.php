@@ -10,8 +10,9 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
+use Sylius\Component\Order\Model\AdjustmentInterface as SyliusAdjustmentInterface;
+use Sylius\Component\Order\Model\OrderAwareInterface;
 use Sylius\Component\Order\Model\OrderInterface;
-use Sylius\Component\Order\Model\OrderItemInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CheckoutSubscriber implements EventSubscriber
@@ -43,7 +44,7 @@ class CheckoutSubscriber implements EventSubscriber
         $em = $args->getObjectManager();
         $uow = $em->getUnitOfWork();
 
-        $isCheckoutRelated = fn ($entity) => $entity instanceof OrderInterface || $entity instanceof OrderItemInterface  || $entity instanceof AdjustmentInterface;
+        $isCheckoutRelated = fn ($entity) => $entity instanceof OrderInterface || $entity instanceof OrderAwareInterface || $entity instanceof SyliusAdjustmentInterface;
 
         $objects = array_merge(
             array_filter($uow->getScheduledEntityInsertions(), $isCheckoutRelated),
@@ -62,7 +63,7 @@ class CheckoutSubscriber implements EventSubscriber
                 $this->order = array_values($orders)[0];
             } else {
                 foreach ($objects as $object) {
-                    if ($object instanceof OrderItemInterface || $object instanceof AdjustmentInterface) {
+                    if ($object instanceof OrderAwareInterface || $object instanceof SyliusAdjustmentInterface) {
                         $this->order = $object->getOrder();
 
                         // happens when an item is removed
