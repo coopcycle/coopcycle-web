@@ -81,14 +81,17 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
             }
 
             $store->addDelivery($delivery);
-            $this->entityManager->persist($delivery);
 
             try {
                 $this->pricingManager->createOrder($delivery, true);
             } catch (NoRuleMatchedException $e) {
                 $errorMessage = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                 $result->addErrorToRow($rowNumber, $errorMessage);
+
+                continue;
             }
+
+            $this->entityManager->persist($delivery);
         }
 
         $this->entityManager->flush();
