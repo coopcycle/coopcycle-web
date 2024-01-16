@@ -116,7 +116,7 @@ const UnassignedTour = ({ tour, tasks, removeTaskFromTour, isDropDisabled, modif
               ref={ provided.innerRef } { ...provided.droppableProps }>
                 { _.map(tasks, (task, index) => {
                   return (
-                    <Draggable key={ `task-${task.id}` } draggableId={ `task:${task.id}` } index={ index }>
+                    <Draggable key={ `task-${task.id}` } draggableId={ `${task['@id']}` } index={ index }>
                       {(provided) => (
                         <div
                           ref={ provided.innerRef }
