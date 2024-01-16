@@ -118,7 +118,7 @@ abstract class AbstractSpreadsheetParser
                 }
 
                 // Verify that the row is not completely empty
-                if (0 === count(array_filter($row))) {
+                if (0 === count(array_filter($row, fn ($value) => trim($value)))) {
                     continue;
                 }
 
