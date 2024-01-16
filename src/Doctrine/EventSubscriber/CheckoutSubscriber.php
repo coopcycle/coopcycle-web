@@ -2,8 +2,6 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
-use AppBundle\Entity\Sylius\Order;
-use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Utils\ValidationUtils;
@@ -12,14 +10,15 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
-use Sylius\Component\Order\Model\Adjustment;
+use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Order\Model\OrderItemInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CheckoutSubscriber implements EventSubscriber
 {
 
-    private ?Order $order = null;
+    private ?OrderInterface $order = null;
 
     private array $insertions = [];
     private array $updates = [];
@@ -46,7 +45,7 @@ class CheckoutSubscriber implements EventSubscriber
         $em = $args->getObjectManager();
         $uow = $em->getUnitOfWork();
 
-        $isCheckoutRelated = fn ($entity) => $entity instanceof Order || $entity instanceof OrderItem  || $entity instanceof Adjustment;
+        $isCheckoutRelated = fn ($entity) => $entity instanceof OrderInterface || $entity instanceof OrderItemInterface  || $entity instanceof AdjustmentInterface;
 
         $objects = array_merge(
             array_filter($uow->getScheduledEntityInsertions(), $isCheckoutRelated),
@@ -60,12 +59,12 @@ class CheckoutSubscriber implements EventSubscriber
             $this->updates = [];
             $this->deletions = [];
         } else {
-            $orders = array_filter($objects, fn ($obj) => $obj instanceof Order);
+            $orders = array_filter($objects, fn ($obj) => $obj instanceof OrderInterface);
             if (count($orders) > 0) {
                 $this->order = array_values($orders)[0];
             } else {
                 foreach ($objects as $object) {
-                    if ($object instanceof OrderItem || $object instanceof Adjustment) {
+                    if ($object instanceof OrderItemInterface || $object instanceof AdjustmentInterface) {
                         $this->order = $object->getOrder();
 
                         // happens when an item is removed
@@ -86,11 +85,11 @@ class CheckoutSubscriber implements EventSubscriber
         }
     }
 
-    private function lookForOrderInChanges($unitOfWork, $entity): ?Order
+    private function lookForOrderInChanges($unitOfWork, $entity): ?OrderInterface
     {
         foreach ($unitOfWork->getEntityChangeSet($entity) as $changeSet) {
             foreach ($changeSet as $item) {
-                if ($item instanceof Order) {
+                if ($item instanceof OrderInterface) {
                     return $item;
                 }
             }

@@ -18,15 +18,12 @@ use AppBundle\Form\Checkout\CheckoutTipType;
 use AppBundle\Form\Checkout\CheckoutVytalType;
 use AppBundle\Form\Checkout\LoopeatReturnsType;
 use AppBundle\Form\Order\CartType;
-use AppBundle\Service\LoggingUtils;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
-use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
-use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -67,7 +64,6 @@ class OrderController extends AbstractController
         string $sessionKeyName,
         private ValidatorInterface $validator,
         private LoggerInterface $checkoutLogger,
-        private LoggingUtils $loggingUtils
     )
     {
         $this->objectManager = $objectManager;
