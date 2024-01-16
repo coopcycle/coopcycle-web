@@ -33,7 +33,7 @@ final class OrderOptionsProcessor implements OrderProcessorInterface
         Assert::isInstanceOf($order, OrderInterface::class);
 
         $this->checkoutLogger->info(sprintf('Order %s | OrderOptionsProcessor | started | itemsTotal: %d (initial) | triggered by %s',
-            $this->loggingUtils->getOrderId($order), $order->getItemsTotal(), $this->loggingUtils->getCallerAtFrame(3)));
+            $this->loggingUtils->getOrderId($order), $order->getItemsTotal(), $this->loggingUtils->getBacktrace()));
 
         foreach ($order->getItems() as $orderItem) {
 

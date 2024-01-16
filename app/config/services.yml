@@ -666,6 +666,10 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
+  AppBundle\Doctrine\EventSubscriber\CheckoutSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
   AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:
     arguments:
         $denyAccessListener: '@api_platform.security.listener.request.deny_access'

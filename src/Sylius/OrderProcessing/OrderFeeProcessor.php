@@ -56,7 +56,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         }
 
         $this->logger->info(sprintf('Order %s | OrderFeeProcessor | started | triggered by %s',
-            $this->loggingUtils->getOrderId($order), $this->loggingUtils->getCallerAtFrame(3)));
+            $this->loggingUtils->getOrderId($order), $this->loggingUtils->getBacktrace()));
 
         $originalTipAdjustments = $order->getAdjustments(AdjustmentInterface::TIP_ADJUSTMENT);
 

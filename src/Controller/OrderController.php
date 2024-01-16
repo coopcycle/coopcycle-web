@@ -135,7 +135,6 @@ class OrderController extends AbstractController
             }
 
             $this->objectManager->flush();
-            $this->logAfterFlush($order);
 
             if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
                 $session->remove($dabbaAccessTokenKey);
@@ -157,7 +156,6 @@ class OrderController extends AbstractController
 
             $orderProcessor->process($order);
             $this->objectManager->flush();
-            $this->logAfterFlush($order);
 
             return $this->redirectToRoute('order');
         }
@@ -186,7 +184,6 @@ class OrderController extends AbstractController
 
             $orderProcessor->process($order);
             $this->objectManager->flush();
-            $this->logAfterFlush($order);
 
             return $this->redirectToRoute('order');
         }
@@ -203,7 +200,6 @@ class OrderController extends AbstractController
 
             $orderProcessor->process($order);
             $this->objectManager->flush();
-            $this->logAfterFlush($order);
 
             return $this->redirectToRoute('order');
         }
@@ -219,7 +215,6 @@ class OrderController extends AbstractController
 
             $orderProcessor->process($order);
             $this->objectManager->flush();
-            $this->logAfterFlush($order);
 
             return $this->redirectToRoute('order');
         }
@@ -253,7 +248,6 @@ class OrderController extends AbstractController
 
                 $orderProcessor->process($order);
                 $this->objectManager->flush();
-                $this->logAfterFlush($order);
 
                 return $this->redirectToRoute('order');
             }
@@ -278,7 +272,6 @@ class OrderController extends AbstractController
                 }
 
                 $this->objectManager->flush();
-                $this->logAfterFlush($order);
 
                 if ($isFreeOrder || $isQuote) {
 
@@ -376,7 +369,6 @@ class OrderController extends AbstractController
             $orderManager->checkout($order, $data);
 
             $this->objectManager->flush();
-            $this->logAfterFlush($order);
 
             if (PaymentInterface::STATE_FAILED === $payment->getState()) {
 
@@ -536,7 +528,6 @@ class OrderController extends AbstractController
             );
 
             $this->objectManager->flush();
-            $this->logAfterFlush($order);
 
             $session->remove($loopeatAccessTokenKey);
             $session->remove($loopeatRefreshTokenKey);
@@ -557,7 +548,6 @@ class OrderController extends AbstractController
             );
 
             $this->objectManager->flush();
-            $this->logAfterFlush($order);
 
             $session->remove($dabbaAccessTokenKey);
             $session->remove($dabbaRefreshTokenKey);
@@ -734,30 +724,5 @@ class OrderController extends AbstractController
             'addresses_normalized' => $this->getUserAddresses(),
             'is_player' => true,
         ]));
-    }
-
-    private function logAfterFlush($order): void {
-        $this->checkoutLogger->info(sprintf('Order #%d updated in the database | OrderController | triggered by %s',
-            $order->getId(),  $this->loggingUtils->getCaller()));
-
-        // added to debug the issues with invalid orders in the database, including multiple delivery fees:
-        // probably due to the race conditions between instances
-        $errors = $this->validator->validate($order);
-        if ($errors->count() > 0) {
-            $message = sprintf('Order #%d has errors: %s | OrderController | triggered by %s',
-                $order->getId(), json_encode(ValidationUtils::serializeViolationList($errors)), $this->loggingUtils->getCaller());
-
-            $this->checkoutLogger->error($message);
-        }
-
-        // added to debug the issue with multiple delivery fees: https://github.com/coopcycle/coopcycle-web/issues/3929
-        $deliveryAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
-        if (count($deliveryAdjustments) > 1) {
-            $message = sprintf('Order #%d has multiple delivery fees: %d | OrderController | triggered by %s',
-                $order->getId(), count($deliveryAdjustments), $this->loggingUtils->getCaller());
-
-            $this->checkoutLogger->error($message);
-            \Sentry\captureException(new \Exception($message));
-        }
     }
 }

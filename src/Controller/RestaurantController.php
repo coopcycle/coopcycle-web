@@ -432,7 +432,6 @@ class RestaurantController extends AbstractController
             $cart->setShippingAddress($address);
 
             $this->persistAndFlushCart($cart);
-            $this->logAfterFlush($cart);
         }
 
         // This is useful to "cleanup" a cart that was stored
@@ -445,7 +444,6 @@ class RestaurantController extends AbstractController
 
             if ($restaurantResolver->accept($cart)) {
                 $this->persistAndFlushCart($cart);
-                $this->logAfterFlush($cart);
             }
         }
 
@@ -459,7 +457,6 @@ class RestaurantController extends AbstractController
             if ($cartForm->isValid()) {
 
                 $this->orderManager->flush();
-                $this->logAfterFlush($cart);
 
                 return $this->redirectToRoute('order');
             }
@@ -513,7 +510,6 @@ class RestaurantController extends AbstractController
 
                     if ($restaurantResolver->accept($cart)) {
                         $this->persistAndFlushCart($cart);
-                        $this->logAfterFlush($cart);
                     }
                 }
 
@@ -556,7 +552,6 @@ class RestaurantController extends AbstractController
 
             if ($restaurantResolver->accept($cart)) {
                 $this->persistAndFlushCart($cart);
-                $this->logAfterFlush($cart);
             }
         }
 
@@ -580,7 +575,6 @@ class RestaurantController extends AbstractController
         // If not, we don't persist the cart
         if ($restaurantResolver->accept($cart)) {
             $this->persistAndFlushCart($cart);
-            $this->logAfterFlush($cart);
         }
 
         $this->eventBus->handle(new OrderUpdated($cart));
@@ -643,7 +637,6 @@ class RestaurantController extends AbstractController
         $this->orderModifier->addToOrder($cart, $cartItem);
 
         $this->persistAndFlushCart($cart);
-        $this->logAfterFlush($cart);
 
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
@@ -669,7 +662,6 @@ class RestaurantController extends AbstractController
 
         if ($restaurantResolver->accept($cart)) {
             $this->persistAndFlushCart($cart);
-            $this->logAfterFlush($cart);
         }
 
         $errors = $this->validator->validate($cart);
@@ -705,7 +697,6 @@ class RestaurantController extends AbstractController
         $orderProcessor->process($cart);
 
         $this->persistAndFlushCart($cart);
-        $this->logAfterFlush($cart);
 
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
@@ -730,7 +721,6 @@ class RestaurantController extends AbstractController
             $this->orderModifier->removeFromOrder($cart, $cartItem);
 
             $this->persistAndFlushCart($cart);
-            $this->logAfterFlush($cart);
         }
 
         $errors = $this->validator->validate($cart);
@@ -915,28 +905,6 @@ class RestaurantController extends AbstractController
         } else {
             $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | RestaurantController | triggered by %s',
                 $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId(), $this->loggingUtils->getCaller()));
-        }
-    }
-
-    private function logAfterFlush($cart): void {
-        // added to debug the issues with invalid orders in the database, including multiple delivery fees:
-        // probably due to the race conditions between instances
-        $errors = $this->validator->validate($cart);
-        if ($errors->count() > 0) {
-            $message = sprintf('Order #%d has errors: %s | RestaurantController | triggered by %s',
-                $cart->getId(), json_encode(ValidationUtils::serializeViolationList($errors)), $this->loggingUtils->getCaller());
-
-            $this->checkoutLogger->error($message);
-        }
-
-        // added to debug the issue with multiple delivery fees: https://github.com/coopcycle/coopcycle-web/issues/3929
-        $deliveryAdjustments = $cart->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
-        if (count($deliveryAdjustments) > 1) {
-            $message = sprintf('Order #%d has multiple delivery fees: %d | RestaurantController | triggered by %s',
-                $cart->getId(), count($deliveryAdjustments), $this->loggingUtils->getCaller());
-
-            $this->checkoutLogger->error($message);
-            \Sentry\captureException(new \Exception($message));
         }
     }
 }

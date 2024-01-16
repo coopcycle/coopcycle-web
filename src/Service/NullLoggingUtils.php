@@ -4,7 +4,7 @@ namespace AppBundle\Service;
 
 class NullLoggingUtils extends LoggingUtils
 {
-    public function getCallerAtFrame($frameNumber): string
+    public function getBacktrace(int $firstFrame = 2, int $lastFrame = 4): string
     {
         return 'function: ? | file: ? | line: ?';
     }

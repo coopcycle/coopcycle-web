@@ -7,7 +7,6 @@ use AppBundle\Utils\OrderTimeHelper;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use ApiPlatform\Core\Validator\ValidatorInterface as ApiPlatformValidatorInterface;
-use AppBundle\Utils\ValidationUtils;
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -18,7 +17,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface as SymfonyValidatorInterface;
 
 final class OrderSubscriber implements EventSubscriberInterface
 {
@@ -29,7 +27,6 @@ final class OrderSubscriber implements EventSubscriberInterface
         private ApiPlatformValidatorInterface $validator,
         private DataPersisterInterface $dataPersister,
         private OrderProcessorInterface $orderProcessor,
-        private SymfonyValidatorInterface $symfonyValidator,
         private LoggerInterface $checkoutLogger,
     ) { }
 
@@ -45,7 +42,6 @@ final class OrderSubscriber implements EventSubscriberInterface
                 ['validateResponse', EventPriorities::POST_VALIDATE],
                 ['process', EventPriorities::PRE_WRITE],
                 ['deleteItemPostWrite', EventPriorities::POST_WRITE],
-                ['logPostWrite', EventPriorities::POST_WRITE],
             ],
         ];
     }
@@ -173,29 +169,5 @@ final class OrderSubscriber implements EventSubscriberInterface
             $resource->getId(), $method, $request->getRequestUri()));
 
         $this->orderProcessor->process($resource);
-    }
-
-    public function logPostWrite(ViewEvent $event)
-    {
-        $resource = $event->getControllerResult();
-        $request = $event->getRequest();
-        $method = $request->getMethod();
-
-        if (!$resource instanceof Order || !(Request::METHOD_POST === $method || Request::METHOD_PUT === $method || Request::METHOD_DELETE === $method)) {
-            return;
-        }
-
-        $this->checkoutLogger->info(sprintf('Order #%d updated in the database | OrderSubscriber | request: %s | %s',
-            $resource->getId(), $method, $request->getRequestUri()));
-
-        // added to debug the issues with invalid orders in the database, including multiple delivery fees:
-        // probably due to the race conditions between instances
-        $errors = $this->symfonyValidator->validate($resource);
-        if ($errors->count() > 0) {
-            $message = sprintf('Order #%d has errors: %s | OrderSubscriber',
-                $resource->getId(), json_encode(ValidationUtils::serializeViolationList($errors)));
-
-            $this->checkoutLogger->error($message);
-        }
     }
 }
