@@ -1399,3 +1399,6 @@ registration.step.company.name: "Nombre de la empresa"
 registration.step.invitation.copy.link: "Copia el siguiente enlace y envíalo a tus colegas"
 registration.step.invitation.copy.button: "Copiar el enlace"
 registration.step.invitation.link.copied: "Copiado"
+deliveries.imports: Ficheros importados
+deliveries.importing: El fichero %filename% va a ser importado.
+deliveries.imports.created_at: Creado el

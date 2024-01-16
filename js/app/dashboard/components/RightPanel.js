@@ -10,7 +10,8 @@ import {
   toggleSearch,
   closeSearch,
   handleDragStart,
-  handleDragEnd } from '../redux/actions'
+  handleDragEnd, 
+  modifyTaskList} from '../redux/actions'
 import UnassignedTasks from './UnassignedTasks'
 import TaskLists from './TaskLists'
 import ContextMenu from './ContextMenu'
@@ -86,7 +87,7 @@ function mapDispatchToProps (dispatch) {
     toggleSearch: () => dispatch(toggleSearch()),
     closeSearch: () => dispatch(closeSearch()),
     handleDragStart: (result) => dispatch(handleDragStart(result)),
-    handleDragEnd: (result) => dispatch(handleDragEnd(result)),
+    handleDragEnd: (result) => dispatch(handleDragEnd(result, modifyTaskList)),
   }
 }
 

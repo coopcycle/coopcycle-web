@@ -8,7 +8,9 @@ export default function(el, options) {
       baseURL={ options.url }
       placeholder={ options.placeholder }
       onSuggestionSelected={ options.onSuggestionSelected }
-      clearOnSelect={ options.clearOnSelect || false } />,
+      clearOnSelect={ options.clearOnSelect || false }
+      searchOnEnter={ options.searchOnEnter || false }
+      initialValue={ options.initialValue || '' } />,
     el
   )
 }
