@@ -4,14 +4,16 @@ namespace AppBundle\DataType;
 
 class NumRange
 {
-    private $lower = 0;
-
     /**
      * Don't use PHP INF constant to avoid error:
      * "Inf and NaN cannot be JSON encoded"
      * https://github.com/api-platform/core/pull/2386
      */
-    private $upper = 'INF';
+    const UPPER_INF = 'INF';
+
+    private $lower = 0;
+
+    private $upper = 1;
 
     /**
      * @return mixed
@@ -55,6 +57,6 @@ class NumRange
 
     public function isUpperInfinite()
     {
-        return $this->upper === 'INF';
+        return $this->upper === self::UPPER_INF;
     }
 }
