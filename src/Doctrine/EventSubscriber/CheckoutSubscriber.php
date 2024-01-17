@@ -109,7 +109,7 @@ class CheckoutSubscriber implements EventSubscriber
         $this->checkoutLogger->info(sprintf('Order %s | CheckoutSubscriber | postFlush | triggered by: %s; at: %s',
             $this->loggingUtils->getOrderId($this->order),
             $this->loggingUtils->getRequest(),
-            $this->loggingUtils->getBacktrace(4, 8)));
+            $this->loggingUtils->getBacktrace(4, 5)));
 
         foreach ($this->insertions as $entity) {
             $this->checkoutLogger->info(sprintf('Order %s | CheckoutSubscriber | postFlush | inserted: %s',
