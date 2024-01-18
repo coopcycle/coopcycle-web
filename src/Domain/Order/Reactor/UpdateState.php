@@ -4,6 +4,7 @@ namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Command\AcceptOrder;
 use AppBundle\Domain\Order\Event;
+use AppBundle\Domain\Task\Event\TaskDone;
 use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
@@ -90,15 +91,23 @@ class UpdateState
 
         if ($event instanceof Event\OrderRestored) {
 
+            foreach ($order->getPayments() as $payment) {
+                // FIXME
+                // This will only work for payment methods supporting the authorize/capture
+                $payment->setState(PaymentInterface::STATE_AUTHORIZED);
+            }
+
             $delivery = $order->getDelivery();
             if (null !== $delivery) {
                 foreach ($delivery->getTasks() as $task) {
-                    $task->setStatus(Task::STATUS_TODO);
+                    // TODO
+                    // Maybe we could use TaskManager::restore()
+                    if ($task->hasEvent(TaskDone::messageName())) {
+                        $task->setStatus(Task::STATUS_DONE);
+                    } else {
+                        $task->setStatus(Task::STATUS_TODO);
+                    }
                 }
-            }
-
-            foreach ($order->getPayments() as $payment) {
-                $payment->setState(PaymentInterface::STATE_NEW);
             }
         }
     }
