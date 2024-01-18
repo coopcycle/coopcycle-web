@@ -578,8 +578,7 @@ export const storeFixture = {
       },
       ui: {
         taskListsLoading: false,
-        unassignedToursDroppableDisabled: true,
-        unassignedTourTasksDroppableDisabled: false,
+        areToursDroppable: false,
         currentTask: null
       }
     },

@@ -2,16 +2,13 @@ import {
   CREATE_TASK_LIST_FAILURE,
   CREATE_TASK_LIST_REQUEST,
   CREATE_TASK_LIST_SUCCESS,
-  ENABLE_UNASSIGNED_TOURS_DROPPABLE,
-  DISABLE_UNASSIGNED_TOURS_DROPPABLE,
-  ENABLE_UNASSIGNED_TOUR_TASKS_DROPPABLE,
-  DISABLE_UNASSIGNED_TOUR_TASKS_DROPPABLE,
+  ENABLE_DROP_IN_TOURS,
+  DISABLE_DROP_IN_TOURS,
 } from './actions';
 
 const initialState = {
   taskListsLoading: false,
-  unassignedToursDroppableDisabled: true,
-  unassignedTourTasksDroppableDisabled: false,
+  areToursDroppable: true,
 }
 
 export default (state = initialState, action) => {
@@ -28,29 +25,17 @@ export default (state = initialState, action) => {
         ...state,
         taskListsLoading: false,
       }
-    
-    case ENABLE_UNASSIGNED_TOURS_DROPPABLE:
-      return {
-        ...state,
-        unassignedToursDroppableDisabled: false,
-      }
-    
-    case DISABLE_UNASSIGNED_TOURS_DROPPABLE:
-      return {
-        ...state,
-        unassignedToursDroppableDisabled: true,
-      }
 
-    case ENABLE_UNASSIGNED_TOUR_TASKS_DROPPABLE:
+    case ENABLE_DROP_IN_TOURS:
       return {
         ...state,
-        unassignedTourTasksDroppableDisabled: false,
+        areToursDroppable: true,
       }
     
-    case DISABLE_UNASSIGNED_TOUR_TASKS_DROPPABLE:
+    case DISABLE_DROP_IN_TOURS:
       return {
         ...state,
-        unassignedTourTasksDroppableDisabled: true,
+        areToursDroppable: false,
       }
   
 

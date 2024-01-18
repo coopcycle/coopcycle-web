@@ -5,7 +5,7 @@ import moment from 'moment'
 import { updateTask, UPDATE_TASK, REMOVE_TASK, handleDragEnd }  from '../actions';
 // import * as dashboardActions from '../actions';
 import { storeFixture } from './storeFixture'
-import { ENABLE_UNASSIGNED_TOUR_TASKS_DROPPABLE } from '../../../coopcycle-frontend-js/logistics/redux';
+import { ENABLE_DROP_IN_TOURS } from '../../../coopcycle-frontend-js/logistics/redux';
 
 
 // https://github.com/dmitry-zaets/redux-mock-store#asynchronous-actions
@@ -76,7 +76,7 @@ describe('handleDragEnd', () => {
     handleDragEnd(result, mockModifyTaskList)(dispatch, store.getState)
 
     expect(dispatch).toHaveBeenCalledWith(
-      {type: ENABLE_UNASSIGNED_TOUR_TASKS_DROPPABLE}
+      {type: ENABLE_DROP_IN_TOURS}
       )
 
     expect(mockModifyTaskList).toHaveBeenLastCalledWith(

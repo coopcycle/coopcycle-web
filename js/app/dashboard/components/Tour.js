@@ -11,7 +11,7 @@ import classNames from 'classnames'
 import { useContextMenu } from 'react-contexify'
 
 
-const Tour = ({ tour, tasks, username=null, removeTaskFromTour, unassignTasks, isDropDisabled, modifyTour, deleteTour }) => {
+const Tour = ({ tour, tasks, username=null, removeTaskFromTour, unassignTasks, isDroppable, modifyTour, deleteTour }) => {
 
 
   const { t } = useTranslation(),
@@ -117,7 +117,7 @@ const Tour = ({ tour, tasks, username=null, removeTaskFromTour, unassignTasks, i
         </h4>
       </div>
       <div id={ `${collapseId}` } className="panel-collapse collapse" role="tabpanel">
-        <Droppable isDropDisabled={isDropDisabled} droppableId={ `tour:${tour['@id']}` }>
+        <Droppable isDropDisabled={!isDroppable} droppableId={ `tour:${tour['@id']}` }>
             {(provided) => (
               <div
               className={ classNames({
@@ -160,7 +160,7 @@ const Tour = ({ tour, tasks, username=null, removeTaskFromTour, unassignTasks, i
 function mapStateToProps (state) {
 
     return {
-        isDropDisabled: state.logistics.ui.unassignedTourTasksDroppableDisabled,
+        isDroppable: state.logistics.ui.areToursDroppable,
     }
   }
 

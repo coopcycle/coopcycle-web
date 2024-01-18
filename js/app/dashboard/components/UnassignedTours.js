@@ -40,7 +40,7 @@ class UnassignedTours extends React.Component {
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
-          <Droppable isDropDisabled={ this.props.isDropDisabled } droppableId="unassigned_tours">
+          <Droppable droppableId="unassigned_tours">
             {(provided) => (
               <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
                 { _.map(this.props.tours, (tour, index) => {
@@ -75,7 +75,6 @@ function mapStateToProps (state) {
 
   return {
     tours: selectUnassignedTours(state),
-    isDropDisabled: state.logistics.ui.unassignedToursDroppableDisabled
   }
 }
 
