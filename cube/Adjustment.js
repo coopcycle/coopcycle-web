@@ -4,7 +4,7 @@ cube(`Adjustment`, {
   measures: {
     // TODO Check if neutral = false
     totalAmount: {
-      sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
+      sql: `COALESCE(ROUND(${CUBE}.amount / 100::numeric, 2), 0)`,
       type: `sum`,
       format: `currency`
     },
