@@ -14,9 +14,9 @@ import {
   modifyTaskList} from '../redux/actions'
 import UnassignedTasks from './UnassignedTasks'
 import TaskLists from './TaskLists'
-import ContextMenu from './ContextMenu'
 import SearchPanel from './SearchPanel'
 import UnassignedTours from './UnassignedTours'
+import TasksContextMenu from './context-menus/TasksContextMenu'
 
 class DashboardApp extends React.Component {
 
@@ -64,7 +64,7 @@ class DashboardApp extends React.Component {
           </Split>
         </DragDropContext>
         <SearchPanel />
-        <ContextMenu />
+        <TasksContextMenu />
         <ToastContainer />
       </div>
     )

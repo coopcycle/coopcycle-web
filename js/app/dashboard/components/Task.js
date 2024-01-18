@@ -155,7 +155,7 @@ const TaskIconRight = ({ task, onRemove }) => {
 }
 
 const { show } = useContextMenu({
-  id: 'dashboard',
+  id: 'task-contextmenu',
 })
 
 class Task extends React.Component {

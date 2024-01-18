@@ -20,9 +20,9 @@ import {
   removeTasksFromGroup,
   restoreTasks, setCurrentTask,
   unassignTasks
-} from '../redux/actions'
-import {selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks} from '../redux/selectors'
-import {selectUnassignedTasks} from '../../coopcycle-frontend-js/logistics/redux'
+} from '../../redux/actions'
+import {selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks} from '../../redux/selectors'
+import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
 
@@ -141,7 +141,7 @@ const DynamicMenu = ({
   }
 
   return (
-    <Menu id="dashboard">
+    <Menu id="task-contextmenu">
       <Item
         hidden={ !(actions.includes(UNASSIGN_SINGLE) && selectedTask) }
         onClick={ () => _unassign([ selectedTask ], unassignTasks) }
