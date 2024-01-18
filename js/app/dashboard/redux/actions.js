@@ -230,7 +230,7 @@ export function unassignTasks(username, tasks) {
     tasks = [ tasks ]
   }
 
-  return function(dispatch, getState) {
+  return async function(dispatch, getState) {
 
     if (tasks.length === 0) {
       return
@@ -242,7 +242,7 @@ export function unassignTasks(username, tasks) {
 
     const taskList = _.find(taskLists, taskList => taskList.username === username)
 
-    dispatch(modifyTaskList(username, withoutTasks(taskList.items, withLinkedTasks(tasks, allTasks))))
+    await dispatch(modifyTaskList(username, withoutTasks(taskList.items, withLinkedTasks(tasks, allTasks))))
   }
 }
 
@@ -288,12 +288,12 @@ export function importError(token, message) {
 
 export function modifyTaskList(username, tasks) {
 
-  const data = tasks.map((task, index) => ({
-    task: task['@id'],
-    position: index,
-  }))
+  return async function(dispatch, getState) {
 
-  return function(dispatch, getState) {
+    const data = tasks.map((task, index) => ({
+      task: task['@id'],
+      position: index,
+    }))
 
     let state = getState()
     let allTasks = selectAllTasks(state)
@@ -315,20 +315,23 @@ export function modifyTaskList(username, tasks) {
 
     dispatch(modifyTaskListRequest(username, newTasks))
 
-    axios
-      .put(url, data, {
+    try {
+      var response =  await axios.put(url, data, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/ld+json'
         },
       })
-      .then(res => {
-        dispatch(modifyTaskListRequestSuccess(res.data))
-      })
-      .catch(error => {
-        // eslint-disable-next-line no-console
-        console.error(error)
-      })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
+
+    // return a promise so we can chain after dispatching this function
+    return new Promise((resolve) => {
+      dispatch(modifyTaskListRequestSuccess(response.data))
+      resolve(response.data)
+    })
   }
 }
 
@@ -1253,16 +1256,11 @@ export function handleDragEnd(result, modifyTaskList) {
     }
 
     // cannot unassign from tour by drag'n'drop atm
-    if (source.droppableId.startsWith('unassigned_tour:') && destination.droppableId === 'unassigned') {
+    if (source.droppableId.startsWith('tour:') && destination.droppableId === 'unassigned') {
       return
     }
 
     const allTasks = selectAllTasks(getState())
-
-    // FIXME
-    // The tasks are dropped in the order they were selected
-    // Instead, we should respect the order of the unassigned tasks
-
 
     // FIXME : if a tour or a group is selected, selectSelectedTasks yields [ undefined ] so we test > 1 no > 0
     let selectedTasks = selectSelectedTasks(getState()).length > 1 ? selectSelectedTasks(getState()) : [_.find(allTasks, t => t['@id'] === result.draggableId)]
@@ -1285,10 +1283,10 @@ export function handleDragEnd(result, modifyTaskList) {
     }
     
     // handle drop in a tour
-    if (destination.droppableId.startsWith('unassigned_tour:')) {
+    if (destination.droppableId.startsWith('tour:')) {
 
       const tours = selectUnassignedTours(getState())
-      const tourId = destination.droppableId.replace('unassigned_tour:', '')
+      const tourId = destination.droppableId.replace('tour:', '')
       const tour = tours.find(t => t['@id'] == tourId)
 
       let newTourItems = [ ...tour.items ]
@@ -1595,39 +1593,42 @@ export function createTour(tasks, name, date) {
 
 export function modifyTour(tour, tasks) {
 
-  return function(dispatch, getState) {
+  return async function(dispatch, getState) {
 
     dispatch(modifyTourRequest(tour, tasks))
 
     const { jwt } = getState()
 
-    createClient(dispatch).request({
-      method: 'put',
-      url: tour['@id'],
-      data: {
-        name: tour.name,
-        tasks: _.map(tasks, t => t['@id'])
-      },
-      headers: {
-        'Authorization': `Bearer ${jwt}`,
-        'Accept': 'application/ld+json',
-        'Content-Type': 'application/ld+json'
-      }
-    })
-      .then(res => {
-        let _tour = res.data
+    try {
+      var response = await createClient(dispatch).request({
+        method: 'put',
+        url: tour['@id'],
+        data: {
+          name: tour.name,
+          tasks: _.map(tasks, t => t['@id'])
+        },
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        dispatch(modifyTourRequestError(tour))
+    }
+
+    return new Promise((resolve) => {
+        let _tour = response.data
         // TODO: do this in the backend?
         _tour.itemIds = _tour.items.map(item => item['@id'])
         
         dispatch(updateTour(_tour))
         dispatch(modifyTourRequestSuccess(_tour, tasks))
-        return _tour
-      })
-      .catch(error => {
-        // eslint-disable-next-line no-console
-        console.error(error)
-        dispatch(modifyTourRequestError(tour))
-      })
+
+        return resolve(_tour)
+    })
   }
 }
 
@@ -1658,11 +1659,20 @@ export function deleteTour(tour) {
   }
 }
 
-export function removeTaskFromTour(tour, task) {
+export function removeTaskFromTour(tour, task, username) {
   return function(dispatch, getState) {
     let state = getState()
     let allTasks = selectAllTasks(state)
-    dispatch(modifyTour(tour, withoutTasks(tour.items, withLinkedTasks([ task ], allTasks))))
+    
+    if (username !== null) {
+      // we want to unsassign before modifying the tour, because we want first the task out of the TaskList in the UI 
+      dispatch(unassignTasks(username, [task])).then(() => {
+        dispatch(modifyTour(tour, withoutTasks(tour.items, withLinkedTasks([ task ], allTasks))))
+      })
+    } else {
+      dispatch(modifyTour(tour, withoutTasks(tour.items, withLinkedTasks([ task ], allTasks))))
+    }
+
   }
 }
 

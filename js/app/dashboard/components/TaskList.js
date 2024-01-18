@@ -15,12 +15,12 @@ import {
 import classNames from 'classnames'
 
 import Task from './Task'
-import Tour from './Tour'
 
 import Avatar from '../../components/Avatar'
 import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
 import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
+import Tour from './Tour'
 
 moment.locale($('html').attr('lang'))
 

@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 
-import UnassignedTour from './UnassignedTour'
+import Tour from './Tour'
 import { openCreateTourModal } from '../redux/actions'
 import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
 
@@ -52,10 +52,9 @@ class UnassignedTours extends React.Component {
                           { ...provided.draggableProps }
                           { ...provided.dragHandleProps }
                         >
-                          <UnassignedTour
+                          <Tour
                             key={ tour['@id'] }
                             tour={ tour }
-                            tasks={ tour.items }
                             />
                         </div>
                       )}
