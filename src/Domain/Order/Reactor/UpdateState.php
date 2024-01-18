@@ -4,6 +4,7 @@ namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Command\AcceptOrder;
 use AppBundle\Domain\Order\Event;
+use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use AppBundle\Utils\OrderTimeHelper;
@@ -11,6 +12,7 @@ use SimpleBus\Message\Bus\MessageBus;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\PaymentTransitions;
+use Sylius\Component\Payment\Model\PaymentInterface;
 
 /**
  * This Reactor is responsible for updating the state of the aggregate.
@@ -40,6 +42,7 @@ class UpdateState
             Event\OrderRefused::messageName()   => OrderTransitions::TRANSITION_REFUSE,
             Event\OrderCancelled::messageName() => OrderTransitions::TRANSITION_CANCEL,
             Event\OrderFulfilled::messageName() => OrderTransitions::TRANSITION_FULFILL,
+            Event\OrderRestored::messageName()  => OrderTransitions::TRANSITION_RESTORE,
         ];
     }
 
@@ -82,6 +85,20 @@ class UpdateState
                 if ($stateMachine->can($transition)) {
                     $stateMachine->apply($transition);
                 }
+            }
+        }
+
+        if ($event instanceof Event\OrderRestored) {
+
+            $delivery = $order->getDelivery();
+            if (null !== $delivery) {
+                foreach ($delivery->getTasks() as $task) {
+                    $task->setStatus(Task::STATUS_TODO);
+                }
+            }
+
+            foreach ($order->getPayments() as $payment) {
+                $payment->setState(PaymentInterface::STATE_NEW);
             }
         }
     }

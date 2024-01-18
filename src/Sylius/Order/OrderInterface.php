@@ -221,4 +221,6 @@ interface OrderInterface extends
     public function isReusablePackagingEnabled();
 
     public function getPaymentMethod(): ?string;
+
+    public function hasEvent(string $type): bool;
 }

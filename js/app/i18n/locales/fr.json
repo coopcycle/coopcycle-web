@@ -314,6 +314,7 @@
         "ADMIN_DASHBOARD_ORDERS_LOOPEAT_STOCK_OK": "En stock",
         "ADMIN_DASHBOARD_ORDERS_LOOPEAT_STOCK_NOK": "Pas assez de stock, {{quantity}} manquant(s)",
         "PRESS_ENTER_TO_SEARCH": "Appuyez sur Entrée pour rechercher « {{query}} »",
-        "SHOW_MORE_RESULTS": "Voir plus de résultats pour « {{query}} »"
+        "SHOW_MORE_RESULTS": "Voir plus de résultats pour « {{query}} »",
+        "ADMIN_DASHBOARD_ORDERS_RESTORE": "Restaurer"
     }
 }

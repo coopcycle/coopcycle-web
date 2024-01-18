@@ -26,6 +26,7 @@ use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
+use AppBundle\Action\Order\Restore as OrderRestore;
 use AppBundle\Action\Order\Tip as OrderTip;
 use AppBundle\Action\Order\UpdateLoopeatFormats as UpdateLoopeatFormatsController;
 use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
@@ -190,6 +191,15 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "security"="is_granted('cancel', object)",
  *       "openapi_context"={
  *         "summary"="Cancels a Order resource."
+ *       }
+ *     },
+ *     "restore"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/restore",
+ *       "controller"=OrderRestore::class,
+ *       "security"="is_granted('restore', object)",
+ *       "openapi_context"={
+ *         "summary"="Restores a cancelled Order resource."
  *       }
  *     },
  *     "assign"={
@@ -1715,6 +1725,17 @@ class Order extends BaseOrder implements OrderInterface
         foreach ($this->getVendors() as $vendor) {
             if ($vendor->getRestaurant()->isLoopeatEnabled() && $vendor->getRestaurant()->hasLoopEatCredentials()) {
 
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function hasEvent(string $type): bool
+    {
+        foreach ($this->getEvents() as $event) {
+            if ($event->getType() === $type) {
                 return true;
             }
         }
