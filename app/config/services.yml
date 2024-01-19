@@ -1177,6 +1177,7 @@ services:
   AppBundle\Sylius\Taxation\TaxesHelper:
     arguments:
       $country: '%region_iso%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
       # $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
 
   AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~
