@@ -1,6 +1,7 @@
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
 import React from 'react';
+import 'chart.js/auto'; // ideally we should only import the component that we need: https://react-chartjs-2.js.org/docs/migration-to-v4/#tree-shaking
 import { Bar } from 'react-chartjs-2';
 import {getCubeDateRange} from "../utils";
 import { useDeepCompareMemo } from 'use-deep-compare'
