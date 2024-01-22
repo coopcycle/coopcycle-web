@@ -21,8 +21,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ImportDeliveriesHandler implements MessageHandlerInterface
 {
-    private static $batchSize = 10;
-
     public function __construct(
         private EntityManagerInterface $entityManager,
         private Filesystem $deliveryImportsFilesystem,
@@ -64,7 +62,6 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
 
         $result = $this->spreadsheetParser->parse($tempnam);
 
-        $i = 0;
         foreach ($result->getData() as $rowNumber => $delivery) {
 
             // Validate data
@@ -95,11 +92,6 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
             }
 
             $this->entityManager->persist($delivery);
-
-            if (($i++ % self::$batchSize) === 0) {
-                $this->entityManager->flush();
-                $this->entityManager->clear();
-            }
         }
 
         $this->entityManager->flush();
