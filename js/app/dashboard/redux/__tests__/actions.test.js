@@ -118,4 +118,33 @@ describe('handleDragEnd', () => {
       
   })
 
+  it ('should assign a group at the end of a tasklist', () => {
+    const dispatch = jest.fn(),
+      mockModifyTaskList = jest.fn()
+
+    let result = {
+      draggableId: 'group:23',
+      source: {droppableId: 'unassigned:'}, destination: {droppableId: 'assigned:admin', index: 6}
+    }
+  
+    handleDragEnd(result, mockModifyTaskList)(dispatch, store.getState)
+
+    expect(dispatch).toHaveBeenCalledWith(
+      {type: ENABLE_UNASSIGNED_TOUR_TASKS_DROPPABLE}
+      )
+
+    expect(mockModifyTaskList).toHaveBeenLastCalledWith(
+      "admin",
+      expect.arrayContaining([
+        expect.objectContaining({"@id": '/api/tasks/729'}),
+        expect.objectContaining({"@id": '/api/tasks/730'}),
+        expect.objectContaining({"@id": '/api/tasks/731'}),
+        expect.objectContaining({"@id": '/api/tasks/727'}),
+        expect.objectContaining(
+          {"@id": '/api/tasks/736', 'group': expect.objectContaining({"@id": "/api/task_groups/23"})})
+      ])
+    )
+      
+  })
+
 })

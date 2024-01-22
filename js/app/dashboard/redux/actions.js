@@ -1270,7 +1270,7 @@ export function handleDragEnd(result, modifyTaskList) {
     // we are moving a whole group or tour, override selectedTasks
     if (result.draggableId.startsWith('group')) {
       let groupId = result.draggableId.split(':')[1]
-      selectedTasks = selectGroups(getState()).find(g => g.id = groupId).tasks
+      selectedTasks = selectGroups(getState()).find(g => g.id == groupId).tasks
     }
     else if (result.draggableId.startsWith('tour')) {
       let tourId = result.draggableId.split(':')[1],

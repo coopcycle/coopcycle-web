@@ -16,7 +16,8 @@ export const storeFixture = {
             '/api/tasks/732',
             '/api/tasks/733',
             '/api/tasks/734',
-            '/api/tasks/735'
+            '/api/tasks/735',
+            '/api/tasks/736'
           ],
           entities: {
             '/api/tasks/730': {
@@ -372,7 +373,31 @@ export const storeFixture = {
               previous: null,
               next: null,
               tour: null
-            }
+            },
+            '/api/tasks/736': {
+              '@context': '/api/contexts/Task',
+              '@id': '/api/tasks/736',
+              '@type': 'Task',
+              id: 736,
+              type: 'DROPOFF',
+              status: 'TODO',
+              group: {
+                '@id': '/api/task_groups/23',
+                '@type': 'TaskGroup',
+                id: 23,
+                name: 'un autre groupe',
+                tags: []
+              },
+              after: '2024-01-09T00:00:00+01:00',
+              before: '2024-01-09T23:59:59+01:00',
+              isAssigned: true,
+              doneAfter: '2024-01-09T00:00:00+01:00',
+              doneBefore: '2024-01-09T23:59:59+01:00',
+              assignedTo: 'admin',
+              previous: null,
+              next: null,
+              tour: null
+            },
           }
         },
         taskLists: {
