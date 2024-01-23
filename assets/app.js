@@ -6,7 +6,6 @@
  */
 
 import { registerReactControllerComponents } from '@symfony/ux-react';
-import './styles/app.css';
 
 // start the Stimulus application
 import './bootstrap.js';
