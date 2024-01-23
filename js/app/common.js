@@ -12,7 +12,6 @@ require('bootstrap-sass')
 
 import './i18n'
 import { setTimezone, getCurrencySymbol } from './i18n'
-import CartTop from './cart/CartTop'
 import AddressAutosuggest from './widgets/AddressAutosuggest'
 import SearchNavbar from './search/navbar'
 
@@ -60,11 +59,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Set global timezone used in Moment.js
   const timezone = document.querySelector('body').dataset.timezone
   setTimezone(timezone)
-
-  const cartTopElement = document.querySelector('#cart-top')
-  if (cartTopElement) {
-    render(<CartTop url={ cartTopElement.dataset.url } href={ cartTopElement.dataset.href } />, cartTopElement)
-  }
 
   const searchNavbarElement = document.querySelector('#search-navbar')
   if (searchNavbarElement) {
