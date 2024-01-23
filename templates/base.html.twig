@@ -11,6 +11,7 @@
       {% include "_partials/auth.html.twig" %}
       {{ encore_entry_script_tags('user-data') }}
     {% endif %}
+    {{ encore_entry_script_tags('app') }}
     {{ encore_entry_link_tags('common') }}
     {{ encore_entry_link_tags('widgets') }}
     {% if app.user %}
