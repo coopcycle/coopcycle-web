@@ -82,5 +82,8 @@ services:
       - { name: validator.constraint_validator }
 
   AppBundle\Validator\Constraints\SpreadsheetValidator:
+    arguments:
+      $parsers:
+        delivery: '@AppBundle\Spreadsheet\DeliverySpreadsheetParser'
     tags:
       - { name: validator.constraint_validator }

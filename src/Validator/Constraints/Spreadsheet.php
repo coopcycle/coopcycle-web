@@ -9,7 +9,14 @@ use Symfony\Component\Validator\Constraint;
  */
 class Spreadsheet extends Constraint
 {
-    public $typeNotEditable = 'task.type.notEditable';
+    public $type;
+
+    public function __construct(string $type = null, array $options = null, array $groups = null, $payload = null)
+    {
+        parent::__construct($options ?? [], $groups, $payload);
+
+        $this->type = $type;
+    }
 
     public function validatedBy()
     {

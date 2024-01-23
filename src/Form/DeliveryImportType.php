@@ -24,7 +24,7 @@ class DeliveryImportType extends AbstractType
                 'required' => true,
                 'label' => 'form.delivery_import.file.label',
                 'constraints' => [
-                    new AssertSpreadsheet(),
+                    new AssertSpreadsheet('delivery'),
                 ],
             ));
 
