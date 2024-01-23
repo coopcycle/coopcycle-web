@@ -6,21 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon.png">
     {{ sonata_seo_metadatas() }}
+
     {# Inject API auth details into webpage #}
     {% if _auth is defined %}
       {% include "_partials/auth.html.twig" %}
       {{ encore_entry_script_tags('user-data') }}
     {% endif %}
-    {{ encore_entry_script_tags('app') }}
+
     {{ encore_entry_link_tags('common') }}
     {{ encore_entry_link_tags('widgets') }}
     {% if app.user %}
       {{ encore_entry_link_tags('notifications') }}
     {% endif %}
+
     {% block styles_common %}
       {% block styles %}{% endblock %}
     {% endblock %}
+
     {% block structured_data %}{% endblock %}
+
     {% if coopcycle_has_banner() %}
     <style>
     .homepage-search, .restaurant-list-header {
@@ -30,6 +34,9 @@
     {% endif %}
 
     <link type="text/css" rel="stylesheet" href="{{ asset('bundles/craueformflow/css/buttons.css') }}" />
+
+    {{ encore_entry_script_tags('common') }}
+    {{ encore_entry_script_tags('app') }}
   </head>
   <body data-country="{{ country_iso }}" data-currency-symbol="{{ currency_context.currencyCode|sylius_currency_symbol }}" data-timezone="{{ coopcycle_setting('timezone') }}">
     {% block menu %}
@@ -81,7 +88,6 @@
     <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 
-    {{ encore_entry_script_tags('common') }}
     {{ encore_entry_script_tags('widgets') }}
 
     {% if app.user %}
