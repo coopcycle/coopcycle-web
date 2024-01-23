@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Store;
+use AppBundle\Validator\Constraints\Spreadsheet as AssertSpreadsheet;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -21,7 +22,10 @@ class DeliveryImportType extends AbstractType
             ->add('file', FileType::class, array(
                 'mapped' => false,
                 'required' => true,
-                'label' => 'form.delivery_import.file.label'
+                'label' => 'form.delivery_import.file.label',
+                'constraints' => [
+                    new AssertSpreadsheet(),
+                ],
             ));
 
         if ($options['with_store']) {

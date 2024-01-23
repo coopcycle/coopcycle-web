@@ -2,13 +2,14 @@
 
 namespace AppBundle\Spreadsheet;
 
-use League\Flysystem\File;
+use League\Flysystem;
 use League\Csv\Writer;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\IReader;
 use PhpOffice\PhpSpreadsheet\Reader\Ods;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Symfony\Component\HttpFoundation;
 
 abstract class AbstractSpreadsheetParser
 {
@@ -81,31 +82,13 @@ abstract class AbstractSpreadsheetParser
     abstract public function parseData(array $data, array $options = []): array | SpreadsheetParseResult;
 
     /**
-     * @param File|string $file
+     * @param Flysystem\File|HttpFoundation\File\File|string $file
      * @param array $options
      * @throws \Exception
      */
     public function parse($file, array $options = [])
     {
-        $isTempFile = false;
-
-        if (is_string($file)) {
-            $filename = $file;
-        } else {
-            if ($file instanceof File) {
-                $tempnam = tempnam(sys_get_temp_dir(), 'coopcycle_spreadsheet_parser_');
-                if (false === file_put_contents($tempnam, $file->read())) {
-                    throw new \Exception(sprintf('Could not write temp file %s', $tempnam));
-                }
-
-                $isTempFile = true;
-                $filename = $tempnam;
-            }
-        }
-
-        $reader = $this->createReader($filename);
-
-        $spreadsheet = $reader->load($filename);
+        $spreadsheet = $this->loadSpreadsheet($file);
 
         $data = [];
         $header = [];
@@ -129,9 +112,6 @@ abstract class AbstractSpreadsheetParser
         try {
             $this->validateHeader($header);
         } catch (\Exception $e) {
-            if ($isTempFile) {
-                unlink($filename);
-            }
             throw $e;
         }
 
@@ -145,15 +125,11 @@ abstract class AbstractSpreadsheetParser
             return array_combine($header, $row);
         }, $data);
 
-        if ($isTempFile) {
-            unlink($filename);
-        }
-
         return $this->parseData($data, $options);
     }
 
     /**
-     * @param File|string $file
+     * @param Flysystem\File|HttpFoundation\File\File|string $file
      * @return Spreadsheet
      * @throws \Exception
      */
@@ -161,10 +137,10 @@ abstract class AbstractSpreadsheetParser
     {
         $isTempFile = false;
 
-        if (is_string($file)) {
-            $filename = $file;
-        } else {
-            if ($file instanceof File) {
+        if (is_object($file)) {
+
+            if ($file instanceof Flysystem\File) {
+
                 $tempnam = tempnam(sys_get_temp_dir(), 'coopcycle_spreadsheet_parser_');
                 if (false === file_put_contents($tempnam, $file->read())) {
                     throw new \Exception(sprintf('Could not write temp file %s', $tempnam));
@@ -172,7 +148,13 @@ abstract class AbstractSpreadsheetParser
 
                 $isTempFile = true;
                 $filename = $tempnam;
+
+            } elseif ($file instanceof HttpFoundation\File\File) {
+                $filename = $file->getPathname();
             }
+
+        } elseif (is_string($file)) {
+            $filename = $file;
         }
 
         $reader = $this->createReader($filename);
@@ -186,6 +168,10 @@ abstract class AbstractSpreadsheetParser
         return $spreadsheet;
     }
 
+    /**
+     * @param Flysystem\File|HttpFoundation\File\File|string $file
+     * @return string
+     */
     public function toCsv($file): string
     {
         $spreadsheet = $this->loadSpreadsheet($file);
@@ -199,10 +185,35 @@ abstract class AbstractSpreadsheetParser
         return $csv->toString();
     }
 
+    /**
+     * @param Flysystem\File|HttpFoundation\File\File|string $file
+     * @return array
+     */
     public function toRawData($file): array
     {
         $spreadsheet = $this->loadSpreadsheet($file);
 
         return $spreadsheet->getSheet($spreadsheet->getFirstSheetIndex())->toArray();
+    }
+
+    /**
+     * @param Flysystem\File|HttpFoundation\File\File|string $file
+     * @throws \Exception
+     */
+    public function preValidate($file)
+    {
+        $spreadsheet = $this->loadSpreadsheet($file);
+
+        $header = [];
+        foreach ($spreadsheet->getWorksheetIterator() as $sheet) {
+            foreach ($sheet->toArray() as $rowIndex => $row) {
+                if ($rowIndex === 0) {
+                    $header = $row;
+                    break;
+                }
+            }
+        }
+
+        $this->validateHeader($header);
     }
 }
