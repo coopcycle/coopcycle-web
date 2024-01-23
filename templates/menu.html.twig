@@ -32,7 +32,7 @@
         {% endif %}
       </ul>
 
-      <div class="navbar-form navbar-left" id="search-navbar" style="position: relative;">
+      <div class="navbar-form navbar-left" style="position: relative;" {{ react_component('NavBarSearch') }}>
         <div class="form-group">
           <input type="text" class="form-control" placeholder="{{ 'basics.search'|trans }}">
         </div>
