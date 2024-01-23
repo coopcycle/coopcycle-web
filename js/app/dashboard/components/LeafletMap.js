@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client';
 import { connect } from 'react-redux'
 import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
@@ -206,8 +206,8 @@ const MapProvider = (props) => {
         const tasks = childMarkers.map(m => m.options.task)
 
         const el = document.createElement('div')
-
-        render(<GroupPopupContent
+        const root = createRoot(el);
+        root.render(<GroupPopupContent
           onEditClick={ proxy.onEditClick }
           clusterTasks={ tasks }
           onMouseEnter={ task => {
@@ -216,7 +216,7 @@ const MapProvider = (props) => {
           onMouseLeave={ () => {
             proxy.hideNext()
           }}
-          />, el)
+          />)
 
         return el
       }

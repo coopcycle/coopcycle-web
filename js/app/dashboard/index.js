@@ -1,5 +1,5 @@
-import React, { createRef } from 'react'
-import { render } from 'react-dom'
+import React, { createRef, useEffect } from 'react'
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
@@ -24,13 +24,21 @@ import './dashboard.scss'
 import { taskListUtils, taskAdapter, taskListAdapter, tourAdapter } from '../coopcycle-frontend-js/logistics/redux'
 
 function start() {
+  const container = document.getElementById('dashboard')
+  const root = createRoot(container);
+  root.render(<DispatchDashboard />);
 
+  // hide export modal after button click
+  $('#export-modal button').on('click', () => setTimeout(() => $('#export-modal').modal('hide'), 400))
+}
+
+function DispatchDashboard() {
   const dashboardEl = document.getElementById('dashboard')
 
   let date = moment(dashboardEl.dataset.date)
   let allTasks = JSON.parse(dashboardEl.dataset.allTasks)
   let taskLists = JSON.parse(dashboardEl.dataset.taskLists)
-  let tours = JSON.parse(dashboardEl.dataset.tours)  
+  let tours = JSON.parse(dashboardEl.dataset.tours)
 
   // normalize data, keep only task ids, instead of the whole objects
   taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
@@ -134,7 +142,16 @@ function start() {
 
   const mapRef = createRef()
 
-  render(
+  useEffect(() => {
+    anim.stop()
+    anim.destroy()
+    document.querySelector('.dashboard__loader').remove()
+
+    // Make sure map is rendered correctly with Split.js
+    // mapRef.current.invalidateSize()
+  });
+
+  return (
     <Provider store={ store }>
       <I18nextProvider i18n={ i18n }>
         <ConfigProvider locale={antdLocale}>
@@ -172,20 +189,8 @@ function start() {
           <Modals />
         </ConfigProvider>
       </I18nextProvider>
-    </Provider>,
-    document.getElementById('dashboard'),
-    () => {
-      anim.stop()
-      anim.destroy()
-      document.querySelector('.dashboard__loader').remove()
-
-      // Make sure map is rendered correctly with Split.js
-      // mapRef.current.invalidateSize()
-    }
+    </Provider>
   )
-
-  // hide export modal after button click
-  $('#export-modal button').on('click', () => setTimeout(() => $('#export-modal').modal('hide'), 400))
 }
 
 const anim = lottie.loadAnimation({
