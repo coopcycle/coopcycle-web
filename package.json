@@ -135,7 +135,7 @@
     "react-split": "^2.0.14",
     "react-spreadsheet": "^0.9.2",
     "react-stickynode": "^4.1.0",
-    "react-timeago": "^6.2.1",
+    "react-timeago": "^7.2.0",
     "react-toastify": "^7.0.4",
     "reduce-reducers": "^1.0.4",
     "redux": "^4.2.0",
