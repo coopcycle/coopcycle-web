@@ -65,6 +65,8 @@ class AppKernel extends Kernel
             new ACSEO\TypesenseBundle\ACSEOTypesenseBundle(),
             new AppBundle\AppBundle(),
             new Craue\FormFlowBundle\CraueFormFlowBundle(),
+            new Symfony\UX\StimulusBundle\StimulusBundle(),
+            new Symfony\UX\React\ReactBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

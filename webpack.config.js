@@ -99,6 +99,9 @@ Encore
   // will require an extra script tag for runtime.js
   // but, you probably want this, unless you're building a single-page app
   .enableSingleRuntimeChunk()
+
+  .enableReactPreset()
+
   .enablePostCssLoader()
   .enableSassLoader(function(sassLoaderOptions) {
     // https://github.com/twbs/bootstrap-sass#sass-number-precision

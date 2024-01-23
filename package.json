@@ -45,6 +45,7 @@
     "@stripe/stripe-js": "^1.22.0",
     "@symfony/stimulus-bridge": "^3.2.2",
     "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
+    "@symfony/ux-react": "file:vendor/symfony/ux-react/assets",
     "@symfony/webpack-encore": "^1.1.2",
     "antd": "^4.24.5",
     "autoprefixer": "^10.4.13",
