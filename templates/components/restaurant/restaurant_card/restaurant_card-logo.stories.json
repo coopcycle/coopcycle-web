@@ -1,5 +1,5 @@
 {
-  "title": "RestaurantCard/2. logo/1. Logo",
+  "title": "Restaurant/2. logo/1. Logo",
   "parameters": {
     "server": {
       "url": "http://localhost/storybook/component",
@@ -20,6 +20,5 @@
       "name": "Broken logo",
       "args": { "image": "https://broken-logo.err" }
     }
-    
   ]
 }

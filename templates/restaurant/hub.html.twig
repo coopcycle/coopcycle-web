@@ -50,7 +50,7 @@
           {% if address is defined and address is not empty %}
             {% set restaurant_path_params = restaurant_path_params|merge({ address: address }) %}
           {% endif %}
-          {% include "components/restaurant_card/restaurant_card.html.twig" with {
+          {% include "components/restaurant/restaurant_card/restaurant_card.html.twig" with {
             url: local_business_path(restaurant, restaurant_path_params),
             image: coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail')|placeholder_image('restaurant_thumbnail'),
             name: restaurant.name,

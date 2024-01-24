@@ -1,5 +1,5 @@
 {
-  "title": "RestaurantCard/4. General/RestaurantCard",
+  "title": "Restaurant/4. Restaurant Card/RestaurantCard",
   "parameters": {
     "server": {
       "url": "http://localhost/storybook/component",

@@ -1,5 +1,5 @@
 {
-  "title": "RestaurantCard/1. Badge/1. Badges",
+  "title": "Restaurant/1. Badge/1. Badges",
   "parameters": {
     "server": {
       "url": "http://localhost/storybook/component",
