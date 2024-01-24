@@ -9,6 +9,7 @@ use PhpOffice\PhpSpreadsheet\Reader\IReader;
 use PhpOffice\PhpSpreadsheet\Reader\Ods;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\CellIterator;
 use Symfony\Component\HttpFoundation;
 
 abstract class AbstractSpreadsheetParser
@@ -93,6 +94,9 @@ abstract class AbstractSpreadsheetParser
         $data = [];
         $header = [];
 
+        $definitionOfEmptyFlags =
+            CellIterator::TREAT_NULL_VALUE_AS_EMPTY_CELL | CellIterator::TREAT_EMPTY_STRING_AS_EMPTY_CELL;
+
         foreach ($spreadsheet->getWorksheetIterator() as $sheet) {
             foreach ($sheet->toArray() as $rowIndex => $row) {
                 if ($rowIndex === 0) {
@@ -101,7 +105,7 @@ abstract class AbstractSpreadsheetParser
                 }
 
                 // Verify that the row is not completely empty
-                if (0 === count(array_filter($row, fn ($value) => !empty(trim($value))))) {
+                if ($sheet->isEmptyRow($rowIndex, $definitionOfEmptyFlags)) {
                     continue;
                 }
 
