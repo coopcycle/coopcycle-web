@@ -2,6 +2,7 @@
 
 {% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'dashboard_restaurant' %}
 {% set restaurant_edit_url = path(restaurant_edit_route, { id: restaurant.id }) %}
+{% set restaurant_id = restaurant.id %}
 
 {% form_theme cart_form 'form/cart.html.twig' %}
 
@@ -200,62 +201,23 @@
         {% endif %}
         <div class="restaurant-menu-section">
           {% for product in child.products %}
-            {# TODO Skip if no variant is defined #}
-            {% if not product.enabled %}
-              <div class="restaurant-menu-section-item">
-                <a class="menu-item menu-item--unavailable">
-                  {% include '_partials/restaurant/menu_item_inner.html.twig' %}
-                </a>
-              </div>
+            {% set product_images = [] %}
+            {% set images_16x9 = product.images|filter(image => image.ratio == '16:9') %}
+            {% if images_16x9|length > 0 %}
+              {% set product_images_filtered = images_16x9 %}
             {% else %}
-              {% set product_images = [] %}
-              {% set images_16x9 = product.images|filter(image => image.ratio == '16:9') %}
-              {% if images_16x9|length > 0 %}
-                {% set product_images_filtered = images_16x9 %}
-              {% else %}
-                {% set product_images_filtered = product.images|filter(image => image.ratio == '1:1') %}
-              {% endif %}
-              {% for product_image in product_images_filtered %}
-                {% set imagine_filter = ('product_thumbnail_' ~ (product_image.ratio|replace({ ':': 'x' }))) %}
-                {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', imagine_filter, true, true) ]) %}
-              {% endfor %}
-              {% if not product.hasOptions() %}
-              <div class="restaurant-menu-section-item">
-                {% if product_images|length > 1 %}
-                  <button class="menu-item" type="button"
-                    data-modal="details"
-                    data-product-name="{{ product.name|e('html_attr') }}"
-                    data-product-images="{{ product_images|json_encode|e('html_attr') }}"
-                    data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
-                    data-form-action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}">
-                    {% include '_partials/restaurant/menu_item_inner.html.twig' %}
-                  </button>
-                {% else %}
-                  <form method="post"
-                    action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code }) }}"
-                    data-product-simple>
-                    <button class="menu-item" type="submit">
-                      {% include '_partials/restaurant/menu_item_inner.html.twig' %}
-                    </button>
-                  </form>
-                {% endif %}
-              </div>
-              {% else %}
-              <div class="restaurant-menu-section-item">
-                <button
-                  class="menu-item"
-                  data-modal="options"
-                  data-form-action="{{ path('restaurant_add_product_to_cart', { id: restaurant.id, code: product.code })|e('html_attr') }}"
-                  data-product-code="{{ product.code|e('html_attr') }}"
-                  data-product-name="{{ product.name|e('html_attr') }}"
-                  data-product-images="{{ product_images|json_encode|e('html_attr') }}"
-                  data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
-                  data-product-options="{{ product.options|coopcycle_normalize('AppBundle\\Entity\\Sylius\\ProductOption', ['product_option'], 'json')|json_encode|e('html_attr') }}">
-                  {% include '_partials/restaurant/menu_item_inner.html.twig' %}
-                </button>
-              </div>
-              {% endif %}
+              {% set product_images_filtered = product.images|filter(image => image.ratio == '1:1') %}
             {% endif %}
+            {% for product_image in product_images_filtered %}
+              {% set imagine_filter = ('product_thumbnail_' ~ (product_image.ratio|replace({ ':': 'x' }))) %}
+              {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', imagine_filter, true, true) ]) %}
+            {% endfor %}
+            {% set card_product_image = null %}
+            {% set images_1x1 = product.images|filter(image => image.ratio == '1:1') %}
+            {% if images_1x1|length > 0 %}
+              {% set card_product_image = coopcycle_asset(images_1x1|first, 'imageFile', 'product_thumbnail', true, true) %}
+            {% endif %}
+            {% include 'components/restaurant/product/menu_item.html.twig' %}
           {% endfor %}
         </div>
         {% endif %}
