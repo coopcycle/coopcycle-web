@@ -12,7 +12,8 @@ class StorybookController extends AbstractController
     private $mapping = [
         'restaurant-card' => 'components/restaurant/restaurant_card/restaurant_card.html.twig',
         'tag' => 'components/restaurant/tag/tag.html.twig',
-        'badge' => 'components/restaurant/badge/badge.html.twig'
+        'badge' => 'components/restaurant/badge/badge.html.twig',
+        'product' => 'components/restaurant/product/menu_item.html.twig',
     ];
 
 	/**

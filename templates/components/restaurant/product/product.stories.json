@@ -1,0 +1,156 @@
+{
+  "title": "Restaurant/5. Product",
+  "parameters": {
+    "server": {
+      "url": "http://localhost/storybook/component",
+      "id": "product"
+    }
+  },
+  "args": {
+  },
+  "tags": ["autodocs"],
+  "stories": [
+    {
+      "name": "Basic",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Pizza",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget tempor aliquam, nunc libero ultricies nunc, quis aliquet nisl nunc eu nisi. Sed euismod, nisl eget tempor aliquam, nunc libero ultricies nunc, quis aliquet nisl nunc eu nisi.",
+          "variants": [
+            {
+              "price": 500
+            }
+          ]
+        },
+        "product_images": [],
+        "card_product_image": ""
+      }
+    },
+    {
+      "name": "With image",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Pizza",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget tempor aliquam, nunc libero ultricies nunc, quis aliquet nisl nunc eu nisi. Sed euismod, nisl eget tempor aliquam, nunc libero ultricies nunc, quis aliquet nisl nunc eu nisi.",
+          "variants": [
+            {
+              "price": 500
+            }
+          ]
+        },
+        "product_images": [
+          "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+        ],
+        "card_product_image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+      }
+    },
+    {
+      "name": "With allergens",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Pizza",
+          "variants": [
+            {
+              "price": 500
+            }
+          ],
+          "attributes": [
+            {
+              "attribute": {
+                "code": "ALLERGENS",
+                "storageType": "json"
+              },
+              "value": [
+                "NUTS"
+              ]
+            }
+          ]
+        },
+        "product_images": [],
+        "card_product_image": ""
+      }
+    },
+    {
+      "name": "With restricted diets",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Pizza",
+          "variants": [
+            {
+              "price": 500
+            }
+          ],
+          "attributes": [
+            {
+              "attribute": {
+                "code": "RESTRICTED_DIETS",
+                "storageType": "json"
+              },
+              "value": [
+                "VEGAN_DIET"
+              ]
+            }
+          ]
+        },
+        "product_images": [],
+        "card_product_image": ""
+      }
+    },
+    {
+      "name": "Disabled product",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Pizza",
+          "enabled": false,
+          "variants": [
+            {
+              "price": 500
+            }
+          ]
+        },
+        "product_images": [],
+        "card_product_image": ""
+      }
+    },
+    {
+      "name": "Reusable packaging",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Pizza",
+          "variants": [
+            {
+              "price": 500
+            }
+          ],
+          "reusablePackagingEnabled": true
+        },
+        "product_images": [],
+        "card_product_image": ""
+      }
+    }
+  ]
+}
