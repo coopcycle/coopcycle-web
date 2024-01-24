@@ -108,6 +108,9 @@ abstract class AbstractSpreadsheetParser
                 if ($sheet->isEmptyRow($rowIndex, $definitionOfEmptyFlags)) {
                     continue;
                 }
+                if (0 === count(array_filter($row, fn ($value) => !empty(trim($value ?? ''))))) {
+                    continue;
+                }
 
                 $data[] = $row;
             }
