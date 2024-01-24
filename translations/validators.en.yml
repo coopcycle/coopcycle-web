@@ -65,3 +65,8 @@ dabba.insufficient_wallet: Your Dabba wallet is missing %amount%
 googlemaps.api_key.invalid: The Google Maps API Key is not valid
 
 loopeat.insufficient_stock: Insufficient stock
+
+spreadsheet.missing_column: You must provide a « %column% » column
+spreadsheet.missing_columns: You must provide a « %column% » or a « %other_column% » column
+spreadsheet.alternative_columns: You must provide a « %column% » or a « %other_column% » column, not both
+spreadsheet.csv_encoding: CSV files must be encoded in UTF-8

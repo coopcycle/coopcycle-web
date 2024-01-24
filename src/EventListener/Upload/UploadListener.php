@@ -11,6 +11,7 @@ use AppBundle\Message\ImportTasks;
 use AppBundle\Spreadsheet\ProductSpreadsheetParser;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
+use AppBundle\Validator\Constraints\Spreadsheet as AssertSpreadsheet;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Oneup\UploaderBundle\Event\PostPersistEvent;
@@ -20,6 +21,7 @@ use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
@@ -45,6 +47,7 @@ final class UploadListener
         SerializerInterface $serializer,
         IriConverterInterface $iriConverter,
         CacheInterface $projectCache,
+        ValidatorInterface $validator,
         string $secret,
         bool $isDemo,
         LoggerInterface $logger)
@@ -58,6 +61,7 @@ final class UploadListener
         $this->serializer = $serializer;
         $this->iriConverter = $iriConverter;
         $this->projectCache = $projectCache;
+        $this->validator = $validator;
         $this->secret = $secret;
         $this->isDemo = $isDemo;
         $this->logger = $logger;
@@ -72,6 +76,11 @@ final class UploadListener
         if ('products' === $event->getType()) {
 
             try {
+
+                $violations = $this->validator->validate($file, new AssertSpreadsheet('product'));
+                if (count($violations) > 0) {
+                    throw new \Exception((string) $violations);
+                }
 
                 $restaurant = $this->iriConverter->getItemFromIri($request->get('restaurant'));
 
@@ -175,22 +184,11 @@ final class UploadListener
 
         $mimeType = $file->getMimeType();
 
-        $this->logger->debug(sprintf('UploadListener | file = %s', $file->getPathname()));
-        $this->logger->debug(sprintf('UploadListener | mime = %s', $mimeType));
+        $violations = $this->validator->validate($file, new AssertSpreadsheet('task'));
+        if (count($violations) > 0) {
+            $fileSystem->delete($file->getPathname());
 
-        // For CSV files, we need to make sure they are in UTF-8
-        if (in_array($mimeType, ['text/csv', 'text/plain'])) {
-
-            // Make sure the file is in UTF-8
-            $encoding = mb_detect_encoding($fileSystem->read($file->getPathname()), ['UTF-8', 'Windows-1252'], true);
-
-            $this->logger->debug(sprintf('UploadListener | encoding = %s', var_export($encoding, true)));
-
-            if ($encoding !== 'UTF-8') {
-                $fileSystem->delete($file->getPathname());
-
-                throw new UploadException('CSV files must be encoded in UTF-8');
-            }
+            throw new UploadException((string) $violations);
         }
 
         $date = $request->get('date');

@@ -199,26 +199,6 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         return $tasks;
     }
 
-    public function validateHeader(array $header)
-    {
-        $hasAddress = in_array('address', $header);
-        $hasStreetAddress = in_array('address.streetAddress', $header);
-        $hasLatLong = in_array('latlong', $header);
-        $hasAddressLatLng = in_array('address.latlng', $header);
-
-        if (!$hasAddress && !$hasLatLong && !$hasStreetAddress && !$hasAddressLatLng) {
-            throw new \Exception('You must provide an "address" (alternatively "address.streetAddress") or a "latlong" (alternatively "address.latlng") column');
-        }
-
-        if ($hasAddress && $hasStreetAddress) {
-            throw new \Exception('You must provide an "address" or a "address.streetAddress" column, not both');
-        }
-
-        if ($hasLatLong && $hasAddressLatLng) {
-            throw new \Exception('You must provide an "latlong" or a "address.latlng" column, not both');
-        }
-    }
-
     public static function parseTimeWindow(array $record, \DateTime $defaultDate)
     {
         $isAfterNotEmpty = isset($record['after']) && !empty(trim($record['after']));
