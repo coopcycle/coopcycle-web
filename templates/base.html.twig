@@ -35,10 +35,15 @@
 
     <link type="text/css" rel="stylesheet" href="{{ asset('bundles/craueformflow/css/buttons.css') }}" />
 
-    {# in <head> as suggested by Turbo: For more information, see: https://turbo.hotwired.dev/handbook/building#working-with-script-elements #}
+    {# run 'app' script in <head> as suggested by Turbo; relevant only for pages with Turbo Drive enabled (search data-turbo="true")
+    For more information, see: https://turbo.hotwired.dev/handbook/building#working-with-script-elements #}
     {{ encore_entry_script_tags('app') }}
   </head>
-  <body data-country="{{ country_iso }}" data-currency-symbol="{{ currency_context.currencyCode|sylius_currency_symbol }}" data-timezone="{{ coopcycle_setting('timezone') }}">
+  <body
+    data-country="{{ country_iso }}"
+    data-currency-symbol="{{ currency_context.currencyCode|sylius_currency_symbol }}"
+    data-timezone="{{ coopcycle_setting('timezone') }}"
+    data-turbo="false">
     {% block menu %}
       {% if not embed_context.enabled %}
       {% include "menu.html.twig" %}
