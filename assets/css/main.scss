@@ -19,6 +19,9 @@
 
 @import "vars.scss";
 @import "utils.scss";
+
+@import "styles.scss";
+
 @import "stripe.scss";
 @import "mercadopago.scss";
 @import "ripple.scss";
@@ -26,7 +29,6 @@
 @import "react-autosuggest.scss";
 @import "address-autosuggest.scss";
 @import "multistep-indicator.scss";
-@import "styles.scss";
 @import '../../js/app/search/navbar.scss';
 @import "adhoc-order.scss";
 @import "account-creation.scss";
