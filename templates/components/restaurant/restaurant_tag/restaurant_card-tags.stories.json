@@ -1,5 +1,5 @@
 {
-  "title": "Foodtech/3. Restaurant Tag/2. RestaurantCard",
+  "title": "Foodtech/1. Restaurant/4. Tag/2. RestaurantCard",
   "parameters": {
     "server": {
       "url": "http://localhost/storybook/component",
