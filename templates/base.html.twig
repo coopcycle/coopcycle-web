@@ -35,7 +35,7 @@
 
     <link type="text/css" rel="stylesheet" href="{{ asset('bundles/craueformflow/css/buttons.css') }}" />
 
-    {{ encore_entry_script_tags('common') }}
+    {# in <head> as suggested by Turbo: For more information, see: https://turbo.hotwired.dev/handbook/building#working-with-script-elements #}
     {{ encore_entry_script_tags('app') }}
   </head>
   <body data-country="{{ country_iso }}" data-currency-symbol="{{ currency_context.currencyCode|sylius_currency_symbol }}" data-timezone="{{ coopcycle_setting('timezone') }}">
@@ -88,6 +88,7 @@
     <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 
+    {{ encore_entry_script_tags('common') }}
     {{ encore_entry_script_tags('widgets') }}
 
     {% if app.user %}
