@@ -142,7 +142,7 @@ class UnassignedTasks extends React.Component {
           <Droppable droppableId="unassigned">
             {(provided) => (
               <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
-                { _.map(this.props.groups, (group, index) => {
+                { !this.props.toursEnabled && _.map(this.props.groups, (group, index) => {
                   return (
                     <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
                       {(provided) => (
@@ -183,6 +183,7 @@ function mapStateToProps (state) {
     standaloneTasks: selectStandaloneTasks(state),
     recurrenceRules: selectRecurrenceRules(state),
     isRecurrenceRulesVisible: state.settings.isRecurrenceRulesVisible,
+    toursEnabled: state.settings.toursEnabled,
   }
 }
 
@@ -191,6 +192,7 @@ function mapDispatchToProps(dispatch) {
     setCurrentRecurrenceRule: (recurrenceRule) => dispatch(setCurrentRecurrenceRule(recurrenceRule)),
     deleteGroup: (group) => dispatch(deleteGroup(group)),
     editGroup: (group) => dispatch(editGroup(group)),
+    
   }
 }
 

@@ -5,8 +5,10 @@ import { withTranslation } from 'react-i18next'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 
 import Tour from './Tour'
-import { openCreateTourModal } from '../redux/actions'
+import { deleteGroup, editGroup, openCreateTourModal } from '../redux/actions'
 import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
+import TaskGroup from './TaskGroup'
+import { selectGroups } from '../redux/selectors'
 
 
 const Buttons = connect(
@@ -43,6 +45,26 @@ class UnassignedTours extends React.Component {
           <Droppable droppableId="unassigned_tours">
             {(provided) => (
               <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
+                { _.map(this.props.groups, (group, index) => {
+                  return (
+                    <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
+                      {(provided) => (
+                        <div
+                          ref={ provided.innerRef }
+                          { ...provided.draggableProps }
+                          { ...provided.dragHandleProps }
+                        >
+                          <TaskGroup
+                            key={ group.id }
+                            group={ group }
+                            tasks={ group.tasks }
+                            onConfirmDelete={ () => this.props.deleteGroup(group) }
+                            onEdit={ (data) => this.props.editGroup(data) } />
+                        </div>
+                      )}
+                    </Draggable>
+                  )
+                })}
                 { _.map(this.props.tours, (tour, index) => {
                   return (
                     <Draggable key={ `tour-${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ index }>
@@ -74,8 +96,16 @@ class UnassignedTours extends React.Component {
 function mapStateToProps (state) {
 
   return {
+    groups: selectGroups(state),
     tours: selectUnassignedTours(state),
   }
 }
 
-export default connect(mapStateToProps)(withTranslation()(UnassignedTours))
+function mapDispatchToProps(dispatch) {
+  return {
+    deleteGroup: (group) => dispatch(deleteGroup(group)),
+    editGroup: (group) => dispatch(editGroup(group)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(UnassignedTours))
