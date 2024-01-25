@@ -90,7 +90,7 @@ class TaskGroup extends React.Component {
     })
 
     return (
-      <div className="panel panel-default nomargin task__draggable">
+      <div className="panel panel-default panel--group nomargin task__draggable">
         <div className="panel-heading" role="tab">
           <h4 className="panel-title d-flex align-items-center">
             <i className="fa fa-folder flex-grow-0"></i>

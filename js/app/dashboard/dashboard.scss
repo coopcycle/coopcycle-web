@@ -186,6 +186,11 @@ html, body {
       background-color: darken(#f5f5f5, 15%);
     }
   }
+
+  .panel--group, .panel--tour {
+    border-color: $main-blue-dark;
+    border-size: 2px;
+  }
 }
 
 .list-group-padded {

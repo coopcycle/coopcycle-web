@@ -72,7 +72,7 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, modifyTour
 
 
   return (
-    <div className="panel panel-default nomargin task__draggable" onContextMenu={(e) => show(e, {
+    <div className="panel panel-default panel--tour nomargin task__draggable" onContextMenu={(e) => show(e, {
       props: { tour }
     })}>
       <div className="panel-heading" role="tab">
