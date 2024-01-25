@@ -1,9 +1,9 @@
 {
-  "title": "Restaurant/2. logo",
+  "title": "Foodtech/2. Restaurant Logo",
   "parameters": {
     "server": {
       "url": "http://localhost/storybook/component",
-      "id": "restaurant-card"
+      "id": "restaurant_card"
     }
   },
   "args": {
