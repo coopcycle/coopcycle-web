@@ -5,7 +5,7 @@ import { assignedTasks } from './taskListUtils';
 import { taskAdapter, taskListAdapter, tourAdapter } from './adapters'
 
 const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
-const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
+export const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
 const tourSelectors = tourAdapter.getSelectors((state) => state.logistics.entities.tours)
 
 export const selectSelectedDate = state => state.logistics.date
@@ -106,38 +106,40 @@ export const makeSelectTaskListItemsByUsername = () => {
   )
 }
 
-export const selectAllTours = tourSelectors.selectAll
+// FIXME This is recalculated all the time we change a tasks
+export const selectTasksWithTour = createSelector(selectAllTasks, 
+  (allTasks) => {
+    return allTasks.filter(t => t.tour)
+})
 
-
-export const selectAssignedTours = createSelector(
-  selectAllTours,
-  selectAssignedTasks,
-  (allTours, assignedTasks) =>
-    _.filter(allTours, tour => assignedTasks.some(assignedTask => tour.itemIds.includes(assignedTask['@id'])))
-)
-
-export const selectUnassignedTours = createSelector(
-  selectAllTours,
-  selectAssignedTours,
-  selectUnassignedTasks,
-  (allTours, assignedTours, unassignedTasks) => {
-    const unassignedTours = _.filter(allTours, tour => assignedTours.findIndex(assignedTour => tour['@id'] == assignedTour['@id']) == -1)
-
-    const unassignedToursWithItems = []
-
-    forEach(unassignedTours, unassignedTour => {
-      const items = []
+// FIXME This is recalculated all the time we change a task
+export const selectAllTours = createSelector(
+  tourSelectors.selectAll,
+  selectTasksWithTour,
+  (allTours, tasksWithTour) => {
+    const toursWithItems = []
+    forEach(allTours, unassignedTour => {
+      let items = [];
       forEach(unassignedTour.itemIds, itemId => {
-        items.push(unassignedTasks.find(task => task['@id'] == itemId))
+        let task = tasksWithTour.find(task => task['@id'] == itemId)
+        items.push(task)
       })
-
-      unassignedToursWithItems.push({
+      toursWithItems.push({
         ...unassignedTour,
-        items
+        items,
       })
     })
-
-    return unassignedToursWithItems
+    return toursWithItems
   }
+)
+
+// not the cleanest ever, but if one task of the tour is assigned then the tour is
+export const isTourAssigned = (tour) => tour.items.length > 0 ? tour.items[0].isAssigned : false 
+export const tourIsAssignedTo = (tour) => tour.items.length > 0 ? tour.items[0].assignedTo : undefined
+
+// FIXME This is recalculated all the time we change a task
+export const selectUnassignedTours = createSelector(
+  selectAllTours,
+  (allTours) => _.filter(allTours, t => !isTourAssigned(t))
 )
 

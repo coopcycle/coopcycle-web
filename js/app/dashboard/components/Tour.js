@@ -7,11 +7,12 @@ import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
 import { removeTaskFromTour, modifyTour, deleteTour, unassignTasks } from '../redux/actions'
+import { isTourAssigned, tourIsAssignedTo } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { useContextMenu } from 'react-contexify'
 
 
-const Tour = ({ tour, tasks, username=null, removeTaskFromTour, unassignTasks, isDroppable, modifyTour, deleteTour }) => {
+const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, modifyTour, deleteTour }) => {
 
 
   const { t } = useTranslation(),
@@ -25,7 +26,7 @@ const Tour = ({ tour, tasks, username=null, removeTaskFromTour, unassignTasks, i
           e.preventDefault()
           $('.task__draggable').LoadingOverlay('show', {image: false})
           let _tour = Object.assign({}, tour, {name : tourName})
-          await modifyTour(_tour, tasks)
+          await modifyTour(_tour, tour.items)
           setToggleInputForName(false)
           $('.task__draggable').LoadingOverlay('hide')
         },
@@ -59,7 +60,7 @@ const Tour = ({ tour, tasks, username=null, removeTaskFromTour, unassignTasks, i
         onConfirmDelete = async (e) => {
           e.preventDefault()
           $('.task__draggable').LoadingOverlay('show', {image: false})
-          await deleteTour(tour, tasks)
+          await deleteTour(tour, tour.items)
           $('.task__draggable').LoadingOverlay('hide')
         }
       
@@ -81,16 +82,16 @@ const Tour = ({ tour, tasks, username=null, removeTaskFromTour, unassignTasks, i
               !toggleInputForName &&
               <>
                 <a role="button" data-toggle="collapse" href={ `#${collapseId}` } className="ml-2 flex-grow-1 text-truncate">
-                  { tourName } <span className="badge">{ tasks.length }</span>
+                  { tourName } <span className="badge">{ tour.items.length }</span>
                 </a>
                 <div className="d-flex flex-grow-0">
                       <a role="button" href="#" className="text-reset mr-2"
                         onClick={ () => setToggleInputForName(true) }>
                         <i className="fa fa-pencil"></i>
                       </a>
-                      { username ?  (
+                      { isTourAssigned(tour) ?  (
                           <a 
-                            onClick={() => unassignTasks(username, tasks)}
+                            onClick={() => unassignTasks(tourIsAssignedTo(tour), tour.items)}
                             title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
                           >
                             <i className="fa fa-times"></i>
@@ -117,19 +118,23 @@ const Tour = ({ tour, tasks, username=null, removeTaskFromTour, unassignTasks, i
         </h4>
       </div>
       <div id={ `${collapseId}` } className="panel-collapse collapse" role="tabpanel">
-        <Droppable isDropDisabled={!isDroppable} droppableId={ `tour:${tour['@id']}` }>
+        <Droppable 
+            isDropDisabled={!isDroppable}
+            isCombineEnabled={true}
+            droppableId={ `tour:${tour['@id']}` } 
+          >
             {(provided) => (
               <div
               className={ classNames({
                 'taskList__tasks': true,
                 'list-group': true,
                 'm-0': true,
-                'list-group-padded': true,
+                'p-0': true,
                 'nomargin': true,
-                'taskList__tasks--empty': !tasks.length
+                'taskList__tasks--empty': !tour.items.length
               }) }
               ref={ provided.innerRef } { ...provided.droppableProps }>
-                { _.map(tasks, (task, index) => {
+                { _.map(tour.items, (task, index) => {
                   return (
                     <Draggable key={ `task-${task.id}` } draggableId={ `${task['@id']}` } index={ index }>
                       {(provided) => (
@@ -141,7 +146,7 @@ const Tour = ({ tour, tasks, username=null, removeTaskFromTour, unassignTasks, i
                           <Task
                             key={ task['@id'] }
                             task={ task }
-                            onRemove={ (taskToRemove) => removeTaskFromTour(tour, taskToRemove, username) }
+                            onRemove={ (taskToRemove) => removeTaskFromTour(tour, taskToRemove, tourIsAssignedTo(tour)) }
                             />
                         </div>
                       )}

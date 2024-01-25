@@ -9,14 +9,13 @@ import 'react-toastify/dist/ReactToastify.css'
 import {
   toggleSearch,
   closeSearch,
-  handleDragStart,
-  handleDragEnd, 
   modifyTaskList} from '../redux/actions'
 import UnassignedTasks from './UnassignedTasks'
 import TaskLists from './TaskLists'
 import SearchPanel from './SearchPanel'
 import UnassignedTours from './UnassignedTours'
 import TasksContextMenu from './context-menus/TasksContextMenu'
+import { handleDragEnd, handleDragStart } from '../redux/handleDrag'
 
 class DashboardApp extends React.Component {
 

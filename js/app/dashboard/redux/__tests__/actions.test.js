@@ -2,10 +2,10 @@ import configureStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import moment from 'moment'
 
-import { updateTask, UPDATE_TASK, REMOVE_TASK, handleDragEnd }  from '../actions';
-// import * as dashboardActions from '../actions';
+import { updateTask, UPDATE_TASK, REMOVE_TASK }  from '../actions';
 import { storeFixture } from './storeFixture'
 import { ENABLE_DROP_IN_TOURS } from '../../../coopcycle-frontend-js/logistics/redux';
+import { handleDragEnd } from '../handleDrag';
 
 
 // https://github.com/dmitry-zaets/redux-mock-store#asynchronous-actions

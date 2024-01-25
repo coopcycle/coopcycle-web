@@ -24,15 +24,13 @@ import Tour from './Tour'
 
 moment.locale($('html').attr('lang'))
 
-const TaskOrTour = ({ item, onRemove, unassignTasks, username }) => {
+const TaskOrTour = ({ item, onRemove, unassignTasks }) => {
 
   if (item['@type'] === 'Tour') {
 
     return (
       <Tour
         tour={ item }
-        tasks={ item.items }
-        username={ username }
         unassignTasks={ unassignTasks } />
     )
   }
@@ -74,7 +72,6 @@ class InnerList extends React.Component {
               <TaskOrTour
                 item={ item }
                 onRemove={ item => this.props.onRemove(item) }
-                username={ this.props.username }
                 unassignTasks={ this.props.unassignTasks } />
             </div>
           )}
