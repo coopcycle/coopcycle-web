@@ -12,8 +12,6 @@ import {
   createTaskListFailure,
   enableDropInTours,
   disableDropInTours,
-  enableDropInTours,
-  disableDropInTours,
 } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
 

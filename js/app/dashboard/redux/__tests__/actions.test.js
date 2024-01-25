@@ -130,7 +130,7 @@ describe('handleDragEnd', () => {
     handleDragEnd(result, mockModifyTaskList)(dispatch, store.getState)
 
     expect(dispatch).toHaveBeenCalledWith(
-      {type: ENABLE_UNASSIGNED_TOUR_TASKS_DROPPABLE}
+      {type: ENABLE_DROP_IN_TOURS}
       )
 
     expect(mockModifyTaskList).toHaveBeenLastCalledWith(
