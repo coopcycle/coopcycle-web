@@ -10,7 +10,7 @@ require('bootstrap-sass')
 
 import './i18n'
 import { setTimezone, getCurrencySymbol } from './i18n'
-import renderAddressAutosuggest from './widgets/AddressAutosuggest'
+import AddressAutosuggest from './widgets/AddressAutosuggest'
 
 global.ClipboardJS = require('clipboard')
 
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }
 
-      renderAddressAutosuggest(
+      new AddressAutosuggest(
         el.closest('.form-group'),
         {
           required: el.required,

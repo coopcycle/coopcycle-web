@@ -1,8 +1,7 @@
 import React from 'react'
-import { createRoot } from 'react-dom/client';
+import { render } from 'react-dom'
 import AddressAutosuggest from '../components/AddressAutosuggest'
 
 export default function(el, options) {
-  const root = createRoot(el);
-  root.render(<AddressAutosuggest { ...options } />)
+  render(<AddressAutosuggest { ...options } />, el)
 }
