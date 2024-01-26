@@ -5,7 +5,7 @@ import 'leaflet.markercluster'
 import 'leaflet-area-select'
 import 'leaflet-swoopy'
 import React from 'react'
-import { createRoot } from 'react-dom/client';
+import { render } from 'react-dom'
 import ColorHash from 'color-hash'
 
 import MapHelper from '../../MapHelper'
@@ -176,18 +176,19 @@ export default class MapProxy {
 
       marker = MapHelper.createMarker(coords, iconName, 'marker', color)
 
+      const el = document.createElement('div')
+
       popupComponent = React.createRef()
 
-      const el = document.createElement('div')
-      const root = createRoot(el);
+      const cb = () => {
+        this.taskMarkers.set(task['@id'], marker)
+        this.taskPopups.set(task['@id'], popupComponent)
+      }
 
-      root.render(<LeafletPopupContent
+      render(<LeafletPopupContent
         task={ task }
         ref={ popupComponent }
-        onEditClick={ () => this.onEditClick(task) } />)
-
-      this.taskMarkers.set(task['@id'], marker)
-      this.taskPopups.set(task['@id'], popupComponent)
+        onEditClick={ () => this.onEditClick(task) } />, el, cb)
 
       const popup = L.popup()
         .setContent(el)
@@ -408,15 +409,15 @@ export default class MapProxy {
       marker.setOpacity(1)
 
       popupComponent = React.createRef()
-
       const popupContent = document.createElement('div')
-      const root = createRoot(popupContent);
-      root.render(<CourierPopupContent
+      const cb = () => {
+        this.courierPopups.set(username, popupComponent)
+      }
+
+      render(<CourierPopupContent
         ref={ popupComponent }
         username={ username }
-        lastSeen={ lastSeen } />)
-
-      this.courierPopups.set(username, popupComponent)
+        lastSeen={ lastSeen } />, popupContent, cb)
 
       const tooltip = L.tooltip({
         offset: [ 0, -15 ],

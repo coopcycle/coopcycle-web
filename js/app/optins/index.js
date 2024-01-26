@@ -1,5 +1,5 @@
 import React from 'react'
-import { createRoot } from 'react-dom/client';
+import { render } from 'react-dom'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
 
@@ -39,11 +39,12 @@ const init = async () => {
 
     const brandName = JSON.parse(container.dataset.brandName)
 
-    const root = createRoot(container);
-    root.render(
+    render(
         <I18nextProvider i18n={ i18n }>
           <AskForOptinsModal httpClient={httpClient} brandName={brandName} />
-        </I18nextProvider>)
+        </I18nextProvider>,
+        container
+      )
 }
 
 init()

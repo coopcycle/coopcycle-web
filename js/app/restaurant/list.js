@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react'
-import { createRoot } from 'react-dom/client';
+import { render, unmountComponentAtNode } from 'react-dom'
 import moment from 'moment'
 import Swiper from 'swiper'
 import { Navigation } from 'swiper/modules'
@@ -79,8 +79,7 @@ function addFulfillmentBadge(el) {
 
     ranges.sort((a, b) => moment(a[0]).isSame(b[0]) ? 0 : (moment(a[0]).isBefore(b[0]) ? -1 : 1))
 
-    const root = createRoot(el);
-    root.render(<FulfillmentBadge range={ ranges[0] } isPreOrder={ isPreOrder } />)
+    render(<FulfillmentBadge range={ ranges[0] } isPreOrder={ isPreOrder } />, el)
   })
 }
 
@@ -145,11 +144,12 @@ const Paginator = ({ page, pages }) => {
 const paginator = document.getElementById('shops-list-paginator')
 
 if (paginator) {
-  const root = createRoot(paginator);
-  root.render(
+  render(
     <Paginator
      page={Number(paginator.dataset.page)}
-     pages={Number(paginator.dataset.pages)} />)
+     pages={Number(paginator.dataset.pages)} />,
+    paginator
+  )
 }
 
 new Swiper('.swiper', {
@@ -190,14 +190,13 @@ new Swiper('.swiper', {
 
 function resetPaginator(data) {
   if (paginator) {
-    const root = createRoot(paginator);
-
-    root.unmount()
-
-    root.render(
+    unmountComponentAtNode(paginator)
+    render(
       <Paginator
        page={Number(data.page)}
-       pages={Number(data.pages)} />)
+       pages={Number(data.pages)} />,
+      paginator
+    )
   }
 }
 
