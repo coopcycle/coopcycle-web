@@ -315,7 +315,7 @@ export function modifyTaskList(username, tasks, updateTourUI=null) {
 
       return {
         ...rt,
-        // tour: task
+        isAssigned: true,
         position,
       }
     })
