@@ -1551,7 +1551,8 @@ export function removeTaskFromTour(tour, task, username) {
     
     if (username !== null) {
       // we want to unsassign before modifying the tour, because we want first the task out of the TaskList in the UI 
-      dispatch(unassignTasks(username, [task])).then(() => {
+      // we force set some fields to avoid a glitch in the UI, as the two AJAX calls are chained
+      dispatch(unassignTasks(username, [{isAssigned: false, tour: null, ...task}])).then(() => {
         dispatch(modifyTour(tour, withoutTasks(tour.items, withLinkedTasks([ task ], allTasks))))
       })
     } else {
