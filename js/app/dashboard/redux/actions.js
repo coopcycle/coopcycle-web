@@ -285,9 +285,16 @@ export function importError(token, message) {
   return { type: IMPORT_ERROR, token, message }
 }
 
-export function modifyTaskList(username, tasks) {
+export function modifyTaskList(username, tasks, updateTourUI=null) {
+  /*
+    Modify a TaskList in the UI.
+
+    We can pass a callback updateTourUI so we update the UI related to the tour before we do the AJAX call
+  */
 
   return async function(dispatch, getState) {
+
+    if (updateTourUI) updateTourUI()
 
     const data = tasks.map((task, index) => ({
       task: task['@id'],
@@ -308,6 +315,7 @@ export function modifyTaskList(username, tasks) {
 
       return {
         ...rt,
+        // tour: task
         position,
       }
     })
@@ -1441,7 +1449,7 @@ export function createTour(tasks, name, date) {
       }
     })
       .then((response) => {
-        tasks.forEach(task => dispatch(updateTask({ ...task, tour: response.data })))
+        tasks.forEach(task => dispatch(updateTask({ '@id': task.id, tour: response.data })))
         // flatten items to itmIds
         let tour = {...response.data}
         tour.itemIds = tour.items.map(item => item['@id'])
@@ -1458,13 +1466,20 @@ export function createTour(tasks, name, date) {
   }
 }
 
-export function modifyTour(tour, tasks) {
+export function updateTourInUI(dispatch, tour, tasks) {
+  dispatch(disableDropInTours())
+  dispatch(modifyTourRequest(tour, tasks))
+}
+
+export function modifyTour(tour, tasks, isTourUIAlreadyUpdated=false) {
+  /*
+    When assigning a task to a tour which is already is assigned,
+    `modifyTaskList` would be responsible for updating the UI.
+  */
 
   return async function(dispatch, getState) {
 
-    dispatch(disableDropInTours())
-
-    dispatch(modifyTourRequest(tour, tasks))
+    if (!isTourUIAlreadyUpdated) updateTourInUI(dispatch, tour, tasks)
 
     const { jwt } = getState()
 
