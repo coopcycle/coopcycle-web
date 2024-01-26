@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { createRoot } from 'react-dom/client';
+import { render } from 'react-dom'
 import { Badge, Popover } from 'antd'
 import Centrifuge from 'centrifuge'
 
@@ -95,8 +95,7 @@ function bootstrap(el, options) {
 
     const { unread, notifications } = result
 
-    const root = createRoot(el);
-    root.render(<Notifications
+    render(<Notifications
       initialNotifications={ notifications }
       initialCount={ unread }
       removeURL={ options.removeNotificationURL }
@@ -105,7 +104,7 @@ function bootstrap(el, options) {
       centrifuge={ centrifuge }
       namespace={ options.namespace }
       username={ options.username }
-      theme={ theme } />)
+      theme={ theme } />, el)
   })
   .catch(() => { /* Fail silently */ })
 }
