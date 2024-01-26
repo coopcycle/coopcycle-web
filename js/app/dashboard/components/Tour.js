@@ -120,7 +120,6 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, modifyTour
       <div id={ `${collapseId}` } className="panel-collapse collapse" role="tabpanel">
         <Droppable 
             isDropDisabled={!isDroppable}
-            isCombineEnabled={true}
             droppableId={ `tour:${tour['@id']}` } 
           >
             {(provided) => (
