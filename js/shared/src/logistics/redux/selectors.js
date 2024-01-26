@@ -72,7 +72,7 @@ export const makeSelectTaskListItemsByUsername = () => {
       return taskList.itemIds
         .filter(id => Object.prototype.hasOwnProperty.call(tasks, id)) // a task with this id may be not loaded yet
         .map(id => tasks[id])
-        .reduce((items, task) => {
+        .reduce((items, task, position) => {
 
           if (belongsToTour(task)) {
 
@@ -87,16 +87,16 @@ export const makeSelectTaskListItemsByUsername = () => {
                 ...task.tour,
                 '@type': 'Tour',
                 items: [
-                  task
+                  {...task, position}
                 ]
               })
             } else {
               const tour = items[tourIndex]
-              tour.items.push(task)
+              tour.items.push({...task, position})
             }
 
           } else {
-            items.push(task)
+            items.push({...task, position})
           }
 
           return items

@@ -1,5 +1,5 @@
 import _ from "lodash"
-import { isTourAssigned, selectAllTours, selectTaskLists, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
+import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskLists, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks, modifyTour } from "./actions"
 import { selectGroups, selectSelectedTasks, taskSelectors, tourSelectors } from "./selectors"
@@ -44,7 +44,7 @@ export function handleDragEnd(result, modifyTaskList) {
         return dispatch(modifyTour(tour, newTourItems))
       
     },
-    handleDropInTaskList = (tasksList, selectedTasks, destination) => {
+    handleDropInTaskList = (tasksList, selectedTasks, index) => {
       let newTasksList = [...tasksList.items]
     
     
@@ -55,11 +55,20 @@ export function handleDragEnd(result, modifyTaskList) {
           newTasksList.splice(taskIndex, 1)
         }
       })
-    
-      // insert all the selected tasks at the destination index
-      newTasksList.splice(destination.index, 0, ...selectedTasks)
-    
+
+      newTasksList.splice(index, 0, ...selectedTasks)
       return dispatch(modifyTaskList(tasksList.username, newTasksList))
+    },
+    getPositionInFlatTaskList = (nestedTaskList, destinationIndex, tourId=null) => {
+      if (tourId) {
+        return nestedTaskList.find((tourOrTask) => tourOrTask['@id'] === tourId).items[0].position + destinationIndex
+      } else if (destinationIndex == 0) {
+        return 0
+      } else {
+        let taskListItem = nestedTaskList[destinationIndex - 1],
+        position = taskListItem['@type'] === 'Tour' ? _.last(taskListItem.items).position : taskListItem.position
+        return position
+      }
     }
 
     // dropped nowhere
@@ -122,24 +131,28 @@ export function handleDragEnd(result, modifyTaskList) {
     
     if (destination.droppableId.startsWith('tour:')) {
       const tours = selectAllTours(getState())
-      const tourId = destination.droppableId.replace('tour:', '')
+      var tourId = destination.droppableId.replace('tour:', '')
       const tour = tours.find(t => t['@id'] == tourId)
 
       if (isTourAssigned(tour)) {
         const tasksLists = selectTaskLists(getState())
         const username = tourIsAssignedTo(tour)
         const tasksList = _.find(tasksLists, tl => tl.username === username)
-        handleDropInTaskList(tasksList, selectedTasks, destination).then(() => {
+        const nestedTaskList = makeSelectTaskListItemsByUsername()(getState(), {username})
+        const index = getPositionInFlatTaskList(nestedTaskList, destination.index, tourId)
+        handleDropInTaskList(tasksList, selectedTasks, index).then(() => {
           handleDropInTour(tour, selectedTasks, source, destination)
         })
       } else {
         handleDropInTour(tour, selectedTasks, source, destination)
       }
-    } else {
+    } else if (destination.droppableId.startsWith('assigned:')) {
       const tasksLists = selectTaskLists(getState())
       const username = destination.droppableId.replace('assigned:', '')
       const tasksList = _.find(tasksLists, tl => tl.username === username)
-      handleDropInTaskList(tasksList, selectedTasks, destination)
+      const nestedTaskList = makeSelectTaskListItemsByUsername()(getState(), {username})
+      const index = getPositionInFlatTaskList(nestedTaskList, destination.index)
+      handleDropInTaskList(tasksList, selectedTasks, index)
     }
   }
 }
