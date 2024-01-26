@@ -42,7 +42,10 @@ class UnassignedTours extends React.Component {
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
-          <Droppable droppableId="unassigned_tours">
+          <Droppable 
+            droppableId="unassigned_tours" 
+            key={this.props.tours.length} // assign a mutable key to trigger a re-render when inserting a nested droppable (for example : a new tour)
+            >
             {(provided) => (
               <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
                 { _.map(this.props.groups, (group, index) => {

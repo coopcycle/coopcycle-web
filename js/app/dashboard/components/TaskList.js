@@ -190,7 +190,10 @@ class TaskList extends React.Component {
               </div>
             </div>
           )}
-          <Droppable droppableId={ `assigned:${username}` }>
+          <Droppable 
+            droppableId={ `assigned:${username}` } 
+            key={tasks.length} // assign a mutable key to trigger a re-render when inserting a nested droppable (for example : a tour)
+          >
             {(provided) => (
               <div ref={ provided.innerRef }
                 className={ classNames({
