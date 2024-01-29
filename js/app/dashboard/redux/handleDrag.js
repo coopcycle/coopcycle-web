@@ -49,7 +49,7 @@ export function handleDragEnd(result, modifyTaskList) {
       } else {
         let taskListItem = nestedTaskList[destinationIndex - 1],
         position = taskListItem['@type'] === 'Tour' ? _.last(taskListItem.items).position : taskListItem.position
-        return position
+        return position + 1
       }
     }
 
