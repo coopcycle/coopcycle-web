@@ -21,6 +21,7 @@ import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/action
 import { selectVisibleTaskIds } from '../redux/selectors'
 import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
 import Tour from './Tour'
+import { getDroppableListStyle } from '../utils'
 
 moment.locale($('html').attr('lang'))
 
@@ -142,10 +143,10 @@ class TaskList extends React.Component {
               okText={ this.props.t('CROPPIE_CONFIRM') }
               cancelText={ this.props.t('ADMIN_DASHBOARD_CANCEL') }>
               <a href="#"
-                className="p-2"
+                className="text-reset mr-2"
                 style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
                 onClick={ e => e.preventDefault() }>
-                <i className="fa fa-lg fa-close"></i>
+                <i className="fa fa-lg fa-times"></i>
               </a>
             </Popconfirm>
           </AccordionItemButton>
@@ -194,7 +195,7 @@ class TaskList extends React.Component {
             droppableId={ `assigned:${username}` } 
             key={tasks.length} // assign a mutable key to trigger a re-render when inserting a nested droppable (for example : a tour)
           >
-            {(provided) => (
+            {(provided, snapshot) => (
               <div ref={ provided.innerRef }
                 className={ classNames({
                   'taskList__tasks': true,
@@ -203,6 +204,7 @@ class TaskList extends React.Component {
                   'taskList__tasks--empty': isEmpty
                 }) }
                 { ...provided.droppableProps }
+                style={getDroppableListStyle(snapshot.isDraggingOver)}
               >
                 <InnerList
                   items={ items }

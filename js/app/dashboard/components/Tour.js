@@ -10,6 +10,7 @@ import { removeTaskFromTour, modifyTour, deleteTour, unassignTasks } from '../re
 import { isTourAssigned, tourIsAssignedTo } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { useContextMenu } from 'react-contexify'
+import { getDroppableListStyle } from '../utils'
 
 
 const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, modifyTour, deleteTour }) => {
@@ -93,6 +94,7 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, modifyTour
                           <a 
                             onClick={() => unassignTasks(tourIsAssignedTo(tour), tour.items)}
                             title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
+                            className="text-reset mr-2"
                           >
                             <i className="fa fa-times"></i>
                           </a>) 
@@ -120,9 +122,9 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, modifyTour
       <div id={ `${collapseId}` } className="panel-collapse collapse" role="tabpanel">
         <Droppable 
             isDropDisabled={!isDroppable}
-            droppableId={ `tour:${tour['@id']}` } 
+            droppableId={ `tour:${tour['@id']}` }
           >
-            {(provided) => (
+            {(provided, snapshot) => (
               <div
               className={ classNames({
                 'taskList__tasks': true,
@@ -132,6 +134,7 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, modifyTour
                 'nomargin': true,
                 'taskList__tasks--empty': !tour.items.length
               }) }
+              style={getDroppableListStyle(snapshot.isDraggingOver)}
               ref={ provided.innerRef } { ...provided.droppableProps }>
                 { _.map(tour.items, (task, index) => {
                   return (

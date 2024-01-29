@@ -125,7 +125,7 @@ class TaskGroup extends React.Component {
           </h4>
         </div>
         <div id={ `task-group-panel-${this.state.group.id}` } className="panel-collapse collapse" role="tabpanel">
-          <ul className="list-group list-group-padded">
+          <ul className="list-group">
             { tasks.map(task => {
               return (
                 <Task
