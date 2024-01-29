@@ -1,7 +1,7 @@
 import _ from "lodash"
 import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskLists, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { disableDropInTours, enableDropInTours, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
-import { clearSelectedTasks, modifyTour, updateTourInUI } from "./actions"
+import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, updateTourInUI } from "./actions"
 import { selectGroups, selectSelectedTasks, taskSelectors, tourSelectors } from "./selectors"
 import { withLinkedTasks } from "./utils"
 
@@ -28,8 +28,7 @@ export function handleDragStart(result) {
   }
 }
   
-// modifyTaskList is passed as argument so we can test this function thanks to dependency injection
-export function handleDragEnd(result, modifyTaskList) {
+export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modifyTour=modifyTourAction) {
   
   return function(dispatch, getState) {
 

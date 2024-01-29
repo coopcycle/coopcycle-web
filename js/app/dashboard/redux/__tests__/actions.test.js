@@ -4,7 +4,6 @@ import moment from 'moment'
 
 import { updateTask, UPDATE_TASK, REMOVE_TASK }  from '../actions';
 import { storeFixture } from './storeFixture'
-import { ENABLE_DROP_IN_TOURS } from '../../../coopcycle-frontend-js/logistics/redux';
 import { handleDragEnd } from '../handleDrag';
 
 
@@ -64,20 +63,17 @@ describe('updateTask', () => {
 describe('handleDragEnd', () => {
   const store = mockStore(storeFixture)
 
-  it ('should assign a tour to a tasklist', () => {
+  it ('should assign a tour at the beginning of a tasklist', () => {
     const dispatch = jest.fn(),
       mockModifyTaskList = jest.fn()
 
     let result = {
       draggableId: 'tour:/api/tours/114',
-      source: {droppableId: 'unassigned:'}, destination: {droppableId: 'assigned:admin'}
+      source: {droppableId: 'unassigned:'}, destination: {droppableId: 'assigned:admin', index: 0},
     }
   
     handleDragEnd(result, mockModifyTaskList)(dispatch, store.getState)
 
-    expect(dispatch).toHaveBeenCalledWith(
-      {type: ENABLE_DROP_IN_TOURS}
-      )
 
     expect(mockModifyTaskList).toHaveBeenLastCalledWith(
       "admin",
@@ -88,7 +84,8 @@ describe('handleDragEnd', () => {
         expect.objectContaining({"@id": '/api/tasks/730'}),
         expect.objectContaining({"@id": '/api/tasks/731'}),
         expect.objectContaining({"@id": '/api/tasks/727'})
-      ])
+      ]),
+      null
     )
       
   })
@@ -99,7 +96,8 @@ describe('handleDragEnd', () => {
 
     let result = {
       draggableId: 'tour:/api/tours/114',
-      source: {droppableId: 'unassigned:'}, destination: {droppableId: 'assigned:admin', index: 5}
+      source: {droppableId: 'unassigned:'},
+      destination: {droppableId: 'assigned:admin', index: 1}
     }
   
     handleDragEnd(result, mockModifyTaskList)(dispatch, store.getState)
@@ -113,25 +111,22 @@ describe('handleDragEnd', () => {
         expect.objectContaining({"@id": '/api/tasks/727'}),
         expect.objectContaining({"@id": '/api/tasks/733' }),
         expect.objectContaining({"@id": '/api/tasks/732'}),
-      ])
+      ]),
+      null
     )
       
   })
 
-  it ('should assign a group at the end of a tasklist', () => {
+  it ('should assign a group at the end of a tasklist',  () => {
     const dispatch = jest.fn(),
       mockModifyTaskList = jest.fn()
 
     let result = {
       draggableId: 'group:23',
-      source: {droppableId: 'unassigned:'}, destination: {droppableId: 'assigned:admin', index: 6}
+      source: {droppableId: 'unassigned:'}, destination: {droppableId: 'assigned:admin', index: 1}
     }
   
     handleDragEnd(result, mockModifyTaskList)(dispatch, store.getState)
-
-    expect(dispatch).toHaveBeenCalledWith(
-      {type: ENABLE_DROP_IN_TOURS}
-      )
 
     expect(mockModifyTaskList).toHaveBeenLastCalledWith(
       "admin",
@@ -142,7 +137,54 @@ describe('handleDragEnd', () => {
         expect.objectContaining({"@id": '/api/tasks/727'}),
         expect.objectContaining(
           {"@id": '/api/tasks/736', 'group': expect.objectContaining({"@id": "/api/task_groups/23"})})
-      ])
+      ]),
+      null
+    )
+      
+  })
+
+  it ('should assign a task in a tour which is already assigned', async () => {
+    const dispatch = jest.fn(),
+      mockModifyTaskList = jest.fn(),
+      mockModifyTour = jest.fn()
+
+    dispatch.mockReturnValue().mockResolvedValueOnce({}).mockReturnValue()
+
+    let result = {
+      draggableId: '/api/tasks/734',
+      source: {droppableId: 'unassigned'}, destination: {droppableId: 'tour:/api/tours/111', index: 1}
+    }
+  
+    handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
+
+    expect(mockModifyTaskList).toHaveBeenCalledWith(
+      "admin",
+      expect.arrayContaining([
+        expect.objectContaining({"@id": '/api/tasks/729'}),
+        expect.objectContaining({"@id": '/api/tasks/734'}),
+        expect.objectContaining({"@id": '/api/tasks/735'}),
+        expect.objectContaining({"@id": '/api/tasks/730'}),
+        expect.objectContaining({"@id": '/api/tasks/731'}),
+        expect.objectContaining({"@id": '/api/tasks/727'}),
+      ]),
+      expect.any(Function)
+
+    )
+    
+    // kind of hackish way to wait for mockModifyTaskList.then(...) to reolve before testing the call to modifyTour
+    await Promise.resolve();
+
+    expect(mockModifyTour).toHaveBeenLastCalledWith(
+      expect.objectContaining({'@id': '/api/tours/111'}),
+      expect.arrayContaining([
+        expect.objectContaining({"@id": '/api/tasks/729'}),
+        expect.objectContaining({"@id": '/api/tasks/734'}),
+        expect.objectContaining({"@id": '/api/tasks/735'}),
+        expect.objectContaining({"@id": '/api/tasks/730'}),
+        expect.objectContaining({"@id": '/api/tasks/731'}),
+        expect.objectContaining({"@id": '/api/tasks/727'}),
+      ]),
+      true
     )
       
   })

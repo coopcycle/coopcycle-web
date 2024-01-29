@@ -8,8 +8,8 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import {
   toggleSearch,
-  closeSearch,
-  modifyTaskList} from '../redux/actions'
+  closeSearch
+} from '../redux/actions'
 import UnassignedTasks from './UnassignedTasks'
 import TaskLists from './TaskLists'
 import SearchPanel from './SearchPanel'
@@ -86,7 +86,7 @@ function mapDispatchToProps (dispatch) {
     toggleSearch: () => dispatch(toggleSearch()),
     closeSearch: () => dispatch(closeSearch()),
     handleDragStart: (result) => dispatch(handleDragStart(result)),
-    handleDragEnd: (result) => dispatch(handleDragEnd(result, modifyTaskList)),
+    handleDragEnd: (result) => dispatch(handleDragEnd(result)),
   }
 }
 
