@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f05351d724607b2a6e35e62ec494ed15",
+    "content-hash": "afaefc6a2299e7808e5fee92544caea5",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1245,6 +1245,46 @@
                 "source": "https://github.com/cocur/slugify/tree/v4.4.0"
             },
             "time": "2023-08-05T09:42:11+00:00"
+        },
+        {
+            "name": "coopcycle/db-shenker",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:coopcycle/DBSchenkerClient.git",
+                "reference": "4d3926dedbe336eee7a66b7da662a064dd28c1d6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/4d3926dedbe336eee7a66b7da662a064dd28c1d6",
+                "reference": "4d3926dedbe336eee7a66b7da662a064dd28c1d6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "league/flysystem": "1.1.10",
+                "php-edifact/edifact-generator": "dev-master",
+                "php-edifact/edifact-mapping": "dev-master",
+                "sabas/edifact": "^0.6.1"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DBShenker\\": "src"
+                }
+            },
+            "authors": [
+                {
+                    "name": "Antoine Bagnaud",
+                    "email": "contact@antoinebagnaud.me"
+                }
+            ],
+            "support": {
+                "source": "https://github.com/coopcycle/DBSchenkerClient/tree/master",
+                "issues": "https://github.com/coopcycle/DBSchenkerClient/issues"
+            },
+            "time": "2023-12-08T17:46:26+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -10865,6 +10905,97 @@
             "time": "2020-10-15T08:29:30+00:00"
         },
         {
+            "name": "php-edifact/edifact-generator",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/coopcycle/edifact-generator.git",
+                "reference": "d87ce1d945adebf6482c993e778f4b471995073e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/d87ce1d945adebf6482c993e778f4b471995073e",
+                "reference": "d87ce1d945adebf6482c993e778f4b471995073e",
+                "shasum": ""
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.9.5",
+                "phpunit/phpunit": "~8.0",
+                "sabas/edifact": "^0.4.1"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "EDI\\Generator\\": "src/Generator/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "codestyle:fix": [
+                    "vendor/bin/php-cs-fixer fix"
+                ],
+                "codestyle:lint": [
+                    "vendor/bin/php-cs-fixer fix --dry-run"
+                ]
+            },
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "description": "EDIFACT message generators",
+            "homepage": "https://github.com/php-edifact/edifact-generator",
+            "keywords": [
+                "EDI",
+                "EDIFACT",
+                "generator",
+                "message"
+            ],
+            "support": {
+                "source": "https://github.com/coopcycle/edifact-generator/tree/master"
+            },
+            "time": "2023-11-30T14:55:40+00:00"
+        },
+        {
+            "name": "php-edifact/edifact-mapping",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/coopcycle/edifact-mapping.git",
+                "reference": "888e8b522fc2bf17132586ad348cfb434b21a23c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/coopcycle/edifact-mapping/zipball/888e8b522fc2bf17132586ad348cfb434b21a23c",
+                "reference": "888e8b522fc2bf17132586ad348cfb434b21a23c",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "EDI\\Mapping\\": "src/Mapping/"
+                }
+            },
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "description": "XML mappings from UNTDID",
+            "homepage": "https://github.com/php-edifact/edifact-mapping",
+            "keywords": [
+                "EDI",
+                "EDIFACT",
+                "UNECE",
+                "mapping",
+                "message"
+            ],
+            "support": {
+                "source": "https://github.com/coopcycle/edifact-mapping/tree/master"
+            },
+            "time": "2023-12-07T11:41:17+00:00"
+        },
+        {
             "name": "php-http/client-common",
             "version": "2.7.0",
             "source": {
@@ -13171,6 +13302,70 @@
                 }
             ],
             "time": "2022-10-12T17:22:51+00:00"
+        },
+        {
+            "name": "sabas/edifact",
+            "version": "0.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-edifact/edifact.git",
+                "reference": "9afd2247f73cb97cbe850490961dd9fdfe20ff12"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-edifact/edifact/zipball/9afd2247f73cb97cbe850490961dd9fdfe20ff12",
+                "reference": "9afd2247f73cb97cbe850490961dd9fdfe20ff12",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-simplexml": "*",
+                "php": "~8"
+            },
+            "require-dev": {
+                "php-edifact/edifact-mapping": "dev-master",
+                "phpunit/phpunit": "~9.0",
+                "voku/arrayy": "~7.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "EDI\\": "src/EDI/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Stefano Sabatini",
+                    "email": "sabas88@gmail.com",
+                    "homepage": "http://stefanosabatini.eu",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Uldis Nelsons",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Emil Vikström",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Tools in PHP for UN/EDIFACT",
+            "homepage": "https://github.com/php-edifact/edifact",
+            "keywords": [
+                "container",
+                "edi",
+                "edifact",
+                "message"
+            ],
+            "support": {
+                "issues": "https://github.com/php-edifact/edifact/issues",
+                "source": "https://github.com/php-edifact/edifact/tree/0.6.1"
+            },
+            "time": "2023-06-19T09:31:51+00:00"
         },
         {
             "name": "sebastian/comparator",
@@ -19300,6 +19495,70 @@
             "time": "2023-02-09T06:45:16+00:00"
         },
         {
+            "name": "twig/html-extra",
+            "version": "v3.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twigphp/html-extra.git",
+                "reference": "95ceb36e70fa8d07af08cf5135ecbf5e0bd8f386"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twigphp/html-extra/zipball/95ceb36e70fa8d07af08cf5135ecbf5e0bd8f386",
+                "reference": "95ceb36e70fa8d07af08cf5135ecbf5e0bd8f386",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.3",
+                "symfony/mime": "^5.4|^6.0",
+                "twig/twig": "^2.7|^3.0"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "^5.4|^6.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Twig\\Extra\\Html\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                }
+            ],
+            "description": "A Twig extension for HTML",
+            "homepage": "https://twig.symfony.com",
+            "keywords": [
+                "html",
+                "twig"
+            ],
+            "support": {
+                "source": "https://github.com/twigphp/html-extra/tree/v3.7.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/twig/twig",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-07-29T15:34:56+00:00"
+        },
+        {
             "name": "twig/intl-extra",
             "version": "v3.7.0",
             "source": {
@@ -23195,7 +23454,7 @@
             "alias_normalized": "3.3.0.0"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
         "league/geotools": 0,
         "drupal/core-vendor-hardening": 20,
@@ -23203,11 +23462,11 @@
         "shahonseven/php-color-hash": 20,
         "behatch/contexts": 20
     },
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
