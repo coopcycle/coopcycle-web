@@ -3,12 +3,14 @@
 namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\Assets\PlaceholderImageResolver;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Utils\PriceFormatter;
+use AppBundle\Utils\RestaurantDecorator;
 use Cocur\Slugify\SlugifyInterface;
 use Liip\ImagineBundle\Service\FilterService;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
@@ -42,6 +44,8 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         SlugifyInterface $slugify,
         FilterService $imagineFilter,
         TranslatorInterface $translator,
+        PlaceholderImageResolver $placeholderImageResolver,
+        RestaurantDecorator $restaurantDecorator,
         string $locale)
     {
         $this->normalizer = $normalizer;
@@ -53,6 +57,8 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->slugify = $slugify;
         $this->imagineFilter = $imagineFilter;
         $this->translator = $translator;
+        $this->placeholderImageResolver = $placeholderImageResolver;
+        $this->restaurantDecorator = $restaurantDecorator;
         $this->locale = $locale;
     }
 
@@ -77,6 +83,15 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         } else {
             try {
                 $data['image'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail');
+            } catch (NotLoadableException $e) {}
+        }
+
+        $bannerImagePath = $this->uploaderHelper->asset($object, 'bannerImageFile');
+        if (empty($bannerImagePath)) {
+            $data['bannerImage'] = $this->placeholderImageResolver->resolve(filter: 'restaurant_banner', obj: $object, referenceType: UrlGeneratorInterface::ABSOLUTE_URL);
+        } else {
+            try {
+                $data['bannerImage'] = $this->imagineFilter->getUrlOfFilteredImage($bannerImagePath, 'restaurant_banner');
             } catch (NotLoadableException $e) {}
         }
 
@@ -112,9 +127,12 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
                 $this->translator->trans(LocalBusiness::getTransKeyForType($data['facets']['type']));
 
             $categories =
-                array_map(fn ($c) => $this->translator->trans(sprintf('homepage.%s', $c)), $data['facets']['category']);
+                array_map(fn ($c) => $this->translator->trans(sprintf('tags.%s', $c)), $data['facets']['category']);
             $data['facets']['category'] = $categories;
         }
+
+        $data['tags'] = $this->restaurantDecorator->getTags($object);
+        $data['badges'] = $this->restaurantDecorator->getBadges($object);
 
         return $data;
     }

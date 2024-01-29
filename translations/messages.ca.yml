@@ -94,7 +94,6 @@ help.title: Ajuda
 help.home: Inici
 restaurants.no_results: No hem trobat cap restaurant que coincideixi amb la cerca
   ☹ <br> Prova amb una adreça diferent
-restaurants.visible_by_you_only: Només és visible per a tu
 localBusiness.form.orderingDelayMinutes: Retard addicional abans de la comanda
 localBusiness.form.orderingDelayMinutes.help: Utilitza aquest camp per afegir un temps
   addicional abans de la comanda d'un usuari. Aquest paràmetre no canvia els temps

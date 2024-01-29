@@ -54,7 +54,11 @@ import {
   OPEN_CREATE_DELIVERY_MODAL,
   CLOSE_CREATE_DELIVERY_MODAL,
   OPEN_CREATE_TOUR_MODAL,
-  CLOSE_CREATE_TOUR_MODAL, OPEN_TASK_RESCHEDULE_MODAL, CLOSE_TASK_RESCHEDULE_MODAL,
+  CLOSE_CREATE_TOUR_MODAL,
+  OPEN_TASK_RESCHEDULE_MODAL,
+  CLOSE_TASK_RESCHEDULE_MODAL,
+  CREATE_TOUR_REQUEST,
+  CREATE_TOUR_REQUEST_SUCCESS,
 } from './actions'
 
 import {
@@ -87,6 +91,7 @@ const initialState = {
   createGroupModalIsOpen: false,
   isCreateDeliveryModalVisible: false,
   isCreateTourModalVisible: false,
+  isCreateTourButtonLoading: false,
   isTaskRescheduleModalVisible: false,
 }
 
@@ -480,6 +485,17 @@ export const isCreateTourModalVisible = (state = initialState.isCreateTourModalV
   case OPEN_CREATE_TOUR_MODAL:
     return true
   case CLOSE_CREATE_TOUR_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
+export const isCreateTourButtonLoading = (state = initialState.isCreateTourButtonLoading, action) => {
+  switch (action.type) {
+  case CREATE_TOUR_REQUEST:
+    return true
+  case CREATE_TOUR_REQUEST_SUCCESS:
     return false
   default:
     return state

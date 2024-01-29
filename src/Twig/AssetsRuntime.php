@@ -2,6 +2,7 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\Assets\PlaceholderImageResolver;
 use Aws\S3\Exception\S3Exception;
 use Twig\Extension\RuntimeExtensionInterface;
 use Intervention\Image\ImageManagerStatic;
@@ -24,7 +25,8 @@ class AssetsRuntime implements RuntimeExtensionInterface
         CacheManager $cacheManager,
         Filesystem $assetsFilesystem,
         UrlGeneratorInterface $urlGenerator,
-        CacheInterface $projectCache)
+        CacheInterface $projectCache,
+        PlaceholderImageResolver $placeholderImageResolver)
     {
         $this->storage = $storage;
         $this->mountManager = $mountManager;
@@ -33,6 +35,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         $this->assetsFilesystem = $assetsFilesystem;
         $this->urlGenerator = $urlGenerator;
         $this->projectCache = $projectCache;
+        $this->placeholderImageResolver = $placeholderImageResolver;
     }
 
     public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false, bool $cacheUrl = false): ?string
@@ -93,5 +96,15 @@ class AssetsRuntime implements RuntimeExtensionInterface
                 return false;
             }
         });
+    }
+
+    public function placeholderImage(?string $url, string $filter, string $provider = 'placehold', object|array $obj = null)
+    {
+        if (!empty($url)) {
+
+            return $url;
+        }
+
+        return $this->placeholderImageResolver->resolve($filter, $provider, $obj);
     }
 }

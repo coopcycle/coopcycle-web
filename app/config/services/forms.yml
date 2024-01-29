@@ -121,6 +121,7 @@ services:
   AppBundle\Form\Checkout\CheckoutAddressType:
     arguments:
       $nonProfitsEnabled: '%env(bool:NONPROFITS_ENABLED)%'
+      $enBoitLePlatUrl: '%env(EN_BOITE_LE_PLAT_URL)'
     tags: [ form.type ]
 
   AppBundle\Form\Checkout\CheckoutCustomerType:
@@ -270,4 +271,10 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\Restaurant\LoopeatType:
+    tags: [ form.type ]
+
+  AppBundle\Form\BusinessAccountType:
+    tags: [ form.type ]
+
+  AppBundle\Form\BusinessAccountRegistrationForm:
     tags: [ form.type ]

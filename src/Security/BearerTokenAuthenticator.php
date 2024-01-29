@@ -2,24 +2,32 @@
 
 namespace AppBundle\Security;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\User;
 use AppBundle\Security\ApiKeyManager;
+use ApiPlatform\Core\Exception\InvalidArgumentException;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\ExpiredTokenException;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\InvalidPayloadException;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\InvalidTokenException;
+use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\JWTAuthenticator;
-use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor;
+use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\PreAuthenticatedUserBadge;
-use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\CustomCredentials;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
@@ -28,88 +36,179 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
  */
 class BearerTokenAuthenticator extends AbstractAuthenticator
 {
-    private $jwtAuthenticator;
-    private $oauth2Authenticator;
-    private $apiKeyManager;
-    private $entityManager;
-    private $firewallName;
+    private $sessionTokenExtractor;
 
     public function __construct(
-        JWTAuthenticator $jwtAuthenticator,
-        OAuth2Authenticator $oauth2Authenticator,
-        ApiKeyManager $apiKeyManager,
-        EntityManagerInterface $entityManager,
-        string $firewallName)
+        private ApiKeyManager $apiKeyManager,
+        private EntityManagerInterface $entityManager,
+        private JWTAuthenticator $jwtAuthenticator,
+        private JWTTokenManagerInterface $jwtManager,
+        private OAuth2Authenticator $oauth2Authenticator,
+        private TokenExtractorInterface $tokenExtractor,
+        private IriConverterInterface $iriConverter,
+        private LoggerInterface $logger,
+        private string $firewallName)
     {
-        $this->jwtAuthenticator = $jwtAuthenticator;
-        $this->oauth2Authenticator = $oauth2Authenticator;
-        $this->apiKeyManager = $apiKeyManager;
-        $this->entityManager = $entityManager;
-        $this->firewallName = $firewallName;
+        $this->sessionTokenExtractor = new AuthorizationHeaderTokenExtractor('Bearer', 'X-CoopCycle-Session');
     }
 
     public function supports(Request $request): ?bool
     {
-        return $this->jwtAuthenticator->supports($request);
+        return $this->apiKeyManager->supports($request)
+            || $this->jwtAuthenticator->supports($request)
+            || $this->oauth2Authenticator->supports($request);
     }
 
-    public function authenticate(Request $request): PassportInterface
+    public function authenticate(Request $request): Passport
     {
         // This means the token starts with "ak_"
         if ($this->apiKeyManager->supports($request)) {
+            try {
+                return $this->authenticateWithApiKey($request);
+            } catch (AuthenticationException $e) {
+                $this->logAuthenticationException($request, 'ApiKey', $e);
+            }
+        }
 
-            $token = $this->apiKeyManager->getCredentials($request);
+        // Then, try with Lexik
+        // Lexik expects a "username" claim in the JWT payload
+        // If not, it throws an InvalidPayloadException
+        if ($this->jwtAuthenticator->supports($request)) {
+            try {
+                return $this->authenticateWithLexik($request);
+            } catch (AuthenticationException $e) {
+                $this->logAuthenticationException($request, 'Lexik', $e);
+            }
+        }
 
-            $apiApp = $this->entityManager
-                ->getRepository(ApiApp::class)
-                ->findOneBy([
-                    'apiKey' => substr($token->getCredentials(), 3),
-                    'type' => 'api_key'
-                ]);
+        // Then, try with League\OAuth2
+        if ($this->oauth2Authenticator->supports($request)) {
+            try {
+                return $this->authenticateWithOAuth2($request);
+            } catch (AuthenticationException $e) {
+                $this->logAuthenticationException($request, 'OAuth2', $e);
+            }
+        }
 
-            if (null === $apiApp) {
+        // Then, try with CartSession token
+        try {
+            return $this->authenticateWithCartSession($request);
+        } catch (AuthenticationException $e) {
+            $this->logAuthenticationException($request, 'CartSession token', $e);
+            throw $e;
+        }
+    }
 
-                throw new AuthenticationException(sprintf('API Key "%s" does not exist', $token->getCredentials()));
+    private function authenticateWithApiKey(Request $request): Passport {
+        $token = $this->apiKeyManager->getCredentials($request);
+
+        $apiApp = $this->entityManager
+            ->getRepository(ApiApp::class)
+            ->findOneBy([
+                'apiKey' => substr($token->getCredentials(), 3),
+                'type' => 'api_key'
+            ]);
+
+        if (null === $apiApp) {
+            throw new AuthenticationException(sprintf('API Key "%s" does not exist', $token->getCredentials()));
+        }
+
+        $user = new User();
+        $user->setUsername($token->getCredentials());
+
+        $token->setUser($user);
+
+        $passport = new SelfValidatingPassport(new UserBadge($token->getCredentials()), [
+            new PreAuthenticatedUserBadge()
+        ]);
+        $passport->setAttribute('apikey_token', $token);
+
+        return $passport;
+    }
+
+    private function authenticateWithLexik(Request $request): Passport {
+        $passport = $this->jwtAuthenticator->doAuthenticate($request);
+
+        $token = $this->jwtAuthenticator->createAuthenticatedToken($passport, $this->firewallName);
+
+        if ($rawSessionToken = $this->sessionTokenExtractor->extract($request)) {
+            $sessionToken = new JWTUserToken();
+            $sessionToken->setRawToken($rawSessionToken);
+
+            if ($payload = $this->jwtManager->decode($sessionToken)) {
+                if ($cart = $this->extractCart($payload)) {
+                    $token->setAttribute('cart', $cart);
+                }
+            }
+        }
+
+        $passport->setAttribute('jwt_token', $token);
+
+        return $passport;
+    }
+
+    private function authenticateWithOAuth2(Request $request): Passport {
+        try {
+            $passport = $this->oauth2Authenticator->authenticate($request);
+        } catch (\Throwable $e) {
+            throw new AuthenticationException("Invalid OAuth2 token", 0, $e);
+        }
+
+        $token = $this->oauth2Authenticator->createAuthenticatedToken($passport, $this->firewallName);
+        $passport->setAttribute('oauth2_token', $token);
+
+        return $passport;
+    }
+
+    private function authenticateWithCartSession(Request $request): Passport {
+        $rawToken = $this->tokenExtractor->extract($request);
+
+        try {
+            if (!$payload = $this->jwtManager->parse($rawToken)) {
+                throw new InvalidTokenException('Invalid JWT Token');
+            }
+        } catch (JWTDecodeFailureException $e) {
+            if (JWTDecodeFailureException::EXPIRED_TOKEN === $e->getReason()) {
+                throw new ExpiredTokenException();
             }
 
-            $user = new User();
-            $user->setUsername($token->getCredentials());
+            throw new InvalidTokenException('Invalid JWT Token', 0, $e);
+        }
 
-            $token->setUser($user);
+        if ($cart = $this->extractCart($payload)) {
+
+            $user = new User();
+            $user->setUsername($rawToken);
+            $user->setRoles(['ROLE_AD_HOC_CUSTOMER']);
+
+            $token = new JWTUserToken([], $user, $rawToken, $this->firewallName);
+            $token->setAttribute('cart', $cart);
 
             $passport = new SelfValidatingPassport(new UserBadge($token->getCredentials()), [
                 new PreAuthenticatedUserBadge()
             ]);
-            $passport->setAttribute('apikey_token', $token);
+            $passport->setAttribute('cart_token', $token);
 
             return $passport;
         }
 
-        try {
+        throw new AuthenticationException();
+    }
 
-            // First, try with Lexik
-            // Lexik expects a "username" claim in the JWT payload
-            // If it throws an InvalidPayloadException, we can try with Trikoder
-            $passport = $this->jwtAuthenticator->authenticate($request);
-
-            $token = $this->jwtAuthenticator->createAuthenticatedToken($passport, $this->firewallName);
-            $passport->setAttribute('jwt_token', $token);
-
-            return $passport;
-
-        } catch (InvalidPayloadException $e) {
-
-            // Then, try with League\OAuth2
-            $passport = $this->oauth2Authenticator->authenticate($request);
-
-            $token = $this->oauth2Authenticator->createAuthenticatedToken($passport, $this->firewallName);
-            $passport->setAttribute('oauth2_token', $token);
-
-            return $passport;
-
-        } catch (AuthenticationException $e) {
-            throw $e;
+    private function extractCart($payload)
+    {
+        if (isset($payload['sub'])) {
+            try {
+                return $this->iriConverter->getItemFromIri($payload['sub']);
+            } catch (InvalidArgumentException | ItemNotFoundException $e) {}
         }
+
+        return false;
+    }
+
+    private function logAuthenticationException(Request $request, string $authenticator, AuthenticationException $e)
+    {
+        $this->logger->info('BearerTokenAuthenticator; '.$request->getRequestUri().' failed to authenticate with '.$authenticator.': '.$e->getMessage(). ' '.$e->getMessageKey());
     }
 
     public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
@@ -128,7 +227,14 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
             return $jwtToken;
         }
 
-        return $passport->getAttribute('oauth2_token');
+        $oauth2Token = $passport->getAttribute('oauth2_token');
+
+        if ($oauth2Token) {
+
+            return $oauth2Token;
+        }
+
+        return $passport->getAttribute('cart_token');
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

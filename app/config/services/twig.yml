@@ -59,6 +59,10 @@ services:
     tags:
       - { name: twig.extension }
 
+  AppBundle\Twig\SettingResolver:
+    arguments:
+      $cache: '@craue_config_cache_provider'
+
   Twig\Extra\Html\HtmlExtension:
     tags:
       - { name: twig.extension }

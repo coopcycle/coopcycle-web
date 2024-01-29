@@ -17,6 +17,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
+use AppBundle\Form\BusinessAccountType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
@@ -79,11 +80,6 @@ class ProfileController extends AbstractController
         EdenredAuthentication $edenredAuthentication)
     {
         $user = $this->getUser();
-
-        if ($user->hasRole('ROLE_COURIER')) {
-
-            return $this->tasksAction($request);
-        }
 
         $customer = $user->getCustomer();
 
@@ -533,6 +529,19 @@ class ProfileController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_LOOPEAT');
 
+        $query = [
+            'measures' => [],
+            'timeDimensions' => [],
+            'order' => [['Loopeat.orderDate','desc']],
+            'dimensions' => [
+                'Loopeat.restaurantName',
+                'Loopeat.orderNumber',
+                'Loopeat.orderDate',
+                'Loopeat.customerEmail',
+                'Loopeat.packagingFee'
+            ],
+        ];
+
         $cubeJsToken = $tokenFactory->createToken();
 
         if ($request->isMethod('POST')) {
@@ -542,7 +551,7 @@ class ProfileController extends AbstractController
                     'Authorization' => $cubeJsToken,
                     'Content-Type' => 'application/json',
                 ],
-                'body' => '{"query":{"measures":[],"timeDimensions":[],"order":[["Loopeat.orderDate","desc"]],"dimensions":["Loopeat.restaurantName","Loopeat.orderNumber","Loopeat.orderDate","Loopeat.customerEmail","Loopeat.grabbedQuantity","Loopeat.returnedQuantity"]}}'
+                'body' => json_encode(['query' => $query])
             ]);
 
             // Need to invoke a method on the Response,
@@ -571,6 +580,44 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/loopeat.html.twig', [
             'cube_token' => $cubeJsToken,
+            'query' => $query,
+        ]);
+    }
+
+    /**
+     * @Route("/profile/business-account", name="profile_business_account")
+     */
+    public function businessAccountAction(
+        Request $request,
+        EntityManagerInterface $objectManager,
+        TranslatorInterface $translator)
+    {
+        $this->denyAccessUnlessGranted('ROLE_BUSINESS_ACCOUNT');
+
+        $user = $this->getUser();
+
+        $businessAccount = $user->getBusinessAccount();
+
+        if (!$businessAccount) {
+            throw $this->createNotFoundException('User does not have a business account associated');
+        }
+
+        $form = $this->createForm(BusinessAccountType::class, $businessAccount);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $objectManager->persist($businessAccount);
+            $objectManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('profile_business_account');
+        }
+
+        return $this->render('admin/business_account.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }

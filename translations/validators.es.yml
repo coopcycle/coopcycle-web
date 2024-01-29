@@ -37,3 +37,8 @@ product.name.modified: Has cambiado el nombre del producto
 task.before.mustBeGreaterThanAfter: La franja horaria no es válida
 
 time_range_jump.next_day: Ya no es posible hacer un pedido para hoy
+
+spreadsheet.missing_column: Debe definir una columna « %column% »
+spreadsheet.missing_columns: Debe definir una columna « %column% » o una columna « %other_column% »
+spreadsheet.alternative_columns: Debe definir una columna « %column% » o una columna « %other_column% », pero no ambas
+spreadsheet.csv_encoding: Los archivos CSV deben estar codificados en UTF-8

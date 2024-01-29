@@ -90,7 +90,6 @@ delivery.tracking_link: Lien de suivi
 delivery.with_id: 'Livraison #%id%'
 restaurants.no_results: Nous n'avons pas trouvé de restaurant correspondant à votre
   recherche ☹<br>Essayez avec une autre adresse ou d'autres filtres
-restaurants.visible_by_you_only: Visible par vous seulement
 localBusiness.form.orderingDelayMinutes: Délai additionnel pour les prises de commandes
 localBusiness.form.orderingDelayMinutes.help: Utilisez ces champs pour ajouter un
   délai avant la commande. N'influe pas sur le temps réservé à la préparation ni sur
@@ -770,6 +769,7 @@ activity.order.dropped: "@%owner% a livré la commande #order/%aggregate_id%\n"
 activity.order.fulfilled: "La commande #order/%aggregate_id% est terminée\n"
 activity.order.cancelled: "La commande #order/%aggregate_id% est annulée\n"
 activity.order.delayed: "La commande #order/%aggregate_id% a été retardée\n"
+activity.order.restored: "La commande #order/%aggregate_id% a été restaurée"
 social.sign_in_with_facebook: Se connecter avec Facebook
 embed.delivery.summary: "Vous avez demandé une course qui vous sera déposée le <strong>%dropoff_date%</strong>\
   \ à l'adresse suivante : <strong>%dropoff_address%</strong><br>Nous avons calculé\
@@ -1233,7 +1233,7 @@ restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 restaurant.form.en_boite_le_plat_enabled.label: Activer le système de consigne En
   Boîte Le Plat
 form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'Je veux
-  des contenants consignés <a href="https://enboiteleplat.fr/rennes/" target="_blank">En
+  des contenants consignés <a href="%url%" target="_blank">En
   Boîte Le Plat</a>.'
 adminDashboard.users.confirmDeleteUser: Voulez-vous vraiment supprimer l'utilisateur
   avec l'email %email% ?
@@ -1249,8 +1249,6 @@ homepage.featured: À la une
 homepage.exclusive: Exclusivités
 homepage.shops.new: Nouveautés
 users.disabled: Désactivés
-admin.settings.stop_using_algolia: |
-  Vous utilisez le moteur de suggestions Algolia, qui <a href="https://www.algolia.com/blog/product/sunsetting-our-places-feature/">cessera de fonctionner à partir du 31 mai 2022</a>. Aller à la <a href="%settings_url%">page des paramètres</a> pour configurer un autre moteur, comme par exemple <a href="https://docs.coopcycle.org/en/admin/google/">Google Maps</a>
 shops.filters.clear_all: Effacer tout
 shops.filters.title.types: Type de commerce
 shops.filters.title.categories: Catégories
@@ -1356,3 +1354,51 @@ form.settings.notifications.task.failed: Tâche échouée
 form.settings.notifications.task.cancelled: Tâche annulée
 form.settings.notifications.task.rescheduled: Tâche reprogrammée
 form.settings.notifications.help: En désactivant les notifications pour les événements ci-dessous, les administrateurs ne recevront pas d'e-mails, ni de notifications dans la barre de menu.
+tags.featured: À la une
+tags.exclusive: Exclusivités
+tags.shops.new: Nouveautés
+tags.zero_waste: Zéro déchet
+delivery.state:
+  pending: 'En attente, À récupérer'
+  in_delivery: 'Récupéré, en livraison'
+  delivered: 'Livré'
+  failed: 'Échoué'
+  cancelled: 'Annulé'
+order.export.heading.payment_method: Moyen de paiement
+payment_method:
+  card: Carte de crédit
+  edenred: Edenred
+  edenred+card: Edenred
+  cash_on_delivery: Contre remboursement
+profile.businessAccount: Compte professionnel
+adminDashboard.business_accounts.title: Comptes professionnels
+adminDashboard.business_accounts.createNew: Créer un nouveau compte professionnel
+form.business_account.hub.label: Hub
+form.business_account.hub.placeholder: Choisir un hub
+form.business_account.employees.label: Liste des employés
+form.business_account.restaurants.add: Ajouter un restaurant
+form.business_account.employees.add: Ajouter un employé
+form.business_account.manager.email.label: Courriel du gestionnaire de compte
+form.business_account.manager.email.help: Un email d'invitation à Coopcycle sera envoyé
+form.business_account.manager.email_sent.help: Un email d'invitation à Coopcycle a été envoyé
+form.business_account.save_and_send_invitation.label: Sauvegarder et envoyer l'invitation
+form.business_acount.send_invitation.confirm: Le courriel d'invitation à Coopcycle a été envoyé
+registration.navigation.title: "Personal account creation"
+registration.info.title: "What is CoopCycle?"
+registration.info.text: "On CoopCycle, you can order food provided by restaurants near you and delivered by your local cooperative. We are proud to be an ethical alternative to the uberization of our society!"
+registration.info.business.account.attachment: "You will be attached to the business account %businessAccountName%, but you can also command under your name."
+registration.alert.text: "You have been invited to create an account on %brandName% by %invitedBy%."
+registration.alert.business.account.text: "Welcome in CoopCycle - %brandName% ! Please create your business account before making your first order."
+registration.form.title: "Your information"
+registration.step.personal: "Personal information"
+registration.step.company: "Company information"
+registration.step.invitation: "Invite your colleagues"
+registration.flow.next: "Next"
+registration.flow.back: "Back"
+error.404: Page non trouvée.
+error.502: Le serveur a dépassé sa capacité. Veuillez réessayer plus tard.
+error.504: Le serveur a mis trop de temps à répondre.
+error.return_to_homepage: Retourner à la page d'accueil
+deliveries.imports: Fichiers importés
+deliveries.importing: Le fichier %filename% va bientôt être importé.
+deliveries.imports.created_at: Créé le

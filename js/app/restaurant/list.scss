@@ -3,6 +3,9 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 @import "../../../assets/css/vars.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+@import "~skeleton-screen-css/dist/index.scss";
+
+@import "./restaurant-card.scss";
 
 .shops-content {
   display: flex;
@@ -23,6 +26,7 @@
 }
 
 .restaurant-list {
+  // gap: 32px;
   h1 {
     display: inline-block;
   }
@@ -50,115 +54,6 @@ button[aria-expanded='false'] .filter-caret {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-}
-
-.restaurant-item {
-
-  position: relative;
-  margin-bottom: $line-height-computed;
-
-  &, & > a {
-    color: #212121;
-    &:hover {
-      color: lighten(#212121, 10%);
-    }
-  }
-
-  &--disabled > * {
-    opacity: 0.6;
-  }
-  &--disabled > &__top-left,
-  &--disabled > &__top-right {
-    opacity: 0.9;
-  }
-  &__top-left,
-  &__top-right {
-    position: absolute;
-    top: 12px;
-  }
-  &__top-left {
-    left: 12px;
-  }
-  &__top-right {
-    right: 12px;
-  }
-
-  &__title {
-    font-weight: 700;
-    height: ($line-height-computed * 2);
-    max-height: ($line-height-computed * 2);
-  }
-
-  &__caption {
-    overflow: hidden;
-    word-wrap: break-word;
-    text-overflow: ellipsis;
-    height: ($line-height-computed * 2);
-    max-height: ($line-height-computed * 2);
-    & > a {
-      color: #777777;
-      &:hover {
-        color: lighten(#777777, 10%);
-      }
-    }
-  }
-
-  &__time-range {
-    font-size: $font-size-small;
-    background: #E5E5E5;
-    border-radius: 4px;
-    padding: 5px 10px;
-  }
-
-  > img,
-  a > img,
-  a > div > img {
-    @include img-responsive;
-    margin-right: auto;
-    margin-left: auto;
-  }
-
-  figcaption {
-    position: absolute;
-    right: 0;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    font-size: $font-size-h3;
-  }
-}
-
-.restaurant-item:hover {
-  text-decoration: none;
-}
-
-.restaurant-item:hover img {
-  opacity: 0.8;
-}
-
-.restaurant-supports-edenred {
-
-  $originalWidth: 413.24px;
-  $originalHeight: 265.47px;
-
-  background-image: url('../../../assets/svg/Edenred_Logo.svg');
-  background-repeat: no-repeat;
-  display: block;
-  width: math.div($originalWidth, 6);
-  height: math.div($originalHeight, 6);
-}
-
-.restaurant-supports-vytal {
-
-    $vytalWidth: 964px;
-    $vytalHeight: 893px;
-
-    background-image: url('../../../assets/logos/vytal_logo_green.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-    display: block;
-    width: math.div($vytalWidth, 15);
-    height: math.div($vytalHeight, 15);
 }
 
 .swiper {

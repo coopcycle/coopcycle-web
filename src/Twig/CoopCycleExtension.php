@@ -67,6 +67,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('cache_key', array(KeyGenerator::class, 'generateKey')),
             new TwigFilter('parse_expression', array(ExpressionLanguageRuntime::class, 'parseExpression')),
             new TwigFilter('expand_tags', array(TagsRuntime::class, 'expandTags')),
+            new TwigFilter('placeholder_image', array(AssetsRuntime::class, 'placeholderImage')),
         );
     }
 
@@ -97,6 +98,10 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('should_show_pre_order', array(LocalBusinessRuntime::class, 'shouldShowPreOrder')),
             new TwigFunction('loopeat_authorization_url', array(LoopeatRuntime::class, 'getAuthorizationUrl')),
             new TwigFunction('loopeat_name', array(LoopeatRuntime::class, 'getName')),
+            new TwigFunction('restaurant_tags', array(LocalBusinessRuntime::class, 'tags')),
+            new TwigFunction('restaurant_badges', array(LocalBusinessRuntime::class, 'badges')),
+            new TwigFunction('coopcycle_configtest', array(SettingResolver::class, 'configTest')),
+            new TwigFunction('coopcycle_lat_lng_bounds', array(SettingResolver::class, 'getLatLngBounds')),
         );
     }
 

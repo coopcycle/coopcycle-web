@@ -2,10 +2,10 @@ import _ from 'lodash'
 import './split-terms-and-privacy'
 
 const emailInput =
-  document.querySelector('[name="registration_form[email]"]')
+  document.querySelector('[id$=_email]')
 
 const usernameInput =
-  document.querySelector('[name="registration_form[username]"]')
+  document.querySelector('[id$=_username]')
 
 const formGroup = usernameInput.closest('.form-group')
 
@@ -14,10 +14,10 @@ const formGroup = usernameInput.closest('.form-group')
 const checkUsername = _.debounce(function() {
 
   const email =
-    document.querySelector('[name="registration_form[email]"]').value
+    document.querySelector('[id$=_email]').value
 
   const username =
-    document.querySelector('[name="registration_form[username]"]').value
+    document.querySelector('[id$=_username]').value
 
   formGroup.classList.remove('has-success', 'has-error')
   formGroup.classList.add('has-feedback')

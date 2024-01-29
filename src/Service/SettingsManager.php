@@ -20,14 +20,6 @@ class SettingsManager
     private $doctrine;
     private $gatewayResolver;
 
-    private $mandatorySettings = [
-        'brand_name',
-        'administrator_email',
-        'google_api_key',
-        'latlng',
-        'currency_code',
-    ];
-
     private $secretSettings = [
         'stripe_test_publishable_key',
         'stripe_test_secret_key',
@@ -37,7 +29,6 @@ class SettingsManager
         'stripe_live_connect_client_id',
         'payment_gateway',
         'payment_method_publishable_key',
-        'google_api_key',
         'mercadopago_test_publishable_key',
         'mercadopago_live_publishable_key',
         'mercadopago_test_access_token',
@@ -313,22 +304,6 @@ class SettingsManager
     {
         $this->doctrine->getManagerForClass($this->configEntityName)->flush();
         $this->craueCache->clear();
-    }
-
-    public function isFullyConfigured()
-    {
-        foreach ($this->mandatorySettings as $name) {
-            try {
-                $value = $this->craueConfig->get($name);
-                if (null === $value) {
-                    return false;
-                }
-            } catch (\RuntimeException $e) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     public function asEntity()

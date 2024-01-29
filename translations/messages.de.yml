@@ -174,7 +174,6 @@ help.title: Hilfe
 help.home: Zuhause
 restaurants.no_results: Wir haben leider kein Restaurant zu deiner Suchanfrage gefunden
   ☹<br>Versuchen Sie es mit einer anderen Adresse
-restaurants.visible_by_you_only: Nur für Sie sichtbar
 localBusiness.form.orderingDelayMinutes: Zusätzliche Verzögerung vor der Bestellung
 localBusiness.form.orderingDelayMinutes.help: Nutzen Sie dieses Feld um eine Zeit
   festzulegen, bevor der Kunde bestellen kann. Diese Einstellung ändert die Kochzeit
@@ -712,3 +711,9 @@ basics.settings: Einstellungen
 form.store_type.failure_reason_set.label: "Fehlergründe"
 profile.delete_my_account: "Mein Konto löschen"
 profile.type_username_to_confirm: "Gib deinen Benutzernamen ein, um die Kontolöschung zu bestätigen"
+delivery.state:
+  pending: 'Ausstehend, Abholbereit'
+  in_delivery: 'Abgeholt, in Lieferung'
+  delivered: 'Zugestellt'
+  failed: 'Fehlgeschlagen'
+  cancelled: 'Abgebrochen'

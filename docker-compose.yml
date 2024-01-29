@@ -214,7 +214,7 @@ services:
 
   # https://cube.dev/docs/getting-started-docker
   cube:
-    image: cubejs/cube:alpine
+    image: cubejs/cube:v0.34
     ports:
       - 4000:4000
     depends_on:
@@ -229,6 +229,8 @@ services:
       - CUBEJS_WEB_SOCKETS=true
       - CUBEJS_DEV_MODE=true
       - CUBEJS_API_SECRET
+      - CUBEJS_SCHEMA_PATH=schema
+      - CUBEJS_CACHE_AND_QUEUE_DRIVER=memory
     volumes:
       - ./cube:/cube/conf/schema
       - ./cube.js:/cube/conf/cube.js
@@ -246,6 +248,19 @@ services:
       - typesense_data:/data
     logging:
       driver: none
+
+  storybook:
+    build:
+      dockerfile: './docker/storybook/Dockerfile'
+      context: '.'
+    ports:
+      - '6006:6006'
+    depends_on:
+      - webpack
+    volumes:
+      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+      - '.:/srv/coopcycle'
+      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
 
 volumes:
   node_modules_webpack:

@@ -88,3 +88,6 @@ order.adhoc.body: |
   Se ha creado un nuevo pedido para usted.
   <br>
   Para finalizar su pedido, haga clic en el siguiente enlace para especificar su dirección, elegir una franja de entrega y pagar con tarjeta de crédito.
+business_account.send_invitation.body: "Hola %name%,\n<br>\nEste correo es una invitación\
+  \ a tu espacio CoopCycle, para terminar la creación de su cuenta, por favor haga\
+  \ un clic en el siguiente enlace.\n"

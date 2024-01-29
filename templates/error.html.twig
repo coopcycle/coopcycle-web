@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+  <head>
+    {{ sonata_seo_title() }}
+    {{ sonata_seo_link_canonical() }}
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    {{ sonata_seo_metadatas() }}
+    {{ encore_entry_link_tags('common') }}
+  </head>
+  <body>
+    <div class="container container--full-height container--center">
+      <img src="{{ coopcycle_company_logo() }}" width="64" height="64" />
+      <img src="/img/error/broken_bike.jpg" width="640" height="426" class="my-4">
+      <p>{{ ('error.' ~ exception.statusCode)|trans }}</p>
+      <a href="{{ path('homepage') }}">{{ 'error.return_to_homepage'|trans }}</a>
+    </div>
+    {% include "_partials/analytics.html.twig" %}
+  </body>
+</html>

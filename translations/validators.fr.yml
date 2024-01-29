@@ -51,3 +51,11 @@ order.shippingTimeRange.notAvailable: Indisponible pour l'instant
 
 dabba.insufficient_wallet: Il vous manque %amount% sur votre cagnotte Dabba
 
+googlemaps.api_key.invalid: La clé d'API Google Maps n'est pas valide
+
+loopeat.insufficient_stock: Stock insuffisant
+
+spreadsheet.missing_column: Vous devez définir une colonne « %column% »
+spreadsheet.missing_columns: Vous devez définir une colonne « %column% » ou une colonne « %other_column% »
+spreadsheet.alternative_columns: Vous devez définir une colonne « %column% » ou une colonne « %other_column% » column, mais pas les deux
+spreadsheet.csv_encoding: Les fichiers CSV doivent être encodés en UTF-8

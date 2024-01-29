@@ -9,13 +9,20 @@ security:
         Nucleos\UserBundle\Model\UserInterface: sha512
 
     role_hierarchy:
-        ROLE_CUSTOMER: ROLE_USER
-        ROLE_COURIER: ROLE_CUSTOMER
+#        ROLE_AD_HOC_CUSTOMER (base role)
+#        ROLE_USER (base role)
+        ROLE_COURIER: ROLE_USER
         ROLE_RESTAURANT: ROLE_USER
         ROLE_STORE: ROLE_USER
         ROLE_LOOPEAT: ROLE_USER
         ROLE_DISPATCHER: [ ROLE_COURIER, ROLE_LOOPEAT ]
         ROLE_ADMIN: ROLE_DISPATCHER
+        ROLE_BUSINESS_ACCOUNT: ROLE_USER
+#        ROLE_API_APP (base role)
+        ROLE_API_KEY: ROLE_API_APP
+        ROLE_OAUTH2_TASKS: ROLE_API_APP
+        ROLE_OAUTH2_DELIVERIES: ROLE_API_APP
+        ROLE_OAUTH2_ORDERS: ROLE_API_APP
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
@@ -136,7 +143,7 @@ security:
             pattern:   ^/api/carts/session$
             methods: [ POST ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_orders_get:
             pattern:   ^/api/orders/[0-9]+$
@@ -154,25 +161,25 @@ security:
             pattern:   ^/api/orders/[0-9]+$
             methods: [ PUT ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_cart_items:
             pattern:   ^/api/orders/[0-9]+/items$
             methods: [ POST ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_cart_item:
             pattern:   ^/api/orders/[0-9]+/items/[0-9]+$
             methods: [ PUT, DELETE ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_cart_create_invitation:
             pattern:   ^/api/orders/[0-9]+/create_invitation$
             methods: [ POST ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_cart_add_player:
             pattern:   ^/api/orders/[0-9]+/players$
@@ -181,52 +188,52 @@ security:
             security: false
 
         api_cart_operations:
-            pattern:   ^/api/orders/[0-9]+/(assign|timing|validate|tip)$
+            pattern:   ^/api/orders/[0-9]+/(assign|timing|validate|tip|centrifugo)$
             methods: [ GET, PUT ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_cart_payment:
             pattern:   ^/api/orders/[0-9]+/payment$
             methods: [ GET ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_cart_payment_methods:
             pattern:   ^/api/orders/[0-9]+/payment_methods$
             methods: [ GET ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_cart_pay:
             pattern:   ^/api/orders/[0-9]+/pay$
             methods: [ PUT ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_cart_mercadopago_preference:
             pattern:   ^/api/orders/[0-9]+/mercadopago-preference$
             methods: [ GET ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_cart_stripe_clone_payment_method:
             pattern:   ^/api/orders/[0-9]+/stripe/clone-payment-method/pm_[0-9a-zA-Z]+$
             methods: [ GET ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_cart_stripe_create_setup_intent_or_attach_pm:
             pattern:   ^/api/orders/[0-9]+/stripe/create-setup-intent-or-attach-pm$
             methods: [ POST ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_cart_loopeat_returns:
             pattern:   ^/api/orders/[0-9]+/loopeat_returns$
             methods: [ POST ]
             stateless: true
-            cart_session: true
+            bearer_token: true
 
         api_me:
             pattern:   ^/api/me$
@@ -322,15 +329,27 @@ security:
         - { path: ^/admin/settings, roles: ROLE_ADMIN }
         - { path: ^/admin, roles: ROLE_DISPATCHER }
         - { path: ^/_uploader/restaurant, roles: [ ROLE_ADMIN, ROLE_RESTAURANT ] }
+
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/facebook/login$, roles: PUBLIC_ACCESS }
-        - { path: ^/api/orders/timing, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/resetting, role: PUBLIC_ACCESS }
-        - { path: ^/api/routing, roles: PUBLIC_ACCESS }
-        - { path: ^/api/settings, roles: PUBLIC_ACCESS }
         - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api/me$, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET ] }
+
+        - { path: ^/api/settings, roles: PUBLIC_ACCESS }
+
         - { path: ^/api/restaurants, roles: PUBLIC_ACCESS, methods: [ GET ] }
         - { path: ^/api/search/shops_products, roles: PUBLIC_ACCESS, methods: [ GET ] }
         - { path: ^/api/carts/session$, roles: PUBLIC_ACCESS, methods: [ POST ] }
+        - { path: ^/api/orders/timing, roles: PUBLIC_ACCESS }
+        - { path: ^/api/time_slots, roles: [ ROLE_USER, ROLE_API_APP ] }
+        - { path: ^/api/deliveries, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET, POST, PUT, DELETE ] }
+        - { path: ^/api/task_import_queues, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET ] }
+        - { path: ^/api/routing, roles: PUBLIC_ACCESS }
+
+        - { path: ^/api/webhooks, roles: [ ROLE_USER, ROLE_API_APP ] }
+        - { path: ^/api/urbantz, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET, POST, PUT, DELETE ] }
+        - { path: ^/api/woopit, roles: [ ROLE_USER, ROLE_API_APP ] }
+
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

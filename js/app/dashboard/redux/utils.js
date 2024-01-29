@@ -15,17 +15,21 @@ export function withoutTasks(state, tasks) {
   )
 }
 
-export function withLinkedTasks(tasks, allTasks) {
+export function withLinkedTasks(tasks, allTasks, unique = false) {
+  /*
+    Pass the "unique" flag to avoid duplicates tasks in the returned array
+  */
 
   if (!Array.isArray(tasks)) {
     tasks = [ tasks ]
   }
 
-  const groups = taskUtils.groupLinkedTasks(allTasks)
+  const groups = taskUtils.groupLinkedTasks(allTasks)  
 
   const newTasks = []
   tasks.forEach(task => {
-    if (Object.prototype.hasOwnProperty.call(groups, task['@id'])) {
+
+    if (Object.prototype.hasOwnProperty.call(groups, task['@id']) ) {
       groups[task['@id']].forEach(taskId => {
         const t = _.find(allTasks, t => t['@id'] === taskId)
         newTasks.push(t)
@@ -35,7 +39,7 @@ export function withLinkedTasks(tasks, allTasks) {
     }
   })
 
-  return newTasks
+ return unique ? _.uniqBy(newTasks, (t) => t['@id']) : newTasks  
 }
 
 export const timeframeToPercentage = (timeframe, reference) => {

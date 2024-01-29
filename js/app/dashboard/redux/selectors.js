@@ -7,13 +7,14 @@ import {
 } from '@reduxjs/toolkit'
 
 import { moment } from '../../coopcycle-frontend-js'
-import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter, taskAdapter } from '../../coopcycle-frontend-js/logistics/redux'
+import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter, taskAdapter, tourAdapter } from '../../coopcycle-frontend-js/logistics/redux'
 import { filter, forEach, find, reduce, map, differenceWith, includes, mapValues } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
 import { taskUtils } from '../../coopcycle-frontend-js/logistics/redux';
 
 const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
-const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
+export const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
+export const tourSelectors = tourAdapter.getSelectors((state) => state.logistics.entities.tours)
 
 export const recurrenceRulesAdapter = createEntityAdapter({
   selectId: (o) => o['@id'],
@@ -43,7 +44,10 @@ export const selectGroups = createSelector(
     const groupsMap = new Map()
     const groups = []
 
-    const tasksWithGroup = filter(unassignedTasks, task => belongsToGroup(task))
+    const tasksWithGroup = filter(
+      unassignedTasks, 
+      task => belongsToGroup(task) && !belongsToTour(task) // if the task is in a tour we don't want it to be displayed in "Unassigned > Group"
+    )
 
     forEach(tasksWithGroup, task => {
       const keys = Array.from(groupsMap.keys())
@@ -295,39 +299,5 @@ export const selectLinkedTasksIds = createSelector(
   (tasks) => {
     const groups = taskUtils.groupLinkedTasks(tasks)
     return Object.keys(groups)
-  }
-)
-
-export const selectUnassignedTours = createSelector(
-  selectUnassignedTasks,
-  (unassignedTasks) => {
-
-    const toursMap = new Map()
-    const tours = []
-
-    const tasksWithTour = filter(unassignedTasks, task => belongsToTour(task))
-
-    forEach(tasksWithTour, task => {
-      const keys = Array.from(toursMap.keys())
-      const tour = find(keys, tour => tour['@id'] === task.tour['@id'])
-
-      if (!tour) {
-        toursMap.set(task.tour, [ task ])
-      } else {
-        toursMap.get(tour).push(task)
-        toursMap.get(tour).sort((a, b) => a.tour.position - b.tour.position)
-      }
-
-
-    })
-
-    toursMap.forEach((tasks, tour) => {
-      tours.push({
-        ...tour,
-        items: tasks,
-      })
-    })
-
-    return tours
   }
 )

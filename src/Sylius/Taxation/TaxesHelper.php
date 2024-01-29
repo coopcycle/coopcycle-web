@@ -18,12 +18,14 @@ class TaxesHelper
         RepositoryInterface $taxRateRepository,
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
-        string $country)
+        string $country,
+        string $locale)
     {
         $this->taxRateRepository = $taxRateRepository;
         $this->translator = $translator;
         $this->settingsManager = $settingsManager;
         $this->country = $country;
+        $this->locale = $locale;
     }
 
     /**
@@ -77,9 +79,12 @@ class TaxesHelper
     {
         $taxRate = $this->taxRateRepository->findOneByCode($code);
 
-        return sprintf('%s %d%%',
+        $formatter = new \NumberFormatter($this->locale, \NumberFormatter::PERCENT);
+        $formatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
+
+        return sprintf('%s %s',
             $this->translator->trans($taxRate->getName(), [], 'taxation'),
-            ($taxRate->getAmount() * 100)
+            $formatter->format($taxRate->getAmount())
         );
     }
 
@@ -94,7 +99,7 @@ class TaxesHelper
         $qb = $this->taxRateRepository->createQueryBuilder('r');
         $qb
             ->join(TaxCategory::class, 'c', Expr\Join::WITH, 'r.category = c.id')
-            ->andWhere('r.country = :country')
+            ->andWhere('LOWER(r.country) = LOWER(:country)')
             ->andWhere(
                 $qb->expr()->in('c.code', ':codes')
             )

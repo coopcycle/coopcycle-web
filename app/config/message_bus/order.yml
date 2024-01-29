@@ -47,6 +47,7 @@ services:
     class: AppBundle\Domain\Order\Handler\AcceptOrderHandler
     arguments:
       - '@event_recorder'
+      - '@validator'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\AcceptOrder
@@ -104,6 +105,15 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\Fulfill
 
+  coopcycle.domain.order.handler.restore:
+    class: AppBundle\Domain\Order\Handler\RestoreOrderHandler
+    arguments:
+      - '@event_recorder'
+      - '@sm.factory'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Order\Command\RestoreOrder
+
   #
   # Event Reactors
   #
@@ -131,6 +141,7 @@ services:
     class: AppBundle\Domain\Order\Reactor\CalculateTimeline
     arguments:
       - '@coopcycle.order_timeline_calculator'
+      - '@event_bus'
     tags:
         - name: event_subscriber
           subscribes_to: order:created
@@ -302,6 +313,8 @@ services:
           subscribes_to: order:cancelled
         - name: event_subscriber
           subscribes_to: order:fulfilled
+        - name: event_subscriber
+          subscribes_to: order:restored
         - name: event_subscriber
           subscribes_to: order:checkout_succeeded
         - name: event_subscriber

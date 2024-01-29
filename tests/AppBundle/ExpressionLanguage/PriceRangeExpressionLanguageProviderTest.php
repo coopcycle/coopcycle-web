@@ -97,4 +97,14 @@ class PriceRangeExpressionLanguageProviderTest extends TestCase
         $this->assertThat($value, $this->isType('int'));
         $this->assertEquals($expectedValue, $value);
     }
+
+    public function testValueBelowThreshold()
+    {
+        $value = $this->language->evaluate('price_range(distance, 24, 100, 2000)', [
+            'distance' => 850,
+        ]);
+
+        $this->assertThat($value, $this->isType('int'));
+        $this->assertEquals(0, $value);
+    }
 }

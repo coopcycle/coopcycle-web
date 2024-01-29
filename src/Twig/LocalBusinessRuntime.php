@@ -9,6 +9,7 @@ use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\RestaurantDecorator;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,7 +27,8 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
         EntityManagerInterface $entityManager,
-        TimingRegistry $timingRegistry)
+        TimingRegistry $timingRegistry,
+        RestaurantDecorator $restaurantDecorator)
     {
         $this->translator = $translator;
         $this->serializer = $serializer;
@@ -34,6 +36,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         $this->projectCache = $projectCache;
         $this->entityManager = $entityManager;
         $this->timingRegistry = $timingRegistry;
+        $this->restaurantDecorator = $restaurantDecorator;
     }
 
     /**
@@ -174,5 +177,15 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         $start = Carbon::parse($timeInfo['range'][0]);
 
         return $start->diffInHours(Carbon::now()) > 1;
+    }
+
+    public function tags(LocalBusiness $restaurant): array
+    {
+        return $this->restaurantDecorator->getTags($restaurant);
+    }
+
+    public function badges(LocalBusiness $restaurant): array
+    {
+        return $this->restaurantDecorator->getBadges($restaurant);
     }
 }

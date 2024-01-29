@@ -12,6 +12,7 @@ use AppBundle\Entity\Vendor;
 use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\OrderProcessing\OrderFeeProcessor;
@@ -58,7 +59,8 @@ class OrderFeeProcessorTest extends KernelTestCase
             $this->translator->reveal(),
             $this->deliveryManager->reveal(),
             $this->promotionRepository->reveal(),
-            new NullLogger()
+            new NullLogger(),
+            new NullLoggingUtils()
         );
     }
 
@@ -551,7 +553,7 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $order = $this->prophesize(OrderInterface::class); // new Order();
         $order->hasVendor()->willReturn(true);
-        $order->getVendor()->willReturn(Vendor::withRestaurant($restaurant));
+        $order->getVendor()->willReturn($restaurant);
         $order->isTakeAway()->willReturn(false);
         $order->getItemsTotal()->willReturn(2000);
 

@@ -3,6 +3,7 @@
 namespace AppBundle\Pricing;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
@@ -25,7 +26,7 @@ class PricingManager
     /**
      * @return OrderInterface|null
      */
-    public function createOrder(Delivery $delivery): ?OrderInterface
+    public function createOrder(Delivery $delivery, bool $throwException = false): ?OrderInterface
     {
         $store = $delivery->getStore();
 
@@ -34,6 +35,11 @@ class PricingManager
             $price = $this->deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
 
             if (null === $price) {
+
+                if ($throwException) {
+                    throw new NoRuleMatchedException();
+                }
+
                 $this->logger->error('Price could not be calculated');
 
                 return null;

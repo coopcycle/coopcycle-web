@@ -5,7 +5,7 @@
 }
 
 .ReactModal__Content--termsAndPolicy {
-  max-height: calc(100vh - 30px);
+  max-height: 482px;
   @media (min-width: $screen-lg-min) {
     width: 50%;
   }
@@ -23,4 +23,43 @@
   h1, h2, h3, h4 {
     font-weight: 700;
   }
+}
+
+.legal-text {
+  max-height: 350px;
+  overflow: auto;
+}
+
+.help {
+  font-size: 12px;
+  color: #6B6B6B;
+}
+
+.btn-agree {
+  background-color: #E4022D;
+  color: #F2F2F3;
+
+  .inactive {
+    background-color: #FF7A94;
+  }
+
+  &:hover {
+    color: #F2F2F3;
+  }
+}
+
+.btn-default {
+  border-color: transparent;
+  color: #6B6B6B;
+
+  &:hover {
+    border-color: transparent;
+    background-color: #f9f9f9;
+  }
+}
+
+.bottom {
+  min-height: 8px;
+  background-color: transparent;
+  color: transparent;
 }

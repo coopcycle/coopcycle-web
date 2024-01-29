@@ -16,11 +16,14 @@ use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Hashids\Hashids;
 use Knp\Component\Pager\PaginatorInterface;
+use League\Flysystem\Filesystem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DashboardController extends AbstractController
@@ -65,6 +68,7 @@ class DashboardController extends AbstractController
             'reusable_packaging_new' => 'dashboard_restaurant_new_reusable_packaging',
             'mercadopago_oauth_redirect' => 'dashboard_restaurant_mercadopago_oauth_redirect',
             'mercadopago_oauth_remove' => 'dashboard_restaurant_mercadopago_oauth_remove',
+            'image_from_url' => 'dashboard_restaurant_image_from_url',
         ];
     }
 
@@ -93,10 +97,10 @@ class DashboardController extends AbstractController
         EntityManagerInterface $entityManager,
         TaxesHelper $taxesHelper,
         CubeJsTokenFactory $tokenFactory,
-        OrderManager $orderManager,
-        DeliveryManager $deliveryManager,
-        OrderFactory $orderFactory,
-        DeliveryRepository $deliveryRepository
+        DeliveryRepository $deliveryRepository,
+        MessageBusInterface $messageBus,
+        Hashids $hashids8,
+        Filesystem $deliveryImportsFilesystem
     )
     {
         $user = $this->getUser();
@@ -117,10 +121,11 @@ class DashboardController extends AbstractController
                 $store->getId(),
                 $request,
                 $paginator,
-                $orderManager,
-                $deliveryManager,
-                $orderFactory,
-                $deliveryRepository
+                deliveryRepository: $deliveryRepository,
+                entityManager: $entityManager,
+                hashids8: $hashids8,
+                deliveryImportsFilesystem: $deliveryImportsFilesystem,
+                messageBus: $messageBus
             );
         }
 

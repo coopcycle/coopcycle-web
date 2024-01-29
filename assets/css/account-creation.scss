@@ -1,0 +1,145 @@
+.navbar-coopcycle {
+  .container {
+
+    h5 {
+      font-size: 16px !important;
+      margin-top: 0px;
+      margin-bottom: 20px;
+    }
+  }
+}
+
+.main {
+  background-color: #f8f9fa !important;
+
+  .container {
+    padding-top: 84px;
+    padding-bottom: 20px;
+
+    @media only screen and (max-width: 992px) {
+      padding-top: 53px;
+    }
+
+    img {
+      width: 453px;
+
+      @media only screen and (max-width: 992px) {
+        margin-bottom: 53px;
+        width: 100%;
+      }
+    }
+  }
+
+}
+
+.info-section {
+  background-color: #fff !important;
+  max-width: 453px;
+  margin-top: 72.5px;
+  margin-bottom: 53px;
+  margin-right: 87px;
+  padding: 24px;
+  box-shadow: 0px 0px 64px 0px #0000000D;
+
+  @media only screen and (max-width: 992px) {
+    margin-top: 0px;
+    margin-right: 0px;
+  }
+
+  h5 {
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    font-size: 16px !important;
+    font-weight: 400;
+    margin-top: 0;
+  }
+
+  img {
+    width: 44px !important;
+
+    @media only screen and (max-width: 992px) {
+      margin-bottom: 0px !important;
+    }
+  }
+}
+
+.form-section {
+  background-color: #fff !important;
+  box-shadow: 0px 0px 64px 0px #0000000D;
+
+  .header {
+    background-color: $primary-default;
+    color: $white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+
+    h5 {
+      font-size: 16px !important;
+    }
+  }
+
+  .form {
+    padding: 24px;
+
+    button {
+      &.btn-primary {
+        background-color: $primary-default;
+      }
+    }
+  }
+}
+
+.step {
+  margin-bottom: 20px;
+
+  .label-inactive {
+    color: #878787;
+  }
+}
+
+.step-1 {
+  @media only screen and (max-width: 992px) {
+    position: relative;
+    left: 0;
+  }
+}
+.step-2 {
+  @media only screen and (max-width: 992px) {
+    position: relative;
+    left: -50%;
+  }
+}
+.step-3 {
+  @media only screen and (max-width: 992px) {
+    position: relative;
+    left: -80%;
+  }
+}
+
+.step-number {
+  border-radius: 50% !important;
+  background-color: $primary-default;
+  color: $white;
+  padding: 4px 10px;
+  margin-left: 8px;
+  margin-right: 4px;
+
+  &.inactive {
+    background-color: $primary-desactivated;
+  }
+}
+
+.flow-buttons {
+  display: flex;
+  justify-content: end;
+  margin-right: 15px;
+
+  button {
+    &.btn-primary-outline {
+      background-color: $white;
+      border: 2px solid;
+      border-color: $primary-default;
+      color: $primary-default;
+    }
+  }
+}

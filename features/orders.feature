@@ -128,6 +128,7 @@ Feature: Orders
         "@type":"http://schema.org/Restaurant",
         "name":"Nodaiwa",
         "image":@string@,
+        "bannerImage":@string@,
         "address":{
           "@id":"@string@.startsWith('/api/addresses')",
           "@type":"http://schema.org/Place",
@@ -143,7 +144,9 @@ Feature: Orders
         "telephone":"+33612345678",
         "loopeatEnabled":false,
         "isOpen":false,
-        "nextOpeningDate":"@string@.isDateTime()"
+        "nextOpeningDate":"@string@.isDateTime()",
+        "tags":@array@,
+        "badges":@array@
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -294,6 +297,7 @@ Feature: Orders
         "@type":"http://schema.org/Restaurant",
         "name":"Nodaiwa",
         "image":@string@,
+        "bannerImage":@string@,
         "address":{
           "@id":"@string@.startsWith('/api/addresses')",
           "@type":"http://schema.org/Place",
@@ -309,7 +313,9 @@ Feature: Orders
         "telephone":"+33612345678",
         "loopeatEnabled":false,
         "isOpen":false,
-        "nextOpeningDate":"@string@.isDateTime()"
+        "nextOpeningDate":"@string@.isDateTime()",
+        "tags":@array@,
+        "badges":@array@
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -605,6 +611,7 @@ Feature: Orders
         "@type":"http://schema.org/Restaurant",
         "name":"Nodaiwa",
         "image":@string@,
+        "bannerImage":@string@,
         "address":{
           "@id":"@string@.startsWith('/api/addresses')",
           "@type":"http://schema.org/Place",
@@ -620,7 +627,9 @@ Feature: Orders
         "telephone":"+33612345678",
         "isOpen":false,
         "nextOpeningDate":"@string@.isDateTime()",
-        "loopeatEnabled":false
+        "loopeatEnabled":false,
+        "tags":@array@,
+        "badges":@array@
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -760,6 +769,7 @@ Feature: Orders
           "@type":"http://schema.org/Restaurant",
           "name":"Nodaiwa",
           "image":@string@,
+          "bannerImage":@string@,
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -774,7 +784,9 @@ Feature: Orders
           },
           "telephone":"+33612345678",
           "isOpen":true,
-          "loopeatEnabled":false
+          "loopeatEnabled":false,
+          "tags":@array@,
+          "badges":@array@
         },
         "shippingAddress":{
           "@id":"@string@.startsWith('/api/addresses')",

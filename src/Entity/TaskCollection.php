@@ -3,7 +3,9 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
+use AppBundle\Enum\TaskCollectionState;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -128,11 +130,24 @@ abstract class TaskCollection
         }
     }
 
-    public function getTasks()
+    /**
+     * @return Task[]
+     */
+    public function getTasks(string $expression = '')
     {
-        return $this->getItems()->map(function (TaskCollectionItem $item) {
-            return $item->getTask();
-        })->toArray();
+        $language = new ExpressionLanguage();
+
+        $tasks = $this->getItems()
+            ->map(fn(TaskCollectionItem $item) => $item->getTask());
+
+        if ('' !== $expression) {
+            $tasks = $tasks
+                ->filter(function (Task $task) use ($language, $expression) {
+                    return $language->evaluate($expression, ['task' => $task]);
+                });
+        }
+
+        return $tasks->toArray();
     }
 
     public function containsTask(Task $task)
@@ -200,5 +215,70 @@ abstract class TaskCollection
             ->map(function (TaskCollectionItem $item) {
                 return $item->getTask();
             })->toArray();
+    }
+
+    /**
+     * Returns true if all tasks are cancelled
+     * @return bool
+     */
+    public function computeCancelled(): bool
+    {
+        foreach ($this->getTasks() as $task) {
+            if (!$task->isCancelled()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function computeFailed(): bool
+    {
+        $tasks = $this->getTasks('not task.isCancelled()');
+        return end($tasks)->isFailed();
+    }
+
+    public function computeDone(): bool
+    {
+        foreach ($this->getTasks('not task.isCancelled()') as $task) {
+            if (!$task->isDone()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function computeDoing(): bool
+    {
+        foreach ($this->getTasks('not task.isCancelled()') as $task) {
+            if ($task->getStatus() == Task::STATUS_DOING || $task->isDone()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function computeState(): TaskCollectionState
+    {
+        // If all tasks are cancelled, return cancelled
+        if ($this->computeCancelled()) {
+            return TaskCollectionState::CANCELLED;
+        }
+
+        // If all tasks are done, return done
+        if ($this->computeDone()) {
+            return TaskCollectionState::DELIVERED;
+        }
+
+        // If one task is failed, return failed
+        if ($this->computeFailed()) {
+            return TaskCollectionState::FAILED;
+        }
+
+        // If one task is in delivery, return in delivery
+        if ($this->computeDoing()) {
+            return TaskCollectionState::IN_DELIVERY;
+        }
+
+        return TaskCollectionState::PENDING;
     }
 }

@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9238692b0a361cfd72c1c39576bbb1e0",
+    "content-hash": "f05351d724607b2a6e35e62ec494ed15",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
-            "version": "dev-fix-delete-upsert",
+            "version": "v0.7.6",
             "source": {
                 "type": "git",
-                "url": "https://github.com/alexsegura/TypesenseBundle.git",
-                "reference": "f5fbbe5be1fe6e7b5b43b03bb5715137b8b8f1df"
+                "url": "https://github.com/acseo/TypesenseBundle.git",
+                "reference": "686bc6f866d9405e02316f1faf501a3c962f5756"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexsegura/TypesenseBundle/zipball/f5fbbe5be1fe6e7b5b43b03bb5715137b8b8f1df",
-                "reference": "f5fbbe5be1fe6e7b5b43b03bb5715137b8b8f1df",
+                "url": "https://api.github.com/repos/acseo/TypesenseBundle/zipball/686bc6f866d9405e02316f1faf501a3c962f5756",
+                "reference": "686bc6f866d9405e02316f1faf501a3c962f5756",
                 "shasum": ""
             },
             "require": {
@@ -44,17 +44,7 @@
                     "ACSEO\\TypesenseBundle\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "ACSEO\\TypesenseBundle\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "typesenseServer": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "docker run -i -p 8108:8108 -v/tmp/typesense-server-data-1c/:/data typesense/typesense:0.23.0 --data-dir /data --api-key=123 --listen-port 8108 --enable-cors"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -66,9 +56,10 @@
             ],
             "description": "This bundle provides integration with Typesense in Symfony",
             "support": {
-                "source": "https://github.com/alexsegura/TypesenseBundle/tree/fix-delete-upsert"
+                "issues": "https://github.com/acseo/TypesenseBundle/issues",
+                "source": "https://github.com/acseo/TypesenseBundle/tree/v0.7.6"
             },
-            "time": "2023-11-10T12:23:00+00:00"
+            "time": "2023-11-13T14:01:04+00:00"
         },
         {
             "name": "api-platform/core",
@@ -1256,46 +1247,6 @@
             "time": "2023-08-05T09:42:11+00:00"
         },
         {
-            "name": "coopcycle/db-shenker",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:coopcycle/DBSchenkerClient.git",
-                "reference": "4d3926dedbe336eee7a66b7da662a064dd28c1d6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/4d3926dedbe336eee7a66b7da662a064dd28c1d6",
-                "reference": "4d3926dedbe336eee7a66b7da662a064dd28c1d6",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "league/flysystem": "1.1.10",
-                "php-edifact/edifact-generator": "dev-master",
-                "php-edifact/edifact-mapping": "dev-master",
-                "sabas/edifact": "^0.6.1"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "DBShenker\\": "src"
-                }
-            },
-            "authors": [
-                {
-                    "name": "Antoine Bagnaud",
-                    "email": "contact@antoinebagnaud.me"
-                }
-            ],
-            "support": {
-                "source": "https://github.com/coopcycle/DBSchenkerClient/tree/master",
-                "issues": "https://github.com/coopcycle/DBSchenkerClient/issues"
-            },
-            "time": "2023-12-08T17:46:26+00:00"
-        },
-        {
             "name": "craue/config-bundle",
             "version": "2.7.0",
             "source": {
@@ -1382,6 +1333,92 @@
             "time": "2023-08-06T22:32:54+00:00"
         },
         {
+            "name": "craue/formflow-bundle",
+            "version": "3.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/craue/CraueFormFlowBundle.git",
+                "reference": "af3db3519a9e62920c439b80d17ff4db689a5d60"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/craue/CraueFormFlowBundle/zipball/af3db3519a9e62920c439b80d17ff4db689a5d60",
+                "reference": "af3db3519a9e62920c439b80d17ff4db689a5d60",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3|^8",
+                "symfony/config": "~4.4|~5.3|^6.0",
+                "symfony/dependency-injection": "~4.4|~5.3|^6.0",
+                "symfony/event-dispatcher": "~4.4|~5.3|^6.0",
+                "symfony/form": "~4.4|~5.3|^6.0",
+                "symfony/http-foundation": "~4.4|~5.3|^6.0",
+                "symfony/http-kernel": "~4.4|~5.3|^6.0",
+                "symfony/options-resolver": "~4.4|~5.3|^6.0",
+                "symfony/security-core": "~4.4|~5.3|^6.0",
+                "symfony/translation": "~4.4|~5.3|^6.0",
+                "symfony/validator": "~4.4|~5.3|^6.0",
+                "symfony/yaml": "~4.4|~5.3|^6.0"
+            },
+            "require-dev": {
+                "craue/translations-tests": "^1.1",
+                "doctrine/annotations": "^1.6",
+                "doctrine/common": "~2.9|~3.0",
+                "doctrine/doctrine-bundle": "~1.10|~2.0",
+                "phpunit/phpunit": "^9.5",
+                "symfony/browser-kit": "~4.4|~5.3|^6.0",
+                "symfony/css-selector": "~4.4|~5.3|^6.0",
+                "symfony/mime": "~4.4|~5.3|^6.0",
+                "symfony/phpunit-bridge": "^6",
+                "symfony/security-bundle": "~4.4|~5.3|^6.0",
+                "symfony/twig-bundle": "~4.4|~5.3|^6.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.6.x-dev"
+                },
+                "symfony": {
+                    "require": "~4.4|~5.3|^6.0"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Craue\\FormFlowBundle\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Raue",
+                    "email": "christian.raue@gmail.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://github.com/craue/CraueFormFlowBundle/contributors"
+                }
+            ],
+            "description": "Multi-step forms for your Symfony project.",
+            "homepage": "https://github.com/craue/CraueFormFlowBundle",
+            "keywords": [
+                "form",
+                "step",
+                "symfony",
+                "wizard"
+            ],
+            "support": {
+                "issues": "https://github.com/craue/CraueFormFlowBundle/issues",
+                "source": "https://github.com/craue/CraueFormFlowBundle/tree/3.6.0"
+            },
+            "time": "2022-01-24T14:43:05+00:00"
+        },
+        {
             "name": "defuse/php-encryption",
             "version": "v2.4.0",
             "source": {
@@ -1447,6 +1484,66 @@
                 "source": "https://github.com/defuse/php-encryption/tree/v2.4.0"
             },
             "time": "2023-06-19T06:10:36+00:00"
+        },
+        {
+            "name": "dflydev/base32-crockford",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dflydev/dflydev-base32-crockford.git",
+                "reference": "8e8f6cb86b130198cbaaeae298fe150094c26760"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dflydev/dflydev-base32-crockford/zipball/8e8f6cb86b130198cbaaeae298fe150094c26760",
+                "reference": "8e8f6cb86b130198cbaaeae298fe150094c26760",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Dflydev\\Base32\\Crockford": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dragonfly Development Inc.",
+                    "email": "info@dflydev.com",
+                    "homepage": "http://dflydev.com"
+                },
+                {
+                    "name": "Beau Simensen",
+                    "email": "beau@dflydev.com",
+                    "homepage": "http://beausimensen.com"
+                }
+            ],
+            "description": "Encode/decode numbers using Douglas Crockford's Base32 Encoding",
+            "homepage": "https://github.com/dflydev/dflydev-base32-crockford",
+            "keywords": [
+                "base32",
+                "crockford",
+                "decode",
+                "decoder",
+                "encode",
+                "encoder"
+            ],
+            "support": {
+                "issues": "https://github.com/dflydev/dflydev-base32-crockford/issues",
+                "source": "https://github.com/dflydev/dflydev-base32-crockford/tree/v1.0.0"
+            },
+            "time": "2012-07-14T18:36:41+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -9228,25 +9325,25 @@
         },
         {
             "name": "mtdowling/jmespath.php",
-            "version": "2.6.1",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jmespath/jmespath.php.git",
-                "reference": "9b87907a81b87bc76d19a7fb2d61e61486ee9edb"
+                "reference": "bbb69a935c2cbb0c03d7f481a238027430f6440b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/9b87907a81b87bc76d19a7fb2d61e61486ee9edb",
-                "reference": "9b87907a81b87bc76d19a7fb2d61e61486ee9edb",
+                "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/bbb69a935c2cbb0c03d7f481a238027430f6440b",
+                "reference": "bbb69a935c2cbb0c03d7f481a238027430f6440b",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.4 || ^7.0 || ^8.0",
+                "php": "^7.2.5 || ^8.0",
                 "symfony/polyfill-mbstring": "^1.17"
             },
             "require-dev": {
-                "composer/xdebug-handler": "^1.4 || ^2.0",
-                "phpunit/phpunit": "^4.8.36 || ^7.5.15"
+                "composer/xdebug-handler": "^3.0.3",
+                "phpunit/phpunit": "^8.5.33"
             },
             "bin": [
                 "bin/jp.php"
@@ -9254,7 +9351,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.6-dev"
+                    "dev-master": "2.7-dev"
                 }
             },
             "autoload": {
@@ -9271,6 +9368,11 @@
             ],
             "authors": [
                 {
+                    "name": "Graham Campbell",
+                    "email": "hello@gjcampbell.co.uk",
+                    "homepage": "https://github.com/GrahamCampbell"
+                },
+                {
                     "name": "Michael Dowling",
                     "email": "mtdowling@gmail.com",
                     "homepage": "https://github.com/mtdowling"
@@ -9283,9 +9385,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jmespath/jmespath.php/issues",
-                "source": "https://github.com/jmespath/jmespath.php/tree/2.6.1"
+                "source": "https://github.com/jmespath/jmespath.php/tree/2.7.0"
             },
-            "time": "2021-06-14T00:11:39+00:00"
+            "time": "2023-08-25T10:54:48+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -10763,97 +10865,6 @@
             "time": "2020-10-15T08:29:30+00:00"
         },
         {
-            "name": "php-edifact/edifact-generator",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/coopcycle/edifact-generator.git",
-                "reference": "d87ce1d945adebf6482c993e778f4b471995073e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/d87ce1d945adebf6482c993e778f4b471995073e",
-                "reference": "d87ce1d945adebf6482c993e778f4b471995073e",
-                "shasum": ""
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.9.5",
-                "phpunit/phpunit": "~8.0",
-                "sabas/edifact": "^0.4.1"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "EDI\\Generator\\": "src/Generator/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "codestyle:fix": [
-                    "vendor/bin/php-cs-fixer fix"
-                ],
-                "codestyle:lint": [
-                    "vendor/bin/php-cs-fixer fix --dry-run"
-                ]
-            },
-            "license": [
-                "LGPL-3.0-or-later"
-            ],
-            "description": "EDIFACT message generators",
-            "homepage": "https://github.com/php-edifact/edifact-generator",
-            "keywords": [
-                "EDI",
-                "EDIFACT",
-                "generator",
-                "message"
-            ],
-            "support": {
-                "source": "https://github.com/coopcycle/edifact-generator/tree/master"
-            },
-            "time": "2023-11-30T14:55:40+00:00"
-        },
-        {
-            "name": "php-edifact/edifact-mapping",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/coopcycle/edifact-mapping.git",
-                "reference": "888e8b522fc2bf17132586ad348cfb434b21a23c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/edifact-mapping/zipball/888e8b522fc2bf17132586ad348cfb434b21a23c",
-                "reference": "888e8b522fc2bf17132586ad348cfb434b21a23c",
-                "shasum": ""
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "EDI\\Mapping\\": "src/Mapping/"
-                }
-            },
-            "license": [
-                "LGPL-3.0-or-later"
-            ],
-            "description": "XML mappings from UNTDID",
-            "homepage": "https://github.com/php-edifact/edifact-mapping",
-            "keywords": [
-                "EDI",
-                "EDIFACT",
-                "UNECE",
-                "mapping",
-                "message"
-            ],
-            "support": {
-                "source": "https://github.com/coopcycle/edifact-mapping/tree/master"
-            },
-            "time": "2023-12-07T11:41:17+00:00"
-        },
-        {
             "name": "php-http/client-common",
             "version": "2.7.0",
             "source": {
@@ -11579,6 +11590,62 @@
             "time": "2022-01-14T16:27:10+00:00"
         },
         {
+            "name": "php-units-of-measure/php-units-of-measure",
+            "version": "v2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PhpUnitsOfMeasure/php-units-of-measure.git",
+                "reference": "25f476e9c50e11af8cf044d22ffc271c96aa5248"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PhpUnitsOfMeasure/php-units-of-measure/zipball/25f476e9c50e11af8cf044d22ffc271c96aa5248",
+                "reference": "25f476e9c50e11af8cf044d22ffc271c96aa5248",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "replace": {
+                "triplepoint/php-units-of-measure": "*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.8.*",
+                "squizlabs/php_codesniffer": "2.2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpUnitsOfMeasure\\": "source/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonathan Hanson",
+                    "email": "jonathan@jonathan-hanson.org",
+                    "homepage": "http://www.jonathan-hanson.org/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP library for converting between standard units of measure.",
+            "homepage": "https://github.com/PhpUnitsOfMeasure/php-units-of-measure",
+            "keywords": [
+                "conversion",
+                "data",
+                "measurements"
+            ],
+            "support": {
+                "email": "jonathan@jonathan-hanson.org",
+                "issues": "https://github.com/PhpUnitsOfMeasure/php-units-of-measure/issues",
+                "source": "https://github.com/PhpUnitsOfMeasure/php-units-of-measure"
+            },
+            "time": "2016-07-24T22:36:00+00:00"
+        },
+        {
             "name": "phpdocumentor/reflection-common",
             "version": "2.2.0",
             "source": {
@@ -12053,6 +12120,70 @@
                 "source": "https://github.com/ppshobi/psonic/tree/v2.1.0"
             },
             "time": "2022-11-01T11:37:31+00:00"
+        },
+        {
+            "name": "proj4php/proj4php",
+            "version": "2.0.13",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/proj4php/proj4php.git",
+                "reference": "17f2a5eea4f587f46ad7d0c62a4855d6b734ac69"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/proj4php/proj4php/zipball/17f2a5eea4f587f46ad7d0c62a4855d6b734ac69",
+                "reference": "17f2a5eea4f587f46ad7d0c62a4855d6b734ac69",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "9.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "proj4php\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1"
+            ],
+            "authors": [
+                {
+                    "name": "julien2512",
+                    "email": "moquet.julien@gmail.com",
+                    "homepage": "https://github.com/julien2512",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Jason Judge",
+                    "email": "jason.judge@academe.co.uk",
+                    "homepage": "http://academe.co.uk",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Nick Blackwell",
+                    "email": "nickblackwell82@gmail.com",
+                    "homepage": "https://people.ok.ubc.ca/nblackwe",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP-Class for geographic coordinates transformation using proj4 definitions, thanks to a translation from Proj4JS",
+            "homepage": "https://github.com/proj4php/proj4php",
+            "keywords": [
+                "coordinates",
+                "geographic",
+                "proj4",
+                "proj4js"
+            ],
+            "support": {
+                "issues": "https://github.com/proj4php/proj4php/issues",
+                "source": "https://github.com/proj4php/proj4php/tree/2.0.13"
+            },
+            "time": "2023-05-10T04:07:19+00:00"
         },
         {
             "name": "psr/cache",
@@ -13040,70 +13171,6 @@
                 }
             ],
             "time": "2022-10-12T17:22:51+00:00"
-        },
-        {
-            "name": "sabas/edifact",
-            "version": "0.6.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-edifact/edifact.git",
-                "reference": "9afd2247f73cb97cbe850490961dd9fdfe20ff12"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-edifact/edifact/zipball/9afd2247f73cb97cbe850490961dd9fdfe20ff12",
-                "reference": "9afd2247f73cb97cbe850490961dd9fdfe20ff12",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "ext-simplexml": "*",
-                "php": "~8"
-            },
-            "require-dev": {
-                "php-edifact/edifact-mapping": "dev-master",
-                "phpunit/phpunit": "~9.0",
-                "voku/arrayy": "~7.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "EDI\\": "src/EDI/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL-3.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "Stefano Sabatini",
-                    "email": "sabas88@gmail.com",
-                    "homepage": "http://stefanosabatini.eu",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Uldis Nelsons",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Emil Vikström",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Tools in PHP for UN/EDIFACT",
-            "homepage": "https://github.com/php-edifact/edifact",
-            "keywords": [
-                "container",
-                "edi",
-                "edifact",
-                "message"
-            ],
-            "support": {
-                "issues": "https://github.com/php-edifact/edifact/issues",
-                "source": "https://github.com/php-edifact/edifact/tree/0.6.1"
-            },
-            "time": "2023-06-19T09:31:51+00:00"
         },
         {
             "name": "sebastian/comparator",
@@ -17083,16 +17150,16 @@
         },
         {
             "name": "symfony/amqp-messenger",
-            "version": "v5.4.28",
+            "version": "v5.4.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/amqp-messenger.git",
-                "reference": "24e5cc90da041e0e1b7bbe15b82ad7f27a508c01"
+                "reference": "8ba6a2c482d3fce9d450b702098ca033bbe42de4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/amqp-messenger/zipball/24e5cc90da041e0e1b7bbe15b82ad7f27a508c01",
-                "reference": "24e5cc90da041e0e1b7bbe15b82ad7f27a508c01",
+                "url": "https://api.github.com/repos/symfony/amqp-messenger/zipball/8ba6a2c482d3fce9d450b702098ca033bbe42de4",
+                "reference": "8ba6a2c482d3fce9d450b702098ca033bbe42de4",
                 "shasum": ""
             },
             "require": {
@@ -17132,7 +17199,7 @@
             "description": "Symfony AMQP extension Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/amqp-messenger/tree/v5.4.28"
+                "source": "https://github.com/symfony/amqp-messenger/tree/v5.4.31"
             },
             "funding": [
                 {
@@ -17148,7 +17215,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-09T17:16:27+00:00"
+            "time": "2023-11-03T16:16:43+00:00"
         },
         {
             "name": "symfony/contracts",
@@ -17253,16 +17320,16 @@
         },
         {
             "name": "symfony/doctrine-messenger",
-            "version": "v5.4.30",
+            "version": "v5.4.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/doctrine-messenger.git",
-                "reference": "132e2a95ef2fa634d3280103f3fb07ab76daf3e1"
+                "reference": "1ff223f53c5f33b03756779a059b5411b76b8005"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/doctrine-messenger/zipball/132e2a95ef2fa634d3280103f3fb07ab76daf3e1",
-                "reference": "132e2a95ef2fa634d3280103f3fb07ab76daf3e1",
+                "url": "https://api.github.com/repos/symfony/doctrine-messenger/zipball/1ff223f53c5f33b03756779a059b5411b76b8005",
+                "reference": "1ff223f53c5f33b03756779a059b5411b76b8005",
                 "shasum": ""
             },
             "require": {
@@ -17306,7 +17373,7 @@
             "description": "Symfony Doctrine Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/doctrine-messenger/tree/v5.4.30"
+                "source": "https://github.com/symfony/doctrine-messenger/tree/v5.4.31"
             },
             "funding": [
                 {
@@ -17322,7 +17389,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-25T13:42:14+00:00"
+            "time": "2023-11-07T09:59:10+00:00"
         },
         {
             "name": "symfony/monolog-bundle",
@@ -18550,16 +18617,16 @@
         },
         {
             "name": "symfony/redis-messenger",
-            "version": "v5.4.26",
+            "version": "v5.4.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/redis-messenger.git",
-                "reference": "55258642bca0d1869d147c85ee3277305549d5a3"
+                "reference": "9735a30ac8f37b42f1714bc1634dc8066b34e72f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/redis-messenger/zipball/55258642bca0d1869d147c85ee3277305549d5a3",
-                "reference": "55258642bca0d1869d147c85ee3277305549d5a3",
+                "url": "https://api.github.com/repos/symfony/redis-messenger/zipball/9735a30ac8f37b42f1714bc1634dc8066b34e72f",
+                "reference": "9735a30ac8f37b42f1714bc1634dc8066b34e72f",
                 "shasum": ""
             },
             "require": {
@@ -18597,7 +18664,7 @@
             "description": "Symfony Redis extension Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/redis-messenger/tree/v5.4.26"
+                "source": "https://github.com/symfony/redis-messenger/tree/v5.4.31"
             },
             "funding": [
                 {
@@ -18613,7 +18680,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-19T20:11:33+00:00"
+            "time": "2023-11-03T16:16:43+00:00"
         },
         {
             "name": "symfony/stimulus-bundle",
@@ -18685,16 +18752,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v5.4.30",
+            "version": "v5.4.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "987c5f69083d7832c4c72305da37244837e01ebb"
+                "reference": "adf54cdee267ad025961c41ad1c2a0681600ede3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/987c5f69083d7832c4c72305da37244837e01ebb",
-                "reference": "987c5f69083d7832c4c72305da37244837e01ebb",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/adf54cdee267ad025961c41ad1c2a0681600ede3",
+                "reference": "adf54cdee267ad025961c41ad1c2a0681600ede3",
                 "shasum": ""
             },
             "require": {
@@ -18886,7 +18953,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/symfony/issues",
-                "source": "https://github.com/symfony/symfony/tree/v5.4.30"
+                "source": "https://github.com/symfony/symfony/tree/v5.4.31"
             },
             "funding": [
                 {
@@ -18902,7 +18969,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-29T00:07:57+00:00"
+            "time": "2023-11-10T13:39:24+00:00"
         },
         {
             "name": "symfony/ux-turbo",
@@ -19231,70 +19298,6 @@
                 }
             ],
             "time": "2023-02-09T06:45:16+00:00"
-        },
-        {
-            "name": "twig/html-extra",
-            "version": "v3.7.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/twigphp/html-extra.git",
-                "reference": "95ceb36e70fa8d07af08cf5135ecbf5e0bd8f386"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/html-extra/zipball/95ceb36e70fa8d07af08cf5135ecbf5e0bd8f386",
-                "reference": "95ceb36e70fa8d07af08cf5135ecbf5e0bd8f386",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1.3",
-                "symfony/mime": "^5.4|^6.0",
-                "twig/twig": "^2.7|^3.0"
-            },
-            "require-dev": {
-                "symfony/phpunit-bridge": "^5.4|^6.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Twig\\Extra\\Html\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
-                }
-            ],
-            "description": "A Twig extension for HTML",
-            "homepage": "https://twig.symfony.com",
-            "keywords": [
-                "html",
-                "twig"
-            ],
-            "support": {
-                "source": "https://github.com/twigphp/html-extra/tree/v3.7.1"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/twig/twig",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2023-07-29T15:34:56+00:00"
         },
         {
             "name": "twig/intl-extra",
@@ -23192,16 +23195,15 @@
             "alias_normalized": "3.3.0.0"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "stability-flags": {
         "league/geotools": 0,
         "drupal/core-vendor-hardening": 20,
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
-        "acseo/typesense-bundle": 20,
         "behatch/contexts": 20
     },
-    "prefer-stable": true,
+    "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.0"

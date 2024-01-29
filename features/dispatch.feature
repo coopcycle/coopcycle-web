@@ -553,6 +553,7 @@ Feature: Dispatch
       """
       {
         "name":"Monday tour",
+        "date": "2018-02-02",
         "tasks":[
           "/api/tasks/4",
           "/api/tasks/5"
@@ -568,9 +569,20 @@ Feature: Dispatch
          "@id":"/api/tours/5",
          "@type":"Tour",
          "name":"Monday tour",
+         "date": "2018-02-02",
          "items":[
-            "/api/tasks/4",
-            "/api/tasks/5"
+            {
+                "@id":"/api/tasks/4",
+                "@type":"Task",
+                "id":4,
+                "@*@": "@*@"
+            },
+            {
+                "@id":"/api/tasks/5",
+                "@type":"Task",
+                "id":5,
+                "@*@": "@*@"
+            }
          ],
          "distance":@integer@,
          "duration":@integer@,
@@ -608,10 +620,26 @@ Feature: Dispatch
          "@id":"/api/tours/5",
          "@type":"Tour",
          "name":"Monday tour",
+         "date": "2018-03-02",
          "items":[
-            "/api/tasks/3",
-            "/api/tasks/2",
-            "/api/tasks/1"
+            {
+              "@id":"/api/tasks/3",
+              "@type":"Task",
+              "id":3,
+              "@*@": "@*@"
+            },
+            {
+              "@id":"/api/tasks/2",
+              "@type":"Task",
+              "id":2,
+              "@*@": "@*@"
+            },
+            {
+              "@id":"/api/tasks/1",
+              "@type":"Task",
+              "id":1,
+              "@*@": "@*@"
+            }                     
          ],
          "distance":@integer@,
          "duration":@integer@,

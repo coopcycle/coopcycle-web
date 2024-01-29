@@ -26,6 +26,7 @@ use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
+use AppBundle\Action\Order\Restore as OrderRestore;
 use AppBundle\Action\Order\Tip as OrderTip;
 use AppBundle\Action\Order\UpdateLoopeatFormats as UpdateLoopeatFormatsController;
 use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
@@ -121,7 +122,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/orders/{id}/payment",
  *       "controller"=PaymentDetailsController::class,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Get payment details for a Order resource."
  *       }
@@ -132,7 +133,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "controller"=PaymentMethodsController::class,
  *       "output"=PaymentMethodsOutput::class,
  *       "normalization_context"={"api_sub_level"=true},
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Get available payment methods for a Order resource."
  *       }
@@ -141,7 +142,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="PUT",
  *       "path"="/orders/{id}/pay",
  *       "controller"=OrderPay::class,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Pays a Order resource."
  *       }
@@ -192,6 +193,15 @@ use Webmozart\Assert\Assert as WMAssert;
  *         "summary"="Cancels a Order resource."
  *       }
  *     },
+ *     "restore"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/restore",
+ *       "controller"=OrderRestore::class,
+ *       "security"="is_granted('restore', object)",
+ *       "openapi_context"={
+ *         "summary"="Restores a cancelled Order resource."
+ *       }
+ *     },
  *     "assign"={
  *       "method"="PUT",
  *       "path"="/orders/{id}/assign",
@@ -207,7 +217,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/orders/{id}/tip",
  *       "controller"=OrderTip::class,
  *       "validation_groups"={"cart"},
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "normalization_context"={"groups"={"cart"}},
  *       "openapi_context"={
  *         "summary"="Updates tip amount of an Order resource."
@@ -216,7 +226,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *     "get_cart_timing"={
  *       "method"="GET",
  *       "path"="/orders/{id}/timing",
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('view', object)",
  *       "openapi_context"={
  *         "summary"="Retrieves timing information about a Order resource.",
  *         "responses"={
@@ -235,7 +245,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/orders/{id}/validate",
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="is_granted('session', object)"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "put_cart"={
  *       "method"="PUT",
@@ -243,7 +253,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "validation_groups"={"cart"},
  *       "normalization_context"={"groups"={"cart"}},
  *       "denormalization_context"={"groups"={"order_update"}},
- *       "security"="is_granted('session', object)"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "post_cart_items"={
  *       "method"="POST",
@@ -253,7 +263,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "validation_groups"={"cart"},
  *       "denormalization_context"={"groups"={"cart"}},
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Adds items to a Order resource."
  *       }
@@ -265,7 +275,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "validation_groups"={"cart"},
  *       "denormalization_context"={"groups"={"cart"}},
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="is_granted('session', object)"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "delete_item"={
  *       "method"="DELETE",
@@ -276,7 +286,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "validate"=false,
  *       "write"=false,
  *       "status"=200,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Deletes items from a Order resource."
  *       }
@@ -296,7 +306,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/orders/{id}/mercadopago-preference",
  *       "controller"=MercadopagoPreference::class,
  *       "output"=MercadopagoPreferenceResponse::class,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Creates a MercadoPago preference and returns its ID."
  *       }
@@ -325,7 +335,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "path"="/orders/{id}/stripe/clone-payment-method/{paymentMethodId}",
  *      "controller"=CloneStripePayment::class,
  *      "output"=StripePaymentMethodOutput::class,
- *      "security"="is_granted('session', object)",
+ *      "security"="is_granted('edit', object)",
  *      "openapi_context"={
  *        "summary"=""
  *      }
@@ -334,7 +344,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "method"="POST",
  *      "path"="/orders/{id}/stripe/create-setup-intent-or-attach-pm",
  *      "controller"=CreateSetupIntentOrAttachPM::class,
- *      "security"="is_granted('session', object)",
+ *      "security"="is_granted('edit', object)",
  *      "openapi_context"={
  *        "summary"=""
  *      }
@@ -343,7 +353,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "method"="POST",
  *      "path"="/orders/{id}/create_invitation",
  *      "status"=200,
- *      "security"="is_granted('session', object)",
+ *      "security"="is_granted('edit', object)",
  *      "normalization_context"={"groups"={"cart"}},
  *      "controller"=CreateInvitationController::class,
  *      "validate"=false,
@@ -384,7 +394,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="POST",
  *       "path"="/orders/{id}/loopeat_returns",
  *       "controller"=UpdateLoopeatReturnsController::class,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "input"=LoopeatReturns::class,
  *       "validate"=false,
  *       "normalization_context"={"groups"={"cart"}},
@@ -411,8 +421,6 @@ class Order extends BaseOrder implements OrderInterface
     use VytalCodeAwareTrait;
 
     protected $customer;
-
-    protected $vendor;
 
     /**
      * @Assert\Valid
@@ -458,7 +466,7 @@ class Order extends BaseOrder implements OrderInterface
 
     /**
      * @Assert\Expression(
-     *   "!this.isTakeaway() or (this.isTakeaway() and this.getRestaurant().isFulfillmentMethodEnabled('collection'))",
+     *   "!this.isTakeaway() or (this.isTakeaway() and this.getVendor().isFulfillmentMethodEnabled('collection'))",
      *   message="order.collection.not_available",
      *   groups={"cart"}
      * )
@@ -642,12 +650,12 @@ class Order extends BaseOrder implements OrderInterface
      */
     public function getRestaurant(): ?LocalBusiness
     {
-        if (null === $this->vendor) {
+        if (!$this->hasVendor() || $this->isMultiVendor()) {
 
             return null;
         }
 
-        return $this->vendor->getRestaurant();
+        return $this->getRestaurants()->first();
     }
 
     /**
@@ -655,14 +663,7 @@ class Order extends BaseOrder implements OrderInterface
      */
     public function setRestaurant(?LocalBusiness $restaurant): void
     {
-        $currentRestaurant = $this->getRestaurant();
-
-        $vendor = new Vendor();
-        $vendor->setRestaurant($restaurant);
-
-        $this->vendor = $vendor;
-
-        if (null !== $restaurant && $restaurant !== $currentRestaurant) {
+        if (null !== $restaurant && $restaurant !== $this->getRestaurant()) {
 
             $this->vendors->clear();
 
@@ -675,7 +676,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function hasVendor(): bool
     {
-        return null !== $this->getVendor();
+        return count($this->getVendors()) > 0;
     }
 
     /**
@@ -1260,12 +1261,14 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getVendor(): ?Vendor
     {
-        return $this->vendor;
-    }
+        if (!$this->hasVendor()) {
 
-    public function setVendor(?Vendor $vendor): void
-    {
-        $this->vendor = $vendor;
+            return null;
+        }
+
+        $first = $this->getRestaurants()->first();
+
+        return $this->isMultiVendor() ? $first->getHub() : $first;
     }
 
     public function getItemsGroupedByVendor(): \SplObjectStorage
@@ -1402,7 +1405,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function isMultiVendor(): bool
     {
-        return $this->hasVendor() && $this->getVendor()->isHub();
+        return $this->hasVendor() && count($this->getVendors()) > 1;
     }
 
     public function getPickupAddress(): ?Address
@@ -1722,6 +1725,17 @@ class Order extends BaseOrder implements OrderInterface
         foreach ($this->getVendors() as $vendor) {
             if ($vendor->getRestaurant()->isLoopeatEnabled() && $vendor->getRestaurant()->hasLoopEatCredentials()) {
 
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function hasEvent(string $type): bool
+    {
+        foreach ($this->getEvents() as $event) {
+            if ($event->getType() === $type) {
                 return true;
             }
         }

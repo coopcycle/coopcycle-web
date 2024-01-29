@@ -81,4 +81,13 @@ class SpreadsheetParseResult
     {
         return count(array_keys($this->errors)) > 0;
     }
+
+    public function getNormalizedErrors(): array
+    {
+        return array_map(
+            fn (int $row, array $errors) => ['row' => $row, 'errors' => $errors],
+            array_keys($this->errors),
+            array_values($this->errors)
+        );
+    }
 }

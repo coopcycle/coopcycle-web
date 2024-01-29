@@ -43,10 +43,10 @@ const placeToAddress = (place, value) => {
 let location
 let autocompleteService
 let geocoderService
+let latLngBounds
 
 const autocompleteOptions = {
   types: ['address'],
-  radius: 50000,
 }
 
 export const onSuggestionsFetchRequested = function({ value }) {
@@ -54,7 +54,8 @@ export const onSuggestionsFetchRequested = function({ value }) {
   // https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service
   autocompleteService.getPlacePredictions({
     ...autocompleteOptions,
-    location: location,
+    // https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service?hl=en#AutocompletionRequest.locationRestriction
+    locationRestriction: latLngBounds,
     input: value,
   }, (predictions, status) => {
 
@@ -162,6 +163,13 @@ export const configure = function (options) {
     geocoderService     = new window.google.maps.Geocoder()
 
     const [ lat, lng ] = options.location.split(',').map(parseFloat)
+    const [ swLat, swLng, neLat, neLng ] = options.latLngBounds.split(',').map(coord => parseFloat(coord))
+
+    // https://developers.google.com/maps/documentation/javascript/reference/coordinates?hl=en#LatLngBounds
+    latLngBounds = new window.google.maps.LatLngBounds(
+      new window.google.maps.LatLng(swLat, swLng),
+      new window.google.maps.LatLng(neLat, neLng)
+    )
 
     location = new window.google.maps.LatLng(lat, lng)
   }

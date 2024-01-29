@@ -72,3 +72,23 @@ services:
   AppBundle\Validator\Constraints\DabbaOrderValidator:
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\GoogleApiKeyValidator:
+    tags:
+      - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\LoopeatStockValidator:
+    tags:
+      - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\DeliverySpreadsheetValidator:
+    tags:
+      - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\TaskSpreadsheetValidator:
+    tags:
+      - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\ProductSpreadsheetValidator:
+    tags:
+      - { name: validator.constraint_validator }

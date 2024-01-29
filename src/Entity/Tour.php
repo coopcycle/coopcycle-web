@@ -7,8 +7,11 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Api\Dto\TourInput;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Action\Task\DeleteTour as DeleteTourController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
+use AppBundle\Api\Filter\DateFilter;
 
 /**
  * @ApiResource(
@@ -28,6 +31,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "method"="PUT",
  *       "input"=TourInput::class,
  *       "security"="is_granted('ROLE_DISPATCHER')"
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_DISPATCHER')",
+ *       "controller"=DeleteTourController::class
  *     }
  *   },
  *   attributes={
@@ -35,9 +43,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "normalization_context"={"groups"={"task_collection", "task", "tour"}}
  *   }
  * )
+ * @ApiFilter(DateFilter::class, properties={"date"})
  */
 class Tour extends TaskCollection implements TaskCollectionInterface
 {
+    private $date;
+    
     protected $id;
 
     /**
@@ -97,4 +108,25 @@ class Tour extends TaskCollection implements TaskCollectionInterface
 
         return 0;
     }
+
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @SerializedName("date")
+     * @Groups({"task_collection", "task_collections"})
+     */
+    public function getDateString()
+    {
+        return $this->date->format('Y-m-d');
+    }
+
+    public function setDate(\DateTime $date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }    
 }

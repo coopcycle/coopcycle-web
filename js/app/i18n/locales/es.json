@@ -271,6 +271,8 @@
         "OPTIN_CONSENT_MODAL_SUBMIT": "Actualizar",
         "CANCEL": "Cancelar",
         "AGREE": "Acepto",
+        "MUST READ_BEFORE_AGREE_terms": "You must read all the terms and conditions before agree",
+        "MUST READ_BEFORE_AGREE_privacy": "You must read all the privacy policy before agree",
         "ADHOC_ORDER_ADD_ITEM": "Agregar nuevo producto",
         "ADHOC_ORDER_ITEM_TITLE": "Datos del producto",
         "ADHOC_ORDER_ITEM_NAME_LABEL": "Nombre",

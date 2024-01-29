@@ -13,6 +13,20 @@
        url('../fonts/open-sans-v17-latin/open-sans-v17-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
        url('../fonts/open-sans-v17-latin/open-sans-v17-latin-regular.svg#OpenSans') format('svg'); /* Legacy iOS */
 }
+
+/* open-sans-semibold - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: url('../fonts/open-sans-v17-latin/open-sans-v17-latin-semibold.eot');
+  src: url('../fonts/open-sans-v17-latin/open-sans-v17-latin-semibold.eot?#iefix') format('embedded-opentype'),
+      url('../fonts/open-sans-v17-latin/open-sans-v17-latin-semibold.woff2') format('woff2'),
+      url('../fonts/open-sans-v17-latin/open-sans-v17-latin-semibold.woff') format('woff'),
+      url('../fonts/open-sans-v17-latin/open-sans-v17-latin-semibold.ttf') format('truetype'),
+      url('../fonts/open-sans-v17-latin/open-sans-v17-latin-semibold.svg#open-sans-v17-latin-semibold') format('svg');
+}
+
 /* open-sans-700 - latin */
 @font-face {
   font-family: 'Open Sans';

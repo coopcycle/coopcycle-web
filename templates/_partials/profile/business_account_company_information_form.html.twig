@@ -1,0 +1,30 @@
+<div class="form-section">
+  <div class="header rounded-top">
+    <h5>{{ flow.currentStepLabel|trans }}</h5>
+  </div>
+  <div class="form rounded-bottom">
+    {{ form_row(form.name) }}
+    {{ form_row(form.address) }}
+    <div class="d-none">
+      {{ form_widget(form.differentAddressForBilling) }}
+    </div>
+    <div class="form-group">
+      <div class="d-flex">
+        <div data-widget="company-address-for-billing-switch" data-switch-target="{{ field_name(form.differentAddressForBilling) }}"></div>
+        <label class="ml-2">{{ field_label(form.differentAddressForBilling) }}</label>
+      </div>
+    </div>
+    <div class="d-none" data-billing-address>
+      {{ form_row(form.billingAddress) }}
+    </div>
+    {% include '_partials/profile/flow_buttons.html.twig' %}
+  </div>
+</div>
+
+{% block scripts %}
+  <script>
+    (function() {
+      document.querySelector('[id$=_businessAccount_billingAddress_streetAddress]').removeAttribute('required')
+    })();
+  </script>
+{% endblock %}

@@ -60,7 +60,11 @@ class InnerList extends React.Component {
   render() {
     return _.map(this.props.items, (item, index) => {
       return (
-        <Draggable key={ item['@id'] } draggableId={ item['@id'] } index={ index }>
+        <Draggable 
+          key={ item['@id'] } 
+          draggableId={ item['@type'] === 'Tour' ? `tour:${item['@id']}`: item['@id']  } 
+          index={ index }
+          >
           {(provided) => (
             <div
               ref={ provided.innerRef }

@@ -94,7 +94,6 @@ delivery.tracking_link: Link di tracciamento
 delivery.with_id: 'Consegna #%id%'
 help.title: Aiuto
 help.home: Home
-restaurants.visible_by_you_only: Visibile solo a te
 adminDashboard.pledges.title: Suggerimenti
 deliveryForm.noPriceWarning: Non è stato possibile calcolare il prezzo. Per favore
   inserirlo manualmente.
@@ -1274,3 +1273,9 @@ basics.settings: Impostazioni
 form.store_type.failure_reason_set.label: "Motivi di Fallimento"
 profile.delete_my_account: "Elimina il mio account"
 profile.type_username_to_confirm: "Inserisci il tuo nome utente per confermare l'eliminazione dell'account"
+delivery.state:
+  pending: 'In attesa, Da ritirare'
+  in_delivery: 'Ritirato, in consegna'
+  delivered: 'Consegnato'
+  failed: 'Fallito'
+  cancelled: 'Annullato'

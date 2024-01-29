@@ -11,6 +11,7 @@ export default ({termsAndConditionsCheck, privacyPolicyCheck}) => {
   const [termsAndConditionsText, setTermsAndConditionsText]= useState(null)
   const [privacyPolicyText, setPrivacyPolicyText] = useState(null)
   const [legalText, setLegalText] = useState(null)
+  const [legalHelp, setLegalHelp] = useState(null)
   const [agreeButtonDisabled, setAgreeButtonDisabled] = useState(true)
   const [loadingText, setLoadingText] = useState(true)
 
@@ -47,6 +48,7 @@ export default ({termsAndConditionsCheck, privacyPolicyCheck}) => {
     if (checked) {
       setLoadingText(true)
       setLegalText(null)
+      setLegalHelp(null)
       setModalOpen(true)
 
       let text = typeText
@@ -67,6 +69,7 @@ export default ({termsAndConditionsCheck, privacyPolicyCheck}) => {
       }
 
       setLegalText(text)
+      setLegalHelp(t(`MUST READ_BEFORE_AGREE_${type}`))
       setLoadingText(false)
     } else {
       setModalOpen(false)
@@ -123,20 +126,27 @@ export default ({termsAndConditionsCheck, privacyPolicyCheck}) => {
         overlayClassName="ReactModal__Overlay--termsAndPolicy">
         {
           loadingText ? _renderLoading() :
-          <form>
-            <ReactMarkdown>
-              { legalText }
-            </ReactMarkdown>
-            <div className="row" >
-              <div className="col-sm-4 col-xs-6">
+          <form className="d-flex flex-column">
+            <div className="legal-text">
+              <ReactMarkdown >
+                { legalText }
+              </ReactMarkdown>
+              <span className="bottom" ref={el => _handleRefAfterRender(el)}>bottom</span>
+            </div>
+            <div className="d-flex justify-content-end align-items-center p-1 mt-4">
+              <span className="help flex-1 mr-4">
+                <i className="fa fa-info-circle mr-2"></i>
+                { legalHelp }
+              </span>
+              <div className="mr-4">
                 <button type="button" className="btn btn-block btn-default"
                   onClick={() => _handleCancel()}>
                   { t('CANCEL') }
                 </button>
               </div>
-              <div className="col-sm-8 col-xs-6">
-                <button ref={el => _handleRefAfterRender(el)} disabled={agreeButtonDisabled}
-                  type="button" className="btn btn-block btn-success" onClick={() => _handleAgree()}>
+              <div className="">
+                <button disabled={agreeButtonDisabled}
+                  type="button" className="btn btn-block btn-agree" onClick={() => _handleAgree()}>
                   { t('AGREE') }
                 </button>
               </div>

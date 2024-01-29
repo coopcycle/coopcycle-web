@@ -14,6 +14,7 @@ use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -128,7 +129,11 @@ trait DeliveryTrait
 
         $order = $this->createOrderForDelivery($orderFactory, $delivery, $variantPrice);
 
-        $variant = $order->getItems()->get(0)->getVariant();
+        /** @var OrderItemInterface */
+        $orderItem = $order->getItems()->first();
+        $orderItem->setImmutable(true);
+
+        $variant = $orderItem->getVariant();
 
         $variant->setName($variantName);
         $variant->setCode(Uuid::uuid4()->toString());

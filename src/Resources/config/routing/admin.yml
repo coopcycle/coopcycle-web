@@ -92,6 +92,24 @@ admin_hubs:
         _controller: AppBundle\Controller\AdminController::hubsAction
     methods: [ GET, POST ]
 
+admin_business_accounts:
+    path: /admin/restaurants/business-accounts
+    defaults:
+        _controller: AppBundle\Controller\AdminController::businessAccountsAction
+    methods: [ GET, POST ]
+
+admin_business_account_new:
+    path: /admin/restaurants/business-account/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newBusinessAccountAction
+    methods: [ GET, POST ]
+
+admin_business_account:
+    path: /admin/restaurants/business-account/{id}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::businessAccountAction
+    methods: [ GET, POST ]
+
 admin_restaurant_new:
     path: /admin/restaurants/new
     defaults:
@@ -618,3 +636,13 @@ admin_nonprofit:
     _controller: AppBundle\Controller\AdminController::nonprofitAction
     layout: 'admin.html.twig'
   methods: [ GET, POST ]
+
+admin_restaurant_image_from_url:
+  path: /admin/restaurants/{id}/image-from-url
+  defaults:
+    _controller: AppBundle\Controller\AdminController::restaurantImageFromUrlAction
+    layout: 'admin.html.twig'
+    routes:
+      restaurants: admin_restaurants
+      restaurant: admin_restaurant
+  methods: [ POST ]

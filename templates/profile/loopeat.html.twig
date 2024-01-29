@@ -3,7 +3,8 @@
 {% block content %}
   <div id="cubejs"
     data-api-url="{{ cubejs_api_url }}"
-    data-token="{{ cube_token }}"></div>
+    data-token="{{ cube_token }}"
+    data-query="{{ query|json_encode|e('html_attr') }}"></div>
   <form method="post">
     <button type="submit" class="btn btn-success">{{ 'basics.export'|trans }}</button>
   </form>

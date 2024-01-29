@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { RRule, rrulestr } from 'rrule'
 import _ from 'lodash'
 import Select from 'react-select'
-import { Button, Checkbox, Radio, TimePicker, Input, Popover, Alert } from 'antd'
+import { Button, Checkbox, Radio, TimePicker, Input, Popover, Alert, InputNumber, Select as AntSelect, Tag } from 'antd'
 import { PlusOutlined, ThunderboltOutlined, UserOutlined, PhoneOutlined, DeleteOutlined, CodeSandboxOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import hash from 'object-hash'
@@ -39,12 +39,12 @@ const byDayOptions = weekdays.map(weekday => ({
   value: RRule[weekday.key.toUpperCase()].weekday,
 }))
 
-const storesAsOptions = stores => stores.map(s => ({ label: s.name, value: s['@id'] }))
+const storesAsOptions = stores => stores.map(s => ({ label: s.name, value: s['@id'], store: s }))
 
 const country = getCountry().toUpperCase()
 const asYouTypeFormatter = new AsYouType(country)
 
-const MoreOptions = ({ item, onChange }) => {
+const MoreOptions = ({ item, packages, onChange }) => {
 
   const { t } = useTranslation()
 
@@ -54,6 +54,12 @@ const MoreOptions = ({ item, onChange }) => {
 
   const [ contactName, setContactName ] = useState(item.address && item.address.contactName)
   const [ taskComments, setTaskComments ] = useState(item.comments)
+  const [ packagesValue, setPackagesValue ] = useState(item.packages ? item.packages : [])
+
+  const packagesOptions = packages.map(p => ({
+    label: p.name,
+    value: p.name
+  }))
 
   return (
     <Popover
@@ -91,6 +97,63 @@ const MoreOptions = ({ item, onChange }) => {
                 )}
               } />
           </div>
+          { (item.type === 'DROPOFF' && packages.length) > 0 && (
+          <div className="mb-3">
+            <AntSelect
+              mode="tags"
+              allowClear
+              style={{ width: '100%' }}
+              placeholder={ t('ADMIN_DASHBOARD_PACKAGES') }
+              defaultValue={ packagesValue.map(p => p.type) }
+              onChange={ (selectedValues) => {
+                setPackagesValue(selectedValues.map(v => ({
+                  type: v,
+                  quantity: _.find(packagesValue, p => p.type === v)?.quantity || 1
+                })))
+              }}
+              options={ packagesOptions }
+              tagRender={ (props) => {
+
+                const { label, value, closable, onClose } = props;
+
+                const onPreventMouseDown = (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }
+
+                let defaultValue = 1
+                const idx = _.findIndex(packagesValue, p => p.type === value)
+                if (-1 !== idx) {
+                  defaultValue = packagesValue[idx].quantity
+                }
+
+                return (
+                  <Tag
+                    onMouseDown={ onPreventMouseDown }
+                    closable={ closable}
+                    onClose={ onClose }
+                  >
+                    <InputNumber
+                      size="small"
+                      style={{ width: 50 }}
+                      min={ 1 }
+                      defaultValue={ defaultValue }
+                      onChange={ quantity => {
+                        const newPackagesValue = packagesValue.slice(0)
+                        const pkgIndex = _.findIndex(newPackagesValue, p => p.type === value)
+                        if (-1 !== pkgIndex) {
+                          newPackagesValue.splice(pkgIndex, 1, {
+                            ...newPackagesValue[pkgIndex],
+                            quantity
+                          })
+                        }
+                        setPackagesValue(newPackagesValue)
+                      }} /> × { label }
+                  </Tag>
+                );
+              }} />
+          </div>
+          )}
           <div>
             <Input.TextArea
               placeholder={ t('ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER') }
@@ -133,6 +196,13 @@ const MoreOptions = ({ item, onChange }) => {
             }
           }
 
+          if (packagesValue) {
+            values = {
+              ...values,
+              packages: packagesValue
+            }
+          }
+
           onChange(values)
         }
       }}
@@ -147,7 +217,7 @@ const MoreOptions = ({ item, onChange }) => {
   )
 }
 
-const TemplateItem =({ item, setFieldValues, onClickRemove, errors, ...props}) => {
+const TemplateItem =({ item, packages, setFieldValues, onClickRemove, errors, ...props}) => {
 
   const provided = props.provided
   const snapshot = props.snapshot
@@ -205,6 +275,7 @@ const TemplateItem =({ item, setFieldValues, onClickRemove, errors, ...props}) =
       </span>
       <MoreOptions
         item={ item }
+        packages={ packages }
         onChange={ (values) => {
           const newAddress = {
             ...item.address,
@@ -226,6 +297,12 @@ const TemplateItem =({ item, setFieldValues, onClickRemove, errors, ...props}) =
             newValues = {
               ...newValues,
               weight: values.weight
+            }
+          }
+          if (values.packages) {
+            newValues = {
+              ...newValues,
+              packages: values.packages
             }
           }
 
@@ -325,6 +402,10 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
 
   const { t } = useTranslation()
 
+  const [ packages, setPackages ] = useState(
+    recurrenceRule ? (_.find(stores, s => s['@id'] === recurrenceRule.store)?.packages || []) : []
+  )
+
   const storesOptions = storesAsOptions(stores)
 
   const defaultRecurrence =
@@ -383,7 +464,10 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
             <Select
               defaultValue={ _.find(storesOptions, o => o.value === values.store) }
               options={ storesOptions }
-              onChange={ ({ value }) => setFieldValue('store', value) }
+              onChange={ ({ value, store }) => {
+                setFieldValue('store', value)
+                setPackages(store.packages)
+              }}
               // https://github.com/coopcycle/coopcycle-web/issues/774
               // https://github.com/JedWatson/react-select/issues/3030
               menuPortalTarget={ document.body }
@@ -420,6 +504,7 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
                             snapshot={snapshot}
                             key={ `${index}-${hash(item)}` }
                             item={ item }
+                            packages={ packages }
                             setFieldValues={ (item, fieldValues) => {
                               const index = values.items.indexOf(item)
                               if (-1 !== index) {

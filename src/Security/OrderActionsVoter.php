@@ -6,6 +6,8 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\User;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Sylius\Order\OrderInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -14,20 +16,24 @@ use Webmozart\Assert\Assert;
 
 class OrderActionsVoter extends Voter
 {
+    const EDIT = 'edit';
     const ACCEPT  = 'accept';
     const REFUSE  = 'refuse';
     const DELAY   = 'delay';
     const FULFILL = 'fulfill';
     const CANCEL  = 'cancel';
+    const RESTORE = 'restore';
     const VIEW    = 'view';
     const VIEW_PUBLIC = 'view_public';
 
     private static $actions = [
+        self::EDIT,
         self::ACCEPT,
         self::REFUSE,
         self::DELAY,
         self::FULFILL,
         self::CANCEL,
+        self::RESTORE,
         self::VIEW,
         self::VIEW_PUBLIC,
     ];
@@ -107,14 +113,26 @@ class OrderActionsVoter extends Voter
 
         $ownsRestaurant = $this->isGrantedRestaurant($subject);
 
-        $isCustomer = null !== $subject->getCustomer()
+        $isCartSessionOwner = false;
+        if (($token instanceof JWTUserToken || $token instanceof JWTPostAuthenticationToken) && $token->hasAttribute('cart')) {
+
+            $cart = $token->getAttribute('cart');
+
+            $isCartSessionOwner = $cart && $cart->getId() === $subject->getId();
+        }
+
+        $isCustomer = (null !== $subject->getCustomer()
             && $subject->getCustomer()->hasUser()
-            && $subject->getCustomer()->getUser() === $user;
+            && $subject->getCustomer()->getUser() === $user) || $isCartSessionOwner;
 
         $dispatcher = $this->authorizationChecker->isGranted('ROLE_DISPATCHER');
 
         if (self::VIEW === $attribute) {
             return $ownsRestaurant || $isCustomer || $dispatcher;
+        }
+
+        if (self::EDIT === $attribute) {
+            return $isCustomer;
         }
 
         // For actions like "accept", "refuse", etc...

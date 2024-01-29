@@ -114,7 +114,6 @@ help.title: Help
 help.home: Home
 restaurants.no_results: We did not find any restaurants matching your search ☹<br>Try
   with a different address or other filters
-restaurants.visible_by_you_only: Visible by you only
 localBusiness.form.orderingDelayMinutes: Additional delay before ordering
 localBusiness.form.orderingDelayMinutes.help: Use this field to add some time before
   the customer can order. This setting doesn't change the time needed for cooking
@@ -302,6 +301,7 @@ profile.fullName: Full name
 profile.managedStores: Stores managed by user
 profile.managedRestaurants: Restaurants managed by user
 profile.accountType: Account type
+profile.businessAccount: Business account
 order.cart.title: Cart
 order.items.products_with_count: Products (%count%)
 order.summary.heading: Order %number% (#%id%)
@@ -825,6 +825,7 @@ activity.order.fulfilled: "Order #order/#%aggregate_id% is fulfilled\n"
 activity.order.cancelled: "Order #order/#%aggregate_id% is cancelled\n"
 activity.order.delayed: "Order #order/#%aggregate_id% has been delayed\n"
 activity.order.updated: "Order #order/%aggregate_id% has been updated\n"
+activity.order.restored: "Order #order/%aggregate_id% has been restored"
 social.sign_in_with_facebook: Sign in with Facebook
 embed.delivery.summary: "You have requested a delivery on <strong>%dropoff_date%</strong>\
   \ at the following address: <strong>%dropoff_address%</strong> <br> We calculated\
@@ -1178,6 +1179,18 @@ store.form.section.settings: Settings
 adminDashboard.hubs.title: Hubs
 adminDashboard.hubs.createNew: Create a new hub
 adminDashboard.hubs.help: Hubs allow to group together shops sharing the same pickup address, like a market for example.
+adminDashboard.business_accounts.title: Business accounts
+adminDashboard.business_accounts.createNew: Create a new business account
+form.business_account.hub.label: Hub
+form.business_account.hub.placeholder: Choose a hub
+form.business_account.employees.label: List of employees
+form.business_account.restaurants.add: Add a restaurant
+form.business_account.employees.add: Add an employee
+form.business_account.manager.email.label: Account manager email
+form.business_account.manager.email.help: An invitation email to Coopcycle will be sent
+form.business_account.manager.email_sent.help: Invitation email to Coopcycle has been sent
+form.business_account.save_and_send_invitation.label: Save and send invitation
+form.business_acount.send_invitation.confirm: Invitation email to Coopcycle has been sent
 restaurant.form.edenred_merchant_id.label: Edenred Merchant ID
 restaurant.form.edenred_merchant_id.help: Leave empty to disable Edenred
 restaurants.mode.list: View as list
@@ -1245,7 +1258,7 @@ localBusiness.form.business_address.help: This address will be used in receipts
 form.local_business.mercadopago.connected: Connected
 restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 restaurant.form.en_boite_le_plat_enabled.label: Enable En Boîte Le Plat deposit-refund system
-form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'I want <a href="https://enboiteleplat.fr/rennes/" target="_blank">En Boîte Le Plat</a> reusable containers.'
+form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'I want <a href="%url%" target="_blank">En Boîte Le Plat</a> reusable containers.'
 order.cart.donation: Donation
 order.export.heading.nonprofit: Nonprofit
 adminDashboard.nonprofits.createNew: Add a new nonprofit
@@ -1260,8 +1273,6 @@ homepage.featured: Featured
 homepage.exclusive: Exclusives
 homepage.shops.new: New shops
 users.disabled: Disabled
-admin.settings.stop_using_algolia: |
-  You are using the Algolia suggestions engine, which <a href="https://www.algolia.com/blog/product/sunsetting-our-places-feature/">will stop working from May 31, 2022</a >. Go to the <a href="%settings_url%">settings page</a> to configure another engine, such as <a href="https://docs.coopcycle.org/en/admin/google/">Google Maps</a>
 shops.filters.clear_all: Clear all
 shops.filters.title.types: Types
 shops.filters.title.categories: Categories
@@ -1367,3 +1378,46 @@ form.settings.notifications.task.failed: Task failed
 form.settings.notifications.task.cancelled: Task cancelled
 form.settings.notifications.task.rescheduled: Task rescheduled
 form.settings.notifications.help: When disabling notifications for events below, administrators won't receive emails, nor top bar notifications.
+tags.featured: Featured
+tags.exclusive: Exclusives
+tags.shops.new: New shops
+tags.zero_waste: Zero waste
+delivery.state:
+  pending: 'Pending, To be picked up'
+  in_delivery: 'Picked up, in delivery'
+  delivered: 'Delivered'
+  failed: 'Failed'
+  cancelled: 'Cancelled'
+order.export.heading.payment_method: Payment method
+payment_method:
+  card: Credit card
+  edenred: Edenred
+  edenred+card: Edenred
+  cash_on_delivery: Cash on delivery
+registration.navigation.title: "Personal account creation"
+registration.info.title: "What is CoopCycle?"
+registration.info.text: "On CoopCycle, you can order food provided by restaurants near you and delivered by your local cooperative. We are proud to be an ethical alternative to the uberization of our society!"
+registration.info.business.account.attachment: "You will be attached to the business account %businessAccountName%, but you can also command under your name."
+registration.alert.text: "You have been invited to create an account on %brandName% by %invitedBy%."
+registration.alert.business.account.text: "Welcome in CoopCycle - %brandName% ! Please create your business account before making your first order."
+registration.form.title: "Your information"
+registration.step.personal: "Personal information"
+registration.step.company: "Company information"
+registration.step.invitation: "Invite your colleagues"
+registration.flow.next: "Next"
+registration.flow.back: "Back"
+registration.flow.finish: "Finish my inscription"
+registration.company.address: "Address"
+registration.company.address.different.for.billing: "Different address for billing"
+registration.company.billing.address: "Billing address"
+registration.step.company.name: "Name of the company"
+registration.step.invitation.copy.link: "Copy the link below and send it to your collegues"
+registration.step.invitation.copy.button: "Copy the link"
+registration.step.invitation.link.copied: "Copied"
+error.404: Page not found.
+error.502: The server is over capacity. Please try again later.
+error.504: The server took too much time to respond.
+error.return_to_homepage: Return to homepage
+deliveries.imports: Imported files
+deliveries.importing: The file %filename% is being imported.
+deliveries.imports.created_at: Created at
