@@ -1,6 +1,6 @@
 import _ from "lodash"
 import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskLists, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
-import { selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
+import { disableDropInTours, enableDropInTours, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks, modifyTour, updateTourInUI } from "./actions"
 import { selectGroups, selectSelectedTasks, taskSelectors, tourSelectors } from "./selectors"
 import { withLinkedTasks } from "./utils"
@@ -16,6 +16,13 @@ export function handleDragStart(result) {
 
     if (!isDraggableSelected) {
       dispatch(clearSelectedTasks())
+    }
+
+    // prevent the user to drag a tour into a tour
+    if (result.draggableId.startsWith('tour:')) {
+      dispatch(disableDropInTours())
+    } else {
+      dispatch(enableDropInTours())
     }
 
   }
