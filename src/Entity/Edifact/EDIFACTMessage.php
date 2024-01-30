@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Edifact;
 
+use AppBundle\Entity\Task;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 

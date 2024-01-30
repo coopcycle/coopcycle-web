@@ -9,10 +9,7 @@ trait EDIFACTMessageAwareTrait
 
     protected $edifactMessages;
 
-    /**
-     * @return mixed
-     */
-    public function getEdifactMessages()
+    public function getEdifactMessages(): ArrayCollection
     {
         return $this->edifactMessages;
     }
@@ -23,7 +20,7 @@ trait EDIFACTMessageAwareTrait
     }
 
     /**
-     * @param mixed $edifactMessages
+     * @param EDIFACTMessage $edifactMessage
      */
     public function addEdifactMessage(EDIFACTMessage $edifactMessage): self
     {

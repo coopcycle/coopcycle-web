@@ -22,6 +22,7 @@ use DBShenker\DTO\Mesurement;
 use DBShenker\DTO\NameAndAddress;
 use DBShenker\Enum\CommunicationMeanType;
 use DBShenker\Enum\NameAndAddressType;
+use DBShenker\Parser\DBShenkerScontrParser;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Adapter\Ftp;
@@ -58,7 +59,7 @@ class SyncTransportersCommand extends Command {
         $this->defaultCoordinates = new GeoCoordinates($lat, $lng);
         $repo = $this->entityManager->getRepository(Store::class);
 
-        /** @var Store $store */
+        /** @var ?Store $store */
         $store = $repo->findOneBy(['DBShenkerEnabled' => true]);
         if (is_null($store)) {
             //TODO: Do not throw to avoid log pollution
@@ -129,13 +130,16 @@ class SyncTransportersCommand extends Command {
                 $this->edifactFs->write($filename, $content);
             }
 
+
             foreach ($messages as $tasks) {
-                foreach ($tasks->getTasks() as $task) {
-                    $this->importTask($task, $filename);
-                    if($count > 5) {
-                        break;
+                if (is_object($tasks) && $tasks instanceof DBShenkerScontrParser) {
+                    foreach ($tasks->getTasks() as $task) {
+                        $this->importTask($task, $filename);
+                        if($count > 5) {
+                            break;
+                        }
+                        $count++;
                     }
-                    $count++;
                 }
             }
         }
@@ -291,6 +295,7 @@ class SyncTransportersCommand extends Command {
 
     }
 
+    /** @phpstan-ignore-next-line **/
     private function storeEDI(string $filename, string $ref): EDIFACTMessage
     {
         $edi = new EDIFACTMessage();
