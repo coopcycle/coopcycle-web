@@ -22,8 +22,8 @@ jobs:
           extensions: redis
       - name: Install PHP dependencies
         run: |
-          composer install --prefer-dist --no-progress --no-scripts
           composer config github-oauth.github.com ${{ secrets.GH_TOKEN_DBSHENKER }}
+          composer install --prefer-dist --no-progress --no-scripts
       - name: Run PHPStan
         run: phpstan analyse
       - name: Clear Symfony cache
