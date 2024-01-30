@@ -14,6 +14,7 @@ class StorybookController extends AbstractController
         'restaurant_badge' => 'components/restaurant/restaurant_badge/restaurant_badge.html.twig',
         'restaurant_tag' => 'components/restaurant/restaurant_tag/restaurant_tag.html.twig',
         'product' => 'components/restaurant/product/menu_item.html.twig',
+        'product_badge' => 'components/restaurant/product_badge/product_badge.html.twig',
     ];
 
 	/**

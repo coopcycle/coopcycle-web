@@ -1,22 +1,50 @@
 {% set variant = product|sylius_resolve_variant %}
 
-<span class="menu-item-inner">
-  <span class="menu-item-content-wrapper">
-    <span class="menu-item-content">
-      {% include 'components/restaurant/product/menu_item_content.html.twig' %}
-    </span>
-    <span class="d-flex align-items-center">
-      <span class="menu-item-price">
-        {{ variant.price|price_format }}
-      </span>
-      {% if product.isReusablePackagingEnabled() %}
-      <span class="label label-info ml-2">{{ 'restaurant.list.tags.zerowaste'|trans }}</span>
-      {% endif %}
-    </span>
-  </span>
-  <span class="menu-item-image-wrapper">
+<div class="h-100 d-flex">
+  <div class="menu-item-image-wrapper">
   {% if card_product_image is not empty %}
     <img src="{{ card_product_image }}">
   {% endif %}
-  </span>
-</span>
+  </div>
+  <div class="menu-item-content-wrapper">
+    <div class="flex-1 d-flex flex-column justify-content-center" style="overflow: hidden">
+      <h5 class="menu-item-name">{{ product.name }}</h5>
+      {% if not product.enabled %}
+        <small class="menu-item-description">{{ 'restaurant.unavailable'|trans }}</small>
+      {% else %}
+        {% if product.description is not null %}
+          <small class="menu-item-description">{{ product.description|nl2br }}</small>
+        {% endif %}
+      {% endif %}
+    </div>
+    <div class="d-flex" style="max-height: 2em; overflow: hidden">
+      <div class="flex-1 d-flex flex-wrap" style="gap: 4px">
+        {% set allergens = [] %}
+        {% if product.allergens is not empty %}
+          {% for allergen in product.allergens %}
+            {% set allergens = allergens|merge([('allergens.' ~ allergen)|trans]) %}
+          {% endfor %}
+        {% endif %}
+        {% set restrictedDiets = [] %}
+        {% if product.restrictedDiets is not empty %}
+          {% for restrictedDiet in product.restrictedDiets %}
+            {% set restrictedDiets = restrictedDiets|merge([('restricted_diets.' ~ restrictedDiet)|trans]) %}
+          {% endfor %}
+        {% endif %}
+        {% for allergen in allergens %}
+          {% include "components/restaurant/product_badge/product_badge.html.twig" with {type: 'allergen', value: allergen} %}
+        {% endfor %}
+        {% for restrictedDiet in restrictedDiets %}
+          {% include "components/restaurant/product_badge/product_badge.html.twig" with {type: 'restricted_diet', value: restrictedDiet} %}
+        {% endfor %}
+        {% if product.isReusablePackagingEnabled() %}
+          <span class="label label-info ml-2">{{ 'restaurant.list.tags.zerowaste'|trans }}</span>
+        {% endif %}
+      </div>
+      <span class="menu-item-price">
+        {{ variant.price|price_format }}
+      </span>
+    </div>
+  </div>
+  <div class="menu-item-add-wrapper">+</div>
+</div>

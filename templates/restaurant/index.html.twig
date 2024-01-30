@@ -195,7 +195,7 @@
       <div class="restaurant-menu-wrapper">
       {% for child in restaurant.menuTaxon.children %}
         {% if child.products|length > 0 %}
-        <h2>{{ child.name }}</h2>
+        <h4 class="restaurant-menu-section-name">{{ child.name }}</h4>
         {% if child.description is not empty %}
         <p class="text-muted">{{ child.description }}</p>
         {% endif %}

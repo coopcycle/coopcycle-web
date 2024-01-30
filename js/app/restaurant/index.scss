@@ -17,23 +17,40 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   }
 }
 
+.restaurant-menu-section-name {
+  margin: 0;
+  padding-bottom: 16px;
+  font-weight: 600;
+}
+
+$item-height: 9.5em;
+
 .restaurant-menu-section {
 
-  display: grid;
-  grid-gap: 8px;
-  grid-template-columns: repeat(2, 1fr);
+  /**
+  use minmax to prevent items from overflowing the column width;
+  https://css-tricks.com/preventing-a-grid-blowout/
+   */
 
-  @media (max-width: $screen-xs-max) {
-    grid-template-columns: repeat(1, 1fr);
+  padding-bottom: 64px;
+  display: grid;
+  grid-gap: 24px;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+
+  @media (min-width: $screen-lg-min) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  // not supported by bootstrap v3
+  //@media (min-width: $screen-xxl-min) {
+  //  grid-template-columns: repeat(3, minmax(0, 1fr));
+  //}
 
   &-item {
-    border: 1px solid $list-group-border;
     & > * {
       width: 100%;
-      min-height: 100%;
-      height: 100%;
+      height: $item-height;
+      overflow: hidden;
     }
     &:hover,
     &:focus {
@@ -46,7 +63,6 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     }
     button.menu-item {
       width: 100%;
-      min-height: 100%;
       height: 100%;
 
       // Reset button styles
@@ -55,7 +71,6 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
       border: none;
       margin: 0;
       padding: 0;
-      width: 100%;
       overflow: visible;
       background: transparent;
       color: inherit;
@@ -70,25 +85,6 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
       flex-direction: column;
       align-items: stretch;
     }
-    .menu-item-inner {
-      display: flex;
-      flex: 1;
-    }
-    .menu-item-content-wrapper {
-      padding: 15px;
-      flex: 3;
-      flex-direction: column;
-      display: flex;
-      justify-content: space-between;
-    }
-    .menu-item-image-wrapper {
-      flex: 1;
-      align-self: center;
-      padding: 15px 15px 15px 0;
-      > img {
-        width: 100%;
-      }
-    }
   }
 }
 
@@ -97,6 +93,31 @@ button.menu-item:focus,
 button.menu-item:active {
    outline: none !important;
    box-shadow: none;
+}
+
+.menu-item-image-wrapper {
+  > img {
+    object-fit: cover;
+    width: $item-height;
+    height: $item-height;
+    border-radius: $border-radius-large 0 0 $border-radius-large;
+  }
+}
+
+.menu-item-content-wrapper {
+  padding: 12px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item-add-wrapper {
+  border: 1px solid $light-gray;
+  border-radius: $border-radius-base;
+  display: flex;
+  margin: 4px 0;
+  align-items: center;
+  padding: 0 12px;
 }
 
 .menu-item.menu-item--unavailable {
@@ -111,25 +132,49 @@ button.menu-item:active {
   }
 }
 
-.menu-item .menu-item-description,
-.menu-item .menu-item-allergens,
-.menu-item-restricted-diets {
-  display: block;
-  font-weight: normal;
-}
-
-.menu-item .menu-item-content {
-  margin-bottom: 5px;
-}
-
 .menu-item .menu-item-name {
   font-family: inherit;
   font-weight: bold;
-  margin: 0 0 5px 0;
+  margin: 0;
+}
+
+.menu-item .menu-item-description {
+  display: block;
+  font-weight: normal;
+  overflow: hidden;
+  margin: 8px 0;
+}
+
+.product-badge-wrapper {
+  display: flex;
+  align-items: center;
+  border-radius: 16px;
+  padding: 2px 8px;
+  overflow: hidden;
+}
+
+.product-badge-allergen {
+  background-color: rgba($color: #000000, $alpha: 0.05);
+}
+
+.product-badge-restricted-diet {
+  background-color: rgba($color: $text-green, $alpha: 0.1);
+  color: $text-green;
+}
+
+.product-badge-text {
+  display: block;
+  max-width: 80px; // FIXME: ideally we should show the full text
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: bold;
 }
 
 .menu-item .menu-item-price {
   white-space: nowrap;
+  font-weight: 600;
+  align-self: center;
 }
 
 .restaurant-header {
