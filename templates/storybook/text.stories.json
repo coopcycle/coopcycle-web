@@ -1,0 +1,15 @@
+{
+  "title": "Core/1. Typography",
+  "parameters": {
+    "server": {
+      "url": "http://localhost/storybook/component",
+      "id": "text"
+    }
+  },
+  "tags": [],
+  "stories": [
+    {
+      "name": "Typography"
+    }
+  ]
+}
