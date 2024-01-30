@@ -18,6 +18,11 @@ const preview = {
         locales: "en-US",
       },
     },
+    docs: {
+      story: {
+        iframeHeight: 250,
+      }
+    }
   },
 };
 
