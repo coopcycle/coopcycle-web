@@ -26,6 +26,16 @@
     </div>
   </div>
 
+  {% if delivery_import_form.vars.submitted and not delivery_import_form.file.vars.valid %}
+    <div class="alert alert-danger">
+      <ul class="list-unstyled">
+      {% for error in delivery_import_form.file.vars.errors %}
+        <li>{{ error.message }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
   {% if delivery_export_form.vars.submitted and not delivery_export_form.vars.valid %}
     {{ form_errors(delivery_export_form) }}
   {% endif %}

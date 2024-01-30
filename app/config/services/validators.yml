@@ -80,3 +80,10 @@ services:
   AppBundle\Validator\Constraints\LoopeatStockValidator:
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\SpreadsheetValidator:
+    arguments:
+      $parsers:
+        delivery: '@AppBundle\Spreadsheet\DeliverySpreadsheetParser'
+    tags:
+      - { name: validator.constraint_validator }
