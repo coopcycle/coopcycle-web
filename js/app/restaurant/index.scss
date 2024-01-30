@@ -10,7 +10,52 @@ $panel-heading-padding-horizontal: nth($panel-heading-padding, 2);
 
 $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 2));
 
+#menu .ant-anchor {
+  width: 100%;
+  overflow: auto;
+  padding: 16px 0;
+  display: flex;
+  background-color: $white;
+
+  @media (min-width: $screen-sm-min) {
+    flex-wrap: wrap;
+  }
+}
+
+#menu .ant-anchor-link {
+  display: flex;
+  border-bottom: 1px solid $gray-100;
+}
+
+// Selected state
+#menu .ant-anchor-link-active {
+  border-bottom: 1px solid $primary-default;
+}
+
+#menu .ant-anchor-link-title {
+  padding: 8px 24px;
+  color: $gray-300;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus {
+    background-color: $nav-link-hover-bg;
+    text-decoration: none;
+  }
+}
+
+// Selected state
+#menu .ant-anchor-link-title-active {
+  &,
+  &:hover,
+  &:focus {
+    color: $primary-default;
+  }
+}
+
 .restaurant-menu-wrapper {
+  padding: 16px 0;
+
   // On mobile, add a margin to allow scrolling
   @media (max-width: $screen-xs-max) {
     margin-bottom: $navbar-height;
@@ -19,7 +64,6 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 
 .restaurant-menu-section-name {
   margin: 0;
-  padding-bottom: 16px;
   font-weight: 600;
 }
 
@@ -32,6 +76,7 @@ $item-height: 9.5em;
   https://css-tricks.com/preventing-a-grid-blowout/
    */
 
+  padding-top: 16px;
   padding-bottom: 64px;
   display: grid;
   grid-gap: 24px;
@@ -183,7 +228,6 @@ button.menu-item:active {
   align-items: center;
   padding-bottom: 15px;
   border-bottom: 1px solid #eeeeee;
-  margin-bottom: 15px;
 
   @media (max-width: $screen-xs-max) {
     flex-direction: column;

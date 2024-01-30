@@ -192,15 +192,32 @@
     {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation) %}
     {% cache cache_key ttl(300) %}
     <div class="col-xs-12 col-sm-8" id="menu">
-      <div class="restaurant-menu-wrapper">
+      {% set sections = [] %}
       {% for child in restaurant.menuTaxon.children %}
         {% if child.products|length > 0 %}
-        <h4 class="restaurant-menu-section-name">{{ child.name }}</h4>
-        {% if child.description is not empty %}
-        <p class="text-muted">{{ child.description }}</p>
+          {% set sections = sections|merge([child]) %}
+        {% endif %}
+      {% endfor %}
+
+      <nav {{ react_component('MenuNav', { 'sections': sections|coopcycle_normalize('Sylius\\Component\\Taxonomy\\Model\\TaxonInterface', ['restaurant_menu'], 'json') }) }}>
+{#        server side rendered content; will be replaced by react #}
+        <div class="ant-anchor">
+          {% for section in sections %}
+            <div class="ant-anchor-link">
+              <a class="ant-anchor-link-title" href="#">{{ section.name }}</a>
+            </div>
+          {% endfor %}
+        </div>
+      </nav>
+
+      <div class="restaurant-menu-wrapper">
+      {% for section in sections %}
+        <h4 id={{ section.name|url_encode }} class="restaurant-menu-section-name">{{ section.name }}</h4>
+        {% if section.description is not empty %}
+          <div class="text-muted">{{ section.description }}</div>
         {% endif %}
         <div class="restaurant-menu-section">
-          {% for product in child.products %}
+          {% for product in section.products %}
             {% set product_images = [] %}
             {% set images_16x9 = product.images|filter(image => image.ratio == '16:9') %}
             {% if images_16x9|length > 0 %}
@@ -220,7 +237,6 @@
             {% include 'components/restaurant/product/menu_item.html.twig' %}
           {% endfor %}
         </div>
-        {% endif %}
       {% endfor %}
       </div>
     </div>
