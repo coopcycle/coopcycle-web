@@ -8,12 +8,16 @@ html, body {
   }
 }
 
+body {
+  color: $text-base;
+}
+
 .content {
   flex: 1;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Raleway", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
 }
 
 .h2 {
