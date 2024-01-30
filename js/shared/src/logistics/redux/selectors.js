@@ -133,13 +133,16 @@ export const selectAllTours = createSelector(
   }
 )
 
-// not the cleanest ever, but if one task of the tour is assigned then the tour is
-export const isTourAssigned = (tour) => tour.items.length > 0 ? tour.items[0].isAssigned : false 
+export const isTourAssigned = (tour) => tour.items.length > 0 ? _.every(tour.items, (item) => item.isAssigned) : false 
+export const isTourUnassigned = (tour) => {
+  if (tour.items.length === 0) return true
+  else return tour.items.length > 0 ? _.every(tour.items, (item) => !item.isAssigned) : false
+}
 export const tourIsAssignedTo = (tour) => tour.items.length > 0 ? tour.items[0].assignedTo : undefined
 
 // FIXME This is recalculated all the time we change a task
 export const selectUnassignedTours = createSelector(
   selectAllTours,
-  (allTours) => _.filter(allTours, t => !isTourAssigned(t))
+  (allTours) => _.filter(allTours, t => isTourUnassigned(t))
 )
 

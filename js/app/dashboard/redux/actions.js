@@ -223,7 +223,7 @@ export function assignAfter(username, task, after) {
   }
 }
 
-export function unassignTasks(username, tasks) {
+export function unassignTasks(username, tasks, updateTourUI=null) {
 
   if (!Array.isArray(tasks)) {
     tasks = [ tasks ]
@@ -241,7 +241,7 @@ export function unassignTasks(username, tasks) {
 
     const taskList = _.find(taskLists, taskList => taskList.username === username)
 
-    await dispatch(modifyTaskList(username, withoutTasks(taskList.items, withLinkedTasks(tasks, allTasks))))
+    await dispatch(modifyTaskList(username, withoutTasks(taskList.items, withLinkedTasks(tasks, allTasks)), updateTourUI))
   }
 }
 
@@ -1550,10 +1550,10 @@ export function removeTaskFromTour(tour, task, username) {
     let allTasks = selectAllTasks(state)
     
     if (username !== null) {
-      // we want to unsassign before modifying the tour, because we want first the task out of the TaskList in the UI 
-      // we force set some fields to avoid a glitch in the UI, as the two AJAX calls are chained
-      dispatch(unassignTasks(username, [{isAssigned: false, tour: null, ...task}])).then(() => {
-        dispatch(modifyTour(tour, withoutTasks(tour.items, withLinkedTasks([ task ], allTasks))))
+      let newTourItems = withoutTasks(tour.items, withLinkedTasks([ task ], allTasks))
+      let uiUpdate = () => updateTourInUI(dispatch, tour, newTourItems)
+      dispatch(unassignTasks(username, [task], uiUpdate)).then(() => {
+        dispatch(modifyTour(tour, newTourItems, true))
       })
     } else {
       dispatch(modifyTour(tour, withoutTasks(tour.items, withLinkedTasks([ task ], allTasks))))
