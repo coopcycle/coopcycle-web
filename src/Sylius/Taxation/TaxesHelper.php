@@ -156,6 +156,8 @@ class TaxesHelper
         if ($rate) {
             return $rate->getCode();
         }
+
+        return null;
     }
 
     /**
