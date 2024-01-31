@@ -6,9 +6,9 @@ import Modal from 'react-modal'
 import _ from 'lodash'
 
 import i18n, { getCountry } from '../i18n'
-import { createStoreFromPreloadedState } from '../cart/redux/store'
-import { queueAddItem, openProductOptionsModal } from '../cart/redux/actions'
-import Cart from '../cart/components/Cart'
+import { createStoreFromPreloadedState } from './redux/store'
+import { queueAddItem, openProductOptionsModal } from './redux/actions'
+import Cart from './components/Cart'
 import storage from '../search/address-storage'
 import { initLoopeatContext } from '../restaurant/loopeat'
 
