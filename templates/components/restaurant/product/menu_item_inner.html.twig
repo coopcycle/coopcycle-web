@@ -1,6 +1,6 @@
 {% set variant = product|sylius_resolve_variant %}
 
-<div class="h-100 d-flex">
+<div class="h-100 flex-1 d-flex">
   <div class="menu-item-image-wrapper">
   {% if card_product_image is not empty %}
     <img src="{{ card_product_image }}">
@@ -9,12 +9,12 @@
   <div class="menu-item-content-wrapper">
     <div class="flex-1 d-flex flex-column justify-content-center" style="overflow: hidden">
       <h5 class="menu-item-name">{{ product.name }}</h5>
-      {% if not product.enabled %}
-        <small class="menu-item-description">{{ 'restaurant.unavailable'|trans }}</small>
-      {% else %}
+      {% if product.enabled %}
         {% if product.description is not null %}
           <small class="menu-item-description">{{ product.description|nl2br }}</small>
         {% endif %}
+      {% else %}
+        <small class="menu-item-description">{{ 'restaurant.unavailable'|trans }}</small>
       {% endif %}
     </div>
     <div class="d-flex" style="max-height: 2em; overflow: hidden">
@@ -46,5 +46,4 @@
       </span>
     </div>
   </div>
-  <div class="menu-item-add-wrapper">+</div>
 </div>
