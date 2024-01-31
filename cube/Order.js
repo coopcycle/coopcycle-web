@@ -54,6 +54,10 @@ cube(`Order`, {
       relationship: `one_to_many`,
       sql: `${CUBE}.id = ${OrderItem}.order_id`,
     },
+    Payment: {
+      relationship: `one_to_many`,
+      sql: `${CUBE}.id = ${Payment}.order_id`,
+    },
   },
 
   measures: {
@@ -131,6 +135,12 @@ cube(`Order`, {
       format: `currency`
     },
 
+    revenue: {
+      sql: `${CUBE.total} - ${CUBE.PlatformFee.totalAmount} - ${CUBE.StripeFee.totalAmount}`,
+      type: `number`,
+      format: `currency`
+    },
+
   },
 
   dimensions: {
@@ -202,7 +212,12 @@ cube(`Order`, {
       type: `boolean`,
       sql: `${CUBE.vendorCount} > 1`,
       sub_query: true,
-    }
+    },
+
+    paymentMethod: {
+      type: `string`,
+      sql: `${CUBE.Payment.method}`,
+    },
 
   },
 
