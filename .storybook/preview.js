@@ -2,7 +2,7 @@
 
 import "../assets/css/main.scss";
 import "../js/app/restaurant/list.scss";
-import "../js/app/restaurant/index.scss";
+import "../js/app/checkout/index.scss";
 
 const preview = {
   parameters: {
