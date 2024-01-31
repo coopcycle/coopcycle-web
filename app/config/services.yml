@@ -1213,6 +1213,7 @@ services:
   AppBundle\CubeJs\TokenFactory:
     arguments:
       $databaseName: '%database_name%'
+      $baseUrl: '%env(APP_HOST)'
 
   AppBundle\Translation\DatePeriodFormatter:
     arguments:
