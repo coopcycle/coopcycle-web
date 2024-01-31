@@ -134,6 +134,9 @@ class TaxesHelper
         return self::$baseRateCodeCache[$code];
     }
 
+    /**
+     * @return string|null
+     */
     public function getServiceTaxRateCode()
     {
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
@@ -142,7 +145,7 @@ class TaxesHelper
         $qb = $this->taxRateRepository->createQueryBuilder('r');
         $qb
             ->join(TaxCategory::class, 'c', Expr\Join::WITH, 'r.category = c.id')
-            ->andWhere('r.country = :country')
+            ->andWhere('LOWER(r.country) = LOWER(:country)')
             ->andWhere('c.code = :code')
             ->setParameter('country', $this->country)
             ->setParameter('code', $code)
@@ -153,5 +156,33 @@ class TaxesHelper
         if ($rate) {
             return $rate->getCode();
         }
+    }
+
+    /**
+     * Given a base rate code, returns
+     * @return array
+     */
+    public function getAlternativeTaxRateCodes(string $baseRateCode): array
+    {
+        $subQuery = $this->taxRateRepository->createQueryBuilder('br');
+        $subQuery->select('br.amount');
+        $subQuery->andWhere('LOWER(br.country) = LOWER(:country)');
+        $subQuery->andWhere('br.code = :base_rate_code');
+        $subQuery->setParameter('country', $this->country);
+        $subQuery->setParameter('base_rate_code', $baseRateCode);
+
+        $amount = $subQuery->getQuery()->getSingleScalarResult();
+
+        $qb = $this->taxRateRepository->createQueryBuilder('r');
+        $qb
+            ->select('r.code')
+            ->andWhere('LOWER(r.country) = LOWER(:country)')
+            ->andWhere('r.amount = :amount')
+            ->andWhere('r.code != :base_rate_code')
+            ->setParameter('country', $this->country)
+            ->setParameter('amount', $amount)
+            ->setParameter('base_rate_code', $baseRateCode);
+
+        return $qb->getQuery()->getSingleColumnResult();
     }
 }

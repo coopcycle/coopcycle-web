@@ -815,6 +815,10 @@ services:
 
   AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
 
+  AppBundle\Api\DataProvider\TaxRateCollectionDataProvider:
+    tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
+    autoconfigure: false
+
   AppBundle\Utils\RestaurantFilter:
     arguments:
       - '@routing_service'
