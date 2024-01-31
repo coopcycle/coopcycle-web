@@ -63,8 +63,9 @@ cube(`Order`, {
     },
 
     itemsTotal: {
-      sql: `items_total`,
-      type: `sum`
+      sql: `ROUND(${CUBE}.items_total / 100::numeric, 2)`,
+      type: `sum`,
+      format: `currency`
     },
 
     adjustmentsTotal: {
@@ -86,6 +87,7 @@ cube(`Order`, {
     deliveryFee: {
       sql: `${CUBE.DeliveryAdjustment.totalAmount}`,
       type: `number`,
+      format: `currency`
     },
 
     vendorCount: {
@@ -96,31 +98,37 @@ cube(`Order`, {
     tip: {
       sql: `${CUBE.TipAdjustment.totalAmount}`,
       type: `number`,
+      format: `currency`
     },
 
     packagingFee: {
       sql: `${CUBE.ReusablePackagingAdjustment.totalAmount}`,
       type: `number`,
+      format: `currency`
     },
 
     promotions: {
       sql: `${CUBE.PromotionAdjustment.totalAmount}`,
       type: `number`,
+      format: `currency`
     },
 
     stripeFee: {
       sql: `${CUBE.StripeFee.totalAmount}`,
       type: `number`,
+      format: `currency`
     },
 
     platformFee: {
       sql: `${CUBE.PlatformFee.totalAmount}`,
       type: `number`,
+      format: `currency`
     },
 
     itemsTaxTotal: {
       sql: `${CUBE.OrderItem.taxTotal}`,
       type: `number`,
+      format: `currency`
     },
 
   },
