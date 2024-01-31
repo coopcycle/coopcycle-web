@@ -55,7 +55,7 @@ class SyncTransportersCommand extends Command {
     )
     {
         parent::__construct();
-        $pos = explode(',', $this->settingsManager->get('latlng'));
+        $pos = explode(',', $this->settingsManager->get('latlng') ?? '');
         $this->defaultCoordinates = new GeoCoordinates($pos[0], $pos[1]);
         $repo = $this->entityManager->getRepository(Store::class);
 
