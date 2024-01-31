@@ -4,7 +4,6 @@ import {
   CLEAR_LAST_ADD_ITEM_REQUEST,
   CLOSE_ADDRESS_MODAL,
   CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL,
-  CLOSE_PRODUCT_DETAILS_MODAL,
   CLOSE_PRODUCT_OPTIONS_MODAL,
   CLOSE_SET_PLAYER_EMAIL_MODAL,
   DISABLE_TAKEAWAY,
@@ -18,7 +17,6 @@ import {
   INVITE_PEOPLE_REQUEST_SUCCESS,
   OPEN_ADDRESS_MODAL,
   OPEN_INVITE_PEOPLE_TO_ORDER_MODAL,
-  OPEN_PRODUCT_DETAILS_MODAL,
   OPEN_PRODUCT_OPTIONS_MODAL,
   OPEN_SET_PLAYER_EMAIL_MODAL,
   PLAYER_UPDATE_EVENT,
@@ -68,8 +66,6 @@ const initialState = {
   country: 'fr',
   isProductOptionsModalOpen: false,
   productOptionsModalContext: {},
-  isProductDetailsModalOpen: false,
-  productDetailsModalContext: {},
   addressModalContext: {},
   isInvitePeopleToOrderModalOpen: false,
   invitePeopleToOrderContext: {},
@@ -302,34 +298,6 @@ const productOptionsModalContext = (state = initialState.productOptionsModalCont
   return state
 }
 
-const isProductDetailsModalOpen = (state = initialState.isProductDetailsModalOpen, action = {}) => {
-  switch (action.type) {
-  case CLOSE_PRODUCT_DETAILS_MODAL:
-
-    return false
-
-  case OPEN_PRODUCT_DETAILS_MODAL:
-
-    return true
-  }
-
-  return state
-}
-
-const productDetailsModalContext = (state = initialState.productDetailsModalContext, action = {}) => {
-  switch (action.type) {
-  case CLOSE_PRODUCT_DETAILS_MODAL:
-
-    return {}
-
-  case OPEN_PRODUCT_DETAILS_MODAL:
-
-    return action.payload
-  }
-
-  return state
-}
-
 const isInvitePeopleToOrderModalOpen = (state = initialState.isInvitePeopleToOrderModalOpen, action = {}) => {
   switch (action.type) {
   case CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL:
@@ -424,8 +392,6 @@ export default combineReducers({
   country,
   isProductOptionsModalOpen,
   productOptionsModalContext,
-  isProductDetailsModalOpen,
-  productDetailsModalContext,
   addressModalContext,
   isInvitePeopleToOrderModalOpen,
   invitePeopleToOrderContext,

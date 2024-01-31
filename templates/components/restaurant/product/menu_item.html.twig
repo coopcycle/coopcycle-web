@@ -3,7 +3,7 @@
   <div class="restaurant-menu-section-item menu-item">
     <button
       class="button-reset flex-1 d-flex"
-      data-modal="options"
+      data-modal="product-details"
       data-form-action="{{ path('restaurant_add_product_to_cart', { id: restaurant_id, code: product.code })|e('html_attr') }}"
       data-product-code="{{ product.code|e('html_attr') }}"
       data-product-name="{{ product.name|e('html_attr') }}"

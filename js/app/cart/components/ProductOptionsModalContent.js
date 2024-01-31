@@ -201,7 +201,7 @@ export default forwardRef(({ name, code, options, images, formAction, onSubmit, 
       <ProductModalHeader name={ name }
         onClickClose={ onClickClose } />
       <main>
-        { images.length > 1 && (
+        { images.length > 0 && (
           <ProductImagesCarousel images={ images } />
         ) }
         <div className="px-4">

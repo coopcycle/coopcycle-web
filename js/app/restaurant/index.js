@@ -7,7 +7,7 @@ import _ from 'lodash'
 
 import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from '../cart/redux/store'
-import { queueAddItem, openProductOptionsModal, openProductDetailsModal } from '../cart/redux/actions'
+import { queueAddItem, openProductOptionsModal } from '../cart/redux/actions'
 import Cart from '../cart/components/Cart'
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
@@ -35,7 +35,7 @@ const init = function() {
     store.dispatch(queueAddItem($(this).attr('action'), 1))
   })
 
-  document.querySelectorAll('[data-modal="options"]').forEach(el => {
+  document.querySelectorAll('[data-modal="product-details"]').forEach(el => {
     el.addEventListener('click', () => {
 
       const name       = el.dataset.productName
@@ -46,18 +46,6 @@ const init = function() {
       const formAction = el.dataset.formAction
 
       store.dispatch(openProductOptionsModal(name, options, images, price, code, formAction))
-    })
-  })
-
-  document.querySelectorAll('[data-modal="details"]').forEach(el => {
-    el.addEventListener('click', () => {
-
-      const name       = el.dataset.productName
-      const images     = JSON.parse(el.dataset.productImages)
-      const price      = JSON.parse(el.dataset.productPrice)
-      const formAction = el.dataset.formAction
-
-      store.dispatch(openProductDetailsModal(name, images, price, formAction))
     })
   })
 
