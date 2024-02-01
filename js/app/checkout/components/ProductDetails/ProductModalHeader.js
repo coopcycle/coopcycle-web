@@ -3,13 +3,13 @@ import React from 'react'
 const ProductModalHeader = ({ name, onClickClose }) => {
 
   return (
-    <header className="border-bottom p-4 d-flex justify-content-between align-items-center">
-      <h3 className="m-0">{ name }</h3>
-      <a href="#" onClick={ e => {
+    <header className="d-flex justify-content-between align-items-center pb-3">
+      <h4 className="m-0 font-weight-bold">{name}</h4>
+      <a className="pl-3 modal-close" href="#" onClick={e => {
         e.preventDefault()
         onClickClose()
       }}>
-        <i className="fa fa-2x fa-times"></i>
+        <i className="fa fa-times p-2"></i>
       </a>
     </header>
   )

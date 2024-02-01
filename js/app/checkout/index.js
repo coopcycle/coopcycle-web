@@ -15,6 +15,7 @@ import { initLoopeatContext } from '../restaurant/loopeat'
 require('gasparesganga-jquery-loading-overlay')
 
 import './index.scss'
+import './menu.scss'
 
 window._paq = window._paq || []
 

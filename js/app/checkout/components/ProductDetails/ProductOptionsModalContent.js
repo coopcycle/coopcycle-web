@@ -6,6 +6,7 @@ import {
 import ProductImagesCarousel from './ProductImagesCarousel'
 import ProductModalHeader from './ProductModalHeader'
 import { OptionGroup } from './ProductOptionGroup'
+import ProductInfo from './ProductInfo'
 
 const getOffset = (options, index) => {
 
@@ -46,14 +47,15 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
       action={ formAction }
       onSubmit={ onSubmit }
       ref={ ref }
-      className="product-modal-container">
+      className="product-modal-container p-4">
       <ProductModalHeader name={ product.name }
         onClickClose={ onClickClose } />
       <main>
         { images.length > 0 && (
           <ProductImagesCarousel images={ images } />
         ) }
-        <div className="px-4">
+        <ProductInfo product={ product } />
+        <div>
         { options.map((option, index) => (
           <OptionGroup
             key={ `option-${index}` }
@@ -62,7 +64,7 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
         )) }
         </div>
       </main>
-      <footer className="p-4 border-top">
+      <footer className="border-top">
         <div className="row">
           <div className="col-xs-12 col-sm-6 col-sm-offset-3">
             <div className="form-group">

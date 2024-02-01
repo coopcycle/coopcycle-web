@@ -9,35 +9,38 @@ const carouselRef = createRef()
 
 export default ({ images }) => {
 
-  const [ slide, setSlide ] = useState(0)
+  const [slide, setSlide] = useState(0)
 
   useEffect(() => {
     carouselRef.current.goTo(slide)
-  }, [ slide ])
+  }, [slide])
 
   return (
-    <div>
+    <div className="mb-3">
       <div className="mb-4">
-        <Carousel ref={ carouselRef } dots={ false }>
-          { images.map((image, index) => (
-            <div key={ `image-${index}` }>
-              <img src={ image } className="img-responsive" />
+        <Carousel ref={carouselRef} dots={false}>
+          {images.map((image, index) => (
+            <div key={`image-${index}`}>
+              <img src={image} className="img-responsive product-image"/>
             </div>
-          )) }
+          ))}
         </Carousel>
       </div>
-      <div className="dotstyle dotstyle-scaleup text-center">
-        <ul>
-          { images.map((image, index) => (
-            <li key={ `dot-${index}` } className={ classNames({ current: index === slide }) }>
-              <a href="#" onClick={ e => {
-                e.preventDefault()
-                setSlide(index)
-              }}>{ image }</a>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {images.length > 1 ? (
+        <div className="dotstyle text-center">
+          <ul>
+            {images.map((image, index) => (
+              <li key={`dot-${index}`}
+                  className={classNames({ current: index === slide })}>
+                <a href="#" onClick={e => {
+                  e.preventDefault()
+                  setSlide(index)
+                }}>{image}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </div>
   )
 }

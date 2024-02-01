@@ -3,11 +3,11 @@
     background-color: rgba(#bdc3c7, 0.3);
 }
 
-.dotstyle-scaleup li a:hover,
-.dotstyle-scaleup li a:focus {
+.dotstyle li a:hover,
+.dotstyle li a:focus {
     background-color: darken(#bdc3c7, 10%);
 }
 
-.dotstyle-scaleup li.current a {
+.dotstyle li.current a {
     background-color: darken(#bdc3c7, 10%);
 }
