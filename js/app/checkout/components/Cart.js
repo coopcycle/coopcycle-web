@@ -14,7 +14,7 @@ import CartTotal from './CartTotal'
 import CartButton from './CartButton'
 import Time from './Time'
 import FulfillmentMethod from './FulfillmentMethod'
-import ProductOptionsModal from './ProductOptionsModal'
+import ProductOptionsModal from './ProductDetails/ProductOptionsModal'
 import LoopeatModal from './LoopeatModal'
 
 import {changeAddress, disableTakeaway, enableTakeaway, openAddressModal, sync, toggleReusablePackaging} from '../redux/actions'

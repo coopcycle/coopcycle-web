@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import Modal from 'react-modal'
 
-import { closeProductOptionsModal, addItemWithOptions, addItem } from '../redux/actions'
+import { closeProductOptionsModal, addItemWithOptions, addItem } from '../../redux/actions'
 import ProductOptionsModalContent from './ProductOptionsModalContent'
 import { ProductOptionsModalProvider } from './ProductOptionsModalContext'
 

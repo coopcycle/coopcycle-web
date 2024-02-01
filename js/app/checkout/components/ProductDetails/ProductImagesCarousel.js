@@ -2,7 +2,7 @@ import React, { useState, useEffect, createRef } from 'react'
 import { Carousel } from 'antd'
 import classNames from 'classnames'
 
-import '../../../../assets/css/dotstyle.css'
+import '../../../../../assets/css/dotstyle.css'
 import './dotstyle.scss'
 
 const carouselRef = createRef()
