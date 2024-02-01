@@ -5,10 +5,11 @@
       class="button-reset flex-1 d-flex"
       data-modal="product-details"
       data-form-action="{{ path('restaurant_add_product_to_cart', { id: restaurant_id, code: product.code })|e('html_attr') }}"
-      data-product-code="{{ product.code|e('html_attr') }}"
-      data-product-name="{{ product.name|e('html_attr') }}"
+      data-product="{{ product|coopcycle_normalize('AppBundle\\Entity\\Sylius\\Product')|json_encode|e('html_attr') }}"
       data-product-images="{{ product_images|json_encode|e('html_attr') }}"
       data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
+{#      FIXME: data-product-options format is slightly different from menuAddOns field in data-product object #}
+{#      adjust code on the JS side to read from data-product and remove data-product-options#}
       data-product-options="{{ product.options|coopcycle_normalize('AppBundle\\Entity\\Sylius\\ProductOption', ['product_option'], 'json')|json_encode|e('html_attr') }}">
       {% include 'components/restaurant/product/menu_item_inner.html.twig' %}
       {% if product.hasOptions() %}

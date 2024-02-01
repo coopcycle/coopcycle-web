@@ -42,8 +42,7 @@ class ProductOptionsModal extends Component {
             price={ this.props.price }>
             <ProductOptionsModalContent
               ref={ this.formRef }
-              name={ this.props.name }
-              code={ this.props.code }
+              product={ this.props.product }
               options={ this.props.options }
               formAction={ this.props.formAction }
               images={ this.props.images }
@@ -77,11 +76,10 @@ function mapStateToProps(state) {
 
   return {
     isOpen:     state.isProductOptionsModalOpen,
-    name:       state.productOptionsModalContext.name,
+    product:    state.productOptionsModalContext.product,
     options:    state.productOptionsModalContext.options,
     images:     state.productOptionsModalContext.images,
     price:      state.productOptionsModalContext.price,
-    code:       state.productOptionsModalContext.code,
     formAction: state.productOptionsModalContext.formAction,
   }
 }

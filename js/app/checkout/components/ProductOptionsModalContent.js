@@ -22,7 +22,7 @@ const getOffset = (options, index) => {
 /* Exported to be able to test it */
 export const getOffsets = (options) => options.map((option, index) => getOffset(options, index))
 
-export default forwardRef(({ name, code, options, images, formAction, onSubmit, onClickClose }, ref) => {
+export default forwardRef(({ product, options, images, formAction, onSubmit, onClickClose }, ref) => {
 
   const [ quantity, setQuantity ] = useState(1)
   const [ state ] = useContext(ProductOptionsModalContext)
@@ -42,12 +42,12 @@ export default forwardRef(({ name, code, options, images, formAction, onSubmit, 
     // FIXME
     // The id is used in Cypress tests
     // It would be better to use data attributes
-    <form id={ `${code}-options` }
+    <form id={ `${product.code}-options` }
       action={ formAction }
       onSubmit={ onSubmit }
       ref={ ref }
       className="product-modal-container">
-      <ProductModalHeader name={ name }
+      <ProductModalHeader name={ product.name }
         onClickClose={ onClickClose } />
       <main>
         { images.length > 0 && (

@@ -37,15 +37,13 @@ const init = function() {
 
   document.querySelectorAll('[data-modal="product-details"]').forEach(el => {
     el.addEventListener('click', () => {
-
-      const name       = el.dataset.productName
+      const product    = JSON.parse(el.dataset.product)
       const options    = JSON.parse(el.dataset.productOptions)
       const images     = JSON.parse(el.dataset.productImages)
       const price      = JSON.parse(el.dataset.productPrice)
-      const code       = el.dataset.productCode
       const formAction = el.dataset.formAction
 
-      store.dispatch(openProductOptionsModal(name, options, images, price, code, formAction))
+      store.dispatch(openProductOptionsModal(product, options, images, price, formAction))
     })
   })
 

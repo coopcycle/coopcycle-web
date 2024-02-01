@@ -63,7 +63,7 @@ export const geocodingFailure = createAction(GEOCODING_FAILURE)
 
 export const closeProductOptionsModal = createAction(CLOSE_PRODUCT_OPTIONS_MODAL)
 export const openProductOptionsModal =
-  createAction(OPEN_PRODUCT_OPTIONS_MODAL, (name, options, images, price, code, formAction) => ({ name, options, images, price, code, formAction }))
+  createAction(OPEN_PRODUCT_OPTIONS_MODAL, (product, options, images, price, formAction) => ({ product, options, images, price, formAction }))
 
 export const openInvitePeopleToOrderModal = createAction(OPEN_INVITE_PEOPLE_TO_ORDER_MODAL)
 export const closeInvitePeopleToOrderModal = createAction(CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL)
