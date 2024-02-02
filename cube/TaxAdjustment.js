@@ -70,6 +70,20 @@ asyncModule(async () => {
           sql: `${CUBE}.origin_code = ${TaxRate}.code`
         },
       },
+      measures: {
+        total_standard: {
+          sql: `0`,
+          type: `number`,
+        },
+        total_intermediary: {
+          sql: `0`,
+          type: `number`,
+        },
+        total_reduced: {
+          sql: `0`,
+          type: `number`,
+        },
+      },
     });
 
   }
