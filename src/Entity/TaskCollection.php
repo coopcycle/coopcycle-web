@@ -45,6 +45,7 @@ abstract class TaskCollection
     {
         $iterator = $this->items->getIterator();
 
+        // front end code regarding tasklist expects "itemIds" arry to be sorted according positions, please don't remove this :)
         $iterator->uasort(function ($a, $b) {
             if ($a->getPosition() === $b->getPosition()) {
                 return 0;

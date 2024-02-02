@@ -224,6 +224,11 @@ export function assignAfter(username, task, after) {
 }
 
 export function unassignTasks(username, tasks, updateTourUI=null) {
+    /*
+      Unassign tasks.
+
+      We can pass a callback updateTourUI so we update the UI related to the tour before we do the AJAX call to modify the tasklist
+    */
 
   if (!Array.isArray(tasks)) {
     tasks = [ tasks ]
@@ -287,9 +292,9 @@ export function importError(token, message) {
 
 export function modifyTaskList(username, tasks, updateTourUI=null) {
   /*
-    Modify a TaskList in the UI.
+    Modify a TaskList
 
-    We can pass a callback updateTourUI so we update the UI related to the tour before we do the AJAX call
+    We can pass a callback updateTourUI so we update the UI related to the tour before we do the AJAX call to modify the tasklist
   */
 
   return async function(dispatch, getState) {
@@ -1558,7 +1563,6 @@ export function removeTaskFromTour(tour, task, username) {
     } else {
       dispatch(modifyTour(tour, withoutTasks(tour.items, withLinkedTasks([ task ], allTasks))))
     }
-
   }
 }
 
