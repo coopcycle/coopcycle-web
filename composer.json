@@ -141,7 +141,7 @@
         "mtdowling/jmespath.php": "^2.7",
         "php-units-of-measure/php-units-of-measure": "^2.1",
         "symfony/ux-turbo": "^2.10",
-        "coopcycle/db-shenker": "*",
+        "coopcycle/db-schenker": "*",
         "twig/html-extra": "^3.7"
     },
     "require-dev": {

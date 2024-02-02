@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "afaefc6a2299e7808e5fee92544caea5",
+    "content-hash": "4b40b714a29c509ef4625081bcc607f4",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1247,17 +1247,17 @@
             "time": "2023-08-05T09:42:11+00:00"
         },
         {
-            "name": "coopcycle/db-shenker",
+            "name": "coopcycle/db-schenker",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git@github.com:coopcycle/DBSchenkerClient.git",
-                "reference": "4d3926dedbe336eee7a66b7da662a064dd28c1d6"
+                "reference": "c764821bd4d7bdd4c4b8a6578e33804faa4f8e7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/4d3926dedbe336eee7a66b7da662a064dd28c1d6",
-                "reference": "4d3926dedbe336eee7a66b7da662a064dd28c1d6",
+                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/c764821bd4d7bdd4c4b8a6578e33804faa4f8e7f",
+                "reference": "c764821bd4d7bdd4c4b8a6578e33804faa4f8e7f",
                 "shasum": ""
             },
             "require": {
@@ -1271,7 +1271,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "DBShenker\\": "src"
+                    "DBSchenker\\": "DBSchenker"
                 }
             },
             "authors": [
@@ -1284,7 +1284,7 @@
                 "source": "https://github.com/coopcycle/DBSchenkerClient/tree/master",
                 "issues": "https://github.com/coopcycle/DBSchenkerClient/issues"
             },
-            "time": "2023-12-08T17:46:26+00:00"
+            "time": "2024-02-02T15:25:55+00:00"
         },
         {
             "name": "craue/config-bundle",
