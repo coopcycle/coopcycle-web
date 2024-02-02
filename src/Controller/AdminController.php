@@ -94,7 +94,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\Query\Expr;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
@@ -210,7 +209,7 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_dashboard');
     }
 
-    protected function getOrderList(Request $request, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
     {
         if ($request->query->has('q')) {
             $qb = $this->orderRepository->search($request->query->get('q'));
@@ -232,14 +231,14 @@ class AdminController extends AbstractController
                 ->setParameter('state_cancelled', OrderInterface::STATE_CANCELLED);
         }
 
-        $paginator = new Paginator($qb->getQuery());
-        $count = count($paginator);
-
-        $orders = $paginator->getIterator();
-        $pages  = ceil($count / self::ITEMS_PER_PAGE);
-        $page   = $request->query->get('p', 1);
-
-        return [ $orders, $pages, $page ];
+        return $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::DISTINCT => false,
+            ]
+        );
     }
 
     /**
