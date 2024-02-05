@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import { connect } from 'react-redux'
 import { withTranslation, useTranslation } from 'react-i18next'
 import { Draggable, Droppable } from "react-beautiful-dnd"
@@ -6,21 +6,20 @@ import _ from 'lodash'
 import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
-import { removeTaskFromTour, modifyTour, deleteTour, unassignTasks } from '../redux/actions'
+import { removeTaskFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded } from '../redux/actions'
 import { isTourAssigned, tourIsAssignedTo } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { useContextMenu } from 'react-contexify'
 import { getDroppableListStyle } from '../utils'
 
 
-const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, modifyTour, deleteTour }) => {
+const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, expandedTourPanelsIds, modifyTour, deleteTour, toggleTourPanelExpanded }) => {
 
 
   const { t } = useTranslation(),
         { show } = useContextMenu({
           id: 'dashboard',
         }),
-        collapseId = `tour-panel-${tour['@id'].replaceAll('/', '-')}`,
         [toggleInputForName, setToggleInputForName] = useState(false),
         [tourName, setTourName] = useState(tour.name),
         onEditSubmitted = async (e) => {
@@ -63,14 +62,8 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, modifyTour
           $('.task__draggable').LoadingOverlay('show', {image: false})
           await deleteTour(tour, tour.items)
           $('.task__draggable').LoadingOverlay('hide')
-        }
-      
-    useEffect(() => {
-      if(!tour.items || !tour.items.length) {
-        $(`#${collapseId}`).collapse('show')
-      }
-    }, [tour.items])        
-
+        },
+        isExpanded = expandedTourPanelsIds.includes(tour['@id'])
 
   return (
     <div className="panel panel-default panel--tour nomargin task__draggable" onContextMenu={(e) => show(e, {
@@ -79,10 +72,10 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, modifyTour
       <div className="panel-heading" role="tab">
         <h4 className="panel-title d-flex align-items-center">
           <i className="fa fa-repeat flex-grow-0"></i>
-            { 
+            {
               !toggleInputForName &&
               <>
-                <a role="button" data-toggle="collapse" href={ `#${collapseId}` } className="ml-2 flex-grow-1 text-truncate">
+                <a role="button" onClick={() => toggleTourPanelExpanded(tour['@id'])} className="ml-2 flex-grow-1 text-truncate">
                   { tourName } <span className="badge">{ tour.items.length }</span>
                 </a>
                 <div className="d-flex flex-grow-0">
@@ -91,13 +84,13 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, modifyTour
                         <i className="fa fa-pencil"></i>
                       </a>
                       { isTourAssigned(tour) ?  (
-                          <a 
+                          <a
                             onClick={() => unassignTasks(tourIsAssignedTo(tour), tour.items)}
                             title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
                             className="text-reset mr-2"
                           >
                             <i className="fa fa-times"></i>
-                          </a>) 
+                          </a>)
                           : <Popconfirm
                               placement="left"
                               title={ t('ADMIN_DASHBOARD_DELETE_TOUR_CONFIRM') }
@@ -110,16 +103,16 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, modifyTour
                                 <i className="fa fa-trash"></i>
                               </a>
                           </Popconfirm>
-                     }            
+                     }
                 </div>
             </>
             }
-            { 
-              toggleInputForName && renderEditNameForm() 
+            {
+              toggleInputForName && renderEditNameForm()
             }
         </h4>
       </div>
-      <div id={ `${collapseId}` } className="panel-collapse collapse" role="tabpanel">
+      <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
         <Droppable 
             isDropDisabled={!isDroppable}
             droppableId={ `tour:${tour['@id']}` }
@@ -168,6 +161,7 @@ function mapStateToProps (state) {
 
     return {
         isDroppable: state.logistics.ui.areToursDroppable,
+        expandedTourPanelsIds: state.logistics.ui.expandedTourPanelsIds,
     }
   }
 
@@ -177,7 +171,8 @@ function mapDispatchToProps(dispatch) {
     removeTaskFromTour: (tour, task, username) => dispatch(removeTaskFromTour(tour, task, username)),
     modifyTour: (tour, tasks) => dispatch(modifyTour(tour, tasks)),
     deleteTour: (tour, tasks) => dispatch(deleteTour(tour, tasks)),
-    unassignTasks: (tour, tasks) => dispatch(unassignTasks(tour, tasks))
+    unassignTasks: (tour, tasks) => dispatch(unassignTasks(tour, tasks)),
+    toggleTourPanelExpanded: (tourId) => dispatch(toggleTourPanelExpanded(tourId))
   }
 }
   

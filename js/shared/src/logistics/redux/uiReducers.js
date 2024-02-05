@@ -9,6 +9,8 @@ import {
 const initialState = {
   taskListsLoading: false,
   areToursDroppable: true,
+  currentTask: null,
+  expandedTourPanelIds: []
 }
 
 export default (state = initialState, action) => {

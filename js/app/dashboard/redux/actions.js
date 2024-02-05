@@ -193,6 +193,8 @@ export const CREATE_TOUR_REQUEST_SUCCESS = 'CREATE_TOUR_REQUEST_SUCCESS'
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
 export const MODIFY_TOUR_REQUEST_ERROR = 'MODIFY_TOUR_REQUEST_ERROR'
+export const TOGGLE_TOUR_PANEL_EXPANDED = 'TOGGLE_EXPANDED_TOUR_PANEL'
+
 export const UPDATE_TOUR = 'UPDATE_TOUR'
 export const DELETE_TOUR_SUCCESS = 'DELETE_TOUR_SUCCESS'
 
@@ -1430,6 +1432,9 @@ export function modifyTourRequestError(tour, tasks) {
   return { type: MODIFY_TOUR_REQUEST_ERROR, tour, tasks }
 }
 
+export function toggleTourPanelExpanded(tourId) {  
+  return { type: TOGGLE_TOUR_PANEL_EXPANDED, tourId}
+}
 
 export function createTour(tasks, name, date) {
   return function(dispatch, getState) {
@@ -1461,6 +1466,7 @@ export function createTour(tasks, name, date) {
 
         dispatch(updateTour(tour))
         dispatch(createTourRequestSuccess())
+        dispatch(toggleTourPanelExpanded(tour['@id']))
         dispatch(closeCreateTourModal())
       })
       .catch(error => {
