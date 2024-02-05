@@ -16,8 +16,8 @@ export default ({ images }) => {
   }, [slide])
 
   return (
-    <div className="mb-3">
-      <div className="mb-4">
+    <div>
+      <div>
         <Carousel ref={carouselRef} dots={false}>
           {images.map((image, index) => (
             <div key={`image-${index}`}>
@@ -27,7 +27,7 @@ export default ({ images }) => {
         </Carousel>
       </div>
       {images.length > 1 ? (
-        <div className="dotstyle text-center">
+        <div className="dotstyle text-center mt-3">
           <ul>
             {images.map((image, index) => (
               <li key={`dot-${index}`}

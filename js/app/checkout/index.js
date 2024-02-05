@@ -16,6 +16,7 @@ require('gasparesganga-jquery-loading-overlay')
 
 import './index.scss'
 import './menu.scss'
+import './productDetails.scss'
 
 window._paq = window._paq || []
 

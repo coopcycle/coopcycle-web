@@ -67,6 +67,7 @@ const ProductOptionsModalProvider = (props) => {
   const [ state, setState ] = useState({
     options,
     price: props.price,
+    quantity: 1,
     total: props.price,
     disabled: invalidOptions.length > 0,
   })
@@ -76,6 +77,25 @@ const ProductOptionsModalProvider = (props) => {
       { props.children }
     </ProductOptionsModalContext.Provider>
   )
+}
+
+export const useProduct = () => {
+
+  const [state, setState] = useContext(ProductOptionsModalContext)
+
+  function setQuantity(quantity) {
+    setState({
+      ...state,
+      quantity,
+    })
+  }
+
+  return {
+    price: state.price,
+    quantity: state.quantity,
+    setQuantity,
+  }
+
 }
 
 const useProductOptions = () => {

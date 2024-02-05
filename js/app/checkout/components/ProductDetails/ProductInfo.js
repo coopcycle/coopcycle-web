@@ -25,25 +25,29 @@ export default function ProductInfo ({ product }) {
     })
   }
 
-  return (
-    <div>
-      {
-        product.description ? (
-          <div>{product.description}</div>
-        ) : null
-      }
-      {
-        badges.length > 0 ? (
-          <div className="product-badge-container mt-3">
-            {
-              badges.map((badge, index) => (
-                <ProductBadge key={index} type={badge.type}
-                              value={badge.value}/>
-              ))
-            }
-          </div>
-        ) : null
-      }
-    </div>
-  )
+  if (product.description || badges.length > 0) {
+    return (
+      <div>
+        {
+          product.description ? (
+            <div>{product.description}</div>
+          ) : null
+        }
+        {
+          badges.length > 0 ? (
+            <div className="product-badge-container mt-3">
+              {
+                badges.map((badge, index) => (
+                  <ProductBadge key={index} type={badge.type}
+                                value={badge.value}/>
+                ))
+              }
+            </div>
+          ) : null
+        }
+      </div>
+    )
+  } else {
+    return null
+  }
 }
