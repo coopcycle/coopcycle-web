@@ -7,6 +7,8 @@ import { closeProductOptionsModal, addItemWithOptions, addItem } from '../../red
 import ProductOptionsModalContent from './ProductOptionsModalContent'
 import { ProductOptionsModalProvider } from './ProductOptionsModalContext'
 
+import './productDetails.scss'
+
 class ProductOptionsModal extends Component {
 
   constructor(props) {
