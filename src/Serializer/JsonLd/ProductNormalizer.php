@@ -5,7 +5,6 @@ namespace AppBundle\Serializer\JsonLd;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
-use AppBundle\Sylius\Product\ProductOptionInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Locale\Provider\LocaleProvider;
 use Sylius\Component\Product\Model\ProductInterface;
@@ -24,81 +23,6 @@ class ProductNormalizer implements NormalizerInterface, DenormalizerInterface
         private UploaderHelper $uploaderHelper,
         private FilterService $imagineFilter, private LoggerInterface $checkoutLogger)
     {
-    }
-
-    private function normalizeRange($range)
-    {
-        return implode('', [
-            '[',
-            $range->getLower(),
-            ',',
-            $range->isUpperInfinite() ? '' : $range->getUpper(),
-            ']',
-        ]);
-    }
-
-    private function normalizeOptions($options)
-    {
-        $data = [];
-
-        foreach ($options as $option) {
-
-            $option->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
-
-            $payload = [
-                '@type' => 'MenuSection',
-                'name' => $option->getName(),
-                'identifier' => $option->getCode(),
-                'additionalType' => $option->getStrategy(),
-                'additional' => $option->isAdditional(),
-                'hasMenuItem' => $this->normalizeOptionValues($option, $option->getValues()),
-            ];
-
-            if (null !== $option->getValuesRange()) {
-                $payload['valuesRange'] = $this->normalizeRange($option->getValuesRange());
-            }
-
-            $data[] = $payload;
-        }
-
-        return $data;
-    }
-
-    private function normalizeOptionValues(ProductOptionInterface $option, $optionValues)
-    {
-        $data = [];
-
-        foreach ($optionValues as $optionValue) {
-
-            $optionValue->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
-
-            $menuItem = [
-                '@type' => 'MenuItem',
-                'name' => $optionValue->getValue(),
-                'identifier' => $optionValue->getCode(),
-            ];
-
-            $price = 0;
-            switch ($option->getStrategy()) {
-                case ProductOptionInterface::STRATEGY_OPTION_VALUE:
-                    $price = $optionValue->getPrice();
-                    break;
-            }
-
-            $menuItem['offers'] = [
-                '@type' => 'Offer',
-                'price' => $price,
-            ];
-
-            $data[] = $menuItem;
-        }
-
-        // Sort option values by name
-        usort($data, function($a, $b) {
-            return $a['name'] < $b['name'] ? -1 : 1;
-        });
-
-        return $data;
     }
 
     private function getProductImagePath($product, $ratio) {
@@ -131,7 +55,6 @@ class ProductNormalizer implements NormalizerInterface, DenormalizerInterface
             // @see https://github.com/coopcycle/coopcycle-app/issues/286
             $description = !empty(trim($object->getDescription())) ? $object->getDescription() : null;
 
-            $data['@type'] = 'MenuItem';
             $data['name'] = $object->getName();
             $data['description'] = $description;
             $data['identifier'] = $object->getCode();
@@ -141,10 +64,6 @@ class ProductNormalizer implements NormalizerInterface, DenormalizerInterface
                 '@type' => 'Offer',
                 'price' => $defaultVariant->getPrice(),
             ];
-
-            if ($object->hasOptions()) {
-                $data['menuAddOn'] = $this->normalizeOptions($object->getOptions());
-            }
 
             $restrictedDiets = $object->getRestrictedDiets();
             if (count($restrictedDiets) > 0) {
