@@ -9,6 +9,7 @@ import { OptionGroup } from './ProductOptionGroup'
 import ProductInfo from './ProductInfo'
 import ProductQuantity from './ProductQuantity'
 import { useTranslation } from 'react-i18next'
+import { Alert } from 'antd'
 
 const getOffset = (options, index) => {
 
@@ -69,13 +70,19 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
         </div>
       </main>
       <footer className="border-top">
-        <button type="submit" className="btn btn-lg btn-block btn-primary" disabled={ state.disabled }>
-          <span data-product-total className='product-add-to-cart'>
-            <i className="fa fa-shopping-cart"></i>
-            <span>{t('ADD_TO_CART')}</span>
-            <span>{((state.total * state.quantity) / 100).formatMoney()}</span>
-          </span>
-        </button>
+        {state.invalidOptions === 0 ? (
+          <button type="submit" className="btn btn-lg btn-block btn-primary">
+            <span data-product-total className="product-add-to-cart">
+              <i className="fa fa-shopping-cart"></i>
+              <span>{t('ADD_TO_CART')}</span>
+              <span>{((state.total * state.quantity) /
+                100).formatMoney()}</span>
+            </span>
+          </button>
+        ) : (
+          <Alert message={t('CART_PRODUCT_OPTIONS_MANDATORY', { count: state.invalidOptions })}
+                 type="info" showIcon/>)
+        }
       </footer>
     </form>
   )

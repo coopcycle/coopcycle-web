@@ -69,7 +69,7 @@ const ProductOptionsModalProvider = (props) => {
     price: props.price,
     quantity: 1,
     total: props.price,
-    disabled: invalidOptions.length > 0,
+    invalidOptions: invalidOptions.length,
   })
 
   return (
@@ -137,7 +137,7 @@ const useProductOptions = () => {
       ...state,
       options: newOptions,
       total: state.price + _.sumBy(newOptions, 'total'),
-      disabled: invalidOptions.length > 0,
+      invalidOptions: invalidOptions.length,
     })
   }
 
