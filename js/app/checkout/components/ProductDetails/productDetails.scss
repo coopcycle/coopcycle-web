@@ -8,25 +8,21 @@
   overflow: inherit;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 
-  max-height: calc(100% - 30px);
+  width: calc(100% - 2rem);
+  height: calc(100% - 2rem);
 
-  @media (min-width: $screen-lg-min) {
-    width: 40%;
-  }
-  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-    width: 50%;
-  }
-  @media (max-width: $screen-xs-max) {
-    width: calc(100% - 30px);
-    height: calc(100% - 30px);
+  @media (min-width: $screen-sm-min) {
+    width: 500px;
+    height: auto;
+    min-height: 240px;
+    max-height: calc(100% - 2rem);
   }
 
   .product-modal-container {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    height: 100%;
     overflow: hidden;
   }
 
@@ -35,6 +31,7 @@
     overflow: auto;
     display: flex;
     flex-direction: column;
+    padding: 1rem 0 1.5rem 0;
     gap: 1rem;
   }
 
