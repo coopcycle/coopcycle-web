@@ -498,3 +498,16 @@ h1, h2, h3, h4, h5, h6 {
 .leaflet-container {
   font-size: 12px;
 }
+
+.ant-alert-info {
+  background-color: $alert-fill-blue;
+  border-color: $alert-stroke-blue;
+
+  .ant-alert-icon {
+    color: $alert-text-blue;
+  }
+  
+  .ant-alert-message {
+    color: $alert-text-blue;
+  }
+}
