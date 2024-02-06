@@ -5,6 +5,7 @@ export default function ProductBadge ({ type, value }) {
     return (
       <div className="product-badge-wrapper product-badge-allergen">
         <i className="fa fa-warning"></i>
+        &nbsp;
         <small className="product-badge-text">{value}</small>
       </div>
     )
@@ -12,6 +13,7 @@ export default function ProductBadge ({ type, value }) {
     return (
       <div className="product-badge-wrapper product-badge-restricted-diet">
         <i className="fa fa-leaf"></i>
+        &nbsp;
         <small className="product-badge-text">{value}</small>
       </div>
     )
