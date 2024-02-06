@@ -47,6 +47,12 @@
     margin: 0 auto;
   }
 
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
   .product-option-item {
     .radio,
     .checkbox {

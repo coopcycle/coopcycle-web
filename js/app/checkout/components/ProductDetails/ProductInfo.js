@@ -5,39 +5,51 @@ import ProductBadge from './ProductBadge'
 export default function ProductInfo ({ product }) {
   const { t } = useTranslation()
 
-  const badges = []
-
-  if (product.allergens) {
-    product.allergens.forEach(item => {
-      badges.push({
-        type: 'allergen',
-        value: t(`ALLERGEN.${item}`),
-      })
-    })
-  }
-
+  const diets = []
   if (product.suitableForDiet) {
     product.suitableForDiet.forEach(item => {
-      badges.push({
+      diets.push({
         type: 'restricted_diet',
         value: t(`RESTRICTED_DIET.${item.replace('http://schema.org/', '')}`),
       })
     })
   }
 
-  if (product.description || badges.length > 0) {
+  const allergens = []
+  if (product.allergens) {
+    product.allergens.forEach(item => {
+      allergens.push({
+        type: 'allergen',
+        value: t(`ALLERGEN.${item}`),
+      })
+    })
+  }
+
+  if (product.description || diets.length > 0 || allergens.length > 0) {
     return (
-      <div>
+      <div className="product-info">
+        {
+          diets.length > 0 ? (
+            <div className="product-badge-container">
+              {
+                diets.map((badge, index) => (
+                  <ProductBadge key={index} type={badge.type}
+                                value={badge.value}/>
+                ))
+              }
+            </div>
+          ) : null
+        }
         {
           product.description ? (
             <div>{product.description}</div>
           ) : null
         }
         {
-          badges.length > 0 ? (
-            <div className="product-badge-container mt-3">
+          allergens.length > 0 ? (
+            <div className="product-badge-container">
               {
-                badges.map((badge, index) => (
+                allergens.map((badge, index) => (
                   <ProductBadge key={index} type={badge.type}
                                 value={badge.value}/>
                 ))
