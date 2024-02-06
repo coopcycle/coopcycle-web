@@ -21,7 +21,18 @@ export const recurrenceRulesAdapter = createEntityAdapter({
   sortComparer: (a, b) => a.orgName.localeCompare(b.orgName),
 })
 
+// UI selectors
 export const selectCurrentTask = state => state.logistics.ui.currentTask
+export const selectAreToursDroppable = state => state.logistics.ui.areToursDroppable
+export const selectExpandedTourPanelsIds = state => state.logistics.ui.expandedTourPanelsIds
+export const selectTaskListsLoading = state => state.logistics.ui.taskListsLoading
+
+// Settings selectors
+export const selectFiltersSetting = state => state.settings.filters
+export const selectHiddenCouriersSetting = state => state.settings.filters.hiddenCouriers
+
+
+
 export const selectCouriers = state => state.config.couriersList
 export const selectTaskEvents = state => state.taskEvents
 
@@ -118,7 +129,7 @@ export const selectStandaloneTasks = createSelector(
 
 export const selectVisibleTaskIds = createSelector(
   selectAllTasks,
-  state => state.settings.filters,
+  selectFiltersSetting,
   selectSelectedDate,
   (tasks, filters, date) => filter(tasks, task => isTaskVisible(task, filters, date)).map(task => task['@id'])
 )

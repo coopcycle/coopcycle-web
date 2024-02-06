@@ -18,7 +18,7 @@ import Task from './Task'
 
 import Avatar from '../../components/Avatar'
 import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
-import { selectVisibleTaskIds } from '../redux/selectors'
+import { selectFiltersSetting, selectVisibleTaskIds } from '../redux/selectors'
 import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
@@ -252,7 +252,7 @@ const makeMapStateToProps = () => {
       isEmpty: items.length === 0 || visibleTaskIds.length === 0,
       distance: ownProps.distance,
       duration: ownProps.duration,
-      filters: state.settings.filters,
+      filters: selectFiltersSetting(state),
     }
   }
 
