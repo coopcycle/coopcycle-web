@@ -19,21 +19,12 @@
     </div>
     <div class="d-flex" style="max-height: 2em; overflow: hidden">
       <div class="product-badge-container">
-        {% set allergens = [] %}
-        {% if product.allergens is not empty %}
-          {% for allergen in product.allergens %}
-            {% set allergens = allergens|merge([('allergens.' ~ allergen)|trans]) %}
-          {% endfor %}
-        {% endif %}
         {% set restrictedDiets = [] %}
         {% if product.restrictedDiets is not empty %}
           {% for restrictedDiet in product.restrictedDiets %}
             {% set restrictedDiets = restrictedDiets|merge([('restricted_diets.' ~ restrictedDiet)|trans]) %}
           {% endfor %}
         {% endif %}
-        {% for allergen in allergens %}
-          {% include "components/restaurant/product_badge/product_badge.html.twig" with {type: 'allergen', value: allergen} %}
-        {% endfor %}
         {% for restrictedDiet in restrictedDiets %}
           {% include "components/restaurant/product_badge/product_badge.html.twig" with {type: 'restricted_diet', value: restrictedDiet} %}
         {% endfor %}
