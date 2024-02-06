@@ -144,4 +144,10 @@
       @include opacity(.65);
     }
   }
+
+  .product-add-to-cart {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
 }

@@ -8,6 +8,7 @@ import ProductModalHeader from './ProductModalHeader'
 import { OptionGroup } from './ProductOptionGroup'
 import ProductInfo from './ProductInfo'
 import ProductQuantity from './ProductQuantity'
+import { useTranslation } from 'react-i18next'
 
 const getOffset = (options, index) => {
 
@@ -28,6 +29,8 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
 
   const [ state ] = useContext(ProductOptionsModalContext)
   const offsets = getOffsets(options)
+
+  const { t } = useTranslation()
 
   // Scroll to the next option
   // useEffect(() => {
@@ -67,7 +70,11 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
       </main>
       <footer className="border-top">
         <button type="submit" className="btn btn-lg btn-block btn-primary" disabled={ state.disabled }>
-          <span data-product-total>{ ((state.total * state.quantity) / 100).formatMoney() }</span>
+          <span data-product-total className='product-add-to-cart'>
+            <i className="fa fa-shopping-cart"></i>
+            <span>{t('ADD_TO_CART')}</span>
+            <span>{((state.total * state.quantity) / 100).formatMoney()}</span>
+          </span>
         </button>
       </footer>
     </form>
