@@ -704,7 +704,14 @@ Feature: Manage restaurants
             "code":@string@,
             "name":@string@,
             "description":null,
-            "enabled":@boolean@
+            "enabled":@boolean@,
+            "identifier":@string@,
+            "reusablePackagingEnabled":@boolean@,
+            "offers": {
+              "@type":"Offer",
+              "price":@integer@
+            },
+            "images":@array@
           },
           {
             "@id":"@string@.startsWith('/api/products')",
@@ -713,7 +720,14 @@ Feature: Manage restaurants
             "code":@string@,
             "name":@string@,
             "description":null,
-            "enabled":@boolean@
+            "enabled":@boolean@,
+            "identifier":@string@,
+            "reusablePackagingEnabled":@boolean@,
+            "offers": {
+              "@type":"Offer",
+              "price":@integer@
+            },
+            "images":@array@
           }
         ],
         "hydra:totalItems":2
@@ -831,7 +845,14 @@ Feature: Manage restaurants
             "code":@string@,
             "name":@string@,
             "description":null,
-            "enabled":@boolean@
+            "enabled":@boolean@,
+            "identifier":@string@,
+            "reusablePackagingEnabled":@boolean@,
+            "offers": {
+              "@type":"Offer",
+              "price":@integer@
+            },
+            "images":@array@
           }
         ],
         "hydra:totalItems":1
