@@ -364,11 +364,18 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-// Prevent scroll on html/body
+.ReactModal__Html--open {
+}
+
+// Prevent scroll
 // https://github.com/reactjs/react-modal/blob/master/docs/styles/classes.md#for-the-documentbody-and-html-tag
-.ReactModal__Html--open,
 .ReactModal__Body--open {
   overflow: hidden;
+
+  // FIXME; use smth more advanced to properly calculate the scrollbar width
+  // for different browsers and operating systems
+  // An attempt to prevent the content from shifting when the scrollbar is removed (due to overflow: hidden)
+  padding-right: 14px;
 }
 
 .text-monospace {
@@ -506,7 +513,7 @@ h1, h2, h3, h4, h5, h6 {
   .ant-alert-icon {
     color: $alert-text-blue;
   }
-  
+
   .ant-alert-message {
     color: $alert-text-blue;
   }
