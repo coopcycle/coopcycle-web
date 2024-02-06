@@ -29,6 +29,11 @@ export default function ProductInfo ({ product }) {
     return (
       <div className="product-info">
         {
+          product.description ? (
+            <div>{product.description}</div>
+          ) : null
+        }
+        {
           diets.length > 0 ? (
             <div className="product-badge-container">
               {
@@ -38,11 +43,6 @@ export default function ProductInfo ({ product }) {
                 ))
               }
             </div>
-          ) : null
-        }
-        {
-          product.description ? (
-            <div>{product.description}</div>
           ) : null
         }
         {

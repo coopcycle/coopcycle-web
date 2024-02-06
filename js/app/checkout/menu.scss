@@ -183,11 +183,14 @@ $item-height: 9.5em;
 
 .product-badge-text {
   display: block;
-  max-width: 80px; // FIXME: ideally we should show the full text
   overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
   font-weight: bold;
+}
+
+.product-badge-text-compact {
+  max-width: 80px; // FIXME: ideally we should show the full text
+  text-overflow: ellipsis;
 }
 
 .menu-item .menu-item-price {
