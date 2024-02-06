@@ -350,15 +350,18 @@ h1, h2, h3, h4, h5, h6 {
   left: 50%;
   right: auto;
   bottom: auto;
-  border: 1px solid rgb(204, 204, 204);
-  background: rgb(255, 255, 255);
   overflow: auto;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 4px 64px 0 #0000000D;
+  background: rgb(255, 255, 255);
   outline: none;
-  padding: 20px;
+  padding: 1rem;
   margin-right: -50%;
   transform: translate(-50%, -50%);
-  // min-width: 50%;
+
+  @media (min-width: $screen-sm-min) {
+    padding: 1.5rem;
+  }
 }
 
 // Prevent scroll on html/body
