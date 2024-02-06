@@ -8,8 +8,8 @@
       data-product="{{ product|coopcycle_normalize('AppBundle\\Entity\\Sylius\\Product')|json_encode|e('html_attr') }}"
       data-product-images="{{ product_images|json_encode|e('html_attr') }}"
       data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
-{#      FIXME: data-product-options format is slightly different from menuAddOns field in data-product object #}
-{#      adjust code on the JS side to read from data-product and remove data-product-options#}
+{#      FIXME: data-product-options format is slightly different from the format returned by the API #}
+{#      switch to the API format to be able to shared code with the mobile app #}
       data-product-options="{{ product.options|coopcycle_normalize('AppBundle\\Entity\\Sylius\\ProductOption', ['product_option'], 'json')|json_encode|e('html_attr') }}">
       {% include 'components/restaurant/product/menu_item_inner.html.twig' %}
       {% if product.hasOptions() %}
