@@ -13,6 +13,84 @@ import { useContextMenu } from 'react-contexify'
 import { getDroppableListStyle } from '../utils'
 import { selectAreToursDroppable, selectExpandedTourPanelsIds } from '../redux/selectors'
 
+const RenderEditNameForm = ({children, tour}) => {
+
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
+
+  const [tourName, setTourName] = useState(tour.name)
+  const [toggleInputForName, setToggleInputForName] = useState(false)
+
+  const onEditSubmitted = async (e) => {
+    e.preventDefault()
+    $('.task__draggable').LoadingOverlay('show', {image: false})
+    let _tour = Object.assign({}, tour, {name : tourName})
+    await dispatch(modifyTour(_tour, tour.items))
+    setToggleInputForName(false)
+    $('.task__draggable').LoadingOverlay('hide')
+  }
+  const onEditCancelled = (e) => {
+      e.preventDefault()
+      setToggleInputForName(false)
+    }
+  const onConfirmDelete = async (e) => {
+        e.preventDefault()
+        $('.task__draggable').LoadingOverlay('show', {image: false})
+        await dispatch(deleteTour(tour, tour.items))
+        $('.task__draggable').LoadingOverlay('hide')
+      }
+
+  return (<>{toggleInputForName ?
+    <form onSubmit={(e) => onEditSubmitted(e)} className="d-flex flex-grow-1">
+      <input autoFocus type="text" name="group-name" className="mx-2 flex-grow-1 group__editable"
+        value={tourName}
+        onChange={ (e) => setTourName(e.target.value) }
+        onKeyDown={e => e.key === 'Escape' ? onEditCancelled(e) : null }>
+      </input>
+      <div className="flex-grow-0">
+        <a role="button" href="#" className="text-reset mr-3"
+          onClick={ e =>  onEditSubmitted(e)}
+          title={t("CHANGE_TOUR_NAME")}
+          >
+          <i className="fa fa-check"></i>
+        </a>
+        <a role="button" href="#" className="text-reset flex-grow-0"
+          onClick={ e => onEditCancelled(e) }>
+          <i className="fa fa-times"></i>
+        </a>
+      </div>
+    </form> :
+    <>
+      { children }
+      <a role="button" href="#" className="text-reset mr-2"
+        onClick={ () => setToggleInputForName(true) }>
+        <i className="fa fa-pencil"></i>
+      </a>
+      { isTourAssigned(tour) ?  (
+          <a
+            onClick={() => dispatch(unassignTasks(tourIsAssignedTo(tour), tour.items))}
+            title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
+            className="text-reset mr-2"
+          >
+            <i className="fa fa-times"></i>
+          </a>)
+          : <Popconfirm
+              placement="left"
+              title={ t('ADMIN_DASHBOARD_DELETE_TOUR_CONFIRM') }
+              onConfirm={ onConfirmDelete }
+              okText={ t('CROPPIE_CONFIRM') }
+              cancelText={ t('ADMIN_DASHBOARD_CANCEL') }
+              >
+              <a role="button" href="#" className="text-reset"
+                onClick={ e => e.preventDefault() }>
+                <i className="fa fa-trash"></i>
+              </a>
+          </Popconfirm>
+      }
+      </>
+  }</>)
+}
+
 
 const Tour = ({ tour }) => {
 
@@ -21,54 +99,9 @@ const Tour = ({ tour }) => {
 
   const dispatch = useDispatch()
 
-  const { t } = useTranslation()
-  const { show } = useContextMenu({
-          id: 'dashboard',
-        })
-  const [toggleInputForName, setToggleInputForName] = useState(false)
-  const [tourName, setTourName] = useState(tour.name)
-  const onEditSubmitted = async (e) => {
-          e.preventDefault()
-          $('.task__draggable').LoadingOverlay('show', {image: false})
-          let _tour = Object.assign({}, tour, {name : tourName})
-          await dispatch(modifyTour(_tour, tour.items))
-          setToggleInputForName(false)
-          $('.task__draggable').LoadingOverlay('hide')
-        }
-  const onEditCancelled = (e) => {
-          e.preventDefault()
-          setToggleInputForName(false)
-        }
-  const renderEditNameForm = () => {
-          return (
-            <form onSubmit={(e) => onEditSubmitted(e)} className="d-flex flex-grow-1">
-              <input autoFocus type="text" name="group-name" className="mx-2 flex-grow-1 group__editable"
-                value={tourName}
-                onChange={ (e) => setTourName(e.target.value) }
-                onKeyDown={e => e.key === 'Escape' ? onEditCancelled(e) : null }>
-              </input>
-              <div className="flex-grow-0">
-                <a role="button" href="#" className="text-reset mr-3"
-                  onClick={ e =>  onEditSubmitted(e)}
-                  title={t("CHANGE_TOUR_NAME")}
-                  >
-                  <i className="fa fa-check"></i>
-                </a>
-                <a role="button" href="#" className="text-reset flex-grow-0"
-                  onClick={ e => onEditCancelled(e) }>
-                  <i className="fa fa-times"></i>
-                </a>
-              </div>
-            </form>
-          )
-        }
-    const onConfirmDelete = async (e) => {
-          e.preventDefault()
-          $('.task__draggable').LoadingOverlay('show', {image: false})
-          await dispatch(deleteTour(tour, tour.items))
-          $('.task__draggable').LoadingOverlay('hide')
-        }
-    const isExpanded = expandedTourPanelsIds.includes(tour['@id'])
+  const { show } = useContextMenu({id: 'dashboard'})
+
+  const isExpanded = expandedTourPanelsIds.includes(tour['@id'])
 
   return (
     <div className="panel panel-default panel--tour nomargin task__draggable" onContextMenu={(e) => show(e, {
@@ -77,44 +110,11 @@ const Tour = ({ tour }) => {
       <div className="panel-heading" role="tab">
         <h4 className="panel-title d-flex align-items-center">
           <i className="fa fa-repeat flex-grow-0"></i>
-            {
-              !toggleInputForName &&
-              <>
-                <a role="button" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))} className="ml-2 flex-grow-1 text-truncate">
-                  { tourName } <span className="badge">{ tour.items.length }</span>
-                </a>
-                <div className="d-flex flex-grow-0">
-                      <a role="button" href="#" className="text-reset mr-2"
-                        onClick={ () => setToggleInputForName(true) }>
-                        <i className="fa fa-pencil"></i>
-                      </a>
-                      { isTourAssigned(tour) ?  (
-                          <a
-                            onClick={() => dispatch(unassignTasks(tourIsAssignedTo(tour), tour.items))}
-                            title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
-                            className="text-reset mr-2"
-                          >
-                            <i className="fa fa-times"></i>
-                          </a>)
-                          : <Popconfirm
-                              placement="left"
-                              title={ t('ADMIN_DASHBOARD_DELETE_TOUR_CONFIRM') }
-                              onConfirm={ onConfirmDelete }
-                              okText={ t('CROPPIE_CONFIRM') }
-                              cancelText={ t('ADMIN_DASHBOARD_CANCEL') }
-                              >
-                              <a role="button" href="#" className="text-reset"
-                                onClick={ e => e.preventDefault() }>
-                                <i className="fa fa-trash"></i>
-                              </a>
-                          </Popconfirm>
-                     }
-                </div>
-            </>
-            }
-            {
-              toggleInputForName && renderEditNameForm()
-            }
+            <RenderEditNameForm tour={tour}>
+              <a role="button" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))} className="ml-2 flex-grow-1 text-truncate">
+                { tour.name } <span className="badge">{ tour.items.length }</span>
+              </a>
+            </RenderEditNameForm>
         </h4>
       </div>
       <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">

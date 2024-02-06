@@ -142,7 +142,7 @@ class UnassignedTasks extends React.Component {
           <Droppable droppableId="unassigned">
             {(provided) => (
               <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
-                { !this.props.toursEnabled && _.map(this.props.groups, (group, index) => {
+                { !this.props.toursEnabled ? _.map(this.props.groups, (group, index) => {
                   return (
                     <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
                       {(provided) => (
@@ -161,7 +161,7 @@ class UnassignedTasks extends React.Component {
                       )}
                     </Draggable>
                   )
-                })}
+                }) : <></>}
 
                 <StandaloneTasksWithConnect
                   tasks={ this.props.standaloneTasks }
