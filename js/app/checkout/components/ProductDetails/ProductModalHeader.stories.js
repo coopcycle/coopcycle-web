@@ -3,6 +3,7 @@ import ProductModalHeader from './ProductModalHeader'
 
 export default {
   title: 'Foodtech/3. Product Details/2. Header',
+  tags: ['autodocs'],
   component: ProductModalHeader,
   decorators: [
     (Story) => (

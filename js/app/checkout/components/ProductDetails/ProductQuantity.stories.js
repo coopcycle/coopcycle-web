@@ -3,8 +3,10 @@ import ProductQuantity from './ProductQuantity'
 import { ProductOptionsModalProvider } from './ProductOptionsModalContext'
 
 export default {
-  title: 'Foodtech/3. Product Details/2. Quantity',
+  title: 'Foodtech/3. Product Details/4. Quantity',
+  tags: ['autodocs'],
   component: ProductQuantity,
+
   decorators: [
     (Story, context) => (
       <div className="ReactModal__Content--product-options">
