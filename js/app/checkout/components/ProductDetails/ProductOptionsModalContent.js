@@ -51,7 +51,7 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
       action={ formAction }
       onSubmit={ onSubmit }
       ref={ ref }
-      className="product-modal-container p-4">
+      className="product-modal-container">
       <ProductModalHeader name={ product.name }
         onClickClose={ onClickClose } />
       <main>
