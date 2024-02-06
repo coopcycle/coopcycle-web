@@ -10,7 +10,7 @@ export default function ProductQuantity () {
     <div className="quantity-input-group">
       <span className="quantity-input-group__price">{(price /
         100).formatMoney()}</span>
-      <button className="quantity-input-group__decrement" type="button"
+      <button className="quantity-decrement" type="button"
               onClick={() => {
                 if (quantity > 1) {
                   setQuantity(quantity - 1)
@@ -22,7 +22,7 @@ export default function ProductQuantity () {
              data-product-quantity
              onChange={e => setQuantity(
                parseInt(e.currentTarget.value, 10))}/>
-      <button className="quantity-input-group__increment" type="button"
+      <button className="quantity-increment" type="button"
               onClick={() => setQuantity(quantity + 1)}>
         <div>+</div>
       </button>

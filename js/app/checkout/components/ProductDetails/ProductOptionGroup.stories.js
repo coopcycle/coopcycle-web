@@ -1,24 +1,28 @@
 import React from 'react'
 import { OptionGroup } from './ProductOptionGroup'
 import { ProductOptionsModalProvider } from './ProductOptionsModalContext'
+import i18n from '../../../i18n'
+import { I18nextProvider } from 'react-i18next'
 
 export default {
   title: 'Foodtech/3. Product Details/3. Options',
   component: OptionGroup,
   decorators: [
     (Story, context) => (
-      <div className="ReactModal__Content--product-options">
-        <ProductOptionsModalProvider
-          options={context.args.options}
-          price={context.args.price}>
+      <I18nextProvider i18n={i18n}>
+        <div className="ReactModal__Content--product-options">
+          <ProductOptionsModalProvider
+            options={context.args.options}
+            price={context.args.price}>
 
-          <div className="product-modal-container">
-            {/* 👇 Decorators in Storybook also accept a function. Replace <Story/> with Story() to enable it  */}
-            <Story/>
-          </div>
+            <div className="product-modal-container">
+              {/* 👇 Decorators in Storybook also accept a function. Replace <Story/> with Story() to enable it  */}
+              <Story/>
+            </div>
 
-        </ProductOptionsModalProvider>
-      </div>
+          </ProductOptionsModalProvider>
+        </div>
+      </I18nextProvider>
     ),
   ],
 }
@@ -46,6 +50,12 @@ export const FreeSingleChoiceOption = {
             'code': 'e0474ed9-1482-4561-9c71-12c5ad014b79',
             'enabled': true,
             'value': 'Vegetariana',
+          },
+          {
+            'price': 0,
+            'code': 'e0474ed9-1482-4561-9c71-12c5ad014b79',
+            'enabled': true,
+            'value': 'Loren ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, vestibulum ligula sit amet, posuere urna.',
           }],
         'name': 'Vegana o Vegetariana',
       },
@@ -112,7 +122,7 @@ export const PaidSingleChoiceOption = {
             'price': 50,
             'code': '185a42a4-74fd-37e5-b3a9-5aa0874d48be',
             'enabled': true,
-            'value': 'Salade de chou',
+            'value': 'Loren ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, vestibulum ligula sit amet, posuere urna.',
           }],
         'name': 'Accompagnement',
       },
@@ -128,7 +138,7 @@ export const FreeAdditionalOption = {
       {
         'strategy': 'free',
         'additional': true,
-        'valuesRange': { 'lower': '0', 'upper': null, 'isUpperInfinite': true },
+        'valuesRange': { 'lower': '0', 'upper': 5, 'isUpperInfinite': false },
         'code': 'fc223477-46b2-3c24-be12-1b9d4812e43e',
         'values': [
           {
@@ -141,7 +151,7 @@ export const FreeAdditionalOption = {
             'price': 0,
             'code': 'df480792-d5d2-3a87-9aa9-b5bbbdf947ad',
             'enabled': true,
-            'value': 'Th\u00e9 vert',
+            'value': 'Loren ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, vestibulum ligula sit amet, posuere urna.',
           },
           {
             'price': 0,
@@ -153,7 +163,6 @@ export const FreeAdditionalOption = {
       },
   },
 }
-
 
 export const PaidAdditionalOption = {
   args: {
@@ -177,7 +186,7 @@ export const PaidAdditionalOption = {
             'price': 100,
             'code': 'df480792-d5d2-3a87-9aa9-b5bbbdf947ad',
             'enabled': true,
-            'value': 'Th\u00e9 vert',
+            'value': 'Loren ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec purus feugiat, vestibulum ligula sit amet, posuere urna.',
           },
           {
             'price': 100,
