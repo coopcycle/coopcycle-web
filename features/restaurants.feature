@@ -711,8 +711,6 @@ Feature: Manage restaurants
               "@type":"Offer",
               "price":@integer@
             },
-            "suitableForDiet":@array@,
-            "allergens":@array@,
             "images":@array@
           },
           {
