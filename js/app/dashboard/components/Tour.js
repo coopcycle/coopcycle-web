@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { connect } from 'react-redux'
+import {useDispatch, useSelector } from 'react-redux'
 import { withTranslation, useTranslation } from 'react-i18next'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 import _ from 'lodash'
@@ -11,10 +11,15 @@ import { isTourAssigned, tourIsAssignedTo } from '../../../shared/src/logistics/
 import classNames from 'classnames'
 import { useContextMenu } from 'react-contexify'
 import { getDroppableListStyle } from '../utils'
+import { selectAreToursDroppable, selectExpandedTourPanelsIds } from '../redux/selectors'
 
 
-const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, expandedTourPanelsIds, modifyTour, deleteTour, toggleTourPanelExpanded }) => {
+const Tour = ({ tour }) => {
 
+  const isDroppable = useSelector(selectAreToursDroppable)
+  const expandedTourPanelsIds = useSelector(selectExpandedTourPanelsIds)
+
+  const dispatch = useDispatch()
 
   const { t } = useTranslation()
   const { show } = useContextMenu({
@@ -26,7 +31,7 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, expandedTo
           e.preventDefault()
           $('.task__draggable').LoadingOverlay('show', {image: false})
           let _tour = Object.assign({}, tour, {name : tourName})
-          await modifyTour(_tour, tour.items)
+          await dispatch(modifyTour(_tour, tour.items))
           setToggleInputForName(false)
           $('.task__draggable').LoadingOverlay('hide')
         }
@@ -60,7 +65,7 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, expandedTo
     const onConfirmDelete = async (e) => {
           e.preventDefault()
           $('.task__draggable').LoadingOverlay('show', {image: false})
-          await deleteTour(tour, tour.items)
+          await dispatch(deleteTour(tour, tour.items))
           $('.task__draggable').LoadingOverlay('hide')
         }
     const isExpanded = expandedTourPanelsIds.includes(tour['@id'])
@@ -75,7 +80,7 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, expandedTo
             {
               !toggleInputForName &&
               <>
-                <a role="button" onClick={() => toggleTourPanelExpanded(tour['@id'])} className="ml-2 flex-grow-1 text-truncate">
+                <a role="button" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))} className="ml-2 flex-grow-1 text-truncate">
                   { tourName } <span className="badge">{ tour.items.length }</span>
                 </a>
                 <div className="d-flex flex-grow-0">
@@ -85,7 +90,7 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, expandedTo
                       </a>
                       { isTourAssigned(tour) ?  (
                           <a
-                            onClick={() => unassignTasks(tourIsAssignedTo(tour), tour.items)}
+                            onClick={() => dispatch(unassignTasks(tourIsAssignedTo(tour), tour.items))}
                             title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
                             className="text-reset mr-2"
                           >
@@ -141,7 +146,7 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, expandedTo
                           <Task
                             key={ task['@id'] }
                             task={ task }
-                            onRemove={ (taskToRemove) => removeTaskFromTour(tour, taskToRemove, tourIsAssignedTo(tour)) }
+                            onRemove={ (taskToRemove) => dispatch(removeTaskFromTour(tour, taskToRemove, tourIsAssignedTo(tour)))}
                             />
                         </div>
                       )}
@@ -157,23 +162,4 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, expandedTo
   )
 }
 
-function mapStateToProps (state) {
-
-    return {
-        isDroppable: state.logistics.ui.areToursDroppable,
-        expandedTourPanelsIds: state.logistics.ui.expandedTourPanelsIds,
-    }
-  }
-
-function mapDispatchToProps(dispatch) {
-
-  return {
-    removeTaskFromTour: (tour, task, username) => dispatch(removeTaskFromTour(tour, task, username)),
-    modifyTour: (tour, tasks) => dispatch(modifyTour(tour, tasks)),
-    deleteTour: (tour, tasks) => dispatch(deleteTour(tour, tasks)),
-    unassignTasks: (tour, tasks) => dispatch(unassignTasks(tour, tasks)),
-    toggleTourPanelExpanded: (tourId) => dispatch(toggleTourPanelExpanded(tourId))
-  }
-}
-  
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Tour))
+export default withTranslation()(Tour)
