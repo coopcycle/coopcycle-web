@@ -16,25 +16,25 @@ import { getDroppableListStyle } from '../utils'
 const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, expandedTourPanelsIds, modifyTour, deleteTour, toggleTourPanelExpanded }) => {
 
 
-  const { t } = useTranslation(),
-        { show } = useContextMenu({
+  const { t } = useTranslation()
+  const { show } = useContextMenu({
           id: 'dashboard',
-        }),
-        [toggleInputForName, setToggleInputForName] = useState(false),
-        [tourName, setTourName] = useState(tour.name),
-        onEditSubmitted = async (e) => {
+        })
+  const [toggleInputForName, setToggleInputForName] = useState(false)
+  const [tourName, setTourName] = useState(tour.name)
+  const onEditSubmitted = async (e) => {
           e.preventDefault()
           $('.task__draggable').LoadingOverlay('show', {image: false})
           let _tour = Object.assign({}, tour, {name : tourName})
           await modifyTour(_tour, tour.items)
           setToggleInputForName(false)
           $('.task__draggable').LoadingOverlay('hide')
-        },
-        onEditCancelled = (e) => {
+        }
+  const onEditCancelled = (e) => {
           e.preventDefault()
           setToggleInputForName(false)
-        },
-        renderEditNameForm = () => {
+        }
+  const renderEditNameForm = () => {
           return (
             <form onSubmit={(e) => onEditSubmitted(e)} className="d-flex flex-grow-1">
               <input autoFocus type="text" name="group-name" className="mx-2 flex-grow-1 group__editable"
@@ -56,14 +56,14 @@ const Tour = ({ tour, removeTaskFromTour, unassignTasks, isDroppable, expandedTo
               </div>
             </form>
           )
-        },
-        onConfirmDelete = async (e) => {
+        }
+    const onConfirmDelete = async (e) => {
           e.preventDefault()
           $('.task__draggable').LoadingOverlay('show', {image: false})
           await deleteTour(tour, tour.items)
           $('.task__draggable').LoadingOverlay('hide')
-        },
-        isExpanded = expandedTourPanelsIds.includes(tour['@id'])
+        }
+    const isExpanded = expandedTourPanelsIds.includes(tour['@id'])
 
   return (
     <div className="panel panel-default panel--tour nomargin task__draggable" onContextMenu={(e) => show(e, {
