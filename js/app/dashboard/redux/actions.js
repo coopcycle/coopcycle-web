@@ -341,11 +341,8 @@ export function modifyTaskList(username, tasks, updateTourUI=null) {
       console.error(error)
     }
 
-    // return a promise so we can chain after dispatching this function
-    return new Promise((resolve) => {
-      dispatch(modifyTaskListRequestSuccess(response.data))
-      resolve(response.data)
-    })
+    dispatch(modifyTaskListRequestSuccess(response.data))
+    return response.data
   }
 }
 
@@ -1514,17 +1511,15 @@ export function modifyTour(tour, tasks, isTourUIAlreadyUpdated=false) {
         dispatch(modifyTourRequestError(tour))
     }
 
-    return new Promise((resolve) => {
-        let _tour = response.data
-        // TODO: do this in the backend?
-        _tour.itemIds = _tour.items.map(item => item['@id'])
-        
-        dispatch(updateTour(_tour))
-        dispatch(modifyTourRequestSuccess(_tour, tasks))
-        dispatch(enableDropInTours())
+    let _tour = response.data
+    // TODO: do this in the backend?
+    _tour.itemIds = _tour.items.map(item => item['@id'])
+    
+    dispatch(updateTour(_tour))
+    dispatch(modifyTourRequestSuccess(_tour, tasks))
+    dispatch(enableDropInTours())
 
-        return resolve(_tour)
-    })
+    return _tour
   }
 }
 
