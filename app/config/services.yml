@@ -1231,19 +1231,18 @@ services:
 
   woopit.grant_type:
     class: BenjaminFavre\OAuthHttpClient\GrantType\ClientCredentialsGrantType
-    arguments: [
-      '@woopit.http_client',
-      'https://connect.%env(WOOPIT_HOST)%/api/oauth/token',
-      '%env(WOOPIT_CLIENT_ID)%',
-      '%env(WOOPIT_CLIENT_SECRET)%'
-    ]
+    arguments:
+      - '@woopit.http_client'
+      - 'https://connect.%env(WOOPIT_HOST)%/api/oauth/token'
+      - '%env(WOOPIT_CLIENT_ID)%'
+      - '%env(WOOPIT_CLIENT_SECRET)%'
+
 
   woopit.oauth_http_client:
       class: BenjaminFavre\OAuthHttpClient\OAuthHttpClient
-      arguments: [
-        '@woopit.http_client',
-        '@woopit.grant_type'
-      ]
+      arguments:
+        - '@woopit.http_client'
+        - '@woopit.grant_type'
 
   AppBundle\Dabba\Client:
     arguments:
