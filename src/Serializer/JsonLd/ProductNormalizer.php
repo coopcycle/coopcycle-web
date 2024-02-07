@@ -5,7 +5,6 @@ namespace AppBundle\Serializer\JsonLd;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
-use Psr\Log\LoggerInterface;
 use Sylius\Component\Locale\Provider\LocaleProvider;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
@@ -21,7 +20,7 @@ class ProductNormalizer implements NormalizerInterface, DenormalizerInterface
         private LocaleProvider $localeProvider,
         private ProductVariantResolverInterface $variantResolver,
         private UploaderHelper $uploaderHelper,
-        private FilterService $imagineFilter, private LoggerInterface $checkoutLogger)
+        private FilterService $imagineFilter)
     {
     }
 
@@ -101,9 +100,6 @@ class ProductNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function supportsNormalization($data, $format = null)
     {
-        $this->checkoutLogger->info('Supports normalization', [
-            'data' => $data,
-        ]);
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof ProductInterface;
     }
 
