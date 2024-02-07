@@ -2,7 +2,6 @@
   "title": "Foodtech/2. Product/1. Card",
   "parameters": {
     "server": {
-      "url": "http://localhost/storybook/component",
       "id": "product"
     }
   },
