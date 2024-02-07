@@ -17,8 +17,8 @@
         <small class="menu-item-description">{{ 'restaurant.unavailable'|trans }}</small>
       {% endif %}
     </div>
-    <div class="d-flex" style="max-height: 2em; overflow: hidden">
-      <div class="product-badge-container">
+    <div class="d-flex overflow-hidden">
+      <div class="product-badge-container product-badge-container-compact">
         {% set restrictedDiets = [] %}
         {% if product.restrictedDiets is not empty %}
           {% for restrictedDiet in product.restrictedDiets %}
