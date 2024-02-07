@@ -1308,3 +1308,8 @@ services:
       $pixabayApiKey: '%env(PIXABAY_API_KEY)%'
 
   AppBundle\Utils\RestaurantDecorator: ~
+
+  AppBundle\Utils\SlingAPIServiceFactory: ~
+  AppBundle\Utils\SlingAPIService:
+    factory: ['@AppBundle\Utils\SlingAPIServiceFactory', 'create']
+    arguments: ['@session']

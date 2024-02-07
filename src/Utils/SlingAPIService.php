@@ -5,7 +5,7 @@ namespace AppBundle\Utils;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
-class SlingApiService
+class SlingAPIService
 {
     private Client $client;
     private string $baseUrl = 'https://api.getsling.com/v1';
@@ -26,8 +26,8 @@ class SlingApiService
      */
     public function fetchData(string $url): array
     {
-            $response = $this->client->request('GET', $url);
-            return json_decode($response->getBody()->getContents(), true);
+        $response = $this->client->request('GET', $url);
+        return json_decode($response->getBody()->getContents(), true);
     }
 
     /**
