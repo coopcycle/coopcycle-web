@@ -24,9 +24,9 @@
                 address: restaurant.address.streetAddress,
                 fulfillment_timing_url: path('restaurant_fulfillment_timing', { id: restaurant.id }),
                 should_show_pre_order: should_show_pre_order(restaurant),
-				tags: restaurant_tags(restaurant),
-				badges: restaurant_badges(restaurant),
-				banner_image: coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner')|placeholder_image(filter='restaurant_banner', obj=restaurant)
+                tags: restaurant_tags(restaurant),
+                badges: restaurant_badges(restaurant),
+                banner_image: coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner')|placeholder_image(filter='restaurant_banner', obj=restaurant)
               } %}
 						</div>
 					{% endfor %}
