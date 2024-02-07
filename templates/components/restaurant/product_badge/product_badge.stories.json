@@ -14,10 +14,6 @@
   "tags": ["autodocs"],
   "stories": [
     {
-      "name": "Default",
-      "args": { "type": "", "value": "Default badge" }
-    },
-    {
       "name": "Allergen",
       "args": { "type": "allergen", "value": "Soja" }
     },
@@ -27,7 +23,7 @@
     },
     {
       "name": "Very long text",
-      "args": { "type": "", "value": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Nulla nec purus feugiat vestibulum mi id facilisis libero. Sed non sapien nec nunc aliquam ultrices. Nulla facilisi. Nulla nec purus feugiat vestibulum mi id facilisis libero. Sed non sapien nec nunc aliquam ultrices. Nulla facilisi" }
+      "args": { "type": "restricted_diet", "value": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Nulla nec purus feugiat vestibulum mi id facilisis libero. Sed non sapien nec nunc aliquam ultrices. Nulla facilisi. Nulla nec purus feugiat vestibulum mi id facilisis libero. Sed non sapien nec nunc aliquam ultrices. Nulla facilisi" }
     }
   ]
 }
