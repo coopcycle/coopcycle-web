@@ -14,8 +14,9 @@
       "args": {
         "restaurant_id": "2",
         "product": {
-          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
           "currentLocale": "en",
+          "id": 1,
           "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
           "name": "Empanadilla De Bonito",
           "description": "",
@@ -34,8 +35,9 @@
       "args": {
         "restaurant_id": "2",
         "product": {
-          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
           "currentLocale": "en",
+          "id": 1,
           "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
           "name": "COCA-COLA",
           "description": "500 mL",
@@ -54,8 +56,9 @@
       "args": {
         "restaurant_id": "2",
         "product": {
-          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
           "currentLocale": "en",
+          "id": 1,
           "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
           "name": "Poke Bowl",
           "description": "",
@@ -76,8 +79,9 @@
       "args": {
         "restaurant_id": "2",
         "product": {
-          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
           "currentLocale": "en",
+          "id": 1,
           "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
           "name": "Poke Bowl",
           "description": "Lorem ipsum dolor sit amet.",
@@ -98,8 +102,9 @@
       "args": {
         "restaurant_id": "2",
         "product": {
-          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
           "currentLocale": "en",
+          "id": 1,
           "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
           "name": "Menu Duobox Gourmet",
           "description": "34 pièces.\n2 sushis thon, 2 sushis saumon cheese, 6 Salmon roll cheese, 6 California chèvre et miel, 6 greenroll thon, 6 California saumon fumé cheese et 8 tatakis roll, servi avec 2 salades de choux et 2 boissons au choix \"hors alcool\".",
@@ -120,8 +125,9 @@
       "args": {
         "restaurant_id": "2",
         "product": {
-          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
           "currentLocale": "en",
+          "id": 1,
           "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
           "name": "Pizza",
           "description": "Mozzarella (fior di latte), parmesan 24 mois, gorgonzola, taleggio (fromage de vache), mascarpone, origan.",
@@ -160,8 +166,9 @@
       "args": {
         "restaurant_id": "2",
         "product": {
-          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
           "currentLocale": "en",
+          "id": 1,
           "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
           "name": "Burger",
           "description": "Mozzarella (fior di latte), parmesan 24 mois, gorgonzola, taleggio (fromage de vache), mascarpone, origan.",
@@ -200,8 +207,9 @@
       "args": {
         "restaurant_id": "2",
         "product": {
-          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
           "currentLocale": "en",
+          "id": 1,
           "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
           "name": "DOC ORVIETO CLASSICO \"CAMPOGRANDE\" - SANTA CRISTINA Cépage \"Procanico, Grechetto, Verdello, Druppeggio, Malvasia\"",
           "description": "",
@@ -220,8 +228,9 @@
       "args": {
         "restaurant_id": "2",
         "product": {
-          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
           "currentLocale": "en",
+          "id": 1,
           "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
           "name": "Pizza",
           "variants": [
@@ -250,8 +259,9 @@
       "args": {
         "restaurant_id": "2",
         "product": {
-          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
           "currentLocale": "en",
+          "id": 1,
           "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
           "name": "Pizza",
           "variants": [
@@ -280,8 +290,9 @@
       "args": {
         "restaurant_id": "2",
         "product": {
-          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
           "currentLocale": "en",
+          "id": 1,
           "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
           "name": "Pizza",
           "variants": [
@@ -300,8 +311,9 @@
       "args": {
         "restaurant_id": "2",
         "product": {
-          "className": "AppBundle\\Entity\\Sylius\\Product",
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
           "currentLocale": "en",
+          "id": 1,
           "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
           "name": "Pizza",
           "enabled": false,
