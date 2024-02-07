@@ -183,6 +183,11 @@ new Swiper('.swiper', {
       spaceBetween: 2.5,
       slidesPerGroup: 3,
     },
+    1600: {
+      slidesPerView: 4,
+      spaceBetween: 2.5,
+      slidesPerGroup: 3,
+    },
   },
   observer: true, // to be initialized properly inside a hidden container
   observeParents: true

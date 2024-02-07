@@ -73,6 +73,27 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
 }
 
+@mixin mixin-container-full-width() {
+  width: 100%;
+  padding-right: 4rem;
+  padding-left: 4rem;
+  margin-right: auto;
+  margin-left: auto;
+  @include clearfix;
+}
+
+.container--full-width {
+  @include mixin-container-full-width;
+}
+
+.container--full-width--mostly {
+  @include mixin-container-full-width;
+
+  @media (min-width: 1920px) {
+    width: 1920px;
+  }
+}
+
 .row--full-height {
   display: flex;
   flex-wrap: wrap;
