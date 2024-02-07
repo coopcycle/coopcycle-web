@@ -5,6 +5,9 @@ import "../js/app/restaurant/list.scss";
 
 const preview = {
   parameters: {
+    server: {
+      url: `http://localhost/storybook/component`,
+    },
     actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {
