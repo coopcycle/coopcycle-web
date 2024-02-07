@@ -1,13 +1,16 @@
 {% extends "profile.html.twig" %}
 
 {% block content %}
-  {% include "profile/orders.pagination.html.twig" %}
+
   {% if orders is empty %}
     <div class="alert alert-warning">
       {%  trans %}profile.orders.empty{%  endtrans %}
     </div>
   {% else %}
     {% include "_partials/order/list.html.twig" with { with_extras: false, with_reorder: true } %}
+    <div class="text-center">
+      {{ knp_pagination_render(orders, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+    </div>
     {% include "_partials/order/receipt_modal.html.twig" %}
   {% endif %}
 {% endblock %}

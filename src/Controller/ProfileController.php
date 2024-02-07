@@ -156,7 +156,7 @@ class ProfileController extends AbstractController
         )));
     }
 
-    protected function getOrderList(Request $request, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
     {
         Assert::isInstanceOf($this->orderRepository, EntityRepository::class);
 
@@ -164,26 +164,18 @@ class ProfileController extends AbstractController
             ->createQueryBuilder('o')
             ->andWhere('o.customer = :customer')
             ->andWhere('o.state != :state')
+            ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
             ->setParameter('customer', $this->getUser()->getCustomer())
             ->setParameter('state', OrderInterface::STATE_CART);
 
-        $count = (clone $qb)
-            ->select('COUNT(o)')
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        $pages  = ceil($count / self::ITEMS_PER_PAGE);
-        $page   = $request->query->getInt('p', 1);
-        $offset = self::ITEMS_PER_PAGE * ($page - 1);
-
-        $orders = (clone $qb)
-            ->setMaxResults(self::ITEMS_PER_PAGE)
-            ->setFirstResult($offset)
-            ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
-            ->getQuery()
-            ->getResult();
-
-        return [ $orders, $pages, $page ];
+        return $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::DISTINCT => false,
+            ]
+        );
     }
 
     public function orderAction($id, Request $request,
