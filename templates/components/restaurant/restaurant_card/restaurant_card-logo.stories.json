@@ -2,7 +2,6 @@
   "title": "Foodtech/1. Restaurant/2. Logo",
   "parameters": {
     "server": {
-      "url": "http://localhost/storybook/component",
       "id": "restaurant_card"
     }
   },
@@ -20,5 +19,6 @@
       "name": "Broken logo",
       "args": { "image": "https://broken-logo.err" }
     }
+
   ]
 }

@@ -6,6 +6,9 @@ import "../js/app/checkout/menu.scss";
 
 const preview = {
   parameters: {
+    server: {
+      url: `http://localhost/storybook/component`,
+    },
     actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {
