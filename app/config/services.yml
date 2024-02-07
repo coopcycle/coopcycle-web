@@ -815,6 +815,10 @@ services:
 
   AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
 
+  AppBundle\Api\DataProvider\TaxRateCollectionDataProvider:
+    tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
+    autoconfigure: false
+
   AppBundle\Utils\RestaurantFilter:
     arguments:
       - '@routing_service'
@@ -1177,6 +1181,7 @@ services:
   AppBundle\Sylius\Taxation\TaxesHelper:
     arguments:
       $country: '%region_iso%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
       # $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
 
   AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~
@@ -1212,6 +1217,7 @@ services:
   AppBundle\CubeJs\TokenFactory:
     arguments:
       $databaseName: '%database_name%'
+      $baseUrl: '%env(APP_HOST)%'
 
   AppBundle\Translation\DatePeriodFormatter:
     arguments:
