@@ -186,6 +186,11 @@ $item-height: 9rem;
   color: $text-green;
 }
 
+.product-badge-reusable-packaging {
+  background-color: $label-info-bg;
+  color: $label-color;
+}
+
 .product-badge-text {
   display: block;
   overflow: hidden;

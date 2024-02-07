@@ -6,4 +6,8 @@
   <div class="product-badge-wrapper product-badge-restricted-diet">
     <i class="fa fa-leaf"></i> <small class="product-badge-text product-badge-text-compact">{{ value }}</small>
   </div>
+{% elseif type == "reusable_packaging" %}
+  <div class="product-badge-wrapper product-badge-reusable-packaging">
+    <small class="product-badge-text product-badge-text-compact">{{ 'restaurant.list.tags.zerowaste'|trans }}</small>
+  </div>
 {% endif %}
