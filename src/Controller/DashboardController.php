@@ -85,7 +85,7 @@ class DashboardController extends AbstractController
         ];
     }
 
-    protected function getOrderList(Request $request, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
     {
         return [];
     }

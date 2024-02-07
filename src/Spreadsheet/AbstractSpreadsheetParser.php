@@ -71,8 +71,6 @@ abstract class AbstractSpreadsheetParser
         throw new \Exception('Unsupported file type');
     }
 
-    abstract public function validateHeader(array $header);
-
     abstract public function getExampleData(): array;
 
     /**
@@ -116,12 +114,6 @@ abstract class AbstractSpreadsheetParser
             }
         }
 
-        try {
-            $this->validateHeader($header);
-        } catch (\Exception $e) {
-            throw $e;
-        }
-
         $data = array_map(function ($row) use ($header) {
 
             // Fix the file structure if some columns are "merged"
@@ -140,7 +132,7 @@ abstract class AbstractSpreadsheetParser
      * @return Spreadsheet
      * @throws \Exception
      */
-    private function loadSpreadsheet($file): Spreadsheet
+    public function loadSpreadsheet($file): Spreadsheet
     {
         $isTempFile = false;
 
@@ -204,23 +196,19 @@ abstract class AbstractSpreadsheetParser
     }
 
     /**
-     * @param Flysystem\File|HttpFoundation\File\File|string $file
-     * @throws \Exception
+     * @param Spreadsheet $spreadsheet
+     * @return array
      */
-    public function preValidate($file)
+    public function getHeaderRow(Spreadsheet $spreadsheet): array
     {
-        $spreadsheet = $this->loadSpreadsheet($file);
-
-        $header = [];
         foreach ($spreadsheet->getWorksheetIterator() as $sheet) {
             foreach ($sheet->toArray() as $rowIndex => $row) {
                 if ($rowIndex === 0) {
-                    $header = $row;
-                    break;
+                    return $row;
                 }
             }
         }
 
-        $this->validateHeader($header);
+        return [];
     }
 }

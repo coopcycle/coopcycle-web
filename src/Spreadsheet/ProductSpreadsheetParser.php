@@ -85,21 +85,6 @@ class ProductSpreadsheetParser extends AbstractSpreadsheetParser
         }, $data);
     }
 
-    public function validateHeader(array $header)
-    {
-        $expected = [
-            'name',
-            'price_tax_incl',
-            'tax_category',
-        ];
-
-        foreach ($expected as $key) {
-            if (!in_array($key, $header)) {
-                throw new \Exception(sprintf('You must provide a "%s" column', $key));
-            }
-        }
-    }
-
     public function getExampleData(): array
     {
         $categories = [];
