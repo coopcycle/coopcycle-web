@@ -11,7 +11,7 @@
   <a href="{{ path('admin_business_accounts') }}">{% trans %}adminDashboard.business_accounts.title{% endtrans %}</a>
 </li>
 <li>
-  {{ 'basics.add'|trans }}
+  {{ is_new_business_account ? ('basics.add'|trans) : business_account.name }}
 </li>
 {% endblock %}
 
