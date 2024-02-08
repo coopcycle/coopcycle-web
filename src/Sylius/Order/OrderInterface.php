@@ -225,8 +225,6 @@ interface OrderInterface extends
 
     public function hasEvent(string $type): bool;
 
-    public function getLocalBusinessGroupVendor(): ?LocalBusinessGroupVendor;
-
     public function getBusinessAccount(): ?BusinessAccount;
 
     /**
