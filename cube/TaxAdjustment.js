@@ -6,11 +6,13 @@ asyncModule(async () => {
 
   let taxRates = []
   if (securityContext.hasOwnProperty('base_url')) {
-    const response = await fetch(`${securityContext.base_url}/api/tax_rates`)
-    if (response.status === 200) {
-      const data = await response.json()
-      taxRates = data['hydra:member']
-    }
+    try {
+      const response = await fetch(`${securityContext.base_url}/api/tax_rates`)
+      if (response.status === 200) {
+        const data = await response.json()
+        taxRates = data['hydra:member']
+      }
+    } catch (e) {}
   }
 
   if (taxRates.length > 0) {
