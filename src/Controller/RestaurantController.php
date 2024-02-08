@@ -393,8 +393,10 @@ class RestaurantController extends AbstractController
             ], Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        return $this->render('restaurant/business_restaurant_group.html.twig', [
-            'business_restaurant_group' => $businessRestaurantGroup,
+        // FIXME
+        // Refactor template with hub
+        return $this->render('restaurant/hub.html.twig', [
+            'hub' => $businessRestaurantGroup,
             'business_type_filter' => $request->query->get('type'),
         ]);
     }
