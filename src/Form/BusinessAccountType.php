@@ -15,12 +15,14 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -28,13 +30,16 @@ class BusinessAccountType extends AbstractType
 {
     private $authorizationChecker;
     private $objectManager;
+    private $urlGenerator;
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
-        EntityManagerInterface $objectManager)
+        EntityManagerInterface $objectManager,
+        UrlGeneratorInterface $urlGenerator)
     {
         $this->authorizationChecker = $authorizationChecker;
         $this->objectManager = $objectManager;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -77,12 +82,12 @@ class BusinessAccountType extends AbstractType
             $form = $event->getForm();
 
             if (null !== $businessAccount->getId()) {
-                if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-                    $businessAccountInvitation = $this->objectManager->getRepository(BusinessAccountInvitation::class)
-                        ->findOneBy([
-                            'businessAccount' => $businessAccount,
-                        ]);
-                    if (null !== $businessAccountInvitation) {
+                $businessAccountInvitation = $this->objectManager->getRepository(BusinessAccountInvitation::class)
+                    ->findOneBy([
+                        'businessAccount' => $businessAccount,
+                    ]);
+                if (null !== $businessAccountInvitation) {
+                    if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                         $form->add('managerEmail', EmailType::class, [
                             'label' => 'form.business_account.manager.email.label',
                             'help' => 'form.business_account.manager.email_sent.help',
@@ -90,6 +95,17 @@ class BusinessAccountType extends AbstractType
                             'required'=> false,
                             'mapped'=> false,
                             'data' => $businessAccountInvitation->getInvitation()->getEmail(),
+                        ]);
+                    }
+
+                    if ($this->authorizationChecker->isGranted('ROLE_BUSINESS_ACCOUNT')) {
+                        $invitationLink = $this->urlGenerator->generate('invitation_define_password', [
+                            'code' => $businessAccountInvitation->getInvitation()->getCode()
+                        ], UrlGeneratorInterface::ABSOLUTE_URL);
+                        $form->add('invitationLink', UrlType::class, [
+                            'mapped' => false,
+                            'label' => 'registration.step.invitation.copy.link',
+                            'data' => $invitationLink
                         ]);
                     }
                 }

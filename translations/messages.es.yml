@@ -1402,3 +1402,4 @@ registration.step.invitation.link.copied: "Copiado"
 deliveries.imports: Ficheros importados
 deliveries.importing: El fichero %filename% va a ser importado.
 deliveries.imports.created_at: Creado el
+business.account.settings.link: Asociar a mi cuenta
