@@ -93,6 +93,16 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       return
     }
 
+    // cannot move directly from one tour to another atm
+    if (source.droppableId.startsWith('tour:') && destination.droppableId.startsWith('tour:')) {
+      return
+    }
+
+    // cannot move directly from one group to another atm
+    if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('group:')) {
+      return
+    }
+
     const allTasks = selectAllTasks(getState())
 
     // FIXME : if a tour or a group is selected, selectSelectedTasks yields [ undefined ] so we test > 1 no > 0
