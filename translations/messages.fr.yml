@@ -1383,18 +1383,18 @@ form.business_account.manager.email.help: Un email d'invitation à Coopcycle ser
 form.business_account.manager.email_sent.help: Un email d'invitation à Coopcycle a été envoyé
 form.business_account.save_and_send_invitation.label: Sauvegarder et envoyer l'invitation
 form.business_acount.send_invitation.confirm: Le courriel d'invitation à Coopcycle a été envoyé
-registration.navigation.title: "Personal account creation"
-registration.info.title: "What is CoopCycle?"
-registration.info.text: "On CoopCycle, you can order food provided by restaurants near you and delivered by your local cooperative. We are proud to be an ethical alternative to the uberization of our society!"
-registration.info.business.account.attachment: "You will be attached to the business account %businessAccountName%, but you can also command under your name."
-registration.alert.text: "You have been invited to create an account on %brandName% by %invitedBy%."
-registration.alert.business.account.text: "Welcome in CoopCycle - %brandName% ! Please create your business account before making your first order."
-registration.form.title: "Your information"
-registration.step.personal: "Personal information"
-registration.step.company: "Company information"
-registration.step.invitation: "Invite your colleagues"
-registration.flow.next: "Next"
-registration.flow.back: "Back"
+registration.navigation.title: "Création de compte personnel"
+registration.info.title: "C'est quoi CoopCycle ?"
+registration.info.text: "Sur CoopCycle, vous pouvez commander auprès des restaurants proches de chez vous et être livré par votre coopérative locale. Nous sommes fiers d'être une alternative éthique à l'ubérisation de notre société !"
+registration.info.business.account.attachment: "Vous serez rattaché au compte professionnel %businessAccountName%, mais vous pouvez également commander pour vous."
+registration.alert.text: "Vous avez été invité à créer votre compte sur %brandName% par %invitedBy%."
+registration.alert.business.account.text: "Bienvenue chez CoopCycle - %brandName% ! Veuillez créer votre compte professionnel avant de passer votre première commande."
+registration.form.title: "Vos informations"
+registration.step.personal: "Informations personnelles"
+registration.step.company: "Informations société"
+registration.step.invitation: "Invitez vos collègues"
+registration.flow.next: "Suivant"
+registration.flow.back: "Précédent"
 error.404: Page non trouvée.
 error.502: Le serveur a dépassé sa capacité. Veuillez réessayer plus tard.
 error.504: Le serveur a mis trop de temps à répondre.
