@@ -1414,7 +1414,7 @@ registration.company.address: "Address"
 registration.company.address.different.for.billing: "Different address for billing"
 registration.company.billing.address: "Billing address"
 registration.step.company.name: "Name of the company"
-registration.step.invitation.copy.link: "Copy the link below and send it to your collegues"
+registration.step.invitation.copy.link: "Copy the link below and send it to your colleagues"
 registration.step.invitation.copy.button: "Copy the link"
 registration.step.invitation.link.copied: "Copied"
 error.404: Page not found.
