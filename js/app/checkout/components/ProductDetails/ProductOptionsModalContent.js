@@ -68,7 +68,7 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
         )) }
       </main>
       <footer className="border-top">
-        {state.invalidOptions === 0 ? (
+        {state.missingMandatoryOptions === 0 ? (
           <button type="submit" className="btn btn-lg btn-block btn-primary">
             <span data-product-total className="product-add-to-cart">
               <i className="fa fa-shopping-cart"></i>
@@ -78,7 +78,7 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
             </span>
           </button>
         ) : (
-          <Alert message={t('CART_PRODUCT_OPTIONS_MANDATORY', { count: state.invalidOptions })}
+          <Alert message={t('CART_PRODUCT_OPTIONS_MANDATORY', { count: state.missingMandatoryOptions })}
                  type="info" showIcon/>)
         }
       </footer>
