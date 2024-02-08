@@ -73,13 +73,22 @@
     }
   }
 
+  @mixin no-ui-controls() {
+    appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+    }
+  }
+
   .product-option-item-range {
     display: flex;
     align-items: center;
     input[type="number"] {
       @extend .form-control;
+      @include no-ui-controls;
       width: 3em;
-      appearance: textfield;
       text-align: center;
     }
     label {
@@ -112,8 +121,8 @@
     align-items: center;
     input[type="number"] {
       @extend .form-control;
+      @include no-ui-controls;
       width: 3em;
-      appearance: textfield;
       text-align: center;
       font-weight: 600;
     }
