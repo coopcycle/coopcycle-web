@@ -60,14 +60,12 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
         ) }
         <ProductInfo product={ product } />
         <ProductQuantity />
-        <div>
         { options.map((option, index) => (
           <OptionGroup
             key={ `option-${index}` }
             index={ offsets[index] }
             option={ option } />
         )) }
-        </div>
       </main>
       <footer className="border-top">
         {state.invalidOptions === 0 ? (
