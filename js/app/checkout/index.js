@@ -16,6 +16,8 @@ require('gasparesganga-jquery-loading-overlay')
 
 import './index.scss'
 import './menu.scss'
+import ProductOptionsModal
+  from './components/ProductDetails/ProductOptionsModal'
 
 window._paq = window._paq || []
 
@@ -111,6 +113,7 @@ const init = function() {
     <Provider store={ store }>
       <I18nextProvider i18n={ i18n }>
         <Cart />
+        <ProductOptionsModal />
       </I18nextProvider>
     </Provider>
   )

@@ -14,7 +14,6 @@ import CartTotal from './CartTotal'
 import CartButton from './CartButton'
 import Time from './Time'
 import FulfillmentMethod from './FulfillmentMethod'
-import ProductOptionsModal from './ProductDetails/ProductOptionsModal'
 import LoopeatModal from './LoopeatModal'
 
 import {changeAddress, disableTakeaway, enableTakeaway, openAddressModal, sync, toggleReusablePackaging} from '../redux/actions'
@@ -85,7 +84,6 @@ class Cart extends Component {
         <AddressModal />
         <RestaurantModal />
         <DateModal />
-        <ProductOptionsModal />
         <InvitePeopleToOrderModal />
         <SetGuestCustomerEmailModal />
         <LoopeatModal />
