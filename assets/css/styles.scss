@@ -75,11 +75,16 @@ h1, h2, h3, h4, h5, h6 {
 
 @mixin mixin-container-full-width() {
   width: 100%;
-  padding-right: 4rem;
-  padding-left: 4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
   margin-right: auto;
   margin-left: auto;
   @include clearfix;
+
+  @media (min-width: $screen-md-min) {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
 }
 
 .container--full-width {
