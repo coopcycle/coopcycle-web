@@ -70,7 +70,7 @@ class UnassignedTours extends React.Component {
                 })}
                 { _.map(this.props.tours, (tour, index) => {
                   return (
-                    <Draggable key={ `tour-${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ index }>
+                    <Draggable key={ `tour-${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ this.props.groups.length + index }>
                       {(provided) => (
                         <div
                           ref={ provided.innerRef }
