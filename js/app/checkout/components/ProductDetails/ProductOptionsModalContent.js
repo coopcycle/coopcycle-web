@@ -43,6 +43,8 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
   //   }
   // }, [ state ]);
 
+  const sumTotal = (state.total * (Number.isNaN(state.quantity) ? 1 : state.quantity)) / 100
+
   return (
     // FIXME
     // The id is used in Cypress tests
@@ -73,8 +75,7 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
             <span data-product-total className="product-add-to-cart">
               <i className="fa fa-shopping-cart"></i>
               <span>{t('ADD_TO_CART')}</span>
-              <span>{((state.total * state.quantity) /
-                100).formatMoney()}</span>
+              <span>{(sumTotal).formatMoney()}</span>
             </span>
           </button>
         ) : (

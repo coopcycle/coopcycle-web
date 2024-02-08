@@ -123,7 +123,7 @@ const useProductOptions = () => {
         return {
           ...opt,
           values: newValues,
-          total: newValues.reduce((total, val) => total + (val.price * val.quantity), 0),
+          total: newValues.reduce((total, val) => total + (val.price * (Number.isNaN(val.quantity) ? 0 : val.quantity)), 0),
           valid: isValidOption(opt, newValues),
         }
       }
