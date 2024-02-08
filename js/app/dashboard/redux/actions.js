@@ -329,8 +329,10 @@ export function modifyTaskList(username, tasks, updateTourUI=null) {
 
     dispatch(modifyTaskListRequest(username, newTasks))
 
+    let response
+
     try {
-      var response =  await axios.put(url, data, {
+      response =  await axios.put(url, data, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/ld+json'
@@ -1491,8 +1493,10 @@ export function modifyTour(tour, tasks, isTourUIAlreadyUpdated=false) {
 
     const { jwt } = getState()
 
+    let response
+
     try {
-      var response = await createClient(dispatch).request({
+      response = await createClient(dispatch).request({
         method: 'put',
         url: tour['@id'],
         data: {
