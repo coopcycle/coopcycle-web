@@ -29,11 +29,13 @@ export default function MenuNav (props) {
   }
 
   useEffect(() => {
-    setTargetOffset(ref.current.clientHeight)
-  })
+    linkRef.current?.scrollIntoView(false)
+    // a nicer variant; but doesn't work on Chrome for android yet (v121)
+    // linkRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [currentAnchor])
 
   useEffect(() => {
-    linkRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    setTargetOffset(ref.current.clientHeight)
   })
 
   return (
@@ -43,7 +45,7 @@ export default function MenuNav (props) {
         onChange={onChange}
         targetOffset={targetOffset}>
         {props.sections.map((section, index) => (
-          <div key={index} ref={(instance) => {
+          <div key={`menu-nav-section-${index}`} ref={(instance) => {
             if (currentAnchor === sectionToLink(section)) {
               linkRef.current = instance
             }
