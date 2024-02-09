@@ -363,7 +363,7 @@ class RestaurantController extends AbstractController
     }
 
     /**
-     * @Route("/business_restaurant_group/{id}-{slug}", name="business_restaurant_group",
+     * @Route("/business-restaurant-group/{id}-{slug}", name="business_restaurant_group",
      *   requirements={
      *     "id"="(\d+)",
      *     "slug"="([a-z0-9-]+)"
