@@ -1,20 +1,16 @@
 @import "./tag.scss";
 @import "./badge.scss";
+@import "../../../assets/css/mixins/card";
 
 .restaurant-item {
-  background-color: white;
   width: 333px;
   min-width: 333px;
+  @include card;
   height: 346px;
-  box-shadow: 0 4px 32px rgba($color: #000000, $alpha: 0.05);
   margin: 16px;
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.25s;
-
-  &:hover {
-    box-shadow: 0 4px 32px rgba($color: #000000, $alpha: 0.1);
-  }
 
   > a {
     width: 100%;

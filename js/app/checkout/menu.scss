@@ -1,7 +1,8 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
-@import "../../../assets/css/vars.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
+@import "../../../assets/css/vars.scss";
+@import "../../../assets/css/mixins/card";
 
 #menu .ant-anchor {
   width: 100%;
@@ -84,16 +85,13 @@ $item-height: 9rem;
   }
 
   &-item {
+    @include card;
     & {
       width: 100%;
       height: $item-height;
       overflow: hidden;
       border-radius: $border-radius-large;
       display: flex;
-    }
-    &:hover,
-    &:focus {
-      box-shadow: 0 4px 32px 0 #0000001A;
     }
   }
 }
