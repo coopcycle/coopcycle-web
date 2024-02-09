@@ -8,6 +8,8 @@ import classNames from 'classnames'
 import { asText } from '../components/ShippingTimeRange'
 import { useIntersection } from '../hooks/useIntersection'
 
+import  _ from 'lodash'
+
 require('gasparesganga-jquery-loading-overlay')
 
 import 'swiper/css';
@@ -152,43 +154,45 @@ if (paginator) {
   )
 }
 
+// Make sure that the same values are set in css
+const CONTAINER_MARGIN = 16
+const CONTAINER_MARGIN_MD = 64
+const ITEM_MARGIN = 16
+const ITEM_WIDTH = 333
+
+const calculateBreakpoints = () => {
+  const breakpoints = {}
+
+  let listOfWidths = _.range(480, 1920, 50)
+  listOfWidths.push(576, 768, 992, 1200, 1600, 1920) // add bootstrap breakpoints
+  listOfWidths = _.uniq(listOfWidths)
+  listOfWidths.sort((a, b) => a - b)
+
+  listOfWidths.forEach(width => {
+    const containerMargin = width >= 768 ? CONTAINER_MARGIN_MD : CONTAINER_MARGIN
+    const slidesPerView = (width - containerMargin * 2) / (ITEM_WIDTH + ITEM_MARGIN * 2)
+
+    breakpoints[width] = {
+      slidesPerView,
+      slidesPerGroup: Math.floor(slidesPerView),
+    }
+  })
+
+  return breakpoints
+}
+
+const swiperBreakpoints = calculateBreakpoints()
+
 new Swiper('.swiper', {
   modules: [ Navigation ],
   slidesPerView: 'auto',
-  spaceBetween: 2,
   slidesPerGroup: 1,
   navigation: {
     nextEl: '.swiper-nav-next',
     prevEl: '.swiper-nav-prev',
   },
   lazyLoading: true,
-  breakpoints: {
-    480: {
-      slidesPerView: 1.25,
-      spaceBetween: 2,
-      slidesPerGroup: 1,
-    },
-    768: {
-      slidesPerView: 2.1,
-      spaceBetween: 2,
-      slidesPerGroup: 2,
-    },
-    992: {
-      slidesPerView: 2.75,
-      spaceBetween: 2,
-      slidesPerGroup: 2,
-    },
-    1200: {
-      slidesPerView: 3.3,
-      spaceBetween: 2.5,
-      slidesPerGroup: 3,
-    },
-    1600: {
-      slidesPerView: 4,
-      spaceBetween: 2.5,
-      slidesPerGroup: 3,
-    },
-  },
+  breakpoints: swiperBreakpoints,
   observer: true, // to be initialized properly inside a hidden container
   observeParents: true
 })

@@ -3,15 +3,18 @@
 @import "../../../assets/css/mixins/card";
 
 .restaurant-item {
-  width: 333px;
-  min-width: 333px;
   @include card;
+  width: 310px;
   height: 346px;
   margin: 16px;
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.25s;
 
+  @media (min-width: 420px) {
+    width: 333px;
+  }
+  
   > a {
     width: 100%;
     height: 100%;
