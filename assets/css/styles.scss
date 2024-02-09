@@ -73,8 +73,7 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
 }
 
-@mixin mixin-container-full-width() {
-  width: 100%;
+@mixin mixin-container-padding() {
   padding-left: 1rem;
   padding-right: 1rem;
   margin-right: auto;
@@ -87,12 +86,12 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.container--full-width {
-  @include mixin-container-full-width;
+.container-fluid {
+  @include mixin-container-padding;
 }
 
-.container--full-width--mostly {
-  @include mixin-container-full-width;
+.container-full-hd {
+  @include mixin-container-padding;
 
   @media (min-width: 1920px) {
     width: 1920px;
