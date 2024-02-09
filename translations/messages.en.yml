@@ -1431,3 +1431,4 @@ form.business_restaurant_group.menu: Menu
 form.product.business_restaurant_group.price_definition.label: Define prices for Business Restaurant Groups
 form.product.business_restaurant_group.price_definition.placeholder: Please select one
 business_restaurant_group.label: Business restaurant group
+adminDashboard.business_restaurant_groups.title: Business restaurant groups

@@ -1410,3 +1410,4 @@ error.return_to_homepage: Retourner à la page d'accueil
 deliveries.imports: Fichiers importés
 deliveries.importing: Le fichier %filename% va bientôt être importé.
 deliveries.imports.created_at: Créé le
+adminDashboard.business_restaurant_groups.title: Groupes de restaurants d'entreprise
