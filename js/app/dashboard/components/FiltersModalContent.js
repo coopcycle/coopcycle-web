@@ -10,7 +10,7 @@ import Avatar from '../../components/Avatar'
 import {
   closeFiltersModal,
   setFilterValue } from '../redux/actions'
-import { selectBookedUsernames } from '../redux/selectors'
+import { selectBookedUsernames, selectFiltersSetting } from '../redux/selectors'
 
 import 'antd/lib/grid/style/index.css'
 
@@ -202,14 +202,15 @@ function mapStateToProps(state) {
     alwayShowUnassignedTasks,
     hiddenCouriers,
     timeRange,
-  } = state.settings.filters
+    tags
+  } = selectFiltersSetting(state)
 
   return {
     tags: state.config.tags,
     showFinishedTasks,
     showCancelledTasks,
     alwayShowUnassignedTasks,
-    selectedTags: state.settings.filters.tags,
+    selectedTags: tags,
     couriers: selectBookedUsernames(state),
     hiddenCouriers,
     timeRange,
