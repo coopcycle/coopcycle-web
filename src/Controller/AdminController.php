@@ -34,6 +34,7 @@ use AppBundle\Entity\Organization;
 use AppBundle\Entity\OrganizationConfig;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
+use AppBundle\Entity\BusinessRestaurantGroup;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
@@ -68,6 +69,7 @@ use AppBundle\Form\OrganizationType;
 use AppBundle\Form\PackageSetType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantAdminType;
+use AppBundle\Form\BusinessRestaurantGroupType;
 use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\Type\TimeSlotChoiceType;
@@ -1336,6 +1338,24 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/restaurant/{restaurantId}/menus", name="admin_restaurant_menus")
+     */
+    public function searchRestaurantMenusAction($restaurantId)
+    {
+        $restaurant = $this->getDoctrine()->getRepository(LocalBusiness::class)->find($restaurantId);
+
+        $data = [];
+        foreach($restaurant->getTaxons() as $taxon) {
+            $data[] = [
+                'id' => $taxon->getId(),
+                'name' => $taxon->getName()
+            ];
+        }
+
+        return new JsonResponse($data);
+    }
+
+    /**
      * @Route("/admin/stores/search", name="admin_stores_search")
      */
     public function searchStoresAction(Request $request)
@@ -2473,12 +2493,54 @@ class AdminController extends AbstractController
         ]);
     }
 
+    private function handleBusinessRestaurantGroupForm(BusinessRestaurantGroup $businessRestaurantGroup, Request $request)
+    {
+        $originalRestaurantsWithMenu = new ArrayCollection();
+
+        foreach($businessRestaurantGroup->getRestaurantsWithMenu() as $restaurantMenu) {
+            $originalRestaurantsWithMenu->add($restaurantMenu);
+        }
+
+        $form = $this->createForm(BusinessRestaurantGroupType::class, $businessRestaurantGroup);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            foreach ($originalRestaurantsWithMenu as $restaurantMenu) {
+                if (false === $businessRestaurantGroup->getRestaurantsWithMenu()->contains($restaurantMenu)) {
+                    $businessRestaurantGroup->removeRestaurantWithMenu($restaurantMenu);
+                    $this->entityManager->remove($restaurantMenu);
+                }
+            }
+
+            $this->entityManager->persist($businessRestaurantGroup);
+            $this->entityManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_business_restaurant_group', ['id' => $businessRestaurantGroup->getId()]);
+        }
+
+        return $this->render('admin/business_restaurant_group.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
     public function newHubAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $hub = new Hub();
 
         return $this->handleHubForm($hub, $request);
+    }
+
+    public function newBusinessRestaurantGroupAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $businessRestaurantGroup = new BusinessRestaurantGroup();
+
+        return $this->handleBusinessRestaurantGroupForm($businessRestaurantGroup, $request);
     }
 
     public function hubAction($id, Request $request)
@@ -2491,6 +2553,28 @@ class AdminController extends AbstractController
         }
 
         return $this->handleHubForm($hub, $request);
+    }
+
+    public function businessRestaurantGroupAction($id, Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $businessRestaurantGroup = $this->getDoctrine()->getRepository(BusinessRestaurantGroup::class)->find($id);
+
+        if (!$businessRestaurantGroup) {
+            throw $this->createNotFoundException(sprintf('Restaurants For Business #%d does not exist', $id));
+        }
+
+        return $this->handleBusinessRestaurantGroupForm($businessRestaurantGroup, $request);
+    }
+
+    public function businessRestaurantGroupListAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $businessRestaurantGroupList = $this->getDoctrine()->getRepository(BusinessRestaurantGroup::class)->findAll();
+
+        return $this->render('admin/business_restaurant_group_list.html.twig', [
+            'business_restaurant_group_list' => $businessRestaurantGroupList,
+        ]);
     }
 
     public function hubsAction(Request $request)

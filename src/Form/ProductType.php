@@ -2,6 +2,9 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\BusinessRestaurantGroup;
+use AppBundle\Entity\BusinessRestaurantGroupPriceWithTax;
+use AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\Sylius\Product;
@@ -9,8 +12,12 @@ use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
 use AppBundle\Form\Type\PriceWithTaxType;
+use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Sylius\Product\ProductInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
@@ -42,6 +49,9 @@ class ProductType extends AbstractType
     private $productAttributeRepository;
     private $productAttributeValueFactory;
     private $localeProvider;
+    private $translator;
+    private $entityManager;
+    private $variantResolver;
     private $hasChangedName = false;
 
     public function __construct(
@@ -50,14 +60,20 @@ class ProductType extends AbstractType
         FactoryInterface $productAttributeValueFactory,
         LocaleProviderInterface $localeProvider,
         TranslatorInterface $translator,
-        bool $taxIncl = true)
+        EntityManagerInterface $entityManager,
+        LazyProductVariantResolverInterface $variantResolver,
+        bool $taxIncl = true,
+        bool $businessAccountEnabled = false)
     {
         $this->variantFactory = $variantFactory;
         $this->productAttributeRepository = $productAttributeRepository;
         $this->productAttributeValueFactory = $productAttributeValueFactory;
         $this->localeProvider = $localeProvider;
         $this->translator = $translator;
+        $this->entityManager = $entityManager;
+        $this->variantResolver = $variantResolver;
         $this->taxIncl = $taxIncl;
+        $this->businessAccountEnabled = $businessAccountEnabled;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -108,7 +124,36 @@ class ProductType extends AbstractType
             'mapped' => false,
         ]);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
+        $businessRestaurantGroups = null;
+        if ($this->businessAccountEnabled && null !== $options['owner']) {
+            $qb = $this->entityManager->getRepository(BusinessRestaurantGroup::class)
+                ->createQueryBuilder('b')
+                ->select('b')
+                ->innerJoin(BusinessRestaurantGroupRestaurantMenu::class, 'g', Expr\Join::WITH, 'g.businessRestaurantGroup = b.id AND g.restaurant = :restaurant')
+                ->setParameter('restaurant', $options['owner'])
+                ->orderBy('b.name');
+
+            $businessRestaurantGroups = $qb->getQuery()->getResult();
+
+            if (count($businessRestaurantGroups) > 0) {
+                $builder->add('businessRestaurantGroupPrices', CollectionType::class, [
+                    'entry_type' => BusinessRestaurantGroupPriceType::class,
+                    'entry_options' => [
+                        'taxIncl' => $this->taxIncl,
+                        'owner' => $options['owner'],
+                        'choices' => $businessRestaurantGroups
+                    ],
+                    'label' => 'form.product.business_restaurant_group.price_definition.label',
+                    'mapped' => false,
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'prototype_name' => '__price__'
+                ]);
+            }
+
+        }
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options, $businessRestaurantGroups) {
 
             $form = $event->getForm();
             $product = $event->getData();
@@ -148,6 +193,22 @@ class ProductType extends AbstractType
                         ;
                 }
 
+                if ($form->has('businessRestaurantGroupPrices')) {
+                    $data = [];
+
+                    foreach($businessRestaurantGroups as $businessRestaurantGroup) {
+                        $variant = $this->variantResolver->getVariantForBusinessRestaurantGroup($product, $businessRestaurantGroup);
+                        if ($variant) {
+                            $data[] = new BusinessRestaurantGroupPriceWithTax(
+                                            $businessRestaurantGroup,
+                                            $variant->getPrice(),
+                                            $variant->getTaxCategory()
+                                        );;
+                        }
+                    }
+
+                    $form->get('businessRestaurantGroupPrices')->setData($data);
+                }
             }
 
             $this->postSetDataEnumAttribute($product, 'ALLERGENS', $form->get('allergens'));
@@ -206,7 +267,7 @@ class ProductType extends AbstractType
             }
         });
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options, $businessRestaurantGroups) {
 
             $form = $event->getForm();
             $product = $event->getData();
@@ -254,6 +315,36 @@ class ProductType extends AbstractType
                     $variant->setName($product->getName());
                     $variant->setPrice($price);
                     $variant->setTaxCategory($taxCategory);
+                }
+            }
+
+            if ($form->has('businessRestaurantGroupPrices')) {
+                $businessRestaurantGroupPrices = $form->get('businessRestaurantGroupPrices')->getData();
+
+                $submitedBusinessRestaurantGroups = new ArrayCollection();
+                foreach ($businessRestaurantGroupPrices as $businessRestaurantGroupPrice) {
+                    $submitedBusinessRestaurantGroups->add($businessRestaurantGroupPrice->getBusinessRestaurantGroup()->getId());
+
+                    if (null === $product->getId()) {
+                        $this->createAndAddVariantForProduct($product, $businessRestaurantGroupPrice);
+                    } else {
+                        $variant = $this->variantResolver->getVariantForBusinessRestaurantGroup($product, $businessRestaurantGroupPrice->getBusinessRestaurantGroup());
+
+                        if ($variant === null) {
+                            $this->createAndAddVariantForProduct($product, $businessRestaurantGroupPrice);
+                        } else {
+                            $variant->setName($product->getName());
+                            $variant->setPrice($businessRestaurantGroupPrice->getPrice());
+                            $variant->setTaxCategory($businessRestaurantGroupPrice->getTaxCategory());
+                        }
+                    }
+                }
+
+                foreach ($businessRestaurantGroups as $businessRestaurantGroup) {
+                    if (!in_array($businessRestaurantGroup->getId(), $submitedBusinessRestaurantGroups->toArray())) {
+                        $variantToRemove = $this->variantResolver->getVariantForBusinessRestaurantGroup($product, $businessRestaurantGroup);
+                        $product->removeVariant($variantToRemove);
+                    }
                 }
             }
 
@@ -318,6 +409,22 @@ class ProductType extends AbstractType
         }
 
         return [];
+    }
+
+    private function createAndAddVariantForProduct(
+        Product $product,
+        BusinessRestaurantGroupPriceWithTax $businessRestaurantGroupPrice
+    )
+    {
+        $variant = $this->variantFactory->createForProduct($product);
+
+        $variant->setName($product->getName());
+        $variant->setCode(Uuid::uuid4()->toString());
+        $variant->setPrice($businessRestaurantGroupPrice->getPrice());
+        $variant->setTaxCategory($businessRestaurantGroupPrice->getTaxCategory());
+        $variant->setBusinessRestaurantGroup($businessRestaurantGroupPrice->getBusinessRestaurantGroup());
+
+        $product->addVariant($variant);
     }
 
     public function configureOptions(OptionsResolver $resolver)

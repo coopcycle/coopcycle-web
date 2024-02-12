@@ -130,6 +130,9 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
+    <many-to-one field="businessAccount" target-entity="AppBundle\Entity\BusinessAccount" inversed-by="orders">
+      <join-column name="business_account_id" referenced-column-name="id" nullable="true" />
+    </many-to-one>
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\OrderListener">
         <lifecycle-callback type="preUpdate" method="preUpdate"/>

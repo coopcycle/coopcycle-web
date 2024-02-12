@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity name="AppBundle\Entity\Hub" table="hub">
+  <entity name="AppBundle\Entity\BusinessRestaurantGroup" table="business_restaurant_group">
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
@@ -16,24 +16,20 @@
       </options>
     </field>
     <field name="enabled" column="enabled" type="boolean" />
-    <many-to-one field="address" target-entity="AppBundle\Entity\Address">
-      <cascade>
-        <cascade-persist/>
-      </cascade>
-      <join-columns>
-        <join-column name="address_id" referenced-column-name="id"/>
-      </join-columns>
-    </many-to-one>
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
       <cascade>
         <cascade-persist/>
       </cascade>
     </many-to-one>
-    <one-to-many field="restaurants" target-entity="AppBundle\Entity\LocalBusiness" mapped-by="hub" />
+    <one-to-many field="restaurantsWithMenu" target-entity="AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu" mapped-by="businessRestaurantGroup">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
     <many-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule">
-      <join-table name="hub_closing_rule">
+      <join-table name="business_restaurant_group_closing_rule">
         <join-columns>
-          <join-column name="hub_id" referenced-column-name="id" />
+          <join-column name="business_restaurant_group_id" referenced-column-name="id" />
         </join-columns>
         <inverse-join-columns>
           <join-column name="rule_id" referenced-column-name="id" unique="true" />
@@ -44,9 +40,9 @@
       </cascade>
     </many-to-many>
     <many-to-many field="fulfillmentMethods" target-entity="AppBundle\Entity\LocalBusiness\FulfillmentMethod">
-      <join-table name="hub_fulfillment_method">
+      <join-table name="business_restaurant_group_fulfillment_method">
         <join-columns>
-          <join-column name="hub_id" referenced-column-name="id" />
+          <join-column name="business_restaurant_group_id" referenced-column-name="id" />
         </join-columns>
         <inverse-join-columns>
           <join-column name="method_id" referenced-column-name="id" unique="true" />
@@ -56,5 +52,6 @@
         <cascade-all/>
       </cascade>
     </many-to-many>
+    <field name="cutoffTime" type="string" length="5" column="cutoff_time" nullable="true"/>
   </entity>
 </doctrine-mapping>
