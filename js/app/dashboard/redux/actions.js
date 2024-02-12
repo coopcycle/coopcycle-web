@@ -1684,3 +1684,17 @@ export function removeTaskFromTour(tour, task) {
 export function setToursEnabled(enabled) {
   return {type: SET_TOURS_ENABLED, enabled}
 }
+
+export function onlyFilter(filter) {
+  return function(dispatch) {
+    ['showFinishedTasks', 'showCancelledTasks', 'showIncidentReportedTasks'].forEach(key => {
+      dispatch(setFilterValue(key, key == filter))
+    })
+
+    dispatch(setFilterValue('onlyFilter', filter))
+    dispatch(closeFiltersModal())
+
+  }
+}
+
+

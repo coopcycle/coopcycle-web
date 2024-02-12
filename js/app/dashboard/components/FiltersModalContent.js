@@ -9,7 +9,9 @@ import TagsSelect from '../../components/TagsSelect'
 import Avatar from '../../components/Avatar'
 import {
   closeFiltersModal,
-  setFilterValue } from '../redux/actions'
+  setFilterValue,
+  onlyFilter
+} from '../redux/actions'
 import { selectBookedUsernames } from '../redux/selectors'
 
 import 'antd/lib/grid/style/index.css'
@@ -60,17 +62,6 @@ class FiltersModalContent extends React.Component {
 
     this.props.closeFiltersModal()
   }
-
-  _onlyFilter(filter) {
-
-    ['showFinishedTasks', 'showCancelledTasks', 'showIncidentReportedTasks'].forEach(key => {
-      this.props.setFilterValue(key, key == filter)
-    })
-
-    this.props.setFilterValue('onlyFilter', filter)
-    this.props.closeFiltersModal()
-  }
-
 
   render() {
 
@@ -138,7 +129,7 @@ class FiltersModalContent extends React.Component {
                         unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
                         defaultChecked={ values.showCancelledTasks }
                         onChange={ (checked) => setFieldValue('showCancelledTasks', checked) } />
-                        <button type="button" onClick={() => this._onlyFilter('showCancelledTasks')}
+                        <button type="button" onClick={() => this.props.onlyFilter('showCancelledTasks')}
                           className="btn btn-link">{ this.props.t('ONLY_SHOW_THESE') }</button>
                     </Form.Item>
                     <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_INCIDENT_REPORTED_TASKS') }>
@@ -147,7 +138,7 @@ class FiltersModalContent extends React.Component {
                         unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
                         defaultChecked={ values.showIncidentReportedTasks }
                         onChange={ (checked) => setFieldValue('showIncidentReportedTasks', checked) } />
-                         <button type="button" onClick={() => this._onlyFilter('showIncidentReportedTasks')}
+                         <button type="button" onClick={() => this.props.onlyFilter('showIncidentReportedTasks')}
                           className="btn btn-link">{ this.props.t('ONLY_SHOW_THESE') }</button>
                     </Form.Item>
                     <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED') }
@@ -247,6 +238,7 @@ function mapDispatchToProps(dispatch) {
   return {
     closeFiltersModal: () => dispatch(closeFiltersModal()),
     setFilterValue: (key, value) => dispatch(setFilterValue(key, value)),
+    onlyFilter: filter => dispatch(onlyFilter(filter))
   }
 }
 
