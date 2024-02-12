@@ -4,7 +4,7 @@ import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
 
 import { stopAskingToEnableReusablePackaging, toggleReusablePackaging } from '../redux/actions'
-import LoopeatContext from '../../restaurant/loopeat'
+import LoopeatContext from '../loopeat'
 
 const LoopeatModal = ({ isOpen, enableReusablePackaging }) => {
 

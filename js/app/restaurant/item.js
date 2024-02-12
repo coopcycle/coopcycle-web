@@ -10,11 +10,11 @@ import { createStoreFromPreloadedState } from './redux/store'
 import { queueAddItem, openProductOptionsModal } from './redux/actions'
 import Cart from './components/Cart'
 import storage from '../search/address-storage'
-import { initLoopeatContext } from '../restaurant/loopeat'
+import { initLoopeatContext } from './loopeat'
 
 require('gasparesganga-jquery-loading-overlay')
 
-import './index.scss'
+import './item.scss'
 import './menu.scss'
 import ProductOptionsModal
   from './components/ProductDetails/ProductOptionsModal'
