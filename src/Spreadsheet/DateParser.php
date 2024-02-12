@@ -2,6 +2,8 @@
 
 namespace AppBundle\Spreadsheet;
 
+use Carbon\Carbon;
+
 class DateParser
 {
     const DATE_PATTERN_HYPHEN = '/(?<year>[0-9]{4})?-?(?<month>[0-9]{2})-(?<day>[0-9]{2})/';
@@ -25,16 +27,13 @@ class DateParser
         $start = new \DateTime();
         $end = new \DateTime();
 
-        self::parseDate($start, $matches[1]);
-        self::parseTime($start, $matches[1]);
-
-        self::parseDate($end, $matches[2]);
-        self::parseTime($end, $matches[2]);
-
-        return [ $start, $end ];
+        return [
+            self::parseDate($start, $matches[1]),
+            self::parseDate($end, $matches[2])
+        ];
     }
 
-    public static function parseDate(\DateTime $date, $text)
+    public static function parseDate(\DateTime $date, $text): \DateTimeInterface
     {
         if (!is_string($text)) {
             if ($text instanceof \DateTimeInterface) {
@@ -42,26 +41,34 @@ class DateParser
             }
         }
 
-        if (1 === preg_match(self::DATE_PATTERN_HYPHEN, $text, $matches)) {
-            $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
-        } elseif (1 === preg_match(self::DATE_PATTERN_SLASH, $text, $matches)) {
-            $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
-        } elseif (1 === preg_match(self::DATE_PATTERN_DOT, $text, $matches)) {
-            $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
-        }
-    }
+        $date = Carbon::make($date);
 
-    public static function parseTime(\DateTime $date, $text)
-    {
-        if (!is_string($text)) {
-            if ($text instanceof \DateTimeInterface) {
-                $text = self::patchXLSXDate($text);
+        $patterns = [
+            self::DATE_PATTERN_HYPHEN,
+            self::DATE_PATTERN_SLASH,
+            self::DATE_PATTERN_DOT
+        ];
+
+        foreach ($patterns as $pattern) {
+            if (1 === preg_match($pattern, $text, $matches)) {
+                $date->year = isset($matches['year']) ? $matches['year'] : $date->format('Y');
+                $date->month = $matches['month'];
+                $date->day = $matches['day'];
+                break;
             }
         }
+
+        var_dump($text);
 
         if (1 === preg_match(self::TIME_PATTERN, $text, $matches)) {
-            $date->setTime($matches['hour'], isset($matches['minute']) ? $matches['minute'] : 00);
+
+            print_r($matches);
+
+            $date->hour = $matches['hour'];
+            $date->minute = isset($matches['minute']) ? $matches['minute'] : 0;
         }
+
+        return $date;
     }
 
     public static function matchesDatePattern($text)

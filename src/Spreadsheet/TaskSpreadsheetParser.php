@@ -9,6 +9,7 @@ use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Service\Geocoder;
+use Carbon\Carbon;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager;
@@ -85,10 +86,21 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         $tasks = [];
         $tasksGroups = [];
 
-        $defaultDate = new \DateTime('now');
+        $defaultDate = Carbon::now();
         if (isset($options['date'])) {
-            $defaultDate = $options['date'] instanceof \DateTime ? $options['date'] : new \DateTime($options['date']);
+            $defaultDate = Carbon::make($options['date']);
         }
+
+        $defaultDate = $defaultDate->tz('Europe/Paris');
+
+        // var_dump($defaultDate);
+
+        // $dt = Carbon::make(new \DateTime());
+        // $dt->hour = 10;
+        // $dt->minute = 0;
+
+        // var_dump($dt->format('H:i:s'));
+
 
         foreach ($data as $record) {
 
@@ -218,17 +230,19 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         $after->setTime(00, 00);
 
         $before = clone $defaultDate;
-        $before->setTime(23, 59);
+        $before->setTime(23, 59, 00);
 
         if (isset($record['after'])) {
-            DateParser::parseDate($after, $record['after']);
-            DateParser::parseTime($after, $record['after']);
+            $after = DateParser::parseDate($after, $record['after']);
         }
 
         if (isset($record['before'])) {
-            DateParser::parseDate($before, $record['before']);
-            DateParser::parseTime($before, $record['before']);
+            $before = DateParser::parseDate($before, $record['before']);
         }
+
+        var_dump($defaultDate->format('Y-m-d H:i:s'));
+        var_dump($after->format('Y-m-d H:i:s'));
+        var_dump($before->format('Y-m-d H:i:s'));
 
         return [ $after, $before ];
     }

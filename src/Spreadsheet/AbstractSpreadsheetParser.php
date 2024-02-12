@@ -95,8 +95,14 @@ abstract class AbstractSpreadsheetParser
         $definitionOfEmptyFlags =
             CellIterator::TREAT_NULL_VALUE_AS_EMPTY_CELL | CellIterator::TREAT_EMPTY_STRING_AS_EMPTY_CELL;
 
+
+        //
+
         foreach ($spreadsheet->getWorksheetIterator() as $sheet) {
-            foreach ($sheet->toArray() as $rowIndex => $row) {
+            foreach ($sheet->toArray(/*null, true, false*/) as $rowIndex => $row) {
+
+                // print_r($row);
+
                 if ($rowIndex === 0) {
                     $header = $row;
                     continue;
@@ -155,6 +161,11 @@ abstract class AbstractSpreadsheetParser
         } elseif (is_string($file)) {
             $filename = $file;
         }
+
+        var_dump(\PhpOffice\PhpSpreadsheet\Shared\Date::getDefaultTimezone());
+        var_dump(\PhpOffice\PhpSpreadsheet\Shared\Date::setDefaultTimezone('Europe/Paris'));
+        var_dump(\PhpOffice\PhpSpreadsheet\Shared\Date::getDefaultTimezone());
+        // \PhpOffice\PhpSpreadsheet\Cell\Cell::setCalculateDateTimeType(\PhpOffice\PhpSpreadsheet\Cell\Cell::CALCULATE_DATE_TIME_ASIS);
 
         $reader = $this->createReader($filename);
 

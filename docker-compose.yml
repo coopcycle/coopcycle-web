@@ -67,6 +67,7 @@ services:
       - ALGOLIA_PLACES_APP_ID
       - ALGOLIA_PLACES_API_KEY
       - ALGOLIA_PLACES_ADDRESS_TEMPLATE
+      - TZ=Europe/Paris
     volumes:
       - './:/var/www/html:cached'
       - 'php_logs:/var/www/html/var/logs'
@@ -85,6 +86,7 @@ services:
       - GOOGLE_API_KEY
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY
+      - TZ=Europe/Paris
     volumes:
       - './:/var/www/html:cached'
       - 'php_logs:/var/www/html/var/logs'

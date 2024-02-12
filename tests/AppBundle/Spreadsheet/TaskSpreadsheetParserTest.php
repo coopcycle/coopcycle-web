@@ -199,6 +199,13 @@ class TaskSpreadsheetParserTest extends TestCase
                 new \DateTime('2020-03-05 12:00:00'),
                 new \DateTime('2020-03-05 14:30:00')
             ],
+            [
+                '10:00:00',
+                '',
+                '',
+                new \DateTime('today 10:00:00'),
+                new \DateTime('today 23:59:00')
+            ],
         ];
     }
 
@@ -234,5 +241,17 @@ class TaskSpreadsheetParserTest extends TestCase
         $this->assertCount(1, $tasks);
 
         $this->geocoder->geocode('Calle 181b #16-13, Bogotá, Colombia')->shouldHaveBeenCalled();
+    }
+
+    public function testEnRoueLivr()
+    {
+        $this->mockDependencies();
+
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/test_after.ods');
+        $tasks = $this->parser->parse($filename);
+
+        $this->assertCount(1, $tasks);
+
+        // $this->geocoder->geocode('Calle 181b #16-13, Bogotá, Colombia')->shouldHaveBeenCalled();
     }
 }
