@@ -2,7 +2,7 @@
 
 {% block body %}
 {% include "restaurant/_partials/list_header.html.twig" %}
-<div class="container-full-hd shops-content">
+<div class="container-full-hd container-extra-space-on-sides shops-content">
   <div class="restaurant-side-bar container-fluid d-none d-sm-block">
     <a href="{{ path('shops', {'geohash': geohash, 'address': address}) }}" class="btn btn-lg btn-default w-100">
       <i class="fa fa-trash mr-sm-2"></i>
