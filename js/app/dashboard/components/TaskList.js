@@ -18,7 +18,7 @@ import Task from './Task'
 import Tour from './Tour'
 
 import Avatar from '../../components/Avatar'
-import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
+import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
 import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
 import ProgressBar from './ProgressBar'
@@ -123,8 +123,8 @@ const ProgressBarMemo = React.memo(({
       </table>
     )
 
-  return (
-    <Tooltip title={title}>
+    return (
+        <Tooltip title={title}>
           <div>
             <ProgressBar width="100%" height="8" backgroundColor="white" segments={[
               {value: `${completedPer}%`, color: '#28a745'},
@@ -133,9 +133,9 @@ const ProgressBarMemo = React.memo(({
               {value: `${inProgressPer}%`, color: '#337ab7'},
             ]} />
           </div>
-    </Tooltip>
-  )
-})
+        </Tooltip>
+    )
+  })
 
 class TaskList extends React.Component {
 
@@ -192,6 +192,14 @@ class TaskList extends React.Component {
                 />
             </div>
             ) }
+            {incidentReported.length > 0 && <div onClick={(e) => {
+              this.props.onlyFilter('showIncidentReportedTasks')
+              e.stopPropagation()
+            }}>
+             <Tooltip title="Incident(s)">
+                <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
+              </Tooltip>
+            </div>}
             <Popconfirm
               placement="left"
               title={ this.props.t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
@@ -316,6 +324,7 @@ function mapDispatchToProps(dispatch) {
     unassignTasks: (username, tasks) => dispatch(unassignTasks(username, tasks)),
     togglePolyline: (username) => dispatch(togglePolyline(username)),
     optimizeTaskList: (taskList) => dispatch(optimizeTaskList(taskList)),
+    onlyFilter: filter => dispatch(onlyFilter(filter))
   }
 }
 
