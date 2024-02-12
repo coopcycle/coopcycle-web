@@ -108,6 +108,23 @@ admin_business_account:
     path: /admin/restaurants/business-account/{id}
     defaults:
         _controller: AppBundle\Controller\AdminController::businessAccountAction
+
+admin_business_restaurant_group_new:
+    path: /admin/restaurants/business-restaurant-groups/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newBusinessRestaurantGroupAction
+    methods: [ GET, POST ]
+
+admin_business_restaurant_group:
+    path: /admin/restaurants/business-restaurant-groups/{id}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::businessRestaurantGroupAction
+    methods: [ GET, POST ]
+
+admin_business_restaurant_group_list:
+    path: /admin/restaurants/business-restaurant-groups
+    defaults:
+        _controller: AppBundle\Controller\AdminController::businessRestaurantGroupListAction
     methods: [ GET, POST ]
 
 admin_restaurant_new:

@@ -19,13 +19,15 @@ class TaxesHelper
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
         string $country,
-        string $locale)
+        string $locale,
+        bool $legacyTaxes)
     {
         $this->taxRateRepository = $taxRateRepository;
         $this->translator = $translator;
         $this->settingsManager = $settingsManager;
         $this->country = $country;
         $this->locale = $locale;
+        $this->legacyTaxes = $legacyTaxes;
     }
 
     /**
@@ -176,9 +178,20 @@ class TaxesHelper
         $amount = $subQuery->getQuery()->getSingleScalarResult();
 
         $qb = $this->taxRateRepository->createQueryBuilder('r');
+        $qb->select('r.code');
+
+        if ($this->legacyTaxes) {
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('r.country'),
+                    $qb->expr()->eq('LOWER(r.country)', 'LOWER(:country)')
+                )
+            );
+        } else {
+            $qb->andWhere('LOWER(r.country) = LOWER(:country)');
+        }
+
         $qb
-            ->select('r.code')
-            ->andWhere('LOWER(r.country) = LOWER(:country)')
             ->andWhere('r.amount = :amount')
             ->andWhere('r.code != :base_rate_code')
             ->setParameter('country', $this->country)

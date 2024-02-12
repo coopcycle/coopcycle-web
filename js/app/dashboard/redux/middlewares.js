@@ -52,9 +52,15 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task:failed':
         case 'task:cancelled':
         case 'task:created':
+        case 'task:rescheduled':
+          dispatch(updateTask(event.data.task))
+          break
         case 'task:assigned':
         case 'task:unassigned':
-        case 'task:rescheduled':
+          // FIXME : for now tours and assignment are handled in two different endpoint
+          // assign is done first
+          // so when the "assign endpoint" is called it doesn't know yet about the tour property setting
+          delete event.data.task['tour']
           dispatch(updateTask(event.data.task))
           break
         case 'task_import:success':
