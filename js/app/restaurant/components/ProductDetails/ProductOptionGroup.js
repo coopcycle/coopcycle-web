@@ -1,7 +1,7 @@
 import React from 'react'
-import { getValuesRange } from './ProductOptionsModalContext'
 import { useTranslation } from 'react-i18next'
 import { AdditionalOptionValue, OptionValue } from './ProductOptionValue'
+import { getValuesRange } from './useProductOptions'
 
 const ValuesRange = ({ option }) => {
 

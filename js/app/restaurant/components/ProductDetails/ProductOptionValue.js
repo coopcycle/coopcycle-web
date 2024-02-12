@@ -1,5 +1,5 @@
 import React from 'react'
-import { getValuesRange, useProductOptions } from './ProductOptionsModalContext'
+import { getValuesRange, useProductOptions } from './useProductOptions'
 
 const OptionValueLabel = ({ option, optionValue }) => (
   <>
@@ -13,7 +13,7 @@ const OptionValueLabel = ({ option, optionValue }) => (
 
 export const OptionValue = ({ index, option, optionValue }) => {
 
-  const { setValueQuantity } = useProductOptions()
+  const { incrementValueQuantity } = useProductOptions()
 
   return (
     <div
@@ -25,7 +25,7 @@ export const OptionValue = ({ index, option, optionValue }) => {
           value={optionValue.code}
           onClick={() => {
             window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
-            setValueQuantity(option, optionValue, 1)
+            incrementValueQuantity(option, optionValue)
           }}/>
         <OptionValueLabel option={option} optionValue={optionValue}/>
       </label>
@@ -40,7 +40,7 @@ export const AdditionalOptionValue = ({
   optionValue,
 }) => {
 
-  const { setValueQuantity, getValueQuantity } = useProductOptions()
+  const { getValueQuantity, setValueQuantity, incrementValueQuantity, decrementValueQuantity } = useProductOptions()
   const valuesRange = getValuesRange(option)
   const quantity = getValueQuantity(option, optionValue)
 
@@ -60,7 +60,7 @@ export const AdditionalOptionValue = ({
         className="product-option-item-label"
         htmlFor={''}
         onClick={() => {
-          setValueQuantity(option, optionValue, quantity + 1)
+          incrementValueQuantity(option, optionValue)
         }}>
         <OptionValueLabel option={option} optionValue={optionValue}/>
       </label>
@@ -68,8 +68,7 @@ export const AdditionalOptionValue = ({
         className="quantity-decrement"
         type="button"
         onClick={() => {
-          quantity > 0 &&
-          setValueQuantity(option, optionValue, quantity - 1)
+          decrementValueQuantity(option, optionValue)
         }}>
         <div>-</div>
       </button>
@@ -80,15 +79,14 @@ export const AdditionalOptionValue = ({
         min="0"
         value={quantity}
         onChange={e => {
-          setValueQuantity(option, optionValue,
-            parseInt(e.currentTarget.value, 10))
+          setValueQuantity(option, optionValue, e.currentTarget.value)
         }}
         {...inputProps} />
       <button
         className="quantity-increment"
         type="button"
         onClick={() => {
-          setValueQuantity(option, optionValue, quantity + 1)
+          incrementValueQuantity(option, optionValue)
         }}>
         <div>+</div>
       </button>

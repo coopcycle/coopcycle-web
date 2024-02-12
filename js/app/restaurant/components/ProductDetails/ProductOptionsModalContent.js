@@ -43,7 +43,7 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
   //   }
   // }, [ state ]);
 
-  const sumTotal = (state.total * (Number.isNaN(state.quantity) ? 1 : state.quantity)) / 100
+  const sumTotal = (state.total * state.quantity) / 100
 
   return (
     // FIXME

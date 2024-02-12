@@ -1,29 +1,23 @@
 import React from 'react'
 import {
   useProduct,
-} from './ProductOptionsModalContext'
+} from './useProduct'
 
 export default function ProductQuantity () {
-  const { price, quantity, setQuantity } = useProduct()
+  const { price, quantity, setQuantity, incrementQuantity, decrementQuantity } = useProduct()
 
   return (
     <div className="quantity-input-group">
-      <span className="quantity-input-group__price">{(price /
-        100).formatMoney()}</span>
+      <span className="quantity-input-group__price">{(price / 100).formatMoney()}</span>
       <button className="quantity-decrement" type="button"
-              onClick={() => {
-                if (quantity > 1) {
-                  setQuantity(quantity - 1)
-                }
-              }}>
+              onClick={decrementQuantity}>
         <div>-</div>
       </button>
       <input type="number" min="1" step="1" value={quantity}
              data-product-quantity
-             onChange={e => setQuantity(
-               parseInt(e.currentTarget.value, 10))}/>
+             onChange={e => setQuantity(e.currentTarget.value)}/>
       <button className="quantity-increment" type="button"
-              onClick={() => setQuantity(quantity + 1)}>
+              onClick={incrementQuantity}>
         <div>+</div>
       </button>
     </div>
