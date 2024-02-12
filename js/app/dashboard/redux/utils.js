@@ -80,7 +80,7 @@ export const isTaskVisible = (task, filters, date) => {
 
   const isFinished = _.includes(['DONE', 'FAILED'], task.status)
   const isCancelled = 'CANCELLED' === task.status
-  const isIncidentReported = task.failureReason !== null
+  const isIncidentReported = task.incidented
 
   if (onlyFilter !== null) {
     switch (onlyFilter) {

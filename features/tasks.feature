@@ -45,7 +45,7 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":[],
             "weight":null,
-            "failureReason":null,
+            "incidented": false,
             "orgName":"",
             "images":[],
             "next":null,
@@ -81,7 +81,7 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":[],
             "weight":null,
-            "failureReason":null,
+            "incidented": false,
             "orgName":"",
             "images":[],
             "next":null,
@@ -116,7 +116,7 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":[],
             "weight":null,
-            "failureReason":null,
+            "incidented": false,
             "orgName":"",
             "images":[],
             "next":null,
@@ -152,7 +152,7 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":[],
             "weight":null,
-            "failureReason":null,
+            "incidented": false,
             "orgName":"",
             "images":[],
             "next":null,
@@ -545,7 +545,7 @@ Feature: Tasks
         "recurrenceRule": null,
         "metadata": [],
         "weight":null,
-        "failureReason":null,
+        "incidented": false,
         "packages": [],
         "createdAt":"@string@.isDateTime()",
         "tour":{
@@ -643,7 +643,7 @@ Feature: Tasks
         "assignedTo":"bob",
         "previous":null,
         "group":null,
-        "failureReason": "DAMAGED",
+        "incidented": true,
         "tags":@array@
       }
       """
@@ -892,7 +892,7 @@ Feature: Tasks
         "recurrenceRule": null,
         "metadata": [],
         "weight": 800,
-        "failureReason":null,
+        "incidented": false,
         "packages": [],
         "createdAt":"@string@.isDateTime()",
         "tour":null
@@ -974,7 +974,7 @@ Feature: Tasks
         "recurrenceRule": null,
         "metadata": [],
         "weight":null,
-        "failureReason":null,
+        "incidented": false,
         "packages": [],
         "createdAt":"@string@.isDateTime()",
         "tour":null
@@ -1106,7 +1106,7 @@ Feature: Tasks
               "baz":"bat"
             },
             "weight":null,
-            "failureReason":null,
+            "incidented": false,
             "packages": [],
             "createdAt":"@string@.isDateTime()",
             "tour":null
@@ -1137,7 +1137,8 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":[],
             "weight":null,
-            "failureReason":null,
+            "incidented": false,
+            "incidented": false,
             "packages": [],
             "createdAt":"@string@.isDateTime()",
             "tour":null
@@ -2317,4 +2318,4 @@ Feature: Tasks
         "thumbnail":@string@
       }
       """
-      
+

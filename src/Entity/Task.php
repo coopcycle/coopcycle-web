@@ -268,7 +268,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *     "task_incident"={
  *       "method"="PUT",
- *       "path"="/tasks/{id}/incident",
+ *       "path"="/tasks/{id}/incidents",
  *       "controller"=TaskIncident::class,
  *       "security"="is_granted('view', object)",
  *       "openapi_context"={
@@ -448,10 +448,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $weight;
 
     /**
-     * @var string|null
-     * @Groups({"task"})
-     */
-    private $failureReason;
+    * @var bool
+    * @Groups({"task"})
+    */
+    private $incidented;
 
     public function __construct()
     {
@@ -1119,19 +1119,13 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $language->evaluate($pricingRule->getPrice(), $this->toExpressionLanguageValues());
     }
 
-    public function getFailureReasons(): array
+    public function setIncidented(bool $incidented): void
     {
-        return [];
+        $this->incidented = $incidented;
     }
 
-    public function getFailureReason(): ?string
+    public function getIncidented(): bool
     {
-        return $this->failureReason;
-    }
-
-    public function setFailureReason(?string $failureReason): Task
-    {
-        $this->failureReason = $failureReason;
-        return $this;
+        return $this->incidented;
     }
 }

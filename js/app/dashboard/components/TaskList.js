@@ -159,7 +159,7 @@ class TaskList extends React.Component {
     const inProgressTasks = _.filter(tasks, t => t.status === 'DOING')
     const failureTasks = _.filter(tasks, t => t.status === 'FAILED')
     const cancelledTasks = _.filter(tasks, t => t.status === 'CANCELLED')
-    const incidentReported = _.filter(tasks, t => t.failureReason !== null)
+    const incidentReported = _.filter(tasks, t => t.incidented)
 
     const durationFormatted = moment.utc()
       .startOf('day')
