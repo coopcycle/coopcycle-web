@@ -150,6 +150,30 @@ describe('withLinkedTasks', () => {
     ])
   })
 
+  it('should return once tasks with unique flag + keep the original tasks order', () => {
+
+    const actual = withLinkedTasks([
+      { '@id': '/api/tasks/4', next: '/api/tasks/5' },
+      { '@id': '/api/tasks/1', next: '/api/tasks/2' }, // this has been inserted between the two
+      { '@id': '/api/tasks/5', previous: '/api/tasks/4' }
+    ], allTasks, true)
+
+    expect(actual).toEqual([
+      {
+        '@id': '/api/tasks/4',
+        next: '/api/tasks/5'
+      }, 
+      {
+        '@id': '/api/tasks/1',
+        next: '/api/tasks/2',
+      },
+      {
+        '@id': '/api/tasks/5',
+        previous: '/api/tasks/4',
+      }
+    ])
+  })
+
   it('should return expected results with multiple tasks (without next)', () => {
 
     const actual = withLinkedTasks({
