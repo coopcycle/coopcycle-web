@@ -101,8 +101,11 @@ class RestaurantResolverTest extends TestCase
         $cart
             ->getRestaurants()
             ->willReturn(new ArrayCollection([ $restaurant->reveal() ]));
+        $cart
+            ->getBusinessAccount()
+            ->willReturn(null);
 
-        $request = new Request(
+            $request = new Request(
             $query = [],
             $request = [],
             $attributes = [
@@ -142,6 +145,9 @@ class RestaurantResolverTest extends TestCase
         $cart
             ->getRestaurants()
             ->willReturn(new ArrayCollection([ $restaurant2->reveal() ]));
+        $cart
+            ->getBusinessAccount()
+            ->willReturn(null);
 
         $request = new Request(
             $query = [],

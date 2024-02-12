@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\Product;
 
+use AppBundle\Entity\BusinessRestaurantGroup;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Model\ProductInterface;
@@ -96,5 +97,18 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
         }
 
         return true;
+    }
+
+    public function getVariantForBusinessRestaurantGroup(ProductInterface $product, BusinessRestaurantGroup $businessRestaurantGroup): ?ProductVariantInterface
+    {
+        foreach ($product->getVariants() as $variant) {
+            $variantBusinessRestaurantGroup = $variant->getBusinessRestaurantGroup();
+
+            if (null !== $variantBusinessRestaurantGroup && $businessRestaurantGroup->getId() === $variantBusinessRestaurantGroup->getId()) {
+                return $variant;
+            }
+        }
+
+        return null;
     }
 }
