@@ -62,9 +62,6 @@
             badges: restaurant_badges(restaurant),
             banner_image: coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner')|placeholder_image(filter='restaurant_banner', obj=restaurant)
           } %}
-          <div class="col-sm-6 col-md-4 display-flex">
-            {% include "_partials/restaurant/list_thumbnail.html.twig" %}
-          </div>
         {% endif %}
       {% endfor %}
     </div>

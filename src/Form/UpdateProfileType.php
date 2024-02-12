@@ -81,14 +81,17 @@ class UpdateProfileType extends AbstractType
                 $form = $event->getForm();
                 $user = $event->getData();
 
+                $form
+                    ->add('email', EmailType::class, [
+                        'label' => 'profile.email',
+                        'disabled' => !$isAdmin,
+                    ]);
+
                 if ($isAdmin) {
                     $form
                         ->add('enabled', CheckboxType::class, [
                             'label' => 'user.edit.enabled.label',
                             'required' => false
-                        ])
-                        ->add('email', EmailType::class, [
-                            'label' => 'profile.email'
                         ]);
                 }
 

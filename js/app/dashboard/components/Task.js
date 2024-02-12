@@ -94,11 +94,6 @@ const TaskIconRight = ({ task, onRemove }) => {
   if (task.isAssigned) {
     switch (task.status) {
     case 'TODO':
-
-      if (task.tour) {
-        return null
-      }
-
       return (
         <a
           href="#"
@@ -155,7 +150,7 @@ const TaskIconRight = ({ task, onRemove }) => {
 }
 
 const { show } = useContextMenu({
-  id: 'dashboard',
+  id: 'task-contextmenu',
 })
 
 class Task extends React.Component {

@@ -15,24 +15,23 @@ import {
 import classNames from 'classnames'
 
 import Task from './Task'
-import Tour from './Tour'
 
 import Avatar from '../../components/Avatar'
 import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
-import { selectVisibleTaskIds } from '../redux/selectors'
+import { selectFiltersSetting, selectVisibleTaskIds } from '../redux/selectors'
 import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
+import Tour from './Tour'
+import { getDroppableListStyle } from '../utils'
 
 moment.locale($('html').attr('lang'))
 
-const TaskOrTour = ({ item, onRemove, unassignTasks, username }) => {
+const TaskOrTour = ({ item, onRemove, unassignTasks }) => {
 
   if (item['@type'] === 'Tour') {
 
     return (
       <Tour
         tour={ item }
-        tasks={ item.items }
-        username={ username }
         unassignTasks={ unassignTasks } />
     )
   }
@@ -74,7 +73,6 @@ class InnerList extends React.Component {
               <TaskOrTour
                 item={ item }
                 onRemove={ item => this.props.onRemove(item) }
-                username={ this.props.username }
                 unassignTasks={ this.props.unassignTasks } />
             </div>
           )}
@@ -145,10 +143,10 @@ class TaskList extends React.Component {
               okText={ this.props.t('CROPPIE_CONFIRM') }
               cancelText={ this.props.t('ADMIN_DASHBOARD_CANCEL') }>
               <a href="#"
-                className="p-2"
+                className="text-reset mr-2"
                 style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
                 onClick={ e => e.preventDefault() }>
-                <i className="fa fa-lg fa-close"></i>
+                <i className="fa fa-lg fa-times"></i>
               </a>
             </Popconfirm>
           </AccordionItemButton>
@@ -193,8 +191,11 @@ class TaskList extends React.Component {
               </div>
             </div>
           )}
-          <Droppable droppableId={ `assigned:${username}` }>
-            {(provided) => (
+          <Droppable
+            droppableId={ `assigned:${username}` }
+            key={tasks.length} // assign a mutable key to trigger a re-render when inserting a nested droppable (for example : a tour)
+          >
+            {(provided, snapshot) => (
               <div ref={ provided.innerRef }
                 className={ classNames({
                   'taskList__tasks': true,
@@ -203,6 +204,7 @@ class TaskList extends React.Component {
                   'taskList__tasks--empty': isEmpty
                 }) }
                 { ...provided.droppableProps }
+                style={getDroppableListStyle(snapshot.isDraggingOver)}
               >
                 <InnerList
                   items={ items }
@@ -250,7 +252,7 @@ const makeMapStateToProps = () => {
       isEmpty: items.length === 0 || visibleTaskIds.length === 0,
       distance: ownProps.distance,
       duration: ownProps.duration,
-      filters: state.settings.filters,
+      filters: selectFiltersSetting(state),
     }
   }
 

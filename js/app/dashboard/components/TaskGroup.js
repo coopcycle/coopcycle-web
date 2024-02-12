@@ -90,7 +90,7 @@ class TaskGroup extends React.Component {
     })
 
     return (
-      <div className="panel panel-default nomargin task__draggable">
+      <div className="panel panel-default panel--group nomargin task__draggable">
         <div className="panel-heading" role="tab">
           <h4 className="panel-title d-flex align-items-center">
             <i className="fa fa-folder flex-grow-0"></i>
@@ -125,7 +125,7 @@ class TaskGroup extends React.Component {
           </h4>
         </div>
         <div id={ `task-group-panel-${this.state.group.id}` } className="panel-collapse collapse" role="tabpanel">
-          <ul className="list-group list-group-padded">
+          <ul className="list-group">
             { tasks.map(task => {
               return (
                 <Task

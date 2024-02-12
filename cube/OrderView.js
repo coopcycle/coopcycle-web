@@ -91,5 +91,14 @@ view(`OrderView`, {
         },
       ]
     },
+    {
+      join_path: Order.Delivery,
+      includes: [
+        {
+          name: `distance`,
+          alias: `delivery_distance`
+        }
+      ]
+    },
   ]
 })

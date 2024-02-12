@@ -66,16 +66,17 @@
   background-color: #fff !important;
   box-shadow: 0px 0px 64px 0px #0000000D;
 
+  h5 {
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    font-size: 16px !important;
+  }
+
   .header {
     background-color: $primary-default;
     color: $white;
     padding-top: 10px;
     padding-bottom: 10px;
     text-align: center;
-
-    h5 {
-      font-size: 16px !important;
-    }
   }
 
   .form {
@@ -140,6 +141,35 @@
       border: 2px solid;
       border-color: $primary-default;
       color: $primary-default;
+    }
+  }
+}
+
+.link-section {
+  margin-top: 20px;
+  max-width: 423px;
+}
+
+button, a {
+  &.btn-primary-default {
+    background-color: $primary-default;
+    color: white;
+  }
+
+  &.btn-primary-outline {
+    background-color: $white;
+    border: 2px solid;
+    border-color: $primary-default;
+    color: $primary-default;
+  }
+
+  &.btn-link-primary-default {
+    background-color: transparent;
+    color: $primary-desactivated;
+
+    &:hover, &:focus, &:active {
+      color: $primary-default !important;
+      box-shadow: none;
     }
   }
 }

@@ -1181,8 +1181,8 @@ adminDashboard.hubs.createNew: Create a new hub
 adminDashboard.hubs.help: Hubs allow to group together shops sharing the same pickup address, like a market for example.
 adminDashboard.business_accounts.title: Business accounts
 adminDashboard.business_accounts.createNew: Create a new business account
-form.business_account.hub.label: Hub
-form.business_account.hub.placeholder: Choose a hub
+form.business_account.businessRestaurantGroup.label: Business restaurant group
+form.business_account.businessRestaurantGroup.placeholder: Choose a business restaurant group`
 form.business_account.employees.label: List of employees
 form.business_account.restaurants.add: Add a restaurant
 form.business_account.employees.add: Add an employee
@@ -1191,6 +1191,9 @@ form.business_account.manager.email.help: An invitation email to Coopcycle will 
 form.business_account.manager.email_sent.help: Invitation email to Coopcycle has been sent
 form.business_account.save_and_send_invitation.label: Save and send invitation
 form.business_acount.send_invitation.confirm: Invitation email to Coopcycle has been sent
+adminDashboard.business_restaurant_group_list.title: Business restaurant group list
+adminDashboard.business_restaurant_group.title: Business restaurant group
+adminDashboard.business_restaurant_group.createNew: Create a new business restaurant group
 restaurant.form.edenred_merchant_id.label: Edenred Merchant ID
 restaurant.form.edenred_merchant_id.help: Leave empty to disable Edenred
 restaurants.mode.list: View as list
@@ -1411,7 +1414,7 @@ registration.company.address: "Address"
 registration.company.address.different.for.billing: "Different address for billing"
 registration.company.billing.address: "Billing address"
 registration.step.company.name: "Name of the company"
-registration.step.invitation.copy.link: "Copy the link below and send it to your collegues"
+registration.step.invitation.copy.link: "Copy the link below and send it to your colleagues"
 registration.step.invitation.copy.button: "Copy the link"
 registration.step.invitation.link.copied: "Copied"
 error.404: Page not found.
@@ -1421,3 +1424,11 @@ error.return_to_homepage: Return to homepage
 deliveries.imports: Imported files
 deliveries.importing: The file %filename% is being imported.
 deliveries.imports.created_at: Created at
+business.account.settings.link: Link with my account
+form.business_restaurant_group.restaurants_with_menu: Restaurants with menu
+form.business_restaurant_group.restaurant: Restaurant
+form.business_restaurant_group.menu: Menu
+form.product.business_restaurant_group.price_definition.label: Define prices for Business Restaurant Groups
+form.product.business_restaurant_group.price_definition.placeholder: Please select one
+business_restaurant_group.label: Business restaurant group
+adminDashboard.business_restaurant_groups.title: Business restaurant groups
