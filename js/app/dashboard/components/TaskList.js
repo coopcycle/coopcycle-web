@@ -84,14 +84,14 @@ class InnerList extends React.Component {
 // OPTIMIZATION
 // Use React.memo to avoid re-renders when percentage hasn't changed
 const ProgressBarMemo = React.memo(({
-  completedTasks, inProgressTasks,
-  incidentReported, failureTasks, tasks, t
+  completedTasks, inProgressTasks, cancelledTasks,
+  failureTasks, tasks, t
 }) => {
 
     const completedPer = completedTasks / tasks * 100
-    const incidentPer = incidentReported / tasks * 100
     const inProgressPer = inProgressTasks / tasks * 100
     const failurePer = failureTasks / tasks * 100
+    const cancelledPer = cancelledTasks / tasks * 100
     const title = (
       <table style={{ width: '100%' }}>
         <tbody>
@@ -100,12 +100,12 @@ const ProgressBarMemo = React.memo(({
             <td style={{ textAlign: 'right' }}>{completedTasks}</td>
           </tr>
           <tr>
-            <td style={{ paddingRight: '10px' }}><span style={{ color: '#ffc107' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_INCIDENT_REPORTED')}</td>
-            <td style={{ textAlign: 'right' }}>{incidentReported}</td>
+            <td style={{ paddingRight: '10px' }}><span style={{ color: '#ffc107' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_FAILED')}</td>
+            <td style={{ textAlign: 'right' }}>{failureTasks}</td>
           </tr>
           <tr>
-            <td style={{ paddingRight: '10px' }}><span style={{ color: '#dc3545' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_FAILED')}</td>
-            <td style={{ textAlign: 'right' }}>{failureTasks}</td>
+            <td style={{ paddingRight: '10px' }}><span style={{ color: '#dc3545' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_CANCELLED')}</td>
+            <td style={{ textAlign: 'right' }}>{cancelledTasks}</td>
           </tr>
           <tr>
             <td style={{ paddingRight: '10px' }}><span style={{ color: '#337ab7' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_IN_PROGRESS')}</td>
@@ -125,14 +125,14 @@ const ProgressBarMemo = React.memo(({
 
   return (
     <Tooltip title={title}>
-        <div>
-          <ProgressBar width="100%" height="8" backgroundColor="white" segments={[
-            {value: `${completedPer}%`, color: '#28a745'},
-            {value: `${incidentPer}%`, color: '#ffc107'},
-            {value: `${failurePer}%`, color: '#dc3545'},
-            {value: `${inProgressPer}%`, color: '#337ab7'},
-          ]} />
-        </div>
+          <div>
+            <ProgressBar width="100%" height="8" backgroundColor="white" segments={[
+              {value: `${completedPer}%`, color: '#28a745'},
+              {value: `${failurePer}%`, color: '#ffc107'},
+              {value: `${cancelledPer}%`, color: '#dc3545'},
+              {value: `${inProgressPer}%`, color: '#337ab7'},
+            ]} />
+          </div>
     </Tooltip>
   )
 })
@@ -158,6 +158,7 @@ class TaskList extends React.Component {
     const completedTasks = _.filter(tasks, t => t.status === 'DONE')
     const inProgressTasks = _.filter(tasks, t => t.status === 'DOING')
     const failureTasks = _.filter(tasks, t => t.status === 'FAILED')
+    const cancelledTasks = _.filter(tasks, t => t.status === 'CANCELLED')
     const incidentReported = _.filter(tasks, t => t.failureReason !== null)
 
     const durationFormatted = moment.utc()
@@ -186,6 +187,7 @@ class TaskList extends React.Component {
                   inProgressTasks={ inProgressTasks.length }
                   incidentReported={ incidentReported.length }
                   failureTasks={ failureTasks.length }
+                  cancelledTasks={ cancelledTasks.length }
                   t={this.props.t.bind(this)}
                 />
             </div>
