@@ -35,7 +35,9 @@ class BusinessVoter implements VoterInterface
 
             Assert::isInstanceOf($user, User::class);
 
-            return $user->hasBusinessAccount();
+            if ($user->hasBusinessAccount()) {
+                return self::ACCESS_GRANTED;
+            }
         }
 
         return $result;
