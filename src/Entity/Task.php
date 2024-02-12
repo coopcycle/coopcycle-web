@@ -451,7 +451,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     * @var bool
     * @Groups({"task"})
     */
-    private $incidented;
+    private $incidented = false;
 
     public function __construct()
     {

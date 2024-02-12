@@ -19,7 +19,7 @@ final class Version20240212132659 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE task ADD incidented BOOLEAN DEFAULT FALSE');
+        $this->addSql('ALTER TABLE task ADD incidented BOOLEAN NOT NULL DEFAULT FALSE');
         $this->addSql('UPDATE task SET incidented = true WHERE failure_reason IS NOT NULL');
         $this->addSql('ALTER TABLE task DROP failure_reason');
     }
