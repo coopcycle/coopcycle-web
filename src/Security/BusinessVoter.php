@@ -3,22 +3,14 @@
 namespace AppBundle\Security;
 
 use AppBundle\Entity\User;
-use AppBundle\Entity\OrganizationConfig;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Webmozart\Assert\Assert;
 
-class ProVoter implements VoterInterface
+class BusinessVoter implements VoterInterface
 {
-    private $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
+    private static $role = 'ROLE_BUSINESS';
     /**
      * {@inheritdoc}
      */
@@ -32,7 +24,7 @@ class ProVoter implements VoterInterface
                 continue;
             }
 
-            if ('ROLE_PRO' !== $attribute) {
+            if (self::$role !== $attribute) {
                 continue;
             }
 
@@ -43,26 +35,9 @@ class ProVoter implements VoterInterface
 
             Assert::isInstanceOf($user, User::class);
 
-            $customer = $user->getCustomer();
-
-            if (null === $customer) {
-                return self::ACCESS_DENIED;
+            if ($user->hasBusinessAccount()) {
+                return self::ACCESS_GRANTED;
             }
-
-            $group = $customer->getGroup();
-
-            if (null === $group) {
-                return self::ACCESS_DENIED;
-            }
-
-            $orgConfig = $this->entityManager->getRepository(OrganizationConfig::class)
-                ->findOneBy(['group' => $group]);
-
-            if (null === $orgConfig) {
-                return self::ACCESS_DENIED;
-            }
-
-            return self::ACCESS_GRANTED;
         }
 
         return $result;

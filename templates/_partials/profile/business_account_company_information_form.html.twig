@@ -1,6 +1,6 @@
 <div class="form-section">
   <div class="header rounded-top">
-    <h5>{{ flow.currentStepLabel|trans }}</h5>
+    <h5>{{ (flow is defined ? flow.currentStepLabel : 'registration.step.company')|trans }}</h5>
   </div>
   <div class="form rounded-bottom">
     {{ form_row(form.name) }}
@@ -17,14 +17,25 @@
     <div class="d-none" data-billing-address>
       {{ form_row(form.billingAddress) }}
     </div>
-    {% include '_partials/profile/flow_buttons.html.twig' %}
+    {% if flow is defined %}
+      {% include '_partials/profile/flow_buttons.html.twig' %}
+    {% elseif form.save is defined %}
+      <div class="row">
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+            <button name="{{ field_name(form.save) }}" type="submit" class="btn btn-block btn-md btn-primary">
+            {{ field_label(form.save)|trans }}
+            </button>
+        </div>
+      </div>
+    {% endif %}
   </div>
 </div>
 
 {% block scripts %}
   <script>
     (function() {
-      document.querySelector('[id$=_businessAccount_billingAddress_streetAddress]').removeAttribute('required')
+      document.querySelector('[id$=_billingAddress_streetAddress]').removeAttribute('required')
     })();
   </script>
 {% endblock %}

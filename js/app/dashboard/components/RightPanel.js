@@ -8,15 +8,14 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import {
   toggleSearch,
-  closeSearch,
-  handleDragStart,
-  handleDragEnd, 
-  modifyTaskList} from '../redux/actions'
+  closeSearch
+} from '../redux/actions'
 import UnassignedTasks from './UnassignedTasks'
 import TaskLists from './TaskLists'
-import ContextMenu from './ContextMenu'
 import SearchPanel from './SearchPanel'
 import UnassignedTours from './UnassignedTours'
+import TasksContextMenu from './context-menus/TasksContextMenu'
+import { handleDragEnd, handleDragStart } from '../redux/handleDrag'
 
 class DashboardApp extends React.Component {
 
@@ -64,7 +63,7 @@ class DashboardApp extends React.Component {
           </Split>
         </DragDropContext>
         <SearchPanel />
-        <ContextMenu />
+        <TasksContextMenu />
         <ToastContainer />
       </div>
     )
@@ -87,7 +86,7 @@ function mapDispatchToProps (dispatch) {
     toggleSearch: () => dispatch(toggleSearch()),
     closeSearch: () => dispatch(closeSearch()),
     handleDragStart: (result) => dispatch(handleDragStart(result)),
-    handleDragEnd: (result) => dispatch(handleDragEnd(result, modifyTaskList)),
+    handleDragEnd: (result) => dispatch(handleDragEnd(result)),
   }
 }
 

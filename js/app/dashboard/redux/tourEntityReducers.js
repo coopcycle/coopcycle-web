@@ -16,7 +16,7 @@ export default (state = initialState, action) => {
       return tourAdapter.upsertOne(state, action.tour)
 
     case MODIFY_TOUR_REQUEST:
-      const _tour = {...action.tour, tasks: action.tasks, items: action.tasks}
+      const _tour = {...action.tour, items: action.tasks}
       _tour.itemIds = _tour.items.map(item => item['@id'])
       return tourAdapter.upsertOne(state, _tour)
     case MODIFY_TOUR_REQUEST_ERROR:

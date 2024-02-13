@@ -11,7 +11,12 @@ final class LoopeatInsufficientStockException extends \Exception
     {
         $this->violations = $violations;
 
-        parent::__construct((string) $violations);
+        $message = '';
+        foreach ($violations as $violation) {
+            $message .= $violation->getMessage() . "\n";
+        }
+
+        parent::__construct($message);
     }
 
     public function getViolations(): ConstraintViolationList

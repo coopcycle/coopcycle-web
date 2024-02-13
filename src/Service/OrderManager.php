@@ -77,4 +77,9 @@ class OrderManager
     {
         $this->commandBus->handle(new OrderCommand\Refund($payment, $amount, $liableParty, $comments));
     }
+
+    public function restore(OrderInterface $order)
+    {
+        $this->commandBus->handle(new OrderCommand\RestoreOrder($order));
+    }
 }

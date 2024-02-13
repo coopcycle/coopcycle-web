@@ -10,12 +10,11 @@ import {
   createTaskListRequest,
   createTaskListSuccess,
   createTaskListFailure,
-  enableUnassignedTourTasksDroppable,
-  disableUnassignedTourTasksDroppable,
+  enableDropInTours,
+  disableDropInTours,
 } from '../../coopcycle-frontend-js/logistics/redux'
-import { selectGroups, selectNextWorkingDay, selectSelectedTasks } from './selectors'
-import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
-import { tourSelectors, taskSelectors } from './selectors'
+import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
+
 
 function createClient(dispatch) {
 
@@ -194,6 +193,8 @@ export const CREATE_TOUR_REQUEST_SUCCESS = 'CREATE_TOUR_REQUEST_SUCCESS'
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
 export const MODIFY_TOUR_REQUEST_ERROR = 'MODIFY_TOUR_REQUEST_ERROR'
+export const TOGGLE_TOUR_PANEL_EXPANDED = 'TOGGLE_EXPANDED_TOUR_PANEL'
+
 export const UPDATE_TOUR = 'UPDATE_TOUR'
 export const DELETE_TOUR_SUCCESS = 'DELETE_TOUR_SUCCESS'
 
@@ -224,25 +225,29 @@ export function assignAfter(username, task, after) {
   }
 }
 
-export function unassignTasks(username, tasks) {
+export function unassignTasks(username, tasks, updateTourUI=null) {
+    /*
+      Unassign tasks.
+
+      We can pass a callback updateTourUI so we update the UI related to the tour before we do the AJAX call to modify the tasklist
+    */
 
   if (!Array.isArray(tasks)) {
     tasks = [ tasks ]
   }
 
-  return function(dispatch, getState) {
+  return async function(dispatch, getState) {
 
     if (tasks.length === 0) {
       return
     }
 
     let state = getState()
-    let allTasks = selectAllTasks(state)
     let taskLists = selectTaskLists(state)
 
     const taskList = _.find(taskLists, taskList => taskList.username === username)
 
-    dispatch(modifyTaskList(username, withoutTasks(taskList.items, withLinkedTasks(tasks, allTasks))))
+    await dispatch(modifyTaskList(username, withoutTasks(taskList.items, tasks), updateTourUI))
   }
 }
 
@@ -286,14 +291,21 @@ export function importError(token, message) {
   return { type: IMPORT_ERROR, token, message }
 }
 
-export function modifyTaskList(username, tasks) {
+export function modifyTaskList(username, tasks, updateTourUI=null) {
+  /*
+    Modify a TaskList
 
-  const data = tasks.map((task, index) => ({
-    task: task['@id'],
-    position: index,
-  }))
+    We can pass a callback updateTourUI so we update the UI related to the tour before we do the AJAX call to modify the tasklist
+  */
 
-  return function(dispatch, getState) {
+  return async function(dispatch, getState) {
+
+    if (updateTourUI) updateTourUI()
+
+    const data = tasks.map((task, index) => ({
+      task: task['@id'],
+      position: index,
+    }))
 
     let state = getState()
     let allTasks = selectAllTasks(state)
@@ -309,26 +321,29 @@ export function modifyTaskList(username, tasks) {
 
       return {
         ...rt,
+        isAssigned: true,
         position,
       }
     })
 
     dispatch(modifyTaskListRequest(username, newTasks))
 
-    axios
-      .put(url, data, {
+    let response
+
+    try {
+      response =  await axios.put(url, data, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/ld+json'
         },
       })
-      .then(res => {
-        dispatch(modifyTaskListRequestSuccess(res.data))
-      })
-      .catch(error => {
-        // eslint-disable-next-line no-console
-        console.error(error)
-      })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
+
+    dispatch(modifyTaskListRequestSuccess(response.data))
+    return response.data
   }
 }
 
@@ -1197,143 +1212,6 @@ export function exportTasks(start, end) {
   }
 }
 
-export function handleDragStart(result) {
-  return function(dispatch, getState) {
-
-    const selectedTasks = getState().selectedTasks
-
-    // If the user is starting to drag something that is not selected then we need to clear the selection.
-    // https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/patterns/multi-drag.md#dragging
-    const isDraggableSelected = selectedTasks.includes(result.draggableId)
-
-    if (!isDraggableSelected) {
-      dispatch(clearSelectedTasks())
-    }
-
-    if (result.source.droppableId == 'unassigned_tours') {
-      dispatch(disableUnassignedTourTasksDroppable())
-    }
-  }
-}
-
-// modifyTaskList is passed as argument so we can test this function thanks to dependency injection
-export function handleDragEnd(result, modifyTaskList) {
-
-  return function(dispatch, getState) {
-
-    dispatch(enableUnassignedTourTasksDroppable())
-
-    // dropped nowhere
-    if (!result.destination) {
-      return;
-    }
-
-    const source = result.source;
-    const destination = result.destination;
-
-    // reordered inside the unassigned list or unassigned tours list, do nothing
-    if (
-      source.droppableId === destination.droppableId &&
-      ( source.droppableId === 'unassigned' || source.droppableId === 'unassigned_tours' )
-    ) {
-      return;
-    }
-
-    // did not move anywhere - can bail early
-    if (
-      source.droppableId === destination.droppableId &&
-      source.index === destination.index
-    ) {
-      return;
-    }
-
-    // cannot unassign by drag'n'drop atm
-    if (source.droppableId.startsWith('assigned:') && destination.droppableId === 'unassigned') {
-      return
-    }
-
-    // cannot unassign from tour by drag'n'drop atm
-    if (source.droppableId.startsWith('unassigned_tour:') && destination.droppableId === 'unassigned') {
-      return
-    }
-
-    const allTasks = selectAllTasks(getState())
-
-    // FIXME
-    // The tasks are dropped in the order they were selected
-    // Instead, we should respect the order of the unassigned tasks
-
-
-    // FIXME : if a tour or a group is selected, selectSelectedTasks yields [ undefined ] so we test > 1 no > 0
-    let selectedTasks = selectSelectedTasks(getState()).length > 1 ? selectSelectedTasks(getState()) : [_.find(allTasks, t => t['@id'] === result.draggableId)]
-
-    // we are moving a whole group or tour, override selectedTasks
-    if (result.draggableId.startsWith('group')) {
-      let groupId = result.draggableId.split(':')[1]
-      selectedTasks = selectGroups(getState()).find(g => g.id = groupId).tasks
-    }
-    else if (result.draggableId.startsWith('tour')) {
-      let tourId = result.draggableId.split(':')[1],
-      tour = tourSelectors.selectById(getState(), tourId)
-      selectedTasks = tour.itemIds.map(taskId => taskSelectors.selectById(getState(), taskId))
-    }
-    
-    // we want to move linked tasks together only when assigning and adding to a tour
-    // so we can keep fine grained control for reordering at will
-    if (source.droppableId !== destination.droppableId) {
-      selectedTasks =  withLinkedTasks(selectedTasks, allTasks, true)
-    }
-    
-    // handle drop in a tour
-    if (destination.droppableId.startsWith('unassigned_tour:')) {
-
-      const tours = selectUnassignedTours(getState())
-      const tourId = destination.droppableId.replace('unassigned_tour:', '')
-      const tour = tours.find(t => t['@id'] == tourId)
-
-      let newTourItems = [ ...tour.items ]
-
-      // Drop new task into existing tour
-      if (source.droppableId === 'unassigned') {
-        Array.prototype.splice.apply(newTourItems,
-          Array.prototype.concat([ result.destination.index, 0 ], selectedTasks))
-      }
-
-      // Reorder tasks of existing tour
-      if (source.droppableId === destination.droppableId) {
-        const [ removed ] = newTourItems.splice(result.source.index, 1);
-        newTourItems.splice(result.destination.index, 0, removed)
-      }
-
-      dispatch(modifyTour(tour, newTourItems))
-
-      return
-    }
-
-    // handle drop in a tasklist
-    const tasksLists = selectTaskLists(getState())
-
-    const username = destination.droppableId.replace('assigned:', '')
-    const tasksList = _.find(tasksLists, tl => tl.username === username)
-
-    let newTasksList = [...tasksList.items]
-
-
-    selectedTasks.forEach((task) => {
-      let taskIndex = newTasksList.findIndex((item) => item['@id'] === task['@id'])
-      // if the task was already in the tasklist, remove from its original place 
-      if ( taskIndex > -1) {
-        newTasksList.splice(taskIndex, 1)
-      }
-    })
-
-    // insert all the selected tasks at the destination index
-    newTasksList.splice(result.destination.index, 0, ...selectedTasks)
-
-    dispatch(modifyTaskList(username, newTasksList))
-  }
-}
-
 export function createGroupRequest() {
   return { type: CREATE_GROUP_REQUEST }
 }
@@ -1552,6 +1430,9 @@ export function modifyTourRequestError(tour, tasks) {
   return { type: MODIFY_TOUR_REQUEST_ERROR, tour, tasks }
 }
 
+export function toggleTourPanelExpanded(tourId) {  
+  return { type: TOGGLE_TOUR_PANEL_EXPANDED, tourId}
+}
 
 export function createTour(tasks, name, date) {
   return function(dispatch, getState) {
@@ -1576,13 +1457,14 @@ export function createTour(tasks, name, date) {
       }
     })
       .then((response) => {
-        tasks.forEach(task => dispatch(updateTask({ ...task, tour: response.data })))
+        tasks.forEach(task => dispatch(updateTask({ '@id': task.id, tour: response.data })))
         // flatten items to itmIds
         let tour = {...response.data}
         tour.itemIds = tour.items.map(item => item['@id'])
 
         dispatch(updateTour(tour))
         dispatch(createTourRequestSuccess())
+        dispatch(toggleTourPanelExpanded(tour['@id']))
         dispatch(closeCreateTourModal())
       })
       .catch(error => {
@@ -1593,41 +1475,54 @@ export function createTour(tasks, name, date) {
   }
 }
 
-export function modifyTour(tour, tasks) {
+export function updateTourInUI(dispatch, tour, tasks) {
+  dispatch(disableDropInTours())
+  dispatch(modifyTourRequest(tour, tasks))
+}
 
-  return function(dispatch, getState) {
+export function modifyTour(tour, tasks, isTourUIAlreadyUpdated=false) {
+  /*
+    When assigning a task to a tour which is already is assigned,
+    `modifyTaskList` would be responsible for updating the UI.
+  */
 
-    dispatch(modifyTourRequest(tour, tasks))
+  return async function(dispatch, getState) {
+
+    if (!isTourUIAlreadyUpdated) updateTourInUI(dispatch, tour, tasks)
 
     const { jwt } = getState()
 
-    createClient(dispatch).request({
-      method: 'put',
-      url: tour['@id'],
-      data: {
-        name: tour.name,
-        tasks: _.map(tasks, t => t['@id'])
-      },
-      headers: {
-        'Authorization': `Bearer ${jwt}`,
-        'Accept': 'application/ld+json',
-        'Content-Type': 'application/ld+json'
-      }
-    })
-      .then(res => {
-        let _tour = res.data
-        // TODO: do this in the backend?
-        _tour.itemIds = _tour.items.map(item => item['@id'])
-        
-        dispatch(updateTour(_tour))
-        dispatch(modifyTourRequestSuccess(_tour, tasks))
-        return _tour
+    let response
+
+    try {
+      response = await createClient(dispatch).request({
+        method: 'put',
+        url: tour['@id'],
+        data: {
+          name: tour.name,
+          tasks: _.map(tasks, t => t['@id'])
+        },
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
       })
-      .catch(error => {
+    } catch (error) {
         // eslint-disable-next-line no-console
         console.error(error)
         dispatch(modifyTourRequestError(tour))
-      })
+    }
+
+    let _tour = response.data
+    // TODO: do this in the backend?
+    _tour.itemIds = _tour.items.map(item => item['@id'])
+    
+    dispatch(updateTour(_tour))
+    dispatch(modifyTourRequestSuccess(_tour, tasks))
+    dispatch(enableDropInTours())
+
+    return _tour
   }
 }
 
@@ -1658,11 +1553,17 @@ export function deleteTour(tour) {
   }
 }
 
-export function removeTaskFromTour(tour, task) {
-  return function(dispatch, getState) {
-    let state = getState()
-    let allTasks = selectAllTasks(state)
-    dispatch(modifyTour(tour, withoutTasks(tour.items, withLinkedTasks([ task ], allTasks))))
+export function removeTaskFromTour(tour, task, username) {
+  return function(dispatch) {
+    if (username !== null) {
+      let newTourItems = withoutTasks(tour.items, [ task ])
+      let uiUpdate = () => updateTourInUI(dispatch, tour, newTourItems)
+      dispatch(unassignTasks(username, [task], uiUpdate)).then(() => {
+        dispatch(modifyTour(tour, newTourItems, true))
+      })
+    } else {
+      dispatch(modifyTour(tour, withoutTasks(tour.items, [ task ])))
+    }
   }
 }
 

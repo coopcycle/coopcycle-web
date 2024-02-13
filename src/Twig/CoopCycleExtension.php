@@ -102,6 +102,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('restaurant_badges', array(LocalBusinessRuntime::class, 'badges')),
             new TwigFunction('coopcycle_configtest', array(SettingResolver::class, 'configTest')),
             new TwigFunction('coopcycle_lat_lng_bounds', array(SettingResolver::class, 'getLatLngBounds')),
+            new TwigFunction('restaurant_menu', array(LocalBusinessRuntime::class, 'resolveMenu')),
         );
     }
 

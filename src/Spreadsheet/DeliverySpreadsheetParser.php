@@ -112,20 +112,6 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         return $parseResult;
     }
 
-    public function validateHeader(array $header)
-    {
-        $hasPickupAddress = in_array('pickup.address', $header);
-        $hasDropoffAddress = in_array('dropoff.address', $header);
-
-        if (!$hasPickupAddress) {
-            throw new \Exception('You must provide a "pickup.address" column');
-        }
-
-        if (!$hasDropoffAddress) {
-            throw new \Exception('You must provide a "dropoff.address" column');
-        }
-    }
-
     private function parseTimeRange($data, $key)
     {
         $timeSlotAsText = $data[$key];
