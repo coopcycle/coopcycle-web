@@ -13,14 +13,14 @@
       {% set query_params = app.request.query.all %}
       {% if business_context.active %}
         {% set query_params = query_params|merge({ _business: 'false' }) %}
-        {% set accountType = 'navbar.lambdaCart' %}
+        {% set label = ('navbar.switch_to_personal'|trans) %}
       {% else %}
         {% set query_params = query_params|merge({ _business: 'true' }) %}
-        {% set accountType = 'navbar.proCart' %}
+        {% set label = ('navbar.switch_to_business'|trans({ '%name%': business_context.businessAccount.name })) %}
       {% endif %}
       {% set current_path = path(app.request.attributes.get('_route'),
         app.request.attributes.get('_route_params')|merge(query_params)) %}
-      <li><a href="{{ current_path }}">{{ accountType|trans }}</a></li>
+      <li><a href="{{ current_path }}">{{ label }}</a></li>
     {% endif %}
 
     <li role="separator" class="divider"></li>

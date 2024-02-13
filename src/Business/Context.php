@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace AppBundle\Business;
 
+use AppBundle\Entity\BusinessAccount;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class Context
 {
@@ -18,9 +20,10 @@ class Context
 
     public const COOKIE_KEY = 'channel_cart';
 
-    public function __construct(RequestStack $requestStack)
+    public function __construct(RequestStack $requestStack, TokenStorageInterface $tokenStorage)
     {
         $this->requestStack = $requestStack;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public function isActive(): bool
@@ -32,5 +35,29 @@ class Context
         }
 
         return '1' === $request->cookies->get('_coopcycle_business');
+    }
+
+    private function getUser()
+    {
+        if (null === $token = $this->tokenStorage->getToken()) {
+            return;
+        }
+
+        if (!is_object($user = $token->getUser())) {
+            // e.g. anonymous authentication
+            return;
+        }
+
+        return $user;
+    }
+
+    public function getBusinessAccount(): ?BusinessAccount
+    {
+        $user = $this->getUser();
+        if ($user && $user->hasBusinessAccount()) {
+            return $user->getBusinessAccount();
+        }
+
+        return null;
     }
 }
