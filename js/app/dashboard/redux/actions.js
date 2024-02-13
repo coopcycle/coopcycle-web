@@ -243,12 +243,11 @@ export function unassignTasks(username, tasks, updateTourUI=null) {
     }
 
     let state = getState()
-    let allTasks = selectAllTasks(state)
     let taskLists = selectTaskLists(state)
 
     const taskList = _.find(taskLists, taskList => taskList.username === username)
 
-    await dispatch(modifyTaskList(username, withoutTasks(taskList.items, withLinkedTasks(tasks, allTasks)), updateTourUI))
+    await dispatch(modifyTaskList(username, withoutTasks(taskList.items, tasks), updateTourUI))
   }
 }
 
@@ -1555,18 +1554,15 @@ export function deleteTour(tour) {
 }
 
 export function removeTaskFromTour(tour, task, username) {
-  return function(dispatch, getState) {
-    let state = getState()
-    let allTasks = selectAllTasks(state)
-    
+  return function(dispatch) {
     if (username !== null) {
-      let newTourItems = withoutTasks(tour.items, withLinkedTasks([ task ], allTasks))
+      let newTourItems = withoutTasks(tour.items, [ task ])
       let uiUpdate = () => updateTourInUI(dispatch, tour, newTourItems)
       dispatch(unassignTasks(username, [task], uiUpdate)).then(() => {
         dispatch(modifyTour(tour, newTourItems, true))
       })
     } else {
-      dispatch(modifyTour(tour, withoutTasks(tour.items, withLinkedTasks([ task ], allTasks))))
+      dispatch(modifyTour(tour, withoutTasks(tour.items, [ task ])))
     }
   }
 }

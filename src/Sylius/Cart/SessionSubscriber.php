@@ -30,12 +30,12 @@ final class SessionSubscriber implements EventSubscriberInterface
         CartContextInterface $cartContext,
         string $sessionKeyName,
         bool $enabled,
-        LoggerInterface $checkoutLogger = null)
+        LoggerInterface $logger = null)
     {
         $this->cartContext = $cartContext;
         $this->sessionKeyName = $sessionKeyName;
         $this->enabled = $enabled;
-        $this->logger = $checkoutLogger ?? new NullLogger();
+        $this->logger = $logger ?? new NullLogger();
     }
 
     /**
