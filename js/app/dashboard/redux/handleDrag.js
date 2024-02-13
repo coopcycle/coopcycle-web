@@ -4,6 +4,8 @@ import { disableDropInTours, enableDropInTours, selectAllTasks } from "../../coo
 import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, updateTourInUI } from "./actions"
 import { belongsToTour, selectGroups, selectSelectedTasks, taskSelectors, tourSelectors } from "./selectors"
 import { withLinkedTasks } from "./utils"
+import { toast } from 'react-toastify'
+
 
 export function handleDragStart(result) {
   return function(dispatch, getState) {
@@ -67,14 +69,6 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
     const source = result.source;
     const destination = result.destination;
 
-    // reordered inside the unassigned list or unassigned tours list, do nothing
-    if (
-      source.droppableId === destination.droppableId &&
-      ( source.droppableId === 'unassigned' || source.droppableId === 'unassigned_tours' )
-    ) {
-      return;
-    }
-
     // did not move anywhere - can bail early
     if (
       source.droppableId === destination.droppableId &&
@@ -83,33 +77,41 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       return;
     }
 
-    // cannot unassign by drag'n'drop atm
+    // reordered inside the unassigned list or unassigned tours list, do nothing
+    if (
+      source.droppableId === destination.droppableId &&
+      ( source.droppableId === 'unassigned' || source.droppableId === 'unassigned_tours' )
+    ) {
+      return;
+    }
+
     if (source.droppableId.startsWith('assigned:') && destination.droppableId === 'unassigned') {
+      toast.warn("Can not unassign by drag'n drop at the moment")
       return
     }
 
-    // cannot unassign from tour by drag'n'drop atm
     if (source.droppableId.startsWith('tour:') && destination.droppableId === 'unassigned') {
+      toast.warn("Can not remove from tour by drag'n drop at the moment")
       return
     }
 
-    // cannot move directly from one tour to another atm
     if (source.droppableId.startsWith('tour:') && destination.droppableId.startsWith('tour:') && source.droppableId !== destination.droppableId) {
+      toast.warn("Can not move directly tasks between tours at the moment")
       return
     }
 
-    // cannot move directly from one group to another atm
     if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('group:') && source.droppableId !== destination.droppableId) {
+      toast.warn("Can not move directly tasks between groups at the moment")
       return
     }
 
-    // cannot assign directly a task from one tour to another atm
     if (source.droppableId.startsWith('tour:') && destination.droppableId.startsWith('assigned:')) {
+      toast.warn("Can not move directly individual task from tour to assigned at the moment")
       return
     }
 
-    // cannot cannot assign directly a task from one group to another atm
     if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('assigned:')) {
+      toast.warn("Can not move directly individual task from group to assigned at the moment")
       return
     }
 
