@@ -2,7 +2,7 @@ import _ from "lodash"
 import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskLists, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { disableDropInTours, enableDropInTours, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, updateTourInUI } from "./actions"
-import { selectGroups, selectSelectedTasks, taskSelectors, tourSelectors } from "./selectors"
+import { belongsToTour, selectGroups, selectSelectedTasks, taskSelectors, tourSelectors } from "./selectors"
 import { withLinkedTasks } from "./utils"
 
 export function handleDragStart(result) {
@@ -119,10 +119,12 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       selectedTasks = tour.itemIds.map(taskId => taskSelectors.selectById(getState(), taskId))
     }
     
-    // we want to move linked tasks together only when assigning and adding to a tour
-    // so we can keep fine grained control for reordering at will
-    if (source.droppableId !== destination.droppableId) {
+    // we want to move linked tasks together only in this case, so the dispatcher can have fine-grained control
+    if (source.droppableId === 'unassigned') {
       selectedTasks =  withLinkedTasks(selectedTasks, allTasks, true)
+      selectedTasks = selectedTasks.filter(
+        t => !belongsToTour(t) && !t.isAssigned // these are already somewhere nice!
+      )
     }
 
     if (selectedTasks.length === 0) return // can happen, for example dropping empty tour
