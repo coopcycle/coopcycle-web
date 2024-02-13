@@ -63,8 +63,14 @@ $('#add-option-value').on('click', function(e) {
 
 });
 
+const updateUpperField = (isInfinity) => {
+  $('#product_option_valuesRange_upper').prop('disabled', isInfinity);
+  $('#product_option_valuesRange_upper').css('color', isInfinity ? 'transparent' : 'inherit');
+
+}
+
 $('#product_option_valuesRange_infinity').on('change', function() {
-  $('#product_option_valuesRange_upper').prop('disabled', $(this).is(':checked'));
+  updateUpperField($(this).is(':checked'));
 });
 
 $('#product_option_additional').on('change', function() {
@@ -80,9 +86,7 @@ if (!$('#product_option_additional').is(':checked')) {
   $('#product_option_valuesRange').hide();
 }
 
-if ($('#product_option_valuesRange_infinity').is(':checked')) {
-  $('#product_option_valuesRange_upper').prop('disabled', true);
-}
+updateUpperField($('#product_option_valuesRange_infinity').is(':checked'));
 
 $('body').on('change', 'form[name="product_option"] input,select', updatePreview);
 // $form.find('input,select').on('change', updatePreview);

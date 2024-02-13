@@ -9,11 +9,13 @@ class NumRange
      * "Inf and NaN cannot be JSON encoded"
      * https://github.com/api-platform/core/pull/2386
      */
-    const UPPER_INF = 'INF';
+    public const UPPER_INF = 'INF';
+
+    public const DEFAULT_UPPER = 1;
 
     private $lower = 0;
 
-    private $upper = 1;
+    private $upper = self::DEFAULT_UPPER;
 
     /**
      * @return mixed
