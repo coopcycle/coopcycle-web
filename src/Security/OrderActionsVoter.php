@@ -22,6 +22,7 @@ class OrderActionsVoter extends Voter
     const DELAY   = 'delay';
     const FULFILL = 'fulfill';
     const CANCEL  = 'cancel';
+    const RESTORE = 'restore';
     const VIEW    = 'view';
     const VIEW_PUBLIC = 'view_public';
 
@@ -32,6 +33,7 @@ class OrderActionsVoter extends Voter
         self::DELAY,
         self::FULFILL,
         self::CANCEL,
+        self::RESTORE,
         self::VIEW,
         self::VIEW_PUBLIC,
     ];

@@ -1,5 +1,5 @@
 cube(`Delivery`, {
-  sql_table: `public.delivery`,
+  sql: `SELECT d.*, tc.distance, tc.duration FROM public.delivery d JOIN public.task_collection tc ON d.id = tc.id`,
   joins: {
     Task: {
       relationship: `one_to_many`,
@@ -15,6 +15,10 @@ cube(`Delivery`, {
       sql: `id`,
       type: `number`,
       primaryKey: true
+    },
+    distance: {
+      sql: `ROUND(${CUBE}.distance / 1000::numeric, 2)`,
+      type: `number`,
     },
   },
   dataSource: `default`

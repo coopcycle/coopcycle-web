@@ -2,6 +2,8 @@
 
 namespace AppBundle\Sylius\Product;
 
+use AppBundle\Business\Context as BusinessContext;
+use AppBundle\Entity\BusinessRestaurantGroup;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Model\ProductInterface;
@@ -16,10 +18,12 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
 
     public function __construct(
         ProductVariantResolverInterface $variantResolver,
-        ProductVariantFactoryInterface $variantFactory)
+        ProductVariantFactoryInterface $variantFactory,
+        BusinessContext $businessContext)
     {
         $this->variantResolver = $variantResolver;
         $this->variantFactory = $variantFactory;
+        $this->businessContext = $businessContext;
     }
 
     /**
@@ -27,6 +31,18 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
      */
     public function getVariant(ProductInterface $product): ?ProductVariantInterface
     {
+        if ($this->businessContext->isActive()) {
+            $businessAccount = $this->businessContext->getBusinessAccount();
+            if ($businessAccount) {
+                $restaurantGroup = $businessAccount->getBusinessRestaurantGroup();
+
+                $variant = $this->getVariantForBusinessRestaurantGroup($product, $restaurantGroup);
+                if ($variant) {
+                    return $variant;
+                }
+            }
+        }
+
         return $this->variantResolver->getVariant($product);
     }
 
@@ -96,5 +112,36 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
         }
 
         return true;
+    }
+
+    public function getVariantForBusinessRestaurantGroup(ProductInterface $product, BusinessRestaurantGroup $businessRestaurantGroup): ?ProductVariantInterface
+    {
+        foreach ($product->getVariants() as $variant) {
+            $variantBusinessRestaurantGroup = $variant->getBusinessRestaurantGroup();
+
+            if (null === $variantBusinessRestaurantGroup) {
+                continue;
+            }
+
+            if ($businessRestaurantGroup === $variantBusinessRestaurantGroup) {
+                return $variant;
+            }
+        }
+
+        return null;
+    }
+
+    protected function getUser()
+    {
+        if (null === $token = $this->tokenStorage->getToken()) {
+            return;
+        }
+
+        if (!is_object($user = $token->getUser())) {
+            // e.g. anonymous authentication
+            return;
+        }
+
+        return $user;
     }
 }

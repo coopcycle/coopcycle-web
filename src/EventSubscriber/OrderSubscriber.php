@@ -3,7 +3,9 @@
 namespace AppBundle\EventSubscriber;
 
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Exception\LoopeatInsufficientStockException;
 use AppBundle\Utils\OrderTimeHelper;
+use AppBundle\Validator\Constraints\LoopeatStock as AssertLoopeatStock;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use ApiPlatform\Core\Validator\ValidatorInterface as ApiPlatformValidatorInterface;
@@ -17,6 +19,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Validator\Constraints\All;
+use Symfony\Component\Validator\Validator\ValidatorInterface as BaseValidatorInterface;
 
 final class OrderSubscriber implements EventSubscriberInterface
 {
@@ -27,7 +31,8 @@ final class OrderSubscriber implements EventSubscriberInterface
         private ApiPlatformValidatorInterface $validator,
         private DataPersisterInterface $dataPersister,
         private OrderProcessorInterface $orderProcessor,
-        private LoggerInterface $checkoutLogger,
+        private BaseValidatorInterface $baseValidator,
+        private LoggerInterface $checkoutLogger
     ) { }
 
     /**
@@ -36,6 +41,9 @@ final class OrderSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
+            KernelEvents::REQUEST => [
+                ['validateAccept', EventPriorities::POST_DESERIALIZE],
+            ],
             KernelEvents::VIEW => [
                 ['preValidate', EventPriorities::PRE_VALIDATE],
                 ['timingResponse', EventPriorities::PRE_VALIDATE],
@@ -58,6 +66,24 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         return $user;
+    }
+
+    public function validateAccept(RequestEvent $event)
+    {
+        $request = $event->getRequest();
+        if ($request->attributes->get('_route') === 'api_orders_accept_item') {
+
+            $order = $request->attributes->get('data');
+
+            $violations = $this->baseValidator->validate(
+                $order->getItems(),
+                new All([ new AssertLoopeatStock() ])
+            );
+
+            if (count($violations) > 0) {
+                throw new LoopeatInsufficientStockException($violations);
+            }
+        }
     }
 
     public function preValidate(ViewEvent $event)

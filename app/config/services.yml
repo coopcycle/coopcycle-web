@@ -829,6 +829,10 @@ services:
 
   AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
 
+  AppBundle\Api\DataProvider\TaxRateCollectionDataProvider:
+    tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
+    autoconfigure: false
+
   AppBundle\Utils\RestaurantFilter:
     arguments:
       - '@routing_service'
@@ -855,14 +859,11 @@ services:
     tags:
       - { name: 'sylius.context.channel', priority: -64 }
 
-  AppBundle\Sylius\Channel\ProChannelContext:
-    tags:
-      - { name: 'sylius.context.channel', priority: 128 }
-
-
-  AppBundle\EventListener\ChangeChannelListener:
+  AppBundle\EventListener\BusinessListener:
     tags:
       - { name: kernel.event_listener, event: kernel.response }
+
+  AppBundle\Business\Context: ~
 
   AppBundle\EventSubscriber\ApiLogSubscriber:
     tags:
@@ -1050,7 +1051,7 @@ services:
 
   AppBundle\Payment\Gateway: ~
 
-  AppBundle\Security\ProVoter:
+  AppBundle\Security\BusinessVoter:
     tags: [ 'security.voter' ]
 
   AppBundle\EventSubscriber\RegistrationInitializeListener:
@@ -1191,7 +1192,8 @@ services:
   AppBundle\Sylius\Taxation\TaxesHelper:
     arguments:
       $country: '%region_iso%'
-      # $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+      $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
 
   AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~
 
@@ -1226,6 +1228,7 @@ services:
   AppBundle\CubeJs\TokenFactory:
     arguments:
       $databaseName: '%database_name%'
+      $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
 
   AppBundle\Translation\DatePeriodFormatter:
     arguments:

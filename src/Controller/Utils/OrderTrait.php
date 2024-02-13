@@ -12,6 +12,7 @@ use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Utils\RestaurantStats;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use League\Flysystem\Filesystem;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -23,7 +24,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 trait OrderTrait
 {
-    abstract protected function getOrderList(Request $request, $showCanceled = false);
+    /**
+     * @return PaginationInterface|array
+     */
+    abstract protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false);
 
     private function orderAsJson(Order $order)
     {
@@ -57,12 +61,8 @@ trait OrderTrait
 
         $routes = $request->attributes->get('routes');
 
-        [ $orders, $pages, $page ] = $this->getOrderList($request, $showCanceled);
-
         $parameters = [
-            'orders' => $orders,
-            'pages' => $pages,
-            'page' => $page,
+            'orders' => $this->getOrderList($request, $paginator, $showCanceled),
             'routes' => $request->attributes->get('routes'),
             'show_canceled' => $showCanceled,
         ];

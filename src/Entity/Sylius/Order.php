@@ -26,6 +26,7 @@ use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
+use AppBundle\Action\Order\Restore as OrderRestore;
 use AppBundle\Action\Order\Tip as OrderTip;
 use AppBundle\Action\Order\UpdateLoopeatFormats as UpdateLoopeatFormatsController;
 use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
@@ -36,6 +37,7 @@ use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
 use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
@@ -190,6 +192,15 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "security"="is_granted('cancel', object)",
  *       "openapi_context"={
  *         "summary"="Cancels a Order resource."
+ *       }
+ *     },
+ *     "restore"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/restore",
+ *       "controller"=OrderRestore::class,
+ *       "security"="is_granted('restore', object)",
+ *       "openapi_context"={
+ *         "summary"="Restores a cancelled Order resource."
  *       }
  *     },
  *     "assign"={
@@ -470,6 +481,8 @@ class Order extends BaseOrder implements OrderInterface
     protected $loopeatDetails;
 
     protected ?OrderCredentials $loopeatCredentials = null;
+
+    protected $businessAccount;
 
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
@@ -1256,6 +1269,10 @@ class Order extends BaseOrder implements OrderInterface
             return null;
         }
 
+        if (null !== $this->getBusinessAccount()) {
+            return $this->getBusinessAccount()->getBusinessRestaurantGroup();
+        }
+
         $first = $this->getRestaurants()->first();
 
         return $this->isMultiVendor() ? $first->getHub() : $first;
@@ -1720,5 +1737,26 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return false;
+    }
+
+    public function hasEvent(string $type): bool
+    {
+        foreach ($this->getEvents() as $event) {
+            if ($event->getType() === $type) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getBusinessAccount(): ?BusinessAccount
+    {
+        return $this->businessAccount;
+    }
+
+    public function setBusinessAccount(BusinessAccount $businessAccount): void
+    {
+        $this->businessAccount = $businessAccount;
     }
 }

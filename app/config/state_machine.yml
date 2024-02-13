@@ -28,11 +28,18 @@ winzou_state_machine:
             refuse:
                 from: [new]
                 to: refused
+            restore:
+                from: [cancelled]
+                to: accepted
         callbacks:
             guard:
                 guard_on_fulfill:
                     on:   'fulfill'
                     do:   ['@AppBundle\Domain\Order\Workflow\Guard', 'isFulfillable']
+                    args: ['object']
+                guard_on_restore:
+                    on:   'restore'
+                    do:   ['@AppBundle\Domain\Order\Workflow\Guard', 'isRestorable']
                     args: ['object']
     sylius_payment:
         class: "%sylius.model.payment.class%"

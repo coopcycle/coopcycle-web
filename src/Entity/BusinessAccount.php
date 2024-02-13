@@ -9,9 +9,10 @@ class BusinessAccount
     private $id;
     private $name;
     private $address;
-    private $hub;
+    private $businessRestaurantGroup;
     private $employees;
     private $billingAddress;
+    private $orders;
 
     /**
      * Only to keep data in form flow
@@ -92,21 +93,21 @@ class BusinessAccount
     }
 
     /**
-     * @return mixed
+     * @return BusinessRestaurantGroup
      */
-    public function getHub()
+    public function getBusinessRestaurantGroup(): ?BusinessRestaurantGroup
     {
-        return $this->hub;
+        return $this->businessRestaurantGroup;
     }
 
     /**
-     * @param mixed $hub
+     * @param mixed $businessRestaurantGroup
      *
      * @return self
      */
-    public function setHub($hub)
+    public function setBusinessRestaurantGroup($businessRestaurantGroup)
     {
-        $this->hub = $hub;
+        $this->businessRestaurantGroup = $businessRestaurantGroup;
 
         return $this;
     }
@@ -159,6 +160,26 @@ class BusinessAccount
     public function setDifferentAddressForBilling($differentAddressForBilling)
     {
         $this->differentAddressForBilling = $differentAddressForBilling;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOrders()
+    {
+        return $this->orders;
+    }
+
+    /**
+     * @param mixed $orders
+     *
+     * @return self
+     */
+    public function setOrders($orders)
+    {
+        $this->orders = $orders;
+
         return $this;
     }
 

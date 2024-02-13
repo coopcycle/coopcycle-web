@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\LiveUpdates;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
@@ -21,8 +22,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ImportDeliveriesHandler implements MessageHandlerInterface
 {
-    private static $batchSize = 10;
-
     public function __construct(
         private EntityManagerInterface $entityManager,
         private Filesystem $deliveryImportsFilesystem,
@@ -31,6 +30,7 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
         private TranslatorInterface $translator,
         private PricingManager $pricingManager,
         private LiveUpdates $liveUpdates,
+        private DeliveryManager $deliveryManager,
         private LoggerInterface $logger)
     {
     }
@@ -64,7 +64,6 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
 
         $result = $this->spreadsheetParser->parse($tempnam);
 
-        $i = 0;
         foreach ($result->getData() as $rowNumber => $delivery) {
 
             // Validate data
@@ -83,22 +82,16 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
                 continue;
             }
 
+            $this->deliveryManager->setDefaults($delivery);
+
             $store->addDelivery($delivery);
+            $this->entityManager->persist($delivery);
 
             try {
                 $this->pricingManager->createOrder($delivery, true);
             } catch (NoRuleMatchedException $e) {
                 $errorMessage = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                 $result->addErrorToRow($rowNumber, $errorMessage);
-
-                continue;
-            }
-
-            $this->entityManager->persist($delivery);
-
-            if (($i++ % self::$batchSize) === 0) {
-                $this->entityManager->flush();
-                $this->entityManager->clear();
             }
         }
 

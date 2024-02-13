@@ -186,19 +186,22 @@ html, body {
       background-color: darken(#f5f5f5, 15%);
     }
   }
+
+  .panel--group, .panel--tour {
+    border-color: $main-blue-dark;
+    border-size: 2px;
+    margin: 4px; // so it is easier to drag tasks between tours in the dashboard panel
+  }
 }
 
-.list-group-padded {
-  padding-left: 15px;
-  background-color: #E8E8E8;
-}
 
 :not(.task-package).list-group-item {
 
   font-size: 12px;
   position: relative;
   cursor: pointer;
-  border-radius: 0 !important;
+  border-radius: 4px 0 !important;
+  margin: 4px;
   padding: 8px 8px 8px 14px;
   border-right: none;
 
@@ -239,13 +242,15 @@ html, body {
 }
 
 .taskList__tasks {
+  border: 2px dashed #F1C40F;
+  padding: 4px;
+  background-color: $light-gray;
+
   .list-group-item {
     padding: 8px 32px 8px 14px;
   }
   &--empty {
     box-sizing: border-box;
-    background-color: lighten(#F39C12, 30%);
-    border: 3px dashed #F1C40F;
     min-height: ($line-height-computed * 2) + (6 * 2);
   }
 }
@@ -273,6 +278,7 @@ html, body {
 }
 
 .task__draggable {
+  border: 1px solid $dark !important;
   &--dragging {
     opacity: 0.4;
   }

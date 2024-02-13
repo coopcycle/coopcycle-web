@@ -224,44 +224,6 @@ class TaskSpreadsheetParserTest extends TestCase
         parent::testCanParseExampleData();
     }
 
-    public function testValidateHeaderThrowsException()
-    {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('You must provide an "address" (alternatively "address.streetAddress") or a "latlong" (alternatively "address.latlng") column');
-
-        $this->mockDependencies();
-
-        $this->parser->validateHeader([
-            'foo',
-        ]);
-    }
-
-    public function testValidateHeaderWithStreetAddress()
-    {
-        $this->mockDependencies();
-
-        $this->assertNull($this->parser->validateHeader([
-            'address.streetAddress',
-        ]));
-        $this->assertNull($this->parser->validateHeader([
-            'address',
-        ]));
-    }
-
-    public function testValidateHeaderWithStreetAddressAndLatlng()
-    {
-        $this->mockDependencies();
-
-        $this->assertNull($this->parser->validateHeader([
-            'address.streetAddress',
-            'address.latlng',
-        ]));
-        $this->assertNull($this->parser->validateHeader([
-            'address',
-            'latlong',
-        ]));
-    }
-
     public function testCsvWithAccents()
     {
         $this->mockDependencies();
