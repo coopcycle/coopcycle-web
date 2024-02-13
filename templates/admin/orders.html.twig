@@ -16,7 +16,9 @@
 
 <div class="d-flex flex-row mb-4">
   <div class="w-50">
-    <div id="orders-search"></div>
+    <form method="get">
+      <div id="orders-search"></div>
+    </form>
   </div>
   <div class="w-50 text-right">
     <span class="mr-2">
@@ -42,8 +44,10 @@
   style="min-height: 180px;"></div>
 {% endif %}
 
-{% include "admin/pagination.html.twig" %}
 {% include "_partials/order/list.html.twig" %}
+<div class="text-center">
+  {{ knp_pagination_render(orders, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
 
 {% if is_granted('ROLE_ADMIN') %}
 <div class="modal fade" tabindex="-1" role="dialog" id="order-export-modal">
@@ -113,7 +117,9 @@ new CoopCycle.Search(document.querySelector('#orders-search'), {
   placeholder: "{{ 'search.orders'|trans }}",
   onSuggestionSelected: function(suggestion) {
     window.location.href = suggestion.path;
-  }
+  },
+  searchOnEnter: true,
+  initialValue: "{{ app.request.get('q', '') }}"
 });
 
 </script>

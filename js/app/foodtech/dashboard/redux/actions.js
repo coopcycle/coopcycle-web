@@ -23,6 +23,8 @@ export const CANCEL_ORDER_REQUEST_SUCCESS = 'CANCEL_ORDER_REQUEST_SUCCESS'
 export const CANCEL_ORDER_REQUEST_FAILURE = 'CANCEL_ORDER_REQUEST_FAILURE'
 export const FULFILL_ORDER_REQUEST_SUCCESS = 'FULFILL_ORDER_REQUEST_SUCCESS'
 export const FULFILL_ORDER_REQUEST_FAILURE = 'FULFILL_ORDER_REQUEST_FAILURE'
+export const RESTORE_ORDER_REQUEST_SUCCESS = 'RESTORE_ORDER_REQUEST_SUCCESS'
+export const RESTORE_ORDER_REQUEST_FAILURE = 'RESTORE_ORDER_REQUEST_FAILURE'
 
 export const CHANGE_RESTAURANT_STATE = 'CHANGE_RESTAURANT_STATE'
 
@@ -54,6 +56,8 @@ export const cancelOrderRequestSuccess = createAction(CANCEL_ORDER_REQUEST_SUCCE
 export const cancelOrderRequestFailure = createAction(CANCEL_ORDER_REQUEST_FAILURE)
 export const fulfillOrderRequestSuccess = createAction(FULFILL_ORDER_REQUEST_SUCCESS)
 export const fulfillOrderRequestFailure = createAction(FULFILL_ORDER_REQUEST_FAILURE)
+export const restoreOrderRequestSuccess = createAction(RESTORE_ORDER_REQUEST_SUCCESS)
+export const restoreOrderRequestFailure = createAction(RESTORE_ORDER_REQUEST_FAILURE)
 
 export const searchResults = createAction(SEARCH_RESULTS, (q, results) => ({ q, results }))
 
@@ -272,5 +276,18 @@ export function updateLoopeatFormats(order, loopeatFormats) {
         dispatch(updateLoopeatFormatsSuccess(res.data))
         dispatch(closeLoopeatSection())
       })
+  }
+}
+
+export function restoreOrder(order) {
+
+  return (dispatch, getState) => {
+    dispatch(fetchRequest())
+
+    const { httpClient } = getState()
+
+    httpClient.put(order['@id'] + '/restore')
+      .then(res => dispatch(restoreOrderRequestSuccess(res.data)))
+      .catch(e => dispatch(restoreOrderRequestFailure(e)))
   }
 }

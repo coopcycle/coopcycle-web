@@ -1,7 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component, Children } from 'react'
 import Autosuggest from 'react-autosuggest'
 import { defaultTheme } from 'react-autosuggest/dist/theme'
 import { debounce } from 'lodash'
+import classNames from 'classnames'
+import { useTranslation } from 'react-i18next'
 
 // ------------------ Autosuggest ------------------
 
@@ -15,13 +17,37 @@ const loadingTheme = {
   container: `${defaultTheme.container} react-autosuggest__container--loading`,
 }
 
+const SuggestionsContainer = ({ containerProps, children, query, onShowMore }) => {
+
+  const { t } = useTranslation()
+
+  if (!query || query.length === 0) {
+    return null
+  }
+
+  const hasChildren = Children.count(children)
+
+  return (
+    <div {...containerProps}>
+      {children}
+      <div className={ classNames(
+        { 'border-top': hasChildren },
+        { 'p-3': hasChildren > 0 }
+      )}>
+        { hasChildren ? <a href="#" onClick={ onShowMore }><small>{ t('SHOW_MORE_RESULTS', { query }) }</small></a> : null }
+        { !hasChildren ? <small>{ t('PRESS_ENTER_TO_SEARCH', { query }) }</small> : null }
+      </div>
+    </div>
+  )
+}
+
 export default class extends Component {
 
   constructor(props) {
     super(props)
 
     this.state = {
-      value: '',
+      value: props.initialValue || '',
       suggestions: [],
       isFetching: false,
     }
@@ -38,7 +64,12 @@ export default class extends Component {
     })
   }
 
-  shouldRenderSuggestions(value) {
+  shouldRenderSuggestions(value, reason) {
+
+    if (reason === 'render') {
+      return true
+    }
+
     return value.trim().length >= 3
   }
 
@@ -70,6 +101,15 @@ export default class extends Component {
     })
   }
 
+  renderSuggestionsContainer(props) {
+    return (
+      <SuggestionsContainer { ...props } onShowMore={ (e) => {
+        e.preventDefault()
+        e.target.closest('form').submit()
+      }} />
+    )
+  }
+
   render() {
     const { value, suggestions, isFetching } = this.state
 
@@ -77,7 +117,16 @@ export default class extends Component {
       placeholder: this.props.placeholder,
       value,
       onChange: this.onChange.bind(this),
-      className: 'form-control'
+      className: 'form-control',
+      name: 'q'
+    }
+
+    let otherProps = {}
+    if (this.props.searchOnEnter) {
+      otherProps = {
+        ...otherProps,
+        renderSuggestionsContainer: this.renderSuggestionsContainer.bind(this)
+      }
     }
 
     return (
@@ -91,6 +140,7 @@ export default class extends Component {
         renderSuggestion={ this.props.renderSuggestion || renderSuggestion }
         shouldRenderSuggestions={this.shouldRenderSuggestions.bind(this)}
         inputProps={inputProps}
+        { ...otherProps }
       />
     )
   }

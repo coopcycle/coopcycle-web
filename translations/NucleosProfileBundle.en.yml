@@ -9,7 +9,7 @@ registration:
       Once you have activated your account, you can complete your order.
     after_confirmation_continue_order: Complete your order
     congratulations: Congratulations
-    after_confirmation_redirect_to_dashboard: You are going to be redirecte to your dashboard
+    after_confirmation_redirect_to_dashboard: You are going to be redirected to your dashboard
     go_to_dashboard: Go to check it out
 
 form.registration.username.help: |

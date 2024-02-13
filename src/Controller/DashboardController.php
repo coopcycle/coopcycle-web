@@ -16,11 +16,14 @@ use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Hashids\Hashids;
 use Knp\Component\Pager\PaginatorInterface;
+use League\Flysystem\Filesystem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DashboardController extends AbstractController
@@ -82,7 +85,7 @@ class DashboardController extends AbstractController
         ];
     }
 
-    protected function getOrderList(Request $request, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
     {
         return [];
     }
@@ -94,10 +97,10 @@ class DashboardController extends AbstractController
         EntityManagerInterface $entityManager,
         TaxesHelper $taxesHelper,
         CubeJsTokenFactory $tokenFactory,
-        OrderManager $orderManager,
-        DeliveryManager $deliveryManager,
-        OrderFactory $orderFactory,
-        DeliveryRepository $deliveryRepository
+        DeliveryRepository $deliveryRepository,
+        MessageBusInterface $messageBus,
+        Hashids $hashids8,
+        Filesystem $deliveryImportsFilesystem
     )
     {
         $user = $this->getUser();
@@ -118,10 +121,11 @@ class DashboardController extends AbstractController
                 $store->getId(),
                 $request,
                 $paginator,
-                $orderManager,
-                $deliveryManager,
-                $orderFactory,
-                $deliveryRepository
+                deliveryRepository: $deliveryRepository,
+                entityManager: $entityManager,
+                hashids8: $hashids8,
+                deliveryImportsFilesystem: $deliveryImportsFilesystem,
+                messageBus: $messageBus
             );
         }
 
@@ -132,6 +136,6 @@ class DashboardController extends AbstractController
             return $this->statsAction($restaurant->getId(), $request, $slugify, $translator, $entityManager, $paginator, $taxesHelper, $tokenFactory);
         }
 
-        return $this->redirectToRoute('nucleos_profile_profile_show');
+        return $this->redirectToRoute('profile_edit');
     }
 }

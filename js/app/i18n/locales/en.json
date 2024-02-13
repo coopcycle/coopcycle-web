@@ -363,6 +363,9 @@
         "RESTAURANT_STOCK_PHOTOS_SEARCH": "Search images",
         "RESTAURANT_STOCK_PHOTOS_PLACEHOLDER": "Pizza, burger…",
         "RESTAURANT_STOCK_PHOTOS_ATTRIBUTION": "Search results from <a href=\"{{url}}\">{{name}}</a>",
-        "RESTAURANT_STOCK_PHOTOS_SELECT": "Select this image"
+        "RESTAURANT_STOCK_PHOTOS_SELECT": "Select this image",
+        "PRESS_ENTER_TO_SEARCH": "Press Enter to search « {{query}} »",
+        "SHOW_MORE_RESULTS": "Show more results for « {{query}} »",
+        "ADMIN_DASHBOARD_ORDERS_RESTORE": "Restore"
     }
 }

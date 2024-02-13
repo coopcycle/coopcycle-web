@@ -43,6 +43,7 @@ use phpcent\Client as CentrifugoClient;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -90,7 +91,7 @@ class ProfileController extends AbstractController
             $redirectUri = $this->generateUrl('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
             $redirectAfterUri = $this->generateUrl(
-                'nucleos_profile_profile_show',
+                'profile_edit',
                 [],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
@@ -130,7 +131,7 @@ class ProfileController extends AbstractController
     /**
      * @Route("/profile/edit", name="profile_edit")
      */
-    public function editProfileAction(Request $request, UserManagerInterface $userManager) {
+    public function editProfileAction(Request $request, UserManagerInterface $userManager, TranslatorInterface $translator) {
 
         $user = $this->getUser();
 
@@ -148,7 +149,10 @@ class ProfileController extends AbstractController
 
             $userManager->updateUser($user);
 
-            return $this->redirectToRoute('nucleos_profile_profile_show');
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
         }
 
         return $this->render('profile/edit_profile.html.twig', $this->auth(array(
@@ -156,7 +160,7 @@ class ProfileController extends AbstractController
         )));
     }
 
-    protected function getOrderList(Request $request, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
     {
         Assert::isInstanceOf($this->orderRepository, EntityRepository::class);
 
@@ -164,26 +168,18 @@ class ProfileController extends AbstractController
             ->createQueryBuilder('o')
             ->andWhere('o.customer = :customer')
             ->andWhere('o.state != :state')
+            ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
             ->setParameter('customer', $this->getUser()->getCustomer())
             ->setParameter('state', OrderInterface::STATE_CART);
 
-        $count = (clone $qb)
-            ->select('COUNT(o)')
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        $pages  = ceil($count / self::ITEMS_PER_PAGE);
-        $page   = $request->query->getInt('p', 1);
-        $offset = self::ITEMS_PER_PAGE * ($page - 1);
-
-        $orders = (clone $qb)
-            ->setMaxResults(self::ITEMS_PER_PAGE)
-            ->setFirstResult($offset)
-            ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
-            ->getQuery()
-            ->getResult();
-
-        return [ $orders, $pages, $page ];
+        return $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::DISTINCT => false,
+            ]
+        );
     }
 
     public function orderAction($id, Request $request,
@@ -603,6 +599,9 @@ class ProfileController extends AbstractController
         }
 
         $form = $this->createForm(BusinessAccountType::class, $businessAccount);
+        $form->add('save', SubmitType::class, [
+            'label'  => 'form.menu_editor.save.label',
+        ]);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
             $objectManager->persist($businessAccount);
@@ -616,7 +615,7 @@ class ProfileController extends AbstractController
             return $this->redirectToRoute('profile_business_account');
         }
 
-        return $this->render('admin/business_account.html.twig', [
+        return $this->render('profile/business_account.html.twig', [
             'form' => $form->createView(),
         ]);
     }

@@ -15,6 +15,7 @@ class LoopeatRuntime implements RuntimeExtensionInterface
     {
         $params = [
             'state' => $this->client->createStateParamForOrder($order),
+            'show_deposit' => 'true',
         ];
 
         if ($requiredCredits > 0) {

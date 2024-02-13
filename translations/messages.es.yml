@@ -1217,8 +1217,8 @@ adminDashboard.hubs.createNew: Crear una nueva agrupación de comercios
 adminDashboard.hubs.title: Agrupación de comercios
 adminDashboard.business_accounts.title: Cuentas de empresa
 adminDashboard.business_accounts.createNew: Crear una nueva cuenta de empresa
-form.business_account.hub.label: Agrupación de restaurantes
-form.business_account.hub.placeholder: Elija una agrupación
+form.business_account.businessRestaurantGroup.label: Grupo de restaurantes para empresas
+form.business_account.businessRestaurantGroup.placeholder: Elija un grupo de restaurantes
 form.business_account.employees.label: Lista de empleados
 form.business_account.restaurants.add: Agregar un restaurante
 form.business_account.employees.add: Agregar un empleado
@@ -1227,6 +1227,9 @@ form.business_account.manager.email.help: Se enviará un link de invitación a C
 form.business_account.manager.email_sent.help: Link de invitación a Coopcycle enviado
 form.business_account.save_and_send_invitation.label: Guardar y enviar invitación
 form.business_acount.send_invitation.confirm: El email de invitación a Coopcycle ha sido enviado
+adminDashboard.business_restaurant_group_list.title: Listado de grupos de restaurantes para empresas
+adminDashboard.business_restaurant_group.title: Group de restaurantes para empresas
+adminDashboard.business_restaurant_group.createNew: Crear un nuevo grupo de restaurantes para empresas
 store.form.section.settings: Ajustes
 stores.address_book: Direcciones guardadas
 form.payment.method.name.label: Método de pago
@@ -1399,3 +1402,13 @@ registration.step.company.name: "Nombre de la empresa"
 registration.step.invitation.copy.link: "Copia el siguiente enlace y envíalo a tus colegas"
 registration.step.invitation.copy.button: "Copiar el enlace"
 registration.step.invitation.link.copied: "Copiado"
+deliveries.imports: Ficheros importados
+deliveries.importing: El fichero %filename% va a ser importado.
+deliveries.imports.created_at: Creado el
+business.account.settings.link: Asociar a mi cuenta
+form.business_restaurant_group.restaurants_with_menu: Restaurantes con menú
+form.business_restaurant_group.restaurant: Restaurante
+form.business_restaurant_group.menu: Menú
+form.product.business_restaurant_group.price_definition.label: Definir precios para grupo de restaurantes para empresas
+form.product.business_restaurant_group.price_definition.placeholder: Por favor seleccione uno
+business_restaurant_group.label: Grupo de restaurantes para empresas

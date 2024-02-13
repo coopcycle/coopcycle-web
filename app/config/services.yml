@@ -113,6 +113,7 @@ services:
   ACSEO\TypesenseBundle\Client\TypesenseClient: '@typesense.client'
   Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface: '@league.oauth2_server.factory.psr_http'
   League\Flysystem\Filesystem $restaurantImagesFilesystem: '@restaurant_images_filesystem'
+  League\Flysystem\Filesystem $deliveryImportsFilesystem: '@delivery_imports_filesystem'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -270,6 +271,11 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.order_processing }
 
+  # should be executed before any other processor
+  AppBundle\Sylius\OrderProcessing\OrderLogStartProcessor:
+    tags:
+      - { name: sylius.order_processor, priority: 1000 }
+
   AppBundle\Sylius\OrderProcessing\OrderDisabledProductProcessor:
     tags:
       - { name: sylius.order_processor, priority: 96 }
@@ -313,6 +319,11 @@ services:
     class: AppBundle\Sylius\OrderProcessing\OrderPaymentProcessor
     tags:
       - { name: sylius.order_processor, priority: 16 }
+
+  # should be executed after any other processor
+  AppBundle\Sylius\OrderProcessing\OrderLogFinishProcessor:
+    tags:
+      - { name: sylius.order_processor, priority: -100 }
 
   sylius.promotion_action.delivery_percentage:
     class: AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand
@@ -655,6 +666,10 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
+  AppBundle\Doctrine\EventSubscriber\CheckoutSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
   AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:
     arguments:
         $denyAccessListener: '@api_platform.security.listener.request.deny_access'
@@ -814,6 +829,10 @@ services:
 
   AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
 
+  AppBundle\Api\DataProvider\TaxRateCollectionDataProvider:
+    tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
+    autoconfigure: false
+
   AppBundle\Utils\RestaurantFilter:
     arguments:
       - '@routing_service'
@@ -840,14 +859,11 @@ services:
     tags:
       - { name: 'sylius.context.channel', priority: -64 }
 
-  AppBundle\Sylius\Channel\ProChannelContext:
-    tags:
-      - { name: 'sylius.context.channel', priority: 128 }
-
-
-  AppBundle\EventListener\ChangeChannelListener:
+  AppBundle\EventListener\BusinessListener:
     tags:
       - { name: kernel.event_listener, event: kernel.response }
+
+  AppBundle\Business\Context: ~
 
   AppBundle\EventSubscriber\ApiLogSubscriber:
     tags:
@@ -1035,7 +1051,7 @@ services:
 
   AppBundle\Payment\Gateway: ~
 
-  AppBundle\Security\ProVoter:
+  AppBundle\Security\BusinessVoter:
     tags: [ 'security.voter' ]
 
   AppBundle\EventSubscriber\RegistrationInitializeListener:
@@ -1080,6 +1096,9 @@ services:
     tags: [ 'security.voter' ]
 
   AppBundle\Security\DeliveryQuoteVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\DeliveryImportQueueVoter:
     tags: [ 'security.voter' ]
 
   # While adding a priority is optional, it’s recommended to add one to make sure the expected value is injected.
@@ -1173,7 +1192,8 @@ services:
   AppBundle\Sylius\Taxation\TaxesHelper:
     arguments:
       $country: '%region_iso%'
-      # $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+      $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
 
   AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~
 
@@ -1208,6 +1228,7 @@ services:
   AppBundle\CubeJs\TokenFactory:
     arguments:
       $databaseName: '%database_name%'
+      $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
 
   AppBundle\Translation\DatePeriodFormatter:
     arguments:
@@ -1262,6 +1283,10 @@ services:
   coopcycle.sylius.order_modifier:
     class: AppBundle\Sylius\Order\OrderModifier
     decorates: sylius.order_modifier
+
+  coopcycle.sylius.order_item_quantity_modifier:
+    class: AppBundle\Sylius\Order\OrderItemQuantityModifier
+    decorates: sylius.order_item_quantity_modifier
 
   AppBundle\CubeJs\HttpClient:
     decorates: cubejs.client

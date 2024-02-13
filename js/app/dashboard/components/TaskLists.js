@@ -7,7 +7,7 @@ import { Accordion } from 'react-accessible-accordion'
 import { openAddUserModal } from '../redux/actions'
 import TaskList from './TaskList'
 
-import { selectTaskLists } from '../redux/selectors'
+import { selectHiddenCouriersSetting, selectTaskLists, selectTaskListsLoading } from '../redux/selectors'
 
 class TaskLists extends React.Component {
 
@@ -58,8 +58,8 @@ function mapStateToProps (state) {
 
   return {
     taskLists: selectTaskLists(state),
-    taskListsLoading: state.logistics.ui.taskListsLoading,
-    hiddenCouriers: state.settings.filters.hiddenCouriers,
+    taskListsLoading: selectTaskListsLoading(state),
+    hiddenCouriers: selectHiddenCouriersSetting(state),
   }
 }
 

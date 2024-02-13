@@ -3,7 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Store;
-use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
+use AppBundle\Validator\Constraints\Spreadsheet as AssertSpreadsheet;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -13,32 +13,19 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DeliveryImportType extends AbstractType
 {
-    private $spreadsheetParser;
-    private $validator;
-    private $translator;
-
-    public function __construct(
-        DeliverySpreadsheetParser $spreadsheetParser,
-        ValidatorInterface $validator, 
-        TranslatorInterface $translator)
-    {
-        $this->spreadsheetParser = $spreadsheetParser;
-        $this->validator = $validator;
-        $this->translator = $translator;
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('file', FileType::class, array(
                 'mapped' => false,
                 'required' => true,
-                'label' => 'form.delivery_import.file.label'
+                'label' => 'form.delivery_import.file.label',
+                'constraints' => [
+                    new AssertSpreadsheet('delivery'),
+                ],
             ));
 
         if ($options['with_store']) {
@@ -53,64 +40,6 @@ class DeliveryImportType extends AbstractType
                 'choice_label' => 'name',
             ]);
         }
-
-        $builder->get('file')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-
-            $file = $event->getData();
-            $parentForm = $event->getForm()->getParent();
-
-            try {
-
-                $result = $this->spreadsheetParser->parse($file->getPathname());
-
-                $deliveries = array_filter($result->getData(), function($delivery, $rowNumber) use ($result) {
-                    $violations = $this->validator->validate($delivery);
-                    if (count($violations) > 0) {
-                        foreach($violations as $violation) {
-
-                            if ($violation->getInvalidValue() instanceof \Stringable) {
-                                $errorMessage = sprintf('%s: %s', $violation->getMessage(), (string) $violation->getInvalidValue());
-                            } else {
-                                $errorMessage = $violation->getMessage();
-                            }
-                            $result->addErrorToRow($rowNumber, $errorMessage);
-                            
-                        }
-                        return false;
-                    }
-                    return true;
-                }, ARRAY_FILTER_USE_BOTH);
-
-                if ($result->hasErrors()) {
-                    $errors = $result->getSortedErrors();
-
-                    $event->getForm()->addError(new FormError(
-                        $this->translator->trans('import.unsuccessful.rows', [
-                            '%rows%' => implode(", ", array_keys($errors))
-                        ])
-                    ));
-
-                    foreach($errors as $rowNumber => $failedRow) {
-                        $event->getForm()->addError(new FormError(
-                            $this->translator->trans('import.errors.at.row', [
-                                '%row_number%' => $rowNumber
-                            ])
-                        ));
-                        foreach($failedRow as $errorMessage) {
-                            $event->getForm()->addError(new FormError(
-                                sprintf(' - %s', $errorMessage)
-                            ));
-                        }
-                    }
-                }
-
-                $parentForm->setData($deliveries);
-
-            } catch (\Exception $e) {
-                $event->getForm()->addError(new FormError($e->getMessage()));
-                return;
-            }
-        });
     }
 
     public function configureOptions(OptionsResolver $resolver)

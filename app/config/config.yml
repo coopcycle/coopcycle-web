@@ -177,6 +177,7 @@ framework:
             'AppBundle\Message\Webhook': async
             'AppBundle\Message\IndexDeliveries': async
             'AppBundle\Message\WoopitDocumentWebhook': async
+            'AppBundle\Message\ImportDeliveries': async
     workflows:
         enabled: true
     mailer:
@@ -245,7 +246,7 @@ twig:
         loopeat_context: '@AppBundle\LoopEat\Context'
         legacy_taxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
         payment_gateway_resolver: '@AppBundle\Payment\GatewayResolver'
-        context_channel: "@sylius.context.channel"
+        business_context: '@AppBundle\Business\Context'
         loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
         embed_context: '@AppBundle\Embed\Context'
         locationiq_access_token: '%env(LOCATIONIQ_ACCESS_TOKEN)%'
@@ -473,6 +474,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: product_imports
+        delivery_imports:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: delivery_imports
         nonprofits_images:
             awss3v3:
                 client: s3_client
@@ -511,6 +517,10 @@ oneup_flysystem:
             adapter: product_imports
             alias: product_imports_filesystem
             mount: product_imports_filesystem
+        delivery_imports:
+            adapter: delivery_imports
+            alias: delivery_imports_filesystem
+            mount: delivery_imports_filesystem
         nonprofits_images:
             adapter: nonprofits_images
             alias: nonprofits_images_filesystem

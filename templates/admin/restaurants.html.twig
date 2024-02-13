@@ -8,44 +8,74 @@
 
 {% block content %}
 
-<div class="d-flex align-items-center justify-content-between">
-  <div class="d-flex align-items-center flex-fill">
+<div class="d-flex flex-column justify-content-between">
+  <div class="d-flex align-items-center justify-content-between">
     <div id="search-restaurants" class="w-25 mr-4">
       <input type="text" class="form-control">
     </div>
-    <a href="{{ path('admin_hubs') }}" class="btn btn-default mr-4">
-      {{ 'adminDashboard.hubs.title'|trans }}
-    </a>
-    <a href="{{ path('admin_promotions') }}" class="btn btn-default mr-4">
-      {% trans %}adminDashboard.promotions.title{% endtrans %}
-    </a>
-    {% if business_account_enabled %}
-      <a href="{{ path('admin_business_accounts') }}" class="btn btn-default mr-4">
-        {{ 'adminDashboard.business_accounts.title'|trans }}
-      </a>
-    {% endif %}
-    {{ form_start(pledge_form, { attr: { class: 'form-inline d-inline-block border-left pl-4' } }) }}
-      {{ form_widget(pledge_form.enable_restaurant_pledges) }}
-      <a href="{{ path('admin_restaurants_pledges') }}" class="btn btn-default ml-4">
-        {% trans %}adminDashboard.pledges.title{% endtrans %} <span class="badge">{{ pledge_count }}</span>
-      </a>
-    {{ form_end(pledge_form) }}
-    <div class="border-left pl-4 ml-4">
-      <a class="btn btn-default" href="{{ path('admin_restaurants_edenred') }}">
-        {{ 'restaurants.edenred_transactions.title'|trans }}
+    <div class="d-flex align-items-center">
+      <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="restaurants-more-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+          <i class="fa fa-cog mr-1"></i>
+          <span>{{ 'task.form.modal.moreOptions'|trans }}</span>
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="restaurants-more-options">
+          <li>
+            <a href="{{ path('admin_hubs') }}">
+              {{ 'adminDashboard.hubs.title'|trans }}
+            </a>
+          </li>
+          <li>
+            <a href="{{ path('admin_promotions') }}">
+              {{ 'adminDashboard.promotions.title'|trans }}
+            </a>
+          </li>
+          <li role="separator" class="divider"></li>
+          {% if business_account_enabled %}
+          <li>
+            <a href="{{ path('admin_business_accounts') }}">
+              {{ 'adminDashboard.business_accounts.title'|trans }}
+            </a>
+          </li>
+          <li>
+            <a href="{{ path('admin_business_restaurant_group_list') }}">
+              {{ 'adminDashboard.business_restaurant_groups.title'|trans }}
+            </a>
+          </li>
+          <li role="separator" class="divider"></li>
+          {% endif %}
+          <li>
+            <a href="{{ path('admin_restaurants_pledges') }}">
+              {% trans %}adminDashboard.pledges.title{% endtrans %} <span class="badge">{{ pledge_count }}</span>
+            </a>
+          </li>
+          <li>
+            {{ form_start(pledge_form, { attr: { class: 'form-inline d-inline-block', style: 'padding: 3px 20px;' } }) }}
+              {{ form_widget(pledge_form.enable_restaurant_pledges) }}
+            {{ form_end(pledge_form) }}
+          </li>
+          <li role="separator" class="divider"></li>
+          <li>
+            <a href="{{ path('admin_restaurants_edenred') }}">
+              {{ 'restaurants.edenred_transactions.title'|trans }}
+            </a>
+          </li>
+          {% if nonprofits_enabled %}
+          <li role="separator" class="divider"></li>
+          <li>
+            <a href="{{ path('admin_nonprofits') }}">
+              {{ 'adminDashboard.nonprofits.title'|trans }}
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+      <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success ml-4">
+        <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
       </a>
     </div>
-    {% if nonprofits_enabled %}
-    <div class="border-left pl-4 ml-4">
-      <a class="btn btn-default" href="{{ path('admin_nonprofits') }}">
-        {{ 'adminDashboard.nonprofits.title'|trans }}
-      </a>
-    </div>
-    {% endif %}
   </div>
-  <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success">
-    <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
-  </a>
 </div>
 {% include "admin/pagination.html.twig" %}
 {% include "_partials/restaurant/list.html.twig" %}

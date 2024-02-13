@@ -72,6 +72,7 @@ AppBundle\Entity\LocalBusiness:
       - '@cuisine_asian'
     featured: true
     exclusive: true
+    rateLimitAmount: null
   restaurant_2:
     name: 'Café Barjot'
     address: "@address_2"
@@ -79,6 +80,7 @@ AppBundle\Entity\LocalBusiness:
     enabled: true
     contract: "@contract_2"
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    rateLimitAmount: null
     __calls:
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]
@@ -93,6 +95,7 @@ AppBundle\Entity\LocalBusiness:
     enabled: true
     contract: "@contract_3"
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    rateLimitAmount: null
     __calls:
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]
@@ -103,6 +106,7 @@ AppBundle\Entity\LocalBusiness:
     enabled: true
     contract: "@contract_3"
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    rateLimitAmount: null
     __calls:
       - setDeletedAt:
         - <identity(new \DateTime('2019-11-12 18:00:00'))>
@@ -118,6 +122,7 @@ AppBundle\Entity\LocalBusiness:
     address: "@address_3"
     enabled: true
     state: pledge
+    rateLimitAmount: null
   restaurant_6:
     name: 'Good Old Times'
     address: "@address_3"
@@ -125,6 +130,7 @@ AppBundle\Entity\LocalBusiness:
     enabled: false
     contract: "@contract_3"
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    rateLimitAmount: null
     __calls:
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]

@@ -55,6 +55,7 @@ class LoopeatStockValidator extends ConstraintValidator
 
                 if ($missingQuantity > 0) {
                     $this->context->buildViolation($constraint->message)
+                        ->setParameter('%name%', $reusablePackaging->getReusablePackaging()->getName())
                         ->setInvalidValue($missingQuantity)
                         ->setCause($reusablePackaging->getReusablePackaging())
                         ->addViolation();

@@ -18,11 +18,9 @@ use AppBundle\Form\Checkout\CheckoutTipType;
 use AppBundle\Form\Checkout\CheckoutVytalType;
 use AppBundle\Form\Checkout\LoopeatReturnsType;
 use AppBundle\Form\Order\CartType;
-use AppBundle\Service\LoggingUtils;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
-use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
@@ -64,8 +62,8 @@ class OrderController extends AbstractController
         FactoryInterface $orderFactory,
         protected JWTTokenManagerInterface $JWTTokenManager,
         string $sessionKeyName,
+        private ValidatorInterface $validator,
         private LoggerInterface $checkoutLogger,
-        private LoggingUtils $loggingUtils
     )
     {
         $this->objectManager = $objectManager;
@@ -81,7 +79,6 @@ class OrderController extends AbstractController
         CartContextInterface $cartContext,
         OrderProcessorInterface $orderProcessor,
         TranslatorInterface $translator,
-        ValidatorInterface $validator,
         SettingsManager $settingsManager,
         EmbedContext $embedContext,
         SessionInterface $session)
@@ -99,7 +96,7 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
-        $errors = $validator->validate($order);
+        $errors = $this->validator->validate($order);
 
         // @see https://github.com/coopcycle/coopcycle-web/issues/2069
         if (count($errors->findByCodes(ShippingAddressConstraint::ADDRESS_NOT_SET)) > 0) {
@@ -134,7 +131,6 @@ class OrderController extends AbstractController
             }
 
             $this->objectManager->flush();
-            $this->logFlushOrder($order);
 
             if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
                 $session->remove($dabbaAccessTokenKey);
@@ -156,7 +152,6 @@ class OrderController extends AbstractController
 
             $orderProcessor->process($order);
             $this->objectManager->flush();
-            $this->logFlushOrder($order);
 
             return $this->redirectToRoute('order');
         }
@@ -185,7 +180,6 @@ class OrderController extends AbstractController
 
             $orderProcessor->process($order);
             $this->objectManager->flush();
-            $this->logFlushOrder($order);
 
             return $this->redirectToRoute('order');
         }
@@ -202,7 +196,6 @@ class OrderController extends AbstractController
 
             $orderProcessor->process($order);
             $this->objectManager->flush();
-            $this->logFlushOrder($order);
 
             return $this->redirectToRoute('order');
         }
@@ -218,7 +211,6 @@ class OrderController extends AbstractController
 
             $orderProcessor->process($order);
             $this->objectManager->flush();
-            $this->logFlushOrder($order);
 
             return $this->redirectToRoute('order');
         }
@@ -252,7 +244,6 @@ class OrderController extends AbstractController
 
                 $orderProcessor->process($order);
                 $this->objectManager->flush();
-                $this->logFlushOrder($order);
 
                 return $this->redirectToRoute('order');
             }
@@ -277,7 +268,6 @@ class OrderController extends AbstractController
                 }
 
                 $this->objectManager->flush();
-                $this->logFlushOrder($order);
 
                 if ($isFreeOrder || $isQuote) {
 
@@ -375,7 +365,6 @@ class OrderController extends AbstractController
             $orderManager->checkout($order, $data);
 
             $this->objectManager->flush();
-            $this->logFlushOrder($order);
 
             if (PaymentInterface::STATE_FAILED === $payment->getState()) {
 
@@ -535,7 +524,6 @@ class OrderController extends AbstractController
             );
 
             $this->objectManager->flush();
-            $this->logFlushOrder($order);
 
             $session->remove($loopeatAccessTokenKey);
             $session->remove($loopeatRefreshTokenKey);
@@ -556,7 +544,6 @@ class OrderController extends AbstractController
             );
 
             $this->objectManager->flush();
-            $this->logFlushOrder($order);
 
             $session->remove($dabbaAccessTokenKey);
             $session->remove($dabbaRefreshTokenKey);
@@ -733,20 +720,5 @@ class OrderController extends AbstractController
             'addresses_normalized' => $this->getUserAddresses(),
             'is_player' => true,
         ]));
-    }
-
-    private function logFlushOrder($order): void {
-        $this->checkoutLogger->info(sprintf('Order #%d updated in the database | OrderController | triggered by %s',
-            $order->getId(),  $this->loggingUtils->getCaller()));
-
-        // added to debug the issue with multiple delivery fees: https://github.com/coopcycle/coopcycle-web/issues/3929
-        $deliveryAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
-        if (count($deliveryAdjustments) > 1) {
-            $message = sprintf('Order #%d has multiple delivery fees: %d | OrderController | triggered by %s',
-                $order->getId(), count($deliveryAdjustments), $this->loggingUtils->getCaller());
-
-            $this->checkoutLogger->error($message);
-            \Sentry\captureException(new \Exception($message));
-        }
     }
 }

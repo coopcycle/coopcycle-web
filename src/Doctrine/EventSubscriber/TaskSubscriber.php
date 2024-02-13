@@ -10,6 +10,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\OrderManager;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
@@ -202,23 +203,39 @@ class TaskSubscriber implements EventSubscriber
     {
         $uow = $em->getUnitOfWork();
         foreach ($tasksToUpdate as $taskToUpdate) {
-            $changeset = $uow->getEntityChangeSet($taskToUpdate);
-            if (isset($changeset['status']) && $changeset['status'][1] === Task::STATUS_CANCELLED) {
-                $delivery = $taskToUpdate->getDelivery();
-                if ($delivery !== null && ($order = $delivery->getOrder()) !== null) {
-                    $tasks = $delivery->getTasks();
-                    $cancelOrder = true;
-                    foreach ($tasks as $task) {
-                        if ($task->getId() !== $taskToUpdate->getId() && $task->getStatus() !== Task::STATUS_CANCELLED) {
-                            $cancelOrder = false;
-                            break;
 
-                        }
+            $changeset = $uow->getEntityChangeSet($taskToUpdate);
+
+            if (!isset($changeset['status'])) {
+                continue;
+            }
+
+            [ $oldValue, $newValue ] = $changeset['status'];
+
+            if ($newValue === Task::STATUS_CANCELLED) {
+
+                $delivery = $taskToUpdate->getDelivery();
+                if (null === $delivery) {
+                    continue;
+                }
+
+                $order = $delivery->getOrder();
+                if (null === $order) {
+                    continue;
+                }
+
+                $tasks = $delivery->getTasks();
+                $cancelOrder = true;
+                foreach ($tasks as $task) {
+                    if ($task->getId() !== $taskToUpdate->getId() && $task->getStatus() !== Task::STATUS_CANCELLED) {
+                        $cancelOrder = false;
+                        break;
                     }
-                    if ($cancelOrder) {
-                        $this->orderManager->cancel($order, 'All tasks were cancelled');
-                        $em->flush();
-                    }
+                }
+
+                if ($cancelOrder && $order->getState() !== OrderInterface::STATE_CANCELLED) {
+                    $this->orderManager->cancel($order, 'All tasks were cancelled');
+                    $em->flush();
                 }
             }
         }
