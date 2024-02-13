@@ -130,18 +130,4 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
 
         return null;
     }
-
-    protected function getUser()
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return;
-        }
-
-        if (!is_object($user = $token->getUser())) {
-            // e.g. anonymous authentication
-            return;
-        }
-
-        return $user;
-    }
 }
