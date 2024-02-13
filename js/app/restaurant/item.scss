@@ -10,42 +10,50 @@ $panel-heading-padding-horizontal: nth($panel-heading-padding, 2);
 
 $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 2));
 
-.restaurant-header {
+@mixin image-params() {
+  width: 230px;
+  height: 230px;
+  border-radius: 16px;
 
-  display: flex;
-  align-items: center;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eeeeee;
-
-  @media (max-width: $screen-xs-max) {
-    flex-direction: column;
+  @media (min-width: $screen-md-min) {
+    margin-right: 1.5rem;
   }
+}
+
+.restaurant-header {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1.5rem;
+
+  @media (min-width: $screen-md-min) {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .restaurant-name {
+    font-weight: bold;
+  }
+
   .restaurant-image,
   img.restaurant-image {
-    width: 120px;
-    height: 120px;
-    margin-right: 15px;
-    @media (max-width: $screen-xs-max) {
-      display: none;
-    }
+    @include image-params();
+    align-self: center;
   }
 
   figcaption {
+    @include image-params();
     position: absolute;
     right: 0;
     left: 0;
     top: 0;
-    bottom: 0px;
-    width: 120px;
-    height: 120px;
-    margin-right: 15px;
-    @media (max-width: $screen-xs-max) {
-      display: none;
-    }
+    bottom: 0;
   }
 
   &-body {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
   &-right {
     flex: 1;

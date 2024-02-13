@@ -155,14 +155,21 @@
     </div>
     {% endif %}
     <section class="restaurant-header-body">
-      <h1>{{ restaurant.name }}</h1>
-      <p class="d-none d-lg-block">{{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
+      <h2 class="restaurant-name">{{ restaurant.name }}</h2>
+      <p class=""> <i class="fa fa-map-marker"></i>  {{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
+
       {% if restaurant.website is defined and restaurant.website is not empty %}
       <p>
         <a href="{{ restaurant.website }}" target="_blank">
           <i class="fa fa-external-link"></i> {{ 'localBusiness.form.website'|trans }}
         </a>
       </p>
+      {% endif %}
+
+      {% if restaurant.description is defined and restaurant.description is not empty %}
+        <section class="restaurant-description text-muted">
+          {{ restaurant.description|markdown_to_html }}
+        </section>
       {% endif %}
     </section>
     <section class="restaurant-header-right">
@@ -174,12 +181,6 @@
       </div>
     </section>
   </header>
-
-  {% if restaurant.description is defined and restaurant.description is not empty %}
-  <section class="restaurant-description text-muted d-none d-lg-block">
-    {{ restaurant.description|markdown_to_html }}
-  </section>
-  {% endif %}
 
   {% set menu = restaurant_menu(restaurant) %}
 
