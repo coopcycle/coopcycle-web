@@ -10,7 +10,6 @@ use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class LazyProductVariantResolver implements LazyProductVariantResolverInterface
 {
@@ -20,13 +19,11 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
     public function __construct(
         ProductVariantResolverInterface $variantResolver,
         ProductVariantFactoryInterface $variantFactory,
-        BusinessContext $businessContext,
-        TokenStorageInterface $tokenStorage)
+        BusinessContext $businessContext)
     {
         $this->variantResolver = $variantResolver;
         $this->variantFactory = $variantFactory;
         $this->businessContext = $businessContext;
-        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -35,9 +32,9 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
     public function getVariant(ProductInterface $product): ?ProductVariantInterface
     {
         if ($this->businessContext->isActive()) {
-            $user = $this->getUser();
-            if ($user && $user->hasBusinessAccount()) {
-                $restaurantGroup = $user->getBusinessAccount()->getBusinessRestaurantGroup();
+            $businessAccount = $this->businessContext->getBusinessAccount();
+            if ($businessAccount) {
+                $restaurantGroup = $businessAccount->getBusinessRestaurantGroup();
 
                 $variant = $this->getVariantForBusinessRestaurantGroup($product, $restaurantGroup);
                 if ($variant) {

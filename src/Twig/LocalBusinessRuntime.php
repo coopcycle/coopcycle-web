@@ -20,7 +20,6 @@ use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -34,8 +33,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         EntityManagerInterface $entityManager,
         TimingRegistry $timingRegistry,
         RestaurantDecorator $restaurantDecorator,
-        BusinessContext $businessContext,
-        TokenStorageInterface $tokenStorage)
+        BusinessContext $businessContext)
     {
         $this->translator = $translator;
         $this->serializer = $serializer;
@@ -45,7 +43,6 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         $this->timingRegistry = $timingRegistry;
         $this->restaurantDecorator = $restaurantDecorator;
         $this->businessContext = $businessContext;
-        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -198,26 +195,12 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         return $this->restaurantDecorator->getBadges($restaurant);
     }
 
-    protected function getUser()
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return;
-        }
-
-        if (!is_object($user = $token->getUser())) {
-            // e.g. anonymous authentication
-            return;
-        }
-
-        return $user;
-    }
-
     public function resolveMenu(LocalBusiness $restaurant): ?Taxon
     {
         if ($this->businessContext->isActive()) {
-            $user = $this->getUser();
-            if ($user && $user->hasBusinessAccount()) {
-                $restaurantGroup = $user->getBusinessAccount()->getBusinessRestaurantGroup();
+            $businessAccount = $this->businessContext->getBusinessAccount();
+            if ($businessAccount) {
+                $restaurantGroup = $businessAccount->getBusinessRestaurantGroup();
                 $qb = $this->entityManager->getRepository(Taxon::class)->createQueryBuilder('m');
                 $qb->join(BusinessRestaurantGroupRestaurantMenu::class, 'rm', Join::WITH, 'rm.menu = m.id');
                 $qb->andWhere('rm.businessRestaurantGroup = :group');
