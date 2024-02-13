@@ -600,7 +600,7 @@ Feature: Tasks
       }
       """
 
-  Scenario: Mark task as failed with failure reason
+  Scenario: Mark task as failed with failure reason via failed endpoint
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | tasks.yml           |
@@ -645,6 +645,138 @@ Feature: Tasks
         "group":null,
         "incidented": true,
         "tags":@array@
+      }
+      """
+    And the user "bob" sends a "GET" request to "/api/tasks/2/events"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/task_events/2",
+            "@type":"TaskEvent",
+            "name":"task:created",
+            "data":[],
+            "createdAt":"@string@.isDateTime()"
+          },
+          {
+            "@id":"@string@",
+            "@type":"TaskEvent",
+            "name":"task:assigned",
+            "data":{"username":"bob"},
+            "createdAt":"@string@.isDateTime()"
+          },
+          {
+            "@id":"@string@",
+            "@type":"TaskEvent",
+            "name":"task:failed",
+            "data":{"reason":"DAMAGED","notes":"DAMAGED"},
+            "createdAt":"@string@.isDateTime()"
+          },
+          {
+            "@id":"@string@",
+            "@type":"TaskEvent",
+            "name":"task:incident-reported",
+            "data":{"reason":"DAMAGED","notes":"DAMAGED"},
+            "createdAt":"@string@.isDateTime()"
+          },
+        ],
+        "hydra:totalItems":4,
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
+
+  Scenario: Mark task as failed with failure reason via incidents endpoint
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When the user "bob" sends a "GET" request to "/api/tasks/2"
+    Then the response status code should be 200
+    And the response should be in JSON
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/2/incidents" with body:
+      """
+      {
+        "reason": "DAMAGED",
+        "notes": "PACKAGE WET"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/2",
+        "@type":"Task",
+        "id":2,
+        "type":"DROPOFF",
+        "status":"TODO",
+        "address":@...@,
+        "after":"2018-03-02T11:30:00+01:00",
+        "before":"2018-03-02T12:00:00+01:00",
+        "doneAfter":"2018-03-02T11:30:00+01:00",
+        "doneBefore":"2018-03-02T12:00:00+01:00",
+        "comments":@string@,
+        "updatedAt":"@string@.isDateTime()",
+        "isAssigned":true,
+        "assignedTo":"bob",
+        "previous":null,
+        "group":null,
+        "incidented": true,
+        "tags":@array@
+      }
+      """
+    And the user "bob" sends a "GET" request to "/api/tasks/2/events"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"@string@",
+            "@type":"TaskEvent",
+            "name":"task:created",
+            "data":[],
+            "createdAt":"@string@.isDateTime()"
+          },
+          {
+            "@id":"@string@",
+            "@type":"TaskEvent",
+            "name":"task:incident-reported",
+            "data":{"reason":"DAMAGED","notes":"PACKAGE WET"},
+            "createdAt":"@string@.isDateTime()"
+          },
+          {
+            "@id":"@string@",
+            "@type":"TaskEvent",
+            "name":"task:assigned",
+            "data":{"username":"bob"},
+            "createdAt":"@string@.isDateTime()"
+          }
+        ],
+        "hydra:totalItems":3,
+        "hydra:search":{
+          "@*@":"@*@"
+        }
       }
       """
 
