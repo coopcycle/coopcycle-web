@@ -94,12 +94,22 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
     }
 
     // cannot move directly from one tour to another atm
-    if (source.droppableId.startsWith('tour:') && destination.droppableId.startsWith('tour:')) {
+    if (source.droppableId.startsWith('tour:') && destination.droppableId.startsWith('tour:') && source.droppableId !== destination.droppableId) {
       return
     }
 
     // cannot move directly from one group to another atm
-    if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('group:')) {
+    if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('group:') && source.droppableId !== destination.droppableId) {
+      return
+    }
+
+    // cannot assign directly a task from one tour to another atm
+    if (source.droppableId.startsWith('tour:') && destination.droppableId.startsWith('assigned:')) {
+      return
+    }
+
+    // cannot cannot assign directly a task from one group to another atm
+    if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('assigned:')) {
       return
     }
 
@@ -157,6 +167,7 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
           dispatch(modifyTour(tour, newTourItems, true))
         })
       } else {
+        // FIXME : should unassign added tasks if needed
         dispatch(modifyTour(tour, newTourItems))
       }
     } else if (destination.droppableId.startsWith('assigned:')) {
