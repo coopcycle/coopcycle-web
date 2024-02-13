@@ -1,23 +1,15 @@
-/** @type { import('@storybook/server-webpack5').StorybookConfig } */
+/** @type { import('@storybook/react-webpack5').StorybookConfig } */
 
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import custom from '../webpack.config.js'
 
 const config = {
-  refs: {
-    react: {
-      title: 'React',
-      url: 'http://localhost:6007',
-    },
-  },
   stories: [
-    "../src/**/*.mdx",
-    "../src/**/*.stories.@(json|yaml|yml)",
-    "../templates/**/*.stories.json"
+    "../js/app/**/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
   addons: ["@storybook/addon-links", "@storybook/addon-essentials"],
   framework: {
-    name: "@storybook/server-webpack5",
+    name: "@storybook/react-webpack5",
     options: {},
   },
   docs: {
@@ -27,8 +19,9 @@ const config = {
     disableTelemetry: true,
   },
   webpackFinal: async (config) => {
-
     config.plugins.push(new MiniCssExtractPlugin())
+
+    config.output.path = config.output.path.replace('/storybook/public', '/storybook-react/public')
 
     return {
       ...config,
