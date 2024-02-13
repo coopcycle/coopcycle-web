@@ -156,7 +156,21 @@
     {% endif %}
     <section class="restaurant-header-body">
       <h2 class="restaurant-name">{{ restaurant.name }}</h2>
-      <p class=""> <i class="fa fa-map-marker"></i>  {{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
+
+      {% set badges = restaurant_badges(restaurant) %}
+      {% set tags = restaurant_tags(restaurant) %}
+      {% if badges is not empty or tags is not empty %}
+      <div class="badges-and-tags">
+        {% for badge in badges %}
+          {% include "components/restaurant/restaurant_badge/restaurant_badge.html.twig" with {type: badge} %}
+        {% endfor %}
+        {% for tag in tags %}
+          {% include "components/restaurant/restaurant_tag/restaurant_tag.html.twig" with {value: tag} %}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <p> <i class="fa fa-map-marker"></i>  {{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
 
       <section class="restaurant-description text-muted">
       {% if restaurant.description is defined and restaurant.description is not empty %}

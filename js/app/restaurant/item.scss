@@ -1,7 +1,10 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
-@import "../../../assets/css/vars.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
+
+@import "../../../assets/css/vars.scss";
+@import "./tag.scss";
+@import "./badge.scss";
 
 // $panel-heading-padding is 10px 15px !default;
 // nth() allows to extract individual values
@@ -55,6 +58,18 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     flex-direction: column;
     gap: 4px;
   }
+
+  .badges-and-tags {
+    padding: 2px 0 12px 0;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .restaurant-badge {
+    box-shadow: none;
+  }
+
   &-right {
     flex: 1;
     text-align: right;
