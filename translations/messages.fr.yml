@@ -1,8 +1,8 @@
 global.changesSaved: Changements sauvegardés.
 navbar.login: Connexion
 navbar.myAccount: Mon compte
-navbar.proCart: Passer en pro
-navbar.lambdaCart: Passer en normal
+navbar.switch_to_business: Compte %name%
+navbar.switch_to_personal: Compte personnel
 base.footer.contactUs: Nous contacter
 base.footer.companyRegister: Devenir partenaire
 base.footer.RegisterMyRestaurant: Inscrire mon restaurant
