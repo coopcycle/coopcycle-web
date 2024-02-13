@@ -158,19 +158,17 @@
       <h2 class="restaurant-name">{{ restaurant.name }}</h2>
       <p class=""> <i class="fa fa-map-marker"></i>  {{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</p>
 
+      <section class="restaurant-description text-muted">
+      {% if restaurant.description is defined and restaurant.description is not empty %}
+          {{ restaurant.description|markdown_to_html }}
+      {% endif %}
+
       {% if restaurant.website is defined and restaurant.website is not empty %}
-      <p>
         <a href="{{ restaurant.website }}" target="_blank">
           <i class="fa fa-external-link"></i> {{ 'localBusiness.form.website'|trans }}
         </a>
-      </p>
       {% endif %}
-
-      {% if restaurant.description is defined and restaurant.description is not empty %}
-        <section class="restaurant-description text-muted">
-          {{ restaurant.description|markdown_to_html }}
-        </section>
-      {% endif %}
+      </section>
     </section>
     <section class="restaurant-header-right">
       <div class="d-flex justify-content-end">
