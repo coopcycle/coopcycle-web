@@ -451,7 +451,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     * @var bool
     * @Groups({"task"})
     */
-    private $incidented = false;
+    private $hasIncidents = false;
 
     public function __construct()
     {
@@ -1119,13 +1119,13 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $language->evaluate($pricingRule->getPrice(), $this->toExpressionLanguageValues());
     }
 
-    public function setIncidented(bool $incidented): void
+    public function setHasIncidents(bool $hasIncidents): void
     {
-        $this->incidented = $incidented;
+        $this->hasIncidents = $hasIncidents;
     }
 
-    public function getIncidented(): bool
+    public function getHasIncidents(): bool
     {
-        return $this->incidented;
+        return $this->hasIncidents;
     }
 }
