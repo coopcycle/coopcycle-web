@@ -8,16 +8,14 @@ use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Validator\Constraints\LoopeatStock as AssertLoopeatStock;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
-use ApiPlatform\Core\Validator\ValidatorInterface;
+use ApiPlatform\Core\Validator\ValidatorInterface as ApiPlatformValidatorInterface;
 use Carbon\Carbon;
-use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -26,27 +24,16 @@ use Symfony\Component\Validator\Validator\ValidatorInterface as BaseValidatorInt
 
 final class OrderSubscriber implements EventSubscriberInterface
 {
-    private $tokenStorage;
-    private $orderTimeHelper;
-    private $validator;
-    private $dataPersister;
-    private $orderProcessor;
 
     public function __construct(
-        TokenStorageInterface $tokenStorage,
-        OrderTimeHelper $orderTimeHelper,
-        ValidatorInterface $validator,
-        DataPersisterInterface $dataPersister,
-        OrderProcessorInterface $orderProcessor,
-        BaseValidatorInterface $baseValidator
-    ) {
-        $this->tokenStorage = $tokenStorage;
-        $this->orderTimeHelper = $orderTimeHelper;
-        $this->validator = $validator;
-        $this->dataPersister = $dataPersister;
-        $this->orderProcessor = $orderProcessor;
-        $this->baseValidator = $baseValidator;
-    }
+        private TokenStorageInterface $tokenStorage,
+        private OrderTimeHelper $orderTimeHelper,
+        private ApiPlatformValidatorInterface $validator,
+        private DataPersisterInterface $dataPersister,
+        private OrderProcessorInterface $orderProcessor,
+        private BaseValidatorInterface $baseValidator,
+        private LoggerInterface $checkoutLogger
+    ) { }
 
     /**
      * @return array
@@ -193,7 +180,8 @@ final class OrderSubscriber implements EventSubscriberInterface
     public function process(ViewEvent $event)
     {
         $resource = $event->getControllerResult();
-        $method = $event->getRequest()->getMethod();
+        $request = $event->getRequest();
+        $method = $request->getMethod();
 
         if (!$resource instanceof Order || Request::METHOD_PUT !== $method) {
             return;
@@ -202,6 +190,9 @@ final class OrderSubscriber implements EventSubscriberInterface
         if ($resource->getState() !== Order::STATE_CART) {
             return;
         }
+
+        $this->checkoutLogger->info(sprintf('Order #%d | OrderSubscriber | started orderProcessor->process | request: %s | %s',
+            $resource->getId(), $method, $request->getRequestUri()));
 
         $this->orderProcessor->process($resource);
     }

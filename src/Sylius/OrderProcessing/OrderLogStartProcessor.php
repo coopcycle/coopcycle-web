@@ -7,7 +7,7 @@ use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 
-final class OrderDisabledProductProcessor implements OrderProcessorInterface
+final class OrderLogStartProcessor implements OrderProcessorInterface
 {
 
     public function __construct(
@@ -21,14 +21,9 @@ final class OrderDisabledProductProcessor implements OrderProcessorInterface
      */
     public function process(BaseOrderInterface $order): void
     {
-        foreach ($order->getItems() as $item) {
-            $product = $item->getVariant()->getProduct();
-            if (!$product->isEnabled()) {
-                $this->checkoutLogger->info(sprintf('Order %s | OrderDisabledProductProcessor | removing disabled product %s',
-                    $this->loggingUtils->getOrderId($order), $product->getCode()));
-
-                $order->removeItem($item);
-            }
-        }
+        $this->checkoutLogger->info(sprintf('Order %s | OrderLogStartProcessor | processing started | triggered by: %s; at: %s',
+            $this->loggingUtils->getOrderId($order),
+            $this->loggingUtils->getRequest(),
+            $this->loggingUtils->getBacktrace()));
     }
 }

@@ -271,6 +271,11 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.order_processing }
 
+  # should be executed before any other processor
+  AppBundle\Sylius\OrderProcessing\OrderLogStartProcessor:
+    tags:
+      - { name: sylius.order_processor, priority: 1000 }
+
   AppBundle\Sylius\OrderProcessing\OrderDisabledProductProcessor:
     tags:
       - { name: sylius.order_processor, priority: 96 }
@@ -314,6 +319,11 @@ services:
     class: AppBundle\Sylius\OrderProcessing\OrderPaymentProcessor
     tags:
       - { name: sylius.order_processor, priority: 16 }
+
+  # should be executed after any other processor
+  AppBundle\Sylius\OrderProcessing\OrderLogFinishProcessor:
+    tags:
+      - { name: sylius.order_processor, priority: -100 }
 
   sylius.promotion_action.delivery_percentage:
     class: AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand
@@ -653,6 +663,10 @@ services:
       - { name: doctrine.event_subscriber }
 
   AppBundle\Doctrine\EventSubscriber\DeliverySubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
+  AppBundle\Doctrine\EventSubscriber\CheckoutSubscriber:
     tags:
       - { name: doctrine.event_subscriber }
 
@@ -1269,6 +1283,10 @@ services:
   coopcycle.sylius.order_modifier:
     class: AppBundle\Sylius\Order\OrderModifier
     decorates: sylius.order_modifier
+
+  coopcycle.sylius.order_item_quantity_modifier:
+    class: AppBundle\Sylius\Order\OrderItemQuantityModifier
+    decorates: sylius.order_item_quantity_modifier
 
   AppBundle\CubeJs\HttpClient:
     decorates: cubejs.client
