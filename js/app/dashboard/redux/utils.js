@@ -47,7 +47,7 @@ export function withLinkedTasks(tasks, allTasks, unique = false) {
     }
   })
 
- return newTasks  
+ return newTasks
 }
 
 export const timeframeToPercentage = (timeframe, reference) => {
@@ -92,7 +92,7 @@ export const isTaskVisible = (task, filters, date) => {
 
   const isFinished = _.includes(['DONE', 'FAILED'], task.status)
   const isCancelled = 'CANCELLED' === task.status
-  const isIncidentReported = task.has_incidents
+  const isIncidentReported = task.hasIncidents
 
   if (onlyFilter !== null) {
     switch (onlyFilter) {
