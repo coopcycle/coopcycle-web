@@ -3,6 +3,10 @@
 import "../assets/css/main.scss";
 
 import "../js/app/restaurant/list.scss";
+import "../js/app/restaurant/menu.scss";
+import "../js/app/restaurant/item.scss";
+import "../js/app/restaurant/components/ProductDetails/productDetails.scss";
+import "../js/app/restaurant/components/ProductDetails/dotstyle.scss";
 
 import numbro from 'numbro'
 
