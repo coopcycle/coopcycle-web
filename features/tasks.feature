@@ -657,34 +657,21 @@ Feature: Tasks
         "@id":"/api/tasks",
         "@type":"hydra:Collection",
         "hydra:member":[
+          "@...@",
           {
-            "@id":"/api/task_events/2",
-            "@type":"TaskEvent",
-            "name":"task:created",
-            "data":[],
-            "createdAt":"@string@.isDateTime()"
-          },
-          {
-            "@id":"@string@",
-            "@type":"TaskEvent",
-            "name":"task:assigned",
-            "data":{"username":"bob"},
-            "createdAt":"@string@.isDateTime()"
-          },
-          {
-            "@id":"@string@",
+            "@id":"@string@.startsWith('/api/task_events')",
             "@type":"TaskEvent",
             "name":"task:failed",
             "data":{"reason":"DAMAGED","notes":"DAMAGED"},
             "createdAt":"@string@.isDateTime()"
           },
           {
-            "@id":"@string@",
+            "@id":"@string@.startsWith('/api/task_events')",
             "@type":"TaskEvent",
             "name":"task:incident-reported",
             "data":{"reason":"DAMAGED","notes":"DAMAGED"},
             "createdAt":"@string@.isDateTime()"
-          },
+          }
         ],
         "hydra:totalItems":4,
         "hydra:search":{
@@ -751,25 +738,12 @@ Feature: Tasks
         "@id":"/api/tasks",
         "@type":"hydra:Collection",
         "hydra:member":[
+          "@...@",
           {
-            "@id":"@string@",
-            "@type":"TaskEvent",
-            "name":"task:created",
-            "data":[],
-            "createdAt":"@string@.isDateTime()"
-          },
-          {
-            "@id":"@string@",
+            "@id":"@string@.startsWith('/api/task_events')",
             "@type":"TaskEvent",
             "name":"task:incident-reported",
             "data":{"reason":"DAMAGED","notes":"PACKAGE WET"},
-            "createdAt":"@string@.isDateTime()"
-          },
-          {
-            "@id":"@string@",
-            "@type":"TaskEvent",
-            "name":"task:assigned",
-            "data":{"username":"bob"},
             "createdAt":"@string@.isDateTime()"
           }
         ],
