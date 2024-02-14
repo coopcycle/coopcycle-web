@@ -166,37 +166,6 @@ h1, h2, h3, h4, h5, h6 {
   padding: 40px;
 }
 
-/* Vertically centered modal */
-/* @see https://stackoverflow.com/questions/18422223/bootstrap-3-modal-vertical-position-center */
-/* @see https://codepen.io/dimbslmh/full/mKfCc */
-
-.modal {
-  text-align: center;
-}
-
-@media screen and (min-width: $screen-sm-min) {
-  .modal:before {
-    display: inline-block;
-    vertical-align: middle;
-    content: " ";
-    height: 100%;
-  }
-}
-
-.modal-dialog {
-  display: inline-block;
-  text-align: left;
-  vertical-align: middle;
-}
-
-.modal {
-  @media (max-width: $screen-xs-max) {
-    .modal-dialog {
-      width: calc(100% - 20px);
-    }
-  }
-}
-
 // ------------------ Admin ------------------
 
 .navbar--admin {
@@ -348,53 +317,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .ant-form-item {
   margin-bottom: 0;
-}
-
-// ------------------ React Modal ------------------
-
-// Copy default styles to be able to use overlayClassName prop
-// @see https://github.com/reactjs/react-modal/tree/master/docs/styles
-.ReactModal__Overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.75);
-}
-
-.ReactModal__Content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  right: auto;
-  bottom: auto;
-  overflow: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 64px 0 #0000000D;
-  background: rgb(255, 255, 255);
-  outline: none;
-  padding: 1rem;
-  margin-right: -50%;
-  transform: translate(-50%, -50%);
-
-  @media (min-width: $screen-sm-min) {
-    padding: 1.5rem;
-  }
-}
-
-.ReactModal__Html--open {
-}
-
-// Prevent scroll
-// https://github.com/reactjs/react-modal/blob/master/docs/styles/classes.md#for-the-documentbody-and-html-tag
-.ReactModal__Body--open {
-  overflow: hidden;
-
-  // FIXME; use smth more advanced to properly calculate the scrollbar width
-  // for different browsers and operating systems
-  // An attempt to prevent the content from shifting when the scrollbar is removed (due to overflow: hidden)
-  padding-right: 14px;
 }
 
 .text-monospace {

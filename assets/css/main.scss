@@ -22,13 +22,16 @@
 
 @import "styles.scss";
 
-@import "stripe.scss";
-@import "mercadopago.scss";
+@import "modals.scss";
 @import "ripple.scss";
 @import "speech-bubble.scss";
-@import "react-autosuggest.scss";
-@import "address-autosuggest.scss";
 @import "multistep-indicator.scss";
 @import '../../js/app/search/navbar.scss';
+
+@import "stripe.scss";
+@import "mercadopago.scss";
+@import "react-autosuggest.scss";
+@import "address-autosuggest.scss";
+
 @import "adhoc-order.scss";
 @import "account-creation.scss";
