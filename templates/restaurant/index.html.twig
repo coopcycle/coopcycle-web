@@ -185,14 +185,14 @@
           </a>
         </div>
       {% endif %}
+
+      <div>
+        <a class="restaurant-opening-hours" href="#" data-toggle="modal" data-target="#restaurant-opening-hours-modal">
+          <i class="fa fa-clock-o"></i> {{ 'localBusiness.form.openingHours'|trans }}
+        </a>
+      </div>
     </section>
     <section class="restaurant-header-right">
-      <div class="d-flex justify-content-end">
-        {% include 'restaurant/_partials/opening_hours.html.twig' with {
-          delivery:   restaurant.isFulfillmentMethodEnabled('delivery')   ? restaurant.getOpeningHours('delivery')   : [],
-          collection: restaurant.isFulfillmentMethodEnabled('collection') ? restaurant.getOpeningHours('collection') : []
-        } %}
-      </div>
     </section>
   </header>
 
@@ -281,6 +281,23 @@
     </div>
   {% endif %}
 
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="restaurant-opening-hours-modal-label" id="restaurant-opening-hours-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="restaurant-opening-hours-modal-label">{% trans %}localBusiness.form.openingHours{% endtrans %}</h4>
+      </div>
+      <div class="modal-body">
+        {% include 'restaurant/_partials/opening_hours.html.twig' with {
+          delivery:   restaurant.isFulfillmentMethodEnabled('delivery')   ? restaurant.getOpeningHours('delivery')   : [],
+          collection: restaurant.isFulfillmentMethodEnabled('collection') ? restaurant.getOpeningHours('collection') : []
+        } %}
+      </div>
+    </div>
+  </div>
 </div>
 
 {% set restaurant_json = { id: restaurant.id, isOpen: restaurant.isOpen } %}

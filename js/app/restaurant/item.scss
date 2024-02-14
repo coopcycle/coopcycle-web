@@ -92,10 +92,18 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
       display: none;
     }
   }
+}
 
+.restaurant-banner {
+  margin-top: -20px;
+}
+
+#restaurant-opening-hours-modal {
+  .modal-dialog {
+    width: 350px;
+  }
   .table-opening-hours {
     width: auto;
-    font-size: $font-size-small;
     thead > tr > th {
       text-align: right;
     }
@@ -111,11 +119,6 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
       background-color: transparent;
     }
   }
-
-}
-
-.restaurant-banner {
-  margin-top: -20px;
 }
 
 #cart {
