@@ -56,7 +56,7 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
       className="product-modal-container">
       <ProductModalHeader name={ product.name }
         onClickClose={ onClickClose } />
-      <main>
+      <main className='modal-body'>
         { images.length > 0 && (
           <ProductImagesCarousel images={ images } />
         ) }
@@ -69,7 +69,7 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
             option={ option } />
         )) }
       </main>
-      <footer className="border-top">
+      <footer className="modal-footer">
         {state.missingMandatoryOptions === 0 ? (
           <button type="submit" className="btn btn-lg btn-block btn-primary">
             <span data-product-total className="product-add-to-cart">

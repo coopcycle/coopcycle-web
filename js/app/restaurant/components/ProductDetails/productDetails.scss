@@ -26,17 +26,19 @@
     overflow: hidden;
   }
 
+  .modal-body {
+    padding: 0 $modal-inner-padding 1.5rem;
+    @media (min-width: $screen-md-min) {
+      padding: 0 $modal-padding-md 1.5rem;
+    }
+  }
+
   main {
     flex: 1;
     overflow: auto;
     display: flex;
     flex-direction: column;
-    margin: 1rem 0 1.5rem 0;
     gap: 1rem;
-  }
-
-  .modal-close {
-    color: $text-base;
   }
 
   .product-image {
@@ -158,6 +160,10 @@
       cursor: $cursor-disabled;
       @include opacity(.65);
     }
+  }
+
+  .modal-footer {
+    text-align: inherit;
   }
 
   .product-add-to-cart {
