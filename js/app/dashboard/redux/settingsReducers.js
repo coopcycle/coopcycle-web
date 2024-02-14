@@ -13,10 +13,12 @@ import {
 const defaultFilters = {
   showFinishedTasks: true,
   showCancelledTasks: false,
+  showIncidentReportedTasks: false,
   alwayShowUnassignedTasks: false,
   tags: [],
   hiddenCouriers: [],
   timeRange: [0, 24],
+  onlyFilter: null,
 }
 
 export const initialState = {
