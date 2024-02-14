@@ -4,8 +4,8 @@ import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import classNames from 'classnames'
 
-import { toggleMobileCart } from '../redux/actions'
-import { selectItems, selectErrorMessages, selectWarningMessages } from '../redux/selectors'
+import { toggleMobileCart } from '../../redux/actions'
+import { selectItems, selectErrorMessages, selectWarningMessages } from '../../redux/selectors'
 
 const HeadingLeftIcon = ({ loading, warnings, errors }) => {
 

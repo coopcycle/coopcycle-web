@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import classNames from 'classnames'
 
-import { selectItems } from '../redux/selectors'
+import { selectItems } from '../../redux/selectors'
 
 class CartButton extends Component {
 

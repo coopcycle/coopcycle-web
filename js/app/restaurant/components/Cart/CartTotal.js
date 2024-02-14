@@ -7,7 +7,7 @@ import {
   selectShowPricesTaxExcluded,
   selectItems,
   selectItemsTotal,
-  selectVariableCustomerAmountEnabled } from '../redux/selectors'
+  selectVariableCustomerAmountEnabled } from '../../redux/selectors'
 
 const Adjustment = ({ adjustment, tooltip }) => (
   <div>

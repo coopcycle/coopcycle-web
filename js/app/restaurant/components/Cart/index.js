@@ -5,18 +5,18 @@ import Sticky from 'react-stickynode'
 import classNames from 'classnames'
 import { Switch } from 'antd'
 
-import AddressModal from './AddressModal'
-import DateModal from './DateModal'
-import RestaurantModal from './RestaurantModal'
+import AddressModal from '../AddressModal'
+import DateModal from '../DateModal'
+import RestaurantModal from '../RestaurantModal'
 import CartItems from './CartItems'
 import CartHeading from './CartHeading'
 import CartTotal from './CartTotal'
 import CartButton from './CartButton'
 import Time from './Time'
 import FulfillmentMethod from './FulfillmentMethod'
-import LoopeatModal from './LoopeatModal'
+import LoopeatModal from '../LoopeatModal'
 
-import {changeAddress, disableTakeaway, enableTakeaway, openAddressModal, sync, toggleReusablePackaging} from '../redux/actions'
+import {changeAddress, disableTakeaway, enableTakeaway, openAddressModal, sync, toggleReusablePackaging} from '../../redux/actions'
 import {
   selectIsCollectionEnabled,
   selectIsDeliveryEnabled,
@@ -24,10 +24,10 @@ import {
   selectItems,
   selectReusablePackagingFeatureEnabled,
   selectReusablePackagingEnabled,
-} from '../redux/selectors'
+} from '../../redux/selectors'
 import InvitePeopleToOrderButton from './InvitePeopleToOrderButton'
-import InvitePeopleToOrderModal from './InvitePeopleToOrderModal'
-import SetGuestCustomerEmailModal from './SetGuestCustomerEmailModal'
+import InvitePeopleToOrderModal from '../InvitePeopleToOrderModal'
+import SetGuestCustomerEmailModal from '../SetGuestCustomerEmailModal'
 
 class Cart extends Component {
 

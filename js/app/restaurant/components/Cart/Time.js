@@ -2,8 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 
-import ShippingTimeRange from '../../components/ShippingTimeRange'
-import { setDateModalOpen } from '../redux/actions'
+import ShippingTimeRange from '../../../components/ShippingTimeRange'
+import { setDateModalOpen } from '../../redux/actions'
 
 class Time extends React.Component {
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { totalTaxExcluded } from '../../utils/tax'
+import { totalTaxExcluded } from '../../../utils/tax'
 
 const truncateText = text => {
   if (text.length > 24) {
