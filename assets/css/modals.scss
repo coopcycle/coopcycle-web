@@ -1,5 +1,10 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_modals";
 
+@mixin modal-content-border() {
+  border-radius: 8px;
+  box-shadow: 0 4px 64px 0 #0000000D;
+}
+
 /* Vertically centered modal */
 /* @see https://stackoverflow.com/questions/18422223/bootstrap-3-modal-vertical-position-center */
 /* @see https://codepen.io/dimbslmh/full/mKfCc */
@@ -21,16 +26,46 @@
   display: inline-block;
   text-align: left;
   vertical-align: middle;
-}
 
-.modal {
   @media (max-width: $screen-xs-max) {
-    .modal-dialog {
-      width: calc(100% - 20px);
-    }
+    width: calc(100% - 20px);
   }
 }
 
+.modal-content {
+  @include modal-content-border();
+}
+
+.modal-header {
+  border: none;
+
+  @media (min-width: $screen-md-min) {
+    padding: $modal-padding-md $modal-padding-md $modal-title-padding;
+  }
+
+  .modal-title {
+    font-weight: bold;
+  }
+
+  .close {
+    margin-top: 0;
+    padding: 2px;
+    color: $text-base;
+    opacity: 1;
+  }
+}
+
+.modal-body {
+  @media (min-width: $screen-md-min) {
+    padding: $modal-padding-md;
+  }
+}
+
+.modal-footer {
+  @media (min-width: $screen-md-min) {
+    padding: $modal-padding-md;
+  }
+}
 
 // ------------------ React Modal ------------------
 
@@ -42,7 +77,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.75);
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .ReactModal__Content {
@@ -52,16 +87,18 @@
   right: auto;
   bottom: auto;
   overflow: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 64px 0 #0000000D;
-  background: rgb(255, 255, 255);
+  background: $modal-content-bg;
+  @include modal-content-border();
   outline: none;
   padding: 1rem;
   margin-right: -50%;
   transform: translate(-50%, -50%);
 
-  @media (min-width: $screen-sm-min) {
-    padding: 1.5rem;
+  // Ideally, we should remove padding from the modal content
+  // and re-add it using modal-.. classes in each modal
+  // use .clear-legacy-padding until we do that
+  &-clear-legacy-padding {
+    padding: 0;
   }
 }
 
