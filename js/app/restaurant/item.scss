@@ -33,7 +33,17 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     align-items: center;
   }
 
+  a {
+    color: $text-base;
+    &:hover,
+    &:focus {
+      background-color: $light-gray;
+      text-decoration: none;
+    }
+  }
+
   .restaurant-name {
+    margin-bottom: 0;
     font-weight: bold;
   }
 
@@ -56,11 +66,10 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 1rem;
   }
 
   .badges-and-tags {
-    padding: 2px 0 12px 0;
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
@@ -68,6 +77,13 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 
   .restaurant-badge {
     box-shadow: none;
+  }
+
+  .restaurant-opening-hours {
+    padding: 4px 0;
+    i {
+      color: $primary-default;
+    }
   }
 
   &-right {
@@ -296,7 +312,6 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
           padding-right: 15px;
           color: #cccccc;
           &:hover,
-          &:visited,
           &:focus {
             text-decoration: none;
           }
