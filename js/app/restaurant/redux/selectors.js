@@ -34,6 +34,11 @@ export const selectItems = createSelector(
   }
 )
 
+export const selectHasItems = createSelector(
+  selectItems,
+  (items) => items.length > 0
+)
+
 export const selectItemsGroups = createSelector(
   selectItems,
   (items) =>  _.groupBy(items, 'vendor.name')
