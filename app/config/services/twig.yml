@@ -62,3 +62,7 @@ services:
   AppBundle\Twig\SettingResolver:
     arguments:
       $cache: '@craue_config_cache_provider'
+
+  AppBundle\Twig\SyliusVariantResolver:
+    arguments:
+      $productVariantResolver: '@coopcycle.sylius.product_variant_resolver.lazy'

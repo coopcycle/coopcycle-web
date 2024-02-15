@@ -2,8 +2,10 @@ import _ from "lodash"
 import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskLists, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { disableDropInTours, enableDropInTours, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, updateTourInUI } from "./actions"
-import { selectGroups, selectSelectedTasks, taskSelectors, tourSelectors } from "./selectors"
+import { belongsToTour, selectGroups, selectSelectedTasks, taskSelectors, tourSelectors } from "./selectors"
 import { withLinkedTasks } from "./utils"
+import { toast } from 'react-toastify'
+
 
 export function handleDragStart(result) {
   return function(dispatch, getState) {
@@ -67,14 +69,6 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
     const source = result.source;
     const destination = result.destination;
 
-    // reordered inside the unassigned list or unassigned tours list, do nothing
-    if (
-      source.droppableId === destination.droppableId &&
-      ( source.droppableId === 'unassigned' || source.droppableId === 'unassigned_tours' )
-    ) {
-      return;
-    }
-
     // did not move anywhere - can bail early
     if (
       source.droppableId === destination.droppableId &&
@@ -83,23 +77,41 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       return;
     }
 
-    // cannot unassign by drag'n'drop atm
+    // reordered inside the unassigned list or unassigned tours list, do nothing
+    if (
+      source.droppableId === destination.droppableId &&
+      ( source.droppableId === 'unassigned' || source.droppableId === 'unassigned_tours' )
+    ) {
+      return;
+    }
+
     if (source.droppableId.startsWith('assigned:') && destination.droppableId === 'unassigned') {
+      toast.warn("Can not unassign by drag'n drop at the moment")
       return
     }
 
-    // cannot unassign from tour by drag'n'drop atm
     if (source.droppableId.startsWith('tour:') && destination.droppableId === 'unassigned') {
+      toast.warn("Can not remove from tour by drag'n drop at the moment")
       return
     }
 
-    // cannot move directly from one tour to another atm
-    if (source.droppableId.startsWith('tour:') && destination.droppableId.startsWith('tour:')) {
+    if (source.droppableId.startsWith('tour:') && destination.droppableId.startsWith('tour:') && source.droppableId !== destination.droppableId) {
+      toast.warn("Can not move directly tasks between tours at the moment")
       return
     }
 
-    // cannot move directly from one group to another atm
-    if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('group:')) {
+    if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('group:') && source.droppableId !== destination.droppableId) {
+      toast.warn("Can not move directly tasks between groups at the moment")
+      return
+    }
+
+    if (source.droppableId.startsWith('tour:') && destination.droppableId.startsWith('assigned:')) {
+      toast.warn("Can not move directly individual task from tour to assigned at the moment")
+      return
+    }
+
+    if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('assigned:')) {
+      toast.warn("Can not move directly individual task from group to assigned at the moment")
       return
     }
 
@@ -119,10 +131,12 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       selectedTasks = tour.itemIds.map(taskId => taskSelectors.selectById(getState(), taskId))
     }
     
-    // we want to move linked tasks together only when assigning and adding to a tour
-    // so we can keep fine grained control for reordering at will
-    if (source.droppableId !== destination.droppableId) {
+    // we want to move linked tasks together only in this case, so the dispatcher can have fine-grained control
+    if (source.droppableId === 'unassigned') {
       selectedTasks =  withLinkedTasks(selectedTasks, allTasks, true)
+      selectedTasks = selectedTasks.filter(
+        t => !belongsToTour(t) && !t.isAssigned // these are already somewhere nice!
+      )
     }
 
     if (selectedTasks.length === 0) return // can happen, for example dropping empty tour
@@ -134,10 +148,9 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
 
       var newTourItems = [ ...tour.items ]
     
-        // Reorder tasks inside a tour
-        if (source.droppableId === 'tour:' + tourId && destination.droppableId === 'tour:' + tourId) {
-          const [ removed ] = newTourItems.splice(source.index, 1);
-          newTourItems.splice(destination.index, 0, removed)
+        // Reorder tasks inside a tour -> remove tasks that were already there
+        if (source.droppableId === destination.droppableId) {
+          _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t['@id']))
         }
 
         Array.prototype.splice.apply(newTourItems,
@@ -156,6 +169,7 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
           dispatch(modifyTour(tour, newTourItems, true))
         })
       } else {
+        // FIXME : should unassign added tasks if needed
         dispatch(modifyTour(tour, newTourItems))
       }
     } else if (destination.droppableId.startsWith('assigned:')) {

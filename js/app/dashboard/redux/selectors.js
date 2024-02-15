@@ -40,8 +40,8 @@ export const selectTaskLists = taskListSelectors.selectAll
 
 export const selectBookedUsernames = taskListSelectors.selectIds
 
-const belongsToGroup = task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group
-const belongsToTour = task => Object.prototype.hasOwnProperty.call(task, 'tour') && task.tour
+export const belongsToGroup = task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group
+export const belongsToTour = task => Object.prototype.hasOwnProperty.call(task, 'tour') && task.tour
 
 export const selectGroups = createSelector(
   selectUnassignedTasks,

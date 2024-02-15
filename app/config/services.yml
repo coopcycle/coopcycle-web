@@ -271,6 +271,11 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.order_processing }
 
+  # should be executed before any other processor
+  AppBundle\Sylius\OrderProcessing\OrderLogStartProcessor:
+    tags:
+      - { name: sylius.order_processor, priority: 1000 }
+
   AppBundle\Sylius\OrderProcessing\OrderDisabledProductProcessor:
     tags:
       - { name: sylius.order_processor, priority: 96 }
@@ -314,6 +319,11 @@ services:
     class: AppBundle\Sylius\OrderProcessing\OrderPaymentProcessor
     tags:
       - { name: sylius.order_processor, priority: 16 }
+
+  # should be executed after any other processor
+  AppBundle\Sylius\OrderProcessing\OrderLogFinishProcessor:
+    tags:
+      - { name: sylius.order_processor, priority: -100 }
 
   sylius.promotion_action.delivery_percentage:
     class: AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand
@@ -656,6 +666,10 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
+  AppBundle\Doctrine\EventSubscriber\CheckoutSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
   AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:
     arguments:
         $denyAccessListener: '@api_platform.security.listener.request.deny_access'
@@ -845,14 +859,11 @@ services:
     tags:
       - { name: 'sylius.context.channel', priority: -64 }
 
-  AppBundle\Sylius\Channel\ProChannelContext:
-    tags:
-      - { name: 'sylius.context.channel', priority: 128 }
-
-
-  AppBundle\EventListener\ChangeChannelListener:
+  AppBundle\EventListener\BusinessListener:
     tags:
       - { name: kernel.event_listener, event: kernel.response }
+
+  AppBundle\Business\Context: ~
 
   AppBundle\EventSubscriber\ApiLogSubscriber:
     tags:
@@ -1040,7 +1051,7 @@ services:
 
   AppBundle\Payment\Gateway: ~
 
-  AppBundle\Security\ProVoter:
+  AppBundle\Security\BusinessVoter:
     tags: [ 'security.voter' ]
 
   AppBundle\EventSubscriber\RegistrationInitializeListener:
@@ -1272,6 +1283,10 @@ services:
   coopcycle.sylius.order_modifier:
     class: AppBundle\Sylius\Order\OrderModifier
     decorates: sylius.order_modifier
+
+  coopcycle.sylius.order_item_quantity_modifier:
+    class: AppBundle\Sylius\Order\OrderItemQuantityModifier
+    decorates: sylius.order_item_quantity_modifier
 
   AppBundle\CubeJs\HttpClient:
     decorates: cubejs.client

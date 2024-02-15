@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\Product;
 
+use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Entity\BusinessRestaurantGroup;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
@@ -17,10 +18,12 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
 
     public function __construct(
         ProductVariantResolverInterface $variantResolver,
-        ProductVariantFactoryInterface $variantFactory)
+        ProductVariantFactoryInterface $variantFactory,
+        BusinessContext $businessContext)
     {
         $this->variantResolver = $variantResolver;
         $this->variantFactory = $variantFactory;
+        $this->businessContext = $businessContext;
     }
 
     /**
@@ -28,6 +31,18 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
      */
     public function getVariant(ProductInterface $product): ?ProductVariantInterface
     {
+        if ($this->businessContext->isActive()) {
+            $businessAccount = $this->businessContext->getBusinessAccount();
+            if ($businessAccount) {
+                $restaurantGroup = $businessAccount->getBusinessRestaurantGroup();
+
+                $variant = $this->getVariantForBusinessRestaurantGroup($product, $restaurantGroup);
+                if ($variant) {
+                    return $variant;
+                }
+            }
+        }
+
         return $this->variantResolver->getVariant($product);
     }
 
@@ -104,7 +119,11 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
         foreach ($product->getVariants() as $variant) {
             $variantBusinessRestaurantGroup = $variant->getBusinessRestaurantGroup();
 
-            if (null !== $variantBusinessRestaurantGroup && $businessRestaurantGroup->getId() === $variantBusinessRestaurantGroup->getId()) {
+            if (null === $variantBusinessRestaurantGroup) {
+                continue;
+            }
+
+            if ($businessRestaurantGroup === $variantBusinessRestaurantGroup) {
                 return $variant;
             }
         }

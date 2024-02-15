@@ -26,7 +26,6 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
     public function process(Task $task, array $entityChangeSet)
     {
         if (!isset($entityChangeSet['assignedTo'])) {
-
             return;
         }
 
@@ -49,63 +48,38 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
                 $taskList = $this->taskListProvider->getTaskList($task, $newValue);
 
-                $tasksToAdd = [];
-                if ($task->hasPrevious() || $task->hasNext()) {
-                    if ($task->hasPrevious()) {
-                        $tasksToAdd = [ $task->getPrevious(), $task ];
-                    }
-                    if ($task->hasNext()) {
-                        $tasksToAdd = [ $task, $task->getNext() ];
-                    }
-                } else {
-                    $tasksToAdd = [ $task ];
-                }
-
                 // WARNING
                 // When tasks have been assigned via the web interface
                 // $taskList->containsTask($task) will return true,
                 // Because $taskList->setTasks() has been used
                 if (!$taskList->containsTask($task)) {
-                    $this->logger->debug(sprintf('Adding %d tasks to TaskList', count($tasksToAdd)));
-                    foreach ($tasksToAdd as $taskToAdd) {
-                        $taskList->addTask($taskToAdd);
-                    }
+                    $this->logger->debug(sprintf('Adding #%d task to TaskList', $task->getId()));
+                    $taskList->addTask($task);
                 }
 
                 if ($wasAssigned && !$wasAssignedToSameUser) {
-
                     $this->logger->debug(sprintf('Removing task #%d from previous TaskList', $task->getId()));
 
                     $oldTaskList = $this->taskListProvider->getTaskList($task, $oldValue);
                     $oldTaskList->removeTask($task, false);
+                }
 
-                    if ($task->hasPrevious() || $task->hasNext()) {
-                        if ($task->hasPrevious()) {
-                            $oldTaskList->removeTask($task->getPrevious(), false);
-                        }
-                        if ($task->hasNext()) {
-                            $oldTaskList->removeTask($task->getNext(), false);
+                $event = new TaskAssigned($task, $newValue);
+
+                $exists = false;
+                foreach ($this->recordedMessages() as $recordedMessage) {
+                    if ($recordedMessage instanceof TaskAssigned) {
+                        if ($recordedMessage->getTask() === $event->getTask() && $recordedMessage->getUser() === $event->getUser()) {
+                            $exists = true;
+                            break;
                         }
                     }
                 }
 
-                foreach ($tasksToAdd as $taskToAdd) {
-
-                    $event = new TaskAssigned($taskToAdd, $newValue);
-
-                    $exists = false;
-                    foreach ($this->recordedMessages() as $recordedMessage) {
-                        if ($recordedMessage instanceof TaskAssigned) {
-                            if ($recordedMessage->getTask() === $event->getTask() && $recordedMessage->getUser() === $event->getUser()) {
-                                $exists = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!$exists) {
-                        $this->record($event);
-                    }
+                if (!$exists) {
+                    $this->record($event);
+                } else {
+                    $this->logger->debug(sprintf('Assign event for task #%d already existed', $task->getId()));
                 }
             }
 
@@ -119,35 +93,25 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
                 $tasksToRemove = [ $task ];
 
-                if ($task->hasPrevious() || $task->hasNext()) {
-                    if ($task->hasPrevious()) {
-                        $tasksToRemove[] = $task->getPrevious();
-                    }
-                    if ($task->hasNext()) {
-                        $tasksToRemove[] = $task->getNext();
+                $event = new TaskUnassigned($task, $oldValue);
+
+                $exists = false;
+                foreach ($this->recordedMessages() as $recordedMessage) {
+                    if ($recordedMessage instanceof TaskUnassigned) {
+                        if ($recordedMessage->getTask() === $event->getTask() && $recordedMessage->getUser() === $event->getUser()) {
+                            $exists = true;
+                            break;
+                        }
                     }
                 }
 
-                foreach ($tasksToRemove as $taskToRemove) {
-
-                    $event = new TaskUnassigned($taskToRemove, $oldValue);
-
-                    $exists = false;
-                    foreach ($this->recordedMessages() as $recordedMessage) {
-                        if ($recordedMessage instanceof TaskUnassigned) {
-                            if ($recordedMessage->getTask() === $event->getTask() && $recordedMessage->getUser() === $event->getUser()) {
-                                $exists = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!$exists) {
-                        $taskToRemove->unassign();
-                        $taskList->removeTask($taskToRemove);
-                        $this->logger->debug(sprintf('Recording event for task #%d', $task->getId()));
-                        $this->record($event);
-                    }
+                if (!$exists) {
+                    $task->unassign();
+                    $taskList->removeTask($task);
+                    $this->logger->debug(sprintf('Recording event for task #%d', $task->getId()));
+                    $this->record($event);
+                } else {
+                    $this->logger->debug(sprintf('Unassign event for task #%d already existed', $task->getId()));
                 }
             }
         }

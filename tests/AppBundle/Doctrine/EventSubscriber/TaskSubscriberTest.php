@@ -652,13 +652,13 @@ class TaskSubscriberTest extends TestCase
 
         $this->eventBus
             ->handle(Argument::type(TaskUnassigned::class))
-            ->shouldHaveBeenCalledTimes(2);
+            ->shouldHaveBeenCalledTimes(1);
 
         $this->assertFalse($pickup->isAssigned());
-        $this->assertFalse($dropoff->isAssigned());
+        $this->assertTrue($dropoff->isAssigned());
 
         $this->assertFalse($taskList->containsTask($pickup));
-        $this->assertFalse($taskList->containsTask($dropoff));
+        $this->assertTrue($taskList->containsTask($dropoff));
 
         // Make sure it can be called several
         // times during the same request cycle
@@ -697,7 +697,6 @@ class TaskSubscriberTest extends TestCase
 
         $dropoff = new Task();
         $dropoff->setBefore($date);
-        // $dropoff->assignTo($user);
 
         $pickup->setNext($dropoff);
         $dropoff->setPrevious($pickup);
@@ -730,7 +729,6 @@ class TaskSubscriberTest extends TestCase
         $taskList = new TaskList();
         $taskList->setCourier($user);
         $taskList->setDate($date);
-        // $taskList->setTasks([ $pickup, $dropoff ]);
 
         $this->taskListRepository
             ->findOneBy([
@@ -752,13 +750,13 @@ class TaskSubscriberTest extends TestCase
 
         $this->eventBus
             ->handle(Argument::type(TaskAssigned::class))
-            ->shouldHaveBeenCalledTimes(2);
+            ->shouldHaveBeenCalledTimes(1);
 
         $this->assertTrue($pickup->isAssigned());
-        $this->assertTrue($dropoff->isAssigned());
+        $this->assertFalse($dropoff->isAssigned());
 
         $this->assertTrue($taskList->containsTask($pickup));
-        $this->assertTrue($taskList->containsTask($dropoff));
+        $this->assertFalse($taskList->containsTask($dropoff));
 
         // Make sure it can be called several
         // times during the same request cycle

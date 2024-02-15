@@ -1432,3 +1432,5 @@ form.product.business_restaurant_group.price_definition.label: Define prices for
 form.product.business_restaurant_group.price_definition.placeholder: Please select one
 business_restaurant_group.label: Business restaurant group
 adminDashboard.business_restaurant_groups.title: Business restaurant groups
+navbar.switch_to_business: '%name% account'
+navbar.switch_to_personal: Personal account
