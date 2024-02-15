@@ -134,6 +134,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 
   height: 100%;
   margin: 0;
+  padding: 0 1rem;
 
   &__messages {
     text-align: center;
@@ -159,6 +160,12 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
       flex: 1;
       height: calc(100% - #{$navbar-height});
     }
+  }
+
+  .panel {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, .03);
   }
 
   .panel-body {
