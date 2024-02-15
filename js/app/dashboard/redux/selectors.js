@@ -30,11 +30,9 @@ export const selectTaskListsLoading = state => state.logistics.ui.taskListsLoadi
 // Settings selectors
 export const selectFiltersSetting = state => state.settings.filters
 export const selectHiddenCouriersSetting = state => state.settings.filters.hiddenCouriers
-export const selectToursEnabled = state => state.settings.toursEnabled
 
 
-export const selectSplitDirection  = state => state.rightPanelSplitDirection
-export const selectSearchIsOn = state => state.searchIsOn
+
 export const selectCouriers = state => state.config.couriersList
 export const selectTaskEvents = state => state.taskEvents
 

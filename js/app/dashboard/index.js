@@ -1,5 +1,5 @@
 import React, { createRef } from 'react'
-import { createRoot } from 'react-dom/client';
+import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
@@ -146,10 +146,10 @@ function start() {
   }
 
   const store = createStoreFromPreloadedState(preloadedState)
-  const mapRef = createRef()
-  const root = createRoot(document.getElementById('dashboard'));
 
-  root.render(
+  const mapRef = createRef()
+
+  render(
     <Provider store={ store }>
       <I18nextProvider i18n={ i18n }>
         <ConfigProvider locale={antdLocale}>
@@ -181,15 +181,22 @@ function start() {
               </div>
             </div>
             <aside className="dashboard__aside">
-              <RightPanel 
-                anim={anim}
-              />
+              <RightPanel />
             </aside>
           </Split>
           <Modals />
         </ConfigProvider>
       </I18nextProvider>
-    </Provider>
+    </Provider>,
+    document.getElementById('dashboard'),
+    () => {
+      anim.stop()
+      anim.destroy()
+      document.querySelector('.dashboard__loader').remove()
+
+      // Make sure map is rendered correctly with Split.js
+      // mapRef.current.invalidateSize()
+    }
   )
 
   // hide export modal after button click
