@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Domain\Task\Command\AddToGroup;
 use AppBundle\Domain\Task\Command\Cancel;
 use AppBundle\Domain\Task\Command\DeleteGroup;
+use AppBundle\Domain\Task\Command\Incident;
 use AppBundle\Domain\Task\Command\MarkAsDone;
 use AppBundle\Domain\Task\Command\MarkAsFailed;
 use AppBundle\Domain\Task\Command\RemoveFromGroup;
@@ -66,5 +67,10 @@ class TaskManager
 
     public function reschedule(Task $task, \DateTime $rescheduledAfter, \DateTime $rescheduledBefore){
         $this->commandBus->handle(new Reschedule($task, $rescheduledAfter, $rescheduledBefore));
+    }
+
+    public function incident(Task $task, string $reason, ?string $notes = null, array $data = []): void
+    {
+        $this->commandBus->handle(new Incident($task, $reason, $notes, $data));
     }
 }

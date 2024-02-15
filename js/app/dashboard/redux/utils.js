@@ -47,7 +47,7 @@ export function withLinkedTasks(tasks, allTasks, unique = false) {
     }
   })
 
- return newTasks  
+ return newTasks
 }
 
 export const timeframeToPercentage = (timeframe, reference) => {
@@ -82,14 +82,28 @@ export const isTaskVisible = (task, filters, date) => {
   const {
     showFinishedTasks,
     showCancelledTasks,
+    showIncidentReportedTasks,
     alwayShowUnassignedTasks,
     tags,
     hiddenCouriers,
     timeRange,
+    onlyFilter,
   } = filters
 
   const isFinished = _.includes(['DONE', 'FAILED'], task.status)
   const isCancelled = 'CANCELLED' === task.status
+  const isIncidentReported = task.hasIncidents
+
+  if (onlyFilter !== null) {
+    switch (onlyFilter) {
+      case 'showCancelledTasks':
+        return isCancelled
+      case 'showIncidentReportedTasks':
+        return isIncidentReported
+      default:
+        return false
+    }
+  }
 
   if (alwayShowUnassignedTasks && !task.isAssigned) {
     if (!showCancelledTasks && isCancelled) {
@@ -103,6 +117,10 @@ export const isTaskVisible = (task, filters, date) => {
   }
 
   if (!showCancelledTasks && isCancelled) {
+    return false
+  }
+
+  if (!showIncidentReportedTasks && isIncidentReported) {
     return false
   }
 

@@ -80,6 +80,13 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\Reschedule
 
+  coopcycle.domain.task.handler.incident:
+    class: AppBundle\Domain\Task\Handler\IncidentHandler
+    arguments:
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\Incident
   #
   # Reactors
   #
