@@ -76,10 +76,31 @@ Encore
     /ca|de|es|fr|pl|pt-br/
   ))
 
+  /**
+   * added to fix:
+   * "BREAKING CHANGE: The request failed to resolve only because it was resolved as fully specified
+   * (probably because the origin is strict EcmaScript Module,
+   * e. g. a module with javascript mimetype, a '.mjs' file, or a '.js' file
+   * where the package.json contains '"type": "module"')."
+   * in @cubejs-client
+    */
+  .addRule({
+    test: /\.m?js$/,
+    resolve: {
+      fullySpecified: false,
+    },
+  })
+
   .enableStimulusBridge('./assets/controllers.json')
 
-  .enableSingleRuntimeChunk()
+  // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
   .splitEntryChunks()
+
+  // will require an extra script tag for runtime.js
+  // but, you probably want this, unless you're building a single-page app
+  .enableSingleRuntimeChunk()
+
+  .enableReactPreset()
 
   .enablePostCssLoader()
   .enableSassLoader(function(sassLoaderOptions) {
