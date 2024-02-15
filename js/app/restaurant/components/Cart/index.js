@@ -40,13 +40,19 @@ class Cart extends Component {
           'cart-wrapper': true,
           'cart-wrapper--show': isMobileCartVisible }) }>
 
+          <div className={classNames({
+            'panel': true,
+            'panel-default': true,
+          })}>
+            <CartHeading/>
+          </div>
+
           <FulfillmentDetails />
 
           <div className={classNames({
             'panel': true,
             'panel-default': true,
           })}>
-            <CartHeading/>
             <div className="panel-body">
               <div className="cart">
                 <CartItems/>

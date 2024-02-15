@@ -127,6 +127,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 .cart-wrapper {
 
   @media (max-width: $screen-md-max) {
+    background-color: $body-bg;
     display: flex;
     flex-direction: column;
   }
