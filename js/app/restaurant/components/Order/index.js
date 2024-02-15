@@ -1,6 +1,6 @@
-import React, {Component} from 'react'
-import {connect} from 'react-redux'
-import {withTranslation} from 'react-i18next'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { withTranslation } from 'react-i18next'
 import Sticky from 'react-stickynode'
 import classNames from 'classnames'
 import { Switch } from 'antd'
@@ -10,7 +10,7 @@ import CartHeading from './CartHeading'
 import CartTotal from './CartTotal'
 import CartButton from './CartButton'
 
-import {sync, toggleReusablePackaging} from '../../redux/actions'
+import { sync, toggleReusablePackaging } from '../../redux/actions'
 import {
   selectIsOrderingAvailable,
   selectItems,
@@ -34,42 +34,48 @@ class Cart extends Component {
       <Sticky>
         <div className={ classNames({
           'cart-wrapper': true,
-          'cart-wrapper--show': isMobileCartVisible }) }>
+          'cart-wrapper--show': isMobileCartVisible,
+        }) }>
 
-          <div className={classNames({
+          <div className={ classNames({
             'panel': true,
             'panel-default': true,
-          })}>
-            <CartHeading/>
+          }) }>
+            <CartHeading />
           </div>
 
           <FulfillmentDetails />
 
-          <div className={classNames({
+          <div className={ classNames({
             'panel': true,
             'panel-default': true,
-          })}>
+          }) }>
             <div className="panel-body">
               <div className="cart">
-                <CartItems/>
+                <CartItems />
                 <div>
-                  {(this.props.reusablePackagingFeatureEnabled &&
+                  { (this.props.reusablePackagingFeatureEnabled &&
                       this.props.hasItems) &&
                     <div className="d-flex align-items-center mb-2">
-                    <Switch size="small" checked={ this.props.reusablePackagingEnabled } onChange={ (checked) => {
-                      this.props.toggleReusablePackaging(checked)
-                    } } />
-                    <span className="ml-2">{ this.props.t('CART_ENABLE_ZERO_WASTE') }</span>
-                  </div>
+                      <Switch size="small"
+                              checked={ this.props.reusablePackagingEnabled }
+                              onChange={ (checked) => {
+                                this.props.toggleReusablePackaging(checked)
+                              } } />
+                      <span className="ml-2">{ this.props.t(
+                        'CART_ENABLE_ZERO_WASTE') }</span>
+                    </div>
                   }
                   <CartTotal />
                   { this.props.isOrderingAvailable &&
-                  <>
-                  <hr />
-                  <CartButton />
-                  { (this.props.isGroupOrdersEnabled && this.props.hasItems && !this.props.isPlayer && window._auth.isAuth) &&
-                  <InvitePeopleToOrderButton /> }
-                  </>
+                    <>
+                      <hr />
+                      <CartButton />
+                      { (this.props.isGroupOrdersEnabled &&
+                          this.props.hasItems && !this.props.isPlayer &&
+                          window._auth.isAuth) &&
+                        <InvitePeopleToOrderButton /> }
+                    </>
                   }
                 </div>
               </div>
@@ -92,7 +98,8 @@ function mapStateToProps(state) {
     isPlayer: state.isPlayer,
     player: state.player,
     isGroupOrdersEnabled: state.isGroupOrdersEnabled,
-    reusablePackagingFeatureEnabled: selectReusablePackagingFeatureEnabled(state),
+    reusablePackagingFeatureEnabled: selectReusablePackagingFeatureEnabled(
+      state),
     reusablePackagingEnabled: selectReusablePackagingEnabled(state),
   }
 }
@@ -101,8 +108,10 @@ function mapDispatchToProps(dispatch) {
 
   return {
     sync: () => dispatch(sync()),
-    toggleReusablePackaging: (checked) => dispatch(toggleReusablePackaging(checked)),
+    toggleReusablePackaging: (checked) => dispatch(
+      toggleReusablePackaging(checked)),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Cart))
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(Cart))
