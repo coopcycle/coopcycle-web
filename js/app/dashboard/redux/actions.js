@@ -1457,7 +1457,7 @@ export function createTour(tasks, name, date) {
       }
     })
       .then((response) => {
-        tasks.forEach(task => dispatch(updateTask({ '@id': task.id, tour: response.data })))
+        tasks.forEach(task => dispatch(updateTask({ '@id': task['@id'], tour: response.data })))
         // flatten items to itmIds
         let tour = {...response.data}
         tour.itemIds = tour.items.map(item => item['@id'])
