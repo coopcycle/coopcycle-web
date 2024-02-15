@@ -15,6 +15,7 @@ import { initLoopeatContext } from './loopeat'
 require('gasparesganga-jquery-loading-overlay')
 
 import './item.scss'
+import './header.scss'
 import './menu.scss'
 import ProductOptionsModal
   from './components/ProductDetails/ProductOptionsModal'
@@ -28,7 +29,6 @@ const init = function() {
   const container = document.getElementById('cart')
 
   if (!container) {
-
     return
   }
 
