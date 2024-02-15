@@ -1430,7 +1430,7 @@ export function modifyTourRequestError(tour, tasks) {
   return { type: MODIFY_TOUR_REQUEST_ERROR, tour, tasks }
 }
 
-export function toggleTourPanelExpanded(tourId) {  
+export function toggleTourPanelExpanded(tourId) {
   return { type: TOGGLE_TOUR_PANEL_EXPANDED, tourId}
 }
 
@@ -1457,7 +1457,7 @@ export function createTour(tasks, name, date) {
       }
     })
       .then((response) => {
-        tasks.forEach(task => dispatch(updateTask({ '@id': task.id, tour: response.data })))
+        tasks.forEach(task => dispatch(updateTask({ '@id': task['@id'], tour: response.data })))
         // flatten items to itmIds
         let tour = {...response.data}
         tour.itemIds = tour.items.map(item => item['@id'])
@@ -1517,7 +1517,7 @@ export function modifyTour(tour, tasks, isTourUIAlreadyUpdated=false) {
     let _tour = response.data
     // TODO: do this in the backend?
     _tour.itemIds = _tour.items.map(item => item['@id'])
-    
+
     dispatch(updateTour(_tour))
     dispatch(modifyTourRequestSuccess(_tour, tasks))
     dispatch(enableDropInTours())
@@ -1570,3 +1570,17 @@ export function removeTaskFromTour(tour, task, username) {
 export function setToursEnabled(enabled) {
   return {type: SET_TOURS_ENABLED, enabled}
 }
+
+export function onlyFilter(filter) {
+  return function(dispatch) {
+    ['showFinishedTasks', 'showCancelledTasks', 'showIncidentReportedTasks'].forEach(key => {
+      dispatch(setFilterValue(key, key == filter))
+    })
+
+    dispatch(setFilterValue('onlyFilter', filter))
+    dispatch(closeFiltersModal())
+
+  }
+}
+
+
