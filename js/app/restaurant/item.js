@@ -9,6 +9,8 @@ import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
 import { queueAddItem, openProductOptionsModal } from './redux/actions'
 import Cart from './components/Cart'
+import ProductOptionsModal
+  from './components/ProductDetails/ProductOptionsModal'
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
 
@@ -17,8 +19,7 @@ require('gasparesganga-jquery-loading-overlay')
 import './item.scss'
 import './header.scss'
 import './menu.scss'
-import ProductOptionsModal
-  from './components/ProductDetails/ProductOptionsModal'
+import './components/Cart/index.scss'
 
 window._paq = window._paq || []
 
