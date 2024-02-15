@@ -160,12 +160,22 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
       height: calc(100% - #{$navbar-height});
     }
   }
+
+  .panel-body {
+    padding: 2rem;
+  }
 }
 
 .cart-wrapper--show {
   @media (max-width: $screen-md-max) {
     transform: translateY(0);
   }
+}
+
+.fulfillment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .cart {
@@ -250,7 +260,6 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   }
   &__time {
     display: block;
-    margin: 15px 0;
     text-align: center;
     color: $state-success-text;
     &:hover,
@@ -266,10 +275,8 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
       display: block;
     }
     &__text {
-      margin-bottom: 5px;
     }
     &__edit {
-      font-size: $font-size-small;
     }
   }
 }

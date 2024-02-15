@@ -20,22 +20,25 @@ export default function FulfillmentDetails() {
   const isOrderingAvailable = useSelector(selectIsOrderingAvailable)
 
   const cart = useSelector(selectCart)
-  const fulfillmentMethod = (cart.takeaway || (isCollectionEnabled && !isDeliveryEnabled)) ? 'collection' : 'delivery'
+  const fulfillmentMethod = (cart.takeaway ||
+    (isCollectionEnabled && !isDeliveryEnabled)) ? 'collection' : 'delivery'
 
   const dispatch = useDispatch()
 
   return (
-    <div className={classNames({
+    <div className={ classNames({
       'panel': true,
       'panel-default': true,
-    })}>
+    }) }>
       <div className="panel-body">
-        <FulfillmentMethod
-          value={fulfillmentMethod}
-          shippingAddress={cart.shippingAddress}
-          onClick={() => dispatch(openAddressModal(cart.restaurant))}
-          allowEdit={!isPlayer}/>
-        {isOrderingAvailable && <Time/>}
+        <div className="fulfillment-details">
+          <FulfillmentMethod
+            value={ fulfillmentMethod }
+            shippingAddress={ cart.shippingAddress }
+            onClick={ () => dispatch(openAddressModal(cart.restaurant)) }
+            allowEdit={ !isPlayer } />
+          { isOrderingAvailable && <Time /> }
+        </div>
       </div>
       <AddressModal />
       <DateModal />
