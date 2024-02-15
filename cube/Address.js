@@ -2,7 +2,10 @@ cube(`Address`, {
   sql: `SELECT * FROM public.address`,
 
   joins: {
-
+    CityZone: {
+      relationship: `hasOne`,
+      sql: `ST_Contains(${CityZone}.polygon::geometry, ${Address}.geo::geometry)`
+    }
   },
 
   measures: {

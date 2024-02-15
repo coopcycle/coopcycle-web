@@ -60,7 +60,6 @@ class RegistrationType extends AbstractTypeExtension
         if ($this->splitTermsAndConditionsAndPrivacyPolicy) {
             $builder->add('termsAndConditionsAndPrivacyPolicy', TermsAndConditionsAndPrivacyPolicyType::class, [
                 'label' => false,
-                'mapped' => false,
             ]);
         } else {
             $builder->add('legal', LegalType::class, [

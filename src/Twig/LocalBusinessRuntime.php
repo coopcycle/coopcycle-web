@@ -2,16 +2,21 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\Business\Context as BusinessContext;
+use AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Entity\Zone;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\RestaurantDecorator;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -26,7 +31,9 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
         EntityManagerInterface $entityManager,
-        TimingRegistry $timingRegistry)
+        TimingRegistry $timingRegistry,
+        RestaurantDecorator $restaurantDecorator,
+        BusinessContext $businessContext)
     {
         $this->translator = $translator;
         $this->serializer = $serializer;
@@ -34,6 +41,8 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         $this->projectCache = $projectCache;
         $this->entityManager = $entityManager;
         $this->timingRegistry = $timingRegistry;
+        $this->restaurantDecorator = $restaurantDecorator;
+        $this->businessContext = $businessContext;
     }
 
     /**
@@ -174,5 +183,39 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         $start = Carbon::parse($timeInfo['range'][0]);
 
         return $start->diffInHours(Carbon::now()) > 1;
+    }
+
+    public function tags(LocalBusiness $restaurant): array
+    {
+        return $this->restaurantDecorator->getTags($restaurant);
+    }
+
+    public function badges(LocalBusiness $restaurant): array
+    {
+        return $this->restaurantDecorator->getBadges($restaurant);
+    }
+
+    public function resolveMenu(LocalBusiness $restaurant): ?Taxon
+    {
+        if ($this->businessContext->isActive()) {
+            $businessAccount = $this->businessContext->getBusinessAccount();
+            if ($businessAccount) {
+                $restaurantGroup = $businessAccount->getBusinessRestaurantGroup();
+                $qb = $this->entityManager->getRepository(Taxon::class)->createQueryBuilder('m');
+                $qb->join(BusinessRestaurantGroupRestaurantMenu::class, 'rm', Join::WITH, 'rm.menu = m.id');
+                $qb->andWhere('rm.businessRestaurantGroup = :group');
+                $qb->andWhere('rm.restaurant = :restaurant');
+                $qb->setParameter('group', $restaurantGroup);
+                $qb->setParameter('restaurant', $restaurant);
+
+                $menu = $qb->getQuery()->getOneOrNullResult();
+
+                if ($menu) {
+                    return $menu;
+                }
+            }
+        }
+
+        return $restaurant->getMenuTaxon();
     }
 }

@@ -9,6 +9,7 @@ use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
@@ -20,8 +21,11 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryRepository;
+use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Hub;
+use AppBundle\Entity\BusinessAccount;
+use AppBundle\Entity\BusinessAccountInvitation;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
@@ -30,6 +34,7 @@ use AppBundle\Entity\Organization;
 use AppBundle\Entity\OrganizationConfig;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
+use AppBundle\Entity\BusinessRestaurantGroup;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
@@ -52,6 +57,7 @@ use AppBundle\Form\EmbedSettingsType;
 use AppBundle\Form\GeoJSONUploadType;
 use AppBundle\Form\HubType;
 use AppBundle\Form\FailureReasonSetType;
+use AppBundle\Form\BusinessAccountType;
 use AppBundle\Form\WoopitIntegrationType;
 use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
@@ -63,6 +69,7 @@ use AppBundle\Form\OrganizationType;
 use AppBundle\Form\PackageSetType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantAdminType;
+use AppBundle\Form\BusinessRestaurantGroupType;
 use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\Type\TimeSlotChoiceType;
@@ -89,8 +96,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\Query\Expr;
+use Hashids\Hashids;
+use League\Flysystem\Filesystem;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Nucleos\UserBundle\Util\TokenGenerator as TokenGeneratorInterface;
 use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
@@ -126,6 +135,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
 use Twig\Environment as TwigEnvironment;
+use phpcent\Client as CentrifugoClient;
 
 class AdminController extends AbstractController
 {
@@ -138,6 +148,7 @@ class AdminController extends AbstractController
     use RestaurantTrait;
     use StoreTrait;
     use UserTrait;
+    use InjectAuthTrait;
 
     protected function getRestaurantRoutes()
     {
@@ -162,6 +173,7 @@ class AdminController extends AbstractController
             'reusable_packaging_new' => 'admin_restaurant_new_reusable_packaging',
             'mercadopago_oauth_redirect' => 'admin_restaurant_mercadopago_oauth_redirect',
             'mercadopago_oauth_remove' => 'admin_restaurant_mercadopago_oauth_remove',
+            'image_from_url' => 'admin_restaurant_image_from_url',
         ];
     }
 
@@ -175,7 +187,8 @@ class AdminController extends AbstractController
         HttpClientInterface $browserlessClient,
         bool $optinExportUsersEnabled,
         CollectionFinderInterface $typesenseShopsFinder,
-        bool $adhocOrderEnabled
+        bool $adhocOrderEnabled,
+        protected JWTTokenManagerInterface $JWTTokenManager
     )
     {
         $this->orderRepository = $orderRepository;
@@ -198,17 +211,21 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_dashboard');
     }
 
-    protected function getOrderList(Request $request, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
     {
-        $qb = $this->orderRepository
-            ->createQueryBuilder('o');
-        $qb
-            ->andWhere('o.state != :state')
-            ->setParameter('state', OrderInterface::STATE_CART)
-            ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
-            ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE)
-            ->setMaxResults(self::ITEMS_PER_PAGE)
-            ;
+        if ($request->query->has('q')) {
+            $qb = $this->orderRepository->search($request->query->get('q'));
+        } else {
+            $qb = $this->orderRepository
+                ->createQueryBuilder('o');
+            $qb
+                ->andWhere('o.state != :state')
+                ->setParameter('state', OrderInterface::STATE_CART)
+                ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
+                ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE)
+                ->setMaxResults(self::ITEMS_PER_PAGE)
+                ;
+        }
 
         if (!$showCanceled) {
             $qb
@@ -216,14 +233,14 @@ class AdminController extends AbstractController
                 ->setParameter('state_cancelled', OrderInterface::STATE_CANCELLED);
         }
 
-        $paginator = new Paginator($qb->getQuery());
-        $count = count($paginator);
-
-        $orders = $paginator->getIterator();
-        $pages  = ceil($count / self::ITEMS_PER_PAGE);
-        $page   = $request->query->get('p', 1);
-
-        return [ $orders, $pages, $page ];
+        return $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::DISTINCT => false,
+            ]
+        );
     }
 
     /**
@@ -234,17 +251,28 @@ class AdminController extends AbstractController
         OrderRepository $orderRepository
     )
     {
-        $results = $orderRepository->search($request->query->get('q'));
+        $qb = $orderRepository->search($request->query->get('q'));
+
+        $qb->setMaxResults(10);
+
+        $results = $qb->getQuery()->getResult();
 
         $data = [];
         foreach ($results as $order) {
-            $data[] = [
-                'id' => $order->getId(),
-                'name' => sprintf(
+
+            if (null !== $order->getCustomer()) {
+                $name = sprintf(
                     '%s (%s)',
                     $order->getNumber(),
                     $order->getCustomer()->getEmailCanonical()
-                ),
+                );
+            } else {
+                $name = $order->getNumber();
+            }
+
+            $data[] = [
+                'id' => $order->getId(),
+                'name' => $name,
                 'path' => $this->generateUrl('admin_order', ['id' => $order->getId()]),
             ];
         }
@@ -740,7 +768,11 @@ class AdminController extends AbstractController
         DeliveryManager $deliveryManager,
         OrderFactory $orderFactory,
         OrderManager $orderManager,
-        DeliveryRepository $deliveryRepository
+        DeliveryRepository $deliveryRepository,
+        Hashids $hashids8,
+        Filesystem $deliveryImportsFilesystem,
+        MessageBusInterface $messageBus,
+        CentrifugoClient $centrifugoClient
     )
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
@@ -749,21 +781,18 @@ class AdminController extends AbstractController
 
         $deliveryImportForm->handleRequest($request);
         if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
+
             $store = $deliveryImportForm->get('store')->getData();
 
-            return $this->handleDeliveryImportForStore($store, $deliveryImportForm, 'admin_deliveries',
-                $orderManager, $deliveryManager, $orderFactory);
-        } else if ($deliveryImportForm->isSubmitted() && !$deliveryImportForm->isValid()) {
-            if (count($deliveryImportForm->getData()) > 0) {
-                // This is the case when some rows have errors and some others were parsed successfuly and have to be persisted
-                $importedDeliveries = $this->persistImportedDeliveries($deliveryImportForm, $orderManager,
-                    $deliveryManager, $orderFactory);
-
-                $importedRowsMessage = $this->translator->trans('import.successful.rows', [
-                    '%count%' => count(array_keys($importedDeliveries)),
-                    '%rows%' => implode(", ", array_keys($importedDeliveries))
-                ]);
-            }
+            return $this->handleDeliveryImportForStore(
+                store: $store,
+                form: $deliveryImportForm,
+                messageBus: $messageBus,
+                entityManager: $this->entityManager,
+                filesystem: $deliveryImportsFilesystem,
+                hashids: $hashids8,
+                routeTo: 'admin_deliveries'
+            );
         }
 
         $dataExportForm = $this->createForm(DataExportType::class);
@@ -809,7 +838,7 @@ class AdminController extends AbstractController
             $deliveryRepository->searchWithSonic($qb, $filters['query'], $request->getLocale());
 
         } else {
-            if ($request->query->has('section') && is_callable([ $deliveryRepository, $request->query->get('section') ])) {
+            if ($request->query->has('section') && method_exists($deliveryRepository, $request->query->get('section'))) {
                 $qb = call_user_func([ $deliveryRepository, $request->query->get('section') ], $qb);
             } else {
                 $qb = $deliveryRepository->today($qb);
@@ -845,15 +874,25 @@ class AdminController extends AbstractController
             ]
         );
 
-        return $this->render('admin/deliveries.html.twig', [
+        $importQueues = $this->entityManager->getRepository(DeliveryImportQueue::class)
+            ->createQueryBuilder('diq')
+            ->andWhere('diq.createdAt >= :yesterday')
+            ->orderBy('diq.createdAt', 'DESC')
+            ->setParameter('yesterday', Carbon::yesterday())
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('admin/deliveries.html.twig', $this->auth([
             'deliveries' => $deliveries,
             'filters' => $filters,
             'routes' => $this->getDeliveryRoutes(),
-            'imported_rows_message' => $importedRowsMessage ?? null,
             'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']),
             'delivery_import_form' => $deliveryImportForm->createView(),
             'delivery_export_form' => $dataExportForm->createView(),
-        ]);
+            'import_queues' => $importQueues,
+            'centrifugo_token' => $centrifugoClient->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600)),
+            'centrifugo_channel' => sprintf('%s_events#%s', $this->getParameter('centrifugo_namespace'), $this->getUser()->getUsername()),
+        ]));
     }
 
     protected function getDeliveryRoutes()
@@ -1296,6 +1335,24 @@ class AdminController extends AbstractController
 
             return new JsonResponse($data);
         }
+    }
+
+    /**
+     * @Route("/admin/restaurant/{restaurantId}/menus", name="admin_restaurant_menus")
+     */
+    public function searchRestaurantMenusAction($restaurantId)
+    {
+        $restaurant = $this->getDoctrine()->getRepository(LocalBusiness::class)->find($restaurantId);
+
+        $data = [];
+        foreach($restaurant->getTaxons() as $taxon) {
+            $data[] = [
+                'id' => $taxon->getId(),
+                'name' => $taxon->getName()
+            ];
+        }
+
+        return new JsonResponse($data);
     }
 
     /**
@@ -2436,12 +2493,54 @@ class AdminController extends AbstractController
         ]);
     }
 
+    private function handleBusinessRestaurantGroupForm(BusinessRestaurantGroup $businessRestaurantGroup, Request $request)
+    {
+        $originalRestaurantsWithMenu = new ArrayCollection();
+
+        foreach($businessRestaurantGroup->getRestaurantsWithMenu() as $restaurantMenu) {
+            $originalRestaurantsWithMenu->add($restaurantMenu);
+        }
+
+        $form = $this->createForm(BusinessRestaurantGroupType::class, $businessRestaurantGroup);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            foreach ($originalRestaurantsWithMenu as $restaurantMenu) {
+                if (false === $businessRestaurantGroup->getRestaurantsWithMenu()->contains($restaurantMenu)) {
+                    $businessRestaurantGroup->removeRestaurantWithMenu($restaurantMenu);
+                    $this->entityManager->remove($restaurantMenu);
+                }
+            }
+
+            $this->entityManager->persist($businessRestaurantGroup);
+            $this->entityManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_business_restaurant_group', ['id' => $businessRestaurantGroup->getId()]);
+        }
+
+        return $this->render('admin/business_restaurant_group.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
     public function newHubAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $hub = new Hub();
 
         return $this->handleHubForm($hub, $request);
+    }
+
+    public function newBusinessRestaurantGroupAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $businessRestaurantGroup = new BusinessRestaurantGroup();
+
+        return $this->handleBusinessRestaurantGroupForm($businessRestaurantGroup, $request);
     }
 
     public function hubAction($id, Request $request)
@@ -2456,6 +2555,28 @@ class AdminController extends AbstractController
         return $this->handleHubForm($hub, $request);
     }
 
+    public function businessRestaurantGroupAction($id, Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $businessRestaurantGroup = $this->getDoctrine()->getRepository(BusinessRestaurantGroup::class)->find($id);
+
+        if (!$businessRestaurantGroup) {
+            throw $this->createNotFoundException(sprintf('Restaurants For Business #%d does not exist', $id));
+        }
+
+        return $this->handleBusinessRestaurantGroupForm($businessRestaurantGroup, $request);
+    }
+
+    public function businessRestaurantGroupListAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $businessRestaurantGroupList = $this->getDoctrine()->getRepository(BusinessRestaurantGroup::class)->findAll();
+
+        return $this->render('admin/business_restaurant_group_list.html.twig', [
+            'business_restaurant_group_list' => $businessRestaurantGroupList,
+        ]);
+    }
+
     public function hubsAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2465,6 +2586,105 @@ class AdminController extends AbstractController
             'hubs' => $hubs,
         ]);
     }
+
+    public function businessAccountsAction()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $accounts = $this->getDoctrine()->getRepository(BusinessAccount::class)->findAll();
+
+        return $this->render('admin/business_accounts.html.twig', [
+            'accounts' => $accounts,
+        ]);
+    }
+
+    public function newBusinessAccountAction(
+        Request $request,
+        CanonicalizerInterface $canonicalizer,
+        EmailManager $emailManager,
+        TokenGeneratorInterface $tokenGenerator,
+        EntityManagerInterface $objectManager)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $account = new BusinessAccount();
+
+        return $this->handleBusinessAccountForm($account, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager);
+    }
+
+    private function handleBusinessAccountForm(
+        BusinessAccount $businessAccount,
+        Request $request,
+        CanonicalizerInterface $canonicalizer,
+        EmailManager $emailManager,
+        TokenGeneratorInterface $tokenGenerator,
+        EntityManagerInterface $objectManager)
+    {
+        $form = $this->createForm(BusinessAccountType::class, $businessAccount);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            if (null === $businessAccount->getId()) {
+                $managerEmail = $form->get('managerEmail')->getData();
+
+                $invitation = new Invitation();
+                $invitation->setEmail($canonicalizer->canonicalize($managerEmail));
+                $invitation->setUser($this->getUser());
+                $invitation->setCode($tokenGenerator->generateToken());
+                $invitation->addRole('ROLE_BUSINESS_ACCOUNT');
+
+                // Send invitation email
+                $message = $emailManager->createBusinessAccountInvitationMessage($invitation, $businessAccount);
+                $emailManager->sendTo($message, $invitation->getEmail());
+                $invitation->setSentAt(new \DateTime());
+
+                $businessAccountInvitation = new BusinessAccountInvitation();
+                $businessAccountInvitation->setBusinessAccount($businessAccount);
+                $businessAccountInvitation->setInvitation($invitation);
+
+                $objectManager->persist($businessAccountInvitation);
+
+                $this->addFlash(
+                    'notice',
+                    $this->translator->trans('form.business_acount.send_invitation.confirm')
+                );
+            } else {
+                $this->addFlash(
+                    'notice',
+                    $this->translator->trans('global.changesSaved')
+                );
+            }
+
+            $objectManager->persist($businessAccount);
+            $objectManager->flush();
+
+            return $this->redirectToRoute('admin_business_accounts');
+        }
+
+        return $this->render('admin/business_account.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    public function businessAccountAction(
+        $id,
+        Request $request,
+        CanonicalizerInterface $canonicalizer,
+        EmailManager $emailManager,
+        TokenGeneratorInterface $tokenGenerator,
+        EntityManagerInterface $objectManager)
+    {
+        if ($this->isGranted('ROLE_BUSINESS_ACCOUNT')) {
+            $businessAccount = $this->getUser()->getBusinessAccount();
+        } else {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+            $businessAccount = $this->getDoctrine()->getRepository(BusinessAccount::class)->find($id);
+        }
+
+        if (!$businessAccount) {
+            throw $this->createNotFoundException(sprintf('Business account #%d does not exist', $id));
+        }
+
+        return $this->handleBusinessAccountForm($businessAccount, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager);
+    }
+
 
     /**
      * @HideSoftDeleted

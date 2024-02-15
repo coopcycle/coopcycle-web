@@ -254,7 +254,7 @@ class Client
         return $res['data'];
     }
 
-    public function getFormats(LocalBusiness $restaurant)
+    public function getFormats(LocalBusiness $restaurant): array
     {
         try {
 
@@ -272,8 +272,9 @@ class Client
 
         } catch (RequestException $e) {
             $this->logger->error($e->getMessage());
-            return false;
         }
+
+        return [];
     }
 
     public function initiative()

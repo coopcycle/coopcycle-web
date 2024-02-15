@@ -112,7 +112,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
 
         $order
             ->hasVendor()

@@ -27,6 +27,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use League\Csv\Writer as CsvWriter;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RestaurantStats implements \Countable
@@ -81,6 +82,7 @@ class RestaurantStats implements \Countable
         $this->addVendors();
         $this->addRefunds();
         $this->addStores();
+        $this->addPaymentMethods();
 
         $this->computeTaxes();
         $this->computeColumnTotals();
@@ -285,6 +287,39 @@ class RestaurantStats implements \Countable
                     $order->refunds[] = $refund;
                 }
             }
+
+            return $order;
+
+        }, $this->result);
+    }
+
+    private function addPaymentMethods()
+    {
+        if (count($this->ids) === 0) {
+            return;
+        }
+
+        $qb = $this->entityManager->getRepository(Order::class)
+            ->createQueryBuilder('o');
+        $qb
+            ->select([
+                'o.id AS order_id',
+                'pm.code',
+            ])
+            ->join(PaymentInterface::class, 'p', Expr\Join::WITH, 'p.order = o.id')
+            ->join(PaymentMethodInterface::class, 'pm', Expr\Join::WITH, 'p.method = pm.id')
+            ->andWhere(
+                $qb->expr()->in('o.id', ':ids')
+            )
+            ->setParameter('ids', $this->ids)
+            ;
+
+        $paymentMethods = $qb->getQuery()->getArrayResult();
+        $paymentMethods = array_column($paymentMethods, 'code', 'order_id');
+
+        $this->result = array_map(function ($order) use ($paymentMethods) {
+
+            $order->paymentMethod = $paymentMethods[$order->id] ?? null;
 
             return $order;
 
@@ -531,6 +566,7 @@ class RestaurantStats implements \Countable
         $headings[] = 'tip';
         $headings[] = 'promotions';
         $headings[] = 'total_incl_tax';
+        $headings[] = 'payment_method';
         $headings[] = 'stripe_fee';
         $headings[] = 'platform_fee';
         $headings[] = 'refund_total';
@@ -616,6 +652,8 @@ class RestaurantStats implements \Countable
                 return $this->formatNumber($order->getRevenue(), !$formatted);
             case 'nonprofit':
                 return $order->getNonprofit();
+            case 'payment_method':
+                return $order->paymentMethod ? $this->translator->trans(sprintf('payment_method.%s', strtolower($order->paymentMethod))) : '';
         }
 
         return '';

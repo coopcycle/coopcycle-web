@@ -4,9 +4,9 @@ namespace AppBundle\Sylius\Cart;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
-use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\OrderInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Webmozart\Assert\Assert;
 
@@ -19,7 +19,6 @@ class RestaurantResolver
 
     private $repository;
 
-    private $entityManager;
 
     private static $routes = [
         'restaurant',
@@ -38,11 +37,11 @@ class RestaurantResolver
     public function __construct(
         RequestStack $requestStack,
         LocalBusinessRepository $repository,
-        EntityManagerInterface $entityManager)
+        LoggerInterface $logger = null)
     {
         $this->requestStack = $requestStack;
         $this->repository = $repository;
-        $this->entityManager = $entityManager;
+        $this->logger = $logger ?? new NullLogger();
     }
 
     /**
@@ -72,48 +71,30 @@ class RestaurantResolver
      */
     public function accept(OrderInterface $cart): bool
     {
-        $data = $this->entityManager
-            ->getUnitOfWork()
-            ->getOriginalEntityData($cart);
+        $restaurant  = $this->resolve();
+        $restaurants = $cart->getRestaurants();
 
-        // This means it is a new object, not persisted yet
-        if (!is_array($data) || empty($data)) {
+        if (count($restaurants) === 0) {
+            $this->logger->debug('Cart is empty, accepting');
             return true;
         }
 
-        if (!isset($data['vendor'])) {
-            throw new \LogicException('No "vendor" key found in original entity data. The column may have been renamed.');
-        }
-
-        $restaurant = $this->resolve();
-
-        if (null === $restaurant) {
-            throw new \LogicException('No restaurant could be resolved from request.');
-        }
-
-        if ($cart->getId() === null) {
+        if ($restaurants->contains($restaurant)) {
+            $this->logger->debug('Cart contains restaurant, accepting');
             return true;
         }
 
-        Assert::isInstanceOf($data['vendor'], Vendor::class);
-
-        $vendor = $data['vendor'];
-
-        if ($vendor->isHub()) {
-
-            return $vendor->getHub() === $restaurant->getHub();
+        if (null !== $cart->getBusinessAccount()) {
+            return $cart->getBusinessAccount()->getBusinessRestaurantGroup()->getRestaurants()->contains($restaurant);
         }
 
-        if ($vendor->getRestaurant() !== $restaurant) {
+        $hub = $restaurants->first()->getHub();
 
-            $thisHub = $data['vendor']->getRestaurant()->getHub();
-            $thatHub = $restaurant->getHub();
+        if (null === $hub) {
 
-            if (null !== $thisHub && null !== $thatHub && $thisHub === $thatHub) {
-                return true;
-            }
+            return $restaurants->first() === $restaurant;
         }
 
-        return $vendor->getRestaurant() === $restaurant;
+        return $hub === $restaurant->getHub();
     }
 }

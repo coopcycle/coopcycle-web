@@ -7,20 +7,32 @@ import {
 } from '@reduxjs/toolkit'
 
 import { moment } from '../../coopcycle-frontend-js'
-import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter, taskAdapter } from '../../coopcycle-frontend-js/logistics/redux'
+import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdapter, taskAdapter, tourAdapter } from '../../coopcycle-frontend-js/logistics/redux'
 import { filter, forEach, find, reduce, map, differenceWith, includes, mapValues } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
 import { taskUtils } from '../../coopcycle-frontend-js/logistics/redux';
 
 const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
-const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
+export const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
+export const tourSelectors = tourAdapter.getSelectors((state) => state.logistics.entities.tours)
 
 export const recurrenceRulesAdapter = createEntityAdapter({
   selectId: (o) => o['@id'],
   sortComparer: (a, b) => a.orgName.localeCompare(b.orgName),
 })
 
+// UI selectors
 export const selectCurrentTask = state => state.logistics.ui.currentTask
+export const selectAreToursDroppable = state => state.logistics.ui.areToursDroppable
+export const selectExpandedTourPanelsIds = state => state.logistics.ui.expandedTourPanelsIds
+export const selectTaskListsLoading = state => state.logistics.ui.taskListsLoading
+
+// Settings selectors
+export const selectFiltersSetting = state => state.settings.filters
+export const selectHiddenCouriersSetting = state => state.settings.filters.hiddenCouriers
+
+
+
 export const selectCouriers = state => state.config.couriersList
 export const selectTaskEvents = state => state.taskEvents
 
@@ -28,8 +40,8 @@ export const selectTaskLists = taskListSelectors.selectAll
 
 export const selectBookedUsernames = taskListSelectors.selectIds
 
-const belongsToGroup = task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group
-const belongsToTour = task => Object.prototype.hasOwnProperty.call(task, 'tour') && task.tour
+export const belongsToGroup = task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group
+export const belongsToTour = task => Object.prototype.hasOwnProperty.call(task, 'tour') && task.tour
 
 export const selectGroups = createSelector(
   selectUnassignedTasks,
@@ -43,7 +55,10 @@ export const selectGroups = createSelector(
     const groupsMap = new Map()
     const groups = []
 
-    const tasksWithGroup = filter(unassignedTasks, task => belongsToGroup(task))
+    const tasksWithGroup = filter(
+      unassignedTasks, 
+      task => belongsToGroup(task) && !belongsToTour(task) // if the task is in a tour we don't want it to be displayed in "Unassigned > Group"
+    )
 
     forEach(tasksWithGroup, task => {
       const keys = Array.from(groupsMap.keys())
@@ -114,7 +129,7 @@ export const selectStandaloneTasks = createSelector(
 
 export const selectVisibleTaskIds = createSelector(
   selectAllTasks,
-  state => state.settings.filters,
+  selectFiltersSetting,
   selectSelectedDate,
   (tasks, filters, date) => filter(tasks, task => isTaskVisible(task, filters, date)).map(task => task['@id'])
 )
@@ -295,39 +310,5 @@ export const selectLinkedTasksIds = createSelector(
   (tasks) => {
     const groups = taskUtils.groupLinkedTasks(tasks)
     return Object.keys(groups)
-  }
-)
-
-export const selectUnassignedTours = createSelector(
-  selectUnassignedTasks,
-  (unassignedTasks) => {
-
-    const toursMap = new Map()
-    const tours = []
-
-    const tasksWithTour = filter(unassignedTasks, task => belongsToTour(task))
-
-    forEach(tasksWithTour, task => {
-      const keys = Array.from(toursMap.keys())
-      const tour = find(keys, tour => tour['@id'] === task.tour['@id'])
-
-      if (!tour) {
-        toursMap.set(task.tour, [ task ])
-      } else {
-        toursMap.get(tour).push(task)
-        toursMap.get(tour).sort((a, b) => a.tour.position - b.tour.position)
-      }
-
-
-    })
-
-    toursMap.forEach((tasks, tour) => {
-      tours.push({
-        ...tour,
-        items: tasks,
-      })
-    })
-
-    return tours
   }
 )

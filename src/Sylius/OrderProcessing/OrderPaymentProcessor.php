@@ -2,7 +2,9 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -20,7 +22,9 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
     public function __construct(
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentFactoryInterface $paymentFactory,
-        CurrencyContextInterface $currencyContext)
+        CurrencyContextInterface $currencyContext,
+        private LoggerInterface $checkoutLogger,
+        private LoggingUtils $loggingUtils)
     {
         $this->paymentMethodRepository = $paymentMethodRepository;
         $this->paymentFactory = $paymentFactory;
@@ -60,8 +64,14 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         $lastPayment = $order->getLastPayment($targetState);
 
         if (null !== $lastPayment) {
+            $this->checkoutLogger->info(sprintf('Order %s | OrderPaymentProcessor | payment: %d (initial)',
+                $this->loggingUtils->getOrderId($order), $lastPayment->getAmount()));
+
             $lastPayment->setCurrencyCode($this->currencyContext->getCurrencyCode());
             $lastPayment->setAmount($order->getTotal());
+
+            $this->checkoutLogger->info(sprintf('Order %s | OrderPaymentProcessor | finished | payment: %d (updated)',
+                $this->loggingUtils->getOrderId($order), $lastPayment->getAmount()));
 
             return;
         }
@@ -78,5 +88,8 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         $payment->setState($targetState);
 
         $order->addPayment($payment);
+
+        $this->checkoutLogger->info(sprintf('Order %s | OrderPaymentProcessor | finished | payment: %d',
+            $this->loggingUtils->getOrderId($order), $payment->getAmount()));
     }
 }

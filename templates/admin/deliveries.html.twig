@@ -26,34 +26,14 @@
     </div>
   </div>
 
-  {% if imported_rows_message is defined and imported_rows_message is not empty %}
-    <div class="alert alert-success">
-      {{ imported_rows_message }}
+  {% if delivery_import_form.vars.submitted and not delivery_import_form.file.vars.valid %}
+    <div class="alert alert-danger">
+      <ul class="list-unstyled">
+      {% for error in delivery_import_form.file.vars.errors %}
+        <li>{{ error.message }}</li>
+      {% endfor %}
+      </ul>
     </div>
-  {% endif %}
-
-  {% if delivery_import_form.vars.submitted and (not delivery_import_form.vars.valid and not delivery_import_form.file.vars.valid) %}
-    <!-- Delivery errors: i.e. when orders can not be created because errors in price calculation -->
-    {% if delivery_import_form.vars.errors is defined and delivery_import_form.vars.errors is not empty %}
-      <div class="alert alert-danger">
-        <ul class="list-unstyled">
-        {% for error in delivery_import_form.vars.errors %}
-          <li>{{ error.message }}</li>
-        {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
-
-    <!-- Errors at rows level then trying to parse the file -->
-    {% if delivery_import_form.file.vars.errors is defined and delivery_import_form.file.vars.errors is not empty %}
-      <div class="alert alert-danger">
-        <ul class="list-unstyled">
-        {% for error in delivery_import_form.file.vars.errors %}
-          <li>{{ error.message }}</li>
-        {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
   {% endif %}
 
   {% if delivery_export_form.vars.submitted and not delivery_export_form.vars.valid %}
@@ -77,6 +57,15 @@
       path: path('admin_deliveries', { section: 'past' })
     }
   ] %}
+
+  {% if import_queues|length > 0 %}
+    {% set tab_items = tab_items|merge([{
+      title: 'deliveries.imports'|trans,
+      active: app.request.query.get('section', 'today') == 'imports',
+      path: path('admin_deliveries', { section: 'imports' })
+    }]) %}
+  {% endif %}
+
   <ul class="nav nav-tabs">
     {% if filters is defined and filters.query %}
     <p><i class="fa fa-search" aria-hidden="true"></i> {% trans with { '%query%': filters.query } %}stores.search.results_for{% endtrans %}</p>
@@ -95,6 +84,7 @@
     {% endif %}
   </ul>
 
+  {% if app.request.query.get('section', 'today') != 'imports' %}
   <div class="d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center mt-4 mb-3">
       <div class="dropdown d-inline-block mr-4">
@@ -117,7 +107,52 @@
     {{ knp_pagination_render(deliveries, '@KnpPaginator/Pagination/sliding.html.twig') }}
     </div>
   </div>
-  {% include '_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %}
+  {% endif %}
+
+  {% if app.request.query.get('section', 'today') == 'imports' %}
+    {% set import_status_icon = {
+      'pending': 'clock-o',
+      'started': 'play',
+      'completed': 'check',
+      'failed': 'exclamation-circle'
+    } %}
+    <table class="table mt-4"
+      data-delivery-imports
+      data-centrifugo-token="{{ centrifugo_token }}"
+      data-centrifugo-channel="{{ centrifugo_channel }}">
+      <thead>
+        <th></th>
+        <th>{{ 'form.delivery_import.file.label'|trans }}</th>
+        <th>{{ 'deliveries.imports.created_at'|trans }}</th>
+        <th></th>
+      </thead>
+      <tbody>
+        {% for import_queue in import_queues %}
+          <tr class="{{ import_queue.status == 'failed' ? 'danger' : '' }}"
+            data-delivery-import
+            data-delivery-import-filename="{{ import_queue.filename }}"
+            data-delivery-import-queue="{{ path('api_delivery_import_queues_get_item', { id: import_queue.id }) }}"
+            data-delivery-import-csv="{{ path('api_delivery_import_queues_csv_item', { id: import_queue.id }) }}"
+            data-delivery-import-redownload="{{ path('api_delivery_import_queues_redownload_item', { id: import_queue.id }) }}">
+            <td width="5%"><i class="fa fa-{{ import_status_icon[import_queue.status] }}" data-delivery-import-status></i></td>
+            <td>{{ import_queue.filename }}</td>
+            <td>{{ import_queue.createdAt|time_diff }}</td>
+            <td class="text-right">
+              <a href="#" class="mr-3 {% if import_queue.status != 'failed' %}d-none{% endif %}" data-delivery-import-view>
+                <i class="fa fa-eye"></i>
+              </a>
+              <a href="#" class="{% if import_queue.status != 'failed' %}d-none{% endif %}" data-delivery-import-redownload>
+                <i class="fa fa-download"></i>
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div id="delivery_import_spreadsheet"></div>
+  {% else %}
+    {% include '_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %}
+  {% endif %}
 
   <nav class="text-center">
     {{ knp_pagination_render(deliveries) }}

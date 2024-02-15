@@ -68,6 +68,7 @@ parameters:
     typesense_products_collection_name: "products"
     colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
     group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
+    business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -176,6 +177,7 @@ framework:
             'AppBundle\Message\Webhook': async
             'AppBundle\Message\IndexDeliveries': async
             'AppBundle\Message\WoopitDocumentWebhook': async
+            'AppBundle\Message\ImportDeliveries': async
     workflows:
         enabled: true
     mailer:
@@ -205,6 +207,16 @@ framework:
                 base_uri: 'https://car-api.%env(WOOPIT_HOST)%/'
             dabba.client:
                 base_uri: "%env(DABBA_BASE_URL)%/"
+            umap.client:
+                base_uri: "https://umap.openstreetmap.fr/"
+            unsplash.client:
+                base_uri: "https://api.unsplash.com/"
+                headers:
+                    Authorization: 'Client-ID %env(UNSPLASH_ACCESS_KEY)%'
+            pixabay.client:
+                base_uri: "https://pixabay.com/api/"
+                query:
+                    key: "%env(PIXABAY_API_KEY)%"
 
 # Twig Configuration
 twig:
@@ -234,7 +246,7 @@ twig:
         loopeat_context: '@AppBundle\LoopEat\Context'
         legacy_taxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
         payment_gateway_resolver: '@AppBundle\Payment\GatewayResolver'
-        context_channel: "@sylius.context.channel"
+        business_context: '@AppBundle\Business\Context'
         loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
         embed_context: '@AppBundle\Embed\Context'
         locationiq_access_token: '%env(LOCATIONIQ_ACCESS_TOKEN)%'
@@ -247,6 +259,7 @@ twig:
         ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
         dabba_context: '@AppBundle\Dabba\Context'
         group_orders_enabled: '%group_orders_enabled%'
+        business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
 
     exception_controller: null
 
@@ -335,6 +348,7 @@ api_platform:
         ApiPlatform\Core\Exception\InvalidArgumentException: 400
         ApiPlatform\Core\Validator\Exception\ValidationException: 400
         AppBundle\Api\Exception\BadRequestHttpException: 400
+        AppBundle\Exception\LoopeatInsufficientStockException: 400
     # see https://github.com/api-platform/core/pull/2721
     messenger:
         enabled: false
@@ -460,6 +474,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: product_imports
+        delivery_imports:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: delivery_imports
         nonprofits_images:
             awss3v3:
                 client: s3_client
@@ -498,6 +517,10 @@ oneup_flysystem:
             adapter: product_imports
             alias: product_imports_filesystem
             mount: product_imports_filesystem
+        delivery_imports:
+            adapter: delivery_imports
+            alias: delivery_imports_filesystem
+            mount: delivery_imports_filesystem
         nonprofits_images:
             adapter: nonprofits_images
             alias: nonprofits_images_filesystem
@@ -508,6 +531,15 @@ vich_uploader:
     storage: flysystem
     mappings:
         restaurant_image:
+            uri_prefix: ''
+            upload_destination: restaurant_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
+        restaurant_banner_image:
             uri_prefix: ''
             upload_destination: restaurant_images_filesystem
             namer: vich_uploader.namer_uniqid
@@ -672,6 +704,7 @@ fos_js_routing:
         - admin_order_fulfill
         - admin_restaurant
         - admin_restaurant_dashboard
+        - admin_restaurant_image_from_url
         - admin_restaurant_stats
         - admin_tags
         - admin_task_image_download
@@ -691,6 +724,7 @@ fos_js_routing:
         - dashboard_order_delay
         - dashboard_order_fulfill
         - dashboard_restaurant_dashboard
+        - dashboard_restaurant_image_from_url
         - dashboard_restaurant_stats
         - routing_route
         - user_avatar
@@ -718,6 +752,23 @@ liip_imagine:
                     min: [ 512, 512 ]
                 thumbnail:
                     size: [ 512, 512 ]
+                    mode: outbound
+                    allow_upscale: true
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
+        restaurant_banner:
+            data_loader: restaurant_images
+            filters:
+                upscale:
+                    min: [ 480, 270 ]
+                thumbnail:
+                    size: [ 480, 270 ]
                     mode: outbound
                     allow_upscale: true
             post_processors:

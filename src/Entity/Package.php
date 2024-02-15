@@ -3,12 +3,17 @@
 namespace AppBundle\Entity;
 
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 class Package
 {
     use Timestampable;
 
     protected $id;
+
+    /**
+     * @Groups({"store_with_packages"})
+     */
     protected $name;
     protected $volumeUnits;
     protected $packageSet;

@@ -9,10 +9,11 @@ class TokenFactory
     private $config;
     private $databaseName;
 
-    public function __construct(Configuration $cubeJsJwtConfiguration, string $databaseName)
+    public function __construct(Configuration $cubeJsJwtConfiguration, string $databaseName, string $baseUrl)
     {
         $this->config = $cubeJsJwtConfiguration;
         $this->databaseName = $databaseName;
+        $this->baseUrl = $baseUrl;
     }
 
     public function createToken(array $customClaims = array()): string
@@ -22,7 +23,8 @@ class TokenFactory
 
         $token = $this->config->builder()
             ->expiresAt($now->modify('+1 hour'))
-            ->withClaim('database', $this->databaseName);
+            ->withClaim('database', $this->databaseName)
+            ->withClaim('base_url', $this->baseUrl);
 
         foreach ($customClaims as $key => $value) {
             $token = $token->withClaim($key, $value);

@@ -20,8 +20,8 @@ phpunit:
 behat:
 	@docker-compose exec php php vendor/bin/behat
 
-mocha:
-	@docker-compose exec -e SYMFONY_ENV=test -e NODE_ENV=test nodejs /run-tests.sh
+jest:
+	@docker-compose exec -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm run jest
 
 migrations-diff:
 	@docker-compose exec php php bin/console doctrine:migrations:diff --no-interaction

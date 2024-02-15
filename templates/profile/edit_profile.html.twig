@@ -1,19 +1,47 @@
 {% extends "profile.html.twig" %}
 
-{% form_theme form 'form/edit_profile.html.twig' %}
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
 
 {% block content %}
-  <h2 class="page-header">
-    {% trans %}profile.editProfile{%  endtrans %}
-  </h2>
   {{ form_start(form) }}
-    {{ form_row(form.username) }}
-    {{ form_row(form.fullName) }}
-    {{ form_row(form.telephone) }}
-    {{ form_rest(form) }}
-    <button type="submit" class="btn btn-lg btn-block btn-primary">{% trans %}basics.save{% endtrans %}</button>
+    <div class="form-section">
+      <div class="header rounded-top">
+        <h5>{{ 'registration.step.personal'|trans }}</h5>
+      </div>
+      <div class="form rounded-bottom">
+        <div class="row">
+          <div class="col-md-6">
+            {{ form_row(form.username) }}
+          </div>
+          <div class="col-md-6">
+            {{ form_row(form.fullName) }}
+          </div>
+        </div>
+        {{ form_row(form.email) }}
+        {{ form_row(form.telephone) }}
+
+        <p><a class="btn btn-link-primary-default pl-0" href="{{ path('nucleos_user_change_password') }}">{% trans %}profile.password.change{% endtrans %}</a></p>
+
+        {% if form.loopeatDisconnect is defined %}
+          <div class="form-group">
+            {{ form_widget(form.loopeatDisconnect, { attr: { class: 'btn-primary-default' } }) }}
+          </div>
+        {% endif %}
+
+        {% if form.dabbaDisconnect is defined %}
+          <div class="form-group">
+            {{ form_widget(form.dabbaDisconnect, { attr: { class: 'btn-primary-default' } }) }}
+          </div>
+        {% endif %}
+
+        {{ form_rest(form) }}
+      </div>
+    </div>
+    <div class="d-flex justify-content-between p-4">
+      <button type="submit" class="btn btn-primary-default">{% trans %}basics.save{% endtrans %}</button>
+      <button type="button" onclick="delete_my_account()" class="btn btn-link-primary-default">{% trans %}profile.delete_my_account{% endtrans %}</button>
+    </div>
   {{ form_end(form) }}
-<button type="button" onclick="delete_my_account()" class="btn btn-link">{% trans %}profile.delete_my_account{% endtrans %}</button>
 {% endblock %}
 
 {% block scripts %}

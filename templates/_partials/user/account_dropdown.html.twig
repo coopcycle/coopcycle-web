@@ -4,23 +4,23 @@
   </a>
   <ul class="dropdown-menu">
     <li>
-      <a href="{{ path('nucleos_profile_profile_show') }}">
+      <a href="{{ path('profile_edit') }}">
         {% trans %}navbar.myAccount{% endtrans %}
       </a>
     </li>
 
-    {% if is_granted('ROLE_PRO') %}
-      {% set queryParams = app.request.query.all %}
-      {% if context_channel.channel.code == 'pro' %}
-        {% set queryParams = queryParams|merge({change_channel: 'web'}) %}
-        {% set accountType = 'navbar.lambdaCart' %}
+    {% if is_granted('ROLE_BUSINESS') %}
+      {% set query_params = app.request.query.all %}
+      {% if business_context.active %}
+        {% set query_params = query_params|merge({ _business: 'false' }) %}
+        {% set label = ('navbar.switch_to_personal'|trans) %}
       {% else %}
-        {% set queryParams = queryParams|merge({change_channel: 'pro'}) %}
-        {% set accountType = 'navbar.proCart' %}
+        {% set query_params = query_params|merge({ _business: 'true' }) %}
+        {% set label = ('navbar.switch_to_business'|trans({ '%name%': business_context.businessAccount.name })) %}
       {% endif %}
-      {% set currentPath = path(app.request.attributes.get('_route'),
-        app.request.attributes.get('_route_params')|merge(queryParams)) %}
-      <li><a href="{{ currentPath }}">{{ accountType|trans }}</a></li>
+      {% set current_path = path(app.request.attributes.get('_route'),
+        app.request.attributes.get('_route_params')|merge(query_params)) %}
+      <li><a href="{{ current_path }}">{{ label }}</a></li>
     {% endif %}
 
     <li role="separator" class="divider"></li>

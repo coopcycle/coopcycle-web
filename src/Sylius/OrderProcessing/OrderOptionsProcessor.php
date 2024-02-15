@@ -2,12 +2,12 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -16,12 +16,13 @@ use Webmozart\Assert\Assert;
 final class OrderOptionsProcessor implements OrderProcessorInterface
 {
     private $adjustmentFactory;
-    private $logger;
 
-    public function __construct(AdjustmentFactoryInterface $adjustmentFactory, LoggerInterface $logger = null)
+    public function __construct(
+        AdjustmentFactoryInterface $adjustmentFactory,
+        private LoggerInterface $checkoutLogger,
+        private LoggingUtils $loggingUtils)
     {
         $this->adjustmentFactory = $adjustmentFactory;
-        $this->logger = $logger ? $logger : new NullLogger();
     }
 
     /**
@@ -30,6 +31,9 @@ final class OrderOptionsProcessor implements OrderProcessorInterface
     public function process(BaseOrderInterface $order): void
     {
         Assert::isInstanceOf($order, OrderInterface::class);
+
+        $this->checkoutLogger->info(sprintf('Order %s | OrderOptionsProcessor | started | itemsTotal: %d (initial) | triggered by %s',
+            $this->loggingUtils->getOrderId($order), $order->getItemsTotal(), $this->loggingUtils->getBacktrace()));
 
         foreach ($order->getItems() as $orderItem) {
 
@@ -63,9 +67,13 @@ final class OrderOptionsProcessor implements OrderProcessorInterface
                 } catch (EntityNotFoundException $e) {
                     // This happens when an option has been deleted,
                     // but is still attached to a product variant
-                    $this->logger->error($e->getMessage(), ['exception' => $e]);
+                    $this->checkoutLogger->error(sprintf('Order %s | OrderOptionsProcessor | error: %s',
+                        $this->loggingUtils->getOrderId($order), $e->getMessage()), ['exception' => $e]);
                 }
             }
         }
+
+        $this->checkoutLogger->info(sprintf('Order %s | OrderOptionsProcessor | finished | itemsTotal: %d (updated)',
+            $this->loggingUtils->getOrderId($order), $order->getItemsTotal()));
     }
 }

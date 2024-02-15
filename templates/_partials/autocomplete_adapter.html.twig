@@ -9,7 +9,8 @@
   data-viewbox="{{ coopcycle_bounding_rect() }}"></div>
 {% elseif adapter == 'google' %}
 <div id="google"
-  data-location="{{ coopcycle_setting('latlng')|e('html_attr') }}"></div>
+  data-location="{{ coopcycle_setting('latlng')|e('html_attr') }}"
+  data-lat-lng-bounds="{{ coopcycle_lat_lng_bounds() }}"></div>
 {% else %}
 <div id="geocode-earth" data-api-key="{{ geocode_earth_api_key }}"
   data-boundary-circle-latlon="{{ coopcycle_setting('latlng')|e('html_attr') }}"></div>

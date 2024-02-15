@@ -60,7 +60,6 @@
         <cascade-persist />
       </cascade>
     </many-to-one>
-    <many-to-one field="vendor" target-entity="AppBundle\Entity\Vendor" />
     <many-to-one field="shippingAddress" target-entity="AppBundle\Entity\Address">
       <cascade>
         <cascade-all/>
@@ -108,7 +107,7 @@
         <cascade-persist/>
       </cascade>
     </one-to-many>
-  <many-to-one field="nonprofit" target-entity="AppBundle\Entity\Nonprofit">
+    <many-to-one field="nonprofit" target-entity="AppBundle\Entity\Nonprofit">
       <cascade>
         <cascade-persist/>
       </cascade>
@@ -131,9 +130,11 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
+    <many-to-one field="businessAccount" target-entity="AppBundle\Entity\BusinessAccount" inversed-by="orders">
+      <join-column name="business_account_id" referenced-column-name="id" nullable="true" />
+    </many-to-one>
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\OrderListener">
-        <lifecycle-callback type="preFlush" method="preFlush"/>
         <lifecycle-callback type="preUpdate" method="preUpdate"/>
       </entity-listener>
     </entity-listeners>

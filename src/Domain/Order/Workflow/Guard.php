@@ -2,6 +2,7 @@
 
 namespace AppBundle\Domain\Order\Workflow;
 
+use AppBundle\Domain\Order\Event;
 use AppBundle\Sylius\Order\OrderInterface;
 
 class Guard
@@ -26,5 +27,11 @@ class Guard
         }
 
         return true;
+    }
+
+    public function isRestorable(OrderInterface $order)
+    {
+        return $order->hasEvent(Event\OrderAccepted::messageName())
+            && $order->hasEvent(Event\OrderCancelled::messageName());
     }
 }

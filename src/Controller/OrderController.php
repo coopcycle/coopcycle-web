@@ -47,6 +47,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Psr\Log\LoggerInterface;
 
 class OrderController extends AbstractController
 {
@@ -60,7 +61,10 @@ class OrderController extends AbstractController
         EntityManagerInterface $objectManager,
         FactoryInterface $orderFactory,
         protected JWTTokenManagerInterface $JWTTokenManager,
-        string $sessionKeyName)
+        string $sessionKeyName,
+        private ValidatorInterface $validator,
+        private LoggerInterface $checkoutLogger,
+    )
     {
         $this->objectManager = $objectManager;
         $this->orderFactory = $orderFactory;
@@ -75,7 +79,6 @@ class OrderController extends AbstractController
         CartContextInterface $cartContext,
         OrderProcessorInterface $orderProcessor,
         TranslatorInterface $translator,
-        ValidatorInterface $validator,
         SettingsManager $settingsManager,
         EmbedContext $embedContext,
         SessionInterface $session)
@@ -93,17 +96,15 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
-        $errors = $validator->validate($order);
+        $errors = $this->validator->validate($order);
 
         // @see https://github.com/coopcycle/coopcycle-web/issues/2069
         if (count($errors->findByCodes(ShippingAddressConstraint::ADDRESS_NOT_SET)) > 0) {
 
             $vendor = $order->getVendor();
-            if ($order->isMultiVendor()) {
-                return $this->redirectToRoute('hub', ['id' => $vendor->getHub()->getId()]);
-            }
+            $routeName = $order->isMultiVendor() ? 'hub' : 'restaurant';
 
-            return $this->redirectToRoute('restaurant', ['id' => $vendor->getRestaurant()->getId()]);
+            return $this->redirectToRoute($routeName, ['id' => $vendor->getId()]);
         }
 
         $user = $this->getUser();
@@ -330,6 +331,22 @@ class OrderController extends AbstractController
         ];
 
         $form->handleRequest($request);
+
+        /**
+         * added to debug issues with stripe payment:
+         * https://github.com/coopcycle/coopcycle-web/issues/3688
+         * https://github.com/coopcycle/coopcycle-app/issues/1603
+         */
+        if ($request->isMethod('POST')) {
+            if ($form->isSubmitted()) {
+                $this->checkoutLogger->info(sprintf('Order #%d | OrderController::paymentAction | isSubmitted: true, isValid: %d errors: %s',
+                    $order->getId(), $form->isValid(), json_encode($form->getErrors()->__toString())));
+            } else {
+                $this->checkoutLogger->info(sprintf('Order #%d | OrderController::paymentAction | isSubmitted: false, errors: %s',
+                    $order->getId(), json_encode($form->getErrors()->__toString())));
+            }
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
@@ -589,6 +606,9 @@ class OrderController extends AbstractController
         $restaurant = $order->getRestaurant();
 
         $cart = $this->orderFactory->createForRestaurant($restaurant);
+        $this->checkoutLogger->info(sprintf('Order (cart) object created (created_at = %s) | OrderController',
+            $cart->getCreatedAt()->format(\DateTime::ATOM)));
+
         $cart->setCustomer($this->getUser()->getCustomer());
 
         foreach ($order->getItems() as $item) {
@@ -599,6 +619,9 @@ class OrderController extends AbstractController
 
         $this->objectManager->persist($cart);
         $this->objectManager->flush();
+
+        $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | OrderController',
+            $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId()));
 
         $session->set($this->sessionKeyName, $cart->getId());
 

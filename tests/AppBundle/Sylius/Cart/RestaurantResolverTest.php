@@ -8,8 +8,7 @@ use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Cart\RestaurantResolver;
 use AppBundle\Sylius\Order\OrderInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\UnitOfWork;
+use Doctrine\Common\Collections\ArrayCollection;
 use AppBundle\Entity\LocalBusiness;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -29,63 +28,21 @@ class RestaurantResolverTest extends TestCase
 
     public function setUp(): void
     {
-        $this->unitOfWork = $this->prophesize(UnitOfWork::class);
         $this->requestStack = $this->prophesize(RequestStack::class);
         $this->repository = $this->prophesize(LocalBusinessRepository::class);
-        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
-
-        $this->entityManager
-            ->getUnitOfWork()
-            ->willReturn($this->unitOfWork->reveal());
     }
 
-    public function testAcceptReturnsTrueWhenThereIsNoOriginalEntityData()
+    public function testAcceptReturnsTrueWhenCartIsEmpty()
     {
         $cart = $this->prophesize(OrderInterface::class);
 
-        $this->unitOfWork
-            ->getOriginalEntityData($cart->reveal())
-            ->willReturn([]);
+        $cart
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection([]));
 
         $resolver = new RestaurantResolver(
             $this->requestStack->reveal(),
-            $this->repository->reveal(),
-            $this->entityManager->reveal()
-        );
-
-        $this->assertTrue($resolver->accept($cart->reveal()));
-    }
-
-    public function testAcceptReturnsTrueWhenCartIsNotSavedYet()
-    {
-        $cart = $this->prophesize(OrderInterface::class);
-        $restaurant = $this->prophesize(LocalBusiness::class);
-
-        $request = new Request(
-            $query = [],
-            $request = [],
-            $attributes = [
-                '_route' => 'restaurant',
-                'id' => 1,
-            ]
-        );
-
-        $this->requestStack->getMasterRequest()->willReturn($request);
-
-        $this->repository->find(1)->willReturn($restaurant->reveal());
-
-        $cart->getId()->willReturn(null);
-
-        $this->unitOfWork
-            ->getOriginalEntityData($cart->reveal())
-            ->willReturn([
-                'vendor' => Vendor::withRestaurant($restaurant->reveal())
-            ]);
-
-        $resolver = new RestaurantResolver(
-            $this->requestStack->reveal(),
-            $this->repository->reveal(),
-            $this->entityManager->reveal()
+            $this->repository->reveal()
         );
 
         $this->assertTrue($resolver->accept($cart->reveal()));
@@ -96,6 +53,14 @@ class RestaurantResolverTest extends TestCase
         $cart = $this->prophesize(OrderInterface::class);
         $restaurant = $this->prophesize(LocalBusiness::class);
 
+        $restaurant
+            ->getHub()
+            ->willReturn(null);
+
+        $cart
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection([ $restaurant->reveal() ]));
+
         $request = new Request(
             $query = [],
             $request = [],
@@ -111,16 +76,9 @@ class RestaurantResolverTest extends TestCase
 
         $cart->getId()->willReturn(1);
 
-        $this->unitOfWork
-            ->getOriginalEntityData($cart->reveal())
-            ->willReturn([
-                'vendor' => Vendor::withRestaurant($restaurant->reveal())
-            ]);
-
         $resolver = new RestaurantResolver(
             $this->requestStack->reveal(),
-            $this->repository->reveal(),
-            $this->entityManager->reveal()
+            $this->repository->reveal()
         );
 
         $this->assertTrue($resolver->accept($cart->reveal()));
@@ -129,10 +87,25 @@ class RestaurantResolverTest extends TestCase
     public function testAcceptReturnsFalseWhenCartIsSavedAndContainsAnotherRestaurant()
     {
         $cart = $this->prophesize(OrderInterface::class);
+
         $restaurant = $this->prophesize(LocalBusiness::class);
         $otherRestaurant = $this->prophesize(LocalBusiness::class);
 
-        $request = new Request(
+        $restaurant
+            ->getHub()
+            ->willReturn(null);
+        $otherRestaurant
+            ->getHub()
+            ->willReturn(null);
+
+        $cart
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection([ $restaurant->reveal() ]));
+        $cart
+            ->getBusinessAccount()
+            ->willReturn(null);
+
+            $request = new Request(
             $query = [],
             $request = [],
             $attributes = [
@@ -146,83 +119,35 @@ class RestaurantResolverTest extends TestCase
 
         $cart->getId()->willReturn(1);
 
-        $this->unitOfWork
-            ->getOriginalEntityData($cart->reveal())
-            ->willReturn([
-                'vendor' => Vendor::withRestaurant($restaurant->reveal())
-            ]);
-
         $resolver = new RestaurantResolver(
             $this->requestStack->reveal(),
-            $this->repository->reveal(),
-            $this->entityManager->reveal()
+            $this->repository->reveal()
         );
 
         $this->assertFalse($resolver->accept($cart->reveal()));
-    }
-
-    public function testAcceptReturnsTrueWhenCartIsSavedAndContainsRestaurantBelongingToSameHub()
-    {
-        $hub = $this->prophesize(Hub::class);
-        $cart = $this->prophesize(OrderInterface::class);
-        $restaurant = $this->prophesize(LocalBusiness::class);
-        $otherRestaurant = $this->prophesize(LocalBusiness::class);
-
-        $restaurant
-            ->belongsToHub()
-            ->willReturn(true);
-        $restaurant
-            ->getHub()
-            ->willReturn($hub->reveal());
-
-        $otherRestaurant
-            ->belongsToHub()
-            ->willReturn(true);
-        $otherRestaurant
-            ->getHub()
-            ->willReturn($hub->reveal());
-
-        $request = new Request(
-            $query = [],
-            $request = [],
-            $attributes = [
-                '_route' => 'restaurant',
-                'id' => 1,
-            ]
-        );
-
-        $this->requestStack->getMasterRequest()->willReturn($request);
-        $this->repository->find(1)->willReturn($otherRestaurant->reveal());
-
-        $cart->getId()->willReturn(1);
-
-        $this->unitOfWork
-            ->getOriginalEntityData($cart->reveal())
-            ->willReturn([
-                'vendor' => Vendor::withRestaurant($restaurant->reveal())
-            ]);
-
-        $resolver = new RestaurantResolver(
-            $this->requestStack->reveal(),
-            $this->repository->reveal(),
-            $this->entityManager->reveal()
-        );
-
-        $this->assertTrue($resolver->accept($cart->reveal()));
     }
 
     public function testAcceptReturnsTrueWhenCartIsSavedWithHubAndContainsRestaurantBelongingToSameHub()
     {
         $hub = $this->prophesize(Hub::class);
         $cart = $this->prophesize(OrderInterface::class);
-        $restaurant = $this->prophesize(LocalBusiness::class);
 
-        $restaurant
-            ->belongsToHub()
-            ->willReturn(true);
-        $restaurant
+        $restaurant1 = $this->prophesize(LocalBusiness::class);
+        $restaurant2 = $this->prophesize(LocalBusiness::class);
+
+        $restaurant1
             ->getHub()
             ->willReturn($hub->reveal());
+        $restaurant2
+            ->getHub()
+            ->willReturn($hub->reveal());
+
+        $cart
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection([ $restaurant2->reveal() ]));
+        $cart
+            ->getBusinessAccount()
+            ->willReturn(null);
 
         $request = new Request(
             $query = [],
@@ -234,20 +159,13 @@ class RestaurantResolverTest extends TestCase
         );
 
         $this->requestStack->getMasterRequest()->willReturn($request);
-        $this->repository->find(1)->willReturn($restaurant->reveal());
+        $this->repository->find(1)->willReturn($restaurant1->reveal());
 
         $cart->getId()->willReturn(1);
 
-        $this->unitOfWork
-            ->getOriginalEntityData($cart->reveal())
-            ->willReturn([
-                'vendor' => Vendor::withHub($hub->reveal())
-            ]);
-
         $resolver = new RestaurantResolver(
             $this->requestStack->reveal(),
-            $this->repository->reveal(),
-            $this->entityManager->reveal()
+            $this->repository->reveal()
         );
 
         $this->assertTrue($resolver->accept($cart->reveal()));

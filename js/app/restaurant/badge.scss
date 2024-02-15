@@ -1,0 +1,129 @@
+.restaurant-badge {
+  background-color: gray;
+  color: white;
+  border-radius: 16px;
+  box-shadow: 0 0 32px rgba($color: #000000, $alpha: 0.25);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  --padding: 1px;
+  padding: var(--padding);
+  display: inline-flex;
+
+  > div::before {
+    --blur: 8px;
+    --opacity: 0.24;
+    mix-blend-mode: plus-lighter;
+  }
+  &::before {
+    --blur: 8px;
+    --opacity: 0.5;
+    mix-blend-mode: plus-lighter;
+  }
+  &::before,
+  > div::before {
+    content: "";
+    width: 24px;
+    height: 200%;
+    position: absolute;
+    transform: rotate(29deg);
+    left: -16px;
+    top: -13px;
+    animation: shin 10s infinite;
+    // left: 50%;
+    filter: blur(var(--blur));
+    background-color: rgba(255, 255, 255, var(--opacity));
+    opacity: 0.5;
+  }
+
+  @keyframes shin {
+    0% {
+      left: -32px;
+    }
+    45% {
+      left: calc(100% + 16px);
+    }
+    50% {
+      left: calc(100% + 16px);
+    }
+    60% {
+      left: -32px;
+    }
+    100% {
+      left: -32px;
+    }
+  }
+
+  svg {
+    --size: 17px;
+    width: var(--size);
+    height: var(--size);
+    stroke: white;
+    // fill: white;
+  }
+
+  &.exclusive {
+    ---color: #76a424;
+    ---color: #ffd700;
+    ---color: #fcc200;
+    ---color: #cfb53b;
+    ---color: #d7b722;
+  }
+  &.new {
+    ---color: #6976df;
+    ---color: #969fea;
+  }
+
+  &.zero-waste {
+    ---color: #2d8e6b;
+    ---color: #04b072;
+  }
+  &.vytal {
+    ---color: #f5f5f5;
+    // ---color: #1cc282;
+    color: #1c1a20;
+  }
+  &.edenred {
+    ---color: rgb(245, 245, 245);
+    ---color: rgb(250, 250, 250);
+    color: #f72717;
+    svg {
+      fill: #f72717;
+    }
+  }
+  &.edenred2 {
+    ---color: #f72717;
+    svg {
+      fill: white;
+    }
+  }
+
+
+  &.edenred3 {
+    padding: 0px 4px 0 0;
+    ---color: white;
+
+    svg {
+      height: 24px;
+      width: auto;
+      fill: #f72717;
+    }
+  }
+
+  background-color: var(---color);
+
+  > div {
+    width: 100%;
+    height: 100%;
+    padding: calc(2px - var(--padding)) calc(12px - var(--padding))
+      calc(2px - var(--padding)) calc(8px - var(--padding));
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background-color: var(---color);
+    position: relative;
+    // box-shadow: 0 0 100px white inset;
+  }
+}

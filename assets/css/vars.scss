@@ -2,6 +2,7 @@
 
 $main-blue: #337ab7;
 $main-blue-light: lighten($main-blue, 20%);
+$main-blue-dark: darken($main-blue, 20%);
 
 $orange: #d35400;
 $light-orange: lighten($orange, 33.3333%);
@@ -16,6 +17,9 @@ $light-red: lighten($red, 33.3333%);
 $dark: #06070f;
 $yellow: #eeb516;
 $green: #558900;
+
+$primary-default: #E4022D;
+$primary-desactivated: #FF7A94;
 
 // Bootstrap variable
 $bs-input-height: 34px;

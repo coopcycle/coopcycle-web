@@ -1,0 +1,41 @@
+<div class="form-section">
+  <div class="header rounded-top">
+    <h5>{{ (flow is defined ? flow.currentStepLabel : 'registration.step.company')|trans }}</h5>
+  </div>
+  <div class="form rounded-bottom">
+    {{ form_row(form.name) }}
+    {{ form_row(form.address) }}
+    <div class="d-none">
+      {{ form_widget(form.differentAddressForBilling) }}
+    </div>
+    <div class="form-group">
+      <div class="d-flex">
+        <div data-widget="company-address-for-billing-switch" data-switch-target="{{ field_name(form.differentAddressForBilling) }}"></div>
+        <label class="ml-2">{{ field_label(form.differentAddressForBilling) }}</label>
+      </div>
+    </div>
+    <div class="d-none" data-billing-address>
+      {{ form_row(form.billingAddress) }}
+    </div>
+    {% if flow is defined %}
+      {% include '_partials/profile/flow_buttons.html.twig' %}
+    {% elseif form.save is defined %}
+      <div class="row">
+        <div class="col-md-6"></div>
+        <div class="col-md-6">
+            <button name="{{ field_name(form.save) }}" type="submit" class="btn btn-block btn-md btn-primary">
+            {{ field_label(form.save)|trans }}
+            </button>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% block scripts %}
+  <script>
+    (function() {
+      document.querySelector('[id$=_billingAddress_streetAddress]').removeAttribute('required')
+    })();
+  </script>
+{% endblock %}

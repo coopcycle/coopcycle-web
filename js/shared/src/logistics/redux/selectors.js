@@ -1,11 +1,12 @@
-import _ from 'lodash';
+import _, { forEach } from 'lodash';
 import { createSelector } from 'reselect';
 import { mapToColor } from './taskUtils';
 import { assignedTasks } from './taskListUtils';
-import { taskAdapter, taskListAdapter } from './adapters'
+import { taskAdapter, taskListAdapter, tourAdapter } from './adapters'
 
 const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
-const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
+export const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
+const tourSelectors = tourAdapter.getSelectors((state) => state.logistics.entities.tours)
 
 export const selectSelectedDate = state => state.logistics.date
 
@@ -71,7 +72,7 @@ export const makeSelectTaskListItemsByUsername = () => {
       return taskList.itemIds
         .filter(id => Object.prototype.hasOwnProperty.call(tasks, id)) // a task with this id may be not loaded yet
         .map(id => tasks[id])
-        .reduce((items, task) => {
+        .reduce((items, task, position) => {
 
           if (belongsToTour(task)) {
 
@@ -86,16 +87,16 @@ export const makeSelectTaskListItemsByUsername = () => {
                 ...task.tour,
                 '@type': 'Tour',
                 items: [
-                  task
+                  {...task, position}
                 ]
               })
             } else {
               const tour = items[tourIndex]
-              tour.items.push(task)
+              tour.items.push({...task, position})
             }
 
           } else {
-            items.push(task)
+            items.push({...task, position})
           }
 
           return items
@@ -104,3 +105,44 @@ export const makeSelectTaskListItemsByUsername = () => {
     }
   )
 }
+
+// FIXME This is recalculated all the time we change a tasks
+export const selectTasksWithTour = createSelector(selectAllTasks, 
+  (allTasks) => {
+    return allTasks.filter(t => t.tour)
+})
+
+// FIXME This is recalculated all the time we change a task
+export const selectAllTours = createSelector(
+  tourSelectors.selectAll,
+  selectTasksWithTour,
+  (allTours, tasksWithTour) => {
+    const toursWithItems = []
+    forEach(allTours, unassignedTour => {
+      let items = [];
+      forEach(unassignedTour.itemIds, itemId => {
+        let task = tasksWithTour.find(task => task['@id'] == itemId)
+        items.push(task)
+      })
+      toursWithItems.push({
+        ...unassignedTour,
+        items,
+      })
+    })
+    return toursWithItems
+  }
+)
+
+export const isTourAssigned = (tour) => tour.items.length > 0 ? _.every(tour.items, (item) => item.isAssigned) : false 
+export const isTourUnassigned = (tour) => {
+  if (tour.items.length === 0) return true
+  else return tour.items.length > 0 ? _.every(tour.items, (item) => !item.isAssigned) : false
+}
+export const tourIsAssignedTo = (tour) => tour.items.length > 0 ? tour.items[0].assignedTo : undefined
+
+// FIXME This is recalculated all the time we change a task
+export const selectUnassignedTours = createSelector(
+  selectAllTours,
+  (allTours) => _.filter(allTours, t => isTourUnassigned(t))
+)
+

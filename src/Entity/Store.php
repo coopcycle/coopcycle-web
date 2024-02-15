@@ -12,10 +12,12 @@ use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
+use AppBundle\Entity\Package;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
@@ -504,5 +506,20 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         $this->failureReasonSet = $failureReasonSet;
         return $this;
+    }
+
+    /**
+     * @SerializedName("packages")
+     * @Groups({"store_with_packages"})
+     *
+     * @return Package[]
+     */
+    public function getPackages()
+    {
+        if (null !== $this->packageSet) {
+            return $this->packageSet->getPackages()->toArray();
+        }
+
+        return [];
     }
 }

@@ -44,4 +44,12 @@ class DeliverySpreadsheetParserTest extends TestCase
             $this->translator->reveal()
         );
     }
+
+    public function testCsvWithEmptyLines()
+    {
+        $this->geocoder->geocode(null)->shouldNotBeCalled();
+
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_empty_lines.csv');
+        $deliveries = $this->parser->parse($filename);
+    }
 }

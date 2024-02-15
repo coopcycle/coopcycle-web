@@ -2,8 +2,10 @@
 
 namespace AppBundle\Sylius\Cart;
 
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityNotFoundException;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
@@ -52,7 +54,10 @@ final class RestaurantCartContext implements CartContextInterface
         ChannelContextInterface $channelContext,
         RestaurantResolver $resolver,
         AuthorizationCheckerInterface $authorizationChecker,
-        TokenStorageInterface $tokenStorage)
+        TokenStorageInterface $tokenStorage,
+        private LoggerInterface $checkoutLogger,
+        private LoggingUtils $loggingUtils
+    )
     {
         $this->session = $session;
         $this->orderRepository = $orderRepository;
@@ -83,8 +88,8 @@ final class RestaurantCartContext implements CartContextInterface
                 $this->session->remove($this->sessionKeyName);
             } else {
                 try {
-                    if (!$cart->isMultiVendor() && !$cart->getVendor()->getRestaurant()->isEnabled()
-                        && !$this->authorizationChecker->isGranted('edit', $cart->getVendor()->getRestaurant())) {
+                    if (!$cart->isMultiVendor() && !$cart->getRestaurant()->isEnabled()
+                        && !$this->authorizationChecker->isGranted('edit', $cart->getVendor())) {
                         $cart = null;
                         $this->session->remove($this->sessionKeyName);
                     }
@@ -102,7 +107,6 @@ final class RestaurantCartContext implements CartContextInterface
                     if (!$this->resolver->accept($cart)) {
                         $cart->clearItems();
                         $cart->setShippingTimeRange(null);
-                        $cart->setRestaurant($restaurant);
                     }
                 }
             }
@@ -118,6 +122,9 @@ final class RestaurantCartContext implements CartContextInterface
             }
 
             $cart = $this->orderFactory->createForRestaurant($restaurant);
+
+            $this->checkoutLogger->info(sprintf('Order (cart) object created (created_at = %s) | RestaurantCartContext | called by %s',
+                $cart->getCreatedAt()->format(\DateTime::ATOM), $this->loggingUtils->getBacktrace()));
         }
 
         if (is_null($cart->getCustomer())) {

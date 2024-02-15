@@ -11,6 +11,7 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\Checkout\Action\Validator\AddProductToCart as AssertAddProductToCart;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Cart\RestaurantResolver;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
@@ -27,6 +28,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
+use Psr\Log\NullLogger;
 use Ramsey\Uuid\Uuid;
 use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository as SyliusEntityRepository;
@@ -135,7 +137,9 @@ class RestaurantControllerTest extends WebTestCase
             $this->serializer,
             $this->restaurantFilter->reveal(),
             $eventBus->reveal(),
-            $jwtTokenManager->reveal()
+            $jwtTokenManager->reveal(),
+            new NullLogger(),
+            new NullLoggingUtils()
         );
 
         $this->controller->setContainer($container->reveal());

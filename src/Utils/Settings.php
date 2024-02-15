@@ -4,11 +4,19 @@ namespace AppBundle\Utils;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
+use AppBundle\Validator\Constraints\GoogleApiKey as AssertGoogleApiKey;
 
 class Settings
 {
+    /**
+     * @Assert\NotBlank(groups={"Default", "mandatory"})
+     */
     public $brand_name;
 
+    /**
+     * @Assert\NotBlank(groups={"Default", "mandatory"})
+     * @Assert\Email(groups={"Default", "mandatory"})
+     */
     public $administrator_email;
 
     /**
@@ -57,12 +65,16 @@ class Settings
      */
     public $stripe_livemode;
 
-    public $google_api_key;
-
+    /**
+     * @Assert\NotBlank(groups={"Default", "mandatory"})
+     */
     public $latlng;
 
     public $subject_to_vat;
 
+    /**
+     * @Assert\NotBlank(groups={"Default", "mandatory"})
+     */
     public $currency_code;
 
     /**
@@ -106,6 +118,7 @@ class Settings
      *   message="This value should not be blank."
      * )
      * @Assert\Regex("/AIza[0-9A-Za-z-_]{35}/")
+     * @AssertGoogleApiKey()
      */
     public $google_api_key_custom;
 

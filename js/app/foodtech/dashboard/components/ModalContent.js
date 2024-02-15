@@ -13,6 +13,7 @@ import {
   delayOrder,
   cancelOrder,
   fulfillOrder,
+  restoreOrder,
   toggleReusablePackagings,
   updateLoopeatFormats,
 } from '../redux/actions'
@@ -153,6 +154,12 @@ class ModalContent extends React.Component {
     this.props.fulfillOrder(order)
   }
 
+  restoreOrder() {
+    const { order } = this.props
+
+    this.props.restoreOrder(order)
+  }
+
   renderButtons() {
 
     const { loading, order } = this.props
@@ -184,6 +191,17 @@ class ModalContent extends React.Component {
           <div className="text-center text-danger">
             <span>{ this.props.t('ADMIN_DASHBOARD_ORDERS_REFUSE_REASON') }</span>
           </div>
+        </div>
+      )
+    }
+
+    if (order.state === 'cancelled') {
+
+      return (
+        <div className="d-flex flex-row justify-content-end py-4 border-top">
+          <Button onClick={ this.restoreOrder.bind(this) } loading={ loading } icon="undo" success>
+            { this.props.t('ADMIN_DASHBOARD_ORDERS_RESTORE') }
+          </Button>
         </div>
       )
     }
@@ -326,7 +344,7 @@ class ModalContent extends React.Component {
 
   render() {
 
-    const { order, itemsGroups, restaurant } = this.props
+    const { order, itemsGroups, restaurant, errorMessage } = this.props
 
     return (
       <div className="panel panel-default">
@@ -366,6 +384,7 @@ class ModalContent extends React.Component {
           { (order.restaurant.loopeatEnabled && order.reusablePackagingEnabled) && this.renderLoopeatSection() }
           <h5>{ this.props.t('ADMIN_DASHBOARD_ORDERS_TIMELINE') }</h5>
           <Timeline order={ order } />
+          { errorMessage ? <div className="alert alert-danger">{ errorMessage }</div> : null }
           { this.renderButtons() }
         </div>
       </div>
@@ -383,6 +402,7 @@ function mapStateToProps(state) {
     isLoopeatSectionOpen: state.isLoopeatSectionOpen,
     reusablePackagings: state.reusablePackagings,
     loopeatFormats: state.loopeatFormats,
+    errorMessage: state.errorMessage,
   }
 }
 
@@ -394,6 +414,7 @@ function mapDispatchToProps(dispatch) {
     delayOrder: order => dispatch(delayOrder(order)),
     cancelOrder: (order, reason) => dispatch(cancelOrder(order, reason)),
     fulfillOrder: order => dispatch(fulfillOrder(order)),
+    restoreOrder: order => dispatch(restoreOrder(order)),
     toggleReusablePackagings: order => dispatch(toggleReusablePackagings(order)),
     updateLoopeatFormats: (order, loopeatFormats) => dispatch(updateLoopeatFormats(order, loopeatFormats)),
   }

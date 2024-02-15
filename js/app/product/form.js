@@ -108,8 +108,7 @@ const getRateAmount = (el) => {
   return _.reduce(rates, (acc, rate) => acc + rate.amount, 0)
 }
 
-document.querySelectorAll('[data-tax-categories]').forEach(el => {
-
+const attachPricesAndTaxEventListeners = (el) => {
   const taxIncl = JSON.parse(el.dataset.taxIncl)
 
   const taxIncludedEl = document.querySelector(el.dataset.included)
@@ -162,7 +161,9 @@ document.querySelectorAll('[data-tax-categories]').forEach(el => {
 
     taxExcludedEl.value = numbro(taxExcluded / 100).format({ mantissa: 2 })
   })
-})
+}
+
+document.querySelectorAll('[data-tax-categories]').forEach(el => attachPricesAndTaxEventListeners(el))
 
 const SET_IMAGES = '@product/SET_IMAGES'
 const setImages = createAction(SET_IMAGES)
@@ -200,3 +201,30 @@ if (imageEditor && formData) {
     })
   })
 }
+
+const businessRestaurantGroupPricesAddButton = document.querySelector('#product_businessRestaurantGroupPrices_add')
+
+if (businessRestaurantGroupPricesAddButton) {
+  businessRestaurantGroupPricesAddButton.addEventListener('click', function() {
+    const listTarget = $(this).attr('data-target')
+    let newWidget = $(this).attr('data-prototype')
+    const counter = $(listTarget).children().length
+
+    newWidget = newWidget.replace(/__price__/g, counter)
+
+    $(newWidget).appendTo($(listTarget))
+
+    const widgetDoc = document.querySelector(`#${$(newWidget).attr('id')}`)
+    attachPricesAndTaxEventListeners(widgetDoc.querySelector('[data-tax-categories]'))
+  })
+}
+
+$("#product_businessRestaurantGroupPrices").on('click', '[data-delete]', function() {
+  const target = $($(this).attr('data-target'))
+
+  if (target.length === 0) {
+    return
+  }
+
+  target.remove()
+})

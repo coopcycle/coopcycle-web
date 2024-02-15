@@ -58,3 +58,11 @@ services:
   Twig\Extra\Markdown\MarkdownExtension:
     tags:
       - { name: twig.extension }
+
+  AppBundle\Twig\SettingResolver:
+    arguments:
+      $cache: '@craue_config_cache_provider'
+
+  AppBundle\Twig\SyliusVariantResolver:
+    arguments:
+      $productVariantResolver: '@coopcycle.sylius.product_variant_resolver.lazy'

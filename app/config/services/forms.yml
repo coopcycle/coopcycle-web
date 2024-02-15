@@ -114,12 +114,15 @@ services:
     arguments:
       $productAttributeRepository: '@sylius.repository.product_attribute'
       $productAttributeValueFactory: '@sylius.factory.product_attribute_value'
+      $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
       $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
+      $businessAccountEnabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
     tags: [ form.type ]
 
   AppBundle\Form\Checkout\CheckoutAddressType:
     arguments:
       $nonProfitsEnabled: '%env(bool:NONPROFITS_ENABLED)%'
+      $enBoitLePlatUrl: '%env(EN_BOITE_LE_PLAT_URL)'
     tags: [ form.type ]
 
   AppBundle\Form\Checkout\CheckoutCustomerType:
@@ -194,6 +197,7 @@ services:
   AppBundle\Form\Type\PriceWithTaxType:
     tags: [ form.type ]
     arguments:
+      $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
       $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
 
   AppBundle\Form\CustomizeType:
@@ -230,6 +234,9 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\HubType:
+    tags: [ form.type ]
+
+  AppBundle\Form\BusinessRestaurantGroupType:
     tags: [ form.type ]
 
   AppBundle\Form\Checkout\ChargeStripeSourceType:
@@ -269,4 +276,16 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\Restaurant\LoopeatType:
+    tags: [ form.type ]
+
+  AppBundle\Form\BusinessAccountType:
+    tags: [ form.type ]
+
+  AppBundle\Form\BusinessAccountRegistrationForm:
+    tags: [ form.type ]
+
+  AppBundle\Form\LocalBusinessWithMenuType:
+    tags: [ form.type ]
+
+  AppBundle\Form\BusinessRestaurantGroupPriceType:
     tags: [ form.type ]

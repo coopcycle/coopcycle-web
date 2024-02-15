@@ -30,7 +30,13 @@ export default function(el, options) {
     thumbnailWidth: width,
     thumbnailHeight: height,
     params: options.dropzone.params,
-    dictDefaultMessage: i18n.t('DROPZONE_DEFAULT_MESSAGE'),
+    dictDefaultMessage: `
+      <span>
+        <span class="d-block text-center mb-2">
+          <img src="https://placehold.co/${Math.round(width / 6)}x${Math.round(height / 6)}?text=${options.imageType ? (options.imageType + '%0A') : ''}${width}x${height}" />
+        </span>
+        <span>${i18n.t('DROPZONE_DEFAULT_MESSAGE')}</span>
+      </span>`,
     dictRemoveFile: i18n.t('DROPZONE_REMOVE_FILE'),
     addRemoveLinks,
     init: function() {
