@@ -3,6 +3,10 @@ import _ from 'lodash'
 
 import { totalTaxExcluded } from '../../utils/tax'
 
+export const selectIsPlayer = state => state.isPlayer
+
+export const selectCart = state => state.cart
+
 export const selectIsDeliveryEnabled = createSelector(
   state => state.cart.vendor.fulfillmentMethods,
   (fulfillmentMethods) => _.includes(fulfillmentMethods, 'delivery')
@@ -93,7 +97,8 @@ export const selectVariableCustomerAmountEnabled = createSelector(
 export const selectIsOrderingAvailable = createSelector(
   state => state.cart,
   state => state.times,
-  (cart, { range, ranges }) => {
+  selectIsPlayer,
+  (cart, { range, ranges }, isPlayer) => {
 
     const shippingTimeRange = cart.shippingTimeRange || range
 
@@ -101,7 +106,7 @@ export const selectIsOrderingAvailable = createSelector(
       return false
     }
 
-    return true
+    return !isPlayer
   }
 )
 
