@@ -3,11 +3,9 @@ html {
 }
 
 body {
-  color: $text-base;
 }
 
 html, body {
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   min-height: 100%;
   @media screen and (min-width: $screen-md-min) {
     height: 100%;

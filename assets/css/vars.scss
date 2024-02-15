@@ -9,8 +9,6 @@ $main-blue-dark: darken($main-blue, 20%);
 $orange: #d35400;
 $light-orange: lighten($orange, 33.3333%);
 
-$text-base: #2B2B2B; // tab/tab-text
-
 $light-gray: #f5f5f5; // Colors/Color Grayscale/grayscale-50
 $gray-100: #E3E3E3; // Colors/Color Grayscale/grayscale-100
 $gray: #ddd;
@@ -26,16 +24,43 @@ $green: #558900;
 
 $text-green: #0DA136; // alert/alert-text-green
 
+
+$brand-primary: $main-blue;
+
 $primary-default: #E4022D;
 $primary-desactivated: #FF7A94;
+
+
+// Scaffolding
+
+$text-color: #2B2B2B; // tab/tab-text
+
+// Typography
+
+$font-family-base: "Open Sans", Helvetica, Arial, sans-serif;
+
+// Components
+
+$bs-base-margin: 20px;
+
+$bs-input-height: 34px;
+
+// Length
+$base-margin-l: $bs-base-margin * 2;
+$base-margin: $bs-base-margin;
+$base-margin-s: $base-margin * 0.5;
+$base-margin-xs: $base-margin-s * 0.5;
 
 $alert-stroke-blue: #CEDFFF;
 $alert-fill-blue: #EBF1FF;
 $alert-text-blue: #3D7DFA;
 
-// Bootstrap variable
-$bs-input-height: 34px;
-$bs-base-margin: 20px;
+$modal-title-padding: 1rem;
+$modal-inner-padding: 1rem;
+$modal-padding-md: 1.5rem;
+
+
+// Media queries breakpoints
 
 // Overriding breakpoints to resemble the default v5 Bootstrap breakpoints
 // could be removed after the migration to Bootstrap v5
@@ -44,13 +69,3 @@ $screen-md-min: 768px;
 //$screen-lg-min: 992px; // v3: 1200px; TODO; replace usages with $screen-xl-min; and uncomment
 $screen-xl-min: 1200px;
 $screen-xxl-min: 1400px;
-
-// Length
-$base-margin-l: $bs-base-margin * 2;
-$base-margin: $bs-base-margin;
-$base-margin-s: $base-margin * 0.5;
-$base-margin-xs: $base-margin-s * 0.5;
-
-$modal-title-padding: 1rem;
-$modal-inner-padding: 1rem;
-$modal-padding-md: 1.5rem;
