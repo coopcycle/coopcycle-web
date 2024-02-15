@@ -196,7 +196,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 
   &__items {
 
-    margin: 15px 0;
+    margin: 0 0 1rem 0;
     padding: 0 0 15px 0;
     border-bottom: 1px solid #eeeeee;
 
@@ -214,26 +214,9 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     &__content {
       display: flex;
       justify-content: space-between;
-      &__remove {
-        a {
-          padding-right: 15px;
-          color: #cccccc;
-          &:hover,
-          &:focus {
-            text-decoration: none;
-          }
-          &:hover {
-            color: darken(#cccccc, 10%);
-          }
-        }
-      }
-      &__left {
-        min-width: 60px;
-        max-width: 60px;
-      }
       &__body {
         flex-grow: 1;
-        padding: 0 10px;
+        padding-right: 10px;
       }
       &__right {
         text-align: right;
@@ -242,26 +225,16 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
         }
       }
     }
+    &__name {
+      font-weight: bold;
+    }
     &__quantity {
       display: flex;
-      flex-direction: row;
       align-items: center;
-      justify-content: space-between;
-      &__decrement,
-      &__increment {
-        border: none;
-        outline: none;
-        background-color: transparent;
-        &[disabled] {
-          cursor: $cursor-disabled;
-          @include opacity(.65);
-        }
-      }
-      &__decrement {
-        padding: 0 5px 0 0;
-      }
-      &__increment {
-        padding: 0 0 0 5px;
+      margin-left: -8px; //to compensate for padding around the button
+
+      &__value {
+        padding: 0 8px;
       }
     }
   }

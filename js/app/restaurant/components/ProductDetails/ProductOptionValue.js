@@ -1,5 +1,9 @@
 import React from 'react'
 import { getValuesRange, useProductOptions } from './useProductOptions'
+import {
+  DecrementQuantityButton,
+  IncrementQuantityButton,
+} from '../ChangeQuantityButton'
 
 const OptionValueLabel = ({ option, optionValue }) => (
   <>
@@ -64,14 +68,10 @@ export const AdditionalOptionValue = ({
         }}>
         <OptionValueLabel option={option} optionValue={optionValue}/>
       </label>
-      <button
-        className="quantity-decrement"
-        type="button"
-        onClick={() => {
+      <DecrementQuantityButton
+        onClick={ () => {
           decrementValueQuantity(option, optionValue)
-        }}>
-        <div>-</div>
-      </button>
+        } } />
       <input
         name={`options[${realIndex}][quantity]`}
         type="number"
@@ -82,14 +82,10 @@ export const AdditionalOptionValue = ({
           setValueQuantity(option, optionValue, e.currentTarget.value)
         }}
         {...inputProps} />
-      <button
-        className="quantity-increment"
-        type="button"
-        onClick={() => {
+      <IncrementQuantityButton
+        onClick={ () => {
           incrementValueQuantity(option, optionValue)
-        }}>
-        <div>+</div>
-      </button>
+        } } />
     </div>
   )
 }

@@ -40,10 +40,6 @@ shouldComponentUpdate(nextProps, nextState) {
     this.props.updateItemQuantity(itemID, quantity)
   }
 
-  _onRemoveItem(itemID) {
-    this.props.removeItem(itemID)
-  }
-
   renderItems(items) {
 
     if (this.state.tabSelected &&
@@ -66,8 +62,7 @@ shouldComponentUpdate(nextProps, nextState) {
             quantity={ item.quantity }
             adjustments={ item.adjustments }
             showPricesTaxExcluded={ this.props.showPricesTaxExcluded }
-            onChangeQuantity={ quantity => this._onChangeQuantity(item.id, quantity) }
-            onClickRemove={ () => this._onRemoveItem(item.id) } />
+            onChangeQuantity={ quantity => this._onChangeQuantity(item.id, quantity) } />
         )) }
       </div>
     )

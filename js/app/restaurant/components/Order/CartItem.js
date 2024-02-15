@@ -2,6 +2,10 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import { totalTaxExcluded } from '../../../utils/tax'
+import {
+  DecrementQuantityButton,
+  IncrementQuantityButton,
+} from '../ChangeQuantityButton'
 
 const truncateText = text => {
   if (text.length > 24) {
@@ -44,38 +48,30 @@ class CartItem extends React.Component {
 
   render() {
 
-    const btnProps = {
-      disabled: this.props.loading
-    }
-
     return (
       <div className="cart__item">
         <div className="cart__item__content">
-          <div className="cart__item__content__remove">
-            <a href="#" onClick={ this.props.onClickRemove }>
-              <i className="fa fa-lg fa-times"></i>
-            </a>
-          </div>
-          <div className="cart__item__content__left">
+          <div className="cart__item__content__body">
+            <span className="cart__item__name">{ truncateText(this.props.name) }</span>
+            { this.renderAdjustments() }
             <div className="cart__item__quantity">
-              <button type="button" className="cart__item__quantity__decrement"
-                onClick={ this.decrement.bind(this) } { ...btnProps }>
-                <i className="fa fa-lg fa-minus-circle"></i>
-              </button>
-              <span>{ this.props.quantity }</span>
-              <button type="button" className="cart__item__quantity__increment"
-                onClick={ this.increment.bind(this) } { ...btnProps }>
-                <i className="fa fa-lg fa-plus-circle"></i>
-              </button>
+              <DecrementQuantityButton
+                disabled={ this.props.loading }
+                onClick={ this.decrement.bind(this) }
+              />
+              <span className="cart__item__quantity__value">{ this.props.quantity }</span>
+              <IncrementQuantityButton
+                disabled={ this.props.loading }
+                onClick={ this.increment.bind(this) } />
             </div>
           </div>
-          <div className="cart__item__content__body">
-            <span>{ truncateText(this.props.name) }</span>
-            { this.renderAdjustments() }
-          </div>
           <div className="cart__item__content__right">
-            { this.props.showPricesTaxExcluded && (<span>{ (totalTaxExcluded(this.props) / 100).formatMoney() }</span>) }
-            { !this.props.showPricesTaxExcluded && (<span>{ (this.props.total / 100).formatMoney() }</span>) }
+            { this.props.showPricesTaxExcluded && (
+              <span>
+                { (totalTaxExcluded(this.props) / 100).formatMoney() }
+              </span>) }
+            { !this.props.showPricesTaxExcluded &&
+              (<span>{ (this.props.total / 100).formatMoney() }</span>) }
           </div>
         </div>
       </div>
@@ -83,7 +79,7 @@ class CartItem extends React.Component {
   }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
 
   return {
     loading: state.isFetching,
