@@ -5,12 +5,10 @@ import Sticky from 'react-stickynode'
 import classNames from 'classnames'
 import { Switch } from 'antd'
 
-import RestaurantModal from '../RestaurantModal'
 import CartItems from './CartItems'
 import CartHeading from './CartHeading'
 import CartTotal from './CartTotal'
 import CartButton from './CartButton'
-import LoopeatModal from '../LoopeatModal'
 
 import {sync, toggleReusablePackaging} from '../../redux/actions'
 import {
@@ -20,8 +18,6 @@ import {
   selectReusablePackagingEnabled,
 } from '../../redux/selectors'
 import InvitePeopleToOrderButton from './InvitePeopleToOrderButton'
-import InvitePeopleToOrderModal from '../InvitePeopleToOrderModal'
-import SetGuestCustomerEmailModal from '../SetGuestCustomerEmailModal'
 import FulfillmentDetails from './FulfillmentDetails'
 
 class Cart extends Component {
@@ -80,10 +76,6 @@ class Cart extends Component {
             </div>
           </div>
         </div>
-        <RestaurantModal />
-        <InvitePeopleToOrderModal />
-        <SetGuestCustomerEmailModal />
-        <LoopeatModal />
       </Sticky>
     )
   }
