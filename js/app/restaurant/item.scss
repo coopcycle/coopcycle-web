@@ -42,7 +42,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 }
 
 #cart {
-  margin-top: ($base-margin + 20px);
+  margin-top: $base-margin;
 }
 
 .sticky-outer-wrapper.active {
@@ -54,7 +54,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 }
 
 // @see https://github.com/yahoo/react-stickynode/issues/9#issuecomment-173039715
-@media (max-width: $screen-xs-max){
+@media (max-width: $screen-md-max){
   .sticky-inner-wrapper {
     position: static !important;
     transform: none !important;
@@ -151,7 +151,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 .cart-heading__right {
   display: none;
 
-  @media (max-width: $screen-xs-max) {
+  @media (max-width: $screen-md-max) {
     display: block;
     right: $panel-heading-padding-horizontal;
   }
@@ -159,7 +159,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 
 .cart-wrapper {
 
-  @media (max-width: $screen-xs-max) {
+  @media (max-width: $screen-md-max) {
     display: flex;
     flex-direction: column;
   }
@@ -170,7 +170,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   &__messages {
     text-align: center;
   }
-  @media (max-width: $screen-xs-max) {
+  @media (max-width: $screen-md-max) {
     padding: 0;
     cursor: pointer;
 
@@ -186,7 +186,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     }
   }
 
-  @media (max-width: $screen-xs-max) {
+  @media (max-width: $screen-md-max) {
     > .panel-body {
       flex: 1;
       height: calc(100% - #{$navbar-height});
@@ -195,14 +195,14 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 }
 
 .cart-wrapper--show {
-  @media (max-width: $screen-xs-max) {
+  @media (max-width: $screen-md-max) {
     transform: translateY(0);
   }
 }
 
 .cart {
 
-  @media (max-width: $screen-xs-max) {
+  @media (max-width: $screen-md-max) {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -217,7 +217,7 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 
     max-height: 200px;
     overflow-y: auto;
-    @media (max-width: $screen-xs-max) {
+    @media (max-width: $screen-md-max) {
       max-height: inherit;
     }
   }
