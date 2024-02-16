@@ -148,10 +148,11 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
 
       var newTourItems = [ ...tour.items ]
     
-        // Reorder tasks inside a tour -> remove tasks that were already there
-        if (source.droppableId === destination.droppableId) {
-          _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t['@id']))
-        }
+      // Reorder tasks inside a tour
+      if (source.droppableId === 'tour:' + tourId && destination.droppableId === 'tour:' + tourId) {
+        const [ removed ] = newTourItems.splice(source.index, 1);
+        newTourItems.splice(destination.index, 0, removed)
+      }
 
         Array.prototype.splice.apply(newTourItems,
           Array.prototype.concat([ destination.index, 0 ], selectedTasks))  
