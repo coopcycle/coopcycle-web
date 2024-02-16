@@ -21,12 +21,10 @@ class BusinessAccountRegistrationFlow extends FormFlow
 				'form_type' => $formType,
 				'skip' => function($estimatedCurrentStepNumber, FormFlowInterface $flow) {
 
-					if ($estimatedCurrentStepNumber === 1) {
-						$data = $flow->getFormData();
-						$user = $data->user;
-						if (null !== $user->getId() && $user->isEnabled() && $user === $this->security->getUser()) {
-							return true;
-						}
+					$data = $flow->getFormData();
+					$user = $data->user;
+					if (null !== $user->getId() && $user->isEnabled() && $user === $this->security->getUser()) {
+						return true;
 					}
 
 					return false;
