@@ -132,7 +132,7 @@
             data-credits-count-cents="{{ loopeat_context.creditsCountCents|json_encode|e('html_attr') }}"
             data-required-amount="{{ loopeat_context.requiredAmount|json_encode|e('html_attr') }}"
             data-containers-count="{{ loopeat_context.containersCount|json_encode|e('html_attr') }}"
-            data-oauth-url="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount)|e('html_attr') }}"
+            data-oauth-url="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount, true)|e('html_attr') }}"
           >
             <i class="fa fa-sliders mr-1"></i>
             <span>{{ (loopeat_trans_prefix ~ '.manage_deposit')|trans }}</span>
