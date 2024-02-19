@@ -13,16 +13,16 @@ use AppBundle\Entity\TimeSlot;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\SettingsManager;
 use Carbon\Carbon;
-use DBShenker\DBShenkerOptions;
-use DBShenker\DBShenkerSync;
-use DBShenker\DBShenker;
-use DBShenker\DTO\CommunicationMean;
-use DBShenker\DTO\GR7;
-use DBShenker\DTO\Mesurement;
-use DBShenker\DTO\NameAndAddress;
-use DBShenker\Enum\CommunicationMeanType;
-use DBShenker\Enum\NameAndAddressType;
-use DBShenker\Parser\DBShenkerScontrParser;
+use DBSchenker\DBSchenkerOptions;
+use DBSchenker\DBSchenkerSync;
+use DBSchenker\DBSchenker;
+use DBSchenker\DTO\CommunicationMean;
+use DBSchenker\DTO\GR7;
+use DBSchenker\DTO\Mesurement;
+use DBSchenker\DTO\NameAndAddress;
+use DBSchenker\Enum\CommunicationMeanType;
+use DBSchenker\Enum\NameAndAddressType;
+use DBSchenker\Parser\DBSchenkerScontrParser;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Adapter\Ftp;
@@ -56,6 +56,9 @@ class SyncTransportersCommand extends Command {
     {
         parent::__construct();
         $pos = explode(',', $this->settingsManager->get('latlng') ?? '');
+        if (count($pos) !== 2) {
+            throw new \Exception('Invalid latlng setting');
+        }
         $this->defaultCoordinates = new GeoCoordinates($pos[0], $pos[1]);
         $repo = $this->entityManager->getRepository(Store::class);
 
@@ -101,13 +104,13 @@ class SyncTransportersCommand extends Command {
             'ssl' => false
         ]));
 
-        $db_opts = new DBShenkerOptions(
+        $db_opts = new DBSchenkerOptions(
             "CoopX", "SIRET_COOP",
-            "DBShenkerTransporter", "SIRET_TRANSPORTER",
+            "DBSchenkerTransporter", "SIRET_TRANSPORTER",
             $filesystem, "coopx"
         );
 
-        $sync = new DBShenkerSync($db_opts);
+        $sync = new DBSchenkerSync($db_opts);
 
         // Each sync can contain multiple files
         // Each file can contain multiple messages
@@ -120,19 +123,19 @@ class SyncTransportersCommand extends Command {
 
         $count = 0;
         foreach ($sync->pull() as $content) {
-            $messages = DBShenker::parse($content);
+            $messages = DBSchenker::parse($content);
             $filename = sprintf(
                 "%s_%s.%s.edi", "dbshenker",
                 date('Y-m-d_His'), uniqid()
             );
 
             if (!$this->dryRun) {
-                $this->edifactFs->write($filename, $content);
+                //$this->edifactFs->write($filename, $content);
             }
 
 
             foreach ($messages as $tasks) {
-                if (is_object($tasks) && $tasks instanceof DBShenkerScontrParser) {
+                if (is_object($tasks) && $tasks instanceof DBSchenkerScontrParser) {
                     foreach ($tasks->getTasks() as $task) {
                         $this->importTask($task, $filename);
                         if($count > 5) {
@@ -150,7 +153,7 @@ class SyncTransportersCommand extends Command {
     }
 
     // Here we need to check if the address is conform and fillable
-    // Translate DBShenker entity into CC entity
+    // Translate DBSchenker entity into CC entity
     // Save EDIFACT message
     private function importTask(GR7 $task, string $filename): void {
         if ($this->output->isVerbose()) {
@@ -166,7 +169,7 @@ class SyncTransportersCommand extends Command {
 
         $edi = new EDIFACTMessage();
         $edi->setMessageType("SCONTR");
-        $edi->setTransporter(EDIFACTMessage::TRANSPORTER_DBSHENKER);
+        $edi->setTransporter(EDIFACTMessage::TRANSPORTER_DBSCHENKER);
         $edi->setDirection(EDIFACTMessage::DIRECTION_INBOUND);
         $edi->setReference($task->getId());
         $edi->setEdifactFile($filename);
@@ -180,7 +183,7 @@ class SyncTransportersCommand extends Command {
             throw new \Exception("Cannot handle multiple recipients");
         }
         $nad = $nad[0];
-        $address = $this->DBShenkerToCCAddress($nad);
+        $address = $this->DBSchenkerToCCAddress($nad);
 
         $imported_from = sprintf(
             "%s\n%s\n\n%s\n",
@@ -228,6 +231,7 @@ class SyncTransportersCommand extends Command {
         $delivery->setDropoffRange($this->startOfDay(), $this->endOfDay());
 
         if (!$this->dryRun) {
+            $this->entityManager->persist($edi);
             $this->entityManager->persist($pickup);
             $this->entityManager->persist($CCTask);
             $this->entityManager->persist($delivery);
@@ -253,7 +257,7 @@ class SyncTransportersCommand extends Command {
         return $task;
     }
 
-    private function DBShenkerToCCAddress(NameAndAddress $nad): Address
+    private function DBSchenkerToCCAddress(NameAndAddress $nad): Address
     {
         $address = $this->geocoder->geocode($nad->getAddress());
 
@@ -267,7 +271,7 @@ class SyncTransportersCommand extends Command {
         $address->setCompany($nad->getAddressLabel());
         $address->setName($nad->getAddressLabel());
         $address->setContactName($nad->getContactName());
-        $address->setTelephone($this->DBShenkerToCCPhone($nad->getCommunicationMeans()));
+        $address->setTelephone($this->DBSchenkerToCCPhone($nad->getCommunicationMeans()));
 
         return $address;
     }
@@ -275,7 +279,7 @@ class SyncTransportersCommand extends Command {
     /**
      * @param array<CommunicationMean> $communicationMeans
      */
-    private function DBShenkerToCCPhone(array $communicationMeans): ?PhoneNumber
+    private function DBSchenkerToCCPhone(array $communicationMeans): ?PhoneNumber
     {
         $phone = collect($communicationMeans)
         ->filter(fn(CommunicationMean $c) => $c->getType() === CommunicationMeanType::PHONE)

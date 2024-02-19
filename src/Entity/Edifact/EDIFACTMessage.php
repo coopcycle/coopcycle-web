@@ -10,10 +10,13 @@ class EDIFACTMessage
 {
     use Timestampable;
 
-    const TRANSPORTER_DBSHENKER = 'DBSHENKER';
+    const TRANSPORTER_DBSCHENKER = 'DBSCHENKER';
 
     const DIRECTION_INBOUND = 'INBOUND';
     const DIRECTION_OUTBOUND = 'OUTBOUND';
+
+    const MESSAGE_TYPE_SCONTR = 'SCONTR';
+    const MESSAGE_TYPE_REPORT = 'REPORT';
 
     private int $id;
 

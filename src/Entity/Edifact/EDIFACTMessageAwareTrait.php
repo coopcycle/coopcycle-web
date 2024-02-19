@@ -2,14 +2,14 @@
 
 namespace AppBundle\Entity\Edifact;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 trait EDIFACTMessageAwareTrait
 {
 
     protected $edifactMessages;
 
-    public function getEdifactMessages(): ArrayCollection
+    public function getEdifactMessages(): Collection
     {
         return $this->edifactMessages;
     }
