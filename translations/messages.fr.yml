@@ -607,7 +607,7 @@ form.checkout_address.reusable_packaging.loopeat.add: Ajouter %missing% crédits
 form.checkout_address.reusable_packaging.loopeat.manage_account: Gérer mon compte zéro déchet
 form.checkout_address.reusable_packaging.loopeat.website: Site Internet %name%
 form.checkout_address.reusable_packaging.loopeat.how_it_works: Comment ça marche ?
-form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activez l'option zéro déchet pour bénéficier d'un service de boîtes consignées et lavables sur votre commande
+form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activez l'option zéro déchet pour bénéficier d'un service de boîtes consignées sur votre commande
 form.checkout_address.reusable_packaging.loopeat.connect: Veuillez créer ou connecter votre compte %name% à %brand_name% pour régler votre consigne, ou désactivez l'option zéro déchet.
 form.checkout_address.reusable_packaging.loopeat.connect_account: Se connecter à %name%
 form.checkout_address.reusable_packaging.loopeat.add_credits: Créditer ma cagnotte
