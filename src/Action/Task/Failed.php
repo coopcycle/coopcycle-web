@@ -20,7 +20,7 @@ class Failed extends Base
                 $task,
                 $this->getNotes($request),
                 $this->getContactName($request),
-                $this->getReason($request)
+                $this->getReason($request) // @deprecated failure must be set using `PUT /api/tasks/:id/incidents`
             );
         } catch (PreviousTaskNotCompletedException $e) {
             throw new BadRequestHttpException($e->getMessage());

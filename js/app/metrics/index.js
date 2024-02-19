@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import cubejs from '@cubejs-client/core';
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin, ConfigProvider, DatePicker, Select } from 'antd';
+import 'chart.js/auto'; // ideally we should only import the component that we need: https://react-chartjs-2.js.org/docs/migration-to-v4/#tree-shaking
 import { Bar } from 'react-chartjs-2';
 import moment from 'moment'
 

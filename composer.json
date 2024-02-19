@@ -140,7 +140,8 @@
         "craue/formflow-bundle": "^3.6",
         "proj4php/proj4php": "^2.0",
         "mtdowling/jmespath.php": "^2.7",
-        "php-units-of-measure/php-units-of-measure": "^2.1"
+        "php-units-of-measure/php-units-of-measure": "^2.1",
+        "symfony/ux-react": "2.10"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

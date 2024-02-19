@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { QueryBuilder } from '@cubejs-client/playground';
 // import the antd styles from the `@cubejs-client/playground` package as it overrides some variables
-import '@cubejs-client/playground/lib/antd.min.css';
+import '@cubejs-client/playground/public/antd.min.css';
 // alternatively you can use the default antd styles
 // import 'antd/dist/antd.min.css';
 

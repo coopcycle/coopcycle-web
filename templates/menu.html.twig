@@ -32,7 +32,7 @@
         {% endif %}
       </ul>
 
-      <div class="navbar-form navbar-left" id="search-navbar" style="position: relative;">
+      <div class="navbar-form navbar-left" style="position: relative;" {{ react_component('NavBarSearch') }}>
         <div class="form-group">
           <input type="text" class="form-control" placeholder="{{ 'basics.search'|trans }}">
         </div>
@@ -74,11 +74,11 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         {% if coopcycle_setting('foodtech_enabled') %}
-        <li id="cart-top" data-url="{{ path('cart_json') }}" data-href="{{ path('order') }}">
-          <a href="#">
-            <i class="fa fa-shopping-basket mr-2" aria-hidden="true"></i>
-            <span>{{ 0|price_format }}</span>
-          </a>
+        <li {{ react_component('NavBarCart', { 'url': path('cart_json'), 'href': path('order') }) }}>
+            <a href="#">
+              <i class="fa fa-shopping-basket mr-2" aria-hidden="true"></i>
+              <span>{{ 0|price_format }}</span>
+            </a>
         </li>
         {% endif %}
         {% if app.user %}
