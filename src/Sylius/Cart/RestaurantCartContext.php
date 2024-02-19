@@ -13,8 +13,8 @@ use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Security;
 
 final class RestaurantCartContext implements CartContextInterface
 {
@@ -36,7 +36,7 @@ final class RestaurantCartContext implements CartContextInterface
      */
     private AuthorizationCheckerInterface $authorizationChecker;
 
-    private TokenStorageInterface $tokenStorage;
+    private Security $security;
 
     /** @var OrderInterface|null */
     private $cart;
@@ -54,7 +54,7 @@ final class RestaurantCartContext implements CartContextInterface
         ChannelContextInterface $channelContext,
         RestaurantResolver $resolver,
         AuthorizationCheckerInterface $authorizationChecker,
-        TokenStorageInterface $tokenStorage,
+        Security $security,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils
     )
@@ -66,7 +66,7 @@ final class RestaurantCartContext implements CartContextInterface
         $this->channelContext = $channelContext;
         $this->resolver = $resolver;
         $this->authorizationChecker = $authorizationChecker;
-        $this->tokenStorage = $tokenStorage;
+        $this->security = $security;
     }
 
     /**
@@ -127,9 +127,10 @@ final class RestaurantCartContext implements CartContextInterface
                 $cart->getCreatedAt()->format(\DateTime::ATOM), $this->loggingUtils->getBacktrace()));
         }
 
-        if (is_null($cart->getCustomer())) {
-            $token = $this->tokenStorage->getToken();
-            $cart->setCustomer($token?->getUser()?->getCustomer());
+        if (null === $cart->getCustomer()) {
+            if ($user = $this->security->getUser()) {
+                $cart->setCustomer($user->getCustomer());
+            }
         }
 
         $this->cart = $cart;

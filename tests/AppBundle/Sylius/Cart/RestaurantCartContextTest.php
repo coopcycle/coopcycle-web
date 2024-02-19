@@ -20,8 +20,8 @@ use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Security;
 
 class RestaurantCartContextTest extends TestCase
 {
@@ -44,7 +44,7 @@ class RestaurantCartContextTest extends TestCase
         $this->channelContext = $this->prophesize(ChannelContextInterface::class);
         $this->restaurantResolver = $this->prophesize(RestaurantResolver::class);
         $this->authorizationChecker = $this->prophesize(AuthorizationCheckerInterface::class);
-        $this->tokenStorage = $this->prophesize(TokenStorageInterface::class);
+        $this->security = $this->prophesize(Security::class);
 
         $this->webChannel = $this->prophesize(ChannelInterface::class);
         $this->webChannel->getCode()->willReturn('web');
@@ -59,7 +59,7 @@ class RestaurantCartContextTest extends TestCase
             $this->channelContext->reveal(),
             $this->restaurantResolver->reveal(),
             $this->authorizationChecker->reveal(),
-            $this->tokenStorage->reveal(),
+            $this->security->reveal(),
             new NullLogger(),
             new NullLoggingUtils()
         );
