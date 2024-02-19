@@ -36,6 +36,7 @@ class Order extends Component {
           <div className={ classNames({
             'panel': true,
             'panel-default': true,
+            'panel-heading-wrapper': true,
           }) }>
             <CartHeading />
           </div>

@@ -126,22 +126,14 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 
 .cart-wrapper {
 
+  height: 100%;
+  margin: 0;
+
   @media (max-width: $screen-md-max) {
     background-color: $body-bg;
     display: flex;
     flex-direction: column;
-  }
-
-  height: 100%;
-  margin: 0;
-  padding: 0 1rem;
-
-  &__messages {
-    text-align: center;
-  }
-  @media (max-width: $screen-md-max) {
-    padding: 0;
-    cursor: pointer;
+    padding: 0 1rem;
 
     position: fixed;
     bottom: 0;
@@ -149,16 +141,13 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     right: 0;
     transform: translateY(calc(100% - #{$navbar-height}));
     transition: transform 0.4s;
-
-    &__messages {
-      display: none;
-    }
   }
 
-  @media (max-width: $screen-md-max) {
-    > .panel-body {
-      flex: 1;
-      height: calc(100% - #{$navbar-height});
+  &__messages {
+    text-align: center;
+
+    @media (max-width: $screen-md-max) {
+      display: none;
     }
   }
 
@@ -170,6 +159,12 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
 
   .panel-body {
     padding: 2rem;
+  }
+
+  .panel-heading-wrapper {
+    @media (max-width: $screen-md-max) {
+      cursor: pointer;
+    }
   }
 }
 
