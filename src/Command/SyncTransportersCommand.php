@@ -22,6 +22,10 @@ use DBSchenker\DTO\Mesurement;
 use DBSchenker\DTO\NameAndAddress;
 use DBSchenker\Enum\CommunicationMeanType;
 use DBSchenker\Enum\NameAndAddressType;
+use DBSchenker\Enum\ReportSituation;
+use DBSchenker\Enum\ReportReason;
+use DBSchenker\Generator\DBSchenkerInterchange;
+use DBSchenker\Generator\DBSchenkerReport;
 use DBSchenker\Parser\DBSchenkerScontrParser;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -82,7 +86,7 @@ class SyncTransportersCommand extends Command {
     protected function configure(): void
     {
         $this->setName('coopcycle:transporters:sync')
-        ->setDescription('Synchronizes transporters with the API');
+        ->setDescription('Synchronizes transporters');
 
         $this->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Dry run mode');
     }
@@ -104,13 +108,13 @@ class SyncTransportersCommand extends Command {
             'ssl' => false
         ]));
 
-        $db_opts = new DBSchenkerOptions(
+        $opts = new DBSchenkerOptions(
             "CoopX", "SIRET_COOP",
             "DBSchenkerTransporter", "SIRET_TRANSPORTER",
             $filesystem, "coopx"
         );
 
-        $sync = new DBSchenkerSync($db_opts);
+        $sync = new DBSchenkerSync($opts);
 
         // Each sync can contain multiple files
         // Each file can contain multiple messages
@@ -121,11 +125,57 @@ class SyncTransportersCommand extends Command {
         }
         $output->writeln("Start syncing...");
 
+        //$this->importAllTasks($sync);
+        $this->sendReports($sync, $opts);
+
+        return 0;
+    }
+
+    private function sendReports(DBSchenkerSync $sync, DBSchenkerOptions $opts): void
+    {
+        /** @var EDIFACTMessageRepository $repo */
+        $repo = $this->entityManager->getRepository(EDIFACTMessage::class);
+        $unsynced = $repo->getUnsynced();
+        if (count($unsynced) === 0) {
+            $this->output->writeln("No messages to send");
+            return;
+        }
+        $reports = array_map(fn(EDIFACTMessage $m) => $this->generateReport($m, $opts), $unsynced);
+        $out = new DBSchenkerInterchange($opts);
+        foreach ($reports as $report) {
+            $out->addGenerator($report);
+        }
+        $content = $out->generate();
+        $filename = sprintf(
+                "%s_%s-REPORT.%s.edi", "dbschenker",
+                date('Y-m-d_His'), uniqid()
+            );
+        echo $content;
+        $this->edifactFs->write($filename, $content);
+        $sync->push($content);
+        $ids = array_map(fn(EDIFACTMessage $m) => $m->getId(), $unsynced);
+        $repo->setSynced($ids, $filename);
+    }
+
+    private function generateReport(EDIFACTMessage $message, DBSchenkerOptions $opts): DBSchenkerReport
+    {
+        $report = new DBSchenkerReport($opts);
+        $report->setDocID(strval($message->getId()));
+        $report->setReference($message->getReference());
+        $report->setReceipt('test');
+        [$situation, $reason] = explode('|', $message->getSubMessageType());
+        $report->setSituation(constant("DBSchenker\Enum\ReportSituation::$situation"));
+        $report->setReason(constant("DBSchenker\Enum\ReportReason::$reason"));
+        return $report;
+    }
+
+    private function importAllTasks(DBSchenkerSync $sync): void
+    {
         $count = 0;
         foreach ($sync->pull() as $content) {
             $messages = DBSchenker::parse($content);
             $filename = sprintf(
-                "%s_%s.%s.edi", "dbshenker",
+                "%s_%s-SCONTR.%s.edi", "dbschenker",
                 date('Y-m-d_His'), uniqid()
             );
 
@@ -146,10 +196,7 @@ class SyncTransportersCommand extends Command {
                 }
             }
         }
-        $output->writeln("Done syncing, imported $count tasks");
-        print_r($this->edifactFs->listContents(""));
-
-        return 0;
+        $this->output->writeln("Done syncing, imported $count tasks");
     }
 
     // Here we need to check if the address is conform and fillable
@@ -305,7 +352,7 @@ class SyncTransportersCommand extends Command {
         $edi = new EDIFACTMessage();
         $edi->setMessageType("SCONTR");
         $edi->setReference($ref);
-        $edi->setTransporter(EDIFACTMessage::TRANSPORTER_DBSHENKER);
+        $edi->setTransporter(EDIFACTMessage::TRANSPORTER_DBSCHENKER);
         $edi->setDirection(EDIFACTMessage::DIRECTION_OUTBOUND);
         $edi->setEdifactFile($filename);
         return $edi;
