@@ -30,26 +30,6 @@ class RegistrationListener implements EventSubscriberInterface
         $form = $event->getForm();
         $user = $event->getUser();
 
-        if ($form->has('accountType')) {
-
-            $accountType = $form->get('accountType')->getData();
-
-            $roles = [];
-            switch ($accountType) {
-                case 'COURIER':
-                    $roles = ['ROLE_COURIER'];
-                    break;
-                case 'STORE':
-                    $roles = ['ROLE_STORE'];
-                    break;
-                case 'RESTAURANT':
-                    $roles = ['ROLE_RESTAURANT'];
-                    break;
-            }
-
-            $user->setRoles($roles);
-        }
-
         foreach(Optin::values() as $optin) {
             if ($form->has($optin->getValue())) {
                 $consent = new OptinConsent();

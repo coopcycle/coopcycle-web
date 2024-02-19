@@ -2,10 +2,12 @@
 
 namespace AppBundle\Validator\Constraints;
 
-use AppBundle\LoopEat\Client as LoopEatClient;
+use AppBundle\LoopEat\Client as LoopeatClient;
+use AppBundle\LoopEat\Context as LoopeatContext;
 use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\PriceFormatter;
 use GuzzleHttp\Exception\RequestException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Constraint;
@@ -19,10 +21,14 @@ class LoopEatOrderValidator extends ConstraintValidator
     private $logger;
 
     public function __construct(
-        LoopEatClient $client,
+        LoopeatClient $client,
+        LoopeatContext $loopeatContext,
+        PriceFormatter $priceFormatter,
         LoggerInterface $logger)
     {
         $this->client = $client;
+        $this->loopeatContext = $loopeatContext;
+        $this->priceFormatter = $priceFormatter;
         $this->logger = $logger;
     }
 
@@ -49,6 +55,7 @@ class LoopEatOrderValidator extends ConstraintValidator
         $quantity = $object->getReusablePackagingQuantity();
 
         if ($quantity < 1) {
+
             $this->context->buildViolation($constraint->insufficientQuantity)
                 ->atPath('reusablePackagingEnabled')
                 ->addViolation();
@@ -68,7 +75,8 @@ class LoopEatOrderValidator extends ConstraintValidator
             if ($missing > 0) {
 
                 $this->context->buildViolation($constraint->insufficientBalance)
-                    ->setParameter('%count%', $missing)
+                    ->setParameter('%name%', $this->loopeatContext->name)
+                    ->setParameter('%amount%', $this->priceFormatter->formatWithSymbol($missing))
                     ->atPath('reusablePackagingEnabled')
                     ->addViolation();
             }
