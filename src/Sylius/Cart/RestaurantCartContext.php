@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\Cart;
 
+use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityNotFoundException;
@@ -55,6 +56,7 @@ final class RestaurantCartContext implements CartContextInterface
         RestaurantResolver $resolver,
         AuthorizationCheckerInterface $authorizationChecker,
         Security $security,
+        private BusinessContext $businessContext,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils
     )
@@ -131,6 +133,10 @@ final class RestaurantCartContext implements CartContextInterface
             if ($user = $this->security->getUser()) {
                 $cart->setCustomer($user->getCustomer());
             }
+        }
+
+        if (null === $cart->getShippingAddress() && $this->businessContext->isActive()) {
+            $cart->setShippingAddress($this->businessContext->getShippingAddress());
         }
 
         $this->cart = $cart;

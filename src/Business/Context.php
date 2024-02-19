@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Business;
 
+use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -42,6 +43,16 @@ class Context
         $user = $this->security->getUser();
         if ($user && $user->hasBusinessAccount()) {
             return $user->getBusinessAccount();
+        }
+
+        return null;
+    }
+
+    public function getShippingAddress(): ?Address
+    {
+        $businessAccount = $this->getBusinessAccount();
+        if ($businessAccount) {
+            return $businessAccount->getAddress();
         }
 
         return null;
