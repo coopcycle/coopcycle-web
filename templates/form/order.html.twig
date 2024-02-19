@@ -101,9 +101,14 @@
                 {{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}
               </li>
               {% endif %}
-              {% if loopeat_context.suggestion == 'returns' %}
+              {% if form.vars.valid and loopeat_context.suggestion == 'returns' %}
               <li class="text-info">
                 {{ (loopeat_trans_prefix ~ '.suggest_returns.label')|trans }}
+              </li>
+              {% endif %}
+              {% if not form.vars.valid %}
+              <li class="text-danger">
+                {{ form.vars.errors|map(e => e.message)|join(' ') }}
               </li>
               {% endif %}
             </ul>
