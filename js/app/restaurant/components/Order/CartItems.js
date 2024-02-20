@@ -49,16 +49,16 @@ export default function CartItems() {
   if (_.size(itemsGroups) > 1) {
 
     return (
-      <>
+      <div className="hub-order">
         { _.map(itemsGroups, (items, title) => {
           return (
-            <React.Fragment key={ title }>
+            <div key={ `cart-restaurant-${ title }` }>
               <h5 className="text-muted">{ title }</h5>
               <ListOfItems items={ items } />
-            </React.Fragment>
+            </div>
           )
         }) }
-      </>
+      </div>
     )
   }
 
@@ -66,7 +66,7 @@ export default function CartItems() {
     return (
       <div className="group-order">
         { _.map(playersGroups, (item, username) => (
-          <div>
+          <div key={ `cart-player-${ username }` }>
             <div className="username">
               { (username === GROUP_ORDER_ADMIN)
                 ? t('GROUP_ORDER_YOU')

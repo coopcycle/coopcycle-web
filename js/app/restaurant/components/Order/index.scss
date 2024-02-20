@@ -200,6 +200,7 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
   gap: 1rem;
 }
 
+.hub-order,
 .group-order {
   display: flex;
   flex-direction: column;
