@@ -26,6 +26,11 @@
             {{ 'restaurant.form.section.general'|trans }}
           </a>
         </li>
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#employees" aria-controls="employees">
+            {{ 'form.business_account.employees.label'|trans }}
+          </a>
+        </li>
       </ul>
     </div>
     <div class="col-sm-9">
@@ -41,6 +46,25 @@
           {% if is_granted('ROLE_ADMIN') %}
             {{ form_row(form.businessRestaurantGroup) }}
           {% endif %}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="employees">
+          <table class="table">
+            <thead>
+              <th>{{ 'profile.username'|trans }}</th>
+              <th>{{ 'profile.email'|trans }}</th>
+              <th>{{ 'profile.fullName'|trans }}</th>
+            </thead>
+            <tbody>
+              {% for employee in business_account.employees %}
+              <tr>
+                <td>{{ employee.username }}</td>
+                <td>{{ employee.email }}</td>
+                <td>{{ employee.fullName }}</td>
+                <td class="text-right">{{ employee.createdAt|time_diff }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
