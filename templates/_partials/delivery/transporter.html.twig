@@ -12,10 +12,10 @@
 </style>
 {% if delivery.store is not empty and delivery.store.isDBShenkerEnabled %}
 {% set importMessage = delivery.getDropoff().getImportMessage() %}
-{% set ediMessages = delivery.getDropoff().getEdifactMessages() %}
+{% set ediMessages = delivery.getDropoff().getEdifactMessagesTimeline() %}
 <div class="panel panel-primary">
   <div class="panel-heading">
-    <h3 class="panel-title">DBShenker</h3>
+    <h3 class="panel-title">DBSchenker</h3>
   </div>
   <div class="panel-body">
     {% if importMessage %}
@@ -26,48 +26,23 @@
     {% endif %}
     <h4>Event timeline</h4>
     <ul class="list-group transporter-event-timeline">
-    <li class="list-group-item">
-      <span class="label label-default"><i class="fa fa-arrow-down" aria-hidden="true"></i></span>
-      2:39pm - Data imported. <span class="actions"><a href="#">Details</a></span>
-    </li>
-    <li class="list-group-item">
-      <span class="label label-success"><i class="fa fa-arrow-up" aria-hidden="true"></i></span>
-      2:40pm - Acknowledged receipt of data. <span class="actions"><a href="#">Details</a></span>
-    </li>
-    <li class="list-group-item">
-      <span class="label label-default"><i class="fa fa-arrow-down" aria-hidden="true"></i></span>
-      2:41pm - Appointement data received. <span class="actions"><a href="#">Details</a></span>
-    </li>
-    <li class="list-group-item unsynced">
-      <span class="label label-danger"><i class="fa fa-arrow-up" aria-hidden="true"></i></span>
-      2:42pm - Failed to deliver. <span class="actions"><a href="#">Edit</a> - <a href="#">Details</a></span>
-    </li>
-
-
-      {% for message in [] %}
-        <li class="{{ html_classes('list-group-item', {'unsynced': message.getSyncedAt is null}) }}">
-        <span class="{{ html_classes('label', {
-          'label-default': message.getDirection == 'OUTBOUND',
-        }) }}"><i class="{{ html_classes('fa', {
-            'fa-arrow-up': message.getDirection == 'OUTBOUND',
-            'fa-arrow-down': message.getDirection == 'INBOUND',
-        }) }}" aria-hidden="true"></i></span>
-        {{ message.getCreatedAt | date('H:i')}} - {{ message.getMessageType }} - {{ message.getDirection }}
-        <span class="actions"><a href="#">Edit</a> - <a href="#">Details</a></span>
+      {% for message in ediMessages %}
+        <li class="list-group-item">
+        <span class="label label-{{ message.color }}"><i class="fa {{message.icon}}" aria-hidden="true"></i></span>
+        {{ message.date | date('H:i')}} - {{ message.title }}
+        <!--<span class="actions"><a href="#">Edit</a> - <a href="#">Details</a></span>-->
         </li>
-
-
       {% endfor %}
     </ul>
   </div>
   <div class="panel-footer">
-    <button type="button" class="btn btn-default">
+    <!--<button type="button" class="btn btn-default">
     Sync <span class="badge">1</span>
-    </button>
-    <button type="button" class="btn btn-danger">
+    </button>-->
+    <button type="button" class="btn btn-danger" onclick="alert('Fonctionnalité pas encore disponible')">
     Report incident
     </button>
-    <small class="text-muted p-2">Unsynced messages are auto-synced at 10pm</small>
+    <!--<small class="text-muted p-2">Unsynced messages are auto-synced at 10pm</small>-->
   </div>
 </div>
 {% endif %}
