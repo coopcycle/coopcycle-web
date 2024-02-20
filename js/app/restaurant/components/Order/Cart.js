@@ -25,7 +25,7 @@ export default function Cart() {
   return (
     <>
       <CartItems />
-      <div>
+      <div className="cart__footer">
         { (reusablePackagingFeatureEnabled && hasItems) &&
           <div className="d-flex align-items-center mb-2">
             <Switch size="small"

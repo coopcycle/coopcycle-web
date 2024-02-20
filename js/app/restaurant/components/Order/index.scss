@@ -203,9 +203,8 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
 .cart__items {
   flex: 1;
   overflow-y: auto;
-  margin: 0 0 1rem;
-  padding: 0 0 1rem;
-  border-bottom: 1px solid #eeeeee;
+  margin: 0 (-$card-padding) 0;
+  padding: 0 $card-padding 0;
 }
 .cart__item {
   padding: 10px 0;
@@ -239,6 +238,13 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
     }
   }
 }
+
+.cart__footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eeeeee;
+}
+
 .cart__time {
   display: block;
   text-align: center;
