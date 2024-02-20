@@ -65,7 +65,7 @@ class DeliveryManager
             $matchedAtLeastOne = false;
 
             if (count($delivery->getTasks()) > 2 || $ruleSet->hasOption(PricingRuleSet::OPTION_MAP_ALL_TASKS)) {
-                foreach ($delivery->getTasks() as $task) {
+                foreach ($delivery->getTasks('not task.isCancelled()') as $task) {
                     foreach ($ruleSet->getRules() as $rule) {
                         if ($task->matchesPricingRule($rule, $this->expressionLanguage)) {
 
@@ -190,9 +190,22 @@ class DeliveryManager
             }
         }
 
-        $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
-        $distance = $this->routing->getDistance(...$coords);
+        $distance = $this->calculateDistance($delivery);
 
         $delivery->setDistance(ceil($distance));
+    }
+
+    /**
+     * @param Delivery $delivery
+     * @param ?Task[] $tasks
+     * @return float
+     */
+    public function calculateDistance(Delivery $delivery, ?array $tasks = null): float
+    {
+        if (is_null($tasks)) {
+            $tasks = $delivery->getTasks();
+        }
+        $coords = array_map(fn($task) => $task->getAddress()->getGeo(), $tasks);
+        return $this->routing->getDistance(...$coords);
     }
 }

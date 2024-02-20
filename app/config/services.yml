@@ -1295,7 +1295,10 @@ services:
     arguments:
       $fleetKey: '%tile38_fleet_key%'
 
-  AppBundle\Pricing\PricingManager: ~
+
+  AppBundle\Pricing\PricingManager:
+    arguments:
+      $eventBus: '@event_bus'
 
   AppBundle\Form\BusinessAccountRegistrationFlow:
     autoconfigure: true
