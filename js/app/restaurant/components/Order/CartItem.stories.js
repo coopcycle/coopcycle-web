@@ -4,7 +4,7 @@ import { createStoreFromPreloadedState } from '../../redux/store'
 import { Provider } from 'react-redux'
 
 export default {
-  title: 'Foodtech/4. Order/2. Cart Item',
+  title: 'Foodtech/4. Order/3. Cart Item',
   tags: [ 'autodocs' ],
   component: CartItem,
 
