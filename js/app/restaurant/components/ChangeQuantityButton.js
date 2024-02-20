@@ -1,6 +1,6 @@
 import React from 'react'
 
-import './ChangeQuantityButton.scss'
+import './changeQuantityButton.scss'
 
 function ChangeQuantityButton({ children, onClick, disabled }) {
   return (
