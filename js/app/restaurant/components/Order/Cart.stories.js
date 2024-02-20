@@ -1,12 +1,12 @@
 import React from 'react'
 import { Provider } from 'react-redux'
 import { createStoreFromPreloadedState } from '../../redux/store'
-import CartItems from './CartItems'
+import Cart from './Cart'
 
 export default {
-  title: 'Foodtech/4. Order/1. Cart Items',
+  title: 'Foodtech/4. Order/1. Cart',
   tags: [ 'autodocs' ],
-  component: CartItems,
+  component: Cart,
 
   decorators: [
     (Story, context) => {
