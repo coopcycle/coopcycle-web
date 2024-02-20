@@ -13,13 +13,10 @@
   {{ order.shippingTimeRange|time_range_for_humans }}
   </mj-text>
   <mj-text align="left" line-height="20px">
-  {% set telephone = coopcycle_setting('phone_number') %}
-  {% if not order.isMultiVendor() %}
-    {% set telephone = order.vendor.telephone %}
-  {% endif %}
+  {% set phone_number = order_phone_number(order) %}
   {{ ('order.foodtech.accepted.' ~ order.fulfillmentMethod ~ '.disclaimer')|trans({
     '%name%': order.vendor.name,
-    '%phone_number%': telephone ? telephone|phone_number_format('NATIONAL') : 'N/A'
+    '%phone_number%': phone_number ? phone_number|phone_number_format('NATIONAL') : 'N/A'
   }, 'emails')|raw }}
   </mj-text>
   {% if not order.isMultiVendor() and order.vendor.loopeatEnabled and order.reusablePackagingEnabled %}
