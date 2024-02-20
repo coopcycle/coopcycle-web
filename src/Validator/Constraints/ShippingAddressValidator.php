@@ -2,6 +2,7 @@
 
 namespace AppBundle\Validator\Constraints;
 
+use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
@@ -18,7 +19,8 @@ class ShippingAddressValidator extends ConstraintValidator
 
     public function __construct(
         RoutingInterface $routing,
-        ExpressionLanguage $expressionLanguage)
+        ExpressionLanguage $expressionLanguage,
+        private BusinessContext $businessContext)
     {
         $this->routing = $routing;
         $this->expressionLanguage = $expressionLanguage;
@@ -51,6 +53,11 @@ class ShippingAddressValidator extends ConstraintValidator
         // Stop here when order is empty
         // We don't want to show an error on shipping address until at least one item is added
         if ($itemsTotal === 0) {
+            return;
+        }
+
+        // Skip this validation in business context
+        if ($this->businessContext->isActive()) {
             return;
         }
 
