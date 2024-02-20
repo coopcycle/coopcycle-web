@@ -367,6 +367,7 @@
         "INVITE_PEOPLE_TO_ADD_ITEMS": "Invite friends to add products",
         "GROUP_ORDER_START": "Start a group order",
         "GROUP_ORDER_SHARE_LINK": "Share the link with others to participate in your order. Once they have finished, you can place the order.",
+        "GROUP_ORDER_YOU": "Admin (you)",
         "ORDERS_RATE_LIMIT": {
           "ORDER_UNIT": "order(s)",
           "TIME_UNIT": "minute(s)",

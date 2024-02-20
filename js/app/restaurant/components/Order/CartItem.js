@@ -6,6 +6,9 @@ import {
   DecrementQuantityButton,
   IncrementQuantityButton,
 } from '../ChangeQuantityButton'
+import { removeItem, updateItemQuantity } from '../../redux/actions'
+import _ from 'lodash'
+import { selectShowPricesTaxExcluded } from '../../redux/selectors'
 
 const truncateText = text => {
   if (text.length > 24) {
@@ -38,14 +41,27 @@ class CartItem extends React.Component {
     }
   }
 
+  _onChangeQuantity(quantity) {
+    if (!_.isNumber(quantity)) {
+      return
+    }
+
+    if (quantity === 0) {
+      this.props.removeItem(this.props.id)
+      return
+    }
+
+    this.props.updateItemQuantity(this.props.id, quantity)
+  }
+
   decrement() {
     const quantity = this.props.quantity - 1
-    this.props.onChangeQuantity(quantity)
+    this._onChangeQuantity(quantity)
   }
 
   increment() {
     const quantity = this.props.quantity + 1
-    this.props.onChangeQuantity(quantity)
+    this._onChangeQuantity(quantity)
   }
 
   render() {
@@ -90,7 +106,15 @@ function mapStateToProps(state) {
 
   return {
     loading: state.isFetching,
+    showPricesTaxExcluded: selectShowPricesTaxExcluded(state),
   }
 }
 
-export default connect(mapStateToProps)(CartItem)
+function mapDispatchToProps(dispatch) {
+  return {
+    removeItem: itemID => dispatch(removeItem(itemID)),
+    updateItemQuantity: (itemID, quantity) => dispatch(updateItemQuantity(itemID, quantity)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CartItem)

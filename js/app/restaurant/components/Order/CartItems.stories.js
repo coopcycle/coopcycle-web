@@ -81,7 +81,7 @@ export const EmptyState = {
   },
 }
 
-export const GroupOrder = {
+export const GroupOrderAdmin = {
   args: {
     _store: {
       cart: {
@@ -124,6 +124,172 @@ export const GroupOrder = {
       player: {
         player: null,
       },
+    },
+  },
+}
+
+export const GroupOrderPlayer = {
+  args: {
+    _store: {
+      cart: {
+        items: [
+          {
+            id: 1,
+            name: 'Pizza Margherita',
+            total: 1000,
+            quantity: 1,
+            adjustments: {
+              menu_item_modifier: [
+                { label: 'Extra cheese' },
+                { label: 'Pepperoni', amount: 150 },
+              ],
+              tax: [
+                { label: 'VAT', amount: 100 },
+              ],
+            },
+            vendor: {
+              name: 'Pizza Hut',
+            },
+            player: null,
+          },
+          {
+            id: 2,
+            name: 'Pizza Pepperoni',
+            total: 1000,
+            quantity: 1,
+            adjustments: {},
+            vendor: {
+              name: 'Pizza Hut',
+            },
+            player: {
+              '@id': '/api/users/1',
+              username: 'John Doe',
+            },
+          },
+        ],
+      },
+      isPlayer: true,
+      player: {
+        player: '/api/users/1',
+      }
+    },
+  },
+}
+
+export const GroupOrderFromHubAdmin = {
+  args: {
+    _store: {
+      cart: {
+        items: [
+          {
+            id: 1,
+            name: 'Pizza Margherita',
+            total: 1000,
+            quantity: 1,
+            adjustments: {
+              menu_item_modifier: [
+                { label: 'Extra cheese' },
+                { label: 'Pepperoni', amount: 150 },
+              ],
+              tax: [
+                { label: 'VAT', amount: 100 },
+              ],
+            },
+            vendor: {
+              name: 'Pizza Hut',
+            },
+            player: {
+              '@id': '/api/users/1',
+              username: 'John Doe',
+            },
+          },
+          {
+            id: 2,
+            name: 'Pizza Pepperoni',
+            total: 1000,
+            quantity: 1,
+            adjustments: {},
+            vendor: {
+              name: 'Pizza Hut',
+            },
+            player: null,
+          },
+          {
+            id: 3,
+            name: 'Sushi Box',
+            total: 1000,
+            quantity: 1,
+            adjustments: {},
+            vendor: {
+              name: 'Sushi Restaurant',
+            },
+            player: {
+              '@id': '/api/users/1',
+              username: 'John Doe',
+            },
+          },
+        ],
+      },
+      isPlayer: false,
+      player: {
+        player: null,
+      },
+    },
+  },
+}
+
+export const GroupOrderFromHubPlayer = {
+  args: {
+    _store: {
+      cart: {
+        items: [
+          {
+            id: 1,
+            name: 'Pizza Margherita',
+            total: 1000,
+            quantity: 1,
+            adjustments: {
+              menu_item_modifier: [
+                { label: 'Extra cheese' },
+                { label: 'Pepperoni', amount: 150 },
+              ],
+              tax: [
+                { label: 'VAT', amount: 100 },
+              ],
+            },
+            vendor: {
+              name: 'Pizza Hut',
+            },
+            player: null,
+          },
+          {
+            id: 2,
+            name: 'Pizza Pepperoni',
+            total: 1000,
+            quantity: 1,
+            adjustments: {},
+            vendor: {
+              name: 'Pizza Hut',
+            },
+            player: null,
+          },
+          {
+            id: 3,
+            name: 'Sushi Box',
+            total: 1000,
+            quantity: 1,
+            adjustments: {},
+            vendor: {
+              name: 'Sushi Restaurant',
+            },
+            player: null,
+          },
+        ],
+      },
+      isPlayer: true,
+      player: {
+        player: '/api/users/1',
+      }
     },
   },
 }

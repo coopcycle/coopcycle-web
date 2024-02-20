@@ -3,7 +3,7 @@ import _ from 'lodash'
 
 import { totalTaxExcluded } from '../../utils/tax'
 
-export const selectIsPlayer = state => state.isPlayer
+export const GROUP_ORDER_ADMIN = 'Admin'
 
 export const selectCart = state => state.cart
 
@@ -48,13 +48,23 @@ export const selectPlayersGroups = createSelector(
   selectItems,
   (items) => _.groupBy(items, (item) => {
     if (item.player === null) {
-      return 'Admin'
+      return GROUP_ORDER_ADMIN
     }
     if (item.player.username !== undefined) {
       return item.player.username
     }
     return 'Unknown'
   })
+)
+
+export const selectIsPlayer = state => state.isPlayer
+
+export const selectIsGroupOrderAdmin = createSelector(
+  selectIsPlayer,
+  selectPlayersGroups,
+  (isPlayer, playersGroups) => {
+    return !isPlayer && Object.keys(playersGroups).length > 1
+  }
 )
 
 export const selectShowPricesTaxExcluded = createSelector(

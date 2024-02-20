@@ -200,6 +200,18 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
   gap: 1rem;
 }
 
+.group-order {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  .username {
+    margin-bottom: 0.25rem;
+    font-size: 20px;
+    font-weight: 600;
+  }
+}
+
 .cart__items {
   flex: 1;
   overflow-y: auto;

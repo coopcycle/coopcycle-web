@@ -1,143 +1,85 @@
 import React from 'react'
-import {connect} from 'react-redux'
-import {withTranslation} from 'react-i18next'
+import { useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 
 import CartItem from './CartItem'
-import {removeItem, updateItemQuantity} from '../../redux/actions'
-import {selectItems, selectItemsGroups, selectPlayersGroups, selectShowPricesTaxExcluded} from '../../redux/selectors'
-import classNames from "classnames";
+import {
+  GROUP_ORDER_ADMIN,
+  selectIsGroupOrderAdmin,
+  selectItems,
+  selectItemsGroups,
+  selectPlayersGroups,
+} from '../../redux/selectors'
 
-class CartItems extends React.Component {
+function ListOfItems({ items }) {
+  // Make sure items are always in the same order
+  // We order them by id asc
+  items.sort((a, b) => a.id - b.id)
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      tabSelected: null
-    }
-  }
-
-shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.showTabs && nextState.tabSelected !== null) {
-      if(!Object.keys(nextProps.playersGroups).includes(nextState.tabSelected)) {
-        this.setState({tabSelected: null})
-        return false
-      }
-    }
-    return true
+  return (
+    <div className="cart__items">
+      { items.map((item) => (
+        <CartItem
+          key={ `cart-item-${ item.id }` }
+          id={ item.id }
+          name={ item.name }
+          total={ item.total }
+          quantity={ item.quantity }
+          adjustments={ item.adjustments } />
+      )) }
+    </div>
+  )
 }
 
-  _onChangeQuantity(itemID, quantity) {
-    if (!_.isNumber(quantity)) {
-      return
-    }
+export default function CartItems() {
+  const items = useSelector(selectItems)
+  const itemsGroups = useSelector(selectItemsGroups)
+  const isGroupOrderAdmin = useSelector(selectIsGroupOrderAdmin)
+  const playersGroups = useSelector(selectPlayersGroups)
 
-    if (quantity === 0) {
-      this.props.removeItem(itemID)
-      return
-    }
+  const { t } = useTranslation()
 
-    this.props.updateItemQuantity(itemID, quantity)
+  if (items.length === 0) {
+    return (
+      <div className="alert alert-warning">{ t('CART_EMPTY') }</div>
+    )
   }
 
-  renderItems(items) {
-
-    if (this.state.tabSelected &&
-      this.props.playersGroups[this.state.tabSelected] !== undefined) {
-      items = this.props.playersGroups[this.state.tabSelected]
-    }
-
-    // Make sure items are always in the same order
-    // We order them by id asc
-    items.sort((a, b) => a.id - b.id)
+  if (_.size(itemsGroups) > 1) {
 
     return (
       <>
-        { items.map((item) => (
-          <CartItem
-            key={ `cart-item-${item.id}` }
-            id={ item.id }
-            name={ item.name }
-            total={ item.total }
-            quantity={ item.quantity }
-            adjustments={ item.adjustments }
-            showPricesTaxExcluded={ this.props.showPricesTaxExcluded }
-            onChangeQuantity={ quantity => this._onChangeQuantity(item.id, quantity) } />
-        )) }
+        { _.map(itemsGroups, (items, title) => {
+          return (
+            <React.Fragment key={ title }>
+              <h5 className="text-muted">{ title }</h5>
+              <ListOfItems items={ items } />
+            </React.Fragment>
+          )
+        }) }
       </>
     )
   }
 
-  renderTabs(items) {
-    return <ul className="nav nav-tabs">
-      {_.map(items, (item, playerID) =>  (
-          <li key={playerID} onClick={(e) => {
-            e.preventDefault()
-            this.setState({tabSelected: playerID})}
-          } className={classNames({
-            active: playerID === this.state.tabSelected
-          })}>
-            <a href="#">{playerID}</a>
-          </li>
-        )) }
-    </ul>
-  }
-
-  render() {
-
-    if (this.props.items.length === 0) {
-      return (
-        <div className="alert alert-warning">{ this.props.t("CART_EMPTY") }</div>
-      )
-    }
-
-    if (_.size(this.props.itemsGroups) > 1) {
-
-      return (
-        <div className="cart__items">
-          { _.map(this.props.itemsGroups, (items, title) => {
-            return (
-              <React.Fragment key={ title }>
-                <h5 className="text-muted">{ title }</h5>
-                { this.renderItems(items) }
-              </React.Fragment>
-            )
-          })}
-        </div>
-      )
-    }
-
+  if (isGroupOrderAdmin) {
     return (
-      <>
-        { this.props.showTabs && this.renderTabs(this.props.playersGroups) }
-      <div className="cart__items">
-        { this.renderItems(this.props.items) }
+      <div className="group-order">
+        { _.map(playersGroups, (item, username) => (
+          <div>
+            <div className="username">
+              { (username === GROUP_ORDER_ADMIN)
+                ? t('GROUP_ORDER_YOU')
+                : username }
+            </div>
+            <ListOfItems items={ playersGroups[username] } />
+          </div>
+        )) }
       </div>
-      </>
     )
   }
+
+  return (
+    <ListOfItems items={ items } />
+  )
 }
-
-function mapStateToProps (state) {
-
-  const items = selectItems(state)
-  const itemsGroups = selectItemsGroups(state)
-  const playersGroups = selectPlayersGroups(state)
-
-  return {
-    items,
-    itemsGroups,
-    playersGroups,
-    showPricesTaxExcluded: selectShowPricesTaxExcluded(state),
-    showTabs: !state.isPlayer && Object.keys(playersGroups).length > 1
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    removeItem: itemID => dispatch(removeItem(itemID)),
-    updateItemQuantity: (itemID, quantity) => dispatch(updateItemQuantity(itemID, quantity)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(CartItems))
