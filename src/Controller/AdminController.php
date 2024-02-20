@@ -2602,12 +2602,13 @@ class AdminController extends AbstractController
         CanonicalizerInterface $canonicalizer,
         EmailManager $emailManager,
         TokenGeneratorInterface $tokenGenerator,
-        EntityManagerInterface $objectManager)
+        EntityManagerInterface $objectManager,
+        PaginatorInterface $paginator)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $account = new BusinessAccount();
 
-        return $this->handleBusinessAccountForm($account, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager);
+        return $this->handleBusinessAccountForm($account, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager, $paginator);
     }
 
     private function handleBusinessAccountForm(
@@ -2616,7 +2617,8 @@ class AdminController extends AbstractController
         CanonicalizerInterface $canonicalizer,
         EmailManager $emailManager,
         TokenGeneratorInterface $tokenGenerator,
-        EntityManagerInterface $objectManager)
+        EntityManagerInterface $objectManager,
+        PaginatorInterface $paginator)
     {
         $form = $this->createForm(BusinessAccountType::class, $businessAccount);
 
@@ -2658,8 +2660,25 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_business_accounts');
         }
 
+        $qb = $objectManager->getRepository(Order::class)->createQueryBuilder('o');
+        $qb
+            ->andWhere('o.businessAccount = :business_account')
+            ->setParameter('business_account', $businessAccount);
+
+        $orders = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'o.createdAt',
+                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
+                PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['o.createdAt'],
+            ]
+        );
+
         return $this->render('admin/business_account.html.twig', [
             'form' => $form->createView(),
+            'orders' => $orders,
         ]);
     }
 
@@ -2669,7 +2688,8 @@ class AdminController extends AbstractController
         CanonicalizerInterface $canonicalizer,
         EmailManager $emailManager,
         TokenGeneratorInterface $tokenGenerator,
-        EntityManagerInterface $objectManager)
+        EntityManagerInterface $objectManager,
+        PaginatorInterface $paginator)
     {
         if ($this->isGranted('ROLE_BUSINESS_ACCOUNT')) {
             $businessAccount = $this->getUser()->getBusinessAccount();
@@ -2682,7 +2702,7 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException(sprintf('Business account #%d does not exist', $id));
         }
 
-        return $this->handleBusinessAccountForm($businessAccount, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager);
+        return $this->handleBusinessAccountForm($businessAccount, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager, $paginator);
     }
 
 

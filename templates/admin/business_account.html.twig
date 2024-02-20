@@ -31,6 +31,11 @@
             {{ 'form.business_account.employees.label'|trans }}
           </a>
         </li>
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#orders" aria-controls="orders">
+            {{ 'restaurant.list.orders'|trans }}
+          </a>
+        </li>
       </ul>
     </div>
     <div class="col-sm-9">
@@ -53,6 +58,7 @@
               <th>{{ 'profile.username'|trans }}</th>
               <th>{{ 'profile.email'|trans }}</th>
               <th>{{ 'profile.fullName'|trans }}</th>
+              <th></th>
             </thead>
             <tbody>
               {% for employee in business_account.employees %}
@@ -61,6 +67,24 @@
                 <td>{{ employee.email }}</td>
                 <td>{{ employee.fullName }}</td>
                 <td class="text-right">{{ employee.createdAt|time_diff }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="orders">
+          <table class="table">
+            <thead>
+              <th>{{ 'restaurant.stats.order_number'|trans }}</th>
+              <th>{{ 'order.total_including_tax'|trans }}</th>
+              <th></th>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>
+                <td class="text-monospace">{{ order.number }}</td>
+                <td>{{ order.total|price_format }}</td>
+                <td class="text-right">{{ order.createdAt|time_diff }}</td>
               </tr>
               {% endfor %}
             </tbody>
