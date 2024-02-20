@@ -228,9 +228,11 @@
         value="{{ form.restaurant.vars.value ? form.restaurant.vars.value : '__value__' }}">
     </td>
     <td>
-      <select id="{{ form.menu.vars.id ? form.menu.vars.id : '' }}_select"
+      <select
         value="{{ form.menu.vars.value }}"
-        class="form-control">
+        class="form-control"
+        data-toggle="menu"
+        data-controls="#{{ form.restaurant.vars.id ? form.restaurant.vars.id : '' }}">
         {% if form.menu.vars.choices|length > 0 %}
           {% for choice in form.menu.vars.choices %}
             <option value="{{ choice.value }}" {% if choice.value == form.menu.vars.value %} selected="selected"{% endif %}>{{ choice.label }}</option>

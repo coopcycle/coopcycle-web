@@ -103,13 +103,13 @@
           if (menus.length > 0) {
             $(`#business_restaurant_group_restaurantsWithMenu_${counter}_menu`).val(menus[0].id)
           }
-
-          $(`#business_restaurant_group_restaurantsWithMenu_${counter}_menu_select`).on("change", function() {
-            $(`#business_restaurant_group_restaurantsWithMenu_${counter}_menu`).val(this.value)
-          })
         });
 
       }
+    });
+
+    $(document).on('change', '[data-toggle="menu"]', function(e) {
+      document.querySelector(e.target.dataset.controls).value = e.target.value
     });
 
     $(document).on('click', '[data-remove="restaurant"]', function(e) {
