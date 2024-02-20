@@ -26,6 +26,7 @@
             {{ 'restaurant.form.section.general'|trans }}
           </a>
         </li>
+        {% if not is_new_business_account %}
         <li role="presentation">
           <a role="tab" data-toggle="tab" href="#employees" aria-controls="employees">
             {{ 'form.business_account.employees.label'|trans }}
@@ -36,6 +37,7 @@
             {{ 'restaurant.list.orders'|trans }}
           </a>
         </li>
+        {% endif %}
       </ul>
     </div>
     <div class="col-sm-9">
@@ -52,6 +54,7 @@
             {{ form_row(form.businessRestaurantGroup) }}
           {% endif %}
         </div>
+        {% if not is_new_business_account %}
         <div role="tabpanel" class="tab-pane" id="employees">
           <table class="table">
             <thead>
@@ -90,6 +93,7 @@
             </tbody>
           </table>
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
