@@ -3,6 +3,6 @@
 {{ order.vendor.address.postalCode }} {{ order.vendor.address.addressLocality }}
 <br>
 {% set phone_number = order_phone_number(order) %}
-{% if not order.isMultiVendor() and phone_number is not empty %}
+{% if phone_number is not empty %}
   {{ phone_number|phone_number_format('NATIONAL') }}
 {% endif %}
