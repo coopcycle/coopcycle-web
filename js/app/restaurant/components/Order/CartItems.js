@@ -52,7 +52,7 @@ shouldComponentUpdate(nextProps, nextState) {
     items.sort((a, b) => a.id - b.id)
 
     return (
-      <div>
+      <>
         { items.map((item) => (
           <CartItem
             key={ `cart-item-${item.id}` }
@@ -64,7 +64,7 @@ shouldComponentUpdate(nextProps, nextState) {
             showPricesTaxExcluded={ this.props.showPricesTaxExcluded }
             onChangeQuantity={ quantity => this._onChangeQuantity(item.id, quantity) } />
         )) }
-      </div>
+      </>
     )
   }
 

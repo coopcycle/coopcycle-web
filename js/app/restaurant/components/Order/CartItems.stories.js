@@ -32,7 +32,15 @@ export const Basic = {
             name: 'Pizza Margherita',
             total: 1000,
             quantity: 1,
-            adjustments: {},
+            adjustments: {
+              menu_item_modifier: [
+                { label: 'Extra cheese' },
+                { label: 'Pepperoni', amount: 150 },
+              ],
+              tax: [
+                { label: 'VAT', amount: 100 },
+              ],
+            },
             vendor: {
               name: 'Pizza Hut',
             },
@@ -73,6 +81,53 @@ export const EmptyState = {
   },
 }
 
+export const GroupOrder = {
+  args: {
+    _store: {
+      cart: {
+        items: [
+          {
+            id: 1,
+            name: 'Pizza Margherita',
+            total: 1000,
+            quantity: 1,
+            adjustments: {
+              menu_item_modifier: [
+                { label: 'Extra cheese' },
+                { label: 'Pepperoni', amount: 150 },
+              ],
+              tax: [
+                { label: 'VAT', amount: 100 },
+              ],
+            },
+            vendor: {
+              name: 'Pizza Hut',
+            },
+            player: null,
+          },
+          {
+            id: 2,
+            name: 'Pizza Pepperoni',
+            total: 1000,
+            quantity: 1,
+            adjustments: {},
+            vendor: {
+              name: 'Pizza Hut',
+            },
+            player: {
+              username: 'John Doe',
+            },
+          },
+        ],
+      },
+      isPlayer: false,
+      player: {
+        player: null,
+      },
+    },
+  },
+}
+
 export const HubOrder = {
   args: {
     _store: {
@@ -83,7 +138,15 @@ export const HubOrder = {
             name: 'Pizza Margherita',
             total: 1000,
             quantity: 1,
-            adjustments: {},
+            adjustments: {
+              menu_item_modifier: [
+                { label: 'Extra cheese' },
+                { label: 'Pepperoni', amount: 150 },
+              ],
+              tax: [
+                { label: 'VAT', amount: 100 },
+              ],
+            },
             vendor: {
               name: 'Pizza Hut',
             },
@@ -110,45 +173,6 @@ export const HubOrder = {
               name: 'Sushi Restaurant',
             },
             player: null,
-          },
-        ],
-      },
-      isPlayer: false,
-      player: {
-        player: null,
-      },
-    },
-  },
-}
-
-export const GroupOrder = {
-  args: {
-    _store: {
-      cart: {
-        items: [
-          {
-            id: 1,
-            name: 'Pizza Margherita',
-            total: 1000,
-            quantity: 1,
-            adjustments: {},
-            vendor: {
-              name: 'Pizza Hut',
-            },
-            player: null,
-          },
-          {
-            id: 2,
-            name: 'Pizza Pepperoni',
-            total: 1000,
-            quantity: 1,
-            adjustments: {},
-            vendor: {
-              name: 'Pizza Hut',
-            },
-            player: {
-              username: 'John Doe',
-            },
           },
         ],
       },
