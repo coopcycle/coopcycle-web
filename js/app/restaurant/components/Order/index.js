@@ -53,32 +53,35 @@ class Order extends Component {
           }) }>
             <div className="panel-body">
               <Cart />
-              <div className="cart__footer">
-                { (this.props.reusablePackagingFeatureEnabled &&
-                    this.props.hasItems) &&
-                  <div className="d-flex align-items-center mb-2">
-                    <Switch
-                      size="small"
-                      checked={ this.props.reusablePackagingEnabled }
-                      onChange={ (checked) => {
-                        this.props.toggleReusablePackaging(checked)
-                      } } />
-                    <span className="ml-2">{ this.props.t(
-                      'CART_ENABLE_ZERO_WASTE') }</span>
-                  </div>
-                }
-                <CartTotal />
-              </div>
-              { this.props.isOrderingAvailable &&
-                <>
-                  <hr />
-                  <CartButton />
-                  { (this.props.isGroupOrdersEnabled &&
-                      this.props.hasItems && !this.props.isPlayer &&
-                      window._auth.isAuth) &&
-                    <InvitePeopleToOrderButton /> }
-                </>
-              }
+              { this.props.hasItems ? (
+                <div className="cart__footer">
+                  { this.props.reusablePackagingFeatureEnabled ? (
+                    <div className="d-flex align-items-center mb-2">
+                      <Switch
+                        size="small"
+                        checked={ this.props.reusablePackagingEnabled }
+                        onChange={ (checked) => {
+                          this.props.toggleReusablePackaging(checked)
+                        } } />
+                      <span className="ml-2">
+                        { this.props.t('CART_ENABLE_ZERO_WASTE') }
+                      </span>
+                    </div>
+                  ) : null }
+                  <CartTotal />
+                  { this.props.isOrderingAvailable ? (
+                    <>
+                      <hr />
+                      <CartButton />
+                    </>
+                  ) : null }
+                </div>
+              ) : null }
+              { (this.props.isGroupOrdersEnabled
+                && !this.props.isPlayer
+                && window._auth.isAuth) ? (
+                <InvitePeopleToOrderButton />
+              ) : null }
             </div>
           </div>
         </div>
