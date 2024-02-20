@@ -1252,12 +1252,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:coopcycle/DBSchenkerClient.git",
-                "reference": "c764821bd4d7bdd4c4b8a6578e33804faa4f8e7f"
+                "reference": "1cfcee9f36976a3165483c9acce9b18c59ddd9f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/c764821bd4d7bdd4c4b8a6578e33804faa4f8e7f",
-                "reference": "c764821bd4d7bdd4c4b8a6578e33804faa4f8e7f",
+                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/1cfcee9f36976a3165483c9acce9b18c59ddd9f5",
+                "reference": "1cfcee9f36976a3165483c9acce9b18c59ddd9f5",
                 "shasum": ""
             },
             "require": {
@@ -1284,7 +1284,7 @@
                 "source": "https://github.com/coopcycle/DBSchenkerClient/tree/master",
                 "issues": "https://github.com/coopcycle/DBSchenkerClient/issues"
             },
-            "time": "2024-02-02T15:25:55+00:00"
+            "time": "2024-02-19T21:37:05+00:00"
         },
         {
             "name": "craue/config-bundle",
