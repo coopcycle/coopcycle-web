@@ -208,34 +208,15 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
 }
 .cart__item {
   padding: 10px 0;
-  &__adjustments {
-    color: $text-muted;
-  }
-  &__content {
+  &__elements {
     display: flex;
-    justify-content: space-between;
-    &__body {
-      flex-grow: 1;
-      padding-right: 10px;
-    }
-    &__right {
-      text-align: right;
-      > span {
-        white-space: nowrap;
-      }
-    }
-  }
-  &__name {
-    font-weight: bold;
+    flex-direction: column;
+    gap: 0.25rem;
   }
   &__quantity {
     display: flex;
     align-items: center;
     margin-left: -8px; //to compensate for padding around the button
-
-    &__value {
-      padding: 0 8px;
-    }
   }
 }
 

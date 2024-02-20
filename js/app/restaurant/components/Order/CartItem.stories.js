@@ -71,7 +71,7 @@ export const WithAdjustmentsTaxIncluded = {
     total: 1000,
     adjustments: {
       menu_item_modifier: [
-        { label: 'Extra cheese', amount: 100 },
+        { label: 'Extra cheese' },
         { label: 'Pepperoni', amount: 150 },
       ],
       tax: [

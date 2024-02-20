@@ -22,16 +22,18 @@ class CartItem extends React.Component {
 
     if (Object.prototype.hasOwnProperty.call(adjustments, 'menu_item_modifier')) {
       return (
-        <div className="cart__item__adjustments">
+        <>
           { adjustments.menu_item_modifier.map((adjustment, index) =>
-            <div key={ `cart-item-${this.props.id}-adjustment-${index}` }>
-              <small>{ truncateText(adjustment.label) }</small>
+            <div
+              key={ `cart-item-${ this.props.id }-adjustment-${ index }` }
+              className="d-flex align-items-center justify-content-between">
+              <span>{ truncateText(adjustment.label) }</span>
               { adjustment.amount > 0 && (
-                <small> (+{ (adjustment.amount / 100).formatMoney() })</small>
-              )}
-            </div>
-          )}
-        </div>
+                <span>{ (adjustment.amount / 100).formatMoney() }</span>
+              ) }
+            </div>,
+          ) }
+        </>
       )
     }
   }
@@ -50,28 +52,33 @@ class CartItem extends React.Component {
 
     return (
       <div className="cart__item">
-        <div className="cart__item__content">
-          <div className="cart__item__content__body">
-            <span className="cart__item__name">{ truncateText(this.props.name) }</span>
-            { this.renderAdjustments() }
-            <div className="cart__item__quantity">
-              <DecrementQuantityButton
-                disabled={ this.props.loading }
-                onClick={ this.decrement.bind(this) }
-              />
-              <span className="cart__item__quantity__value">{ this.props.quantity }</span>
-              <IncrementQuantityButton
-                disabled={ this.props.loading }
-                onClick={ this.increment.bind(this) } />
-            </div>
+        <div className="cart__item__elements">
+          <span className="font-weight-bold">
+            { truncateText(this.props.name) }
+          </span>
+          { this.renderAdjustments() }
+        </div>
+        <div className="mt-3 d-flex align-items-center justify-content-between">
+          <div className="cart__item__quantity">
+            <DecrementQuantityButton
+              disabled={ this.props.loading }
+              onClick={ this.decrement.bind(this) } />
+            <span className="px-2 font-weight-semi-bold">
+              { this.props.quantity }
+            </span>
+            <IncrementQuantityButton
+              disabled={ this.props.loading }
+              onClick={ this.increment.bind(this) } />
           </div>
-          <div className="cart__item__content__right">
-            { this.props.showPricesTaxExcluded && (
-              <span>
+          <div>
+            { this.props.showPricesTaxExcluded ? (
+              <span className="font-weight-semi-bold">
                 { (totalTaxExcluded(this.props) / 100).formatMoney() }
-              </span>) }
-            { !this.props.showPricesTaxExcluded &&
-              (<span>{ (this.props.total / 100).formatMoney() }</span>) }
+              </span>) : (
+              <span className="font-weight-semi-bold">
+                { (this.props.total / 100).formatMoney() }
+              </span>)
+            }
           </div>
         </div>
       </div>
