@@ -23,7 +23,7 @@ export default function Cart() {
   const { t } = useTranslation()
 
   return (
-    <div className="cart">
+    <>
       <CartItems />
       <div>
         { (reusablePackagingFeatureEnabled && hasItems) &&
@@ -38,6 +38,6 @@ export default function Cart() {
         }
         <CartTotal />
       </div>
-    </div>
+    </>
   )
 }

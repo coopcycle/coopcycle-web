@@ -8,17 +8,7 @@ $panel-heading-padding-horizontal: nth($panel-heading-padding, 2);
 
 $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 2));
 
-#cart {
-  margin-top: $base-margin;
-}
-
-.sticky-outer-wrapper.active {
-  .sticky-inner-wrapper {
-    overflow: auto;
-    max-height: 100%;
-    padding: 20px 0;
-  }
-}
+$card-padding: 2rem;
 
 // @see https://github.com/yahoo/react-stickynode/issues/9#issuecomment-173039715
 @media (max-width: $screen-md-max){
@@ -124,15 +114,33 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   }
 }
 
-.cart-wrapper {
+$restaurant-navbar-height: calc(25px + #{$base-margin});
+$alert-height: calc(52px + #{$base-margin});
 
-  height: 100%;
-  margin: 0;
+//FIXME; not all elements are taken into account, find a better way to calculate this
+$top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-navbar-height} + #{$alert-height});
+
+.sticky-outer-wrapper {
+  .sticky-inner-wrapper {
+    height: calc(100vh - #{$top-elements-height});
+    display: flex;
+    padding-top: $base-margin;
+  }
+}
+
+.sticky-outer-wrapper.active {
+  .sticky-inner-wrapper {
+    height: calc(100vh);
+  }
+}
+
+.order-wrapper {
+  display: flex;
+  flex-direction: column;
 
   @media (max-width: $screen-md-max) {
+    height: 100%;
     background-color: $body-bg;
-    display: flex;
-    flex-direction: column;
     padding: 0 1rem;
 
     position: fixed;
@@ -157,18 +165,30 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
     box-shadow: 0 4px 16px 0 rgba(0, 0, 0, .03);
   }
 
-  .panel-body {
-    padding: 2rem;
-  }
-
   .panel-heading-wrapper {
     @media (max-width: $screen-md-max) {
       cursor: pointer;
     }
   }
+
+  .panel-body {
+    padding: $card-padding;
+  }
+
+  .panel-cart-wrapper {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+    .panel-body {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+  }
 }
 
-.cart-wrapper--show {
+.order-wrapper--show {
   @media (max-width: $screen-md-max) {
     transform: translateY(0);
   }
@@ -180,79 +200,64 @@ $cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 
   gap: 1rem;
 }
 
-.cart {
-
-  @media (max-width: $screen-md-max) {
-    height: 100%;
+.cart__items {
+  flex: 1;
+  overflow-y: auto;
+  margin: 0 0 1rem;
+  padding: 0 0 1rem;
+  border-bottom: 1px solid #eeeeee;
+}
+.cart__item {
+  padding: 10px 0;
+  &__adjustments {
+    color: $text-muted;
+  }
+  &__content {
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
-  }
-
-  &__items {
-
-    margin: 0 0 1rem 0;
-    padding: 0 0 15px 0;
-    border-bottom: 1px solid #eeeeee;
-
-    max-height: 200px;
-    overflow-y: auto;
-    @media (max-width: $screen-md-max) {
-      max-height: inherit;
+    &__body {
+      flex-grow: 1;
+      padding-right: 10px;
     }
-  }
-  &__item {
-    padding: 10px 0;
-    &__adjustments {
-      color: $text-muted;
-    }
-    &__content {
-      display: flex;
-      justify-content: space-between;
-      &__body {
-        flex-grow: 1;
-        padding-right: 10px;
-      }
-      &__right {
-        text-align: right;
-        > span {
-          white-space: nowrap;
-        }
-      }
-    }
-    &__name {
-      font-weight: bold;
-    }
-    &__quantity {
-      display: flex;
-      align-items: center;
-      margin-left: -8px; //to compensate for padding around the button
-
-      &__value {
-        padding: 0 8px;
+    &__right {
+      text-align: right;
+      > span {
+        white-space: nowrap;
       }
     }
   }
-  &__time {
+  &__name {
+    font-weight: bold;
+  }
+  &__quantity {
+    display: flex;
+    align-items: center;
+    margin-left: -8px; //to compensate for padding around the button
+
+    &__value {
+      padding: 0 8px;
+    }
+  }
+}
+.cart__time {
+  display: block;
+  text-align: center;
+  color: $state-success-text;
+  &:hover,
+  &:visited,
+  &:focus {
+    text-decoration: none;
+  }
+  &--not-today {
+    color: $state-danger-text;
+  }
+  &__text,
+  &__edit {
     display: block;
-    text-align: center;
-    color: $state-success-text;
-    &:hover,
-    &:visited,
-    &:focus {
-      text-decoration: none;
-    }
-    &--not-today {
-      color: $state-danger-text;
-    }
-    &__text,
-    &__edit {
-      display: block;
-    }
-    &__text {
-    }
-    &__edit {
-    }
+  }
+  &__text {
+  }
+  &__edit {
   }
 }
 

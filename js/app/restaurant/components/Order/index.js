@@ -29,8 +29,8 @@ class Order extends Component {
     return (
       <Sticky>
         <div className={ classNames({
-          'cart-wrapper': true,
-          'cart-wrapper--show': isMobileCartVisible,
+          'order-wrapper': true,
+          'order-wrapper--show': isMobileCartVisible,
         }) }>
 
           <div className={ classNames({
@@ -46,6 +46,7 @@ class Order extends Component {
           <div className={ classNames({
             'panel': true,
             'panel-default': true,
+            'panel-cart-wrapper': true,
           }) }>
             <div className="panel-body">
               <Cart />

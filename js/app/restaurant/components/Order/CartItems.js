@@ -108,12 +108,12 @@ shouldComponentUpdate(nextProps, nextState) {
     }
 
     return (
-      <div>
+      <>
         { this.props.showTabs && this.renderTabs(this.props.playersGroups) }
       <div className="cart__items">
         { this.renderItems(this.props.items) }
       </div>
-      </div>
+      </>
     )
   }
 }
