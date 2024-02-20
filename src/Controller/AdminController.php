@@ -2660,21 +2660,25 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_business_accounts');
         }
 
-        $qb = $objectManager->getRepository(Order::class)->createQueryBuilder('o');
-        $qb
-            ->andWhere('o.businessAccount = :business_account')
-            ->setParameter('business_account', $businessAccount);
+        $orders = [];
 
-        $orders = $paginator->paginate(
-            $qb,
-            $request->query->getInt('page', 1),
-            self::ITEMS_PER_PAGE,
-            [
-                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'o.createdAt',
-                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
-                PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['o.createdAt'],
-            ]
-        );
+        if (null !== $businessAccount->getId()) {
+            $qb = $objectManager->getRepository(Order::class)->createQueryBuilder('o');
+            $qb
+                ->andWhere('o.businessAccount = :business_account')
+                ->setParameter('business_account', $businessAccount);
+
+            $orders = $paginator->paginate(
+                $qb,
+                $request->query->getInt('page', 1),
+                self::ITEMS_PER_PAGE,
+                [
+                    PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'o.createdAt',
+                    PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
+                    PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['o.createdAt'],
+                ]
+            );
+        }
 
         return $this->render('admin/business_account.html.twig', [
             'form' => $form->createView(),
