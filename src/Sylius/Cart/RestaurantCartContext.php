@@ -135,8 +135,12 @@ final class RestaurantCartContext implements CartContextInterface
             }
         }
 
-        if (null === $cart->getShippingAddress() && $this->businessContext->isActive()) {
-            $cart->setShippingAddress($this->businessContext->getShippingAddress());
+        if ($this->businessContext->isActive()) {
+            $cart->setBusinessAccount($this->businessContext->getBusinessAccount());
+            // Set default address
+            if (null === $cart->getShippingAddress()) {
+                $cart->setShippingAddress($this->businessContext->getShippingAddress());
+            }
         }
 
         $this->cart = $cart;
