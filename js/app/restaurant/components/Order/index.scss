@@ -251,6 +251,12 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid $gray-100;
+
+  .cart__total {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 }
 
 .cart__time {
@@ -282,4 +288,10 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
   > * {
     width: 45%;
   }
+}
+
+.button-composite {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
 }

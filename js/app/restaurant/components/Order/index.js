@@ -69,12 +69,7 @@ class Order extends Component {
                     </div>
                   ) : null }
                   <CartTotal />
-                  { this.props.isOrderingAvailable ? (
-                    <>
-                      <hr />
-                      <CartButton />
-                    </>
-                  ) : null }
+                  { this.props.isOrderingAvailable ? (<CartButton />) : null }
                 </div>
               ) : null }
               { (this.props.isGroupOrdersEnabled
