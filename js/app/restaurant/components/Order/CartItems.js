@@ -12,6 +12,8 @@ import {
   selectPlayersGroups,
 } from '../../redux/selectors'
 
+import cartEmptySvg from '../../../../../assets/svg/cart_empty.svg'
+
 function ListOfItems({ items }) {
   // Make sure items are always in the same order
   // We order them by id asc
@@ -42,7 +44,12 @@ export default function CartItems() {
 
   if (items.length === 0) {
     return (
-      <div className="alert alert-warning">{ t('CART_EMPTY') }</div>
+      <div className="cart__empty">
+        <img src={ cartEmptySvg } />
+        <div className="alert alert-info w-100 mt-3">
+          <i className="fa fa-info-circle"></i> { t('CART_EMPTY') }
+        </div>
+      </div>
     )
   }
 

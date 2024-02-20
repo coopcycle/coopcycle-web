@@ -51,9 +51,9 @@ $base-margin: $bs-base-margin;
 $base-margin-s: $base-margin * 0.5;
 $base-margin-xs: $base-margin-s * 0.5;
 
-$alert-stroke-blue: #CEDFFF;
-$alert-fill-blue: #EBF1FF;
-$alert-text-blue: #3D7DFA;
+$alert-info-bg: #EBF1FF;
+$alert-info-border: #CEDFFF;
+$alert-info-text: #3D7DFA;
 
 $modal-title-padding: 1rem;
 $modal-inner-padding: 1rem;

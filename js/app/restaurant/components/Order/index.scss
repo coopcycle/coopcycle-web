@@ -181,6 +181,7 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
     overflow-y: auto;
 
     .panel-body {
+      min-height: 350px;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
@@ -211,6 +212,14 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
     font-size: 20px;
     font-weight: 600;
   }
+}
+
+.cart__empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .cart__items {
