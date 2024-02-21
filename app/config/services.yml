@@ -1330,3 +1330,5 @@ services:
       $pixabayApiKey: '%env(PIXABAY_API_KEY)%'
 
   AppBundle\Utils\RestaurantDecorator: ~
+
+  AppBundle\Fulfillment\FulfillmentMethodResolver: ~

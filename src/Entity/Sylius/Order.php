@@ -40,7 +40,6 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
@@ -1159,33 +1158,6 @@ class Order extends BaseOrder implements OrderInterface
     public function setFulfillmentMethod(string $fulfillmentMethod)
     {
         $this->setTakeaway($fulfillmentMethod === 'collection');
-    }
-
-    public function getFulfillmentMethodObject(): ?FulfillmentMethod
-    {
-        $restaurants = $this->getRestaurants();
-
-        if (count($restaurants) === 0) {
-
-            // Vendors may not have been processed yet
-            $restaurant = $this->getRestaurant();
-
-            if (null !== $restaurant) {
-
-                return $restaurant->getFulfillmentMethod(
-                    $this->getFulfillmentMethod()
-                );
-            }
-
-            return null;
-        }
-
-        $first = $restaurants->first();
-        $target = count($restaurants) === 1 ? $first : $first->getHub();
-
-        return $target->getFulfillmentMethod(
-            $this->getFulfillmentMethod()
-        );
     }
 
     public function getRefundTotal(): int
