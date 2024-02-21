@@ -192,7 +192,7 @@ class OrderTimeHelper
                 ->format(\DateTime::ATOM);
         }
 
-        $fulfillmentMethod = $cart->getFulfillmentMethodObject();
+        $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($cart);
 
         return [
             'behavior' => $fulfillmentMethod->getOpeningHoursBehavior(),
