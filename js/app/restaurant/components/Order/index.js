@@ -7,7 +7,6 @@ import { Switch } from 'antd'
 
 import { sync, toggleReusablePackaging } from '../../redux/actions'
 import {
-  selectIsOrderingAvailable,
   selectHasItems,
   selectReusablePackagingFeatureEnabled,
   selectReusablePackagingEnabled,
@@ -63,7 +62,7 @@ class Order extends Component {
                     </div>
                   ) : null }
                   <CartTotal />
-                  { this.props.isOrderingAvailable ? (<CartButton />) : null }
+                  <CartButton />
                 </div>
               ) : null }
               { (this.props.isGroupOrdersEnabled
@@ -83,7 +82,6 @@ function mapStateToProps(state) {
 
   return {
     isMobileCartVisible: state.isMobileCartVisible,
-    isOrderingAvailable: selectIsOrderingAvailable(state) && !state.isPlayer,
     hasItems: selectHasItems(state),
     isPlayer: state.isPlayer,
     player: state.player,
