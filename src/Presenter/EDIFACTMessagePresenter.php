@@ -38,15 +38,22 @@ class EDIFACTMessagePresenter {
     private static function messageToIcon(EDIFACTMessage $message): string {
         return match ($message->getDirection()) {
             EDIFACTMessage::DIRECTION_INBOUND => "fa-arrow-down",
-            EDIFACTMessage::DIRECTION_OUTBOUND => "fa-arrow-up",
+            EDIFACTMessage::DIRECTION_OUTBOUND => match ($message->getSyncedAt()) {
+                null => "fa-circle",
+                default => "fa-arrow-up",
+            },
             default => "fa-question",
         };
     }
 
     //TODO: Improve this to a more generic way
+    //Maybe use the EDIFACT's task to get if there is an incident
     private static function messageToColor(EDIFACTMessage $message): string {
         return match ($message->getSubMessageType()) {
-            'LIV|CFM' => 'success',
+            'LIV|CFM' => match ($message->getSyncedAt()) {
+                null => 'primary',
+                default => 'success',
+            },
             default => 'default',
         };
     }
