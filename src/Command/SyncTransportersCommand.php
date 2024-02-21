@@ -61,8 +61,18 @@ class SyncTransportersCommand extends Command {
         private PhoneNumberUtil $phoneUtil,
         private Filesystem $edifactFs
     )
+    { parent::__construct(); }
+
+    protected function configure(): void
     {
-        parent::__construct();
+        $this->setName('coopcycle:transporters:sync')
+        ->setDescription('Synchronizes transporters');
+
+        $this->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Dry run mode');
+    }
+
+    private function setup(): void
+    {
         $pos = explode(',', $this->settingsManager->get('latlng') ?? '');
         if (count($pos) !== 2) {
             throw new \Exception('Invalid latlng setting');
@@ -98,17 +108,9 @@ class SyncTransportersCommand extends Command {
 
     }
 
-    protected function configure(): void
-    {
-        $this->setName('coopcycle:transporters:sync')
-        ->setDescription('Synchronizes transporters');
-
-        $this->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Dry run mode');
-    }
-
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->setup();
         $this->dryRun = $input->getOption('dry-run');
         $this->output = $output;
 
