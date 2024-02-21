@@ -79,6 +79,7 @@
           <table class="table">
             <thead>
               <th>{{ 'restaurant.stats.order_number'|trans }}</th>
+              <th>{{ 'profile.email'|trans }}</th>
               <th>{{ 'order.total_including_tax'|trans }}</th>
               <th></th>
             </thead>
@@ -86,6 +87,7 @@
               {% for order in orders %}
               <tr>
                 <td class="text-monospace">{{ order.number }}</td>
+                <td>{{ order.customer.email }}</td>
                 <td>{{ order.total|price_format }}</td>
                 <td class="text-right">{{ order.createdAt|time_diff }}</td>
               </tr>
