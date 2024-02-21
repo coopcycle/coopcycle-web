@@ -16,7 +16,7 @@ import InvitePeopleToOrderButton from './InvitePeopleToOrderButton'
 import FulfillmentDetails from './FulfillmentDetails'
 import Cart from './Cart'
 import CartTotal from './CartTotal'
-import CartHeading from './CartHeading'
+import MobileCartHeading from './MobileCartHeading'
 import CartButton from './CartButton'
 
 class Order extends Component {
@@ -36,13 +36,7 @@ class Order extends Component {
           'order-wrapper--show': isMobileCartVisible,
         }) }>
 
-          <div className={ classNames({
-            'panel': true,
-            'panel-default': true,
-            'panel-heading-wrapper': true,
-          }) }>
-            <CartHeading />
-          </div>
+          <MobileCartHeading />
 
           <FulfillmentDetails />
 

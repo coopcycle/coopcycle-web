@@ -1,13 +1,6 @@
 @import "../../../../../assets/css/vars.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
 
-// $panel-heading-padding is 10px 15px !default;
-// nth() allows to extract individual values
-$panel-heading-padding-vertical: nth($panel-heading-padding, 1);
-$panel-heading-padding-horizontal: nth($panel-heading-padding, 2);
-
-$cart-heading-line-height: ($navbar-height - ($panel-heading-padding-vertical * 2));
-
 $card-padding: 2rem;
 
 // @see https://github.com/yahoo/react-stickynode/issues/9#issuecomment-173039715
@@ -19,98 +12,33 @@ $card-padding: 2rem;
   }
 }
 
-.cart-heading {
-  position: relative;
-  height: $navbar-height;
-  text-align: center;
-  color: $white !important;
-  background-color: $main-blue-light !important;
-  line-height: $cart-heading-line-height;
-
-  &--warning {
-    background-color: $state-warning-bg !important;
-    color: $state-warning-text !important;
-
-    .cart-heading__left,
-    .cart-heading__right {
-      background-color: $state-warning-text;
-      color: $state-warning-bg;
-    }
-  }
-
-  &--success {
-    background-color: $state-success-bg !important;
-    color: $state-success-text !important;
-
-    .cart-heading__left,
-    .cart-heading__right {
-      background-color: $state-success-text;
-      color: $state-success-bg;
-    }
-
-    .cart-heading__right {
-      display: none;
-    }
-
-    .cart-heading__button {
-      display: block;
-    }
-  }
-}
-
-.cart-heading__right {
-  position: relative;
-  &:after {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -35px 0 0 -35px;
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    content: '';
-    opacity: 0;
-    pointer-events: none;
-    box-shadow: inset 0 0 0 35px rgba(111, 148, 182, 0);
-  }
-  &--ripple:after {
-    animation: ripple-effect-radomir 0.5s ease-out forwards;
-  }
-}
-
-.cart-heading__button {
-  display: none;
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: $navbar-height;
-  height: $navbar-height;
-  background-color: $state-success-text;
-  color: $state-success-bg;
-  border: none;
-}
-
-.cart-heading__left,
-.cart-heading__right {
-  display: block;
-  position: absolute;
-  width: $cart-heading-line-height;
-  height: $cart-heading-line-height;
-  border-radius: $cart-heading-line-height;
-  background-color: $main-blue;
-  top: $panel-heading-padding-vertical;
-}
-
-.cart-heading__left {
-  left: $panel-heading-padding-horizontal;
-}
-
-.cart-heading__right {
+.mobile-cart {
   display: none;
 
   @media (max-width: $screen-md-max) {
     display: block;
-    right: $panel-heading-padding-horizontal;
+    cursor: pointer;
+  }
+
+  .panel-heading {
+    position: relative;
+    height: $navbar-height;
+    display: flex;
+    align-items: center;
+    color: $white !important;
+    background-color: $main-blue-light !important;
+
+    &--warning {
+      background-color: $state-warning-bg !important;
+      color: $state-warning-text !important;
+    }
+
+    &__body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }
 
@@ -135,6 +63,7 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
 }
 
 .order-wrapper {
+  width: 100%;
   display: flex;
   flex-direction: column;
 
@@ -163,12 +92,6 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
     border: none;
     border-radius: 16px;
     box-shadow: 0 4px 16px 0 rgba(0, 0, 0, .03);
-  }
-
-  .panel-heading-wrapper {
-    @media (max-width: $screen-md-max) {
-      cursor: pointer;
-    }
   }
 
   .panel-body {

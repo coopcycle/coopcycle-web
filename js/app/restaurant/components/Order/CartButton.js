@@ -4,19 +4,17 @@ import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import classNames from 'classnames'
 
-import { selectItems } from '../../redux/selectors'
+import { selectIsFetching, selectItems } from '../../redux/selectors'
+import OrderState from './OrderState'
 
 class CartButton extends Component {
 
   render() {
 
-    const { hasErrors, items, loading, restaurantIsOpen } = this.props
+    const { hasErrors, items, loading } = this.props
 
     const disabled = (hasErrors || items.length === 0 || loading)
     const btnProps = disabled ? { disabled: true } : {}
-    const label = restaurantIsOpen
-      ? this.props.t('CART_WIDGET_BUTTON')
-      : this.props.t('SCHEDULE_ORDER')
 
     return (<button type="submit" className={ classNames({
       'mt-4': true,
@@ -26,13 +24,7 @@ class CartButton extends Component {
       'btn-primary': true,
       'disabled': disabled,
     }) }{ ...btnProps }>
-      { this.props.loading ? (
-        <span><i className="fa fa-spinner fa-spin"></i></span>) : (
-        <span className="button-composite">
-          <i className="fa fa-shopping-cart"></i>
-          <span>{ label }</span>
-          <span>{ (this.props.total / 100).formatMoney() }</span>
-        </span>) }
+      <OrderState />
     </button>)
   }
 }
@@ -41,10 +33,8 @@ function mapStateToProps(state) {
 
   return {
     items: selectItems(state),
-    total: state.cart.total,
-    loading: state.isFetching,
+    loading: selectIsFetching(state),
     hasErrors: _.size(state.errors) > 0,
-    restaurantIsOpen: state.restaurant.isOpen,
   }
 }
 

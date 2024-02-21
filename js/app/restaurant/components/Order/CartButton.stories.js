@@ -30,25 +30,6 @@ export const Basic = {
       cart: {
         items: [
           {
-            id: 1,
-            name: 'Pizza Margherita',
-            total: 1000,
-            quantity: 1,
-            adjustments: {
-              menu_item_modifier: [
-                { label: 'Extra cheese' },
-                { label: 'Pepperoni', amount: 150 },
-              ],
-              tax: [
-                { label: 'VAT', amount: 100 },
-              ],
-            },
-            vendor: {
-              name: 'Pizza Hut',
-            },
-            player: null,
-          },
-          {
             id: 2,
             name: 'Pizza Pepperoni',
             total: 1000,
@@ -62,22 +43,6 @@ export const Basic = {
         ],
         itemsTotal: 2000,
         total: 2100,
-        adjustments: {
-          delivery: [
-            {
-              id: 1,
-              label: 'Delivery',
-              amount: 100,
-            },
-          ],
-          tax: [
-            {
-              id: 1,
-              label: 'VAT',
-              amount: 200,
-            },
-          ],
-        },
       },
       isPlayer: false,
       player: {
@@ -97,24 +62,44 @@ export const Loading = {
       cart: {
         items: [
           {
-            id: 1,
-            name: 'Pizza Margherita',
+            id: 2,
+            name: 'Pizza Pepperoni',
             total: 1000,
             quantity: 1,
-            adjustments: {
-              menu_item_modifier: [
-                { label: 'Extra cheese' },
-                { label: 'Pepperoni', amount: 150 },
-              ],
-              tax: [
-                { label: 'VAT', amount: 100 },
-              ],
-            },
+            adjustments: {},
             vendor: {
               name: 'Pizza Hut',
             },
             player: null,
           },
+        ],
+        itemsTotal: 2000,
+        total: 2100,
+      },
+      isPlayer: false,
+      player: {
+        player: null,
+      },
+      restaurant: {
+        isOpen: true,
+      },
+    },
+  },
+}
+
+export const Error = {
+  args: {
+    _store: {
+      isFetching: false,
+      errors: {
+        'shippingAddress': [
+          {
+            message: 'Wrong address',
+          },
+        ],
+      },
+      cart: {
+        items: [
           {
             id: 2,
             name: 'Pizza Pepperoni',
@@ -129,22 +114,6 @@ export const Loading = {
         ],
         itemsTotal: 2000,
         total: 2100,
-        adjustments: {
-          delivery: [
-            {
-              id: 1,
-              label: 'Delivery',
-              amount: 100,
-            },
-          ],
-          tax: [
-            {
-              id: 1,
-              label: 'VAT',
-              amount: 200,
-            },
-          ],
-        },
       },
       isPlayer: false,
       player: {
@@ -156,3 +125,43 @@ export const Loading = {
     },
   },
 }
+
+export const Warning = {
+  args: {
+    _store: {
+      isFetching: false,
+      errors: {
+        'cart': [
+          {
+            message: 'Product is not available',
+          },
+        ],
+      },
+      cart: {
+        items: [
+          {
+            id: 2,
+            name: 'Pizza Pepperoni',
+            total: 1000,
+            quantity: 1,
+            adjustments: {},
+            vendor: {
+              name: 'Pizza Hut',
+            },
+            player: null,
+          },
+        ],
+        itemsTotal: 2000,
+        total: 2100,
+      },
+      isPlayer: false,
+      player: {
+        player: null,
+      },
+      restaurant: {
+        isOpen: true,
+      },
+    },
+  },
+}
+

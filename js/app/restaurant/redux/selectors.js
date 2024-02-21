@@ -5,7 +5,15 @@ import { totalTaxExcluded } from '../../utils/tax'
 
 export const GROUP_ORDER_ADMIN = 'Admin'
 
+export const selectIsFetching = state => state.isFetching
+
+export const selectIsMobileCartVisible = state => state.isMobileCartVisible
+
+export const selectRestaurant = state => state.restaurant
+
 export const selectCart = state => state.cart
+
+export const selectCartTotal = state => state.cart.total
 
 export const selectIsDeliveryEnabled = createSelector(
   state => state.cart.vendor.fulfillmentMethods,
