@@ -115,7 +115,7 @@ class SyncTransportersCommand extends Command {
         $this->output = $output;
 
         $config = $this->params->get('transporters_config');
-        if (!$config['DBSCHENKER']['enabled'] ?? true) {
+        if (!($config['DBSCHENKER']['enabled'] ?? false)) {
             throw new \Exception('DBSchenker is not configured or enabled');
         }
         $config = $config['DBSCHENKER'];
