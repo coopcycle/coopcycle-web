@@ -11,21 +11,13 @@ use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
-use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Security;
 
 final class RestaurantCartContext implements CartContextInterface
 {
-    private $session;
-
-    private $orderRepository;
-
     private $orderFactory;
-
-    private $sessionKeyName;
 
     /**
      * @var ChannelContextInterface
@@ -42,16 +34,9 @@ final class RestaurantCartContext implements CartContextInterface
     /** @var OrderInterface|null */
     private $cart;
 
-    /**
-     * @param SessionInterface $session
-     * @param OrderRepositoryInterface $orderRepository
-     * @param string $sessionKeyName
-     */
     public function __construct(
-        SessionInterface $session,
-        OrderRepositoryInterface $orderRepository,
         FactoryInterface $orderFactory,
-        string $sessionKeyName,
+        SessionStorage $storage,
         ChannelContextInterface $channelContext,
         RestaurantResolver $resolver,
         AuthorizationCheckerInterface $authorizationChecker,
@@ -61,10 +46,8 @@ final class RestaurantCartContext implements CartContextInterface
         private LoggingUtils $loggingUtils
     )
     {
-        $this->session = $session;
-        $this->orderRepository = $orderRepository;
         $this->orderFactory = $orderFactory;
-        $this->sessionKeyName = $sessionKeyName;
+        $this->storage = $storage;
         $this->channelContext = $channelContext;
         $this->resolver = $resolver;
         $this->authorizationChecker = $authorizationChecker;
@@ -82,22 +65,22 @@ final class RestaurantCartContext implements CartContextInterface
 
         $cart = null;
 
-        if ($this->session->has($this->sessionKeyName)) {
+        if ($this->storage->has()) {
 
-            $cart = $this->orderRepository->findCartById($this->session->get($this->sessionKeyName));
+            $cart = $this->storage->get();
 
             if (null === $cart || $cart->getChannel()->getCode() !== $this->channelContext->getChannel()->getCode()) {
-                $this->session->remove($this->sessionKeyName);
+                $this->storage->remove();
             } else {
                 try {
                     if (!$cart->isMultiVendor() && !$cart->getRestaurant()->isEnabled()
                         && !$this->authorizationChecker->isGranted('edit', $cart->getVendor())) {
                         $cart = null;
-                        $this->session->remove($this->sessionKeyName);
+                        $this->storage->remove();
                     }
                 } catch (EntityNotFoundException $e) {
                     $cart = null;
-                    $this->session->remove($this->sessionKeyName);
+                    $this->storage->remove();
                 }
             }
 
