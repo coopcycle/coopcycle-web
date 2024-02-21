@@ -28,7 +28,7 @@
     <field name="weightRequired" type="boolean" column="weight_required"/>
     <field name="packagesRequired" type="boolean" column="packages_required"/>
     <field name="multiDropEnabled" type="boolean" column="multi_drop_enabled"/>
-    <field name="DBShenkerEnabled" type="boolean" column="db_shenker">
+    <field name="DBSchenkerEnabled" type="boolean" column="db_schenker">
       <options>
         <option name="default">0</option>
       </options>

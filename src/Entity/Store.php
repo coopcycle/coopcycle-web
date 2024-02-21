@@ -154,7 +154,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $failureReasonSet;
 
-    private $DBShenkerEnabled = false;
+    private $DBSchenkerEnabled = false;
 
     public function __construct() {
         $this->deliveries = new ArrayCollection();
@@ -525,14 +525,14 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return [];
     }
 
-    public function isDBShenkerEnabled(): bool
+    public function isDBSchenkerEnabled(): bool
     {
-        return $this->DBShenkerEnabled;
+        return $this->DBSchenkerEnabled;
     }
 
-    public function setDBShenkerEnabled(bool $DBShenkerEnabled): Store
+    public function setDBSchenkerEnabled(bool $DBSchenkerEnabled): Store
     {
-        $this->DBShenkerEnabled = $DBShenkerEnabled;
+        $this->DBSchenkerEnabled = $DBSchenkerEnabled;
         return $this;
     }
 }

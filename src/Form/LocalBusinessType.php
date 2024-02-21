@@ -29,7 +29,7 @@ abstract class LocalBusinessType extends AbstractType
     protected $country;
     protected $debug;
     protected $cashOnDeliveryOptinEnabled;
-    protected bool $dbshenkerEnabled;
+    protected bool $DBSchenkerEnabled;
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,

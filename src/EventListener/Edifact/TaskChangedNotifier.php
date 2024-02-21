@@ -63,7 +63,7 @@ class TaskChangedNotifier {
             'organization' => $org
         ]);
 
-        return !$store->isDBShenkerEnabled();
+        return !$store->isDBSchenkerEnabled();
     }
 
 }

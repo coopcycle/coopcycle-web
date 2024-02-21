@@ -10,7 +10,7 @@
     padding-left: 10px;
   }
 </style>
-{% if delivery.store is not empty and delivery.store.isDBShenkerEnabled %}
+{% if delivery.store is not empty and delivery.store.isDBSchenkerEnabled %}
 {% set importMessage = delivery.getDropoff().getImportMessage() %}
 {% set ediMessages = delivery.getDropoff().getEdifactMessagesTimeline() %}
 <div class="panel panel-primary">

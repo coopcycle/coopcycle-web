@@ -88,10 +88,10 @@ class StoreType extends LocalBusinessType
                     'required' => false,
                 ));
 
-            if ($this->dbshenkerEnabled) {
-                $builder->add('DBShenkerEnabled', CheckboxType::class, [
-                    'label' => 'This store is managed by DBShenker',
-                    'help' => 'Enable DBShenker integration for this store',
+            if ($this->DBSchenkerEnabled) {
+                $builder->add('DBSchenkerEnabled', CheckboxType::class, [
+                    'label' => 'This store is managed by DBSchenker',
+                    'help' => 'Enable DBSchenker integration for this store',
                     'required' => false
                 ]);
             }
