@@ -1755,7 +1755,7 @@ class Order extends BaseOrder implements OrderInterface
         return $this->businessAccount;
     }
 
-    public function setBusinessAccount(BusinessAccount $businessAccount): void
+    public function setBusinessAccount(?BusinessAccount $businessAccount): void
     {
         $this->businessAccount = $businessAccount;
     }
