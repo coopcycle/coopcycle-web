@@ -12,6 +12,7 @@ import {
   selectReusablePackagingEnabled,
   selectIsMobileCartVisible,
   selectCartItemsRelatedErrorMessages,
+  selectIsFetching,
 } from '../../redux/selectors'
 import InvitePeopleToOrderButton from './InvitePeopleToOrderButton'
 import FulfillmentDetails from './FulfillmentDetails'
@@ -44,6 +45,7 @@ function ReusablePackagingSwitch() {
 
 export default function Order() {
   const isMobileCartVisible = useSelector(selectIsMobileCartVisible)
+  const isFetching = useSelector(selectIsFetching)
   const hasItems = useSelector(selectHasItems)
   const cartItemsRelatedErrors = useSelector(selectCartItemsRelatedErrorMessages)
   const reusablePackagingFeatureEnabled = useSelector(selectReusablePackagingFeatureEnabled)
@@ -74,7 +76,7 @@ export default function Order() {
               <span>{ _.first(cartItemsRelatedErrors) }</span>
             </div>) : null }
           <Cart />
-          { hasItems ? (<div className="cart__footer">
+          { (hasItems || isFetching) ? (<div className="cart__footer">
             { reusablePackagingFeatureEnabled ? (
               <ReusablePackagingSwitch />) : null }
             <CartTotal />
