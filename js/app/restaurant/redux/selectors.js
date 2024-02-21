@@ -66,6 +66,9 @@ export const selectPlayersGroups = createSelector(
 )
 
 export const selectIsPlayer = state => state.isPlayer
+export const selectPlayer = state => state.player
+
+export const selectIsGroupOrdersEnabled = state => state.isGroupOrdersEnabled
 
 export const selectIsGroupOrderAdmin = createSelector(
   selectIsPlayer,
@@ -157,30 +160,21 @@ const selectSortedErrors = createSelector(
 
 export const selectSortedErrorMessages = createSelector(
   selectSortedErrors,
-  (errors) => {
-
-    const messages = []
-    _.forEach(errors, (error) => {
-      messages.push(error.message)
-    })
-
-    return messages
-  }
+  (errors) => errors.map(error => error.message)
 )
 
 export const selectFulfillmentRelatedErrorMessages = createSelector(
   selectSortedErrors,
-  (errors) => {
+  (errors) => errors.filter(error =>
+    error.propertyPath === 'shippingAddress'
+    || error.propertyPath === 'shippingTimeRange').map(error => error.message),
+)
 
-    const messages = []
-    _.forEach(errors, (error) => {
-      if (error.propertyPath === 'shippingAddress' || error.propertyPath === 'shippingTimeRange') {
-        messages.push(error.message)
-      }
-    })
-
-    return messages
-  }
+export const selectCartItemsRelatedErrorMessages = createSelector(
+  selectSortedErrors,
+  (errors) => errors.filter(error =>
+    error.propertyPath === 'items'
+    || error.propertyPath === 'total').map(error => error.message),
 )
 
 export const selectReusablePackagingFeatureEnabled = createSelector(

@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { withTranslation } from 'react-i18next'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import Sticky from 'react-stickynode'
 import classNames from 'classnames'
 import { Switch } from 'antd'
@@ -10,6 +10,10 @@ import {
   selectHasItems,
   selectReusablePackagingFeatureEnabled,
   selectReusablePackagingEnabled,
+  selectIsMobileCartVisible,
+  selectIsPlayer,
+  selectIsGroupOrdersEnabled,
+  selectCartItemsRelatedErrorMessages,
 } from '../../redux/selectors'
 import InvitePeopleToOrderButton from './InvitePeopleToOrderButton'
 import FulfillmentDetails from './FulfillmentDetails'
@@ -17,89 +21,73 @@ import Cart from './Cart'
 import CartTotal from './CartTotal'
 import MobileCartHeading from './MobileCartHeading'
 import CartButton from './CartButton'
+import _ from 'lodash'
 
-class Order extends Component {
+function ReusablePackagingSwitch() {
+  const reusablePackagingEnabled = useSelector(selectReusablePackagingEnabled)
 
-  componentDidMount() {
-    this.props.sync()
-  }
+  const { t } = useTranslation()
 
-  render() {
+  const dispatch = useDispatch()
 
-    const { isMobileCartVisible } = this.props
+  return (<div className="d-flex align-items-center mb-2">
+    <Switch
+      size="small"
+      checked={ reusablePackagingEnabled }
+      onChange={ (checked) => {
+        dispatch(toggleReusablePackaging(checked))
+      } } />
+    <span
+      className="ml-2">
+        { t('CART_ENABLE_ZERO_WASTE') }
+      </span>
+  </div>)
+}
 
-    return (
-      <Sticky>
-        <div className={ classNames({
-          'order-wrapper': true,
-          'order-wrapper--show': isMobileCartVisible,
-        }) }>
+export default function Order() {
+  const isMobileCartVisible = useSelector(selectIsMobileCartVisible)
+  const hasItems = useSelector(selectHasItems)
+  const cartItemsRelatedErrors = useSelector(selectCartItemsRelatedErrorMessages)
+  const isGroupOrdersEnabled = useSelector(selectIsGroupOrdersEnabled)
+  const isPlayer = useSelector(selectIsPlayer)
+  const reusablePackagingFeatureEnabled = useSelector(selectReusablePackagingFeatureEnabled)
+  
+  const dispatch = useDispatch()
 
-          <MobileCartHeading />
+  useEffect(() => {
+    dispatch(sync())
+  }, [])
 
-          <FulfillmentDetails />
+  return (<Sticky>
+    <div className={ classNames({
+      'order-wrapper': true, 'order-wrapper--show': isMobileCartVisible,
+    }) }>
 
-          <div className={ classNames({
-            'panel': true,
-            'panel-default': true,
-            'panel-cart-wrapper': true,
-          }) }>
-            <div className="panel-body">
-              <Cart />
-              { this.props.hasItems ? (
-                <div className="cart__footer">
-                  { this.props.reusablePackagingFeatureEnabled ? (
-                    <div className="d-flex align-items-center mb-2">
-                      <Switch
-                        size="small"
-                        checked={ this.props.reusablePackagingEnabled }
-                        onChange={ (checked) => {
-                          this.props.toggleReusablePackaging(checked)
-                        } } />
-                      <span className="ml-2">
-                        { this.props.t('CART_ENABLE_ZERO_WASTE') }
-                      </span>
-                    </div>
-                  ) : null }
-                  <CartTotal />
-                  <CartButton />
-                </div>
-              ) : null }
-              { (this.props.isGroupOrdersEnabled
-                && !this.props.isPlayer
-                && window._auth.isAuth) ? (
-                <InvitePeopleToOrderButton />
-              ) : null }
-            </div>
-          </div>
+      <MobileCartHeading />
+
+      <FulfillmentDetails />
+
+      <div className={ classNames({
+        'panel': true, 'panel-default': true, 'panel-cart-wrapper': true,
+      }) }>
+        <div className="panel-body">
+          { cartItemsRelatedErrors.length > 0 ? (
+            <div className="alert alert-warning">
+              <i className="fa fa-warning"></i>
+              &nbsp;
+              <span>{ _.first(cartItemsRelatedErrors) }</span>
+            </div>) : null }
+          <Cart />
+          { hasItems ? (<div className="cart__footer">
+            { reusablePackagingFeatureEnabled ? (
+              <ReusablePackagingSwitch />) : null }
+            <CartTotal />
+            <CartButton />
+          </div>) : null }
+          { (isGroupOrdersEnabled && !isPlayer && window._auth.isAuth) ? (
+            <InvitePeopleToOrderButton />) : null }
         </div>
-      </Sticky>
-    )
-  }
+      </div>
+    </div>
+  </Sticky>)
 }
-
-function mapStateToProps(state) {
-
-  return {
-    isMobileCartVisible: state.isMobileCartVisible,
-    hasItems: selectHasItems(state),
-    isPlayer: state.isPlayer,
-    player: state.player,
-    isGroupOrdersEnabled: state.isGroupOrdersEnabled,
-    reusablePackagingFeatureEnabled: selectReusablePackagingFeatureEnabled(
-      state),
-    reusablePackagingEnabled: selectReusablePackagingEnabled(state),
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-
-  return {
-    sync: () => dispatch(sync()),
-    toggleReusablePackaging: (checked) => dispatch(
-      toggleReusablePackaging(checked)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(Order))
