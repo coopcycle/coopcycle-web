@@ -37,9 +37,9 @@ use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
 use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
@@ -480,6 +480,8 @@ class Order extends BaseOrder implements OrderInterface
     protected $loopeatDetails;
 
     protected ?OrderCredentials $loopeatCredentials = null;
+
+    protected $businessAccount;
 
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
@@ -1158,33 +1160,6 @@ class Order extends BaseOrder implements OrderInterface
         $this->setTakeaway($fulfillmentMethod === 'collection');
     }
 
-    public function getFulfillmentMethodObject(): ?FulfillmentMethod
-    {
-        $restaurants = $this->getRestaurants();
-
-        if (count($restaurants) === 0) {
-
-            // Vendors may not have been processed yet
-            $restaurant = $this->getRestaurant();
-
-            if (null !== $restaurant) {
-
-                return $restaurant->getFulfillmentMethod(
-                    $this->getFulfillmentMethod()
-                );
-            }
-
-            return null;
-        }
-
-        $first = $restaurants->first();
-        $target = count($restaurants) === 1 ? $first : $first->getHub();
-
-        return $target->getFulfillmentMethod(
-            $this->getFulfillmentMethod()
-        );
-    }
-
     public function getRefundTotal(): int
     {
         $refundTotal = 0;
@@ -1264,6 +1239,10 @@ class Order extends BaseOrder implements OrderInterface
         if (!$this->hasVendor()) {
 
             return null;
+        }
+
+        if (null !== $this->getBusinessAccount()) {
+            return $this->getBusinessAccount()->getBusinessRestaurantGroup();
         }
 
         $first = $this->getRestaurants()->first();
@@ -1741,5 +1720,20 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return false;
+    }
+
+    public function getBusinessAccount(): ?BusinessAccount
+    {
+        return $this->businessAccount;
+    }
+
+    public function setBusinessAccount(?BusinessAccount $businessAccount): void
+    {
+        $this->businessAccount = $businessAccount;
+    }
+
+    public function isBusiness(): bool
+    {
+        return null !== $this->businessAccount;
     }
 }

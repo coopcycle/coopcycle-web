@@ -167,8 +167,8 @@
     <section class="restaurant-header-right">
       <div class="d-flex justify-content-end">
         {% include 'restaurant/_partials/opening_hours.html.twig' with {
-          delivery:   restaurant.isFulfillmentMethodEnabled('delivery')   ? restaurant.getOpeningHours('delivery')   : [],
-          collection: restaurant.isFulfillmentMethodEnabled('collection') ? restaurant.getOpeningHours('collection') : []
+          delivery:   restaurant.isFulfillmentMethodEnabled('delivery')   ? restaurant_opening_hours(restaurant, 'delivery')   : [],
+          collection: restaurant.isFulfillmentMethodEnabled('collection') ? restaurant_opening_hours(restaurant, 'collection') : []
         } %}
       </div>
     </section>
@@ -180,7 +180,9 @@
   </section>
   {% endif %}
 
-  {% if restaurant.menuTaxon is not null %}
+  {% set menu = restaurant_menu(restaurant) %}
+
+  {% if menu is not null %}
   <div class="row">
 
     {#
@@ -188,11 +190,11 @@
     We cache the following block for performance
     Iterating through all products, options… is a lot of database requests
     #}
-    {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation) %}
+    {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation ~ (business_context.active ? '_business' : '')) %}
     {% cache cache_key ttl(300) %}
     <div class="col-xs-12 col-sm-8" id="menu">
       <div class="restaurant-menu-wrapper">
-      {% for child in restaurant.menuTaxon.children %}
+      {% for child in menu.children %}
         {% if child.products|length > 0 %}
         <h2>{{ child.name }}</h2>
         {% if child.description is not empty %}

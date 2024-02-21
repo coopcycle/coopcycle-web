@@ -32,7 +32,7 @@
               </p>
             {% else %}
               <p class="mt-2">{{ 'registration.after_confirmation_redirect_to_dashboard'|trans }}</p>
-              <a href="{{ is_granted('DASHBOARD_VIEW') ? path('dashboard') : path('nucleos_profile_profile_show') }}" class="btn btn-md bg-primary mt-3">
+              <a href="{{ is_granted('DASHBOARD_VIEW') ? path('dashboard') : path('profile_edit') }}" class="btn btn-md bg-primary mt-3">
                 {{ 'registration.go_to_dashboard'|trans }}
               </a>
             {% endif %}

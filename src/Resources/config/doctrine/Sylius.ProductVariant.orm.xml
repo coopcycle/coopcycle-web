@@ -13,5 +13,10 @@
         <join-column name="tax_category_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
+    <many-to-one field="businessRestaurantGroup" target-entity="AppBundle\Entity\BusinessRestaurantGroup">
+      <join-columns>
+        <join-column name="business_restaurant_group_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
   </entity>
 </doctrine-mapping>

@@ -247,7 +247,7 @@ twig:
         loopeat_context: '@AppBundle\LoopEat\Context'
         legacy_taxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
         payment_gateway_resolver: '@AppBundle\Payment\GatewayResolver'
-        context_channel: "@sylius.context.channel"
+        business_context: '@AppBundle\Business\Context'
         loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
         embed_context: '@AppBundle\Embed\Context'
         locationiq_access_token: '%env(LOCATIONIQ_ACCESS_TOKEN)%'

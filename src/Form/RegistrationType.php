@@ -23,17 +23,14 @@ use AppBundle\Form\Type\TermsAndConditionsAndPrivacyPolicyType;
 class RegistrationType extends AbstractTypeExtension
 {
     private $settingsManager;
-    private $isDemo;
     private $splitTermsAndConditionsAndPrivacyPolicy;
 
     public function __construct(
         SettingsManager $settingsManager,
         string $country,
-        bool $isDemo = false,
         bool $splitTermsAndConditionsAndPrivacyPolicy = false)
     {
         $this->settingsManager = $settingsManager;
-        $this->isDemo = $isDemo;
         $this->splitTermsAndConditionsAndPrivacyPolicy = $splitTermsAndConditionsAndPrivacyPolicy;
         $this->country = strtoupper($country);
     }
@@ -64,20 +61,6 @@ class RegistrationType extends AbstractTypeExtension
         } else {
             $builder->add('legal', LegalType::class, [
                 'mapped' => false,
-            ]);
-        }
-
-        if ($this->isDemo) {
-            $builder->add('accountType', ChoiceType::class, [
-                'mapped' => false,
-                'required' => true,
-                'choices'  => [
-                    'roles.ROLE_USER' => 'CUSTOMER',
-                    'roles.ROLE_COURIER' => 'COURIER',
-                    'roles.ROLE_RESTAURANT' => 'RESTAURANT',
-                    'roles.ROLE_STORE' => 'STORE',
-                ],
-                'label' => 'profile.accountType'
             ]);
         }
 

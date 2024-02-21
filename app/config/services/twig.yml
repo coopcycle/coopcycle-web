@@ -66,3 +66,7 @@ services:
   Twig\Extra\Html\HtmlExtension:
     tags:
       - { name: twig.extension }
+
+  AppBundle\Twig\SyliusVariantResolver:
+    arguments:
+      $productVariantResolver: '@coopcycle.sylius.product_variant_resolver.lazy'

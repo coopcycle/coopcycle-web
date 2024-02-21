@@ -34,6 +34,7 @@ use AppBundle\Entity\Organization;
 use AppBundle\Entity\OrganizationConfig;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
+use AppBundle\Entity\BusinessRestaurantGroup;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
@@ -68,6 +69,7 @@ use AppBundle\Form\OrganizationType;
 use AppBundle\Form\PackageSetType;
 use AppBundle\Form\PricingRuleSetType;
 use AppBundle\Form\RestaurantAdminType;
+use AppBundle\Form\BusinessRestaurantGroupType;
 use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\Type\TimeSlotChoiceType;
@@ -94,7 +96,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\ORM\Query\Expr;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
@@ -210,7 +211,7 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_dashboard');
     }
 
-    protected function getOrderList(Request $request, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
     {
         if ($request->query->has('q')) {
             $qb = $this->orderRepository->search($request->query->get('q'));
@@ -232,14 +233,14 @@ class AdminController extends AbstractController
                 ->setParameter('state_cancelled', OrderInterface::STATE_CANCELLED);
         }
 
-        $paginator = new Paginator($qb->getQuery());
-        $count = count($paginator);
-
-        $orders = $paginator->getIterator();
-        $pages  = ceil($count / self::ITEMS_PER_PAGE);
-        $page   = $request->query->get('p', 1);
-
-        return [ $orders, $pages, $page ];
+        return $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::DISTINCT => false,
+            ]
+        );
     }
 
     /**
@@ -1334,6 +1335,24 @@ class AdminController extends AbstractController
 
             return new JsonResponse($data);
         }
+    }
+
+    /**
+     * @Route("/admin/restaurant/{restaurantId}/menus", name="admin_restaurant_menus")
+     */
+    public function searchRestaurantMenusAction($restaurantId)
+    {
+        $restaurant = $this->getDoctrine()->getRepository(LocalBusiness::class)->find($restaurantId);
+
+        $data = [];
+        foreach($restaurant->getTaxons() as $taxon) {
+            $data[] = [
+                'id' => $taxon->getId(),
+                'name' => $taxon->getName()
+            ];
+        }
+
+        return new JsonResponse($data);
     }
 
     /**
@@ -2474,12 +2493,54 @@ class AdminController extends AbstractController
         ]);
     }
 
+    private function handleBusinessRestaurantGroupForm(BusinessRestaurantGroup $businessRestaurantGroup, Request $request)
+    {
+        $originalRestaurantsWithMenu = new ArrayCollection();
+
+        foreach($businessRestaurantGroup->getRestaurantsWithMenu() as $restaurantMenu) {
+            $originalRestaurantsWithMenu->add($restaurantMenu);
+        }
+
+        $form = $this->createForm(BusinessRestaurantGroupType::class, $businessRestaurantGroup);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            foreach ($originalRestaurantsWithMenu as $restaurantMenu) {
+                if (false === $businessRestaurantGroup->getRestaurantsWithMenu()->contains($restaurantMenu)) {
+                    $businessRestaurantGroup->removeRestaurantWithMenu($restaurantMenu);
+                    $this->entityManager->remove($restaurantMenu);
+                }
+            }
+
+            $this->entityManager->persist($businessRestaurantGroup);
+            $this->entityManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('admin_business_restaurant_group', ['id' => $businessRestaurantGroup->getId()]);
+        }
+
+        return $this->render('admin/business_restaurant_group.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
     public function newHubAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $hub = new Hub();
 
         return $this->handleHubForm($hub, $request);
+    }
+
+    public function newBusinessRestaurantGroupAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $businessRestaurantGroup = new BusinessRestaurantGroup();
+
+        return $this->handleBusinessRestaurantGroupForm($businessRestaurantGroup, $request);
     }
 
     public function hubAction($id, Request $request)
@@ -2492,6 +2553,28 @@ class AdminController extends AbstractController
         }
 
         return $this->handleHubForm($hub, $request);
+    }
+
+    public function businessRestaurantGroupAction($id, Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $businessRestaurantGroup = $this->getDoctrine()->getRepository(BusinessRestaurantGroup::class)->find($id);
+
+        if (!$businessRestaurantGroup) {
+            throw $this->createNotFoundException(sprintf('Restaurants For Business #%d does not exist', $id));
+        }
+
+        return $this->handleBusinessRestaurantGroupForm($businessRestaurantGroup, $request);
+    }
+
+    public function businessRestaurantGroupListAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $businessRestaurantGroupList = $this->getDoctrine()->getRepository(BusinessRestaurantGroup::class)->findAll();
+
+        return $this->render('admin/business_restaurant_group_list.html.twig', [
+            'business_restaurant_group_list' => $businessRestaurantGroupList,
+        ]);
     }
 
     public function hubsAction(Request $request)
@@ -2519,12 +2602,13 @@ class AdminController extends AbstractController
         CanonicalizerInterface $canonicalizer,
         EmailManager $emailManager,
         TokenGeneratorInterface $tokenGenerator,
-        EntityManagerInterface $objectManager)
+        EntityManagerInterface $objectManager,
+        PaginatorInterface $paginator)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $account = new BusinessAccount();
 
-        return $this->handleBusinessAccountForm($account, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager);
+        return $this->handleBusinessAccountForm($account, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager, $paginator);
     }
 
     private function handleBusinessAccountForm(
@@ -2533,7 +2617,8 @@ class AdminController extends AbstractController
         CanonicalizerInterface $canonicalizer,
         EmailManager $emailManager,
         TokenGeneratorInterface $tokenGenerator,
-        EntityManagerInterface $objectManager)
+        EntityManagerInterface $objectManager,
+        PaginatorInterface $paginator)
     {
         $form = $this->createForm(BusinessAccountType::class, $businessAccount);
 
@@ -2575,8 +2660,29 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_business_accounts');
         }
 
+        $orders = [];
+
+        if (null !== $businessAccount->getId()) {
+            $qb = $objectManager->getRepository(Order::class)->createQueryBuilder('o');
+            $qb
+                ->andWhere('o.businessAccount = :business_account')
+                ->setParameter('business_account', $businessAccount);
+
+            $orders = $paginator->paginate(
+                $qb,
+                $request->query->getInt('page', 1),
+                self::ITEMS_PER_PAGE,
+                [
+                    PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'o.createdAt',
+                    PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
+                    PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['o.createdAt'],
+                ]
+            );
+        }
+
         return $this->render('admin/business_account.html.twig', [
             'form' => $form->createView(),
+            'orders' => $orders,
         ]);
     }
 
@@ -2586,7 +2692,8 @@ class AdminController extends AbstractController
         CanonicalizerInterface $canonicalizer,
         EmailManager $emailManager,
         TokenGeneratorInterface $tokenGenerator,
-        EntityManagerInterface $objectManager)
+        EntityManagerInterface $objectManager,
+        PaginatorInterface $paginator)
     {
         if ($this->isGranted('ROLE_BUSINESS_ACCOUNT')) {
             $businessAccount = $this->getUser()->getBusinessAccount();
@@ -2599,7 +2706,7 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException(sprintf('Business account #%d does not exist', $id));
         }
 
-        return $this->handleBusinessAccountForm($businessAccount, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager);
+        return $this->handleBusinessAccountForm($businessAccount, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager, $paginator);
     }
 
 

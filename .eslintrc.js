@@ -36,5 +36,6 @@ module.exports = {
     'no-extra-boolean-cast': 'off',
     'react/prop-types': 'off',
     'react/display-name': 'off',
+    'react/no-deprecated': 'warn',
   }
 };

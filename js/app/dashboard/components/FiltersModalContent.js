@@ -9,8 +9,10 @@ import TagsSelect from '../../components/TagsSelect'
 import Avatar from '../../components/Avatar'
 import {
   closeFiltersModal,
-  setFilterValue } from '../redux/actions'
-import { selectBookedUsernames } from '../redux/selectors'
+  setFilterValue,
+  onlyFilter
+} from '../redux/actions'
+import { selectBookedUsernames, selectFiltersSetting } from '../redux/selectors'
 
 import 'antd/lib/grid/style/index.css'
 
@@ -52,6 +54,7 @@ class FiltersModalContent extends React.Component {
 
     this.props.setFilterValue('showFinishedTasks', values.showFinishedTasks)
     this.props.setFilterValue('showCancelledTasks', values.showCancelledTasks)
+    this.props.setFilterValue('showIncidentReportedTasks', values.showIncidentReportedTasks)
     this.props.setFilterValue('alwayShowUnassignedTasks', values.alwayShowUnassignedTasks)
     this.props.setFilterValue('tags', values.tags)
     this.props.setFilterValue('hiddenCouriers', values.hiddenCouriers)
@@ -65,6 +68,7 @@ class FiltersModalContent extends React.Component {
     let initialValues = {
       showFinishedTasks: this.props.showFinishedTasks,
       showCancelledTasks: this.props.showCancelledTasks,
+      showIncidentReportedTasks: this.props.showIncidentReportedTasks,
       alwayShowUnassignedTasks: this.props.alwayShowUnassignedTasks,
       tags: this.props.selectedTags,
       hiddenCouriers: this.props.hiddenCouriers,
@@ -125,6 +129,17 @@ class FiltersModalContent extends React.Component {
                         unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
                         defaultChecked={ values.showCancelledTasks }
                         onChange={ (checked) => setFieldValue('showCancelledTasks', checked) } />
+                        <button type="button" onClick={() => this.props.onlyFilter('showCancelledTasks')}
+                          className="btn btn-link">{ this.props.t('ONLY_SHOW_THESE') }</button>
+                    </Form.Item>
+                    <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_INCIDENT_REPORTED_TASKS') }>
+                      <Switch
+                        checkedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
+                        unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
+                        defaultChecked={ values.showIncidentReportedTasks }
+                        onChange={ (checked) => setFieldValue('showIncidentReportedTasks', checked) } />
+                         <button type="button" onClick={() => this.props.onlyFilter('showIncidentReportedTasks')}
+                          className="btn btn-link">{ this.props.t('ONLY_SHOW_THESE') }</button>
                     </Form.Item>
                     <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED') }
                       help={
@@ -199,17 +214,20 @@ function mapStateToProps(state) {
   const {
     showFinishedTasks,
     showCancelledTasks,
+    showIncidentReportedTasks,
     alwayShowUnassignedTasks,
     hiddenCouriers,
     timeRange,
-  } = state.settings.filters
+    tags
+  } = selectFiltersSetting(state)
 
   return {
     tags: state.config.tags,
     showFinishedTasks,
     showCancelledTasks,
+    showIncidentReportedTasks,
     alwayShowUnassignedTasks,
-    selectedTags: state.settings.filters.tags,
+    selectedTags: tags,
     couriers: selectBookedUsernames(state),
     hiddenCouriers,
     timeRange,
@@ -221,6 +239,7 @@ function mapDispatchToProps(dispatch) {
   return {
     closeFiltersModal: () => dispatch(closeFiltersModal()),
     setFilterValue: (key, value) => dispatch(setFilterValue(key, value)),
+    onlyFilter: filter => dispatch(onlyFilter(filter))
   }
 }
 

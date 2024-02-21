@@ -179,9 +179,12 @@ class UserController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $user = $userManager->createUser();
-        $user->setEmail($invitation->getEmail());
-        $user->setEnabled(true);
+        $user = $userManager->findUserByEmail($invitation->getEmail());
+        if (null === $user) {
+            $user = $userManager->createUser();
+            $user->setEmail($invitation->getEmail());
+            $user->setEnabled(true);
+        }
 
         $businessAccountInvitation = null;
         if ($this->getParameter('business_account_enabled')) {

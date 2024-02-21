@@ -142,7 +142,8 @@
         "php-units-of-measure/php-units-of-measure": "^2.1",
         "symfony/ux-turbo": "^2.10",
         "coopcycle/db-schenker": "*",
-        "twig/html-extra": "^3.7"
+        "twig/html-extra": "^3.7",
+        "symfony/ux-react": "2.10"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -170,10 +171,6 @@
         {
             "type": "vcs",
             "url": "git@github.com:rkeet/behatch-contexts.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/alexsegura/TypesenseBundle"
         },
         {
           "type": "vcs",

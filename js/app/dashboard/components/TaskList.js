@@ -4,7 +4,7 @@ import moment from 'moment'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
-import { Progress, Tooltip } from 'antd'
+import { Tooltip } from 'antd'
 import Popconfirm from 'antd/lib/popconfirm'
 import {
   AccordionItem,
@@ -15,24 +15,24 @@ import {
 import classNames from 'classnames'
 
 import Task from './Task'
-import Tour from './Tour'
 
 import Avatar from '../../components/Avatar'
-import { unassignTasks, togglePolyline, optimizeTaskList } from '../redux/actions'
-import { selectVisibleTaskIds } from '../redux/selectors'
+import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter } from '../redux/actions'
+import { selectFiltersSetting, selectVisibleTaskIds } from '../redux/selectors'
 import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
+import Tour from './Tour'
+import { getDroppableListStyle } from '../utils'
+import ProgressBar from './ProgressBar'
 
 moment.locale($('html').attr('lang'))
 
-const TaskOrTour = ({ item, onRemove, unassignTasks, username }) => {
+const TaskOrTour = ({ item, onRemove, unassignTasks }) => {
 
   if (item['@type'] === 'Tour') {
 
     return (
       <Tour
         tour={ item }
-        tasks={ item.items }
-        username={ username }
         unassignTasks={ unassignTasks } />
     )
   }
@@ -60,9 +60,9 @@ class InnerList extends React.Component {
   render() {
     return _.map(this.props.items, (item, index) => {
       return (
-        <Draggable 
-          key={ item['@id'] } 
-          draggableId={ item['@type'] === 'Tour' ? `tour:${item['@id']}`: item['@id']  } 
+        <Draggable
+          key={ item['@id'] }
+          draggableId={ item['@type'] === 'Tour' ? `tour:${item['@id']}`: item['@id']  }
           index={ index }
           >
           {(provided) => (
@@ -74,7 +74,6 @@ class InnerList extends React.Component {
               <TaskOrTour
                 item={ item }
                 onRemove={ item => this.props.onRemove(item) }
-                username={ this.props.username }
                 unassignTasks={ this.props.unassignTasks } />
             </div>
           )}
@@ -86,14 +85,59 @@ class InnerList extends React.Component {
 
 // OPTIMIZATION
 // Use React.memo to avoid re-renders when percentage hasn't changed
-const ProgressBar = React.memo(({ completedTasks, tasks }) => {
+const ProgressBarMemo = React.memo(({
+  completedTasks, inProgressTasks, cancelledTasks,
+  failureTasks, tasks, t
+}) => {
 
-  return (
-    <Tooltip title={ `${completedTasks} / ${tasks}` }>
-      <Progress percent={ Math.round((completedTasks * 100) / tasks) } size="small" />
-    </Tooltip>
-  )
-})
+    const completedPer = completedTasks / tasks * 100
+    const inProgressPer = inProgressTasks / tasks * 100
+    const failurePer = failureTasks / tasks * 100
+    const cancelledPer = cancelledTasks / tasks * 100
+    const title = (
+      <table style={{ width: '100%' }}>
+        <tbody>
+          <tr>
+            <td style={{ paddingRight: '10px' }}><span style={{ color: '#28a745' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_COMPLETED')}</td>
+            <td style={{ textAlign: 'right' }}>{completedTasks}</td>
+          </tr>
+          <tr>
+            <td style={{ paddingRight: '10px' }}><span style={{ color: '#ffc107' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_FAILED')}</td>
+            <td style={{ textAlign: 'right' }}>{failureTasks}</td>
+          </tr>
+          <tr>
+            <td style={{ paddingRight: '10px' }}><span style={{ color: '#dc3545' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_CANCELLED')}</td>
+            <td style={{ textAlign: 'right' }}>{cancelledTasks}</td>
+          </tr>
+          <tr>
+            <td style={{ paddingRight: '10px' }}><span style={{ color: '#337ab7' }}>●</span> {t('ADMIN_DASHBOARD_TOOLTIP_IN_PROGRESS')}</td>
+            <td style={{ textAlign: 'right' }}>{inProgressTasks}</td>
+          </tr>
+          <tr>
+            <td>───</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td style={{ paddingRight: '10px' }}>{t('ADMIN_DASHBOARD_TOOLTIP_TOTAL')}</td>
+            <td style={{ textAlign: 'right' }}>{tasks}</td>
+          </tr>
+        </tbody>
+      </table>
+    )
+
+    return (
+        <Tooltip title={title}>
+          <div>
+            <ProgressBar width="100%" height="8" backgroundColor="white" segments={[
+              {value: `${completedPer}%`, color: '#28a745'},
+              {value: `${failurePer}%`, color: '#ffc107'},
+              {value: `${cancelledPer}%`, color: '#dc3545'},
+              {value: `${inProgressPer}%`, color: '#337ab7'},
+            ]} />
+          </div>
+        </Tooltip>
+    )
+  })
 
 class TaskList extends React.Component {
 
@@ -114,6 +158,10 @@ class TaskList extends React.Component {
 
     const uncompletedTasks = _.filter(tasks, t => t.status === 'TODO')
     const completedTasks = _.filter(tasks, t => t.status === 'DONE')
+    const inProgressTasks = _.filter(tasks, t => t.status === 'DOING')
+    const failureTasks = _.filter(tasks, t => t.status === 'FAILED')
+    const cancelledTasks = _.filter(tasks, t => t.status === 'CANCELLED')
+    const incidentReported = _.filter(tasks, t => t.hasIncidents)
 
     const durationFormatted = moment.utc()
       .startOf('day')
@@ -135,9 +183,25 @@ class TaskList extends React.Component {
             </span>
             { tasks.length > 0 && (
             <div style={{ width: '33.3333%' }}>
-              <ProgressBar completedTasks={ completedTasks.length } tasks={ tasks.length } />
+              <ProgressBarMemo
+                  completedTasks={ completedTasks.length }
+                  tasks={ tasks.length }
+                  inProgressTasks={ inProgressTasks.length }
+                  incidentReported={ incidentReported.length }
+                  failureTasks={ failureTasks.length }
+                  cancelledTasks={ cancelledTasks.length }
+                  t={this.props.t.bind(this)}
+                />
             </div>
             ) }
+            {incidentReported.length > 0 && <div onClick={(e) => {
+              this.props.onlyFilter('showIncidentReportedTasks')
+              e.stopPropagation()
+            }}>
+             <Tooltip title="Incident(s)">
+                <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
+              </Tooltip>
+            </div>}
             <Popconfirm
               placement="left"
               title={ this.props.t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
@@ -145,10 +209,10 @@ class TaskList extends React.Component {
               okText={ this.props.t('CROPPIE_CONFIRM') }
               cancelText={ this.props.t('ADMIN_DASHBOARD_CANCEL') }>
               <a href="#"
-                className="p-2"
+                className="text-reset mr-2"
                 style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
                 onClick={ e => e.preventDefault() }>
-                <i className="fa fa-lg fa-close"></i>
+                <i className="fa fa-lg fa-times"></i>
               </a>
             </Popconfirm>
           </AccordionItemButton>
@@ -193,8 +257,11 @@ class TaskList extends React.Component {
               </div>
             </div>
           )}
-          <Droppable droppableId={ `assigned:${username}` }>
-            {(provided) => (
+          <Droppable
+            droppableId={ `assigned:${username}` }
+            key={tasks.length} // assign a mutable key to trigger a re-render when inserting a nested droppable (for example : a tour)
+          >
+            {(provided, snapshot) => (
               <div ref={ provided.innerRef }
                 className={ classNames({
                   'taskList__tasks': true,
@@ -203,6 +270,7 @@ class TaskList extends React.Component {
                   'taskList__tasks--empty': isEmpty
                 }) }
                 { ...provided.droppableProps }
+                style={getDroppableListStyle(snapshot.isDraggingOver)}
               >
                 <InnerList
                   items={ items }
@@ -250,7 +318,7 @@ const makeMapStateToProps = () => {
       isEmpty: items.length === 0 || visibleTaskIds.length === 0,
       distance: ownProps.distance,
       duration: ownProps.duration,
-      filters: state.settings.filters,
+      filters: selectFiltersSetting(state),
     }
   }
 
@@ -262,6 +330,7 @@ function mapDispatchToProps(dispatch) {
     unassignTasks: (username, tasks) => dispatch(unassignTasks(username, tasks)),
     togglePolyline: (username) => dispatch(togglePolyline(username)),
     optimizeTaskList: (taskList) => dispatch(optimizeTaskList(taskList)),
+    onlyFilter: filter => dispatch(onlyFilter(filter))
   }
 }
 

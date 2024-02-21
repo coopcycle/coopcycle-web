@@ -59,6 +59,8 @@ import {
   CLOSE_TASK_RESCHEDULE_MODAL,
   CREATE_TOUR_REQUEST,
   CREATE_TOUR_REQUEST_SUCCESS,
+  CREATE_GROUP_REQUEST,
+  CREATE_GROUP_SUCCESS,
 } from './actions'
 
 import {
@@ -89,6 +91,7 @@ const initialState = {
   recurrenceRulesErrorMessage: '',
   exportModalIsOpen: false,
   createGroupModalIsOpen: false,
+  isCreateGroupButtonLoading: false,
   isCreateDeliveryModalVisible: false,
   isCreateTourModalVisible: false,
   isCreateTourButtonLoading: false,
@@ -452,6 +455,17 @@ export const createGroupModalIsOpen = (state = false, action) => {
   case OPEN_CREATE_GROUP_MODAL:
     return true
   case CLOSE_CREATE_GROUP_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
+export const isCreateGroupButtonLoading = (state = initialState.isCreateGroupButtonLoading, action) => {
+  switch (action.type) {
+  case CREATE_GROUP_REQUEST:
+    return true
+  case CREATE_GROUP_SUCCESS:
     return false
   default:
     return state

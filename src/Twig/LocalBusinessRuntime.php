@@ -2,22 +2,28 @@
 
 namespace AppBundle\Twig;
 
+use AppBundle\Business\Context as BusinessContext;
+use AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Entity\Zone;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\RestaurantDecorator;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
+use libphonenumber\PhoneNumber;
 
 class LocalBusinessRuntime implements RuntimeExtensionInterface
 {
@@ -28,7 +34,9 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         CacheInterface $projectCache,
         EntityManagerInterface $entityManager,
         TimingRegistry $timingRegistry,
-        RestaurantDecorator $restaurantDecorator)
+        RestaurantDecorator $restaurantDecorator,
+        BusinessContext $businessContext,
+        SettingsManager $settingsManager)
     {
         $this->translator = $translator;
         $this->serializer = $serializer;
@@ -37,6 +45,8 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         $this->entityManager = $entityManager;
         $this->timingRegistry = $timingRegistry;
         $this->restaurantDecorator = $restaurantDecorator;
+        $this->businessContext = $businessContext;
+        $this->settingsManager = $settingsManager;
     }
 
     /**
@@ -187,5 +197,55 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
     public function badges(LocalBusiness $restaurant): array
     {
         return $this->restaurantDecorator->getBadges($restaurant);
+    }
+
+    public function resolveMenu(LocalBusiness $restaurant): ?Taxon
+    {
+        if ($this->businessContext->isActive()) {
+            $businessAccount = $this->businessContext->getBusinessAccount();
+            if ($businessAccount) {
+                $restaurantGroup = $businessAccount->getBusinessRestaurantGroup();
+                $qb = $this->entityManager->getRepository(Taxon::class)->createQueryBuilder('m');
+                $qb->join(BusinessRestaurantGroupRestaurantMenu::class, 'rm', Join::WITH, 'rm.menu = m.id');
+                $qb->andWhere('rm.businessRestaurantGroup = :group');
+                $qb->andWhere('rm.restaurant = :restaurant');
+                $qb->setParameter('group', $restaurantGroup);
+                $qb->setParameter('restaurant', $restaurant);
+
+                $menu = $qb->getQuery()->getOneOrNullResult();
+
+                if ($menu) {
+                    return $menu;
+                }
+            }
+        }
+
+        return $restaurant->getMenuTaxon();
+    }
+
+    public function resolvePhoneNumber(OrderInterface $order): ?PhoneNumber
+    {
+        if (!$order->isMultiVendor()) {
+
+            $vendor = $order->getVendor();
+
+            if (is_callable([ $vendor, 'getTelephone' ])) {
+                return $vendor->getTelephone();
+            }
+        }
+
+        return $this->settingsManager->get('phone_number');
+    }
+
+    public function openingHours(LocalBusiness $restaurant, $fulfillment = 'delivery'): array
+    {
+        if ($this->businessContext->isActive()) {
+            $businessAccount = $this->businessContext->getBusinessAccount();
+            if ($businessAccount->getBusinessRestaurantGroup()->hasRestaurant($restaurant)) {
+                return $businessAccount->getBusinessRestaurantGroup()->getOpeningHours($fulfillment);
+            }
+        }
+
+        return $restaurant->getOpeningHours($fulfillment);
     }
 }

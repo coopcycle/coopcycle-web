@@ -65,7 +65,7 @@ class EdenredController extends AbstractController
 
             $this->addFlash('error', 'There was an error while trying to connect your Edenred account.');
 
-            return $this->redirectToRoute('nucleos_profile_profile_show');
+            return $this->redirectToRoute('profile_edit');
         }
 
         $data = $this->authentication->authorizationCode($request->query->get('code'));
@@ -74,7 +74,7 @@ class EdenredController extends AbstractController
             $this->addFlash('error', 'There was an error while trying to connect your Edenred account.');
 
             // TODO Redirect depending on context
-            return $this->redirectToRoute('nucleos_profile_profile_show');
+            return $this->redirectToRoute('profile_edit');
         }
 
         $customer = $subject instanceof Order ? $subject->getCustomer() : $subject;
@@ -89,7 +89,7 @@ class EdenredController extends AbstractController
         $this->addFlash('notice', $translator->trans('edenred.oauth_connect.success'));
 
         return $this->redirectToRoute(
-            $subject instanceof Order ? 'order_payment' : 'nucleos_profile_profile_show'
+            $subject instanceof Order ? 'order_payment' : 'profile_edit'
         );
     }
 }

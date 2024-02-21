@@ -11,6 +11,7 @@ use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Events as TaskEvents;
 use AppBundle\Action\Task\FailureReasons as TaskFailureReasons;
+use AppBundle\Action\Task\Incident as TaskIncident;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
@@ -266,6 +267,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "summary"="Retrieves possible failure reasons for a Task"
  *        }
  *      },
+ *     "task_incident"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/incidents",
+ *       "controller"=TaskIncident::class,
+ *       "security"="is_granted('view', object)",
+ *       "openapi_context"={
+ *         "summary"="Creates an incident for a Task"
+ *       }
+ *     },
  *     "task_events"={
  *       "method"="GET",
  *       "path"="/tasks/{id}/events",
@@ -440,10 +450,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $weight;
 
     /**
-     * @var string|null
-     * @Groups({"task"})
-     */
-    private $failureReason;
+    * @var bool
+    * @Groups({"task"})
+    */
+    private $hasIncidents = false;
 
     public function __construct()
     {
@@ -1122,19 +1132,13 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $language->evaluate($pricingRule->getPrice(), $this->toExpressionLanguageValues());
     }
 
-    public function getFailureReasons(): array
+    public function setHasIncidents(bool $hasIncidents): void
     {
-        return [];
+        $this->hasIncidents = $hasIncidents;
     }
 
-    public function getFailureReason(): ?string
+    public function getHasIncidents(): bool
     {
-        return $this->failureReason;
-    }
-
-    public function setFailureReason(?string $failureReason): Task
-    {
-        $this->failureReason = $failureReason;
-        return $this;
+        return $this->hasIncidents;
     }
 }

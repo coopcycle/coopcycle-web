@@ -4,9 +4,9 @@ namespace AppBundle\Sylius\Order;
 
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Sylius\OrderEvent;
 use AppBundle\Entity\Vendor;
 use AppBundle\LoopEat\LoopeatAwareInterface;
@@ -208,8 +208,6 @@ interface OrderInterface extends
      */
     public function getPickupAddress(): ?Address;
 
-    public function getFulfillmentMethodObject(): ?FulfillmentMethod;
-
     public function getAlcoholicItemsTotal(): int;
 
     public function isLoopeat(): bool;
@@ -223,4 +221,13 @@ interface OrderInterface extends
     public function getPaymentMethod(): ?string;
 
     public function hasEvent(string $type): bool;
+
+    public function getBusinessAccount(): ?BusinessAccount;
+
+    /**
+     * @param BusinessAccount $businessAccount
+     */
+    public function setBusinessAccount(BusinessAccount $businessAccount): void;
+
+    public function isBusiness(): bool;
 }

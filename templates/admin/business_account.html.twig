@@ -11,7 +11,7 @@
   <a href="{{ path('admin_business_accounts') }}">{% trans %}adminDashboard.business_accounts.title{% endtrans %}</a>
 </li>
 <li>
-  {{ 'basics.add'|trans }}
+  {{ is_new_business_account ? ('basics.add'|trans) : business_account.name }}
 </li>
 {% endblock %}
 
@@ -26,6 +26,18 @@
             {{ 'restaurant.form.section.general'|trans }}
           </a>
         </li>
+        {% if not is_new_business_account %}
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#employees" aria-controls="employees">
+            {{ 'form.business_account.employees.label'|trans }}
+          </a>
+        </li>
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#orders" aria-controls="orders">
+            {{ 'restaurant.list.orders'|trans }}
+          </a>
+        </li>
+        {% endif %}
       </ul>
     </div>
     <div class="col-sm-9">
@@ -39,9 +51,51 @@
             {{ form_row(form.address) }}
           {% endif %}
           {% if is_granted('ROLE_ADMIN') %}
-            {{ form_row(form.hub) }}
+            {{ form_row(form.businessRestaurantGroup) }}
           {% endif %}
         </div>
+        {% if not is_new_business_account %}
+        <div role="tabpanel" class="tab-pane" id="employees">
+          <table class="table">
+            <thead>
+              <th>{{ 'profile.username'|trans }}</th>
+              <th>{{ 'profile.email'|trans }}</th>
+              <th>{{ 'profile.fullName'|trans }}</th>
+              <th></th>
+            </thead>
+            <tbody>
+              {% for employee in business_account.employees %}
+              <tr>
+                <td>{{ employee.username }}</td>
+                <td>{{ employee.email }}</td>
+                <td>{{ employee.fullName }}</td>
+                <td class="text-right">{{ employee.createdAt|time_diff }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="orders">
+          <table class="table">
+            <thead>
+              <th>{{ 'restaurant.stats.order_number'|trans }}</th>
+              <th>{{ 'profile.email'|trans }}</th>
+              <th>{{ 'order.total_including_tax'|trans }}</th>
+              <th></th>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>
+                <td class="text-monospace">{{ order.number }}</td>
+                <td>{{ order.customer.email }}</td>
+                <td>{{ order.total|price_format }}</td>
+                <td class="text-right">{{ order.createdAt|time_diff }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
       </div>
     </div>
   </div>

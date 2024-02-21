@@ -1,8 +1,8 @@
 global.changesSaved: Changements sauvegardés.
 navbar.login: Connexion
 navbar.myAccount: Mon compte
-navbar.proCart: Passer en pro
-navbar.lambdaCart: Passer en normal
+navbar.switch_to_business: Compte %name%
+navbar.switch_to_personal: Compte personnel
 base.footer.contactUs: Nous contacter
 base.footer.companyRegister: Devenir partenaire
 base.footer.RegisterMyRestaurant: Inscrire mon restaurant
@@ -607,7 +607,7 @@ form.checkout_address.reusable_packaging.loopeat.add: Ajouter %missing% crédits
 form.checkout_address.reusable_packaging.loopeat.manage_account: Gérer mon compte zéro déchet
 form.checkout_address.reusable_packaging.loopeat.website: Site Internet %name%
 form.checkout_address.reusable_packaging.loopeat.how_it_works: Comment ça marche ?
-form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activez l'option zéro déchet pour bénéficier d'un service de boîtes consignées et lavables sur votre commande
+form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activez l'option zéro déchet pour bénéficier d'un service de boîtes consignées sur votre commande
 form.checkout_address.reusable_packaging.loopeat.connect: Veuillez créer ou connecter votre compte %name% à %brand_name% pour régler votre consigne, ou désactivez l'option zéro déchet.
 form.checkout_address.reusable_packaging.loopeat.connect_account: Se connecter à %name%
 form.checkout_address.reusable_packaging.loopeat.add_credits: Créditer ma cagnotte
@@ -1383,18 +1383,26 @@ form.business_account.manager.email.help: Un email d'invitation à Coopcycle ser
 form.business_account.manager.email_sent.help: Un email d'invitation à Coopcycle a été envoyé
 form.business_account.save_and_send_invitation.label: Sauvegarder et envoyer l'invitation
 form.business_acount.send_invitation.confirm: Le courriel d'invitation à Coopcycle a été envoyé
-registration.navigation.title: "Personal account creation"
-registration.info.title: "What is CoopCycle?"
-registration.info.text: "On CoopCycle, you can order food provided by restaurants near you and delivered by your local cooperative. We are proud to be an ethical alternative to the uberization of our society!"
-registration.info.business.account.attachment: "You will be attached to the business account %businessAccountName%, but you can also command under your name."
-registration.alert.text: "You have been invited to create an account on %brandName% by %invitedBy%."
-registration.alert.business.account.text: "Welcome in CoopCycle - %brandName% ! Please create your business account before making your first order."
-registration.form.title: "Your information"
-registration.step.personal: "Personal information"
-registration.step.company: "Company information"
-registration.step.invitation: "Invite your colleagues"
-registration.flow.next: "Next"
-registration.flow.back: "Back"
+registration.navigation.title: "Création de compte personnel"
+registration.info.title: "C'est quoi CoopCycle ?"
+registration.info.text: "Sur CoopCycle, vous pouvez commander auprès des restaurants proches de chez vous et être livré par votre coopérative locale. Nous sommes fiers d'être une alternative éthique à l'ubérisation de notre société !"
+registration.info.business.account.attachment: "Vous serez rattaché au compte professionnel %businessAccountName%, mais vous pouvez également commander pour vous."
+registration.alert.text: "Vous avez été invité à créer votre compte sur %brandName% par %invitedBy%."
+registration.alert.business.account.text: "Bienvenue chez CoopCycle - %brandName% ! Veuillez créer votre compte professionnel avant de passer votre première commande."
+registration.form.title: "Vos informations"
+registration.step.personal: "Informations personnelles"
+registration.step.company: "Informations société"
+registration.step.company.name: "Nom de la société"
+registration.step.invitation: "Invitez vos collègues"
+registration.step.invitation.copy.link: "Copiez le lien ci-dessous et envoyez-le à vos collègues"
+registration.step.invitation.copy.button: "Copier le lien"
+registration.step.invitation.link.copied: "Copié !"
+registration.flow.next: "Suivant"
+registration.flow.back: "Précédent"
+registration.company.address: "Adresse"
+registration.company.address.different.for.billing: "Utiliser une adresse différente pour la facturation"
+registration.company.billing.address: "Adresse de facturation"
+business.account.settings.link: Lier avec mon compte
 error.404: Page non trouvée.
 error.502: Le serveur a dépassé sa capacité. Veuillez réessayer plus tard.
 error.504: Le serveur a mis trop de temps à répondre.
@@ -1402,3 +1410,9 @@ error.return_to_homepage: Retourner à la page d'accueil
 deliveries.imports: Fichiers importés
 deliveries.importing: Le fichier %filename% va bientôt être importé.
 deliveries.imports.created_at: Créé le
+adminDashboard.business_restaurant_groups.title: Groupes de restaurants d'entreprise
+registration.flow.finish: "Terminer mon inscription"
+form.settings.company_legal_name.label: "Nom légal de l'entreprise"
+form.settings.company_legal_name.help: "Veuillez entrer le nom légal complet de l'entreprise tel qu'il apparaît sur ses documents officiels."
+form.settings.company_legal_id.label: "Numéro de SIRET"
+form.settings.company_legal_id.help: "Ce numéro est généralement disponible sur les documents officiels de l'entreprise, tels que les factures ou les contrats."
