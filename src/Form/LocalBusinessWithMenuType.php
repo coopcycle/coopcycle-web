@@ -41,7 +41,7 @@ class LocalBusinessWithMenuType extends AbstractType
             ]);
         };
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($modifier) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($modifier) {
             $restaurantMenu = $event->getData();
             if ($restaurantMenu) {
                 $modifier($event->getForm(), $restaurantMenu->getRestaurant());
