@@ -21,10 +21,9 @@ class CartButton extends Component {
     const btnProps = disabled ? { disabled: true } : {}
 
     return (<button type="submit" className={ classNames({
-      'mt-4': true,
+      'order-button': true,
       'btn': true,
       'btn-lg': true,
-      'btn-block': true,
       'btn-primary': true,
       'disabled': disabled,
     }) }{ ...btnProps }>

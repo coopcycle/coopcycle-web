@@ -214,3 +214,13 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
   gap: 0.5rem;
   align-items: center;
 }
+
+.invite-to-order-button {
+  flex: 1;
+  min-width: 150px;
+}
+
+.order-button {
+  flex: 2;
+  min-width: 300px;
+}

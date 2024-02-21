@@ -1,33 +1,29 @@
-import React, { Component } from 'react'
-import { withTranslation } from 'react-i18next'
-import { connect } from 'react-redux'
+import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { useDispatch, useSelector } from 'react-redux'
 import { openInvitePeopleToOrderModal } from '../../redux/actions'
+import {
+  selectIsGroupOrdersEnabled,
+  selectIsPlayer,
+} from '../../redux/selectors'
 
-class InvitePeopleToOrderButton extends Component {
+export default function InvitePeopleToOrderButton() {
+  const isGroupOrdersEnabled = useSelector(selectIsGroupOrdersEnabled)
+  const isPlayer = useSelector(selectIsPlayer)
+  const isAuth = window._auth.isAuth
 
-  render() {
+  const { t } = useTranslation()
+
+  const dispatch = useDispatch()
+
+  if (isGroupOrdersEnabled && !isPlayer && isAuth) {
     return (
-      <div className="text-center mt-4">
-        <a onClick={() => this.props.openInvitePeopleModal()}>
-          <span>{this.props.t('INVITE_PEOPLE_TO_ADD_ITEMS')}</span>
+      <div className="invite-to-order-button px-3 py-2 text-center">
+        <a onClick={ () => dispatch(openInvitePeopleToOrderModal()) }>
+          <span>{ t('INVITE_PEOPLE_TO_ADD_ITEMS') }</span>
         </a>
-      </div>
-    )
+      </div>)
+  } else {
+    return null
   }
 }
-
-function mapStateToProps(state) {
-
-  return {
-    loading: state.isFetching,
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-
-  return {
-    openInvitePeopleModal: () => dispatch(openInvitePeopleToOrderModal()),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(InvitePeopleToOrderButton))

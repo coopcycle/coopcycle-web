@@ -11,8 +11,6 @@ import {
   selectReusablePackagingFeatureEnabled,
   selectReusablePackagingEnabled,
   selectIsMobileCartVisible,
-  selectIsPlayer,
-  selectIsGroupOrdersEnabled,
   selectCartItemsRelatedErrorMessages,
 } from '../../redux/selectors'
 import InvitePeopleToOrderButton from './InvitePeopleToOrderButton'
@@ -48,10 +46,8 @@ export default function Order() {
   const isMobileCartVisible = useSelector(selectIsMobileCartVisible)
   const hasItems = useSelector(selectHasItems)
   const cartItemsRelatedErrors = useSelector(selectCartItemsRelatedErrorMessages)
-  const isGroupOrdersEnabled = useSelector(selectIsGroupOrdersEnabled)
-  const isPlayer = useSelector(selectIsPlayer)
   const reusablePackagingFeatureEnabled = useSelector(selectReusablePackagingFeatureEnabled)
-  
+
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -82,10 +78,11 @@ export default function Order() {
             { reusablePackagingFeatureEnabled ? (
               <ReusablePackagingSwitch />) : null }
             <CartTotal />
-            <CartButton />
-          </div>) : null }
-          { (isGroupOrdersEnabled && !isPlayer && window._auth.isAuth) ? (
-            <InvitePeopleToOrderButton />) : null }
+            <div className="mt-4 d-flex align-items-center justify-content-center flex-wrap">
+              <InvitePeopleToOrderButton />
+              <CartButton />
+            </div>
+          </div>) : (<div><InvitePeopleToOrderButton /></div>) }
         </div>
       </div>
     </div>
