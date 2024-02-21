@@ -79,15 +79,7 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
     transform: translateY(calc(100% - #{$navbar-height}));
     transition: transform 0.4s;
   }
-
-  &__messages {
-    text-align: center;
-
-    @media (max-width: $screen-md-max) {
-      display: none;
-    }
-  }
-
+  
   .panel {
     border: none;
     border-radius: 16px;
@@ -184,7 +176,6 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
 
 .cart__time {
   display: block;
-  text-align: center;
   color: $state-success-text;
   &:hover,
   &:visited,
