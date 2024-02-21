@@ -228,4 +228,6 @@ interface OrderInterface extends
      * @param BusinessAccount $businessAccount
      */
     public function setBusinessAccount(BusinessAccount $businessAccount): void;
+
+    public function isBusiness(): bool;
 }

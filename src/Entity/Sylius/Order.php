@@ -1731,4 +1731,9 @@ class Order extends BaseOrder implements OrderInterface
     {
         $this->businessAccount = $businessAccount;
     }
+
+    public function isBusiness(): bool
+    {
+        return null !== $this->businessAccount;
+    }
 }
