@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\Cart;
 
+use AppBundle\Business\Context as BusinessContext;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -11,6 +12,7 @@ class SessionStorage
     public function __construct(
         private RequestStack $requestStack,
         private OrderRepositoryInterface $orderRepository,
+        private BusinessContext $businessContext,
         private string $sessionKeyName)
     {}
 
@@ -42,6 +44,11 @@ class SessionStorage
 
     private function getSessionKey(): string
     {
+        if ($this->businessContext->isActive()) {
+
+            return sprintf('%s.business', $this->sessionKeyName);
+        }
+
         return $this->sessionKeyName;
     }
 }
