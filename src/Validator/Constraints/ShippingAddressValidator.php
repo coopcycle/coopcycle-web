@@ -2,7 +2,6 @@
 
 namespace AppBundle\Validator\Constraints;
 
-use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
@@ -19,8 +18,7 @@ class ShippingAddressValidator extends ConstraintValidator
 
     public function __construct(
         RoutingInterface $routing,
-        ExpressionLanguage $expressionLanguage,
-        private BusinessContext $businessContext)
+        ExpressionLanguage $expressionLanguage)
     {
         $this->routing = $routing;
         $this->expressionLanguage = $expressionLanguage;
@@ -57,7 +55,7 @@ class ShippingAddressValidator extends ConstraintValidator
         }
 
         // Skip this validation in business context
-        if ($this->businessContext->isActive()) {
+        if ($object->isBusiness()) {
             return;
         }
 
