@@ -103,7 +103,7 @@ services:
   AppBundle\Form\StoreType:
     arguments:
       $country: '%country_iso%'
-      $dbshenkerEnabled: '%dbshenker_sync_uri%'
+      $transportersConfig: '%transporters_config%'
     tags: [ form.type ]
 
   AppBundle\Form\MenuEditor\TaxonProductType:

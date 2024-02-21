@@ -69,7 +69,7 @@ parameters:
     colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
     group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
     business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
-    dbshenker_sync_uri: '%env(DBSHENKER_SYNC_URI)%'
+    transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.

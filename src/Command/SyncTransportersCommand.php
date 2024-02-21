@@ -47,6 +47,9 @@ class SyncTransportersCommand extends Command {
     private readonly Store $store;
     private readonly GeoCoordinates $defaultCoordinates;
 
+    private readonly string $companyLegalName;
+    private readonly string $companyLegalID;
+
     private bool $dryRun;
     private OutputInterface $output;
 
@@ -64,11 +67,22 @@ class SyncTransportersCommand extends Command {
         if (count($pos) !== 2) {
             throw new \Exception('Invalid latlng setting');
         }
+
+        $this->companyLegalName = $this->settingsManager->get('company_legal_name');
+        if (empty($this->companyLegalName)) {
+            throw new \Exception('Company name not set');
+        }
+
+        $this->companyLegalID = $this->settingsManager->get('company_legal_id');
+        if (empty($this->companyLegalID)) {
+            throw new \Exception('Company ID not set');
+        }
+
         $this->defaultCoordinates = new GeoCoordinates($pos[0], $pos[1]);
         $repo = $this->entityManager->getRepository(Store::class);
 
         /** @var ?Store $store */
-        $store = $repo->findOneBy(['DBShenkerEnabled' => true]);
+        $store = $repo->findOneBy(['DBSchenkerEnabled' => true]);
         if (is_null($store)) {
             //TODO: Do not throw to avoid log pollution
             throw new \Exception('No store with transporter connected');
@@ -98,7 +112,13 @@ class SyncTransportersCommand extends Command {
         $this->dryRun = $input->getOption('dry-run');
         $this->output = $output;
 
-        $auth_details = parse_url($this->params->get('dbshenker_sync_uri'));
+        $config = $this->params->get('transporters_config');
+        if (!$config['DBSCHENKER']['enabled'] ?? true) {
+            throw new \Exception('DBSchenker is not configured or enabled');
+        }
+        $config = $config['DBSCHENKER'];
+
+        $auth_details = parse_url($config['sync_uri']);
 
         $filesystem = new Filesystem(new Ftp([
             'host' => $auth_details['host'],
@@ -110,7 +130,7 @@ class SyncTransportersCommand extends Command {
         ]));
 
         $opts = new DBSchenkerOptions(
-            "CoopX", "SIRET_COOP",
+            $this->companyLegalName, $this->companyLegalID,
             "DBSchenkerTransporter", "SIRET_TRANSPORTER",
             $filesystem, "coopx"
         );

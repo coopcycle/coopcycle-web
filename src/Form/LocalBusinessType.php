@@ -40,7 +40,7 @@ abstract class LocalBusinessType extends AbstractType
         string $country,
         bool $debug = false,
         bool $cashOnDeliveryOptinEnabled = false,
-        string $dbshenkerEnabled = null
+        array $transportersConfig = []
     )
     {
         $this->authorizationChecker = $authorizationChecker;
@@ -51,7 +51,7 @@ abstract class LocalBusinessType extends AbstractType
         $this->debug = $debug;
         $this->cashOnDeliveryOptinEnabled = $cashOnDeliveryOptinEnabled;
         $this->gatewayResolver = $gatewayResolver;
-        $this->dbshenkerEnabled = !empty($dbshenkerEnabled);
+        $this->DBSchenkerEnabled = $transportersConfig['DBSCHENKER']['enabled'] ?? false;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
