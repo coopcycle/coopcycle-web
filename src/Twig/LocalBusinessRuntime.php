@@ -239,6 +239,13 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
     public function openingHours(LocalBusiness $restaurant, $fulfillment = 'delivery'): array
     {
+        if ($this->businessContext->isActive()) {
+            $businessAccount = $this->businessContext->getBusinessAccount();
+            if ($businessAccount->getBusinessRestaurantGroup()->hasRestaurant($restaurant)) {
+                return $businessAccount->getBusinessRestaurantGroup()->getOpeningHours($fulfillment);
+            }
+        }
+
         return $restaurant->getOpeningHours($fulfillment);
     }
 }
