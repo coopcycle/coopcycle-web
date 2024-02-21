@@ -104,6 +104,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('coopcycle_lat_lng_bounds', array(SettingResolver::class, 'getLatLngBounds')),
             new TwigFunction('restaurant_menu', array(LocalBusinessRuntime::class, 'resolveMenu')),
             new TwigFunction('order_phone_number', array(LocalBusinessRuntime::class, 'resolvePhoneNumber')),
+            new TwigFunction('restaurant_opening_hours', array(LocalBusinessRuntime::class, 'openingHours')),
         );
     }
 

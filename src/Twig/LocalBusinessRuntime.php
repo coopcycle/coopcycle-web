@@ -236,4 +236,9 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
         return $this->settingsManager->get('phone_number');
     }
+
+    public function openingHours(LocalBusiness $restaurant, $fulfillment = 'delivery'): array
+    {
+        return $restaurant->getOpeningHours($fulfillment);
+    }
 }
