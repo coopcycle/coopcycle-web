@@ -43,12 +43,12 @@ use libphonenumber\PhoneNumberUtil;
 
 class SyncTransportersCommand extends Command {
 
-    private readonly Address $HQAdress;
-    private readonly Store $store;
-    private readonly GeoCoordinates $defaultCoordinates;
+    private Address $HQAdress;
+    private Store $store;
+    private GeoCoordinates $defaultCoordinates;
 
-    private readonly string $companyLegalName;
-    private readonly string $companyLegalID;
+    private string $companyLegalName;
+    private string $companyLegalID;
 
     private bool $dryRun;
     private OutputInterface $output;
