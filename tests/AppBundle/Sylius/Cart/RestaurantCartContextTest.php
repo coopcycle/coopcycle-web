@@ -9,6 +9,7 @@ use AppBundle\Entity\Vendor;
 use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Cart\RestaurantCartContext;
 use AppBundle\Sylius\Cart\RestaurantResolver;
+use AppBundle\Sylius\Cart\SessionStorage;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -20,7 +21,6 @@ use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -28,20 +28,17 @@ class RestaurantCartContextTest extends TestCase
 {
     use ProphecyTrait;
 
-    private $session;
     private $orderRepository;
     private $orderFactory;
 
     private $tokenStorage;
-    private $sessionKeyName = 'foo';
 
     private $context;
 
     public function setUp(): void
     {
-        $this->session = $this->prophesize(SessionInterface::class);
-        $this->orderRepository = $this->prophesize(OrderRepositoryInterface::class);
         $this->orderFactory = $this->prophesize(OrderFactory::class);
+        $this->storage = $this->prophesize(SessionStorage::class);
         $this->channelContext = $this->prophesize(ChannelContextInterface::class);
         $this->restaurantResolver = $this->prophesize(RestaurantResolver::class);
         $this->authorizationChecker = $this->prophesize(AuthorizationCheckerInterface::class);
@@ -56,10 +53,8 @@ class RestaurantCartContextTest extends TestCase
         $this->businessContext->isActive()->willReturn(false);
 
         $this->context = new RestaurantCartContext(
-            $this->session->reveal(),
-            $this->orderRepository->reveal(),
             $this->orderFactory->reveal(),
-            $this->sessionKeyName,
+            $this->storage->reveal(),
             $this->channelContext->reveal(),
             $this->restaurantResolver->reveal(),
             $this->authorizationChecker->reveal(),
@@ -78,8 +73,8 @@ class RestaurantCartContextTest extends TestCase
             ->resolve()
             ->willReturn(null);
 
-        $this->session
-            ->has($this->sessionKeyName)
+        $this->storage
+            ->has()
             ->willReturn(false);
 
         $cart = $this->context->getCart();
@@ -87,8 +82,8 @@ class RestaurantCartContextTest extends TestCase
 
     public function testNothingStoredInSession()
     {
-        $this->session
-            ->has($this->sessionKeyName)
+        $this->storage
+            ->has()
             ->willReturn(false);
 
         $restaurant = $this->prophesize(LocalBusiness::class)->reveal();
@@ -126,14 +121,6 @@ class RestaurantCartContextTest extends TestCase
             ->resolve()
             ->willReturn($restaurant->reveal());
 
-        $this->session
-            ->has($this->sessionKeyName)
-            ->willReturn(true);
-
-        $this->session
-            ->get($this->sessionKeyName)
-            ->willReturn(1);
-
         $expectedCart = $this->prophesize(Order::class);
         $expectedCart->getCustomer()->willReturn($this->prophesize(CustomerInterface::class));
         $expectedCart->getRestaurant()->willReturn($restaurant->reveal());
@@ -146,13 +133,17 @@ class RestaurantCartContextTest extends TestCase
         $expectedCart->getChannel()->willReturn($this->webChannel->reveal());
         $expectedCart->getShippingAddress()->willReturn(null);
 
+        $this->storage
+            ->has()
+            ->willReturn(true);
+
+        $this->storage
+            ->get()
+            ->willReturn($expectedCart->reveal());
+
         $this->restaurantResolver
             ->accept($expectedCart->reveal())
             ->willReturn(true);
-
-        $this->orderRepository
-            ->findCartById(1)
-            ->willReturn($expectedCart->reveal());
 
         $cart = $this->context->getCart();
 
@@ -174,14 +165,6 @@ class RestaurantCartContextTest extends TestCase
             ->resolve()
             ->willReturn($otherRestaurant->reveal());
 
-        $this->session
-            ->has($this->sessionKeyName)
-            ->willReturn(true);
-
-        $this->session
-            ->get($this->sessionKeyName)
-            ->willReturn(1);
-
         $expectedCart = $this->prophesize(Order::class);
         $expectedCart->getCustomer()->willReturn($this->prophesize(CustomerInterface::class));
         $expectedCart->getRestaurant()->willReturn($restaurant->reveal());
@@ -194,13 +177,17 @@ class RestaurantCartContextTest extends TestCase
             ->willReturn(false);
         $expectedCart->getShippingAddress()->willReturn(null);
 
+        $this->storage
+            ->has()
+            ->willReturn(true);
+
+        $this->storage
+            ->get()
+            ->willReturn($expectedCart->reveal());
+
         $this->restaurantResolver
             ->accept($expectedCart->reveal())
             ->willReturn(false);
-
-        $this->orderRepository
-            ->findCartById(1)
-            ->willReturn($expectedCart->reveal());
 
         $cart = $this->context->getCart();
 
@@ -220,20 +207,20 @@ class RestaurantCartContextTest extends TestCase
             ->resolve()
             ->willReturn($restaurant);
 
-        $this->session
-            ->has($this->sessionKeyName)
+        $this->storage
+            ->has()
             ->willReturn(true);
 
-        $this->session
-            ->get($this->sessionKeyName)
-            ->willReturn(1);
-
-        $this->orderRepository
-            ->findCartById(1)
+        $this->storage
+            ->get()
             ->willReturn(null);
 
-        $this->session
-            ->remove($this->sessionKeyName)
+        // $this->orderRepository
+        //     ->findCartById(1)
+        //     ->willReturn(null);
+
+        $this->storage
+            ->remove()
             ->shouldBeCalled();
 
         $cartProphecy = $this->prophesize(OrderInterface::class);
@@ -265,27 +252,21 @@ class RestaurantCartContextTest extends TestCase
             ->resolve()
             ->willReturn(null);
 
-        $this->session
-            ->has($this->sessionKeyName)
-            ->willReturn(true);
-
-        $this->session
-            ->get($this->sessionKeyName)
-            ->willReturn(1);
-
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
         $cartProphecy->getVendor()->willReturn($restaurant->reveal());
         $cartProphecy->isMultiVendor()->willReturn(false);
         $cartProphecy->getChannel()->willReturn($this->webChannel->reveal());
 
-        $expectedCart = $cartProphecy->reveal();
+        $this->storage
+            ->has()
+            ->willReturn(true);
 
-        $this->orderRepository
-            ->findCartById(1)
-            ->willReturn($expectedCart);
+        $this->storage
+            ->get()
+            ->willReturn($cartProphecy->reveal());
 
-        $this->session->remove($this->sessionKeyName)->shouldBeCalled();
+        $this->storage->remove()->shouldBeCalled();
 
         $cart = $this->context->getCart();
     }
@@ -301,14 +282,6 @@ class RestaurantCartContextTest extends TestCase
             ->resolve()
             ->willReturn(null);
 
-        $this->session
-            ->has($this->sessionKeyName)
-            ->willReturn(true);
-
-        $this->session
-            ->get($this->sessionKeyName)
-            ->willReturn(1);
-
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getCustomer()->willReturn($this->prophesize(CustomerInterface::class));
         $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
@@ -319,11 +292,15 @@ class RestaurantCartContextTest extends TestCase
 
         $expectedCart = $cartProphecy->reveal();
 
-        $this->orderRepository
-            ->findCartById(1)
+        $this->storage
+            ->has()
+            ->willReturn(true);
+
+        $this->storage
+            ->get()
             ->willReturn($expectedCart);
 
-        $this->session->remove($this->sessionKeyName)->shouldNotBeCalled();
+        $this->storage->remove()->shouldNotBeCalled();
 
         $cart = $this->context->getCart();
 
@@ -342,14 +319,6 @@ class RestaurantCartContextTest extends TestCase
             ->resolve()
             ->willReturn(null);
 
-        $this->session
-            ->has($this->sessionKeyName)
-            ->willReturn(true);
-
-        $this->session
-            ->get($this->sessionKeyName)
-            ->willReturn(1);
-
         $cartProphecy = $this->prophesize(OrderInterface::class);
         $cartProphecy->getRestaurant()->willReturn($restaurant->reveal());
         $cartProphecy->getVendor()->willReturn($restaurant->reveal());
@@ -358,11 +327,15 @@ class RestaurantCartContextTest extends TestCase
 
         $expectedCart = $cartProphecy->reveal();
 
-        $this->orderRepository
-            ->findCartById(1)
+        $this->storage
+            ->has()
+            ->willReturn(true);
+
+        $this->storage
+            ->get()
             ->willReturn($expectedCart);
 
-        $this->session->remove($this->sessionKeyName)->shouldBeCalled();
+        $this->storage->remove()->shouldBeCalled();
 
         $cart = $this->context->getCart();
     }
@@ -375,20 +348,16 @@ class RestaurantCartContextTest extends TestCase
             ->resolve()
             ->willReturn(null);
 
-        $this->session
-            ->has($this->sessionKeyName)
+        $this->storage
+            ->has()
             ->willReturn(true);
 
-        $this->session
-            ->get($this->sessionKeyName)
-            ->willReturn(1);
-
-        $this->orderRepository
-            ->findCartById(1)
+        $this->storage
+            ->get()
             ->willReturn(null);
 
-        $this->session
-            ->remove($this->sessionKeyName)
+        $this->storage
+            ->remove()
             ->shouldBeCalled();
 
         $cart = $this->context->getCart();
