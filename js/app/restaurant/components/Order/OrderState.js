@@ -5,17 +5,15 @@ import _ from 'lodash'
 
 import {
   selectCartTotal,
-  selectErrorMessages,
   selectIsFetching,
   selectRestaurant,
-  selectWarningMessages,
+  selectSortedErrorMessages,
 } from '../../redux/selectors'
 
 export default function OrderState() {
   const isFetching = useSelector(selectIsFetching)
 
-  const errors = useSelector(selectErrorMessages)
-  const warnings = useSelector(selectWarningMessages)
+  const errors = useSelector(selectSortedErrorMessages)
   const total = useSelector(selectCartTotal)
 
   const restaurant = useSelector(selectRestaurant)
@@ -39,15 +37,6 @@ export default function OrderState() {
       <span className="button-composite">
         <i className="fa fa-warning"></i>
         <small>{ _.first(errors) }</small>
-      </span>
-    )
-  }
-  if (warnings.length > 0) {
-
-    return (
-      <span className="button-composite">
-        <i className="fa fa-warning"></i>
-        <small>{ _.first(warnings) }</small>
       </span>
     )
   }

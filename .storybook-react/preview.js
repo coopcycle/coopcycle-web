@@ -11,6 +11,15 @@ import "../js/app/restaurant/components/Order/index.scss";
 
 import numbro from 'numbro'
 
+import jquery from 'jquery';
+global.$ = jquery;
+
+global.Routing = {
+  generate: (route, params) => {
+    return route
+  }
+}
+
 Number.prototype.formatMoney = function() {
   return numbro(this).format({
     ...numbro.languageData().formats.fullWithTwoDecimals,

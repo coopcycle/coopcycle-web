@@ -4,20 +4,16 @@ import classNames from 'classnames'
 
 import { toggleMobileCart } from '../../redux/actions'
 import {
-  selectErrorMessages,
-  selectWarningMessages,
   selectIsMobileCartVisible,
+  selectSortedErrorMessages,
 } from '../../redux/selectors'
 import OrderState from './OrderState'
 
 export default function MobileCartHeading() {
   const isMobileCartVisible = useSelector(selectIsMobileCartVisible)
-  const errors = useSelector(selectErrorMessages)
-  const warnings = useSelector(selectWarningMessages)
+  const errors = useSelector(selectSortedErrorMessages)
 
   const dispatch = useDispatch()
-
-  const hasErrorsOrWarnings = errors.length > 0 || warnings.length > 0
 
   return (
     <div
@@ -29,7 +25,7 @@ export default function MobileCartHeading() {
       <div
         className={ classNames({
           'panel-heading': true,
-          'panel-heading--warning': hasErrorsOrWarnings,
+          'panel-heading--warning': errors.length > 0,
         }) }
         onClick={ () => dispatch(toggleMobileCart()) }>
         <div className="panel-heading__body">

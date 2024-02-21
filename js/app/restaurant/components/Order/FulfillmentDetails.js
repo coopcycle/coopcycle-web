@@ -1,16 +1,21 @@
 import React from 'react'
 import classNames from 'classnames'
+import { useDispatch, useSelector } from 'react-redux'
+import _ from 'lodash'
+
+import {
+  selectCart,
+  selectFulfillmentRelatedErrorMessages,
+  selectIsCollectionEnabled,
+  selectIsDeliveryEnabled,
+  selectIsOrderingAvailable,
+  selectIsPlayer,
+} from '../../redux/selectors'
+import { openAddressModal } from '../../redux/actions'
 import FulfillmentMethod from './FulfillmentMethod'
 import Time from './Time'
 import AddressModal from '../AddressModal'
 import DateModal from '../DateModal'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  selectCart,
-  selectIsCollectionEnabled,
-  selectIsDeliveryEnabled, selectIsOrderingAvailable, selectIsPlayer,
-} from '../../redux/selectors'
-import { openAddressModal } from '../../redux/actions'
 
 export default function FulfillmentDetails() {
   const isCollectionEnabled = useSelector(selectIsCollectionEnabled)
@@ -22,6 +27,8 @@ export default function FulfillmentDetails() {
   const cart = useSelector(selectCart)
   const fulfillmentMethod = (cart.takeaway ||
     (isCollectionEnabled && !isDeliveryEnabled)) ? 'collection' : 'delivery'
+
+  const errors = useSelector(selectFulfillmentRelatedErrorMessages)
 
   const dispatch = useDispatch()
 
@@ -38,6 +45,13 @@ export default function FulfillmentDetails() {
             onClick={ () => dispatch(openAddressModal(cart.restaurant)) }
             allowEdit={ !isPlayer } />
           { isOrderingAvailable && <Time /> }
+          { errors.length > 0 ? (
+            <div className="alert alert-warning">
+              <i className="fa fa-warning"></i>
+              &nbsp;
+              <span>{ _.first(errors) }</span>
+            </div>
+          ) : null }
         </div>
       </div>
       <AddressModal />

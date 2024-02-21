@@ -79,7 +79,7 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
     transform: translateY(calc(100% - #{$navbar-height}));
     transition: transform 0.4s;
   }
-  
+
   .panel {
     border: none;
     border-radius: 16px;
@@ -114,6 +114,11 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  .alert {
+    width: 100%;
+    margin-bottom: 0;
+  }
 }
 
 .hub-order,

@@ -155,28 +155,26 @@ const selectSortedErrors = createSelector(
   }
 )
 
-export const selectErrorMessages = createSelector(
+export const selectSortedErrorMessages = createSelector(
   selectSortedErrors,
   (errors) => {
 
     const messages = []
     _.forEach(errors, (error) => {
-      if (error.propertyPath === 'shippingAddress') {
-        messages.push(error.message)
-      }
+      messages.push(error.message)
     })
 
     return messages
   }
 )
 
-export const selectWarningMessages = createSelector(
+export const selectFulfillmentRelatedErrorMessages = createSelector(
   selectSortedErrors,
   (errors) => {
 
     const messages = []
     _.forEach(errors, (error) => {
-      if (error.propertyPath !== 'shippingAddress') {
+      if (error.propertyPath === 'shippingAddress' || error.propertyPath === 'shippingTimeRange') {
         messages.push(error.message)
       }
     })

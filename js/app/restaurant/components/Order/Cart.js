@@ -47,7 +47,7 @@ export default function Cart() {
       <div className="cart__empty">
         <img src={ cartEmptySvg } />
         <div className="alert alert-info w-100 mt-3">
-          <i className="fa fa-info-circle"></i> { t('CART_EMPTY') }
+          <i className="fa fa-info-circle"></i>&nbsp;{ t('CART_EMPTY') }
         </div>
       </div>
     )
