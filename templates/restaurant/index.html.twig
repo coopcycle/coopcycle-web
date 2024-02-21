@@ -215,8 +215,8 @@
       </div>
       <div class="modal-body">
         {% include 'restaurant/_partials/opening_hours.html.twig' with {
-          delivery:   restaurant.isFulfillmentMethodEnabled('delivery')   ? restaurant.getOpeningHours('delivery')   : [],
-          collection: restaurant.isFulfillmentMethodEnabled('collection') ? restaurant.getOpeningHours('collection') : []
+          delivery:   restaurant.isFulfillmentMethodEnabled('delivery')   ? restaurant_opening_hours(restaurant, 'delivery')   : [],
+          collection: restaurant.isFulfillmentMethodEnabled('collection') ? restaurant_opening_hours(restaurant, 'collection') : []
         } %}
       </div>
     </div>

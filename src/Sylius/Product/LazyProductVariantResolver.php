@@ -57,6 +57,10 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
                 continue;
             }
 
+            if ($variant->isBusiness() !== $this->businessContext->isActive()) {
+                continue;
+            }
+
             if ($this->matchOptions($variant, $optionValues)) {
                 return $variant;
             }
@@ -82,7 +86,7 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
         $variant->setName($product->getName());
         $variant->setCode(Uuid::uuid4()->toString());
 
-        $defaultVariant = $this->variantResolver->getVariant($product);
+        $defaultVariant = $this->getVariant($product);
 
         // Copy price & tax category from default variant
         $variant->setPrice($defaultVariant->getPrice());

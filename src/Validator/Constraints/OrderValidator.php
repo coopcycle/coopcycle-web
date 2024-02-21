@@ -3,6 +3,7 @@
 namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Entity\Address;
+use AppBundle\Fulfillment\FulfillmentMethodResolver;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\RoutingInterface;
@@ -18,9 +19,10 @@ class OrderValidator extends ConstraintValidator
 {
     private $priceFormatter;
 
-    public function __construct(PriceFormatter $priceFormatter)
+    public function __construct(PriceFormatter $priceFormatter, FulfillmentMethodResolver $fulfillmentMethodResolver)
     {
         $this->priceFormatter = $priceFormatter;
+        $this->fulfillmentMethodResolver = $fulfillmentMethodResolver;
     }
 
     private function validateVendor($object, Constraint $constraint)
@@ -32,7 +34,8 @@ class OrderValidator extends ConstraintValidator
             return;
         }
 
-        $minimumAmount = $order->getFulfillmentMethodObject()->getMinimumAmount();
+        $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($order);
+        $minimumAmount = $fulfillmentMethod->getMinimumAmount();
         $itemsTotal = $order->getItemsTotal();
 
         if ($itemsTotal < $minimumAmount) {

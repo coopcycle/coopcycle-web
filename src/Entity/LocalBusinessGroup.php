@@ -86,6 +86,15 @@ abstract class LocalBusinessGroup implements OpenCloseInterface, ToggleableInter
 
     /**
      * @param LocalBusiness $restaurant
+     * @return bool
+     */
+    public function hasRestaurant(LocalBusiness $restaurant): bool
+    {
+        return $this->getRestaurants()->contains($restaurant);
+    }
+
+    /**
+     * @param LocalBusiness $restaurant
      */
     public abstract function addRestaurant(LocalBusiness $restaurant);
 

@@ -7,7 +7,9 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\LoopEat\Client as LoopEatClient;
+use AppBundle\LoopEat\Context as LoopeatContext;
 use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
+use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\LoopEatOrder as LoopEatOrderConstraint;
 use AppBundle\Validator\Constraints\LoopEatOrderValidator;
 use Prophecy\Argument;
@@ -26,9 +28,16 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
 
     public function setUp(): void
     {
+        $this->loopeatContext = new LoopeatContext();
+        $this->loopeatContext->name = 'Acme';
+
         $this->tokenStorage = $this->prophesize(TokenStorageInterface::class);
         $this->loopeatClient = $this->prophesize(LoopEatClient::class);
+        $this->priceFormatter = $this->prophesize(PriceFormatter::class);
         $this->session = $this->prophesize(SessionInterface::class);
+
+        $this->priceFormatter->formatWithSymbol(Argument::type('int'))
+            ->will(fn ($args) => sprintf('%d €', $args[0] / 100));
 
         parent::setUp();
     }
@@ -37,6 +46,8 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
     {
         return new LoopEatOrderValidator(
             $this->loopeatClient->reveal(),
+            $this->loopeatContext,
+            $this->priceFormatter->reveal(),
             new NullLogger()
         );
     }
@@ -115,7 +126,8 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation($constraint->insufficientBalance)
             ->atPath('property.path.reusablePackagingEnabled')
-            ->setParameter('%count%', 200)
+            ->setParameter('%name%', 'Acme')
+            ->setParameter('%amount%', '2 €')
             ->assertRaised();
     }
 
@@ -194,7 +206,8 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation($constraint->insufficientBalance)
             ->atPath('property.path.reusablePackagingEnabled')
-            ->setParameter('%count%', 500)
+            ->setParameter('%name%', 'Acme')
+            ->setParameter('%amount%', '5 €')
             ->assertRaised();
     }
 

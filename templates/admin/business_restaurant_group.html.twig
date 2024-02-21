@@ -85,34 +85,31 @@
       onSuggestionSelected: function(suggestion) {
 
         var counter = $restaurants.find('tbody > tr').length;
-        console.log(`counter ${counter}`)
-        console.log(`index ${$restaurants.attr('data-index')}`)
         var newRestaurant = $restaurants.attr('data-prototype');
 
         newRestaurant = newRestaurant.replace(/__restaurantWithMenu__/g, counter);
         newRestaurant = newRestaurant.replace(/__value__/g, suggestion.id);
         newRestaurant = newRestaurant.replace(/__restaurant_name__/g, suggestion.name);
 
-        var options= ''
-        $.getJSON(menusURL.replace('__ID__', suggestion.id), {}, (menus) => {
-          menus.forEach(({id, name}) => {
-            options += `<option value="${id}">${name}</option>`
-
+        var options = ''
+        $.getJSON(menusURL.replace('__ID__', suggestion.id), {}, function (menus) {
+          menus.forEach(function (menu) {
+            options += `<option value="${menu.id}">${menu.name}</option>`
           })
           newRestaurant = newRestaurant.replace(/__restaurant_menus__/g, options);
 
           $restaurants.find('tbody').append($(newRestaurant));
 
-          if (menus.length === 1) {
+          if (menus.length > 0) {
             $(`#business_restaurant_group_restaurantsWithMenu_${counter}_menu`).val(menus[0].id)
           }
-
-          $(`#business_restaurant_group_restaurantsWithMenu_${counter}_menu_select`).on("change", function() {
-            $(`#business_restaurant_group_restaurantsWithMenu_${counter}_menu`).val(this.value)
-          })
-        })
+        });
 
       }
+    });
+
+    $(document).on('change', '[data-toggle="menu"]', function(e) {
+      document.querySelector(e.target.dataset.controls).value = e.target.value
     });
 
     $(document).on('click', '[data-remove="restaurant"]', function(e) {
