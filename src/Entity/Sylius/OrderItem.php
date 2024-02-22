@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Sylius;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
@@ -100,5 +101,37 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
     public function getOrder(): ?OrderInterface
     {
         return parent::getOrder();
+    }
+
+    public function hasOverridenLoopeatQuantityForPackaging(ReusablePackaging $packaging): bool
+    {
+        $data = $packaging->getData();
+        $deliver = $this->getOrder()->getLoopeatDeliver();
+
+        if (isset($deliver[$this->getId()])) {
+            foreach ($deliver[$this->getId()] as $format) {
+                if ($format['format_id'] === $data['id']) {
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function getOverridenLoopeatQuantityForPackaging(ReusablePackaging $packaging)
+    {
+        $data = $packaging->getData();
+        $deliver = $this->getOrder()->getLoopeatDeliver();
+
+        if (isset($deliver[$this->getId()])) {
+            foreach ($deliver[$this->getId()] as $format) {
+                if ($format['format_id'] === $data['id']) {
+
+                    return $format['quantity'];
+                }
+            }
+        }
     }
 }
