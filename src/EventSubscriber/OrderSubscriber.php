@@ -78,7 +78,7 @@ final class OrderSubscriber implements EventSubscriberInterface
 
             $violations = $this->baseValidator->validate(
                 $order->getItems(),
-                new All([ new AssertLoopeatStock() ])
+                new All([ new AssertLoopeatStock(true) ])
             );
 
             if (count($violations) > 0) {

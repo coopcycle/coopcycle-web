@@ -29,13 +29,15 @@ class Context
 
     public function isActive(): bool
     {
-        $request = $this->requestStack->getMainRequest();
+        if (null !== $request = $this->requestStack->getCurrentRequest()) {
+            if ($request->query->has('_business')) {
+                return $request->query->getBoolean('_business');
+            }
 
-        if ($request->query->has('_business')) {
-            return $request->query->getBoolean('_business');
+            return '1' === $request->cookies->get('_coopcycle_business');
         }
 
-        return '1' === $request->cookies->get('_coopcycle_business');
+        return false;
     }
 
     public function getBusinessAccount(): ?BusinessAccount
