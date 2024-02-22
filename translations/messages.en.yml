@@ -1409,7 +1409,7 @@ registration.step.company: "Company information"
 registration.step.invitation: "Invite your colleagues"
 registration.flow.next: "Next"
 registration.flow.back: "Back"
-registration.flow.finish: "Finish my inscription"
+registration.flow.finish: "Finish my registration"
 registration.company.address: "Address"
 registration.company.address.different.for.billing: "Different address for billing"
 registration.company.billing.address: "Billing address"
@@ -1434,3 +1434,8 @@ business_restaurant_group.label: Business restaurant group
 adminDashboard.business_restaurant_groups.title: Business restaurant groups
 navbar.switch_to_business: '%name% account'
 navbar.switch_to_personal: Personal account
+form.settings.company_legal_name.label: "Legal name of the company"
+form.settings.company_legal_name.help: "Please enter the full legal name of the company as it appears on its official documents."
+form.settings.company_legal_id.label: "Company registration number or EIN"
+form.settings.company_legal_id.help: "This number is usually available on the company's official documents, such as invoices or contracts."
+

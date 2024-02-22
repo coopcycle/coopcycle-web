@@ -72,7 +72,7 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
       <footer className="modal-footer">
         {state.missingMandatoryOptions === 0 ? (
           <button type="submit" className="btn btn-lg btn-block btn-primary">
-            <span data-product-total className="product-add-to-cart">
+            <span data-product-total className="button-composite">
               <i className="fa fa-shopping-cart"></i>
               <span>{t('ADD_TO_CART')}</span>
               <span>{(sumTotal).formatMoney()}</span>

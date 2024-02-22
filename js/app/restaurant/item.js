@@ -8,16 +8,22 @@ import _ from 'lodash'
 import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
 import { queueAddItem, openProductOptionsModal } from './redux/actions'
-import Cart from './components/Cart'
+import Order from './components/Order'
+import ProductOptionsModal
+  from './components/ProductDetails/ProductOptionsModal'
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
 
 require('gasparesganga-jquery-loading-overlay')
 
 import './item.scss'
+import './header.scss'
 import './menu.scss'
-import ProductOptionsModal
-  from './components/ProductDetails/ProductOptionsModal'
+import './components/Order/index.scss'
+import RestaurantModal from './components/RestaurantModal'
+import InvitePeopleToOrderModal from './components/InvitePeopleToOrderModal'
+import SetGuestCustomerEmailModal from './components/SetGuestCustomerEmailModal'
+import LoopeatModal from './components/LoopeatModal'
 
 window._paq = window._paq || []
 
@@ -28,7 +34,6 @@ const init = function() {
   const container = document.getElementById('cart')
 
   if (!container) {
-
     return
   }
 
@@ -113,8 +118,12 @@ const init = function() {
     <StrictMode>
       <Provider store={ store }>
         <I18nextProvider i18n={ i18n }>
-          <Cart />
+          <Order />
           <ProductOptionsModal />
+          <RestaurantModal />
+          <InvitePeopleToOrderModal />
+          <SetGuestCustomerEmailModal />
+          <LoopeatModal />
         </I18nextProvider>
       </Provider>
     </StrictMode>

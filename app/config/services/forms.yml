@@ -16,7 +16,6 @@ services:
 
   AppBundle\Form\RegistrationType:
     arguments:
-      $isDemo: '%is_demo%'
       $splitTermsAndConditionsAndPrivacyPolicy: '%env(bool:SPLIT_TERMS_AND_CONDITIONS_AND_PRIVACY_POLICY)%'
       $country: '%country_iso%'
     tags:

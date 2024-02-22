@@ -2,8 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 
-import ShippingTimeRange from '../../components/ShippingTimeRange'
-import { setDateModalOpen } from '../redux/actions'
+import ShippingTimeRange from '../../../components/ShippingTimeRange'
+import { setDateModalOpen } from '../../redux/actions'
 
 class Time extends React.Component {
 
@@ -17,18 +17,23 @@ class Time extends React.Component {
 
   render() {
 
-    const cssClasses = [ 'cart__time' ]
+    const cssClasses = [ 'cart__time', 'd-flex', 'justify-content-between' ]
     if (!this.props.today) {
       cssClasses.push('cart__time--not-today')
     }
 
     return (
-      <a className={ cssClasses.join(' ') } href="#" onClick={ this._onClick.bind(this) }>
-        <strong className="cart__time__text">
+      <div className={ cssClasses.join(' ') }>
+        <span className="cart__time__text">
           <ShippingTimeRange value={ this.props.shippingTimeRange } />
-        </strong>
-        <span className="cart__time__edit">{ this.props.t('CART_DELIVERY_TIME_EDIT') }</span>
-      </a>
+        </span>
+        <a className="pl-3" href="#"
+           onClick={ this._onClick.bind(this) }>
+          <span className="cart__time__edit">{
+            this.props.t('CART_DELIVERY_TIME_EDIT') }
+          </span>
+        </a>
+      </div>
     )
   }
 }
@@ -51,4 +56,5 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Time))
+export default connect(mapStateToProps, mapDispatchToProps)(
+  withTranslation()(Time))

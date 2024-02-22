@@ -146,6 +146,9 @@ class ShippingAddressValidatorTest extends ConstraintValidatorTestCase
             ->getFulfillmentMethod()
             ->willReturn($takeaway ? 'collection' : 'delivery');
 
+        $order->isBusiness()
+            ->willReturn(false);
+
         return $order;
     }
 
@@ -326,6 +329,65 @@ class ShippingAddressValidatorTest extends ConstraintValidatorTestCase
         $violations = $this->validator->validate(null, $constraint);
 
         $this->assertNoViolation();
+    }
+
+    public function testOrderInBusinessContextIsValid()
+    {
+        $shippingAddressCoords = new GeoCoordinates();
+        $restaurantAddressCoords = new GeoCoordinates();
+
+        $shippingAddress = $this->createAddress($shippingAddressCoords);
+        $restaurantAddress = $this->createAddressProphecy($restaurantAddressCoords);
+
+        $restaurant = $this->createRestaurantProphecy(
+            $restaurantAddress->reveal(),
+            $minimumCartAmount = 2000,
+            $maxDistanceExpression = 'distance < 3000',
+            $canDeliver = true
+        );
+
+        $order = $this->createOrderProphecy(
+            $restaurant->reveal(),
+            $shippingAddress
+        );
+
+        $shippingTimeRange =
+            DateUtils::dateTimeToTsRange(new \DateTime('+1 hour'), 5);
+
+        $order
+            ->getShippingTimeRange()
+            ->willReturn($shippingTimeRange);
+        $order
+            ->getItemsTotal()
+            ->willReturn(2500);
+        $order
+            ->containsDisabledProduct()
+            ->willReturn(false);
+
+        $order->isBusiness()
+            ->willReturn(true);
+
+        $this->prophesizeGetRawResponse(
+            $restaurantAddressCoords,
+            $shippingAddressCoords,
+            $maxDistanceExpression = 'distance < 1500',
+            $duration = 300
+        );
+
+        $this->setObject($order->reveal());
+
+        $constraint = new ShippingAddressConstraint();
+        $violations = $this->validator->validate($shippingAddress, $constraint);
+
+        $this->assertNoViolation();
+
+        $this->routing
+            ->getDistance(Argument::type(GeoCoordinates::class), Argument::type(GeoCoordinates::class))
+            ->shouldNotHaveBeenCalled();
+
+        $this->routing
+            ->getDuration(Argument::type(GeoCoordinates::class), Argument::type(GeoCoordinates::class))
+            ->shouldNotHaveBeenCalled();
     }
 
     public function testOrderIsValid()

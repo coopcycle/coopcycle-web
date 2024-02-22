@@ -5,7 +5,6 @@ namespace AppBundle\Form;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\BusinessAccountInvitation;
 use AppBundle\Entity\BusinessRestaurantGroup;
-use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as AssertUserWithSameEmailNotExists;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -113,7 +112,6 @@ class BusinessAccountType extends AbstractType
                             new Assert\Email([
                                 'mode' => Assert\Email::VALIDATION_MODE_STRICT,
                             ]),
-                            new AssertUserWithSameEmailNotExists(),
                         ],
                         'label' => 'form.business_account.manager.email.label',
                         'help' => 'form.business_account.manager.email.help',

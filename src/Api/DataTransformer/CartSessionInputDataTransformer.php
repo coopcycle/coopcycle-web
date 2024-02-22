@@ -57,6 +57,10 @@ class CartSessionInputDataTransformer implements DataTransformerInterface
                 $cart->getCreatedAt()->format(\DateTime::ATOM)));
         }
 
+        // TODO When in business context
+        // - Associate to the business account with setBusinessAccount
+        // - Set default address if not set
+
         if (null === $cart->getCustomer() && $user = $this->getUserFromToken()) {
             $cart->setCustomer($user->getCustomer());
         }

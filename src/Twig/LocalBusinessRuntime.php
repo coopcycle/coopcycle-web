@@ -10,6 +10,7 @@ use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Entity\Zone;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\RestaurantDecorator;
@@ -22,6 +23,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
+use libphonenumber\PhoneNumber;
 
 class LocalBusinessRuntime implements RuntimeExtensionInterface
 {
@@ -33,7 +35,8 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         EntityManagerInterface $entityManager,
         TimingRegistry $timingRegistry,
         RestaurantDecorator $restaurantDecorator,
-        BusinessContext $businessContext)
+        BusinessContext $businessContext,
+        SettingsManager $settingsManager)
     {
         $this->translator = $translator;
         $this->serializer = $serializer;
@@ -43,6 +46,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         $this->timingRegistry = $timingRegistry;
         $this->restaurantDecorator = $restaurantDecorator;
         $this->businessContext = $businessContext;
+        $this->settingsManager = $settingsManager;
     }
 
     /**
@@ -217,5 +221,31 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         }
 
         return $restaurant->getMenuTaxon();
+    }
+
+    public function resolvePhoneNumber(OrderInterface $order): ?PhoneNumber
+    {
+        if (!$order->isMultiVendor()) {
+
+            $vendor = $order->getVendor();
+
+            if (is_callable([ $vendor, 'getTelephone' ])) {
+                return $vendor->getTelephone();
+            }
+        }
+
+        return $this->settingsManager->get('phone_number');
+    }
+
+    public function openingHours(LocalBusiness $restaurant, $fulfillment = 'delivery'): array
+    {
+        if ($this->businessContext->isActive()) {
+            $businessAccount = $this->businessContext->getBusinessAccount();
+            if ($businessAccount->getBusinessRestaurantGroup()->hasRestaurant($restaurant)) {
+                return $businessAccount->getBusinessRestaurantGroup()->getOpeningHours($fulfillment);
+            }
+        }
+
+        return $restaurant->getOpeningHours($fulfillment);
     }
 }

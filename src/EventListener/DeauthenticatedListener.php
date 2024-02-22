@@ -2,22 +2,16 @@
 
 namespace AppBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\RequestStack;
+use AppBundle\Sylius\Cart\SessionStorage;
 use Symfony\Component\Security\Http\Event\DeauthenticatedEvent;
 
 class DeauthenticatedListener
 {
-    private $requestStack;
-    private $sessionKeyName;
-
-    public function __construct(RequestStack $requestStack, string $sessionKeyName)
-    {
-        $this->requestStack = $requestStack;
-        $this->sessionKeyName = $sessionKeyName;
-    }
+    public function __construct(private SessionStorage $storage)
+    {}
 
     public function logoutOnChange(DeauthenticatedEvent $event)
     {
-        $this->requestStack->getSession()->remove($this->sessionKeyName);
+        $this->storage->remove();
     }
 }

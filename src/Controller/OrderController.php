@@ -21,6 +21,7 @@ use AppBundle\Form\Order\CartType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
+use AppBundle\Sylius\Cart\SessionStorage as CartStorage;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
@@ -40,7 +41,6 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -61,14 +61,12 @@ class OrderController extends AbstractController
         EntityManagerInterface $objectManager,
         FactoryInterface $orderFactory,
         protected JWTTokenManagerInterface $JWTTokenManager,
-        string $sessionKeyName,
         private ValidatorInterface $validator,
         private LoggerInterface $checkoutLogger,
     )
     {
         $this->objectManager = $objectManager;
         $this->orderFactory = $orderFactory;
-        $this->sessionKeyName = $sessionKeyName;
     }
 
     /**
@@ -584,9 +582,9 @@ class OrderController extends AbstractController
      */
     public function reorderAction($hashid,
         OrderRepository $orderRepository,
-        SessionInterface $session,
         OrderProcessorInterface $orderProcessor,
-        OrderModifierInterface $orderModifier)
+        OrderModifierInterface $orderModifier,
+        CartStorage $cartStorage)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
 
@@ -623,7 +621,7 @@ class OrderController extends AbstractController
         $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | OrderController',
             $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId()));
 
-        $session->set($this->sessionKeyName, $cart->getId());
+        $cartStorage->set($cart);
 
         return $this->redirectToRoute('order');
     }
@@ -685,9 +683,8 @@ class OrderController extends AbstractController
      * @Route("/order/share/{slug}", name="public_share_order")
      */
     public function shareOrderAction($slug, Request $request,
-        RequestStack $requestStack,
-        SessionInterface $session,
-        OrderTimeHelper $orderTimeHelper)
+        OrderTimeHelper $orderTimeHelper,
+        CartStorage $cartStorage)
     {
         $invitation =
             $this->objectManager->getRepository(OrderInvitation::class)->findOneBy(['slug' => $slug]);
@@ -705,11 +702,11 @@ class OrderController extends AbstractController
         // $this->denyAccessUnlessGranted('view_public', $order);
 
         // Hacky fix to correctly set the session and reload all the context
-        if (!$session->has($this->sessionKeyName) || $session->get($this->sessionKeyName) != $order->getId()) {
-            $session->set($this->sessionKeyName, $order->getId());
+        if (!$cartStorage->has() || $cartStorage->get() !== $order) {
+            $cartStorage->set($order);
+
             return $this->redirectToRoute($request->attributes->get('_route'), ['slug' => $slug]);
         }
-
 
         $cartForm = $this->createForm(CartType::class, $order);
 

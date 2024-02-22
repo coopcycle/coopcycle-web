@@ -17,8 +17,8 @@ final class SessionSubscriber implements EventSubscriberInterface
     /** @var CartContextInterface */
     private $cartContext;
 
-    /** @var string */
-    private $sessionKeyName;
+    /** @var SessionStorage */
+    private $storage;
 
     /** @var bool */
     private $enabled;
@@ -28,12 +28,12 @@ final class SessionSubscriber implements EventSubscriberInterface
 
     public function __construct(
         CartContextInterface $cartContext,
-        string $sessionKeyName,
+        SessionStorage $storage,
         bool $enabled,
         LoggerInterface $logger = null)
     {
         $this->cartContext = $cartContext;
-        $this->sessionKeyName = $sessionKeyName;
+        $this->storage = $storage;
         $this->enabled = $enabled;
         $this->logger = $logger ?? new NullLogger();
     }
@@ -88,6 +88,6 @@ final class SessionSubscriber implements EventSubscriberInterface
         }
 
         $this->logger->debug(sprintf('SessionSubscriber | Order #%d | Saving in session', $cart->getId()));
-        $request->getSession()->set($this->sessionKeyName, $cart->getId());
+        $this->storage->set($cart);
     }
 }

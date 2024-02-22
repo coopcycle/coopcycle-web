@@ -8,30 +8,21 @@ const Icon = ({ type }) => (
       'fa': true,
       'fa-bicycle': type === 'delivery',
       'fa-cube': type === 'collection',
-    }) }></i>
-  </span>
-)
+    }) } />
+  </span>)
 
-const FulfillmentMethod = ({ value, shippingAddress, onClick, allowEdit }) => {
+function FulfillmentMethod({ value, shippingAddress, onClick, allowEdit }) {
 
   const { t } = useTranslation()
 
   return (
-    <a href="#"
-      className="d-flex align-items-start justify-content-between border-bottom pb-4 text-decoration-none"
-      onClick={ e => {
-        e.preventDefault()
-        if (allowEdit) {
-          onClick()
-        }
-      }}>
+    <div className="d-flex justify-content-between">
       <span>
         { value === 'collection' && (
           <React.Fragment>
             <Icon type={ value } />
             <strong>{ t('CART_TAKE_AWAY') }</strong>
-          </React.Fragment>
-        ) }
+          </React.Fragment>) }
         { value === 'delivery' && (
           <React.Fragment>
             <span>
@@ -39,16 +30,23 @@ const FulfillmentMethod = ({ value, shippingAddress, onClick, allowEdit }) => {
               <strong>{ t('RULE_PICKER_LINE_OPTGROUP_DELIVERY') }</strong>
             </span>
             <br />
-            <small className="text-muted" data-testid="cart.shippingAddress">{ shippingAddress?.streetAddress }</small>
-          </React.Fragment>
-        ) }
+            <span
+              data-testid="cart.shippingAddress">{ shippingAddress?.streetAddress }</span>
+          </React.Fragment>) }
       </span>
-      { allowEdit &&
-      <span className="pl-4">
-        <small>{ t('CART_DELIVERY_TIME_EDIT') }</small>
-      </span> }
-    </a>
-  )
+      { allowEdit ? (
+        <a
+          href="#"
+          className="pl-3 text-decoration-none"
+          onClick={ e => {
+            e.preventDefault()
+            if (allowEdit) {
+              onClick()
+            }
+          } }>
+          <span>{ t('CART_DELIVERY_TIME_EDIT') }</span>
+        </a>) : null }
+    </div>)
 }
 
 export default FulfillmentMethod

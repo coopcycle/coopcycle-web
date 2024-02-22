@@ -7,8 +7,18 @@ import "../js/app/restaurant/menu.scss";
 import "../js/app/restaurant/item.scss";
 import "../js/app/restaurant/components/ProductDetails/productDetails.scss";
 import "../js/app/restaurant/components/ProductDetails/dotstyle.scss";
+import "../js/app/restaurant/components/Order/index.scss";
 
 import numbro from 'numbro'
+
+import jquery from 'jquery';
+global.$ = jquery;
+
+global.Routing = {
+  generate: (route, params) => {
+    return route
+  }
+}
 
 Number.prototype.formatMoney = function() {
   return numbro(this).format({

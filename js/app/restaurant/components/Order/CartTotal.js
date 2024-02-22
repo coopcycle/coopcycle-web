@@ -7,7 +7,7 @@ import {
   selectShowPricesTaxExcluded,
   selectItems,
   selectItemsTotal,
-  selectVariableCustomerAmountEnabled } from '../redux/selectors'
+  selectVariableCustomerAmountEnabled } from '../../redux/selectors'
 
 const Adjustment = ({ adjustment, tooltip }) => (
   <div>
@@ -17,7 +17,7 @@ const Adjustment = ({ adjustment, tooltip }) => (
         <i className="fa fa-info-circle"></i>
       </span>
     ) }
-    <strong className="pull-right">{ (adjustment.amount / 100).formatMoney() }</strong>
+    <span className="pull-right">{ (adjustment.amount / 100).formatMoney() }</span>
   </div>
 )
 
@@ -86,7 +86,7 @@ class CartTotal extends React.Component {
     }
 
     return (
-      <div>
+      <>
         { deliveryAdjustments.map(adjustment =>
           <Adjustment
             key={ adjustment.id }
@@ -103,35 +103,28 @@ class CartTotal extends React.Component {
             key={ adjustment.id }
             adjustment={ adjustment } />
         )}
-      </div>
+      </>
     )
   }
 
   render() {
 
-    const { total, itemsTotal } = this.props
+    const { itemsTotal } = this.props
 
     if (itemsTotal > 0) {
       return (
-        <div>
+        <div className="cart__total">
           <div>
             <span>{ this.props.t('CART_TOTAL_PRODUCTS') }</span>
-            <strong className="pull-right">{ (itemsTotal / 100).formatMoney() }</strong>
+            <span className="pull-right">{ (itemsTotal / 100).formatMoney() }</span>
           </div>
           { this.renderAdjustments() }
-          <div>
-            <span>{ this.props.t('CART_TOTAL') }</span>
-            <strong className="pull-right">{ (total / 100).formatMoney() }</strong>
-          </div>
         </div>
       )
+    } else {
+      return null
     }
-
-    return (
-      <div></div>
-    )
   }
-
 }
 
 function mapStateToProps (state) {
@@ -139,7 +132,6 @@ function mapStateToProps (state) {
   return {
     items: selectItems(state),
     itemsTotal: selectItemsTotal(state),
-    total: state.cart.total,
     adjustments: state.cart.adjustments,
     variableCustomerAmountEnabled: selectVariableCustomerAmountEnabled(state),
     showPricesTaxExcluded: selectShowPricesTaxExcluded(state),

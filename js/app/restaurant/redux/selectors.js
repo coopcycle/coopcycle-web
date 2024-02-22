@@ -3,6 +3,18 @@ import _ from 'lodash'
 
 import { totalTaxExcluded } from '../../utils/tax'
 
+export const GROUP_ORDER_ADMIN = 'Admin'
+
+export const selectIsFetching = state => state.isFetching
+
+export const selectIsMobileCartVisible = state => state.isMobileCartVisible
+
+export const selectRestaurant = state => state.restaurant
+
+export const selectCart = state => state.cart
+
+export const selectCartTotal = state => state.cart.total
+
 export const selectIsDeliveryEnabled = createSelector(
   state => state.cart.vendor.fulfillmentMethods,
   (fulfillmentMethods) => _.includes(fulfillmentMethods, 'delivery')
@@ -30,6 +42,11 @@ export const selectItems = createSelector(
   }
 )
 
+export const selectHasItems = createSelector(
+  selectItems,
+  (items) => items.length > 0
+)
+
 export const selectItemsGroups = createSelector(
   selectItems,
   (items) =>  _.groupBy(items, 'vendor.name')
@@ -39,13 +56,26 @@ export const selectPlayersGroups = createSelector(
   selectItems,
   (items) => _.groupBy(items, (item) => {
     if (item.player === null) {
-      return 'Admin'
+      return GROUP_ORDER_ADMIN
     }
     if (item.player.username !== undefined) {
       return item.player.username
     }
     return 'Unknown'
   })
+)
+
+export const selectIsPlayer = state => state.isPlayer
+export const selectPlayer = state => state.player
+
+export const selectIsGroupOrdersEnabled = state => state.isGroupOrdersEnabled
+
+export const selectIsGroupOrderAdmin = createSelector(
+  selectIsPlayer,
+  selectPlayersGroups,
+  (isPlayer, playersGroups) => {
+    return !isPlayer && Object.keys(playersGroups).length > 1
+  }
 )
 
 export const selectShowPricesTaxExcluded = createSelector(
@@ -93,7 +123,8 @@ export const selectVariableCustomerAmountEnabled = createSelector(
 export const selectIsOrderingAvailable = createSelector(
   state => state.cart,
   state => state.times,
-  (cart, { range, ranges }) => {
+  selectIsPlayer,
+  (cart, { range, ranges }, isPlayer) => {
 
     const shippingTimeRange = cart.shippingTimeRange || range
 
@@ -101,7 +132,7 @@ export const selectIsOrderingAvailable = createSelector(
       return false
     }
 
-    return true
+    return !isPlayer
   }
 )
 
@@ -127,34 +158,23 @@ const selectSortedErrors = createSelector(
   }
 )
 
-export const selectErrorMessages = createSelector(
+export const selectSortedErrorMessages = createSelector(
   selectSortedErrors,
-  (errors) => {
-
-    const messages = []
-    _.forEach(errors, (error) => {
-      if (error.propertyPath === 'shippingAddress') {
-        messages.push(error.message)
-      }
-    })
-
-    return messages
-  }
+  (errors) => errors.map(error => error.message)
 )
 
-export const selectWarningMessages = createSelector(
+export const selectFulfillmentRelatedErrorMessages = createSelector(
   selectSortedErrors,
-  (errors) => {
+  (errors) => errors.filter(error =>
+    error.propertyPath === 'shippingAddress'
+    || error.propertyPath === 'shippingTimeRange').map(error => error.message),
+)
 
-    const messages = []
-    _.forEach(errors, (error) => {
-      if (error.propertyPath !== 'shippingAddress') {
-        messages.push(error.message)
-      }
-    })
-
-    return messages
-  }
+export const selectCartItemsRelatedErrorMessages = createSelector(
+  selectSortedErrors,
+  (errors) => errors.filter(error =>
+    error.propertyPath === 'items'
+    || error.propertyPath === 'total').map(error => error.message),
 )
 
 export const selectReusablePackagingFeatureEnabled = createSelector(

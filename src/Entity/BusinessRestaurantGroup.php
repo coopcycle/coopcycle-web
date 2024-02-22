@@ -64,8 +64,9 @@ class BusinessRestaurantGroup extends LocalBusinessGroup
      */
     public function getAddress()
     {
-        if (count($this->restaurants) > 0) {
-            return $this->restaurants->first->getAddress();
+        $restaurants = $this->getRestaurants();
+        if (count($restaurants) > 0) {
+            return $restaurants->first()->getAddress();
         }
         return null;
     }

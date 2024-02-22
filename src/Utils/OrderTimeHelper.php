@@ -4,6 +4,7 @@ namespace AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\TimeSlot;
+use AppBundle\Fulfillment\FulfillmentMethodResolver;
 use AppBundle\Form\Type\AsapChoiceLoader;
 use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Form\Type\TsRangeChoice;
@@ -33,6 +34,7 @@ class OrderTimeHelper
         ShippingTimeCalculator $shippingTimeCalculator,
         Redis $redis,
         TimeRegistry $timeRegistry,
+        FulfillmentMethodResolver $fulfillmentMethodResolver,
         string $country,
         LoggerInterface $logger = null)
     {
@@ -41,6 +43,7 @@ class OrderTimeHelper
         $this->shippingTimeCalculator = $shippingTimeCalculator;
         $this->redis = $redis;
         $this->timeRegistry = $timeRegistry;
+        $this->fulfillmentMethodResolver = $fulfillmentMethodResolver;
         $this->country = $country;
         $this->logger = $logger ?? new NullLogger();
     }
@@ -96,7 +99,7 @@ class OrderTimeHelper
         if (!isset($this->choicesCache[$hash])) {
 
             $vendor = $cart->getVendor();
-            $fulfillmentMethod = $cart->getFulfillmentMethodObject();
+            $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($cart);
 
             $choiceLoader = new AsapChoiceLoader(
                 $fulfillmentMethod->getOpeningHours(),
@@ -121,7 +124,7 @@ class OrderTimeHelper
 
     public function getShippingTimeRanges(OrderInterface $cart)
     {
-        $fulfillmentMethod = $cart->getFulfillmentMethodObject();
+        $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($cart);
 
         $this->logger->info(sprintf('Cart has fulfillment method "%s" and behavior "%s"',
             $fulfillmentMethod->getType(),
@@ -189,7 +192,7 @@ class OrderTimeHelper
                 ->format(\DateTime::ATOM);
         }
 
-        $fulfillmentMethod = $cart->getFulfillmentMethodObject();
+        $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($cart);
 
         return [
             'behavior' => $fulfillmentMethod->getOpeningHoursBehavior(),

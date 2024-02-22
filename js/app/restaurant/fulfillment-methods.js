@@ -67,18 +67,21 @@ $(function() {
   // Orders Rate Limiter component scope
   {
     const widget = document.querySelector('[data-widget="orders-rate-limiter"]')
-    const container = document.createElement('div')
-    const input = widget.querySelector('input[type="hidden"]')
 
-    render(
-      <OrdersRateLimiter
-        defaultValue={widget.dataset.defaultValue}
-        onChange={v => input.value = v}
-      />,
-      container
-    )
+    if (widget) {
+      const container = document.createElement('div')
+      const input = widget.querySelector('input[type="hidden"]')
 
-    widget.appendChild(container)
+      render(
+        <OrdersRateLimiter
+          defaultValue={widget.dataset.defaultValue}
+          onChange={v => input.value = v}
+        />,
+        container
+      )
+
+      widget.appendChild(container)
+    }
   }
 
 })

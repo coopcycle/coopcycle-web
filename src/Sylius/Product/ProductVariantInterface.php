@@ -29,4 +29,6 @@ interface ProductVariantInterface extends BaseProductVariantInterface, TaxableIn
     public function hasOptionValueWithQuantity(ProductOptionValueInterface $optionValue, int $quantity = 1): bool;
 
     public function getQuantityForOptionValue(ProductOptionValueInterface $optionValue): int;
+
+    public function isBusiness(): bool;
 }

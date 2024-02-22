@@ -134,41 +134,7 @@
     }
   }
 
-  .quantity-decrement,
-  .quantity-increment {
-    min-width: 3rem;
-    min-height: 3rem;
-    border: none;
-    background-color: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    > div {
-      min-width: 2rem;
-      min-height: 2rem;
-      background-color: $light-gray;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      &:hover {
-        background-color: $gray;
-      }
-    }
-
-    &[disabled] {
-      cursor: $cursor-disabled;
-      @include opacity(.65);
-    }
-  }
-
   .modal-footer {
     text-align: inherit;
-  }
-
-  .product-add-to-cart {
-    display: inline-flex;
-    gap: 0.5rem;
-    align-items: center;
   }
 }

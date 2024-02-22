@@ -3,11 +3,9 @@ html {
 }
 
 body {
-  color: $text-base;
 }
 
 html, body {
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
   min-height: 100%;
   @media screen and (min-width: $screen-md-min) {
     height: 100%;
@@ -448,14 +446,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .ant-alert-info {
-  background-color: $alert-fill-blue;
-  border-color: $alert-stroke-blue;
+  background-color: $alert-info-bg;
+  border-color: $alert-info-border;
 
   .ant-alert-icon {
-    color: $alert-text-blue;
+    color: $alert-info-text;
   }
 
   .ant-alert-message {
-    color: $alert-text-blue;
+    color: $alert-info-text;
   }
 }
