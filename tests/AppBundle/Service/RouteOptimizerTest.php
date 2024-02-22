@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskCollection;
 use AppBundle\Service\RouteOptimizer;
+use AppBundle\Service\SettingsManager;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -20,6 +21,8 @@ class RouteOptimizerTest extends KernelTestCase
         parent::setUp();
 
         self::bootKernel();
+
+        $this->settingsManager = $this->prophesize(SettingsManager::class);
 
         $this->client = self::$container->get('vroom.client');
     }
@@ -76,7 +79,7 @@ class RouteOptimizerTest extends KernelTestCase
         $taskCollection = $this->prophesize(TaskCollection::class);
         $taskCollection->getTasks()->willReturn($taskList);
 
-        $optimizer = new RouteOptimizer($this->client);
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
 
         $problem = $optimizer->createRoutingProblem($taskCollection->reveal());
 
@@ -125,7 +128,7 @@ class RouteOptimizerTest extends KernelTestCase
         $taskCollection = $this->prophesize(TaskCollection::class);
         $taskCollection->getTasks()->willReturn($taskList);
 
-        $optimizer = new RouteOptimizer($this->client);
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
 
         $result = $optimizer->optimize($taskCollection->reveal());
 
