@@ -31,7 +31,6 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\OptinConsent;
 use AppBundle\Entity\Organization;
-use AppBundle\Entity\OrganizationConfig;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\BusinessRestaurantGroup;
@@ -2394,82 +2393,6 @@ class AdminController extends AbstractController
         return $this->render('admin/customize.html.twig', [
             'form' => $form->createView(),
         ]);
-    }
-
-    /**
-     * @Route("/admin/organizations", name="admin_organizations")
-     */
-    public function organizationsAction()
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $organizations = $this->getDoctrine()->getRepository(Organization::class)->findAll();
-
-        return $this->render('admin/organizations.html.twig', [
-            'organizations' => $organizations,
-        ]);
-    }
-
-    /**
-     * @Route("/admin/organizations/new", name="admin_add_organization")
-     */
-    public function addOrganizationAction(Request $request)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $form = $this->createForm(OrganizationType::class);
-
-        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-            $organization = $form->getData();
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($organization);
-            $em->flush();
-
-            return new RedirectResponse($this->generateUrl('admin_organizations'));
-        }
-
-        return $this->render('admin/add_organization.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/admin/organizations/{id}/configure", name="admin_organization_configure")
-     */
-    public function configureOrganizationAction($id, Request $request)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $organization = $this->getDoctrine()->getRepository(Organization::class)->find($id);
-
-        if (!$organization) {
-            throw $this->createNotFoundException(sprintf('Organization #%d does not exist', $id));
-        }
-
-        $organizationConfig = $this->getDoctrine()->getRepository(OrganizationConfig::class)
-            ->findOneBy(['organization' => $organization]);
-
-        if (!$organizationConfig) {
-            $organizationConfig = new OrganizationConfig($organization);
-        }
-
-        $form = $this->createForm(AddOrganizationType::class, $organizationConfig);
-        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-            $organization = $form->getData();
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($organization);
-            $em->flush();
-
-            return new RedirectResponse($this->generateUrl('admin_organizations'));
-        }
-
-        return $this->render(
-            'admin/add_organization.html.twig',
-            [
-                'form' => $form->createView(),
-                'organization' => $organization,
-            ]
-        );
     }
 
     private function handleHubForm(Hub $hub, Request $request)
