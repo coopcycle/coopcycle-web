@@ -1736,4 +1736,9 @@ class Order extends BaseOrder implements OrderInterface
     {
         return null !== $this->businessAccount;
     }
+
+    public function getPickupAddresses(): Collection
+    {
+        return $this->getRestaurants()->map(fn (LocalBusiness $restaurant): Address => $restaurant->getAddress());
+    }
 }
