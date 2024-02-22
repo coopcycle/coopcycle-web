@@ -4,14 +4,13 @@
 @import "./tag.scss";
 @import "./badge.scss";
 
-@mixin image-params() {
-  width: 230px;
-  height: 230px;
-  border-radius: 16px;
+@mixin image-size() {
+  width: 320px;
+  height: 180px;
+}
 
-  @media (min-width: $screen-md-min) {
-    margin-right: 1.5rem;
-  }
+@mixin image-border-radius() {
+  border-radius: 16px;
 }
 
 .restaurant-header {
@@ -38,19 +37,32 @@
     font-weight: bold;
   }
 
-  .restaurant-image,
-  img.restaurant-image {
-    @include image-params();
+  .restaurant-image {
+    position: relative;
     align-self: center;
+
+    @media (min-width: $screen-md-min) {
+      margin-right: 1.5rem;
+    }
+
+    img {
+      @include image-size();
+      @include image-border-radius();
+    }
   }
 
   figcaption {
-    @include image-params();
+    @include image-size();
     position: absolute;
     right: 0;
     left: 0;
     top: 0;
     bottom: 0;
+
+    .overlay {
+      @include image-border-radius();
+      opacity: 0.5;
+    }
   }
 
   &-body {
