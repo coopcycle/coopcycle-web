@@ -42,23 +42,12 @@ $card-padding: 2rem;
   }
 }
 
-$restaurant-navbar-height: calc(25px + #{$base-margin});
-$alert-height: calc(52px + #{$base-margin});
-
-//FIXME; not all elements are taken into account, find a better way to calculate this
-$top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-navbar-height} + #{$alert-height});
+$restaurant-menu-nav-height: 100px; // the actual height is 69px, set a bit more just in case
 
 .sticky-outer-wrapper {
   .sticky-inner-wrapper {
-    height: calc(100vh - #{$top-elements-height});
+    max-height: calc(100vh - #{$restaurant-menu-nav-height});
     display: flex;
-    padding-top: $base-margin;
-  }
-}
-
-.sticky-outer-wrapper.active {
-  .sticky-inner-wrapper {
-    height: calc(100vh);
   }
 }
 
@@ -78,6 +67,7 @@ $top-elements-height: calc(#{$navbar-height} + #{$base-margin} + #{$restaurant-n
     right: 0;
     transform: translateY(calc(100% - #{$navbar-height}));
     transition: transform 0.4s;
+    z-index: 2;
   }
 
   .panel {

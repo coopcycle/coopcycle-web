@@ -3,49 +3,6 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
 @import "../../../assets/css/mixins/card";
 
-#menu .ant-anchor {
-  width: 100%;
-  overflow: auto;
-  padding: 16px 0;
-  display: flex;
-  background-color: $white;
-
-  @media (min-width: $screen-sm-min) {
-    flex-wrap: wrap;
-  }
-}
-
-#menu .ant-anchor-link {
-  display: flex;
-  border-bottom: 1px solid $gray-100;
-}
-
-// Selected state
-#menu .ant-anchor-link-active {
-  border-bottom: 1px solid $primary-default;
-}
-
-#menu .ant-anchor-link-title {
-  padding: 8px 24px;
-  color: $gray-300;
-  white-space: nowrap;
-
-  &:hover,
-  &:focus {
-    background-color: $nav-link-hover-bg;
-    text-decoration: none;
-  }
-}
-
-// Selected state
-#menu .ant-anchor-link-title-active {
-  &,
-  &:hover,
-  &:focus {
-    color: $primary-default;
-  }
-}
-
 .restaurant-menu-wrapper {
   padding: 1rem 0;
 

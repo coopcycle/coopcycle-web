@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import Sticky from 'react-stickynode'
@@ -50,13 +50,20 @@ export default function Order() {
   const cartItemsRelatedErrors = useSelector(selectCartItemsRelatedErrorMessages)
   const reusablePackagingFeatureEnabled = useSelector(selectReusablePackagingFeatureEnabled)
 
+  const [menuNavHeight, setMenuNavHeight] = useState(0)
+
   const dispatch = useDispatch()
 
   useEffect(() => {
     dispatch(sync())
   }, [])
 
-  return (<Sticky>
+  useEffect(() => {
+    const height = document.getElementById('restaurant-menu-nav').clientHeight
+    setMenuNavHeight(height)
+  })
+
+  return (<Sticky top={menuNavHeight}>
     <div className={ classNames({
       'order-wrapper': true, 'order-wrapper--show': isMobileCartVisible,
     }) }>

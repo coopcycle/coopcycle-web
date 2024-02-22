@@ -8,9 +8,6 @@ import _ from 'lodash'
 import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
 import { queueAddItem, openProductOptionsModal } from './redux/actions'
-import Order from './components/Order'
-import ProductOptionsModal
-  from './components/ProductDetails/ProductOptionsModal'
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
 
@@ -18,8 +15,13 @@ require('gasparesganga-jquery-loading-overlay')
 
 import './item.scss'
 import './header.scss'
+import './menu-nav.scss'
 import './menu.scss'
 import './components/Order/index.scss'
+
+import Order from './components/Order'
+import ProductOptionsModal
+  from './components/ProductDetails/ProductOptionsModal'
 import RestaurantModal from './components/RestaurantModal'
 import InvitePeopleToOrderModal from './components/InvitePeopleToOrderModal'
 import SetGuestCustomerEmailModal from './components/SetGuestCustomerEmailModal'

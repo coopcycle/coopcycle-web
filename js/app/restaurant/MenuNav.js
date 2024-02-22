@@ -8,7 +8,7 @@ const sectionToLink = (section) => {
 }
 
 export default function MenuNav (props) {
-  const [targetOffset, setTargetOffset] = useState(undefined)
+  const [elementHeight, setElementHeight] = useState(undefined)
   const [currentAnchor, setCurrentAnchor] = useState(undefined)
 
   const ref = useRef(null)
@@ -35,15 +35,15 @@ export default function MenuNav (props) {
   }, [currentAnchor])
 
   useEffect(() => {
-    setTargetOffset(ref.current.clientHeight)
+    setElementHeight(ref.current.clientHeight)
   })
 
   return (
-    <div ref={ref}>
+    <div id="restaurant-menu-nav" ref={ref}>
       <Anchor
         getCurrentAnchor={getCurrentAnchor}
         onChange={onChange}
-        targetOffset={targetOffset}>
+        targetOffset={elementHeight}>
         {props.sections.map((section, index) => (
           <div key={`menu-nav-section-${index}`} ref={(instance) => {
             if (currentAnchor === sectionToLink(section)) {

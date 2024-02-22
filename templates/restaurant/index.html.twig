@@ -39,7 +39,7 @@
 {% endblock %}
 
 {% block body %}
-<div class="container-full-hd container-extra-space-on-sides px-3">
+  <div class="container-full-hd container-extra-space-on-sides px-3">
 
   {% block restaurant_nav %}
     {% if not embed_context.enabled %}
@@ -138,90 +138,104 @@
     {% endif %}
   {% endif %}
 
-  <div class="row">
     {% set menu = restaurant_menu(restaurant) %}
-
-    <div class="col-xs-12 col-lg-8">
-      <header class="restaurant-header">
-        {% set restaurant_banner = coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner') %}
-        {% if restaurant_banner is not empty %}
-        <div class="restaurant-image">
-          <img src="{{ restaurant_banner }}">
-          {% if should_show_pre_order(restaurant) %}
-          <figcaption>
-            <div class="position-absolute w-100 h-100 bg-dark overlay"></div>
-            <div class="position-absolute text-white font-weight-bold d-flex flex-column justify-content-center align-items-center w-100 h-100 p-1">
-              <i class="fa fa-clock-o"></i>
-              <span>{{ 'restaurants.pre_order'|trans }}</span>
-            </div>
-          </figcaption>
+    {% set sections = [] %}
+    {% if menu is not null %}
+      {% for child in menu.children %}
+        {% if child.products|length > 0 %}
+          {% set sections = sections|merge([child]) %}
         {% endif %}
-        </div>
-        {% endif %}
-        <section class="restaurant-header-body">
-          {% include 'restaurant/_partials/restaurant_details.html.twig' %}
-        </section>
-      </header>
+      {% endfor %}
+    {% endif %}
 
-      {% if menu is not null %}
-        {#
-        WARNING
-        We cache the following block for performance
-        Iterating through all products, options… is a lot of database requests
-        #}
-        {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation ~ (business_context.active ? '_business' : '')) %}
-        {% cache cache_key ttl(300) %}
-        <div id="menu">
-          {% set sections = [] %}
-          {% for child in menu.children %}
-            {% if child.products|length > 0 %}
-              {% set sections = sections|merge([child]) %}
+    <header class="restaurant-header">
+      <div class="row">
+        <div class="col-xs-12 col-lg-8">
+          <section class="restaurant-header-body">
+            {% set restaurant_banner = coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner') %}
+            {% if restaurant_banner is not empty %}
+              <div class="restaurant-image">
+                <img src="{{ restaurant_banner }}">
+                {% if should_show_pre_order(restaurant) %}
+                  <figcaption>
+                    <div class="position-absolute w-100 h-100 bg-dark overlay"></div>
+                    <div
+                      class="position-absolute text-white font-weight-bold d-flex flex-column justify-content-center align-items-center w-100 h-100 p-1">
+                      <i class="fa fa-clock-o"></i>
+                      <span>{{ 'restaurants.pre_order'|trans }}</span>
+                    </div>
+                  </figcaption>
+                {% endif %}
+              </div>
             {% endif %}
-          {% endfor %}
-
-          {% include 'restaurant/_partials/menu_nav.html.twig' %}
-          {% include 'restaurant/_partials/menu_content.html.twig' %}
+            <div class="restaurant-details">
+              {% include 'restaurant/_partials/restaurant_details.html.twig' %}
+            </div>
+          </section>
         </div>
-        {% endcache %}
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          {% if sections|length > 0 %}
+            {% include 'restaurant/_partials/menu_nav.html.twig' %}
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <div class="row">
+      {% if menu is not null %}
+        <div class="col-xs-12 col-lg-8">
+          <div id="menu">
+            {#
+            WARNING
+            We cache the following block for performance
+            Iterating through all products, options… is a lot of database requests
+            #}
+            {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation ~ (business_context.active ? '_business' : '')) %}
+            {% cache cache_key ttl(300) %}
+              {% include 'restaurant/_partials/menu_content.html.twig' %}
+            {% endcache %}
+          </div>
+        </div>
+        <div class="col-xs-12 col-lg-4">
+          {% if restaurant.isFulfillmentMethodEnabled('delivery') or restaurant.isFulfillmentMethodEnabled('collection') %}
+            {{ form_start(cart_form, { attr: { 'data-cart-url': path('restaurant_cart', { id: restaurant.id }) } }) }}
+            <div id="cart"></div>
+            {{ form_end(cart_form) }}
+          {% else %}
+            <div class="alert alert-warning">
+              {% trans from 'validators' %}order.fulfillment_methods.empty{% endtrans %}
+            </div>
+          {% endif %}
+        </div>
       {% else %}
         <div class="alert alert-warning">
           {% trans %}restaurant.noMenuWarning{% endtrans %}
         </div>
       {% endif %}
     </div>
-
-    {% if menu is not null %}
-      <div class="col-xs-12 col-lg-4">
-        {% if restaurant.isFulfillmentMethodEnabled('delivery') or restaurant.isFulfillmentMethodEnabled('collection') %}
-          {{ form_start(cart_form, { attr: { 'data-cart-url': path('restaurant_cart', { id: restaurant.id }) } }) }}
-          <div id="cart"></div>
-          {{ form_end(cart_form) }}
-        {% else %}
-          <div class="alert alert-warning">
-            {% trans from 'validators' %}order.fulfillment_methods.empty{% endtrans %}
-          </div>
-        {% endif %}
-      </div>
-    {% endif %}
   </div>
-</div>
 
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="restaurant-opening-hours-modal-label" id="restaurant-opening-hours-modal">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="restaurant-opening-hours-modal-label">{% trans %}localBusiness.form.openingHours{% endtrans %}</h4>
-      </div>
-      <div class="modal-body">
-        {% include 'restaurant/_partials/opening_hours.html.twig' with {
-          delivery:   restaurant.isFulfillmentMethodEnabled('delivery')   ? restaurant_opening_hours(restaurant, 'delivery')   : [],
-          collection: restaurant.isFulfillmentMethodEnabled('collection') ? restaurant_opening_hours(restaurant, 'collection') : []
-        } %}
+  <div class="modal fade" tabindex="-1" role="dialog"
+       aria-labelledby="restaurant-opening-hours-modal-label" id="restaurant-opening-hours-modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+              aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title"
+              id="restaurant-opening-hours-modal-label">{% trans %}localBusiness.form.openingHours{% endtrans %}</h4>
+        </div>
+        <div class="modal-body">
+          {% include 'restaurant/_partials/opening_hours.html.twig' with {
+            delivery:   restaurant.isFulfillmentMethodEnabled('delivery')   ? restaurant_opening_hours(restaurant, 'delivery')   : [],
+            collection: restaurant.isFulfillmentMethodEnabled('collection') ? restaurant_opening_hours(restaurant, 'collection') : []
+          } %}
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 {% set restaurant_json = { id: restaurant.id, isOpen: restaurant.isOpen } %}
 {% set cart_json = cart_provider.normalize(cart) %}
