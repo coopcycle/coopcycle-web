@@ -100,5 +100,11 @@ view(`OrderView`, {
         }
       ]
     },
+    {
+      join_path: Order.Payment,
+      includes: [
+        `refundTotal`
+      ]
+    },
   ]
 })

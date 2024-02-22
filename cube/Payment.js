@@ -16,8 +16,8 @@ cube(`Payment`, {
   },
   measures: {
     refundTotal: {
-      sql: `${CUBE.Refund.amount}`,
-      type: `sum`,
+      sql: `${CUBE.Refund.totalAmount}`,
+      type: `number`,
       format: `currency`
     },
   },
