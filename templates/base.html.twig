@@ -15,6 +15,7 @@
 
     {{ encore_entry_link_tags('common') }}
     {{ encore_entry_link_tags('widgets') }}
+    {{ encore_entry_link_tags('app') }}
     {% if app.user %}
       {{ encore_entry_link_tags('notifications') }}
     {% endif %}
@@ -37,7 +38,7 @@
 
     {# run 'app' script in <head> as suggested by Turbo; relevant only for pages with Turbo Drive enabled (search data-turbo="true")
     For more information, see: https://turbo.hotwired.dev/handbook/building#working-with-script-elements #}
-    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_script_tags('app', attributes={ defer: true }) }}
   </head>
   <body
     data-country="{{ country_iso }}"
