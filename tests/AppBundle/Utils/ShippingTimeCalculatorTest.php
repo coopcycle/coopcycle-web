@@ -5,9 +5,11 @@ namespace Tests\AppBundle\Utils;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Restaurant;
+use AppBundle\Service\RouteOptimizer;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\ShippingTimeCalculator;
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -22,8 +24,14 @@ class ShippingTimeCalculatorTest extends TestCase
     public function setUp(): void
     {
         $this->routing = $this->prophesize(RoutingInterface::class);
+        $this->routeOptimizer = $this->prophesize(RouteOptimizer::class);
 
-        $this->calculator = new ShippingTimeCalculator($this->routing->reveal(), '10 minutes');
+        $this->routeOptimizer->optimizePickupsAndDelivery(Argument::type('array'), Argument::type(Address::class))
+            ->will(function ($args) {
+                return [ $args[0][0], $args[1] ];
+            });
+
+        $this->calculator = new ShippingTimeCalculator($this->routing->reveal(), $this->routeOptimizer->reveal(), '10 minutes');
     }
 
     public function calculateProvider()
@@ -65,8 +73,8 @@ class ShippingTimeCalculatorTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getPickupAddress()
-            ->willReturn($restaurantAddress);
+            ->getPickupAddresses()
+            ->willReturn(new ArrayCollection([ $restaurantAddress ]));
         $order
             ->getShippingAddress()
             ->willReturn($shippingAddress);
@@ -86,8 +94,8 @@ class ShippingTimeCalculatorTest extends TestCase
 
         $order = $this->prophesize(OrderInterface::class);
         $order
-            ->getPickupAddress()
-            ->willReturn($restaurantAddress);
+            ->getPickupAddresses()
+            ->willReturn(new ArrayCollection([ $restaurantAddress ]));
         $order
             ->getShippingAddress()
             ->willReturn(null);

@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskCollection;
 use AppBundle\Service\RouteOptimizer;
+use AppBundle\Service\SettingsManager;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -20,6 +21,10 @@ class RouteOptimizerTest extends KernelTestCase
         parent::setUp();
 
         self::bootKernel();
+
+        $this->settingsManager = $this->prophesize(SettingsManager::class);
+
+        $this->settingsManager->get('latlng')->willReturn('48.856613,2.352222');
 
         $this->client = self::$container->get('vroom.client');
     }
@@ -76,7 +81,7 @@ class RouteOptimizerTest extends KernelTestCase
         $taskCollection = $this->prophesize(TaskCollection::class);
         $taskCollection->getTasks()->willReturn($taskList);
 
-        $optimizer = new RouteOptimizer($this->client);
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
 
         $problem = $optimizer->createRoutingProblem($taskCollection->reveal());
 
@@ -125,12 +130,48 @@ class RouteOptimizerTest extends KernelTestCase
         $taskCollection = $this->prophesize(TaskCollection::class);
         $taskCollection->getTasks()->willReturn($taskList);
 
-        $optimizer = new RouteOptimizer($this->client);
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
 
         $result = $optimizer->optimize($taskCollection->reveal());
 
         $this->assertSame($result[0], $taskList[0]);
         $this->assertSame($result[1], $taskList[2]);
         $this->assertSame($result[2], $taskList[1]);
+    }
+
+    public function testOptimizePickupsAndDelivery()
+    {
+        // 24, Rue de Rivoli, Paris
+        $dropoffCoords = new GeoCoordinates(48.85611377884633, 2.358438422685973);
+
+        $pickupsCoords = [
+            // 93 Bd Beaumarchais, Paris
+            new GeoCoordinates(48.859689349806516, 2.3672223527688017),
+            // 41 R. de Turbigo, Paris
+            new GeoCoordinates(48.864977465145486, 2.352779054615334),
+            // 18 Bd Voltaire, Paris
+            new GeoCoordinates(48.86537371109955, 2.367317869956039),
+        ];
+
+        $pickups = array_map(function ($coords) {
+            $address = new Address();
+            $address->setGeo($coords);
+
+            return $address;
+        }, $pickupsCoords);
+
+        $dropoff = new Address();
+        $dropoff->setGeo($dropoffCoords);
+
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
+
+        $addresses = $optimizer->optimizePickupsAndDelivery($pickups, $dropoff);
+
+        $this->assertCount(4, $addresses);
+
+        $this->assertSame($addresses[0], $pickups[1]);
+        $this->assertSame($addresses[1], $pickups[2]);
+        $this->assertSame($addresses[2], $pickups[0]);
+        $this->assertSame($addresses[3], $dropoff);
     }
 }
