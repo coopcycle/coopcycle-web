@@ -15,7 +15,6 @@ require('gasparesganga-jquery-loading-overlay')
 
 import './item.scss'
 import './header.scss'
-import './menu-nav.scss'
 import './menu.scss'
 import './components/Order/index.scss'
 

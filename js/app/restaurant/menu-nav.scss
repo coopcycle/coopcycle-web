@@ -17,9 +17,14 @@
     z-index: 1;
   }
 
+  .ant-anchor-ink-ball {
+    display: none;
+  }
+
   .ant-anchor-link {
     display: flex;
     border-bottom: 1px solid $gray-100;
+    padding: 0;
   }
 
   // Selected state

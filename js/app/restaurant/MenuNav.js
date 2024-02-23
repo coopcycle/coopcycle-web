@@ -3,6 +3,8 @@ import { Anchor } from 'antd'
 
 const { Link } = Anchor
 
+import './menu-nav.scss'
+
 const sectionToLink = (section) => {
   return `#${encodeURI(section.name)}`
 }
