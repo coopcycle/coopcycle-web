@@ -34,6 +34,7 @@
     "@hotwired/stimulus": "^3.2.2",
     "@mapbox/polyline": "^1.1.0",
     "@react-css/grid": "^2.2.0",
+    "@react-hook/size": "^2.1.2",
     "@reduxjs/toolkit": "^1.8.6",
     "@release-notes/changelog-parser": "^0.1.2",
     "@storybook/addon-essentials": "^7.5.3",
