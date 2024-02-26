@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
-import { Draggable, Droppable } from "react-beautiful-dnd"
+import { Draggable, Droppable } from "@hello-pangea/dnd"
 import { Popover } from 'antd'
 import { useTranslation } from 'react-i18next'
 

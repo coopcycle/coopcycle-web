@@ -13,7 +13,7 @@ export function handleDragStart(result) {
     const selectedTasks = getState().selectedTasks
 
     // If the user is starting to drag something that is not selected then we need to clear the selection.
-    // https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/patterns/multi-drag.md#dragging
+    // https://github.com/atlassian/@hello-pangea/dnd/blob/master/docs/patterns/multi-drag.md#dragging
     const isDraggableSelected = selectedTasks.includes(result.draggableId)
 
     if (!isDraggableSelected) {
@@ -148,10 +148,9 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
 
       var newTourItems = [ ...tour.items ]
     
-      // Reorder tasks inside a tour
-      if (source.droppableId === 'tour:' + tourId && destination.droppableId === 'tour:' + tourId) {
-        const [ removed ] = newTourItems.splice(source.index, 1);
-        newTourItems.splice(destination.index, 0, removed)
+      // Reorder tasks inside a tour -> remove tasks that were already there
+      if (source.droppableId === destination.droppableId) {
+        _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t['@id']))
       }
 
         Array.prototype.splice.apply(newTourItems,

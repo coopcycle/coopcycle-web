@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {useDispatch, useSelector } from 'react-redux'
 import { withTranslation, useTranslation } from 'react-i18next'
-import { Draggable, Droppable } from "react-beautiful-dnd"
+import { Draggable, Droppable } from "@hello-pangea/dnd"
 import _ from 'lodash'
 import Popconfirm from 'antd/lib/popconfirm'
 

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { DragDropContext } from 'react-beautiful-dnd'
+import { DragDropContext } from '@hello-pangea/dnd'
 import Split from 'react-split'
 
 import { ToastContainer } from 'react-toastify'
@@ -55,7 +55,7 @@ const DashboardApp = () => {
   return (
     <div className="dashboard__aside-container">
       <DragDropContext
-        // https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/patterns/multi-drag.md
+        // https://github.com/atlassian/@hello-pangea/dnd/blob/master/docs/patterns/multi-drag.md
         onDragStart={ (result) => dispatch(handleDragStart(result)) }
         onDragEnd={ (result) => dispatch(handleDragEnd(result)) }>
         <Split

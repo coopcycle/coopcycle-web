@@ -22,6 +22,7 @@ import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
 import { taskListUtils, taskAdapter, taskListAdapter, tourAdapter } from '../coopcycle-frontend-js/logistics/redux'
+import _ from 'lodash'
 
 function start() {
 
@@ -134,16 +135,14 @@ function start() {
   let expandedToursIds = []
   tours.forEach((tour) => {if (tour.itemIds.length == 0) {expandedToursIds.push(tour['@id'])}})
   
-  preloadedState = {
-    ...preloadedState,
+  _.merge(preloadedState, {
     logistics: {
-      ...preloadedState.logistics,
       ui: {
-        ...preloadedState.ui,
+        ...preloadedState.logistics.ui,
         expandedTourPanelsIds: expandedToursIds
       }
     }
-  }
+  })
 
   const store = createStoreFromPreloadedState(preloadedState)
 
