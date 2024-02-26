@@ -95,6 +95,14 @@ $restaurant-menu-nav-height: 100px; // the actual height is 69px, set a bit more
   }
 }
 
+.ReactModal__Body--open {
+  @media (max-width: $screen-md-max) {
+    .order-wrapper {
+      z-index: inherit;
+    }
+  }
+}
+
 .order-wrapper--show {
   @media (max-width: $screen-md-max) {
     transform: translateY(0);
