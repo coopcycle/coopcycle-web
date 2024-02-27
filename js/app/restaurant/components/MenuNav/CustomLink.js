@@ -1,7 +1,13 @@
 import React from 'react'
 import classNames from 'classnames'
 
-export default function CustomLink({ title, href, onClick, isActive, rightIcon }) {
+export default function CustomLink({
+  title,
+  href,
+  onClick,
+  isActive,
+  rightIcon,
+}) {
   return (
     <div
       className={ classNames(
@@ -15,7 +21,7 @@ export default function CustomLink({ title, href, onClick, isActive, rightIcon }
         }
         href={ href }
         onClick={ onClick }>
-        { title }
+        <span>{ title }</span>
         { rightIcon
           ? (<>&nbsp;<i className={ classNames('fa', rightIcon) } /></>)
           : null }

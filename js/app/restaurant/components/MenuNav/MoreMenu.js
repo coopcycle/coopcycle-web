@@ -74,14 +74,16 @@ export default function MoreMenu({ sections, currentSection, targetOffset }) {
           onOpenChange={ (open) => setIsOpen(open) }
           menu={ { items: items } }
           placement="bottomRight"
-          overlayClassName="restaurant-menu-nav-more">
-          <CustomLink
-            title={ currentSectionInMoreMenu?.name ??
-              t('RESTAURANT_SECTIONS_MORE') }
-            href="#"
-            onClick={ (ev) => ev.preventDefault() }
-            isActive={ Boolean(currentSectionInMoreMenu) }
-            rightIcon={ isOpen ? 'fa-chevron-up' : 'fa-chevron-down' } />
+          overlayClassName="restaurant-menu-nav__more-overlay">
+          <div className="restaurant-menu-nav__more-trigger">
+            <CustomLink
+              title={ currentSectionInMoreMenu?.name ??
+                t('RESTAURANT_SECTIONS_MORE') }
+              href="#"
+              onClick={ (ev) => ev.preventDefault() }
+              isActive={ Boolean(currentSectionInMoreMenu) }
+              rightIcon={ isOpen ? 'fa-chevron-up' : 'fa-chevron-down' } />
+          </div>
         </Dropdown>
       </>
     )

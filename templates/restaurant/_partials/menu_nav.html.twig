@@ -3,7 +3,8 @@
   <div id="restaurant-menu-nav" class="restaurant-menu-nav">
     <div class="ant-anchor">
       {% for section in sections %}
-        <div class="ant-anchor-link">
+        {# 'id' is used on the JS side to get element's width #}
+        <div class="ant-anchor-link" id="menu-nav-section-{{ section.name|url_encode }}">
           <a class="ant-anchor-link-title" href="#">{{ section.name }}</a>
         </div>
       {% endfor %}

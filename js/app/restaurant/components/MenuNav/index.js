@@ -7,12 +7,13 @@ import classNames from 'classnames'
 
 import './menu-nav.scss'
 import MoreMenu from './MoreMenu'
-import { currentSection, sectionToLink } from './utils'
+import { currentSection, elementId, sectionToLink } from './utils'
 
 const paddingX = 24
 const oneSymbol = 8
 const maxMoreWidth = 160
-const moreWidth = paddingX + maxMoreWidth + paddingX
+
+const sectionElementId = (section) => `menu-nav-section-${ elementId(section) }`
 
 const layoutSections = (sections, width) => {
   let displaySections = []
@@ -22,13 +23,22 @@ const layoutSections = (sections, width) => {
 
   sections.forEach((section, index) => {
     if (isSpaceAvailable) {
-      const sectionWidth = paddingX + section.name.length * oneSymbol + paddingX
+      const el = document.getElementById(sectionElementId(section))
+
+      let sectionWidth = paddingX + section.name.length * oneSymbol + paddingX
+      if (el) {
+        // use the actual width if it's available
+        const width = Math.ceil(el.getBoundingClientRect().width)
+        if (width > 0) {
+          sectionWidth = width
+        }
+      }
 
       const isFirstItem = index === 0
       const isLastItem = index === sections.length - 1
 
       if (isFirstItem
-        || (occupiedWidth + sectionWidth + moreWidth <= width)
+        || (occupiedWidth + sectionWidth + maxMoreWidth <= width)
         || (isLastItem && occupiedWidth + sectionWidth <= width)) {
         occupiedWidth += sectionWidth
       } else {
@@ -71,9 +81,10 @@ export default function MenuNav(props) {
         getCurrentAnchor={ getCurrentAnchor }
         onChange={ onChange }
         targetOffset={ height }>
-        { displaySections.map((section, index) => (
+        { displaySections.map((section) => (
           <div
-            key={ `menu-nav-section-${ index }` }
+            key={ sectionElementId(section) }
+            id={ sectionElementId(section) }
             className={ classNames(
               {
                 'overflow-hidden': section.isVisible,

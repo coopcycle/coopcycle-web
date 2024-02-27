@@ -1,5 +1,17 @@
 @import "../../../../../assets/css/vars";
 
+@mixin ant-anchor-link--no-padding() {
+  .ant-anchor-link {
+    padding: 0;
+  }
+}
+
+@mixin ant-anchor-link--max-width() {
+  .ant-anchor-link {
+    max-width: 180px;
+  }
+}
+
 @mixin ant-anchor-link-title__text() {
   .ant-anchor-link-title {
     color: $gray-300;
@@ -16,6 +28,7 @@
     color: $primary-default;
   }
 }
+
 
 .restaurant-menu-nav {
   .ant-anchor {
@@ -34,9 +47,10 @@
     display: none;
   }
 
+  @include ant-anchor-link--no-padding();
+
   .ant-anchor-link {
     border-bottom: 1px solid $gray-100;
-    padding: 0;
 
     &:hover {
       background-color: $nav-link-hover-bg;
@@ -61,6 +75,20 @@
       background-color: transparent;
     }
   }
+
+  &__more-trigger {
+    @include ant-anchor-link--max-width();
+
+    .ant-anchor-link-title {
+      display: flex;
+      align-items: center;
+
+      span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
 }
 
 .ReactModal__Body--open {
@@ -69,22 +97,19 @@
   }
 }
 
-.restaurant-menu-nav-more {
+.restaurant-menu-nav__more-overlay {
   .ant-dropdown-menu-item {
     &:hover {
       background-color: $nav-link-hover-bg;
     }
   }
 
-  .ant-anchor-link {
-    padding: 0;
-  }
+  @include ant-anchor-link--no-padding();
+  @include ant-anchor-link--max-width();
 
   @include ant-anchor-link-title__text();
 
   .ant-anchor-link-title {
-    max-width: 160px;
-    text-overflow: ellipsis;
     padding: 0.5rem 0;
   }
 }
