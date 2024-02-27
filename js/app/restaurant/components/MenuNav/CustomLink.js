@@ -1,7 +1,7 @@
-import classNames from 'classnames'
 import React from 'react'
+import classNames from 'classnames'
 
-export default function CustomLink({ title, href, onClick, isActive }) {
+export default function CustomLink({ title, href, onClick, isActive, rightIcon }) {
   return (
     <div
       className={ classNames(
@@ -14,7 +14,12 @@ export default function CustomLink({ title, href, onClick, isActive }) {
           { 'ant-anchor-link-title-active': isActive })
         }
         href={ href }
-        onClick={ onClick }>{ title }</a>
+        onClick={ onClick }>
+        { title }
+        { rightIcon
+          ? (<>&nbsp;<i className={ classNames('fa', rightIcon) } /></>)
+          : null }
+      </a>
     </div>
   )
 }

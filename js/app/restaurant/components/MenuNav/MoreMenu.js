@@ -1,15 +1,13 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Dropdown } from 'antd'
 
 import CustomLink from './CustomLink'
 import { elementId, sectionToLink } from './utils'
 
-function MoreMenuItem({ section, targetOffset }) {
+function MoreMenuItem({ section, targetOffset, onClick }) {
   const handleClick = (ev) => {
     ev.preventDefault()
-
-    document.body.classList.remove('body--no-scroll')
 
     const elId = elementId(section)
     if (elId) {
@@ -21,6 +19,8 @@ function MoreMenuItem({ section, targetOffset }) {
       // a nicer variant; but doesn't work on Chrome for android yet (v121)
       // el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
+
+    onClick?.()
   }
 
   return (
@@ -32,6 +32,7 @@ function MoreMenuItem({ section, targetOffset }) {
 }
 
 export default function MoreMenu({ sections, currentSection, targetOffset }) {
+  const [ isOpen, setIsOpen ] = useState(false)
   const { t } = useTranslation()
 
   let items = []
@@ -45,11 +46,23 @@ export default function MoreMenu({ sections, currentSection, targetOffset }) {
         {
           key: `menu-nav-more-section-${ index }`,
           label: (
-            <MoreMenuItem section={ section } targetOffset={ targetOffset } />),
+            <MoreMenuItem
+              section={ section }
+              targetOffset={ targetOffset }
+              onClick={ () => setIsOpen(false) } />),
         },
       )
     }
   })
+
+  useEffect(() => {
+    // use similar to ReactModal approach to prevent body in the background from scrolling
+    if (isOpen) {
+      document.body.classList.add('body--no-scroll')
+    } else {
+      document.body.classList.remove('body--no-scroll')
+    }
+  }, [ isOpen ])
 
   if (items.length > 0) {
     return (
@@ -58,14 +71,7 @@ export default function MoreMenu({ sections, currentSection, targetOffset }) {
         </div>
         <Dropdown
           trigger={ [ 'click' ] }
-          onOpenChange={ (open) => {
-            // use similar to ReactModal approach to prevent body in the background from scrolling
-            if (open) {
-              document.body.classList.add('body--no-scroll')
-            } else {
-              document.body.classList.remove('body--no-scroll')
-            }
-          } }
+          onOpenChange={ (open) => setIsOpen(open) }
           menu={ { items: items } }
           placement="bottomRight"
           overlayClassName="restaurant-menu-nav-more">
@@ -74,7 +80,8 @@ export default function MoreMenu({ sections, currentSection, targetOffset }) {
               t('RESTAURANT_SECTIONS_MORE') }
             href="#"
             onClick={ (ev) => ev.preventDefault() }
-            isActive={ Boolean(currentSectionInMoreMenu) } />
+            isActive={ Boolean(currentSectionInMoreMenu) }
+            rightIcon={ isOpen ? 'fa-chevron-up' : 'fa-chevron-down' } />
         </Dropdown>
       </>
     )
