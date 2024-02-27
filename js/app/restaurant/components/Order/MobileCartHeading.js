@@ -15,6 +15,17 @@ export default function MobileCartHeading() {
 
   const dispatch = useDispatch()
 
+  const handleClick = () => {
+    // use ReactModal css class to prevent body in the background from scrolling
+    if (isMobileCartVisible) {
+      document.body.classList.remove('ReactModal__Body--open')
+    } else {
+      document.body.classList.add('ReactModal__Body--open')
+    }
+
+    dispatch(toggleMobileCart())
+  }
+
   return (
     <div
       className={ classNames({
@@ -27,7 +38,7 @@ export default function MobileCartHeading() {
           'panel-heading': true,
           'panel-heading--warning': errors.length > 0,
         }) }
-        onClick={ () => dispatch(toggleMobileCart()) }>
+        onClick={ handleClick }>
         <div className="panel-heading__body">
           { isMobileCartVisible ? null : (<OrderState />) }
         </div>
