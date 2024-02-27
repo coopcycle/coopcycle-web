@@ -3,21 +3,65 @@
 
 $card-padding: 2rem;
 
-// @see https://github.com/yahoo/react-stickynode/issues/9#issuecomment-173039715
-@media (max-width: $screen-md-max){
+$restaurant-menu-nav-height: 100px; // the actual height is 69px, set a bit more just in case
+
+.sticky-outer-wrapper {
   .sticky-inner-wrapper {
-    position: static !important;
-    transform: none !important;
-    width: auto !important;
+    // @see https://github.com/yahoo/react-stickynode/issues/9#issuecomment-173039715
+    @media (max-width: $screen-md-max) {
+      transform: none !important;
+    }
+
+    @media (min-width: $screen-lg-min) {
+      max-height: calc(100vh - #{$restaurant-menu-nav-height});
+      display: flex;
+    }
   }
 }
 
-.mobile-cart {
-  display: none;
+.order-wrapper {
+  background-color: $body-bg;
+  padding: 0 1rem;
 
-  @media (max-width: $screen-md-max) {
-    display: block;
-    cursor: pointer;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(calc(100% - #{$navbar-height}));
+  transition: transform 0.4s;
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: $screen-lg-min) {
+    position: unset;
+    transform: unset;
+    transition: unset;
+    z-index: unset;
+
+    width: 100%;
+    overflow-y: auto;
+  }
+
+  &--show {
+    transform: translateY(0);
+  }
+}
+
+.ReactModal__Body--open {
+  .order-wrapper {
+    z-index: unset;
+  }
+}
+
+.order-heading--mobile {
+  display: block;
+  cursor: pointer;
+
+  @media (min-width: $screen-lg-min) {
+    display: none;
   }
 
   .panel-heading {
@@ -42,33 +86,10 @@ $card-padding: 2rem;
   }
 }
 
-$restaurant-menu-nav-height: 100px; // the actual height is 69px, set a bit more just in case
-
-.sticky-outer-wrapper {
-  .sticky-inner-wrapper {
-    max-height: calc(100vh - #{$restaurant-menu-nav-height});
-    display: flex;
-  }
-}
-
-.order-wrapper {
-  width: 100%;
+.order-wrapper__content {
   display: flex;
   flex-direction: column;
-
-  @media (max-width: $screen-md-max) {
-    height: 100%;
-    background-color: $body-bg;
-    padding: 0 1rem;
-
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    transform: translateY(calc(100% - #{$navbar-height}));
-    transition: transform 0.4s;
-    z-index: 2;
-  }
+  overflow-y: auto;
 
   .panel {
     border: none;
@@ -83,29 +104,21 @@ $restaurant-menu-nav-height: 100px; // the actual height is 69px, set a bit more
   .panel-cart-wrapper {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+
+    @media (min-width: $screen-lg-min) {
+      overflow-y: auto;
+    }
 
     .panel-body {
       min-height: 350px;
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
       overflow-x: hidden;
-    }
-  }
-}
 
-.ReactModal__Body--open {
-  @media (max-width: $screen-md-max) {
-    .order-wrapper {
-      z-index: inherit;
+      @media (min-width: $screen-lg-min) {
+        overflow-y: auto;
+      }
     }
-  }
-}
-
-.order-wrapper--show {
-  @media (max-width: $screen-md-max) {
-    transform: translateY(0);
   }
 }
 
@@ -143,13 +156,17 @@ $restaurant-menu-nav-height: 100px; // the actual height is 69px, set a bit more
 
 .cart__items {
   flex: 1;
-  overflow-y: auto;
   margin: 0 (-$card-padding) 0;
   padding: 0 $card-padding 0;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  @media (min-width: $screen-lg-min) {
+    overflow-y: auto;
+  }
 }
+
 .cart__item {
   padding-top: 0.5rem;
   border-bottom: 1px solid $gray-100;
@@ -159,6 +176,7 @@ $restaurant-menu-nav-height: 100px; // the actual height is 69px, set a bit more
     flex-direction: column;
     gap: 0.25rem;
   }
+
   &__quantity {
     display: flex;
     align-items: center;
@@ -181,20 +199,25 @@ $restaurant-menu-nav-height: 100px; // the actual height is 69px, set a bit more
 .cart__time {
   display: block;
   color: $state-success-text;
+
   &:hover,
   &:visited,
   &:focus {
     text-decoration: none;
   }
+
   &--not-today {
     color: $state-danger-text;
   }
+
   &__text,
   &__edit {
     display: block;
   }
+
   &__text {
   }
+
   &__edit {
   }
 }
@@ -203,6 +226,7 @@ $restaurant-menu-nav-height: 100px; // the actual height is 69px, set a bit more
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
   > * {
     width: 45%;
   }

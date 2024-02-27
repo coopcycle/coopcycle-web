@@ -18,7 +18,7 @@ import InvitePeopleToOrderButton from './InvitePeopleToOrderButton'
 import FulfillmentDetails from './FulfillmentDetails'
 import Cart from './Cart'
 import CartTotal from './CartTotal'
-import MobileCartHeading from './MobileCartHeading'
+import MobileOrderHeading from './MobileOrderHeading'
 import CartButton from './CartButton'
 import _ from 'lodash'
 
@@ -47,10 +47,12 @@ export default function Order() {
   const isMobileCartVisible = useSelector(selectIsMobileCartVisible)
   const isFetching = useSelector(selectIsFetching)
   const hasItems = useSelector(selectHasItems)
-  const cartItemsRelatedErrors = useSelector(selectCartItemsRelatedErrorMessages)
-  const reusablePackagingFeatureEnabled = useSelector(selectReusablePackagingFeatureEnabled)
+  const cartItemsRelatedErrors = useSelector(
+    selectCartItemsRelatedErrorMessages)
+  const reusablePackagingFeatureEnabled = useSelector(
+    selectReusablePackagingFeatureEnabled)
 
-  const [menuNavHeight, setMenuNavHeight] = useState(0)
+  const [ menuNavHeight, setMenuNavHeight ] = useState(0)
 
   const dispatch = useDispatch()
 
@@ -63,35 +65,38 @@ export default function Order() {
     setMenuNavHeight(height)
   })
 
-  return (<Sticky top={menuNavHeight}>
-    <div className={ classNames({
-      'order-wrapper': true, 'order-wrapper--show': isMobileCartVisible,
+  return (<Sticky top={ menuNavHeight }>
+    <div className={ classNames('order-wrapper', {
+      'order-wrapper--show': isMobileCartVisible,
     }) }>
 
-      <MobileCartHeading />
+      <MobileOrderHeading />
 
-      <FulfillmentDetails />
+      <div className="order-wrapper__content">
+        <FulfillmentDetails />
 
-      <div className={ classNames({
-        'panel': true, 'panel-default': true, 'panel-cart-wrapper': true,
-      }) }>
-        <div className="panel-body">
-          { cartItemsRelatedErrors.length > 0 ? (
-            <div className="alert alert-warning">
-              <i className="fa fa-warning"></i>
-              &nbsp;
-              <span>{ _.first(cartItemsRelatedErrors) }</span>
-            </div>) : null }
-          <Cart />
-          { (hasItems || isFetching) ? (<div className="cart__footer">
-            { reusablePackagingFeatureEnabled ? (
-              <ReusablePackagingSwitch />) : null }
-            <CartTotal />
-            <div className="mt-4 d-flex align-items-center justify-content-center flex-wrap">
-              <InvitePeopleToOrderButton />
-              <CartButton />
-            </div>
-          </div>) : (<div><InvitePeopleToOrderButton /></div>) }
+        <div className={ classNames({
+          'panel': true, 'panel-default': true, 'panel-cart-wrapper': true,
+        }) }>
+          <div className="panel-body">
+            { cartItemsRelatedErrors.length > 0 ? (
+              <div className="alert alert-warning">
+                <i className="fa fa-warning"></i>
+                &nbsp;
+                <span>{ _.first(cartItemsRelatedErrors) }</span>
+              </div>) : null }
+            <Cart />
+            { (hasItems || isFetching) ? (<div className="cart__footer">
+              { reusablePackagingFeatureEnabled ? (
+                <ReusablePackagingSwitch />) : null }
+              <CartTotal />
+              <div
+                className="mt-4 d-flex align-items-center justify-content-center flex-wrap">
+                <InvitePeopleToOrderButton />
+                <CartButton />
+              </div>
+            </div>) : (<div><InvitePeopleToOrderButton /></div>) }
+          </div>
         </div>
       </div>
     </div>

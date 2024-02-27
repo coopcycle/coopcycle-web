@@ -9,7 +9,7 @@ import {
 } from '../../redux/selectors'
 import OrderState from './OrderState'
 
-export default function MobileCartHeading() {
+export default function MobileOrderHeading() {
   const isMobileCartVisible = useSelector(selectIsMobileCartVisible)
   const errors = useSelector(selectSortedErrorMessages)
 
@@ -28,14 +28,13 @@ export default function MobileCartHeading() {
 
   return (
     <div
-      className={ classNames({
-        'mobile-cart': true,
-        'panel': true,
-        'panel-default': true,
-      }) }>
+      className={ classNames(
+        'order-heading--mobile',
+        'panel',
+        'panel-default',
+      ) }>
       <div
-        className={ classNames({
-          'panel-heading': true,
+        className={ classNames('panel-heading', {
           'panel-heading--warning': errors.length > 0,
         }) }
         onClick={ handleClick }>
