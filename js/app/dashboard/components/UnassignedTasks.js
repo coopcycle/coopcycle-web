@@ -93,7 +93,7 @@ const Buttons = () => {
   )
 }
 
-const UnassignedTasks = () => {
+export const UnassignedTasks = () => {
 
   const dispatch = useDispatch()
   const { t } = useTranslation()
@@ -171,5 +171,3 @@ const UnassignedTasks = () => {
     </div>
   )
 }
-
-export default UnassignedTasks
