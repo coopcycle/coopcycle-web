@@ -33,7 +33,7 @@ const Buttons = connect(
 
 export const UnassignedTours = () => {
 
-  const t = useTranslation()
+  const { t } = useTranslation()
   const groups = useSelector(selectGroups)
   const tours = useSelector(selectUnassignedTours)
   const dispatch = useDispatch()
