@@ -3,12 +3,7 @@ html {
 }
 
 body {
-}
-
-html, body {
-  min-height: 100%;
   @media screen and (min-width: $screen-md-min) {
-    height: 100%;
     display: flex;
     flex-direction: column;
   }
