@@ -73,24 +73,7 @@ export const UnassignedTours = () => {
                   </Draggable>
                 )
               })}
-              { _.map(tours, (tour, index) => {
-                return (
-                  <Draggable key={ `tour-${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ groups.length + index }>
-                    {(provided) => (
-                      <div
-                        ref={ provided.innerRef }
-                        { ...provided.draggableProps }
-                        { ...provided.dragHandleProps }
-                      >
-                        <Tour
-                          key={ tour['@id'] }
-                          tour={ tour }
-                          />
-                      </div>
-                    )}
-                  </Draggable>
-                )
-              })}
+              { _.map(tours, (tour, index) => <Tour key={ tour['@id'] } tour={ tour } draggableIndex={ index } />) }
               { provided.placeholder }
             </div>
           )}

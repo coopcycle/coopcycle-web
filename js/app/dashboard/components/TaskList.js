@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { Draggable, Droppable } from "@hello-pangea/dnd"
+import { Droppable } from "@hello-pangea/dnd"
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import { Tooltip } from 'antd'
@@ -26,20 +26,13 @@ import ProgressBar from './ProgressBar'
 
 moment.locale($('html').attr('lang'))
 
-const TaskOrTour = ({ item, onRemove }) => {
+const TaskOrTour = ({ item, draggableIndex, onRemove, unassignTasks }) => {
 
   if (item['@type'] === 'Tour') {
-
-    return (
-      <Tour tour={ item } />
-    )
+    return (<Tour tour={ item } draggableIndex={ draggableIndex } unassignTasks={ unassignTasks } />)
+  } else {
+    return (<Task task={ item } draggableIndex={ draggableIndex } onRemove={ item => onRemove(item) } />)
   }
-
-  return (
-    <Task
-      task={ item }
-      onRemove={ item => onRemove(item) } />
-  )
 }
 
 // OPTIMIZATION
@@ -56,28 +49,14 @@ class InnerList extends React.Component {
   }
 
   render() {
-    return _.map(this.props.items, (item, index) => {
-      return (
-        <Draggable
-          key={ item['@id'] }
-          draggableId={ item['@type'] === 'Tour' ? `tour:${item['@id']}`: item['@id']  }
-          index={ index }
-          >
-          {(provided) => (
-            <div
-              ref={ provided.innerRef }
-              { ...provided.draggableProps }
-              { ...provided.dragHandleProps }
-            >
-              <TaskOrTour
-                item={ item }
-                onRemove={ item => this.props.onRemove(item) }
-              />
-            </div>
-          )}
-        </Draggable>
-      )
-    })
+    return _.map(this.props.items,
+      (item, index) => <TaskOrTour
+        key={ item['@id'] }
+        item={ item }
+        draggableIndex={ index }
+        onRemove={ item => this.props.onRemove(item) }
+        unassignTasks={ this.props.unassignTasks }
+      />)
   }
 }
 

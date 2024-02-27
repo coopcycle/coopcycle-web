@@ -4,9 +4,11 @@ import { withTranslation, useTranslation } from 'react-i18next'
 import moment from 'moment'
 import { useContextMenu } from 'react-contexify'
 import _ from 'lodash'
+import { Draggable } from "@hello-pangea/dnd"
+
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
-import { selectVisibleTaskIds } from '../redux/selectors'
+import { selectVisibleTaskIds, selectSelectedTasks } from '../redux/selectors'
 import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-frontend-js/logistics/redux'
 
 import { addressAsText } from '../utils'
@@ -235,22 +237,39 @@ class Task extends React.Component {
     }
 
     return (
-      <span { ...taskProps }>
-        <span className="list-group-item-color" style={{ backgroundColor: color }}></span>
-        <span>
-          <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
-          {task.metadata?.rescheduled ? <i className="task__icon task__icon--type fa fa-repeat"></i> : null}
-          <TaskCaption task={ task } />
-          <TaskAttrs task={ task } />
-          <TaskTags task={ task } />
-          <TaskIconRight task={ task } onRemove={ this.props.onRemove } />
-          <TaskEta
-            after={ task.after }
-            before={ task.before }
-            date={ date } />
-          <TaskComments task={ task } />
-        </span>
-      </span>
+      <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ this.props.draggableIndex }>
+        {(provided, snapshot) => {
+          return (
+            <div
+              ref={ provided.innerRef }
+              { ...provided.draggableProps }
+              { ...provided.dragHandleProps }
+            >
+              <span { ...taskProps }>
+              <span className="list-group-item-color" style={{ backgroundColor: color }}></span>
+              <span>
+                <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
+                {task.metadata?.rescheduled ? <i className="task__icon task__icon--type fa fa-repeat"></i> : null}
+                <TaskCaption task={ task } />
+                <TaskAttrs task={ task } />
+                <TaskTags task={ task } />
+                <TaskIconRight task={ task } onRemove={ this.props.onRemove } />
+                <TaskEta
+                  after={ task.after }
+                  before={ task.before }
+                  date={ date } />
+                <TaskComments task={ task } />
+              </span>
+            </span>
+            { (snapshot.isDragging && this.props.selectedTasks.length > 1) && (
+                  <div className="task-dragging-number">
+                    <span>{ this.props.selectedTasks.length }</span>
+                  </div>
+                ) }
+              </div>
+            )
+          }}
+        </Draggable>
     )
 
   }
@@ -264,9 +283,11 @@ function mapStateToProps(state, ownProps) {
     tasksWithColor[ownProps.task['@id']] : '#ffffff'
 
   const visibleTaskIds = selectVisibleTaskIds(state)
+  const selectedTasks = selectSelectedTasks(state)
 
   return {
-    selected: -1 !== state.selectedTasks.indexOf(ownProps.task['@id']),
+    selectedTasks: selectedTasks,
+    selected: -1 !== selectedTasks.indexOf(ownProps.task['@id']),
     color,
     date: selectSelectedDate(state),
     isVisible: _.includes(visibleTaskIds, ownProps.task['@id']),

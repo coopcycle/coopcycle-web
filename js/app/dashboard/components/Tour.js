@@ -96,7 +96,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
 }
 
 
-const Tour = ({ tour }) => {
+const Tour = ({ tour, draggableIndex }) => {
 
   const isDroppable = useSelector(selectAreToursDroppable)
   const expandedTourPanelsIds = useSelector(selectExpandedTourPanelsIds)
@@ -110,63 +110,57 @@ const Tour = ({ tour }) => {
   const { show } = useContextMenu({id: 'dashboard'})
 
   return (
-    <div
-      className="panel panel-default panel--tour nomargin task__draggable"
-      onContextMenu={(e) => show(e, {props: { tour }})}
-      style={{ opacity: isLoading ? 0.7 : 1, pointerEvents: isLoading ? 'none' : 'initial' }}
-    >
-      <div className="panel-heading" role="tab">
-        <h4 className="panel-title d-flex align-items-center">
-          <i className="fa fa-repeat flex-grow-0"></i>
-            <RenderEditNameForm tour={tour} isLoading={isLoading}>
-              <a role="button" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))} className="ml-2 flex-grow-1 text-truncate">
-                { tour.name } <span className="badge">{ tour.items.length }</span>
-              </a>
-            </RenderEditNameForm>
-        </h4>
-      </div>
-      <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
-        <Droppable
-            isDropDisabled={!isDroppable || isLoading}
-            droppableId={ `tour:${tour['@id']}` }
-          >
-            {(provided, snapshot) => (
-              <div
-              className={ classNames({
-                'taskList__tasks': true,
-                'list-group': true,
-                'm-0': true,
-                'p-0': true,
-                'nomargin': true,
-                'taskList__tasks--empty': !tour.items.length
-              }) }
-              style={getDroppableListStyle(snapshot.isDraggingOver)}
-              ref={ provided.innerRef } { ...provided.droppableProps }>
-                { _.map(tour.items, (task, index) => {
-                  return (
-                    <Draggable key={ `task-${task.id}` } draggableId={ `${task['@id']}` } index={ index }>
-                      {(provided) => (
-                        <div
-                          ref={ provided.innerRef }
-                          { ...provided.draggableProps }
-                          { ...provided.dragHandleProps }
-                        >
-                          <Task
-                            key={ task['@id'] }
-                            task={ task }
-                            onRemove={ (taskToRemove) => dispatch(removeTaskFromTour(tour, taskToRemove, tourIsAssignedTo(tour)))}
-                            />
-                        </div>
-                      )}
-                    </Draggable>
-                  )
-                })}
-                { provided.placeholder }
-              </div>
-            )}
-          </Droppable>
-      </div>
-    </div>
+    <Draggable key={ `tour-${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ draggableIndex }>
+      {(provided) => (
+        <div
+          ref={ provided.innerRef } { ...provided.draggableProps } { ...provided.dragHandleProps }
+          className="panel panel-default panel--tour nomargin task__draggable"
+          onContextMenu={(e) => show(e, {props: { tour }})}
+          style={{ opacity: isLoading ? 0.7 : 1, pointerEvents: isLoading ? 'none' : 'initial' }}
+        >
+          <div className="panel-heading" role="tab">
+            <h4 className="panel-title d-flex align-items-center">
+              <i className="fa fa-repeat flex-grow-0"></i>
+                <RenderEditNameForm tour={tour}>
+                  <a role="button" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))} className="ml-2 flex-grow-1 text-truncate">
+                    { tour.name } <span className="badge">{ tour.items.length }</span>
+                  </a>
+                </RenderEditNameForm>
+            </h4>
+          </div>
+          <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
+            <Droppable
+                isDropDisabled={!isDroppable || isLoading}
+                droppableId={ `tour:${tour['@id']}` }
+              >
+                {(provided, snapshot) => (
+                  <div
+                  className={ classNames({
+                    'taskList__tasks': true,
+                    'list-group': true,
+                    'm-0': true,
+                    'p-0': true,
+                    'nomargin': true,
+                    'taskList__tasks--empty': !tour.items.length
+                  }) }
+                  style={getDroppableListStyle(snapshot.isDraggingOver)}
+                  ref={ provided.innerRef } { ...provided.droppableProps }>
+                    { _.map(tour.items, (task, index) =>
+                      <Task
+                        key={ task['@id'] }
+                        task={ task }
+                        draggableIndex={ index }
+                        onRemove={ (taskToRemove) => dispatch(removeTaskFromTour(tour, taskToRemove, tourIsAssignedTo(tour)))}
+                      />
+                    )}
+                    { provided.placeholder }
+                  </div>
+                )}
+              </Droppable>
+          </div>
+        </div>
+      )}
+    </Draggable>
   )
 }
 
