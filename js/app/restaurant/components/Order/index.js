@@ -62,10 +62,13 @@ export default function Order() {
 
   useEffect(() => {
     const height = document.getElementById('restaurant-menu-nav').clientHeight
+
+    document.documentElement.style.setProperty('--restaurant-menu-nav-height',
+      `${ height }px`)
     setMenuNavHeight(height)
   })
 
-  return (<Sticky top={ menuNavHeight }>
+  return (<Sticky top={ menuNavHeight } bottomBoundary=".content">
     <div className={ classNames('order-wrapper', {
       'order-wrapper--show': isMobileCartVisible,
     }) }>

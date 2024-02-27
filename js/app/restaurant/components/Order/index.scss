@@ -3,8 +3,6 @@
 
 $card-padding: 2rem;
 
-$restaurant-menu-nav-height: 100px; // the actual height is 69px, set a bit more just in case
-
 .sticky-outer-wrapper {
   .sticky-inner-wrapper {
     // @see https://github.com/yahoo/react-stickynode/issues/9#issuecomment-173039715
@@ -13,7 +11,7 @@ $restaurant-menu-nav-height: 100px; // the actual height is 69px, set a bit more
     }
 
     @media (min-width: $screen-lg-min) {
-      max-height: calc(100vh - #{$restaurant-menu-nav-height});
+      max-height: calc(100vh - var(--restaurant-menu-nav-height));
       display: flex;
     }
   }
