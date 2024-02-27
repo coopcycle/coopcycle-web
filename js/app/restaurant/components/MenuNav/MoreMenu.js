@@ -9,6 +9,8 @@ function MoreMenuItem({ section, targetOffset }) {
   const handleClick = (ev) => {
     ev.preventDefault()
 
+    document.body.classList.remove('body--no-scroll')
+
     const elId = elementId(section)
     if (elId) {
       const el = document.getElementById(elId)
@@ -56,6 +58,14 @@ export default function MoreMenu({ sections, currentSection, targetOffset }) {
         </div>
         <Dropdown
           trigger={ [ 'click' ] }
+          onOpenChange={ (open) => {
+            // use similar to ReactModal approach to prevent body in the background from scrolling
+            if (open) {
+              document.body.classList.add('body--no-scroll')
+            } else {
+              document.body.classList.remove('body--no-scroll')
+            }
+          } }
           menu={ { items: items } }
           placement="bottomRight"
           overlayClassName="restaurant-menu-nav-more">

@@ -16,11 +16,11 @@ export default function MobileCartHeading() {
   const dispatch = useDispatch()
 
   const handleClick = () => {
-    // use ReactModal css class to prevent body in the background from scrolling
+    // use similar to ReactModal approach to prevent body in the background from scrolling
     if (isMobileCartVisible) {
-      document.body.classList.remove('ReactModal__Body--open')
+      document.body.classList.remove('body--no-scroll')
     } else {
-      document.body.classList.add('ReactModal__Body--open')
+      document.body.classList.add('body--no-scroll')
     }
 
     dispatch(toggleMobileCart())
