@@ -143,7 +143,7 @@ export const TaskList = ({ tasks, items, uri, username, polylineEnabled, isEmpty
     unassignTasks(username, task)
   }
 
-  const t = useTranslation()
+  const { t } = useTranslation()
 
   const uncompletedTasks = _.filter(tasks, t => t.status === 'TODO')
   const completedTasks = _.filter(tasks, t => t.status === 'DONE')
