@@ -1,8 +1,8 @@
 import _ from "lodash"
-import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskLists, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
+import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskLists, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { disableDropInTours, enableDropInTours, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, updateTourInUI } from "./actions"
-import { belongsToTour, selectGroups, selectSelectedTasks, taskSelectors, tourSelectors } from "./selectors"
+import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
 import { withLinkedTasks } from "./utils"
 import { toast } from 'react-toastify'
 
@@ -10,7 +10,7 @@ import { toast } from 'react-toastify'
 export function handleDragStart(result) {
   return function(dispatch, getState) {
 
-    const selectedTasks = getState().selectedTasks
+    const selectedTasks = selectSelectedTasks(getState())
 
     // If the user is starting to drag something that is not selected then we need to clear the selection.
     // https://github.com/atlassian/@hello-pangea/dnd/blob/master/docs/patterns/multi-drag.md#dragging
@@ -90,6 +90,16 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       return
     }
 
+    if (source.droppableId.startsWith('assigned:') && destination.droppableId.startsWith('tour:')) {
+      let tourId = destination.droppableId.split(':')[1],
+      tour = selectTourById(getState(), tourId)
+
+      if (!isTourAssigned(tour)) {
+        toast.warn("Can not unassign by drag'n drop at the moment")
+        return
+      }
+    }
+
     if (source.droppableId.startsWith('tour:') && destination.droppableId === 'unassigned') {
       toast.warn("Can not remove from tour by drag'n drop at the moment")
       return
@@ -127,8 +137,8 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
     }
     else if (result.draggableId.startsWith('tour')) {
       let tourId = result.draggableId.split(':')[1],
-      tour = tourSelectors.selectById(getState(), tourId)
-      selectedTasks = tour.itemIds.map(taskId => taskSelectors.selectById(getState(), taskId))
+      tour = selectTourById(getState(), tourId)
+      selectedTasks = tour.items
     }
     
     // we want to move linked tasks together only in this case, so the dispatcher can have fine-grained control

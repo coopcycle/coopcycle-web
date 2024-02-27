@@ -133,6 +133,10 @@ export const selectAllTours = createSelector(
   }
 )
 
+export const selectTourById = (state, tourId) => {
+  return selectAllTours(state).find(t => t['@id'] === tourId)
+}
+
 export const isTourAssigned = (tour) => tour.items.length > 0 ? _.every(tour.items, (item) => item.isAssigned) : false 
 export const isTourUnassigned = (tour) => {
   if (tour.items.length === 0) return true
