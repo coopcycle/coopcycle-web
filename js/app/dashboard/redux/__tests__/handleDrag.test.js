@@ -38,7 +38,7 @@ describe('handleDragEnd', () => {
         
     })
   
-    it ('should reorder a tour inside a tasklist', () => {
+    it ('should assign a tour inside a tasklist at given index', () => {
       const dispatch = jest.fn(),
         mockModifyTaskList = jest.fn()
   
@@ -150,8 +150,19 @@ describe('handleDragEnd', () => {
       expect(dispatch).toHaveBeenCalledTimes(0)
 
     })
+
+    it ('should not move a task between two tours', () => {
+      const dispatch = jest.fn()
+
+      let result = {
+        draggableId: '/api/tasks/733',
+        source: {droppableId: '/api/tours/111'}, destination: {droppableId: 'tour:/api/tours/114', index: 1}
+      }
+
+      handleDragEnd(result)(dispatch, store.getState)
+
+      expect(dispatch).toHaveBeenCalledTimes(0)
+    })
   
-    
-  
-})
+  })
   

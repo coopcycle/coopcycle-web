@@ -1567,7 +1567,7 @@ export function deleteTour(tour) {
   }
 }
 
-export function removeTaskFromTour(tour, task, username) {
+export function removeTaskFromTour(tour, task, username, unassignTasks=unassignTasks, modifyTour=modifyTour) {
   return function(dispatch) {
     if (username !== null) {
       let newTourItems = withoutTasks(tour.items, [ task ])
