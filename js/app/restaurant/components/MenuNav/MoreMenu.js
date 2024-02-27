@@ -1,31 +1,53 @@
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { Dropdown } from 'antd'
-import React from 'react'
-import CustomLink from './CustomLink'
-import { sectionToLink } from './utils'
 
-export default function MoreMenu({ displaySections, currentSection }) {
+import CustomLink from './CustomLink'
+import { elementId, sectionToLink } from './utils'
+
+function MoreMenuItem({ section, targetOffset }) {
+  const handleClick = (ev) => {
+    ev.preventDefault()
+
+    const elId = elementId(section)
+    if (elId) {
+      const el = document.getElementById(elId)
+
+      el?.scrollIntoView(true)
+      window.scrollBy(0, -1 * targetOffset) // 'Anchor' height
+
+      // a nicer variant; but doesn't work on Chrome for android yet (v121)
+      // el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
+  return (
+    <CustomLink
+      title={ section.name }
+      href={ sectionToLink(section) }
+      onClick={ handleClick } />
+  )
+}
+
+export default function MoreMenu({ sections, currentSection, targetOffset }) {
   const { t } = useTranslation()
 
   let items = []
   let currentSectionInMoreMenu = undefined
 
-  displaySections.filter((section) => !section.isVisible).
-    forEach((section, index) => {
-      if (currentSection.name === section.name) {
-        currentSectionInMoreMenu = section
-      } else {
-        items.push(
-          {
-            key: `menu-nav-more-section-${ index }`,
-            label: (
-              <CustomLink
-                title={ section.name }
-                href={ sectionToLink(section) } />),
-          },
-        )
-      }
-    })
+  sections.forEach((section, index) => {
+    if (currentSection.name === section.name) {
+      currentSectionInMoreMenu = section
+    } else {
+      items.push(
+        {
+          key: `menu-nav-more-section-${ index }`,
+          label: (
+            <MoreMenuItem section={ section } targetOffset={ targetOffset } />),
+        },
+      )
+    }
+  })
 
   if (items.length > 0) {
     return (
@@ -41,7 +63,7 @@ export default function MoreMenu({ displaySections, currentSection }) {
             title={ currentSectionInMoreMenu?.name ??
               t('RESTAURANT_SECTIONS_MORE') }
             href="#"
-            onClick={ (e) => e.preventDefault() }
+            onClick={ (ev) => ev.preventDefault() }
             isActive={ Boolean(currentSectionInMoreMenu) } />
         </Dropdown>
       </>

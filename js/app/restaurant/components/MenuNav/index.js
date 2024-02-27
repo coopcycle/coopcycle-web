@@ -84,8 +84,9 @@ export default function MenuNav(props) {
           </div>
         )) }
         <MoreMenu
-          displaySections={ displaySections }
-          currentSection={ currentSection(props.sections, currentAnchor) } />
+          sections={ displaySections.filter((section) => !section.isVisible) }
+          currentSection={ currentSection(props.sections, currentAnchor) }
+          targetOffset={ height } />
       </Anchor>
     </div>
   )

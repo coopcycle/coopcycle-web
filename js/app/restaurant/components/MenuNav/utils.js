@@ -1,5 +1,9 @@
+export const elementId = (section) => {
+  return encodeURI(section.name)
+}
+
 export const sectionToLink = (section) => {
-  return `#${ encodeURI(section.name) }`
+  return `#${ elementId(section) }`
 }
 
 export const currentSection = (sections, currentAnchor) => {
