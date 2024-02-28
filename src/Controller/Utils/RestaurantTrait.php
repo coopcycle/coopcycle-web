@@ -62,7 +62,9 @@ use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -292,6 +294,17 @@ trait RestaurantTrait
         $restaurant = $repository->find($id);
 
         $this->accessControl($restaurant);
+
+        if ($request->query->has('format') && 'json' === $request->query->get('format')) {
+            $restaurantNormalized = $this->get('serializer')->normalize($restaurant, 'jsonld', [
+                'resource_class' => LocalBusiness::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['restaurant']
+            ]);
+
+            return new JsonResponse($restaurantNormalized);
+        }
 
         return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient);
     }
@@ -1661,6 +1674,58 @@ trait RestaurantTrait
             'layout' => $request->attributes->get('layout'),
             'month' => $month,
             'payments' => $hash,
+        ]));
+    }
+
+    public function addRestaurantsEdenredAction(Request $request)
+    {
+        $form = $this->createFormBuilder()
+            ->add('restaurants', CollectionType::class, [
+                'entry_type' => EntityType::class,
+                'entry_options' => [
+                    'label' => false,
+                    'class' => LocalBusiness::class,
+                    'choice_label' => 'name',
+                ],
+                'label' => 'restaurants.edenred.add_list_title',
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+            ])
+            ->getForm();
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $restaurantsToSync = array_filter($form->get('restaurants')->getData(), function($restaurant) {
+                return !$restaurant->getEdenredSyncSent();
+            });
+
+            // TODO call a service to create and send the XML to Edenred
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('global.changesSaved')
+            );
+
+            return $this->render('restaurant/edenred_sync.html.twig', $this->withRoutes([
+                'layout' => $request->attributes->get('layout'),
+                'form' => $form->createView(),
+            ]));
+        }
+
+        if ($request->query->has('section') && $request->query->get('section') === 'added') {
+            $restaurants = $this->getDoctrine()
+                ->getRepository(LocalBusiness::class)
+                ->findBy([ 'edenredSyncSent' => true ]);
+
+            return $this->render('restaurant/edenred_sync.html.twig', $this->withRoutes([
+                'layout' => $request->attributes->get('layout'),
+                'restaurants' => $restaurants,
+            ]));
+        }
+
+        return $this->render('restaurant/edenred_sync.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'form' => $form->createView(),
         ]));
     }
 

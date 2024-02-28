@@ -3,7 +3,9 @@
 {% block body %}
 <div class="container">
 
-  <div class="d-flex justify-content-end mb-4">
+  <div class="d-flex align-items-center justify-content-end mb-4">
+    <a href="{{ path('admin_add_restaurants_edenred') }}" class="btn btn-success mr-4">
+        <i class="fa fa-plus"></i> {{ 'restaurants.edenred.add_restaurants'|trans }}</a>
     <div id="month-picker" class="d-inline-block"
       data-default-value="{{ month|date('Y-m') }}"></div>
   </div>

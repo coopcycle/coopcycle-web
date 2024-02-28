@@ -1438,4 +1438,12 @@ form.settings.company_legal_name.label: "Legal name of the company"
 form.settings.company_legal_name.help: "Please enter the full legal name of the company as it appears on its official documents."
 form.settings.company_legal_id.label: "Company registration number or EIN"
 form.settings.company_legal_id.help: "This number is usually available on the company's official documents, such as invoices or contracts."
-
+restaurants.edenred.add_restaurants: Add restaurants
+restaurants.edenred.add_list_title: List of restaurants to send to Edenred
+restaurants.edenred.added_restaurants: Added restaurants
+restaurants.edenred.already_sent: "The restaurants that appear crossed out in the list are because\
+  \ they have already been sent to Edenred for incorporation.\
+  \ Please <a href=\"%link%\">click here</a> to check their status."
+restaurants.edenred.added_list.name: Name
+restaurants.edenred.added_list.merchant_id: Merchant ID
+restaurants.edenred.added_list.tr_card_enabled: TR card enabled
