@@ -17,8 +17,8 @@
     color: $gray-300;
     white-space: nowrap;
 
-    &:hover {
-      background-color: transparent;
+    &:hover,
+    &:focus {
       text-decoration: none;
     }
   }
