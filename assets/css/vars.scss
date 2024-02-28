@@ -69,6 +69,7 @@ $modal-padding-md: 1.5rem;
 // Overriding breakpoints to resemble the default v5 Bootstrap breakpoints
 // could be removed after the migration to Bootstrap v5, see https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss
 
+//$screen-xs-min: 0px; // v3: 480px;
 //$screen-sm-min: 576px; // v3: 768px; TODO; replace usages with $screen-md-min; and uncomment
 $screen-md-min: 768px;
 //$screen-lg-min: 992px; // v3: 1200px; TODO; replace usages with $screen-xl-min; and uncomment

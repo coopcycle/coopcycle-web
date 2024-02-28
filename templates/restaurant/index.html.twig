@@ -151,27 +151,8 @@
     <header class="restaurant-header">
       <div class="row">
         <div class="col-xs-12 col-lg-8">
-          <section class="restaurant-header__body">
-            {% set restaurant_banner = coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner') %}
-            {% if restaurant_banner is not empty %}
-              <div class="restaurant-image">
-                <img src="{{ restaurant_banner }}">
-                {% if should_show_pre_order(restaurant) %}
-                  <figcaption>
-                    <div class="position-absolute w-100 h-100 bg-dark overlay"></div>
-                    <div
-                      class="position-absolute text-white font-weight-bold d-flex flex-column justify-content-center align-items-center w-100 h-100 p-1">
-                      <i class="fa fa-clock-o"></i>
-                      <span>{{ 'restaurants.pre_order'|trans }}</span>
-                    </div>
-                  </figcaption>
-                {% endif %}
-              </div>
-            {% endif %}
-            <div class="restaurant-details">
-              {% include 'restaurant/_partials/restaurant_details.html.twig' %}
-            </div>
-          </section>
+          {% set restaurant_banner = coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner') %}
+          {% include 'restaurant/_partials/restaurant_info.html.twig' %}
         </div>
         <div class="col-xs-12 col-lg-4">
           <div id="restaurant__fulfilment-details__container">

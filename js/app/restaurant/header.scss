@@ -4,9 +4,17 @@
 @import "./tag.scss";
 @import "./badge.scss";
 
+$orig-image-width: 480px;
+$orig-image-height: 270px;
+
 @mixin image-size() {
-  width: 320px;
-  height: 180px;
+  width: calc($orig-image-width * 0.6);
+  height: calc($orig-image-height * 0.6);
+
+  @media (min-width: 360px) {
+    width: calc($orig-image-width * 0.65);
+    height: calc($orig-image-height * 0.65);
+  }
 }
 
 @mixin image-border-radius() {
@@ -17,15 +25,15 @@
   display: flex;
   flex-direction: column;
   padding: 1.5rem 0;
+}
 
-  &__body {
-    display: flex;
-    flex-direction: column;
+.restaurant-info {
+  display: flex;
+  flex-direction: column;
 
-    @media (min-width: $screen-md-min) {
-      flex-direction: row;
-      align-items: center;
-    }
+  @media (min-width: $screen-md-min) {
+    flex-direction: row;
+    align-items: center;
   }
 
   .restaurant-details {
@@ -36,6 +44,7 @@
 
     a {
       color: $text-color;
+
       &:hover,
       &:focus {
         background-color: $light-gray;
@@ -47,8 +56,10 @@
   .restaurant-image {
     position: relative;
     align-self: center;
+    margin-bottom: 1rem;
 
     @media (min-width: $screen-md-min) {
+      margin-bottom: 0;
       margin-right: 1.5rem;
     }
 
@@ -89,6 +100,7 @@
 
   .restaurant-opening-hours {
     padding: 4px 0;
+
     i {
       color: $primary-default;
     }
