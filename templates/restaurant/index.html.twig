@@ -39,7 +39,7 @@
 {% endblock %}
 
 {% block body %}
-  <div class="container-full-hd container--extra-space-on-sides px-3" id="container__restaurant">
+  <div id="restaurant__container" class="container-full-hd container--extra-space-on-sides px-3">
 
   {% block restaurant_nav %}
     {% if not embed_context.enabled %}
@@ -151,7 +151,7 @@
     <header class="restaurant-header">
       <div class="row">
         <div class="col-xs-12 col-lg-8">
-          <section class="restaurant-header-body">
+          <section class="restaurant-header__body">
             {% set restaurant_banner = coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner') %}
             {% if restaurant_banner is not empty %}
               <div class="restaurant-image">
@@ -174,7 +174,7 @@
           </section>
         </div>
         <div class="col-xs-12 col-lg-4">
-          <div id="container__fulfilment-details">
+          <div id="restaurant__fulfilment-details__container">
           </div>
         </div>
       </div>

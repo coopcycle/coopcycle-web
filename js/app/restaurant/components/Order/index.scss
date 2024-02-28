@@ -3,7 +3,7 @@
 
 $card-padding: 2rem;
 
-#container__restaurant {
+#restaurant__container {
   .panel {
     border: none;
     border-radius: 16px;
@@ -15,7 +15,7 @@ $card-padding: 2rem;
   }
 }
 
-#container__fulfilment-details {
+#restaurant__fulfilment-details__container {
   display: none;
 
   @media (min-width: $screen-lg-min) {

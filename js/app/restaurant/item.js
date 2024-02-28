@@ -117,7 +117,7 @@ const init = function() {
   Modal.setAppElement(container)
 
   // desktop only
-  const fulfilmentDetailsContainer = document.getElementById('container__fulfilment-details')
+  const fulfilmentDetailsContainer = document.getElementById('restaurant__fulfilment-details__container')
 
   const root = createRoot(container);
   root.render(
