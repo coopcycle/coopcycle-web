@@ -74,7 +74,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.container-extra-space-on-sides {
+.container--extra-space-on-sides {
   margin-right: auto;
   margin-left: auto;
   @include clearfix;
