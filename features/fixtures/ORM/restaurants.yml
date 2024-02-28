@@ -73,6 +73,9 @@ AppBundle\Entity\LocalBusiness:
     featured: true
     exclusive: true
     rateLimitAmount: null
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
   restaurant_2:
     name: 'Café Barjot'
     address: "@address_2"
@@ -88,6 +91,9 @@ AppBundle\Entity\LocalBusiness:
       - setOpeningHours:
         - ['Mo-Sa 11:30-14:30']
         - 'collection'
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
   restaurant_3:
     name: 'La Cantina Clandestina'
     address: "@address_3"
@@ -99,6 +105,9 @@ AppBundle\Entity\LocalBusiness:
     __calls:
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
   restaurant_4:
     name: 'Wild Buffet'
     address: "@address_3"
@@ -117,12 +126,18 @@ AppBundle\Entity\LocalBusiness:
       - setOpeningHours:
         - ['Mo-Sa 11:30-14:30']
         - 'collection'
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
   restaurant_5:
     name: 'I Want This Restaurant'
     address: "@address_3"
     enabled: true
     state: pledge
     rateLimitAmount: null
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
   restaurant_6:
     name: 'Good Old Times'
     address: "@address_3"
@@ -134,3 +149,6 @@ AppBundle\Entity\LocalBusiness:
     __calls:
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false

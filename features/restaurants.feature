@@ -105,7 +105,11 @@ Feature: Manage restaurants
           },
           "loopeatEnabled":false,
           "tags":@array@,
-          "badges":@array@
+          "badges":@array@,
+          "edenredMerchantId": null,
+          "edenredTRCardEnabled": false,
+          "edenredSyncSent": false,
+          "edenredEnabled": false
         }
       ],
       "hydra:totalItems":1,
@@ -186,7 +190,11 @@ Feature: Manage restaurants
       "hub":null,
       "loopeatEnabled":false,
       "tags":@array@,
-      "badges":@array@
+      "badges":@array@,
+      "edenredMerchantId": null,
+      "edenredTRCardEnabled": false,
+      "edenredSyncSent": false,
+      "edenredEnabled": false
     }
     """
 
@@ -263,7 +271,11 @@ Feature: Manage restaurants
       "hub":null,
       "loopeatEnabled":false,
       "tags":@array@,
-      "badges":@array@
+      "badges":@array@,
+      "edenredMerchantId": null,
+      "edenredTRCardEnabled": false,
+      "edenredSyncSent": false,
+      "edenredEnabled": false
     }
     """
 

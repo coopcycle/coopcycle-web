@@ -45,3 +45,6 @@ AppBundle\Entity\LocalBusiness:
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: true
     contract: "@contract_1"
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false

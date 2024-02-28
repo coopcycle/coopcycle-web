@@ -1439,3 +1439,20 @@ form.settings.company_legal_name.help: "Please enter the full legal name of the 
 form.settings.company_legal_id.label: "Company registration number or EIN"
 form.settings.company_legal_id.help: "This number is usually available on the company's official documents, such as invoices or contracts."
 business_restaurant_group.form.invalid: "There are errors or missing information, please check all the sections of the configuration."
+restaurants.edenred.add_restaurants: Add restaurants
+restaurants.edenred.add_list_title: List of restaurants to send to Edenred
+restaurants.edenred.added_restaurants: Added restaurants
+restaurants.edenred.already_sent: "The restaurants that appear crossed out in the list are because\
+  \ they have already been sent to Edenred for incorporation.\
+  \ Please <a href=\"%link%\">click here</a> to check their status."
+restaurants.edenred.added_list.name: Name
+restaurants.edenred.added_list.merchant_id: Merchant ID
+restaurants.edenred.added_list.tr_card_enabled: TR card enabled
+restaurants.edenred.sending_success: "The restaurants has been successfully sent to Edenred."
+restaurants.edenred.sending_failed: "Error trying to send restaurants to Edenred. Please try again later."
+restaurants.edenred.sending_failed.errors: "There are errors with some restaurants:"
+restaurants.edenred.sending_failed.no_siret: "The restaurant '%restaurant_name%' has not a Siret defined."
+restaurant.form.edenred_enabled.label: Enable Edenred
+restaurants.edenred.refresh.no_updates: "The restaurant '%restaurant_name%' does not have any updates on Edenred servers so far."
+restaurants.edenred.refresh.has_updates: "The restaurant '%restaurant_name%' has had an update from Edenred servers."
+restaurants.edenred.added_list.actions: Actions
