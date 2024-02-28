@@ -8,7 +8,7 @@ import { Draggable } from "@hello-pangea/dnd"
 
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
-import { selectVisibleTaskIds, selectSelectedTasks } from '../redux/selectors'
+import { selectVisibleTaskIds } from '../redux/selectors'
 import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-frontend-js/logistics/redux'
 
 import { addressAsText } from '../utils'
@@ -224,12 +224,6 @@ class Task extends React.Component {
 
         this.props.selectTask(task)
 
-        // FIXME: this is temporary
-        // disable menu if task from assigned tour
-        if (task.isAssigned && task.tour) {
-          return
-        }
-
         show(e, {
           props: { task }
         })
@@ -283,7 +277,7 @@ function mapStateToProps(state, ownProps) {
     tasksWithColor[ownProps.task['@id']] : '#ffffff'
 
   const visibleTaskIds = selectVisibleTaskIds(state)
-  const selectedTasks = selectSelectedTasks(state)
+  const selectedTasks = state.selectedTasks
 
   return {
     selectedTasks: selectedTasks,
