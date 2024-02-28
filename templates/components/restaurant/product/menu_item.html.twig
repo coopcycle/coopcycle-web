@@ -1,6 +1,6 @@
 {# TODO Skip if no variant is defined #}
 {% if product.enabled %}
-  <div class="restaurant-menu-section-item menu-item">
+  <div class="restaurant-menu-section__item">
     <button
       class="button-reset flex-1 d-flex"
       data-modal="product-details"
@@ -13,7 +13,7 @@
       data-product-options="{{ product.options|coopcycle_normalize('AppBundle\\Entity\\Sylius\\ProductOption', ['product_option'], 'json')|json_encode|e('html_attr') }}">
       {% include 'components/restaurant/product/menu_item_inner.html.twig' %}
       {% if product.hasOptions() %}
-        <div class="menu-item-add-wrapper">
+        <div class="menu-item__add-wrapper">
           +
         </div>
       {% endif %}
@@ -23,7 +23,7 @@
         method="post"
         action="{{ path('restaurant_add_product_to_cart', { id: restaurant_id, code: product.code }) }}"
         data-product-simple
-        class="menu-item-add-wrapper menu-item-add-wrapper-active">
+        class="menu-item__add-wrapper menu-item__add-wrapper--active">
         <button class="button-reset w-100 h-100" type="submit">
           +
         </button>
@@ -31,7 +31,7 @@
     {% endif %}
   </div>
 {% else %}
-  <div class="restaurant-menu-section-item menu-item">
+  <div class="restaurant-menu-section__item">
     <a class="menu-item--unavailable">
       {% include 'components/restaurant/product/menu_item_inner.html.twig' %}
     </a>
