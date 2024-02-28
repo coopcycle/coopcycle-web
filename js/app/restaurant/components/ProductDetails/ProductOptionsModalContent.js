@@ -1,4 +1,6 @@
 import React, { forwardRef, useContext } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Alert } from 'antd'
 
 import {
   ProductOptionsModalContext,
@@ -8,8 +10,6 @@ import ProductModalHeader from './ProductModalHeader'
 import { OptionGroup } from './ProductOptionGroup'
 import ProductInfo from './ProductInfo'
 import ProductQuantity from './ProductQuantity'
-import { useTranslation } from 'react-i18next'
-import { Alert } from 'antd'
 
 const getOffset = (options, index) => {
 

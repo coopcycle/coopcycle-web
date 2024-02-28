@@ -441,14 +441,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .ant-alert-info {
-  background-color: $alert-info-bg;
-  border-color: $alert-info-border;
+  background-color: $alert-info-bg !important;
+  border-color: $alert-info-border !important;
 
   .ant-alert-icon {
-    color: $alert-info-text;
+    color: $alert-info-text !important;
   }
 
   .ant-alert-message {
-    color: $alert-info-text;
+    color: $alert-info-text !important;
   }
 }
