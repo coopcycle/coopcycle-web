@@ -1,6 +1,6 @@
 {# TODO Skip if no variant is defined #}
 {% if product.enabled %}
-  <div class="restaurant-menu-section__item">
+  <div class="menu-item">
     <button
       class="button-reset flex-1 d-flex"
       data-modal="product-details"
@@ -31,7 +31,7 @@
     {% endif %}
   </div>
 {% else %}
-  <div class="restaurant-menu-section__item">
+  <div class="menu-item">
     <a class="menu-item--unavailable">
       {% include 'components/restaurant/product/menu_item_inner.html.twig' %}
     </a>

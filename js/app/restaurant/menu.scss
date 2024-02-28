@@ -3,58 +3,56 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
 @import "../../../assets/css/mixins/card";
 
-.restaurant-menu-wrapper {
+.restaurant-menu {
   padding: 1rem 0;
 
   // On mobile, add a margin to allow scrolling
   @media (max-width: $screen-xs-max) {
     margin-bottom: $navbar-height;
   }
-}
 
-.restaurant-menu-section-name {
-  margin: 0;
-  font-weight: 600;
-}
-
-$item-height: 9rem;
-
-.restaurant-menu-section {
-
-  /**
-  use minmax to prevent items from overflowing the column width;
-  https://css-tricks.com/preventing-a-grid-blowout/
-   */
-
-  padding-top: 16px;
-  padding-bottom: 64px;
-  display: grid;
-  grid-gap: 24px;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-
-  @media (min-width: $screen-md-min) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  &__section-name {
+    margin: 0;
+    font-weight: 600;
   }
 
-  @media (min-width: 1600px) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+  &__section {
 
-  &__item {
-    @include card;
+    /**
+    use minmax to prevent items from overflowing the column width;
+    https://css-tricks.com/preventing-a-grid-blowout/
+     */
 
-    & {
-      width: 100%;
-      height: $item-height;
-      overflow: hidden;
-      border-radius: $border-radius-large;
-      display: flex;
+    padding-top: 16px;
+    padding-bottom: 64px;
+    display: grid;
+    grid-gap: 24px;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+
+    @media (min-width: $screen-md-min) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (min-width: 1600px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 }
 
-.restaurant-menu-section__item {
-  .menu-item--unavailable {
+$item-height: 9rem;
+
+.menu-item {
+  @include card;
+
+  & {
+    width: 100%;
+    height: $item-height;
+    overflow: hidden;
+    border-radius: $border-radius-large;
+    display: flex;
+  }
+
+  &--unavailable {
     flex: 1;
     display: block;
     color: #ddd;
@@ -69,7 +67,7 @@ $item-height: 9rem;
     }
   }
 
-  .menu-item__image-wrapper {
+  &__image-wrapper {
     > img {
       object-fit: cover;
       width: $item-height;
@@ -78,7 +76,7 @@ $item-height: 9rem;
     }
   }
 
-  .menu-item__content {
+  &__content {
     padding: 0.75rem;
     flex: 1;
     display: flex;
@@ -98,13 +96,13 @@ $item-height: 9rem;
     }
   }
 
-  .menu-item__name {
+  &__name {
     font-family: inherit;
     font-weight: bold;
     margin: 0;
   }
 
-  .menu-item__description {
+  &__description {
     margin: 0.5rem 0;
     max-height: 3.25rem; // 3 lines ~ 52px
     display: block;
@@ -112,13 +110,13 @@ $item-height: 9rem;
     overflow: hidden;
   }
 
-  .menu-item__price {
+  &__price {
     padding: 2px 0;
     white-space: nowrap;
     font-weight: 600;
   }
 
-  .menu-item__add-wrapper {
+  &__add-wrapper {
     border: 1px solid $light-gray;
     border-radius: $border-radius-base;
     margin: 4px;
@@ -128,7 +126,7 @@ $item-height: 9rem;
     padding: 0 0.75rem;
   }
 
-  .menu-item__add-wrapper--active {
+  &__add-wrapper--active {
     &:hover,
     &:focus {
       border: 1px solid $gray;

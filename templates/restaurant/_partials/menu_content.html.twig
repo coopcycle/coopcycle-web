@@ -1,10 +1,10 @@
-<div class="restaurant-menu-wrapper">
+<div class="restaurant-menu">
   {% for section in sections %}
-    <h4 id={{ section.name|url_encode }} class="restaurant-menu-section-name">{{ section.name }}</h4>
+    <h4 id={{ section.name|url_encode }} class="restaurant-menu__section-name">{{ section.name }}</h4>
     {% if section.description is not empty %}
       <div class="text-muted">{{ section.description }}</div>
     {% endif %}
-    <div class="restaurant-menu-section">
+    <div class="restaurant-menu__section">
       {% for product in section.products %}
         {% set product_images = [] %}
         {% set images_16x9 = product.images|filter(image => image.ratio == '16:9') %}
