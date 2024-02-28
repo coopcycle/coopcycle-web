@@ -3,21 +3,40 @@
 
 $card-padding: 2rem;
 
-.sticky-outer-wrapper {
-  .sticky-inner-wrapper {
-    // @see https://github.com/yahoo/react-stickynode/issues/9#issuecomment-173039715
-    @media (max-width: $screen-md-max) {
-      transform: none !important;
-    }
+#container__restaurant {
+  .panel {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, .03);
+  }
 
-    @media (min-width: $screen-lg-min) {
-      max-height: calc(100vh - var(--restaurant-menu-nav-height));
-      display: flex;
-    }
+  .panel-body {
+    padding: $card-padding;
   }
 }
 
-.order-wrapper {
+#container__fulfilment-details {
+  display: none;
+
+  @media (min-width: $screen-lg-min) {
+    display: block;
+    padding: 0 1rem;
+  }
+}
+
+.fulfillment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .alert {
+    width: 100%;
+    margin-bottom: 0;
+  }
+}
+
+// mobile (and small tablets)
+.order-overlay {
   background-color: $body-bg;
   padding: 0 1rem;
 
@@ -34,13 +53,7 @@ $card-padding: 2rem;
   flex-direction: column;
 
   @media (min-width: $screen-lg-min) {
-    position: unset;
-    transform: unset;
-    transition: unset;
-    z-index: unset;
-
-    width: 100%;
-    overflow-y: auto;
+    display: none;
   }
 
   &--show {
@@ -49,18 +62,31 @@ $card-padding: 2rem;
 }
 
 .ReactModal__Body--open {
-  .order-wrapper {
+  .order-overlay {
     z-index: unset;
   }
 }
 
-.order-heading--mobile {
-  display: block;
-  cursor: pointer;
+// desktop (and larger tablets)
+.sticky-outer-wrapper {
+  display: none;
 
   @media (min-width: $screen-lg-min) {
-    display: none;
+    display: block;
   }
+
+  .sticky-inner-wrapper {
+    @media (min-width: $screen-lg-min) {
+      max-height: calc(100vh - var(--restaurant-menu-nav-height));
+      display: flex;
+      flex-direction: column;
+      padding: 0 1rem;
+    }
+  }
+}
+
+.order-overlay__heading {
+  cursor: pointer;
 
   .panel-heading {
     position: relative;
@@ -84,50 +110,29 @@ $card-padding: 2rem;
   }
 }
 
-.order-wrapper__content {
+.order-overlay__content {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+}
 
-  .panel {
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, .03);
+.panel-cart-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: $screen-lg-min) {
+    overflow-y: auto;
   }
 
   .panel-body {
-    padding: $card-padding;
-  }
-
-  .panel-cart-wrapper {
+    min-height: 350px;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 
     @media (min-width: $screen-lg-min) {
       overflow-y: auto;
     }
-
-    .panel-body {
-      min-height: 350px;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-
-      @media (min-width: $screen-lg-min) {
-        overflow-y: auto;
-      }
-    }
-  }
-}
-
-.fulfillment-details {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-
-  .alert {
-    width: 100%;
-    margin-bottom: 0;
   }
 }
 

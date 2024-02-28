@@ -29,7 +29,7 @@ export default function MobileOrderHeading() {
   return (
     <div
       className={ classNames(
-        'order-heading--mobile',
+        'order-overlay__heading',
         'panel',
         'panel-default',
       ) }>

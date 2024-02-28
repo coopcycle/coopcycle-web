@@ -33,10 +33,7 @@ export default function FulfillmentDetails() {
   const dispatch = useDispatch()
 
   return (
-    <div className={ classNames({
-      'panel': true,
-      'panel-default': true,
-    }) }>
+    <div className="panel panel-default">
       <div className="panel-body">
         <div className="fulfillment-details">
           <FulfillmentMethod

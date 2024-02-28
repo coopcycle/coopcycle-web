@@ -1,5 +1,6 @@
 import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client';
+import { createPortal } from 'react-dom'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
@@ -18,13 +19,14 @@ import './header.scss'
 import './menu.scss'
 import './components/Order/index.scss'
 
-import Order from './components/Order'
 import ProductOptionsModal
   from './components/ProductDetails/ProductOptionsModal'
 import RestaurantModal from './components/RestaurantModal'
 import InvitePeopleToOrderModal from './components/InvitePeopleToOrderModal'
 import SetGuestCustomerEmailModal from './components/SetGuestCustomerEmailModal'
 import LoopeatModal from './components/LoopeatModal'
+import FulfillmentDetails from './components/Order/FulfillmentDetails'
+import { OrderOverlay, StickyOrder } from './components/Order'
 
 window._paq = window._paq || []
 
@@ -114,12 +116,17 @@ const init = function() {
 
   Modal.setAppElement(container)
 
+  // desktop only
+  const fulfilmentDetailsContainer = document.getElementById('container__fulfilment-details')
+
   const root = createRoot(container);
   root.render(
     <StrictMode>
       <Provider store={ store }>
         <I18nextProvider i18n={ i18n }>
-          <Order />
+          {createPortal(<FulfillmentDetails />, fulfilmentDetailsContainer)}
+          <StickyOrder />
+          <OrderOverlay />
           <ProductOptionsModal />
           <RestaurantModal />
           <InvitePeopleToOrderModal />

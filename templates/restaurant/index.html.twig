@@ -39,7 +39,7 @@
 {% endblock %}
 
 {% block body %}
-  <div class="container-full-hd container--extra-space-on-sides px-3">
+  <div class="container-full-hd container--extra-space-on-sides px-3" id="container__restaurant">
 
   {% block restaurant_nav %}
     {% if not embed_context.enabled %}
@@ -172,6 +172,10 @@
               {% include 'restaurant/_partials/restaurant_details.html.twig' %}
             </div>
           </section>
+        </div>
+        <div class="col-xs-12 col-lg-4">
+          <div id="container__fulfilment-details">
+          </div>
         </div>
       </div>
       <div class="row">
