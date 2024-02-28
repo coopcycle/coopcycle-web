@@ -26,38 +26,30 @@ import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/re
 
 import 'react-contexify/dist/ReactContexify.css'
 
-const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
-const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
-const CANCEL_MULTI = 'CANCEL_MULTI'
-const MOVE_TO_TOP = 'MOVE_TO_TOP'
-const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
-const MOVE_TO_NEXT_DAY_MULTI = 'MOVE_TO_NEXT_DAY_MULTI'
-const MOVE_TO_NEXT_WORKING_DAY_MULTI = 'MOVE_TO_NEXT_WORKING_DAY_MULTI'
-const CREATE_GROUP = 'CREATE_GROUP'
-const ADD_TO_GROUP = 'ADD_TO_GROUP'
-const REMOVE_FROM_GROUP = 'REMOVE_FROM_GROUP'
-const RESTORE = 'RESTORE'
-const RESCHEDULE = 'RESCHEDULE'
-const CREATE_DELIVERY = 'CREATE_DELIVERY'
-const CREATE_TOUR = 'CREATE_TOUR'
+export const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
+export const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
+export const CANCEL_MULTI = 'CANCEL_MULTI'
+export const MOVE_TO_TOP = 'MOVE_TO_TOP'
+export const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
+export const MOVE_TO_NEXT_DAY_MULTI = 'MOVE_TO_NEXT_DAY_MULTI'
+export const MOVE_TO_NEXT_WORKING_DAY_MULTI = 'MOVE_TO_NEXT_WORKING_DAY_MULTI'
+export const CREATE_GROUP = 'CREATE_GROUP'
+export const ADD_TO_GROUP = 'ADD_TO_GROUP'
+export const REMOVE_FROM_GROUP = 'REMOVE_FROM_GROUP'
+export const RESTORE = 'RESTORE'
+export const RESCHEDULE = 'RESCHEDULE'
+export const CREATE_DELIVERY = 'CREATE_DELIVERY'
+export const CREATE_TOUR = 'CREATE_TOUR'
 
 function _unassign(tasksToUnassign, unassignTasks) {
   const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo)
   _.forEach(tasksByUsername, (tasks, username) => unassignTasks(username, tasks))
 }
 
-const DynamicMenu = ({
-  unassignedTasks, selectedTasks, setCurrentTask, nextWorkingDay, linkedTasksIds,
-  unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
-  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal,
-  openCreateTourModal, openTaskRescheduleModal
-}) => {
-
-  const { t } = useTranslation()
-
+export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds) {
   const tasksToUnassign =
-    _.filter(selectedTasks, selectedTask =>
-      !_.find(unassignedTasks, unassignedTask => unassignedTask['@id'] === selectedTask['@id']))
+  _.filter(selectedTasks, selectedTask =>
+    !_.find(unassignedTasks, unassignedTask => unassignedTask['@id'] === selectedTask['@id']))
 
   const containsOnlyUnassignedTasks = !_.find(selectedTasks, t => t.isAssigned)
   const containsOnlyCancelledTasks = _.every(selectedTasks, t => t.status === 'CANCELLED')
@@ -85,13 +77,12 @@ const DynamicMenu = ({
       if (containsOnlyUnassignedTasks) {
         actions.push(CANCEL_MULTI)
         actions.push(CREATE_GROUP)
+        actions.push(CREATE_TOUR)
       }
 
       if (containsOnlyGroupedTasks) {
         actions.push(REMOVE_FROM_GROUP)
       }
-
-      actions.push(CREATE_TOUR)
 
       if (containsOnePickupAndAtLeastOneDropoff) {
         if (!containsOnlyLinkedTasks) {
@@ -111,6 +102,7 @@ const DynamicMenu = ({
         actions.push(MOVE_TO_BOTTOM)
       } else {
         actions.push(CREATE_GROUP)
+        actions.push(CREATE_TOUR)
 
         const taskWithGroup = Object.prototype.hasOwnProperty.call(selectedTask, 'group') && selectedTask.group
 
@@ -139,6 +131,26 @@ const DynamicMenu = ({
       actions.push(RESTORE)
     }
   }
+
+  return actions
+}
+
+const DynamicMenu = ({
+  unassignedTasks, selectedTasks, setCurrentTask, nextWorkingDay, linkedTasksIds,
+  unassignTasks, cancelTasks, moveToTop, moveToBottom, moveTasksToNextDay, moveTasksToNextWorkingDay,
+  openCreateGroupModal, openAddTaskToGroupModal, removeTasksFromGroup, restoreTasks, openCreateDeliveryModal,
+  openCreateTourModal, openTaskRescheduleModal
+}) => {
+
+  const { t } = useTranslation()
+
+  const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
+
+  const tasksToUnassign =
+  _.filter(selectedTasks, selectedTask =>
+    !_.find(unassignedTasks, unassignedTask => unassignedTask['@id'] === selectedTask['@id']))
+    
+  const selectedTask = selectedTasks.length > 0 ? selectedTasks[0] : undefined
 
   return (
     <Menu id="task-contextmenu">
