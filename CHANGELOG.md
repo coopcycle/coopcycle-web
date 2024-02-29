@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.29.1] - 2024-02-15
+
+- Use new React18 createRoot to render the dispatch right panel
+
+## [1.29.0] - 2024-02-15
+
+- Incidents display on the dashboard : in task detail and in assigned tasks
+- Fix for creating a tour from several tasks
+- Upgrade to react 18
+
+## [1.28.0] - 2024-02-13
+
+- Allow to modify assigned tours with drag'n drop
+- Assign linked tasks together, unassign separately
+- Fix tour ordering mess when assigning a tour with linked tasks
+- Add early design for Business Account/catering
+
+## [1.25.1] - 2024-01-18
+
+- Ignore empty lines in spreadsheets.
+- Allow restoring cancelled orders that were previously accepted.
+
+## [1.25.0] - 2024-01-16
+
+- Improve orders search
+- Improve dispatch dashboard drag'n'drop
+
 ## [1.24.0] - 2024-01-12
 
 ### Added

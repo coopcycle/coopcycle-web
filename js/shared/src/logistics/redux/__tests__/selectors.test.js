@@ -248,20 +248,24 @@ describe('Selectors', () => {
           tour: {
             '@id': '/api/tours/1',
             name: 'Tour 1'
-          }
+          },
+          position: 0
         },
         '/api/tasks/2': {
           '@id': '/api/tasks/2',
           tour: {
             '@id': '/api/tours/1',
             name: 'Tour 1'
-          }
+          },
+          position: 1
         },
         '/api/tasks/3': {
           '@id': '/api/tasks/3',
+          position: 2
         },
         '/api/tasks/4': {
           '@id': '/api/tasks/4',
+          position: 3
         },
       },
     }
@@ -312,22 +316,26 @@ describe('Selectors', () => {
               tour: {
                 '@id': '/api/tours/1',
                 name: 'Tour 1'
-              }
+              },
+              position: 0
             },
             {
               '@id': '/api/tasks/2',
               tour: {
                 '@id': '/api/tours/1',
                 name: 'Tour 1'
-              }
+              },
+              position: 1
             }
           ]
         },
         {
           '@id': '/api/tasks/3',
+          position: 2
         },
         {
           '@id': '/api/tasks/4',
+          position: 3
         },
       ])
     })
@@ -370,6 +378,7 @@ describe('Selectors', () => {
       expect(items).toEqual([
         {
           '@id': '/api/tasks/3',
+          position: 0
         },
         {
           '@id': '/api/tours/1',
@@ -381,19 +390,22 @@ describe('Selectors', () => {
               tour: {
                 '@id': '/api/tours/1',
                 name: 'Tour 1'
-              }
+              },
+              position: 1
             },
             {
               '@id': '/api/tasks/2',
               tour: {
                 '@id': '/api/tours/1',
                 name: 'Tour 1'
-              }
+              },
+              position: 2
             }
           ]
         },
         {
           '@id': '/api/tasks/4',
+          position: 3
         },
       ])
     })
@@ -436,9 +448,11 @@ describe('Selectors', () => {
       expect(items).toEqual([
         {
           '@id': '/api/tasks/3',
+          position: 0
         },
         {
           '@id': '/api/tasks/4',
+          position: 1
         },
         {
           '@id': '/api/tours/1',
@@ -450,82 +464,18 @@ describe('Selectors', () => {
               tour: {
                 '@id': '/api/tours/1',
                 name: 'Tour 1'
-              }
-            },
-            {
-              '@id': '/api/tasks/2',
-              tour: {
-                '@id': '/api/tours/1',
-                name: 'Tour 1'
-              }
-            }
-          ]
-        },
-      ])
-    })
-
-    it('should return mixed items with tasks & tours (tour with wrong positions)', () => {
-
-      const selectTaskListItemsByUsername = makeSelectTaskListItemsByUsername()
-
-      let state = {
-        logistics: {
-          date,
-          entities: {
-            tasks,
-            taskLists: {
-              ids: [
-                '/api/task_lists/1',
-              ],
-              entities: {
-                'bot_1': {
-                  '@id': '/api/task_lists/1',
-                  'username': 'bot_1',
-                  itemIds: [
-                    '/api/tasks/3',
-                    '/api/tasks/1',
-                    '/api/tasks/4',
-                    '/api/tasks/2',
-                  ]
-                }
               },
-            },
-          }
-        }
-      }
-
-      const items = selectTaskListItemsByUsername(state, {
-        username: 'bot_1'
-      })
-
-      expect(items).toHaveLength(3)
-      expect(items).toEqual([
-        {
-          '@id': '/api/tasks/3',
-        },
-        {
-          '@id': '/api/tours/1',
-          '@type': 'Tour',
-          name: 'Tour 1',
-          items: [
-            {
-              '@id': '/api/tasks/1',
-              tour: {
-                '@id': '/api/tours/1',
-                name: 'Tour 1'
-              }
+              position: 2
             },
             {
               '@id': '/api/tasks/2',
               tour: {
                 '@id': '/api/tours/1',
                 name: 'Tour 1'
-              }
+              },
+              position: 3
             }
           ]
-        },
-        {
-          '@id': '/api/tasks/4',
         },
       ])
     })

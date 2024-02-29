@@ -1,0 +1,120 @@
+{% extends "admin.html.twig" %}
+
+{% form_theme form 'form/restaurant.html.twig' %}
+
+{% set business_restaurant_group = form.vars.data %}
+{% set is_new = (business_restaurant_group.id is null) %}
+
+{% block breadcrumb %}
+<li>
+  <a href="{{ path('admin_restaurants') }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a>
+</li>
+<li>
+  <a href="{{ path('admin_business_restaurant_group_list') }}">{% trans %}adminDashboard.business_restaurant_groups.title{% endtrans %}</a>
+</li>
+<li>
+  {{ is_new ? ('basics.add'|trans) : business_restaurant_group.name }}
+</li>
+{% endblock %}
+
+{% block content %}
+{{ form_start(form) }}
+
+  <div class="row">
+    <div class="col-sm-3">
+      <ul class="nav nav-pills nav-stacked">
+        <li role="presentation" class="active">
+          <a role="tab" data-toggle="tab" href="#general" aria-controls="general">
+            {{ 'restaurant.form.section.general'|trans }}
+          </a>
+        </li>
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#fulfillment" aria-controls="fulfillment">
+            {{ 'restaurant.form.section.fulfillment'|trans }}
+          </a>
+        </li>
+        <li role="presentation">
+          <a role="tab" data-toggle="tab" href="#settlement" aria-controls="settlement">
+            {{ 'restaurant.form.section.settlement'|trans }}
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-9">
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="general">
+          {{ form_row(form.name) }}
+          {{ form_row(form.cutoffTime) }}
+          {{ form_row(form.enabled) }}
+          {{ form_row(form.restaurantsWithMenu) }}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="fulfillment">
+          {{ form_row(form.fulfillmentMethods, { label: false }) }}
+          {{ form_row(form.shippingOptionsDays) }}
+          {% if form.deliveryPerimeterExpression is defined %}
+            {{ form_row(form.deliveryPerimeterExpression) }}
+          {% endif %}
+        </div>
+        <div role="tabpanel" class="tab-pane" id="settlement">
+          {{ form_widget(form) }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <button type="submit" class="btn btn-block btn-lg btn-primary">
+    {{ 'basics.save'|trans }}
+  </button>
+{{ form_end(form) }}
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('restaurant-fulfillment-methods') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('restaurant-fulfillment-methods') }}
+  <script>
+    var $restaurants = $('#business_restaurant_group_restaurantsWithMenu')
+    var menusURL = "{{ path('admin_restaurant_menus', { restaurantId: '__ID__' }) }}";
+    new CoopCycle.Search(document.querySelector('#restaurant-search'), {
+      url: "{{ path('admin_restaurants_search', { format: 'json' }) }}",
+      placeholder: "{{ 'basics.search'|trans }}",
+      onSuggestionSelected: function(suggestion) {
+
+        var counter = $restaurants.find('tbody > tr').length;
+        var newRestaurant = $restaurants.attr('data-prototype');
+
+        newRestaurant = newRestaurant.replace(/__restaurantWithMenu__/g, counter);
+        newRestaurant = newRestaurant.replace(/__value__/g, suggestion.id);
+        newRestaurant = newRestaurant.replace(/__restaurant_name__/g, suggestion.name);
+
+        var options = ''
+        $.getJSON(menusURL.replace('__ID__', suggestion.id), {}, function (menus) {
+          menus.forEach(function (menu) {
+            options += `<option value="${menu.id}">${menu.name}</option>`
+          })
+          newRestaurant = newRestaurant.replace(/__restaurant_menus__/g, options);
+
+          $restaurants.find('tbody').append($(newRestaurant));
+
+          if (menus.length > 0) {
+            $(`#business_restaurant_group_restaurantsWithMenu_${counter}_menu`).val(menus[0].id)
+          }
+        });
+
+      }
+    });
+
+    $(document).on('change', '[data-toggle="menu"]', function(e) {
+      document.querySelector(e.target.dataset.controls).value = e.target.value
+    });
+
+    $(document).on('click', '[data-remove="restaurant"]', function(e) {
+      e.preventDefault();
+      $(this).closest('tr').remove();
+    });
+  </script>
+{% endblock %}

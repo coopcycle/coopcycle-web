@@ -110,6 +110,10 @@ class Settings
 
     public $autocomplete_provider;
 
+    public $company_legal_name;
+
+    public $company_legal_id;
+
     /**
      * The regex to validate Google API Key was found on https://github.com/odomojuli/RegExAPI
      *

@@ -85,7 +85,7 @@ class DashboardController extends AbstractController
         ];
     }
 
-    protected function getOrderList(Request $request, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
     {
         return [];
     }
@@ -136,6 +136,6 @@ class DashboardController extends AbstractController
             return $this->statsAction($restaurant->getId(), $request, $slugify, $translator, $entityManager, $paginator, $taxesHelper, $tokenFactory);
         }
 
-        return $this->redirectToRoute('nucleos_profile_profile_show');
+        return $this->redirectToRoute('profile_edit');
     }
 }

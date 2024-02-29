@@ -13,11 +13,11 @@
         <join-column name="address_id" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
-    <one-to-one field="hub" target-entity="AppBundle\Entity\Hub">
+    <many-to-one field="businessRestaurantGroup" target-entity="AppBundle\Entity\BusinessRestaurantGroup">
       <join-columns>
-        <join-column name="hub_id" referenced-column-name="id"/>
+        <join-column name="business_restaurant_group_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
-    </one-to-one>
+    </many-to-one>
     <one-to-many field="employees" target-entity="AppBundle\Entity\User" mapped-by="businessAccount" />
     <one-to-one field="billingAddress" target-entity="AppBundle\Entity\Address">
       <cascade>
@@ -27,5 +27,10 @@
         <join-column name="billing_address_id" referenced-column-name="id"/>
       </join-columns>
     </one-to-one>
+    <one-to-many field="orders" target-entity="Sylius\Component\Order\Model\OrderInterface" mapped-by="businessAccount">
+      <cascade>
+        <cascade-all />
+      </cascade>
+    </one-to-many>
   </entity>
 </doctrine-mapping>

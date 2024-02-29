@@ -15,27 +15,39 @@ export function withoutTasks(state, tasks) {
   )
 }
 
-export function withLinkedTasks(tasks, allTasks) {
+export function withLinkedTasks(tasks, allTasks, unique = false) {
+  /*
+    Pass the "unique" flag to avoid duplicates tasks in the returned array
+  */
 
   if (!Array.isArray(tasks)) {
     tasks = [ tasks ]
   }
 
   const groups = taskUtils.groupLinkedTasks(allTasks)
-
   const newTasks = []
+
   tasks.forEach(task => {
-    if (Object.prototype.hasOwnProperty.call(groups, task['@id'])) {
+    if (Object.prototype.hasOwnProperty.call(groups, task['@id']) ) {
       groups[task['@id']].forEach(taskId => {
-        const t = _.find(allTasks, t => t['@id'] === taskId)
-        newTasks.push(t)
+        if (unique &&
+          taskId != task['@id'] &&
+          (_.find(tasks, t => t['@id'] === taskId) || // no need to push this linked task, it was in the original tasks list
+          _.find(newTasks, t => t['@id'] === taskId) // no need to push this linked task, it was already found thanks to an other linked task of the same group
+          )) {
+          return
+        } else {
+          const t = _.find(allTasks, t => t['@id'] === taskId)
+          newTasks.push(t)
+        }
       })
     } else {
+      // task with no linked tasks
       newTasks.push(task)
     }
   })
 
-  return newTasks
+ return newTasks
 }
 
 export const timeframeToPercentage = (timeframe, reference) => {
@@ -70,14 +82,28 @@ export const isTaskVisible = (task, filters, date) => {
   const {
     showFinishedTasks,
     showCancelledTasks,
+    showIncidentReportedTasks,
     alwayShowUnassignedTasks,
     tags,
     hiddenCouriers,
     timeRange,
+    onlyFilter,
   } = filters
 
   const isFinished = _.includes(['DONE', 'FAILED'], task.status)
   const isCancelled = 'CANCELLED' === task.status
+  const isIncidentReported = task.hasIncidents
+
+  if (onlyFilter !== null) {
+    switch (onlyFilter) {
+      case 'showCancelledTasks':
+        return isCancelled
+      case 'showIncidentReportedTasks':
+        return isIncidentReported
+      default:
+        return false
+    }
+  }
 
   if (alwayShowUnassignedTasks && !task.isAssigned) {
     if (!showCancelledTasks && isCancelled) {
@@ -91,6 +117,10 @@ export const isTaskVisible = (task, filters, date) => {
   }
 
   if (!showCancelledTasks && isCancelled) {
+    return false
+  }
+
+  if (!showIncidentReportedTasks && isIncidentReported) {
     return false
   }
 

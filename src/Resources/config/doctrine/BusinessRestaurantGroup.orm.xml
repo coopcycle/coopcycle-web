@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity name="AppBundle\Entity\BusinessRestaurantGroup" table="business_restaurant_group">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name"/>
+    <field name="shippingOptionsDays" type="integer" column="shipping_options_days" nullable="false">
+      <options>
+        <option name="default">2</option>
+      </options>
+    </field>
+    <field name="deliveryPerimeterExpression" type="string" column="delivery_perimeter_expression" nullable="false">
+      <options>
+        <option name="default">distance &lt; 3000</option>
+      </options>
+    </field>
+    <field name="enabled" column="enabled" type="boolean" />
+    <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
+    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
+    <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </many-to-one>
+    <one-to-many field="restaurantsWithMenu" target-entity="AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu" mapped-by="businessRestaurantGroup">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <many-to-many field="closingRules" target-entity="AppBundle\Entity\ClosingRule">
+      <join-table name="business_restaurant_group_closing_rule">
+        <join-columns>
+          <join-column name="business_restaurant_group_id" referenced-column-name="id" />
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="rule_id" referenced-column-name="id" unique="true" />
+        </inverse-join-columns>
+      </join-table>
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </many-to-many>
+    <many-to-many field="fulfillmentMethods" target-entity="AppBundle\Entity\LocalBusiness\FulfillmentMethod">
+      <join-table name="business_restaurant_group_fulfillment_method">
+        <join-columns>
+          <join-column name="business_restaurant_group_id" referenced-column-name="id" />
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="method_id" referenced-column-name="id" unique="true" />
+        </inverse-join-columns>
+      </join-table>
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </many-to-many>
+    <field name="cutoffTime" type="string" length="5" column="cutoff_time" nullable="true"/>
+  </entity>
+</doctrine-mapping>

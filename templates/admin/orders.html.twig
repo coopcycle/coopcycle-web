@@ -44,8 +44,10 @@
   style="min-height: 180px;"></div>
 {% endif %}
 
-{% include "admin/pagination.html.twig" %}
 {% include "_partials/order/list.html.twig" %}
+<div class="text-center">
+  {{ knp_pagination_render(orders, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
 
 {% if is_granted('ROLE_ADMIN') %}
 <div class="modal fade" tabindex="-1" role="dialog" id="order-export-modal">

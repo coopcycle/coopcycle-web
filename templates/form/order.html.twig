@@ -101,9 +101,14 @@
                 {{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}
               </li>
               {% endif %}
-              {% if loopeat_context.suggestion == 'returns' %}
+              {% if form.vars.valid and loopeat_context.suggestion == 'returns' %}
               <li class="text-info">
                 {{ (loopeat_trans_prefix ~ '.suggest_returns.label')|trans }}
+              </li>
+              {% endif %}
+              {% if not form.vars.valid %}
+              <li class="text-danger">
+                {{ form.vars.errors|map(e => e.message)|join(' ') }}
               </li>
               {% endif %}
             </ul>
@@ -132,7 +137,7 @@
             data-credits-count-cents="{{ loopeat_context.creditsCountCents|json_encode|e('html_attr') }}"
             data-required-amount="{{ loopeat_context.requiredAmount|json_encode|e('html_attr') }}"
             data-containers-count="{{ loopeat_context.containersCount|json_encode|e('html_attr') }}"
-            data-oauth-url="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount)|e('html_attr') }}"
+            data-oauth-url="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount, true)|e('html_attr') }}"
           >
             <i class="fa fa-sliders mr-1"></i>
             <span>{{ (loopeat_trans_prefix ~ '.manage_deposit')|trans }}</span>

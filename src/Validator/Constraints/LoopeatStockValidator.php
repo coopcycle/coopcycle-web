@@ -49,12 +49,18 @@ class LoopeatStockValidator extends ConstraintValidator
             foreach ($product->getReusablePackagings() as $reusablePackaging) {
 
                 $packagingData = $reusablePackaging->getReusablePackaging()->getData();
-                $originalQuantity = ceil($reusablePackaging->getUnits() * $object->getQuantity());
 
-                $missingQuantity = $this->getMissingQuantity($packagingData['id'], $originalQuantity, $restaurantContainers);
+                $quantity = ceil($reusablePackaging->getUnits() * $object->getQuantity());
+                if ($constraint->useOverridenQuantity &&
+                    $object->hasOverridenLoopeatQuantityForPackaging($reusablePackaging->getReusablePackaging())) {
+                    $quantity = $object->getOverridenLoopeatQuantityForPackaging($reusablePackaging->getReusablePackaging());
+                }
+
+                $missingQuantity = $this->getMissingQuantity($packagingData['id'], $quantity, $restaurantContainers);
 
                 if ($missingQuantity > 0) {
                     $this->context->buildViolation($constraint->message)
+                        ->setParameter('%name%', $reusablePackaging->getReusablePackaging()->getName())
                         ->setInvalidValue($missingQuantity)
                         ->setCause($reusablePackaging->getReusablePackaging())
                         ->addViolation();

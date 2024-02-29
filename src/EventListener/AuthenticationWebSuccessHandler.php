@@ -70,7 +70,7 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
                 }
 
                 if ($user->hasRole('ROLE_COURIER')) {
-                    return new RedirectResponse($this->router->generate('nucleos_profile_profile_show'));
+                    return new RedirectResponse($this->router->generate('profile_edit'));
                 }
 
                 return $this->httpUtils->createRedirectResponse($request, $this->options['default_target_path']);

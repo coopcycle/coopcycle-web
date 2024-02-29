@@ -26,6 +26,7 @@ use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
+use AppBundle\Action\Order\Restore as OrderRestore;
 use AppBundle\Action\Order\Tip as OrderTip;
 use AppBundle\Action\Order\UpdateLoopeatFormats as UpdateLoopeatFormatsController;
 use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
@@ -36,9 +37,9 @@ use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
 use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
@@ -190,6 +191,15 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "security"="is_granted('cancel', object)",
  *       "openapi_context"={
  *         "summary"="Cancels a Order resource."
+ *       }
+ *     },
+ *     "restore"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/restore",
+ *       "controller"=OrderRestore::class,
+ *       "security"="is_granted('restore', object)",
+ *       "openapi_context"={
+ *         "summary"="Restores a cancelled Order resource."
  *       }
  *     },
  *     "assign"={
@@ -470,6 +480,8 @@ class Order extends BaseOrder implements OrderInterface
     protected $loopeatDetails;
 
     protected ?OrderCredentials $loopeatCredentials = null;
+
+    protected $businessAccount;
 
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
@@ -1148,33 +1160,6 @@ class Order extends BaseOrder implements OrderInterface
         $this->setTakeaway($fulfillmentMethod === 'collection');
     }
 
-    public function getFulfillmentMethodObject(): ?FulfillmentMethod
-    {
-        $restaurants = $this->getRestaurants();
-
-        if (count($restaurants) === 0) {
-
-            // Vendors may not have been processed yet
-            $restaurant = $this->getRestaurant();
-
-            if (null !== $restaurant) {
-
-                return $restaurant->getFulfillmentMethod(
-                    $this->getFulfillmentMethod()
-                );
-            }
-
-            return null;
-        }
-
-        $first = $restaurants->first();
-        $target = count($restaurants) === 1 ? $first : $first->getHub();
-
-        return $target->getFulfillmentMethod(
-            $this->getFulfillmentMethod()
-        );
-    }
-
     public function getRefundTotal(): int
     {
         $refundTotal = 0;
@@ -1254,6 +1239,10 @@ class Order extends BaseOrder implements OrderInterface
         if (!$this->hasVendor()) {
 
             return null;
+        }
+
+        if (null !== $this->getBusinessAccount()) {
+            return $this->getBusinessAccount()->getBusinessRestaurantGroup();
         }
 
         $first = $this->getRestaurants()->first();
@@ -1720,5 +1709,36 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return false;
+    }
+
+    public function hasEvent(string $type): bool
+    {
+        foreach ($this->getEvents() as $event) {
+            if ($event->getType() === $type) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getBusinessAccount(): ?BusinessAccount
+    {
+        return $this->businessAccount;
+    }
+
+    public function setBusinessAccount(?BusinessAccount $businessAccount): void
+    {
+        $this->businessAccount = $businessAccount;
+    }
+
+    public function isBusiness(): bool
+    {
+        return null !== $this->businessAccount;
+    }
+
+    public function getPickupAddresses(): Collection
+    {
+        return $this->getRestaurants()->map(fn (LocalBusiness $restaurant): Address => $restaurant->getAddress());
     }
 }

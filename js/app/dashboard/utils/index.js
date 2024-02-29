@@ -32,3 +32,8 @@ const country = (getCountry() || 'fr').toUpperCase()
 const phoneNumber = getExampleNumber(country, phoneNumberExamples)
 
 export const phoneNumberExample = i18n.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP', { example: phoneNumber.formatNational() })
+
+export const getDroppableListStyle = (isDraggingOver) => ({
+  background: isDraggingOver ? "lightblue" : "white",
+  borderWidth: isDraggingOver ? "4px" : "3px"
+})

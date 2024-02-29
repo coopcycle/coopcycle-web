@@ -3,6 +3,9 @@
 namespace Tests\AppBundle\Sylius\Product;
 
 use AppBundle\Sylius\Product\LazyProductVariantResolver;
+use AppBundle\Business\Context as BusinessContext;
+use AppBundle\Entity\BusinessAccount;
+use AppBundle\Entity\BusinessRestaurantGroup;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductOptionValue;
@@ -24,10 +27,14 @@ class LazyProductVariantResolverTest extends TestCase
     {
         $this->defaultVariantResolver = $this->prophesize(ProductVariantResolverInterface::class);
         $this->variantFactory = $this->prophesize(ProductVariantFactoryInterface::class);
+        $this->businessContext = $this->prophesize(BusinessContext::class);
+
+        $this->businessContext->isActive()->willReturn(false);
 
         $this->lazyVariantResolver = new LazyProductVariantResolver(
             $this->defaultVariantResolver->reveal(),
-            $this->variantFactory->reveal()
+            $this->variantFactory->reveal(),
+            $this->businessContext->reveal()
         );
     }
 
@@ -455,5 +462,34 @@ class LazyProductVariantResolverTest extends TestCase
         $this->assertEquals(900, $actualVariant->getPrice());
         $this->assertTrue($actualVariant->hasOptionValue($optionValue3));
         $this->assertTrue($actualVariant->hasOptionValue($optionValue4));
+    }
+
+    public function testGetVariantForBusiness()
+    {
+        $restaurantGroup = new BusinessRestaurantGroup();
+
+        $businessAccount = new BusinessAccount();
+        $businessAccount->setBusinessRestaurantGroup($restaurantGroup);
+
+        $this->businessContext->isActive()->willReturn(true);
+        $this->businessContext->getBusinessAccount()->willReturn($businessAccount);
+
+        $product = new Product();
+        $product->setCurrentLocale('en');
+
+        $defaultVariant = new ProductVariant();
+        $defaultVariant->setPrice(900);
+
+        $businessVariant = new ProductVariant();
+        $businessVariant->setPrice(950);
+        $businessVariant->setBusinessRestaurantGroup($restaurantGroup);
+
+        $product->addVariant($defaultVariant);
+        $product->addVariant($businessVariant);
+
+        $variant = $this->lazyVariantResolver
+            ->getVariant($product);
+
+        $this->assertSame($businessVariant, $variant);
     }
 }

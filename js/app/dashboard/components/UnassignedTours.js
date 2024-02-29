@@ -4,9 +4,11 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { Draggable, Droppable } from "react-beautiful-dnd"
 
-import UnassignedTour from './UnassignedTour'
-import { openCreateTourModal } from '../redux/actions'
+import Tour from './Tour'
+import { deleteGroup, editGroup, openCreateTourModal } from '../redux/actions'
 import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
+import TaskGroup from './TaskGroup'
+import { selectGroups } from '../redux/selectors'
 
 
 const Buttons = connect(
@@ -40,22 +42,44 @@ class UnassignedTours extends React.Component {
           </span>
         </h4>
         <div className="dashboard__panel__scroll">
-          <Droppable isDropDisabled={ this.props.isDropDisabled } droppableId="unassigned_tours">
+          <Droppable 
+            droppableId="unassigned_tours" 
+            key={this.props.tours.length} // assign a mutable key to trigger a re-render when inserting a nested droppable (for example : a new tour)
+            >
             {(provided) => (
               <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
-                { _.map(this.props.tours, (tour, index) => {
+                { _.map(this.props.groups, (group, index) => {
                   return (
-                    <Draggable key={ `tour-${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ index }>
+                    <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
                       {(provided) => (
                         <div
                           ref={ provided.innerRef }
                           { ...provided.draggableProps }
                           { ...provided.dragHandleProps }
                         >
-                          <UnassignedTour
+                          <TaskGroup
+                            key={ group.id }
+                            group={ group }
+                            tasks={ group.tasks }
+                            onConfirmDelete={ () => this.props.deleteGroup(group) }
+                            onEdit={ (data) => this.props.editGroup(data) } />
+                        </div>
+                      )}
+                    </Draggable>
+                  )
+                })}
+                { _.map(this.props.tours, (tour, index) => {
+                  return (
+                    <Draggable key={ `tour-${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ this.props.groups.length + index }>
+                      {(provided) => (
+                        <div
+                          ref={ provided.innerRef }
+                          { ...provided.draggableProps }
+                          { ...provided.dragHandleProps }
+                        >
+                          <Tour
                             key={ tour['@id'] }
                             tour={ tour }
-                            tasks={ tour.items }
                             />
                         </div>
                       )}
@@ -75,9 +99,16 @@ class UnassignedTours extends React.Component {
 function mapStateToProps (state) {
 
   return {
+    groups: selectGroups(state),
     tours: selectUnassignedTours(state),
-    isDropDisabled: state.logistics.ui.unassignedToursDroppableDisabled
   }
 }
 
-export default connect(mapStateToProps)(withTranslation()(UnassignedTours))
+function mapDispatchToProps(dispatch) {
+  return {
+    deleteGroup: (group) => dispatch(deleteGroup(group)),
+    editGroup: (group) => dispatch(editGroup(group)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(UnassignedTours))

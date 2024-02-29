@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\LiveUpdates;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
@@ -29,6 +30,7 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
         private TranslatorInterface $translator,
         private PricingManager $pricingManager,
         private LiveUpdates $liveUpdates,
+        private DeliveryManager $deliveryManager,
         private LoggerInterface $logger)
     {
     }
@@ -79,6 +81,8 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
 
                 continue;
             }
+
+            $this->deliveryManager->setDefaults($delivery);
 
             $store->addDelivery($delivery);
             $this->entityManager->persist($delivery);

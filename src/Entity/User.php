@@ -475,6 +475,11 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
         $this->businessAccount = $businessAccount;
     }
 
+    public function hasBusinessAccount(): bool
+    {
+        return null !== $this->businessAccount;
+    }
+
     public function getTermsAndConditionsAndPrivacyPolicy() {
         return $this->termsAndConditionsAndPrivacyPolicy;
     }

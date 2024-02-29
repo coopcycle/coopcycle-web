@@ -130,6 +130,21 @@ function start() {
     }
   }
 
+  // the empty tour panels are initially open
+  let expandedToursIds = []
+  tours.forEach((tour) => {if (tour.itemIds.length == 0) {expandedToursIds.push(tour['@id'])}})
+  
+  preloadedState = {
+    ...preloadedState,
+    logistics: {
+      ...preloadedState.logistics,
+      ui: {
+        ...preloadedState.ui,
+        expandedTourPanelsIds: expandedToursIds
+      }
+    }
+  }
+
   const store = createStoreFromPreloadedState(preloadedState)
 
   const mapRef = createRef()

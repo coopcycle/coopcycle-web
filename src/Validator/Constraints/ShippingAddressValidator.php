@@ -54,6 +54,11 @@ class ShippingAddressValidator extends ConstraintValidator
             return;
         }
 
+        // Skip this validation in business context
+        if ($object->isBusiness()) {
+            return;
+        }
+
         if (null === $value) {
             $this->context->buildViolation($constraint->addressNotSetMessage)
                 ->setCode(ShippingAddress::ADDRESS_NOT_SET)

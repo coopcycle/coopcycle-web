@@ -33,6 +33,18 @@ class BusinessAccountRegistrationForm extends AbstractType
                 $builder->add('user', RegistrationFormType::class, [
                     'label' => false
                 ]);
+
+                // Disable the email field so that it can't be modified
+
+                $form = $builder->get('user');
+                $email = $form->get('email');
+
+                $config = $email->getFormConfig();
+                $options = $email->getOptions();
+                $options['disabled'] = true;
+
+                $form->add('email', get_class($config->getType()->getInnerType()), $options);
+
                 break;
             case 2:
                 $builder->add('businessAccount', BusinessAccountType::class, [

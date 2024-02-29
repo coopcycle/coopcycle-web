@@ -56,10 +56,5 @@
         <cascade-all/>
       </cascade>
     </many-to-many>
-    <one-to-one field="businessAccount" target-entity="AppBundle\Entity\BusinessAccount">
-      <join-columns>
-        <join-column name="business_account_id" referenced-column-name="id"/>
-      </join-columns>
-    </one-to-one>
   </entity>
 </doctrine-mapping>

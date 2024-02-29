@@ -248,11 +248,6 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $stripePaymentMethods = [];
 
-    /**
-     * @Groups({"restaurant"})
-     */
-    protected $isAvailableForB2b;
-
     protected $mercadopagoAccount;
 
     protected $edenredMerchantId;
@@ -289,7 +284,6 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->preparationTimeRules = new ArrayCollection();
         $this->reusablePackagings = new ArrayCollection();
         $this->promotions = new ArrayCollection();
-        $this->isAvailableForB2b = false ;
 
         $this->fulfillmentMethods = new ArrayCollection();
         $this->addFulfillmentMethod('delivery', true);
@@ -399,22 +393,6 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->address = $address;
 
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAvailableForB2b(): bool
-    {
-        return $this->isAvailableForB2b;
-    }
-
-    /**
-     * @param bool $isAvailableForB2b
-     */
-    public function setIsAvailableForB2b(bool $isAvailableForB2b): void
-    {
-        $this->isAvailableForB2b = $isAvailableForB2b;
     }
 
     public function getStripeAccounts()

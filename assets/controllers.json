@@ -9,6 +9,12 @@
                 "enabled": false,
                 "fetch": "eager"
             }
+        },
+        "@symfony/ux-react": {
+          "react": {
+            "enabled": true,
+            "fetch": "lazy"
+          }
         }
     },
     "entrypoints": []

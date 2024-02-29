@@ -6,6 +6,7 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Vendor;
+use AppBundle\Fulfillment\FulfillmentMethodResolver;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\TimeRegistry;
 use AppBundle\Utils\OrderTimeHelper;
@@ -37,12 +38,15 @@ class OrderTimeHelperTest extends TestCase
         $this->timeRegistry->getAveragePreparationTime()->willReturn(0);
         $this->timeRegistry->getAverageShippingTime()->willReturn(0);
 
+        $this->fulfillmentMethodResolver = $this->prophesize(FulfillmentMethodResolver::class);
+
         $this->helper = new OrderTimeHelper(
             $this->shippingDateFilter->reveal(),
             $this->preparationTimeCalculator->reveal(),
             $this->shippingTimeCalculator->reveal(),
             $this->redis->reveal(),
             $this->timeRegistry->reveal(),
+            $this->fulfillmentMethodResolver->reveal(),
             'fr'
         );
     }
@@ -99,8 +103,9 @@ class OrderTimeHelperTest extends TestCase
         $cart
             ->getFulfillmentMethod()
             ->willReturn('delivery');
-        $cart
-            ->getFulfillmentMethodObject()
+
+        $this->fulfillmentMethodResolver
+            ->resolveForOrder($cart)
             ->willReturn($fulfillmentMethod);
 
         $this->shippingDateFilter

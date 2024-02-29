@@ -2,7 +2,9 @@ import configureStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import moment from 'moment'
 
-import { updateTask, REMOVE_TASK, UPDATE_TASK } from '../actions'
+import { updateTask, UPDATE_TASK, REMOVE_TASK }  from '../actions';
+
+
 
 // https://github.com/dmitry-zaets/redux-mock-store#asynchronous-actions
 const middlewares = [ thunk]
