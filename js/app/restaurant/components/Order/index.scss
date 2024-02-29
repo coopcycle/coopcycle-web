@@ -67,15 +67,6 @@ $card-padding: 2rem;
   }
 }
 
-.ReactModal__Body--open,
-.body--no-scroll {
-  .order-overlay {
-    // FIXME; use smth more advanced to properly calculate the scrollbar width for different browsers and operating systems
-    // An attempt to prevent the content from shifting when the scrollbar is removed (due to overflow: hidden)
-    right: $scrollbar-width;
-  }
-}
-
 // desktop (and larger tablets)
 .sticky-outer-wrapper {
   display: none;

@@ -111,7 +111,10 @@
 .body--no-scroll {
   overflow: hidden;
 
-  // FIXME; use smth more advanced to properly calculate the scrollbar width for different browsers and operating systems
-  // An attempt to prevent the content from shifting when the scrollbar is removed (due to overflow: hidden)
-  padding-right: $scrollbar-width;
+  @media (min-width: $screen-xl-min) {
+    // FIXME; use smth more advanced to properly calculate the scrollbar width for different browsers and operating systems
+    // it seems that it's not needed for mobile devices
+    // An attempt to prevent the content from shifting when the scrollbar is removed (due to overflow: hidden)
+    padding-right: 15px;
+  }
 }
