@@ -3,9 +3,12 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 
 class BusinessRestaurantGroup extends LocalBusinessGroup
 {
+    use SoftDeleteable;
+
     private $cutoffTime;
     private $businessAccount;
     private $restaurantsWithMenu;
@@ -64,8 +67,9 @@ class BusinessRestaurantGroup extends LocalBusinessGroup
      */
     public function getAddress()
     {
-        if (count($this->restaurants) > 0) {
-            return $this->restaurants->first->getAddress();
+        $restaurants = $this->getRestaurants();
+        if (count($restaurants) > 0) {
+            return $restaurants->first()->getAddress();
         }
         return null;
     }

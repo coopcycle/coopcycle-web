@@ -178,4 +178,9 @@ class ProductVariant extends BaseProductVariant implements ProductVariantInterfa
 
         return $this;
     }
+
+    public function isBusiness(): bool
+    {
+        return null !== $this->businessRestaurantGroup;
+    }
 }

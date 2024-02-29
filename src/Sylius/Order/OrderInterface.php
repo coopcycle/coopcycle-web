@@ -7,7 +7,6 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Sylius\OrderEvent;
 use AppBundle\Entity\Vendor;
 use AppBundle\LoopEat\LoopeatAwareInterface;
@@ -209,8 +208,6 @@ interface OrderInterface extends
      */
     public function getPickupAddress(): ?Address;
 
-    public function getFulfillmentMethodObject(): ?FulfillmentMethod;
-
     public function getAlcoholicItemsTotal(): int;
 
     public function isLoopeat(): bool;
@@ -231,4 +228,11 @@ interface OrderInterface extends
      * @param BusinessAccount $businessAccount
      */
     public function setBusinessAccount(BusinessAccount $businessAccount): void;
+
+    public function isBusiness(): bool;
+
+    /**
+     * @return Collection
+     */
+    public function getPickupAddresses(): Collection;
 }

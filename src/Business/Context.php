@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace AppBundle\Business;
 
+use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Security;
 
 class Context
 {
@@ -20,42 +21,40 @@ class Context
 
     public const COOKIE_KEY = 'channel_cart';
 
-    public function __construct(RequestStack $requestStack, TokenStorageInterface $tokenStorage)
+    public function __construct(RequestStack $requestStack, Security $security)
     {
         $this->requestStack = $requestStack;
-        $this->tokenStorage = $tokenStorage;
+        $this->security = $security;
     }
 
     public function isActive(): bool
     {
-        $request = $this->requestStack->getMainRequest();
+        if (null !== $request = $this->requestStack->getCurrentRequest()) {
+            if ($request->query->has('_business')) {
+                return $request->query->getBoolean('_business');
+            }
 
-        if ($request->query->has('_business')) {
-            return $request->query->getBoolean('_business');
+            return '1' === $request->cookies->get('_coopcycle_business');
         }
 
-        return '1' === $request->cookies->get('_coopcycle_business');
-    }
-
-    private function getUser()
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return;
-        }
-
-        if (!is_object($user = $token->getUser())) {
-            // e.g. anonymous authentication
-            return;
-        }
-
-        return $user;
+        return false;
     }
 
     public function getBusinessAccount(): ?BusinessAccount
     {
-        $user = $this->getUser();
+        $user = $this->security->getUser();
         if ($user && $user->hasBusinessAccount()) {
             return $user->getBusinessAccount();
+        }
+
+        return null;
+    }
+
+    public function getShippingAddress(): ?Address
+    {
+        $businessAccount = $this->getBusinessAccount();
+        if ($businessAccount) {
+            return $businessAccount->getAddress();
         }
 
         return null;

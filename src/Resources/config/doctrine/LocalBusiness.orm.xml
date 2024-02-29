@@ -74,11 +74,6 @@
     <field name="loopeatRefreshToken" type="text" column="loopeat_refresh_token" nullable="true"/>
     <field name="featured" type="boolean" column="featured"/>
     <field name="stripePaymentMethods" type="json_array" column="stripe_payment_methods"/>
-    <field name="isAvailableForB2b" type="boolean" nullable="false" >
-      <options>
-        <option name="default">false</option>
-      </options>
-    </field>
     <field name="edenredMerchantId" type="string" column="edenred_merchant_id" nullable="true"/>
     <field name="vytalEnabled" type="boolean" column="vytal_enabled">
       <options>
