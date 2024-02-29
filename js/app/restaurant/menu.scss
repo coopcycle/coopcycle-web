@@ -55,10 +55,11 @@ $item-height: 9rem;
   &--unavailable {
     flex: 1;
     display: block;
-    color: #ddd;
+    color: $gray;
     cursor: default;
 
     &:hover {
+      color: $gray;
       text-decoration: none;
     }
 
