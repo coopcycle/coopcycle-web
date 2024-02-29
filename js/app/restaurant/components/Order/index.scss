@@ -1,7 +1,8 @@
 @import "../../../../../assets/css/vars.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
 
-$card-padding: 2rem;
+$card-padding: 1rem;
+$card-padding-lg: 2rem;
 
 #restaurant__container {
   .panel {
@@ -12,6 +13,10 @@ $card-padding: 2rem;
 
   .panel-body {
     padding: $card-padding;
+
+    @media (min-width: $screen-lg-min) {
+      padding: $card-padding-lg;
+    }
   }
 }
 
@@ -166,6 +171,8 @@ $card-padding: 2rem;
   gap: 1rem;
 
   @media (min-width: $screen-lg-min) {
+    margin: 0 (-$card-padding-lg) 0;
+    padding: 0 $card-padding-lg 0;
     overflow-y: auto;
   }
 }
