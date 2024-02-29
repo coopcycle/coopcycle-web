@@ -30,9 +30,9 @@ $orig-image-height: 270px;
 .restaurant-info {
   display: flex;
   flex-direction: column;
-  padding-top: 1.5rem;
 
   @media (min-width: $screen-md-min) {
+    padding-top: 1.5rem;
     flex-direction: row;
     align-items: center;
   }
