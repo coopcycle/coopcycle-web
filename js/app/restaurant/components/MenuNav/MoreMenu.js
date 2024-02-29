@@ -70,11 +70,12 @@ export default function MoreMenu({ sections, currentSection, targetOffset }) {
         <div className="ant-anchor-link ant-anchor-space">
         </div>
         <Dropdown
-          trigger={ [ 'click' ] }
-          onOpenChange={ (open) => setIsOpen(open) }
           menu={ { items: items } }
+          overlayClassName="restaurant-menu-nav__more-overlay"
+          trigger={ [ 'click' ] }
           placement="bottomRight"
-          overlayClassName="restaurant-menu-nav__more-overlay">
+          autoAdjustOverflow={ false }
+          onOpenChange={ (open) => setIsOpen(open) }>
           <div className="restaurant-menu-nav__more-trigger">
             <CustomLink
               title={ currentSectionInMoreMenu?.name ??
