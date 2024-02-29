@@ -14,7 +14,7 @@
       {% include 'components/restaurant/product/menu_item_inner.html.twig' %}
       {% if product.hasOptions() %}
         <div class="menu-item__add-wrapper">
-          +
+          <div class="add-button">+</div>
         </div>
       {% endif %}
     </button>
@@ -24,7 +24,7 @@
         action="{{ path('restaurant_add_product_to_cart', { id: restaurant_id, code: product.code }) }}"
         data-product-simple
         class="menu-item__add-wrapper menu-item__add-wrapper--active">
-        <button class="button-reset w-100 h-100" type="submit">
+        <button class="button-reset add-button" type="submit">
           +
         </button>
       </form>
