@@ -24,12 +24,13 @@ $orig-image-height: 270px;
 .restaurant-header {
   display: flex;
   flex-direction: column;
-  padding: 1.5rem 0;
+  padding-bottom: 1.5rem;
 }
 
 .restaurant-info {
   display: flex;
   flex-direction: column;
+  padding-top: 1.5rem;
 
   @media (min-width: $screen-md-min) {
     flex-direction: row;
