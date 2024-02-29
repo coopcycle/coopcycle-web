@@ -18,6 +18,7 @@ export const TOGGLE_MOBILE_CART = 'TOGGLE_MOBILE_CART'
 export const REPLACE_ERRORS = 'REPLACE_ERRORS'
 export const SET_DATE_MODAL_OPEN = 'SET_DATE_MODAL_OPEN'
 export const CLOSE_ADDRESS_MODAL = 'CLOSE_ADDRESS_MODAL'
+export const GEOCODING_SUCCESS = 'GEOCODING_SUCCESS'
 export const GEOCODING_FAILURE = 'GEOCODING_FAILURE'
 export const OPEN_ADDRESS_MODAL = 'OPEN_ADDRESS_MODAL'
 
@@ -59,6 +60,7 @@ export const setDateModalOpen = createAction(SET_DATE_MODAL_OPEN)
 export const closeAddressModal = createAction(CLOSE_ADDRESS_MODAL)
 export const openAddressModal = createAction(OPEN_ADDRESS_MODAL)
 
+export const geocodingSuccess = createAction(GEOCODING_SUCCESS)
 export const geocodingFailure = createAction(GEOCODING_FAILURE)
 
 export const closeProductOptionsModal = createAction(CLOSE_PRODUCT_OPTIONS_MODAL)
@@ -310,8 +312,6 @@ function geocodeAndSync() {
       return
     }
 
-    dispatch(fetchRequest())
-
     if (getCountry() === 'gb' && cart.shippingAddress.geo) {
       dispatch(changeAddress({
         ...cart.shippingAddress,
@@ -321,11 +321,14 @@ function geocodeAndSync() {
       return
     }
 
+    dispatch(fetchRequest())
+
     geocode(cart.shippingAddress.streetAddress).then(address => {
 
       $('#menu').LoadingOverlay('hide')
 
       if (address) {
+        dispatch(geocodingSuccess())
         dispatch(changeAddress({
           ...cart.shippingAddress,
           ...address,

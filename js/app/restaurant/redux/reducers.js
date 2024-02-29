@@ -11,6 +11,7 @@ import {
   FETCH_FAILURE,
   FETCH_REQUEST,
   FETCH_SUCCESS,
+  GEOCODING_SUCCESS,
   GEOCODING_FAILURE,
   INVITE_PEOPLE_REQUEST,
   INVITE_PEOPLE_REQUEST_FAILURE,
@@ -89,6 +90,7 @@ const isFetching = (state = initialState.isFetching, action = {}) => {
     return true
   case FETCH_SUCCESS:
   case FETCH_FAILURE:
+  case GEOCODING_SUCCESS:
   case GEOCODING_FAILURE:
     return false
   default:
