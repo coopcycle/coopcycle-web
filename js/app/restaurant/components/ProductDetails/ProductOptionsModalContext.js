@@ -1,5 +1,4 @@
 import React, { createContext, useState } from 'react'
-import { isInitialValidValue } from './useProductOptions'
 
 const ProductOptionsModalContext = createContext([ {}, () => {} ])
 
@@ -11,18 +10,14 @@ const ProductOptionsModalProvider = (props) => {
         ...optionValue,
         quantity: 0,
       })),
-      valid: isInitialValidValue(option),
       total: 0
     }))
-
-    const invalidOptions = options.filter(opt => !opt.valid)
 
     return {
       options,
       price: props.price,
       quantity: 1,
       total: props.price,
-      missingMandatoryOptions: invalidOptions.length,
     }
   }
 

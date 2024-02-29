@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext } from 'react'
+import React, { forwardRef, useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'antd'
 
@@ -10,6 +10,7 @@ import ProductModalHeader from './ProductModalHeader'
 import { OptionGroup } from './ProductOptionGroup'
 import ProductInfo from './ProductInfo'
 import ProductQuantity from './ProductQuantity'
+import { isMandatory, isValid } from './useProductOptions'
 
 const getOffset = (options, index) => {
 
@@ -24,14 +25,33 @@ const getOffset = (options, index) => {
 }
 
 /* Exported to be able to test it */
-export const getOffsets = (options) => options.map((option, index) => getOffset(options, index))
+export const getOffsets = (options) => options.map(
+  (option, index) => getOffset(options, index))
 
-export default forwardRef(({ product, options, images, formAction, onSubmit, onClickClose }, ref) => {
-
+export default forwardRef((props, ref) => {
+  const { product, images, formAction, onSubmit, onClickClose } = props
   const [ state ] = useContext(ProductOptionsModalContext)
+  const options = state.options
+  const sumTotal = (state.total * state.quantity) / 100
+
+  const missingMandatoryOptions = state.options.filter(
+    opt => isMandatory(opt) && !isValid(opt)).length
+  const invalidOptions = state.options.filter(opt => !isValid(opt)).length
+
   const offsets = getOffsets(options)
 
   const { t } = useTranslation()
+
+  const alertMessage = useMemo(() => {
+    if (missingMandatoryOptions > 0) {
+      return t('CART_PRODUCT_OPTIONS_MANDATORY',
+        { count: missingMandatoryOptions })
+    } else if (invalidOptions > 0) {
+      return t('CART_PRODUCT_OPTIONS_INVALID')
+    } else {
+      return ''
+    }
+  }, [ missingMandatoryOptions, invalidOptions ])
 
   // Scroll to the next option
   // useEffect(() => {
@@ -43,20 +63,19 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
   //   }
   // }, [ state ]);
 
-  const sumTotal = (state.total * state.quantity) / 100
-
   return (
     // FIXME
     // The id is used in Cypress tests
     // It would be better to use data attributes
-    <form id={ `${product.code}-options` }
-      action={ formAction }
-      onSubmit={ onSubmit }
-      ref={ ref }
-      className="product-modal-container">
-      <ProductModalHeader name={ product.name }
+    <form id={ `${ product.code }-options` }
+          action={ formAction }
+          onSubmit={ onSubmit }
+          ref={ ref }
+          className="product-modal-container">
+      <ProductModalHeader
+        name={ product.name }
         onClickClose={ onClickClose } />
-      <main className='modal-body'>
+      <main className="modal-body">
         { images.length > 0 && (
           <ProductImagesCarousel images={ images } />
         ) }
@@ -64,24 +83,25 @@ export default forwardRef(({ product, options, images, formAction, onSubmit, onC
         <ProductQuantity />
         { options.map((option, index) => (
           <OptionGroup
-            key={ `option-${index}` }
+            key={ `option-${ index }` }
             index={ offsets[index] }
             option={ option } />
         )) }
       </main>
       <footer className="modal-footer">
-        {state.missingMandatoryOptions === 0 ? (
+        { (missingMandatoryOptions === 0 && invalidOptions === 0) ? (
           <button type="submit" className="btn btn-lg btn-block btn-primary">
-            <span data-product-total className="button-composite">
-              <i className="fa fa-shopping-cart"></i>
-              <span>{t('ADD_TO_CART')}</span>
-              <span>{(sumTotal).formatMoney()}</span>
-            </span>
+              <span data-product-total className="button-composite">
+                <i className="fa fa-shopping-cart"></i>
+                <span>{ t('ADD_TO_CART') }</span>
+                <span>{ (sumTotal).formatMoney() }</span>
+              </span>
           </button>
         ) : (
-          <Alert message={t('CART_PRODUCT_OPTIONS_MANDATORY', { count: state.missingMandatoryOptions })}
-                 type="info" showIcon/>)
-        }
+          <Alert
+            message={ alertMessage }
+            type="info"
+            showIcon />) }
       </footer>
     </form>
   )

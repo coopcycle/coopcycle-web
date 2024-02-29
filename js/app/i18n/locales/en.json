@@ -231,6 +231,7 @@
         "CART_DYNAMIC_DELIVERY_FEE": "The delivery fee is calculated based on your address",
         "CART_TAKE_AWAY": "On-site pick-up",
         "CART_PRODUCT_OPTIONS_MANDATORY": "{{count}} selection(s) required",
+        "CART_PRODUCT_OPTIONS_INVALID": "Some selections are not available",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE": "Please choose between {{min}} and {{max}} values",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_AT_LEAST": "Please choose at least {{count}} value(s)",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Please choose up to {{count}} value(s)",

@@ -7,10 +7,9 @@ import {
 
 const OptionValueLabel = ({ option, optionValue }) => (
   <>
-    <span className="product-option-item-label__name">{optionValue.value}</span>
+    <span className="product-option-item__name">{optionValue.value}</span>
     {(option.strategy === 'option_value' && optionValue.price > 0) && (
-      <span className="product-option-item-label__price">+{(optionValue.price /
-        100).formatMoney()}</span>
+      <span>+{(optionValue.price / 100).formatMoney()}</span>
     )}
   </>
 )
@@ -22,7 +21,7 @@ export const OptionValue = ({ index, option, optionValue }) => {
   return (
     <div
       className="radio m-0 product-option-item product-option-item-single-choice">
-      <label className="product-option-item-label">
+      <label>
         <input
           type="radio"
           name={`options[${index}][code]`}
@@ -61,7 +60,6 @@ export const AdditionalOptionValue = ({
         type="hidden" name={`options[${realIndex}][code]`}
         value={optionValue.code}/>
       <label
-        className="product-option-item-label"
         htmlFor={''}
         onClick={() => {
           incrementValueQuantity(option, optionValue)

@@ -12,21 +12,18 @@ const defaultValuesRange = {
 
 export const getValuesRange = option => option.valuesRange || defaultValuesRange
 
-export function isInitialValidValue(option) {
-  if (!option.additional) {
-    return false
+export function isMandatory(option) {
+  if (option.additional) {
+    const valuesRange = getValuesRange(option)
+    const min = parseInt(valuesRange.lower, 10)
+    return min > 0
+  } else {
+    return true
   }
-
-  const valuesRange = getValuesRange(option)
-  const min = parseInt(valuesRange.lower, 10)
-
-  return min === 0
 }
 
-
-function isValidOption(option, values) {
-
-  const totalQuantity = values.reduce(
+export function isValid(option) {
+  const totalQuantity = option.values.reduce(
     (quantity, val) => quantity + val.quantity,
     0
   )
@@ -103,20 +100,16 @@ export const useProductOptions = () => {
           ...opt,
           values: newValues,
           total: newValues.reduce((total, val) => total + (val.price * val.quantity), 0),
-          valid: isValidOption(opt, newValues),
         }
       }
 
       return opt
     })
 
-    const invalidOptions = newOptions.filter(opt => !opt.valid)
-
     setState({
       ...state,
       options: newOptions,
       total: state.price + _.sumBy(newOptions, 'total'),
-      missingMandatoryOptions: invalidOptions.length,
     })
   }
 
