@@ -26,14 +26,12 @@ import ProgressBar from './ProgressBar'
 
 moment.locale($('html').attr('lang'))
 
-const TaskOrTour = ({ item, onRemove, unassignTasks }) => {
+const TaskOrTour = ({ item, onRemove }) => {
 
   if (item['@type'] === 'Tour') {
 
     return (
-      <Tour
-        tour={ item }
-        unassignTasks={ unassignTasks } />
+      <Tour tour={ item } />
     )
   }
 
@@ -74,7 +72,7 @@ class InnerList extends React.Component {
               <TaskOrTour
                 item={ item }
                 onRemove={ item => this.props.onRemove(item) }
-                unassignTasks={ this.props.unassignTasks } />
+              />
             </div>
           )}
         </Draggable>
@@ -275,8 +273,8 @@ class TaskList extends React.Component {
                 <InnerList
                   items={ items }
                   onRemove={ task => this.remove(task) }
-                  unassignTasks={ this.props.unassignTasks }
-                  username={ username } />
+                  username={ username }
+                />
                 { provided.placeholder }
               </div>
             )}
