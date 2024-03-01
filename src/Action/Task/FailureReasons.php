@@ -2,6 +2,9 @@
 
 namespace AppBundle\Action\Task;
 
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Model\CustomFailureReasonInterface;
+use AppBundle\Entity\Organization;
 use AppBundle\Entity\Store;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +34,15 @@ class FailureReasons
         }, $config['failure_reasons']);
     }
 
+    private function getFailureReasons(CustomFailureReasonInterface $entity)
+    {
+        $set = $entity->getFailureReasonSet();
+        if (is_null($set)) {
+            return $this->getDefaultReasons();
+        }
+        return $set->getReasons();
+    }
+
     public function __invoke($data, Request $request)
     {
 
@@ -40,14 +52,27 @@ class FailureReasons
             return $this->getDefaultReasons();
         }
 
-        $store = $this->em->getRepository(Store::class)->findOneBy([
-            'organization' => $org
-        ]);
+        $reverse = $this->em->getRepository(Organization::class)
+            ->reverseFindByOrganizarionID($org);
 
-        if (is_null($store->getFailureReasonSet())) {
+        if (empty($reverse)) {
             return $this->getDefaultReasons();
         }
+        $reverse = $reverse[0];
 
-        return $store->getFailureReasonSet()->getReasons();
+        if (!is_null($reverse['store_id'])) {
+            $store = $this->em->getRepository(Store::class)
+                ->find($reverse['store_id']);
+            return $this->getFailureReasons($store);
+        }
+
+        if (!is_null($reverse['restaurant_id'])) {
+            $restaurant = $this->em->getRepository(LocalBusiness::class)
+                ->find($reverse['restaurant_id']);
+            return $this->getFailureReasons($restaurant);
+        }
+
+        return $this->getDefaultReasons();
+
     }
 }
