@@ -25,6 +25,7 @@ export const recurrenceRulesAdapter = createEntityAdapter({
 export const selectCurrentTask = state => state.logistics.ui.currentTask
 export const selectAreToursDroppable = state => state.logistics.ui.areToursDroppable
 export const selectExpandedTourPanelsIds = state => state.logistics.ui.expandedTourPanelsIds
+export const selectLoadingTourPanelsIds = state => state.logistics.ui.loadingTourPanelsIds
 export const selectTaskListsLoading = state => state.logistics.ui.taskListsLoading
 
 // Settings selectors
@@ -60,7 +61,7 @@ export const selectGroups = createSelector(
     const groups = []
 
     const tasksWithGroup = filter(
-      unassignedTasks, 
+      unassignedTasks,
       task => belongsToGroup(task) && !belongsToTour(task) // if the task is in a tour we don't want it to be displayed in "Unassigned > Group"
     )
 
