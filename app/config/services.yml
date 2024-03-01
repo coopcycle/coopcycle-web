@@ -1344,3 +1344,7 @@ services:
   AppBundle\Utils\RestaurantDecorator: ~
 
   AppBundle\Fulfillment\FulfillmentMethodResolver: ~
+
+  AppBundle\Service\EdenredManager:
+    arguments:
+      $coopcycleAppName: '%env(COOPCYCLE_APP_NAME)%'
