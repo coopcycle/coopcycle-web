@@ -38,7 +38,7 @@ const DashboardApp = () => {
   ]
 
   useEffect(() => {
-    window.addEventListener('keydown', e => {
+    const toggleSearchOnKeyDown = e => {
       const isCtrl = (e.ctrlKey || e.metaKey)
       if (e.keyCode === 114 || (isCtrl && e.keyCode === 70)) {
         if (!searchIsOn) {
@@ -49,7 +49,13 @@ const DashboardApp = () => {
       if (e.keyCode === 27) {
         dispatch(closeSearch())
       }
-    })
+    }
+    window.addEventListener('keydown', toggleSearchOnKeyDown)
+
+    // return cleanup function
+    return () => {
+      window.removeEventListener('keydown', toggleSearchOnKeyDown, false)
+    }
   })
 
   return (
