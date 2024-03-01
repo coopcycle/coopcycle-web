@@ -115,12 +115,12 @@ const UnassignedTasks = () => {
   // not the nicest ever. when tasks changed, we want to render droppable on "next tick"
   // otherwise we may run in the error "Unable to find draggable with id: <taskId>" (then the task wont be draggable)
   // ref https://github.com/atlassian/@hello-pangea/dnd/issues/2407#issuecomment-1648339464
-  const [renderDroppableArea, setEnabled] = useState(false);
+  const [renderDroppableArea, setRenderDroppableArea] = useState(false);
   useEffect(() => {
-    const animation = requestAnimationFrame(() => setEnabled(true));
+    const animation = requestAnimationFrame(() => setRenderDroppableArea(true));
     return () => {
-    cancelAnimationFrame(animation);
-    setEnabled(false);
+      cancelAnimationFrame(animation);
+      setRenderDroppableArea(false);
     };
   }, [standaloneTasks]);
 
