@@ -40,7 +40,7 @@ const StandaloneTasks =  React.memo(
     })
   },
   (prevProps, nextProps) => {
-    if (nextProps.tasks === prevProps.tasks && nextProps.offset === prevProps.offset) {
+    if (nextProps.tasks === prevProps.tasks && nextProps.offset === prevProps.offset && nextProps.selectedTasksLength === prevProps.selectedTasksLength) {
         return true
     }
     return false

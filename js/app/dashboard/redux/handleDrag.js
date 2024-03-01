@@ -10,11 +10,11 @@ import { toast } from 'react-toastify'
 export function handleDragStart(result) {
   return function(dispatch, getState) {
 
-    const selectedTasks = selectSelectedTasks(getState())
+    const selectedTasksIds = selectSelectedTasks(getState()).map(t => t['@id'])
 
     // If the user is starting to drag something that is not selected then we need to clear the selection.
     // https://github.com/atlassian/@hello-pangea/dnd/blob/master/docs/patterns/multi-drag.md#dragging
-    const isDraggableSelected = selectedTasks.includes(result.draggableId)
+    const isDraggableSelected = selectedTasksIds.includes(result.draggableId)
 
     if (!isDraggableSelected) {
       dispatch(clearSelectedTasks())
@@ -29,18 +29,18 @@ export function handleDragStart(result) {
 
   }
 }
-  
+
 export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modifyTour=modifyTourAction) {
-  
+
   return function(dispatch, getState) {
 
     const handleDropInTaskList = (tasksList, selectedTasks, index, updateTourUI=null) => {
       let newTasksList = [...tasksList.items]
-    
-    
+
+
       selectedTasks.forEach((task) => {
         let taskIndex = newTasksList.findIndex((item) => item['@id'] === task['@id'])
-        // if the task was already in the tasklist, remove from its original place 
+        // if the task was already in the tasklist, remove from its original place
         if ( taskIndex > -1) {
           newTasksList.splice(taskIndex, 1)
         }
