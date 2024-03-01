@@ -19,6 +19,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints;
 
@@ -83,10 +84,18 @@ class StoreType extends LocalBusinessType
                 ->add('tags', TagsType::class)
                 ->add('failureReasonSet', EntityType::class, array(
                     'label' => 'form.store_type.failure_reason_set.label',
+                    'help' => 'form.store_type.failure_reason_set.help',
                     'class' => FailureReasonSet::class,
                     'choice_label' => 'name',
                     'query_builder' => new OrderByNameQueryBuilder(),
                     'required' => false,
+                    'translation_domain' => 'messages',
+                    'help_translation_parameters' => [
+                        '%failure_reason_set%' => $this->urlGenerator->generate('admin_failures_list', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                        '%entity%' => 'store',
+                    ],
+                    'help_html' => true,
+
                 ));
 
             if ($this->DBSchenkerEnabled) {
