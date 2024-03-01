@@ -138,7 +138,6 @@ function start() {
   _.merge(preloadedState, {
     logistics: {
       ui: {
-        ...preloadedState.logistics.ui,
         expandedTourPanelsIds: expandedToursIds,
         loadingTourPanelsIds: []
       }
