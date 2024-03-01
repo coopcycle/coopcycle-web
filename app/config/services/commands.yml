@@ -156,6 +156,10 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:edenred:capture' }
 
+  AppBundle\Command\EdenredRestaurantsReceiveCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:edenred:restaurants-receive' }
+
   AppBundle\Command\AnonymizeCommand:
     tags:
       - { name: 'console.command', command: 'coopcycle:anonymize' }
