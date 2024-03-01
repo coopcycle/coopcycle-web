@@ -36,6 +36,7 @@ use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\LoopEat\Client as LoopeatClient;
+use AppBundle\Service\EdenredManager;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -1677,7 +1678,7 @@ trait RestaurantTrait
         ]));
     }
 
-    public function addRestaurantsEdenredAction(Request $request)
+    public function addRestaurantsEdenredAction(Request $request, EdenredManager $edenredManager)
     {
         $form = $this->createFormBuilder()
             ->add('restaurants', CollectionType::class, [
@@ -1695,20 +1696,32 @@ trait RestaurantTrait
             ->getForm();
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-            $restaurantsToSync = array_filter($form->get('restaurants')->getData(), function($restaurant) {
-                return !$restaurant->getEdenredSyncSent();
-            });
+            $restaurantsToSync = [];
+            $errors = [];
 
-            // TODO call a service to create and send the XML to Edenred
+            foreach($form->get('restaurants')->getData() as $restaurant) {
+                if ($restaurant->hasAdditionalProperty('siret')) {
+                    if (!$restaurant->getEdenredSyncSent()) {
+                        $restaurantsToSync[] = $restaurant;
+                    }
+                } else {
+                    $errors[] = $this->translator->trans('restaurants.edenred.sending_failed.no_siret', [
+                        '%restaurant_name%' => $restaurant->getName()
+                    ]);
+                }
+            }
 
-            $this->addFlash(
-                'notice',
-                $this->translator->trans('global.changesSaved')
-            );
+            $result = $edenredManager->createSyncFileAndSendToEdenred($restaurantsToSync);
+
+            if ($result) {
+                $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+            }
 
             return $this->render('restaurant/edenred_sync.html.twig', $this->withRoutes([
                 'layout' => $request->attributes->get('layout'),
                 'form' => $form->createView(),
+                'sending_result' => $result,
+                'errors' => $errors,
             ]));
         }
 

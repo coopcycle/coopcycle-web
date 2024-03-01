@@ -1421,3 +1421,7 @@ restaurants.edenred.already_sent: "Los restaurantes que aparecen tachados es por
 restaurants.edenred.added_list.name: Nombre
 restaurants.edenred.added_list.merchant_id: Restaurant ID
 restaurants.edenred.added_list.tr_card_enabled: TR card habilitada
+restaurants.edenred.sending_success: "Los restaurantes han sido enviados a Edenred con éxito."
+restaurants.edenred.sending_failed: "Hubo un error al enviar los restaurantes a Edenred. Intente nuevamente más tarde."
+restaurants.edenred.sending_failed.errors: "Se han encontrado errores en algunos de los restaurantes:"
+restaurants.edenred.sending_failed.no_siret: "El restaurant '%restaurant_name%' no tiene un Siret definido."

@@ -1447,3 +1447,7 @@ restaurants.edenred.already_sent: "The restaurants that appear crossed out in th
 restaurants.edenred.added_list.name: Name
 restaurants.edenred.added_list.merchant_id: Merchant ID
 restaurants.edenred.added_list.tr_card_enabled: TR card enabled
+restaurants.edenred.sending_success: "The restaurants has been successfully sent to Edenred."
+restaurants.edenred.sending_failed: "Error trying to send restaurants to Edenred. Please try again later."
+restaurants.edenred.sending_failed.errors: "There are errors with some restaurants:"
+restaurants.edenred.sending_failed.no_siret: "The restaurant '%restaurant_name%' has not a Siret defined."
