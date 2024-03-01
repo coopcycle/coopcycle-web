@@ -140,7 +140,7 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       tour = selectTourById(getState(), tourId)
       selectedTasks = tour.items
     }
-    
+
     // we want to move linked tasks together only in this case, so the dispatcher can have fine-grained control
     if (source.droppableId === 'unassigned') {
       selectedTasks =  withLinkedTasks(selectedTasks, allTasks, true)
@@ -150,21 +150,21 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
     }
 
     if (selectedTasks.length === 0) return // can happen, for example dropping empty tour
-    
+
     if (destination.droppableId.startsWith('tour:')) {
       const tours = selectAllTours(getState())
       var tourId = destination.droppableId.replace('tour:', '')
       const tour = tours.find(t => t['@id'] == tourId)
 
       var newTourItems = [ ...tour.items ]
-    
+
       // Reorder tasks inside a tour -> remove tasks that were already there
       if (source.droppableId === destination.droppableId) {
         _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t['@id']))
       }
 
         Array.prototype.splice.apply(newTourItems,
-          Array.prototype.concat([ destination.index, 0 ], selectedTasks))  
+          Array.prototype.concat([ destination.index, 0 ], selectedTasks))
 
       if (isTourAssigned(tour)) {
         const tasksLists = selectTaskLists(getState())
