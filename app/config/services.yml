@@ -1348,3 +1348,5 @@ services:
   AppBundle\Service\EdenredManager:
     arguments:
       $coopcycleAppName: '%env(COOPCYCLE_APP_NAME)%'
+    tags:
+    - { name: monolog.logger, channel: edenred }
