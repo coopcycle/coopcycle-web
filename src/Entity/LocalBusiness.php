@@ -258,7 +258,12 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @Groups({"restaurant"})
      */
-    protected $edenredMerchantActive;
+    protected $edenredTRCardEnabled;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $edenredEnabled;
 
     /**
      * @Groups({"restaurant"})
@@ -821,14 +826,24 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->edenredMerchantId = $edenredMerchantId;
     }
 
-    public function getEdenredMerchantActive()
+    public function isEdenredEnabled()
     {
-        return $this->edenredMerchantActive;
+        return $this->edenredEnabled;
     }
 
-    public function setEdenredMerchantActive($edenredMerchantActive)
+    public function setEdenredEnabled($edenredEnabled)
     {
-        $this->edenredMerchantActive = $edenredMerchantActive;
+        $this->edenredEnabled = $edenredEnabled;
+    }
+
+    public function isEdenredTRCardEnabled()
+    {
+        return $this->edenredTRCardEnabled;
+    }
+
+    public function setEdenredTRCardEnabled($edenredTRCardEnabled)
+    {
+        $this->edenredTRCardEnabled = $edenredTRCardEnabled;
     }
 
     public function getEdenredSyncSent()

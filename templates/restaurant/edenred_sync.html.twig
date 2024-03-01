@@ -68,7 +68,7 @@
           <tr>
             <td>{{ restaurant.name }}</td>
             <td>{{ restaurant.edenredMerchantId ? restaurant.edenredMerchantId : '-'}}</td>
-            <td>{{ (restaurant.edenredMerchantActive ? 'basics.yes' : 'basics.no')|trans }}</td>
+            <td>{{ (restaurant.edenredTRCardEnabled ? 'basics.yes' : 'basics.no')|trans }}</td>
           </tr>
         {% endfor %}
       </tbody>
