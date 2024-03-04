@@ -22,7 +22,7 @@ import {
   setCurrentTask,
   unassignTasks
 } from '../../redux/actions'
-import {selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks} from '../../redux/selectors'
+import {belongsToTour, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
@@ -62,6 +62,10 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
   const containsOnePickupAndAtLeastOneDropoff = selectedTasksByType.PICKUP === 1 && selectedTasksByType.DROPOFF > 0
 
   const actions = []
+
+  if (selectedTasks.find(t => belongsToTour(t))) {
+    return []
+  }
 
   let selectedTask
 
@@ -152,7 +156,7 @@ const DynamicMenu = () => {
   const tasksToUnassign =
   _.filter(selectedTasks, selectedTask =>
     !_.find(unassignedTasks, unassignedTask => unassignedTask['@id'] === selectedTask['@id']))
-    
+
   const selectedTask = selectedTasks.length > 0 ? selectedTasks[0] : undefined
 
   return (
