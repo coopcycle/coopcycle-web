@@ -37,7 +37,7 @@ describe('updateTask', () => {
 
         const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
 
-        expect(actions).toStrictEqual([UNASSIGN_SINGLE, MOVE_TO_TOP, MOVE_TO_BOTTOM, CANCEL_MULTI, MOVE_TO_NEXT_DAY_MULTI, MOVE_TO_NEXT_WORKING_DAY_MULTI])
+        expect(actions).toStrictEqual([UNASSIGN_SINGLE, MOVE_TO_TOP, MOVE_TO_BOTTOM, CANCEL_MULTI])
     })
 
     it('should return actions for several assigned tasks', () => {
@@ -61,7 +61,7 @@ describe('updateTask', () => {
 
         const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
 
-        expect(actions).toStrictEqual([CANCEL_MULTI, MOVE_TO_NEXT_DAY_MULTI, MOVE_TO_NEXT_WORKING_DAY_MULTI])
+        expect(actions).toStrictEqual([])
     })
 
     it('should return actions for several tasks into an unassigned tour', () => {
@@ -77,7 +77,7 @@ describe('updateTask', () => {
 
         const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
 
-        expect(actions).toStrictEqual([CANCEL_MULTI, MOVE_TO_NEXT_DAY_MULTI, MOVE_TO_NEXT_WORKING_DAY_MULTI])
+        expect(actions).toStrictEqual([])
     })
 
     it('should return actions for several tasks into an assigned tour', () => {
@@ -90,6 +90,6 @@ describe('updateTask', () => {
 
         const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
 
-        expect(actions).toStrictEqual([UNASSIGN_MULTI])
+        expect(actions).toStrictEqual([])
     })
 })

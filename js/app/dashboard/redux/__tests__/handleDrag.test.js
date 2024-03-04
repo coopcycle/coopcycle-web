@@ -10,19 +10,19 @@ const mockStore = configureStore(middlewares)
 
 describe('handleDragEnd', () => {
     const store = mockStore(storeFixture)
-  
+
     it ('should assign a tour at the beginning of a tasklist', () => {
       const dispatch = jest.fn(),
         mockModifyTaskList = jest.fn()
-  
+
       let result = {
         draggableId: 'tour:/api/tours/114',
         source: {droppableId: 'unassigned:'}, destination: {droppableId: 'assigned:admin', index: 0},
       }
-    
+
       handleDragEnd(result, mockModifyTaskList)(dispatch, store.getState)
-  
-  
+
+
       expect(mockModifyTaskList).toHaveBeenLastCalledWith(
         "admin",
         expect.arrayContaining([
@@ -35,21 +35,21 @@ describe('handleDragEnd', () => {
         ]),
         null
       )
-        
+
     })
-  
+
     it ('should assign a tour inside a tasklist at given index', () => {
       const dispatch = jest.fn(),
         mockModifyTaskList = jest.fn()
-  
+
       let result = {
         draggableId: 'tour:/api/tours/114',
         source: {droppableId: 'unassigned:'},
         destination: {droppableId: 'assigned:admin', index: 1}
       }
-    
+
       handleDragEnd(result, mockModifyTaskList)(dispatch, store.getState)
-  
+
       expect(mockModifyTaskList).toHaveBeenLastCalledWith(
         "admin",
         expect.arrayContaining([
@@ -62,20 +62,20 @@ describe('handleDragEnd', () => {
         ]),
         null
       )
-        
+
     })
-  
+
     it ('should assign a group at the end of a tasklist',  () => {
       const dispatch = jest.fn(),
         mockModifyTaskList = jest.fn()
-  
+
       let result = {
         draggableId: 'group:23',
         source: {droppableId: 'unassigned:'}, destination: {droppableId: 'assigned:admin', index: 1}
       }
-    
+
       handleDragEnd(result, mockModifyTaskList)(dispatch, store.getState)
-  
+
       expect(mockModifyTaskList).toHaveBeenLastCalledWith(
         "admin",
         expect.arrayContaining([
@@ -88,23 +88,23 @@ describe('handleDragEnd', () => {
         ]),
         null
       )
-        
+
     })
-  
+
     it ('should assign a task in a tour which is already assigned', async () => {
       const dispatch = jest.fn(),
         mockModifyTaskList = jest.fn(),
         mockModifyTour = jest.fn()
-  
+
       dispatch.mockReturnValue().mockResolvedValueOnce({}).mockReturnValue()
-  
+
       let result = {
         draggableId: '/api/tasks/734',
         source: {droppableId: 'unassigned'}, destination: {droppableId: 'tour:/api/tours/111', index: 1}
       }
-    
+
       handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
-  
+
       expect(mockModifyTaskList).toHaveBeenCalledWith(
         "admin",
         expect.arrayContaining([
@@ -116,12 +116,12 @@ describe('handleDragEnd', () => {
           expect.objectContaining({"@id": '/api/tasks/727'}),
         ]),
         expect.any(Function)
-  
+
       )
-      
+
       // kind of hackish way to wait for mockModifyTaskList.then(...) to reolve before testing the call to modifyTour
       await Promise.resolve();
-  
+
       expect(mockModifyTour).toHaveBeenLastCalledWith(
         expect.objectContaining({'@id': '/api/tours/111'}),
         expect.arrayContaining([
@@ -134,7 +134,7 @@ describe('handleDragEnd', () => {
         ]),
         true
       )
-        
+
     })
 
     it ('should not unassign a task from tasklist to unassigned tour', () => {
@@ -156,13 +156,12 @@ describe('handleDragEnd', () => {
 
       let result = {
         draggableId: '/api/tasks/733',
-        source: {droppableId: '/api/tours/111'}, destination: {droppableId: 'tour:/api/tours/114', index: 1}
+        source: {droppableId: 'tour:/api/tours/111'}, destination: {droppableId: 'tour:/api/tours/114', index: 1}
       }
 
       handleDragEnd(result)(dispatch, store.getState)
 
       expect(dispatch).toHaveBeenCalledTimes(0)
     })
-  
+
   })
-  
