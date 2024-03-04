@@ -453,7 +453,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     * @var bool
     * @Groups({"task"})
     */
-    private $hasIncidents = false;
+    private $hasIncidents = false; //TODO(incident): Make this stored value into a computed value
+
+    /**
+    * @Groups({"task"})
+    */
+    private $incidents;
 
     public function __construct()
     {
@@ -461,6 +466,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->images = new ArrayCollection();
         $this->packages = new ArrayCollection();
         $this->edifactMessages = new ArrayCollection();
+        $this->incidents = new ArrayCollection();
     }
 
     public function getId()
