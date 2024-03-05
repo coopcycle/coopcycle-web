@@ -6,7 +6,7 @@ import _ from 'lodash'
 import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
-import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded } from '../redux/actions'
+import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded, updateTourInUI } from '../redux/actions'
 import { isTourAssigned, tourIsAssignedTo } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
@@ -24,6 +24,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
     e.preventDefault()
     $('.task__draggable').LoadingOverlay('show', {image: false})
     let _tour = Object.assign({}, tour, {name : tourName})
+    dispatch(updateTourInUI(_tour, tour.items))
     await dispatch(modifyTour(_tour, tour.items))
     setToggleInputForName(false)
     $('.task__draggable').LoadingOverlay('hide')

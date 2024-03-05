@@ -223,11 +223,9 @@ export function assignAfter(username, task, after) {
   }
 }
 
-export function unassignTasks(username, tasks, updateTourUI=null) {
+export function unassignTasks(username, tasks) {
     /*
       Unassign tasks.
-
-      We can pass a callback updateTourUI so we update the UI related to the tour before we do the AJAX call to modify the tasklist
     */
 
   if (!Array.isArray(tasks)) {
@@ -245,7 +243,7 @@ export function unassignTasks(username, tasks, updateTourUI=null) {
 
     const taskList = _.find(taskLists, taskList => taskList.username === username)
 
-    await dispatch(modifyTaskList(username, withoutTasks(taskList.items, tasks), updateTourUI))
+    await dispatch(modifyTaskList(username, withoutTasks(taskList.items, tasks)))
   }
 }
 
@@ -289,16 +287,12 @@ export function importError(token, message) {
   return { type: IMPORT_ERROR, token, message }
 }
 
-export function modifyTaskList(username, tasks, updateTourUI=null) {
+export function modifyTaskList(username, tasks) {
   /*
     Modify a TaskList
-
-    We can pass a callback updateTourUI so we update the UI related to the tour before we do the AJAX call to modify the tasklist
   */
 
   return async function(dispatch, getState) {
-
-    if (updateTourUI) updateTourUI()
 
     const data = tasks.map((task, index) => ({
       task: task['@id'],
@@ -1450,7 +1444,7 @@ export function toggleTourLoading(tourId) {
   /*
     Block/unblock actions on tour while we are modifying it.
   */
-  return { type: TOGGLE_TOUR_LOADING, tourId}
+  return { type: TOGGLE_TOUR_LOADING, tourId }
 }
 
 export function createTour(tasks, name, date) {
@@ -1502,20 +1496,19 @@ export function createTour(tasks, name, date) {
   }
 }
 
-export function updateTourInUI(dispatch, tour, tasks) {
-  dispatch(toggleTourLoading(tour['@id']))
-  dispatch(modifyTourRequest(tour, tasks))
+export function updateTourInUI(tour, tasks) {
+  return async function(dispatch) {
+    dispatch(toggleTourLoading(tour['@id']))
+    dispatch(modifyTourRequest(tour, tasks))
+  }
 }
 
-export function modifyTour(tour, tasks, isTourUIAlreadyUpdated=false) {
+export function modifyTour(tour, tasks) {
   /*
-    When assigning a task to a tour which is already is assigned,
-    `modifyTaskList` would be responsible for updating the UI.
+    Trigger actions for tour update. You need to call `updateTourInUI` separately first.
   */
 
   return async function(dispatch, getState) {
-
-    if (!isTourUIAlreadyUpdated) updateTourInUI(dispatch, tour, tasks)
 
     const { jwt } = getState()
 
@@ -1587,14 +1580,15 @@ export function removeTasksFromTour(tour, tasks, username, unassignTasksAction=u
   }
 
   return function(dispatch) {
+    let newTourItems = withoutTasks(tour.items, tasks)
+    dispatch(updateTourInUI(tour, newTourItems))
+
     if (username) {
-      let newTourItems = withoutTasks(tour.items, tasks)
-      let uiUpdate = () => updateTourInUI(dispatch, tour, newTourItems)
-      dispatch(unassignTasksAction(username, tasks, uiUpdate)).then(() => {
-        dispatch(modifyTourAction(tour, newTourItems, true))
+      dispatch(unassignTasksAction(username, tasks)).then(() => {
+        dispatch(modifyTourAction(tour, newTourItems))
       })
     } else {
-      dispatch(modifyTourAction(tour, withoutTasks(tour.items, tasks)))
+      dispatch(modifyTourAction(tour, newTourItems))
     }
   }
 }
