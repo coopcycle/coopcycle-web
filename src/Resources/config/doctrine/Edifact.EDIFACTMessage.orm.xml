@@ -17,7 +17,7 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
-    <many-to-many field="tasks" target-entity="AppBundle\Entity\Task" mapped-by="edifactMessages" index-by="tasks" />
+    <many-to-many field="tasks" target-entity="AppBundle\Entity\Task" mapped-by="edifactMessages" index-by="edifactMessages" />
     <indexes>
       <index columns="reference"></index>
     </indexes>
