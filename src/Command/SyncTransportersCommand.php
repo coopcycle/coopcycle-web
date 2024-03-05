@@ -133,8 +133,8 @@ class SyncTransportersCommand extends Command {
 
         $opts = new DBSchenkerOptions(
             $this->companyLegalName, $this->companyLegalID,
-            "DBSchenkerTransporter", "SIRET_TRANSPORTER",
-            $filesystem, "coopx"
+            $config['legal_name'], $config['legal_id'],
+            $filesystem, $config['fs_mask'],
         );
         $sync = new DBSchenkerSync($opts);
 
