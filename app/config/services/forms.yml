@@ -103,6 +103,7 @@ services:
   AppBundle\Form\StoreType:
     arguments:
       $country: '%country_iso%'
+      $transportersConfig: '%transporters_config%'
     tags: [ form.type ]
 
   AppBundle\Form\MenuEditor\TaxonProductType:

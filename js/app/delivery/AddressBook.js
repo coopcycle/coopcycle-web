@@ -389,7 +389,7 @@ export default function(el, options) {
 
   const reactContainer = document.createElement('div')
 
-  el.prepend(reactContainer)
+  el.append(reactContainer)
 
   render(
     <AddressBook

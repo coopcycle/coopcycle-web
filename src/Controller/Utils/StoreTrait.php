@@ -179,10 +179,28 @@ trait StoreTrait
 
             $this->accessControl($store);
 
+            /** @var Store $store */
             $store = $form->getData();
+            $objectManager = $this->getDoctrine()->getManagerForClass(Store::class);
 
-            $this->getDoctrine()->getManagerForClass(Store::class)->persist($store);
-            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+            if ($store->isDBSchenkerEnabled()) {
+                $fstore = $objectManager->getRepository(Store::class)->findOneBy([
+                    'DBSchenkerEnabled' => true
+                ]);
+
+                if (!is_null($fstore) && $store->getId() != $fstore->getId()) {
+                    $this->addFlash(
+                        'error',
+                        'DBSchenker is already enabled for another store'
+                    );
+
+                    return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);
+                }
+
+            }
+
+            $objectManager->persist($store);
+            $objectManager->flush();
 
             $this->addFlash(
                 'notice',

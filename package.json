@@ -158,6 +158,7 @@
     "to-string-loader": "^1.2.0",
     "url-loader": "^4.1.1",
     "use-deep-compare": "^1.1.0",
-    "x-data-spreadsheet": "^1.1.9"
+    "x-data-spreadsheet": "^1.1.9",
+    "jsbarcode": "^3.11.6"
   }
 }

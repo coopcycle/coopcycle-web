@@ -18,4 +18,5 @@ failure_reasons:
   - { code: "PACKAGING_ISSUE", description: "delivery.failure_reason.packaging_problems" }
   - { code: "CLOSED_STORE", description: "delivery.failure_reason.closed_store" }
   - { code: "HOLIDAY", description: "delivery.failure_reason.holiday_closure" }
+  - { code: "ADDRESS_REVIEW_NEEDED", description: "delivery.failure_reason.address_review_needed" }
 
