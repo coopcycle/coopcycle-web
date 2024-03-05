@@ -97,7 +97,7 @@ class Navbar extends React.Component {
   render () {
 
     return (
-      <nav className="navbar navbar-default">
+      <nav className="navbar navbar-expand-lg">
         <div className="container-fluid">
           <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul className="nav navbar-nav" id="dashboard-controls">
