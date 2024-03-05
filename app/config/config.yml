@@ -69,6 +69,7 @@ parameters:
     colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
     group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
     business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
+    transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -484,6 +485,12 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: nonprofits
+        edi_messages:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_EDI_BUCKET)%'
+                prefix: edi_messages
+
     filesystems:
         assets:
             adapter: assets
@@ -525,6 +532,10 @@ oneup_flysystem:
             adapter: nonprofits_images
             alias: nonprofits_images_filesystem
             mount: nonprofits_images_filesystem
+        edi_messages:
+            adapter: edi_messages
+            alias: edi_messages_filesystem
+            mount: edi_messages_filesystem
 
 vich_uploader:
     db_driver: orm

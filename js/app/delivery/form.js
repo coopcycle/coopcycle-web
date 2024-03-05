@@ -1,5 +1,6 @@
 import MapHelper from '../MapHelper'
 import _ from 'lodash'
+import JsBarcode from 'jsbarcode'
 require('gasparesganga-jquery-loading-overlay')
 
 import DeliveryForm from '../forms/delivery'
@@ -12,6 +13,8 @@ let form
 let pricePreview
 
 let markers = []
+
+JsBarcode('.barcode').init();
 
 function route(delivery) {
 

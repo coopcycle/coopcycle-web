@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
-import { Draggable, Droppable } from "react-beautiful-dnd"
+import { Draggable, Droppable } from "@hello-pangea/dnd"
 
 import Tour from './Tour'
 import { deleteGroup, editGroup, openCreateTourModal } from '../redux/actions'

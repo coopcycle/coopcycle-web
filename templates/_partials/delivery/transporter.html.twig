@@ -1,0 +1,48 @@
+<style>
+  .transporter-event-timeline .list-group-item .actions {
+    float: right;
+  }
+  .transporter-event-timeline .list-group-item {
+    padding-left: 12px;
+  }
+  .transporter-event-timeline .list-group-item.unsynced {
+    border-left: 2px solid grey;
+    padding-left: 10px;
+  }
+</style>
+{% if delivery.store is not empty and delivery.store.isDBSchenkerEnabled %}
+{% set importMessage = delivery.getDropoff().getImportMessage() %}
+{% set ediMessages = delivery.getDropoff().getEdifactMessagesTimeline() %}
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">DBSchenker</h3>
+  </div>
+  <div class="panel-body">
+    {% if importMessage %}
+      <svg class="barcode img-thumbnail img-responsive center-block"
+          jsbarcode-format="code128"
+          jsbarcode-height="60"
+          jsbarcode-value="{{ importMessage.getReference() }}"/>
+    {% endif %}
+    <h4>Event timeline</h4>
+    <ul class="list-group transporter-event-timeline">
+      {% for message in ediMessages %}
+        <li class="list-group-item">
+        <span class="label label-{{ message.color }}"><i class="fa {{message.icon}}" aria-hidden="true"></i></span>
+        {{ message.date | date('H:i')}} - {{ message.title }}
+        <!--<span class="actions"><a href="#">Edit</a> - <a href="#">Details</a></span>-->
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="panel-footer">
+    <!--<button type="button" class="btn btn-default">
+    Sync <span class="badge">1</span>
+    </button>-->
+    <button type="button" class="btn btn-danger" onclick="alert('Fonctionnalité pas encore disponible')">
+    Report incident
+    </button>
+    <!--<small class="text-muted p-2">Unsynced messages are auto-synced at 10pm</small>-->
+  </div>
+</div>
+{% endif %}
