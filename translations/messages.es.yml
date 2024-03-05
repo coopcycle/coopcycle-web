@@ -1425,3 +1425,4 @@ restaurants.edenred.sending_success: "Los restaurantes han sido enviados a Edenr
 restaurants.edenred.sending_failed: "Hubo un error al enviar los restaurantes a Edenred. Intente nuevamente más tarde."
 restaurants.edenred.sending_failed.errors: "Se han encontrado errores en algunos de los restaurantes:"
 restaurants.edenred.sending_failed.no_siret: "El restaurant '%restaurant_name%' no tiene un Siret definido."
+restaurant.form.edenred_enabled.label: Habilitar Edenred

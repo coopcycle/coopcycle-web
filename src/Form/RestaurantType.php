@@ -189,9 +189,8 @@ class RestaurantType extends LocalBusinessType
 
                     if ($options['edenred_enabled']) {
                         $form
-                            ->add('edenredMerchantId', TextType::class, [
-                                'label' => 'restaurant.form.edenred_merchant_id.label',
-                                'help' => 'restaurant.form.edenred_merchant_id.help',
+                            ->add('edenredEnabled', CheckboxType::class, [
+                                'label' => 'restaurant.form.edenred_enabled.label',
                                 'required' => false,
                                 'disabled' => !$this->authorizationChecker->isGranted('ROLE_ADMIN')
                             ]);
