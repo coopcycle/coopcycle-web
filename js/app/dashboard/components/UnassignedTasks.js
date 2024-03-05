@@ -11,6 +11,8 @@ import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules } from '../redux/actions'
 import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode } from '../redux/selectors'
+import { getDroppableListStyle } from '../utils'
+import classNames from 'classnames'
 
 const StandaloneTasks =  ({tasks, offset}) => {
   return _.map(tasks, (task, index) => <Task task={ task } draggableIndex={ (offset + index) } key={ task['@id'] } />)
@@ -110,9 +112,17 @@ export const UnassignedTasks = () => {
         ) }
         { renderDroppableArea ?
           <Droppable droppableId="unassigned">
-            {(provided) => (
-              <div className="list-group nomargin" ref={ provided.innerRef } { ...provided.droppableProps }>
-                { !toursEnabled ? _.map(groups, (group, index) => {
+            {(provided, snapshot) => (
+              <div
+                ref={ provided.innerRef }
+                className={ classNames({
+                  'taskList__tasks': true,
+                  'list-group': true,
+                  'm-0': true,
+                }) }
+                { ...provided.droppableProps }
+              style={getDroppableListStyle(snapshot.isDraggingOver)}
+            >   { !toursEnabled ? _.map(groups, (group, index) => {
                   return (
                     <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
                       {(provided) => (

@@ -6,7 +6,7 @@ import _ from 'lodash'
 import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
-import { removeTaskFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded } from '../redux/actions'
+import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded } from '../redux/actions'
 import { isTourAssigned, tourIsAssignedTo } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
@@ -146,7 +146,7 @@ const Tour = ({ tour, draggableIndex }) => {
                           key={ task['@id'] }
                           task={ task }
                           draggableIndex={ index }
-                          onRemove={ (taskToRemove) => dispatch(removeTaskFromTour(tour, taskToRemove, tourIsAssignedTo(tour)))}
+                          onRemove={ (taskToRemove) => dispatch(removeTasksFromTour(tour, taskToRemove, tourIsAssignedTo(tour)))}
                         />
                       )}
                       { provided.placeholder }

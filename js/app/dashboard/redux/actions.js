@@ -1580,16 +1580,21 @@ export function deleteTour(tour) {
   }
 }
 
-export function removeTaskFromTour(tour, task, username, unassignTasksAction=unassignTasks, modifyTourAction=modifyTour) {
+export function removeTasksFromTour(tour, tasks, username, unassignTasksAction=unassignTasks, modifyTourAction=modifyTour) {
+
+  if (!Array.isArray(tasks)) {
+    tasks = [ tasks ]
+  }
+
   return function(dispatch) {
-    if (username !== null) {
-      let newTourItems = withoutTasks(tour.items, [ task ])
+    if (username) {
+      let newTourItems = withoutTasks(tour.items, tasks)
       let uiUpdate = () => updateTourInUI(dispatch, tour, newTourItems)
-      dispatch(unassignTasksAction(username, [task], uiUpdate)).then(() => {
+      dispatch(unassignTasksAction(username, tasks, uiUpdate)).then(() => {
         dispatch(modifyTourAction(tour, newTourItems, true))
       })
     } else {
-      dispatch(modifyTourAction(tour, withoutTasks(tour.items, [ task ])))
+      dispatch(modifyTourAction(tour, withoutTasks(tour.items, tasks)))
     }
   }
 }

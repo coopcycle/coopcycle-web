@@ -1,7 +1,7 @@
 import _ from "lodash"
 import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskLists, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { disableDropInTours, enableDropInTours, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
-import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, updateTourInUI } from "./actions"
+import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, removeTasksFromTour, unassignTasks, updateTourInUI } from "./actions"
 import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
 import { withLinkedTasks } from "./utils"
 import { toast } from 'react-toastify'
@@ -85,11 +85,7 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       return;
     }
 
-    if (source.droppableId.startsWith('assigned:') && destination.droppableId === 'unassigned') {
-      toast.warn("Can not unassign by drag'n drop at the moment")
-      return
-    }
-
+    // from courier tasklist to unassigned tours
     if (source.droppableId.startsWith('assigned:') && destination.droppableId.startsWith('tour:')) {
       let tourId = destination.droppableId.split(':')[1],
       tour = selectTourById(getState(), tourId)
@@ -98,11 +94,6 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
         toast.warn("Can not unassign by drag'n drop at the moment")
         return
       }
-    }
-
-    if (source.droppableId.startsWith('tour:') && destination.droppableId === 'unassigned') {
-      toast.warn("Can not remove from tour by drag'n drop at the moment")
-      return
     }
 
     if (source.droppableId.startsWith('tour:') && destination.droppableId.startsWith('tour:') && source.droppableId !== destination.droppableId) {
@@ -151,7 +142,21 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
 
     if (selectedTasks.length === 0) return // can happen, for example dropping empty tour
 
-    if (destination.droppableId.startsWith('tour:')) {
+
+    // from assigned tour to unassigned
+
+    // single task to unassigned
+
+    if (destination.droppableId === 'unassigned') {
+      // for multiselection isValidTasksMultiSelect validator gives us the insurance to have all tasks in the same tour or assigned to the same user
+      if (!belongsToTour(selectedTasks[0])) {
+        dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
+      } else {
+        const tour = selectTourById(getState(), selectedTasks[0].tour['@id'])
+        dispatch(removeTasksFromTour(tour, selectedTasks, selectedTasks[0].assignedTo))
+      }
+
+    } else if (destination.droppableId.startsWith('tour:')) {
       const tours = selectAllTours(getState())
       var tourId = destination.droppableId.replace('tour:', '')
       const tour = tours.find(t => t['@id'] == tourId)
