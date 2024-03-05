@@ -20,7 +20,7 @@
 @import "bootstrap/scss/root";
 
 // 6. Optionally include any other parts as needed
-@import "bootstrap/scss/utilities";
+@import "utils.scss";
 
 // Layout & components
 @import "bootstrap/scss/reboot";
@@ -60,7 +60,6 @@
 @import "bootstrap/scss/utilities/api";
 
 // 8. Add additional custom code here
-@import "utils.scss";
 
 @import "styles.scss";
 
