@@ -8,6 +8,10 @@
 @import "bootstrap/scss/variables-dark";
 
 
+// ---
+
+// legacy variables (v3); todo get rid of them / move to defauls
+
 // Colors
 
 $main-blue: #337ab7;
@@ -69,16 +73,110 @@ $modal-padding-md: 1.5rem;
 
 
 // Media queries breakpoints
-
-// Overriding breakpoints to resemble the default v5 Bootstrap breakpoints
-// could be removed after the migration to Bootstrap v5, see https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss
-
-//$screen-xs-min: 0px; // v3: 480px;
-//$screen-sm-min: 576px; // v3: 768px; TODO; replace usages with $screen-md-min; and uncomment
-$screen-md-min: 768px;
-//$screen-lg-min: 992px; // v3: 1200px; TODO; replace usages with $screen-xl-min; and uncomment
 $screen-xl-min: 1200px;
 $screen-xxl-min: 1400px;
 
 // Grid containers
 $container-md: 720px; // match the default v5 screen-md container width
+
+
+// Extra small screen / phone
+//** Deprecated `$screen-xs` as of v3.0.1
+$screen-xs:                  480px !default;
+//** Deprecated `$screen-xs-min` as of v3.2.0
+$screen-xs-min:              $screen-xs !default;
+//** Deprecated `$screen-phone` as of v3.0.1
+$screen-phone:               $screen-xs-min !default;
+
+// Small screen / tablet
+//** Deprecated `$screen-sm` as of v3.0.1
+$screen-sm:                  768px !default;
+$screen-sm-min:              $screen-sm !default;
+//** Deprecated `$screen-tablet` as of v3.0.1
+$screen-tablet:              $screen-sm-min !default;
+
+// Medium screen / desktop
+//** Deprecated `$screen-md` as of v3.0.1
+$screen-md:                  768px !default;
+$screen-md-min:              $screen-md !default;
+//** Deprecated `$screen-desktop` as of v3.0.1
+$screen-desktop:             $screen-md-min !default;
+
+// Large screen / wide desktop
+//** Deprecated `$screen-lg` as of v3.0.1
+$screen-lg:                  1200px !default;
+$screen-lg-min:              $screen-lg !default;
+//** Deprecated `$screen-lg-desktop` as of v3.0.1
+$screen-lg-desktop:          $screen-lg-min !default;
+
+// So media queries don't overlap when required, provide a maximum
+$screen-xs-max:              ($screen-sm-min - 1) !default;
+$screen-sm-max:              ($screen-md-min - 1) !default;
+$screen-md-max:              ($screen-lg-min - 1) !default;
+
+$font-size-large:         ceil((14px * 1.25)) !default; // ~18px
+$font-size-h2:            floor((14px * 2.15)) !default; // ~30px
+$font-size-h4:            ceil((14px * 1.25)) !default; // ~18px
+
+$cursor-disabled:                not-allowed !default;
+
+$padding-base-vertical:     6px !default;
+$padding-base-horizontal:   12px !default;
+
+$navbar-height:                    50px !default;
+
+$form-group-margin-bottom:       15px !default;
+
+$line-height-computed:    floor((14px * $line-height-base)) !default; // ~20px
+
+$input-height-base:              ($line-height-computed + ($padding-base-vertical * 2) + 2) !default;
+
+$border-radius-base:        4px !default;
+$border-radius-large:       6px !default;
+
+$gray-base:              #000 !default;
+$gray-darker:            lighten($gray-base, 13.5%) !default; // #222
+$gray-dark:              lighten($gray-base, 20%) !default;   // #333
+$gray-light:             lighten($gray-base, 46.7%) !default; // #777
+$gray-lighter:           lighten($gray-base, 93.5%) !default; // #eee
+
+$brand-info:            #5bc0de !default;
+$brand-danger:          #d9534f !default;
+
+$nav-link-hover-bg:                         $gray-lighter !default;
+
+$state-success-text:             #3c763d !default;
+$state-success-bg:               #dff0d8 !default;
+$state-success-border:           darken(adjust-hue($state-success-bg, -10), 5%) !default;
+
+$state-info-text:                #31708f !default;
+$state-info-bg:                  #d9edf7 !default;
+$state-info-border:              darken(adjust-hue($state-info-bg, -10), 7%) !default;
+
+$state-warning-text:             #8a6d3b !default;
+$state-warning-bg:               #fcf8e3 !default;
+$state-warning-border:           darken(adjust-hue($state-warning-bg, -10), 5%) !default;
+
+$state-danger-text:              #a94442 !default;
+$state-danger-bg:                #f2dede !default;
+$state-danger-border:            darken(adjust-hue($state-danger-bg, -10), 5%) !default;
+
+$alert-danger-bg:             $state-danger-bg !default;
+$alert-danger-text:           $state-danger-text !default;
+$alert-danger-border:         $state-danger-border !default;
+
+$label-info-bg:               $brand-info !default;
+$label-color:                 #fff !default;
+
+//** `<input>` background color
+$input-bg:                       #fff !default;
+//** `<input disabled>` background color
+$input-bg-disabled:              $gray-lighter !default;
+$input-border:                   #ccc !default;
+$input-border-focus:             #66afe9 !default;
+
+@mixin opacity($opacity) {
+  $opacity-ie: ($opacity * 100);  // IE8 filter
+  filter: alpha(opacity=$opacity-ie);
+  opacity: $opacity;
+}

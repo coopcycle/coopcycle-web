@@ -152,6 +152,24 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+@mixin alert-variant($background, $border, $text-color) {
+  color: $text-color;
+  background-color: $background;
+  border-color: $border;
+
+  hr {
+    border-top-color: darken($border, 5%);
+  }
+
+  .alert-link {
+    color: darken($text-color, 10%);
+  }
+}
+
+.alert-danger {
+  @include alert-variant($alert-danger-bg, $alert-danger-border, $alert-danger-text);
+}
+
 .maintenance {
   @extend .alert;
   @extend .alert-danger;
@@ -393,6 +411,26 @@ h1, h2, h3, h4, h5, h6 {
   background: transparent;
   border: 0;
   appearance: none;
+}
+
+.table-bordered {
+  border: 1px solid $table-border-color;
+  > thead,
+  > tbody,
+  > tfoot {
+    > tr {
+      > th,
+      > td {
+        border: 1px solid $table-border-color;
+      }
+    }
+  }
+  > thead > tr {
+    > th,
+    > td {
+      border-bottom-width: 2px;
+    }
+  }
 }
 
 .about-us {
