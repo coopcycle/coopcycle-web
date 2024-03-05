@@ -1,7 +1,8 @@
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+@import "./vars.scss";
 @import "~font-awesome/scss/_variables.scss";
 @import "~font-awesome/scss/_mixins.scss";
 @import "~font-awesome/scss/_animated.scss";
+
 
 .react-autosuggest__container {
   position: relative;

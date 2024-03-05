@@ -1,6 +1,6 @@
 @import "../../../../assets/css/vars.scss";
 
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+@import "bootstrap/scss/mixins";
 
 .quantity-change-button {
   min-width: 3rem;

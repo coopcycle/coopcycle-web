@@ -1,7 +1,7 @@
 @import "../../../../../assets/css/vars.scss";
 
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/forms";
 
 .ReactModal__Content--product-options {
 

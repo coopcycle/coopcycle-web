@@ -6,7 +6,8 @@ global.$ = global.jQuery = $
 
 import '../../assets/css/main.scss'
 
-require('bootstrap-sass')
+// Import all of Bootstrap's JS
+require('bootstrap')
 
 import './i18n'
 import { setTimezone, getCurrencySymbol } from './i18n'

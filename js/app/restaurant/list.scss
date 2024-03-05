@@ -1,7 +1,7 @@
 @use "sass:math";
 
 @import "../../../assets/css/vars.scss";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+@import "bootstrap/scss/mixins";
 @import "~skeleton-screen-css/dist/index.scss";
 
 @import "./restaurant-card.scss";
