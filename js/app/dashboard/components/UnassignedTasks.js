@@ -12,39 +12,32 @@ import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules } from '../redux/actions'
 import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectSelectedTasks, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode } from '../redux/selectors'
 
-const StandaloneTasks =  React.memo(
-  ({tasks, offset, selectedTasksLength}) => {
-    return _.map(tasks, (task, index) => {
+const StandaloneTasks = ({tasks, offset, selectedTasksLength}) => {
+  return _.map(tasks, (task, index) => {
 
-      return (
-        <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ (offset + index) }>
-          {(provided, snapshot) => {
+    return (
+      <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ (offset + index) }>
+        {(provided, snapshot) => {
 
-            return (
-              <div
-                ref={ provided.innerRef }
-                { ...provided.draggableProps }
-                { ...provided.dragHandleProps }
-              >
-                <Task task={ task } />
-                { (snapshot.isDragging && selectedTasksLength > 1) && (
-                  <div className="task-dragging-number">
-                    <span>{ selectedTasksLength }</span>
-                  </div>
-                ) }
-              </div>
-            )
-          }}
-        </Draggable>
-      )
-    })
-  },
-  (prevProps, nextProps) => {
-    if (nextProps.tasks === prevProps.tasks && nextProps.offset === prevProps.offset && nextProps.selectedTasksLength === prevProps.selectedTasksLength) {
-        return true
-    }
-    return false
-})
+          return (
+            <div
+              ref={ provided.innerRef }
+              { ...provided.draggableProps }
+              { ...provided.dragHandleProps }
+            >
+              <Task task={ task } />
+              { (snapshot.isDragging && selectedTasksLength > 1) && (
+                <div className="task-dragging-number">
+                  <span>{ selectedTasksLength }</span>
+                </div>
+              ) }
+            </div>
+          )
+        }}
+      </Draggable>
+    )
+  })
+}
 
 
 const Buttons = () => {
