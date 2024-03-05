@@ -34,7 +34,7 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
 
   return function(dispatch, getState) {
 
-    const handleDropInTaskList = (tasksList, selectedTasks, index, updateTourUI=null) => {
+    const handleDropInTaskList = (tasksList, selectedTasks, index) => {
       let newTasksList = [...tasksList.items]
 
 
@@ -47,7 +47,7 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       })
 
       newTasksList.splice(index, 0, ...selectedTasks)
-      return dispatch(modifyTaskList(tasksList.username, newTasksList, updateTourUI))
+      return dispatch(modifyTaskList(tasksList.username, newTasksList))
     },
     getPositionInFlatTaskList = (nestedTaskList, destinationIndex, tourId=null) => {
       if (tourId) {
@@ -143,12 +143,8 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
     if (selectedTasks.length === 0) return // can happen, for example dropping empty tour
 
 
-    // from assigned tour to unassigned
-
-    // single task to unassigned
-
     if (destination.droppableId === 'unassigned') {
-      // for multiselection isValidTasksMultiSelect validator gives us the insurance to have all tasks in the same tour or assigned to the same user
+      // in case of tasks multiselection isValidTasksMultiSelect validator gives us the insurance to have all tasks in the same tour or assigned to the same user
       if (!belongsToTour(selectedTasks[0])) {
         dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
       } else {
@@ -168,8 +164,10 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
         _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t['@id']))
       }
 
-        Array.prototype.splice.apply(newTourItems,
-          Array.prototype.concat([ destination.index, 0 ], selectedTasks))
+
+      Array.prototype.splice.apply(newTourItems, Array.prototype.concat([ destination.index, 0 ], selectedTasks))
+
+      dispatch(updateTourInUI(tour, newTourItems))
 
       if (isTourAssigned(tour)) {
         const tasksLists = selectTaskLists(getState())
@@ -178,13 +176,10 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
         const nestedTaskList = makeSelectTaskListItemsByUsername()(getState(), {username})
         const index = getPositionInFlatTaskList(nestedTaskList, destination.index, tourId)
 
-        let uiUpdate = () => updateTourInUI(dispatch, tour, newTourItems)
-
-        handleDropInTaskList(tasksList, selectedTasks, index, uiUpdate).then(() => {
-          dispatch(modifyTour(tour, newTourItems, true))
+        handleDropInTaskList(tasksList, selectedTasks, index).then(() => {
+          dispatch(modifyTour(tour, newTourItems))
         })
       } else {
-        // FIXME : should unassign added tasks if needed
         dispatch(modifyTour(tour, newTourItems))
       }
     } else if (destination.droppableId.startsWith('assigned:')) {
