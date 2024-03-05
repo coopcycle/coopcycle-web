@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect, useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 import { Droppable } from "@hello-pangea/dnd"
 import { useTranslation } from 'react-i18next'
@@ -18,7 +18,7 @@ import Task from './Task'
 
 import Avatar from '../../components/Avatar'
 import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter } from '../redux/actions'
-import { selectVisibleTaskIds } from '../redux/selectors'
+import { selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/selectors'
 import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
@@ -115,10 +115,32 @@ const ProgressBarMemo = React.memo(({
     )
   })
 
-export const TaskList = ({ tasks, items, uri, username, polylineEnabled, isEmpty, distance, duration }) => {
-
+export const TaskList = ({ uri, username, distance, duration }) => {
   const dispatch = useDispatch()
   const unassignTasksFromTaskList = (username => tasks => dispatch(unassignTasks(username, tasks)))(username)
+
+  const selectTaskListItems = makeSelectTaskListItemsByUsername()
+
+  const items = useSelector(state => selectTaskListItems(state, {username: username}))
+
+  // we also need a flattened list of tasks
+  const tasks = items.reduce((acc, item) => {
+    if (item['@type'] === 'Tour') {
+      acc.push(...item.items)
+    } else {
+      acc.push(item)
+    }
+    return acc
+  }, [])
+
+  const visibleTaskIds = _.intersectionWith(
+    useSelector(selectVisibleTaskIds),
+    tasks.map(task => task['@id'])
+  )
+
+  const isEmpty = items.length === 0 || visibleTaskIds.length === 0
+
+  const polylineEnabled = useSelector(selectPolylineEnabledByUsername(username))
 
   const { t } = useTranslation()
 
@@ -248,40 +270,8 @@ export const TaskList = ({ tasks, items, uri, username, polylineEnabled, isEmpty
   )
 }
 
-const makeMapStateToProps = () => {
-
-  const selectTaskListItemsByUsername = makeSelectTaskListItemsByUsername()
-
-  const mapStateToProps = (state, ownProps) => {
-
-    // items is a prop of mixed task and tours
-    const items = selectTaskListItemsByUsername(state, ownProps)
-
-    // we also need a flatten list of tasks
-    const tasks = items.reduce((acc, item) => {
-      if (item['@type'] === 'Tour') {
-        acc.push(...item.items)
-      } else {
-        acc.push(item)
-      }
-      return acc
-    }, [])
-
-    const visibleTaskIds = _.intersectionWith(
-      selectVisibleTaskIds(state),
-      tasks.map(task => task['@id'])
-    )
-
-    return {
-      polylineEnabled: state.polylineEnabled[ownProps.username],
-      tasks,
-      items,
-      isEmpty: items.length === 0 || visibleTaskIds.length === 0,
-    }
-  }
-
-  return mapStateToProps
-}
 
 
-export default connect(makeMapStateToProps)(TaskList)
+
+
+export default TaskList
