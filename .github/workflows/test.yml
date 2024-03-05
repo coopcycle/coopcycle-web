@@ -22,7 +22,6 @@ jobs:
           extensions: redis
       - name: Install PHP dependencies
         run: |
-          composer config github-oauth.github.com ${{ secrets.GH_TOKEN_DBSHENKER }}
           composer install --prefer-dist --no-progress --no-scripts
       - name: Run PHPStan
         run: phpstan analyse
@@ -51,8 +50,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Create .env file
         run: cp .env.dist .env
-      - name: Add secret for composer
-        run: composer config github-oauth.github.com ${{ secrets.GH_TOKEN_DBSHENKER }}
       - name: Pull Docker images
         run: docker-compose pull --ignore-pull-failures
       - name: Prepare OSRM data
