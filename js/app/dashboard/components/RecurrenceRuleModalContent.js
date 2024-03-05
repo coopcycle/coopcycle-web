@@ -23,7 +23,7 @@ import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import RecurrenceRuleAsText from './RecurrenceRuleAsText'
 
 import { phoneNumberExample } from '../utils'
-import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import {DragDropContext, Draggable, Droppable} from "@hello-pangea/dnd";
 import ReactDOM from "react-dom";
 
 const freqOptions = [
@@ -311,7 +311,7 @@ const TemplateItem =({ item, packages, setFieldValues, onClickRemove, errors, ..
     </li>
   )
 
-  // https://github.com/atlassian/react-beautiful-dnd/blob/master/stories/src/portal/portal-app.jsx
+  // https://github.com/atlassian/@hello-pangea/dnd/blob/master/stories/src/portal/portal-app.jsx
   if (!usePortal) {
     return child
   }

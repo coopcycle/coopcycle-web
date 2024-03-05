@@ -173,3 +173,7 @@ services:
   AppBundle\Command\CopyStoreAddressesCommand:
     tags:
       - { name: 'console.command', command: 'coopcycle:stores:copy_addresses' }
+
+  AppBundle\Command\SyncTransportersCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:transporters:sync' }

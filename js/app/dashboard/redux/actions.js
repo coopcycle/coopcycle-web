@@ -9,9 +9,7 @@ import {
   selectAllTasks,
   createTaskListRequest,
   createTaskListSuccess,
-  createTaskListFailure,
-  enableDropInTours,
-  disableDropInTours,
+  createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
 
@@ -194,6 +192,7 @@ export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
 export const MODIFY_TOUR_REQUEST_ERROR = 'MODIFY_TOUR_REQUEST_ERROR'
 export const TOGGLE_TOUR_PANEL_EXPANDED = 'TOGGLE_EXPANDED_TOUR_PANEL'
+export const TOGGLE_TOUR_LOADING = 'TOGGLE_TOUR_LOADING'
 
 export const UPDATE_TOUR = 'UPDATE_TOUR'
 export const DELETE_TOUR_SUCCESS = 'DELETE_TOUR_SUCCESS'
@@ -1434,6 +1433,13 @@ export function toggleTourPanelExpanded(tourId) {
   return { type: TOGGLE_TOUR_PANEL_EXPANDED, tourId}
 }
 
+export function toggleTourLoading(tourId) {
+  /*
+    Block/unblock actions on tour while we are modifying it.
+  */
+  return { type: TOGGLE_TOUR_LOADING, tourId}
+}
+
 export function createTour(tasks, name, date) {
   return function(dispatch, getState) {
 
@@ -1457,7 +1463,15 @@ export function createTour(tasks, name, date) {
       }
     })
       .then((response) => {
-        tasks.forEach(task => dispatch(updateTask({ '@id': task['@id'], tour: response.data })))
+        tasks.forEach(task =>
+          // we do a partial update here, because we don't want to mess with isAssigned/assignedTo which are handled somewhere else
+          dispatch(updateTask({
+            '@id': task['@id'],
+            tour: response.data, // the only property we want to update on the task
+            doneAfter: task.doneAfter, // pass this because `updateTask` is doing a date range check
+            doneBefore: task.doneBefore // pass this because `updateTask` is doing a date range check
+          }))
+        )
         // flatten items to itmIds
         let tour = {...response.data}
         tour.itemIds = tour.items.map(item => item['@id'])
@@ -1476,7 +1490,7 @@ export function createTour(tasks, name, date) {
 }
 
 export function updateTourInUI(dispatch, tour, tasks) {
-  dispatch(disableDropInTours())
+  dispatch(toggleTourLoading(tour['@id']))
   dispatch(modifyTourRequest(tour, tasks))
 }
 
@@ -1520,7 +1534,7 @@ export function modifyTour(tour, tasks, isTourUIAlreadyUpdated=false) {
 
     dispatch(updateTour(_tour))
     dispatch(modifyTourRequestSuccess(_tour, tasks))
-    dispatch(enableDropInTours())
+    dispatch(toggleTourLoading(tour['@id']))
 
     return _tour
   }
@@ -1582,5 +1596,3 @@ export function onlyFilter(filter) {
 
   }
 }
-
-

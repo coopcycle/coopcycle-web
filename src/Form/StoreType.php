@@ -8,6 +8,7 @@ use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Form\Type\QueryBuilder\OrderByNameQueryBuilder;
+use Sonata\Form\Type\BooleanType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -86,6 +87,14 @@ class StoreType extends LocalBusinessType
                     'query_builder' => new OrderByNameQueryBuilder(),
                     'required' => false,
                 ));
+
+            if ($this->DBSchenkerEnabled) {
+                $builder->add('DBSchenkerEnabled', CheckboxType::class, [
+                    'label' => 'This store is managed by DBSchenker',
+                    'help' => 'Enable DBSchenker integration for this store',
+                    'required' => false
+                ]);
+            }
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {

@@ -55,6 +55,9 @@ class Address extends BaseAddress
      */
     private $contactName;
 
+
+    private $complete;
+
     /**
      * Gets id.
      *
@@ -151,6 +154,17 @@ class Address extends BaseAddress
         $this->setGeo(new GeoCoordinates($lat, $lng));
 
         return $this;
+    }
+
+    public function setComplete(bool $complete): self
+    {
+        $this->complete = $complete;
+        return $this;
+    }
+
+    public function getComplete(): bool
+    {
+        return $this->complete;
     }
 
     public function clone()

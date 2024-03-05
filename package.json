@@ -17,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hello-pangea/dnd": "^16.5.0",
     "dotenv": "^8.6.0",
     "form-data": "^2.3.3",
     "lodash": "^4.17.21",
@@ -122,7 +123,6 @@
     "react": "^18.2.0",
     "react-accessible-accordion": "^5.0.0",
     "react-autosuggest": "^10.1.0",
-    "react-beautiful-dnd": "^13.1.1",
     "react-chartjs-2": "^5.2.0",
     "react-color": "^2.19.3",
     "react-contexify": "^5.0.0",
@@ -160,6 +160,7 @@
     "to-string-loader": "^1.2.0",
     "url-loader": "^4.1.1",
     "use-deep-compare": "^1.1.0",
-    "x-data-spreadsheet": "^1.1.9"
+    "x-data-spreadsheet": "^1.1.9",
+    "jsbarcode": "^3.11.6"
   }
 }

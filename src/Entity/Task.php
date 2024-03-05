@@ -29,6 +29,7 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Delivery\FailureReason;
 use AppBundle\Entity\Delivery\PricingRule;
+use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Task\Group as TaskGroup;
@@ -315,6 +316,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     use TaggableTrait;
     use OrganizationAwareTrait;
     use PackagesAwareTrait;
+    use EDIFACTMessageAwareTrait;
 
     const TYPE_DROPOFF = 'DROPOFF';
     const TYPE_PICKUP = 'PICKUP';
@@ -458,6 +460,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->events = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->packages = new ArrayCollection();
+        $this->edifactMessages = new ArrayCollection();
     }
 
     public function getId()
@@ -963,6 +966,16 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function getMetadata()
     {
         return $this->metadata;
+    }
+
+    public function getImportedFrom(): ?string {
+        return collect($this->getMetadata())->get('imported_from');
+    }
+
+    public function setImportedFrom(?string $importedFrom): self
+    {
+        // Not updating metadata, read-only property
+        return $this;
     }
 
     public function getPackages()

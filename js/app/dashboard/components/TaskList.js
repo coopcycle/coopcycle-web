@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { Draggable, Droppable } from "react-beautiful-dnd"
+import { Draggable, Droppable } from "@hello-pangea/dnd"
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import { Tooltip } from 'antd'
@@ -26,14 +26,12 @@ import ProgressBar from './ProgressBar'
 
 moment.locale($('html').attr('lang'))
 
-const TaskOrTour = ({ item, onRemove, unassignTasks }) => {
+const TaskOrTour = ({ item, onRemove }) => {
 
   if (item['@type'] === 'Tour') {
 
     return (
-      <Tour
-        tour={ item }
-        unassignTasks={ unassignTasks } />
+      <Tour tour={ item } />
     )
   }
 
@@ -46,7 +44,7 @@ const TaskOrTour = ({ item, onRemove, unassignTasks }) => {
 
 // OPTIMIZATION
 // Avoid useless re-rendering when starting to drag
-// @see https://egghead.io/lessons/react-optimize-performance-in-react-beautiful-dnd-with-shouldcomponentupdate-and-purecomponent
+// @see https://egghead.io/lessons/react-optimize-performance-in-@hello-pangea/dnd-with-shouldcomponentupdate-and-purecomponent
 class InnerList extends React.Component {
 
   shouldComponentUpdate(nextProps) {
@@ -74,7 +72,7 @@ class InnerList extends React.Component {
               <TaskOrTour
                 item={ item }
                 onRemove={ item => this.props.onRemove(item) }
-                unassignTasks={ this.props.unassignTasks } />
+              />
             </div>
           )}
         </Draggable>
@@ -275,8 +273,8 @@ class TaskList extends React.Component {
                 <InnerList
                   items={ items }
                   onRemove={ task => this.remove(task) }
-                  unassignTasks={ this.props.unassignTasks }
-                  username={ username } />
+                  username={ username }
+                />
                 { provided.placeholder }
               </div>
             )}

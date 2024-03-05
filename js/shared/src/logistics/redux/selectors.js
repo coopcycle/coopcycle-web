@@ -107,7 +107,7 @@ export const makeSelectTaskListItemsByUsername = () => {
 }
 
 // FIXME This is recalculated all the time we change a tasks
-export const selectTasksWithTour = createSelector(selectAllTasks, 
+export const selectTasksWithTour = createSelector(selectAllTasks,
   (allTasks) => {
     return allTasks.filter(t => t.tour)
 })
@@ -133,7 +133,13 @@ export const selectAllTours = createSelector(
   }
 )
 
-export const isTourAssigned = (tour) => tour.items.length > 0 ? _.every(tour.items, (item) => item.isAssigned) : false 
+const selectTourId = (state, tourId) => tourId
+
+export const selectTourById = createSelector(selectAllTours, selectTourId,
+  (tours, tourId) => tours.find(t => t['@id'] === tourId)
+)
+
+export const isTourAssigned = (tour) => tour.items.length > 0 ? _.every(tour.items, (item) => item.isAssigned) : false
 export const isTourUnassigned = (tour) => {
   if (tour.items.length === 0) return true
   else return tour.items.length > 0 ? _.every(tour.items, (item) => !item.isAssigned) : false
@@ -145,4 +151,3 @@ export const selectUnassignedTours = createSelector(
   selectAllTours,
   (allTours) => _.filter(allTours, t => isTourUnassigned(t))
 )
-

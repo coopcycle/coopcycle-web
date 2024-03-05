@@ -5,6 +5,7 @@ import {
   OPEN_NEW_TASK_MODAL,
   SET_CURRENT_TASK,
   TOGGLE_TOUR_PANEL_EXPANDED,
+  TOGGLE_TOUR_LOADING
 } from "./actions";
 
 // will be overrided by js/shared/src/logistics/redux/uiReducers.js when we reduce reducers so set initialState there
@@ -39,6 +40,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         expandedTourPanelsIds: _.xor([...state.expandedTourPanelsIds], [action.tourId])
+      }
+    case TOGGLE_TOUR_LOADING:
+      return {
+        ...state,
+        loadingTourPanelsIds: _.xor([...state.loadingTourPanelsIds], [action.tourId])
       }
   }
 

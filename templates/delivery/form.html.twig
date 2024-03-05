@@ -43,6 +43,8 @@
           {{ form_row(form.vehicle) }}
         {% endif %}
 
+        {% include "_partials/delivery/transporter.html.twig" with {delivery: delivery} only %}
+
         {% if not is_new %}
         <div class="alert alert-info">
           <a href="{{ url('public_delivery', { hashid: delivery|hashid }) }}" target="_blank" id="tracking_link">{% trans %}delivery.tracking_link{% endtrans %} <i class="fa fa-external-link"></i></a>
