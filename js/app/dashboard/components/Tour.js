@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {useDispatch, useSelector } from 'react-redux'
 import { withTranslation, useTranslation } from 'react-i18next'
-import { Draggable, Droppable } from "react-beautiful-dnd"
+import { Draggable, Droppable } from "@hello-pangea/dnd"
 import _ from 'lodash'
 import Popconfirm from 'antd/lib/popconfirm'
 
@@ -11,9 +11,9 @@ import { isTourAssigned, tourIsAssignedTo } from '../../../shared/src/logistics/
 import classNames from 'classnames'
 import { useContextMenu } from 'react-contexify'
 import { getDroppableListStyle } from '../utils'
-import { selectAreToursDroppable, selectExpandedTourPanelsIds } from '../redux/selectors'
+import { selectAreToursDroppable, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds } from '../redux/selectors'
 
-const RenderEditNameForm = ({children, tour}) => {
+const RenderEditNameForm = ({children, tour, isLoading}) => {
 
   const dispatch = useDispatch()
   const { t } = useTranslation()
@@ -62,32 +62,36 @@ const RenderEditNameForm = ({children, tour}) => {
     </form> :
     <>
       { children }
-      <a role="button" href="#" className="text-reset mr-2"
-        onClick={ () => setToggleInputForName(true) }>
-        <i className="fa fa-pencil"></i>
-      </a>
-      { isTourAssigned(tour) ?  (
-          <a
-            onClick={() => dispatch(unassignTasks(tourIsAssignedTo(tour), tour.items))}
-            title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
-            className="text-reset mr-2"
-          >
-            <i className="fa fa-times"></i>
-          </a>)
-          : <Popconfirm
-              placement="left"
-              title={ t('ADMIN_DASHBOARD_DELETE_TOUR_CONFIRM') }
-              onConfirm={ onConfirmDelete }
-              okText={ t('CROPPIE_CONFIRM') }
-              cancelText={ t('ADMIN_DASHBOARD_CANCEL') }
-              >
-              <a role="button" href="#" className="text-reset"
-                onClick={ e => e.preventDefault() }>
-                <i className="fa fa-trash"></i>
-              </a>
-          </Popconfirm>
+      { isLoading ?
+        <span className="pull-right"><i className="fa fa-spinner"></i></span>
+        : <>
+          <a role="button" href="#" className="text-reset mr-2" onClick={ () => setToggleInputForName(true) }>
+              <i className="fa fa-pencil"></i>
+          </a>
+          { isTourAssigned(tour) ?
+            <a
+              onClick={() => dispatch(unassignTasks(tourIsAssignedTo(tour), tour.items))}
+              title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
+              className="text-reset mr-2"
+            >
+              <i className="fa fa-times"></i>
+            </a>
+            : <Popconfirm
+                placement="left"
+                title={ t('ADMIN_DASHBOARD_DELETE_TOUR_CONFIRM') }
+                onConfirm={ onConfirmDelete }
+                okText={ t('CROPPIE_CONFIRM') }
+                cancelText={ t('ADMIN_DASHBOARD_CANCEL') }
+                >
+                <a role="button" href="#" className="text-reset"
+                  onClick={ e => e.preventDefault() }>
+                  <i className="fa fa-trash"></i>
+                </a>
+            </Popconfirm>
+          }
+        </>
       }
-      </>
+    </>
   }</>)
 }
 
@@ -96,21 +100,25 @@ const Tour = ({ tour }) => {
 
   const isDroppable = useSelector(selectAreToursDroppable)
   const expandedTourPanelsIds = useSelector(selectExpandedTourPanelsIds)
+  const isExpanded = expandedTourPanelsIds.includes(tour['@id'])
+
+  const loadingTourIds = useSelector(selectLoadingTourPanelsIds)
+  const isLoading = loadingTourIds.includes(tour['@id'])
 
   const dispatch = useDispatch()
 
   const { show } = useContextMenu({id: 'dashboard'})
 
-  const isExpanded = expandedTourPanelsIds.includes(tour['@id'])
-
   return (
-    <div className="panel panel-default panel--tour nomargin task__draggable" onContextMenu={(e) => show(e, {
-      props: { tour }
-    })}>
+    <div
+      className="panel panel-default panel--tour nomargin task__draggable"
+      onContextMenu={(e) => show(e, {props: { tour }})}
+      style={{ opacity: isLoading ? 0.7 : 1, pointerEvents: isLoading ? 'none' : 'initial' }}
+    >
       <div className="panel-heading" role="tab">
         <h4 className="panel-title d-flex align-items-center">
           <i className="fa fa-repeat flex-grow-0"></i>
-            <RenderEditNameForm tour={tour}>
+            <RenderEditNameForm tour={tour} isLoading={isLoading}>
               <a role="button" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))} className="ml-2 flex-grow-1 text-truncate">
                 { tour.name } <span className="badge">{ tour.items.length }</span>
               </a>
@@ -118,8 +126,8 @@ const Tour = ({ tour }) => {
         </h4>
       </div>
       <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
-        <Droppable 
-            isDropDisabled={!isDroppable}
+        <Droppable
+            isDropDisabled={!isDroppable || isLoading}
             droppableId={ `tour:${tour['@id']}` }
           >
             {(provided, snapshot) => (

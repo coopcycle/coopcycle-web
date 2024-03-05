@@ -1,8 +1,8 @@
 import _ from "lodash"
-import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskLists, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
+import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskLists, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { disableDropInTours, enableDropInTours, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, updateTourInUI } from "./actions"
-import { belongsToTour, selectGroups, selectSelectedTasks, taskSelectors, tourSelectors } from "./selectors"
+import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
 import { withLinkedTasks } from "./utils"
 import { toast } from 'react-toastify'
 
@@ -10,11 +10,11 @@ import { toast } from 'react-toastify'
 export function handleDragStart(result) {
   return function(dispatch, getState) {
 
-    const selectedTasks = getState().selectedTasks
+    const selectedTasksIds = selectSelectedTasks(getState()).map(t => t['@id'])
 
     // If the user is starting to drag something that is not selected then we need to clear the selection.
-    // https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/patterns/multi-drag.md#dragging
-    const isDraggableSelected = selectedTasks.includes(result.draggableId)
+    // https://github.com/atlassian/@hello-pangea/dnd/blob/master/docs/patterns/multi-drag.md#dragging
+    const isDraggableSelected = selectedTasksIds.includes(result.draggableId)
 
     if (!isDraggableSelected) {
       dispatch(clearSelectedTasks())
@@ -29,18 +29,18 @@ export function handleDragStart(result) {
 
   }
 }
-  
+
 export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modifyTour=modifyTourAction) {
-  
+
   return function(dispatch, getState) {
 
     const handleDropInTaskList = (tasksList, selectedTasks, index, updateTourUI=null) => {
       let newTasksList = [...tasksList.items]
-    
-    
+
+
       selectedTasks.forEach((task) => {
         let taskIndex = newTasksList.findIndex((item) => item['@id'] === task['@id'])
-        // if the task was already in the tasklist, remove from its original place 
+        // if the task was already in the tasklist, remove from its original place
         if ( taskIndex > -1) {
           newTasksList.splice(taskIndex, 1)
         }
@@ -90,6 +90,16 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       return
     }
 
+    if (source.droppableId.startsWith('assigned:') && destination.droppableId.startsWith('tour:')) {
+      let tourId = destination.droppableId.split(':')[1],
+      tour = selectTourById(getState(), tourId)
+
+      if (!isTourAssigned(tour)) {
+        toast.warn("Can not unassign by drag'n drop at the moment")
+        return
+      }
+    }
+
     if (source.droppableId.startsWith('tour:') && destination.droppableId === 'unassigned') {
       toast.warn("Can not remove from tour by drag'n drop at the moment")
       return
@@ -127,10 +137,10 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
     }
     else if (result.draggableId.startsWith('tour')) {
       let tourId = result.draggableId.split(':')[1],
-      tour = tourSelectors.selectById(getState(), tourId)
-      selectedTasks = tour.itemIds.map(taskId => taskSelectors.selectById(getState(), taskId))
+      tour = selectTourById(getState(), tourId)
+      selectedTasks = tour.items
     }
-    
+
     // we want to move linked tasks together only in this case, so the dispatcher can have fine-grained control
     if (source.droppableId === 'unassigned') {
       selectedTasks =  withLinkedTasks(selectedTasks, allTasks, true)
@@ -140,21 +150,21 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
     }
 
     if (selectedTasks.length === 0) return // can happen, for example dropping empty tour
-    
+
     if (destination.droppableId.startsWith('tour:')) {
       const tours = selectAllTours(getState())
       var tourId = destination.droppableId.replace('tour:', '')
       const tour = tours.find(t => t['@id'] == tourId)
 
       var newTourItems = [ ...tour.items ]
-    
-        // Reorder tasks inside a tour -> remove tasks that were already there
-        if (source.droppableId === destination.droppableId) {
-          _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t['@id']))
-        }
+
+      // Reorder tasks inside a tour -> remove tasks that were already there
+      if (source.droppableId === destination.droppableId) {
+        _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t['@id']))
+      }
 
         Array.prototype.splice.apply(newTourItems,
-          Array.prototype.concat([ destination.index, 0 ], selectedTasks))  
+          Array.prototype.concat([ destination.index, 0 ], selectedTasks))
 
       if (isTourAssigned(tour)) {
         const tasksLists = selectTaskLists(getState())

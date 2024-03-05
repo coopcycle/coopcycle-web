@@ -10,7 +10,8 @@ const initialState = {
   taskListsLoading: false,
   areToursDroppable: true,
   currentTask: null,
-  expandedTourPanelIds: []
+  expandedTourPanelIds: [],
+  loadingTourPanelsIds: []
 }
 
 export default (state = initialState, action) => {
@@ -33,13 +34,13 @@ export default (state = initialState, action) => {
         ...state,
         areToursDroppable: true,
       }
-    
+
     case DISABLE_DROP_IN_TOURS:
       return {
         ...state,
         areToursDroppable: false,
       }
-  
+
 
     default:
       return state
