@@ -3,9 +3,12 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 
 class BusinessRestaurantGroup extends LocalBusinessGroup
 {
+    use SoftDeleteable;
+
     private $cutoffTime;
     private $businessAccount;
     private $restaurantsWithMenu;

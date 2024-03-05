@@ -230,4 +230,9 @@ interface OrderInterface extends
     public function setBusinessAccount(BusinessAccount $businessAccount): void;
 
     public function isBusiness(): bool;
+
+    /**
+     * @return Collection
+     */
+    public function getPickupAddresses(): Collection;
 }

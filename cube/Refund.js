@@ -11,5 +11,12 @@ cube(`Refund`, {
       type: `number`
     }
   },
+  measures: {
+    totalAmount: {
+      sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
+      type: `sum`,
+      format: `currency`
+    },
+  },
   dataSource: `default`
 });

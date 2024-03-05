@@ -190,8 +190,7 @@ services:
   coopcycle.domain.order.reactor.clear_session:
     class: AppBundle\Domain\Order\Reactor\ClearSession
     arguments:
-      - '@request_stack'
-      - '%sylius_cart_restaurant_session_key_name%'
+      - '@AppBundle\Sylius\Cart\SessionStorage'
     tags:
         - name: event_subscriber
           subscribes_to: order:checkout_succeeded

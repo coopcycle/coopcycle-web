@@ -125,7 +125,6 @@ services:
     arguments:
       $objectManager: '@sylius.manager.order'
       $orderFactory: '@sylius.factory.order'
-      $sessionKeyName: "%sylius_cart_restaurant_session_key_name%"
 
   AppBundle\LoopEat\Client:
     arguments:
@@ -222,8 +221,6 @@ services:
       - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
   AppBundle\EventListener\DeauthenticatedListener:
-    arguments:
-      $sessionKeyName: "%sylius_cart_restaurant_session_key_name%"
     tags:
       - { name: kernel.event_listener, event: Symfony\Component\Security\Http\Event\DeauthenticatedEvent, method: logoutOnChange }
 
@@ -418,10 +415,13 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.order_processing }
 
+  AppBundle\Sylius\Cart\SessionStorage:
+    arguments:
+      $sessionKeyName: "%sylius_cart_restaurant_session_key_name%"
+
   AppBundle\Sylius\Cart\RestaurantCartContext:
     arguments:
       $orderFactory: "@sylius.factory.order"
-      $sessionKeyName: "%sylius_cart_restaurant_session_key_name%"
     tags:
       - { name: sylius.context.cart, priority: 32 }
 
@@ -1127,7 +1127,6 @@ services:
 
   AppBundle\Sylius\Cart\SessionSubscriber:
     arguments:
-      $sessionKeyName: "%sylius_cart_restaurant_session_key_name%"
       $enabled: "%foodtech_enabled%"
     tags:
       - { name: kernel.event_subscriber }

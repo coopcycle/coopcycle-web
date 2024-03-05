@@ -24,7 +24,7 @@ class AcceptOrderHandler
     {
         $order = $command->getOrder();
 
-        $violations = $this->validator->validate($order->getItems(), new All([ new AssertLoopeatStock() ]));
+        $violations = $this->validator->validate($order->getItems(), new All([ new AssertLoopeatStock(true) ]));
         if (count($violations) > 0) {
             throw new LoopeatInsufficientStockException($violations);
         }

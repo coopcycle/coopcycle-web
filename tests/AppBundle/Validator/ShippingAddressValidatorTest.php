@@ -2,7 +2,6 @@
 
 namespace AppBundle\Validator;
 
-use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\LocalBusiness;
@@ -29,9 +28,6 @@ class ShippingAddressValidatorTest extends ConstraintValidatorTestCase
     public function setUp(): void
     {
         $this->routing = $this->prophesize(RoutingInterface::class);
-        $this->businessContext = $this->prophesize(BusinessContext::class);
-
-        $this->businessContext->isActive()->willReturn(false);
 
         parent::setUp();
     }
@@ -40,8 +36,7 @@ class ShippingAddressValidatorTest extends ConstraintValidatorTestCase
     {
         return new ShippingAddressValidator(
             $this->routing->reveal(),
-            new ExpressionLanguage(),
-            $this->businessContext->reveal()
+            new ExpressionLanguage()
         );
     }
 
@@ -150,6 +145,9 @@ class ShippingAddressValidatorTest extends ConstraintValidatorTestCase
         $order
             ->getFulfillmentMethod()
             ->willReturn($takeaway ? 'collection' : 'delivery');
+
+        $order->isBusiness()
+            ->willReturn(false);
 
         return $order;
     }
@@ -366,7 +364,8 @@ class ShippingAddressValidatorTest extends ConstraintValidatorTestCase
             ->containsDisabledProduct()
             ->willReturn(false);
 
-        $this->businessContext->isActive()->willReturn(true);
+        $order->isBusiness()
+            ->willReturn(true);
 
         $this->prophesizeGetRawResponse(
             $restaurantAddressCoords,

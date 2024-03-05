@@ -11,6 +11,15 @@ class LoopeatStock extends Constraint
 {
     public $message = 'loopeat.insufficient_stock';
 
+    public $useOverridenQuantity;
+
+    public function __construct(bool $useOverridenQuantity = false)
+    {
+        $this->useOverridenQuantity = $useOverridenQuantity;
+
+        parent::__construct();
+    }
+
     public function validatedBy()
     {
         return get_class($this).'Validator';
