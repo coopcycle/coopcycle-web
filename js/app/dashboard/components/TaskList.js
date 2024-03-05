@@ -1,5 +1,5 @@
 import React from 'react'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 import moment from 'moment'
 import { Droppable } from "@hello-pangea/dnd"
 import { useTranslation } from 'react-i18next'
@@ -26,12 +26,12 @@ import ProgressBar from './ProgressBar'
 
 moment.locale($('html').attr('lang'))
 
-const TaskOrTour = ({ item, draggableIndex, onRemove, unassignTasks }) => {
+const TaskOrTour = ({ item, draggableIndex, unassignTasksFromTaskList }) => {
 
   if (item['@type'] === 'Tour') {
-    return (<Tour tour={ item } draggableIndex={ draggableIndex } unassignTasks={ unassignTasks } />)
+    return (<Tour tour={ item } draggableIndex={ draggableIndex } />)
   } else {
-    return (<Task task={ item } draggableIndex={ draggableIndex } onRemove={ item => onRemove(item) } />)
+    return (<Task task={ item } draggableIndex={ draggableIndex } onRemove={ item => unassignTasksFromTaskList(item) } />)
   }
 }
 
@@ -54,8 +54,7 @@ class InnerList extends React.Component {
         key={ item['@id'] }
         item={ item }
         draggableIndex={ index }
-        onRemove={ item => this.props.onRemove(item) }
-        unassignTasks={ this.props.unassignTasks }
+        unassignTasksFromTaskList={ this.props.unassignTasksFromTaskList }
       />)
   }
 }
@@ -116,11 +115,10 @@ const ProgressBarMemo = React.memo(({
     )
   })
 
-export const TaskList = ({ tasks, items, uri, username, polylineEnabled, isEmpty, distance, duration,  unassignTasks, togglePolyline, optimizeTaskList, onlyFilter }) => {
+export const TaskList = ({ tasks, items, uri, username, polylineEnabled, isEmpty, distance, duration }) => {
 
-  const removeTask =  (task) => {
-    unassignTasks(username, task)
-  }
+  const dispatch = useDispatch()
+  const unassignTasksFromTaskList = (username => tasks => dispatch(unassignTasks(username, tasks)))(username)
 
   const { t } = useTranslation()
 
@@ -163,7 +161,7 @@ export const TaskList = ({ tasks, items, uri, username, polylineEnabled, isEmpty
           </div>
           ) }
           {incidentReported.length > 0 && <div onClick={(e) => {
-            onlyFilter('showIncidentReportedTasks')
+            dispatch(onlyFilter('showIncidentReportedTasks'))
             e.stopPropagation()
           }}>
             <Tooltip title="Incident(s)">
@@ -204,10 +202,7 @@ export const TaskList = ({ tasks, items, uri, username, polylineEnabled, isEmpty
                 }}
                 onClick={ e => {
                   e.preventDefault()
-                  optimizeTaskList({
-                    '@id': uri,
-                    username: username,
-                  })
+                  dispatch(optimizeTaskList({'@id': uri, username: username}))
                 }}
               >
                 <i className="fa fa-2x fa-bolt"></i>
@@ -218,7 +213,7 @@ export const TaskList = ({ tasks, items, uri, username, polylineEnabled, isEmpty
                   'invisible': tasks.length < 1,
                   'text-muted': !polylineEnabled
                 }) }
-                onClick={ () => togglePolyline(username) }
+                onClick={ () => dispatch(togglePolyline(username)) }
               >
                 <i className="fa fa-map fa-2x"></i>
               </a>
@@ -242,8 +237,7 @@ export const TaskList = ({ tasks, items, uri, username, polylineEnabled, isEmpty
             >
               <InnerList
                 items={ items }
-                onRemove={ task => removeTask(task) }
-                unassignTasks={ unassignTasks }
+                unassignTasksFromTaskList={ unassignTasksFromTaskList }
                 username={ username } />
               { provided.placeholder }
             </div>
@@ -289,13 +283,5 @@ const makeMapStateToProps = () => {
   return mapStateToProps
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    unassignTasks: (username, tasks) => dispatch(unassignTasks(username, tasks)),
-    togglePolyline: (username) => dispatch(togglePolyline(username)),
-    optimizeTaskList: (taskList) => dispatch(optimizeTaskList(taskList)),
-    onlyFilter: filter => dispatch(onlyFilter(filter))
-  }
-}
 
-export default connect(makeMapStateToProps, mapDispatchToProps)(TaskList)
+export default connect(makeMapStateToProps)(TaskList)
