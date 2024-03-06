@@ -1,6 +1,12 @@
 {% block coopcycle_address_book_widget %}
   <div id="{{ form.vars.id }}">
 
+    {% if form.parent.imported_from is defined %}
+      {% if form.parent.imported_from.vars.data is not null %}
+        <pre>{{ form.parent.imported_from.vars.data }}</pre>
+      {% endif %}
+    {% endif %}
+
     {% set isNewAddress = (form.isNewAddress.vars.data == true) %}
 
     {{ form_widget(form.existingAddress,          { attr: { 'class': (isNewAddress ? 'd-none' : '') } }) }}

@@ -66,7 +66,8 @@ class TaskType extends AbstractType
                 'label' => 'form.task.comments.label',
                 'required' => false,
                 'attr' => ['rows' => '2', 'placeholder' => 'form.task.comments.placeholder']
-            ]);
+            ])
+        ->add('imported_from');
 
         if (null !== $options['with_time_slot']
         && null !== $options['with_time_slots']

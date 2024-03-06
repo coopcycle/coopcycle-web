@@ -51,3 +51,14 @@ log:
     -e 's/\(.*EMERGENCY\)/\o033[95m\1\o033[39m/' \
     -e 's/\(.*DEBUG\)/\o033[90m\1\o033[39m/' \
     -e 's/\(stacktrace\)/\o033[37m\1\o033[39m/'
+
+ftp:
+	$(eval TMP := $(shell mktemp -d))
+	@mkdir -p $(TMP)/from_coopx
+	@mkdir -p $(TMP)/to_coopx
+	@echo "Temp folder: $(TMP)"
+	@docker run --name "coopcycle-transporter-ftp" -d --rm \
+		--net "container:coopcycle-web-php-1" \
+		-e FTP_USERNAME=user -e FTP_PASSWORD=123 \
+		-v $(TMP):/home/user \
+		monteops/proftpd

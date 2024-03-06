@@ -29,6 +29,7 @@ abstract class LocalBusinessType extends AbstractType
     protected $country;
     protected $debug;
     protected $cashOnDeliveryOptinEnabled;
+    protected bool $DBSchenkerEnabled;
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
@@ -38,7 +39,9 @@ abstract class LocalBusinessType extends AbstractType
         GatewayResolver $gatewayResolver,
         string $country,
         bool $debug = false,
-        bool $cashOnDeliveryOptinEnabled = false)
+        bool $cashOnDeliveryOptinEnabled = false,
+        array $transportersConfig = []
+    )
     {
         $this->authorizationChecker = $authorizationChecker;
         $this->tokenStorage = $tokenStorage;
@@ -48,6 +51,7 @@ abstract class LocalBusinessType extends AbstractType
         $this->debug = $debug;
         $this->cashOnDeliveryOptinEnabled = $cashOnDeliveryOptinEnabled;
         $this->gatewayResolver = $gatewayResolver;
+        $this->DBSchenkerEnabled = $transportersConfig['DBSCHENKER']['enabled'] ?? false;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

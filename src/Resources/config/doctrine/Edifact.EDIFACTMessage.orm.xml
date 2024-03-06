@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity repository-class="AppBundle\Entity\Edifact\EDIFACTMessageRepository" name="AppBundle\Entity\Edifact\EDIFACTMessage" table="edifact_message">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="transporter" type="string" column="transporter" nullable="false"/>
+    <field name="reference" type="string" column="reference" length="255" nullable="false" />
+    <field name="direction" type="string" column="direction" length="255" nullable="false" />
+    <field name="messageType" type="string" column="message_type" length="255" nullable="false"/>
+    <field name="subMessageType" type="string" column="sub_message_type" length="255" nullable="true"/>
+    <field name="edifactFile" type="string" column="edifact_file" nullable="true"/>
+    <field name="syncedAt" type="datetime" column="synced_at" nullable="true"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <many-to-many field="tasks" target-entity="AppBundle\Entity\Task" mapped-by="edifactMessages" index-by="edifactMessages" />
+    <indexes>
+      <index columns="reference"></index>
+    </indexes>
+ </entity>
+</doctrine-mapping>

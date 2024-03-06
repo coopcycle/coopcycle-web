@@ -136,6 +136,22 @@ describe('handleDragEnd', () => {
       )
         
     })
+
+    it ('should not unassign a task from tasklist to unassigned tour', () => {
+      const dispatch = jest.fn()
+
+      let result = {
+        draggableId: '/api/tasks/731',
+        source: {droppableId: 'assigned:admin'}, destination: {droppableId: 'tour:/api/tours/114', index: 1}
+      }
+
+      handleDragEnd(result)(dispatch, store.getState)
+
+      expect(dispatch).toHaveBeenCalledTimes(0)
+
+    })
   
-  })
+    
+  
+})
   
