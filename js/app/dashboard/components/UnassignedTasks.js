@@ -56,7 +56,7 @@ const Buttons = () => {
             setVisible(false)
           }}
           isRecurrenceRulesVisible={isRecurrenceRulesVisible}
-          showRecurrenceRules={showRecurrenceRules}
+          showRecurrenceRules={(checked) => dispatch(showRecurrenceRules(checked))}
            />
         }
         open={ visible }
