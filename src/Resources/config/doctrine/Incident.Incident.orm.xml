@@ -4,7 +4,8 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <field name="failure_reason_code" type="string" column="failure_reason_code" length="32" nullable="false"/>
+    <field name="status" type="string" column="status" length="32"/>
+    <field name="failure_reason_code" type="string" column="failure_reason_code" length="32" nullable="true" />
     <field name="description" type="string" column="description" length="65535" nullable="true" />
     <field name="created_at" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
