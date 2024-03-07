@@ -119,6 +119,7 @@ export const UnassignedTasks = () => {
                   'taskList__tasks': true,
                   'list-group': true,
                   'm-0': true,
+                  'taskList__tasks--empty': !standaloneTasks.length
                 }) }
                 { ...provided.droppableProps }
               style={getDroppableListStyle(snapshot.isDraggingOver)}
