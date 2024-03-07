@@ -230,42 +230,48 @@ class Task extends React.Component {
       }
     }
 
-    return (
-      <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ this.props.draggableIndex }>
-        {(provided, snapshot) => {
-          return (
-            <div
-              ref={ provided.innerRef }
-              { ...provided.draggableProps }
-              { ...provided.dragHandleProps }
-            >
-              <span { ...taskProps }>
-              <span className="list-group-item-color" style={{ backgroundColor: color }}></span>
-              <span>
-                <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
-                {task.metadata?.rescheduled ? <i className="task__icon task__icon--type fa fa-repeat"></i> : null}
-                <TaskCaption task={ task } />
-                <TaskAttrs task={ task } />
-                <TaskTags task={ task } />
-                <TaskIconRight task={ task } onRemove={ this.props.onRemove } />
-                <TaskEta
-                  after={ task.after }
-                  before={ task.before }
-                  date={ date } />
-                <TaskComments task={ task } />
-              </span>
-            </span>
-            { (snapshot.isDragging && this.props.selectedTasks.length > 1) && (
+    const taskContent = (
+      <span { ...taskProps }>
+        <span className="list-group-item-color" style={{ backgroundColor: color }}></span>
+        <span>
+          <i className={ 'task__icon task__icon--type fa fa-' + (task.type === 'PICKUP' ? 'cube' : 'arrow-down') }></i>
+          {task.metadata?.rescheduled ? <i className="task__icon task__icon--type fa fa-repeat"></i> : null}
+          <TaskCaption task={ task } />
+          <TaskAttrs task={ task } />
+          <TaskTags task={ task } />
+          <TaskIconRight task={ task } onRemove={ this.props.onRemove } />
+          <TaskEta
+            after={ task.after }
+            before={ task.before }
+            date={ date } />
+          <TaskComments task={ task } />
+        </span>
+      </span>)
+
+    if(this.props.taskWithoutDrag) {
+      return taskContent
+    } else {
+      return (
+        <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ this.props.draggableIndex }>
+          {(provided, snapshot) => {
+            return (
+              <div
+                ref={ provided.innerRef }
+                { ...provided.draggableProps }
+                { ...provided.dragHandleProps }
+              >
+                { taskContent}
+                {(snapshot.isDragging && this.props.selectedTasks.length > 1) && (
                   <div className="task-dragging-number">
                     <span>{ this.props.selectedTasks.length }</span>
                   </div>
-                ) }
+                )}
               </div>
-            )
-          }}
-        </Draggable>
-    )
-
+              )
+            }}
+          </Draggable>
+      )
+    }
   }
 }
 
