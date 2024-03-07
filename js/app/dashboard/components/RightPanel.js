@@ -9,10 +9,10 @@ import {
   toggleSearch,
   closeSearch
 } from '../redux/actions'
-import UnassignedTasks from './UnassignedTasks'
+import { UnassignedTasks } from './UnassignedTasks'
+import { UnassignedTours } from './UnassignedTours'
 import TaskLists from './TaskLists'
 import SearchPanel from './SearchPanel'
-import UnassignedTours from './UnassignedTours'
 import TasksContextMenu from './context-menus/TasksContextMenu'
 import { handleDragEnd, handleDragStart } from '../redux/handleDrag'
 import { selectCouriers, selectSplitDirection, selectAreToursEnabled, selectSearchIsOn } from '../redux/selectors'

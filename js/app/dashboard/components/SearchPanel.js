@@ -95,6 +95,7 @@ class SearchPanel extends React.Component {
                   task={ task }
                   toggleTask={ this.props.toggleTask }
                   selectTask={ this.props.selectTask }
+                  taskWithoutDrag
                 />
               )
             })}

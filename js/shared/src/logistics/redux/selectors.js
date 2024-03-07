@@ -51,8 +51,7 @@ export const selectTasksWithColor = createSelector(
   allTasks => mapToColor(allTasks)
 )
 
-const selectTaskListByUsername = (state, props) =>
-  taskListSelectors.selectById(state, props.username)
+const selectTaskListByUsername = (state, props) => taskListSelectors.selectById(state, props.username)
 
 const belongsToTour = task => Object.prototype.hasOwnProperty.call(task, 'tour') && task.tour
 

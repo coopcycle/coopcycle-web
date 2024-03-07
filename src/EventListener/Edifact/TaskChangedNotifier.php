@@ -54,14 +54,18 @@ class TaskChangedNotifier {
             return true;
         }
         $org = $task->getOrganization();
-        if (is_null($org)) {
+        if (null === $org) {
             return true;
         }
 
-        /** @var Store $store */
+        /** @var Store|null $store */
         $store = $this->em->getRepository(Store::class)->findOneBy([
             'organization' => $org
         ]);
+
+        if (null === $store) {
+            return true;
+        }
 
         return !$store->isDBSchenkerEnabled();
     }
