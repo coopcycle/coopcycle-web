@@ -4,6 +4,8 @@ import { withTranslation, useTranslation } from 'react-i18next'
 import moment from 'moment'
 import { useContextMenu } from 'react-contexify'
 import _ from 'lodash'
+import { Draggable } from "@hello-pangea/dnd"
+
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
 import { selectVisibleTaskIds } from '../redux/selectors'
@@ -222,19 +224,13 @@ class Task extends React.Component {
 
         this.props.selectTask(task)
 
-        // FIXME: this is temporary
-        // disable menu if task from assigned tour
-        if (task.isAssigned && task.tour) {
-          return
-        }
-
         show(e, {
           props: { task }
         })
       }
     }
 
-    return (
+    const taskContent = (
       <span { ...taskProps }>
         <span className="list-group-item-color" style={{ backgroundColor: color }}></span>
         <span>
@@ -250,9 +246,32 @@ class Task extends React.Component {
             date={ date } />
           <TaskComments task={ task } />
         </span>
-      </span>
-    )
+      </span>)
 
+    if(this.props.taskWithoutDrag) {
+      return taskContent
+    } else {
+      return (
+        <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ this.props.draggableIndex }>
+          {(provided, snapshot) => {
+            return (
+              <div
+                ref={ provided.innerRef }
+                { ...provided.draggableProps }
+                { ...provided.dragHandleProps }
+              >
+                { taskContent}
+                {(snapshot.isDragging && this.props.selectedTasks.length > 1) && (
+                  <div className="task-dragging-number">
+                    <span>{ this.props.selectedTasks.length }</span>
+                  </div>
+                )}
+              </div>
+              )
+            }}
+          </Draggable>
+      )
+    }
   }
 }
 
@@ -264,9 +283,11 @@ function mapStateToProps(state, ownProps) {
     tasksWithColor[ownProps.task['@id']] : '#ffffff'
 
   const visibleTaskIds = selectVisibleTaskIds(state)
+  const selectedTasks = state.selectedTasks
 
   return {
-    selected: -1 !== state.selectedTasks.indexOf(ownProps.task['@id']),
+    selectedTasks: selectedTasks,
+    selected: -1 !== selectedTasks.indexOf(ownProps.task['@id']),
     color,
     date: selectSelectedDate(state),
     isVisible: _.includes(visibleTaskIds, ownProps.task['@id']),

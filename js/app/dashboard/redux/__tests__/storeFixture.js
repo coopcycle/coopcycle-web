@@ -454,56 +454,6 @@ export const storeFixture = {
               '@id': '/api/tours/114',
               '@type': 'Tour',
               name: 'ma tournée',
-              items: [
-                {
-                  '@id': '/api/tasks/733',
-                  '@type': 'Task',
-                  id: 733,
-                  type: 'DROPOFF',
-                  status: 'TODO',
-                  after: '2024-01-09T00:00:00+01:00',
-                  before: '2024-01-09T23:59:59+01:00',
-                  isAssigned: false,
-                  orgName: '',
-                  images: [],
-                  doneAfter: '2024-01-09T00:00:00+01:00',
-                  doneBefore: '2024-01-09T23:59:59+01:00',
-                  assignedTo: null,
-                  previous: null,
-                  next: null,
-                  packages: [],
-                  tour: {
-                    '@id': '/api/tours/114',
-                    name: 'ma tournée',
-                    position: 0
-                  },
-                  position: 0
-                },
-                {
-                  '@id': '/api/tasks/732',
-                  '@type': 'Task',
-                  id: 732,
-                  type: 'DROPOFF',
-                  status: 'TODO',
-                  after: '2024-01-09T00:00:00+01:00',
-                  before: '2024-01-09T23:59:59+01:00',
-                  isAssigned: false,
-                  orgName: '',
-                  images: [],
-                  doneAfter: '2024-01-09T00:00:00+01:00',
-                  doneBefore: '2024-01-09T23:59:59+01:00',
-                  assignedTo: null,
-                  previous: null,
-                  next: null,
-                  packages: [],
-                  tour: {
-                    '@id': '/api/tours/114',
-                    name: 'ma tournée',
-                    position: 1
-                  },
-                  position: 1
-                }
-              ],
               distance: 4429,
               duration: 1343,
               polyline: 'ovkiHejmMB?L?x@DdAf@ZAj@Bj@Tp@BNATDbAh@Fa@He@|Ah@ZHVHp@l@~@x@jAdAVB`Az@v@t@nAjABBDDTRVNd@Xt@b@JFhC|AzCjBNLNPb@f@FNbAlCTj@HR@FjBbFBHVp@rCzHJAZ?Jn@j@`DVzAFZHd@x@`FHh@~@rF@HJj@Cb@tAjI^nBBPN`AFZxAjIRvA??xA`Jf@fCTrAF^VrADZDPV~A@BN`AHEP@rJn@F??NAnI?\\?VE|G?PH@vC`@bAJPBFBb@PbBn@ZJNFHDxBv@FBj@TJD~@^HBFBpBr@JDl@Vb@Rh@RNFp@XFBFB~B~@XRd@R^NFBpElBn@VdBr@v@bA|E`HBn@B`@V`@^T\\RZTLHLHrA`AFBNJSPoAzFAj@CA',

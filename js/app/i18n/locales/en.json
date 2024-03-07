@@ -139,6 +139,7 @@
         "ADMIN_DASHBOARD_TOOLTIP_FAILED": "Failed",
         "ADMIN_DASHBOARD_TOOLTIP_INCIDENT_REPORTED": "Incident reported",
         "ADMIN_DASHBOARD_TOOLTIP_TOTAL": "Total",
+        "ADMIN_DASHBOARD_INVALID_TASKS_SELECTION": "These tasks can't be selected together. Please select tasks in the same tour, same courier or in unassigned tasks.",
         "USER_EDIT_ENABLED_LABEL": "Enabled",
         "USER_EDIT_DISABLED_LABEL": "Disabled",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Order created",

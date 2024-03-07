@@ -25,7 +25,7 @@ class ShippingTimeCalculator
         $pickupAddresses = $order->getPickupAddresses()->toArray();
         $dropoffAddress = $order->getShippingAddress();
 
-        if (null === $dropoffAddress || null === $dropoffAddress->getGeo()) {
+        if (null === $dropoffAddress || null === $dropoffAddress->getGeo() || count($pickupAddresses) === 0) {
             return $this->fallback;
         }
 

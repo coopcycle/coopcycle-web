@@ -36,7 +36,12 @@ export const selectIsRecurrenceRulesVisible = state => state.settings.isRecurren
 export const selectTaskListGroupMode = state => state.taskListGroupMode
 export const selectSplitDirection = state => state.rightPanelSplitDirection
 export const selectSearchIsOn = state => state.searchIsOn
+export const selectPolylineEnabledByUsername = username => state => state.polylineEnabled[username]
 
+export const getProductNameById = id => store => {
+  return store.dashboard.dashboards.filter(({ Id }) => Id === id)[0]
+    .Name;
+}
 
 export const selectCouriers = state => state.config.couriersList
 export const selectTaskEvents = state => state.taskEvents
