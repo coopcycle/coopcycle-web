@@ -105,22 +105,16 @@ export const makeSelectTaskListItemsByUsername = () => {
   )
 }
 
-// FIXME This is recalculated all the time we change a tasks
-export const selectTasksWithTour = createSelector(selectAllTasks,
-  (allTasks) => {
-    return allTasks.filter(t => t.tour)
-})
-
 // FIXME This is recalculated all the time we change a task
 export const selectAllTours = createSelector(
   tourSelectors.selectAll,
-  selectTasksWithTour,
-  (allTours, tasksWithTour) => {
+  selectAllTasks,
+  (allTours, allTasks) => {
     const toursWithItems = []
     forEach(allTours, unassignedTour => {
       let items = [];
       forEach(unassignedTour.itemIds, itemId => {
-        let task = tasksWithTour.find(task => task['@id'] == itemId)
+        let task = allTasks.find(task => task['@id'] == itemId)
         items.push(task)
       })
       toursWithItems.push({
