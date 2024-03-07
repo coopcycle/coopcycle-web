@@ -2,24 +2,47 @@
 
 namespace AppBundle\Entity\Incident;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Task;
 use Doctrine\Common\Collections\ArrayCollection;
 
+
+/**
+ * @ApiResource(
+ *   collectionOperations={
+ *     "post"={
+ *       "method"="POST",
+ *     }
+ *   },
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *     },
+ *   }
+ * )
+ */
 class Incident {
 
     protected int $id;
 
+    protected string $status;
+
     protected ArrayCollection $tasks;
 
-    protected string $failure_reason_code;
+    protected ?string $failure_reason_code;
 
-    protected string $description;
+    protected ?string $description;
 
     protected ArrayCollection $images;
 
     protected $created_at;
 
     protected $updated_at;
+
+    const STATUS_NEW = 'NEW';
+    const STATUS_OPEN = 'OPEN';
+    const STATUS_CLOSED = 'CLOSED';
+    const STATUS_RESOLVED = 'RESOLVED';
 
 
     public function __construct() {
@@ -29,6 +52,15 @@ class Incident {
 
     public function getId(): int {
         return $this->id;
+    }
+
+    public function getStatus(): string {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self {
+        $this->status = $status;
+        return $this;
     }
 
     public function getTasks(): ArrayCollection {

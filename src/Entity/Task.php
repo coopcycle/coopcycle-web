@@ -30,6 +30,7 @@ use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Delivery\FailureReason;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
+use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Task\Group as TaskGroup;
@@ -1138,13 +1139,30 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $language->evaluate($pricingRule->getPrice(), $this->toExpressionLanguageValues());
     }
 
+    /**
+    * @deprecated
+    */
     public function setHasIncidents(bool $hasIncidents): void
     {
         $this->hasIncidents = $hasIncidents;
     }
 
+
+    // This should be computed from `getIncidents`
+    // Ex: $this->getIncidents()->count() > 0
     public function getHasIncidents(): bool
     {
         return $this->hasIncidents;
     }
+
+    public function getIncidents(): ArrayCollection
+    {
+        return $this->incidents;
+    }
+
+    public function addIncident(Incident $incident): void
+    {
+        $this->incidents[] = $incident;
+    }
+
 }
