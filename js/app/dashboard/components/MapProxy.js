@@ -227,13 +227,13 @@ export default class MapProxy {
 
     L.Util.setOptions(marker, { task })
 
-    marker.off('click').on('click', (e) => {
-      if(e.originalEvent.ctrlKey) { // e is a leaflet 'click' event
-        this.toggleTaskOnMarkerClick(task)
-      } else {
-        this.selectTaskOnMarkerClick(task['@id'])
-      }   
-    })
+    // marker.off('click').on('click', (e) => {
+    //   if(e.originalEvent.ctrlKey) { // e is a leaflet 'click' event
+    //     this.toggleTaskOnMarkerClick(task)
+    //   } else {
+    //     this.selectTaskOnMarkerClick(task['@id'])
+    //   }
+    // })
     marker.off('mouseover').on('mouseover', () => this.onTaskMouseOver(task))
     marker.off('mouseout').on('mouseout', () => this.onTaskMouseOut(task))
     marker.off('mousedown').on('mousedown', e => {
