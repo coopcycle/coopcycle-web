@@ -20,7 +20,7 @@ class TaskLists extends React.Component {
         <h4>
           <span>{ this.props.t('DASHBOARD_ASSIGNED') }</span>
           { taskListsLoading ?
-            (<span className="pull-right"><i className="fa fa-spinner"></i></span>) :
+            (<span className="pull-right"><span className="loader"></span></span>) :
             (<a className="pull-right" onClick={this.props.openAddUserModal}>
               <i className="fa fa-plus"></i>&nbsp;<i className="fa fa-user"></i>
             </a>)

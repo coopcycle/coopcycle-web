@@ -115,6 +115,7 @@
         "ADMIN_DASHBOARD_TOOLTIP_FAILED": "Échouée",
         "ADMIN_DASHBOARD_TOOLTIP_INCIDENT_REPORTED": "Incident signalé",
         "ADMIN_DASHBOARD_TOOLTIP_TOTAL": "Total",
+        "ADMIN_DASHBOARD_INVALID_TASKS_SELECTION": "Ces tâches ne peuvent pas être sélectionnées ensemble. Veuillez sélectionner des tâches dans la même tournée, le même coursier ou dans la colonne non-assignées.",
         "USER_EDIT_ENABLED_LABEL": "Activé",
         "USER_EDIT_DISABLED_LABEL": "Désactivé",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Commande créée",

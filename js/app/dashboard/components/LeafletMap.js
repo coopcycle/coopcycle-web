@@ -7,7 +7,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import classNames from 'classnames'
 
-import { setCurrentTask, assignAfter, selectTask, selectTasksByIds } from '../redux/actions'
+import { setCurrentTask, assignAfter, selectTask, selectTasksByIds, toggleTask } from '../redux/actions'
 import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle } from './MapLayers'
 import { selectVisibleTaskIds } from '../redux/selectors'
 import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
@@ -148,6 +148,8 @@ const MapProvider = (props) => {
     const proxy = new MapProxy(LMap, {
       useAvatarColors: props.useAvatarColors,
       onEditClick: props.setCurrentTask,
+      toggleTaskOnMarkerClick: (task) => props.toggleTask(task),
+      selectTaskOnMarkerClick: (taskId) => props.selectTasksByIds([taskId]),
       onTaskMouseDown: task => {
         if (task.isAssigned) {
           proxy.disableDragging()
@@ -254,6 +256,7 @@ class LeafletMap extends Component {
         setCurrentTask={ this.props.setCurrentTask }
         assignAfter={ this.props.assignAfter }
         selectTasksByIds={ this.props.selectTasksByIds }
+        toggleTask={ this.props.toggleTask }
         useAvatarColors={ this.props.useAvatarColors }
       >
         <CourierMapLayer />
@@ -281,6 +284,7 @@ function mapDispatchToProps (dispatch) {
     assignAfter: (username, task, after) => dispatch(assignAfter(username, task, after)),
     selectTask: task => dispatch(selectTask(task)),
     selectTasksByIds: taskIds => dispatch(selectTasksByIds(taskIds)),
+    toggleTask: task => dispatch(toggleTask(task, true)),
   }
 }
 
