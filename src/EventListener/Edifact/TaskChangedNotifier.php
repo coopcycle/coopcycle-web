@@ -58,7 +58,7 @@ class TaskChangedNotifier {
             return true;
         }
 
-        /** @var Store $store */
+        /** @var Store|null $store */
         $store = $this->em->getRepository(Store::class)->findOneBy([
             'organization' => $org
         ]);
