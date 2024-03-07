@@ -108,7 +108,7 @@
         "ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING": "Importation en cours…",
         "ADMIN_DASHBOARD_CANCEL_TASK_CONFIRM": "Êtes-vous sûr·e de vouloir annuler la tâche #{{id}} ?",
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Formats de fichiers supportés : csv, ods, xlsx",
-        "ADMIN_DASHBOARD_RESCHEDULE": "Relivrer",
+        "ADMIN_DASHBOARD_RESCHEDULE": "Replannifier",
         "ADMIN_DASHBOARD_TOOLTIP_COMPLETED": "Terminée",
         "ADMIN_DASHBOARD_TOOLTIP_CANCELLED": "Annulée",
         "ADMIN_DASHBOARD_TOOLTIP_IN_PROGRESS": "En cours",
