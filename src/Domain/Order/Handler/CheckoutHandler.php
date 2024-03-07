@@ -5,25 +5,22 @@ namespace AppBundle\Domain\Order\Handler;
 use AppBundle\Domain\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Payment\Gateway;
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
+use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
 class CheckoutHandler
 {
-    private $eventRecorder;
-    private $orderNumberAssigner;
-    private $gateway;
-
     public function __construct(
-        RecordsMessages $eventRecorder,
-        OrderNumberAssignerInterface $orderNumberAssigner,
-        Gateway $gateway)
+        private RecordsMessages $eventRecorder,
+        private OrderNumberAssignerInterface $orderNumberAssigner,
+        private Gateway $gateway,
+        private LoggerInterface $checkoutLogger,
+        private LoggingUtils $loggingUtils)
     {
-        $this->eventRecorder = $eventRecorder;
-        $this->orderNumberAssigner = $orderNumberAssigner;
-        $this->gateway = $gateway;
     }
 
     private function getLastPayment(OrderInterface $order): ?PaymentInterface
@@ -77,6 +74,10 @@ class CheckoutHandler
             $this->gateway->authorize($payment, ['token' => $stripeToken]);
             $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $payment));
         } catch (\Exception $e) {
+            $this->checkoutLogger->error(sprintf('Order %s | CheckoutHandler | CheckoutFailed: %s',
+                $this->loggingUtils->getOrderId($order),
+                $e->getMessage()), ['exception' => $e]);
+
             $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, $e->getMessage()));
         }
     }
