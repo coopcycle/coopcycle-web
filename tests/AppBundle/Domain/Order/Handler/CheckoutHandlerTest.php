@@ -12,10 +12,11 @@ use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\MercadopagoManager;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Service\StripeManager;
-use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Log\NullLogger;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -51,7 +52,9 @@ class CheckoutHandlerTest extends TestCase
         $this->handler = new CheckoutHandler(
             $this->eventRecorder->reveal(),
             $this->orderNumberAssigner->reveal(),
-            $this->gateway
+            $this->gateway,
+            new NullLogger(),
+            new NullLoggingUtils()
         );
     }
 
