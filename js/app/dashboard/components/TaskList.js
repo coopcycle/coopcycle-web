@@ -193,7 +193,7 @@ export const TaskList = ({ uri, username, distance, duration }) => {
           <Popconfirm
             placement="left"
             title={ t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
-            onConfirm={ () => unassignTasks(username, uncompletedTasks) }
+            onConfirm={ () => dispatch(unassignTasks(username, uncompletedTasks)) }
             okText={ t('CROPPIE_CONFIRM') }
             cancelText={ t('ADMIN_DASHBOARD_CANCEL') }>
             <a href="#"
