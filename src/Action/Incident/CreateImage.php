@@ -45,7 +45,7 @@ class CreateImage
             $this->entityManager->persist($incidentImage);
 
             if (isset($incident)) {
-                $incident->addImage($incidentImage);
+                $incidentImage->setIncident($incident);
             }
 
             $this->entityManager->flush();
