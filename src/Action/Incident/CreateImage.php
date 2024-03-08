@@ -6,7 +6,7 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\Incident\IncidentImage;
 use AppBundle\Entity\Incident\Incident;
-use AppBundle\Form\TaskImageType;
+use AppBundle\Form\IncidentImageType;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -29,7 +29,7 @@ class CreateImage
         $this->entityManager = $doctrine->getManager();
     }
 
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): IncidentImage
     {
         $incidentImage = new IncidentImage();
 
@@ -38,7 +38,7 @@ class CreateImage
             $incident = $this->iriConverter->getItemFromIri($request->headers->get('X-Attach-To'));
         }
 
-        $form = $this->formFactory->create(TaskImageType::class, $incidentImage);
+        $form = $this->formFactory->create(IncidentImageType::class, $incidentImage);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
