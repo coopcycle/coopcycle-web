@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Incident;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Task;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 
 /**
@@ -27,17 +28,17 @@ class Incident {
 
     protected string $status;
 
-    protected ArrayCollection $tasks;
+    protected Collection $tasks;
 
     protected ?string $failure_reason_code;
 
     protected ?string $description;
 
-    protected ArrayCollection $images;
+    protected Collection $images;
 
-    protected $created_at;
+    protected $createdAt;
 
-    protected $updated_at;
+    protected $updatedAt;
 
     const STATUS_NEW = 'NEW';
     const STATUS_OPEN = 'OPEN';
@@ -63,7 +64,7 @@ class Incident {
         return $this;
     }
 
-    public function getTasks(): ArrayCollection {
+    public function getTasks(): Collection {
         return $this->tasks;
     }
 
@@ -90,7 +91,7 @@ class Incident {
         return $this;
     }
 
-    public function getImages(): ArrayCollection {
+    public function getImages(): Collection {
         return $this->images;
     }
 
@@ -100,11 +101,11 @@ class Incident {
     }
 
     public function getCreatedAt(): mixed {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
     public function getUpdatedAt(): mixed {
-        return $this->updated_at;
+        return $this->updatedAt;
     }
 
 }

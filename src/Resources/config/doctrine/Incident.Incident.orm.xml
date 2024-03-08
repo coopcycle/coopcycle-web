@@ -7,10 +7,10 @@
     <field name="status" type="string" column="status" length="32"/>
     <field name="failure_reason_code" type="string" column="failure_reason_code" length="32" nullable="true" />
     <field name="description" type="string" column="description" length="65535" nullable="true" />
-    <field name="created_at" type="datetime" column="created_at">
+    <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
-    <field name="updated_at" type="datetime" column="updated_at">
+    <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
     <one-to-many field="images" target-entity="AppBundle\Entity\Incident\IncidentImage" mapped-by="incident">
