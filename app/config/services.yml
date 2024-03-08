@@ -251,14 +251,18 @@ services:
   # OrderOptionsProcessor MUST be invoked BEFORE OrderFeeProcessor
   # Otherwise, fee calculation may be wrong
   # We don't tag those services directly, but we use OrderOptionsFeeProcessor
+  # We also need to disable auto configuration for these services
+  # Otherwise, they will be still added automatically by Sylius; https://github.com/Sylius/Sylius/issues/12389
 
   sylius.order_processing.order_options_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderOptionsProcessor
+    autoconfigure: false # see comment above
     arguments:
       $adjustmentFactory: "@sylius.factory.adjustment"
 
   sylius.order_processing.order_fee_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderFeeProcessor
+    autoconfigure: false # see comment above
     arguments:
       $adjustmentFactory: "@sylius.factory.adjustment"
     tags:
@@ -266,20 +270,30 @@ services:
 
   sylius.order_processing.order_vendor_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderVendorProcessor
+    autoconfigure: false # see comment above
     tags:
       - { name: monolog.logger, channel: coopcycle.order_processing }
 
+  # For now, disable auto configuration for all services tagged with sylius.order_processor
+  # Otherwise they will be added (and executed) twice:
+  # Once, due to the OrderProcessorInterface https://github.com/Sylius/Sylius/issues/12389
+  # And once, due to the tag sylius.order_processor
+  # The recommended approach is to use attributes instead of tags: https://docs.sylius.com/en/latest/components_and_bundles/bundles/SyliusOrderBundle/processors.html
+
   # should be executed before any other processor
   AppBundle\Sylius\OrderProcessing\OrderLogStartProcessor:
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
     tags:
       - { name: sylius.order_processor, priority: 1000 }
 
   AppBundle\Sylius\OrderProcessing\OrderDisabledProductProcessor:
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
     tags:
       - { name: sylius.order_processor, priority: 96 }
 
   sylius.order_processing.order_promotion_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderPromotionProcessor
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
     arguments:
       - "@sylius.promotion_processor"
     tags:
@@ -290,6 +304,7 @@ services:
   # because we need to increase the platform fee for LoopEat
 
   AppBundle\Sylius\OrderProcessing\OrderDepositRefundProcessor:
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
     arguments:
       $adjustmentFactory: "@sylius.factory.adjustment"
       $loopeatProcessingFee: "%env(LOOPEAT_PROCESSING_FEE)%"
@@ -299,6 +314,7 @@ services:
 
   sylius.order_processing.order_options_fee_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderOptionsFeeProcessor
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
     arguments:
       - "@sylius.order_processing.order_options_processor"
       - "@sylius.order_processing.order_fee_processor"
@@ -308,6 +324,7 @@ services:
 
   sylius.order_processing.order_taxes_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
     arguments:
       $state: "%region_iso%"
     tags:
@@ -315,11 +332,13 @@ services:
 
   sylius.order_processing.order_payment_processor:
     class: AppBundle\Sylius\OrderProcessing\OrderPaymentProcessor
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
     tags:
       - { name: sylius.order_processor, priority: 16 }
 
   # should be executed after any other processor
   AppBundle\Sylius\OrderProcessing\OrderLogFinishProcessor:
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
     tags:
       - { name: sylius.order_processor, priority: -100 }
 
