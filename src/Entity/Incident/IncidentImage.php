@@ -3,7 +3,7 @@
 namespace AppBundle\Entity\Incident;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Action\Task\CreateImage;
+use AppBundle\Action\Incident\CreateImage;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -13,7 +13,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 /**
  * @ApiResource(iri="http://schema.org/MediaObject",
  *   attributes={
- *     "normalization_context"={"groups"={"task_image"}}
+ *     "normalization_context"={"groups"={"incident_image"}}
  *   },
  *   itemOperations={
  *     "get"
@@ -31,14 +31,14 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 class IncidentImage
 {
     /**
-     * @Groups({"task"})
+     * @Groups({"incident"})
      */
     private $id;
 
     private $incident;
 
     /**
-     * @Vich\UploadableField(mapping="task_image", fileNameProperty="imageName")
+     * @Vich\UploadableField(mapping="incident_image", fileNameProperty="imageName")
      * @Assert\File(
      *   maxSize = "5M",
      *   mimeTypes = {"image/jpg", "image/jpeg", "image/png"}
@@ -48,7 +48,7 @@ class IncidentImage
     private $file;
 
     /**
-     * @Groups({"task_image"})
+     * @Groups({"incident_image"})
      */
     private $imageName;
 

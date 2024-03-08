@@ -495,6 +495,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: edi_messages
+        incident_images:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: incidents
 
     filesystems:
         assets:
@@ -541,6 +546,10 @@ oneup_flysystem:
             adapter: edi_messages
             alias: edi_messages_filesystem
             mount: edi_messages
+        incident_images:
+            adapter: incident_images
+            alias: incident_images_filesystem
+            mount: incident_images
 
 vich_uploader:
     db_driver: orm
@@ -585,6 +594,15 @@ vich_uploader:
         product_image:
             uri_prefix: ''
             upload_destination: oneup_flysystem.product_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
+        incident_image:
+            uri_prefix: ''
+            upload_destination: oneup_flysystem.incident_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -922,6 +940,9 @@ liip_imagine:
         assets:
             flysystem:
                 filesystem_service: oneup_flysystem.assets_filesystem
+        incident_images:
+            flysystem:
+                filesystem_service: oneup_flysystem.incident_images_filesystem
 
 oneup_uploader:
     mappings:
