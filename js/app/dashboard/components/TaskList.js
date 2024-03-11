@@ -115,7 +115,7 @@ const ProgressBarMemo = React.memo(({
     )
   })
 
-export const TaskList = ({ uri, username, distance, duration }) => {
+export const TaskList = ({ uri, username, distance, duration, taskListsLoading }) => {
   const dispatch = useDispatch()
   const unassignTasksFromTaskList = (username => tasks => dispatch(unassignTasks(username, tasks)))(username)
 
@@ -245,6 +245,7 @@ export const TaskList = ({ uri, username, distance, duration }) => {
         <Droppable
           droppableId={ `assigned:${username}` }
           key={tasks.length} // assign a mutable key to trigger a re-render when inserting a nested droppable (for example : a tour)
+          isDropDisabled={ taskListsLoading }
         >
           {(provided, snapshot) => (
             <div ref={ provided.innerRef }
