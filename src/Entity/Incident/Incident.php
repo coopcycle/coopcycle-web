@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Incident;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -26,15 +27,21 @@ class Incident {
 
     protected int $id;
 
+    protected string $title;
+
     protected string $status;
+
+    protected int $priority;
 
     protected Collection $tasks;
 
-    protected ?string $failure_reason_code;
+    protected ?string $failure_reason_code = null;
 
-    protected ?string $description;
+    protected ?string $description = null;
 
     protected Collection $images;
+
+    protected ?User $created_by = null;
 
     protected $createdAt;
 
@@ -44,6 +51,10 @@ class Incident {
     const STATUS_OPEN = 'OPEN';
     const STATUS_CLOSED = 'CLOSED';
     const STATUS_RESOLVED = 'RESOLVED';
+
+    const PRIORITY_HIGH = 1;
+    const PRIORITY_MEDIUM = 2;
+    const PRIORITY_LOW = 3;
 
 
     public function __construct() {
@@ -55,12 +66,30 @@ class Incident {
         return $this->id;
     }
 
+    public function getTitle(): string {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self {
+        $this->title = $title;
+        return $this;
+    }
+
     public function getStatus(): string {
         return $this->status;
     }
 
     public function setStatus(string $status): self {
         $this->status = $status;
+        return $this;
+    }
+
+    public function getPriority(): int {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): self {
+        $this->priority = $priority;
         return $this;
     }
 
@@ -97,6 +126,15 @@ class Incident {
 
     public function addImage(IncidentImage $image): self {
         $this->images[] = $image;
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User {
+        return $this->created_by;
+    }
+
+    public function setCreatedBy(?User $created_by): self {
+        $this->created_by = $created_by;
         return $this;
     }
 
