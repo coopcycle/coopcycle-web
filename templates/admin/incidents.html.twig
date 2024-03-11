@@ -1,0 +1,15 @@
+{% extends "deliveries.html.twig" %}
+
+{% block breadcrumb %}
+{{ parent() }}
+<li>{% trans %}adminDashboard.incidents.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="text-right mb-4">
+    <a href="" class="btn btn-success">
+      <i class="fa fa-plus"></i> {% trans %}adminDashboard.incidents.createNew{% endtrans %}
+    </a>
+  </div>
+  {% include "incident/list.html.twig" %}
+{% endblock %}

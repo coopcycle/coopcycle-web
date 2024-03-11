@@ -1,0 +1,51 @@
+{% if incidents|length > 0 %}
+  <table class="table incidents-list">
+    <thead>
+      <th width="100px"></th>
+      <th>{{ 'basics.name'|trans }}</th>
+      <th></th>
+    </thead>
+    <tbody>
+    {% for incident in incidents %}
+      <tr>
+        <td>
+          <div class="thumbnail priority p{{ incident.getPriority() }}">
+            <div>P{{ incident.getPriority() }}</div>
+          </div>
+          <div class="label label-default label-id">#{{ incident.id }}</div>
+          <!-- <a href="{{ path(incident_route, { id: incident.id }) }}">#{{ incident.id }}</a> -->
+        </td>
+        <td>
+          <h3>{{ incident.title }}</h3>
+          <p>{{ incident.description }}</p>
+        </td>
+        <td class="text-right">
+        {% set user = incident.getCreatedBy() %}
+        <p>
+        <p><span class="label label-danger">{{ incident.getStatus() }}</span></p>
+        {% if user is not null %}
+          <p><i class="fa fa-user" aria-hidden="true"></i> {{ incident.getCreatedBy().username }}</p>
+        {% endif %}
+        </p>
+        <p class="text-muted" ><i class="fa fa-clock-o" aria-hidden="true"></i> {{ incident.getCreatedAt() | date }}</p>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <nav class="text-center">
+   {{ knp_pagination_render(incidents) }}
+  </nav>
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}incidents.list.noincidents{% endtrans %}
+  </div>
+{% endif %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('incident-form') }}
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('incident-form') }}
+{% endblock %}
