@@ -1,7 +1,7 @@
 import _ from "lodash"
 import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskIdToTourIdMap, selectTaskLists, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { disableDropInTours, enableDropInTours, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
-import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, removeTasksFromTour, unassignTasks, updateTourInUI } from "./actions"
+import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, removeTasksFromTour, unassignTasks } from "./actions"
 import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
 import { withLinkedTasks } from "./utils"
 import { toast } from 'react-toastify'
@@ -152,8 +152,6 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       }
 
       Array.prototype.splice.apply(newTourItems, Array.prototype.concat([ destination.index, 0 ], selectedTasks))
-
-      dispatch(updateTourInUI(tour, newTourItems))
 
       if (isTourAssigned(tour)) {
         const tasksLists = selectTaskLists(getState())

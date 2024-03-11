@@ -1521,13 +1521,12 @@ export function updateTourInUI(tour, tasks) {
 }
 
 export function modifyTour(tour, tasks) {
-  /*
-    Trigger actions for tour update. You need to call `updateTourInUI` separately first.
-  */
 
   return async function(dispatch, getState) {
 
     const { jwt } = getState()
+
+    dispatch(updateTourInUI(tour, tasks))
 
     let response
 
@@ -1603,7 +1602,6 @@ export function removeTasksFromTour(tour, tasks, username, unassignTasksAction=u
 
   return function(dispatch) {
     let newTourItems = withoutTasks(tour.items, tasks)
-    dispatch(updateTourInUI(tour, newTourItems))
 
     if (username) {
       dispatch(unassignTasksAction(username, tasks))
