@@ -129,26 +129,28 @@ const Tour = ({ tour, draggableIndex }) => {
                   droppableId={ `tour:${tour['@id']}` }
                 >
                   {(provided, snapshot) => (
-                    <div
-                    className={ classNames({
-                      'taskList__tasks': true,
-                      'list-group': true,
-                      'm-0': true,
-                      'p-0': true,
-                      'nomargin': true,
-                      'taskList__tasks--empty': !tour.items.length
-                    }) }
-                    style={getDroppableListStyle(snapshot.isDraggingOver)}
-                    ref={ provided.innerRef } { ...provided.droppableProps }>
-                      { _.map(tour.items, (task, index) =>
-                        <Task
-                          key={ task['@id'] }
-                          task={ task }
-                          draggableIndex={ index }
-                          onRemove={ (taskToRemove) => dispatch(removeTasksFromTour(tour, taskToRemove, tourIsAssignedTo(tour)))}
-                        />
-                      )}
-                      { provided.placeholder }
+                    <div ref={ provided.innerRef } { ...provided.droppableProps }>
+                      <div
+                      className={ classNames({
+                        'taskList__tasks': true,
+                        'list-group': true,
+                        'm-0': true,
+                        'p-0': true,
+                        'nomargin': true,
+                        'taskList__tasks--empty': !tour.items.length
+                      }) }
+                      style={getDroppableListStyle(snapshot.isDraggingOver)}
+                      >
+                        { _.map(tour.items, (task, index) =>
+                          <Task
+                            key={ task['@id'] }
+                            task={ task }
+                            draggableIndex={ index }
+                            onRemove={ (taskToRemove) => dispatch(removeTasksFromTour(tour, taskToRemove, tourIsAssignedTo(tour)))}
+                          />
+                        )}
+                        { provided.placeholder }
+                      </div>
                     </div>
                   )}
                 </Droppable>
