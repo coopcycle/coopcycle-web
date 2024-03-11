@@ -8,7 +8,7 @@ import {
 
 const initialState = {
   taskListsLoading: false,
-  areToursDroppable: true,
+  isTourDragging: true,
   currentTask: null,
   expandedTourPanelIds: [],
   loadingTourPanelsIds: []
@@ -32,13 +32,13 @@ export default (state = initialState, action) => {
     case ENABLE_DROP_IN_TOURS:
       return {
         ...state,
-        areToursDroppable: true,
+        isTourDragging: true,
       }
 
     case DISABLE_DROP_IN_TOURS:
       return {
         ...state,
-        areToursDroppable: false,
+        isTourDragging: false,
       }
 
 

@@ -10,7 +10,7 @@ import TaskGroup from './TaskGroup'
 import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules } from '../redux/actions'
-import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode, selectAreToursDroppable } from '../redux/selectors'
+import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode, selectIsTourDragging } from '../redux/selectors'
 import { getDroppableListStyle } from '../utils'
 import classNames from 'classnames'
 
@@ -82,7 +82,7 @@ export const UnassignedTasks = () => {
   const recurrenceRules = useSelector(selectRecurrenceRules)
   const isRecurrenceRulesVisible = useSelector(selectIsRecurrenceRulesVisible)
   const toursEnabled = useSelector(selectAreToursEnabled)
-  const isDroppable = useSelector(selectAreToursDroppable)
+  const isTourDragging = useSelector(selectIsTourDragging)
 
   // not the nicest ever. when tasks changed, we want to render droppable on "next tick"
   // otherwise we may run in the error "Unable to find draggable with id: <taskId>" (then the task wont be draggable)
@@ -114,7 +114,7 @@ export const UnassignedTasks = () => {
 
           <Droppable
             droppableId="unassigned"
-            isDropDisabled={!isDroppable}
+            isDropDisabled={!isTourDragging}
           >
             {(provided, snapshot) => (
               <div ref={ provided.innerRef } { ...provided.droppableProps }>

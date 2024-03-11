@@ -24,7 +24,7 @@ export const recurrenceRulesAdapter = createEntityAdapter({
 
 // UI selectors
 export const selectCurrentTask = state => state.logistics.ui.currentTask
-export const selectAreToursDroppable = state => state.logistics.ui.areToursDroppable
+export const selectIsTourDragging = state => state.logistics.ui.isTourDragging
 export const selectExpandedTourPanelsIds = state => state.logistics.ui.expandedTourPanelsIds
 export const selectLoadingTourPanelsIds = state => state.logistics.ui.loadingTourPanelsIds
 export const selectTaskListsLoading = state => state.logistics.ui.taskListsLoading

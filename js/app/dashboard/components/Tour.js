@@ -10,7 +10,7 @@ import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourP
 import { isTourAssigned, tourIsAssignedTo } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
-import { selectAreToursDroppable, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds } from '../redux/selectors'
+import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds } from '../redux/selectors'
 
 const RenderEditNameForm = ({children, tour, isLoading}) => {
 
@@ -93,7 +93,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
 
 const Tour = ({ tour, draggableIndex }) => {
 
-  const isDroppable = useSelector(selectAreToursDroppable)
+  const isTourDragging = useSelector(selectIsTourDragging)
   const expandedTourPanelsIds = useSelector(selectExpandedTourPanelsIds)
   const isExpanded = expandedTourPanelsIds.includes(tour['@id'])
 
@@ -122,7 +122,7 @@ const Tour = ({ tour, draggableIndex }) => {
             </div>
             <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
               <Droppable
-                  isDropDisabled={!isDroppable || isLoading}
+                  isDropDisabled={!isTourDragging || isLoading}
                   droppableId={ `tour:${tour['@id']}` }
                 >
                   {(provided, snapshot) => (
