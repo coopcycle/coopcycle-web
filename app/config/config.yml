@@ -488,7 +488,7 @@ oneup_flysystem:
         edi_messages:
             awss3v3:
                 client: s3_client
-                bucket: '%env(S3_EDI_BUCKET)%'
+                bucket: '%env(S3_BUCKET)%'
                 prefix: edi_messages
 
     filesystems:
