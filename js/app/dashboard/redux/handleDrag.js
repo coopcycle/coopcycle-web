@@ -1,6 +1,6 @@
 import _ from "lodash"
 import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskIdToTourIdMap, selectTaskLists, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
-import { disableDropInTours, enableDropInTours, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
+import { setIsTourDragging, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, removeTasksFromTour, unassignTasks } from "./actions"
 import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
 import { withLinkedTasks } from "./utils"
@@ -22,9 +22,9 @@ export function handleDragStart(result) {
 
     // prevent the user to drag a tour into a tour
     if (result.draggableId.startsWith('tour:')) {
-      dispatch(disableDropInTours())
+      dispatch(setIsTourDragging(true))
     } else {
-      dispatch(enableDropInTours())
+      dispatch(setIsTourDragging(false))
     }
 
   }
@@ -86,12 +86,17 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
     }
 
     if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('group:') && source.droppableId !== destination.droppableId) {
-      toast.warn("Can not move directly tasks between groups at the moment")
+      toast.warn("Can not move directly tasks between groups")
       return
     }
 
     if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('assigned:')) {
-      toast.warn("Can not move directly individual task from group to assigned at the moment")
+      toast.warn("Can not move directly individual task from group to assigned")
+      return
+    }
+
+    if (result.draggableId.startsWith('group:') && destination.droppableId.startsWith('unassigned')) {
+      toast.warn("Can not move group to unassign")
       return
     }
 

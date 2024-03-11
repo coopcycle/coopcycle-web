@@ -114,7 +114,7 @@ export const UnassignedTasks = () => {
 
           <Droppable
             droppableId="unassigned"
-            isDropDisabled={!isTourDragging}
+            isDropDisabled={isTourDragging}
           >
             {(provided, snapshot) => (
               <div ref={ provided.innerRef } { ...provided.droppableProps }>

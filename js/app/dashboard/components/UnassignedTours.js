@@ -9,7 +9,7 @@ import Tour from './Tour'
 import { deleteGroup, editGroup, openCreateTourModal } from '../redux/actions'
 import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
 import TaskGroup from './TaskGroup'
-import { selectGroups } from '../redux/selectors'
+import { selectGroups, selectIsTourDragging } from '../redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
 
@@ -39,6 +39,7 @@ export const UnassignedTours = () => {
   const groups = useSelector(selectGroups)
   const tours = useSelector(selectUnassignedTours)
   const dispatch = useDispatch()
+  const isTourDragging = useSelector(selectIsTourDragging)
 
   return (
     <div className="dashboard__panel">
@@ -52,6 +53,7 @@ export const UnassignedTours = () => {
         <Droppable
           droppableId="unassigned_tours"
           key={tours.length} // assign a mutable key to trigger a re-render when inserting a nested droppable (for example : a new tour)
+          isDropDisabled={!isTourDragging}
           >
           {(provided, snapshot) => (
             <div ref={ provided.innerRef } { ...provided.droppableProps }>

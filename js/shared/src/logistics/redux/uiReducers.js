@@ -2,8 +2,7 @@ import {
   CREATE_TASK_LIST_FAILURE,
   CREATE_TASK_LIST_REQUEST,
   CREATE_TASK_LIST_SUCCESS,
-  ENABLE_DROP_IN_TOURS,
-  DISABLE_DROP_IN_TOURS,
+  SET_IS_TOUR_DRAGGING,
 } from './actions';
 
 const initialState = {
@@ -29,18 +28,11 @@ export default (state = initialState, action) => {
         taskListsLoading: false,
       }
 
-    case ENABLE_DROP_IN_TOURS:
+    case SET_IS_TOUR_DRAGGING:
       return {
         ...state,
-        isTourDragging: true,
+        isTourDragging: action.payload,
       }
-
-    case DISABLE_DROP_IN_TOURS:
-      return {
-        ...state,
-        isTourDragging: false,
-      }
-
 
     default:
       return state

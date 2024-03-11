@@ -122,7 +122,7 @@ const Tour = ({ tour, draggableIndex }) => {
             </div>
             <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
               <Droppable
-                  isDropDisabled={!isTourDragging || isLoading}
+                  isDropDisabled={isTourDragging || isLoading}
                   droppableId={ `tour:${tour['@id']}` }
                 >
                   {(provided, snapshot) => (
