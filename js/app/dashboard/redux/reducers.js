@@ -65,9 +65,6 @@ import {
 import {
   recurrenceRulesAdapter,
 } from './selectors'
-import { toast } from 'react-toastify'
-import { isValidTasksMultiSelect } from './utils'
-import i18next from 'i18next'
 
 const initialState = {
   addModalIsOpen: false,
