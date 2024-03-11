@@ -28,7 +28,7 @@ moment.locale($('html').attr('lang'))
 
 const TaskOrTour = ({ item, draggableIndex, unassignTasksFromTaskList }) => {
 
-  if (item['@type'] === 'Tour') {
+  if (item['@id'].startsWith('/api/tours')) {
     return (<Tour tour={ item } draggableIndex={ draggableIndex } />)
   } else {
     return (<Task task={ item } draggableIndex={ draggableIndex } onRemove={ item => unassignTasksFromTaskList(item) } />)
