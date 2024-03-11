@@ -1606,12 +1606,10 @@ export function removeTasksFromTour(tour, tasks, username, unassignTasksAction=u
     dispatch(updateTourInUI(tour, newTourItems))
 
     if (username) {
-      dispatch(unassignTasksAction(username, tasks)).then(() => {
-        dispatch(modifyTourAction(tour, newTourItems))
-      })
-    } else {
-      dispatch(modifyTourAction(tour, newTourItems))
+      dispatch(unassignTasksAction(username, tasks))
     }
+
+    dispatch(modifyTourAction(tour, newTourItems))
   }
 }
 

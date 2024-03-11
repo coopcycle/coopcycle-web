@@ -85,29 +85,8 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       return;
     }
 
-    // from courier tasklist to unassigned tours
-    if (source.droppableId.startsWith('assigned:') && destination.droppableId.startsWith('tour:')) {
-      let tourId = destination.droppableId.split(':')[1],
-      tour = selectTourById(getState(), tourId)
-
-      if (!isTourAssigned(tour)) {
-        toast.warn("Can not unassign by drag'n drop at the moment")
-        return
-      }
-    }
-
-    if (source.droppableId.startsWith('tour:') && destination.droppableId.startsWith('tour:') && source.droppableId !== destination.droppableId) {
-      toast.warn("Can not move directly tasks between tours at the moment")
-      return
-    }
-
     if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('group:') && source.droppableId !== destination.droppableId) {
       toast.warn("Can not move directly tasks between groups at the moment")
-      return
-    }
-
-    if (source.droppableId.startsWith('tour:') && destination.droppableId.startsWith('assigned:')) {
-      toast.warn("Can not move directly individual task from tour to assigned at the moment")
       return
     }
 
@@ -136,22 +115,25 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
     if (source.droppableId === 'unassigned') {
       selectedTasks =  withLinkedTasks(selectedTasks, allTasks, true)
       selectedTasks = selectedTasks.filter(
-        t => !belongsToTour(t) && !t.isAssigned // these are already somewhere nice!
+        t => !belongsToTour(t)(getState()) && !t.isAssigned // these are already somewhere nice!
       )
     }
 
     if (selectedTasks.length === 0) return // can happen, for example dropping empty tour
 
-
+    // ! in case of tasks multiselection isValidTasksMultiSelect validator gives us the insurance to have all tasks in the same tour or assigned to the same user
     if (destination.droppableId === 'unassigned') {
-      // in case of tasks multiselection isValidTasksMultiSelect validator gives us the insurance to have all tasks in the same tour or assigned to the same user
-      if (!belongsToTour(selectedTasks[0])) {
+      if (!belongsToTour(selectedTasks[0])(getState())) {
         dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
       } else {
-        const tour = selectTourById(getState(), selectedTasks[0].tour['@id'])
-        dispatch(removeTasksFromTour(tour, selectedTasks, selectedTasks[0].assignedTo))
+        const tourId = selectTaskIdToTourIdMap(getState()).get(selectedTasks[0]['@id'])
+        const tour = selectTourById(getState(), tourId)
+        dispatch(removeTasksFromTour(tour, selectedTasks, selectedTasks[0].assignedTo)) // will unassign if assignedTo is defined
       }
 
+    } else if (destination.droppableId === 'unassigned_tours' && result.draggableId.startsWith('tour')) {
+      // unassigning a whole tour
+      dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
     } else if (destination.droppableId.startsWith('tour:')) {
       const tours = selectAllTours(getState())
       var tourId = destination.droppableId.replace('tour:', '')
@@ -159,11 +141,15 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
 
       var newTourItems = [ ...tour.items ]
 
-      // Reorder tasks inside a tour -> remove tasks that were already there
+      // Reorder tasks inside a tour
       if (source.droppableId === destination.droppableId) {
         _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t['@id']))
+      } // moving single tasks between tours
+      else if (source.droppableId.startsWith('tour:')) {
+        var sourceTourId = source.droppableId.replace('tour:', '')
+        const sourceTour = tours.find(t => t['@id'] == sourceTourId)
+        dispatch(removeTasksFromTour(sourceTour, selectedTasks))
       }
-
 
       Array.prototype.splice.apply(newTourItems, Array.prototype.concat([ destination.index, 0 ], selectedTasks))
 
@@ -176,10 +162,12 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
         const nestedTaskList = makeSelectTaskListItemsByUsername()(getState(), {username})
         const index = getPositionInFlatTaskList(nestedTaskList, destination.index, tourId)
 
-        handleDropInTaskList(tasksList, selectedTasks, index).then(() => {
-          dispatch(modifyTour(tour, newTourItems))
-        })
+        handleDropInTaskList(tasksList, selectedTasks, index)
+        dispatch(modifyTour(tour, newTourItems))
       } else {
+        if (selectedTasks[0].assignedTo) {
+          dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
+        }
         dispatch(modifyTour(tour, newTourItems))
       }
     } else if (destination.droppableId.startsWith('assigned:')) {
@@ -188,6 +176,14 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       const tasksList = _.find(tasksLists, tl => tl.username === username)
       const nestedTaskList = makeSelectTaskListItemsByUsername()(getState(), {username})
       const index = getPositionInFlatTaskList(nestedTaskList, destination.index)
+
+      // moving task(s) to a tasklist but not the whole tour -> remove tasks from tour
+      if (source.droppableId.startsWith('tour:')) {
+        const sourceTourId = source.droppableId.replace('tour:', '')
+        const sourceTour = selectTourById(getState(), sourceTourId)
+        dispatch(removeTasksFromTour(sourceTour, selectedTasks))
+      }
+
       handleDropInTaskList(tasksList, selectedTasks, index)
     }
   }
