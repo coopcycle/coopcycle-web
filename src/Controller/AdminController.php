@@ -9,6 +9,7 @@ use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\IncidentTrait;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
@@ -147,6 +148,7 @@ class AdminController extends AbstractController
     use RestaurantTrait;
     use StoreTrait;
     use UserTrait;
+    use IncidentTrait;
     use InjectAuthTrait;
 
     protected function getRestaurantRoutes()
