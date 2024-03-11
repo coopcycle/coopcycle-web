@@ -128,6 +128,8 @@
         "RESTAURANT_LIST_FILTER_WHEN": "Cuando?",
         "RESTAURANT_LIST_FILTER_ASAP": "Lo antes posible",
         "RESTAURANT_LIST_FILTER_LATER": "Más tarde",
+        "RESTAURANT_SECTIONS_MORE": "Más",
+        "ADD_TO_CART": "Añadir a la cesta",
         "CART_TOTAL": "Total",
         "CART_TOTAL_PRODUCTS": "Total productos",
         "ENTER_YOUR_ADDRESS": "Ingrese calle y portal y seleccione una dirección",
@@ -260,6 +262,8 @@
           "VeganDiet": "Vegano",
           "VegetarianDiet": "Vegetariano"
         },
+        "CART_PRODUCT_OPTIONS_MANDATORY": "{{count}} de las opciones son obligatorios para continuar",
+        "CART_PRODUCT_OPTIONS_INVALID": "Alguna de tus elecciones no es válida",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Por favor eliga hasta {{count}} valor(es)",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_AT_LEAST": "Por favor eliga al menos {{count}} valor(es)",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE": "Por favor eliga entre los valores {{min}} y {{max}}",
@@ -348,6 +352,7 @@
         "ADD_OR_SELECT_A_CARD_TO_PAY": "Por favor seleccione o ingrese una tarjeta de crédito para realizar el pago",
         "INVITE_PEOPLE_TO_ADD_ITEMS": "Invita amigos para que agreguen productos",
         "EXPIRATION": "Expiración",
+        "GROUP_ORDER_YOU": "Admin (tú)",
         "ORDERS_RATE_LIMIT": {
           "ORDER_UNIT": "pedido(s)",
           "TIME_UNIT": "minuto(s)",

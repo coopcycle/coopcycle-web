@@ -149,6 +149,8 @@
         "RESTAURANT_LIST_FILTER_WHEN": "Quand ?",
         "RESTAURANT_LIST_FILTER_ASAP": "Au plus tôt",
         "RESTAURANT_LIST_FILTER_LATER": "Plus tard",
+        "RESTAURANT_SECTIONS_MORE": "Voir plus",
+        "ADD_TO_CART": "Ajouter au panier",
         "CART_TOTAL": "Total",
         "CART_TOTAL_PRODUCTS": "Total produits",
         "ENTER_YOUR_ADDRESS": "Saisissez votre adresse",
@@ -255,6 +257,8 @@
           "VeganDiet": "Vegan",
           "VegetarianDiet": "Végétarien"
         },
+        "CART_PRODUCT_OPTIONS_MANDATORY": "Vous devez sélectionner au moins {{count}} option(s)",
+        "CART_PRODUCT_OPTIONS_INVALID": "Certaines options ne sont pas disponibles",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE": "Veuillez choisir entre {{min}} et {{max}} valeurs",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_AT_LEAST": "Veuillez choisir au moins {{count}} valeur(s)",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Veuillez choisir jusqu'à {{count}} valeur(s)",
@@ -319,6 +323,7 @@
         "GROUP_ORDER_PLAYER_EMAIL_LABEL": "Email",
         "GROUP_ORDER_TITLE": "Rejoindre la commande groupée ?",
         "GROUP_ORDER_SUBTEXT": "Ajoutez des articles à cette commande et tout sera livré ensemble",
+        "GROUP_ORDER_YOU": "Administrateur (vous)",
         "ORDERS_RATE_LIMIT": {
           "ORDER_UNIT": "commande(s)",
           "TIME_UNIT": "minute(s)",
