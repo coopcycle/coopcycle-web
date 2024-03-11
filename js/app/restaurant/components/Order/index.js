@@ -37,6 +37,7 @@ export function OrderOverlay() {
   )
 }
 
+
 // desktop (and larger tablets)
 export function StickyOrder() {
   const [ menuNavHeight, setMenuNavHeight ] = useState(0)
@@ -47,13 +48,17 @@ export function StickyOrder() {
     dispatch(sync())
   }, [])
 
-  useEffect(() => {
-    const height = document.getElementById('restaurant-menu-nav').clientHeight
+  const el = document.getElementById('restaurant-menu-nav')
 
-    document.documentElement.style.setProperty('--restaurant-menu-nav-height',
-      `${ height }px`)
-    setMenuNavHeight(height)
-  })
+  useEffect(() => {
+    if (el) {
+      const height = el.clientHeight
+
+      document.documentElement.style.setProperty('--restaurant-menu-nav-height',
+        `${ height }px`)
+      setMenuNavHeight(height)
+    }
+  }, [ el ])
 
   return (
     <Sticky top={ menuNavHeight } bottomBoundary=".content">

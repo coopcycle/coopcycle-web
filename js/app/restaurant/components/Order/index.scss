@@ -4,7 +4,7 @@
 $card-padding: 1rem;
 $card-padding-lg: 2rem;
 
-#restaurant__container {
+#restaurant-body {
   .panel {
     border: none;
     border-radius: 16px;
@@ -25,7 +25,6 @@ $card-padding-lg: 2rem;
 
   @media (min-width: $screen-lg-min) {
     display: block;
-    padding: 0 1rem;
   }
 }
 
@@ -79,13 +78,18 @@ $card-padding-lg: 2rem;
   @media (min-width: $screen-lg-min) {
     display: block;
   }
+}
 
+@media (min-width: $screen-lg-min) {
   .sticky-inner-wrapper {
-    @media (min-width: $screen-lg-min) {
-      max-height: calc(100vh - var(--restaurant-menu-nav-height));
-      display: flex;
-      flex-direction: column;
-      padding: 0 1rem;
+    max-height: calc(100vh - var(--restaurant-menu-nav-height));
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sticky-outer-wrapper.active {
+    .sticky-inner-wrapper {
+      padding-top: 1rem;
     }
   }
 }

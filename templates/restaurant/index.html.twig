@@ -39,104 +39,117 @@
 {% endblock %}
 
 {% block body %}
-  <div id="restaurant__container" class="container-full-hd container--extra-space-on-sides px-3">
+  <div id="restaurant-body">
 
-  {% block restaurant_nav %}
-    {% if not embed_context.enabled %}
-    <div class="homepage-restaurants__show-more text-left mb-4">
-      {% if restaurant.belongsToHub() %}
-        <a class="restaurant-show-more" href="{{ path('hub', { id: restaurant.hub.id, slug: restaurant.hub.name|slugify }) }}">
-          <i class="fa fa-arrow-left mr-2"></i>
-          <span>{% trans %}index.view_all_merchants{% endtrans %}</span>
-        </a>
-      {% elseif restaurant.context == 'AppBundle\\Enum\\Store' %}
-        <a class="restaurant-show-more" href="{{ path('stores') }}">
-          <i class="fa fa-arrow-left mr-2"></i>
-          <span>{% trans %}index.view_all_shops{% endtrans %}</span>
-        </a>
-      {% else %}
-        <a class="restaurant-show-more" href="{{ path('restaurants', app.request.query.all()) }}">
-          <i class="fa fa-arrow-left mr-2"></i>
-          <span>{% trans %}index.view_all_restaurants{% endtrans %}</span>
-        </a>
-      {% endif %}
-    </div>
-    {% endif %}
-  {% endblock %}
-
-  {#
-  FIXME
-  Calling restaurant.getNextOpeningDate() may throw Spatie\OpeningHours\Exceptions\MaximumLimitExceeded
-  "No open date/time found in the next 366 days, use $openingHours->setDayLimit() to increase the limit."
-  For example, set holidays for 2 years
-  #}
-
-  {% set cart = cart_provider.getCart() %}
-
-  {% if not restaurant.isOpen %}
-    {% set closingRule = restaurant.matchClosingRuleFor %}
-    {% if closingRule is not empty %}
-    <div class="alert alert-info text-center">
-      {% trans with { '%date%': closingRule.endDate|format_datetime('full', 'none') } %}
-      restaurant.temporaryClosedWarning
-      {% endtrans %}
-    </div>
-    {% else %}
-    <div class="alert alert-info text-center">
-      {% set next_opening_date = restaurant.getNextOpeningDate() %}
-      {% if next_opening_date %}
-        {% set isOrderingAvailable = cart.shippingTimeRange is not null or times.range is not null or times.ranges|length > 0 %}
-        {% if next_opening_date.isToday() %}
-          {% trans with { '%time%': next_opening_date|format_datetime('none','short') } %}
-          restaurant.closedOpensTodayLaterWarning
-          {% endtrans %}
-          {% if isOrderingAvailable %}
-            {% trans %}restaurant.canOrderForLater{% endtrans %}
+    <header class="custom-container">
+      {% block restaurant_nav %}
+        {% if not embed_context.enabled %}
+        <div class="homepage-restaurants__show-more text-left mb-4">
+          {% if restaurant.belongsToHub() %}
+            <a class="restaurant-show-more" href="{{ path('hub', { id: restaurant.hub.id, slug: restaurant.hub.name|slugify }) }}">
+              <i class="fa fa-arrow-left mr-2"></i>
+              <span>{% trans %}index.view_all_merchants{% endtrans %}</span>
+            </a>
+          {% elseif restaurant.context == 'AppBundle\\Enum\\Store' %}
+            <a class="restaurant-show-more" href="{{ path('stores') }}">
+              <i class="fa fa-arrow-left mr-2"></i>
+              <span>{% trans %}index.view_all_shops{% endtrans %}</span>
+            </a>
+          {% else %}
+            <a class="restaurant-show-more" href="{{ path('restaurants', app.request.query.all()) }}">
+              <i class="fa fa-arrow-left mr-2"></i>
+              <span>{% trans %}index.view_all_restaurants{% endtrans %}</span>
+            </a>
           {% endif %}
-        {% elseif next_opening_date.isTomorrow() %}
-          {% trans with { '%time%': next_opening_date|format_datetime('none','short') } %}
-          restaurant.closedOpensTomorrowWarning
+        </div>
+        {% endif %}
+      {% endblock %}
+
+      {#
+      FIXME
+      Calling restaurant.getNextOpeningDate() may throw Spatie\OpeningHours\Exceptions\MaximumLimitExceeded
+      "No open date/time found in the next 366 days, use $openingHours->setDayLimit() to increase the limit."
+      For example, set holidays for 2 years
+      #}
+
+      {% set cart = cart_provider.getCart() %}
+
+      {% if not restaurant.isOpen %}
+        {% set closingRule = restaurant.matchClosingRuleFor %}
+        {% if closingRule is not empty %}
+        <div class="alert alert-info text-center">
+          {% trans with { '%date%': closingRule.endDate|format_datetime('full', 'none') } %}
+          restaurant.temporaryClosedWarning
           {% endtrans %}
-          {% if isOrderingAvailable %}
-            {% trans %}restaurant.canOrderForTomorrow{% endtrans %}
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center">
+          {% set next_opening_date = restaurant.getNextOpeningDate() %}
+          {% if next_opening_date %}
+            {% set isOrderingAvailable = cart.shippingTimeRange is not null or times.range is not null or times.ranges|length > 0 %}
+            {% if next_opening_date.isToday() %}
+              {% trans with { '%time%': next_opening_date|format_datetime('none','short') } %}
+              restaurant.closedOpensTodayLaterWarning
+              {% endtrans %}
+              {% if isOrderingAvailable %}
+                {% trans %}restaurant.canOrderForLater{% endtrans %}
+              {% endif %}
+            {% elseif next_opening_date.isTomorrow() %}
+              {% trans with { '%time%': next_opening_date|format_datetime('none','short') } %}
+              restaurant.closedOpensTomorrowWarning
+              {% endtrans %}
+              {% if isOrderingAvailable %}
+                {% trans %}restaurant.canOrderForTomorrow{% endtrans %}
+              {% endif %}
+            {% else %}
+              {# after tomorrow #}
+              {% trans with { '%date%': next_opening_date|format_datetime('full','none') } %}
+              restaurant.closedOpensAfterTomorrowWarning
+              {% endtrans %}
+              {% if isOrderingAvailable %}
+                {% trans %}restaurant.canOrderForOtherDay{% endtrans %}
+              {% endif %}
+            {% endif %}
+          {% else %}
+            {% trans %}
+            restaurant.closedNowWarning
+            {% endtrans %}
+          {% endif %}
+        </div>
+        {% endif %}
+      {% endif %}
+
+      {% if restaurant.quotesAllowed %}
+        {% set trans_params = {
+          '%contact_us%': ('mailto:' ~ coopcycle_setting('administrator_email')),
+          '%login%': path('nucleos_user_security_login')
+        } %}
+        {% if app.user %}
+          {% if not app.user.quotesAllowed %}
+            <div class="alert alert-info">
+              <i class="fa fa-info-circle"></i> 
+              {% trans with trans_params %}restaurant.quotes_disclaimer.authenticated{% endtrans %}
+            </div>
           {% endif %}
         {% else %}
-          {# after tomorrow #}
-          {% trans with { '%date%': next_opening_date|format_datetime('full','none') } %}
-          restaurant.closedOpensAfterTomorrowWarning
-          {% endtrans %}
-          {% if isOrderingAvailable %}
-            {% trans %}restaurant.canOrderForOtherDay{% endtrans %}
-          {% endif %}
+          <div class="alert alert-info">
+            <i class="fa fa-info-circle"></i> 
+            {% trans with trans_params %}restaurant.quotes_disclaimer.not_authenticated{% endtrans %}
+          </div>
         {% endif %}
-      {% else %}
-        {% trans %}
-        restaurant.closedNowWarning
-        {% endtrans %}
       {% endif %}
-    </div>
-    {% endif %}
-  {% endif %}
 
-  {% if restaurant.quotesAllowed %}
-    {% set trans_params = {
-      '%contact_us%': ('mailto:' ~ coopcycle_setting('administrator_email')),
-      '%login%': path('nucleos_user_security_login')
-    } %}
-    {% if app.user %}
-      {% if not app.user.quotesAllowed %}
-        <div class="alert alert-info">
-          <i class="fa fa-info-circle"></i> 
-          {% trans with trans_params %}restaurant.quotes_disclaimer.authenticated{% endtrans %}
+      <div class="row">
+        <div class="col-xs-12 col-lg-8">
+          {% set restaurant_banner = coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner') %}
+          {% include 'restaurant/_partials/restaurant_info.html.twig' %}
         </div>
-      {% endif %}
-    {% else %}
-      <div class="alert alert-info">
-        <i class="fa fa-info-circle"></i> 
-        {% trans with trans_params %}restaurant.quotes_disclaimer.not_authenticated{% endtrans %}
+        <div class="col-xs-12 col-lg-4">
+          <div id="restaurant__fulfilment-details__container">
+          </div>
+        </div>
       </div>
-    {% endif %}
-  {% endif %}
+    </header>
 
     {% set menu = restaurant_menu(restaurant) %}
     {% set sections = [] %}
@@ -148,58 +161,47 @@
       {% endfor %}
     {% endif %}
 
-    <header class="restaurant-header">
-      <div class="row">
-        <div class="col-xs-12 col-lg-8">
-          {% set restaurant_banner = coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner') %}
-          {% include 'restaurant/_partials/restaurant_info.html.twig' %}
-        </div>
-        <div class="col-xs-12 col-lg-4">
-          <div id="restaurant__fulfilment-details__container">
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
-          {% if sections|length > 0 %}
-            {% include 'restaurant/_partials/menu_nav.html.twig' %}
-          {% endif %}
-        </div>
-      </div>
-    </header>
+    {% if sections|length > 0 %}
+      {% include 'restaurant/_partials/menu_nav.html.twig' %}
+    {% endif %}
 
-    <div class="row">
-      {% if menu is not null %}
-        <div class="col-xs-12 col-lg-8">
-          <div id="menu">
-            {#
-            WARNING
-            We cache the following block for performance
-            Iterating through all products, options… is a lot of database requests
-            #}
-            {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation ~ (business_context.active ? '_business' : '')) %}
-            {% cache cache_key ttl(300) %}
-              {% include 'restaurant/_partials/menu_content.html.twig' %}
-            {% endcache %}
-          </div>
-        </div>
-        <div class="col-xs-12 col-lg-4">
-          {% if restaurant.isFulfillmentMethodEnabled('delivery') or restaurant.isFulfillmentMethodEnabled('collection') %}
-            {{ form_start(cart_form, { attr: { 'data-cart-url': path('restaurant_cart', { id: restaurant.id }) } }) }}
-            <div id="cart"></div>
-            {{ form_end(cart_form) }}
+    <main>
+      <div class="custom-container">
+        <div class="row">
+          {% if menu is not null %}
+            <div class="col-xs-12 col-lg-8">
+              <div id="menu">
+                {#
+                WARNING
+                We cache the following block for performance
+                Iterating through all products, options… is a lot of database requests
+                #}
+                {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation ~ (business_context.active ? '_business' : '')) %}
+                {% cache cache_key ttl(300) %}
+                  {% include 'restaurant/_partials/menu_content.html.twig' %}
+                {% endcache %}
+              </div>
+            </div>
+            <div class="col-xs-12 col-lg-4">
+              {% if restaurant.isFulfillmentMethodEnabled('delivery') or restaurant.isFulfillmentMethodEnabled('collection') %}
+                {{ form_start(cart_form, { attr: { 'data-cart-url': path('restaurant_cart', { id: restaurant.id }) } }) }}
+                <div id="cart"></div>
+                {{ form_end(cart_form) }}
+              {% else %}
+                <div class="alert alert-warning">
+                  {% trans from 'validators' %}order.fulfillment_methods.empty{% endtrans %}
+                </div>
+              {% endif %}
+            </div>
           {% else %}
             <div class="alert alert-warning">
-              {% trans from 'validators' %}order.fulfillment_methods.empty{% endtrans %}
+              {% trans %}restaurant.noMenuWarning{% endtrans %}
             </div>
           {% endif %}
         </div>
-      {% else %}
-        <div class="alert alert-warning">
-          {% trans %}restaurant.noMenuWarning{% endtrans %}
-        </div>
-      {% endif %}
-    </div>
+      </div>
+    </main>
+
   </div>
 
   <div class="modal fade" tabindex="-1" role="dialog"

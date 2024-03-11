@@ -74,13 +74,12 @@ export default function MenuNav(props) {
   }
 
   return (
-    <div id="restaurant-menu-nav"
-         className="restaurant-menu-nav"
-         ref={ rootRef }>
-      <Anchor
-        getCurrentAnchor={ getCurrentAnchor }
-        onChange={ onChange }
-        targetOffset={ height }>
+    <Anchor
+      getCurrentAnchor={ getCurrentAnchor }
+      onChange={ onChange }
+      targetOffset={ height }>
+      <div className="custom-container pt-3 d-flex"
+           ref={ rootRef }>
         { displaySections.map((section) => (
           <div
             key={ sectionElementId(section) }
@@ -98,7 +97,7 @@ export default function MenuNav(props) {
           sections={ displaySections.filter((section) => !section.isVisible) }
           currentSection={ currentSection(props.sections, currentAnchor) }
           targetOffset={ height } />
-      </Anchor>
-    </div>
+      </div>
+    </Anchor>
   )
 }

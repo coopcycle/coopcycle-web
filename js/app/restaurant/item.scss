@@ -1,8 +1,22 @@
 @import "../../../assets/css/vars.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+@import "../../../assets/css/grid.scss";
 
 .restaurant-banner {
   margin-top: -20px;
+}
+
+#restaurant-body {
+  .custom-container {
+    @extend .container-full-hd;
+    @extend .container--extra-space-on-sides;
+    padding: 0 1rem;
+  }
+
+  main {
+    padding-top: 1.5rem;
+    background-color: $body-bg-secondary;
+  }
 }
 
 #restaurant-opening-hours-modal {

@@ -34,8 +34,6 @@
   .ant-anchor {
     width: 100%;
     overflow: hidden;
-    padding: 16px 0;
-    display: flex;
     background-color: $white;
   }
 
@@ -75,20 +73,6 @@
       background-color: transparent;
     }
   }
-
-  &__more-trigger {
-    @include ant-anchor-link--max-width();
-
-    .ant-anchor-link-title {
-      display: flex;
-      align-items: center;
-
-      span {
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-  }
 }
 
 .ReactModal__Body--open {
@@ -97,7 +81,21 @@
   }
 }
 
-.restaurant-menu-nav__more-overlay {
+.more-trigger {
+  @include ant-anchor-link--max-width();
+
+  .ant-anchor-link-title {
+    display: flex;
+    align-items: center;
+
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.more-overlay {
   .ant-dropdown-menu-item {
     &:hover {
       background-color: $nav-link-hover-bg;
