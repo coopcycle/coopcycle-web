@@ -262,8 +262,8 @@ export function closeAddUserModal() {
   return {type: CLOSE_ADD_USER}
 }
 
-export function modifyTaskListRequest(username, tasks) {
-  return { type: MODIFY_TASK_LIST_REQUEST, username, tasks }
+export function modifyTaskListRequest(username, tasks, previousTasks) {
+  return { type: MODIFY_TASK_LIST_REQUEST, username, tasks, previousTasks }
 }
 
 export function modifyTaskListRequestSuccess(taskList) {
@@ -320,8 +320,11 @@ export function modifyTaskList(username, tasks) {
         position,
       }
     })
+    const tasksLists = selectTaskLists(getState())
+    const tasksList = _.find(tasksLists, tl => tl.username === username)
+    const previousTasks = tasksList.items
 
-    dispatch(modifyTaskListRequest(username, newTasks))
+    dispatch(modifyTaskListRequest(username, newTasks, previousTasks))
 
     let response
 

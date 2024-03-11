@@ -18,7 +18,21 @@ const selectors = taskAdapter.getSelectors((state) => state)
 export default (state = initialState, action) => {
   switch (action.type) {
     case MODIFY_TASK_LIST_REQUEST:
-      return taskAdapter.upsertMany(state, action.tasks)
+        const toKeep = action.tasks.map((t) => ({
+          '@id': t['@id'],
+          isAssigned: true,
+          assignedTo: action.username
+        }))
+
+      const toRemove =
+        _.differenceWith(action.previousTasks, action.tasks, taskComparator)
+        .map((t) => ({
+          '@id': t['@id'],
+          isAssigned: false,
+          assignedTo: null
+        }))
+
+      return taskAdapter.upsertMany(state, [ ...toKeep, ...toRemove ])
 
     case MODIFY_TASK_LIST_REQUEST_SUCCESS:
       const entities = action.taskList.items.map(item => ({
