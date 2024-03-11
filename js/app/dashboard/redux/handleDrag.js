@@ -1,5 +1,5 @@
 import _ from "lodash"
-import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskLists, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
+import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskIdToTourIdMap, selectTaskLists, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { disableDropInTours, enableDropInTours, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, removeTasksFromTour, unassignTasks, updateTourInUI } from "./actions"
 import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"

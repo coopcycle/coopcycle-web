@@ -198,7 +198,7 @@ export const isInDateRange = (task, date) => {
   return range.overlaps(dateAsRange)
 }
 
-export const isValidTasksMultiSelect = (selectedTasks) => {
+export const isValidTasksMultiSelect = (selectedTasks, taskIdToTourIdMap) => {
   /*
     In order to keep things "simple" we want :
       - multi selected tasks all assigned to the same user or not assigned
@@ -207,7 +207,8 @@ export const isValidTasksMultiSelect = (selectedTasks) => {
 
   return (
     selectedTasks.every(t => t.assignedTo === selectedTasks[0].assignedTo) &&
-    selectedTasks.every(t => t.tour === null) ||
-      (selectedTasks.every(t => t.tour !== null) && selectedTasks.every(t => t.tour["@id"] === selectedTasks[0].tour["@id"]))
+    selectedTasks.every(t => !taskIdToTourIdMap.has(t['@id'])) || // no tour
+      (selectedTasks.every(t => taskIdToTourIdMap.has(t['@id'])) &&
+        selectedTasks.every(t => taskIdToTourIdMap.get(t['@id']) === taskIdToTourIdMap.get(t[0]['@id'])))
   )
 }

@@ -11,6 +11,7 @@ import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdap
 import { filter, forEach, find, reduce, map, differenceWith, includes, mapValues } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
 import { taskUtils } from '../../coopcycle-frontend-js/logistics/redux';
+import { selectTaskIdToTourIdMap } from '../../../shared/src/logistics/redux/selectors'
 
 const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
 export const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
@@ -50,13 +51,16 @@ export const selectTaskLists = taskListSelectors.selectAll
 
 export const selectBookedUsernames = taskListSelectors.selectIds
 
+
 export const belongsToGroup = task => Object.prototype.hasOwnProperty.call(task, 'group') && task.group
-export const belongsToTour = task => Object.prototype.hasOwnProperty.call(task, 'tour') && task.tour
+export const belongsToTour = task => state => selectTaskIdToTourIdMap(state).has(task['@id'])
+
 
 export const selectGroups = createSelector(
   selectUnassignedTasks,
   state => state.taskListGroupMode,
-  (unassignedTasks, taskListGroupMode) => {
+  selectTaskIdToTourIdMap,
+  (unassignedTasks, taskListGroupMode, taskIdToTourIdMap) => {
 
     if (taskListGroupMode !== 'GROUP_MODE_FOLDERS') {
       return []
@@ -67,7 +71,7 @@ export const selectGroups = createSelector(
 
     const tasksWithGroup = filter(
       unassignedTasks,
-      task => belongsToGroup(task) && !belongsToTour(task) // if the task is in a tour we don't want it to be displayed in "Unassigned > Group"
+      task => belongsToGroup(task) && !taskIdToTourIdMap.has(task['@id']) // if the task is in a tour we don't want it to be displayed in "Unassigned > Group"
     )
 
     forEach(tasksWithGroup, task => {
@@ -94,12 +98,13 @@ export const selectGroups = createSelector(
 export const selectStandaloneTasks = createSelector(
   selectUnassignedTasks,
   state => state.taskListGroupMode,
-  (unassignedTasks, taskListGroupMode) => {
+  selectTaskIdToTourIdMap,
+  (unassignedTasks, taskListGroupMode, taskIdToTourIdMap) => {
 
     let standaloneTasks = unassignedTasks
 
     if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
-      standaloneTasks = filter(unassignedTasks, task => !belongsToGroup(task) && !belongsToTour(task))
+      standaloneTasks = filter(unassignedTasks, task => !belongsToGroup(task) && !taskIdToTourIdMap.has(task['@id']))
     }
 
     // Order by dropoff desc, with pickup before

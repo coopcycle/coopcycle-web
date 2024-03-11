@@ -12,6 +12,9 @@ import {
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectNextWorkingDay, selectSelectedTasks, taskSelectors } from './selectors'
+import { toast } from 'react-toastify'
+import i18next from 'i18next'
+import { selectTaskIdToTourIdMap } from '../../../shared/src/logistics/redux/selectors'
 
 
 function createClient(dispatch) {
@@ -1558,6 +1561,8 @@ export function deleteTour(tour) {
 
     let resourceId = tour['@id'];
 
+    dispatch(toggleTourLoading(resourceId))
+
     createClient(dispatch).request({
       method: 'delete',
       url: resourceId,
@@ -1567,7 +1572,10 @@ export function deleteTour(tour) {
         'Content-Type': 'application/ld+json'
       }
     })
-      .then(() => dispatch(deleteTourSuccess(resourceId)))
+      .then(() => {
+        dispatch(deleteTourSuccess(resourceId))
+        dispatch(toggleTourLoading(resourceId))
+      })
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))
   }

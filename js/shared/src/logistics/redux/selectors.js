@@ -53,7 +53,6 @@ export const selectTasksWithColor = createSelector(
 
 const selectTaskListByUsername = (state, props) => taskListSelectors.selectById(state, props.username)
 
-const belongsToTour = task => Object.prototype.hasOwnProperty.call(task, 'tour') && task.tour
 
 // https://github.com/reduxjs/reselect#connecting-a-selector-to-the-redux-store
 // https://redux.js.org/recipes/computing-derived-data
@@ -62,7 +61,9 @@ export const makeSelectTaskListItemsByUsername = () => {
   return createSelector(
     taskSelectors.selectEntities, // FIXME This is recalculated all the time
     selectTaskListByUsername,
-    (tasks, taskList) => {
+    selectTaskIdToTourIdMap,
+    selectAllTours,
+    (tasks, taskList, taskIdToTourIdMap, allTours) => {
 
       if (!taskList) {
         return []
@@ -71,34 +72,28 @@ export const makeSelectTaskListItemsByUsername = () => {
       return taskList.itemIds
         .filter(id => Object.prototype.hasOwnProperty.call(tasks, id)) // a task with this id may be not loaded yet
         .map(id => tasks[id])
-        .reduce((items, task, position) => {
+        .reduce((taskListItems, task, position) => {
 
-          if (belongsToTour(task)) {
+          if (taskIdToTourIdMap.has(task['@id'])) {
+            const tourId = taskIdToTourIdMap.get(task['@id'])
+            let tourIndex = _.findIndex(taskListItems, item => item['@id'] === tourId)
 
-            const tourIndex = _.findIndex(items, item => {
-
-              return belongsToTour(task)
-                && item['@type'] === 'Tour' && task.tour['@id'] === item['@id']
-            })
-
-            if (-1 === tourIndex) {
-              items.push({
-                ...task.tour,
-                '@type': 'Tour',
-                items: [
-                  {...task, position}
-                ]
-              })
-            } else {
-              const tour = items[tourIndex]
-              tour.items.push({...task, position})
+            if (tourIndex === -1) {
+              const tour = allTours.find(t => t['@id'] === tourId)
+              taskListItems.push(tour)
+              tourIndex = taskListItems.length - 1
             }
 
+            // update tour items with the task position in the tasklist, because we will need it later...
+            // we assume that the tasks are in the order corresponding to their position in taskList.itemIds and tour.itemIds
+            // see
+            let taskIndex = taskListItems[tourIndex].items.findIndex(t => t['@id'] === task['@id'])
+            taskListItems[tourIndex].items[taskIndex] = {...task, position: position}
           } else {
-            items.push({...task, position})
+            taskListItems.push({...task, position})
           }
 
-          return items
+          return taskListItems
 
         }, [])
     }
@@ -144,3 +139,15 @@ export const selectUnassignedTours = createSelector(
   selectAllTours,
   (allTours) => _.filter(allTours, t => isTourUnassigned(t))
 )
+
+export const selectTaskIdToTourIdMap = createSelector(
+  selectAllTours,
+  (allTours) => {
+    let taskIdToTourIdMap = new Map()
+    allTours.forEach((tour) => {
+      tour.itemIds.forEach(taskId => {
+        taskIdToTourIdMap.set(taskId, tour['@id'])
+    })
+  })
+  return taskIdToTourIdMap
+})
