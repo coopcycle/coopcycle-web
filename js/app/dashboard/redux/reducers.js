@@ -128,31 +128,29 @@ export const selectedTasks = (state = [], action) => {
   /*
     FIXME selectedTasks is an array of task ids, not tasks objects
   */
-  let newSelectedTasks
+  let newState
 
   switch (action.type) {
     case TOGGLE_TASK:
 
-      if (-1 !== state.indexOf(action.task['@id'])) {
+      if (-1 !== state.indexOf(action.taskId)) {
         // let's remove this task!
         if (!action.multiple) {
           return []
         }
-        return _.filter(state, task => task !== action.task['@id'])
+        return _.filter(state, task => task !== action.taskId)
       }
 
-      newSelectedTasks = action.multiple ? action.currentlySelectedTasks.slice(0) : []
-      newSelectedTasks.push(action.task)
-      break
+      newState = action.multiple ? state.slice(0) : []
+      newState.push(action.taskId)
+      return newState
   case SELECT_TASK:
-    if (-1 !== state.indexOf(action.task['@id'])) {
+    if (-1 !== state.indexOf(action.taskId)) {
       return state
     }
-
-    return [action.task['@id']]
+    return [action.taskId]
   case SELECT_TASKS:
-    newSelectedTasks = action.tasks
-    break
+    return action.taskIds
   case CLEAR_SELECTED_TASKS:
   case MODIFY_TASK_LIST_REQUEST_SUCCESS:
     // OPTIMIZATION
@@ -162,15 +160,6 @@ export const selectedTasks = (state = [], action) => {
       return []
     }
   break
-  }
-
-  if (newSelectedTasks && newSelectedTasks.length > 0) {
-    if (isValidTasksMultiSelect(newSelectedTasks)) {
-      return newSelectedTasks.map(task => task['@id'])
-    } else {
-      toast.warn(i18next.t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
-      return state
-    }
   }
   return state
 }

@@ -2,7 +2,7 @@ import _, { filter } from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
 
-import { taskComparator, withoutTasks, withLinkedTasks, isInDateRange } from './utils'
+import { taskComparator, withoutTasks, withLinkedTasks, isInDateRange, isValidTasksMultiSelect } from './utils'
 import {
   selectSelectedDate,
   selectTaskLists,
@@ -357,26 +357,37 @@ export function toggleTask(task, multiple = false) {
     Check the `TOGGLE_TASK` reducer for the exact behavior. Pass the `multiple` flag if you want to keep the already selected tasks in the list.
   */
   return function(dispatch, getState) {
-    // we pass the selectedTasks data, as the `state` we get in the reducer is only the IDs
-    const currentlySelectedTasks = selectSelectedTasks(getState())
-    dispatch({ type: TOGGLE_TASK, task, multiple, currentlySelectedTasks })
+    let currentlySelectedTasks = selectSelectedTasks(getState())
+
+    // case where we add a new task to the selected tasks list
+    if (multiple &&
+      !currentlySelectedTasks.includes(t => t['@id'])
+    ) {
+      currentlySelectedTasks.push(task)
+      if(!isValidTasksMultiSelect(currentlySelectedTasks, selectTaskIdToTourIdMap(getState()))){
+        toast.warn(i18next.t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
+        return
+      }
+    }
+    dispatch({ type: TOGGLE_TASK, taskId: task['@id'], multiple })
   }
 }
 
 export function selectTask(task) {
-  return { type: SELECT_TASK, task }
+  return { type: SELECT_TASK, taskId: task['@id'] }
 }
 
 export function selectTasksByIds(taskIds) {
   /*
-    Set selectedTasks to the given `taskIds`. We pass the task objects as we will need them in the reducer.
+    Set selectedTasks to the given `taskIds`.
   */
   return function(dispatch, getState) {
-    // FIXME
-    // We use filter, to filter out "undefined" objects
-    // Best would be to clear the selectedTasks after Redux action completes
     const tasks = filter(taskIds.map(id => taskSelectors.selectEntities(getState())[id]))
-    dispatch({ type: SELECT_TASKS, tasks })
+      if (isValidTasksMultiSelect(tasks, selectTaskIdToTourIdMap(getState()))) {
+        dispatch({ type: SELECT_TASKS, taskIds })
+      } else {
+        toast.warn(i18next.t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
+      }
   }
 }
 
