@@ -7,7 +7,6 @@ import {
   TOGGLE_TASK,
   SELECT_TASK,
   SELECT_TASKS,
-  SELECT_TASKS_BY_IDS,
   SET_TASK_LIST_GROUP_MODE,
   OPEN_NEW_TASK_MODAL,
   CLOSE_NEW_TASK_MODAL,
@@ -66,6 +65,9 @@ import {
 import {
   recurrenceRulesAdapter,
 } from './selectors'
+import { toast } from 'react-toastify'
+import { isValidTasksMultiSelect } from './utils'
+import i18next from 'i18next'
 
 const initialState = {
   addModalIsOpen: false,
@@ -123,50 +125,53 @@ export const polylineEnabled = (state = {}, action) => {
 }
 
 export const selectedTasks = (state = [], action) => {
+  /*
+    FIXME selectedTasks is an array of task ids, not tasks objects
+  */
+  let newSelectedTasks
+
   switch (action.type) {
-  case TOGGLE_TASK:
+    case TOGGLE_TASK:
 
-    if (-1 !== state.indexOf(action.task['@id'])) {
-      if (!action.multiple) {
-        return []
+      if (-1 !== state.indexOf(action.task['@id'])) {
+        // let's remove this task!
+        if (!action.multiple) {
+          return []
+        }
+        return _.filter(state, task => task !== action.task['@id'])
       }
-      return _.filter(state, task => task !== action.task['@id'])
-    }
 
-    const newState = action.multiple ? state.slice(0) : []
-    newState.push(action.task['@id'])
-
-    return newState
-
+      newSelectedTasks = action.multiple ? action.currentlySelectedTasks.slice(0) : []
+      newSelectedTasks.push(action.task)
+      break
   case SELECT_TASK:
-
     if (-1 !== state.indexOf(action.task['@id'])) {
-
       return state
     }
 
-    return [ action.task['@id'] ]
-
+    return [action.task['@id']]
   case SELECT_TASKS:
-
-    return action.tasks.map(task => task['@id'])
-
-  case SELECT_TASKS_BY_IDS:
-
-    return action.taskIds
-
+    newSelectedTasks = action.tasks
+    break
   case CLEAR_SELECTED_TASKS:
   case MODIFY_TASK_LIST_REQUEST_SUCCESS:
-
     // OPTIMIZATION
     // Make sure the array if not already empty
     // before returning a new reference
     if (state.length > 0) {
       return []
     }
-    break
+  break
   }
 
+  if (newSelectedTasks && newSelectedTasks.length > 0) {
+    if (isValidTasksMultiSelect(newSelectedTasks)) {
+      return newSelectedTasks.map(task => task['@id'])
+    } else {
+      toast.warn(i18next.t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
+      return state
+    }
+  }
   return state
 }
 
@@ -526,4 +531,3 @@ export const isTaskRescheduleModalVisible = (state = initialState.isTaskReschedu
       return state
   }
 }
-

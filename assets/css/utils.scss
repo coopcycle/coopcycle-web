@@ -31,6 +31,31 @@
   padding: 0;
 }
 
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loader {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #FFF;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotating 1.5s linear infinite;
+
+  &.loader--dark {
+    border-color: $dark;
+    border-bottom-color: transparent;
+  }
+}
+
 .font-weight-semi-bold {
   font-weight: 600 !important;
 }

@@ -22,8 +22,19 @@ asyncModule(async () => {
     const reducedTaxRate      = taxRates.find(r => r.category === 'BASE_REDUCED')
 
     const standardTaxRateCodes     = [ standardTaxRate.code, ...standardTaxRate.alternatives ]
-    const intermediaryTaxRateCodes = [ intermediaryTaxRate.code, ...intermediaryTaxRate.alternatives ]
-    const reducedTaxRateCodes      = [ reducedTaxRate.code, ...reducedTaxRate.alternatives ]
+    let intermediaryTaxRateCodes   = []
+    let reducedTaxRateCodes        = []
+
+    if (intermediaryTaxRate) {
+      intermediaryTaxRateCodes = [ intermediaryTaxRate.code, ...intermediaryTaxRate.alternatives ]
+    }
+
+    if (reducedTaxRate) {
+      reducedTaxRateCodes = [ reducedTaxRate.code, ...reducedTaxRate.alternatives ]
+    }
+
+    intermediaryTaxRateCodes = intermediaryTaxRateCodes.length > 0 ? intermediaryTaxRateCodes : ['N/A']
+    reducedTaxRateCodes = reducedTaxRateCodes.length > 0 ? reducedTaxRateCodes : ['N/A']
 
     cube(`TaxAdjustment`, {
       sql: `SELECT * FROM public.sylius_adjustment WHERE type = 'tax'`,

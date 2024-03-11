@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _, { filter } from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
 
@@ -11,7 +11,7 @@ import {
   createTaskListSuccess,
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
-import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
+import { selectNextWorkingDay, selectSelectedTasks, taskSelectors } from './selectors'
 
 
 function createClient(dispatch) {
@@ -97,7 +97,6 @@ export const TOGGLE_POLYLINE = 'TOGGLE_POLYLINE'
 export const TOGGLE_TASK = 'TOGGLE_TASK'
 export const SELECT_TASK = 'SELECT_TASK'
 export const SELECT_TASKS = 'SELECT_TASKS'
-export const SELECT_TASKS_BY_IDS = 'SELECT_TASKS_BY_IDS'
 export const CLEAR_SELECTED_TASKS = 'CLEAR_SELECTED_TASKS'
 export const SET_TASK_LIST_GROUP_MODE = 'SET_TASK_LIST_GROUP_MODE'
 export const REMOVE_TASK = 'REMOVE_TASK'
@@ -355,19 +354,33 @@ export function taskListsUpdated(taskLists) {
 }
 
 export function toggleTask(task, multiple = false) {
-  return { type: TOGGLE_TASK, task, multiple }
+  /*
+    Toggle the given task in the `selectedTasks` list.
+
+    Check the `TOGGLE_TASK` reducer for the exact behavior. Pass the `multiple` flag if you want to keep the already selected tasks in the list.
+  */
+  return function(dispatch, getState) {
+    // we pass the selectedTasks data, as the `state` we get in the reducer is only the IDs
+    const currentlySelectedTasks = selectSelectedTasks(getState())
+    dispatch({ type: TOGGLE_TASK, task, multiple, currentlySelectedTasks })
+  }
 }
 
 export function selectTask(task) {
   return { type: SELECT_TASK, task }
 }
 
-export function selectTasks(tasks) {
-  return { type: SELECT_TASKS, tasks }
-}
-
 export function selectTasksByIds(taskIds) {
-  return { type: SELECT_TASKS_BY_IDS, taskIds }
+  /*
+    Set selectedTasks to the given `taskIds`. We pass the task objects as we will need them in the reducer.
+  */
+  return function(dispatch, getState) {
+    // FIXME
+    // We use filter, to filter out "undefined" objects
+    // Best would be to clear the selectedTasks after Redux action completes
+    const tasks = filter(taskIds.map(id => taskSelectors.selectEntities(getState())[id]))
+    dispatch({ type: SELECT_TASKS, tasks })
+  }
 }
 
 export function clearSelectedTasks() {
@@ -1567,16 +1580,16 @@ export function deleteTour(tour) {
   }
 }
 
-export function removeTaskFromTour(tour, task, username) {
+export function removeTaskFromTour(tour, task, username, unassignTasksAction=unassignTasks, modifyTourAction=modifyTour) {
   return function(dispatch) {
     if (username !== null) {
       let newTourItems = withoutTasks(tour.items, [ task ])
       let uiUpdate = () => updateTourInUI(dispatch, tour, newTourItems)
-      dispatch(unassignTasks(username, [task], uiUpdate)).then(() => {
-        dispatch(modifyTour(tour, newTourItems, true))
+      dispatch(unassignTasksAction(username, [task], uiUpdate)).then(() => {
+        dispatch(modifyTourAction(tour, newTourItems, true))
       })
     } else {
-      dispatch(modifyTour(tour, withoutTasks(tour.items, [ task ])))
+      dispatch(modifyTourAction(tour, withoutTasks(tour.items, [ task ])))
     }
   }
 }

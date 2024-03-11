@@ -10,33 +10,10 @@ import TaskGroup from './TaskGroup'
 import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules } from '../redux/actions'
-import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectSelectedTasks, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode } from '../redux/selectors'
+import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode } from '../redux/selectors'
 
-const StandaloneTasks = ({tasks, offset, selectedTasksLength}) => {
-  return _.map(tasks, (task, index) => {
-
-    return (
-      <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ (offset + index) }>
-        {(provided, snapshot) => {
-
-          return (
-            <div
-              ref={ provided.innerRef }
-              { ...provided.draggableProps }
-              { ...provided.dragHandleProps }
-            >
-              <Task task={ task } />
-              { (snapshot.isDragging && selectedTasksLength > 1) && (
-                <div className="task-dragging-number">
-                  <span>{ selectedTasksLength }</span>
-                </div>
-              ) }
-            </div>
-          )
-        }}
-      </Draggable>
-    )
-  })
+const StandaloneTasks =  ({tasks, offset}) => {
+  return _.map(tasks, (task, index) => <Task task={ task } draggableIndex={ (offset + index) } key={ task['@id'] } />)
 }
 
 
@@ -93,7 +70,7 @@ const Buttons = () => {
   )
 }
 
-const UnassignedTasks = () => {
+export const UnassignedTasks = () => {
 
   const dispatch = useDispatch()
   const { t } = useTranslation()
@@ -103,7 +80,6 @@ const UnassignedTasks = () => {
   const recurrenceRules = useSelector(selectRecurrenceRules)
   const isRecurrenceRulesVisible = useSelector(selectIsRecurrenceRulesVisible)
   const toursEnabled = useSelector(selectAreToursEnabled)
-  const selectedTasksLength = useSelector(selectSelectedTasks).length
 
   // not the nicest ever. when tasks changed, we want to render droppable on "next tick"
   // otherwise we may run in the error "Unable to find draggable with id: <taskId>" (then the task wont be draggable)
@@ -160,7 +136,6 @@ const UnassignedTasks = () => {
                 <StandaloneTasks
                   tasks={ standaloneTasks }
                   offset={ groups.length }
-                  selectedTasksLength={selectedTasksLength}
                 />
                 { provided.placeholder }
               </div>
@@ -171,5 +146,3 @@ const UnassignedTasks = () => {
     </div>
   )
 }
-
-export default UnassignedTasks
