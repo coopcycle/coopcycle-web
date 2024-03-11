@@ -35,9 +35,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
     }
   const onConfirmDelete = async (e) => {
         e.preventDefault()
-        $('.task__draggable').LoadingOverlay('show', {image: false})
-        await dispatch(deleteTour(tour, tour.items))
-        $('.task__draggable').LoadingOverlay('hide')
+        dispatch(deleteTour(tour, tour.items))
       }
 
   return (<>{toggleInputForName ?
