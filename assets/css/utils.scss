@@ -7,6 +7,14 @@
   display: inline-block;
 }
 
+.display-none {
+  display: none;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
 .nomargin {
   margin: 0;
 }
@@ -46,4 +54,8 @@
     border-color: $dark;
     border-bottom-color: transparent;
   }
+}
+
+.font-weight-semi-bold {
+  font-weight: 600 !important;
 }

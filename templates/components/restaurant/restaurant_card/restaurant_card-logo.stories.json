@@ -1,0 +1,24 @@
+{
+  "title": "Foodtech/1. Restaurant/2. Logo",
+  "parameters": {
+    "server": {
+      "id": "restaurant_card"
+    }
+  },
+  "args": {
+    "name": "Lorem ipsum"
+  },
+  "argTypes": {},
+  "tags": [],
+  "stories": [
+    {
+      "name": "Working logo",
+      "args": { "image": "https://img.logoipsum.com/300.png" }
+    },
+    {
+      "name": "Broken logo",
+      "args": { "image": "https://broken-logo.err" }
+    }
+
+  ]
+}

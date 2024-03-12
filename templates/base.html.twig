@@ -15,6 +15,7 @@
 
     {{ encore_entry_link_tags('common') }}
     {{ encore_entry_link_tags('widgets') }}
+    {{ encore_entry_link_tags('app') }}
     {% if app.user %}
       {{ encore_entry_link_tags('notifications') }}
     {% endif %}
@@ -35,8 +36,15 @@
 
     <link type="text/css" rel="stylesheet" href="{{ asset('bundles/craueformflow/css/buttons.css') }}" />
 
-    {# run 'app' script in <head> as suggested by Turbo; relevant only for pages with Turbo Drive enabled (search data-turbo="true")
+    {# run 'app' script in <head> as suggested by Turbo;
+    Pages with Turbo Drive enabled (search: data-turbo="true")
     For more information, see: https://turbo.hotwired.dev/handbook/building#working-with-script-elements #}
+
+    {# ideally we should define all scripts in the Head and defer running them (instead of placing them at the end of the Body)
+    See:
+    https://symfony.com/doc/current/frontend/encore/simple-example.html#configuring-encore-webpack
+    https://github.com/symfony/webpack-encore-bundle/pull/102
+    but it requires, at least, getting rid from the scripts inside twig templates #}
     {{ encore_entry_script_tags('app') }}
   </head>
   <body

@@ -4,6 +4,12 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import custom from '../webpack.config.js'
 
 const config = {
+  refs: {
+    react: {
+      title: 'React',
+      url: 'http://localhost:6007',
+    },
+  },
   stories: [
     "../src/**/*.mdx",
     "../src/**/*.stories.@(json|yaml|yml)",

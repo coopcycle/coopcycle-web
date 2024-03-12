@@ -2,9 +2,13 @@
 
 import "../assets/css/main.scss";
 import "../js/app/restaurant/list.scss";
+import "../js/app/restaurant/menu.scss";
 
 const preview = {
   parameters: {
+    server: {
+      url: `http://localhost/storybook/component`,
+    },
     actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {
@@ -18,6 +22,11 @@ const preview = {
         locales: "en-US",
       },
     },
+    docs: {
+      story: {
+        iframeHeight: 250,
+      }
+    }
   },
 };
 
