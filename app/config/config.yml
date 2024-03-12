@@ -37,7 +37,7 @@ parameters:
     tile38_fleet_key: '%database_name%:fleet'
     tile38_doorstep_chan_namespace: '%database_name%'
     centrifugo_namespace: '%database_name%'
-    cors_allow_origin: http://localhost
+    cors_allow_origin: http://206.189.30.248
     jwt_public_key_path: "%env(COOPCYCLE_PUBLIC_KEY_FILE)%"
     jwt_private_key_path: "%env(COOPCYCLE_PRIVATE_KEY_FILE)%"
     transactional_address: "%env(COOPCYCLE_MAIL_SENDER_ADDRESS)%"
