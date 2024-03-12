@@ -27,34 +27,6 @@ h1, h2, h3, h4, h5, h6 {
   vertical-align: middle;
 }
 
-.button-reset {
-  // Reset button styles
-  // @see https://gist.github.com/MoOx/9137295
-
-  border: none;
-  margin: 0;
-  padding: 0;
-  width: auto;
-  overflow: visible;
-
-  background: transparent;
-
-  /* inherit font & color from ancestor */
-  color: inherit;
-  font: inherit;
-  text-align: inherit;
-
-  /* Normalize `line-height`. Cannot be changed from `normal` in Firefox 4+. */
-  line-height: normal;
-
-  /* Corrects font smoothing for webkit */
-  -webkit-font-smoothing: inherit;
-  -moz-osx-font-smoothing: inherit;
-
-  /* Corrects inability to style clickable `input` types in iOS */
-  -webkit-appearance: none;
-}
-
 .container--full-height {
   height: 100%;
   display: flex;

@@ -3,6 +3,18 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
 @import "../../../assets/css/mixins/card";
 
+.button-reset {
+  // Reset button styles based on https://gist.github.com/MoOx/9137295
+  border: none;
+  padding: 0;
+  background: transparent;
+
+  text-align: inherit;
+
+  /* Corrects inability to style clickable `input` types in iOS */
+  -webkit-appearance: none;
+}
+
 .restaurant-menu {
   padding: 1rem 0;
 
