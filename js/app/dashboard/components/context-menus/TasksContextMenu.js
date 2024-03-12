@@ -22,11 +22,10 @@ import {
   setCurrentTask,
   unassignTasks
 } from '../../redux/actions'
-import {selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks} from '../../redux/selectors'
+import {belongsToTour, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
-import { selectTaskIdToTourIdMap } from '../../../../shared/src/logistics/redux/selectors'
 
 export const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
 export const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
@@ -149,8 +148,7 @@ const DynamicMenu = () => {
   const selectedTasks = useSelector(selectSelectedTasks)
   const nextWorkingDay = useSelector(selectNextWorkingDay)
   const linkedTasksIds = useSelector(selectLinkedTasksIds)
-  const taskIdToTourIdMap = useSelector(selectTaskIdToTourIdMap)
-  const selectedTasksBelongsToTour = selectedTasks.includes(t => taskIdToTourIdMap.has(t['@id']))
+  const selectedTasksBelongsToTour = selectedTasks.some(t => belongsToTour(t))
 
   const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
 

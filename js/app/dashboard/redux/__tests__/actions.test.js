@@ -2,7 +2,7 @@ import thunk from 'redux-thunk'
 import moment from 'moment'
 import configureMockStore from 'redux-mock-store'
 
-import { updateTask, UPDATE_TASK, REMOVE_TASK, removeTaskFromTour, selectTask, selectTasksByIds, toggleTask }  from '../actions';
+import { updateTask, UPDATE_TASK, REMOVE_TASK, selectTask, selectTasksByIds, toggleTask, removeTasksFromTour }  from '../actions';
 import { storeFixture } from './storeFixture';
 import { selectSelectedTasks } from '../selectors';
 import { createStoreFromPreloadedState } from '../store';
@@ -71,8 +71,6 @@ describe('removeTaskFromTour', () => {
       mockUnassignTasks = jest.fn(),
       mockModifyTour = jest.fn()
 
-    dispatch.mockReturnValue().mockResolvedValueOnce({}).mockReturnValue()
-
     const tour = {
       '@id': '/api/tours/111',
       name: 'tour 1',
@@ -83,29 +81,24 @@ describe('removeTaskFromTour', () => {
         '/api/tasks/727'
       ],
       items: [
-      {'@id': '/api/tasks/729', isAssigned: true, tour: { '@id': '/api/tours/111',  name: 'tour 1', position: 0 }},
-      {'@id': '/api/tasks/730', isAssigned: true, tour: { '@id': '/api/tours/111',  name: 'tour 1', position: 1 }},
-      {'@id': '/api/tasks/731', isAssigned: true, tour: { '@id': '/api/tours/111',  name: 'tour 1', position: 2 }},
-      {'@id': '/api/tasks/727', isAssigned: true, tour: { '@id': '/api/tours/111',  name: 'tour 1', position: 3 }},
+      {'@id': '/api/tasks/729', isAssigned: true},
+      {'@id': '/api/tasks/730', isAssigned: true},
+      {'@id': '/api/tasks/731', isAssigned: true},
+      {'@id': '/api/tasks/727', isAssigned: true},
 
       ]
     }
-    const task = {'@id': '/api/tasks/730', isAssigned: true, tour: { '@id': '/api/tours/111',  name: 'tour 1', position: 1 }}
+    const task = {'@id': '/api/tasks/730', isAssigned: true}
 
-    removeTaskFromTour(tour, task, 'admin',  mockUnassignTasks, mockModifyTour)(dispatch, store.getState)
+    removeTasksFromTour(tour, task, 'admin',  mockUnassignTasks, mockModifyTour)(dispatch, store.getState)
 
     expect(mockUnassignTasks).toHaveBeenCalledTimes(1)
     expect(mockUnassignTasks).toHaveBeenCalledWith(
       "admin",
       expect.arrayContaining([
         expect.objectContaining({"@id": '/api/tasks/730'}),
-      ]),
-      expect.any(Function)
-
+      ])
     )
-
-    // kind of hackish way to wait for mockModifyTaskList.then(...) to resolve before testing the call to modifyTour
-    await Promise.resolve();
 
     expect(mockModifyTour).toHaveBeenCalledTimes(1)
     expect(mockModifyTour).toHaveBeenLastCalledWith(
@@ -114,8 +107,7 @@ describe('removeTaskFromTour', () => {
         expect.objectContaining({"@id": '/api/tasks/729'}),
         expect.objectContaining({"@id": '/api/tasks/731'}),
         expect.objectContaining({"@id": '/api/tasks/727'}),
-      ]),
-      true
+      ])
     )
   })
 })

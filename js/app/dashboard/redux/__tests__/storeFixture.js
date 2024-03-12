@@ -39,11 +39,6 @@ export const storeFixture = {
               previous: null,
               next: '/api/tasks/731',
               packages: [],
-              tour: {
-                '@id': '/api/tours/111',
-                name: 'tour 1',
-                position: 1
-              }
             },
             '/api/tasks/731': {
               '@context': '/api/contexts/Task',
@@ -62,11 +57,6 @@ export const storeFixture = {
               previous: '/api/tasks/730',
               next: null,
               packages: [],
-              tour: {
-                '@id': '/api/tours/111',
-                name: 'tour 1',
-                position: 2
-              }
             },
             '/api/tasks/727': {
               '@context': '/api/contexts/Task',
@@ -90,11 +80,6 @@ export const storeFixture = {
               assignedTo: 'admin',
               previous: null,
               next: null,
-              tour: {
-                '@id': '/api/tours/111',
-                name: 'tour 1',
-                position: 3
-              }
             },
             '/api/tasks/728': {
               '@context': '/api/contexts/Task',
@@ -124,7 +109,6 @@ export const storeFixture = {
               previous: null,
               next: null,
               packages: [],
-              tour: null
             },
             '/api/tasks/729': {
               '@context': '/api/contexts/Task',
@@ -145,11 +129,6 @@ export const storeFixture = {
               previous: null,
               next: null,
               packages: [],
-              tour: {
-                '@id': '/api/tours/111',
-                name: 'tour 1',
-                position: 0
-              }
             },
             '/api/tasks/732': {
               '@context': '/api/contexts/Task',
@@ -162,80 +141,7 @@ export const storeFixture = {
               assignedTo: null,
               previous: null,
               next: null,
-              packages: [],
-              tour: {
-                '@context': '/api/contexts/Tour',
-                '@id': '/api/tours/114',
-                '@type': 'Tour',
-                name: 'ma tournée',
-                items: [
-                  {
-                    '@context': '/api/contexts/Task',
-                    '@id': '/api/tasks/732',
-                    '@type': 'Task',
-                    id: 732,
-                    type: 'DROPOFF',
-                    status: 'TODO',
-                    group: null,
-                    after: '2024-01-09T00:00:00+01:00',
-                    before: '2024-01-09T23:59:59+01:00',
-                    isAssigned: false,
-                    orgName: '',
-                    images: [],
-                    doneAfter: '2024-01-09T00:00:00+01:00',
-                    doneBefore: '2024-01-09T23:59:59+01:00',
-                    assignedTo: null,
-                    previous: null,
-                    next: null,
-                    packages: [],
-                    tour: {
-                      '@context': '/api/contexts/Tour',
-                      '@id': '/api/tours/114',
-                      '@type': 'Tour',
-                      name: 'ma tournée',
-                      items: [],
-                      distance: 0,
-                      duration: 0,
-                      polyline: '',
-                      date: '2024-01-09',
-                      createdAt: '2024-01-09T12:46:23+01:00',
-                      updatedAt: '2024-01-09T12:46:23+01:00',
-                      itemIds: [],
-                      position: 0
-                    }
-                  }
-                ],
-                date: '2024-01-09',
-                createdAt: '2024-01-09T12:46:23+01:00',
-                updatedAt: '2024-01-09T12:46:36+01:00',
-                itemIds: [
-                  '/api/tasks/732'
-                ],
-                tasks: [
-                  {
-                    '@context': '/api/contexts/Task',
-                    '@id': '/api/tasks/732',
-                    '@type': 'Task',
-                    id: 732,
-                    type: 'DROPOFF',
-                    status: 'TODO',
-                    group: null,
-                    after: '2024-01-09T00:00:00+01:00',
-                    before: '2024-01-09T23:59:59+01:00',
-                    isAssigned: false,
-                    orgName: '',
-                    images: [],
-                    doneAfter: '2024-01-09T00:00:00+01:00',
-                    doneBefore: '2024-01-09T23:59:59+01:00',
-                    assignedTo: null,
-                    previous: null,
-                    next: null,
-                    packages: [],
-                    tour: null
-                  }
-                ],
-                position: 1
-              }
+              packages: []
             },
             '/api/tasks/733': {
               '@context': '/api/contexts/Task',
@@ -255,83 +161,7 @@ export const storeFixture = {
               assignedTo: null,
               previous: null,
               next: null,
-              packages: [],
-              tour: {
-                '@context': '/api/contexts/Tour',
-                '@id': '/api/tours/114',
-                '@type': 'Tour',
-                name: 'ma tournée',
-                items: [
-                  {
-                    '@context': '/api/contexts/Task',
-                    '@id': '/api/tasks/732',
-                    '@type': 'Task',
-                    id: 732,
-                    type: 'DROPOFF',
-                    status: 'TODO',
-                    group: null,
-                    after: '2024-01-09T00:00:00+01:00',
-                    before: '2024-01-09T23:59:59+01:00',
-                    isAssigned: false,
-                    orgName: '',
-                    images: [],
-                    doneAfter: '2024-01-09T00:00:00+01:00',
-                    doneBefore: '2024-01-09T23:59:59+01:00',
-                    assignedTo: null,
-                    previous: null,
-                    next: null,
-                    packages: [],
-                    tour: {
-                      '@context': '/api/contexts/Tour',
-                      '@id': '/api/tours/114',
-                      '@type': 'Tour',
-                      name: 'ma tournée',
-                      items: [],
-                      distance: 0,
-                      duration: 0,
-                      polyline: '',
-                      date: '2024-01-09',
-                      createdAt: '2024-01-09T12:46:23+01:00',
-                      updatedAt: '2024-01-09T12:46:23+01:00',
-                      itemIds: [],
-                      position: 0
-                    }
-                  }
-                ],
-                distance: 0,
-                duration: 0,
-                polyline: '',
-                date: '2024-01-09',
-                createdAt: '2024-01-09T12:46:23+01:00',
-                updatedAt: '2024-01-09T12:46:36+01:00',
-                itemIds: [
-                  '/api/tasks/732'
-                ],
-                tasks: [
-                  {
-                    '@context': '/api/contexts/Task',
-                    '@id': '/api/tasks/732',
-                    '@type': 'Task',
-                    id: 732,
-                    type: 'DROPOFF',
-                    status: 'TODO',
-                    group: null,
-                    after: '2024-01-09T00:00:00+01:00',
-                    before: '2024-01-09T23:59:59+01:00',
-                    isAssigned: false,
-                    orgName: '',
-                    images: [],
-                    doneAfter: '2024-01-09T00:00:00+01:00',
-                    doneBefore: '2024-01-09T23:59:59+01:00',
-                    assignedTo: null,
-                    previous: null,
-                    next: null,
-                    packages: [],
-                    tour: null
-                  }
-                ],
-                position: 0
-              }
+              packages: []
             },
             '/api/tasks/734': {
               '@context': '/api/contexts/Task',
@@ -352,7 +182,6 @@ export const storeFixture = {
               previous: '/api/tasks/735',
               next: null,
               packages: [],
-              tour: null
             },
             '/api/tasks/735': {
               '@context': '/api/contexts/Task',
@@ -372,7 +201,6 @@ export const storeFixture = {
               assignedTo: null,
               previous: null,
               next: null,
-              tour: null
             },
             '/api/tasks/736': {
               '@context': '/api/contexts/Task',
@@ -395,8 +223,7 @@ export const storeFixture = {
               doneBefore: '2024-01-09T23:59:59+01:00',
               assignedTo: 'admin',
               previous: null,
-              next: null,
-              tour: null
+              next: null
             },
           }
         },
@@ -464,72 +291,9 @@ export const storeFixture = {
                 '/api/tasks/733',
                 '/api/tasks/732'
               ],
-              tasks: [
-                {
-                  '@context': '/api/contexts/Task',
-                  '@id': '/api/tasks/733',
-                  '@type': 'Task',
-                  id: 733,
-                  type: 'DROPOFF',
-                  status: 'TODO',
-                  group: null,
-                  after: '2024-01-09T00:00:00+01:00',
-                  before: '2024-01-09T23:59:59+01:00',
-                  isAssigned: false,
-                  orgName: '',
-                  images: [],
-                  doneAfter: '2024-01-09T00:00:00+01:00',
-                  doneBefore: '2024-01-09T23:59:59+01:00',
-                  assignedTo: null,
-                  previous: null,
-                  next: null,
-                  packages: [],
-                  tour: null
-                },
-                {
-                  '@context': '/api/contexts/Task',
-                  '@id': '/api/tasks/732',
-                  '@type': 'Task',
-                  id: 732,
-                  type: 'DROPOFF',
-                  status: 'TODO',
-                  group: null,
-                  after: '2024-01-09T00:00:00+01:00',
-                  before: '2024-01-09T23:59:59+01:00',
-                  isAssigned: false,
-                  orgName: '',
-                  images: [],
-                  doneAfter: '2024-01-09T00:00:00+01:00',
-                  doneBefore: '2024-01-09T23:59:59+01:00',
-                  assignedTo: null,
-                  previous: null,
-                  next: null,
-                  packages: [],
-                  tour: {
-                    '@context': '/api/contexts/Tour',
-                    '@id': '/api/tours/114',
-                    '@type': 'Tour',
-                    name: 'ma tournée',
-                    items: [],
-                    distance: 0,
-                    duration: 0,
-                    polyline: '',
-                    date: '2024-01-09',
-                    createdAt: '2024-01-09T12:46:23+01:00',
-                    updatedAt: '2024-01-09T12:46:23+01:00',
-                    itemIds: [],
-                    position: 0
-                  }
-                }
-              ]
             }
           }
         }
-      },
-      ui: {
-        taskListsLoading: false,
-        isTourDragging: false,
-        currentTask: null
       }
     },
     config: {

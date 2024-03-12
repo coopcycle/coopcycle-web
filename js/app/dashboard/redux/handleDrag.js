@@ -1,7 +1,11 @@
 import _ from "lodash"
-import { isTourAssigned, makeSelectTaskListItemsByUsername, selectAllTours, selectTaskIdToTourIdMap, selectTaskLists, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
+import { isTourAssigned, makeSelectTaskListItemsByUsername, selectTaskIdToTourIdMap, selectTaskLists, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { setIsTourDragging, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
-import { clearSelectedTasks, modifyTaskList as modifyTaskListAction, modifyTour as modifyTourAction, removeTasksFromTour, unassignTasks } from "./actions"
+import { clearSelectedTasks,
+  modifyTaskList as modifyTaskListAction,
+  modifyTour as modifyTourAction,
+  removeTasksFromTour as removeTasksFromTourAction,
+  unassignTasks as unassignTasksAction } from "./actions"
 import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
 import { withLinkedTasks } from "./utils"
 import { toast } from 'react-toastify'
@@ -30,7 +34,12 @@ export function handleDragStart(result) {
   }
 }
 
-export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modifyTour=modifyTourAction) {
+export function handleDragEnd(
+  result,
+  modifyTaskList=modifyTaskListAction,
+  modifyTour=modifyTourAction,
+  unassignTasks=unassignTasksAction,
+  removeTasksFromTour=removeTasksFromTourAction) {
 
   return function(dispatch, getState) {
 
@@ -140,9 +149,8 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       // unassigning a whole tour
       dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
     } else if (destination.droppableId.startsWith('tour:')) {
-      const tours = selectAllTours(getState())
       var tourId = destination.droppableId.replace('tour:', '')
-      const tour = tours.find(t => t['@id'] == tourId)
+      const tour = selectTourById(getState(), tourId)
 
       var newTourItems = [ ...tour.items ]
 
@@ -152,7 +160,7 @@ export function handleDragEnd(result, modifyTaskList=modifyTaskListAction, modif
       } // moving single tasks between tours
       else if (source.droppableId.startsWith('tour:')) {
         var sourceTourId = source.droppableId.replace('tour:', '')
-        const sourceTour = tours.find(t => t['@id'] == sourceTourId)
+        const sourceTour = selectTourById(getState(), sourceTourId)
         dispatch(removeTasksFromTour(sourceTour, selectedTasks))
       }
 
