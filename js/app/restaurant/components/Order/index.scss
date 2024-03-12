@@ -179,11 +179,14 @@ $card-padding-lg: 2rem;
     padding: 0 $card-padding-lg 0;
     overflow-y: auto;
   }
+
+  .cart__item:not(:last-child) {
+    border-bottom: 1px solid $gray-100;
+  }
 }
 
 .cart__item {
   padding-top: 0.5rem;
-  border-bottom: 1px solid $gray-100;
 
   &__elements {
     display: flex;
