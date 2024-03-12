@@ -1155,7 +1155,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $this->hasIncidents;
     }
 
-    public function getIncidents(): ArrayCollection
+    public function getIncidents(): Collection
     {
         return $this->incidents;
     }
