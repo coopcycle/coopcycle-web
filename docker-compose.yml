@@ -6,7 +6,7 @@ services:
     restart: always
     image: mdillon/postgis:9.4-alpine
     environment:
-      - POSTGRES_DB=${COOPCYCLE_DB_NAME
+      - POSTGRES_DB=${COOPCYCLE_DB_NAME}
       - POSTGRES_USER=${COOPCYCLE_DB_USER}
       - POSTGRES_PASSWORD=${COOPCYCLE_DB_PASSWORD}
     ports:
