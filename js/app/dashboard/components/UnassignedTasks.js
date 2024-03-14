@@ -118,7 +118,7 @@ export const UnassignedTasks = () => {
           >
             {(provided, snapshot) => (
               <div ref={ provided.innerRef } { ...provided.droppableProps }>
-                { renderDroppableArea || !renderDroppableArea ?
+                { renderDroppableArea ?
                 <div
                   className={ classNames({
                     'taskList__tasks': true,
