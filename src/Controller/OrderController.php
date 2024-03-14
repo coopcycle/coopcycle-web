@@ -556,7 +556,7 @@ class OrderController extends AbstractController
         $exp->modify('+3 hours');
 
         $customMessage = null;
-        if ($assetsFilesystem->has('order_confirm.md')) {
+        if ($assetsFilesystem->fileExists('order_confirm.md')) {
             $customMessage = $assetsFilesystem->read('order_confirm.md');
         }
 

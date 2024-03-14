@@ -552,7 +552,7 @@ trait StoreTrait
             // while $taskImagesFilesystem is alreay aware of the prefix
             $imagePath = ltrim($storage->resolveUri($image, 'file'), '/');
 
-            if (!$taskImagesFilesystem->has($imagePath)) {
+            if (!$taskImagesFilesystem->fileExists($imagePath)) {
                 throw new BadRequestHttpException(sprintf('Image at path "%s" not found', $imagePath));
             }
 

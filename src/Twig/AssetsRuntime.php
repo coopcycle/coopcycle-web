@@ -77,7 +77,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
             return '';
         }
 
-        if (!$fileSystem->has($uri)) {
+        if (!$fileSystem->fileExists($uri)) {
             return '';
         }
 
@@ -91,7 +91,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
             $item->expiresAfter(3600);
 
             try {
-                return $this->assetsFilesystem->has('banner.svg');
+                return $this->assetsFilesystem->fileExists('banner.svg');
             } catch (S3Exception $e) {
                 return false;
             }
