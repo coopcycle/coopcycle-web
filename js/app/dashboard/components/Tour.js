@@ -6,11 +6,11 @@ import _ from 'lodash'
 import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
-import { removeTaskFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded } from '../redux/actions'
+import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded } from '../redux/actions'
 import { isTourAssigned, tourIsAssignedTo } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
-import { selectAreToursDroppable, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds } from '../redux/selectors'
+import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds } from '../redux/selectors'
 
 const RenderEditNameForm = ({children, tour, isLoading}) => {
 
@@ -22,11 +22,9 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
 
   const onEditSubmitted = async (e) => {
     e.preventDefault()
-    $('.task__draggable').LoadingOverlay('show', {image: false})
     let _tour = Object.assign({}, tour, {name : tourName})
-    await dispatch(modifyTour(_tour, tour.items))
+    dispatch(modifyTour(_tour, tour.items))
     setToggleInputForName(false)
-    $('.task__draggable').LoadingOverlay('hide')
   }
   const onEditCancelled = (e) => {
       e.preventDefault()
@@ -34,9 +32,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
     }
   const onConfirmDelete = async (e) => {
         e.preventDefault()
-        $('.task__draggable').LoadingOverlay('show', {image: false})
-        await dispatch(deleteTour(tour, tour.items))
-        $('.task__draggable').LoadingOverlay('hide')
+        dispatch(deleteTour(tour, tour.items))
       }
 
   return (<>{toggleInputForName ?
@@ -97,7 +93,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
 
 const Tour = ({ tour, draggableIndex }) => {
 
-  const isDroppable = useSelector(selectAreToursDroppable)
+  const isTourDragging = useSelector(selectIsTourDragging)
   const expandedTourPanelsIds = useSelector(selectExpandedTourPanelsIds)
   const isExpanded = expandedTourPanelsIds.includes(tour['@id'])
 
@@ -126,30 +122,32 @@ const Tour = ({ tour, draggableIndex }) => {
             </div>
             <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
               <Droppable
-                  isDropDisabled={!isDroppable || isLoading}
+                  isDropDisabled={isTourDragging || isLoading}
                   droppableId={ `tour:${tour['@id']}` }
                 >
                   {(provided, snapshot) => (
-                    <div
-                    className={ classNames({
-                      'taskList__tasks': true,
-                      'list-group': true,
-                      'm-0': true,
-                      'p-0': true,
-                      'nomargin': true,
-                      'taskList__tasks--empty': !tour.items.length
-                    }) }
-                    style={getDroppableListStyle(snapshot.isDraggingOver)}
-                    ref={ provided.innerRef } { ...provided.droppableProps }>
-                      { _.map(tour.items, (task, index) =>
-                        <Task
-                          key={ task['@id'] }
-                          task={ task }
-                          draggableIndex={ index }
-                          onRemove={ (taskToRemove) => dispatch(removeTaskFromTour(tour, taskToRemove, tourIsAssignedTo(tour)))}
-                        />
-                      )}
-                      { provided.placeholder }
+                    <div ref={ provided.innerRef } { ...provided.droppableProps }>
+                      <div
+                      className={ classNames({
+                        'taskList__tasks': true,
+                        'list-group': true,
+                        'm-0': true,
+                        'p-0': true,
+                        'nomargin': true,
+                        'taskList__tasks--empty': !tour.items.length
+                      }) }
+                      style={getDroppableListStyle(snapshot.isDraggingOver)}
+                      >
+                        { _.map(tour.items, (task, index) =>
+                          <Task
+                            key={ task['@id'] }
+                            task={ task }
+                            draggableIndex={ index }
+                            onRemove={ (taskToRemove) => dispatch(removeTasksFromTour(tour, taskToRemove, tourIsAssignedTo(tour)))}
+                          />
+                        )}
+                        { provided.placeholder }
+                      </div>
                     </div>
                   )}
                 </Droppable>
