@@ -190,7 +190,7 @@ class RouteOptimizer
         // Bail early, no need to optimize
         if (count($pickups) === 1) {
 
-            return [ $pickups[0], $delivery ];
+            return [ $pickups[array_key_first($pickups)], $delivery ];
         }
 
         $registry = new \SplObjectStorage();
