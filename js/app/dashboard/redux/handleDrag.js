@@ -9,6 +9,7 @@ import { clearSelectedTasks,
 import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
 import { withLinkedTasks } from "./utils"
 import { toast } from 'react-toastify'
+import i18next from "i18next"
 
 
 export function handleDragStart(result) {
@@ -95,17 +96,17 @@ export function handleDragEnd(
     }
 
     if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('group:') && source.droppableId !== destination.droppableId) {
-      toast.warn("Can not move directly tasks between groups")
+      toast.warn(i18next.t("ADMIN_DASHBOARD_CAN_NOT_MOVE_TASKS_BETWEEN_GROUPS"))
       return
     }
 
     if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('assigned:')) {
-      toast.warn("Can not move directly individual task from group to assigned")
+      toast.warn(i18next.t("ADMIN_DASHBOARD_CAN_NOT_MOVE_FROM_GROUP_TO_ASSIGNED"))
       return
     }
 
     if (result.draggableId.startsWith('group:') && destination.droppableId.startsWith('unassigned')) {
-      toast.warn("Can not move group to unassign")
+      toast.warn(i18next.t("ADMIN_DASHBOARD_GROUP_TO_UNASSIGNED"))
       return
     }
 
