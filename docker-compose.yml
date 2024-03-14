@@ -249,6 +249,20 @@ services:
     logging:
       driver: none
 
+
+  storybook-react:
+    build:
+      dockerfile: './docker/storybook-react/Dockerfile'
+      context: '.'
+    ports:
+      - '6007:6007'
+    depends_on:
+      - webpack
+    volumes:
+      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+      - '.:/srv/coopcycle'
+      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
+
   storybook:
     build:
       dockerfile: './docker/storybook/Dockerfile'
@@ -257,6 +271,7 @@ services:
       - '6006:6006'
     depends_on:
       - webpack
+      - storybook-react
     volumes:
       # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
       - '.:/srv/coopcycle'
