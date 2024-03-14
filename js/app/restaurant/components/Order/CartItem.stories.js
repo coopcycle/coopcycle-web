@@ -9,8 +9,8 @@ export default {
   component: CartItem,
 
   decorators: [
-    (Story) => {
-      const store = createStoreFromPreloadedState({})
+    (Story, context) => {
+      const store = createStoreFromPreloadedState(context.args._store ?? {})
 
       return (
         <Provider store={ store }>
@@ -29,7 +29,19 @@ export const Basic = {
     total: 1000,
     quantity: 1,
     adjustments: {},
-    showPricesTaxExcluded: false,
+  },
+}
+
+export const BasicLoading = {
+  args: {
+    id: 1,
+    name: 'Pizza',
+    total: 1000,
+    quantity: 1,
+    adjustments: {},
+    _store: {
+      isFetching: true,
+    }
   },
 }
 
@@ -40,7 +52,6 @@ export const LongName = {
     total: 1000,
     quantity: 1,
     adjustments: {},
-    showPricesTaxExcluded: false,
   },
 }
 
@@ -59,7 +70,9 @@ export const WithAdjustmentsTaxExcluded = {
         { label: 'VAT', amount: 100 },
       ],
     },
-    showPricesTaxExcluded: true,
+    _store: {
+      country: 'fr',
+    }
   },
 }
 
@@ -71,13 +84,15 @@ export const WithAdjustmentsTaxIncluded = {
     total: 1000,
     adjustments: {
       menu_item_modifier: [
-        { label: 'Extra cheese' },
+        { label: 'Extra cheese', amount: 100 },
         { label: 'Pepperoni', amount: 150 },
       ],
       tax: [
         { label: 'VAT', amount: 100 },
       ],
     },
-    showPricesTaxExcluded: false,
+    _store: {
+      country: 'ca',
+    }
   },
 }

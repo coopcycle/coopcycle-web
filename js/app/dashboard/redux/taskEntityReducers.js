@@ -8,8 +8,6 @@ import {
   CREATE_GROUP_SUCCESS,
   REMOVE_TASKS_FROM_GROUP_SUCCESS,
   ADD_TASKS_TO_GROUP_SUCCESS,
-  MODIFY_TOUR_REQUEST,
-  DELETE_TOUR_SUCCESS
 } from './actions'
 import { taskAdapter } from '../../coopcycle-frontend-js/logistics/redux'
 import { taskComparator } from './utils'
@@ -20,7 +18,21 @@ const selectors = taskAdapter.getSelectors((state) => state)
 export default (state = initialState, action) => {
   switch (action.type) {
     case MODIFY_TASK_LIST_REQUEST:
-      return taskAdapter.upsertMany(state, action.tasks)
+        const toKeep = action.tasks.map((t) => ({
+          '@id': t['@id'],
+          isAssigned: true,
+          assignedTo: action.username
+        }))
+
+      const toRemove =
+        _.differenceWith(action.previousTasks, action.tasks, taskComparator)
+        .map((t) => ({
+          '@id': t['@id'],
+          isAssigned: false,
+          assignedTo: null
+        }))
+
+      return taskAdapter.upsertMany(state, [ ...toKeep, ...toRemove ])
 
     case MODIFY_TASK_LIST_REQUEST_SUCCESS:
       const entities = action.taskList.items.map(item => ({
@@ -43,20 +55,6 @@ export default (state = initialState, action) => {
       }
 
       return taskAdapter.removeMany(state, tasksMatchingGroup.map(t => t['@id']))
-
-    case DELETE_TOUR_SUCCESS:
-      const tasksMatchingTour = _.filter(
-        selectors.selectAll(state),
-        t => t.tour && t.tour['@id'] === action.tour
-      )
-
-      if (tasksMatchingTour.length === 0) {
-        return state
-      }
-
-      let updatedTasks = tasksMatchingTour.map( (t) => {return {id: t['@id'], changes: {tour:null}}})
-
-      return taskAdapter.updateMany(state, updatedTasks )
 
     case REMOVE_TASK:
       return taskAdapter.removeOne(state, action.task['@id'])
@@ -96,26 +94,6 @@ export default (state = initialState, action) => {
           tags: [],
         }, (value, key) => key !== 'tasks')
       })))
-
-    case MODIFY_TOUR_REQUEST:
-
-      const toKeep = action.tasks.map((t, index) => ({
-        '@id': t['@id'],
-        tour: {
-          ...action.tour,
-          position: index
-        }
-      }))
-
-      const toRemove =
-        _.differenceWith(action.tour.items, action.tasks, taskComparator)
-        .map((t) => ({
-          '@id': t['@id'],
-          tour: null,
-        }))
-
-      return taskAdapter
-        .upsertMany(state, [ ...toKeep, ...toRemove ])
   }
 
   return state

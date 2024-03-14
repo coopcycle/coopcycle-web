@@ -59,7 +59,7 @@ describe('updateTask', () => {
         const unassignedTasks = [{'@id': '/api/tasks/730', assignedTo: '', previous: null, next: null, packages: [], tour: {'@id': '/api/tours/111'}}]
         const linkedTasksIds = []
 
-        const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
+        const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, true)
 
         expect(actions).toStrictEqual([])
     })
@@ -75,7 +75,7 @@ describe('updateTask', () => {
         ]
         const linkedTasksIds = []
 
-        const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
+        const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, true)
 
         expect(actions).toStrictEqual([])
     })
@@ -88,7 +88,7 @@ describe('updateTask', () => {
         const unassignedTasks = []
         const linkedTasksIds = []
 
-        const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
+        const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, true)
 
         expect(actions).toStrictEqual([])
     })
