@@ -62,3 +62,8 @@ ftp:
 		-e FTP_USERNAME=user -e FTP_PASSWORD=123 \
 		-v $(TMP):/home/user \
 		monteops/proftpd
+
+redeploy:
+	docker compose stop
+	git pull
+	docker compose up --remove-orphans
