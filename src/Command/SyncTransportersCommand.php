@@ -216,9 +216,8 @@ class SyncTransportersCommand extends Command {
                 }
             }
         }
-        if (!$this->dryRun) {
-            $sync->flush();
-        }
+        $this->output->writeln("Remove files to aknowledge import");
+        $sync->flush($this->dryRun);
         $this->output->writeln("Done syncing, imported $count tasks");
     }
 
