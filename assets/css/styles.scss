@@ -1,8 +1,9 @@
-html, body {
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
-  min-height: 100%;
+html {
+  font-size: 16px; // reset to default rem
+}
+
+body {
   @media screen and (min-width: $screen-md-min) {
-    height: 100%;
     display: flex;
     flex-direction: column;
   }
@@ -13,7 +14,7 @@ html, body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Raleway", Helvetica, Arial, sans-serif;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
 }
 
 .h2 {
@@ -109,37 +110,6 @@ h1, h2, h3, h4, h5, h6 {
   @extend .alert-danger;
   text-align: center;
   padding: 40px;
-}
-
-/* Vertically centered modal */
-/* @see https://stackoverflow.com/questions/18422223/bootstrap-3-modal-vertical-position-center */
-/* @see https://codepen.io/dimbslmh/full/mKfCc */
-
-.modal {
-  text-align: center;
-}
-
-@media screen and (min-width: $screen-sm-min) {
-  .modal:before {
-    display: inline-block;
-    vertical-align: middle;
-    content: " ";
-    height: 100%;
-  }
-}
-
-.modal-dialog {
-  display: inline-block;
-  text-align: left;
-  vertical-align: middle;
-}
-
-.modal {
-  @media (max-width: $screen-xs-max) {
-    .modal-dialog {
-      width: calc(100% - 20px);
-    }
-  }
 }
 
 // ------------------ Admin ------------------
@@ -295,43 +265,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0;
 }
 
-// ------------------ React Modal ------------------
-
-// Copy default styles to be able to use overlayClassName prop
-// @see https://github.com/reactjs/react-modal/tree/master/docs/styles
-.ReactModal__Overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.75);
-}
-
-.ReactModal__Content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  right: auto;
-  bottom: auto;
-  border: 1px solid rgb(204, 204, 204);
-  background: rgb(255, 255, 255);
-  overflow: auto;
-  border-radius: 4px;
-  outline: none;
-  padding: 20px;
-  margin-right: -50%;
-  transform: translate(-50%, -50%);
-  // min-width: 50%;
-}
-
-// Prevent scroll on html/body
-// https://github.com/reactjs/react-modal/blob/master/docs/styles/classes.md#for-the-documentbody-and-html-tag
-.ReactModal__Html--open,
-.ReactModal__Body--open {
-  overflow: hidden;
-}
-
 .text-monospace {
   font-family: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
 }
@@ -458,4 +391,17 @@ h1, h2, h3, h4, h5, h6 {
 // https://github.com/coopcycle/coopcycle-web/issues/3296
 .leaflet-container {
   font-size: 12px;
+}
+
+.ant-alert-info {
+  background-color: $alert-info-bg !important;
+  border-color: $alert-info-border !important;
+
+  .ant-alert-icon {
+    color: $alert-info-text !important;
+  }
+
+  .ant-alert-message {
+    color: $alert-info-text !important;
+  }
 }

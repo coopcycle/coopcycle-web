@@ -1,0 +1,120 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_modals";
+
+@mixin modal-content-border() {
+  border-radius: 8px;
+  box-shadow: 0 4px 64px 0 #0000000D;
+}
+
+/* Vertically centered modal */
+/* @see https://stackoverflow.com/questions/18422223/bootstrap-3-modal-vertical-position-center */
+/* @see https://codepen.io/dimbslmh/full/mKfCc */
+
+.modal {
+  text-align: center;
+}
+
+@media screen and (min-width: $screen-sm-min) {
+  .modal:before {
+    display: inline-block;
+    vertical-align: middle;
+    content: " ";
+    height: 100%;
+  }
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 20px);
+  }
+}
+
+.modal-content {
+  @include modal-content-border();
+}
+
+.modal-header {
+  border: none;
+
+  @media (min-width: $screen-md-min) {
+    padding: $modal-padding-md $modal-padding-md $modal-title-padding;
+  }
+
+  .modal-title {
+    font-weight: bold;
+  }
+
+  .close {
+    margin-top: 0;
+    padding: 2px;
+    color: $text-color;
+    opacity: 1;
+  }
+}
+
+.modal-body {
+  @media (min-width: $screen-md-min) {
+    padding: $modal-padding-md;
+  }
+}
+
+.modal-footer {
+  @media (min-width: $screen-md-min) {
+    padding: $modal-padding-md;
+  }
+}
+
+// ------------------ React Modal ------------------
+
+// Copy default styles to be able to use overlayClassName prop
+// @see https://github.com/reactjs/react-modal/tree/master/docs/styles
+.ReactModal__Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.ReactModal__Content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  overflow: auto;
+  background: $modal-content-bg;
+  @include modal-content-border();
+  outline: none;
+  padding: 1rem;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+
+  // Ideally, we should remove padding from the modal content
+  // and re-add it using modal-.. classes in each modal
+  // use .clear-legacy-padding until we do that
+  &-clear-legacy-padding {
+    padding: 0;
+  }
+}
+
+.ReactModal__Html--open {
+}
+
+// Prevent scroll
+// https://github.com/reactjs/react-modal/blob/master/docs/styles/classes.md#for-the-documentbody-and-html-tag
+.ReactModal__Body--open,
+.body--no-scroll {
+  overflow: hidden;
+
+  @media (min-width: $screen-xl-min) {
+    // FIXME; use smth more advanced to properly calculate the scrollbar width for different browsers and operating systems
+    // it seems that it's not needed for mobile devices
+    // An attempt to prevent the content from shifting when the scrollbar is removed (due to overflow: hidden)
+    padding-right: 15px;
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "title": "Foodtech/1. Restaurant/4. Tag/1. Tags",
+  "parameters": {
+    "server": {
+      "id": "restaurant_tag"
+    }
+  },
+  "args": {
+    "value": ""
+  },
+  "argTypes": {
+    "value": { "control": "text" }
+  },
+  "tags": ["autodocs"],
+  "stories": [
+    {
+      "name": "Default",
+      "args": { "value": "Default tag" }
+    },
+    {
+      "name": "Without value"
+    }
+  ]
+}

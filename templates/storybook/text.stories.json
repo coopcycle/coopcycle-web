@@ -1,0 +1,14 @@
+{
+  "title": "Design System/1. Typography",
+  "parameters": {
+    "server": {
+      "id": "text"
+    }
+  },
+  "tags": [],
+  "stories": [
+    {
+      "name": "Typography"
+    }
+  ]
+}

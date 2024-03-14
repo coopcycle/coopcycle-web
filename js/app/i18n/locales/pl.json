@@ -184,6 +184,35 @@
         "PLEASE_SELECT_ADDRESS": "Proszę wybierz adres w menu rozwijanym",
         "PAYMENT_FORM_REDIRECT_HELP": "You will be redirected to the banking site to complete your payment",
         "PAYMENT_FORM_CARDHOLDER_NAME": "Imię i nazwisko posiadacza karty",
-        "PAYMENT_FORM_TITLE": "Twoje informacje o płatności"
+        "PAYMENT_FORM_TITLE": "Twoje informacje o płatności",
+        "ALLERGEN": {
+          "CEREALS_CONTAINING_GLUTEN": "Zboża zawierające gluten",
+          "CRUSTACEANS": "Skorupiaki",
+          "EGGS": "Jajka",
+          "FISH": "Ryba",
+          "PEANUTS": "Orzeszki ziemne",
+          "SOYBEANS": "Soja",
+          "MILK": "Mleko",
+          "NUTS": "Orzechy",
+          "CELERY": "Seler",
+          "MUSTARD": "Gorczyca",
+          "SESAME_SEEDS": "Ziarna sezamu",
+          "SULPHUR_DIOXIDE_SULPHITES": "Dwutlenek siarki i siarczyny",
+          "LUPIN": "Łubin",
+          "MOLLUSCS": "Mięczaki"
+        },
+        "RESTRICTED_DIET": {
+          "DiabeticDiet": "Diabetyczny",
+          "GlutenFreeDiet": "Bezglutenowy",
+          "HalalDiet": "Halal",
+          "HinduDiet": "Hinduskie",
+          "KosherDiet": "Koszerny",
+          "LowCalorieDiet": "Niskokaloryczny",
+          "LowFatDiet": "Niskotłuszczowy",
+          "LowLactoseDiet": "Niska poziom laktozy",
+          "LowSaltDiet": "Niski poziom soli",
+          "VeganDiet": "Wegańskie",
+          "VegetarianDiet": "Wegetariańskie"
+        }
     }
 }

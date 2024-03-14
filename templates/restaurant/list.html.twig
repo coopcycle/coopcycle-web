@@ -2,7 +2,7 @@
 
 {% block body %}
 {% include "restaurant/_partials/list_header.html.twig" %}
-<div class="shops-content">
+<div class="container-full-hd container--extra-space-on-sides shops-content">
   <div class="restaurant-side-bar container-fluid d-none d-sm-block">
     <a href="{{ path('shops', {'geohash': geohash, 'address': address}) }}" class="btn btn-lg btn-default w-100">
       <i class="fa fa-trash mr-sm-2"></i>
@@ -22,7 +22,7 @@
             data-toggle="collapse" href="#collapseType" aria-expanded="true" aria-controls="collapseType">
             <div class="d-flex flex-row align-items-center justify-content-between">
               <h4><strong>{{ 'shops.filters.title.types'|trans }}</strong></h4>
-              <strong><span class="filter-caret caret"></span></i></strong>
+              <strong><span class="filter-caret caret"></span></strong>
             </div>
           </button>
           <div class="collapse in" id="collapseType">
@@ -45,7 +45,7 @@
           data-toggle="collapse" href="#collapseCuisine" aria-expanded="true" aria-controls="collapseCuisine">
           <div class="d-flex flex-row align-items-center justify-content-between">
             <h4><strong>{{ 'shops.filters.title.cuisines'|trans }}</strong></h4>
-            <strong><span class="filter-caret caret"></span></i></strong>
+            <strong><span class="filter-caret caret"></span></strong>
           </div>
         </button>
         <div class="collapse in" id="collapseCuisine">
@@ -68,7 +68,7 @@
           data-toggle="collapse" href="#collapseCategory" aria-expanded="true" aria-controls="collapseCategory">
           <div class="d-flex flex-row align-items-center justify-content-between">
             <h4><strong>{{ 'shops.filters.title.categories'|trans }}</strong></h4>
-            <strong><span class="filter-caret caret"></span></i></strong>
+            <strong><span class="filter-caret caret"></span></strong>
           </div>
         </button>
         {% set categories = [

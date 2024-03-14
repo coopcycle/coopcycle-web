@@ -12,9 +12,11 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 class StorybookController extends AbstractController
 {
     private $mapping = [
-        'restaurant-card' => 'components/restaurant_card/restaurant_card.html.twig',
-        'tag' => 'components/restaurant_card/tag/tag.html.twig',
-        'badge' => 'components/restaurant_card/badge/badge.html.twig'
+        'restaurant_card' => 'components/restaurant/restaurant_card/restaurant_card.html.twig',
+        'restaurant_badge' => 'components/restaurant/restaurant_badge/restaurant_badge.html.twig',
+        'restaurant_tag' => 'components/restaurant/restaurant_tag/restaurant_tag.html.twig',
+        'product' => 'components/restaurant/product/menu_item.html.twig',
+        'product_badge' => 'components/restaurant/product_badge/product_badge.html.twig',
     ];
 
 	/**

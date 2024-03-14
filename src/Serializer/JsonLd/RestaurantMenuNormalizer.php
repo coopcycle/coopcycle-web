@@ -4,15 +4,11 @@ namespace AppBundle\Serializer\JsonLd;
 
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Taxon;
-use AppBundle\Enum\Allergen;
-use AppBundle\Enum\RestrictedDiet;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Sylius\Component\Locale\Provider\LocaleProvider;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
-use Liip\ImagineBundle\Service\FilterService;
 
 /**
  * FIXME
@@ -22,22 +18,12 @@ use Liip\ImagineBundle\Service\FilterService;
  */
 class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    private $normalizer;
-    private $localeProvider;
-    private $variantResolver;
-
     public function __construct(
-        ItemNormalizer $normalizer,
-        LocaleProvider $localeProvider,
-        ProductVariantResolverInterface $variantResolver,
-        UploaderHelper $uploaderHelper,
-        FilterService $imagineFilter)
+        private ItemNormalizer $normalizer,
+        private ProductNormalizer $productNormalizer,
+        private LocaleProvider $localeProvider,
+        private ProductVariantResolverInterface $variantResolver)
     {
-        $this->normalizer = $normalizer;
-        $this->localeProvider = $localeProvider;
-        $this->variantResolver = $variantResolver;
-        $this->uploaderHelper = $uploaderHelper;
-        $this->imagineFilter = $imagineFilter;
     }
 
     private function normalizeRange($range)
@@ -49,33 +35,6 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
             $range->isUpperInfinite() ? '' : $range->getUpper(),
             ']',
         ]);
-    }
-
-    private function normalizeOptions($options)
-    {
-        $data = [];
-
-        foreach ($options as $option) {
-
-            $option->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
-
-            $payload = [
-                '@type' => 'MenuSection',
-                'name' => $option->getName(),
-                'identifier' => $option->getCode(),
-                'additionalType' => $option->getStrategy(),
-                'additional' => $option->isAdditional(),
-                'hasMenuItem' => $this->normalizeOptionValues($option, $option->getValues()),
-            ];
-
-            if (null !== $option->getValuesRange()) {
-                $payload['valuesRange'] = $this->normalizeRange($option->getValuesRange());
-            }
-
-            $data[] = $payload;
-        }
-
-        return $data;
     }
 
     private function normalizeOptionValues(ProductOptionInterface $option, $optionValues)
@@ -115,22 +74,31 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
         return $data;
     }
 
-    private function getProductImagePath($product, $ratio) {
-        try {
-            $productImage = $product->getImages()->filter(function ($image) use($ratio) {
-                return $image->getRatio() === $ratio;
-            })->first();
-            if ($productImage) {
-                $imagePath = $this->uploaderHelper->asset($productImage, 'imageFile');
-                if (!empty($imagePath)) {
-                    $filterName = sprintf('product_thumbnail_%s', str_replace(':', 'x', $ratio));
-                    return $this->imagineFilter->getUrlOfFilteredImage($imagePath, $filterName);
-                }
+    private function normalizeOptions($options)
+    {
+        $data = [];
+
+        foreach ($options as $option) {
+
+            $option->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
+
+            $payload = [
+                '@type' => 'MenuSection',
+                'name' => $option->getName(),
+                'identifier' => $option->getCode(),
+                'additionalType' => $option->getStrategy(),
+                'additional' => $option->isAdditional(),
+                'hasMenuItem' => $this->normalizeOptionValues($option, $option->getValues()),
+            ];
+
+            if (null !== $option->getValuesRange()) {
+                $payload['valuesRange'] = $this->normalizeRange($option->getValuesRange());
             }
-        } catch (\Exception $e) {
-            // TODO add logger?
+
+            $data[] = $payload;
         }
-        return null;
+
+        return $data;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -144,7 +112,6 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
 
         $object->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-        $sections = [];
         foreach ($object->getChildren() as $child) {
             $section = [
                 'name' => $child->getName(),
@@ -156,58 +123,19 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                 $defaultVariant = $this->variantResolver->getVariant($product);
 
                 if ($defaultVariant) {
-                    $product->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
+                    $productData = $this->productNormalizer->normalize($product, $format, $context);
 
-                    // @see https://github.com/coopcycle/coopcycle-app/issues/286
-                    $description = !empty(trim($product->getDescription())) ? $product->getDescription() : null;
+                    $productData['@type'] = 'MenuItem';
 
-                    $item = [
-                        '@type' => 'MenuItem',
-                        'name' => $product->getName(),
-                        'description' => $description,
-                        'identifier' => $product->getCode(),
-                        'enabled' => $product->isEnabled(),
-                        'reusablePackagingEnabled' => $product->isReusablePackagingEnabled(),
-                        'offers' => [
-                            '@type' => 'Offer',
-                            'price' => $defaultVariant->getPrice(),
-                        ]
-                    ];
+                    //just to preserve the existing format (tested with Behat), maybe there is no harm in keeping these fields
+                    unset($productData['@context']);
+                    unset($productData['@id']);
+
                     if ($product->hasOptions()) {
-                        $item['menuAddOn'] = $this->normalizeOptions($product->getOptions());
+                        $productData['menuAddOn'] = $this->normalizeOptions($product->getOptions());
                     }
 
-                    $restrictedDiets = $product->getRestrictedDiets();
-                    if (count($restrictedDiets) > 0) {
-                        // https://schema.org/suitableForDiet
-                        $item['suitableForDiet'] = array_values(array_map(function ($constantName) {
-                            $reflect = new \ReflectionClass(RestrictedDiet::class);
-                            return $reflect->getConstant($constantName);
-                        }, $restrictedDiets));
-                    }
-
-                    $allergens = $product->getAllergens();
-                    if (count($allergens) > 0) {
-                        $item['allergens'] = array_values(array_map(function ($constantName) {
-                            $reflect = new \ReflectionClass(Allergen::class);
-                            return $reflect->getConstant($constantName);
-                        }, $allergens));
-                    }
-
-                    $images = [];
-                    foreach (['1:1', '16:9'] as $ratio) {
-                        $imagePath = $this->getProductImagePath($product, $ratio);
-                        if ($imagePath) {
-                            $images[] = [
-                                'ratio' => $ratio,
-                                'url' => $imagePath,
-                            ];
-                        }
-                    }
-
-                    $item['images'] = $images;
-
-                    $section['hasMenuItem'][] = $item;
+                    $section['hasMenuItem'][] = $productData;
                 }
             }
 

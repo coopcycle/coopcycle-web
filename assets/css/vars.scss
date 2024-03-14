@@ -1,3 +1,5 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables";
+
 // Colors
 
 $main-blue: #337ab7;
@@ -7,8 +9,10 @@ $main-blue-dark: darken($main-blue, 20%);
 $orange: #d35400;
 $light-orange: lighten($orange, 33.3333%);
 
-$light-gray: #f5f5f5;
+$light-gray: #f5f5f5; // Colors/Color Grayscale/grayscale-50
+$gray-100: #E3E3E3; // Colors/Color Grayscale/grayscale-100
 $gray: #ddd;
+$gray-300: #ABABAB; // Colors/Color Grayscale/grayscale-300
 $dark-gray: #95A5A6;
 $white: #fff;
 
@@ -18,16 +22,57 @@ $dark: #06070f;
 $yellow: #eeb516;
 $green: #558900;
 
+$text-green: #0DA136; // alert/alert-text-green
+
+
+$brand-primary: $main-blue;
+
 $primary-default: #E4022D;
 $primary-desactivated: #FF7A94;
 
-// Bootstrap variable
-$bs-input-height: 34px;
+
+// Scaffolding
+
+$body-bg-secondary: #FAFAFA;
+
+$text-color: #2B2B2B; // tab/tab-text
+
+// Typography
+
+$font-family-base: "Open Sans", Helvetica, Arial, sans-serif;
+
+// Components
+
 $bs-base-margin: 20px;
-$screen-md-min: 768px;
+
+$bs-input-height: 34px;
 
 // Length
 $base-margin-l: $bs-base-margin * 2;
 $base-margin: $bs-base-margin;
 $base-margin-s: $base-margin * 0.5;
 $base-margin-xs: $base-margin-s * 0.5;
+
+$alert-info-bg: #EBF1FF;
+$alert-info-border: #CEDFFF;
+$alert-info-text: #3D7DFA;
+
+$modal-title-padding: 1rem;
+$modal-inner-padding: 1rem;
+$modal-padding-md: 1.5rem;
+
+
+// Media queries breakpoints
+
+// Overriding breakpoints to resemble the default v5 Bootstrap breakpoints
+// could be removed after the migration to Bootstrap v5, see https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss
+
+//$screen-xs-min: 0px; // v3: 480px;
+//$screen-sm-min: 576px; // v3: 768px; TODO; replace usages with $screen-md-min; and uncomment
+$screen-md-min: 768px;
+//$screen-lg-min: 992px; // v3: 1200px; TODO; replace usages with $screen-xl-min; and uncomment
+$screen-xl-min: 1200px;
+$screen-xxl-min: 1400px;
+
+// Grid containers
+$container-md: 720px; // match the default v5 screen-md container width
