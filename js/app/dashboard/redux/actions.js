@@ -2,7 +2,7 @@ import _, { filter } from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
 
-import { taskComparator, withoutTasks, withLinkedTasks, isInDateRange } from './utils'
+import { taskComparator, withoutTasks, withLinkedTasks, isInDateRange, isValidTasksMultiSelect } from './utils'
 import {
   selectSelectedDate,
   selectTaskLists,
@@ -12,6 +12,9 @@ import {
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectNextWorkingDay, selectSelectedTasks, taskSelectors } from './selectors'
+import { toast } from 'react-toastify'
+import i18next from 'i18next'
+import { selectTaskIdToTourIdMap } from '../../../shared/src/logistics/redux/selectors'
 
 
 function createClient(dispatch) {
@@ -223,11 +226,9 @@ export function assignAfter(username, task, after) {
   }
 }
 
-export function unassignTasks(username, tasks, updateTourUI=null) {
+export function unassignTasks(username, tasks) {
     /*
       Unassign tasks.
-
-      We can pass a callback updateTourUI so we update the UI related to the tour before we do the AJAX call to modify the tasklist
     */
 
   if (!Array.isArray(tasks)) {
@@ -245,7 +246,7 @@ export function unassignTasks(username, tasks, updateTourUI=null) {
 
     const taskList = _.find(taskLists, taskList => taskList.username === username)
 
-    await dispatch(modifyTaskList(username, withoutTasks(taskList.items, tasks), updateTourUI))
+    await dispatch(modifyTaskList(username, withoutTasks(taskList.items, tasks)))
   }
 }
 
@@ -261,8 +262,8 @@ export function closeAddUserModal() {
   return {type: CLOSE_ADD_USER}
 }
 
-export function modifyTaskListRequest(username, tasks) {
-  return { type: MODIFY_TASK_LIST_REQUEST, username, tasks }
+export function modifyTaskListRequest(username, tasks, previousTasks) {
+  return { type: MODIFY_TASK_LIST_REQUEST, username, tasks, previousTasks }
 }
 
 export function modifyTaskListRequestSuccess(taskList) {
@@ -289,16 +290,12 @@ export function importError(token, message) {
   return { type: IMPORT_ERROR, token, message }
 }
 
-export function modifyTaskList(username, tasks, updateTourUI=null) {
+export function modifyTaskList(username, tasks) {
   /*
     Modify a TaskList
-
-    We can pass a callback updateTourUI so we update the UI related to the tour before we do the AJAX call to modify the tasklist
   */
 
   return async function(dispatch, getState) {
-
-    if (updateTourUI) updateTourUI()
 
     const data = tasks.map((task, index) => ({
       task: task['@id'],
@@ -323,8 +320,11 @@ export function modifyTaskList(username, tasks, updateTourUI=null) {
         position,
       }
     })
+    const tasksLists = selectTaskLists(getState())
+    const tasksList = _.find(tasksLists, tl => tl.username === username)
+    const previousTasks = tasksList.items
 
-    dispatch(modifyTaskListRequest(username, newTasks))
+    dispatch(modifyTaskListRequest(username, newTasks, previousTasks))
 
     let response
 
@@ -360,26 +360,37 @@ export function toggleTask(task, multiple = false) {
     Check the `TOGGLE_TASK` reducer for the exact behavior. Pass the `multiple` flag if you want to keep the already selected tasks in the list.
   */
   return function(dispatch, getState) {
-    // we pass the selectedTasks data, as the `state` we get in the reducer is only the IDs
-    const currentlySelectedTasks = selectSelectedTasks(getState())
-    dispatch({ type: TOGGLE_TASK, task, multiple, currentlySelectedTasks })
+    let currentlySelectedTasks = selectSelectedTasks(getState())
+
+    // case where we add a new task to the selected tasks list
+    if (multiple &&
+      !currentlySelectedTasks.includes(t => t['@id'])
+    ) {
+      currentlySelectedTasks.push(task)
+      if(!isValidTasksMultiSelect(currentlySelectedTasks, selectTaskIdToTourIdMap(getState()))){
+        toast.warn(i18next.t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
+        return
+      }
+    }
+    dispatch({ type: TOGGLE_TASK, taskId: task['@id'], multiple })
   }
 }
 
 export function selectTask(task) {
-  return { type: SELECT_TASK, task }
+  return { type: SELECT_TASK, taskId: task['@id'] }
 }
 
 export function selectTasksByIds(taskIds) {
   /*
-    Set selectedTasks to the given `taskIds`. We pass the task objects as we will need them in the reducer.
+    Set selectedTasks to the given `taskIds`.
   */
   return function(dispatch, getState) {
-    // FIXME
-    // We use filter, to filter out "undefined" objects
-    // Best would be to clear the selectedTasks after Redux action completes
     const tasks = filter(taskIds.map(id => taskSelectors.selectEntities(getState())[id]))
-    dispatch({ type: SELECT_TASKS, tasks })
+      if (isValidTasksMultiSelect(tasks, selectTaskIdToTourIdMap(getState()))) {
+        dispatch({ type: SELECT_TASKS, taskIds })
+      } else {
+        toast.warn(i18next.t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
+      }
   }
 }
 
@@ -1450,7 +1461,7 @@ export function toggleTourLoading(tourId) {
   /*
     Block/unblock actions on tour while we are modifying it.
   */
-  return { type: TOGGLE_TOUR_LOADING, tourId}
+  return { type: TOGGLE_TOUR_LOADING, tourId }
 }
 
 export function createTour(tasks, name, date) {
@@ -1502,22 +1513,20 @@ export function createTour(tasks, name, date) {
   }
 }
 
-export function updateTourInUI(dispatch, tour, tasks) {
-  dispatch(toggleTourLoading(tour['@id']))
-  dispatch(modifyTourRequest(tour, tasks))
+export function updateTourInUI(tour, tasks) {
+  return async function(dispatch) {
+    dispatch(toggleTourLoading(tour['@id']))
+    dispatch(modifyTourRequest(tour, tasks))
+  }
 }
 
-export function modifyTour(tour, tasks, isTourUIAlreadyUpdated=false) {
-  /*
-    When assigning a task to a tour which is already is assigned,
-    `modifyTaskList` would be responsible for updating the UI.
-  */
+export function modifyTour(tour, tasks) {
 
   return async function(dispatch, getState) {
 
-    if (!isTourUIAlreadyUpdated) updateTourInUI(dispatch, tour, tasks)
-
     const { jwt } = getState()
+
+    dispatch(updateTourInUI(tour, tasks))
 
     let response
 
@@ -1565,6 +1574,8 @@ export function deleteTour(tour) {
 
     let resourceId = tour['@id'];
 
+    dispatch(toggleTourLoading(resourceId))
+
     createClient(dispatch).request({
       method: 'delete',
       url: resourceId,
@@ -1574,23 +1585,29 @@ export function deleteTour(tour) {
         'Content-Type': 'application/ld+json'
       }
     })
-      .then(() => dispatch(deleteTourSuccess(resourceId)))
+      .then(() => {
+        dispatch(deleteTourSuccess(resourceId))
+        dispatch(toggleTourLoading(resourceId))
+      })
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))
   }
 }
 
-export function removeTaskFromTour(tour, task, username, unassignTasksAction=unassignTasks, modifyTourAction=modifyTour) {
+export function removeTasksFromTour(tour, tasks, username, unassignTasksAction=unassignTasks, modifyTourAction=modifyTour) {
+
+  if (!Array.isArray(tasks)) {
+    tasks = [ tasks ]
+  }
+
   return function(dispatch) {
-    if (username !== null) {
-      let newTourItems = withoutTasks(tour.items, [ task ])
-      let uiUpdate = () => updateTourInUI(dispatch, tour, newTourItems)
-      dispatch(unassignTasksAction(username, [task], uiUpdate)).then(() => {
-        dispatch(modifyTourAction(tour, newTourItems, true))
-      })
-    } else {
-      dispatch(modifyTourAction(tour, withoutTasks(tour.items, [ task ])))
+    let newTourItems = withoutTasks(tour.items, tasks)
+
+    if (username) {
+      dispatch(unassignTasksAction(username, tasks))
     }
+
+    dispatch(modifyTourAction(tour, newTourItems))
   }
 }
 
