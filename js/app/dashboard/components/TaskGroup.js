@@ -126,12 +126,12 @@ class TaskGroup extends React.Component {
         </div>
         <div id={ `task-group-panel-${this.state.group.id}` } className="panel-collapse collapse" role="tabpanel">
           <ul className="list-group">
-            { tasks.map((task, index) => {
+            { tasks.map((task) => {
               return (
                 <Task
                   key={ task['@id'] }
                   task={ task }
-                  draggableIndex={ index }
+                  taskWithoutDrag
                 />
               )
             })}

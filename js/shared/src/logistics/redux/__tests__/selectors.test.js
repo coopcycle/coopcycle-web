@@ -245,18 +245,11 @@ describe('Selectors', () => {
       entities: {
         '/api/tasks/1': {
           '@id': '/api/tasks/1',
-          tour: {
-            '@id': '/api/tours/1',
-            name: 'Tour 1'
-          },
           position: 0
         },
         '/api/tasks/2': {
           '@id': '/api/tasks/2',
-          tour: {
-            '@id': '/api/tours/1',
-            name: 'Tour 1'
-          },
+
           position: 1
         },
         '/api/tasks/3': {
@@ -267,6 +260,21 @@ describe('Selectors', () => {
           '@id': '/api/tasks/4',
           position: 3
         },
+      },
+    }
+
+    const tours = {
+      ids: [
+        '/api/tours/1',
+      ],
+      entities: {
+        '/api/tours/1': {
+          '@id': '/api/tours/1',
+          itemIds: [
+            '/api/tasks/1',
+            '/api/tasks/2',
+          ]
+        }
       },
     }
 
@@ -296,6 +304,7 @@ describe('Selectors', () => {
                 }
               },
             },
+            tours: tours
           }
         }
       }
@@ -308,26 +317,20 @@ describe('Selectors', () => {
       expect(items).toEqual([
         {
           '@id': '/api/tours/1',
-          '@type': 'Tour',
-          name: 'Tour 1',
+          itemIds: [
+            '/api/tasks/1',
+            '/api/tasks/2',
+          ],
           items: [
-            {
-              '@id': '/api/tasks/1',
-              tour: {
-                '@id': '/api/tours/1',
-                name: 'Tour 1'
+              {
+                "@id": "/api/tasks/1",
+                "position": 0,
               },
-              position: 0
-            },
-            {
-              '@id': '/api/tasks/2',
-              tour: {
-                '@id': '/api/tours/1',
-                name: 'Tour 1'
+              {
+                "@id": "/api/tasks/2",
+                "position": 1,
               },
-              position: 1
-            }
-          ]
+            ],
         },
         {
           '@id': '/api/tasks/3',
@@ -366,6 +369,7 @@ describe('Selectors', () => {
                 }
               },
             },
+            tours: tours
           }
         }
       }
@@ -382,26 +386,20 @@ describe('Selectors', () => {
         },
         {
           '@id': '/api/tours/1',
-          '@type': 'Tour',
-          name: 'Tour 1',
+          itemIds: [
+            '/api/tasks/1',
+            '/api/tasks/2',
+          ],
           items: [
-            {
-              '@id': '/api/tasks/1',
-              tour: {
-                '@id': '/api/tours/1',
-                name: 'Tour 1'
+              {
+                "@id": "/api/tasks/1",
+                "position": 1,
               },
-              position: 1
-            },
-            {
-              '@id': '/api/tasks/2',
-              tour: {
-                '@id': '/api/tours/1',
-                name: 'Tour 1'
+              {
+                "@id": "/api/tasks/2",
+                "position": 2,
               },
-              position: 2
-            }
-          ]
+            ],
         },
         {
           '@id': '/api/tasks/4',
@@ -436,6 +434,7 @@ describe('Selectors', () => {
                 }
               },
             },
+            tours: tours
           }
         }
       }
@@ -456,26 +455,20 @@ describe('Selectors', () => {
         },
         {
           '@id': '/api/tours/1',
-          '@type': 'Tour',
-          name: 'Tour 1',
+          itemIds: [
+            '/api/tasks/1',
+            '/api/tasks/2',
+          ],
           items: [
-            {
-              '@id': '/api/tasks/1',
-              tour: {
-                '@id': '/api/tours/1',
-                name: 'Tour 1'
+              {
+                "@id": "/api/tasks/1",
+                "position": 2,
               },
-              position: 2
-            },
-            {
-              '@id': '/api/tasks/2',
-              tour: {
-                '@id': '/api/tours/1',
-                name: 'Tour 1'
+              {
+                "@id": "/api/tasks/2",
+                "position": 3,
               },
-              position: 3
-            }
-          ]
+            ],
         },
       ])
     })

@@ -22,10 +22,11 @@ import {
   setCurrentTask,
   unassignTasks
 } from '../../redux/actions'
-import {belongsToTour, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks} from '../../redux/selectors'
+import {selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
+import { selectTaskIdToTourIdMap } from '../../../../shared/src/logistics/redux/selectors'
 
 export const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
 export const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
@@ -47,7 +48,7 @@ function _unassign(tasksToUnassign, unassignTasks) {
   _.forEach(tasksByUsername, (tasks, username) => unassignTasks(username, tasks))
 }
 
-export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds) {
+export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour) {
   const tasksToUnassign =
   _.filter(selectedTasks, selectedTask =>
     !_.find(unassignedTasks, unassignedTask => unassignedTask['@id'] === selectedTask['@id']))
@@ -61,11 +62,11 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
   const selectedTasksByType = _.countBy(selectedTasks, t => t.type)
   const containsOnePickupAndAtLeastOneDropoff = selectedTasksByType.PICKUP === 1 && selectedTasksByType.DROPOFF > 0
 
-  const actions = []
-
-  if (selectedTasks.find(t => belongsToTour(t))) {
+  if (selectedTasksBelongsToTour) {
     return []
   }
+
+  const actions = []
 
   let selectedTask
 
@@ -148,8 +149,10 @@ const DynamicMenu = () => {
   const selectedTasks = useSelector(selectSelectedTasks)
   const nextWorkingDay = useSelector(selectNextWorkingDay)
   const linkedTasksIds = useSelector(selectLinkedTasksIds)
+  const taskIdToTourIdMap = useSelector(selectTaskIdToTourIdMap)
+  const selectedTasksBelongsToTour = selectedTasks.some(t => taskIdToTourIdMap.has(t['@id']))
 
-  const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
+  const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
 
   const dispatch = useDispatch()
 
