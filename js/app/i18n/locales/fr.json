@@ -115,7 +115,7 @@
         "ADMIN_DASHBOARD_TOOLTIP_FAILED": "Échouée",
         "ADMIN_DASHBOARD_TOOLTIP_INCIDENT_REPORTED": "Incident signalé",
         "ADMIN_DASHBOARD_TOOLTIP_TOTAL": "Total",
-        "ADMIN_DASHBOARD_INVALID_TASKS_SELECTION": "La sélection de tâche est trop complexe. Veuillez sélectionner des tâches dans la même tournée, le même coursier ou dans la colonne non-assignées.",
+        "ADMIN_DASHBOARD_INVALID_TASKS_SELECTION": "Vous ne pouvez pas agir sur cette sélection de tâches. Veuillez sélectionner des tâches dans la même tournée, le même coursier ou dans la colonne non-assignées.",
         "ADMIN_DASHBOARD_CAN_NOT_MOVE_FROM_GROUP_TO_ASSIGNED": "Les tâches ne peuvent pas être déplacées individuellement du groupe vers le coursier",
         "ADMIN_DASHBOARD_CAN_NOT_MOVE_TASKS_BETWEEN_GROUPS": "Les tâches ne peuvent pas être déplacées individuellement entre les groupes",
         "ADMIN_DASHBOARD_GROUP_TO_UNASSIGNED": "Le groupe ne peut pas être déplacé vers les tâches non assignées",
