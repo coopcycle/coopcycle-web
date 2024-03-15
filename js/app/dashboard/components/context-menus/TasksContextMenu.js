@@ -52,15 +52,9 @@ const { hideAll } = useContextMenu({
   id: 'task-contextmenu',
 })
 
-function _assign(tasksToAssign, username, allTasks, tasksLists, addLinkedTasks=false) {
-
-  if (addLinkedTasks) {
-    tasksToAssign =  withLinkedTasks(tasksToAssign, allTasks, true)
-  }
-
+function _assign(tasksToAssign, username, tasksLists,) {
   const tasksList = _.find(tasksLists, tl => tl.username === username)
-  // FIXME ? tasksList.items seems to be undefined
-  let newTasksList = [...tasksList.items, ...tasksToAssign]
+  const newTasksList = [...tasksList.items, ...tasksToAssign]
   return modifyTaskList(tasksList.username, newTasksList)
 }
 
@@ -173,6 +167,7 @@ const DynamicMenu = () => {
   const unassignedTasks = useSelector(selectUnassignedTasks)
   const selectedTasks = useSelector(selectSelectedTasks)
   const allTasks = useSelector(selectAllTasks)
+
   const tasksLists = useSelector(selectTasksListsWithItems)
   const nextWorkingDay = useSelector(selectNextWorkingDay)
   const linkedTasksIds = useSelector(selectLinkedTasksIds)
@@ -182,7 +177,24 @@ const DynamicMenu = () => {
   const couriers = useSelector(selectCouriersWithExclude)
   const tasksListsLoading = useSelector(selectTaskListsLoading)
 
+<<<<<<< HEAD
   const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
+=======
+  let selectedTasksWithLinkedTasks =  withLinkedTasks(selectedTasks, allTasks, true)
+  selectedTasksWithLinkedTasks = selectedTasksWithLinkedTasks.filter(
+    t => !taskIdToTourIdMap.has(t['@id']) && !t.isAssigned // these are already somewhere nice!
+  )
+
+  let actions
+
+  if(!isValidTasksMultiSelect(selectedTasks, taskIdToTourIdMap)){
+    toast.warn(t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
+    actions = []
+  } else {
+    actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
+
+  }
+>>>>>>> 92903429b (clean: do not assigned linked tasks that are already in tour)
 
   const dispatch = useDispatch()
 
@@ -226,11 +238,11 @@ const DynamicMenu = () => {
           ? (<div className="text-center"><span className="loader loader--dark"></span></div>)
           : couriers.map((c) =>
             <Item key={c.username} onClick={() => {
-              // hide manually menu and submenu
-              // https://github.com/fkhadra/react-contexify/issues/172
-              hideAll()
-              dispatch(_assign(selectedTasks, c.username, allTasks, tasksLists, true))
-          }}>
+                // hide manually menu and submenu
+                // https://github.com/fkhadra/react-contexify/issues/172
+                hideAll()
+                dispatch(_assign(selectedTasks, c.username, tasksLists))
+            }}>
               <Avatar username={c.username} />  {c.username}
             </Item>
         )}
@@ -243,7 +255,7 @@ const DynamicMenu = () => {
             // hide manually menu and submenu
             // https://github.com/fkhadra/react-contexify/issues/172
             hideAll()
-            dispatch(_assign(selectedTasks, c.username, allTasks, tasksLists, true))
+            dispatch(_assign(selectedTasksWithLinkedTasks, c.username, tasksLists))
         }}>
             <Avatar username={c.username} />  {c.username}
           </Item>
