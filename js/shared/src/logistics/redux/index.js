@@ -7,7 +7,7 @@ export * from './adapters'
 
 export {
   selectSelectedDate,
-  selectTaskLists,
+  selectTasksListsWithItems as selectTaskLists,
   selectAssignedTasks,
   selectUnassignedTasks,
   selectAllTasks,

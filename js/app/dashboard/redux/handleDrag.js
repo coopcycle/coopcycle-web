@@ -1,5 +1,5 @@
 import _ from "lodash"
-import { isTourAssigned, makeSelectTaskListItemsByUsername, selectTaskIdToTourIdMap, selectTaskLists, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
+import { isTourAssigned, makeSelectTaskListItemsByUsername, selectTaskIdToTourIdMap, selectTasksListsWithItems, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { setIsTourDragging, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks,
   modifyTaskList as modifyTaskListAction,
@@ -180,7 +180,7 @@ export function handleDragEnd(
       Array.prototype.splice.apply(newTourItems, Array.prototype.concat([ destination.index, 0 ], selectedTasks))
 
       if (isTourAssigned(tour)) {
-        const tasksLists = selectTaskLists(getState())
+        const tasksLists = selectTasksListsWithItems(getState())
         const username = tourIsAssignedTo(tour)
         const tasksList = _.find(tasksLists, tl => tl.username === username)
         const nestedTaskList = makeSelectTaskListItemsByUsername()(getState(), {username})
@@ -195,7 +195,7 @@ export function handleDragEnd(
         dispatch(modifyTour(tour, newTourItems))
       }
     } else if (destination.droppableId.startsWith('assigned:')) {
-      const tasksLists = selectTaskLists(getState())
+      const tasksLists = selectTasksListsWithItems(getState())
       const username = destination.droppableId.replace('assigned:', '')
       const tasksList = _.find(tasksLists, tl => tl.username === username)
       const nestedTaskList = makeSelectTaskListItemsByUsername()(getState(), {username})
