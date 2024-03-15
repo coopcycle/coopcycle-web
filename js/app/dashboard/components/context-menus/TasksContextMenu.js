@@ -24,9 +24,11 @@ import {
 } from '../../redux/actions'
 import {selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
+import { toast } from 'react-toastify'
 
 import 'react-contexify/dist/ReactContexify.css'
 import { selectTaskIdToTourIdMap } from '../../../../shared/src/logistics/redux/selectors'
+import { isValidTasksMultiSelect } from '../../redux/utils'
 
 export const UNASSIGN_SINGLE = 'UNASSIGN_SINGLE'
 export const UNASSIGN_MULTI = 'UNASSIGN_MULTI'
@@ -152,7 +154,15 @@ const DynamicMenu = () => {
   const taskIdToTourIdMap = useSelector(selectTaskIdToTourIdMap)
   const selectedTasksBelongsToTour = selectedTasks.some(t => taskIdToTourIdMap.has(t['@id']))
 
-  const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
+  let actions
+
+  if(!isValidTasksMultiSelect(selectedTasks, taskIdToTourIdMap)){
+    toast.warn(t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
+    actions = []
+  } else {
+    actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
+
+  }
 
   const dispatch = useDispatch()
 
