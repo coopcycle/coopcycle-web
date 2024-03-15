@@ -31,16 +31,16 @@ parameters:
 # https://github.com/symfony/demo/blob/master/config/packages/prod/doctrine.yaml
 doctrine:
     orm:
-        auto_generate_proxy_classes: false
-        metadata_cache_driver:
-            type: pool
-            pool: doctrine.system_cache_pool
-        query_cache_driver:
-            type: pool
-            pool: doctrine.system_cache_pool
-        result_cache_driver:
-            type: pool
-            pool: doctrine.result_cache_pool
+#        auto_generate_proxy_classes: false
+#        metadata_cache_driver:
+#            type: pool
+#            pool: doctrine.system_cache_pool
+#        query_cache_driver:
+#            type: pool
+#            pool: doctrine.system_cache_pool
+#        result_cache_driver:
+#            type: pool
+#            pool: doctrine.result_cache_pool
 
 monolog:
     channels: [ 'checkout' ] # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
