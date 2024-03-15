@@ -126,7 +126,7 @@
     "react-autosuggest": "^10.1.0",
     "react-chartjs-2": "^5.2.0",
     "react-color": "^2.19.3",
-    "react-contexify": "^5.0.0",
+    "react-contexify": "^6.0.0",
     "react-cropper": "^2.1.8",
     "react-dom": "^18.2.0",
     "react-dropzone": "^11.5.3",
