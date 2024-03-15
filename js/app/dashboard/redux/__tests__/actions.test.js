@@ -129,9 +129,7 @@ let task4 = {
   isAssigned: true,
   assignedTo: 'lila'
 }
-let task5 = {
-  '@id': '/api/tasks/5',
-}
+
 let allTasks = [task1, task2, task3, task4]
 
 let tour1 = {
