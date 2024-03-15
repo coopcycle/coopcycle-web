@@ -11,10 +11,10 @@ framework:
     # https://github.com/symfony/demo/blob/master/config/packages/prod/doctrine.yaml
     cache:
         pools:
-            doctrine.result_cache_pool:
-                adapter: cache.app
-            doctrine.system_cache_pool:
-                adapter: cache.system
+#            doctrine.result_cache_pool:
+#                adapter: cache.app
+#            doctrine.system_cache_pool:
+#                adapter: cache.system
 #    validation:
 #        cache: validator.mapping.cache.doctrine.apc
 #    serializer:
