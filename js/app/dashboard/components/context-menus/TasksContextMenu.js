@@ -220,22 +220,8 @@ const DynamicMenu = () => {
         >
           { t('ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI', { count: tasksToUnassign.length }) }
 
-        </Item>
-        <Submenu label="Assign single tasks" hidden={ !actions.includes(ASSIGN_MULTI)}>
-          { tasksListsLoading
-            ? (<div className="text-center"><span className="loader loader--dark"></span></div>)
-            : couriers.map((c) =>
-              <Item key={c.username} onClick={() => {
-                  // hide manually menu and submenu
-                  // https://github.com/fkhadra/react-contexify/issues/172
-                  hideAll()
-                  dispatch(_assign(selectedTasks, c.username, allTasks, tasksLists))
-              }}>
-                <Avatar username={c.username} />  {c.username}
-              </Item>
-          )}
-        </Submenu>
-        <Submenu label="Assign deliveries/orders" hidden={ !actions.includes(ASSIGN_WITH_LINKED_TASKS_MULTI)}>
+      </Item>
+      <Submenu label={t('ADMIN_DASHBOARD_ASSIGN_TASKS', { count: selectedTasks.length })} hidden={ !actions.includes(ASSIGN_MULTI)}>
         { tasksListsLoading
           ? (<div className="text-center"><span className="loader loader--dark"></span></div>)
           : couriers.map((c) =>
@@ -248,78 +234,95 @@ const DynamicMenu = () => {
               <Avatar username={c.username} />  {c.username}
             </Item>
         )}
-        </Submenu>
-        <Item
-          hidden={ !actions.includes(CANCEL_MULTI) }
-          onClick={ () => dispatch(cancelTasks(selectedTasks)) }
-        >
-          { t('ADMIN_DASHBOARD_CANCEL_TASKS_MULTI', { count: selectedTasks.length }) }
-        </Item>
-        <Item
-          hidden={ !actions.includes(MOVE_TO_NEXT_DAY_MULTI) }
-          onClick={ () => dispatch(moveTasksToNextDay(selectedTasks)) }
-        >
-          { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI', { count: selectedTasks.length }) }
-        </Item>
-        <Item
-          hidden={ !actions.includes(MOVE_TO_NEXT_WORKING_DAY_MULTI) }
-          onClick={ () => dispatch(moveTasksToNextWorkingDay(selectedTasks)) }
-        >
-          { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI', { count: selectedTasks.length, nextWorkingDay: moment(nextWorkingDay).format('LL') }) }
-        </Item>
-        <Item
-          hidden={ !actions.includes(CREATE_GROUP) }
-          onClick={ () => dispatch(openCreateGroupModal()) }
-        >
-          { t('ADMIN_DASHBOARD_CREATE_GROUP') }
-        </Item>
-        <Item
-          hidden={ !actions.includes(ADD_TO_GROUP) }
-          onClick={ () => dispatch(openAddTaskToGroupModal(selectedTasks)) }
-        >
-          { t('ADMIN_DASHBOARD_ADD_TO_GROUP') }
-        </Item>
-        <Item
-          hidden={ !actions.includes(REMOVE_FROM_GROUP) }
-          onClick={ () => dispatch(removeTasksFromGroup(selectedTasks)) }
-        >
-          { t('ADMIN_DASHBOARD_REMOVE_FROM_GROUP') }
-        </Item>
-        <Item
-          hidden={ !actions.includes(RESTORE) }
-          onClick={ () => dispatch(restoreTasks(selectedTasks)) }
-        >
-          { t('ADMIN_DASHBOARD_RESTORE') }
-        </Item>
-        <Item
-          hidden={ !actions.includes(RESCHEDULE) }
-          onClick={ () => {
-            dispatch(setCurrentTask(selectedTasks[0]))
-            dispatch(openTaskRescheduleModal())
-          }}
-          >
-          { t('ADMIN_DASHBOARD_RESCHEDULE') }
-        </Item>
-        <Item
-          hidden={ !actions.includes(CREATE_DELIVERY) }
-          onClick={ () => dispatch(openCreateDeliveryModal()) }
-        >
-          { t('ADMIN_DASHBOARD_CREATE_DELIVERY') }
-        </Item>
-        <Item
-          hidden={ !actions.includes(CREATE_TOUR) }
-          onClick={ () => dispatch(openCreateTourModal()) }
-        >
-          { t('ADMIN_DASHBOARD_CREATE_TOUR') }
-        </Item>
-        { actions.length === 0 && (
-          <Item disabled>
-            { t('ADMIN_DASHBOARD_NO_ACTION_AVAILABLE') }
+      </Submenu>
+      <Submenu label={t('ADMIN_DASHBOARD_ASSIGN_DELIVERIES_ORDERS', { count: selectedTasks.length })} hidden={ !actions.includes(ASSIGN_WITH_LINKED_TASKS_MULTI)}>
+      { tasksListsLoading
+        ? (<div className="text-center"><span className="loader loader--dark"></span></div>)
+        : couriers.map((c) =>
+          <Item key={c.username} onClick={() => {
+            // hide manually menu and submenu
+            // https://github.com/fkhadra/react-contexify/issues/172
+            hideAll()
+            dispatch(_assign(selectedTasks, c.username, allTasks, tasksLists, true))
+        }}>
+            <Avatar username={c.username} />  {c.username}
           </Item>
-        )}
-      </> :
-      <Item disabled={true}>{t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION')}</Item>
-    }
+      )}
+      </Submenu>
+      <Item
+        hidden={ !actions.includes(CANCEL_MULTI) }
+        onClick={ () => dispatch(cancelTasks(selectedTasks)) }
+      >
+        { t('ADMIN_DASHBOARD_CANCEL_TASKS_MULTI', { count: selectedTasks.length }) }
+      </Item>
+      <Item
+        hidden={ !actions.includes(MOVE_TO_NEXT_DAY_MULTI) }
+        onClick={ () => dispatch(moveTasksToNextDay(selectedTasks)) }
+      >
+        { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI', { count: selectedTasks.length }) }
+      </Item>
+      <Item
+        hidden={ !actions.includes(MOVE_TO_NEXT_WORKING_DAY_MULTI) }
+        onClick={ () => dispatch(moveTasksToNextWorkingDay(selectedTasks)) }
+      >
+        { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI', { count: selectedTasks.length, nextWorkingDay: moment(nextWorkingDay).format('LL') }) }
+      </Item>
+      <Item
+        hidden={ !actions.includes(CREATE_GROUP) }
+        onClick={ () => dispatch(openCreateGroupModal()) }
+      >
+        { t('ADMIN_DASHBOARD_CREATE_GROUP') }
+      </Item>
+      <Item
+        hidden={ !actions.includes(ADD_TO_GROUP) }
+        onClick={ () => dispatch(openAddTaskToGroupModal(selectedTasks)) }
+      >
+        { t('ADMIN_DASHBOARD_ADD_TO_GROUP') }
+      </Item>
+      <Item
+        hidden={ !actions.includes(REMOVE_FROM_GROUP) }
+        onClick={ () => dispatch(removeTasksFromGroup(selectedTasks)) }
+      >
+        { t('ADMIN_DASHBOARD_REMOVE_FROM_GROUP') }
+      </Item>
+      <Item
+        hidden={ !actions.includes(RESTORE) }
+        onClick={ () => dispatch(restoreTasks(selectedTasks)) }
+      >
+        { t('ADMIN_DASHBOARD_RESTORE') }
+      </Item>
+      <Item
+        hidden={ !actions.includes(RESCHEDULE) }
+        onClick={ () => {
+          dispatch(setCurrentTask(selectedTasks[0]))
+          dispatch(openTaskRescheduleModal())
+        }}
+        >
+        { t('ADMIN_DASHBOARD_RESCHEDULE') }
+      </Item>
+      <Item
+        hidden={ !actions.includes(CREATE_DELIVERY) }
+        onClick={ () => dispatch(openCreateDeliveryModal()) }
+      >
+        { t('ADMIN_DASHBOARD_CREATE_DELIVERY') }
+      </Item>
+      <Item
+        hidden={ !actions.includes(CREATE_TOUR) }
+        onClick={ () => dispatch(openCreateTourModal()) }
+      >
+        { t('ADMIN_DASHBOARD_CREATE_TOUR') }
+      </Item>
+      { selectedTasks.length > 0 && actions.length === 0 && (
+        <Item disabled>
+          { t('ADMIN_DASHBOARD_NO_ACTION_AVAILABLE') }
+        </Item>
+      )}
+      { selectedTasks.length === 0 && (
+        <Item disabled>
+          { t('ADMIN_DASHBOARD_NO_SELECTED_TASKS') }
+        </Item>
+      )}
+      </> : <Item disabled={true}>{t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION')}</Item> }
     </Menu>
   )
 }
