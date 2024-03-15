@@ -208,7 +208,7 @@ export const isValidTasksMultiSelect = (selectedTasks, taskIdToTourIdMap) => {
   const isAllAssignedToSameUserOrNotAssigned = selectedTasks.every(t => t.assignedTo === selectedTasks[0].assignedTo)
   const isNoneInTour = selectedTasks.every(t => !taskIdToTourIdMap.has(t['@id']))
   const isAllInTour = selectedTasks.every(t => taskIdToTourIdMap.has(t['@id']))
-  const isAllInSameTour = isAllInTour && selectedTasks.every(t => taskIdToTourIdMap.get(t['@id']) === taskIdToTourIdMap.get(t[0]['@id']))
+  const isAllInSameTour = isAllInTour && selectedTasks.every(t => taskIdToTourIdMap.get(t['@id']) === taskIdToTourIdMap.get(selectedTasks[0]['@id']))
 
   return (isAllAssignedToSameUserOrNotAssigned && isNoneInTour) || isAllInSameTour
 }
