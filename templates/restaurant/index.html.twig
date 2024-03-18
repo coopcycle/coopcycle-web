@@ -142,7 +142,6 @@
       <div class="row">
         <div class="col-xs-12 col-lg-8">
           {% set restaurant_banner = coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner')|placeholder_image(filter='restaurant_banner', obj=restaurant) %}
-          <div>{{ restaurant_banner }}</div>
           {% include 'restaurant/_partials/restaurant_info.html.twig' %}
         </div>
         <div class="col-xs-12 col-lg-4">

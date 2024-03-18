@@ -3,8 +3,6 @@
 
 		<div class="restaurant-image">
 
-      <div>{{ banner_image }}</div>
-
 			<div class="restaurant-banner">
 				<img src="{{ banner_image|default(null)|placeholder_image('restaurant_banner') }}" alt="{{ name is defined ? name ~ "'s banner" : "banner" }}">
 			</div>
