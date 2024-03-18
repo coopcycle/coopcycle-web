@@ -129,9 +129,7 @@ let task4 = {
   isAssigned: true,
   assignedTo: 'lila'
 }
-let task5 = {
-  '@id': '/api/tasks/5',
-}
+
 let allTasks = [task1, task2, task3, task4]
 
 let tour1 = {
@@ -176,14 +174,6 @@ describe('selecting-tasks', () => {
     expect(selectSelectedTasks(store.getState())).toStrictEqual([task1, task2])
   })
 
-  it('should not select several tasks by id', () => {
-
-    store.dispatch(selectTasksByIds([task1, task4].map(t => t['@id'])))
-
-    expect(store.getState().selectedTasks).toStrictEqual([].map(t => t['@id']))
-    expect(selectSelectedTasks(store.getState())).toStrictEqual([])
-  })
-
   it('should toggle several tasks', () => {
 
     store.dispatch(toggleTask(task1, true))
@@ -195,26 +185,6 @@ describe('selecting-tasks', () => {
     store.dispatch(toggleTask(task2, true))
 
     expect(store.getState().selectedTasks).toStrictEqual([task1].map(t => t['@id']))
-  })
-
-  it('should not toggle several tasks that are assigned to different riders', () => {
-
-    store.dispatch(toggleTask(task3, true))
-    store.dispatch(toggleTask(task4, true))
-
-    expect(store.getState().selectedTasks).toStrictEqual([task3].map(t => t['@id']))
-    // FIXME i dont know why it doesnt work ?
-    // expect(selectSelectedTasks(store.getState())).toStrictEqual([task3])
-  })
-
-  it('should not toggle several tasks that are in different tours', () => {
-
-    store.dispatch(toggleTask(task2, true))
-    store.dispatch(toggleTask(task5, true))
-
-    expect(store.getState().selectedTasks).toStrictEqual([task2].map(t => t['@id']))
-    // FIXME i dont know why it doesnt work ?
-    // expect(selectSelectedTasks(store.getState())).toStrictEqual([task2])
   })
 
 })

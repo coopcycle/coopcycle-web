@@ -21,31 +21,31 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "security"="is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
  *     },
  *     "post"={
  *       "method"="POST",
- *       "security"="is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
  *     }
  *   },
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "security"="is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
  *     },
  *     "put"={
  *       "method"="PUT",
- *       "security"="is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
  *     },
  *     "between"={
  *       "method"="POST",
  *       "path"="/recurrence_rules/{id}/between",
- *       "security"="is_granted('ROLE_ADMIN')",
+ *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')",
  *       "controller"=BetweenController::class
  *     },
  *     "delete"={
  *       "method"="DELETE",
- *       "security"="is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
  *     }
  *   }
  * )

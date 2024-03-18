@@ -7,7 +7,7 @@ import { clearSelectedTasks,
   removeTasksFromTour as removeTasksFromTourAction,
   unassignTasks as unassignTasksAction } from "./actions"
 import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
-import { withLinkedTasks } from "./utils"
+import { isValidTasksMultiSelect, withLinkedTasks } from "./utils"
 import { toast } from 'react-toastify'
 import i18next from "i18next"
 
@@ -41,6 +41,15 @@ export function handleDragEnd(
   modifyTour=modifyTourAction,
   unassignTasks=unassignTasksAction,
   removeTasksFromTour=removeTasksFromTourAction) {
+  /*
+    Handle the end of drag of `result.draggableId` into `result.destination.droppableId` from `result.destination.droppableId`.
+
+    The function is subdivided like:
+      - Return early if we don't support the move
+      - Find the involved tasks
+      - Validate the set of tasks
+      - Dispatch actions according to the destination
+  */
 
   return function(dispatch, getState) {
 
@@ -136,7 +145,12 @@ export function handleDragEnd(
 
     if (selectedTasks.length === 0) return // can happen, for example dropping empty tour
 
-    // ! in case of tasks multiselection isValidTasksMultiSelect validator gives us the insurance to have all tasks in the same tour or assigned to the same user
+
+    if(!isValidTasksMultiSelect(selectedTasks, selectTaskIdToTourIdMap(getState()))){
+      toast.warn(i18next.t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
+      return
+    }
+
     if (destination.droppableId === 'unassigned') {
       if (!belongsToTour(selectedTasks[0])(getState())) {
         dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
