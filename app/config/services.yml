@@ -1348,5 +1348,9 @@ services:
   AppBundle\Service\EdenredManager:
     arguments:
       $coopcycleAppName: '%env(COOPCYCLE_APP_NAME)%'
+      $sftpHost: '%env(EDENRED_SFTP_HOST)%'
+      $sftpPort: '%env(EDENRED_SFTP_PORT)%'
+      $sftpUsername: '%env(EDENRED_SFTP_USERNAME)%'
+      $sftpPrivateKeyFile: '%env(EDENRED_SFTP_PRIVATE_KEY_FILE)%'
     tags:
     - { name: monolog.logger, channel: edenred }

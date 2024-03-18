@@ -5,8 +5,11 @@ namespace AppBundle\Service;
 use AppBundle\Entity\LocalBusiness;
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
-use League\Flysystem\Adapter\Local;
+use League\Flysystem\FileAttributes;
 use League\Flysystem\Filesystem;
+use League\Flysystem\PhpseclibV3\SftpAdapter;
+use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
+use League\Flysystem\StorageAttributes;
 use Psr\Log\LoggerInterface;
 
 class EdenredManager
@@ -14,67 +17,93 @@ class EdenredManager
     private $entityManager;
     private $logger;
     private $coopcycleAppName;
+    private $sftpHost;
+    private $sftpPort;
+    private $sftpUsername;
+    private $sftpPrivateKeyFile;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
-        string $coopcycleAppName
+        string $coopcycleAppName,
+        string $sftpHost,
+        string $sftpPort,
+        string $sftpUsername,
+        string $sftpPrivateKeyFile
     )
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->coopcycleAppName = $coopcycleAppName;
+        $this->sftpHost = $sftpHost;
+        $this->sftpPort = $sftpPort;
+        $this->sftpUsername = $sftpUsername;
+        $this->sftpPrivateKeyFile = $sftpPrivateKeyFile;
     }
 
-    public function createSyncFileAndSendToEdenred(array $restaurants): bool
+    public function createSyncFileAndSendToEdenred(array $restaurants): void
     {
         $date = new \DateTime();
 
-        // TODO: should we have a DB sequence for this?
+        // For now the number will be the same since we are not checking this field
         $number = '001';
         $fileName = sprintf('COOPCYCLE_%s_RAEN_TRDQ_%s_%s_%s.xml', strtoupper($this->coopcycleAppName),
             $date->format('Ymd'), $date->format('His'), $number);
 
         $xml = $this->createXML($restaurants, $fileName, $date, $number);
 
-        // $filesystem = new Filesystem(new Ftp([
-        //     'host' => 'gateway2.edenred.fr',
-        //     'username' => 'TP_COOPCYCLE',
-        //     'password' => 'TP_COOPCYCLE_pass',
-        //     'port' => 22,
-        //     'root' => './OUT',
-        //     'ssl' => false
-        // ]));
-        $adapter = new Local(__DIR__.'/../../edenred-files/IN');
-        $filesystem = new Filesystem($adapter);
+        $filesystem = new Filesystem(new SftpAdapter(
+            new SftpConnectionProvider(
+                $this->sftpHost,
+                $this->sftpUsername,
+                null, // password
+                $this->sftpPrivateKeyFile,
+                null, // passphrase
+                $this->sftpPort,
+                false,
+                30, // timeout (optional, default: 10)
+                10, // max tries (optional, default: 4)
+            ),
+            '/sftp/IN', // path
+        ));
 
-        return $filesystem->write($fileName, $xml);
+        $filesystem->write($fileName, $xml);
     }
 
     public function readEdenredFileAndSynchronise()
     {
-        // $filesystem = new Filesystem(new Ftp([
-        //     'host' => 'gateway2.edenred.fr',
-        //     'username' => 'TP_COOPCYCLE',
-        //     'password' => 'TP_COOPCYCLE_pass',
-        //     'port' => 22,
-        //     'root' => './OUT',
-        //     'ssl' => false
-        // ]));
-        $adapter = new Local(__DIR__.'/../../edenred-files/OUT');
-        $filesystem = new Filesystem($adapter);
+        $filesystem = new Filesystem(new SftpAdapter(
+            new SftpConnectionProvider(
+                $this->sftpHost,
+                $this->sftpUsername,
+                null, // password
+                $this->sftpPrivateKeyFile,
+                null, // passphrase
+                $this->sftpPort,
+                false,
+                30, // timeout (optional, default: 10)
+                10, // max tries (optional, default: 4)
+            ),
+            '/sftp/OUT', // path
+        ));
 
-        $contents = array_filter(
-            $filesystem->listContents(''),
-            fn ($file) => str_starts_with($file['path'], sprintf('RAEN_COOPCYCLE_%s_TRDQ_', strtoupper($this->coopcycleAppName)))
-                & $file['size'] > 0 & $file['type'] === 'file'
-        );
+        $allPaths = $filesystem->listContents('')
+            ->filter(fn (StorageAttributes $attributes) => $attributes->isFile())
+            ->filter(fn (FileAttributes $attributes) =>
+                str_starts_with($attributes->path(), sprintf('RAEN_COOPCYCLE_%s_TRDQ_', strtoupper($this->coopcycleAppName))) & $attributes->fileSize() > 0)
+            ->map(fn (FileAttributes $attributes) => $attributes->path())
+            ->toArray();
 
-        foreach ($contents as $object) {
-            $this->logger->info(sprintf('Reading content from file "%s"', $object['path']));
+        $this->logger->info(sprintf('%d files at Edenred SFTP for sync', count($allPaths)));
 
+        $contents = array_map(function($path) use($filesystem) {
+            $this->logger->info(sprintf('Reading content from file "%s"', $path));
+            return $filesystem->read($path);
+        }, $allPaths);
+
+        foreach ($contents as $content) {
             $document = new DOMDocument();
-            $document->loadXML($filesystem->read($object['path']));
+            $document->loadXML($content);
 
             $merchants = $document->getElementsByTagName('PDV');
 
@@ -136,7 +165,7 @@ class EdenredManager
         $documentElement->setAttribute('date', $dateTime->format('YmdHis')); // Date execution batch YYYYMMDDHHmmss
 
         /*
-        <!-- Nom du fichier NomMarketPlace_RAEN_TRDQ_AAAAMMJJ_HHNNSS_Num�roOrdre.xml-->
+        <!-- Nom du fichier NomMarketPlace_RAEN_TRDQ_AAAAMMJJ_HHNNSS_NumeroOrdre.xml-->
         */
         $documentElement->setAttribute('nom', $fileName);
 

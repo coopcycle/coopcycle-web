@@ -52,6 +52,7 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ObjectRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Csv\Writer as CsvWriter;
+use League\Flysystem\UnableToWriteFile;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use MercadoPago;
@@ -1711,16 +1712,19 @@ trait RestaurantTrait
                 }
             }
 
-            $result = $edenredManager->createSyncFileAndSendToEdenred($restaurantsToSync);
+            $sent = true;
+            try {
+                $edenredManager->createSyncFileAndSendToEdenred($restaurantsToSync);
 
-            if ($result) {
                 $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+            } catch(UnableToWriteFile $e) {
+                $sent = false;
             }
 
             return $this->render('restaurant/edenred_sync.html.twig', $this->withRoutes([
                 'layout' => $request->attributes->get('layout'),
                 'form' => $form->createView(),
-                'sending_result' => $result,
+                'sending_result' => $sent,
                 'errors' => $errors,
             ]));
         }

@@ -145,7 +145,8 @@
         "symfony/ux-react": "2.10",
         "league/flysystem": "^3.0",
         "league/flysystem-ftp": "^3.0",
-        "coopcycle/db-schenker": "*"
+        "coopcycle/db-schenker": "*",
+        "league/flysystem-sftp-v3": "^3.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
