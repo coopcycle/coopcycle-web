@@ -9,15 +9,20 @@
     {% for incident in incidents %}
       <tr>
         <td>
+          {% if incident.getStatus() == "OPEN" %}
           <div class="thumbnail priority p{{ incident.getPriority() }}">
             <div>P{{ incident.getPriority() }}</div>
           </div>
+          {% endif %}
           <div class="label label-default label-id">#{{ incident.id }}</div>
-          <!-- <a href="{{ path(incident_route, { id: incident.id }) }}">#{{ incident.id }}</a> -->
         </td>
         <td>
+        <a href="{{ path(incident_route, { id: incident.id }) }}">
           <h3>{{ incident.title }}</h3>
+        </a>
           <p>{{ incident.description }}</p>
+          <span class="label label-default">Last-mile</span>
+          <span class="label label-default">Invoice</span>
         </td>
         <td class="text-right">
         {% set user = incident.getCreatedBy() %}
@@ -41,11 +46,3 @@
   {% trans %}incidents.list.noincidents{% endtrans %}
   </div>
 {% endif %}
-
-{% block styles %}
-  {{ encore_entry_link_tags('incident-form') }}
-{% endblock %}
-
-{% block scripts %}
-{{ encore_entry_script_tags('incident-form') }}
-{% endblock %}

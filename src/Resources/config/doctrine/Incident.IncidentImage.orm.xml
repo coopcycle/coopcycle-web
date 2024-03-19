@@ -8,7 +8,7 @@
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
-    <many-to-one field="incident" target-entity="AppBundle\Entity\Incident\Incident" inversed-by="images">
+    <many-to-one field="incident" target-entity="AppBundle\Entity\Incident\Incident" inversed-by="images" fetch="EAGER">
       <join-columns>
         <join-column name="incident_id" referenced-column-name="id"/>
       </join-columns>
