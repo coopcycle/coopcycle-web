@@ -3,8 +3,12 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Incident\Incident;
+use AppBundle\Entity\Incident\IncidentImage;
 use Knp\Component\Pager\PaginatorInterface;
+use Liip\ImagineBundle\Service\FilterService;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 trait IncidentTrait {
 
@@ -33,6 +37,27 @@ trait IncidentTrait {
             'layout' => $request->attributes->get('layout'),
             'incident_route' => $routes['incident'],
             'incident_new_route' => $routes['incident_new'],
+        ]);
+    }
+
+    public function incidentAction($id, Request $request) {
+        /** @var ?Incident $incident */
+        $incident = $this->getDoctrine()->getRepository(Incident::class)->find($id);
+
+        // $images = $incident->getImages()->map(function (IncidentImage $image) use ($uploaderHelper, $filterService) {
+        //     $path = $uploaderHelper->asset($image, 'file');
+        //     return [
+        //         'path' => $path,
+        //         'thumbnail' => $filterService->getUrlOfFilteredImage($path, 'incident_image_thumbnail'),
+        //     ];
+        // });
+
+        if (!$incident) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->render($request->attributes->get('template'), [
+            'incident' => $incident,
         ]);
     }
 }

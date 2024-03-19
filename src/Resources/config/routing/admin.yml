@@ -502,6 +502,7 @@ admin_incident:
     defaults:
         _controller: AppBundle\Controller\AdminController::incidentAction
         layout: 'admin.html.twig'
+        template: 'admin/incident.html.twig'
         routes:
             incidents: admin_incidents
     methods:  [ GET ]
