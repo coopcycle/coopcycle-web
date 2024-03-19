@@ -19,13 +19,23 @@
   }
 }
 
+.footer {
+  margin-top: 0;
+}
+
 #restaurant-opening-hours-modal {
   .modal-dialog {
     // width: inherit from bootstrap .modal-dialog
 
     @media (min-width: $screen-xs-min) {
-      width: 350px;
+      min-width: 350px;
+      width: auto;
+      max-width: calc(100% - 2rem);
     }
+  }
+
+  .modal-body {
+    overflow-x: auto;
   }
 
   .table-opening-hours {
