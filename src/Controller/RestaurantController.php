@@ -10,16 +10,12 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Domain\Order\Event\OrderUpdated;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessRestaurantGroup;
-use AppBundle\Entity\BusinessRestaurantGroups;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
-use AppBundle\Event\ItemAddedEvent;
-use AppBundle\Event\ItemQuantityChangedEvent;
-use AppBundle\Event\ItemRemovedEvent;
 use AppBundle\Form\Checkout\Action\AddProductToCartAction as CheckoutAddProductToCart;
 use AppBundle\Form\Checkout\Action\Validator\AddProductToCart as AssertAddProductToCart;
 use AppBundle\Form\Order\CartType;
@@ -31,7 +27,6 @@ use AppBundle\Service\LoggingUtils;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Cart\RestaurantResolver;
-use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
@@ -45,7 +40,11 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
 use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Sylius\Component\Order\Context\CartContextInterface;
+use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
+use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
+use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -70,63 +69,24 @@ class RestaurantController extends AbstractController
 
     const ITEMS_PER_PAGE = 21;
 
-    private $orderManager;
-    private $serializer;
-    private $restaurantFilter;
-
-    /**
-     * @var OrderTimeHelper
-     */
-    private OrderTimeHelper $orderTimeHelper;
-
-    /**
-     * @var ValidatorInterface
-     */
-    private ValidatorInterface $validator;
-
-    /**
-     * @var RepositoryInterface
-     */
-    private RepositoryInterface $productRepository;
-    private $productVariantResolver;
-    private $orderItemFactory;
-
-    /**
-     * @var RepositoryInterface
-     */
-    private RepositoryInterface $orderItemRepository;
-    private $orderItemQuantityModifier;
-    private $orderModifier;
-
     public function __construct(
-        EntityManagerInterface $orderManager,
-        ValidatorInterface $validator,
-        RepositoryInterface $productRepository,
-        RepositoryInterface $orderItemRepository,
-        $orderItemFactory,
-        $productVariantResolver,
-        $orderItemQuantityModifier,
-        $orderModifier,
-        OrderTimeHelper $orderTimeHelper,
-        SerializerInterface $serializer,
-        RestaurantFilter $restaurantFilter,
+        private EntityManagerInterface $orderManager,
+        private ValidatorInterface $validator,
+        private RepositoryInterface $productRepository,
+        private RepositoryInterface $orderItemRepository,
+        private FactoryInterface $orderItemFactory,
+        private ProductVariantResolverInterface $productVariantResolver,
+        private OrderItemQuantityModifierInterface $orderItemQuantityModifier,
+        private OrderModifierInterface $orderModifier,
+        private OrderTimeHelper $orderTimeHelper,
+        private SerializerInterface $serializer,
+        private RestaurantFilter $restaurantFilter,
         private EventBus $eventBus,
         protected JWTTokenManagerInterface $JWTTokenManager,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils
     )
     {
-        $this->orderManager = $orderManager;
-        $this->validator = $validator;
-        $this->productRepository = $productRepository;
-        $this->orderItemRepository = $orderItemRepository;
-        $this->orderItemFactory = $orderItemFactory;
-        $this->productVariantResolver = $productVariantResolver;
-        $this->orderItemQuantityModifier = $orderItemQuantityModifier;
-        $this->orderModifier = $orderModifier;
-        $this->orderTimeHelper = $orderTimeHelper;
-        $this->serializer = $serializer;
-        $this->restaurantFilter = $restaurantFilter;
     }
 
     private function jsonResponse(OrderInterface $cart, array $errors)
