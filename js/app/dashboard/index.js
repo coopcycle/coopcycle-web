@@ -63,7 +63,6 @@ function start() {
       }
     },
     jwt: dashboardEl.dataset.jwt,
-
     rrules: recurrenceRulesAdapter.upsertMany(
       recurrenceRulesAdapter.getInitialState(),
       JSON.parse(dashboardEl.dataset.rrules)
