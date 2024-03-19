@@ -1,0 +1,22 @@
+<li>
+  <span>task #{{ task.getId() }}</span>
+  {% if task.getdelivery() is not null %}
+    <span>(delivery <a href="{{ path('admin_delivery', { id: task.getDelivery().getId() }) }}">#{{ task.getDelivery().getId() }})</a></span>
+  {% endif %}
+</li>
+<ul>
+{% for event in task.getEvents() %}
+  {% switch event.getName() %}
+    {% case 'task:done' %}
+      <li class="green">{{event.getName()}}</li>
+    {% case 'task:failed' %}
+    {% case 'task:cancelled' %}
+      <li class="red">{{event.getName()}}</li>
+    {% case 'task:rescheduled' %}
+    {% case 'task:incident-reported' %}
+      <li class="orange">{{event.getName()}}</li>
+    {% default %}
+      <li class="blue">{{event.getName()}}</li>
+  {% endswitch %}
+{% endfor %}
+</ul>

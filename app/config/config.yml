@@ -919,6 +919,17 @@ liip_imagine:
                 optipng:
                     strip_all: true
                     level: 4
+        incident_image_thumbnail:
+            data_loader: incident_images
+            filters:
+                thumbnail:
+                    size: [ 128, 128 ]
+                    mode: outbound
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
     loaders:
         default:
             filesystem:
