@@ -15,10 +15,7 @@ export function withoutTasks(state, tasks) {
   )
 }
 
-export function withLinkedTasks(tasks, allTasks, unique = false) {
-  /*
-    Pass the "unique" flag to avoid duplicates tasks in the returned array
-  */
+export function withLinkedTasks(tasks, allTasks, taskIdToTourIdMap) {
 
   if (!Array.isArray(tasks)) {
     tasks = [ tasks ]
@@ -30,21 +27,24 @@ export function withLinkedTasks(tasks, allTasks, unique = false) {
   tasks.forEach(task => {
     if (Object.prototype.hasOwnProperty.call(groups, task['@id']) ) {
       groups[task['@id']].forEach(taskId => {
-        if (unique &&
-          taskId != task['@id'] &&
-          (_.find(tasks, t => t['@id'] === taskId) || // no need to push this linked task, it was in the original tasks list
-          _.find(newTasks, t => t['@id'] === taskId) // no need to push this linked task, it was already found thanks to an other linked task of the same group
-          )) {
-          return
-        } else {
-          const t = _.find(allTasks, t => t['@id'] === taskId)
-          newTasks.push(t)
+        const taskWasAlreadyAdded = _.find(newTasks, t => t['@id'] === taskId)
+
+        if (!(taskWasAlreadyAdded)) {
+          const taskToAdd = _.find(allTasks, t => t['@id'] === taskId)
+
+          if (isValidTasksMultiSelect([task, taskToAdd], taskIdToTourIdMap)) {
+            newTasks.push(taskToAdd)
+          }
         }
       })
     } else {
-      // task with no linked tasks
+      // task which is not in a order/delivery
       newTasks.push(task)
     }
+  })
+
+  newTasks.sort((a, b) => {
+    return moment(a.before).isBefore(b.before) ? -1 : 1
   })
 
  return newTasks

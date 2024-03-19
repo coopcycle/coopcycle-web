@@ -24,7 +24,6 @@ import {
 } from '../../redux/actions'
 import {selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
-import { toast } from 'react-toastify'
 
 import 'react-contexify/dist/ReactContexify.css'
 import { selectTaskIdToTourIdMap } from '../../../../shared/src/logistics/redux/selectors'
