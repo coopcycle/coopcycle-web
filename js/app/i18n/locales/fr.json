@@ -124,6 +124,7 @@
         "ADMIN_DASHBOARD_ASSIGN_DELIVERIES_ORDERS": "Assigner la livraison/la commande",
         "ADMIN_DASHBOARD_ASSIGN_DELIVERIES_ORDERS_plural": "Assigner {{ count }} livraisons/commandes",
         "ADMIN_DASHBOARD_NO_SELECTED_TASKS": "Veuillez sélectionner une tâche",
+        "ADMIN_DASHBOARD_WAIT_FOR_PREVIOUS_ASSIGN": "En attente de l'attribution précédente",
         "USER_EDIT_ENABLED_LABEL": "Activé",
         "USER_EDIT_DISABLED_LABEL": "Désactivé",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Commande créée",

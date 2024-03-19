@@ -28,7 +28,7 @@ import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/re
 
 import 'react-contexify/dist/ReactContexify.css'
 import { selectAllTasks, selectTaskIdToTourIdMap, selectTasksListsWithItems } from '../../../../shared/src/logistics/redux/selectors'
-import { isValidTasksMultiSelect, withLinkedTasks } from '../../redux/utils'
+import { isValidTasksMultiSelect, withOrderTasksForDragNDrop } from '../../redux/utils'
 import Avatar from '../../../components/Avatar'
 
 export const ASSIGN_MULTI = 'ASSIGN_MULTI'
@@ -177,24 +177,9 @@ const DynamicMenu = () => {
   const couriers = useSelector(selectCouriersWithExclude)
   const tasksListsLoading = useSelector(selectTaskListsLoading)
 
-<<<<<<< HEAD
   const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
-=======
-  let selectedTasksWithLinkedTasks =  withLinkedTasks(selectedTasks, allTasks, true)
-  selectedTasksWithLinkedTasks = selectedTasksWithLinkedTasks.filter(
-    t => !taskIdToTourIdMap.has(t['@id']) && !t.isAssigned // these are already somewhere nice!
-  )
 
-  let actions
-
-  if(!isValidTasksMultiSelect(selectedTasks, taskIdToTourIdMap)){
-    toast.warn(t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
-    actions = []
-  } else {
-    actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
-
-  }
->>>>>>> 92903429b (clean: do not assigned linked tasks that are already in tour)
+  let selectedTasksWithLinkedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
 
   const dispatch = useDispatch()
 
@@ -235,7 +220,7 @@ const DynamicMenu = () => {
       </Item>
       <Submenu label={t('ADMIN_DASHBOARD_ASSIGN_TASKS', { count: selectedTasks.length })} hidden={ !actions.includes(ASSIGN_MULTI)}>
         { tasksListsLoading
-          ? (<div className="text-center"><span className="loader loader--dark"></span></div>)
+          ? (<div className="text-center"><span className="loader loader--dark"></span>&nbsp;{t('ADMIN_DASHBOARD_WAIT_FOR_PREVIOUS_ASSIGN')}</div>)
           : couriers.map((c) =>
             <Item key={c.username} onClick={() => {
                 // hide manually menu and submenu
@@ -249,7 +234,7 @@ const DynamicMenu = () => {
       </Submenu>
       <Submenu label={t('ADMIN_DASHBOARD_ASSIGN_DELIVERIES_ORDERS', { count: selectedTasks.length })} hidden={ !actions.includes(ASSIGN_WITH_LINKED_TASKS_MULTI)}>
       { tasksListsLoading
-        ? (<div className="text-center"><span className="loader loader--dark"></span></div>)
+        ? (<div className="text-center"><span className="loader loader--dark"></span>&nbsp;{t('ADMIN_DASHBOARD_WAIT_FOR_PREVIOUS_ASSIGN')}</div>)
         : couriers.map((c) =>
           <Item key={c.username} onClick={() => {
             // hide manually menu and submenu
