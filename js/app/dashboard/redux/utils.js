@@ -15,7 +15,7 @@ export function withoutTasks(state, tasks) {
   )
 }
 
-export function withLinkedTasks(tasks, allTasks, taskIdToTourIdMap) {
+export function withOrderTasksForDragNDrop(tasks, allTasks, taskIdToTourIdMap) {
 
   if (!Array.isArray(tasks)) {
     tasks = [ tasks ]
@@ -32,6 +32,7 @@ export function withLinkedTasks(tasks, allTasks, taskIdToTourIdMap) {
         if (!(taskWasAlreadyAdded)) {
           const taskToAdd = _.find(allTasks, t => t['@id'] === taskId)
 
+          // we don't want to move tasks that have been assigned to other courier, or moved individually to another tour..
           if (isValidTasksMultiSelect([task, taskToAdd], taskIdToTourIdMap)) {
             newTasks.push(taskToAdd)
           }
@@ -41,10 +42,6 @@ export function withLinkedTasks(tasks, allTasks, taskIdToTourIdMap) {
       // task which is not in a order/delivery
       newTasks.push(task)
     }
-  })
-
-  newTasks.sort((a, b) => {
-    return moment(a.before).isBefore(b.before) ? -1 : 1
   })
 
  return newTasks

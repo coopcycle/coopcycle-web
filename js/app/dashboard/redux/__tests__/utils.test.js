@@ -1,6 +1,6 @@
 import {
   withoutTasks,
-  withLinkedTasks,
+  withOrderTasksForDragNDrop,
   timeframeToPercentage,
   nowToPercentage,
   isInDateRange,
@@ -31,7 +31,7 @@ describe('withoutTasks', () => {
   })
 })
 
-describe('withLinkedTasks', () => {
+describe('withOrderTasksForDragNDrop', () => {
 
   const allTasks = [
     {
@@ -59,6 +59,10 @@ describe('withLinkedTasks', () => {
       '@id': '/api/tasks/8',
       previous: '/api/tasks/7',
     },
+    {
+      '@id': '/api/tasks/10',
+      previous: '/api/tasks/8',
+    },
     // Not linked
     {
       '@id': '/api/tasks/9',
@@ -66,10 +70,11 @@ describe('withLinkedTasks', () => {
   ]
 
   const taskIdToTourIdMap = new Map()
+  taskIdToTourIdMap.set('/api/tasks/10', '/api/tours/1')
 
   it('should return expected results with one task', () => {
 
-    const actual = withLinkedTasks([{ '@id': '/api/tasks/4', next: '/api/tasks/5' }], allTasks, taskIdToTourIdMap)
+    const actual = withOrderTasksForDragNDrop([{ '@id': '/api/tasks/4', next: '/api/tasks/5' }], allTasks, taskIdToTourIdMap)
 
     expect(actual).toEqual([
       {
@@ -84,7 +89,7 @@ describe('withLinkedTasks', () => {
 
   it('should return expected results with multiple tasks', () => {
 
-    const actual = withLinkedTasks(
+    const actual = withOrderTasksForDragNDrop(
       [
         { '@id': '/api/tasks/4', next: '/api/tasks/5' },
         { '@id': '/api/tasks/2', previous: '/api/tasks/1' }
@@ -112,7 +117,7 @@ describe('withLinkedTasks', () => {
 
   it('should return not twice the tasks if two tasks linked together as function arguments', () => {
 
-    const actual = withLinkedTasks([
+    const actual = withOrderTasksForDragNDrop([
       { '@id': '/api/tasks/4', next: '/api/tasks/5' },
       { '@id': '/api/tasks/5', previous: '/api/tasks/4' }
     ], allTasks, taskIdToTourIdMap)
@@ -130,7 +135,7 @@ describe('withLinkedTasks', () => {
 
   it('should find the linked tasks', () => {
 
-    const actual = withLinkedTasks([
+    const actual = withOrderTasksForDragNDrop([
       {
         '@id': '/api/tasks/6',
       },
@@ -159,7 +164,7 @@ describe('withLinkedTasks', () => {
 
   it('should return expected results with multiple tasks (without next)', () => {
 
-    const actual = withLinkedTasks({
+    const actual = withOrderTasksForDragNDrop({
       '@id': '/api/tasks/6'
     }, allTasks, taskIdToTourIdMap)
 
@@ -178,7 +183,7 @@ describe('withLinkedTasks', () => {
 
   it('should return expected results with unlinked task', () => {
 
-    const actual = withLinkedTasks({
+    const actual = withOrderTasksForDragNDrop({
       '@id': '/api/tasks/9'
     }, allTasks, taskIdToTourIdMap)
 
@@ -186,6 +191,25 @@ describe('withLinkedTasks', () => {
       {
         '@id': '/api/tasks/9',
       }
+    ])
+  })
+
+  it('should not return linked tasks in a different tour', () => {
+
+    const actual = withOrderTasksForDragNDrop({
+      '@id': '/api/tasks/8'
+    }, allTasks, taskIdToTourIdMap)
+
+    expect(actual).toEqual([
+      {
+        '@id': '/api/tasks/6',
+      }, {
+        '@id': '/api/tasks/7',
+        previous: '/api/tasks/6',
+      }, {
+        '@id': '/api/tasks/8',
+        previous: '/api/tasks/7',
+      },
     ])
   })
 
