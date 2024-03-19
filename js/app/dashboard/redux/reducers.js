@@ -33,7 +33,6 @@ import {
   OPEN_IMPORT_MODAL,
   CLOSE_IMPORT_MODAL,
   CLEAR_SELECTED_TASKS,
-  MODIFY_TASK_LIST_REQUEST_SUCCESS,
   RIGHT_PANEL_MORE_THAN_HALF,
   RIGHT_PANEL_LESS_THAN_HALF,
   OPEN_RECURRENCE_RULE_MODAL,
@@ -60,6 +59,9 @@ import {
   CREATE_TOUR_REQUEST_SUCCESS,
   CREATE_GROUP_REQUEST,
   CREATE_GROUP_SUCCESS,
+  MODIFY_TASK_LIST_REQUEST,
+  MODIFY_TOUR_REQUEST,
+  ADD_TASK_TO_GROUP_REQUEST,
 } from './actions'
 
 import {
@@ -149,7 +151,11 @@ export const selectedTasks = (state = [], action) => {
   case SELECT_TASKS:
     return action.taskIds
   case CLEAR_SELECTED_TASKS:
-  case MODIFY_TASK_LIST_REQUEST_SUCCESS:
+  case MODIFY_TASK_LIST_REQUEST:
+  case MODIFY_TOUR_REQUEST:
+  case CREATE_TOUR_REQUEST:
+  case CREATE_GROUP_REQUEST:
+  case ADD_TASK_TO_GROUP_REQUEST:
     // OPTIMIZATION
     // Make sure the array if not already empty
     // before returning a new reference

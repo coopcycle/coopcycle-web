@@ -2,7 +2,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
 
-import { taskComparator, withoutTasks, withLinkedTasks, isInDateRange } from './utils'
+import { taskComparator, withoutTasks, isInDateRange } from './utils'
 import {
   selectSelectedDate,
   selectTaskLists,
@@ -207,7 +207,6 @@ export function assignAfter(username, task, after) {
   return function(dispatch, getState) {
 
     let state = getState()
-    let allTasks = selectAllTasks(state)
     let taskLists = selectTaskLists(state)
 
     const taskList = _.find(taskLists, taskList => taskList.username === username)
@@ -216,7 +215,7 @@ export function assignAfter(username, task, after) {
     if (-1 !== taskIndex) {
       const newTaskListItems = taskList.items.slice()
       Array.prototype.splice.apply(newTaskListItems,
-        Array.prototype.concat([ taskIndex + 1, 0 ], withLinkedTasks(task, allTasks))
+        Array.prototype.concat([ taskIndex + 1, 0 ], task)
       )
       dispatch(modifyTaskList(username, newTaskListItems))
     }

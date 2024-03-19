@@ -7,7 +7,7 @@ import { clearSelectedTasks,
   removeTasksFromTour as removeTasksFromTourAction,
   unassignTasks as unassignTasksAction } from "./actions"
 import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
-import { isValidTasksMultiSelect, withLinkedTasks } from "./utils"
+import { isValidTasksMultiSelect, withOrderTasksForDragNDrop } from "./utils"
 import { toast } from 'react-toastify'
 import i18next from "i18next"
 
@@ -135,20 +135,18 @@ export function handleDragEnd(
       selectedTasks = tour.items
     }
 
-    // we want to move linked tasks together only in this case, so the dispatcher can have fine-grained control
-    if (source.droppableId === 'unassigned') {
-      selectedTasks =  withLinkedTasks(selectedTasks, allTasks, true)
-      selectedTasks = selectedTasks.filter(
-        t => !belongsToTour(t)(getState()) && !t.isAssigned // these are already somewhere nice!
-      )
-    }
-
     if (selectedTasks.length === 0) return // can happen, for example dropping empty tour
 
+    const taskIdToTourIdMap = selectTaskIdToTourIdMap(getState())
 
-    if(!isValidTasksMultiSelect(selectedTasks, selectTaskIdToTourIdMap(getState()))){
+    if(!isValidTasksMultiSelect(selectedTasks, taskIdToTourIdMap)){
       toast.warn(i18next.t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
       return
+    }
+
+    // when we drag n drop we want all tasks of the order/delivery to move alongside
+    if (source.droppableId !== destination.droppableId) {
+      selectedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
     }
 
     if (destination.droppableId === 'unassigned') {

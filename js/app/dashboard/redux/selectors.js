@@ -104,7 +104,7 @@ export const selectStandaloneTasks = createSelector(
     let standaloneTasks = unassignedTasks
 
     if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
-      standaloneTasks = filter(unassignedTasks, task => !belongsToGroup(task) && !taskIdToTourIdMap.has(task['@id']))
+      standaloneTasks = filter(unassignedTasks, task => !belongsToGroup(task))
     }
 
     // Order by dropoff desc, with pickup before
@@ -138,7 +138,7 @@ export const selectStandaloneTasks = createSelector(
       })
     }
 
-    return standaloneTasks
+    return filter(standaloneTasks, t => !taskIdToTourIdMap.has(t['@id']))
   }
 )
 
