@@ -1,0 +1,111 @@
+{% extends "admin.html.twig" %}
+{% set user = incident.getCreatedBy() %}
+
+{% block breadcrumb %}
+<li>
+  <a href="{{ path('admin_incidents') }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a>
+</li>
+<li>
+  Incident #{{incident.id}}
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="incident-header">
+<div class="container">
+<div class="row">
+
+  <div class="btn-group col-md-1 priority-group" align="center">
+    <button type="button" class="thumbnail priority p{{ incident.getPriority() }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <div>P{{ incident.getPriority() }} <span class="caret"></span></div>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a href="#">Priority 1 (high)</a></li>
+      <li><a href="#">Priority 2 (medium)</a></li>
+      <li><a href="#">Priority 3 (low)</a></li>
+  </ul>
+  </div>
+
+  <div class="col-md-9">
+    <span class="text-muted">{{ incident.getCreatedAt() | date }}</span>
+    <h1>{{ incident.title }}</h1>
+    <a href="#">Add tags</a>
+  </div>
+
+  <div class="col-md-2 text-right">
+    <p>
+    <div class="btn-group">
+      <button type="button" class="btn btn-danger dropdown-toggle"
+      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{incident.getStatus()}} <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href="#">Open the issue</a></li>
+        <li><a href="#">Close the issue</a></li>
+        <li><a href="#">Resolve the issue</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#">Reopen the issue</a></li>
+      </ul>
+    </div>
+    </p>
+    {% if user is not null %}
+      <p>Created by: <i class="fa fa-user" aria-hidden="true"></i> {{ incident.getCreatedBy().username }}</p>
+    {% endif %}
+
+  </div>
+
+</div>
+</div>
+</div>
+
+<div class="container incident-body">
+<div class="col-md-9">
+<div class="row">
+<p style="font-weight: bold" >Description</p>
+<p>{{ incident.description }}</p>
+</div>
+<hr>
+<div class="row">
+<p>Attachments <span class="caret"></span></p>
+{% for image in incident.getImages() %}
+  <a class="thumbnail" style="width: 128px; height: 128px">
+    <img src="{{ coopcycle_asset(image, 'file', 'incident_image_thumbnail') }}" />
+  </a>
+{% endfor %}
+</div>
+</div>
+
+<div class="col-md-3">
+  <h5>Tasks concerning this incident</h5>
+  <ul class="task-list">
+  {% for task in incident.getTasks() %}
+    <li>
+      <span>task #{{ task.getid() }}</span>
+      {% if task.getdelivery() is not null %}
+        <span>(delivery <a href="{{ path('admin_delivery', { id: task.getdelivery().getid() }) }}">#{{ task.getdelivery().getid() }})</a></span>
+      {% endif %}
+    </li>
+    <ul>
+    {% for event in task.getevents() %}
+      {% include "components/incident/timeline_task_item.html.twig" with {task: task} %}
+    {% endfor %}
+    </ul>
+  {% endfor %}
+  </ul>
+  <h5>Actions</h5>
+  <button type="button" class="btn btn-block btn-sm btn-success">Reschedule incidented task</button>
+  <button type="button" class="btn btn-block btn-sm btn-warning">Cancel incidented task</button>
+  <button type="button" class="btn btn-block btn-sm btn-danger">Cancel all tasks</button>
+</div>
+</div>
+
+
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('incident-form') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('incident-form') }}
+{% endblock %}

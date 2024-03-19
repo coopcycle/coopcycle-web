@@ -47,7 +47,6 @@ class Incident {
 
     protected $updatedAt;
 
-    const STATUS_NEW = 'NEW';
     const STATUS_OPEN = 'OPEN';
     const STATUS_CLOSED = 'CLOSED';
     const STATUS_RESOLVED = 'RESOLVED';
