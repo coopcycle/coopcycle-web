@@ -104,7 +104,7 @@ const ProgressBarMemo = React.memo(({
     return (
         <Tooltip title={title}>
           <div>
-            <ProgressBar width="100%" height="8" backgroundColor="white" segments={[
+            <ProgressBar width="100%" height="8px" backgroundColor="white" segments={[
               {value: `${completedPer}%`, color: '#28a745'},
               {value: `${failurePer}%`, color: '#ffc107'},
               {value: `${cancelledPer}%`, color: '#dc3545'},
