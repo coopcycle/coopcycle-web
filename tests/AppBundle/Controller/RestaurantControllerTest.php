@@ -12,7 +12,9 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\Checkout\Action\Validator\AddProductToCart as AssertAddProductToCart;
 use AppBundle\Service\NullLoggingUtils;
+use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Cart\RestaurantResolver;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -20,10 +22,8 @@ use AppBundle\Sylius\Product\ProductVariantInterface;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\RestaurantFilter;
-use AppBundle\Service\SettingsManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -84,6 +84,7 @@ class RestaurantControllerTest extends WebTestCase
         $this->restaurantResolver = $this->prophesize(RestaurantResolver::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
         $this->restaurantFilter = $this->prophesize(RestaurantFilter::class);
+        $this->timingRegistry = $this->prophesize(TimingRegistry::class);
 
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
@@ -136,8 +137,10 @@ class RestaurantControllerTest extends WebTestCase
             $this->orderTimeHelper->reveal(),
             $this->serializer,
             $this->restaurantFilter->reveal(),
+            $this->restaurantResolver->reveal(),
             $eventBus->reveal(),
             $jwtTokenManager->reveal(),
+            $this->timingRegistry->reveal(),
             new NullLogger(),
             new NullLoggingUtils()
         );
@@ -184,6 +187,13 @@ class RestaurantControllerTest extends WebTestCase
         $cart = new Order();
         $cart->setRestaurant($restaurant);
 
+        $this->restaurantResolver
+            ->resolve()
+            ->willReturn($restaurant);
+        $this->restaurantResolver
+            ->accept(Argument::type(OrderInterface::class))
+            ->willReturn(true);
+
         $product = $this->prophesize(ProductInterface::class);
         $product->isEnabled()->willReturn(true);
         $product->hasOptions()->willReturn(true);
@@ -193,11 +203,13 @@ class RestaurantControllerTest extends WebTestCase
         $this->localBusinessRepository->find(1)->willReturn($restaurant);
 
         $cartContext = $this->prophesize(CartContextInterface::class);
-        $translator = $this->prophesize(TranslatorInterface::class);
-
         $cartContext
             ->getCart()
             ->willReturn($cart);
+
+        $this->orderTimeHelper
+            ->getTimeInfo(Argument::type(OrderInterface::class))
+            ->willReturn([]);
 
         $this->optionsPayloadConverter->convert($product->reveal(), [
                 [
@@ -243,18 +255,16 @@ class RestaurantControllerTest extends WebTestCase
 
         $response = $this->controller->addProductToCartAction(1, $productCode, $request,
             $cartContext->reveal(),
-            $translator->reveal(),
-            $this->restaurantResolver->reveal(),
-            $this->optionsPayloadConverter->reveal(),
-            $this->eventDispatcher->reveal()
+            $this->optionsPayloadConverter->reveal()
         );
 
         $this->assertInstanceOf(JsonResponse::class, $response);
 
         $data = json_decode((string) $response->getContent(), true);
 
+        $this->assertArrayHasKey('timing', $data);
         $this->assertArrayHasKey('cart', $data);
-        $this->assertArrayHasKey('times', $data);
+        $this->assertNotNull($data['cartTiming']);
         $this->assertArrayHasKey('errors', $data);
 
         $this->assertArrayHasKey('vendor', $data['cart']);
@@ -302,6 +312,13 @@ class RestaurantControllerTest extends WebTestCase
         $cart = new Order();
         $cart->setRestaurant($otherRestaurant);
 
+        $this->restaurantResolver
+            ->resolve()
+            ->willReturn($otherRestaurant);
+        $this->restaurantResolver
+            ->accept(Argument::type(OrderInterface::class))
+            ->willReturn(false);
+
         $product = $this->prophesize(ProductInterface::class);
         $product->isEnabled()->willReturn(true);
         $product->hasOptions()->willReturn(true);
@@ -311,11 +328,13 @@ class RestaurantControllerTest extends WebTestCase
         $this->localBusinessRepository->find(1)->willReturn($restaurant);
 
         $cartContext = $this->prophesize(CartContextInterface::class);
-        $translator = $this->prophesize(TranslatorInterface::class);
-
         $cartContext
             ->getCart()
             ->willReturn($cart);
+
+        $this->orderTimeHelper
+            ->getTimeInfo(Argument::type(OrderInterface::class))
+            ->willReturn([]);
 
         $this->productRepository
             ->findOneByCode($productCode)
@@ -340,18 +359,16 @@ class RestaurantControllerTest extends WebTestCase
 
         $response = $this->controller->addProductToCartAction(1, $productCode, $request,
             $cartContext->reveal(),
-            $translator->reveal(),
-            $this->restaurantResolver->reveal(),
-            $this->optionsPayloadConverter->reveal(),
-            $this->eventDispatcher->reveal()
+            $this->optionsPayloadConverter->reveal()
         );
 
         $this->assertInstanceOf(JsonResponse::class, $response);
 
         $data = json_decode((string) $response->getContent(), true);
 
+        $this->assertArrayHasKey('timing', $data);
         $this->assertArrayHasKey('cart', $data);
-        $this->assertArrayHasKey('times', $data);
+        $this->assertNull($data['cartTiming']);
         $this->assertArrayHasKey('errors', $data);
 
         $this->assertArrayHasKey('restaurant', $data['errors']);
