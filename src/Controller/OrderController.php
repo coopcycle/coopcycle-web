@@ -11,12 +11,14 @@ use AppBundle\Embed\Context as EmbedContext;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderInvitation;
 use AppBundle\Entity\Sylius\OrderRepository;
+use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutCouponType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\Checkout\CheckoutTipType;
 use AppBundle\Form\Checkout\CheckoutVytalType;
 use AppBundle\Form\Checkout\LoopeatReturnsType;
+use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Order\CartType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
@@ -62,6 +64,7 @@ class OrderController extends AbstractController
         FactoryInterface $orderFactory,
         protected JWTTokenManagerInterface $JWTTokenManager,
         private ValidatorInterface $validator,
+        private OrderTimeHelper $orderTimeHelper,
         private LoggerInterface $checkoutLogger,
     )
     {
@@ -321,11 +324,22 @@ class OrderController extends AbstractController
         // TODO Make sure we are using Stripe, not MercadoPago
         $stripeManager->configurePayment($payment);
 
-        $form = $this->createForm(CheckoutPaymentType::class, $order);
+        $checkoutPayment = new CheckoutPayment($order);
+        $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment);
+
+        $range =
+            $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
+
+        // Don't forget that $range may be NULL
+        $shippingTimeRange = $range ? implode(' - ', [
+            $range->getLower()->format(\DateTime::ATOM),
+            $range->getUpper()->format(\DateTime::ATOM),
+        ]) : '';
 
         $parameters =  [
             'order' => $order,
             'payment' => $payment,
+            'shippingTimeRange' => $shippingTimeRange,
         ];
 
         $form->handleRequest($request);

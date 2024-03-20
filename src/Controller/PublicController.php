@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\Order\AdhocOrderType;
 use AppBundle\Service\OrderManager;
@@ -71,7 +72,8 @@ class PublicController extends AbstractController
 
         if (in_array($lastPayment->getState(), $paymentStates)) {
 
-            $paymentForm = $this->createForm(CheckoutPaymentType::class, $order);
+            $checkoutPayment = new CheckoutPayment($order);
+            $paymentForm = $this->createForm(CheckoutPaymentType::class, $checkoutPayment);
 
             $paymentForm->handleRequest($request);
             if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
