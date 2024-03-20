@@ -28,6 +28,7 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Cart\RestaurantResolver;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\RestaurantFilter;
@@ -43,7 +44,6 @@ use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
-use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -52,7 +52,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -75,11 +75,11 @@ class RestaurantController extends AbstractController
         private RepositoryInterface $productRepository,
         private RepositoryInterface $orderItemRepository,
         private FactoryInterface $orderItemFactory,
-        private ProductVariantResolverInterface $productVariantResolver,
+        private LazyProductVariantResolverInterface $productVariantResolver,
         private OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         private OrderModifierInterface $orderModifier,
         private OrderTimeHelper $orderTimeHelper,
-        private SerializerInterface $serializer,
+        private Serializer $serializer,
         private RestaurantFilter $restaurantFilter,
         private RestaurantResolver $restaurantResolver,
         private EventBus $eventBus,
