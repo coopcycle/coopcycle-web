@@ -1,5 +1,5 @@
 import _ from "lodash"
-import { isTourAssigned, makeSelectTaskListItemsByUsername, selectTaskIdToTourIdMap, selectTaskLists, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
+import { isTourAssigned, makeSelectTaskListItemsByUsername, selectTaskIdToTourIdMap, selectTasksListsWithItems, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { setIsTourDragging, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks,
   modifyTaskList as modifyTaskListAction,
@@ -7,7 +7,7 @@ import { clearSelectedTasks,
   removeTasksFromTour as removeTasksFromTourAction,
   unassignTasks as unassignTasksAction } from "./actions"
 import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
-import { isValidTasksMultiSelect, withLinkedTasks } from "./utils"
+import { isValidTasksMultiSelect, withOrderTasksForDragNDrop } from "./utils"
 import { toast } from 'react-toastify'
 import i18next from "i18next"
 
@@ -135,20 +135,18 @@ export function handleDragEnd(
       selectedTasks = tour.items
     }
 
-    // we want to move linked tasks together only in this case, so the dispatcher can have fine-grained control
-    if (source.droppableId === 'unassigned') {
-      selectedTasks =  withLinkedTasks(selectedTasks, allTasks, true)
-      selectedTasks = selectedTasks.filter(
-        t => !belongsToTour(t)(getState()) && !t.isAssigned // these are already somewhere nice!
-      )
-    }
-
     if (selectedTasks.length === 0) return // can happen, for example dropping empty tour
 
+    const taskIdToTourIdMap = selectTaskIdToTourIdMap(getState())
 
-    if(!isValidTasksMultiSelect(selectedTasks, selectTaskIdToTourIdMap(getState()))){
+    if(!isValidTasksMultiSelect(selectedTasks, taskIdToTourIdMap)){
       toast.warn(i18next.t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
       return
+    }
+
+    // when we drag n drop we want all tasks of the order/delivery to move alongside
+    if (source.droppableId !== destination.droppableId) {
+      selectedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
     }
 
     if (destination.droppableId === 'unassigned') {
@@ -182,7 +180,7 @@ export function handleDragEnd(
       Array.prototype.splice.apply(newTourItems, Array.prototype.concat([ destination.index, 0 ], selectedTasks))
 
       if (isTourAssigned(tour)) {
-        const tasksLists = selectTaskLists(getState())
+        const tasksLists = selectTasksListsWithItems(getState())
         const username = tourIsAssignedTo(tour)
         const tasksList = _.find(tasksLists, tl => tl.username === username)
         const nestedTaskList = makeSelectTaskListItemsByUsername()(getState(), {username})
@@ -197,7 +195,7 @@ export function handleDragEnd(
         dispatch(modifyTour(tour, newTourItems))
       }
     } else if (destination.droppableId.startsWith('assigned:')) {
-      const tasksLists = selectTaskLists(getState())
+      const tasksLists = selectTasksListsWithItems(getState())
       const username = destination.droppableId.replace('assigned:', '')
       const tasksList = _.find(tasksLists, tl => tl.username === username)
       const nestedTaskList = makeSelectTaskListItemsByUsername()(getState(), {username})

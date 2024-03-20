@@ -16,7 +16,7 @@ export const selectSelectedDate = state => state.logistics.date
 // Also, it generates copies all the time
 // Replace this with a selectTaskListItemsByUsername selector, used by the <TaskList> component
 // https://redux.js.org/tutorials/essentials/part-6-performance-normalization#memoizing-selector-functions
-export const selectTaskLists = createSelector(
+export const selectTasksListsWithItems = createSelector(
   taskListSelectors.selectEntities,
   taskSelectors.selectEntities,
   (taskListsById, tasksById) =>
@@ -35,7 +35,7 @@ export const selectTaskLists = createSelector(
 export const selectAllTasks = taskSelectors.selectAll
 
 export const selectAssignedTasks = createSelector(
-  selectTaskLists,
+  selectTasksListsWithItems,
   taskLists => assignedTasks(taskLists)
 )
 

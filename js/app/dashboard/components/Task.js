@@ -224,9 +224,7 @@ class Task extends React.Component {
 
         this.props.selectTask(task)
 
-        show(e, {
-          props: { task }
-        })
+        show({ event: e, props: task})
       }
     }
 

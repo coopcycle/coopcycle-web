@@ -9,45 +9,31 @@ use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
-use AppBundle\Utils\OrderTimeHelper;
-use Sylius\Component\Payment\Model\PaymentInterface;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormError;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Webmozart\Assert\Assert;
 
 class CheckoutPaymentType extends AbstractType
 {
-    private $resolver;
-
     public function __construct(
-        GatewayResolver $resolver,
-        OrderTimeHelper $orderTimeHelper,
-        EdenredAuthentication $edenredAuthentication,
-        EdenredPayment $edenredPayment,
-        SettingsManager $settingsManager,
-        bool $cashEnabled)
-    {
-        $this->resolver = $resolver;
-        $this->edenredAuthentication = $edenredAuthentication;
-        $this->edenredPayment = $edenredPayment;
-        $this->settingsManager = $settingsManager;
-        $this->cashEnabled = $cashEnabled;
-
-        parent::__construct($orderTimeHelper);
-    }
+        private GatewayResolver $resolver,
+        private EdenredAuthentication $edenredAuthentication,
+        private EdenredPayment $edenredPayment,
+        private SettingsManager $settingsManager,
+        private bool $cashEnabled)
+    { }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
 
         $builder
-            ->add('stripePayment', StripePaymentType::class, [
-                'mapped' => false,
-            ]);
+            ->add('stripePayment', StripePaymentType::class);
 
         // @see https://www.mercadopago.com.br/developers/en/guides/payments/api/receiving-payment-by-card/
         if ('mercadopago' === $this->resolver->resolve()) {
@@ -63,7 +49,8 @@ class CheckoutPaymentType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
-            $order = $event->getData();
+            $checkoutPayment = $event->getData();
+            $order = $checkoutPayment->getOrder();
 
             $choices = [];
 
@@ -124,5 +111,12 @@ class CheckoutPaymentType extends AbstractType
                     'data' => count($choices) === 1 ? 'card' : null
                 ]);
         });
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => CheckoutPayment::class,
+        ]);
     }
 }

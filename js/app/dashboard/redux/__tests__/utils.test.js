@@ -1,6 +1,6 @@
 import {
   withoutTasks,
-  withLinkedTasks,
+  withOrderTasksForDragNDrop,
   timeframeToPercentage,
   nowToPercentage,
   isInDateRange,
@@ -31,7 +31,7 @@ describe('withoutTasks', () => {
   })
 })
 
-describe('withLinkedTasks', () => {
+describe('withOrderTasksForDragNDrop', () => {
 
   const allTasks = [
     {
@@ -59,17 +59,22 @@ describe('withLinkedTasks', () => {
       '@id': '/api/tasks/8',
       previous: '/api/tasks/7',
     },
+    {
+      '@id': '/api/tasks/10',
+      previous: '/api/tasks/8',
+    },
     // Not linked
     {
       '@id': '/api/tasks/9',
     }
   ]
 
+  const taskIdToTourIdMap = new Map()
+  taskIdToTourIdMap.set('/api/tasks/10', '/api/tours/1')
+
   it('should return expected results with one task', () => {
 
-    const actual = withLinkedTasks([
-      { '@id': '/api/tasks/4', next: '/api/tasks/5' }
-    ], allTasks)
+    const actual = withOrderTasksForDragNDrop([{ '@id': '/api/tasks/4', next: '/api/tasks/5' }], allTasks, taskIdToTourIdMap)
 
     expect(actual).toEqual([
       {
@@ -84,10 +89,13 @@ describe('withLinkedTasks', () => {
 
   it('should return expected results with multiple tasks', () => {
 
-    const actual = withLinkedTasks([
-      { '@id': '/api/tasks/4', next: '/api/tasks/5' },
-      { '@id': '/api/tasks/2', previous: '/api/tasks/1' }
-    ], allTasks)
+    const actual = withOrderTasksForDragNDrop(
+      [
+        { '@id': '/api/tasks/4', next: '/api/tasks/5' },
+        { '@id': '/api/tasks/2', previous: '/api/tasks/1' }
+      ],
+      allTasks,
+      taskIdToTourIdMap)
 
     expect(actual).toEqual([
       {
@@ -107,37 +115,12 @@ describe('withLinkedTasks', () => {
     ])
   })
 
-  it('should return twice the tasks if two tasks linked together as function arguments', () => {
+  it('should return not twice the tasks if two tasks linked together as function arguments', () => {
 
-    const actual = withLinkedTasks([
+    const actual = withOrderTasksForDragNDrop([
       { '@id': '/api/tasks/4', next: '/api/tasks/5' },
       { '@id': '/api/tasks/5', previous: '/api/tasks/4' }
-    ], allTasks)
-
-    expect(actual).toEqual([
-      {
-        '@id': '/api/tasks/4',
-        next: '/api/tasks/5'
-      }, {
-        '@id': '/api/tasks/5',
-        previous: '/api/tasks/4',
-      },
-      {
-        '@id': '/api/tasks/4',
-        next: '/api/tasks/5'
-      }, {
-        '@id': '/api/tasks/5',
-        previous: '/api/tasks/4',
-      },
-    ])
-  })
-
-  it('should return once tasks if two tasks linked together as function arguments and unique flag is given', () => {
-
-    const actual = withLinkedTasks([
-      { '@id': '/api/tasks/4', next: '/api/tasks/5' },
-      { '@id': '/api/tasks/5', previous: '/api/tasks/4' }
-    ], allTasks, true)
+    ], allTasks, taskIdToTourIdMap)
 
     expect(actual).toEqual([
       {
@@ -150,39 +133,18 @@ describe('withLinkedTasks', () => {
     ])
   })
 
-  it('should return once tasks when unique flag is given + keep the original tasks order', () => {
+  it('should find the linked tasks', () => {
 
-    const actual = withLinkedTasks([
-      { '@id': '/api/tasks/4', next: '/api/tasks/5' },
-      { '@id': '/api/tasks/9',},
-      { '@id': '/api/tasks/5', previous: '/api/tasks/4' }
-    ], allTasks, true)
-
-    expect(actual).toEqual([
-      {
-        '@id': '/api/tasks/4',
-        next: '/api/tasks/5'
-      }, 
-      { '@id': '/api/tasks/9',},
-      {
-        '@id': '/api/tasks/5',
-        previous: '/api/tasks/4',
-      }
-    ])
-  })
-
-  it('should return once tasks when unique flag is given + find the linked tasks', () => {
-
-    const actual = withLinkedTasks([
+    const actual = withOrderTasksForDragNDrop([
       {
         '@id': '/api/tasks/6',
       },
-      { '@id': '/api/tasks/9',}, 
+      { '@id': '/api/tasks/9',},
       {
         '@id': '/api/tasks/8',
         previous: '/api/tasks/6',
       },
-    ], allTasks, true)
+    ], allTasks, taskIdToTourIdMap)
 
     expect(actual).toEqual([
       {
@@ -192,19 +154,19 @@ describe('withLinkedTasks', () => {
         '@id': '/api/tasks/7',
         previous: '/api/tasks/6',
       },
-      { '@id': '/api/tasks/9',}, 
       {
         '@id': '/api/tasks/8',
         previous: '/api/tasks/7',
       },
+      { '@id': '/api/tasks/9',},
     ])
   })
 
   it('should return expected results with multiple tasks (without next)', () => {
 
-    const actual = withLinkedTasks({
+    const actual = withOrderTasksForDragNDrop({
       '@id': '/api/tasks/6'
-    }, allTasks)
+    }, allTasks, taskIdToTourIdMap)
 
     expect(actual).toEqual([
       {
@@ -221,14 +183,33 @@ describe('withLinkedTasks', () => {
 
   it('should return expected results with unlinked task', () => {
 
-    const actual = withLinkedTasks({
+    const actual = withOrderTasksForDragNDrop({
       '@id': '/api/tasks/9'
-    }, allTasks)
+    }, allTasks, taskIdToTourIdMap)
 
     expect(actual).toEqual([
       {
         '@id': '/api/tasks/9',
       }
+    ])
+  })
+
+  it('should not return linked tasks in a different tour', () => {
+
+    const actual = withOrderTasksForDragNDrop({
+      '@id': '/api/tasks/8'
+    }, allTasks, taskIdToTourIdMap)
+
+    expect(actual).toEqual([
+      {
+        '@id': '/api/tasks/6',
+      }, {
+        '@id': '/api/tasks/7',
+        previous: '/api/tasks/6',
+      }, {
+        '@id': '/api/tasks/8',
+        previous: '/api/tasks/7',
+      },
     ])
   })
 

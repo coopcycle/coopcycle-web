@@ -41,7 +41,8 @@ final class Version20231219182856 extends AbstractMigration
         $this->addSql('ALTER TABLE business_restaurant_group_fulfillment_method ADD CONSTRAINT FK_A942AABE19883967 FOREIGN KEY (method_id) REFERENCES restaurant_fulfillment_method (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE business_account DROP CONSTRAINT fk_2005ede96c786081');
         $this->addSql('DROP INDEX uniq_2005ede96c786081');
-        $this->addSql('ALTER TABLE business_account RENAME COLUMN hub_id TO business_restaurant_group_id');
+        $this->addSql('ALTER TABLE business_account DROP hub_id');
+        $this->addSql('ALTER TABLE business_account ADD business_restaurant_group_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE business_account ADD CONSTRAINT FK_2005EDE9C4EC76B FOREIGN KEY (business_restaurant_group_id) REFERENCES business_restaurant_group (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('CREATE INDEX IDX_2005EDE9C4EC76B ON business_account (business_restaurant_group_id)');
         $this->addSql('ALTER TABLE hub DROP CONSTRAINT fk_4871ce4d5bc85711');
@@ -56,6 +57,7 @@ final class Version20231219182856 extends AbstractMigration
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE business_account DROP CONSTRAINT FK_2005EDE9C4EC76B');
+        $this->addSql('ALTER TABLE business_account DROP business_restaurant_group_id');
         $this->addSql('ALTER TABLE business_restaurant_group_closing_rule DROP CONSTRAINT FK_88A97212C4EC76B');
         $this->addSql('ALTER TABLE business_restaurant_group_fulfillment_method DROP CONSTRAINT FK_A942AABEC4EC76B');
         $this->addSql('ALTER TABLE restaurant DROP CONSTRAINT FK_EB95123FC4EC76B');
@@ -71,7 +73,7 @@ final class Version20231219182856 extends AbstractMigration
         $this->addSql('ALTER TABLE restaurant ADD CONSTRAINT fk_eb95123f5bc85711 FOREIGN KEY (business_account_id) REFERENCES business_account (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('CREATE INDEX idx_eb95123f5bc85711 ON restaurant (business_account_id)');
         $this->addSql('DROP INDEX IDX_2005EDE9C4EC76B');
-        $this->addSql('ALTER TABLE business_account RENAME COLUMN business_restaurant_group_id TO hub_id');
+        $this->addSql('ALTER TABLE business_account ADD hub_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE business_account ADD CONSTRAINT fk_2005ede96c786081 FOREIGN KEY (hub_id) REFERENCES hub (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('CREATE UNIQUE INDEX uniq_2005ede96c786081 ON business_account (hub_id)');
     }

@@ -1,11 +1,11 @@
 import {
   selectSelectedDate,
-  selectTaskLists,
   selectAllTasks,
   selectAssignedTasks,
   selectUnassignedTasks,
   selectTasksWithColor,
   makeSelectTaskListItemsByUsername,
+  selectTasksListsWithItems,
 } from '../selectors';
 
 import moment from '../../../moment';
@@ -83,7 +83,7 @@ describe('Selectors', () => {
 
   describe('selectTaskLists', () => {
     it('should return task lists with tasks', () => {
-      expect(selectTaskLists(baseState)).toEqual([
+      expect(selectTasksListsWithItems(baseState)).toEqual([
         {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
@@ -151,7 +151,7 @@ describe('Selectors', () => {
         }
       }
 
-      expect(selectTaskLists(baseState)).toEqual([
+      expect(selectTasksListsWithItems(baseState)).toEqual([
         {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',

@@ -5,11 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.2] - 2024-03-19
+Tour fixes :
+- Filter out duplicate tasks in "unassigned tasks / unassigned tours" (bug with the options for sorting unassigned tasks)
+- When assigning orders/tasks to a route they continue to appear in the unassigned column as well as the routes column #4067
+- Move order tasks together on drag n drop (even for unassign) #4064
+- Clear out task selection on create tour, modify tour, create group, modify group #4071
+- Remove annoying toast about "incorrect" tasks selection
+
+## [2.0.0] - 2024-03-19
+
+- Implement new design for restaurant page ✨
+
 ## [1.31.1] - 2024-03-15
- - Enable to highlight several tasks on the map even if no action is available for tasks (Mensakas issue)
+
+- Enable to highlight several tasks on the map even if no action is available for tasks (Mensakas issue)
 
 ## [1.30.1] - 2024-03-05
- - Bug fixes for Tours beta feature. Issues #4012, #4013, #4016
+
+- Bug fixes for Tours beta feature. Issues #4012, #4013, #4016
 
 ## [1.30.0] - 2024-03-05
 

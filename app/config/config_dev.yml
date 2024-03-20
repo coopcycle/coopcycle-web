@@ -55,7 +55,7 @@ monolog:
             level: debug
             formatter: monolog.formatter.json
             max_files: 3
-            channels: [ checkout ]
+            channels: [ checkout, coopcycle.order_processing ]
         geofencing:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/geofencing.%kernel.environment%.log"

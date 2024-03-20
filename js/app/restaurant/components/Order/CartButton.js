@@ -6,7 +6,8 @@ import classNames from 'classnames'
 
 import {
   selectIsFetching,
-  selectIsOrderingAvailable,
+  selectIsFulfilmentTimeSlotsAvailable,
+  selectIsOrderAdmin,
   selectItems,
 } from '../../redux/selectors'
 import OrderState from './OrderState'
@@ -15,9 +16,9 @@ class CartButton extends Component {
 
   render() {
 
-    const { hasErrors, isOrderingAvailable, items, loading } = this.props
+    const { hasErrors, isOrderAdmin, isFulfilmentTimeSlotsAvailable, items, loading } = this.props
 
-    const disabled = (hasErrors || !isOrderingAvailable || items.length === 0 || loading)
+    const disabled = (hasErrors || !isOrderAdmin || !isFulfilmentTimeSlotsAvailable || items.length === 0 || loading)
     const btnProps = disabled ? { disabled: true } : {}
 
     return (<button type="submit" className={ classNames({
@@ -38,7 +39,8 @@ function mapStateToProps(state) {
     items: selectItems(state),
     loading: selectIsFetching(state),
     hasErrors: _.size(state.errors) > 0,
-    isOrderingAvailable: selectIsOrderingAvailable(state),
+    isFulfilmentTimeSlotsAvailable: selectIsFulfilmentTimeSlotsAvailable(state),
+    isOrderAdmin: selectIsOrderAdmin(state),
   }
 }
 

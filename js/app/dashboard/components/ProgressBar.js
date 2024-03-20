@@ -1,8 +1,6 @@
 import React from 'react';
 
 const ProgressBar = ({ segments, width, height, backgroundColor }) => {
-  const rx = height / 2;
-  const maskId = `round-corner-mask-${Math.random().toString(36)}`;
 
   const calculateOffset = (segments) => {
     let total = 0;
@@ -16,25 +14,25 @@ const ProgressBar = ({ segments, width, height, backgroundColor }) => {
   const adjustedSegments = calculateOffset(segments);
 
   return (
-    <svg width={width} height={height}>
-    <defs>
-        <mask id={maskId}>
-          <rect width="100%" height={height} fill="#fff" rx={rx} ry={rx} />
-        </mask>
-      </defs>
-      <rect width="100%" height={height} fill={backgroundColor} rx={rx} ry={rx} />
-      <g mask={`url(#${maskId})`}>
+    <div style={{
+      backgroundColor, width, height,
+      overflow: 'hidden', position: 'relative',
+      borderRadius: '4px',
+    }}>
         {adjustedSegments.map((segment, index) => (
-          <rect
+          <div
             key={index}
-            x={`${segment.offset}%`}
-            width={segment.value}
-            height={height}
-            fill={segment.color}
-          />
+            style={{
+              backgroundColor: segment.color,
+              height,
+              position: 'absolute',
+              width: segment.value,
+              left: `${segment.offset}%`,
+              top: 0,
+            }}
+          ></div>
         ))}
-      </g>
-    </svg>
+    </div>
   );
 };
 

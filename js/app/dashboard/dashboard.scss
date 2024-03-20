@@ -537,3 +537,8 @@ $pulse-color: #2ECC40;
     }
   }
 }
+
+.contexify .contexify_submenu {
+  max-height: 160px;
+  overflow: auto;
+}

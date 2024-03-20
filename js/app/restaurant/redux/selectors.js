@@ -15,15 +15,58 @@ export const selectCart = state => state.cart
 
 export const selectCartTotal = state => state.cart.total
 
-export const selectIsDeliveryEnabled = createSelector(
-  state => state.cart.vendor.fulfillmentMethods,
-  (fulfillmentMethods) => _.includes(fulfillmentMethods, 'delivery')
-)
+/**
+ * if the value is present it means that the customer can order in this restaurant using the existing cart
+ */
+export const selectCartTiming = state => state.cartTiming
+
+export const selectCanAddToExistingCart = createSelector(
+  selectCartTiming,
+  (cartTiming) => Boolean(cartTiming))
+
+export const selectFirstChoiceFulfilmentMethod = state => state.timing.firstChoiceKey
+
+export const selectAllFulfilmentMethods = state => state.timing
 
 export const selectIsCollectionEnabled = createSelector(
-  state => state.cart.vendor.fulfillmentMethods,
-  (fulfillmentMethods) => _.includes(fulfillmentMethods, 'collection')
+  selectAllFulfilmentMethods,
+  (allFulfilmentMethods) => allFulfilmentMethods['collection']?.range !== undefined
 )
+
+export const selectFulfilmentMethod = createSelector(
+  selectCanAddToExistingCart,
+  selectCart,
+  selectFirstChoiceFulfilmentMethod,
+  (canAddToExistingCart, cart, firstChoiceFulfilmentMethod) => {
+    if (canAddToExistingCart) {
+      return cart.takeaway ? 'collection' : 'delivery'
+    } else {
+      return firstChoiceFulfilmentMethod
+    }
+  })
+
+export const selectFulfilmentTimeRange = createSelector(
+  selectCanAddToExistingCart,
+  selectCart,
+  selectCartTiming,
+  selectFulfilmentMethod,
+  selectAllFulfilmentMethods,
+  (canAddToExistingCart, cart, cartTiming, fulfilmentMethod, allFulfilmentMethods) => {
+    if (canAddToExistingCart) {
+      return cart.shippingTimeRange || cartTiming.range
+    } else {
+      if (fulfilmentMethod) {
+        return allFulfilmentMethods[fulfilmentMethod]?.range
+      } else {
+        return null
+      }
+    }
+  })
+
+export const selectIsFulfilmentTimeSlotsAvailable = createSelector(
+  selectFulfilmentTimeRange,
+  (fulfilmentTimeRange) => Boolean(fulfilmentTimeRange))
+
 
 export const selectItems = createSelector(
   state => state.cart.items,
@@ -78,6 +121,15 @@ export const selectIsGroupOrderAdmin = createSelector(
   }
 )
 
+export const selectIsOrderAdmin = createSelector(
+  selectIsPlayer,
+  (isPlayer) => {
+    // individual order: isPlayer == false
+    // group order: only admin can order in a group order
+    return !isPlayer
+  })
+
+
 export const selectShowPricesTaxExcluded = createSelector(
   state => state.country,
   (country) => country === 'ca'
@@ -117,22 +169,6 @@ export const selectVariableCustomerAmountEnabled = createSelector(
     }
 
     return false
-  }
-)
-
-export const selectIsOrderingAvailable = createSelector(
-  state => state.cart,
-  state => state.times,
-  selectIsPlayer,
-  (cart, { range, ranges }, isPlayer) => {
-
-    const shippingTimeRange = cart.shippingTimeRange || range
-
-    if (!shippingTimeRange && ranges.length === 0) {
-      return false
-    }
-
-    return !isPlayer
   }
 )
 

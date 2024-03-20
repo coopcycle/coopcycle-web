@@ -5,8 +5,8 @@ namespace Tests\AppBundle\Utils;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\Vendor;
 use AppBundle\Fulfillment\FulfillmentMethodResolver;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\TimeRegistry;
 use AppBundle\Utils\OrderTimeHelper;
@@ -18,6 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Log\NullLogger;
 use Redis;
 
 class OrderTimeHelperTest extends TestCase
@@ -47,7 +48,9 @@ class OrderTimeHelperTest extends TestCase
             $this->redis->reveal(),
             $this->timeRegistry->reveal(),
             $this->fulfillmentMethodResolver->reveal(),
-            'fr'
+            'fr',
+            new NullLogger(),
+            new NullLoggingUtils()
         );
     }
 
