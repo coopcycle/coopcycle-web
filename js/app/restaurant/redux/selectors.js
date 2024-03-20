@@ -63,6 +63,11 @@ export const selectFulfilmentTimeRange = createSelector(
     }
   })
 
+export const selectIsFulfilmentTimeSlotsAvailable = createSelector(
+  selectFulfilmentTimeRange,
+  (fulfilmentTimeRange) => Boolean(fulfilmentTimeRange))
+
+
 export const selectItems = createSelector(
   state => state.cart.items,
   state => state.isPlayer,
@@ -116,6 +121,15 @@ export const selectIsGroupOrderAdmin = createSelector(
   }
 )
 
+export const selectIsOrderAdmin = createSelector(
+  selectIsPlayer,
+  (isPlayer) => {
+    // individual order: isPlayer == false
+    // group order: only admin can order in a group order
+    return !isPlayer
+  })
+
+
 export const selectShowPricesTaxExcluded = createSelector(
   state => state.country,
   (country) => country === 'ca'
@@ -155,20 +169,6 @@ export const selectVariableCustomerAmountEnabled = createSelector(
     }
 
     return false
-  }
-)
-
-export const selectIsOrderingAvailable = createSelector(
-  selectIsPlayer,
-  selectFulfilmentTimeRange,
-  (isPlayer, fulfilmentTimeRange) => {
-
-    // only admin can order in a group order
-    if (isPlayer) {
-      return false
-    }
-
-    return Boolean(fulfilmentTimeRange)
   }
 )
 

@@ -6,8 +6,9 @@ import {
   selectCart,
   selectFulfilmentMethod,
   selectFulfillmentRelatedErrorMessages,
-  selectIsOrderingAvailable,
-  selectFulfilmentTimeRange, selectCanAddToExistingCart,
+  selectFulfilmentTimeRange,
+  selectCanAddToExistingCart,
+  selectIsOrderAdmin, selectIsFulfilmentTimeSlotsAvailable,
 } from '../../redux/selectors'
 import { openAddressModal, setDateModalOpen } from '../../redux/actions'
 import FulfillmentMethod from './FulfillmentMethod'
@@ -22,8 +23,10 @@ export default function FulfillmentDetails() {
   const fulfillmentMethod = useSelector(selectFulfilmentMethod)
   const fulfilmentTimeRange = useSelector(selectFulfilmentTimeRange)
 
+  const isOrderAdmin = useSelector(selectIsOrderAdmin)
+  const isFulfilmentTimeSlotsAvailable = useSelector(selectIsFulfilmentTimeSlotsAvailable)
+
   const canAddToExistingCart = useSelector(selectCanAddToExistingCart)
-  const isOrderingAvailable = useSelector(selectIsOrderingAvailable)
 
   const errors = useSelector(selectFulfillmentRelatedErrorMessages)
 
@@ -58,12 +61,12 @@ export default function FulfillmentDetails() {
             value={ fulfillmentMethod }
             shippingAddress={ cart.shippingAddress }
             onClick={ changeFulfillmentMethod }
-            allowEdit={ isOrderingAvailable } />
+            allowEdit={ isOrderAdmin } />
           { Boolean(fulfilmentTimeRange) ? (
             <Time
               timeRange={fulfilmentTimeRange}
               onClick={ changeTimeSlot }
-              allowEdit={ isOrderingAvailable } />) : t('NOT_AVAILABLE_ATM') }
+              allowEdit={ isFulfilmentTimeSlotsAvailable } />) : t('NOT_AVAILABLE_ATM') }
           { errors.length > 0 ? (
             <div className="alert alert-warning">
               <i className="fa fa-warning"></i>
