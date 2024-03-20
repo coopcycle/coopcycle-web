@@ -63,7 +63,7 @@ export default function FulfillmentDetails() {
             <Time
               timeRange={fulfilmentTimeRange}
               onClick={ changeTimeSlot }
-              allowEdit={ isOrderingAvailable } />) : t('CART_FULFILMENT_NOT_AVAILABLE') }
+              allowEdit={ isOrderingAvailable } />) : t('NOT_AVAILABLE_ATM') }
           { errors.length > 0 ? (
             <div className="alert alert-warning">
               <i className="fa fa-warning"></i>

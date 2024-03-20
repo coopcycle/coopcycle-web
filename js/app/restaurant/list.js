@@ -37,7 +37,7 @@ window.history.scrollRestoration = 'manual'
 const FulfillmentBadge = ({ fulfilmentMethod, isPreOrder }) => {
 
   if (!fulfilmentMethod) {
-    return i18n.t('CART_FULFILMENT_NOT_AVAILABLE')
+    return i18n.t('NOT_AVAILABLE_ATM')
   }
 
   return (
