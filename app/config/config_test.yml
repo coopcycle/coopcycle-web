@@ -63,6 +63,12 @@ oneup_flysystem:
             local:
                 location: '/tmp'
 
+liip_imagine:
+    resolvers:
+        default:
+            web_path:
+                web_root: '/tmp'
+
 services:
 
     _defaults:
