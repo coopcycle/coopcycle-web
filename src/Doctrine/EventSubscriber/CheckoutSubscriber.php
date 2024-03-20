@@ -131,9 +131,17 @@ class CheckoutSubscriber implements EventSubscriber
 
 //        // added to debug the issues with invalid orders in the database, including multiple delivery fees:
 //        // probably due to the race conditions between instances
-        $errors = $this->validator->validate($this->order);
+        $errors = [];
+        try {
+            $errors = $this->validator->validate($this->order);
+        } catch (\Exception $e) {
+            $this->checkoutLogger->error(sprintf('Order %s | CheckoutSubscriber | postFlush | validate | exception: %s',
+                $this->loggingUtils->getOrderId($this->order),
+                $e->getMessage()));
+        }
+
         if ($errors->count() > 0) {
-            $message = sprintf('Order %s | has errors: %s | CheckoutSubscriber',
+            $message = sprintf('Order %s | CheckoutSubscriber | has errors: %s',
                 $this->loggingUtils->getOrderId($this->order),
                 json_encode(ValidationUtils::serializeViolationList($errors)));
 
@@ -143,7 +151,7 @@ class CheckoutSubscriber implements EventSubscriber
         // added to debug the issue with multiple delivery fees: https://github.com/coopcycle/coopcycle-web/issues/3929
         $deliveryAdjustments = $this->order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
         if (count($deliveryAdjustments) > 1) {
-            $message = sprintf('Order %s | has multiple delivery fees: %d | CheckoutSubscriber',
+            $message = sprintf('Order %s | CheckoutSubscriber | has multiple delivery fees: %d',
                 $this->loggingUtils->getOrderId($this->order),
                 count($deliveryAdjustments));
 
