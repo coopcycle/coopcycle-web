@@ -1,35 +1,54 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import _ from 'lodash'
 
 import {
   selectCart,
+  selectFulfilmentMethod,
   selectFulfillmentRelatedErrorMessages,
-  selectIsCollectionEnabled,
-  selectIsDeliveryEnabled,
   selectIsOrderingAvailable,
-  selectIsPlayer,
+  selectFulfilmentTimeRange, selectCanAddToExistingCart,
 } from '../../redux/selectors'
-import { openAddressModal } from '../../redux/actions'
+import { openAddressModal, setDateModalOpen } from '../../redux/actions'
 import FulfillmentMethod from './FulfillmentMethod'
 import Time from './Time'
 import AddressModal from '../AddressModal'
 import DateModal from '../DateModal'
+import Modal from 'react-modal'
+import { useTranslation } from 'react-i18next'
 
 export default function FulfillmentDetails() {
-  const isCollectionEnabled = useSelector(selectIsCollectionEnabled)
-  const isDeliveryEnabled = useSelector(selectIsDeliveryEnabled)
-
-  const isPlayer = useSelector(selectIsPlayer)
-  const isOrderingAvailable = useSelector(selectIsOrderingAvailable)
-
   const cart = useSelector(selectCart)
-  const fulfillmentMethod = (cart.takeaway ||
-    (isCollectionEnabled && !isDeliveryEnabled)) ? 'collection' : 'delivery'
+  const fulfillmentMethod = useSelector(selectFulfilmentMethod)
+  const fulfilmentTimeRange = useSelector(selectFulfilmentTimeRange)
+
+  const canAddToExistingCart = useSelector(selectCanAddToExistingCart)
+  const isOrderingAvailable = useSelector(selectIsOrderingAvailable)
 
   const errors = useSelector(selectFulfillmentRelatedErrorMessages)
 
+  const [isWarningModalOpen, setWarningModalOpen] = useState(false)
+  const continueURL = window.Routing.generate('order_continue')
+
+  const { t } = useTranslation()
+
   const dispatch = useDispatch()
+
+  const changeFulfillmentMethod = () => {
+    if (canAddToExistingCart) {
+      dispatch(openAddressModal(cart.restaurant))
+    } else {
+      setWarningModalOpen(true)
+    }
+  }
+
+  const changeTimeSlot = () => {
+    if (canAddToExistingCart) {
+      dispatch(setDateModalOpen(true))
+    } else {
+      setWarningModalOpen(true)
+    }
+  }
 
   return (
     <div className="panel panel-default">
@@ -38,9 +57,13 @@ export default function FulfillmentDetails() {
           <FulfillmentMethod
             value={ fulfillmentMethod }
             shippingAddress={ cart.shippingAddress }
-            onClick={ () => dispatch(openAddressModal(cart.restaurant)) }
-            allowEdit={ !isPlayer } />
-          { isOrderingAvailable && <Time /> }
+            onClick={ changeFulfillmentMethod }
+            allowEdit={ isOrderingAvailable } />
+          { Boolean(fulfilmentTimeRange) ? (
+            <Time
+              timeRange={fulfilmentTimeRange}
+              onClick={ changeTimeSlot }
+              allowEdit={ isOrderingAvailable } />) : t('CART_FULFILMENT_NOT_AVAILABLE') }
           { errors.length > 0 ? (
             <div className="alert alert-warning">
               <i className="fa fa-warning"></i>
@@ -50,8 +73,30 @@ export default function FulfillmentDetails() {
           ) : null }
         </div>
       </div>
-      <AddressModal />
-      <DateModal />
+      { canAddToExistingCart ? (<AddressModal />) : null}
+      { canAddToExistingCart ? (<DateModal />) : null}
+      <Modal
+        isOpen={ isWarningModalOpen }
+        contentLabel={ t('CART_CHANGE_RESTAURANT_MODAL_LABEL') }
+        className="ReactModal__Content--restaurant">
+        <div>
+          <div className="text-center">
+            <p>
+              { t('CART_CHANGE_FULFILMENT_DETAILS_MODAL_TEXT_LINE_1') }
+              <br />
+              { t('CART_CHANGE_FULFILMENT_DETAILS_MODAL_TEXT_LINE_2') }
+            </p>
+          </div>
+          <div className="ReactModal__Restaurant__button">
+            <a className="btn btn-default" href={ continueURL }>
+              { t('CART_CHANGE_FULFILMENT_DETAILS_MODAL_BTN_NO') }
+            </a>
+            <button type="button" className="btn btn-primary" onClick={ () => setWarningModalOpen(false) }>
+              { t('CART_CHANGE_FULFILMENT_DETAILS_MODAL_BTN_YES') }
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

@@ -81,17 +81,30 @@ class RestaurantController extends AbstractController
         private OrderTimeHelper $orderTimeHelper,
         private SerializerInterface $serializer,
         private RestaurantFilter $restaurantFilter,
+        private RestaurantResolver $restaurantResolver,
         private EventBus $eventBus,
         protected JWTTokenManagerInterface $JWTTokenManager,
+        private TimingRegistry $timingRegistry,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils
     )
     {
     }
 
+    private function getCartTiming(OrderInterface $cart)
+    {
+        // Return info only if the customer can order in this restaurant using the existing cart
+        if ($this->restaurantResolver->accept($cart)) {
+            return $this->orderTimeHelper->getTimeInfo($cart);
+        } else {
+            return null;
+        }
+    }
+
     private function jsonResponse(OrderInterface $cart, array $errors)
     {
         $country = $this->getParameter('country_iso');
+        $restaurant = $this->restaurantResolver->resolve();
 
         $serializerContext = [
             'is_web' => true,
@@ -100,8 +113,9 @@ class RestaurantController extends AbstractController
 
         return new JsonResponse([
             'cart'   => $this->serializer->normalize($cart, 'jsonld', $serializerContext),
-            'times' => $this->orderTimeHelper->getTimeInfo($cart),
+            'cartTiming' => $this->getCartTiming($cart),
             'errors' => $errors,
+            'timing' => $this->timingRegistry->getAllFulfilmentMethodsForObject($restaurant),
         ]);
     }
 
@@ -130,14 +144,13 @@ class RestaurantController extends AbstractController
     public function legacyRestaurantsAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        SlugifyInterface $slugify,
-        TimingRegistry $timingRegistry)
+        SlugifyInterface $slugify)
     {
         $requestClone = clone $request;
 
         $requestClone->attributes->set('type', LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT));
 
-        return $this->listAction($requestClone, $repository, $projectCache, $slugify, $timingRegistry);
+        return $this->listAction($requestClone, $repository, $projectCache, $slugify);
     }
 
     /**
@@ -146,8 +159,7 @@ class RestaurantController extends AbstractController
     public function listAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        SlugifyInterface $slugify,
-        TimingRegistry $timingRegistry)
+        SlugifyInterface $slugify)
     {
         $originalParams = $request->query->all();
 
@@ -238,7 +250,7 @@ class RestaurantController extends AbstractController
             }
         }
 
-        $iterator = new SortableRestaurantIterator($matches, $timingRegistry);
+        $iterator = new SortableRestaurantIterator($matches, $this->timingRegistry);
         $matches = iterator_to_array($iterator);
 
         $count = count($matches);
@@ -385,7 +397,6 @@ class RestaurantController extends AbstractController
     public function indexAction($type, $id, $slug, Request $request,
         SlugifyInterface $slugify,
         CartContextInterface $cartContext,
-        RestaurantResolver $restaurantResolver,
         LoopEatContextInitializer $loopeatContextInitializer,
         LoopEatContext $loopeatContext,
         Address $address = null)
@@ -443,7 +454,7 @@ class RestaurantController extends AbstractController
 
             $cart->setShippingTimeRange(null);
 
-            if ($restaurantResolver->accept($cart)) {
+            if ($this->restaurantResolver->accept($cart)) {
                 $this->persistAndFlushCart($cart);
             }
         }
@@ -469,8 +480,9 @@ class RestaurantController extends AbstractController
 
         return $this->render('restaurant/index.html.twig', $this->auth([
             'restaurant' => $restaurant,
-            'times' => $this->orderTimeHelper->getTimeInfo($cart),
+            'timing' => $this->timingRegistry->getAllFulfilmentMethodsForObject($restaurant),
             'cart_form' => $cartForm->createView(),
+            'cart_timing' => $this->getCartTiming($cart),
             'addresses_normalized' => $this->getUserAddresses(),
         ]));
     }
@@ -480,8 +492,7 @@ class RestaurantController extends AbstractController
      */
     public function changeAddressAction($id, Request $request,
         CartContextInterface $cartContext,
-        IriConverterInterface $iriConverter,
-        RestaurantResolver $restaurantResolver)
+        IriConverterInterface $iriConverter)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
@@ -509,7 +520,7 @@ class RestaurantController extends AbstractController
                     $cart->setShippingAddress($shippingAddress);
                     $cart->setTakeaway(false);
 
-                    if ($restaurantResolver->accept($cart)) {
+                    if ($this->restaurantResolver->accept($cart)) {
                         $this->persistAndFlushCart($cart);
                     }
                 }
@@ -529,8 +540,7 @@ class RestaurantController extends AbstractController
      * @Route("/restaurant/{id}/cart", name="restaurant_cart", methods={"POST"})
      */
     public function cartAction($id, Request $request,
-        CartContextInterface $cartContext,
-        RestaurantResolver $restaurantResolver)
+        CartContextInterface $cartContext)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
@@ -551,7 +561,7 @@ class RestaurantController extends AbstractController
 
             $cart->setShippingTimeRange(null);
 
-            if ($restaurantResolver->accept($cart)) {
+            if ($this->restaurantResolver->accept($cart)) {
                 $this->persistAndFlushCart($cart);
             }
         }
@@ -574,7 +584,7 @@ class RestaurantController extends AbstractController
         // Customer may be browsing the available restaurants
         // Make sure the request targets the same restaurant
         // If not, we don't persist the cart
-        if ($restaurantResolver->accept($cart)) {
+        if ($this->restaurantResolver->accept($cart)) {
             $this->persistAndFlushCart($cart);
         }
 
@@ -587,8 +597,6 @@ class RestaurantController extends AbstractController
      */
     public function addProductToCartAction($id, $code, Request $request,
         CartContextInterface $cartContext,
-        TranslatorInterface $translator,
-        RestaurantResolver $restaurantResolver,
         OptionsPayloadConverter $optionsPayloadConverter)
     {
         $restaurant = $this->getDoctrine()
@@ -651,8 +659,7 @@ class RestaurantController extends AbstractController
      * @Route("/restaurant/{id}/cart/clear-time", name="restaurant_cart_clear_time", methods={"POST"})
      */
     public function clearCartTimeAction($id, Request $request,
-        CartContextInterface $cartContext,
-        RestaurantResolver $restaurantResolver)
+        CartContextInterface $cartContext)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
@@ -661,7 +668,7 @@ class RestaurantController extends AbstractController
 
         $cart->setShippingTimeRange(null);
 
-        if ($restaurantResolver->accept($cart)) {
+        if ($this->restaurantResolver->accept($cart)) {
             $this->persistAndFlushCart($cart);
         }
 
@@ -841,14 +848,13 @@ class RestaurantController extends AbstractController
     public function legacyStoreListAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        SlugifyInterface $slugify,
-        TimingRegistry $timingRegistry)
+        SlugifyInterface $slugify)
     {
         $requestClone = clone $request;
 
         $requestClone->attributes->set('type', LocalBusiness::getKeyForType(Store::GROCERY_STORE));
 
-        return $this->listAction($requestClone, $repository, $projectCache, $slugify, $timingRegistry);
+        return $this->listAction($requestClone, $repository, $projectCache, $slugify);
     }
 
     /**
