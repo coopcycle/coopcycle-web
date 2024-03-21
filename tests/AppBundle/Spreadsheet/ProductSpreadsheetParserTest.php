@@ -5,8 +5,9 @@ namespace Tests\AppBundle\Spreadsheet;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Spreadsheet\ProductSpreadsheetParser;
 use AppBundle\Utils\TaskSpreadsheetParser;
-use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
+use Oneup\UploaderBundle\Uploader\File\FlysystemFile;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -29,7 +30,7 @@ class ProductSpreadsheetParserTest extends KernelTestCase
 
         self::bootKernel();
 
-        $adapter = new Local(__DIR__ . '/../Resources/spreadsheet');
+        $adapter = new LocalFilesystemAdapter(__DIR__ . '/../Resources/spreadsheet');
         $this->filesystem = new Filesystem($adapter);
 
         $serializer = self::$container->get(SerializerInterface::class);
@@ -72,7 +73,7 @@ class ProductSpreadsheetParserTest extends KernelTestCase
         $this->taxCategoryRepository->findOneBy(['name' => 'Food'])
             ->willReturn($foodTax);
 
-        $file = $this->filesystem->get('products.csv');
+        $file = new FlysystemFile('products.csv', $this->filesystem);
         $products = $this->parser->parse($file);
 
         $this->assertCount(2, $products);
@@ -94,7 +95,7 @@ class ProductSpreadsheetParserTest extends KernelTestCase
         $this->taxCategoryRepository->findOneBy(['name' => 'Food'])
             ->willReturn($foodTax);
 
-        $file = $this->filesystem->get('products_missing_price.csv');
+        $file = new FlysystemFile('products_missing_price.csv', $this->filesystem);
         $products = $this->parser->parse($file);
     }
 
@@ -117,7 +118,7 @@ class ProductSpreadsheetParserTest extends KernelTestCase
         $this->taxCategoryRepository->findOneBy(['name' => 'Foobar'])
             ->willReturn(null);
 
-        $file = $this->filesystem->get('products_unknown_tax_category.csv');
+        $file = new FlysystemFile('products_unknown_tax_category.csv', $this->filesystem);
         $products = $this->parser->parse($file);
     }
 

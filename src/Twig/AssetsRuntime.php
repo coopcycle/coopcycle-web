@@ -40,10 +40,6 @@ class AssetsRuntime implements RuntimeExtensionInterface
 
     public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false, bool $cacheUrl = false): ?string
     {
-        $mapping = $this->propertyMappingFactory->fromField($obj, $fieldName);
-
-        $fileSystem = $this->mountManager->getFilesystem($mapping->getUploadDestination());
-
         $uri = $this->storage->resolveUri($obj, $fieldName);
 
         if (!$uri) {
@@ -67,21 +63,17 @@ class AssetsRuntime implements RuntimeExtensionInterface
 
     public function assetBase64($obj, string $fieldName, string $filter): ?string
     {
-        $mapping = $this->propertyMappingFactory->fromField($obj, $fieldName);
-
-        $fileSystem = $this->mountManager->getFilesystem($mapping->getUploadDestination());
-
         $uri = $this->storage->resolveUri($obj, $fieldName);
 
         if (!$uri) {
             return '';
         }
 
-        if (!$fileSystem->has($uri)) {
+        if (!$this->mountManager->fileExists($uri)) {
             return '';
         }
 
-        return (string) ImageManagerStatic::make($fileSystem->read($uri))->encode('data-url');
+        return (string) ImageManagerStatic::make($this->mountManager->read($uri))->encode('data-url');
     }
 
     public function hasCustomBanner(): bool
@@ -91,7 +83,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
             $item->expiresAfter(3600);
 
             try {
-                return $this->assetsFilesystem->has('banner.svg');
+                return $this->assetsFilesystem->fileExists('banner.svg');
             } catch (S3Exception $e) {
                 return false;
             }

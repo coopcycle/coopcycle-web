@@ -27,7 +27,7 @@ class CustomizeType extends AbstractType
 
     private function getContentData($filename)
     {
-        if ($this->assetsFilesystem->has($filename)) {
+        if ($this->assetsFilesystem->fileExists($filename)) {
 
             return [
                 $content = $this->assetsFilesystem->read($filename),
@@ -48,13 +48,13 @@ class CustomizeType extends AbstractType
         }
 
         if ($enabled) {
-            if ($this->assetsFilesystem->has($filename)) {
-                $this->assetsFilesystem->update($filename, $content);
+            if ($this->assetsFilesystem->fileExists($filename)) {
+                $this->assetsFilesystem->write($filename, $content);
             } else {
                 $this->assetsFilesystem->write($filename, $content);
             }
         } else {
-            if ($this->assetsFilesystem->has($filename)) {
+            if ($this->assetsFilesystem->fileExists($filename)) {
                 $this->assetsFilesystem->delete($filename);
             }
         }

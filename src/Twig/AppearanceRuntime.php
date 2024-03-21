@@ -35,7 +35,7 @@ class AppearanceRuntime implements RuntimeExtensionInterface
     public function logo()
     {
         $companyLogo = $this->settingsManager->get('company_logo');
-        if (!empty($companyLogo) && $this->assetsFilesystem->has($companyLogo)) {
+        if (!empty($companyLogo) && $this->assetsFilesystem->fileExists($companyLogo)) {
 
             return $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');
         }
@@ -49,7 +49,7 @@ class AppearanceRuntime implements RuntimeExtensionInterface
 
             $companyLogo = $this->settingsManager->get('company_logo');
 
-            if (!empty($companyLogo) && $this->assetsFilesystem->has($companyLogo)) {
+            if (!empty($companyLogo) && $this->assetsFilesystem->fileExists($companyLogo)) {
 
                 return (string) ImageManagerStatic::make($this->assetsFilesystem->read($companyLogo))->encode('data-url');
             }
@@ -64,7 +64,7 @@ class AppearanceRuntime implements RuntimeExtensionInterface
 
             $item->expiresAfter(60 * 60 * 24);
 
-            return $this->assetsFilesystem->has('about_us.md');
+            return $this->assetsFilesystem->fileExists('about_us.md');
         });
     }
 }

@@ -32,6 +32,8 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Adapter\Ftp;
 use League\Flysystem\Filesystem;
+use League\Flysystem\Ftp\FtpAdapter;
+use League\Flysystem\Ftp\FtpConnectionOptions;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -122,14 +124,18 @@ class SyncTransportersCommand extends Command {
 
         $auth_details = parse_url($config['sync_uri']);
 
-        $filesystem = new Filesystem(new Ftp([
-            'host' => $auth_details['host'],
-            'username' => $auth_details['user'],
-            'password' => $auth_details['pass'],
-            'port' => $auth_details['port'] ?? 21,
-            'root' => $auth_details['path'] ?? '',
-            'ssl' => false
-        ]));
+        $adapter = new FtpAdapter(
+            FtpConnectionOptions::fromArray([
+                'host' => $auth_details['host'],
+                'username' => $auth_details['user'],
+                'password' => $auth_details['pass'],
+                'port' => $auth_details['port'] ?? 21,
+                'root' => $auth_details['path'] ?? '',
+                'ssl' => false,
+            ])
+        );
+
+        $filesystem = new Filesystem($adapter);
 
         $opts = new DBSchenkerOptions(
             $this->companyLegalName, $this->companyLegalID,

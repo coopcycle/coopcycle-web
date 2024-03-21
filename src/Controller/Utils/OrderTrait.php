@@ -146,7 +146,7 @@ trait OrderTrait
 
         $filename = sprintf('%s.pdf', $orderNumber);
 
-        if (!$receiptsFilesystem->has($filename)) {
+        if (!$receiptsFilesystem->fileExists($filename)) {
             throw $this->createNotFoundException(sprintf('File %s.pdf does not exist', $orderNumber));
         }
 

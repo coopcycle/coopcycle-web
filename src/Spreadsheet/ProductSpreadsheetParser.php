@@ -3,7 +3,6 @@
 namespace AppBundle\Spreadsheet;
 
 use AppBundle\Entity\Sylius\Product;
-use League\Flysystem\File;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;

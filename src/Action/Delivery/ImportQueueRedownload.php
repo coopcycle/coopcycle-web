@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery\ImportQueue;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use League\Csv\Writer;
 use League\Flysystem\Filesystem;
+use Oneup\UploaderBundle\Uploader\File\FlysystemFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -19,7 +20,7 @@ class ImportQueueRedownload
 
     public function __invoke(ImportQueue $data)
     {
-        $file = $this->deliveryImportsFilesystem->get($data->getFilename());
+        $file = new FlysystemFile($data->getFilename(), $this->deliveryImportsFilesystem);
 
         $errors = $data->getErrors();
 

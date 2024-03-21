@@ -40,28 +40,34 @@ oneup_flysystem:
     adapters:
         assets:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         product_images:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         restaurant_images:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         store_images:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         task_images:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         receipts:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         task_imports:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         product_imports:
             local:
-                directory: '/tmp'
+                location: '/tmp'
+
+liip_imagine:
+    resolvers:
+        default:
+            web_path:
+                web_root: '/tmp'
 
 services:
 

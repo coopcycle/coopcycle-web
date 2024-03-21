@@ -495,47 +495,47 @@ oneup_flysystem:
         assets:
             adapter: assets
             alias: assets_filesystem
-            mount: assets_filesystem
+            mount: assets
         product_images:
             adapter: product_images
             alias: product_images_filesystem
-            mount: product_images_filesystem
+            mount: product_images
         restaurant_images:
             adapter: restaurant_images
             alias: restaurant_images_filesystem
-            mount: restaurant_images_filesystem
+            mount: restaurant_images
         store_images:
             adapter: store_images
             alias: store_images_filesystem
-            mount: store_images_filesystem
+            mount: store_images
         task_images:
             adapter: task_images
             alias: task_images_filesystem
-            mount: task_images_filesystem
+            mount: task_images
         receipts:
             adapter: receipts
             alias: receipts_filesystem
-            mount: receipts_filesystem
+            mount: receipts
         task_imports:
             adapter: task_imports
             alias: task_imports_filesystem
-            mount: task_imports_filesystem
+            mount: task_imports
         product_imports:
             adapter: product_imports
             alias: product_imports_filesystem
-            mount: product_imports_filesystem
+            mount: product_imports
         delivery_imports:
             adapter: delivery_imports
             alias: delivery_imports_filesystem
-            mount: delivery_imports_filesystem
+            mount: delivery_imports
         nonprofits_images:
             adapter: nonprofits_images
             alias: nonprofits_images_filesystem
-            mount: nonprofits_images_filesystem
+            mount: nonprofits_images
         edi_messages:
             adapter: edi_messages
             alias: edi_messages_filesystem
-            mount: edi_messages_filesystem
+            mount: edi_messages
 
 vich_uploader:
     db_driver: orm
@@ -543,7 +543,7 @@ vich_uploader:
     mappings:
         restaurant_image:
             uri_prefix: ''
-            upload_destination: restaurant_images_filesystem
+            upload_destination: oneup_flysystem.restaurant_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -552,7 +552,7 @@ vich_uploader:
                     dirs: 2
         restaurant_banner_image:
             uri_prefix: ''
-            upload_destination: restaurant_images_filesystem
+            upload_destination: oneup_flysystem.restaurant_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -561,7 +561,7 @@ vich_uploader:
                     dirs: 2
         store_image:
             uri_prefix: ''
-            upload_destination: store_images_filesystem
+            upload_destination: oneup_flysystem.store_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -570,7 +570,7 @@ vich_uploader:
                     dirs: 2
         task_image:
             uri_prefix: ''
-            upload_destination: task_images_filesystem
+            upload_destination: oneup_flysystem.task_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -579,7 +579,7 @@ vich_uploader:
                     dirs: 2
         product_image:
             uri_prefix: ''
-            upload_destination: product_images_filesystem
+            upload_destination: oneup_flysystem.product_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir

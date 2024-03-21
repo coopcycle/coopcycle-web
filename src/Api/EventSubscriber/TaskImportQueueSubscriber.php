@@ -61,7 +61,7 @@ final class TaskImportQueueSubscriber implements EventSubscriberInterface
         $encoded = $hashids->encode($result->getGroup()->getId());
         $filename = sprintf('%s.csv', $encoded);
 
-        if ($this->filesystem->has($filename)) {
+        if ($this->filesystem->fileExists($filename)) {
             $this->filesystem->delete($filename);
         }
 

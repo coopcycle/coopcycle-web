@@ -86,7 +86,7 @@ class Settings
 
         try {
             $companyLogo = $this->settingsManager->get('company_logo');
-            if (!empty($companyLogo) && $this->assetsFilesystem->has($companyLogo)) {
+            if (!empty($companyLogo) && $this->assetsFilesystem->fileExists($companyLogo)) {
                 $data['logo'] = $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');
             }
         } catch (S3Exception $e) {
@@ -110,7 +110,7 @@ class Settings
         }
 
         $orderConfirmMessage = '';
-        if ($this->assetsFilesystem->has('order_confirm.md')) {
+        if ($this->assetsFilesystem->fileExists('order_confirm.md')) {
             $orderConfirmMessage = $this->assetsFilesystem->read('order_confirm.md');
         }
         $data['order_confirm_message'] = $orderConfirmMessage;
