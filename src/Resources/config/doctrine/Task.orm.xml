@@ -52,7 +52,7 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <one-to-many field="packages" target-entity="AppBundle\Entity\Task\Package" mapped-by="task" orphan-removal="true" fetch="EAGER">
+    <one-to-many field="packages" target-entity="AppBundle\Entity\Task\Package" mapped-by="task" orphan-removal="true">
       <cascade>
         <cascade-all/>
       </cascade>
