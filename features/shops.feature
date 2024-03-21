@@ -70,6 +70,10 @@ Feature: Manage shops
         "hub":null,
         "loopeatEnabled":false,
         "tags":@array@,
-        "badges":@array@
+        "badges":@array@,
+         "edenredMerchantId": null,
+        "edenredTRCardEnabled": false,
+        "edenredSyncSent": false,
+        "edenredEnabled": false
       }
       """
