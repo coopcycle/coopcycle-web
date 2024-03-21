@@ -933,8 +933,7 @@ Feature: Manage restaurants
               "doneBefore":"@string@.isDateTime()",
               "weight": null,
               "packages": [],
-              "createdAt":"@string@.isDateTime()",
-              "tour":null
+              "createdAt":"@string@.isDateTime()"
             },
             "dropoff":{
               "@id":"/api/tasks/2",
@@ -962,8 +961,7 @@ Feature: Manage restaurants
               "doneBefore":"@string@.isDateTime()",
               "weight":null,
               "packages": [],
-              "createdAt":"@string@.isDateTime()",
-              "tour":null
+              "createdAt":"@string@.isDateTime()"
             },
             "trackingUrl": @string@
           }
