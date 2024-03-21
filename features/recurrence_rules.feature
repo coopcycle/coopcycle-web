@@ -322,12 +322,12 @@ Feature: Task recurrence rules
           {
             "@id":"/api/tasks/1",
             "@type":"Task",
-            "packages": [],
+            "packages": []
           },
           {
             "@id":"/api/tasks/2",
             "@type":"Task",
-            "packages": [],
+            "packages": []
           }
         ],
         "hydra:totalItems":2
