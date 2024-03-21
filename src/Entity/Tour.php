@@ -16,6 +16,10 @@ use AppBundle\Api\Filter\DateFilter;
 /**
  * @ApiResource(
  *   collectionOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_DISPATCHER')"
+ *     },
  *     "post"={
  *       "method"="POST",
  *       "input"=TourInput::class,
@@ -48,7 +52,7 @@ use AppBundle\Api\Filter\DateFilter;
 class Tour extends TaskCollection implements TaskCollectionInterface
 {
     private $date;
-    
+
     protected $id;
 
     /**
@@ -128,5 +132,5 @@ class Tour extends TaskCollection implements TaskCollectionInterface
         $this->date = $date;
 
         return $this;
-    }    
+    }
 }
