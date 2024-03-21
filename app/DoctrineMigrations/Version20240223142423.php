@@ -20,7 +20,11 @@ final class Version20240223142423 extends AbstractMigration
         $this->addSql('ALTER TABLE restaurant ADD edenred_sync_sent BOOLEAN DEFAULT \'false\'');
         $this->addSql('ALTER TABLE restaurant ADD edenred_trcard_enabled BOOLEAN DEFAULT \'false\'');
 
-        $this->addSql('UPDATE restaurant SET edenred_enabled = \'f\', edenred_sync_sent = \'f\', edenred_trcard_enabled = \'f\'');
+        $this->addSql('UPDATE restaurant SET edenred_enabled = \'false\', edenred_sync_sent = \'false\', edenred_trcard_enabled = \'false\'');
+
+        $this->addSql('ALTER TABLE restaurant ALTER edenred_enabled SET NOT NULL');
+        $this->addSql('ALTER TABLE restaurant ALTER edenred_sync_sent SET NOT NULL');
+        $this->addSql('ALTER TABLE restaurant ALTER edenred_trcard_enabled SET NOT NULL');
     }
 
     public function down(Schema $schema): void
