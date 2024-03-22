@@ -286,26 +286,15 @@ export function importError(token, message) {
   return { type: IMPORT_ERROR, token, message }
 }
 
-export function modifyTaskList(username, tasks) {
+export function modifyTaskListInUI(username, tasks) {
   /*
     Modify a TaskList
   */
 
-  return async function(dispatch, getState) {
-
-    const data = tasks.map((task, index) => ({
-      task: task['@id'],
-      position: index,
-    }))
+  return function(dispatch, getState) {
 
     let state = getState()
     let allTasks = selectAllTasks(state)
-    let date = selectSelectedDate(state)
-
-    const url = window.Routing.generate('admin_task_list_modify', {
-      date: date.format('YYYY-MM-DD'),
-      username,
-    })
 
     const newTasks = tasks.map((task, position) => {
       const rt = _.find(allTasks, t => t['@id'] === task['@id'])
@@ -320,7 +309,31 @@ export function modifyTaskList(username, tasks) {
     const tasksList = _.find(tasksLists, tl => tl.username === username)
     const previousTasks = tasksList.items
 
-    dispatch(modifyTaskListRequest(username, newTasks, previousTasks))
+    return dispatch(modifyTaskListRequest(username, newTasks, previousTasks))
+  }}
+
+export function modifyTaskList(username, tasks) {
+  /*
+    Modify a TaskList
+  */
+
+  return async function(dispatch, getState) {
+
+    const state = getState()
+
+    modifyTaskListInUI(username, tasks)
+
+    const data = tasks.map((task, index) => ({
+      task: task['@id'],
+      position: index,
+    }))
+
+    const date = selectSelectedDate(state)
+
+    const url = window.Routing.generate('admin_task_list_modify', {
+      date: date.format('YYYY-MM-DD'),
+      username,
+    })
 
     let response
 

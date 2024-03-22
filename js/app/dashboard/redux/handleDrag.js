@@ -5,7 +5,8 @@ import { clearSelectedTasks,
   modifyTaskList as modifyTaskListAction,
   modifyTour as modifyTourAction,
   removeTasksFromTour as removeTasksFromTourAction,
-  unassignTasks as unassignTasksAction } from "./actions"
+  unassignTasks as unassignTasksAction
+} from "./actions"
 import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
 import { isValidTasksMultiSelect, withOrderTasksForDragNDrop } from "./utils"
 import { toast } from 'react-toastify'
@@ -51,11 +52,10 @@ export function handleDragEnd(
       - Dispatch actions according to the destination
   */
 
-  return function(dispatch, getState) {
+  return  function(dispatch, getState) {
 
-    const handleDropInTaskList = (tasksList, selectedTasks, index) => {
+    const  handleDropInTaskList = async (tasksList, selectedTasks, index) => {
       let newTasksList = [...tasksList.items]
-
 
       selectedTasks.forEach((task) => {
         let taskIndex = newTasksList.findIndex((item) => item['@id'] === task['@id'])
@@ -63,9 +63,15 @@ export function handleDragEnd(
         if ( taskIndex > -1) {
           newTasksList.splice(taskIndex, 1)
         }
+
       })
 
       newTasksList.splice(index, 0, ...selectedTasks)
+
+      if(selectedTasks[0].assignedTo && selectedTasks[0].assignedTo !== tasksList.username) {
+        await dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
+      }
+
       return dispatch(modifyTaskList(tasksList.username, newTasksList))
     },
     getPositionInFlatTaskList = (nestedTaskList, destinationIndex, tourId=null) => {

@@ -117,6 +117,7 @@ const Tour = ({ tour, draggableIndex }) => {
                     <a role="button" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))} className="ml-2 flex-grow-1 text-truncate">
                       { tour.name } <span className="badge">{ tour.items.length }</span>
                     </a>
+                    <i className="fa fa-bars mr-2"></i>
                   </RenderEditNameForm>
               </h4>
             </div>
