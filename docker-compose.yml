@@ -62,6 +62,8 @@ services:
       # Make sure "base_url" has a trailing slash
       # https://github.com/FriendsOfBehat/SymfonyExtension/issues/124
       - 'BEHAT_PARAMS={"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80/"}}}'
+      - APP_ENV
+      - APP_DEBUG
       - GOOGLE_API_KEY
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY
