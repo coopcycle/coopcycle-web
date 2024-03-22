@@ -20,7 +20,7 @@ framework:
 #    serializer:
 #        cache: serializer.mapping.cache.doctrine.apc
     session:
-        cookie_secure: true
+#        cookie_secure: true
 
 parameters:
     router.request_context.scheme: 'https'
