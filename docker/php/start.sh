@@ -38,9 +38,11 @@ php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --en
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=$APP_ENV
 php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=$APP_ENV
 
-php bin/console doctrine:database:create --if-not-exists --env=test
-php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=test
-php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=test
-php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=test
+if [ "$APP_ENV" = 'dev' ] || [ "$APP_ENV" = 'test' ]; then
+    php bin/console doctrine:database:create --if-not-exists --env=test
+    php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=test
+    php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=test
+    php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=test
+fi
 
 exec docker-php-entrypoint "$@"
