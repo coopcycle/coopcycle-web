@@ -96,13 +96,6 @@ export function handleDragEnd(
       return;
     }
 
-    // reordered inside the unassigned tours list, do nothing
-    if (
-      source.droppableId === destination.droppableId && source.droppableId === 'unassigned_tours'
-    ) {
-      return;
-    }
-
     if (source.droppableId.startsWith('group:') && destination.droppableId.startsWith('group:') && source.droppableId !== destination.droppableId) {
       toast.warn(i18next.t("ADMIN_DASHBOARD_CAN_NOT_MOVE_TASKS_BETWEEN_GROUPS"))
       return
@@ -148,7 +141,14 @@ export function handleDragEnd(
       selectedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
     }
 
+    // reordered inside the unassigned tours list
     if (
+      source.droppableId === destination.droppableId && source.droppableId === 'unassigned_tours'
+    ) {
+      const itemId = result.draggableId.startsWith('tour:') ? result.draggableId.replace('tour:', '') : result.draggableId.replace('group:', '')
+      dispatch({type: "INSERT_IN_UNASSIGNED_TOURS", itemId: itemId, index: result.destination.index})
+      return;
+    } else if (
       source.droppableId === destination.droppableId && source.droppableId === 'unassigned'
     ) {
       dispatch({type: "INSERT_IN_UNASSIGNED_TASKS", tasksToInsert: selectedTasks, index: result.destination.index})

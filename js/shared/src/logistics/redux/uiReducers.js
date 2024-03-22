@@ -17,6 +17,7 @@ const initialState = {
 
 export default (state = initialState, action) => {
   let unassignedTasksIdsOrder
+  let unassignedToursOrGroupsOrderIds
 
   switch (action.type) {
     case CREATE_TASK_LIST_REQUEST:
@@ -41,7 +42,7 @@ export default (state = initialState, action) => {
     case 'APPEND_TO_UNASSIGNED_TASKS':
       unassignedTasksIdsOrder = [...state.unassignedTasksIdsOrder]
       _.remove(unassignedTasksIdsOrder, t => action.taskToRemoveIds.includes(t))
-      // unassignedTasksIdsOrder = [...unassignedTasksIdsOrder, ...action.tasksToAppendIds]
+      unassignedTasksIdsOrder = [...unassignedTasksIdsOrder, ...action.tasksToAppendIds]
       return {
         ...state,
         unassignedTasksIdsOrder: unassignedTasksIdsOrder,
@@ -57,6 +58,26 @@ export default (state = initialState, action) => {
         ...state,
         unassignedTasksIdsOrder: unassignedTasksIdsOrder,
       }
+
+  case 'APPEND_TO_UNASSIGNED_TOURS':
+    unassignedToursOrGroupsOrderIds = [...state.unassignedToursOrGroupsOrderIds]
+    _.remove(unassignedToursOrGroupsOrderIds, t => action.itemsToRemoveIds.includes(t))
+    unassignedToursOrGroupsOrderIds = [...unassignedToursOrGroupsOrderIds, ...action.itemsToAppendIds]
+    return {
+      ...state,
+      unassignedToursOrGroupsOrderIds: unassignedToursOrGroupsOrderIds,
+    }
+
+  case 'INSERT_IN_UNASSIGNED_TOURS':
+    const tourOrGroupToInsert = action.itemId
+    unassignedToursOrGroupsOrderIds = [...state.unassignedToursOrGroupsOrderIds]
+    _.remove(unassignedToursOrGroupsOrderIds, t => t === tourOrGroupToInsert)
+    Array.prototype.splice.apply(unassignedToursOrGroupsOrderIds, Array.prototype.concat([ action.index, 0 ], tourOrGroupToInsert))
+
+    return {
+      ...state,
+      unassignedToursOrGroupsOrderIds: unassignedToursOrGroupsOrderIds,
+    }
 
     default:
       return state

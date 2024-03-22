@@ -159,7 +159,8 @@ async function start() {
       ui: {
         expandedTourPanelsIds: expandedToursIds,
         loadingTourPanelsIds: [],
-        unassignedTasksIdsOrder: []
+        unassignedTasksIdsOrder: [],
+        unassignedToursOrGroupsOrderIds: []
       }
     }
   })

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import _ from 'lodash'
 
 import { Draggable, Droppable } from "@hello-pangea/dnd"
@@ -38,8 +38,23 @@ export const UnassignedTours = () => {
   const { t } = useTranslation()
   const groups = useSelector(selectGroups)
   const tours = useSelector(selectUnassignedTours)
+  const items = [...groups, ...tours]
   const dispatch = useDispatch()
   const isTourDragging = useSelector(selectIsTourDragging)
+  const unassignedToursOrGroupsOrderIds = useSelector(state => state.logistics.ui.unassignedToursOrGroupsOrderIds)
+
+  useEffect(() => {
+    const itemIds = [...groups.map(t => t['@id']), ...tours.map(t => t['@id'])]
+
+    const itemsToAppendIds = _.filter(itemIds, t => !unassignedToursOrGroupsOrderIds.includes(t))
+
+    let itemsToRemoveIds = _.filter(unassignedToursOrGroupsOrderIds, taskId => !itemIds.includes(taskId))
+
+    if (itemsToAppendIds.length > 0 || itemsToRemoveIds.length > 0) {
+      dispatch({type: "APPEND_TO_UNASSIGNED_TOURS", itemsToAppendIds, itemsToRemoveIds})
+    }
+
+  }, [tours, groups]);
 
   return (
     <div className="dashboard__panel">
@@ -52,7 +67,7 @@ export const UnassignedTours = () => {
       <div className="dashboard__panel__scroll">
         <Droppable
           droppableId="unassigned_tours"
-          key={tours.length} // assign a mutable key to trigger a re-render when inserting a nested droppable (for example : a new tour)
+          key={items.length} // assign a mutable key to trigger a re-render when inserting a nested droppable (for example : a new tour)
           isDropDisabled={!isTourDragging}
           >
           {(provided, snapshot) => (
@@ -65,27 +80,31 @@ export const UnassignedTours = () => {
                   }) }
                   style={getDroppableListStyle(snapshot.isDraggingOver)}
                 >
-              { _.map(groups, (group, index) => {
-                return (
-                  <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
-                    {(provided) => (
-                      <div
-                        ref={ provided.innerRef }
-                        { ...provided.draggableProps }
-                        { ...provided.dragHandleProps }
-                      >
-                        <TaskGroup
-                          key={ group.id }
-                          group={ group }
-                          tasks={ group.tasks }
-                          onConfirmDelete={ () => dispatch(deleteGroup(group)) }
-                          onEdit={ (data) => dispatch(editGroup(data)) } />
-                      </div>
-                    )}
-                  </Draggable>
-                )
+              {_.map(unassignedToursOrGroupsOrderIds, (itemId, index) => {
+                const item = items.find(i => i['@id'] === itemId)
+                if (item && itemId.startsWith('/api/task_groups')) {
+                  return (
+                    <Draggable key={ `group-${item.id}` } draggableId={ `group:${item.id}` } index={ index }>
+                      {(provided) => (
+                        <div
+                          ref={ provided.innerRef }
+                          { ...provided.draggableProps }
+                          { ...provided.dragHandleProps }
+                        >
+                          <TaskGroup
+                            key={ item.id }
+                            group={ item }
+                            tasks={ item.tasks }
+                            onConfirmDelete={ () => dispatch(deleteGroup(item)) }
+                            onEdit={ (data) => dispatch(editGroup(data)) } />
+                        </div>
+                      )}
+                    </Draggable>
+                  )
+                } else if (item && itemId.startsWith('/api/tours')) {
+                  return <Tour key={ item['@id'] } tour={ item } draggableIndex={ index } />
+                }
               })}
-              { _.map(tours, (tour, index) => <Tour key={ tour['@id'] } tour={ tour } draggableIndex={ index + groups.length } />) }
               { provided.placeholder }
               </div>
             </div>
