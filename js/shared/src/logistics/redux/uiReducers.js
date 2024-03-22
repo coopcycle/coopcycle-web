@@ -40,9 +40,8 @@ export default (state = initialState, action) => {
 
     case 'APPEND_TO_UNASSIGNED_TASKS':
       unassignedTasksIdsOrder = [...state.unassignedTasksIdsOrder]
-      const taskToRemoveIds = action.tasksToRemove.map(t => t['@id'])
-      _.remove(unassignedTasksIdsOrder, t => taskToRemoveIds.includes(t))
-      unassignedTasksIdsOrder = [...unassignedTasksIdsOrder, ...action.tasksToAppend.map(t => t['@id'])]
+      _.remove(unassignedTasksIdsOrder, t => action.taskToRemoveIds.includes(t))
+      // unassignedTasksIdsOrder = [...unassignedTasksIdsOrder, ...action.tasksToAppendIds]
       return {
         ...state,
         unassignedTasksIdsOrder: unassignedTasksIdsOrder,

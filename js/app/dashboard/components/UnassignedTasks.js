@@ -91,12 +91,14 @@ export const UnassignedTasks = () => {
   let unassignedTasksIdsOrder = useSelector(state => state.logistics.ui.unassignedTasksIdsOrder)
 
   useEffect(() => {
-    let tasksToAppend = _.filter(standaloneTasks, t => !unassignedTasksIdsOrder.includes(t['@id']))
-    const standaloneTaskIds = standaloneTasks.map(t => t['@id'])
-    let tasksToRemove = _.filter(unassignedTasksIdsOrder, taskId => !standaloneTaskIds.includes(taskId))
+    const tasksToAppend = _.filter(standaloneTasks, t => !unassignedTasksIdsOrder.includes(t['@id']))
+    const tasksToAppendIds = tasksToAppend.map(t => t['@id'])
 
-    if (tasksToAppend.length > 0 || tasksToAppend.length > 0) {
-      dispatch({type: "APPEND_TO_UNASSIGNED_TASKS", tasksToAppend, tasksToRemove })
+    const standaloneTaskIds = standaloneTasks.map(t => t['@id'])
+    let taskToRemoveIds = _.filter(unassignedTasksIdsOrder, taskId => !standaloneTaskIds.includes(taskId))
+
+    if (tasksToAppendIds.length > 0 || taskToRemoveIds.length > 0) {
+      dispatch({type: "APPEND_TO_UNASSIGNED_TASKS", tasksToAppendIds, taskToRemoveIds})
     }
 
   }, [standaloneTasks]);
