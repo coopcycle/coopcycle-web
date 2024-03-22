@@ -134,7 +134,6 @@ const Tour = ({ tour, draggableIndex }) => {
                         'm-0': true,
                         'p-0': true,
                         'nomargin': true,
-                        'taskList__tasks--empty': !tour.items.length
                       }) }
                       style={getDroppableListStyle(snapshot.isDraggingOver)}
                       >

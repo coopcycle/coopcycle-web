@@ -62,7 +62,6 @@ export const UnassignedTours = () => {
                     'taskList__tasks': true,
                     'list-group': true,
                     'm-0': true,
-                    'taskList__tasks--empty': !(groups.length + tours.length)
                   }) }
                   style={getDroppableListStyle(snapshot.isDraggingOver)}
                 >

@@ -158,7 +158,8 @@ async function start() {
     logistics: {
       ui: {
         expandedTourPanelsIds: expandedToursIds,
-        loadingTourPanelsIds: []
+        loadingTourPanelsIds: [],
+        unassignedTasksIdsOrder: []
       }
     }
   })

@@ -96,10 +96,9 @@ export function handleDragEnd(
       return;
     }
 
-    // reordered inside the unassigned list or unassigned tours list, do nothing
+    // reordered inside the unassigned tours list, do nothing
     if (
-      source.droppableId === destination.droppableId &&
-      ( source.droppableId === 'unassigned' || source.droppableId === 'unassigned_tours' )
+      source.droppableId === destination.droppableId && source.droppableId === 'unassigned_tours'
     ) {
       return;
     }
@@ -149,7 +148,12 @@ export function handleDragEnd(
       selectedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
     }
 
-    if (destination.droppableId === 'unassigned') {
+    if (
+      source.droppableId === destination.droppableId && source.droppableId === 'unassigned'
+    ) {
+      dispatch({type: "INSERT_IN_UNASSIGNED_TASKS", tasksToInsert: selectedTasks, index: result.destination.index})
+      return;
+    } else if (destination.droppableId === 'unassigned') {
       if (!belongsToTour(selectedTasks[0])(getState())) {
         dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
       } else {

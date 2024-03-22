@@ -14,8 +14,13 @@ import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRec
 import { getDroppableListStyle } from '../utils'
 import classNames from 'classnames'
 
-const StandaloneTasks =  ({tasks, offset}) => {
-  return _.map(tasks, (task, index) => <Task task={ task } draggableIndex={ (offset + index) } key={ task['@id'] } />)
+const StandaloneTasks =  ({tasks, unassignedTasksIdsOrder, offset}) => {
+  return _.map(unassignedTasksIdsOrder, (taskId, index) => {
+    const task = tasks.find(t => t['@id'] === taskId)
+    if (task) {
+      return <Task task={ task } draggableIndex={ (offset + index) } key={ task['@id'] } />
+    }
+  })
 }
 
 
@@ -83,17 +88,17 @@ export const UnassignedTasks = () => {
   const isRecurrenceRulesVisible = useSelector(selectIsRecurrenceRulesVisible)
   const toursEnabled = useSelector(selectAreToursEnabled)
   const isTourDragging = useSelector(selectIsTourDragging)
+  let unassignedTasksIdsOrder = useSelector(state => state.logistics.ui.unassignedTasksIdsOrder)
 
-  // not the nicest ever. when tasks changed, we want to render droppable on "next tick"
-  // otherwise we may run in the error "Unable to find draggable with id: <taskId>" (then the task wont be draggable)
-  // ref https://github.com/atlassian/@hello-pangea/dnd/issues/2407#issuecomment-1648339464
-  const [renderDroppableArea, setRenderDroppableArea] = useState(false);
   useEffect(() => {
-    const animation = requestAnimationFrame(() => setRenderDroppableArea(true));
-    return () => {
-      cancelAnimationFrame(animation);
-      setRenderDroppableArea(false);
-    };
+    let tasksToAppend = _.filter(standaloneTasks, t => !unassignedTasksIdsOrder.includes(t['@id']))
+    const standaloneTaskIds = standaloneTasks.map(t => t['@id'])
+    let tasksToRemove = _.filter(unassignedTasksIdsOrder, taskId => !standaloneTaskIds.includes(taskId))
+
+    if (tasksToAppend.length > 0 || tasksToAppend.length > 0) {
+      dispatch({type: "APPEND_TO_UNASSIGNED_TASKS", tasksToAppend, tasksToRemove })
+    }
+
   }, [standaloneTasks]);
 
   return (
@@ -111,49 +116,69 @@ export const UnassignedTasks = () => {
             rrule={ rrule }
             onClick={ () => dispatch(setCurrentRecurrenceRule(rrule)) } />
         ) }
-
+          { !toursEnabled ?
+            <Droppable
+              droppableId="unassigned_groups"
+              isDropDisabled={true}
+            >
+            {(provided, snapshot) => (
+              <div ref={ provided.innerRef } { ...provided.droppableProps }>
+                <div
+                  className={ classNames({
+                    'taskList__tasks': true,
+                    'list-group': true,
+                    'm-0': true,
+                  })}
+                  style={getDroppableListStyle(snapshot.isDraggingOver)}
+                >
+                  {_.map(groups, (group, index) => {
+                      return (
+                        <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
+                          {(provided) => (
+                            <div
+                              ref={ provided.innerRef }
+                              { ...provided.draggableProps }
+                              { ...provided.dragHandleProps }
+                            >
+                              <TaskGroup
+                                key={ group.id }
+                                group={ group }
+                                tasks={ group.tasks }
+                                onConfirmDelete={ () => dispatch(deleteGroup(group)) }
+                                onEdit={ (data) => dispatch(editGroup(data)) } />
+                            </div>
+                          )}
+                        </Draggable>
+                      )
+                    })}
+                    { provided.placeholder }
+                </div>
+              </div>
+            )}
+            </Droppable> : null
+          }
           <Droppable
             droppableId="unassigned"
             isDropDisabled={isTourDragging}
           >
             {(provided, snapshot) => (
               <div ref={ provided.innerRef } { ...provided.droppableProps }>
-                { renderDroppableArea ?
-                <div
+                { <div
                   className={ classNames({
                     'taskList__tasks': true,
                     'list-group': true,
                     'm-0': true,
-                    'taskList__tasks--empty': !standaloneTasks.length
                   }) }
                   style={getDroppableListStyle(snapshot.isDraggingOver)}
-                >{ !toursEnabled ? _.map(groups, (group, index) => {
-                    return (
-                      <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
-                        {(provided) => (
-                          <div
-                            ref={ provided.innerRef }
-                            { ...provided.draggableProps }
-                            { ...provided.dragHandleProps }
-                          >
-                            <TaskGroup
-                              key={ group.id }
-                              group={ group }
-                              tasks={ group.tasks }
-                              onConfirmDelete={ () => dispatch(deleteGroup(group)) }
-                              onEdit={ (data) => dispatch(editGroup(data)) } />
-                          </div>
-                        )}
-                      </Draggable>
-                    )
-                  }) : null}
-
+                >
+                  {/* offset={ !toursEnabled ? groups.length : 0 */}
                   <StandaloneTasks
                     tasks={ standaloneTasks }
-                    offset={ groups.length }
+                    unassignedTasksIdsOrder={ unassignedTasksIdsOrder }
+                    offset={ 0 }
                   />
                   { provided.placeholder }
-                </div>  : null }
+                </div> }
               </div>
             )}
           </Droppable>
