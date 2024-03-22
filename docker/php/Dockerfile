@@ -101,8 +101,5 @@ RUN chmod +x /usr/local/bin/docker-app-start
 RUN chmod +x /usr/local/bin/enable-xdebug
 RUN chmod +x bin/demo
 
-ENV APP_ENV dev
-ENV APP_DEBUG 1
-
 ENTRYPOINT ["docker-app-start"]
 CMD ["php-fpm"]

@@ -61,8 +61,7 @@ Feature: Multi-step deliveries
           "comments": "1.50 kg",
           "weight":1500,
           "packages": [],
-          "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -89,8 +88,7 @@ Feature: Multi-step deliveries
           "comments": "",
           "weight":1500,
           "packages": [],
-          "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
       }
@@ -175,8 +173,7 @@ Feature: Multi-step deliveries
               "quantity":4
             }
           ],
-          "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":@string@,
@@ -209,8 +206,7 @@ Feature: Multi-step deliveries
               "quantity":2
             }
           ],
-          "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
       }
@@ -291,8 +287,7 @@ Feature: Multi-step deliveries
               "quantity":2
             }
           ],
-          "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"/api/tasks/3",
@@ -325,8 +320,7 @@ Feature: Multi-step deliveries
               "quantity":2
             }
           ],
-          "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
       }
@@ -405,8 +399,7 @@ Feature: Multi-step deliveries
               "quantity":2
             }
           ],
-          "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"/api/tasks/3",
@@ -439,8 +432,7 @@ Feature: Multi-step deliveries
               "quantity":2
             }
           ],
-          "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
       }
