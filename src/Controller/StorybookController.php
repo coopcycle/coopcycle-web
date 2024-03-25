@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StorybookController extends AbstractController
 {
@@ -22,7 +23,7 @@ class StorybookController extends AbstractController
 	/**
      * @Route("/storybook/component/{id}", name="storybook_component")
      */
-    public function componentAction($id, Request $request, DenormalizerInterface $denormalizer)
+    public function componentAction($id, Request $request, DenormalizerInterface $denormalizer, TranslatorInterface $translator)
     {
         if (array_key_exists($id, $this->mapping)) {
             $template = $this->mapping[$id];
@@ -33,6 +34,10 @@ class StorybookController extends AbstractController
         }
 
         $args = $request->query->all();
+
+        if (array_key_exists('locale', $args)) {
+            $translator->setLocale($args['locale']);
+        }
 
         $args = array_map(function ($value) use ($denormalizer) {
 
