@@ -28,11 +28,11 @@
         {% endif %}
 
         {% for restrictedDiet in restrictedDiets %}
-          {% include "components/restaurant/product_badge/product_badge.html.twig" with {type: 'restricted_diet', value: restrictedDiet} %}
+          {% include "components/product/badge/product_badge.html.twig" with {type: 'restricted_diet', value: restrictedDiet} %}
         {% endfor %}
 
         {% if product.isReusablePackagingEnabled() %}
-          {% include "components/restaurant/product_badge/product_badge.html.twig" with {type: 'reusable_packaging'} %}
+          {% include "components/product/badge/product_badge.html.twig" with {type: 'reusable_packaging'} %}
         {% endif %}
 
       </div>

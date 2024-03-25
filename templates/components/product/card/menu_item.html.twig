@@ -11,7 +11,7 @@
 {#      FIXME: data-product-options format is slightly different from the format returned by the API #}
 {#      switch to the API format to be able to shared code with the mobile app #}
       data-product-options="{{ product.options|coopcycle_normalize('AppBundle\\Entity\\Sylius\\ProductOption', ['product_option'], 'json')|json_encode|e('html_attr') }}">
-      {% include 'components/restaurant/product/menu_item_inner.html.twig' %}
+      {% include 'components/product/card/menu_item_inner.html.twig' %}
       {% if product.hasOptions() %}
         <div class="menu-item__add-wrapper">
           <div class="add-button">+</div>
@@ -33,7 +33,7 @@
 {% else %}
   <div class="menu-item">
     <a class="menu-item--unavailable">
-      {% include 'components/restaurant/product/menu_item_inner.html.twig' %}
+      {% include 'components/product/card/menu_item_inner.html.twig' %}
     </a>
   </div>
 {% endif %}

@@ -23,10 +23,10 @@
     {% if badges is not empty or tags is not empty %}
       <div class="badges-and-tags">
         {% for badge in badges %}
-          {% include "components/restaurant/restaurant_badge/restaurant_badge.html.twig" with {type: badge} %}
+          {% include "components/restaurant/badge/restaurant_badge.html.twig" with {type: badge} %}
         {% endfor %}
         {% for tag in tags %}
-          {% include "components/restaurant/restaurant_tag/restaurant_tag.html.twig" with {value: tag} %}
+          {% include "components/restaurant/tag/restaurant_tag.html.twig" with {value: tag} %}
         {% endfor %}
       </div>
     {% endif %}
