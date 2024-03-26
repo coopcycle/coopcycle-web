@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 class StorybookController extends AbstractController
 {
@@ -20,10 +20,14 @@ class StorybookController extends AbstractController
         'product_badge' => 'components/product/badge/product_badge.html.twig',
     ];
 
+    public function __construct(private LocaleAwareInterface $translator)
+    {
+    }
+
 	/**
      * @Route("/storybook/component/{id}", name="storybook_component")
      */
-    public function componentAction($id, Request $request, DenormalizerInterface $denormalizer, TranslatorInterface $translator)
+    public function componentAction($id, Request $request, DenormalizerInterface $denormalizer)
     {
         if (array_key_exists($id, $this->mapping)) {
             $template = $this->mapping[$id];
@@ -36,7 +40,7 @@ class StorybookController extends AbstractController
         $args = $request->query->all();
 
         if (array_key_exists('locale', $args)) {
-            $translator->setLocale($args['locale']);
+            $this->translator->setLocale($args['locale']);
         }
 
         $args = array_map(function ($value) use ($denormalizer) {
