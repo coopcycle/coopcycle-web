@@ -21,11 +21,6 @@ Feature: Tours
         "id":1,
         "type":"DROPOFF",
         "status":"TODO",
-        "tour":{
-          "@id":"/api/tours/1",
-          "name":"Example tour",
-          "position":@integer@
-        },
         "@*@":"@*@"
       }
       """
@@ -70,8 +65,6 @@ Feature: Tours
         "id":1,
         "type":"DROPOFF",
         "status":"TODO",
-        "tour":null,
         "@*@":"@*@"
       }
       """
-

@@ -51,12 +51,7 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":0,
-            "createdAt":"@string@.isDateTime()",
-            "tour":{
-              "@id":"/api/tours/1",
-              "name":"Example tour",
-              "position":@integer@
-            }
+            "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -87,8 +82,7 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":1,
-            "createdAt":"@string@.isDateTime()",
-            "tour":null
+            "createdAt":"@string@.isDateTime()"
           }
         ],
         "hydra:totalItems":2,
@@ -122,12 +116,7 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":0,
-            "createdAt":"@string@.isDateTime()",
-            "tour":{
-              "@id":"/api/tours/1",
-              "name":"Example tour",
-              "position":@integer@
-            }
+            "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -158,8 +147,7 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":1,
-            "createdAt":"@string@.isDateTime()",
-            "tour":null
+            "createdAt":"@string@.isDateTime()"
           }
         ],
         "distance":@integer@,
@@ -547,12 +535,7 @@ Feature: Tasks
         "weight":null,
         "hasIncidents": false,
         "packages": [],
-        "createdAt":"@string@.isDateTime()",
-        "tour":{
-          "@id":"/api/tours/1",
-          "name":"Example tour",
-          "position":@integer@
-        }
+        "createdAt":"@string@.isDateTime()"
       }
       """
 
@@ -1000,8 +983,7 @@ Feature: Tasks
         "weight": 800,
         "hasIncidents": false,
         "packages": [],
-        "createdAt":"@string@.isDateTime()",
-        "tour":null
+        "createdAt":"@string@.isDateTime()"
       }
       """
 
@@ -1082,8 +1064,7 @@ Feature: Tasks
         "weight":null,
         "hasIncidents": false,
         "packages": [],
-        "createdAt":"@string@.isDateTime()",
-        "tour":null
+        "createdAt":"@string@.isDateTime()"
       }
       """
 
@@ -1214,8 +1195,7 @@ Feature: Tasks
             "weight":null,
             "hasIncidents": false,
             "packages": [],
-            "createdAt":"@string@.isDateTime()",
-            "tour":null
+            "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"/api/tasks/2",
@@ -1245,8 +1225,7 @@ Feature: Tasks
             "weight":null,
             "hasIncidents": false,
             "packages": [],
-            "createdAt":"@string@.isDateTime()",
-            "tour":null
+            "createdAt":"@string@.isDateTime()"
           }
         ],
         "hydra:totalItems":2,
@@ -2423,4 +2402,3 @@ Feature: Tasks
         "thumbnail":@string@
       }
       """
-

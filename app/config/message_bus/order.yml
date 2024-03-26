@@ -26,10 +26,7 @@ services:
 
   coopcycle.domain.order.handler.checkout:
     class: AppBundle\Domain\Order\Handler\CheckoutHandler
-    arguments:
-      - '@event_recorder'
-      - '@sylius.order_number_assigner'
-      - '@AppBundle\Payment\Gateway'
+    autowire: true
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Order\Command\Checkout

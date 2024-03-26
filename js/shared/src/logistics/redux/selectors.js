@@ -110,7 +110,12 @@ export const selectAllTours = createSelector(
       let items = [];
       forEach(unassignedTour.itemIds, itemId => {
         let task = allTasks.find(task => task['@id'] == itemId)
-        items.push(task)
+        if (task) {
+          items.push(task)
+        } else {
+          console.error('unable to find task for tour')
+        }
+
       })
       toursWithItems.push({
         ...unassignedTour,
