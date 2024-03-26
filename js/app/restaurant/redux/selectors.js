@@ -54,12 +54,10 @@ export const selectFulfilmentTimeRange = createSelector(
   (canAddToExistingCart, cart, cartTiming, fulfilmentMethod, allFulfilmentMethods) => {
     if (canAddToExistingCart) {
       return cart.shippingTimeRange || cartTiming.range
+    } else if (fulfilmentMethod) {
+      return allFulfilmentMethods[fulfilmentMethod]?.range
     } else {
-      if (fulfilmentMethod) {
-        return allFulfilmentMethods[fulfilmentMethod]?.range
-      } else {
-        return null
-      }
+      return null
     }
   })
 
