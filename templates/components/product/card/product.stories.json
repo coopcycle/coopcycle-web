@@ -164,6 +164,7 @@
     {
       "name": "Name with image, description, many restricted diets",
       "args": {
+        "locale": "fr",
         "restaurant_id": "2",
         "product": {
           "resource_class": "AppBundle\\Entity\\Sylius\\Product",
