@@ -28,6 +28,8 @@ export const selectIsTourDragging = state => state.logistics.ui.isTourDragging
 export const selectExpandedTourPanelsIds = state => state.logistics.ui.expandedTourPanelsIds
 export const selectLoadingTourPanelsIds = state => state.logistics.ui.loadingTourPanelsIds
 export const selectTaskListsLoading = state => state.logistics.ui.taskListsLoading
+export const selectOrderOfUnassignedTasks = state => state.logistics.ui.unassignedTasksIdsOrder
+export const selectOrderOfUnassignedToursAndGroups = state => state.logistics.ui.unassignedToursOrGroupsOrderIds
 
 // Settings selectors
 export const selectFiltersSetting = state => state.settings.filters

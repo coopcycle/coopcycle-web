@@ -9,7 +9,7 @@ import Tour from './Tour'
 import { deleteGroup, editGroup, openCreateTourModal } from '../redux/actions'
 import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
 import TaskGroup from './TaskGroup'
-import { selectGroups, selectIsTourDragging } from '../redux/selectors'
+import { selectGroups, selectIsTourDragging, selectOrderOfUnassignedToursAndGroups } from '../redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
 
@@ -41,7 +41,7 @@ export const UnassignedTours = () => {
   const items = [...groups, ...tours]
   const dispatch = useDispatch()
   const isTourDragging = useSelector(selectIsTourDragging)
-  const unassignedToursOrGroupsOrderIds = useSelector(state => state.logistics.ui.unassignedToursOrGroupsOrderIds)
+  const unassignedToursOrGroupsOrderIds = useSelector(selectOrderOfUnassignedToursAndGroups)
 
   useEffect(() => {
     const itemIds = [...groups.map(t => t['@id']), ...tours.map(t => t['@id'])]

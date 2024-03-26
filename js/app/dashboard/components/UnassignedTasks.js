@@ -10,7 +10,7 @@ import TaskGroup from './TaskGroup'
 import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules } from '../redux/actions'
-import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode, selectIsTourDragging } from '../redux/selectors'
+import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode, selectIsTourDragging, selectOrderOfUnassignedTasks } from '../redux/selectors'
 import { getDroppableListStyle } from '../utils'
 import classNames from 'classnames'
 
@@ -88,7 +88,7 @@ export const UnassignedTasks = () => {
   const isRecurrenceRulesVisible = useSelector(selectIsRecurrenceRulesVisible)
   const toursEnabled = useSelector(selectAreToursEnabled)
   const isTourDragging = useSelector(selectIsTourDragging)
-  let unassignedTasksIdsOrder = useSelector(state => state.logistics.ui.unassignedTasksIdsOrder)
+  const unassignedTasksIdsOrder = useSelector(selectOrderOfUnassignedTasks)
 
   useEffect(() => {
     const tasksToAppend = _.filter(standaloneTasks, t => !unassignedTasksIdsOrder.includes(t['@id']))
