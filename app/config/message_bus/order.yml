@@ -352,6 +352,13 @@ services:
       - name: event_subscriber
         subscribes_to: order:cancelled
 
+  coopcycle.domain.order.reactor.auto_accept_order:
+    class: AppBundle\Domain\Order\Reactor\AutoAcceptOrder
+    autowire: true
+    tags:
+      - name: event_subscriber
+        subscribes_to: order:created
+
   coopcycle.domain.order.reactor.create_impec_order:
     class: AppBundle\Domain\Order\Reactor\CreateLoopeatOrder
     arguments:
