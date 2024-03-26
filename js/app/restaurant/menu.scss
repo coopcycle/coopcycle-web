@@ -68,19 +68,20 @@ $item-height: 9rem;
     flex: 1;
     display: flex;
     overflow: hidden;
+  }
 
-    &--unavailable {
+  &--unavailable {
+    .menu-item__inner-wrapper {
       color: $gray;
       cursor: default;
 
       &:hover {
-        color: $gray;
         text-decoration: none;
       }
+    }
 
-      .menu-item-inner__price {
-        text-decoration: line-through;
-      }
+    .menu-item-inner__price {
+      text-decoration: line-through;
     }
   }
 
