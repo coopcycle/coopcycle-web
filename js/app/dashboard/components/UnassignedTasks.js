@@ -10,7 +10,7 @@ import TaskGroup from './TaskGroup'
 import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules } from '../redux/actions'
-import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode, selectIsTourDragging, selectOrderOfUnassignedTasks } from '../redux/selectors'
+import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode, selectIsTourDragging, selectOrderOfUnassignedTasks, selectUnassignedTasksLoading } from '../redux/selectors'
 import { getDroppableListStyle } from '../utils'
 import classNames from 'classnames'
 
@@ -89,6 +89,7 @@ export const UnassignedTasks = () => {
   const toursEnabled = useSelector(selectAreToursEnabled)
   const isTourDragging = useSelector(selectIsTourDragging)
   const unassignedTasksIdsOrder = useSelector(selectOrderOfUnassignedTasks)
+  const unassignedTasksLoading = useSelector(selectUnassignedTasksLoading)
 
   useEffect(() => {
     const tasksToAppend = _.filter(standaloneTasks, t => !unassignedTasksIdsOrder.includes(t['@id']))
@@ -111,7 +112,10 @@ export const UnassignedTasks = () => {
           <Buttons />
         </span>
       </h4>
-      <div className="dashboard__panel__scroll">
+      <div
+        className="dashboard__panel__scroll"
+        style={{ opacity: unassignedTasksLoading ? 0.7 : 1, pointerEvents: unassignedTasksLoading ? 'none' : 'initial' }}
+      >
         { isRecurrenceRulesVisible && recurrenceRules.map((rrule, index) =>
           <RecurrenceRule
             key={ `rrule-${index}` }

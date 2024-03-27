@@ -5,6 +5,7 @@ import { clearSelectedTasks,
   modifyTaskList as modifyTaskListAction,
   modifyTour as modifyTourAction,
   removeTasksFromTour as removeTasksFromTourAction,
+  setUnassignedTasksLoading,
   unassignTasks as unassignTasksAction
 } from "./actions"
 import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
@@ -69,7 +70,9 @@ export function handleDragEnd(
       newTasksList.splice(index, 0, ...selectedTasks)
 
       if(selectedTasks[0].assignedTo && selectedTasks[0].assignedTo !== tasksList.username) {
+        dispatch(setUnassignedTasksLoading(true))
         await dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
+        dispatch(setUnassignedTasksLoading(false))
       }
 
       return dispatch(modifyTaskList(tasksList.username, newTasksList))

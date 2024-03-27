@@ -9,7 +9,8 @@ import {
   APPEND_TO_UNASSIGNED_TASKS,
   INSERT_IN_UNASSIGNED_TASKS,
   APPEND_TO_UNASSIGNED_TOURS,
-  INSERT_IN_UNASSIGNED_TOURS
+  INSERT_IN_UNASSIGNED_TOURS,
+  SET_UNASSIGNEDTASKS_LOADING
 } from "./actions";
 
 // will be overrided by js/shared/src/logistics/redux/uiReducers.js when we reduce reducers so set initialState there
@@ -20,6 +21,11 @@ export default (state = initialState, action) => {
   let unassignedToursOrGroupsOrderIds
 
   switch (action.type) {
+    case SET_UNASSIGNEDTASKS_LOADING:
+      return {
+        ...state,
+        unassignedTasksLoading: action.payload
+      }
     case MODIFY_TASK_LIST_REQUEST:
       return {
         ...state,

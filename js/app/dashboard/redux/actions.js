@@ -12,6 +12,7 @@ import {
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
+import { createAction } from 'redux-actions'
 
 
 function createClient(dispatch) {
@@ -133,7 +134,7 @@ export const LOAD_TASK_EVENTS_REQUEST = 'LOAD_TASK_EVENTS_REQUEST'
 export const LOAD_TASK_EVENTS_SUCCESS = 'LOAD_TASK_EVENTS_SUCCESS'
 export const LOAD_TASK_EVENTS_FAILURE = 'LOAD_TASK_EVENTS_FAILURE'
 
-export const SET_TASK_LISTS_LOADING = 'SET_TASK_LISTS_LOADING'
+export const SET_UNASSIGNEDTASKS_LOADING = 'SET_UNASSIGNEDTASKS_LOADING'
 
 export const ADD_IMPORT = 'ADD_IMPORT'
 export const IMPORT_SUCCESS = 'IMPORT_SUCCESS'
@@ -201,9 +202,6 @@ export const INSERT_IN_UNASSIGNED_TOURS = 'INSERT_IN_UNASSIGNED_TOURS'
 
 export const SET_TOURS_ENABLED = 'SET_TOURS_ENABLED'
 
-export function setTaskListsLoading(loading = true) {
-  return { type: SET_TASK_LISTS_LOADING, loading }
-}
 
 export function assignAfter(username, task, after) {
 
@@ -289,6 +287,8 @@ export function importError(token, message) {
   return { type: IMPORT_ERROR, token, message }
 }
 
+export const setUnassignedTasksLoading = createAction(SET_UNASSIGNEDTASKS_LOADING)
+
 export function modifyTaskListInUI(username, tasks) {
   /*
     Modify a TaskList
@@ -324,7 +324,7 @@ export function modifyTaskList(username, tasks) {
 
     const state = getState()
 
-    modifyTaskListInUI(username, tasks)
+    dispatch(modifyTaskListInUI(username, tasks))
 
     const data = tasks.map((task, index) => ({
       task: task['@id'],
