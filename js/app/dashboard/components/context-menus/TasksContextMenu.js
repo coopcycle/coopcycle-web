@@ -8,6 +8,7 @@ import moment from 'moment'
 
 import {
   cancelTasks,
+  createTaskList,
   modifyTaskList,
   moveTasksToNextDay,
   moveTasksToNextWorkingDay,
@@ -27,7 +28,7 @@ import {selectCouriersWithExclude, selectLinkedTasksIds, selectNextWorkingDay, s
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
-import { selectAllTasks, selectTaskIdToTourIdMap, selectTasksListsWithItems } from '../../../../shared/src/logistics/redux/selectors'
+import { selectAllTasks, selectSelectedDate, selectTaskIdToTourIdMap, selectTasksListsWithItems } from '../../../../shared/src/logistics/redux/selectors'
 import { isValidTasksMultiSelect, withOrderTasksForDragNDrop } from '../../redux/utils'
 import Avatar from '../../../components/Avatar'
 
@@ -52,10 +53,15 @@ const { hideAll } = useContextMenu({
   id: 'task-contextmenu',
 })
 
-function _assign(tasksToAssign, username, tasksLists,) {
-  const tasksList = _.find(tasksLists, tl => tl.username === username)
+async function _assign(tasksToAssign, username, tasksLists, date, dispatch) {
+  let tasksList = _.find(tasksLists, tl => tl.username === username)
+
+  if (!tasksList) {
+    tasksList= await dispatch(createTaskList(date, username))
+  }
+
   const newTasksList = [...tasksList.items, ...tasksToAssign]
-  return modifyTaskList(tasksList.username, newTasksList)
+  return dispatch(modifyTaskList(tasksList.username, newTasksList))
 }
 
 function _unassign(tasksToUnassign, unassignTasks) {
@@ -167,6 +173,7 @@ const DynamicMenu = () => {
   const unassignedTasks = useSelector(selectUnassignedTasks)
   const selectedTasks = useSelector(selectSelectedTasks)
   const allTasks = useSelector(selectAllTasks)
+  const date = useSelector(selectSelectedDate)
 
   const tasksLists = useSelector(selectTasksListsWithItems)
   const nextWorkingDay = useSelector(selectNextWorkingDay)
@@ -226,7 +233,7 @@ const DynamicMenu = () => {
                 // hide manually menu and submenu
                 // https://github.com/fkhadra/react-contexify/issues/172
                 hideAll()
-                dispatch(_assign(selectedTasks, c.username, tasksLists))
+                dispatch(_assign(selectedTasks, c.username, tasksLists, date, dispatch))
             }}>
               <Avatar username={c.username} />  {c.username}
             </Item>
@@ -240,7 +247,7 @@ const DynamicMenu = () => {
             // hide manually menu and submenu
             // https://github.com/fkhadra/react-contexify/issues/172
             hideAll()
-            dispatch(_assign(selectedTasksWithLinkedTasks, c.username, tasksLists))
+            dispatch(_assign(selectedTasksWithLinkedTasks, c.username, tasksLists, date, dispatch))
         }}>
             <Avatar username={c.username} />  {c.username}
           </Item>
