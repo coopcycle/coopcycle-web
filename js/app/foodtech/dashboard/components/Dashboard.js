@@ -21,6 +21,8 @@ import {
   selectAcceptedOrders,
   selectFulfilledOrders,
   selectCancelledOrders,
+  selectStartedOrders,
+  selectReadyOrders,
 } from '../redux/selectors'
 
 export default function Dashboard({ onDateChange }) {
@@ -28,6 +30,8 @@ export default function Dashboard({ onDateChange }) {
   const date = useSelector(state => state.date)
   const newOrders = useSelector(selectNewOrders)
   const acceptedOrders = useSelector(selectAcceptedOrders)
+  const startedOrders = useSelector(selectStartedOrders)
+  const readyOrders = useSelector(selectReadyOrders)
   const fulfilledOrders = useSelector(selectFulfilledOrders)
   const cancelledOrders = useSelector(selectCancelledOrders)
   const order = useSelector(state => state.order)
@@ -56,6 +60,15 @@ export default function Dashboard({ onDateChange }) {
     150: '2h30',
     180: '3h',
   }
+
+  const sections = [
+    { key: 'new', title: t('new'), orders: newOrders, context: 'warning' },
+    { key: 'accepted', title: t('accepted'), orders: acceptedOrders, context: 'info' },
+    { key: 'started', title: t('started'), orders: startedOrders, context: 'info' },
+    { key: 'ready', title: t('ready'), orders: readyOrders, context: 'info' },
+    { key: 'fulfilled', title: t('fulfilled'), orders: fulfilledOrders, context: 'success' },
+    { key: 'cancelled', title: t('cancelled'), orders: cancelledOrders, context: 'danger' },
+  ]
 
   const dispatch = useDispatch()
 
@@ -153,52 +166,25 @@ export default function Dashboard({ onDateChange }) {
         <SlotViz />
       </div>
       <div className="FoodtechDashboard__Columns">
-        <Column
-          orders={ newOrders }
-          title={ t('RESTAURANT_DASHBOARD_NEW_ORDERS') }
-          context="warning"
-          active={ activeTab === 'new' }
-          onCardClick={ order => dispatch(setCurrentOrder(order)) } />
-        <Column
-          orders={ acceptedOrders }
-          title={ t('RESTAURANT_DASHBOARD_ACCEPTED_ORDERS') }
-          context="info"
-          active={ activeTab === 'accepted' }
-          onCardClick={ order => dispatch(setCurrentOrder(order)) } />
-        <Column
-          orders={ fulfilledOrders }
-          title={ t('RESTAURANT_DASHBOARD_FULFILLED_ORDERS') }
-          context="success"
-          active={ activeTab === 'fulfilled' }
-          onCardClick={ order => dispatch(setCurrentOrder(order)) } />
-        <Column
-          orders={ cancelledOrders }
-          title={ t('RESTAURANT_DASHBOARD_CANCELLED_REFUSED_ORDERS') }
-          context="danger"
-          active={ activeTab === 'cancelled' }
-          onCardClick={ order => dispatch(setCurrentOrder(order)) } />
+        { sections.map(section => (
+          <Column
+            key={ section.key }
+            orders={ section.orders }
+            title={ section.title }
+            context={ section.context }
+            active={ activeTab === section.key }
+            onCardClick={ order => dispatch(setCurrentOrder(order)) } />
+        )) }
       </div>
       <nav className="FoodtechDashboard__TabNav">
-        <Tab
-          title={ `${ t('new') } (${ newOrders.length })` }
-          target="new"
-          onClick={ (tab) => dispatch(setActiveTab(tab)) }
-          active={ activeTab === 'new' } />
-        <Tab
-          title={ `${ t('accepted') } (${ acceptedOrders.length })` }
-          target="accepted"
-          onClick={ (tab) => dispatch(setActiveTab(tab)) }
-          active={ activeTab === 'accepted' } />
-        <Tab
-          title={ `${ t('fulfilled') } (${ fulfilledOrders.length })` }
-          target="fulfilled"
-          onClick={ (tab) => dispatch(setActiveTab(tab)) }
-          active={ activeTab === 'fulfilled' } />
-        <Tab
-          title={ `${ t('cancelled') } (${ cancelledOrders.length })` }
-          target="cancelled"
-          onClick={ (tab) => dispatch(setActiveTab(tab)) }
-          active={ activeTab === 'cancelled' } />
+        { sections.map(section => (
+          <Tab
+            key={ section.key }
+            title={ `${ section.title } (${ section.orders.length })` }
+            target={ section.key }
+            onClick={ (tab) => dispatch(setActiveTab(tab)) }
+            active={ activeTab === section.key } />
+        ))}
       </nav>
       <Modal
         isOpen={ modalIsOpen }
