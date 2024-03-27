@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
-import { render } from 'react-dom'
 import Modal from 'react-modal'
 
 import i18n from '../../i18n'
@@ -69,13 +69,14 @@ export function renderDashboard(el, options) {
 
     const store = createStoreFromPreloadedState(state)
 
-    render(
-      <Provider store={ store }>
-        <I18nextProvider i18n={ i18n }>
-          <Dashboard onDateChange={ options.onDateChange } />
-        </I18nextProvider>
-      </Provider>,
-      el,
-    )
+    const root = createRoot(el)
+    root.render(
+      <StrictMode>
+        <Provider store={ store }>
+          <I18nextProvider i18n={ i18n }>
+            <Dashboard onDateChange={ options.onDateChange } />
+          </I18nextProvider>
+        </Provider>
+      </StrictMode>)
   })
 }
