@@ -43,6 +43,8 @@ class UpdateState
             Event\OrderRefused::messageName()   => OrderTransitions::TRANSITION_REFUSE,
             Event\OrderCancelled::messageName() => OrderTransitions::TRANSITION_CANCEL,
             Event\OrderFulfilled::messageName() => OrderTransitions::TRANSITION_FULFILL,
+            Event\OrderPreparationStarted::messageName() => OrderTransitions::TRANSITION_START_PREPARING,
+            Event\OrderPreparationFinished::messageName() => OrderTransitions::TRANSITION_FINISH_PREPARING,
             Event\OrderRestored::messageName()  => OrderTransitions::TRANSITION_RESTORE,
         ];
     }
