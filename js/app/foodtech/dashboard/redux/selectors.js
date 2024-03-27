@@ -89,7 +89,7 @@ export const selectOrdersByHourRange = createSelector(
   }
 )
 
-export const selectItems = state => state.order.items
+export const selectItems = state => state.order ? state.order.items : []
 
 export const selectItemsGroups = createSelector(
   selectItems,
