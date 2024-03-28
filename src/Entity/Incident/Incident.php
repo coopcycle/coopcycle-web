@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Incident;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -41,7 +42,9 @@ class Incident {
 
     protected Collection $images;
 
-    protected ?User $created_by = null;
+    protected Collection $events;
+
+    protected ?User $createdBy = null;
 
     protected $createdAt;
 
@@ -59,6 +62,7 @@ class Incident {
     public function __construct() {
         $this->tasks = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function getId(): int {
@@ -97,7 +101,13 @@ class Incident {
     }
 
     public function addTask(Task $task): self {
-        $this->tasks[] = $task;
+        // For now only limit task to one
+        if (!$this->getTasks()->isEmpty()) {
+            return $this;
+        }
+        if (!$this->tasks->contains($task)) {
+            $this->tasks[] = $task;
+        }
         return $this;
     }
 
@@ -128,12 +138,21 @@ class Incident {
         return $this;
     }
 
+    public function getEvents(): Collection {
+        return $this->events;
+    }
+
+    public function addEvent(IncidentEvent $event): self {
+        $this->events[] = $event;
+        return $this;
+    }
+
     public function getCreatedBy(): ?User {
-        return $this->created_by;
+        return $this->createdBy;
     }
 
     public function setCreatedBy(?User $created_by): self {
-        $this->created_by = $created_by;
+        $this->createdBy = $created_by;
         return $this;
     }
 
@@ -143,6 +162,13 @@ class Incident {
 
     public function getUpdatedAt(): mixed {
         return $this->updatedAt;
+    }
+
+    public function getCustomerUserInfo(): ?User {
+        if ($this->getTasks()->count() > 0) {
+            return $this->getTasks()->first()->getDelivery()?->getOrder()?->getCustomer()?->getUser();
+        }
+        return null;
     }
 
 }
