@@ -23,6 +23,8 @@ use AppBundle\Entity\LocalBusiness\FulfillmentMethodsTrait;
 use AppBundle\Entity\LocalBusiness\ImageTrait;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsTrait;
+use AppBundle\Entity\Model\CustomFailureReasonInterface;
+use AppBundle\Entity\Model\CustomFailureReasonTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Enum\FoodEstablishment;
@@ -120,6 +122,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     OpenCloseInterface,
     OrganizationAwareInterface,
     ShippingOptionsInterface,
+    CustomFailureReasonInterface,
     Vendor
 {
     use Timestampable;
@@ -133,6 +136,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     use ClosingRulesTrait;
     use FulfillmentMethodsTrait;
     use ShippingOptionsTrait;
+    use CustomFailureReasonTrait;
 
     /**
      * @var int

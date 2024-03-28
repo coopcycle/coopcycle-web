@@ -8,12 +8,15 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\MyStores;
 use AppBundle\Entity\Base\LocalBusiness;
 use AppBundle\Entity\Delivery\FailureReasonSet;
+use AppBundle\Entity\Model\CustomFailureReasonInterface;
+use AppBundle\Entity\Model\CustomFailureReasonTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Package;
 use Doctrine\Common\Collections\ArrayCollection;
+use IncidentableTrait;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -55,10 +58,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * )
  * @Vich\Uploadable
  */
-class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface
+class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface, CustomFailureReasonInterface
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
+    use CustomFailureReasonTrait;
 
     /**
      * @var int
@@ -152,7 +156,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $timeSlots;
 
-    private $failureReasonSet;
 
     private $DBSchenkerEnabled = false;
 
@@ -492,23 +495,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         $this->timeSlots->add($timeSlot);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getFailureReasonSet()
-    {
-        return $this->failureReasonSet;
-    }
 
-    /**
-     * @param mixed $failureReasonSet
-     * @return Store
-     */
-    public function setFailureReasonSet($failureReasonSet)
-    {
-        $this->failureReasonSet = $failureReasonSet;
-        return $this;
-    }
 
     /**
      * @SerializedName("packages")

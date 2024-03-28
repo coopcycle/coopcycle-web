@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
@@ -26,6 +27,7 @@ abstract class LocalBusinessType extends AbstractType
     protected $tokenStorage;
     protected $entityManager;
     protected $serializer;
+    protected $urlGenerator;
     protected $country;
     protected $debug;
     protected $cashOnDeliveryOptinEnabled;
@@ -37,6 +39,7 @@ abstract class LocalBusinessType extends AbstractType
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
         GatewayResolver $gatewayResolver,
+        UrlGeneratorInterface $urlGenerator,
         string $country,
         bool $debug = false,
         bool $cashOnDeliveryOptinEnabled = false,
@@ -47,6 +50,7 @@ abstract class LocalBusinessType extends AbstractType
         $this->tokenStorage = $tokenStorage;
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
+        $this->urlGenerator = $urlGenerator;
         $this->country = $country;
         $this->debug = $debug;
         $this->cashOnDeliveryOptinEnabled = $cashOnDeliveryOptinEnabled;

@@ -1,0 +1,11 @@
+<li>
+  <span>task #{{ task.getId() }}</span>
+  {% if task.getdelivery() is not null %}
+    <span>(delivery <a href="{{ path('admin_delivery', { id: task.getDelivery().getId() }) }}">#{{ task.getDelivery().getId() }})</a></span>
+  {% endif %}
+</li>
+<ul>
+{% for event in task.getEvents() %}
+      <li class="green">{{event.getName()}}</li>
+{% endfor %}
+</ul>

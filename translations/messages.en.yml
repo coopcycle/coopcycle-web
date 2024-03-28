@@ -1358,6 +1358,7 @@ form.failure_reason.description.label: Description
 basics.manage: Manage
 basics.settings: Settings
 form.store_type.failure_reason_set.label: "Failure Reasons"
+form.store_type.failure_reason_set.help: 'Select a list of <a href="%failure_reason_set%">failure reasons</a> to be used in this %entity%.'
 profile.delete_my_account: "Delete my account"
 profile.type_username_to_confirm: "Type your username to confirm the account deletion"
 form.pricing_rule_set.options.label: Options

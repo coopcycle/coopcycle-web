@@ -111,6 +111,19 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
+    <many-to-many field="incidents" target-entity="AppBundle\Entity\Incident\Incident" inversed-by="tasks">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-table name="tasks_incidents">
+        <join-columns>
+          <join-column name="task_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="incident_id" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\TaskListener">
         <lifecycle-callback type="prePersist" method="prePersist"/>
