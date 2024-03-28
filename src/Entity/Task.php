@@ -468,6 +468,11 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $this->id;
     }
 
+    public function getDeliveryId()
+    {
+        return $this->delivery_id;
+    }
+
     public function getDelivery()
     {
         return $this->delivery;
