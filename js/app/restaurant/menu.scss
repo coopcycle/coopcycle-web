@@ -60,25 +60,59 @@ $item-height: 9rem;
     width: 100%;
     height: $item-height;
     overflow: hidden;
-    border-radius: $border-radius-large;
     display: flex;
+    border-radius: $border-radius-large;
+  }
+
+  &__inner-wrapper {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
   }
 
   &--unavailable {
-    flex: 1;
-    display: block;
-    color: $gray;
-    cursor: default;
-
-    &:hover {
+    .menu-item__inner-wrapper {
       color: $gray;
-      text-decoration: none;
+      cursor: default;
+
+      &:hover {
+        text-decoration: none;
+      }
     }
 
-    .menu-item__price {
+    .menu-item-inner__price {
       text-decoration: line-through;
     }
   }
+
+  &__add-wrapper {
+    border: 1px solid $light-gray;
+    border-radius: $border-radius-base;
+    margin: 4px;
+    align-self: stretch;
+
+    &--active {
+      &:hover,
+      &:focus {
+        border: 1px solid $gray;
+      }
+    }
+
+    .add-button {
+      padding: 0 0.75rem;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.menu-item-inner {
+  height: 100%;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
 
   &__image-wrapper {
     > img {
@@ -92,6 +126,7 @@ $item-height: 9rem;
   &__content {
     padding: 0.75rem;
     flex: 1;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 
@@ -124,31 +159,9 @@ $item-height: 9rem;
   }
 
   &__price {
-    padding: 2px 0;
+    padding: 2px 0 2px 4px;
     white-space: nowrap;
     font-weight: 600;
-  }
-
-  &__add-wrapper {
-    border: 1px solid $light-gray;
-    border-radius: $border-radius-base;
-    margin: 4px;
-    align-self: stretch;
-
-    &--active {
-      &:hover,
-      &:focus {
-        border: 1px solid $gray;
-      }
-    }
-
-    .add-button {
-      padding: 0 0.75rem;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-    }
   }
 }
 
@@ -194,6 +207,5 @@ $item-height: 9rem;
 }
 
 .product-badge-text--compact {
-  max-width: 5rem;
   text-overflow: ellipsis;
 }

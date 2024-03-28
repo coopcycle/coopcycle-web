@@ -96,6 +96,11 @@
 }
 
 .more-overlay {
+  .ant-dropdown-menu {
+    overflow-y: auto;
+    max-height: 500px;
+  }
+
   .ant-dropdown-menu-item {
     &:hover {
       background-color: $nav-link-hover-bg;

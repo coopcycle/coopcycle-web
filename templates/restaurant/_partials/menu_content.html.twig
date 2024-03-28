@@ -22,7 +22,7 @@
         {% if images_1x1|length > 0 %}
           {% set card_product_image = coopcycle_asset(images_1x1|first, 'imageFile', 'product_thumbnail', true, true) %}
         {% endif %}
-        {% include 'components/restaurant/product/menu_item.html.twig' %}
+        {% include 'components/product/card/menu_item.html.twig' %}
       {% endfor %}
     </div>
   {% endfor %}

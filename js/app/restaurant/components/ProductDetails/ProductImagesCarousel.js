@@ -16,7 +16,7 @@ export default ({ images }) => {
   }, [slide])
 
   return (
-    <div>
+    <div className="product-images">
       <div>
         <Carousel ref={carouselRef} dots={false}>
           {images.map((image, index) => (

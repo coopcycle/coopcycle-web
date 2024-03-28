@@ -3,6 +3,16 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
 
+@mixin modal-padding-horizontal() {
+  padding-left: $modal-inner-padding;
+  padding-right: $modal-inner-padding;
+
+  @media (min-width: $screen-md-min) {
+    padding-left: $modal-padding-md;
+    padding-right: $modal-padding-md;
+  }
+}
+
 .ReactModal__Content--product-options {
 
   overflow: inherit;
@@ -27,10 +37,7 @@
   }
 
   .modal-body {
-    padding: 0 $modal-inner-padding 1.5rem;
-    @media (min-width: $screen-md-min) {
-      padding: 0 $modal-padding-md 1.5rem;
-    }
+    padding: 0 0 1.5rem;
   }
 
   main {
@@ -41,22 +48,35 @@
     gap: 1rem;
   }
 
+  .product-images {
+    @include modal-padding-horizontal;
+  }
+
   .product-image {
     margin: 0 auto;
   }
 
   .product-info {
+    @include modal-padding-horizontal;
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
 
   .product-option-group {
+    border-top: 1px solid $gray-100;
+    @include modal-padding-horizontal;
+
     &--invalid {
       .product-option-group__name,
       .product-option-group__values_range {
         color: $brand-danger;
       }
+    }
+
+    &__name {
+      padding-top: 1rem;
+      font-weight: bold;
     }
   }
 
@@ -65,12 +85,18 @@
       margin: 0;
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       font-weight: 400;
-      hyphens: auto;
+      overflow: hidden;
     }
 
     &__name {
       flex: 1;
+      hyphens: auto;
+    }
+
+    &__price {
+      white-space: nowrap;
     }
   }
 
@@ -118,6 +144,7 @@
   }
 
   .quantity-input-group {
+    @include modal-padding-horizontal;
     display: flex;
     align-items: center;
     input[type="number"] {
