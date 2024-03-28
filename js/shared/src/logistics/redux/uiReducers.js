@@ -10,7 +10,8 @@ const initialState = {
   isTourDragging: true,
   currentTask: null,
   expandedTourPanelIds: [],
-  loadingTourPanelsIds: []
+  loadingTourPanelsIds: [],
+  unassignedTasksIdsOrder: []
 }
 
 export default (state = initialState, action) => {

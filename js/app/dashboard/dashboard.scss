@@ -245,13 +245,11 @@ html, body {
   border: 2px dashed #F1C40F;
   padding: 4px;
   background-color: $light-gray;
+  box-sizing: border-box;
+  min-height: ($line-height-computed * 2) + (6 * 2);
 
   .list-group-item {
     padding: 8px 32px 8px 14px;
-  }
-  &--empty {
-    box-sizing: border-box;
-    min-height: ($line-height-computed * 2) + (6 * 2);
   }
 }
 
