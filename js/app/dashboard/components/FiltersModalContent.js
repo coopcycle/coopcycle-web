@@ -14,8 +14,6 @@ import {
 } from '../redux/actions'
 import { selectBookedUsernames, selectFiltersSetting } from '../redux/selectors'
 
-import 'antd/lib/grid/style/index.css'
-
 function isHidden(hiddenCouriers, username) {
   return !!_.find(hiddenCouriers, u => u === username)
 }
