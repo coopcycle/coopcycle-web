@@ -3,7 +3,7 @@
   <entity name="AppBundle\Entity\Incident\Incident" table="incident">
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
-    </id>
+      </id>
     <field name="title" type="string" column="title" length="255"/>
     <field name="status" type="string" column="status" length="32"/>
     <field name="priority" type="integer" column="priority" />
@@ -11,12 +11,17 @@
     <field name="description" type="string" column="description" length="65535" nullable="true" />
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
-    </field>
+      </field>
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
-    </field>
+      </field>
     <many-to-many field="tasks" mapped-by="incidents" target-entity="AppBundle\Entity\Task"/>
     <one-to-many field="images" target-entity="AppBundle\Entity\Incident\IncidentImage" mapped-by="incident" />
-    <many-to-one field="created_by" target-entity="AppBundle\Entity\User" />
- </entity>
-</doctrine-mapping>
+    <one-to-many field="events" target-entity="AppBundle\Entity\Incident\IncidentEvent" mapped-by="incident">
+      <order-by>
+        <order-by-field name="createdAt" direction="ASC" />
+        </order-by>
+      </one-to-many>
+    <many-to-one field="createdBy" target-entity="AppBundle\Entity\User" />
+    </entity>
+  </doctrine-mapping>
