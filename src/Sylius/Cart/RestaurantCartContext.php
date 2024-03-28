@@ -75,10 +75,18 @@ final class RestaurantCartContext implements CartContextInterface
                 try {
                     if (!$cart->isMultiVendor() && !$cart->getRestaurant()->isEnabled()
                         && !$this->authorizationChecker->isGranted('edit', $cart->getVendor())) {
+
+                        $this->checkoutLogger->info(sprintf('Order %s | RestaurantCartContext | cart is not valid any more',
+                            $this->loggingUtils->getOrderId($cart)));
+
                         $cart = null;
                         $this->storage->remove();
                     }
                 } catch (EntityNotFoundException $e) {
+                    $this->checkoutLogger->info(sprintf('Order %s | RestaurantCartContext | error: %s',
+                        $this->loggingUtils->getOrderId($cart),
+                        $e->getMessage()));
+
                     $cart = null;
                     $this->storage->remove();
                 }
@@ -90,6 +98,10 @@ final class RestaurantCartContext implements CartContextInterface
             if (null !== $cart) {
                 if ($restaurant = $this->resolver->resolve()) {
                     if (!$this->resolver->accept($cart)) {
+                        $this->checkoutLogger->info(sprintf('Order %s | RestaurantCartContext | cart is not accepted by this restaurant: %d',
+                            $this->loggingUtils->getOrderId($cart),
+                            $restaurant->getId()));
+
                         $cart->clearItems();
                         $cart->setShippingTimeRange(null);
                     }

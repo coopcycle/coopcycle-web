@@ -11,7 +11,7 @@ const Icon = ({ type }) => (
     }) } />
   </span>)
 
-function FulfillmentMethod({ value, shippingAddress, onClick, allowEdit }) {
+export default function FulfillmentMethod({ value, shippingAddress, onClick, allowEdit }) {
 
   const { t } = useTranslation()
 
@@ -40,13 +40,9 @@ function FulfillmentMethod({ value, shippingAddress, onClick, allowEdit }) {
           className="pl-3 text-decoration-none"
           onClick={ e => {
             e.preventDefault()
-            if (allowEdit) {
-              onClick()
-            }
+            onClick()
           } }>
           <span>{ t('CART_DELIVERY_TIME_EDIT') }</span>
         </a>) : null }
     </div>)
 }
-
-export default FulfillmentMethod
