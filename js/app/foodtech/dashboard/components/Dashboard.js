@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import Modal from 'react-modal'
-import { DatePicker, Slider, Col, Row, Switch } from 'antd'
+import { DatePicker, Slider, Col, Row, Switch, ConfigProvider } from 'antd'
 import moment from 'moment'
 
 import Column from './Column'
@@ -24,6 +24,7 @@ import {
   selectStartedOrders,
   selectReadyOrders,
 } from '../redux/selectors'
+import { antdLocale } from '../../../i18n'
 
 export default function Dashboard({ onDateChange }) {
   const restaurant = useSelector(state => state.restaurant)
@@ -152,14 +153,16 @@ export default function Dashboard({ onDateChange }) {
           )
         }
         <div>
-          <DatePicker
-            format={ 'll' }
-            defaultValue={ moment(date) }
-            onChange={ (date) => {
-              if (date) {
-                onDateChange(date)
-              }
-            } } />
+          <ConfigProvider locale={ antdLocale }>
+            <DatePicker
+              format={ 'll' }
+              defaultValue={ moment(date) }
+              onChange={ (date) => {
+                if (date) {
+                  onDateChange(date)
+                }
+              } } />
+          </ConfigProvider>
         </div>
       </div>
       <div className="FoodtechDashboard__SlotViz">
