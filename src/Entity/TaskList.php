@@ -20,12 +20,12 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_OAUTH2_TASKS')"
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_OAUTH2_TASKS')"
  *     },
  *     "post"={
  *       "method"="POST",
  *       "controller"=CreateTaskListController::class,
- *       "access_control"="is_granted('ROLE_ADMIN')"
+ *       "access_control"="is_granted('ROLE_DISPATCHER')"
  *     }
  *   },
  *   itemOperations={

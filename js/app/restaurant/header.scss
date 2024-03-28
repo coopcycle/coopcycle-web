@@ -24,11 +24,12 @@ $orig-image-height: 270px;
 .restaurant-info {
   display: flex;
   flex-direction: column;
+  align-items: center;
 
   @media (min-width: $screen-md-min) {
     padding-top: 1.5rem;
     flex-direction: row;
-    align-items: center;
+    align-items: unset;
   }
 
   .restaurant-details {
@@ -50,7 +51,6 @@ $orig-image-height: 270px;
 
   .restaurant-image {
     position: relative;
-    align-self: center;
     margin-bottom: 1rem;
 
     @media (min-width: $screen-md-min) {
@@ -83,7 +83,7 @@ $orig-image-height: 270px;
     font-weight: bold;
   }
 
-  .badges-and-tags {
+  .badges-or-tags {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;

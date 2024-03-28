@@ -379,7 +379,7 @@ export function setTaskListGroupMode(mode) {
 
 export function createTaskList(date, username) {
 
-  return function(dispatch) {
+  return async function(dispatch) {
 
     const url = window.Routing.generate('admin_task_list_create', {
       date: date.format('YYYY-MM-DD'),
@@ -388,14 +388,21 @@ export function createTaskList(date, username) {
 
     dispatch(createTaskListRequest())
 
-    return axios.post(url, {}, {
-      withCredentials: true,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    })
-      .then(res => dispatch(createTaskListSuccess(res.data)))
-      .catch(error => dispatch(createTaskListFailure(error)))
+    let response
+    try {
+      response =  await axios.post(url, {}, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/ld+json'
+        },
+      })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      dispatch(createTaskListFailure(error))
+    }
+
+    dispatch(createTaskListSuccess(response.data))
+    return response.data
   }
 }
 
