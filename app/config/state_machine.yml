@@ -11,16 +11,17 @@ winzou_state_machine:
             fulfilled: ~
             accepted: ~
             refused: ~
+            started: ~
             ready: ~
         transitions:
             create:
                 from: [cart]
                 to: new
             cancel:
-                from: [new, accepted]
+                from: [new, accepted, started, ready]
                 to: cancelled
             fulfill:
-                from: [new, accepted]
+                from: [new, accepted, started, ready]
                 to: fulfilled
             accept:
                 from: [new]
@@ -31,6 +32,12 @@ winzou_state_machine:
             restore:
                 from: [cancelled]
                 to: accepted
+            start_preparing:
+                from: [accepted]
+                to: started
+            finish_preparing:
+                from: [accepted, started]
+                to: ready
         callbacks:
             guard:
                 guard_on_fulfill:

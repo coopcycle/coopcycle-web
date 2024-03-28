@@ -89,6 +89,10 @@ class RestaurantType extends LocalBusinessType
                 ->add('depositRefundEnabled', CheckboxType::class, [
                     'label' => 'restaurant.form.deposit_refund_enabled.label',
                     'required' => false,
+                ])
+                ->add('autoAcceptOrdersEnabled', CheckboxType::class, [
+                    'label' => 'restaurant.form.auto_accept_orders_enabled.label',
+                    'required' => false,
                 ]);
 
             if ($this->cashOnDeliveryOptinEnabled) {

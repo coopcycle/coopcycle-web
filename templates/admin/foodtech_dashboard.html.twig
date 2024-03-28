@@ -1,32 +1,24 @@
 {% extends "admin.html.twig" %}
 
 {% block body %}
-<div id="foodtech-dashboard"></div>
+<div id="foodtech-dashboard"
+     data-current-route="{{ app.request.attributes.get('_route') }}"
+     data-orders="{{ orders_normalized|json_encode|e('html_attr') }}"
+     data-date="{{ date|date('Y-m-d') }}"
+     data-initial-order="{{ initial_order|json_encode|e('html_attr') }}"
+     data-preparation-delay="{{ preparation_delay }}"
+     data-show-search="true"
+></div>
 {% endblock %}
 
 {% block footer %}{% endblock %}
 
 {% block styles %}
   {{ encore_entry_link_tags('foodtech-dashboard') }}
+  {{ encore_entry_link_tags('admin-foodtech-dashboard') }}
 {% endblock %}
 
 {% block scripts %}
-{% set current_route = app.request.attributes.get('_route') %}
-{{ encore_entry_script_tags('foodtech-dashboard') }}
-<script>
-var orders = {{ orders_normalized|json_encode()|raw }};
-new CoopCycle.FoodtechDashboard(document.querySelector('#foodtech-dashboard'), {
-  orders: orders['hydra:member'],
-  initialOrder: {{ initial_order|json_encode()|raw }},
-  date: "{{ date|date('Y-m-d') }}",
-  currentRoute: "{{ current_route }}",
-  preparationDelay: {{ preparation_delay }},
-  showSearch: true,
-}, {
-  onDateChange: function(date) {
-    window.location.href =
-      window.Routing.generate('{{ current_route }}', { date: date.format('YYYY-MM-DD') });
-  }
-});
-</script>
+  {{ encore_entry_script_tags('foodtech-dashboard') }}
+  {{ encore_entry_script_tags('admin-foodtech-dashboard') }}
 {% endblock %}

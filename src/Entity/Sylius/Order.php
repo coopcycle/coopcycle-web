@@ -12,6 +12,8 @@ use AppBundle\Action\Order\Accept as OrderAccept;
 use AppBundle\Action\Order\AddPlayer as AddPlayer;
 use AppBundle\Action\Order\Assign as OrderAssign;
 use AppBundle\Action\Order\Cancel as OrderCancel;
+use AppBundle\Action\Order\StartPreparing as OrderStartPreparing;
+use AppBundle\Action\Order\FinishPreparing as OrderFinishPreparing;
 use AppBundle\Action\Order\Centrifugo as CentrifugoController;
 use AppBundle\Action\Order\CloneStripePayment;
 use AppBundle\Action\Order\CreateInvitation as CreateInvitationController;
@@ -193,6 +195,24 @@ use Webmozart\Assert\Assert as WMAssert;
  *         "summary"="Cancels a Order resource."
  *       }
  *     },
+ *     "start_preparing"={
+ *        "method"="PUT",
+ *        "path"="/orders/{id}/start_preparing",
+ *        "controller"=OrderStartPreparing::class,
+ *        "security"="is_granted('start_preparing', object)",
+ *        "openapi_context"={
+ *          "summary"="Starts preparing an Order resource."
+ *        }
+ *      },
+ *     "finish_preparing"={
+ *        "method"="PUT",
+ *        "path"="/orders/{id}/finish_preparing",
+ *        "controller"=OrderFinishPreparing::class,
+ *        "security"="is_granted('finish_preparing', object)",
+ *        "openapi_context"={
+ *          "summary"="Finishes preparing an Order resource."
+ *        }
+ *      },
  *     "restore"={
  *       "method"="PUT",
  *       "path"="/orders/{id}/restore",

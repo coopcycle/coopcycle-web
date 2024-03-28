@@ -170,6 +170,7 @@ restaurant.form.allow_mercadopago_connect.label: Allow the restaurant to manage 
 restaurant.form.temporaryClosingRule: Click here to temporarily disable orders to
   your restaurant.
 restaurant.form.deposit_refund_enabled.label: Enable deposit-refund system
+restaurant.form.auto_accept_orders_enabled.label: Automatically accept orders
 restaurant.form.accessPlanning: Access planning
 restaurant.form.createRestaurant: Create restaurant
 restaurant.form.exclusive.label: This restaurant is exclusive
