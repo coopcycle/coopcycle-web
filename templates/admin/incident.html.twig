@@ -1,5 +1,6 @@
 {% extends "admin.html.twig" %}
 {% set user = incident.getCreatedBy() %}
+{% set customerUserInfo = incident.getCustomerUserInfo() %}
 
 {% block breadcrumb %}
 <li>
@@ -73,26 +74,54 @@
   </a>
 {% endfor %}
 </div>
+<hr>
+{% for event in incident.getEvents() %}
+{% set username = event.getCreatedBy().getUsername() %}
+<div class="media">
+  <div class="media-left media-top">
+    <a href="#">
+      <img class="media-object" src="{{ path('user_avatar', { username: username }) }}" alt="{{username}}">
+    </a>
+  </div>
+  <div class="media-body">
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <span class="font-weight-bold">{{ username }}<span> <span class="text-muted font-weight-light">{{ event.getCreatedAt()|time_diff }}</span>
+  </div>
+  <div class="panel-body">
+    {{ event.getMessage() }}
+  </div>
+</div>
+  </div>
+</div>
+{% endfor %}
 </div>
 
 <div class="col-md-3">
-  <h5>Tasks concerning this incident</h5>
+  <h4>Customer details</h4>
+  {% if customerUserInfo is not null %}
+  <p><i class="fa fa-user" aria-hidden="true"></i> {{customerUserInfo.getUsername()}}</p>
+  <p><i class="fa fa-phone" aria-hidden="true"></i> {{customerUserInfo.getTelephone()}}</p>
+  <p><i class="fa fa-envelope" aria-hidden="true"></i> {{customerUserInfo.getEmail()}}</p>
+  {% endif %}
+
+  <h4>Tasks concerning this incident</h4>
   <ul class="task-list">
   {% for task in incident.getTasks() %}
     <li>
-      <span>task #{{ task.getid() }}</span>
-      {% if task.getdelivery() is not null %}
-        <span>(delivery <a href="{{ path('admin_delivery', { id: task.getdelivery().getid() }) }}">#{{ task.getdelivery().getid() }})</a></span>
+      <span>task #{{ task.getId() }}</span>
+      {% if task.getDelivery() is not null %}
+        <span>(delivery <a href="{{ path('admin_delivery', { id: task.getDelivery().getId() }) }}">#{{ task.getDelivery().getId() }})</a></span>
       {% endif %}
     </li>
     <ul>
-    {% for event in task.getevents() %}
+    {% for event in task.getEvents() %}
       {% include "components/incident/timeline_task_item.html.twig" with {task: task} %}
     {% endfor %}
     </ul>
   {% endfor %}
   </ul>
-  <h5>Actions</h5>
+  <h4>Actions</h4>
   <button type="button" class="btn btn-block btn-sm btn-success">Reschedule incidented task</button>
   <button type="button" class="btn btn-block btn-sm btn-warning">Cancel incidented task</button>
   <button type="button" class="btn btn-block btn-sm btn-danger">Cancel all tasks</button>
