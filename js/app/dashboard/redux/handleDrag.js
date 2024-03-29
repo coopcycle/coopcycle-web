@@ -10,7 +10,7 @@ import { clearSelectedTasks,
   setUnassignedTasksLoading,
   unassignTasks as unassignTasksAction
 } from "./actions"
-import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
+import { belongsToTour, selectGroups, selectOrderOfUnassignedTasks, selectSelectedTasks } from "./selectors"
 import { isValidTasksMultiSelect, withOrderTasksForDragNDrop } from "./utils"
 import { toast } from 'react-toastify'
 import i18next from "i18next"
@@ -152,6 +152,17 @@ export function handleDragEnd(
       selectedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
     }
 
+    // sorting
+    if (source.droppableId === 'unassigned') {
+      const unassignedTasksOrder = selectOrderOfUnassignedTasks(getState())
+
+      selectedTasks.sort((task1, task2) => {
+        const task1Rank = unassignedTasksOrder.findIndex(taskId => taskId === task1['@id'])
+        const task2Rank = unassignedTasksOrder.findIndex(taskId => taskId === task2['@id'])
+        return  task1Rank - task2Rank
+      })
+    }
+
     // reordered inside the unassigned tours list
     if (
       source.droppableId === destination.droppableId && source.droppableId === 'unassigned_tours'
@@ -159,7 +170,9 @@ export function handleDragEnd(
       const itemId = result.draggableId.startsWith('tour:') ? result.draggableId.replace('tour:', '') : result.draggableId.replace('group:', '')
       dispatch(insertInUnassignedTours({itemId: itemId, index: result.destination.index}))
       return;
-    } else if (
+    }
+    // reordered inside the unassigned tasks list
+    else if (
       source.droppableId === destination.droppableId && source.droppableId === 'unassigned'
     ) {
       dispatch(insertInUnassignedTasks({tasksToInsert: selectedTasks, index: result.destination.index}))
@@ -192,7 +205,7 @@ export function handleDragEnd(
         dispatch(removeTasksFromTour(sourceTour, selectedTasks))
       }
 
-      Array.prototype.splice.apply(newTourItems, Array.prototype.concat([ destination.index, 0 ], selectedTasks))
+      newTourItems.splice(destination.index, 0, ...selectedTasks)
 
       if (isTourAssigned(tour)) {
         const tasksLists = selectTasksListsWithItems(getState())

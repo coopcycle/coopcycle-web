@@ -3,6 +3,7 @@ import thunk from 'redux-thunk'
 
 import { storeFixture } from './storeFixture'
 import { handleDragEnd } from '../handleDrag';
+import { insertInUnassignedTasks } from '../actions';
 
 // https://github.com/dmitry-zaets/redux-mock-store#asynchronous-actions
 const middlewares = [ thunk]
@@ -228,4 +229,56 @@ describe('handleDragEnd', () => {
       )
     })
 
+    it ('should move unassigned tasks of the same order when moving to tour', async () => {
+      const dispatch = jest.fn(),
+        mockModifyTaskList = jest.fn(),
+        mockModifyTour = jest.fn()
+
+      let result = {
+        draggableId: '/api/tasks/737',
+        source: {droppableId: 'unassigned'}, destination: {droppableId: 'tour:/api/tours/114', index: 1}
+      }
+
+      handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
+
+      expect(mockModifyTour).toHaveBeenCalledTimes(1)
+      expect(mockModifyTour).toHaveBeenLastCalledWith(
+        expect.objectContaining({'@id': '/api/tours/114'}),
+        expect.arrayContaining([
+          expect.objectContaining({"@id": '/api/tasks/733'}),
+          expect.objectContaining({"@id": '/api/tasks/737'}),
+          expect.objectContaining({"@id": '/api/tasks/738'}),
+          expect.objectContaining({"@id": '/api/tasks/732'})
+        ])
+      )
+    })
+
+    it ('should move unassigned tasks in the order they are in the unassigned tasks panel', async () => {
+
+      // revert order of tasks in unassigned tasks compared to previous test
+      store.dispatch(insertInUnassignedTasks({tasksToInsert: ['/api/tasks/738'], index: 1}))
+
+
+      const dispatch = jest.fn(),
+        mockModifyTaskList = jest.fn(),
+        mockModifyTour = jest.fn()
+
+      let result = {
+        draggableId: '/api/tasks/737',
+        source: {droppableId: 'unassigned'}, destination: {droppableId: 'tour:/api/tours/114', index: 1}
+      }
+
+      handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
+
+      expect(mockModifyTour).toHaveBeenCalledTimes(1)
+      expect(mockModifyTour).toHaveBeenLastCalledWith(
+        expect.objectContaining({'@id': '/api/tours/114'}),
+        expect.arrayContaining([
+          expect.objectContaining({"@id": '/api/tasks/733'}),
+          expect.objectContaining({"@id": '/api/tasks/738'}), // reverted compare to previous test
+          expect.objectContaining({"@id": '/api/tasks/737'}),
+          expect.objectContaining({"@id": '/api/tasks/732'})
+        ])
+      )
+    })
   })
