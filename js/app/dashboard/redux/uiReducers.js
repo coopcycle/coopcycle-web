@@ -71,7 +71,7 @@ export default (state = initialState, action) => {
       const tasksToInsertIds = action.payload.tasksToInsert.map(t => t['@id'])
       unassignedTasksIdsOrder = [...state.unassignedTasksIdsOrder]
       _.remove(unassignedTasksIdsOrder, t => tasksToInsertIds.includes(t))
-      Array.prototype.splice.apply(unassignedTasksIdsOrder, Array.prototype.concat([ action.payload.index, 0 ], tasksToInsertIds))
+      unassignedTasksIdsOrder.splice(action.payload.index, 0 , ...tasksToInsertIds)
 
       return {
         ...state,
@@ -92,7 +92,7 @@ export default (state = initialState, action) => {
     const tourOrGroupToInsert = action.payload.itemId
     unassignedToursOrGroupsOrderIds = [...state.unassignedToursOrGroupsOrderIds]
     _.remove(unassignedToursOrGroupsOrderIds, t => t === tourOrGroupToInsert)
-    Array.prototype.splice.apply(unassignedToursOrGroupsOrderIds, Array.prototype.concat([ action.payload.index, 0 ], tourOrGroupToInsert))
+    unassignedToursOrGroupsOrderIds.splice(action.payload.index, 0, ...tourOrGroupToInsert)
 
     return {
       ...state,
