@@ -6,7 +6,7 @@ import { connect, useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
 import Tour from './Tour'
-import { deleteGroup, editGroup, openCreateTourModal } from '../redux/actions'
+import { appendToUnassignedTours, deleteGroup, editGroup, openCreateTourModal } from '../redux/actions'
 import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
 import TaskGroup from './TaskGroup'
 import { selectGroups, selectIsTourDragging, selectOrderOfUnassignedToursAndGroups } from '../redux/selectors'
@@ -51,7 +51,7 @@ export const UnassignedTours = () => {
     let itemsToRemoveIds = _.filter(unassignedToursOrGroupsOrderIds, taskId => !itemIds.includes(taskId))
 
     if (itemsToAppendIds.length > 0 || itemsToRemoveIds.length > 0) {
-      dispatch({type: "APPEND_TO_UNASSIGNED_TOURS", itemsToAppendIds, itemsToRemoveIds})
+      dispatch(appendToUnassignedTours({itemsToAppendIds, itemsToRemoveIds}))
     }
 
   }, [tours, groups]);

@@ -9,7 +9,7 @@ import Task from './Task'
 import TaskGroup from './TaskGroup'
 import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
-import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules } from '../redux/actions'
+import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules, appendToUnassignedTasks } from '../redux/actions'
 import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode, selectIsTourDragging, selectOrderOfUnassignedTasks, selectUnassignedTasksLoading } from '../redux/selectors'
 import { getDroppableListStyle } from '../utils'
 import classNames from 'classnames'
@@ -99,7 +99,7 @@ export const UnassignedTasks = () => {
     let taskToRemoveIds = _.filter(unassignedTasksIdsOrder, taskId => !standaloneTaskIds.includes(taskId))
 
     if (tasksToAppendIds.length > 0 || taskToRemoveIds.length > 0) {
-      dispatch({type: "APPEND_TO_UNASSIGNED_TASKS", tasksToAppendIds, taskToRemoveIds})
+      dispatch(appendToUnassignedTasks({tasksToAppendIds, taskToRemoveIds}))
     }
 
   }, [standaloneTasks]);

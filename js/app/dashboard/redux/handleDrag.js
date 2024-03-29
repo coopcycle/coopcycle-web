@@ -2,6 +2,7 @@ import _ from "lodash"
 import { isTourAssigned, makeSelectTaskListItemsByUsername, selectTaskIdToTourIdMap, selectTasksListsWithItems, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { setIsTourDragging, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks,
+  insertInUnassignedTasks,
   modifyTaskList as modifyTaskListAction,
   modifyTour as modifyTourAction,
   removeTasksFromTour as removeTasksFromTourAction,
@@ -160,7 +161,7 @@ export function handleDragEnd(
     } else if (
       source.droppableId === destination.droppableId && source.droppableId === 'unassigned'
     ) {
-      dispatch({type: "INSERT_IN_UNASSIGNED_TASKS", tasksToInsert: selectedTasks, index: result.destination.index})
+      dispatch(insertInUnassignedTasks({tasksToInsert: selectedTasks, index: result.destination.index}))
       return;
     } else if (destination.droppableId === 'unassigned') {
       if (!belongsToTour(selectedTasks[0])(getState())) {

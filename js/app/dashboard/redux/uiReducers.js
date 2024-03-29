@@ -6,22 +6,19 @@ import {
   SET_CURRENT_TASK,
   TOGGLE_TOUR_PANEL_EXPANDED,
   TOGGLE_TOUR_LOADING,
-  APPEND_TO_UNASSIGNED_TASKS,
-  INSERT_IN_UNASSIGNED_TASKS,
-  APPEND_TO_UNASSIGNED_TOURS,
-  INSERT_IN_UNASSIGNED_TOURS,
-  SET_UNASSIGNEDTASKS_LOADING
+  setUnassignedTasksLoading,
+  appendToUnassignedTasks,
+  insertInUnassignedTasks,
+  appendToUnassignedTours,
+  insertInUnassignedTours
 } from "./actions";
 
 // will be overrided by js/shared/src/logistics/redux/uiReducers.js when we reduce reducers so set initialState there
 const initialState = {}
 
 export default (state = initialState, action) => {
-  let unassignedTasksIdsOrder
-  let unassignedToursOrGroupsOrderIds
-
   switch (action.type) {
-    case SET_UNASSIGNEDTASKS_LOADING:
+    case setUnassignedTasksLoading.type:
       return {
         ...state,
         unassignedTasksLoading: action.payload
@@ -59,45 +56,48 @@ export default (state = initialState, action) => {
         ...state,
         loadingTourPanelsIds: _.xor([...state.loadingTourPanelsIds], [action.tourId])
       }
-    case APPEND_TO_UNASSIGNED_TASKS:
+    case appendToUnassignedTasks.type: {
+      let unassignedTasksIdsOrder
       unassignedTasksIdsOrder = [...state.unassignedTasksIdsOrder]
-      _.remove(unassignedTasksIdsOrder, t => action.taskToRemoveIds.includes(t))
-      unassignedTasksIdsOrder = [...unassignedTasksIdsOrder, ...action.tasksToAppendIds]
+      _.remove(unassignedTasksIdsOrder, t => action.payload.taskToRemoveIds.includes(t))
+      unassignedTasksIdsOrder = [...unassignedTasksIdsOrder, ...action.payload.tasksToAppendIds]
       return {
         ...state,
         unassignedTasksIdsOrder: unassignedTasksIdsOrder,
-      }
+      }}
 
-    case INSERT_IN_UNASSIGNED_TASKS:
-      const tasksToInsertIds = action.tasksToInsert.map(t => t['@id'])
+    case insertInUnassignedTasks.type: {
+      let unassignedTasksIdsOrder
+      const tasksToInsertIds = action.payload.tasksToInsert.map(t => t['@id'])
       unassignedTasksIdsOrder = [...state.unassignedTasksIdsOrder]
       _.remove(unassignedTasksIdsOrder, t => tasksToInsertIds.includes(t))
-      Array.prototype.splice.apply(unassignedTasksIdsOrder, Array.prototype.concat([ action.index, 0 ], tasksToInsertIds))
+      Array.prototype.splice.apply(unassignedTasksIdsOrder, Array.prototype.concat([ action.payload.index, 0 ], tasksToInsertIds))
 
       return {
         ...state,
         unassignedTasksIdsOrder: unassignedTasksIdsOrder,
-      }
+      }}
 
-  case APPEND_TO_UNASSIGNED_TOURS:
+  case appendToUnassignedTours.type: {
+    let unassignedToursOrGroupsOrderIds
     unassignedToursOrGroupsOrderIds = [...state.unassignedToursOrGroupsOrderIds]
-    _.remove(unassignedToursOrGroupsOrderIds, t => action.itemsToRemoveIds.includes(t))
-    unassignedToursOrGroupsOrderIds = [...unassignedToursOrGroupsOrderIds, ...action.itemsToAppendIds]
+    _.remove(unassignedToursOrGroupsOrderIds, t => action.payload.itemsToRemoveIds.includes(t))
+    unassignedToursOrGroupsOrderIds = [...unassignedToursOrGroupsOrderIds, ...action.payload.itemsToAppendIds]
     return {
       ...state,
       unassignedToursOrGroupsOrderIds: unassignedToursOrGroupsOrderIds,
-    }
-
-  case INSERT_IN_UNASSIGNED_TOURS:
-    const tourOrGroupToInsert = action.itemId
+    }}
+  case insertInUnassignedTours.type: {
+    let unassignedToursOrGroupsOrderIds
+    const tourOrGroupToInsert = action.payload.itemId
     unassignedToursOrGroupsOrderIds = [...state.unassignedToursOrGroupsOrderIds]
     _.remove(unassignedToursOrGroupsOrderIds, t => t === tourOrGroupToInsert)
-    Array.prototype.splice.apply(unassignedToursOrGroupsOrderIds, Array.prototype.concat([ action.index, 0 ], tourOrGroupToInsert))
+    Array.prototype.splice.apply(unassignedToursOrGroupsOrderIds, Array.prototype.concat([ action.payload.index, 0 ], tourOrGroupToInsert))
 
     return {
       ...state,
       unassignedToursOrGroupsOrderIds: unassignedToursOrGroupsOrderIds,
-    }
+    }}
   }
 
   return state

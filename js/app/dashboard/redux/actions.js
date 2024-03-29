@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _, { create } from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
 
@@ -12,7 +12,7 @@ import {
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
-import { createAction } from 'redux-actions'
+import { createAction } from '@reduxjs/toolkit'
 
 
 function createClient(dispatch) {
@@ -134,8 +134,6 @@ export const LOAD_TASK_EVENTS_REQUEST = 'LOAD_TASK_EVENTS_REQUEST'
 export const LOAD_TASK_EVENTS_SUCCESS = 'LOAD_TASK_EVENTS_SUCCESS'
 export const LOAD_TASK_EVENTS_FAILURE = 'LOAD_TASK_EVENTS_FAILURE'
 
-export const SET_UNASSIGNEDTASKS_LOADING = 'SET_UNASSIGNEDTASKS_LOADING'
-
 export const ADD_IMPORT = 'ADD_IMPORT'
 export const IMPORT_SUCCESS = 'IMPORT_SUCCESS'
 export const IMPORT_ERROR = 'IMPORT_ERROR'
@@ -195,12 +193,16 @@ export const TOGGLE_TOUR_LOADING = 'TOGGLE_TOUR_LOADING'
 export const UPDATE_TOUR = 'UPDATE_TOUR'
 export const DELETE_TOUR_SUCCESS = 'DELETE_TOUR_SUCCESS'
 
-export const APPEND_TO_UNASSIGNED_TASKS = 'APPEND_TO_UNASSIGNED_TASKS'
-export const INSERT_IN_UNASSIGNED_TASKS = 'INSERT_IN_UNASSIGNED_TASKS'
-export const APPEND_TO_UNASSIGNED_TOURS = 'APPEND_TO_UNASSIGNED_TOURS'
 export const INSERT_IN_UNASSIGNED_TOURS = 'INSERT_IN_UNASSIGNED_TOURS'
 
 export const SET_TOURS_ENABLED = 'SET_TOURS_ENABLED'
+
+export const setUnassignedTasksLoading = createAction('SET_UNASSIGNEDTASKS_LOADING')
+export const appendToUnassignedTasks = createAction('APPEND_TO_UNASSIGNED_TASKS')
+export const insertInUnassignedTasks = createAction('INSERT_IN_UNASSIGNED_TASKS')
+export const appendToUnassignedTours = createAction('APPEND_TO_UNASSIGNED_TOURS')
+export const insertInUnassignedTours = createAction('INSERT_IN_UNASSIGNED_TOURS')
+
 
 
 export function assignAfter(username, task, after) {
@@ -286,8 +288,6 @@ export function importSuccess(token) {
 export function importError(token, message) {
   return { type: IMPORT_ERROR, token, message }
 }
-
-export const setUnassignedTasksLoading = createAction(SET_UNASSIGNEDTASKS_LOADING)
 
 export function modifyTaskListInUI(username, tasks) {
   /*
