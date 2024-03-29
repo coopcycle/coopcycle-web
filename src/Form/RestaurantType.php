@@ -16,9 +16,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -91,7 +89,7 @@ class RestaurantType extends LocalBusinessType
                     'required' => false,
                 ])
                 ->add('autoAcceptOrdersEnabled', CheckboxType::class, [
-                    'label' => 'restaurant.form.auto_accept_orders_enabled.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.auto_accept_orders_enabled.label', 'restaurant.form.auto_accept_orders_enabled.docs_path'),
                     'required' => false,
                 ]);
 

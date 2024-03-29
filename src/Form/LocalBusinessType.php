@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Service\FormFieldUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
@@ -37,6 +38,7 @@ abstract class LocalBusinessType extends AbstractType
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
         GatewayResolver $gatewayResolver,
+        protected FormFieldUtils $formFieldUtils,
         string $country,
         bool $debug = false,
         bool $cashOnDeliveryOptinEnabled = false,
