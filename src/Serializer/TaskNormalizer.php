@@ -92,14 +92,16 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                 ->getRepository(Task::class)
                 ->createQueryBuilder('t');
 
-                $data['packages'] = $qb
-                    ->select('p.name AS name', 'p.name AS type', 'tp.quantity AS quantity')
+                $query = $qb
+                    ->select('p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity')
                     ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
                     ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
                     ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
+                    ->groupBy('p.name')
                     ->setParameter('deliveryId', $deliveryId)
-                    ->getQuery()
-                    ->getResult();
+                    ->getQuery();
+
+                $data['packages'] = $query->getResult();
 
                 $qbWeight =  $this->entityManager
                     ->getRepository(Task::class)
