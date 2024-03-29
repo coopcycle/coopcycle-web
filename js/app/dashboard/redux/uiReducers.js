@@ -92,7 +92,7 @@ export default (state = initialState, action) => {
     const tourOrGroupToInsert = action.payload.itemId
     unassignedToursOrGroupsOrderIds = [...state.unassignedToursOrGroupsOrderIds]
     _.remove(unassignedToursOrGroupsOrderIds, t => t === tourOrGroupToInsert)
-    unassignedToursOrGroupsOrderIds.splice(action.payload.index, 0, ...tourOrGroupToInsert)
+    unassignedToursOrGroupsOrderIds.splice(action.payload.index, 0, tourOrGroupToInsert)
 
     return {
       ...state,

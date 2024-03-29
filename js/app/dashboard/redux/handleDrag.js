@@ -3,6 +3,7 @@ import { isTourAssigned, makeSelectTaskListItemsByUsername, selectTaskIdToTourId
 import { setIsTourDragging, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks,
   insertInUnassignedTasks,
+  insertInUnassignedTours,
   modifyTaskList as modifyTaskListAction,
   modifyTour as modifyTourAction,
   removeTasksFromTour as removeTasksFromTourAction,
@@ -156,7 +157,7 @@ export function handleDragEnd(
       source.droppableId === destination.droppableId && source.droppableId === 'unassigned_tours'
     ) {
       const itemId = result.draggableId.startsWith('tour:') ? result.draggableId.replace('tour:', '') : result.draggableId.replace('group:', '')
-      dispatch({type: "INSERT_IN_UNASSIGNED_TOURS", itemId: itemId, index: result.destination.index})
+      dispatch(insertInUnassignedTours({itemId: itemId, index: result.destination.index}))
       return;
     } else if (
       source.droppableId === destination.droppableId && source.droppableId === 'unassigned'
