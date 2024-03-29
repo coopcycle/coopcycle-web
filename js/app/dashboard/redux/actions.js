@@ -1485,15 +1485,6 @@ export function createTour(tasks, name, date) {
       }
     })
       .then((response) => {
-        tasks.forEach(task =>
-          // we do a partial update here, because we don't want to mess with isAssigned/assignedTo which are handled somewhere else
-          dispatch(updateTask({
-            '@id': task['@id'],
-            tour: response.data, // the only property we want to update on the task
-            doneAfter: task.doneAfter, // pass this because `updateTask` is doing a date range check
-            doneBefore: task.doneBefore // pass this because `updateTask` is doing a date range check
-          }))
-        )
         // flatten items to itmIds
         let tour = {...response.data}
         tour.itemIds = tour.items.map(item => item['@id'])
