@@ -17,21 +17,24 @@ class FormFieldUtils
     {
         $localizedDocsPath = $this->translator->trans($docsPath);
 
-        // docs path exists
+        // docs path provided in the translations
         if ($localizedDocsPath !== $docsPath) {
-            return [
-                'label' => '%label%. <a href="https://docs.coopcycle.org%docs_path%" target="_blank" rel="noopener">%docs_label% <i class="fa fa-external-link"></i></a>',
-                'label_translation_parameters' => [
-                    '%label%' => $this->translator->trans($label),
-                    '%docs_path%' => $this->translator->trans($docsPath),
-                    '%docs_label%' => $this->translator->trans('docs.label'),
-                ],
-                'label_html' => true,
-            ];
-        } else {
-            return [
-                'label' => $label,
-            ];
+            $url = 'https://docs.coopcycle.org' . $localizedDocsPath;
+            if (filter_var($url, FILTER_VALIDATE_URL)) {
+                return [
+                    'label' => '%label%. <a href="%url%" target="_blank" rel="noopener">%docs_label% <i class="fa fa-external-link"></i></a>',
+                    'label_translation_parameters' => [
+                        '%label%' => $this->translator->trans($label),
+                        '%url%' => $url,
+                        '%docs_label%' => $this->translator->trans('docs.label'),
+                    ],
+                    'label_html' => true,
+                ];
+            }
         }
+
+        return [
+            'label' => $label,
+        ];
     }
 }
