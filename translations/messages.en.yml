@@ -173,6 +173,7 @@ restaurant.form.temporaryClosingRule: Click here to temporarily disable orders t
 restaurant.form.deposit_refund_enabled.label: Enable deposit-refund system
 restaurant.form.deposit_refund_enabled.docs_path: /en/admin/restaurants/general-settings/#deposit-refund
 restaurant.form.auto_accept_orders_enabled.label: Automatically accept orders
+restaurant.form.auto_accept_orders_enabled.docs_path: /en/admin/restaurants/general-settings/#auto-accept-orders
 restaurant.form.accessPlanning: Access planning
 restaurant.form.createRestaurant: Create restaurant
 restaurant.form.exclusive.label: This restaurant is exclusive
