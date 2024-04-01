@@ -72,20 +72,20 @@ class RestaurantType extends LocalBusinessType
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
                 ->add('featured', CheckboxType::class, [
-                    'label' => 'restaurant.form.featured.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.featured.label', 'restaurant.form.featured.docs_path'),
                     'required' => false
                 ])
                 ->add('exclusive', CheckboxType::class, [
-                    'label' => 'restaurant.form.exclusive.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.exclusive.label', 'restaurant.form.exclusive.docs_path'),
                     'required' => false
                 ])
                 ->add('contract', ContractType::class)
                 ->add('quotesAllowed', CheckboxType::class, [
-                    'label' => 'restaurant.form.quotes_allowed.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.quotes_allowed.label', 'restaurant.form.quotes_allowed.docs_path'),
                     'required' => false,
                 ])
                 ->add('depositRefundEnabled', CheckboxType::class, [
-                    'label' => 'restaurant.form.deposit_refund_enabled.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.deposit_refund_enabled.label', 'restaurant.form.deposit_refund_enabled.docs_path'),
                     'required' => false,
                 ])
                 ->add('autoAcceptOrdersEnabled', CheckboxType::class, [
