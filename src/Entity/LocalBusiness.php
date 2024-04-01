@@ -272,6 +272,9 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected ?int $rateLimitAmount;
 
+    /**
+     * @Groups({"restaurant"})
+     */
     protected bool $autoAcceptOrdersEnabled = false;
 
     public function __construct()
