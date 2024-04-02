@@ -1,16 +1,10 @@
-import configureStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
-
 import { storeFixture } from './storeFixture'
 import { handleDragEnd } from '../handleDrag';
-import { insertInUnassignedTasks } from '../actions';
-
-// https://github.com/dmitry-zaets/redux-mock-store#asynchronous-actions
-const middlewares = [ thunk]
-const mockStore = configureStore(middlewares)
+import { insertInUnassignedTasks, toggleTask } from '../actions';
+import { createStoreFromPreloadedState } from '../store';
 
 describe('handleDragEnd', () => {
-    const store = mockStore(storeFixture)
+    let store = createStoreFromPreloadedState(storeFixture)
 
     it ('should assign a tour at the beginning of a tasklist', () => {
       const dispatch = jest.fn(),
@@ -251,12 +245,13 @@ describe('handleDragEnd', () => {
           expect.objectContaining({"@id": '/api/tasks/732'})
         ])
       )
+      expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
     })
 
     it ('should move unassigned tasks in the order they are in the unassigned tasks panel', async () => {
 
       // revert order of tasks in unassigned tasks compared to previous test
-      store.dispatch(insertInUnassignedTasks({tasksToInsert: ['/api/tasks/738'], index: 1}))
+      store.dispatch(insertInUnassignedTasks({tasksToInsert: [{'@id': '/api/tasks/738'}], index: 1}))
 
 
       const dispatch = jest.fn(),
@@ -278,6 +273,35 @@ describe('handleDragEnd', () => {
           expect.objectContaining({"@id": '/api/tasks/738'}), // reverted compare to previous test
           expect.objectContaining({"@id": '/api/tasks/737'}),
           expect.objectContaining({"@id": '/api/tasks/732'})
+        ])
+      )
+      expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
+    })
+
+    it ('should move individual tasks from tour in the order they are in the tour when assigning', async () => {
+
+      store.dispatch(toggleTask({'@id': '/api/tasks/732'}, true))
+
+      const dispatch = jest.fn(),
+        mockModifyTaskList = jest.fn(),
+        mockModifyTour = jest.fn()
+
+      let result = {
+        draggableId: '/api/tasks/732',
+        source: {droppableId: 'tour:/api/tours/114'}, destination: {droppableId: 'assigned:admin', index: 0}
+      }
+
+      handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
+
+      expect(mockModifyTaskList).toHaveBeenCalledWith(
+        "admin",
+        expect.arrayContaining([
+          expect.objectContaining({"@id": '/api/tasks/733'}),
+          expect.objectContaining({"@id": '/api/tasks/732'}),
+          expect.objectContaining({"@id": '/api/tasks/729'}),
+          expect.objectContaining({"@id": '/api/tasks/730'}),
+          expect.objectContaining({"@id": '/api/tasks/731'}),
+          expect.objectContaining({"@id": '/api/tasks/727'}),
         ])
       )
     })

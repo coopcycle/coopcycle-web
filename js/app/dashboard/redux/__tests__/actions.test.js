@@ -142,7 +142,7 @@ let allTours = [tour1]
 
 describe('selecting-tasks', () => {
   /*
-    We test on the action level because it is where the validation code leaves
+    We test on the action level because it is where the validation code lives
   */
 
   beforeEach(() => {

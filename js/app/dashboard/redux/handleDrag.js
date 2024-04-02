@@ -55,9 +55,9 @@ export function handleDragEnd(
       - Dispatch actions according to the destination
   */
 
-  return  function(dispatch, getState) {
+  return function(dispatch, getState) {
 
-    const  handleDropInTaskList = async (tasksList, selectedTasks, index) => {
+    const handleDropInTaskList = async (tasksList, selectedTasks, index) => {
       let newTasksList = [...tasksList.items]
 
       selectedTasks.forEach((task) => {
@@ -152,7 +152,7 @@ export function handleDragEnd(
       selectedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
     }
 
-    // sorting
+    // sorting tasks to be inserted
     if (source.droppableId === 'unassigned') {
       const unassignedTasksOrder = selectOrderOfUnassignedTasks(getState())
 
@@ -161,7 +161,17 @@ export function handleDragEnd(
         const task2Rank = unassignedTasksOrder.findIndex(taskId => taskId === task2['@id'])
         return  task1Rank - task2Rank
       })
+    } else if (source.droppableId.startsWith('tour') || result.draggableId.startsWith('tour')) {
+      const tourId = result.draggableId.startsWith('tour') ? result.draggableId.replace('tour:', '') : source.droppableId.replace('tour:', '')
+      const tour = selectTourById(getState(), tourId)
+      selectedTasks.sort((task1, task2) => {
+        const task1Rank = tour.itemIds.findIndex(taskId => taskId === task1['@id'])
+        const task2Rank = tour.itemIds.findIndex(taskId => taskId === task2['@id'])
+        return  task1Rank - task2Rank
+      })
+
     }
+    // maybe when moving task in assigned list it should keep order ?
 
     // reordered inside the unassigned tours list
     if (
