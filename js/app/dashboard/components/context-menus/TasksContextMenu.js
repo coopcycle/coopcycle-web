@@ -53,21 +53,21 @@ const { hideAll } = useContextMenu({
   id: 'task-contextmenu',
 })
 
-const useAssignAction = async function(username, tasksToAssign) {
-
+const useAssignAction = function() {
   const dispatch = useDispatch()
   const date = useSelector(selectSelectedDate)
   const tasksLists = useSelector(selectTasksListsWithItems)
 
-  let tasksList = _.find(tasksLists, tl => tl.username === username)
+  return async function (username, tasksToAssign) {
+    let tasksList = _.find(tasksLists, tl => tl.username === username)
 
-  if (!tasksList) {
-    tasksList= await dispatch(createTaskList(date, username))
+    if (!tasksList) {
+      tasksList= await dispatch(createTaskList(date, username))
+    }
+
+    const newTasksList = [...tasksList.items, ...tasksToAssign]
+    return dispatch(modifyTaskList(tasksList.username, newTasksList))
   }
-
-  const newTasksList = [...tasksList.items, ...tasksToAssign]
-  return dispatch(modifyTaskList(tasksList.username, newTasksList))
-
 }
 
 
@@ -190,8 +190,9 @@ const DynamicMenu = () => {
 
   let selectedOrders =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
 
-  const assignSelectedOrders = (username) => useAssignAction(username, selectedOrders)
-  const assignSelectedTasks = (username) => useAssignAction(username, selectedTasks)
+  const assign = useAssignAction()
+  const assignSelectedOrders = (username) => assign(username, selectedOrders)
+  const assignSelectedTasks = (username) => assign(username, selectedTasks)
 
   const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
 

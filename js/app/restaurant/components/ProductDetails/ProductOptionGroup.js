@@ -45,7 +45,7 @@ export const OptionGroup = ({ index, option }) => {
 
   return (
     <div id={ `product-option-group-${ option.code }` }
-         className={ classNames({
+         className={ classNames('product-option-group', {
            'product-option-group--invalid': isSelectedAndNotValid,
          }) }>
       <div className="product-option-group__name">{ option.name }</div>

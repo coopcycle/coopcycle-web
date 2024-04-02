@@ -7,9 +7,9 @@ import {
 
 const OptionValueLabel = ({ option, optionValue }) => (
   <>
-    <span className="product-option-item__name">{optionValue.value}</span>
+    <div className="product-option-item__name">{optionValue.value}</div>
     {(option.strategy === 'option_value' && optionValue.price > 0) && (
-      <span>+{(optionValue.price / 100).formatMoney()}</span>
+      <div className="product-option-item__price">+{(optionValue.price / 100).formatMoney()}</div>
     )}
   </>
 )

@@ -121,7 +121,7 @@
       }
     },
     {
-      "name": "Name with image, description, allergens and restricted diet",
+      "name": "Name with image, description and restricted diet",
       "args": {
         "restaurant_id": "2",
         "product": {
@@ -162,8 +162,9 @@
       }
     },
     {
-      "name": "Name with image, description, many allergens and a few restricted diets",
+      "name": "Name with image, description, many restricted diets",
       "args": {
+        "locale": "fr",
         "restaurant_id": "2",
         "product": {
           "resource_class": "AppBundle\\Entity\\Sylius\\Product",
@@ -174,7 +175,7 @@
           "description": "Mozzarella (fior di latte), parmesan 24 mois, gorgonzola, taleggio (fromage de vache), mascarpone, origan.",
           "variants": [
             {
-              "price": 1520
+              "price": 15200
             }
           ],
           "attributes": [
@@ -193,7 +194,7 @@
                 "storageType": "json"
               },
               "value": [
-                "VEGETARIAN_DIET", "VEGAN_DIET"
+                "VEGETARIAN_DIET", "VEGAN_DIET", "GLUTEN_FREE_DIET"
               ]
             }
           ]
@@ -303,7 +304,7 @@
           "reusablePackagingEnabled": true
         },
         "product_images": [],
-        "card_product_image": ""
+        "card_product_image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd"
       }
     },
     {
