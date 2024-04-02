@@ -5,7 +5,7 @@ base.footer.contactUs: Kontaktujte nás
 base.footer.help: Nápověda
 base.footer.legal: Zákonné oznámení
 base.footer.suggest: Navrhnout firmu
-adminDashboard.title: Řídicí panel administrátora
+adminDashboard.title: Dispatch
 adminDashboard.configuration: Konfigurace
 adminDashboard.tooltip.orders: Správa objednávek restaurací
 adminDashboard.tooltip.deliveries: Spravovat dodávky
