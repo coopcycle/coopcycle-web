@@ -15,7 +15,11 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
       </field>
-    <many-to-many field="tasks" mapped-by="incidents" target-entity="AppBundle\Entity\Task"/>
+    <many-to-one field="task" target-entity="AppBundle\Entity\Task" inversed-by="incidents" fetch="EAGER">
+      <join-columns>
+        <join-column name="task_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
     <one-to-many field="images" target-entity="AppBundle\Entity\Incident\IncidentImage" mapped-by="incident" />
     <one-to-many field="events" target-entity="AppBundle\Entity\Incident\IncidentEvent" mapped-by="incident">
       <order-by>

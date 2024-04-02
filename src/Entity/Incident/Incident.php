@@ -34,7 +34,7 @@ class Incident {
 
     protected int $priority;
 
-    protected Collection $tasks;
+    protected Task $task;
 
     protected ?string $failure_reason_code = null;
 
@@ -60,7 +60,6 @@ class Incident {
 
 
     public function __construct() {
-        $this->tasks = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->events = new ArrayCollection();
     }
@@ -96,18 +95,12 @@ class Incident {
         return $this;
     }
 
-    public function getTasks(): Collection {
-        return $this->tasks;
+    public function getTask(): Task {
+        return $this->task;
     }
 
-    public function addTask(Task $task): self {
-        // For now only limit task to one
-        if (!$this->getTasks()->isEmpty()) {
-            return $this;
-        }
-        if (!$this->tasks->contains($task)) {
-            $this->tasks[] = $task;
-        }
+    public function setTask(Task $task): self {
+        $this->task = $task;
         return $this;
     }
 
@@ -165,10 +158,7 @@ class Incident {
     }
 
     public function getCustomerUserInfo(): ?User {
-        if ($this->getTasks()->count() > 0) {
-            return $this->getTasks()->first()->getDelivery()?->getOrder()?->getCustomer()?->getUser();
-        }
-        return null;
+        return $this->getTask()->getDelivery()?->getOrder()?->getCustomer()?->getUser();
     }
 
 }
