@@ -117,6 +117,7 @@ const Tour = ({ tour, draggableIndex }) => {
                     <a role="button" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))} className="ml-2 flex-grow-1 text-truncate">
                       { tour.name } <span className="badge">{ tour.items.length }</span>
                     </a>
+                    <i className="fa fa-arrows cursor--grabbing mr-2"></i>
                   </RenderEditNameForm>
               </h4>
             </div>
@@ -134,7 +135,6 @@ const Tour = ({ tour, draggableIndex }) => {
                         'm-0': true,
                         'p-0': true,
                         'nomargin': true,
-                        'taskList__tasks--empty': !tour.items.length
                       }) }
                       style={getDroppableListStyle(snapshot.isDraggingOver)}
                       >

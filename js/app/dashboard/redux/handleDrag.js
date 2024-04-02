@@ -2,10 +2,14 @@ import _ from "lodash"
 import { isTourAssigned, makeSelectTaskListItemsByUsername, selectTaskIdToTourIdMap, selectTasksListsWithItems, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { setIsTourDragging, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks,
+  insertInUnassignedTasks,
+  insertInUnassignedTours,
   modifyTaskList as modifyTaskListAction,
   modifyTour as modifyTourAction,
   removeTasksFromTour as removeTasksFromTourAction,
-  unassignTasks as unassignTasksAction } from "./actions"
+  setUnassignedTasksLoading,
+  unassignTasks as unassignTasksAction
+} from "./actions"
 import { belongsToTour, selectGroups, selectSelectedTasks } from "./selectors"
 import { isValidTasksMultiSelect, withOrderTasksForDragNDrop } from "./utils"
 import { toast } from 'react-toastify'
@@ -51,11 +55,10 @@ export function handleDragEnd(
       - Dispatch actions according to the destination
   */
 
-  return function(dispatch, getState) {
+  return  function(dispatch, getState) {
 
-    const handleDropInTaskList = (tasksList, selectedTasks, index) => {
+    const  handleDropInTaskList = async (tasksList, selectedTasks, index) => {
       let newTasksList = [...tasksList.items]
-
 
       selectedTasks.forEach((task) => {
         let taskIndex = newTasksList.findIndex((item) => item['@id'] === task['@id'])
@@ -63,9 +66,17 @@ export function handleDragEnd(
         if ( taskIndex > -1) {
           newTasksList.splice(taskIndex, 1)
         }
+
       })
 
       newTasksList.splice(index, 0, ...selectedTasks)
+
+      if(selectedTasks[0].assignedTo && selectedTasks[0].assignedTo !== tasksList.username) {
+        dispatch(setUnassignedTasksLoading(true))
+        await dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
+        dispatch(setUnassignedTasksLoading(false))
+      }
+
       return dispatch(modifyTaskList(tasksList.username, newTasksList))
     },
     getPositionInFlatTaskList = (nestedTaskList, destinationIndex, tourId=null) => {
@@ -92,14 +103,6 @@ export function handleDragEnd(
     if (
       source.droppableId === destination.droppableId &&
       source.index === destination.index
-    ) {
-      return;
-    }
-
-    // reordered inside the unassigned list or unassigned tours list, do nothing
-    if (
-      source.droppableId === destination.droppableId &&
-      ( source.droppableId === 'unassigned' || source.droppableId === 'unassigned_tours' )
     ) {
       return;
     }
@@ -149,7 +152,19 @@ export function handleDragEnd(
       selectedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
     }
 
-    if (destination.droppableId === 'unassigned') {
+    // reordered inside the unassigned tours list
+    if (
+      source.droppableId === destination.droppableId && source.droppableId === 'unassigned_tours'
+    ) {
+      const itemId = result.draggableId.startsWith('tour:') ? result.draggableId.replace('tour:', '') : result.draggableId.replace('group:', '')
+      dispatch(insertInUnassignedTours({itemId: itemId, index: result.destination.index}))
+      return;
+    } else if (
+      source.droppableId === destination.droppableId && source.droppableId === 'unassigned'
+    ) {
+      dispatch(insertInUnassignedTasks({tasksToInsert: selectedTasks, index: result.destination.index}))
+      return;
+    } else if (destination.droppableId === 'unassigned') {
       if (!belongsToTour(selectedTasks[0])(getState())) {
         dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
       } else {

@@ -53,16 +53,23 @@ const { hideAll } = useContextMenu({
   id: 'task-contextmenu',
 })
 
-async function _assign(tasksToAssign, username, tasksLists, date, dispatch) {
-  let tasksList = _.find(tasksLists, tl => tl.username === username)
+const useAssignAction = function() {
+  const dispatch = useDispatch()
+  const date = useSelector(selectSelectedDate)
+  const tasksLists = useSelector(selectTasksListsWithItems)
 
-  if (!tasksList) {
-    tasksList= await dispatch(createTaskList(date, username))
+  return async function (username, tasksToAssign) {
+    let tasksList = _.find(tasksLists, tl => tl.username === username)
+
+    if (!tasksList) {
+      tasksList= await dispatch(createTaskList(date, username))
+    }
+
+    const newTasksList = [...tasksList.items, ...tasksToAssign]
+    return dispatch(modifyTaskList(tasksList.username, newTasksList))
   }
-
-  const newTasksList = [...tasksList.items, ...tasksToAssign]
-  return dispatch(modifyTaskList(tasksList.username, newTasksList))
 }
+
 
 function _unassign(tasksToUnassign, unassignTasks) {
   const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo)
@@ -173,9 +180,6 @@ const DynamicMenu = () => {
   const unassignedTasks = useSelector(selectUnassignedTasks)
   const selectedTasks = useSelector(selectSelectedTasks)
   const allTasks = useSelector(selectAllTasks)
-  const date = useSelector(selectSelectedDate)
-
-  const tasksLists = useSelector(selectTasksListsWithItems)
   const nextWorkingDay = useSelector(selectNextWorkingDay)
   const linkedTasksIds = useSelector(selectLinkedTasksIds)
   const taskIdToTourIdMap = useSelector(selectTaskIdToTourIdMap)
@@ -184,9 +188,14 @@ const DynamicMenu = () => {
   const couriers = useSelector(selectCouriersWithExclude)
   const tasksListsLoading = useSelector(selectTaskListsLoading)
 
+  let selectedOrders =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
+
+  const assign = useAssignAction()
+  const assignSelectedOrders = (username) => assign(username, selectedOrders)
+  const assignSelectedTasks = (username) => assign(username, selectedTasks)
+
   const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
 
-  let selectedTasksWithLinkedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
 
   const dispatch = useDispatch()
 
@@ -233,7 +242,7 @@ const DynamicMenu = () => {
                 // hide manually menu and submenu
                 // https://github.com/fkhadra/react-contexify/issues/172
                 hideAll()
-                dispatch(_assign(selectedTasks, c.username, tasksLists, date, dispatch))
+                assignSelectedTasks(c.username)
             }}>
               <Avatar username={c.username} />  {c.username}
             </Item>
@@ -247,7 +256,7 @@ const DynamicMenu = () => {
             // hide manually menu and submenu
             // https://github.com/fkhadra/react-contexify/issues/172
             hideAll()
-            dispatch(_assign(selectedTasksWithLinkedTasks, c.username, tasksLists, date, dispatch))
+            assignSelectedOrders(c.username)
         }}>
             <Avatar username={c.username} />  {c.username}
           </Item>
