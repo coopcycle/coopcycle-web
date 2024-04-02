@@ -2,7 +2,6 @@
 
 namespace AppBundle\Domain\Order\Reactor;
 
-use AppBundle\Domain\Order\Command\AcceptOrder;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Task\Event\TaskDone;
 use AppBundle\Entity\Task;
@@ -174,7 +173,10 @@ class UpdateState
 
             $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
 
-            $stateMachine->apply($transition, true);
+            if ($stateMachine->apply($transition, true)) {
+                $orderStateChangeEvent = new Event\OrderStateChanged($order, $event);
+                $this->eventBus->handle($orderStateChangeEvent);
+            }
         }
     }
 }

@@ -255,10 +255,6 @@ services:
         - name: event_subscriber
           subscribes_to: order:cancelled
         - name: event_subscriber
-          subscribes_to: order:preparation_started
-        - name: event_subscriber
-          subscribes_to: order:preparation_finished
-        - name: event_subscriber
           subscribes_to: order:picked
         - name: event_subscriber
           subscribes_to: order:dropped
@@ -266,6 +262,8 @@ services:
           subscribes_to: order:fulfilled
         - name: event_subscriber
           subscribes_to: order:updated
+        - name: event_subscriber
+          subscribes_to: order:state_changed
 
   coopcycle.domain.order.reactor.modify_promotions_usage:
     class: AppBundle\Domain\Order\Reactor\ModifyPromotionsUsage
