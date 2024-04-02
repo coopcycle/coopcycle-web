@@ -56,8 +56,14 @@ trait IncidentTrait {
             throw $this->createNotFoundException();
         }
 
+        $delivery = $incident->getTask()?->getDelivery();
+
+        $order = $delivery?->getOrder();
+
         return $this->render($request->attributes->get('template'), [
             'incident' => $incident,
+            'delivery' => $delivery,
+            'order' => $order
         ]);
     }
 }
