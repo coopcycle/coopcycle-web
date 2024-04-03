@@ -14,7 +14,9 @@ function Comment({ event }) {
             {moment(event.createdAt).fromNow()}
           </span>
         </div>
-        <div className="panel-body">{event.message}</div>
+        <div className="panel-body" style={{ whiteSpace: "pre-line" }}>
+          {event.message}
+        </div>
       </div>
     </div>
   );
