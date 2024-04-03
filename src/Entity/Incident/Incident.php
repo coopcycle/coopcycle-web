@@ -3,11 +3,11 @@
 namespace AppBundle\Entity\Incident;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use AppBundle\Action\Incident\CreateComment as AddCommentToIncident;
 
 
 /**
@@ -23,6 +23,11 @@ use Doctrine\Common\Collections\Collection;
  *     },
  *     "put"={
  *       "method"="PUT",
+ *     },
+ *     "add_comment"={
+ *       "method"="POST",
+ *       "path"="/incidents/{id}/comments",
+ *       "controller"=AddCommentToIncident::class,
  *     }
  *   }
  * )

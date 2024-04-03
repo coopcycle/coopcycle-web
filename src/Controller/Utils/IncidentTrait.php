@@ -60,10 +60,10 @@ trait IncidentTrait {
 
         $order = $delivery?->getOrder();
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->auth([
             'incident' => $incident,
             'delivery' => $delivery,
             'order' => $order
-        ]);
+        ]));
     }
 }
