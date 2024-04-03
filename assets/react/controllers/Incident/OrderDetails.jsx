@@ -15,7 +15,7 @@ function formatTime(task) {
 }
 
 function heading(task, delivery, order) {
-  const button = link => (
+  const button = (link) => (
     <Button
       onClick={() => window.open(link, "_blank")}
       type="dashed"
@@ -119,11 +119,10 @@ export default function ({ task, delivery, order }) {
   order = JSON.parse(order);
 
   const { coutry, currencyCode } = document.body.dataset;
-  console.log(task, delivery, order);
 
   return (
     <div className="order-details-card">
-      <h4>{heading(task, delivery, order)}</h4>
+      {heading(task, delivery, order)}
       <p className="text-muted">Date: {formatTime(task)}</p>
       <hr />
       {order && showOrderDetails(order, { coutry, currencyCode })}
