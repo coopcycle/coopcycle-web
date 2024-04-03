@@ -17,7 +17,9 @@ export const storeFixture = {
             '/api/tasks/733',
             '/api/tasks/734',
             '/api/tasks/735',
-            '/api/tasks/736'
+            '/api/tasks/736',
+            '/api/tasks/737',
+            '/api/tasks/738'
           ],
           entities: {
             '/api/tasks/730': {
@@ -225,6 +227,40 @@ export const storeFixture = {
               previous: null,
               next: null
             },
+            '/api/tasks/737': {
+              '@context': '/api/contexts/Task',
+              '@id': '/api/tasks/737',
+              '@type': 'Task',
+              id: 737,
+              type: 'DROPOFF',
+              status: 'TODO',
+              group: null,
+              after: '2024-01-09T00:00:00+01:00',
+              before: '2024-01-09T23:59:59+01:00',
+              isAssigned: true,
+              doneAfter: '2024-01-09T00:00:00+01:00',
+              doneBefore: '2024-01-09T23:59:59+01:00',
+              assignedTo: 'admin',
+              previous: null,
+              next: '/api/tasks/738'
+            },
+            '/api/tasks/738': {
+              '@context': '/api/contexts/Task',
+              '@id': '/api/tasks/738',
+              '@type': 'Task',
+              id: 738,
+              type: 'DROPOFF',
+              status: 'TODO',
+              group: null,
+              after: '2024-01-09T00:00:00+01:00',
+              before: '2024-01-09T23:59:59+01:00',
+              isAssigned: true,
+              doneAfter: '2024-01-09T00:00:00+01:00',
+              doneBefore: '2024-01-09T23:59:59+01:00',
+              assignedTo: 'admin',
+              previous: '/api/tasks/737',
+              next: null
+            },
           }
         },
         taskLists: {
@@ -294,6 +330,18 @@ export const storeFixture = {
             }
           }
         }
+      },
+      ui: {
+        unassignedTasksIdsOrder: [
+          '/api/tasks/728',
+          '/api/tasks/732',
+          '/api/tasks/733',
+          '/api/tasks/734',
+          '/api/tasks/735',
+          '/api/tasks/736',
+          '/api/tasks/737',
+          '/api/tasks/738'
+        ]
       }
     },
     config: {
