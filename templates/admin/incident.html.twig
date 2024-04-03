@@ -1,6 +1,5 @@
 {% extends "admin.html.twig" %}
-{% set user = incident.getCreatedBy() %}
-{% set customerUserInfo = incident.getCustomerUserInfo() %}
+{% set createdBy = incident.getCreatedBy() %}
 
 {% block breadcrumb %}
 <li>
@@ -49,8 +48,8 @@
       </ul>
     </div>
     </p>
-    {% if user is not null %}
-      <p>Created by: <i class="fa fa-user" aria-hidden="true"></i> {{ incident.getCreatedBy().username }}</p>
+    {% if createdBy is not null %}
+      <p>Created by: <i class="fa fa-user" aria-hidden="true"></i> {{ createdBy.username }}</p>
     {% endif %}
 
   </div>
