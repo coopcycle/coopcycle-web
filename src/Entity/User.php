@@ -22,6 +22,7 @@ use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
@@ -62,10 +63,14 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
 {
     use Timestampable;
 
+    /**
+     * @Groups({"incident_event"})
+     */
     protected $id;
 
     /**
      * @var string
+     * @Groups({"incident_event"})
      */
     protected ?string $username;
 

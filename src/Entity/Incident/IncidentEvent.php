@@ -3,21 +3,44 @@
 namespace AppBundle\Entity\Incident;
 
 use AppBundle\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 class IncidentEvent
 {
+    /**
+    * @Groups({"incident_event"})
+    */
     protected $id;
 
+
+    /**
+    * @Groups({"incident_event"})
+    */
     protected $type;
 
+
+    /**
+    * @Groups({"incident_event"})
+    */
     protected $message;
 
+
+    /**
+    * @Groups({"incident_event"})
+    */
     protected $metadata;
 
     protected $incident;
 
+
+    /**
+    * @Groups({"incident_event"})
+    */
     protected $createdBy;
 
+    /**
+    * @Groups({"incident_event"})
+    */
     protected $createdAt;
 
     public function getId()
