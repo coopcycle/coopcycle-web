@@ -76,7 +76,7 @@
 <hr>
   <div>
     <div {{ react_component('Incident/IncidentTimeline', {events: incident.getEvents()|serialize('json', {groups: 'incident_event'})}) }} ></div>
-  <textarea class="form-control" rows="3" placeholder="Add a comment"></textarea>
+    <div {{ react_component('Incident/CommentBox', {id: incident.getId()}) }} ></div>
   </div>
 </div>
 
