@@ -21,6 +21,9 @@ use Doctrine\Common\Collections\Collection;
  *     "get"={
  *       "method"="GET",
  *     },
+ *     "put"={
+ *       "method"="PUT",
+ *     }
  *   }
  * )
  */
