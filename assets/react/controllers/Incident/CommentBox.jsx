@@ -25,11 +25,11 @@ export default function ({ id }) {
         placeholder="Add a comment"
         status={error ? "error" : null}
         value={comment}
-        showCount
         onChange={(e) => setComment(e.target.value)}
         autoSize={{ minRows: 2, maxRows: 6 }}
       />
       <Button
+        style={{ float: "right" }}
         type="primary"
         disabled={!comment.trim()}
         loading={submitting}

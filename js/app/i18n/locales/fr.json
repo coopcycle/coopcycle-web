@@ -126,6 +126,7 @@
         "ADMIN_DASHBOARD_ASSIGN_DELIVERIES_ORDERS_plural": "Assigner {{ count }} livraisons/commandes",
         "ADMIN_DASHBOARD_NO_SELECTED_TASKS": "Veuillez sélectionner une tâche",
         "ADMIN_DASHBOARD_WAIT_FOR_PREVIOUS_ASSIGN": "En attente de l'attribution précédente",
+        "ADMIN_DASHBOARD_AND_CLOSE_THE_INCIDENT": "et fermer l'incident",
         "USER_EDIT_ENABLED_LABEL": "Activé",
         "USER_EDIT_DISABLED_LABEL": "Désactivé",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Commande créée",

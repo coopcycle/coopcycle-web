@@ -87,6 +87,8 @@
     order: order|serialize
   }) }}></div>
   <hr>
+  <div {{ react_component('Incident/ActionBox', {task: incident.getTask()|serialize}) }} ></div>
+  <hr>
   <div {{react_component('Incident/TaskTimeline', {events: incident.getTask().getEvents()|serialize}) }} ></div>
 </div>
 </div>
