@@ -43,6 +43,8 @@ class IncidentEvent
     */
     protected $createdAt;
 
+    const TYPE_COMMENT = "comment";
+
     public function getId()
     {
         return $this->id;
