@@ -12,6 +12,7 @@ import {
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
+import { createAction } from '@reduxjs/toolkit'
 
 
 function createClient(dispatch) {
@@ -133,8 +134,6 @@ export const LOAD_TASK_EVENTS_REQUEST = 'LOAD_TASK_EVENTS_REQUEST'
 export const LOAD_TASK_EVENTS_SUCCESS = 'LOAD_TASK_EVENTS_SUCCESS'
 export const LOAD_TASK_EVENTS_FAILURE = 'LOAD_TASK_EVENTS_FAILURE'
 
-export const SET_TASK_LISTS_LOADING = 'SET_TASK_LISTS_LOADING'
-
 export const ADD_IMPORT = 'ADD_IMPORT'
 export const IMPORT_SUCCESS = 'IMPORT_SUCCESS'
 export const IMPORT_ERROR = 'IMPORT_ERROR'
@@ -186,21 +185,25 @@ export const CLOSE_TASK_RESCHEDULE_MODAL = 'CLOSE_TASK_RESCHEDULE_MODAL'
 
 export const CREATE_TOUR_REQUEST = 'CREATE_TOUR_REQUEST'
 export const CREATE_TOUR_REQUEST_SUCCESS = 'CREATE_TOUR_REQUEST_SUCCESS'
-
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
 export const MODIFY_TOUR_REQUEST_ERROR = 'MODIFY_TOUR_REQUEST_ERROR'
 export const TOGGLE_TOUR_PANEL_EXPANDED = 'TOGGLE_EXPANDED_TOUR_PANEL'
 export const TOGGLE_TOUR_LOADING = 'TOGGLE_TOUR_LOADING'
-
 export const UPDATE_TOUR = 'UPDATE_TOUR'
 export const DELETE_TOUR_SUCCESS = 'DELETE_TOUR_SUCCESS'
 
+export const INSERT_IN_UNASSIGNED_TOURS = 'INSERT_IN_UNASSIGNED_TOURS'
+
 export const SET_TOURS_ENABLED = 'SET_TOURS_ENABLED'
 
-export function setTaskListsLoading(loading = true) {
-  return { type: SET_TASK_LISTS_LOADING, loading }
-}
+export const setUnassignedTasksLoading = createAction('SET_UNASSIGNEDTASKS_LOADING')
+export const appendToUnassignedTasks = createAction('APPEND_TO_UNASSIGNED_TASKS')
+export const insertInUnassignedTasks = createAction('INSERT_IN_UNASSIGNED_TASKS')
+export const appendToUnassignedTours = createAction('APPEND_TO_UNASSIGNED_TOURS')
+export const insertInUnassignedTours = createAction('INSERT_IN_UNASSIGNED_TOURS')
+
+
 
 export function assignAfter(username, task, after) {
 
@@ -286,26 +289,15 @@ export function importError(token, message) {
   return { type: IMPORT_ERROR, token, message }
 }
 
-export function modifyTaskList(username, tasks) {
+export function modifyTaskListInUI(username, tasks) {
   /*
     Modify a TaskList
   */
 
-  return async function(dispatch, getState) {
-
-    const data = tasks.map((task, index) => ({
-      task: task['@id'],
-      position: index,
-    }))
+  return function(dispatch, getState) {
 
     let state = getState()
     let allTasks = selectAllTasks(state)
-    let date = selectSelectedDate(state)
-
-    const url = window.Routing.generate('admin_task_list_modify', {
-      date: date.format('YYYY-MM-DD'),
-      username,
-    })
 
     const newTasks = tasks.map((task, position) => {
       const rt = _.find(allTasks, t => t['@id'] === task['@id'])
@@ -320,7 +312,31 @@ export function modifyTaskList(username, tasks) {
     const tasksList = _.find(tasksLists, tl => tl.username === username)
     const previousTasks = tasksList.items
 
-    dispatch(modifyTaskListRequest(username, newTasks, previousTasks))
+    return dispatch(modifyTaskListRequest(username, newTasks, previousTasks))
+  }}
+
+export function modifyTaskList(username, tasks) {
+  /*
+    Modify a TaskList
+  */
+
+  return async function(dispatch, getState) {
+
+    const state = getState()
+
+    dispatch(modifyTaskListInUI(username, tasks))
+
+    const data = tasks.map((task, index) => ({
+      task: task['@id'],
+      position: index,
+    }))
+
+    const date = selectSelectedDate(state)
+
+    const url = window.Routing.generate('admin_task_list_modify', {
+      date: date.format('YYYY-MM-DD'),
+      username,
+    })
 
     let response
 
@@ -1469,15 +1485,6 @@ export function createTour(tasks, name, date) {
       }
     })
       .then((response) => {
-        tasks.forEach(task =>
-          // we do a partial update here, because we don't want to mess with isAssigned/assignedTo which are handled somewhere else
-          dispatch(updateTask({
-            '@id': task['@id'],
-            tour: response.data, // the only property we want to update on the task
-            doneAfter: task.doneAfter, // pass this because `updateTask` is doing a date range check
-            doneBefore: task.doneBefore // pass this because `updateTask` is doing a date range check
-          }))
-        )
         // flatten items to itmIds
         let tour = {...response.data}
         tour.itemIds = tour.items.map(item => item['@id'])

@@ -5,7 +5,7 @@ base.footer.contactUs: Contáctanos
 base.footer.help: Ayuda
 base.footer.legal: Notas legales
 base.footer.privacy: Privacidad
-adminDashboard.title: Panel de administración
+adminDashboard.title: Dispatch
 adminDashboard.configuration: Configuración
 adminDashboard.tooltip.orders: Gestiona pedidos
 adminDashboard.tooltip.deliveries: Gestiona entregas

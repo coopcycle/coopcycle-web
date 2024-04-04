@@ -35,6 +35,9 @@ const pulse = _.debounce(() => {
 }, 2000)
 
 export const socketIO = ({ dispatch, getState }) => {
+  /*
+    Synchronization between mobile dispatch or other web dispatch instances.
+  */
 
   if (!centrifuge) {
 
@@ -57,10 +60,6 @@ export const socketIO = ({ dispatch, getState }) => {
           break
         case 'task:assigned':
         case 'task:unassigned':
-          // FIXME : for now tours and assignment are handled in two different endpoint
-          // assign is done first
-          // so when the "assign endpoint" is called it doesn't know yet about the tour property setting
-          delete event.data.task['tour']
           dispatch(updateTask(event.data.task))
           break
         case 'task_import:success':

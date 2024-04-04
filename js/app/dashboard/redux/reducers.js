@@ -132,8 +132,7 @@ export const selectedTasks = (state = [], action) => {
   switch (action.type) {
     case TOGGLE_TASK:
 
-      if (-1 !== state.indexOf(action.taskId)) {
-        // let's remove this task!
+      if (-1 !== state.indexOf(action.taskId)) { // let's remove this task!
         if (!action.multiple) {
           return []
         }

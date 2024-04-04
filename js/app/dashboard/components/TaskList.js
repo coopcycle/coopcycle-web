@@ -140,8 +140,6 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
 
   const visibleTasks = tasks.filter(task => _.includes(visibleTaskIds, task['@id']))
 
-  const isEmpty = items.length === 0 || visibleTaskIds.length === 0
-
   const polylineEnabled = useSelector(selectPolylineEnabledByUsername(username))
 
   const { t } = useTranslation()
@@ -255,7 +253,6 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
                 'taskList__tasks': true,
                 'list-group': true,
                 'm-0': true,
-                'taskList__tasks--empty': isEmpty
               }) }
               { ...provided.droppableProps }
               style={getDroppableListStyle(snapshot.isDraggingOver)}
