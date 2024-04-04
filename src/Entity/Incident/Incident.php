@@ -7,7 +7,8 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use AppBundle\Action\Incident\CreateComment as AddCommentToIncident;
+use AppBundle\Action\Incident\CreateComment;
+use AppBundle\Action\Incident\IncidentAction;
 
 
 /**
@@ -27,7 +28,12 @@ use AppBundle\Action\Incident\CreateComment as AddCommentToIncident;
  *     "add_comment"={
  *       "method"="POST",
  *       "path"="/incidents/{id}/comments",
- *       "controller"=AddCommentToIncident::class,
+ *       "controller"=CreateComment::class,
+ *     },
+ *     "action"={
+ *       "method"="PUT",
+ *       "path"="/incidents/{id}/action",
+ *       "controller"=IncidentAction::class,
  *     }
  *   }
  * )

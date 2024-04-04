@@ -44,6 +44,9 @@ class IncidentEvent
     protected $createdAt;
 
     const TYPE_COMMENT = "comment";
+    const TYPE_RESCHEDULE = "reschedule";
+    const TYPE_APPLY_PRICE_DIFF = "apply_price_diff";
+    const TYPE_CANCEL_TASK = "cancel_task";
 
     public function getId()
     {

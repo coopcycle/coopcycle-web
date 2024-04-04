@@ -5,7 +5,7 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="type" type="string" column="type" length="255"/>
-    <field name="message" type="string" column="message" length="4096"/>
+    <field name="message" type="string" column="message" length="4096" nullable="true"/>
     <field name="metadata" type="json_array" column="metadata" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>

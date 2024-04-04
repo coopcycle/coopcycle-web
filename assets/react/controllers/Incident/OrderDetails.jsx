@@ -14,8 +14,8 @@ function formatTime(task) {
   return moment(task.after).format("LL");
 }
 
-function heading(task, delivery, order) {
-  const button = (link) => (
+function _externalLink(link) {
+  return (
     <Button
       onClick={() => window.open(link, "_blank")}
       type="dashed"
@@ -25,6 +25,9 @@ function heading(task, delivery, order) {
       icon={<i className="fa fa-external-link" style={{ fontSize: "12px" }} />}
     />
   );
+}
+
+function heading(task, delivery, order) {
   const header = (title, btn = null) => (
     <h4 style={{ lineHeight: "24px" }}>
       {title}
@@ -33,17 +36,17 @@ function heading(task, delivery, order) {
   );
   if (order?.number) {
     const link = window.Routing.generate("admin_order", { id: order.id });
-    return header(`Order N° ${order.number}`, button(link));
+    return header(`Order N° ${order.number}`, _externalLink(link));
   }
 
   if (order?.id) {
     const link = window.Routing.generate("admin_order", { id: order.id });
-    return header(`Order #${order.id}`, button(link));
+    return header(`Order #${order.id}`, _externalLink(link));
   }
 
   if (delivery?.id) {
     const link = window.Routing.generate("admin_delivery", { id: order.id });
-    return header(`Delivery #${delivery.id}`, button(link));
+    return header(`Delivery #${delivery.id}`, _externalLink(link));
   }
 
   return header(`Task #${task.id}`);
@@ -95,9 +98,14 @@ function showOrderDetails(order, config) {
 }
 
 function showCustomerDetails(customer) {
+  const link = window.Routing.generate("admin_user_edit", {
+    username: customer?.username,
+  });
   return (
     <>
-      <h5>Customer information</h5>
+      <h5 style={{ lineHeight: "24px" }}>
+        Customer information{_externalLink(link)}
+      </h5>
       {customerShowName(customer)}
       {customer?.email && (
         <p>
