@@ -5,11 +5,11 @@ namespace AppBundle\Action\Incident;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentEvent;
 use AppBundle\Service\TaskManager;
-use Carbon\Carbon;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
-use IncidentEvent as IncidentEventIncidentEvent;
+use Sylius\Component\Order\Model\Adjustment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -112,9 +112,22 @@ class IncidentAction
             throw new \InvalidArgumentException("diff is required");
         }
 
+        $order = $data->getTask()->getDelivery()?->getOrder();
+        if (is_null($order)) {
+            throw new \InvalidArgumentException("There is no order linked to this task");
+        }
+
+        $adjustment = new Adjustment();
+        $adjustment->setType(AdjustmentInterface::INCIDENT_ADJUSTMENT);
+        $adjustment->setAmount($priceDiff);
+        $adjustment->setLabel("Incident");
+        $order->addAdjustment($adjustment);
+
+        $this->entityManager->persist($order);
+
         $event->setType(IncidentEvent::TYPE_APPLY_PRICE_DIFF);
+        $event->setMetadata(["diff" => $priceDiff]);
 
         //TODO:: Merge https://github.com/coopcycle/coopcycle-web/pull/3845
-        throw new \Exception("Not implemented");
     }
 }
