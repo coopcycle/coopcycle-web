@@ -114,6 +114,10 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
         $restaurant = $object->getRestaurant();
 
+        if (null !== $restaurant && $restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials()) {
+            $data['loopeatContext'] = $this->loopeatContextInitializer->initialize($object);
+        }
+
         // Suggest the customer to use reusable packaging via order payload
         if (null !== $restaurant &&
             $object->isEligibleToReusablePackaging() &&
@@ -143,16 +147,16 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             ];
 
             if ($restaurant->isLoopeatEnabled()) {
-                $enableReusablePackagingAction['loopeatOAuthUrl'] = $this->loopeatClient->getOAuthAuthorizeUrl([
+                $loopeatParams = [
                     'state' => $this->loopeatClient->createStateParamForOrder($object, $useDeepLink = true),
-                ]);
+                ];
+                if (isset($data['loopeatContext'])) {
+                    $loopeatParams['required_credits_cents'] = $data['loopeatContext']->requiredAmount;
+                }
+                $enableReusablePackagingAction['loopeatOAuthUrl'] = $this->loopeatClient->getOAuthAuthorizeUrl($loopeatParams);
             }
 
             $data['potentialAction'] = [ $enableReusablePackagingAction ];
-        }
-
-        if (null !== $restaurant && $restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials()) {
-            $data['loopeatContext'] = $this->loopeatContextInitializer->initialize($object);
         }
 
         if (isset($context['is_web']) && $context['is_web']) {
