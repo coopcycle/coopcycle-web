@@ -2,14 +2,23 @@ import React, { useState } from "react";
 import { Button, Drawer, InputNumber } from "antd";
 import RescheduleTask from "./ActionBox/RescheduleTask";
 
-export default function ({ incident }) {
+async function _handleCancelButton(id) {
+  const httpClient = new window._auth.httpClient();
+  return await httpClient.put(
+    window.Routing.generate("api_incidents_action_item", { id }),
+    { action: "cancel_task" },
+  );
+}
+
+export default function ({ incident, task }) {
   incident = JSON.parse(incident);
-  const { task } = incident;
+  task = JSON.parse(task);
   const { currencySymbol } = document.body.dataset;
   const placement = "left";
   const [open, setOpen] = useState(false);
   const [rescheduleDrawer, setRescheduleDrawer] = useState(false);
   const [priceDiffDrawer, setPriceDiffDrawer] = useState(false);
+
   return (
     <>
       <Button style={{ width: "100%" }} onClick={() => setOpen(true)}>
@@ -21,14 +30,20 @@ export default function ({ incident }) {
         onClose={() => setOpen(false)}
         open={open}
       >
-        <p>
-          <Button onClick={() => setRescheduleDrawer(true)}>
-            Reschedule the task
-          </Button>
-        </p>
-        <p>
-          <Button>Cancel the task</Button>
-        </p>
+        {task.status !== "DONE" && (
+          <>
+            <p>
+              <Button onClick={() => setRescheduleDrawer(true)}>
+                Reschedule the task
+              </Button>
+            </p>
+            <p>
+              <Button onClick={() => _handleCancelButton(incident.id)}>
+                Cancel the task
+              </Button>
+            </p>
+          </>
+        )}
         <p>
           <Button onClick={() => setPriceDiffDrawer(true)}>
             Apply a difference on the price
@@ -45,7 +60,7 @@ export default function ({ incident }) {
           onClose={() => setRescheduleDrawer(false)}
           open={rescheduleDrawer}
         >
-          <RescheduleTask task={task} />
+          <RescheduleTask task={task} incident={incident} />
         </Drawer>
 
         <Drawer

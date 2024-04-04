@@ -26,10 +26,10 @@ class IncidentAction
         $this->entityManager = $doctrine->getManager();
     }
 
-    public function __invoke(Incident $data, UserInterface $user, Request $request): Incident
+    public function __invoke(Incident $data, UserInterface $user, Request $request)
     {
 
-        $action = $request->request->get("action");
+        $action = $request->request->get("action", null);
 
         $allowedActions = [
             IncidentEvent::TYPE_RESCHEDULE,
@@ -57,7 +57,7 @@ class IncidentAction
                 $this->applyPriceDiff($data, $event, $request);
                 break;
             case IncidentEvent::TYPE_CANCEL_TASK:
-                $this->cancelTask($data, $event, $request);
+                $this->cancelTask($data, $event);
                 break;
         }
 
@@ -67,6 +67,7 @@ class IncidentAction
         $this->entityManager->flush();
 
         return $data;
+
     }
 
     private function reschedule(Incident &$data, IncidentEvent &$event, Request $request): void
@@ -82,7 +83,6 @@ class IncidentAction
         $rescheduledAfter = new \DateTime($after);
         $rescheduledBefore = new \DateTime($before);
 
-        $this->taskManager->reschedule($task, $rescheduledAfter, $rescheduledBefore);
 
         $event->setType(IncidentEvent::TYPE_RESCHEDULE);
         $event->setMetadata([
@@ -95,9 +95,11 @@ class IncidentAction
                 'before' => $rescheduledBefore->format(DateTime::ISO8601)
             ]
         ]);
+
+        $this->taskManager->reschedule($task, $rescheduledAfter, $rescheduledBefore);
     }
 
-    private function cancelTask(Incident &$data, IncidentEvent &$event, Request $request): void
+    private function cancelTask(Incident &$data, IncidentEvent &$event): void
     {
         $task = $data->getTask();
         $this->taskManager->cancel($task);

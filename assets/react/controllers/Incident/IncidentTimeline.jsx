@@ -108,7 +108,6 @@ function Item({ event }) {
 
 export default function ({ events }) {
   events = JSON.parse(events);
-  console.log(events);
 
   return (
     <div className="tl-incident-event">
