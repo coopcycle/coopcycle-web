@@ -2,16 +2,10 @@ import React, { useState } from "react";
 import { Button, Input } from "antd";
 
 async function _handleCommentSubmit(id, comment) {
-  return fetch(
+  const httpClient = new window._auth.httpClient();
+  return await httpClient.post(
     window.Routing.generate("api_incidents_add_comment_item", { id }),
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${window._auth.jwt}`,
-      },
-      body: JSON.stringify({ comment }),
-    },
+    { comment },
   );
 }
 
@@ -19,6 +13,7 @@ export default function ({ id }) {
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(false);
+
   return (
     <div>
       <Input.TextArea
@@ -35,8 +30,8 @@ export default function ({ id }) {
         loading={submitting}
         onClick={async () => {
           setSubmitting(true);
-          const response = await _handleCommentSubmit(id, comment);
-          if (response.ok) {
+          const { error } = await _handleCommentSubmit(id, comment);
+          if (!error) {
             location.reload();
           } else {
             setError(true);

@@ -770,6 +770,7 @@ fos_js_routing:
         - api_orders_add_player_item
         - api_orders_create_invitation_item
         - api_incidents_add_comment_item
+        - api_incidents_action_item
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'
