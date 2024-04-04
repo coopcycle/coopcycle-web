@@ -2,13 +2,7 @@ import React from "react";
 import moment from "moment";
 import { Button } from "antd";
 import "./OrderDetails.scss";
-
-function money(amount, { coutry, currencyCode }) {
-  return new Intl.NumberFormat(coutry, {
-    style: "currency",
-    currency: currencyCode,
-  }).format(amount / 100);
-}
+import { money } from "./utils";
 
 function formatTime(task) {
   return moment(task.after).format("LL");
@@ -64,7 +58,7 @@ function customerShowName(customer) {
   );
 }
 
-function showAdjustement(adjustments, adjustmentType, config) {
+function showAdjustment(adjustments, adjustmentType) {
   const total = adjustments[adjustmentType].reduce(
     (total, adjustment) => total + adjustment.amount,
     0,
@@ -75,22 +69,23 @@ function showAdjustement(adjustments, adjustmentType, config) {
   return adjustments[adjustmentType].map((adjustment) => (
     <p key={adjustment.id}>
       {adjustment.label}
-      <span>{money(adjustment.amount, config)}</span>
+      <span>{money(adjustment.amount)}</span>
     </p>
   ));
 }
 
-function showOrderDetails(order, config) {
+function showOrderDetails(order) {
   return (
     <>
       <h5>Order Details</h5>
       <p>
-        Subtotal<span>{money(order.itemsTotal, config)}</span>
+        Subtotal<span>{money(order.itemsTotal)}</span>
       </p>
-      {showAdjustement(order.adjustments, "delivery", config)}
-      {showAdjustement(order.adjustments, "tax", config)}
+      {showAdjustment(order.adjustments, "delivery")}
+      {showAdjustment(order.adjustments, "tax")}
+      {showAdjustment(order.adjustments, "incident")}
       <p>
-        Total<span>{money(order.total, config)}</span>
+        Total<span>{money(order.total)}</span>
       </p>
       <hr />
     </>
@@ -126,14 +121,12 @@ export default function ({ task, delivery, order }) {
   delivery = JSON.parse(delivery);
   order = JSON.parse(order);
 
-  const { coutry, currencyCode } = document.body.dataset;
-
   return (
     <div className="order-details-card">
       {heading(task, delivery, order)}
       <p className="text-muted">Date: {formatTime(task)}</p>
       <hr />
-      {order && showOrderDetails(order, { coutry, currencyCode })}
+      {order && showOrderDetails(order)}
       <h5>Shipping information</h5>
       <p>{task.address.name}</p>
       <p>{task.address.streetAddress}</p>

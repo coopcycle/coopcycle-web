@@ -2,6 +2,7 @@ import React from "react";
 import moment from "moment";
 import classNames from "classnames";
 import "./IncidentTimeline.scss";
+import { money } from "./utils";
 
 function Comment({ event }) {
   const { username } = event.createdBy;
@@ -28,6 +29,8 @@ function _eventTypeToText(event) {
       return "rescheduled the task";
     case "cancel_task":
       return "cancelled the task";
+    case "apply_price_diff":
+      return "applied a difference on the price";
   }
 }
 
@@ -50,6 +53,8 @@ function _metadataToText({ type, metadata }) {
           </div>
         </>
       );
+    case "apply_price_diff":
+      return money(metadata.diff);
   }
 }
 
