@@ -24,15 +24,32 @@ function Comment({ event }) {
 
 function _eventTypeToText(event) {
   switch (event.type) {
-    case "rescheduled":
+    case "reschedule":
       return "rescheduled the task";
+    case "cancel_task":
+      return "cancelled the task";
   }
 }
 
 function _metadataToText({ type, metadata }) {
   switch (type) {
-    case "rescheduled":
-      return moment(metadata.rescheduled).format("lll");
+    case "reschedule":
+      return (
+        <>
+          <div>
+            <span style={{ width: "55px", display: "inline-block" }}>
+              From:
+            </span>
+            {moment(metadata.from.before).format("l LT")} to{" "}
+            {moment(metadata.from.after).format("l LT")}
+          </div>
+          <div>
+            <span style={{ width: "55px", display: "inline-block" }}>To:</span>
+            {moment(metadata.to.before).format("l LT")} to{" "}
+            {moment(metadata.to.after).format("l LT")}
+          </div>
+        </>
+      );
   }
 }
 
