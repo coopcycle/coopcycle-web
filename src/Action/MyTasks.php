@@ -16,10 +16,9 @@ final class MyTasks
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        EntityManagerInterface $entityManager)
+        protected EntityManagerInterface $entityManager)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->entityManager = $entityManager;
     }
 
     public function __invoke(Request $request)
@@ -74,4 +73,3 @@ final class MyTasks
         return null;
     }
 }
-

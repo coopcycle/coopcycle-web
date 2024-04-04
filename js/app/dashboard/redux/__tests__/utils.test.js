@@ -213,6 +213,45 @@ describe('withOrderTasksForDragNDrop', () => {
     ])
   })
 
+  it('should keep the original order if tasks of orders are, not regroup the tasks of the same order together', () => {
+
+    const actual = withOrderTasksForDragNDrop([
+      {
+        '@id': '/api/tasks/1',
+        next: '/api/tasks/2',
+      }, {
+        '@id': '/api/tasks/4',
+        next: '/api/tasks/5',
+      },
+      {
+        '@id': '/api/tasks/2',
+        previous: '/api/tasks/1',
+      },
+      {
+        '@id': '/api/tasks/5',
+        previous: '/api/tasks/4',
+      },
+    ], allTasks, taskIdToTourIdMap)
+
+    expect(actual).toEqual([
+      {
+        '@id': '/api/tasks/1',
+        next: '/api/tasks/2',
+      }, {
+        '@id': '/api/tasks/4',
+        next: '/api/tasks/5',
+      },
+      {
+        '@id': '/api/tasks/2',
+        previous: '/api/tasks/1',
+      },
+      {
+        '@id': '/api/tasks/5',
+        previous: '/api/tasks/4',
+      },
+    ])
+  })
+
 })
 
 describe('timeframeToPercentage', () => {
