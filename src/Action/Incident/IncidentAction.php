@@ -4,6 +4,7 @@ namespace AppBundle\Action\Incident;
 
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentEvent;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\TaskManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use DateTime;
@@ -117,6 +118,10 @@ class IncidentAction
         $order = $data->getTask()->getDelivery()?->getOrder();
         if (is_null($order)) {
             throw new \InvalidArgumentException("There is no order linked to this task");
+        }
+
+        if ($order->getTotal() + $priceDiff < 0) {
+            throw new \InvalidArgumentException("Price diff cannot be negative");
         }
 
         $adjustment = new Adjustment();
