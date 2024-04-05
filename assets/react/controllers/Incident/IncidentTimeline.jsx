@@ -43,13 +43,13 @@ function _metadataToText({ type, metadata }) {
             <span style={{ width: "55px", display: "inline-block" }}>
               From:
             </span>
-            {moment(metadata.from.before).format("l LT")} to{" "}
-            {moment(metadata.from.after).format("l LT")}
+            {moment(metadata.from.after).format("l LT")} to{" "}
+            {moment(metadata.from.before).format("l LT")}
           </div>
           <div>
             <span style={{ width: "55px", display: "inline-block" }}>To:</span>
-            {moment(metadata.to.before).format("l LT")} to{" "}
-            {moment(metadata.to.after).format("l LT")}
+            {moment(metadata.to.after).format("l LT")} to{" "}
+            {moment(metadata.to.before).format("l LT")}
           </div>
         </>
       );

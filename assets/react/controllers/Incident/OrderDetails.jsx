@@ -3,6 +3,7 @@ import moment from "moment";
 import { Button } from "antd";
 import "./OrderDetails.scss";
 import { money } from "./utils";
+import TaskStatusBadge from "../../../../js/app/dashboard/components/TaskStatusBadge";
 
 function formatTime(task) {
   return moment(task.after).format("LL");
@@ -128,6 +129,7 @@ export default function ({ task, delivery, order }) {
       <hr />
       {order && showOrderDetails(order)}
       <h5>Shipping information</h5>
+      <div>{<TaskStatusBadge task={task} />}</div>
       <p>{task.address.name}</p>
       <p>{task.address.streetAddress}</p>
       <p>{task.address.telephone}</p>
