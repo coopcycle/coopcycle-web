@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Drawer, InputNumber } from "antd";
+import { Button, Drawer, InputNumber, Popconfirm } from "antd";
 import RescheduleTask from "./ActionBox/RescheduleTask";
 
 async function _handleCancelButton(id) {
@@ -31,19 +31,29 @@ export default function ({ incident, task }) {
         open={open}
       >
         {task.status !== "DONE" && (
-          <>
-            <p>
-              <Button onClick={() => setRescheduleDrawer(true)}>
-                Reschedule the task
-              </Button>
-            </p>
-            <p>
-              <Button onClick={() => _handleCancelButton(incident.id)}>
-                Cancel the task
-              </Button>
-            </p>
-          </>
+          <p>
+            <Button onClick={() => setRescheduleDrawer(true)}>
+              Reschedule the task
+            </Button>
+          </p>
         )}
+        {task.status !== "DONE" ||
+          (task.status !== "CANCELLED" && (
+            <p>
+              <Popconfirm
+                placement="rightTop"
+                title="Are you sure?"
+                onConfirm={async () => {
+                  const { error } = await _handleCancelButton(incident.id);
+                  if (!error) {
+                    location.reload();
+                  }
+                }}
+              >
+                <Button>Cancel the task</Button>
+              </Popconfirm>
+            </p>
+          ))}
         <p>
           <Button onClick={() => setPriceDiffDrawer(true)}>
             Apply a difference on the price
