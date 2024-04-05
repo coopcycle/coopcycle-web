@@ -67,12 +67,8 @@
 <hr>
 <div class="row">
 <p>Attachments <span class="caret"></span></p>
-{% for image in incident.getImages() %}
-  <a class="thumbnail" style="width: 128px; height: 128px">
-    <img src="{{ coopcycle_asset(image, 'file', 'incident_image_thumbnail') }}" />
-  </a>
-{% endfor %}
-</div>
+{%- set images = incident.getImages()|map(i => coopcycle_asset(i, 'file', 'incident_image_thumbnail'))|serialize -%}
+<div {{react_component('Incident/IncidentImages', {images: images})}}></div>
 <hr>
   <div>
     <div {{ react_component('Incident/IncidentTimeline', {events: incident.getEvents()|serialize('json', {groups: 'incident_event'})}) }} ></div>
