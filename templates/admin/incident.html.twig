@@ -14,47 +14,7 @@
 <div class="incident-header">
   <div class="container">
     <div class="row">
-
-      <div class="btn-group col-md-1 priority-group" align="center">
-        <button type="button" class="thumbnail priority p{{ incident.getPriority() }}" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false">
-          <div>P{{ incident.getPriority() }} <span class="caret"></span></div>
-        </button>
-        <ul class="dropdown-menu">
-          <li><a href="#">Priority 1 (high)</a></li>
-          <li><a href="#">Priority 2 (medium)</a></li>
-          <li><a href="#">Priority 3 (low)</a></li>
-        </ul>
-      </div>
-
-      <div class="col-md-9">
-        <span class="text-muted">{{ incident.getCreatedAt() | date }}</span>
-        <h1>{{ incident.title }}</h1>
-        <a href="#">Add tags</a>
-      </div>
-
-      <div class="col-md-2 text-right">
-        <p>
-        <div class="btn-group">
-          <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="false">
-            {{incident.getStatus()}} <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a href="#">Open the issue</a></li>
-            <li><a href="#">Close the issue</a></li>
-            <li><a href="#">Resolve the issue</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Reopen the issue</a></li>
-          </ul>
-        </div>
-        </p>
-        {% if createdBy is not null %}
-        <p>Created by: <i class="fa fa-user" aria-hidden="true"></i> {{ createdBy.username }}</p>
-        {% endif %}
-
-      </div>
-
+      <div {{ react_component('Incident/IncidentHeader', {incident: incident|serialize, createdBy: createdBy.username}) }} ></div>
     </div>
   </div>
 </div>

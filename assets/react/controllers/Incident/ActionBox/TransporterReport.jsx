@@ -41,9 +41,9 @@ function ImagesSelector({ images, onChange = () => {} }) {
         Check all
       </Checkbox>
       <Checkbox.Group onChange={handleOnChange} value={selectedImages}>
-        <Row gutter={[16, 16]} align="middle">
+        <Row gutter={[12, 12]} align="middle">
           {images.map((image, i) => (
-            <Col key={i} span={8} align="middle">
+            <Col key={i} span={4} align="middle">
               <Image
                 width="128px"
                 src={image}
