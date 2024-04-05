@@ -928,14 +928,19 @@ liip_imagine:
         incident_image_thumbnail:
             data_loader: incident_images
             filters:
+                upscale:
+                    min: [ 768, 768 ]
                 thumbnail:
-                    size: [ 128, 128 ]
+                    size: [ 768, 768 ]
                     mode: outbound
             post_processors:
                 jpegoptim:
                     strip_all: true
                     max: 80
                     progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
     loaders:
         default:
             filesystem:
