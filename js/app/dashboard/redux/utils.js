@@ -21,15 +21,15 @@ export function withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTour
     selectedTasks = [ selectedTasks ]
   }
 
-  const groups = taskUtils.groupLinkedTasks(selectedTasks)
+  const groups = taskUtils.groupLinkedTasks(allTasks)
   const newTasks = []
 
   selectedTasks.forEach(task => {
     if (Object.prototype.hasOwnProperty.call(groups, task['@id']) ) {
       groups[task['@id']].forEach(taskId => {
         const taskIsCurrentTask = taskId === task['@id']
-        const taskWasAlreadyAdded = _.find(newTasks, t => t['@id'] === taskId)
-        const taskIsAlreadyInSelection = _.find(selectedTasks, t => t['@id'] === taskId)
+        const taskWasAlreadyAdded = newTasks.some(t => t['@id'] === taskId)
+        const taskIsAlreadyInSelection = selectedTasks.some(t => t['@id'] === taskId)
 
         /*
           We want the tasks to keep the selection order, so we insert linked tasks if needed but if the task was already in `selectedTasks` add it when its turn come.
