@@ -16,7 +16,7 @@ class httpClient {
     this.jwt = jwt;
   }
 
-  async request({ method, url, data, headers = {} }, depth = 0) {
+  async request({ method, url, data, headers }, depth = 0) {
     try {
       const response = await axios({
         method,
@@ -45,20 +45,20 @@ class httpClient {
     }
   }
 
-  async get(url) {
-    return await this.request({ method: "GET", url });
+  async get(url, headers = {}) {
+    return await this.request({ method: "GET", url, headers });
   }
 
-  async post(url, data) {
-    return await this.request({ method: "POST", url, data });
+  async post(url, data, headers = {}) {
+    return await this.request({ method: "POST", url, data, headers });
   }
 
-  async put(url, data) {
-    return await this.request({ method: "PUT", url, data });
+  async put(url, data, headers = {}) {
+    return await this.request({ method: "PUT", url, data, headers });
   }
 
-  async patch(url, data) {
-    return await this.request({ method: "PATCH", url, data });
+  async patch(url, data, headers = {}) {
+    return await this.request({ method: "PATCH", url, data, headers });
   }
 
   async _refreshToken() {
