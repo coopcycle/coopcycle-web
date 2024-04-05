@@ -52,26 +52,25 @@ export default function ({ incident, task, order }) {
             <Divider>OR</Divider>
           </>
         )}
-        {task.status !== "DONE" ||
-          (task.status !== "CANCELLED" && (
-            <>
-              <p>
-                <Popconfirm
-                  placement="rightTop"
-                  title="Are you sure?"
-                  onConfirm={async () => {
-                    const { error } = await _handleCancelButton(incident.id);
-                    if (!error) {
-                      location.reload();
-                    }
-                  }}
-                >
-                  <Button style={styles.btn}>Cancel the task</Button>
-                </Popconfirm>
-              </p>
-              <Divider>OR</Divider>
-            </>
-          ))}
+        {task.status !== "DONE" && task.status !== "CANCELLED" && (
+          <>
+            <p>
+              <Popconfirm
+                placement="rightTop"
+                title="Are you sure?"
+                onConfirm={async () => {
+                  const { error } = await _handleCancelButton(incident.id);
+                  if (!error) {
+                    location.reload();
+                  }
+                }}
+              >
+                <Button style={styles.btn}>Cancel the task</Button>
+              </Popconfirm>
+            </p>
+            <Divider>OR</Divider>
+          </>
+        )}
         {order && (
           <>
             <p>
