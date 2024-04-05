@@ -129,7 +129,7 @@ export default function ({ task, delivery, order }) {
       <hr />
       {order && showOrderDetails(order)}
       <h5>Shipping information</h5>
-      <div>{<TaskStatusBadge task={task} />}</div>
+      <div className="mt-1 mb-3">{<TaskStatusBadge task={task} />}</div>
       <p>{task.address.name}</p>
       <p>{task.address.streetAddress}</p>
       <p>{task.address.telephone}</p>
