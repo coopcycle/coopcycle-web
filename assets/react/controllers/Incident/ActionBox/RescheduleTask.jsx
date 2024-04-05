@@ -17,8 +17,8 @@ export default function ({ incident, task }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(false);
 
-  const doneAfter = moment(task.done_after);
-  const doneBefore = moment(task.done_before);
+  const doneAfter = moment(task.after);
+  const doneBefore = moment(task.before);
   const ranges = {
     "Next day": [
       doneAfter.clone().add(1, "days"),
@@ -34,10 +34,12 @@ export default function ({ incident, task }) {
     <div>
       <DatePicker.RangePicker
         size="large"
+        style={{ width: "100%" }}
+        format="DD/MM/YYYY HH:mm"
         status={error ? "error" : null}
         ranges={ranges}
         defaultValue={[doneAfter, doneBefore]}
-        showTime={{ format: "HH:mm" }}
+        showTime={{ format: "HH:mm", minuteStep: 15 }}
         onChange={(dates) => setValue(dates)}
       />
       <p className="mt-3">
@@ -45,10 +47,12 @@ export default function ({ incident, task }) {
           disabled={value === null || submitting}
           onClick={async () => {
             setSubmitting(true);
+            const after = value[0].set({ second: 0, millisecond: 0 });
+            const before = value[1].set({ second: 0, millisecond: 0 });
             const { error } = await _handleResheduleSubmit(
               incident.id,
-              value[0].format(),
-              value[1].format(),
+              after.format(),
+              before.format(),
             );
             if (!error) {
               location.reload();
