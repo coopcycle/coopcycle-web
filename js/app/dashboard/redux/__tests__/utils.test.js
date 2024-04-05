@@ -142,7 +142,7 @@ describe('withOrderTasksForDragNDrop', () => {
       { '@id': '/api/tasks/9',},
       {
         '@id': '/api/tasks/8',
-        previous: '/api/tasks/6',
+        previous: '/api/tasks/7',
       },
     ], allTasks, taskIdToTourIdMap)
 
@@ -154,11 +154,11 @@ describe('withOrderTasksForDragNDrop', () => {
         '@id': '/api/tasks/7',
         previous: '/api/tasks/6',
       },
+      { '@id': '/api/tasks/9',},
       {
         '@id': '/api/tasks/8',
         previous: '/api/tasks/7',
       },
-      { '@id': '/api/tasks/9',},
     ])
   })
 
@@ -197,7 +197,7 @@ describe('withOrderTasksForDragNDrop', () => {
   it('should not return linked tasks in a different tour', () => {
 
     const actual = withOrderTasksForDragNDrop({
-      '@id': '/api/tasks/8'
+      '@id': '/api/tasks/8', previous: '/api/tasks/7'
     }, allTasks, taskIdToTourIdMap)
 
     expect(actual).toEqual([
