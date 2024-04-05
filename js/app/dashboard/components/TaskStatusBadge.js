@@ -14,14 +14,14 @@ export default function ({ task }) {
       }}
     >
       <i
-        className={classNames("fa", {
+        className={classNames("fa mr-2", {
           "fa-clock-o text-default": status == "TODO",
           "fa-bicycle text-info": status == "DOING",
           "fa-exclamation-triangle text-warning": status == "FAILED",
           "fa-check text-success": status == "DONE",
           "fa-times text-danger": status == "CANCELLED",
         })}
-      ></i>{" "}
+      ></i>
       {status.toLowerCase()}
     </span>
   );

@@ -117,6 +117,7 @@ export default function ({ incident, task, order, images }) {
         </Drawer>
 
         <Modal
+          width="840px"
           title="Transporter report"
           open={transporterReportModal}
           onCancel={() => setTransporterReportModal(false)}
