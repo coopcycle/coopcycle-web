@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Button, Divider, Drawer, Popconfirm } from "antd";
+import { Button, Divider, Drawer, Popconfirm, Modal } from "antd";
 import RescheduleTask from "./ActionBox/RescheduleTask";
 import ApplyPriceDiffTask from "./ActionBox/ApplyPriceDiffTask";
+import TransporterReport from "./ActionBox/TransporterReport";
 
 async function _handleCancelButton(id) {
   const httpClient = new window._auth.httpClient();
@@ -17,16 +18,18 @@ const styles = {
   },
 };
 
-export default function ({ incident, task, order }) {
+export default function ({ incident, task, order, images }) {
   incident = JSON.parse(incident);
   task = JSON.parse(task);
   order = JSON.parse(order);
+  images = JSON.parse(images);
 
   const placement = "left";
   const [open, setOpen] = useState(false);
 
   const [rescheduleDrawer, setRescheduleDrawer] = useState(false);
   const [priceDiffDrawer, setPriceDiffDrawer] = useState(false);
+  const [transporterReportModal, setTransporterReportModal] = useState(false);
 
   return (
     <>
@@ -85,7 +88,12 @@ export default function ({ incident, task, order }) {
           </>
         )}
         <p>
-          <Button style={styles.btn}>Send report to transporter</Button>
+          <Button
+            style={styles.btn}
+            onClick={() => setTransporterReportModal(true)}
+          >
+            Send report to transporter
+          </Button>
         </p>
 
         <Drawer
@@ -107,6 +115,14 @@ export default function ({ incident, task, order }) {
         >
           <ApplyPriceDiffTask incident={incident} order={order} />
         </Drawer>
+
+        <Modal
+          title="Transporter report"
+          open={transporterReportModal}
+          onCancel={() => setTransporterReportModal(false)}
+        >
+          <TransporterReport incident={incident} images={images} task={task} />
+        </Modal>
       </Drawer>
     </>
   );
