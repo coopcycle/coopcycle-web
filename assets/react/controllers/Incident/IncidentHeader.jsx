@@ -50,8 +50,9 @@ export default function ({ incident, createdBy }) {
           bordered={false}
         />
         <div>
-          <i className="fa fa-calendar" style={{ marginRight: "5px" }} />
-          {moment(incident.createdAt).fromNow()}
+          <div className="pb-1">Incident reported at :</div>
+          <i className="fa fa-calendar pr-1" />
+          {moment(incident.createdAt).format("LLL")}
         </div>
       </Row>
     </PageHeader>
