@@ -98,7 +98,7 @@ export default function ({ incident, task, order, images }) {
 
         <Drawer
           placement={placement}
-          width={500}
+          width={480}
           title="Reschedule the task"
           onClose={() => setRescheduleDrawer(false)}
           open={rescheduleDrawer}

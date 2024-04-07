@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import classNames from "classnames";
-import { Select, Form, DatePicker, Image, Checkbox, Row, Col } from "antd";
+import {
+  Select,
+  Form,
+  DatePicker,
+  Image,
+  Checkbox,
+  Row,
+  Col,
+  Divider,
+  Empty,
+} from "antd";
 import "../Style.scss";
 
 async function _fetchFailureReason(id) {
@@ -32,30 +42,39 @@ function ImagesSelector({ images, onChange = () => {} }) {
 
   return (
     <>
-      <Checkbox
-        className="m-3"
-        indeterminate={indeterminate}
-        onChange={onCheckAllChange}
-        checked={checkAll}
-      >
-        Check all
-      </Checkbox>
+      <div>
+        {images.length > 1 && (
+          <Checkbox
+            className="my-3 mx-1"
+            indeterminate={indeterminate}
+            onChange={onCheckAllChange}
+            checked={checkAll}
+          >
+            Check all
+          </Checkbox>
+        )}
+      </div>
       <Checkbox.Group onChange={handleOnChange} value={selectedImages}>
         <Row gutter={[12, 12]} align="middle">
-          {images.map((image, i) => (
-            <Col key={i} span={4} align="middle">
-              <Image
-                width="128px"
-                src={image}
-                className={classNames("p-2", {
-                  "border border-primary": selectedImages.includes(image),
-                })}
-              />
-              <div className="mt-1">
-                <Checkbox value={image}>Select</Checkbox>
-              </div>
-            </Col>
-          ))}
+          {images.map((image, i) => {
+            const selected = selectedImages.includes(image);
+            return (
+              <Col key={i} align="middle">
+                <Image
+                  width="128px"
+                  height="128px"
+                  src={image}
+                  className={classNames("p-2, border", {
+                    "border-primary": selected,
+                    "border-default": !selected,
+                  })}
+                />
+                <div className="mt-1">
+                  <Checkbox value={image}>Select</Checkbox>
+                </div>
+              </Col>
+            );
+          })}
         </Row>
       </Checkbox.Group>
     </>
@@ -81,8 +100,15 @@ export default function ({ incident, task, images }) {
     _fetch();
   }, []);
 
+  const imageComponent =
+    images.length > 0 ? (
+      <ImagesSelector images={images} />
+    ) : (
+      <Empty description="No images" />
+    );
+
   return (
-    <Form labelCol={{ span: 6 }} wrapperCol={{ span: 16 }} autoComplete="off">
+    <Form layout="vertical" autoComplete="off">
       <Form.Item
         label="Failure reason"
         name="failureReason"
@@ -105,8 +131,10 @@ export default function ({ incident, task, images }) {
           showTime={{ format: "HH:mm", minuteStep: 15 }}
         />
       </Form.Item>
-      <h4>Images</h4>
-      <ImagesSelector images={images} />
+      <Divider orientation="left" plain>
+        Images to include in the report
+      </Divider>
+      {imageComponent}
     </Form>
   );
 }

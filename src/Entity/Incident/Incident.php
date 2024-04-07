@@ -3,6 +3,8 @@
 namespace AppBundle\Entity\Incident;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Entity\Model\TaggableInterface;
+use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -22,6 +24,9 @@ use AppBundle\Action\Incident\IncidentAction;
  *     "get"={
  *       "method"="GET",
  *     },
+ *     "patch"={
+ *       "method"="PATCH",
+ *     },
  *     "put"={
  *       "method"="PUT",
  *     },
@@ -38,7 +43,8 @@ use AppBundle\Action\Incident\IncidentAction;
  *   }
  * )
  */
-class Incident {
+class Incident implements TaggableInterface {
+    use TaggableTrait;
 
     protected int $id;
 
