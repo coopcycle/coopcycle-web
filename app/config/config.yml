@@ -773,6 +773,7 @@ fos_js_routing:
         - api_incidents_action_item
         - api_tasks_task_failure_reasons_item
         - api_incident_images_post_collection
+        - api_incidents_get_item
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'
