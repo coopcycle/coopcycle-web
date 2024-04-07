@@ -1,8 +1,11 @@
 import React from "react";
-import { Image, Upload } from "antd";
+import { Image, Upload, notification } from "antd";
 import "./Style.scss";
 
 async function _handleUpload(id, file) {
+  if (file.size > 5 * 1024 * 1024) {
+    return { message: "Image is too big" };
+  }
   const httpClient = new window._auth.httpClient();
   const formData = new FormData();
   formData.append("file", file);
@@ -29,10 +32,21 @@ export default function ({ images, incident_id }) {
       </Image.PreviewGroup>
       <Upload
         name="image"
-        customRequest={({ file }) => _handleUpload(incident_id, file)}
+        accept="image/*"
+        customRequest={async ({ file }) => {
+          const { error, message } = await _handleUpload(incident_id, file);
+          if (!error) {
+            location.reload();
+          } else {
+            if (message) {
+              return notification.error({ message });
+            }
+            return notification.error({ message: "Something went wrong" });
+          }
+        }}
         className="thumbnail"
       >
-        <div className="incident-image-uploader ">
+        <div className="incident-image-uploader">
           <div>
             <i className="fa fa-upload mr-2"></i>Upload
           </div>
