@@ -25,4 +25,9 @@ class NullLoggingUtils extends LoggingUtils
     {
         return '#1234';
     }
+
+    public function getVendors($order): string
+    {
+        return '1, 2, 3';
+    }
 }
