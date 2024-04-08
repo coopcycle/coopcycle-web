@@ -50,7 +50,7 @@ final class AssignedFilter extends AbstractContextAwareFilter
 
         $user = $this->getUser();
 
-        if ($user->hasRole('ROLE_ADMIN')) {
+        if ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_DISPATCHER')) {
             $isAssigned = filter_var($value, FILTER_VALIDATE_BOOLEAN);
 
             if (false === $isAssigned) {
