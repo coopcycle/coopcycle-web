@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, StrictMode } from 'react'
-import { render, unmountComponentAtNode } from 'react-dom'
 import { createRoot } from 'react-dom/client';
 import Swiper from 'swiper'
 import { Navigation } from 'swiper/modules'
@@ -75,8 +74,8 @@ function addFulfillmentBadge(el) {
 
     const firstChoiceMethod = data.firstChoiceKey ? data[data.firstChoiceKey] : null
 
-    const root = createRoot(el);
-    root.render(
+    const badgeRoot = createRoot(el);
+    badgeRoot.render(
       <StrictMode>
         <FulfillmentBadge fulfilmentMethod={ firstChoiceMethod } isPreOrder={ isPreOrder } />
       </StrictMode>
@@ -142,16 +141,31 @@ const Paginator = ({ page, pages }) => {
   )
 }
 
-const paginator = document.getElementById('shops-list-paginator')
+const paginatorEl = document.getElementById('shops-list-paginator')
+const paginatorRoot = paginatorEl ? createRoot(paginatorEl) : null
 
-if (paginator) {
-  render(
-    <Paginator
-     page={Number(paginator.dataset.page)}
-     pages={Number(paginator.dataset.pages)} />,
-    paginator
+if (paginatorRoot) {
+  paginatorRoot.render(
+    <StrictMode>
+      <Paginator
+        page={Number(paginatorEl.dataset.page)}
+        pages={Number(paginatorEl.dataset.pages)} />
+    </StrictMode>
   )
 }
+
+function reRenderPaginator(data) {
+  if (paginatorRoot) {
+    paginatorRoot.render(
+      <StrictMode>
+        <Paginator
+          page={Number(data.page)}
+          pages={Number(data.pages)} />
+      </StrictMode>
+    )
+  }
+}
+
 
 // Make sure that the same values are set in css
 const CONTAINER_MARGIN = 16
@@ -196,18 +210,6 @@ new Swiper('.swiper', {
   observeParents: true
 })
 
-function resetPaginator(data) {
-  if (paginator) {
-    unmountComponentAtNode(paginator)
-    render(
-      <Paginator
-       page={Number(data.page)}
-       pages={Number(data.pages)} />,
-      paginator
-    )
-  }
-}
-
 function renderFulfillmentBadgeAfterAjax() {
   document.querySelectorAll('[data-fulfillment]').forEach(el => {
     // render fulfillment badge only to new elements
@@ -231,7 +233,7 @@ function submitFilter(e) {
     type: $(e.target).closest('form').attr('method'),
     cache: false,
     success: function(data) {
-      resetPaginator(data)
+      reRenderPaginator(data)
 
       shopsEl.empty().append($.parseHTML(data.rendered_list)) // show results
 
