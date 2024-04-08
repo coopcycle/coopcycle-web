@@ -9,7 +9,7 @@ base.footer.legal: 'Notas legals'
 base.footer.suggest: 'Sucherir un restaurant'
 base.footer.privacy: 'Privacidat'
 base.footer.terms: 'Termins de servicio'
-adminDashboard.title: 'Panel d''administración'
+adminDashboard.title: Dispatch
 adminDashboard.configuration: 'Configuración'
 adminDashboard.tooltip.orders: 'Chestiona pedius'
 adminDashboard.tooltip.deliveries: 'Chestiona entregas'

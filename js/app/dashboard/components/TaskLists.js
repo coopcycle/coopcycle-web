@@ -27,6 +27,7 @@ class TaskLists extends React.Component {
           }
         </h4>
         <Accordion
+          allowMultipleExpanded
           allowZeroExpanded
           id="accordion"
           className="dashboard__panel__scroll"

@@ -8,16 +8,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 
 class StorybookController extends AbstractController
 {
     private $mapping = [
-        'restaurant_card' => 'components/restaurant/restaurant_card/restaurant_card.html.twig',
-        'restaurant_badge' => 'components/restaurant/restaurant_badge/restaurant_badge.html.twig',
-        'restaurant_tag' => 'components/restaurant/restaurant_tag/restaurant_tag.html.twig',
-        'product' => 'components/restaurant/product/menu_item.html.twig',
-        'product_badge' => 'components/restaurant/product_badge/product_badge.html.twig',
+        'restaurant_card' => 'components/restaurant/card/restaurant_card.html.twig',
+        'restaurant_badge' => 'components/restaurant/badge/restaurant_badge.html.twig',
+        'restaurant_tag' => 'components/restaurant/tag/restaurant_tag.html.twig',
+        'product' => 'components/product/card/menu_item.html.twig',
+        'product_badge' => 'components/product/badge/product_badge.html.twig',
     ];
+
+    public function __construct(private LocaleAwareInterface $translator)
+    {
+    }
 
 	/**
      * @Route("/storybook/component/{id}", name="storybook_component")
@@ -33,6 +38,10 @@ class StorybookController extends AbstractController
         }
 
         $args = $request->query->all();
+
+        if (array_key_exists('locale', $args)) {
+            $this->translator->setLocale($args['locale']);
+        }
 
         $args = array_map(function ($value) use ($denormalizer) {
 

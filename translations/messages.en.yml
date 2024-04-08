@@ -9,7 +9,7 @@ base.footer.legal: Legal notice
 base.footer.suggest: Suggest a business
 base.footer.privacy: Privacy
 base.footer.terms: Terms of service
-adminDashboard.title: Admin dashboard
+adminDashboard.title: Dispatch
 adminDashboard.configuration: Configuration
 adminDashboard.tooltip.orders: Manage restaurants orders
 adminDashboard.tooltip.deliveries: Manage deliveries
@@ -1438,4 +1438,3 @@ form.settings.company_legal_name.label: "Legal name of the company"
 form.settings.company_legal_name.help: "Please enter the full legal name of the company as it appears on its official documents."
 form.settings.company_legal_id.label: "Company registration number or EIN"
 form.settings.company_legal_id.help: "This number is usually available on the company's official documents, such as invoices or contracts."
-

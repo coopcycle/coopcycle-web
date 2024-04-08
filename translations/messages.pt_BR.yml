@@ -5,7 +5,7 @@ base.footer.contactUs: Entre em contato
 base.footer.help: Ajuda
 base.footer.legal: Aviso legal
 base.footer.suggest: Sugerir um restaurante
-adminDashboard.title: Painel administrativo
+adminDashboard.title: Dispatch
 adminDashboard.configuration: Configurações
 adminDashboard.tooltip.orders: Gerenciar pedidos de restaurantes
 adminDashboard.tooltip.deliveries: Gerenciar entregas
