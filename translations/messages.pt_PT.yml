@@ -7,7 +7,7 @@ base.footer.legal: Aviso legal
 base.footer.suggest: Sugira um restaurante
 base.footer.privacy: Privacidade
 base.footer.terms: Termos de serviço
-adminDashboard.title: Painel do administrador
+adminDashboard.title: Dispatch
 adminDashboard.configuration: Configuração
 adminDashboard.tooltip.orders: Administrar os pedidos dos restaurantes
 adminDashboard.tooltip.deliveries: Administrar entregas

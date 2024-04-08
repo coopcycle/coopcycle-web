@@ -12,10 +12,16 @@ use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use AppBundle\Api\Filter\DateFilter;
+use AppBundle\Vroom\Job as VroomJob;
+use AppBundle\Vroom\Shipment as VroomShipment;
 
 /**
  * @ApiResource(
  *   collectionOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_DISPATCHER')"
+ *     },
  *     "post"={
  *       "method"="POST",
  *       "input"=TourInput::class,
@@ -48,7 +54,7 @@ use AppBundle\Api\Filter\DateFilter;
 class Tour extends TaskCollection implements TaskCollectionInterface
 {
     private $date;
-    
+
     protected $id;
 
     /**
@@ -128,5 +134,22 @@ class Tour extends TaskCollection implements TaskCollectionInterface
         $this->date = $date;
 
         return $this;
-    }    
+    }
+
+    public static function toVroomStep(Tour $tour) : VroomJob|VroomShipment
+    {
+
+        $tasks = $tour->getTasks();
+
+        if (count($tasks) > 1) {
+            $shipment = new VroomShipment();
+            $shipment->pickup = Task::toVroomJob($tasks[0]);
+            $shipment->delivery = Task::toVroomJob($tasks[count($tasks) - 1]);
+            $shipment->description = 'tour:'.$tour->getId();
+            return $shipment;
+        } else {
+            return Task::toVroomJob($tasks[0]);
+        }
+
+    }
 }

@@ -5,7 +5,7 @@ base.footer.contactUs: Contacta'ns
 base.footer.help: Ajuda
 base.footer.legal: Avís legal
 base.footer.suggest: Suggereix un establiment
-adminDashboard.title: Tauler d’administrador
+adminDashboard.title: Dispatch
 adminDashboard.configuration: Configuració
 adminDashboard.tooltip.orders: Gestiona les comandes del restaurant
 adminDashboard.tooltip.deliveries: Gestiona les entregues

@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Tour;
 use AppBundle\Vroom\RoutingProblem;
 use AppBundle\Vroom\RoutingProblemNormalizer;
 use AppBundle\Vroom\Job;
@@ -56,7 +57,17 @@ class RouteOptimizer
         $jobIds = [];
         // extract task ids from steps
         foreach ($firstRoute['steps'] as $step) {
-            if (array_key_exists('id', $step)) {
+            if (array_key_exists('description', $step) && str_starts_with($step['description'], 'tour')) {
+                $tourId = explode($step['description'], ':')[1];
+                $tourTasks = array_filter($tasks, function ($task) use ($tourId) {
+                    return $task->getTour() && $task->getTour()->getId() === $tourId;
+                });
+                array_push(
+                    array_map(function ($task) { return $task->getId(); }, $tourTasks),
+                    $jobIds
+                );
+            }
+            else if (array_key_exists('id', $step)) {
                 $jobIds[] = $step['id'];
             }
         }
@@ -80,13 +91,26 @@ class RouteOptimizer
         $routingProblem = new RoutingProblem();
 
         $deliveries = [];
-        foreach ($taskCollection->getTasks() as $task) {
-            if (null !== $task->getDelivery()) {
-                if (!in_array($task->getDelivery(), $deliveries, true)) {
-                    $deliveries[] = $task->getDelivery();
-                }
-            } else {
+        $tours = [];
+        $tasks = $taskCollection->getTasks();
+
+        foreach ($tasks as $task) {
+            if (null !== $task->getTour() && !in_array($task->getTour(), $tours, true)) {
+                $tours[] = $task->getTour();
+            } else if (null !== $task->getDelivery() && !in_array($task->getDelivery(), $deliveries, true)) {
+                $deliveries[] = $task->getDelivery();
+            } else if (null == $task->getDelivery() && null == $task->getTour()) {
                 $routingProblem->addJob(Task::toVroomJob($task));
+            }
+        }
+
+        foreach ($tours as $tour) {
+            $vroomStep = Tour::toVroomStep($tour);
+            if ($vroomStep instanceof Shipment) {
+                $routingProblem->addShipment($vroomStep);
+            } else {
+                // case of tour with 1 task
+                $routingProblem->addJob($vroomStep);
             }
         }
 

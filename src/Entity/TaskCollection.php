@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * A TaskCollection is the database representation of a Task\CollectionInterface.
  * It uses Doctrine's Inheritance Mapping to implement a OneToMany relationship with TaskCollectionItem.
- * There are two concrete implementations of TaskCollection: Delivery & TaskList.
+ * There are concrete implementations of TaskCollection: Tour, Delivery & TaskList.
  *
  * @see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/inheritance-mapping.html
  */
@@ -45,7 +45,7 @@ abstract class TaskCollection
     {
         $iterator = $this->items->getIterator();
 
-        // front end code regarding tasklist expects "itemIds" arry to be sorted according positions, please don't remove this :)
+        // front end code regarding tasklist expects "itemIds" array to be sorted according positions, please don't remove this :)
         $iterator->uasort(function ($a, $b) {
             if ($a->getPosition() === $b->getPosition()) {
                 return 0;

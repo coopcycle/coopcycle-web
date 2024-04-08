@@ -1363,3 +1363,7 @@ services:
   AppBundle\Utils\RestaurantDecorator: ~
 
   AppBundle\Fulfillment\FulfillmentMethodResolver: ~
+
+  AppBundle\Controller\StorybookController:
+    arguments:
+      $translator: '@translator'

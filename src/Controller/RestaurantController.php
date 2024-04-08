@@ -115,7 +115,7 @@ class RestaurantController extends AbstractController
             'cart'   => $this->serializer->normalize($cart, 'jsonld', $serializerContext),
             'cartTiming' => $this->getCartTiming($cart),
             'errors' => $errors,
-            'timing' => $this->timingRegistry->getAllFulfilmentMethodsForObject($restaurant),
+            'restaurantTiming' => $this->timingRegistry->getAllFulfilmentMethodsForObject($restaurant),
         ]);
     }
 
@@ -480,7 +480,7 @@ class RestaurantController extends AbstractController
 
         return $this->render('restaurant/index.html.twig', $this->auth([
             'restaurant' => $restaurant,
-            'timing' => $this->timingRegistry->getAllFulfilmentMethodsForObject($restaurant),
+            'restaurant_timing' => $this->timingRegistry->getAllFulfilmentMethodsForObject($restaurant),
             'cart_form' => $cartForm->createView(),
             'cart_timing' => $this->getCartTiming($cart),
             'addresses_normalized' => $this->getUserAddresses(),

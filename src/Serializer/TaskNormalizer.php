@@ -36,18 +36,6 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         $this->entityManager = $entityManager;
     }
 
-    private function _normalizeTaskPackages($packages) {
-        $packagesNormalized = [];
-        foreach ($packages as $package) {
-            $packagesNormalized[] = [
-                'type' => $package->getPackage()->getName(),
-                'name' => $package->getPackage()->getName(),
-                'quantity' => $package->getQuantity(),
-            ];
-        }
-        return $packagesNormalized;
-    }
-
     public function normalize($object, $format = null, array $context = array())
     {
         $data = $this->normalizer->normalize($object, $format, $context);
@@ -98,21 +86,48 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $delivery = $object->getDelivery();
 
             if (null !== $delivery) {
-                $data['packages'] = $this->_normalizeTaskPackages($delivery->getPackages());
-                $data['weight'] = $delivery->getWeight();
+                $deliveryId = $delivery->getId();
+
+                $qb =  $this->entityManager
+                ->getRepository(Task::class)
+                ->createQueryBuilder('t');
+
+                $query = $qb
+                    ->select('p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity')
+                    ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
+                    ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
+                    ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
+                    ->groupBy('p.name')
+                    ->setParameter('deliveryId', $deliveryId)
+                    ->getQuery();
+
+                $data['packages'] = $query->getResult();
+
+                $qbWeight =  $this->entityManager
+                    ->getRepository(Task::class)
+                    ->createQueryBuilder('t');
+
+                $data['weight'] = $qbWeight
+                    ->select('sum(t.weight)')
+                    ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
+                    ->setParameter('deliveryId', $deliveryId)
+                    ->groupBy('d.id')
+                    ->getQuery()
+                    ->getResult()[0]["1"];
             }
         } else {
-            $data['packages'] = $this->_normalizeTaskPackages($object->getPackages());
-        }
+            $qb =  $this->entityManager
+                ->getRepository(Task::class)
+                ->createQueryBuilder('t');
 
-        // FIXME Manage this with serialization groups
-        $data['tour'] = null;
-        if (null !== ($tour = $object->getTour())) {
-            $data['tour'] = [
-                '@id' => $this->iriConverter->getIriFromItem($tour),
-                'name' => $tour->getName(),
-                'position' => $tour->getTaskPosition($object),
-            ];
+            $data['packages'] = $qb
+                ->select('p.name AS name', 'p.name AS type', 'tp.quantity AS quantity')
+                ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
+                ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
+                ->andWhere('t.id = :taskId')
+                ->setParameter('taskId', $object->getId())
+                ->getQuery()
+                ->getResult();
         }
 
         return $data;

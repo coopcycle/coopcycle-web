@@ -23,15 +23,35 @@ import './dashboard.scss'
 
 import { taskListUtils, taskAdapter, taskListAdapter, tourAdapter } from '../coopcycle-frontend-js/logistics/redux'
 import _ from 'lodash'
+import axios from 'axios'
 
-function start() {
+async function start() {
 
   const dashboardEl = document.getElementById('dashboard')
+  const jwtToken = dashboardEl.dataset.jwt
+  const baseUrl = location.protocol + '//' + location.hostname
+  const headers = {
+    'Authorization': `Bearer ${jwtToken}`,
+    'Accept': 'application/ld+json',
+    'Content-Type': 'application/ld+json'
+  }
 
   let date = moment(dashboardEl.dataset.date)
-  let allTasks = JSON.parse(dashboardEl.dataset.allTasks)
-  let taskLists = JSON.parse(dashboardEl.dataset.taskLists)
-  let tours = JSON.parse(dashboardEl.dataset.tours)
+
+  const tasksRequest = axios.create({ baseURL: baseUrl }).get(`/api/tasks?date=${date.format('YYYY-MM-DD')}`, { headers: headers})
+  const tasksListsRequest = axios.create({ baseURL: baseUrl }).get(`/api/task_lists?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
+  const toursRequest = axios.create({ baseURL: baseUrl }).get(`/api/tours?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
+
+  let allTasks
+  let taskLists
+  let tours
+
+  await Promise.all([tasksRequest, tasksListsRequest, toursRequest]).then((values) => {
+    const [taskRes, taskListRes, toursRes] = values
+    allTasks = taskRes.data['hydra:member']
+    taskLists = taskListRes.data['hydra:member']
+    tours = toursRes.data['hydra:member']
+  })
 
   // normalize data, keep only task ids, instead of the whole objects
   taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
@@ -62,7 +82,7 @@ function start() {
         )
       }
     },
-    jwt: dashboardEl.dataset.jwt,
+    jwt: jwtToken,
     rrules: recurrenceRulesAdapter.upsertMany(
       recurrenceRulesAdapter.getInitialState(),
       JSON.parse(dashboardEl.dataset.rrules)
@@ -138,7 +158,9 @@ function start() {
     logistics: {
       ui: {
         expandedTourPanelsIds: expandedToursIds,
-        loadingTourPanelsIds: []
+        loadingTourPanelsIds: [],
+        unassignedTasksIdsOrder: [],
+        unassignedToursOrGroupsOrderIds: []
       }
     }
   })

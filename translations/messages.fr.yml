@@ -12,7 +12,7 @@ base.footer.terms: Conditions générales
 base.footer.suggest: Suggérer un restaurant
 base.footer.privacy: Confidentialité
 button.suggest.submitted.label: Revenir à l'accueil
-adminDashboard.title: Panel d'administration
+adminDashboard.title: Dispatch
 adminDashboard.configuration: Configuration
 adminDashboard.tooltip.orders: Gestion des commandes restaurateurs
 adminDashboard.tooltip.deliveries: Gestion des courses

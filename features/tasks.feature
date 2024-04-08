@@ -51,12 +51,7 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":0,
-            "createdAt":"@string@.isDateTime()",
-            "tour":{
-              "@id":"/api/tours/1",
-              "name":"Example tour",
-              "position":@integer@
-            }
+            "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -87,8 +82,7 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":1,
-            "createdAt":"@string@.isDateTime()",
-            "tour":null
+            "createdAt":"@string@.isDateTime()"
           }
         ],
         "hydra:totalItems":2,
@@ -122,12 +116,7 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":0,
-            "createdAt":"@string@.isDateTime()",
-            "tour":{
-              "@id":"/api/tours/1",
-              "name":"Example tour",
-              "position":@integer@
-            }
+            "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -158,8 +147,7 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "position":1,
-            "createdAt":"@string@.isDateTime()",
-            "tour":null
+            "createdAt":"@string@.isDateTime()"
           }
         ],
         "distance":@integer@,
@@ -547,12 +535,7 @@ Feature: Tasks
         "weight":null,
         "hasIncidents": false,
         "packages": [],
-        "createdAt":"@string@.isDateTime()",
-        "tour":{
-          "@id":"/api/tours/1",
-          "name":"Example tour",
-          "position":@integer@
-        }
+        "createdAt":"@string@.isDateTime()"
       }
       """
 
@@ -1000,8 +983,7 @@ Feature: Tasks
         "weight": 800,
         "hasIncidents": false,
         "packages": [],
-        "createdAt":"@string@.isDateTime()",
-        "tour":null
+        "createdAt":"@string@.isDateTime()"
       }
       """
 
@@ -1082,8 +1064,7 @@ Feature: Tasks
         "weight":null,
         "hasIncidents": false,
         "packages": [],
-        "createdAt":"@string@.isDateTime()",
-        "tour":null
+        "createdAt":"@string@.isDateTime()"
       }
       """
 
@@ -1214,8 +1195,7 @@ Feature: Tasks
             "weight":null,
             "hasIncidents": false,
             "packages": [],
-            "createdAt":"@string@.isDateTime()",
-            "tour":null
+            "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"/api/tasks/2",
@@ -1245,8 +1225,7 @@ Feature: Tasks
             "weight":null,
             "hasIncidents": false,
             "packages": [],
-            "createdAt":"@string@.isDateTime()",
-            "tour":null
+            "createdAt":"@string@.isDateTime()"
           }
         ],
         "hydra:totalItems":2,
@@ -1263,11 +1242,11 @@ Feature: Tasks
       }
       """
 
-  Scenario: Retrieve tasks filtered by date for admin
+  Scenario: Retrieve tasks filtered by date for dispatcher
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | dispatch.yml        |
-    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" has role "ROLE_DISPATCHER"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -1376,11 +1355,11 @@ Feature: Tasks
       }
       """
 
-  Scenario: Retrieve unassigned tasks filtered by date for admin
+  Scenario: Retrieve unassigned tasks filtered by date for dispatcher
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | dispatch.yml        |
-    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" has role "ROLE_DISPATCHER"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -1417,6 +1396,120 @@ Feature: Tasks
         "hydra:totalItems":1,
         "hydra:view":{
           "@id":"/api/tasks?date=2018-12-01\u0026assigned=no",
+          "@type":"hydra:PartialCollectionView"
+        },
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/tasks{?date,assigned,organization}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":@array@
+        }
+      }
+      """
+
+  Scenario: Retrieve tasks filtered by date for dispatcher+courier (GH #4125)
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" has role "ROLE_COURIER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/tasks?date=2018-12-01"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/tasks/1",
+            "@type":"Task",
+            "id":1,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "after":"2018-12-01T10:30:00+01:00",
+            "before":"2018-12-01T11:00:00+01:00",
+            "doneAfter":"2018-12-01T10:30:00+01:00",
+            "doneBefore":"2018-12-01T11:00:00+01:00",
+            "comments":null,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "previous":null,
+            "next":null,
+            "group":null,
+            "tags":@array@
+          },
+          {
+            "@id":"/api/tasks/2",
+            "@type":"Task",
+            "id":2,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "after":"2018-12-01T11:30:00+01:00",
+            "before":"2018-12-01T12:00:00+01:00",
+            "doneAfter":"2018-12-01T11:30:00+01:00",
+            "doneBefore":"2018-12-01T12:00:00+01:00",
+            "comments":null,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "previous":null,
+            "next":null,
+            "group":null,
+            "tags":@array@
+          },
+          {
+            "@id":"/api/tasks/6",
+            "@type":"Task",
+            "id":6,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "doneAfter":"2018-12-01T12:00:00+01:00",
+            "doneBefore":"2018-12-01T12:30:00+01:00",
+            "after":"2018-12-01T12:00:00+01:00",
+            "before":"2018-12-01T12:30:00+01:00",
+            "comments":null,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":false,
+            "assignedTo":null,
+            "previous":null,
+            "next":null,
+            "group":null,
+            "tags":@array@
+          },
+          {
+            "@id":"/api/tasks/7",
+            "@type":"Task",
+            "id":7,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "doneAfter":"2018-12-01T12:00:00+01:00",
+            "doneBefore":"2018-12-01T12:30:00+01:00",
+            "comments":"",
+            "updatedAt":"2019-11-14T18:48:59+01:00",
+            "group":null,
+            "images":@array@,
+            "tags":@array@,
+            "isAssigned":true,
+            "after":"2018-12-01T12:00:00+01:00",
+            "before":"2018-12-01T12:30:00+01:00",
+            "assignedTo":"bob",
+            "previous":null,
+            "next":null
+          }
+        ],
+        "hydra:totalItems":4,
+        "hydra:view":{
+          "@id":"/api/tasks?date=2018-12-01",
           "@type":"hydra:PartialCollectionView"
         },
         "hydra:search":{
@@ -2423,4 +2516,3 @@ Feature: Tasks
         "thumbnail":@string@
       }
       """
-

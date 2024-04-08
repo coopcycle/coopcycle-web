@@ -43,8 +43,9 @@ class OrderTimeHelper
 
             $result = $this->shippingDateFilter->accept($cart, $choice->toTsRange());
 
-            $this->logger->info(sprintf('Order %s | OrderTimeHelper::filterChoices; ShippingDateFilter::accept() returned %s for %s',
+            $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::filterChoices; ShippingDateFilter::accept() returned %s for %s',
                 $this->loggingUtils->getOrderId($cart),
+                $this->loggingUtils->getVendors($cart),
                 var_export($result, true),
                 (string) $choice
             ));
@@ -84,7 +85,18 @@ class OrderTimeHelper
 
     private function getChoices(OrderInterface $cart)
     {
-        $hash = sprintf('%s-%s', $cart->getFulfillmentMethod(), spl_object_hash($cart));
+        $hash = sprintf('%s-%s-%s',
+            $cart->getFulfillmentMethod(),
+            implode(',', array_map(function($vendor) {
+                return $vendor->getRestaurant()->getId();
+            }, $cart->getVendors()->toArray())),
+            spl_object_hash($cart));
+
+        $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::getChoices; is using cached value: %s',
+            $this->loggingUtils->getOrderId($cart),
+            $this->loggingUtils->getVendors($cart),
+            var_export(isset($this->choicesCache[$hash]), true),
+        ));
 
         if (!isset($this->choicesCache[$hash])) {
 
@@ -116,8 +128,9 @@ class OrderTimeHelper
     {
         $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($cart);
 
-        $this->logger->info(sprintf('Order %s | OrderTimeHelper::getShippingTimeRanges; Cart has fulfillment method "%s" and behavior "%s"',
+        $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::getShippingTimeRanges; Cart has fulfillment method "%s" and behavior "%s"',
             $this->loggingUtils->getOrderId($cart),
+            $this->loggingUtils->getVendors($cart),
             $fulfillmentMethod->getType(),
             $fulfillmentMethod->getOpeningHoursBehavior()
         ));

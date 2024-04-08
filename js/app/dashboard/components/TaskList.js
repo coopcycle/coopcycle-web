@@ -138,18 +138,18 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
     tasks.map(task => task['@id'])
   )
 
-  const isEmpty = items.length === 0 || visibleTaskIds.length === 0
+  const visibleTasks = tasks.filter(task => _.includes(visibleTaskIds, task['@id']))
 
   const polylineEnabled = useSelector(selectPolylineEnabledByUsername(username))
 
   const { t } = useTranslation()
 
-  const uncompletedTasks = _.filter(tasks, t => t.status === 'TODO')
-  const completedTasks = _.filter(tasks, t => t.status === 'DONE')
-  const inProgressTasks = _.filter(tasks, t => t.status === 'DOING')
-  const failureTasks = _.filter(tasks, t => t.status === 'FAILED')
-  const cancelledTasks = _.filter(tasks, t => t.status === 'CANCELLED')
-  const incidentReported = _.filter(tasks, t => t.hasIncidents)
+  const uncompletedTasks = _.filter(visibleTasks, t => t.status === 'TODO')
+  const completedTasks = _.filter(visibleTasks, t => t.status === 'DONE')
+  const inProgressTasks = _.filter(visibleTasks, t => t.status === 'DOING')
+  const failureTasks = _.filter(visibleTasks, t => t.status === 'FAILED')
+  const cancelledTasks = _.filter(visibleTasks, t => t.status === 'CANCELLED')
+  const incidentReported = _.filter(visibleTasks, t => t.hasIncidents)
 
   const durationFormatted = moment.utc()
     .startOf('day')
@@ -169,11 +169,11 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
               <span className="text-muted">{ `(${tasks.length})` }</span>
             </small>
           </span>
-          { tasks.length > 0 && (
+          { visibleTasks.length > 0 && (
           <div style={{ width: '33.3333%' }}>
             <ProgressBarMemo
                 completedTasks={ completedTasks.length }
-                tasks={ tasks.length }
+                tasks={ visibleTasks.length }
                 inProgressTasks={ inProgressTasks.length }
                 incidentReported={ incidentReported.length }
                 failureTasks={ failureTasks.length }
@@ -253,7 +253,6 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
                 'taskList__tasks': true,
                 'list-group': true,
                 'm-0': true,
-                'taskList__tasks--empty': isEmpty
               }) }
               { ...provided.droppableProps }
               style={getDroppableListStyle(snapshot.isDraggingOver)}
