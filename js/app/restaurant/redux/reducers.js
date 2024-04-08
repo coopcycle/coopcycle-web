@@ -243,7 +243,7 @@ const restaurantTiming = (state = initialState.restaurantTiming, action = {}) =>
   switch (action.type) {
   case FETCH_SUCCESS:
 
-    return action.payload.timing
+    return action.payload.restaurantTiming
   default:
 
     return state
