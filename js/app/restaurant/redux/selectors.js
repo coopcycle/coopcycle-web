@@ -20,23 +20,28 @@ export const selectCartTotal = state => state.cart.total
  */
 export const selectCartTiming = state => state.cartTiming
 
+const selectRestaurantTiming = state => state.restaurantTiming
+
 export const selectCanAddToExistingCart = createSelector(
   selectCartTiming,
   (cartTiming) => Boolean(cartTiming))
 
-export const selectFirstChoiceFulfilmentMethod = state => state.timing.firstChoiceKey
+export const selectFirstChoiceFulfilmentMethodForRestaurant = createSelector(
+  selectRestaurantTiming,
+  (restaurantTiming) => restaurantTiming.firstChoiceKey
+)
 
-export const selectAllFulfilmentMethods = state => state.timing
+export const selectAllFulfilmentMethodsForRestaurant = selectRestaurantTiming
 
 export const selectIsCollectionEnabled = createSelector(
-  selectAllFulfilmentMethods,
+  selectAllFulfilmentMethodsForRestaurant,
   (allFulfilmentMethods) => allFulfilmentMethods['collection']?.range !== undefined
 )
 
 export const selectFulfilmentMethod = createSelector(
   selectCanAddToExistingCart,
   selectCart,
-  selectFirstChoiceFulfilmentMethod,
+  selectFirstChoiceFulfilmentMethodForRestaurant,
   (canAddToExistingCart, cart, firstChoiceFulfilmentMethod) => {
     if (canAddToExistingCart) {
       return cart.takeaway ? 'collection' : 'delivery'
@@ -50,7 +55,7 @@ export const selectFulfilmentTimeRange = createSelector(
   selectCart,
   selectCartTiming,
   selectFulfilmentMethod,
-  selectAllFulfilmentMethods,
+  selectAllFulfilmentMethodsForRestaurant,
   (canAddToExistingCart, cart, cartTiming, fulfilmentMethod, allFulfilmentMethods) => {
     if (canAddToExistingCart) {
       return cart.shippingTimeRange || cartTiming.range

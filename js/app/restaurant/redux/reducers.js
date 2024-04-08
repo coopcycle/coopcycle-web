@@ -54,7 +54,7 @@ const initialState = {
   isMobileCartVisible: false,
   addresses: [],
   lastAddItemRequest: null,
-  timing: {
+  restaurantTiming: {
     // object shape:
     // delivery: {
     //   fast: false,
@@ -239,7 +239,7 @@ const isDateModalOpen = (state = initialState.isDateModalOpen, action = {}) => {
   }
 }
 
-const timing = (state = initialState.timing, action = {}) => {
+const restaurantTiming = (state = initialState.restaurantTiming, action = {}) => {
   switch (action.type) {
   case FETCH_SUCCESS:
 
@@ -415,7 +415,7 @@ export default combineReducers({
   isMobileCartVisible,
   addresses,
   lastAddItemRequest,
-  timing,
+  restaurantTiming,
   cartTiming,
   isDateModalOpen,
   isAddressModalOpen,
