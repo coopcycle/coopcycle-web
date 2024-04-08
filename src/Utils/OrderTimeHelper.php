@@ -85,7 +85,12 @@ class OrderTimeHelper
 
     private function getChoices(OrderInterface $cart)
     {
-        $hash = sprintf('%s-%s', $cart->getFulfillmentMethod(), spl_object_hash($cart));
+        $hash = sprintf('%s-%s-%s',
+            $cart->getFulfillmentMethod(),
+            implode(',', array_map(function($vendor) {
+                return $vendor->getRestaurant()->getId();
+            }, $cart->getVendors()->toArray())),
+            spl_object_hash($cart));
 
         if (!isset($this->choicesCache[$hash])) {
 
