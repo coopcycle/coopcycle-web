@@ -48,7 +48,7 @@ class IncidentImage
     private $file;
 
     /**
-     * @Groups({"incident_image"})
+     * @Groups({"incident"})
      */
     private $imageName;
 

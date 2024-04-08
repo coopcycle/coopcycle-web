@@ -4,6 +4,8 @@ import classNames from "classnames";
 import "./IncidentTimeline.scss";
 import { money } from "./utils";
 
+import store from "./incidentStore";
+
 function Comment({ event }) {
   const { username } = event.createdBy;
   return (
@@ -106,12 +108,12 @@ function Item({ event }) {
   );
 }
 
-export default function ({ events }) {
-  events = JSON.parse(events);
+export default function () {
+  const { incident } = store.getState();
 
   return (
     <div className="tl-incident-event">
-      {events.map((event) => (
+      {incident.events.map((event) => (
         <Item key={event.id} event={event} />
       ))}
     </div>
