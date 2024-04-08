@@ -5,6 +5,7 @@ namespace Tests\AppBundle\Utils;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Fulfillment\FulfillmentMethodResolver;
 use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -103,6 +104,18 @@ class OrderTimeHelperTest extends TestCase
             ->willReturn(
                 $restaurant->reveal()
             );
+
+        $orderVendor = $this->prophesize(OrderVendor::class);
+        $orderVendor
+            ->getRestaurant()
+            ->willReturn($restaurant->reveal());
+
+        $cart
+            ->getVendors()
+            ->willReturn(
+                new ArrayCollection([ $orderVendor->reveal() ])
+            );
+
         $cart
             ->getFulfillmentMethod()
             ->willReturn('delivery');
