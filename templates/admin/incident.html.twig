@@ -11,10 +11,16 @@
 {% endblock %}
 
 {% block content %}
+{%- set images = incident.getImages()|reverse|map(i => coopcycle_asset(i, 'file', 'incident_image_thumbnail'))|serialize -%}
+<div {{ react_component('Incident/IncidentLoad', {
+  incident: incident|serialize('json', {groups: ['incident', 'task', 'address'] }),
+  order: order|serialize,
+  images: images
+}) }} ></div>
 <div class="incident-header">
   <div class="container">
     <div class="row">
-      <div {{ react_component('Incident/IncidentHeader', {incident: incident|serialize, createdBy: createdBy.username}) }} ></div>
+      <div {{ react_component('Incident/IncidentHeader') }} ></div>
     </div>
   </div>
 </div>
@@ -28,25 +34,19 @@
     <hr>
     <div class="row">
       <p>Attachments <span class="caret"></span></p>
-      {%- set images = incident.getImages()|reverse|map(i => coopcycle_asset(i, 'file', 'incident_image_thumbnail'))|serialize
-      -%}
-      <div {{react_component('Incident/IncidentImages', {images: images, incident_id: incident.getId()})}}></div>
+      <div {{react_component('Incident/IncidentImages')}}></div>
     </div>
     <hr>
     <div>
-      <div {{ react_component('Incident/IncidentTimeline', {
-        events: incident.getEvents()|serialize('json', {groups: 'incident_event' })
-      }) }}></div>
-      <div {{ react_component('Incident/CommentBox', {id: incident.getId()}) }}></div>
+      <div {{ react_component('Incident/IncidentTimeline') }}></div>
+      <div {{ react_component('Incident/CommentBox') }}></div>
     </div>
   </div>
 
   <div class="col-md-3">
-    <div {{ react_component('Incident/OrderDetails', { task: incident.getTask()|serialize, delivery: delivery|serialize,
-      order: order|serialize }) }}></div>
+    <div {{ react_component('Incident/OrderDetails', { delivery: delivery|serialize }) }}></div>
     <hr>
-    <div {{ react_component('Incident/ActionBox', { incident: incident|serialize, task: incident.getTask()|serialize,
-      delivery: delivery|serialize, order: order|serialize, images: images }) }}></div>
+    <div {{ react_component('Incident/ActionBox') }}></div>
     <hr>
     <div {{react_component('Incident/TaskTimeline', {events: incident.getTask().getEvents()|serialize}) }}></div>
   </div>

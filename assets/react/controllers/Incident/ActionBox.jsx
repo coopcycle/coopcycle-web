@@ -4,6 +4,8 @@ import RescheduleTask from "./ActionBox/RescheduleTask";
 import ApplyPriceDiffTask from "./ActionBox/ApplyPriceDiffTask";
 import TransporterReport from "./ActionBox/TransporterReport";
 
+import store from "./incidentStore";
+
 async function _handleCancelButton(id) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.put(
@@ -18,11 +20,9 @@ const styles = {
   },
 };
 
-export default function ({ incident, task, order, images }) {
-  incident = JSON.parse(incident);
-  task = JSON.parse(task);
-  order = JSON.parse(order);
-  images = JSON.parse(images);
+export default function () {
+  const { loaded, incident, order, images } = store.getState();
+  const { task } = incident;
 
   const placement = "left";
   const [open, setOpen] = useState(false);
@@ -30,6 +30,10 @@ export default function ({ incident, task, order, images }) {
   const [rescheduleDrawer, setRescheduleDrawer] = useState(false);
   const [priceDiffDrawer, setPriceDiffDrawer] = useState(false);
   const [transporterReportModal, setTransporterReportModal] = useState(false);
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <>
