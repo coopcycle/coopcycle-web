@@ -43,8 +43,9 @@ class OrderTimeHelper
 
             $result = $this->shippingDateFilter->accept($cart, $choice->toTsRange());
 
-            $this->logger->info(sprintf('Order %s | OrderTimeHelper::filterChoices; ShippingDateFilter::accept() returned %s for %s',
+            $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::filterChoices; ShippingDateFilter::accept() returned %s for %s',
                 $this->loggingUtils->getOrderId($cart),
+                $this->loggingUtils->getVendors($cart),
                 var_export($result, true),
                 (string) $choice
             ));
@@ -116,8 +117,9 @@ class OrderTimeHelper
     {
         $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($cart);
 
-        $this->logger->info(sprintf('Order %s | OrderTimeHelper::getShippingTimeRanges; Cart has fulfillment method "%s" and behavior "%s"',
+        $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::getShippingTimeRanges; Cart has fulfillment method "%s" and behavior "%s"',
             $this->loggingUtils->getOrderId($cart),
+            $this->loggingUtils->getVendors($cart),
             $fulfillmentMethod->getType(),
             $fulfillmentMethod->getOpeningHoursBehavior()
         ));
