@@ -262,7 +262,7 @@ class RestaurantControllerTest extends WebTestCase
 
         $data = json_decode((string) $response->getContent(), true);
 
-        $this->assertArrayHasKey('timing', $data);
+        $this->assertArrayHasKey('restaurantTiming', $data);
         $this->assertArrayHasKey('cart', $data);
         $this->assertNotNull($data['cartTiming']);
         $this->assertArrayHasKey('errors', $data);
@@ -366,7 +366,7 @@ class RestaurantControllerTest extends WebTestCase
 
         $data = json_decode((string) $response->getContent(), true);
 
-        $this->assertArrayHasKey('timing', $data);
+        $this->assertArrayHasKey('restaurantTiming', $data);
         $this->assertArrayHasKey('cart', $data);
         $this->assertNull($data['cartTiming']);
         $this->assertArrayHasKey('errors', $data);
