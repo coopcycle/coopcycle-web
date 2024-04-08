@@ -92,6 +92,12 @@ class OrderTimeHelper
             }, $cart->getVendors()->toArray())),
             spl_object_hash($cart));
 
+        $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::getChoices; is using cached value: %s',
+            $this->loggingUtils->getOrderId($cart),
+            $this->loggingUtils->getVendors($cart),
+            var_export(isset($this->choicesCache[$hash]), true),
+        ));
+
         if (!isset($this->choicesCache[$hash])) {
 
             $vendor = $cart->getVendor();
