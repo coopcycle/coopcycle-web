@@ -62,11 +62,11 @@ export default function FulfillmentDetails() {
             shippingAddress={ cart.shippingAddress }
             onClick={ changeFulfillmentMethod }
             allowEdit={ isOrderAdmin } />
-          { Boolean(fulfilmentTimeRange) ? (
+          { isFulfilmentTimeSlotsAvailable ? (
             <Time
               timeRange={fulfilmentTimeRange}
               onClick={ changeTimeSlot }
-              allowEdit={ isFulfilmentTimeSlotsAvailable } />) : t('NOT_AVAILABLE_ATM') }
+              allowEdit={ isOrderAdmin } />) : t('NOT_AVAILABLE_ATM') }
           { errors.length > 0 ? (
             <div className="alert alert-warning">
               <i className="fa fa-warning"></i>
