@@ -66,6 +66,10 @@ class OrderTimeHelperTest extends TestCase
 
         $restaurant = $this->prophesize(LocalBusiness::class);
 
+        $restaurant
+            ->getId()
+            ->willReturn(1);
+
         $sameDayChoices = [
             '2020-03-31T14:30:00+02:00',
             '2020-03-31T14:40:00+02:00',
