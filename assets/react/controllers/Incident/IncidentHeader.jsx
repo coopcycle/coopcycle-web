@@ -25,20 +25,31 @@ async function syncData(id, body) {
   }
 }
 
+function _priorytyLabel(key) {
+  switch (key) {
+    case 1:
+      return "High";
+    case 2:
+      return "Medium";
+    case 3:
+      return "Low";
+  }
+}
+
+function _statusBtn(status) {
+  switch (status) {
+    case "OPEN":
+      return { next: "CLOSED", label: "Close this incident" };
+    case "CLOSED":
+      return { next: "OPEN", label: "Reopen this incident" };
+  }
+}
+
 export default function () {
   const { loaded, incident } = store.getState();
   const [priority, setPriority] = useState(incident.priority);
   const [status, setStatus] = useState(incident.status);
   const [tags, setTags] = useState(incident.tags);
-
-  const statusBtn = () => {
-    switch (status) {
-      case "OPEN":
-        return { next: "CLOSED", label: "Close this incident" };
-      case "CLOSED":
-        return { next: "OPEN", label: "Reopen this incident" };
-    }
-  };
 
   if (!loaded) {
     return null;
@@ -51,7 +62,7 @@ export default function () {
         <Dropdown.Button
           key="close"
           onClick={() => {
-            const next = statusBtn().next;
+            const next = _statusBtn(status).next;
             setStatus(next);
             syncData(incident.id, { status: next });
           }}
@@ -62,14 +73,14 @@ export default function () {
               syncData(incident.id, { priority: key });
             },
             items: [
-              { label: "Set to low priority", key: 1 },
+              { label: "Set to low priority", key: 3 },
               { label: "Set to medium priority", key: 2 },
-              { label: "Set to high priority", key: 3 },
+              { label: "Set to high priority", key: 1 },
             ],
           }}
           type="primary"
         >
-          {statusBtn().label}
+          {_statusBtn(status).label}
         </Dropdown.Button>,
       ]}
     >
@@ -81,7 +92,7 @@ export default function () {
         />
         <Statistic
           title="Priority"
-          value={priority}
+          value={_priorytyLabel(priority)}
           style={{ margin: "0 22px" }}
         />
         <Statistic title="Created by" value={incident.createdBy.username} />
