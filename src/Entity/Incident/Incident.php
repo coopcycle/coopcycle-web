@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use AppBundle\Action\Incident\CreateComment;
 use AppBundle\Action\Incident\IncidentAction;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
 /**
@@ -46,28 +47,74 @@ use AppBundle\Action\Incident\IncidentAction;
 class Incident implements TaggableInterface {
     use TaggableTrait;
 
+    /**
+    * @Groups({"incident"})
+    */
     protected int $id;
 
+    /**
+    * @Groups({"incident"})
+    */
     protected string $title;
 
+
+    /**
+    * @Groups({"incident"})
+    */
     protected string $status;
 
+
+    /**
+    * @Groups({"incident"})
+    */
     protected int $priority;
 
+
+    /**
+    * @Groups({"incident"})
+    */
     protected Task $task;
 
+
+    /**
+    * @Groups({"incident"})
+    */
     protected ?string $failure_reason_code = null;
 
+
+    /**
+    * @Groups({"incident"})
+    */
     protected ?string $description = null;
 
+
+    /**
+    * @Groups({"incident"})
+    */
     protected Collection $images;
 
+
+    /**
+    * @Groups({"incident"})
+    */
     protected Collection $events;
 
+
+    /**
+    * @Groups({"incident"})
+    */
     protected ?User $createdBy = null;
 
+
+    /**
+    * @Groups({"incident"})
+    */
     protected $createdAt;
 
+
+    /**
+    * @Groups({"incident"})
+    */
     protected $updatedAt;
 
     const STATUS_OPEN = 'OPEN';

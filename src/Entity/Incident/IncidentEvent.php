@@ -8,25 +8,25 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class IncidentEvent
 {
     /**
-    * @Groups({"incident_event"})
+    * @Groups({"incident"})
     */
     protected $id;
 
 
     /**
-    * @Groups({"incident_event"})
+    * @Groups({"incident"})
     */
     protected $type;
 
 
     /**
-    * @Groups({"incident_event"})
+    * @Groups({"incident"})
     */
     protected $message;
 
 
     /**
-    * @Groups({"incident_event"})
+    * @Groups({"incident"})
     */
     protected $metadata;
 
@@ -34,12 +34,12 @@ class IncidentEvent
 
 
     /**
-    * @Groups({"incident_event"})
+    * @Groups({"incident"})
     */
     protected $createdBy;
 
     /**
-    * @Groups({"incident_event"})
+    * @Groups({"incident"})
     */
     protected $createdAt;
 

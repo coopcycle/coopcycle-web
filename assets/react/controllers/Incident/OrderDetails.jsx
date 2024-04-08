@@ -5,6 +5,8 @@ import "./OrderDetails.scss";
 import { money } from "./utils";
 import TaskStatusBadge from "../../../../js/app/dashboard/components/TaskStatusBadge";
 
+import store from "./incidentStore";
+
 function formatTime(task) {
   return moment(task.after).format("LL");
 }
@@ -117,10 +119,14 @@ function showCustomerDetails(customer) {
   );
 }
 
-export default function ({ task, delivery, order }) {
-  task = JSON.parse(task);
+export default function ({ delivery }) {
   delivery = JSON.parse(delivery);
-  order = JSON.parse(order);
+  const { loaded, order, incident } = store.getState();
+  const { task } = incident;
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <div className="order-details-card">

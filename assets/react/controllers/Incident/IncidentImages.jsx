@@ -2,6 +2,8 @@ import React from "react";
 import { Image, Upload, notification } from "antd";
 import "./Style.scss";
 
+import store from "./incidentStore";
+
 async function _handleUpload(id, file) {
   if (file.size > 5 * 1024 * 1024) {
     return { message: "Image is too big" };
@@ -19,8 +21,8 @@ async function _handleUpload(id, file) {
   );
 }
 
-export default function ({ images, incident_id }) {
-  images = JSON.parse(images);
+export default function () {
+  const { incident, images } = store.getState();
   return (
     <>
       <Image.PreviewGroup>
@@ -34,7 +36,7 @@ export default function ({ images, incident_id }) {
         name="image"
         accept="image/*"
         customRequest={async ({ file }) => {
-          const { error, message } = await _handleUpload(incident_id, file);
+          const { error, message } = await _handleUpload(incident.id, file);
           if (!error) {
             location.reload();
           } else {

@@ -9,6 +9,8 @@ import {
   notification,
 } from "antd";
 
+import store from "./incidentStore";
+
 async function _handleStatusSubmit(id, body) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.patch(
@@ -23,8 +25,8 @@ async function syncData(id, body) {
   }
 }
 
-export default function ({ incident, createdBy }) {
-  incident = JSON.parse(incident);
+export default function () {
+  const { loaded, incident } = store.getState();
   const [priority, setPriority] = useState(incident.priority);
   const [status, setStatus] = useState(incident.status);
   const [tags, setTags] = useState(incident.tags);
@@ -37,6 +39,10 @@ export default function ({ incident, createdBy }) {
         return { next: "OPEN", label: "Reopen this incident" };
     }
   };
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <PageHeader
@@ -78,7 +84,7 @@ export default function ({ incident, createdBy }) {
           value={priority}
           style={{ margin: "0 22px" }}
         />
-        <Statistic title="Created by" value={createdBy} />
+        <Statistic title="Created by" value={incident.createdBy.username} />
       </Row>
       <Row justify="space-between" className="mt-3">
         <Select
