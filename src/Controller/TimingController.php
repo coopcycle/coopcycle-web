@@ -15,9 +15,8 @@ class TimingController extends AbstractController
     public function fulfillmentTimingAction($id,
         TimingRegistry $timingRegistry)
     {
-        return new JsonResponse([
-            'delivery'   => $timingRegistry->getForId($id, 'delivery'),
-            'collection' => $timingRegistry->getForId($id, 'collection'),
-        ]);
+        return new JsonResponse(
+            $timingRegistry->getAllFulfilmentMethodsForId($id)
+        );
     }
 }

@@ -163,6 +163,7 @@
         "CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_2": "Tem a certeza que quer começar um novo pedido neste restaurante?",
         "CART_CHANGE_RESTAURANT_MODAL_BTN_YES": "Começar um novo pedido",
         "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Voltar ao pedido anterior",
+        "NOT_AVAILABLE_ATM": "Não disponível no momento",
         "CART_ADDRESS_MODAL_HELP_TEXT": "Insere um endereço mais específico, com número e nome da rua",
         "CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS": "Voltar à lista de restaurantes",
         "CART_ADDRESS_MODAL_NO_THANKS_TAKEAWAY": "Eu mesmo irei recolher o pedido",

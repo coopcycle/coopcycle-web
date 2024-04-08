@@ -65,6 +65,18 @@ class LoggingUtils
             return sprintf('(not persisted yet; created_at = %s)', $order->getCreatedAt()->format(\DateTime::ATOM));
         }
     }
+
+    public function getVendors($order): string {
+        $vendors = $order->getVendors()->toArray();
+
+        if (count($vendors) === 0) {
+            return 'no vendors';
+        } else {
+            return sprintf('%s (LocalBusiness/Restaurant)', implode(', ', array_map(function($vendor) {
+                return $vendor->getRestaurant()->getId();
+            }, $vendors)));
+        }
+    }
 }
 
 class StackItem

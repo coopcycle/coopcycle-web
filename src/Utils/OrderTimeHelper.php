@@ -8,6 +8,7 @@ use AppBundle\Fulfillment\FulfillmentMethodResolver;
 use AppBundle\Form\Type\AsapChoiceLoader;
 use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Form\Type\TsRangeChoice;
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Service\TimeRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
@@ -16,36 +17,24 @@ use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ShippingTimeCalculator;
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Redis;
 
 class OrderTimeHelper
 {
-    private $shippingDateFilter;
-    private $preparationTimeCalculator;
-    private $shippingTimeCalculator;
-    private $country;
     private $choicesCache = [];
     private $extraTime;
 
     public function __construct(
-        ShippingDateFilter $shippingDateFilter,
-        PreparationTimeCalculator $preparationTimeCalculator,
-        ShippingTimeCalculator $shippingTimeCalculator,
-        Redis $redis,
-        TimeRegistry $timeRegistry,
-        FulfillmentMethodResolver $fulfillmentMethodResolver,
-        string $country,
-        LoggerInterface $logger = null)
+        private ShippingDateFilter $shippingDateFilter,
+        private PreparationTimeCalculator $preparationTimeCalculator,
+        private ShippingTimeCalculator $shippingTimeCalculator,
+        private Redis $redis,
+        private TimeRegistry $timeRegistry,
+        private FulfillmentMethodResolver $fulfillmentMethodResolver,
+        private string $country,
+        private LoggerInterface $logger,
+        private LoggingUtils $loggingUtils)
     {
-        $this->shippingDateFilter = $shippingDateFilter;
-        $this->preparationTimeCalculator = $preparationTimeCalculator;
-        $this->shippingTimeCalculator = $shippingTimeCalculator;
-        $this->redis = $redis;
-        $this->timeRegistry = $timeRegistry;
-        $this->fulfillmentMethodResolver = $fulfillmentMethodResolver;
-        $this->country = $country;
-        $this->logger = $logger ?? new NullLogger();
     }
 
     private function filterChoices(OrderInterface $cart, array $choices)
@@ -54,7 +43,9 @@ class OrderTimeHelper
 
             $result = $this->shippingDateFilter->accept($cart, $choice->toTsRange());
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept() returned %s for %s',
+            $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::filterChoices; ShippingDateFilter::accept() returned %s for %s',
+                $this->loggingUtils->getOrderId($cart),
+                $this->loggingUtils->getVendors($cart),
                 var_export($result, true),
                 (string) $choice
             ));
@@ -94,7 +85,18 @@ class OrderTimeHelper
 
     private function getChoices(OrderInterface $cart)
     {
-        $hash = sprintf('%s-%s', $cart->getFulfillmentMethod(), spl_object_hash($cart));
+        $hash = sprintf('%s-%s-%s',
+            $cart->getFulfillmentMethod(),
+            implode(',', array_map(function($vendor) {
+                return $vendor->getRestaurant()->getId();
+            }, $cart->getVendors()->toArray())),
+            spl_object_hash($cart));
+
+        $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::getChoices; is using cached value: %s',
+            $this->loggingUtils->getOrderId($cart),
+            $this->loggingUtils->getVendors($cart),
+            var_export(isset($this->choicesCache[$hash]), true),
+        ));
 
         if (!isset($this->choicesCache[$hash])) {
 
@@ -126,7 +128,9 @@ class OrderTimeHelper
     {
         $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($cart);
 
-        $this->logger->info(sprintf('Cart has fulfillment method "%s" and behavior "%s"',
+        $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::getShippingTimeRanges; Cart has fulfillment method "%s" and behavior "%s"',
+            $this->loggingUtils->getOrderId($cart),
+            $this->loggingUtils->getVendors($cart),
             $fulfillmentMethod->getType(),
             $fulfillmentMethod->getOpeningHoursBehavior()
         ));
