@@ -80,7 +80,7 @@ function showAdjustment(adjustments, adjustmentType) {
 function showOrderDetails(order) {
   return (
     <>
-      <h5>Order Details</h5>
+      <h5>Order details</h5>
       <p>
         Subtotal<span>{money(order.itemsTotal)}</span>
       </p>
@@ -102,7 +102,7 @@ function showCustomerDetails(customer) {
   return (
     <>
       <h5 style={{ lineHeight: "24px" }}>
-        Customer information{_externalLink(link)}
+        Customer details{_externalLink(link)}
       </h5>
       {customerShowName(customer)}
       {customer?.email && (
@@ -134,7 +134,12 @@ export default function ({ delivery }) {
       <p className="text-muted">Date: {formatTime(task)}</p>
       <hr />
       {order && showOrderDetails(order)}
-      <h5>Shipping information</h5>
+      <h5>
+        <span style={{ textTransform: "capitalize" }}>
+          {task.type.toLowerCase()}
+        </span>{" "}
+        details
+      </h5>
       <p>{task.address.name}</p>
       <p>{task.address.streetAddress}</p>
       <p>{task.address.telephone}</p>
