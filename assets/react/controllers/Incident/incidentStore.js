@@ -1,3 +1,5 @@
+import React from "react";
+import { Provider } from "react-redux";
 import { createSlice, configureStore } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -23,6 +25,9 @@ const incidentSlice = createSlice({
     setImages(state, action) {
       state.images = action.payload;
     },
+    setEvents(state, action) {
+      state.incident.events = action.payload;
+    },
   },
 });
 
@@ -30,7 +35,15 @@ const store = configureStore({
   reducer: incidentSlice.reducer,
 });
 
-export const { setLoaded, setIncident, setOrder, setImages } =
+export const { setLoaded, setIncident, setOrder, setImages, setEvents } =
   incidentSlice.actions;
 
 export default store;
+
+export const useStore =
+  (Component) =>
+  ({ ...props }) => (
+    <Provider store={store}>
+      <Component {...props} />
+    </Provider>
+  );
