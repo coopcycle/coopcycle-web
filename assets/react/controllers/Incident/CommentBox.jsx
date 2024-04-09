@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Input } from "antd";
 
-import store from "./incidentStore";
+import store, { setEvents } from "./incidentStore";
 
 async function _handleCommentSubmit(id, comment) {
   const httpClient = new window._auth.httpClient();
@@ -33,9 +33,15 @@ export default function () {
         loading={submitting}
         onClick={async () => {
           setSubmitting(true);
-          const { error } = await _handleCommentSubmit(incident.id, comment);
+          const { response, error } = await _handleCommentSubmit(
+            incident.id,
+            comment,
+          );
           if (!error) {
-            location.reload();
+            const { events } = response;
+            store.dispatch(setEvents(events));
+            setSubmitting(false);
+            setComment("");
           } else {
             setError(true);
             setSubmitting(false);

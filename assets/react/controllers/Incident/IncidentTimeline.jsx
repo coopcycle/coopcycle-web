@@ -4,7 +4,8 @@ import classNames from "classnames";
 import "./IncidentTimeline.scss";
 import { money } from "./utils";
 
-import store from "./incidentStore";
+import { useStore } from "./incidentStore";
+import { useSelector } from "react-redux";
 
 function Comment({ event }) {
   const { username } = event.createdBy;
@@ -108,14 +109,14 @@ function Item({ event }) {
   );
 }
 
-export default function () {
-  const { incident } = store.getState();
+export default useStore(function () {
+  const events = useSelector((state) => state.incident.events);
 
   return (
     <div className="tl-incident-event">
-      {incident.events.map((event) => (
+      {events.map((event) => (
         <Item key={event.id} event={event} />
       ))}
     </div>
   );
-}
+});
