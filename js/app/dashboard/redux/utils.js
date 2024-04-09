@@ -15,24 +15,31 @@ export function withoutTasks(state, tasks) {
   )
 }
 
-export function withOrderTasksForDragNDrop(tasks, allTasks, taskIdToTourIdMap) {
+export function withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap) {
 
-  if (!Array.isArray(tasks)) {
-    tasks = [ tasks ]
+  if (!Array.isArray(selectedTasks)) {
+    selectedTasks = [ selectedTasks ]
   }
 
   const groups = taskUtils.groupLinkedTasks(allTasks)
   const newTasks = []
 
-  tasks.forEach(task => {
+  selectedTasks.forEach(task => {
     if (Object.prototype.hasOwnProperty.call(groups, task['@id']) ) {
       groups[task['@id']].forEach(taskId => {
-        const taskWasAlreadyAdded = _.find(newTasks, t => t['@id'] === taskId)
+        const taskIsCurrentTask = taskId === task['@id']
+        const taskWasAlreadyAdded = newTasks.some(t => t['@id'] === taskId)
+        const taskIsAlreadyInSelection = selectedTasks.some(t => t['@id'] === taskId)
 
-        if (!(taskWasAlreadyAdded)) {
+        /*
+          We want the tasks to keep the selection order, so we insert linked tasks if needed but if the task was already in `selectedTasks` add it when its turn come.
+        */
+        if (taskIsCurrentTask) {
+          newTasks.push(task)
+        } else if (!taskIsAlreadyInSelection && !taskWasAlreadyAdded) {
           const taskToAdd = _.find(allTasks, t => t['@id'] === taskId)
 
-          // we don't want to move tasks that have been assigned to other courier, or moved individually to another tour..
+          // we don't want to move tasks that have been assigned to other courier, or moved individually to another tour
           if (isValidTasksMultiSelect([task, taskToAdd], taskIdToTourIdMap)) {
             newTasks.push(taskToAdd)
           }

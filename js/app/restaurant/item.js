@@ -63,7 +63,8 @@ const init = function() {
   const loopeatDataElement = document.querySelector('#js-loopeat')
 
   const restaurant = JSON.parse(restaurantDataElement.dataset.restaurant)
-  const times = JSON.parse(restaurantDataElement.dataset.times)
+  const restaurantTiming = JSON.parse(restaurantDataElement.dataset.restaurantTiming)
+  const cartTiming = JSON.parse(restaurantDataElement.dataset.cartTiming)
   const isPlayer = JSON.parse(restaurantDataElement.dataset.isPlayer)
   const isGroupOrdersEnabled = JSON.parse(restaurantDataElement.dataset.isGroupOrdersEnabled)
   const addresses = JSON.parse(addressesDataElement.dataset.addresses)
@@ -106,7 +107,8 @@ const init = function() {
     },
     isNewAddressFormElement: document.querySelector('#cart_isNewAddress'),
     addresses,
-    times,
+    restaurantTiming,
+    cartTiming,
     country: getCountry(),
     isPlayer,
     isGroupOrdersEnabled,

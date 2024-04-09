@@ -142,7 +142,7 @@ describe('withOrderTasksForDragNDrop', () => {
       { '@id': '/api/tasks/9',},
       {
         '@id': '/api/tasks/8',
-        previous: '/api/tasks/6',
+        previous: '/api/tasks/7',
       },
     ], allTasks, taskIdToTourIdMap)
 
@@ -154,11 +154,11 @@ describe('withOrderTasksForDragNDrop', () => {
         '@id': '/api/tasks/7',
         previous: '/api/tasks/6',
       },
+      { '@id': '/api/tasks/9',},
       {
         '@id': '/api/tasks/8',
         previous: '/api/tasks/7',
       },
-      { '@id': '/api/tasks/9',},
     ])
   })
 
@@ -197,7 +197,7 @@ describe('withOrderTasksForDragNDrop', () => {
   it('should not return linked tasks in a different tour', () => {
 
     const actual = withOrderTasksForDragNDrop({
-      '@id': '/api/tasks/8'
+      '@id': '/api/tasks/8', previous: '/api/tasks/7'
     }, allTasks, taskIdToTourIdMap)
 
     expect(actual).toEqual([
@@ -209,6 +209,45 @@ describe('withOrderTasksForDragNDrop', () => {
       }, {
         '@id': '/api/tasks/8',
         previous: '/api/tasks/7',
+      },
+    ])
+  })
+
+  it('should keep the original order if tasks of orders are, not regroup the tasks of the same order together', () => {
+
+    const actual = withOrderTasksForDragNDrop([
+      {
+        '@id': '/api/tasks/1',
+        next: '/api/tasks/2',
+      }, {
+        '@id': '/api/tasks/4',
+        next: '/api/tasks/5',
+      },
+      {
+        '@id': '/api/tasks/2',
+        previous: '/api/tasks/1',
+      },
+      {
+        '@id': '/api/tasks/5',
+        previous: '/api/tasks/4',
+      },
+    ], allTasks, taskIdToTourIdMap)
+
+    expect(actual).toEqual([
+      {
+        '@id': '/api/tasks/1',
+        next: '/api/tasks/2',
+      }, {
+        '@id': '/api/tasks/4',
+        next: '/api/tasks/5',
+      },
+      {
+        '@id': '/api/tasks/2',
+        previous: '/api/tasks/1',
+      },
+      {
+        '@id': '/api/tasks/5',
+        previous: '/api/tasks/4',
       },
     ])
   })

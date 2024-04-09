@@ -165,6 +165,7 @@
         "CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_2": "Sei sicuro di voler iniziare un nuovo ordine in questo ristorante?",
         "CART_CHANGE_RESTAURANT_MODAL_BTN_YES": "Inizia un nuovo ordine",
         "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Torna agli ordini precedenti",
+        "NOT_AVAILABLE_ATM": "Non disponibile al momento",
         "TIME_RANGE": "tra {{start}} e {{end}}",
         "CART_DELIVERY_TIME_RANGE_SAME_DAY": "[Oggi] [{{range}}]",
         "cancel": {

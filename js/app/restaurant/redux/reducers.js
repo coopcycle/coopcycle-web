@@ -54,7 +54,23 @@ const initialState = {
   isMobileCartVisible: false,
   addresses: [],
   lastAddItemRequest: null,
-  times: {
+  restaurantTiming: {
+    // object shape:
+    // delivery: {
+    //   fast: false,
+    //   today: false,
+    //   diff: '',
+    //   range: null,
+    // },
+    // collection: {
+    //   fast: false,
+    //   today: false,
+    //   diff: '',
+    //   range: null,
+    // },
+    firstChoiceKey: null,
+  },
+  cartTiming: {
     asap: null,
     fast: false,
     today: false,
@@ -223,14 +239,25 @@ const isDateModalOpen = (state = initialState.isDateModalOpen, action = {}) => {
   }
 }
 
-const times = (state = initialState.times, action = {}) => {
+const restaurantTiming = (state = initialState.restaurantTiming, action = {}) => {
   switch (action.type) {
   case FETCH_SUCCESS:
 
-    return action.payload.times
+    return action.payload.restaurantTiming
   default:
 
     return state
+  }
+}
+
+const cartTiming = (state = initialState.cartTiming, action = {}) => {
+  switch (action.type) {
+    case FETCH_SUCCESS:
+
+      return action.payload.cartTiming
+    default:
+
+      return state
   }
 }
 
@@ -388,7 +415,8 @@ export default combineReducers({
   isMobileCartVisible,
   addresses,
   lastAddItemRequest,
-  times,
+  restaurantTiming,
+  cartTiming,
   isDateModalOpen,
   isAddressModalOpen,
   country,

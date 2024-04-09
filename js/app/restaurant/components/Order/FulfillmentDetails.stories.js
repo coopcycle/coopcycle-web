@@ -39,7 +39,7 @@ export const Delivery = {
       restaurant: {
         isOpen: true,
       },
-      times: {
+      cartTiming: {
         today: true,
         range: [
           '2021-09-29T12:00:00+01:00',
@@ -71,7 +71,7 @@ export const DeliveryNoAddress = {
       restaurant: {
         isOpen: true,
       },
-      times: {
+      cartTiming: {
         today: true,
         range: [
           '2021-09-29T12:00:00+01:00',
@@ -97,7 +97,7 @@ export const Takeaway = {
       restaurant: {
         isOpen: true,
       },
-      times: {
+      cartTiming: {
         today: true,
         range: [
           '2021-09-29T12:00:00+01:00',
@@ -130,7 +130,40 @@ export const NotAvailable = {
       restaurant: {
         isOpen: true,
       },
-      times: {
+      cartTiming: {
+        today: true,
+        range: [
+          '2021-09-29T12:00:00+01:00',
+          '2021-09-29T14:00:00+01:00',
+        ],
+      },
+    },
+  },
+}
+
+export const IsPlayer = {
+  args: {
+    _store: {
+      errors: {
+        'shippingTimeRange': [
+          {
+            'message': 'Not available at the moment',
+            'code': 'Order::SHIPPING_TIME_RANGE_NOT_AVAILABLE',
+          },
+        ],
+      },
+      cart: {
+        vendor: {},
+        items: [],
+      },
+      isPlayer: true,
+      player: {
+        player: null,
+      },
+      restaurant: {
+        isOpen: true,
+      },
+      cartTiming: {
         today: true,
         range: [
           '2021-09-29T12:00:00+01:00',
