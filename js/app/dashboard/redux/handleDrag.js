@@ -148,7 +148,8 @@ export function handleDragEnd(
     }
 
     // when we drag n drop we want all tasks of the order/delivery to move alongside
-    if (source.droppableId !== destination.droppableId) {
+    // except from tour or group, keep them as they are organized
+    if (source.droppableId !== destination.droppableId && !result.draggableId.startsWith('tour') && !result.draggableId.startsWith('group')) {
       selectedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
     }
 
@@ -208,7 +209,7 @@ export function handleDragEnd(
       // Reorder tasks inside a tour
       if (source.droppableId === destination.droppableId) {
         _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t['@id']))
-      } // moving single tasks between tours
+      } // moving single tasks between tours -> remove from source tour
       else if (source.droppableId.startsWith('tour:')) {
         var sourceTourId = source.droppableId.replace('tour:', '')
         const sourceTour = selectTourById(getState(), sourceTourId)
@@ -225,13 +226,12 @@ export function handleDragEnd(
         const index = getPositionInFlatTaskList(nestedTaskList, destination.index, tourId)
 
         handleDropInTaskList(tasksList, selectedTasks, index)
-        dispatch(modifyTour(tour, newTourItems))
-      } else {
-        if (selectedTasks[0].assignedTo) {
-          dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
-        }
-        dispatch(modifyTour(tour, newTourItems))
+      } else if (selectedTasks[0].assignedTo) {
+        dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
       }
+
+      dispatch(modifyTour(tour, newTourItems))
+
     } else if (destination.droppableId.startsWith('assigned:')) {
       const tasksLists = selectTasksListsWithItems(getState())
       const username = destination.droppableId.replace('assigned:', '')
