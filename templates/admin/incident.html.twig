@@ -12,6 +12,7 @@
 
 {% block content %}
 {%- set images = incident.getImages()|reverse|map(i => {
+  'id': i.id,
   'thumbnail': coopcycle_asset(i, 'file', 'incident_image_thumbnail'),
   'full': absolute_url(path('incident_image_public', {path: i.imageName}))
 })|serialize -%}
