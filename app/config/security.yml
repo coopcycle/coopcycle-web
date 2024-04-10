@@ -317,6 +317,7 @@ security:
             lazy: true
 
     access_control:
+        - { path: ^/incident/image, roles: PUBLIC_ACCESS }
         - { path: ^/login, role: PUBLIC_ACCESS }
         - { path: ^/register, role: PUBLIC_ACCESS }
         - { path: ^/resetting, role: PUBLIC_ACCESS }
