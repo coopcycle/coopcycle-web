@@ -11,7 +11,10 @@
 {% endblock %}
 
 {% block content %}
-{%- set images = incident.getImages()|reverse|map(i => coopcycle_asset(i, 'file', 'incident_image_thumbnail'))|serialize -%}
+{%- set images = incident.getImages()|reverse|map(i => {
+  'thumbnail': coopcycle_asset(i, 'file', 'incident_image_thumbnail'),
+  'full': absolute_url(path('incident_image_public', {path: i.imageName}))
+})|serialize -%}
 <div {{ react_component('Incident/IncidentLoad', {
   incident: incident|serialize('json', {groups: ['incident', 'task', 'address'] }),
   order: order|serialize,
