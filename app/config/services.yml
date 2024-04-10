@@ -86,6 +86,7 @@ services:
   League\Flysystem\Filesystem $taskImportsFilesystem: '@task_imports_filesystem'
   League\Flysystem\Filesystem $receiptsFilesystem: '@receipts_filesystem'
   League\Flysystem\Filesystem $ediMessagesFilesystem: '@edi_messages_filesystem'
+  League\Flysystem\Filesystem $incidentImagesFilesystem: '@incident_images_filesystem'
   Nucleos\UserBundle\Util\Canonicalizer: '@nucleos_user.util.canonicalizer.simple'
 
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
@@ -193,6 +194,7 @@ services:
       $promotionFactory: '@sylius.factory.promotion'
       $optinExportUsersEnabled: '%env(bool:OPTIN_EXPORT_USERS_ENABLED)%'
       $adhocOrderEnabled: '%env(bool:ADHOC_ORDER_ENABLED)%'
+      $incidentImagesFilesystem: '@incident_images_filesystem'
 
   AppBundle\Controller\DashboardController:
     arguments:
