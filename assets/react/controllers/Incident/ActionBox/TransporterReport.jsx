@@ -63,7 +63,8 @@ function ImagesSelector({ images, onChange = () => {} }) {
                 <Image
                   width="128px"
                   height="128px"
-                  src={image}
+                  src={image.thumbnail}
+                  preview={{src: image.full}}
                   className={classNames("p-2, border", {
                     "border-primary": selected,
                     "border-default": !selected,
