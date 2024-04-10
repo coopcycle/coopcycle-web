@@ -9,6 +9,7 @@ use Liip\ImagineBundle\Service\FilterService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
+use Symfony\Component\Routing\Annotation\Route;
 
 trait IncidentTrait {
 
@@ -65,5 +66,25 @@ trait IncidentTrait {
             'delivery' => $delivery,
             'order' => $order
         ]));
+    }
+
+    /**
+    * @Route("/incident/image/{id}.jpg", name="incident_image", methods={"GET"})
+    */
+    public function incidentImageAction($id, Request $request) {
+        $object = $this->getDoctrine()->getRepository(IncidentImage::class)->find($id);
+        if (is_null($object)) {
+            throw $this->createNotFoundException();
+        }
+        try {
+            $imagePath = $this->uploaderHelper->asset($object, 'file');
+            $imageBin = $this->incidentImagesFilesystem->read($imagePath);
+        } catch (\Exception $e) {
+            throw $this->createNotFoundException();
+        }
+        return new Response($imageBin, 200, [
+            'content-type' => 'image/jpeg',
+            'Content-Disposition' => sprintf('inline; filename="%s"', $object->getImageName())
+        ]);
     }
 }
