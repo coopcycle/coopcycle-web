@@ -154,8 +154,8 @@ final class UploadListener
 
         $directoryName = $directoryNamer->directoryName($object, $propertyMapping);
 
-        $file->getFilesystem()->rename(
-            $file->getPath(),
+        $file->getFilesystem()->move(
+            $file->getPathname(),
             sprintf('%s/%s', $directoryName, $file->getBasename())
         );
     }
@@ -200,7 +200,7 @@ final class UploadListener
         $filename = sprintf('%s.%s', $encoded, TaskSpreadsheetParser::getFileExtension($mimeType));
         $this->logger->debug(sprintf('UploadListener | filename = %s', $filename));
 
-        $fileSystem->rename($file->getPathname(), $filename);
+        $fileSystem->move($file->getPathname(), $filename);
 
         $this->messageBus->dispatch(
             new ImportTasks($encoded, $filename, new \DateTime($date)),

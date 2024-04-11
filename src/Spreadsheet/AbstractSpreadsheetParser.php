@@ -2,8 +2,8 @@
 
 namespace AppBundle\Spreadsheet;
 
-use League\Flysystem;
 use League\Csv\Writer;
+use Oneup\UploaderBundle\Uploader\File\FlysystemFile;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\IReader;
 use PhpOffice\PhpSpreadsheet\Reader\Ods;
@@ -81,7 +81,7 @@ abstract class AbstractSpreadsheetParser
     abstract public function parseData(array $data, array $options = []): array | SpreadsheetParseResult;
 
     /**
-     * @param Flysystem\File|HttpFoundation\File\File|string $file
+     * @param FlysystemFile|HttpFoundation\File\File|string $file
      * @param array $options
      * @throws \Exception
      */
@@ -128,7 +128,7 @@ abstract class AbstractSpreadsheetParser
     }
 
     /**
-     * @param Flysystem\File|HttpFoundation\File\File|string $file
+     * @param FlysystemFile|HttpFoundation\File\File|string $file
      * @return Spreadsheet
      * @throws \Exception
      */
@@ -138,10 +138,10 @@ abstract class AbstractSpreadsheetParser
 
         if (is_object($file)) {
 
-            if ($file instanceof Flysystem\File) {
+            if ($file instanceof FlysystemFile) {
 
                 $tempnam = tempnam(sys_get_temp_dir(), 'coopcycle_spreadsheet_parser_');
-                if (false === file_put_contents($tempnam, $file->read())) {
+                if (false === file_put_contents($tempnam, $file->getFilesystem()->read($file->getPathName()))) {
                     throw new \Exception(sprintf('Could not write temp file %s', $tempnam));
                 }
 
@@ -168,7 +168,7 @@ abstract class AbstractSpreadsheetParser
     }
 
     /**
-     * @param Flysystem\File|HttpFoundation\File\File|string $file
+     * @param FlysystemFile|HttpFoundation\File\File|string $file
      * @return string
      */
     public function toCsv($file): string
@@ -185,7 +185,7 @@ abstract class AbstractSpreadsheetParser
     }
 
     /**
-     * @param Flysystem\File|HttpFoundation\File\File|string $file
+     * @param FlysystemFile|HttpFoundation\File\File|string $file
      * @return array
      */
     public function toRawData($file): array

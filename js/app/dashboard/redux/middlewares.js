@@ -93,10 +93,6 @@ export const socketIO = ({ dispatch, getState }) => {
   }
 }
 
-function getKey(state) {
-  return state.logistics.date.format('YYYY-MM-DD')
-}
-
 export const persistFilters = ({ getState }) => (next) => (action) => {
 
   const result = next(action)
@@ -104,12 +100,12 @@ export const persistFilters = ({ getState }) => (next) => (action) => {
   let state
   if (action.type === SET_FILTER_VALUE) {
     state = getState()
-    window.sessionStorage.setItem(`cpccl__dshbd__fltrs__${getKey(state)}`, JSON.stringify(state.settings.filters))
+    window.localStorage.setItem("cpccl__dshbd__fltrs", JSON.stringify(state.settings.filters))
   }
 
   if (action.type === RESET_FILTERS) {
     state = getState()
-    window.sessionStorage.removeItem(`cpccl__dshbd__fltrs__${getKey(state)}`)
+    window.localStorage.removeItem("cpccl__dshbd__fltrs")
   }
 
   if (action.type === SHOW_RECURRENCE_RULES) {

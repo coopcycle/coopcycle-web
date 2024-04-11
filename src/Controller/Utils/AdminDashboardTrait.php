@@ -411,7 +411,7 @@ trait AdminDashboardTrait
         // while $taskImagesFilesystem is alreay aware of the prefix
         $imagePath = ltrim($storage->resolveUri($image, 'file'), '/');
 
-        if (!$taskImagesFilesystem->has($imagePath)) {
+        if (!$taskImagesFilesystem->fileExists($imagePath)) {
             throw new NotFoundHttpException(sprintf('Image at path "%s" not found', $imagePath));
         }
 
@@ -421,7 +421,7 @@ trait AdminDashboardTrait
             stream_copy_to_stream($fileStream, $outputStream);
         });
 
-        $response->headers->set('Content-Type', $taskImagesFilesystem->getMimetype($imagePath));
+        $response->headers->set('Content-Type', $taskImagesFilesystem->mimeType($imagePath));
 
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,

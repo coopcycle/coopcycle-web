@@ -69,7 +69,6 @@ Class ResolveImagineCacheCommand extends Command
             foreach ($paginator as $image) {
 
                 $mapping = $this->propertyMappingFactory->fromField($image, 'imageFile');
-                $fileSystem = $this->mountManager->getFilesystem($mapping->getUploadDestination());
                 $uri = $this->storage->resolveUri($image, 'imageFile');
 
                 $filterName = sprintf('product_thumbnail_%s', str_replace(':', 'x', $image->getRatio()));

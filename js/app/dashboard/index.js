@@ -106,8 +106,7 @@ async function start() {
     settings: settingsInitialState,
   }
 
-  const key = date.format('YYYY-MM-DD')
-  const persistedFilters = window.sessionStorage.getItem(`cpccl__dshbd__fltrs__${key}`)
+  const persistedFilters = window.localStorage.getItem("cpccl__dshbd__fltrs")
   if (persistedFilters) {
     preloadedState = {
       ...preloadedState,
