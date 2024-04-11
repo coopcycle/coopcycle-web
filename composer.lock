@@ -1247,16 +1247,16 @@
         },
         {
             "name": "coopcycle/db-schenker",
-            "version": "dev-master",
+            "version": "v0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/DBSchenkerClient.git",
-                "reference": "762f077b352691edbfa59c5fe7b0997aa6611d62"
+                "reference": "1e19f56b2877696c48ce337649efa981c3407deb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/762f077b352691edbfa59c5fe7b0997aa6611d62",
-                "reference": "762f077b352691edbfa59c5fe7b0997aa6611d62",
+                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/1e19f56b2877696c48ce337649efa981c3407deb",
+                "reference": "1e19f56b2877696c48ce337649efa981c3407deb",
                 "shasum": ""
             },
             "require": {
@@ -1266,11 +1266,10 @@
                 "php-edifact/edifact-mapping": "dev-master",
                 "sabas/edifact": "^0.6.1"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "DBSchenker\\": "DBSchenker"
+                    "DBShenker\\": "src"
                 }
             },
             "authors": [
@@ -1280,10 +1279,10 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/coopcycle/DBSchenkerClient/tree/master",
+                "source": "https://github.com/coopcycle/DBSchenkerClient/tree/v0.1.0",
                 "issues": "https://github.com/coopcycle/DBSchenkerClient/issues"
             },
-            "time": "2024-03-15T11:31:06+00:00"
+            "time": "2023-12-01T16:11:29+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -23646,8 +23645,7 @@
         "drupal/core-vendor-hardening": 20,
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
-        "behatch/contexts": 20,
-        "coopcycle/db-schenker": 20
+        "behatch/contexts": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
