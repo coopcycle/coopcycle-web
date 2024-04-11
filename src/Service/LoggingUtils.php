@@ -56,6 +56,18 @@ class LoggingUtils
         return sprintf('%s %s', $request->getMethod(), $request->getRequestUri());
     }
 
+    /**
+     * Redacts (masks) sensitive information to be written to logs.
+     * @param string $text Text to redact
+     * @param int $symbolsAtStart Number of symbols to keep at the start of the text
+     * @param int $symbolsAtEnd Number of symbols to keep at the end of the text
+     * @param int $symbolsInMiddle Number of symbols to use as a mask in the middle of the text
+     * @return string
+     */
+    public function redact(string $text, int $symbolsAtStart=4, int $symbolsAtEnd=4, int $symbolsInMiddle=4): string {
+        return substr($text, 0, $symbolsAtStart) . str_repeat('*', $symbolsInMiddle) . substr($text, -$symbolsAtEnd);
+    }
+
     public function getOrderId($order): string {
         $isPersisted = $order->getId() !== null;
 
