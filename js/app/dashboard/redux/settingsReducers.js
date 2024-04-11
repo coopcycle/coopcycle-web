@@ -13,7 +13,7 @@ import {
 const defaultFilters = {
   showFinishedTasks: true,
   showCancelledTasks: false,
-  showIncidentReportedTasks: false,
+  showIncidentReportedTasks: true,
   alwayShowUnassignedTasks: false,
   tags: [],
   hiddenCouriers: [],
