@@ -82,7 +82,7 @@ trait IncidentTrait {
         try {
             $imagePath = $this->uploaderHelper->asset($object, 'file');
             $imageBin = $this->incidentImagesFilesystem->read($imagePath);
-            $mimeType = $this->incidentImagesFilesystem->getMimetype($imagePath);
+            $mimeType = $this->incidentImagesFilesystem->mimeType($imagePath);
         } catch (\Exception $e) {
             throw $this->createNotFoundException();
         }
