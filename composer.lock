@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e20ab4d13b243e7946c2357202d3efdf",
+    "content-hash": "8eb637b4182370d2fd21f96fd513ca4e",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1251,17 +1251,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/DBSchenkerClient.git",
-                "reference": "bd9b01c4e662fbe6c3610c5b1f228070334591a3"
+                "reference": "762f077b352691edbfa59c5fe7b0997aa6611d62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/bd9b01c4e662fbe6c3610c5b1f228070334591a3",
-                "reference": "bd9b01c4e662fbe6c3610c5b1f228070334591a3",
+                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/762f077b352691edbfa59c5fe7b0997aa6611d62",
+                "reference": "762f077b352691edbfa59c5fe7b0997aa6611d62",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
-                "league/flysystem": "1.1.10",
+                "league/flysystem": "^3.0",
                 "php-edifact/edifact-generator": "dev-master",
                 "php-edifact/edifact-mapping": "dev-master",
                 "sabas/edifact": "^0.6.1"
@@ -1283,7 +1283,7 @@
                 "source": "https://github.com/coopcycle/DBSchenkerClient/tree/master",
                 "issues": "https://github.com/coopcycle/DBSchenkerClient/issues"
             },
-            "time": "2024-03-14T13:53:49+00:00"
+            "time": "2024-03-15T11:31:06+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -7848,54 +7848,52 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.1.10",
+            "version": "3.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "3239285c825c152bcc315fe0e87d6b55f5972ed1"
+                "reference": "4c44347133618cccd9b3df1729647a1577b4ad99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/3239285c825c152bcc315fe0e87d6b55f5972ed1",
-                "reference": "3239285c825c152bcc315fe0e87d6b55f5972ed1",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/4c44347133618cccd9b3df1729647a1577b4ad99",
+                "reference": "4c44347133618cccd9b3df1729647a1577b4ad99",
                 "shasum": ""
             },
             "require": {
-                "ext-fileinfo": "*",
-                "league/mime-type-detection": "^1.3",
-                "php": "^7.2.5 || ^8.0"
+                "league/flysystem-local": "^3.0.0",
+                "league/mime-type-detection": "^1.0.0",
+                "php": "^8.0.2"
             },
             "conflict": {
-                "league/flysystem-sftp": "<1.0.6"
+                "async-aws/core": "<1.19.0",
+                "async-aws/s3": "<1.14.0",
+                "aws/aws-sdk-php": "3.209.31 || 3.210.0",
+                "guzzlehttp/guzzle": "<7.0",
+                "guzzlehttp/ringphp": "<1.1.1",
+                "phpseclib/phpseclib": "3.0.15",
+                "symfony/http-client": "<5.2"
             },
             "require-dev": {
-                "phpspec/prophecy": "^1.11.1",
-                "phpunit/phpunit": "^8.5.8"
-            },
-            "suggest": {
-                "ext-ftp": "Allows you to use FTP server storage",
-                "ext-openssl": "Allows you to use FTPS server storage",
-                "league/flysystem-aws-s3-v2": "Allows you to use S3 storage with AWS SDK v2",
-                "league/flysystem-aws-s3-v3": "Allows you to use S3 storage with AWS SDK v3",
-                "league/flysystem-azure": "Allows you to use Windows Azure Blob storage",
-                "league/flysystem-cached-adapter": "Flysystem adapter decorator for metadata caching",
-                "league/flysystem-eventable-filesystem": "Allows you to use EventableFilesystem",
-                "league/flysystem-rackspace": "Allows you to use Rackspace Cloud Files",
-                "league/flysystem-sftp": "Allows you to use SFTP server storage via phpseclib",
-                "league/flysystem-webdav": "Allows you to use WebDAV storage",
-                "league/flysystem-ziparchive": "Allows you to use ZipArchive adapter",
-                "spatie/flysystem-dropbox": "Allows you to use Dropbox storage",
-                "srmklive/flysystem-dropbox-v2": "Allows you to use Dropbox storage for PHP 5 applications"
+                "async-aws/s3": "^1.5 || ^2.0",
+                "async-aws/simple-s3": "^1.1 || ^2.0",
+                "aws/aws-sdk-php": "^3.295.10",
+                "composer/semver": "^3.0",
+                "ext-fileinfo": "*",
+                "ext-ftp": "*",
+                "ext-zip": "*",
+                "friendsofphp/php-cs-fixer": "^3.5",
+                "google/cloud-storage": "^1.23",
+                "microsoft/azure-storage-blob": "^1.1",
+                "phpseclib/phpseclib": "^3.0.36",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^9.5.11|^10.0",
+                "sabre/dav": "^4.6.0"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.1-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
-                    "League\\Flysystem\\": "src/"
+                    "League\\Flysystem\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -7905,73 +7903,67 @@
             "authors": [
                 {
                     "name": "Frank de Jonge",
-                    "email": "info@frenky.net"
+                    "email": "info@frankdejonge.nl"
                 }
             ],
-            "description": "Filesystem abstraction: Many filesystems, one API.",
+            "description": "File storage abstraction for PHP",
             "keywords": [
-                "Cloud Files",
                 "WebDAV",
-                "abstraction",
                 "aws",
                 "cloud",
-                "copy.com",
-                "dropbox",
-                "file systems",
+                "file",
                 "files",
                 "filesystem",
                 "filesystems",
                 "ftp",
-                "rackspace",
-                "remote",
                 "s3",
                 "sftp",
                 "storage"
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/1.1.10"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.25.0"
             },
             "funding": [
                 {
-                    "url": "https://offset.earth/frankdejonge",
-                    "type": "other"
+                    "url": "https://ecologi.com/frankdejonge",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/frankdejonge",
+                    "type": "github"
                 }
             ],
-            "time": "2022-10-04T09:16:37+00:00"
+            "time": "2024-03-09T17:06:45+00:00"
         },
         {
             "name": "league/flysystem-aws-s3-v3",
-            "version": "1.0.30",
+            "version": "3.23.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem-aws-s3-v3.git",
-                "reference": "af286f291ebab6877bac0c359c6c2cb017eb061d"
+                "reference": "97728e7a0d40ec9c6147eb0f4ee4cdc6ff0a8240"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-aws-s3-v3/zipball/af286f291ebab6877bac0c359c6c2cb017eb061d",
-                "reference": "af286f291ebab6877bac0c359c6c2cb017eb061d",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-aws-s3-v3/zipball/97728e7a0d40ec9c6147eb0f4ee4cdc6ff0a8240",
+                "reference": "97728e7a0d40ec9c6147eb0f4ee4cdc6ff0a8240",
                 "shasum": ""
             },
             "require": {
-                "aws/aws-sdk-php": "^3.20.0",
-                "league/flysystem": "^1.0.40",
-                "php": ">=5.5.0"
+                "aws/aws-sdk-php": "^3.220.0",
+                "league/flysystem": "^3.10.0",
+                "league/mime-type-detection": "^1.0.0",
+                "php": "^8.0.2"
             },
-            "require-dev": {
-                "henrikbjorn/phpspec-code-coverage": "~1.0.1",
-                "phpspec/phpspec": "^2.0.0"
+            "conflict": {
+                "guzzlehttp/guzzle": "<7.0",
+                "guzzlehttp/ringphp": "<1.1.1"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
-                    "League\\Flysystem\\AwsS3v3\\": "src/"
+                    "League\\Flysystem\\AwsS3V3\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -7981,29 +7973,154 @@
             "authors": [
                 {
                     "name": "Frank de Jonge",
-                    "email": "info@frenky.net"
+                    "email": "info@frankdejonge.nl"
                 }
             ],
-            "description": "Flysystem adapter for the AWS S3 SDK v3.x",
+            "description": "AWS S3 filesystem adapter for Flysystem.",
+            "keywords": [
+                "Flysystem",
+                "aws",
+                "file",
+                "files",
+                "filesystem",
+                "s3",
+                "storage"
+            ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem-aws-s3-v3/issues",
-                "source": "https://github.com/thephpleague/flysystem-aws-s3-v3/tree/1.0.30"
+                "source": "https://github.com/thephpleague/flysystem-aws-s3-v3/tree/3.23.1"
             },
             "funding": [
                 {
-                    "url": "https://offset.earth/frankdejonge",
+                    "url": "https://ecologi.com/frankdejonge",
                     "type": "custom"
                 },
                 {
                     "url": "https://github.com/frankdejonge",
                     "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/league/flysystem",
-                    "type": "tidelift"
                 }
             ],
-            "time": "2022-07-02T13:51:38+00:00"
+            "time": "2024-01-26T18:25:23+00:00"
+        },
+        {
+            "name": "league/flysystem-ftp",
+            "version": "3.25.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/flysystem-ftp.git",
+                "reference": "a72481e3ebffde3ad67c16ca7b6214600fe62c3e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-ftp/zipball/a72481e3ebffde3ad67c16ca7b6214600fe62c3e",
+                "reference": "a72481e3ebffde3ad67c16ca7b6214600fe62c3e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ftp": "*",
+                "league/flysystem": "^3.0.0",
+                "league/mime-type-detection": "^1.0.0",
+                "php": "^8.0.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "League\\Flysystem\\Ftp\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Frank de Jonge",
+                    "email": "info@frankdejonge.nl"
+                }
+            ],
+            "description": "FTP filesystem adapter for Flysystem.",
+            "keywords": [
+                "Flysystem",
+                "file",
+                "files",
+                "filesystem",
+                "ftp",
+                "ftpd"
+            ],
+            "support": {
+                "source": "https://github.com/thephpleague/flysystem-ftp/tree/3.25.0"
+            },
+            "funding": [
+                {
+                    "url": "https://ecologi.com/frankdejonge",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/frankdejonge",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-03-09T13:25:09+00:00"
+        },
+        {
+            "name": "league/flysystem-local",
+            "version": "3.23.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/flysystem-local.git",
+                "reference": "b884d2bf9b53bb4804a56d2df4902bb51e253f00"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-local/zipball/b884d2bf9b53bb4804a56d2df4902bb51e253f00",
+                "reference": "b884d2bf9b53bb4804a56d2df4902bb51e253f00",
+                "shasum": ""
+            },
+            "require": {
+                "ext-fileinfo": "*",
+                "league/flysystem": "^3.0.0",
+                "league/mime-type-detection": "^1.0.0",
+                "php": "^8.0.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "League\\Flysystem\\Local\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Frank de Jonge",
+                    "email": "info@frankdejonge.nl"
+                }
+            ],
+            "description": "Local filesystem adapter for Flysystem.",
+            "keywords": [
+                "Flysystem",
+                "file",
+                "files",
+                "filesystem",
+                "local"
+            ],
+            "support": {
+                "issues": "https://github.com/thephpleague/flysystem-local/issues",
+                "source": "https://github.com/thephpleague/flysystem-local/tree/3.23.1"
+            },
+            "funding": [
+                {
+                    "url": "https://ecologi.com/frankdejonge",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/frankdejonge",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-01-26T18:25:23+00:00"
         },
         {
             "name": "league/geotools",
@@ -10556,80 +10673,61 @@
         },
         {
             "name": "oneup/flysystem-bundle",
-            "version": "3.7.1",
+            "version": "4.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/1up-lab/OneupFlysystemBundle.git",
-                "reference": "7c9483c1eb21d80ed487d87cdc2a9b359fb8e8f4"
+                "reference": "54f7248f089e154a34b1df91a7c66241329bf50d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/1up-lab/OneupFlysystemBundle/zipball/7c9483c1eb21d80ed487d87cdc2a9b359fb8e8f4",
-                "reference": "7c9483c1eb21d80ed487d87cdc2a9b359fb8e8f4",
+                "url": "https://api.github.com/repos/1up-lab/OneupFlysystemBundle/zipball/54f7248f089e154a34b1df91a7c66241329bf50d",
+                "reference": "54f7248f089e154a34b1df91a7c66241329bf50d",
                 "shasum": ""
             },
             "require": {
-                "league/flysystem": "^1.0.26",
-                "php": ">=7.1",
-                "symfony/config": "^3.4 || ^4.0 || ^5.0",
-                "symfony/dependency-injection": "^3.4 || ^4.0 || ^5.0",
-                "symfony/http-kernel": "^3.4 || ^4.0 || ^5.0"
-            },
-            "conflict": {
-                "async-aws/flysystem-s3": "<1.0"
+                "league/flysystem": "^2.0 || ^3.0",
+                "php": "^8.0",
+                "symfony/config": "^4.4 || ^5.3 || ^6.0 || ^7.0",
+                "symfony/dependency-injection": "^4.4 || ^5.3 || ^6.0 || ^7.0",
+                "symfony/http-kernel": "^4.4 || ^5.3 || ^6.0 || ^7.0"
             },
             "require-dev": {
-                "async-aws/flysystem-s3": "^1.0",
-                "jenko/flysystem-gaufrette": "^1.0",
-                "league/flysystem-aws-s3-v2": "^1.0",
-                "league/flysystem-azure-blob-storage": "^0.1",
-                "league/flysystem-cached-adapter": "^1.0",
-                "league/flysystem-gridfs": "^1.0",
-                "league/flysystem-memory": "^1.0",
-                "league/flysystem-rackspace": "^1.0",
-                "league/flysystem-replicate-adapter": "^1.0",
-                "league/flysystem-sftp": "^1.0",
-                "league/flysystem-webdav": "^1.0",
-                "league/flysystem-ziparchive": "^1.0",
-                "litipk/flysystem-fallback-adapter": "^0.1",
-                "phpunit/phpunit": "^6.5 || ^7.5 || ^8.5",
-                "spatie/flysystem-dropbox": "^1.0",
-                "superbalist/flysystem-google-storage": "^4.0",
-                "symfony/asset": "^3.4 || ^4.0 || ^5.0",
-                "symfony/browser-kit": "^3.4 || ^4.0 || ^5.0",
-                "symfony/finder": "^3.4 || ^4.0 || ^5.0",
-                "symfony/templating": "^3.4 || ^4.0 || ^5.0",
-                "symfony/translation": "^3.4 || ^4.0 || ^5.0",
-                "symfony/yaml": "^3.4 || ^4.0 || ^5.0",
-                "twistor/flysystem-stream-wrapper": "^1.0"
+                "ext-simplexml": "*",
+                "friendsofphp/php-cs-fixer": "^2.16 || ^3.5",
+                "league/flysystem-async-aws-s3": "^2.0 || ^3.0",
+                "league/flysystem-aws-s3-v3": "^2.0 || ^3.0",
+                "league/flysystem-azure-blob-storage": "^3.0",
+                "league/flysystem-ftp": "^2.0 || ^3.0",
+                "league/flysystem-google-cloud-storage": "^2.0 || ^3.0",
+                "league/flysystem-memory": "^2.0 || ^3.0",
+                "league/flysystem-sftp-v3": "^2.0 || ^3.0",
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.5",
+                "royvoetman/flysystem-gitlab-storage": "^2.0 || ^3.0",
+                "symfony/asset": "^4.4 || ^5.3 || ^6.0 || ^7.0",
+                "symfony/browser-kit": "^4.4 || ^5.3 || ^6.0 || ^7.0",
+                "symfony/finder": "^4.4 || ^5.3 || ^6.0 || ^7.0",
+                "symfony/framework-bundle": "^4.4 || ^5.3 || ^6.0 || ^7.0",
+                "symfony/phpunit-bridge": "^6.0 || ^7.0",
+                "symfony/templating": "^4.4 || ^5.3 || ^6.0 || ^7.0",
+                "symfony/translation": "^4.4 || ^5.3 || ^6.0 || ^7.0",
+                "symfony/yaml": "^4.4 || ^5.3 || ^6.0 || ^7.0"
             },
             "suggest": {
                 "ext-fileinfo": "Required for MimeType",
                 "ext-ftp": "Required for FTP and SFTP",
-                "jenko/flysystem-gaufrette": "Allows you to use gaufrette adapter",
-                "league/flysystem-aws-s3-v2": "Use S3 storage with AWS SDK v2",
+                "league/flysystem-async-aws-s3": "Use flysystem S3 adapter from AsyncAws",
                 "league/flysystem-aws-s3-v3": "Use S3 storage with AWS SDK v3",
-                "league/flysystem-azure-blob-storage": "Allows you to use Azure Blob Storage adapter",
-                "league/flysystem-cached-adapter": "Flysystem adapter decorator for metadata caching",
-                "league/flysystem-gridfs": "Allows you to use GridFS adapter",
-                "league/flysystem-rackspace": "Allows you to use Rackspace Cloud Files",
-                "league/flysystem-replicate-adapter": "Allows you to use the Replicate adapter from Flysystem",
-                "league/flysystem-sftp": "Allows SFTP server storage via phpseclib",
-                "league/flysystem-webdav": "Allows you to use WebDAV storage",
-                "league/flysystem-ziparchive": "Allows you to use ZipArchive adapter",
-                "litipk/flysystem-fallback-adapter": "Allows you to use a fallback filesystem",
-                "spatie/flysystem-dropbox": "Use Dropbox storage",
-                "superbalist/flysystem-google-storage": "Allows you to use Google Cloud Storage buckets",
-                "twistor/flysystem-stream-wrapper": "Allows you to use stream wrapper"
+                "league/flysystem-google-cloud-storage": "Use Google Cloud Storage Adapter for Flysystem",
+                "league/flysystem-sftp-v3": "Allows SFTP server storage via phpseclib",
+                "royvoetman/flysystem-gitlab-storage": "Use Gitlab Storage filesystem for Flysystem"
             },
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
-                    "Oneup\\FlysystemBundle\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
+                    "Oneup\\FlysystemBundle\\": "src"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -10659,22 +10757,22 @@
             ],
             "support": {
                 "issues": "https://github.com/1up-lab/OneupFlysystemBundle/issues",
-                "source": "https://github.com/1up-lab/OneupFlysystemBundle/tree/3.7.1"
+                "source": "https://github.com/1up-lab/OneupFlysystemBundle/tree/4.11.2"
             },
-            "time": "2021-08-02T12:11:02+00:00"
+            "time": "2023-12-21T11:17:36+00:00"
         },
         {
             "name": "oneup/uploader-bundle",
-            "version": "3.2.1",
+            "version": "4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/1up-lab/OneupUploaderBundle.git",
-                "reference": "b11ea2060d4d76b7202d24ae170162b70c7a88b6"
+                "reference": "34d22041d40ff45f87de56cd617a580d48cbdd8c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/1up-lab/OneupUploaderBundle/zipball/b11ea2060d4d76b7202d24ae170162b70c7a88b6",
-                "reference": "b11ea2060d4d76b7202d24ae170162b70c7a88b6",
+                "url": "https://api.github.com/repos/1up-lab/OneupUploaderBundle/zipball/34d22041d40ff45f87de56cd617a580d48cbdd8c",
+                "reference": "34d22041d40ff45f87de56cd617a580d48cbdd8c",
                 "shasum": ""
             },
             "require": {
@@ -10696,7 +10794,8 @@
                 "doctrine/doctrine-bundle": "^2.4",
                 "friendsofphp/php-cs-fixer": "^2.16",
                 "knplabs/gaufrette": "^0.9",
-                "oneup/flysystem-bundle": "^1.2 || ^2.0 || ^3.0",
+                "m2mtech/flysystem-stream-wrapper": "^1.0",
+                "oneup/flysystem-bundle": "^4.1",
                 "phpstan/phpstan": "^0.12.10",
                 "phpunit/phpunit": "^9.5",
                 "sensio/framework-extra-bundle": "^5.0 || ^6.0",
@@ -10708,8 +10807,8 @@
             },
             "suggest": {
                 "knplabs/knp-gaufrette-bundle": "0.1.*",
-                "oneup/flysystem-bundle": "^3.0",
-                "twistor/flysystem-stream-wrapper": "^1.0 (Required when using Flysystem)"
+                "m2mtech/flysystem-stream-wrapper": "^1.0 (Required when using Flysystem)",
+                "oneup/flysystem-bundle": "^3.0"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -10752,9 +10851,9 @@
             ],
             "support": {
                 "issues": "https://github.com/1up-lab/OneupUploaderBundle/issues",
-                "source": "https://github.com/1up-lab/OneupUploaderBundle/tree/3.2.1"
+                "source": "https://github.com/1up-lab/OneupUploaderBundle/tree/4.0.1"
             },
-            "time": "2022-07-25T07:48:07+00:00"
+            "time": "2022-07-25T07:51:47+00:00"
         },
         {
             "name": "pagerfanta/core",
@@ -20036,32 +20135,36 @@
         },
         {
             "name": "vich/uploader-bundle",
-            "version": "1.16.1",
+            "version": "1.23.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dustin10/VichUploaderBundle.git",
-                "reference": "781dd64bf278e924971a35d38ef6c690e35de6e1"
+                "reference": "7d20347fc92243ab8e261c0b6196c25b77c579f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dustin10/VichUploaderBundle/zipball/781dd64bf278e924971a35d38ef6c690e35de6e1",
-                "reference": "781dd64bf278e924971a35d38ef6c690e35de6e1",
+                "url": "https://api.github.com/repos/dustin10/VichUploaderBundle/zipball/7d20347fc92243ab8e261c0b6196c25b77c579f8",
+                "reference": "7d20347fc92243ab8e261c0b6196c25b77c579f8",
                 "shasum": ""
             },
             "require": {
+                "doctrine/persistence": "^1.3 || ^2 || ^3",
                 "ext-simplexml": "*",
-                "jms/metadata": "^2.4",
+                "jms/metadata": "^1.7 || ^2.4",
                 "php": "^7.3 || ^8.0",
-                "symfony/config": "^4.4 || ^5.0",
-                "symfony/console": "^4.4 || ^5.0",
-                "symfony/dependency-injection": "^4.4 || ^5.0",
-                "symfony/event-dispatcher-contracts": "^1.1 || ^2.0",
-                "symfony/form": "^4.4 || ^5.0",
-                "symfony/http-foundation": "^4.4 || ^5.0",
-                "symfony/http-kernel": "^4.4 || ^5.0",
-                "symfony/mime": "^4.4 || ^5.0",
-                "symfony/property-access": "^4.4 || ^5.0",
-                "symfony/string": "^5.0"
+                "symfony/config": "^4.4 || ^5.0 || ^6.0",
+                "symfony/console": "^4.4 || ^5.0 || ^6.0",
+                "symfony/dependency-injection": "^4.4 || ^5.0 || ^6.0",
+                "symfony/event-dispatcher-contracts": "^1.1 || ^2.0 || ^3.0",
+                "symfony/http-foundation": "^4.4 || ^5.0 || ^6.0",
+                "symfony/http-kernel": "^4.4 || ^5.0 || ^6.0",
+                "symfony/mime": "^4.4 || ^5.0 || ^6.0",
+                "symfony/property-access": "^4.4 || ^5.0 || ^6.0",
+                "symfony/string": "^5.0 || ^6.0"
+            },
+            "conflict": {
+                "doctrine/annotations": "<1.12",
+                "league/flysystem": "<2.0"
             },
             "require-dev": {
                 "alcaeus/mongo-php-adapter": "^1.2",
@@ -20069,27 +20172,27 @@
                 "doctrine/mongodb-odm": "^1.2 || ^2.0",
                 "doctrine/orm": "^2.7",
                 "ext-sqlite3": "*",
-                "knplabs/knp-gaufrette-bundle": "^0.7",
-                "league/flysystem-bundle": "^1.4",
-                "league/flysystem-memory": "^1.0",
+                "knplabs/knp-gaufrette-bundle": "dev-master",
+                "league/flysystem-bundle": "^2.0",
+                "league/flysystem-memory": "^2.0",
                 "matthiasnoback/symfony-dependency-injection-test": "^4.1",
-                "mikey179/vfsstream": "^1.6",
-                "oneup/flysystem-bundle": "^3.3",
+                "mikey179/vfsstream": "^1.6.8",
                 "phpunit/phpunit": "^9.5",
-                "symfony/asset": "^4.4 || ^5.0",
-                "symfony/browser-kit": "^4.4 || ^5.0",
-                "symfony/css-selector": "^4.4 || ^5.0",
-                "symfony/doctrine-bridge": "^4.4 || ^5.0",
-                "symfony/dom-crawler": "^4.4 || ^5.0",
-                "symfony/framework-bundle": "^4.4 || ^5.0",
-                "symfony/phpunit-bridge": "^5.2",
-                "symfony/security-csrf": "^4.4 || ^5.0",
-                "symfony/translation": "^4.4 || ^5.0",
-                "symfony/twig-bridge": "^4.4 || ^5.0",
-                "symfony/twig-bundle": "^4.4 || ^5.0",
-                "symfony/validator": "^4.4 || ^5.0",
-                "symfony/var-dumper": "^4.4 || ^5.0",
-                "symfony/yaml": "^4.4 || ^5.0"
+                "symfony/asset": "^4.4 || ^5.0 || ^6.0",
+                "symfony/browser-kit": "^4.4 || ^5.0 || ^6.0",
+                "symfony/css-selector": "^4.4 || ^5.0 || ^6.0",
+                "symfony/doctrine-bridge": "^4.4 || ^5.0 || ^6.0",
+                "symfony/dom-crawler": "^4.4 || ^5.0 || ^6.0",
+                "symfony/form": "^4.4 || ^5.0 || ^6.0",
+                "symfony/framework-bundle": "^4.4 || ^5.0 || ^6.0",
+                "symfony/phpunit-bridge": "^6.0",
+                "symfony/security-csrf": "^4.4 || ^5.0 || ^6.0",
+                "symfony/translation": "^4.4 || ^5.0 || ^6.0",
+                "symfony/twig-bridge": "^4.4 || ^5.0 || ^6.0",
+                "symfony/twig-bundle": "^4.4 || ^5.0 || ^6.0",
+                "symfony/validator": "^4.4 || ^5.0 || ^6.0",
+                "symfony/var-dumper": "^4.4 || ^5.0 || ^6.0",
+                "symfony/yaml": "^4.4 || ^5.0 || ^6.0"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "For integration with Doctrine",
@@ -20097,10 +20200,12 @@
                 "doctrine/orm": "For integration with Doctrine ORM",
                 "doctrine/phpcr-odm": "For integration with Doctrine PHPCR",
                 "knplabs/knp-gaufrette-bundle": "For integration with Gaufrette",
+                "league/flysystem-bundle": "For integration with Flysystem",
                 "liip/imagine-bundle": "To generate image thumbnails",
                 "ocramius/proxy-manager": "To use lazy services",
                 "oneup/flysystem-bundle": "For integration with Flysystem",
                 "symfony/asset": "To generate better links",
+                "symfony/form": "To handle uploads in forms",
                 "symfony/yaml": "To use YAML mapping"
             },
             "type": "symfony-bundle",
@@ -20132,9 +20237,9 @@
             ],
             "support": {
                 "issues": "https://github.com/dustin10/VichUploaderBundle/issues",
-                "source": "https://github.com/dustin10/VichUploaderBundle/tree/1.16.1"
+                "source": "https://github.com/dustin10/VichUploaderBundle/tree/1.23.1"
             },
-            "time": "2021-01-19T11:35:18+00:00"
+            "time": "2023-04-14T09:05:19+00:00"
         },
         {
             "name": "voku/portable-ascii",
@@ -23541,7 +23646,8 @@
         "drupal/core-vendor-hardening": 20,
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
-        "behatch/contexts": 20
+        "behatch/contexts": 20,
+        "coopcycle/db-schenker": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

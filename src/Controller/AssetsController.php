@@ -23,7 +23,7 @@ class AssetsController extends AbstractController
      */
     public function bannerAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $projectCache)
     {
-        if (!$assetsFilesystem->has('banner.svg')) {
+        if (!$assetsFilesystem->fileExists('banner.svg')) {
             throw $this->createNotFoundException();
         }
 
@@ -80,11 +80,11 @@ class AssetsController extends AbstractController
     {
         $path = "placeholders/{$hashid}.jpg";
 
-        if (!$restaurantImagesFilesystem->has($path)) {
+        if (!$restaurantImagesFilesystem->fileExists($path)) {
 
             $results = $pixabay->search('', rand(1, 10));
 
-            $restaurantImagesFilesystem->put(
+            $restaurantImagesFilesystem->write(
                 $path,
                 file_get_contents($results[rand(0, 19)]['webformatURL'])
             );
