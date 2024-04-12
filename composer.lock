@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8eb637b4182370d2fd21f96fd513ca4e",
+    "content-hash": "441f7459fc0b6a8c3f36a23fb7a98c00",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1251,12 +1251,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/DBSchenkerClient.git",
-                "reference": "762f077b352691edbfa59c5fe7b0997aa6611d62"
+                "reference": "a50ddac269433ed410aa0aac5787d5c0b6d501d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/762f077b352691edbfa59c5fe7b0997aa6611d62",
-                "reference": "762f077b352691edbfa59c5fe7b0997aa6611d62",
+                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/a50ddac269433ed410aa0aac5787d5c0b6d501d0",
+                "reference": "a50ddac269433ed410aa0aac5787d5c0b6d501d0",
                 "shasum": ""
             },
             "require": {
@@ -1283,7 +1283,7 @@
                 "source": "https://github.com/coopcycle/DBSchenkerClient/tree/master",
                 "issues": "https://github.com/coopcycle/DBSchenkerClient/issues"
             },
-            "time": "2024-03-15T11:31:06+00:00"
+            "time": "2024-04-10T18:54:52+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -23646,8 +23646,8 @@
         "drupal/core-vendor-hardening": 20,
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
-        "behatch/contexts": 20,
-        "coopcycle/db-schenker": 20
+        "coopcycle/db-schenker": 20,
+        "behatch/contexts": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
