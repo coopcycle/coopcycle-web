@@ -261,6 +261,7 @@ twig:
         dabba_context: '@AppBundle\Dabba\Context'
         group_orders_enabled: '%group_orders_enabled%'
         business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
+        odoo_url: '%env(ODOO_URL)%'
 
     exception_controller: null
 
