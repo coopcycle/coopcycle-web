@@ -21,7 +21,7 @@ class SynchronizerClient
             sprintf('merchants/%s', $restaurant->getAdditionalPropertyValue('siret')));
     }
 
-    public function synchroinzeMerchants(array $restaurants)
+    public function synchronizeMerchants(array $restaurants)
     {
         $merchants = [];
         foreach ($restaurants as $restaurant) {

@@ -52,7 +52,6 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\Persistence\ObjectRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Csv\Writer as CsvWriter;
-use League\Flysystem\UnableToWriteFile;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use MercadoPago;
@@ -1712,7 +1711,7 @@ trait RestaurantTrait
                 }
             }
 
-            $response = $synchronizerClient->synchroinzeMerchants($restaurantsToSync);
+            $response = $synchronizerClient->synchronizeMerchants($restaurantsToSync);
 
             if ($response->getStatusCode() !== 200) {
                 $responseData = json_decode((string) $response->getContent(false), true);
