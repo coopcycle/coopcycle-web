@@ -2,13 +2,8 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Fidry\AliceDataFixtures\LoaderInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

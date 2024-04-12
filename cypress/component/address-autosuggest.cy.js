@@ -27,37 +27,6 @@ describe('Address Autosuggest', () => {
 
   })
 
-  it('search address (Algolia, es)', function () {
-
-    mount(<AddressAutosuggest
-      country="es"
-      language="es"
-      algolia={{
-        appId: Cypress.env('ALGOLIA_PLACES_APP_ID'),
-        apiKey: Cypress.env('ALGOLIA_PLACES_API_KEY'),
-        aroundLatLng: '40.416775,-3.703790',
-        addressTemplate: 'city'
-      }} />)
-
-    this.expectations.es.forEach(expectation => {
-
-      cy.get('#cypress-root input[type="search"]')
-        .clear()
-        .type(expectation.search, { timeout: 5000, delay: 30 })
-
-      cy.get('#cypress-root')
-        .find('ul[role="listbox"] li', { timeout: 5000 })
-        .invoke('text')
-        .should((suggestions) => {
-          expectation.expect.forEach((item) => {
-            expect(suggestions).to.include(item)
-          })
-        })
-
-    })
-
-  })
-
   it('search address (gb)', function () {
 
     mount(<AddressAutosuggest

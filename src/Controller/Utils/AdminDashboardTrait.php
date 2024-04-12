@@ -119,46 +119,6 @@ trait AdminDashboardTrait
             return $response;
         }
 
-        // $allTasks = $this->getDoctrine()
-        //     ->getRepository(Task::class)
-        //     ->findByDate($date)
-        //     ;
-
-        // $taskLists = $this->getDoctrine()
-        //     ->getRepository(TaskList::class)
-        //     ->findByDate($date);
-
-        $tours = $this->getDoctrine()
-            ->getRepository(Tour::class)
-            ->findByDate($date);
-
-        // $allTasksNormalized = array_map(function (Task $task) {
-        //     return $this->get('serializer')->normalize($task, 'jsonld', [
-        //         'resource_class' => Task::class,
-        //         'operation_type' => 'item',
-        //         'item_operation_name' => 'get',
-        //         'groups' => ['task', 'delivery', 'address', sprintf('address_%s', $this->getParameter('country_iso'))]
-        //     ]);
-        // }, $allTasks);
-
-        // $taskListsNormalized = array_map(function (TaskList $taskList) {
-        //     return $this->get('serializer')->normalize($taskList, 'jsonld', [
-        //         'resource_class' => TaskList::class,
-        //         'operation_type' => 'item',
-        //         'item_operation_name' => 'get',
-        //         'groups' => ['task_collection']
-        //     ]);
-        // }, $taskLists);
-
-        $toursNormalized = array_map(function (Tour $tour) {
-            return $this->get('serializer')->normalize($tour, 'jsonld', [
-                'resource_class' => Tour::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
-                'groups' => ['task_collection']
-            ]);
-        }, $tours);
-
         $couriers = $this->getDoctrine()
             ->getRepository(User::class)
             ->createQueryBuilder('u')

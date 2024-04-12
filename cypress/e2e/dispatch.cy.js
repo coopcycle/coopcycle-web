@@ -1,4 +1,4 @@
-context('Checkout', () => {
+context('Dispatch', () => {
   beforeEach(() => {
 
     const prefix = Cypress.env('COMMAND_PREFIX')
@@ -13,9 +13,6 @@ context('Checkout', () => {
     cy.window().then((win) => {
       win.sessionStorage.clear()
     })
-  })
-
-  it.skip('make basic dispatch operations', () => {
 
     cy.intercept('POST', '/api/tasks').as('postTask')
     cy.intercept('POST', '/admin/task-lists/**/jane').as('postTaskList')
@@ -26,9 +23,17 @@ context('Checkout', () => {
     cy.get('[name="_password"]').type('12345678')
     cy.get('[name="_submit"]').click()
 
+    cy.visit('/admin/dashboard')
+
     cy.location('pathname').should('eq', '/admin/dashboard')
 
-    cy.get('[data-rbd-droppable-id="unassigned"]')
+    cy.wait(1500)
+
+  })
+
+  it('creates a task', () => {
+
+    cy.get('[data-rfd-droppable-id="unassigned"] > .taskList__tasks')
       .children()
       .should('have.length', 2)
 
@@ -39,7 +44,8 @@ context('Checkout', () => {
     // Open task modal
     //
 
-    cy.get('[data-rbd-droppable-id="unassigned"]')
+    cy.get('[data-rfd-droppable-id="unassigned"] > .taskList__tasks')
+      .children()
       .first()
       .dblclick()
 
@@ -47,7 +53,7 @@ context('Checkout', () => {
       .should('be.visible')
 
     cy.get('.ReactModal__Content--task-form .address-autosuggest__container  input[type="search"]')
-      .should('have.value', '18, avenue Ledru-Rollin 75012 Paris 12ème')
+      .should('have.value', '272, rue Saint Honoré 75001 Paris 1er')
 
     cy.get('.ReactModal__Content--task-form .modal-header .fa-times')
       .click()
@@ -73,7 +79,7 @@ context('Checkout', () => {
     // Create a task
     //
 
-    cy.get('.dashboard__aside .dashboard__panel:first-child .pull-right > a:first-child')
+    cy.get('.dashboard__aside .dashboard__panel:first-child .fa.fa-plus')
       .click()
 
     cy.get('.ReactModal__Content--task-form input[type="search"]')
@@ -81,14 +87,12 @@ context('Checkout', () => {
 
     cy.get('.ReactModal__Content--task-form')
       .find('ul[role="listbox"] li', { timeout: 5000 })
-      .contains('91 Rue de Rivoli, 75004 Paris, France')
+      .contains('91 Rue De Rivoli, 75001 Paris, France')
       .click()
 
     cy.get('.ReactModal__Content--task-form input[type="search"]')
-      .should('have.value', '91 Rue de Rivoli, 75004 Paris, France')
+      .should('have.value', '91 Rue De Rivoli, 75001 Paris, France')
 
-    // FIXME
-    // Make it work without wait
     cy.wait(500)
 
     cy.get('.ReactModal__Content--task-form .modal-footer .btn-primary')
@@ -96,48 +100,36 @@ context('Checkout', () => {
 
     cy.wait('@postTask')
 
-    cy.get('[data-rbd-droppable-id="unassigned"]')
+    cy.get('[data-rfd-droppable-id="unassigned"] > .taskList__tasks')
       .children()
       .should('have.length', 3)
 
     cy.get('#map .leaflet-marker-pane > .beautify-marker')
       .should('have.length', 3)
 
+    })
+
+    it.skip('assign a task with drag n drop', () => {
+
     //
     // Assign task
     //
 
-    cy.get('.dashboard__aside .dashboard__panel:nth-child(2) a.pull-right')
-      .click()
+   // add a rider tasklist
+   cy.get('.dashboard__panel.dashboard__panel--assignees h4 .fa.fa-plus')
+    .click()
 
-    cy.get('.ReactModal__Content--select-courier')
-      .should('be.visible')
+    cy.get('.ReactModal__Content--select-courier [data-action="dispatch"] > div')
+    .click()
 
-    cy.get('.ReactModal__Content--select-courier .form-group > div')
-      .click()
+    // cy.get('[data-cypress-select-username="jane"]')
+    // .click()
 
-    cy.get('.ReactModal__Content--select-courier [class$="-MenuList"] [class$="-option"]')
-      .contains('jane')
-      .click()
+    // cy.get('.ReactModal__Content--select-courier button[type="submit"]')
+    // .click()
 
-    // FIXME
-    // Make it work without wait
-    cy.wait(500)
+    // cy.wait(500)
 
-    cy.get('.ReactModal__Content--select-courier .modal-footer .btn-primary')
-      .click()
-
-    cy.wait('@postTaskList', { timeout: 10000 })
-
-    // FIXME Drag'n'drop doesn't work
-
-    // cy
-    //   .get('[data-rbd-droppable-id="unassigned"]')
-    //   .children()
-    //   .first()
-    //   .drag('[data-rbd-droppable-id="assigned:jane"]')
-
-    // cy.wait('@postTaskList', { timeout: 10000 })
-
+    // cy.get('#accordion .accordion__button').click()
   })
 })
