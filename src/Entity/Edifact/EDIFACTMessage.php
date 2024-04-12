@@ -32,6 +32,8 @@ class EDIFACTMessage
 
     private string $edifactFile;
 
+    private ?array $metadata;
+
     private ?\DateTime $syncedAt;
 
     private $tasks;
@@ -115,6 +117,31 @@ class EDIFACTMessage
     {
         $this->edifactFile = $file;
         return $this;
+    }
+
+    public function getMetadata(): ?array
+    {
+        return $this->metadata;
+    }
+
+    public function setMetadata(?array $metadata): EDIFACTMessage
+    {
+        $this->metadata = $metadata;
+        return $this;
+    }
+
+    public function setPods(array $pods): EDIFACTMessage
+    {
+        if (!is_array($pods)) {
+            $this->metadata = [];
+        }
+        $this->metadata['pods'] = $pods;
+        return $this;
+    }
+
+    public function getPods(): array
+    {
+        return $this->metadata['pods'] ?? [];
     }
 
     public function getSyncedAt(): ?\DateTime

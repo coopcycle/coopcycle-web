@@ -2,9 +2,11 @@
 
 namespace AppBundle\Action\Incident;
 
+use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentEvent;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Store;
 use AppBundle\Service\TaskManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use DateTime;
@@ -35,7 +37,8 @@ class IncidentAction
         $allowedActions = [
             IncidentEvent::TYPE_RESCHEDULE,
             IncidentEvent::TYPE_APPLY_PRICE_DIFF,
-            IncidentEvent::TYPE_CANCEL_TASK
+            IncidentEvent::TYPE_CANCEL_TASK,
+            IncidentEvent::TYPE_TRANSPORTER_REPORT
         ];
 
         if (empty($action)) {
@@ -59,6 +62,9 @@ class IncidentAction
                 break;
             case IncidentEvent::TYPE_CANCEL_TASK:
                 $this->cancelTask($data, $event);
+                break;
+            case IncidentEvent::TYPE_TRANSPORTER_REPORT:
+                $this->createTransporterReport($data, $event, $request);
                 break;
         }
 
@@ -136,5 +142,56 @@ class IncidentAction
         $event->setMetadata(["diff" => $priceDiff]);
 
         //TODO:: Merge https://github.com/coopcycle/coopcycle-web/pull/3845
+    }
+
+    private function createTransporterReport(Incident &$data, IncidentEvent &$event, Request $request): void
+    {
+        /** @var ?Store $store */
+        $store = $data->getTask()->getDelivery()?->getStore();
+
+        if (is_null($store)) {
+            throw new \InvalidArgumentException("There is no store linked to this task");
+        }
+
+        if (!$store->isDBSchenkerEnabled()) {
+            throw new \InvalidArgumentException("Transporter report cannot be created for store without DBSchenker");
+        }
+
+        $failureReason = $request->request->get("failure_reason", null);
+        if (is_null($failureReason)) {
+            throw new \InvalidArgumentException("failure_reason is required");
+        }
+
+        $createdAt = $request->request->get("created_at", null);
+        if (is_null($createdAt)) {
+            throw new \InvalidArgumentException("created_at is required");
+        }
+        $createdAt = new \DateTime($createdAt);
+
+        /** @var mixed $pods */
+        $pods = $request->request->get("pods", []);
+        if (!is_array($pods)) {
+            throw new \InvalidArgumentException("pods is required, and must be an array");
+        }
+
+        $importEDI = $data->getTask()->getImportMessage();
+        if (is_null($importEDI)) {
+            throw new \InvalidArgumentException("There is no import message linked to this task");
+        }
+
+        $ediMessage = new EDIFACTMessage();
+        $ediMessage->setMessageType(EDIFACTMessage::MESSAGE_TYPE_SCONTR);
+        $ediMessage->setTransporter(EDIFACTMessage::TRANSPORTER_DBSCHENKER);
+        $ediMessage->setDirection(EDIFACTMessage::DIRECTION_OUTBOUND);
+        $ediMessage->setReference($importEDI->getReference());
+        $ediMessage->setSubMessageType($failureReason);
+        $ediMessage->setCreatedAt($createdAt);
+        $ediMessage->setPods($pods);
+
+        $this->entityManager->persist($ediMessage);
+
+
+        $event->setType(IncidentEvent::TYPE_TRANSPORTER_REPORT);
+
     }
 }
