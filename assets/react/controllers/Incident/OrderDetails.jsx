@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 import { Button } from "antd";
 import "./OrderDetails.scss";
-import { money } from "./utils";
+import { money, weight } from "./utils";
 import TaskStatusBadge from "../../../../js/app/dashboard/components/TaskStatusBadge";
 
 import store from "./incidentStore";
@@ -31,6 +31,7 @@ function heading(task, delivery, order) {
       {btn}
     </h4>
   );
+  console.log(order);
   if (order?.number) {
     const link = window.Routing.generate("admin_order", { id: order.id });
     return header(`Order N° ${order.number}`, _externalLink(link));
@@ -42,7 +43,7 @@ function heading(task, delivery, order) {
   }
 
   if (delivery?.id) {
-    const link = window.Routing.generate("admin_delivery", { id: order.id });
+    const link = window.Routing.generate("admin_delivery", { id: delivery.id });
     return header(`Delivery #${delivery.id}`, _externalLink(link));
   }
 
@@ -143,7 +144,7 @@ export default function ({ delivery }) {
       <p>{task.address.name}</p>
       <p>{task.address.streetAddress}</p>
       <p>{task.address.telephone}</p>
-      {task.weight && <p>{task.weight} kg</p>}
+      {task.weight && <p>{weight(task.weight)}</p>}
       <div className="mt-3">{<TaskStatusBadge task={task} />}</div>
       <hr />
       {order?.customer && showCustomerDetails(order.customer)}
