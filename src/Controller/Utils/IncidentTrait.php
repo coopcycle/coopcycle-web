@@ -69,7 +69,7 @@ trait IncidentTrait {
     }
 
     /**
-    * @Route("/incident/image/{path}", name="incident_image_public", methods={"GET"})
+    * @Route("/media/incident/image/{path}", name="incident_image_public", methods={"GET"})
     */
     public function incidentImagePublicAction($path, Request $request): Response
     {
