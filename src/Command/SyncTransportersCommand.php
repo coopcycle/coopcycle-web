@@ -201,6 +201,10 @@ class SyncTransportersCommand extends Command {
         $report->setDocID(strval($message->getId()));
         $report->setReference($message->getReference());
         $report->setReceipt($message->getReference());
+        if (!empty($message->getPods())) {
+            $report->setPods($message->getPods());
+        }
+        $report->setDSJ($message->getCreatedAt());
         [$situation, $reason] = explode('|', $message->getSubMessageType());
         $report->setSituation(constant("Transporter\Enum\ReportSituation::$situation"));
         $report->setReason(constant("Transporter\Enum\ReportReason::$reason"));

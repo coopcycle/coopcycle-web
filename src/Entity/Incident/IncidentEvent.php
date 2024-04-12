@@ -47,6 +47,7 @@ class IncidentEvent
     const TYPE_RESCHEDULE = "reschedule";
     const TYPE_APPLY_PRICE_DIFF = "apply_price_diff";
     const TYPE_CANCEL_TASK = "cancel_task";
+    const TYPE_TRANSPORTER_REPORT = "transporter_report";
 
     public function getId()
     {
