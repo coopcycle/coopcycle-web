@@ -20025,7 +20025,7 @@
             "version": "6.43.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:twilio/twilio-php.git",
+                "url": "https://github.com/twilio/twilio-php.git",
                 "reference": "687245ed07dc807eec94389f715323cf13c1e316"
             },
             "dist": {
@@ -20067,6 +20067,10 @@
                 "sms",
                 "twilio"
             ],
+            "support": {
+                "issues": "https://github.com/twilio/twilio-php/issues",
+                "source": "https://github.com/twilio/twilio-php/tree/6.43.0"
+            },
             "time": "2022-10-19T19:27:21+00:00"
         },
         {
@@ -20394,6 +20398,7 @@
                     "type": "patreon"
                 }
             ],
+            "abandoned": "web-token/jwt-library",
             "time": "2023-02-02T17:35:17+00:00"
         },
         {
@@ -20472,6 +20477,7 @@
                     "type": "patreon"
                 }
             ],
+            "abandoned": "web-token/jwt-library",
             "time": "2023-05-18T16:20:51+00:00"
         },
         {
@@ -20549,6 +20555,7 @@
                     "type": "patreon"
                 }
             ],
+            "abandoned": "web-token/jwt-library",
             "time": "2023-05-18T16:20:51+00:00"
         },
         {
@@ -20619,6 +20626,7 @@
                     "type": "patreon"
                 }
             ],
+            "abandoned": "web-token/jwt-library",
             "time": "2023-05-18T16:20:51+00:00"
         },
         {
@@ -23702,7 +23710,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.0"
+        "php": ">=8.3"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
