@@ -14,6 +14,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\Collection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethod;

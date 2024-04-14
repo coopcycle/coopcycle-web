@@ -17,6 +17,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
