@@ -187,16 +187,14 @@ services:
 
   coopcycle.domain.order.reactor.send_remote_push_notification:
     class: AppBundle\Domain\Order\Reactor\SendRemotePushNotification
-    arguments:
-      - '@nucleos_user.user_manager'
-      - '@messenger.default_bus'
-      - '@api_platform.iri_converter'
-      - '@translator'
+    autowire: true
     tags:
         - name: event_subscriber
           subscribes_to: order:created
         - name: event_subscriber
           subscribes_to: order:accepted
+        - name: event_subscriber
+          subscribes_to: order:state_changed
 
   coopcycle.domain.order.reactor.clear_session:
     class: AppBundle\Domain\Order\Reactor\ClearSession

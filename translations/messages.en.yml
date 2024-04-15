@@ -975,6 +975,7 @@ form.delivery_import.file.label: File
 form.delivery_import.store.label: Store
 basics.view_example: View example
 notifications.restaurant.new_order: New order to accept
+notifications.restaurant.accepted_order: New order
 profile.loopeat.connect: Connect my %name% account
 profile.loopeat.connected: '%name% account connected'
 profile.loopeat.disconnect: Disconnect %name%
