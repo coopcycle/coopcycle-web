@@ -17,6 +17,8 @@ You can find a comprehensive list of our repos here : [Our repos comprehensive l
 How to run a local instance
 ---------------------------
 
+Please find below the steps to install the platform locally. You can find additional tips & configurations [in the wiki](https://github.com/coopcycle/coopcycle-web/wiki/Developing).
+
 ### Prerequisites
 
 Install [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install).

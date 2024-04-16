@@ -52,6 +52,7 @@ const checkUsername = _.debounce(function() {
 
     usernameInput.setAttribute('disabled', false)
     usernameInput.removeAttribute('disabled')
+    usernameInput.focus()
 
     if (usernameInput.value) {
       formGroup.classList
