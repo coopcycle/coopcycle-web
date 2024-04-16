@@ -17,9 +17,10 @@ Tours
   - Ability to reorder unassigned tasks and unassigned tours
   - When adding tasks in tours, sort them in the tour according to their order in "Unassigned tasks
   - Fix for dispatchers that are also riders not able to see all tasks in the web dispatch
+ 
 Foodtech
-	- Fix for "Unable to change filters on restaurants list page" #4082
   - Fix for "Misleading information about available time slots" #4050
+  - Fix for "Unable to change filters on restaurants list page" #4082
   - Show some message on restaurants list page when restaurant is unavailable
 
 ## [2.0.2] - 2024-03-19
