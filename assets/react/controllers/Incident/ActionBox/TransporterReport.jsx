@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import classNames from "classnames";
 import {
+  Alert,
   Select,
   Form,
   DatePicker,
@@ -201,6 +202,13 @@ function FailureReasonSelector({ task, onChange }) {
 }
 
 export default function ({ incident, task, images, form }) {
+  const incidents = useMemo(
+    () =>
+      _(incident?.events)
+        .filter((event) => event.type === "transporter_report")
+        .size(),
+    [incident],
+  );
   const reasonValidator = (_, value) => {
     if (!value) {
       // Do not validate if there is no value
@@ -234,6 +242,14 @@ export default function ({ incident, task, images, form }) {
       }}
       autoComplete="off"
     >
+      {incidents > 0 && (
+        <Alert
+          className="mb-3"
+          showIcon
+          message={`There is already ${incidents} report(s) for this incident`}
+          type="info"
+        />
+      )}
       <Form.Item
         label="Failure reason"
         name="failureReason"
