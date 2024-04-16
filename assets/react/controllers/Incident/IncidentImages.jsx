@@ -27,8 +27,12 @@ export default function () {
     <>
       <Image.PreviewGroup>
         {images.map((image) => (
-          <span key={image} className="thumbnail">
-            <Image width="128px" src={image.thumbnail} preview={{src: image.full}} />
+          <span key={image.id} className="thumbnail">
+            <Image
+              width="128px"
+              src={image.thumbnail}
+              preview={{ src: image.full }}
+            />
           </span>
         ))}
       </Image.PreviewGroup>

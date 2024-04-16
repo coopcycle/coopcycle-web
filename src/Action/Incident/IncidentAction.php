@@ -174,13 +174,16 @@ class IncidentAction
             throw new \InvalidArgumentException("pods is required, and must be an array");
         }
 
-        $importEDI = $data->getTask()->getImportMessage();
+        $appointment = $request->request->get("appointment", null);
+
+        $task = $data->getTask();
+        $importEDI = $task->getImportMessage();
         if (is_null($importEDI)) {
             throw new \InvalidArgumentException("There is no import message linked to this task");
         }
 
         $ediMessage = new EDIFACTMessage();
-        $ediMessage->setMessageType(EDIFACTMessage::MESSAGE_TYPE_SCONTR);
+        $ediMessage->setMessageType(EDIFACTMessage::MESSAGE_TYPE_REPORT);
         $ediMessage->setTransporter(EDIFACTMessage::TRANSPORTER_DBSCHENKER);
         $ediMessage->setDirection(EDIFACTMessage::DIRECTION_OUTBOUND);
         $ediMessage->setReference($importEDI->getReference());
@@ -188,7 +191,14 @@ class IncidentAction
         $ediMessage->setCreatedAt($createdAt);
         $ediMessage->setPods($pods);
 
+        if (!is_null($appointment)) {
+            $ediMessage->setAppointment(new \DateTime($appointment));
+        }
+
+        $task->addEdifactMessage($ediMessage);
+
         $this->entityManager->persist($ediMessage);
+        $this->entityManager->persist($task);
 
 
         $event->setType(IncidentEvent::TYPE_TRANSPORTER_REPORT);

@@ -17,11 +17,25 @@ trait EDIFACTMessageAwareTrait
 
     public function getImportMessage(): ?EDIFACTMessage
     {
-        return collect($this->edifactMessages)->filter(fn (EDIFACTMessage $message) => $message->getMessageType() === "SCONTR")->first();
+        return collect($this->edifactMessages)
+            ->filter(fn (EDIFACTMessage $message) => $message->getMessageType() === EDIFACTMessage::MESSAGE_TYPE_SCONTR)
+            ->first();
+    }
+
+    public function getReports(): Collection
+    {
+        return collect($this->edifactMessages)
+            ->filter(fn (EDIFACTMessage $message) => $message->getMessageType() === EDIFACTMessage::MESSAGE_TYPE_REPORT);
+    }
+
+    public function hasReports(): bool
+    {
+        return $this->getReports()->count() > 0;
     }
 
     public function getEdifactMessagesTimeline(): array
     {
+        dump($this->edifactMessages->toArray());
         return array_map(fn (EDIFACTMessage $message) => EDIFACTMessagePresenter::toTimeline($message), $this->edifactMessages->toArray());
     }
 

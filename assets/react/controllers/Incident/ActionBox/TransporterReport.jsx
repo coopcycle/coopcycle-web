@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import classNames from "classnames";
 import {
   Select,
@@ -10,8 +10,11 @@ import {
   Col,
   Divider,
   Empty,
+  Skeleton,
 } from "antd";
 import "../Style.scss";
+import _ from "lodash";
+import moment from "moment";
 
 async function _fetchFailureReason(id) {
   const httpClient = new window._auth.httpClient();
@@ -20,7 +23,11 @@ async function _fetchFailureReason(id) {
   );
 }
 
-function ImagesSelector({ images, onChange = () => {} }) {
+function ImagesSelector({ images, onChange }) {
+  if (images.length === 0) {
+    return <Empty description="No images" />;
+  }
+
   const [selectedImages, setSelectedImages] = useState([]);
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(false);
@@ -56,15 +63,15 @@ function ImagesSelector({ images, onChange = () => {} }) {
       </div>
       <Checkbox.Group onChange={handleOnChange} value={selectedImages}>
         <Row gutter={[12, 12]} align="middle">
-          {images.map((image, i) => {
+          {images.map((image) => {
             const selected = selectedImages.includes(image);
             return (
-              <Col key={i} align="middle">
+              <Col key={image.id} align="middle">
                 <Image
                   width="128px"
                   height="128px"
                   src={image.thumbnail}
-                  preview={{src: image.full}}
+                  preview={{ src: image.full }}
                   className={classNames("p-2, border", {
                     "border-primary": selected,
                     "border-default": !selected,
@@ -82,10 +89,11 @@ function ImagesSelector({ images, onChange = () => {} }) {
   );
 }
 
-export default function ({ incident, task, images }) {
-  console.log(incident);
-
+function FailureReasonSelector({ task, onChange }) {
   const [failureReasons, setFailureReasons] = useState(null);
+  const [selectedState, setSelectedState] = useState(null);
+  const [selectedReason, setSelectedReason] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
     async function _fetch() {
@@ -94,6 +102,8 @@ export default function ({ incident, task, images }) {
         const value = response["hydra:member"].map((v) => ({
           value: v.code,
           label: v.description,
+          option: v.option ?? "default",
+          only: v.only ?? null,
         }));
         setFailureReasons(value);
       }
@@ -101,41 +111,145 @@ export default function ({ incident, task, images }) {
     _fetch();
   }, []);
 
-  const imageComponent =
-    images.length > 0 ? (
-      <ImagesSelector images={images} />
-    ) : (
-      <Empty description="No images" />
-    );
+  const options = useMemo(
+    () => _.groupBy(failureReasons, (v) => v.option),
+    [failureReasons],
+  );
+  const subOptions = useMemo(
+    () => _.filter(options.reason, (v) => v.only.includes(selectedState)),
+    [options, selectedState],
+  );
+
+  useEffect(() => {
+    if (!selectedReason || !selectedState) {
+      return onChange(null);
+    }
+    if (selectedReason === "PVI" && !selectedDate) {
+      return onChange(null);
+    }
+    return onChange({
+      code: { state: selectedState, reason: selectedReason },
+      date: selectedDate,
+    });
+  }, [selectedState, selectedReason, selectedDate]);
 
   return (
-    <Form layout="vertical" autoComplete="off">
+    <Skeleton title={false} loading={!failureReasons}>
+      <Row gutter={[16, 16]}>
+        <Col span={12}>
+          <Select
+            placeholder="Select state"
+            value={selectedState}
+            onChange={(v) => {
+              setSelectedReason(null);
+              setSelectedState(v);
+            }}
+            options={options.state}
+          />
+        </Col>
+        <Col span={12}>
+          <Select
+            placeholder="Select reason"
+            value={selectedReason}
+            onChange={setSelectedReason}
+            options={subOptions}
+          />
+        </Col>
+        {selectedReason === "PVI" && (
+          <Col span={12} offset={12}>
+            <DatePicker
+              style={{ width: "100%" }}
+              placeholder="Pick a new appointment"
+              format="LLL"
+              showTime={{ format: "HH:mm", minuteStep: 15 }}
+              onChange={setSelectedDate}
+              disabledDate={(date) => date.isBefore(moment(), "hour")}
+            />
+          </Col>
+        )}
+      </Row>
+    </Skeleton>
+  );
+}
+
+export default function ({ incident, task, images, form }) {
+  console.log(incident);
+
+  const _handleFormSubmit = ({ failureReason, failureDate, images }) => {
+    const failure_reason = `${failureReason.code.state}|${failureReason.code.reason}`;
+    let appointment = null;
+    if (failureReason.date) {
+      appointment = failureReason.date.toISOString();
+    }
+    const pods = _.map(images, "full");
+
+    console.log({
+      action: "transporter_report",
+      failure_reason,
+      appointment,
+      pods,
+      created_at: failureDate.toISOString(),
+    });
+  };
+
+  const reasonValidator = (_, value) => {
+    if (!value) {
+      // Do not validate if there is no value
+      return Promise.resolve();
+    }
+    if (!value.code.reason || !value.code.state) {
+      return Promise.reject("Please select a reason and state");
+    }
+    if (value.code.reason === "PVI" && !moment(value.date).isValid()) {
+      return Promise.reject("Please select a valid date");
+    }
+    if (value.code.reason === "PVI" && value.date.isBefore(moment())) {
+      return Promise.reject("Please select a date in the future");
+    }
+    return Promise.resolve();
+  };
+
+  return (
+    <Form
+      layout="vertical"
+      form={form}
+      name="transporter-report"
+      onFinish={_handleFormSubmit}
+      autoComplete="off"
+    >
       <Form.Item
         label="Failure reason"
         name="failureReason"
-        rules={[{ required: true, message: "Please enter a reason" }]}
+        required={true}
+        rules={[
+          { validator: reasonValidator },
+          { required: true, message: "Please select a reason" },
+        ]}
       >
-        <Select
-          loading={!failureReasons}
-          disabled={!failureReasons}
-          options={failureReasons}
-        />
+        <FailureReasonSelector task={task} />
       </Form.Item>
       <Form.Item
         label="Failure date"
         name="failureDate"
-        rules={[{ required: true, message: "Please enter a date" }]}
+        extra="Select the date and time of the incident."
+        rules={[
+          { required: true, message: "Please select a date" },
+          { type: "date", message: "Please select a valid date" },
+        ]}
       >
         <DatePicker
           style={{ width: "100%" }}
           format="LLL"
           showTime={{ format: "HH:mm", minuteStep: 15 }}
+          disabledDate={(date) => date.isAfter(moment(), "minute")}
         />
       </Form.Item>
       <Divider orientation="left" plain>
         Images to include in the report
       </Divider>
-      {imageComponent}
+      <Form.Item name="images">
+        <ImagesSelector images={images} />
+      </Form.Item>
     </Form>
   );
 }

@@ -204,6 +204,9 @@ class SyncTransportersCommand extends Command {
         if (!empty($message->getPods())) {
             $report->setPods($message->getPods());
         }
+        if (!is_null($message->getAppointment())) {
+            $report->setAppointment($message->getAppointment());
+        }
         $report->setDSJ($message->getCreatedAt());
         [$situation, $reason] = explode('|', $message->getSubMessageType());
         $report->setSituation(constant("Transporter\Enum\ReportSituation::$situation"));

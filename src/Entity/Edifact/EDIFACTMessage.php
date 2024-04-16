@@ -144,6 +144,17 @@ class EDIFACTMessage
         return $this->metadata['pods'] ?? [];
     }
 
+    public function setAppointment(\DateTime $appointment): EDIFACTMessage
+    {
+        $this->metadata['appointment'] = $appointment->format(\DateTime::ISO8601);
+        return $this;
+    }
+
+    public function getAppointment(): ?\DateTime
+    {
+        return $this->metadata['appointment'] ? new \DateTime($this->metadata['appointment']) : null;
+    }
+
     public function getSyncedAt(): ?\DateTime
     {
         return $this->syncedAt;

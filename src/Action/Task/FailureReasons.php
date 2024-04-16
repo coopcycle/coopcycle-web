@@ -21,21 +21,45 @@ class FailureReasons
     )
     { }
 
-    private function getDefaultReasons(): array
+    private function loadFailureReasonsConfig(): array
     {
         $path = realpath(__DIR__ . '/../../Resources/config/failure_reasons.yml');
         $parser = new YamlParser();
-        $config = $parser->parseFile($path, Yaml::PARSE_CONSTANT);
+        return $parser->parseFile($path, Yaml::PARSE_CONSTANT);
+    }
+
+    private function getDefaultReasons(): array
+    {
+        $config = $this->loadFailureReasonsConfig();
         return array_map(function($failure_reason) {
             return [
                 'code' => $failure_reason['code'],
                 'description' => $this->translator->trans($failure_reason['description'])
             ];
-        }, $config['failure_reasons']);
+        }, $config['failure_reasons']['default']);
+    }
+
+    private function getTransporterReasons(string $transporter): array
+    {
+        $config = $this->loadFailureReasonsConfig();
+        return array_map(function($failure_reason) {
+            return [
+                'code' => $failure_reason['code'],
+                'description' => $this->translator->trans($failure_reason['description']),
+                'option' => $failure_reason['option'] ?? null,
+                'only' => $failure_reason['only'] ?? null
+            ];
+        }, $config['failure_reasons'][$transporter]);
     }
 
     private function getFailureReasons(CustomFailureReasonInterface $entity)
     {
+        if (
+            $entity instanceof Store &&
+            $entity->isDBSchenkerEnabled()
+        ) {
+            return $this->getTransporterReasons('dbschenker');
+        }
         $set = $entity->getFailureReasonSet();
         if (is_null($set)) {
             return $this->getDefaultReasons();
