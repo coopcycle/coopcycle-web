@@ -344,6 +344,8 @@ order.state.refused: Refused
 order.state.new: New
 order.state.fulfilled: Fulfilled
 order.state.cancelled: Cancelled
+order.state.started: In preparation
+order.state.ready: Ready
 order.reusable_packaging.alert: This order must be packed in reusable packaging
 order.public_link: Shareable link
 order.payments: Payments
