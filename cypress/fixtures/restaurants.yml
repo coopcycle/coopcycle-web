@@ -141,8 +141,15 @@ AppBundle\Entity\Sylius\Product:
     name: Salade au poulet
     slug: chicken-salad
     enabled: true
-
+    reusablePackagingEnabled: true
     variants: [ "@chicken_salad_default" ]
+
+
+AppBundle\Entity\ReusablePackagings:
+  reusable_packagins_for_chicken_salad:
+    reusablePackaging: "@packaging_acme"
+    product: "@chicken_salad"
+    units: 1
 
 # Menus
 

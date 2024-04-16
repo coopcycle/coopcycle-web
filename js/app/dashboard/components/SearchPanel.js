@@ -67,7 +67,7 @@ class SearchPanel extends React.Component {
               e.preventDefault()
               this.props.toggleSearch()
             }}>
-              <i className="fa fa-close"></i>
+              <i className="fa fa-close" data-cypress-close-search></i>
             </a>
           </span>
         </h4>

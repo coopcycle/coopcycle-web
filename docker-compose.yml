@@ -64,9 +64,6 @@ services:
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY
       - STRIPE_CONNECT_CLIENT_ID
-      - ALGOLIA_PLACES_APP_ID
-      - ALGOLIA_PLACES_API_KEY
-      - ALGOLIA_PLACES_ADDRESS_TEMPLATE
     volumes:
       - './:/var/www/html:cached'
       - 'php_logs:/var/www/html/var/logs'

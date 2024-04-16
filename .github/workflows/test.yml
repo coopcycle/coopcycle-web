@@ -79,8 +79,7 @@ jobs:
       - name: Run Jest
         run: docker-compose exec -T webpack npm run jest
   E2E:
-    if: false
-    name: Run End to End tests
+    name: Run end to end tests with cypress
     runs-on: ubuntu-latest
     env:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
@@ -93,8 +92,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Create .env file
         run: cp .env.dist .env
-      # - name: Change APP_ENV
-      #   run: sed -i 's/APP_ENV=dev/APP_ENV=test/' .env
       - name: Pull Docker images
         run: docker-compose pull --ignore-pull-failures
       - name: Prepare OSRM data
@@ -122,10 +119,10 @@ jobs:
       - name: Compile assets
         run: until docker-compose exec -T webpack node_modules/.bin/encore dev; do sleep 5; done
       - name: Run Cypress
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v6
         with:
           spec: |
-            cypress/integration/*.spec.js
+            cypress/integration/**/*.cy.js
       # - name: Print logs
       #   if: always()
       #   run: cat var/logs/*.log
@@ -139,7 +136,7 @@ jobs:
       #     aws --endpoint=$AWS_ENDPOINT s3 cp $GITHUB_SHA.tgz s3://cypress/$GITHUB_SHA.tgz --acl private
   COMPONENT:
     if: false
-    name: Run Component tests
+    name: Run Component tests with Cypress
     runs-on: ubuntu-latest
     strategy:
       matrix:

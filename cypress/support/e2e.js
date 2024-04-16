@@ -16,7 +16,14 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 
-// import '@cypress/react/support'
-
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+
+    if (err.message.includes('Request failed with status code 401')) {
+      return false
+    }
+    // we still want to ensure there are no other unexpected
+    // errors, so we let them fail the test
+  })

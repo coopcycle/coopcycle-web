@@ -49,6 +49,7 @@ Cypress.Commands.add('searchAddress', (selector, search, match) => {
     .should('be.visible')
 
   cy.get(`${selector} input[type="search"]`)
+    .eq(1)  // take the 2nd input on the restaurant page. to be changed when fix for https://github.com/coopcycle/coopcycle-web/issues/4149
     .type(search, { timeout: 5000, delay: 30 })
 
   cy.get(selector)
@@ -58,7 +59,9 @@ Cypress.Commands.add('searchAddress', (selector, search, match) => {
 })
 
 Cypress.Commands.add('enterCreditCard', () => {
-  const expDate = Cypress.moment().add(6, 'month').format('MMYY')
+  const date = new Date(),
+  expDate = ("0" + (date.getMonth() + 1)).slice(-2) + date.getFullYear().toString().substring(2)
+
   // @see https://github.com/cypress-io/cypress/issues/136
   cy.get('.StripeElement iframe')
     .then(function ($iframe) {

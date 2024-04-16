@@ -8,6 +8,7 @@ module.exports = {
     STRIPE_PUBLISHABLE_KEY: ''
   },
   nodeVersion: 'system',
+  viewportWidth: 1600,
   e2e: {
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
