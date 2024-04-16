@@ -70,6 +70,7 @@ Feature: Manage shops
         "hub":null,
         "loopeatEnabled":false,
         "tags":@array@,
-        "badges":@array@
+        "badges":@array@,
+        "autoAcceptOrdersEnabled": @boolean@
       }
       """
