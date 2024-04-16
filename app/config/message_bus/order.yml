@@ -188,6 +188,8 @@ services:
   coopcycle.domain.order.reactor.send_remote_push_notification:
     class: AppBundle\Domain\Order\Reactor\SendRemotePushNotification
     autowire: true
+    arguments:
+      $userManager: '@coopcycle.user_manager'
     tags:
         - name: event_subscriber
           subscribes_to: order:created

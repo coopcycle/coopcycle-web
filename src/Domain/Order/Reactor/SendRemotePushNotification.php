@@ -5,8 +5,8 @@ namespace AppBundle\Domain\Order\Reactor;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Message\PushNotification;
+use AppBundle\Security\UserManager;
 use AppBundle\Sylius\Order\OrderInterface;
-use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -14,7 +14,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SendRemotePushNotification
 {
     public function __construct(
-        private UserManagerInterface $userManager,
+        private UserManager $userManager,
         private MessageBusInterface $messageBus,
         private IriConverterInterface $iriConverter,
         private TranslatorInterface $translator,
