@@ -89,9 +89,6 @@ jobs:
       AWS_ENDPOINT: ${{ secrets.AWS_ENDPOINT }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      ALGOLIA_PLACES_APP_ID: ${{ secrets.ALGOLIA_PLACES_APP_ID }}
-      ALGOLIA_PLACES_API_KEY: ${{ secrets.ALGOLIA_PLACES_API_KEY }}
-      ALGOLIA_PLACES_ADDRESS_TEMPLATE: county
     steps:
       - uses: actions/checkout@v2
       - name: Create .env file
@@ -150,8 +147,6 @@ jobs:
     env:
       COOPCYCLE_COUNTRY: ${{ matrix.country }}
       COOPCYCLE_LOCALE: ${{ matrix.country }}
-      ALGOLIA_PLACES_APP_ID: ${{ secrets.ALGOLIA_PLACES_APP_ID }}
-      ALGOLIA_PLACES_API_KEY: ${{ secrets.ALGOLIA_PLACES_API_KEY }}
     steps:
       - uses: actions/checkout@v2
       - name: Run Cypress
