@@ -147,7 +147,9 @@ class UpdateState
 
             $createdEvent = new Event\OrderCreated($order);
 
-            $this->handleStateChange($createdEvent);
+            // set generateEvent to false, because we don't want to send order:state_changed event
+            // before/together with order:created event
+            $this->handleStateChange($createdEvent, false);
             $this->eventBus->handle($createdEvent);
 
         } elseif ($event instanceof Event\CheckoutFailed) {
@@ -163,7 +165,7 @@ class UpdateState
         }
     }
 
-    private function handleStateChange(Event $event)
+    private function handleStateChange(Event $event, $generateEvent = true)
     {
         if (isset($this->eventNameToTransition[$event::messageName()])) {
 
@@ -173,7 +175,7 @@ class UpdateState
 
             $stateMachine = $this->stateMachineFactory->get($order, OrderTransitions::GRAPH);
 
-            if ($stateMachine->apply($transition, true)) {
+            if ($stateMachine->apply($transition, true) && $generateEvent) {
                 $orderStateChangeEvent = new Event\OrderStateChanged($order, $event);
                 $this->eventBus->handle($orderStateChangeEvent);
             }
