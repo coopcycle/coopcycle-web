@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Divider, Drawer, Popconfirm, Modal } from "antd";
+import { Button, Divider, Drawer, Popconfirm, Modal, Form } from "antd";
 import RescheduleTask from "./ActionBox/RescheduleTask";
 import ApplyPriceDiffTask from "./ActionBox/ApplyPriceDiffTask";
 import TransporterReport from "./ActionBox/TransporterReport";
@@ -25,11 +25,13 @@ export default function () {
   const { task } = incident;
 
   const placement = "left";
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   const [rescheduleDrawer, setRescheduleDrawer] = useState(false);
   const [priceDiffDrawer, setPriceDiffDrawer] = useState(false);
-  const [transporterReportModal, setTransporterReportModal] = useState(false);
+  const [transporterReportModal, setTransporterReportModal] = useState(true);
+
+  const [transporterForm] = Form.useForm();
 
   if (!loaded) {
     return null;
@@ -124,9 +126,15 @@ export default function () {
           width="840px"
           title="Transporter report"
           open={transporterReportModal}
+          onOk={() => transporterForm.submit()}
           onCancel={() => setTransporterReportModal(false)}
         >
-          <TransporterReport incident={incident} images={images} task={task} />
+          <TransporterReport
+            incident={incident}
+            images={images}
+            task={task}
+            form={transporterForm}
+          />
         </Modal>
       </Drawer>
     </>

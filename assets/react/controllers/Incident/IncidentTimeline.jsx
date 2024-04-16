@@ -34,6 +34,8 @@ function _eventTypeToText(event) {
       return "cancelled the task";
     case "apply_price_diff":
       return "applied a difference on the price";
+    case "transporter_report":
+      return "sent a report to the transporter";
   }
 }
 
