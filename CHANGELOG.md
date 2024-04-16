@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.1] - 2024-04-16
+- Do not add the other tasks of an order when drag'n droping a tour in dispatch
+- Add a link to odoo instance in admin navbar if any
+- Show incidents as default in dispatch
+- Dispatch filters are persistent
+
 ## [2.2.0] - 2024-04-09
 Tours
   - Make "optimize rider assignments" not break when they are tours in the rider's assignment
