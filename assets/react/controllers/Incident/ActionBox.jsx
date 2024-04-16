@@ -25,11 +25,11 @@ export default function () {
   const { task } = incident;
 
   const placement = "left";
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const [rescheduleDrawer, setRescheduleDrawer] = useState(false);
   const [priceDiffDrawer, setPriceDiffDrawer] = useState(false);
-  const [transporterReportModal, setTransporterReportModal] = useState(true);
+  const [transporterReportModal, setTransporterReportModal] = useState(false);
 
   const [transporterForm] = Form.useForm();
 

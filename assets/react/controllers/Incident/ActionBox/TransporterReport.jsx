@@ -11,6 +11,7 @@ import {
   Divider,
   Empty,
   Skeleton,
+  notification,
 } from "antd";
 import "../Style.scss";
 import _ from "lodash";
@@ -20,6 +21,32 @@ async function _fetchFailureReason(id) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.get(
     window.Routing.generate("api_tasks_task_failure_reasons_item", { id }),
+  );
+}
+
+async function _handleFormSubmit(
+  { failureReason, failureDate, images },
+  { id },
+) {
+  const httpClient = new window._auth.httpClient();
+  const failure_reason = `${failureReason.code.state}|${failureReason.code.reason}`;
+  let appointment = null;
+  if (failureReason.date) {
+    appointment = failureReason.date.toISOString();
+  }
+  const pods = _.map(images, "full");
+
+  const payload = {
+    action: "transporter_report",
+    failure_reason,
+    appointment,
+    pods,
+    created_at: failureDate.toISOString(),
+  };
+
+  return await httpClient.put(
+    window.Routing.generate("api_incidents_action_item", { id }),
+    payload,
   );
 }
 
@@ -133,6 +160,7 @@ function FailureReasonSelector({ task, onChange }) {
     });
   }, [selectedState, selectedReason, selectedDate]);
 
+  //TODO: Improve appointment display detection
   return (
     <Skeleton title={false} loading={!failureReasons}>
       <Row gutter={[16, 16]}>
@@ -173,25 +201,6 @@ function FailureReasonSelector({ task, onChange }) {
 }
 
 export default function ({ incident, task, images, form }) {
-  console.log(incident);
-
-  const _handleFormSubmit = ({ failureReason, failureDate, images }) => {
-    const failure_reason = `${failureReason.code.state}|${failureReason.code.reason}`;
-    let appointment = null;
-    if (failureReason.date) {
-      appointment = failureReason.date.toISOString();
-    }
-    const pods = _.map(images, "full");
-
-    console.log({
-      action: "transporter_report",
-      failure_reason,
-      appointment,
-      pods,
-      created_at: failureDate.toISOString(),
-    });
-  };
-
   const reasonValidator = (_, value) => {
     if (!value) {
       // Do not validate if there is no value
@@ -214,7 +223,15 @@ export default function ({ incident, task, images, form }) {
       layout="vertical"
       form={form}
       name="transporter-report"
-      onFinish={_handleFormSubmit}
+      onFinish={async (values) => {
+        const { error } = await _handleFormSubmit(values, incident);
+        if (!error) {
+          return location.reload();
+        }
+        notification.error({
+          message: "Something went wrong",
+        });
+      }}
       autoComplete="off"
     >
       <Form.Item
