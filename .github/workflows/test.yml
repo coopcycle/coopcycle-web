@@ -122,7 +122,7 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           spec: |
-            cypress/integration/**/*.cy.js
+            cypress/e2e/**/*.cy.js
       # - name: Print logs
       #   if: always()
       #   run: cat var/logs/*.log
