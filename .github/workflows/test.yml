@@ -148,4 +148,5 @@ jobs:
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
+          component: true
           spec: cypress/component/address-autosuggest.spec.js
