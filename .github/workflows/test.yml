@@ -149,4 +149,4 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           component: true
-          spec: cypress/component/address-autosuggest.spec.js
+          spec: cypress/component/**/*.cy.js
