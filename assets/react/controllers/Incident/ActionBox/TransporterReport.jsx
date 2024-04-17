@@ -22,6 +22,7 @@ async function _fetchFailureReason(id) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.get(
     window.Routing.generate("api_tasks_task_failure_reasons_item", { id }),
+    { transporter: true },
   );
 }
 

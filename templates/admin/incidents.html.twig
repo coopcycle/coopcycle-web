@@ -11,7 +11,7 @@
       <i class="fa fa-plus"></i> {% trans %}adminDashboard.incidents.createNew{% endtrans %}
     </a>
   </div>
-  {% include "incident/list.html.twig" %}
+<div {{ react_component('Incident/List') }}></div>
 {% endblock %}
 
 {% block styles %}

@@ -16,12 +16,13 @@ class httpClient {
     this.jwt = jwt;
   }
 
-  async request({ method, url, data, headers }, depth = 0) {
+  async request({ method, url, data, params, headers }, depth = 0) {
     try {
       const response = await axios({
         method,
         url,
         data,
+        params,
         headers: {
           "Content-Type": "application/json; charset=utf-8",
           Authorization: `Bearer ${this.jwt}`,
@@ -45,8 +46,8 @@ class httpClient {
     }
   }
 
-  async get(url, headers = {}) {
-    return await this.request({ method: "GET", url, headers });
+  async get(url, params = {}, headers = {}) {
+    return await this.request({ method: "GET", url, params, headers });
   }
 
   async post(url, data, headers = {}) {
