@@ -125,7 +125,7 @@ jobs:
         with:
           spec: |
             cypress/e2e/**/*.cy.js
-      # after the test run completes store videos and any screenshots
+        # after the test run completes store videos and any screenshots
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -158,9 +158,9 @@ jobs:
       matrix:
         country: [fr]
     env:
+      GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
       COOPCYCLE_COUNTRY: ${{ matrix.country }}
       COOPCYCLE_LOCALE: ${{ matrix.country }}
-      GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
     steps:
       - uses: actions/checkout@v2
       - name: Run Cypress
@@ -168,7 +168,7 @@ jobs:
         with:
           component: true
           spec: cypress/component/**/*.cy.js
-            - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cypress-screenshots
