@@ -22,6 +22,8 @@ context('Checkout', () => {
 
         cy.wait('@postRestaurantCart')
 
+        cy.contains('Cheese Cake').click()
+
         cy.get('.product-modal-container button[type="submit"]').click()
 
         cy.wait('@postProduct', {timeout: 5000})

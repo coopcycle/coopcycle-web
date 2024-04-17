@@ -64,7 +64,7 @@ context('Checkout', () => {
         cy.get('.table-order-items tfoot tr:last-child td')
           .invoke('text')
           .invoke('trim')
-          .should('match', /^€18.00/)
+          .should('match', /^18,00 €/)
 
         cy.get('#checkout_address_reusablePackagingEnabled')
           .should('be.visible')
