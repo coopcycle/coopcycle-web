@@ -522,16 +522,28 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return [];
     }
 
+    /**
+    * @deprecated
+    */
     public function isDBSchenkerEnabled(): bool
     {
         return $this->DBSchenkerEnabled;
     }
 
+    /**
+    * @deprecated
+    */
     public function setDBSchenkerEnabled(bool $DBSchenkerEnabled): Store
     {
         $this->DBSchenkerEnabled = $DBSchenkerEnabled;
         return $this;
     }
+
+    public function isTransporterEnabled(): bool
+    {
+        //TODO: Add support for multi transporters
+        return $this->DBSchenkerEnabled;
+     }
 
     /**
      * Get the recurrence rules linked to this store

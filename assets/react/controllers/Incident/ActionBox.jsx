@@ -21,7 +21,8 @@ const styles = {
 };
 
 export default function () {
-  const { loaded, incident, order, images } = store.getState();
+  const { loaded, incident, order, images, transporterEnabled } =
+    store.getState();
   const { task } = incident;
 
   const placement = "left";
@@ -90,17 +91,21 @@ export default function () {
                 Apply a difference on the price
               </Button>
             </p>
-            <Divider>OR</Divider>
           </>
         )}
-        <p>
-          <Button
-            style={styles.btn}
-            onClick={() => setTransporterReportModal(true)}
-          >
-            Send report to transporter
-          </Button>
-        </p>
+        {transporterEnabled && (
+          <>
+            <Divider>OR</Divider>
+            <p>
+              <Button
+                style={styles.btn}
+                onClick={() => setTransporterReportModal(true)}
+              >
+                Send report to transporter
+              </Button>
+            </p>
+          </>
+        )}
 
         <Drawer
           placement={placement}

@@ -20,6 +20,7 @@ use AppBundle\Action\Task\Restore as TaskRestore;
 use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
+use AppBundle\Action\Task\Context as TaskContext;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
@@ -302,6 +303,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "security"="is_granted('ROLE_OAUTH2_TASKS')",
  *       "input"=BioDeliverInput::class,
  *       "denormalization_context"={"groups"={"task_edit"}}
+ *     },
+ *     "get_task_context"={
+ *       "method"="GET",
+ *       "path"="/tasks/{id}/context",
+ *       "controller"=TaskContext::class,
+ *       "security"="is_granted('view', object)"
  *     }
  *   }
  * )
@@ -335,18 +342,18 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     const GEOFENCING_RADIUS = 300;
 
     /**
-     * @Groups({"task", "delivery"})
+     * @Groups({"task", "delivery", "incident_get_collection"})
      */
     private $id;
 
     /**
      * @Assert\Choice({"PICKUP", "DROPOFF"})
-     * @Groups({"task", "task_create", "task_edit", "delivery_create"})
+     * @Groups({"task", "task_create", "task_edit", "delivery_create", "incident_get_collection"})
      */
     private $type = self::TYPE_DROPOFF;
 
     /**
-     * @Groups({"task", "delivery"})
+     * @Groups({"task", "delivery", "incident_get_collection"})
      */
     private $status = self::STATUS_TODO;
 
@@ -397,7 +404,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $group;
 
     /**
-     * @Groups({"task"})
+     * @Groups({"task", "incident_get_collection"})
      */
     private $assignedTo;
 

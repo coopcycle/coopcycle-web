@@ -3,7 +3,7 @@
 
 {% block breadcrumb %}
 <li>
-  <a href="{{ path('admin_incidents') }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a>
+  <a href="{{ path('admin_incidents') }}">{% trans %}adminDashboard.incidents.title{% endtrans %}</a>
 </li>
 <li>
   Incident #{{incident.id}}
@@ -19,7 +19,8 @@
 <div {{ react_component('Incident/IncidentLoad', {
   incident: incident|serialize('json', {groups: ['incident', 'task', 'address'] }),
   order: order|serialize,
-  images: images
+  images: images,
+  transporterEnabled: transporterEnabled
 }) }} ></div>
 <div class="incident-header">
   <div class="container">
