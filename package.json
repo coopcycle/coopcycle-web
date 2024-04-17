@@ -17,7 +17,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@cypress/react18": "^2.0.0",
+    "@cypress/webpack-preprocessor": "^6.0.1",
     "@hello-pangea/dnd": "^16.5.0",
+    "cypress": "^13.7.3",
     "dotenv": "^8.6.0",
     "form-data": "^2.3.3",
     "lodash": "^4.17.21",
