@@ -41,12 +41,8 @@ services:
       - OSRM_FILENAME=data.osrm
 
   php:
-    build:
-      dockerfile: './docker/php/Dockerfile'
-      context: '.'
-    image: coopcycle/php:8.1
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    image: ${IMAGES_PREFIX:-}app-php
+    restart: unless-stopped
     depends_on:
       - postgres
       - redis
@@ -57,38 +53,93 @@ services:
       - stripe_mock
       - browserless
     environment:
+      SERVER_NAME: ${SERVER_NAME:-localhost}, php:80
+      MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+      MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+      TRUSTED_HOSTS: ^${SERVER_NAME:-example\.com|localhost}|php$$
+      # Run "composer require symfony/orm-pack" to install and configure Doctrine ORM
+#      DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-!ChangeMe!}@database:5432/${POSTGRES_DB:-app}?serverVersion=${POSTGRES_VERSION:-15}&charset=${POSTGRES_CHARSET:-utf8}
+      # Run "composer require symfony/mercure-bundle" to install and configure the Mercure integration
+      MERCURE_URL: ${CADDY_MERCURE_URL:-http://php/.well-known/mercure}
+      MERCURE_PUBLIC_URL: https://${SERVER_NAME:-localhost}/.well-known/mercure
+      MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       # Make sure "base_url" has a trailing slash
       # https://github.com/FriendsOfBehat/SymfonyExtension/issues/124
-      - 'BEHAT_PARAMS={"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80/"}}}'
-      - GOOGLE_API_KEY
-      - STRIPE_PUBLISHABLE_KEY
-      - STRIPE_SECRET_KEY
-      - STRIPE_CONNECT_CLIENT_ID
-      - ALGOLIA_PLACES_APP_ID
-      - ALGOLIA_PLACES_API_KEY
-      - ALGOLIA_PLACES_ADDRESS_TEMPLATE
+#      - 'BEHAT_PARAMS={"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80/" } } }'
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_CONNECT_CLIENT_ID: ${STRIPE_CONNECT_CLIENT_ID}
+      ALGOLIA_PLACES_APP_ID: ${ALGOLIA_PLACES_APP_ID}
+      ALGOLIA_PLACES_API_KEY: ${ALGOLIA_PLACES_API_KEY}
+      ALGOLIA_PLACES_ADDRESS_TEMPLATE: ${ALGOLIA_PLACES_ADDRESS_TEMPLATE}
     volumes:
-      - './:/var/www/html:cached'
-      - 'php_logs:/var/www/html/var/logs'
-      - 'php_cache:/var/www/html/var/cache'
-    cap_add:
-      - SYS_ADMIN
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      # HTTP
+      - target: 80
+        published: ${HTTP_PORT:-80}
+        protocol: tcp
+      # HTTPS
+      - target: 443
+        published: ${HTTPS_PORT:-443}
+        protocol: tcp
+      # HTTP/3
+      - target: 443
+        published: ${HTTP3_PORT:-443}
+        protocol: udp
 
-  php_worker:
-    build:
-      dockerfile: './docker/php_worker/Dockerfile'
-      context: '.'
-    depends_on:
-      - php
-    restart: always
-    environment:
-      - GOOGLE_API_KEY
-      - STRIPE_PUBLISHABLE_KEY
-      - STRIPE_SECRET_KEY
-    volumes:
-      - './:/var/www/html:cached'
-      - 'php_logs:/var/www/html/var/logs'
-      - 'php_cache:/var/www/html/var/cache'
+#  php:
+#    build:
+#      dockerfile: './docker/php/Dockerfile'
+#      context: '.'
+#    image: coopcycle/php:8.1
+#    extra_hosts:
+#      - "host.docker.internal:host-gateway"
+#    depends_on:
+#      - postgres
+#      - redis
+#      - osrm
+#      - stripe_mock
+#    links:
+#      - osrm
+#      - stripe_mock
+#      - browserless
+#    environment:
+#      # Make sure "base_url" has a trailing slash
+#      # https://github.com/FriendsOfBehat/SymfonyExtension/issues/124
+#      - 'BEHAT_PARAMS={"extensions":{"Behat\\MinkExtension":{"base_url": "http://nginx_test:80/"}}}'
+#      - GOOGLE_API_KEY
+#      - STRIPE_PUBLISHABLE_KEY
+#      - STRIPE_SECRET_KEY
+#      - STRIPE_CONNECT_CLIENT_ID
+#      - ALGOLIA_PLACES_APP_ID
+#      - ALGOLIA_PLACES_API_KEY
+#      - ALGOLIA_PLACES_ADDRESS_TEMPLATE
+#    volumes:
+#      - './:/var/www/html:cached'
+#      - 'php_logs:/var/www/html/var/logs'
+#      - 'php_cache:/var/www/html/var/cache'
+#    cap_add:
+#      - SYS_ADMIN
+
+#  php_worker:
+#    build:
+#      dockerfile: './docker/php_worker/Dockerfile'
+#      context: '.'
+#    depends_on:
+#      - php
+#    restart: always
+#    environment:
+#      - GOOGLE_API_KEY
+#      - STRIPE_PUBLISHABLE_KEY
+#      - STRIPE_SECRET_KEY
+#    volumes:
+#      - './:/var/www/html:cached'
+#      - 'php_logs:/var/www/html/var/logs'
+#      - 'php_cache:/var/www/html/var/cache'
 
   nginx:
     image: 'nginx:1.11-alpine'
@@ -277,7 +328,13 @@ services:
       - '.:/srv/coopcycle'
       - 'node_modules_webpack:/srv/coopcycle/node_modules/'
 
+# Mercure is installed as a Caddy module, prevent the Flex recipe from installing another service
+###> symfony/mercure-bundle ###
+###< symfony/mercure-bundle ###
+
 volumes:
+  caddy_data:
+  caddy_config:
   node_modules_webpack:
   pg_data:
   php_cache:
@@ -285,3 +342,5 @@ volumes:
   typesense_data:
   webpack_php_cache:
   php_logs:
+###> symfony/mercure-bundle ###
+###< symfony/mercure-bundle ###
