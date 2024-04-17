@@ -135,12 +135,11 @@ jobs:
       #     tar czvf $GITHUB_SHA.tgz -C cypress/videos .
       #     aws --endpoint=$AWS_ENDPOINT s3 cp $GITHUB_SHA.tgz s3://cypress/$GITHUB_SHA.tgz --acl private
   COMPONENT:
-    if: false
-    name: Run Component tests with Cypress
+    name: Run component tests with Cypress
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        country: [es]
+        country: [fr]
     env:
       COOPCYCLE_COUNTRY: ${{ matrix.country }}
       COOPCYCLE_LOCALE: ${{ matrix.country }}
@@ -150,4 +149,3 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           spec: cypress/component/address-autosuggest.spec.js
-          config: baseUrl=https://demo.coopcycle.org
