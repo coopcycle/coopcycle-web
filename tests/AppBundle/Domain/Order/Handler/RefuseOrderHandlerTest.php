@@ -15,6 +15,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Tests\AppBundle\StripeTrait;
 
 class RefuseOrderHandlerTest extends TestCase

@@ -1,4 +1,4 @@
-FROM php:8.1-fpm-alpine
+FROM php:8.3-fpm-alpine
 
 RUN apk update
 
@@ -7,8 +7,8 @@ RUN apk add --no-cache \
         icu \
         zlib
 
-ENV APCU_VERSION 5.1.21
-ENV PHPREDIS_VERSION 5.3.6
+ENV APCU_VERSION 5.1.23
+ENV PHPREDIS_VERSION 6.0.2
 
 RUN set -xe \
     && apk add --no-cache \
@@ -42,6 +42,7 @@ RUN set -xe \
         bcmath \
         gd \
         pcntl \
+        ftp \
     && pecl install \
         apcu-${APCU_VERSION} \
         redis-${PHPREDIS_VERSION} \

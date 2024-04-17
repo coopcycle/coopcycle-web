@@ -95,7 +95,7 @@ services:
 #    build:
 #      dockerfile: './docker/php/Dockerfile'
 #      context: '.'
-#    image: coopcycle/php:8.1
+#    image: coopcycle/php:8.3
 #    extra_hosts:
 #      - "host.docker.internal:host-gateway"
 #    depends_on:
