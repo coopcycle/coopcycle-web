@@ -52,12 +52,17 @@ class FailureReasons
         }, $config['failure_reasons'][$transporter]);
     }
 
-    private function getFailureReasons(CustomFailureReasonInterface $entity)
+    private function getFailureReasons(
+        CustomFailureReasonInterface $entity,
+        bool $transporter
+    ): array
     {
         if (
+            $transporter &&
             $entity instanceof Store &&
-            $entity->isDBSchenkerEnabled()
+            $entity->isTransporterEnabled()
         ) {
+            //TODO: Support multi transporter
             return $this->getTransporterReasons('dbschenker');
         }
         $set = $entity->getFailureReasonSet();
@@ -71,6 +76,8 @@ class FailureReasons
     {
 
         $org = $data->getOrganization();
+
+        $transporter = boolval($request->get('transporter', false));
 
         if (is_null($org)) {
             return $this->getDefaultReasons();
@@ -87,13 +94,13 @@ class FailureReasons
         if (!is_null($reverse['store_id'])) {
             $store = $this->em->getRepository(Store::class)
                 ->find($reverse['store_id']);
-            return $this->getFailureReasons($store);
+            return $this->getFailureReasons($store, $transporter);
         }
 
         if (!is_null($reverse['restaurant_id'])) {
             $restaurant = $this->em->getRepository(LocalBusiness::class)
                 ->find($reverse['restaurant_id']);
-            return $this->getFailureReasons($restaurant);
+            return $this->getFailureReasons($restaurant, $transporter);
         }
 
         return $this->getDefaultReasons();

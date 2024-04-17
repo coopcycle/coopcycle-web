@@ -17,6 +17,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *   collectionOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "normalization_context"={"groups"={"incident_get_collection"}},
+ *       "pagination_enabled"=false
+ *     },
  *     "post"={
  *       "method"="POST",
  *     }
@@ -48,30 +53,30 @@ class Incident implements TaggableInterface {
     use TaggableTrait;
 
     /**
-    * @Groups({"incident"})
+    * @Groups({"incident", "incident_get_collection"})
     */
     protected int $id;
 
     /**
-    * @Groups({"incident"})
+    * @Groups({"incident", "incident_get_collection"})
     */
     protected string $title;
 
 
     /**
-    * @Groups({"incident"})
+    * @Groups({"incident", "incident_get_collection"})
     */
     protected string $status;
 
 
     /**
-    * @Groups({"incident"})
+    * @Groups({"incident", "incident_get_collection"})
     */
     protected int $priority;
 
 
     /**
-    * @Groups({"incident"})
+    * @Groups({"incident", "incident_get_collection"})
     */
     protected Task $task;
 
@@ -83,7 +88,7 @@ class Incident implements TaggableInterface {
 
 
     /**
-    * @Groups({"incident"})
+    * @Groups({"incident", "incident_get_collection"})
     */
     protected ?string $description = null;
 
@@ -101,13 +106,13 @@ class Incident implements TaggableInterface {
 
 
     /**
-    * @Groups({"incident"})
+    * @Groups({"incident", "incident_get_collection"})
     */
     protected ?User $createdBy = null;
 
 
     /**
-    * @Groups({"incident"})
+    * @Groups({"incident", "incident_get_collection"})
     */
     protected $createdAt;
 

@@ -7,6 +7,7 @@ const initialState = {
   incident: null,
   order: null,
   images: [],
+  transporterEnabled: false,
 };
 
 const incidentSlice = createSlice({
@@ -28,6 +29,9 @@ const incidentSlice = createSlice({
     setEvents(state, action) {
       state.incident.events = action.payload;
     },
+    setTransporterEnabled(state, action) {
+      state.transporterEnabled = action.payload;
+    },
   },
 });
 
@@ -35,8 +39,14 @@ const store = configureStore({
   reducer: incidentSlice.reducer,
 });
 
-export const { setLoaded, setIncident, setOrder, setImages, setEvents } =
-  incidentSlice.actions;
+export const {
+  setLoaded,
+  setIncident,
+  setOrder,
+  setImages,
+  setEvents,
+  setTransporterEnabled,
+} = incidentSlice.actions;
 
 export default store;
 
