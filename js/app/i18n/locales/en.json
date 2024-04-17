@@ -417,6 +417,8 @@
         "RESTAURANT_STOCK_PHOTOS_SELECT": "Select this image",
         "PRESS_ENTER_TO_SEARCH": "Press Enter to search « {{query}} »",
         "SHOW_MORE_RESULTS": "Show more results for « {{query}} »",
-        "ADMIN_DASHBOARD_ORDERS_RESTORE": "Restore"
+        "ADMIN_DASHBOARD_ORDERS_RESTORE": "Restore",
+        "TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME": "Search a saved address",
+        "TASK_FORM_SEARCH_ADDRESS_NAME_PLACEHOLDER": "Address name..."
     }
 }
