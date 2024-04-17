@@ -40,7 +40,7 @@ class InvitePeopleToOrderModal extends Component {
     if (this.state.isRequesting || !this.props.invitation) {
       return null;
     }
-    return location.protocol + '//' + location.hostname + window.Routing.generate('public_share_order', {slug: this.props.invitation})
+    return location.protocol + '//' + location.host + window.Routing.generate('public_share_order', {slug: this.props.invitation})
   }
 
   render() {

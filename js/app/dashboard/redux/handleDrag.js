@@ -148,11 +148,7 @@ export function handleDragEnd(
     }
 
     // when we drag n drop we want all tasks of the order/delivery to move alongside
-<<<<<<< HEAD
     // except from tour or group, keep them as they are organized
-=======
-    // except from tour as group, keep them as they are organized
->>>>>>> 587f8ca21 (fix: do not add order tasks when DnDing a tour)
     if (source.droppableId !== destination.droppableId && !result.draggableId.startsWith('tour') && !result.draggableId.startsWith('group')) {
       selectedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
     }

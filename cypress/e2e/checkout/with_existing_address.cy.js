@@ -12,18 +12,16 @@ context('Checkout', () => {
 
         cy.visit('/login')
 
-        cy.get('[name="_username"]').type('jane')
-        cy.get('[name="_password"]').type('12345678')
-        cy.get('[name="_submit"]').click()
+        cy.login('jane', '12345678')
 
         cy.location('pathname').should('eq', '/fr/')
 
         cy.get('[data-search="address"] input[type="search"]')
-          .type('1 rue de', { timeout: 5000 })
+          .type('1 rue de', { timeout: 5000, delay: 30 })
 
         cy.get('[data-search="address"]')
-          .find('.react-autosuggest__suggestions-container')
-          .find('.react-autosuggest__section-container')
+          .find('.react-autosuggest__suggestions-container', { timeout: 5000 })
+          .find('.react-autosuggest__section-container', { timeout: 5000 })
           // There should be 2 sections
           .then(($sections) => {
             cy.wrap($sections).should('have.length', 2)

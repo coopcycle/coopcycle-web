@@ -19,9 +19,7 @@ context('Dispatch', () => {
 
       cy.visit('/login')
 
-      cy.get('[name="_username"]').type('admin')
-      cy.get('[name="_password"]').type('12345678')
-      cy.get('[name="_submit"]').click()
+      cy.login('admin', '12345678')
 
       cy.visit('/admin/dashboard')
 
