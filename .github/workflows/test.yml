@@ -146,6 +146,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run Cypress
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v6
         with:
           spec: cypress/component/address-autosuggest.spec.js
