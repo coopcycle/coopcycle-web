@@ -1,4 +1,4 @@
-// override means that we won't override options from the command line
+// override: false means that we won't override env vars from the command line
 require('dotenv').config({override: false})
 
 let env = process.env

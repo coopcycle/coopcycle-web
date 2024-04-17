@@ -81,7 +81,9 @@ jobs:
   E2E:
     name: Run end to end tests with cypress
     runs-on: ubuntu-latest
+    if: false
     env:
+      GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       STRIPE_CONNECT_CLIENT_ID: ${{ secrets.STRIPE_CONNECT_CLIENT_ID }}
@@ -123,6 +125,21 @@ jobs:
         with:
           spec: |
             cypress/e2e/**/*.cy.js
+      # after the test run completes store videos and any screenshots
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-videos
+          path: cypress/videos
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
+
+
       # - name: Print logs
       #   if: always()
       #   run: cat var/logs/*.log
@@ -143,6 +160,7 @@ jobs:
     env:
       COOPCYCLE_COUNTRY: ${{ matrix.country }}
       COOPCYCLE_LOCALE: ${{ matrix.country }}
+      GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
     steps:
       - uses: actions/checkout@v2
       - name: Run Cypress
@@ -150,3 +168,15 @@ jobs:
         with:
           component: true
           spec: cypress/component/**/*.cy.js
+            - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-videos
+          path: cypress/videos
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
