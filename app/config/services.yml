@@ -791,12 +791,6 @@ services:
     arguments:
       $state: "%region_iso%"
 
-  AppBundle\Action\TimeSlot\Choices:
-    public: true
-    arguments:
-      $country: "%country_iso%"
-      $locale: '%env(COOPCYCLE_LOCALE)%'
-
   AppBundle\Action\CentrifugoToken:
     public: true
     arguments:
