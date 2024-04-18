@@ -24,7 +24,8 @@
         "process-timeout":0,
         "allow-plugins": {
             "drupal/core-vendor-hardening": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "symfony/runtime": true
         }
     },
     "require": {
@@ -145,7 +146,8 @@
         "symfony/ux-react": "2.10",
         "league/flysystem": "^3.0",
         "league/flysystem-ftp": "^3.0",
-        "coopcycle/db-schenker": "dev-master"
+        "coopcycle/db-schenker": "dev-master",
+        "runtime/frankenphp-symfony": "^0.2.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -244,6 +246,9 @@
             ],
             "symfony/webpack-encore-bundle": ["tests"],
             "willdurand/hateoas": ["tests"]
+        },
+        "symfony": {
+            "docker": true
         }
     }
 }

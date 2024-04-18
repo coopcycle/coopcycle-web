@@ -22,13 +22,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	git \
 	&& rm -rf /var/lib/apt/lists/*
 
+ENV APCU_VERSION 5.1.23
+ENV PHPREDIS_VERSION 6.0.2
+
 RUN set -eux; \
 	install-php-extensions \
 		@composer \
-		apcu \
+		apcu-${APCU_VERSION} \
 		intl \
 		opcache \
 		zip \
+    redis-${PHPREDIS_VERSION} \
+    pdo_pgsql \
+    gd \
+    bcmath \
+    pcntl \
+    ftp \
 	;
 
 # https://getcomposer.org/doc/03-cli.md#composer-allow-superuser
