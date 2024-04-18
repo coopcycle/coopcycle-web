@@ -18,7 +18,7 @@ import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TimeRange from '../../utils/TimeRange'
 import { timePickerProps } from '../../utils/antd'
 import { recurrenceTemplateToArray } from '../redux/utils'
-import { saveRecurrenceRule, createTasksFromRecurrenceRule, deleteRecurrenceRule } from '../redux/actions'
+import { saveRecurrenceRule, createTasksFromRecurrenceRule, deleteRecurrenceRule, closeRecurrenceRuleModal } from '../redux/actions'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import RecurrenceRuleAsText from './RecurrenceRuleAsText'
 
@@ -398,7 +398,7 @@ const validateForm = values => {
   return errors
 }
 
-const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecurrenceRule, stores, loading, date, deleteRecurrenceRule, error }) => {
+const ModalContent = ({ recurrenceRule, saveRecurrenceRule, closeRecurrenceRuleModal, createTasksFromRecurrenceRule, stores, loading, date, deleteRecurrenceRule, error }) => {
 
   const { t } = useTranslation()
 
@@ -429,154 +429,160 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
     }
 
   return (
-    <Formik
-      initialValues={ initialValues }
-      validate={ validateForm }
-      onSubmit={ values => {
-        saveRecurrenceRule({
-          ...recurrenceRule,
-          store: values.store,
-          rule: values.recurrence,
-          template: {
-            '@type': 'hydra:Collection',
-            'hydra:member': values.items
-          },
-          name: values.name,
-        })
-      }}
-      validateOnBlur={ true }
-      validateOnChange={ false }
-    >
-      {({
-        values,
-        errors,
-        handleSubmit,
-        setFieldValue,
-      }) => (
-        <div>
-            <div className="p-4 border-bottom" >
-                <input className="form-control"
-                       placeholder={ t('ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER') }
-                       value={ values.name }
-                       onChange={ e => setFieldValue('name', e.target.value) } />
+    <div>
+      <div className="modal-header">
+          <button type="button" className="close" onClick={ () => closeRecurrenceRuleModal() } aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 className="modal-title">{ t('ADMIN_DASHBOARD_RECURRENCE_RULE_MODAL_TITLE') }</h4>
+      </div>
+      <Formik
+        initialValues={ initialValues }
+        validate={ validateForm }
+        onSubmit={ values => {
+          saveRecurrenceRule({
+            ...recurrenceRule,
+            store: values.store,
+            rule: values.recurrence,
+            template: {
+              '@type': 'hydra:Collection',
+              'hydra:member': values.items
+            },
+            name: values.name,
+          })
+        }}
+        validateOnBlur={ true }
+        validateOnChange={ false }
+      >
+        {({
+          values,
+          errors,
+          handleSubmit,
+          setFieldValue,
+        }) => (
+          <div>
+              <div className="p-4 border-bottom" >
+                  <input className="form-control"
+                        placeholder={ t('ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER') }
+                        value={ values.name }
+                        onChange={ e => setFieldValue('name', e.target.value) } />
+              </div>
+            <div className="p-4 border-bottom">
+              <Select
+                defaultValue={ _.find(storesOptions, o => o.value === values.store) }
+                options={ storesOptions }
+                onChange={ ({ value, store }) => {
+                  setFieldValue('store', value)
+                  setPackages(store.packages)
+                }}
+                // https://github.com/coopcycle/coopcycle-web/issues/774
+                // https://github.com/JedWatson/react-select/issues/3030
+                menuPortalTarget={ document.body }
+                styles={{
+                  menuPortal: base => ({ ...base, zIndex: 9 }),
+                  control: styles => ({
+                    ...styles,
+                    borderColor: errors.store ? '#DE350B' : styles.borderColor,
+                  })
+                }} />
             </div>
-          <div className="p-4 border-bottom">
-            <Select
-              defaultValue={ _.find(storesOptions, o => o.value === values.store) }
-              options={ storesOptions }
-              onChange={ ({ value, store }) => {
-                setFieldValue('store', value)
-                setPackages(store.packages)
-              }}
-              // https://github.com/coopcycle/coopcycle-web/issues/774
-              // https://github.com/JedWatson/react-select/issues/3030
-              menuPortalTarget={ document.body }
-              styles={{
-                menuPortal: base => ({ ...base, zIndex: 9 }),
-                control: styles => ({
-                  ...styles,
-                  borderColor: errors.store ? '#DE350B' : styles.borderColor,
-                })
-              }} />
-          </div>
-          <div className="p-4 border-bottom">
-            <RecurrenceEditor
-              recurrence={ values.recurrence }
-              onChange={ (newOpts) => {
-                const cleanOpts = _.pick(newOpts, ['freq', 'byweekday'])
-                setFieldValue('recurrence', RRule.optionsToString(cleanOpts))
-              }} />
-          </div>
-          <div className="px-4 pt-4 border-bottom" style={{ maxHeight: '50vh', overflow: 'auto' }}>
-          <DragDropContext onDragEnd={ e => {
-            if (!e.destination)
-            { return }
-            setFieldValue('items', reorder(values.items, e.source.index, e.destination.index))
-          } }>
-            <Droppable direction="vertical" droppableId="droppable">
-              {(provided) => (
-                <ol className="list-unstyled" ref={provided.innerRef}
-                    {...provided.droppableProps}>
-                  { values.items.map((item, index) => (
-                      <Draggable key={index} draggableId={'pos:' + index} index={index}>
-                        {(provided, snapshot) => <TemplateItem
-                            provided={provided}
-                            snapshot={snapshot}
-                            key={ `${index}-${hash(item)}` }
-                            item={ item }
-                            packages={ packages }
-                            setFieldValues={ (item, fieldValues) => {
-                              const index = values.items.indexOf(item)
-                              if (-1 !== index) {
-                                const newItems = values.items.slice(0)
-                                newItems.splice(index, 1, { ...item, ...fieldValues })
-                                setFieldValue('items', newItems)
-                              }
-                            }}
-                            onClickRemove={ item => {
-                              const index = values.items.indexOf(item)
-                              if (-1 !== index) {
-                                const newItems = values.items.slice(0)
-                                newItems.splice(index, 1)
-                                setFieldValue('items', newItems)
-                              }
-                            }}
-                            errors={ (errors && errors.items && errors.items[index]) || {} } />}
-                      </Draggable>
-                  )) }
-                  {provided.placeholder}
-                </ol>)}
-            </Droppable>
-          </DragDropContext>
-          </div>
-          <div className="p-4 border-bottom">
-            <Button icon={ <PlusOutlined /> } onClick={ () => {
-              const newItems = values.items.slice(0)
-              newItems.push({ ...defaultTask })
-              setFieldValue('items', newItems)
-            }}>{ t('ADMIN_DASHBOARD_ADD') }</Button>
-          </div>
-          { !_.isEmpty(error) &&
-            <Alert message={ error } type="error" showIcon />
-          }
-          <div className={ classNames({
-            'd-flex': true,
-            'p-4': true,
-            'justify-content-end': !isSaved,
-            'justify-content-between': isSaved
-          })}>
-            { isSaved &&
-              <Popconfirm
-                placement="right"
-                title={ t('CONFIRM_DELETE') }
-                onConfirm={ () => deleteRecurrenceRule(recurrenceRule) }
-                okText={ t('CROPPIE_CONFIRM') }
-                cancelText={ t('CROPPIE_CANCEL') }
-                >
-                <Button type="danger" size="large" icon={ <DeleteOutlined /> }
-                  disabled={ loading }>
-                  { t('ADMIN_DASHBOARD_CANCEL') }
-                </Button>
-              </Popconfirm>
+            <div className="p-4 border-bottom">
+              <RecurrenceEditor
+                recurrence={ values.recurrence }
+                onChange={ (newOpts) => {
+                  const cleanOpts = _.pick(newOpts, ['freq', 'byweekday'])
+                  setFieldValue('recurrence', RRule.optionsToString(cleanOpts))
+                }} />
+            </div>
+            <div className="px-4 pt-4 border-bottom" style={{ maxHeight: '50vh', overflow: 'auto' }}>
+            <DragDropContext onDragEnd={ e => {
+              if (!e.destination)
+              { return }
+              setFieldValue('items', reorder(values.items, e.source.index, e.destination.index))
+            } }>
+              <Droppable direction="vertical" droppableId="droppable">
+                {(provided) => (
+                  <ol className="list-unstyled" ref={provided.innerRef}
+                      {...provided.droppableProps}>
+                    { values.items.map((item, index) => (
+                        <Draggable key={index} draggableId={'pos:' + index} index={index}>
+                          {(provided, snapshot) => <TemplateItem
+                              provided={provided}
+                              snapshot={snapshot}
+                              key={ `${index}-${hash(item)}` }
+                              item={ item }
+                              packages={ packages }
+                              setFieldValues={ (item, fieldValues) => {
+                                const index = values.items.indexOf(item)
+                                if (-1 !== index) {
+                                  const newItems = values.items.slice(0)
+                                  newItems.splice(index, 1, { ...item, ...fieldValues })
+                                  setFieldValue('items', newItems)
+                                }
+                              }}
+                              onClickRemove={ item => {
+                                const index = values.items.indexOf(item)
+                                if (-1 !== index) {
+                                  const newItems = values.items.slice(0)
+                                  newItems.splice(index, 1)
+                                  setFieldValue('items', newItems)
+                                }
+                              }}
+                              errors={ (errors && errors.items && errors.items[index]) || {} } />}
+                        </Draggable>
+                    )) }
+                    {provided.placeholder}
+                  </ol>)}
+              </Droppable>
+            </DragDropContext>
+            </div>
+            <div className="p-4 border-bottom">
+              <Button icon={ <PlusOutlined /> } onClick={ () => {
+                const newItems = values.items.slice(0)
+                newItems.push({ ...defaultTask })
+                setFieldValue('items', newItems)
+              }}>{ t('ADMIN_DASHBOARD_ADD') }</Button>
+            </div>
+            { !_.isEmpty(error) &&
+              <Alert message={ error } type="error" showIcon />
             }
-            <span>
+            <div className={ classNames({
+              'd-flex': true,
+              'p-4': true,
+              'justify-content-end': !isSaved,
+              'justify-content-between': isSaved
+            })}>
               { isSaved &&
-                <span className="mr-4">
-                  <Button size="large" icon={ <ThunderboltOutlined /> }
-                    onClick={ () => {
-                      createTasksFromRecurrenceRule(recurrenceRule)
-                    }}> { t('ADMIN_DASHBOARD_TASK_FORM_CREATE') }
-                    </Button>
-                </span>
+                <Popconfirm
+                  placement="right"
+                  title={ t('CONFIRM_DELETE') }
+                  onConfirm={ () => deleteRecurrenceRule(recurrenceRule) }
+                  okText={ t('CROPPIE_CONFIRM') }
+                  cancelText={ t('CROPPIE_CANCEL') }
+                  >
+                  <Button type="danger" size="large" icon={ <DeleteOutlined /> }
+                    disabled={ loading }>
+                    { t('ADMIN_DASHBOARD_DELETE') }
+                  </Button>
+                </Popconfirm>
               }
-              <Button type="primary" size="large" onClick={ handleSubmit } loading={ loading }>
-                { t('ADMIN_DASHBOARD_TASK_FORM_SAVE') }
-              </Button>
-            </span>
+              <span>
+                { isSaved &&
+                  <span className="mr-4">
+                    <Button size="large" icon={ <ThunderboltOutlined /> }
+                      onClick={ () => {
+                        createTasksFromRecurrenceRule(recurrenceRule)
+                      }}> { t('ADMIN_DASHBOARD_TASK_FORM_CREATE') }
+                      </Button>
+                  </span>
+                }
+                <Button type="primary" size="large" onClick={ handleSubmit } loading={ loading }>
+                  { t('ADMIN_DASHBOARD_TASK_FORM_SAVE') }
+                </Button>
+              </span>
+            </div>
           </div>
-        </div>
-      )}
-    </Formik>
+        )}
+      </Formik>
+    </div>
   )
 }
 
@@ -597,6 +603,7 @@ function mapDispatchToProps(dispatch) {
     saveRecurrenceRule: (recurrenceRule) => dispatch(saveRecurrenceRule(recurrenceRule)),
     createTasksFromRecurrenceRule: (recurrenceRule) => dispatch(createTasksFromRecurrenceRule(recurrenceRule)),
     deleteRecurrenceRule: (recurrenceRule) => dispatch(deleteRecurrenceRule(recurrenceRule)),
+    closeRecurrenceRuleModal: () => dispatch(closeRecurrenceRuleModal()),
   }
 }
 

@@ -19,6 +19,10 @@ const checkUsername = _.debounce(function() {
   const username =
     document.querySelector('[id$=_username]').value
 
+  if (!username || username.length < 3) {
+    return
+  }
+
   formGroup.classList.remove('has-success', 'has-error')
   formGroup.classList.add('has-feedback')
 
@@ -89,7 +93,7 @@ const checkUsername = _.debounce(function() {
 
   })
 
-}, 350)
+}, 500)
 
 usernameInput
   .addEventListener('input', checkUsername, false)
