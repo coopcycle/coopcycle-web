@@ -31,7 +31,13 @@ context('Checkout', () => {
         cy.get('.ReactModal__Content--enter-address').should('be.visible')
         cy.get('.cart__items').invoke('text').should('match', /Cheese Cake/)
 
-        cy.get('.ReactModal__Content--enter-address .close').click()
+        cy.searchAddress(
+          '.ReactModal__Content--enter-address',
+          '91 rue de rivoli paris',
+          '91 Rue De Rivoli, 75001 Paris, France'
+        )
+
+        cy.wait('@postRestaurantCart')
 
         cy.visit('/fr/')
 
@@ -39,8 +45,6 @@ context('Checkout', () => {
           'Pizza Express',
           /\/fr\/restaurant\/[0-9]+-pizza-express/
         )
-
-        cy.wait('@postRestaurantCart')
 
         cy.get('#cart .panel-body .cart .alert-warning').should('have.text', 'Votre panier est vide')
 

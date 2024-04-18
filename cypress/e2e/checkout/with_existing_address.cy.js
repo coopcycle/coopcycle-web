@@ -20,8 +20,8 @@ context('Checkout', () => {
           .type('1 rue de', { timeout: 5000, delay: 30 })
 
         cy.get('[data-search="address"]')
-          .find('.react-autosuggest__suggestions-container')
-          .find('.react-autosuggest__section-container')
+          .find('.react-autosuggest__suggestions-container', { timeout: 5000 })
+          .find('.react-autosuggest__section-container', { timeout: 5000 })
           // There should be 2 sections
           .then(($sections) => {
             cy.wrap($sections).should('have.length', 2)

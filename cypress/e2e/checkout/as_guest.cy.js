@@ -75,7 +75,7 @@ context('Checkout', () => {
         cy.get('.table-order-items tfoot tr:last-child td')
           .invoke('text')
           .invoke('trim')
-          .should('match', "20,00 €")
+          .should('equal', "20,00 €")
 
         cy.get('#tip-incr').click()
         cy.wait('@postOrder')
@@ -85,6 +85,6 @@ context('Checkout', () => {
         cy.get('.table-order-items tfoot tr:last-child td')
           .invoke('text')
           .invoke('trim')
-          .should('match', "21,00 €")
+          .should('equal', "21,00 €")
       })
 })
