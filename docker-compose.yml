@@ -141,28 +141,28 @@ services:
 #      - 'php_logs:/var/www/html/var/logs'
 #      - 'php_cache:/var/www/html/var/cache'
 
-  nginx:
-    image: 'nginx:1.11-alpine'
-    depends_on:
-      - php
-      - centrifugo
-    ports:
-      - '80:80'
-    volumes:
-      - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
-      - './web:/var/www/html/web:ro'
-      - './vendor:/var/www/html/vendor:ro'
-
-  nginx_test:
-    image: 'nginx:1.11-alpine'
-    depends_on:
-      - php
-    ports:
-      - '9080:80'
-    volumes:
-      - './docker/nginx_test/conf.d:/etc/nginx/conf.d:ro'
-      - './web:/var/www/html/web:ro'
-      - './vendor:/var/www/html/vendor:ro'
+#  nginx:
+#    image: 'nginx:1.11-alpine'
+#    depends_on:
+#      - php
+#      - centrifugo
+#    ports:
+#      - '80:80'
+#    volumes:
+#      - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
+#      - './web:/var/www/html/web:ro'
+#      - './vendor:/var/www/html/vendor:ro'
+#
+#  nginx_test:
+#    image: 'nginx:1.11-alpine'
+#    depends_on:
+#      - php
+#    ports:
+#      - '9080:80'
+#    volumes:
+#      - './docker/nginx_test/conf.d:/etc/nginx/conf.d:ro'
+#      - './web:/var/www/html/web:ro'
+#      - './vendor:/var/www/html/vendor:ro'
 
   smtp:
     image: namshi/smtp
