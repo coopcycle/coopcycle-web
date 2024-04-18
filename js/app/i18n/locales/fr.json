@@ -25,6 +25,7 @@
         "ADMIN_DASHBOARD_COURIER": "Coursier",
         "ADMIN_DASHBOARD_CANCEL": "Annuler",
         "ADMIN_DASHBOARD_CANCEL_TASK": "Annuler",
+        "ADMIN_DASHBOARD_DELETE": "Supprimer",
         "ADMIN_DASHBOARD_DUPLICATE_TASK": "Dupliquer",
         "ADMIN_DASHBOARD_START_TASK": "Démarrer",
         "ADMIN_DASHBOARD_MODIFY_TASK": "Modifier",

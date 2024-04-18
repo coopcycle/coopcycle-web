@@ -555,7 +555,7 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, createTasksFromRecur
                 >
                 <Button type="danger" size="large" icon={ <DeleteOutlined /> }
                   disabled={ loading }>
-                  { t('ADMIN_DASHBOARD_CANCEL') }
+                  { t('ADMIN_DASHBOARD_DELETE') }
                 </Button>
               </Popconfirm>
             }

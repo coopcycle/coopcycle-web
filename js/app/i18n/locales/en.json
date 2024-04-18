@@ -28,6 +28,7 @@
         "ADMIN_DASHBOARD_COURIER": "Courier",
         "ADMIN_DASHBOARD_CANCEL": "Cancel",
         "ADMIN_DASHBOARD_CANCEL_TASK": "Cancel",
+        "ADMIN_DASHBOARD_DELETE": "Delete",
         "ADMIN_DASHBOARD_DUPLICATE_TASK": "Duplicate",
         "ADMIN_DASHBOARD_START_TASK": "Start",
         "ADMIN_DASHBOARD_MODIFY_TASK": "Modify",

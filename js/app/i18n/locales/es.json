@@ -25,6 +25,7 @@
         "ADMIN_DASHBOARD_COURIER": "Mensajero",
         "ADMIN_DASHBOARD_CANCEL": "Cancelar",
         "ADMIN_DASHBOARD_CANCEL_TASK": "Cancelar",
+        "ADMIN_DASHBOARD_DELETE": "Suprimir",
         "ADMIN_DASHBOARD_DUPLICATE_TASK": "Duplicar",
         "ADMIN_DASHBOARD_ADD": "Añadir",
         "ADMIN_DASHBOARD_DURATION": "Duración",
