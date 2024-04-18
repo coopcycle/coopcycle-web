@@ -26,11 +26,12 @@ context('Delivery', () => {
       cy.get('a').contains('Créer une livraison').click()
 
       cy.get('[data-form="task"]').eq(0).find('input[type="search"]')
-        .type('23 av claude vellefaux', { timeout: 15000 })
+        .type('23 av claude vellefaux', { timeout: 5000, delay: 30 })
+
       cy.contains('23 Avenue Claude Vellefaux, 75010 Paris, France').click()
 
       cy.get('[data-form="task"]').eq(1).find('input[type="search"]')
-        .type('72 rue st maur', { timeout: 15000 })
+        .type('72 rue st maur', { timeout: 5000, delay: 30 })
       cy.contains('72 Rue Saint-Maur, 75011 Paris, France').click()
 
       cy.wait('@apiRoutingRoute')
