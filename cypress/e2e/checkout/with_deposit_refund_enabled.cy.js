@@ -32,6 +32,8 @@ context('Checkout', () => {
 
         cy.get('.cart__items').invoke('text').should('match', /Salade au poulet/)
 
+        cy.wait(1000)
+
         cy.get('.ReactModal__Content--enter-address')
           .should('be.visible')
 
@@ -42,6 +44,8 @@ context('Checkout', () => {
         )
 
         cy.wait('@postRestaurantCart')
+
+        cy.wait(1000)
 
         cy.get('#restaurant__fulfilment-details__container [data-testid="cart.shippingAddress"]')
           .should('have.text', '10 Avenue Ledru-Rollin, 75012 Paris, France')
