@@ -354,6 +354,8 @@
         "CART_LOOPEAT_MODAL_RETURN_SECTION_TITLE": "Je rends mes boîtes ({{count}})",
         "CART_LOOPEAT_MODAL_WALLET_SECTION_TITLE": "Ma cagnotte ({{count}})",
         "ORDER_DELAYED_NOTIFICATION": "La commande {{orderNumber}} a été retardée. Nouveau créneau de livraison : {{shippingTimeRange}}",
+        "ADMIN_DASHBOARD_RECURRENCE_RULE_MODAL_TITLE": "Règle récurrente",
+        "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Montrer les règles récurrentes",
         "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Nom de la règle",
         "RULE_PICKER_LINE_TASK_TYPE": "Type de tâche",
         "CART_ENABLE_ZERO_WASTE": "Activer l'option zéro déchet",
