@@ -48,9 +48,9 @@ context('Delivery', () => {
             .should('match', /[0-9\.]+/)
         })
 
-      cy.get('#delivery_name').type('John Doe')
-      cy.get('#delivery_email').type('dev@coopcycle.org')
-      cy.get('#delivery_telephone').type('0612345678')
+      cy.get('#delivery_name').type('John Doe', { timeout: 5000, delay: 30 })
+      cy.get('#delivery_email').type('dev@coopcycle.org', { timeout: 5000, delay: 30 })
+      cy.get('#delivery_telephone').type('0612345678', { timeout: 5000, delay: 30 })
 
       cy.get('form[name="delivery"] button[type="submit"]').click()
 
@@ -60,7 +60,7 @@ context('Delivery', () => {
         .invoke('text')
         .should('match', /Vous avez demandé une course qui vous sera déposée le/)
 
-      cy.get('form[name="checkout_payment"] input[type="text"]').type('John Doe')
+      cy.get('form[name="checkout_payment"] input[type="text"]').type('John Doe', { timeout: 5000, delay: 30 })
       cy.enterCreditCard()
 
       cy.get('form[name="checkout_payment"] button[type="submit"]').click()

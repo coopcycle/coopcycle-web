@@ -17,9 +17,7 @@ context('Delivery', () => {
 
       cy.visit('/login')
 
-      cy.get('[name="_username"]').type('store_1')
-      cy.get('[name="_password"]').type('store_1')
-      cy.get('[name="_submit"]').click()
+      cy.login('store_1', 'store_1')
 
       cy.location('pathname').should('eq', '/dashboard')
 
