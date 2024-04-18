@@ -166,9 +166,6 @@ const MapProvider = (props) => {
         }
       },
       onTaskMouseOut: (task) => {
-        if (task.isAssigned) {
-          proxy.hidePolyline(task.assignedTo)
-        }
         toTask.current = null
         proxy.disableConnect(task)
       },
