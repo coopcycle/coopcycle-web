@@ -9,7 +9,7 @@ import 'antd/es/select/style/index.css'
 
 import { antdLocale, localeDetector } from '../i18n'
 
-const baseURL = location.protocol + '//' + location.hostname
+const baseURL = location.protocol + '//' + location.host
 
 const { RangePicker } = DatePicker
 
