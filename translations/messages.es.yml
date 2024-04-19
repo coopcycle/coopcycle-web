@@ -1412,3 +1412,4 @@ form.business_restaurant_group.menu: Menú
 form.product.business_restaurant_group.price_definition.label: Definir precios para grupo de restaurantes para empresas
 form.product.business_restaurant_group.price_definition.placeholder: Por favor seleccione uno
 business_restaurant_group.label: Grupo de restaurantes para empresas
+business_restaurant_group.form.invalid: "Hay errores o datos sin completar, por favor revise todas las secciones de configuración."
