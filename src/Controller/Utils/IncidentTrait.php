@@ -17,8 +17,17 @@ trait IncidentTrait {
 
     public function incidentListAction(Request $request, PaginatorInterface $paginator)
     {
+
+        /** @var IncidentRepository $repo */
+        $repo =  $this->getDoctrine()
+            ->getRepository(Incident::class);
+
+        $incidents = $repo->getAllIncidents();
+
+
         return $this->render($request->attributes->get('template'), $this->auth([
             'layout' => $request->attributes->get('layout'),
+            'incidents' => $incidents,
         ]));
     }
 

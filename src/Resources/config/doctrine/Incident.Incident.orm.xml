@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
-  <entity name="AppBundle\Entity\Incident\Incident" table="incident">
+  <entity repository-class="AppBundle\Entity\Incident\IncidentRepository" name="AppBundle\Entity\Incident\Incident" table="incident">
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
       </id>

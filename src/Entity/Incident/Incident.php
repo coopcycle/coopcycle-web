@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use AppBundle\Action\Incident\CreateComment;
 use AppBundle\Action\Incident\IncidentAction;
+use AppBundle\Action\Incident\IncidentFastList;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 
@@ -19,8 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "normalization_context"={"groups"={"incident_get_collection"}},
- *       "pagination_enabled"=false
+ *       "controller"=IncidentFastList::class,
  *     },
  *     "post"={
  *       "method"="POST",
