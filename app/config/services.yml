@@ -580,6 +580,9 @@ services:
     arguments:
       - AppBundle\Entity\Hub
 
+  AppBundle\Entity\Incident\IncidentRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+
   AppBundle\Entity\DeliveryRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Table, Tag, Tooltip, Avatar, Button, Row, Col, Badge } from "antd";
+import { Table, Tag, Avatar, Row, Col, Badge, Switch } from "antd";
 import TaskContext from "./TaskContext";
 import _ from "lodash";
 import "antd/dist/antd.css";
@@ -22,15 +22,93 @@ function _showPriority(priority) {
   }
 }
 
+function _statusCtx({ store, order: { restaurant } }) {
+  if (store.id) {
+    return (
+      <div>
+        <i className="fa fa-truck mr-2" aria-hidden="true"></i>
+        {store.name}
+      </div>
+    );
+  }
+
+  if (restaurant.id) {
+    return (
+      <div>
+        <i className="fa fa-cutlery mr-2" aria-hidden="true"></i>
+        {restaurant.name}
+      </div>
+    );
+  }
+}
+
+function _storeFilter(value, record) {
+  if (value.startsWith("#s")) {
+    return record.store.id === parseInt(value.substring(2));
+  }
+
+  if (value.startsWith("#r")) {
+    return record.order.restaurant.id === parseInt(value.substring(2));
+  }
+
+  if (value === "store") {
+    return record.store.id;
+  }
+
+  if (value === "restaurant") {
+    return record.order.restaurant.id;
+  }
+}
+
 export default function () {
   const [incidents, setIncidents] = useState(null);
+  const [showClosed, setShowClosed] = useState(false);
 
   const users = useMemo(() => {
     return _(incidents)
-      .uniqBy("createdBy.id")
-      .map((u) => ({ value: u.createdBy.username, text: u.createdBy.username }))
+      .uniqBy("author.id")
+      .map((u) => ({ value: u.author.username, text: u.author.username }))
       .value();
   }, [incidents]);
+
+  const stores = useMemo(() => {
+    return _(incidents)
+      .filter((i) => i.store.id)
+      .uniqBy("store.id")
+      .map((i) => ({ value: "#s" + i.store.id, text: i.store.name }))
+      .value();
+  }, [incidents]);
+
+  const restaurants = useMemo(() => {
+    return _(incidents)
+      .filter((i) => i.order.restaurant.id)
+      .uniqBy("order.restaurant.id")
+      .map((i) => ({
+        value: "#r" + i.order.restaurant.id,
+        text: i.order.restaurant.name,
+      }))
+      .value();
+  }, [incidents]);
+
+  const customers = useMemo(() => {
+    return _(incidents)
+      .filter((i) => i.order.customer.id)
+      .uniqBy("order.customer.id")
+      .map((i) => ({
+        value: i.order.customer.id,
+        text: i.order.customer.username,
+      }))
+      .value();
+  }, [incidents]);
+
+  const showedIncidents = useMemo(() => {
+    if (showClosed) {
+      return incidents;
+    }
+    return _(incidents)
+      .filter((i) => i.status !== "CLOSED")
+      .value();
+  }, [incidents, showClosed]);
 
   useEffect(() => {
     async function _fetch() {
@@ -42,7 +120,6 @@ export default function () {
     _fetch();
   }, []);
 
-  console.log(users);
   const columns = [
     {
       title: "Title",
@@ -79,23 +156,33 @@ export default function () {
       ),
     },
     {
-      title: "Task",
-      dataIndex: "task",
-      key: "task",
-      render: (task) => (
-        <Tooltip placement="leftTop" title={<TaskContext task={task} />}>
-          <Button type="link">Task #{task.id}</Button>
-        </Tooltip>
-      ),
+      title: "Store",
+      key: "context",
+      filters: [
+        { text: "Store", value: "store", children: stores },
+        { text: "Restaurant", value: "restaurant", children: restaurants },
+      ],
+      filterSearch: true,
+      filterMode: "tree",
+      onFilter: _storeFilter,
+      render: _statusCtx,
+    },
+    {
+      title: "Customer",
+      dataIndex: ["order", "customer", "username"],
+      filters: customers,
+      filterSearch: true,
+      onFilter: (value, record) => record.order.customer.id === value,
+      key: "customer",
     },
     {
       title: "Author",
-      dataIndex: ["createdBy", "username"],
-      key: "createdBy",
+      dataIndex: "author",
+      key: ["author", "username"],
       filters: users,
       filterSearch: true,
-      onFilter: (value, record) => record.createdBy.username === value,
-      render: (username) => (
+      onFilter: (value, record) => record.author.username === value,
+      render: ({ username }) => (
         <>
           <Avatar
             size="small"
@@ -115,11 +202,12 @@ export default function () {
       ),
     },
   ];
-  return (
+  return <>
+    <p><Switch className="mr-2" onChange={setShowClosed} />Show closed incidents</p>
     <Table
       columns={columns}
       loading={!incidents}
-      dataSource={incidents}
+      dataSource={showedIncidents}
       expandedRowRender={(record) => (
         <Row gutter={[16, 16]}>
           <Col span={18}>
@@ -132,5 +220,5 @@ export default function () {
       )}
       rowKey="id"
     />
-  );
+  </>;
 }
