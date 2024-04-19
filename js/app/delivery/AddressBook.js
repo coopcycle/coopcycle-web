@@ -182,7 +182,10 @@ const AddressBook = ({
        {allowSearchSavedAddresses &&
         <div>
           <a className="help-block" role="button" onClick={() => setSearchSavedAddresses(!searchSavedAddresses)} aria-expanded="false">
-            <small><i className="fa fa-plus"></i> { t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME') }</small>
+            <small>
+              <i className={`fa ${searchSavedAddresses ? 'fa-chevron-down' : 'fa-chevron-right'}`}></i>
+               { t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME') }
+            </small>
           </a>
           {searchSavedAddresses &&
             <SavedAddressesBox addresses={addresses} address={address} onSelected={(selected) => {
