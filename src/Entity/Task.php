@@ -458,12 +458,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $weight;
 
     /**
-    * @var bool
-    * @Groups({"task"})
-    */
-    private $hasIncidents = false; //TODO(incident): Make this stored value into a computed value
-
-    /**
     * @Groups({"task"})
     */
     private $incidents;
@@ -1147,19 +1141,13 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     }
 
     /**
-    * @deprecated
+    * @Groups({"task"})
     */
-    public function setHasIncidents(bool $hasIncidents): void
-    {
-        $this->hasIncidents = $hasIncidents;
-    }
-
-
-    // This should be computed from `getIncidents`
-    // Ex: $this->getIncidents()->count() > 0
     public function getHasIncidents(): bool
     {
-        return $this->hasIncidents;
+        return !$this->getIncidents()->filter(function (Incident $incident) {
+            return $incident->getStatus() === Incident::STATUS_OPEN;
+        })->isEmpty();
     }
 
     public function getIncidents(): Collection

@@ -3,14 +3,9 @@
 namespace AppBundle\Action\Incident;
 
 use AppBundle\Entity\Delivery\FailureReason;
-use AppBundle\Entity\Delivery\FailureReasonRepository;
 use AppBundle\Entity\Incident\Incident;
-use AppBundle\Entity\Task;
-use Doctrine\ORM\EntityManager;
+use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -22,7 +17,8 @@ class CreateIncident
 
     public function __construct(
         private EntityManagerInterface $em,
-        private TranslatorInterface $translator
+        private TranslatorInterface $translator,
+        private TaskManager $taskManager
     )
     { }
 
@@ -63,6 +59,15 @@ class CreateIncident
         $data->setCreatedBy($user);
         $this->em->persist($data);
         $this->em->flush();
+
+        $this->taskManager->incident(
+            $data->getTask(),
+            $data->getFailureReasonCode(),
+            $data->getDescription(),
+            [
+                'incident_id' => $data->getId()
+            ]
+        );
 
         return $data;
     }
