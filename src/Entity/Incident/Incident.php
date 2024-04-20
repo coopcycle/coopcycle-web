@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\Collection;
 use AppBundle\Action\Incident\CreateComment;
 use AppBundle\Action\Incident\IncidentAction;
 use AppBundle\Action\Incident\IncidentFastList;
+use AppBundle\Action\Incident\CreateIncident;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 
@@ -24,6 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     "post"={
  *       "method"="POST",
+ *       "controller"=CreateIncident::class,
  *     }
  *   },
  *   itemOperations={
@@ -53,30 +55,30 @@ class Incident implements TaggableInterface {
     use TaggableTrait;
 
     /**
-    * @Groups({"incident", "incident_get_collection"})
+    * @Groups({"incident"})
     */
-    protected int $id;
+    protected $id;
 
     /**
-    * @Groups({"incident", "incident_get_collection"})
+    * @Groups({"incident"})
     */
-    protected string $title;
-
-
-    /**
-    * @Groups({"incident", "incident_get_collection"})
-    */
-    protected string $status;
+    protected ?string $title = null;
 
 
     /**
-    * @Groups({"incident", "incident_get_collection"})
+    * @Groups({"incident"})
     */
-    protected int $priority;
+    protected string $status = Incident::STATUS_OPEN;
 
 
     /**
-    * @Groups({"incident", "incident_get_collection"})
+    * @Groups({"incident"})
+    */
+    protected int $priority = Incident::PRIORITY_MEDIUM;
+
+
+    /**
+    * @Groups({"incident"})
     */
     protected Task $task;
 
@@ -88,7 +90,7 @@ class Incident implements TaggableInterface {
 
 
     /**
-    * @Groups({"incident", "incident_get_collection"})
+    * @Groups({"incident"})
     */
     protected ?string $description = null;
 
@@ -106,13 +108,13 @@ class Incident implements TaggableInterface {
 
 
     /**
-    * @Groups({"incident", "incident_get_collection"})
+    * @Groups({"incident"})
     */
     protected ?User $createdBy = null;
 
 
     /**
-    * @Groups({"incident", "incident_get_collection"})
+    * @Groups({"incident"})
     */
     protected $createdAt;
 
@@ -136,11 +138,11 @@ class Incident implements TaggableInterface {
         $this->events = new ArrayCollection();
     }
 
-    public function getId(): int {
+    public function getId(): ?int {
         return $this->id;
     }
 
-    public function getTitle(): string {
+    public function getTitle(): ?string {
         return $this->title;
     }
 
@@ -176,11 +178,11 @@ class Incident implements TaggableInterface {
         return $this;
     }
 
-    public function getFailureReasonCode(): string {
+    public function getFailureReasonCode(): ?string {
         return $this->failure_reason_code;
     }
 
-    public function setFailureReasonCode(string $failure_reason_code): self {
+    public function setFailureReasonCode(?string $failure_reason_code): self {
         $this->failure_reason_code = $failure_reason_code;
         return $this;
     }
