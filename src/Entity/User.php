@@ -64,13 +64,13 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
     use Timestampable;
 
     /**
-     * @Groups({"incident", "incident_get_collection"})
+     * @Groups({"incident"})
      */
     protected $id;
 
     /**
      * @var string
-     * @Groups({"incident", "incident_get_collection"})
+     * @Groups({"incident"})
      */
     protected ?string $username;
 

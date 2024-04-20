@@ -342,18 +342,18 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     const GEOFENCING_RADIUS = 300;
 
     /**
-     * @Groups({"task", "delivery", "incident_get_collection"})
+     * @Groups({"task", "delivery"})
      */
     private $id;
 
     /**
      * @Assert\Choice({"PICKUP", "DROPOFF"})
-     * @Groups({"task", "task_create", "task_edit", "delivery_create", "incident_get_collection"})
+     * @Groups({"task", "task_create", "task_edit", "delivery_create"})
      */
     private $type = self::TYPE_DROPOFF;
 
     /**
-     * @Groups({"task", "delivery", "incident_get_collection"})
+     * @Groups({"task", "delivery"})
      */
     private $status = self::STATUS_TODO;
 
@@ -404,7 +404,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $group;
 
     /**
-     * @Groups({"task", "incident_get_collection"})
+     * @Groups({"task"})
      */
     private $assignedTo;
 
