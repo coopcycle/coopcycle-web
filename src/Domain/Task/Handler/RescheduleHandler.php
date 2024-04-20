@@ -25,7 +25,6 @@ class RescheduleHandler
         $task->setBefore($rescheduledBefore);
         $task->unassign();
         $task->setMetadata('rescheduled', true);
-        $task->setHasIncidents(false);
         $task->setStatus(Task::STATUS_TODO);
     }
 }
