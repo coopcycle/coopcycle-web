@@ -1,3 +1,5 @@
+@import "../../../assets/css/vars.scss";
+
 .ReactModal__Overlay--addressProp {
   // To make sure the overlay is *ABOVE* the Leaflet map
   z-index: 1001;
@@ -5,4 +7,16 @@
 
 .ReactModal__Content--addressProp {
   max-width: 50%;
+}
+
+.SavedAddressesBox__Results {
+  max-height: 160px;
+  overflow: auto;
+
+  li {
+    &:hover,
+      &:focus {
+        background-color: $light-gray;
+      }
+  }
 }

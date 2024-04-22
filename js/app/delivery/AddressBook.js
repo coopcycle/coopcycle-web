@@ -12,6 +12,7 @@ import AddressAutosuggest from '../components/AddressAutosuggest'
 import { getCountry } from '../i18n'
 
 import './AddressBook.scss'
+import { SavedAddressesBox } from './SavedAddressBox'
 
 const AddressPopoverIcon = ({ prop }) => {
   switch (prop) {
@@ -150,12 +151,14 @@ const AddressBook = ({
   onDuplicateAddress,
   onClear,
   details,
+  allowSearchSavedAddresses,
   ...otherProps
 }) => {
 
   const { t } = useTranslation()
   const [ address, setAddress ] = useState(initialAddress)
   const [ isModalOpen, setModalOpen ] = useState(false)
+  const [ searchSavedAddresses, setSearchSavedAddresses ] = useState(false)
 
   const onAddressPropChange = (address, prop, value) => {
 
@@ -176,6 +179,22 @@ const AddressBook = ({
 
   return (
     <div>
+       {allowSearchSavedAddresses &&
+        <div>
+          <a className="help-block" role="button" onClick={() => setSearchSavedAddresses(!searchSavedAddresses)} aria-expanded="false">
+            <small>
+              <i className={`fa ${searchSavedAddresses ? 'fa-chevron-down' : 'fa-chevron-right'}`}></i>
+               { t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME') }
+            </small>
+          </a>
+          {searchSavedAddresses &&
+            <SavedAddressesBox addresses={addresses} address={address} onSelected={(selected) => {
+              setAddress(selected)
+              onAddressSelected(selected.streetAddress, selected)
+            }}/>
+          }
+        </div>
+       }
       <div>
         <AddressAutosuggest
           addresses={ addresses }
@@ -255,6 +274,7 @@ export default function(el, options) {
     newAddressControl,
     isNewAddressControl,
     duplicateAddressControl,
+    allowSearchSavedAddresses,
   } = options
 
   Modal.setAppElement(el)
@@ -393,6 +413,7 @@ export default function(el, options) {
 
   render(
     <AddressBook
+      allowSearchSavedAddresses={ Boolean(allowSearchSavedAddresses) }
       addresses={ addresses }
       initialAddress={ address }
       details={ details }
