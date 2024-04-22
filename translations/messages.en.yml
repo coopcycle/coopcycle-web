@@ -1456,3 +1456,4 @@ restaurant.form.edenred_enabled.label: Enable Edenred
 restaurants.edenred.refresh.no_updates: "The restaurant '%restaurant_name%' does not have any updates on Edenred servers so far."
 restaurants.edenred.refresh.has_updates: "The restaurant '%restaurant_name%' has had an update from Edenred servers."
 restaurants.edenred.added_list.actions: Actions
+business_restaurant_group.form.fill_all_pages: "Please, fill out all three settings pages."
