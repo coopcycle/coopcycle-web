@@ -46,6 +46,7 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "hasIncidents": false,
+            "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
@@ -77,6 +78,7 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "hasIncidents": false,
+            "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
@@ -111,6 +113,7 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "hasIncidents": false,
+            "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
@@ -142,6 +145,7 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "hasIncidents": false,
+            "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
@@ -534,6 +538,7 @@ Feature: Tasks
         "metadata": [],
         "weight":null,
         "hasIncidents": false,
+        "incidents": [],
         "packages": [],
         "createdAt":"@string@.isDateTime()"
       }
@@ -982,6 +987,7 @@ Feature: Tasks
         "metadata": [],
         "weight": 800,
         "hasIncidents": false,
+        "incidents": [],
         "packages": [],
         "createdAt":"@string@.isDateTime()"
       }
@@ -1063,6 +1069,7 @@ Feature: Tasks
         "metadata": [],
         "weight":null,
         "hasIncidents": false,
+        "incidents": [],
         "packages": [],
         "createdAt":"@string@.isDateTime()"
       }
@@ -1194,6 +1201,7 @@ Feature: Tasks
             },
             "weight":null,
             "hasIncidents": false,
+            "incidents": [],
             "packages": [],
             "createdAt":"@string@.isDateTime()"
           },
@@ -1224,6 +1232,7 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "hasIncidents": false,
+            "incidents": [],
             "packages": [],
             "createdAt":"@string@.isDateTime()"
           }

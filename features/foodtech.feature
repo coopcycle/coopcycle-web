@@ -86,7 +86,8 @@ Feature: Food Tech
               "order_promotion":[],
               "reusable_packaging":[],
               "tax":@array@,
-              "tip":[]
+              "tip":[],
+              "incident":[]
             },
             "paymentMethod": "CARD",
             "hasReceipt":@boolean@,
