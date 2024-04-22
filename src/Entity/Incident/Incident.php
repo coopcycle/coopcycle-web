@@ -126,7 +126,6 @@ class Incident implements TaggableInterface {
 
     const STATUS_OPEN = 'OPEN';
     const STATUS_CLOSED = 'CLOSED';
-    const STATUS_RESOLVED = 'RESOLVED';
 
     const PRIORITY_HIGH = 1;
     const PRIORITY_MEDIUM = 2;
