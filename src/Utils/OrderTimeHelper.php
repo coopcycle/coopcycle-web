@@ -21,6 +21,9 @@ use Redis;
 
 class OrderTimeHelper
 {
+    const MAX_CHOICES_LOGGED = 10;
+    const MAX_ACCEPTED_CHOICES_LOGGED = 3;
+
     private $choicesCache = [];
     private $extraTime;
 
@@ -39,16 +42,27 @@ class OrderTimeHelper
 
     private function filterChoices(OrderInterface $cart, array $choices)
     {
-        return array_filter($choices, function (TsRangeChoice $choice) use ($cart) {
+        $choicesLogged = 0;
+        $acceptedChoicesLogged = 0;
+
+        return array_filter($choices, function (TsRangeChoice $choice) use ($cart, &$choicesLogged, &$acceptedChoicesLogged) {
 
             $result = $this->shippingDateFilter->accept($cart, $choice->toTsRange());
 
-            $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::filterChoices; ShippingDateFilter::accept() returned %s for %s',
-                $this->loggingUtils->getOrderId($cart),
-                $this->loggingUtils->getVendors($cart),
-                var_export($result, true),
-                (string) $choice
-            ));
+            if ($choicesLogged < self::MAX_CHOICES_LOGGED && $acceptedChoicesLogged < self::MAX_ACCEPTED_CHOICES_LOGGED) {
+                $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::filterChoices; ShippingDateFilter::accept() returned %s for %s',
+                    $this->loggingUtils->getOrderId($cart),
+                    $this->loggingUtils->getVendors($cart),
+                    var_export($result, true),
+                    (string)$choice
+                ));
+                
+                if ($result) {
+                    $acceptedChoicesLogged++;
+                }
+
+                $choicesLogged++;
+            }
 
             return $result;
         });
