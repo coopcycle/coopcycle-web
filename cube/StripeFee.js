@@ -7,4 +7,16 @@ cube(`StripeFee`, {
       sql: `${CUBE}.order_id = ${Order}.id`
     }
   },
+  pre_aggregations: {
+    main: {
+      measures: [
+        StripeFee.totalAmount
+      ],
+      dimensions: [
+        Order.number
+      ],
+      timeDimension: OrderFulfilledEvent.createdAt,
+      granularity: `day`
+    }
+  }
 });

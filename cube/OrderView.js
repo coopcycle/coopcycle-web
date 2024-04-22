@@ -10,7 +10,7 @@ view(`OrderView`, {
         `hasVendor`,
         `total`,
         `itemsTotal`,
-        `paymentMethod`,
+        // `paymentMethod`,
         // Measures
         `itemsTaxTotal`,
         `deliveryFee`,
@@ -91,6 +91,10 @@ view(`OrderView`, {
         },
       ]
     },
+    // {
+    //   join_path: Order.OrderItem.OrderItemAdjustment,
+    //   includes: `*`
+    // },
     {
       join_path: Order.Delivery,
       includes: [
@@ -103,7 +107,22 @@ view(`OrderView`, {
     {
       join_path: Order.Payment,
       includes: [
-        `refundTotal`
+        `refundTotal`,
+        /*
+        {
+          name: `method`,
+          alias: `paymentMethod`
+        },
+        */
+      ]
+    },
+    {
+      join_path: Order.Payment.PaymentMethod,
+      includes: [
+        {
+          name: `code`,
+          alias: `paymentMethod`
+        },
       ]
     },
   ]

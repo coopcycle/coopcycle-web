@@ -1,14 +1,17 @@
 cube(`Payment`, {
   sql_table: `public.sylius_payment`,
   joins: {
+    /*
     Order: {
       relationship: `many_to_one`,
       sql: `${CUBE}.order_id = ${Order}.id`
     },
+    /*
     Refund: {
       relationship: `one_to_many`,
       sql: `${CUBE}.id = ${Refund}.payment_id`
     },
+    */
     PaymentMethod: {
       relationship: `one_to_one`,
       sql: `${CUBE}.method_id = ${PaymentMethod}.id`
@@ -16,8 +19,8 @@ cube(`Payment`, {
   },
   measures: {
     refundTotal: {
-      sql: `${CUBE.Refund.totalAmount}`,
-      type: `number`,
+      sql: `${CUBE.Refund.amount}`,
+      type: `sum`,
       format: `currency`
     },
   },

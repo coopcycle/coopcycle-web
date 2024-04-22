@@ -14,13 +14,9 @@ cube(`Order`, {
       relationship: `one_to_one`,
       sql: `${CUBE}.id = ${OrderFulfilledEvent}.aggregate_id`
     },
-    Adjustment: {
+    OrderAdjustment: {
       relationship: `one_to_many`,
-      sql: `${CUBE}.id = ${Adjustment}.order_id`,
-    },
-    DeliveryAdjustment: {
-      relationship: `one_to_many`,
-      sql: `${CUBE}.id = ${DeliveryAdjustment}.order_id`,
+      sql: `${CUBE}.id = ${OrderAdjustment}.order_id`,
     },
     MessengerWithOrder: {
       relationship: `one_to_one`,
@@ -29,26 +25,6 @@ cube(`Order`, {
     Delivery: {
       relationship: `one_to_one`,
       sql: `${CUBE}.id = ${Delivery}.order_id`,
-    },
-    TipAdjustment: {
-      relationship: `one_to_many`,
-      sql: `${CUBE}.id = ${TipAdjustment}.order_id`,
-    },
-    ReusablePackagingAdjustment: {
-      relationship: `one_to_many`,
-      sql: `${CUBE}.id = ${ReusablePackagingAdjustment}.order_id`,
-    },
-    PromotionAdjustment: {
-      relationship: `one_to_many`,
-      sql: `${CUBE}.id = ${PromotionAdjustment}.order_id`,
-    },
-    StripeFee: {
-      relationship: `one_to_many`,
-      sql: `${CUBE}.id = ${StripeFee}.order_id`,
-    },
-    PlatformFee: {
-      relationship: `one_to_many`,
-      sql: `${CUBE}.id = ${PlatformFee}.order_id`,
     },
     OrderItem: {
       relationship: `one_to_many`,
@@ -66,21 +42,9 @@ cube(`Order`, {
       drillMembers: [id]
     },
 
-    itemsTotal: {
-      sql: `ROUND(${CUBE}.items_total / 100::numeric, 2)`,
-      type: `sum`,
-      format: `currency`
-    },
-
     adjustmentsTotal: {
       sql: `adjustments_total`,
       type: `sum`
-    },
-
-    total: {
-      sql: `ROUND(${CUBE}.total / 100::numeric, 2)`,
-      type: `sum`,
-      format: `currency`
     },
 
     averageTotal: {
@@ -89,9 +53,10 @@ cube(`Order`, {
     },
 
     deliveryFee: {
-      sql: `${CUBE.DeliveryAdjustment.totalAmount}`,
-      type: `number`,
-      format: `currency`
+      sql: `${CUBE.OrderAdjustment.amount}`,
+      type: `sum`,
+      format: `currency`,
+      filters: [{ sql: `${CUBE.OrderAdjustment.type} = 'delivery'` }],
     },
 
     vendorCount: {
@@ -100,33 +65,38 @@ cube(`Order`, {
     },
 
     tip: {
-      sql: `${CUBE.TipAdjustment.totalAmount}`,
-      type: `number`,
-      format: `currency`
+      sql: `${CUBE.OrderAdjustment.amount}`,
+      type: `sum`,
+      format: `currency`,
+      filters: [{ sql: `${CUBE.OrderAdjustment.type} = 'tip'` }],
     },
 
     packagingFee: {
-      sql: `${CUBE.ReusablePackagingAdjustment.totalAmount}`,
-      type: `number`,
-      format: `currency`
+      sql: `${CUBE.OrderAdjustment.amount}`,
+      type: `sum`,
+      format: `currency`,
+      filters: [{ sql: `${CUBE.OrderAdjustment.type} = 'reusable_packaging'` }],
     },
 
     promotions: {
-      sql: `${CUBE.PromotionAdjustment.totalAmount}`,
-      type: `number`,
-      format: `currency`
+      sql: `${CUBE.OrderAdjustment.amount}`,
+      type: `sum`,
+      format: `currency`,
+      filters: [{ sql: `${CUBE.OrderAdjustment.type} IN ('delivery_promotion', 'order_promotion')` }],
     },
 
     stripeFee: {
-      sql: `${CUBE.StripeFee.totalAmount}`,
-      type: `number`,
-      format: `currency`
+      sql: `${CUBE.OrderAdjustment.amount}`,
+      type: `sum`,
+      format: `currency`,
+      filters: [{ sql: `${CUBE.OrderAdjustment.type} = 'stripe_fee'` }],
     },
 
     platformFee: {
-      sql: `${CUBE.PlatformFee.totalAmount}`,
-      type: `number`,
-      format: `currency`
+      sql: `${CUBE.OrderAdjustment.amount}`,
+      type: `sum`,
+      format: `currency`,
+      filters: [{ sql: `${CUBE.OrderAdjustment.type} = 'fee'` }],
     },
 
     itemsTaxTotal: {
@@ -135,11 +105,11 @@ cube(`Order`, {
       format: `currency`
     },
 
-    revenue: {
-      sql: `${CUBE.total} - ${CUBE.PlatformFee.totalAmount} - ${CUBE.StripeFee.totalAmount}`,
-      type: `number`,
-      format: `currency`
-    },
+    // revenue: {
+    //   sql: `${CUBE.total} - ${CUBE.platformFee} - ${CUBE.stripeFee}`,
+    //   type: `number`,
+    //   format: `currency`
+    // },
 
   },
 
@@ -214,11 +184,55 @@ cube(`Order`, {
       sub_query: true,
     },
 
+    /*
     paymentMethod: {
       type: `string`,
       sql: `${CUBE.Payment.method}`,
     },
+    */
 
+    total: {
+      sql: `ROUND(${CUBE}.total / 100::numeric, 2)`,
+      type: `number`,
+      format: `currency`
+    },
+
+    itemsTotal: {
+      sql: `ROUND(${CUBE}.items_total / 100::numeric, 2)`,
+      type: `number`,
+      format: `currency`
+    },
+
+  },
+
+  pre_aggregations: {
+    // main: {
+    //   measures: [
+    //     Order.total,
+    //     Order.itemsTotal,
+    //     TaxAdjustment.totalAmount,
+    //     OrderItem.total,
+    //     TaxAdjustment.total_standard,
+    //     TaxAdjustment.total_intermediary,
+    //     TaxAdjustment.total_reduced,
+    //     TipAdjustment.totalAmount,
+    //     ReusablePackagingAdjustment.totalAmount,
+    //     DeliveryAdjustment.totalAmount,
+    //     StripeFee.totalAmount,
+    //     PromotionAdjustment.totalAmount,
+    //     PlatformFee.totalAmount,
+    //     Refund.totalAmount
+    //   ],
+    //   dimensions: [
+    //     Order.fulfillmentMethod,
+    //     Order.hasVendor,
+    //     Order.number,
+    //     OrderVendor.name,
+    //     Store.name
+    //   ],
+    //   timeDimension: OrderFulfilledEvent.createdAt,
+    //   granularity: `day`
+    // }
   },
 
   dataSource: `default`

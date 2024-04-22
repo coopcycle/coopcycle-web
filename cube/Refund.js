@@ -1,5 +1,11 @@
 cube(`Refund`, {
   sql_table: `public.refund`,
+  // joins: {
+  //   Payment: {
+  //     relationship: `many_to_one`,
+  //     sql: `${CUBE}.id = ${Paymen}.refund_id`
+  //   },
+  // },
   dimensions: {
     id: {
       sql: `id`,
@@ -18,5 +24,17 @@ cube(`Refund`, {
       format: `currency`
     },
   },
+  // pre_aggregations: {
+  //   main: {
+  //     measures: [
+  //       Refund.totalAmount
+  //     ],
+  //     dimensions: [
+  //       Order.number
+  //     ],
+  //     timeDimension: OrderFulfilledEvent.createdAt,
+  //     granularity: `day`
+  //   }
+  // },
   dataSource: `default`
 });

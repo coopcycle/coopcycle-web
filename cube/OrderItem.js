@@ -1,13 +1,15 @@
 cube(`OrderItem`, {
   sql_table: `public.sylius_order_item`,
   joins: {
+    /*
     Order: {
       relationship: `many_to_one`,
       sql: `${CUBE}.order_id = ${Order}.id`
     },
-    TaxAdjustment: {
+    */
+    OrderItemAdjustment: {
       relationship: `many_to_one`,
-      sql: `${CUBE}.id = ${TaxAdjustment}.order_item_id`
+      sql: `${CUBE}.id = ${OrderItemAdjustment}.order_item_id`
     }
   },
   dimensions: {
@@ -23,35 +25,45 @@ cube(`OrderItem`, {
       type: `sum`,
     },
     taxTotal: {
-      sql: `${CUBE.TaxAdjustment.totalAmount}`,
-      type: `number`,
+      sql: `${CUBE.OrderItemAdjustment.amount}`,
+      type: `sum`,
+      filters: [{ sql: `${CUBE.OrderItemAdjustment.type} = 'tax'` }],
     },
     tax_total_standard: {
-      sql: `${CUBE.TaxAdjustment.total_standard}`,
-      type: `number`,
+      sql: `${CUBE.OrderItemAdjustment.amount}`,
+      type: `sum`,
+      filters: [{
+        sql: `${CUBE.OrderItemAdjustment}.type = 'tax' AND ${CUBE.OrderItemAdjustment}.origin_code IN ('FR_BASE_STANDARD_STANDARD', 'FR_SERVICE_STANDARD', 'FR_DRINK_ALCOHOL_STANDARD')`
+      }],
     },
     tax_total_intermediary: {
-      sql: `${CUBE.TaxAdjustment.total_intermediary}`,
-      type: `number`,
+      sql: `${CUBE.OrderItemAdjustment.amount}`,
+      type: `sum`,
+      filters: [{
+        sql: `${CUBE.OrderItemAdjustment.type} = 'tax' AND ${CUBE.OrderItemAdjustment}.origin_code IN ('FR_BASE_INTERMEDIARY_INTERMEDIARY', 'FR_FOOD_TAKEAWAY_INTERMEDIARY')`
+      }],
     },
     tax_total_reduced: {
-      sql: `${TaxAdjustment.total_reduced}`,
-      type: `number`,
+      sql: `${CUBE.OrderItemAdjustment.amount}`,
+      type: `sum`,
+      filters: [{
+        sql: `${CUBE.OrderItemAdjustment.type} = 'tax' AND ${CUBE.OrderItemAdjustment}.origin_code IN ('FR_BASE_REDUCED_REDUCED', 'FR_DRINK_REDUCED')`
+      }],
     },
     total_excl_tax: {
-      sql: `${CUBE.total} - ${CUBE.TaxAdjustment.totalAmount}`,
+      sql: `0`, // `${CUBE.total} - ${CUBE.TaxAdjustment.totalAmount}`,
       type: `number`,
     },
     total_excl_tax_standard: {
-      sql: `${CUBE.total} - ${TaxAdjustment.total_standard}`,
+      sql: `0`, // `${CUBE.total} - ${CUBE.TaxAdjustment.total_standard}`,
       type: `number`,
     },
     total_excl_tax_intermediary: {
-      sql: `${CUBE.total} - ${TaxAdjustment.total_intermediary}`,
+      sql: `0`, // `${CUBE.total} - ${CUBE.TaxAdjustment.total_intermediary}`,
       type: `number`,
     },
     total_excl_tax_reduced: {
-      sql: `${CUBE.total} - ${TaxAdjustment.total_reduced}`,
+      sql: `0`, // `${CUBE.total} - ${CUBE.TaxAdjustment.total_reduced}`,
       type: `number`,
     },
   },

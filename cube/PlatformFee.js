@@ -7,12 +7,24 @@ cube(`PlatformFee`, {
       sql: `${CUBE}.order_id = ${Order}.id`
     }
   },
-  measures: {
-    // For backwards compatibility
-    amount: {
-      sql: `ROUND(amount / 100::numeric, 2)`,
-      type: `sum`,
-      format: `currency`
+  // measures: {
+  //   // For backwards compatibility
+  //   amount: {
+  //     sql: `ROUND(amount / 100::numeric, 2)`,
+  //     type: `sum`,
+  //     format: `currency`
+  //   }
+  // },
+  pre_aggregations: {
+    main: {
+      measures: [
+        PlatformFee.totalAmount
+      ],
+      dimensions: [
+        Order.number
+      ],
+      timeDimension: OrderFulfilledEvent.createdAt,
+      granularity: `day`
     }
   }
 });

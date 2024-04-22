@@ -79,8 +79,108 @@ class IndexController extends AbstractController
     public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache,
         TimingRegistry $timingRegistry,
         UrlGeneratorInterface $urlGenerator,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        \AppBundle\CubeJs\TokenFactory $tokenFactory,
+        \Symfony\Contracts\HttpClient\HttpClientInterface $cubejsClient)
     {
+        $cubeJsToken = $tokenFactory->createToken([
+            'database' => 'robinfood',
+            'base_url' => 'https://robinfood.coopcycle.org'
+        ]);
+
+        $json = <<<'EOD'
+        {
+                "dimensions": [
+                    "OrderView.number",
+                    "OrderView.hasVendor",
+                    "OrderView.vendorName",
+                    "OrderView.storeName",
+                    "OrderView.fulfillmentMethod",
+                    "OrderView.completedAt",
+                    "OrderView.completedBy",
+                    "OrderView.paymentMethod",
+                    "OrderView.delivery_distance",
+                    "OrderView.total",
+                    "OrderView.itemsTotal"
+                ],
+                "measures": [
+                    "OrderView.itemsTaxTotal",
+                    "OrderView.items_total_excl_tax_standard",
+                    "OrderView.items_total_excl_tax_intermediary",
+                    "OrderView.items_total_excl_tax_reduced",
+                    "OrderView.items_total_excl_tax",
+                    "OrderView.items_tax_total_standard",
+                    "OrderView.items_tax_total_intermediary",
+                    "OrderView.items_tax_total_reduced",
+                    "OrderView.tip",
+                    "OrderView.packagingFee",
+                    "OrderView.deliveryFee",
+                    "OrderView.stripeFee",
+                    "OrderView.promotions",
+                    "OrderView.platformFee"
+                ],
+                "filters": [
+                    {
+                        "member": "OrderView.state",
+                        "operator": "equals",
+                        "values": [
+                            "fulfilled"
+                        ]
+                    }
+                ],
+                "timeDimensions": [
+                    {
+                        "dimension": "OrderView.completedAt",
+                        "dateRange": [null, null]
+                    }
+                ],
+                "order": [
+                    [
+                        "OrderView.completedAt",
+                        "desc"
+                    ]
+                ]
+            }
+EOD;
+
+        $query = json_decode($json, true);
+
+        echo '<pre>';
+        $query['timeDimensions'][0]['dateRange'] = [
+            '2024-04-01',
+            '2024-04-15'
+        ];
+
+        $response = $cubejsClient->request('GET', 'sql?query='.urlencode(json_encode($query)), [
+            'headers' => [
+                'Authorization' => $cubeJsToken,
+                'Content-Type' => 'application/json',
+            ],
+            // 'body' => json_encode(['query' => $query])
+        ]);
+
+        // Need to invoke a method on the Response,
+        // to actually throw the Exception here
+        // https://github.com/symfony/symfony/issues/34281
+        // https://symfony.com/doc/5.4/http_client.html#handling-exceptions
+        $content = $response->getContent();
+
+        $resultSet = json_decode($content, true);
+
+        print_r($resultSet);
+
+        // $response = $cubejsClient->request('POST', 'load', [
+        //     'headers' => [
+        //         'Authorization' => $token,
+        //         'Content-Type' => 'application/json',
+        //     ],
+        //     'body' => json_encode(['query' => $query])
+        // ]);
+
+        var_dump($token);
+
+
+        exit;
         $user = $this->getUser();
 
         if ($user && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_RESTAURANT'))) {

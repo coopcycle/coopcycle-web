@@ -230,7 +230,7 @@ services:
       - CUBEJS_DEV_MODE=true
       - CUBEJS_API_SECRET
       - CUBEJS_SCHEMA_PATH=schema
-      - CUBEJS_CACHE_AND_QUEUE_DRIVER=memory
+      # - CUBEJS_CACHE_AND_QUEUE_DRIVER=memory
     volumes:
       - ./cube:/cube/conf/schema
       - ./cube.js:/cube/conf/cube.js
