@@ -1831,7 +1831,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
