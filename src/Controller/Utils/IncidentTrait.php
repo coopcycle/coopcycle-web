@@ -40,7 +40,7 @@ trait IncidentTrait {
         }
 
         /** @var ?Delivery $delivery */
-        $delivery = $incident->getTask()?->getDelivery();
+        $delivery = $incident->getTask()->getDelivery();
 
         $transporterEnabled = $delivery?->getStore()?->isTransporterEnabled() ?? false;
 
