@@ -413,7 +413,7 @@ export default function(el, options) {
 
   render(
     <AddressBook
-      allowSearchSavedAddresses={ allowSearchSavedAddresses }
+      allowSearchSavedAddresses={ Boolean(allowSearchSavedAddresses) }
       addresses={ addresses }
       initialAddress={ address }
       details={ details }
