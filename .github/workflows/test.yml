@@ -81,6 +81,7 @@ jobs:
   E2E:
     name: Run end to end tests with cypress
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     env:
       GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
