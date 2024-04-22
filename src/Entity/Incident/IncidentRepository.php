@@ -19,7 +19,7 @@ class IncidentRepository extends EntityRepository {
             $tempArray = &$outputArray;
 
             foreach ($keys as $nestedKey) {
-                if (!isset($tempArray[$nestedKey])) {
+                if (is_array($tempArray) && !isset($tempArray[$nestedKey])) {
                     $tempArray[$nestedKey] = [];
                 }
                 $tempArray = &$tempArray[$nestedKey];

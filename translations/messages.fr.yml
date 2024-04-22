@@ -1319,6 +1319,7 @@ delivery.failure_reason:
   packaging_problems: "Problèmes d'emballage"
   holiday_closure: "Fermeture pour congé"
   closed_store: "Magasin fermé"
+  not_at_home: "Client absent"
 adminDashboard.failureSet.title: "Motifs d'échec"
 adminDashboard.failureSet.help: "Définissez les motifs pour lesquelles vos livraisons peuvent échouer."
 adminDashboard.failureSet.nofailureSet: "Aucun motif d'échec"

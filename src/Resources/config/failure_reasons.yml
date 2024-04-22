@@ -3,6 +3,8 @@ failure_reasons:
     - { code: "DAMAGED", description: "delivery.failure_reason.default.damaged" }
     - { code: "LOST", description: "delivery.failure_reason.default.lost" }
     - { code: "LATE", description: "delivery.failure_reason.default.late" }
+    - { code: "NOT_AT_HOME", description: "delivery.failure_reason.default.not_at_home" }
+    - { code: "CLOSED_STORE", description: "delivery.failure_reason.default.closed_store" }
     - { code: "WRONG_ADDR", description: "delivery.failure_reason.default.incorrect_address" }
     - { code: "REFUSED", description: "delivery.failure_reason.default.customer_refused" }
     - { code: "ITEM_MISSING", description: "delivery.failure_reason.default.item_missing" }
@@ -17,7 +19,6 @@ failure_reasons:
     - { code: "INSUFFICIENT_FUND", description: "delivery.failure_reason.default.insufficient_funds" }
     - { code: "DATA_ERROR", description: "delivery.failure_reason.default.data_entry_error" }
     - { code: "PACKAGING_ISSUE", description: "delivery.failure_reason.default.packaging_problems" }
-    - { code: "CLOSED_STORE", description: "delivery.failure_reason.default.closed_store" }
     - { code: "HOLIDAY", description: "delivery.failure_reason.default.holiday_closure" }
     - { code: "ADDRESS_REVIEW_NEEDED", description: "delivery.failure_reason.default.address_review_needed" }
   dbschenker:
