@@ -8,7 +8,7 @@ function getAddressesFilter(inputValue) {
   return function addressesFilter(address) {
     return (
       !inputValue ||
-      address.name.toLowerCase().includes(lowerCasedInputValue)
+      address.name?.toLowerCase().includes(lowerCasedInputValue)
     )
   }
 }
