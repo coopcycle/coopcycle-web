@@ -202,23 +202,28 @@ export default function () {
       ),
     },
   ];
-  return <>
-    <p><Switch className="mr-2" onChange={setShowClosed} />Show closed incidents</p>
-    <Table
-      columns={columns}
-      loading={!incidents}
-      dataSource={showedIncidents}
-      expandedRowRender={(record) => (
-        <Row gutter={[16, 16]}>
-          <Col span={18}>
-            <p>{record.description}</p>
-          </Col>
-          <Col span={6}>
-            <TaskContext task={record.task} />
-          </Col>
-        </Row>
-      )}
-      rowKey="id"
-    />
-  </>;
+  return (
+    <>
+      <p>
+        <Switch className="mr-2" onChange={setShowClosed} />
+        Show closed incidents
+      </p>
+      <Table
+        columns={columns}
+        loading={!incidents}
+        dataSource={showedIncidents}
+        expandedRowRender={(record) => (
+          <Row gutter={[16, 16]}>
+            <Col span={18}>
+              <p>{record.description}</p>
+            </Col>
+            <Col span={6}>
+              <TaskContext task={record.task} />
+            </Col>
+          </Row>
+        )}
+        rowKey="id"
+      />
+    </>
+  );
 }

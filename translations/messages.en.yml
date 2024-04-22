@@ -1348,6 +1348,7 @@ delivery.failure_reason:
     holiday_closure: "Holiday Closure"
     closed_store: "Closed Store"
     address_review_needed: "Address Review Needed"
+    not_at_home: "Customer not at home"
   transporter:
     state:
       aar: "À quai"
