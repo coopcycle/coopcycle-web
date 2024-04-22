@@ -39,9 +39,17 @@ function _priorytyLabel(key) {
 function _statusBtn(status) {
   switch (status) {
     case "OPEN":
-      return { next: "CLOSED", label: "Close this incident" };
+      return {
+        next: "CLOSED",
+        label: "Close this incident",
+        icon: <i className="fa fa-dot-circle-o mr-2" />,
+      };
     case "CLOSED":
-      return { next: "OPEN", label: "Reopen this incident" };
+      return {
+        next: "OPEN",
+        label: "Reopen this incident",
+        icon: <i className="fa fa-check-circle-o mr-2" />,
+      };
   }
 }
 
@@ -55,6 +63,8 @@ export default function () {
     return null;
   }
 
+  const { next, label, icon } = _statusBtn(status);
+
   return (
     <PageHeader
       title={incident.title}
@@ -62,7 +72,6 @@ export default function () {
         <Dropdown.Button
           key="close"
           onClick={() => {
-            const next = _statusBtn(status).next;
             setStatus(next);
             syncData(incident.id, { status: next });
           }}
@@ -80,7 +89,8 @@ export default function () {
           }}
           type="primary"
         >
-          {_statusBtn(status).label}
+          {icon}
+          {label}
         </Dropdown.Button>,
       ]}
     >
