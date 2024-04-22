@@ -38,6 +38,15 @@
     {% endif %}
   {% endif %}
 
+  {% if form.edenredEnabled is defined %}
+      <div class="alert alert-warning">
+        {{ field_label(form.edenredEnabled) }}
+        <div class="pull-right">
+          {{ form_widget(form.edenredEnabled, { attr: { class: 'checkbox switch' }}) }}
+        </div>
+      </div>
+    {% endif %}
+
 {% endif %}
 
 {% if form.allowStripeConnect is defined and not form.allowStripeConnect.rendered %}
@@ -50,6 +59,6 @@
   {% do form.allowMercadopagoConnect.setRendered %}
 {% endif %}
 
-{% if form.edenredMerchantId is defined %}
-  {{ form_row(form.edenredMerchantId) }}
+{% if form.edenredEnabled is defined and not form.edenredEnabled.rendered %}
+  {% do form.edenredEnabled.setRendered %}
 {% endif %}

@@ -1413,3 +1413,20 @@ form.product.business_restaurant_group.price_definition.label: Definir precios p
 form.product.business_restaurant_group.price_definition.placeholder: Por favor seleccione uno
 business_restaurant_group.label: Grupo de restaurantes para empresas
 business_restaurant_group.form.invalid: "Hay errores o datos sin completar, por favor revise todas las secciones de configuración."
+restaurants.edenred.add_restaurants: Agregar restaurantes
+restaurants.edenred.add_list_title: Listado de restaurantes a enviar a Edenred
+restaurants.edenred.added_restaurants: Restaurantes agregados
+restaurants.edenred.already_sent: "Los restaurantes que aparecen tachados es por que\
+  \ ya han sido enviados a Edenred para su incorporación.\
+  \ Por favor <a href=\"%link%\">haga click aquí</a> para ver su estado."
+restaurants.edenred.added_list.name: Nombre
+restaurants.edenred.added_list.merchant_id: Merchant ID
+restaurants.edenred.added_list.tr_card_enabled: TR card habilitada
+restaurants.edenred.sending_success: "Los restaurantes han sido enviados a Edenred con éxito."
+restaurants.edenred.sending_failed: "Hubo un error al enviar los restaurantes a Edenred. Intente nuevamente más tarde."
+restaurants.edenred.sending_failed.errors: "Se han encontrado errores en algunos de los restaurantes:"
+restaurants.edenred.sending_failed.no_siret: "El restaurant '%restaurant_name%' no tiene un Siret definido."
+restaurant.form.edenred_enabled.label: Habilitar Edenred
+restaurants.edenred.refresh.no_updates: "El restaurante '%restaurant_name%' hasta ahora no ha tenido actualizaciones en los servidores de Edenred."
+restaurants.edenred.refresh.has_updates: "El restaurante '%restaurant_name%' ha tenido actualizaciones de los servidores de Edenred."
+restaurants.edenred.added_list.actions: Acciones

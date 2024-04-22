@@ -74,6 +74,20 @@ admin_restaurants_edenred:
         layout: 'admin.html.twig'
     methods: [ GET, POST ]
 
+admin_add_restaurants_edenred:
+    path: /admin/restaurants/edenred/add
+    defaults:
+        _controller: AppBundle\Controller\AdminController::addRestaurantsEdenredAction
+        layout: 'admin.html.twig'
+    methods: [ GET, POST ]
+
+admin_refresh_restaurant_edenred:
+    path: /admin/restaurants/edenred/refresh/{restaurantId}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::refreshRestaurantEdenredAction
+        layout: 'admin.html.twig'
+    methods: [ GET ]
+
 admin_hub_new:
     path: /admin/restaurants/hubs/new
     defaults:
