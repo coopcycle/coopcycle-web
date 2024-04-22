@@ -43,8 +43,6 @@ function formatContext({ delivery, order }) {
 
 export default function ({ task }) {
   const [context, setContext] = useState(null);
-  console.log(context);
-  console.log(task);
 
   useEffect(() => {
     async function _fetch() {

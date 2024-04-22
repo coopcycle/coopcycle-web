@@ -13,7 +13,6 @@
 {% if delivery.store is not empty and delivery.store.isDBSchenkerEnabled %}
 {% set importMessage = delivery.getDropoff().getImportMessage() %}
 {% set ediMessages = delivery.getDropoff().getEdifactMessagesTimeline() %}
-{{ dump(ediMessages) }}
 <div class="panel panel-primary">
   <div class="panel-heading">
     <h3 class="panel-title">DBSchenker</h3>

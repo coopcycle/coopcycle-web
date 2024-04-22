@@ -31,7 +31,7 @@ function heading(task, delivery, order) {
       {btn}
     </h4>
   );
-  console.log(order);
+
   if (order?.number) {
     const link = window.Routing.generate("admin_order", { id: order.id });
     return header(`Order N° ${order.number}`, _externalLink(link));
