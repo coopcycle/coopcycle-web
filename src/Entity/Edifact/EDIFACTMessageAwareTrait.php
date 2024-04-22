@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Edifact;
 
 use AppBundle\Presenter\EDIFACTMessagePresenter;
 use Doctrine\Common\Collections\Collection;
+use Illuminate\Support\Collection as IlluminateCollection;
 
 trait EDIFACTMessageAwareTrait
 {
@@ -22,7 +23,7 @@ trait EDIFACTMessageAwareTrait
             ->first();
     }
 
-    public function getReports(): Collection
+    public function getReports(): IlluminateCollection
     {
         return collect($this->edifactMessages)
             ->filter(fn (EDIFACTMessage $message) => $message->getMessageType() === EDIFACTMessage::MESSAGE_TYPE_REPORT);
@@ -35,7 +36,6 @@ trait EDIFACTMessageAwareTrait
 
     public function getEdifactMessagesTimeline(): array
     {
-        dump($this->edifactMessages->toArray());
         return array_map(fn (EDIFACTMessage $message) => EDIFACTMessagePresenter::toTimeline($message), $this->edifactMessages->toArray());
     }
 
