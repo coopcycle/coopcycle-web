@@ -81,7 +81,6 @@ jobs:
   E2E:
     name: Run end to end tests with cypress
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
     env:
       GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
@@ -125,26 +124,14 @@ jobs:
         with:
           spec: |
             cypress/e2e/**/*.cy.js
-          browser: chrome
         # after the test run completes store videos and any screenshots
-      - uses: actions/upload-artifact@v4
+      - name: Upload images for failed tests
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cypress-screenshots
           path: cypress/screenshots
           if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
-
-      # - name: Print logs
-      #   if: always()
-      #   run: cat var/logs/*.log
-      # - name: Upload screenshots
-      #   if: always()
-      #   run: |
-      #     python -m pip install --upgrade pip
-      #     pip install python-swiftclient python-keystoneclient
-      #     pip install awscli
-      #     tar czvf $GITHUB_SHA.tgz -C cypress/videos .
-      #     aws --endpoint=$AWS_ENDPOINT s3 cp $GITHUB_SHA.tgz s3://cypress/$GITHUB_SHA.tgz --acl private
   COMPONENT:
     name: Run component tests with Cypress
     runs-on: ubuntu-latest
@@ -162,15 +149,10 @@ jobs:
         with:
           component: true
           spec: cypress/component/**/*.cy.js
-      - uses: actions/upload-artifact@v4
+      - name: Upload images for failed tests
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: cypress-screenshots
           path: cypress/screenshots
-          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: cypress-videos
-          path: cypress/videos
           if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
