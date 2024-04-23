@@ -29,7 +29,7 @@ async function syncData(id, body) {
 function _prioryToLabel(key) {
   switch (key) {
     case 1:
-      return "HIGHT";
+      return "HIGH";
     case 2:
       return "MEDIUM";
     case 3:
