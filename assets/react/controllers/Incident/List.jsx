@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Table, Tag, Avatar, Row, Col, Badge, Switch } from "antd";
 import TaskContext from "./TaskContext";
 import _ from "lodash";
-import "antd/dist/antd.css";
+import "antd/lib/pagination/style/index.css";
 import { useTranslation } from "react-i18next";
 
 async function _fetchIncidents() {
