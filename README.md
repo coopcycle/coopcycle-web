@@ -155,10 +155,12 @@ docker compose up
 
 In the `.env` file you need to set `GEOCODE_EARTH_API_KEY` to a valid API key. You need also Stripe configured on the platform or in the `.env` file (`STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_CONNECT_CLIENT_ID`).
 
-and then this command will lead you to CYpress GUI
+and then this command will lead you to Cypress GUI
 ```
 cypress open
 ```
+
+The Cypress tests will run automatically in Github CI on the `master` branch. You can get screenshots of the failed tests from the `Upload images for failed test` step (there is a link there to download the failed steps).
 
 
 Debugging
