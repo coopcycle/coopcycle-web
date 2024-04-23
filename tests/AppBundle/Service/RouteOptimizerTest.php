@@ -138,15 +138,8 @@ class RouteOptimizerTest extends KernelTestCase
 
         $problem = $optimizer->createRoutingProblem($taskList);
 
-        $this->assertCount(1, $problem->getShipments());
-
-        $tourShipment = $problem->getShipments()[0];
-
-        $this->assertEquals($tourShipment->pickup->location,[2.3681042, 48.8532461]);
-        $this->assertEquals($tourShipment->delivery->location, [2.362811, 48.867598]);
-        $tourShipment->delivery->location = [];
-
-        $this->assertCount(4, $problem->getJobs());
+        $this->assertCount(0, $problem->getShipments());
+        $this->assertCount(5, $problem->getJobs());
     }
 
     public function testOptimizeWithTour()

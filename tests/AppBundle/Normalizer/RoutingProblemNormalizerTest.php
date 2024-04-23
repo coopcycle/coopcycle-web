@@ -70,21 +70,24 @@ class RoutingProblemNormalizerTest extends TestCase
                     "location"=>[2.336311340332, 48.87261892829],
                     "time_windows"=>[
                         [ (int) $after->format('U'), (int) $before->format('U') ]
-                    ]
+                    ],
+                    "description"=> ""
                 ],
                 [
                     "id"=>1,
                     "location"=>[2.354850769043, 48.869231581254],
                     "time_windows"=>[
                         [ (int) $after->format('U'), (int) $before->format('U') ]
-                    ]
+                    ],
+                    "description"=> ""
                 ],
                 [
                     "id"=>2,
                     "location"=>[2.3466110229492, 48.876006045999],
                     "time_windows"=>[
                         [ (int) $after->format('U'), (int) $before->format('U') ]
-                    ]
+                    ],
+                    "description"=> ""
                 ],
             ],
             "shipments"=>[],
