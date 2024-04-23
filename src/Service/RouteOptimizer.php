@@ -14,6 +14,7 @@ use AppBundle\Vroom\Vehicle;
 use AppBundle\Entity\TaskCollection;
 use Carbon\Carbon;
 use Geocoder\Model\Coordinates;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -24,10 +25,11 @@ class RouteOptimizer
 {
     private $vroomClient;
 
-    public function __construct(HttpClientInterface $vroomClient, SettingsManager $settingsManager)
+    public function __construct(HttpClientInterface $vroomClient, SettingsManager $settingsManager, LoggerInterface $logger)
     {
         $this->vroomClient = $vroomClient;
         $this->settingsManager = $settingsManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -42,6 +44,9 @@ class RouteOptimizer
 
         $normalizer = new RoutingProblemNormalizer();
 
+        $this->logger->debug("Input data for routing problem");
+        $this->logger->debug(print_r($normalizer->normalize($routingProblem), true));
+
         // TODO Catch Exception
         $response = $this->vroomClient->request('POST', '', [
             'headers' => ['Content-Type'=> 'application/json'],
@@ -52,19 +57,27 @@ class RouteOptimizer
         $data = json_decode((string) $response->getContent(), true);
 
         $firstRoute = $data['routes'][0];
+
+        // remove the first result which is the starting point, for now equal of the first task of the list
         array_shift($firstRoute['steps']);
+
+        $this->logger->debug("Route optimization result");
+        $this->logger->debug(print_r($firstRoute['steps'], true));
 
         $jobIds = [];
         // extract task ids from steps
         foreach ($firstRoute['steps'] as $step) {
             if (array_key_exists('description', $step) && str_starts_with($step['description'], 'tour')) {
-                $tourId = explode($step['description'], ':')[1];
-                $tourTasks = array_filter($tasks, function ($task) use ($tourId) {
-                    return $task->getTour() && $task->getTour()->getId() === $tourId;
-                });
-                array_push(
-                    array_map(function ($task) { return $task->getId(); }, $tourTasks),
-                    $jobIds
+
+                $tourId = explode(':', $step['description'])[1];
+                $tourTasks = array_values(array_filter($tasks, function ($task) use ($tourId) {
+                    return $task->getTour() && $task->getTour()->getId() == $tourId;
+                }));
+                $tourTasksIds = array_map(function ($task) { return $task->getId(); }, $tourTasks);
+
+                $jobIds = array_merge(
+                    $jobIds,
+                    $tourTasksIds
                 );
             }
             else if (array_key_exists('id', $step)) {
@@ -97,21 +110,16 @@ class RouteOptimizer
         foreach ($tasks as $task) {
             if (null !== $task->getTour() && !in_array($task->getTour(), $tours, true)) {
                 $tours[] = $task->getTour();
-            } else if (null !== $task->getDelivery() && !in_array($task->getDelivery(), $deliveries, true)) {
+            } else if (null == $task->getTour() && null !== $task->getDelivery() && !in_array($task->getDelivery(), $deliveries, true)) {
                 $deliveries[] = $task->getDelivery();
-            } else if (null == $task->getDelivery() && null == $task->getTour()) {
+            } else if (null == $task->getTour() && null == $task->getDelivery()) {
                 $routingProblem->addJob(Task::toVroomJob($task));
             }
         }
 
         foreach ($tours as $tour) {
             $vroomStep = Tour::toVroomStep($tour);
-            if ($vroomStep instanceof Shipment) {
-                $routingProblem->addShipment($vroomStep);
-            } else {
-                // case of tour with 1 task
-                $routingProblem->addJob($vroomStep);
-            }
+            $routingProblem->addJob($vroomStep);
         }
 
         foreach ($deliveries as $delivery) {

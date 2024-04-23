@@ -14,7 +14,7 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Doctrine\ORM\EntityManagerInterface;
-
+use Psr\Log\LoggerInterface;
 
 class RouteOptimizerTest extends KernelTestCase
 {
@@ -25,6 +25,7 @@ class RouteOptimizerTest extends KernelTestCase
     protected $settingsManager;
     protected $client;
     protected $fixturesLoader;
+    protected $logger;
 
     public function setUp(): void
     {
@@ -39,6 +40,8 @@ class RouteOptimizerTest extends KernelTestCase
         $this->client = self::$container->get('vroom.client');
 
         $this->entityManager = self::$container->get(EntityManagerInterface::class);
+
+        $this->logger = self::$container->get(LoggerInterface::class);
 
         $this->fixturesLoader = self::$container->get('fidry_alice_data_fixtures.loader.doctrine');
     }
@@ -110,7 +113,7 @@ class RouteOptimizerTest extends KernelTestCase
         $taskCollection = $this->prophesize(TaskCollection::class);
         $taskCollection->getTasks()->willReturn($taskList);
 
-        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger);
 
         $problem = $optimizer->createRoutingProblem($taskCollection->reveal());
 
@@ -125,7 +128,7 @@ class RouteOptimizerTest extends KernelTestCase
             __DIR__.'/../../../features/fixtures/ORM/optimizer/set1.yml'
         ]);
 
-        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger);
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
 
@@ -155,7 +158,7 @@ class RouteOptimizerTest extends KernelTestCase
             __DIR__.'/../../../features/fixtures/ORM/optimizer/set2.yml'
         ]);
 
-        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger);
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
 
@@ -171,6 +174,34 @@ class RouteOptimizerTest extends KernelTestCase
         // other steps of the tour, in the same order as it was given
         $this->assertEquals(48.8669865, $solution[1]->getAddress()->getGeo()->getLatitude());
         $this->assertEquals(48.8655514, $solution[2]->getAddress()->getGeo()->getLatitude());
+
+        $purger = new ORMPurger($this->entityManager);
+        $purger->purge();
+    }
+
+    public function testOptimizeWithTour2()
+    {
+
+        // we want to make sure the tour tasks are kept together
+        $this->fixturesLoader->load([
+            __DIR__.'/../../../features/fixtures/ORM/optimizer/set3.yml'
+        ]);
+
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger);
+
+        $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
+
+        foreach($this->entityManager->getRepository(Task::class)->findAll() as $task) {
+            $taskList->addTask($task);
+        }
+
+        $solution = $optimizer->optimize($taskList);
+
+        $this->assertEquals(48.8563831, $solution[0]->getAddress()->getGeo()->getLatitude());
+        // other steps of the tour, in the same order as it was given
+        $this->assertEquals(48.862527, $solution[1]->getAddress()->getGeo()->getLatitude());
+        $this->assertEquals(48.8637441, $solution[2]->getAddress()->getGeo()->getLatitude());
+        $this->assertEquals(48.872162, $solution[3]->getAddress()->getGeo()->getLatitude());
 
         $purger = new ORMPurger($this->entityManager);
         $purger->purge();
@@ -218,7 +249,7 @@ class RouteOptimizerTest extends KernelTestCase
         $taskCollection = $this->prophesize(TaskCollection::class);
         $taskCollection->getTasks()->willReturn($taskList);
 
-        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger);
 
         $result = $optimizer->optimize($taskCollection->reveal());
 
@@ -251,7 +282,7 @@ class RouteOptimizerTest extends KernelTestCase
         $dropoff = new Address();
         $dropoff->setGeo($dropoffCoords);
 
-        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger);
 
         $addresses = $optimizer->optimizePickupsAndDelivery($pickups, $dropoff);
 

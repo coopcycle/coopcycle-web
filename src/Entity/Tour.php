@@ -136,20 +136,13 @@ class Tour extends TaskCollection implements TaskCollectionInterface
         return $this;
     }
 
-    public static function toVroomStep(Tour $tour) : VroomJob|VroomShipment
+    public static function toVroomStep(Tour $tour) : VroomJob
     {
 
         $tasks = $tour->getTasks();
-
-        if (count($tasks) > 1) {
-            $shipment = new VroomShipment();
-            $shipment->pickup = Task::toVroomJob($tasks[0]);
-            $shipment->delivery = Task::toVroomJob($tasks[count($tasks) - 1]);
-            $shipment->description = 'tour:'.$tour->getId();
-            return $shipment;
-        } else {
-            return Task::toVroomJob($tasks[0]);
-        }
+        $job = Task::toVroomJob($tasks[0]);
+        $job->description = 'tour:'.$tour->getId();
+        return $job;
 
     }
 }
