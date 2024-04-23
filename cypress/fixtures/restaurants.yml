@@ -231,6 +231,9 @@ AppBundle\Entity\LocalBusiness:
     openingHours: ['Mo-Su 09:30-23:30']
     enabled: true
     contract: "@contract_1"
+    edenred_enabled: false
+    edenred_trcard_enabled: false
+    edenred_sync_sent: false
     __calls:
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]
@@ -246,6 +249,9 @@ AppBundle\Entity\LocalBusiness:
     openingHours: ['Mo-Su 09:30-23:30']
     enabled: true
     contract: "@contract_2"
+    edenred_enabled: false
+    edenred_trcard_enabled: false
+    edenred_sync_sent: false
     __calls:
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]
@@ -259,6 +265,9 @@ AppBundle\Entity\LocalBusiness:
     openingHours: ['Mo-Su 09:30-23:30']
     enabled: true
     contract: "@contract_3"
+    edenred_enabled: false
+    edenred_trcard_enabled: false
+    edenred_sync_sent: false
     depositRefundEnabled: true
     __calls:
       - setMinimumAmount: ['delivery', 1500]
