@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "441f7459fc0b6a8c3f36a23fb7a98c00",
+    "content-hash": "08aa8fb53640af541d0abb81e9787665",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1246,17 +1246,17 @@
             "time": "2023-09-17T07:26:20+00:00"
         },
         {
-            "name": "coopcycle/db-schenker",
+            "name": "coopcycle/transporter",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/coopcycle/DBSchenkerClient.git",
-                "reference": "54c18b3aae2096aab362d281caaba775ebe3bcc5"
+                "url": "https://github.com/coopcycle/transporter.git",
+                "reference": "8613150e855d299efa64f90693f51069553ad7db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/DBSchenkerClient/zipball/54c18b3aae2096aab362d281caaba775ebe3bcc5",
-                "reference": "54c18b3aae2096aab362d281caaba775ebe3bcc5",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/8613150e855d299efa64f90693f51069553ad7db",
+                "reference": "8613150e855d299efa64f90693f51069553ad7db",
                 "shasum": ""
             },
             "require": {
@@ -1270,8 +1270,11 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "DBSchenker\\": "DBSchenker"
-                }
+                    "Transporter\\": "Transporter/"
+                },
+                "files": [
+                    "Transporter/helpers.php"
+                ]
             },
             "authors": [
                 {
@@ -1280,10 +1283,10 @@
                 }
             ],
             "support": {
-                "source": "https://github.com/coopcycle/DBSchenkerClient/tree/master",
-                "issues": "https://github.com/coopcycle/DBSchenkerClient/issues"
+                "source": "https://github.com/coopcycle/transporter/tree/master",
+                "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2024-04-12T16:02:08+00:00"
+            "time": "2024-04-23T11:33:17+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -23646,7 +23649,6 @@
         "drupal/core-vendor-hardening": 20,
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
-        "coopcycle/db-schenker": 20,
         "behatch/contexts": 20
     },
     "prefer-stable": true,
