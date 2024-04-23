@@ -21,7 +21,9 @@ const Option = ({ children, ...props }) => {
 
   return (
     <components.Option { ...props }>
-      <Avatar username={ props.data.username } />  { children }
+      <div data-cypress-select-username={ props.data.username }>
+        <Avatar username={ props.data.username } />  { children }
+      </div>
     </components.Option>
   )
 }

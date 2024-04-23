@@ -218,7 +218,7 @@ const deliveryImports = document.querySelector('[data-delivery-imports]')
 if (deliveryImports) {
 
   const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
-  const centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
+  const centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
   centrifuge.setToken(deliveryImports.dataset.centrifugoToken)
 
   centrifuge.subscribe(deliveryImports.dataset.centrifugoChannel, function(message) {

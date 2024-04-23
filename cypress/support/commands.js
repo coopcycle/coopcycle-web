@@ -49,16 +49,19 @@ Cypress.Commands.add('searchAddress', (selector, search, match) => {
     .should('be.visible')
 
   cy.get(`${selector} input[type="search"]`)
-    .type(search, { timeout: 5000, delay: 30 })
+    .eq(1)  // take the 2nd input on the restaurant page. to be changed when fix for https://github.com/coopcycle/coopcycle-web/issues/4149
+    .type(search, { timeout: 5000, delay: 50 })
 
   cy.get(selector)
-    .find('ul[role="listbox"] li', { timeout: 5000 })
+    .find('ul[role="listbox"] li', { timeout: 10000 })
     .contains(match)
     .click()
 })
 
 Cypress.Commands.add('enterCreditCard', () => {
-  const expDate = Cypress.moment().add(6, 'month').format('MMYY')
+  const date = new Date(),
+  expDate = ("0" + (date.getMonth() + 1)).slice(-2) + date.getFullYear().toString().substring(2)
+
   // @see https://github.com/cypress-io/cypress/issues/136
   cy.get('.StripeElement iframe')
     .then(function ($iframe) {
@@ -67,17 +70,17 @@ Cypress.Commands.add('enterCreditCard', () => {
 
       cy
         .wrap($body)
-        .find('input[name="cardnumber"]')
+        .find('input[name="cardnumber"]', { timeout: 5000, delay: 30 })
         .type('4242424242424242')
 
       cy
         .wrap($body)
-        .find('input[name="exp-date"]')
+        .find('input[name="exp-date"]', { timeout: 5000, delay: 30 })
         .type(expDate)
 
       cy
         .wrap($body)
-        .find('input[name="cvc"]')
+        .find('input[name="cvc"]', { timeout: 5000, delay: 30 })
         .type('123')
     })
 })

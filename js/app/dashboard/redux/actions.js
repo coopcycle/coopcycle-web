@@ -18,7 +18,7 @@ import { createAction } from '@reduxjs/toolkit'
 function createClient(dispatch) {
 
   const client = axios.create({
-    baseURL: location.protocol + '//' + location.hostname
+    baseURL: location.protocol + '//' + location.host
   })
 
   let subscribers = []

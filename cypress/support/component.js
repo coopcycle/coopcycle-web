@@ -1,5 +1,5 @@
 // ***********************************************************
-// This example support/index.js is processed and
+// This example support/component.js is processed and
 // loaded automatically before your test files.
 //
 // This is a great place to put global configuration and
@@ -16,7 +16,16 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 
-import '@cypress/react/support'
-
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+import { mount } from 'cypress/react18'
+
+Cypress.Commands.add('mount', (component, options) => {
+    // Wrap any parent components needed
+    // ie: return mount(<MyProvider>{component}</MyProvider>, options)
+    return mount(component, options)
+})
+
+// Example use:
+// cy.mount(<MyComponent />)

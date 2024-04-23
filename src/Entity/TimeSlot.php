@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Action\TimeSlot\Choices as ChoicesController;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
@@ -18,23 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *   normalizationContext={"groups"={"time_slot"}},
  *   itemOperations={
  *     "get"={"method"="GET"}
- *   },
- *   collectionOperations={
- *     "choices"={
- *       "method"="GET",
- *       "path"="/time_slots/choices",
- *       "controller"=ChoicesController::class,
- *       "status"=200,
- *       "read"=false,
- *       "write"=false,
- *       "normalization_context"={"groups"={"time_slot_choices"}, "api_sub_level"=true},
- *       "security"="is_granted('ROLE_OAUTH2_DELIVERIES')",
- *       "openapi_context"={
- *         "summary"="Retrieves choices for time slot"
- *       }
- *     }
- *   }
- * )
+ *   })
  */
 class TimeSlot
 {
@@ -77,11 +60,6 @@ class TimeSlot
      * @AssertNotOverlappingOpeningHours(groups={"Default"})
      */
     private $openingHours = [];
-
-    public function __construct()
-    {
-    	$this->choices = new ArrayCollection();
-    }
 
     /**
      * @return mixed
@@ -219,16 +197,6 @@ class TimeSlot
         $this->sameDayCutoff = $sameDayCutoff;
 
         return $this;
-    }
-
-    /**
-     * @deprecated
-     * @SerializedName("choices")
-     * @Groups({"time_slot"})
-     */
-    public function getChoices()
-    {
-        return [];
     }
 
     public static function create(FulfillmentMethod $fulfillmentMethod, ShippingOptionsInterface $options): TimeSlot

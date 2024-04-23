@@ -142,9 +142,14 @@ AppBundle\Entity\Sylius\Product:
     slug: chicken-salad
     enabled: true
     reusablePackagingEnabled: true
-    reusablePackagingUnit: 1
-    reusablePackaging: "@packaging_acme"
     variants: [ "@chicken_salad_default" ]
+
+
+AppBundle\Entity\ReusablePackagings:
+  reusable_packagins_for_chicken_salad:
+    reusablePackaging: "@packaging_acme"
+    product: "@chicken_salad"
+    units: 1
 
 # Menus
 

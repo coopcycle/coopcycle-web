@@ -85,7 +85,7 @@ function bootstrap(el, options) {
   }
 
   const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
-  const centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
+  const centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
   centrifuge.setToken(options.token)
 
   const theme = el.dataset.theme || 'light'
