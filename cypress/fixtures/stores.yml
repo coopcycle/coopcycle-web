@@ -33,18 +33,12 @@ AppBundle\Entity\Address:
     streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
     geo: "@geo_1"
 
-AppBundle\Entity\TimeSlot\Choice:
-  time_slot_choice_1:
-    startTime: '12:00:00'
-    endTime: '14:00:00'
-  time_slot_choice_2:
-    startTime: '14:00:00'
-    endTime: '17:00:00'
-
 AppBundle\Entity\TimeSlot:
   time_slot_1:
     name: 'Acme time slot'
-    choices: ['@time_slot_choice_1', '@time_slot_choice_2']
+    openingHours:
+      - 'Mo-Su 12:00-14:00'
+      - 'Mo-Su 14:00-17:00'
 
 AppBundle\Entity\Store:
   store_1:

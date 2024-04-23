@@ -145,7 +145,7 @@
         "symfony/ux-react": "2.10",
         "league/flysystem": "^3.0",
         "league/flysystem-ftp": "^3.0",
-        "coopcycle/db-schenker": "dev-master"
+        "coopcycle/transporter": "dev-master"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -176,7 +176,7 @@
         },
         {
           "type": "vcs",
-          "url": "https://github.com/coopcycle/DBSchenkerClient"
+          "url": "https://github.com/coopcycle/transporter"
         },
         {
           "type": "vcs",

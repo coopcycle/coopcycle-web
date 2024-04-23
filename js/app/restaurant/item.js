@@ -1,4 +1,4 @@
-import React, { StrictMode } from 'react'
+import React from 'react'
 import { createRoot } from 'react-dom/client';
 import { createPortal } from 'react-dom'
 import { Provider } from 'react-redux'
@@ -123,7 +123,6 @@ const init = function() {
 
   const root = createRoot(container);
   root.render(
-    <StrictMode>
       <Provider store={ store }>
         <I18nextProvider i18n={ i18n }>
           {createPortal(<FulfillmentDetails />, fulfilmentDetailsContainer)}
@@ -136,7 +135,6 @@ const init = function() {
           <LoopeatModal />
         </I18nextProvider>
       </Provider>
-    </StrictMode>
   )
 
 }

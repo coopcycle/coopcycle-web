@@ -14,12 +14,17 @@ import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRec
 import { getDroppableListStyle } from '../utils'
 import classNames from 'classnames'
 
-const StandaloneTasks =  ({tasks, unassignedTasksIdsOrder, offset}) => {
-  return _.map(unassignedTasksIdsOrder, (taskId, index) => {
-    const task = tasks.find(t => t['@id'] === taskId)
-    if (task) {
+const StandaloneTasks =  ({tasks, offset}) => {
+  // waiting for https://github.com/coopcycle/coopcycle-web/issues/4196 to resolve to bring this code back
+  // takes into account manual sorting of issues
+  // return _.map(unassignedTasksIdsOrder, (taskId, index) => {
+  //   const task = tasks.find(t => t['@id'] === taskId)
+  //   if (task) {
+  //     return <Task task={ task } draggableIndex={ (offset + index) } key={ task['@id'] } />
+  //   }
+  // })
+  return _.map(tasks, (task, index) => {
       return <Task task={ task } draggableIndex={ (offset + index) } key={ task['@id'] } />
-    }
   })
 }
 

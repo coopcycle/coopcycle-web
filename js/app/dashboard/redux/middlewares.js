@@ -43,7 +43,7 @@ export const socketIO = ({ dispatch, getState }) => {
 
     const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
 
-    centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
+    centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
     centrifuge.setToken(getState().config.centrifugoToken)
 
     centrifuge.subscribe(getState().config.centrifugoEventsChannel, function(message) {
