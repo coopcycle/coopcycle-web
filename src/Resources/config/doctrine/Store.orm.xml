@@ -5,6 +5,8 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name" nullable="true"/>
+    <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
+    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <field name="enabled" type="boolean" column="enabled">
       <options>
         <option name="default">0</option>

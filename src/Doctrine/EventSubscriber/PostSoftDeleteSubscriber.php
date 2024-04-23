@@ -3,6 +3,7 @@
 namespace AppBundle\Doctrine\EventSubscriber;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Entity\Sylius\Product;
@@ -72,6 +73,7 @@ class PostSoftDeleteSubscriber implements EventSubscriber
             $unitOfWork->computeChangeSets();
         }
 
+        // LocalBusiness and Restaurant case
         if ($entity instanceof LocalBusiness) {
 
             // FIXME Use OrderInterface
@@ -85,6 +87,16 @@ class PostSoftDeleteSubscriber implements EventSubscriber
             $owners = $entity->getOwners();
             foreach ($owners as $owner) {
                 $owner->getRestaurants()->removeElement($entity);
+            }
+
+            $unitOfWork->computeChangeSets();
+        }
+
+        if ($entity instanceof Store) {
+
+            $owners = $entity->getOwners();
+            foreach ($owners as $owner) {
+                $owner->getStores()->removeElement($entity);
             }
 
             $unitOfWork->computeChangeSets();

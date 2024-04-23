@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Address;
+use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
@@ -49,6 +50,9 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait StoreTrait
 {
+    /**
+    * @HideSoftDeleted
+    */
     public function storeListAction(Request $request, PaginatorInterface $paginator)
     {
         $qb = $this->getDoctrine()
@@ -182,6 +186,14 @@ trait StoreTrait
             /** @var Store $store */
             $store = $form->getData();
             $objectManager = $this->getDoctrine()->getManagerForClass(Store::class);
+
+            if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
+
+                $this->getDoctrine()->getManagerForClass(Store::class)->remove($store);
+                $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+
+                return $this->redirectToRoute($routes['stores']);
+            }
 
             if ($store->isDBSchenkerEnabled()) {
                 $fstore = $objectManager->getRepository(Store::class)->findOneBy([

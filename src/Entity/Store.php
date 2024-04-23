@@ -14,6 +14,7 @@ use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Package;
 use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -57,6 +58,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface
 {
+    use SoftDeleteable;
     use TaggableTrait;
     use OrganizationAwareTrait;
 

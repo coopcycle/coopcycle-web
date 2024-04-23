@@ -2,6 +2,8 @@ import React from 'react'
 import { render } from 'react-dom'
 import TagsSelect from '../components/TagsSelect'
 import { addressMapper } from '../widgets/addressForm'
+import i18n from '../i18n'
+
 
 var tagsEl = document.querySelector('#store_tags');
 
@@ -132,3 +134,11 @@ if (timeSlotsEl && timeSlotEl) {
 
   document.querySelector('#store_timeSlot').closest('.form-group').classList.add('d-none')
 }
+
+console.log('here');
+// Delete confirmation
+$('#store_delete').on('click', e => {
+  if (!window.confirm(i18n.t('CONFIRM_DELETE'))) {
+    e.preventDefault()
+  }
+})
