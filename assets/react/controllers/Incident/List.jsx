@@ -3,6 +3,7 @@ import { Table, Tag, Avatar, Row, Col, Badge, Switch } from "antd";
 import TaskContext from "./TaskContext";
 import _ from "lodash";
 import "antd/dist/antd.css";
+import { useTranslation } from "react-i18next";
 
 async function _fetchIncidents() {
   const httpClient = new window._auth.httpClient();
@@ -61,6 +62,7 @@ function _storeFilter(value, record) {
 }
 
 export default function () {
+  const { t } = useTranslation();
   const [incidents, setIncidents] = useState(null);
   const [showClosed, setShowClosed] = useState(false);
 
@@ -122,18 +124,18 @@ export default function () {
 
   const columns = [
     {
-      title: "Title",
+      title: t("TITLE"),
       dataIndex: "title",
       key: "title",
     },
     {
-      title: "Priority",
+      title: t("PRIORITY"),
       dataIndex: "priority",
       key: "priority",
       filters: [
-        { text: "Low", value: 3 },
-        { text: "Medium", value: 2 },
-        { text: "High", value: 1 },
+        { text: t("LOW"), value: 3 },
+        { text: t("MEDIUM"), value: 2 },
+        { text: t("HIGH"), value: 1 },
       ],
       onFilter: (value, record) => record.priority === value,
       sorter: (a, b) => a.priority - b.priority,
@@ -143,12 +145,12 @@ export default function () {
       },
     },
     {
-      title: "Status",
+      title: t("STATUS"),
       dataIndex: "status",
       key: "status",
       filters: [
-        { text: "Open", value: "OPEN" },
-        { text: "Closed", value: "CLOSED" },
+        { text: t("OPEN"), value: "OPEN" },
+        { text: t("CLOSED"), value: "CLOSED" },
       ],
       onFilter: (value, record) => record.status === value,
       render: (text) => (
@@ -156,11 +158,11 @@ export default function () {
       ),
     },
     {
-      title: "Store",
+      title: t("STORE"),
       key: "context",
       filters: [
-        { text: "Store", value: "store", children: stores },
-        { text: "Restaurant", value: "restaurant", children: restaurants },
+        { text: t("STORE"), value: "store", children: stores },
+        { text: t("RESTAURANT"), value: "restaurant", children: restaurants },
       ],
       filterSearch: true,
       filterMode: "tree",
@@ -168,7 +170,7 @@ export default function () {
       render: _statusCtx,
     },
     {
-      title: "Customer",
+      title: t("CUSTOMER"),
       dataIndex: ["order", "customer", "username"],
       filters: customers,
       filterSearch: true,
@@ -176,7 +178,7 @@ export default function () {
       key: "customer",
     },
     {
-      title: "Author",
+      title: t("REPORTED_BY"),
       dataIndex: "author",
       key: ["author", "username"],
       filters: users,
@@ -194,7 +196,7 @@ export default function () {
       ),
     },
     {
-      title: "Action",
+      title: t("ACTION"),
       dataIndex: "id",
       key: "action",
       render: (id) => (
@@ -206,7 +208,7 @@ export default function () {
     <>
       <p>
         <Switch className="mr-2" onChange={setShowClosed} />
-        Show closed incidents
+        {t("SHOW_CLOSED_INCIDENTS")}
       </p>
       <Table
         columns={columns}

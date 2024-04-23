@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, Input } from "antd";
 
 import store, { setEvents } from "./incidentStore";
+import { useTranslation } from "react-i18next";
 
 async function _handleCommentSubmit(id, comment) {
   const httpClient = new window._auth.httpClient();
@@ -16,11 +17,12 @@ export default function () {
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <div>
       <Input.TextArea
-        placeholder="Add a comment"
+        placeholder={t("ADD_A_COMMENT")}
         status={error ? "error" : null}
         value={comment}
         onChange={(e) => setComment(e.target.value)}
@@ -49,7 +51,7 @@ export default function () {
         }}
         className="mt-2"
       >
-        Comment
+        {t("COMMENT")}
       </Button>
     </div>
   );
