@@ -4,9 +4,13 @@ namespace AppBundle\Sylius\Product;
 
 use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Entity\BusinessRestaurantGroup;
+use AppBundle\Entity\Sylius\ProductVariantOptionValue;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr\Join;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Model\ProductInterface;
+use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
@@ -15,15 +19,18 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
 {
     private $variantResolver;
     private $variantFactory;
+    private $entityManager;
 
     public function __construct(
         ProductVariantResolverInterface $variantResolver,
         ProductVariantFactoryInterface $variantFactory,
-        BusinessContext $businessContext)
+        BusinessContext $businessContext,
+        EntityManagerInterface $entityManager)
     {
         $this->variantResolver = $variantResolver;
         $this->variantFactory = $variantFactory;
         $this->businessContext = $businessContext;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -51,18 +58,41 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
      */
     public function getVariantForOptionValues(ProductInterface $product, \Traversable $optionValues): ?ProductVariantInterface
     {
-        foreach ($product->getVariants() as $variant) {
+        $qb = $this->entityManager->getRepository(ProductVariantInterface::class)->createQueryBuilder('variant');
+        $qb->leftJoin(ProductVariantOptionValue::class, 'variant_option_value', Join::WITH, 'variant_option_value.variant = variant.id');
+        $qb->leftJoin(ProductOptionValueInterface::class, 'option_value', Join::WITH, 'variant_option_value.optionValue = option_value.id');
 
-            if (count($variant->getOptionValues()) !== count($optionValues)) {
+        $qb->select('variant.id');
+        $qb->addSelect('IDENTITY(variant.businessRestaurantGroup) AS business_restaurant_group_id');
+        $qb->addSelect('JSON_AGG(JSON_BUILD_OBJECT(\'id\', option_value.id, \'quantity\', variant_option_value.quantity)) AS option_values');
+
+        $qb->andWhere('variant.product = :product');
+        $qb->setParameter('product', $product);
+
+        $qb->groupBy('variant.id');
+
+        $variantsAsArray = array_map(function ($variant) {
+            $variant['option_values'] = json_decode($variant['option_values'], true);
+            if (count($variant['option_values']) === 1 && $variant['option_values'][0]['id'] === null) {
+                $variant['option_values'] = [];
+            }
+
+            return $variant;
+        }, $qb->getQuery()->getArrayResult());
+
+        foreach ($variantsAsArray as $variant) {
+
+            if (count($variant['option_values']) !== count($optionValues)) {
                 continue;
             }
 
-            if ($variant->isBusiness() !== $this->businessContext->isActive()) {
+            $isBusiness = !empty($variant['business_restaurant_group_id']);
+            if ($isBusiness !== $this->businessContext->isActive()) {
                 continue;
             }
 
             if ($this->matchOptions($variant, $optionValues)) {
-                return $variant;
+                return $this->entityManager->getRepository(ProductVariantInterface::class)->find($variant['id']);
             }
         }
 
@@ -95,7 +125,7 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
         return $variant;
     }
 
-    private function matchOptions(ProductVariantInterface $variant, \Traversable $optionValues)
+    private function matchOptions(array $variant, \Traversable $optionValues)
     {
         foreach ($optionValues as $optionValue) {
 
@@ -105,17 +135,41 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
             }
 
             if (null !== $quantity) {
-                if (!$variant->hasOptionValueWithQuantity($optionValue, (int) $quantity)) {
+                if (!$this->hasOptionValueWithQuantity($variant, $optionValue, (int) $quantity)) {
                     return false;
                 }
             } else {
-                if (!$variant->hasOptionValue($optionValue)) {
+                if (!$this->hasOptionValue($variant, $optionValue)) {
                     return false;
                 }
             }
         }
 
         return true;
+    }
+
+    private function hasOptionValue(array $variant, ProductOptionValueInterface $optionValue): bool
+    {
+        foreach ($variant['option_values'] as $optVal) {
+            if ($optVal['id'] === $optionValue->getId()) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function hasOptionValueWithQuantity(array $variant, ProductOptionValueInterface $optionValue, int $quantity): bool
+    {
+        foreach ($variant['option_values'] as $optVal) {
+            if ($optVal['id'] === $optionValue->getId()) {
+
+                return $optVal['quantity'] === $quantity;
+            }
+        }
+
+        return false;
     }
 
     public function getVariantForBusinessRestaurantGroup(ProductInterface $product, BusinessRestaurantGroup $businessRestaurantGroup): ?ProductVariantInterface
