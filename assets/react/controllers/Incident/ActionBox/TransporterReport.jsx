@@ -17,6 +17,7 @@ import {
 import "../Style.scss";
 import _ from "lodash";
 import moment from "moment";
+import { useTranslation } from "react-i18next";
 
 async function _fetchFailureReason(id) {
   const httpClient = new window._auth.httpClient();
@@ -61,6 +62,8 @@ function ImagesSelector({ images, onChange }) {
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(false);
 
+  const { t } = useTranslation();
+
   const handleOnChange = (checkedList) => {
     setCheckAll(checkedList.length === images.length);
     setIndeterminate(
@@ -86,7 +89,7 @@ function ImagesSelector({ images, onChange }) {
             onChange={onCheckAllChange}
             checked={checkAll}
           >
-            Check all
+            {t("CHECK_ALL")}
           </Checkbox>
         )}
       </div>
@@ -107,7 +110,7 @@ function ImagesSelector({ images, onChange }) {
                   })}
                 />
                 <div className="mt-1">
-                  <Checkbox value={image}>Select</Checkbox>
+                  <Checkbox value={image}>{t("SELECT")}</Checkbox>
                 </div>
               </Col>
             );
@@ -123,6 +126,8 @@ function FailureReasonSelector({ task, onChange }) {
   const [selectedState, setSelectedState] = useState(null);
   const [selectedReason, setSelectedReason] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     async function _fetch() {
@@ -168,7 +173,7 @@ function FailureReasonSelector({ task, onChange }) {
       <Row gutter={[16, 16]}>
         <Col span={12}>
           <Select
-            placeholder="Select state"
+            placeholder={t("SELECT_DATE")}
             value={selectedState}
             onChange={(v) => {
               setSelectedReason(null);
@@ -179,7 +184,7 @@ function FailureReasonSelector({ task, onChange }) {
         </Col>
         <Col span={12}>
           <Select
-            placeholder="Select reason"
+            placeholder={t("SELECT_REASON")}
             value={selectedReason}
             onChange={setSelectedReason}
             options={subOptions}
@@ -189,7 +194,7 @@ function FailureReasonSelector({ task, onChange }) {
           <Col span={12} offset={12}>
             <DatePicker
               style={{ width: "100%" }}
-              placeholder="Pick a new appointment"
+              placeholder={t("PICK_NEW_APPOINTMENT")}
               format="LLL"
               showTime={{ format: "HH:mm", minuteStep: 15 }}
               onChange={setSelectedDate}
@@ -203,6 +208,8 @@ function FailureReasonSelector({ task, onChange }) {
 }
 
 export default function ({ incident, task, images, form }) {
+  const { t } = useTranslation();
+
   const incidents = useMemo(
     () =>
       _(incident?.events)
@@ -216,13 +223,13 @@ export default function ({ incident, task, images, form }) {
       return Promise.resolve();
     }
     if (!value.code.reason || !value.code.state) {
-      return Promise.reject("Please select a reason and state");
+      return Promise.reject(t("PLEASE_SELECT_A_REASON_AND_STATE"));
     }
     if (value.code.reason === "PVI" && !moment(value.date).isValid()) {
-      return Promise.reject("Please select a valid date");
+      return Promise.reject(t("PLEASE_SELECT_A_VALID_DATE"));
     }
     if (value.code.reason === "PVI" && value.date.isBefore(moment())) {
-      return Promise.reject("Please select a date in the future");
+      return Promise.reject(t("PLEASE_SELECT_A_DATE_IN_THE_FUTURE"));
     }
     return Promise.resolve();
   };
@@ -238,7 +245,7 @@ export default function ({ incident, task, images, form }) {
           return location.reload();
         }
         notification.error({
-          message: "Something went wrong",
+          message: t("SOMETHING_WENT_WRONG"),
         });
       }}
       autoComplete="off"
@@ -247,28 +254,30 @@ export default function ({ incident, task, images, form }) {
         <Alert
           className="mb-3"
           showIcon
-          message={`There is already ${incidents} report(s) for this incident`}
+          message={t("THERE_IS_ALREADY_COUNT_REPORTS_FOR_THIS_INCIDENT", {
+            count: incidents,
+          })}
           type="info"
         />
       )}
       <Form.Item
-        label="Failure reason"
+        label={t("SELECT_REASON")}
         name="failureReason"
         required={true}
         rules={[
           { validator: reasonValidator },
-          { required: true, message: "Please select a reason" },
+          { required: true, message: t("PLEASE_SELECT_A_REASON") },
         ]}
       >
         <FailureReasonSelector task={task} />
       </Form.Item>
       <Form.Item
-        label="Failure date"
+        label={t("FAILURE_DATE")}
         name="failureDate"
-        extra="Select the date and time of the incident."
+        extra={t("SELECT_THE_DATE_AND_TIME_OF_THE_INCIDENT")}
         rules={[
-          { required: true, message: "Please select a date" },
-          { type: "date", message: "Please select a valid date" },
+          { required: true, message: t("PLEASE_SELECT_A_DATE") },
+          { type: "date", message: t("PLEASE_SELECT_A_VALID_DATE") },
         ]}
       >
         <DatePicker
@@ -279,7 +288,7 @@ export default function ({ incident, task, images, form }) {
         />
       </Form.Item>
       <Divider orientation="left" plain>
-        Images to include in the report
+        {t("IMAGES_TO_INCLUDE_IN_THE_REPORT")}
       </Divider>
       <Form.Item name="images">
         <ImagesSelector images={images} />

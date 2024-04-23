@@ -6,6 +6,7 @@ import { money, weight } from "./utils";
 import TaskStatusBadge from "../../../../js/app/dashboard/components/TaskStatusBadge";
 
 import store from "./incidentStore";
+import { useTranslation } from "react-i18next";
 
 function formatTime(task) {
   return moment(task.after).format("LL");
@@ -24,7 +25,8 @@ function _externalLink(link) {
   );
 }
 
-function heading(task, delivery, order) {
+function Heading({ task, delivery, order }) {
+  const { t } = useTranslation();
   const header = (title, btn = null) => (
     <h4 style={{ lineHeight: "24px" }}>
       {title}
@@ -34,30 +36,32 @@ function heading(task, delivery, order) {
 
   if (order?.number) {
     const link = window.Routing.generate("admin_order", { id: order.id });
-    return header(`Order N° ${order.number}`, _externalLink(link));
+    return header(`${t("ORDER")} N° ${order.number}`, _externalLink(link));
   }
 
   if (order?.id) {
     const link = window.Routing.generate("admin_order", { id: order.id });
-    return header(`Order #${order.id}`, _externalLink(link));
+    return header(`${t("ORDER")} #${order.id}`, _externalLink(link));
   }
 
   if (delivery?.id) {
     const link = window.Routing.generate("admin_delivery", { id: delivery.id });
-    return header(`Delivery #${delivery.id}`, _externalLink(link));
+    return header(`${t("DELIVERY")} #${delivery.id}`, _externalLink(link));
   }
 
-  return header(`Task #${task.id}`);
+  return header(`${t("TASK")} #${task.id}`);
 }
 
-function customerShowName(customer) {
+function CustomerShowName({ customer }) {
+  const { t } = useTranslation();
   let customerName = customer?.username;
   if (customer?.fullName != null) {
     customerName = customer.fullName;
   }
   return (
     <p title={customer?.username}>
-      Customer<span>{customerName}</span>
+      {t("CUSTOMER")}
+      <span>{customerName}</span>
     </p>
   );
 }
@@ -78,42 +82,49 @@ function showAdjustment(adjustments, adjustmentType) {
   ));
 }
 
-function showOrderDetails(order) {
+function ShowOrderDetails({ order }) {
+  const { t } = useTranslation();
   return (
     <>
-      <h5>Order details</h5>
+      <h5>{t("ORDER_DETAILS")}</h5>
       <p>
-        Subtotal<span>{money(order.itemsTotal)}</span>
+        {t("SUBTOTAL")}
+        <span>{money(order.itemsTotal)}</span>
       </p>
       {showAdjustment(order.adjustments, "delivery")}
       {showAdjustment(order.adjustments, "tax")}
       {showAdjustment(order.adjustments, "incident")}
       <p>
-        Total<span>{money(order.total)}</span>
+        {t("TOTAL")}
+        <span>{money(order.total)}</span>
       </p>
       <hr />
     </>
   );
 }
 
-function showCustomerDetails(customer) {
+function ShowCustomerDetails({ customer }) {
+  const { t } = useTranslation();
   const link = window.Routing.generate("admin_user_edit", {
     username: customer?.username,
   });
   return (
     <>
       <h5 style={{ lineHeight: "24px" }}>
-        Customer details{_externalLink(link)}
+        {t("CUSTOMER_DETAILS")}
+        {_externalLink(link)}
       </h5>
-      {customerShowName(customer)}
+      <CustomerShowName customer={customer} />
       {customer?.email && (
         <p>
-          Email<span>{customer?.email}</span>
+          {t("EMAIL")}
+          <span>{customer?.email}</span>
         </p>
       )}
       {customer?.telephone && (
         <p>
-          Phone<span>{customer?.telephone}</span>
+          {t("PHONE")}
+          <span>{customer?.telephone}</span>
         </p>
       )}
     </>
@@ -122,6 +133,7 @@ function showCustomerDetails(customer) {
 
 export default function ({ delivery }) {
   delivery = JSON.parse(delivery);
+  const { t } = useTranslation();
   const { loaded, order, incident } = store.getState();
   const { task } = incident;
 
@@ -131,10 +143,12 @@ export default function ({ delivery }) {
 
   return (
     <div className="order-details-card">
-      {heading(task, delivery, order)}
-      <p className="text-muted">Date: {formatTime(task)}</p>
+      <Heading task={task} delivery={delivery} order={order} />
+      <p className="text-muted">
+        {t("DATE")}: {formatTime(task)}
+      </p>
       <hr />
-      {order && showOrderDetails(order)}
+      {order && <ShowOrderDetails order={order} />}
       <h5>
         <span style={{ textTransform: "capitalize" }}>
           {task.type.toLowerCase()}
@@ -147,7 +161,7 @@ export default function ({ delivery }) {
       {task.weight && <p>{weight(task.weight)}</p>}
       <div className="mt-3">{<TaskStatusBadge task={task} />}</div>
       <hr />
-      {order?.customer && showCustomerDetails(order.customer)}
+      {order?.customer && <ShowCustomerDetails customer={order.customer} />}
     </div>
   );
 }

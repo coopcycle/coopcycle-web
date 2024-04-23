@@ -6,6 +6,7 @@ import { money } from "./utils";
 
 import { useStore } from "./incidentStore";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 function Comment({ event }) {
   const { username } = event.createdBy;
@@ -29,13 +30,13 @@ function Comment({ event }) {
 function _eventTypeToText(event) {
   switch (event.type) {
     case "reschedule":
-      return "rescheduled the task";
+      return "RESCHEDULED_THE_TASK";
     case "cancel_task":
-      return "cancelled the task";
+      return "CANCELLED_THE_TASK";
     case "apply_price_diff":
-      return "applied a difference on the price";
+      return "APPLIED_A_DIFFERENCE_ON_THE_PRICE";
     case "transporter_report":
-      return "sent a report to the transporter";
+      return "SENT_A_REPORT_TO_THE_TRANSPORTER";
   }
 }
 
@@ -65,13 +66,16 @@ function _metadataToText({ type, metadata }) {
 
 function Event({ event }) {
   const { username } = event.createdBy;
+  const { t } = useTranslation();
 
   const metadata = _metadataToText(event);
 
   return (
     <div className="media-body">
       <span className="font-weight-bold">{username}</span>
-      <span className="font-weight-light px-1">{_eventTypeToText(event)}</span>
+      <span className="font-weight-light px-1">
+        {t(_eventTypeToText(event))}
+      </span>
       <span className="text-muted font-weight-light">
         {moment(event.createdAt).fromNow()}
       </span>

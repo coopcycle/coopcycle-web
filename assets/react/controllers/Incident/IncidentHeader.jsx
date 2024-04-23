@@ -8,6 +8,7 @@ import {
   Select,
   notification,
 } from "antd";
+import { useTranslation } from "react-i18next";
 
 import store from "./incidentStore";
 
@@ -25,14 +26,14 @@ async function syncData(id, body) {
   }
 }
 
-function _priorytyLabel(key) {
+function _prioryToLabel(key) {
   switch (key) {
     case 1:
-      return "High";
+      return "HIGHT";
     case 2:
-      return "Medium";
+      return "MEDIUM";
     case 3:
-      return "Low";
+      return "LOW";
   }
 }
 
@@ -41,13 +42,13 @@ function _statusBtn(status) {
     case "OPEN":
       return {
         next: "CLOSED",
-        label: "Close this incident",
+        label: "CLOSE_THIS_INCIDENT",
         icon: <i className="fa fa-dot-circle-o mr-2" />,
       };
     case "CLOSED":
       return {
         next: "OPEN",
-        label: "Reopen this incident",
+        label: "REOPEN_THIS_INCIDENT",
         icon: <i className="fa fa-check-circle-o mr-2" />,
       };
   }
@@ -58,6 +59,8 @@ export default function () {
   const [priority, setPriority] = useState(incident.priority);
   const [status, setStatus] = useState(incident.status);
   const [tags, setTags] = useState(incident.tags);
+
+  const { t } = useTranslation();
 
   if (!loaded) {
     return null;
@@ -82,35 +85,53 @@ export default function () {
               syncData(incident.id, { priority: key });
             },
             items: [
-              { label: "Set to low priority", key: 3 },
-              { label: "Set to medium priority", key: 2 },
-              { label: "Set to high priority", key: 1 },
+              {
+                label: t("SET_TO_PRIORITY", {
+                  priority: t("LOW").toLowerCase(),
+                }),
+                key: 3,
+              },
+              {
+                label: t("SET_TO_PRIORITY", {
+                  priority: t("MEDIUM").toLowerCase(),
+                }),
+                key: 2,
+              },
+              {
+                label: t("SET_TO_PRIORITY", {
+                  priority: t("HIGH").toLowerCase(),
+                }),
+                key: 1,
+              },
             ],
           }}
           type="primary"
         >
           {icon}
-          {label}
+          {t(label)}
         </Dropdown.Button>,
       ]}
     >
       <Row className="mb-3">
         <Statistic
-          title="Status"
+          title={t("STATUS")}
           style={{ textTransform: "capitalize", marginLeft: "12px" }}
-          value={status.toLowerCase()}
+          value={t(status)}
         />
         <Statistic
-          title="Priority"
-          value={_priorytyLabel(priority)}
+          title={t("PRIORITY")}
+          value={t(_prioryToLabel(priority))}
           style={{ margin: "0 22px" }}
         />
-        <Statistic title="Created by" value={incident.createdBy.username} />
+        <Statistic
+          title={t("REPORTED_BY")}
+          value={incident.createdBy.username}
+        />
       </Row>
       <Row justify="space-between" className="mt-3">
         <Select
           mode="tags"
-          placeholder="+ Add tags"
+          placeholder={t("PLUS_ADD_TAGS")}
           onBlur={() => syncData(incident.id, { tags })}
           onChange={(tags) => setTags(tags)}
           options={tags.map((t) => ({ label: t, value: t }))}
@@ -118,7 +139,7 @@ export default function () {
           bordered={false}
         />
         <div>
-          <div className="pb-1">Incident reported at :</div>
+          <div className="pb-1">{t("INCIDENT_REPORTED_AT")} :</div>
           <i className="fa fa-calendar pr-1" />
           {moment(incident.createdAt).format("LLL")}
         </div>

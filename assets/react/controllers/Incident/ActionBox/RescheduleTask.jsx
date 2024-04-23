@@ -67,8 +67,9 @@ export default function ({ incident, task }) {
       </p>
       <p>
         <Button type="danger" ghost disabled={value === null || submitting}>
-          {t("ADMIN_DASHBOARD_RESCHEDULE")}{" "}
-          {t("ADMIN_DASHBOARD_AND_CLOSE_THE_INCIDENT")}
+          {t("ADMIN_DASHBOARD_AND_CLOSE_THE_INCIDENT", {
+            action: t("ADMIN_DASHBOARD_RESCHEDULE"),
+          })}
         </Button>
       </p>
     </div>

@@ -4,6 +4,8 @@ import RescheduleTask from "./ActionBox/RescheduleTask";
 import ApplyPriceDiffTask from "./ActionBox/ApplyPriceDiffTask";
 import TransporterReport from "./ActionBox/TransporterReport";
 
+import { useTranslation } from "react-i18next";
+
 import store from "./incidentStore";
 
 async function _handleCancelButton(id) {
@@ -23,6 +25,13 @@ const styles = {
 export default function () {
   const { loaded, incident, order, images, transporterEnabled } =
     store.getState();
+
+  const { t } = useTranslation();
+
+  if (!loaded) {
+    return null;
+  }
+
   const { task } = incident;
 
   const placement = "left";
@@ -34,14 +43,72 @@ export default function () {
 
   const [transporterForm] = Form.useForm();
 
-  if (!loaded) {
-    return null;
-  }
+  const buttons = [
+    {
+      key: "reschedule",
+      component: () => (
+        <Button style={styles.btn} onClick={() => setRescheduleDrawer(true)}>
+          {t("RESCHEDULE_THE_TASK")}
+        </Button>
+      ),
+      shouldRender: task.status !== "DONE",
+    },
+    {
+      key: "cancel",
+      component: () => (
+        <Popconfirm
+          placement="rightTop"
+          title={t("ARE_YOU_SURE")}
+          onConfirm={async () => {
+            const { error } = await _handleCancelButton(incident.id);
+            if (!error) {
+              location.reload();
+            }
+          }}
+        >
+          <Button style={styles.btn}>{t("CANCEL_THE_TASK")}</Button>
+        </Popconfirm>
+      ),
+      shouldRender: task.status !== "DONE" && task.status !== "CANCELLED",
+    },
+    {
+      key: "apply-price-diff",
+      component: () => (
+        <Button style={styles.btn} onClick={() => setPriceDiffDrawer(true)}>
+          {t("APPLY_A_PRICE_DIFFERENCE")}
+        </Button>
+      ),
+      shouldRender: order && order.state !== "cancelled",
+    },
+    {
+      key: "transporter-report",
+      component: () => (
+        <Button
+          style={styles.btn}
+          onClick={() => setTransporterReportModal(true)}
+        >
+          {t("SEND_REPORT_TO_THE_TRANSPORTER")}
+        </Button>
+      ),
+      shouldRender: transporterEnabled,
+    },
+  ]
+    .filter((b) => b.shouldRender)
+    .map((b, index) => (
+      <React.Fragment key={b.key}>
+        {!!index && <Divider>{t("OR")}</Divider>}
+        <p>{b.component()}</p>
+      </React.Fragment>
+    ));
 
   return (
     <>
-      <Button style={styles.btn} onClick={() => setOpen(true)}>
-        Take actions
+      <Button
+        style={styles.btn}
+        onClick={() => setOpen(true)}
+        disabled={buttons.length === 0}
+      >
+        {t("TAKE_ACTIONS")}
       </Button>
       <Drawer
         placement={placement}
@@ -49,68 +116,11 @@ export default function () {
         onClose={() => setOpen(false)}
         open={open}
       >
-        {task.status !== "DONE" && (
-          <>
-            <p>
-              <Button
-                style={styles.btn}
-                onClick={() => setRescheduleDrawer(true)}
-              >
-                Reschedule the task
-              </Button>
-            </p>
-            <Divider>OR</Divider>
-          </>
-        )}
-        {task.status !== "DONE" && task.status !== "CANCELLED" && (
-          <>
-            <p>
-              <Popconfirm
-                placement="rightTop"
-                title="Are you sure?"
-                onConfirm={async () => {
-                  const { error } = await _handleCancelButton(incident.id);
-                  if (!error) {
-                    location.reload();
-                  }
-                }}
-              >
-                <Button style={styles.btn}>Cancel the task</Button>
-              </Popconfirm>
-            </p>
-            <Divider>OR</Divider>
-          </>
-        )}
-        {order && (
-          <>
-            <p>
-              <Button
-                style={styles.btn}
-                onClick={() => setPriceDiffDrawer(true)}
-              >
-                Apply a difference on the price
-              </Button>
-            </p>
-          </>
-        )}
-        {transporterEnabled && (
-          <>
-            <Divider>OR</Divider>
-            <p>
-              <Button
-                style={styles.btn}
-                onClick={() => setTransporterReportModal(true)}
-              >
-                Send report to transporter
-              </Button>
-            </p>
-          </>
-        )}
-
+        {buttons}
         <Drawer
           placement={placement}
           width={480}
-          title="Reschedule the task"
+          title={t("RESCHEDULE_THE_TASK")}
           onClose={() => setRescheduleDrawer(false)}
           open={rescheduleDrawer}
         >
@@ -120,7 +130,7 @@ export default function () {
         <Drawer
           placement={placement}
           width={500}
-          title="Apply a difference on the price"
+          title={t("APPLY_A_PRICE_DIFFERENCE")}
           onClose={() => setPriceDiffDrawer(false)}
           open={priceDiffDrawer}
         >
@@ -129,7 +139,7 @@ export default function () {
 
         <Modal
           width="840px"
-          title="Transporter report"
+          title={t("SEND_REPORT_TO_THE_TRANSPORTER")}
           open={transporterReportModal}
           onOk={() => transporterForm.submit()}
           onCancel={() => setTransporterReportModal(false)}
