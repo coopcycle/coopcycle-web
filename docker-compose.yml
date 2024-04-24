@@ -92,6 +92,18 @@ services:
         published: ${HTTP3_PORT:-443}
         protocol: udp
 
+  php_worker:
+    image: ${IMAGES_PREFIX:-}app-php
+    restart: unless-stopped
+    depends_on:
+      php:
+        condition: service_healthy
+    command: php bin/console messenger:consume async --limit=100 --time-limit=900 -n
+    environment:
+      - GOOGLE_API_KEY
+      - STRIPE_PUBLISHABLE_KEY
+      - STRIPE_SECRET_KEY
+
 #  php:
 #    build:
 #      dockerfile: './docker/php/Dockerfile'

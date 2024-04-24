@@ -6,13 +6,9 @@ services:
       dockerfile: './docker/symfony-docker/Dockerfile'
       target: frankenphp_dev
     volumes:
-      - ./:/app
-#      - ./:/var/www/html:cached
+      - ./:/app:cached
       - ./frankenphp/Caddyfile:/etc/caddy/Caddyfile:ro
       - ./frankenphp/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
-      # If you develop on Mac or Windows you can remove the vendor/ directory
-      #  from the bind-mount for better performance by enabling the next line:
-#      - /app/vendor
       - php_logs:/app/var/logs
       - php_cache:/app/var/cache
     environment:
@@ -22,6 +18,16 @@ services:
     extra_hosts:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway
+    tty: true # to have human-readable logs in dev
+
+  php_worker:
+    build:
+      context: '.'
+      dockerfile: './docker/symfony-docker/Dockerfile'
+    volumes:
+      - ./:/app:cached
+      - php_logs:/app/var/logs
+      - php_cache:/app/var/cache
     tty: true # to have human-readable logs in dev
 
 ###> symfony/mercure-bundle ###
