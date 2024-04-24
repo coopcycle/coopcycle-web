@@ -258,17 +258,17 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @Groups({"restaurant"})
      */
-    protected $edenredTRCardEnabled;
+    protected $edenredTRCardEnabled = false;
 
     /**
      * @Groups({"restaurant"})
      */
-    protected $edenredEnabled;
+    protected $edenredEnabled = false;
 
     /**
      * @Groups({"restaurant"})
      */
-    protected $edenredSyncSent;
+    protected $edenredSyncSent = false;
 
     /**
      * @Groups({"restaurant"})
