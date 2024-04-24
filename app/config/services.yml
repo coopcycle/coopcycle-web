@@ -1367,3 +1367,8 @@ services:
   AppBundle\Controller\StorybookController:
     arguments:
       $translator: '@translator'
+
+  AppBundle\Edenred\SynchronizerClient:
+    arguments: [
+      '@edenredsynchronizer.client',
+    ]

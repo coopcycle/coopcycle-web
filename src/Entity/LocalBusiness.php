@@ -250,7 +250,25 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $mercadopagoAccount;
 
+    /**
+     * @Groups({"restaurant"})
+     */
     protected $edenredMerchantId;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $edenredTRCardEnabled;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $edenredEnabled;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $edenredSyncSent;
 
     /**
      * @Groups({"restaurant"})
@@ -806,6 +824,36 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setEdenredMerchantId($edenredMerchantId)
     {
         $this->edenredMerchantId = $edenredMerchantId;
+    }
+
+    public function isEdenredEnabled()
+    {
+        return $this->edenredEnabled;
+    }
+
+    public function setEdenredEnabled($edenredEnabled)
+    {
+        $this->edenredEnabled = $edenredEnabled;
+    }
+
+    public function isEdenredTRCardEnabled()
+    {
+        return $this->edenredTRCardEnabled;
+    }
+
+    public function setEdenredTRCardEnabled($edenredTRCardEnabled)
+    {
+        $this->edenredTRCardEnabled = $edenredTRCardEnabled;
+    }
+
+    public function getEdenredSyncSent()
+    {
+        return $this->edenredSyncSent;
+    }
+
+    public function setEdenredSyncSent($edenredSyncSent)
+    {
+        $this->edenredSyncSent = $edenredSyncSent;
     }
 
     public function supportsEdenred(): bool

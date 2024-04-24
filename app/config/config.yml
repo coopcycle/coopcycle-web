@@ -218,6 +218,10 @@ framework:
                 base_uri: "https://pixabay.com/api/"
                 query:
                     key: "%env(PIXABAY_API_KEY)%"
+            edenredsynchronizer.client:
+                base_uri: "%env(EDENRED_SYNCHRONIZER_BASE_URL)%"
+                query:
+                    api_key: "%env(EDENRED_SYNCHRONIZER_API_KEY)%"
 
 # Twig Configuration
 twig:

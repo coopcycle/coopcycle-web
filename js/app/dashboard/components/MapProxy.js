@@ -188,9 +188,13 @@ export default class MapProxy {
       }
 
       render(<LeafletPopupContent
-        task={ task }
-        ref={ popupComponent }
-        onEditClick={ () => this.onEditClick(task) } />, el, cb)
+          task={ task }
+          ref={ popupComponent }
+          onEditClick={ this.onEditClick }
+        />,
+        el,
+        cb
+      )
 
       const popup = L.popup()
         .setContent(el)

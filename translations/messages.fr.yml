@@ -1416,3 +1416,4 @@ form.settings.company_legal_name.label: "Nom légal de l'entreprise"
 form.settings.company_legal_name.help: "Veuillez entrer le nom légal complet de l'entreprise tel qu'il apparaît sur ses documents officiels."
 form.settings.company_legal_id.label: "Numéro de SIRET"
 form.settings.company_legal_id.help: "Ce numéro est généralement disponible sur les documents officiels de l'entreprise, tels que les factures ou les contrats."
+restaurant.form.edenred_enabled.label: Activer Edenred

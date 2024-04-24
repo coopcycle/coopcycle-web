@@ -122,7 +122,12 @@ export const UnassignedTasks = () => {
             rrule={ rrule }
             onClick={ () => dispatch(setCurrentRecurrenceRule(rrule)) } />
         ) }
-          { !toursEnabled ?
+          {/*
+            groups are in another droppable area to ease writing the code for sorting tasks with dragNdrop
+            it is a little bit ugly to have two droppable areas one after another but we assume either the coop is foodtech either it is lasmile and they have tours enabled
+            also for now we can only drag out of this zone so no need to have it if there is no group in it
+          */}
+          { !toursEnabled && groups.length > 0 ?
             <Droppable
               droppableId="unassigned_groups"
               isDropDisabled={true}
@@ -177,7 +182,6 @@ export const UnassignedTasks = () => {
                   }) }
                   style={getDroppableListStyle(snapshot.isDraggingOver)}
                 >
-                  {/* offset={ !toursEnabled ? groups.length : 0 */}
                   <StandaloneTasks
                     tasks={ standaloneTasks }
                     unassignedTasksIdsOrder={ unassignedTasksIdsOrder }
