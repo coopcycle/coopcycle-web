@@ -47,6 +47,7 @@ services:
       - postgres
       - redis
       - osrm
+      - centrifugo
       - stripe_mock
     links:
       - osrm
