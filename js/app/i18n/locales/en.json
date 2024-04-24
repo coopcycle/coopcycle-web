@@ -336,6 +336,7 @@
         "MUST READ_BEFORE_AGREE_terms": "You must read all the terms and conditions before agree",
         "MUST READ_BEFORE_AGREE_privacy": "You must read all the privacy policy before agree",
         "CONFIRM_DELETE": "Do you confirm the deletion?",
+        "CONFIRM_DELETE_WITH_PLACEHOLDER": "Do you confirm the deletion of {{ object_name }}?",
         "ADHOC_ORDER_ADD_ITEM": "Add new product",
         "ADHOC_ORDER_ITEM_TITLE": "Product information",
         "ADHOC_ORDER_ITEM_NAME_LABEL": "Name",

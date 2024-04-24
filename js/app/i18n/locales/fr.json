@@ -318,6 +318,7 @@
         "OPTIN_CONSENT_MODAL_SUBMIT": "Mettre à jour",
         "ADMIN_DASHBOARD_SETTINGS_AVATAR_COLORS_ENABLED": "Utiliser les couleurs des avatars pour les marqueurs et les tracés",
         "CONFIRM_DELETE": "Confirmez-vous la suppression ?",
+        "CONFIRM_DELETE_WITH_PLACEHOLDER": "Confirmez-vous la suppression de {{ object_name }}?",
         "SEARCH_SHOPS": "Boutiques",
         "SEARCH_PRODUCTS": "Produits",
         "SEARCH_PRODUCT_ITEM_SUBTITLE": "Dans {{- shop}}",

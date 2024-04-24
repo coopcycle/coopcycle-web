@@ -1,5 +1,5 @@
 {% if stores|length > 0 %}
-  <table class="table">
+  <table class="table" id="stores-list" data-jwt="{{ jwt }}" >
     <thead>
       <th></th>
       <th>{{ 'basics.name'|trans }}</th>
@@ -62,18 +62,23 @@
                   {% trans %}stores.deliveries{% endtrans %}
                 </a>
               </li>
+              <li>
+                <a href="{{ path(store_delivery_new_route, { id: store.id }) }}">
+                  {% trans %}stores.createNewDelivery{% endtrans %}
+                </a>
+              </li>
               {% if is_granted('ROLE_ADMIN') %}
               <li>
                 <a href="{{ path('admin_store_users', { id: store.id }) }}">
                   {% trans %}stores.users{% endtrans %}
                 </a>
               </li>
-              {% endif %}
               <li>
-                <a href="{{ path(store_delivery_new_route, { id: store.id }) }}">
-                  {% trans %}stores.createNewDelivery{% endtrans %}
+                <a class="text-danger delete-store" data-store-name="{{ store.name }}" data-store-id="{{ store.id }}">
+                  {% trans %}basics.delete{% endtrans %}
                 </a>
               </li>
+              {% endif %}
             </ul>
           </div>
         </td>
@@ -81,11 +86,15 @@
     {% endfor %}
     </tbody>
   </table>
-  <nav class="text-center"> 
-   {{ knp_pagination_render(stores) }} 
-  </nav> 
+  <nav class="text-center">
+   {{ knp_pagination_render(stores) }}
+  </nav>
 {% else %}
   <div class="alert alert-info">
   {% trans %}stores.list.noStores{% endtrans %}
   </div>
 {% endif %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('stores-list') }}
+{% endblock %}

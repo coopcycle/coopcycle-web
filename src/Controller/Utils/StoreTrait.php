@@ -33,6 +33,7 @@ use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
@@ -53,7 +54,7 @@ trait StoreTrait
     /**
     * @HideSoftDeleted
     */
-    public function storeListAction(Request $request, PaginatorInterface $paginator)
+    public function storeListAction(Request $request, PaginatorInterface $paginator, JWTManagerInterface $jwtManager)
     {
         $qb = $this->getDoctrine()
         ->getRepository(Store::class)
@@ -79,6 +80,7 @@ trait StoreTrait
             'store_route' => $routes['store'],
             'store_delivery_new_route' => $routes['store_delivery_new'],
             'store_deliveries_route' => $routes['store_deliveries'],
+            'jwt' => $jwtManager->create($this->getUser()),
         ]);
     }
 
