@@ -1282,6 +1282,16 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given the store with name :storeName has order creation enabled
+     */
+    public function theStoreWithNameHasOrderCreationEnabled($storeName)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+        $store->setCreateOrders(true);
+        $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
      * @Given stripe client is ready to use
      */
     public function theStripeClientIsReadyToUse()
