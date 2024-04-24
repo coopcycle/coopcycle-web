@@ -44,6 +44,13 @@ class TimeSlot
     private $workingDaysOnly = true;
 
     /**
+     * kept for backward compatibility, to be deleted when https://github.com/coopcycle/coopcycle-app/issues/1771 is solved
+     * @deprecated
+     * @Groups({"time_slot"})
+     */
+    private $choices = [];
+
+    /**
      * @var string
      * @Groups({"time_slot"})
      */
@@ -67,6 +74,15 @@ class TimeSlot
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * kept for backward compatibility, to be deleted when https://github.com/coopcycle/coopcycle-app/issues/1771 is solved
+     * @deprecated
+     */
+    public function getChoices()
+    {
+        return [];
     }
 
     /**
