@@ -78,7 +78,7 @@ export default function () {
           {t("APPLY_A_PRICE_DIFFERENCE")}
         </Button>
       ),
-      shouldRender: order && order.state !== "cancelled",
+      shouldRender: false && order && order.state !== "cancelled", //NOTE: Disabled for protect foodtech
     },
     {
       key: "transporter-report",
