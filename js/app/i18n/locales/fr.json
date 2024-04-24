@@ -389,7 +389,7 @@
         "CLOSE_THIS_INCIDENT": "Fermer cet incident",
         "REOPEN_THIS_INCIDENT": "Réouvrir cet incident",
         "SET_TO_PRIORITY": "Définir la priorité sur {{ priority }}",
-        "INCIDENT_REPORTED_AT": "Incident signalé à",
+        "INCIDENT_REPORTED_AT": "Incident signalé le",
         "RESCHEDULED_THE_TASK": "a reprogrammé la tâche",
         "CANCELLED_THE_TASK": "a annulé la tâche",
         "APPLIED_A_DIFFERENCE_ON_THE_PRICE": "a appliqué une différence sur le prix",
