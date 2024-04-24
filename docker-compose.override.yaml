@@ -13,8 +13,8 @@ services:
       # If you develop on Mac or Windows you can remove the vendor/ directory
       #  from the bind-mount for better performance by enabling the next line:
 #      - /app/vendor
-      - php_logs:/var/www/html/var/logs
-      - php_cache:/var/www/html/var/cache
+      - php_logs:/app/var/logs
+      - php_cache:/app/var/cache
     environment:
       MERCURE_EXTRA_DIRECTIVES: demo
       # See https://xdebug.org/docs/all_settings#mode
@@ -22,7 +22,7 @@ services:
     extra_hosts:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway
-    tty: true
+    tty: true # to have human-readable logs in dev
 
 ###> symfony/mercure-bundle ###
 ###< symfony/mercure-bundle ###
