@@ -84,26 +84,13 @@ class FailureReasons
         }
 
         $reverse = $this->em->getRepository(Organization::class)
-            ->reverseFindByOrganizarionID($org);
+            ->reverseFindByOrganization($org);
 
-        if (empty($reverse)) {
-            return $this->getDefaultReasons();
-        }
-        $reverse = $reverse[0];
 
-        if (!is_null($reverse['store_id'])) {
-            $store = $this->em->getRepository(Store::class)
-                ->find($reverse['store_id']);
-            return $this->getFailureReasons($store, $transporter);
-        }
-
-        if (!is_null($reverse['restaurant_id'])) {
-            $restaurant = $this->em->getRepository(LocalBusiness::class)
-                ->find($reverse['restaurant_id']);
-            return $this->getFailureReasons($restaurant, $transporter);
+        if ($reverse instanceof LocalBusiness || $reverse instanceof Store) {
+            return $this->getFailureReasons($reverse, $transporter);
         }
 
         return $this->getDefaultReasons();
-
     }
 }
