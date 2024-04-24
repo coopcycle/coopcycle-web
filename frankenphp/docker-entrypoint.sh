@@ -20,10 +20,14 @@ if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
       chmod 644 var/jwt/public.pem
   fi
 
-	if [ -z "$(ls -A 'vendor/' 2>/dev/null)" ]; then
-		composer install --prefer-dist --no-progress --no-interaction
-	fi
+  if [ "$APP_ENV" = 'prod' ]; then
+      composer install --prefer-dist --no-progress --no-dev --optimize-autoloader --classmap-authoritative
+  else
+      composer install --prefer-dist --no-progress
+  fi
 
+  #FIXME: This is taken form the sample setup, but it's not executed currently
+  # because we dont define DATABASE_URL in the .env file
 	if grep -q ^DATABASE_URL= .env; then
 		echo "Waiting for database to be ready..."
 		ATTEMPTS_LEFT_TO_REACH_DATABASE=60
