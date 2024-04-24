@@ -68,16 +68,16 @@
                 </a>
               </li>
               {% if is_granted('ROLE_ADMIN') %}
-              <li>
-                <a href="{{ path('admin_store_users', { id: store.id }) }}">
-                  {% trans %}stores.users{% endtrans %}
-                </a>
-              </li>
-              <li>
-                <a class="text-danger delete-store" data-store-name="{{ store.name }}" data-store-id="{{ store.id }}">
-                  {% trans %}basics.delete{% endtrans %}
-                </a>
-              </li>
+                <li>
+                  <a href="{{ path('admin_store_users', { id: store.id }) }}">
+                    {% trans %}stores.users{% endtrans %}
+                  </a>
+                </li>
+                <li>
+                  <a class="text-danger delete-store" data-store-name="{{ store.name }}" data-store-id="{{ store.id }}">
+                    {% trans %}basics.delete{% endtrans %}
+                  </a>
+                </li>
               {% endif %}
             </ul>
           </div>
