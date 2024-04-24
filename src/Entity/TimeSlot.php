@@ -48,7 +48,7 @@ class TimeSlot
      * @deprecated
      * @Groups({"time_slot"})
      */
-    private $choices = [];
+    public $choices = [];
 
     /**
      * @var string
