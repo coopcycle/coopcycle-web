@@ -3,6 +3,7 @@ import { Table, Tag, Avatar, Row, Col, Badge, Switch } from "antd";
 import TaskContext from "./TaskContext";
 import _ from "lodash";
 import "antd/lib/pagination/style/index.css";
+import "antd/lib/tree/style/index.css";
 import { useTranslation } from "react-i18next";
 
 async function _fetchIncidents() {
