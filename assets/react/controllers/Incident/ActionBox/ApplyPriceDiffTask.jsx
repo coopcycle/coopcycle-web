@@ -31,7 +31,7 @@ export default function ({ incident, order }) {
       />
       {value && (
         <p className="text-center my-2" style={{ fontSize: "1.2em" }}>
-          New price: {money(order.total + value * 100)}
+          {t("NEW_PRICE")}: {money(order.total + value * 100)}
         </p>
       )}
       <p className="mt-3">
@@ -51,14 +51,14 @@ export default function ({ incident, order }) {
             }
           }}
         >
-          Apply
+          {t("APPLY")}
         </Button>
       </p>
-      <p>
+      {false &&<p>
         <Button type="danger" ghost disabled={!value || submitting}>
           Apply {t("ADMIN_DASHBOARD_AND_CLOSE_THE_INCIDENT")}
         </Button>
-      </p>
+      </p>}
     </div>
   );
 }

@@ -460,6 +460,8 @@
         "RESCHEDULE_THE_TASK": "Reschedule the task",
         "CANCEL_THE_TASK": "Cancel the task",
         "OR": "OR",
+        "APPLY": "Apply",
+        "NEW_PRICE": "New price",
         "APPLY_A_PRICE_DIFFERENCE": "Apply a price difference",
         "SEND_REPORT_TO_THE_TRANSPORTER": "Send report to the transporter",
         "CHECK_ALL": "Check all",

@@ -412,6 +412,8 @@
         "RESCHEDULE_THE_TASK": "Reprogrammer la tâche",
         "CANCEL_THE_TASK": "Annuler la tâche",
         "OR": "OU",
+        "APPLY": "Appliquer",
+        "NEW_PRICE": "Nouveau prix",
         "APPLY_A_PRICE_DIFFERENCE": "Appliquer une différence de prix",
         "SEND_REPORT_TO_THE_TRANSPORTER": "Envoyer le rapport au transporteur",
         "CHECK_ALL": "Tout cocher",
