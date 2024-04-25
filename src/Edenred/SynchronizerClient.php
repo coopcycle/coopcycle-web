@@ -18,7 +18,7 @@ class SynchronizerClient
     public function getMerchant(LocalBusiness $restaurant)
     {
         return $this->edenredSynchronizerClient->request('GET',
-            sprintf('merchants/%s', $restaurant->getAdditionalPropertyValue('siret')));
+            sprintf('merchants/%s', preg_replace('/\s+/', '', $restaurant->getAdditionalPropertyValue('siret'))));
     }
 
     public function synchronizeMerchants(array $restaurants)
@@ -26,7 +26,7 @@ class SynchronizerClient
         $merchants = [];
         foreach ($restaurants as $restaurant) {
             $merchants[] = [
-                "siret" => $restaurant->getAdditionalPropertyValue('siret'),
+                'siret' => preg_replace('/\s+/', '', $restaurant->getAdditionalPropertyValue('siret')),
                 'addInfo' => strval($restaurant->getId()),
             ];
         }
