@@ -729,8 +729,10 @@ class LazyProductVariantResolverTest extends KernelTestCase
     public function testGetVariantForBusiness()
     {
         $restaurantGroup = new BusinessRestaurantGroup();
+        $restaurantGroup->setName('Acme');
 
         $businessAccount = new BusinessAccount();
+        $businessAccount->setName('Acme');
         $businessAccount->setBusinessRestaurantGroup($restaurantGroup);
 
         $this->businessContext->isActive()->willReturn(true);
@@ -738,16 +740,27 @@ class LazyProductVariantResolverTest extends KernelTestCase
 
         $product = new Product();
         $product->setCurrentLocale('en');
+        $product->setCode(Uuid::uuid4()->toString());
 
         $defaultVariant = new ProductVariant();
+        $defaultVariant->setTaxCategory($this->taxCategoryRepository->findOneByCode('BASE_REDUCED'));
+        $defaultVariant->setCode(Uuid::uuid4()->toString());
         $defaultVariant->setPrice(900);
 
         $businessVariant = new ProductVariant();
+        $businessVariant->setTaxCategory($this->taxCategoryRepository->findOneByCode('BASE_REDUCED'));
+        $businessVariant->setCode(Uuid::uuid4()->toString());
         $businessVariant->setPrice(950);
         $businessVariant->setBusinessRestaurantGroup($restaurantGroup);
 
         $product->addVariant($defaultVariant);
         $product->addVariant($businessVariant);
+
+        $this->entityManager->persist($restaurantGroup);
+        $this->entityManager->persist($businessAccount);
+
+        $this->entityManager->persist($product);
+        $this->entityManager->flush();
 
         $variant = $this->lazyVariantResolver
             ->getVariant($product);
