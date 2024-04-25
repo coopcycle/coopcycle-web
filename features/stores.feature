@@ -219,7 +219,8 @@ Feature: Stores
               "Sunday"
             ]
           }
-        ]
+        ],
+        "choices":[]
       }
       """
 
@@ -279,7 +280,8 @@ Feature: Stores
               "Sunday"
             ]
           }
-        ]
+        ],
+        "choices":[]
       }
       """
 

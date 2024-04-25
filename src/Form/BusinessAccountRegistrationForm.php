@@ -48,7 +48,8 @@ class BusinessAccountRegistrationForm extends AbstractType
                 break;
             case 2:
                 $builder->add('businessAccount', BusinessAccountType::class, [
-                    'label' => false
+                    'label' => false,
+                    'business_account_registration' => true
                 ]);
 				break;
             case 3:

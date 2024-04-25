@@ -67,6 +67,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "normalization_context"={"groups"={"restaurant", "address", "order", "restaurant_potential_action"}},
  *       "security"="is_granted('view', object)"
  *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')"
+ *     },
  *     "restaurant_menu"={
  *       "method"="GET",
  *       "path"="/restaurants/{id}/menu",
@@ -258,17 +262,17 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @Groups({"restaurant"})
      */
-    protected $edenredTRCardEnabled;
+    protected $edenredTRCardEnabled = false;
 
     /**
      * @Groups({"restaurant"})
      */
-    protected $edenredEnabled;
+    protected $edenredEnabled = false;
 
     /**
      * @Groups({"restaurant"})
      */
-    protected $edenredSyncSent;
+    protected $edenredSyncSent = false;
 
     /**
      * @Groups({"restaurant"})
