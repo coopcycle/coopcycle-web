@@ -58,27 +58,10 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
      */
     public function getVariantForOptionValues(ProductInterface $product, \Traversable $optionValues): ?ProductVariantInterface
     {
-        $qb = $this->entityManager->getRepository(ProductVariantInterface::class)->createQueryBuilder('variant');
-        $qb->leftJoin(ProductVariantOptionValue::class, 'variant_option_value', Join::WITH, 'variant_option_value.variant = variant.id');
-        $qb->leftJoin(ProductOptionValueInterface::class, 'option_value', Join::WITH, 'variant_option_value.optionValue = option_value.id');
-
-        $qb->select('variant.id');
-        $qb->addSelect('IDENTITY(variant.businessRestaurantGroup) AS business_restaurant_group_id');
-        $qb->addSelect('JSON_AGG(JSON_BUILD_OBJECT(\'id\', option_value.id, \'quantity\', variant_option_value.quantity)) AS option_values');
-
-        $qb->andWhere('variant.product = :product');
-        $qb->setParameter('product', $product);
-
-        $qb->groupBy('variant.id');
-
-        $variantsAsArray = array_map(function ($variant) {
-            $variant['option_values'] = json_decode($variant['option_values'], true);
-            if (count($variant['option_values']) === 1 && $variant['option_values'][0]['id'] === null) {
-                $variant['option_values'] = [];
-            }
-
-            return $variant;
-        }, $qb->getQuery()->getArrayResult());
+        // We do *NOT* use the Product::getVariants() method,
+        // because when there is a big number of variants, it becomes very slow.
+        // See https://github.com/coopcycle/coopcycle-web/issues/4090
+        $variantsAsArray = $this->getVariantsAsArray($product);
 
         foreach ($variantsAsArray as $variant) {
 
@@ -123,6 +106,35 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
         $variant->setTaxCategory($defaultVariant->getTaxCategory());
 
         return $variant;
+    }
+
+    private function getVariantsAsArray(ProductInterface $product)
+    {
+        $qb = $this->entityManager->getRepository(ProductVariantInterface::class)->createQueryBuilder('variant');
+        $qb->leftJoin(ProductVariantOptionValue::class, 'variant_option_value', Join::WITH, 'variant_option_value.variant = variant.id');
+        $qb->leftJoin(ProductOptionValueInterface::class, 'option_value', Join::WITH, 'variant_option_value.optionValue = option_value.id');
+
+        $qb->select('variant.id');
+        $qb->addSelect('IDENTITY(variant.businessRestaurantGroup) AS business_restaurant_group_id');
+        // This will return the option values & their quantity as JSON
+        // [{"id" : 1, "quantity" : 1}, {"id" : 2, "quantity" : 2}]
+        $qb->addSelect('JSON_AGG(JSON_BUILD_OBJECT(\'id\', option_value.id, \'quantity\', variant_option_value.quantity)) AS option_values');
+
+        $qb->andWhere('variant.product = :product');
+        $qb->setParameter('product', $product);
+
+        $qb->groupBy('variant.id');
+
+        return array_map(function ($variant) {
+            $variant['option_values'] = json_decode($variant['option_values'], true);
+
+            // This happens when a variant has no options
+            if (count($variant['option_values']) === 1 && $variant['option_values'][0]['id'] === null) {
+                $variant['option_values'] = [];
+            }
+
+            return $variant;
+        }, $qb->getQuery()->getArrayResult());
     }
 
     private function matchOptions(array $variant, \Traversable $optionValues)
