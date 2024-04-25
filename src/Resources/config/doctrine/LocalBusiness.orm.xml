@@ -55,6 +55,7 @@
     <field name="stripeConnectRoles" type="json_array" column="stripe_connect_roles"/>
     <field name="mercadopagoConnectRoles" type="json_array" column="mercadopago_connect_roles" nullable="true"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
+    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <field name="exclusive" type="boolean" column="exclusive">
       <options>
         <option name="default">0</option>
@@ -111,7 +112,6 @@
       </options>
     </field>
     <field name="dabbaCode" type="string" column="dabba_code" nullable="true"/>
-    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
       <cascade>
         <cascade-persist/>

@@ -2697,7 +2697,8 @@ class AdminController extends AbstractController
             'products_route' => $routes['products'],
             'pledge_count' => $pledgeCount,
             'pledge_form' => $pledgeForm->createView(),
-            'nonprofits_enabled' => $this->getParameter('nonprofits_enabled')
+            'nonprofits_enabled' => $this->getParameter('nonprofits_enabled'),
+            'jwt' => $this->JWTTokenManager->create($this->getUser()),
         ]);
     }
 

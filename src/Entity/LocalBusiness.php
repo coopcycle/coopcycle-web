@@ -67,6 +67,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "normalization_context"={"groups"={"restaurant", "address", "order", "restaurant_potential_action"}},
  *       "security"="is_granted('view', object)"
  *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')"
+ *     },
  *     "restaurant_menu"={
  *       "method"="GET",
  *       "path"="/restaurants/{id}/menu",

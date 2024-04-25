@@ -56,6 +56,7 @@ Encore
   .addEntry('search-address', './js/app/search/address.js')
   .addEntry('search-user', './js/app/search/user.js')
   .addEntry('store-form', './js/app/store/form.js')
+  .addEntry('stores-list', './js/app/store/list.js')
   .addEntry('task-list', './js/app/delivery/task-list.js')
   .addEntry('time-slot-form', './js/app/time-slot/form.js')
   .addEntry('time-slot-list', './js/app/time-slot/list.js')

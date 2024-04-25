@@ -12,6 +12,7 @@ use Sonata\Form\Type\BooleanType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -104,6 +105,12 @@ class StoreType extends LocalBusinessType
             if (null !== $store && null !== $store->getId()) {
                 // Remove default address form
                 $form->remove('address');
+
+                if (!$store->isDeleted()) {
+                    $form->add('delete', SubmitType::class, [
+                        'label' => 'basics.delete',
+                    ]);
+                }
             }
         });
 

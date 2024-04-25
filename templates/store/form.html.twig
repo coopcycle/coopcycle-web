@@ -27,12 +27,25 @@
 
   <hr>
 
-  <button type="submit" class="btn btn-lg btn-block btn-primary">{% trans %}basics.save{% endtrans %}</button>
+  <div class="d-flex">
+  {#
+  Make sure the "save" button is *BEFORE* the "delete" button in the DOM
+  to avoid deleting when hitting "enter"
+  #}
+  <div class="flex-fill">
+    <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.save'|trans }}</button>
+  </div>
+    {% if form.delete is defined %}
+      <div class="flex-shrink-1 ml-2">
+      {{ form_widget(form.delete, { attr: { class: 'btn-block btn-lg btn-danger' } }) }}
+      </div>
+    {% endif %}
+  </div>
 
 {{ form_end(form) }}
 
 {% endblock %}
 
 {% block scripts %}
-{{ encore_entry_script_tags('store-form') }}
+  {{ encore_entry_script_tags('store-form') }}
 {% endblock %}
