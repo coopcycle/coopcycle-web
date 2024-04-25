@@ -15,11 +15,11 @@ async function _fetchIncidents() {
 function _showPriority(priority) {
   switch (priority) {
     case 1:
-      return { text: "High", status: "error" };
+      return { text: "HIGH", status: "error" };
     case 2:
-      return { text: "Medium", status: "warning" };
+      return { text: "MEDIUM", status: "warning" };
     case 3:
-      return { text: "Low", status: "success" };
+      return { text: "LOW", status: "success" };
   }
 }
 
@@ -141,7 +141,7 @@ export default function () {
       sorter: (a, b) => a.priority - b.priority,
       render: (priority) => {
         const { text, status } = _showPriority(priority);
-        return <Badge status={status} text={text} />;
+        return <Badge status={status} text={t(text)} />;
       },
     },
     {
@@ -200,7 +200,9 @@ export default function () {
       dataIndex: "id",
       key: "action",
       render: (id) => (
-        <a href={window.Routing.generate("admin_incident", { id })}>Edit</a>
+        <a href={window.Routing.generate("admin_incident", { id })}>
+          {t("EDIT")}
+        </a>
       ),
     },
   ];

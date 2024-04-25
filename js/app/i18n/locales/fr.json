@@ -414,6 +414,7 @@
         "OR": "OU",
         "APPLY": "Appliquer",
         "NEW_PRICE": "Nouveau prix",
+        "EDIT": "Modifier",
         "APPLY_A_PRICE_DIFFERENCE": "Appliquer une différence de prix",
         "SEND_REPORT_TO_THE_TRANSPORTER": "Envoyer le rapport au transporteur",
         "CHECK_ALL": "Tout cocher",
