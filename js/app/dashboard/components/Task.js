@@ -209,6 +209,10 @@ class Task extends React.Component {
       classNames.push('task__highlighted')
     }
 
+    if (task.hasIncidents) {
+      classNames.push('task__has-incidents')
+    }
+
     const taskProps = {
       ...taskAttributes,
       style: {
