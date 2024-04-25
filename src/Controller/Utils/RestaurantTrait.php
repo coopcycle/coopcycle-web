@@ -1700,7 +1700,7 @@ trait RestaurantTrait
             $errors = [];
 
             foreach($form->get('restaurants')->getData() as $restaurant) {
-                if ($restaurant->hasAdditionalProperty('siret') && !empty($restaurant->getAdditionalProperty('siret'))) {
+                if ($restaurant->hasAdditionalProperty('siret') && !empty($restaurant->getAdditionalPropertyValue('siret'))) {
                     if (!$restaurant->getEdenredSyncSent()) {
                         $restaurantsToSync[] = $restaurant;
                     }
