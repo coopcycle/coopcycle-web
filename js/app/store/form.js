@@ -135,7 +135,7 @@ if (timeSlotsEl && timeSlotEl) {
   document.querySelector('#store_timeSlot').closest('.form-group').classList.add('d-none')
 }
 
-console.log('here');
+
 // Delete confirmation
 $('#store_delete').on('click', e => {
   if (!window.confirm(i18n.t('CONFIRM_DELETE'))) {

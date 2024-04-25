@@ -52,8 +52,8 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 trait StoreTrait
 {
     /**
-    * @HideSoftDeleted
-    */
+     * @HideSoftDeleted
+     */
     public function storeListAction(Request $request, PaginatorInterface $paginator, JWTManagerInterface $jwtManager)
     {
         $qb = $this->getDoctrine()
