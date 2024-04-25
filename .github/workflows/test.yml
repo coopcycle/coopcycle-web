@@ -68,6 +68,8 @@ jobs:
         run: docker-compose logs php
       - name: Create database
         run: docker-compose exec -T php bin/console doctrine:schema:create --env=test
+      - name: Create typesense collections
+        run: docker-compose exec -T php bin/console typesense:create --env=test
       - name: Validate database schema
         run: docker-compose exec -T php bin/console doctrine:schema:validate --env=test --skip-sync
       - name: Run PHPUnit

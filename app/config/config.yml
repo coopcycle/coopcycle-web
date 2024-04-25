@@ -327,6 +327,8 @@ doctrine:
                 CAST: DoctrineExtensions\Query\Mysql\Cast
                 JSON_GET_FIELD_AS_TEXT: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetFieldAsText
                 JSON_GET_FIELD: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetField
+                JSON_AGG: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonAgg
+                JSON_BUILD_OBJECT: AppBundle\Doctrine\Functions\JsonBuildObject
             datetime_functions:
                 date: DoctrineExtensions\Query\Mysql\Date
         filters:
