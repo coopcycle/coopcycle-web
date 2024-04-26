@@ -481,7 +481,7 @@ Feature: Carts
           ],
           "delivery_promotion":[
             {
-              "id":1,
+              "id":3,
               "label":"Free delivery",
               "amount":-350
             }
