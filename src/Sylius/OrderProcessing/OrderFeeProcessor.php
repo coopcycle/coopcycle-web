@@ -243,34 +243,38 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         bool $neutral = false,
         array $details = [])
     {
-        $prevAdjustments = $order->getAdjustments($type);
-
-        if (count($prevAdjustments) === 0) {
-            $adjustment = $this->adjustmentFactory->createWithData(
-                $type,
-                $this->translator->trans($labelId),
-                $amount,
-                $neutral,
-                $details
-            );
-
-            $order->addAdjustment($adjustment);
-
-            $this->logger->info(sprintf('Order %s | OrderFeeProcessor | %s: %d | added',
-                $this->loggingUtils->getOrderId($order), $labelId, $adjustment->getAmount()));
+        if ($amount === 0) {
+            $order->removeAdjustments($type);
         } else {
-            //fixme: invalid state; do some cleanup?
-            if (count($prevAdjustments) !== 1) {
-                $this->logger->warning(sprintf('Order %s | OrderFeeProcessor | multiple %s: %d',
-                    $this->loggingUtils->getOrderId($order), $labelId, count($prevAdjustments)));
+            $prevAdjustments = $order->getAdjustments($type);
+
+            if (count($prevAdjustments) === 0) {
+                $adjustment = $this->adjustmentFactory->createWithData(
+                    $type,
+                    $this->translator->trans($labelId),
+                    $amount,
+                    $neutral,
+                    $details
+                );
+
+                $order->addAdjustment($adjustment);
+
+                $this->logger->info(sprintf('Order %s | OrderFeeProcessor | %s: %d | added',
+                    $this->loggingUtils->getOrderId($order), $labelId, $adjustment->getAmount()));
+            } else {
+                //fixme: invalid state; do some cleanup?
+                if (count($prevAdjustments) !== 1) {
+                    $this->logger->warning(sprintf('Order %s | OrderFeeProcessor | multiple %s: %d',
+                        $this->loggingUtils->getOrderId($order), $labelId, count($prevAdjustments)));
+                }
+
+                $adjustment = $prevAdjustments->first();
+                $prevAmount = $adjustment->getAmount();
+                $adjustment->setAmount($amount);
+
+                $this->logger->info(sprintf('Order %s | OrderFeeProcessor | %s: %d | prev: %d | updated',
+                    $this->loggingUtils->getOrderId($order), $labelId, $adjustment->getAmount(), $prevAmount));
             }
-
-            $adjustment = $prevAdjustments->first();
-            $prevAmount = $adjustment->getAmount();
-            $adjustment->setAmount($amount);
-
-            $this->logger->info(sprintf('Order %s | OrderFeeProcessor | %s: %d | prev: %d | updated',
-                $this->loggingUtils->getOrderId($order), $labelId, $adjustment->getAmount(), $prevAmount));
         }
     }
 }
