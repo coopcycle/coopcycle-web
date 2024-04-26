@@ -130,6 +130,7 @@ trait AdminDashboardTrait
             ->getArrayResult();
 
         $this->getDoctrine()->getManager()->getFilters()->enable('soft_deleteable');
+        // insert here all queries for soft deletable that you don't want to show in the dashboard
 
         $recurrenceRules =
             $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findAll();
@@ -142,9 +143,9 @@ trait AdminDashboardTrait
             ]);
         }, $recurrenceRules);
 
-        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
-
         $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
+
+        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
 
         $storesNormalized = array_map(function (Store $store) {
             return $this->get('serializer')->normalize($store, 'jsonld', [
