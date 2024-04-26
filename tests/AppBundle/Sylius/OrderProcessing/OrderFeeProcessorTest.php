@@ -592,13 +592,14 @@ class OrderFeeProcessorTest extends KernelTestCase
         $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
             ->willReturn(90);
 
+        $order->removeAdjustments(Argument::that(function ($adjustment) {
+            return AdjustmentInterface::DELIVERY_ADJUSTMENT === $adjustment;
+        }))->shouldBeCalled();
+
         $this->orderFeeProcessor->process($order->reveal());
 
         $order->addAdjustment(Argument::that(function ($adjustment) {
             return AdjustmentInterface::FEE_ADJUSTMENT === $adjustment->getType() && 590 === $adjustment->getAmount();
-        }))->shouldBeCalledOnce();
-        $order->addAdjustment(Argument::that(function ($adjustment) {
-            return AdjustmentInterface::DELIVERY_ADJUSTMENT === $adjustment->getType() && 0 === $adjustment->getAmount();
         }))->shouldBeCalledOnce();
     }
 

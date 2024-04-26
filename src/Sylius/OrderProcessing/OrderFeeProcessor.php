@@ -189,7 +189,9 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             AdjustmentInterface::FEE_ADJUSTMENT,
             'order.adjustment_type.platform_fees',
             $feeAmount,
-            $neutral = true);
+            true,
+            [],
+            true);
 
         $this->lazyUpsertAdjustment(
             $order,
@@ -241,9 +243,10 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         string $labelId,
         int $amount,
         bool $neutral = false,
-        array $details = [])
+        array $details = [],
+        bool $hasZeroValue = false)
     {
-        if ($amount === 0) {
+        if ($amount === 0 && !$hasZeroValue) {
             $order->removeAdjustments($type);
         } else {
             $prevAdjustments = $order->getAdjustments($type);
