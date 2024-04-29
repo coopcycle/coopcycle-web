@@ -10,7 +10,7 @@ async function _fetchTaskContect(id) {
   );
 }
 
-function formatContext({ delivery, order }) {
+function ContextDetails({ delivery, order }) {
   if (order) {
     const orderID = order?.number
       ? `Order N°${order.number}`
@@ -65,7 +65,7 @@ export default function ({ task }) {
         <TaskStatusBadge task={task} />
       </p>
       <div className="text-capitalize">Type: {task.type.toLowerCase()}</div>
-      {formatContext(context)}
+      {ContextDetails(context)}
     </div>
   );
 }
