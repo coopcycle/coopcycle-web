@@ -974,7 +974,11 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.tagging }
 
-  AppBundle\Log\RequestResponseProcessor:
+  AppBundle\Log\RequestIdProcessor:
+
+  AppBundle\Log\RequestUriProcessor:
+
+  AppBundle\Log\ApiRequestResponseProcessor:
     tags:
       - { name: monolog.processor, channel: api }
 
