@@ -1648,6 +1648,7 @@ class AdminController extends AbstractController
         $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
         return $this->render('admin/forms.html.twig', [
             'forms' => $forms,
+            'jwt' => $this->JWTTokenManager->create($this->getUser())
         ]);
     }
 

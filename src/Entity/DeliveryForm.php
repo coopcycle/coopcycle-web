@@ -2,8 +2,22 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Gedmo\Timestampable\Traits\Timestampable;
 
+
+/**
+ * A form to order deliveries, to be embedded anywhere.
+ *
+ * @ApiResource(
+ *   itemOperations={
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')"
+ *     }
+ *   }
+ * )
+ */
 class DeliveryForm
 {
     use Timestampable;
@@ -15,6 +29,7 @@ class DeliveryForm
     private $withVehicle = false;
     private $withWeight = false;
     private $showHomepage = false;
+    private $submissions;
 
     /**
      * @return mixed
