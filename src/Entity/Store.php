@@ -13,6 +13,7 @@ use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Package;
+use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\HttpFoundation\File\File;
@@ -130,6 +131,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
      */
     private $deliveries;
 
+    private $rrules;
+
     private $owners;
 
     private $prefillPickupAddress = false;
@@ -167,6 +170,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         $this->owners = new ArrayCollection();
         $this->addresses = new ArrayCollection();
         $this->timeSlots = new ArrayCollection();
+        $this->rrules = new ArrayCollection();
     }
 
     /**
@@ -540,5 +544,14 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         $this->DBSchenkerEnabled = $DBSchenkerEnabled;
         return $this;
+    }
+
+    /**
+     * Get the recurrence rules linked to this store
+     * @return RecurrenceRule[]
+     */
+    public function getRrules()
+    {
+        return $this->rrules;
     }
 }
