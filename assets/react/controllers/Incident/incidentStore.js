@@ -50,7 +50,7 @@ export const {
 
 export default store;
 
-export const useStore =
+export const connectWithRedux =
   (Component) =>
   ({ ...props }) => (
     <Provider store={store}>
