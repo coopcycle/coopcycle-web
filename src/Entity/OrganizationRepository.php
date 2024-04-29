@@ -24,7 +24,7 @@ class OrganizationRepository extends EntityRepository
 
         $query = array_filter($query);
         if (count($query) === 1) {
-            return $query[0];
+            return array_shift($query);
         }
         return null;
     }
