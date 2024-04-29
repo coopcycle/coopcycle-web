@@ -52,7 +52,7 @@ function Heading({ task, delivery, order }) {
   return header(`${t("TASK")} #${task.id}`);
 }
 
-function CustomerShowName({ customer }) {
+function CustomerName({ customer }) {
   const { t } = useTranslation();
   let customerName = customer?.username;
   if (customer?.fullName != null) {
@@ -66,7 +66,7 @@ function CustomerShowName({ customer }) {
   );
 }
 
-function showAdjustment(adjustments, adjustmentType) {
+function Adjustment(adjustments, adjustmentType) {
   const total = adjustments[adjustmentType].reduce(
     (total, adjustment) => total + adjustment.amount,
     0,
@@ -82,7 +82,7 @@ function showAdjustment(adjustments, adjustmentType) {
   ));
 }
 
-function ShowOrderDetails({ order }) {
+function OrderDetails({ order }) {
   const { t } = useTranslation();
   return (
     <>
@@ -91,9 +91,9 @@ function ShowOrderDetails({ order }) {
         {t("SUBTOTAL")}
         <span>{money(order.itemsTotal)}</span>
       </p>
-      {showAdjustment(order.adjustments, "delivery")}
-      {showAdjustment(order.adjustments, "tax")}
-      {showAdjustment(order.adjustments, "incident")}
+      {Adjustment(order.adjustments, "delivery")}
+      {Adjustment(order.adjustments, "tax")}
+      {Adjustment(order.adjustments, "incident")}
       <p>
         {t("TOTAL")}
         <span>{money(order.total)}</span>
@@ -103,7 +103,7 @@ function ShowOrderDetails({ order }) {
   );
 }
 
-function ShowCustomerDetails({ customer }) {
+function CustomerDetails({ customer }) {
   const { t } = useTranslation();
   const link = window.Routing.generate("admin_user_edit", {
     username: customer?.username,
@@ -114,7 +114,7 @@ function ShowCustomerDetails({ customer }) {
         {t("CUSTOMER_DETAILS")}
         {_externalLink(link)}
       </h5>
-      <CustomerShowName customer={customer} />
+      <CustomerName customer={customer} />
       {customer?.email && (
         <p>
           {t("EMAIL")}
@@ -148,7 +148,7 @@ export default function ({ delivery }) {
         {t("DATE")}: {formatTime(task)}
       </p>
       <hr />
-      {order && <ShowOrderDetails order={order} />}
+      {order && <OrderDetails order={order} />}
       <h5>
         <span style={{ textTransform: "capitalize" }}>
           {task.type.toLowerCase()}
@@ -161,7 +161,7 @@ export default function ({ delivery }) {
       {task.weight && <p>{weight(task.weight)}</p>}
       <div className="mt-3">{<TaskStatusBadge task={task} />}</div>
       <hr />
-      {order?.customer && <ShowCustomerDetails customer={order.customer} />}
+      {order?.customer && <CustomerDetails customer={order.customer} />}
     </div>
   );
 }
