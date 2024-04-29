@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Table, Tag, Avatar, Row, Col, Badge, Switch } from "antd";
-import TaskContext from "./TaskContext";
+import IncidentItem from "./IncidentItem";
 import _ from "lodash";
 import "antd/lib/pagination/style/index.css";
 import "antd/lib/tree/style/index.css";
@@ -223,7 +223,7 @@ export default function () {
               <p>{record.description}</p>
             </Col>
             <Col span={6}>
-              <TaskContext task={record.task} />
+              <IncidentItem task={record.task} />
             </Col>
           </Row>
         )}
