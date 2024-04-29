@@ -31,7 +31,8 @@ export default function ({ incident, order }) {
       />
       {value && (
         <p className="text-center my-2" style={{ fontSize: "1.2em" }}>
-          {t("NEW_PRICE")}: {money(order.total + value * 100)}
+          <p>{t("CURRENT_PRICE")}: {money(order.total)}</p>
+          <p>{t("NEW_PRICE")}: {money(order.total + value * 100)}</p>
         </p>
       )}
       <p className="mt-3">
