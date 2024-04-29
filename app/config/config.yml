@@ -779,6 +779,8 @@ fos_js_routing:
         - api_incidents_get_collection
         - api_tasks_get_task_context_item
         - admin_incident
+        - api_stores_get_item
+        - api_restaurants_get_item
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'
