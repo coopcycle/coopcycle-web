@@ -13,7 +13,7 @@ class RequestIdSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => ['onKernelRequest'],
+            KernelEvents::REQUEST => ['onKernelRequest', 4096], // to run before everything else
             KernelEvents::RESPONSE => ['onKernelResponse'],
         ];
     }
