@@ -465,7 +465,7 @@ class StripeController extends AbstractController
             ->find($paymentId);
 
         if (null === $payment) {
-            $this->logger->warning(sprintf('Payment with id "%d" does not exist', $paymentId), ['hash' => $hashId]);
+            $this->logger->error(sprintf('Payment with id "%d" does not exist', $paymentId), ['hash' => $hashId]);
 
             return new JsonResponse(['error' =>
                 ['message' => sprintf('Payment with id "%d" does not exist', $paymentId)]

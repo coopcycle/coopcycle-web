@@ -139,9 +139,9 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         $newTipAmount = $order->getTipAmount();
 
         // $order->getTipAmount() is the tip amount set in the current request
-        // preserve the previous tip amount if it's null
+        // preserve the previous tip amount if $newTipAmount is null
         if (null !== $newTipAmount) {
-            $this->lazyUpsertAdjustment(
+            $this->upsertAdjustment(
                 $order,
                 AdjustmentInterface::TIP_ADJUSTMENT,
                 'order.adjustment_type.tip',
@@ -184,7 +184,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             $feeAmount = 0;
         }
 
-        $this->lazyUpsertAdjustment(
+        $this->upsertAdjustment(
             $order,
             AdjustmentInterface::FEE_ADJUSTMENT,
             'order.adjustment_type.platform_fees',
@@ -193,7 +193,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             [],
             true);
 
-        $this->lazyUpsertAdjustment(
+        $this->upsertAdjustment(
             $order,
             AdjustmentInterface::DELIVERY_ADJUSTMENT,
             'order.adjustment_type.delivery',
@@ -237,7 +237,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         return $delivery;
     }
 
-    private function lazyUpsertAdjustment(
+    private function upsertAdjustment(
         BaseOrderInterface $order,
         string $type,
         string $labelId,
