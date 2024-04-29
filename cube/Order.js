@@ -58,6 +58,10 @@ cube(`Order`, {
       relationship: `one_to_many`,
       sql: `${CUBE}.id = ${Payment}.order_id`,
     },
+    OrderPayment: {
+      relationship: `one_to_one`,
+      sql: `${CUBE}.id = ${OrderPayment}.order_id`,
+    },
   },
 
   measures: {
