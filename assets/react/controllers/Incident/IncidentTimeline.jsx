@@ -42,7 +42,7 @@ function _eventTypeToText(event) {
 
 function _metadataToText({ type, metadata }) {
   switch (type) {
-    case "reschedule":
+    case "rescheduled":
       return (
         <>
           <div>
@@ -59,7 +59,7 @@ function _metadataToText({ type, metadata }) {
           </div>
         </>
       );
-    case "apply_price_diff":
+    case "applied_price_diff":
       return money(metadata.diff);
   }
 }
@@ -88,7 +88,7 @@ function Event({ event }) {
 
 function _body(event) {
   switch (event.type) {
-    case "comment":
+    case "commented":
       return <Comment event={event} />;
     default:
       return <Event event={event} />;
@@ -97,7 +97,7 @@ function _body(event) {
 
 function Item({ event }) {
   const { username } = event.createdBy;
-  const eventType = event.type !== "comment";
+  const eventType = event.type !== "commented";
   return (
     <div className={classNames("media", { event: eventType })}>
       <div className="media-left media-top">

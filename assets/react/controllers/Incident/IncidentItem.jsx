@@ -65,7 +65,7 @@ export default function ({ task }) {
         <TaskStatusBadge task={task} />
       </p>
       <div className="text-capitalize">Type: {task.type.toLowerCase()}</div>
-      {ContextDetails(context)}
+      <ContextDetails context={context} />
     </div>
   );
 }
