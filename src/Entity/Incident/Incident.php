@@ -55,73 +55,73 @@ class Incident implements TaggableInterface {
     use TaggableTrait;
 
     /**
-    * @Groups({"incident"})
-    */
+     * @Groups({"incident"})
+     */
     protected $id;
 
     /**
-    * @Groups({"incident"})
-    */
+     * @Groups({"incident"})
+     */
     protected ?string $title = null;
 
 
     /**
-    * @Groups({"incident"})
-    */
+     * @Groups({"incident"})
+     */
     protected string $status = Incident::STATUS_OPEN;
 
 
     /**
-    * @Groups({"incident"})
-    */
+     * @Groups({"incident"})
+     */
     protected int $priority = Incident::PRIORITY_MEDIUM;
 
 
     /**
-    * @Groups({"incident"})
-    */
+     * @Groups({"incident"})
+     */
     protected Task $task;
 
 
     /**
-    * @Groups({"incident"})
-    */
+     * @Groups({"incident"})
+     */
     protected ?string $failure_reason_code = null;
 
 
     /**
-    * @Groups({"incident"})
-    */
+     * @Groups({"incident"})
+     */
     protected ?string $description = null;
 
 
     /**
-    * @Groups({"incident"})
-    */
+     * @Groups({"incident"})
+     */
     protected Collection $images;
 
 
     /**
-    * @Groups({"incident"})
-    */
+     * @Groups({"incident"})
+     */
     protected Collection $events;
 
 
     /**
-    * @Groups({"incident"})
-    */
+     * @Groups({"incident"})
+     */
     protected ?User $createdBy = null;
 
 
     /**
-    * @Groups({"incident"})
-    */
+     * @Groups({"incident"})
+     */
     protected $createdAt;
 
 
     /**
-    * @Groups({"incident"})
-    */
+     * @Groups({"incident"})
+     */
     protected $updatedAt;
 
     const STATUS_OPEN = 'OPEN';
