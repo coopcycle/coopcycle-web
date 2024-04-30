@@ -47,10 +47,8 @@
           {% if is_granted('ROLE_ADMIN') and form.managerEmail is defined %}
             {{ form_row(form.managerEmail) }}
           {% endif %}
-          {% if is_granted('ROLE_BUSINESS_ACCOUNT') %}
-            {{ form_row(form.address) }}
-          {% endif %}
           {% if is_granted('ROLE_ADMIN') %}
+            {{ form_row(form.address) }}
             {{ form_row(form.businessRestaurantGroup) }}
           {% endif %}
         </div>
