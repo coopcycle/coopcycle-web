@@ -1141,8 +1141,8 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     }
 
     /**
-    * @Groups({"task"})
-    */
+     * @Groups({"task"})
+     */
     public function getHasIncidents(): bool
     {
         return !$this->getIncidents()->filter(function (Incident $incident) {
