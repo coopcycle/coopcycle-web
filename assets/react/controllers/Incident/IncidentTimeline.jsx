@@ -29,13 +29,13 @@ function Comment({ event }) {
 
 function _eventTypeToText(event) {
   switch (event.type) {
-    case "reschedule":
+    case "rescheduled":
       return "RESCHEDULED_THE_TASK";
-    case "cancel_task":
+    case "cancelled":
       return "CANCELLED_THE_TASK";
-    case "apply_price_diff":
+    case "applied_price_diff":
       return "APPLIED_A_DIFFERENCE_ON_THE_PRICE";
-    case "transporter_report":
+    case "transporter_reported":
       return "SENT_A_REPORT_TO_THE_TRANSPORTER";
   }
 }

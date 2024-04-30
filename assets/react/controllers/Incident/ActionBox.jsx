@@ -12,7 +12,7 @@ async function _handleCancelButton(id) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.put(
     window.Routing.generate("api_incidents_action_item", { id }),
-    { action: "cancel_task" },
+    { action: "cancelled" },
   );
 }
 

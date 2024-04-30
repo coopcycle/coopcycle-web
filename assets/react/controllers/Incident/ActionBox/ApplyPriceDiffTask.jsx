@@ -7,7 +7,7 @@ async function _handleApplyPriceDiff(id, diff) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.put(
     window.Routing.generate("api_incidents_action_item", { id }),
-    { action: "apply_price_diff", diff },
+    { action: "applied_price_diff", diff },
   );
 }
 

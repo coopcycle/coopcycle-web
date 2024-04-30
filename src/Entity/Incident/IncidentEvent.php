@@ -43,11 +43,11 @@ class IncidentEvent
     */
     protected $createdAt;
 
-    const TYPE_COMMENT = "comment";
-    const TYPE_RESCHEDULE = "reschedule";
-    const TYPE_APPLY_PRICE_DIFF = "apply_price_diff";
-    const TYPE_CANCEL_TASK = "cancel_task";
-    const TYPE_TRANSPORTER_REPORT = "transporter_report";
+    const TYPE_COMMENT = "commented";
+    const TYPE_RESCHEDULE = "rescheduled";
+    const TYPE_APPLY_PRICE_DIFF = "applied_price_diff";
+    const TYPE_CANCEL_TASK = "cancelled";
+    const TYPE_TRANSPORTER_REPORT = "transporter_reported";
 
     public function getId()
     {
