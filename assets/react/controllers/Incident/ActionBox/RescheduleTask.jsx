@@ -7,7 +7,7 @@ async function _handleResheduleSubmit(id, after, before) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.put(
     window.Routing.generate("api_incidents_action_item", { id }),
-    { action: "reschedule", after, before },
+    { action: "rescheduled", after, before },
   );
 }
 

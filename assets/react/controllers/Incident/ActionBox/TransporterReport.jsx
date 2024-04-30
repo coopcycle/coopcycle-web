@@ -40,7 +40,7 @@ async function _handleFormSubmit(
   const pods = _.map(images, "full");
 
   const payload = {
-    action: "transporter_report",
+    action: "transporter_reported",
     failure_reason,
     appointment,
     pods,
