@@ -99,6 +99,11 @@ class PostSoftDeleteSubscriber implements EventSubscriber
                 $owner->getStores()->removeElement($entity);
             }
 
+            $rrules = $entity->getRrules();
+            foreach ($rrules as $rrule) {
+                $unitOfWork->scheduleForDelete($rrule);
+            }
+
             $unitOfWork->computeChangeSets();
         }
     }

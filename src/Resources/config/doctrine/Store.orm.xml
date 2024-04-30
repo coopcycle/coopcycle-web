@@ -114,5 +114,6 @@
         <join-column name="organization_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
+    <one-to-many field="rrules" target-entity="AppBundle\Entity\Task\RecurrenceRule" mapped-by="store" />
   </entity>
 </doctrine-mapping>
