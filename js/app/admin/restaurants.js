@@ -40,7 +40,7 @@ document.querySelectorAll('.delete-restaurant').forEach((el) => {
       'Content-Type': 'application/ld+json'
     }
 
-    const url = window.Routing.generate('api_restaurants_get_item', {
+    const url = window.Routing.generate('api_restaurants_delete_item', {
       id: e.target.dataset.restaurantId,
     })
 
