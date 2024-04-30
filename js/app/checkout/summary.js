@@ -24,10 +24,7 @@ var im = new Inputmask("currency", {
     suffix: currency.position === 'postfix' ? `${space}${getCurrencySymbol()}` : ''
 })
 
-const submitBtns = document.querySelectorAll(
-  'form[name="checkout_address"] input[type="submit"],button[type="submit"]'
-)
-const mainSubmitBtn = _.find(Array.from(submitBtns), btn => !btn.hasAttribute('name'))
+const submitPageBtn = document.querySelector('.btn-submit-page')
 
 const getValue = (inputmask) => numbro.unformat(inputmask.unmaskedvalue())
 
@@ -56,7 +53,7 @@ const updateTip = _.debounce(function() {
   $('form[name="checkout_address"] table').LoadingOverlay('show', {
     image: false,
   })
-  disableBtn(mainSubmitBtn)
+  disableBtn(submitPageBtn)
 
   $.ajax({
     url : $form.attr('action'),
@@ -70,7 +67,7 @@ const updateTip = _.debounce(function() {
       enableTipInput()
 
       $('form[name="checkout_address"] table').LoadingOverlay('hide')
-      enableBtn(mainSubmitBtn)
+      enableBtn(submitPageBtn)
     }
   })
 
@@ -197,7 +194,7 @@ $('#apply-coupon').on('click', function(e) {
   $('form[name="checkout_address"] table').LoadingOverlay('show', {
     image: false,
   })
-  disableBtn(mainSubmitBtn)
+  disableBtn(submitPageBtn)
 
   $.ajax({
     url : $form.attr('action'),
@@ -215,7 +212,7 @@ $('#apply-coupon').on('click', function(e) {
       $('#promotion-coupon-collapse').collapse('hide')
 
       $('form[name="checkout_address"] table').LoadingOverlay('hide')
-      enableBtn(mainSubmitBtn)
+      enableBtn(submitPageBtn)
     }
   })
 })
@@ -231,5 +228,6 @@ window.setNonprofit = function (elem) {
 const form = document.querySelector('form[name="checkout_address"]')
 
 form.addEventListener('submit', function() {
-  disableBtn(mainSubmitBtn)
+  submitPageBtn.classList.add('btn__loading')
+  disableBtn(submitPageBtn)
 })

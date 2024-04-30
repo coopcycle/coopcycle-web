@@ -164,8 +164,8 @@
             {% if form.quote is defined %}
               {{ form_widget(form.quote, { attr: { class: 'btn-lg btn-default mr-2' } }) }}
             {% endif %}
-            <button class="btn btn-lg btn-primary" type="submit">
-              {% trans %}cart.widget.button{% endtrans %}
+            <button class="btn btn-lg btn-primary btn-submit-page" type="submit">
+              <i class="fa fa-spinner fa-spin"></i> {% trans %}cart.widget.button{% endtrans %}
             </button>
           </div>
         </div>
