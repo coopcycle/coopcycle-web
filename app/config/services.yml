@@ -978,6 +978,10 @@ services:
 
   AppBundle\Log\RequestUriProcessor:
 
+  Symfony\Bridge\Monolog\Processor\RouteProcessor:
+    tags:
+      - { name: monolog.processor }
+
   AppBundle\Log\ApiRequestResponseProcessor:
     tags:
       - { name: monolog.processor, channel: api }
