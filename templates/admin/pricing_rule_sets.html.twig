@@ -9,7 +9,7 @@
 <div class="text-right mb-4">
   <a class="btn btn-success" href="{{ path('admin_deliveries_pricing_ruleset_new') }}"><i class="fa fa-plus"></i> {% trans %}adminDashboard.pricing.createNew{% endtrans %}</a>
 </div>
-<table class="table">
+<table class="table" id="pricings-list" data-jwt="{{ jwt }}">
   <tbody>
   {% if ruleSets|length > 0 %}
     {% for ruleSet in ruleSets %}
@@ -26,10 +26,19 @@
                 <a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">
                   {% trans %}adminDashboard.pricing.settings{% endtrans %}
                 </a>
+              </li>
+              <li>
                 <a href="{{ path('admin_deliveries_pricing_ruleset_duplicate', { id: ruleSet.id }) }}">
                   {% trans %}adminDashboard.pricing.duplicate{% endtrans %}
                 </a>
               </li>
+              {% if is_granted('ROLE_ADMIN') %}
+                <li>
+                  <a class="text-danger delete-pricing" data-pricing-name="{{ ruleSet.name }}" data-pricing-id="{{ ruleSet.id }}">
+                    {% trans %}basics.delete{% endtrans %}
+                  </a>
+                </li>
+              {% endif %}
             </ul>
           </div>
         </td>
@@ -45,4 +54,5 @@
 {% endblock %}
 
 {% block scripts %}
+  {{ encore_entry_script_tags('pricings') }}
 {% endblock %}

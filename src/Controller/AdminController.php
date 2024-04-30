@@ -1044,8 +1044,9 @@ class AdminController extends AbstractController
         $ruleSets = $this->getDoctrine()
             ->getRepository(Delivery\PricingRuleSet::class)
             ->findAll();
-        return $this->render('admin/pricing.html.twig', [
-            'ruleSets' => $ruleSets
+        return $this->render('admin/pricing_rule_sets.html.twig', [
+            'ruleSets' => $ruleSets,
+            'jwt' => $this->JWTTokenManager->create($this->getUser())
         ]);
     }
 
