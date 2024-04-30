@@ -10,16 +10,7 @@ import mercadopago from '../payment/mercadopago'
 import { Disclaimer } from '../payment/cashOnDelivery'
 
 import { useTranslation } from 'react-i18next'
-
-function disableBtn(btn) {
-  btn.setAttribute('disabled', '')
-  btn.disabled = true
-}
-
-function enableBtn(btn) {
-  btn.disabled = false
-  btn.removeAttribute('disabled')
-}
+import { disableBtn, enableBtn } from './button'
 
 const methodPickerStyles = {
   display: 'flex',
