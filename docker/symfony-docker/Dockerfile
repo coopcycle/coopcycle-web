@@ -13,6 +13,9 @@ FROM frankenphp_upstream AS frankenphp_base
 
 WORKDIR /app
 
+ENV APCU_VERSION 5.1.23
+ENV PHPREDIS_VERSION 6.0.2
+
 # persistent / runtime deps
 # hadolint ignore=DL3008
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -20,10 +23,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	file \
 	gettext \
 	git \
+  jpegoptim \
+  optipng \
+  pngquant \
 	&& rm -rf /var/lib/apt/lists/*
-
-ENV APCU_VERSION 5.1.23
-ENV PHPREDIS_VERSION 6.0.2
 
 RUN set -eux; \
 	install-php-extensions \
