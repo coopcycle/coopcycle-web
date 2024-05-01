@@ -1,6 +1,8 @@
 {
 	{$CADDY_GLOBAL_OPTIONS}
 
+	auto_https disable_redirects # allow /api access via HTTP from the test mobile devices; FIXME: switch to HTTPS
+
 	frankenphp {
 		{$FRANKENPHP_CONFIG}
 	}
@@ -13,7 +15,7 @@
 
 {$CADDY_EXTRA_CONFIG}
 
-{$SERVER_NAME:localhost} {
+{$SERVER_NAME} {
 	log {
 		# Redact the authorization query parameter that can be set by Mercure
 		format filter {
