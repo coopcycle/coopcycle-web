@@ -10,12 +10,7 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 Encore
 
   .setOutputPath(__dirname + '/web/build')
-
   .setPublicPath('/build')
-
-  // Use this if you want to debug on a real device
-  // .setPublicPath('http://192.168.0.11:8080')
-  // .setManifestKeyPrefix('/build')
 
   .addEntry('app', './assets/app.js')
   .addEntry('adhoc-order', './js/app/adhoc_order/index.js')

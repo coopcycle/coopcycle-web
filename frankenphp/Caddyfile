@@ -1,7 +1,7 @@
 {
 	{$CADDY_GLOBAL_OPTIONS}
 
-	auto_https disable_redirects # allow /api access via HTTP from the test mobile devices; FIXME: switch to HTTPS
+	auto_https disable_redirects # allow access via HTTP; FIXME?: use HTTPS in local development
 
 	frankenphp {
 		{$FRANKENPHP_CONFIG}
