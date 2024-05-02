@@ -1495,3 +1495,5 @@ restaurants.edenred.refresh.no_updates: "The restaurant '%restaurant_name%' does
 restaurants.edenred.refresh.has_updates: "The restaurant '%restaurant_name%' has had an update from Edenred servers."
 restaurants.edenred.added_list.actions: Actions
 business_restaurant_group.form.fill_all_pages: "Please, fill out all three settings pages."
+business_account.registration.user_with_same_email_exists: An account with the your email already
+  exists. Please log in to continue with your business account configuration.

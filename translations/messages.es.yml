@@ -1431,3 +1431,5 @@ restaurants.edenred.refresh.no_updates: "El restaurante '%restaurant_name%' hast
 restaurants.edenred.refresh.has_updates: "El restaurante '%restaurant_name%' ha tenido actualizaciones de los servidores de Edenred."
 restaurants.edenred.added_list.actions: Acciones
 business_restaurant_group.form.fill_all_pages: "Por favor, completar toda la configuración requerida en las tres páginas."
+business_account.registration.user_with_same_email_exists: Ya existe una cuenta con su correo
+  electrónico. Por favor, inicie sesión para continuar con la configuración de su cuenta de empresa.
