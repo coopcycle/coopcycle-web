@@ -29,6 +29,10 @@ AppBundle\Entity\Cuisine:
   cuisine_italian:
     name: 'italian'
 
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: Default
+
 AppBundle\Entity\Contract:
   contract_1:
     flatDeliveryPrice: 350
@@ -46,6 +50,7 @@ AppBundle\Entity\Contract:
     flatDeliveryPrice: 350
     customerAmount: 350
     feeRate: 0.00
+    variable_delivery_price: "@pricing_rule_set_1"
 
 AppBundle\Entity\MercadopagoAccount:
   mercadopago_account_1:
@@ -54,6 +59,7 @@ AppBundle\Entity\MercadopagoAccount:
     publicKey: 'PUBLIC_KEY'
     user_id: 1
     restaurant: '@restaurant_1'
+
 
 AppBundle\Entity\LocalBusiness:
   restaurant_1:

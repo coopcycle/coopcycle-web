@@ -16,7 +16,7 @@ Feature: Pricing rules set
     And the response should be in JSON
     And the JSON should match:
       """
-      {"error": "Unable to delete because stores are linked to this pricing. Please delete store(s) Acme."}
+      {"error": [{"entity": "AppBundle\\Entity\\Store", "name": "Acme","id": 1}]}
       """
     And the user "admin" sends a "DELETE" request to "/api/stores/1"
     And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"
@@ -25,6 +25,7 @@ Feature: Pricing rules set
     Scenario: Delete pricing rule set fails if restaurant then succeed if no restaurant
         Given the fixtures files are loaded:
         | sylius_channels.yml |
+        | products.yml          |
         | restaurants.yml          |
         And the user "admin" is loaded:
         | email      | admin@coopcycle.org |
@@ -34,12 +35,12 @@ Feature: Pricing rules set
         When I add "Content-Type" header equal to "application/ld+json"
         And I add "Accept" header equal to "application/ld+json"
         And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"
-        Then print last response
+        Then print last JSON response
         Then the response status code should be 400
         And the response should be in JSON
         And the JSON should match:
         """
-        {"error": "Unable to delete because restaurants are linked to this pricing. Please delete restaurant(s) Good Old Times with variables pricing."}
+         {"error": [{"entity": "AppBundle\\Entity\\LocalBusiness", "name": "Good Old Times with variables pricing","id": 7}]}
         """
         And the user "admin" sends a "DELETE" request to "/api/restaurants/7"
         And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"

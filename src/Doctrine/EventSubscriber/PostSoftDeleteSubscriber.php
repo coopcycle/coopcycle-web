@@ -89,6 +89,11 @@ class PostSoftDeleteSubscriber implements EventSubscriber
                 $owner->getRestaurants()->removeElement($entity);
             }
 
+            // unlink the restaurant from PricingRuleSet so we can hard delete PricingRuleSet if we want to
+            $contract = $entity->getContract();
+            $contract->setVariableCustomerAmount(null);
+            $contract->setVariableDeliveryPrice(null);
+
             $unitOfWork->computeChangeSets();
         }
 
