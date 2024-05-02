@@ -51,6 +51,8 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait StoreTrait
 {
+    use InjectAuthTrait;
+
     /**
      * @HideSoftDeleted
      */
@@ -74,14 +76,13 @@ trait StoreTrait
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->auth([
             'stores' => $stores,
             'layout' => $request->attributes->get('layout'),
             'store_route' => $routes['store'],
             'store_delivery_new_route' => $routes['store_delivery_new'],
-            'store_deliveries_route' => $routes['store_deliveries'],
-            'jwt' => $jwtManager->create($this->getUser()),
-        ]);
+            'store_deliveries_route' => $routes['store_deliveries']
+        ]));
     }
 
     public function storeUsersAction($id, Request $request,

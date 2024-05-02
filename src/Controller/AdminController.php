@@ -99,7 +99,6 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Nucleos\UserBundle\Util\TokenGenerator as TokenGeneratorInterface;
 use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
@@ -134,6 +133,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 use Twig\Environment as TwigEnvironment;
 use phpcent\Client as CentrifugoClient;
@@ -191,7 +191,7 @@ class AdminController extends AbstractController
         bool $optinExportUsersEnabled,
         CollectionFinderInterface $typesenseShopsFinder,
         bool $adhocOrderEnabled,
-        Filesystem $incidentImagesFilesystem,
+        protected Filesystem $incidentImagesFilesystem,
         protected JWTTokenManagerInterface $JWTTokenManager
     )
     {
@@ -206,7 +206,6 @@ class AdminController extends AbstractController
         $this->optinExportUsersEnabled = $optinExportUsersEnabled;
         $this->adhocOrderEnabled = $adhocOrderEnabled;
         $this->typesenseShopsFinder = $typesenseShopsFinder;
-        $this->incidentImagesFilesystem = $incidentImagesFilesystem;
     }
 
     /**
@@ -1044,10 +1043,7 @@ class AdminController extends AbstractController
         $ruleSets = $this->getDoctrine()
             ->getRepository(Delivery\PricingRuleSet::class)
             ->findAll();
-        return $this->render('admin/pricing_rule_sets.html.twig', [
-            'ruleSets' => $ruleSets,
-            'jwt' => $this->JWTTokenManager->create($this->getUser())
-        ]);
+        return $this->render('admin/pricing_rule_sets.html.twig', $this->auth(['ruleSets' => $ruleSets]));
     }
 
     private function renderPricingRuleSetForm(Delivery\PricingRuleSet $ruleSet, Request $request)
@@ -1648,10 +1644,7 @@ class AdminController extends AbstractController
     public function formsAction()
     {
         $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
-        return $this->render('admin/forms.html.twig', [
-            'forms' => $forms,
-            'jwt' => $this->JWTTokenManager->create($this->getUser())
-        ]);
+        return $this->render('admin/forms.html.twig', $this->auth(['forms' => $forms]));
     }
 
     /**
@@ -2262,10 +2255,7 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
-        return $this->render('admin/package_sets.html.twig', [
-            'package_sets' => $packageSets,
-            'jwt' => $this->JWTTokenManager->create($this->getUser()),
-        ]);
+        return $this->render('admin/package_sets.html.twig', $this->auth(['package_sets' => $packageSets]));
     }
 
     private function renderPackageSetForm(Request $request, PackageSet $packageSet, EntityManagerInterface $objectManager)
@@ -2729,7 +2719,7 @@ class AdminController extends AbstractController
 
         [ $restaurants, $pages, $page ] = $this->getRestaurantList($request);
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->auth([
             'layout' => $request->attributes->get('layout'),
             'restaurants' => $restaurants,
             'pages' => $pages,
@@ -2742,8 +2732,7 @@ class AdminController extends AbstractController
             'pledge_count' => $pledgeCount,
             'pledge_form' => $pledgeForm->createView(),
             'nonprofits_enabled' => $this->getParameter('nonprofits_enabled'),
-            'jwt' => $this->JWTTokenManager->create($this->getUser()),
-        ]);
+        ]));
     }
 
 

@@ -9,7 +9,7 @@
 <div class="text-right mb-4">
   <a class="btn btn-success" href="{{ path('admin_deliveries_pricing_ruleset_new') }}"><i class="fa fa-plus"></i> {% trans %}adminDashboard.pricing.createNew{% endtrans %}</a>
 </div>
-<table class="table" id="pricings-list" data-jwt="{{ jwt }}">
+<table class="table">
   <tbody>
   {% if ruleSets|length > 0 %}
     {% for ruleSet in ruleSets %}

@@ -8,7 +8,7 @@ document.querySelectorAll('.delete-pricing').forEach((el) => {
       return
     }
 
-    const jwtToken = document.querySelector("#pricings-list").dataset.jwt
+    const jwtToken = document.head.querySelector('meta[name="application-auth-jwt"]').content
     const headers = {
       'Authorization': `Bearer ${jwtToken}`,
       'Accept': 'application/ld+json',

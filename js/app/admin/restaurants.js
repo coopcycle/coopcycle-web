@@ -33,9 +33,9 @@ document.querySelectorAll('.delete-restaurant').forEach((el) => {
       return
     }
 
-    const jwtToken = document.querySelector("#restaurants-list").dataset.jwt
+    const jwt = document.head.querySelector('meta[name="application-auth-jwt"]').content
     const headers = {
-      'Authorization': `Bearer ${jwtToken}`,
+      'Authorization': `Bearer ${jwt}`,
       'Accept': 'application/ld+json',
       'Content-Type': 'application/ld+json'
     }

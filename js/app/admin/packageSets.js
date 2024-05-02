@@ -8,7 +8,7 @@ document.querySelectorAll('.delete-package').forEach((el) => {
       return
     }
 
-    const jwtToken = document.querySelector("#packages-list").dataset.jwt
+    const jwtToken = document.head.querySelector('meta[name="application-auth-jwt"]').content
     const headers = {
       'Authorization': `Bearer ${jwtToken}`,
       'Accept': 'application/ld+json',

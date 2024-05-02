@@ -8,7 +8,7 @@ document.querySelectorAll('.delete-form').forEach((el) => {
       return
     }
 
-    const jwtToken = document.querySelector("#delivery-forms-list").dataset.jwt
+    const jwtToken = document.head.querySelector('meta[name="application-auth-jwt"]').content
     const headers = {
       'Authorization': `Bearer ${jwtToken}`,
       'Accept': 'application/ld+json',
