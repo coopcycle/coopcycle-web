@@ -50,6 +50,10 @@ class httpClient {
     return await this.request({ method: "GET", url, params, headers });
   }
 
+  async head(url, headers = {}) {
+    return await this.request({ method: "HEAD", url, headers });
+  }
+
   async post(url, data, headers = {}) {
     return await this.request({ method: "POST", url, data, headers });
   }
@@ -60,6 +64,10 @@ class httpClient {
 
   async patch(url, data, headers = {}) {
     return await this.request({ method: "PATCH", url, data, headers });
+  }
+
+  async delete(url, headers = {}) {
+    return await this.request({ method: "DELETE", url, headers });
   }
 
   async _refreshToken() {
