@@ -16,6 +16,9 @@
       <tr>
         <td><a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">#{{ ruleSet.id }}</a></td>
         <td>{{ ruleSet.name }}</td>
+        <td>
+          <div {{ react_component('PricingRuleSetApplications', { 'pricingRuleSetId': ruleSet.id }) }}></div>
+        </td>
         <td class="text-right">
           <div class="btn-group">
             <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -732,6 +732,7 @@ fos_js_routing:
         - admin_dashboard_fullscreen
         - admin_foodtech_dashboard
         - admin_foodtech_settings
+        - admin_form
         - admin_metrics
         - admin_order
         - admin_order_accept
@@ -740,9 +741,11 @@ fos_js_routing:
         - admin_order_delay
         - admin_order_fulfill
         - admin_restaurant
+        - admin_store
         - admin_restaurant_dashboard
         - admin_restaurant_image_from_url
         - admin_restaurant_stats
+        - admin_business_restaurant_group
         - admin_tags
         - admin_task_image_download
         - admin_task_list_create
@@ -784,6 +787,9 @@ fos_js_routing:
         - api_stores_delete_item
         - api_restaurants_delete_item
         - api_delivery_forms_delete_item
+        - api_pricing_rule_sets_delete_item
+        - api_pricing_rule_sets_applications_item
+        - api_package_sets_delete_item
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'

@@ -13,6 +13,11 @@
 
     {{ form_errors(form) }}
 
+    <div {{ react_component('PricingRuleSetApplications', { 'pricingRuleSetId': ruleSetId }) }}>
+      {# server side rendered content; will be replaced by react #}
+      <div class="text-center"><span class="loader loader--dark"></span></div>
+    </div>
+
     {{ form_row(form.name) }}
     {{ form_row(form.strategy) }}
     {{ form_row(form.options) }}

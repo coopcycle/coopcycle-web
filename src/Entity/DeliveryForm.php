@@ -4,7 +4,7 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Gedmo\Timestampable\Traits\Timestampable;
-
+use Hashids\Hashids;
 
 /**
  * A form to order deliveries, to be embedded anywhere.
@@ -37,6 +37,11 @@ class DeliveryForm
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getDisplayHash()
+    {
+        return new Hashids($this->getId(), 12);
     }
 
     /**

@@ -1,5 +1,9 @@
 {
     "common": {
+        "RESTAURANT": "Restaurant",
+        "STORE": "Store",
+        "RESTAURANTS_GROUP": "Restaurants group",
+        "DELIVERY_FORM": "Delivery form",
         "CART_TITLE": "Cart",
         "CART_WIDGET_BUTTON": "Order",
         "SCHEDULE_ORDER": "Schedule order",
@@ -22,6 +26,7 @@
         "fulfilled": "Delivered",
         "cancelled": "Cancelled",
         "ready": "Ready",
+        "ADMIN_NO_APPLICATIONS": "Not applied yet",
         "DASHBOARD_ASSIGNED": "Assigned",
         "ADMIN_DASHBOARD_NORMAL": "Normal",
         "ADMIN_DASHBOARD_RUSH": "Rush",

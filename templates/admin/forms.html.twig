@@ -70,12 +70,12 @@
               </a>
             </li>
             {% if is_granted('ROLE_ADMIN') %}
-                <li>
-                  <a class="text-danger delete-form" data-form-name="{{ form|hashid(12) }}" data-form-id="{{ form.id }}">
-                    {% trans %}basics.delete{% endtrans %}
-                  </a>
-                </li>
-              {% endif %}
+              <li>
+                <a class="text-danger delete-form" data-form-name="{{ form|hashid(12) }}" data-form-id="{{ form.id }}">
+                  {% trans %}basics.delete{% endtrans %}
+                </a>
+              </li>
+            {% endif %}
           </ul>
         </div>
       </div>

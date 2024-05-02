@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -11,6 +12,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Contract
 {
     private $id;
+
+    private $restaurants;
+
+    private $businessRestaurantGroups;
 
     /**
      * @var int
@@ -83,12 +88,29 @@ class Contract
      */
     private $takeAwayFeeRate = 0.00;
 
+    public function __construct()
+    {
+        $this->restaurants = new ArrayCollection();
+        $this->businessRestaurantGroups = new ArrayCollection();
+
+    }
+
     /**
      * @return int
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getContractor()
+    {
+        if (count($this->restaurants)) {
+            return $this->restaurants[0];
+        } else if (count($this->businessRestaurantGroups)) {
+            return $this->businessRestaurantGroups[0];
+        }
+        // should not happen to arrive here...
     }
 
     /**

@@ -79,10 +79,12 @@ use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\VehicleType;
 use AppBundle\Form\ZoneCollectionType;
+use AppBundle\Serializer\PricingRuleSetApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
+use AppBundle\Service\PricingRuleSetManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -1102,6 +1104,7 @@ class AdminController extends AbstractController
         return $this->render('admin/pricing_rule_set.html.twig', [
             'form' => $form->createView(),
             'packages' => $packageNames,
+            'ruleSetId' => $ruleSet->getId()
         ]);
     }
 
