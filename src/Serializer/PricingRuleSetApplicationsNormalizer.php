@@ -25,7 +25,7 @@ class PricingRuleSetApplicationsNormalizer implements NormalizerInterface
         return [
             'entity' => $this->getClass($object),
             'name' => $this->getName($object),
-            'id' => $object->getId()
+            'id' => $this->getId($object)
         ];
     }
 
@@ -44,6 +44,14 @@ class PricingRuleSetApplicationsNormalizer implements NormalizerInterface
             return get_class($object->getContractor());
         } else {
             return get_class($object);
+        }
+    }
+
+    public function getId($object) {
+        if ($object instanceof Contract) {
+            return $object->getContractor()->getId();
+        } else {
+            return $object->getId();
         }
     }
 

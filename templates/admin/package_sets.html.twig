@@ -13,11 +13,12 @@
   </a>
 </p>
 
-<table class="table">
+<table class="table" id="packages-list" data-jwt="{{ jwt }}">
   <thead>
     <th>#</th>
     <th>{{ 'form.package_set.name.label'|trans }}</th>
     <th>{{ 'form.package_set.packages.label'|trans }}</th>
+    {% if is_granted('ROLE_ADMIN') %}<th></th>{% endif %}
   </thead>
   <tbody>
   {% for package_set in package_sets %}

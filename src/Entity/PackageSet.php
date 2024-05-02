@@ -2,9 +2,27 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 
+
+/**
+ *
+ * @ApiResource(
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "normalization_context"={"groups"={"pricingrule_set"}}
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *     }
+ *   }
+ * )
+ */
 class PackageSet
 {
     use Timestampable;

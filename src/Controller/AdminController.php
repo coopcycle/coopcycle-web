@@ -2264,6 +2264,7 @@ class AdminController extends AbstractController
         $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
         return $this->render('admin/package_sets.html.twig', [
             'package_sets' => $packageSets,
+            'jwt' => $this->JWTTokenManager->create($this->getUser()),
         ]);
     }
 
