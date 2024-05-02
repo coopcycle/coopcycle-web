@@ -42,6 +42,10 @@ AppBundle\Entity\Contract:
     flatDeliveryPrice: 350
     customerAmount: 350
     feeRate: 0.00
+  contract_4:
+    flatDeliveryPrice: 350
+    customerAmount: 350
+    feeRate: 0.00
 
 AppBundle\Entity\MercadopagoAccount:
   mercadopago_account_1:
@@ -144,6 +148,20 @@ AppBundle\Entity\LocalBusiness:
     openingHours: ['Mo-Sa 11:30-14:30']
     enabled: false
     contract: "@contract_3"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    rateLimitAmount: null
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
+  restaurant_7:
+    name: 'Good Old Times with variables pricing'
+    address: "@address_3"
+    openingHours: ['Mo-Sa 11:30-14:30']
+    enabled: false
+    contract: "@contract_4"
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
     rateLimitAmount: null
     __calls:

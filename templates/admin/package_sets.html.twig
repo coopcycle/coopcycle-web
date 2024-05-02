@@ -35,9 +35,29 @@
         {% endfor %}
         {{ packages|join(', ') }}
       </td>
+      {% if is_granted('ROLE_ADMIN') %}
+        <td class="text-right">
+          <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {% trans %}adminDashboard.pricing.manage{% endtrans %}   <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li>
+                  <a class="text-danger delete-package" data-package-name="{{ package_set.name }}" data-package-id="{{ package_set.id }}">
+                    {% trans %}basics.delete{% endtrans %}
+                  </a>
+                </li>
+            </ul>
+          </div>
+        </td>
+      {% endif %}
     </tr>
   {% endfor %}
   </tbody>
 </table>
 
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('package-sets-list') }}
 {% endblock %}
