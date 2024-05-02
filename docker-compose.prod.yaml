@@ -3,7 +3,7 @@ services:
   php:
     build:
       context: .
-      dockerfile: './docker/symfony-docker/Dockerfile'
+      dockerfile: './docker/php/Dockerfile'
       target: frankenphp_prod
     environment:
       APP_SECRET: ${APP_SECRET}

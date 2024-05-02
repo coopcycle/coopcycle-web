@@ -3,7 +3,7 @@ services:
   php:
     build:
       context: .
-      dockerfile: './docker/symfony-docker/Dockerfile'
+      dockerfile: './docker/php/Dockerfile'
       target: frankenphp_dev
     volumes:
       - ./:/app:cached
@@ -23,7 +23,7 @@ services:
   php_worker:
     build:
       context: '.'
-      dockerfile: './docker/symfony-docker/Dockerfile'
+      dockerfile: './docker/php/Dockerfile'
     volumes:
       - ./:/app:cached
       - php_logs:/app/var/logs
