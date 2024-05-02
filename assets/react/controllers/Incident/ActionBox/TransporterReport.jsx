@@ -173,7 +173,7 @@ function FailureReasonSelector({ task, onChange }) {
       <Row gutter={[16, 16]}>
         <Col span={12}>
           <Select
-            placeholder={t("SELECT_DATE")}
+            placeholder={t("SELECT_STATE")}
             value={selectedState}
             onChange={(v) => {
               setSelectedReason(null);
