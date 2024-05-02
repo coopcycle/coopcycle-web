@@ -104,7 +104,6 @@ adminDashboard.back.title: Back to website
 adminDashboard.promotions.title: Promotions
 adminDashboard.pledges.title: Suggestions
 adminDashboard.time_slots.title: Time slots
-adminDashboard.pricingrule_set.unableToDeleteStoreExists: Unable to delete because stores are linked to this pricing. Please delete store(s) %store_names%.
 deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
 deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing.
   Please enter it manually or edit the pricing.
