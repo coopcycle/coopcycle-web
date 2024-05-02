@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -xe
 
 if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 
@@ -57,6 +57,18 @@ if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 
 	setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var
 	setfacl -dR -m u:www-data:rwX -m u:"$(whoami)":rwX var
+fi
+
+php bin/console doctrine:database:create --if-not-exists --env=$APP_ENV
+php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=$APP_ENV
+php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=$APP_ENV
+php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=$APP_ENV
+
+if [ "$APP_ENV" = 'dev' ] || [ "$APP_ENV" = 'test' ]; then
+    php bin/console doctrine:database:create --if-not-exists --env=test
+    php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis' --env=test
+    php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS postgis_topology' --env=test
+    php bin/console doctrine:query:sql 'CREATE EXTENSION IF NOT EXISTS pg_trgm' --env=test
 fi
 
 exec docker-php-entrypoint "$@"

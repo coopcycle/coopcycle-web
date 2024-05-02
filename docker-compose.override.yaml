@@ -6,6 +6,8 @@ services:
     image: mdillon/postgis:9.4-alpine
     environment:
       - POSTGRES_DB=${COOPCYCLE_DB_NAME}
+      - POSTGRES_USER=${COOPCYCLE_DB_USER}
+      - POSTGRES_PASSWORD=${COOPCYCLE_DB_PASSWORD}
     ports:
       - '5432:5432'
     volumes:
@@ -82,6 +84,8 @@ services:
         condition: service_healthy
     command: php bin/console messenger:consume async --limit=100 --time-limit=900 -n
     environment:
+      - APP_ENV
+      - APP_DEBUG
       - GOOGLE_API_KEY
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY

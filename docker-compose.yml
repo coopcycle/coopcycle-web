@@ -7,6 +7,8 @@ services:
     restart: unless-stopped
     environment:
       SERVER_NAME: ${SERVER_NAME:-http://localhost}, php:80
+      APP_ENV: ${APP_ENV}
+      APP_DEBUG: ${APP_DEBUG}
       MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
       TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
