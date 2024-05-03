@@ -26,11 +26,7 @@ class PricingRuleSetDeleteValidator extends ConstraintValidator
             throw new \InvalidArgumentException(sprintf('$object should be an instance of %s', PricingRuleSet::class));
         }
 
-        // don't take into account softdeleted stores
-        $this->entityManager->getFilters()->enable('soft_deleteable');
         $relatedEntities = $this->pricingRuleSetManager->getPricingRuleSetApplications($object);
-        $this->entityManager->getFilters()->disable('soft_deleteable');
-
 
         if (count($relatedEntities) > 0) {
             $this->context
