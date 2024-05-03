@@ -23,24 +23,25 @@ function LinkToApplication ({pricingRuleSetApplication}) {
       return (<li><a href={url}>{t('DELIVERY_FORM')} {pricingRuleSetApplication.name}</a></li>)
     }
     default:
+      console.error('Unable to display linked entity')
       return "Unhandled entity type"
   }
 }
 
 export default function PricingRuleSetApplications(props) {
   const { t } = useTranslation(),
-    { pricingRuleSetId } = props,
+    { url } = props,
     [applications, setApplications] = useState([]),
     [loading, setLoading] = useState(true),
     [expanded, setExpanded] = useState(false),
-    displayedApplications = expanded ? applications : applications.slice(0, 1)
+    NUM_SHOWN_APPLICATIONS = 1,
+    displayedApplications = expanded ? applications : applications.slice(0, NUM_SHOWN_APPLICATIONS)
 
-  useEffect(() => {
-    const url = window.Routing.generate('api_pricing_rule_sets_applications_item', {id:pricingRuleSetId})
-    // const jwtToken = document.querySelector("#pricings-list").dataset.jwt
+    useEffect(() => {
 
+    const jwt = document.head.querySelector('meta[name="application-auth-jwt"]').content
     const headers = {
-      'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MTQ2MzM1OTcsImV4cCI6MTcxNDYzNzE5Nywicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfRElTUEFUQ0hFUiIsIlJPTEVfU1RPUkUiLCJST0xFX1VTRVIiXSwidXNlcm5hbWUiOiJhZG1pbiJ9.A6KQsqks5_czE8TChzwfxfTE6h_8Tb5aRTvxzqwtn8d3e1F1XacIT-rnoU8iw4guaYNVrBSUa5DvLZOo_kGl3-rMTBSdhKw2bQcPK2BlJxutU36EwvND_ZR1BVX6VwqE0oniSaseFqqXYucFhPnx3DwTbuuS7wprCArJnbfQ8RPhieKU-zZKXMZPP8NN8oJqjL-xHnH8u-qUNlxl9Nec74J13PbqmUNqJT8rhWqU_95qPM3HZGHYhVeDUlHptyIyHLIZzBn3Wrm6PoEJ3nimzNRxaosc6d7WGGwplB8tDuuiL0d1hyEeULGFdTbvWoPjIMlb9y5V1ADDy_AoDBeeDxVouxEz6_kF6tE5QhtQQmkYqnSBRnhQuD25qeUhW_lelw8f23-qLIFsDMo-RmPlYdrSM4WPMyGopOI-xyZBB-8t3UmRSiuU5inyadZIqjBP68t9Z7JmJ9LvakE8XCGHRL75FfMCwoTnVZr3DfLQ9qHRMj-fxa8oxMv4owOmfYJUIx9wc1PaRErnX8jtIIOOXwHow7sVnUjqxLq8bb4APh_PagtvxG2AO6YSqsI_MWn8dzNGHvi49qWRAy3j_vofoEQM0-qV92-UDtdAwLCmgbI5yipx7fCT5knZtlas0mjMGw1bq_lZVwe02-Kms-obfovJMnh242dbhAm5Bo4fPZ0`,
+      'Authorization': `Bearer ${jwt}`,
       'Accept': 'application/ld+json',
       'Content-Type': 'application/ld+json'
     }
@@ -53,19 +54,26 @@ export default function PricingRuleSetApplications(props) {
     },[])
 
   return (
-    <ul>
-      { loading ?
-        <div className="text-center"><span className="loader loader--dark"></span></div> :
-        <>
-          {displayedApplications.length > 0 ?
-            displayedApplications.map((pricingRuleSetApplication, index) => {
-              return <LinkToApplication key={index} pricingRuleSetApplication={pricingRuleSetApplication} />
-            }) :
-            t('ADMIN_NO_APPLICATIONS')
-          }
-          { expanded ? (<a onClick={() => setExpanded(false)}>...show more</a>) : (<a onClick={() => setExpanded(true)}>hide</a>) }
-        </>
-      }
-    </ul>
+    <>
+    { loading ?
+      <div className="text-center"><span className="loader loader--dark"></span></div> :
+      <>
+        <ul>
+            { displayedApplications.length > 0 ?
+              displayedApplications.map((pricingRuleSetApplication, index) => {
+                return <LinkToApplication key={index} pricingRuleSetApplication={pricingRuleSetApplication} />
+              }) :
+              <li>{t('ADMIN_NO_APPLICATIONS')}</li>
+            }
+        </ul>
+        { displayedApplications.length > NUM_SHOWN_APPLICATIONS ?
+          expanded ?
+            (<a onClick={() => setExpanded(false)}>...show more</a>) :
+            (<a onClick={() => setExpanded(true)}>hide</a>)
+          : null
+        }
+      </>
+    }
+    </>
   )
 }

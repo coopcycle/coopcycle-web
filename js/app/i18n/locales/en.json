@@ -26,6 +26,7 @@
         "fulfilled": "Delivered",
         "cancelled": "Cancelled",
         "ready": "Ready",
+        "ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION": "Could not delete. Please unlink this rule from stores, restaurants or delivery forms it may apply",
         "ADMIN_NO_APPLICATIONS": "Not applied yet",
         "DASHBOARD_ASSIGNED": "Assigned",
         "ADMIN_DASHBOARD_NORMAL": "Normal",

@@ -22,7 +22,7 @@ document.querySelectorAll('.delete-pricing').forEach((el) => {
     fetch(url, {method: "DELETE", headers: headers}).then(
       function (resp) {
         if (resp.status === 400) {
-          alert('there are objects linked to this pricing rule')
+          alert(i18n.t('ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION'))
         } else {
           window.location.reload()
         }
