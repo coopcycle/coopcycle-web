@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -85,14 +86,20 @@ class BusinessAccountType extends AbstractType
                     ]);
                 if (null !== $businessAccountInvitation) {
                     if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && !$options['business_account_registration']) {
-                        $form->add('managerEmail', EmailType::class, [
-                            'label' => 'form.business_account.manager.email.label',
-                            'help' => 'form.business_account.manager.email_sent.help',
-                            'disabled' => true,
-                            'required'=> false,
-                            'mapped'=> false,
-                            'data' => $businessAccountInvitation->getInvitation()->getEmail(),
-                        ]);
+                        $form
+                            ->add('managerEmail', EmailType::class, [
+                                'label' => 'form.business_account.manager.email.label',
+                                'help' => 'form.business_account.manager.email_sent.help',
+                                'help_html' => true,
+                                'disabled' => true,
+                                'required'=> false,
+                                'mapped'=> false,
+                                'data' => $businessAccountInvitation->getInvitation()->getEmail(),
+                            ])
+                            ->add('invitationId', HiddenType::class, [
+                                'mapped' => false,
+                                'data' => $businessAccountInvitation->getId()
+                            ]);
                     }
 
                     if ($this->authorizationChecker->isGranted('ROLE_BUSINESS_ACCOUNT')) {
