@@ -54,6 +54,9 @@
   {% endif %}
   </tbody>
 </table>
+<div class="text-center">
+  {{ knp_pagination_render(ruleSets, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
 {% endblock %}
 
 {% block scripts %}

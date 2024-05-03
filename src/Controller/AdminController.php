@@ -134,7 +134,10 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+<<<<<<< HEAD
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
+=======
+>>>>>>> 06e594ed6 (clean: paginate pricing rule sets on list page)
 use Twig\Environment as TwigEnvironment;
 use phpcent\Client as CentrifugoClient;
 
@@ -192,7 +195,8 @@ class AdminController extends AbstractController
         CollectionFinderInterface $typesenseShopsFinder,
         bool $adhocOrderEnabled,
         protected Filesystem $incidentImagesFilesystem,
-        protected JWTTokenManagerInterface $JWTTokenManager
+        protected PricingRuleSetManager $pricingRuleSetManager,
+        protected JWTTokenManagerInterface $JWTTokenManager,
     )
     {
         $this->orderRepository = $orderRepository;
@@ -1037,13 +1041,28 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/deliveries/pricing", name="admin_deliveries_pricing")
      */
-    public function pricingRuleSetsAction()
+    public function pricingRuleSetsAction(Request $request, PaginatorInterface $paginator)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $ruleSets = $this->getDoctrine()
-            ->getRepository(Delivery\PricingRuleSet::class)
-            ->findAll();
-        return $this->render('admin/pricing_rule_sets.html.twig', $this->auth(['ruleSets' => $ruleSets]));
+
+        // FIXME : we load asynchronously the applications of each rule, so let's not display too much on the same table, divide number of item by 2
+        $qb = $this->getDoctrine()->getRepository(Delivery\PricingRuleSet::class)
+            ->createQueryBuilder('rs')
+            ->orderBy('rs.id', 'DESC')
+            ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE / 2)
+            ->setMaxResults(self::ITEMS_PER_PAGE / 2);
+
+        $ruleSets = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE / 2,
+            [PaginatorInterface::DISTINCT => false]
+        );
+
+        return $this->render(
+            'admin/pricing_rule_sets.html.twig',
+            $this->auth(['ruleSets' => $ruleSets])
+        );
     }
 
     private function renderPricingRuleSetForm(Delivery\PricingRuleSet $ruleSet, Request $request)
@@ -1095,11 +1114,13 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_deliveries_pricing_ruleset', ['id' => $ruleSet->getId()]);
         }
 
-        return $this->render('admin/pricing_rule_set.html.twig', [
-            'form' => $form->createView(),
-            'packages' => $packageNames,
-            'ruleSetId' => $ruleSet->getId()
-        ]);
+        return $this->render(
+            'admin/pricing_rule_set.html.twig',
+            $this->auth([
+                'form' => $form->createView(),
+                'packages' => $packageNames,
+                'ruleSetId' => $ruleSet->getId()
+        ]));
     }
 
     /**
