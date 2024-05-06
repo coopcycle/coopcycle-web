@@ -20,12 +20,13 @@ function LinkToApplication ({pricingRuleSetApplication}) {
       return (<li><a href={url}>{t('RESTAURANTS_GROUP')} {pricingRuleSetApplication.name}</a></li>)
     }
     case "AppBundle\\Entity\\DeliveryForm": {
+      console.log(pricingRuleSetApplication)
       const url = window.Routing.generate("admin_form", {id: pricingRuleSetApplication.id})
       return (<li><a href={url}>{t('DELIVERY_FORM')} {pricingRuleSetApplication.name}</a></li>)
     }
     default:
       console.error('Unable to display linked entity')
-      return "Unhandled entity type"
+      return <li>Unhandled entity type</li>
   }
 }
 
@@ -71,10 +72,10 @@ export default function PricingRuleSetApplications(props) {
               <li>{t('ADMIN_NO_APPLICATIONS')}</li>
             }
         </ul>
-        { displayedApplications.length > NUM_SHOWN_APPLICATIONS ?
+        { applications.length > NUM_SHOWN_APPLICATIONS ?
           expanded ?
-            (<a onClick={() => setExpanded(false)}>...show more</a>) :
-            (<a onClick={() => setExpanded(true)}>hide</a>)
+            (<a onClick={() => setExpanded(false)}>hide</a>) :
+            (<a onClick={() => setExpanded(true)}>...show more</a>)
           : null
         }
       </>

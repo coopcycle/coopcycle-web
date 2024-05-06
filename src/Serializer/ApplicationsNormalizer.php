@@ -6,6 +6,7 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
+use Hashids\Hashids;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -16,9 +17,12 @@ class ApplicationsNormalizer implements NormalizerInterface
 {
     public function __construct(
         private ObjectNormalizer $normalizer,
-        private IriConverterInterface $iriConverterInterface
+        private IriConverterInterface $iriConverterInterface,
+        private string $secret
     )
-    {}
+    {
+        $this->secret = $secret;
+    }
 
     public function normalize($object, $format = null, array $context = array())
     {
@@ -35,7 +39,8 @@ class ApplicationsNormalizer implements NormalizerInterface
         } else if ($object instanceof Store) {
             return $object->getName();
         } else if ($object instanceof DeliveryForm) {
-            return $object->getDisplayHash();
+            $hashids12 = new Hashids($this->secret, 12);
+            return $hashids12->encode($object->getId());
         }
     }
 
