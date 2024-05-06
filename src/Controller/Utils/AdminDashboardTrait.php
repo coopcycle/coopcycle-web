@@ -175,7 +175,7 @@ trait AdminDashboardTrait
             $qb->getQuery()->getArrayResult()
         );
 
-        return $this->render('admin/dashboard_iframe.html.twig', [
+        return $this->render('admin/dashboard_iframe.html.twig', $this->auth([
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
             'couriers' => $couriers,
@@ -190,7 +190,7 @@ trait AdminDashboardTrait
             'stores' => $storesNormalized,
             'pickup_cluster_addresses' => $addressIris,
             'export_enabled' => $this->isGranted('ROLE_ADMIN') ? 'on' : 'off',
-        ]);
+        ]));
     }
 
     private function loadPositions(Redis $tile38, $cursor = 0, array $points = [])

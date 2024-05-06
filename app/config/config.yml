@@ -497,6 +497,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: edi_messages
+        incident_images:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: incidents
 
     filesystems:
         assets:
@@ -543,6 +548,10 @@ oneup_flysystem:
             adapter: edi_messages
             alias: edi_messages_filesystem
             mount: edi_messages
+        incident_images:
+            adapter: incident_images
+            alias: incident_images_filesystem
+            mount: incident_images
 
 vich_uploader:
     db_driver: orm
@@ -587,6 +596,15 @@ vich_uploader:
         product_image:
             uri_prefix: ''
             upload_destination: oneup_flysystem.product_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
+        incident_image:
+            uri_prefix: ''
+            upload_destination: oneup_flysystem.incident_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -715,6 +733,7 @@ fos_js_routing:
         - admin_foodtech_dashboard
         - admin_foodtech_settings
         - admin_metrics
+        - admin_order
         - admin_order_accept
         - admin_order_refuse
         - admin_order_cancel
@@ -730,6 +749,7 @@ fos_js_routing:
         - admin_task_list_modify
         - admin_task_receipt
         - admin_users_search
+        - admin_user_edit
         - order_continue
         - profile_jwt
         - profile_notifications
@@ -751,6 +771,14 @@ fos_js_routing:
         - order_set_guest_customer_email
         - api_orders_add_player_item
         - api_orders_create_invitation_item
+        - api_incidents_add_comment_item
+        - api_incidents_action_item
+        - api_tasks_task_failure_reasons_item
+        - api_incident_images_post_collection
+        - api_incidents_get_item
+        - api_incidents_get_collection
+        - api_tasks_get_task_context_item
+        - admin_incident
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'
@@ -903,6 +931,22 @@ liip_imagine:
                 optipng:
                     strip_all: true
                     level: 4
+        incident_image_thumbnail:
+            data_loader: incident_images
+            filters:
+                upscale:
+                    min: [ 768, 768 ]
+                thumbnail:
+                    size: [ 768, 768 ]
+                    mode: outbound
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
     loaders:
         default:
             filesystem:
@@ -924,6 +968,9 @@ liip_imagine:
         assets:
             flysystem:
                 filesystem_service: oneup_flysystem.assets_filesystem
+        incident_images:
+            flysystem:
+                filesystem_service: oneup_flysystem.incident_images_filesystem
 
 oneup_uploader:
     mappings:

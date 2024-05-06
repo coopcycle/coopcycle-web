@@ -11027,12 +11027,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/edifact-generator.git",
-                "reference": "d87ce1d945adebf6482c993e778f4b471995073e"
+                "reference": "67ff6943d656d8bd5910aaa47d5c9e45f5a9091a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/d87ce1d945adebf6482c993e778f4b471995073e",
-                "reference": "d87ce1d945adebf6482c993e778f4b471995073e",
+                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/67ff6943d656d8bd5910aaa47d5c9e45f5a9091a",
+                "reference": "67ff6943d656d8bd5910aaa47d5c9e45f5a9091a",
                 "shasum": ""
             },
             "require-dev": {
@@ -11072,7 +11072,7 @@
             "support": {
                 "source": "https://github.com/coopcycle/edifact-generator/tree/master"
             },
-            "time": "2023-11-30T14:55:40+00:00"
+            "time": "2024-04-12T16:11:11+00:00"
         },
         {
             "name": "php-edifact/edifact-mapping",
@@ -23649,7 +23649,6 @@
         "drupal/core-vendor-hardening": 20,
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
-        "coopcycle/transporter": 20,
         "behatch/contexts": 20
     },
     "prefer-stable": true,

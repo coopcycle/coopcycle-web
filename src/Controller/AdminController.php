@@ -9,6 +9,7 @@ use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\IncidentTrait;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
@@ -133,6 +134,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 use Twig\Environment as TwigEnvironment;
 use phpcent\Client as CentrifugoClient;
 
@@ -147,6 +149,7 @@ class AdminController extends AbstractController
     use RestaurantTrait;
     use StoreTrait;
     use UserTrait;
+    use IncidentTrait;
     use InjectAuthTrait;
 
     protected function getRestaurantRoutes()
@@ -184,9 +187,11 @@ class AdminController extends AbstractController
         FactoryInterface $promotionRuleFactory,
         FactoryInterface $promotionFactory,
         HttpClientInterface $browserlessClient,
+        UploaderHelper $uploaderHelper,
         bool $optinExportUsersEnabled,
         CollectionFinderInterface $typesenseShopsFinder,
         bool $adhocOrderEnabled,
+        Filesystem $incidentImagesFilesystem,
         protected JWTTokenManagerInterface $JWTTokenManager
     )
     {
@@ -197,9 +202,11 @@ class AdminController extends AbstractController
         $this->promotionRuleFactory = $promotionRuleFactory;
         $this->promotionFactory = $promotionFactory;
         $this->browserlessClient = $browserlessClient;
+        $this->uploaderHelper = $uploaderHelper;
         $this->optinExportUsersEnabled = $optinExportUsersEnabled;
         $this->adhocOrderEnabled = $adhocOrderEnabled;
         $this->typesenseShopsFinder = $typesenseShopsFinder;
+        $this->incidentImagesFilesystem = $incidentImagesFilesystem;
     }
 
     /**

@@ -1,0 +1,18 @@
+{% extends "deliveries.html.twig" %}
+
+{% block breadcrumb %}
+{{ parent() }}
+<li>{% trans %}adminDashboard.incidents.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+<div {{ react_component('Incident/List') }}></div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('incident-form') }}
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('incident-form') }}
+{% endblock %}

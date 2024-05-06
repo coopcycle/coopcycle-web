@@ -1295,6 +1295,8 @@ class Order extends BaseOrder implements OrderInterface
             array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT)->toArray());
         $tipAdjustments =
             array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::TIP_ADJUSTMENT)->toArray());
+        $incidentAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::INCIDENT_ADJUSTMENT)->toArray());
 
         return [
             AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
@@ -1303,6 +1305,7 @@ class Order extends BaseOrder implements OrderInterface
             AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments),
             AdjustmentInterface::TAX_ADJUSTMENT => array_values($taxAdjustments),
             AdjustmentInterface::TIP_ADJUSTMENT => array_values($tipAdjustments),
+            AdjustmentInterface::INCIDENT_ADJUSTMENT => array_values($incidentAdjustments),
         ];
     }
 

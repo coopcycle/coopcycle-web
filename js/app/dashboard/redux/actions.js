@@ -163,6 +163,9 @@ export const EDIT_GROUP_SUCCESS = 'EDIT_GROUP_SUCCESS'
 export const OPEN_CREATE_GROUP_MODAL = 'OPEN_CREATE_GROUP_MODAL'
 export const CLOSE_CREATE_GROUP_MODAL = 'CLOSE_CREATE_GROUP_MODAL'
 
+export const OPEN_REPORT_INCIDENT_MODAL = 'OPEN_REPORT_INCIDENT_MODAL'
+export const CLOSE_REPORT_INCIDENT_MODAL = 'CLOSE_REPORT_INCIDENT_MODAL'
+
 export const OPEN_ADD_TASK_TO_GROUP_MODAL = 'OPEN_ADD_TASK_TO_GROUP_MODAL'
 export const CLOSE_ADD_TASK_TO_GROUP_MODAL = 'CLOSE_ADD_TASK_TO_GROUP_MODAL'
 export const ADD_TASK_TO_GROUP_REQUEST = 'ADD_TASK_TO_GROUP_REQUEST'
@@ -1247,6 +1250,14 @@ export function openCreateGroupModal() {
 
 export function closeCreateGroupModal() {
   return { type: CLOSE_CREATE_GROUP_MODAL }
+}
+
+export function openReportIncidentModal() {
+  return { type: OPEN_REPORT_INCIDENT_MODAL }
+}
+
+export function closeReportIncidentModal() {
+  return { type: CLOSE_REPORT_INCIDENT_MODAL }
 }
 
 export function createGroup(name) {

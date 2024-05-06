@@ -291,6 +291,16 @@ html, body {
   background-color: $yellow!important;
 }
 
+.task__has-incidents {
+  background: repeating-linear-gradient(
+    -45deg,
+    $white,
+    $white 10px,
+    lighten($yellow, 40%) 9px,
+    lighten($yellow, 40%) 18px
+    )
+}
+
 .task__eta {
   width: 100%;
   height: 4px;
@@ -338,6 +348,9 @@ html, body {
   padding: 0;
 }
 
+.ReactModal__Content--task-report-incident {
+  min-width: 40%;
+}
 .ReactModal__Content--filters {
   min-width: 66.666%;
 }
