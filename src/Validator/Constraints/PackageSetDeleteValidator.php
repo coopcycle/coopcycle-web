@@ -4,7 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 
 use AppBundle\Entity\PackageSet;
-use AppBundle\Serializer\PricingRuleSetApplicationsNormalizer;
+use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\PackageSetManager;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -14,7 +14,7 @@ class PackageSetDeleteValidator extends ConstraintValidator
 {
     public function __construct(
         protected PackageSetManager $packageSetManager,
-        protected PricingRuleSetApplicationsNormalizer $normalizer
+        protected ApplicationsNormalizer $normalizer
     ) {}
 
     public function validate($object, Constraint $constraint)

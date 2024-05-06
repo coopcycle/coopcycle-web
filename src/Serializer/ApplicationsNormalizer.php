@@ -10,9 +10,9 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 /**
- * A normalizer for objects related to PricingRuleSet
+ * A normalizer for objects to which PricingRuleSet or PackageSet are applied
  */
-class PricingRuleSetApplicationsNormalizer implements NormalizerInterface
+class ApplicationsNormalizer implements NormalizerInterface
 {
     public function __construct(
         private ObjectNormalizer $normalizer,

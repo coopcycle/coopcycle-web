@@ -76,7 +76,7 @@ use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\VehicleType;
 use AppBundle\Form\ZoneCollectionType;
-use AppBundle\Serializer\PricingRuleSetApplicationsNormalizer;
+use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\EmailManager;
@@ -1034,7 +1034,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/deliveries/pricing", name="admin_deliveries_pricing")
      */
-    public function pricingRuleSetsAction(Request $request, PaginatorInterface $paginator, PricingRuleSetManager $pricingRuleSetManager, PricingRuleSetApplicationsNormalizer $normalizer)
+    public function pricingRuleSetsAction(Request $request, PaginatorInterface $paginator, PricingRuleSetManager $pricingRuleSetManager, ApplicationsNormalizer $normalizer)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -2282,7 +2282,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/settings/packages", name="admin_packages")
      */
-    public function packageSetsAction(Request $request, PaginatorInterface $paginator, PackageSetManager $packageSetManager, PricingRuleSetApplicationsNormalizer $normalizer)
+    public function packageSetsAction(Request $request, PaginatorInterface $paginator, PackageSetManager $packageSetManager, ApplicationsNormalizer $normalizer)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
