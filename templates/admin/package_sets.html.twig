@@ -38,7 +38,7 @@
         {{ packages|join(', ') }}
       </td>
       <td>
-        <div {{ react_component('PackageSetApplications', { 'packageSetId': package_set.id }) }}></div>
+        <div {{ react_component('PackageSetApplications', { packageSetId: package_set.id, data: relatedEntitiesByPackageSetId[package_set.id] }) }}></div>
       </td>
       {% if is_granted('ROLE_ADMIN') %}
         <td class="text-right">

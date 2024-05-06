@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { isArray } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -30,7 +31,7 @@ function LinkToApplication ({pricingRuleSetApplication}) {
 
 export default function PricingRuleSetApplications(props) {
   const { t } = useTranslation(),
-    { url } = props,
+    { url, data } = props,
     [applications, setApplications] = useState([]),
     [loading, setLoading] = useState(true),
     [expanded, setExpanded] = useState(false),
@@ -39,18 +40,22 @@ export default function PricingRuleSetApplications(props) {
 
     useEffect(() => {
 
-    const jwt = document.head.querySelector('meta[name="application-auth-jwt"]').content
-    const headers = {
-      'Authorization': `Bearer ${jwt}`,
-      'Accept': 'application/ld+json',
-      'Content-Type': 'application/ld+json'
-    }
+      if (isArray(data)) {
+        setLoading(false)
+        setApplications(data)
+      } else {
+        const jwt = document.head.querySelector('meta[name="application-auth-jwt"]').content
+        const headers = {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
 
-    axios.get(url, { headers: headers}).then((resp) => {
-      setApplications(resp.data['hydra:member'])
-      setLoading(false)
-    })
-
+        axios.get(url, { headers: headers}).then((resp) => {
+          setApplications(resp.data['hydra:member'])
+          setLoading(false)
+        })
+      }
     },[])
 
   return (

@@ -32,6 +32,7 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\BusinessRestaurantGroup;
+use AppBundle\Entity\Contract;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
@@ -75,10 +76,13 @@ use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\VehicleType;
 use AppBundle\Form\ZoneCollectionType;
+use AppBundle\Serializer\PricingRuleSetApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
+use AppBundle\Service\PackageSetManager;
+use AppBundle\Service\PricingRuleSetManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -1030,27 +1034,44 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/deliveries/pricing", name="admin_deliveries_pricing")
      */
-    public function pricingRuleSetsAction(Request $request, PaginatorInterface $paginator)
+    public function pricingRuleSetsAction(Request $request, PaginatorInterface $paginator, PricingRuleSetManager $pricingRuleSetManager, PricingRuleSetApplicationsNormalizer $normalizer)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        // FIXME : we load asynchronously the applications of each rule, so let's not display too much on the same table, divide number of item by 2
+        // the way we get the results for applications of pricing rule set is not very efficient (3 requests per rule set), so let's not load too much of them
+        // if needed optimize (and complexifiy !) the query to get applications of the pricing rule set
         $qb = $this->getDoctrine()->getRepository(Delivery\PricingRuleSet::class)
             ->createQueryBuilder('rs')
             ->orderBy('rs.id', 'DESC')
             ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE / 2)
             ->setMaxResults(self::ITEMS_PER_PAGE / 2);
 
-        $ruleSets = $paginator->paginate(
+        $paginatedRuleSets = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
             self::ITEMS_PER_PAGE / 2,
             [PaginatorInterface::DISTINCT => false]
         );
 
+        $relatedEntitiesByPricingRuleSetId = [];
+
+        array_map(
+            function ($ruleSet) use (&$relatedEntitiesByPricingRuleSetId, $normalizer, $pricingRuleSetManager) {
+                $normalizedRelatedEntities = array_map(
+                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    $pricingRuleSetManager->getPricingRuleSetApplications($ruleSet)
+                );
+                $relatedEntitiesByPricingRuleSetId[$ruleSet->getId()] = $normalizedRelatedEntities;
+            },
+            $qb->getQuery()->getResult()
+        );
+
         return $this->render(
             'admin/pricing_rule_sets.html.twig',
-            $this->auth(['ruleSets' => $ruleSets])
+            $this->auth([
+                'ruleSets' => $paginatedRuleSets,
+                'relatedEntitiesByPricingRuleSetId' => $relatedEntitiesByPricingRuleSetId
+            ])
         );
     }
 
@@ -2261,10 +2282,12 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/settings/packages", name="admin_packages")
      */
-    public function packageSetsAction(Request $request, PaginatorInterface $paginator)
+    public function packageSetsAction(Request $request, PaginatorInterface $paginator, PackageSetManager $packageSetManager, PricingRuleSetApplicationsNormalizer $normalizer)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
+        // the way we get the results for applications of pricing rule set is not very efficient (3 requests per rule set), so let's not load too much of them
+        // if needed optimize (and complexifiy !) the query to get applications of the pricing rule set
         $qb = $this->getDoctrine()->getRepository(PackageSet::class)
             ->createQueryBuilder('ps')
             ->orderBy('ps.id', 'DESC')
@@ -2278,7 +2301,22 @@ class AdminController extends AbstractController
             [PaginatorInterface::DISTINCT => false,]
         );
 
-        return $this->render('admin/package_sets.html.twig', $this->auth(['package_sets' => $packageSets]));
+        $relatedEntitiesByPackageSetId = [];
+        array_map(
+            function ($packageSet) use (&$relatedEntitiesByPackageSetId, $normalizer, $packageSetManager) {
+                $normalizedRelatedEntities = array_map(
+                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    $packageSetManager->getPackageSetApplications($packageSet)
+                );
+                $relatedEntitiesByPackageSetId[$packageSet->getId()] = $normalizedRelatedEntities;
+            },
+            $qb->getQuery()->getResult()
+        );
+
+        return $this->render(
+            'admin/package_sets.html.twig',
+            $this->auth(['package_sets' => $packageSets, 'relatedEntitiesByPackageSetId' => $relatedEntitiesByPackageSetId])
+        );
     }
 
     private function renderPackageSetForm(Request $request, PackageSet $packageSet, EntityManagerInterface $objectManager)
