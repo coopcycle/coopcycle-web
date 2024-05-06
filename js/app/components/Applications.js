@@ -34,9 +34,7 @@ export default function PricingRuleSetApplications(props) {
     { url, data } = props,
     [applications, setApplications] = useState([]),
     [loading, setLoading] = useState(true),
-    [expanded, setExpanded] = useState(false),
-    NUM_SHOWN_APPLICATIONS = 1,
-    displayedApplications = expanded ? applications : applications.slice(0, NUM_SHOWN_APPLICATIONS)
+    [expanded, setExpanded] = useState(false)
 
     useEffect(() => {
 
@@ -60,25 +58,23 @@ export default function PricingRuleSetApplications(props) {
 
   return (
     <>
-    { loading ?
-      <span className="loader loader--dark"></span> :
-      <>
-        <ul>
-            { displayedApplications.length > 0 ?
-              displayedApplications.map((pricingRuleSetApplication, index) => {
-                return <LinkToApplication key={index} pricingRuleSetApplication={pricingRuleSetApplication} />
-              }) :
-              <li>{t('ADMIN_NO_APPLICATIONS')}</li>
-            }
-        </ul>
-        { applications.length > NUM_SHOWN_APPLICATIONS ?
-          expanded ?
-            (<a onClick={() => setExpanded(false)}>hide</a>) :
-            (<a onClick={() => setExpanded(true)}>...show more</a>)
-          : null
-        }
-      </>
-    }
+      { loading ?
+        <span className="loader loader--dark"></span> :
+        <>
+          { applications.length > 0 ?
+            <span>
+              {t('ADMIN_APPLIED_TO', { count: applications.length })} - <a onClick={() => setExpanded(!expanded)}>{ t('SHOW_DETAILS') }</a>
+            </span> :
+            <span>{t('ADMIN_NO_APPLICATIONS')}</span>
+          }
+          { expanded ?
+            <ul className="nomargin">
+              { applications.map((pricingRuleSetApplication, index) => {return <LinkToApplication key={index} pricingRuleSetApplication={pricingRuleSetApplication} />}) }
+            </ul> :
+            null
+          }
+        </>
+      }
     </>
   )
 }
