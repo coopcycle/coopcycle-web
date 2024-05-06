@@ -142,7 +142,7 @@ export const isTaskVisible = (task, filters, date) => {
   if (hiddenCouriers.length > 0) {
 
     if (!task.isAssigned) {
-      return false
+      return true
     }
 
     if (_.includes(hiddenCouriers, task.assignedTo)) {

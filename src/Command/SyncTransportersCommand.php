@@ -185,7 +185,7 @@ class SyncTransportersCommand extends Command {
 
         $content = $out->generate();
         $filename = sprintf(
-                "%s_%s-REPORT.%s.edi", "dbschenker",
+                "REPORT-%s_%s.%s.edi", "dbschenker",
                 date('Y-m-d_His'), uniqid()
             );
 

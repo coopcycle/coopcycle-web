@@ -4,6 +4,8 @@ namespace Tests\AppBundle\Entity\Sylius;
 
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\ReusablePackaging;
+use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -30,9 +32,17 @@ class OrderTest extends TestCase
         return $restaurant->reveal();
     }
 
-    private function createProduct()
+    private function createProduct($isReusablePackagingEnabled = false,
+        $hasReusablePackagings = false, array $reusablePackagings = [])
     {
         $product = $this->prophesize(ProductInterface::class);
+
+        $product->isReusablePackagingEnabled()->willReturn($isReusablePackagingEnabled);
+        $product->hasReusablePackagings()->willReturn($hasReusablePackagings);
+
+        if (!empty($reusablePackagings)) {
+            $product->getReusablePackagings()->willReturn(new ArrayCollection($reusablePackagings));
+        }
 
         return $product->reveal();
     }
@@ -52,6 +62,7 @@ class OrderTest extends TestCase
 
         $item->getVariant()->willReturn($variant);
         $item->getTotal()->willReturn($total);
+        $item->getQuantity()->willReturn(1);
 
         $item->setOrder(Argument::type(OrderInterface::class))->shouldBeCalled();
 
@@ -134,5 +145,35 @@ class OrderTest extends TestCase
         $order = new Order();
 
         $this->assertEquals(0.0, $order->getPercentageForRestaurant($bakery));
+    }
+
+    public function testGetFormatsToDeliverForLoopeatGroupsContainers()
+    {
+        $order = new Order();
+
+        $reusablePackaging = new ReusablePackaging();
+        $reusablePackaging->setData(['id' => 1]);
+
+        $reusablePackagings = new ReusablePackagings();
+        $reusablePackagings->setReusablePackaging($reusablePackaging);
+        $reusablePackagings->setUnits(1);
+
+        $product1 = $this->createProduct(true, true, [ $reusablePackagings ]);
+        $product2 = $this->createProduct(true, true, [ $reusablePackagings ]);
+        $product3 = $this->createProduct(true, true, [ $reusablePackagings ]);
+
+        $product1Variant = $this->createProductVariant($product1);
+        $product2Variant = $this->createProductVariant($product2);
+        $product3Variant = $this->createProductVariant($product3);
+
+        $order->addItem($this->createOrderItem($product1Variant, 2000));
+        $order->addItem($this->createOrderItem($product2Variant,  700));
+        $order->addItem($this->createOrderItem($product3Variant,   300));
+
+        $expectedFormats = [
+            ['format_id' => 1, 'quantity' => 3]
+        ];
+
+        $this->assertEquals($expectedFormats, $order->getFormatsToDeliverForLoopeat());
     }
 }

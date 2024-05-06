@@ -22,7 +22,7 @@ asyncModule(async () => {
       a.amount,
       a.origin_code
     FROM sylius_adjustment a
-    LEFT JOIN sylius_order_item i ON a.order_item_id = i.id
+    JOIN sylius_order_item i ON a.order_item_id = i.id
   `
 
   const dimensions = {
