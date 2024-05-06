@@ -96,3 +96,7 @@ services:
   AppBundle\Validator\Constraints\PricingRuleSetDeleteValidator:
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\PackageSetDeleteValidator:
+    tags:
+      - { name: validator.constraint_validator }

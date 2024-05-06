@@ -56,7 +56,7 @@ export default function PricingRuleSetApplications(props) {
   return (
     <>
     { loading ?
-      <div className="text-center"><span className="loader loader--dark"></span></div> :
+      <span className="loader loader--dark"></span> :
       <>
         <ul>
             { displayedApplications.length > 0 ?

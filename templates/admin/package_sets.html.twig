@@ -18,6 +18,7 @@
     <th>#</th>
     <th>{{ 'form.package_set.name.label'|trans }}</th>
     <th>{{ 'form.package_set.packages.label'|trans }}</th>
+    <th>{{ 'form.package_set.applications.label'|trans }}</th>
     {% if is_granted('ROLE_ADMIN') %}<th></th>{% endif %}
   </thead>
   <tbody>
@@ -35,6 +36,9 @@
           {% set packages = packages|merge([ package.name ]) %}
         {% endfor %}
         {{ packages|join(', ') }}
+      </td>
+      <td>
+        <div {{ react_component('PackageSetApplications', { 'packageSetId': package_set.id }) }}></div>
       </td>
       {% if is_granted('ROLE_ADMIN') %}
         <td class="text-right">
@@ -56,7 +60,9 @@
   {% endfor %}
   </tbody>
 </table>
-
+<div class="text-center">
+  {{ knp_pagination_render(package_sets, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
 {% endblock %}
 
 {% block scripts %}

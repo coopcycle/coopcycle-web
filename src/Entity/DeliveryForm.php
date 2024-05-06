@@ -41,7 +41,9 @@ class DeliveryForm
 
     public function getDisplayHash()
     {
-        return new Hashids($this->getId(), 12);
+        // $hashids12 = new Hashids($this->getId(), 12);
+        // return $hashids12->encode($this->getId());
+        return $this->getId();
     }
 
     /**

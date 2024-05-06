@@ -3,27 +3,27 @@
 namespace AppBundle\Validator\Constraints;
 
 
-use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\PackageSet;
 use AppBundle\Serializer\PricingRuleSetApplicationsNormalizer;
-use AppBundle\Service\PricingRuleSetManager;
+use AppBundle\Service\PackageSetManager;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 
-class PricingRuleSetDeleteValidator extends ConstraintValidator
+class PackageSetDeleteValidator extends ConstraintValidator
 {
     public function __construct(
-        protected PricingRuleSetManager $pricingRuleSetManager,
+        protected PackageSetManager $packageSetManager,
         protected PricingRuleSetApplicationsNormalizer $normalizer
     ) {}
 
     public function validate($object, Constraint $constraint)
     {
-        if (!$object instanceof PricingRuleSet) {
-            throw new \InvalidArgumentException(sprintf('$object should be an instance of %s', PricingRuleSet::class));
+        if (!$object instanceof PackageSet) {
+            throw new \InvalidArgumentException(sprintf('$object should be an instance of %s', PackageSet::class));
         }
 
-        $relatedEntities = $this->pricingRuleSetManager->getPricingRuleSetApplications($object);
+        $relatedEntities = $this->packageSetManager->getPackageSetApplications($object);
 
         if (count($relatedEntities) > 0) {
             $this->context

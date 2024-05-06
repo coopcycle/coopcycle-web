@@ -1064,6 +1064,7 @@ class AdminController extends AbstractController
         }
 
         $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
+
         $packageNames = [];
         foreach ($packageSets as $packageSet) {
             foreach ($packageSet->getPackages() as $package) {
@@ -2260,11 +2261,23 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/settings/packages", name="admin_packages")
      */
-    public function packageSetsAction()
+    public function packageSetsAction(Request $request, PaginatorInterface $paginator)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
+        $qb = $this->getDoctrine()->getRepository(PackageSet::class)
+            ->createQueryBuilder('ps')
+            ->orderBy('ps.id', 'DESC')
+            ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE / 2)
+            ->setMaxResults(self::ITEMS_PER_PAGE / 2);
+
+            $packageSets = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE / 2,
+            [PaginatorInterface::DISTINCT => false,]
+        );
+
         return $this->render('admin/package_sets.html.twig', $this->auth(['package_sets' => $packageSets]));
     }
 
@@ -2282,9 +2295,7 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_packages');
         }
 
-        return $this->render('admin/package_set.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        return $this->render('admin/package_set.html.twig', $this->auth(['form' => $form->createView()]));
     }
 
     /**

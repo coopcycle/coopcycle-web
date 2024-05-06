@@ -737,6 +737,7 @@ form.time_slot.working_days_only.label: Allow selecting only working days
 form.time_slot_choice.start_time.label: Start time
 form.time_slot_choice.end_time.label: End time
 form.time_slot.prior_notice_hours.label: Prior notice (hours)
+form.package_set.applications.label: Applies to
 form.package_set.name.label: Name
 form.package_set.packages.label: Packages
 form.package.name.label: Name
@@ -1400,6 +1401,7 @@ adminDashboard.incidents.help: "Manage incidents."
 adminDashboard.incidents.createNew: Create a new incident
 profile.delete_my_account: "Delete my account"
 profile.type_username_to_confirm: "Type your username to confirm the account deletion"
+form.pricingrule_set.applications.label: Applies to
 form.pricing_rule_set.options.label: Options
 form.pricing_rule_set.options.map_all_tasks.label: Apply to all the tasks
 form.settings.notifications.title: Notifications
