@@ -976,7 +976,15 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.tagging }
 
-  AppBundle\Log\RequestResponseProcessor:
+  AppBundle\Log\RequestIdProcessor:
+
+  AppBundle\Log\RequestUriProcessor:
+
+  Symfony\Bridge\Monolog\Processor\RouteProcessor:
+    tags:
+      - { name: monolog.processor }
+
+  AppBundle\Log\ApiRequestResponseProcessor:
     tags:
       - { name: monolog.processor, channel: api }
 

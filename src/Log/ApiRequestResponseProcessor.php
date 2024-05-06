@@ -4,7 +4,7 @@ namespace AppBundle\Log;
 
 use Monolog\Processor\ProcessorInterface;
 
-class RequestResponseProcessor
+class ApiRequestResponseProcessor
 {
     public function __invoke(array $record)
     {
@@ -45,6 +45,10 @@ class RequestResponseProcessor
                     $responseBody = json_encode($responseData);
                 }
             }
+        }
+
+        if ($request->headers->has('X-Request-ID')) {
+            $record['extra']['request_id'] = $request->headers->get('X-Request-ID');
         }
 
         $record['extra']['method'] = $request->getMethod();
