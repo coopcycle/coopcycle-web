@@ -39,7 +39,12 @@ class BusinessAccountType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class, ['label' => 'registration.step.company.name']);
+            ->add('name', TextType::class, ['label' => 'registration.step.company.name'])
+            ->add('address', AddressType::class, [
+                'with_widget' => true,
+                'with_description' => false,
+                'label' => 'registration.company.address',
+            ]);
 
         $businessRestaurantGroup = $this->objectManager->getRepository(BusinessRestaurantGroup::class)->findAll();
 
@@ -58,11 +63,6 @@ class BusinessAccountType extends AbstractType
 
         if ($this->authorizationChecker->isGranted('ROLE_BUSINESS_ACCOUNT') || $options['business_account_registration']) {
             $builder
-                ->add('address', AddressType::class, [
-                    'with_widget' => true,
-                    'with_description' => false,
-                    'label' => 'registration.company.address',
-                ])
                 ->add('differentAddressForBilling', CheckboxType::class, [
                     'label' => 'registration.company.address.different.for.billing',
                     'required' => false,

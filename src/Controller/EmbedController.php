@@ -317,6 +317,17 @@ class EmbedController extends AbstractController
                     return $this->redirectToRoute('public_order', [
                         'hashid' => $hashids->encode($order->getId())
                     ]);
+                } else {
+                    return $this->render('embed/delivery/summary.html.twig', [
+                        'hashid' => $hashid,
+                        'delivery' => $delivery,
+                        'price' => $price,
+                        'price_excluding_tax' => ($order->getTotal() - $order->getTaxTotal()),
+                        'form' => $paymentForm->createView(),
+                        'payment' => $order->getLastPayment(PaymentInterface::STATE_CART),
+                        'order' => $order,
+                        'submission_hashid' => $request->query->get('data'),
+                    ]);
                 }
             }
 

@@ -96,9 +96,9 @@ class Product extends BaseProduct implements ProductInterface, Comparable
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function isReusablePackagingEnabled()
+    public function isReusablePackagingEnabled(): bool
     {
         return $this->reusablePackagingEnabled;
     }
@@ -116,9 +116,9 @@ class Product extends BaseProduct implements ProductInterface, Comparable
     }
 
     /**
-     * @return mixed
+     * @return Collection
      */
-    public function getReusablePackagings()
+    public function getReusablePackagings(): Collection
     {
         return $this->reusablePackagings;
     }
@@ -147,7 +147,7 @@ class Product extends BaseProduct implements ProductInterface, Comparable
         $this->reusablePackagings->clear();
     }
 
-    public function hasReusablePackagings()
+    public function hasReusablePackagings(): bool
     {
         return count($this->reusablePackagings) > 0;
     }
