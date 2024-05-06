@@ -1,5 +1,5 @@
 import React from 'react'
-import Impl from '../../../js/app/components/PricingRuleSetApplications'
+import Impl from '../../../js/app/components/Applications'
 
 export default function PricingRuleSetApplications(props) {
   const { pricingRuleSetId } = props,
