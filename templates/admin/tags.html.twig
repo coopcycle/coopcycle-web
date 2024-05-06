@@ -28,8 +28,9 @@
   	<form method="POST">
   	 <input type="hidden" name="tag" value="{{ tag.id }}">
      <p class="text-right nomargin">
-  	   <button class="btn btn-danger btn-xs" type="submit" name="delete" onclick="return confirm('{{ 'adminDashboard.tags.confirm_delete'|trans|escape('js') }}')">{{ 'basics.delete'|trans }}
-      </button>
+  	   <a class="text-danger" type="submit" name="delete" onclick="return confirm('{{ 'adminDashboard.tags.confirm_delete'|trans|escape('js') }}')">
+        <i class="fa fa-trash"></i>
+      </a>
      </p>
     </form>
   </td>
