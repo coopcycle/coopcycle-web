@@ -26,13 +26,5 @@ final class Version20240429074926 extends AbstractMigration
     }
 
     public function down(Schema $schema): void
-    {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
-        $this->addSql('CREATE SCHEMA topology');
-        $this->addSql('CREATE SCHEMA tiger');
-        $this->addSql('CREATE SCHEMA tiger_data');
-        $this->addSql('COMMENT ON COLUMN zone.polygon IS \'(DC2Type:geojson)(DC2Type:geojson)\'');
-        $this->addSql('COMMENT ON COLUMN city_zone.polygon IS \'(DC2Type:geojson)(DC2Type:geojson)\'');
-    }
+    {}
 }
