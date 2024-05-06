@@ -60,18 +60,15 @@ trait StoreTrait
     {
         $qb = $this->getDoctrine()
         ->getRepository(Store::class)
-        ->createQueryBuilder('c');
+        ->createQueryBuilder('c')
+        ->orderBy('c.name', 'ASC');
 
         $STORES_PER_PAGE = 20;
 
         $stores = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            $STORES_PER_PAGE,
-            [
-                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'c.name',
-                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
-            ],
+            $STORES_PER_PAGE
         );
 
         $routes = $request->attributes->get('routes');

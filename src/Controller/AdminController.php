@@ -756,7 +756,7 @@ class AdminController extends AbstractController
 
         $restaurants = $repository->findBy([], [
             'enabled' => 'DESC',
-            'id' => 'DESC',
+            'name' => 'ASC',
         ], self::ITEMS_PER_PAGE, $offset);
 
         return [ $restaurants, $pages, $page ];
@@ -1024,7 +1024,7 @@ class AdminController extends AbstractController
             }
         }
 
-        $tags = $this->getDoctrine()->getRepository(Tag::class)->findAll();
+        $tags = $this->getDoctrine()->getRepository(Tag::class)->findBy(array(), array('name' => 'ASC'));
 
         return $this->render('admin/tags.html.twig', [
             'tags' => $tags
@@ -1042,7 +1042,7 @@ class AdminController extends AbstractController
         // if needed optimize (and complexifiy !) the query to get applications of the pricing rule set
         $qb = $this->getDoctrine()->getRepository(Delivery\PricingRuleSet::class)
             ->createQueryBuilder('rs')
-            ->orderBy('rs.id', 'DESC')
+            ->orderBy('rs.name', 'ASC')
             ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE / 2)
             ->setMaxResults(self::ITEMS_PER_PAGE / 2);
 
@@ -1227,7 +1227,8 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $failureReasonSets = $this->getDoctrine()
             ->getRepository(Delivery\FailureReasonSet::class)
-            ->findAll();
+            ->findBy(array(), array('name' => 'ASC'));
+
         return $this->render('admin/failures.html.twig', [
             'failureReasonSets' => $failureReasonSets
         ]);
@@ -1675,7 +1676,7 @@ class AdminController extends AbstractController
      */
     public function formsAction()
     {
-        $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
+        $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findBy(array(), array('id' => 'ASC'));
         return $this->render('admin/forms.html.twig', $this->auth(['forms' => $forms]));
     }
 
@@ -2196,7 +2197,7 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $timeSlots = $this->getDoctrine()->getRepository(TimeSlot::class)->findAll();
+        $timeSlots = $this->getDoctrine()->getRepository(TimeSlot::class)->findBy(array(), array('name' => 'ASC'));
         return $this->render('admin/time_slots.html.twig', [
             'time_slots' => $timeSlots,
         ]);
@@ -2290,7 +2291,7 @@ class AdminController extends AbstractController
         // if needed optimize (and complexifiy !) the query to get applications of the pricing rule set
         $qb = $this->getDoctrine()->getRepository(PackageSet::class)
             ->createQueryBuilder('ps')
-            ->orderBy('ps.id', 'DESC')
+            ->orderBy('ps.name', 'ASC')
             ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE / 2)
             ->setMaxResults(self::ITEMS_PER_PAGE / 2);
 
@@ -2573,7 +2574,7 @@ class AdminController extends AbstractController
     public function businessAccountsAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $accounts = $this->getDoctrine()->getRepository(BusinessAccount::class)->findAll();
+        $accounts = $this->getDoctrine()->getRepository(BusinessAccount::class)->findBy(array(), array('name' => 'ASC'));
 
         return $this->render('admin/business_accounts.html.twig', [
             'accounts' => $accounts,
