@@ -86,7 +86,7 @@ class Incident implements TaggableInterface {
     /**
      * @Groups({"incident"})
      */
-    protected ?string $failure_reason_code = null;
+    protected ?string $failureReasonCode = null;
 
 
     /**
@@ -178,11 +178,11 @@ class Incident implements TaggableInterface {
     }
 
     public function getFailureReasonCode(): ?string {
-        return $this->failure_reason_code;
+        return $this->failureReasonCode;
     }
 
-    public function setFailureReasonCode(?string $failure_reason_code): self {
-        $this->failure_reason_code = $failure_reason_code;
+    public function setFailureReasonCode(?string $failureReasonCode): self {
+        $this->failureReasonCode = $failureReasonCode;
         return $this;
     }
 
