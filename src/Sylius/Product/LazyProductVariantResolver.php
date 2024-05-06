@@ -187,7 +187,9 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
     public function getVariantForBusinessRestaurantGroup(ProductInterface $product, BusinessRestaurantGroup $businessRestaurantGroup): ?ProductVariantInterface
     {
         $qb = $this->entityManager->getRepository(ProductVariantInterface::class)->createQueryBuilder('v');
+        $qb->andWhere('v.product = :product');
         $qb->andWhere('v.businessRestaurantGroup = :business_restaurant_group');
+        $qb->setParameter('product', $product);
         $qb->setParameter('business_restaurant_group', $businessRestaurantGroup);
 
         return $qb->getQuery()->getOneOrNullResult();
