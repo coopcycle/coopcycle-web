@@ -14,8 +14,7 @@
   {% if ruleSets|length > 0 %}
     {% for ruleSet in ruleSets %}
       <tr>
-        <td><a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">#{{ ruleSet.id }}</a></td>
-        <td>{{ ruleSet.name }}</td>
+        <td><a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">{{ ruleSet.name }}</a></td>
         <td>
           <div {{ react_component('PricingRuleSetApplications', { pricingRuleSetId: ruleSet.id, data: relatedEntitiesByPricingRuleSetId[ruleSet.id] }) }}></div>
         </td>
@@ -35,16 +34,16 @@
                   {% trans %}adminDashboard.pricing.duplicate{% endtrans %}
                 </a>
               </li>
-              {% if is_granted('ROLE_ADMIN') %}
-                <li>
-                  <a class="text-danger delete-pricing" data-pricing-name="{{ ruleSet.name }}" data-pricing-id="{{ ruleSet.id }}">
-                    {% trans %}basics.delete{% endtrans %}
-                  </a>
-                </li>
-              {% endif %}
             </ul>
           </div>
         </td>
+        {% if is_granted('ROLE_ADMIN') %}
+          <td>
+            <a class="text-danger delete-pricing">
+              <i data-pricing-name="{{ ruleSet.name }}" data-pricing-id="{{ ruleSet.id }}" class="fa fa-trash"></i>
+            </a>
+          </td>
+        {% endif %}
       </tr>
     {% endfor %}
   {% else %}

@@ -20,7 +20,6 @@ function LinkToApplication ({pricingRuleSetApplication}) {
       return (<li><a href={url}>{t('RESTAURANTS_GROUP')} {pricingRuleSetApplication.name}</a></li>)
     }
     case "AppBundle\\Entity\\DeliveryForm": {
-      console.log(pricingRuleSetApplication)
       const url = window.Routing.generate("admin_form", {id: pricingRuleSetApplication.id})
       return (<li><a href={url}>{t('DELIVERY_FORM')} {pricingRuleSetApplication.name}</a></li>)
     }

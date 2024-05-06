@@ -15,7 +15,6 @@
 
 <table class="table">
   <thead>
-    <th>#</th>
     <th>{{ 'form.package_set.name.label'|trans }}</th>
     <th>{{ 'form.package_set.packages.label'|trans }}</th>
     <th>{{ 'form.package_set.applications.label'|trans }}</th>
@@ -25,10 +24,7 @@
   {% for package_set in package_sets %}
     <tr>
       <td>
-        <a href="{{ path('admin_package', { id: package_set.id }) }}">#{{ package_set.id }}</a>
-      </td>
-      <td>
-        {{ package_set.name }}
+        <a href="{{ path('admin_package', { id: package_set.id }) }}">{{ package_set.name }}</a>
       </td>
       <td>
         {% set packages = [] %}
@@ -41,19 +37,10 @@
         <div {{ react_component('PackageSetApplications', { packageSetId: package_set.id, data: relatedEntitiesByPackageSetId[package_set.id] }) }}></div>
       </td>
       {% if is_granted('ROLE_ADMIN') %}
-        <td class="text-right">
-          <div class="btn-group">
-            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              {% trans %}adminDashboard.pricing.manage{% endtrans %}   <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right">
-                <li>
-                  <a class="text-danger delete-package" data-package-name="{{ package_set.name }}" data-package-id="{{ package_set.id }}">
-                    {% trans %}basics.delete{% endtrans %}
-                  </a>
-                </li>
-            </ul>
-          </div>
+        <td>
+           <a class="text-danger delete-package">
+            <i data-package-name="{{ package_set.name }}" data-package-id="{{ package_set.id }}" class="fa fa-trash"></i>
+          </a>
         </td>
       {% endif %}
     </tr>

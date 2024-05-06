@@ -56,29 +56,18 @@
           </li>
         </ul>
       </td>
-      <td class="text-right">
-         <div class="dropdown">
-          <button class="btn btn-default dropdown-toggle" type="button" id="forms-more-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <i class="fa fa-cog mr-1"></i>
-            <span>{{ 'task.form.modal.moreOptions'|trans }}</span>
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="forms-more-options">
-            <li>
-              <a href="{{ path('embed_delivery_start', { hashid: form|hashid(12) }) }}" target="_blank">
-                <i class="fa fa-external-link"></i>&nbsp;{% trans %}basics.view{% endtrans %}
-              </a>
-            </li>
-            {% if is_granted('ROLE_ADMIN') %}
-              <li>
-                <a class="text-danger delete-form" data-form-name="{{ form|hashid(12) }}" data-form-id="{{ form.id }}">
-                  {% trans %}basics.delete{% endtrans %}
-                </a>
-              </li>
-            {% endif %}
-          </ul>
-        </div>
-      </div>
+      <td>
+        <a href="{{ path('embed_delivery_start', { hashid: form|hashid(12) }) }}" target="_blank">
+          <i class="fa fa-external-link"></i>&nbsp;{% trans %}basics.view{% endtrans %}
+        </a>
+      </td>
+      {% if is_granted('ROLE_ADMIN') %}
+        <td>
+          <a class="text-danger delete-form">
+            <i data-form-name="{{ form|hashid(12) }}" data-form-id="{{ form.id }}" class="fa fa-trash"></i>
+          </a>
+        </td>
+      {% endif %}
       </td>
     </tr>
   {% endfor %}
