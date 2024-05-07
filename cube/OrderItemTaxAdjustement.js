@@ -17,12 +17,12 @@ asyncModule(async () => {
 
   const sql = `
     SELECT
-      COALESCE(a.order_id, i.order_id) AS order_id,
+      i.order_id,
       a.type,
       a.amount,
       a.origin_code
-    FROM sylius_adjustment a
-    JOIN sylius_order_item i ON a.order_item_id = i.id
+    FROM sylius_order_item i
+    LEFT JOIN sylius_adjustment a ON a.order_item_id = i.id
   `
 
   const dimensions = {
@@ -66,53 +66,11 @@ asyncModule(async () => {
     intermediaryTaxRateCodes = intermediaryTaxRateCodes.length > 0 ? intermediaryTaxRateCodes : ['N/A']
     reducedTaxRateCodes = reducedTaxRateCodes.length > 0 ? reducedTaxRateCodes : ['N/A']
 
-    cube(`OrderAdjustment`, {
+    cube(`OrderItemTaxAdjustment`, {
       sql,
-      joins: {
-        Order: {
-          relationship: `many_to_one`,
-          sql: `${CUBE}.order_id = ${Order}.id`
-        },
-      },
       dimensions,
       dataSource: `default`,
       measures: {
-        stripe_fee: {
-          type: `sum`,
-          sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
-          filters: [{ sql: `${CUBE}.type = 'stripe_fee'` }],
-          format: `currency`,
-        },
-        platform_fee: {
-          type: `sum`,
-          sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
-          filters: [{ sql: `${CUBE}.type = 'fee'` }],
-          format: `currency`,
-        },
-        packaging_fee: {
-          type: `sum`,
-          sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
-          filters: [{ sql: `${CUBE}.type = 'reusable_packaging'` }],
-          format: `currency`,
-        },
-        delivery_fee: {
-          type: `sum`,
-          sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
-          filters: [{ sql: `${CUBE}.type = 'delivery'` }],
-          format: `currency`,
-        },
-        promotions: {
-          type: `sum`,
-          sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
-          filters: [{ sql: `${CUBE}.type IN ('delivery_promotion', 'order_promotion')` }],
-          format: `currency`,
-        },
-        tip: {
-          type: `sum`,
-          sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
-          filters: [{ sql: `${CUBE}.type = 'tip'` }],
-          format: `currency`,
-        },
         tax_total: {
           type: `sum`,
           sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
@@ -144,30 +102,24 @@ asyncModule(async () => {
         },
         total_excl_tax_standard: {
           type: `number`,
-          sql: `${CUBE.Order.total} - ${CUBE.tax_total_standard}`,
+          sql: `${CUBE.Order.itemsTotal} - ${CUBE.tax_total_standard}`,
           format: `currency`,
         },
         total_excl_tax_intermediary: {
           type: `number`,
-          sql: `${CUBE.Order.total} - ${CUBE.tax_total_intermediary}`,
+          sql: `${CUBE.Order.itemsTotal} - ${CUBE.tax_total_intermediary}`,
           format: `currency`,
         },
         total_excl_tax_reduced: {
           type: `number`,
-          sql: `${CUBE.Order.total} - ${CUBE.tax_total_reduced}`,
+          sql: `${CUBE.Order.itemsTotal} - ${CUBE.tax_total_reduced}`,
           format: `currency`,
-        },
-        revenue: {
-          // Use COALESCE when there is no corresponding row with JOIN
-          sql: `${CUBE.Order.total} - COALESCE(${CUBE.platform_fee}, 0) - COALESCE(${CUBE.stripe_fee}, 0)`,
-          type: `number`,
-          format: `currency`
         },
       },
     })
 
   } else {
-    cube(`OrderAdjustment`, {
+    cube(`OrderItemTaxAdjustment`, {
       sql,
       joins: {
         Order: {
@@ -178,42 +130,6 @@ asyncModule(async () => {
       dimensions,
       dataSource: `default`,
       measures: {
-        stripe_fee: {
-          type: `sum`,
-          sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
-          filters: [{ sql: `${CUBE}.type = 'stripe_fee'` }],
-          format: `currency`,
-        },
-        platform_fee: {
-          type: `sum`,
-          sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
-          filters: [{ sql: `${CUBE}.type = 'fee'` }],
-          format: `currency`,
-        },
-        packaging_fee: {
-          type: `sum`,
-          sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
-          filters: [{ sql: `${CUBE}.type = 'reusable_packaging'` }],
-          format: `currency`,
-        },
-        delivery_fee: {
-          type: `sum`,
-          sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
-          filters: [{ sql: `${CUBE}.type = 'delivery'` }],
-          format: `currency`,
-        },
-        promotions: {
-          type: `sum`,
-          sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
-          filters: [{ sql: `${CUBE}.type IN ('delivery_promotion', 'order_promotion')` }],
-          format: `currency`,
-        },
-        tip: {
-          type: `sum`,
-          sql: `ROUND(${CUBE}.amount / 100::numeric, 2)`,
-          filters: [{ sql: `${CUBE}.type = 'tip'` }],
-          format: `currency`,
-        },
         tax_total: {
           type: `sum`,
           sql: `0`,
@@ -241,24 +157,18 @@ asyncModule(async () => {
         },
         total_excl_tax_standard: {
           type: `number`,
-          sql: `${CUBE.Order.total} - ${CUBE.tax_total_standard}`,
+          sql: `${CUBE.Order.itemsTotal} - ${CUBE.tax_total_standard}`,
           format: `currency`,
         },
         total_excl_tax_intermediary: {
           type: `number`,
-          sql: `${CUBE.Order.total} - ${CUBE.tax_total_intermediary}`,
+          sql: `${CUBE.Order.itemsTotal} - ${CUBE.tax_total_intermediary}`,
           format: `currency`,
         },
         total_excl_tax_reduced: {
           type: `number`,
-          sql: `${CUBE.Order.total} - ${CUBE.tax_total_reduced}`,
+          sql: `${CUBE.Order.itemsTotal} - ${CUBE.tax_total_reduced}`,
           format: `currency`,
-        },
-        revenue: {
-          // Use COALESCE when there is no corresponding row with JOIN
-          sql: `${CUBE.Order.total} - COALESCE(${CUBE.platform_fee}, 0) - COALESCE(${CUBE.stripe_fee}, 0)`,
-          type: `number`,
-          format: `currency`
         },
       },
     })

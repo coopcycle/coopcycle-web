@@ -13,24 +13,8 @@ view(`OrderView`, {
       ]
     },
     {
-      join_path: Order.OrderAdjustment,
+      join_path: Order.OrderItemTaxAdjustment,
       includes: [
-        {
-          name: `delivery_fee`,
-          alias: `deliveryFee`
-        },
-        {
-          name: `stripe_fee`,
-          alias: `stripeFee`
-        },
-        {
-          name: `platform_fee`,
-          alias: `platformFee`
-        },
-        {
-          name: `packaging_fee`,
-          alias: `packagingFee`
-        },
         {
           name: `tax_total`,
           alias: `itemsTaxTotal`
@@ -62,6 +46,27 @@ view(`OrderView`, {
         {
           name: `total_excl_tax`,
           alias: `items_total_excl_tax`
+        },
+      ]
+    },
+    {
+      join_path: Order.OrderFee,
+      includes: [
+        {
+          name: `delivery_fee`,
+          alias: `deliveryFee`
+        },
+        {
+          name: `stripe_fee`,
+          alias: `stripeFee`
+        },
+        {
+          name: `platform_fee`,
+          alias: `platformFee`
+        },
+        {
+          name: `packaging_fee`,
+          alias: `packagingFee`
         },
         `tip`,
         `promotions`,

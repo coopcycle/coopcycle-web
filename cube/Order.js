@@ -42,6 +42,14 @@ cube(`Order`, {
       relationship: `one_to_one`,
       sql: `${CUBE}.id = ${OrderPayment}.order_id`,
     },
+    OrderFee: {
+      relationship: `one_to_many`,
+      sql: `${CUBE}.id = ${OrderFee}.order_id`,
+    },
+    OrderItemTaxAdjustment: {
+      relationship: `one_to_many`,
+      sql: `${CUBE}.id = ${OrderItemTaxAdjustment}.order_id`,
+    },
   },
 
   measures: {
