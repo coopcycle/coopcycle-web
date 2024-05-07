@@ -69,7 +69,7 @@ class FailureReasons
         if (is_null($set)) {
             return $this->getDefaultReasons();
         }
-        return $set->getReasons();
+        return $set->getReasons()->toArray();
     }
 
     public function __invoke($data, Request $request)
