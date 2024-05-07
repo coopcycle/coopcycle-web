@@ -2,7 +2,6 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
@@ -17,12 +16,8 @@ class ApplicationsNormalizer implements NormalizerInterface
 {
     public function __construct(
         private ObjectNormalizer $normalizer,
-        private IriConverterInterface $iriConverterInterface,
         private string $secret
-    )
-    {
-        $this->secret = $secret;
-    }
+    ) {}
 
     public function normalize($object, $format = null, array $context = array())
     {

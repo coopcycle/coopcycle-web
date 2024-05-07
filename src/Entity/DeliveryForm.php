@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 
 /**
@@ -29,6 +30,11 @@ class DeliveryForm
     private $withWeight = false;
     private $showHomepage = false;
     private $submissions;
+
+    public function __construct()
+    {
+        $this->submissions = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -156,5 +162,13 @@ class DeliveryForm
         $this->showHomepage = $showHomepage;
 
         return $this;
+    }
+
+    /**
+     * Get the value of submissions
+     */
+    public function getSubmissions()
+    {
+        return $this->submissions;
     }
 }

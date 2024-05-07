@@ -7,14 +7,11 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 
 
 class PricingRuleSetManager
 {
-    public function __construct(
-        private EntityManagerInterface $entityManager,
-        private LoggerInterface $logger)
+    public function __construct(private EntityManagerInterface $entityManager)
     {}
 
     /**
@@ -33,7 +30,7 @@ class PricingRuleSetManager
     }
 
     /**
-     * @return ArrayCollection|Contract[]
+     * @return Contract[]
      */
     public function getContracts(PricingRuleSet $pricingRuleSet) {
         $repository = $this->entityManager->getRepository(Contract::class);
@@ -46,14 +43,14 @@ class PricingRuleSetManager
     }
 
     /**
-     * @return ArrayCollection|Store[]
+     * @return Store[]
      */
     public function getStores(PricingRuleSet $pricingRuleSet) {
         return $this->entityManager->getRepository(Store::class)->findBy(['pricingRuleSet' => $pricingRuleSet]);
     }
 
     /**
-     * @return ArrayCollection|DeliveryForm[]
+     * @return DeliveryForm[]]
      */
     public function getDeliveryForms(PricingRuleSet $pricingRuleSet) {
         return $this->entityManager->getRepository(DeliveryForm::class)->findBy(['pricingRuleSet' => $pricingRuleSet]);

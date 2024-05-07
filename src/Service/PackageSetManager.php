@@ -34,14 +34,14 @@ class PackageSetManager
     }
 
     /**
-     * @return ArrayCollection|Store[]
+     * @return Store[]
      */
     public function getStores(PackageSet $packageSet) {
         return $this->entityManager->getRepository(Store::class)->findBy(['packageSet' => $packageSet]);
     }
 
     /**
-     * @return ArrayCollection|DeliveryForm[]
+     * @return DeliveryForm[]
      */
     public function getDeliveryForms(PackageSet $packageSet) {
         return $this->entityManager->getRepository(DeliveryForm::class)->findBy(['packageSet' => $packageSet]);
