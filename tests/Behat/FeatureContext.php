@@ -13,6 +13,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\DeliveryAddress;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\ReusablePackaging;
@@ -1303,5 +1304,31 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         Stripe::$apiBase = $stripeMockApiBase;
+    }
+
+    /**
+     * @Given the task with id :taskId belongs to organization with name :orgName
+     */
+    public function theTaskWithIdBelongsToOrganizationWithName($taskId, $orgName)
+    {
+        $task = $this->doctrine->getRepository(Task::class)->find($taskId);
+        $organization = $this->doctrine->getRepository(Organization::class)->findOneByName($orgName);
+
+        $task->setOrganization($organization);
+
+        $this->doctrine->getManagerForClass(Task::class)->flush();
+    }
+
+    /**
+     * @Given the store with name :storeName has failure reason set :failureReasonSet
+     */
+    public function theStoreWithNameHasFailureReasonSet($storeName, $failureReasonSet)
+    {
+        $failureReasonSet = $this->doctrine->getRepository(FailureReasonSet::class)->findOneByName($failureReasonSet);
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $store->setFailureReasonSet($failureReasonSet);
+
+        $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 }

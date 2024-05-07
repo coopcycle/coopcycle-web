@@ -2525,3 +2525,50 @@ Feature: Tasks
         "thumbnail":@string@
       }
       """
+
+  Scenario: Retrieve failure reasons
+    Given the fixtures files are loaded:
+      | sylius_channels.yml  |
+      | tasks.yml            |
+      | stores_with_orgs.yml |
+      | failure_reasons.yml  |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    And the task with id "2" belongs to organization with name "Acme"
+    And the store with name "Acme" has failure reason set "Default"
+    When the user "bob" sends a "GET" request to "/api/tasks/2/failure_reasons"
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@type":"FailureReason",
+            "@id":"@string@",
+            "code":"REFUSED",
+            "description":"Refused",
+            "metadata":[]
+          },
+          {
+            "@type":"FailureReason",
+            "@id":"@string@",
+            "code":"DAMAGED",
+            "description":"Damaged",
+            "metadata":[]
+          }
+        ],
+        "hydra:totalItems":2,
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/tasks/2/failure_reasons{?date,assigned,organization}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":@array@
+        }
+      }
+      """
