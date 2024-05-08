@@ -5,9 +5,12 @@ namespace Tests\AppBundle\Entity;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\User;
+use PHPUnit\Framework\TestCase;
 
-class TaskListTest extends TaskCollectionTest
+class TaskListTest extends TestCase
 {
+    protected $taskCollection;
+
     public function setUp(): void
     {
         $user = new User();
@@ -16,7 +19,7 @@ class TaskListTest extends TaskCollectionTest
         $this->taskCollection->setCourier($user);
     }
 
-
+    // TODO : this should pass once we setup the listener
     public function testAddRemoveTaskChangesAssignedUser()
     {
         $user = new User();
