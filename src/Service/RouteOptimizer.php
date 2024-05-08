@@ -12,6 +12,7 @@ use AppBundle\Vroom\Job;
 use AppBundle\Vroom\Shipment;
 use AppBundle\Vroom\Vehicle;
 use AppBundle\Entity\TaskCollection;
+use AppBundle\Entity\TaskList;
 use Carbon\Carbon;
 use Geocoder\Model\Coordinates;
 use Psr\Log\LoggerInterface;
@@ -32,10 +33,10 @@ class RouteOptimizer
     /**
      * return a list of tasks sorted into an optimal route as obtained from the vroom api
      *
-     * @param TaskCollection $taskCollection
+     * @param TaskCollection|TaskList $taskCollection
      * @return array
      */
-    public function optimize(TaskCollection $taskCollection)
+    public function optimize(TaskCollection|TaskList $taskCollection)
     {
         $routingProblem = $this->createRoutingProblem($taskCollection);
 
@@ -93,10 +94,10 @@ class RouteOptimizer
     }
 
     /**
-     * @param TaskCollection $taskCollection
+     * @param TaskCollection|TaskList $taskCollection
      * @return RoutingProblem
      */
-    public function createRoutingProblem(TaskCollection $taskCollection)
+    public function createRoutingProblem(TaskCollection|TaskList $taskCollection)
     {
         $routingProblem = new RoutingProblem();
 

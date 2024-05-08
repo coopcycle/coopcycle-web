@@ -4,7 +4,6 @@
     <discriminator-column name="type" type="string" length="255"/>
     <discriminator-map>
       <discriminator-mapping value="delivery" class="AppBundle\Entity\Delivery"/>
-      <discriminator-mapping value="task_list" class="AppBundle\Entity\TaskList"/>
       <discriminator-mapping value="tour" class="AppBundle\Entity\Tour"/>
     </discriminator-map>
     <id name="id" type="integer" column="id">
