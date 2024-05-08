@@ -21,6 +21,7 @@ final class Optimize
         $data->getItems()->clear();
 
         foreach ($optimizedTasks as $i => $t) {
+            // TODO fix this by using addItem
             $data->addTask($t, $i);
         }
 

@@ -9,8 +9,13 @@ use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Api\Filter\DateFilter;
+use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
+use AppBundle\Entity\TaskList\Item;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * A TaskList represents the daily planning for a courier.
@@ -65,11 +70,31 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  * )
  * @ApiFilter(DateFilter::class, properties={"date"})
  */
-class TaskList extends TaskCollection implements TaskCollectionInterface
+class TaskList implements TaskCollectionInterface
 {
+    use TaskCollectionTrait;
+
+    private $id;
+
+    /**
+     * @Assert\Valid()
+     * @Groups({"task_collection", "task"})
+     */
+    protected $items;
+
     private $date;
 
     private $courier;
+
+    public function __construct()
+    {
+        $this->items = new ArrayCollection();
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
 
     public function getDate()
     {
@@ -105,26 +130,78 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
     }
 
     /**
-     * When a Task is added, it is assigned.
+     * The ordered tasks.
+     *
+     * @return Task[]
      */
-    public function addTask(Task $task, $position = null)
-    {
-        $task->assignTo($this->getCourier(), $this->getDate());
+    public function getTasks() {
+        $items = $this->getItems();
+        $tasks = [];
 
-        return parent::addTask($task, $position);
+        foreach($items as $item) {
+            if (is_null($item->getTask())) {
+                $tasks = array_merge($tasks, $item->getTour()->getTasks());
+            } else {
+                array_push($tasks, $item->getTask());
+            }
+        }
+        return $tasks;
     }
 
-    /**
-     * When a Task is removed, it is unassigned.
-     */
-    public function removeTask(Task $task, $unassign = true)
+    public function addItem(Item $item) {
+        $this->items->add($item);
+    }
+
+    public function containsTask(Task $task)
     {
-        if ($unassign) {
-            $task->unassign();
+        // TODO : check if it has still sense to do that. this function is used in EntityChangeSetProcessor and in tests
+        foreach ($this->getTasks() as $t) {
+            if ($task === $t) {
+                return true;
+            }
         }
 
-        return parent::removeTask($task);
+        return false;
     }
+
+    public function addTask(Task $task) {
+        // TODO : check if this make sense. it is called from EntityChangeSetProcessor when the task is "assigned" but not in the tasklist. actually this should not happen, maybe happen from mobile dispatch (??)
+        $item = new Item();
+        $item->setTask($task);
+        $item->setPosition($this->items->count());
+        $this->items->add($item);
+    }
+
+    public function removeTask(Task $task)
+    {
+        foreach ($this->items as $item) {
+            if ($item->getTask() === $task) {
+                $this->items->removeElement($item);
+                $item->setParent(null);
+                break;
+            }
+        }
+    }
+
+    // TODO : implement this in listener
+    // public function addItem(Task|Tour $item, $position = null)
+    // {
+    //     $task->assignTo($this->getCourier(), $this->getDate());
+
+    //     return parent::addTask($task, $position);
+    // }
+
+    // /**
+    //  * When a Task is removed, it is unassigned.
+    //  */
+    // public function removeItem(Task|Tour $item, $unassign = true)
+    // {
+    //     if ($unassign) {
+    //         $task->unassign();
+    //     }
+
+    //     return parent::removeTask($task);
+    // }
 
     /**
      * @SerializedName("username")
@@ -133,5 +210,25 @@ class TaskList extends TaskCollection implements TaskCollectionInterface
     public function getUsername()
     {
         return $this->getCourier()->getUsername();
+    }
+
+    /**
+     * Get the value of items
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * Set the value of items
+     *
+     * @return  self
+     */
+    public function setItems($items)
+    {
+        $this->items = $items;
+
+        return $this;
     }
 }
