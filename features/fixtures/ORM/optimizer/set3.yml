@@ -88,10 +88,34 @@ AppBundle\Entity\User:
         - true
         - false
 
+AppBundle\Entity\TaskList\Item:
+  item_1:
+    task: "@task_1"
+    position: 0
+  item_2:
+    tour: "@tour_1"
+    position: 1
+  item_3:
+    task: "@task_5"
+    position: 2
+  item_4:
+    task: "@task_6"
+    position: 3
+
+
 AppBundle\Entity\TaskList:
   tasklist_1:
     courier: "@bob"
     date: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    __calls:
+      - addItem:
+        - "@item_1"
+      - addItem:
+        - "@item_2"
+      - addItem:
+        - "@item_3"
+      - addItem:
+        - "@item_4"
 
 
 AppBundle\Entity\Tour:

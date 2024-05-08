@@ -11,6 +11,7 @@ use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
+use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\User;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\OrderManager;
@@ -630,7 +631,15 @@ class TaskSubscriberTest extends TestCase
         $taskList = new TaskList();
         $taskList->setCourier($user);
         $taskList->setDate($date);
-        $taskList->setTasks([ $pickup, $dropoff ]);
+
+        $item1 = new Item();
+        $item1->setTask($pickup);
+
+        $item2 = new Item();
+        $item2->setTask($dropoff);
+
+        $taskList->addItem($item1);
+        $taskList->addItem($item2);
 
         $this->taskListRepository
             ->findOneBy([

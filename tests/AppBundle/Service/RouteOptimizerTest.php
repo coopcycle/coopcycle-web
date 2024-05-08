@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskCollection;
 use AppBundle\Entity\TaskList;
+use AppBundle\Entity\TaskList\Item;
 use AppBundle\Service\RouteOptimizer;
 use AppBundle\Service\SettingsManager;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
@@ -133,7 +134,9 @@ class RouteOptimizerTest extends KernelTestCase
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
 
         foreach($this->entityManager->getRepository(Task::class)->findAll() as $task) {
-            $taskList->addTask($task);
+            $item = new Item();
+            $item->setTask($task);
+            $taskList->addItem($item);
         }
 
         $problem = $optimizer->createRoutingProblem($taskList);
@@ -155,10 +158,6 @@ class RouteOptimizerTest extends KernelTestCase
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
 
-        foreach($this->entityManager->getRepository(Task::class)->findAll() as $task) {
-            $taskList->addTask($task);
-        }
-
         $solution = $optimizer->optimize($taskList);
 
         // tour first task was at the beginning in the fixture, and still at the beginning here because it is used as the starting point in the vroom problem
@@ -167,9 +166,6 @@ class RouteOptimizerTest extends KernelTestCase
         // other steps of the tour, in the same order as it was given
         $this->assertEquals(48.8669865, $solution[1]->getAddress()->getGeo()->getLatitude());
         $this->assertEquals(48.8655514, $solution[2]->getAddress()->getGeo()->getLatitude());
-
-        $purger = new ORMPurger($this->entityManager);
-        $purger->purge();
     }
 
     public function testOptimizeWithTour2()
@@ -184,10 +180,6 @@ class RouteOptimizerTest extends KernelTestCase
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
 
-        foreach($this->entityManager->getRepository(Task::class)->findAll() as $task) {
-            $taskList->addTask($task);
-        }
-
         $solution = $optimizer->optimize($taskList);
 
         $this->assertEquals(48.8563831, $solution[0]->getAddress()->getGeo()->getLatitude());
@@ -195,9 +187,6 @@ class RouteOptimizerTest extends KernelTestCase
         $this->assertEquals(48.862527, $solution[1]->getAddress()->getGeo()->getLatitude());
         $this->assertEquals(48.8637441, $solution[2]->getAddress()->getGeo()->getLatitude());
         $this->assertEquals(48.872162, $solution[3]->getAddress()->getGeo()->getLatitude());
-
-        $purger = new ORMPurger($this->entityManager);
-        $purger->purge();
     }
 
     public function testOptimize()
