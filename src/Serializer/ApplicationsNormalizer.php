@@ -55,12 +55,9 @@ class ApplicationsNormalizer implements NormalizerInterface
         }
     }
 
-    public function supportsNormalization($object, $format = null)
+    public function supportsNormalization($object, $format = null, array $context = [])
     {
-        return $this->normalizer->supportsNormalization($object, $format) && (
-            $object instanceof Contract ||
-            $object instanceof DeliveryForm ||
-            $object instanceof Store
-        );
+        return $this->normalizer->supportsNormalization($object, $format) &&
+        (array_key_exists('item_operation_name', $context) && $context['item_operation_name'] =='applications');
     }
 }

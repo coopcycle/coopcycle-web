@@ -1,0 +1,178 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.864577", "2.333338" ]
+  geo_2:
+    __construct: [ "48.846656", "2.369052" ]
+  geo_3:
+    __construct: [ "48.878658", "2.341055" ]
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_1"
+  address_2:
+    addressLocality: 'Paris'
+    postalCode: '75012'
+    streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
+    geo: "@geo_2"
+  address_3:
+    addressLocality: 'Paris'
+    postalCode: '75009'
+    streetAddress: '17, rue Milton 75009 Paris 9ème'
+    geo: "@geo_3"
+
+AppBundle\Entity\Cuisine:
+  cuisine_asian:
+    name: 'asian'
+  cuisine_italian:
+    name: 'italian'
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: Default
+
+AppBundle\Entity\Contract:
+  contract_1:
+    flatDeliveryPrice: 350
+    customerAmount: 350
+    feeRate: 0.00
+  contract_2:
+    flatDeliveryPrice: 350
+    customerAmount: 350
+    feeRate: 0.00
+  contract_3:
+    flatDeliveryPrice: 350
+    customerAmount: 350
+    feeRate: 0.00
+  contract_4:
+    flatDeliveryPrice: 350
+    customerAmount: 350
+    feeRate: 0.00
+    variable_delivery_price: "@pricing_rule_set_1"
+
+AppBundle\Entity\MercadopagoAccount:
+  mercadopago_account_1:
+    accessToken: 'ACCESS_TOKEN'
+    refreshToken: 'REFRESH_TOKEN'
+    publicKey: 'PUBLIC_KEY'
+    user_id: 1
+    restaurant: '@restaurant_1'
+
+
+AppBundle\Entity\LocalBusiness:
+  restaurant_1:
+    name: 'Nodaiwa'
+    address: "@address_1"
+    openingHours: ['Mo-Sa 11:30-14:30']
+    enabled: true
+    contract: "@contract_1"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+    products:
+      - '@pizza'
+      - '@hamburger'
+    productOptions:
+      - '@pizza_topping'
+      - '@gluten_intolerance'
+    servesCuisine:
+      - '@cuisine_asian'
+    featured: true
+    exclusive: true
+    rateLimitAmount: null
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
+  restaurant_2:
+    name: 'Café Barjot'
+    address: "@address_2"
+    openingHours: ['Mo-Sa 19:30-23:30']
+    enabled: true
+    contract: "@contract_2"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    rateLimitAmount: null
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+      - addFulfillmentMethod: ['collection', true]
+      - setOpeningHours:
+        - ['Mo-Sa 11:30-14:30']
+        - 'collection'
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
+  restaurant_3:
+    name: 'La Cantina Clandestina'
+    address: "@address_3"
+    openingHours: ['Mo-Sa 12:30-14:30']
+    enabled: true
+    contract: "@contract_3"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    rateLimitAmount: null
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
+  restaurant_4:
+    name: 'Wild Buffet'
+    address: "@address_3"
+    openingHours: ['Mo-Sa 11:30-14:30']
+    enabled: true
+    contract: "@contract_3"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    rateLimitAmount: null
+    __calls:
+      - setDeletedAt:
+        - <identity(new \DateTime('2019-11-12 18:00:00'))>
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+      - disableFulfillmentMethod: ['delivery']
+      - addFulfillmentMethod: ['collection', true]
+      - setOpeningHours:
+        - ['Mo-Sa 11:30-14:30']
+        - 'collection'
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
+  restaurant_5:
+    name: 'I Want This Restaurant'
+    address: "@address_3"
+    enabled: true
+    state: pledge
+    rateLimitAmount: null
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
+  restaurant_6:
+    name: 'Good Old Times'
+    address: "@address_3"
+    openingHours: ['Mo-Sa 11:30-14:30']
+    enabled: false
+    contract: "@contract_3"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    rateLimitAmount: null
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
+  restaurant_7:
+    name: 'Good Old Times with variables pricing'
+    address: "@address_3"
+    openingHours: ['Mo-Sa 11:30-14:30']
+    enabled: false
+    contract: "@contract_4"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    rateLimitAmount: null
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1500]
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
