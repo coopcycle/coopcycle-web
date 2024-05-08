@@ -31,6 +31,7 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
         [ $oldValue, $newValue ] = $entityChangeSet['assignedTo'];
 
+        // task is still assined
         if ($newValue !== null) {
 
             $wasAssigned = $oldValue !== null;
@@ -52,6 +53,7 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                 // When tasks have been assigned via the web interface
                 // $taskList->containsTask($task) will return true,
                 // Because $taskList->setTasks() has been used
+                // TODO : when does this happen? if in the app then it should be fixed
                 if (!$taskList->containsTask($task)) {
                     $this->logger->debug(sprintf('Adding #%d task to TaskList', $task->getId()));
                     $taskList->addTask($task);
@@ -83,15 +85,11 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                 }
             }
 
-        } else {
-
-            if ($oldValue !== null) {
+        } else if ($oldValue !== null) { // task was assigned but is not anymore
 
                 $this->logger->debug(sprintf('Task#%d has been unassigned', $task->getId()));
 
                 $taskList = $this->taskListProvider->getTaskList($task, $oldValue);
-
-                $tasksToRemove = [ $task ];
 
                 $event = new TaskUnassigned($task, $oldValue);
 
@@ -115,5 +113,4 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                 }
             }
         }
-    }
 }
