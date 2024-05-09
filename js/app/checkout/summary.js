@@ -233,6 +233,6 @@ window.setNonprofit = function (elem) {
 const form = document.querySelector('form[name="checkout_address"]')
 
 form.addEventListener('submit', function() {
-  submitPageBtn.classList.add('btn__loading')
+  submitPageBtn.classList.add('btn--loading')
   setLoading(true)
 })
