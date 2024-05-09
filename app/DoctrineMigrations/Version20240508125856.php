@@ -14,7 +14,7 @@ final class Version20240508125856 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Create task_list_item table and add columns for task_list table';
     }
 
     public function up(Schema $schema): void
@@ -27,15 +27,11 @@ final class Version20240508125856 extends AbstractMigration
         $this->addSql('ALTER TABLE task_list_item ADD CONSTRAINT FK_25FF37A68DB60186 FOREIGN KEY (task_id) REFERENCES task (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE task_list_item ADD CONSTRAINT FK_25FF37A615ED8D43 FOREIGN KEY (tour_id) REFERENCES tour (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE task_list_item ADD CONSTRAINT FK_25FF37A6727ACA70 FOREIGN KEY (parent_id) REFERENCES task_list (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('ALTER TABLE task_list DROP CONSTRAINT fk_377b6c63bf396750');
         $this->addSql('ALTER TABLE task_list ADD distance INT');
         $this->addSql('ALTER TABLE task_list ADD duration INT');
         $this->addSql('ALTER TABLE task_list ADD polyline TEXT');
         $this->addSql('ALTER TABLE task_list ADD created_at TIMESTAMP(0) WITHOUT TIME ZONE');
         $this->addSql('ALTER TABLE task_list ADD updated_at TIMESTAMP(0) WITHOUT TIME ZONE');
-        $this->addSql('CREATE SEQUENCE task_list_id_seq');
-        $this->addSql('SELECT setval(\'task_list_id_seq\', (SELECT MAX(id) FROM task_list))');
-        $this->addSql('ALTER TABLE task_list ALTER id SET DEFAULT nextval(\'task_list_id_seq\')');
 
         // TODO add unique key in orm.xml for task_id, tour_id
         // TODO : add check for nul(task_id, tour_id) = 1
@@ -53,7 +49,5 @@ final class Version20240508125856 extends AbstractMigration
         $this->addSql('ALTER TABLE task_list DROP polyline');
         $this->addSql('ALTER TABLE task_list DROP created_at');
         $this->addSql('ALTER TABLE task_list DROP updated_at');
-        $this->addSql('ALTER TABLE task_list ALTER id DROP DEFAULT');
-        $this->addSql('ALTER TABLE task_list ADD CONSTRAINT fk_377b6c63bf396750 FOREIGN KEY (id) REFERENCES task_collection (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
     }
 }
