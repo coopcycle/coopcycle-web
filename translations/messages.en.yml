@@ -1499,3 +1499,6 @@ restaurants.edenred.added_list.actions: Actions
 business_restaurant_group.form.fill_all_pages: "Please, fill out all three settings pages."
 business_account.registration.user_with_same_email_exists: An account with the your email already
   exists. Please log in to continue with your business account configuration.
+registration.business_account.loggin.help: <a href="#">Click here</a> to login and then associate your account with the company %name%.
+registration.business_account.loggin.warning_message: Login to associate your account with the company %name%.
+business_account.employee.associated: Your account has been associated successfully with the company %name%

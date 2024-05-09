@@ -33,6 +33,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserController extends AbstractController
 {
@@ -217,6 +218,46 @@ class UserController extends AbstractController
             'invitationUser' => $invitation->getUser(),
             'businessAccountInvitation' => $businessAccountInvitation
         ]);
+    }
+
+    /**
+     * @Route("/invitation/associate-loggedin-user-to-business-account/{code}", name="associate-loggedin-user-to-business-account")
+     */
+    public function associateLoggedinUserToBusinessAccount(
+        string $code,
+        EntityManagerInterface $objectManager,
+        UserManagerInterface $userManager,
+        TranslatorInterface $translator)
+    {
+        $user = $this->getUser();
+
+        $repository = $objectManager->getRepository(Invitation::class);
+
+        if (null === $invitation = $repository->findOneByCode($code)) {
+            throw $this->createNotFoundException();
+        }
+
+        $businessAccountInvitation = null;
+        if ($this->getParameter('business_account_enabled')) {
+            $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
+                'invitation' => $invitation,
+            ]);
+            if (null !== $businessAccountInvitation) {
+                $user->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
+            }
+        }
+
+        $userManager->updateUser($user);
+        $objectManager->flush();
+
+        $this->addFlash(
+            'notice',
+            $translator->trans('business_account.employee.associated', [
+                '%name%' => $businessAccountInvitation->getBusinessAccount()->getName()
+            ])
+        );
+
+        return $this->redirectToRoute('homepage');
     }
 
     private function loadBusinessAccountRegistrationFlow(Request $request,

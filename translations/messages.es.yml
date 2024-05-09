@@ -1435,3 +1435,6 @@ restaurants.edenred.added_list.actions: Acciones
 business_restaurant_group.form.fill_all_pages: "Por favor, completar toda la configuración requerida en las tres páginas."
 business_account.registration.user_with_same_email_exists: Ya existe una cuenta con su correo
   electrónico. Por favor, inicie sesión para continuar con la configuración de su cuenta de empresa.
+registration.business_account.loggin.help: <a href="#">Haga click aquí</a> para iniciar sesión y asociar su cuenta con la empresa %name%.
+registration.business_account.loggin.warning_message: Inicie sesión para luego asociar su cuenta con la empresa %name%.
+business_account.employee.associated: Su cuenta ha sido asociada con éxito a la empresa %name%
