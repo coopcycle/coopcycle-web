@@ -1502,3 +1502,5 @@ business_account.registration.user_with_same_email_exists: An account with the y
 registration.business_account.loggin.help: <a href="#">Click here</a> to login and then associate your account with the company %name%.
 registration.business_account.loggin.warning_message: Login to associate your account with the company %name%.
 business_account.employee.associated: Your account has been associated successfully with the company %name%
+business_account.loggedin_employee.association.text: You are logged in with the email <strong>%user_email%</strong>. Do you want to associate your account with the company <strong>%business_account_name%</strong>?
+business_account.loggedin_employee.association.title: Invitation to associate your account with a Business Acccount

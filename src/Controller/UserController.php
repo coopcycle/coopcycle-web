@@ -32,6 +32,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -172,7 +173,8 @@ class UserController extends AbstractController
         UserManagerInterface $userManager,
         EventDispatcherInterface $eventDispatcher,
         Canonicalizer $canonicalizer,
-        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow)
+        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
+        Security $security)
     {
         $repository = $this->getDoctrine()->getRepository(Invitation::class);
 
@@ -196,8 +198,18 @@ class UserController extends AbstractController
                 return $this->loadBusinessAccountRegistrationFlow($request, $businessAccountRegistrationFlow, $user,
                     $businessAccountInvitation, $objectManager, $userManager, $eventDispatcher, $canonicalizer);
             } else {
+                $loggedInUser = $security->getUser();
+
+                if ($loggedInUser) {
+                    return $this->render('profile/associate_loggedin_user_to_business_account.html.twig', [
+                        'show_left_menu' => false,
+                        'businessAccountInvitation' => $businessAccountInvitation
+                    ]);
+                }
+
                 // The email has to be entered by the invited user in the form
                 $user->setEmail('');
+                $user->setUsername('');
             }
         }
 

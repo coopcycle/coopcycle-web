@@ -1438,3 +1438,5 @@ business_account.registration.user_with_same_email_exists: Ya existe una cuenta 
 registration.business_account.loggin.help: <a href="#">Haga click aquí</a> para iniciar sesión y asociar su cuenta con la empresa %name%.
 registration.business_account.loggin.warning_message: Inicie sesión para luego asociar su cuenta con la empresa %name%.
 business_account.employee.associated: Su cuenta ha sido asociada con éxito a la empresa %name%
+business_account.loggedin_employee.association.text: Tenés una sesión iniciada con el email <strong>%user_email%</strong>, deseas asociar tu cuenta a la de la empresa <strong>%business_account_name%</strong>?
+business_account.loggedin_employee.association.title: Invitación para asociar su cuenta a una cuenta de empresa
