@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use AppBundle\Action\MyTasks as MyTasksController;
 use AppBundle\Action\TaskList\Create as CreateTaskListController;
 use AppBundle\Action\TaskList\Optimize as OptimizeController;
+use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -36,8 +37,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')"
+ *       "access_control"="is_granted('ROLE_DISPATCHER')"
  *     },
+ *     "set_items"={
+ *       "method"="PUT",
+ *       "access_control"="is_granted('ROLE_DISPATCHER')",
+ *       "path"="/task_lists/set_items/{date}/{username}",
+ *       "controller"=SetTaskListItemsController::class,
+ *       "read"=false,
+ *       "write"=false
+ *      },
  *     "my_tasks"={
  *       "method"="GET",
  *       "path"="/me/tasks/{date}",
