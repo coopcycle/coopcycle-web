@@ -30,7 +30,6 @@ class TaskCollectionSubscriber implements EventSubscriber
     private $translator;
     private $routing;
     private $logger;
-    private $taskLists = [];
 
     public function __construct(
         MessageBus $eventBus,
@@ -50,8 +49,7 @@ class TaskCollectionSubscriber implements EventSubscriber
     {
         return array(
             Events::prePersist,
-            Events::onFlush,
-            Events::postFlush,
+            Events::onFlush
         );
     }
 
@@ -87,8 +85,6 @@ class TaskCollectionSubscriber implements EventSubscriber
      */
     public function onFlush(OnFlushEventArgs $args)
     {
-        $this->taskLists = [];
-
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
 
@@ -130,80 +126,6 @@ class TaskCollectionSubscriber implements EventSubscriber
 
             if ($em->contains($taskCollection)) {
                 $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(TaskCollection::class), $taskCollection);
-            }
-
-            if ($taskCollection instanceof TaskList) {
-                $this->taskLists[] = $taskCollection;
-            }
-        }
-    }
-
-    public function postFlush(PostFlushEventArgs $args)
-    {
-        $this->logger->debug(sprintf('TaskLists updated = %d', count($this->taskLists)));
-
-        if (count($this->taskLists) === 0) {
-            return;
-        }
-
-        $usersByDate = new \SplObjectStorage();
-        foreach ($this->taskLists as $taskList) {
-
-            $this->eventBus->handle(new TaskListUpdated($taskList));
-
-            $date = $taskList->getDate();
-            $users = isset($usersByDate[$date]) ? $usersByDate[$date] : [];
-
-            $usersByDate[$date] = array_merge($users, [
-                $taskList->getCourier()
-            ]);
-        }
-
-        if (count($usersByDate) === 0) {
-            return;
-        }
-
-        $now = Carbon::now();
-
-        foreach ($usersByDate as $date) {
-
-            $users = $usersByDate[$date];
-            $users = array_unique($users);
-
-            // We do not send push notifications to users with role ROLE_ADMIN,
-            // they have WebSockets to get live updates
-            $users = array_filter($users, fn(UserInterface $user) => !$user->hasRole('ROLE_ADMIN'));
-
-            if (count($users) === 0) {
-                continue;
-            }
-
-            $usernames = array_map(fn(UserInterface $user) => $user->getUsername(), $users);
-
-            $data = [
-                'event' => [
-                    'name' => 'tasks:changed',
-                    'data' => [
-                        'date' => $date->format('Y-m-d')
-                    ]
-                ]
-            ];
-
-            if ($date->format('Y-m-d') === $now->format('Y-m-d')) {
-                $message = $this->translator->trans('notifications.tasks_changed_today');
-            } else {
-                $message = $this->translator->trans('notifications.tasks_changed', [
-                    '%date%' => $date->format('Y-m-d'),
-                ]);
-            }
-
-            if (RemotePushNotificationManager::isEnabled()) {
-
-                $this->logger->debug(sprintf('Sending push notification to %s', implode(', ', $usernames)));
-
-                $this->messageBus->dispatch(
-                    new PushNotification($message, $usernames, $data)
-                );
             }
         }
     }
