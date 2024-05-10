@@ -1603,6 +1603,7 @@ export function removeTasksFromTour(tour, tasks, username, unassignTasksAction=u
   return function(dispatch) {
     let newTourItems = withoutTasks(tour.items, tasks)
 
+    // TODO : no need to unassign tasks anymore
     if (username) {
       dispatch(unassignTasksAction(username, tasks))
     }

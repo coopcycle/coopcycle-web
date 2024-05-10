@@ -22,9 +22,9 @@ export const selectTasksListsWithItems = createSelector(
   (taskListsById, tasksById) =>
     Object.values(taskListsById).map(taskList => {
       let newTaskList = {...taskList}
-      delete newTaskList.itemIds
+      delete newTaskList.items
 
-      newTaskList.items = taskList.itemIds
+      newTaskList.items = taskList.items
         .filter(taskId => Object.prototype.hasOwnProperty.call(tasksById, taskId)) // a task with this id may be not loaded yet
         .map(taskId => tasksById[taskId])
 
@@ -33,6 +33,12 @@ export const selectTasksListsWithItems = createSelector(
 )
 
 export const selectAllTasks = taskSelectors.selectAll
+
+const selectTaskId = (state, taskId) => taskId
+
+export const selectTaskById = createSelector(selectAllTasks, selectTaskId,
+  (tasks, taskId) => tasks.find(t => t['@id'] === taskId)
+)
 
 export const selectAssignedTasks = createSelector(
   selectTasksListsWithItems,
@@ -51,7 +57,7 @@ export const selectTasksWithColor = createSelector(
   allTasks => mapToColor(allTasks)
 )
 
-const selectTaskListByUsername = (state, props) => taskListSelectors.selectById(state, props.username)
+export const selectTaskListByUsername = (state, props) => taskListSelectors.selectById(state, props.username)
 
 
 // https://github.com/reduxjs/reselect#connecting-a-selector-to-the-redux-store
@@ -59,7 +65,6 @@ const selectTaskListByUsername = (state, props) => taskListSelectors.selectById(
 export const makeSelectTaskListItemsByUsername = () => {
 
   return createSelector(
-    taskSelectors.selectEntities, // FIXME This is recalculated all the time
     selectTaskListByUsername,
     selectTaskIdToTourIdMap,
     selectAllTours,
@@ -69,7 +74,7 @@ export const makeSelectTaskListItemsByUsername = () => {
         return []
       }
 
-      return taskList.itemIds
+      return taskList.items
         .filter(id => Object.prototype.hasOwnProperty.call(tasks, id)) // a task with this id may be not loaded yet
         .map(id => tasks[id])
         .reduce((taskListItems, task, position) => {
