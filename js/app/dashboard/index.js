@@ -54,7 +54,6 @@ async function start() {
   })
 
   // normalize data, keep only task ids, instead of the whole objects
-  taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
   tours = tours.map(tour => taskListUtils.replaceTasksWithIds(tour))
 
   const preloadedPositions = JSON.parse(dashboardEl.dataset.positions)

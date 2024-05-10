@@ -22,7 +22,7 @@ export function findTaskListByUsername(taskListsById, username) {
 
 export function findTaskListByTask(taskListsById, task) {
   return _.find(Object.values(taskListsById), taskList => {
-    return _.includes(taskList.itemIds, task['@id'])
+    return _.includes(taskList.items, task['@id'])
   })
 }
 
@@ -37,7 +37,7 @@ export function addAssignedTask(taskListsById, task) {
       //unassign
       taskListsToUpdate.push({
         ...currentTaskList,
-        itemIds: removeTaskId(currentTaskList.itemIds, task['@id'])
+        items: removeTaskId(currentTaskList.items, task['@id'])
       })
     } else {
       return []
@@ -48,7 +48,7 @@ export function addAssignedTask(taskListsById, task) {
   if (targetTaskList) {
     taskListsToUpdate.push({
       ...targetTaskList,
-      itemIds: addTaskIdIfMissing(targetTaskList.itemIds, task['@id'])
+      itemIds: addTaskIdIfMissing(targetTaskList.items, task['@id'])
     })
   } else {
     let newTaskList = createTempTaskList(task.assignedTo, [task])
@@ -69,7 +69,7 @@ export function removeUnassignedTask(taskListsById, task) {
     //unassign
     taskListsToUpdate.push({
       ...taskList,
-      itemIds: removeTaskId(taskList.itemIds, task['@id'])
+      items: removeTaskId(taskList.items, task['@id'])
     })
   }
 

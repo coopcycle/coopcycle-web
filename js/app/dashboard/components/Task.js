@@ -14,6 +14,7 @@ import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-fronte
 import { addressAsText } from '../utils'
 import TaskEta from './TaskEta'
 import OrderNumber from './OrderNumber'
+import { selectTaskById } from '../../../shared/src/logistics/redux/selectors'
 
 moment.locale($('html').attr('lang'))
 
@@ -279,20 +280,27 @@ class Task extends React.Component {
 
 function mapStateToProps(state, ownProps) {
 
+  let task = ownProps.task
+
+  if (!task && ownProps.taskId) {
+    task = selectTaskById(state, ownProps.taskId)
+  }
+
   const tasksWithColor = selectTasksWithColor(state)
 
-  const color = Object.prototype.hasOwnProperty.call(tasksWithColor, ownProps.task['@id']) ?
-    tasksWithColor[ownProps.task['@id']] : '#ffffff'
+  const color = Object.prototype.hasOwnProperty.call(tasksWithColor, task['@id']) ?
+    tasksWithColor[task['@id']] : '#ffffff'
 
   const visibleTaskIds = selectVisibleTaskIds(state)
   const selectedTasks = state.selectedTasks
 
   return {
+    task: task,
     selectedTasks: selectedTasks,
-    selected: -1 !== selectedTasks.indexOf(ownProps.task['@id']),
+    selected: -1 !== selectedTasks.indexOf(task['@id']),
     color,
     date: selectSelectedDate(state),
-    isVisible: _.includes(visibleTaskIds, ownProps.task['@id']),
+    isVisible: _.includes(visibleTaskIds, task['@id']),
   }
 }
 
