@@ -4,33 +4,41 @@ namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
+use AppBundle\Entity\Tour;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    private $normalizer;
 
-    public function __construct(ItemNormalizer $normalizer)
+    public function __construct(
+        protected ItemNormalizer $normalizer,
+        protected IriConverterInterface $iriConverterInterface)
     {
         $this->normalizer = $normalizer;
     }
 
-    private function flattenItems(array $items)
+    private function flattenItemsUris(array $items)
     {
-        return array_values(array_map(function ($item) {
-
-            if (!is_array($item['task'])) {
-
-                return $item;
+        $itemsUris = [];
+        foreach($items as $item) {
+            if (isset($item['task'])) {
+                array_push(
+                    $itemsUris,
+                    // $item['task']['@id']
+                    $item['task']
+                );
+            } else {
+                array_push(
+                    $itemsUris,
+                    $item['tour']['@id'], // to the best of my knowledge, tour is eagerly fetch because we use the table inheritance for the tour table
+                );
             }
+        }
 
-            $position = $item['position'];
-            $task = $item['task'];
-
-            return array_merge($task, ['position' => $position]);
-        }, $items));
+        return $itemsUris;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -38,7 +46,7 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
         $data = $this->normalizer->normalize($object, $format, $context);
 
         if (isset($data['items'])) {
-            $data['items'] = $this->flattenItems($data['items']);
+            $data['items'] = $this->flattenItemsUris($data['items']);
         }
 
         // Legacy

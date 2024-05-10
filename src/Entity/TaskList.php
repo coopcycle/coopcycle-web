@@ -54,7 +54,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
  *       "read"=false,
  *       "write"=false,
- *       "normalization_context"={"groups"={"task_collection", "task", "delivery", "address"}},
+ *       "normalization_context"={"groups"={"task_list", "task", "delivery", "address"}},
  *       "openapi_context"={
  *         "summary"="Retrieves the collection of Task resources assigned to the authenticated token.",
  *         "parameters"={{
@@ -74,7 +74,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     }
  *   },
  *   attributes={
- *     "normalization_context"={"groups"={"task_collection", "task", "address"}}
+ *     "normalization_context"={"groups"={"task_list"}}
  *   }
  * )
  * @ApiFilter(DateFilter::class, properties={"date"})
@@ -87,7 +87,7 @@ class TaskList implements TaskCollectionInterface
 
     /**
      * @Assert\Valid()
-     * @Groups({"task_collection", "task"})
+     * @Groups({"task_list", "task"})
      */
     protected $items;
 
@@ -112,7 +112,7 @@ class TaskList implements TaskCollectionInterface
 
     /**
      * @SerializedName("date")
-     * @Groups({"task_collection", "task_collections"})
+     * @Groups({"task_list"})
      */
     public function getDateString()
     {
@@ -191,29 +191,9 @@ class TaskList implements TaskCollectionInterface
         }
     }
 
-    // TODO : implement this in listener
-    // public function addItem(Task|Tour $item, $position = null)
-    // {
-    //     $task->assignTo($this->getCourier(), $this->getDate());
-
-    //     return parent::addTask($task, $position);
-    // }
-
-    // /**
-    //  * When a Task is removed, it is unassigned.
-    //  */
-    // public function removeItem(Task|Tour $item, $unassign = true)
-    // {
-    //     if ($unassign) {
-    //         $task->unassign();
-    //     }
-
-    //     return parent::removeTask($task);
-    // }
-
     /**
      * @SerializedName("username")
-     * @Groups({"task_collection", "task_collections"})
+     * @Groups({"task_list"})
      */
     public function getUsername()
     {

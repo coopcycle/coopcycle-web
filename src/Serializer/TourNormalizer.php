@@ -18,7 +18,7 @@ class TourNormalizer implements NormalizerInterface
     }
 
     private function flattenItems(array $items)
-    {
+    {   // TODO : returns tasks uri here
         return array_values(array_map(function ($item) {
 
             if (!is_array($item['task'])) {
