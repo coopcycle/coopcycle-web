@@ -49,8 +49,9 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
                 $taskList = $this->taskListProvider->getTaskList($task, $newValue);
 
-                // When tasks have been assigned via the web interface $taskList->containsTask($task) will return true, because $taskList->setTasks() has been used
+                // When tasks have been assigned via the web interface $taskList->containsTask($task) will return true, because we call Action\TaskList\SetItems
                 // the app's endpoint call AssignTrait->assign which set assignment on the task but not on the tasklist, so set it here
+                // FIXME : the smartphone app should create/set the taskslit to avoid the check here
                 if (!$taskList->containsTask($task)) {
                     $this->logger->debug(sprintf('Adding #%d task to TaskList', $task->getId()));
                     $taskList->addTask($task);
