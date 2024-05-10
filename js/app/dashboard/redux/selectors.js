@@ -173,7 +173,7 @@ export const selectAsTheCrowFlies = createSelector(
   (tasksById, taskListsByUsername) => {
 
     return mapValues(taskListsByUsername, taskList => {
-      const polyline = map(taskList.itemIds, itemId => {
+      const polyline = map(taskList.items, itemId => {
         const item = tasksById[itemId]
 
         return item ? [
