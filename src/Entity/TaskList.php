@@ -215,8 +215,22 @@ class TaskList implements TaskCollectionInterface
      */
     public function setItems($items)
     {
-        $this->items = $items;
+        foreach($items as $item) {
+            $this->items->add($item);
+            $item->setParent($this);
+        }
 
         return $this;
+    }
+
+     /**
+     * Clear the assigned items
+     */
+    public function clear()
+    {
+        foreach($this->items as $item) {
+            $item->setParent(null);
+        }
+        return $this->items->clear();
     }
 }
