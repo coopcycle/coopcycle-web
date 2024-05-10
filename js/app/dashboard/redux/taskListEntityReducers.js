@@ -29,7 +29,7 @@ export default (state = initialState, action) => {
 
       let newEntity = {
         ...entity,
-        itemIds: taskUtils.tasksToIds(action.tasks),
+        items: taskUtils.tasksToIds(action.tasks),
       }
 
       return taskListAdapter.upsertOne(state, newEntity)
