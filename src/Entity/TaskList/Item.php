@@ -17,18 +17,18 @@ class Item
 
     /**
      * @Assert\Valid()
-     * @Groups({"task_collection"})
+     * @Groups({"task_list"})
      */
     private $task;
 
     /**
      * @Assert\Valid()
-     * @Groups({"task_collection"})
+     * @Groups({"task_list"})
      */
     private $tour;
 
     /**
-     * @Groups({"task_collection"})
+     * @Groups({"task_list"})
      */
     private $position;
 
