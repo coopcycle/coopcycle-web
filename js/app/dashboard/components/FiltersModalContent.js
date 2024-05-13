@@ -52,6 +52,7 @@ class FiltersModalContent extends React.Component {
 
   _onSubmit(values) {
 
+    this.props.setFilterValue('onlyFilter', null)
     this.props.setFilterValue('showFinishedTasks', values.showFinishedTasks)
     this.props.setFilterValue('showCancelledTasks', values.showCancelledTasks)
     this.props.setFilterValue('showIncidentReportedTasks', values.showIncidentReportedTasks)
