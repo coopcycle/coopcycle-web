@@ -18,7 +18,14 @@
     <div class="row">
       <div class="col-xs-12">
         {% include 'order/breadcrumb.html.twig' %}
-        <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h4>
+
+        {% if order_errors is defined and order_errors|length > 0 %}
+          {% include 'order/_partials/errors.html.twig' with {
+            errors: order_errors,
+          } %}
+        {% endif %}
+
+        <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h2>
         <div>
           <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
           <div id="items">

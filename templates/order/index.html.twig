@@ -75,6 +75,12 @@
           {% endif %}
         {% endfor %}
 
+        {% if order_errors is defined and order_errors|length > 0 %}
+          {% include 'order/_partials/errors.html.twig' with {
+            errors: order_errors,
+          } %}
+        {% endif %}
+
         {{ form_errors(form) }}
 
         <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h2>
