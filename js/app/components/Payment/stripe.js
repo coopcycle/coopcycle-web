@@ -5,8 +5,8 @@ import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 
-import i18n, { getCountry } from '../i18n'
-import SavedCreditCard from '../components/SavedCreditCard'
+import i18n, { getCountry } from '../../i18n'
+import SavedCreditCard from './SavedCreditCard'
 
 const style = {
   base: {

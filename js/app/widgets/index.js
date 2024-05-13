@@ -1,5 +1,5 @@
 import DatePicker from './DatePicker'
-import PaymentForm from './PaymentForm'
+import PaymentForm from '../components/Payment'
 import Search from './Search'
 import Switch from './Switch'
 
