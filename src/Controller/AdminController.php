@@ -1039,12 +1039,12 @@ class AdminController extends AbstractController
         $qb = $this->getDoctrine()->getRepository(Delivery\PricingRuleSet::class)
             ->createQueryBuilder('rs')
             ->orderBy('rs.name', 'ASC')
-            ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE / 2)
+            ->setFirstResult(max(($request->query->getInt('p', 1) - 1), 0) * self::ITEMS_PER_PAGE / 2)
             ->setMaxResults(self::ITEMS_PER_PAGE / 2);
 
         $paginatedRuleSets = $paginator->paginate(
             $qb,
-            $request->query->getInt('page', 1),
+            max($request->query->getInt('page', 1), 1),
             self::ITEMS_PER_PAGE / 2,
             [PaginatorInterface::DISTINCT => false]
         );
