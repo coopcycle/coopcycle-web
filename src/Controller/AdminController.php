@@ -127,10 +127,6 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-<<<<<<< HEAD
-use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
-=======
->>>>>>> 06e594ed6 (clean: paginate pricing rule sets on list page)
 use Twig\Environment as TwigEnvironment;
 use phpcent\Client as CentrifugoClient;
 
