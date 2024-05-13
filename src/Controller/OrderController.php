@@ -250,7 +250,7 @@ class OrderController extends AbstractController
                 return $this->redirectToRoute('order');
             }
 
-            if (empty($orderErrors) && $form->isValid()) {
+            if ($orderErrors->count() === 0 && $form->isValid()) {
 
                 // https://github.com/coopcycle/coopcycle-web/issues/1910
                 // Maybe a better would be to use "empty_data" option in CheckoutAddressType
