@@ -45,7 +45,7 @@ final class TaskListCollectionDataProvider extends CollectionDataProvider
                 return $store->getOrganization() === $task->getOrganization();
             });
 
-            $taskList->setTasks($storeTasks);
+            $taskList->setTempLegacyTaskStorage($storeTasks);
         }
 
         return $collection;

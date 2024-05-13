@@ -65,7 +65,7 @@ final class MyTasks
                 return !$task->isCancelled();
             });
 
-            $taskList->setTasks($notCancelled);
+            $taskList->setTempLegacyTaskStorage($notCancelled);
 
             return $taskList;
         }

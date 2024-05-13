@@ -91,6 +91,13 @@ class TaskList implements TaskCollectionInterface
      */
     protected $items;
 
+    /**
+     * Legacy props to filter then display a TaskList as a list of tasks
+     * Can be get and set, but not persisted to the database
+     * @deprecated
+     */
+    protected $tempLegacyTaskStorage;
+
     private $date;
 
     private $courier;
@@ -232,5 +239,25 @@ class TaskList implements TaskCollectionInterface
             $item->setParent(null);
         }
         return $this->items->clear();
+    }
+
+    /**
+     * Get legacy props to manage a TaskList as a list of tasks
+     */
+    public function getTempLegacyTaskStorage()
+    {
+        return $this->tempLegacyTaskStorage;
+    }
+
+    /**
+     * Set legacy props to manage a TaskList as a list of tasks
+     *
+     * @return  self
+     */
+    public function setTempLegacyTaskStorage($allTasks)
+    {
+        $this->tempLegacyTaskStorage = $tempLegacyTaskStorage;
+
+        return $this;
     }
 }
