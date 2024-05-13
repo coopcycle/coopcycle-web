@@ -30,6 +30,7 @@ Feature: Tasks lists
     }
     """
     And the user "bob" sends a "GET" request to "/api/me/tasks/2018-03-02"
+    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:

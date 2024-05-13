@@ -65,7 +65,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')",
- *       "pagination_enabled"=false
+ *       "pagination"={
+ *          "enabled_parameter_name"="pagination",
+ *          "items_per_page_parameter_name"="itemsPerPage"
+ *         },
+ *       "paginationClientItemsPerPage"=true
  *     },
  *     "post"={
  *       "method"="POST",
