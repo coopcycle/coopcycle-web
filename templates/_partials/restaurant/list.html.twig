@@ -58,8 +58,8 @@
         </td>
         {% if is_granted('ROLE_ADMIN') %}
           <td width="5%" class="text-center">
-            <a class="text-danger delete-restaurant">
-               <i data-restaurant-name="{{ restaurant.name }}" data-restaurant-id="{{ restaurant.id }}" class="fa fa-trash"></i>
+            <a class="text-danger">
+               <i class="fa fa-trash delete-restaurant" data-restaurant-name="{{ restaurant.name }}" data-restaurant-id="{{ restaurant.id }}"></i>
             </a>
           </td>
         {% endif %}

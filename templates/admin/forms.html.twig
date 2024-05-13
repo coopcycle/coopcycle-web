@@ -63,8 +63,8 @@
       </td>
       {% if is_granted('ROLE_ADMIN') %}
         <td>
-          <a class="text-danger delete-form">
-            <i data-form-name="{{ form|hashid(12) }}" data-form-id="{{ form.id }}" class="fa fa-trash"></i>
+          <a class="text-danger">
+            <i class="fa fa-trash delete-form" data-form-name="{{ form|hashid(12) }}" data-form-id="{{ form.id }}"></i>
           </a>
         </td>
       {% endif %}

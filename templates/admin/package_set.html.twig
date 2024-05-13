@@ -15,7 +15,6 @@
 {% block content %}
 {% set package_set = form.vars.value %}
 {% if package_set.id is not null %}
-  <strong>{{ 'form.package_set.applications.label' | trans }}</strong>
   <div {{ react_component('PackageSetApplications', { 'packageSetId': package_set.id }) }}>
     <span class="loader loader--dark"></span>
   </div>

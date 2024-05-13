@@ -39,8 +39,8 @@
         </td>
         {% if is_granted('ROLE_ADMIN') %}
           <td>
-            <a class="text-danger delete-pricing">
-              <i data-pricing-name="{{ ruleSet.name }}" data-pricing-id="{{ ruleSet.id }}" class="fa fa-trash"></i>
+            <a class="text-danger">
+              <i class="fa fa-trash delete-pricing" data-pricing-name="{{ ruleSet.name }}" data-pricing-id="{{ ruleSet.id }}"></i>
             </a>
           </td>
         {% endif %}
