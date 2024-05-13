@@ -122,9 +122,7 @@
 {% endif %}
 
 <script type="text/javascript">
-  // FIXME
-  // 'StripePaymentForm' should be renamed to something more generic like GatewatPaymentForm - @sgobotta
-  new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
+  new CoopCycle.PaymentForm(document.querySelector('form[name="checkout_payment"]'), {
     card: "{{ gateway }}",
     amount: {{ order.total }},
     orderHasUser: "{{ order.customer.hasUser() }}",
