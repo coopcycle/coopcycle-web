@@ -39,7 +39,7 @@ class ShippingDateFilter
         // Obviously, we can't ship in the past
         if ($dropoff <= $now) {
 
-            $this->logger->info(sprintf('Order: %s | Vendor: %s | ShippingDateFilter::accept() - date "%s" is in the past',
+            $this->logger->info(sprintf('Order: %s | Vendor: %s | ShippingDateFilter::accept() - dropoff "%s" is in the past',
                 $this->loggingUtils->getOrderId($order),
                 $this->loggingUtils->getVendors($order),
                 $dropoff->format(\DateTime::ATOM))
@@ -67,7 +67,7 @@ class ShippingDateFilter
 
         if (!$this->isOpen($vendor->getOpeningHours($fulfillmentMethod), $preparation, $vendor->getClosingRules())) {
 
-            $this->logger->info(sprintf('Order: %s | Vendor: %s | ShippingDateFilter::accept() - closed at "%s"',
+            $this->logger->info(sprintf('Order: %s | Vendor: %s | ShippingDateFilter::accept() - vendor closed at "%s"',
                 $this->loggingUtils->getOrderId($order),
                 $this->loggingUtils->getVendors($order),
                 $preparation->format(\DateTime::ATOM))
