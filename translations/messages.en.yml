@@ -1182,7 +1182,7 @@ adminDashboard.hubs.help: Hubs allow to group together shops sharing the same pi
 adminDashboard.business_accounts.title: Business accounts
 adminDashboard.business_accounts.createNew: Create a new business account
 form.business_account.businessRestaurantGroup.label: Business restaurant group
-form.business_account.businessRestaurantGroup.placeholder: Choose a business restaurant group`
+form.business_account.businessRestaurantGroup.placeholder: Choose a business restaurant group
 form.business_account.employees.label: List of employees
 form.business_account.restaurants.add: Add a restaurant
 form.business_account.employees.add: Add an employee
