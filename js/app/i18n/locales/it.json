@@ -139,6 +139,7 @@
         "ADMIN_DASHBOARD_FILTERS_TAB_GENERAL": "Generale",
         "ADMIN_DASHBOARD_FILTERS_INCIDENT_REPORTED_TASKS": "Compiti con segnalazioni di incidenti",
         "ONLY_SHOW_THESE": "Mostra solo questi",
+        "ONLY_THIS_FILTER": "Questo filtro esclusivamente",
         "ADMIN_DASHBOARD_NAV_IMPORT_ERRORS": "Importare errori",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_DESCRIPTION_LABEL": "Istruzioni",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_DESCRIPTION_PLACEHOLDER": "2a porta a sinistra…",

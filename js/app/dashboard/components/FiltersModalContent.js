@@ -48,6 +48,8 @@ const timeStepsWithStyle = _.mapValues(timeSteps, (value) => ({
   }
 }))
 
+const onlyFilterColor = "#8250df";
+
 class FiltersModalContent extends React.Component {
 
   _onSubmit(values) {
@@ -66,6 +68,7 @@ class FiltersModalContent extends React.Component {
 
   render() {
 
+    const { onlyFilter } = this.props;
     let initialValues = {
       showFinishedTasks: this.props.showFinishedTasks,
       showCancelledTasks: this.props.showCancelledTasks,
@@ -126,20 +129,32 @@ class FiltersModalContent extends React.Component {
                     </Form.Item>
                     <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS') }>
                       <Switch
-                        checkedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
+                        checkedChildren={ onlyFilter === 'showCancelledTasks' ? this.props.t('ONLY_THIS_FILTER') : this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
                         unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
                         defaultChecked={ values.showCancelledTasks }
-                        onChange={ (checked) => setFieldValue('showCancelledTasks', checked) } />
-                        <button type="button" onClick={() => this.props.onlyFilter('showCancelledTasks')}
+                        style={{backgroundColor: onlyFilter === 'showCancelledTasks' ? onlyFilterColor : null}}
+                        onChange={ (checked) => {
+                            if (onlyFilter === 'showCancelledTasks') {
+                              this.props.setFilterValue('onlyFilter', null)
+                            }
+                          setFieldValue('showCancelledTasks', checked)
+                          }} />
+                        <button type="button" onClick={() => this.props.setOnlyFilter('showCancelledTasks')}
                           className="btn btn-link">{ this.props.t('ONLY_SHOW_THESE') }</button>
                     </Form.Item>
                     <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_INCIDENT_REPORTED_TASKS') }>
                       <Switch
-                        checkedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
+                        checkedChildren={ onlyFilter === 'showIncidentReportedTasks' ? this.props.t('ONLY_THIS_FILTER') : this.props.t('ADMIN_DASHBOARD_FILTERS_SHOW') }
                         unCheckedChildren={ this.props.t('ADMIN_DASHBOARD_FILTERS_HIDE') }
                         defaultChecked={ values.showIncidentReportedTasks }
-                        onChange={ (checked) => setFieldValue('showIncidentReportedTasks', checked) } />
-                         <button type="button" onClick={() => this.props.onlyFilter('showIncidentReportedTasks')}
+                        style={{backgroundColor: onlyFilter === 'showIncidentReportedTasks' ? onlyFilterColor : null}}
+                        onChange={ (checked) => {
+                            if (onlyFilter === 'showIncidentReportedTasks') {
+                              this.props.setFilterValue('onlyFilter', null)
+                            }
+                            setFieldValue('showIncidentReportedTasks', checked)
+                        }} />
+                         <button type="button" onClick={() => this.props.setOnlyFilter('showIncidentReportedTasks')}
                           className="btn btn-link">{ this.props.t('ONLY_SHOW_THESE') }</button>
                     </Form.Item>
                     <Form.Item label={ this.props.t('ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED') }
@@ -219,7 +234,8 @@ function mapStateToProps(state) {
     alwayShowUnassignedTasks,
     hiddenCouriers,
     timeRange,
-    tags
+    tags,
+    onlyFilter
   } = selectFiltersSetting(state)
 
   return {
@@ -232,6 +248,7 @@ function mapStateToProps(state) {
     couriers: selectBookedUsernames(state),
     hiddenCouriers,
     timeRange,
+    onlyFilter
   }
 }
 
@@ -240,7 +257,7 @@ function mapDispatchToProps(dispatch) {
   return {
     closeFiltersModal: () => dispatch(closeFiltersModal()),
     setFilterValue: (key, value) => dispatch(setFilterValue(key, value)),
-    onlyFilter: filter => dispatch(onlyFilter(filter))
+    setOnlyFilter: filter => dispatch(onlyFilter(filter))
   }
 }
 

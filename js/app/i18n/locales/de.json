@@ -54,6 +54,7 @@
         "ADMIN_DASHBOARD_FILTERS_HIDE": "Ausblenden",
         "ADMIN_DASHBOARD_FILTERS_INCIDENT_REPORTED_TASKS": "Aufgaben mit Zwischenfallberichten",
         "ONLY_SHOW_THESE": "Nur diese anzeigen",
+        "ONLY_THIS_FILTER": "Diesen Filter ausschließlich",
         "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Aufgabe #{{id}}",
         "ADMIN_DASHBOARD_TASK_TIME_RANGE": "Zwischen {{after}} und {{before}}",
         "ADMIN_DASHBOARD_TASK_ASSIGNED_TO": "Zugeteilt an {{username}}",

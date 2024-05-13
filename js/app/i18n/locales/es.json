@@ -58,6 +58,7 @@
         "ADMIN_DASHBOARD_NAV_FILTERS": "Filtros",
         "ADMIN_DASHBOARD_FILTERS_INCIDENT_REPORTED_TASKS": "Tareas con informes de incidentes",
         "ONLY_SHOW_THESE": "Mostrar solo estos",
+        "ONLY_THIS_FILTER": "Este filtro exclusivamente",
         "ADMIN_DASHBOARD_NAV_IMPORT_ERRORS": "Errores de importación",
         "ADMIN_DASHBOARD_TASK_TITLE": "Tarea #{{id}}",
         "ADMIN_DASHBOARD_TASK_TITLE_NEW": "Nueva tarea",
