@@ -105,10 +105,12 @@ class Contract
 
     public function getContractor()
     {
+        // FIXME : here we are making assumption : the contract is either linked to one Restaurant or one Business Restaurant Group
+        // this should be checked on DB or Entity level : https://github.com/coopcycle/coopcycle-web/issues/4254
         if (count($this->restaurants)) {
-            return $this->restaurants[0];
+            return array_shift($this->restaurants->toArray());
         } else if (count($this->businessRestaurantGroups)) {
-            return $this->businessRestaurantGroups[0];
+            return array_shift($this->businessRestaurantGroups->toArray());
         }
         // should not happen to arrive here...
     }
