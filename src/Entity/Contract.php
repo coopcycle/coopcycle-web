@@ -108,9 +108,11 @@ class Contract
         // FIXME : here we are making assumption : the contract is either linked to one Restaurant or one Business Restaurant Group
         // this should be checked on DB or Entity level : https://github.com/coopcycle/coopcycle-web/issues/4254
         if (count($this->restaurants)) {
-            return array_shift($this->restaurants->toArray());
+            $restaurants = $this->restaurants->toArray();
+            return array_shift($restaurants);
         } else if (count($this->businessRestaurantGroups)) {
-            return array_shift($this->businessRestaurantGroups->toArray());
+            $businessRestaurantGroups = $this->businessRestaurantGroups->toArray();
+            return array_shift($businessRestaurantGroups);
         }
         // should not happen to arrive here...
     }
