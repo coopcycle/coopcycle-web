@@ -1188,9 +1188,11 @@ form.business_account.restaurants.add: Add a restaurant
 form.business_account.employees.add: Add an employee
 form.business_account.manager.email.label: Account manager email
 form.business_account.manager.email.help: An invitation email to Coopcycle will be sent
-form.business_account.manager.email_sent.help: Invitation email to Coopcycle has been sent
+form.business_account.manager.email_sent.help: Invitation email to Coopcycle has been sent. <a href="#">Click here</a> to resend the email.
 form.business_account.save_and_send_invitation.label: Save and send invitation
 form.business_acount.send_invitation.confirm: Invitation email to Coopcycle has been sent
+form.business_acount.resend_invitation.confirm: Invitation email to Coopcycle has been resent
+form.business_acount.resend_invitation.failed: There has been an error trying to resend the Business Account registration email
 adminDashboard.business_restaurant_group_list.title: Business restaurant group list
 adminDashboard.business_restaurant_group.title: Business restaurant group
 adminDashboard.business_restaurant_group.createNew: Create a new business restaurant group
@@ -1495,3 +1497,5 @@ restaurants.edenred.refresh.no_updates: "The restaurant '%restaurant_name%' does
 restaurants.edenred.refresh.has_updates: "The restaurant '%restaurant_name%' has had an update from Edenred servers."
 restaurants.edenred.added_list.actions: Actions
 business_restaurant_group.form.fill_all_pages: "Please, fill out all three settings pages."
+business_account.registration.user_with_same_email_exists: An account with the your email already
+  exists. Please log in to continue with your business account configuration.

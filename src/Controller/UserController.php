@@ -265,7 +265,7 @@ class UserController extends AbstractController
         return $this->render('_partials/profile/definition_password_for_business_account.html.twig', [
             'form' => $form->createView(),
             'flow' => $businessAccountRegistrationFlow,
-            'invitationUser' => $businessAccountInvitation->getInvitation()->getUser(),
+            'invitation' => $businessAccountInvitation->getInvitation(),
         ]);
     }
 

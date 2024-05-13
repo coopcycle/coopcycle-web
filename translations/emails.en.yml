@@ -160,3 +160,4 @@ business_account.send_invitation.body: |
   Hello %name%,
   <br>
   This is an invitation to configure the business account in CoopCycle, to continue with the activation please click on the following link.
+business_account.send_invitation.cta: Continue to activate

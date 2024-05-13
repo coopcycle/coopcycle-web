@@ -123,6 +123,12 @@ admin_business_account:
     defaults:
         _controller: AppBundle\Controller\AdminController::businessAccountAction
 
+admin_business_account_resend_registration_email:
+    path: /admin/restaurants/business-account-resend-registration-email
+    defaults:
+        _controller: AppBundle\Controller\AdminController::businessAccountResendRegistrationEmailAction
+    methods: [ POST ]
+
 admin_business_restaurant_group_new:
     path: /admin/restaurants/business-restaurant-groups/new
     defaults:

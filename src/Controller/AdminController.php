@@ -2541,6 +2541,39 @@ class AdminController extends AbstractController
         return $this->handleBusinessAccountForm($account, $request, $canonicalizer, $emailManager, $tokenGenerator, $objectManager, $paginator);
     }
 
+    public function businessAccountResendRegistrationEmailAction(
+        Request $request, EmailManager $emailManager, EntityManagerInterface $objectManager)
+    {
+        if ($request->request->has('invitationId')) {
+            $invitationId = $request->request->get('invitationId');
+
+            $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->find($invitationId);
+            $businessAccount = $businessAccountInvitation->getBusinessAccount();
+            $invitation = $businessAccountInvitation->getInvitation();
+
+            $message = $emailManager->createBusinessAccountInvitationMessage($invitation, $businessAccount);
+            $emailManager->sendTo($message, $invitation->getEmail());
+            $invitation->setSentAt(new \DateTime());
+
+            $objectManager->persist($invitation);
+            $objectManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('form.business_acount.resend_invitation.confirm')
+            );
+
+            return $this->redirectToRoute('admin_business_account', ['id' => $businessAccount->getId()]);
+        }
+
+        $this->addFlash(
+            'notice',
+            $this->translator->trans('form.business_acount.resend_invitation.failed')
+        );
+
+        return $this->redirectToRoute('admin_business_accounts');
+    }
+
     private function handleBusinessAccountForm(
         BusinessAccount $businessAccount,
         Request $request,

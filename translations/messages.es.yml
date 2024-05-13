@@ -1224,9 +1224,11 @@ form.business_account.restaurants.add: Agregar un restaurante
 form.business_account.employees.add: Agregar un empleado
 form.business_account.manager.email.label: Email del administrador de la cuenta
 form.business_account.manager.email.help: Se enviará un link de invitación a Coopcycle
-form.business_account.manager.email_sent.help: Link de invitación a Coopcycle enviado
+form.business_account.manager.email_sent.help: Link de invitación a Coopcycle enviado. <a href="#">Haga click aquí</a> para reenviar el email.
 form.business_account.save_and_send_invitation.label: Guardar y enviar invitación
 form.business_acount.send_invitation.confirm: El email de invitación a Coopcycle ha sido enviado
+form.business_acount.resend_invitation.confirm: El email de invitación a Coopcycle ha sido reenviado
+form.business_acount.resend_invitation.failed: Ha ocurrido un error al intentar reenviar el email de registración de la cuenta de empresa
 adminDashboard.business_restaurant_group_list.title: Listado de grupos de restaurantes para empresas
 adminDashboard.business_restaurant_group.title: Group de restaurantes para empresas
 adminDashboard.business_restaurant_group.createNew: Crear un nuevo grupo de restaurantes para empresas
@@ -1431,3 +1433,5 @@ restaurants.edenred.refresh.no_updates: "El restaurante '%restaurant_name%' hast
 restaurants.edenred.refresh.has_updates: "El restaurante '%restaurant_name%' ha tenido actualizaciones de los servidores de Edenred."
 restaurants.edenred.added_list.actions: Acciones
 business_restaurant_group.form.fill_all_pages: "Por favor, completar toda la configuración requerida en las tres páginas."
+business_account.registration.user_with_same_email_exists: Ya existe una cuenta con su correo
+  electrónico. Por favor, inicie sesión para continuar con la configuración de su cuenta de empresa.
