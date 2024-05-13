@@ -249,11 +249,11 @@ h1, h2, h3, h4, h5, h6 {
   border-bottom: 1px solid darken(#ededed, 10%);
 }
 
-.btn-payment > .fa-spinner {
+.btn > .btn__loading_indicator {
   display:none;
 }
 
-.btn-payment__loading > .fa-spinner {
+.btn--loading > .btn__loading_indicator {
   display:inline-block;
 }
 
