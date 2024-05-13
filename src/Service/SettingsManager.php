@@ -14,11 +14,15 @@ use AppBundle\Payment\GatewayResolver;
 class SettingsManager
 {
     private $craueConfig;
+    private $craueCache;
     private $configEntityName;
     private $phoneNumberUtil;
     private $country;
+    private $foodtechEnabled;
+    private $b2bEnabled;
     private $doctrine;
     private $gatewayResolver;
+    private $forceStripe;
 
     private $secretSettings = [
         'stripe_test_publishable_key',
