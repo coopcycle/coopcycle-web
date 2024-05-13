@@ -7,6 +7,7 @@ use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Tour;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -15,7 +16,9 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function __construct(
         protected ItemNormalizer $normalizer,
-        protected IriConverterInterface $iriConverterInterface)
+        protected IriConverterInterface $iriConverterInterface,
+        protected TaskNormalizer $taskNormalizer
+    )
     {
         $this->normalizer = $normalizer;
     }
@@ -43,10 +46,23 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function normalize($object, $format = null, array $context = array())
     {
-        $data = $this->normalizer->normalize($object, $format, $context);
+        if ($object->getTempLegacyTaskStorage() && count($object->getTempLegacyTaskStorage())) {
+            $context[AbstractNormalizer::IGNORED_ATTRIBUTES] = ['items'];
+            $data = $this->normalizer->normalize($object, $format, $context);
+            $data['items'] = array_map(function($task) {
+                return $this->taskNormalizer->normalize(
+                    $task,
+                    'jsonld',
+                    ['groups' => ['task']]
+                );
+                }, $object->getTempLegacyTaskStorage()
+            );
+        } else  {
+            $data = $this->normalizer->normalize($object, $format, $context);
 
-        if (isset($data['items'])) {
-            $data['items'] = $this->flattenItemsUris($data['items']);
+            if (isset($data['items'])) {
+                $data['items'] = $this->flattenItemsUris($data['items']);
+            }
         }
 
         // Legacy
