@@ -17,7 +17,7 @@ context('Checkout', () => {
         cy.location('pathname').should('eq', '/fr/')
 
         cy.get('[data-search="address"] input[type="search"]')
-          .type('1 rue de', { timeout: 5000, delay: 30 })
+          .type('1 rue de', { timeout: 5000, delay: 300 })
 
         cy.get('[data-search="address"]')
           .find('.react-autosuggest__suggestions-container', { timeout: 5000 })
