@@ -18,7 +18,8 @@ const selectors = taskAdapter.getSelectors((state) => state)
 export default (state = initialState, action) => {
   switch (action.type) {
     case MODIFY_TASK_LIST_REQUEST:
-        const toKeep = action.tasks.map((t) => ({
+      // TODO : make this work with tours tasks IF NECESSARY
+      const toKeep = action.tasks.map((t) => ({
           '@id': t['@id'],
           isAssigned: true,
           assignedTo: action.username
@@ -33,13 +34,6 @@ export default (state = initialState, action) => {
         }))
 
       return taskAdapter.upsertMany(state, [ ...toKeep, ...toRemove ])
-
-    case MODIFY_TASK_LIST_REQUEST_SUCCESS:
-      const entities = action.taskList.items.map(item => ({
-        '@id': item.task,
-        position: item.position
-      }))
-      return taskAdapter.upsertMany(state, entities)
 
     case UPDATE_TASK:
       return taskAdapter.upsertOne(state, action.task)

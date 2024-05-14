@@ -137,6 +137,7 @@ export const selectTourById = createSelector(selectAllTours, selectTourId,
   (tours, tourId) => tours.find(t => t['@id'] === tourId)
 )
 
+// TODO : use the fact that now tours are registered as tasklist items
 export const isTourAssigned = (tour) => tour.items.length > 0 ? _.every(tour.items, (item) => item.isAssigned) : false
 export const isTourUnassigned = (tour) => {
   if (tour.items.length === 0) return true

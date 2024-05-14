@@ -13,6 +13,7 @@ import {
 } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
 import { createAction } from '@reduxjs/toolkit'
+import { selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
 
 
 function createClient(dispatch) {
@@ -264,8 +265,13 @@ export function closeAddUserModal() {
   return {type: CLOSE_ADD_USER}
 }
 
-export function modifyTaskListRequest(username, tasks, previousTasks) {
-  return { type: MODIFY_TASK_LIST_REQUEST, username, tasks, previousTasks }
+/**
+ * @param {string} Username - Username of the rider to which we assign
+ * @param {Array.string} items - Items to be assigned, list of tasks and tours URIs to be assigned
+ * @param {Array.string} previousItems - Items to be assigned, list of tasks and tours URIs to be assigned
+ */
+export function modifyTaskListRequest(username, items, previousItems) {
+  return { type: MODIFY_TASK_LIST_REQUEST, username, items, previousItems }
 }
 
 export function modifyTaskListRequestSuccess(taskList) {
@@ -303,25 +309,13 @@ export function modifyTaskList(username, items) {
 
   return async function(dispatch, getState) {
 
-    const state = getState(),
-      allTasks = selectAllTasks(state)
+    const state = getState()
 
-    const newTasks = items.map((task, position) => {
-      const rt = _.find(allTasks, t => t['@id'] === task['@id'])
+    const tasksList = selectTaskListByUsername(getState, {username: username})
+    const previousItems = tasksList.items
+    const newItems = items.map((item) => item['@id'])
 
-      return {
-        ...rt,
-        isAssigned: true,
-        position,
-      }
-    })
-    const tasksLists = selectTaskLists(getState())
-    const tasksList = _.find(tasksLists, tl => tl.username === username)
-    const previousTasks = tasksList.items
-
-    dispatch(modifyTaskListRequest(username, newTasks, previousTasks))
-
-    const data = items.map((item) => item['@id'])
+    dispatch(modifyTaskListRequest(username, newItems, previousItems))
 
     const date = selectSelectedDate(state)
 
@@ -333,7 +327,7 @@ export function modifyTaskList(username, items) {
     let response
 
     try {
-      response =  await axios.put(url, data, {
+      response =  await axios.put(url, newItems, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/ld+json'
@@ -422,16 +416,17 @@ function moveTo(task, direction) {
     const taskList = _.find(taskLists, taskList => taskList.username === task.assignedTo)
 
     if (taskList) {
-      const newTasks = taskList.items.filter(item => item['@id'] !== task['@id'])
+      const taskId = task['@id'],
+        newItems = taskList.items.filter(item => item !== taskId)
       switch (direction) {
         case 'top':
-          newTasks.unshift(task)
+          newItems.unshift(taskId)
           break
         case 'bottom':
-          newTasks.push(task)
+          newItems.push(taskId)
           break
       }
-      dispatch(modifyTaskList(taskList.username, newTasks))
+      dispatch(modifyTaskList(taskList.username, newItems))
     }
   }
 }
