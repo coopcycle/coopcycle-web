@@ -2,7 +2,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
 
-import { taskComparator, withoutTasks, isInDateRange } from './utils'
+import { taskComparator, withoutTasks, isInDateRange, withoutTaskListItems } from './utils'
 import {
   selectSelectedDate,
   selectTaskLists,
@@ -13,7 +13,7 @@ import {
 } from '../../coopcycle-frontend-js/logistics/redux'
 import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
 import { createAction } from '@reduxjs/toolkit'
-import { selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
+import { selectTaskById, selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
 
 
 function createClient(dispatch) {
@@ -208,7 +208,12 @@ export const appendToUnassignedTours = createAction('APPEND_TO_UNASSIGNED_TOURS'
 export const insertInUnassignedTours = createAction('INSERT_IN_UNASSIGNED_TOURS')
 
 
-
+/**
+ * This action assign a task after another when you linked the two markers on the map
+ * @param {string} username - Username of the rider to which we assign
+ * @param {Object} task - Task we want to assign after the "after" task
+ * @param {Object} task - Task pointed on the map
+ */
 export function assignAfter(username, task, after) {
 
   return function(dispatch, getState) {
@@ -217,39 +222,45 @@ export function assignAfter(username, task, after) {
     let taskLists = selectTaskLists(state)
 
     const taskList = _.find(taskLists, taskList => taskList.username === username)
-    const taskIndex = _.findIndex(taskList.items, t => taskComparator(t, after))
+    const taskIndex = _.findIndex(
+      taskList.items,
+      t => taskComparator(selectTaskById(getState(), t), after['@id'])
+    )
 
     if (-1 !== taskIndex) {
       const newTaskListItems = taskList.items.slice()
       Array.prototype.splice.apply(newTaskListItems,
-        Array.prototype.concat([ taskIndex + 1, 0 ], task)
+        Array.prototype.concat([ taskIndex + 1, 0 ], task['@id'])
       )
       dispatch(modifyTaskList(username, newTaskListItems))
     }
   }
 }
 
-export function unassignTasks(username, tasks) {
-    /*
-      Unassign tasks.
-    */
+/**
+ * Unassign tasks or tours
+ * @param {string} username - Username of the rider
+ * @param {Array.Object} items - Items (tasks or tours IRIs) to be unassigned
+ */
+export function unassignTasks(username, items) {
 
-  if (!Array.isArray(tasks)) {
-    tasks = [ tasks ]
+  if (!Array.isArray(items)) {
+    items = [ items ]
   }
 
   return async function(dispatch, getState) {
 
-    if (tasks.length === 0) {
+    if (items.length === 0) {
       return
     }
 
     let state = getState()
     let taskLists = selectTaskLists(state)
 
-    const taskList = _.find(taskLists, taskList => taskList.username === username)
+    const taskList = _.find(taskLists, taskList => taskList.username === username),
+      toRemove = items.map(i => i['@id'])
 
-    await dispatch(modifyTaskList(username, withoutTasks(taskList.items, tasks)))
+    await dispatch(modifyTaskList(username, withoutTaskListItems(taskList.items, toRemove)))
   }
 }
 
@@ -408,6 +419,11 @@ export function createTaskList(date, username) {
   }
 }
 
+/**
+ * Action to move task to top or bottom of tasklist
+ * @param {Object} task - Task we are moving
+ * @param {string} direction - Either 'top' or 'bottom'
+ */
 function moveTo(task, direction) {
 
   return function(dispatch, getState) {
@@ -912,6 +928,7 @@ export function optimizeTaskList(taskList) {
       }
     })
       .then(response => {
+        // TODO : fix this
         dispatch(modifyTaskList(taskList.username, response.data.items))
       })
       // eslint-disable-next-line no-console

@@ -15,6 +15,18 @@ export function withoutTasks(state, tasks) {
   )
 }
 
+/**
+ * @param {Array.string} currentItems - Current list of items (tasks or tours IRIs)
+ * @param {Array.string} toRemoveItems - Items to be removed (tasks or tours IRIs)
+ */
+export function withoutTaskListItems(currentItems, toRemoveItems) {
+
+  return _.differenceWith(
+    currentItems,
+    _.intersectionWith(currentItems, toRemoveItems)
+  )
+}
+
 export function withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap) {
 
   if (!Array.isArray(selectedTasks)) {
