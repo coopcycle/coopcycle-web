@@ -170,7 +170,6 @@ class TaskList implements TaskCollectionInterface
 
     public function containsTask(Task $task)
     {
-        // TODO : check if it has still sense to do that. this function is used in EntityChangeSetProcessor and in tests
         foreach ($this->getTasks() as $t) {
             if ($task === $t) {
                 return true;
@@ -180,8 +179,10 @@ class TaskList implements TaskCollectionInterface
         return false;
     }
 
+    /*
+       Append a task at the end of the tasklist
+    */
     public function addTask(Task $task) {
-        // TODO : check if this make sense. it is called from EntityChangeSetProcessor when the task is "assigned" but not in the tasklist. actually this should not happen, maybe happen from mobile dispatch (??)
         $item = new Item();
         $item->setTask($task);
         $item->setPosition($this->items->count());
