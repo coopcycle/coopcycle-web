@@ -48,6 +48,7 @@ Feature: Pricing rules set
 
   Scenario: Get the applications of a pricing rule set
     Given the fixtures files are loaded:
+    | sylius_channels.yml |
     | pricing_rule_set.yml |
     And the user "admin" is loaded:
     | email      | admin@coopcycle.org |
