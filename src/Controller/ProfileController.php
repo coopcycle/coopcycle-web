@@ -14,6 +14,7 @@ use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
@@ -617,6 +618,49 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/business_account.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/profile/business-account-orders", name="profile_business_account_orders")
+     */
+    public function businessAccountOrdersAction(
+        Request $request,
+        EntityManagerInterface $objectManager,
+        PaginatorInterface $paginator)
+    {
+        $this->denyAccessUnlessGranted('ROLE_BUSINESS_ACCOUNT');
+
+        $user = $this->getUser();
+
+        $businessAccount = $user->getBusinessAccount();
+
+        if (!$businessAccount) {
+            throw $this->createNotFoundException('User does not have a business account associated');
+        }
+
+        $orders = [];
+
+        if (null !== $businessAccount->getId()) {
+            $qb = $objectManager->getRepository(Order::class)->createQueryBuilder('o');
+            $qb
+                ->andWhere('o.businessAccount = :business_account')
+                ->setParameter('business_account', $businessAccount);
+
+            $orders = $paginator->paginate(
+                $qb,
+                $request->query->getInt('page', 1),
+                self::ITEMS_PER_PAGE,
+                [
+                    PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'o.createdAt',
+                    PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
+                    PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['o.createdAt'],
+                ]
+            );
+        }
+
+        return $this->render('profile/orders.html.twig', [
+            'orders' => $orders,
         ]);
     }
 }
