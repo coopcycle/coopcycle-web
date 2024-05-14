@@ -36,7 +36,7 @@ export const SavedAddressesBox = ({ addresses, address, onSelected }) => {
 
   return (
     <div className="mb-2">
-      <label class="control-label">{t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME')}</label>
+      <label className="control-label">{t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME')}</label>
       <div className="form-group-search">
         <input
           placeholder={t('TASK_FORM_SEARCH_ADDRESS_NAME_PLACEHOLDER')}
