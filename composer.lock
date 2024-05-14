@@ -1909,16 +1909,16 @@
         },
         {
             "name": "doctrine/common",
-            "version": "3.4.3",
+            "version": "3.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/common.git",
-                "reference": "8b5e5650391f851ed58910b3e3d48a71062eeced"
+                "reference": "0aad4b7ab7ce8c6602dfbb1e1a24581275fb9d1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/common/zipball/8b5e5650391f851ed58910b3e3d48a71062eeced",
-                "reference": "8b5e5650391f851ed58910b3e3d48a71062eeced",
+                "url": "https://api.github.com/repos/doctrine/common/zipball/0aad4b7ab7ce8c6602dfbb1e1a24581275fb9d1a",
+                "reference": "0aad4b7ab7ce8c6602dfbb1e1a24581275fb9d1a",
                 "shasum": ""
             },
             "require": {
@@ -1980,7 +1980,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/common/issues",
-                "source": "https://github.com/doctrine/common/tree/3.4.3"
+                "source": "https://github.com/doctrine/common/tree/3.4.4"
             },
             "funding": [
                 {
@@ -1996,7 +1996,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-10-09T11:47:59+00:00"
+            "time": "2024-04-16T13:35:33+00:00"
         },
         {
             "name": "doctrine/data-fixtures",
@@ -10217,21 +10217,21 @@
         },
         {
             "name": "nucleos/profile-bundle",
-            "version": "2.3.x-dev",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosProfileBundle.git",
-                "reference": "a1858aed7263ac0300515a8691e132d8acbfaf65"
+                "reference": "bee9d31a465bfde0c66ab9faf92f38c8c8004a85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/a1858aed7263ac0300515a8691e132d8acbfaf65",
-                "reference": "a1858aed7263ac0300515a8691e132d8acbfaf65",
+                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/bee9d31a465bfde0c66ab9faf92f38c8c8004a85",
+                "reference": "bee9d31a465bfde0c66ab9faf92f38c8c8004a85",
                 "shasum": ""
             },
             "require": {
                 "doctrine/persistence": "^2.2.2 || ^3.0.0",
-                "nucleos/user-bundle": "^2.0",
+                "nucleos/user-bundle": "^2.3 || ^3.0",
                 "php": "^8.1",
                 "symfony/config": "^5.4 || ^6.2",
                 "symfony/dependency-injection": "^5.4 || ^6.2",
@@ -10294,7 +10294,7 @@
             ],
             "support": {
                 "issues": "https://github.com/nucleos/NucleosProfileBundle/issues",
-                "source": "https://github.com/nucleos/NucleosProfileBundle/tree/2.3.x"
+                "source": "https://github.com/nucleos/NucleosProfileBundle/tree/2.4.0"
             },
             "funding": [
                 {
@@ -10314,7 +10314,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2023-07-05T08:48:05+00:00"
+            "time": "2023-08-10T17:27:20+00:00"
         },
         {
             "name": "nucleos/user-bundle",
@@ -11948,28 +11948,35 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "5.3.0",
+            "version": "5.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "622548b623e81ca6d78b721c5e029f4ce664f170"
+                "reference": "298d2febfe79d03fe714eb871d5538da55205b1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/622548b623e81ca6d78b721c5e029f4ce664f170",
-                "reference": "622548b623e81ca6d78b721c5e029f4ce664f170",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/298d2febfe79d03fe714eb871d5538da55205b1a",
+                "reference": "298d2febfe79d03fe714eb871d5538da55205b1a",
                 "shasum": ""
             },
             "require": {
+                "doctrine/deprecations": "^1.1",
                 "ext-filter": "*",
-                "php": "^7.2 || ^8.0",
+                "php": "^7.4 || ^8.0",
                 "phpdocumentor/reflection-common": "^2.2",
-                "phpdocumentor/type-resolver": "^1.3",
+                "phpdocumentor/type-resolver": "^1.7",
+                "phpstan/phpdoc-parser": "^1.7",
                 "webmozart/assert": "^1.9.1"
             },
             "require-dev": {
-                "mockery/mockery": "~1.3.2",
-                "psalm/phar": "^4.8"
+                "mockery/mockery": "~1.3.5",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan": "^1.8",
+                "phpstan/phpstan-mockery": "^1.1",
+                "phpstan/phpstan-webmozart-assert": "^1.2",
+                "phpunit/phpunit": "^9.5",
+                "vimeo/psalm": "^5.13"
             },
             "type": "library",
             "extra": {
@@ -11993,36 +12000,39 @@
                 },
                 {
                     "name": "Jaap van Otterdijk",
-                    "email": "account@ijaap.nl"
+                    "email": "opensource@ijaap.nl"
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
             "support": {
                 "issues": "https://github.com/phpDocumentor/ReflectionDocBlock/issues",
-                "source": "https://github.com/phpDocumentor/ReflectionDocBlock/tree/5.3.0"
+                "source": "https://github.com/phpDocumentor/ReflectionDocBlock/tree/5.4.0"
             },
-            "time": "2021-10-19T17:43:47+00:00"
+            "time": "2024-04-09T21:13:58+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
-            "version": "1.6.2",
+            "version": "1.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "48f445a408c131e38cab1c235aa6d2bb7a0bb20d"
+                "reference": "153ae662783729388a584b4361f2545e4d841e3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/48f445a408c131e38cab1c235aa6d2bb7a0bb20d",
-                "reference": "48f445a408c131e38cab1c235aa6d2bb7a0bb20d",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/153ae662783729388a584b4361f2545e4d841e3c",
+                "reference": "153ae662783729388a584b4361f2545e4d841e3c",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.4 || ^8.0",
-                "phpdocumentor/reflection-common": "^2.0"
+                "doctrine/deprecations": "^1.0",
+                "php": "^7.3 || ^8.0",
+                "phpdocumentor/reflection-common": "^2.0",
+                "phpstan/phpdoc-parser": "^1.13"
             },
             "require-dev": {
                 "ext-tokenizer": "*",
+                "phpbench/phpbench": "^1.2",
                 "phpstan/extension-installer": "^1.1",
                 "phpstan/phpstan": "^1.8",
                 "phpstan/phpstan-phpunit": "^1.1",
@@ -12054,9 +12064,9 @@
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
             "support": {
                 "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
-                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.6.2"
+                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.8.2"
             },
-            "time": "2022-10-14T12:47:21+00:00"
+            "time": "2024-02-23T11:10:43+00:00"
         },
         {
             "name": "phpoffice/phpspreadsheet",
@@ -12275,16 +12285,16 @@
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "1.23.1",
+            "version": "1.29.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "846ae76eef31c6d7790fac9bc399ecee45160b26"
+                "reference": "536889f2b340489d328f5ffb7b02bb6b183ddedc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/846ae76eef31c6d7790fac9bc399ecee45160b26",
-                "reference": "846ae76eef31c6d7790fac9bc399ecee45160b26",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/536889f2b340489d328f5ffb7b02bb6b183ddedc",
+                "reference": "536889f2b340489d328f5ffb7b02bb6b183ddedc",
                 "shasum": ""
             },
             "require": {
@@ -12316,9 +12326,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.23.1"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.29.0"
             },
-            "time": "2023-08-03T16:32:59+00:00"
+            "time": "2024-05-06T12:04:23+00:00"
         },
         {
             "name": "ppshobi/psonic",
@@ -17462,16 +17472,16 @@
         },
         {
             "name": "symfony/amqp-messenger",
-            "version": "v5.4.31",
+            "version": "v5.4.39",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/amqp-messenger.git",
-                "reference": "8ba6a2c482d3fce9d450b702098ca033bbe42de4"
+                "reference": "252902bdd576b0a9279cb3d9b9f7e8317d1c54c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/amqp-messenger/zipball/8ba6a2c482d3fce9d450b702098ca033bbe42de4",
-                "reference": "8ba6a2c482d3fce9d450b702098ca033bbe42de4",
+                "url": "https://api.github.com/repos/symfony/amqp-messenger/zipball/252902bdd576b0a9279cb3d9b9f7e8317d1c54c3",
+                "reference": "252902bdd576b0a9279cb3d9b9f7e8317d1c54c3",
                 "shasum": ""
             },
             "require": {
@@ -17511,7 +17521,7 @@
             "description": "Symfony AMQP extension Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/amqp-messenger/tree/v5.4.31"
+                "source": "https://github.com/symfony/amqp-messenger/tree/v5.4.39"
             },
             "funding": [
                 {
@@ -17527,7 +17537,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-03T16:16:43+00:00"
+            "time": "2024-04-18T08:26:06+00:00"
         },
         {
             "name": "symfony/contracts",
@@ -17632,16 +17642,16 @@
         },
         {
             "name": "symfony/doctrine-messenger",
-            "version": "v5.4.31",
+            "version": "v5.4.39",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/doctrine-messenger.git",
-                "reference": "1ff223f53c5f33b03756779a059b5411b76b8005"
+                "reference": "b72331fddcb8d4c1bf5547c18c6cc9eaa57033d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/doctrine-messenger/zipball/1ff223f53c5f33b03756779a059b5411b76b8005",
-                "reference": "1ff223f53c5f33b03756779a059b5411b76b8005",
+                "url": "https://api.github.com/repos/symfony/doctrine-messenger/zipball/b72331fddcb8d4c1bf5547c18c6cc9eaa57033d7",
+                "reference": "b72331fddcb8d4c1bf5547c18c6cc9eaa57033d7",
                 "shasum": ""
             },
             "require": {
@@ -17685,7 +17695,7 @@
             "description": "Symfony Doctrine Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/doctrine-messenger/tree/v5.4.31"
+                "source": "https://github.com/symfony/doctrine-messenger/tree/v5.4.39"
             },
             "funding": [
                 {
@@ -17701,7 +17711,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-07T09:59:10+00:00"
+            "time": "2024-04-18T08:26:06+00:00"
         },
         {
             "name": "symfony/monolog-bundle",
@@ -18896,16 +18906,16 @@
         },
         {
             "name": "symfony/redis-messenger",
-            "version": "v5.4.31",
+            "version": "v5.4.39",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/redis-messenger.git",
-                "reference": "9735a30ac8f37b42f1714bc1634dc8066b34e72f"
+                "reference": "7b7b1c5e8cbaab9c15808822ab5ef355eff6c4c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/redis-messenger/zipball/9735a30ac8f37b42f1714bc1634dc8066b34e72f",
-                "reference": "9735a30ac8f37b42f1714bc1634dc8066b34e72f",
+                "url": "https://api.github.com/repos/symfony/redis-messenger/zipball/7b7b1c5e8cbaab9c15808822ab5ef355eff6c4c3",
+                "reference": "7b7b1c5e8cbaab9c15808822ab5ef355eff6c4c3",
                 "shasum": ""
             },
             "require": {
@@ -18943,7 +18953,7 @@
             "description": "Symfony Redis extension Messenger Bridge",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/redis-messenger/tree/v5.4.31"
+                "source": "https://github.com/symfony/redis-messenger/tree/v5.4.39"
             },
             "funding": [
                 {
@@ -18959,7 +18969,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-03T16:16:43+00:00"
+            "time": "2024-04-18T08:26:06+00:00"
         },
         {
             "name": "symfony/stimulus-bundle",
@@ -19919,16 +19929,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v2.15.5",
+            "version": "v2.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "fc02a6af3eeb97c4bf5650debc76c2eda85ac22e"
+                "reference": "0c9cc7ef2e0ec6d20c5af1200522a89ba101f623"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/fc02a6af3eeb97c4bf5650debc76c2eda85ac22e",
-                "reference": "fc02a6af3eeb97c4bf5650debc76c2eda85ac22e",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/0c9cc7ef2e0ec6d20c5af1200522a89ba101f623",
+                "reference": "0c9cc7ef2e0ec6d20c5af1200522a89ba101f623",
                 "shasum": ""
             },
             "require": {
@@ -19939,12 +19949,12 @@
             },
             "require-dev": {
                 "psr/container": "^1.0",
-                "symfony/phpunit-bridge": "^4.4.9|^5.0.9|^6.0"
+                "symfony/phpunit-bridge": "^5.4.9|^6.3"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.15-dev"
+                    "dev-master": "2.16-dev"
                 }
             },
             "autoload": {
@@ -19983,7 +19993,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v2.15.5"
+                "source": "https://github.com/twigphp/Twig/tree/v2.16.0"
             },
             "funding": [
                 {
@@ -19995,7 +20005,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-03T17:49:41+00:00"
+            "time": "2023-12-22T07:22:15+00:00"
         },
         {
             "name": "twilio/sdk",
@@ -23626,7 +23636,6 @@
     "stability-flags": {
         "league/geotools": 0,
         "drupal/core-vendor-hardening": 20,
-        "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
         "coopcycle/transporter": 20,
         "behatch/contexts": 20
