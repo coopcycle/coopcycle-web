@@ -14,6 +14,10 @@ import {
 const initialState = taskListAdapter.getInitialState()
 const selectors = taskListAdapter.getSelectors((state) => state)
 
+/**
+ * @param {Object} state - Initial state
+ * @param {Array.string} items - Items to be assigned, list of tasks and tours to be assigned
+ */
 export default (state = initialState, action) => {
   switch (action.type) {
     case MODIFY_TASK_LIST_REQUEST:

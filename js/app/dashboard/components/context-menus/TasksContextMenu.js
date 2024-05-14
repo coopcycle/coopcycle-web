@@ -67,7 +67,7 @@ const useAssignAction = function() {
       tasksList= await dispatch(createTaskList(date, username))
     }
 
-    const newTasksList = [...tasksList.items, ...tasksToAssign]
+    const newTasksList = [...tasksList.items, ...tasksToAssign.map(t => t['@id'])]
     return dispatch(modifyTaskList(tasksList.username, newTasksList))
   }
 }
