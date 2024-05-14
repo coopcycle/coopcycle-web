@@ -309,39 +309,46 @@ export function importError(token, message) {
 }
 
 /**
+ * Modify a TaskList
  * @param {string} Username - Username of the rider to which we assign
  * @param {Array.Objects} items - Items to be assigned, list of tasks and tours to be assigned
  */
 export function modifyTaskList(username, items) {
-  /*
-    Modify a TaskList
-  */
 
   return async function(dispatch, getState) {
 
     const state = getState()
 
-    const tasksList = selectTaskListByUsername(getState, {username: username})
+    const tasksList = selectTaskListByUsername(getState(), {username: username})
     const previousItems = tasksList.items
-    const newItems = items.map((item) => item['@id'])
+
+    // support passing URI directly - TODO uniformize behaviour
+    const newItems = items.map((item) => item['@id'] || item)
 
     dispatch(modifyTaskListRequest(username, newItems, previousItems))
 
     const date = selectSelectedDate(state)
 
-    const url = window.Routing.generate('admin_task_list_modify', {
+    const url = window.Routing.generate('api_task_lists_set_items_item', {
       date: date.format('YYYY-MM-DD'),
       username,
     })
 
+    const { jwt } = getState()
+    const httpClient = createClient(dispatch)
+
     let response
 
     try {
-      response =  await axios.put(url, newItems, {
-        withCredentials: true,
+      response = await httpClient.request({
+        method: 'put',
+        url,
+        data: {'items': newItems},
         headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
           'Content-Type': 'application/ld+json'
-        },
+        }
       })
     } catch (error) {
       // eslint-disable-next-line no-console
