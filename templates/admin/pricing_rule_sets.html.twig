@@ -14,8 +14,10 @@
   {% if ruleSets|length > 0 %}
     {% for ruleSet in ruleSets %}
       <tr>
-        <td><a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">#{{ ruleSet.id }}</a></td>
-        <td>{{ ruleSet.name }}</td>
+        <td><a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">{{ ruleSet.name }}</a></td>
+        <td>
+          <div {{ react_component('PricingRuleSetApplications', { pricingRuleSetId: ruleSet.id, data: relatedEntitiesByPricingRuleSetId[ruleSet.id] }) }}></div>
+        </td>
         <td class="text-right">
           <div class="btn-group">
             <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -26,6 +28,8 @@
                 <a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">
                   {% trans %}adminDashboard.pricing.settings{% endtrans %}
                 </a>
+              </li>
+              <li>
                 <a href="{{ path('admin_deliveries_pricing_ruleset_duplicate', { id: ruleSet.id }) }}">
                   {% trans %}adminDashboard.pricing.duplicate{% endtrans %}
                 </a>
@@ -33,6 +37,13 @@
             </ul>
           </div>
         </td>
+        {% if is_granted('ROLE_ADMIN') %}
+          <td>
+            <a class="text-danger">
+              <i class="fa fa-trash delete-pricing" data-pricing-name="{{ ruleSet.name }}" data-pricing-id="{{ ruleSet.id }}"></i>
+            </a>
+          </td>
+        {% endif %}
       </tr>
     {% endfor %}
   {% else %}
@@ -42,7 +53,11 @@
   {% endif %}
   </tbody>
 </table>
+<div class="text-center">
+  {{ knp_pagination_render(ruleSets, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
 {% endblock %}
 
 {% block scripts %}
+  {{ encore_entry_script_tags('pricings') }}
 {% endblock %}

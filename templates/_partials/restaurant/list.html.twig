@@ -1,5 +1,5 @@
 {% if restaurants|length > 0 %}
-  <table class="table" id="restaurants-list" data-jwt="{{ jwt }}">
+  <table class="table">
     <tbody>
     {% for restaurant in restaurants %}
       <tr>
@@ -7,9 +7,8 @@
           <i class="fa fa-circle {% if restaurant.enabled %}text-success{% else %}text-danger{% endif %}"></i>
         </td>
         <td width="1%">{% if restaurant.state == 'rush' %}<i class="fa fa-fire"></i>{% endif %}</td>
-        <td width="5%"><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
         <td width="20%">
-          <span>{{ restaurant.name }}</span>
+          <span><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></span>
           <br>
           <small class="text-muted">{{ restaurant|local_business_type }}</small>
         </td>
@@ -49,21 +48,21 @@
                   {% trans %}restaurant.list.products{% endtrans %}
                 </a>
               </li>
-              {% if is_granted('ROLE_ADMIN') %}
-                <li>
-                  <a class="text-danger delete-restaurant" data-restaurant-name="{{ restaurant.name }}" data-restaurant-id="{{ restaurant.id }}">
-                    {% trans %}basics.delete{% endtrans %}
-                  </a>
-                </li>
-              {% endif %}
             </ul>
           </div>
         </td>
-        <td class="text-right" width="5%">
+        <td width="5%" class="text-center">
           <a target="_blank" href="{{ path('restaurant', { id: restaurant.id, 'slug': restaurant.name|slugify }) }}">
             <i class="fa fa-external-link" aria-hidden="true"></i>
           </a>
         </td>
+        {% if is_granted('ROLE_ADMIN') %}
+          <td width="5%" class="text-center">
+            <a class="text-danger">
+               <i class="fa fa-trash delete-restaurant" data-restaurant-name="{{ restaurant.name }}" data-restaurant-id="{{ restaurant.id }}"></i>
+            </a>
+          </td>
+        {% endif %}
       </tr>
     {% endfor %}
     </tbody>

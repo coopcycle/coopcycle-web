@@ -122,3 +122,9 @@ services:
     arguments:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\ApplicationsNormalizer:
+    arguments:
+      $normalizer: "@serializer.normalizer.object"
+      $secret: '%secret%'
+    tags: [ { name: serializer.normalizer, priority: 128 } ]

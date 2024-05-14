@@ -111,6 +111,15 @@
           "NO_LIMIT": "Keine Bestellbegrenzung",
           "LIMIT": "Maximal {{command}} Bestellungen alle {{time}}"
         },
-        "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Regelname"
+        "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Regelname",
+        "RESTAURANT": "Restaurant",
+        "STORE": "Geschäft",
+        "RESTAURANTS_GROUP": "Restaurantgruppe",
+        "DELIVERY_FORM": "Lieferformular",
+        "ADMIN_PLEASE_UNLINK_PACKAGE_SET_BEFORE_DELETION": "Konnte nicht gelöscht werden. Bitte trennen Sie dieses Paketset von den Geschäften oder Lieferformularen, auf die es zutreffen könnte.",
+        "ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION": "Konnte nicht gelöscht werden. Bitte trennen Sie diese Preisgestaltung von den Geschäften, Restaurants oder Lieferformularen, auf die sie zutreffen könnte.",
+        "SHOW_DETAILS": "Details anzeigen",
+        "ADMIN_NO_APPLICATIONS": "Noch nicht in Benutzung",
+        "ADMIN_APPLIED_TO": "Angewendet auf {{count}} Element(e)"
     }
 }

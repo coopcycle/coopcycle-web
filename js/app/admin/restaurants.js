@@ -33,14 +33,17 @@ document.querySelectorAll('.delete-restaurant').forEach((el) => {
       return
     }
 
-    const jwtToken = document.querySelector("#restaurants-list").dataset.jwt
+    const jwt = document.head.querySelector('meta[name="application-auth-jwt"]').content
     const headers = {
-      'Authorization': `Bearer ${jwtToken}`,
+      'Authorization': `Bearer ${jwt}`,
       'Accept': 'application/ld+json',
       'Content-Type': 'application/ld+json'
     }
 
-    const url = '/api/restaurants/' + e.target.dataset.restaurantId
+    const url = window.Routing.generate('api_restaurants_delete_item', {
+      id: e.target.dataset.restaurantId,
+    })
+
     fetch(url, {method: "DELETE", headers: headers}).then(
       function () { location.reload(); }
     );

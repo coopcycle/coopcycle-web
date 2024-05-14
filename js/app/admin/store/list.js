@@ -1,4 +1,4 @@
-import i18n from '../i18n'
+import i18n from '../../i18n'
 
 document.querySelectorAll('.delete-store').forEach((el) => {
     el.addEventListener('click', (e) => {
@@ -8,14 +8,17 @@ document.querySelectorAll('.delete-store').forEach((el) => {
       return
     }
 
-    const jwtToken = document.querySelector("#stores-list").dataset.jwt
+    const jwtToken = document.head.querySelector('meta[name="application-auth-jwt"]').content
     const headers = {
       'Authorization': `Bearer ${jwtToken}`,
       'Accept': 'application/ld+json',
       'Content-Type': 'application/ld+json'
     }
 
-    const url = '/api/stores/' + e.target.dataset.storeId
+    const url = window.Routing.generate('api_stores_delete_item', {
+      id: e.target.dataset.storeId,
+    })
+
     fetch(url, {method: "DELETE", headers: headers}).then(
       function () { location.reload(); }
     );

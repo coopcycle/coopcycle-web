@@ -51,6 +51,8 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait StoreTrait
 {
+    use InjectAuthTrait;
+
     /**
      * @HideSoftDeleted
      */
@@ -58,30 +60,26 @@ trait StoreTrait
     {
         $qb = $this->getDoctrine()
         ->getRepository(Store::class)
-        ->createQueryBuilder('c');
+        ->createQueryBuilder('c')
+        ->orderBy('c.name', 'ASC');
 
         $STORES_PER_PAGE = 20;
 
         $stores = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            $STORES_PER_PAGE,
-            [
-                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'c.name',
-                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
-            ],
+            $STORES_PER_PAGE
         );
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->auth([
             'stores' => $stores,
             'layout' => $request->attributes->get('layout'),
             'store_route' => $routes['store'],
             'store_delivery_new_route' => $routes['store_delivery_new'],
-            'store_deliveries_route' => $routes['store_deliveries'],
-            'jwt' => $jwtManager->create($this->getUser()),
-        ]);
+            'store_deliveries_route' => $routes['store_deliveries']
+        ]));
     }
 
     public function storeUsersAction($id, Request $request,
