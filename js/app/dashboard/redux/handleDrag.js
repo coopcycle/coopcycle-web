@@ -118,7 +118,7 @@ export function handleDragEnd(
     // FIXME : if a tour or a group is selected, selectSelectedTasks yields [ undefined ] so we test > 1 no > 0
     let selectedTasks = selectSelectedTasks(getState()).length > 1 ? selectSelectedTasks(getState()) : [_.find(allTasks, t => t['@id'] === result.draggableId)]
 
-    // we are moving a whole group or tour, override selectedTasks
+    // we are moving a whole group, override selectedTasks
     if (result.draggableId.startsWith('group')) {
       let groupId = result.draggableId.split(':')[1]
       selectedTasks = selectGroups(getState()).find(g => g.id == groupId).tasks
