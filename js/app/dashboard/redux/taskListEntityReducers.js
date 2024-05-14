@@ -7,8 +7,6 @@ import {
   REMOVE_TASK
 } from './actions'
 import {
-  taskUtils,
-  taskListUtils,
   taskListEntityUtils,
   taskListAdapter,
 } from '../../coopcycle-frontend-js/logistics/redux'
@@ -29,14 +27,14 @@ export default (state = initialState, action) => {
 
       let newEntity = {
         ...entity,
-        items: taskUtils.tasksToIds(action.tasks),
+        items: action.items,
       }
 
       return taskListAdapter.upsertOne(state, newEntity)
 
     case MODIFY_TASK_LIST_REQUEST_SUCCESS:
 
-      return taskListAdapter.upsertOne(state, taskListUtils.replaceTasksWithIds(action.taskList))
+      return taskListAdapter.upsertOne(state, action.taskList)
 
     case TASK_LISTS_UPDATED: {
 
