@@ -7,7 +7,7 @@ import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
 import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded } from '../redux/actions'
-import { isTourAssigned, selectTourById, tourIsAssignedTo } from '../../../shared/src/logistics/redux/selectors'
+import { selectTourById, selectTourAssignedTo, tourIsAssignedTo } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
 import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds } from '../redux/selectors'
@@ -19,6 +19,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
 
   const [tourName, setTourName] = useState(tour.name)
   const [toggleInputForName, setToggleInputForName] = useState(false)
+  const tourAssignedTo = useSelector((state) => selectTourAssignedTo(state, tour))
 
   const onEditSubmitted = async (e) => {
     e.preventDefault()
@@ -63,9 +64,9 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
           <a role="button" href="#" className="text-reset mr-2" onClick={ () => setToggleInputForName(true) }>
               <i className="fa fa-pencil"></i>
           </a>
-          { isTourAssigned(tour) ?
+          { tourAssignedTo ?
             <a
-              onClick={() => dispatch(unassignTasks(tourIsAssignedTo(tour), tour.items))}
+              onClick={() => dispatch(unassignTasks(tourAssignedTo, [tour['@id']]))}
               title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
               className="text-reset mr-2"
             >
