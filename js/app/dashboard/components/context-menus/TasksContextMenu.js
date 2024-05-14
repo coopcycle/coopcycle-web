@@ -29,7 +29,7 @@ import {selectCouriersWithExclude, selectLinkedTasksIds, selectNextWorkingDay, s
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
-import { selectAllTasks, selectSelectedDate, selectTaskIdToTourIdMap, selectTasksListsWithItems } from '../../../../shared/src/logistics/redux/selectors'
+import { selectAllTasks, selectSelectedDate, selectTaskIdToTourIdMap, selectTaskListByUsername } from '../../../../shared/src/logistics/redux/selectors'
 import { isValidTasksMultiSelect, withOrderTasksForDragNDrop } from '../../redux/utils'
 import Avatar from '../../../components/Avatar'
 
@@ -58,10 +58,9 @@ const { hideAll } = useContextMenu({
 const useAssignAction = function() {
   const dispatch = useDispatch()
   const date = useSelector(selectSelectedDate)
-  const tasksLists = useSelector(selectTasksListsWithItems)
 
   return async function (username, tasksToAssign) {
-    let tasksList = _.find(tasksLists, tl => tl.username === username)
+    let tasksList = useSelector(state => selectTaskListByUsername(state, {username: username}))
 
     if (!tasksList) {
       tasksList= await dispatch(createTaskList(date, username))

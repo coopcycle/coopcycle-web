@@ -131,24 +131,39 @@ export const selectAllTours = createSelector(
   }
 )
 
+
 const selectTourId = (state, tourId) => tourId
+
+const selectTour = (state, tour) => tour
 
 export const selectTourById = createSelector(selectAllTours, selectTourId,
   (tours, tourId) => tours.find(t => t['@id'] === tourId)
 )
 
-// TODO : use the fact that now tours are registered as tasklist items
-export const isTourAssigned = (tour) => tour.items.length > 0 ? _.every(tour.items, (item) => item.isAssigned) : false
-export const isTourUnassigned = (tour) => {
-  if (tour.items.length === 0) return true
-  else return tour.items.length > 0 ? _.every(tour.items, (item) => !item.isAssigned) : false
-}
-export const tourIsAssignedTo = (tour) => tour.items.length > 0 ? tour.items[0].assignedTo : undefined
+export const selectTourAssignedTo = createSelector(
+  taskListSelectors.selectAll,
+  selectTour,
+  (allTaskLists, tour) => {
+    const tl = allTaskLists.find(tl => tl.items.includes(tour['@id']))
+    if (tl) {
+      return tl.username
+    }
+  }
+)
 
-// FIXME This is recalculated all the time we change a task
 export const selectUnassignedTours = createSelector(
   selectAllTours,
-  (allTours) => _.filter(allTours, t => isTourUnassigned(t))
+  taskListSelectors.selectAll,
+  (allTours, allTaskLists) => {
+    let unassignedTours = []
+    _.map(allTours, tour => {
+      const tl = allTaskLists.find(tl => tl.items.includes(tour['@id']))
+      if (!tl) {
+        unassignedTours.push(tour)
+      }
+    })
+    return unassignedTours
+  }
 )
 
 export const selectTaskIdToTourIdMap = createSelector(
