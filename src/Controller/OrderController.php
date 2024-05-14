@@ -20,6 +20,7 @@ use AppBundle\Form\Checkout\CheckoutVytalType;
 use AppBundle\Form\Checkout\LoopeatReturnsType;
 use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Order\CartType;
+use AppBundle\Security\OrderAccessTokenManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
@@ -66,6 +67,7 @@ class OrderController extends AbstractController
         protected JWTTokenManagerInterface $JWTTokenManager,
         private ValidatorInterface $validator,
         private OrderTimeHelper $orderTimeHelper,
+        private OrderAccessTokenManager $orderAccessTokenManager,
         private LoggerInterface $checkoutLogger,
     )
     {
@@ -345,12 +347,13 @@ class OrderController extends AbstractController
         $checkoutPayment = new CheckoutPayment($order);
         $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment);
 
-        $parameters =  [
+        $parameters =  $this->auth([
             'order' => $order,
             'order_errors' => ValidationUtils::serializeViolationList($orderErrors),
+            'order_access_token' => $this->orderAccessTokenManager->create($order),
             'payment' => $payment,
             'shippingTimeRange' => $this->getShippingTimeRange($order),
-        ];
+        ]);
 
         $form->handleRequest($request);
 

@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { StrictMode } from 'react'
 import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client';
 import _ from 'lodash'
 import axios from 'axios'
 
@@ -9,6 +10,7 @@ import { Disclaimer } from './cashOnDelivery'
 
 import { disableBtn, enableBtn } from '../../widgets/button'
 import PaymentMethodPicker from './PaymentMethodPicker'
+import { isGuest } from './utils'
 
 class CreditCard {
  constructor(config) {
@@ -18,27 +20,22 @@ class CreditCard {
 
 const containsMethod = (methods, method) => !!_.find(methods, m => m.type === method)
 
-const handleCardPayment = (cc, options, form, submitButton, savedPaymentMethodId = null) => {
-  cc.createToken(savedPaymentMethodId)
-    .then(token => {
-      if (token) {
-        options.tokenElement.setAttribute('value', token)
-        form.submit()
-      } else {
-        $('.btn-payment').removeClass('btn--loading')
-        enableBtn(submitButton)
-      }
-    })
-    .catch(e => {
-      $('.btn-payment').removeClass('btn--loading')
-      enableBtn(submitButton)
-      document.getElementById('card-errors').textContent = e.message
-    })
-}
-
 export default function(form, options) {
 
   const submitButton = form.querySelector('input[type="submit"],button[type="submit"]')
+
+  const orderErrorContainerEl = document.getElementById('order-error-container')
+  const orderErrorContainerRoot = orderErrorContainerEl ? createRoot(orderErrorContainerEl) : null
+
+  function setLoading(isLoading) {
+    if (isLoading) {
+      $('.btn-payment').addClass('btn--loading')
+      disableBtn(submitButton)
+    } else {
+      $('.btn-payment').removeClass('btn--loading')
+      enableBtn(submitButton)
+    }
+  }
 
   const methods = Array
     .from(form.querySelectorAll('input[name="checkout_payment[method]"]'))
@@ -91,20 +88,30 @@ export default function(form, options) {
 
   }
 
-  form.addEventListener('submit', function(event) {
+  const handleCardPayment = (savedPaymentMethodId = null) => {
+    cc.createToken(savedPaymentMethodId)
+      .then(token => {
+        if (token) {
+          options.tokenElement.setAttribute('value', token)
+          form.submit()
+        } else {
+          setLoading(false)
+        }
+      })
+      .catch(e => {
+        setLoading(false)
+        document.getElementById('card-errors').textContent = e.message
+      })
+  }
 
-    event.preventDefault()
-
-    $('.btn-payment').addClass('btn--loading')
-    disableBtn(submitButton)
-
+  const handlePayment = () => {
     let savedPaymentMethod = null
     if (options.savedPaymentMethodElement) {
       savedPaymentMethod = options.savedPaymentMethodElement.getAttribute('value')
     }
 
     if (methods.length === 1 && containsMethod(methods, 'card')) {
-      handleCardPayment(cc, options, form, submitButton, savedPaymentMethod)
+      handleCardPayment(savedPaymentMethod)
     } else {
 
       const selectedMethod =
@@ -114,8 +121,7 @@ export default function(form, options) {
         case 'giropay':
           cc.confirmGiropayPayment()
             .catch(e => {
-              $('.btn-payment').removeClass('btn--loading')
-              enableBtn(submitButton)
+              setLoading(false)
               document.getElementById('card-errors').textContent = e.message
             })
           break
@@ -128,11 +134,56 @@ export default function(form, options) {
           break
         case 'edenred+card':
         case 'card':
-          handleCardPayment(cc, options, form, submitButton, savedPaymentMethod)
+          handleCardPayment(savedPaymentMethod)
           break
       }
     }
+  }
 
+  form.addEventListener('submit', async function(event) {
+
+    event.preventDefault()
+
+    setLoading(true)
+
+    //FIXME: only /order/payment route is tested to provide orderId; guest and account tokens
+
+    if (options.orderId) {
+      const httpClient = new window._auth.httpClient();
+
+      if (isGuest(options)) {
+        httpClient.setToken(options.orderAccessToken);
+      }
+
+      const hasAccount = window._auth && window._auth.isAuth
+
+      if (isGuest(options) || hasAccount) {
+        const validateItemRoute = window.Routing.generate("api_orders_validate_item", { id: options.orderId });
+        const result = await httpClient.get(validateItemRoute);
+
+        if (result.response) {
+          handlePayment();
+        } else {
+          setLoading(false)
+
+          const violations = result.error?.response?.data?.violations;
+
+          if (orderErrorContainerRoot && violations) {
+            orderErrorContainerRoot.render(
+              <StrictMode>
+                <div className="alert alert-danger">
+                  {violations.map((violation, index) => <p key={index}>{violation.message}</p>)}
+                </div>
+              </StrictMode>
+            )
+          }
+        }
+      } else {
+        handlePayment()
+      }
+    } else {
+      handlePayment()
+    }
   })
 
   const onSelect = value => {

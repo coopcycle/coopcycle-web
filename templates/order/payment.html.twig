@@ -19,11 +19,13 @@
       <div class="col-xs-12">
         {% include 'order/breadcrumb.html.twig' %}
 
-        {% if order_errors is defined and order_errors|length > 0 %}
-          {% include 'order/_partials/errors.html.twig' with {
-            errors: order_errors,
-          } %}
-        {% endif %}
+        <div id="order-error-container">
+          {% if order_errors is defined and order_errors|length > 0 %}
+            {% include 'order/_partials/errors.html.twig' with {
+              errors: order_errors,
+            } %}
+          {% endif %}
+        </div>
 
         <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h2>
         <div>
@@ -125,7 +127,9 @@
   new CoopCycle.PaymentForm(document.querySelector('form[name="checkout_payment"]'), {
     card: "{{ gateway }}",
     amount: {{ order.total }},
+    orderId: "{{ order.id }}",
     orderHasUser: "{{ order.customer.hasUser() }}",
+    orderAccessToken: "{{ order_access_token }}",
     gatewayConfigs: {{ gateway_configs|json_encode|raw }},
     tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
     savedPaymentMethodElement: document.querySelector('#checkout_payment_stripePayment_savedPaymentMethodId'),
