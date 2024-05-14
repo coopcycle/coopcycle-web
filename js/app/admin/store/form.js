@@ -1,8 +1,8 @@
 import React from 'react'
 import { render } from 'react-dom'
-import TagsSelect from '../components/TagsSelect'
-import { addressMapper } from '../widgets/addressForm'
-import i18n from '../i18n'
+import TagsSelect from '../../components/TagsSelect'
+import { addressMapper } from '../../widgets/addressForm'
+import i18n from '../../i18n'
 
 
 var tagsEl = document.querySelector('#store_tags');

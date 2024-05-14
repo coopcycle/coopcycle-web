@@ -23,18 +23,16 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
-use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\BusinessAccountInvitation;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
-use AppBundle\Entity\OptinConsent;
-use AppBundle\Entity\Organization;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\BusinessRestaurantGroup;
+use AppBundle\Entity\Contract;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
@@ -46,7 +44,6 @@ use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Vehicle;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Entity\Zone;
-use AppBundle\Form\AddOrganizationType;
 use AppBundle\Form\AttachToOrganizationType;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\BannerType;
@@ -79,18 +76,17 @@ use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\VehicleType;
 use AppBundle\Form\ZoneCollectionType;
+use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\OrderManager;
+use AppBundle\Service\PackageSetManager;
+use AppBundle\Service\PricingRuleSetManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
-use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
-use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
-use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
-use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
@@ -99,7 +95,6 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Nucleos\UserBundle\Util\TokenGenerator as TokenGeneratorInterface;
 use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
@@ -111,7 +106,6 @@ use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Promotion\Factory\PromotionCouponFactoryInterface;
-use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Promotion\Repository\PromotionCouponRepositoryInterface;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -121,7 +115,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -130,13 +123,14 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 use Twig\Environment as TwigEnvironment;
 use phpcent\Client as CentrifugoClient;
+
 
 class AdminController extends AbstractController
 {
@@ -191,8 +185,9 @@ class AdminController extends AbstractController
         bool $optinExportUsersEnabled,
         CollectionFinderInterface $typesenseShopsFinder,
         bool $adhocOrderEnabled,
-        Filesystem $incidentImagesFilesystem,
-        protected JWTTokenManagerInterface $JWTTokenManager
+        protected Filesystem $incidentImagesFilesystem,
+        protected PricingRuleSetManager $pricingRuleSetManager,
+        protected JWTTokenManagerInterface $JWTTokenManager,
     )
     {
         $this->orderRepository = $orderRepository;
@@ -206,7 +201,6 @@ class AdminController extends AbstractController
         $this->optinExportUsersEnabled = $optinExportUsersEnabled;
         $this->adhocOrderEnabled = $adhocOrderEnabled;
         $this->typesenseShopsFinder = $typesenseShopsFinder;
-        $this->incidentImagesFilesystem = $incidentImagesFilesystem;
     }
 
     /**
@@ -760,7 +754,7 @@ class AdminController extends AbstractController
 
         $restaurants = $repository->findBy([], [
             'enabled' => 'DESC',
-            'id' => 'DESC',
+            'name' => 'ASC',
         ], self::ITEMS_PER_PAGE, $offset);
 
         return [ $restaurants, $pages, $page ];
@@ -1028,7 +1022,7 @@ class AdminController extends AbstractController
             }
         }
 
-        $tags = $this->getDoctrine()->getRepository(Tag::class)->findAll();
+        $tags = $this->getDoctrine()->getRepository(Tag::class)->findBy(array(), array('name' => 'ASC'));
 
         return $this->render('admin/tags.html.twig', [
             'tags' => $tags
@@ -1038,15 +1032,45 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/deliveries/pricing", name="admin_deliveries_pricing")
      */
-    public function pricingRuleSetsAction()
+    public function pricingRuleSetsAction(Request $request, PaginatorInterface $paginator, PricingRuleSetManager $pricingRuleSetManager, ApplicationsNormalizer $normalizer)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $ruleSets = $this->getDoctrine()
-            ->getRepository(Delivery\PricingRuleSet::class)
-            ->findAll();
-        return $this->render('admin/pricing.html.twig', [
-            'ruleSets' => $ruleSets
-        ]);
+
+        $qb = $this->getDoctrine()->getRepository(Delivery\PricingRuleSet::class)
+            ->createQueryBuilder('rs')
+            ->orderBy('rs.name', 'ASC')
+            ->setFirstResult(max(($request->query->getInt('page', 1) - 1), 0) * self::ITEMS_PER_PAGE / 2)
+            ->setMaxResults(self::ITEMS_PER_PAGE / 2);
+
+        $paginatedRuleSets = $paginator->paginate(
+            $qb,
+            max($request->query->getInt('page', 1), 1),
+            self::ITEMS_PER_PAGE / 2,
+            [PaginatorInterface::DISTINCT => false]
+        );
+
+        $relatedEntitiesByPricingRuleSetId = [];
+
+        // the way we get the results for applications of pricing rule set is not very efficient (3 requests per rule set), so let's not load too much of them
+        // if needed optimize (and complexifiy !) the query to get applications of the pricing rule set
+        array_map(
+            function ($ruleSet) use (&$relatedEntitiesByPricingRuleSetId, $normalizer, $pricingRuleSetManager) {
+                $normalizedRelatedEntities = array_map(
+                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    $pricingRuleSetManager->getPricingRuleSetApplications($ruleSet)
+                );
+                $relatedEntitiesByPricingRuleSetId[$ruleSet->getId()] = $normalizedRelatedEntities;
+            },
+            $qb->getQuery()->getResult()
+        );
+
+        return $this->render(
+            'admin/pricing_rule_sets.html.twig',
+            $this->auth([
+                'ruleSets' => $paginatedRuleSets,
+                'relatedEntitiesByPricingRuleSetId' => $relatedEntitiesByPricingRuleSetId
+            ])
+        );
     }
 
     private function renderPricingRuleSetForm(Delivery\PricingRuleSet $ruleSet, Request $request)
@@ -1059,6 +1083,7 @@ class AdminController extends AbstractController
         }
 
         $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
+
         $packageNames = [];
         foreach ($packageSets as $packageSet) {
             foreach ($packageSet->getPackages() as $package) {
@@ -1098,10 +1123,13 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_deliveries_pricing_ruleset', ['id' => $ruleSet->getId()]);
         }
 
-        return $this->render('admin/pricing_rule_set.html.twig', [
-            'form' => $form->createView(),
-            'packages' => $packageNames,
-        ]);
+        return $this->render(
+            'admin/pricing_rule_set.html.twig',
+            $this->auth([
+                'form' => $form->createView(),
+                'packages' => $packageNames,
+                'ruleSetId' => $ruleSet->getId()
+        ]));
     }
 
     /**
@@ -1197,7 +1225,8 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $failureReasonSets = $this->getDoctrine()
             ->getRepository(Delivery\FailureReasonSet::class)
-            ->findAll();
+            ->findBy(array(), array('name' => 'ASC'));
+
         return $this->render('admin/failures.html.twig', [
             'failureReasonSets' => $failureReasonSets
         ]);
@@ -1645,10 +1674,8 @@ class AdminController extends AbstractController
      */
     public function formsAction()
     {
-        $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
-        return $this->render('admin/forms.html.twig', [
-            'forms' => $forms,
-        ]);
+        $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findBy(array(), array('id' => 'ASC'));
+        return $this->render('admin/forms.html.twig', $this->auth(['forms' => $forms]));
     }
 
     /**
@@ -2168,7 +2195,7 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $timeSlots = $this->getDoctrine()->getRepository(TimeSlot::class)->findAll();
+        $timeSlots = $this->getDoctrine()->getRepository(TimeSlot::class)->findBy(array(), array('name' => 'ASC'));
         return $this->render('admin/time_slots.html.twig', [
             'time_slots' => $timeSlots,
         ]);
@@ -2254,14 +2281,41 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/settings/packages", name="admin_packages")
      */
-    public function packageSetsAction()
+    public function packageSetsAction(Request $request, PaginatorInterface $paginator, PackageSetManager $packageSetManager, ApplicationsNormalizer $normalizer)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
-        return $this->render('admin/package_sets.html.twig', [
-            'package_sets' => $packageSets,
-        ]);
+        $qb = $this->getDoctrine()->getRepository(PackageSet::class)
+            ->createQueryBuilder('ps')
+            ->orderBy('ps.name', 'ASC')
+            ->setFirstResult(($request->query->getInt('page', 1) - 1) * self::ITEMS_PER_PAGE / 2)
+            ->setMaxResults(self::ITEMS_PER_PAGE / 2);
+
+            $packageSets = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE / 2,
+            [PaginatorInterface::DISTINCT => false,]
+        );
+
+        $relatedEntitiesByPackageSetId = [];
+        // the way we get the results for applications of package set is not very efficient (3 requests per rule set), so let's not load too much of them
+        // if needed optimize (and complexifiy !) the query to get applications of the package set
+        array_map(
+            function ($packageSet) use (&$relatedEntitiesByPackageSetId, $normalizer, $packageSetManager) {
+                $normalizedRelatedEntities = array_map(
+                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    $packageSetManager->getPackageSetApplications($packageSet)
+                );
+                $relatedEntitiesByPackageSetId[$packageSet->getId()] = $normalizedRelatedEntities;
+            },
+            $qb->getQuery()->getResult()
+        );
+
+        return $this->render(
+            'admin/package_sets.html.twig',
+            $this->auth(['package_sets' => $packageSets, 'relatedEntitiesByPackageSetId' => $relatedEntitiesByPackageSetId])
+        );
     }
 
     private function renderPackageSetForm(Request $request, PackageSet $packageSet, EntityManagerInterface $objectManager)
@@ -2278,9 +2332,7 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_packages');
         }
 
-        return $this->render('admin/package_set.html.twig', [
-            'form' => $form->createView(),
-        ]);
+        return $this->render('admin/package_set.html.twig', $this->auth(['form' => $form->createView()]));
     }
 
     /**
@@ -2520,7 +2572,7 @@ class AdminController extends AbstractController
     public function businessAccountsAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $accounts = $this->getDoctrine()->getRepository(BusinessAccount::class)->findAll();
+        $accounts = $this->getDoctrine()->getRepository(BusinessAccount::class)->findBy(array(), array('name' => 'ASC'));
 
         return $this->render('admin/business_accounts.html.twig', [
             'accounts' => $accounts,
@@ -2725,7 +2777,7 @@ class AdminController extends AbstractController
 
         [ $restaurants, $pages, $page ] = $this->getRestaurantList($request);
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->auth([
             'layout' => $request->attributes->get('layout'),
             'restaurants' => $restaurants,
             'pages' => $pages,
@@ -2738,8 +2790,7 @@ class AdminController extends AbstractController
             'pledge_count' => $pledgeCount,
             'pledge_form' => $pledgeForm->createView(),
             'nonprofits_enabled' => $this->getParameter('nonprofits_enabled'),
-            'jwt' => $this->JWTTokenManager->create($this->getUser()),
-        ]);
+        ]));
     }
 
 

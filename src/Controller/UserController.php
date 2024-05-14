@@ -32,7 +32,9 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserController extends AbstractController
 {
@@ -171,7 +173,8 @@ class UserController extends AbstractController
         UserManagerInterface $userManager,
         EventDispatcherInterface $eventDispatcher,
         Canonicalizer $canonicalizer,
-        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow)
+        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
+        Security $security)
     {
         $repository = $this->getDoctrine()->getRepository(Invitation::class);
 
@@ -195,8 +198,18 @@ class UserController extends AbstractController
                 return $this->loadBusinessAccountRegistrationFlow($request, $businessAccountRegistrationFlow, $user,
                     $businessAccountInvitation, $objectManager, $userManager, $eventDispatcher, $canonicalizer);
             } else {
+                $loggedInUser = $security->getUser();
+
+                if ($loggedInUser) {
+                    return $this->render('profile/associate_loggedin_user_to_business_account.html.twig', [
+                        'show_left_menu' => false,
+                        'businessAccountInvitation' => $businessAccountInvitation
+                    ]);
+                }
+
                 // The email has to be entered by the invited user in the form
                 $user->setEmail('');
+                $user->setUsername('');
             }
         }
 
@@ -217,6 +230,46 @@ class UserController extends AbstractController
             'invitationUser' => $invitation->getUser(),
             'businessAccountInvitation' => $businessAccountInvitation
         ]);
+    }
+
+    /**
+     * @Route("/invitation/associate-loggedin-user-to-business-account/{code}", name="associate-loggedin-user-to-business-account")
+     */
+    public function associateLoggedinUserToBusinessAccount(
+        string $code,
+        EntityManagerInterface $objectManager,
+        UserManagerInterface $userManager,
+        TranslatorInterface $translator)
+    {
+        $user = $this->getUser();
+
+        $repository = $objectManager->getRepository(Invitation::class);
+
+        if (null === $invitation = $repository->findOneByCode($code)) {
+            throw $this->createNotFoundException();
+        }
+
+        $businessAccountInvitation = null;
+        if ($this->getParameter('business_account_enabled')) {
+            $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
+                'invitation' => $invitation,
+            ]);
+            if (null !== $businessAccountInvitation) {
+                $user->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
+            }
+        }
+
+        $userManager->updateUser($user);
+        $objectManager->flush();
+
+        $this->addFlash(
+            'notice',
+            $translator->trans('business_account.employee.associated', [
+                '%name%' => $businessAccountInvitation->getBusinessAccount()->getName()
+            ])
+        );
+
+        return $this->redirectToRoute('homepage');
     }
 
     private function loadBusinessAccountRegistrationFlow(Request $request,

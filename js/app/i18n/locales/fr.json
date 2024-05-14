@@ -381,8 +381,6 @@
         "TITLE": "Titre",
         "PRIORITY": "Priorité",
         "STATUS": "Statut",
-        "STORE": "Magasin",
-        "RESTAURANT": "Restaurant",
         "CUSTOMER": "Client",
         "REPORTED_BY": "Rapporté par",
         "ACTION": "Action",
@@ -442,6 +440,15 @@
         "PLEASE_SELECT_A_DATE": "Veuillez sélectionner une date",
         "OPEN": "Ouvert",
         "CLOSED": "Fermé",
-        "PLUS_ADD_TAGS": "+ Ajouter des tags"
+        "PLUS_ADD_TAGS": "+ Ajouter des tags",
+        "RESTAURANT": "Restaurant",
+        "STORE": "Magasin",
+        "RESTAURANTS_GROUP": "Groupe de restaurants",
+        "DELIVERY_FORM": "Formulaire de livraison",
+        "ADMIN_PLEASE_UNLINK_PACKAGE_SET_BEFORE_DELETION": "Impossible de supprimer. Veuillez désassocier cet ensemble de packages des magasins ou des formulaires de livraison auxquels il peut s'appliquer.",
+        "ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION": "Impossible de supprimer. Veuillez désassocier cette tarification des magasins, restaurants ou formulaires de livraison auxquels elle peut s'appliquer.",
+        "SHOW_DETAILS": "Afficher les détails",
+        "ADMIN_NO_APPLICATIONS": "Pas encore utilisé",
+        "ADMIN_APPLIED_TO": "Appliqué à {{count}} élément(s)"
     }
 }

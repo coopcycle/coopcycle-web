@@ -29,5 +29,7 @@
         <join-column name="variable_customer_amount_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
+    <one-to-many field="restaurants" target-entity="AppBundle\Entity\LocalBusiness" mapped-by="contract" />
+    <one-to-many field="businessRestaurantGroups" target-entity="AppBundle\Entity\BusinessRestaurantGroup" mapped-by="contract" />
   </entity>
 </doctrine-mapping>

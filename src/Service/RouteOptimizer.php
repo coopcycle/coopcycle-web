@@ -23,14 +23,11 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
  */
 class RouteOptimizer
 {
-    private $vroomClient;
-
-    public function __construct(HttpClientInterface $vroomClient, SettingsManager $settingsManager, LoggerInterface $logger)
-    {
-        $this->vroomClient = $vroomClient;
-        $this->settingsManager = $settingsManager;
-        $this->logger = $logger;
-    }
+    public function __construct(
+        private HttpClientInterface $vroomClient,
+        private SettingsManager $settingsManager,
+        private LoggerInterface $logger)
+    {}
 
     /**
      * return a list of tasks sorted into an optimal route as obtained from the vroom api

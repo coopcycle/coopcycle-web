@@ -2,9 +2,38 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Action\NotFoundAction;
+use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Action\PackageSet\Applications;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 
+
+/**
+ *
+ * @ApiResource(
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "controller"=NotFoundAction::class,
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *     },
+ *     "applications"={
+ *        "method"="GET",
+ *        "path"="/package_sets/{id}/applications",
+ *        "controller"=Applications::class,
+ *        "security"="is_granted('ROLE_ADMIN')",
+ *        "openapi_context"={
+ *          "summary"="Get the objects to which this pricing rule set is applied"
+ *        }
+ *     },
+ *   }
+ * )
+ */
 class PackageSet
 {
     use Timestampable;

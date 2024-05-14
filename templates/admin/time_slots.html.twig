@@ -15,7 +15,6 @@
 
 <table class="table">
   <thead>
-    <th>#</th>
     <th>{{ 'form.time_slot.name.label'|trans }}</th>
     <th>{{ 'form.time_slot.interval.label'|trans }}</th>
     <th>{{ 'form.time_slot.prior_notice_hours.label'|trans }}</th>
@@ -26,10 +25,7 @@
   {% for time_slot in time_slots %}
     <tr>
       <td>
-        <a href="{{ path('admin_time_slot', { id: time_slot.id }) }}">#{{ time_slot.id }}</a>
-      </td>
-      <td>
-        {{ time_slot.name }}
+        <a href="{{ path('admin_time_slot', { id: time_slot.id }) }}">{{ time_slot.name }}</a>
       </td>
       <td>
         {{ time_slot.interval }}

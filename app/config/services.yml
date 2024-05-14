@@ -723,6 +723,12 @@ services:
         - '@translator'
     tags: [ 'kernel.event_subscriber' ]
 
+  AppBundle\Api\EventSubscriber\PricingRuleSetDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\PackageSetDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
   AppBundle\Api\EventSubscriber\TaskOrganizationSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 

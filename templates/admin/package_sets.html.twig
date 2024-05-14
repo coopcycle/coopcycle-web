@@ -15,18 +15,16 @@
 
 <table class="table">
   <thead>
-    <th>#</th>
     <th>{{ 'form.package_set.name.label'|trans }}</th>
     <th>{{ 'form.package_set.packages.label'|trans }}</th>
+    <th></th>
+    {% if is_granted('ROLE_ADMIN') %}<th></th>{% endif %}
   </thead>
   <tbody>
   {% for package_set in package_sets %}
     <tr>
       <td>
-        <a href="{{ path('admin_package', { id: package_set.id }) }}">#{{ package_set.id }}</a>
-      </td>
-      <td>
-        {{ package_set.name }}
+        <a href="{{ path('admin_package', { id: package_set.id }) }}">{{ package_set.name }}</a>
       </td>
       <td>
         {% set packages = [] %}
@@ -35,9 +33,25 @@
         {% endfor %}
         {{ packages|join(', ') }}
       </td>
+      <td>
+        <div {{ react_component('PackageSetApplications', { packageSetId: package_set.id, data: relatedEntitiesByPackageSetId[package_set.id] }) }}></div>
+      </td>
+      {% if is_granted('ROLE_ADMIN') %}
+        <td>
+           <a class="text-danger">
+            <i class="fa fa-trash delete-package" data-package-name="{{ package_set.name }}" data-package-id="{{ package_set.id }}"></i>
+          </a>
+        </td>
+      {% endif %}
     </tr>
   {% endfor %}
   </tbody>
 </table>
+<div class="text-center">
+  {{ knp_pagination_render(package_sets, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
+{% endblock %}
 
+{% block scripts %}
+  {{ encore_entry_script_tags('package-sets-list') }}
 {% endblock %}

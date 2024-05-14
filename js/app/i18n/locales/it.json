@@ -289,6 +289,15 @@
           "NO_LIMIT": "Nessun limite di ordini",
           "LIMIT": "Un massimo di {{command}} ordini ogni {{time}}"
         },
-        "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Nome della regola"
+        "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Nome della regola",
+        "RESTAURANT": "Ristorante",
+        "STORE": "Negozio",
+        "RESTAURANTS_GROUP": "Gruppo di ristoranti",
+        "DELIVERY_FORM": "Modulo di consegna",
+        "ADMIN_PLEASE_UNLINK_PACKAGE_SET_BEFORE_DELETION": "Impossibile eliminare. Scollega questo insieme di pacchetti dai negozi o moduli di consegna a cui potrebbe essere applicato.",
+        "ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION": "Impossibile eliminare. Scollega questa tariffa dai negozi, ristoranti o moduli di consegna a cui potrebbe essere applicata.",
+        "SHOW_DETAILS": "Mostra dettagli",
+        "ADMIN_NO_APPLICATIONS": "Non ancora in uso",
+        "ADMIN_APPLIED_TO": "Applicato a {{count}} elemento(i)"
     }
 }

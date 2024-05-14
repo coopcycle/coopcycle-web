@@ -69,15 +69,12 @@ use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 use Typesense\Exceptions\ObjectNotFound;
 
+
 /**
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context, SnippetAcceptingContext
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $doctrine;
 
     /**
      * @var \Doctrine\Common\Persistence\ObjectManager
@@ -94,15 +91,13 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     private $classes;
 
-    private $kernel;
-
     private $restContext;
+
+    private $minkContext;
 
     private $tokens;
 
     private $oAuthTokens;
-
-    private $fixturesLoader;
 
     private $apiKeys;
 
@@ -114,44 +109,28 @@ class FeatureContext implements Context, SnippetAcceptingContext
      * context constructor through behat.yml.
      */
     public function __construct(
-        ManagerRegistry $doctrine,
-        PhoneNumberUtil $phoneNumberUtil,
-        LoaderInterface $fixturesLoader,
-        SettingsManager $settingsManager,
-        OrderTimelineCalculator $orderTimelineCalculator,
-        UserManipulator $userManipulator,
-        AuthorizationServer $authorizationServer,
-        Redis $redis,
-        IriConverterInterface $iriConverter,
-        HttpMessageFactoryInterface $httpMessageFactory,
-        Redis $tile38,
-        FakerGenerator $faker,
-        OrderProcessorInterface $orderProcessor,
-        KernelInterface $kernel,
-        UserManager $userManager,
-        CollectionManager $typesenseCollectionManager)
+        protected ManagerRegistry $doctrine,
+        protected PhoneNumberUtil $phoneNumberUtil,
+        protected LoaderInterface $fixturesLoader,
+        protected SettingsManager $settingsManager,
+        protected OrderTimelineCalculator $orderTimelineCalculator,
+        protected UserManipulator $userManipulator,
+        protected AuthorizationServer $authorizationServer,
+        protected Redis $redis,
+        protected IriConverterInterface $iriConverter,
+        protected HttpMessageFactoryInterface $httpMessageFactory,
+        protected Redis $tile38,
+        protected FakerGenerator $faker,
+        protected OrderProcessorInterface $orderProcessor,
+        protected KernelInterface $kernel,
+        protected UserManager $userManager,
+        protected CollectionManager $typesenseCollectionManager)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
         $this->apiKeys = [];
-        $this->doctrine = $doctrine;
         $this->manager = $doctrine->getManager();
         $this->schemaTool = new SchemaTool($this->manager);
-        $this->phoneNumberUtil = $phoneNumberUtil;
-        $this->fixturesLoader = $fixturesLoader;
-        $this->settingsManager = $settingsManager;
-        $this->orderTimelineCalculator = $orderTimelineCalculator;
-        $this->userManipulator = $userManipulator;
-        $this->authorizationServer = $authorizationServer;
-        $this->redis = $redis;
-        $this->iriConverter = $iriConverter;
-        $this->httpMessageFactory = $httpMessageFactory;
-        $this->tile38 = $tile38;
-        $this->faker = $faker;
-        $this->orderProcessor = $orderProcessor;
-        $this->kernel = $kernel;
-        $this->userManager = $userManager;
-        $this->typesenseCollectionManager = $typesenseCollectionManager;
     }
 
     protected function getContainer()

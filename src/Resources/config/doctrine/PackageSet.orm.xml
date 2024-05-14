@@ -13,7 +13,8 @@
     </field>
     <one-to-many field="packages" target-entity="AppBundle\Entity\Package" mapped-by="packageSet" orphan-removal="true">
       <cascade>
-        <cascade-all/>
+        <!-- a package can be not linked to a packageSet if it is linked to TaskPackage/task and we delete the PackageSet -->
+        <cascade-persist/>
       </cascade>
     </one-to-many>
   </entity>
