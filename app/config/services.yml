@@ -918,6 +918,8 @@ services:
 
   AppBundle\Security\ApiKeyManager: ~
 
+  AppBundle\Security\OrderAccessTokenManager: ~
+
   AppBundle\Mjml\MjmlServerRenderer: ~
 
   AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
