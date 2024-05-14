@@ -1036,12 +1036,10 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        // the way we get the results for applications of pricing rule set is not very efficient (3 requests per rule set), so let's not load too much of them
-        // if needed optimize (and complexifiy !) the query to get applications of the pricing rule set
         $qb = $this->getDoctrine()->getRepository(Delivery\PricingRuleSet::class)
             ->createQueryBuilder('rs')
             ->orderBy('rs.name', 'ASC')
-            ->setFirstResult(max(($request->query->getInt('p', 1) - 1), 0) * self::ITEMS_PER_PAGE / 2)
+            ->setFirstResult(max(($request->query->getInt('page', 1) - 1), 0) * self::ITEMS_PER_PAGE / 2)
             ->setMaxResults(self::ITEMS_PER_PAGE / 2);
 
         $paginatedRuleSets = $paginator->paginate(
@@ -1053,6 +1051,8 @@ class AdminController extends AbstractController
 
         $relatedEntitiesByPricingRuleSetId = [];
 
+        // the way we get the results for applications of pricing rule set is not very efficient (3 requests per rule set), so let's not load too much of them
+        // if needed optimize (and complexifiy !) the query to get applications of the pricing rule set
         array_map(
             function ($ruleSet) use (&$relatedEntitiesByPricingRuleSetId, $normalizer, $pricingRuleSetManager) {
                 $normalizedRelatedEntities = array_map(
@@ -2285,12 +2285,10 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        // the way we get the results for applications of pricing rule set is not very efficient (3 requests per rule set), so let's not load too much of them
-        // if needed optimize (and complexifiy !) the query to get applications of the pricing rule set
         $qb = $this->getDoctrine()->getRepository(PackageSet::class)
             ->createQueryBuilder('ps')
             ->orderBy('ps.name', 'ASC')
-            ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE / 2)
+            ->setFirstResult(($request->query->getInt('page', 1) - 1) * self::ITEMS_PER_PAGE / 2)
             ->setMaxResults(self::ITEMS_PER_PAGE / 2);
 
             $packageSets = $paginator->paginate(
@@ -2301,6 +2299,8 @@ class AdminController extends AbstractController
         );
 
         $relatedEntitiesByPackageSetId = [];
+        // the way we get the results for applications of package set is not very efficient (3 requests per rule set), so let's not load too much of them
+        // if needed optimize (and complexifiy !) the query to get applications of the package set
         array_map(
             function ($packageSet) use (&$relatedEntitiesByPackageSetId, $normalizer, $packageSetManager) {
                 $normalizedRelatedEntities = array_map(
