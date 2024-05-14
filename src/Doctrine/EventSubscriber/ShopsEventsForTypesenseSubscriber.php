@@ -18,22 +18,15 @@ use AppBundle\Entity\Store;
 
 class ShopsEventsForTypesenseSubscriber implements EventSubscriber
 {
-    private $typesenseClient;
     private $productsCollection;
     private $maxPosts = 250;
 
     public function __construct(
-        CollectionManager $collectionManager,
-        DocumentManager $documentManager,
-        LoggerInterface $logger,
-        TypesenseClient $typeClient
-    )
+        private CollectionManager $collectionManager,
+        private DocumentManager $documentManager,
+        private LoggerInterface $logger,
+        private TypesenseClient $typesenseClient)
     {
-        $this->logger = $logger;
-        $this->collectionManager = $collectionManager;
-        $this->documentManager = $documentManager;
-        $this->typesenseClient = $typeClient;
-
         $this->productsCollection = array_search(Product::class, $this->collectionManager->getManagedClassNames(), true);
     }
 

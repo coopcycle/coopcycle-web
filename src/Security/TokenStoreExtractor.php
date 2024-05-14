@@ -12,6 +12,10 @@ use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 
 class TokenStoreExtractor
 {
+    private $doctrine;
+    private $tokenStorage;
+    private $accessTokenManager;
+
     public function __construct(
         EntityManagerInterface $doctrine,
         TokenStorageInterface $tokenStorage,

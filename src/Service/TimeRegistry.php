@@ -15,12 +15,13 @@ class TimeRegistry
     const AVERAGE_PREPARATION_CACHE_KEY = 'avg_preparation';
     const AVERAGE_SHIPPING_CACHE_KEY = 'avg_shipping';
 
+    private $entityManager;
+
     public function __construct(
         EntityManagerInterface $entityManager,
-        CacheInterface $appCache)
+        private CacheInterface $appCache)
     {
         $this->entityManager = $entityManager;
-        $this->appCache = $appCache;
     }
 
     public function getAveragePreparationTime(): int
