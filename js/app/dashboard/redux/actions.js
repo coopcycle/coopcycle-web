@@ -6,7 +6,6 @@ import { taskComparator, withoutTasks, isInDateRange, withoutTaskListItems } fro
 import {
   selectSelectedDate,
   selectTaskLists,
-  selectAllTasks,
   createTaskListRequest,
   createTaskListSuccess,
   createTaskListFailure

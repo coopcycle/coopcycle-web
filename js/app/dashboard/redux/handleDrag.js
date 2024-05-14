@@ -80,18 +80,6 @@ export function handleDragEnd(
 
       return dispatch(modifyTaskList(tasksList.username, newTasksList))
     }
-    // ,
-    // getPositionInFlatTaskList = (nestedTaskList, destinationIndex, tourId=null) => {
-    //   if (tourId) {
-    //     return nestedTaskList.find((tourOrTask) => tourOrTask['@id'] === tourId).items[0].position + destinationIndex
-    //   } else if (destinationIndex == 0) {
-    //     return 0
-    //   } else {
-    //     let taskListItem = nestedTaskList[destinationIndex - 1],
-    //     position = taskListItem['@type'] === 'Tour' ? _.last(taskListItem.items).position : taskListItem.position
-    //     return position + 1
-    //   }
-    // }
 
     // dropped nowhere
     if (!result.destination) {
