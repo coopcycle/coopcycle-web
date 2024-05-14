@@ -292,17 +292,21 @@ export function importError(token, message) {
   return { type: IMPORT_ERROR, token, message }
 }
 
-export function modifyTaskListInUI(username, tasks) {
+/**
+ * @param {string} Username - Username of the rider to which we assign
+ * @param {Array.Objects} items - Items to be assigned, list of tasks and tours to be assigned
+ */
+export function modifyTaskList(username, items) {
   /*
     Modify a TaskList
   */
 
-  return function(dispatch, getState) {
+  return async function(dispatch, getState) {
 
-    let state = getState()
-    let allTasks = selectAllTasks(state)
+    const state = getState(),
+      allTasks = selectAllTasks(state)
 
-    const newTasks = tasks.map((task, position) => {
+    const newTasks = items.map((task, position) => {
       const rt = _.find(allTasks, t => t['@id'] === task['@id'])
 
       return {
@@ -315,24 +319,9 @@ export function modifyTaskListInUI(username, tasks) {
     const tasksList = _.find(tasksLists, tl => tl.username === username)
     const previousTasks = tasksList.items
 
-    return dispatch(modifyTaskListRequest(username, newTasks, previousTasks))
-  }}
+    dispatch(modifyTaskListRequest(username, newTasks, previousTasks))
 
-export function modifyTaskList(username, tasks) {
-  /*
-    Modify a TaskList
-  */
-
-  return async function(dispatch, getState) {
-
-    const state = getState()
-
-    dispatch(modifyTaskListInUI(username, tasks))
-
-    const data = tasks.map((task, index) => ({
-      task: task['@id'],
-      position: index,
-    }))
+    const data = items.map((item) => item['@id'])
 
     const date = selectSelectedDate(state)
 
