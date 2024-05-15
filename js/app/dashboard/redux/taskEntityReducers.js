@@ -16,7 +16,7 @@ const selectors = taskAdapter.getSelectors((state) => state)
 
 export default (state = initialState, action) => {
   switch (action.type) {
-          // TODO : make this work with tours tasks IF NECESSARY
+          // ALOIS : make this work with tours tasks IF NECESSARY
     // case MODIFY_TASK_LIST_REQUEST:
       // const toKeep = action.tasks.map((t) => ({
       //     '@id': t['@id'],
