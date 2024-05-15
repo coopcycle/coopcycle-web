@@ -33,11 +33,11 @@ final class Version20240508125856 extends AbstractMigration
         $this->addSql('ALTER TABLE task_list ADD created_at TIMESTAMP(0) WITHOUT TIME ZONE');
         $this->addSql('ALTER TABLE task_list ADD updated_at TIMESTAMP(0) WITHOUT TIME ZONE');
 
-        // TODO add unique key in orm.xml for task_id, tour_id
-        // TODO : add check for nul(task_id, tour_id) = 1
+        // ALOIS add unique key in orm.xml for task_id, tour_id
+        // ALOIS : add check for nul(task_id, tour_id) = 1
         //   alter table the_table add constraint at_least_one_not_null check (num_nonnulls(col1, col2) = 1)
 
-        // TODO distance duration polyline created_at updated_at to migrate and to set NOT NULL afterwards
+        // ALOIS distance duration polyline created_at updated_at to migrate and to set NOT NULL afterwards
     }
 
     public function down(Schema $schema): void
