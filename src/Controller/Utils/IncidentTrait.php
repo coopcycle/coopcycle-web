@@ -44,6 +44,8 @@ trait IncidentTrait {
 
         $transporterEnabled = $delivery?->getStore()?->isTransporterEnabled() ?? false;
 
+        $isLastmile = !is_null($delivery?->getStore());
+
         $order = $delivery?->getOrder();
 
         return $this->render($request->attributes->get('template'), $this->auth([
@@ -51,6 +53,7 @@ trait IncidentTrait {
             'delivery' => $delivery,
             'order' => $order,
             'transporterEnabled' => $transporterEnabled,
+            'isLastmile' => $isLastmile,
         ]));
     }
 

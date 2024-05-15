@@ -22,7 +22,7 @@ const styles = {
   },
 };
 
-export default function () {
+export default function ({isLastmile}) {
   const { loaded, incident, order, images, transporterEnabled } =
     store.getState();
 
@@ -78,7 +78,7 @@ export default function () {
           {t("APPLY_A_PRICE_DIFFERENCE")}
         </Button>
       ),
-      shouldRender: false && order && order.state !== "cancelled", //NOTE: Disabled for protect foodtech
+      shouldRender: isLastmile && order && order.state !== "cancelled",
     },
     {
       key: "transporter-report",
