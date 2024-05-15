@@ -29,28 +29,37 @@ class TaskListManager {
         foreach ($currentTasks as $task) {
             if (!array_search($task, $newTasks)) {
                 $tasksToRemove[] = $task;
+                $task->unassign();
             }
         }
 
-        // reflect unassignment on the Task objects
-        $qb = $this->entityManager->createQueryBuilder();
-        $qb->update(Task::class, 't')
-            ->set('t.assignedTo', ':assignedTo')
-            ->where('t in (:tasks)')
-            ->setParameter('assignedTo', null)
-            ->setParameter('tasks', $tasksToRemove)
-            ->getQuery()
-            ->execute();
+        foreach ($newTasks as $task) {
+            $task->assignTo(
+                $taskList->getCourier(),
+                $taskList->getDate()
+            );
+        }
 
-        // reflect assignment on the Task objects
-        $qb = $this->entityManager->createQueryBuilder();
-        $qb->update(Task::class, 't')
-            ->set('t.assignedTo', ':assignedTo')
-            ->where('t in (:tasks)')
-            ->setParameter('assignedTo', $taskList->getCourier())
-            ->setParameter('tasks', $newTasks)
-            ->getQuery()
-            ->execute();
+        // FIXME this is not reflected in $uow->getScheduledEntityUpdates() in TaskSubscriber
+        // reflect unassignment on the Task objects
+        // $qb = $this->entityManager->createQueryBuilder();
+        // $qb->update(Task::class, 't')
+        //     ->set('t.assignedTo', ':assignedTo')
+        //     ->where('t in (:tasks)')
+        //     ->setParameter('assignedTo', null)
+        //     ->setParameter('tasks', $tasksToRemove)
+        //     ->getQuery()
+        //     ->execute();
+
+        // // reflect assignment on the Task objects
+        // $qb = $this->entityManager->createQueryBuilder();
+        // $qb->update(Task::class, 't')
+        //     ->set('t.assignedTo', ':assignedTo')
+        //     ->where('t in (:tasks)')
+        //     ->setParameter('assignedTo', $taskList->getCourier())
+        //     ->setParameter('tasks', $newTasks)
+        //     ->getQuery()
+        //     ->execute();
     }
 
 }
