@@ -16,7 +16,7 @@
       <tr>
         <td><a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">{{ ruleSet.name }}</a></td>
         <td>
-          <div {{ react_component('PricingRuleSetApplications', { pricingRuleSetId: ruleSet.id, data: relatedEntitiesByPricingRuleSetId[ruleSet.id] }) }}></div>
+          <div {{ react_component('ShowApplications', { objectId: ruleSet.id, data: relatedEntitiesByPricingRuleSetId[ruleSet.id], fetchUrl: 'api_pricing_rule_sets_get_item' }) }}></div>
         </td>
         <td class="text-right">
           <div class="btn-group">

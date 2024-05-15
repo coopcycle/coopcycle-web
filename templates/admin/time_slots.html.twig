@@ -44,7 +44,7 @@
         </ul>
       </td>
       <td>
-        <div {{ react_component('ShowApplications', { timeSlot: time_slot.id, data: relatedEntitiesByTimeSlotId[time_slot.id] }) }}></div>
+        <div {{ react_component('ShowApplications', { objectId: time_slot.id, data: relatedEntitiesByTimeSlotId[time_slot.id] }) }}></div>
       </td>
       {% if is_granted('ROLE_ADMIN') %}
         <td>
