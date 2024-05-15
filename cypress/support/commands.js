@@ -38,6 +38,29 @@ Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.location('pathname').should('match', pathnameRegexp)
 })
 
+Cypress.Commands.add('addProduct', (name, detailsModalSelector, optionItemsSelectors = []) => {
+  cy.contains(name).click()
+
+  cy.get(detailsModalSelector)
+    .should('be.visible')
+
+  // Make sure to use a precise selector, because 2 products have same options
+
+  optionItemsSelectors.forEach((itemSelector) => {
+    cy.get(`${detailsModalSelector} input[value="${itemSelector}"]`)
+      .check()
+  })
+
+  optionItemsSelectors.forEach((itemSelector) => {
+    cy.get(`${detailsModalSelector} input[value="${itemSelector}"]`)
+      .should('be.checked')
+  })
+
+  cy.get(`${detailsModalSelector} button[type="submit"]`)
+    .should('not.be.disabled')
+    .click()
+})
+
 Cypress.Commands.add('login', (username, password) => {
   cy.get('[name="_username"]').type(username)
   cy.get('[name="_password"]').type(password)
