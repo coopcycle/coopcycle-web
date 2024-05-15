@@ -30,7 +30,7 @@
     "require": {
         "php": ">=8.0",
         "symfony/symfony": "^5.3",
-        "api-platform/core": "2.6.8",
+        "api-platform/core": "2.7.18",
         "doctrine/orm": "^2.7",
         "doctrine/doctrine-bundle": "^2.4",
         "symfony/monolog-bundle": "^3.5",
