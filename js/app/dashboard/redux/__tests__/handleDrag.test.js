@@ -56,6 +56,41 @@ describe('handleDragEnd', () => {
 
     })
 
+    it ('should assign a tour at the beginning of a tasklist then reorder', () => {
+      const dispatch = jest.fn(),
+        mockModifyTaskList = jest.fn(),
+        mockModifyTour = jest.fn()
+
+      let result
+
+      result = {
+        draggableId: 'tour:/api/tours/114',
+        source: {droppableId: 'unassigned_tours'}, destination: {droppableId: 'assigned:admin', index: 0},
+      }
+
+      handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
+
+      result = {
+        draggableId: 'tour:/api/tours/114',
+        source: {droppableId: 'assigned:admin'}, destination: {droppableId: 'assigned:admin', index: 1},
+      }
+
+      handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
+
+      expect(mockModifyTaskList).toHaveBeenCalledTimes(2)
+
+      expect(mockModifyTaskList).toHaveBeenLastCalledWith(
+        "admin",
+        [
+          '/api/tours/111',
+          '/api/tours/114',
+        ]
+      )
+
+      expect(mockModifyTour).toHaveBeenCalledTimes(0)
+
+    })
+
     it ('should unassign a tour', () => {
       const dispatch = jest.fn(),
         mockModifyTaskList = jest.fn(),
