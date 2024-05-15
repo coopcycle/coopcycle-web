@@ -58,9 +58,7 @@
         </td>
         {% if is_granted('ROLE_ADMIN') %}
           <td width="5%" class="text-center">
-            <a class="text-danger">
-               <i class="fa fa-trash delete-restaurant" data-restaurant-name="{{ restaurant.name }}" data-restaurant-id="{{ restaurant.id }}"></i>
-            </a>
+            <div {{ react_component('DeleteIcon', { objectId: restaurant.id, objectName: restaurant.name, deleteUrl: 'api_restaurants_delete_item'}) }}>
           </td>
         {% endif %}
       </tr>

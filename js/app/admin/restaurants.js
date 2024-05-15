@@ -24,29 +24,3 @@ if (search) {
       clearOnSelect={ true } />
   , search)
 }
-
-document.querySelectorAll('.delete-restaurant').forEach((el) => {
-    el.addEventListener('click', (e) => {
-
-    if (!window.confirm(i18n.t('CONFIRM_DELETE_WITH_PLACEHOLDER', { object_name: e.target.dataset.restaurantName }))) {
-      e.preventDefault()
-      return
-    }
-
-    const jwt = document.head.querySelector('meta[name="application-auth-jwt"]').content
-    const headers = {
-      'Authorization': `Bearer ${jwt}`,
-      'Accept': 'application/ld+json',
-      'Content-Type': 'application/ld+json'
-    }
-
-    const url = window.Routing.generate('api_restaurants_delete_item', {
-      id: e.target.dataset.restaurantId,
-    })
-
-    fetch(url, {method: "DELETE", headers: headers}).then(
-      function () { location.reload(); }
-    );
-
-  });
-})
