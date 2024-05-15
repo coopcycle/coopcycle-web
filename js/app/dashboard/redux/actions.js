@@ -1500,9 +1500,7 @@ export function createTour(tasks, name, date) {
       }
     })
       .then((response) => {
-        // flatten items to itmIds
         let tour = {...response.data}
-        tour.itemIds = tour.items.map(item => item['@id'])
 
         dispatch(updateTour(tour))
         dispatch(createTourRequestSuccess())
@@ -1555,9 +1553,6 @@ export function modifyTour(tour, tasks) {
     }
 
     let _tour = response.data
-    // TODO: do this in the backend?
-    _tour.itemIds = _tour.items.map(item => item['@id'])
-
     dispatch(updateTour(_tour))
     dispatch(modifyTourRequestSuccess(_tour, tasks))
     dispatch(toggleTourLoading(tour['@id']))
