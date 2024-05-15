@@ -3,7 +3,7 @@ import {
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
   TASK_LISTS_UPDATED,
-  UPDATE_TASK,
+  // UPDATE_TASK,
   REMOVE_TASK
 } from './actions'
 import {
@@ -70,17 +70,18 @@ export default (state = initialState, action) => {
         }
       }))
     }
-    case UPDATE_TASK: {
-      let newItems
+    // ALOIS : delete this ?
+    // case UPDATE_TASK: {
+    //   let newItems
 
-      if (action.task.isAssigned) {
-        newItems = taskListEntityUtils.addAssignedTask(selectors.selectEntities(state), action.task)
-      } else {
-        newItems = taskListEntityUtils.removeUnassignedTask(selectors.selectEntities(state), action.task)
-      }
+    //   if (action.task.isAssigned) {
+    //     newItems = taskListEntityUtils.addAssignedTask(selectors.selectEntities(state), action.task)
+    //   } else {
+    //     newItems = taskListEntityUtils.removeUnassignedTask(selectors.selectEntities(state), action.task)
+    //   }
 
-      return taskListAdapter.upsertMany(state, newItems)
-    }
+    //   return taskListAdapter.upsertMany(state, newItems)
+    // }
     case REMOVE_TASK:
       return taskListAdapter.upsertMany(state,
         taskListEntityUtils.removeUnassignedTask(selectors.selectEntities(state), action.task))
