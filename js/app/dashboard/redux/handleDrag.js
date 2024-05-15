@@ -169,7 +169,7 @@ export function handleDragEnd(
       }
     }
 
-    // reordered inside the unassigned tours list
+    // REORDERING reordered inside the unassigned tours list
     if (
       source.droppableId === destination.droppableId && source.droppableId === 'unassigned_tours'
     ) {
@@ -183,18 +183,9 @@ export function handleDragEnd(
     ) {
       dispatch(insertInUnassignedTasks({tasksToInsert: selectedTasks, index: result.destination.index}))
       return;
-    // unassigning tasks
-    } else if (!isTourDrag && destination.droppableId === 'unassigned') {
-      if (!belongsToTour(selectedTasks[0])(getState())) {
-        dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
-      } else {
-        const tourId = selectTaskIdToTourIdMap(getState()).get(selectedTasks[0]['@id'])
-        const tour = selectTourById(getState(), tourId)
-        dispatch(removeTasksFromTour(tour, selectedTasks, selectedTasks[0].assignedTo))
-      }
 
-    } else if (isTourDrag && destination.droppableId === 'unassigned_tours') {
-      // unassign the tour
+    // HANDLING TOUR DRAG
+    } else if (isTourDrag && destination.droppableId === 'unassigned_tours') { // unassign the tour
       const username = source.droppableId.replace('assigned:', '')
       const tourId = result.draggableId.replace('tour:', '')
       const tour = selectTourById(getState(), tourId)
@@ -206,6 +197,16 @@ export function handleDragEnd(
       const tourId = result.draggableId.replace('tour:', '')
       const tour = selectTourById(getState(), tourId)
       handleDropInTaskList(tasksList, [tour], index)
+    }
+    // HANDLING TASK DRAG
+    else if (!isTourDrag && destination.droppableId === 'unassigned') {
+      if (!belongsToTour(selectedTasks[0])(getState())) {
+        dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
+      } else {
+        const tourId = selectTaskIdToTourIdMap(getState()).get(selectedTasks[0]['@id'])
+        const tour = selectTourById(getState(), tourId)
+        dispatch(removeTasksFromTour(tour, selectedTasks, selectedTasks[0].assignedTo))
+      }
     } else if (!isTourDrag && destination.droppableId.startsWith('tour:')) {
       var tourId = destination.droppableId.replace('tour:', '')
       const tour = selectTourById(getState(), tourId)
