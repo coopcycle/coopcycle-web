@@ -176,7 +176,7 @@ class AdminController extends AbstractController
     public function __construct(
         OrderRepositoryInterface $orderRepository,
         TranslatorInterface $translator,
-        EntityManagerInterface $entityManager,
+        protected EntityManagerInterface $entityManager,
         PromotionCouponRepositoryInterface $promotionCouponRepository,
         FactoryInterface $promotionRuleFactory,
         FactoryInterface $promotionFactory,
@@ -192,7 +192,6 @@ class AdminController extends AbstractController
     {
         $this->orderRepository = $orderRepository;
         $this->translator = $translator;
-        $this->entityManager = $entityManager;
         $this->promotionCouponRepository = $promotionCouponRepository;
         $this->promotionRuleFactory = $promotionRuleFactory;
         $this->promotionFactory = $promotionFactory;
@@ -1007,10 +1006,10 @@ class AdminController extends AbstractController
         if ($request->isMethod('POST') && $request->request->has('delete')) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN');
             $id = $request->request->get('tag');
-            $tag = $this->getDoctrine()->getRepository(Tag::class)->find($id);
+            $tag = $this->entityManager->getRepository(Tag::class)->find($id);
             $tagManager->untagAll($tag);
-            $this->getDoctrine()->getManagerForClass(Tag::class)->remove($tag);
-            $this->getDoctrine()->getManagerForClass(Tag::class)->flush();
+            $this->entityManager->remove($tag);
+            $this->entityManager->flush();
 
             return  $this->redirectToRoute('admin_tags');
         }
@@ -1022,7 +1021,7 @@ class AdminController extends AbstractController
             }
         }
 
-        $tags = $this->getDoctrine()->getRepository(Tag::class)->findBy(array(), array('name' => 'ASC'));
+        $tags = $this->entityManager->getRepository(Tag::class)->findBy(array(), array('name' => 'ASC'));
 
         return $this->render('admin/tags.html.twig', [
             'tags' => $tags
