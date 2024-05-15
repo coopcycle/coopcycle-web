@@ -1,6 +1,5 @@
 import React from 'react'
 import { render } from 'react-dom'
-import i18n from '../i18n'
 
 import Autocomplete from '../components/Autocomplete'
 
