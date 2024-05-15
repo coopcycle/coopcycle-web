@@ -279,11 +279,8 @@ export const storeFixture = {
               username: 'admin',
               createdAt: '2024-01-08T15:01:12+01:00',
               updatedAt: '2024-01-09T11:01:58+01:00',
-              itemIds: [
-                '/api/tasks/729',
-                '/api/tasks/730',
-                '/api/tasks/731',
-                '/api/tasks/727'
+              items: [
+                '/api/tours/111'
               ]
             }
           }

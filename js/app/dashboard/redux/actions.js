@@ -322,7 +322,7 @@ export function modifyTaskList(username, items) {
     const tasksList = selectTaskListByUsername(getState(), {username: username})
     const previousItems = tasksList.items
 
-    // support passing URI directly - TODO uniformize behaviour
+    // support passing URIs directly - TODO uniformize behaviour
     const newItems = items.map((item) => item['@id'] || item)
 
     dispatch(modifyTaskListRequest(username, newItems, previousItems))
