@@ -21,7 +21,7 @@ import { initialState as settingsInitialState } from './redux/settingsReducers'
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
-import { taskListUtils, taskAdapter, taskListAdapter, tourAdapter } from '../coopcycle-frontend-js/logistics/redux'
+import { taskAdapter, taskListAdapter, tourAdapter } from '../coopcycle-frontend-js/logistics/redux'
 import _ from 'lodash'
 import axios from 'axios'
 
@@ -52,9 +52,6 @@ async function start() {
     taskLists = taskListRes.data['hydra:member']
     tours = toursRes.data['hydra:member']
   })
-
-  // normalize data, keep only task ids, instead of the whole objects
-  tours = tours.map(tour => taskListUtils.replaceTasksWithIds(tour))
 
   const preloadedPositions = JSON.parse(dashboardEl.dataset.positions)
   const positions = preloadedPositions.map(pos => ({
@@ -150,7 +147,7 @@ async function start() {
 
   // the empty tour panels are initially open
   let expandedToursIds = []
-  tours.forEach((tour) => {if (tour.itemIds.length == 0) {expandedToursIds.push(tour['@id'])}})
+  tours.forEach((tour) => {if (tour.items.length == 0) {expandedToursIds.push(tour['@id'])}})
 
   _.merge(preloadedState, {
     logistics: {

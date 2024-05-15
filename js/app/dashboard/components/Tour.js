@@ -143,10 +143,10 @@ const Tour = ({ tour, tourId, draggableIndex }) => {
                       }) }
                       style={getDroppableListStyle(snapshot.isDraggingOver)}
                       >
-                        { _.map(tour.items, (task, index) =>
+                        { _.map(tour.items, (taskId, index) =>
                           <Task
-                            key={ task['@id'] }
-                            task={ task }
+                            key={ taskId }
+                            taskId={ taskId }
                             draggableIndex={ index }
                             onRemove={ (taskToRemove) => dispatch(removeTasksFromTour(tour, taskToRemove, tourIsAssignedTo(tour)))}
                           />

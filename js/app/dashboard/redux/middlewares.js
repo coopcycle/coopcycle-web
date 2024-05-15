@@ -49,6 +49,8 @@ export const socketIO = ({ dispatch, getState }) => {
     centrifuge.subscribe(getState().config.centrifugoEventsChannel, function(message) {
       const { event } = message.data
 
+      console.debug('Received event : ' + event.name)
+
       switch (event.name) {
         case 'task:started':
         case 'task:done':

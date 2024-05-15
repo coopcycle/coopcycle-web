@@ -162,8 +162,8 @@ export function handleDragEnd(
         const tourId = result.draggableId.startsWith('tour') ? result.draggableId.replace('tour:', '') : source.droppableId.replace('tour:', '')
         const tour = selectTourById(getState(), tourId)
         selectedTasks.sort((task1, task2) => {
-          const task1Rank = tour.itemIds.findIndex(taskId => taskId === task1['@id'])
-          const task2Rank = tour.itemIds.findIndex(taskId => taskId === task2['@id'])
+          const task1Rank = tour.items.findIndex(taskId => taskId === task1['@id'])
+          const task2Rank = tour.items.findIndex(taskId => taskId === task2['@id'])
           return  task1Rank - task2Rank
         })
       }
