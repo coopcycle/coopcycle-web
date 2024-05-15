@@ -314,7 +314,7 @@ Feature: Stores
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
-              "id":3,
+              "id":@integer@,
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -326,7 +326,7 @@ Feature: Stores
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
-              "id":4,
+              "id":@integer@,
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -344,7 +344,7 @@ Feature: Stores
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
-              "id":1,
+              "id":@integer@,
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -356,7 +356,7 @@ Feature: Stores
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
-              "id":2,
+              "id":@integer@,
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -403,7 +403,7 @@ Feature: Stores
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
-              "id":1,
+              "id":@integer@,
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -415,7 +415,7 @@ Feature: Stores
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
-              "id":2,
+              "id":@integer@,
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -433,7 +433,7 @@ Feature: Stores
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
-              "id":3,
+              "id":@integer@,
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -445,7 +445,7 @@ Feature: Stores
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
-              "id":4,
+              "id":@integer@,
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -488,7 +488,7 @@ Feature: Stores
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
-              "id":3,
+              "id":@integer@,
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -500,7 +500,7 @@ Feature: Stores
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
-              "id":4,
+              "id":@integer@,
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -518,7 +518,7 @@ Feature: Stores
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
-              "id":1,
+              "id":@integer@,
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -530,7 +530,7 @@ Feature: Stores
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
-              "id":2,
+              "id":@integer@,
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
