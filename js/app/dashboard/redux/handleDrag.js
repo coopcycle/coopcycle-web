@@ -1,6 +1,6 @@
 import _ from "lodash"
 // import { isTourAssigned, makeSelectTaskListItemsByUsername, selectTasksListsWithItems, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
-import { selectTaskIdToTourIdMap, selectTaskListByUsername, selectTourById } from "../../../shared/src/logistics/redux/selectors"
+import { selectItemAssignedTo, selectTaskIdToTourIdMap, selectTaskListByUsername, selectTourById } from "../../../shared/src/logistics/redux/selectors"
 import { setIsTourDragging, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks,
   insertInUnassignedTasks,
@@ -77,10 +77,10 @@ export function handleDragEnd(
 
       newTasksListItems.splice(index, 0, ...selectedItems.map(it => it['@id']))
 
-      // TODO : should handle switching tours between riders
-      if(selectedItems[0].assignedTo && selectedItems[0].assignedTo !== tasksList.username) {
+      const previousAssignedTo = selectItemAssignedTo(getState(), selectedItems[0]['@id'])
+      if(previousAssignedTo && previousAssignedTo !== tasksList.username) {
         dispatch(setUnassignedTasksLoading(true))
-        await dispatch(unassignTasks(selectedItems[0].assignedTo, selectedTasks))
+        await dispatch(unassignTasks(previousAssignedTo, selectedItems))
         dispatch(setUnassignedTasksLoading(false))
       }
 
@@ -222,6 +222,10 @@ export function handleDragEnd(
         var sourceTourId = source.droppableId.replace('tour:', '')
         const sourceTour = selectTourById(getState(), sourceTourId)
         dispatch(removeTasksFromTour(sourceTour, selectedTasks))
+      } // moving from a tasklist "root level" to a tour -> remove from tasklist
+      else if (source.droppableId.startsWith('assigned:')) {
+        const username = source.droppableId.replace('assigned:', '')
+        dispatch(unassignTasks(username, selectedTasks))
       }
 
       newTourItems.splice(destination.index, 0, ...selectedTasks)

@@ -131,24 +131,23 @@ export const selectAllTours = createSelector(
   }
 )
 
+const selectItemId = (state, itemId) => itemId
 
-const selectTourId = (state, tourId) => tourId
-
-const selectTour = (state, tour) => tour
-
-export const selectTourById = createSelector(selectAllTours, selectTourId,
-  (tours, tourId) => tours.find(t => t['@id'] === tourId)
-)
-
-export const selectTourAssignedTo = createSelector(
+export const selectItemAssignedTo = createSelector(
   taskListSelectors.selectAll,
-  selectTour,
-  (allTaskLists, tour) => {
-    const tl = allTaskLists.find(tl => tl.items.includes(tour['@id']))
+  selectItemId,
+  (allTaskLists, itemId) => { // item can be a task or a tour (!)
+    const tl = allTaskLists.find(tl => tl.items.includes(itemId))
     if (tl) {
       return tl.username
     }
   }
+)
+
+const selectTourId = (state, tourId) => tourId
+
+export const selectTourById = createSelector(selectAllTours, selectTourId,
+  (tours, tourId) => tours.find(t => t['@id'] === tourId)
 )
 
 export const selectUnassignedTours = createSelector(

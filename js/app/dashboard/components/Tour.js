@@ -7,7 +7,7 @@ import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
 import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded } from '../redux/actions'
-import { selectTourById, selectTourAssignedTo, tourIsAssignedTo } from '../../../shared/src/logistics/redux/selectors'
+import { selectTourById, selectItemAssignedTo, tourIsAssignedTo } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
 import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds } from '../redux/selectors'
@@ -19,7 +19,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
 
   const [tourName, setTourName] = useState(tour.name)
   const [toggleInputForName, setToggleInputForName] = useState(false)
-  const tourAssignedTo = useSelector((state) => selectTourAssignedTo(state, tour))
+  const tourAssignedTo = useSelector((state) => selectItemAssignedTo(state, tour['@id']))
 
   const onEditSubmitted = async (e) => {
     e.preventDefault()
