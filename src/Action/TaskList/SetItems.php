@@ -54,6 +54,7 @@ final class SetItems
 
         // Tasks are sent as JSON payload
         $data = json_decode($request->getContent(), true);
+        $items = [];
         foreach ($data['items'] as $key => $taskOrTour) {
             $taskOrTour = $this->iriConverter->getItemFromIri($taskOrTour);
             $item = new Item();
