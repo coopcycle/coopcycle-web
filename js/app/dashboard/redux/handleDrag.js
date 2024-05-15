@@ -67,9 +67,9 @@ export function handleDragEnd(
       let newTasksListItems = [...tasksList.items]
 
       selectedItems.forEach((t) => {
-        let itemIndex = newTasksListItems.findIndex((item) => item['@id'] === t['@id'])
+        let itemIndex = newTasksListItems.findIndex((item) => item === t['@id'])
         // if the item was already in the tasklist, remove from its original place
-        if ( itemIndex > -1) {
+        if (itemIndex > -1) {
           newTasksListItems.splice(itemIndex, 1)
         }
 
@@ -183,7 +183,24 @@ export function handleDragEnd(
     ) {
       dispatch(insertInUnassignedTasks({tasksToInsert: selectedTasks, index: result.destination.index}))
       return;
+    // reordering inside a task list
+    } else if (
+      source.droppableId === destination.droppableId && source.droppableId.startsWith('assigned')
+    ) {
+      const username = destination.droppableId.replace('assigned:', '')
+      const tasksList = selectTaskListByUsername(getState(), {username})
+      const index = destination.index
+      let items
 
+      if (isTourDrag) {
+        const tourId = result.draggableId.replace('tour:', '')
+        items = [selectTourById(getState(), tourId)]
+      } else {
+        items = selectedTasks
+      }
+
+      handleDropInTaskList(tasksList, items, index)
+      return;
     // HANDLING TOUR DRAG
     } else if (isTourDrag && destination.droppableId === 'unassigned_tours') { // unassign the tour
       const username = source.droppableId.replace('assigned:', '')
