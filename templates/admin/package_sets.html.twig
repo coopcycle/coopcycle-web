@@ -38,9 +38,7 @@
       </td>
       {% if is_granted('ROLE_ADMIN') %}
         <td>
-           <a class="text-danger">
-            <i class="fa fa-trash delete-package" data-package-name="{{ package_set.name }}" data-package-id="{{ package_set.id }}"></i>
-          </a>
+          <div {{ react_component('DeleteIcon', { objectId: package_set.id, objectName: package_set.name, deleteUrl: 'api_package_sets_delete_item', errorMessage: 'ADMIN_PLEASE_UNLINK_PACKAGE_SET_BEFORE_DELETION'}) }}></div>
         </td>
       {% endif %}
     </tr>
@@ -50,8 +48,4 @@
 <div class="text-center">
   {{ knp_pagination_render(package_sets, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
 </div>
-{% endblock %}
-
-{% block scripts %}
-  {{ encore_entry_script_tags('package-sets-list') }}
 {% endblock %}
