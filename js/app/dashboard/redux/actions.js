@@ -239,7 +239,7 @@ export function assignAfter(username, task, after) {
 /**
  * Unassign tasks or tours
  * @param {string} username - Username of the rider
- * @param {Array.Object} items - Items (tasks or tours IRIs) to be unassigned
+ * @param {Array.Object} items - Items (tasks or tours) to be unassigned
  */
 export function unassignTasks(username, items) {
 
@@ -253,10 +253,7 @@ export function unassignTasks(username, items) {
       return
     }
 
-    let state = getState()
-    let taskLists = selectTaskLists(state)
-
-    const taskList = _.find(taskLists, taskList => taskList.username === username),
+    const taskList = selectTaskListByUsername(getState(), {username: username}),
       toRemove = items.map(i => i['@id'])
 
     await dispatch(modifyTaskList(username, withoutTaskListItems(taskList.items, toRemove)))
