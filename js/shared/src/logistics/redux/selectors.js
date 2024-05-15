@@ -1,4 +1,4 @@
-import _, { forEach } from 'lodash';
+import _ from 'lodash';
 import { createSelector } from 'reselect';
 import { mapToColor } from './taskUtils';
 import { assignedTasks } from './taskListUtils';
@@ -90,7 +90,7 @@ export const makeSelectTaskListItemsByUsername = () => {
             }
 
             // update tour items with the task position in the tasklist, because we will need it later...
-            // we assume that the tasks are in the order corresponding to their position in taskList.itemIds and tour.itemIds
+            // we assume that the tasks are in the order corresponding to their position in taskList.items and tour.items
             // see
             let taskIndex = taskListItems[tourIndex].items.findIndex(t => t['@id'] === task['@id'])
             taskListItems[tourIndex].items[taskIndex] = {...task, position: position}
@@ -108,26 +108,25 @@ export const makeSelectTaskListItemsByUsername = () => {
 // FIXME This is recalculated all the time we change a task
 export const selectAllTours = createSelector(
   tourSelectors.selectAll,
-  selectAllTasks,
-  (allTours, allTasks) => {
-    const toursWithItems = []
-    forEach(allTours, unassignedTour => {
-      let items = [];
-      forEach(unassignedTour.itemIds, itemId => {
-        let task = allTasks.find(task => task['@id'] == itemId)
-        if (task) {
-          items.push(task)
-        } else {
-          console.error('unable to find task for tour')
-        }
+  (allTours) => {
+    // const toursWithItems = []
+    // forEach(allTours, unassignedTour => {
+    //   let items = [];
+    //   forEach(unassignedTour.itemIds, itemId => {
+    //     let task = allTasks.find(task => task['@id'] == itemId)
+    //     if (task) {
+    //       items.push(task)
+    //     } else {
+    //       console.error('unable to find task ' + task + ' for tour ' + unassignedTour['@id'])
+    //     }
 
-      })
-      toursWithItems.push({
-        ...unassignedTour,
-        items,
-      })
-    })
-    return toursWithItems
+    //   })
+    //   toursWithItems.push({
+    //     ...unassignedTour,
+    //     items,
+    //   })
+    // })
+    return allTours
   }
 )
 
@@ -170,7 +169,7 @@ export const selectTaskIdToTourIdMap = createSelector(
   (allTours) => {
     let taskIdToTourIdMap = new Map()
     allTours.forEach((tour) => {
-      tour.itemIds.forEach(taskId => {
+      tour.items.forEach(taskId => {
         taskIdToTourIdMap.set(taskId, tour['@id'])
     })
   })
