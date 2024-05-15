@@ -13,7 +13,9 @@ trait AssignTrait
 
     protected function assign(Task $task, $payload)
     {
+        $user = $this->getUser();
         if (isset($payload['username'])) {
+
             $user = $this->userManager->findUserByUsername($payload['username']);
 
             if (!$user) {
@@ -21,26 +23,20 @@ trait AssignTrait
                 throw new ItemNotFoundException(sprintf('User "%s" does not exist',
                     $this->getUser()->getUsername()));
             }
-        } else {
-            $user = $this->getUser();
         }
 
-        if ($task->isAssigned()) {
-            if ($task->isAssignedTo($this->getUser())) {
+        if (!$this->getUser()->hasRole('ROLE_ADMIN') && $task->isAssigned()) {
 
-                return $task; // Do nothing
-            }
-
-            if (!$this->getUser()->hasRole('ROLE_ADMIN')) {
-
-                throw new BadRequestHttpException(sprintf('Task #%d is already assigned to "%s"',
-                    $task->getId(), $this->getUser()->getUsername()));
-            }
+            throw new BadRequestHttpException(sprintf('Task #%d is already assigned to "%s"',
+                $task->getId(), $task->getAssignedCourier()->getUsername()));
         }
 
-        if ($user) {
-            $task->assignTo($user);
+        if ($task->isAssignedTo($user)) {
+
+            return $task; // Do nothing
         }
+
+        $task->assignTo($user);
 
         return $task;
     }
