@@ -21,7 +21,7 @@ trait AssignTrait
             if (!$user) {
 
                 throw new ItemNotFoundException(sprintf('User "%s" does not exist',
-                    $this->getUser()->getUsername()));
+                    $user->getUsername()));
             }
         }
 
