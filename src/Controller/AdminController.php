@@ -85,6 +85,7 @@ use AppBundle\Service\PackageSetManager;
 use AppBundle\Service\PricingRuleSetManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
+use AppBundle\Service\TimeSlotManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use Carbon\Carbon;
@@ -188,6 +189,7 @@ class AdminController extends AbstractController
         protected Filesystem $incidentImagesFilesystem,
         protected PricingRuleSetManager $pricingRuleSetManager,
         protected JWTTokenManagerInterface $JWTTokenManager,
+        protected TimeSlotManager $timeSlotManager
     )
     {
         $this->orderRepository = $orderRepository;
@@ -2190,14 +2192,41 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/settings/time-slots", name="admin_time_slots")
      */
-    public function timeSlotsAction()
+    public function timeSlotsAction(Request $request, PaginatorInterface $paginator, ApplicationsNormalizer $normalizer, TimeSlotManager $timeSlotManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $timeSlots = $this->getDoctrine()->getRepository(TimeSlot::class)->findBy(array(), array('name' => 'ASC'));
-        return $this->render('admin/time_slots.html.twig', [
-            'time_slots' => $timeSlots,
-        ]);
+        $qb = $this->entityManager->getRepository(TimeSlot::class)
+            ->createQueryBuilder('rs')
+            ->orderBy('rs.name', 'ASC')
+            ->setFirstResult(max(($request->query->getInt('page', 1) - 1), 0) * self::ITEMS_PER_PAGE / 2)
+            ->setMaxResults(self::ITEMS_PER_PAGE / 2);
+
+        $paginatedTimeSlots = $paginator->paginate(
+            $qb,
+            max($request->query->getInt('page', 1), 1),
+            self::ITEMS_PER_PAGE / 2,
+            [PaginatorInterface::DISTINCT => false]
+        );
+
+        $relatedEntitiesByTimeSlotId = [];
+
+        // if needed optimize (and complexifiy !) the query to get applications of the time slot
+        array_map(
+            function ($ruleSet) use (&$relatedEntitiesByTimeSlotId, $normalizer, $timeSlotManager) {
+                $normalizedRelatedEntities = array_map(
+                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    $timeSlotManager->getTimeSlotApplications($ruleSet)
+                );
+                $relatedEntitiesByTimeSlotId[$ruleSet->getId()] = $normalizedRelatedEntities;
+            },
+            $qb->getQuery()->getResult()
+        );
+
+        return $this->render('admin/time_slots.html.twig', $this->auth([
+            'time_slots' => $paginatedTimeSlots,
+            'relatedEntitiesByTimeSlotId' => $relatedEntitiesByTimeSlotId
+        ]));
     }
 
     private function renderTimeSlotForm(Request $request, TimeSlot $timeSlot, EntityManagerInterface $objectManager)

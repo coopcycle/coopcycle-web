@@ -16,7 +16,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *   normalizationContext={"groups"={"time_slot"}},
  *   itemOperations={
- *     "get"={"method"="GET"}
+ *     "get"={"method"="GET"},
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')"
+ *     }
  *   })
  */
 class TimeSlot

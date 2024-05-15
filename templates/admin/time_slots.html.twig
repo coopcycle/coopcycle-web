@@ -43,10 +43,23 @@
           {% endfor %}
         </ul>
       </td>
+      <td>
+        <div {{ react_component('ShowApplications', { timeSlot: time_slot.id, data: relatedEntitiesByTimeSlotId[time_slot.id] }) }}></div>
+      </td>
+      {% if is_granted('ROLE_ADMIN') %}
+        <td>
+          <div {{ react_component('DeleteIcon', { objectId: time_slot.id, objectName: time_slot.name, deleteUrl: 'api_time_slots_delete_item', errorMessage: 'ADMIN_PLEASE_UNLINK_TIME_SLOT_BEFORE_DELETION'}) }}>
+          </div>
+        </td>
+      {% endif %}
     </tr>
   {% endfor %}
   </tbody>
 </table>
+
+<div class="text-center">
+  {{ knp_pagination_render(time_slots, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
 
 {% endblock %}
 
