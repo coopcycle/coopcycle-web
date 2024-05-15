@@ -1,6 +1,8 @@
 AppBundle\Entity\PackageSet:
   package_set_1:
     name: 'Standard'
+  package_set_2:
+    name: 'Standard'
 
 AppBundle\Entity\Package:
   package_small:
@@ -11,6 +13,10 @@ AppBundle\Entity\Package:
     name: 'XL'
     volumeUnits: 3.0
     packageSet: '@package_set_1'
+  package_small2:
+    name: 'SMALL'
+    volumeUnits: 1.0
+    packageSet: '@package_set_2'
 
 AppBundle\Entity\Base\GeoCoordinates:
   geo_1:
@@ -33,3 +39,11 @@ AppBundle\Entity\Store:
 AppBundle\Entity\DeliveryForm:
   form_1:
     packageSet: '@package_set_1'
+
+AppBundle\Entity\Task:
+  task_9:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('2018-12-02 14:30:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-02 15:45:00'))>
+    __calls:
+      - addPackageWithQuantity: [ "@package_small2", 4 ]
