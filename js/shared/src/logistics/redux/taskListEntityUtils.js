@@ -48,7 +48,7 @@ export function addAssignedTask(taskListsById, task) {
   if (targetTaskList) {
     taskListsToUpdate.push({
       ...targetTaskList,
-      itemIds: addTaskIdIfMissing(targetTaskList.items, task['@id'])
+      items: addTaskIdIfMissing(targetTaskList.items, task['@id'])
     })
   } else {
     let newTaskList = createTempTaskList(task.assignedTo, [task])
