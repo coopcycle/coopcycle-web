@@ -72,9 +72,8 @@ const useAssignAction = function() {
   }
 }
 
-
 function _unassign(tasksToUnassign, unassignTasks) {
-  const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo)
+  const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo) // legacy : work with tasks selected from several riders, but we limited this case with isValidTasksMultiSelect
   _.forEach(tasksByUsername, (tasks, username) => unassignTasks(username, tasks))
 }
 
