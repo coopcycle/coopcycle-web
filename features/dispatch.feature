@@ -138,7 +138,7 @@ Feature: Dispatch
         "@id":"/api/tasks/4",
         "@type":"Task",
         "id":4,
-        "type":"DROPOFF",
+        "type":"PICKUP",
         "status":"TODO",
         "address":{"@*@":"@*@"},
         "doneAfter":"@string@.isDateTime()",
@@ -147,7 +147,7 @@ Feature: Dispatch
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"sarah",
-        "previous":"/api/tasks/5",
+        "previous":null,
         "next":null,
         "group":null,
         "tags":@array@,
@@ -162,8 +162,7 @@ Feature: Dispatch
         "before":"@string@.isDateTime()",
         "orgName": @string@,
         "images": @array@,
-        "hasIncidents": @boolean@,
-        "packages": @array@
+        "hasIncidents": @boolean@
       }
       """
 
@@ -343,7 +342,6 @@ Feature: Dispatch
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the OAuth client "Acme" sends a "GET" request to "/api/task_lists?date=2018-12-01"
-    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -424,7 +422,6 @@ Feature: Dispatch
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/tasks?date=2018-12-01&organization=Acme"
-    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:

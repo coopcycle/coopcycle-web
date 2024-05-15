@@ -72,7 +72,6 @@ AppBundle\Entity\Task:
     doneAfter: <identity(new \DateTime('2018-12-02 12:00:00'))>
     doneBefore: <identity(new \DateTime('2018-12-02 12:30:00'))>
     type: PICKUP
-    next: "@task_5"
     __calls:
       - assignTo: [ "@bob", <identity(new \DateTime('2018-12-02'))> ]
   task_5:
