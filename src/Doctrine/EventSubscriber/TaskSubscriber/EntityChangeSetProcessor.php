@@ -31,7 +31,7 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
         [ $oldValue, $newValue ] = $entityChangeSet['assignedTo'];
 
-        // task is still assined
+        // task is still assigned
         if ($newValue !== null) {
 
             $wasAssigned = $oldValue !== null;
