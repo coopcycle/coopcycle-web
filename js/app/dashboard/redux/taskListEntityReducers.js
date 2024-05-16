@@ -36,39 +36,12 @@ export default (state = initialState, action) => {
       return taskListAdapter.upsertOne(state, newEntity)
 
     case MODIFY_TASK_LIST_REQUEST_SUCCESS:
-
       return taskListAdapter.upsertOne(state, action.taskList)
 
     case TASK_LISTS_UPDATED: {
-
-      const taskLists = selectors.selectEntities(state)
-
-      const matchingLists = _.filter(
-        action.taskLists,
-        updated => !!_.find(taskLists, taskList => taskList.username === updated.username && taskList.date === updated.date)
-      )
-
-      if (matchingLists.length === 0) {
-
-        return state
-      }
-
-      return taskListAdapter.upsertMany(state, _.mapValues(taskLists, current => {
-        const matchingList = _.find(matchingLists, o => o['@id'] === current['@id'])
-
-        if (!matchingList) {
-
-          return current
-        }
-
-        return {
-          ...current,
-          distance: matchingList.distance,
-          duration: matchingList.duration,
-          polyline: matchingList.polyline,
-        }
-      }))
+      return taskListAdapter.upsertOne(state, action.taskList)
     }
+
     // ALOIS : delete this ?
     // case UPDATE_TASK: {
     //   let newItems

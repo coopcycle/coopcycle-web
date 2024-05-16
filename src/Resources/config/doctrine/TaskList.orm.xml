@@ -25,7 +25,7 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
-    <one-to-many field="items" target-entity="AppBundle\Entity\TaskList\Item" mapped-by="parent" orphan-removal="true">
+    <one-to-many field="items" target-entity="AppBundle\Entity\TaskList\Item" mapped-by="parent" orphan-removal="true" fetch="EAGER">
       <cascade>
         <cascade-all/>
       </cascade>
