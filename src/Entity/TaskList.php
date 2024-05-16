@@ -164,10 +164,6 @@ class TaskList implements TaskCollectionInterface
         return $tasks;
     }
 
-    public function addItem(Item $item) {
-        $this->items->add($item);
-    }
-
     public function containsTask(Task $task)
     {
         foreach ($this->getTasks() as $t) {
@@ -187,6 +183,7 @@ class TaskList implements TaskCollectionInterface
         $item->setTask($task);
         $item->setPosition($this->items->count());
         $this->items->add($item);
+        $item->setParent($this);
     }
 
     public function removeTask(Task $task)
@@ -229,6 +226,11 @@ class TaskList implements TaskCollectionInterface
         }
 
         return $this;
+    }
+
+    public function addItem(Item $item) {
+        $this->items->add($item);
+        $item->setParent($this);
     }
 
      /**
