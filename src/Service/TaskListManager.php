@@ -6,35 +6,53 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
+use AppBundle\Entity\Tour;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 class TaskListManager {
 
     public function __construct(
         protected EntityManagerInterface $entityManager,
-        protected IriConverterInterface $iriConverterInterface
+        protected IriConverterInterface $iriConverter,
+        protected LoggerInterface $logger
     ) {}
 
-    public function assign(TaskList $taskList, $newItems) {
+    public function assign(TaskList $taskList, $newItemsIris) {
 
-        $currentItems = $taskList->getItems();
+        $currentItems =  array_merge(array(), $taskList->getItems()->toArray());
 
-        // items that were removed will be removed thanks to orphan removal
+        // items that were removed in $newItems will be removed thanks to orphan removal
         $taskList->clear();
 
-        foreach($newItems as $position => $newItem) {
+        foreach($newItemsIris as $position => $newItemIri) {
+            $this->logger->info('match new item IRI ' .$newItemIri);
+
             $existingItem = array_filter(
-                $currentItems->toArray(),
-                function (Item $item) use ($newItem) {
-                    return $item->getItemIri($this->iriConverterInterface) === $newItem->getItemIri($this->iriConverterInterface);}
+                $currentItems,
+                function (Item $item) use ($newItemIri) {
+                    $this->logger->info('try match with item IRI ' .$newItemIri);
+                    return $item->getItemIri($this->iriConverter) === $newItemIri;}
             );
-            if (count($existingItem)) {
-                $existingItem = $existingItem[0];
+            // update position
+            if (count($existingItem) > 0) {
+                $this->logger->info('found match for ' .$newItemIri);
+                $existingItem = array_shift($existingItem);
                 $existingItem->setPosition($position);
                 $taskList->addItem($existingItem);
-            } else { // items that were added to the tasklist
-                $taskList->addItem($newItem);
+            // items that were added to the tasklist
+            } else {
+                $this->logger->info('not found match for ' .$newItemIri);
+                $taskOrTour = $this->iriConverter->getItemFromIri($newItemIri);
+                $item = new Item();
+                $item->setPosition($position);
+                if ($taskOrTour instanceof Tour) {
+                    $item->setTour($taskOrTour);
+                } else {
+                    $item->setTask($taskOrTour);
+                }
+                $taskList->addItem($item);
             }
         }
 
@@ -49,14 +67,6 @@ class TaskListManager {
             }
         }
 
-        // foreach ($newTasks as $task) {
-        //     $task->assignTo(
-        //         $taskList->getCourier(),
-        //         $taskList->getDate()
-        //     );
-        // }
-
-        // FIXME this is not reflected in $uow->getScheduledEntityUpdates() in TaskSubscriber
         // reflect unassignment on the Task objects
         $qb = $this->entityManager->createQueryBuilder();
         $qb->update(Task::class, 't')
