@@ -242,7 +242,8 @@ export function assignAfter(username, task, after) {
  * @param {Array.Object} items - Items (tasks or tours) to be unassigned
  */
 export function unassignTasks(username, items) {
-
+  console.log(username)
+  console.log(items)
   if (!Array.isArray(items)) {
     items = [ items ]
   }
@@ -361,8 +362,8 @@ export function togglePolyline(username) {
   return { type: TOGGLE_POLYLINE, username }
 }
 
-export function taskListsUpdated(taskLists) {
-  return { type: TASK_LISTS_UPDATED, taskLists }
+export function taskListsUpdated(taskList) {
+  return { type: TASK_LISTS_UPDATED, taskList }
 }
 
 export function toggleTask(task, multiple = false) {

@@ -20,8 +20,7 @@ class PublishLiveUpdate
         if ($event instanceof TaskListUpdated) {
             $user = $event->getTaskList()->getCourier();
             $this->liveUpdates->toUsers([ $user ], $event);
-        } else {
-            $this->liveUpdates->toAdmins($event);
         }
+        $this->liveUpdates->toAdmins($event);
     }
 }
