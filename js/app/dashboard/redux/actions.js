@@ -2,7 +2,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import moment from 'moment'
 
-import { taskComparator, withoutTasks, isInDateRange, withoutTaskListItems } from './utils'
+import { taskComparator, isInDateRange, withoutItemsIRIs } from './utils'
 import {
   selectSelectedDate,
   selectTaskLists,
@@ -256,7 +256,7 @@ export function unassignTasks(username, items) {
     const taskList = selectTaskListByUsername(getState(), {username: username}),
       toRemove = items.map(i => i['@id'])
 
-    await dispatch(modifyTaskList(username, withoutTaskListItems(taskList.items, toRemove)))
+    await dispatch(modifyTaskList(username, withoutItemsIRIs(taskList.items, toRemove)))
   }
 }
 
@@ -1454,8 +1454,12 @@ export function createTourRequestSuccess() {
   return { type: CREATE_TOUR_REQUEST_SUCCESS }
 }
 
-export function modifyTourRequest(tour, tasks) {
-  return { type: MODIFY_TOUR_REQUEST, tour, tasks }
+/**
+ * @param {Object} tour - tour that will be modified
+ * @param {Array.string} items - list of tasks IRIs
+ */
+export function modifyTourRequest(tour, items) {
+  return { type: MODIFY_TOUR_REQUEST, tour, items }
 }
 
 export function modifyTourRequestSuccess(tour, tasks) {
@@ -1522,11 +1526,18 @@ export function updateTourInUI(tour, tasks) {
   }
 }
 
+/**
+ * @param {Object} tour - tour that will be modified
+ * @param {Array.string} tasks - list of tasks IRIs
+ */
 export function modifyTour(tour, tasks) {
 
   return async function(dispatch, getState) {
 
     const { jwt } = getState()
+
+    console.log(tasks)
+    tasks = _.map(tasks, t => t['@id'] || t)
 
     dispatch(updateTourInUI(tour, tasks))
 
@@ -1538,7 +1549,7 @@ export function modifyTour(tour, tasks) {
         url: tour['@id'],
         data: {
           name: tour.name,
-          tasks: _.map(tasks, t => t['@id'])
+          tasks: tasks
         },
         headers: {
           'Authorization': `Bearer ${jwt}`,
@@ -1553,7 +1564,6 @@ export function modifyTour(tour, tasks) {
     }
 
     let _tour = response.data
-    dispatch(updateTour(_tour))
     dispatch(modifyTourRequestSuccess(_tour, tasks))
     dispatch(toggleTourLoading(tour['@id']))
 
@@ -1593,20 +1603,18 @@ export function deleteTour(tour) {
   }
 }
 
-export function removeTasksFromTour(tour, tasks, username, unassignTasksAction=unassignTasks, modifyTourAction=modifyTour) {
+/**
+ * @param {Object} tour - tour that will be modified
+ * @param {Array.Object} tasks - list of tasks objects
+ */
+export function removeTasksFromTour(tour, tasks, modifyTourAction=modifyTour) {
 
   if (!Array.isArray(tasks)) {
     tasks = [ tasks ]
   }
 
   return function(dispatch) {
-    let newTourItems = withoutTasks(tour.items, tasks)
-
-    // TODO : no need to unassign tasks anymore
-    if (username) {
-      dispatch(unassignTasksAction(username, tasks))
-    }
-
+    let newTourItems = withoutItemsIRIs(tour.items, tasks.map(t => t['@id']))
     dispatch(modifyTourAction(tour, newTourItems))
   }
 }
