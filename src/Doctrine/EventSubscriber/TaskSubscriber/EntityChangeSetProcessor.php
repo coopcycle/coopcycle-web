@@ -25,6 +25,8 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
     public function process(Task $task, array $entityChangeSet)
     {
+        $this->logger->debug(sprintf('Began processing Task#%d', $task->getId()));
+
         if (!isset($entityChangeSet['assignedTo'])) {
             return;
         }
@@ -53,12 +55,12 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                 // the app's endpoint call AssignTrait->assign which set assignment on the task but not on the tasklist, so set it here
                 // FIXME : the smartphone app should create/set the taskslit to avoid the check here
                 if (!$taskList->containsTask($task)) {
-                    $this->logger->debug(sprintf('Adding #%d task to TaskList', $task->getId()));
+                    $this->logger->debug(sprintf('Adding Task#%d to TaskList', $task->getId()));
                     $taskList->addTask($task);
                 }
 
                 if ($wasAssigned && !$wasAssignedToSameUser) {
-                    $this->logger->debug(sprintf('Removing task #%d from previous TaskList', $task->getId()));
+                    $this->logger->debug(sprintf('Removing Task#%d from previous TaskList', $task->getId()));
 
                     $oldTaskList = $this->taskListProvider->getTaskList($task, $oldValue);
                     $oldTaskList->removeTask($task, false);
@@ -77,9 +79,10 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                 }
 
                 if (!$exists) {
+                    $this->logger->debug(sprintf('Task#%d has been assigned, emit new event', $task->getId()));
                     $this->record($event);
                 } else {
-                    $this->logger->debug(sprintf('Assign event for task #%d already existed', $task->getId()));
+                    $this->logger->debug(sprintf('Assign event for Task#%d already existed', $task->getId()));
                 }
             }
 
@@ -104,10 +107,10 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                 if (!$exists) {
                     $task->unassign();
                     $taskList->removeTask($task);
-                    $this->logger->debug(sprintf('Recording event for task #%d', $task->getId()));
+                    $this->logger->debug(sprintf('Recording event for Task#%d', $task->getId()));
                     $this->record($event);
                 } else {
-                    $this->logger->debug(sprintf('Unassign event for task #%d already existed', $task->getId()));
+                    $this->logger->debug(sprintf('Unassign event for Task#%d already existed', $task->getId()));
                 }
             }
         }
