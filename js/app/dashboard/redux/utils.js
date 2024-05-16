@@ -19,7 +19,7 @@ export function withoutTasks(state, tasks) {
  * @param {Array.string} currentItems - Current list of items (tasks or tours IRIs)
  * @param {Array.string} toRemoveItems - Items to be removed (tasks or tours IRIs)
  */
-export function withoutTaskListItems(currentItems, toRemoveItems) {
+export function withoutItemsIRIs(currentItems, toRemoveItems) {
 
   return _.differenceWith(
     currentItems,

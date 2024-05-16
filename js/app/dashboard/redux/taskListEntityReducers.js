@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import {
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
