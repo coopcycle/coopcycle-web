@@ -48,27 +48,12 @@ final class SetItems
 
         $taskList = $this->getTaskList($date, $user);
 
-        if (null === $taskList->getId()) {
-            $this->objectManager->persist($taskList);
-        }
-
         // Tasks are sent as JSON payload
         $data = json_decode($request->getContent(), true);
-        $items = [];
-        foreach ($data['items'] as $position => $taskOrTour) {
-            $taskOrTour = $this->iriConverter->getItemFromIri($taskOrTour);
-            $item = new Item();
-            $item->setPosition($position);
-            if ($taskOrTour instanceof Tour) {
-                $item->setTour($taskOrTour);
-            } else {
-                $item->setTask($taskOrTour);
-            }
-            $items[] = $item;
-        }
 
-        $this->taskListManager->assign($taskList, $items);
+        $this->taskListManager->assign($taskList, $data['items']);
 
+        $this->objectManager->persist($taskList);
         $this->objectManager->flush();
 
         return new JsonResponse($this->taskListNormalizer->normalize($taskList, 'jsonld', [
