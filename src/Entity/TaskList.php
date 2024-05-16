@@ -255,7 +255,7 @@ class TaskList implements TaskCollectionInterface
      *
      * @return  self
      */
-    public function setTempLegacyTaskStorage($allTasks)
+    public function setTempLegacyTaskStorage($tempLegacyTaskStorage)
     {
         $this->tempLegacyTaskStorage = $tempLegacyTaskStorage;
 
