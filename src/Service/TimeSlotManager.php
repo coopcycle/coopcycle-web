@@ -31,7 +31,12 @@ class TimeSlotManager
      * @return Store[]
      */
     public function getStores(TimeSlot $timeSlot) {
-        return $this->entityManager->getRepository(Store::class)->findBy(['timeSlot' => $timeSlot]);
+        return $this->entityManager
+            ->getRepository(Store::class)
+            ->createQueryBuilder('s')
+            ->innerJoin('s.timeSlots', 'ts', 'WITH', 'ts = :timeslot')
+            ->setParameter('timeslot', $timeSlot)
+            ->getQuery()->getResult();
     }
 
     /**
