@@ -105,32 +105,13 @@ export const makeSelectTaskListItemsByUsername = () => {
   )
 }
 
-// FIXME This is recalculated all the time we change a task
 export const selectAllTours = createSelector(
   tourSelectors.selectAll,
-  (allTours) => {
-    // const toursWithItems = []
-    // forEach(allTours, unassignedTour => {
-    //   let items = [];
-    //   forEach(unassignedTour.itemIds, itemId => {
-    //     let task = allTasks.find(task => task['@id'] == itemId)
-    //     if (task) {
-    //       items.push(task)
-    //     } else {
-    //       console.error('unable to find task ' + task + ' for tour ' + unassignedTour['@id'])
-    //     }
-
-    //   })
-    //   toursWithItems.push({
-    //     ...unassignedTour,
-    //     items,
-    //   })
-    // })
-    return allTours
-  }
+  (allTours) => allTours
 )
 
 const selectItemId = (state, itemId) => itemId
+
 
 export const selectItemAssignedTo = createSelector(
   taskListSelectors.selectAll,

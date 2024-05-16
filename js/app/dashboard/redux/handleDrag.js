@@ -1,5 +1,4 @@
 import _ from "lodash"
-// import { isTourAssigned, makeSelectTaskListItemsByUsername, selectTasksListsWithItems, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
 import { selectItemAssignedTo, selectTaskIdToTourIdMap, selectTaskListByUsername, selectTourById } from "../../../shared/src/logistics/redux/selectors"
 import { setIsTourDragging, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks,
@@ -218,11 +217,11 @@ export function handleDragEnd(
     // HANDLING TASK DRAG
     else if (!isTourDrag && destination.droppableId === 'unassigned') {
       if (!belongsToTour(selectedTasks[0])(getState())) {
-        dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
+        dispatch(unassignTasks(selectItemAssignedTo(getState(), selectedTasks[0]['@id']), selectedTasks))
       } else {
         const tourId = selectTaskIdToTourIdMap(getState()).get(selectedTasks[0]['@id'])
         const tour = selectTourById(getState(), tourId)
-        dispatch(removeTasksFromTour(tour, selectedTasks, selectedTasks[0].assignedTo))
+        dispatch(removeTasksFromTour(tour, selectedTasks))
       }
     } else if (!isTourDrag && destination.droppableId.startsWith('tour:')) {
       var tourId = destination.droppableId.replace('tour:', '')
