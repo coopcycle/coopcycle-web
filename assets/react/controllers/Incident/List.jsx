@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Table, Tag, Avatar, Row, Col, Badge, Switch } from "antd";
+import { Table, Tag, Avatar, Row, Col, Badge } from "antd";
 import IncidentItem from "./IncidentItem";
 import _ from "lodash";
 import "antd/lib/pagination/style/index.css";
