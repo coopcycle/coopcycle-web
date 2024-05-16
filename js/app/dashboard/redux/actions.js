@@ -5,12 +5,11 @@ import moment from 'moment'
 import { taskComparator, isInDateRange, withoutItemsIRIs } from './utils'
 import {
   selectSelectedDate,
-  selectTaskLists,
   createTaskListRequest,
   createTaskListSuccess,
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
-import { selectNextWorkingDay, selectSelectedTasks } from './selectors'
+import { selectNextWorkingDay, selectSelectedTasks, selectTaskLists } from './selectors'
 import { createAction } from '@reduxjs/toolkit'
 import { selectTaskById, selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
 
@@ -242,8 +241,7 @@ export function assignAfter(username, task, after) {
  * @param {Array.Object} items - Items (tasks or tours) to be unassigned
  */
 export function unassignTasks(username, items) {
-  console.log(username)
-  console.log(items)
+
   if (!Array.isArray(items)) {
     items = [ items ]
   }
@@ -437,7 +435,7 @@ function moveTo(task, direction) {
 
     if (taskList) {
       const taskId = task['@id'],
-        newItems = taskList.items.filter(item => item !== taskId)
+        newItems = taskList.items.filter(t => t !== taskId)
       switch (direction) {
         case 'top':
           newItems.unshift(taskId)
@@ -1537,7 +1535,6 @@ export function modifyTour(tour, tasks) {
 
     const { jwt } = getState()
 
-    console.log(tasks)
     tasks = _.map(tasks, t => t['@id'] || t)
 
     dispatch(updateTourInUI(tour, tasks))
