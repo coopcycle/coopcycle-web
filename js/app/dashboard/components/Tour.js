@@ -66,7 +66,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
           </a>
           { tourAssignedTo ?
             <a
-              onClick={() => dispatch(unassignTasks(tourAssignedTo, [tour['@id']]))}
+              onClick={() => dispatch(unassignTasks(tourAssignedTo, [tour]))}
               title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
               className="text-reset mr-2"
             >
@@ -148,7 +148,7 @@ const Tour = ({ tour, tourId, draggableIndex }) => {
                             key={ taskId }
                             taskId={ taskId }
                             draggableIndex={ index }
-                            onRemove={ (taskToRemove) => dispatch(removeTasksFromTour(tour, taskToRemove, tourIsAssignedTo(tour)))}
+                            onRemove={ (taskToRemove) => dispatch(removeTasksFromTour(tour, taskToRemove))}
                           />
                         )}
                         { provided.placeholder }

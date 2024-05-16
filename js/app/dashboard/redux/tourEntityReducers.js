@@ -10,17 +10,14 @@ const initialState = tourAdapter.getInitialState()
 
 export default (state = initialState, action) => {
 
-
   switch (action.type) {
     case UPDATE_TOUR:
       return tourAdapter.upsertOne(state, action.tour)
-
     case MODIFY_TOUR_REQUEST:
-      const _tour = {...action.tour, items: action.tasks.map(t => t['@id'])}
+      const _tour = {...action.tour, items: action.items}
       return tourAdapter.upsertOne(state, _tour)
     case MODIFY_TOUR_REQUEST_ERROR:
       return tourAdapter.upsertOne(state, action.tour)
-
     case DELETE_TOUR_SUCCESS:
       return tourAdapter.removeOne(state, action.tour)
 
