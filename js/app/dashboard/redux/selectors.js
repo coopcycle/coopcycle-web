@@ -140,6 +140,7 @@ export const selectStandaloneTasks = createSelector(
         if (moment(a.before).isSame(b.before) && a.type === 'PICKUP') {
           return -1
         } else {
+          // put on top of the list the tasks that have an end of delivery window that finishes sooner
           return moment(a.before).isBefore(b.before) ? -1 : 1
         }
       })
