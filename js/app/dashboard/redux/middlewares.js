@@ -71,9 +71,8 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task_import:failure':
           dispatch(importError(event.data.token, event.data.message))
           break
-        // ALOIS : check if it is working
-        case 'task_collections:updated':
-          dispatch(taskListsUpdated(event.data.task_collections))
+        case 'task_list:updated':
+          dispatch(taskListsUpdated(event.data.task_list))
           break
       }
     })
