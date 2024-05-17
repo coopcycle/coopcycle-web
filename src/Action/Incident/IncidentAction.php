@@ -153,7 +153,8 @@ class IncidentAction
             throw new \InvalidArgumentException("There is no store linked to this task");
         }
 
-        if (!$store->isDBSchenkerEnabled()) {
+        //TODO(multitrans): Add support for multi transporters
+        if (!$store->isTransporterEnabled()) {
             throw new \InvalidArgumentException("Transporter report cannot be created for store without DBSchenker");
         }
 

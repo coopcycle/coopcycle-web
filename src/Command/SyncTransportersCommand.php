@@ -47,8 +47,8 @@ class SyncTransportersCommand extends Command {
     private Store $store;
     private GeoCoordinates $defaultCoordinates;
 
-    private string $companyLegalName;
-    private string $companyLegalID;
+    private ?string $companyLegalName;
+    private ?string $companyLegalID;
 
     private bool $dryRun;
     private OutputInterface $output;
