@@ -43,6 +43,7 @@ const typeToOperators = {
 }
 
 const isK = type => type === 'distance' || type === 'weight'
+const isDecimals = type => isK(type) || ["time_range_length(pickup, 'hours')", "time_range_length(dropoff, 'hours')"].includes(type)
 
 const formatValue = (value, type) => {
   if (!_.includes(numericTypes, type)) {
@@ -145,10 +146,10 @@ class RulePickerLine extends React.Component {
     this.props.onDelete(this.props.index)
   }
 
-  renderNumberInput(k = false) {
+  renderNumberInput(k = false, decimals = false) {
 
     let props = {}
-    if (k) {
+    if (decimals) {
       props = {
         ...props,
         step: '.1'
@@ -216,7 +217,7 @@ class RulePickerLine extends React.Component {
         return this.renderBooleanInput()
       }
 
-      return this.renderNumberInput(isK(this.state.type))
+      return this.renderNumberInput(isK(this.state.type), isDecimals(this.state.type))
     // weight, distance, diff_days(pickup)
     case 'in':
       return (
@@ -231,7 +232,7 @@ class RulePickerLine extends React.Component {
       )
     case '<':
     case '>':
-      return this.renderNumberInput(isK(this.state.type))
+      return this.renderNumberInput(isK(this.state.type), isDecimals(this.state.type))
     case 'containsAtLeastOne':
       return (
         <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
