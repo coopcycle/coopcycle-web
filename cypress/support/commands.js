@@ -38,11 +38,16 @@ Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.location('pathname').should('match', pathnameRegexp)
 })
 
-Cypress.Commands.add('addProduct', (name, detailsModalSelector, optionItemsSelectors = []) => {
+Cypress.Commands.add('addProduct', (name, detailsModalSelector, quantity = undefined, optionItemsSelectors = []) => {
   cy.contains(name).click()
 
   cy.get(detailsModalSelector)
     .should('be.visible')
+
+  if (quantity) {
+    cy.get(`${detailsModalSelector} .quantity-input-group input[type="number"]`)
+      .type('{backspace}' + quantity)
+  }
 
   // Make sure to use a precise selector, because 2 products have same options
 
