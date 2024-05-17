@@ -36,7 +36,7 @@ class httpClient {
           if (depth < 3) {
             await this._refreshToken();
             return await this.request(
-              { method, url, data, headers },
+              { method, url, data, params, headers },
               depth + 1,
             );
           }

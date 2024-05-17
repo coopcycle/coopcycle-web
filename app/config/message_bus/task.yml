@@ -75,6 +75,7 @@ services:
   coopcycle.domain.task.handler.reschedule:
     class: AppBundle\Domain\Task\Handler\RescheduleHandler
     arguments:
+      - '@doctrine.orm.default_entity_manager'
       - '@event_recorder'
     tags:
       - name: command_handler

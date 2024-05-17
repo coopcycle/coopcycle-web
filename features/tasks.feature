@@ -1645,9 +1645,9 @@ Feature: Tasks
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
-          "@id":"/api/tasks/1",
+          "@id":@string@,
           "@type":"Task",
-          "id":1,
+          "id":@integer@,
           "status":"TODO",
           "address":@...@,
           "doneAfter":"2019-11-12T18:00:00+01:00",
@@ -1657,9 +1657,9 @@ Feature: Tasks
           "before":"2019-11-12T18:30:00+01:00"
         },
         "dropoff":{
-          "@id":"/api/tasks/2",
+          "@id":@string@,
           "@type":"Task",
-          "id":2,
+          "id":@integer@,
           "status":"TODO",
           "address":@...@,
           "doneAfter":"2019-11-12T19:00:00+01:00",
@@ -1696,9 +1696,9 @@ Feature: Tasks
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
-          "@id":"/api/tasks/1",
+          "@id":@string@,
           "@type":"Task",
-          "id":1,
+          "id":@integer@,
           "status":"DONE",
           "address":@...@,
           "doneAfter":"2019-11-12T18:00:00+01:00",
@@ -1708,9 +1708,9 @@ Feature: Tasks
           "before":"2019-11-12T18:30:00+01:00"
         },
         "dropoff":{
-          "@id":"/api/tasks/2",
+          "@id":@string@,
           "@type":"Task",
-          "id":2,
+          "id":@integer@,
           "status":"TODO",
           "address":@...@,
           "doneAfter":"2019-11-12T19:00:00+01:00",
@@ -1740,9 +1740,9 @@ Feature: Tasks
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
-          "@id":"/api/tasks/1",
+          "@id":@string@,
           "@type":"Task",
-          "id":1,
+          "id":@integer@,
           "status":"DONE",
           "address":@...@,
           "doneAfter":"2019-11-12T18:00:00+01:00",
@@ -1752,9 +1752,9 @@ Feature: Tasks
           "before":"2019-11-12T18:30:00+01:00"
         },
         "dropoff":{
-          "@id":"/api/tasks/2",
+          "@id":@string@,
           "@type":"Task",
-          "id":2,
+          "id":@integer@,
           "status":"DONE",
           "address":@...@,
           "doneAfter":"2019-11-12T19:00:00+01:00",

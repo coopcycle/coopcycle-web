@@ -140,17 +140,29 @@ Feature: Dispatch
         "id":4,
         "type":"PICKUP",
         "status":"TODO",
-        "address":@...@,
+        "address":{"@*@":"@*@"},
         "doneAfter":"@string@.isDateTime()",
         "doneBefore":"@string@.isDateTime()",
-        "comments":null,
+        "comments":"",
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"sarah",
         "previous":null,
         "next":null,
         "group":null,
-        "tags":@array@
+        "tags":@array@,
+        "createdAt":"@string@.isDateTime()",
+        "doorstep": @boolean@,
+        "ref": null,
+        "recurrenceRule": null,
+        "metadata": @array@,
+        "weight": null,
+        "incidents": @array@,
+        "after":"@string@.isDateTime()",
+        "before":"@string@.isDateTime()",
+        "orgName": @string@,
+        "images": @array@,
+        "hasIncidents": @boolean@
       }
       """
 
@@ -209,7 +221,7 @@ Feature: Dispatch
         "@context":"/api/contexts/Error",
         "@type":"hydra:Error",
         "hydra:title":"An error occurred",
-        "hydra:description":"Task #4 is already assigned to \u0022sarah\u0022",
+        "hydra:description":"Task #4 is already assigned to \u0022bob\u0022",
         "trace":@array@
       }
       """
@@ -330,7 +342,6 @@ Feature: Dispatch
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the OAuth client "Acme" sends a "GET" request to "/api/task_lists?date=2018-12-01"
-    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -411,7 +422,6 @@ Feature: Dispatch
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/tasks?date=2018-12-01&organization=Acme"
-    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -600,7 +610,7 @@ Feature: Dispatch
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "sarah" sends a "PUT" request to "/api/tours/5" with body:
+    And the user "sarah" sends a "PUT" request to "/api/tours/1" with body:
       """
       {
         "name":"Monday tour",
@@ -617,7 +627,7 @@ Feature: Dispatch
       """
       {
          "@context":"/api/contexts/Tour",
-         "@id":"/api/tours/5",
+         "@id":"/api/tours/1",
          "@type":"Tour",
          "name":"Monday tour",
          "date": "2018-03-02",

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Table, Tag, Avatar, Row, Col, Badge, Switch } from "antd";
+import { Table, Tag, Avatar, Row, Col, Badge } from "antd";
 import IncidentItem from "./IncidentItem";
 import _ from "lodash";
 import "antd/lib/pagination/style/index.css";
@@ -67,7 +67,6 @@ function _storeFilter(value, record) {
 export default function () {
   const { t } = useTranslation();
   const [incidents, setIncidents] = useState(null);
-  const [showClosed, setShowClosed] = useState(false);
 
   const users = useMemo(() => {
     return _(incidents)
@@ -105,15 +104,6 @@ export default function () {
       }))
       .value();
   }, [incidents]);
-
-  const showedIncidents = useMemo(() => {
-    if (showClosed) {
-      return incidents;
-    }
-    return _(incidents)
-      .filter((i) => i.status !== "CLOSED")
-      .value();
-  }, [incidents, showClosed]);
 
   useEffect(() => {
     async function _fetch() {
@@ -210,27 +200,21 @@ export default function () {
     },
   ];
   return (
-    <>
-      <p>
-        <Switch className="mr-2" onChange={setShowClosed} />
-        {t("SHOW_CLOSED_INCIDENTS")}
-      </p>
-      <Table
-        columns={columns}
-        loading={!incidents}
-        dataSource={showedIncidents}
-        expandedRowRender={(record) => (
-          <Row gutter={[16, 16]}>
-            <Col span={18}>
-              <p>{record.description}</p>
-            </Col>
-            <Col span={6}>
-              <IncidentItem task={record.task} />
-            </Col>
-          </Row>
-        )}
-        rowKey="id"
-      />
-    </>
+    <Table
+      columns={columns}
+      loading={!incidents}
+      dataSource={incidents}
+      expandedRowRender={(record) => (
+        <Row gutter={[16, 16]}>
+          <Col span={18}>
+            <p>{record.description}</p>
+          </Col>
+          <Col span={6}>
+            <IncidentItem task={record.task} />
+          </Col>
+        </Row>
+      )}
+      rowKey="id"
+    />
   );
 }

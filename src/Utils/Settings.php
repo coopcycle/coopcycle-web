@@ -56,6 +56,12 @@ class Settings
 
     public $sms_enabled;
 
+    /**
+     * @Assert\Expression(
+     *   "!this.sms_enabled or value in ['mailjet', 'twilio']",
+     *   message="This value should not be blank."
+     * )
+     */
     public $sms_gateway;
 
     public $sms_gateway_config;

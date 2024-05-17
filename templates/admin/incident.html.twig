@@ -51,7 +51,7 @@
   <div class="col-md-3">
     <div {{ react_component('Incident/OrderDetails', { delivery: delivery|serialize }) }}></div>
     <hr>
-    <div {{ react_component('Incident/ActionBox') }}></div>
+    <div {{ react_component('Incident/ActionBox', { isLastmile: isLastmile }) }}></div>
     <hr>
     <div {{react_component('Incident/TaskTimeline', {events: incident.getTask().getEvents()|serialize}) }}></div>
   </div>

@@ -124,7 +124,7 @@ jobs:
       - name: Setup CoopCycle
         run: docker-compose exec -T php bin/console coopcycle:setup --env=test
       - name: Compile assets
-        run: until docker-compose exec -T webpack node_modules/.bin/encore dev; do sleep 5; done
+        run: docker-compose exec -T webpack node_modules/.bin/encore dev
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:

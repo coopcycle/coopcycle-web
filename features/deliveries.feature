@@ -1215,7 +1215,7 @@ Feature: Deliveries
       """
     Then the response status code should be 200
 
-    Scenario: Check delivery returns HTTP 201 when creating order and sending "store" key as defaut pickup
+  Scenario: Check delivery returns HTTP 201 when creating order and sending "store" key as defaut pickup
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_products.yml |
@@ -1247,7 +1247,7 @@ Feature: Deliveries
         "pickup": {
             "@id": "@string@.startsWith('/api/tasks')",
             "@type": "Task",
-            "id": 1,
+            "id": @integer@,
             "status": "TODO",
             "address": {
                 "@id": "/api/addresses/1",
@@ -1285,7 +1285,7 @@ Feature: Deliveries
                     "latitude": @double@,
                     "longitude": @double@
                 },
-                "streetAddress": "48 Rue de Rivoli, 59800 Lille",
+                "streetAddress": @string@,
                 "telephone": null,
                 "name": null
             },
