@@ -26,9 +26,9 @@
 
 Cypress.Commands.add('symfonyConsole', (command) => {
   const prefix = Cypress.env('COMMAND_PREFIX')
-  let cmd = `bin/console ${command} --env="test"`
+  let cmd = `bin/console ${ command } --env="test"`
   if (prefix) {
-    cmd = `${prefix} ${cmd}`
+    cmd = `${ prefix } ${ cmd }`
   }
   cy.exec(cmd)
 })
@@ -38,33 +38,36 @@ Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.location('pathname').should('match', pathnameRegexp)
 })
 
-Cypress.Commands.add('addProduct', (name, detailsModalSelector, quantity = undefined, optionItemsSelectors = []) => {
-  cy.contains(name).click()
+Cypress.Commands.add('addProduct',
+  (name, detailsModalSelector, quantity = undefined,
+    optionItemsSelectors = []) => {
+    cy.contains(name).click()
 
-  cy.get(detailsModalSelector)
-    .should('be.visible')
+    cy.get(detailsModalSelector)
+      .should('be.visible')
 
-  if (quantity) {
-    cy.get(`${detailsModalSelector} .quantity-input-group input[type="number"]`)
-      .type('{backspace}' + quantity)
-  }
+    if (quantity) {
+      cy.get(
+        `${ detailsModalSelector } .quantity-input-group input[type="number"]`)
+        .type('{backspace}' + quantity)
+    }
 
-  // Make sure to use a precise selector, because 2 products have same options
+    // Make sure to use a precise selector, because 2 products have same options
 
-  optionItemsSelectors.forEach((itemSelector) => {
-    cy.get(`${detailsModalSelector} input[value="${itemSelector}"]`)
-      .check()
+    optionItemsSelectors.forEach((itemSelector) => {
+      cy.get(`${ detailsModalSelector } input[value="${ itemSelector }"]`)
+        .check()
+    })
+
+    optionItemsSelectors.forEach((itemSelector) => {
+      cy.get(`${ detailsModalSelector } input[value="${ itemSelector }"]`)
+        .should('be.checked')
+    })
+
+    cy.get(`${ detailsModalSelector } button[type="submit"]`)
+      .should('not.be.disabled')
+      .click()
   })
-
-  optionItemsSelectors.forEach((itemSelector) => {
-    cy.get(`${detailsModalSelector} input[value="${itemSelector}"]`)
-      .should('be.checked')
-  })
-
-  cy.get(`${detailsModalSelector} button[type="submit"]`)
-    .should('not.be.disabled')
-    .click()
-})
 
 Cypress.Commands.add('login', (username, password) => {
   cy.get('[name="_username"]').type(username)
@@ -78,11 +81,12 @@ Cypress.Commands.add('searchAddress', (selector, search, match) => {
 
   cy.wait(500)
 
-  cy.get(`${selector} input[type="search"]`)
-  .should('be.visible')
+  cy.get(`${ selector } input[type="search"]`)
+    .should('be.visible')
 
-  cy.get(`${selector} input[type="search"]`)
-    .eq(1)  // take the 2nd input on the restaurant page. to be changed when fix for https://github.com/coopcycle/coopcycle-web/issues/4149
+  cy.get(`${ selector } input[type="search"]`)
+    .eq(
+      1)  // take the 2nd input on the restaurant page. to be changed when fix for https://github.com/coopcycle/coopcycle-web/issues/4149
     .type(search, { timeout: 5000, delay: 50 })
 
   cy.get(selector)
@@ -93,7 +97,8 @@ Cypress.Commands.add('searchAddress', (selector, search, match) => {
 
 Cypress.Commands.add('enterCreditCard', () => {
   const date = new Date(),
-  expDate = ("0" + (date.getMonth() + 1)).slice(-2) + date.getFullYear().toString().substring(2)
+    expDate = ('0' + (date.getMonth() + 1)).slice(-2) +
+      date.getFullYear().toString().substring(2)
 
   // @see https://github.com/cypress-io/cypress/issues/136
   cy.get('.StripeElement iframe')
