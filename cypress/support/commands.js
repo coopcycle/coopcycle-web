@@ -122,3 +122,68 @@ Cypress.Commands.add('enterCreditCard', () => {
         .type('123')
     })
 })
+
+/**
+ * Clears cookies before executing a callback and then restores the cookies.
+ * see https://github.com/cypress-io/cypress/issues/959#issuecomment-1373985148
+ * @param {Function} callback
+ * @param {{ domain, log, timeout }} options https://docs.cypress.io/api/commands/getcookies#Arguments
+ */
+Cypress.Commands.add('ignoreCookiesOnce', (callback, options) => {
+  return cy.getCookies(options).then(cookies => {
+    // Clear cookies
+    cy.clearCookies(options)
+
+    // Execute callback
+    callback()
+
+    // Clear cookies set by the callback
+    cy.clearCookies(options)
+
+    // Restore cookies
+    cookies.forEach(({ name, value, ...rest }) => {
+      cy.setCookie(name, value, rest)
+    })
+  })
+})
+
+Cypress.Commands.add('closeRestaurant',
+  (ownerUsername, ownerPassword) => {
+    //get API token
+    cy.request({
+      method: 'POST',
+      url: '/api/login_check',
+      headers: {
+        ContentType: 'application/x-www-form-urlencoded',
+      },
+      body: {
+        _username: ownerUsername,
+        _password: ownerPassword,
+      },
+    }).then((loginResponse) => {
+      const token = loginResponse.body.token
+
+      cy.request({
+        method: 'GET',
+        url: '/api/me/restaurants',
+        headers: {
+          Authorization: `Bearer ${ token }`,
+        },
+      }).then((myRestaurantsResponse) => {
+        myRestaurantsResponse.body['hydra:member'].forEach((restaurant) => {
+          cy.request({
+            method: 'PUT',
+            url: '/api/restaurants/' + restaurant.id + '/close',
+            headers: {
+              Authorization: `Bearer ${ token }`,
+              ContentType: 'application/json',
+            },
+            body: {},
+          }).then(() => {
+            cy.log(
+              `Restaurant ${ restaurant.id }; ${ restaurant.name } is closed`)
+          })
+        })
+      })
+    })
+  })
