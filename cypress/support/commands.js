@@ -149,39 +149,41 @@ Cypress.Commands.add('ignoreCookiesOnce', (callback, options) => {
 
 Cypress.Commands.add('closeRestaurant',
   (ownerUsername, ownerPassword) => {
-    //get API token
-    cy.request({
-      method: 'POST',
-      url: '/api/login_check',
-      headers: {
-        ContentType: 'application/x-www-form-urlencoded',
-      },
-      body: {
-        _username: ownerUsername,
-        _password: ownerPassword,
-      },
-    }).then((loginResponse) => {
-      const token = loginResponse.body.token
-
+    cy.ignoreCookiesOnce(() => {
+      //get API token
       cy.request({
-        method: 'GET',
-        url: '/api/me/restaurants',
+        method: 'POST',
+        url: '/api/login_check',
         headers: {
-          Authorization: `Bearer ${ token }`,
+          ContentType: 'application/x-www-form-urlencoded',
         },
-      }).then((myRestaurantsResponse) => {
-        myRestaurantsResponse.body['hydra:member'].forEach((restaurant) => {
-          cy.request({
-            method: 'PUT',
-            url: '/api/restaurants/' + restaurant.id + '/close',
-            headers: {
-              Authorization: `Bearer ${ token }`,
-              ContentType: 'application/json',
-            },
-            body: {},
-          }).then(() => {
-            cy.log(
-              `Restaurant ${ restaurant.id }; ${ restaurant.name } is closed`)
+        body: {
+          _username: ownerUsername,
+          _password: ownerPassword,
+        },
+      }).then((loginResponse) => {
+        const token = loginResponse.body.token
+
+        cy.request({
+          method: 'GET',
+          url: '/api/me/restaurants',
+          headers: {
+            Authorization: `Bearer ${ token }`,
+          },
+        }).then((myRestaurantsResponse) => {
+          myRestaurantsResponse.body['hydra:member'].forEach((restaurant) => {
+            cy.request({
+              method: 'PUT',
+              url: '/api/restaurants/' + restaurant.id + '/close',
+              headers: {
+                Authorization: `Bearer ${ token }`,
+                ContentType: 'application/json',
+              },
+              body: {},
+            }).then(() => {
+              cy.log(
+                `Restaurant ${ restaurant.id }; ${ restaurant.name } is closed`)
+            })
           })
         })
       })

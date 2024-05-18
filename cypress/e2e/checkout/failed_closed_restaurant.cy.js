@@ -121,26 +121,29 @@ describe('Failed checkout; restaurant is closed', () => {
     () => {
       it('proceed with payment (FIXME)', () => {
 
-        cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
-        cy.intercept('POST', '/fr/restaurant/*/cart/product/*')
-          .as('postProduct')
-
         cy.visit('/fr/')
+
+        cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart1')
 
         cy.clickRestaurant(
           'Crazy Hamburger',
           /\/fr\/restaurant\/[0-9]+-crazy-hamburger/,
         )
 
-        cy.wait('@postRestaurantCart')
+        cy.wait('@postRestaurantCart1')
+
+        cy.intercept('POST', '/fr/restaurant/*/cart/product/*')
+          .as('postProduct1')
 
         cy.addProduct('Cheeseburger', '#CHEESEBURGER-options', 2, [
           'HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES',
           'HAMBURGER_DRINK_COLA' ])
 
-        cy.wait('@postProduct', { timeout: 5000 })
+        cy.wait('@postProduct1', { timeout: 5000 })
 
         cy.get('.cart__items').invoke('text').should('match', /Cheeseburger/)
+
+        cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart2')
 
         cy.searchAddress(
           '.ReactModal__Content--enter-address',
@@ -148,7 +151,7 @@ describe('Failed checkout; restaurant is closed', () => {
           /^91,? Rue de Rivoli,? 75001,? Paris,? France/i,
         )
 
-        cy.wait('@postRestaurantCart')
+        cy.wait('@postRestaurantCart2')
 
         cy.get(
           '#restaurant__fulfilment-details__container [data-testid="cart.shippingAddress"]')
