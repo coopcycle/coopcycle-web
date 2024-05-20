@@ -22,6 +22,7 @@ class TaskListManager {
     public function assign(TaskList $taskList, $newItemsIris) {
 
         $currentItems =  array_merge(array(), $taskList->getItems()->toArray());
+        $currentTasks = array_merge(array(), $taskList->getTasks());
 
         // items that were removed in $newItems will be removed thanks to orphan removal
         $taskList->clear();
@@ -56,36 +57,20 @@ class TaskListManager {
             }
         }
 
-        // Manage tasks (i.e. CASCADE assignations information on task.assignedTo and task.assignedAt)
-        $currentTasks = $taskList->getTasks();
+        // Update tasks (i.e. CASCADE assignations information on task.assignedTo)
+        // we need to iterate over all the tasks so we trigger EntityChangeSetProcessor - it doesn't seem that the more efficient : $qb = $this->entityManager->createQueryBuilder(->update(Task::class, 't') updates the code
         $newTasks = $taskList->getTasks();
         $tasksToRemove = [];
         foreach ($currentTasks as $task) {
             if (!array_search($task, $newTasks)) {
                 $tasksToRemove[] = $task;
-                // $task->unassign();
+                $task->unassign();
             }
         }
 
-        // reflect unassignment on the Task objects
-        $qb = $this->entityManager->createQueryBuilder();
-        $qb->update(Task::class, 't')
-            ->set('t.assignedTo', ':assignedTo') // ALOIS set assignedAT
-            ->where('t in (:tasks)')
-            ->setParameter('assignedTo', null)
-            ->setParameter('tasks', $tasksToRemove)
-            ->getQuery()
-            ->execute();
-
-        // reflect assignment on the Task objects
-        $qb = $this->entityManager->createQueryBuilder();
-        $qb->update(Task::class, 't')
-            ->set('t.assignedTo', ':assignedTo')
-            ->where('t in (:tasks)')
-            ->setParameter('assignedTo', $taskList->getCourier())
-            ->setParameter('tasks', $newTasks)
-            ->getQuery()
-            ->execute();
+        foreach ($newTasks as $task) {
+            $task->assignTo($taskList->getCourier(), $taskList->getDate());
+        }
     }
 
 }
