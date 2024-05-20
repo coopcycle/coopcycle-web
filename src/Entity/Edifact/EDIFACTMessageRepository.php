@@ -22,12 +22,15 @@ class EDIFACTMessageRepository extends EntityRepository {
         ->execute();
     }
 
-    public function getUnsynced(): mixed
+    public function getUnsynced(string $transporter): mixed
     {
         $qb = $this->createQueryBuilder('e')
-        ->where('e.syncedAt IS NULL')
-        ->andWhere('e.direction = :direction')
-        ->setParameter('direction', EDIFACTMessage::DIRECTION_OUTBOUND);
+            ->where('e.syncedAt IS NULL')
+            ->andWhere('e.direction = :direction')
+            ->andWhere('e.transporter = :transporter')
+            ->setParameter('direction', EDIFACTMessage::DIRECTION_OUTBOUND)
+            ->setParameter('transporter', $transporter);
+
 
         return $qb->getQuery()->getResult();
     }

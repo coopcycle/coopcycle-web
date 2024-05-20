@@ -79,6 +79,14 @@ class ImportFromPoint {
         return $task;
     }
 
+    public function buildPickupTask(Address $address): Task
+    {
+        $task = new Task();
+        $task->setType(Task::TYPE_PICKUP);
+        $task->setAddress($address);
+        return $task;
+    }
+
     public function setDefaultCoordinates(
         GeoCoordinates $defaultCoordinates
     ): void
