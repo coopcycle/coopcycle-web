@@ -1074,18 +1074,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->setOrganization($store->getOrganization());
     }
 
-    public function getTour()
-    {
-        return $this->tour;
-    }
-
-    public function setTour($tour)
-    {
-        $this->tour = $tour;
-
-        return $this;
-    }
-
     public function toExpressionLanguageObject()
     {
         $taskObject = new \stdClass();
