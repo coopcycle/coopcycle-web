@@ -1,6 +1,6 @@
-{{ order.vendor.address.streetAddress }}
+{{ order.vendorMetadata.address.streetAddress }}
 <br>
-{{ order.vendor.address.postalCode }} {{ order.vendor.address.addressLocality }}
+{{ order.vendorMetadata.address.postalCode }} {{ order.vendorMetadata.address.addressLocality }}
 <br>
 {% set phone_number = order_phone_number(order) %}
 {% if phone_number is not empty %}

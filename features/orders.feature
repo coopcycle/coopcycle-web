@@ -234,7 +234,13 @@ Feature: Orders
       "paymentMethod":"CARD",
       "assignedTo":null,
       "invitation":null,
-      "events":@array@
+      "events":@array@,
+      "vendorMetadata":{
+        "id":1,
+        "name": "Nodaiwa",
+        "address":{"@*@":"@*@"},
+        "deleted":false
+      }
     }
     """
 
@@ -403,7 +409,13 @@ Feature: Orders
       "paymentMethod":"CARD",
       "assignedTo":null,
       "invitation":null,
-      "events":@array@
+      "events":@array@,
+      "vendorMetadata":{
+        "id":1,
+        "name": "Nodaiwa",
+        "address":{"@*@":"@*@"},
+        "deleted":false
+      }
     }
     """
 
@@ -693,7 +705,13 @@ Feature: Orders
       "paymentMethod":"CARD",
       "assignedTo":null,
       "invitation":null,
-      "events":@array@
+      "events":@array@,
+      "vendorMetadata":{
+        "id":1,
+        "name": "Nodaiwa",
+        "address":{"@*@":"@*@"},
+        "deleted":false
+      }
     }
     """
 
@@ -849,7 +867,13 @@ Feature: Orders
         "paymentMethod":"@string@||@null@",
         "hasReceipt":@boolean@,
         "invitation":null,
-        "events":@array@
+        "events":@array@,
+        "vendorMetadata":{
+          "id":1,
+          "name": "Nodaiwa",
+          "address":{"@*@":"@*@"},
+          "deleted":false
+        }
       }
       """
 
@@ -1000,7 +1024,8 @@ Feature: Orders
       "paymentMethod":"CARD",
       "assignedTo":null,
       "invitation":null,
-      "events":@array@
+      "events":@array@,
+      "vendorMetadata":{"@*@":"@*@"}
     }
     """
 
@@ -1223,7 +1248,8 @@ Feature: Orders
         "paymentMethod":"CARD",
         "assignedTo":null,
         "invitation":null,
-        "events":@array@
+        "events":@array@,
+        "vendorMetadata":{"@*@":"@*@"}
       }
       """
 

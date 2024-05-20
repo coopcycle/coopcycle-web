@@ -2,9 +2,25 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Sylius\Order\OrderInterface;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 
+/**
+ * @ApiResource(
+ *   shortName="BusinessRestaurantGroup",
+ *   attributes={
+ *     "normalization_context"={"groups"={"order", "order_minimal"}}
+ *   },
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "security"="is_granted('view', object)"
+ *     }
+ *   }
+ * )
+ */
 class BusinessRestaurantGroup extends LocalBusinessGroup
 {
     use SoftDeleteable;
@@ -18,6 +34,16 @@ class BusinessRestaurantGroup extends LocalBusinessGroup
         $this->restaurantsWithMenu = new ArrayCollection();
 
         parent::__construct();
+    }
+
+    public function getVendorForOrder(OrderInterface $order)
+    {
+        foreach($this->getRestaurants() as $restaurant) {
+            if ($restaurant->getId() === $order->getRestaurants()->first()->getId()) {
+                return $restaurant;
+            }
+        }
+        return null;
     }
 
     public function getCutoffTime()

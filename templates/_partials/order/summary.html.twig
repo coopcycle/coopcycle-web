@@ -10,14 +10,14 @@
         '%name%': order.vendor.name
       } %}order.list.summary.hub.text{% endtrans %}
   {% else %}
-    {% if order.vendor.deleted %}
+    {% if order.vendorMetadata.deleted %}
       {% trans with {
-        '%restaurant_name%': order.vendor.name
+        '%restaurant_name%': order.vendorMetadata.name
       } %}order.list.summary.deleted_restaurant.text{% endtrans %}
     {% else %}
       {% trans with {
-        '%restaurant_url%': path(routes.restaurant, { id: order.vendor.id }),
-        '%restaurant_name%': order.vendor.name
+        '%restaurant_url%': path(routes.restaurant, { id: order.vendorMetadata.id }),
+        '%restaurant_name%': order.vendorMetadata.name
       } %}order.list.summary.restaurant.text{% endtrans %}
     {% endif %}
     {% if order.notes %}

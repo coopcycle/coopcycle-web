@@ -7,7 +7,7 @@
     {% if order.hasVendor() %}
       {{ 'admin.order_foodtech.created.body' | trans({
         '%order.url%': url('admin_order', { id: order.id }),
-        '%restaurant.name%': order.vendor.name
+        '%restaurant.name%': order.vendorMetadata.name
       }, 'emails') | raw }}
     {% else %}
       {{ 'admin.order.created.body' | trans({

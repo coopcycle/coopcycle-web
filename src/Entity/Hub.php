@@ -58,4 +58,14 @@ class Hub extends LocalBusinessGroup
         $restaurant->setHub(null);
     }
 
+    /**
+     * For backward compatibility with deletable Vendors.
+     * Hub entity should be deprecated
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return false;
+    }
+
 }

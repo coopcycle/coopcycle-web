@@ -169,6 +169,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             } else {
 
                 $vendor = $object->getVendor();
+                $vendorMetadata = $object->getVendorMetadata();
 
                 $fulfillmentMethods = [];
                 foreach ($vendor->getFulfillmentMethods() as $fulfillmentMethod) {
@@ -178,13 +179,13 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 }
 
                 $data['vendor'] = [
-                    'id' => $vendor->getId(),
+                    'id' => $vendorMetadata['id'],
                     'variableCustomerAmountEnabled' =>
                         $vendor->getContract() !== null ? $vendor->getContract()->isVariableCustomerAmountEnabled() : false,
                     'address' => [
                         'latlng' => [
-                            $vendor->getAddress()->getGeo()->getLatitude(),
-                            $vendor->getAddress()->getGeo()->getLongitude(),
+                            $vendorMetadata['address']->getGeo()->getLatitude(),
+                            $vendorMetadata['address']->getGeo()->getLongitude(),
                         ]
                     ],
                     'fulfillmentMethods' => $fulfillmentMethods,
@@ -192,6 +193,16 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             }
 
             $data['takeaway'] = $object->isTakeaway();
+        }
+
+        if (isset($data['vendor']) && isset($data['vendor']['@type']) && 'BusinessRestaurantGroup' === $data['vendor']['@type']) {
+            $vendorMetadata = $object->getVendorMetadata();
+
+            $data['vendor'] = [
+                'id' => $vendorMetadata['id'],
+                'address' => $this->objectNormalizer->normalize($vendorMetadata['address'], $format, $context),
+                'name' => $vendorMetadata['name']
+            ];
         }
 
         $data['invitation'] = null;

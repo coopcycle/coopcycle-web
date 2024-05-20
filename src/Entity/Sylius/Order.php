@@ -1234,6 +1234,26 @@ class Order extends BaseOrder implements OrderInterface
         return $this->customer->getUser();
     }
 
+    /**
+     * @Groups({"order", "order_minimal"})
+     */
+    public function getVendorMetadata()
+    {
+        $vendor = null;
+        if (null !== $this->getBusinessAccount()) {
+            $vendor = $this->getBusinessAccount()->getBusinessRestaurantGroup()->getVendorForOrder($this);
+        } else {
+            $vendor = $this->getVendor();
+        }
+
+        return [
+            'id' => $vendor->getId(),
+            'name' => $vendor->getName(),
+            'address' => $vendor->getAddress(),
+            'deleted' => $vendor->isDeleted(),
+        ];
+    }
+
     public function getVendor(): ?Vendor
     {
         if (!$this->hasVendor()) {

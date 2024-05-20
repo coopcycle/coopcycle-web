@@ -92,7 +92,8 @@ Feature: Food Tech
             "paymentMethod": "CARD",
             "hasReceipt":@boolean@,
             "invitation": "@string@||@null@",
-            "events":@array@
+            "events":@array@,
+            "vendorMetadata":{"@*@":"@*@"}
           }
         ],
         "hydra:totalItems":1,

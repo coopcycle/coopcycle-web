@@ -15,7 +15,7 @@
   <mj-text align="left" line-height="20px">
   {% set phone_number = order_phone_number(order) %}
   {{ ('order.foodtech.accepted.' ~ order.fulfillmentMethod ~ '.disclaimer')|trans({
-    '%name%': order.vendor.name,
+    '%name%': order.vendorMetadata.name,
     '%phone_number%': phone_number ? phone_number|phone_number_format('NATIONAL') : 'N/A'
   }, 'emails')|raw }}
   </mj-text>

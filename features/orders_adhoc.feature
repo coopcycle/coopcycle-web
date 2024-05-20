@@ -154,7 +154,13 @@ Feature: Orders Adhoc
           "@*@":"@*@"
         },
         "invitation": "@string@||@null@",
-        "events":@array@
+        "events":@array@,
+        "vendorMetadata": {
+          "id": @integer@,
+          "name": "Nodaiwa",
+          "address":{"@*@":"@*@"},
+          "deleted":false
+        }
       }
     """
 
@@ -279,7 +285,13 @@ Feature: Orders Adhoc
           "@*@":"@*@"
         },
         "invitation": "@string@||@null@",
-        "events":@array@
+        "events":@array@,
+        "vendorMetadata": {
+          "id": @integer@,
+          "name": "Nodaiwa",
+          "address":{"@*@":"@*@"},
+          "deleted":false
+        }
       }
     """
     When the user "bob" is loaded:
@@ -403,6 +415,12 @@ Feature: Orders Adhoc
           "@*@":"@*@"
         },
         "invitation": "@string@||@null@",
-        "events":@array@
+        "events":@array@,
+        "vendorMetadata": {
+          "id": @integer@,
+          "name": "El Mercado",
+          "address":{"@*@":"@*@"},
+          "deleted":false
+        }
       }
     """

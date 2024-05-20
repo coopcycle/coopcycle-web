@@ -12,14 +12,14 @@
 <ol class="multi-step-list mb-5">
   <li class="multi-step-item">
     <a class="item-wrap" href="{{ path((order.isMultiVendor() ? 'hub' : 'restaurant'), {
-        id:   order.vendor.id,
-        slug: order.vendor.name|slugify
+        id:   order.vendorMetadata.id,
+        slug: order.vendorMetadata.name|slugify
       }) }}">
       <span class="item-title">
         <span class="mr-2">
           <i class="fa fa-shopping-basket fa-lg"></i>
         </span>
-        <span class="d-none d-lg-inline d-xl-inline">{{ order.vendor.name }}</span>
+        <span class="d-none d-lg-inline d-xl-inline">{{ order.vendorMetadata.name }}</span>
       </span>
     </a>
   </li>
