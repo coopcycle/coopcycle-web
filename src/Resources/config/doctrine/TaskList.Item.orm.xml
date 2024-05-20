@@ -10,11 +10,12 @@
         <join-column name="parent_id" referenced-column-name="id" on-delete="CASCADE"/>
       </join-columns>
     </many-to-one>
-    <one-to-one field="task" target-entity="AppBundle\Entity\Task">
+    <!-- FIXME this can not be set to one-to-one because we can not enforce unique constraint due to addTask/removeTask calls in the same transaction in EntityChangeSetProcessor -->
+    <many-to-one field="task" target-entity="AppBundle\Entity\Task">
       <cascade>
         <cascade-persist/>
       </cascade>
-    </one-to-one>
+    </many-to-one>
     <one-to-one field="tour" target-entity="AppBundle\Entity\Tour">
       <cascade>
         <cascade-persist/>
