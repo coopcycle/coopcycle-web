@@ -21,7 +21,7 @@ final class Version20240508125856 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE TABLE task_list_item (id SERIAL NOT NULL, task_id INT DEFAULT NULL, tour_id INT DEFAULT NULL, parent_id INT DEFAULT NULL, position INT NOT NULL, PRIMARY KEY(id))');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_25FF37A68DB60186 ON task_list_item (task_id)');
+        $this->addSql('CREATE INDEX IDX_25FF37A68DB60186 ON task_list_item (task_id)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_25FF37A615ED8D43 ON task_list_item (tour_id)');
         $this->addSql('CREATE INDEX IDX_25FF37A6727ACA70 ON task_list_item (parent_id)');
         $this->addSql('ALTER TABLE task_list_item ADD CONSTRAINT FK_25FF37A68DB60186 FOREIGN KEY (task_id) REFERENCES task (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
