@@ -7,7 +7,6 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Api\Dto\TourInput;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Action\Task\DeleteTour as DeleteTourController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -41,7 +40,6 @@ use AppBundle\Vroom\Shipment as VroomShipment;
  *     "delete"={
  *       "method"="DELETE",
  *       "security"="is_granted('ROLE_DISPATCHER')",
- *       "controller"=DeleteTourController::class
  *     }
  *   },
  *   attributes={
@@ -89,19 +87,6 @@ class Tour extends TaskCollection implements TaskCollectionInterface
         $this->name = $name;
 
         return $this;
-    }
-
-    public function addTask(Task $task, $position = null)
-    {
-        $task->setTour($this);
-
-        return parent::addTask($task, $position);
-    }
-
-    public function removeTask(Task $task)
-    {
-        $task->setTour(null);
-        parent::removeTask($task);
     }
 
     public function getTaskPosition(Task $task)
