@@ -85,6 +85,7 @@ use AppBundle\Service\PackageSetManager;
 use AppBundle\Service\PricingRuleSetManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
+use AppBundle\Service\TimeSlotManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use Carbon\Carbon;
@@ -176,7 +177,7 @@ class AdminController extends AbstractController
     public function __construct(
         OrderRepositoryInterface $orderRepository,
         TranslatorInterface $translator,
-        EntityManagerInterface $entityManager,
+        protected EntityManagerInterface $entityManager,
         PromotionCouponRepositoryInterface $promotionCouponRepository,
         FactoryInterface $promotionRuleFactory,
         FactoryInterface $promotionFactory,
@@ -188,11 +189,11 @@ class AdminController extends AbstractController
         protected Filesystem $incidentImagesFilesystem,
         protected PricingRuleSetManager $pricingRuleSetManager,
         protected JWTTokenManagerInterface $JWTTokenManager,
+        protected TimeSlotManager $timeSlotManager
     )
     {
         $this->orderRepository = $orderRepository;
         $this->translator = $translator;
-        $this->entityManager = $entityManager;
         $this->promotionCouponRepository = $promotionCouponRepository;
         $this->promotionRuleFactory = $promotionRuleFactory;
         $this->promotionFactory = $promotionFactory;
@@ -1007,10 +1008,10 @@ class AdminController extends AbstractController
         if ($request->isMethod('POST') && $request->request->has('delete')) {
             $this->denyAccessUnlessGranted('ROLE_ADMIN');
             $id = $request->request->get('tag');
-            $tag = $this->getDoctrine()->getRepository(Tag::class)->find($id);
+            $tag = $this->entityManager->getRepository(Tag::class)->find($id);
             $tagManager->untagAll($tag);
-            $this->getDoctrine()->getManagerForClass(Tag::class)->remove($tag);
-            $this->getDoctrine()->getManagerForClass(Tag::class)->flush();
+            $this->entityManager->remove($tag);
+            $this->entityManager->flush();
 
             return  $this->redirectToRoute('admin_tags');
         }
@@ -1022,7 +1023,7 @@ class AdminController extends AbstractController
             }
         }
 
-        $tags = $this->getDoctrine()->getRepository(Tag::class)->findBy(array(), array('name' => 'ASC'));
+        $tags = $this->entityManager->getRepository(Tag::class)->findBy(array(), array('name' => 'ASC'));
 
         return $this->render('admin/tags.html.twig', [
             'tags' => $tags
@@ -2191,14 +2192,41 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/settings/time-slots", name="admin_time_slots")
      */
-    public function timeSlotsAction()
+    public function timeSlotsAction(Request $request, PaginatorInterface $paginator, ApplicationsNormalizer $normalizer, TimeSlotManager $timeSlotManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $timeSlots = $this->getDoctrine()->getRepository(TimeSlot::class)->findBy(array(), array('name' => 'ASC'));
-        return $this->render('admin/time_slots.html.twig', [
-            'time_slots' => $timeSlots,
-        ]);
+        $qb = $this->entityManager->getRepository(TimeSlot::class)
+            ->createQueryBuilder('rs')
+            ->orderBy('rs.name', 'ASC')
+            ->setFirstResult(max(($request->query->getInt('page', 1) - 1), 0) * self::ITEMS_PER_PAGE / 2)
+            ->setMaxResults(self::ITEMS_PER_PAGE / 2);
+
+        $paginatedTimeSlots = $paginator->paginate(
+            $qb,
+            max($request->query->getInt('page', 1), 1),
+            self::ITEMS_PER_PAGE / 2,
+            [PaginatorInterface::DISTINCT => false]
+        );
+
+        $relatedEntitiesByTimeSlotId = [];
+
+        // if needed optimize (and complexifiy !) the query to get applications of the time slot
+        array_map(
+            function ($ruleSet) use (&$relatedEntitiesByTimeSlotId, $normalizer, $timeSlotManager) {
+                $normalizedRelatedEntities = array_map(
+                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    $timeSlotManager->getTimeSlotApplications($ruleSet)
+                );
+                $relatedEntitiesByTimeSlotId[$ruleSet->getId()] = $normalizedRelatedEntities;
+            },
+            $qb->getQuery()->getResult()
+        );
+
+        return $this->render('admin/time_slots.html.twig', $this->auth([
+            'time_slots' => $paginatedTimeSlots,
+            'relatedEntitiesByTimeSlotId' => $relatedEntitiesByTimeSlotId
+        ]));
     }
 
     private function renderTimeSlotForm(Request $request, TimeSlot $timeSlot, EntityManagerInterface $objectManager)

@@ -39,7 +39,7 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <one-to-many field="events" target-entity="AppBundle\Entity\Sylius\OrderEvent" mapped-by="order">
+    <one-to-many field="events" target-entity="AppBundle\Entity\Sylius\OrderEvent" mapped-by="order" orphan-removal="true">
       <cascade>
         <cascade-all/>
       </cascade>

@@ -16,7 +16,7 @@
       <tr>
         <td><a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">{{ ruleSet.name }}</a></td>
         <td>
-          <div {{ react_component('PricingRuleSetApplications', { pricingRuleSetId: ruleSet.id, data: relatedEntitiesByPricingRuleSetId[ruleSet.id] }) }}></div>
+          <div {{ react_component('ShowApplications', { objectId: ruleSet.id, data: relatedEntitiesByPricingRuleSetId[ruleSet.id], fetchUrl: 'api_pricing_rule_sets_get_item' }) }}></div>
         </td>
         <td class="text-right">
           <div class="btn-group">
@@ -39,9 +39,8 @@
         </td>
         {% if is_granted('ROLE_ADMIN') %}
           <td>
-            <a class="text-danger">
-              <i class="fa fa-trash delete-pricing" data-pricing-name="{{ ruleSet.name }}" data-pricing-id="{{ ruleSet.id }}"></i>
-            </a>
+            <div {{ react_component('DeleteIcon', { objectId: ruleSet.id, objectName: ruleSet.name, deleteUrl: 'api_pricing_rule_sets_delete_item', errorMessage: 'ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION'}) }}>
+            </div>
           </td>
         {% endif %}
       </tr>
@@ -56,8 +55,4 @@
 <div class="text-center">
   {{ knp_pagination_render(ruleSets, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
 </div>
-{% endblock %}
-
-{% block scripts %}
-  {{ encore_entry_script_tags('pricings') }}
 {% endblock %}
