@@ -17,7 +17,10 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
     private $taskListProvider;
     private $logger;
 
-    public function __construct(TaskListProvider $taskListProvider, LoggerInterface $logger = null)
+    public function __construct(
+        TaskListProvider $taskListProvider,
+        LoggerInterface $logger = null,
+    )
     {
         $this->taskListProvider = $taskListProvider;
         $this->logger = $logger ? $logger : new NullLogger();
@@ -54,16 +57,17 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                 // When tasks have been assigned via the web interface $taskList->containsTask($task) will return true, because we call Action\TaskList\SetItems
                 // the app's endpoint call AssignTrait->assign which set assignment on the task but not on the tasklist, so set it here
                 // FIXME : the smartphone app should create/set the taskslit to avoid the check here
-                if (!$taskList->containsTask($task)) {
-                    $this->logger->debug(sprintf('Adding Task#%d to TaskList', $task->getId()));
-                    $taskList->addTask($task);
-                }
-
                 if ($wasAssigned && !$wasAssignedToSameUser) {
                     $this->logger->debug(sprintf('Removing Task#%d from previous TaskList', $task->getId()));
 
                     $oldTaskList = $this->taskListProvider->getTaskList($task, $oldValue);
-                    $oldTaskList->removeTask($task, false);
+                    // FIXME : this prevent us to enforce uniqueness on task_list_item.task_id, because in this case we cannot add and remove the task_list_item pointing to the same task in the same transaction
+                    $oldTaskList->removeTask($task);
+                }
+
+                if (!$taskList->containsTask($task)) {
+                    $this->logger->debug(sprintf('Adding Task#%d to TaskList', $task->getId()));
+                    $taskList->addTask($task);
                 }
 
                 $event = new TaskAssigned($task, $newValue);
