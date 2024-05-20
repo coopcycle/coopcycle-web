@@ -2,22 +2,14 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Entity\TaskCollection;
 use AppBundle\Entity\TaskCollectionItem;
-use AppBundle\Entity\TaskList;
-use AppBundle\Domain\Task\Event\TaskListUpdated;
-use AppBundle\Message\PushNotification;
-use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\RoutingInterface;
-use Carbon\Carbon;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
-use Nucleos\UserBundle\Model\UserInterface;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -25,22 +17,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaskCollectionSubscriber implements EventSubscriber
 {
-    private $eventBus;
-    private $messageBus;
-    private $translator;
     private $routing;
     private $logger;
 
     public function __construct(
-        MessageBus $eventBus,
-        MessageBusInterface $messageBus,
-        TranslatorInterface $translator,
         RoutingInterface $routing,
         LoggerInterface $logger)
     {
-        $this->eventBus = $eventBus;
-        $this->messageBus = $messageBus;
-        $this->translator = $translator;
         $this->routing = $routing;
         $this->logger = $logger;
     }
