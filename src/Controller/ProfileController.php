@@ -661,6 +661,12 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/orders.html.twig', [
             'orders' => $orders,
+            'routes' => [
+                'restaurant' => 'restaurant',
+                'order_receipt' => 'profile_order_receipt',
+                'order_receipt_generate' => 'profile_order_receipt_generate',
+                'order' => 'profile_order'
+            ]
         ]);
     }
 }
