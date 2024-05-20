@@ -69,7 +69,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "enabled_parameter_name"="pagination",
  *          "items_per_page_parameter_name"="itemsPerPage"
  *         },
- *       "paginationClientItemsPerPage"=true
+ *       "pagination_client_items_per_page"=true,
+ *       "pagination_enabled"=false,
+ *       "pagination_client_enabled"=true
  *     },
  *     "post"={
  *       "method"="POST",
