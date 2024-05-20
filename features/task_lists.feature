@@ -32,6 +32,7 @@ Feature: Tasks lists
     And the user "bob" sends a "GET" request to "/api/me/tasks/2018-03-02"
     Then print last JSON response
     Then the response status code should be 200
+    Then print last JSON response
     And the response should be in JSON
     And the JSON should match:
     """
@@ -39,9 +40,17 @@ Feature: Tasks lists
         "@context":"/api/contexts/TaskList",
         "@id":"/api/task_lists/1",
         "@type":"TaskList",
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "date":"2018-03-02",
+        "username":"bob",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
         "hydra:member":[
           {
             "@id":"@string@.startsWith('/api/tasks')",
+            "@context": "/api/contexts/Task",
             "@type":"Task",
             "id":4,
             "type":"DROPOFF",
@@ -56,8 +65,8 @@ Feature: Tasks lists
             "isAssigned":true,
             "assignedTo":"bob",
             "previous":null,
-            "group":{"@*@":"@*@"},
-            "tags":@*@,
+            "group":null,
+            "tags":[],
             "doorstep":@*@,
             "ref":null,
             "recurrenceRule":null,
@@ -69,15 +78,15 @@ Feature: Tasks lists
             "images":[],
             "next":null,
             "packages":[],
-            "position":0,
             "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
+            "@context": "/api/contexts/Task",
             "@type":"Task",
             "id":1,
             "type":"DROPOFF",
-            "status":"DONE",
+            "status":"TODO",
             "address":{"@*@":"@*@"},
             "after":"@string@.isDateTime().startsWith('2018-03-02T12:00:00')",
             "before":"@string@.isDateTime().startsWith('2018-03-02T12:30:00')",
@@ -89,7 +98,7 @@ Feature: Tasks lists
             "assignedTo":"bob",
             "previous":null,
             "group":null,
-            "tags":@*@,
+            "tags":[],
             "doorstep":@*@,
             "ref":null,
             "recurrenceRule":null,
@@ -101,15 +110,15 @@ Feature: Tasks lists
             "images":[],
             "next":null,
             "packages":[],
-            "position":1,
             "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
+            "@context": "/api/contexts/Task",
             "@type":"Task",
             "id":2,
             "type":"DROPOFF",
-            "status":"DONE",
+            "status":"TODO",
             "address":{"@*@":"@*@"},
             "after":"@string@.isDateTime().startsWith('2018-03-02T12:00:00')",
             "before":"@string@.isDateTime().startsWith('2018-03-02T12:30:00')",
@@ -120,8 +129,8 @@ Feature: Tasks lists
             "isAssigned":true,
             "assignedTo":"bob",
             "previous":null,
-            "group":null,
-            "tags":@*@,
+            "group":{"@*@":"@*@"},
+            "tags":[],
             "doorstep":@*@,
             "ref":null,
             "recurrenceRule":null,
@@ -133,7 +142,6 @@ Feature: Tasks lists
             "images":[],
             "next":null,
             "packages":[],
-            "position":1,
             "createdAt":"@string@.isDateTime()"
             }
         ],
@@ -141,6 +149,7 @@ Feature: Tasks lists
         "items":[
           {
             "@id":"@string@.startsWith('/api/tasks')",
+            "@context": "/api/contexts/Task",
             "@type":"Task",
             "id":4,
             "type":"DROPOFF",
@@ -155,8 +164,8 @@ Feature: Tasks lists
             "isAssigned":true,
             "assignedTo":"bob",
             "previous":null,
-            "group":{"@*@":"@*@"},
-            "tags":@*@,
+            "group":null,
+            "tags":[],
             "doorstep":@*@,
             "ref":null,
             "recurrenceRule":null,
@@ -168,15 +177,15 @@ Feature: Tasks lists
             "images":[],
             "next":null,
             "packages":[],
-            "position":0,
             "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
+            "@context": "/api/contexts/Task",
             "@type":"Task",
             "id":1,
             "type":"DROPOFF",
-            "status":"DONE",
+            "status":"TODO",
             "address":{"@*@":"@*@"},
             "after":"@string@.isDateTime().startsWith('2018-03-02T12:00:00')",
             "before":"@string@.isDateTime().startsWith('2018-03-02T12:30:00')",
@@ -188,7 +197,7 @@ Feature: Tasks lists
             "assignedTo":"bob",
             "previous":null,
             "group":null,
-            "tags":@*@,
+            "tags":[],
             "doorstep":@*@,
             "ref":null,
             "recurrenceRule":null,
@@ -200,15 +209,15 @@ Feature: Tasks lists
             "images":[],
             "next":null,
             "packages":[],
-            "position":1,
             "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
+            "@context": "/api/contexts/Task",
             "@type":"Task",
             "id":2,
             "type":"DROPOFF",
-            "status":"DONE",
+            "status":"TODO",
             "address":{"@*@":"@*@"},
             "after":"@string@.isDateTime().startsWith('2018-03-02T12:00:00')",
             "before":"@string@.isDateTime().startsWith('2018-03-02T12:30:00')",
@@ -219,8 +228,8 @@ Feature: Tasks lists
             "isAssigned":true,
             "assignedTo":"bob",
             "previous":null,
-            "group":null,
-            "tags":@*@,
+            "group":{"@*@":"@*@"},
+            "tags":[],
             "doorstep":@*@,
             "ref":null,
             "recurrenceRule":null,
@@ -232,17 +241,9 @@ Feature: Tasks lists
             "images":[],
             "next":null,
             "packages":[],
-            "position":1,
             "createdAt":"@string@.isDateTime()"
-          },
-        ],
-        "distance":@integer@,
-        "duration":@integer@,
-        "polyline":@string@,
-        "date":"2018-03-02",
-        "username":"bob",
-        "createdAt":"@string@.isDateTime()",
-        "updatedAt":"@string@.isDateTime()"
+          }
+        ]
       }
      """
 
