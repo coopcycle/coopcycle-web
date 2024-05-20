@@ -1261,12 +1261,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "6cb932fd33b65cf14aafe64e5c17de243b406e1d"
+                "reference": "d6c3564b88c7a27eda0d05ee781c77950fd6255b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/6cb932fd33b65cf14aafe64e5c17de243b406e1d",
-                "reference": "6cb932fd33b65cf14aafe64e5c17de243b406e1d",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/d6c3564b88c7a27eda0d05ee781c77950fd6255b",
+                "reference": "d6c3564b88c7a27eda0d05ee781c77950fd6255b",
                 "shasum": ""
             },
             "require": {
@@ -1296,7 +1296,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2024-05-20T11:42:32+00:00"
+            "time": "2024-05-20T12:44:49+00:00"
         },
         {
             "name": "craue/config-bundle",
