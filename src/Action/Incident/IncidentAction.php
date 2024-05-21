@@ -36,7 +36,7 @@ class IncidentAction
 
         $allowedActions = [
             IncidentEvent::TYPE_RESCHEDULE,
-            //IncidentEvent::TYPE_APPLY_PRICE_DIFF, //NOTE: Disabled to protech foodtech
+            IncidentEvent::TYPE_APPLY_PRICE_DIFF,
             IncidentEvent::TYPE_CANCEL_TASK,
             IncidentEvent::TYPE_TRANSPORTER_REPORT
         ];
