@@ -22,7 +22,7 @@ import { selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
-import { selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
+import { selectTaskListByUsername, selectTaskListTasksByUsername } from '../../../shared/src/logistics/redux/selectors'
 
 moment.locale($('html').attr('lang'))
 
@@ -121,21 +121,8 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
 
   const taskList = useSelector(state => selectTaskListByUsername(state, {username: username}))
   const items = taskList.items
-
-  // we also need a flattened list of tasks
-  const tasks = items.reduce((acc, item) => {
-    if (item['@type'] === 'Tour') {
-      acc.push(...item.items)
-    } else {
-      acc.push(item)
-    }
-    return acc
-  }, [])
-
-  const visibleTaskIds = _.intersectionWith(
-    useSelector(selectVisibleTaskIds),
-    tasks.map(task => task['@id'])
-  )
+  const tasks = useSelector(state => selectTaskListTasksByUsername(state, {username: username}))
+  const visibleTaskIds = useSelector(selectVisibleTaskIds)
 
   const visibleTasks = tasks.filter(task => _.includes(visibleTaskIds, task['@id']))
 
