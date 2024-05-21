@@ -57,7 +57,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         $this->logger->info(sprintf('Order %s | OrderFeeProcessor | started | triggered by %s',
             $this->loggingUtils->getOrderId($order), $this->loggingUtils->getBacktrace()));
 
-        $contract = $order->getVendor()->getContract();
+        $contract = $order->getSetupVendor()->getContract();
 
         $delivery = null;
         if (!$order->isTakeAway() && ($contract->isVariableDeliveryPriceEnabled() || $contract->isVariableCustomerAmountEnabled())) {
