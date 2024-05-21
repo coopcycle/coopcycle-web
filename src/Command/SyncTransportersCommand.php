@@ -8,7 +8,6 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageRepository;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\Task;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
@@ -35,14 +34,12 @@ use Transporter\Interface\TransporterSync;
 use Transporter\Transporter;
 use Transporter\TransporterException;
 use Transporter\TransporterOptions;
-use Transporter\Transporters\DBSchenker\Generator\DBSchenkerInterchange;
-use Transporter\Transporters\DBSchenker\Parser\DBSchenkerScontrParser;
 
 class SyncTransportersCommand extends Command {
 
+    private string $transporter;
     private Address $HQAddress;
     private Store $store;
-    private GeoCoordinates $defaultCoordinates;
 
     private TransporterImpl $impl;
 
@@ -75,7 +72,7 @@ class SyncTransportersCommand extends Command {
     /**
      * @throws Exception
      */
-    private function setup(string $transporter): void
+    private function setup(): void
     {
         $pos = explode(',', $this->settingsManager->get('latlng') ?? '');
         if (count($pos) !== 2) {
@@ -92,16 +89,16 @@ class SyncTransportersCommand extends Command {
             throw new Exception('Company ID not set');
         }
 
-        $this->defaultCoordinates = new GeoCoordinates($pos[0], $pos[1]);
+        $this->importFromPoint->setDefaultCoordinates(new GeoCoordinates($pos[0], $pos[1]));
         $repo = $this->entityManager->getRepository(Store::class);
 
         /** @var ?Store $store */
-        $store = $repo->findOneBy(['transporter' => $transporter]);
+        $store = $repo->findOneBy(['transporter' => $this->transporter]);
         if (is_null($store)) {
             //TODO: Do not throw to avoid log pollution
             throw new Exception(sprintf(
                 'No store with transporter "%s" connected',
-                $transporter
+                $this->transporter
             ));
         }
 
@@ -110,7 +107,7 @@ class SyncTransportersCommand extends Command {
             throw new Exception('Store without address');
         }
 
-        $this->impl = new TransporterImpl($transporter);
+        $this->impl = new TransporterImpl($this->transporter);
 
         $this->store = $store;
         $this->HQAddress = $address;
@@ -125,16 +122,16 @@ class SyncTransportersCommand extends Command {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $transporter = $input->getArgument('transporter');
-        $this->setup($transporter);
+        $this->transporter = TransporterName::from($input->getArgument('transporter'))->value;
+        $this->setup();
         $this->dryRun = $input->getOption('dry-run');
         $this->output = $output;
 
         $config = $this->params->get('transporters_config');
-        if (!($config[$transporter]['enabled'] ?? false)) {
-            throw new Exception(sprintf('%s is not configured or enabled', $transporter));
+        if (!($config[$this->transporter]['enabled'] ?? false)) {
+            throw new Exception(sprintf('%s is not configured or enabled', $this->transporter));
         }
-        $config = $config[$transporter];
+        $config = $config[$this->transporter];
 
         $auth_details = parse_url($config['sync_uri']);
 
@@ -153,14 +150,14 @@ class SyncTransportersCommand extends Command {
         $filesystem = new Filesystem($adapter);
 
         $opts = new TransporterOptions(
-            $transporter,
+            $this->transporter,
             $this->companyLegalName, $this->companyLegalID,
             $config['legal_name'], $config['legal_id'],
             $filesystem, $config['fs_mask'],
         );
 
         /** @var TransporterSync $sync */
-        $sync = new ($this->impl->getSync())($opts);
+        $sync = new ($this->impl->sync)($opts);
 
         if ($this->dryRun) {
             $output->writeln("Dry run mode, nothing will be imported");
@@ -178,11 +175,10 @@ class SyncTransportersCommand extends Command {
      */
     private function sendReports(TransporterSync $sync, TransporterOptions $opts): void
     {
-        //TODO: Sync should implement a interface.
         /** @var EDIFACTMessageRepository $repo */
         $repo = $this->entityManager->getRepository(EDIFACTMessage::class);
 
-        $unsynced = $repo->getUnsynced($opts->getTransporter());
+        $unsynced = $repo->getUnsynced($this->transporter);
         if (count($unsynced) === 0) {
             $this->output->writeln("No messages to send");
             return;
@@ -190,19 +186,15 @@ class SyncTransportersCommand extends Command {
 
         $this->output->writeln(sprintf("%s messages to send", count($unsynced)));
         $reports = array_map(
-            fn(EDIFACTMessage $m) => $this->reportFromCC->generateReport($m, $opts)
-            , $unsynced
+            fn(EDIFACTMessage $m) => $this->reportFromCC->generateReport($m, $opts),
+            $unsynced
         );
-        $out = new DBSchenkerInterchange($opts);
 
-        foreach ($reports as $report) {
-            $out->addGenerator($report);
-        }
+        $content = $this->reportFromCC->buildSCONTR($reports, $opts);
 
-        $content = $out->generate();
         //TODO: Move filename generation to Transporter lib
         $filename = sprintf(
-                "REPORT-%s_%s.%s.edi", "dbschenker",
+                "REPORT-%s_%s.%s.edi", mb_strtolower($this->transporter),
                 date('Y-m-d_His'), uniqid()
             );
 
@@ -224,10 +216,10 @@ class SyncTransportersCommand extends Command {
             $messages = Transporter::parse(
                 $content,
                 INOVERTMessageType::SCONTR,
-                TransporterName::DB_SCHENKER
+                TransporterName::from($this->transporter)
             );
             $filename = sprintf(
-                "%s_%s-SCONTR.%s.edi", "dbschenker",
+                "%s_%s-SCONTR.%s.edi", mb_strtolower($this->transporter),
                 date('Y-m-d_His'), uniqid()
             );
 
@@ -236,12 +228,10 @@ class SyncTransportersCommand extends Command {
             }
 
             foreach ($messages as $tasks) {
-                if ($tasks instanceof DBSchenkerScontrParser) {
-                    foreach ($tasks->getTasks() as $task) {
-                        $edifactMessage = $this->storeSCONTR($task, $filename);
-                        $this->importTask($task, $edifactMessage);
-                        $count++;
-                    }
+                foreach ($tasks->getTasks() as $task) {
+                    $edifactMessage = $this->storeSCONTR($task, $filename);
+                    $this->importTask($task, $edifactMessage);
+                    $count++;
                 }
             }
         }
@@ -295,8 +285,7 @@ class SyncTransportersCommand extends Command {
         $edi = new EDIFACTMessage();
         $edi->setMessageType("SCONTR");
         $edi->setReference($task->getId());
-        //TODO: Transporter should be configurable
-        $edi->setTransporter(EDIFACTMessage::TRANSPORTER_DBSCHENKER);
+        $edi->setTransporter($this->transporter);
         $edi->setDirection(EDIFACTMessage::DIRECTION_INBOUND);
         $edi->setEdifactFile($filename);
         return $edi;

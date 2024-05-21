@@ -5,27 +5,28 @@ namespace AppBundle\Transporter;
 use Transporter\Enum\TransporterName;
 use Transporter\Transporters\DBSchenker\DBSchenkerSync;
 use Transporter\Transporters\DBSchenker\Generator\DBSchenkerInterchange;
-use Transporter\Transporters\DBSchenker\Generator\DBSchenkerReport;
+use Transporter\Transporters\DBSchenker\Generator\DBSchenkerReportGenerator;
 
 /**
 * Class TransporterImpl
 * @method string getSync()
-* @method string getReport()
+* @method string getReportGenerator()
 * @method string getInterchange()
 */
 class TransporterImpl {
 
     private array $implementations = [
-        TransporterName::DB_SCHENKER->value => [
+        'DBSCHENKER' => [
             'sync' => DBSchenkerSync::class,
-            'report' => DBSchenkerReport::class,
+            'reportGenerator' => DBSchenkerReportGenerator::class,
             'interchange' => DBSchenkerInterchange::class
         ],
-        TransporterName::BMV->value => [
+        'BMV' => [
 
         ]
     ];
 
+    //TODO: Move this class inside the transporter lib.
     public function __construct(
         private string $implementation
     )
