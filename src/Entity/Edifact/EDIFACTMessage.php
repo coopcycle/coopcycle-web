@@ -5,12 +5,11 @@ namespace AppBundle\Entity\Edifact;
 use AppBundle\Entity\Task;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Transporter\Enum\TransporterName;
 
 class EDIFACTMessage
 {
     use Timestampable;
-
-    const TRANSPORTER_DBSCHENKER = 'DBSCHENKER';
 
     const DIRECTION_INBOUND = 'INBOUND';
     const DIRECTION_OUTBOUND = 'OUTBOUND';

@@ -185,7 +185,7 @@ class IncidentAction
 
         $ediMessage = new EDIFACTMessage();
         $ediMessage->setMessageType(EDIFACTMessage::MESSAGE_TYPE_REPORT);
-        $ediMessage->setTransporter(EDIFACTMessage::TRANSPORTER_DBSCHENKER);
+        $ediMessage->setTransporter($importEDI->getTransporter());
         $ediMessage->setDirection(EDIFACTMessage::DIRECTION_OUTBOUND);
         $ediMessage->setReference($importEDI->getReference());
         $ediMessage->setSubMessageType($failureReason);
