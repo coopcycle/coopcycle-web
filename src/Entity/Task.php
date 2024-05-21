@@ -24,6 +24,7 @@ use AppBundle\Action\Task\Context as TaskContext;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
+use AppBundle\Api\Filter\TaskOrderFilter;
 use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Api\Filter\OrganizationFilter;
 use AppBundle\DataType\TsRange;
@@ -313,6 +314,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   }
  * )
  * @AssertTask()
+ * @ApiFilter(TaskOrderFilter::class)
  * @ApiFilter(TaskDateFilter::class, properties={"date"})
  * @ApiFilter(TaskFilter::class)
  * @ApiFilter(AssignedFilter::class, properties={"assigned"})
