@@ -40,6 +40,14 @@ export const selectTaskById = createSelector(selectAllTasks, selectTaskId,
   (tasks, taskId) => tasks.find(t => t['@id'] === taskId)
 )
 
+const selectTasksId = (state, tasksId) => tasksId
+
+export const selectTasksById = createSelector(
+  selectAllTasks,
+  selectTasksId,
+  (allTasks, tasksId) => tasksId.map(taskId => allTasks.find(t => t['@id'] === taskId))
+)
+
 export const selectAssignedTasks = createSelector(
   selectTasksListsWithItems,
   taskLists => assignedTasks(taskLists)
@@ -58,6 +66,24 @@ export const selectTasksWithColor = createSelector(
 )
 
 export const selectTaskListByUsername = (state, props) => taskListSelectors.selectById(state, props.username)
+
+export const selectTaskListTasksByUsername = createSelector(
+  selectTaskListByUsername,
+  selectAllTasks,
+  tourSelectors.selectAll,
+  (taskList, allTasks, allTours) => {
+    return taskList.items.reduce((acc, it) => {
+      if (it.startsWith('/api/tours')) {
+        const tour = allTours.find(t => t['@id'] === it)
+        acc = [...acc, ...tour.items.map(tId => allTasks.find(t => t['@id'] === tId))]
+      } else {
+        acc.push(allTasks.find(t => t["@id"] === it))
+      }
+      return acc
+    }, [])
+  }
+
+)
 
 
 // https://github.com/reduxjs/reselect#connecting-a-selector-to-the-redux-store
