@@ -926,11 +926,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $this->ref;
     }
 
-    public static function toVroomJob(Task $task): VroomJob
+    public static function toVroomJob(Task $task, $iri): VroomJob
     {
         $job = new VroomJob();
 
         $job->id = $task->getId();
+        $job->description = $iri; // if the task is linked to a tour, this will be the tour iri, otherwise the task iri
         $job->location = [
             $task->getAddress()->getGeo()->getLongitude(),
             $task->getAddress()->getGeo()->getLatitude()
