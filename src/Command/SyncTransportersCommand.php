@@ -11,7 +11,6 @@ use AppBundle\Entity\Store;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
-use AppBundle\Transporter\TransporterImpl;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -33,6 +32,7 @@ use Transporter\Enum\TransporterName;
 use Transporter\Interface\TransporterSync;
 use Transporter\Transporter;
 use Transporter\TransporterException;
+use Transporter\TransporterImpl;
 use Transporter\TransporterOptions;
 
 class SyncTransportersCommand extends Command {
@@ -72,7 +72,7 @@ class SyncTransportersCommand extends Command {
     /**
      * @throws Exception
      */
-    private function setup(): void
+    private function setup(TransporterName $transporter): void
     {
         $pos = explode(',', $this->settingsManager->get('latlng') ?? '');
         if (count($pos) !== 2) {
@@ -107,7 +107,7 @@ class SyncTransportersCommand extends Command {
             throw new Exception('Store without address');
         }
 
-        $this->impl = new TransporterImpl($this->transporter);
+        $this->impl = new TransporterImpl($transporter);
 
         $this->store = $store;
         $this->HQAddress = $address;
@@ -122,8 +122,9 @@ class SyncTransportersCommand extends Command {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $this->transporter = TransporterName::from($input->getArgument('transporter'))->value;
-        $this->setup();
+        $transporterName = TransporterName::from($input->getArgument('transporter'));
+        $this->transporter = $transporterName->value;
+        $this->setup($transporterName);
         $this->dryRun = $input->getOption('dry-run');
         $this->output = $output;
 
@@ -150,7 +151,7 @@ class SyncTransportersCommand extends Command {
         $filesystem = new Filesystem($adapter);
 
         $opts = new TransporterOptions(
-            $this->transporter,
+            $transporterName,
             $this->companyLegalName, $this->companyLegalID,
             $config['legal_name'], $config['legal_id'],
             $filesystem, $config['fs_mask'],
@@ -192,7 +193,7 @@ class SyncTransportersCommand extends Command {
 
         $content = $this->reportFromCC->buildSCONTR($reports, $opts);
 
-        //TODO: Move filename generation to Transporter lib
+        // This is the name of the file that will be stored on our S3
         $filename = sprintf(
                 "REPORT-%s_%s.%s.edi", mb_strtolower($this->transporter),
                 date('Y-m-d_His'), uniqid()
@@ -250,6 +251,7 @@ class SyncTransportersCommand extends Command {
 
         // DROPOFF SETUP
         $task = $this->importFromPoint->import($point, $edi);
+        $task->setPrevious($pickup);
 
 
         // DELIVERY SETUP
