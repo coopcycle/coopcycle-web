@@ -36,6 +36,8 @@ final class SetItems
             $taskList = new TaskList();
             $taskList->setDate($date);
             $taskList->setCourier($user);
+            $this->objectManager->persist($taskList);
+            $this->objectManager->flush();
         }
 
         return $taskList;
