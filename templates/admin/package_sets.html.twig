@@ -34,7 +34,7 @@
         {{ packages|join(', ') }}
       </td>
       <td>
-        <div {{ react_component('ShowApplication', { objectId: package_set.id, data: relatedEntitiesByPackageSetId[package_set.id], fetchUrl: "api_package_sets_applications_item" }) }}></div>
+        <div {{ react_component('ShowApplications', { objectId: package_set.id, data: relatedEntitiesByPackageSetId[package_set.id], fetchUrl: "api_package_sets_applications_item" }) }}></div>
       </td>
       {% if is_granted('ROLE_ADMIN') %}
         <td>
