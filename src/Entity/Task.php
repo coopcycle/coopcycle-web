@@ -20,9 +20,11 @@ use AppBundle\Action\Task\Restore as TaskRestore;
 use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
+use AppBundle\Action\Task\Context as TaskContext;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
+use AppBundle\Api\Filter\TaskOrderFilter;
 use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Api\Filter\OrganizationFilter;
 use AppBundle\DataType\TsRange;
@@ -30,6 +32,7 @@ use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Delivery\FailureReason;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
+use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Task\Group as TaskGroup;
@@ -301,10 +304,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "security"="is_granted('ROLE_OAUTH2_TASKS')",
  *       "input"=BioDeliverInput::class,
  *       "denormalization_context"={"groups"={"task_edit"}}
+ *     },
+ *     "get_task_context"={
+ *       "method"="GET",
+ *       "path"="/tasks/{id}/context",
+ *       "controller"=TaskContext::class,
+ *       "security"="is_granted('view', object)"
  *     }
  *   }
  * )
  * @AssertTask()
+ * @ApiFilter(TaskOrderFilter::class)
  * @ApiFilter(TaskDateFilter::class, properties={"date"})
  * @ApiFilter(TaskFilter::class)
  * @ApiFilter(AssignedFilter::class, properties={"assigned"})
@@ -450,10 +460,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $weight;
 
     /**
-    * @var bool
     * @Groups({"task"})
     */
-    private $hasIncidents = false;
+    private $incidents;
 
     public function __construct()
     {
@@ -461,6 +470,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->images = new ArrayCollection();
         $this->packages = new ArrayCollection();
         $this->edifactMessages = new ArrayCollection();
+        $this->incidents = new ArrayCollection();
     }
 
     public function getId()
@@ -1132,13 +1142,24 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $language->evaluate($pricingRule->getPrice(), $this->toExpressionLanguageValues());
     }
 
-    public function setHasIncidents(bool $hasIncidents): void
-    {
-        $this->hasIncidents = $hasIncidents;
-    }
-
+    /**
+     * @Groups({"task"})
+     */
     public function getHasIncidents(): bool
     {
-        return $this->hasIncidents;
+        return !$this->getIncidents()->filter(function (Incident $incident) {
+            return $incident->getStatus() === Incident::STATUS_OPEN;
+        })->isEmpty();
     }
+
+    public function getIncidents(): Collection
+    {
+        return $this->incidents;
+    }
+
+    public function addIncident(Incident $incident): void
+    {
+        $this->incidents[] = $incident;
+    }
+
 }

@@ -55,6 +55,7 @@
     <field name="stripeConnectRoles" type="json_array" column="stripe_connect_roles"/>
     <field name="mercadopagoConnectRoles" type="json_array" column="mercadopago_connect_roles" nullable="true"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
+    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <field name="exclusive" type="boolean" column="exclusive">
       <options>
         <option name="default">0</option>
@@ -75,6 +76,21 @@
     <field name="featured" type="boolean" column="featured"/>
     <field name="stripePaymentMethods" type="json_array" column="stripe_payment_methods"/>
     <field name="edenredMerchantId" type="string" column="edenred_merchant_id" nullable="true"/>
+    <field name="edenredEnabled" type="boolean" column="edenred_enabled" default="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="edenredTRCardEnabled" type="boolean" column="edenred_trcard_enabled" default="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="edenredSyncSent" type="boolean" column="edenred_sync_sent" default="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <field name="vytalEnabled" type="boolean" column="vytal_enabled">
       <options>
         <option name="default">0</option>
@@ -101,8 +117,7 @@
         <option name="default">0</option>
       </options>
     </field>
-    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
-    <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
+    <many-to-one field="contract" target-entity="AppBundle\Entity\Contract" inversed-by="restaurants">
       <cascade>
         <cascade-persist/>
       </cascade>
@@ -242,6 +257,14 @@
     </many-to-one>
     <many-to-one field="hub" target-entity="AppBundle\Entity\Hub" inversed-by="restaurants">
       <join-column name="hub_id" referenced-column-name="id" />
+    </many-to-one>
+    <many-to-one field="failureReasonSet" target-entity="AppBundle\Entity\Delivery\FailureReasonSet">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="failure_reason_set_id" referenced-column-name="id"/>
+      </join-columns>
     </many-to-one>
   </entity>
 </doctrine-mapping>

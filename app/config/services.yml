@@ -87,6 +87,7 @@ services:
   League\Flysystem\Filesystem $taskImportsFilesystem: '@task_imports_filesystem'
   League\Flysystem\Filesystem $receiptsFilesystem: '@receipts_filesystem'
   League\Flysystem\Filesystem $ediMessagesFilesystem: '@edi_messages_filesystem'
+  League\Flysystem\Filesystem $incidentImagesFilesystem: '@incident_images_filesystem'
   Nucleos\UserBundle\Util\Canonicalizer: '@nucleos_user.util.canonicalizer.simple'
 
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
@@ -194,6 +195,7 @@ services:
       $promotionFactory: '@sylius.factory.promotion'
       $optinExportUsersEnabled: '%env(bool:OPTIN_EXPORT_USERS_ENABLED)%'
       $adhocOrderEnabled: '%env(bool:ADHOC_ORDER_ENABLED)%'
+      $incidentImagesFilesystem: '@incident_images_filesystem'
 
   AppBundle\Controller\DashboardController:
     arguments:
@@ -722,6 +724,15 @@ services:
         - '@translator'
     tags: [ 'kernel.event_subscriber' ]
 
+  AppBundle\Api\EventSubscriber\PricingRuleSetDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\TimeSlotDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\PackageSetDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
   AppBundle\Api\EventSubscriber\TaskOrganizationSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
@@ -791,12 +802,6 @@ services:
     public: true
     arguments:
       $state: "%region_iso%"
-
-  AppBundle\Action\TimeSlot\Choices:
-    public: true
-    arguments:
-      $country: "%country_iso%"
-      $locale: '%env(COOPCYCLE_LOCALE)%'
 
   AppBundle\Action\CentrifugoToken:
     public: true
@@ -981,7 +986,15 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.tagging }
 
-  AppBundle\Log\RequestResponseProcessor:
+  AppBundle\Log\RequestIdProcessor:
+
+  AppBundle\Log\RequestUriProcessor:
+
+  Symfony\Bridge\Monolog\Processor\RouteProcessor:
+    tags:
+      - { name: monolog.processor }
+
+  AppBundle\Log\ApiRequestResponseProcessor:
     tags:
       - { name: monolog.processor, channel: api }
 
@@ -1368,3 +1381,8 @@ services:
   AppBundle\Controller\StorybookController:
     arguments:
       $translator: '@translator'
+
+  AppBundle\Edenred\SynchronizerClient:
+    arguments: [
+      '@edenredsynchronizer.client',
+    ]

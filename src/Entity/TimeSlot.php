@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Action\TimeSlot\Choices as ChoicesController;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
@@ -17,24 +16,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *   normalizationContext={"groups"={"time_slot"}},
  *   itemOperations={
- *     "get"={"method"="GET"}
- *   },
- *   collectionOperations={
- *     "choices"={
- *       "method"="GET",
- *       "path"="/time_slots/choices",
- *       "controller"=ChoicesController::class,
- *       "status"=200,
- *       "read"=false,
- *       "write"=false,
- *       "normalization_context"={"groups"={"time_slot_choices"}, "api_sub_level"=true},
- *       "security"="is_granted('ROLE_OAUTH2_DELIVERIES')",
- *       "openapi_context"={
- *         "summary"="Retrieves choices for time slot"
- *       }
+ *     "get"={"method"="GET"},
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')"
  *     }
- *   }
- * )
+ *   })
  */
 class TimeSlot
 {
@@ -61,6 +48,13 @@ class TimeSlot
     private $workingDaysOnly = true;
 
     /**
+     * kept for backward compatibility, to be deleted when https://github.com/coopcycle/coopcycle-app/issues/1771 is solved
+     * @deprecated
+     * @Groups({"time_slot"})
+     */
+    public $choices = [];
+
+    /**
      * @var string
      * @Groups({"time_slot"})
      */
@@ -78,17 +72,21 @@ class TimeSlot
      */
     private $openingHours = [];
 
-    public function __construct()
-    {
-    	$this->choices = new ArrayCollection();
-    }
-
     /**
      * @return mixed
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * kept for backward compatibility, to be deleted when https://github.com/coopcycle/coopcycle-app/issues/1771 is solved
+     * @deprecated
+     */
+    public function getChoices()
+    {
+        return [];
     }
 
     /**
@@ -219,16 +217,6 @@ class TimeSlot
         $this->sameDayCutoff = $sameDayCutoff;
 
         return $this;
-    }
-
-    /**
-     * @deprecated
-     * @SerializedName("choices")
-     * @Groups({"time_slot"})
-     */
-    public function getChoices()
-    {
-        return [];
     }
 
     public static function create(FulfillmentMethod $fulfillmentMethod, ShippingOptionsInterface $options): TimeSlot

@@ -24,4 +24,9 @@ class Job
      * @var array
      */
     public $time_windows;
+
+    /**
+     * @var string
+     */
+    public $description;
 }

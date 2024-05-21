@@ -1,0 +1,58 @@
+{% extends "deliveries.html.twig" %}
+
+{% block breadcrumb %}
+{{ parent() }}
+<li>{% trans %}adminDashboard.pricing.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+<div class="text-right mb-4">
+  <a class="btn btn-success" href="{{ path('admin_deliveries_pricing_ruleset_new') }}"><i class="fa fa-plus"></i> {% trans %}adminDashboard.pricing.createNew{% endtrans %}</a>
+</div>
+<table class="table">
+  <tbody>
+  {% if ruleSets|length > 0 %}
+    {% for ruleSet in ruleSets %}
+      <tr>
+        <td><a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">{{ ruleSet.name }}</a></td>
+        <td>
+          <div {{ react_component('ShowApplications', { objectId: ruleSet.id, data: relatedEntitiesByPricingRuleSetId[ruleSet.id], fetchUrl: 'api_pricing_rule_sets_get_item' }) }}></div>
+        </td>
+        <td class="text-right">
+          <div class="btn-group">
+            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {% trans %}adminDashboard.pricing.manage{% endtrans %}   <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+              <li>
+                <a href="{{ path('admin_deliveries_pricing_ruleset', { id: ruleSet.id }) }}">
+                  {% trans %}adminDashboard.pricing.settings{% endtrans %}
+                </a>
+              </li>
+              <li>
+                <a href="{{ path('admin_deliveries_pricing_ruleset_duplicate', { id: ruleSet.id }) }}">
+                  {% trans %}adminDashboard.pricing.duplicate{% endtrans %}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </td>
+        {% if is_granted('ROLE_ADMIN') %}
+          <td>
+            <div {{ react_component('DeleteIcon', { objectId: ruleSet.id, objectName: ruleSet.name, deleteUrl: 'api_pricing_rule_sets_delete_item', errorMessage: 'ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION'}) }}>
+            </div>
+          </td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  {% else %}
+    <div class="alert alert-info">
+    {% trans %}adminDashboard.pricing.noPricings{% endtrans %}
+    </div>
+  {% endif %}
+  </tbody>
+</table>
+<div class="text-center">
+  {{ knp_pagination_render(ruleSets, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
+{% endblock %}

@@ -57,7 +57,8 @@ Encore
   .addEntry('restaurant-dashboard', './js/app/dashboard/@restaurant/dashboard.js')
   .addEntry('search-address', './js/app/search/address.js')
   .addEntry('search-user', './js/app/search/user.js')
-  .addEntry('store-form', './js/app/store/form.js')
+  .addEntry('store-form', './js/app/admin/store/form.js')
+  .addEntry('stores-list', './js/app/admin/store/list.js')
   .addEntry('task-list', './js/app/delivery/task-list.js')
   .addEntry('time-slot-form', './js/app/time-slot/form.js')
   .addEntry('time-slot-list', './js/app/time-slot/list.js')
@@ -69,6 +70,7 @@ Encore
   .addEntry('widgets-admin', './js/app/widgets/admin.js')
   .addEntry('zone-preview', './js/app/zone/preview.js')
   .addEntry('failure-form', './js/app/failure/form.js')
+  .addEntry('incident-form', './js/app/incident/form.js')
 
   // @see https://symfony.com/doc/current/frontend/encore/custom-loaders-plugins.html#adding-custom-plugins
   // @see https://github.com/moment/moment/issues/2373

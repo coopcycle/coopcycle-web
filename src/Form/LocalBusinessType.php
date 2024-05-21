@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Service\FormFieldUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Symfony\Component\Form\AbstractType;
@@ -18,6 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 use AppBundle\Payment\GatewayResolver;
 
@@ -27,6 +29,7 @@ abstract class LocalBusinessType extends AbstractType
     protected $tokenStorage;
     protected $entityManager;
     protected $serializer;
+    protected $urlGenerator;
     protected $country;
     protected $debug;
     protected $cashOnDeliveryOptinEnabled;
@@ -38,6 +41,7 @@ abstract class LocalBusinessType extends AbstractType
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
         GatewayResolver $gatewayResolver,
+        UrlGeneratorInterface $urlGenerator,
         protected FormFieldUtils $formFieldUtils,
         string $country,
         bool $debug = false,
@@ -49,6 +53,7 @@ abstract class LocalBusinessType extends AbstractType
         $this->tokenStorage = $tokenStorage;
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
+        $this->urlGenerator = $urlGenerator;
         $this->country = $country;
         $this->debug = $debug;
         $this->cashOnDeliveryOptinEnabled = $cashOnDeliveryOptinEnabled;
@@ -78,20 +83,25 @@ abstract class LocalBusinessType extends AbstractType
                 'label' => 'localBusiness.form.telephone',
             ]);
 
-        foreach ($options['additional_properties'] as $key) {
-            $builder->add($key, TextType::class, [
+        foreach ($options['additional_properties'] as $key => $constraints) {
+
+            $additionalPropertyOptions = [
                 'required' => false,
                 'mapped' => false,
                 'label' => sprintf('form.local_business.iso_code.%s.%s', $this->country, $key),
-                // TODO Add constraints
-            ]);
+            ];
+            if (!empty($constraints)) {
+                $additionalPropertyOptions['constraints'] = $constraints;
+            }
+
+            $builder->add($key, TextType::class, $additionalPropertyOptions);
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
             $form = $event->getForm();
             $localBusiness = $event->getData();
 
-            foreach ($options['additional_properties'] as $key) {
+            foreach (array_keys($options['additional_properties']) as $key) {
                 if ($form->has($key)) {
                     $form->get($key)->setData($localBusiness->getAdditionalPropertyValue($key));
                 }
@@ -111,7 +121,7 @@ abstract class LocalBusinessType extends AbstractType
 
                 $localBusiness = $event->getForm()->getData();
 
-                foreach ($options['additional_properties'] as $key) {
+                foreach (array_keys($options['additional_properties']) as $key) {
                     $value = $event->getForm()->get($key)->getData();
                     $localBusiness->setAdditionalProperty($key, $value);
                 }
@@ -141,12 +151,12 @@ abstract class LocalBusinessType extends AbstractType
 
         switch ($this->country) {
             case 'fr':
-                $additionalProperties[] = 'siret';
-                $additionalProperties[] = 'vat_number';
-                $additionalProperties[] = 'rcs_number';
+                $additionalProperties['siret'] = [ new Assert\Luhn(message: 'siret.invalid') ];
+                $additionalProperties['vat_number'] = [];
+                $additionalProperties['rcs_number'] = [];
                 break;
             case 'ar':
-                $additionalProperties[] = 'cuit';
+                $additionalProperties['cuit'] = [];
             default:
                 break;
         }

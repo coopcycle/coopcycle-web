@@ -1,0 +1,69 @@
+{% extends "admin.html.twig" %}
+{% set createdBy = incident.getCreatedBy() %}
+
+{% block breadcrumb %}
+<li>
+  <a href="{{ path('admin_incidents') }}">{% trans %}adminDashboard.incidents.title{% endtrans %}</a>
+</li>
+<li>
+  Incident #{{incident.id}}
+</li>
+{% endblock %}
+
+{% block content %}
+{%- set images = incident.getImages()|reverse|map(i => {
+  'id': i.id,
+  'thumbnail': coopcycle_asset(i, 'file', 'incident_image_thumbnail'),
+  'full': absolute_url(path('incident_image_public', {path: i.imageName}))
+})|serialize -%}
+<div {{ react_component('Incident/IncidentLoad', {
+  incident: incident|serialize('json', {groups: ['incident', 'task', 'address'] }),
+  order: order|serialize,
+  images: images,
+  transporterEnabled: transporterEnabled
+}) }} ></div>
+<div class="incident-header">
+  <div class="container">
+    <div class="row">
+      <div {{ react_component('Incident/IncidentHeader') }} ></div>
+    </div>
+  </div>
+</div>
+
+<div class="container incident-body">
+  <div class="col-md-9">
+    <div class="row">
+      <p style="font-weight: bold">Description</p>
+      <p class="mx-2">{{ incident.description }}</p>
+    </div>
+    <hr>
+    <div class="row">
+      <p>Attachments <span class="caret"></span></p>
+      <div {{react_component('Incident/IncidentImages')}}></div>
+    </div>
+    <hr>
+    <div>
+      <div {{ react_component('Incident/IncidentTimeline') }}></div>
+      <div {{ react_component('Incident/CommentBox') }}></div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div {{ react_component('Incident/OrderDetails', { delivery: delivery|serialize }) }}></div>
+    <hr>
+    <div {{ react_component('Incident/ActionBox', { isLastmile: isLastmile }) }}></div>
+    <hr>
+    <div {{react_component('Incident/TaskTimeline', {events: incident.getTask().getEvents()|serialize}) }}></div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block styles %}
+{{ encore_entry_link_tags('incident-form') }}
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('incident-form') }}
+{% endblock %}

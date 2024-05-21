@@ -119,46 +119,6 @@ trait AdminDashboardTrait
             return $response;
         }
 
-        // $allTasks = $this->getDoctrine()
-        //     ->getRepository(Task::class)
-        //     ->findByDate($date)
-        //     ;
-
-        // $taskLists = $this->getDoctrine()
-        //     ->getRepository(TaskList::class)
-        //     ->findByDate($date);
-
-        $tours = $this->getDoctrine()
-            ->getRepository(Tour::class)
-            ->findByDate($date);
-
-        // $allTasksNormalized = array_map(function (Task $task) {
-        //     return $this->get('serializer')->normalize($task, 'jsonld', [
-        //         'resource_class' => Task::class,
-        //         'operation_type' => 'item',
-        //         'item_operation_name' => 'get',
-        //         'groups' => ['task', 'delivery', 'address', sprintf('address_%s', $this->getParameter('country_iso'))]
-        //     ]);
-        // }, $allTasks);
-
-        // $taskListsNormalized = array_map(function (TaskList $taskList) {
-        //     return $this->get('serializer')->normalize($taskList, 'jsonld', [
-        //         'resource_class' => TaskList::class,
-        //         'operation_type' => 'item',
-        //         'item_operation_name' => 'get',
-        //         'groups' => ['task_collection']
-        //     ]);
-        // }, $taskLists);
-
-        $toursNormalized = array_map(function (Tour $tour) {
-            return $this->get('serializer')->normalize($tour, 'jsonld', [
-                'resource_class' => Tour::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
-                'groups' => ['task_collection']
-            ]);
-        }, $tours);
-
         $couriers = $this->getDoctrine()
             ->getRepository(User::class)
             ->createQueryBuilder('u')
@@ -170,6 +130,7 @@ trait AdminDashboardTrait
             ->getArrayResult();
 
         $this->getDoctrine()->getManager()->getFilters()->enable('soft_deleteable');
+        // insert here all queries for soft deletable that you don't want to show in the dashboard
 
         $recurrenceRules =
             $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findAll();
@@ -182,9 +143,9 @@ trait AdminDashboardTrait
             ]);
         }, $recurrenceRules);
 
-        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
-
         $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
+
+        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
 
         $storesNormalized = array_map(function (Store $store) {
             return $this->get('serializer')->normalize($store, 'jsonld', [
@@ -214,7 +175,7 @@ trait AdminDashboardTrait
             $qb->getQuery()->getArrayResult()
         );
 
-        return $this->render('admin/dashboard_iframe.html.twig', [
+        return $this->render('admin/dashboard_iframe.html.twig', $this->auth([
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
             'couriers' => $couriers,
@@ -229,7 +190,7 @@ trait AdminDashboardTrait
             'stores' => $storesNormalized,
             'pickup_cluster_addresses' => $addressIris,
             'export_enabled' => $this->isGranted('ROLE_ADMIN') ? 'on' : 'off',
-        ]);
+        ]));
     }
 
     private function loadPositions(Redis $tile38, $cursor = 0, array $points = [])

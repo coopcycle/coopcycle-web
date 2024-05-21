@@ -9,6 +9,7 @@ import LoopeatModal from './LoopeatModal'
 require('gasparesganga-jquery-loading-overlay')
 
 import './summary.scss'
+import { disableBtn, enableBtn } from '../widgets/button'
 
 const {
   currency,
@@ -23,10 +24,7 @@ var im = new Inputmask("currency", {
     suffix: currency.position === 'postfix' ? `${space}${getCurrencySymbol()}` : ''
 })
 
-const submitBtns = document.querySelectorAll(
-  'form[name="checkout_address"] input[type="submit"],button[type="submit"]'
-)
-const mainSubmitBtn = _.find(Array.from(submitBtns), btn => !btn.hasAttribute('name'))
+const submitPageBtn = document.querySelector('.btn-submit-page')
 
 const getValue = (inputmask) => numbro.unformat(inputmask.unmaskedvalue())
 
@@ -41,6 +39,19 @@ function enableTipInput() {
   })
 }
 
+function setLoading(isLoading) {
+  if (isLoading) {
+    $('.form-content').LoadingOverlay('show', {
+      image: false,
+      zIndex: 1,
+    })
+    disableBtn(submitPageBtn)
+  } else {
+    $('.form-content').LoadingOverlay('hide')
+    enableBtn(submitPageBtn)
+  }
+}
+
 const updateTip = _.debounce(function() {
 
   const mask = document.querySelector('#tip-input').inputmask
@@ -52,11 +63,7 @@ const updateTip = _.debounce(function() {
   data['checkout_tip[amount]'] = newValue
   data['checkout_tip[_token]'] = $('#checkout_tip__token').val()
 
-  $('form[name="checkout_address"] table').LoadingOverlay('show', {
-    image: false,
-  })
-  mainSubmitBtn.setAttribute('disabled', true)
-  mainSubmitBtn.classList.add('disabled')
+  setLoading(true)
 
   $.ajax({
     url : $form.attr('action'),
@@ -69,9 +76,7 @@ const updateTip = _.debounce(function() {
 
       enableTipInput()
 
-      $('form[name="checkout_address"] table').LoadingOverlay('hide')
-      mainSubmitBtn.removeAttribute('disabled')
-      mainSubmitBtn.classList.remove('disabled')
+      setLoading(false)
     }
   })
 
@@ -195,11 +200,7 @@ $('#apply-coupon').on('click', function(e) {
     'checkout_coupon[_token]': $('#checkout_coupon__token').val(),
   }
 
-  $('form[name="checkout_address"] table').LoadingOverlay('show', {
-    image: false,
-  })
-  mainSubmitBtn.setAttribute('disabled', true)
-  mainSubmitBtn.classList.add('disabled')
+  setLoading(true)
 
   $.ajax({
     url : $form.attr('action'),
@@ -216,9 +217,7 @@ $('#apply-coupon').on('click', function(e) {
       $('#coupon-code').val('')
       $('#promotion-coupon-collapse').collapse('hide')
 
-      $('form[name="checkout_address"] table').LoadingOverlay('hide')
-      mainSubmitBtn.removeAttribute('disabled')
-      mainSubmitBtn.classList.remove('disabled')
+      setLoading(false)
     }
   })
 })
@@ -230,3 +229,10 @@ window.setNonprofit = function (elem) {
   nonprofitCards.map(x => x.classList.remove('active'));
   elem.classList.add("active");
 }
+
+const form = document.querySelector('form[name="checkout_address"]')
+
+form.addEventListener('submit', function() {
+  submitPageBtn.classList.add('btn--loading')
+  setLoading(true)
+})

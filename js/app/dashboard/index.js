@@ -29,7 +29,7 @@ async function start() {
 
   const dashboardEl = document.getElementById('dashboard')
   const jwtToken = dashboardEl.dataset.jwt
-  const baseUrl = location.protocol + '//' + location.hostname
+  const baseUrl = location.protocol + '//' + location.host
   const headers = {
     'Authorization': `Bearer ${jwtToken}`,
     'Accept': 'application/ld+json',

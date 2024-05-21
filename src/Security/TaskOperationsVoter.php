@@ -46,7 +46,7 @@ class TaskOperationsVoter extends Voter
             return $this->voteOnAttributeWithOAuth($attribute, $subject);
         }
 
-        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+        if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
             return true;
         }
 

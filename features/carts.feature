@@ -89,7 +89,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -165,7 +166,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -241,7 +243,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod": "delivery",
         "invitation": "@string@||@null@"
@@ -302,7 +305,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -366,7 +370,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -424,7 +429,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -474,14 +480,14 @@ Feature: Carts
         "adjustments":{
           "delivery":[
             {
-              "id":3,
+              "id":2,
               "label":"Livraison",
               "amount":350
             }
           ],
           "delivery_promotion":[
             {
-              "id":1,
+              "id":3,
               "label":"Free delivery",
               "amount":-350
             }
@@ -489,7 +495,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":@array@,
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -547,7 +554,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax": @array@,
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -652,7 +660,8 @@ Feature: Carts
               "amount":@integer@
             }
           ],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -757,7 +766,8 @@ Feature: Carts
               "amount":@integer@
             }
           ],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -862,7 +872,8 @@ Feature: Carts
               "amount":@integer@
             }
           ],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -1525,7 +1536,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -1647,7 +1659,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -1732,7 +1745,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -1817,7 +1831,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -1917,7 +1932,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "invitation": "@string@||@null@"
       }

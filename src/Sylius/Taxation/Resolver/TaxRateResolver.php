@@ -16,10 +16,8 @@ class TaxRateResolver extends BaseTaxRateResolver implements TaxRateResolverInte
      * @param RepositoryInterface $taxRateRepository
      * @param string $region
      */
-    public function __construct(RepositoryInterface $taxRateRepository, string $region)
+    public function __construct(RepositoryInterface $taxRateRepository, private string $region)
     {
-        $this->region = $region;
-
         parent::__construct($taxRateRepository);
     }
 

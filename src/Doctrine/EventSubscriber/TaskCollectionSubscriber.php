@@ -128,7 +128,7 @@ class TaskCollectionSubscriber implements EventSubscriber
             $this->logger->debug('TaskCollection was modified, recalculating…');
             $this->calculate($taskCollection);
 
-            if ($uow->isInIdentityMap($taskCollection)) {
+            if ($em->contains($taskCollection)) {
                 $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(TaskCollection::class), $taskCollection);
             }
 

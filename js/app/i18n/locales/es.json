@@ -58,6 +58,7 @@
         "ADMIN_DASHBOARD_NAV_FILTERS": "Filtros",
         "ADMIN_DASHBOARD_FILTERS_INCIDENT_REPORTED_TASKS": "Tareas con informes de incidentes",
         "ONLY_SHOW_THESE": "Mostrar solo estos",
+        "ONLY_THIS_FILTER": "Este filtro exclusivamente",
         "ADMIN_DASHBOARD_NAV_IMPORT_ERRORS": "Errores de importación",
         "ADMIN_DASHBOARD_TASK_TITLE": "Tarea #{{id}}",
         "ADMIN_DASHBOARD_TASK_TITLE_NEW": "Nueva tarea",
@@ -369,6 +370,17 @@
         "SEE_ALL": "Ver todo",
         "ORDER_DELAYED_NOTIFICATION": "Orden {{orderNumber}} atrasada. Nuevo rango horario de entrega: {{shippingTimeRange}}",
         "DELETE_ALL": "Eliminar todo",
-        "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Nombre de la regla"
+        "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Nombre de la regla",
+        "TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME": "Buscar una dirección guardada",
+        "TASK_FORM_SEARCH_ADDRESS_NAME_PLACEHOLDER": "Nombre de la dirección...",
+        "RESTAURANT": "Restaurante",
+        "STORE": "Tienda",
+        "RESTAURANTS_GROUP": "Grupo de restaurantes",
+        "DELIVERY_FORM": "Formulario de entrega",
+        "ADMIN_PLEASE_UNLINK_PACKAGE_SET_BEFORE_DELETION": "No se pudo eliminar. Por favor, desvincule este conjunto de paquetes de las tiendas o formularios de entrega a los que pueda aplicarse.",
+        "ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION": "No se pudo eliminar. Por favor, desvincule esta tarifa de los establecimientos, restaurantes o formularios de entrega a los que pueda aplicarse.",
+        "SHOW_DETAILS": "Mostrar detalles",
+        "ADMIN_NO_APPLICATIONS": "Aún no está en uso",
+        "ADMIN_APPLIED_TO": "Aplicado a {{count}} elemento(s)"
     }
 }

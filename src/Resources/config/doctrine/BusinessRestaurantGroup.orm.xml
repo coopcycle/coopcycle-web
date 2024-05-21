@@ -18,7 +18,7 @@
     <field name="enabled" column="enabled" type="boolean" />
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
-    <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
+    <many-to-one field="contract" target-entity="AppBundle\Entity\Contract" inversed-by="businessRestaurantGroups">
       <cascade>
         <cascade-persist/>
       </cascade>

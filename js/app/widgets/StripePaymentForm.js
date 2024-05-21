@@ -10,16 +10,7 @@ import mercadopago from '../payment/mercadopago'
 import { Disclaimer } from '../payment/cashOnDelivery'
 
 import { useTranslation } from 'react-i18next'
-
-function disableBtn(btn) {
-  btn.setAttribute('disabled', '')
-  btn.disabled = true
-}
-
-function enableBtn(btn) {
-  btn.disabled = false
-  btn.removeAttribute('disabled')
-}
+import { disableBtn, enableBtn } from './button'
 
 const methodPickerStyles = {
   display: 'flex',
@@ -137,12 +128,12 @@ const handleCardPayment = (cc, options, form, submitButton, savedPaymentMethodId
         options.tokenElement.setAttribute('value', token)
         form.submit()
       } else {
-        $('.btn-payment').removeClass('btn-payment__loading')
+        $('.btn-payment').removeClass('btn--loading')
         enableBtn(submitButton)
       }
     })
     .catch(e => {
-      $('.btn-payment').removeClass('btn-payment__loading')
+      $('.btn-payment').removeClass('btn--loading')
       enableBtn(submitButton)
       document.getElementById('card-errors').textContent = e.message
     })
@@ -207,7 +198,7 @@ export default function(form, options) {
 
     event.preventDefault()
 
-    $('.btn-payment').addClass('btn-payment__loading')
+    $('.btn-payment').addClass('btn--loading')
     disableBtn(submitButton)
 
     let savedPaymentMethod = null
@@ -226,7 +217,7 @@ export default function(form, options) {
         case 'giropay':
           cc.confirmGiropayPayment()
             .catch(e => {
-              $('.btn-payment').removeClass('btn-payment__loading')
+              $('.btn-payment').removeClass('btn--loading')
               enableBtn(submitButton)
               document.getElementById('card-errors').textContent = e.message
             })

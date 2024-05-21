@@ -174,6 +174,7 @@ class DeliveryManager
             $pickup->setAddress($store->getAddress());
         }
 
+        // If no pickup is specified, estimates pickup time from dropoff address and distance
         if (null !== $dropoff->getBefore() && null !== $dropoff->getAddress()) {
 
             foreach ($delivery->getTasksByType(Task::TYPE_PICKUP) as $p) {

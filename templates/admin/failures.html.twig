@@ -14,25 +14,13 @@
     {% if failureReasonSets|length > 0 %}
       {% for failureReasonSet in failureReasonSets %}
         <tr>
-          <td><a href="{{ path('admin_deliveries_failures_failurereasonset', { id: failureReasonSet.id }) }}">#{{ failureReasonSet.id }}</a></td>
-          <td>{{ failureReasonSet.name }}</td>
+          <td><a href="{{ path('admin_deliveries_failures_failurereasonset', { id: failureReasonSet.id }) }}">{{ failureReasonSet.name }}</a></td>
           <td class="text-right">
             <form method="post" id="delete_failure_{{ failureReasonSet.id }}" action="{{ path('admin_failures_delete', { id: failureReasonSet.id }) }}">
             </form>
-
-            <div class="btn-group">
-              <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {% trans %}basics.manage{% endtrans %}   <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-right">
-                <li>
-                  <a href="{{ path('admin_deliveries_failures_failurereasonset', { id: failureReasonSet.id }) }}">
-                    {% trans %}basics.settings{% endtrans %}
-                  </a>
-                  <a href="#" onclick="deleteFailureSet('delete_failure_{{ failureReasonSet.id }}')">{% trans %}basics.delete{% endtrans %}</a>
-                </li>
-              </ul>
-            </div>
+            <a href="#" onclick="deleteFailureSet('delete_failure_{{ failureReasonSet.id }}')">
+               <i class="fa fa-trash text-danger"></i>
+            </a>
           </td>
         </tr>
       {% endfor %}

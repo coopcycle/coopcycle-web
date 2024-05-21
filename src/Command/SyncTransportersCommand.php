@@ -8,44 +8,42 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageRepository;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\TimeSlot;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\SettingsManager;
 use Carbon\Carbon;
-use DBSchenker\DBSchenkerOptions;
-use DBSchenker\DBSchenkerSync;
-use DBSchenker\DBSchenker;
-use DBSchenker\DTO\CommunicationMean;
-use DBSchenker\DTO\GR7;
-use DBSchenker\DTO\Mesurement;
-use DBSchenker\DTO\NameAndAddress;
-use DBSchenker\Enum\CommunicationMeanType;
-use DBSchenker\Enum\NameAndAddressType;
-use DBSchenker\Enum\ReportSituation;
-use DBSchenker\Enum\ReportReason;
-use DBSchenker\Generator\DBSchenkerInterchange;
-use DBSchenker\Generator\DBSchenkerReport;
-use DBSchenker\Parser\DBSchenkerScontrParser;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use League\Flysystem\Adapter\Ftp;
+use Exception;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\Ftp\FtpConnectionOptions;
+use libphonenumber\PhoneNumber;
+use libphonenumber\PhoneNumberUtil;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use libphonenumber\PhoneNumber;
-use libphonenumber\PhoneNumberUtil;
+use Transporter\DTO\CommunicationMean;
+use Transporter\DTO\Mesurement;
+use Transporter\DTO\NameAndAddress;
+use Transporter\DTO\Point;
+use Transporter\Enum\CommunicationMeanType;
+use Transporter\Enum\INOVERTMessageType;
+use Transporter\Enum\NameAndAddressType;
+use Transporter\Enum\TransporterName;
+use Transporter\Transporter;
+use Transporter\TransporterException;
+use Transporter\TransporterOptions;
+use Transporter\Transporters\DBSchenker\DBSchenkerSync;
+use Transporter\Transporters\DBSchenker\Generator\DBSchenkerInterchange;
+use Transporter\Transporters\DBSchenker\Generator\DBSchenkerReport;
+use Transporter\Transporters\DBSchenker\Parser\DBSchenkerScontrParser;
 
 class SyncTransportersCommand extends Command {
 
-    private Address $HQAdress;
+    private Address $HQAddress;
     private Store $store;
     private GeoCoordinates $defaultCoordinates;
 
@@ -73,21 +71,24 @@ class SyncTransportersCommand extends Command {
         $this->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Dry run mode');
     }
 
+    /**
+     * @throws Exception
+     */
     private function setup(): void
     {
         $pos = explode(',', $this->settingsManager->get('latlng') ?? '');
         if (count($pos) !== 2) {
-            throw new \Exception('Invalid latlng setting');
+            throw new Exception('Invalid lat-lng setting');
         }
 
         $this->companyLegalName = $this->settingsManager->get('company_legal_name');
         if (empty($this->companyLegalName)) {
-            throw new \Exception('Company name not set');
+            throw new Exception('Company name not set');
         }
 
         $this->companyLegalID = $this->settingsManager->get('company_legal_id');
         if (empty($this->companyLegalID)) {
-            throw new \Exception('Company ID not set');
+            throw new Exception('Company ID not set');
         }
 
         $this->defaultCoordinates = new GeoCoordinates($pos[0], $pos[1]);
@@ -97,19 +98,24 @@ class SyncTransportersCommand extends Command {
         $store = $repo->findOneBy(['DBSchenkerEnabled' => true]);
         if (is_null($store)) {
             //TODO: Do not throw to avoid log pollution
-            throw new \Exception('No store with transporter connected');
+            throw new Exception('No store with transporter connected');
         }
 
         $address = $store->getAddress();
         if (is_null($address)) {
-            throw new \Exception('Store without address');
+            throw new Exception('Store without address');
         }
 
         $this->store = $store;
-        $this->HQAdress = $address;
+        $this->HQAddress = $address;
 
     }
 
+    /**
+     * @throws FilesystemException
+     * @throws TransporterException
+     * @throws Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->setup();
@@ -118,7 +124,7 @@ class SyncTransportersCommand extends Command {
 
         $config = $this->params->get('transporters_config');
         if (!($config['DBSCHENKER']['enabled'] ?? false)) {
-            throw new \Exception('DBSchenker is not configured or enabled');
+            throw new Exception('DBSchenker is not configured or enabled');
         }
         $config = $config['DBSCHENKER'];
 
@@ -137,7 +143,7 @@ class SyncTransportersCommand extends Command {
 
         $filesystem = new Filesystem($adapter);
 
-        $opts = new DBSchenkerOptions(
+        $opts = new TransporterOptions(
             $this->companyLegalName, $this->companyLegalID,
             $config['legal_name'], $config['legal_id'],
             $filesystem, $config['fs_mask'],
@@ -155,7 +161,10 @@ class SyncTransportersCommand extends Command {
         return 0;
     }
 
-    private function sendReports(DBSchenkerSync $sync, DBSchenkerOptions $opts): void
+    /**
+     * @throws FilesystemException
+     */
+    private function sendReports(DBSchenkerSync $sync, TransporterOptions $opts): void
     {
         /** @var EDIFACTMessageRepository $repo */
         $repo = $this->entityManager->getRepository(EDIFACTMessage::class);
@@ -176,7 +185,7 @@ class SyncTransportersCommand extends Command {
 
         $content = $out->generate();
         $filename = sprintf(
-                "%s_%s-REPORT.%s.edi", "dbschenker",
+                "REPORT-%s_%s.%s.edi", "dbschenker",
                 date('Y-m-d_His'), uniqid()
             );
 
@@ -186,23 +195,39 @@ class SyncTransportersCommand extends Command {
         $repo->setSynced($ids, $filename);
     }
 
-    private function generateReport(EDIFACTMessage $message, DBSchenkerOptions $opts): DBSchenkerReport
+    private function generateReport(EDIFACTMessage $message, TransporterOptions $opts): DBSchenkerReport
     {
         $report = new DBSchenkerReport($opts);
         $report->setDocID(strval($message->getId()));
         $report->setReference($message->getReference());
         $report->setReceipt($message->getReference());
+        if (!empty($message->getPods())) {
+            $report->setPods($message->getPods());
+        }
+        if (!is_null($message->getAppointment())) {
+            $report->setAppointment($message->getAppointment());
+        }
+        $report->setDSJ($message->getCreatedAt());
         [$situation, $reason] = explode('|', $message->getSubMessageType());
-        $report->setSituation(constant("DBSchenker\Enum\ReportSituation::$situation"));
-        $report->setReason(constant("DBSchenker\Enum\ReportReason::$reason"));
+        $report->setSituation(constant("Transporter\Enum\ReportSituation::$situation"));
+        $report->setReason(constant("Transporter\Enum\ReportReason::$reason"));
         return $report;
     }
 
+    /**
+     * @throws FilesystemException
+     * @throws TransporterException
+     * @throws Exception
+     */
     private function importAllTasks(DBSchenkerSync $sync): void
     {
         $count = 0;
         foreach ($sync->pull() as $content) {
-            $messages = DBSchenker::parse($content);
+            $messages = Transporter::parse(
+                $content,
+                INOVERTMessageType::SCONTR,
+                TransporterName::DB_SCHENKER
+            );
             $filename = sprintf(
                 "%s_%s-SCONTR.%s.edi", "dbschenker",
                 date('Y-m-d_His'), uniqid()
@@ -213,7 +238,7 @@ class SyncTransportersCommand extends Command {
             }
 
             foreach ($messages as $tasks) {
-                if (is_object($tasks) && $tasks instanceof DBSchenkerScontrParser) {
+                if ($tasks instanceof DBSchenkerScontrParser) {
                     foreach ($tasks->getTasks() as $task) {
                         $edifactMessage = $this->storeSCONTR($task, $filename);
                         $this->importTask($task, $edifactMessage);
@@ -222,12 +247,12 @@ class SyncTransportersCommand extends Command {
                 }
             }
         }
-        $this->output->writeln("Remove files to aknowledge import");
+        $this->output->writeln("Remove files to acknowledge import");
         $sync->flush($this->dryRun);
         $this->output->writeln("Done syncing, imported $count tasks");
     }
 
-    private function importTask(GR7 $task, EDIFACTMessage $edi): void {
+    private function importTask(Point $task, EDIFACTMessage $edi): void {
         if ($this->output->isVerbose()) {
             $this->output->writeln("Task ID: ".$task->getId()."\n");
             $this->output->writeln("Recipient address: ".$task->getNamesAndAddresses(NameAndAddressType::RECIPIENT)[0]->getAddress());
@@ -245,7 +270,7 @@ class SyncTransportersCommand extends Command {
         // DROPOFF SETUP
         $nad = $task->getNamesAndAddresses(NameAndAddressType::RECIPIENT);
         if (count($nad) !== 1) {
-            throw new \Exception("Cannot handle multiple recipients");
+            throw new Exception("Cannot handle multiple recipients");
         }
         $nad = $nad[0];
         $address = $this->DBSchenkerToCCAddress($nad);
@@ -315,7 +340,7 @@ class SyncTransportersCommand extends Command {
     {
         $task = new Task();
         $task->setType(Task::TYPE_PICKUP);
-        $task->setAddress($this->HQAdress->clone());
+        $task->setAddress($this->HQAddress->clone());
         return $task;
     }
 
@@ -352,7 +377,7 @@ class SyncTransportersCommand extends Command {
             try {
                 //TODO: Handle country code
                 $phone = $this->phoneUtil->parse($phone, 'FR');
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return null;
             }
         }
@@ -361,7 +386,7 @@ class SyncTransportersCommand extends Command {
 
     }
 
-    private function storeSCONTR(GR7 $task, string $filename): EDIFACTMessage
+    private function storeSCONTR(Point $task, string $filename): EDIFACTMessage
     {
         $edi = new EDIFACTMessage();
         $edi->setMessageType("SCONTR");

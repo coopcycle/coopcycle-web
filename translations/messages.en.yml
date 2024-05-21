@@ -1191,15 +1191,17 @@ adminDashboard.hubs.help: Hubs allow to group together shops sharing the same pi
 adminDashboard.business_accounts.title: Business accounts
 adminDashboard.business_accounts.createNew: Create a new business account
 form.business_account.businessRestaurantGroup.label: Business restaurant group
-form.business_account.businessRestaurantGroup.placeholder: Choose a business restaurant group`
+form.business_account.businessRestaurantGroup.placeholder: Choose a business restaurant group
 form.business_account.employees.label: List of employees
 form.business_account.restaurants.add: Add a restaurant
 form.business_account.employees.add: Add an employee
 form.business_account.manager.email.label: Account manager email
 form.business_account.manager.email.help: An invitation email to Coopcycle will be sent
-form.business_account.manager.email_sent.help: Invitation email to Coopcycle has been sent
+form.business_account.manager.email_sent.help: Invitation email to Coopcycle has been sent. <a href="#">Click here</a> to resend the email.
 form.business_account.save_and_send_invitation.label: Save and send invitation
 form.business_acount.send_invitation.confirm: Invitation email to Coopcycle has been sent
+form.business_acount.resend_invitation.confirm: Invitation email to Coopcycle has been resent
+form.business_acount.resend_invitation.failed: There has been an error trying to resend the Business Account registration email
 adminDashboard.business_restaurant_group_list.title: Business restaurant group list
 adminDashboard.business_restaurant_group.title: Business restaurant group
 adminDashboard.business_restaurant_group.createNew: Create a new business restaurant group
@@ -1336,25 +1338,59 @@ basics.filter: "Filter"
 stores.search.results_for: 'Search results for <mark>%query%</mark>'
 activity.task.rescheduled: "@%owner% has rescheduled task #task/%aggregate_id%\n"
 delivery.failure_reason:
-  damaged: "Damaged"
-  lost: "Lost"
-  late: "Late Delivery"
-  incorrect_address: "Incorrect Address"
-  customer_refused: "Customer Refused Delivery"
-  item_missing: "Item Missing"
-  incorrect_item: "Incorrect Item Delivered"
-  bad_weather: "Bad Weather Conditions"
-  vehicle_breakdown: "Vehicle Breakdown"
-  traffic_delays: "Traffic Delays"
-  routing_problems: "Routing Problems"
-  customs_issues: "Customs Clearance Issues"
-  inventory_shortage: "Inventory Shortage"
-  address_unreachable: "Address Unreachable"
-  insufficient_funds: "Insufficient Funds"
-  data_entry_error: "Data Entry Error"
-  packaging_problems: "Packaging Problems"
-  holiday_closure: "Holiday Closure"
-  closed_store: "Closed Store"
+  default:
+    damaged: "Damaged"
+    lost: "Lost"
+    late: "Late Delivery"
+    incorrect_address: "Incorrect Address"
+    customer_refused: "Customer Refused Delivery"
+    item_missing: "Item Missing"
+    incorrect_item: "Incorrect Item Delivered"
+    bad_weather: "Bad Weather Conditions"
+    vehicle_breakdown: "Vehicle Breakdown"
+    traffic_delays: "Traffic Delays"
+    routing_problems: "Routing Problems"
+    customs_issues: "Customs Clearance Issues"
+    inventory_shortage: "Inventory Shortage"
+    address_unreachable: "Address Unreachable"
+    insufficient_funds: "Insufficient Funds"
+    data_entry_error: "Data Entry Error"
+    packaging_problems: "Packaging Problems"
+    holiday_closure: "Holiday Closure"
+    closed_store: "Closed Store"
+    address_review_needed: "Address Review Needed"
+    not_at_home: "Customer not at home"
+  transporter:
+    state:
+      aar: "À quai"
+      raq: "Restant à quai"
+      mlv: "En cours de livraison"
+      liv: "Livré"
+      ren: "Refusé"
+      rst: "Destinataire non livré"
+    reason:
+      cfm: "Conforme"
+      ava: "Avarie"
+      mqp: "Réserves pour colis manquant(s)"
+      mqt: "Colis manquant total"
+      ouv: "Colis ouvert"
+      pve: "Poids visiblement erroné"
+      rca: "Réserves pour avaries caractérisées"
+      avi: "Destinataire avisé"
+      cad: "Complément adresse"
+      daf: "Destinatire fermé ou absent"
+      fhb: "Fermeture hebdomadaire"
+      rma: "Réserves pour manquant et avarie"
+      div: "Réserves diverses"
+      nju: "Non justifié"
+      snc: "Refusé non commandé"
+      tar: "Refusé livraison trop tardive"
+      dem: "Destinataire démenagé"
+      dia: "Destinaitaire inconnu à l'adresse"
+      lna: "Livrer à une nouvelle adresse"
+      spd: "Souffrance: Refusé port dû"
+      srb: "Souffrance: Refusé remboursement"
+      pvi: "Prendre rendez-vous"
 adminDashboard.failureSet.title: "Failure Reasons"
 adminDashboard.failureSet.help: "Set the reasons for which your deliveries can fail."
 adminDashboard.failureSet.nofailureSet: "No failure reasons"
@@ -1367,6 +1403,10 @@ form.failure_reason.description.label: Description
 basics.manage: Manage
 basics.settings: Settings
 form.store_type.failure_reason_set.label: "Failure Reasons"
+form.store_type.failure_reason_set.help: 'Select a list of <a href="%failure_reason_set%">failure reasons</a> to be used in this %entity%.'
+adminDashboard.incidents.title: Incidents
+adminDashboard.incidents.help: "Manage incidents."
+adminDashboard.incidents.createNew: Create a new incident
 profile.delete_my_account: "Delete my account"
 profile.type_username_to_confirm: "Type your username to confirm the account deletion"
 form.pricing_rule_set.options.label: Options
@@ -1447,3 +1487,29 @@ form.settings.company_legal_name.label: "Legal name of the company"
 form.settings.company_legal_name.help: "Please enter the full legal name of the company as it appears on its official documents."
 form.settings.company_legal_id.label: "Company registration number or EIN"
 form.settings.company_legal_id.help: "This number is usually available on the company's official documents, such as invoices or contracts."
+business_restaurant_group.form.invalid: "There are errors or missing information, please check all the sections of the configuration."
+restaurants.edenred.add_restaurants: Add restaurants
+restaurants.edenred.add_list_title: List of restaurants to send to Edenred
+restaurants.edenred.added_restaurants: Added restaurants
+restaurants.edenred.already_sent: "The restaurants that appear crossed out in the list are because\
+  \ they have already been sent to Edenred for incorporation.\
+  \ Please <a href=\"%link%\">click here</a> to check their status."
+restaurants.edenred.added_list.name: Name
+restaurants.edenred.added_list.merchant_id: Merchant ID
+restaurants.edenred.added_list.tr_card_enabled: TR card enabled
+restaurants.edenred.sending_success: "The restaurants has been successfully sent to Edenred."
+restaurants.edenred.sending_failed: "Error trying to send restaurants to Edenred. Please try again later."
+restaurants.edenred.sending_failed.errors: "There are errors with some restaurants:"
+restaurants.edenred.sending_failed.no_siret: "The restaurant '%restaurant_name%' has not a Siret defined."
+restaurant.form.edenred_enabled.label: Enable Edenred
+restaurants.edenred.refresh.no_updates: "The restaurant '%restaurant_name%' does not have any updates on Edenred servers so far."
+restaurants.edenred.refresh.has_updates: "The restaurant '%restaurant_name%' has had an update from Edenred servers."
+restaurants.edenred.added_list.actions: Actions
+business_restaurant_group.form.fill_all_pages: "Please, fill out all three settings pages."
+business_account.registration.user_with_same_email_exists: An account with the your email already
+  exists. Please log in to continue with your business account configuration.
+registration.business_account.loggin.help: <a href="#">Click here</a> to login and then associate your account with the company %name%.
+registration.business_account.loggin.warning_message: Login to associate your account with the company %name%.
+business_account.employee.associated: Your account has been associated successfully with the company %name%
+business_account.loggedin_employee.association.text: You are logged in with the email <strong>%user_email%</strong>. Do you want to associate your account with the company <strong>%business_account_name%</strong>?
+business_account.loggedin_employee.association.title: Invitation to associate your account with a Business Acccount

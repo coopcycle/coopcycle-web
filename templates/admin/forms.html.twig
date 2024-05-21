@@ -56,10 +56,16 @@
           </li>
         </ul>
       </td>
-      <td class="text-right">
+      <td>
         <a href="{{ path('embed_delivery_start', { hashid: form|hashid(12) }) }}" target="_blank">
-          <i class="fa fa-external-link"></i>
+          <i class="fa fa-external-link mr-2"></i>{% trans %}basics.view{% endtrans %}
         </a>
+      </td>
+      {% if is_granted('ROLE_ADMIN') %}
+        <td>
+          <div {{ react_component('DeleteIcon', { objectId: form.id, objectName: form|hashid(12), deleteUrl: 'api_delivery_forms_delete_item'}) }}></div>
+        </td>
+      {% endif %}
       </td>
     </tr>
   {% endfor %}

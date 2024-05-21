@@ -1153,7 +1153,7 @@ Feature: Deliveries
       }
       """
 
-  Scenario: Check delivery returns HTTP 400 (with JWT)
+  Scenario: Check delivery returns HTTP 400 (with JWT) when dropoff is outside check zone
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
@@ -1195,7 +1195,7 @@ Feature: Deliveries
       }
       """
 
-  Scenario: Check delivery returns HTTP 200
+  Scenario: Check delivery returns HTTP 200 when dropoff is in check zone
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
@@ -1214,6 +1214,94 @@ Feature: Deliveries
       }
       """
     Then the response status code should be 200
+
+  Scenario: Check delivery returns HTTP 201 when creating order and sending "store" key as defaut pickup
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | stores.yml          |
+    And the store with name "Acme" has order creation enabled
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the JSON should match:
+      """
+    {
+        "@context": "/api/contexts/Delivery",
+        "@id": "/api/deliveries/1",
+        "@type": "http://schema.org/ParcelDelivery",
+        "id": @integer@,
+        "pickup": {
+            "@id": "@string@.startsWith('/api/tasks')",
+            "@type": "Task",
+            "id": @integer@,
+            "status": "TODO",
+            "address": {
+                "@id": "/api/addresses/1",
+                "@type": "http://schema.org/Place",
+                "contactName": null,
+                "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": @double@,
+                    "longitude": @double@
+                },
+                "streetAddress": "272, rue Saint Honoré 75001 Paris 1er",
+                "telephone": null,
+                "name": null
+            },
+            "comments": "",
+            "createdAt": "@string@.isDateTime()",
+            "weight": null,
+            "after": "@string@.isDateTime()",
+            "before": "@string@.isDateTime()",
+            "doneAfter": "@string@.isDateTime()",
+            "doneBefore": "@string@.isDateTime()",
+            "packages": []
+        },
+        "dropoff": {
+            "@id": "@string@.startsWith('/api/tasks')",
+            "@type": "Task",
+            "id": @integer@,
+            "status": "TODO",
+            "address": {
+                "@id": "/api/addresses/4",
+                "@type": "http://schema.org/Place",
+                "contactName": null,
+                "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": @double@,
+                    "longitude": @double@
+                },
+                "streetAddress": @string@,
+                "telephone": null,
+                "name": null
+            },
+            "comments": "",
+            "createdAt": "@string@.isDateTime()",
+            "weight": null,
+            "after": "@string@.isDateTime()",
+            "before": "@string@.isDateTime()",
+            "doneAfter": "@string@.isDateTime()",
+            "doneBefore": "@string@.isDateTime()",
+            "packages": []
+        },
+        "trackingUrl": @string@
+    }
+  """
+
 
   Scenario: Cancel delivery
     Given the fixtures files are loaded:

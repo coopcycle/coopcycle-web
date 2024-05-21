@@ -18,6 +18,7 @@ import {
   openCreateDeliveryModal,
   openCreateGroupModal,
   openCreateTourModal,
+  openReportIncidentModal,
   openTaskRescheduleModal,
   removeTasksFromGroup,
   restoreTasks,
@@ -48,6 +49,7 @@ export const RESTORE = 'RESTORE'
 export const RESCHEDULE = 'RESCHEDULE'
 export const CREATE_DELIVERY = 'CREATE_DELIVERY'
 export const CREATE_TOUR = 'CREATE_TOUR'
+export const REPORT_INCIDENT = 'REPORT_INCIDENT'
 
 const { hideAll } = useContextMenu({
   id: 'task-contextmenu',
@@ -150,10 +152,8 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
       }
 
       actions.push(CANCEL_MULTI)
-
-      if (selectedTask.status === 'FAILED' || selectedTask.status === 'CANCELLED') {
-        actions.push(RESCHEDULE)
-      }
+      actions.push(RESCHEDULE)
+      actions.push(REPORT_INCIDENT)
 
     }
 
@@ -324,6 +324,12 @@ const DynamicMenu = () => {
         onClick={ () => dispatch(openCreateTourModal()) }
       >
         { t('ADMIN_DASHBOARD_CREATE_TOUR') }
+      </Item>
+      <Item
+            hidden={ !actions.includes(REPORT_INCIDENT) }
+            onClick={ () => dispatch(openReportIncidentModal()) }
+          >
+            {t("ADMIN_DASHBOARD_REPORT_INCIDENT")}
       </Item>
       { selectedTasks.length > 0 && actions.length === 0 && (
         <Item disabled>

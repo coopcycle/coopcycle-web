@@ -45,6 +45,8 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         if (0 === $order->getTotal()) {
             foreach ($order->getPayments() as $payment) {
                 $order->removePayment($payment);
+                $this->checkoutLogger->info(sprintf('Order %s | OrderPaymentProcessor | payment #%d | removed',
+                    $this->loggingUtils->getOrderId($order), $payment->getId()));
             }
 
             return;

@@ -43,7 +43,7 @@ export const socketIO = ({ dispatch, getState }) => {
 
     const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
 
-    centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
+    centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
     centrifuge.setToken(getState().config.centrifugoToken)
 
     centrifuge.subscribe(getState().config.centrifugoEventsChannel, function(message) {
@@ -56,6 +56,7 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task:cancelled':
         case 'task:created':
         case 'task:rescheduled':
+        case 'task:incident-reported':
           dispatch(updateTask(event.data.task))
           break
         case 'task:assigned':

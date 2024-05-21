@@ -48,14 +48,10 @@ const checkUsername = _.debounce(function() {
   feedbackEl.classList.remove('fa-check', 'fa-warning')
   feedbackEl.classList.add('fa-spinner', 'fa-spin')
 
-  usernameInput.setAttribute('disabled', true)
-
   $.getJSON('/register/suggest', { username, email }).then(result => {
 
     feedbackEl.classList.remove('fa-spinner', 'fa-spin')
 
-    usernameInput.setAttribute('disabled', false)
-    usernameInput.removeAttribute('disabled')
     usernameInput.focus()
 
     if (usernameInput.value) {

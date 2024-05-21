@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Utils;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
+use AppBundle\Edenred\SynchronizerClient;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Contract;
@@ -62,7 +63,9 @@ use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -292,6 +295,17 @@ trait RestaurantTrait
         $restaurant = $repository->find($id);
 
         $this->accessControl($restaurant);
+
+        if ($request->query->has('format') && 'json' === $request->query->get('format')) {
+            $restaurantNormalized = $this->get('serializer')->normalize($restaurant, 'jsonld', [
+                'resource_class' => LocalBusiness::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['restaurant']
+            ]);
+
+            return new JsonResponse($restaurantNormalized);
+        }
 
         return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient);
     }
@@ -1662,6 +1676,114 @@ trait RestaurantTrait
             'month' => $month,
             'payments' => $hash,
         ]));
+    }
+
+    public function addRestaurantsEdenredAction(Request $request, SynchronizerClient $synchronizerClient)
+    {
+        $form = $this->createFormBuilder()
+            ->add('restaurants', CollectionType::class, [
+                'entry_type' => EntityType::class,
+                'entry_options' => [
+                    'label' => false,
+                    'class' => LocalBusiness::class,
+                    'choice_label' => 'name',
+                ],
+                'label' => 'restaurants.edenred.add_list_title',
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+            ])
+            ->getForm();
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $restaurantsToSync = [];
+            $errors = [];
+
+            foreach($form->get('restaurants')->getData() as $restaurant) {
+                if ($restaurant->hasAdditionalProperty('siret') && !empty($restaurant->getAdditionalPropertyValue('siret'))) {
+                    if (!$restaurant->getEdenredSyncSent()) {
+                        $restaurantsToSync[] = $restaurant;
+                    }
+                } else {
+                    $errors[] = $this->translator->trans('restaurants.edenred.sending_failed.no_siret', [
+                        '%restaurant_name%' => $restaurant->getName()
+                    ]);
+                }
+            }
+
+            $response = $synchronizerClient->synchronizeMerchants($restaurantsToSync);
+
+            if ($response->getStatusCode() !== 200) {
+                $responseData = json_decode((string) $response->getContent(false), true);
+                $errors[] = $responseData["detail"];
+            } else {
+                foreach($restaurantsToSync as $restaurant) {
+                    $restaurant->setEdenredSyncSent(true);
+                }
+                $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+            }
+
+            return $this->render('restaurant/edenred_sync.html.twig', $this->withRoutes([
+                'layout' => $request->attributes->get('layout'),
+                'form' => $form->createView(),
+                'sending_result' => $response->getStatusCode() === 200,
+                'errors' => $errors,
+            ]));
+        }
+
+        if ($request->query->has('section') && $request->query->get('section') === 'added') {
+            $restaurants = $this->getDoctrine()
+                ->getRepository(LocalBusiness::class)
+                ->findBy([ 'edenredSyncSent' => true ]);
+
+            return $this->render('restaurant/edenred_sync.html.twig', $this->withRoutes([
+                'layout' => $request->attributes->get('layout'),
+                'restaurants' => $restaurants,
+            ]));
+        }
+
+        return $this->render('restaurant/edenred_sync.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'form' => $form->createView(),
+        ]));
+    }
+
+    public function refreshRestaurantEdenredAction($restaurantId, Request $request, SynchronizerClient $synchronizerClient)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        $response = $synchronizerClient->getMerchant($restaurant);
+
+        $responseData = json_decode((string) $response->getContent(false), true);
+
+        $hasUpdates = false;
+
+        if ($response->getStatusCode() === 200) {
+            if (isset($responseData['merchantId']) && !empty($responseData['merchantId']) && null === $restaurant->getEdenredMerchantId()) {
+                $restaurant->setEdenredMerchantId($responseData['merchantId']);
+                $hasUpdates = true;
+            }
+            if (isset($responseData['acceptsTRCard']) && !empty($responseData['acceptsTRCard']) && false === $restaurant->isEdenredTRCardEnabled()) {
+                $restaurant->setEdenredTRCardEnabled($responseData['acceptsTRCard']);
+                $hasUpdates = true;
+            }
+
+            if ($hasUpdates) {
+                $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+            }
+        }
+
+        $this->addFlash(
+            'notice',
+            $this->translator->trans(
+                $hasUpdates ? 'restaurants.edenred.refresh.has_updates' : 'restaurants.edenred.refresh.no_updates', [
+                    '%restaurant_name%' => $restaurant->getName(),
+                ])
+        );
+
+        return $this->redirectToRoute('admin_add_restaurants_edenred', [ 'section' => 'added' ]);
     }
 
     public function restaurantApiAction(

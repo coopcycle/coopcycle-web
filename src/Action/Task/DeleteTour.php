@@ -13,7 +13,7 @@ class DeleteTour
 
     public function __invoke($data)
     {
-        foreach($data->getTasks() as $task) {
+        foreach ($data->getTasks() as $task) {
             $task->setTour(null);
         }
 

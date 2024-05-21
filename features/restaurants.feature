@@ -106,7 +106,11 @@ Feature: Manage restaurants
           "loopeatEnabled":false,
           "tags":@array@,
           "badges":@array@,
-          "autoAcceptOrdersEnabled": @boolean@
+          "autoAcceptOrdersEnabled": @boolean@,
+          "edenredMerchantId": null,
+          "edenredTRCardEnabled": false,
+          "edenredSyncSent": false,
+          "edenredEnabled": false
         }
       ],
       "hydra:totalItems":1,
@@ -188,7 +192,11 @@ Feature: Manage restaurants
       "loopeatEnabled":false,
       "tags":@array@,
       "badges":@array@,
-      "autoAcceptOrdersEnabled": @boolean@
+      "autoAcceptOrdersEnabled": @boolean@,
+      "edenredMerchantId": null,
+      "edenredTRCardEnabled": false,
+      "edenredSyncSent": false,
+      "edenredEnabled": false
     }
     """
 
@@ -266,7 +274,11 @@ Feature: Manage restaurants
       "loopeatEnabled":false,
       "tags":@array@,
       "badges":@array@,
-      "autoAcceptOrdersEnabled": @boolean@
+      "autoAcceptOrdersEnabled": @boolean@,
+      "edenredMerchantId": null,
+      "edenredTRCardEnabled": false,
+      "edenredSyncSent": false,
+      "edenredEnabled": false
     }
     """
 
@@ -911,7 +923,7 @@ Feature: Manage restaurants
             "@type":"http://schema.org/ParcelDelivery",
             "id":@integer@,
             "pickup":{
-              "@id":"/api/tasks/1",
+              "@id":@string@,
               "@type":"Task",
               "id":@integer@,
               "status":"TODO",
@@ -939,7 +951,7 @@ Feature: Manage restaurants
               "createdAt":"@string@.isDateTime()"
             },
             "dropoff":{
-              "@id":"/api/tasks/2",
+              "@id":@string@,
               "@type":"Task",
               "id":@integer@,
               "status":"TODO",

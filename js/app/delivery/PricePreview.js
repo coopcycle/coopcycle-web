@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseURL = location.protocol + '//' + location.hostname
+const baseURL = location.protocol + '//' + location.host
 
 // @see https://gist.github.com/anvk/5602ec398e4fdc521e2bf9940fd90f84
 

@@ -451,6 +451,7 @@ class StripeController extends AbstractController
 
         $decoded = $hashids->decode($hashId);
         if (count($decoded) !== 1) {
+            $this->logger->warning(sprintf('Payment with hash "%s" does not exist', $hashId));
 
             return new JsonResponse(['error' =>
                 ['message' => sprintf('Payment with hash "%s" does not exist', $hashId)]
@@ -464,6 +465,7 @@ class StripeController extends AbstractController
             ->find($paymentId);
 
         if (null === $payment) {
+            $this->logger->error(sprintf('Payment with id "%d" does not exist', $paymentId), ['hash' => $hashId]);
 
             return new JsonResponse(['error' =>
                 ['message' => sprintf('Payment with id "%d" does not exist', $paymentId)]
@@ -475,6 +477,7 @@ class StripeController extends AbstractController
         $data = !empty($content) ? json_decode($content, true) : [];
 
         if (!isset($data['payment_method_id'])) {
+            $this->logger->warning('No payment_method_id key found in request', ['hash' => $hashId]);
 
             return new JsonResponse(['error' =>
                 ['message' => 'No payment_method_id key found in request']
@@ -501,6 +504,10 @@ class StripeController extends AbstractController
             $this->entityManager->flush();
 
         } catch (ApiErrorException $e) {
+            $this->logger->error(sprintf('Order #%d | Failed to create payment intent; error: %s',
+                $order->getId(),
+                $e->getMessage()),
+                ['hash' => $hashId]);
 
             return new JsonResponse(['error' =>
                 ['message' => $e->getMessage()]
@@ -508,7 +515,8 @@ class StripeController extends AbstractController
         }
 
         $this->logger->info(
-            sprintf('Order #%d | Created payment intent %s', $order->getId(), $payment->getPaymentIntent())
+            sprintf('Order #%d | Created payment intent %s', $order->getId(), $payment->getPaymentIntent()),
+            ['hash' => $hashId]
         );
 
         $response = [];
@@ -540,6 +548,9 @@ class StripeController extends AbstractController
             ];
 
         } else {
+            $this->logger->warning(sprintf('Order #%d | Invalid PaymentIntent status: %s',
+                $order->getId(),
+                $payment->getPaymentIntentStatus()));
 
             return new JsonResponse(['error' =>
                 ['message' => 'Invalid PaymentIntent status']

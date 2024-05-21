@@ -12,6 +12,7 @@ import AddressAutosuggest from '../components/AddressAutosuggest'
 import { getCountry } from '../i18n'
 
 import './AddressBook.scss'
+import { SavedAddressesBox } from './SavedAddressBox'
 
 const AddressPopoverIcon = ({ prop }) => {
   switch (prop) {
@@ -150,6 +151,7 @@ const AddressBook = ({
   onDuplicateAddress,
   onClear,
   details,
+  allowSearchSavedAddresses,
   ...otherProps
 }) => {
 
@@ -176,6 +178,12 @@ const AddressBook = ({
 
   return (
     <div>
+       {allowSearchSavedAddresses &&
+          <SavedAddressesBox addresses={addresses} address={address} onSelected={(selected) => {
+            setAddress(selected)
+            onAddressSelected(selected.streetAddress, selected)
+          }}/>
+       }
       <div>
         <AddressAutosuggest
           addresses={ addresses }
@@ -255,6 +263,7 @@ export default function(el, options) {
     newAddressControl,
     isNewAddressControl,
     duplicateAddressControl,
+    allowSearchSavedAddresses,
   } = options
 
   Modal.setAppElement(el)
@@ -393,6 +402,7 @@ export default function(el, options) {
 
   render(
     <AddressBook
+      allowSearchSavedAddresses={ Boolean(allowSearchSavedAddresses) }
       addresses={ addresses }
       initialAddress={ address }
       details={ details }

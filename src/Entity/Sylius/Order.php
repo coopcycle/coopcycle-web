@@ -1315,6 +1315,8 @@ class Order extends BaseOrder implements OrderInterface
             array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT)->toArray());
         $tipAdjustments =
             array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::TIP_ADJUSTMENT)->toArray());
+        $incidentAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::INCIDENT_ADJUSTMENT)->toArray());
 
         return [
             AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
@@ -1323,6 +1325,7 @@ class Order extends BaseOrder implements OrderInterface
             AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments),
             AdjustmentInterface::TAX_ADJUSTMENT => array_values($taxAdjustments),
             AdjustmentInterface::TIP_ADJUSTMENT => array_values($tipAdjustments),
+            AdjustmentInterface::INCIDENT_ADJUSTMENT => array_values($incidentAdjustments),
         ];
     }
 
@@ -1556,6 +1559,22 @@ class Order extends BaseOrder implements OrderInterface
                 }
             }
         }
+
+        // Make sure same formats do not appear twice
+        $formats = array_reduce($formats, function ($carry, $item) {
+            foreach ($carry as $index => $el) {
+                if ($el['format_id'] === $item['format_id']) {
+                    $carry[$index]['quantity'] += $item['quantity'];
+
+                    return $carry;
+                }
+            }
+
+            $carry[] = $item;
+
+            return $carry;
+
+        }, []);
 
         return $formats;
     }
