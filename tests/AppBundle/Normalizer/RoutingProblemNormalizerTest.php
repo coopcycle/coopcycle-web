@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Normalizer;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
@@ -11,10 +12,18 @@ use AppBundle\Vroom\Job;
 use AppBundle\Vroom\Vehicle;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class RoutingProblemNormalizerTest extends TestCase
+class RoutingProblemNormalizerTest extends KernelTestCase
 {
     use ProphecyTrait;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        self::bootKernel();
+    }
 
     public function testNormalization()
     {
@@ -51,11 +60,17 @@ class RoutingProblemNormalizerTest extends TestCase
             $task_id += 1;
         }
 
+        $iriConverter = self::$container->get(IriConverterInterface::class);
+
         $vehicle1 = new Vehicle(1, 'bike', $address1->getGeo()->toGeocoderCoordinates(), $address1->getGeo()->toGeocoderCoordinates());
         $routingProblem = new RoutingProblem();
 
         foreach ($taskList as $task){
-            $routingProblem->addJob(Task::toVroomJob($task));
+            $routingProblem->addJob(
+                Task::toVroomJob(
+                    $task,
+                    $iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $task->getId()])
+                ));
         }
         $routingProblem->addVehicle($vehicle1);
 
@@ -71,7 +86,7 @@ class RoutingProblemNormalizerTest extends TestCase
                     "time_windows"=>[
                         [ (int) $after->format('U'), (int) $before->format('U') ]
                     ],
-                    "description"=> ""
+                    "description"=> "/api/tasks/0"
                 ],
                 [
                     "id"=>1,
@@ -79,7 +94,7 @@ class RoutingProblemNormalizerTest extends TestCase
                     "time_windows"=>[
                         [ (int) $after->format('U'), (int) $before->format('U') ]
                     ],
-                    "description"=> ""
+                    "description"=> "/api/tasks/1"
                 ],
                 [
                     "id"=>2,
@@ -87,7 +102,7 @@ class RoutingProblemNormalizerTest extends TestCase
                     "time_windows"=>[
                         [ (int) $after->format('U'), (int) $before->format('U') ]
                     ],
-                    "description"=> ""
+                    "description"=> "/api/tasks/2"
                 ],
             ],
             "shipments"=>[],
