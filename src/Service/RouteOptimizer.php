@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
@@ -27,16 +28,18 @@ class RouteOptimizer
     public function __construct(
         private HttpClientInterface $vroomClient,
         private SettingsManager $settingsManager,
-        private LoggerInterface $logger)
+        private LoggerInterface $logger,
+        private IriConverterInterface $iriConverter
+    )
     {}
 
     /**
      * return a list of tasks sorted into an optimal route as obtained from the vroom api
      *
-     * @param TaskCollection|TaskList $taskCollection
+     * @param TaskList $taskCollection
      * @return array
      */
-    public function optimize(TaskCollection|TaskList $taskCollection)
+    public function optimize(TaskList $taskCollection)
     {
         $routingProblem = $this->createRoutingProblem($taskCollection);
 
@@ -51,77 +54,95 @@ class RouteOptimizer
             'body' => json_encode($normalizer->normalize($routingProblem)),
         ]);
 
-        $tasks = $taskCollection->getTasks();
         $data = json_decode((string) $response->getContent(), true);
 
         $firstRoute = $data['routes'][0];
-
         // remove the first result which is the starting point, for now equal of the first task of the list
         array_shift($firstRoute['steps']);
 
         $this->logger->debug("Route optimization result");
         $this->logger->debug(print_r($firstRoute['steps'], true));
 
-        $jobIds = [];
-        // extract task ids from steps
+        $jobDescriptions = [];
+
         foreach ($firstRoute['steps'] as $step) {
-            if (array_key_exists('description', $step) && str_starts_with($step['description'], 'tour')) {
-
-                $tourId = explode(':', $step['description'])[1];
-                $tourTasks = array_values(array_filter($tasks, function ($task) use ($tourId) {
-                    return $task->getTour() && $task->getTour()->getId() == $tourId;
-                }));
-                $tourTasksIds = array_map(function ($task) { return $task->getId(); }, $tourTasks);
-
-                $jobIds = array_merge(
-                    $jobIds,
-                    $tourTasksIds
-                );
-            }
-            else if (array_key_exists('id', $step)) {
-                $jobIds[] = $step['id'];
-            }
+            array_push($jobDescriptions, $step['description']);
         }
 
-        // sort tasks by ids in steps
-        usort($tasks, function($a, $b) use($jobIds){
-            $ka = array_search($a->getId(), $jobIds);
-            $kb = array_search($b->getId(), $jobIds);
-            return ($ka - $kb);
-        });
+        $items = $taskCollection->getItems();
+        $iriConverter = $this->iriConverter;
 
-        return $tasks;
+        $res = array_filter( // eliminate NULL results as in the case of delivery with split pickup/dropoffs
+            array_map(
+                function($desc) use ($iriConverter, $items) {
+                    $res = $items->filter(function($item) use ($desc, $iriConverter) {
+                        return $item->getItemIri($iriConverter) == $desc;
+                    });
+                    if (count($res) > 0) { // FIXME : handle the case were we optimized a delivery which pickup and dropoff has been separated
+                        return $res->current();
+                    }
+                },
+                $jobDescriptions
+            )
+        );
+
+        // add empty tours that were not sent to Vroom
+        $res = array_merge(
+            $res,
+            $items->filter(function($item) {
+                return $item->getTour() !== null && count($item->getTour()->getTasks()) === 0;
+            })->toArray()
+        );
+
+        return $res;
     }
 
     /**
-     * @param TaskCollection|TaskList $taskCollection
+     * @param TaskList $taskCollection
      * @return RoutingProblem
      */
-    public function createRoutingProblem(TaskCollection|TaskList $taskCollection)
+    public function createRoutingProblem(TaskList $taskCollection)
     {
         $routingProblem = new RoutingProblem();
 
         $deliveries = [];
         $tours = [];
-        $tasks = $taskCollection->getTasks();
+        $items = $taskCollection->getItems();
 
-        foreach ($tasks as $task) {
-            if (null !== $task->getTour() && !in_array($task->getTour(), $tours, true)) {
-                $tours[] = $task->getTour();
-            } else if (null == $task->getTour() && null !== $task->getDelivery() && !in_array($task->getDelivery(), $deliveries, true)) {
-                $deliveries[] = $task->getDelivery();
-            } else if (null == $task->getTour() && null == $task->getDelivery()) {
-                $routingProblem->addJob(Task::toVroomJob($task));
+        foreach ($items as $item) {
+            if (null !== $item->getTour() && !in_array($item->getTour(), $tours, true)) {
+                $tours[] = $item->getTour();
+            } else if (null == $item->getTour()) {
+                $task = $item->getTask();
+
+                // FIXME : may not work as expected now that we allow to split deliveries pickup/dropoffs between riders
+                if (null !== $task->getDelivery() && !in_array($task->getDelivery(), $deliveries, true)) {
+                    $deliveries[] = $task->getDelivery();
+                } else if (null == $task->getDelivery()) {
+                    $routingProblem->addJob(Task::toVroomJob(
+                        $task,
+                        $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $task->getId()])
+                    ));
+                }
             }
         }
 
         foreach ($tours as $tour) {
-            $vroomStep = Tour::toVroomStep($tour);
-            $routingProblem->addJob($vroomStep);
+            if (count($tour->getTasks())) {
+                $vroomStep = Tour::toVroomStep(
+                    $tour,
+                    $this->iriConverter->getItemIriFromResourceClass(Tour::class, ['id' => $tour->getId()])
+                );
+                $routingProblem->addJob($vroomStep);
+            }
         }
 
         foreach ($deliveries as $delivery) {
-            $routingProblem->addShipment(Delivery::toVroomShipment($delivery));
+            $routingProblem->addShipment(Delivery::toVroomShipment(
+                $delivery,
+                $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $delivery->getPickup()->getId()]),
+                $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $delivery->getDropoff()->getId()])
+            ));
         }
 
         $firstTask = current($taskCollection->getTasks());
