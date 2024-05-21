@@ -1711,7 +1711,7 @@ class AdminController extends AbstractController
                 ->find($oAuth2ClientId);
 
             $newSecret = hash('sha512', random_bytes(32));
-            $oAuth2Client->setSecret($newSecret);
+            $oAuth2Client->setSecret($newSecret); /* @phpstan-ignore variable.undefined */
 
             $this->entityManager->flush();
 
@@ -1819,7 +1819,7 @@ class AdminController extends AbstractController
                 ->find($oAuth2ClientId);
 
             $newSecret = hash('sha512', random_bytes(32));
-            $oAuth2Client->setSecret($newSecret);
+            $oAuth2Client->setSecret($newSecret); /* @phpstan-ignore variable.undefined */
 
             $this->entityManager->flush();
 
