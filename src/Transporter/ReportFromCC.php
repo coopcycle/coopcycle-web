@@ -4,6 +4,7 @@ namespace AppBundle\Transporter;
 
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use Transporter\Interface\ReportGeneratorInterface;
+use Transporter\TransporterImpl;
 use Transporter\TransporterOptions;
 
 class ReportFromCC {
