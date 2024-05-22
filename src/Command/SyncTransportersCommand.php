@@ -146,7 +146,10 @@ class SyncTransportersCommand extends Command {
         }
         $config = $config[$this->transporter];
 
-        $filesystem = $this->initFileSystem($config);
+        $filesystem = $config['sync_uri'];
+        if (!($filesystem instanceof Filesystem)) {
+            $filesystem = $this->initFileSystem($config);
+        }
 
         $opts = new TransporterOptions(
             $transporterName,
