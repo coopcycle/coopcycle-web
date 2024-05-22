@@ -84,8 +84,10 @@ class Modals extends React.Component {
           shouldCloseOnOverlayClick={ true }>
           <AddUserModalContent
             onClickClose={ this.props.closeAddUserModal }
-            onClickSubmit={ username => {
-              this.props.createTaskList(this.props.date, username)
+            onClickSubmit={ (selectedCouriers) => {
+              selectedCouriers.forEach((courier) => {
+                this.props.createTaskList(this.props.date, courier.username)
+              })
               this.props.closeAddUserModal()
             }} />
         </Modal>
