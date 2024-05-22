@@ -12,12 +12,15 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
 use Carbon\Carbon;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\Ftp\FtpConnectionOptions;
+use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Command\Command;
@@ -143,21 +146,7 @@ class SyncTransportersCommand extends Command {
         }
         $config = $config[$this->transporter];
 
-        $auth_details = parse_url($config['sync_uri']);
-
-        //TODO: This is okay now, but other transporters should have their own adapters
-        $adapter = new FtpAdapter(
-            FtpConnectionOptions::fromArray([
-                'host' => $auth_details['host'],
-                'username' => $auth_details['user'],
-                'password' => $auth_details['pass'],
-                'port' => $auth_details['port'] ?? 21,
-                'root' => $auth_details['path'] ?? '',
-                'ssl' => false,
-            ])
-        );
-
-        $filesystem = new Filesystem($adapter);
+        $filesystem = $this->initFileSystem($config);
 
         $opts = new TransporterOptions(
             $transporterName,
@@ -302,6 +291,39 @@ class SyncTransportersCommand extends Command {
         $edi->setDirection(EDIFACTMessage::DIRECTION_INBOUND);
         $edi->setEdifactFile($filename);
         return $edi;
+    }
+
+    /**
+     * @param array<int,mixed> $config
+     */
+    private function initFileSystem(array $config = []): Filesystem
+    {
+        $auth_details = parse_url($config['sync_uri']);
+
+        switch ($auth_details['scheme']) {
+            case 'ftp':
+                $adapter = new FtpAdapter(
+                    FtpConnectionOptions::fromArray([
+                        'host' => $auth_details['host'],
+                        'username' => $auth_details['user'],
+                        'password' => $auth_details['pass'],
+                        'port' => $auth_details['port'] ?? 21,
+                        'root' => $auth_details['path'] ?? '',
+                        'ssl' => false,
+                    ])
+                );
+                break;
+            case 'file':
+                $adapter = new LocalFilesystemAdapter($auth_details['path']);
+                break;
+            case 'memory':
+                $adapter = new InMemoryFilesystemAdapter();
+                break;
+            default:
+                throw new Exception(sprintf('Unknown scheme %s', $auth_details['scheme']));
+        }
+
+        return new Filesystem($adapter);
     }
 
     private function debugPoint(Point $point): void {
