@@ -300,6 +300,11 @@ class SyncTransportersCommand extends Command {
     {
         $auth_details = parse_url($config['sync_uri']);
 
+        //Enjoy the ugly hack :)
+        if (!$auth_details && str_starts_with($config['sync_uri'], 'memory://')) {
+            $auth_details = ['scheme' => 'memory'];
+        }
+
         switch ($auth_details['scheme']) {
             case 'ftp':
                 $adapter = new FtpAdapter(
