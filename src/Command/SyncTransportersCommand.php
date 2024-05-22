@@ -18,6 +18,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\Ftp\FtpConnectionOptions;
+use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -36,6 +37,8 @@ use Transporter\TransporterImpl;
 use Transporter\TransporterOptions;
 
 class SyncTransportersCommand extends Command {
+
+    use LockableTrait;
 
     private string $transporter;
     private Address $HQAddress;
@@ -122,6 +125,12 @@ class SyncTransportersCommand extends Command {
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
+        if (!$this->lock()) {
+            $output->writeln('The command is already running in another process.');
+
+            return Command::SUCCESS;
+        }
+
         $transporterName = TransporterName::from($input->getArgument('transporter'));
         $this->transporter = $transporterName->value;
         $this->setup($transporterName);
@@ -167,6 +176,8 @@ class SyncTransportersCommand extends Command {
 
         $this->importAllTasks($sync);
         $this->sendReports($sync, $opts);
+
+        $this->release();
 
         return Command::SUCCESS;
     }
