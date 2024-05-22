@@ -201,22 +201,19 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
     public function resolveMenu(LocalBusiness $restaurant): ?Taxon
     {
-        if ($this->businessContext->isActive()) {
-            $businessAccount = $this->businessContext->getBusinessAccount();
-            if ($businessAccount) {
-                $restaurantGroup = $businessAccount->getBusinessRestaurantGroup();
-                $qb = $this->entityManager->getRepository(Taxon::class)->createQueryBuilder('m');
-                $qb->join(BusinessRestaurantGroupRestaurantMenu::class, 'rm', Join::WITH, 'rm.menu = m.id');
-                $qb->andWhere('rm.businessRestaurantGroup = :group');
-                $qb->andWhere('rm.restaurant = :restaurant');
-                $qb->setParameter('group', $restaurantGroup);
-                $qb->setParameter('restaurant', $restaurant);
+        if ($this->businessContext->isActive() && $businessAccount = $this->businessContext->getBusinessAccount()) {
+            $restaurantGroup = $businessAccount->getBusinessRestaurantGroup();
+            $qb = $this->entityManager->getRepository(Taxon::class)->createQueryBuilder('m');
+            $qb->join(BusinessRestaurantGroupRestaurantMenu::class, 'rm', Join::WITH, 'rm.menu = m.id');
+            $qb->andWhere('rm.businessRestaurantGroup = :group');
+            $qb->andWhere('rm.restaurant = :restaurant');
+            $qb->setParameter('group', $restaurantGroup);
+            $qb->setParameter('restaurant', $restaurant);
 
-                $menu = $qb->getQuery()->getOneOrNullResult();
+            $menu = $qb->getQuery()->getOneOrNullResult();
 
-                if ($menu) {
-                    return $menu;
-                }
+            if ($menu) {
+                return $menu;
             }
         }
 
@@ -239,8 +236,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
     public function openingHours(LocalBusiness $restaurant, $fulfillment = 'delivery'): array
     {
-        if ($this->businessContext->isActive()) {
-            $businessAccount = $this->businessContext->getBusinessAccount();
+        if ($this->businessContext->isActive() && $businessAccount = $this->businessContext->getBusinessAccount()) {
             if ($businessAccount->getBusinessRestaurantGroup()->hasRestaurant($restaurant)) {
                 return $businessAccount->getBusinessRestaurantGroup()->getOpeningHours($fulfillment);
             }
