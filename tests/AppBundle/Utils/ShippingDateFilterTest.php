@@ -176,7 +176,7 @@ class ShippingDateFilterTest extends TestCase
 
         $order = $this->prophesize(Order::class);
         $order
-            ->getVendor()
+            ->getSetupVendor()
             ->willReturn(
                 $this->restaurant->reveal()
             );

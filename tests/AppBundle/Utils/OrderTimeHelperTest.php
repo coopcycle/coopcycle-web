@@ -104,7 +104,7 @@ class OrderTimeHelperTest extends TestCase
             ->getRestaurant()
             ->willReturn($restaurant->reveal());
         $cart
-            ->getVendor()
+            ->getSetupVendor()
             ->willReturn(
                 $restaurant->reveal()
             );
