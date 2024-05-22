@@ -642,19 +642,20 @@ class ProfileController extends AbstractController
         $orders = [];
 
         if (null !== $businessAccount->getId()) {
-            $qb = $objectManager->getRepository(Order::class)->createQueryBuilder('o');
-            $qb
+            $qb = $this->orderRepository
+                ->createQueryBuilder('o')
                 ->andWhere('o.businessAccount = :business_account')
-                ->setParameter('business_account', $businessAccount);
+                ->andWhere('o.state != :state')
+                ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
+                ->setParameter('business_account', $businessAccount)
+                ->setParameter('state', OrderInterface::STATE_CART);
 
             $orders = $paginator->paginate(
                 $qb,
                 $request->query->getInt('page', 1),
                 self::ITEMS_PER_PAGE,
                 [
-                    PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'o.createdAt',
-                    PaginatorInterface::DEFAULT_SORT_DIRECTION => 'desc',
-                    PaginatorInterface::SORT_FIELD_ALLOW_LIST => ['o.createdAt'],
+                    PaginatorInterface::DISTINCT => false,
                 ]
             );
         }
