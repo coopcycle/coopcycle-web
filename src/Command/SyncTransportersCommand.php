@@ -293,9 +293,6 @@ class SyncTransportersCommand extends Command {
         return $edi;
     }
 
-    /**
-     * @param array<int,mixed> $config
-     */
     private function initFileSystem(array $config = []): Filesystem
     {
         $auth_details = parse_url($config['sync_uri']);
