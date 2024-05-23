@@ -1286,7 +1286,7 @@ shops.filters.title: Filters
 form.local_business.mercadopago.remove.connection: Remove connection with Mercadopago
 form.local_business.mercadopago.remove.connection.success: Mercadopago connection removed successfully
 form.vehicle.volume_units.label: Volume units
-form.vehicle.max_weight.label: Maximum weight
+form.vehicle.max_weight.label: Maximum weight (kg)
 vehicles.breadcrumb: Vehicles
 vehicles.breadcrumb.help: Define fleet of vehicles
 form.task_export.dv4cul.label: Export using DV4CUL format
