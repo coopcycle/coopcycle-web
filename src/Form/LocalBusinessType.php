@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Service\FormFieldUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use libphonenumber\PhoneNumberFormat;
@@ -41,6 +42,7 @@ abstract class LocalBusinessType extends AbstractType
         SerializerInterface $serializer,
         GatewayResolver $gatewayResolver,
         UrlGeneratorInterface $urlGenerator,
+        protected FormFieldUtils $formFieldUtils,
         string $country,
         bool $debug = false,
         bool $cashOnDeliveryOptinEnabled = false,

@@ -4,6 +4,7 @@ namespace Tests\AppBundle\Service;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Service\RemotePushNotificationManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Kreait\Firebase\Factory as FirebaseFactory;
@@ -61,7 +62,8 @@ class RemotePushNotificationManagerTest extends TestCase
             $this->pushOkClient->reveal(),
             $this->entityManager->reveal(),
             $this->translator->reveal(),
-            new NullLogger()
+            new NullLogger(),
+            new NullLoggingUtils()
         );
     }
 

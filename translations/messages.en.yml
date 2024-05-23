@@ -1,4 +1,5 @@
 global.changesSaved: Your changes have been saved.
+docs.label: Learn more
 navbar.login: Login
 navbar.myAccount: My Account
 base.footer.contactUs: Contact us
@@ -170,14 +171,19 @@ restaurant.form.allow_mercadopago_connect.label: Allow the restaurant to manage 
 restaurant.form.temporaryClosingRule: Click here to temporarily disable orders to
   your restaurant.
 restaurant.form.deposit_refund_enabled.label: Enable deposit-refund system
+restaurant.form.deposit_refund_enabled.docs_path: /en/admin/restaurants/general-settings/#deposit-refund
+restaurant.form.auto_accept_orders_enabled.label: Automatically accept orders
+restaurant.form.auto_accept_orders_enabled.docs_path: /en/admin/restaurants/general-settings/#auto-accept-orders
 restaurant.form.accessPlanning: Access planning
 restaurant.form.createRestaurant: Create restaurant
 restaurant.form.exclusive.label: This restaurant is exclusive
-restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (e.g.:
-  catering)'
+restaurant.form.exclusive.docs_path: /en/admin/restaurants/general-settings/#exclusive
+restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (e.g.: catering)'
+restaurant.form.quotes_allowed.docs_path: /en/admin/restaurants/general-settings/#quotes-allowed
 restaurant.form.loopeat_enabled.label: Enable LoopEat deposit-refund system
 restaurant.form.loopeat_disconnect.label: Disconnect %name%
 restaurant.form.featured.label: This restaurant is featured on homepage
+restaurant.form.featured.docs_path: /en/admin/restaurants/general-settings/#featured
 restaurant.form.giropay_enabled.label: Enable Giropay
 restaurant.form.fulfillment_methods.label: Fulfillment methods
 restaurant.form.section.general: General
@@ -338,6 +344,8 @@ order.state.refused: Refused
 order.state.new: New
 order.state.fulfilled: Fulfilled
 order.state.cancelled: Cancelled
+order.state.started: In preparation
+order.state.ready: Ready
 order.reusable_packaging.alert: This order must be packed in reusable packaging
 order.public_link: Shareable link
 order.payments: Payments
@@ -969,6 +977,7 @@ form.delivery_import.file.label: File
 form.delivery_import.store.label: Store
 basics.view_example: View example
 notifications.restaurant.new_order: New order to accept
+notifications.restaurant.accepted_order: New order
 profile.loopeat.connect: Connect my %name% account
 profile.loopeat.connected: '%name% account connected'
 profile.loopeat.disconnect: Disconnect %name%

@@ -298,6 +298,11 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected ?int $rateLimitAmount;
 
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected bool $autoAcceptOrdersEnabled = false;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -1173,5 +1178,14 @@ class LocalBusiness extends BaseLocalBusiness implements
         );
     }
 
+    public function isAutoAcceptOrdersEnabled(): bool
+    {
+        return $this->autoAcceptOrdersEnabled;
+    }
+
+    public function setAutoAcceptOrdersEnabled(bool $enabled): void
+    {
+        $this->autoAcceptOrdersEnabled = $enabled;
+    }
 
 }

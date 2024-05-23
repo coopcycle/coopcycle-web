@@ -19,9 +19,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -78,20 +76,24 @@ class RestaurantType extends LocalBusinessType
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
                 ->add('featured', CheckboxType::class, [
-                    'label' => 'restaurant.form.featured.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.featured.label', 'restaurant.form.featured.docs_path'),
                     'required' => false
                 ])
                 ->add('exclusive', CheckboxType::class, [
-                    'label' => 'restaurant.form.exclusive.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.exclusive.label', 'restaurant.form.exclusive.docs_path'),
                     'required' => false
                 ])
                 ->add('contract', ContractType::class)
                 ->add('quotesAllowed', CheckboxType::class, [
-                    'label' => 'restaurant.form.quotes_allowed.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.quotes_allowed.label', 'restaurant.form.quotes_allowed.docs_path'),
                     'required' => false,
                 ])
                 ->add('depositRefundEnabled', CheckboxType::class, [
-                    'label' => 'restaurant.form.deposit_refund_enabled.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.deposit_refund_enabled.label', 'restaurant.form.deposit_refund_enabled.docs_path'),
+                    'required' => false,
+                ])
+                ->add('autoAcceptOrdersEnabled', CheckboxType::class, [
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.auto_accept_orders_enabled.label', 'restaurant.form.auto_accept_orders_enabled.docs_path'),
                     'required' => false,
                 ])
                 ->add('failureReasonSet', EntityType::class, array(

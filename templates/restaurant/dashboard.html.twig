@@ -7,31 +7,23 @@
 {% endblock %}
 
 {% block content %}
-<div id="restaurant-dashboard"></div>
+<div id="restaurant-dashboard"
+     data-current-route="{{ app.request.attributes.get('_route') }}"
+     data-orders="{{ orders_normalized|json_encode|e('html_attr') }}"
+     data-date="{{ date|date('Y-m-d') }}"
+     data-restaurant="{{ restaurant_normalized|json_encode|e('html_attr') }}"
+     data-initial-order="{{ initial_order|json_encode|e('html_attr') }}"
+     data-show-settings="false"
+     data-adhoc-order-enabled="{{ adhoc_order_enabled }}"
+></div>
 {% endblock %}
 
 {% block styles %}
-{{ encore_entry_link_tags('foodtech-dashboard') }}
+  {{ encore_entry_link_tags('foodtech-dashboard') }}
+  {{ encore_entry_link_tags('restaurant-dashboard') }}
 {% endblock %}
 
 {% block scripts %}
-{% set current_route = app.request.attributes.get('_route') %}
-{{ encore_entry_script_tags('foodtech-dashboard') }}
-<script>
-var orders = {{ orders_normalized|json_encode()|raw }};
-new CoopCycle.FoodtechDashboard(document.querySelector('#restaurant-dashboard'), {
-  orders: orders['hydra:member'],
-  initialOrder: {{ initial_order|json_encode()|raw }},
-  date: "{{ date|date('Y-m-d') }}",
-  restaurant: {{ restaurant_normalized|json_encode()|raw }},
-  currentRoute: "{{ current_route }}",
-  showSettings: false,
-  adhocOrderEnabled: "{{ adhoc_order_enabled }}",
-}, {
-  onDateChange: function(date) {
-    window.location.href =
-      window.Routing.generate('{{ current_route }}', { restaurantId: {{ restaurant.id }}, date: date.format('YYYY-MM-DD') })
-  }
-});
-</script>
+  {{ encore_entry_script_tags('foodtech-dashboard') }}
+  {{ encore_entry_script_tags('restaurant-dashboard') }}
 {% endblock %}

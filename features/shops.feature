@@ -71,7 +71,8 @@ Feature: Manage shops
         "loopeatEnabled":false,
         "tags":@array@,
         "badges":@array@,
-         "edenredMerchantId": null,
+        "autoAcceptOrdersEnabled": @boolean@,
+        "edenredMerchantId": null,
         "edenredTRCardEnabled": false,
         "edenredSyncSent": false,
         "edenredEnabled": false
