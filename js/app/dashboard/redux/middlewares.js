@@ -118,7 +118,7 @@ export const persistFilters = ({ getState }) => (next) => (action) => {
 
   if (action.type === SET_TOURS_ENABLED) {
     state = getState()
-    window.sessionStorage.setItem(`tours_enabled`, JSON.stringify(state.settings.toursEnabled))
+    window.localStorage.setItem(`cpccl__dshbd__tours_enabled`, JSON.stringify(state.settings.toursEnabled))
   }
 
   return result
