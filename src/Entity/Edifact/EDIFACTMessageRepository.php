@@ -7,7 +7,9 @@ use Doctrine\ORM\EntityRepository;
  * @extends EntityRepository<object>
  */
 class EDIFACTMessageRepository extends EntityRepository {
-
+    /**
+     * @param array<int> $ids
+     */
     public function setSynced(array $ids, string $filename): void
     {
         $qb = $this->createQueryBuilder('e');
@@ -19,7 +21,7 @@ class EDIFACTMessageRepository extends EntityRepository {
         ->setParameter('file', $filename)
         ->where($qb->expr()->in('e.id', $ids))
         ->getQuery()
-        ->execute();
+        ->getSingleScalarResult();
     }
 
     public function getUnsynced(string $transporter): mixed
