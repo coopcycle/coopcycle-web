@@ -4,7 +4,8 @@ namespace Tests\AppBundle\Transporter;
 
 use AppBundle\Command\SyncTransportersCommand;
 use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Entity\Store;
+use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Task;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
@@ -14,12 +15,22 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+
+
+
 
 class SyncTransportersCommandTest extends KernelTestCase {
 
     use ProphecyTrait;
+
+    const EDI_SAMPLE = <<<EDI
+    UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOY0123456789' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA+IC+:JOHN DOE+06 01 02 03 04:AL' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' TXT+DEL+TEL ?: 06 01 02 03 04 POUR PRENDRE UN RENDEZ VOUS DE LIVRAISON' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOY0123456789+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
+    EDI;
+
+    const FS_MASK = 'testing';
 
 
     protected EntityManagerInterface $entityManager;
@@ -75,16 +86,19 @@ class SyncTransportersCommandTest extends KernelTestCase {
                     'name' => 'DBSchenker test',
                     'legal_name' => 'DBSchenker Testing Inc.',
                     'legal_id' => '0000011',
-                    'fs_mask' => 'testing',
+                    'fs_mask' => self::FS_MASK,
                     'sync_uri' => $this->syncFs,
                 ]
             ]);
 
+        $this->syncFs->createDirectory(sprintf('to_%s', self::FS_MASK));
+        $this->syncFs->createDirectory(sprintf('from_%s', self::FS_MASK));
+
     }
 
-    public function testExcecute(): void
+    protected function initCommand(): Command
     {
-        $command = new SyncTransportersCommand(
+        return new SyncTransportersCommand(
             $this->entityManager,
             $this->params->reveal(),
             $this->settingManager->reveal(),
@@ -92,15 +106,100 @@ class SyncTransportersCommandTest extends KernelTestCase {
             self::$container->get(ReportFromCC::class),
             $this->edifactFs
         );
+    }
+
+    public function testValidEmptySync(): void
+    {
+        $command = $this->initCommand();
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'transporter' => 'DBSCHENKER'
         ]);
 
+        $commandTester->assertCommandIsSuccessful();
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('imported 0 tasks', $output);
+        $this->assertStringContainsString('No messages to send', $output);
     }
 
+    public function testValidSyncOneTask(): void
+    {
+        // Insert edi to sync
+        $this->syncFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK),
+            self::EDI_SAMPLE
+        );
 
+        // Valid the file is there
+        $dir_list = $this->syncFs->listContents(sprintf('to_%s', self::FS_MASK))->toArray();
+        $this->assertCount(1, $dir_list);
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        // Check command output
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('No messages to send', $output);
+
+        // Check if command removed the file to sync
+        $dir_list = $this->syncFs->listContents(sprintf('to_%s', self::FS_MASK))->toArray();
+        $this->assertCount(0, $dir_list);
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $delivery);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($delivery);
+        $this->assertCount(2, $delivery->getTasks());
+
+
+        /** @var Task $pickup */
+        $pickup = $delivery->getPickup();
+        /** @var Task $dropoff */
+        $dropoff = $delivery->getDropoff();
+
+
+        $this->assertEquals('DBSchenker', $delivery->getStore()->getName());
+
+        $this->assertEquals(
+            '18, avenue Ledru-Rollin 75012 Paris 12ème',
+            $pickup->getAddress()->getStreetaddress()
+        );
+        $this->assertEquals(new GeoCoordinates(48.864577, 2.333338), $pickup->getAddress()->getGeo());
+
+
+
+        $this->assertEquals(
+            '64 Rue Alexandre Dumas, 75011 Paris',
+            $dropoff->getAddress()->getStreetaddress()
+        );
+        $this->assertEquals(new GeoCoordinates(48.854034, 2.395023), $dropoff->getAddress()->getGeo());
+        $this->assertEquals(
+            'Country Code: 33 National Number: 601020304',
+            $dropoff->getAddress()->getTelephone()->__toString()
+        );
+        $this->assertEquals(
+            'JOHN DOE ZIMP COMPANY',
+            $dropoff->getAddress()->getCompany()
+        );
+        $this->assertEquals(
+            'JOHN DOE',
+            $dropoff->getAddress()->getContactName()
+        );
+        $this->assertEquals(
+            'TEL : 06 01 02 03 04 POUR PRENDRE UN RENDEZ VOUS DE LIVRAISON',
+            $dropoff->getComments()
+        );
+
+        $this->assertEquals(15000, $delivery->getWeight());
+
+
+
+    }
 
 }
