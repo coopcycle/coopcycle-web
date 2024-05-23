@@ -7,7 +7,9 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Task;
+use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Service\TaskManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
 use Doctrine\ORM\EntityManagerInterface;
@@ -35,11 +37,26 @@ class SyncTransportersCommandTest extends KernelTestCase {
     UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOY0123456789' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+INVALID ADDRESS+VOID CITY++00+FR' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOY0123456789+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
     EDI;
 
+    const PARTIAL_REPORT_EDI_SAMPLE = <<<EDI
+    UNB+UNOC:1+Coopcycle Testing Inc.:22+DBSchenker Testing Inc.:22+
+    NAD+MR+4447190000:5+Coopcycle Testing Inc.'
+    NAD+MS+0000011:5+DBSchenker Testing Inc.'
+    UNS+D'
+    RFF+UNC+JOY0123456789'
+    RSJ+MS+LIV+CFM'
+    NAD+MR+4447190000:5+Coopcycle Testing Inc.'
+    NAD+MS+0000011:5+DBSchenker Testing Inc.'
+    UNS+D'
+    RFF+UNC+JOY0123456789'
+    RSJ+MS+LIV+CFM'
+    EDI;
+
     const FS_MASK_DBS = 'testingdbs';
     const FS_MASK_BMV = 'testingbmv';
 
 
     protected EntityManagerInterface $entityManager;
+    protected TaskManager $taskManager;
     protected LoaderInterface $fixturesLoader;
     protected Filesystem $syncFs;
     protected Filesystem $edifactFs;
@@ -55,6 +72,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         // LOAD FROM CONTAINER & PROPHESIZE
         $this->entityManager = self::$container->get(EntityManagerInterface::class);
+        $this->taskManager = self::$container->get(TaskManager::class);
         $this->fixturesLoader = self::$container->get('fidry_alice_data_fixtures.loader.doctrine');
         $this->params = $this->prophesize(ParameterBagInterface::class);
         $this->settingManager = $this->prophesize(SettingsManager::class);
@@ -494,6 +512,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         );
 
         $this->assertEquals(15000, $delivery->getWeight());
+        $this->assertEquals($pickup, $dropoff->getPrevious());
 
         $ediMessage = $dropoff->getImportMessage();
         $this->assertNotNull($ediMessage);
@@ -508,6 +527,53 @@ class SyncTransportersCommandTest extends KernelTestCase {
             EDIFACTMessage::MESSAGE_TYPE_SCONTR,
             $ediMessage->getMessageType()
         );
+
+
+        $this->assertCount(1, $dropoff->getEdifactMessages());
+        $this->taskManager->markAsDone($pickup);
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        $this->assertCount(2, $dropoff->getEdifactMessages());
+        /** @var EDIFACTMessage $reportEDIMessage */
+        $reportEDIMessage = $dropoff->getEdifactMessages()->last();
+
+        $this->assertEquals('JOY0123456789', $reportEDIMessage->getReference());
+        $this->assertEquals('DBSCHENKER', $reportEDIMessage->getTransporter());
+        $this->assertEquals(
+            EDIFACTMessage::MESSAGE_TYPE_REPORT,
+            $reportEDIMessage->getMessageType()
+        );
+        $this->assertEquals(
+            EDIFACTMessage::DIRECTION_OUTBOUND,
+            $reportEDIMessage->getDirection()
+        );
+        $this->assertEquals(
+            'LIV|CFM',
+            $reportEDIMessage->getSubMessageType()
+        );
+        $this->assertNull($reportEDIMessage->getSyncedAt());
+
+
+        $this->assertCount(0, $this->syncFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray());
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 0 tasks', $output);
+        $this->assertStringContainsString('1 messages to send', $output);
+
+        $dir_list = $this->syncFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $dir_list);
+        $reportContent = $this->syncFs->read($dir_list[0]['path']);
+
+
+        foreach(explode("\n", self::PARTIAL_REPORT_EDI_SAMPLE) as $line) {
+            $this->assertStringContainsString(
+                $line,
+                $reportContent
+            );
+        }
 
     }
 
