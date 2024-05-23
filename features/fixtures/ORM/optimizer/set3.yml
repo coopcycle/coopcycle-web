@@ -1,0 +1,88 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.8704288", "2.3355269" ]
+  geo_2:
+    __construct: [ "48.8669865", "2.338254" ]
+  geo_3:
+    __construct: [ "48.8655514", "2.3328735" ]
+
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75000'
+    streetAddress: 'Centre de paris'
+    geo: "@geo_1"
+  address_2:
+    addressLocality: 'Paris'
+    postalCode: '75000'
+    streetAddress: 'Centre de paris'
+    geo: "@geo_2"
+  address_3:
+    addressLocality: 'Paris'
+    postalCode: '75000'
+    streetAddress: 'Centre de paris'
+    geo: "@geo_3"
+
+
+AppBundle\Entity\Task:
+  task_1:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('2018-03-02 10:30:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 11:00:00'))>
+    comments: ""
+    type: "PICKUP"
+  task_2:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('2018-03-02 11:30:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    comments: "#bob"
+    type: "DROPOFF"
+  task_3:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 12:30:00'))>
+    comments: "#bob"
+    status: "DONE"
+    type: "DROPOFF"
+
+AppBundle\Entity\User:
+  bob:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'bob'
+        - '123456'
+        - 'bob@demo.coopcycle.org'
+        - true
+        - false
+
+AppBundle\Entity\Delivery:
+  delivery_1:
+    __factory:
+      createWithTasks:
+        - '@task_1'
+        - '@task_2'
+        - '@task_3'
+
+AppBundle\Entity\TaskList\Item:
+  item_1:
+    task: "@task_1"
+    position: 0
+  item_2:
+    task: "@task_2"
+    position: 1
+  item_3:
+    task: "@task_3"
+    position: 2
+
+AppBundle\Entity\TaskList:
+  tasklist_1:
+    courier: "@bob"
+    date: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    __calls:
+      - addItem:
+        - "@item_1"
+      - addItem:
+        - "@item_2"
+      - addItem:
+        - "@item_3"
