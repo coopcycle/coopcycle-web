@@ -556,6 +556,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
 
         $this->assertCount(0, $this->syncFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray());
+
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
+        $this->assertCount(1, $unsynced);
         $commandTester->execute([
             'transporter' => 'DBSCHENKER'
         ]);
@@ -565,8 +568,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         $dir_list = $this->syncFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray();
         $this->assertCount(1, $dir_list);
-        $reportContent = $this->syncFs->read($dir_list[0]['path']);
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
+        $this->assertCount(0, $unsynced);
 
+
+        $reportContent = $this->syncFs->read($dir_list[0]['path']);
 
         foreach(explode("\n", self::PARTIAL_REPORT_EDI_SAMPLE) as $line) {
             $this->assertStringContainsString(
@@ -574,6 +580,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
                 $reportContent
             );
         }
+
 
     }
 
