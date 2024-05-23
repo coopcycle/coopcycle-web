@@ -94,6 +94,12 @@ html, body {
       }
     }
 
+    &__collapsed {
+      text-align: center;
+      height: 100%;
+      padding: 5px;
+    }
+
     &__scroll {
       overflow: auto;
     }
