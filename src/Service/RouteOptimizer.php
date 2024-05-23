@@ -105,7 +105,6 @@ class RouteOptimizer
     {
         $routingProblem = new RoutingProblem();
 
-        $deliveries = [];
         $tours = [];
         $items = $taskCollection->getItems();
 
@@ -114,10 +113,15 @@ class RouteOptimizer
                 $tours[] = $item->getTour();
             } else if (null == $item->getTour()) {
                 $task = $item->getTask();
-
+                $delivery =$task->getDelivery();
                 // FIXME : may not work as expected now that we allow to split deliveries pickup/dropoffs between riders
-                if (null !== $task->getDelivery() && !in_array($task->getDelivery(), $deliveries, true)) {
-                    $deliveries[] = $task->getDelivery();
+                if (null !== $delivery && $task->isDropoff()) {
+                    $routingProblem->addShipment(Delivery::toVroomShipment(
+                        $delivery,
+                        $task,
+                        $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $delivery->getPickup()->getId()]),
+                        $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $task->getId()])
+                    ));
                 } else if (null == $task->getDelivery()) {
                     $routingProblem->addJob(Task::toVroomJob(
                         $task,
@@ -135,14 +139,6 @@ class RouteOptimizer
                 );
                 $routingProblem->addJob($vroomStep);
             }
-        }
-
-        foreach ($deliveries as $delivery) {
-            $routingProblem->addShipment(Delivery::toVroomShipment(
-                $delivery,
-                $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $delivery->getPickup()->getId()]),
-                $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $delivery->getDropoff()->getId()])
-            ));
         }
 
         $firstTask = current($taskCollection->getTasks());
