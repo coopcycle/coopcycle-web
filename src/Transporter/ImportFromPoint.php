@@ -100,7 +100,10 @@ class ImportFromPoint {
     {
         $address = $this->geocoder->geocode($nad->getAddress());
 
-        if (is_null($address)) {
+        if (
+            is_null($address) ||
+            !$this->isInRange($this->defaultCoordinates, $address->getGeo())
+        ) {
             $address = new Address();
             $address->setGeo($this->defaultCoordinates);
             $address->setStreetAddress('INVALID ADDRESS');
@@ -132,6 +135,22 @@ class ImportFromPoint {
         }
 
         return $phone;
+
+    }
+
+    private function isInRange(
+        GeoCoordinates $from,
+        GeoCoordinates $to,
+        int $distance = 50000
+    ): bool
+    {
+        $p1 = deg2rad($from->getLatitude());
+        $p2 = deg2rad($to->getLatitude());
+        $dp = deg2rad($to->getLatitude() - $from->getLatitude());
+        $dl = deg2rad($to->getLongitude() - $from->getLongitude());
+        $a = (sin($dp/2) * sin($dp/2)) + (cos($p1) * cos($p2) * sin($dl/2) * sin($dl/2));
+        $c = 2 * atan2(sqrt($a),sqrt(1-$a));
+        return (6371008 * $c) <= $distance;
 
     }
 
