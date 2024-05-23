@@ -27,13 +27,13 @@ class EDIFACTMessage
 
     private string $messageType;
 
-    private ?string $subMessageType;
+    private ?string $subMessageType = null;
 
     private string $edifactFile;
 
-    private ?array $metadata;
+    private ?array $metadata = null;
 
-    private ?\DateTime $syncedAt;
+    private ?\DateTime $syncedAt = null;
 
     private $tasks;
 
