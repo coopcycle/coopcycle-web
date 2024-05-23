@@ -207,9 +207,9 @@ class UserController extends AbstractController
                     ]);
                 }
 
-                // The email has to be entered by the invited user in the form
-                $user->setEmail('');
-                $user->setUsername('');
+                // Reset object for a new user
+                $user = $userManager->createUser();
+                $user->setEnabled(true);
             }
         }
 
