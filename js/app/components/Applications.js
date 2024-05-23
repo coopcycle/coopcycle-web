@@ -29,9 +29,9 @@ function LinkToApplication ({pricingRuleSetApplication}) {
   }
 }
 
-export default function PricingRuleSetApplications(props) {
+export default function ShowApplications(props) {
   const { t } = useTranslation(),
-    { url, data } = props,
+    { data, objectId, fetchUrl } = props,
     [applications, setApplications] = useState([]),
     [loading, setLoading] = useState(true),
     [expanded, setExpanded] = useState(false)
@@ -48,6 +48,7 @@ export default function PricingRuleSetApplications(props) {
           'Accept': 'application/ld+json',
           'Content-Type': 'application/ld+json'
         }
+        const url = window.Routing.generate(fetchUrl, {id: objectId})
 
         axios.get(url, { headers: headers}).then((resp) => {
           setApplications(resp.data['hydra:member'])

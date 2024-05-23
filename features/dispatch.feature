@@ -432,7 +432,7 @@ Feature: Dispatch
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "id":1,
+            "id":@integer@,
             "type":"DROPOFF",
             "status":"TODO",
             "address":{
@@ -448,7 +448,7 @@ Feature: Dispatch
             "@*@":"@*@"
           },
           {
-            "id":3,
+            "id":@integer@,
             "type":"DROPOFF",
             "status":"TODO",
             "address":{
@@ -576,7 +576,7 @@ Feature: Dispatch
       """
       {
          "@context":"/api/contexts/Tour",
-         "@id":"/api/tours/5",
+         "@id":"@string@.startsWith('/api/tours')",
          "@type":"Tour",
          "name":"Monday tour",
          "date": "2018-02-02",
@@ -649,7 +649,7 @@ Feature: Dispatch
               "@type":"Task",
               "id":1,
               "@*@": "@*@"
-            }                     
+            }
          ],
          "distance":@integer@,
          "duration":@integer@,

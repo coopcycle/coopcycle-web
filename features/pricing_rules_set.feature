@@ -35,7 +35,6 @@ Feature: Pricing rules set
         When I add "Content-Type" header equal to "application/ld+json"
         And I add "Accept" header equal to "application/ld+json"
         And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"
-        Then print last JSON response
         Then the response status code should be 400
         And the response should be in JSON
         And the JSON should match:
@@ -60,7 +59,6 @@ Feature: Pricing rules set
     And the user "admin" sends a "GET" request to "/api/pricing_rule_sets/1/applications"
     Then the response status code should be 200
     And the response should be in JSON
-    Then print last JSON response
     And the JSON should match:
     """
       {

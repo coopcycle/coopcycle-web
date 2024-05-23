@@ -207,9 +207,9 @@ class UserController extends AbstractController
                     ]);
                 }
 
-                // The email has to be entered by the invited user in the form
-                $user->setEmail('');
-                $user->setUsername('');
+                // Reset object for a new user
+                $user = $userManager->createUser();
+                $user->setEnabled(true);
             }
         }
 
@@ -318,7 +318,7 @@ class UserController extends AbstractController
         return $this->render('_partials/profile/definition_password_for_business_account.html.twig', [
             'form' => $form->createView(),
             'flow' => $businessAccountRegistrationFlow,
-            'invitation' => $businessAccountInvitation->getInvitation(),
+            'businessAccountInvitation' => $businessAccountInvitation,
         ]);
     }
 

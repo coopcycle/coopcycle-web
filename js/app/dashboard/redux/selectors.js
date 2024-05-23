@@ -137,7 +137,11 @@ export const selectStandaloneTasks = createSelector(
       standaloneTasks = grouped
     } else {
       standaloneTasks.sort((a, b) => {
-        return moment(a.before).isBefore(b.before) ? -1 : 1
+        if (moment(a.before).isSame(b.before) && a.type === 'PICKUP') {
+          return -1
+        } else {
+          return moment(a.before).isBefore(b.before) ? -1 : 1
+        }
       })
     }
 

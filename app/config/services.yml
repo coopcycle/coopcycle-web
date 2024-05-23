@@ -2,6 +2,7 @@
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
   sylius_cart_restaurant_session_key_name: _coopcycle.sylius.cart.restaurant
+  apns_default_is_production_env: true
 
 imports:
   - { resource: services/forms.yml }
@@ -726,6 +727,9 @@ services:
   AppBundle\Api\EventSubscriber\PricingRuleSetDeleteSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
+  AppBundle\Api\EventSubscriber\TimeSlotDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
   AppBundle\Api\EventSubscriber\PackageSetDeleteSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
@@ -1070,7 +1074,7 @@ services:
 
   Pushok\Client:
     arguments:
-      $isProductionEnv: true
+      $isProductionEnv: "%env(default:apns_default_is_production_env:bool:APNS_IS_PRODUCTION_ENV)%"
 
   AppBundle\Sylius\Taxation\TaxesProvider:
     arguments:

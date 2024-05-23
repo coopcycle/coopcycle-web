@@ -601,6 +601,7 @@ Feature: Food Tech
         "loopeatEnabled":false,
         "tags":@array@,
         "badges":@array@,
+        "autoAcceptOrdersEnabled": @boolean@,
         "edenredMerchantId": null,
         "edenredTRCardEnabled": false,
         "edenredSyncSent": false,

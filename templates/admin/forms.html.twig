@@ -63,9 +63,7 @@
       </td>
       {% if is_granted('ROLE_ADMIN') %}
         <td>
-          <a class="text-danger">
-            <i class="fa fa-trash delete-form" data-form-name="{{ form|hashid(12) }}" data-form-id="{{ form.id }}"></i>
-          </a>
+          <div {{ react_component('DeleteIcon', { objectId: form.id, objectName: form|hashid(12), deleteUrl: 'api_delivery_forms_delete_item'}) }}></div>
         </td>
       {% endif %}
       </td>
@@ -73,8 +71,4 @@
   {% endfor %}
   </tbody>
 </table>
-{% endblock %}
-
-{% block scripts %}
-  {{ encore_entry_script_tags('delivery-forms-list') }}
 {% endblock %}

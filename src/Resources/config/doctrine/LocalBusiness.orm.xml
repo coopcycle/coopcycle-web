@@ -112,6 +112,11 @@
       </options>
     </field>
     <field name="dabbaCode" type="string" column="dabba_code" nullable="true"/>
+    <field name="autoAcceptOrdersEnabled" type="boolean" column="auto_accept_orders_enabled">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract" inversed-by="restaurants">
       <cascade>
         <cascade-persist/>
