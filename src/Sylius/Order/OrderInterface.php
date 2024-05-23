@@ -181,7 +181,7 @@ interface OrderInterface extends
      * shippingOptionsDays, openingHours.
      * @return Vendor|null
      */
-    public function getSetupVendor(): ?Vendor;
+    public function getVendorConditions(): ?Vendor;
 
     /**
      * @return boolean

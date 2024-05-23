@@ -1254,7 +1254,7 @@ class Order extends BaseOrder implements OrderInterface
         return $this->customer->getUser();
     }
 
-    public function getSetupVendor(): ?Vendor
+    public function getVendorConditions(): ?Vendor
     {
         if (null !== $this->getBusinessAccount()) {
             return $this->getBusinessAccount()->getBusinessRestaurantGroup();

@@ -67,14 +67,14 @@ class ShippingAddressValidator extends ConstraintValidator
             return;
         }
 
-        $setupVendor = $object->getSetupVendor();
+        $vendorConditions = $object->getVendorConditions();
 
         $distance = $this->routing->getDistance(
             $object->getPickupAddress()->getGeo(),
             $value->getGeo()
         );
 
-        if (!$setupVendor->canDeliverAddress($value, $distance, $this->expressionLanguage)) {
+        if (!$vendorConditions->canDeliverAddress($value, $distance, $this->expressionLanguage)) {
             $this->context->buildViolation($constraint->addressTooFarMessage)
                 ->setCode(ShippingAddress::ADDRESS_TOO_FAR)
                 ->addViolation();
