@@ -73,7 +73,7 @@
         <join-column name="group_id" referenced-column-name="id" on-delete="SET NULL"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="assignedTo" target-entity="AppBundle\Entity\User">
+    <many-to-one field="assignedTo" target-entity="AppBundle\Entity\User" fetch="EAGER">
       <join-columns>
         <join-column name="assigned_to" referenced-column-name="id"/>
       </join-columns>

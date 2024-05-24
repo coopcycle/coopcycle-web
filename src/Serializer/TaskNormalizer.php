@@ -82,15 +82,18 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             }
         }
 
-        if ($object->isPickup()) {
+        if (!is_null($object->getPrefetchedPackagesAndWeight())) {
+            $data['packages'] = $object->getPrefetchedPackagesAndWeight()['packages'];
+            $data['weight'] = $object->getPrefetchedPackagesAndWeight()['weight'];
+        } else if ($object->isPickup()) {
             $delivery = $object->getDelivery();
 
             if (null !== $delivery) {
                 $deliveryId = $delivery->getId();
 
                 $qb =  $this->entityManager
-                ->getRepository(Task::class)
-                ->createQueryBuilder('t');
+                    ->getRepository(Task::class)
+                    ->createQueryBuilder('t');
 
                 $query = $qb
                     ->select('p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity')
