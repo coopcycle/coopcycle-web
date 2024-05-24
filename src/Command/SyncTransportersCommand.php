@@ -223,7 +223,7 @@ class SyncTransportersCommand extends Command {
                 TransporterName::from($this->transporter)
             );
             $filename = sprintf(
-                "%s_%s-SCONTR.%s.edi", mb_strtolower($this->transporter),
+                "SCONTR-%s_%s.%s.edi", mb_strtolower($this->transporter),
                 date('Y-m-d_His'), uniqid()
             );
 
@@ -288,7 +288,7 @@ class SyncTransportersCommand extends Command {
     private function storeSCONTR(Point $task, string $filename): EDIFACTMessage
     {
         $edi = new EDIFACTMessage();
-        $edi->setMessageType("SCONTR");
+        $edi->setMessageType(EDIFACTMessage::MESSAGE_TYPE_SCONTR);
         $edi->setReference($task->getId());
         $edi->setTransporter($this->transporter);
         $edi->setDirection(EDIFACTMessage::DIRECTION_INBOUND);
