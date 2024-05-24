@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Task\AddImagesToTasks;
+use AppBundle\Action\Task\Collection as TaskList;
 use AppBundle\Action\Task\Assign as TaskAssign;
 use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
@@ -71,7 +72,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *         },
  *       "pagination_client_items_per_page"=true,
  *       "pagination_enabled"=false,
- *       "pagination_client_enabled"=true
+ *       "pagination_client_enabled"=true,
+ *       "controller"=TaskList::class
  *     },
  *     "post"={
  *       "method"="POST",
@@ -331,6 +333,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
+
+    /**
+     * We actually don't expose the 'packages' property in the API, we use aggregates :
+     * - DROPOFF : all packages aggregated by package name
+     * - PICKUP : all packages of the delivery aggregated by package name
+    */
     use PackagesAwareTrait;
     use EDIFACTMessageAwareTrait;
 
@@ -455,6 +463,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $metadata = [];
 
     /**
+     *
+     * We actually don't expose the 'weight' property in the API, we expose :
+     * - DROPOFF : weight property
+     * - PICKUP : sum of weight of all the dropoffs
      * @var int
      * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create", "pricing_deliveries"})
      */
@@ -473,6 +485,13 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->edifactMessages = new ArrayCollection();
         $this->incidents = new ArrayCollection();
     }
+
+    /**
+    * Non-DB-mapped property to store packages and weight aggregates (see on $weight and $packages property for aggregates definitions)
+    * @return ['weight' => int|null, 'packages' => Array['name' => string, 'type' => string, 'quantity' => int]|null]
+    */
+    private $prefetchedPackagesAndWeight;
+
 
     public function getId()
     {
@@ -1152,4 +1171,23 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->incidents[] = $incident;
     }
 
+    /**
+     * Get the value of prefetchedPackagesAndWeight
+     */
+    public function getPrefetchedPackagesAndWeight()
+    {
+        return $this->prefetchedPackagesAndWeight;
+    }
+
+    /**
+     * Set the value of prefetchedPackagesAndWeight
+     *
+     * @return  self
+     */
+    public function setPrefetchedPackagesAndWeight($prefetchedPackagesAndWeight)
+    {
+        $this->prefetchedPackagesAndWeight = $prefetchedPackagesAndWeight;
+
+        return $this;
+    }
 }
