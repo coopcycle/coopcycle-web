@@ -17,16 +17,16 @@ use Symfony\Component\HttpFoundation\Request;
 final class SetItems
 {
     public function __construct(
-        protected EntityManagerInterface $objectManager,
-        protected UserManager $userManager,
-        protected IriConverterInterface $iriConverter,
-        protected TaskListManager $taskListManager,
-        protected TaskListNormalizer $taskListNormalizer
+        private EntityManagerInterface $objectManager,
+        private UserManager $userManager,
+        private IriConverterInterface $iriConverter,
+        private TaskListManager $taskListManager,
+        private TaskListNormalizer $taskListNormalizer
     )
     {
     }
 
-    protected function getTaskList(\DateTime $date, User $user)
+    private function getTaskList(\DateTime $date, User $user)
     {
         $taskList = $this->objectManager
             ->getRepository(TaskList::class)
