@@ -284,7 +284,7 @@ class OrderController extends AbstractController
 
         return $this->render('order/index.html.twig', array(
             'order' => $order,
-            'order_errors' => ValidationUtils::serializeViolationList($orderErrors),
+            'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
             'form' => $form->createView(),
             'form_tip' => $tipForm->createView(),
             'form_coupon' => $couponForm->createView(),
@@ -349,7 +349,7 @@ class OrderController extends AbstractController
 
         $parameters =  $this->auth([
             'order' => $order,
-            'order_errors' => ValidationUtils::serializeViolationList($orderErrors),
+            'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
             'order_access_token' => $this->orderAccessTokenManager->create($order),
             'payment' => $payment,
             'shippingTimeRange' => $this->getShippingTimeRange($order),

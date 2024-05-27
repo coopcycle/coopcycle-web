@@ -20,9 +20,9 @@
         {% include 'order/breadcrumb.html.twig' %}
 
         <div id="order-error-container">
-          {% if order_errors is defined and order_errors|length > 0 %}
+          {% if pre_submit_errors is defined and pre_submit_errors|length > 0 %}
             {% include 'order/_partials/errors.html.twig' with {
-              errors: order_errors,
+              errors: pre_submit_errors,
             } %}
           {% endif %}
         </div>
