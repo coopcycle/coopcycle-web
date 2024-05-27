@@ -41,8 +41,6 @@ Encore
   .addEntry('optins', './js/app/optins/index.js')
   .addEntry('order', './js/app/order/index.js')
   .addEntry('order-details', './js/app/order/details.js')
-  .addEntry('package-sets-list', './js/app/admin/packageSets.js')
-  .addEntry('pricings', './js/app/admin/pricingRuleSets.js')
   .addEntry('product-form', './js/app/product/form.js')
   .addEntry('product-list', './js/app/product/list.js')
   .addEntry('product-option-form', './js/app/forms/product-option.js')
