@@ -19,7 +19,6 @@ final class SetItems
     public function __construct(
         private EntityManagerInterface $objectManager,
         private UserManager $userManager,
-        private IriConverterInterface $iriConverter,
         private TaskListManager $taskListManager,
         private TaskListNormalizer $taskListNormalizer
     )
