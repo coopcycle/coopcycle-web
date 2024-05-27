@@ -106,27 +106,21 @@ class CheckoutSubscriber implements EventSubscriber
         $em = $args->getObjectManager();
         $uow = $em->getUnitOfWork();
 
-        $this->checkoutLogger->info(sprintf('Order %s | CheckoutSubscriber | postFlush | triggered by: %s; at: %s',
-            $this->loggingUtils->getOrderId($this->order),
-            $this->loggingUtils->getRequest(),
-            $this->loggingUtils->getBacktrace(4, 5)));
+        $this->checkoutLogger->info(sprintf('CheckoutSubscriber | postFlush'), ['order' => $this->loggingUtils->getOrderId($this->order)]);
 
         foreach ($this->insertions as $entity) {
-            $this->checkoutLogger->info(sprintf('Order %s | CheckoutSubscriber | postFlush | inserted: %s',
-                $this->loggingUtils->getOrderId($this->order),
-                $this->formatEntity($uow, $entity)));
+            $this->checkoutLogger->info(sprintf('CheckoutSubscriber | postFlush | inserted: %s',
+                $this->formatEntity($uow, $entity)), ['order' => $this->loggingUtils->getOrderId($this->order)]);
         }
 
         foreach ($this->updates as $entity) {
-            $this->checkoutLogger->info(sprintf('Order %s | CheckoutSubscriber | postFlush | updated: %s',
-                $this->loggingUtils->getOrderId($this->order),
-                $this->formatEntity($uow, $entity)));
+            $this->checkoutLogger->info(sprintf('CheckoutSubscriber | postFlush | updated: %s',
+                $this->formatEntity($uow, $entity)), ['order' => $this->loggingUtils->getOrderId($this->order)]);
         }
 
         foreach ($this->deletions as $entity) {
-            $this->checkoutLogger->info(sprintf('Order %s | CheckoutSubscriber | postFlush | deleted: %s',
-                $this->loggingUtils->getOrderId($this->order),
-                $this->formatEntity($uow, $entity)));
+            $this->checkoutLogger->info(sprintf('CheckoutSubscriber | postFlush | deleted: %s',
+                $this->formatEntity($uow, $entity)), ['order' => $this->loggingUtils->getOrderId($this->order)]);
         }
 
 //        // added to debug the issues with invalid orders in the database, including multiple delivery fees:
@@ -135,9 +129,8 @@ class CheckoutSubscriber implements EventSubscriber
         try {
             $errors = $this->validator->validate($this->order);
         } catch (\Exception $e) {
-            $this->checkoutLogger->error(sprintf('Order %s | CheckoutSubscriber | postFlush | validate | exception: %s',
-                $this->loggingUtils->getOrderId($this->order),
-                $e->getMessage()));
+            $this->checkoutLogger->error(sprintf('CheckoutSubscriber | postFlush | validate | exception: %s',
+                $e->getMessage()), ['order' => $this->loggingUtils->getOrderId($this->order)]);
         }
 
         if ($errors->count() > 0) {
@@ -145,7 +138,7 @@ class CheckoutSubscriber implements EventSubscriber
                 $this->loggingUtils->getOrderId($this->order),
                 json_encode(ValidationUtils::serializeViolationList($errors)));
 
-            $this->checkoutLogger->error($message);
+            $this->checkoutLogger->error($message, ['order' => $this->loggingUtils->getOrderId($this->order)]);
         }
 
         // added to debug the issue with multiple delivery fees: https://github.com/coopcycle/coopcycle-web/issues/3929
@@ -155,7 +148,7 @@ class CheckoutSubscriber implements EventSubscriber
                 $this->loggingUtils->getOrderId($this->order),
                 count($deliveryAdjustments));
 
-            $this->checkoutLogger->error($message);
+            $this->checkoutLogger->error($message, ['order' => $this->loggingUtils->getOrderId($this->order)]);
             \Sentry\captureException(new \Exception($message));
         }
 

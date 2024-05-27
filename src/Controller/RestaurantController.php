@@ -905,11 +905,10 @@ class RestaurantController extends AbstractController
         $this->orderManager->flush();
 
         if ($isExisting) {
-            $this->checkoutLogger->info(sprintf('Order #%d updated in the database | RestaurantController | triggered by %s',
-                $cart->getId(), $this->loggingUtils->getBacktrace()));
+            $this->checkoutLogger->info('Order updated in the database', ['file' => 'RestaurantController', 'order' => $this->loggingUtils->getOrderId($cart)]);
         } else {
-            $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | RestaurantController | triggered by %s',
-                $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId(), $this->loggingUtils->getBacktrace()));
+            $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database',
+                $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM)), ['file' => 'RestaurantController', 'order' => $this->loggingUtils->getOrderId($cart)]);
         }
     }
 }

@@ -4,6 +4,8 @@ namespace AppBundle\Sylius\Cart;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Service\LoggingUtils;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -37,11 +39,13 @@ class RestaurantResolver
     public function __construct(
         RequestStack $requestStack,
         LocalBusinessRepository $repository,
-        LoggerInterface $logger = null)
+        LoggerInterface $logger = null,
+        LoggingUtils $loggingUtils = null)
     {
         $this->requestStack = $requestStack;
         $this->repository = $repository;
         $this->logger = $logger ?? new NullLogger();
+        $this->loggingUtils = $loggingUtils ?? new NullLoggingUtils();
     }
 
     /**
@@ -75,12 +79,12 @@ class RestaurantResolver
         $restaurants = $cart->getRestaurants();
 
         if (count($restaurants) === 0) {
-            $this->logger->debug('Cart is empty, accepting');
+            $this->logger->debug('Cart is empty, accepting', ['order' => $this->loggingUtils->getOrderId($cart)]);
             return true;
         }
 
         if ($restaurants->contains($restaurant)) {
-            $this->logger->debug('Cart contains restaurant, accepting');
+            $this->logger->debug('Cart contains restaurant, accepting', ['order' => $this->loggingUtils->getOrderId($cart)]);
             return true;
         }
 
