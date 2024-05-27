@@ -158,14 +158,14 @@ describe('handleDragEnd', () => {
       expect(mockModifyTour).toHaveBeenCalledTimes(1)
       expect(mockModifyTour).toHaveBeenLastCalledWith(
         expect.objectContaining({'@id': '/api/tours/111'}),
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/729'}),
-          expect.objectContaining({"@id": '/api/tasks/734'}),
-          expect.objectContaining({"@id": '/api/tasks/735'}),
-          expect.objectContaining({"@id": '/api/tasks/730'}),
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-          expect.objectContaining({"@id": '/api/tasks/727'}),
-        ])
+        [
+          '/api/tasks/729',
+          '/api/tasks/734',
+          '/api/tasks/735',
+          '/api/tasks/730',
+          '/api/tasks/731',
+          '/api/tasks/727',
+        ]
       )
 
     })
@@ -189,11 +189,12 @@ describe('handleDragEnd', () => {
       expect(mockModifyTour).toHaveBeenCalledTimes(1)
       expect(mockModifyTour).toHaveBeenCalledWith(
         expect.objectContaining({'@id': '/api/tours/114'}),
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/732'}),
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-          expect.objectContaining({"@id": '/api/tasks/733'}),
-        ])
+        [
+          '/api/tasks/733',
+          '/api/tasks/730', // linked task moving together
+          '/api/tasks/731',
+          '/api/tasks/732',
+        ]
       )
 
       expect(mockRemoveTasksFromTour).toHaveBeenCalledTimes(1)
@@ -226,13 +227,13 @@ describe('handleDragEnd', () => {
       expect(mockModifyTour).toHaveBeenCalledTimes(1)
       expect(mockModifyTour).toHaveBeenLastCalledWith(
         expect.objectContaining({'@id': '/api/tours/111'}),
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/729'}),
-          expect.objectContaining({"@id": '/api/tasks/733'}),
-          expect.objectContaining({"@id": '/api/tasks/730'}),
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-          expect.objectContaining({"@id": '/api/tasks/727'}),
-        ])
+        [
+          '/api/tasks/729',
+          '/api/tasks/733',
+          '/api/tasks/730',
+          '/api/tasks/731',
+          '/api/tasks/727',
+        ]
       )
 
       expect(mockRemoveTasksFromTour).toHaveBeenCalledWith(
@@ -258,12 +259,12 @@ describe('handleDragEnd', () => {
       expect(mockModifyTour).toHaveBeenCalledTimes(1)
       expect(mockModifyTour).toHaveBeenLastCalledWith(
         expect.objectContaining({'@id': '/api/tours/114'}),
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/733'}),
-          expect.objectContaining({"@id": '/api/tasks/737'}),
-          expect.objectContaining({"@id": '/api/tasks/738'}),
-          expect.objectContaining({"@id": '/api/tasks/732'})
-        ])
+        [
+          '/api/tasks/733',
+          '/api/tasks/737',
+          '/api/tasks/738',
+          '/api/tasks/732'
+        ]
       )
       expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
     })
@@ -288,12 +289,12 @@ describe('handleDragEnd', () => {
       expect(mockModifyTour).toHaveBeenCalledTimes(1)
       expect(mockModifyTour).toHaveBeenLastCalledWith(
         expect.objectContaining({'@id': '/api/tours/114'}),
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/733'}),
-          expect.objectContaining({"@id": '/api/tasks/738'}), // reverted compare to previous test
-          expect.objectContaining({"@id": '/api/tasks/737'}),
-          expect.objectContaining({"@id": '/api/tasks/732'})
-        ])
+        [
+          '/api/tasks/733',
+          '/api/tasks/738', // reverted compare to previous test
+          '/api/tasks/737',
+          '/api/tasks/732'
+        ]
       )
       expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
     })
