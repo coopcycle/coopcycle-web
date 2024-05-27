@@ -488,7 +488,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     /**
     * Non-DB-mapped property to store packages and weight aggregates (see on $weight and $packages property for aggregates definitions)
-    * @return ['weight' => int|null, 'packages' => Array['name' => string, 'type' => string, 'quantity' => int]|null]
+    * @return ['weight' => int|null, 'packages' => ['name' => string, 'type' => string, 'quantity' => int]|null]
     */
     private $prefetchedPackagesAndWeight;
 
