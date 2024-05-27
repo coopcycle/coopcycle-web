@@ -83,7 +83,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         if (!is_null($object->getPrefetchedPackagesAndWeight())) {
-            $data['packages'] = $object->getPrefetchedPackagesAndWeight()['packages'];
+            $data['packages'] = !is_null($object->getPrefetchedPackagesAndWeight()['packages']) ? $object->getPrefetchedPackagesAndWeight()['packages'] : [];
             $data['weight'] = $object->getPrefetchedPackagesAndWeight()['weight'];
         } else if ($object->isPickup()) {
             $delivery = $object->getDelivery();
