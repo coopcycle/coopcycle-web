@@ -54,22 +54,19 @@ class Collection extends Base
                     END
                     as weight
             from task t_outer
-            where t_outer.id = 385;
+            where t_outer.id IN (:taskIds);
         ";
 
-
-
-        $stmt = $entityManager->getConnection()->prepare($sql);
-        $stmt->execute();
-        $res = $stmt->fetchAll();
+        $params = ['taskIds' => array_map(function ($task) { return $task->getId(); }, $data)];
+        $query = $entityManager->getConnection()->executeQuery(
+            $sql,
+            $params,
+            ['taskIds' =>  \Doctrine\DBAL\Connection::PARAM_INT_ARRAY]
+        );
+        $res = $query->fetchAllAssociativeIndexed();
 
         foreach($data as $task) {
-            $input = array_filter(
-                $res,
-                function ($item) use ($task) {
-                    return $item['id'] === 385;
-                }
-            )[0];
+            $input = $res[$task->getId()];
             $task->setPrefetchedPackagesAndWeight([
                 'packages' => json_decode($input['packages']),
                 'weight' => $input['weight']]
