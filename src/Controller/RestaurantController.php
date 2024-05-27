@@ -446,31 +446,29 @@ class RestaurantController extends AbstractController
             $this->persistAndFlushCart($cart);
         }
 
-        // This is useful to "cleanup" a cart that was stored
-        // with a time range that is now expired
-        // FIXME Maybe this should be moved to a Doctrine postLoad listener?
-        $violations = $this->validator->validate($cart, null, ['ShippingTime']);
-        if (count($violations) > 0) {
-
-            $cart->setShippingTimeRange(null);
-
-            if ($this->restaurantResolver->accept($cart)) {
-                $this->persistAndFlushCart($cart);
-            }
-        }
-
         $cartForm = $this->createForm(CartType::class, $cart);
+        $cartForm->handleRequest($request);
 
-        if ($request->isMethod('POST')) {
-
-            $cartForm->handleRequest($request);
-
+        if ($cartForm->isSubmitted()) {
             // The cart is valid, and the user clicked on the submit button
             if ($cartForm->isValid()) {
 
                 $this->orderManager->flush();
 
                 return $this->redirectToRoute('order');
+            }
+        } else {
+            // This is useful to "cleanup" a cart that was stored
+            // with a time range that is now expired
+            // FIXME Maybe this should be moved to a Doctrine postLoad listener?
+            $violations = $this->validator->validate($cart, null, ['ShippingTime']);
+            if (count($violations) > 0) {
+
+                $cart->setShippingTimeRange(null);
+
+                if ($this->restaurantResolver->accept($cart)) {
+                    $this->persistAndFlushCart($cart);
+                }
             }
         }
 
