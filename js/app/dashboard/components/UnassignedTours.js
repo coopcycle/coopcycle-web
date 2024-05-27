@@ -129,7 +129,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
                 const item = items.find(i => i['@id'] === itemId)
                 if (item && itemId.startsWith('/api/task_groups')) {
                   return (
-                    <Draggable key={ `group-${item.id}` } draggableId={ `group:${item.id}` } index={ index }>
+                    <Draggable key={ `group-${itemId}` } draggableId={ `group:${itemId}` } index={ index }>
                       {(provided) => (
                         <div
                           ref={ provided.innerRef }
@@ -137,7 +137,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
                           { ...provided.dragHandleProps }
                         >
                           <TaskGroup
-                            key={ item.id }
+                            key={ itemId }
                             group={ item }
                             tasks={ item.tasks }
                             onConfirmDelete={ () => dispatch(deleteGroup(item)) }
@@ -147,7 +147,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
                     </Draggable>
                   )
                 } else if (item && itemId.startsWith('/api/tours')) {
-                  return <Tour key={ item['@id'] } tour={ item } draggableIndex={ index } />
+                  return <Tour key={ item['@id'] } tourId={ itemId } draggableIndex={ index } />
                 }
               })}
               { provided.placeholder }
