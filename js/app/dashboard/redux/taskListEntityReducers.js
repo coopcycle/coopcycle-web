@@ -42,18 +42,6 @@ export default (state = initialState, action) => {
       return taskListAdapter.upsertOne(state, action.taskList)
     }
 
-    // ALOIS : delete this ?
-    // case UPDATE_TASK: {
-    //   let newItems
-
-    //   if (action.task.isAssigned) {
-    //     newItems = taskListEntityUtils.addAssignedTask(selectors.selectEntities(state), action.task)
-    //   } else {
-    //     newItems = taskListEntityUtils.removeUnassignedTask(selectors.selectEntities(state), action.task)
-    //   }
-
-    //   return taskListAdapter.upsertMany(state, newItems)
-    // }
     case REMOVE_TASK:
       return taskListAdapter.upsertMany(state,
         taskListEntityUtils.removeUnassignedTask(selectors.selectEntities(state), action.task))
