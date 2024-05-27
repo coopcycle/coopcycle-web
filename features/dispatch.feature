@@ -444,7 +444,7 @@ Feature: Dispatch
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "orgName":"Acme",
-            "assignedTo":"sarah",
+            "assignedTo":"bob",
             "@*@":"@*@"
           },
           {
@@ -460,7 +460,7 @@ Feature: Dispatch
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "orgName":"Acme",
-            "assignedTo":"bob",
+            "assignedTo":"sarah",
             "@*@":"@*@"
           }
         ],
