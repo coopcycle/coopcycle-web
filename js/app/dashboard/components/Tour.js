@@ -92,11 +92,9 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
 }
 
 
-const Tour = ({ tour, tourId, draggableIndex }) => {
+const Tour = ({ tourId, draggableIndex }) => {
 
-  if (!tour && tourId) {
-    tour = useSelector(state => selectTourById(state, tourId))
-  }
+  const tour = useSelector(state => selectTourById(state, tourId))
 
   const isTourDragging = useSelector(selectIsTourDragging)
   const expandedTourPanelsIds = useSelector(selectExpandedTourPanelsIds)

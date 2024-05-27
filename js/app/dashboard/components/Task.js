@@ -280,11 +280,7 @@ class Task extends React.Component {
 
 function mapStateToProps(state, ownProps) {
 
-  let task = ownProps.task
-
-  if (!task && ownProps.taskId) {
-    task = selectTaskById(state, ownProps.taskId)
-  }
+  let task = selectTaskById(state, ownProps.taskId)
 
   const tasksWithColor = selectTasksWithColor(state)
 

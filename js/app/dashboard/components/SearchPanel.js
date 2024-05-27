@@ -92,7 +92,7 @@ class SearchPanel extends React.Component {
               return (
                 <Task
                   key={ key }
-                  task={ task }
+                  taskId={ task['@id'] }
                   toggleTask={ this.props.toggleTask }
                   selectTask={ this.props.selectTask }
                   taskWithoutDrag
