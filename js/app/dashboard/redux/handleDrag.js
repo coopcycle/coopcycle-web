@@ -244,7 +244,7 @@ export function handleDragEnd(
         dispatch(unassignTasks(username, selectedTasks))
       }
 
-      newTourItems.splice(destination.index, 0, ...selectedTasks)
+      newTourItems.splice(destination.index, 0, ...selectedTasks.map(t => t['@id']))
 
       dispatch(modifyTour(tour, newTourItems))
 
