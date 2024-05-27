@@ -15,7 +15,7 @@ export default function Time({ timeRange, allowEdit, onClick }) {
   }
 
   return (
-    <div className={ cssClasses.join(' ') }>
+    <div className={ cssClasses.join(' ') } data-testid="cart.time">
         <span className="cart__time__text">
           <ShippingTimeRange value={ timeRange } />
         </span>
