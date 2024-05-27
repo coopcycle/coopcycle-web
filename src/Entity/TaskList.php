@@ -182,8 +182,7 @@ class TaskList implements TaskCollectionInterface
         $item = new Item();
         $item->setTask($task);
         $item->setPosition($this->items->count());
-        $this->items->add($item);
-        $item->setParent($this);
+        $this->addItem($item);
     }
 
     public function removeTask(Task $task)
