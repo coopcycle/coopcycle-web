@@ -3,8 +3,6 @@
 namespace AppBundle\Doctrine\EventSubscriber;
 
 use AppBundle\Service\LoggingUtils;
-use AppBundle\Sylius\Order\AdjustmentInterface;
-use AppBundle\Utils\ValidationUtils;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
@@ -13,7 +11,6 @@ use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Model\AdjustmentInterface as SyliusAdjustmentInterface;
 use Sylius\Component\Order\Model\OrderAwareInterface;
 use Sylius\Component\Order\Model\OrderInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CheckoutSubscriber implements EventSubscriber
 {
@@ -26,8 +23,7 @@ class CheckoutSubscriber implements EventSubscriber
 
     public function __construct(
         private LoggerInterface $checkoutLogger,
-        private LoggingUtils $loggingUtils,
-        private ValidatorInterface $validator)
+        private LoggingUtils $loggingUtils)
     {
     }
 
@@ -106,52 +102,23 @@ class CheckoutSubscriber implements EventSubscriber
         $em = $args->getObjectManager();
         $uow = $em->getUnitOfWork();
 
-        $this->checkoutLogger->info(sprintf('CheckoutSubscriber | postFlush'), ['order' => $this->loggingUtils->getOrderId($this->order)]);
+        $this->checkoutLogger->info('CheckoutSubscriber | postFlush',
+            ['order' => $this->loggingUtils->getOrderId($this->order)]);
 
         foreach ($this->insertions as $entity) {
-            $this->checkoutLogger->info(sprintf('CheckoutSubscriber | postFlush | inserted: %s',
-                $this->formatEntity($uow, $entity)), ['order' => $this->loggingUtils->getOrderId($this->order)]);
+            $this->checkoutLogger->info(sprintf('CheckoutSubscriber | postFlush | inserted: %s', $this->formatEntity($uow, $entity)),
+                ['order' => $this->loggingUtils->getOrderId($this->order)]);
         }
 
         foreach ($this->updates as $entity) {
-            $this->checkoutLogger->info(sprintf('CheckoutSubscriber | postFlush | updated: %s',
-                $this->formatEntity($uow, $entity)), ['order' => $this->loggingUtils->getOrderId($this->order)]);
+            $this->checkoutLogger->info(sprintf('CheckoutSubscriber | postFlush | updated: %s', $this->formatEntity($uow, $entity)),
+                ['order' => $this->loggingUtils->getOrderId($this->order)]);
         }
 
         foreach ($this->deletions as $entity) {
-            $this->checkoutLogger->info(sprintf('CheckoutSubscriber | postFlush | deleted: %s',
-                $this->formatEntity($uow, $entity)), ['order' => $this->loggingUtils->getOrderId($this->order)]);
+            $this->checkoutLogger->info(sprintf('CheckoutSubscriber | postFlush | deleted: %s', $this->formatEntity($uow, $entity)),
+                ['order' => $this->loggingUtils->getOrderId($this->order)]);
         }
-
-//        // added to debug the issues with invalid orders in the database, including multiple delivery fees:
-//        // probably due to the race conditions between instances
-        $errors = [];
-        try {
-            $errors = $this->validator->validate($this->order);
-        } catch (\Exception $e) {
-            $this->checkoutLogger->error(sprintf('CheckoutSubscriber | postFlush | validate | exception: %s',
-                $e->getMessage()), ['order' => $this->loggingUtils->getOrderId($this->order)]);
-        }
-
-        if ($errors->count() > 0) {
-            $message = sprintf('Order %s | CheckoutSubscriber | has errors: %s',
-                $this->loggingUtils->getOrderId($this->order),
-                json_encode(ValidationUtils::serializeViolationList($errors)));
-
-            $this->checkoutLogger->error($message, ['order' => $this->loggingUtils->getOrderId($this->order)]);
-        }
-
-        // added to debug the issue with multiple delivery fees: https://github.com/coopcycle/coopcycle-web/issues/3929
-        $deliveryAdjustments = $this->order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
-        if (count($deliveryAdjustments) > 1) {
-            $message = sprintf('Order %s | CheckoutSubscriber | has multiple delivery fees: %d',
-                $this->loggingUtils->getOrderId($this->order),
-                count($deliveryAdjustments));
-
-            $this->checkoutLogger->error($message, ['order' => $this->loggingUtils->getOrderId($this->order)]);
-            \Sentry\captureException(new \Exception($message));
-        }
-
     }
 
     private function formatEntity($unitOfWork, EntityItem $entityItem): string {

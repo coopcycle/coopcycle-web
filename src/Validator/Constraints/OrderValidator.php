@@ -2,27 +2,25 @@
 
 namespace AppBundle\Validator\Constraints;
 
-use AppBundle\Entity\Address;
 use AppBundle\Fulfillment\FulfillmentMethodResolver;
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\PriceFormatter;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\ValidatorBuilder;
 
 class OrderValidator extends ConstraintValidator
 {
-    private $priceFormatter;
 
-    public function __construct(PriceFormatter $priceFormatter, FulfillmentMethodResolver $fulfillmentMethodResolver)
+    public function __construct(
+        private PriceFormatter $priceFormatter,
+        private FulfillmentMethodResolver $fulfillmentMethodResolver,
+        private LoggerInterface $checkoutLogger,
+        private LoggingUtils $loggingUtils,
+    )
     {
-        $this->priceFormatter = $priceFormatter;
-        $this->fulfillmentMethodResolver = $fulfillmentMethodResolver;
     }
 
     private function validateVendor($object, Constraint $constraint)
@@ -45,12 +43,20 @@ class OrderValidator extends ConstraintValidator
                 ->addViolation();
         }
 
+        // added to debug the issue with multiple delivery fees: https://github.com/coopcycle/coopcycle-web/issues/3929
         $deliveryAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
         if (count($deliveryAdjustments) > 1) {
             $this->context->buildViolation($constraint->unexpectedAdjustmentsCount)
                 ->setParameter('%type%', AdjustmentInterface::DELIVERY_ADJUSTMENT)
                 ->atPath('adjustments')
                 ->addViolation();
+
+            $message = sprintf('Order %s has multiple delivery fees: %d',
+                $this->loggingUtils->getOrderId($order),
+                count($deliveryAdjustments));
+
+            $this->checkoutLogger->error($message, ['order' => $this->loggingUtils->getOrderId($order)]);
+            \Sentry\captureException(new \Exception($message));
         }
 
         $feeAdjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
