@@ -175,16 +175,10 @@ class TaskList implements TaskCollectionInterface
         return false;
     }
 
-    /*
-       Append a task at the end of the tasklist
-    */
-    public function addTask(Task $task) {
-        $item = new Item();
-        $item->setTask($task);
-        $item->setPosition($this->items->count());
-        $this->addItem($item);
-    }
-
+    /**
+     * Only used in `EntityChangeSetProcessor` class to sync $task state into $tasklist.
+     * Should not generally not be used; please use TaskListManager->assign
+     */
     public function removeTask(Task $task)
     {
         foreach ($this->items as $item) {
