@@ -50,13 +50,12 @@ class OrderTimeHelper
             $result = $this->shippingDateFilter->accept($cart, $choice->toTsRange());
 
             if ($choicesLogged < self::MAX_CHOICES_LOGGED && $acceptedChoicesLogged < self::MAX_ACCEPTED_CHOICES_LOGGED) {
-                $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::filterChoices; ShippingDateFilter::accept() returned %s for %s',
-                    $this->loggingUtils->getOrderId($cart),
+                $this->logger->info(sprintf('OrderTimeHelper::filterChoices; Vendor: %s; ShippingDateFilter::accept() returned %s for %s',
                     $this->loggingUtils->getVendors($cart),
                     var_export($result, true),
-                    (string)$choice
-                ));
-                
+                    (string)$choice),
+                    ['order' => $this->loggingUtils->getOrderId($cart)]);
+
                 if ($result) {
                     $acceptedChoicesLogged++;
                 }
@@ -106,11 +105,10 @@ class OrderTimeHelper
             }, $cart->getVendors()->toArray())),
             spl_object_hash($cart));
 
-        $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::getChoices; is using cached value: %s',
-            $this->loggingUtils->getOrderId($cart),
+        $this->logger->info(sprintf('OrderTimeHelper::getChoices; Vendor: %s; using cached value: %s',
             $this->loggingUtils->getVendors($cart),
-            var_export(isset($this->choicesCache[$hash]), true),
-        ));
+            var_export(isset($this->choicesCache[$hash]), true)),
+            ['order' => $this->loggingUtils->getOrderId($cart)]);
 
         if (!isset($this->choicesCache[$hash])) {
 
@@ -142,12 +140,11 @@ class OrderTimeHelper
     {
         $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($cart);
 
-        $this->logger->info(sprintf('Order: %s | Vendor: %s | OrderTimeHelper::getShippingTimeRanges; Cart has fulfillment method "%s" and behavior "%s"',
-            $this->loggingUtils->getOrderId($cart),
+        $this->logger->info(sprintf('OrderTimeHelper::getShippingTimeRanges; Vendor: %s; Cart has fulfillment method "%s" and behavior "%s"',
             $this->loggingUtils->getVendors($cart),
             $fulfillmentMethod->getType(),
-            $fulfillmentMethod->getOpeningHoursBehavior()
-        ));
+            $fulfillmentMethod->getOpeningHoursBehavior()),
+            ['order' => $this->loggingUtils->getOrderId($cart)]);
 
         if ($fulfillmentMethod->getOpeningHoursBehavior() === 'time_slot') {
 

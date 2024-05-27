@@ -39,10 +39,10 @@ class ShippingDateFilter
         // Obviously, we can't ship in the past
         if ($dropoff <= $now) {
 
-            $this->logger->info(sprintf('Order: %s | Vendor: %s | ShippingDateFilter::accept() - dropoff "%s" is in the past',
-                $this->loggingUtils->getOrderId($order),
+            $this->logger->info(sprintf('ShippingDateFilter::accept() | Vendor: %s | dropoff "%s" is in the past',
                 $this->loggingUtils->getVendors($order),
-                $dropoff->format(\DateTime::ATOM))
+                $dropoff->format(\DateTime::ATOM)),
+                ['order' => $this->loggingUtils->getOrderId($order)]
             );
 
             return false;
@@ -53,10 +53,10 @@ class ShippingDateFilter
 
         if ($preparation <= $now) {
 
-            $this->logger->info(sprintf('Order: %s | Vendor: %s | ShippingDateFilter::accept() - preparation time "%s" is in the past',
-                $this->loggingUtils->getOrderId($order),
+            $this->logger->info(sprintf('ShippingDateFilter::accept() | Vendor: %s | preparation time "%s" is in the past',
                 $this->loggingUtils->getVendors($order),
-                $preparation->format(\DateTime::ATOM))
+                $preparation->format(\DateTime::ATOM)),
+                ['order' => $this->loggingUtils->getOrderId($order)]
             );
 
             return false;
@@ -67,10 +67,10 @@ class ShippingDateFilter
 
         if (!$this->isOpen($vendor->getOpeningHours($fulfillmentMethod), $preparation, $vendor->getClosingRules())) {
 
-            $this->logger->info(sprintf('Order: %s | Vendor: %s | ShippingDateFilter::accept() - vendor closed at "%s"',
-                $this->loggingUtils->getOrderId($order),
+            $this->logger->info(sprintf('ShippingDateFilter::accept() | Vendor: %s | vendor closed at "%s"',
                 $this->loggingUtils->getVendors($order),
-                $preparation->format(\DateTime::ATOM))
+                $preparation->format(\DateTime::ATOM)),
+                ['order' => $this->loggingUtils->getOrderId($order)]
             );
 
             return false;
@@ -80,10 +80,10 @@ class ShippingDateFilter
 
         if ($diffInDays >= 7) {
 
-            $this->logger->info(sprintf('Order: %s | Vendor: %s | ShippingDateFilter::accept() - date "%s" is more than 7 days in the future',
-                $this->loggingUtils->getOrderId($order),
+            $this->logger->info(sprintf('ShippingDateFilter::accept() | Vendor: %s | date "%s" is more than 7 days in the future',
                 $this->loggingUtils->getVendors($order),
-                $dropoff->format(\DateTime::ATOM))
+                $dropoff->format(\DateTime::ATOM)),
+                ['order' => $this->loggingUtils->getOrderId($order)]
             );
 
             return false;
