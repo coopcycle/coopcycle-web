@@ -1515,3 +1515,4 @@ registration.business_account.loggin.warning_message: Login to associate your ac
 business_account.employee.associated: Your account has been associated successfully with the company %name%
 business_account.loggedin_employee.association.text: You are logged in with the email <strong>%user_email%</strong>. Do you want to associate your account with the company <strong>%business_account_name%</strong>?
 business_account.loggedin_employee.association.title: Invitation to associate your account with a Business Acccount
+topbar.action.admin_business_account: Administrate my Business Account

@@ -1442,3 +1442,4 @@ registration.business_account.loggin.warning_message: Inicie sesión para luego 
 business_account.employee.associated: Su cuenta ha sido asociada con éxito a la empresa %name%
 business_account.loggedin_employee.association.text: Tenés una sesión iniciada con el email <strong>%user_email%</strong>, deseas asociar tu cuenta a la de la empresa <strong>%business_account_name%</strong>?
 business_account.loggedin_employee.association.title: Invitación para asociar su cuenta a una cuenta de empresa
+topbar.action.admin_business_account: Administrar mi Cuenta de empresa
