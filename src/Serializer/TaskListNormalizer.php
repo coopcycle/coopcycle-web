@@ -30,7 +30,6 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
             if (isset($item['task'])) {
                 array_push(
                     $itemsUris,
-                    // $item['task']['@id']
                     $item['task']
                 );
             } else {
@@ -46,6 +45,7 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function normalize($object, $format = null, array $context = array())
     {
+        // supports the legacy display of TaskList as tasks for the smartphone app courier part
         if ($object->getTempLegacyTaskStorage() && count($object->getTempLegacyTaskStorage())) {
             $context[AbstractNormalizer::IGNORED_ATTRIBUTES] = ['items'];
             $data = $this->normalizer->normalize($object, $format, $context);
@@ -53,7 +53,7 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
                 return $this->taskNormalizer->normalize(
                     $task,
                     'jsonld',
-                    ['groups' => ['task']]
+                    ['groups' => ["task_collection", "task", "delivery", "address"]]
                 );
                 }, $object->getTempLegacyTaskStorage()
             );

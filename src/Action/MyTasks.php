@@ -65,6 +65,7 @@ final class MyTasks
                 return !$task->isCancelled();
             });
 
+            // supports the legacy display of TaskList as tasks for the app courier part
             $taskList->setTempLegacyTaskStorage($notCancelled);
 
             return $taskList;
