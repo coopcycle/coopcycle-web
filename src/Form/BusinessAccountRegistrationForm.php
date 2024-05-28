@@ -51,16 +51,14 @@ class BusinessAccountRegistrationForm extends AbstractType
                     'label' => false,
                     'business_account_registration' => true
                 ]);
-				break;
-            case 3:
+
                 $code = $this->tokenGenerator->generateToken();
                 $invitationLink = $this->urlGenerator->generate('invitation_define_password', [
                     'code' => $code
                 ], UrlGeneratorInterface::ABSOLUTE_URL);
 
                 $builder
-                    ->add('invitationLink', UrlType::class, [
-                        'label' => 'registration.step.invitation.copy.link',
+                    ->add('invitationLink', HiddenType::class, [
                         'data' => $invitationLink
                     ])
                     ->add('code', HiddenType::class, [

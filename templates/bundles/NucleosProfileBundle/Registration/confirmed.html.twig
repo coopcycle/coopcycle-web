@@ -38,6 +38,16 @@
             {% endif %}
           </div>
         </div>
+        {% if is_granted('ROLE_BUSINESS') and user.businessAccount is not null %}
+          <div class="d-flex justify-content-end">
+            <div class="info-section rounded mt-0 mr-0">
+              {% include '_partials/profile/invitation_link.html.twig' with {
+                'title': 'registration.confirm.invitation.link.title',
+                'invitationLink': invitation_link_provider.getInvitationLink()
+              } %}
+            </div>
+          </div>
+        {% endif %}
         <div class="d-flex">
           <img src="{{ asset('img/registration-image.svg') }}">
         </div>
