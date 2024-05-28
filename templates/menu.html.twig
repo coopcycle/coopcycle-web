@@ -83,7 +83,7 @@
         {% endif %}
         {% if app.user %}
           {% include '_partials/user/account_dropdown.html.twig' %}
-          {% if is_granted('ROLE_BUSINESS') %}
+          {% if is_granted('ROLE_BUSINESS_ACCOUNT') %}
             <li>
               <a href="{{ path('profile_business_account') }}">
                 <i class="fa fa-gear mr-1"></i>
