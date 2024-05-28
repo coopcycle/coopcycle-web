@@ -83,6 +83,14 @@
         {% endif %}
         {% if app.user %}
           {% include '_partials/user/account_dropdown.html.twig' %}
+          {% if is_granted('ROLE_BUSINESS') %}
+            <li>
+              <a href="{{ path('profile_business_account') }}">
+                <i class="fa fa-gear mr-1"></i>
+                {{ 'topbar.action.admin_business_account'|trans }}
+              </a>
+            </li>
+          {% endif %}
         {% else %}
           <li>
             <a href="{{ path('nucleos_user_security_login') }}">{% trans %}navbar.login{% endtrans %}</a>
