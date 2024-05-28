@@ -68,7 +68,6 @@ describe('removeTaskFromTour', () => {
     const store = mockStore(storeFixture)
 
     const dispatch = jest.fn(),
-      mockUnassignTasks = jest.fn(),
       mockModifyTour = jest.fn()
 
     const tour = {
