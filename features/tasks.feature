@@ -196,7 +196,6 @@ Feature: Tasks
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/me/tasks/2018-03-02"
     Then the response status code should be 200
-    Then print last JSON response
     And the response should be in JSON
     And the JSON should match:
       """
@@ -212,7 +211,16 @@ Feature: Tasks
             "id":@integer@,
             "type":"DROPOFF",
             "status":"TODO",
-            "address":{"@*@":"@*@"},
+            "address":{
+              "streetAddress": "@string@",
+              "@type":"http://schema.org/Place",
+              "geo":{
+                "@type":"GeoCoordinates",
+                "latitude":48.846656,
+                "longitude":2.369052
+              },
+              "@*@":"@*@"
+            },
             "after":"@string@.isDateTime().startsWith('2018-03-02T11:30:00')",
             "before":"@string@.isDateTime().startsWith('2018-03-02T12:00:00')",
             "doneAfter":"@string@.isDateTime().startsWith('2018-03-02T11:30:00')",
