@@ -21,7 +21,7 @@ final class Version20240508165328 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE task_list DROP CONSTRAINT fk_377b6c63bf396750'); // drop link with task_collection
-        $this->addSql('CREATE SEQUENCE IF NOT EXISTS \'task_list_id_seq\'');
+        $this->addSql('CREATE SEQUENCE IF NOT EXISTS task_list_id_seq');
         $this->addSql('SELECT setval(\'task_list_id_seq\', (SELECT MAX(id) FROM task_list))');
         $this->addSql('ALTER TABLE task_list ALTER id SET DEFAULT nextval(\'task_list_id_seq\')');
 
