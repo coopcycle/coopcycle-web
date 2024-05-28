@@ -61,8 +61,8 @@ AppBundle\Entity\Task:
       - addToStore: [ "@store_2" ]
   task_3:
     address: "@address_1"
-    doneAfter: <identity(new \DateTime('2018-12-01 10:30:00'))>
-    doneBefore: <identity(new \DateTime('2018-12-01 11:00:00'))>
+    doneAfter: <identity(new \DateTime('2018-12-01 09:30:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-01 10:00:00'))>
     __calls:
       - assignTo: [ "@bob", <identity(new \DateTime('2018-12-01'))> ]
       - addToStore: [ "@store_1" ]
