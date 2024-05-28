@@ -4,23 +4,29 @@ namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Fulfillment\FulfillmentMethodResolver;
 use AppBundle\Service\LoggingUtils;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\PriceFormatter;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 class OrderValidator extends ConstraintValidator
 {
+    private LoggerInterface $checkoutLogger;
+    private LoggingUtils $loggingUtils;
 
     public function __construct(
         private PriceFormatter $priceFormatter,
         private FulfillmentMethodResolver $fulfillmentMethodResolver,
-        private LoggerInterface $checkoutLogger,
-        private LoggingUtils $loggingUtils,
+        LoggerInterface $checkoutLogger = null,
+        LoggingUtils $loggingUtils = null,
     )
     {
+        $this->checkoutLogger = $checkoutLogger ?? new NullLogger();
+        $this->loggingUtils = $loggingUtils ?? new NullLoggingUtils();
     }
 
     private function validateVendor($object, Constraint $constraint)
