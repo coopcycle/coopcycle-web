@@ -53,9 +53,18 @@ export const selectTaskListTasksByUsername = createSelector(
     return taskList.items.reduce((acc, it) => {
       if (it.startsWith('/api/tours')) {
         const tour = allTours.find(t => t['@id'] === it)
-        acc = [...acc, ...tour.items.map(tId => allTasks.find(t => t['@id'] === tId))]
+        // filter out undefined values
+        // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+        acc = [...acc, ...tour.items.map(tId => allTasks.find(t => t['@id'] === tId)).filter( Boolean )]
       } else {
-        acc.push(allTasks.find(t => t["@id"] === it))
+        // filter out undefined values
+        // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+        const task = allTasks.find(t => t["@id"] === it)
+        if (task === undefined) {
+          console.error("Could not find task at id " + it)
+        } else {
+          acc.push(task)
+        }
       }
       return acc
     }, [])

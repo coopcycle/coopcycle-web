@@ -189,6 +189,11 @@ class Task extends React.Component {
 
   render() {
 
+    // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+    if (this.props.task === undefined) {
+      return <></>
+    }
+
     const { color, task, selected, isVisible, date } = this.props
 
     const classNames = [
@@ -281,6 +286,12 @@ class Task extends React.Component {
 function mapStateToProps(state, ownProps) {
 
   let task = selectTaskById(state, ownProps.taskId)
+
+  // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+  if (task === undefined) {
+    console.error("Could not find task at id " + ownProps.taskId)
+    return { task: task}
+  }
 
   const tasksWithColor = selectTasksWithColor(state)
 
