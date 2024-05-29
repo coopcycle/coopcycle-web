@@ -40,10 +40,10 @@ final class TaskListCollectionDataProvider extends CollectionDataProvider
 
             $tasks = $taskList->getTasks();
 
-            $storeTasks = array_filter($tasks, function ($task) use ($store) {
-
+            // reset array index to 0 with array_values, otherwise you might get weird stuff in the serializer
+            $storeTasks = array_values(array_filter($tasks, function ($task) use ($store) {
                 return $store->getOrganization() === $task->getOrganization();
-            });
+            }));
 
             $taskList->setTempLegacyTaskStorage($storeTasks);
         }
