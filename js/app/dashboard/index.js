@@ -134,7 +134,7 @@ async function start() {
     }
   }
 
-  const persistedToursEnabled = window.localStorage.getItem(`tours_enabled`)
+  const persistedToursEnabled = window.localStorage.getItem(`cpccl__dshbd__tours_enabled`)
   if (persistedToursEnabled) {
     preloadedState = {
       ...preloadedState,
