@@ -44,7 +44,6 @@ class TaskChangedNotifier {
             $this->em->persist($ediMessage);
             $this->em->persist($task);
             $this->em->flush();
-
         }
    }
 
@@ -63,7 +62,7 @@ class TaskChangedNotifier {
             'organization' => $org
         ]);
 
-        if (null === $store) {
+        if (is_null($store)) {
             return true;
         }
 
