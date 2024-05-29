@@ -231,7 +231,7 @@ export function handleDragEnd(
 
       // Reorder tasks inside a tour
       if (source.droppableId === destination.droppableId) {
-        _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t['@id']))
+        _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t))
       }
       // moving single tasks between tours -> remove from source tour
       else if (source.droppableId.startsWith('tour:')) {
