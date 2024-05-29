@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Action\TimeSlot\Choices as ChoicesController;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
@@ -21,7 +22,23 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "method"="DELETE",
  *       "security"="is_granted('ROLE_ADMIN')"
  *     }
- *   })
+ *   },
+ *   collectionOperations={
+ *     "choices"={
+ *       "method"="GET",
+ *       "path"="/time_slots/choices",
+ *       "controller"=ChoicesController::class,
+ *       "status"=200,
+ *       "read"=false,
+ *       "write"=false,
+ *       "normalization_context"={"groups"={"time_slot_choices"}, "api_sub_level"=true},
+ *       "security"="is_granted('ROLE_OAUTH2_DELIVERIES')",
+ *       "openapi_context"={
+ *         "summary"="Retrieves choices for time slot"
+ *       }
+ *     }
+ *   }
+ * )
  */
 class TimeSlot
 {
