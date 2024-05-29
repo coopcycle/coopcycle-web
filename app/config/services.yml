@@ -197,6 +197,11 @@ services:
       $adhocOrderEnabled: '%env(bool:ADHOC_ORDER_ENABLED)%'
       $incidentImagesFilesystem: '@incident_images_filesystem'
 
+  AppBundle\Controller\AssetsController:
+    arguments:
+      $taskImagesFilesystem: '@task_images_filesystem'
+      $incidentImagesFilesystem: '@incident_images_filesystem'
+
   AppBundle\Controller\DashboardController:
     arguments:
       $adhocOrderEnabled: '%env(bool:ADHOC_ORDER_ENABLED)%'
