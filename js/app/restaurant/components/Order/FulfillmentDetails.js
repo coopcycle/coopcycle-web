@@ -18,6 +18,7 @@ import DateModal from '../DateModal'
 import { useTranslation } from 'react-i18next'
 import ChangeRestaurantOnEditFulfilmentDetailsModal
   from './ChangeRestaurantOnEditFulfilmentDetailsModal'
+import TimeRangeChangedModal from './TimeRangeChangedModal'
 
 export default function FulfillmentDetails() {
   const cart = useSelector(selectCart)
@@ -83,6 +84,7 @@ export default function FulfillmentDetails() {
       <ChangeRestaurantOnEditFulfilmentDetailsModal
         isWarningModalOpen={ isWarningModalOpen }
         setWarningModalOpen={ setWarningModalOpen } />
+      <TimeRangeChangedModal />
     </div>
   )
 }

@@ -5,6 +5,7 @@ import qs from 'qs'
 
 import i18n, {getCountry} from '../../i18n'
 import {geocode} from '../../components/AddressAutosuggest'
+import { createAction } from '@reduxjs/toolkit'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const FETCH_SUCCESS = 'FETCH_SUCCESS'
@@ -83,6 +84,9 @@ export const setPlayerFailure = createFsAction(SET_PLAYER_FAILURE)
 export const playerUpdateEvent = createFsAction(PLAYER_UPDATE_EVENT)
 
 export const stopAskingToEnableReusablePackaging = createFsAction(STOP_ASKING_ENABLE_REUSABLE_PACKAGING)
+
+export const openTimeRangeChangedModal = createAction("OPEN_TIME_RANGE_CHANGED_MODAL")
+export const closeTimeRangeChangedModal = createAction("CLOSE_TIME_RANGE_CHANGED_MODAL")
 
 const httpClient = axios.create()
 function getRoutingParams(params) {

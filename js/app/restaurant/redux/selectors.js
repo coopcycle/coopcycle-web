@@ -237,3 +237,5 @@ export const selectReusablePackagingEnabled = createSelector(
     return false
   }
 )
+
+export const selectIsTimeRangeChangedModalOpen = state => state.isTimeRangeChangedModalOpen

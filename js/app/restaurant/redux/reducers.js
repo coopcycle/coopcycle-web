@@ -30,6 +30,8 @@ import {
   STOP_ASKING_ENABLE_REUSABLE_PACKAGING,
   ENABLE_REUSABLE_PACKAGING,
   DISABLE_REUSABLE_PACKAGING,
+  openTimeRangeChangedModal,
+  closeTimeRangeChangedModal,
 } from './actions'
 
 const initialState = {
@@ -98,6 +100,7 @@ const initialState = {
   },
   isGroupOrdersEnabled: false,
   shouldAskToEnableReusablePackaging: true,
+  isTimeRangeChangedModalOpen: false,
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -404,6 +407,17 @@ const shouldAskToEnableReusablePackaging = (state = initialState.shouldAskToEnab
   }
 }
 
+const isTimeRangeChangedModalOpen = (state = initialState.isTimeRangeChangedModalOpen, action = {}) => {
+  switch (action.type) {
+    case openTimeRangeChangedModal.type:
+      return true
+    case closeTimeRangeChangedModal.type:
+      return false
+    default:
+      return state
+  }
+}
+
 export default combineReducers({
   isFetching,
   cart,
@@ -430,4 +444,5 @@ export default combineReducers({
   player,
   isGroupOrdersEnabled,
   shouldAskToEnableReusablePackaging,
+  isTimeRangeChangedModalOpen
 })
