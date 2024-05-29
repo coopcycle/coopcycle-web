@@ -126,7 +126,7 @@ export function handleDragEnd(
     // we are moving a whole group, override selectedTasks
     if (result.draggableId.startsWith('group')) {
       let groupId = result.draggableId.split(':')[1]
-      selectedTasks = selectGroups(getState()).find(g => g.id == groupId).tasks
+      selectedTasks = selectGroups(getState()).find(g => g['@id'] == groupId).tasks
     }
 
     if (selectedTasks.length === 0) return // can happen, for example dropping empty tour
