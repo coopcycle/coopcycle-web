@@ -780,6 +780,9 @@ fos_js_routing:
         - api_incidents_get_item
         - api_incidents_get_collection
         - api_tasks_get_task_context_item
+        - api_tasks_get_collection
+        - api_tours_get_collection
+        - api_task_lists_v2_collection
         - api_task_lists_set_items_item
         - admin_incident
         - api_stores_get_item

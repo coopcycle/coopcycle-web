@@ -71,7 +71,7 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task_import:failure':
           dispatch(importError(event.data.token, event.data.message))
           break
-        case 'task_list:updated':
+        case 'v2:task_list:updated':
           dispatch(taskListsUpdated(event.data.task_list))
           break
       }

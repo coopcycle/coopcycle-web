@@ -26,13 +26,25 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_OAUTH2_TASKS')"
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_OAUTH2_TASKS')",
+ *       "openapi_context"={
+ *         "summary"="Legacy endpoint, please use '/api/task_lists/v2' instead. Retrieves Tasklists as lists of tasks, not tasks and tours, with expanded tasks."
+ *       },
+ *       "normalization_context"={"groups"={"task_list", "task_collection", "task", "delivery", "address"}}
  *     },
  *     "post"={
  *       "method"="POST",
  *       "controller"=CreateTaskListController::class,
  *       "access_control"="is_granted('ROLE_DISPATCHER')"
- *     }
+ *     },
+ *     "v2"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_OAUTH2_TASKS')",
+ *       "path"="/task_lists/v2",
+ *       "openapi_context"={
+ *         "summary"="Retrieves TaskLists as lists of tours and tasks."
+ *       }
+ *    }
  *   },
  *   itemOperations={
  *     "get"={
@@ -87,7 +99,7 @@ class TaskList implements TaskCollectionInterface
 
     /**
      * @Assert\Valid()
-     * @Groups({"task_list", "task"})
+     * @Groups({"task_list"})
      */
     protected $items;
 
@@ -146,7 +158,7 @@ class TaskList implements TaskCollectionInterface
     }
 
     /**
-     * The ordered tasks.
+     * The ordered tasks of the TaskList. Is useful for calculating distances or operations on tasks, but for dispatch read/write you would prefer `getItems` as it will return the tasklist as a list of both tasks and tours.
      *
      * @return Task[]
      */

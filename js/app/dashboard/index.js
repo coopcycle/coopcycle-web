@@ -38,9 +38,9 @@ async function start() {
 
   let date = moment(dashboardEl.dataset.date)
 
-  const tasksRequest = axios.create({ baseURL: baseUrl }).get(`/api/tasks?date=${date.format('YYYY-MM-DD')}`, { headers: headers})
-  const tasksListsRequest = axios.create({ baseURL: baseUrl }).get(`/api/task_lists?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
-  const toursRequest = axios.create({ baseURL: baseUrl }).get(`/api/tours?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
+  const tasksRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_tasks_get_collection') }?date=${date.format('YYYY-MM-DD')}`, { headers: headers})
+  const tasksListsRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_task_lists_v2_collection') }?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
+  const toursRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_tours_get_collection') }?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
 
   let allTasks
   let taskLists
