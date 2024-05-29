@@ -45,7 +45,7 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function normalize($object, $format = null, array $context = array())
     {
-        // supports the legacy display of TaskList as tasks for the smartphone app courier part
+        // legacy serialization for app and events with filtered tasks
         if ($object->getTempLegacyTaskStorage() && count($object->getTempLegacyTaskStorage())) {
             $context[AbstractNormalizer::IGNORED_ATTRIBUTES] = ['items'];
             $data = $this->normalizer->normalize($object, $format, $context);
@@ -53,9 +53,23 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
                 return $this->taskNormalizer->normalize(
                     $task,
                     'jsonld',
-                    ['groups' => ["task_collection", "task", "delivery", "address"]]
+                    ['groups' => ["task_list", "task_collection", "task", "delivery", "address"]]
                 );
                 }, $object->getTempLegacyTaskStorage()
+            );
+        }
+        // legacy serialization for app and events
+        // see https://github.com/coopcycle/coopcycle-app/issues/1803
+        else if (in_array('task', $context['groups'])) {
+            $context[AbstractNormalizer::IGNORED_ATTRIBUTES] = ['items'];
+            $data = $this->normalizer->normalize($object, $format, $context);
+            $data['items'] = array_map(function($task) {
+                return $this->taskNormalizer->normalize(
+                    $task,
+                    'jsonld',
+                    ['groups' => ["task_list", "task_collection", "task", "delivery", "address"]]
+                );
+                }, $object->getTasks()
             );
         } else  {
             $data = $this->normalizer->normalize($object, $format, $context);

@@ -8,6 +8,7 @@ use AppBundle\Entity\TaskCollection;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\TaskList;
 use AppBundle\Domain\Task\Event\TaskListUpdated;
+use AppBundle\Domain\Task\Event\TaskListUpdatedv2;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Message\PushNotification;
 use AppBundle\Service\RemotePushNotificationManager;
@@ -148,7 +149,10 @@ class TaskListSubscriber implements EventSubscriber
         $usersByDate = new \SplObjectStorage();
         foreach ($this->taskLists as $taskList) {
 
+            // legacy event and new version of event
+            // see https://github.com/coopcycle/coopcycle-app/issues/1803
             $this->eventBus->handle(new TaskListUpdated($taskList));
+            $this->eventBus->handle(new TaskListUpdatedv2($taskList));
 
             $date = $taskList->getDate();
             $users = isset($usersByDate[$date]) ? $usersByDate[$date] : [];

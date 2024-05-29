@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class TaskListUpdated extends BaseEvent implements SerializableEventInterface
+class TaskListUpdatedv2 extends BaseEvent implements SerializableEventInterface
 {
     protected $collection;
 
@@ -29,7 +29,7 @@ class TaskListUpdated extends BaseEvent implements SerializableEventInterface
             'resource_class' => TaskList::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['task_list', "task_collection", "task", "delivery", "address"]
+            'groups' => ['task_list']
         ]);
 
         return [
@@ -39,6 +39,6 @@ class TaskListUpdated extends BaseEvent implements SerializableEventInterface
 
     public static function messageName(): string
     {
-        return 'task_list:updated';
+        return 'v2:task_list:updated';
     }
 }
