@@ -1516,3 +1516,4 @@ business_account.employee.associated: Your account has been associated successfu
 business_account.loggedin_employee.association.text: You are logged in with the email <strong>%user_email%</strong>. Do you want to associate your account with the company <strong>%business_account_name%</strong>?
 business_account.loggedin_employee.association.title: Invitation to associate your account with a Business Acccount
 topbar.action.admin_business_account: Administrate my Business Account
+basics.order_now: Order now
