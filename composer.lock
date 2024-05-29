@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f3f2510b2425d95ab1ee4dc739143be",
+    "content-hash": "8ee56333187d02095e385e683be8dea2",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -3145,20 +3145,20 @@
         },
         {
             "name": "drupal/core-vendor-hardening",
-            "version": "9.2.x-dev",
+            "version": "10.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-vendor-hardening.git",
-                "reference": "f9eaafd58792fef38037979c2344a9216a93cc7e"
+                "reference": "a524b4dd2480910a7b0dad20f2995daf204e8e56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/f9eaafd58792fef38037979c2344a9216a93cc7e",
-                "reference": "f9eaafd58792fef38037979c2344a9216a93cc7e",
+                "url": "https://api.github.com/repos/drupal/core-vendor-hardening/zipball/a524b4dd2480910a7b0dad20f2995daf204e8e56",
+                "reference": "a524b4dd2480910a7b0dad20f2995daf204e8e56",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^1.1 || ^2",
+                "composer-plugin-api": "^2",
                 "php": ">=7.3.0"
             },
             "type": "composer-plugin",
@@ -3180,9 +3180,9 @@
                 "drupal"
             ],
             "support": {
-                "source": "https://github.com/drupal/core-vendor-hardening/tree/9.2.x"
+                "source": "https://github.com/drupal/core-vendor-hardening/tree/10.2.6"
             },
-            "time": "2021-04-22T15:46:23+00:00"
+            "time": "2023-07-24T07:55:25+00:00"
         },
         {
             "name": "edamov/pushok",
@@ -23687,7 +23687,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "league/geotools": 0,
-        "drupal/core-vendor-hardening": 20,
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
         "coopcycle/transporter": 20,
