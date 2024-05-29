@@ -1,4 +1,4 @@
-import {createAction} from 'redux-actions'
+import {createAction as createFsAction} from 'redux-actions'
 import _ from 'lodash'
 import axios from 'axios'
 import qs from 'qs'
@@ -46,43 +46,43 @@ export const STOP_ASKING_ENABLE_REUSABLE_PACKAGING = 'STOP_ASKING_ENABLE_REUSABL
 export const DISABLE_REUSABLE_PACKAGING = 'DISABLE_REUSABLE_PACKAGING'
 export const ENABLE_REUSABLE_PACKAGING = 'ENABLE_REUSABLE_PACKAGING'
 
-export const fetchRequest = createAction(FETCH_REQUEST)
-export const fetchSuccess = createAction(FETCH_SUCCESS)
-export const fetchFailure = createAction(FETCH_FAILURE)
+export const fetchRequest = createFsAction(FETCH_REQUEST)
+export const fetchSuccess = createFsAction(FETCH_SUCCESS)
+export const fetchFailure = createFsAction(FETCH_FAILURE)
 
-export const setStreetAddress = createAction(SET_STREET_ADDRESS)
-export const toggleMobileCart = createAction(TOGGLE_MOBILE_CART)
-export const replaceErrors = createAction(REPLACE_ERRORS, (propertyPath, errors) => ({ propertyPath, errors }))
+export const setStreetAddress = createFsAction(SET_STREET_ADDRESS)
+export const toggleMobileCart = createFsAction(TOGGLE_MOBILE_CART)
+export const replaceErrors = createFsAction(REPLACE_ERRORS, (propertyPath, errors) => ({ propertyPath, errors }))
 
-export const setLastAddItemRequest = createAction(SET_LAST_ADD_ITEM_REQUEST, (url, data) => ({ url, data }))
-export const clearLastAddItemRequest = createAction(CLEAR_LAST_ADD_ITEM_REQUEST)
-export const setDateModalOpen = createAction(SET_DATE_MODAL_OPEN)
-export const closeAddressModal = createAction(CLOSE_ADDRESS_MODAL)
-export const openAddressModal = createAction(OPEN_ADDRESS_MODAL)
+export const setLastAddItemRequest = createFsAction(SET_LAST_ADD_ITEM_REQUEST, (url, data) => ({ url, data }))
+export const clearLastAddItemRequest = createFsAction(CLEAR_LAST_ADD_ITEM_REQUEST)
+export const setDateModalOpen = createFsAction(SET_DATE_MODAL_OPEN)
+export const closeAddressModal = createFsAction(CLOSE_ADDRESS_MODAL)
+export const openAddressModal = createFsAction(OPEN_ADDRESS_MODAL)
 
-export const geocodingSuccess = createAction(GEOCODING_SUCCESS)
-export const geocodingFailure = createAction(GEOCODING_FAILURE)
+export const geocodingSuccess = createFsAction(GEOCODING_SUCCESS)
+export const geocodingFailure = createFsAction(GEOCODING_FAILURE)
 
-export const closeProductOptionsModal = createAction(CLOSE_PRODUCT_OPTIONS_MODAL)
+export const closeProductOptionsModal = createFsAction(CLOSE_PRODUCT_OPTIONS_MODAL)
 export const openProductOptionsModal =
-  createAction(OPEN_PRODUCT_OPTIONS_MODAL, (product, options, images, price, formAction) => ({ product, options, images, price, formAction }))
+  createFsAction(OPEN_PRODUCT_OPTIONS_MODAL, (product, options, images, price, formAction) => ({ product, options, images, price, formAction }))
 
-export const openInvitePeopleToOrderModal = createAction(OPEN_INVITE_PEOPLE_TO_ORDER_MODAL)
-export const closeInvitePeopleToOrderModal = createAction(CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL)
+export const openInvitePeopleToOrderModal = createFsAction(OPEN_INVITE_PEOPLE_TO_ORDER_MODAL)
+export const closeInvitePeopleToOrderModal = createFsAction(CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL)
 
-export const invitePeopleRequest = createAction(INVITE_PEOPLE_REQUEST)
-export const invitePeopleSuccess = createAction(INVITE_PEOPLE_REQUEST_SUCCESS)
-export const invitePeopleFailure = createAction(INVITE_PEOPLE_REQUEST_FAILURE)
+export const invitePeopleRequest = createFsAction(INVITE_PEOPLE_REQUEST)
+export const invitePeopleSuccess = createFsAction(INVITE_PEOPLE_REQUEST_SUCCESS)
+export const invitePeopleFailure = createFsAction(INVITE_PEOPLE_REQUEST_FAILURE)
 
-export const openSetPlayerEmailModal = createAction(OPEN_SET_PLAYER_EMAIL_MODAL)
-export const closeSetPlayerEmailModal = createAction(CLOSE_SET_PLAYER_EMAIL_MODAL)
-export const setPlayerToken = createAction(SET_PLAYER_TOKEN)
+export const openSetPlayerEmailModal = createFsAction(OPEN_SET_PLAYER_EMAIL_MODAL)
+export const closeSetPlayerEmailModal = createFsAction(CLOSE_SET_PLAYER_EMAIL_MODAL)
+export const setPlayerToken = createFsAction(SET_PLAYER_TOKEN)
 
-export const setPlayerFailure = createAction(SET_PLAYER_FAILURE)
+export const setPlayerFailure = createFsAction(SET_PLAYER_FAILURE)
 
-export const playerUpdateEvent = createAction(PLAYER_UPDATE_EVENT)
+export const playerUpdateEvent = createFsAction(PLAYER_UPDATE_EVENT)
 
-export const stopAskingToEnableReusablePackaging = createAction(STOP_ASKING_ENABLE_REUSABLE_PACKAGING)
+export const stopAskingToEnableReusablePackaging = createFsAction(STOP_ASKING_ENABLE_REUSABLE_PACKAGING)
 
 const httpClient = axios.create()
 function getRoutingParams(params) {
@@ -470,8 +470,8 @@ export function clearDate() {
   }
 }
 
-const _enableTakeaway = createAction(ENABLE_TAKEAWAY)
-const _disableTakeaway = createAction(DISABLE_TAKEAWAY)
+const _enableTakeaway = createFsAction(ENABLE_TAKEAWAY)
+const _disableTakeaway = createFsAction(DISABLE_TAKEAWAY)
 
 export function enableTakeaway(post = true) {
 
@@ -613,8 +613,8 @@ export function createInvitation() {
   }
 }
 
-const _enableReusablePackaging = createAction(ENABLE_REUSABLE_PACKAGING)
-const _disableReusablePackaging = createAction(DISABLE_REUSABLE_PACKAGING)
+const _enableReusablePackaging = createFsAction(ENABLE_REUSABLE_PACKAGING)
+const _disableReusablePackaging = createFsAction(DISABLE_REUSABLE_PACKAGING)
 
 export function toggleReusablePackaging(checked = true) {
 
