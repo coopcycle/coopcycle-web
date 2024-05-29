@@ -762,6 +762,9 @@ services:
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $splitTermsAndConditionsAndPrivacyPolicy: '%env(SPLIT_TERMS_AND_CONDITIONS_AND_PRIVACY_POLICY)%'
 
+  AppBundle\Transporter\ImportFromPoint: ~
+  AppBundle\Transporter\ReportFromCC: ~
+
   AppBundle\Command\SyncTransportersCommand:
     public: true
     arguments:

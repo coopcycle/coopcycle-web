@@ -195,15 +195,16 @@ trait StoreTrait
                 return $this->redirectToRoute($routes['stores']);
             }
 
-            if ($store->isDBSchenkerEnabled()) {
+            if ($store->isTransporterEnabled()) {
+                $transporter = $store->getTransporter();
                 $fstore = $objectManager->getRepository(Store::class)->findOneBy([
-                    'DBSchenkerEnabled' => true
+                    'transporter' => $transporter
                 ]);
 
                 if (!is_null($fstore) && $store->getId() != $fstore->getId()) {
                     $this->addFlash(
                         'error',
-                        'DBSchenker is already enabled for another store'
+                        sprintf('%s is already enabled for %s', $transporter, $fstore->getName())
                     );
 
                     return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);

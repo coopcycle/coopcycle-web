@@ -120,3 +120,12 @@ AppBundle\Entity\Store:
     timeSlot: '@time_slot_1'
     __calls:
       - addAddress: [ "@address_2" ]
+  store_5:
+    name: 'DBSchenker'
+    address: "@address_2"
+    enabled: true
+    transporter: 'DBSCHENKER'
+    pricingRuleSet: '@pricing_rule_set_4'
+    timeSlot: '@time_slot_1'
+    __calls:
+      - addAddress: [ "@address_2" ]

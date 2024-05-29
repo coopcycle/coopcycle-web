@@ -67,7 +67,7 @@ class TaskChangedNotifier {
             return true;
         }
 
-        return !$store->isDBSchenkerEnabled();
+        return !$store->isTransporterEnabled();
     }
 
 }
