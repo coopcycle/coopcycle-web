@@ -123,7 +123,7 @@ describe('handleDragEnd', () => {
         mockModifyTour = jest.fn()
 
       let result = {
-        draggableId: 'group:23',
+        draggableId: 'group:/api/task_groups/23',
         source: {droppableId: 'unassigned:'}, destination: {droppableId: 'assigned:admin', index: 1}
       }
 
