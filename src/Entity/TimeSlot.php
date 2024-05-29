@@ -48,7 +48,7 @@ class TimeSlot
 
     /**
      * @var string
-     * @Groups({"time_slot"})
+     * @Groups({"time_slot", "store_time_slots"})
      */
     private $name;
 
