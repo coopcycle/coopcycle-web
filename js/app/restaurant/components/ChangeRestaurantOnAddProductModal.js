@@ -5,7 +5,7 @@ import Modal from 'react-modal'
 
 import { retryLastAddItemRequest } from '../redux/actions'
 
-class RestaurantModal extends Component {
+class ChangeRestaurantOnAddProductModal extends Component {
 
   afterOpenModal() {
     window._paq.push(['trackEvent', 'Checkout', 'openModal', 'changeRestaurant'])
@@ -71,4 +71,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(RestaurantModal))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(ChangeRestaurantOnAddProductModal))

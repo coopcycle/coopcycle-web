@@ -25,7 +25,7 @@ import './components/Order/index.scss'
 
 import ProductOptionsModal
   from './components/ProductDetails/ProductOptionsModal'
-import RestaurantModal from './components/RestaurantModal'
+import ChangeRestaurantOnAddProductModal from './components/ChangeRestaurantOnAddProductModal'
 import InvitePeopleToOrderModal from './components/InvitePeopleToOrderModal'
 import SetGuestCustomerEmailModal from './components/SetGuestCustomerEmailModal'
 import LoopeatModal from './components/LoopeatModal'
@@ -150,7 +150,7 @@ function init() {
           <StickyOrder />
           <OrderOverlay />
           <ProductOptionsModal />
-          <RestaurantModal />
+          <ChangeRestaurantOnAddProductModal />
           <InvitePeopleToOrderModal />
           <SetGuestCustomerEmailModal />
           <LoopeatModal />
