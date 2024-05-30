@@ -30,7 +30,9 @@
         <li class="list-group-item">
         <span class="label label-{{ message.color }}"><i class="fa {{message.icon}}" aria-hidden="true"></i></span>
         {{ message.date | date('H:i')}} - {{ message.title }}
+        {% if message.edi is not null %}
         <span class="actions"><a href="{{ path('admin_transporter_message', { edi: message.edi })  }}">View EDI</a></span>
+        {% endif %}
         </li>
       {% endfor %}
     </ul>

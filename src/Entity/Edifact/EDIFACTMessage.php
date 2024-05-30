@@ -29,7 +29,7 @@ class EDIFACTMessage
 
     private ?string $subMessageType = null;
 
-    private string $edifactFile;
+    private ?string $edifactFile = null;
 
     private ?array $metadata = null;
 
@@ -107,7 +107,7 @@ class EDIFACTMessage
         return $this;
     }
 
-    public function getEdiMessage(): string
+    public function getEdiMessage(): ?string
     {
         return $this->edifactFile;
     }
