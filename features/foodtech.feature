@@ -587,10 +587,10 @@ Feature: Food Tech
             "@id":@string@,
             "@type":"OpeningHoursSpecification",
             "id":@integer@,
-            "opens":"00:00",
+            "opens":"23:59",
             "closes":"00:00",
             "validFrom":"2020-10-02",
-            "validThrough":"2020-10-03"
+            "validThrough":"2020-10-02"
           }
         ],
         "image":@string@,
