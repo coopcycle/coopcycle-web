@@ -431,6 +431,19 @@ class LocalBusinessRepository extends EntityRepository
         return array_map(fn ($result) => $result['id'], $qb->getQuery()->getArrayResult());
     }
 
+    public function isRestaurantAvailableInBusinessAccount(LocalBusiness $restaurant)
+    {
+        $qb = $this->createQueryBuilder('r');
+
+        $this->addBusinessContextClause($qb,'r');
+
+        $qb
+            ->andWhere('r.id = :restaurant')
+            ->setParameter('restaurant', $restaurant);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
     private function addBusinessContextClause(QueryBuilder $qb, string $alias)
     {
         if (null !== $this->businessContext && $this->businessContext->isActive()) {

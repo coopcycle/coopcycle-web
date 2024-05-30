@@ -406,10 +406,16 @@ class RestaurantController extends AbstractController
         CartContextInterface $cartContext,
         LoopEatContextInitializer $loopeatContextInitializer,
         LoopEatContext $loopeatContext,
+        BusinessContext $businessContext,
+        LocalBusinessRepository $repository,
         Address $address = null)
     {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(LocalBusiness::class)->find($id);
+        $restaurant = $repository->find($id);
+
+        $restaurantAvailableForBusinessAccount = false;
+        if ($businessContext->isActive()) {
+            $restaurantAvailableForBusinessAccount = $repository->isRestaurantAvailableInBusinessAccount($restaurant) !== null;
+        }
 
         if (!$restaurant) {
             throw new NotFoundHttpException();
@@ -491,6 +497,7 @@ class RestaurantController extends AbstractController
             'cart_form' => $cartForm->createView(),
             'cart_timing' => $this->getCartTiming($cart),
             'addresses_normalized' => $this->getUserAddresses(),
+            'available_for_business_account' => $restaurantAvailableForBusinessAccount
         ]));
     }
 
