@@ -124,10 +124,7 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const tasks = useSelector(state => selectTaskListTasksByUsername(state, {username: username}))
   const visibleTaskIds = useSelector(selectVisibleTaskIds)
 
-  console.log(visibleTaskIds)
   const visibleTasks = tasks.filter(task => {
-    console.error(username)
-    console.error(task)
     return _.includes(visibleTaskIds, task['@id'])
   })
 
