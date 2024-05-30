@@ -145,13 +145,13 @@ class RestaurantController extends AbstractController
     public function legacyRestaurantsAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        SlugifyInterface $slugify)
+        BusinessContext $businessContext)
     {
         $requestClone = clone $request;
 
         $requestClone->attributes->set('type', LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT));
 
-        return $this->listAction($requestClone, $repository, $projectCache, $slugify);
+        return $this->listAction($requestClone, $repository, $projectCache, $businessContext);
     }
 
     /**
@@ -855,13 +855,13 @@ class RestaurantController extends AbstractController
     public function legacyStoreListAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        SlugifyInterface $slugify)
+        BusinessContext $businessContext)
     {
         $requestClone = clone $request;
 
         $requestClone->attributes->set('type', LocalBusiness::getKeyForType(Store::GROCERY_STORE));
 
-        return $this->listAction($requestClone, $repository, $projectCache, $slugify);
+        return $this->listAction($requestClone, $repository, $projectCache, $businessContext);
     }
 
     /**
