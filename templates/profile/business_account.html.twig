@@ -14,6 +14,10 @@
       </div>
     </div>
 
+    <a href="{{ path('shops', {type: 'restaurant', '_business': 'true'}) }}" class="btn btn-block btn-md form btn-primary-red">
+      {{ 'basics.order_now'|trans }}
+    </a>
+
   {{ form_end(form) }}
 {% endblock %}
 

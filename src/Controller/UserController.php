@@ -33,6 +33,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -174,7 +175,8 @@ class UserController extends AbstractController
         EventDispatcherInterface $eventDispatcher,
         Canonicalizer $canonicalizer,
         BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
-        Security $security)
+        Security $security,
+        TokenGeneratorInterface $tokenGenerator)
     {
         $repository = $this->getDoctrine()->getRepository(Invitation::class);
 
@@ -196,7 +198,7 @@ class UserController extends AbstractController
             ]);
             if (null !== $businessAccountInvitation && $businessAccountInvitation->isInvitationForManager()) {
                 return $this->loadBusinessAccountRegistrationFlow($request, $businessAccountRegistrationFlow, $user,
-                    $businessAccountInvitation, $objectManager, $userManager, $eventDispatcher, $canonicalizer);
+                    $businessAccountInvitation, $objectManager, $userManager, $eventDispatcher, $canonicalizer, $tokenGenerator);
             } else {
                 $loggedInUser = $security->getUser();
 
@@ -279,7 +281,8 @@ class UserController extends AbstractController
         EntityManagerInterface $objectManager,
         UserManagerInterface $userManager,
         EventDispatcherInterface $eventDispatcher,
-        Canonicalizer $canonicalizer
+        Canonicalizer $canonicalizer,
+        TokenGeneratorInterface $tokenGenerator
     )
     {
         $flowData = new BusinessAccountRegistration($user, $businessAccountInvitation->getBusinessAccount());
@@ -296,7 +299,7 @@ class UserController extends AbstractController
                 $invitation = new Invitation();
                 $invitation->setEmail($canonicalizer->canonicalize($user->getEmail()));
                 $invitation->setUser($user);
-                $invitation->setCode($flowData->code);
+                $invitation->setCode($tokenGenerator->generateToken());
 
                 $businessAccountEmployeeInvitation = new BusinessAccountInvitation();
                 $businessAccountEmployeeInvitation->setBusinessAccount($businessAccountInvitation->getBusinessAccount());

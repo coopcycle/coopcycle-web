@@ -169,9 +169,10 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             } else {
 
                 $vendor = $object->getVendor();
+                $vendorConditions = $object->getVendorConditions();
 
                 $fulfillmentMethods = [];
-                foreach ($vendor->getFulfillmentMethods() as $fulfillmentMethod) {
+                foreach ($vendorConditions->getFulfillmentMethods() as $fulfillmentMethod) {
                     if ($fulfillmentMethod->isEnabled()) {
                         $fulfillmentMethods[] = $fulfillmentMethod->getType();
                     }
@@ -180,7 +181,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 $data['vendor'] = [
                     'id' => $vendor->getId(),
                     'variableCustomerAmountEnabled' =>
-                        $vendor->getContract() !== null ? $vendor->getContract()->isVariableCustomerAmountEnabled() : false,
+                        $vendorConditions->getContract() !== null ? $vendorConditions->getContract()->isVariableCustomerAmountEnabled() : false,
                     'address' => [
                         'latlng' => [
                             $vendor->getAddress()->getGeo()->getLatitude(),

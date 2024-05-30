@@ -30,11 +30,7 @@
     <field name="weightRequired" type="boolean" column="weight_required"/>
     <field name="packagesRequired" type="boolean" column="packages_required"/>
     <field name="multiDropEnabled" type="boolean" column="multi_drop_enabled"/>
-    <field name="DBSchenkerEnabled" type="boolean" column="db_schenker">
-      <options>
-        <option name="default">0</option>
-      </options>
-    </field>
+    <field name="transporter" type="string" column="transporter" nullable="true" unique="true" />
     <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store">
       <cascade>
         <cascade-persist/>

@@ -112,13 +112,13 @@ class OrderTimeHelper
 
         if (!isset($this->choicesCache[$hash])) {
 
-            $vendor = $cart->getVendor();
+            $vendorConditions = $cart->getVendorConditions();
             $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($cart);
 
             $choiceLoader = new AsapChoiceLoader(
                 $fulfillmentMethod->getOpeningHours(),
                 $this->timeRegistry,
-                $vendor->getClosingRules(),
+                $vendorConditions->getClosingRules(),
                 $this->getOrderingDelayMinutes($fulfillmentMethod->getOrderingDelayMinutes()),
                 $fulfillmentMethod->getOption('range_duration', 10),
                 $fulfillmentMethod->isPreOrderingAllowed()
@@ -148,12 +148,12 @@ class OrderTimeHelper
 
         if ($fulfillmentMethod->getOpeningHoursBehavior() === 'time_slot') {
 
-            $vendor = $cart->getVendor();
+            $vendorConditions = $cart->getVendorConditions();
 
             $choiceLoader = new TimeSlotChoiceLoader(
-                TimeSlot::create($fulfillmentMethod, $vendor),
+                TimeSlot::create($fulfillmentMethod, $vendorConditions),
                 $this->country,
-                $vendor->getClosingRules(),
+                $vendorConditions->getClosingRules(),
                 new \DateTime('+7 days')
             );
             $choiceList = $choiceLoader->loadChoiceList();

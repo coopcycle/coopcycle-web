@@ -149,7 +149,7 @@ class OrderController extends AbstractController
         $tipForm = $this->createForm(CheckoutTipType::class);
         $tipForm->handleRequest($request);
 
-        if ($tipForm->isSubmitted()) {
+        if ($tipForm->isSubmitted() && $tipForm->isValid()) {
 
             $tipAmount = $tipForm->get('amount')->getData();
             $order->setTipAmount((int) ($tipAmount * 100));

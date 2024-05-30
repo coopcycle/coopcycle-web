@@ -153,7 +153,8 @@ class IncidentAction
             throw new \InvalidArgumentException("There is no store linked to this task");
         }
 
-        if (!$store->isDBSchenkerEnabled()) {
+        //TODO(multitrans): Add support for multi transporters
+        if (!$store->isTransporterEnabled()) {
             throw new \InvalidArgumentException("Transporter report cannot be created for store without DBSchenker");
         }
 
@@ -184,7 +185,7 @@ class IncidentAction
 
         $ediMessage = new EDIFACTMessage();
         $ediMessage->setMessageType(EDIFACTMessage::MESSAGE_TYPE_REPORT);
-        $ediMessage->setTransporter(EDIFACTMessage::TRANSPORTER_DBSCHENKER);
+        $ediMessage->setTransporter($importEDI->getTransporter());
         $ediMessage->setDirection(EDIFACTMessage::DIRECTION_OUTBOUND);
         $ediMessage->setReference($importEDI->getReference());
         $ediMessage->setSubMessageType($failureReason);

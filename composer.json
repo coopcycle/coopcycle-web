@@ -163,7 +163,8 @@
         "friends-of-behat/mink-browserkit-driver": "^1.4",
         "rector/rector": "^0.17",
         "phpstan/phpstan-doctrine": "^1.0",
-        "aeon-php/calendar": "1.0.6"
+        "aeon-php/calendar": "1.0.6",
+        "league/flysystem-memory": "^3.0"
     },
     "repositories": [
         {

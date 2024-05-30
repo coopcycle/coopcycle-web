@@ -62,10 +62,10 @@ class ShippingDateFilter
             return false;
         }
 
-        $vendor = $order->getVendor();
+        $vendorConditions = $order->getVendorConditions();
         $fulfillmentMethod = $order->getFulfillmentMethod();
 
-        if (!$this->isOpen($vendor->getOpeningHours($fulfillmentMethod), $preparation, $vendor->getClosingRules())) {
+        if (!$this->isOpen($vendorConditions->getOpeningHours($fulfillmentMethod), $preparation, $vendorConditions->getClosingRules())) {
 
             $this->logger->info(sprintf('ShippingDateFilter::accept() | Vendor: %s | vendor closed at "%s"',
                 $this->loggingUtils->getVendors($order),

@@ -2,11 +2,14 @@
 
 namespace AppBundle\Action\Order;
 
+use ApiPlatform\Core\Validator\Exception\ValidationException;
 use AppBundle\Entity\Sylius\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validation;
 
 class Tip
 {
@@ -32,8 +35,19 @@ class Tip
             return throw new BadRequestHttpException();
         }
 
+        $amount = intval($body['tipAmount']);
+
+        $validator = Validation::createValidator();
+
+        $violations = $validator->validate($amount, [
+            new Assert\GreaterThanOrEqual(0),
+        ]);
+        if (count($violations) > 0) {
+            throw new ValidationException($violations);
+        }
+
         try {
-            $data->setTipAmount(intval($body['tipAmount']));
+            $data->setTipAmount($amount);
 
             $this->orderProcessor->process($data);
             $this->entityManager->flush();
