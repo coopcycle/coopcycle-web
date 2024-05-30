@@ -642,6 +642,8 @@ class ProfileController extends AbstractController
         $orders = [];
 
         if (null !== $businessAccount->getId()) {
+            Assert::isInstanceOf($this->orderRepository, EntityRepository::class);
+
             $qb = $this->orderRepository
                 ->createQueryBuilder('o')
                 ->andWhere('o.businessAccount = :business_account')
