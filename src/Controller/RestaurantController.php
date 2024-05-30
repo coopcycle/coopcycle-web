@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Domain\Order\Event\OrderUpdated;
@@ -159,7 +160,7 @@ class RestaurantController extends AbstractController
     public function listAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        SlugifyInterface $slugify)
+        BusinessContext $businessContext)
     {
         $originalParams = $request->query->all();
 
@@ -177,10 +178,16 @@ class RestaurantController extends AbstractController
             ]);
         }
 
+        $repository->setBusinessContext($businessContext);
+
         // find cuisines which can be selected by user to filter
         $cuisines = $repository->findExistingCuisines();
 
         $cacheKey = $this->getShopsListCacheKey($request);
+
+        if ($businessContext->isActive()) {
+            $cacheKey = sprintf('%s.%s', $cacheKey, '_business');
+        }
 
         if ($request->query->has('type')) {
             $type = LocalBusiness::getTypeForKey($request->query->get('type'));
