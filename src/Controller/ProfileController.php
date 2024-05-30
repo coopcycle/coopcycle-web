@@ -660,15 +660,12 @@ class ProfileController extends AbstractController
             );
         }
 
-        $form = $this->createForm(BusinessAccountType::class, $businessAccount);
-
         return $this->render('profile/business_account_orders.html.twig', [
             'orders' => $orders,
             'routes' => [
                 'restaurant' => 'restaurant',
                 'order' => 'profile_order'
-            ],
-            'form' => $form->createView()
+            ]
         ]);
     }
 }
