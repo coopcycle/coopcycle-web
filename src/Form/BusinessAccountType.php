@@ -101,17 +101,6 @@ class BusinessAccountType extends AbstractType
                                 'data' => $businessAccountInvitation->getId()
                             ]);
                     }
-
-                    if ($this->authorizationChecker->isGranted('ROLE_BUSINESS_ACCOUNT')) {
-                        $invitationLink = $this->urlGenerator->generate('invitation_define_password', [
-                            'code' => $businessAccountInvitation->getInvitation()->getCode()
-                        ], UrlGeneratorInterface::ABSOLUTE_URL);
-                        $form->add('invitationLink', UrlType::class, [
-                            'mapped' => false,
-                            'label' => 'registration.step.invitation.copy.link',
-                            'data' => $invitationLink
-                        ]);
-                    }
                 }
             } else {
                 if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
