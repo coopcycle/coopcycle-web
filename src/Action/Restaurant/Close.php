@@ -12,11 +12,11 @@ class Close
         $today = Carbon::now();
         $today->setTime(00, 00, 00);
 
-        $tomorrow = $today->copy()->add(1, 'day');
+        $endOfTheDay = $today->copy()->setTime(23, 59, 59);
 
         $closingRule = new ClosingRule();
         $closingRule->setStartDate($today);
-        $closingRule->setEndDate($tomorrow);
+        $closingRule->setEndDate($endOfTheDay);
 
         $data->addClosingRule($closingRule);
 
