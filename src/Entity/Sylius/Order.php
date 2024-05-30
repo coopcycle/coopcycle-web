@@ -1106,7 +1106,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function setTipAmount(int $tipAmount)
     {
-        $this->tipAmount = $tipAmount;
+        $this->tipAmount = max(0, $tipAmount);
     }
 
     public function getShippingTimeRange(): ?TsRange
