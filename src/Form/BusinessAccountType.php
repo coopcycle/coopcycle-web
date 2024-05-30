@@ -12,12 +12,10 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -25,16 +23,13 @@ class BusinessAccountType extends AbstractType
 {
     private $authorizationChecker;
     private $objectManager;
-    private $urlGenerator;
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
-        EntityManagerInterface $objectManager,
-        UrlGeneratorInterface $urlGenerator)
+        EntityManagerInterface $objectManager)
     {
         $this->authorizationChecker = $authorizationChecker;
         $this->objectManager = $objectManager;
-        $this->urlGenerator = $urlGenerator;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
