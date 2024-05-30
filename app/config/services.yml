@@ -1062,6 +1062,8 @@ services:
     arguments:
       $country: "%country_iso%"
 
+  AppBundle\Service\InvitationLinkProviderService: ~
+
   AppBundle\Domain\Order\Workflow\Guard:
     public: true
 

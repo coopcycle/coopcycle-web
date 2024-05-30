@@ -1402,6 +1402,7 @@ registration.company.address.different.for.billing: "Usar una dirección diferen
 registration.company.billing.address: "Dirección de facturación"
 registration.step.company.name: "Nombre de la empresa"
 registration.step.invitation.copy.link: "Copia el siguiente enlace y envíalo a tus colegas"
+registration.confirm.invitation.link.title: "Usa el siguiente enlace para invitar a tus colegas de trabajo a unirse"
 registration.step.invitation.copy.button: "Copiar el enlace"
 registration.step.invitation.link.copied: "Copiado"
 deliveries.imports: Ficheros importados
