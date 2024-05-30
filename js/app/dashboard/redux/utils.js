@@ -101,6 +101,7 @@ export const isTaskVisible = (task, filters, date) => {
     showIncidentReportedTasks,
     alwayShowUnassignedTasks,
     tags,
+    excludedTags,
     hiddenCouriers,
     timeRange,
     onlyFilter,
@@ -147,6 +148,17 @@ export const isTaskVisible = (task, filters, date) => {
     }
 
     if (_.intersectionWith(task.tags, tags, (tag, slug) => tag.slug === slug).length === 0) {
+      return false
+    }
+  }
+
+  if (excludedTags.length > 0) {
+
+    if (task.tags.length === 0) {
+      return true
+    }
+
+    if (_.intersectionWith(task.tags, excludedTags, (tag, slug) => tag.slug === slug).length > 0) {
       return false
     }
   }

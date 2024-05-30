@@ -16,6 +16,7 @@ const defaultFilters = {
   showIncidentReportedTasks: true,
   alwayShowUnassignedTasks: false,
   tags: [],
+  excludedTags: [],
   hiddenCouriers: [],
   timeRange: [0, 24],
   onlyFilter: null,
