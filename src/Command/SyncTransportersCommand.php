@@ -206,6 +206,7 @@ class SyncTransportersCommand extends Command {
         $sync->push($content);
         $ids = array_map(fn(EDIFACTMessage $m) => $m->getId(), $unsynced);
         $repo->setSynced($ids, $filename);
+        $this->entityManager->flush();
     }
 
     /**
