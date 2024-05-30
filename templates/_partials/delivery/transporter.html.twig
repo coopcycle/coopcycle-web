@@ -30,19 +30,10 @@
         <li class="list-group-item">
         <span class="label label-{{ message.color }}"><i class="fa {{message.icon}}" aria-hidden="true"></i></span>
         {{ message.date | date('H:i')}} - {{ message.title }}
-        <!--<span class="actions"><a href="#">Edit</a> - <a href="#">Details</a></span>-->
+        <span class="actions"><a href="{{ path('admin_transporter_message', { edi: message.edi })  }}">View EDI</a></span>
         </li>
       {% endfor %}
     </ul>
-  </div>
-  <div class="panel-footer">
-    <!--<button type="button" class="btn btn-default">
-    Sync <span class="badge">1</span>
-    </button>-->
-    <button type="button" class="btn btn-danger" onclick="alert('Fonctionnalité pas encore disponible')">
-    Report incident
-    </button>
-    <!--<small class="text-muted p-2">Unsynced messages are auto-synced at 10pm</small>-->
   </div>
 </div>
 {% endif %}

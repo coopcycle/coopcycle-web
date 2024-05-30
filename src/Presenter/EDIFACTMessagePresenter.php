@@ -13,14 +13,18 @@ class EDIFACTMessagePresenter {
             'title' => Self::messageToText($message),
             'icon' => Self::messageToIcon($message),
             'color' => Self::messageToColor($message),
-            'date' => $message->getCreatedAt()
+            'date' => $message->getCreatedAt(),
+            'edi' => $message->getEdiMessage()
         ];
     }
 
     private static function messageToText(EDIFACTMessage $message): string {
         $ret = match ($message->getMessageType()) {
             EDIFACTMessage::MESSAGE_TYPE_SCONTR => "Tâche importée depuis le transporteur",
-            EDIFACTMessage::MESSAGE_TYPE_REPORT => "Rapport de l'état de la tâche",
+            EDIFACTMessage::MESSAGE_TYPE_REPORT => sprintf(
+                "Rapport de l'état de la tâche (incluant %d POD.s)",
+                count($message->getPods())
+            ),
             default => "Unknown type",
         };
 

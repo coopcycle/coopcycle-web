@@ -196,6 +196,7 @@ services:
       $optinExportUsersEnabled: '%env(bool:OPTIN_EXPORT_USERS_ENABLED)%'
       $adhocOrderEnabled: '%env(bool:ADHOC_ORDER_ENABLED)%'
       $incidentImagesFilesystem: '@incident_images_filesystem'
+      $edifactFilesystem: '@edi_messages_filesystem'
 
   AppBundle\Controller\AssetsController:
     arguments:
