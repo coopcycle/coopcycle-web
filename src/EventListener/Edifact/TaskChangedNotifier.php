@@ -6,7 +6,6 @@ use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Task;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
-use AppBundle\Entity\Store;
 
 class TaskChangedNotifier {
 
@@ -27,46 +26,39 @@ class TaskChangedNotifier {
 
     private function handleChangeset(Task $task, array $changeset): void
     {
-        // Check if status is done
-        if (
-            in_array('status', array_keys($changeset)) &&
-            $changeset['status'][1] === Task::STATUS_DONE
-        ) {
-            $importMessage = $task->getImportMessage();
-            $ediMessage = new EDIFACTMessage();
-            $ediMessage->setMessageType(EDIFACTMessage::MESSAGE_TYPE_REPORT);
-            $ediMessage->setTransporter($importMessage->getTransporter());
-            $ediMessage->setDirection(EDIFACTMessage::DIRECTION_OUTBOUND);
-            $ediMessage->setReference($importMessage->getReference());
-            $ediMessage->setSubMessageType('LIV|CFM');
-
-            $task->addEdifactMessage($ediMessage);
-            $this->em->persist($ediMessage);
-            $this->em->persist($task);
-            $this->em->flush();
+        if (!in_array('status', array_keys($changeset))) {
+            return;
         }
+
+        match ([$task->getType(), $changeset['status'][1]]) {
+            [Task::TYPE_PICKUP, Task::STATUS_DOING] => $this->scheduleEdifactSubMessage($task, 'AAR|CFM'),
+            [Task::TYPE_PICKUP, Task::STATUS_DONE]  => $this->scheduleEdifactSubMessage($task, 'MLV|CFM'),
+            [Task::TYPE_DROPOFF, Task::STATUS_DONE] => $this->scheduleEdifactSubMessage($task, 'LIV|CFM'),
+        };
    }
+
+    private function scheduleEdifactSubMessage(
+        Task $task,
+        string $subMessageType
+    ): void
+    {
+        $importMessage = $task->getImportMessage();
+        $ediMessage = new EDIFACTMessage();
+        $ediMessage->setMessageType(EDIFACTMessage::MESSAGE_TYPE_REPORT);
+        $ediMessage->setTransporter($importMessage->getTransporter());
+        $ediMessage->setDirection(EDIFACTMessage::DIRECTION_OUTBOUND);
+        $ediMessage->setReference($importMessage->getReference());
+        $ediMessage->setSubMessageType($subMessageType);
+
+        $task->addEdifactMessage($ediMessage);
+        $this->em->persist($ediMessage);
+        $this->em->persist($task);
+        $this->em->flush();
+    }
 
     private function shouldEventBeIgnored(Task $task): bool
     {
-        if ($task->getType() !== Task::TYPE_DROPOFF) {
-            return true;
-        }
-        $org = $task->getOrganization();
-        if (null === $org) {
-            return true;
-        }
-
-        /** @var Store|null $store */
-        $store = $this->em->getRepository(Store::class)->findOneBy([
-            'organization' => $org
-        ]);
-
-        if (is_null($store)) {
-            return true;
-        }
-
-        return !$store->isTransporterEnabled();
+        return empty($task->getEdifactMessages());
     }
 
 }

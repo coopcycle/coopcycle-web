@@ -251,7 +251,7 @@ class SyncTransportersCommand extends Command {
         }
 
         // PICKUP SETUP
-        $pickup = $this->importFromPoint->buildPickupTask($this->HQAddress->clone());
+        $pickup = $this->importFromPoint->buildPickupTask($this->HQAddress->clone(), $edi);
 
         // DROPOFF SETUP
         $task = $this->importFromPoint->import($point, $edi);
