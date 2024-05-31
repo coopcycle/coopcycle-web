@@ -14,17 +14,16 @@ class EDIFACTMessagePresenter {
             'icon' => Self::messageToIcon($message),
             'color' => Self::messageToColor($message),
             'date' => $message->getCreatedAt(),
-            'edi' => $message->getEdiMessage()
+            'edi' => $message->getEdiMessage(),
+            'pods' => $message->getPods(),
+            'description' => Self::subMessageTypeToI18n($message),
         ];
     }
 
     private static function messageToText(EDIFACTMessage $message): string {
         $ret = match ($message->getMessageType()) {
             EDIFACTMessage::MESSAGE_TYPE_SCONTR => "Tâche importée depuis le transporteur",
-            EDIFACTMessage::MESSAGE_TYPE_REPORT => sprintf(
-                "Rapport de l'état de la tâche (incluant %d POD.s)",
-                count($message->getPods())
-            ),
+            EDIFACTMessage::MESSAGE_TYPE_REPORT => "Rapport de l'état de la tâche",
             default => "Unknown type",
         };
 
@@ -59,6 +58,15 @@ class EDIFACTMessagePresenter {
                 default => 'success',
             },
             default => 'default',
+        };
+    }
+
+    private static function subMessageTypeToI18n(EDIFACTMessage $message): ?string {
+        return match ($message->getSubMessageType()) {
+            'LIV|CFM' => "delivery.failure_reason.transporter.state.liv",
+            'AAR|CFM' => "delivery.failure_reason.transporter.state.aar",
+            'MLV|CFM' => "delivery.failure_reason.transporter.state.mlv",
+            default => null,
         };
     }
 }

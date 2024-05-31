@@ -11,6 +11,7 @@ use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
+use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
@@ -18,6 +19,7 @@ use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\Presenter\EDIFACTMessagePresenter;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
@@ -538,5 +540,18 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function hasImages()
     {
         return count($this->getImages()) > 0;
+    }
+
+    public function getEdifactMessagesTimeline(): array
+    {
+        $messages = array_merge(...array_map(function (Task $task) {
+            return $task->getEdifactMessages()->toArray();
+        }, $this->getTasks()));
+        usort($messages, fn ($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
+        array_shift($messages);
+        return array_map(
+            fn (EDIFACTMessage $message) => EDIFACTMessagePresenter::toTimeline($message),
+            $messages
+        );
     }
 }

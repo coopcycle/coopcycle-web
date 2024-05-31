@@ -12,7 +12,7 @@
 </style>
 {% if delivery.store is not empty and delivery.store.isTransporterEnabled %}
 {% set importMessage = delivery.getDropoff().getImportMessage() %}
-{% set ediMessages = delivery.getDropoff().getEdifactMessagesTimeline() %}
+{% set ediMessages = delivery.getEdifactMessagesTimeline() %}
 <div class="panel panel-primary">
   <div class="panel-heading">
     <h3 class="panel-title">Transporter</h3>
@@ -30,6 +30,9 @@
         <li class="list-group-item">
         <span class="label label-{{ message.color }}"><i class="fa {{message.icon}}" aria-hidden="true"></i></span>
         {{ message.date | date('H:i')}} - {{ message.title }}
+        {% if message.description %}
+          <i class="fa fa-info-circle" aria-hidden="true" title="{{ message.description|trans }}"></i>
+        {% endif %}
         {% if message.edi is not null %}
         <span class="actions"><a href="{{ path('admin_transporter_message', { edi: message.edi })  }}">View EDI</a></span>
         {% endif %}
