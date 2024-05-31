@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\Annotation\Groups;
+use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
 
 /**
  * @ApiResource(
@@ -41,9 +42,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "openapi_context"={
  *         "summary"="Retrieves choices for time slot"
  *       }
- *     }
- *   }
- * )
+ *     },
+ *     "opening_hours"={
+ *       "method"="GET",
+ *       "path"="/time_slots/{id}/opening_hours",
+ *       "controller"=OpeningHours::class,
+ *       "normalization_context"={"groups"={"opening_hours"}}
+ *     },
+ *   })
  */
 class TimeSlot
 {

@@ -662,7 +662,6 @@ Feature: Stores
       }
       """
 
-  @debug
   Scenario: Retrieve store timeslots
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -697,3 +696,22 @@ Feature: Stores
         "hydra:totalItems": 2
       }
       """
+
+  @debug
+  Scenario: Retrieve timeslots opening hours
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/time_slots/1/opening_hours"
+    And print last response
+    # Then the response status code should be 200
+    # And the response should be in JSON
+    # And the JSON should match:
+    #   """
+    #   """
