@@ -886,6 +886,12 @@ services:
       $country: "%country_iso%"
       $locale: '%env(COOPCYCLE_LOCALE)%'
 
+  AppBundle\Action\TimeSlot\StoreOpeningHours:
+    public: true
+    arguments:
+      $country: "%country_iso%"
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }

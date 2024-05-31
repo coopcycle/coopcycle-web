@@ -702,16 +702,41 @@ Feature: Stores
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
+    Given the current time is "2024-05-31 11:00:00"
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
       | password   | 123456            |
     Given the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "GET" request to "/api/time_slots/1/opening_hours"
-    And print last response
-    # Then the response status code should be 200
-    # And the response should be in JSON
-    # And the JSON should match:
-    #   """
-    #   """
+    And the user "bob" sends a "GET" request to "/api/time_slots/1/choices"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+           "@context": {
+               "@vocab": "http://nginx_test/api/docs.jsonld#",
+               "hydra": "http://www.w3.org/ns/hydra/core#",
+               "choices": "TimeSlotChoices/choices"
+           },
+           "@type": "TimeSlotChoices",
+           "@id": @string@,
+           "choices": [
+               {
+                   "@context": "/api/contexts/TimeSlotChoice",
+                   "@id": @string@,
+                   "@type": "TimeSlotChoice",
+                   "value": "2024-05-31T10:00:00Z/2024-05-31T12:00:00Z",
+                   "label": "Aujourd'hui entre 12:00 et 14:00"
+               },
+               {
+                   "@context": "/api/contexts/TimeSlotChoice",
+                   "@id": @string@,
+                   "@type": "TimeSlotChoice",
+                   "value": "2024-05-31T12:00:00Z/2024-05-31T15:00:00Z",
+                   "label": "Aujourd'hui entre 14:00 et 17:00"
+               }
+           ]
+      }
+      """

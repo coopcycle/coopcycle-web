@@ -23,7 +23,13 @@ use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
  *     "delete"={
  *       "method"="DELETE",
  *       "security"="is_granted('ROLE_ADMIN')"
- *     }
+ *     },
+ *     "choices"={
+ *       "method"="GET",
+ *       "path"="/time_slots/{id}/choices",
+ *       "controller"=OpeningHours::class,
+ *       "normalization_context"={"groups"={"time_slot_choices"}, "api_sub_level"=true}
+ *     },
  *   },
  *   collectionOperations={
  *     "get"={
@@ -42,12 +48,6 @@ use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
  *       "openapi_context"={
  *         "summary"="Retrieves choices for time slot"
  *       }
- *     },
- *     "opening_hours"={
- *       "method"="GET",
- *       "path"="/time_slots/{id}/opening_hours",
- *       "controller"=OpeningHours::class,
- *       "normalization_context"={"groups"={"opening_hours"}}
  *     },
  *   })
  */
