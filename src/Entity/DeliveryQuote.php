@@ -59,7 +59,7 @@ class DeliveryQuote
      * @Groups({"delivery_quote"})
      */
     private $amount;
-    private $payload;
+    private array $payload;
 
     /**
      * @Groups({"delivery_quote"})

@@ -23,7 +23,7 @@
     </field>
     <field name="legalName" type="string" column="legal_name" nullable="true"/>
     <field name="vatID" type="string" column="vat_id" nullable="true"/>
-    <field name="additionalProperties" type="json_array" column="additional_properties" nullable="true"/>
+    <field name="additionalProperties" type="json" column="additional_properties" nullable="true"/>
     <field name="prefillPickupAddress" type="boolean" column="prefill_pickup_address"/>
     <field name="createOrders" type="boolean" column="create_orders"/>
     <field name="checkExpression" type="string" column="check_expression" nullable="true"/>

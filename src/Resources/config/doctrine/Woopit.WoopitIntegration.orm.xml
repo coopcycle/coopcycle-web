@@ -20,7 +20,7 @@
         <join-column name="zone_id" referenced-column-name="id" nullable="true"/>
       </join-columns>
     </many-to-one>
-    <field name="productTypes" type="json_array" column="product_types" nullable="true"/>
+    <field name="productTypes" type="json" column="product_types" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
