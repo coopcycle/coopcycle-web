@@ -9,6 +9,13 @@ body {
   }
 }
 
+/* These styles make the root element full-height */
+#root {
+  display: flex;
+  height: 100%;
+  flex: 1;
+}
+
 .content {
   flex: 1;
 }

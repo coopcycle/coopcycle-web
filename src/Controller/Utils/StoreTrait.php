@@ -473,7 +473,7 @@ trait StoreTrait
             ]
         );
 
-        return $this->render('store/deliveries.html.twig', [
+        return $this->render('store/deliveries.html.twig', $this->auth([
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'deliveries' => $deliveries,
@@ -484,7 +484,7 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'delivery_import_form' => $deliveryImportForm->createView(),
-        ]);
+        ]));
     }
 
     public function storeAddressesAction($id, Request $request, TranslatorInterface $translator)

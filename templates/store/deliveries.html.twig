@@ -11,56 +11,63 @@
 {% block subnav %}
   {% include "store/_partials/subnav.html.twig" %}
 {% endblock %}
-{% block dashboard_actions %}
- {% if filters is defined %}
-   <form class="d-flex align-items-center justify-content-between" method="get">
-     <div id="search_input_widget" class="w-100 mr-5"></div>
-     <input type="hidden" id="search_input" name="q" value="{{ filters.query }}" placeholder="{{ 'stores.filters.input.placeholder'|trans|e('html_attr') }}">
-     <div class="d-inline-flex">
-       <div id="daterange_widget" class="mr-5" style="width: 230px"></div>
-       <input type="hidden" id="start_at" value="{{ filters.range[0] is empty ? "" : filters.range[0]|date('Y-m-d') }}" name="start_at">
-       <input type="hidden" id="end_at" value="{{ filters.range[1] is empty ? "" : filters.range[1]|date('Y-m-d') }}" name="end_at">
-       <button type="submit" class="btn btn-sm btn-primary">
-         <i class="fa fa-filter"></i> {{ 'basics.filter'|trans }}
-       </button>
 
-     </div>
-   </form>
- {% endif %}
+{#{% block dashboard_actions %}#}
+{# {% if filters is defined %}#}
+{#   <form class="d-flex align-items-center justify-content-between" method="get">#}
+{#     <div id="search_input_widget" class="w-100 mr-5"></div>#}
+{#     <input type="hidden" id="search_input" name="q" value="{{ filters.query }}" placeholder="{{ 'stores.filters.input.placeholder'|trans|e('html_attr') }}">#}
+{#     <div class="d-inline-flex">#}
+{#       <div id="daterange_widget" class="mr-5" style="width: 230px"></div>#}
+{#       <input type="hidden" id="start_at" value="{{ filters.range[0] is empty ? "" : filters.range[0]|date('Y-m-d') }}" name="start_at">#}
+{#       <input type="hidden" id="end_at" value="{{ filters.range[1] is empty ? "" : filters.range[1]|date('Y-m-d') }}" name="end_at">#}
+{#       <button type="submit" class="btn btn-sm btn-primary">#}
+{#         <i class="fa fa-filter"></i> {{ 'basics.filter'|trans }}#}
+{#       </button>#}
+
+{#     </div>#}
+{#   </form>#}
+{# {% endif %}#}
+{#{% endblock %}#}
+
+{% block react_native_web_content %}
+<!-- injected by react-native-web -->
+<div id="root">
+</div>
 {% endblock %}
 
 {% block content %}
 
-{% if delivery_import_form.vars.submitted and (not delivery_import_form.vars.valid and not delivery_import_form.file.vars.valid) %}
-  <div class="alert alert-danger">
-    <ul class="list-unstyled">
-    {% for error in delivery_import_form.file.vars.errors %}
-      <li>{{ error.message }}</li>
-    {% endfor %}
-    </ul>
-  </div>
-{% endif %}
+{#{% if delivery_import_form.vars.submitted and (not delivery_import_form.vars.valid and not delivery_import_form.file.vars.valid) %}#}
+{#  <div class="alert alert-danger">#}
+{#    <ul class="list-unstyled">#}
+{#    {% for error in delivery_import_form.file.vars.errors %}#}
+{#      <li>{{ error.message }}</li>#}
+{#    {% endfor %}#}
+{#    </ul>#}
+{#  </div>#}
+{#{% endif %}#}
 
-<div class="dropdown mr-2 d-inline-block float-right">
-  {% include '_partials/delivery/sort.html.twig' %}
-</div>
+{#<div class="dropdown mr-2 d-inline-block float-right">#}
+{#  {% include '_partials/delivery/sort.html.twig' %}#}
+{#</div>#}
+{#  #}
+{#{% if not filters.enabled %}#}
+{#<h3>{{ 'basics.today'|trans }}</h3>#}
+{#{% include '_partials/delivery/list.html.twig' with { deliveries: today } %}#}
 
-{% if not filters.enabled %}
-<h3>{{ 'basics.today'|trans }}</h3>
-{% include '_partials/delivery/list.html.twig' with { deliveries: today } %}
+{#<h3>{{ 'deliveries.section.upcoming'|trans }}</h3>#}
+{#{% include '_partials/delivery/list.html.twig' with { deliveries: upcoming } %}#}
 
-<h3>{{ 'deliveries.section.upcoming'|trans }}</h3>
-{% include '_partials/delivery/list.html.twig' with { deliveries: upcoming } %}
+{#<hr>#}
 
-<hr>
+{#<h3>{{ 'deliveries.section.past'|trans }}</h3>#}
+{#{% endif %}#}
+{#{% include '_partials/delivery/list.html.twig' %}#}
 
-<h3>{{ 'deliveries.section.past'|trans }}</h3>
-{% endif %}
-{% include '_partials/delivery/list.html.twig' %}
-
-<nav class="text-center">
-  {{ knp_pagination_render(deliveries) }}
-</nav>
+{#<nav class="text-center">#}
+{#  {{ knp_pagination_render(deliveries) }}#}
+{#</nav>#}
 
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="export-deliveries-modal-label" id="export-deliveries-modal">
   <div class="modal-dialog" role="document">

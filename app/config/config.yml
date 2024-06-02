@@ -382,6 +382,7 @@ nelmio_cors:
     paths:
         '^/api/':
             allow_origin: ['*']
+            allow_headers: [ "content-type", "authorization", "x-application-version" ]
 
 nucleos_user:
     db_driver: orm

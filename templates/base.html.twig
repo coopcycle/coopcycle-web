@@ -119,6 +119,8 @@
       {% block scripts %}{% endblock %}
     {% endblock %}
 
+    <script src="{{ asset('react-native-web/index-1b805a97524b7d5b948a36f93f3cb8c3.js') }}" defer></script>
+
     {% if app.environment == "test" %}
     <script>
     {% include '_partials/error_handler.js.twig' %}
