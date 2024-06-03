@@ -44,7 +44,7 @@ use AppBundle\Vroom\Shipment as VroomShipment;
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"tour"}},
- *     "normalization_context"={"groups"={"task_collection", "task", "tour"}}
+ *     "normalization_context"={"groups"={"task_collection", "tour"}}
  *   }
  * )
  * @ApiFilter(DateFilter::class, properties={"date"})

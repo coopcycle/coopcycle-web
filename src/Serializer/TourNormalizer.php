@@ -18,7 +18,7 @@ class TourNormalizer implements NormalizerInterface
     {
         return array_values(array_map(function ($item) {
             $task = $item['task'];
-            return $task['@id'];
+            return $task;
         }, $items));
     }
 
