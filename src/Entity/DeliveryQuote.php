@@ -144,7 +144,7 @@ class DeliveryQuote
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPayload(): string
     {
@@ -152,7 +152,7 @@ class DeliveryQuote
     }
 
     /**
-     * @param mixed $payload
+     * @param string $payload
      *
      * @return self
      */
