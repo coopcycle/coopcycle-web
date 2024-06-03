@@ -147,7 +147,7 @@ export function handleDragEnd(
     // sorting tasks to be inserted
     // if the tasks are moved from unassigned -> keep the tasks in the same order in the destination
     // if the tasks are moved from a tour -> keep the tasks in the same order in the destination
-    // maybe when moving tasks from assigned list it should keep order ?
+    // if the tasks are moved from a task list -> keep the tasks in the same order in the destination
     if (!isTourDrag) {
       if (source.droppableId === 'unassigned') {
         const unassignedTasksOrder = selectOrderOfUnassignedTasks(getState())
@@ -163,6 +163,14 @@ export function handleDragEnd(
         selectedTasks.sort((task1, task2) => {
           const task1Rank = tour.items.findIndex(taskId => taskId === task1['@id'])
           const task2Rank = tour.items.findIndex(taskId => taskId === task2['@id'])
+          return  task1Rank - task2Rank
+        })
+      } else if (source.droppableId.startsWith('assigned')) {
+        const username = source.droppableId.replace('assigned:', '')
+        const tasksList = selectTaskListByUsername(getState(), {username})
+        selectedTasks.sort((task1, task2) => {
+          const task1Rank = tasksList.items.findIndex(taskId => taskId === task1['@id'])
+          const task2Rank = tasksList.items.findIndex(taskId => taskId === task2['@id'])
           return  task1Rank - task2Rank
         })
       }

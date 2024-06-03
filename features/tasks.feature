@@ -196,6 +196,7 @@ Feature: Tasks
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/me/tasks/2018-03-02"
     Then the response status code should be 200
+    Then print last JSON response
     And the response should be in JSON
     And the JSON should match:
       """
