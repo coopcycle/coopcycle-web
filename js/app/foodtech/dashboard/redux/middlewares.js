@@ -9,6 +9,7 @@ import {
   orderCancelled,
   orderFulfilled,
   orderDelayed,
+  orderStateChanged,
   ORDER_DELAYED,
   ORDER_CREATED,
   initHttpClient,
@@ -39,6 +40,16 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'order:created':
           dispatch(orderCreated(event.data.order))
           break
+        case 'order:state_changed': {
+          // used 'order:state_changed' event only for new statuses for now,
+          // but it can be used for some other statuses as well
+          if (event.data.order.state === 'started') {
+            dispatch(orderStateChanged(event.data.order))
+          } else if (event.data.order.state === 'ready') {
+            dispatch(orderStateChanged(event.data.order))
+          }
+          break
+        }
         case 'order:accepted':
           dispatch(orderAccepted(event.data.order))
           break
