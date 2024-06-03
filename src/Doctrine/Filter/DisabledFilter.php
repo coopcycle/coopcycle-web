@@ -26,7 +26,7 @@ final class DisabledFilter extends SQLFilter
         }
 
         return sprintf('%s.enabled = %s',
-            $targetTableAlias, $this->getConnection()->quote(true, Type::BOOLEAN)
+            $targetTableAlias, $this->getConnection()->quote(true, Type::getType('boolean'))
         );
     }
 

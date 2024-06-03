@@ -71,7 +71,7 @@ class ActivityManager
             ],
             [
                 'excluded' => Connection::PARAM_STR_ARRAY,
-                'date' => Type::DATE
+                'date' => Type::getType('date')
             ]
         );
 

@@ -146,7 +146,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function resetSequences()
     {
         $connection = $this->doctrine->getConnection();
-        $rows = $connection->fetchAll('SELECT sequence_name FROM information_schema.sequences');
+        $rows = $connection->fetchAllAssociative('SELECT sequence_name FROM information_schema.sequences');
         foreach ($rows as $row) {
             $connection->executeQuery(sprintf('ALTER SEQUENCE %s RESTART WITH 1', $row['sequence_name']));
         }
