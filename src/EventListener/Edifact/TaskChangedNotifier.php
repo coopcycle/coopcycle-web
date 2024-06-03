@@ -6,11 +6,13 @@ use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Task;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Psr\Log\LoggerInterface;
 
 class TaskChangedNotifier {
 
     public function __construct(
-        private EntityManagerInterface $em
+        private EntityManagerInterface $em,
+        private LoggerInterface $logger
     ) { }
 
     public function __invoke(Task $task, PostUpdateEventArgs $event): void
@@ -34,6 +36,10 @@ class TaskChangedNotifier {
             [Task::TYPE_PICKUP, Task::STATUS_DOING] => $this->scheduleEdifactSubMessage($task, 'AAR|CFM'),
             [Task::TYPE_PICKUP, Task::STATUS_DONE]  => $this->scheduleEdifactSubMessage($task, 'MLV|CFM'),
             [Task::TYPE_DROPOFF, Task::STATUS_DONE] => $this->scheduleEdifactSubMessage($task, 'LIV|CFM'),
+            default => $this->logger->warning(sprintf(
+                'Unexpected task type "%s" and status "%s"',
+                $task->getType(), $changeset['status'][1])
+            )
         };
    }
 
@@ -43,6 +49,13 @@ class TaskChangedNotifier {
     ): void
     {
         $importMessage = $task->getImportMessage();
+        if (is_null($importMessage)) {
+            $this->logger->warning(sprintf(
+                'Task "%s" has no import message',
+                $task->getId()
+            ));
+            return;
+        }
         $ediMessage = new EDIFACTMessage();
         $ediMessage->setMessageType(EDIFACTMessage::MESSAGE_TYPE_REPORT);
         $ediMessage->setTransporter($importMessage->getTransporter());
@@ -58,7 +71,7 @@ class TaskChangedNotifier {
 
     private function shouldEventBeIgnored(Task $task): bool
     {
-        return empty($task->getEdifactMessages());
+        return $task->getEdifactMessages()->count() === 0;
     }
 
 }
