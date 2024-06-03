@@ -144,6 +144,7 @@
         "ADMIN_DASHBOARD_PACKAGES": "Packages",
         "ADMIN_DASHBOARD_WEIGHT": "Weight",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Move {{count}} tasks to next day",
+        "ADMIN_DASHBOARD_START_TASKS_MULTI": "Start {{count}} tasks",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Move {{count}} tasks to next working day ({{nextWorkingDay}})",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Display by dropoff asc.",
         "ADMIN_DASHBOARD_RECURRENCE_RULE_MODAL_TITLE": "Recurrence rule",

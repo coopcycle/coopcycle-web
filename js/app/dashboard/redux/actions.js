@@ -114,6 +114,7 @@ export const COMPLETE_TASK_FAILURE = 'COMPLETE_TASK_FAILURE'
 export const CANCEL_TASK_FAILURE = 'CANCEL_TASK_FAILURE'
 export const TOKEN_REFRESH_SUCCESS = 'TOKEN_REFRESH_SUCCESS'
 export const RESTORE_TASK_FAILURE = 'RESTORE_TASK_FAILURE'
+export const START_TASK_FAILURE = 'START_TASK_FAILURE'
 
 export const OPEN_FILTERS_MODAL = 'OPEN_FILTERS_MODAL'
 export const CLOSE_FILTERS_MODAL = 'CLOSE_FILTERS_MODAL'
@@ -507,6 +508,10 @@ export function cancelTaskFailure(error) {
   return { type: CANCEL_TASK_FAILURE, error }
 }
 
+export function startTaskFailure(error) {
+  return { type: START_TASK_FAILURE, error }
+}
+
 export function tokenRefreshSuccess(token) {
   return { type: TOKEN_REFRESH_SUCCESS, token }
 }
@@ -761,6 +766,39 @@ export function cancelTasks(tasks) {
         values.forEach(response => dispatch(updateTask(response.data)))
       })
       .catch(error => dispatch(cancelTaskFailure(error)))
+  }
+}
+
+export function startTasks(tasks) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const requests = tasks.map(task => {
+
+      return httpClient.request({
+        method: 'put',
+        url: `${task['@id']}/start`,
+        data: {},
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    })
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+      })
+      .catch(error => dispatch(startTaskFailure(error)))
   }
 }
 

@@ -23,6 +23,7 @@ import {
   removeTasksFromGroup,
   restoreTasks,
   setCurrentTask,
+  startTasks,
   unassignTasks
 } from '../../redux/actions'
 import {selectCouriersWithExclude, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading} from '../../redux/selectors'
@@ -42,6 +43,7 @@ export const MOVE_TO_TOP = 'MOVE_TO_TOP'
 export const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
 export const MOVE_TO_NEXT_DAY_MULTI = 'MOVE_TO_NEXT_DAY_MULTI'
 export const MOVE_TO_NEXT_WORKING_DAY_MULTI = 'MOVE_TO_NEXT_WORKING_DAY_MULTI'
+export const START_TASKS_MULTI = 'START_TASKS_MULTI'
 export const CREATE_GROUP = 'CREATE_GROUP'
 export const ADD_TO_GROUP = 'ADD_TO_GROUP'
 export const REMOVE_FROM_GROUP = 'REMOVE_FROM_GROUP'
@@ -105,6 +107,8 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
     const isMultiple = selectedTasks.length > 1
 
     if (isMultiple) {
+
+      actions.push(START_TASKS_MULTI)
 
       if (tasksToUnassign.length > 0) {
         actions.push(UNASSIGN_MULTI)
@@ -279,6 +283,12 @@ const DynamicMenu = () => {
         onClick={ () => dispatch(moveTasksToNextWorkingDay(selectedTasks)) }
       >
         { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI', { count: selectedTasks.length, nextWorkingDay: moment(nextWorkingDay).format('LL') }) }
+      </Item>
+      <Item
+        hidden={!actions.includes(START_TASKS_MULTI)}
+        onClick={() => dispatch(startTasks(selectedTasks))}
+      >
+        {t('ADMIN_DASHBOARD_START_TASKS_MULTI', {count: selectedTasks.length})}
       </Item>
       <Item
         hidden={ !actions.includes(CREATE_GROUP) }
