@@ -28,13 +28,13 @@ final class Version20200424061221 extends AbstractMigration
         $stmts['product_option_value'] =
             $this->connection->prepare('SELECT * FROM sylius_product_option_value WHERE option_id = :option_id');
 
-        $stmts['product_option']->execute();
-        while ($productOption = $stmts['product_option']->fetch()) {
+        $result = $stmts['product_option']->execute();
+        while ($productOption = $result->fetchAssociative()) {
 
             $stmts['product_option_value']->bindParam('option_id', $productOption['id']);
-            $stmts['product_option_value']->execute();
+            $result2 = $stmts['product_option_value']->execute();
 
-            while ($productOptionValue = $stmts['product_option_value']->fetch()) {
+            while ($productOptionValue = $result2->fetchAssociative()) {
                 switch ($productOption['strategy']) {
                     case 'free':
                         $this->addSql('UPDATE sylius_product_option_value SET price = 0 WHERE id = :id', [

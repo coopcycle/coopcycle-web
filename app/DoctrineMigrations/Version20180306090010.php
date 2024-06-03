@@ -15,12 +15,12 @@ class Version20180306090010 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
 
         $stmt = $this->connection->prepare('SELECT MAX(id) FROM delivery');
-        $stmt->execute();
-        $lastDeliveryId = $stmt->fetchColumn();
+        $result = $stmt->execute();
+        $lastDeliveryId = $result->fetchOne();
 
         $stmt = $this->connection->prepare('SELECT MAX(id) FROM task_list');
-        $stmt->execute();
-        $lastTaskListId = $stmt->fetchColumn();
+        $result = $stmt->execute();
+        $lastTaskListId = $result->fetchOne();
 
         $taskCollectionId = (max($lastDeliveryId, $lastTaskListId) + 1);
 

@@ -24,7 +24,7 @@ final class Version20200826135116 extends AbstractMigration
             [ 'name' => $name ]
         );
 
-        return $stmt->fetchColumn();
+        return $stmt->fetchOne();
     }
 
     private function configureStripe(): bool
@@ -50,9 +50,9 @@ final class Version20200826135116 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT id, details FROM sylius_payment WHERE details::jsonb ?? \'refunds\'');
 
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($payment = $stmt->fetch()) {
+        while ($payment = $result->fetchAssociative()) {
             $details = json_decode($payment['details'], true);
 
             $stripeOptions = [];

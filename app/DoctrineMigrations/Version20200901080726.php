@@ -25,8 +25,8 @@ final class Version20200901080726 extends AbstractMigration
         $this->addSql('ALTER TABLE sylius_order DROP CONSTRAINT FK_6196A1F99395C3F3');
 
         $stmt = $this->connection->prepare('SELECT o.id, u.customer_id FROM sylius_order o JOIN api_user u ON o.customer_id = u.id');
-        $stmt->execute();
-        while ($order = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($order = $result->fetchAssociative()) {
             $this->addSql('UPDATE sylius_order SET customer_id = :customer_id WHERE id = :id' , [
                 'customer_id' => $order['customer_id'],
                 'id' => $order['id'],
@@ -44,8 +44,8 @@ final class Version20200901080726 extends AbstractMigration
         $this->addSql('ALTER TABLE sylius_order DROP CONSTRAINT fk_6196a1f99395c3f3');
 
         $stmt = $this->connection->prepare('SELECT o.id, u.id AS user_id FROM sylius_order o JOIN sylius_customer c ON o.customer_id = c.id LEFT JOIN api_user u ON c.id = u.customer_id');
-        $stmt->execute();
-        while ($order = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($order = $result->fetchAssociative()) {
             $this->addSql('UPDATE sylius_order SET customer_id = :customer_id WHERE id = :id' , [
                 // user_id may be NULL
                 'customer_id' => $order['user_id'],

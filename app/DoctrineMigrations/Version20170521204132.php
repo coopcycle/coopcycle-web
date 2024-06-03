@@ -21,9 +21,9 @@ class Version20170521204132 extends AbstractMigration
         $this->addSql('ALTER TABLE restaurant ADD address_id INT DEFAULT NULL');
 
         $stmt = $this->connection->prepare("SELECT * FROM restaurant");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($restaurant = $stmt->fetch()) {
+        while ($restaurant = $result->fetchAssociative()) {
             $this->addSql("INSERT INTO address (id, name, street_address, address_locality, postal_code, geo)"
                 . " VALUES (nextval('address_id_seq'), :name, :street_address, :address_locality, :postal_code, :geo)", $restaurant);
             $this->addSql("UPDATE restaurant SET address_id = currval('address_id_seq') WHERE id = :id", $restaurant);

@@ -27,9 +27,9 @@ final class Version20200809202600 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT c.created_at, c.updated_at, u.id AS user_id FROM sylius_customer c JOIN api_user u ON c.id = u.customer_id');
 
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($customer = $stmt->fetch()) {
+        while ($customer = $result->fetchAssociative()) {
             $this->addSql('UPDATE api_user SET created_at = :created_at, updated_at = :updated_at WHERE id = :id', [
                 'created_at' => $customer['created_at'],
                 'updated_at' => $customer['updated_at'],

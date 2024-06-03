@@ -15,10 +15,10 @@ class Version20180515174439 extends AbstractMigration
     private function getSetting($name)
     {
         $this->stmt['setting']->bindParam('name', $name);
-        $this->stmt['setting']->execute();
+        $result = $this->stmt['setting']->execute();
 
-        if ($this->stmt['setting']->rowCount() === 1) {
-            $setting = $this->stmt['setting']->fetch();
+        if ($result->rowCount() === 1) {
+            $setting = $result->fetchAssociative();
 
             return $setting['value'];
         }
