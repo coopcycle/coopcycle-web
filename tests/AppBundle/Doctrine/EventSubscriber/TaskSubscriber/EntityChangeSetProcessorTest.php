@@ -7,6 +7,7 @@ use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
+use AppBundle\Entity\TaskList\Item;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 
@@ -79,7 +80,11 @@ class EntityChangeSetProcessorTest extends TestCase
 
         $taskListForBob = new TaskList();
         $taskListForBob->setCourier($bob);
-        $taskListForBob->addTask($task);
+
+        $item = new Item();
+        $item->setTask($task);
+        $item->setPosition(count($taskListForBob->getItems()));
+        $taskListForBob->addItem($item);
 
         $taskListForClaire = new TaskList();
         $taskListForClaire->setCourier($claire);
@@ -115,7 +120,11 @@ class EntityChangeSetProcessorTest extends TestCase
 
         $taskListForBob = new TaskList();
         $taskListForBob->setCourier($bob);
-        $taskListForBob->addTask($task);
+
+        $item = new Item();
+        $item->setTask($task);
+        $item->setPosition(count($taskListForBob->getItems()));
+        $taskListForBob->addItem($item);
 
         $this->taskListProvider
             ->getTaskList($task, $bob)

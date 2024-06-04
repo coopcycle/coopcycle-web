@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
-  <entity repository-class="AppBundle\Entity\TaskListRepository" name="AppBundle\Entity\TaskList" table="task_list">
+  <entity name="AppBundle\Entity\TaskList" table="task_list" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
     <indexes>
       <index columns="date"/>
     </indexes>
@@ -13,5 +16,22 @@
         <join-column name="courier_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
+    <field name="distance" type="integer" column="distance" nullable="false"/>
+    <field name="duration" type="integer" column="duration" nullable="false"/>
+    <field name="polyline" type="text" column="polyline" nullable="false"/>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <one-to-many field="items" target-entity="AppBundle\Entity\TaskList\Item" mapped-by="parent" orphan-removal="true" fetch="EAGER">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+      <order-by>
+        <order-by-field name="position" direction="ASC"/>
+      </order-by>
+    </one-to-many>
   </entity>
 </doctrine-mapping>

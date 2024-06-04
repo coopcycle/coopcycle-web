@@ -60,6 +60,7 @@ class TaskSubscriber implements EventSubscriber
 
     public function onFlush(OnFlushEventArgs $args)
     {
+
         // Cleanup
         $this->createdTasks = [];
         $this->postFlushEvents = [];

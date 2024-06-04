@@ -24,7 +24,7 @@ const StandaloneTasks =  ({tasks, offset}) => {
   //   }
   // })
   return _.map(tasks, (task, index) => {
-      return <Task task={ task } draggableIndex={ (offset + index) } key={ task['@id'] } />
+      return <Task taskId={ task['@id'] } draggableIndex={ (offset + index) } key={ task['@id'] } />
   })
 }
 

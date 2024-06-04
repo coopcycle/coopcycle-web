@@ -677,6 +677,11 @@ services:
       - { name: doctrine.event_subscriber, connection: default, priority: 32 }
 
   AppBundle\Doctrine\EventSubscriber\TaskCollectionSubscriber:
+    tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
+      - { name: doctrine.event_subscriber, connection: default, priority: 16 }
+
+  AppBundle\Doctrine\EventSubscriber\TaskListSubscriber:
     arguments:
       $eventBus: '@event_bus'
     tags:

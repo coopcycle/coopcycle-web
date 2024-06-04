@@ -34,6 +34,13 @@ AppBundle\Entity\Task\Group:
     tags: [ 'important' ]
 
 AppBundle\Entity\Task:
+  task_0:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('2018-03-02 11:30:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    comments: "#bob"
+    group: "@task_group_1"
+    status: "CANCELLED"
   task_1:
     address: "@address_1"
     doneAfter: <identity(new \DateTime('2018-03-02 10:30:00'))>

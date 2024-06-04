@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Task\AddImagesToTasks;
+use AppBundle\Action\Task\Collection as TaskList;
 use AppBundle\Action\Task\Assign as TaskAssign;
 use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
@@ -65,7 +66,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')",
- *       "pagination_enabled"=false
+ *       "pagination"={
+ *          "enabled_parameter_name"="pagination",
+ *          "items_per_page_parameter_name"="itemsPerPage"
+ *         },
+ *       "pagination_client_items_per_page"=true,
+ *       "pagination_enabled"=false,
+ *       "pagination_client_enabled"=true,
+ *       "controller"=TaskList::class
  *     },
  *     "post"={
  *       "method"="POST",
@@ -325,6 +333,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
+
+    /**
+     * We actually don't expose the 'packages' property in the API, we use aggregates :
+     * - DROPOFF : all packages aggregated by package name
+     * - PICKUP : all packages of the delivery aggregated by package name
+    */
     use PackagesAwareTrait;
     use EDIFACTMessageAwareTrait;
 
@@ -449,11 +463,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $metadata = [];
 
     /**
-     * @var array
-     */
-    private $tour;
-
-    /**
+     *
+     * We actually don't expose the 'weight' property in the API, we expose :
+     * - DROPOFF : weight property
+     * - PICKUP : sum of weight of all the dropoffs
      * @var int
      * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create", "pricing_deliveries"})
      */
@@ -472,6 +485,14 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->edifactMessages = new ArrayCollection();
         $this->incidents = new ArrayCollection();
     }
+
+    /**
+    * Non-DB-mapped property to store packages and weight aggregates (see on $weight and $packages property for aggregates definitions)
+    * // FIXME : make annotation works with PHPStan
+    * ['weight' => int|null, 'packages' => ['name' => string, 'type' => string, 'quantity' => int]|null]
+    */
+    private $prefetchedPackagesAndWeight;
+
 
     public function getId()
     {
@@ -920,11 +941,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $this->ref;
     }
 
-    public static function toVroomJob(Task $task): VroomJob
+    public static function toVroomJob(Task $task, $iri): VroomJob
     {
         $job = new VroomJob();
 
         $job->id = $task->getId();
+        $job->description = $iri; // if the task is linked to a tour, this will be the tour iri, otherwise the task iri
         $job->location = [
             $task->getAddress()->getGeo()->getLongitude(),
             $task->getAddress()->getGeo()->getLatitude()
@@ -1068,18 +1090,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->setOrganization($store->getOrganization());
     }
 
-    public function getTour()
-    {
-        return $this->tour;
-    }
-
-    public function setTour($tour)
-    {
-        $this->tour = $tour;
-
-        return $this;
-    }
-
     public function toExpressionLanguageObject()
     {
         $taskObject = new \stdClass();
@@ -1162,4 +1172,23 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->incidents[] = $incident;
     }
 
+    /**
+     * Get the value of prefetchedPackagesAndWeight
+     */
+    public function getPrefetchedPackagesAndWeight()
+    {
+        return $this->prefetchedPackagesAndWeight;
+    }
+
+    /**
+     * Set the value of prefetchedPackagesAndWeight
+     *
+     * @return  self
+     */
+    public function setPrefetchedPackagesAndWeight($prefetchedPackagesAndWeight)
+    {
+        $this->prefetchedPackagesAndWeight = $prefetchedPackagesAndWeight;
+
+        return $this;
+    }
 }

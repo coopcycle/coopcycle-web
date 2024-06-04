@@ -15,6 +15,18 @@ export function withoutTasks(state, tasks) {
   )
 }
 
+/**
+ * @param {Array.string} currentItems - Current list of items (tasks or tours IRIs)
+ * @param {Array.string} toRemoveItems - Items to be removed (tasks or tours IRIs)
+ */
+export function withoutItemsIRIs(currentItems, toRemoveItems) {
+
+  return _.differenceWith(
+    currentItems,
+    _.intersectionWith(currentItems, toRemoveItems)
+  )
+}
+
 export function withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap) {
 
   if (!Array.isArray(selectedTasks)) {
@@ -89,6 +101,7 @@ export const isTaskVisible = (task, filters, date) => {
     showIncidentReportedTasks,
     alwayShowUnassignedTasks,
     tags,
+    excludedTags,
     hiddenCouriers,
     timeRange,
     onlyFilter,
@@ -135,6 +148,17 @@ export const isTaskVisible = (task, filters, date) => {
     }
 
     if (_.intersectionWith(task.tags, tags, (tag, slug) => tag.slug === slug).length === 0) {
+      return false
+    }
+  }
+
+  if (excludedTags.length > 0) {
+
+    if (task.tags.length === 0) {
+      return true
+    }
+
+    if (_.intersectionWith(task.tags, excludedTags, (tag, slug) => tag.slug === slug).length > 0) {
       return false
     }
   }

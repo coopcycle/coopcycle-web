@@ -116,6 +116,8 @@ services:
       - name: event_subscriber
         subscribes_to: task_list:updated
       - name: event_subscriber
+        subscribes_to: v2:task_list:updated
+      - name: event_subscriber
         subscribes_to: task:rescheduled
       - name: event_subscriber
         subscribes_to: task:incident-reported
