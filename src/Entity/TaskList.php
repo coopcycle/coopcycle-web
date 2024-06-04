@@ -196,6 +196,7 @@ class TaskList implements TaskCollectionInterface
         foreach ($this->items as $item) {
             if ($item->getTask() === $task) {
                 $this->items->removeElement($item);
+                $item->setParent(null);
                 break;
             }
         }
