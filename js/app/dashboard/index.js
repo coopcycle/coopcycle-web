@@ -123,7 +123,7 @@ async function start() {
     }
   }
 
-  const persistedUseAvatarColors = window.sessionStorage.getItem(`use_avatar_colors`)
+  const persistedUseAvatarColors = window.sessionStorage.getItem(`use_avatar_colors`) || true
   if (persistedUseAvatarColors) {
     preloadedState = {
       ...preloadedState,
