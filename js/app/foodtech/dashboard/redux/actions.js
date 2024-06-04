@@ -11,6 +11,7 @@ export const ORDER_REFUSED = 'ORDER_REFUSED'
 export const ORDER_CANCELLED = 'ORDER_CANCELLED'
 export const ORDER_FULFILLED = 'ORDER_FULFILLED'
 export const ORDER_DELAYED = 'ORDER_DELAYED'
+export const ORDER_STATE_CHANGED = 'ORDER_STATE_CHANGED'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const ACCEPT_ORDER_REQUEST_SUCCESS = 'ACCEPT_ORDER_REQUEST_SUCCESS'
@@ -44,6 +45,7 @@ export const orderRefused = createAction(ORDER_REFUSED)
 export const orderCancelled = createAction(ORDER_CANCELLED)
 export const orderFulfilled = createAction(ORDER_FULFILLED)
 export const orderDelayed = createAction(ORDER_DELAYED)
+export const orderStateChanged = createAction(ORDER_STATE_CHANGED)
 
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const acceptOrderRequestSuccess = createAction(ACCEPT_ORDER_REQUEST_SUCCESS)
