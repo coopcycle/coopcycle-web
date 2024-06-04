@@ -17,8 +17,6 @@ use Twig\Environment as TwigEnvironment;
 
 Class EmailCubeQueryResultCommand extends Command
 {
-    private $batchSize = 10;
-
     public function __construct(
         private CubeJsTokenFactory $tokenFactory,
         private HttpClientInterface $cubejsClient,
