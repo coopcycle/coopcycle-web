@@ -33,7 +33,8 @@ Class EmailCubeQueryResultCommand extends Command
             ->setDescription('Emails results of a Cube query.')
             ->addArgument(
                 'query',
-                InputArgument::REQUIRED
+                InputArgument::REQUIRED,
+                'JSON query in Base64'
             )
             ->addOption(
                 'email',
@@ -54,7 +55,7 @@ Class EmailCubeQueryResultCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $query = $input->getArgument('query');
+        $query = base64_decode($input->getArgument('query'));
         $template = $this->twig->createTemplate($query);
         $parsedQuery = $template->render([]);
 
