@@ -35,7 +35,7 @@ import {
   CLOSE_LOOPEAT_SECTION,
   SET_LOOPEAT_FORMATS,
   UPDATE_LOOPEAT_FORMATS_SUCCESS,
-  TOGGLE_COLUMN,
+  COLUMN_TOGGLED,
 } from './actions'
 
 export const initialState = {
@@ -305,7 +305,7 @@ export default (state = initialState, action = {}) => {
       order: action.payload,
     }
 
-  case TOGGLE_COLUMN: {
+  case COLUMN_TOGGLED: {
     const columnId = action.payload
 
     const collapsedColumns = state.preferences.collapsedColumns

@@ -3,7 +3,7 @@ import classNames from 'classnames'
 
 import OrderCard from './OrderCard'
 import { useDispatch, useSelector } from 'react-redux'
-import { toggleColumn } from '../redux/actions'
+import { columnToggled } from '../redux/actions'
 import { selectIsCollapsedColumn } from '../redux/selectors'
 
 export default ({ id, title, orders, active, context, onCardClick }) => {
@@ -24,7 +24,7 @@ export default ({ id, title, orders, active, context, onCardClick }) => {
           <i className={ classNames('fa', {
             'fa-chevron-left': isCollapsed,
             'fa-chevron-right': !isCollapsed,
-          }) } onClick={ () => dispatch(toggleColumn(id)) } />
+          }) } onClick={ () => dispatch(columnToggled(id)) } />
         </div>
         { isCollapsed ? null : (
           <div className="panel-body">
