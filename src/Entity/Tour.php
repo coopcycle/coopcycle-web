@@ -11,6 +11,7 @@ use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use AppBundle\Api\Filter\DateFilter;
+use AppBundle\Entity\TaskList\Item;
 use AppBundle\Vroom\Job as VroomJob;
 use AppBundle\Vroom\Shipment as VroomShipment;
 
@@ -54,6 +55,8 @@ class Tour extends TaskCollection implements TaskCollectionInterface
     private $date;
 
     protected $id;
+
+    private $taskListItem;
 
     /**
      * @var string
@@ -128,5 +131,15 @@ class Tour extends TaskCollection implements TaskCollectionInterface
         $job = Task::toVroomJob($tasks[0], $tourIri);
         return $job;
 
+    }
+
+    /**
+     * Get the value of taskListItem
+     *
+     * @return Item
+     */
+    public function getTaskListItem()
+    {
+        return $this->taskListItem;
     }
 }

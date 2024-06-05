@@ -16,7 +16,7 @@
         <cascade-persist/>
       </cascade>
     </many-to-one>
-    <one-to-one field="tour" target-entity="AppBundle\Entity\Tour">
+    <one-to-one field="tour" target-entity="AppBundle\Entity\Tour" inversed-by="taskListItem">
       <cascade>
         <cascade-persist/>
       </cascade>
