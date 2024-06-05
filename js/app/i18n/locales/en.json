@@ -505,6 +505,16 @@
         "PLEASE_SELECT_A_DATE": "Please select a date",
         "OPEN": "Open",
         "CLOSED": "Closed",
-        "PLUS_ADD_TAGS": "+ Add tags"
+        "PLUS_ADD_TAGS": "+ Add tags",
+        "TRANSPORTER_MESSAGE_TYPE_SCONTR": "Task imported from the carrier",
+        "TRANSPORTER_MESSAGE_TYPE_REPORT": "Task status report",
+        "TRANSPORTER_SITUATION_AAR": "At the dock",
+        "TRANSPORTER_SITUATION_RAQ": "Remaining at the dock",
+        "TRANSPORTER_SITUATION_MLV": "In delivery",
+        "TRANSPORTER_SITUATION_LIV": "Delivered",
+        "TRANSPORTER_SITUATION_REN": "Refused",
+        "TRANSPORTER_SITUATION_RST": "Recipient not delivered",
+        "TRANSPORTER_SHOW_EDI": "Show edi",
+        "TRANSPORTER_SHOW_PODS": "Show pods"
     }
 }

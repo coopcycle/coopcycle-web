@@ -792,6 +792,7 @@ fos_js_routing:
         - api_package_sets_delete_item
         - api_package_sets_applications_item
         - api_time_slots_delete_item
+        - admin_transporter_message
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'

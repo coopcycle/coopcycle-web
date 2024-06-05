@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\Entity\Edifact\EDIFACTMessage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
