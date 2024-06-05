@@ -24,9 +24,13 @@ class PublishLiveUpdate
         // ref: https://github.com/coopcycle/coopcycle-app/blob/58d84b3519ccb16d53f8ae2948a211378f4929f7/src/redux/Courier/taskEntityReducer.js#L302
         // legacy event and new version of event
         // see https://github.com/coopcycle/coopcycle-app/issues/1803
-        if ($event instanceof TaskListUpdated || $event instanceof TaskListUpdatedv2) {
+        if ($event instanceof TaskListUpdated) {
             $user = $event->getTaskList()->getCourier();
             $this->liveUpdates->toUsers([ $user ], $event);
+        } else if ($event instanceof TaskListUpdatedv2) { // can be safely broadcasted both to riders and admins
+            $this->liveUpdates->toAdmins($event);
+            $user = $event->getTaskList()->getCourier(); // not used in the rider part of the app yet
+            $this->liveUpdates->toUsers([ $user ], $event); // not used in the rider part of the app yet
         } else {
             $this->liveUpdates->toAdmins($event);
         }
