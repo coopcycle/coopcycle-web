@@ -308,6 +308,8 @@ profile.managedStores: Stores managed by user
 profile.managedRestaurants: Restaurants managed by user
 profile.accountType: Account type
 profile.businessAccount: Business account
+profile.orders: Orders
+profile.configuration: Configuration
 order.cart.title: Cart
 order.items.products_with_count: Products (%count%)
 order.summary.heading: Order %number% (#%id%)
