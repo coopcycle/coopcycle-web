@@ -3,7 +3,9 @@
 namespace AppBundle\Command;
 
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
+use AppBundle\Entity\CubeJsonQuery;
 use AppBundle\Service\EmailManager;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Writer as CsvWriter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,7 +23,8 @@ Class EmailCubeQueryResultCommand extends Command
         private CubeJsTokenFactory $tokenFactory,
         private HttpClientInterface $cubejsClient,
         private TwigEnvironment $twig,
-        private EmailManager $emailManager)
+        private EmailManager $emailManager,
+        private EntityManagerInterface $entityManager)
     {
         parent::__construct();
     }
@@ -34,7 +37,7 @@ Class EmailCubeQueryResultCommand extends Command
             ->addArgument(
                 'query',
                 InputArgument::REQUIRED,
-                'JSON query in Base64'
+                'Name of the JSON query stored in database'
             )
             ->addOption(
                 'email',
@@ -55,8 +58,11 @@ Class EmailCubeQueryResultCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $query = base64_decode($input->getArgument('query'));
-        $template = $this->twig->createTemplate($query);
+        $queryName = $input->getArgument('query');
+
+        $cubeQuery = $this->entityManager->getRepository(CubeJsonQuery::class)->findOneByName($queryName);
+
+        $template = $this->twig->createTemplate(json_encode($cubeQuery->getQuery()));
         $parsedQuery = $template->render([]);
 
         $jsonQuery = json_decode($parsedQuery, true);
