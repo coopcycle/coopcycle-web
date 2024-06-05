@@ -12,6 +12,7 @@ import MapHelper from '../../MapHelper'
 import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
 import { createLeafletIcon } from '../../components/Avatar'
+import { isMarkerInsidePolygon } from '../utils'
 
 const tagsColor = tags => {
   const tag = _.first(tags)
@@ -142,6 +143,7 @@ export default class MapProxy {
     this.map.selectArea.enable()
 
     this.map.on('areaselected', (e) => {
+      console.debug(e.bounds)
       L.Util.requestAnimFrame(() => {
         const markers = []
         this.map.eachLayer((layer) => {
@@ -154,6 +156,25 @@ export default class MapProxy {
           markers.push(layer)
         })
         options.onMarkersSelected(markers)
+      })
+    })
+
+    this.map.on('pm:create', ({layer}) => {
+
+      const polygonLayer = layer
+      L.Util.requestAnimFrame(() => {
+        const markers = []
+        this.map.eachLayer((marker) => {
+          if (!_.includes(Array.from(this.taskMarkers.values()), marker)) {
+            return
+          }
+          if (isMarkerInsidePolygon(marker, polygonLayer)) {
+            markers.push(marker)
+          }
+        })
+        options.onMarkersSelected(markers)
+        map.removeLayer(polygonLayer)
+        map.pm.disableDraw()
       })
     })
 
