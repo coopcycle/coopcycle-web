@@ -52,7 +52,7 @@ class ProductNormalizer implements NormalizerInterface, DenormalizerInterface
             $object->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
             // @see https://github.com/coopcycle/coopcycle-app/issues/286
-            $description = !empty(trim($object->getDescription())) ? $object->getDescription() : null;
+            $description = !empty(trim($object->getDescription() || '')) ? $object->getDescription() : null;
 
             $data['name'] = $object->getName();
             $data['description'] = $description;
