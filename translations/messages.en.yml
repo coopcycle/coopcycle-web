@@ -1518,3 +1518,6 @@ business_account.loggedin_employee.association.text: You are logged in with the 
 business_account.loggedin_employee.association.title: Invitation to associate your account with a Business Acccount
 topbar.action.admin_business_account: Administrate my Business Account
 basics.order_now: Order now
+restaurant.businessAccount.notAvilable: "This restaurant is not included in the restaurants of your company configuration.\
+  \ <br> You can see the available restaurants for your company <a href=\"%path%\"\
+  >clicking here</a>.\n"

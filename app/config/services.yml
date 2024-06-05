@@ -486,6 +486,8 @@ services:
     tags:
       - { name: doctrine.event_subscriber, connection: default }
 
+  AppBundle\EventListener\LogoutSubscriber: ~
+
   AppBundle\EventListener\TaggableSubscriber:
     arguments: [ '@coopcycle.tag_manager' ]
     tags:
@@ -575,6 +577,9 @@ services:
       - method: setRestaurantFilter
         arguments:
             - '@coopcycle.utils.restaurant_filter'
+      - method: setBusinessContext
+        arguments:
+            - '@AppBundle\Business\Context'
 
   AppBundle\Entity\HubRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]

@@ -1445,3 +1445,6 @@ business_account.loggedin_employee.association.text: Tenés una sesión iniciada
 business_account.loggedin_employee.association.title: Invitación para asociar su cuenta a una cuenta de empresa
 topbar.action.admin_business_account: Administrar mi Cuenta de empresa
 basics.order_now: Pedir ahora
+restaurant.businessAccount.notAvilable: "Éste restaurante no está incluído entre los restaurantes disponibles para realizar pedidos con tu empresa.\
+  \ <br> Si quiéres, puedes ver los restaurantes disponibles para tu empresa <a href=\"%path%\"\
+  >haciendo click aquí</a>.\n"
