@@ -1,17 +1,143 @@
-{% extends 'delivery/form.html.twig' %}
+{% extends layout %}
+
+{% form_theme form 'form/delivery.html.twig' %}
 
 {% block breadcrumb %}
-
   {% set delivery = form.vars.value %}
-
-  <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
-  <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
-
+  <li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
   {% if delivery.id is not null %}
-  <li>#{{ delivery.id }}</li>
+    <li>#{{ delivery.id }}</li>
   {% else %}
-  <li>{% trans %}delivery.createNew{% endtrans %}</li>
+    <li>{% trans %}delivery.createNew{% endtrans %}</li>
   {% endif %}
-
 {% endblock %}
 
+{% block dashboard_subnav %}
+  <div>
+    <a href="{{ path(back_route) }}">
+      <i class="fa fa-arrow-left mr-2"></i>{{ 'stores.deliveries'|trans }}
+    </a>
+  </div>
+{% endblock %}
+
+{% block react_native_web_content %}
+  <!-- injected by react-native-web -->
+  <div id="root">
+  </div>
+{% endblock %}
+
+{#{% block content %}#}
+
+{#  {% set delivery = form.vars.value %}#}
+{#  {% set is_new = delivery.id is null %}#}
+
+{#  {{ form_start(form, { attr: { 'data-store': delivery.store is not empty ? delivery.store|get_iri_from_item : null, 'data-user-admin': is_granted('ROLE_ADMIN') } }) }}#}
+
+{#  {% if is_granted('ROLE_ADMIN') and not is_new and delivery.order is not empty %}#}
+{#    {% include '_partials/delivery/order_alert.html.twig' with { order: delivery.order } %}#}
+{#  {% endif %}#}
+
+{#  {{ form_errors(form) }}#}
+
+{#  <div class="row">#}
+{#    <div class="col-md-7">#}
+{#      {{ form_widget(form.tasks, { attr: { 'data-index': form.tasks|length > 0 ? form.tasks|length : 0 } }) }}#}
+{#    </div>#}
+{#    <div class="col-md-5">#}
+{#      <div class="form-horizontal">#}
+{#        {% if form.vehicle is defined %}#}
+{#          {{ form_row(form.vehicle) }}#}
+{#        {% endif %}#}
+
+{#        {% include "_partials/delivery/transporter.html.twig" with {delivery: delivery} only %}#}
+
+{#        {% if not is_new %}#}
+{#          <div class="alert alert-info">#}
+{#            <a href="{{ url('public_delivery', { hashid: delivery|hashid }) }}" target="_blank" id="tracking_link">{% trans %}delivery.tracking_link{% endtrans %} <i class="fa fa-external-link"></i></a>#}
+{#            <a href="#" class="pull-right" id="copy" data-clipboard-target="#tracking_link"><i class="fa fa-clipboard" aria-hidden="true"></i></a>#}
+{#          </div>#}
+{#        {% endif %}#}
+{#        <div class="embed-responsive embed-responsive-16by9">#}
+{#          <div class="embed-responsive-item" id="map"></div>#}
+{#          <div class="map-distance-overlay">#}
+{#            <span class="mr-2">{% trans %}form.delivery.distance.label{% endtrans %}</span>#}
+{#            <span id="delivery_distance">#}
+{#              {% if delivery.distance is not empty %}#}
+{#                {{ delivery.distance|meters_to_kilometers }}#}
+{#              {% endif %}#}
+{#            </span>#}
+{#          </div>#}
+{#        </div>#}
+{#        {% if form.arbitraryPrice is defined %}#}
+{#          <hr>#}
+{#          {{ form_row(form.arbitraryPrice) }}#}
+{#          <div class="d-none" data-variant-details>#}
+{#            {{ form_row(form.variantName) }}#}
+{#            {{ form_row(form.variantPrice) }}#}
+{#          </div>#}
+{#        {% endif %}#}
+{#      </div>#}
+{#    </div>#}
+{#  </div>#}
+
+{#  <hr>#}
+
+{#  <div class="d-md-flex d-lg-flex d-xl-flex flex-row mb-4">#}
+{#    <div class="col-md-7">#}
+{#      {% if delivery.id is empty and delivery.store is not empty and delivery.store.createOrders %}#}
+{#        <div id="delivery-price" class="mb-4 mb-md-0">#}
+
+{#          <div class="delivery-price">#}
+{#            <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>#}
+{#            <span class="delivery-price-value" id="delivery_price">#}
+{#              <span>#}
+{#                <span data-tax="included">{{ 0|price_format }}</span>#}
+{#                <span class="ml-2">{{ 'basics.tax_incl'|trans }}</span>#}
+{#              </span>#}
+{#              <span class="text-muted">#}
+{#                <span data-tax="excluded">{{ 0|price_format }}</span>#}
+{#                <span class="ml-2">{{ 'basics.tax_excl'|trans }}</span>#}
+{#              </span>#}
+{#            </span>#}
+{#          </div>#}
+
+{#          <div class="text-center text-danger">#}
+{#            <small id="delivery_price_error" class="delivery-price-error"></small>#}
+{#          </div>#}
+
+{#          {% if debug_pricing is defined and debug_pricing %}#}
+{#            {% set pricing_rules = delivery.store.pricingRuleSet.rules %}#}
+{#            <ul class="list-group" id="pricing-rules-debug">#}
+{#              {% for pricing_rule in pricing_rules %}#}
+{#                <li class="list-group-item" data-pricing-rule="/api/pricing_rules/{{ pricing_rule.id }}">#}
+{#                  <span>{{ pricing_rule.expression }}</span>#}
+{#                  <span class="pull-right">#}
+{#                  <i class="fa fa-spinner fa-spin hidden"></i>#}
+{#                </span>#}
+{#                </li>#}
+{#              {% endfor %}#}
+{#            </ul>#}
+{#          {% endif %}#}
+
+{#        </div>#}
+{#      {% endif %}#}
+{#    </div>#}
+{#    <div class="col-md-5">#}
+{#      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary h-100">#}
+{#        <i class="fa fa-spinner fa-spin hidden" id="loader"></i>#}
+{#        {% trans %}basics.save{% endtrans %}#}
+{#      </button>#}
+{#    </div>#}
+{#  </div>#}
+
+{#  {{ form_end(form) }}#}
+
+{#{% endblock %}#}
+
+{#{% block styles %}#}
+{#  {{ encore_entry_link_tags('delivery-form') }}#}
+{#{% endblock %}#}
+
+{#{% block scripts %}#}
+{#  {{ encore_entry_script_tags('delivery-form') }}#}
+{#{% endblock %}#}
