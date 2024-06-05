@@ -131,7 +131,7 @@ class TaskGroup extends React.Component {
               return (
                 <Task
                   key={ task['@id'] }
-                  task={ task }
+                  taskId={ task['@id'] }
                   taskWithoutDrag
                 />
               )

@@ -107,6 +107,7 @@
 
     {% if app.user %}
       {{ encore_entry_script_tags('notifications') }}
+      {{ encore_entry_script_tags('business-account') }}
     {% endif %}
 
     {% include '_partials/autocomplete_adapter.html.twig' %}

@@ -730,6 +730,7 @@ fos_js_routing:
         - restaurant_cart_address
         - restaurant_cart_clear_time
         - restaurant_modify_cart_item_quantity
+        - admin_deliveries
         - admin_delivery
         - admin_dashboard_fullscreen
         - admin_foodtech_dashboard
@@ -751,7 +752,6 @@ fos_js_routing:
         - admin_tags
         - admin_task_image_download
         - admin_task_list_create
-        - admin_task_list_modify
         - admin_task_receipt
         - admin_users_search
         - admin_user_edit
@@ -783,6 +783,10 @@ fos_js_routing:
         - api_incidents_get_item
         - api_incidents_get_collection
         - api_tasks_get_task_context_item
+        - api_tasks_get_collection
+        - api_tours_get_collection
+        - api_task_lists_v2_collection
+        - api_task_lists_set_items_item
         - admin_incident
         - api_stores_get_item
         - api_restaurants_get_item

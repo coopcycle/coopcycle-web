@@ -55,16 +55,13 @@
       title: 'deliveries.section.past'|trans,
       active: (deliveries.params.section is defined and deliveries.params.section == 'past'),
       path: path('admin_deliveries', { section: 'past' })
-    }
-  ] %}
-
-  {% if import_queues|length > 0 %}
-    {% set tab_items = tab_items|merge([{
+    },
+    {
       title: 'deliveries.imports'|trans,
       active: app.request.query.get('section', 'today') == 'imports',
       path: path('admin_deliveries', { section: 'imports' })
-    }]) %}
-  {% endif %}
+    },
+  ] %}
 
   <ul class="nav nav-tabs">
     {% if filters is defined and filters.query %}
@@ -116,7 +113,10 @@
       'completed': 'check',
       'failed': 'exclamation-circle'
     } %}
-    <table class="table mt-4"
+    <div class="text-right my-2">
+      <div id="import-datepicker"></div>
+    </div>
+    <table class="table mb-4"
       data-delivery-imports
       data-centrifugo-token="{{ centrifugo_token }}"
       data-centrifugo-channel="{{ centrifugo_channel }}">
@@ -227,6 +227,12 @@
 {% block scripts %}
 {{ encore_entry_script_tags('delivery-list') }}
 <script>
+new CoopCycle.DatePicker(document.querySelector('#import-datepicker'), {
+  defaultValue: "{{ import_date|date('Y-m-d') }}",
+  onChange: function(date, dateString) {
+    window.location.href = window.Routing.generate('admin_deliveries', { section: 'imports', date: date.format('YYYY-MM-DD') });
+  }
+});
 $('#stores').on('change', function(e) {
   window.location.href = $(this).val();
 });

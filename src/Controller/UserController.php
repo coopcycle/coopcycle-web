@@ -106,6 +106,28 @@ class UserController extends AbstractController
     }
 
     /**
+     * @Route("/register/check-email-exists", name="register_check_email_exists")
+     */
+    public function emailExistsAction(Request $request, UserManagerInterface $userManager, TranslatorInterface $translator)
+    {
+        if (!$request->query->has('email')) {
+            throw new BadRequestHttpException('Missing "email" parameter');
+        }
+
+        $email = $request->query->get('email');
+
+        $user = null;
+        if (!empty($email)) {
+            $user = $userManager->findUserByEmail($email);
+        }
+
+        return new JsonResponse([
+            'exists' => null !== $user,
+            'errorMessage' => null !== $user ? $translator->trans('nucleos_user.email.already_used', [], 'validators') : ''
+        ]);
+    }
+
+    /**
      * @Route("/users/{username}", name="user")
      */
     public function indexAction($username, UserManagerInterface $userManager)

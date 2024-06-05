@@ -19,21 +19,19 @@ const tagsColor = tags => {
   return tag.color
 }
 
-const taskColor = (task, selected, useAvatarColors) => {
+const taskColor = (task, selected, useAvatarColors, polylineEnabled) => {
 
   if (selected) {
     return '#EEB516'
-  }
-
-  if (task.group && task.group.tags.length > 0) {
+  } else if (task.isAssigned && useAvatarColors && polylineEnabled[task.assignedTo]) {
+    return colorHash.hex(task.assignedTo)
+  } else if (task.group && task.group.tags.length > 0) {
     return tagsColor(task.group.tags)
-  }
-
-  if (task.tags.length > 0) {
+  } else if (task.tags.length > 0) {
     return tagsColor(task.tags)
+  } else {
+    return '#777'
   }
-
-  return task.isAssigned && useAvatarColors ? colorHash.hex(task.assignedTo) : '#777'
 }
 
 const taskIcon = task => {
@@ -163,11 +161,11 @@ export default class MapProxy {
 
   }
 
-  addTask(task, selected = false, isRestaurantAddress = false) {
+  addTask(task, selected = false, isRestaurantAddress = false, polylineEnabled = {}) {
 
     let marker = this.taskMarkers.get(task['@id'])
 
-    const color = taskColor(task, selected, this.useAvatarColors)
+    const color = taskColor(task, selected, this.useAvatarColors, polylineEnabled)
     const iconName = taskIcon(task)
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const latLng = L.latLng(task.address.geo.latitude, task.address.geo.longitude)

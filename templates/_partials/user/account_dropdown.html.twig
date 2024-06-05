@@ -9,20 +9,6 @@
       </a>
     </li>
 
-    {% if is_granted('ROLE_BUSINESS') %}
-      {% set query_params = app.request.query.all %}
-      {% if business_context.active %}
-        {% set query_params = query_params|merge({ _business: 'false' }) %}
-        {% set label = ('navbar.switch_to_personal'|trans) %}
-      {% else %}
-        {% set query_params = query_params|merge({ _business: 'true' }) %}
-        {% set label = ('navbar.switch_to_business'|trans({ '%name%': business_context.businessAccount.name })) %}
-      {% endif %}
-      {% set current_path = path(app.request.attributes.get('_route'),
-        app.request.attributes.get('_route_params')|merge(query_params)) %}
-      <li><a href="{{ current_path }}">{{ label }}</a></li>
-    {% endif %}
-
     <li role="separator" class="divider"></li>
 
     {% if is_granted('DASHBOARD_VIEW') %}
@@ -38,3 +24,26 @@
     <span class="badge">0</span>
   </a>
 </li>
+{% if is_granted('ROLE_BUSINESS') %}
+  <li>
+    <div class="d-flex align-items-center pt-2 px-3">
+      <input class="d-none" type="checkbox" id="business_mode" name="business_mode"
+        value="{{ business_context.active }}" {% if business_context.active %}checked="checked"{% endif %}>
+      <div data-widget="business-mode-switch" data-switch-target="business_mode"></div>
+      <div class="d-flex flex-column ml-2">
+        <label class="{{ is_granted('ROLE_BUSINESS_ACCOUNT') ? 'mb-0 text-gray' : 'mb-0 py-2 text-gray' }}">
+          {% if business_context.active %}
+            {{ 'business_account.switch.ordering_with_business'|trans }}
+          {% else %}
+            {{ 'business_account.switch.order_with_business'|trans }}
+          {% endif %}
+        </label>
+        {% if is_granted('ROLE_BUSINESS_ACCOUNT') %}
+          <a class="my-0 help-block fs-07 pb-1 text-decoration-underline" href="{{ path('profile_business_account') }}">
+            {{ 'topbar.action.admin_business_account'|trans }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </li>
+{% endif %}

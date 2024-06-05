@@ -107,10 +107,14 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
 
         $validator = Validation::createValidator();
 
+        $closingRulesConstraint = new AssertClosingRules($this->closingRules);
+
         while ($cursor <= $this->maxDate) {
 
+            $carbonCursor = Carbon::instance($cursor);
+
             if (!empty($this->timeSlot->getSameDayCutoff())
-            && Carbon::instance($cursor)->isSameDay($this->now)) {
+            && $carbonCursor->isSameDay($this->now)) {
                 $cutoff = $this->now->copy()->setTimeFromTimeString(
                     $this->timeSlot->getSameDayCutoff()
                 );
@@ -126,7 +130,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                     return $this->OHSToCarbon[$dayOfWeek];
                 }, $spec->dayOfWeek);
 
-                if (in_array(Carbon::instance($cursor)->weekday(), $weekdays)) {
+                if (in_array($carbonCursor->weekday(), $weekdays)) {
 
                     $choice = new TimeSlotChoice(
                         clone $cursor,
@@ -136,7 +140,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
                     $tsRange = $choice->toTsRange();
 
                     $violations = $validator->validate($tsRange, [
-                        new AssertClosingRules($this->closingRules)
+                        $closingRulesConstraint
                     ]);
 
                     if (count($violations) === 0 && !$choice->hasFinished($this->now, $this->timeSlot->getPriorNotice())
