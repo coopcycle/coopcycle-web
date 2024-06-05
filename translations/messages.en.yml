@@ -1523,3 +1523,8 @@ basics.order_now: Order now
 restaurant.businessAccount.notAvilable: "This restaurant is not included in the restaurants of your company configuration.\
   \ <br> You can see the available restaurants for your company <a href=\"%path%\"\
   >clicking here</a>.\n"
+<<<<<<< HEAD
+=======
+business_account.switch.order_with_business: Order with my company
+business_account.switch.ordering_with_business: Ordering with my company
+>>>>>>> 1f6647ed9 (switch top bar button to change to business or personal mode)
