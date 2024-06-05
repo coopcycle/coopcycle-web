@@ -24,7 +24,7 @@ class httpClient {
         data,
         params,
         headers: {
-          "Content-Type": "application/json; charset=utf-8",
+          "Content-Type": "application/ld+json; charset=utf-8",
           Authorization: `Bearer ${this.jwt}`,
           ...headers,
         },
