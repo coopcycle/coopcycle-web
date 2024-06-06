@@ -1261,12 +1261,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "bf354a8aa2cc40c40641c372ac5c355d234f4dc5"
+                "reference": "196c14d86c7cfea6a1667a181bcbd0d74dddb89b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/bf354a8aa2cc40c40641c372ac5c355d234f4dc5",
-                "reference": "bf354a8aa2cc40c40641c372ac5c355d234f4dc5",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/196c14d86c7cfea6a1667a181bcbd0d74dddb89b",
+                "reference": "196c14d86c7cfea6a1667a181bcbd0d74dddb89b",
                 "shasum": ""
             },
             "require": {
@@ -1296,7 +1296,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2024-05-21T11:31:52+00:00"
+            "time": "2024-06-06T14:09:26+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -23690,7 +23690,6 @@
         "drupal/core-vendor-hardening": 20,
         "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
-        "coopcycle/transporter": 20,
         "behatch/contexts": 20
     },
     "prefer-stable": true,
