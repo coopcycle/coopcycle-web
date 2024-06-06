@@ -7,6 +7,7 @@ import {
   UploadOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
+import classNames from "classnames";
 
 function ediDot(edi) {
   const style = { fontSize: "20px" };
@@ -67,7 +68,6 @@ function PreviewPods({ pods }) {
         ))}
       </Image.PreviewGroup>
       <a
-        className="mx-3"
         href="#"
         onClick={(e) => {
           e.preventDefault();
@@ -108,14 +108,16 @@ export default function ({ ediMessages }) {
                 </span>
               )}
             </p>
-            <a
-              href={window.Routing.generate("admin_transporter_message", {
-                edi: ediMessage.ediMessage,
-              })}
-              disabled={ediMessage.ediMessage === null}
-            >
-              {t("TRANSPORTER_SHOW_EDI")}
-            </a>
+            {ediMessage.ediMessage && (
+              <a
+                className="mr-3"
+                href={window.Routing.generate("admin_transporter_message", {
+                  edi: ediMessage.ediMessage,
+                })}
+              >
+                {t("TRANSPORTER_SHOW_EDI")}
+              </a>
+            )}
             {ediMessage.pods.length > 0 && (
               <PreviewPods pods={ediMessage.pods} />
             )}

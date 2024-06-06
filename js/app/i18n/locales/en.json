@@ -514,7 +514,7 @@
         "TRANSPORTER_SITUATION_LIV": "Delivered",
         "TRANSPORTER_SITUATION_REN": "Refused",
         "TRANSPORTER_SITUATION_RST": "Recipient not delivered",
-        "TRANSPORTER_SHOW_EDI": "Show edi",
-        "TRANSPORTER_SHOW_PODS": "Show pods"
+        "TRANSPORTER_SHOW_EDI": "Show EDI",
+        "TRANSPORTER_SHOW_PODS": "Show PODs"
     }
 }
