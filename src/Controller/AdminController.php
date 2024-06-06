@@ -875,6 +875,12 @@ class AdminController extends AbstractController
             ]
         );
 
+        $this->getDoctrine()->getManager()->getFilters()->enable('soft_deleteable');
+
+        $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
+
+        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
+
         $importDate = new \DateTime($request->query->get('date', 'now'));
 
         $importQueues = $this->entityManager->getRepository(DeliveryImportQueue::class)
@@ -889,7 +895,7 @@ class AdminController extends AbstractController
             'deliveries' => $deliveries,
             'filters' => $filters,
             'routes' => $this->getDeliveryRoutes(),
-            'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']),
+            'stores' => $stores,
             'delivery_import_form' => $deliveryImportForm->createView(),
             'delivery_export_form' => $dataExportForm->createView(),
             'import_queues' => $importQueues,
