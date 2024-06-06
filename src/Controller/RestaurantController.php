@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Domain\Order\Event\OrderUpdated;
@@ -144,13 +145,13 @@ class RestaurantController extends AbstractController
     public function legacyRestaurantsAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        SlugifyInterface $slugify)
+        BusinessContext $businessContext)
     {
         $requestClone = clone $request;
 
         $requestClone->attributes->set('type', LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT));
 
-        return $this->listAction($requestClone, $repository, $projectCache, $slugify);
+        return $this->listAction($requestClone, $repository, $projectCache, $businessContext);
     }
 
     /**
@@ -159,7 +160,7 @@ class RestaurantController extends AbstractController
     public function listAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        SlugifyInterface $slugify)
+        BusinessContext $businessContext)
     {
         $originalParams = $request->query->all();
 
@@ -177,10 +178,16 @@ class RestaurantController extends AbstractController
             ]);
         }
 
+        $repository->setBusinessContext($businessContext);
+
         // find cuisines which can be selected by user to filter
         $cuisines = $repository->findExistingCuisines();
 
         $cacheKey = $this->getShopsListCacheKey($request);
+
+        if ($businessContext->isActive()) {
+            $cacheKey = sprintf('%s.%s', $cacheKey, '_business');
+        }
 
         if ($request->query->has('type')) {
             $type = LocalBusiness::getTypeForKey($request->query->get('type'));
@@ -399,10 +406,16 @@ class RestaurantController extends AbstractController
         CartContextInterface $cartContext,
         LoopEatContextInitializer $loopeatContextInitializer,
         LoopEatContext $loopeatContext,
+        BusinessContext $businessContext,
+        LocalBusinessRepository $repository,
         Address $address = null)
     {
-        $restaurant = $this->getDoctrine()
-            ->getRepository(LocalBusiness::class)->find($id);
+        $restaurant = $repository->find($id);
+
+        $restaurantAvailableForBusinessAccount = false;
+        if ($businessContext->isActive()) {
+            $restaurantAvailableForBusinessAccount = $repository->isRestaurantAvailableInBusinessAccount($restaurant) !== null;
+        }
 
         if (!$restaurant) {
             throw new NotFoundHttpException();
@@ -482,6 +495,7 @@ class RestaurantController extends AbstractController
             'cart_form' => $cartForm->createView(),
             'cart_timing' => $this->getCartTiming($cart),
             'addresses_normalized' => $this->getUserAddresses(),
+            'available_for_business_account' => $restaurantAvailableForBusinessAccount
         ]));
     }
 
@@ -846,13 +860,13 @@ class RestaurantController extends AbstractController
     public function legacyStoreListAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
-        SlugifyInterface $slugify)
+        BusinessContext $businessContext)
     {
         $requestClone = clone $request;
 
         $requestClone->attributes->set('type', LocalBusiness::getKeyForType(Store::GROCERY_STORE));
 
-        return $this->listAction($requestClone, $repository, $projectCache, $slugify);
+        return $this->listAction($requestClone, $repository, $projectCache, $businessContext);
     }
 
     /**

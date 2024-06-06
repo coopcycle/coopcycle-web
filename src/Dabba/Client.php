@@ -15,17 +15,16 @@ use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 class Client
 {
     private $client;
-    private $baseUrl;
 
     public function __construct(
         HttpClientInterface $dabbaClient,
-        UrlGeneratorInterface $urlGenerator,
-        EntityManagerInterface $entityManager,
-        JWTEncoderInterface $jwtEncoder,
-        IriConverterInterface $iriConverter,
-        string $baseUrl,
-        string $clientId,
-        string $clientSecret)
+        private UrlGeneratorInterface $urlGenerator,
+        private EntityManagerInterface $entityManager,
+        private JWTEncoderInterface $jwtEncoder,
+        private IriConverterInterface $iriConverter,
+        private string $baseUrl,
+        private string $clientId,
+        private string $clientSecret)
     {
         $this->client = $dabbaClient;
         $this->urlGenerator = $urlGenerator;

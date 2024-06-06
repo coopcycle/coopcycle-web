@@ -17,9 +17,11 @@ use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 class AsapChoiceLoader implements ChoiceLoaderInterface
 {
     private $openingHours;
+    private $timeRegistry;
     private $closingRules;
     private $orderingDelayMinutes;
     private $rangeDuration;
+    private $preOrderingAllowed;
 
     public function __construct(
         array $openingHours,

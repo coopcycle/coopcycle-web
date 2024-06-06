@@ -969,6 +969,10 @@
   padding-left: 3rem !important;
 }
 
+.fs-07 {
+  font-size: 0.7rem !important;
+}
+
 .font-weight-light {
   font-weight: 300 !important;
 }
@@ -1057,6 +1061,10 @@
 
 .text-body {
   color: #212529 !important;
+}
+
+.text-gray {
+  color: #777 !important;
 }
 
 /*
@@ -1157,6 +1165,10 @@
 
 .text-decoration-none {
   text-decoration: none !important;
+}
+
+.text-decoration-underline {
+  text-decoration: underline !important;
 }
 
 .font-italic {

@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
@@ -79,7 +80,8 @@ class IndexController extends AbstractController
     public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache,
         TimingRegistry $timingRegistry,
         UrlGeneratorInterface $urlGenerator,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        BusinessContext $businessContext)
     {
         $user = $this->getUser();
 
@@ -89,7 +91,15 @@ class IndexController extends AbstractController
             $cacheKeySuffix = 'anonymous';
         }
 
+        if ($user && $user->getBusinessAccount()) {
+            if ($businessContext->isActive()) {
+                $cacheKeySuffix = sprintf('%s.%s', $cacheKeySuffix, '_business');
+            }
+        }
+
         $sections = [];
+
+        $repository->setBusinessContext($businessContext);
 
         $shopsByType = array_keys($repository->countByType());
 

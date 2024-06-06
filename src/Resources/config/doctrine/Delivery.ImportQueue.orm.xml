@@ -14,7 +14,7 @@
     </field>
     <field name="startedAt" type="datetime" column="started_at" nullable="true" />
     <field name="finishedAt" type="datetime" column="finished_at" nullable="true" />
-    <field name="errors" type="json_array" column="errors" nullable="true" />
+    <field name="errors" type="json" column="errors" nullable="true" />
     <many-to-one field="store" target-entity="AppBundle\Entity\Store" />
   </entity>
 </doctrine-mapping>

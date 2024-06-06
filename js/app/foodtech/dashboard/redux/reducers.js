@@ -12,6 +12,7 @@ import {
   ORDER_CANCELLED,
   ORDER_FULFILLED,
   ORDER_DELAYED,
+  ORDER_STATE_CHANGED,
   FETCH_REQUEST,
   ACCEPT_ORDER_REQUEST_SUCCESS,
   ACCEPT_ORDER_REQUEST_FAILURE,
@@ -213,6 +214,13 @@ export default (state = initialState, action = {}) => {
     return {
       ...state,
       orders: replaceOrder(state.orders, Object.assign({}, action.payload), true),
+    }
+
+  case ORDER_STATE_CHANGED:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload)),
     }
 
   case SET_CURRENT_ORDER:

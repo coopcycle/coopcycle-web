@@ -48,12 +48,12 @@
       </options>
     </field>
     <field name="vatID" type="string" column="vat_id" nullable="true"/>
-    <field name="additionalProperties" type="json_array" column="additional_properties" nullable="true"/>
+    <field name="additionalProperties" type="json" column="additional_properties" nullable="true"/>
     <field name="rateLimitRangeDuration" type="integer" column="rate_limit_range_duration" nullable="true" />
     <field name="rateLimitAmount" type="integer" column="rate_limit_amount" nullable="true" />
     <field name="state" type="string" column="state"/>
-    <field name="stripeConnectRoles" type="json_array" column="stripe_connect_roles"/>
-    <field name="mercadopagoConnectRoles" type="json_array" column="mercadopago_connect_roles" nullable="true"/>
+    <field name="stripeConnectRoles" type="json" column="stripe_connect_roles"/>
+    <field name="mercadopagoConnectRoles" type="json" column="mercadopago_connect_roles" nullable="true"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <field name="exclusive" type="boolean" column="exclusive">
@@ -74,7 +74,7 @@
     <field name="loopeatAccessToken" type="text" column="loopeat_access_token" nullable="true"/>
     <field name="loopeatRefreshToken" type="text" column="loopeat_refresh_token" nullable="true"/>
     <field name="featured" type="boolean" column="featured"/>
-    <field name="stripePaymentMethods" type="json_array" column="stripe_payment_methods"/>
+    <field name="stripePaymentMethods" type="json" column="stripe_payment_methods"/>
     <field name="edenredMerchantId" type="string" column="edenred_merchant_id" nullable="true"/>
     <field name="edenredEnabled" type="boolean" column="edenred_enabled" default="false">
       <options>

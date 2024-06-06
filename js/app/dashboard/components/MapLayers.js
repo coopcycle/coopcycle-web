@@ -24,7 +24,7 @@ const CourierLayer = ({ positions }) => {
   return null
 }
 
-const TaskLayer = ({ tasks, visibleTaskIds, hiddenTaskIds, selectedTasks, /*pickupGroups,*/ restaurantAddressIds }) => {
+const TaskLayer = ({ tasks, visibleTaskIds, hiddenTaskIds, selectedTasks, /*pickupGroups,*/ restaurantAddressIds, polylineEnabled }) => {
 
   const map = useMap()
 
@@ -36,12 +36,12 @@ const TaskLayer = ({ tasks, visibleTaskIds, hiddenTaskIds, selectedTasks, /*pick
     visibleTasks.forEach(task => {
       const selected = -1 !== selectedTasks.indexOf(task)
       const isRestaurantAddress = -1 !== restaurantAddressIds.indexOf(task.address['@id'])
-      map.addTask(task, selected, isRestaurantAddress)
+      map.addTask(task, selected, isRestaurantAddress, polylineEnabled)
     })
 
     hiddenTasks.forEach(task => map.hideTask(task))
 
-  }, [ tasks, visibleTaskIds, hiddenTaskIds, selectedTasks ])
+  }, [ tasks, visibleTaskIds, hiddenTaskIds, selectedTasks, polylineEnabled ])
 
   return null
 }
@@ -93,6 +93,7 @@ function mapStateToPropsTask(state) {
     hiddenTaskIds: selectHiddenTaskIds(state),
     selectedTasks: selectSelectedTasks(state),
     restaurantAddressIds: selectRestaurantAddressIds(state),
+    polylineEnabled: state.polylineEnabled,
   }
 }
 

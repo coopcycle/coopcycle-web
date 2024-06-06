@@ -9,9 +9,10 @@ import Tour from './Tour'
 import { appendToUnassignedTours, deleteGroup, editGroup, openCreateTourModal } from '../redux/actions'
 import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
 import TaskGroup from './TaskGroup'
-import { selectGroups, selectIsTourDragging, selectOrderOfUnassignedToursAndGroups } from '../redux/selectors'
+import { selectAreToursEnabled, selectGroups, selectIsTourDragging, selectOrderOfUnassignedToursAndGroups, selectSplitDirection } from '../redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
+import { Tooltip } from 'antd'
 
 
 const Buttons = connect(
@@ -32,8 +33,38 @@ const Buttons = connect(
   )
 })
 
+const CollapsedUnassignedTours = ({ unassignedToursCount, splitCollapseAction }) => {
+  const { t } = useTranslation()
+  const splitDirection = useSelector(selectSplitDirection)
 
-export const UnassignedTours = () => {
+  return <>
+    { splitDirection == "vertical" ?
+      (<div className="dashboard__panel">
+        <h4 className="d-flex justify-content-between">
+          <a onClick={() => splitCollapseAction()}>
+            <span className="mr-2">{ t('DASHBOARD_UNASSIGNED_TOURS') }</span>
+            <span className="mr-2">({ unassignedToursCount })</span>
+            <i className="fa fa-caret-down"></i>
+          </a>
+        </h4>
+      </div>) :
+      (<div className="dashboard__panel">
+          <h4 className="d-flex justify-content-center dashboard__panel__collapsed">
+            <a onClick={() => splitCollapseAction()}>
+              <Tooltip title={ t('DASHBOARD_UNASSIGNED_TOURS') }>
+                <span>({ unassignedToursCount })</span><br />
+                <i className="fa fa-caret-right"></i>
+              </Tooltip>
+            </a>
+          </h4>
+        </div>
+      )
+    }
+  </>
+}
+
+
+export const UnassignedTours = ({ splitCollapseAction }) => {
 
   const { t } = useTranslation()
   const groups = useSelector(selectGroups)
@@ -42,6 +73,9 @@ export const UnassignedTours = () => {
   const dispatch = useDispatch()
   const isTourDragging = useSelector(selectIsTourDragging)
   const unassignedToursOrGroupsOrderIds = useSelector(selectOrderOfUnassignedToursAndGroups)
+  const toursEnabled = useSelector(selectAreToursEnabled)
+  const splitDirection = useSelector(selectSplitDirection)
+
 
   useEffect(() => {
     const itemIds = [...groups.map(t => t['@id']), ...tours.map(t => t['@id'])]
@@ -56,10 +90,21 @@ export const UnassignedTours = () => {
 
   }, [tours, groups]);
 
+  if (!toursEnabled) {
+    return <CollapsedUnassignedTours unassignedToursCount={tours.length} splitCollapseAction={ splitCollapseAction } />
+  }
+
   return (
     <div className="dashboard__panel">
       <h4 className="d-flex justify-content-between">
-        <span>{ t('DASHBOARD_UNASSIGNED_TOURS') }</span>
+        <a onClick={() => splitCollapseAction()}>
+            <span className="mr-2">{ t('DASHBOARD_UNASSIGNED_TOURS') }</span>
+            <span className="mr-2">({ tours.length + groups.length })</span>
+            { splitDirection == 'vertical' ?
+                <i className="fa fa-caret-up"></i>
+              : <i className="fa fa-caret-left"></i>
+            }
+          </a>
         <span>
           <Buttons />
         </span>
@@ -84,7 +129,7 @@ export const UnassignedTours = () => {
                 const item = items.find(i => i['@id'] === itemId)
                 if (item && itemId.startsWith('/api/task_groups')) {
                   return (
-                    <Draggable key={ `group-${item.id}` } draggableId={ `group:${item.id}` } index={ index }>
+                    <Draggable key={ `group-${itemId}` } draggableId={ `group:${itemId}` } index={ index }>
                       {(provided) => (
                         <div
                           ref={ provided.innerRef }
@@ -92,7 +137,7 @@ export const UnassignedTours = () => {
                           { ...provided.dragHandleProps }
                         >
                           <TaskGroup
-                            key={ item.id }
+                            key={ itemId }
                             group={ item }
                             tasks={ item.tasks }
                             onConfirmDelete={ () => dispatch(deleteGroup(item)) }
@@ -102,7 +147,7 @@ export const UnassignedTours = () => {
                     </Draggable>
                   )
                 } else if (item && itemId.startsWith('/api/tours')) {
-                  return <Tour key={ item['@id'] } tour={ item } draggableIndex={ index } />
+                  return <Tour key={ item['@id'] } tourId={ itemId } draggableIndex={ index } />
                 }
               })}
               { provided.placeholder }

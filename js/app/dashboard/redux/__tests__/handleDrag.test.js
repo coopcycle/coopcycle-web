@@ -13,7 +13,7 @@ describe('handleDragEnd', () => {
 
       let result = {
         draggableId: 'tour:/api/tours/114',
-        source: {droppableId: 'unassigned:'}, destination: {droppableId: 'assigned:admin', index: 0},
+        source: {droppableId: 'unassigned_tours'}, destination: {droppableId: 'assigned:admin', index: 0},
       }
 
       handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
@@ -22,14 +22,10 @@ describe('handleDragEnd', () => {
 
       expect(mockModifyTaskList).toHaveBeenLastCalledWith(
         "admin",
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/733' }),
-          expect.objectContaining({"@id": '/api/tasks/732'}),
-          expect.objectContaining({"@id": '/api/tasks/729'}),
-          expect.objectContaining({"@id": '/api/tasks/730'}),
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-          expect.objectContaining({"@id": '/api/tasks/727'})
-        ])
+        [
+          '/api/tours/114',
+          '/api/tours/111',
+        ]
       )
 
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
@@ -43,7 +39,7 @@ describe('handleDragEnd', () => {
 
       let result = {
         draggableId: 'tour:/api/tours/114',
-        source: {droppableId: 'unassigned:'},
+        source: {droppableId: 'unassigned_tours'},
         destination: {droppableId: 'assigned:admin', index: 1}
       }
 
@@ -51,15 +47,72 @@ describe('handleDragEnd', () => {
 
       expect(mockModifyTaskList).toHaveBeenLastCalledWith(
         "admin",
+        [
+          '/api/tours/111',
+          '/api/tours/114',
+        ]
+      )
+      expect(mockModifyTour).toHaveBeenCalledTimes(0)
+
+    })
+
+    it ('should assign a tour at the beginning of a tasklist then reorder', () => {
+      const dispatch = jest.fn(),
+        mockModifyTaskList = jest.fn(),
+        mockModifyTour = jest.fn()
+
+      let result
+
+      result = {
+        draggableId: 'tour:/api/tours/114',
+        source: {droppableId: 'unassigned_tours'}, destination: {droppableId: 'assigned:admin', index: 0},
+      }
+
+      handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
+
+      result = {
+        draggableId: 'tour:/api/tours/114',
+        source: {droppableId: 'assigned:admin'}, destination: {droppableId: 'assigned:admin', index: 1},
+      }
+
+      handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
+
+      expect(mockModifyTaskList).toHaveBeenCalledTimes(2)
+
+      expect(mockModifyTaskList).toHaveBeenLastCalledWith(
+        "admin",
+        [
+          '/api/tours/111',
+          '/api/tours/114',
+        ]
+      )
+
+      expect(mockModifyTour).toHaveBeenCalledTimes(0)
+
+    })
+
+    it ('should unassign a tour', () => {
+      const dispatch = jest.fn(),
+        mockModifyTaskList = jest.fn(),
+        mockModifyTour = jest.fn(),
+        mockUnassignTasks = jest.fn()
+
+      let result = {
+        draggableId: 'tour:/api/tours/111',
+        source: {droppableId: 'assigned:admin'},
+        destination: {droppableId: 'unassigned_tours', index: 1}
+      }
+
+      handleDragEnd(result, mockModifyTaskList, mockModifyTour, mockUnassignTasks)(dispatch, store.getState)
+
+      expect(mockUnassignTasks).toHaveBeenLastCalledWith(
+        "admin",
         expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/729'}),
-          expect.objectContaining({"@id": '/api/tasks/730'}),
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-          expect.objectContaining({"@id": '/api/tasks/727'}),
-          expect.objectContaining({"@id": '/api/tasks/733' }),
-          expect.objectContaining({"@id": '/api/tasks/732'}),
+          expect.objectContaining({"@id": '/api/tours/111'}),
         ])
       )
+
+      expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
 
     })
@@ -70,7 +123,7 @@ describe('handleDragEnd', () => {
         mockModifyTour = jest.fn()
 
       let result = {
-        draggableId: 'group:23',
+        draggableId: 'group:/api/task_groups/23',
         source: {droppableId: 'unassigned:'}, destination: {droppableId: 'assigned:admin', index: 1}
       }
 
@@ -78,14 +131,10 @@ describe('handleDragEnd', () => {
 
       expect(mockModifyTaskList).toHaveBeenLastCalledWith(
         "admin",
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/729'}),
-          expect.objectContaining({"@id": '/api/tasks/730'}),
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-          expect.objectContaining({"@id": '/api/tasks/727'}),
-          expect.objectContaining(
-            {"@id": '/api/tasks/736', 'group': expect.objectContaining({"@id": "/api/task_groups/23"})})
-        ])
+        [
+          '/api/tours/111',
+          '/api/tasks/736'
+        ]
       )
       expect(mockModifyTour).toHaveBeenCalledTimes(0)
 
@@ -104,30 +153,19 @@ describe('handleDragEnd', () => {
 
       handleDragEnd(result, mockModifyTaskList, mockModifyTour)(dispatch, store.getState)
 
-      expect(mockModifyTaskList).toHaveBeenCalledTimes(1)
-      expect(mockModifyTaskList).toHaveBeenCalledWith(
-        "admin",
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/729'}),
-          expect.objectContaining({"@id": '/api/tasks/734'}),
-          expect.objectContaining({"@id": '/api/tasks/735'}),
-          expect.objectContaining({"@id": '/api/tasks/730'}),
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-          expect.objectContaining({"@id": '/api/tasks/727'}),
-        ])
-      )
+      expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
 
       expect(mockModifyTour).toHaveBeenCalledTimes(1)
       expect(mockModifyTour).toHaveBeenLastCalledWith(
         expect.objectContaining({'@id': '/api/tours/111'}),
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/729'}),
-          expect.objectContaining({"@id": '/api/tasks/734'}),
-          expect.objectContaining({"@id": '/api/tasks/735'}),
-          expect.objectContaining({"@id": '/api/tasks/730'}),
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-          expect.objectContaining({"@id": '/api/tasks/727'}),
-        ])
+        [
+          '/api/tasks/729',
+          '/api/tasks/734',
+          '/api/tasks/735',
+          '/api/tasks/730',
+          '/api/tasks/731',
+          '/api/tasks/727',
+        ]
       )
 
     })
@@ -147,23 +185,16 @@ describe('handleDragEnd', () => {
       handleDragEnd(result, mockModifyTaskList, mockModifyTour, mockUnassignTasks, mockRemoveTasksFromTour)(dispatch, store.getState)
 
       expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
-      expect(mockUnassignTasks).toHaveBeenCalledTimes(1)
-
-      expect(mockUnassignTasks).toHaveBeenCalledWith(
-        "admin",
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-        ])
-      )
 
       expect(mockModifyTour).toHaveBeenCalledTimes(1)
       expect(mockModifyTour).toHaveBeenCalledWith(
         expect.objectContaining({'@id': '/api/tours/114'}),
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/732'}),
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-          expect.objectContaining({"@id": '/api/tasks/733'}),
-        ])
+        [
+          '/api/tasks/733',
+          '/api/tasks/730', // linked task moving together
+          '/api/tasks/731',
+          '/api/tasks/732',
+        ]
       )
 
       expect(mockRemoveTasksFromTour).toHaveBeenCalledTimes(1)
@@ -191,28 +222,18 @@ describe('handleDragEnd', () => {
 
       handleDragEnd(result, mockModifyTaskList, mockModifyTour, mockUnassignTasks, mockRemoveTasksFromTour)(dispatch, store.getState)
 
-      expect(mockModifyTaskList).toHaveBeenCalledTimes(1)
-      expect(mockModifyTaskList).toHaveBeenCalledWith(
-        "admin",
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/729'}),
-          expect.objectContaining({"@id": '/api/tasks/733'}),
-          expect.objectContaining({"@id": '/api/tasks/730'}),
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-          expect.objectContaining({"@id": '/api/tasks/727'}),
-        ])
-      )
+      expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
 
       expect(mockModifyTour).toHaveBeenCalledTimes(1)
       expect(mockModifyTour).toHaveBeenLastCalledWith(
         expect.objectContaining({'@id': '/api/tours/111'}),
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/729'}),
-          expect.objectContaining({"@id": '/api/tasks/733'}),
-          expect.objectContaining({"@id": '/api/tasks/730'}),
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-          expect.objectContaining({"@id": '/api/tasks/727'}),
-        ])
+        [
+          '/api/tasks/729',
+          '/api/tasks/733',
+          '/api/tasks/730',
+          '/api/tasks/731',
+          '/api/tasks/727',
+        ]
       )
 
       expect(mockRemoveTasksFromTour).toHaveBeenCalledWith(
@@ -223,7 +244,7 @@ describe('handleDragEnd', () => {
       )
     })
 
-    it ('should move unassigned tasks of the same order when moving to tour', async () => {
+    it ('should move unassigned tasks in the same order they are in the unassigned tasks panel when moving to tour', async () => {
       const dispatch = jest.fn(),
         mockModifyTaskList = jest.fn(),
         mockModifyTour = jest.fn()
@@ -238,17 +259,17 @@ describe('handleDragEnd', () => {
       expect(mockModifyTour).toHaveBeenCalledTimes(1)
       expect(mockModifyTour).toHaveBeenLastCalledWith(
         expect.objectContaining({'@id': '/api/tours/114'}),
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/733'}),
-          expect.objectContaining({"@id": '/api/tasks/737'}),
-          expect.objectContaining({"@id": '/api/tasks/738'}),
-          expect.objectContaining({"@id": '/api/tasks/732'})
-        ])
+        [
+          '/api/tasks/733',
+          '/api/tasks/737',
+          '/api/tasks/738',
+          '/api/tasks/732'
+        ]
       )
       expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
     })
 
-    it ('should move unassigned tasks in the order they are in the unassigned tasks panel', async () => {
+    it ('should move unassigned tasks in the order they are in the unassigned tasks panel when they were reordered', async () => {
 
       // revert order of tasks in unassigned tasks compared to previous test
       store.dispatch(insertInUnassignedTasks({tasksToInsert: [{'@id': '/api/tasks/738'}], index: 1}))
@@ -268,12 +289,12 @@ describe('handleDragEnd', () => {
       expect(mockModifyTour).toHaveBeenCalledTimes(1)
       expect(mockModifyTour).toHaveBeenLastCalledWith(
         expect.objectContaining({'@id': '/api/tours/114'}),
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/733'}),
-          expect.objectContaining({"@id": '/api/tasks/738'}), // reverted compare to previous test
-          expect.objectContaining({"@id": '/api/tasks/737'}),
-          expect.objectContaining({"@id": '/api/tasks/732'})
-        ])
+        [
+          '/api/tasks/733',
+          '/api/tasks/738', // reverted compare to previous test
+          '/api/tasks/737',
+          '/api/tasks/732'
+        ]
       )
       expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
     })
@@ -295,14 +316,11 @@ describe('handleDragEnd', () => {
 
       expect(mockModifyTaskList).toHaveBeenCalledWith(
         "admin",
-        expect.arrayContaining([
-          expect.objectContaining({"@id": '/api/tasks/733'}),
-          expect.objectContaining({"@id": '/api/tasks/732'}),
-          expect.objectContaining({"@id": '/api/tasks/729'}),
-          expect.objectContaining({"@id": '/api/tasks/730'}),
-          expect.objectContaining({"@id": '/api/tasks/731'}),
-          expect.objectContaining({"@id": '/api/tasks/727'}),
-        ])
+        [
+         '/api/tasks/733',
+         '/api/tasks/732',
+         '/api/tours/111'
+        ]
       )
     })
   })

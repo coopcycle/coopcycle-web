@@ -17,24 +17,14 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    private $normalizer;
-    private $iriConverter;
-
     public function __construct(
-        ItemNormalizer $normalizer,
-        IriConverterInterface $iriConverter,
-        TagManager $tagManager,
-        UserManagerInterface $userManager,
-        Geocoder $geocoder,
-        EntityManagerInterface $entityManager)
-    {
-        $this->normalizer = $normalizer;
-        $this->iriConverter = $iriConverter;
-        $this->tagManager = $tagManager;
-        $this->userManager = $userManager;
-        $this->geocoder = $geocoder;
-        $this->entityManager = $entityManager;
-    }
+        private ItemNormalizer $normalizer,
+        private IriConverterInterface $iriConverter,
+        private TagManager $tagManager,
+        private UserManagerInterface $userManager,
+        private Geocoder $geocoder,
+        private EntityManagerInterface $entityManager)
+    {}
 
     public function normalize($object, $format = null, array $context = array())
     {
@@ -82,15 +72,18 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             }
         }
 
-        if ($object->isPickup()) {
+        if (!is_null($object->getPrefetchedPackagesAndWeight())) {
+            $data['packages'] = !is_null($object->getPrefetchedPackagesAndWeight()['packages']) ? $object->getPrefetchedPackagesAndWeight()['packages'] : [];
+            $data['weight'] = $object->getPrefetchedPackagesAndWeight()['weight'];
+        } else if ($object->isPickup()) {
             $delivery = $object->getDelivery();
 
             if (null !== $delivery) {
                 $deliveryId = $delivery->getId();
 
                 $qb =  $this->entityManager
-                ->getRepository(Task::class)
-                ->createQueryBuilder('t');
+                    ->getRepository(Task::class)
+                    ->createQueryBuilder('t');
 
                 $query = $qb
                     ->select('p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity')

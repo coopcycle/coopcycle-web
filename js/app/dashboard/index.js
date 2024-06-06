@@ -16,12 +16,12 @@ import Navbar from './components/Navbar'
 import Modals from './components/Modals'
 import { updateRightPanelSize } from './redux/actions'
 import { recurrenceRulesAdapter } from './redux/selectors'
-import { initialState as settingsInitialState } from './redux/settingsReducers'
+import { initialState as settingsInitialState, defaultFilters } from './redux/settingsReducers'
 
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
-import { taskListUtils, taskAdapter, taskListAdapter, tourAdapter } from '../coopcycle-frontend-js/logistics/redux'
+import { taskAdapter, taskListAdapter, tourAdapter } from '../coopcycle-frontend-js/logistics/redux'
 import _ from 'lodash'
 import axios from 'axios'
 
@@ -38,9 +38,9 @@ async function start() {
 
   let date = moment(dashboardEl.dataset.date)
 
-  const tasksRequest = axios.create({ baseURL: baseUrl }).get(`/api/tasks?date=${date.format('YYYY-MM-DD')}`, { headers: headers})
-  const tasksListsRequest = axios.create({ baseURL: baseUrl }).get(`/api/task_lists?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
-  const toursRequest = axios.create({ baseURL: baseUrl }).get(`/api/tours?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
+  const tasksRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_tasks_get_collection') }?date=${date.format('YYYY-MM-DD')}`, { headers: headers})
+  const tasksListsRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_task_lists_v2_collection') }?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
+  const toursRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_tours_get_collection') }?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
 
   let allTasks
   let taskLists
@@ -52,10 +52,6 @@ async function start() {
     taskLists = taskListRes.data['hydra:member']
     tours = toursRes.data['hydra:member']
   })
-
-  // normalize data, keep only task ids, instead of the whole objects
-  taskLists = taskLists.map(taskList => taskListUtils.replaceTasksWithIds(taskList))
-  tours = tours.map(tour => taskListUtils.replaceTasksWithIds(tour))
 
   const preloadedPositions = JSON.parse(dashboardEl.dataset.positions)
   const positions = preloadedPositions.map(pos => ({
@@ -106,12 +102,13 @@ async function start() {
     settings: settingsInitialState,
   }
 
-  const persistedFilters = window.localStorage.getItem("cpccl__dshbd__fltrs")
+  const persistedFilters = JSON.parse(window.localStorage.getItem("cpccl__dshbd__fltrs"))
+  const initialFilters = {...persistedFilters, ...defaultFilters}
   if (persistedFilters) {
     preloadedState = {
       ...preloadedState,
       settings: {
-        filters: JSON.parse(persistedFilters)
+        filters: initialFilters
       }
     }
   }
@@ -127,7 +124,7 @@ async function start() {
     }
   }
 
-  const persistedUseAvatarColors = window.sessionStorage.getItem(`use_avatar_colors`)
+  const persistedUseAvatarColors = window.sessionStorage.getItem(`use_avatar_colors`) || true
   if (persistedUseAvatarColors) {
     preloadedState = {
       ...preloadedState,
@@ -138,7 +135,7 @@ async function start() {
     }
   }
 
-  const persistedToursEnabled = window.sessionStorage.getItem(`tours_enabled`)
+  const persistedToursEnabled = window.localStorage.getItem(`cpccl__dshbd__tours_enabled`)
   if (persistedToursEnabled) {
     preloadedState = {
       ...preloadedState,
@@ -151,7 +148,7 @@ async function start() {
 
   // the empty tour panels are initially open
   let expandedToursIds = []
-  tours.forEach((tour) => {if (tour.itemIds.length == 0) {expandedToursIds.push(tour['@id'])}})
+  tours.forEach((tour) => {if (tour.items.length == 0) {expandedToursIds.push(tour['@id'])}})
 
   _.merge(preloadedState, {
     logistics: {

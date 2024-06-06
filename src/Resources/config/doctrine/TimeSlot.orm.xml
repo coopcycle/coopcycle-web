@@ -11,7 +11,7 @@
         <option name="default">t</option>
       </options>
     </field>
-    <field name="openingHours" type="json_array" column="opening_hours" nullable="true"/>
+    <field name="openingHours" type="json" column="opening_hours" nullable="true"/>
     <field name="priorNotice" type="string" column="prior_notice" nullable="true"/>
     <field name="sameDayCutoff" type="string" length="5" column="same_day_cutoff" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">

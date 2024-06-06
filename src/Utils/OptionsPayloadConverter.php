@@ -6,10 +6,8 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 class OptionsPayloadConverter
 {
-    public function __construct(RepositoryInterface $productOptionValueRepository)
-    {
-        $this->productOptionValueRepository = $productOptionValueRepository;
-    }
+    public function __construct(private RepositoryInterface $productOptionValueRepository)
+    {}
 
     public function convert($product, array $options): \SplObjectStorage
     {

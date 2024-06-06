@@ -12,9 +12,9 @@ class LoopeatOrderDetails
     private $id;
     private $order;
     private $orderId;
-    private $returns = [];
-    private $deliver = [];
-    private $pickup = [];
+    private array $returns = [];
+    private array $deliver = [];
+    private array $pickup = [];
 
     /**
      * @return mixed

@@ -239,12 +239,12 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * The roles needed to be able to manage Stripe Connect.
      */
-    protected $stripeConnectRoles = ['ROLE_ADMIN'];
+    protected array $stripeConnectRoles = ['ROLE_ADMIN'];
 
     /**
      * The roles needed to be able to manage Mercadopago connect.
      */
-    protected $mercadopagoConnectRoles = ['ROLE_ADMIN'];
+    protected array $mercadopagoConnectRoles = ['ROLE_ADMIN'];
 
     protected $preparationTimeRules;
 
@@ -254,7 +254,7 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $featured = false;
 
-    protected $stripePaymentMethods = [];
+    protected array $stripePaymentMethods = [];
 
     protected $mercadopagoAccount;
 

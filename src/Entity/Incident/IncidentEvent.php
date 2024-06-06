@@ -28,7 +28,7 @@ class IncidentEvent
     /**
      * @Groups({"incident"})
      */
-    protected $metadata;
+    protected ?array $metadata;
 
     protected $incident;
 

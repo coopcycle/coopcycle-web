@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class Context
 {
-    public function __construct(RequestStack $requestStack)
+    public function __construct(private RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
     }
