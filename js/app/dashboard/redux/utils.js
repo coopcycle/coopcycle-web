@@ -152,7 +152,7 @@ export const isTaskVisible = (task, filters, date) => {
     }
   }
 
-  if (excludedTags.length > 0) {
+  if (excludedTags && excludedTags.length > 0) {
 
     if (task.tags.length === 0) {
       return true
