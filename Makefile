@@ -13,10 +13,6 @@ osrm:
 	@docker-compose run --rm osrm osrm-partition /data/data.osrm
 	@docker-compose run --rm osrm osrm-customize /data/data.osrm
 
-phpunit:
-	@docker-compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --quiet
-	@docker-compose exec php php vendor/bin/phpunit
-
 behat:
 	@docker-compose exec php php vendor/bin/behat
 
