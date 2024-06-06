@@ -17,8 +17,6 @@ final class Version20180817101639 extends AbstractMigration implements Container
 {
     use ContainerAwareTrait;
 
-    private $orderFactory;
-
     private function createOrder($data)
     {
         $orderFactory = $this->container->get('sylius.factory.order');
