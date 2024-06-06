@@ -1,4 +1,4 @@
-import { ADD_TO_GROUP, ASSIGN_MULTI, ASSIGN_WITH_LINKED_TASKS_MULTI, CANCEL_MULTI, CREATE_DELIVERY, CREATE_GROUP, CREATE_TOUR, MOVE_TO_BOTTOM, MOVE_TO_NEXT_DAY_MULTI, MOVE_TO_NEXT_WORKING_DAY_MULTI, MOVE_TO_TOP, REMOVE_FROM_GROUP, UNASSIGN_MULTI, UNASSIGN_SINGLE, RESCHEDULE, REPORT_INCIDENT, getAvailableActionsForTasks } from '../../components/context-menus/TasksContextMenu'
+import { START_TASKS_MULTI, ADD_TO_GROUP, ASSIGN_MULTI, ASSIGN_WITH_LINKED_TASKS_MULTI, CANCEL_MULTI, CREATE_DELIVERY, CREATE_GROUP, CREATE_TOUR, MOVE_TO_BOTTOM, MOVE_TO_NEXT_DAY_MULTI, MOVE_TO_NEXT_WORKING_DAY_MULTI, MOVE_TO_TOP, REMOVE_FROM_GROUP, UNASSIGN_MULTI, UNASSIGN_SINGLE, RESCHEDULE, REPORT_INCIDENT, getAvailableActionsForTasks } from '../../components/context-menus/TasksContextMenu'
 
 
 describe('updateTask', () => {
@@ -25,7 +25,7 @@ describe('updateTask', () => {
 
         const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
 
-        expect(actions).toStrictEqual([ASSIGN_MULTI, ASSIGN_WITH_LINKED_TASKS_MULTI, CANCEL_MULTI, CREATE_GROUP, CREATE_TOUR, REMOVE_FROM_GROUP, CREATE_DELIVERY, MOVE_TO_NEXT_DAY_MULTI, MOVE_TO_NEXT_WORKING_DAY_MULTI])
+        expect(actions).toStrictEqual([START_TASKS_MULTI, ASSIGN_MULTI, ASSIGN_WITH_LINKED_TASKS_MULTI, CANCEL_MULTI, CREATE_GROUP, CREATE_TOUR, REMOVE_FROM_GROUP, CREATE_DELIVERY, MOVE_TO_NEXT_DAY_MULTI, MOVE_TO_NEXT_WORKING_DAY_MULTI])
 
     })
 
@@ -51,7 +51,7 @@ describe('updateTask', () => {
 
         const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
 
-        expect(actions).toStrictEqual([UNASSIGN_MULTI])
+        expect(actions).toStrictEqual([START_TASKS_MULTI, UNASSIGN_MULTI])
     })
 
     it('should return actions for a task into an unassigned tour', () => {
