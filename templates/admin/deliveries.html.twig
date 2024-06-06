@@ -114,7 +114,7 @@
       'failed': 'exclamation-circle'
     } %}
     <div class="text-right my-2">
-      <div id="import-datepicker"></div>
+      <div id="import-datepicker" data-default-date="{{ import_date|date('Y-m-d') }}"></div>
     </div>
     <table class="table mb-4"
       data-delivery-imports
@@ -227,12 +227,6 @@
 {% block scripts %}
 {{ encore_entry_script_tags('delivery-list') }}
 <script>
-new CoopCycle.DatePicker(document.querySelector('#import-datepicker'), {
-  defaultValue: "{{ import_date|date('Y-m-d') }}",
-  onChange: function(date, dateString) {
-    window.location.href = window.Routing.generate('admin_deliveries', { section: 'imports', date: date.format('YYYY-MM-DD') });
-  }
-});
 $('#stores').on('change', function(e) {
   window.location.href = $(this).val();
 });

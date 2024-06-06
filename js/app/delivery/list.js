@@ -249,3 +249,13 @@ if (deliveryImports) {
     addRedownload(el.querySelector('[data-delivery-import-redownload]'))
   })
 }
+
+const deliveryImportsDatePicker = document.querySelector('#import-datepicker')
+if (deliveryImportsDatePicker) {
+  new DatePicker(deliveryImportsDatePicker, {
+    defaultValue: deliveryImportsDatePicker.dataset.defaultDate,
+    onChange: function(date) {
+      window.location.href = window.Routing.generate('admin_deliveries', { section: 'imports', date: date.format('YYYY-MM-DD') });
+    }
+  });
+}
