@@ -43,6 +43,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
     NAD+MS+0000011:5+DBSchenker Testing Inc.'
     UNS+D'
     RFF+UNC+JOY0123456789'
+    RSJ+MS+AAR+CFM'
+    RSJ+MS+MLV+CFM'
     RSJ+MS+LIV+CFM'
     NAD+MR+4447190000:5+Coopcycle Testing Inc.'
     NAD+MS+0000011:5+DBSchenker Testing Inc.'
