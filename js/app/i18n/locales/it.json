@@ -300,6 +300,17 @@
         "ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION": "Impossibile eliminare. Scollega questa tariffa dai negozi, ristoranti o moduli di consegna a cui potrebbe essere applicata.",
         "SHOW_DETAILS": "Mostra dettagli",
         "ADMIN_NO_APPLICATIONS": "Non ancora in uso",
-        "ADMIN_APPLIED_TO": "Applicato a {{count}} elemento(i)"
+        "ADMIN_APPLIED_TO": "Applicato a {{count}} elemento(i)",
+        "ADMIN_DASHBOARD_START_TASKS_MULTI": "Avvia {{count}} compito(i)",
+        "TRANSPORTER_MESSAGE_TYPE_SCONTR": "Compito importato dal trasportatore",
+        "TRANSPORTER_MESSAGE_TYPE_REPORT": "Rapporto sullo stato del compito",
+        "TRANSPORTER_SITUATION_AAR": "Al molo",
+        "TRANSPORTER_SITUATION_RAQ": "Rimanendo al molo",
+        "TRANSPORTER_SITUATION_MLV": "In consegna",
+        "TRANSPORTER_SITUATION_LIV": "Consegnato",
+        "TRANSPORTER_SITUATION_REN": "Rifiutato",
+        "TRANSPORTER_SITUATION_RST": "Destinatario non consegnato",
+        "TRANSPORTER_SHOW_EDI": "Vedi EDI",
+        "TRANSPORTER_SHOW_PODS": "Vedi PODs"
     }
 }

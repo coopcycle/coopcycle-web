@@ -120,6 +120,17 @@
         "ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION": "Konnte nicht gelöscht werden. Bitte trennen Sie diese Preisgestaltung von den Geschäften, Restaurants oder Lieferformularen, auf die sie zutreffen könnte.",
         "SHOW_DETAILS": "Details anzeigen",
         "ADMIN_NO_APPLICATIONS": "Noch nicht in Benutzung",
-        "ADMIN_APPLIED_TO": "Angewendet auf {{count}} Element(e)"
+        "ADMIN_APPLIED_TO": "Angewendet auf {{count}} Element(e)",
+        "ADMIN_DASHBOARD_START_TASKS_MULTI": "{{count}} Aufgabe(n) starten",
+        "TRANSPORTER_MESSAGE_TYPE_SCONTR": "Aufgabe vom Transporteur importiert",
+        "TRANSPORTER_MESSAGE_TYPE_REPORT": "Aufgabenstatusbericht",
+        "TRANSPORTER_SITUATION_AAR": "Am Dock",
+        "TRANSPORTER_SITUATION_RAQ": "Verbleibend am Dock",
+        "TRANSPORTER_SITUATION_MLV": "In Zustellung",
+        "TRANSPORTER_SITUATION_LIV": "Zugestellt",
+        "TRANSPORTER_SITUATION_REN": "Abgelehnt",
+        "TRANSPORTER_SITUATION_RST": "Empfänger nicht zugestellt",
+        "TRANSPORTER_SHOW_EDI": "EDI anzeigen",
+        "TRANSPORTER_SHOW_PODS": "PODs anzeigen"
     }
 }

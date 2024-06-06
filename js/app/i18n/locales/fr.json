@@ -452,6 +452,7 @@
         "SHOW_DETAILS": "Afficher les détails",
         "ADMIN_NO_APPLICATIONS": "Pas encore utilisé",
         "ADMIN_APPLIED_TO": "Appliqué à {{count}} élément(s)",
+        "ADMIN_DASHBOARD_START_TASKS_MULTI": "Démarrer {{count}} tâche(s)",
         "TRANSPORTER_MESSAGE_TYPE_SCONTR": "Tâche importée depuis le transporteur",
         "TRANSPORTER_MESSAGE_TYPE_REPORT": "Rapport de l'état de la tâche",
         "TRANSPORTER_SITUATION_AAR": "À quai",
@@ -460,7 +461,7 @@
         "TRANSPORTER_SITUATION_LIV": "Livré",
         "TRANSPORTER_SITUATION_REN": "Refusé",
         "TRANSPORTER_SITUATION_RST": "Destinataire non livré",
-        "TRANSPORTER_SHOW_EDI": "Voir edi",
-        "TRANSPORTER_SHOW_PODS": "Voir les pods"
+        "TRANSPORTER_SHOW_EDI": "Voir EDI",
+        "TRANSPORTER_SHOW_PODS": "Voir les PODs"
     }
 }
