@@ -7,6 +7,7 @@ parameters:
     level: 4
     paths:
         - src
+        - tests/Behat/FeatureContext.php
     excludePaths:
         # Class AppBundle\Api\DataProvider\RestaurantCollectionDataProvider extends final class ApiPlatform\Core\Bridge\Doctrine\Orm\CollectionDataProvider
         - src/Api/DataProvider/RestaurantCollectionDataProvider
