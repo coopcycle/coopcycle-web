@@ -10,7 +10,7 @@ import {
   SET_TOURS_ENABLED,
 } from './actions'
 
-const defaultFilters = {
+export const defaultFilters = {
   showFinishedTasks: true,
   showCancelledTasks: false,
   showIncidentReportedTasks: true,
