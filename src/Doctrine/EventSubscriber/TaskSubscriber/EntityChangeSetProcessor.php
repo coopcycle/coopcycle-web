@@ -6,6 +6,8 @@ use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList\Item;
+use AppBundle\Entity\Tour;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use SimpleBus\Message\Recorder\ContainsRecordedMessages;
@@ -17,14 +19,17 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
     private $taskListProvider;
     private $logger;
+    private $tourRepository;
 
     public function __construct(
         TaskListProvider $taskListProvider,
         LoggerInterface $logger = null,
+        EntityManagerInterface $entityManager
     )
     {
         $this->taskListProvider = $taskListProvider;
         $this->logger = $logger ? $logger : new NullLogger();
+        $this->tourRepository = $entityManager->getRepository(Tour::class);
     }
 
     public function process(Task $task, array $entityChangeSet)
@@ -66,10 +71,11 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                     $oldTaskList->removeTask($task);
                 }
 
-                if (!$taskList->containsTask($task)) {
+                // sync $task.assignedTo info TO tasklist (see explanation above)
+                // task in a tour does not need to be added to tasklist
+                if (!$this->tourRepository->findOneByTask($task) && !$taskList->containsTask($task)) {
                     $this->logger->debug(sprintf('Adding Task#%d to TaskList', $task->getId()));
 
-                    // sync $task.assignedTo info to tasklist (see explanation above)
                     $item = new Item();
                     $item->setTask($task);
                     $item->setPosition($taskList->getItems()->count());
