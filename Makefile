@@ -13,9 +13,6 @@ osrm:
 	@docker-compose run --rm osrm osrm-partition /data/data.osrm
 	@docker-compose run --rm osrm osrm-customize /data/data.osrm
 
-behat:
-	@docker-compose exec php php vendor/bin/behat
-
 jest:
 	@docker-compose exec -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm run jest
 
