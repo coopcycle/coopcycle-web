@@ -18,6 +18,7 @@ use Symfony\Component\Validator\ValidatorBuilder;
 class OrderValidator extends ConstraintValidator
 {
     private $priceFormatter;
+    private $fulfillmentMethodResolver;
 
     public function __construct(PriceFormatter $priceFormatter, FulfillmentMethodResolver $fulfillmentMethodResolver)
     {

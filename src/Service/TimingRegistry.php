@@ -13,16 +13,11 @@ use Symfony\Contracts\Cache\ItemInterface;
 class TimingRegistry
 {
     public function __construct(
-        EntityManagerInterface $entityManager,
-        OrderFactory $orderFactory,
-        OrderTimeHelper $orderTimeHelper,
-        CacheInterface $projectCache)
-    {
-        $this->entityManager = $entityManager;
-        $this->orderFactory = $orderFactory;
-        $this->orderTimeHelper = $orderTimeHelper;
-        $this->projectCache = $projectCache;
-    }
+        private EntityManagerInterface $entityManager,
+        private OrderFactory $orderFactory,
+        private OrderTimeHelper $orderTimeHelper,
+        private CacheInterface $projectCache)
+    {}
 
     public function getAllFulfilmentMethodsForObject($restaurant)
     {
