@@ -7,7 +7,6 @@ import {
   UploadOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
-import classNames from "classnames";
 
 function ediDot(edi) {
   const style = { fontSize: "20px" };
