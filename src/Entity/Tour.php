@@ -56,6 +56,9 @@ class Tour extends TaskCollection implements TaskCollectionInterface
 
     protected $id;
 
+    /**
+     * @var Item
+     */
     private $taskListItem;
 
     /**
@@ -141,5 +144,19 @@ class Tour extends TaskCollection implements TaskCollectionInterface
     public function getTaskListItem()
     {
         return $this->taskListItem;
+    }
+
+    /**
+     * Set the value of taskListItem
+     *
+     * @param  Item  $taskListItem
+     *
+     * @return  self
+     */
+    public function setTaskListItem(Item $taskListItem)
+    {
+        $this->taskListItem = $taskListItem;
+
+        return $this;
     }
 }

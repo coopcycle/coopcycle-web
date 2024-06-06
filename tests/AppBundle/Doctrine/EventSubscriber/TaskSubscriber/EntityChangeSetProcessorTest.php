@@ -8,6 +8,9 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
+use AppBundle\Entity\Tour;
+use AppBundle\Entity\TourRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 
@@ -17,9 +20,19 @@ class EntityChangeSetProcessorTest extends TestCase
 
     private $taskListProvider;
 
+    private $tourRepository;
+
+    private $entityManager;
+
     public function setUp(): void
     {
         $this->taskListProvider = $this->prophesize(TaskListProvider::class);
+
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+        $this->tourRepository = $this->prophesize(TourRepository::class);
+        $this->entityManager
+            ->getRepository(Tour::class)
+            ->willReturn($this->tourRepository->reveal());
     }
 
     public function testTaskAssignmentHasNotChanged()
@@ -37,7 +50,7 @@ class EntityChangeSetProcessorTest extends TestCase
 
         $this->assertFalse($taskList->containsTask($task));
 
-        $processor = new EntityChangeSetProcessor($this->taskListProvider->reveal());
+        $processor = new EntityChangeSetProcessor($this->taskListProvider->reveal(), null, $this->entityManager->reveal());
         $processor->process($task, []);
 
         $this->assertCount(0, $processor->recordedMessages());
@@ -58,7 +71,7 @@ class EntityChangeSetProcessorTest extends TestCase
 
         $this->assertFalse($taskList->containsTask($task));
 
-        $processor = new EntityChangeSetProcessor($this->taskListProvider->reveal());
+        $processor = new EntityChangeSetProcessor($this->taskListProvider->reveal(), null, $this->entityManager->reveal());
         $processor->process($task, [
             'assignedTo' => [ null, $user ]
         ]);
@@ -100,7 +113,7 @@ class EntityChangeSetProcessorTest extends TestCase
         $this->assertTrue($taskListForBob->containsTask($task));
         $this->assertFalse($taskListForClaire->containsTask($task));
 
-        $processor = new EntityChangeSetProcessor($this->taskListProvider->reveal());
+        $processor = new EntityChangeSetProcessor($this->taskListProvider->reveal(), null, $this->entityManager->reveal());
         $processor->process($task, [
             'assignedTo' => [ $bob, $claire ]
         ]);
@@ -132,7 +145,7 @@ class EntityChangeSetProcessorTest extends TestCase
 
         $this->assertTrue($taskListForBob->containsTask($task));
 
-        $processor = new EntityChangeSetProcessor($this->taskListProvider->reveal());
+        $processor = new EntityChangeSetProcessor($this->taskListProvider->reveal(), null, $this->entityManager->reveal());
         $processor->process($task, [
             'assignedTo' => [ $bob, null ]
         ]);

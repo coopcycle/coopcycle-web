@@ -34,10 +34,5 @@ class PublishLiveUpdate
         } else {
             $this->liveUpdates->toAdmins($event);
         }
-
-        if ($event instanceof TaskListUpdatedv2) {
-            $this->liveUpdates->toUsers([ $user ], $event);
-            $this->liveUpdates->toAdmins($event);
-        }
     }
 }

@@ -74,16 +74,19 @@ class TourSubscriber implements EventSubscriber
 
         $task = $taskCollectionItem->getTask();
         $item = $taskCollection->getTaskListItem();
-        $tourIsAssigned = !is_null($item);
 
-        if ($tourIsAssigned && !$removed && $task->isAssigned() !== $item->getParent()->getCourier()) { // tour is assigned and the item belongs to it
-            $item = $taskCollection->getTaskListItem();
-            $taskList = $item->getParent();
-            $this->logger->debug(sprintf('Tour modification: Task #%d needs to be assigned', $taskCollectionItem->getTask()->getId()));
-            $task->assignTo($taskList->getCourier(), $taskList->getDate());
-        } else if ($tourIsAssigned && $removed && $task->isAssigned()) { // tour is assigned and the item was removed
-            $this->logger->debug(sprintf('Tour modification: Task #%d needs to be unassigned', $taskCollectionItem->getTask()->getId()));
-            $taskCollectionItem->getTask()->unassign();
+        // phpstan struggles with "populating" the inversed side of the one-one - ref https://github.com/phpstan/phpstan-doctrine/issues/244
+        /** @phpstan-ignore function.impossibleType */
+        if (!is_null($item)) {
+            if (!$removed && $task->isAssigned() !== $item->getParent()->getCourier()) { // tour is assigned and the item belongs to it
+                $item = $taskCollection->getTaskListItem();
+                $taskList = $item->getParent();
+                $this->logger->debug(sprintf('Tour modification: Task #%d needs to be assigned', $taskCollectionItem->getTask()->getId()));
+                $task->assignTo($taskList->getCourier(), $taskList->getDate());
+            } else if ($removed && $task->isAssigned()) { // tour is assigned and the item was removed
+                $this->logger->debug(sprintf('Tour modification: Task #%d needs to be unassigned', $taskCollectionItem->getTask()->getId()));
+                $taskCollectionItem->getTask()->unassign();
+            }
         }
     }
 }
