@@ -47,7 +47,6 @@ class TourSubscriber implements EventSubscriber
         });
 
         foreach ($taskCollectionItems as $taskCollectionItem) {
-
             $taskCollection = $taskCollectionItem->getParent();
 
             // When a TaskCollectionItem has been removed, its parent is NULL.
@@ -61,19 +60,30 @@ class TourSubscriber implements EventSubscriber
             }
 
             if ($taskCollection instanceof Tour) {
-                $this->logger->debug(sprintf('Tour modification: processing TaskCollectionItem #%d', $taskCollectionItem->getId()));
-                if (!$removed && $taskCollection->getTaskListItem()) { // tour is assigned and the item belongs to it
-                    $item = $taskCollection->getTaskListItem();
-                    $taskList = $item->getParent();
-                    $this->logger->debug(sprintf('Tour modification: Task #%d needs to be assigned', $taskCollectionItem->getTask()->getId()));
-                    $taskCollectionItem->getTask()->assignTo($taskList->getCourier(), $taskList->getDate());
-                } else if ($removed && $taskCollection->getTaskListItem()) { // tour is assigned and the item was removed
-                    $this->logger->debug(sprintf('Tour modification: Task #%d needs to be unassigned', $taskCollectionItem->getTask()->getId()));
-                    $taskCollectionItem->getTask()->unassign();
-                }
+                $this->processTourItem($taskCollectionItem, $removed, $taskCollection);
             }
+
         }
 
         $uow->computeChangeSets();
+    }
+
+    private function processTourItem (TaskCollectionItem $taskCollectionItem, bool $removed, Tour $taskCollection) {
+
+        $this->logger->debug(sprintf('Tour modification: processing TaskCollectionItem #%d', $taskCollectionItem->getId()));
+
+        $task = $taskCollectionItem->getTask();
+        $item = $taskCollection->getTaskListItem();
+        $tourIsAssigned = !is_null($item);
+
+        if ($tourIsAssigned && !$removed && $task->isAssigned() !== $item->getParent()->getCourier()) { // tour is assigned and the item belongs to it
+            $item = $taskCollection->getTaskListItem();
+            $taskList = $item->getParent();
+            $this->logger->debug(sprintf('Tour modification: Task #%d needs to be assigned', $taskCollectionItem->getTask()->getId()));
+            $task->assignTo($taskList->getCourier(), $taskList->getDate());
+        } else if ($tourIsAssigned && $removed && $task->isAssigned()) { // tour is assigned and the item was removed
+            $this->logger->debug(sprintf('Tour modification: Task #%d needs to be unassigned', $taskCollectionItem->getTask()->getId()));
+            $taskCollectionItem->getTask()->unassign();
+        }
     }
 }
