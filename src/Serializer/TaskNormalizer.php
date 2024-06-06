@@ -17,24 +17,14 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    private $normalizer;
-    private $iriConverter;
-
     public function __construct(
-        ItemNormalizer $normalizer,
-        IriConverterInterface $iriConverter,
-        TagManager $tagManager,
-        UserManagerInterface $userManager,
-        Geocoder $geocoder,
-        EntityManagerInterface $entityManager)
-    {
-        $this->normalizer = $normalizer;
-        $this->iriConverter = $iriConverter;
-        $this->tagManager = $tagManager;
-        $this->userManager = $userManager;
-        $this->geocoder = $geocoder;
-        $this->entityManager = $entityManager;
-    }
+        private ItemNormalizer $normalizer,
+        private IriConverterInterface $iriConverter,
+        private TagManager $tagManager,
+        private UserManagerInterface $userManager,
+        private Geocoder $geocoder,
+        private EntityManagerInterface $entityManager)
+    {}
 
     public function normalize($object, $format = null, array $context = array())
     {

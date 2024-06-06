@@ -19,6 +19,7 @@ class RestaurantResolver
 
     private $repository;
 
+    private $logger;
 
     private static $routes = [
         'restaurant',
