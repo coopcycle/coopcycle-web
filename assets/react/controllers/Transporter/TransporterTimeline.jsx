@@ -111,6 +111,7 @@ export default function ({ ediMessages }) {
               <a
                 className="mr-3"
                 target="_blank"
+                rel="noreferrer"
                 href={window.Routing.generate("admin_transporter_message", {
                   edi: ediMessage.ediMessage,
                 })}
