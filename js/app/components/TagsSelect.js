@@ -4,6 +4,7 @@ import _ from 'lodash'
 import chroma from 'chroma-js'
 
 import i18n from '../i18n'
+import { findTagFromSlug } from '../dashboard/utils'
 
 const tagAsOption = tag => ({
   ...tag,
@@ -71,7 +72,7 @@ export default (props) => {
 
   if (defaultValue && typeof defaultValue === 'string') {
     const slugs = defaultValue.split(/[ ]+/)
-    defaultValueAsTags = slugs.map(slug => _.find(tags, t => t.slug === slug))
+    defaultValueAsTags = slugs.map(slug => findTagFromSlug(slug))
   }
 
   return (
