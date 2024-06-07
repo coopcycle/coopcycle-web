@@ -13,13 +13,28 @@ export const selectRestaurant = state => state.restaurant
 
 export const selectCart = state => state.cart
 
+export const selectOrderId = state => state.cart.id
+
+export const selectOrderAccessToken = state => state.orderAccessToken
+
 export const selectCartTotal = state => state.cart.total
 
 /**
+ * time range explicitly set by the customer
+ * can be null
+ */
+export const selectCartShippingTimeRange = state => state.cart.shippingTimeRange
+
+/**
+ * Timing options for the current cart
  * if the value is present it means that the customer can order in this restaurant using the existing cart
  */
 export const selectCartTiming = state => state.cartTiming
 
+/**
+ * Timing options for the shown restaurant
+ * might be different from the cartTiming if the customer is browsing different restaurants
+ */
 const selectRestaurantTiming = state => state.restaurantTiming
 
 export const selectCanAddToExistingCart = createSelector(
@@ -52,13 +67,13 @@ export const selectFulfilmentMethod = createSelector(
 
 export const selectFulfilmentTimeRange = createSelector(
   selectCanAddToExistingCart,
-  selectCart,
+  selectCartShippingTimeRange,
   selectCartTiming,
   selectFulfilmentMethod,
   selectAllFulfilmentMethodsForRestaurant,
-  (canAddToExistingCart, cart, cartTiming, fulfilmentMethod, allFulfilmentMethods) => {
+  (canAddToExistingCart, cartShippingTimeRange, cartTiming, fulfilmentMethod, allFulfilmentMethods) => {
     if (canAddToExistingCart) {
-      return cart.shippingTimeRange || cartTiming.range
+      return cartShippingTimeRange || cartTiming.range
     } else if (fulfilmentMethod) {
       return allFulfilmentMethods[fulfilmentMethod]?.range
     } else {
@@ -239,3 +254,5 @@ export const selectReusablePackagingEnabled = createSelector(
 )
 
 export const selectIsTimeRangeChangedModalOpen = state => state.isTimeRangeChangedModalOpen
+
+export const selectIsRestaurantNotAvailableModalOpen = state => state.isRestaurantNotAvailableModalOpen

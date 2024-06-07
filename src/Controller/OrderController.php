@@ -741,6 +741,7 @@ class OrderController extends AbstractController
             'restaurant' => $order->getRestaurant(),
             'times' => $orderTimeHelper->getTimeInfo($order),
             'cart_form' => $cartForm->createView(),
+            'order_access_token' => $this->orderAccessTokenManager->create($order),
             'addresses_normalized' => $this->getUserAddresses(),
             'is_player' => true,
         ]));

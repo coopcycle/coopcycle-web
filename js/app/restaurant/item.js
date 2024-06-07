@@ -12,6 +12,10 @@ import {
   queueAddItem,
   openProductOptionsModal,
   fetchRequest,
+  fetchFailure,
+  openTimeRangeChangedModal,
+  updateCartTiming,
+  openRestaurantNotAvailableModal,
 } from './redux/actions'
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
@@ -31,6 +35,15 @@ import SetGuestCustomerEmailModal from './components/SetGuestCustomerEmailModal'
 import LoopeatModal from './components/LoopeatModal'
 import FulfillmentDetails from './components/Order/FulfillmentDetails'
 import { OrderOverlay, StickyOrder } from './components/Order'
+import {
+  selectCanAddToExistingCart,
+  selectCartShippingTimeRange,
+  selectCartTiming,
+  selectOrderAccessToken,
+  selectOrderId,
+} from './redux/selectors'
+import { getTiming } from '../utils/OrderAPI'
+import moment from 'moment'
 
 window._paq = window._paq || []
 
@@ -74,9 +87,52 @@ function init() {
     })
   })
 
-  $('form[name="cart"]').on('submit', function() {
+  const cartForm = document.querySelector('form[name="cart"]')
+
+  cartForm.addEventListener('submit', async function(event) {
+    event.preventDefault()
+
     setMenuLoading(true)
     store.dispatch(fetchRequest()) // will trigger loading state in some react components
+
+    const canAddToExistingCart = selectCanAddToExistingCart(store.getState())
+
+    if (canAddToExistingCart) {
+      const cartShippingTimeRange = selectCartShippingTimeRange(store.getState())
+      // if the customer has already selected the time range, it will be checked on the server side
+      if (!cartShippingTimeRange) {
+        const displayedTiming = selectCartTiming(store.getState())
+
+        const orderId = selectOrderId(store.getState())
+        const orderAccessToken = selectOrderAccessToken(store.getState())
+
+        const latestTiming = await getTiming(orderId, orderAccessToken)
+        store.dispatch(updateCartTiming(latestTiming))
+
+        if (displayedTiming && displayedTiming.range && latestTiming) {
+          if (latestTiming.range) {
+            const displayedUpperBound = moment(displayedTiming.range[1])
+            const latestLowerBound = moment(latestTiming.range[0])
+
+            let isTimeRangeSignificantlyDifferent = latestLowerBound.diff(displayedUpperBound, 'hours') > 2
+
+            if (isTimeRangeSignificantlyDifferent) {
+              setMenuLoading(false)
+              store.dispatch(fetchFailure()) // will hide loading state in some react components
+              store.dispatch(openTimeRangeChangedModal())
+              return
+            }
+          } else {
+            setMenuLoading(false)
+            store.dispatch(fetchFailure()) // will hide loading state in some react components
+            store.dispatch(openRestaurantNotAvailableModal())
+            return
+          }
+        }
+      }
+    }
+
+    cartForm.submit()
   })
 
   const restaurantDataElement = document.querySelector('#js-restaurant-data')
@@ -86,6 +142,7 @@ function init() {
   const restaurant = JSON.parse(restaurantDataElement.dataset.restaurant)
   const restaurantTiming = JSON.parse(restaurantDataElement.dataset.restaurantTiming)
   const cartTiming = JSON.parse(restaurantDataElement.dataset.cartTiming)
+  const orderAccessToken = restaurantDataElement.dataset.orderAccessToken || null
   const isPlayer = JSON.parse(restaurantDataElement.dataset.isPlayer)
   const isGroupOrdersEnabled = JSON.parse(restaurantDataElement.dataset.isGroupOrdersEnabled)
   const addresses = JSON.parse(addressesDataElement.dataset.addresses)
@@ -130,6 +187,7 @@ function init() {
     addresses,
     restaurantTiming,
     cartTiming,
+    orderAccessToken,
     country: getCountry(),
     isPlayer,
     isGroupOrdersEnabled,

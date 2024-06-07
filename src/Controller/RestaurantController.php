@@ -23,6 +23,7 @@ use AppBundle\Form\Order\CartType;
 use AppBundle\Form\PledgeType;
 use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopEatContextInitializer;
+use AppBundle\Security\OrderAccessTokenManager;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Service\SettingsManager;
@@ -86,17 +87,28 @@ class RestaurantController extends AbstractController
         private EventBus $eventBus,
         protected JWTTokenManagerInterface $JWTTokenManager,
         private TimingRegistry $timingRegistry,
+        private OrderAccessTokenManager $orderAccessTokenManager,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils
     )
     {
     }
 
-    private function getCartTiming(OrderInterface $cart)
+    private function getOrderTiming(OrderInterface $order)
     {
         // Return info only if the customer can order in this restaurant using the existing cart
-        if ($this->restaurantResolver->accept($cart)) {
-            return $this->orderTimeHelper->getTimeInfo($cart);
+        if ($this->restaurantResolver->accept($order)) {
+            return $this->orderTimeHelper->getTimeInfo($order);
+        } else {
+            return null;
+        }
+    }
+
+    private function getOrderAccessToken(OrderInterface $order)
+    {
+        // Return info only if the customer can order in this restaurant using the existing cart
+        if ($this->restaurantResolver->accept($order) && $order->getId() !== null) {
+            return $this->orderAccessTokenManager->create($order);
         } else {
             return null;
         }
@@ -114,7 +126,8 @@ class RestaurantController extends AbstractController
 
         return new JsonResponse([
             'cart'   => $this->serializer->normalize($cart, 'jsonld', $serializerContext),
-            'cartTiming' => $this->getCartTiming($cart),
+            'cartTiming' => $this->getOrderTiming($cart),
+            'orderAccessToken' => $this->getOrderAccessToken($cart),
             'errors' => $errors,
             'restaurantTiming' => $this->timingRegistry->getAllFulfilmentMethodsForObject($restaurant),
         ]);
@@ -451,15 +464,15 @@ class RestaurantController extends AbstractController
             ]);
         }
 
-        $cart = $cartContext->getCart();
+        $order = $cartContext->getCart();
 
         if (null !== $address) {
-            $cart->setShippingAddress($address);
+            $order->setShippingAddress($address);
 
-            $this->persistAndFlushCart($cart);
+            $this->persistAndFlushCart($order);
         }
 
-        $cartForm = $this->createForm(CartType::class, $cart);
+        $cartForm = $this->createForm(CartType::class, $order);
         $cartForm->handleRequest($request);
 
         if ($cartForm->isSubmitted()) {
@@ -474,26 +487,27 @@ class RestaurantController extends AbstractController
             // This is useful to "cleanup" a cart that was stored
             // with a time range that is now expired
             // FIXME Maybe this should be moved to a Doctrine postLoad listener?
-            $violations = $this->validator->validate($cart, null, ['ShippingTime']);
+            $violations = $this->validator->validate($order, null, ['ShippingTime']);
             if (count($violations) > 0) {
 
-                $cart->setShippingTimeRange(null);
+                $order->setShippingTimeRange(null);
 
-                if ($this->restaurantResolver->accept($cart)) {
-                    $this->persistAndFlushCart($cart);
+                if ($this->restaurantResolver->accept($order)) {
+                    $this->persistAndFlushCart($order);
                 }
             }
         }
 
-        if ($cart->supportsLoopeat()) {
-            $loopeatContextInitializer->initialize($cart, $loopeatContext);
+        if ($order->supportsLoopeat()) {
+            $loopeatContextInitializer->initialize($order, $loopeatContext);
         }
 
         return $this->render('restaurant/index.html.twig', $this->auth([
             'restaurant' => $restaurant,
             'restaurant_timing' => $this->timingRegistry->getAllFulfilmentMethodsForObject($restaurant),
             'cart_form' => $cartForm->createView(),
-            'cart_timing' => $this->getCartTiming($cart),
+            'cart_timing' => $this->getOrderTiming($order),
+            'order_access_token' => $this->getOrderAccessToken($order),
             'addresses_normalized' => $this->getUserAddresses(),
             'available_for_business_account' => $restaurantAvailableForBusinessAccount
         ]));

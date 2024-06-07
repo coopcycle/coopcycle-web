@@ -32,6 +32,9 @@ import {
   DISABLE_REUSABLE_PACKAGING,
   openTimeRangeChangedModal,
   closeTimeRangeChangedModal,
+  updateCartTiming,
+  openRestaurantNotAvailableModal,
+  closeRestaurantNotAvailableModal,
 } from './actions'
 
 const initialState = {
@@ -80,6 +83,8 @@ const initialState = {
     range: null,
     ranges: [],
   },
+  // can be used to access OrderAPI during guest checkout
+  orderAccessToken: null,
   isDateModalOpen: false,
   isAddressModalOpen: false,
   country: 'fr',
@@ -101,6 +106,7 @@ const initialState = {
   isGroupOrdersEnabled: false,
   shouldAskToEnableReusablePackaging: true,
   isTimeRangeChangedModalOpen: false,
+  isRestaurantNotAvailableModalOpen: false,
 }
 
 const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -258,6 +264,20 @@ const cartTiming = (state = initialState.cartTiming, action = {}) => {
     case FETCH_SUCCESS:
 
       return action.payload.cartTiming
+    case updateCartTiming.type:
+
+      return action.payload
+    default:
+
+      return state
+  }
+}
+
+const orderAccessToken = (state = initialState.orderAccessToken, action = {}) => {
+  switch (action.type) {
+    case FETCH_SUCCESS:
+
+      return action.payload.orderAccessToken
     default:
 
       return state
@@ -418,6 +438,17 @@ const isTimeRangeChangedModalOpen = (state = initialState.isTimeRangeChangedModa
   }
 }
 
+const isRestaurantNotAvailableModalOpen = (state = initialState.isRestaurantNotAvailableModalOpen, action = {}) => {
+  switch (action.type) {
+    case openRestaurantNotAvailableModal.type:
+      return true
+    case closeRestaurantNotAvailableModal.type:
+      return false
+    default:
+      return state
+  }
+}
+
 export default combineReducers({
   isFetching,
   cart,
@@ -431,6 +462,7 @@ export default combineReducers({
   lastAddItemRequest,
   restaurantTiming,
   cartTiming,
+  orderAccessToken,
   isDateModalOpen,
   isAddressModalOpen,
   country,
@@ -444,5 +476,6 @@ export default combineReducers({
   player,
   isGroupOrdersEnabled,
   shouldAskToEnableReusablePackaging,
-  isTimeRangeChangedModalOpen
+  isTimeRangeChangedModalOpen,
+  isRestaurantNotAvailableModalOpen
 })

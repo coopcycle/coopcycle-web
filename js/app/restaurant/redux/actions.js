@@ -88,6 +88,12 @@ export const stopAskingToEnableReusablePackaging = createFsAction(STOP_ASKING_EN
 export const openTimeRangeChangedModal = createAction("OPEN_TIME_RANGE_CHANGED_MODAL")
 export const closeTimeRangeChangedModal = createAction("CLOSE_TIME_RANGE_CHANGED_MODAL")
 
+export const updateCartTiming = createAction("UPDATE_CART_TIMING")
+
+export const openRestaurantNotAvailableModal = createAction("OPEN_RESTAURANT_NOT_AVAILABLE_MODAL")
+export const closeRestaurantNotAvailableModal = createAction("CLOSE_RESTAURANT_NOT_AVAILABLE_MODAL")
+
+
 const httpClient = axios.create()
 function getRoutingParams(params) {
 
@@ -163,7 +169,7 @@ function handleAjaxResponse(res, dispatch, broadcast = true) {
 }
 
 function handleAjaxError(e, dispatch) {
-  dispatch(fetchFailure())
+  dispatch(fetchFailure(e.toString()))
 }
 
 function playerHeader({player: {token}}, headers = {}) {

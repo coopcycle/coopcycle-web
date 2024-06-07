@@ -3,14 +3,15 @@ import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  closeTimeRangeChangedModal,
-  setDateModalOpen,
+  closeRestaurantNotAvailableModal,
 } from '../../redux/actions'
-import { selectIsTimeRangeChangedModalOpen } from '../../redux/selectors'
+import {
+  selectIsRestaurantNotAvailableModalOpen,
+} from '../../redux/selectors'
 
-export default function TimeRangeChangedModal() {
+export default function RestaurantNotAvailableModal() {
   const isModalOpen = useSelector(
-    selectIsTimeRangeChangedModalOpen)
+    selectIsRestaurantNotAvailableModalOpen)
 
   const { t } = useTranslation()
 
@@ -24,7 +25,7 @@ export default function TimeRangeChangedModal() {
       <div data-testid="cart.timeRangeChangedModal">
         <div className="text-center">
           <p>
-            { t('CART_TIME_RANGE_CHANGED_MODAL_TEXT_LINE_1') }
+            { t('CART_RESTAURANT_NOT_AVAILABLE_MODAL_TEXT_LINE_1') }
           </p>
         </div>
         <div className="ReactModal__Restaurant__button">
@@ -32,10 +33,10 @@ export default function TimeRangeChangedModal() {
             type="button"
             className="btn btn-primary"
             onClick={ () => {
-              dispatch(closeTimeRangeChangedModal())
-              dispatch(setDateModalOpen(true))
+              dispatch(closeRestaurantNotAvailableModal())
+              window.location.href = window.Routing.generate('restaurants')
             } }>
-            { t('CART_CHANGE_TIME_MODAL_LABEL') }
+            { t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS') }
           </button>
         </div>
       </div>
