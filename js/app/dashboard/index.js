@@ -228,5 +228,5 @@ const anim = lottie.loadAnimation({
 })
 
 anim.addEventListener('DOMLoaded', function() {
-  setTimeout(() => start(), 800)
+  start()
 })

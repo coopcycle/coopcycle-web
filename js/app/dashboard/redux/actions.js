@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import axios from 'axios'
 import moment from 'moment'
 
 import { taskComparator, isInDateRange, withoutItemsIRIs } from './utils'
@@ -12,80 +11,7 @@ import {
 import { selectNextWorkingDay, selectSelectedTasks, selectTaskLists } from './selectors'
 import { createAction } from '@reduxjs/toolkit'
 import { selectTaskById, selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
-
-
-function createClient(dispatch) {
-
-  const client = axios.create({
-    baseURL: location.protocol + '//' + location.host
-  })
-
-  let subscribers = []
-  let isRefreshingToken = false
-
-  function onTokenFetched(token) {
-    subscribers.forEach(callback => callback(token))
-    subscribers = []
-  }
-
-  function addSubscriber(callback) {
-    subscribers.push(callback)
-  }
-
-  function refreshToken() {
-    return new Promise((resolve) => {
-      // TODO Check response is OK, reject promise
-      $.getJSON(window.Routing.generate('profile_jwt')).then(result => resolve(result.jwt))
-    })
-  }
-
-  // @see https://gist.github.com/Godofbrowser/bf118322301af3fc334437c683887c5f
-  // @see https://www.techynovice.com/setting-up-JWT-token-refresh-mechanism-with-axios/
-  client.interceptors.response.use(
-    response => response,
-    error => {
-
-      if (error.response && error.response.status === 401) {
-
-        try {
-
-          const req = error.config
-
-          const retry = new Promise(resolve => {
-            addSubscriber(token => {
-              req.headers['Authorization'] = `Bearer ${token}`
-              resolve(axios(req))
-            })
-          })
-
-          if (!isRefreshingToken) {
-
-            isRefreshingToken = true
-
-            refreshToken()
-              .then(token => {
-                dispatch(tokenRefreshSuccess(token))
-                return token
-              })
-              .then(token => onTokenFetched(token))
-              .catch(error => Promise.reject(error))
-              .finally(() => {
-                isRefreshingToken = false
-              })
-          }
-
-          return retry
-        } catch (e) {
-          return Promise.reject(e)
-        }
-      }
-
-      return Promise.reject(error)
-    }
-  )
-
-  return client
-}
+import { createClient } from '../utils/client'
 
 export const UPDATE_TASK = 'UPDATE_TASK'
 export const OPEN_ADD_USER = 'OPEN_ADD_USER'
@@ -406,7 +332,7 @@ export function createTaskList(date, username) {
 
     let response
     try {
-      response =  await axios.post(url, {}, {
+      response =  await createClient(dispatch).post(url, {}, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/ld+json'

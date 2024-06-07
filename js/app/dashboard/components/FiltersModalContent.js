@@ -13,6 +13,7 @@ import {
   onlyFilter,
 } from "../redux/actions";
 import {
+  selectAllTags,
   selectBookedUsernames,
   selectFiltersSetting,
 } from "../redux/selectors";
@@ -392,7 +393,7 @@ function mapStateToProps(state) {
   } = selectFiltersSetting(state);
 
   return {
-    tags: state.config.tags,
+    tags: selectAllTags(state),
     excludedTags,
     showFinishedTasks,
     showCancelledTasks,
