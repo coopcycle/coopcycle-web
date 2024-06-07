@@ -414,7 +414,13 @@ class UserController extends AbstractController
             $objectManager->flush();
         }
 
-        $response = new RedirectResponse($this->generateUrl('nucleos_profile_registration_confirmed'));
+        $parameters = [];
+
+        if ($businessAccountInvitation) {
+            $parameters['_business'] = true;
+        }
+
+        $response = new RedirectResponse($this->generateUrl('nucleos_profile_registration_confirmed', $parameters));
 
         $eventDispatcher->dispatch(new FilterUserResponseEvent($user, $request, $response), NucleosProfileEvents::REGISTRATION_CONFIRMED);
 
