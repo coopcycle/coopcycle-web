@@ -52,7 +52,7 @@ describe('Failed checkout; restaurant is closed', () => {
         .invoke('text')
         .should('match', /^91,? Rue de Rivoli,? 75001,? Paris,? France/i)
 
-      cy.closeRestaurant('resto_1', 'resto_1')
+      cy.closeRestaurantForToday('resto_1', 'resto_1')
 
       cy.get('.order-button:visible').click()
 
@@ -108,7 +108,7 @@ describe('Failed checkout; restaurant is closed', () => {
         cy.get('input[name="checkout_address[customer][fullName]"]')
           .type('John Doe')
 
-        cy.closeRestaurant('resto_1', 'resto_1')
+        cy.closeRestaurantForToday('resto_1', 'resto_1')
 
         cy.contains('Commander').click()
 
@@ -173,7 +173,7 @@ describe('Failed checkout; restaurant is closed', () => {
           .type('John Doe')
         cy.enterCreditCard()
 
-        cy.closeRestaurant('resto_1', 'resto_1')
+        cy.closeRestaurantForToday('resto_1', 'resto_1')
 
         cy.get('form[name="checkout_payment"]').submit()
 
