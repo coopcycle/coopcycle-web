@@ -22,8 +22,8 @@ final class Version20201001132956 extends AbstractMigration
             'FROM api_user u JOIN sylius_customer c ON u.customer_id = c.id '.
             'WHERE u.email != c.email OR u.email_canonical != c.email_canonical');
 
-        $stmt->execute();
-        while ($data = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($data = $result->fetchAssociative()) {
 
             if ($data['customer_email'] !== $data['user_email']) {
                 $this->addSql('UPDATE sylius_customer SET email = :email WHERE id = :id' , [

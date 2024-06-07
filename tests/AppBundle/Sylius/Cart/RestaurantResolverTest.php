@@ -70,7 +70,7 @@ class RestaurantResolverTest extends TestCase
             ]
         );
 
-        $this->requestStack->getMasterRequest()->willReturn($request);
+        $this->requestStack->getMainRequest()->willReturn($request);
 
         $this->repository->find(1)->willReturn($restaurant->reveal());
 
@@ -114,7 +114,7 @@ class RestaurantResolverTest extends TestCase
             ]
         );
 
-        $this->requestStack->getMasterRequest()->willReturn($request);
+        $this->requestStack->getMainRequest()->willReturn($request);
         $this->repository->find(1)->willReturn($otherRestaurant->reveal());
 
         $cart->getId()->willReturn(1);
@@ -158,7 +158,7 @@ class RestaurantResolverTest extends TestCase
             ]
         );
 
-        $this->requestStack->getMasterRequest()->willReturn($request);
+        $this->requestStack->getMainRequest()->willReturn($request);
         $this->repository->find(1)->willReturn($restaurant1->reveal());
 
         $cart->getId()->willReturn(1);

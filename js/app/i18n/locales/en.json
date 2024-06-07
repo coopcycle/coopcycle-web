@@ -82,6 +82,8 @@
         "ADMIN_DASHBOARD_FILTERS_SHOW": "Show",
         "ADMIN_DASHBOARD_FILTERS_HIDE": "Hide",
         "ADMIN_DASHBOARD_FILTERS_INCIDENT_REPORTED_TASKS": "Tasks with incident reports",
+        "ADMIN_DASHBOARD_FILTERS_TAGS_TO_SELECT": "Tags to show",
+        "ADMIN_DASHBOARD_FILTERS_TAGS_TO_HIDE": "Tags to hide",
         "ONLY_SHOW_THESE": "Only show these",
         "ONLY_THIS_FILTER": "This filter exclusively",
         "ADMIN_DASHBOARD_TASK_CAPTION_SHORT": "Task #{{id}}",

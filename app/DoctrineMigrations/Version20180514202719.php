@@ -93,16 +93,16 @@ class Version20180514202719 extends AbstractMigration implements ContainerAwareI
         $stmt['menu_item'] =
             $this->connection->prepare('SELECT * FROM menu_item WHERE parent_id = :menu_section_id ORDER BY position ASC');
 
-        $stmt['menu']->execute();
-        while ($menu = $stmt['menu']->fetch()) {
+        $result = $stmt['menu']->execute();
+        while ($menu = $result->fetchAssociative()) {
 
             $stmt['menu_section']->bindParam('menu_id', $menu['id']);
-            $stmt['menu_section']->execute();
+            $result2 = $stmt['menu_section']->execute();
 
             $menu['code'] = Uuid::uuid4()->toString();
             $menu['children'] = [];
 
-            while ($menuSection = $stmt['menu_section']->fetch()) {
+            while ($menuSection = $result2->fetchAssociative()) {
 
                 if (empty($menuSection['name'])) {
                     $menuSection['name'] = '???';
@@ -111,10 +111,10 @@ class Version20180514202719 extends AbstractMigration implements ContainerAwareI
                 $menuSection['code'] = Uuid::uuid4()->toString();
 
                 $stmt['menu_item']->bindParam('menu_section_id', $menuSection['id']);
-                $stmt['menu_item']->execute();
+                $result3 = $stmt['menu_item']->execute();
 
                 $menuSection['products'] = [];
-                while ($menuItem = $stmt['menu_item']->fetch()) {
+                while ($menuItem = $result3->fetchAssociative()) {
                     $productCode = sprintf('CPCCL-FDTCH-%d', $menuItem['id']);
                     $menuSection['products'][] = $productCode;
                 }

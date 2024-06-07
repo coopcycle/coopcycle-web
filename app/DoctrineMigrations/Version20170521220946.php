@@ -23,9 +23,9 @@ class Version20170521220946 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_5F29A826F5B7AF75 ON api_user_address (address_id)');
 
         $stmt = $this->connection->prepare("SELECT * FROM delivery_address");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($deliveryAddress = $stmt->fetch()) {
+        while ($deliveryAddress = $result->fetchAssociative()) {
             $this->addSql("INSERT INTO address (id, name, street_address, address_locality, postal_code, geo)"
                 . " VALUES (nextval('address_id_seq'), :name, :street_address, :address_locality, :postal_code, :geo)", $deliveryAddress);
             $this->addSql("INSERT INTO api_user_address (api_user_id, address_id) VALUES (:api_user_id, currval('address_id_seq'))", [
@@ -52,9 +52,9 @@ class Version20170521220946 extends AbstractMigration
         $this->addSql('ALTER TABLE address ADD user_id INT DEFAULT NULL');
 
         $stmt = $this->connection->prepare("SELECT * FROM api_user_address");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($address = $stmt->fetch()) {
+        while ($address = $result->fetchAssociative()) {
             $this->addSql("UPDATE address SET user_id = :api_user_id WHERE id = :address_id", $address);
         }
 

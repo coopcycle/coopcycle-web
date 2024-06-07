@@ -410,3 +410,17 @@ h1, h2, h3, h4, h5, h6 {
   margin-right: 0px;
   margin-left: 0px;
 }
+
+.btn-primary-red {
+  background-color: #E4022D;
+  color: #F2F2F3;
+
+  .inactive {
+    background-color: #FF7A94;
+  }
+
+  &:hover {
+    color: #F2F2F3;
+  }
+
+}

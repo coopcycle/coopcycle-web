@@ -22,8 +22,8 @@ class Version20180312160410 extends AbstractMigration
 
         foreach ($defaults as $name => $value) {
             $stmt->bindParam('name', $name);
-            $stmt->execute();
-            $count = $stmt->fetchColumn();
+            $result = $stmt->execute();
+            $count = $result->fetchOne();
             if ((int) $count === 0) {
                 $this->addSql('INSERT INTO craue_config_setting (name, section, value) VALUES (:name, :section, :value)', [
                     'name' => $name,

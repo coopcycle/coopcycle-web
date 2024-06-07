@@ -57,22 +57,22 @@ Class DeduplicateCustomerAddressesCommand extends Command
 
         $stmt = $this->connection
             ->prepare("SELECT customer_id, COUNT(*) AS address_count FROM sylius_customer_address GROUP BY customer_id HAVING COUNT(*) > 1 ORDER BY COUNT(*) DESC");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($customer = $stmt->fetch()) {
+        while ($customer = $result->fetchAssociative()) {
 
             $getCustomerEmail->bindParam('id', $customer['customer_id']);
-            $getCustomerEmail->execute();
+            $result2 = $getCustomerEmail->execute();
 
-            $email = $getCustomerEmail->fetchColumn();
+            $email = $result2->fetchOne();
 
             $this->io->text(sprintf('Customer "%s" has %d addresses', $email, $customer['address_count']));
 
             $getCustomerAddresses->bindParam('customer_id', $customer['customer_id']);
-            $getCustomerAddresses->execute();
+            $result3 = $getCustomerAddresses->execute();
 
             $customerAddresses = [];
-            while ($address = $getCustomerAddresses->fetch()) {
+            while ($address = $result3->fetch()) {
                 $customerAddresses[$address['coords']][] = $address;
                 // $coords = GeoUtils::asGeoCoordinates($address['coords']);
             }

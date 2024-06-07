@@ -1,5 +1,5 @@
 import _ from "lodash"
-import { isTourAssigned, makeSelectTaskListItemsByUsername, selectTaskIdToTourIdMap, selectTasksListsWithItems, selectTourById, tourIsAssignedTo } from "../../../shared/src/logistics/redux/selectors"
+import { selectItemAssignedTo, selectTaskIdToTourIdMap, selectTaskListByUsername, selectTourById } from "../../../shared/src/logistics/redux/selectors"
 import { setIsTourDragging, selectAllTasks } from "../../coopcycle-frontend-js/logistics/redux"
 import { clearSelectedTasks,
   insertInUnassignedTasks,
@@ -57,38 +57,33 @@ export function handleDragEnd(
 
   return function(dispatch, getState) {
 
-    const handleDropInTaskList = async (tasksList, selectedTasks, index) => {
-      let newTasksList = [...tasksList.items]
+    /**
+     * @param {Object} tasksList - TaskList to be modified
+     * @param {Array.Objects} selectedItems - Items to be assigned, list of tasks and tours to be assigned
+     * @param {number} index - The index at which we drop
+    */
+    const handleDropInTaskList = async (tasksList, selectedItems, index) => {
+      let newTasksListItems = [...tasksList.items]
 
-      selectedTasks.forEach((task) => {
-        let taskIndex = newTasksList.findIndex((item) => item['@id'] === task['@id'])
-        // if the task was already in the tasklist, remove from its original place
-        if ( taskIndex > -1) {
-          newTasksList.splice(taskIndex, 1)
+      selectedItems.forEach((t) => {
+        let itemIndex = newTasksListItems.findIndex((item) => item === t['@id'])
+        // if the item was already in the tasklist, remove from its original place
+        if (itemIndex > -1) {
+          newTasksListItems.splice(itemIndex, 1)
         }
 
       })
 
-      newTasksList.splice(index, 0, ...selectedTasks)
+      newTasksListItems.splice(index, 0, ...selectedItems.map(it => it['@id']))
 
-      if(selectedTasks[0].assignedTo && selectedTasks[0].assignedTo !== tasksList.username) {
+      const previousAssignedTo = selectItemAssignedTo(getState(), selectedItems[0]['@id'])
+      if(previousAssignedTo && previousAssignedTo !== tasksList.username) {
         dispatch(setUnassignedTasksLoading(true))
-        await dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
+        await dispatch(unassignTasks(previousAssignedTo, selectedItems))
         dispatch(setUnassignedTasksLoading(false))
       }
 
-      return dispatch(modifyTaskList(tasksList.username, newTasksList))
-    },
-    getPositionInFlatTaskList = (nestedTaskList, destinationIndex, tourId=null) => {
-      if (tourId) {
-        return nestedTaskList.find((tourOrTask) => tourOrTask['@id'] === tourId).items[0].position + destinationIndex
-      } else if (destinationIndex == 0) {
-        return 0
-      } else {
-        let taskListItem = nestedTaskList[destinationIndex - 1],
-        position = taskListItem['@type'] === 'Tour' ? _.last(taskListItem.items).position : taskListItem.position
-        return position + 1
-      }
+      return dispatch(modifyTaskList(tasksList.username, newTasksListItems))
     }
 
     // dropped nowhere
@@ -122,27 +117,23 @@ export function handleDragEnd(
       return
     }
 
-    const allTasks = selectAllTasks(getState())
+    const allTasks = selectAllTasks(getState()),
+      isTourDrag = result.draggableId.startsWith('tour')
 
     // FIXME : if a tour or a group is selected, selectSelectedTasks yields [ undefined ] so we test > 1 no > 0
     let selectedTasks = selectSelectedTasks(getState()).length > 1 ? selectSelectedTasks(getState()) : [_.find(allTasks, t => t['@id'] === result.draggableId)]
 
-    // we are moving a whole group or tour, override selectedTasks
+    // we are moving a whole group, override selectedTasks
     if (result.draggableId.startsWith('group')) {
       let groupId = result.draggableId.split(':')[1]
-      selectedTasks = selectGroups(getState()).find(g => g.id == groupId).tasks
-    }
-    else if (result.draggableId.startsWith('tour')) {
-      let tourId = result.draggableId.split(':')[1],
-      tour = selectTourById(getState(), tourId)
-      selectedTasks = tour.items
+      selectedTasks = selectGroups(getState()).find(g => g['@id'] == groupId).tasks
     }
 
     if (selectedTasks.length === 0) return // can happen, for example dropping empty tour
 
     const taskIdToTourIdMap = selectTaskIdToTourIdMap(getState())
 
-    if(!isValidTasksMultiSelect(selectedTasks, taskIdToTourIdMap)){
+    if(!isTourDrag && !isValidTasksMultiSelect(selectedTasks, taskIdToTourIdMap)){
       toast.warn(i18next.t('ADMIN_DASHBOARD_INVALID_TASKS_SELECTION'), {autoclose: 15000})
       return
     }
@@ -154,27 +145,38 @@ export function handleDragEnd(
     }
 
     // sorting tasks to be inserted
-    if (source.droppableId === 'unassigned') {
-      const unassignedTasksOrder = selectOrderOfUnassignedTasks(getState())
+    // if the tasks are moved from unassigned -> keep the tasks in the same order in the destination
+    // if the tasks are moved from a tour -> keep the tasks in the same order in the destination
+    // if the tasks are moved from a task list -> keep the tasks in the same order in the destination
+    if (!isTourDrag) {
+      if (source.droppableId === 'unassigned') {
+        const unassignedTasksOrder = selectOrderOfUnassignedTasks(getState())
 
-      selectedTasks.sort((task1, task2) => {
-        const task1Rank = unassignedTasksOrder.findIndex(taskId => taskId === task1['@id'])
-        const task2Rank = unassignedTasksOrder.findIndex(taskId => taskId === task2['@id'])
-        return  task1Rank - task2Rank
-      })
-    } else if (source.droppableId.startsWith('tour') || result.draggableId.startsWith('tour')) {
-      const tourId = result.draggableId.startsWith('tour') ? result.draggableId.replace('tour:', '') : source.droppableId.replace('tour:', '')
-      const tour = selectTourById(getState(), tourId)
-      selectedTasks.sort((task1, task2) => {
-        const task1Rank = tour.itemIds.findIndex(taskId => taskId === task1['@id'])
-        const task2Rank = tour.itemIds.findIndex(taskId => taskId === task2['@id'])
-        return  task1Rank - task2Rank
-      })
-
+        selectedTasks.sort((task1, task2) => {
+          const task1Rank = unassignedTasksOrder.findIndex(taskId => taskId === task1['@id'])
+          const task2Rank = unassignedTasksOrder.findIndex(taskId => taskId === task2['@id'])
+          return  task1Rank - task2Rank
+        })
+      } else if (source.droppableId.startsWith('tour') || result.draggableId.startsWith('tour')) {
+        const tourId = result.draggableId.startsWith('tour') ? result.draggableId.replace('tour:', '') : source.droppableId.replace('tour:', '')
+        const tour = selectTourById(getState(), tourId)
+        selectedTasks.sort((task1, task2) => {
+          const task1Rank = tour.items.findIndex(taskId => taskId === task1['@id'])
+          const task2Rank = tour.items.findIndex(taskId => taskId === task2['@id'])
+          return  task1Rank - task2Rank
+        })
+      } else if (source.droppableId.startsWith('assigned')) {
+        const username = source.droppableId.replace('assigned:', '')
+        const tasksList = selectTaskListByUsername(getState(), {username})
+        selectedTasks.sort((task1, task2) => {
+          const task1Rank = tasksList.items.findIndex(taskId => taskId === task1['@id'])
+          const task2Rank = tasksList.items.findIndex(taskId => taskId === task2['@id'])
+          return  task1Rank - task2Rank
+        })
+      }
     }
-    // maybe when moving task in assigned list it should keep order ?
 
-    // reordered inside the unassigned tours list
+    // REORDERING reordered inside the unassigned tours list
     if (
       source.droppableId === destination.droppableId && source.droppableId === 'unassigned_tours'
     ) {
@@ -188,19 +190,48 @@ export function handleDragEnd(
     ) {
       dispatch(insertInUnassignedTasks({tasksToInsert: selectedTasks, index: result.destination.index}))
       return;
-    } else if (destination.droppableId === 'unassigned') {
+    // reordering inside a task list
+    } else if (
+      source.droppableId === destination.droppableId && source.droppableId.startsWith('assigned')
+    ) {
+      const username = destination.droppableId.replace('assigned:', '')
+      const tasksList = selectTaskListByUsername(getState(), {username})
+      const index = destination.index
+      let items
+
+      if (isTourDrag) {
+        const tourId = result.draggableId.replace('tour:', '')
+        items = [selectTourById(getState(), tourId)]
+      } else {
+        items = selectedTasks
+      }
+
+      handleDropInTaskList(tasksList, items, index)
+      return;
+    // HANDLING TOUR DRAG
+    } else if (isTourDrag && destination.droppableId === 'unassigned_tours') { // unassign the tour
+      const username = source.droppableId.replace('assigned:', '')
+      const tourId = result.draggableId.replace('tour:', '')
+      const tour = selectTourById(getState(), tourId)
+      dispatch(unassignTasks(username, [tour]))
+    } else if (isTourDrag && destination.droppableId.startsWith('assigned:')) {
+      const username = destination.droppableId.replace('assigned:', '')
+      const tasksList = selectTaskListByUsername(getState(), {username})
+      const index = destination.index
+      const tourId = result.draggableId.replace('tour:', '')
+      const tour = selectTourById(getState(), tourId)
+      handleDropInTaskList(tasksList, [tour], index)
+    }
+    // HANDLING TASK DRAG
+    else if (!isTourDrag && destination.droppableId === 'unassigned') {
       if (!belongsToTour(selectedTasks[0])(getState())) {
-        dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
+        dispatch(unassignTasks(selectItemAssignedTo(getState(), selectedTasks[0]['@id']), selectedTasks))
       } else {
         const tourId = selectTaskIdToTourIdMap(getState()).get(selectedTasks[0]['@id'])
         const tour = selectTourById(getState(), tourId)
-        dispatch(removeTasksFromTour(tour, selectedTasks, selectedTasks[0].assignedTo)) // will unassign if assignedTo is defined
+        dispatch(removeTasksFromTour(tour, selectedTasks))
       }
-
-    } else if (destination.droppableId === 'unassigned_tours' && result.draggableId.startsWith('tour')) {
-      // unassigning a whole tour
-      dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
-    } else if (destination.droppableId.startsWith('tour:')) {
+    } else if (!isTourDrag && destination.droppableId.startsWith('tour:')) {
       var tourId = destination.droppableId.replace('tour:', '')
       const tour = selectTourById(getState(), tourId)
 
@@ -208,36 +239,28 @@ export function handleDragEnd(
 
       // Reorder tasks inside a tour
       if (source.droppableId === destination.droppableId) {
-        _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t['@id']))
-      } // moving single tasks between tours -> remove from source tour
+        _.remove(newTourItems, t => selectedTasks.find(selectedTask => selectedTask['@id'] === t))
+      }
+      // moving single tasks between tours -> remove from source tour
       else if (source.droppableId.startsWith('tour:')) {
         var sourceTourId = source.droppableId.replace('tour:', '')
         const sourceTour = selectTourById(getState(), sourceTourId)
         dispatch(removeTasksFromTour(sourceTour, selectedTasks))
+      } // moving from a tasklist "root level" to a tour -> remove from tasklist
+      else if (source.droppableId.startsWith('assigned:')) {
+        const username = source.droppableId.replace('assigned:', '')
+        dispatch(unassignTasks(username, selectedTasks))
       }
 
-      newTourItems.splice(destination.index, 0, ...selectedTasks)
-
-      if (isTourAssigned(tour)) {
-        const tasksLists = selectTasksListsWithItems(getState())
-        const username = tourIsAssignedTo(tour)
-        const tasksList = _.find(tasksLists, tl => tl.username === username)
-        const nestedTaskList = makeSelectTaskListItemsByUsername()(getState(), {username})
-        const index = getPositionInFlatTaskList(nestedTaskList, destination.index, tourId)
-
-        handleDropInTaskList(tasksList, selectedTasks, index)
-      } else if (selectedTasks[0].assignedTo) {
-        dispatch(unassignTasks(selectedTasks[0].assignedTo, selectedTasks))
-      }
+      newTourItems.splice(destination.index, 0, ...selectedTasks.map(t => t['@id']))
 
       dispatch(modifyTour(tour, newTourItems))
 
-    } else if (destination.droppableId.startsWith('assigned:')) {
-      const tasksLists = selectTasksListsWithItems(getState())
+    }
+    else if (!isTourDrag && destination.droppableId.startsWith('assigned:')) {
       const username = destination.droppableId.replace('assigned:', '')
-      const tasksList = _.find(tasksLists, tl => tl.username === username)
-      const nestedTaskList = makeSelectTaskListItemsByUsername()(getState(), {username})
-      const index = getPositionInFlatTaskList(nestedTaskList, destination.index)
+      const tasksList = selectTaskListByUsername(getState(), {username})
+      const index = destination.index
 
       // moving task(s) to a tasklist but not the whole tour -> remove tasks from tour
       if (source.droppableId.startsWith('tour:')) {

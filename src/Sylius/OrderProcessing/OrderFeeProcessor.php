@@ -55,7 +55,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
 
         $this->logger->info('OrderFeeProcessor | started', ['order' => $this->loggingUtils->getOrderId($order)]);
 
-        $contract = $order->getVendor()->getContract();
+        $contract = $order->getVendorConditions()->getContract();
 
         $delivery = null;
         if (!$order->isTakeAway() && ($contract->isVariableDeliveryPriceEnabled() || $contract->isVariableCustomerAmountEnabled())) {

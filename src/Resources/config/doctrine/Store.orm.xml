@@ -23,18 +23,14 @@
     </field>
     <field name="legalName" type="string" column="legal_name" nullable="true"/>
     <field name="vatID" type="string" column="vat_id" nullable="true"/>
-    <field name="additionalProperties" type="json_array" column="additional_properties" nullable="true"/>
+    <field name="additionalProperties" type="json" column="additional_properties" nullable="true"/>
     <field name="prefillPickupAddress" type="boolean" column="prefill_pickup_address"/>
     <field name="createOrders" type="boolean" column="create_orders"/>
     <field name="checkExpression" type="string" column="check_expression" nullable="true"/>
     <field name="weightRequired" type="boolean" column="weight_required"/>
     <field name="packagesRequired" type="boolean" column="packages_required"/>
     <field name="multiDropEnabled" type="boolean" column="multi_drop_enabled"/>
-    <field name="DBSchenkerEnabled" type="boolean" column="db_schenker">
-      <options>
-        <option name="default">0</option>
-      </options>
-    </field>
+    <field name="transporter" type="string" column="transporter" nullable="true" unique="true" />
     <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store">
       <cascade>
         <cascade-persist/>

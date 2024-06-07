@@ -31,25 +31,25 @@ class Version20180509130706 extends AbstractMigration
         $stmt['products'] =
             $this->connection->prepare('SELECT id FROM sylius_product WHERE code = :code');
 
-        $stmt['restaurants']->execute();
-        while ($restaurant = $stmt['restaurants']->fetch()) {
+        $result = $stmt['restaurants']->execute();
+        while ($restaurant = $result->fetchAssociative()) {
 
             $stmt['menu_sections']->bindParam('menu_id', $restaurant['menu_id']);
-            $stmt['menu_sections']->execute();
+            $result2 = $stmt['menu_sections']->execute();
 
-            while ($menuSection = $stmt['menu_sections']->fetch()) {
+            while ($menuSection = $result2->fetchAssociative()) {
 
                 $stmt['menu_items']->bindParam('parent_id', $menuSection['id']);
-                $stmt['menu_items']->execute();
+                $result3 = $stmt['menu_items']->execute();
 
-                while ($menuItem = $stmt['menu_items']->fetch()) {
+                while ($menuItem = $result3->fetchAssociative()) {
 
                     $productCode = sprintf('CPCCL-FDTCH-%d', $menuItem['id']);
 
                     $stmt['products']->bindParam('code', $productCode);
-                    $stmt['products']->execute();
+                    $result4 = $stmt['products']->execute();
 
-                    while ($product = $stmt['products']->fetch()) {
+                    while ($product = $result4->fetch()) {
                         $this->addSql('INSERT INTO restaurant_product (restaurant_id, product_id) VALUES (:restaurant_id, :product_id)', [
                             'restaurant_id' => $restaurant['id'],
                             'product_id' => $product['id']

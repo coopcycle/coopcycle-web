@@ -27,14 +27,14 @@ final class Version20180927085246 extends AbstractMigration
         $stmts['stripe_account'] = $this->connection->prepare('SELECT * FROM stripe_account');
         $stmts['restaurant'] = $this->connection->prepare('SELECT * FROM restaurant WHERE stripe_account_id = :stripe_account_id');
 
-        $stmts['stripe_account']->execute();
-        while ($stripeAccount = $stmts['stripe_account']->fetch()) {
+        $result = $stmts['stripe_account']->execute();
+        while ($stripeAccount = $result->fetchAssociative()) {
 
             $stmts['restaurant']->bindParam('stripe_account_id', $stripeAccount['id']);
-            $stmts['restaurant']->execute();
+            $result2 = $stmts['restaurant']->execute();
 
-            if ($stmts['restaurant']->rowCount() === 1) {
-                $restaurant = $stmts['restaurant']->fetch();
+            if ($result2->rowCount() === 1) {
+                $restaurant = $result2->fetchAssociative();
 
                 $this->addSql('INSERT INTO restaurant_stripe_account (restaurant_id, stripe_account_id, livemode) VALUES (:restaurant_id, :stripe_account_id, :livemode)', [
                     'restaurant_id' => $restaurant['id'],
@@ -57,10 +57,10 @@ final class Version20180927085246 extends AbstractMigration
         $this->addSql('CREATE INDEX idx_eb95123fe065f932 ON restaurant (stripe_account_id)');
 
         $stmt = $this->connection->prepare('SELECT * FROM restaurant_stripe_account');
-        $stmt->execute();
+        $result = $stmt->execute();
 
         $stripeAccountByRestaurant = [];
-        while ($restaurantStripeAccount = $stmt->fetch()) {
+        while ($restaurantStripeAccount = $result->fetchAssociative()) {
             $stripeAccountByRestaurant[$restaurantStripeAccount['restaurant_id']][] = $restaurantStripeAccount;
         }
 

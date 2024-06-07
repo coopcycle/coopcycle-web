@@ -14,8 +14,8 @@ final class Version20181005192815 extends AbstractMigration
     {
         $stmt = $this->connection->prepare('SELECT id, number FROM sylius_order WHERE number IS NOT NULL');
 
-        $stmt->execute();
-        while ($order = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($order = $result->fetchAssociative()) {
             $this->addSql('UPDATE sylius_order SET number = :number WHERE id = :id', [
                 'number' => strtoupper(base_convert($order['id'], 10, 36)),
                 'id' => $order['id'],

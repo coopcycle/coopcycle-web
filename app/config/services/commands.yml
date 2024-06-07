@@ -177,3 +177,7 @@ services:
   AppBundle\Command\SyncTransportersCommand:
     tags:
       - { name: 'console.command', command: 'coopcycle:transporters:sync' }
+
+  AppBundle\Command\EmailCubeQueryResultCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:cube:email-results' }

@@ -19,19 +19,19 @@ import Task from './Task'
 import Avatar from '../../components/Avatar'
 import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter } from '../redux/actions'
 import { selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/selectors'
-import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
+import { selectTaskListByUsername, selectTaskListTasksByUsername } from '../../../shared/src/logistics/redux/selectors'
 
 moment.locale($('html').attr('lang'))
 
 const TaskOrTour = ({ item, draggableIndex, unassignTasksFromTaskList }) => {
 
-  if (item['@id'].startsWith('/api/tours')) {
-    return (<Tour tour={ item } draggableIndex={ draggableIndex } />)
+  if (item.startsWith('/api/tours')) {
+    return (<Tour tourId={ item } draggableIndex={ draggableIndex } />)
   } else {
-    return (<Task task={ item } draggableIndex={ draggableIndex } onRemove={ item => unassignTasksFromTaskList(item) } />)
+    return (<Task taskId={ item } draggableIndex={ draggableIndex } onRemove={ item => unassignTasksFromTaskList(item) } />)
   }
 }
 
@@ -51,7 +51,7 @@ class InnerList extends React.Component {
   render() {
     return _.map(this.props.items,
       (item, index) => <TaskOrTour
-        key={ item['@id'] }
+        key={ item }
         item={ item }
         draggableIndex={ index }
         unassignTasksFromTaskList={ this.props.unassignTasksFromTaskList }
@@ -119,26 +119,14 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const dispatch = useDispatch()
   const unassignTasksFromTaskList = (username => tasks => dispatch(unassignTasks(username, tasks)))(username)
 
-  const selectTaskListItems = makeSelectTaskListItemsByUsername()
+  const taskList = useSelector(state => selectTaskListByUsername(state, {username: username}))
+  const items = taskList.items
+  const tasks = useSelector(state => selectTaskListTasksByUsername(state, {username: username}))
+  const visibleTaskIds = useSelector(selectVisibleTaskIds)
 
-  const items = useSelector(state => selectTaskListItems(state, {username: username}))
-
-  // we also need a flattened list of tasks
-  const tasks = items.reduce((acc, item) => {
-    if (item['@type'] === 'Tour') {
-      acc.push(...item.items)
-    } else {
-      acc.push(item)
-    }
-    return acc
-  }, [])
-
-  const visibleTaskIds = _.intersectionWith(
-    useSelector(selectVisibleTaskIds),
-    tasks.map(task => task['@id'])
-  )
-
-  const visibleTasks = tasks.filter(task => _.includes(visibleTaskIds, task['@id']))
+  const visibleTasks = tasks.filter(task => {
+    return _.includes(visibleTaskIds, task['@id'])
+  })
 
   const polylineEnabled = useSelector(selectPolylineEnabledByUsername(username))
 

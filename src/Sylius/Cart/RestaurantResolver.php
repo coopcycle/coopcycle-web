@@ -21,6 +21,7 @@ class RestaurantResolver
 
     private $repository;
 
+    private $logger;
 
     private static $routes = [
         'restaurant',
@@ -53,7 +54,7 @@ class RestaurantResolver
      */
     public function resolve(): ?LocalBusiness
     {
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
 
         if (!$request) {
 

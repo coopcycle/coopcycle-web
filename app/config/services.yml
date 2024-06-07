@@ -486,6 +486,8 @@ services:
     tags:
       - { name: doctrine.event_subscriber, connection: default }
 
+  AppBundle\EventListener\LogoutSubscriber: ~
+
   AppBundle\EventListener\TaggableSubscriber:
     arguments: [ '@coopcycle.tag_manager' ]
     tags:
@@ -575,6 +577,9 @@ services:
       - method: setRestaurantFilter
         arguments:
             - '@coopcycle.utils.restaurant_filter'
+      - method: setBusinessContext
+        arguments:
+            - '@AppBundle\Business\Context'
 
   AppBundle\Entity\HubRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
@@ -668,6 +673,12 @@ services:
       $redis: '@snc_redis.shared'
       $service: opencage
 
+ # needs to be run before TaskSubscriber as it reflects Tour.tasks changes into task.assignedTo attribute
+  AppBundle\Doctrine\EventSubscriber\TourSubscriber:
+    tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
+      - { name: doctrine.event_subscriber, connection: default, priority: 48 }
+
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber:
     arguments:
       $eventBus: '@event_bus'
@@ -677,6 +688,11 @@ services:
       - { name: doctrine.event_subscriber, connection: default, priority: 32 }
 
   AppBundle\Doctrine\EventSubscriber\TaskCollectionSubscriber:
+    tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
+      - { name: doctrine.event_subscriber, connection: default, priority: 16 }
+
+  AppBundle\Doctrine\EventSubscriber\TaskListSubscriber:
     arguments:
       $eventBus: '@event_bus'
     tags:
@@ -762,6 +778,9 @@ services:
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $splitTermsAndConditionsAndPrivacyPolicy: '%env(SPLIT_TERMS_AND_CONDITIONS_AND_PRIVACY_POLICY)%'
 
+  AppBundle\Transporter\ImportFromPoint: ~
+  AppBundle\Transporter\ReportFromCC: ~
+
   AppBundle\Command\SyncTransportersCommand:
     public: true
     arguments:
@@ -827,6 +846,12 @@ services:
     public: true
     arguments:
       $appId: "%env(GOOGLE_SIGN_IN_CLIENT_ID)%"
+
+  AppBundle\Action\TimeSlot\Choices:
+    public: true
+    arguments:
+      $country: "%country_iso%"
+      $locale: '%env(COOPCYCLE_LOCALE)%'
 
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
@@ -1054,6 +1079,8 @@ services:
   AppBundle\Service\CartProviderService:
     arguments:
       $country: "%country_iso%"
+
+  AppBundle\Service\InvitationLinkProviderService: ~
 
   AppBundle\Domain\Order\Workflow\Guard:
     public: true

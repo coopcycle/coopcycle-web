@@ -29,51 +29,6 @@ class OrderValidator extends ConstraintValidator
         $this->loggingUtils = $loggingUtils ?? new NullLoggingUtils();
     }
 
-    private function validateVendor($object, Constraint $constraint)
-    {
-        $order = $object;
-        $isNew = $order->getId() === null || $order->getState() === OrderInterface::STATE_CART;
-
-        if (!$isNew) {
-            return;
-        }
-
-        $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($order);
-        $minimumAmount = $fulfillmentMethod->getMinimumAmount();
-        $itemsTotal = $order->getItemsTotal();
-
-        if ($itemsTotal < $minimumAmount) {
-            $this->context->buildViolation($constraint->totalIncludingTaxTooLowMessage)
-                ->setParameter('%minimum_amount%', $this->priceFormatter->formatWithSymbol($minimumAmount))
-                ->atPath('total')
-                ->addViolation();
-        }
-
-        // added to debug the issue with multiple delivery fees: https://github.com/coopcycle/coopcycle-web/issues/3929
-        $deliveryAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
-        if (count($deliveryAdjustments) > 1) {
-            $this->context->buildViolation($constraint->unexpectedAdjustmentsCount)
-                ->setParameter('%type%', AdjustmentInterface::DELIVERY_ADJUSTMENT)
-                ->atPath('adjustments')
-                ->addViolation();
-
-            $message = sprintf('Order %s has multiple delivery fees: %d',
-                $this->loggingUtils->getOrderId($order),
-                count($deliveryAdjustments));
-
-            $this->checkoutLogger->error($message, ['order' => $this->loggingUtils->getOrderId($order)]);
-            \Sentry\captureException(new \Exception($message));
-        }
-
-        $feeAdjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
-        if (count($feeAdjustments) > 1) {
-            $this->context->buildViolation($constraint->unexpectedAdjustmentsCount)
-                ->setParameter('%type%', AdjustmentInterface::FEE_ADJUSTMENT)
-                ->atPath('adjustments')
-                ->addViolation();
-        }
-    }
-
     public function validate($object, Constraint $constraint)
     {
         if (!$object instanceof OrderInterface) {
@@ -92,19 +47,54 @@ class OrderValidator extends ConstraintValidator
 
                 return;
             }
+
+            // added to debug the issue with multiple delivery fees: https://github.com/coopcycle/coopcycle-web/issues/3929
+            $deliveryAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+            if (count($deliveryAdjustments) > 1) {
+                $this->context->buildViolation($constraint->unexpectedAdjustmentsCount)
+                    ->setParameter('%type%', AdjustmentInterface::DELIVERY_ADJUSTMENT)
+                    ->atPath('adjustments')
+                    ->addViolation();
+
+                $message = sprintf('Order %s has multiple delivery fees: %d',
+                    $this->loggingUtils->getOrderId($order),
+                    count($deliveryAdjustments));
+
+                $this->checkoutLogger->error($message, ['order' => $this->loggingUtils->getOrderId($order)]);
+                \Sentry\captureException(new \Exception($message));
+
+                return;
+            }
+
+            if ($order->hasVendor()) {
+                $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($order);
+
+                $minimumAmount = $fulfillmentMethod->getMinimumAmount();
+                $itemsTotal = $order->getItemsTotal();
+
+                if (!$fulfillmentMethod->isEnabled()) {
+                    $this->context->buildViolation($constraint->fulfillmentMethodDisabledMessage)
+                        ->atPath('fulfillmentMethod')
+                        ->setCode(Order::FULFILMENT_METHOD_DISABLED)
+                        ->addViolation();
+                    return;
+                }
+
+                if ($itemsTotal < $minimumAmount) {
+                    $this->context->buildViolation($constraint->totalIncludingTaxTooLowMessage)
+                        ->setParameter('%minimum_amount%', $this->priceFormatter->formatWithSymbol($minimumAmount))
+                        ->atPath('total')
+                        ->addViolation();
+                }
+            }
+
         } else {
             if (null === $order->getShippingTimeRange()) {
                 $this->context->buildViolation($constraint->shippedAtNotEmptyMessage)
                     ->atPath('shippingTimeRange')
                     ->setCode(Order::SHIPPED_AT_NOT_EMPTY)
                     ->addViolation();
-
-                return;
             }
-        }
-
-        if ($order->hasVendor()) {
-            $this->validateVendor($object, $constraint);
         }
     }
 }

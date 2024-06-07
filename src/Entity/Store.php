@@ -166,7 +166,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     private $timeSlots;
 
 
-    private $DBSchenkerEnabled = false;
+    private ?string $transporter = null;
 
     public function __construct() {
         $this->deliveries = new ArrayCollection();
@@ -522,28 +522,22 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return [];
     }
 
-    /**
-    * @deprecated
-    */
-    public function isDBSchenkerEnabled(): bool
+    public function isTransporterEnabled(): bool
     {
-        return $this->DBSchenkerEnabled;
+        return !is_null($this->transporter);
     }
 
-    /**
-    * @deprecated
-    */
-    public function setDBSchenkerEnabled(bool $DBSchenkerEnabled): Store
+    public function getTransporter(): ?string
     {
-        $this->DBSchenkerEnabled = $DBSchenkerEnabled;
+        return $this->transporter;
+    }
+
+    public function setTransporter(?string $transporter): Store
+    {
+        $this->transporter = $transporter;
         return $this;
     }
 
-    public function isTransporterEnabled(): bool
-    {
-        //TODO: Add support for multi transporters
-        return $this->DBSchenkerEnabled;
-     }
 
     /**
      * Get the recurrence rules linked to this store

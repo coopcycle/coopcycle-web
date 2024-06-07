@@ -49,6 +49,8 @@ export const socketIO = ({ dispatch, getState }) => {
     centrifuge.subscribe(getState().config.centrifugoEventsChannel, function(message) {
       const { event } = message.data
 
+      console.debug('Received event : ' + event.name)
+
       switch (event.name) {
         case 'task:started':
         case 'task:done':
@@ -69,8 +71,8 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task_import:failure':
           dispatch(importError(event.data.token, event.data.message))
           break
-        case 'task_collections:updated':
-          dispatch(taskListsUpdated(event.data.task_collections))
+        case 'v2:task_list:updated':
+          dispatch(taskListsUpdated(event.data.task_list))
           break
       }
     })
@@ -116,7 +118,7 @@ export const persistFilters = ({ getState }) => (next) => (action) => {
 
   if (action.type === SET_TOURS_ENABLED) {
     state = getState()
-    window.sessionStorage.setItem(`tours_enabled`, JSON.stringify(state.settings.toursEnabled))
+    window.localStorage.setItem(`cpccl__dshbd__tours_enabled`, JSON.stringify(state.settings.toursEnabled))
   }
 
   return result

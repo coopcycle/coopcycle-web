@@ -12,6 +12,7 @@ use Sonata\Form\Type\BooleanType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -98,11 +99,20 @@ class StoreType extends LocalBusinessType
 
                 ));
 
-            if ($this->DBSchenkerEnabled) {
-                $builder->add('DBSchenkerEnabled', CheckboxType::class, [
-                    'label' => 'This store is managed by DBSchenker',
-                    'help' => 'Enable DBSchenker integration for this store',
-                    'required' => false
+            if ($this->transportersEnabled) {
+                $transporterConfig = $this->transportersConfig;
+                $choices = array_reduce(array_keys($this->transportersConfig), function ($acc, $transporter) use (&$transporterConfig) {
+                    if ($transporterConfig[$transporter]['enabled'] ?? false) {
+                        $acc[$transporterConfig[$transporter]['name']] = $transporter;
+                    }
+                    return $acc;
+                });
+
+                $builder->add('transporter', ChoiceType::class, [
+                    'label' => 'This store is managed by the transporter',
+                    'help' => 'Select a transporter to manage this store',
+                    'choices' => $choices,
+                    'required' => false,
                 ]);
             }
         }

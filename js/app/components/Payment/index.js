@@ -159,14 +159,12 @@ export default function(form, options) {
 
       if (isGuest(options) || hasAccount) {
         const validateItemRoute = window.Routing.generate("api_orders_validate_item", { id: options.orderId });
-        const result = await httpClient.get(validateItemRoute);
+        const { error } = await httpClient.get(validateItemRoute);
 
-        if (result.response) {
-          handlePayment();
-        } else {
+        if (error) {
           setLoading(false)
 
-          const violations = result.error?.response?.data?.violations;
+          const violations = error.response?.data?.violations;
 
           if (orderErrorContainerRoot && violations) {
             orderErrorContainerRoot.render(
@@ -177,13 +175,12 @@ export default function(form, options) {
               </StrictMode>
             )
           }
+          return
         }
-      } else {
-        handlePayment()
       }
-    } else {
-      handlePayment()
     }
+
+    handlePayment()
   })
 
   const onSelect = value => {

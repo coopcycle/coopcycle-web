@@ -73,9 +73,10 @@
       #}
 
       {% set cart = cart_provider.getCart() %}
+      {% set openingInformation = business_context.active ? cart.vendorConditions : restaurant %}
 
-      {% if not restaurant.isOpen %}
-        {% set closingRule = restaurant.matchClosingRuleFor %}
+      {% if not openingInformation.isOpen %}
+        {% set closingRule = openingInformation.matchClosingRuleFor %}
         {% if closingRule is not empty %}
         <div class="alert alert-info text-center">
           {% trans with { '%date%': closingRule.endDate|format_datetime('full', 'none') } %}
@@ -84,7 +85,7 @@
         </div>
         {% else %}
         <div class="alert alert-info text-center">
-          {% set next_opening_date = restaurant.getNextOpeningDate() %}
+          {% set next_opening_date = openingInformation.getNextOpeningDate() %}
           {% if next_opening_date %}
             {% set isOrderingAvailable = cart.shippingTimeRange is not null or restaurant_timing.firstChoiceKey is not null %}
             {% if next_opening_date.isToday() %}
@@ -137,6 +138,13 @@
             {% trans with trans_params %}restaurant.quotes_disclaimer.not_authenticated{% endtrans %}
           </div>
         {% endif %}
+      {% endif %}
+
+      {% if business_context.active and available_for_business_account is defined and not available_for_business_account %}
+        <div class="alert alert-info text-center">
+          <i class="fa fa-info-circle"></i> 
+          {{ 'restaurant.businessAccount.notAvilable'|trans({ '%path%': path('homepage') }) | raw }}
+        </div>
       {% endif %}
 
       <div class="row">

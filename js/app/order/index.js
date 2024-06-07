@@ -20,8 +20,9 @@ const {
 const space = currencyFormat.spaceSeparatedCurrency ? ' ' : ''
 
 var im = new Inputmask("currency", {
-    radixPoint: delimiters.decimal,
-    suffix: currency.position === 'postfix' ? `${space}${getCurrencySymbol()}` : ''
+  radixPoint: delimiters.decimal,
+  suffix: currency.position === 'postfix' ? `${space}${getCurrencySymbol()}` : '',
+  allowMinus: false,
 })
 
 const submitPageBtn = document.querySelector('.btn-submit-page')

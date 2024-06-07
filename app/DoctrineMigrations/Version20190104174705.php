@@ -11,8 +11,8 @@ final class Version20190104174705 extends AbstractMigration
     {
         $stmt = $this->connection->prepare('SELECT * FROM notification WHERE route_name = \'profile_restaurant_dashboard_order\'');
 
-        $stmt->execute();
-        while ($notification = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($notification = $result->fetchAssociative()) {
 
             $routeParameters = json_decode($notification['route_parameters'], true);
 

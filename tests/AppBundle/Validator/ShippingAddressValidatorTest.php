@@ -123,7 +123,7 @@ class ShippingAddressValidatorTest extends ConstraintValidatorTestCase
             ->willReturn($restaurant);
 
         $order
-            ->getVendor()
+            ->getVendorConditions()
             ->willReturn($restaurant);
 
         $order

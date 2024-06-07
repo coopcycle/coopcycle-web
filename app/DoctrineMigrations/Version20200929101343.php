@@ -26,8 +26,8 @@ final class Version20200929101343 extends AbstractMigration
         $phoneNumberUtil = PhoneNumberUtil::getInstance();
 
         $stmt = $this->connection->prepare('SELECT id, phone_number FROM sylius_customer WHERE phone_number IS NOT NULL');
-        $stmt->execute();
-        while ($customer = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($customer = $result->fetchAssociative()) {
 
             $delete = false;
 

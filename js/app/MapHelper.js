@@ -1,4 +1,7 @@
 import L from 'leaflet'
+
+import "@geoman-io/leaflet-geoman-free";
+
 import Polyline from '@mapbox/polyline'
 require('beautifymarker')
 
@@ -25,6 +28,28 @@ function init(id, options = {}) {
   }
 
   var map = L.map(id, { scrollWheelZoom: false, zoomControl })
+
+  map.pm.addControls({
+    position: 'topleft',
+    drawCircleMarker: false,
+    rotateMode: false, //	Adds a button to rotate layers.
+    drawMarker: false, //	Adds button to draw Markers.
+    drawPolyline:	false,	// Adds button to draw Line.
+    drawRectangle: false, // Adds button to draw Rectangle.
+    drawPolygon:	true, // Adds button to draw Polygon.
+    drawCircle:	false,	// Adds button to draw Circle.
+    drawText:	false, //	Adds button to draw Text.
+    editMode:	false, //	Adds button to toggle Edit Mode for all layers.
+    dragMode:	false, //	Adds button to toggle Drag Mode for all layers.
+    cutPolygon:	false, //	Adds button to cut a hole in a Polygon or Line.
+    removalMode:	false, //	Adds a button to remove layers.
+    oneBlock:	false, //	All buttons will be displayed as one block Customize Controls.
+    drawControls:	true, //	Shows all draw buttons / buttons in the draw block.
+    editControls:	false, //	Shows all edit buttons / buttons in the edit block.
+    customControls:	false, //	Shows all buttons in the custom block.
+  });
+
+  map.pm.Toolbar.changeActionsOfControl("Polygon", []);
 
   if (options.onLoad) {
     map.whenReady(options.onLoad)

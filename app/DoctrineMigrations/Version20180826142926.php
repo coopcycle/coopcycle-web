@@ -30,9 +30,9 @@ final class Version20180826142926 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT * FROM task_event');
 
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($taskEvent = $stmt->fetch()) {
+        while ($taskEvent = $result->fetchAssociative()) {
 
             if (isset($this->mapping[$taskEvent['name']])) {
                 $this->addSql('UPDATE task_event SET name = :name WHERE id = :id', [
@@ -71,9 +71,9 @@ final class Version20180826142926 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT * FROM task_event');
 
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($taskEvent = $stmt->fetch()) {
+        while ($taskEvent = $result->fetchAssociative()) {
 
             if (isset($mapping[$taskEvent['name']])) {
                 $this->addSql('UPDATE task_event SET name = :name WHERE id = :id', [

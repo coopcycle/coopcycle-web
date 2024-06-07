@@ -13,9 +13,9 @@ class Version20180622100900 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         $stmt = $this->connection->prepare("SELECT id, expression FROM pricing_rule");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($pricingRule = $stmt->fetch()) {
+        while ($pricingRule = $result->fetchAssociative()) {
             if (false !== strpos($pricingRule['expression'], 'deliveryAddress')) {
                 $expression = str_replace('deliveryAddress', 'dropoff.address', $pricingRule['expression']);
                 $this->addSql('UPDATE pricing_rule SET expression = :expression WHERE id = :id', [
@@ -26,9 +26,9 @@ class Version20180622100900 extends AbstractMigration
         }
 
         $stmt = $this->connection->prepare("SELECT id, delivery_perimeter_expression FROM restaurant");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($restaurant = $stmt->fetch()) {
+        while ($restaurant = $result->fetchAssociative()) {
             if (false !== strpos($restaurant['delivery_perimeter_expression'], 'deliveryAddress')) {
                 $expression = str_replace('deliveryAddress', 'dropoff.address', $restaurant['delivery_perimeter_expression']);
                 $this->addSql('UPDATE restaurant SET delivery_perimeter_expression = :expression WHERE id = :id', [
@@ -42,9 +42,9 @@ class Version20180622100900 extends AbstractMigration
     public function down(Schema $schema) : void
     {
         $stmt = $this->connection->prepare("SELECT id, expression FROM pricing_rule");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($pricingRule = $stmt->fetch()) {
+        while ($pricingRule = $result->fetchAssociative()) {
             if (false !== strpos($pricingRule['expression'], 'dropoff.address')) {
                 $expression = str_replace('dropoff.address', 'deliveryAddress', $pricingRule['expression']);
                 $this->addSql('UPDATE pricing_rule SET expression = :expression WHERE id = :id', [
@@ -55,9 +55,9 @@ class Version20180622100900 extends AbstractMigration
         }
 
         $stmt = $this->connection->prepare("SELECT id, delivery_perimeter_expression FROM restaurant");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($restaurant = $stmt->fetch()) {
+        while ($restaurant = $result->fetchAssociative()) {
             if (false !== strpos($restaurant['delivery_perimeter_expression'], 'dropoff.address')) {
                 $expression = str_replace('dropoff.address', 'deliveryAddress', $restaurant['delivery_perimeter_expression']);
                 $this->addSql('UPDATE restaurant SET delivery_perimeter_expression = :expression WHERE id = :id', [

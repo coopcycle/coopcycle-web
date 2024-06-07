@@ -67,6 +67,7 @@ class FiltersModalContent extends React.Component {
       values.alwayShowUnassignedTasks,
     );
     this.props.setFilterValue("tags", values.tags);
+    this.props.setFilterValue("excludedTags", values.excludedTags);
     this.props.setFilterValue("hiddenCouriers", values.hiddenCouriers);
     this.props.setFilterValue("timeRange", values.timeRange);
 
@@ -81,6 +82,7 @@ class FiltersModalContent extends React.Component {
       showIncidentReportedTasks: this.props.showIncidentReportedTasks,
       alwayShowUnassignedTasks: this.props.alwayShowUnassignedTasks,
       tags: this.props.selectedTags,
+      excludedTags: this.props.excludedTags,
       hiddenCouriers: this.props.hiddenCouriers,
       timeRange: this.props.timeRange,
     };
@@ -280,6 +282,9 @@ class FiltersModalContent extends React.Component {
               </div>
               <div role="tabpanel" className="tab-pane" id="filters_tags">
                 <div className="dashboard__modal-filters__tabpane">
+                  <label>
+                    { this.props.t('ADMIN_DASHBOARD_FILTERS_TAGS_TO_SELECT') }
+                  </label>
                   <TagsSelect
                     tags={this.props.tags}
                     defaultValue={this.props.selectedTags}
@@ -290,6 +295,21 @@ class FiltersModalContent extends React.Component {
                       )
                     }
                   />
+                  <hr />
+                  <label>
+                    { this.props.t('ADMIN_DASHBOARD_FILTERS_TAGS_TO_HIDE') }
+                  </label>
+                  <TagsSelect
+                    tags={this.props.tags}
+                    defaultValue={this.props.excludedTags}
+                    onChange={(tags) =>
+                      setFieldValue(
+                        "excludedTags",
+                        _.map(tags, (tag) => tag.slug),
+                      )
+                    }
+                  />
+                  <hr />
                 </div>
               </div>
               <div role="tabpanel" className="tab-pane" id="filters_couriers">
@@ -367,11 +387,13 @@ function mapStateToProps(state) {
     hiddenCouriers,
     timeRange,
     tags,
+    excludedTags,
     onlyFilter,
   } = selectFiltersSetting(state);
 
   return {
     tags: state.config.tags,
+    excludedTags,
     showFinishedTasks,
     showCancelledTasks,
     showIncidentReportedTasks,

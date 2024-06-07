@@ -10,12 +10,12 @@
     padding-left: 10px;
   }
 </style>
-{% if delivery.store is not empty and delivery.store.isDBSchenkerEnabled %}
+{% if delivery.store is not empty and delivery.store.isTransporterEnabled %}
 {% set importMessage = delivery.getDropoff().getImportMessage() %}
 {% set ediMessages = delivery.getDropoff().getEdifactMessagesTimeline() %}
 <div class="panel panel-primary">
   <div class="panel-heading">
-    <h3 class="panel-title">DBSchenker</h3>
+    <h3 class="panel-title">Transporter</h3>
   </div>
   <div class="panel-body">
     {% if importMessage %}

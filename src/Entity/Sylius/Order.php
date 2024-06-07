@@ -1106,7 +1106,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function setTipAmount(int $tipAmount)
     {
-        $this->tipAmount = $tipAmount;
+        $this->tipAmount = max(0, $tipAmount);
     }
 
     public function getShippingTimeRange(): ?TsRange
@@ -1254,15 +1254,20 @@ class Order extends BaseOrder implements OrderInterface
         return $this->customer->getUser();
     }
 
+    public function getVendorConditions(): ?Vendor
+    {
+        if (null !== $this->getBusinessAccount()) {
+            return $this->getBusinessAccount()->getBusinessRestaurantGroup();
+        }
+
+        return $this->getVendor();
+    }
+
     public function getVendor(): ?Vendor
     {
         if (!$this->hasVendor()) {
 
             return null;
-        }
-
-        if (null !== $this->getBusinessAccount()) {
-            return $this->getBusinessAccount()->getBusinessRestaurantGroup();
         }
 
         $first = $this->getRestaurants()->first();
