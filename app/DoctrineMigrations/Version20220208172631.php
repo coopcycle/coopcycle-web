@@ -22,9 +22,9 @@ final class Version20220208172631 extends AbstractMigration
         $this->addSql('ALTER TABLE oauth2_client ADD name VARCHAR(128) DEFAULT NULL');
 
         $stmt = $this->connection->prepare("SELECT c.identifier, a.name FROM oauth2_client c JOIN api_app a ON c.identifier = a.oauth2_client_id");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($oauth2Client = $stmt->fetch()) {
+        while ($oauth2Client = $result->fetchAssociative()) {
             $this->addSql('UPDATE oauth2_client SET name = :name WHERE identifier = :identifier', $oauth2Client);
         }
 

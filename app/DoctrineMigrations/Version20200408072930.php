@@ -27,9 +27,9 @@ final class Version20200408072930 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN sylius_order.shipping_time_range IS \'(DC2Type:tsrange)\'');
 
         $stmt = $this->connection->prepare("SELECT * FROM sylius_order");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($order = $stmt->fetch()) {
+        while ($order = $result->fetchAssociative()) {
 
             if (null !== $order['shipped_at']) {
                 $shippingTimeRange =

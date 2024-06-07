@@ -7,58 +7,96 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.7.7] - 2024-06-06
 
-- Enable polygon selection in dispatch #4368
-- Set marker color to rider color when showing polyline #4378
-- Fix for assignment not correctly set on dispatch map (technical: task.assignedTo was not set when Dnd to assigned tour) #4379
-- Fix do not show deleted shops in create delivery/order dropdown #4400
-- Various catering improvments by @lucasferraro
+### Changed
+
+- Enable polygon selection in dispatch
+- Set marker color to rider color when showing polyline
+
+### Fixed
+
+- Fix for assignment not correctly set on dispatch map
+- Fix do not show deleted shops in create delivery/order dropdown
+- Various catering improvements
 
 ## [2.7.1] - 2024-06-04
 
-- New method to get setup vendor information by @lucasferraro in #4301
-- Invitation link moved to confirmed registration screen by @lucasferraro in #4340
-- Re-architecture the "TaskList" entity in the backend by @Atala in #4267
+### Added
+
 - Add a filter for "exclude tags" by @Atala in #4353
+
+### Changed
+
+- New method to get setup vendor information
+- Invitation link moved to confirmed registration screen
+- Re-architecture the "TaskList" entity in the backend by @Atala in #4267
+
+### Fixed
+
 - Fix bug in task list live updates that were dispatched to all admins 
 
 ## [2.6.0] - 2024-05-29
 
-* Allow auto-accepting orders
+### Added
+
+- Allow auto-accepting orders
 
 ## [2.5.3] - 2024-05-20
 
-* Fixes for item deletion in admin
-* Order pickup before dropoff in unassigned tasks
+### Fixed
+
+- Fixes for item deletion in admin
+- Order pickup before dropoff in unassigned tasks
 
 ## [2.4.3] - 2024-05-07
 
-* First version for incidents + ability to report incidents from dispatch
-* Show unassigned tasks when filtering out by courier in the dispatch
+### Added
+
+- First version for incidents + ability to report incidents from dispatch
+
+### Changed
+
+- Show unassigned tasks when filtering out by courier in the dispatch
 
 ## [2.3.0] - 2024-04-22
+
+### Added
 
 - Allow synchronizing Edenred merchant IDs.
 
 ## [2.2.1] - 2024-04-16
+
+### Fixed
+
 - Do not add the other tasks of an order when drag'n droping a tour in dispatch
+
+### Added
+
 - Add a link to odoo instance in admin navbar if any
+
+### Changed
+
 - Show incidents as default in dispatch
 - Dispatch filters are persistent
 
 ## [2.2.0] - 2024-04-09
-Tours
-  - Make "optimize rider assignments" not break when they are tours in the rider's assignment
-  - Ability to reorder unassigned tasks and unassigned tours
-  - When adding tasks in tours, sort them in the tour according to their order in "Unassigned tasks
-  - Fix for dispatchers that are also riders not able to see all tasks in the web dispatch
+
+### Changed
+
+- Make "optimize rider assignments" not break when they are tours in the rider's assignment
+- Ability to reorder unassigned tasks and unassigned tours
+- When adding tasks in tours, sort them in the tour according to their order in "Unassigned tasks
+- Fix for dispatchers that are also riders not able to see all tasks in the web dispatch
  
-Foodtech
-  - Fix for "Misleading information about available time slots" #4050
-  - Fix for "Unable to change filters on restaurants list page" #4082
-  - Show some message on restaurants list page when restaurant is unavailable
+### Fixed
+
+- Fix for "Misleading information about available time slots"
+- Fix for "Unable to change filters on restaurants list page"
+- Show some message on restaurants list page when restaurant is unavailable
 
 ## [2.0.2] - 2024-03-19
-Tour fixes :
+
+### Fixed
+
 - Filter out duplicate tasks in "unassigned tasks / unassigned tours" (bug with the options for sorting unassigned tasks)
 - When assigning orders/tasks to a route they continue to appear in the unassigned column as well as the routes column #4067
 - Move order tasks together on drag n drop (even for unassign) #4064
@@ -67,27 +105,39 @@ Tour fixes :
 
 ## [2.0.0] - 2024-03-19
 
+### Changed
+
 - Implement new design for restaurant page ✨
 
 ## [1.31.1] - 2024-03-15
 
-- Enable to highlight several tasks on the map even if no action is available for tasks (Mensakas issue)
+### Changed
+
+- Allow to highlight several tasks on the map even if no action is available for tasks
 
 ## [1.30.1] - 2024-03-05
+
+### Fixed
 
 - Bug fixes for Tours beta feature. Issues #4012, #4013, #4016
 
 ## [1.30.0] - 2024-03-05
 
+### Added
+
 - Introduce DBSchenker automatic import
 
 ## [1.29.1] - 2024-02-15
+
+### Changed
 
 - Use new React18 createRoot to render the dispatch right panel
 
 ## [1.29.0] - 2024-02-15
 
-- Incidents display on the dashboard : in task detail and in assigned tasks
+### Changed
+
+- Incidents display on the dashboard: in task detail and in assigned tasks
 - Fix for creating a tour from several tasks
 - Upgrade to react 18
 
@@ -100,10 +150,14 @@ Tour fixes :
 
 ## [1.25.1] - 2024-01-18
 
+### Fixed
+
 - Ignore empty lines in spreadsheets.
 - Allow restoring cancelled orders that were previously accepted.
 
 ## [1.25.0] - 2024-01-16
+
+### Changed
 
 - Improve orders search
 - Improve dispatch dashboard drag'n'drop

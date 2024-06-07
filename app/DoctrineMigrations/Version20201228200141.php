@@ -32,9 +32,9 @@ final class Version20201228200141 extends AbstractMigration
         $storesForUser = $this->connection->prepare('SELECT * FROM api_user_store WHERE api_user_id = :user_id');
 
         $allInvitations = $this->connection->prepare('SELECT i.code, i.user_id, u.email_canonical, u.customer_id, u.roles FROM invitation i JOIN api_user u ON i.user_id = u.id');
-        $allInvitations->execute();
+        $result = $allInvitations->execute();
 
-        while ($invitation = $allInvitations->fetch()) {
+        while ($invitation = $result->fetchAssociative()) {
 
             $roles = unserialize($invitation['roles']);
 
@@ -42,14 +42,14 @@ final class Version20201228200141 extends AbstractMigration
             $stores = [];
 
             $restaurantsForUser->bindParam('user_id', $invitation['user_id']);
-            $restaurantsForUser->execute();
-            while ($restaurant = $restaurantsForUser->fetch()) {
+            $result2 = $restaurantsForUser->execute();
+            while ($restaurant = $result2->fetchAssociative()) {
                 $restaurants[] = $restaurant['restaurant_id'];
             }
 
             $storesForUser->bindParam('user_id', $invitation['user_id']);
-            $storesForUser->execute();
-            while ($store = $storesForUser->fetch()) {
+            $result3 = $storesForUser->execute();
+            while ($store = $result3->fetchAssociative()) {
                 $stores[] = $store['store_id'];
             }
 

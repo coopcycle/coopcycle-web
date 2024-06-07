@@ -26,13 +26,13 @@ class Version20171230131300 extends AbstractMigration
             'select_delivery' => $this->connection->prepare('SELECT * FROM delivery WHERE id = :id'),
         ];
 
-        $stmts['select_schedule_items']->execute();
-        while ($scheduleItem = $stmts['select_schedule_items']->fetch()) {
+        $result = $stmts['select_schedule_items']->execute();
+        while ($scheduleItem = $result->fetchAssociative()) {
 
             $stmts['select_delivery']->bindParam('id', $scheduleItem['delivery_id']);
-            $stmts['select_delivery']->execute();
+            $result2 = $stmts['select_delivery']->execute();
 
-            $delivery = $stmts['select_delivery']->fetch();
+            $delivery = $result2->fetchAssociative();
 
             $isPickup = $delivery['origin_address_id'] === $scheduleItem['address_id'];
 

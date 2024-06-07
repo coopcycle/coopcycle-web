@@ -284,7 +284,6 @@ doctrine:
         types:
             geography: Jsor\Doctrine\PostGIS\Types\GeographyType
             geometry: Jsor\Doctrine\PostGIS\Types\GeometryType
-            raster: Jsor\Doctrine\PostGIS\Types\RasterType
             geojson: AppBundle\Doctrine\DBAL\Types\GeoJSONType
             uuid: Ramsey\Uuid\Doctrine\UuidType
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType

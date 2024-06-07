@@ -34,9 +34,9 @@ final class Version20220307181623 extends AbstractMigration
             AND u.roles NOT LIKE \'%ROLE_RESTAURANT%\'
             AND u.roles NOT LIKE \'%ROLE_STORE%\''
         );
-        $customersUsers->execute();
+        $result = $customersUsers->execute();
 
-        while ($user = $customersUsers->fetch())
+        while ($user = $result->fetchAssociative())
         {
             foreach(Optin::values() as $optin) {
                 $this->addSql('INSERT INTO optin_consent (user_id, type, created_at) VALUES (:user_id, :type, CURRENT_TIMESTAMP)', [

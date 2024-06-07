@@ -23,15 +23,15 @@ final class Version20210108082409 extends AbstractMigration
         $getUserId = $this->connection->prepare('SELECT id FROM api_user WHERE username = :username');
 
         $tasks = $this->connection->prepare('SELECT id, done_before FROM task WHERE status = \'DONE\' AND assigned_to IS NULL');
-        $tasks->execute();
+        $result = $tasks->execute();
 
-        while ($task = $tasks->fetch()) {
+        while ($task = $result->fetchAssociative()) {
 
             $taskEvents->bindParam('task_id', $task['id']);
-            $taskEvents->execute();
+            $result2 = $taskEvents->execute();
 
             $completedBy = null;
-            while ($taskEvent = $taskEvents->fetch()) {
+            while ($taskEvent = $result2->fetchAssociative()) {
                 if ('task:done' === $taskEvent['name']) {
                     $metadata = json_decode($taskEvent['metadata'], true);
                     $completedBy = $metadata['username'];
@@ -41,8 +41,8 @@ final class Version20210108082409 extends AbstractMigration
 
             if ($completedBy) {
                 $getUserId->bindParam('username', $completedBy);
-                $getUserId->execute();
-                $user = $getUserId->fetch();
+                $result3 = $getUserId->execute();
+                $user = $result3->fetchAssociative();
 
                 $this->addSql('UPDATE task SET assigned_to = :user_id WHERE id = :task_id', [
                     'user_id' => $user['id'],

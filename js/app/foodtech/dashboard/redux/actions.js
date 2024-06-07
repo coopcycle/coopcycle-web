@@ -38,6 +38,7 @@ export const SET_LOOPEAT_FORMATS = 'SET_LOOPEAT_FORMATS'
 export const UPDATE_LOOPEAT_FORMATS_SUCCESS = 'UPDATE_LOOPEAT_FORMATS_SUCCESS'
 
 export const ACTIVE_TAB = 'ACTIVE_TAB'
+export const COLUMN_TOGGLED = 'COLUMN_TOGGLED'
 
 export const orderCreated = createAction(ORDER_CREATED)
 export const orderAccepted = createAction(ORDER_ACCEPTED)
@@ -70,6 +71,7 @@ export const setLoopeatFormats = createAction(SET_LOOPEAT_FORMATS)
 export const updateLoopeatFormatsSuccess = createAction(UPDATE_LOOPEAT_FORMATS_SUCCESS)
 
 export const setActiveTab = createAction(ACTIVE_TAB)
+export const columnToggled = createAction(COLUMN_TOGGLED)
 
 export const initHttpClient = createAction(INIT_HTTP_CLIENT)
 export const refreshTokenSuccess = createAction(REFRESH_TOKEN_SUCCESS)

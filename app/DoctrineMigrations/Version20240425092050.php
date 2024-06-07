@@ -25,9 +25,9 @@ final class Version20240425092050 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT id, additional_properties FROM restaurant');
 
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($restaurant = $stmt->fetchAssociative()) {
+        while ($restaurant = $result->fetchAssociative()) {
             $additionalProperties = json_decode($restaurant['additional_properties'], true);
 
             foreach ($additionalProperties as $key => $item) {

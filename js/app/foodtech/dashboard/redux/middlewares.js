@@ -15,6 +15,7 @@ import {
   initHttpClient,
   INIT_HTTP_CLIENT,
   refreshTokenSuccess,
+  COLUMN_TOGGLED,
 } from './actions'
 
 import createHttpClient from '../../../client'
@@ -199,4 +200,18 @@ export const httpClient = ({ dispatch, getState }) => {
 
     return next(action)
   }
+}
+
+export const persistPreferences = ({ getState }) => (next) => (action) => {
+
+  const result = next(action)
+
+  let state
+  if (action.type === COLUMN_TOGGLED) {
+    state = getState()
+
+    window.localStorage.setItem("cpccl__fdtch_dshbd__cllpsd_clmns", JSON.stringify(state.preferences.collapsedColumns))
+  }
+
+  return result
 }

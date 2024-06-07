@@ -24,9 +24,9 @@ final class Version20200810135535 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT id, floor, description FROM address WHERE floor IS NOT NULL AND floor != \'\'');
 
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($address = $stmt->fetch()) {
+        while ($address = $result->fetchAssociative()) {
             $this->addSql('UPDATE address SET description = :description WHERE id = :id', [
                 'description' => sprintf('%s - %s', $address['description'], $address['floor']),
                 'id' => $address['id'],

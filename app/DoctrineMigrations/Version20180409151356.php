@@ -15,8 +15,8 @@ class Version20180409151356 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         // update the pricing rules to use cents instead of floating point amounts
         $stmt = $this->connection->prepare('SELECT id, price FROM pricing_rule');
-        $stmt->execute();
-        while ($row = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($row = $result->fetchAssociative()) {
 
             if (is_numeric($row['price'])) {
                 $row['price'] = (string)((float)$row['price'] * 100);

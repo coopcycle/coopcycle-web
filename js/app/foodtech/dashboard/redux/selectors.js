@@ -105,3 +105,13 @@ export const selectItemsGroups = createSelector(
   selectItems,
   (items) =>  _.groupBy(items, 'vendor.name')
 )
+
+const selectColumnId = (state, id) => id;
+
+const selectCollapsedColumns = state => state.preferences.collapsedColumns
+
+export const selectIsCollapsedColumn = createSelector(
+  selectColumnId,
+  selectCollapsedColumns,
+  (id, collapsedColumns) => collapsedColumns.includes(id)
+)

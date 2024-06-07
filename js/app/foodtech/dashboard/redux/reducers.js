@@ -35,6 +35,7 @@ import {
   CLOSE_LOOPEAT_SECTION,
   SET_LOOPEAT_FORMATS,
   UPDATE_LOOPEAT_FORMATS_SUCCESS,
+  COLUMN_TOGGLED,
 } from './actions'
 
 export const initialState = {
@@ -63,6 +64,9 @@ export const initialState = {
   isLoopeatSectionOpen: false,
   loopeatFormats: [],
   errorMessage: '',
+  preferences: {
+    collapsedColumns: [],
+  },
 }
 
 // The "force" parameter is useful for multi vendor orders,
@@ -301,6 +305,29 @@ export default (state = initialState, action = {}) => {
       order: action.payload,
     }
 
+  case COLUMN_TOGGLED: {
+    const columnId = action.payload
+
+    const collapsedColumns = state.preferences.collapsedColumns
+
+    if (collapsedColumns.includes(columnId)) {
+      return {
+        ...state,
+        preferences: {
+          ...state.preferences,
+          collapsedColumns: collapsedColumns.filter(col => col !== columnId)
+        }
+      }
+    } else {
+      return {
+        ...state,
+        preferences: {
+          ...state.preferences,
+          collapsedColumns: collapsedColumns.concat(columnId)
+        }
+      }
+    }
+  }
   }
 
   return state

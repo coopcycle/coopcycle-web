@@ -28,9 +28,9 @@ final class Version20200604070521 extends AbstractMigration
         $stmts['contract'] =
             $this->connection->prepare('SELECT restaurant_id, minimum_cart_amount FROM contract');
 
-        $stmts['contract']->execute();
+        $result = $stmts['contract']->execute();
 
-        while ($contract = $stmts['contract']->fetch()) {
+        while ($contract = $result->fetchAssociative()) {
             $this->addSql('UPDATE restaurant_fulfillment_method SET minimum_amount = :minimum_amount WHERE restaurant_id = :restaurant_id', [
                 'minimum_amount' => $contract['minimum_cart_amount'],
                 'restaurant_id'  => $contract['restaurant_id'],

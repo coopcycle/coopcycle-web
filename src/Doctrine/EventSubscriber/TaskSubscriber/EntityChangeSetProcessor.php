@@ -73,7 +73,8 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
                 // sync $task.assignedTo info TO tasklist (see explanation above)
                 // task in a tour does not need to be added to tasklist, the tour itself is in the tasklist
-                if (!$this->tourRepository->findOneByTask($task) && !$taskList->containsTask($task)) {
+                // FIXME : add check for tour !$this->tourRepository->findOneByTask($task)
+                if (!$taskList->containsTask($task)) {
                     $this->logger->debug(sprintf('Adding Task#%d to TaskList', $task->getId()));
 
                     $item = new Item();

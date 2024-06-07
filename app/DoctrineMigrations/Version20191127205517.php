@@ -30,14 +30,14 @@ final class Version20191127205517 extends AbstractMigration
         $stmt['reusable_packaging'] = $this->connection->prepare('SELECT id, restaurant_id FROM reusable_packaging');
         $stmt['restaurant_product'] = $this->connection->prepare('SELECT p.id, p.reusable_packaging_enabled FROM sylius_product p JOIN restaurant_product rp ON p.id = rp.product_id WHERE p.reusable_packaging_enabled = \'t\' AND rp.restaurant_id = :restaurant_id');
 
-        $stmt['reusable_packaging']->execute();
+        $result = $stmt['reusable_packaging']->execute();
 
-        while ($reusablePackaging = $stmt['reusable_packaging']->fetch()) {
+        while ($reusablePackaging = $result->fetchAssociative()) {
 
             $stmt['restaurant_product']->bindParam('restaurant_id', $reusablePackaging['restaurant_id']);
-            $stmt['restaurant_product']->execute();
+            $result2 = $stmt['restaurant_product']->execute();
 
-            while ($product = $stmt['restaurant_product']->fetch()) {
+            while ($product = $result2->fetchAssociative()) {
                 $this->addSql('UPDATE sylius_product SET reusable_packaging_id = :reusable_packaging_id WHERE id = :id', [
                     'reusable_packaging_id' => $reusablePackaging['id'],
                     'id' => $product['id'],
