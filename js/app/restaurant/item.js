@@ -117,6 +117,9 @@ function init() {
               store.dispatch(openTimeRangeChangedModal())
               return
             }
+
+            window.sessionStorage.setItem(`cpccl__chckt__order__${orderId}__tmng`, JSON.stringify(latestTiming.range))
+
           } else {
             // no time ranges available; restaurant is closed for the coming days
             setMenuLoading(false)
