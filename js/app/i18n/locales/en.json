@@ -1,7 +1,5 @@
 {
     "common": {
-        "RESTAURANT": "Restaurant",
-        "STORE": "Store",
         "RESTAURANTS_GROUP": "Restaurants group",
         "DELIVERY_FORM": "Delivery form",
         "CART_TITLE": "Cart",
