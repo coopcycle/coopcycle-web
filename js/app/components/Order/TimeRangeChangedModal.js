@@ -1,20 +1,9 @@
 import React from 'react'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  closeTimeRangeChangedModal,
-  setDateModalOpen,
-} from '../../redux/actions'
-import { selectIsTimeRangeChangedModalOpen } from '../../redux/selectors'
 
-export default function TimeRangeChangedModal() {
-  const isModalOpen = useSelector(
-    selectIsTimeRangeChangedModalOpen)
-
+export default function TimeRangeChangedModal({ isModalOpen, onClick }) {
   const { t } = useTranslation()
-
-  const dispatch = useDispatch()
 
   return (
     <Modal
@@ -31,10 +20,7 @@ export default function TimeRangeChangedModal() {
           <button
             type="button"
             className="btn btn-primary"
-            onClick={ () => {
-              dispatch(closeTimeRangeChangedModal())
-              dispatch(setDateModalOpen(true))
-            } }>
+            onClick={ onClick }>
             { t('CART_CHANGE_TIME_MODAL_LABEL') }
           </button>
         </div>

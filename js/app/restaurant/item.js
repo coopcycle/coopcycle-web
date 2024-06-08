@@ -43,7 +43,7 @@ import {
   selectOrderId,
 } from './redux/selectors'
 import { getTiming } from '../utils/OrderAPI'
-import moment from 'moment'
+import { isTimeRangeSignificantlyDifferent } from '../utils/OrderHelpers'
 
 window._paq = window._paq || []
 
@@ -111,18 +111,14 @@ function init() {
 
         if (displayedTiming && displayedTiming.range && latestTiming) {
           if (latestTiming.range) {
-            const displayedUpperBound = moment(displayedTiming.range[1])
-            const latestLowerBound = moment(latestTiming.range[0])
-
-            let isTimeRangeSignificantlyDifferent = latestLowerBound.diff(displayedUpperBound, 'hours') > 2
-
-            if (isTimeRangeSignificantlyDifferent) {
+            if (isTimeRangeSignificantlyDifferent(displayedTiming.range, latestTiming.range)) {
               setMenuLoading(false)
               store.dispatch(fetchFailure()) // will hide loading state in some react components
               store.dispatch(openTimeRangeChangedModal())
               return
             }
           } else {
+            // no time ranges available; restaurant is closed for the coming days
             setMenuLoading(false)
             store.dispatch(fetchFailure()) // will hide loading state in some react components
             store.dispatch(openRestaurantNotAvailableModal())

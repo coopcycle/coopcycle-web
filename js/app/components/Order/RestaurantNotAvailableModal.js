@@ -1,21 +1,10 @@
 import React from 'react'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  closeRestaurantNotAvailableModal,
-} from '../../redux/actions'
-import {
-  selectIsRestaurantNotAvailableModalOpen,
-} from '../../redux/selectors'
 
-export default function RestaurantNotAvailableModal() {
-  const isModalOpen = useSelector(
-    selectIsRestaurantNotAvailableModalOpen)
+export default function RestaurantNotAvailableModal({ isModalOpen, onClick }) {
 
   const { t } = useTranslation()
-
-  const dispatch = useDispatch()
 
   return (
     <Modal
@@ -33,7 +22,7 @@ export default function RestaurantNotAvailableModal() {
             type="button"
             className="btn btn-primary"
             onClick={ () => {
-              dispatch(closeRestaurantNotAvailableModal())
+              onClick()
               window.location.href = window.Routing.generate('restaurants')
             } }>
             { t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS') }
