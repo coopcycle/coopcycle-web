@@ -56,6 +56,7 @@ class DeliveryManager
                 }
             }
 
+            $this->logger->info(sprintf('No rule matched, strategy: "%s"', $ruleSet->getStrategy()));
             return null;
         }
 
@@ -97,9 +98,13 @@ class DeliveryManager
             if ($matchedAtLeastOne) {
 
                 return $totalPrice;
+            } else {
+                $this->logger->info(sprintf('No rule matched, strategy: "%s"', $ruleSet->getStrategy()));
+                return null;
             }
         }
 
+        $this->logger->info(sprintf('Unknown strategy: "%s"', $ruleSet->getStrategy()));
         return null;
     }
 
