@@ -25,42 +25,20 @@ use Carbon\Carbon;
 
 class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    private $normalizer;
-    private $urlGenerator;
-    private $requestStack;
-    private $uploaderHelper;
-    private $currencyContext;
-    private $priceFormatter;
-    private $slugify;
-    private $locale;
-
     public function __construct(
-        ItemNormalizer $normalizer,
-        UrlGeneratorInterface $urlGenerator,
-        RequestStack $requestStack,
-        UploaderHelper $uploaderHelper,
-        CurrencyContextInterface $currencyContext,
-        PriceFormatter $priceFormatter,
-        SlugifyInterface $slugify,
-        FilterService $imagineFilter,
-        TranslatorInterface $translator,
-        PlaceholderImageResolver $placeholderImageResolver,
-        RestaurantDecorator $restaurantDecorator,
-        string $locale)
-    {
-        $this->normalizer = $normalizer;
-        $this->urlGenerator = $urlGenerator;
-        $this->requestStack = $requestStack;
-        $this->uploaderHelper = $uploaderHelper;
-        $this->currencyContext = $currencyContext;
-        $this->priceFormatter = $priceFormatter;
-        $this->slugify = $slugify;
-        $this->imagineFilter = $imagineFilter;
-        $this->translator = $translator;
-        $this->placeholderImageResolver = $placeholderImageResolver;
-        $this->restaurantDecorator = $restaurantDecorator;
-        $this->locale = $locale;
-    }
+        private ItemNormalizer $normalizer,
+        private UrlGeneratorInterface $urlGenerator,
+        private RequestStack $requestStack,
+        private UploaderHelper $uploaderHelper,
+        private CurrencyContextInterface $currencyContext,
+        private PriceFormatter $priceFormatter,
+        private SlugifyInterface $slugify,
+        private FilterService $imagineFilter,
+        private TranslatorInterface $translator,
+        private PlaceholderImageResolver $placeholderImageResolver,
+        private RestaurantDecorator $restaurantDecorator,
+        private string $locale)
+    {}
 
     public function normalize($object, $format = null, array $context = array())
     {

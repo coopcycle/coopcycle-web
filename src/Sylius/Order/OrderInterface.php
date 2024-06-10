@@ -6,6 +6,7 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\OrderEvent;
 use AppBundle\Entity\Vendor;
@@ -162,9 +163,25 @@ interface OrderInterface extends
     public function getUser(): ?UserInterface;
 
     /**
+     * As we've introduced the concept of Business Account for Orders associated with one of it
+     * all the vendor information should be consumed from the Restaurant entity.
+     *
+     * Use this method to get vendor data like ID, name, address, etc.
      * @return Vendor|null
      */
     public function getVendor(): ?Vendor;
+
+    /**
+     * As we've introduced the concept of Business Account for Orders associated with one of it
+     * all the setup information should be consumed from the BusinessRestaurantGroup entity.
+     * For Orders without association with a Business Account the setup information should be consumed
+     * as usual (from the Restaurant).
+     *
+     * Use this method to get vendor setup like contract, fulfillmentMethods, closingRules,
+     * shippingOptionsDays, openingHours.
+     * @return Vendor|null
+     */
+    public function getVendorConditions(): ?Vendor;
 
     /**
      * @return boolean

@@ -20,9 +20,9 @@ final class Version20191121130720 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         $stmt = $this->connection->prepare('SELECT id, done_after, done_before FROM task WHERE done_after > done_before');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($task = $stmt->fetch()) {
+        while ($task = $result->fetchAssociative()) {
             $this->addSql('UPDATE task SET done_after = :after, done_before = :before WHERE id = :id', [
                 'after' => $task['done_before'],
                 'before' => $task['done_after'],
@@ -31,9 +31,9 @@ final class Version20191121130720 extends AbstractMigration
         }
 
         $stmt = $this->connection->prepare('SELECT id, done_after, done_before FROM task WHERE done_after = done_before');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($task = $stmt->fetch()) {
+        while ($task = $result->fetchAssociative()) {
 
             $after = new \DateTime($task['done_after']);
             $after->modify('-5 minutes');

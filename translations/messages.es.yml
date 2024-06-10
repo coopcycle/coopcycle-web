@@ -208,6 +208,8 @@ profile.managedStores: Tiendas gestionadas por el usuario
 profile.managedRestaurants: Restaurantes gestionados por el usuario
 profile.accountType: Tipo de cuenta
 profile.businessAccount: Cuenta de empresa
+profile.orders: Pedidos
+profile.configuration: Configuración
 order.cart.title: Cesta
 order.items.products_with_count: Productos (%count%)
 order.summary.heading: Pedido %number% (#%id%)
@@ -1402,6 +1404,7 @@ registration.company.address.different.for.billing: "Usar una dirección diferen
 registration.company.billing.address: "Dirección de facturación"
 registration.step.company.name: "Nombre de la empresa"
 registration.step.invitation.copy.link: "Copia el siguiente enlace y envíalo a tus colegas"
+registration.confirm.invitation.link.title: "Usa el siguiente enlace para invitar a tus colegas de trabajo a unirse"
 registration.step.invitation.copy.button: "Copiar el enlace"
 registration.step.invitation.link.copied: "Copiado"
 deliveries.imports: Ficheros importados
@@ -1435,8 +1438,17 @@ restaurants.edenred.added_list.actions: Acciones
 business_restaurant_group.form.fill_all_pages: "Por favor, completar toda la configuración requerida en las tres páginas."
 business_account.registration.user_with_same_email_exists: Ya existe una cuenta con su correo
   electrónico. Por favor, inicie sesión para continuar con la configuración de su cuenta de empresa.
-registration.business_account.loggin.help: <a href="#">Haga click aquí</a> para iniciar sesión y asociar su cuenta con la empresa %name%.
+registration.email.taken.use.another: O puedes usar otro email si lo deseas.
+registration.link.to.login: Por favor, haga click aquí para iniciar sesión.
+registration.email.taken: El email ingresado ya existe, quieres iniciar sesión con él?
 registration.business_account.loggin.warning_message: Inicie sesión para luego asociar su cuenta con la empresa %name%.
 business_account.employee.associated: Su cuenta ha sido asociada con éxito a la empresa %name%
 business_account.loggedin_employee.association.text: Tenés una sesión iniciada con el email <strong>%user_email%</strong>, deseas asociar tu cuenta a la de la empresa <strong>%business_account_name%</strong>?
 business_account.loggedin_employee.association.title: Invitación para asociar su cuenta a una cuenta de empresa
+topbar.action.admin_business_account: Administrar mi Cuenta de empresa
+basics.order_now: Pedir ahora
+restaurant.businessAccount.notAvilable: "Éste restaurante no está incluído entre los restaurantes disponibles para realizar pedidos con tu empresa.\
+  \ <br> Si quiéres, puedes ver los restaurantes disponibles para tu empresa <a href=\"%path%\"\
+  >haciendo click aquí</a>.\n"
+business_account.switch.order_with_business: Pedir con mi empresa
+business_account.switch.ordering_with_business: Pidiendo con mi empresa

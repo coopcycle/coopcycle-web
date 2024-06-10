@@ -22,10 +22,10 @@ final class Version20220112190322 extends AbstractMigration
         $this->addSql('ALTER TABLE task ADD weight INT DEFAULT NULL');
 
         $stmt = $this->connection->prepare('SELECT d.id AS delivery_id, d.weight, t.id AS task_id, tci.position FROM delivery d JOIN task t ON t.delivery_id = d.id AND t.type = \'DROPOFF\' JOIN task_collection_item tci ON tci.task_id = t.id WHERE d.weight IS NOT NULL');
-        $stmt->execute();
+        $result = $stmt->execute();
 
         $deliveriesWithWeight = [];
-        while ($deliveryWithWeight = $stmt->fetch()) {
+        while ($deliveryWithWeight = $result->fetchAssociative()) {
             if (!isset($deliveriesWithWeight[$deliveryWithWeight['delivery_id']])) {
                 $deliveriesWithWeight[$deliveryWithWeight['delivery_id']] = $deliveryWithWeight;
             } else {
@@ -56,12 +56,12 @@ final class Version20220112190322 extends AbstractMigration
         $this->addSql('ALTER TABLE delivery ADD weight INT DEFAULT NULL');
 
         $stmt = $this->connection->prepare('SELECT t.delivery_id, t.id AS task_id, t.weight, tci.position FROM task t JOIN delivery d ON d.id = t.delivery_id JOIN task_collection_item tci ON tci.task_id = t.id WHERE t.weight IS NOT NULL AND t.type = \'DROPOFF\'');
-        $stmt->execute();
+        $result = $stmt->execute();
 
         $weightsByDelivery = [];
 
         $tasksWithWeight = [];
-        while ($taskWithWeight = $stmt->fetch()) {
+        while ($taskWithWeight = $result->fetchAssociative()) {
             $tasksWithWeight[$taskWithWeight['delivery_id']] = $taskWithWeight;
         }
 

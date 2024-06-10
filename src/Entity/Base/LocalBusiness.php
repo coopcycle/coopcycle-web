@@ -31,7 +31,7 @@ abstract class LocalBusiness
      */
     protected $vatID;
 
-    protected $additionalProperties = [];
+    protected array $additionalProperties = [];
 
     public function getLegalName()
     {

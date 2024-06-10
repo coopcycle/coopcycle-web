@@ -172,6 +172,7 @@ export default function Dashboard({ onDateChange }) {
         { sections.map(section => (
           <Column
             key={ section.key }
+            id={ section.key }
             orders={ section.orders }
             title={ section.title }
             context={ section.context }

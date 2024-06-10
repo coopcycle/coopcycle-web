@@ -22,12 +22,12 @@ final class Version20181117163440 extends AbstractMigration
         $productCode = self::PRODUCT_CODE;
         $stmt['product']->bindParam('product_code', $productCode);
 
-        $stmt['product']->execute();
-        while ($product = $stmt['product']->fetch()) {
+        $result = $stmt['product']->execute();
+        while ($product = $result->fetchAssociative()) {
 
             $stmt['variant']->bindParam('product_id', $product['id']);
-            $stmt['variant']->execute();
-            while ($variant = $stmt['variant']->fetch()) {
+            $result2 = $stmt['variant']->execute();
+            while ($variant = $result2->fetchAssociative()) {
 
                 if ($variant['name'] !== $product['name']) {
                     $this->addSql('UPDATE sylius_product_variant_translation SET name = :product_name WHERE id = :translation_id', [

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08aa8fb53640af541d0abb81e9787665",
+    "content-hash": "5a1850481c67b46011cd66dc76a844f6",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1261,12 +1261,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "8613150e855d299efa64f90693f51069553ad7db"
+                "reference": "bf354a8aa2cc40c40641c372ac5c355d234f4dc5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/8613150e855d299efa64f90693f51069553ad7db",
-                "reference": "8613150e855d299efa64f90693f51069553ad7db",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/bf354a8aa2cc40c40641c372ac5c355d234f4dc5",
+                "reference": "bf354a8aa2cc40c40641c372ac5c355d234f4dc5",
                 "shasum": ""
             },
             "require": {
@@ -1296,7 +1296,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2024-04-23T11:33:17+00:00"
+            "time": "2024-05-21T11:31:52+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -2092,35 +2092,40 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "2.13.9",
+            "version": "3.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "c480849ca3ad6706a39c970cdfe6888fa8a058b8"
+                "reference": "b05e48a745f722801f55408d0dbd8003b403dbbd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/c480849ca3ad6706a39c970cdfe6888fa8a058b8",
-                "reference": "c480849ca3ad6706a39c970cdfe6888fa8a058b8",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/b05e48a745f722801f55408d0dbd8003b403dbbd",
+                "reference": "b05e48a745f722801f55408d0dbd8003b403dbbd",
                 "shasum": ""
             },
             "require": {
-                "doctrine/cache": "^1.0|^2.0",
+                "composer-runtime-api": "^2",
+                "doctrine/cache": "^1.11|^2.0",
                 "doctrine/deprecations": "^0.5.3|^1",
-                "doctrine/event-manager": "^1.0",
-                "ext-pdo": "*",
-                "php": "^7.1 || ^8"
+                "doctrine/event-manager": "^1|^2",
+                "php": "^7.4 || ^8.0",
+                "psr/cache": "^1|^2|^3",
+                "psr/log": "^1|^2|^3"
             },
             "require-dev": {
-                "doctrine/coding-standard": "9.0.0",
-                "jetbrains/phpstorm-stubs": "2021.1",
-                "phpstan/phpstan": "1.4.6",
-                "phpunit/phpunit": "^7.5.20|^8.5|9.5.16",
-                "psalm/plugin-phpunit": "0.16.1",
-                "squizlabs/php_codesniffer": "3.6.2",
-                "symfony/cache": "^4.4",
-                "symfony/console": "^2.0.5|^3.0|^4.0|^5.0",
-                "vimeo/psalm": "4.22.0"
+                "doctrine/coding-standard": "12.0.0",
+                "fig/log-test": "^1",
+                "jetbrains/phpstorm-stubs": "2023.1",
+                "phpstan/phpstan": "1.10.58",
+                "phpstan/phpstan-strict-rules": "^1.5",
+                "phpunit/phpunit": "9.6.16",
+                "psalm/plugin-phpunit": "0.18.4",
+                "slevomat/coding-standard": "8.13.1",
+                "squizlabs/php_codesniffer": "3.9.0",
+                "symfony/cache": "^5.4|^6.0|^7.0",
+                "symfony/console": "^4.4|^5.4|^6.0|^7.0",
+                "vimeo/psalm": "4.30.0"
             },
             "suggest": {
                 "symfony/console": "For helpful console commands such as SQL execution and import of files."
@@ -2131,7 +2136,7 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Doctrine\\DBAL\\": "lib/Doctrine/DBAL"
+                    "Doctrine\\DBAL\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2174,14 +2179,13 @@
                 "queryobject",
                 "sasql",
                 "sql",
-                "sqlanywhere",
                 "sqlite",
                 "sqlserver",
                 "sqlsrv"
             ],
             "support": {
                 "issues": "https://github.com/doctrine/dbal/issues",
-                "source": "https://github.com/doctrine/dbal/tree/2.13.9"
+                "source": "https://github.com/doctrine/dbal/tree/3.8.4"
             },
             "funding": [
                 {
@@ -2197,7 +2201,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-02T20:28:55+00:00"
+            "time": "2024-04-25T07:04:44+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -6594,26 +6598,29 @@
         },
         {
             "name": "jsor/doctrine-postgis",
-            "version": "v1.8.0",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jsor/doctrine-postgis.git",
-                "reference": "801a1c16ec6929eb940a7cf80c08f5621a40c512"
+                "reference": "28d47faa60e4b596d19f864e5e991fa1e59f16be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jsor/doctrine-postgis/zipball/801a1c16ec6929eb940a7cf80c08f5621a40c512",
-                "reference": "801a1c16ec6929eb940a7cf80c08f5621a40c512",
+                "url": "https://api.github.com/repos/jsor/doctrine-postgis/zipball/28d47faa60e4b596d19f864e5e991fa1e59f16be",
+                "reference": "28d47faa60e4b596d19f864e5e991fa1e59f16be",
                 "shasum": ""
             },
             "require": {
-                "doctrine/dbal": "^2.4",
-                "php": "^5.6 || ^7.0 || ^8.0"
+                "doctrine/dbal": "^2.13 || ^3.1",
+                "php": "^8.0"
             },
             "require-dev": {
-                "doctrine/orm": "^2.4",
-                "friendsofphp/php-cs-fixer": "^2.14",
-                "phpunit/phpunit": "^4.8.35 || ^5.7"
+                "doctrine/orm": "^2.9",
+                "friendsofphp/php-cs-fixer": "^3.13",
+                "phpunit/phpunit": "^9.5",
+                "symfony/doctrine-bridge": "^5.4 || ^6.0",
+                "symfony/doctrine-messenger": "^5.4 || ^6.0",
+                "vimeo/psalm": "^5.9"
             },
             "suggest": {
                 "doctrine/orm": "For using with the Doctrine ORM"
@@ -6621,7 +6628,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.x-dev"
+                    "dev-main": "2.x-dev"
                 }
             },
             "autoload": {
@@ -6655,9 +6662,9 @@
             ],
             "support": {
                 "issues": "https://github.com/jsor/doctrine-postgis/issues",
-                "source": "https://github.com/jsor/doctrine-postgis/tree/v1.8.0"
+                "source": "https://github.com/jsor/doctrine-postgis/tree/v2.3.0"
             },
-            "time": "2021-09-03T12:10:13+00:00"
+            "time": "2024-02-20T22:32:02+00:00"
         },
         {
             "name": "knplabs/knp-components",
@@ -21788,6 +21795,54 @@
                 "source": "https://github.com/justinrainbow/json-schema/tree/5.2.12"
             },
             "time": "2022-04-13T08:02:27+00:00"
+        },
+        {
+            "name": "league/flysystem-memory",
+            "version": "3.28.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/flysystem-memory.git",
+                "reference": "009a4a1b64dfbfb709fad9ced8dc3d2ed2224f85"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-memory/zipball/009a4a1b64dfbfb709fad9ced8dc3d2ed2224f85",
+                "reference": "009a4a1b64dfbfb709fad9ced8dc3d2ed2224f85",
+                "shasum": ""
+            },
+            "require": {
+                "ext-fileinfo": "*",
+                "league/flysystem": "^3.0.0",
+                "php": "^8.0.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "League\\Flysystem\\InMemory\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Frank de Jonge",
+                    "email": "info@frankdejonge.nl"
+                }
+            ],
+            "description": "In-memory filesystem adapter for Flysystem.",
+            "keywords": [
+                "Flysystem",
+                "file",
+                "files",
+                "filesystem",
+                "memory"
+            ],
+            "support": {
+                "source": "https://github.com/thephpleague/flysystem-memory/tree/3.28.0"
+            },
+            "time": "2024-05-06T20:05:52+00:00"
         },
         {
             "name": "nikic/php-parser",

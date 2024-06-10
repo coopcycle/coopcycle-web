@@ -19,6 +19,7 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
 {
     private $variantResolver;
     private $variantFactory;
+    private $businessContext;
     private $entityManager;
 
     public function __construct(

@@ -15,8 +15,8 @@ final class Version20190216143748 extends AbstractMigration
 
         $stmt['multi_address'] = $this->connection->prepare('SELECT api_user_id, address.geo, COUNT(address.id), ARRAY_TO_STRING(ARRAY_AGG(address.id), \',\') AS address_ids FROM api_user_address JOIN address ON api_user_address.address_id = address.id GROUP BY api_user_id, address.geo HAVING COUNT(address.id) > 1');
 
-        $stmt['multi_address']->execute();
-        while ($row = $stmt['multi_address']->fetch()) {
+        $result = $stmt['multi_address']->execute();
+        while ($row = $result->fetchAssociative()) {
 
             $addressIds = array_map('intval', explode(',', $row['address_ids']));
 
@@ -32,7 +32,7 @@ final class Version20190216143748 extends AbstractMigration
                 [ 'address_ids' => Connection::PARAM_INT_ARRAY ]
             );
 
-            while ($order = $stmt['orders']->fetch()) {
+            while ($order = $stmt['orders']->fetchAssociative()) {
                 $this->addSql('UPDATE sylius_order SET shipping_address_id = :address_id WHERE id = :id', [
                     'address_id' => $addressIdToKeep,
                     'id' => $order['id'],
@@ -45,7 +45,7 @@ final class Version20190216143748 extends AbstractMigration
                 [ 'address_ids' => Connection::PARAM_INT_ARRAY ]
             );
 
-            while ($task = $stmt['tasks']->fetch()) {
+            while ($task = $stmt['tasks']->fetchAssociative()) {
                 $this->addSql('UPDATE task SET address_id = :address_id WHERE id = :id', [
                     'address_id' => $addressIdToKeep,
                     'id' => $task['id'],

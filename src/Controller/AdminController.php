@@ -875,11 +875,19 @@ class AdminController extends AbstractController
             ]
         );
 
+        $this->getDoctrine()->getManager()->getFilters()->enable('soft_deleteable');
+
+        $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
+
+        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
+
+        $importDate = new \DateTime($request->query->get('date', 'now'));
+
         $importQueues = $this->entityManager->getRepository(DeliveryImportQueue::class)
             ->createQueryBuilder('diq')
-            ->andWhere('diq.createdAt >= :yesterday')
+            ->andWhere('DATE(diq.createdAt) = :import_date')
             ->orderBy('diq.createdAt', 'DESC')
-            ->setParameter('yesterday', Carbon::yesterday())
+            ->setParameter('import_date', $importDate->format('Y-m-d'))
             ->getQuery()
             ->getResult();
 
@@ -887,10 +895,11 @@ class AdminController extends AbstractController
             'deliveries' => $deliveries,
             'filters' => $filters,
             'routes' => $this->getDeliveryRoutes(),
-            'stores' => $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']),
+            'stores' => $stores,
             'delivery_import_form' => $deliveryImportForm->createView(),
             'delivery_export_form' => $dataExportForm->createView(),
             'import_queues' => $importQueues,
+            'import_date' => $importDate,
             'centrifugo_token' => $centrifugoClient->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600)),
             'centrifugo_channel' => sprintf('%s_events#%s', $this->getParameter('centrifugo_namespace'), $this->getUser()->getUsername()),
         ]));

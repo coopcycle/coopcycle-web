@@ -220,7 +220,7 @@ class ModalContent extends React.Component {
       )
     }
 
-    if (order.state === 'accepted') {
+    if (order.state === 'accepted' || order.state === 'started' || order.state === 'ready') {
 
       return (
         <div className="d-flex flex-row justify-content-between py-4 border-top">

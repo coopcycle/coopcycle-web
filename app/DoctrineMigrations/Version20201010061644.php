@@ -31,10 +31,10 @@ final class Version20201010061644 extends AbstractMigration
         $this->addSql('ALTER TABLE delivery_form ADD CONSTRAINT FK_831435D52E007EC4 FOREIGN KEY (package_set_id) REFERENCES package_set (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
 
         $stmt = $this->connection->prepare('SELECT name, value FROM craue_config_setting');
-        $stmt->execute();
+        $result = $stmt->execute();
 
         $settings = [];
-        while ($setting = $stmt->fetch()) {
+        while ($setting = $result->fetchAssociative()) {
             $settings[$setting['name']] = $setting['value'];
         }
 

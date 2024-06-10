@@ -21,9 +21,9 @@ class Version20180516124244 extends AbstractMigration
 
         $this->stmt = [];
         $this->stmt['restaurant_taxon'] = $this->connection->prepare('SELECT * FROM restaurant_taxon');
-        $this->stmt['restaurant_taxon']->execute();
+        $result = $this->stmt['restaurant_taxon']->execute();
 
-        while ($restaurantTaxon = $this->stmt['restaurant_taxon']->fetch()) {
+        while ($restaurantTaxon = $result->fetchAssociative()) {
             $this->addSql('UPDATE restaurant SET active_menu_taxon_id = :taxon_id WHERE id = :restaurant_id', $restaurantTaxon);
         }
     }

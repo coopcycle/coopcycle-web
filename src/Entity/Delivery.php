@@ -512,12 +512,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         }
     }
 
-    public static function toVroomShipment(Delivery $delivery): VroomShipment
+    public static function toVroomShipment(Delivery $delivery, $pickupIri, $dropoffIri): VroomShipment
     {
         $shipment = new VroomShipment();
 
-        $shipment->pickup = Task::toVroomJob($delivery->getPickup());
-        $shipment->delivery = Task::toVroomJob($delivery->getDropoff());
+        $shipment->pickup = Task::toVroomJob($delivery->getPickup(), $pickupIri);
+        $shipment->delivery = Task::toVroomJob($delivery->getDropoff(), $dropoffIri);
 
         return $shipment;
     }

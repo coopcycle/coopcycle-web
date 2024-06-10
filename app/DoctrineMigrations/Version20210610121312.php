@@ -41,7 +41,7 @@ final class Version20210610121312 extends AbstractMigration implements Container
                 ]
             );
 
-            $oldTaxCategoryId = $oldTaxCategoryQuery->fetchColumn(0);
+            $oldTaxCategoryId = $oldTaxCategoryQuery->fetchFirstColumn();
 
             $newTaxRateQuery = $this->connection->executeQuery(
                 $sql,
@@ -59,7 +59,7 @@ final class Version20210610121312 extends AbstractMigration implements Container
                 continue;
             }
 
-            $newTaxRate = $newTaxRateQuery->fetch();
+            $newTaxRate = $newTaxRateQuery->fetchAssociative();
 
             $this->addSql('UPDATE sylius_product_variant SET tax_category_id = :new_category_id WHERE tax_category_id = :old_category_id', [
                 'new_category_id' => $newTaxRate['category_id'],
@@ -74,7 +74,7 @@ final class Version20210610121312 extends AbstractMigration implements Container
                 ]
             );
 
-            while ($oldTaxRate = $oldTaxRatesQuery->fetch()) {
+            while ($oldTaxRate = $oldTaxRatesQuery->fetchAssociative()) {
 
                 $this->addSql('UPDATE sylius_adjustment SET origin_code = :new_origin_code, label = :label WHERE type = \'tax\' AND origin_code = :old_origin_code', [
                     'new_origin_code' => $newTaxRate['code'],

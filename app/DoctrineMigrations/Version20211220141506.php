@@ -20,9 +20,9 @@ final class Version20211220141506 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $stmt = $this->connection->prepare('SELECT id, delivery_id, comments FROM task WHERE type = \'PICKUP\' AND delivery_id IN (SELECT delivery_id FROM urbantz_delivery)');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($task = $stmt->fetch()) {
+        while ($task = $result->fetchAssociative()) {
 
             if (1 === preg_match('/([0-9\.]+) kg/im', $task['comments'], $matches)) {
 

@@ -22,9 +22,9 @@ class Version20171009155642 extends AbstractMigration
         $this->addSql('ALTER TABLE order_ ADD uuid VARCHAR(255) DEFAULT NULL');
 
         $stmt = $this->connection->prepare("SELECT * FROM order_");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($order = $stmt->fetch()) {
+        while ($order = $result->fetchAssociative()) {
             $this->addSql("UPDATE order_ SET uuid = :uuid WHERE id = :id", [
                 'id' => $order['id'],
                 'uuid' => Uuid::uuid4()->toString(),

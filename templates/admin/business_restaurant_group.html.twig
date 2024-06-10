@@ -4,6 +4,7 @@
 
 {% set business_restaurant_group = form.vars.data %}
 {% set is_new = (business_restaurant_group.id is null) %}
+{% set formErrors = form.vars.errors.form.getErrors(true)|length > 0 %}
 
 {% block breadcrumb %}
 <li>
@@ -85,6 +86,10 @@
   <script>
     var submitButton = document.querySelector("button[type='submit']")
     var form = document.querySelector('[name="business_restaurant_group"]')
+
+    if ({{ formErrors }}) {
+      document.querySelector('[name="invalid-form-alert"]').classList.remove('hidden')
+    }
 
     submitButton.addEventListener('click', function (e) {
       if (!form.checkValidity()) {

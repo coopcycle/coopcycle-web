@@ -279,11 +279,8 @@ export const storeFixture = {
               username: 'admin',
               createdAt: '2024-01-08T15:01:12+01:00',
               updatedAt: '2024-01-09T11:01:58+01:00',
-              itemIds: [
-                '/api/tasks/729',
-                '/api/tasks/730',
-                '/api/tasks/731',
-                '/api/tasks/727'
+              items: [
+                '/api/tours/111'
               ]
             }
           }
@@ -305,7 +302,7 @@ export const storeFixture = {
               createdAt: '2024-01-08T14:34:25+01:00',
               updatedAt: '2024-01-08T17:59:50+01:00',
               name: 'tour 1',
-              itemIds: [
+              items: [
                 '/api/tasks/729',
                 '/api/tasks/730',
                 '/api/tasks/731',
@@ -323,7 +320,7 @@ export const storeFixture = {
               date: '2024-01-09',
               createdAt: '2024-01-09T12:46:23+01:00',
               updatedAt: '2024-01-09T12:46:47+01:00',
-              itemIds: [
+              items: [
                 '/api/tasks/733',
                 '/api/tasks/732'
               ],

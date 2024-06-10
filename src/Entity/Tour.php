@@ -7,11 +7,11 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Api\Dto\TourInput;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Action\Task\DeleteTour as DeleteTourController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use AppBundle\Api\Filter\DateFilter;
+use AppBundle\Entity\TaskList\Item;
 use AppBundle\Vroom\Job as VroomJob;
 use AppBundle\Vroom\Shipment as VroomShipment;
 
@@ -41,12 +41,11 @@ use AppBundle\Vroom\Shipment as VroomShipment;
  *     "delete"={
  *       "method"="DELETE",
  *       "security"="is_granted('ROLE_DISPATCHER')",
- *       "controller"=DeleteTourController::class
  *     }
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"tour"}},
- *     "normalization_context"={"groups"={"task_collection", "task", "tour"}}
+ *     "normalization_context"={"groups"={"task_collection", "tour"}}
  *   }
  * )
  * @ApiFilter(DateFilter::class, properties={"date"})
@@ -56,6 +55,11 @@ class Tour extends TaskCollection implements TaskCollectionInterface
     private $date;
 
     protected $id;
+
+    /**
+     * @var Item
+     */
+    private $taskListItem;
 
     /**
      * @var string
@@ -91,19 +95,6 @@ class Tour extends TaskCollection implements TaskCollectionInterface
         return $this;
     }
 
-    public function addTask(Task $task, $position = null)
-    {
-        $task->setTour($this);
-
-        return parent::addTask($task, $position);
-    }
-
-    public function removeTask(Task $task)
-    {
-        $task->setTour(null);
-        parent::removeTask($task);
-    }
-
     public function getTaskPosition(Task $task)
     {
         foreach ($this->getItems() as $item) {
@@ -136,13 +127,36 @@ class Tour extends TaskCollection implements TaskCollectionInterface
         return $this;
     }
 
-    public static function toVroomStep(Tour $tour) : VroomJob
+    public static function toVroomStep(Tour $tour, $tourIri) : VroomJob
     {
 
         $tasks = $tour->getTasks();
-        $job = Task::toVroomJob($tasks[0]);
-        $job->description = 'tour:'.$tour->getId();
+        $job = Task::toVroomJob($tasks[0], $tourIri);
         return $job;
 
+    }
+
+    /**
+     * Get the value of taskListItem
+     *
+     * @return Item
+     */
+    public function getTaskListItem()
+    {
+        return $this->taskListItem;
+    }
+
+    /**
+     * Set the value of taskListItem
+     *
+     * @param  Item  $taskListItem
+     *
+     * @return  self
+     */
+    public function setTaskListItem(Item $taskListItem)
+    {
+        $this->taskListItem = $taskListItem;
+
+        return $this;
     }
 }

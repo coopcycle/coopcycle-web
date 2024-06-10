@@ -39,7 +39,6 @@ use Behat\Testwork\Tester\Result\ExceptionResult;
 use Behat\Behat\Tester\Exception\PendingException;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\ORM\Tools\SchemaTool;
 use Faker\Generator as FakerGenerator;
 use Nucleos\UserBundle\Model\UserManager;
 use Nucleos\UserBundle\Util\UserManipulator;
@@ -75,22 +74,6 @@ use Typesense\Exceptions\ObjectNotFound;
  */
 class FeatureContext implements Context, SnippetAcceptingContext
 {
-
-    /**
-     * @var \Doctrine\Common\Persistence\ObjectManager
-     */
-    private $manager;
-
-    /**
-     * @var SchemaTool
-     */
-    private $schemaTool;
-
-    /**
-     * @var array
-     */
-    private $classes;
-
     private $restContext;
 
     private $minkContext;
@@ -129,8 +112,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->tokens = [];
         $this->oAuthTokens = [];
         $this->apiKeys = [];
-        $this->manager = $doctrine->getManager();
-        $this->schemaTool = new SchemaTool($this->manager);
     }
 
     protected function getContainer()
@@ -143,6 +124,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function gatherContexts(BeforeScenarioScope $scope)
     {
+        /** @var \Behat\Behat\Context\Environment\InitializedContextEnvironment */
         $environment = $scope->getEnvironment();
 
         $this->restContext = $environment->getContext('Behatch\Context\RestContext');
@@ -164,7 +146,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function resetSequences()
     {
         $connection = $this->doctrine->getConnection();
-        $rows = $connection->fetchAll('SELECT sequence_name FROM information_schema.sequences');
+        $rows = $connection->fetchAllAssociative('SELECT sequence_name FROM information_schema.sequences');
         foreach ($rows as $row) {
             $connection->executeQuery(sprintf('ALTER SEQUENCE %s RESTART WITH 1', $row['sequence_name']));
         }
@@ -1237,6 +1219,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $data = json_decode($contents, true);
 
+        /** @var \GeoJson\Feature\FeatureCollection */
         $geojson = GeoJson::jsonUnserialize($data);
 
         foreach ($geojson as $feature) {

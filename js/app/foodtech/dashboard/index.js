@@ -49,6 +49,14 @@ export function renderDashboard(el, options) {
     preloadedState.preparationDelay = parseInt(el.dataset.preparationDelay)
   }
 
+  const collapsedColumns = window.localStorage.getItem("cpccl__fdtch_dshbd__cllpsd_clmns")
+  if (collapsedColumns) {
+    preloadedState.preferences = {
+      ...preloadedState.preferences,
+      collapsedColumns: JSON.parse(collapsedColumns)
+    }
+  }
+
   Modal.setAppElement(el)
 
   // TODO Add loader

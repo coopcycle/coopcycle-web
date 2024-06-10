@@ -7,8 +7,8 @@ import {
   closeSettings,
   setPolylineStyle,
   setClustersEnabled,
-  setUseAvatarColors,
-  setToursEnabled } from '../redux/actions'
+  setUseAvatarColors
+} from '../redux/actions'
 
 const formItemLayout = {
   labelCol: { span: 14 },
@@ -26,7 +26,6 @@ class SettingsModalContent extends React.Component {
       polylineStyle: props.polylineStyle,
       clustersEnabled: props.clustersEnabled,
       useAvatarColors: props.useAvatarColors,
-      toursEnabled: props.toursEnabled,
     }
   }
 
@@ -34,7 +33,6 @@ class SettingsModalContent extends React.Component {
     this.props.setPolylineStyle(this.state.polylineStyle)
     this.props.setClustersEnabled(this.state.clustersEnabled)
     this.props.setUseAvatarColors(this.state.useAvatarColors)
-    this.props.setToursEnabled(this.state.toursEnabled)
     this.props.closeSettings()
   }
 
@@ -65,13 +63,6 @@ class SettingsModalContent extends React.Component {
             <Radio.Button value={ false }>No</Radio.Button>
           </Radio.Group>
         </Form.Item>
-        <Form.Item label={ this.props.t('ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED') } { ...formItemLayout }>
-          <Radio.Group defaultValue={ this.props.toursEnabled }
-            onChange={ (e) => this.setState({ toursEnabled: e.target.value }) }>
-            <Radio.Button value={ true }>Yes</Radio.Button>
-            <Radio.Button value={ false }>No</Radio.Button>
-          </Radio.Group>
-        </Form.Item>
         <Form.Item { ...buttonItemLayout }>
           <button type="button" className="btn btn-block btn-primary" onClick={ this.handleSubmit.bind(this) }>
             { this.props.t('ADMIN_DASHBOARD_FILTERS_APPLY') }
@@ -88,7 +79,6 @@ function mapStateToProps(state) {
     polylineStyle: state.settings.polylineStyle,
     clustersEnabled: state.settings.clustersEnabled,
     useAvatarColors: state.settings.useAvatarColors,
-    toursEnabled: state.settings.toursEnabled,
   }
 }
 
@@ -98,7 +88,6 @@ function mapDispatchToProps(dispatch) {
     setPolylineStyle: style => dispatch(setPolylineStyle(style)),
     setClustersEnabled: enabled => dispatch(setClustersEnabled(enabled)),
     setUseAvatarColors: useAvatarColors => dispatch(setUseAvatarColors(useAvatarColors)),
-    setToursEnabled: enabled => dispatch(setToursEnabled(enabled)),
     closeSettings: () => dispatch(closeSettings())
   }
 }

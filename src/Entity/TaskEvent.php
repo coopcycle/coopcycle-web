@@ -31,9 +31,9 @@ class TaskEvent
     /**
      * @Groups({"task"})
      */
-    private $data = [];
+    private array $data = [];
 
-    private $metadata = [];
+    private array $metadata = [];
 
     /**
      * @Groups({"task"})

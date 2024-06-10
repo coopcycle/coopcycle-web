@@ -59,11 +59,11 @@ class CartType extends AbstractType
                 $form->get('isNewAddress')->setData(false);
             }
 
-            $vendor = $cart->getVendor();
+            $vendorConditions = $cart->getVendorConditions();
             $isCollectionOnly =
-                $vendor->isFulfillmentMethodEnabled('collection') && !$vendor->isFulfillmentMethodEnabled('delivery');
+                $vendorConditions->isFulfillmentMethodEnabled('collection') && !$vendorConditions->isFulfillmentMethodEnabled('delivery');
 
-            if ($vendor->isFulfillmentMethodEnabled('collection')) {
+            if ($vendorConditions->isFulfillmentMethodEnabled('collection')) {
                 $form->add('takeaway', CheckboxType::class, [
                     'required' => false,
                     'data' => $isCollectionOnly ? true : $cart->isTakeaway(),

@@ -444,7 +444,7 @@ Feature: Dispatch
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "orgName":"Acme",
-            "assignedTo":"sarah",
+            "assignedTo":"bob",
             "@*@":"@*@"
           },
           {
@@ -460,7 +460,7 @@ Feature: Dispatch
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "orgName":"Acme",
-            "assignedTo":"bob",
+            "assignedTo":"sarah",
             "@*@":"@*@"
           }
         ],
@@ -581,19 +581,9 @@ Feature: Dispatch
          "name":"Monday tour",
          "date": "2018-02-02",
          "items":[
-            {
-                "@id":"/api/tasks/4",
-                "@type":"Task",
-                "id":4,
-                "@*@": "@*@"
-            },
-            {
-                "@id":"/api/tasks/5",
-                "@type":"Task",
-                "id":5,
-                "@*@": "@*@"
-            }
-         ],
+          "/api/tasks/4",
+          "/api/tasks/5"
+        ],
          "distance":@integer@,
          "duration":@integer@,
          "polyline":@string@,
@@ -632,25 +622,10 @@ Feature: Dispatch
          "name":"Monday tour",
          "date": "2018-03-02",
          "items":[
-            {
-              "@id":"/api/tasks/3",
-              "@type":"Task",
-              "id":3,
-              "@*@": "@*@"
-            },
-            {
-              "@id":"/api/tasks/2",
-              "@type":"Task",
-              "id":2,
-              "@*@": "@*@"
-            },
-            {
-              "@id":"/api/tasks/1",
-              "@type":"Task",
-              "id":1,
-              "@*@": "@*@"
-            }
-         ],
+          "/api/tasks/3",
+          "/api/tasks/2",
+          "/api/tasks/1"
+        ],
          "distance":@integer@,
          "duration":@integer@,
          "polyline":@string@,

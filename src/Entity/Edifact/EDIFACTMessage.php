@@ -5,12 +5,11 @@ namespace AppBundle\Entity\Edifact;
 use AppBundle\Entity\Task;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Transporter\Enum\TransporterName;
 
 class EDIFACTMessage
 {
     use Timestampable;
-
-    const TRANSPORTER_DBSCHENKER = 'DBSCHENKER';
 
     const DIRECTION_INBOUND = 'INBOUND';
     const DIRECTION_OUTBOUND = 'OUTBOUND';
@@ -28,13 +27,13 @@ class EDIFACTMessage
 
     private string $messageType;
 
-    private ?string $subMessageType;
+    private ?string $subMessageType = null;
 
     private string $edifactFile;
 
-    private ?array $metadata;
+    private ?array $metadata = null;
 
-    private ?\DateTime $syncedAt;
+    private ?\DateTime $syncedAt = null;
 
     private $tasks;
 
@@ -152,7 +151,7 @@ class EDIFACTMessage
 
     public function getAppointment(): ?\DateTime
     {
-        return $this->metadata['appointment'] ? new \DateTime($this->metadata['appointment']) : null;
+        return isset($this->metadata['appointment']) ? new \DateTime($this->metadata['appointment']) : null;
     }
 
     public function getSyncedAt(): ?\DateTime

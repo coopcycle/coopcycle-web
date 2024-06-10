@@ -28,10 +28,10 @@ final class Version20191212172101 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT p.id AS product_id, po.id as option_id, po.additional AS is_additional, po.position FROM sylius_product_options pos JOIN sylius_product p ON p.id = pos.product_id JOIN sylius_product_option po ON po.id = pos.option_id ORDER by p.id ASC');
 
-        $stmt->execute();
+        $result = $stmt->execute();
 
         $products = [];
-        while ($product = $stmt->fetch()) {
+        while ($product = $result->fetchAssociative()) {
             $products[$product['product_id']][] = $product;
         }
 

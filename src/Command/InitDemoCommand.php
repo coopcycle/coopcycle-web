@@ -170,7 +170,7 @@ class InitDemoCommand extends Command
     private function resetSequences()
     {
         $connection = $this->doctrine->getConnection();
-        $rows = $connection->fetchAll('SELECT sequence_name FROM information_schema.sequences');
+        $rows = $connection->fetchAllAssociative('SELECT sequence_name FROM information_schema.sequences');
         foreach ($rows as $row) {
 
             $sequenceName = $row['sequence_name'];

@@ -7,13 +7,13 @@ use Lcobucci\JWT\Configuration;
 class TokenFactory
 {
     private $config;
-    private $databaseName;
 
-    public function __construct(Configuration $cubeJsJwtConfiguration, string $databaseName, string $baseUrl)
+    public function __construct(
+        Configuration $cubeJsJwtConfiguration,
+        private string $databaseName,
+        private string $baseUrl)
     {
         $this->config = $cubeJsJwtConfiguration;
-        $this->databaseName = $databaseName;
-        $this->baseUrl = $baseUrl;
     }
 
     public function createToken(array $customClaims = array()): string

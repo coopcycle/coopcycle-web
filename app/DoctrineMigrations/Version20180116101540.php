@@ -36,8 +36,8 @@ class Version20180116101540 extends AbstractMigration
 
         // Create tasks from deliveries
         $stmt = $this->connection->prepare('SELECT * FROM delivery');
-        $stmt->execute();
-        while ($delivery = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($delivery = $result->fetchAssociative()) {
 
             $dropoffDoneBefore = new \DateTime($delivery['date']);
 

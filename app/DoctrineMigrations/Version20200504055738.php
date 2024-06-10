@@ -42,8 +42,8 @@ where customer_id = :customer_id AND shipping_address_id IS NOT NULL GROUP BY sh
 
         $customersWithAddress = [];
 
-        $stmts['user_address']->execute();
-        while ($userAddress = $stmts['user_address']->fetch()) {
+        $result = $stmts['user_address']->execute();
+        while ($userAddress = $result->fetchAssociative()) {
 
             $this->addSql('INSERT INTO sylius_customer_address (customer_id, address_id) VALUES (:customer_id, :address_id)' , [
                 'customer_id' => $userAddress['customer_id'],
@@ -57,13 +57,13 @@ where customer_id = :customer_id AND shipping_address_id IS NOT NULL GROUP BY sh
 
         foreach ($customersWithAddress as $customer_id) {
             $stmts['default_address']->bindParam('customer_id', $customer_id);
-            $stmts['default_address']->execute();
+            $result = $stmts['default_address']->execute();
 
-            $defaultAddress = $stmts['default_address']->fetch();
-
-            if ($stmts['default_address']->rowCount() === 0) {
+            if ($result->rowCount() === 0) {
                 continue;
             }
+
+            $defaultAddress = $result->fetchAssociative();
 
             $this->addSql('UPDATE sylius_customer SET default_address_id = :default_address_id WHERE id = :customer_id' , [
                 'default_address_id' => $defaultAddress['id'],
@@ -89,8 +89,8 @@ where customer_id = :customer_id AND shipping_address_id IS NOT NULL GROUP BY sh
         $stmts['customer_address'] =
             $this->connection->prepare('SELECT a.address_id, u.id AS user_id FROM sylius_customer_address a JOIN sylius_customer c ON c.id = a.customer_id JOIN api_user u ON c.id = u.customer_id');
 
-        $stmts['customer_address']->execute();
-        while ($customerAddress = $stmts['customer_address']->fetch()) {
+        $result = $stmts['customer_address']->execute();
+        while ($customerAddress = $result->fetchAssociative()) {
             $this->addSql('INSERT INTO api_user_address (api_user_id, address_id) VALUES (:user_id, :address_id)' , [
                 'user_id' => $customerAddress['user_id'],
                 'address_id' => $customerAddress['address_id'],

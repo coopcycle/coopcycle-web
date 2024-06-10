@@ -308,6 +308,8 @@ profile.managedStores: Stores managed by user
 profile.managedRestaurants: Restaurants managed by user
 profile.accountType: Account type
 profile.businessAccount: Business account
+profile.orders: Orders
+profile.configuration: Configuration
 order.cart.title: Cart
 order.items.products_with_count: Products (%count%)
 order.summary.heading: Order %number% (#%id%)
@@ -1466,6 +1468,7 @@ registration.step.company.name: "Name of the company"
 registration.step.invitation.copy.link: "Copy the link below and send it to your colleagues"
 registration.step.invitation.copy.button: "Copy the link"
 registration.step.invitation.link.copied: "Copied"
+registration.confirm.invitation.link.title: "Use this link below to invite colleagues to join"
 error.404: Page not found.
 error.502: The server is over capacity. Please try again later.
 error.504: The server took too much time to respond.
@@ -1508,8 +1511,17 @@ restaurants.edenred.added_list.actions: Actions
 business_restaurant_group.form.fill_all_pages: "Please, fill out all three settings pages."
 business_account.registration.user_with_same_email_exists: An account with the your email already
   exists. Please log in to continue with your business account configuration.
-registration.business_account.loggin.help: <a href="#">Click here</a> to login and then associate your account with the company %name%.
+registration.email.taken.use.another: You can use an other email if you want to.
+registration.link.to.login: Please, click here to login.
+registration.email.taken: This email is already taken, do you want to login with it?
 registration.business_account.loggin.warning_message: Login to associate your account with the company %name%.
 business_account.employee.associated: Your account has been associated successfully with the company %name%
 business_account.loggedin_employee.association.text: You are logged in with the email <strong>%user_email%</strong>. Do you want to associate your account with the company <strong>%business_account_name%</strong>?
 business_account.loggedin_employee.association.title: Invitation to associate your account with a Business Acccount
+topbar.action.admin_business_account: Administrate my Business Account
+basics.order_now: Order now
+restaurant.businessAccount.notAvilable: "This restaurant is not included in the restaurants of your company configuration.\
+  \ <br> You can see the available restaurants for your company <a href=\"%path%\"\
+  >clicking here</a>.\n"
+business_account.switch.order_with_business: Order with my company
+business_account.switch.ordering_with_business: Ordering with my company
