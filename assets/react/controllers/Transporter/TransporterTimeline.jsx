@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Timeline, Image } from "antd";
+import moment from "moment";
 import { useTranslation } from "react-i18next";
 import {
   DownloadOutlined,
@@ -25,12 +26,20 @@ function ediDot(edi) {
   }
 }
 
+function getSitucation(edi) {
+  const split = edi?.subMessageType?.split("|");
+  if (split.length > 1) {
+    return split.shift();
+  }
+  return null;
+}
+
 function ediColor(edi) {
   if (edi.messageType === "SCONTR") {
     return "blue";
   }
 
-  switch (edi?.subMessageType?.split("|")[0]) {
+  switch (getSitucation(edi)) {
     case "LIV":
       return "green";
     case "REN":
@@ -44,7 +53,7 @@ function ediColor(edi) {
 function ediPresenter(edi) {
   let subMessage = null;
   if (edi.subMessageType) {
-    const situation = edi.subMessageType.split("|")[0];
+    const situation = getSitucation(edi);
     subMessage = `TRANSPORTER_SITUATION_${situation}`;
   }
   return {
@@ -80,34 +89,34 @@ function PreviewPods({ pods }) {
 }
 
 export default function ({ ediMessages }) {
-  ediMessages = JSON.parse(ediMessages);
-  const scontrs = ediMessages.filter((edi) => edi.messageType === "SCONTR");
-  const reports = ediMessages.filter((edi) => edi.messageType === "REPORT");
+  let messages = JSON.parse(ediMessages);
+  const scontrs = messages.filter((edi) => edi.messageType === "SCONTR");
+  const reports = messages.filter((edi) => edi.messageType === "REPORT");
   let scontr = [];
   if (scontrs.length > 1) {
     scontr = [scontrs.shift()];
   }
-  ediMessages = [...scontr, ...reports];
+  messages = [...scontr, ...reports];
 
   const { t } = useTranslation();
   return (
     <Timeline className="m-3">
-      {ediMessages.map((ediMessage) => {
+      {messages.map((ediMessage) => {
         const { message, dot, color, subMessage } = ediPresenter(ediMessage);
         return (
           <Timeline.Item key={ediMessage.id} dot={dot} color={color}>
             <p>
               {t(message)}
               <span className="text-muted d-block font-weight-light">
-                {new Date(ediMessage.createdAt).toLocaleString()}
+                {moment(ediMessage.createdAt).format("l LT")}
               </span>
-              {subMessage && (
+              {subMessage ? (
                 <span className="font-weight-light d-block">
                   {t(subMessage)}
                 </span>
-              )}
+              ) : null}
             </p>
-            {ediMessage.ediMessage && (
+            {ediMessage.ediMessage ? (
               <a
                 className="mr-3"
                 target="_blank"
@@ -118,7 +127,7 @@ export default function ({ ediMessages }) {
               >
                 {t("TRANSPORTER_SHOW_EDI")}
               </a>
-            )}
+            ) : null}
             {ediMessage.pods.length > 0 && (
               <PreviewPods pods={ediMessage.pods} />
             )}

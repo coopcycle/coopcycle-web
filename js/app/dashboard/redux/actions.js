@@ -114,7 +114,6 @@ export const COMPLETE_TASK_FAILURE = 'COMPLETE_TASK_FAILURE'
 export const CANCEL_TASK_FAILURE = 'CANCEL_TASK_FAILURE'
 export const TOKEN_REFRESH_SUCCESS = 'TOKEN_REFRESH_SUCCESS'
 export const RESTORE_TASK_FAILURE = 'RESTORE_TASK_FAILURE'
-export const START_TASK_FAILURE = 'START_TASK_FAILURE'
 
 export const OPEN_FILTERS_MODAL = 'OPEN_FILTERS_MODAL'
 export const CLOSE_FILTERS_MODAL = 'CLOSE_FILTERS_MODAL'
@@ -207,6 +206,7 @@ export const insertInUnassignedTasks = createAction('INSERT_IN_UNASSIGNED_TASKS'
 export const appendToUnassignedTours = createAction('APPEND_TO_UNASSIGNED_TOURS')
 export const insertInUnassignedTours = createAction('INSERT_IN_UNASSIGNED_TOURS')
 
+export const startTaskFailure = createAction('START_TASK_FAILURE');
 
 
 export function assignAfter(username, task, after) {
@@ -506,10 +506,6 @@ export function completeTaskFailure(error) {
 
 export function cancelTaskFailure(error) {
   return { type: CANCEL_TASK_FAILURE, error }
-}
-
-export function startTaskFailure(error) {
-  return { type: START_TASK_FAILURE, error }
 }
 
 export function tokenRefreshSuccess(token) {
