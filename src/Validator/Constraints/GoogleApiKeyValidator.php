@@ -64,7 +64,7 @@ class GoogleApiKeyValidator extends ConstraintValidator
                 ReverseQuery::fromCoordinates($latitude, $longitude)
             );
         } catch (InvalidCredentials | InvalidServerResponse $e) {
-            $this->context->buildViolation($constraint->invalidApiKeyMessage)
+            $this->context->buildViolation($constraint->invalidApiKeyMessage, ['%error%' => $e->getMessage()])
                 ->setCode(GoogleApiKey::INVALID_API_KEY_ERROR)
                 ->addViolation();
         }
