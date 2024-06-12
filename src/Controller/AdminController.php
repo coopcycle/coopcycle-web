@@ -10,6 +10,7 @@ use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Controller\Utils\IncidentTrait;
+use AppBundle\Controller\Utils\TransporterTrait;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
@@ -145,6 +146,7 @@ class AdminController extends AbstractController
     use StoreTrait;
     use UserTrait;
     use IncidentTrait;
+    use TransporterTrait;
     use InjectAuthTrait;
 
     protected function getRestaurantRoutes()
@@ -187,6 +189,7 @@ class AdminController extends AbstractController
         CollectionFinderInterface $typesenseShopsFinder,
         bool $adhocOrderEnabled,
         protected Filesystem $incidentImagesFilesystem,
+        protected Filesystem $edifactFilesystem,
         protected PricingRuleSetManager $pricingRuleSetManager,
         protected JWTTokenManagerInterface $JWTTokenManager,
         protected TimeSlotManager $timeSlotManager

@@ -383,6 +383,17 @@
         "ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION": "No se pudo eliminar. Por favor, desvincule esta tarifa de los establecimientos, restaurantes o formularios de entrega a los que pueda aplicarse.",
         "SHOW_DETAILS": "Mostrar detalles",
         "ADMIN_NO_APPLICATIONS": "Aún no está en uso",
-        "ADMIN_APPLIED_TO": "Aplicado a {{count}} elemento(s)"
+        "ADMIN_APPLIED_TO": "Aplicado a {{count}} elemento(s)",
+        "ADMIN_DASHBOARD_START_TASKS_MULTI": "Iniciar {{count}} tarea(s)",
+        "TRANSPORTER_MESSAGE_TYPE_SCONTR": "Tarea importada del transportista",
+        "TRANSPORTER_MESSAGE_TYPE_REPORT": "Informe del estado de la tarea",
+        "TRANSPORTER_SITUATION_AAR": "En el muelle",
+        "TRANSPORTER_SITUATION_RAQ": "Permaneciendo en el muelle",
+        "TRANSPORTER_SITUATION_MLV": "En entrega",
+        "TRANSPORTER_SITUATION_LIV": "Entregado",
+        "TRANSPORTER_SITUATION_REN": "Rechazado",
+        "TRANSPORTER_SITUATION_RST": "Destinatario no entregado",
+        "TRANSPORTER_SHOW_EDI": "Ver EDI",
+        "TRANSPORTER_SHOW_PODS": "Ver PODs"
     }
 }

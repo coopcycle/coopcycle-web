@@ -2,7 +2,7 @@ import React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import _ from 'lodash'
 import {useTranslation} from 'react-i18next'
-import {Item, Menu, Submenu, useContextMenu} from 'react-contexify'
+import {Item, Menu, Submenu, Separator, useContextMenu} from 'react-contexify'
 
 import moment from 'moment'
 
@@ -23,6 +23,7 @@ import {
   removeTasksFromGroup,
   restoreTasks,
   setCurrentTask,
+  startTasks,
   unassignTasks
 } from '../../redux/actions'
 import {selectCouriersWithExclude, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading} from '../../redux/selectors'
@@ -42,6 +43,7 @@ export const MOVE_TO_TOP = 'MOVE_TO_TOP'
 export const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
 export const MOVE_TO_NEXT_DAY_MULTI = 'MOVE_TO_NEXT_DAY_MULTI'
 export const MOVE_TO_NEXT_WORKING_DAY_MULTI = 'MOVE_TO_NEXT_WORKING_DAY_MULTI'
+export const START_TASKS_MULTI = 'START_TASKS_MULTI'
 export const CREATE_GROUP = 'CREATE_GROUP'
 export const ADD_TO_GROUP = 'ADD_TO_GROUP'
 export const REMOVE_FROM_GROUP = 'REMOVE_FROM_GROUP'
@@ -105,6 +107,8 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
 
     if (isMultiple) {
 
+      actions.push(START_TASKS_MULTI)
+
       if (tasksToUnassign.length > 0) {
         actions.push(UNASSIGN_MULTI)
       }
@@ -151,6 +155,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
       }
 
       actions.push(CANCEL_MULTI)
+      actions.push(START_TASKS_MULTI)
       actions.push(RESCHEDULE)
       actions.push(REPORT_INCIDENT)
 
@@ -261,12 +266,20 @@ const DynamicMenu = () => {
           </Item>
       )}
       </Submenu>
+     <Separator />
       <Item
         hidden={ !actions.includes(CANCEL_MULTI) }
         onClick={ () => dispatch(cancelTasks(selectedTasks)) }
       >
         { t('ADMIN_DASHBOARD_CANCEL_TASKS_MULTI', { count: selectedTasks.length }) }
       </Item>
+      <Item
+        hidden={!actions.includes(START_TASKS_MULTI)}
+        onClick={() => dispatch(startTasks(selectedTasks))}
+      >
+        {t('ADMIN_DASHBOARD_START_TASKS_MULTI', {count: selectedTasks.length})}
+      </Item>
+      <Separator />
       <Item
         hidden={ !actions.includes(MOVE_TO_NEXT_DAY_MULTI) }
         onClick={ () => dispatch(moveTasksToNextDay(selectedTasks)) }

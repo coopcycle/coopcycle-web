@@ -206,6 +206,7 @@ class SyncTransportersCommand extends Command {
         $sync->push($content);
         $ids = array_map(fn(EDIFACTMessage $m) => $m->getId(), $unsynced);
         $repo->setSynced($ids, $filename);
+        $this->entityManager->flush();
     }
 
     /**
@@ -250,7 +251,7 @@ class SyncTransportersCommand extends Command {
         }
 
         // PICKUP SETUP
-        $pickup = $this->importFromPoint->buildPickupTask($this->HQAddress->clone());
+        $pickup = $this->importFromPoint->buildPickupTask($this->HQAddress->clone(), $edi);
 
         // DROPOFF SETUP
         $task = $this->importFromPoint->import($point, $edi);
