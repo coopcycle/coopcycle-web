@@ -2,7 +2,7 @@ import React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import _ from 'lodash'
 import {useTranslation} from 'react-i18next'
-import {Item, Menu, Submenu, useContextMenu} from 'react-contexify'
+import {Item, Menu, Submenu, Separator, useContextMenu} from 'react-contexify'
 
 import moment from 'moment'
 
@@ -156,6 +156,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
       }
 
       actions.push(CANCEL_MULTI)
+      actions.push(START_TASKS_MULTI)
       actions.push(RESCHEDULE)
       actions.push(REPORT_INCIDENT)
 
@@ -266,12 +267,20 @@ const DynamicMenu = () => {
           </Item>
       )}
       </Submenu>
+     <Separator />
       <Item
         hidden={ !actions.includes(CANCEL_MULTI) }
         onClick={ () => dispatch(cancelTasks(selectedTasks)) }
       >
         { t('ADMIN_DASHBOARD_CANCEL_TASKS_MULTI', { count: selectedTasks.length }) }
       </Item>
+      <Item
+        hidden={!actions.includes(START_TASKS_MULTI)}
+        onClick={() => dispatch(startTasks(selectedTasks))}
+      >
+        {t('ADMIN_DASHBOARD_START_TASKS_MULTI', {count: selectedTasks.length})}
+      </Item>
+      <Separator />
       <Item
         hidden={ !actions.includes(MOVE_TO_NEXT_DAY_MULTI) }
         onClick={ () => dispatch(moveTasksToNextDay(selectedTasks)) }
@@ -283,12 +292,6 @@ const DynamicMenu = () => {
         onClick={ () => dispatch(moveTasksToNextWorkingDay(selectedTasks)) }
       >
         { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI', { count: selectedTasks.length, nextWorkingDay: moment(nextWorkingDay).format('LL') }) }
-      </Item>
-      <Item
-        hidden={!actions.includes(START_TASKS_MULTI)}
-        onClick={() => dispatch(startTasks(selectedTasks))}
-      >
-        {t('ADMIN_DASHBOARD_START_TASKS_MULTI', {count: selectedTasks.length})}
       </Item>
       <Item
         hidden={ !actions.includes(CREATE_GROUP) }

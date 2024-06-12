@@ -10,7 +10,7 @@ describe('updateTask', () => {
 
         const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
 
-        expect(actions).toStrictEqual([ASSIGN_MULTI, ASSIGN_WITH_LINKED_TASKS_MULTI, CREATE_GROUP, CREATE_TOUR, CANCEL_MULTI, RESCHEDULE, REPORT_INCIDENT, MOVE_TO_NEXT_DAY_MULTI, MOVE_TO_NEXT_WORKING_DAY_MULTI, ADD_TO_GROUP])
+        expect(actions).toStrictEqual([START_TASKS_MULTI, ASSIGN_MULTI, ASSIGN_WITH_LINKED_TASKS_MULTI, CREATE_GROUP, CREATE_TOUR, CANCEL_MULTI, RESCHEDULE, REPORT_INCIDENT, MOVE_TO_NEXT_DAY_MULTI, MOVE_TO_NEXT_WORKING_DAY_MULTI, ADD_TO_GROUP])
     })
 
     it('should return actions for one unassigned pickup and one unassigned dropoff into a group', () => {
@@ -37,7 +37,7 @@ describe('updateTask', () => {
 
         const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds)
 
-        expect(actions).toStrictEqual([UNASSIGN_SINGLE, MOVE_TO_TOP, MOVE_TO_BOTTOM, CANCEL_MULTI, RESCHEDULE, REPORT_INCIDENT])
+        expect(actions).toStrictEqual([START_TASKS_MULTI, UNASSIGN_SINGLE, MOVE_TO_TOP, MOVE_TO_BOTTOM, CANCEL_MULTI, RESCHEDULE, REPORT_INCIDENT])
     })
 
     it('should return actions for several assigned tasks', () => {
