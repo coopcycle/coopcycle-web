@@ -173,7 +173,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
      */
     private $timeSlots;
 
-
     private ?string $transporter = null;
 
     public function __construct() {
@@ -523,7 +522,10 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     public function getTimeSlots()
     {
-        return $this->timeSlots;
+        // return $this->timeSlots;
+        return array_map(function(StoreTimeSlot $storeTS) {
+            return $storeTS->getTimeSlot();
+        }, $this->timeSlots->toArray());
     }
 
     /**
@@ -535,7 +537,21 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     public function addTimeSlot(TimeSlot $timeSlot): void
     {
-        $this->timeSlots->add($timeSlot);
+        $sts = new StoreTimeSlot();
+        $sts->setTimeSlot($timeSlot);
+        $sts->setStore($this);
+        $sts->setPosition($this->timeSlots->last()->getPosition() + 1);
+        $this->timeSlots->add($sts);
+    }
+
+    public function removeTimeSlot(TimeSlot $timeSlot){
+        foreach($this->timeSlots as $item) {
+            if ($item->getTimeSlot() === $timeSlot) {
+                $this->timeSlots->removeElement($timeSlot);
+                break;
+            }
+
+        }
     }
 
 
@@ -555,7 +571,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return [];
     }
 
-    public function isTransporterEnabled(): bool
+   public function isTransporterEnabled(): bool
     {
         return !is_null($this->transporter);
     }

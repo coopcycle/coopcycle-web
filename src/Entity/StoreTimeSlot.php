@@ -2,8 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Enum\Store;
-
 class StoreTimeSlot {
     private int $id;
     private Store $store;
@@ -40,5 +38,10 @@ class StoreTimeSlot {
 
     public function getPosition(): int {
         return $this->position;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getTimeSlot()->getName();
     }
 }
