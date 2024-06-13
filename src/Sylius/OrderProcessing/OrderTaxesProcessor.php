@@ -5,6 +5,7 @@ namespace AppBundle\Sylius\OrderProcessing;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Taxation\Resolver\TaxRateResolverInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -12,24 +13,20 @@ use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
-use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
 final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInterface
 {
-    private $taxRateResolver;
-
     public function __construct(
         private AdjustmentFactoryInterface $adjustmentFactory,
-        TaxRateResolverInterface $taxRateResolver,
+        private TaxRateResolverInterface $taxRateResolver,
         private CalculatorInterface $calculator,
         private SettingsManager $settingsManager,
         private TaxCategoryRepositoryInterface $taxCategoryRepository,
         private TranslatorInterface $translator,
         private string $state)
     {
-        $this->taxRateResolver = $taxRateResolver;
     }
 
     private function setTaxCategory(?TaxCategoryInterface $taxCategory): void

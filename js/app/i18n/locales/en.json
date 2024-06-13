@@ -144,6 +144,7 @@
         "ADMIN_DASHBOARD_PACKAGES": "Packages",
         "ADMIN_DASHBOARD_WEIGHT": "Weight",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Move {{count}} tasks to next day",
+        "ADMIN_DASHBOARD_START_TASKS_MULTI": "Start {{count}} tasks",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Move {{count}} tasks to next working day ({{nextWorkingDay}})",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Display by dropoff asc.",
         "ADMIN_DASHBOARD_RECURRENCE_RULE_MODAL_TITLE": "Recurrence rule",
@@ -506,6 +507,16 @@
         "PLEASE_SELECT_A_DATE": "Please select a date",
         "OPEN": "Open",
         "CLOSED": "Closed",
-        "PLUS_ADD_TAGS": "+ Add tags"
+        "PLUS_ADD_TAGS": "+ Add tags",
+        "TRANSPORTER_MESSAGE_TYPE_SCONTR": "Task imported from the carrier",
+        "TRANSPORTER_MESSAGE_TYPE_REPORT": "Task status report",
+        "TRANSPORTER_SITUATION_AAR": "At the dock",
+        "TRANSPORTER_SITUATION_RAQ": "Remaining at the dock",
+        "TRANSPORTER_SITUATION_MLV": "In delivery",
+        "TRANSPORTER_SITUATION_LIV": "Delivered",
+        "TRANSPORTER_SITUATION_REN": "Refused",
+        "TRANSPORTER_SITUATION_RST": "Recipient not delivered",
+        "TRANSPORTER_SHOW_EDI": "Show EDI",
+        "TRANSPORTER_SHOW_PODS": "Show PODs"
     }
 }

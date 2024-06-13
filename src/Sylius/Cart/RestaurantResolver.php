@@ -14,14 +14,10 @@ use Webmozart\Assert\Assert;
 
 class RestaurantResolver
 {
-    /**
-     * @var RequestStack
-     */
-    private RequestStack $requestStack;
 
-    private $repository;
+    private LoggerInterface $logger;
 
-    private $logger;
+    private LoggingUtils $loggingUtils;
 
     private static $routes = [
         'restaurant',
@@ -38,13 +34,11 @@ class RestaurantResolver
      * @param LocalBusinessRepository $repository
      */
     public function __construct(
-        RequestStack $requestStack,
-        LocalBusinessRepository $repository,
+        private RequestStack $requestStack,
+        private LocalBusinessRepository $repository,
         LoggerInterface $logger = null,
         LoggingUtils $loggingUtils = null)
     {
-        $this->requestStack = $requestStack;
-        $this->repository = $repository;
         $this->logger = $logger ?? new NullLogger();
         $this->loggingUtils = $loggingUtils ?? new NullLoggingUtils();
     }

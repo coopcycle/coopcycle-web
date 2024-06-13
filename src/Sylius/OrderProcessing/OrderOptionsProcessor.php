@@ -67,7 +67,7 @@ final class OrderOptionsProcessor implements OrderProcessorInterface
                 } catch (EntityNotFoundException $e) {
                     // This happens when an option has been deleted,
                     // but is still attached to a product variant
-                    $this->checkoutLogger->error(sprintf('OrderOptionsProcessor | error: %s', $e->getMessage()),
+                    $this->checkoutLogger->warning(sprintf('OrderOptionsProcessor | error: %s', $e->getMessage()),
                         ['order' => $this->loggingUtils->getOrderId($order), 'exception' => $e]);
                 }
             }

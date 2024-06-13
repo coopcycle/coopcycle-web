@@ -62,7 +62,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             try {
                 $delivery = $this->getDelivery($order);
             } catch (ShippingAddressMissingException|NoAvailableTimeSlotException $e) {
-                $this->logger->error(sprintf('OrderFeeProcessor | error: %s',  $e->getMessage()),
+                $this->logger->warning(sprintf('OrderFeeProcessor | error: %s',  $e->getMessage()),
                     ['order' => $this->loggingUtils->getOrderId($order)]);
             }
         }
@@ -82,7 +82,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
                 if (null === $customerAmount) {
                     $customerAmount = $contract->getCustomerAmount();
 
-                    $this->logger->error(sprintf('OrderFeeProcessor | customer amount: %d | could not calculate price, falling back to flat price', $customerAmount),
+                    $this->logger->warning(sprintf('OrderFeeProcessor | customer amount: %d | could not calculate price, falling back to flat price', $customerAmount),
                         ['order' => $this->loggingUtils->getOrderId($order)]);
                 } else {
                     $this->logger->info(sprintf('OrderFeeProcessor | customer amount: %d | price calculated successfully', $customerAmount),
@@ -105,7 +105,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
                 if (null === $businessAmount) {
                     $businessAmount = $contract->getFlatDeliveryPrice();
 
-                    $this->logger->error(sprintf('OrderFeeProcessor | business amount: %d | could not calculate price, falling back to flat price', $businessAmount),
+                    $this->logger->warning(sprintf('OrderFeeProcessor | business amount: %d | could not calculate price, falling back to flat price', $businessAmount),
                         ['order' => $this->loggingUtils->getOrderId($order)]);
                 } else {
                     $this->logger->info(sprintf('OrderFeeProcessor | business amount: %d | price calculated successfully', $businessAmount),

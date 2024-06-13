@@ -53,7 +53,7 @@ order.shippingTimeRange.notAvailable: Indisponible pour l'instant
 
 dabba.insufficient_wallet: Il vous manque %amount% sur votre cagnotte Dabba
 
-googlemaps.api_key.invalid: La clé d'API Google Maps n'est pas valide
+googlemaps.api_key.invalid: La clé d'API Google Maps n'est pas valide. %error%
 
 loopeat.insufficient_stock: Quantité d'emballages zéro déchet insuffisante pour « %name% »
 

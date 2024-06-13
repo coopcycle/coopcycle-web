@@ -143,7 +143,8 @@ class RestaurantControllerTest extends WebTestCase
             $jwtTokenManager->reveal(),
             $this->timingRegistry->reveal(),
             new NullLogger(),
-            new NullLoggingUtils()
+            new NullLoggingUtils(),
+            'test',
         );
 
         $this->controller->setContainer($container->reveal());
