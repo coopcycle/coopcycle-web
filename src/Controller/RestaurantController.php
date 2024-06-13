@@ -595,6 +595,8 @@ class RestaurantController extends AbstractController
             foreach ($cartForm->getErrors() as $formError) {
                 $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
                 $errors[$propertyPath] = [ ValidationUtils::serializeFormError($formError) ];
+
+                $this->checkoutLogger->warning($formError->getMessage(), [ 'order' => $this->loggingUtils->getOrderId($cart) ]);
             }
         }
 
