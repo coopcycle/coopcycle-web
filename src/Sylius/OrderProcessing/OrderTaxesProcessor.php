@@ -18,18 +18,15 @@ use Webmozart\Assert\Assert;
 
 final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInterface
 {
-    private $taxRateResolver;
-
     public function __construct(
         private AdjustmentFactoryInterface $adjustmentFactory,
-        TaxRateResolverInterface $taxRateResolver,
+        private TaxRateResolverInterface $taxRateResolver,
         private CalculatorInterface $calculator,
         private SettingsManager $settingsManager,
         private TaxCategoryRepositoryInterface $taxCategoryRepository,
         private TranslatorInterface $translator,
         private string $state)
     {
-        $this->taxRateResolver = $taxRateResolver;
     }
 
     private function setTaxCategory(?TaxCategoryInterface $taxCategory): void
