@@ -257,6 +257,8 @@ services:
     arguments:
       $region: '%region_iso%'
 
+  AppBundle\Sylius\Taxation\Resolver\TaxRateResolverInterface: '@sylius.tax_rate_resolver'
+
   # IMPORTANT
   # OrderOptionsProcessor MUST be invoked BEFORE OrderFeeProcessor
   # Otherwise, fee calculation may be wrong
