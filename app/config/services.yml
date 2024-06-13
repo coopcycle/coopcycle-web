@@ -158,6 +158,7 @@ services:
       $orderItemQuantityModifier: '@sylius.order_item_quantity_modifier'
       $orderModifier: '@sylius.order_modifier'
       $serializer: '@serializer'
+      $environment: '%kernel.environment%'
 
   AppBundle\Controller\LoopEatController:
     arguments:
