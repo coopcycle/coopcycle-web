@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity\Edifact;
 
-use AppBundle\Presenter\EDIFACTMessagePresenter;
 use Doctrine\Common\Collections\Collection;
 use Illuminate\Support\Collection as IlluminateCollection;
 
@@ -32,11 +31,6 @@ trait EDIFACTMessageAwareTrait
     public function hasReports(): bool
     {
         return $this->getReports()->count() > 0;
-    }
-
-    public function getEdifactMessagesTimeline(): array
-    {
-        return array_map(fn (EDIFACTMessage $message) => EDIFACTMessagePresenter::toTimeline($message), $this->edifactMessages->toArray());
     }
 
     /**

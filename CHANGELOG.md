@@ -5,12 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.8.2] - 2024-06-12
+
+### Changed
+
+- Allow massively starting tasks | Right click on multiple tasks will have a "start tasks" option. This will be used to inform transporters that we have received correctly the packages to delivery today and alert them if some have not arrived. 
+- Revamp view of EDIFACT messages | Added more information to timeline below the bar code in an order detail page
+
+## [2.8.1] - 2024-06-11
+
+### Fixed
+
+- Fix for "Unable to drag a group from Unassigned column to rider's assignment" | Assigning groups to riders was broken, we fixed it
+
 ## [2.7.7] - 2024-06-06
 
 ### Changed
 
-- Enable polygon selection in dispatch
-- Set marker color to rider color when showing polyline
+- Enable polygon selection in dispatch | Now we can draw whatever we want, not just rectangles
+- Set marker color to rider color when showing polyline | Points on the map assigned to a rider will change color when the map icon is selected to improve visualisation of the routes assigend to each person in the map
 
 ### Fixed
 

@@ -205,6 +205,7 @@ export const insertInUnassignedTasks = createAction('INSERT_IN_UNASSIGNED_TASKS'
 export const appendToUnassignedTours = createAction('APPEND_TO_UNASSIGNED_TOURS')
 export const insertInUnassignedTours = createAction('INSERT_IN_UNASSIGNED_TOURS')
 
+export const startTaskFailure = createAction('START_TASK_FAILURE');
 
 /**
  * This action assign a task after another when you linked the two markers on the map
@@ -763,6 +764,39 @@ export function cancelTasks(tasks) {
         values.forEach(response => dispatch(updateTask(response.data)))
       })
       .catch(error => dispatch(cancelTaskFailure(error)))
+  }
+}
+
+export function startTasks(tasks) {
+
+  return function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const requests = tasks.map(task => {
+
+      return httpClient.request({
+        method: 'put',
+        url: `${task['@id']}/start`,
+        data: {},
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    })
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+      })
+      .catch(error => dispatch(startTaskFailure(error)))
   }
 }
 

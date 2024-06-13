@@ -56,28 +56,4 @@ trait IncidentTrait {
             'isLastmile' => $isLastmile,
         ]));
     }
-
-    /**
-    * @Route("/media/incident/image/{path}", name="incident_image_public", methods={"GET"})
-    */
-    public function incidentImagePublicAction($path, Request $request): Response
-    {
-        $object = $this->getDoctrine()->getRepository(IncidentImage::class)->findOneBy([
-            'imageName' => $path
-        ]);
-        if (is_null($object)) {
-            throw $this->createNotFoundException();
-        }
-        try {
-            $imagePath = $this->uploaderHelper->asset($object, 'file');
-            $imageBin = $this->incidentImagesFilesystem->read($imagePath);
-            $mimeType = $this->incidentImagesFilesystem->mimeType($imagePath);
-        } catch (\Exception $e) {
-            throw $this->createNotFoundException();
-        }
-        return new Response($imageBin, 200, [
-            'content-type' => $mimeType,
-            'Content-Disposition' => sprintf('inline; filename="%s"', $path)
-        ]);
-    }
 }

@@ -79,11 +79,18 @@ class ImportFromPoint {
         return $task;
     }
 
-    public function buildPickupTask(Address $address): Task
+    public function buildPickupTask(
+        Address $address,
+        ?EDIFACTMessage $edi = null
+    ): Task
     {
         $task = new Task();
         $task->setType(Task::TYPE_PICKUP);
         $task->setAddress($address);
+        if (!is_null($edi)) {
+            $task->addEdifactMessage($edi);
+        }
+
         return $task;
     }
 

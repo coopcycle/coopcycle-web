@@ -43,6 +43,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
     NAD+MS+0000011:5+DBSchenker Testing Inc.'
     UNS+D'
     RFF+UNC+JOY0123456789'
+    RSJ+MS+AAR+CFM'
+    RSJ+MS+MLV+CFM'
     RSJ+MS+LIV+CFM'
     NAD+MR+4447190000:5+Coopcycle Testing Inc.'
     NAD+MS+0000011:5+DBSchenker Testing Inc.'
@@ -529,43 +531,62 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
 
         $this->assertCount(1, $dropoff->getEdifactMessages());
+        $this->taskManager->start($pickup);
+        $this->entityManager->flush();
         $this->taskManager->markAsDone($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
         $this->taskManager->markAsDone($dropoff);
         $this->entityManager->flush();
 
+        $this->assertCount(3, $pickup->getEdifactMessages());
         $this->assertCount(2, $dropoff->getEdifactMessages());
-        /** @var EDIFACTMessage $reportEDIMessage */
-        $reportEDIMessage = $dropoff->getEdifactMessages()->last();
 
-        $this->assertEquals('JOY0123456789', $reportEDIMessage->getReference());
-        $this->assertEquals('DBSCHENKER', $reportEDIMessage->getTransporter());
+        $pickupReportEDIMessage = $pickup->getEdifactMessages()->map(function (EDIFACTMessage $message) {
+            return [$message->getMessageType(), $message->getSubMessageType()];
+        });
+        $this->assertEquals(
+            [
+                [EDIFACTMessage::MESSAGE_TYPE_SCONTR, null],
+                [EDIFACTMessage::MESSAGE_TYPE_REPORT, 'AAR|CFM'],
+                [EDIFACTMessage::MESSAGE_TYPE_REPORT, 'MLV|CFM'],
+            ],
+            $pickupReportEDIMessage->toArray()
+        );
+
+        /** @var EDIFACTMessage $reportEDIMessage */
+        $dropoffReportEDIMessage = $dropoff->getEdifactMessages()->last();
+
+        $this->assertEquals('JOY0123456789', $dropoffReportEDIMessage->getReference());
+        $this->assertEquals('DBSCHENKER', $dropoffReportEDIMessage->getTransporter());
         $this->assertEquals(
             EDIFACTMessage::MESSAGE_TYPE_REPORT,
-            $reportEDIMessage->getMessageType()
+            $dropoffReportEDIMessage->getMessageType()
         );
         $this->assertEquals(
             EDIFACTMessage::DIRECTION_OUTBOUND,
-            $reportEDIMessage->getDirection()
+            $dropoffReportEDIMessage->getDirection()
         );
         $this->assertEquals(
             'LIV|CFM',
-            $reportEDIMessage->getSubMessageType()
+            $dropoffReportEDIMessage->getSubMessageType()
         );
-        $this->assertNull($reportEDIMessage->getSyncedAt());
+        $this->assertNull($dropoffReportEDIMessage->getSyncedAt());
 
 
         $this->assertCount(0, $this->syncFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray());
         $this->assertCount(0, $this->syncFs->listContents(sprintf('from_%s', self::FS_MASK_BMV))->toArray());
 
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
-        $this->assertCount(1, $unsynced);
+        $this->assertCount(3, $unsynced);
 
         $commandTester->execute([
             'transporter' => 'DBSCHENKER'
         ]);
         $output = $commandTester->getDisplay();
         $this->assertStringContainsString('imported 0 tasks', $output);
-        $this->assertStringContainsString('1 messages to send', $output);
+        $this->assertStringContainsString('3 messages to send', $output);
 
 
         $this->assertCount(0, $this->syncFs->listContents(sprintf('from_%s', self::FS_MASK_BMV))->toArray());

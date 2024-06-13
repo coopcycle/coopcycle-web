@@ -149,7 +149,7 @@ export const UnassignedTasks = () => {
                 >
                   {_.map(groups, (group, index) => {
                       return (
-                        <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
+                        <Draggable key={ `group-${group.id}` } draggableId={ `group:${group['@id']}` } index={ index }>
                           {(provided) => (
                             <div
                               ref={ provided.innerRef }

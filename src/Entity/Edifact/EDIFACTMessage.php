@@ -5,7 +5,6 @@ namespace AppBundle\Entity\Edifact;
 use AppBundle\Entity\Task;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
-use Transporter\Enum\TransporterName;
 
 class EDIFACTMessage
 {
@@ -29,7 +28,7 @@ class EDIFACTMessage
 
     private ?string $subMessageType = null;
 
-    private string $edifactFile;
+    private ?string $edifactFile = null;
 
     private ?array $metadata = null;
 
@@ -107,7 +106,7 @@ class EDIFACTMessage
         return $this;
     }
 
-    public function getEdiMessage(): string
+    public function getEdiMessage(): ?string
     {
         return $this->edifactFile;
     }
@@ -129,6 +128,9 @@ class EDIFACTMessage
         return $this;
     }
 
+    /**
+     * @param array<string> $pods
+     */
     public function setPods(array $pods): EDIFACTMessage
     {
         if (!is_array($pods)) {

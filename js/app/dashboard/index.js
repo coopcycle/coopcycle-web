@@ -103,7 +103,7 @@ async function start() {
   }
 
   const persistedFilters = JSON.parse(window.localStorage.getItem("cpccl__dshbd__fltrs"))
-  const initialFilters = {...persistedFilters, ...defaultFilters}
+  const initialFilters = {...defaultFilters, ...persistedFilters}
   if (persistedFilters) {
     preloadedState = {
       ...preloadedState,
