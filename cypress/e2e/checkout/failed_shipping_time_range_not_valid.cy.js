@@ -21,7 +21,8 @@ describe('Failed checkout; time range is not valid any more', () => {
       /\/fr\/restaurant\/[0-9]+-crazy-hamburger/,
     )
 
-    cy.wait('@postRestaurantCart1')
+    //FIXME: why do we send two requests?
+    cy.wait(['@postRestaurantCart1', '@postRestaurantCart1'])
 
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct1')
 
