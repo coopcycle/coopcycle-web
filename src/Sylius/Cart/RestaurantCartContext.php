@@ -55,16 +55,15 @@ final class RestaurantCartContext implements CartContextInterface
                     if (!$cart->isMultiVendor() && !$cart->getRestaurant()->isEnabled()
                         && !$this->authorizationChecker->isGranted('edit', $cart->getVendor())) {
 
-                        $this->checkoutLogger->info(sprintf('Order %s | RestaurantCartContext | cart is not valid any more',
-                            $this->loggingUtils->getOrderId($cart)));
+                        $this->checkoutLogger->info('cart is not valid any more',
+                            ['file' => 'RestaurantCartContext', 'order' => $this->loggingUtils->getOrderId($cart)]);
 
                         $cart = null;
                         $this->storage->remove();
                     }
                 } catch (EntityNotFoundException $e) {
-                    $this->checkoutLogger->info(sprintf('Order %s | RestaurantCartContext | error: %s',
-                        $this->loggingUtils->getOrderId($cart),
-                        $e->getMessage()));
+                    $this->checkoutLogger->info(sprintf('error: %s', $e->getMessage()),
+                        ['file' => 'RestaurantCartContext', 'order' => $this->loggingUtils->getOrderId($cart)]);
 
                     $cart = null;
                     $this->storage->remove();
@@ -77,9 +76,8 @@ final class RestaurantCartContext implements CartContextInterface
             if (null !== $cart) {
                 if ($restaurant = $this->resolver->resolve()) {
                     if (!$this->resolver->accept($cart)) {
-                        $this->checkoutLogger->info(sprintf('Order %s | RestaurantCartContext | cart is not accepted by this restaurant: %d',
-                            $this->loggingUtils->getOrderId($cart),
-                            $restaurant->getId()));
+                        $this->checkoutLogger->info(sprintf(' cart is not accepted by this restaurant: %d', $restaurant->getId()),
+                            ['file' => 'RestaurantCartContext', 'order' => $this->loggingUtils->getOrderId($cart)]);
 
                         $cart->clearItems();
                         $cart->setShippingTimeRange(null);
@@ -99,8 +97,8 @@ final class RestaurantCartContext implements CartContextInterface
 
             $cart = $this->orderFactory->createForRestaurant($restaurant);
 
-            $this->checkoutLogger->info(sprintf('Order (cart) object created (created_at = %s) | RestaurantCartContext | called by %s',
-                $cart->getCreatedAt()->format(\DateTime::ATOM), $this->loggingUtils->getBacktrace()));
+            $this->checkoutLogger->info(sprintf('Order (cart) object created (created_at = %s)', $cart->getCreatedAt()->format(\DateTime::ATOM)),
+                ['file' => 'RestaurantCartContext', 'order' => $this->loggingUtils->getOrderId($cart)]);
         }
 
         if (null === $cart->getCustomer()) {

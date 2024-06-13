@@ -276,3 +276,15 @@ AppBundle\Entity\LocalBusiness:
       - addProduct: [ "@chicken_salad" ]
       - addTaxon: [ "@zero_waste_menu" ]
       - setMenuTaxon: [ "@zero_waste_menu" ]
+
+AppBundle\Entity\User:
+  default_user:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'resto_1'
+        - 'resto_1'
+        - 'resto_1@coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_RESTAURANT' ]
+    restaurants: [ '@crazy_hamburger' ]

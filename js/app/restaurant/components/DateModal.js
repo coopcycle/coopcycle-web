@@ -96,7 +96,7 @@ class DateModal extends Component {
               </button>
             </div>
             <div className="col-sm-8 col-xs-6">
-              <button type="button" className="btn btn-block btn-success" onClick={ this._onClickSubmit.bind(this) }>
+              <button type="button" className="btn btn-block btn-success" onClick={ this._onClickSubmit.bind(this) } data-testid="cart.time.submit">
                 { this.props.t('CART_DELIVERY_TIME_SUBMIT') }
               </button>
             </div>

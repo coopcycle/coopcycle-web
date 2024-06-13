@@ -158,6 +158,7 @@ services:
       $orderItemQuantityModifier: '@sylius.order_item_quantity_modifier'
       $orderModifier: '@sylius.order_modifier'
       $serializer: '@serializer'
+      $environment: '%kernel.environment%'
 
   AppBundle\Controller\LoopEatController:
     arguments:
@@ -255,6 +256,8 @@ services:
     class: AppBundle\Sylius\Taxation\Resolver\TaxRateResolver
     arguments:
       $region: '%region_iso%'
+
+  AppBundle\Sylius\Taxation\Resolver\TaxRateResolverInterface: '@sylius.tax_rate_resolver'
 
   # IMPORTANT
   # OrderOptionsProcessor MUST be invoked BEFORE OrderFeeProcessor
@@ -952,6 +955,8 @@ services:
       - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
 
   AppBundle\Security\ApiKeyManager: ~
+
+  AppBundle\Security\OrderAccessTokenManager: ~
 
   AppBundle\Mjml\MjmlServerRenderer: ~
 

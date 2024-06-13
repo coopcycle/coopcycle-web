@@ -20,6 +20,7 @@ use AppBundle\Form\Checkout\CheckoutVytalType;
 use AppBundle\Form\Checkout\LoopeatReturnsType;
 use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Order\CartType;
+use AppBundle\Security\OrderAccessTokenManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
@@ -27,6 +28,7 @@ use AppBundle\Sylius\Cart\SessionStorage as CartStorage;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
+use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -65,6 +67,7 @@ class OrderController extends AbstractController
         protected JWTTokenManagerInterface $JWTTokenManager,
         private ValidatorInterface $validator,
         private OrderTimeHelper $orderTimeHelper,
+        private OrderAccessTokenManager $orderAccessTokenManager,
         private LoggerInterface $checkoutLogger,
     )
     {
@@ -97,10 +100,10 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
-        $errors = $this->validator->validate($order);
+        $orderErrors = $this->validator->validate($order);
 
         // @see https://github.com/coopcycle/coopcycle-web/issues/2069
-        if (count($errors->findByCodes(ShippingAddressConstraint::ADDRESS_NOT_SET)) > 0) {
+        if (count($orderErrors->findByCodes(ShippingAddressConstraint::ADDRESS_NOT_SET)) > 0) {
 
             $vendor = $order->getVendor();
             $routeName = $order->isMultiVendor() ? 'hub' : 'restaurant';
@@ -249,7 +252,7 @@ class OrderController extends AbstractController
                 return $this->redirectToRoute('order');
             }
 
-            if ($form->isValid()) {
+            if ($orderErrors->count() === 0 && $form->isValid()) {
 
                 // https://github.com/coopcycle/coopcycle-web/issues/1910
                 // Maybe a better would be to use "empty_data" option in CheckoutAddressType
@@ -281,12 +284,27 @@ class OrderController extends AbstractController
 
         return $this->render('order/index.html.twig', array(
             'order' => $order,
+            'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
             'form' => $form->createView(),
             'form_tip' => $tipForm->createView(),
             'form_coupon' => $couponForm->createView(),
             'form_vytal' => $vytalForm->createView(),
             'form_loopeat_returns' => $loopeatReturnsForm->createView(),
         ));
+    }
+
+    private function getShippingTimeRange(OrderInterface $order)
+    {
+        $range =
+            $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
+
+        // Don't forget that $range may be NULL
+        $shippingTimeRange = $range ? implode(' - ', [
+            $range->getLower()->format(\DateTime::ATOM),
+            $range->getUpper()->format(\DateTime::ATOM),
+        ]) : '';
+
+        return $shippingTimeRange;
     }
 
     /**
@@ -317,6 +335,8 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order');
         }
 
+        $orderErrors = $this->validator->validate($order);
+
         $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
         // Make sure to call StripeManager::configurePayment()
@@ -327,20 +347,13 @@ class OrderController extends AbstractController
         $checkoutPayment = new CheckoutPayment($order);
         $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment);
 
-        $range =
-            $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
-
-        // Don't forget that $range may be NULL
-        $shippingTimeRange = $range ? implode(' - ', [
-            $range->getLower()->format(\DateTime::ATOM),
-            $range->getUpper()->format(\DateTime::ATOM),
-        ]) : '';
-
-        $parameters =  [
+        $parameters =  $this->auth([
             'order' => $order,
+            'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
+            'order_access_token' => $this->orderAccessTokenManager->create($order),
             'payment' => $payment,
-            'shippingTimeRange' => $shippingTimeRange,
-        ];
+            'shippingTimeRange' => $this->getShippingTimeRange($order),
+        ]);
 
         $form->handleRequest($request);
 

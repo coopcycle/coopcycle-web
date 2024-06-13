@@ -5,8 +5,9 @@ import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 
-import i18n, { getCountry } from '../i18n'
-import SavedCreditCard from '../components/SavedCreditCard'
+import i18n, { getCountry } from '../../i18n'
+import SavedCreditCard from './SavedCreditCard'
+import { isGuest } from './utils'
 
 const style = {
   base: {
@@ -131,7 +132,6 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
     && Object.prototype.hasOwnProperty.call(options.amount_breakdown, 'card')
 
   const thereAreCardsToShow = cards && cards.length
-  const isGuest = formOptions && !formOptions.orderHasUser
 
   const handleCardClicked = (e, c) => {
     if (e.target.checked) {
@@ -183,7 +183,7 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
         </div> : null
       }
       {
-        (addNewCard || !thereAreCardsToShow || isGuest) ?
+        (addNewCard || !thereAreCardsToShow || isGuest(formOptions)) ?
         <div id="card-form">
           <div className="form-group">
             <CardholderNameInput onChange={ onCardholderNameChange } />
@@ -207,7 +207,7 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
             )}
           </div>
           {
-            !isGuest ?
+            !isGuest(formOptions) ?
             <div className="form-group">
               <div className="checkbox">
                 <label>
@@ -263,7 +263,7 @@ export default {
     }
 
     let resultCards = []
-    if (formOptions.orderHasUser) { // avoid this API call if the customer is a guest
+    if (!isGuest(formOptions)) { // avoid this API call if the customer is a guest
       resultCards = await axios.get(this.config.gatewayConfig.customerPaymentMethodsURL)
     }
 

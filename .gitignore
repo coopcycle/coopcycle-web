@@ -47,6 +47,8 @@
 .docker-sync
 
 .env
+*.env.local
+*.env.*.local
 
 /js/app/shared-js-lib-local
 

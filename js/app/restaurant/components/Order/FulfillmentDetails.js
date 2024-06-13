@@ -56,7 +56,7 @@ export default function FulfillmentDetails() {
   return (
     <div className="panel panel-default">
       <div className="panel-body">
-        <div className="fulfillment-details">
+        <div className="fulfillment-details" data-testid="cart.fulfillmentDetails">
           <FulfillmentMethod
             value={ fulfillmentMethod }
             shippingAddress={ cart.shippingAddress }

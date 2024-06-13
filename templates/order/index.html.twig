@@ -75,6 +75,12 @@
           {% endif %}
         {% endfor %}
 
+        {% if pre_submit_errors is defined and pre_submit_errors|length > 0 %}
+          {% include 'order/_partials/errors.html.twig' with {
+            errors: pre_submit_errors,
+          } %}
+        {% endif %}
+
         {{ form_errors(form) }}
 
         <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h2>
@@ -251,13 +257,13 @@
 {% endblock %}
 
 {% block styles %}
-  {{ encore_entry_link_tags('checkout-summary') }}
+  {{ encore_entry_link_tags('order') }}
   {{ encore_entry_link_tags('optins') }}
 {% endblock %}
 
 {% block scripts %}
 {% if not order.empty %}
-{{ encore_entry_script_tags('checkout-summary') }}
+{{ encore_entry_script_tags('order') }}
 {% endif %}
 {{ encore_entry_script_tags('optins') }}
 {% endblock %}

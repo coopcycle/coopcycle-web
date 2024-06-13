@@ -124,7 +124,7 @@ $("#modify-form").on('click', function() {
     .submit()
 });
 
-new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
+new CoopCycle.PaymentForm(document.querySelector('form[name="checkout_payment"]'), {
   card: "{{ gateway }}",
   amount: {{ price }},
   gatewayConfigs: {{ gateway_configs|json_encode|raw }},

@@ -87,7 +87,8 @@ class RestaurantController extends AbstractController
         protected JWTTokenManagerInterface $JWTTokenManager,
         private TimingRegistry $timingRegistry,
         private LoggerInterface $checkoutLogger,
-        private LoggingUtils $loggingUtils
+        private LoggingUtils $loggingUtils,
+        private string $environment
     )
     {
     }
@@ -459,31 +460,31 @@ class RestaurantController extends AbstractController
             $this->persistAndFlushCart($cart);
         }
 
-        // This is useful to "cleanup" a cart that was stored
-        // with a time range that is now expired
-        // FIXME Maybe this should be moved to a Doctrine postLoad listener?
-        $violations = $this->validator->validate($cart, null, ['ShippingTime']);
-        if (count($violations) > 0) {
+        $cartForm = $this->createForm(CartType::class, $cart, [
+            'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
+        ]);
+        $cartForm->handleRequest($request);
 
-            $cart->setShippingTimeRange(null);
-
-            if ($this->restaurantResolver->accept($cart)) {
-                $this->persistAndFlushCart($cart);
-            }
-        }
-
-        $cartForm = $this->createForm(CartType::class, $cart);
-
-        if ($request->isMethod('POST')) {
-
-            $cartForm->handleRequest($request);
-
+        if ($cartForm->isSubmitted()) {
             // The cart is valid, and the user clicked on the submit button
             if ($cartForm->isValid()) {
 
                 $this->orderManager->flush();
 
                 return $this->redirectToRoute('order');
+            }
+        } else {
+            // This is useful to "cleanup" a cart that was stored
+            // with a time range that is now expired
+            // FIXME Maybe this should be moved to a Doctrine postLoad listener?
+            $violations = $this->validator->validate($cart, null, ['ShippingTime']);
+            if (count($violations) > 0) {
+
+                $cart->setShippingTimeRange(null);
+
+                if ($this->restaurantResolver->accept($cart)) {
+                    $this->persistAndFlushCart($cart);
+                }
             }
         }
 
@@ -580,7 +581,9 @@ class RestaurantController extends AbstractController
             }
         }
 
-        $cartForm = $this->createForm(CartType::class, $cart);
+        $cartForm = $this->createForm(CartType::class, $cart, [
+            'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
+        ]);
 
         $cartForm->handleRequest($request);
 
@@ -592,6 +595,8 @@ class RestaurantController extends AbstractController
             foreach ($cartForm->getErrors() as $formError) {
                 $propertyPath = (string) $formError->getOrigin()->getPropertyPath();
                 $errors[$propertyPath] = [ ValidationUtils::serializeFormError($formError) ];
+
+                $this->checkoutLogger->warning($formError->getMessage(), [ 'order' => $this->loggingUtils->getOrderId($cart) ]);
             }
         }
 
@@ -921,11 +926,10 @@ class RestaurantController extends AbstractController
         $this->orderManager->flush();
 
         if ($isExisting) {
-            $this->checkoutLogger->info(sprintf('Order #%d updated in the database | RestaurantController | triggered by %s',
-                $cart->getId(), $this->loggingUtils->getBacktrace()));
+            $this->checkoutLogger->info('Order updated in the database', ['file' => 'RestaurantController', 'order' => $this->loggingUtils->getOrderId($cart)]);
         } else {
-            $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | RestaurantController | triggered by %s',
-                $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId(), $this->loggingUtils->getBacktrace()));
+            $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database',
+                $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM)), ['file' => 'RestaurantController', 'order' => $this->loggingUtils->getOrderId($cart)]);
         }
     }
 }

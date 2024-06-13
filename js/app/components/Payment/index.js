@@ -1,117 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { StrictMode } from 'react'
 import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client';
 import _ from 'lodash'
-import classNames from 'classnames'
 import axios from 'axios'
 
-import PaymentMethodIcon from '../components/PaymentMethodIcon'
-import stripe from '../payment/stripe'
-import mercadopago from '../payment/mercadopago'
-import { Disclaimer } from '../payment/cashOnDelivery'
+import stripe from './stripe'
+import mercadopago from './mercadopago'
+import { Disclaimer } from './cashOnDelivery'
 
-import { useTranslation } from 'react-i18next'
-import { disableBtn, enableBtn } from './button'
-
-const methodPickerStyles = {
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginTop: '8px'
-}
-
-const methodPickerBtnClassNames = {
-  'btn': true,
-  'btn-default': true,
-  'p-2': true
-}
-
-const methodStyles = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'start',
-  justifyContent: 'space-between',
-}
-
-const PaymentMethodPicker = ({ methods, onSelect }) => {
-
-  const { t } = useTranslation()
-
-  const [ method, setMethod ] = useState('')
-
-  useEffect(() => {
-    if (method) {
-      onSelect(method)
-    }
-  }, [ method ])
-
-  return (
-    <div style={ methodPickerStyles }>
-      { _.map(methods, m => {
-
-        switch (m.type) {
-
-        case 'card':
-          return (
-            <div style={ methodStyles }>
-              <label>{ t('PM_CREDIT_OR_DEBIT_CARD') }</label>
-              <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'card' }) }
-                onClick={ () => setMethod('card') }>
-                <PaymentMethodIcon code={ m.type } height="45" />
-              </button>
-            </div>
-          )
-
-        case 'giropay':
-
-          return (
-            <div style={ methodStyles }>
-              <label>{ t('PM_GIROPAY') }</label>
-              <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
-                onClick={ () => setMethod('giropay') }>
-                <PaymentMethodIcon code={ m.type } height="45" />
-              </button>
-            </div>
-          )
-
-        case 'edenred':
-        case 'edenred+card':
-
-          return (
-            <div style={ methodStyles }>
-              <label>{ t('PM_EDENRED') }</label>
-              <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
-                onClick={ () => {
-
-                  if (!m.data.edenredIsConnected) {
-                    window.location.href = m.data.edenredAuthorizeUrl
-                    return
-                  }
-
-                  setMethod(m.type)
-                }}>
-                <PaymentMethodIcon code={ m.type } height="45" />
-              </button>
-            </div>
-          )
-
-        case 'cash_on_delivery':
-
-          return (
-            <div style={ methodStyles }>
-              <label>{ t('PM_CASH') }</label>
-              <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
-                onClick={ () => setMethod('cash_on_delivery') }>
-                <PaymentMethodIcon code={ m.type } height="45" />
-              </button>
-              </div>
-          )
-
-        }
-      }) }
-    </div>
-  )
-}
+import { disableBtn, enableBtn } from '../../widgets/button'
+import PaymentMethodPicker from './PaymentMethodPicker'
+import { isGuest } from './utils'
 
 class CreditCard {
  constructor(config) {
@@ -121,27 +20,22 @@ class CreditCard {
 
 const containsMethod = (methods, method) => !!_.find(methods, m => m.type === method)
 
-const handleCardPayment = (cc, options, form, submitButton, savedPaymentMethodId = null) => {
-  cc.createToken(savedPaymentMethodId)
-    .then(token => {
-      if (token) {
-        options.tokenElement.setAttribute('value', token)
-        form.submit()
-      } else {
-        $('.btn-payment').removeClass('btn--loading')
-        enableBtn(submitButton)
-      }
-    })
-    .catch(e => {
-      $('.btn-payment').removeClass('btn--loading')
-      enableBtn(submitButton)
-      document.getElementById('card-errors').textContent = e.message
-    })
-}
-
 export default function(form, options) {
 
   const submitButton = form.querySelector('input[type="submit"],button[type="submit"]')
+
+  const orderErrorContainerEl = document.getElementById('order-error-container')
+  const orderErrorContainerRoot = orderErrorContainerEl ? createRoot(orderErrorContainerEl) : null
+
+  function setLoading(isLoading) {
+    if (isLoading) {
+      $('.btn-payment').addClass('btn--loading')
+      disableBtn(submitButton)
+    } else {
+      $('.btn-payment').removeClass('btn--loading')
+      enableBtn(submitButton)
+    }
+  }
 
   const methods = Array
     .from(form.querySelectorAll('input[name="checkout_payment[method]"]'))
@@ -194,20 +88,30 @@ export default function(form, options) {
 
   }
 
-  form.addEventListener('submit', function(event) {
+  const handleCardPayment = (savedPaymentMethodId = null) => {
+    cc.createToken(savedPaymentMethodId)
+      .then(token => {
+        if (token) {
+          options.tokenElement.setAttribute('value', token)
+          form.submit()
+        } else {
+          setLoading(false)
+        }
+      })
+      .catch(e => {
+        setLoading(false)
+        document.getElementById('card-errors').textContent = e.message
+      })
+  }
 
-    event.preventDefault()
-
-    $('.btn-payment').addClass('btn--loading')
-    disableBtn(submitButton)
-
+  const handlePayment = () => {
     let savedPaymentMethod = null
     if (options.savedPaymentMethodElement) {
       savedPaymentMethod = options.savedPaymentMethodElement.getAttribute('value')
     }
 
     if (methods.length === 1 && containsMethod(methods, 'card')) {
-      handleCardPayment(cc, options, form, submitButton, savedPaymentMethod)
+      handleCardPayment(savedPaymentMethod)
     } else {
 
       const selectedMethod =
@@ -217,8 +121,7 @@ export default function(form, options) {
         case 'giropay':
           cc.confirmGiropayPayment()
             .catch(e => {
-              $('.btn-payment').removeClass('btn--loading')
-              enableBtn(submitButton)
+              setLoading(false)
               document.getElementById('card-errors').textContent = e.message
             })
           break
@@ -231,11 +134,53 @@ export default function(form, options) {
           break
         case 'edenred+card':
         case 'card':
-          handleCardPayment(cc, options, form, submitButton, savedPaymentMethod)
+          handleCardPayment(savedPaymentMethod)
           break
       }
     }
+  }
 
+  form.addEventListener('submit', async function(event) {
+
+    event.preventDefault()
+
+    setLoading(true)
+
+    //FIXME: only /order/payment route is tested to provide orderId; guest and account tokens
+
+    if (options.orderId) {
+      const httpClient = new window._auth.httpClient();
+
+      if (isGuest(options)) {
+        httpClient.setToken(options.orderAccessToken);
+      }
+
+      const hasAccount = window._auth && window._auth.isAuth
+
+      if (isGuest(options) || hasAccount) {
+        const validateItemRoute = window.Routing.generate("api_orders_validate_item", { id: options.orderId });
+        const { error } = await httpClient.get(validateItemRoute);
+
+        if (error) {
+          setLoading(false)
+
+          const violations = error.response?.data?.violations;
+
+          if (orderErrorContainerRoot && violations) {
+            orderErrorContainerRoot.render(
+              <StrictMode>
+                <div className="alert alert-danger">
+                  {violations.map((violation, index) => <p key={index}>{violation.message}</p>)}
+                </div>
+              </StrictMode>
+            )
+          }
+          return
+        }
+      }
+    }
+
+    handlePayment()
   })
 
   const onSelect = value => {

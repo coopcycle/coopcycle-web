@@ -27,8 +27,7 @@ class AutoAcceptOrder
 
         if ($restaurant->isAutoAcceptOrdersEnabled()) {
             $this->orderManager->accept($order);
-            $this->checkoutLogger->info(sprintf('Order %s | AutoAcceptOrder | accepted',
-                $this->loggingUtils->getOrderId($order)));
+            $this->checkoutLogger->info('AutoAcceptOrder | accepted', ['order' => $this->loggingUtils->getOrderId($order)]);
         }
     }
 }
