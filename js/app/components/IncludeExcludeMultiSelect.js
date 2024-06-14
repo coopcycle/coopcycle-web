@@ -47,5 +47,6 @@ export default ({placeholder, onChange, selectOptions, defaultValue}) => {
       onInputChange={onInputChange}
       filterOption={createFilter(filterConfig)}
       defaultValue={defaultValue}
+      classNamePrefix="dashboard"
     />)
 }
