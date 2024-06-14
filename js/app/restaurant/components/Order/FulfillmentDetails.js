@@ -10,10 +10,11 @@ import {
   selectCanAddToExistingCart,
   selectIsOrderAdmin,
   selectIsFulfilmentTimeSlotsAvailable,
-  selectIsTimeRangeChangedModalOpen, selectIsRestaurantNotAvailableModalOpen,
+  selectIsTimeRangeChangedModalOpen,
+  selectCartTiming,
 } from '../../redux/selectors'
 import {
-  closeRestaurantNotAvailableModal,
+  changeDate,
   closeTimeRangeChangedModal,
   openAddressModal,
   setDateModalOpen,
@@ -25,10 +26,8 @@ import DateModal from '../DateModal'
 import { useTranslation } from 'react-i18next'
 import ChangeRestaurantOnEditFulfilmentDetailsModal
   from './ChangeRestaurantOnEditFulfilmentDetailsModal'
-import RestaurantNotAvailableModal
-  from '../../../components/Order/RestaurantNotAvailableModal'
 import TimeRangeChangedModal
-  from '../../../components/Order/TimeRangeChangedModal'
+  from '../../../components/order/TimeRangeChangedModal'
 
 export default function FulfillmentDetails() {
   const cart = useSelector(selectCart)
@@ -39,15 +38,14 @@ export default function FulfillmentDetails() {
   const isFulfilmentTimeSlotsAvailable = useSelector(
     selectIsFulfilmentTimeSlotsAvailable)
 
+  const cartTiming = useSelector(selectCartTiming)
+
   const canAddToExistingCart = useSelector(selectCanAddToExistingCart)
 
   const errors = useSelector(selectFulfillmentRelatedErrorMessages)
 
   const isTimeRangeChangedModalOpen = useSelector(
     selectIsTimeRangeChangedModalOpen)
-
-  const isRestaurantNotAvailableModalOpen = useSelector(
-    selectIsRestaurantNotAvailableModalOpen)
 
   const [ isWarningModalOpen, setWarningModalOpen ] = useState(false)
 
@@ -102,15 +100,15 @@ export default function FulfillmentDetails() {
         setWarningModalOpen={ setWarningModalOpen } />
       <TimeRangeChangedModal
         isModalOpen={ isTimeRangeChangedModalOpen }
-        onClick={ () => {
+        timing={ cartTiming }
+        onChangeTimeRangeClick={ (timeRange) => {
+          dispatch(changeDate(timeRange))
           dispatch(closeTimeRangeChangedModal())
-          dispatch(setDateModalOpen(true))
-        } } />
-      <RestaurantNotAvailableModal
-        isModalOpen={ isRestaurantNotAvailableModalOpen }
-        onClick={ () => {
-          dispatch(closeRestaurantNotAvailableModal())
-        } } />
+        } }
+        onChangeRestaurantClick={ () => {
+          dispatch(closeTimeRangeChangedModal())
+        } }
+      />
     </div>
   )
 }

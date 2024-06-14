@@ -3,13 +3,31 @@ import numbro from 'numbro'
 import _ from 'lodash'
 import React from 'react'
 import { render } from 'react-dom'
-import { getCurrencySymbol } from '../i18n'
+import Modal from 'react-modal'
+import { createRoot } from 'react-dom/client'
+import { Provider } from 'react-redux'
+import { I18nextProvider } from 'react-i18next'
+import i18n, { getCurrencySymbol } from '../i18n'
 import LoopeatModal from './LoopeatModal'
 
 require('gasparesganga-jquery-loading-overlay')
 
 import './index.scss'
+import '../components/order/index.scss'
+
 import { disableBtn, enableBtn } from '../widgets/button'
+import { createStoreFromPreloadedState } from './redux/store'
+import {
+  openTimeRangeChangedModal,
+} from './redux/uiSlice'
+import RootPage from './RootPage'
+import { getAccountInitialState } from '../redux/account'
+import { getGuestInitialState } from '../redux/guest'
+import { initialState as orderInitialState } from './redux/orderSlice'
+import {
+  getTimingPathForStorage,
+  isTimeRangeSignificantlyDifferent,
+} from '../utils/order/helpers'
 
 const {
   currency,
@@ -237,3 +255,41 @@ form.addEventListener('submit', function() {
   submitPageBtn.classList.add('btn--loading')
   setLoading(true)
 })
+
+const orderDataElement = document.querySelector('#js-order-data')
+const orderNodeId = orderDataElement.dataset.orderNodeId
+const orderAccessToken = orderDataElement.dataset.orderAccessToken
+
+const initialState = {
+  account: getAccountInitialState(),
+  guest: getGuestInitialState(orderNodeId, orderAccessToken),
+  order: {
+    ...orderInitialState,
+    '@id': orderNodeId,
+  },
+}
+const store = createStoreFromPreloadedState(initialState)
+
+const shippingTimeRange = JSON.parse(orderDataElement.dataset.shippingTimeRange)
+
+const persistedTimeRange = JSON.parse(window.sessionStorage.getItem(getTimingPathForStorage(orderNodeId)))
+
+if (persistedTimeRange) {
+  if (!shippingTimeRange ||
+    isTimeRangeSignificantlyDifferent(persistedTimeRange, shippingTimeRange)) {
+    store.dispatch(openTimeRangeChangedModal())
+  }
+}
+
+const container = document.getElementById('react-root')
+
+Modal.setAppElement(container)
+
+const root = createRoot(container);
+root.render(
+  <Provider store={ store }>
+    <I18nextProvider i18n={ i18n }>
+      <RootPage />
+    </I18nextProvider>
+  </Provider>
+)

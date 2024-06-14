@@ -15,7 +15,6 @@ import {
   fetchFailure,
   openTimeRangeChangedModal,
   updateCartTiming,
-  openRestaurantNotAvailableModal,
 } from './redux/actions'
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
@@ -26,6 +25,7 @@ import './item.scss'
 import './header.scss'
 import './menu.scss'
 import './components/Order/index.scss'
+import '../components/order/index.scss'
 
 import ProductOptionsModal
   from './components/ProductDetails/ProductOptionsModal'
@@ -39,11 +39,15 @@ import {
   selectCanAddToExistingCart,
   selectCartShippingTimeRange,
   selectCartTiming,
-  selectOrderAccessToken,
-  selectOrderId,
+  selectOrderNodeId,
 } from './redux/selectors'
-import { getTiming } from '../utils/OrderAPI'
-import { isTimeRangeSignificantlyDifferent } from '../utils/OrderHelpers'
+import { getAccountInitialState } from '../redux/account'
+import { getGuestInitialState } from '../redux/guest'
+import { apiSlice } from '../redux/api/slice'
+import {
+  getTimingPathForStorage,
+  isTimeRangeSignificantlyDifferent,
+} from '../utils/order/helpers'
 
 window._paq = window._paq || []
 
@@ -103,28 +107,35 @@ function init() {
       if (!cartShippingTimeRange) {
         const displayedTiming = selectCartTiming(store.getState())
 
-        const orderId = selectOrderId(store.getState())
-        const orderAccessToken = selectOrderAccessToken(store.getState())
+        const orderNodeId = selectOrderNodeId(store.getState())
 
-        const latestTiming = await getTiming(orderId, orderAccessToken)
-        store.dispatch(updateCartTiming(latestTiming))
+        let latestTiming = null
+
+        try {
+          const result = await store.dispatch(apiSlice.endpoints.getOrderTiming.initiate(orderNodeId))
+          latestTiming = result.data
+        } catch (error) {
+          // ignore the error and continue without the timing check
+        }
 
         if (displayedTiming && displayedTiming.range && latestTiming) {
+          store.dispatch(updateCartTiming(latestTiming))
+
           if (latestTiming.range) {
             if (isTimeRangeSignificantlyDifferent(displayedTiming.range, latestTiming.range)) {
               setMenuLoading(false)
-              store.dispatch(fetchFailure()) // will hide loading state in some react components
+              store.dispatch(fetchFailure()) // only to hide loading state in some react components
               store.dispatch(openTimeRangeChangedModal())
               return
             }
 
-            window.sessionStorage.setItem(`cpccl__chckt__order__${orderId}__tmng`, JSON.stringify(latestTiming.range))
+            window.sessionStorage.setItem(getTimingPathForStorage(orderNodeId), JSON.stringify(latestTiming.range))
 
           } else {
             // no time ranges available; restaurant is closed for the coming days
             setMenuLoading(false)
-            store.dispatch(fetchFailure()) // will hide loading state in some react components
-            store.dispatch(openRestaurantNotAvailableModal())
+            store.dispatch(fetchFailure()) // only to hide loading state in some react components
+            store.dispatch(openTimeRangeChangedModal())
             return
           }
         }
@@ -172,6 +183,8 @@ function init() {
   }
 
   const state = {
+    account: getAccountInitialState(),
+    guest: getGuestInitialState(cart['@id'], orderAccessToken),
     cart,
     restaurant,
     datePickerTimeSlotInputName: 'cart[timeSlot]',
@@ -186,7 +199,6 @@ function init() {
     addresses,
     restaurantTiming,
     cartTiming,
-    orderAccessToken,
     country: getCountry(),
     isPlayer,
     isGroupOrdersEnabled,

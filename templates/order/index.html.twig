@@ -9,6 +9,8 @@
 {% block body %}
 <div class="container container--full-height">
 
+  <div id="react-root"></div>
+
   {% if not order.empty %}
 
     {% set user_with_same_email_exists_code =
@@ -247,6 +249,11 @@
     </div>
   {% endif %}
 </div>
+
+<div id="js-order-data"
+     data-order-node-id="{{ order|get_iri_from_item }}"
+     data-shipping-time-range="{{ shipping_time_range|json_encode|e('html_attr') }}"
+     data-order-access-token="{{ order_access_token is defined ? order_access_token }}"></div>
 
 <div id="optins"
   data-brand-name={{ coopcycle_setting('brand_name')|json_encode|e('html_attr') }}></div>

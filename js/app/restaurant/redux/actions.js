@@ -6,6 +6,7 @@ import qs from 'qs'
 import i18n, {getCountry} from '../../i18n'
 import {geocode} from '../../components/AddressAutosuggest'
 import { createAction } from '@reduxjs/toolkit'
+import { setOrderAccessToken } from '../../redux/guest/slice'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const FETCH_SUCCESS = 'FETCH_SUCCESS'
@@ -90,10 +91,6 @@ export const closeTimeRangeChangedModal = createAction("CLOSE_TIME_RANGE_CHANGED
 
 export const updateCartTiming = createAction("UPDATE_CART_TIMING")
 
-export const openRestaurantNotAvailableModal = createAction("OPEN_RESTAURANT_NOT_AVAILABLE_MODAL")
-export const closeRestaurantNotAvailableModal = createAction("CLOSE_RESTAURANT_NOT_AVAILABLE_MODAL")
-
-
 const httpClient = axios.create()
 function getRoutingParams(params) {
 
@@ -162,6 +159,13 @@ function notifyListeners(cart) {
 
 function handleAjaxResponse(res, dispatch, broadcast = true) {
   dispatch(fetchSuccess(res))
+
+  const orderNodeId = res.cart['@id']
+  const orderAccessToken = res.orderAccessToken
+  if (orderNodeId && orderAccessToken) {
+    dispatch(setOrderAccessToken({ orderNodeId, orderAccessToken }))
+  }
+
   $('#menu').LoadingOverlay('hide')
   if (broadcast) {
     notifyListeners(res.cart)

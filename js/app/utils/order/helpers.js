@@ -6,3 +6,5 @@ export function isTimeRangeSignificantlyDifferent(origRange, latestRange) {
 
   return latestLowerBound.diff(displayedUpperBound, 'hours') > 2
 }
+
+export const getTimingPathForStorage = (orderNodeId) => `cpccl__chckt__order__${ orderNodeId }__tmng`

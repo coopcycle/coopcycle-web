@@ -282,18 +282,34 @@ class OrderController extends AbstractController
             }
         }
 
-        return $this->render('order/index.html.twig', array(
+        return $this->render('order/index.html.twig', $this->auth([
             'order' => $order,
+            'shipping_time_range' => $this->getShippingTimeRange($order),
             'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
+            'order_access_token' => $this->orderAccessTokenManager->create($order),
             'form' => $form->createView(),
             'form_tip' => $tipForm->createView(),
             'form_coupon' => $couponForm->createView(),
             'form_vytal' => $vytalForm->createView(),
             'form_loopeat_returns' => $loopeatReturnsForm->createView(),
-        ));
+        ]));
     }
 
     private function getShippingTimeRange(OrderInterface $order)
+    {
+        $range =
+            $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
+
+        // Don't forget that $range may be NULL
+        $shippingTimeRange = $range ? [
+            $range->getLower()->format(\DateTime::ATOM),
+            $range->getUpper()->format(\DateTime::ATOM),
+        ] : null;
+
+        return $shippingTimeRange;
+    }
+
+    private function getShippingTimeRangeAsString(OrderInterface $order)
     {
         $range =
             $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
@@ -352,7 +368,7 @@ class OrderController extends AbstractController
             'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
             'order_access_token' => $this->orderAccessTokenManager->create($order),
             'payment' => $payment,
-            'shippingTimeRange' => $this->getShippingTimeRange($order),
+            'shippingTimeRange' => $this->getShippingTimeRangeAsString($order),
         ]);
 
         $form->handleRequest($request);

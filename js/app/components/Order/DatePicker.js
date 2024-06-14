@@ -28,7 +28,9 @@ const DatePicker = ({ choices, onChange, t, value }) => {
     _.groupBy(choices, range => moment(range[0]).format('YYYY-MM-DD'))
 
   const dateOptions = _.keys(choicesByDate).map(d => dateAsOption(d, t))
-  const timeOptions = choicesByDate[date].map(r => ({
+
+  const choicesOnDate = choicesByDate[date] ?? []
+  const timeOptions = choicesOnDate.map(r => ({
     label: rangeAsTimeLabel(r),
     value: r
   }))

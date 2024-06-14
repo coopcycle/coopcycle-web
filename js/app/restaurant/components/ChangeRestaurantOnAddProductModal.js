@@ -27,7 +27,7 @@ class ChangeRestaurantOnAddProductModal extends Component {
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_2') }
           </p>
         </div>
-        <div className="ReactModal__Restaurant__button">
+        <div className="ReactModal__Content__buttons">
           <a className="btn btn-default" href={ continueURL }>
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_BTN_NO') }
           </a>

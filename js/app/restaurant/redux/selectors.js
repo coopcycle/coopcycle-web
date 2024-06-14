@@ -13,9 +13,7 @@ export const selectRestaurant = state => state.restaurant
 
 export const selectCart = state => state.cart
 
-export const selectOrderId = state => state.cart.id
-
-export const selectOrderAccessToken = state => state.orderAccessToken
+export const selectOrderNodeId = state => state.cart['@id']
 
 export const selectCartTotal = state => state.cart.total
 
@@ -254,5 +252,3 @@ export const selectReusablePackagingEnabled = createSelector(
 )
 
 export const selectIsTimeRangeChangedModalOpen = state => state.isTimeRangeChangedModalOpen
-
-export const selectIsRestaurantNotAvailableModalOpen = state => state.isRestaurantNotAvailableModalOpen

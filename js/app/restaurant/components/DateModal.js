@@ -6,10 +6,10 @@ import Modal from 'react-modal'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
 
-import DatePicker from './DatePicker'
-import TimeSlotPicker from './TimeSlotPicker'
 import { clearDate, changeDate, setDateModalOpen } from '../redux/actions'
 import { selectCartTiming } from '../redux/selectors'
+import DatePicker from '../../components/order/DatePicker'
+import TimeSlotPicker from '../../components/order/TimeSlotPicker'
 
 const moment = extendMoment(Moment)
 

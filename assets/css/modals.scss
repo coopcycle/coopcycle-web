@@ -102,6 +102,21 @@
   }
 }
 
+.ReactModal__Content__body {
+  margin: 1.5rem 0;
+}
+
+.ReactModal__Content__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 0.5rem;
+
+  @media (min-width: $screen-md-min) {
+    margin: 1rem 1.5rem;
+  }
+}
+
 .ReactModal__Html--open {
 }
 
