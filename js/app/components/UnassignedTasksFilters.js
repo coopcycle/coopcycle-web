@@ -1,42 +1,25 @@
 import React, { useEffect, useState } from 'react'
 
-import i18n from '../i18n'
 import { setFilterValue } from '../dashboard/redux/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectAllTags, selectFiltersSetting } from '../dashboard/redux/selectors'
 import { createClient } from '../dashboard/utils/client'
 import IncludeExcludeMultiSelect from './IncludeExcludeMultiSelect'
 import { findTagFromSlug } from '../dashboard/utils'
+import { useTranslation } from 'react-i18next'
+import { selectAllOrganizations } from '../../shared/src/logistics/redux/selectors'
 
 
 export default () => {
 
   const dispatch = useDispatch()
-  const jwt = useSelector(state => state.jwt)
+  const { t } = useTranslation()
 
   const allTags = useSelector(selectAllTags),
+    allOrganizations = useSelector(selectAllOrganizations),
+    organizationOptions = allOrganizations.map(val => {return {...val, label: val.name, value: val.name}}),
     tagOptions = allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}}),
-    organizationOptions = [],
-    initOptions = Array.prototype.concat(tagOptions, organizationOptions)
-
-  const [options, setOptions] = useState(initOptions)
-
-  useEffect(() => {
-    const client = createClient(dispatch)
-
-    client.paginatedRequest({
-      method: 'GET',
-      url: window.Routing.generate('api_organizations_get_collection'),
-      headers: {
-        'Authorization': `Bearer ${jwt}`,
-        'Accept': 'application/ld+json',
-        'Content-Type': 'application/ld+json'
-      }
-    }).then(data => {
-      const organizationOptions = data.map(val => {return {...val, label: val.name, value: val.name}})
-      setOptions(Array.prototype.concat(tagOptions, organizationOptions))
-    })
-  }, [])
+    options = Array.prototype.concat(tagOptions, organizationOptions)
 
   const onChange = (selected) => {
     // dispatch action
@@ -64,7 +47,7 @@ export default () => {
 
   return (
     <IncludeExcludeMultiSelect
-      placeholder={ i18n.t('TAGS_SELECT_PLACEHOLDER') }
+      placeholder={ t('TAGS_SELECT_PLACEHOLDER') }
       onChange={ onChange }
       selectOptions={ options }
       defaultValue={ defaultDisplayedValue }

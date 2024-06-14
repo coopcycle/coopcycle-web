@@ -2,15 +2,18 @@ import _ from 'lodash';
 import { createSelector } from 'reselect';
 import { mapToColor } from './taskUtils';
 import { assignedItemsIds } from './taskListUtils';
-import { taskAdapter, taskListAdapter, tourAdapter } from './adapters'
+import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter } from './adapters'
 
 const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
 export const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
 const tourSelectors = tourAdapter.getSelectors((state) => state.logistics.entities.tours)
+const organizationSelectors = organizationAdapter.getSelectors((state) => state.logistics.entities.organizations)
 
 export const selectSelectedDate = state => state.logistics.date
 
 export const selectAllTasks = taskSelectors.selectAll
+
+export const selectAllOrganizations = organizationSelectors.selectAll
 
 const selectTaskId = (state, taskId) => taskId
 

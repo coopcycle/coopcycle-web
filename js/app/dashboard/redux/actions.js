@@ -131,7 +131,11 @@ export const insertInUnassignedTasks = createAction('INSERT_IN_UNASSIGNED_TASKS'
 export const appendToUnassignedTours = createAction('APPEND_TO_UNASSIGNED_TOURS')
 export const insertInUnassignedTours = createAction('INSERT_IN_UNASSIGNED_TOURS')
 
-export const startTaskFailure = createAction('START_TASK_FAILURE');
+export const startTaskFailure = createAction('START_TASK_FAILURE')
+
+export const loadOrganizations = createAction('LOAD_ORGANIZATIONS')
+export const loadOrganizationsSuccess = createAction('LOAD_ORGANIZATIONS_SUCCESS')
+
 
 /**
  * This action assign a task after another when you linked the two markers on the map
@@ -1592,3 +1596,22 @@ export function onlyFilter(filter) {
 
   }
 }
+
+// TODO ALOIS
+
+export function
+
+const jwt = useSelector(state => state.jwt)
+const client = createClient(dispatch)
+
+client.paginatedRequest({
+  method: 'GET',
+  url: window.Routing.generate('api_organizations_get_collection'),
+  headers: {
+    'Authorization': `Bearer ${jwt}`,
+    'Accept': 'application/ld+json',
+    'Content-Type': 'application/ld+json'
+  }
+}).then(data => {
+  dispatch(loadOrganizationsSuccess(data))
+})

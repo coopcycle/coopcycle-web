@@ -21,26 +21,17 @@ import { initialState as settingsInitialState, defaultFilters } from './redux/se
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
-import { taskAdapter, taskListAdapter, tourAdapter } from '../coopcycle-frontend-js/logistics/redux'
+import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter } from '../coopcycle-frontend-js/logistics/redux'
 import _ from 'lodash'
 import axios from 'axios'
 
-async function start() {
+const dashboardEl = document.getElementById('dashboard')
+const date = moment(dashboardEl.dataset.date)
+const jwtToken = dashboardEl.dataset.jwt
+const baseUrl = location.protocol + '//' + location.host
 
-  const dashboardEl = document.getElementById('dashboard')
-  const jwtToken = dashboardEl.dataset.jwt
-  const baseUrl = location.protocol + '//' + location.host
-  const headers = {
-    'Authorization': `Bearer ${jwtToken}`,
-    'Accept': 'application/ld+json',
-    'Content-Type': 'application/ld+json'
-  }
 
-  let date = moment(dashboardEl.dataset.date)
-
-  const tasksRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_tasks_get_collection') }?date=${date.format('YYYY-MM-DD')}`, { headers: headers})
-  const tasksListsRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_task_lists_v2_collection') }?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
-  const toursRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_tours_get_collection') }?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
+async function start(tasksRequest, tasksListsRequest, toursRequest) {
 
   let allTasks
   let taskLists
@@ -75,7 +66,8 @@ async function start() {
         tours: tourAdapter.upsertMany(
           tourAdapter.getInitialState(),
           tours
-        )
+        ),
+        organizations: organizationAdapter.getInitialState()
       }
     },
     jwt: jwtToken,
@@ -228,5 +220,21 @@ const anim = lottie.loadAnimation({
 })
 
 anim.addEventListener('DOMLoaded', function() {
-  start()
+  const headers = {
+    'Authorization': `Bearer ${jwtToken}`,
+    'Accept': 'application/ld+json',
+    'Content-Type': 'application/ld+json'
+  }
+
+  const tasksRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_tasks_get_collection') }?date=${date.format('YYYY-MM-DD')}`, { headers: headers})
+  const tasksListsRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_task_lists_v2_collection') }?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
+  const toursRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_tours_get_collection') }?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
+
+  // the 800ms delay is here to avoid a glitch in the animation when there is no tasks to load
+  // fire the initial loading requests then wait
+  setTimeout(() => start(
+    tasksRequest,
+    tasksListsRequest,
+    toursRequest
+  ), 800)
 })
