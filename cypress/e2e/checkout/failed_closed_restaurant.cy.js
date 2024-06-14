@@ -177,7 +177,7 @@ describe('Failed checkout; restaurant is closed', () => {
       context('restaurant is closed while the customer is on the payment page' +
         ` (${ customerType })`,
         () => {
-          it.only('proceed with payment (FIXME)' + ` (${ customerType })`, () => {
+          it('proceed with payment (FIXME)' + ` (${ customerType })`, () => {
 
             cy.visit('/fr/')
 
