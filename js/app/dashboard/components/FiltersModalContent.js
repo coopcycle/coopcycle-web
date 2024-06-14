@@ -283,34 +283,9 @@ class FiltersModalContent extends React.Component {
               </div>
               <div role="tabpanel" className="tab-pane" id="filters_tags">
                 <div className="dashboard__modal-filters__tabpane">
-                  <label>
-                    { this.props.t('ADMIN_DASHBOARD_FILTERS_TAGS_TO_SELECT') }
-                  </label>
                   <TagsSelect
-                    tags={this.props.tags}
-                    defaultValue={this.props.selectedTags}
-                    onChange={(tags) =>
-                      setFieldValue(
-                        "tags",
-                        _.map(tags, (tag) => tag.slug),
-                      )
-                    }
+                    setFieldValue={setFieldValue}
                   />
-                  <hr />
-                  <label>
-                    { this.props.t('ADMIN_DASHBOARD_FILTERS_TAGS_TO_HIDE') }
-                  </label>
-                  <TagsSelect
-                    tags={this.props.tags}
-                    defaultValue={this.props.excludedTags}
-                    onChange={(tags) =>
-                      setFieldValue(
-                        "excludedTags",
-                        _.map(tags, (tag) => tag.slug),
-                      )
-                    }
-                  />
-                  <hr />
                 </div>
               </div>
               <div role="tabpanel" className="tab-pane" id="filters_couriers">
