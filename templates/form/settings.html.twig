@@ -23,11 +23,11 @@
 {% endblock %}
 
 {% block password_widget %}
-{% if form.vars.name != 'mercadopago_client_secret' and (form.vars.name matches '/^stripe_/' or form.vars.name matches '/^mercadopago_/') %}
+{% if form.vars.name != 'mercadopago_client_secret' and (form.vars.name matches '/^stripe_/' or form.vars.name matches '/^mercadopago_/' or form.vars.name matches '/^paygreen_/') %}
   {% set disabled = is_demo %}
   <div class="input-group">
     <span class="input-group-addon">
-      {% if form.vars.name matches '/^stripe_live_/' or form.vars.name matches '/^mercadopago_live_/' %}
+      {% if form.vars.name matches '/^stripe_live_/' or form.vars.name matches '/^mercadopago_live_/' or form.vars.name matches '/^paygreen_live_/' %}
         LIVE
       {% else %}
         TEST

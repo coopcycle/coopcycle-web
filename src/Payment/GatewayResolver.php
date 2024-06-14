@@ -32,6 +32,8 @@ class GatewayResolver
 
     public function resolve()
     {
+        //FEAT: Add context to switch between Stripe or PayGreen depending on LocalBusiness payment configuration
+        return 'paygreen';
         return $this->resolveForCountry($this->country);
     }
 }
