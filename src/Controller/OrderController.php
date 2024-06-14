@@ -285,6 +285,7 @@ class OrderController extends AbstractController
         return $this->render('order/index.html.twig', $this->auth([
             'order' => $order,
             'shipping_time_range' => $this->getShippingTimeRange($order),
+            'displayed_time_range' => $this->getDisplayedTimeRange($order),
             'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
             'order_access_token' => $this->orderAccessTokenManager->create($order),
             'form' => $form->createView(),
@@ -295,7 +296,7 @@ class OrderController extends AbstractController
         ]));
     }
 
-    private function getShippingTimeRange(OrderInterface $order)
+    private function getDisplayedTimeRange(OrderInterface $order)
     {
         $range =
             $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
@@ -309,7 +310,20 @@ class OrderController extends AbstractController
         return $shippingTimeRange;
     }
 
-    private function getShippingTimeRangeAsString(OrderInterface $order)
+    private function getShippingTimeRange(OrderInterface $order)
+    {
+        $range = $order->getShippingTimeRange();
+
+        // Don't forget that $range may be NULL
+        $shippingTimeRange = $range ? [
+            $range->getLower()->format(\DateTime::ATOM),
+            $range->getUpper()->format(\DateTime::ATOM),
+        ] : null;
+
+        return $shippingTimeRange;
+    }
+
+    private function getDisplayedTimeRangeAsString(OrderInterface $order)
     {
         $range =
             $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
@@ -368,7 +382,7 @@ class OrderController extends AbstractController
             'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
             'order_access_token' => $this->orderAccessTokenManager->create($order),
             'payment' => $payment,
-            'shippingTimeRange' => $this->getShippingTimeRangeAsString($order),
+            'shippingTimeRange' => $this->getDisplayedTimeRangeAsString($order),
         ]);
 
         $form->handleRequest($request);

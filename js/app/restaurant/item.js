@@ -102,9 +102,9 @@ function init() {
     const canAddToExistingCart = selectCanAddToExistingCart(store.getState())
 
     if (canAddToExistingCart) {
-      const cartShippingTimeRange = selectCartShippingTimeRange(store.getState())
+      const shippingTimeRange = selectCartShippingTimeRange(store.getState())
       // if the customer has already selected the time range, it will be checked on the server side
-      if (!cartShippingTimeRange) {
+      if (!shippingTimeRange) {
         const displayedTiming = selectCartTiming(store.getState())
 
         const orderNodeId = selectOrderNodeId(store.getState())

@@ -28,6 +28,7 @@ import {
   getTimingPathForStorage,
   isTimeRangeSignificantlyDifferent,
 } from '../utils/order/helpers'
+import { apiSlice } from '../redux/api/slice'
 
 const {
   currency,
@@ -249,13 +250,6 @@ window.setNonprofit = function (elem) {
   elem.classList.add("active");
 }
 
-const form = document.querySelector('form[name="checkout_address"]')
-
-form.addEventListener('submit', function() {
-  submitPageBtn.classList.add('btn--loading')
-  setLoading(true)
-})
-
 const orderDataElement = document.querySelector('#js-order-data')
 const orderNodeId = orderDataElement.dataset.orderNodeId
 const orderAccessToken = orderDataElement.dataset.orderAccessToken
@@ -270,13 +264,58 @@ const initialState = {
 }
 const store = createStoreFromPreloadedState(initialState)
 
-const shippingTimeRange = JSON.parse(orderDataElement.dataset.shippingTimeRange)
+const shippingTimeRange = JSON.parse(orderDataElement.dataset.shippingTimeRange ?? null)
+const displayedTimeRange = JSON.parse(orderDataElement.dataset.displayedTimeRange ?? null)
 
 const persistedTimeRange = JSON.parse(window.sessionStorage.getItem(getTimingPathForStorage(orderNodeId)))
 
-if (persistedTimeRange) {
-  if (!shippingTimeRange ||
-    isTimeRangeSignificantlyDifferent(persistedTimeRange, shippingTimeRange)) {
+const form = document.querySelector('form[name="checkout_address"]')
+
+form.addEventListener('submit', async function(event) {
+  event.preventDefault()
+
+  submitPageBtn.classList.add('btn--loading')
+  setLoading(true)
+
+  // if the customer has already selected the time range, it will be checked on the server side
+  if (!shippingTimeRange && persistedTimeRange) {
+    let latestTiming = null
+
+    try {
+      const result = await store.dispatch(apiSlice.endpoints.getOrderTiming.initiate(orderNodeId))
+      latestTiming = result.data
+    } catch (error) {
+      // ignore the error and continue without the timing check
+    }
+
+    if (latestTiming) {
+      if (latestTiming.range) {
+        if (isTimeRangeSignificantlyDifferent(persistedTimeRange, latestTiming.range)) {
+          submitPageBtn.classList.remove('btn--loading')
+          setLoading(false)
+
+          store.dispatch(openTimeRangeChangedModal())
+          return
+        }
+
+        window.sessionStorage.setItem(getTimingPathForStorage(orderNodeId), JSON.stringify(latestTiming.range))
+
+      } else {
+        // no time ranges available; restaurant is closed for the coming days
+        submitPageBtn.classList.remove('btn--loading')
+        setLoading(false)
+
+        store.dispatch(openTimeRangeChangedModal())
+        return
+      }
+    }
+  }
+
+  form.submit()
+})
+
+if (!shippingTimeRange && persistedTimeRange && displayedTimeRange) {
+  if (isTimeRangeSignificantlyDifferent(persistedTimeRange, displayedTimeRange)) {
     store.dispatch(openTimeRangeChangedModal())
   }
 }

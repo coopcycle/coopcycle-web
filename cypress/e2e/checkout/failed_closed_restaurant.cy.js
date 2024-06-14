@@ -28,7 +28,7 @@ describe('Failed checkout; restaurant is closed', () => {
 
       context('restaurant is closed while the customer is on the menu page' +
         ` (${ customerType })`, () => {
-        it('suggest to choose a new time range' + ` (${ customerType })`,
+        it('suggest to choose a new time range (Timing modal)' + ` (${ customerType })`,
           () => {
 
             cy.visit('/fr/')
@@ -101,7 +101,7 @@ describe('Failed checkout; restaurant is closed', () => {
       context('restaurant is closed while the customer is on the address page' +
         ` (${ customerType })`,
         () => {
-          it('show an error message (address page)' + ` (${ customerType })`,
+          it('suggest to choose a new time range (Timing modal)' + ` (${ customerType })`,
             () => {
 
               cy.intercept('POST', '/fr/restaurant/*/cart')
@@ -168,9 +168,38 @@ describe('Failed checkout; restaurant is closed', () => {
 
               cy.contains('Commander').click()
 
-              cy.get('form[name="checkout_address"]')
-                .contains(
-                  'Il n\'est plus possible de commander pour aujourd\'hui')
+              cy.get('[data-testid="order.timeRangeChangedModal"]')
+                .should('be.visible')
+
+              cy.intercept('PUT', '/api/orders/*')
+                .as('putOrder1')
+              cy.get(
+                '[data-testid="order.timeRangeChangedModal.setTimeRange"]:visible button')
+                .click()
+              cy.wait('@putOrder1')
+
+              cy.get(
+                '[data-testid="order.time"]:visible')
+                .invoke('text')
+                .should('match', /^Demain entre 10:00 et 10:10/i)
+
+              cy.get('input[name="checkout_address[customer][fullName]"]')
+                .type('John Doe')
+
+              if (customerType === 'guest checkout') {
+                cy.get('input[name="checkout_address[customer][email]"]')
+                  .type('test@gmail.com')
+
+                cy.get('input[name="checkout_address[customer][phoneNumber]"]')
+                  .type('+33612345678')
+
+                cy.get('input[name="checkout_address[customer][legal]"]')
+                  .check()
+              }
+
+              cy.contains('Commander').click()
+
+              cy.location('pathname').should('eq', '/order/payment')
             })
         })
 

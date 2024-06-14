@@ -166,7 +166,7 @@
         <div class="d-flex flex-row justify-content-between align-items-center py-3">
           <span class="text-success">
             <i class="fa fa-clock-o fa-lg mr-2"></i>
-            <strong>{{ form.shippingTimeRange.vars.value|time_range_for_humans }}</strong>
+            <strong data-testid="order.time">{{ form.shippingTimeRange.vars.value|time_range_for_humans }}</strong>
           </span>
           <div>
             {% if form.quote is defined %}
@@ -252,7 +252,8 @@
 
 <div id="js-order-data"
      data-order-node-id="{{ order|get_iri_from_item }}"
-     data-shipping-time-range="{{ shipping_time_range|json_encode|e('html_attr') }}"
+     data-order-shipping-time-range="{{ shipping_time_range is not null ? shipping_time_range|json_encode|e('html_attr') }}"
+     data-displayed-time-range="{{ displayed_time_range is not null ? displayed_time_range|json_encode|e('html_attr') }}"
      data-order-access-token="{{ order_access_token is defined ? order_access_token }}"></div>
 
 <div id="optins"
