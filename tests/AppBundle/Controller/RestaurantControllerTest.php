@@ -11,6 +11,7 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\Checkout\Action\Validator\AddProductToCart as AssertAddProductToCart;
+use AppBundle\Security\OrderAccessTokenManager;
 use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Cart\RestaurantResolver;
@@ -86,6 +87,7 @@ class RestaurantControllerTest extends WebTestCase
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
         $this->restaurantFilter = $this->prophesize(RestaurantFilter::class);
         $this->timingRegistry = $this->prophesize(TimingRegistry::class);
+        $this->orderAccessTokenManager = $this->prophesize(OrderAccessTokenManager::class);
 
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
@@ -142,6 +144,7 @@ class RestaurantControllerTest extends WebTestCase
             $eventBus->reveal(),
             $jwtTokenManager->reveal(),
             $this->timingRegistry->reveal(),
+            $this->orderAccessTokenManager->reveal(),
             new NullLogger(),
             new NullLoggingUtils(),
             'test',
