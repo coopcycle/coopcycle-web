@@ -114,6 +114,19 @@ const traverseNode = (node, accumulator) => {
         operator: node.attributes.name,
         right:    node.nodes.arguments.nodes[1].attributes.value,
       })
+    } else if (node.attributes.name === 'diff_hours' || node.attributes.name === 'diff_days') {
+
+      let [ cmpSign, cmpValue ] = node.nodes.arguments.nodes[1].attributes.value.split(' ')
+      if (cmpSign === 'in') {
+        cmpValue = cmpValue.split('..')
+      }
+
+      accumulator.push({
+        left:     `${node.attributes.name}(${node.nodes.arguments.nodes[0].attributes.name})`,
+        operator: cmpSign,
+        right:    cmpValue,
+      })
+
     } else {
       if (node.nodes.left.nodes.node?.attributes.name === 'dropoff' && node.nodes.left.nodes.attribute?.attributes.value === 'doorstep') {
         accumulator.push({
