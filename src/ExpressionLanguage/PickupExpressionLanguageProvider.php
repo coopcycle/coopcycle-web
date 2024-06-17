@@ -17,7 +17,7 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
             // FIXME Need to test compilation
         };
 
-        $daysEvaluator = function ($arguments, $task, $expression = null) {
+        $daysEvaluator = function ($arguments, $task, ?string $expression = null): int|float|bool {
 
             if (null === $expression) {
                 @trigger_error('Not passing an expression as the 2nd argument is deprecated', E_USER_DEPRECATED);
@@ -26,7 +26,7 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
             $now = Carbon::now();
 
             if (isset($arguments['task']) && $arguments['task']->type !== '' && $arguments['task'] !== $task) {
-                return false;
+                return null === $expression ? -1 : false;
             }
 
             if (isset($task->createdAt) && null !== $task->createdAt) {
@@ -53,7 +53,7 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
             // FIXME Need to test compilation
         };
 
-        $hoursEvaluator = function ($arguments, $task, $expression = null) {
+        $hoursEvaluator = function ($arguments, $task, ?string $expression = null): float|bool {
 
             if (null === $expression) {
                 @trigger_error('Not passing an expression as the 2nd argument is deprecated', E_USER_DEPRECATED);
@@ -62,11 +62,11 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
             $now = Carbon::now();
 
             if (isset($arguments['task']) && $arguments['task']->type !== '' && $arguments['task'] !== $task) {
-                return false;
+                return null === $expression ? -1 : false;
             }
 
             if (null === $task->before) {
-                return false;
+                return null === $expression ? -1 : false;
             }
 
             if (isset($task->createdAt) && null !== $task->createdAt) {

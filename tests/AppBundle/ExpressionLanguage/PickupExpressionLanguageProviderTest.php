@@ -50,7 +50,7 @@ class PickupExpressionLanguageProviderTest extends TestCase
             'pickup' => $pickup,
         ]);
 
-        $this->assertThat($value, $this->isType('int'));
+        $this->assertIsNumeric($value);
         $this->assertEquals($expectedValue, $value);
     }
 
