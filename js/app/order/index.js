@@ -2,7 +2,7 @@ import Inputmask from 'inputmask'
 import numbro from 'numbro'
 import _ from 'lodash'
 import React from 'react'
-import { render } from 'react-dom'
+import { createPortal, render } from 'react-dom'
 import Modal from 'react-modal'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
@@ -29,6 +29,11 @@ import {
   isTimeRangeSignificantlyDifferent,
 } from '../utils/order/helpers'
 import { apiSlice } from '../redux/api/slice'
+import TimeRange from './TimeRange'
+import {
+  selectPersistedTimeRange,
+  selectShippingTimeRange,
+} from './redux/selectors'
 
 const {
   currency,
@@ -254,20 +259,24 @@ const orderDataElement = document.querySelector('#js-order-data')
 const orderNodeId = orderDataElement.dataset.orderNodeId
 const orderAccessToken = orderDataElement.dataset.orderAccessToken
 
-const initialState = {
-  account: getAccountInitialState(),
-  guest: getGuestInitialState(orderNodeId, orderAccessToken),
-  order: {
-    ...orderInitialState,
-    '@id': orderNodeId,
-  },
+const buildInitialState = () => {
+  const shippingTimeRange = JSON.parse(orderDataElement.dataset.shippingTimeRange ?? null)
+  const persistedTimeRange = JSON.parse(window.sessionStorage.getItem(getTimingPathForStorage(orderNodeId)))
+
+  const initialState = {
+    account: getAccountInitialState(),
+    guest: getGuestInitialState(orderNodeId, orderAccessToken),
+    order: {
+      ...orderInitialState,
+      '@id': orderNodeId,
+      shippingTimeRange: shippingTimeRange,
+      persistedTimeRange: persistedTimeRange,
+    },
+  }
+  return initialState
 }
-const store = createStoreFromPreloadedState(initialState)
 
-const shippingTimeRange = JSON.parse(orderDataElement.dataset.shippingTimeRange ?? null)
-const displayedTimeRange = JSON.parse(orderDataElement.dataset.displayedTimeRange ?? null)
-
-const persistedTimeRange = JSON.parse(window.sessionStorage.getItem(getTimingPathForStorage(orderNodeId)))
+const store = createStoreFromPreloadedState(buildInitialState())
 
 const form = document.querySelector('form[name="checkout_address"]')
 
@@ -277,12 +286,15 @@ form.addEventListener('submit', async function(event) {
   submitPageBtn.classList.add('btn--loading')
   setLoading(true)
 
+  const shippingTimeRange = selectShippingTimeRange(store.getState())
+  const persistedTimeRange = selectPersistedTimeRange(store.getState())
+
   // if the customer has already selected the time range, it will be checked on the server side
   if (!shippingTimeRange && persistedTimeRange) {
     let latestTiming = null
 
     try {
-      const result = await store.dispatch(apiSlice.endpoints.getOrderTiming.initiate(orderNodeId))
+      const result = await store.dispatch(apiSlice.endpoints.getOrderTiming.initiate(orderNodeId, { forceRefetch: true }))
       latestTiming = result.data
     } catch (error) {
       // ignore the error and continue without the timing check
@@ -314,13 +326,9 @@ form.addEventListener('submit', async function(event) {
   form.submit()
 })
 
-if (!shippingTimeRange && persistedTimeRange && displayedTimeRange) {
-  if (isTimeRangeSignificantlyDifferent(persistedTimeRange, displayedTimeRange)) {
-    store.dispatch(openTimeRangeChangedModal())
-  }
-}
-
 const container = document.getElementById('react-root')
+
+const fulfilmentTimeRangeContainer = document.getElementById('order__fulfilment_time_range__container')
 
 Modal.setAppElement(container)
 
@@ -328,6 +336,7 @@ const root = createRoot(container);
 root.render(
   <Provider store={ store }>
     <I18nextProvider i18n={ i18n }>
+      {createPortal(<TimeRange />, fulfilmentTimeRangeContainer) }
       <RootPage />
     </I18nextProvider>
   </Provider>

@@ -5,6 +5,7 @@ import _ from 'lodash'
 import TimeSlotPicker from './TimeSlotPicker'
 import DatePicker from './DatePicker'
 import Button from '../core/Button'
+import LoadingIcon from '../core/LoadingIcon'
 
 export default function TimeRangeChangedModal({
   isModalOpen,
@@ -43,7 +44,7 @@ export default function TimeRangeChangedModal({
             { t('CART_TIME_RANGE_CHANGED_MODAL_TEXT_LINE_2') }
           </p>
           <p>
-            <i className="fa fa-spinner fa-spin"></i>
+            <LoadingIcon />
           </p>
         </>) : null }
         { !isFetchingTiming && hasTimingOptions && hasValue ? (<>

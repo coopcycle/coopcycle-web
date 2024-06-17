@@ -112,7 +112,7 @@ function init() {
         let latestTiming = null
 
         try {
-          const result = await store.dispatch(apiSlice.endpoints.getOrderTiming.initiate(orderNodeId))
+          const result = await store.dispatch(apiSlice.endpoints.getOrderTiming.initiate(orderNodeId, { forceRefetch: true }))
           latestTiming = result.data
         } catch (error) {
           // ignore the error and continue without the timing check

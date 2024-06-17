@@ -183,20 +183,6 @@ describe('Failed checkout; restaurant is closed', () => {
                 .invoke('text')
                 .should('match', /^Demain entre 10:00 et 10:10/i)
 
-              cy.get('input[name="checkout_address[customer][fullName]"]')
-                .type('John Doe')
-
-              if (customerType === 'guest checkout') {
-                cy.get('input[name="checkout_address[customer][email]"]')
-                  .type('test@gmail.com')
-
-                cy.get('input[name="checkout_address[customer][phoneNumber]"]')
-                  .type('+33612345678')
-
-                cy.get('input[name="checkout_address[customer][legal]"]')
-                  .check()
-              }
-
               cy.contains('Commander').click()
 
               cy.location('pathname').should('eq', '/order/payment')

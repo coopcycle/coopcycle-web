@@ -14,6 +14,7 @@ import TimeRangeChangedModal from '../components/order/TimeRangeChangedModal'
 import {
   getTimingPathForStorage,
 } from '../utils/order/helpers'
+import { setPersistedTimeRange, setShippingTimeRange } from './redux/orderSlice'
 
 export default function RootPage() {
   const isTimeRangeChangedModalOpen = useSelector(
@@ -47,11 +48,12 @@ export default function RootPage() {
             return
           }
 
-          window.sessionStorage.removeItem(getTimingPathForStorage(orderNodeId))
-          dispatch(closeTimeRangeChangedModal())
+          dispatch(setShippingTimeRange(timeRange))
 
-          //refresh page to get updated data in the twig-rendered template
-          window.location.reload()
+          dispatch(setPersistedTimeRange(null))
+          window.sessionStorage.removeItem(getTimingPathForStorage(orderNodeId))
+
+          dispatch(closeTimeRangeChangedModal())
         })
       } }
       onChangeRestaurantClick={ () => {
