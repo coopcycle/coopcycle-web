@@ -1094,6 +1094,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         $taskObject = new \stdClass();
 
+        $taskObject->type = $this->getType();
         $taskObject->address = $this->getAddress();
         $taskObject->createdAt = $this->getCreatedAt();
         $taskObject->after = $this->getAfter();
@@ -1114,14 +1115,14 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $emptyObject->before = null;
         $emptyObject->doorstep = false;
 
+        $thisObj = $this->toExpressionLanguageObject();
+
         $values['distance'] = -1;
         $values['weight'] = $this->getWeight();
-        $values['pickup'] = $this->isPickup() ? $this->toExpressionLanguageObject() : $emptyObject;
-        $values['dropoff'] = $this->isDropoff() ? $this->toExpressionLanguageObject() : $emptyObject;
+        $values['pickup'] = $this->isPickup() ? $thisObj : $emptyObject;
+        $values['dropoff'] = $this->isDropoff() ? $thisObj : $emptyObject;
         $values['packages'] = new PackagesResolver($this);
 
-        $thisObj = new \stdClass();
-        $thisObj->type = $this->getType();
         $values['task'] = $thisObj;
 
         return $values;

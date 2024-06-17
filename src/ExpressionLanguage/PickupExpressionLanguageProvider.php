@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInterface
 {
@@ -16,18 +17,20 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
             // FIXME Need to test compilation
         };
 
-        $daysEvaluator = function ($arguments, $task) {
+        $daysEvaluator = function ($arguments, $task, $expression = null) {
+
+            if (null === $expression) {
+                @trigger_error('Not passing an expression as the 2nd argument is deprecated', E_USER_DEPRECATED);
+            }
 
             $now = Carbon::now();
 
-            if (isset($task->createdAt) && null !== $task->createdAt) {
-                $now = Carbon::instance($task->createdAt);
+            if (isset($arguments['task']) && $arguments['task']->type !== '' && $arguments['task'] !== $task) {
+                return false;
             }
 
-            // May happen for multiple points
-            // FIXME Won't work as expected when using "less than", i.e diff_days(pickup) < 3
-            if (null === $task->before) {
-                return -1;
+            if (isset($task->createdAt) && null !== $task->createdAt) {
+                $now = Carbon::instance($task->createdAt);
             }
 
             $before = Carbon::instance($task->before);
@@ -37,30 +40,49 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
                 $diff = $before->isSameDay($now) ? 0 : 1;
             }
 
-            return $diff;
+            if (null === $expression) {
+                return $diff;
+            }
+
+            $el = new ExpressionLanguage();
+
+            return $el->evaluate("{$diff} {$expression}");
         };
 
         $hoursCompiler = function (Address $address, $zoneName) {
             // FIXME Need to test compilation
         };
 
-        $hoursEvaluator = function ($arguments, $task) {
+        $hoursEvaluator = function ($arguments, $task, $expression = null) {
+
+            if (null === $expression) {
+                @trigger_error('Not passing an expression as the 2nd argument is deprecated', E_USER_DEPRECATED);
+            }
 
             $now = Carbon::now();
+
+            if (isset($arguments['task']) && $arguments['task']->type !== '' && $arguments['task'] !== $task) {
+                return false;
+            }
+
+            if (null === $task->before) {
+                return false;
+            }
 
             if (isset($task->createdAt) && null !== $task->createdAt) {
                 $now = Carbon::instance($task->createdAt);
             }
 
-            // May happen for multiple points
-            // FIXME Won't work as expected when using "less than", i.e diff_days(pickup) < 3
-            if (null === $task->before) {
-                return -1;
+            $before = Carbon::instance($task->before);
+            $diff = $before->floatDiffInHours($now);
+
+            if (null === $expression) {
+                return $diff;
             }
 
-            $before = Carbon::instance($task->before);
+            $el = new ExpressionLanguage();
 
-            return $before->floatDiffInHours($now);
+            return $el->evaluate("{$diff} {$expression}");
         };
 
         $timeRangeLengthCompiler = function ($task, $unit) {
