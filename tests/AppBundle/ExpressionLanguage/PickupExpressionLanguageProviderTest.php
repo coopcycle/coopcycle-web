@@ -207,6 +207,13 @@ class PickupExpressionLanguageProviderTest extends TestCase
 
         $this->assertIsNumeric($value);
         $this->assertEquals($expectedValue, $value);
+
+        $value = $this->language->evaluate(sprintf('time_range_length(pickup, "hours", "== %s")', $expectedValue), [
+            'pickup' => $pickup,
+        ]);
+
+        $this->assertThat($value, $this->isType('boolean'));
+        $this->assertTrue($value);
     }
 
     public function timeRangeLengthProviderIn()

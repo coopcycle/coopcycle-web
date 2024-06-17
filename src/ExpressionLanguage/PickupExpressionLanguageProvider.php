@@ -89,18 +89,28 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
             // FIXME Need to test compilation
         };
 
-        $timeRangeLengthEvaluator = function ($arguments, $task, $unit) {
+        $timeRangeLengthEvaluator = function ($arguments, $task, $unit, $expression = null) {
 
-            // May happen for multiple points
-            // FIXME Won't work as expected when using "less than", i.e time_range_length(pickup) < 3
+            if (isset($arguments['task']) && $arguments['task']->type !== '' && $arguments['task'] !== $task) {
+                return null === $expression ? -1 : false;
+            }
+
             if (null === $task->after || null === $task->before) {
-                return -1;
+                return null === $expression ? -1 : false;
             }
 
             $after = Carbon::instance($task->after);
             $before = Carbon::instance($task->before);
 
-            return $before->floatDiffInHours($after);
+            $diff = $before->floatDiffInHours($after);
+
+            if (null === $expression) {
+                return $diff;
+            }
+
+            $el = new ExpressionLanguage();
+
+            return $el->evaluate("{$diff} {$expression}");
         };
 
         return array(

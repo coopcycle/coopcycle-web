@@ -38,6 +38,14 @@ const lineToString = state => {
     return `diff_hours(pickup, '${state.operator} ${convertToRange(state.right)}')`
   }
 
+  if (state.left === `time_range_length(pickup, 'hours')`) {
+    return `time_range_length(pickup, 'hours', '${state.operator} ${convertToRange(state.right)}')`
+  }
+
+  if (state.left === `time_range_length(dropoff, 'hours')`) {
+    return `time_range_length(dropoff, 'hours', '${state.operator} ${convertToRange(state.right)}')`
+  }
+
   if (state.operator === 'in' && Array.isArray(state.right) && state.right.length === 2) {
     return `${state.left} in ${state.right[0]}..${state.right[1]}`
   }
