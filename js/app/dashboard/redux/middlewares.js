@@ -12,6 +12,7 @@ import {
 } from './actions'
 import _ from 'lodash'
 import Centrifuge from 'centrifuge'
+import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 
 // Check every 30s
 const OFFLINE_TIMEOUT_INTERVAL = (30 * 1000)
@@ -72,7 +73,13 @@ export const socketIO = ({ dispatch, getState }) => {
           dispatch(importError(event.data.token, event.data.message))
           break
         case 'v2:task_list:updated':
-          dispatch(taskListsUpdated(event.data.task_list))
+          const currentDate = selectSelectedDate(getState())
+          if (event.data.task_list.date === currentDate.format('YYYY-MM-DD')) {
+            dispatch(taskListsUpdated(event.data.task_list))
+          } else {
+            console.debug('Discarding tasklist event for other day ' + event.data.task_list.date)
+          }
+
           break
       }
     })
