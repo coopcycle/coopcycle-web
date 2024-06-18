@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.0] - 2024-06-18
+
+### Fixed
+
+* Fix The ‘Close restaurant for a day’ button closes restaurant for 2 days https://github.com/coopcycle/coopcycle-app/issues/1734
+* Fix A customer can create an order for a disabled (deactivated) restaurant (this fix is only for web orders for now) https://github.com/coopcycle/coopcycle/issues/55
+* Fix Order is created with a preparation scheduled in the past (this fix is only for web orders for now) https://github.com/coopcycle/coopcycle/issues/56
+* Potential Fix for assignment bug when dispatching on two different tabs on two different days (reported by Naofood) by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4433
+* Fix crash when setting "use avatar color" to Yes by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4435
+
 ## [2.8.2] - 2024-06-12
 
 ### Changed
