@@ -2,12 +2,13 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import chroma from 'chroma-js'
 
-import IncludeExcludeMultiSelect from './IncludeExcludeMultiSelect'
+import IncludeExcludeMultiSelect from '../../components/IncludeExcludeMultiSelect'
 
-import { selectAllTags, selectFiltersSetting, selectOrganizationsLoading } from '../dashboard/redux/selectors'
-import { findTagFromSlug } from '../dashboard/utils'
+import { selectAllTags, selectFiltersSetting, selectOrganizationsLoading } from '../redux/selectors'
+import { findTagFromSlug } from '../utils'
 import { useTranslation } from 'react-i18next'
-import { selectAllOrganizations } from '../../shared/src/logistics/redux/selectors'
+import { selectAllOrganizations } from '../../../shared/src/logistics/redux/selectors'
+
 
 const styles = {
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
@@ -90,12 +91,15 @@ export default ({setFieldValue}) => {
 
 
   return (
-    <IncludeExcludeMultiSelect
-      placeholder={t('TAGS_SELECT_PLACEHOLDER')}
-      onChange={onChange}
-      selectOptions={initOptions}
-      defaultValue={defaultDisplayedValue}
-      selectProps={styles}
-      isLoading={organizationsLoading}
-    />)
+    <>
+      <IncludeExcludeMultiSelect
+        placeholder={t('ADMIN_DASHBOARD_FILTERS_TAGS_AND_ORGS_PLACEHOLDER')}
+        onChange={onChange}
+        selectOptions={initOptions}
+        defaultValue={defaultDisplayedValue}
+        selectProps={styles}
+        isLoading={organizationsLoading}
+      />
+      <p className='text-muted'>{ t('ADMIN_DASHBOARD_FILTERS_TAGS_AND_ORGS_HELP_TEXT') }</p>
+    </>)
 }

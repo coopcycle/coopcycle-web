@@ -7,6 +7,7 @@ import IncludeExcludeMultiSelect from './IncludeExcludeMultiSelect'
 import { findTagFromSlug } from '../dashboard/utils'
 import { useTranslation } from 'react-i18next'
 import { selectAllOrganizations } from '../../shared/src/logistics/redux/selectors'
+import { Tooltip } from 'antd'
 
 
 export default () => {
@@ -46,12 +47,18 @@ export default () => {
   )
 
   return (
-    <IncludeExcludeMultiSelect
-      placeholder={ t('TAGS_SELECT_PLACEHOLDER') }
-      onChange={ onChange }
-      selectOptions={ options }
-      defaultValue={ defaultDisplayedValue }
-      isLoading={ organizationsLoading }
-    />
+    <>
+      <Tooltip title={ t('ADMIN_DASHBOARD_FILTERS_TAGS_AND_ORGS_HELP_TEXT') }>
+        <div> {/* Needed for the Tooltip to work */}
+          <IncludeExcludeMultiSelect
+            placeholder={ t('ADMIN_DASHBOARD_FILTERS_TAGS_AND_ORGS_PLACEHOLDER') }
+            onChange={ onChange }
+            selectOptions={ options }
+            defaultValue={ defaultDisplayedValue }
+            isLoading={ organizationsLoading }
+          />
+        </div>
+      </Tooltip>
+    </>
   )
 }
