@@ -373,8 +373,10 @@ export default class MapProxy {
 
   showPolyline(username, style = 'normal') {
     if (style === 'as_the_crow_flies') {
+      this.getPolylineLayerGroup(username).removeFrom(this.map)
       this.getPolylineAsTheCrowFliesLayerGroup(username).addTo(this.map)
     } else {
+      this.getPolylineAsTheCrowFliesLayerGroup(username).removeFrom(this.map)
       this.getPolylineLayerGroup(username).addTo(this.map)
     }
   }
