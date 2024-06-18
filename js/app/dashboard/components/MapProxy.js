@@ -20,11 +20,11 @@ const tagsColor = tags => {
   return tag.color
 }
 
-const taskColor = (task, selected, useAvatarColors, polylineEnabled) => {
+const taskColor = (task, selected, useAvatarColors, polylineEnabled = {}) => {
 
   if (selected) {
     return '#EEB516'
-  } else if (task.isAssigned && useAvatarColors && polylineEnabled[task.assignedTo]) {
+  } else if (task.isAssigned && (useAvatarColors || polylineEnabled[task.assignedTo])) {
     return colorHash.hex(task.assignedTo)
   } else if (task.group && task.group.tags.length > 0) {
     return tagsColor(task.group.tags)
