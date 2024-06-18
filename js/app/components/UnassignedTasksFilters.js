@@ -18,9 +18,12 @@ export default () => {
   const allTags = useSelector(selectAllTags),
     allOrganizations = useSelector(selectAllOrganizations),
     organizationsLoading = useSelector(selectOrganizationsLoading),
-    organizationOptions = allOrganizations.map(val => {return {...val, label: val.name, value: val.name}}),
     tagOptions = allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}}),
-    options = Array.prototype.concat(tagOptions, organizationOptions)
+    organizationOptions = allOrganizations.length > 0 ? allOrganizations.map(val => {return {...val, label: val.name, value: val.name}}) : [{value: '', label: `${t('ADMIN_DASHBOARD_LOADING')}`, isDisabled: true}],
+    options = [
+      {'label': t('ADMIN_DASHBOARD_FILTERS_ORGS'), options: organizationOptions},
+      {'label': t('ADMIN_DASHBOARD_FILTERS_TAGS'), options: tagOptions},
+    ]
 
   const onChange = (selected) => {
     // dispatch action
