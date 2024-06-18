@@ -8,7 +8,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import {
   toggleSearch,
   closeSearch,
-  setToursEnabled
+  setToursEnabled,
+  loadOrganizations
 } from '../redux/actions'
 import { UnassignedTasks } from './UnassignedTasks'
 import { UnassignedTours } from './UnassignedTours'
@@ -61,6 +62,8 @@ const DashboardApp = () => {
       }
     }
     window.addEventListener('keydown', toggleSearchOnKeyDown)
+
+    dispatch(loadOrganizations())
 
     // return cleanup function
     return () => {

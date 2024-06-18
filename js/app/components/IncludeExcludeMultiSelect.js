@@ -1,7 +1,7 @@
 import React,{ useEffect, useState } from "react"
 import Select, { createFilter } from 'react-select'
 
-export default ({placeholder, onChange, selectOptions, defaultValue}) => {
+export default ({placeholder, onChange, selectOptions, defaultValue, loading}) => {
 
     const [excludeState, setExcludeState] = useState(false)
     const [options, setOptions] = useState([])
@@ -39,8 +39,8 @@ export default ({placeholder, onChange, selectOptions, defaultValue}) => {
       isMulti={true}
       // https://github.com/coopcycle/coopcycle-web/issues/774
       // https://github.com/JedWatson/react-select/issues/3030
-      menuPortalTarget={ document.body }
-      options={ options }
+      menuPortalTarget={document.body}
+      options={options}
       onChange={(selected) => { onChangeHandler(selected) }}
       placeholder={ placeholder }
       inputValue={inputValue}
@@ -48,5 +48,6 @@ export default ({placeholder, onChange, selectOptions, defaultValue}) => {
       filterOption={createFilter(filterConfig)}
       defaultValue={defaultValue}
       classNamePrefix="dashboard"
+      loading={loading}
     />)
 }

@@ -6,7 +6,7 @@ const initialState = organizationAdapter.getInitialState()
 export default (state = initialState, action) => {
     switch (action.type) {
         case loadOrganizationsSuccess.type:
-            return organizationAdapter.upsertMany(organizationAdapter.getInitialState(), loadOrganizationsSuccess.payload)
+            return organizationAdapter.upsertMany(organizationAdapter.getInitialState(), action.payload)
     }
 
     return state
