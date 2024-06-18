@@ -443,3 +443,61 @@ Feature: Multi-step deliveries
         "trackingUrl": @string@
       }
       """
+
+  Scenario: Suggest delivery optimizations with OAuth
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    Given the setting "latlng" has value "48.856613,2.352222"
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries/suggest_optimizations" with body:
+      """
+      {
+        "tasks": [
+          {
+            "type": "pickup",
+            "address": "24 Rue de Rivoli, 75004 Paris",
+            "after": "tomorrow 13:00",
+            "before": "tomorrow 13:15"
+          },
+          {
+            "type": "dropoff",
+            "address": "45 Rue d'Ulm, 75005 Paris",
+            "after": "tomorrow 13:45",
+            "before": "tomorrow 15:30"
+          },
+          {
+            "type": "dropoff",
+            "address": "45 Rue de Rivoli, 75001 Paris",
+            "after": "tomorrow 13:15",
+            "before": "tomorrow 13:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+          "@context": {"@*@": "@*@"},
+          "@type": "OptimizationSuggestions",
+          "@id": @string@,
+          "suggestions": [
+            {
+              "@context": {"@*@": "@*@"},
+              "@type": "OptimizationSuggestion",
+              "@id": @string@,
+              "gain": "distance",
+              "order": [
+                0,
+                2,
+                1
+              ]
+            }
+          ]
+      }
+      """

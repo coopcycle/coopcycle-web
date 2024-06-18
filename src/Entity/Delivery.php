@@ -9,7 +9,9 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Create as CreateDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
+use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
@@ -60,7 +62,22 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "input"=DeliveryInput::class,
  *       "denormalization_context"={"groups"={"delivery_create_from_tasks"}},
  *       "security"="is_granted('ROLE_ADMIN')"
- *     }
+ *     },
+ *     "suggest_optimizations"={
+ *       "method"="POST",
+ *       "path"="/deliveries/suggest_optimizations",
+ *       "write"=false,
+ *       "status"=200,
+ *       "controller"=SuggestOptimizationsController::class,
+ *       "output"=OptimizationSuggestions::class,
+ *       "denormalization_context"={"groups"={"delivery_create"}},
+ *       "normalization_context"={"groups"={"optimization_suggestions"}, "api_sub_level"=true},
+ *       "security_post_denormalize"="is_granted('create', object)",
+ *       "openapi_context"={
+ *         "summary"="Suggests optimizations for a delivery",
+ *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
+ *       }
+ *     },
  *   },
  *   itemOperations={
  *     "get"={
