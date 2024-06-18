@@ -11,9 +11,6 @@ const guestCheckoutEndpoints = [
 const baseQuery = fetchBaseQuery({
   baseUrl: '/',
   prepareHeaders: (headers, { getState, endpoint }) => {
-    // headers.set('Content-Type', 'application/ld+json') // breaks serialization for PUT requests
-    headers.set('Content-Type', 'application/json')
-
     const accessToken = selectAccessToken(getState())
 
     if (accessToken) {
@@ -29,6 +26,7 @@ const baseQuery = fetchBaseQuery({
 
     return headers
   },
+  jsonContentType: 'application/ld+json',
 })
 
 //based on https://redux-toolkit.js.org/rtk-query/usage/customizing-queries#automatic-re-authorization-by-extending-fetchbasequery
