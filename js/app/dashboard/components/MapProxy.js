@@ -349,14 +349,14 @@ export default class MapProxy {
   }
 
   setPolylineAsTheCrowFlies(username, polyline) {
+
     const layerGroup = this.getPolylineAsTheCrowFliesLayerGroup(username)
     layerGroup.clearLayers()
 
     const color = colorHash.hex(username)
-    const [ line, arrows ] = MapHelper.createPolylineWithArrows(polyline, color)
-
-    layerGroup.addLayer(line)
-    layerGroup.addLayer(arrows)
+    layerGroup.addLayer(
+      MapHelper.createPolylineWithArrows(polyline, color)
+    )
   }
 
   setPolyline(username, polyline) {
@@ -365,10 +365,9 @@ export default class MapProxy {
     layerGroup.clearLayers()
 
     const color = colorHash.hex(username)
-    const [ line, arrows ] = MapHelper.createPolylineWithArrows(polyline, color)
-
-    layerGroup.addLayer(line)
-    layerGroup.addLayer(arrows)
+    layerGroup.addLayer(
+      MapHelper.createPolylineWithArrows(polyline, color)
+    )
   }
 
   showPolyline(username, style = 'normal') {

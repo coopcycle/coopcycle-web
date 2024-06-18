@@ -103,7 +103,7 @@
     "json-loader": "^0.5.7",
     "leaflet": "^1.7.1",
     "leaflet-area-select": "^1.0.5",
-    "leaflet-polylinedecorator": "^1.6.0",
+    "leaflet-arrowheads": "^1.4.0",
     "leaflet-providers": "^1.13.0",
     "leaflet-swoopy": "^3.4.1",
     "leaflet.markercluster": "^1.5.3",

@@ -1,6 +1,5 @@
 import MapHelper from '../MapHelper'
 import L from 'leaflet'
-import 'leaflet-polylinedecorator'
 import _ from 'lodash'
 import JsBarcode from 'jsbarcode'
 require('gasparesganga-jquery-loading-overlay')
@@ -147,13 +146,9 @@ form = new DeliveryForm('delivery', {
 
       const updateDistance = new Promise((resolve) => {
         route(delivery).then((infos) => {
-
-          const [ line, arrows ] =
+          polylineLayerGroup.addLayer(
             MapHelper.createPolylineWithArrows(infos.polyline, '#3498DB')
-
-          polylineLayerGroup.addLayer(line)
-          polylineLayerGroup.addLayer(arrows)
-
+          )
           $('#delivery_distance').text(`${infos.kms} Km`)
           resolve()
         })
