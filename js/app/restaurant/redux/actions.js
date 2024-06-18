@@ -6,7 +6,7 @@ import qs from 'qs'
 import i18n, {getCountry} from '../../i18n'
 import {geocode} from '../../components/AddressAutosuggest'
 import { createAction } from '@reduxjs/toolkit'
-import { setOrderAccessToken } from '../../entities/guest/slice'
+import { setOrderAccessToken } from '../../entities/guest/reduxSlice'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const FETCH_SUCCESS = 'FETCH_SUCCESS'
