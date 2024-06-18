@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import L from 'leaflet'
-import 'leaflet-polylinedecorator'
 import 'leaflet.markercluster'
 import 'leaflet-area-select'
 import 'leaflet-swoopy'
@@ -354,33 +353,10 @@ export default class MapProxy {
     layerGroup.clearLayers()
 
     const color = colorHash.hex(username)
+    const [ line, arrows ] = MapHelper.createPolylineWithArrows(polyline, color)
 
-    const layer = L.polyline(polyline, {
-      ...polylineOptions,
-      color,
-    })
-
-    // Add arrows to polyline
-    const decorator = L.polylineDecorator(layer, {
-      patterns: [
-        {
-          offset: '5%',
-          repeat: '12.5%',
-          symbol: L.Symbol.arrowHead({
-            pixelSize: 12,
-            polygon: false,
-            pathOptions: {
-              stroke: true,
-              color,
-              opacity: 0.7
-            }
-          })
-        }
-      ]
-    })
-
-    layerGroup.addLayer(layer)
-    layerGroup.addLayer(decorator)
+    layerGroup.addLayer(line)
+    layerGroup.addLayer(arrows)
   }
 
   setPolyline(username, polyline) {
@@ -389,33 +365,10 @@ export default class MapProxy {
     layerGroup.clearLayers()
 
     const color = colorHash.hex(username)
+    const [ line, arrows ] = MapHelper.createPolylineWithArrows(polyline, color)
 
-    const layer = L.polyline(MapHelper.decodePolyline(polyline), {
-      ...polylineOptions,
-      color,
-    })
-
-    // Add arrows to polyline
-    const decorator = L.polylineDecorator(layer, {
-      patterns: [
-        {
-          offset: '5%',
-          repeat: '12.5%',
-          symbol: L.Symbol.arrowHead({
-            pixelSize: 12,
-            polygon: false,
-            pathOptions: {
-              stroke: true,
-              color,
-              opacity: 0.7
-            }
-          })
-        }
-      ]
-    })
-
-    layerGroup.addLayer(layer)
-    layerGroup.addLayer(decorator)
+    layerGroup.addLayer(line)
+    layerGroup.addLayer(arrows)
   }
 
   showPolyline(username, style = 'normal') {

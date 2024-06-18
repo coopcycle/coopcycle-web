@@ -1,6 +1,7 @@
 import L from 'leaflet'
 
-import "@geoman-io/leaflet-geoman-free";
+import '@geoman-io/leaflet-geoman-free'
+import 'leaflet-polylinedecorator'
 
 import Polyline from '@mapbox/polyline'
 require('beautifymarker')
@@ -138,6 +139,34 @@ function getPolyline(origin, destination) {
     .then(route => decodePolyline(route.geometry))
 }
 
+function createPolylineWithArrows(polyline, color) {
+
+  const line = L.polyline(typeof polyline === 'string' ? decodePolyline(polyline) : polyline, {
+    opacity: 0.7,
+    color
+  })
+
+  const arrows = L.polylineDecorator(line, {
+    patterns: [
+      {
+        offset: '5%',
+        repeat: '12.5%',
+        symbol: L.Symbol.arrowHead({
+          pixelSize: 12,
+          polygon: false,
+          pathOptions: {
+            stroke: true,
+            color,
+            opacity: 0.7
+          }
+        })
+      }
+    ]
+  })
+
+  return [ line, arrows ]
+}
+
 export default {
   init: init,
   createMarker: createMarker,
@@ -145,5 +174,6 @@ export default {
   fitToLayers: fitToLayers,
   decodePolyline: decodePolyline,
   getPolyline: getPolyline,
-  route
+  route,
+  createPolylineWithArrows,
 }

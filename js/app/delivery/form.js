@@ -148,31 +148,10 @@ form = new DeliveryForm('delivery', {
       const updateDistance = new Promise((resolve) => {
         route(delivery).then((infos) => {
 
-          const polyline = L.polyline(infos.polyline, {
-            color: '#3498DB',
-            opacity: 0.7
-          })
+          const [ line, arrows ] =
+            MapHelper.createPolylineWithArrows(infos.polyline, '#3498DB')
 
-          // Add arrows to polyline
-          const arrows = L.polylineDecorator(polyline, {
-            patterns: [
-              {
-                offset: '5%',
-                repeat: '12.5%',
-                symbol: L.Symbol.arrowHead({
-                  pixelSize: 12,
-                  polygon: false,
-                  pathOptions: {
-                    stroke: true,
-                    color: '#3498DB',
-                    opacity: 0.7
-                  }
-                })
-              }
-            ]
-          })
-
-          polylineLayerGroup.addLayer(polyline)
+          polylineLayerGroup.addLayer(line)
           polylineLayerGroup.addLayer(arrows)
 
           $('#delivery_distance').text(`${infos.kms} Km`)
